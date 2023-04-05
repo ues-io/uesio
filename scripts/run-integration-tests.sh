@@ -3,7 +3,7 @@
 set -e
 
 # Delete and recreate the tests app and dev workspace
-hurl --no-output --variable host=studio.uesio-dev.com --variable port=3009 libs/apps/uesio/tests/hurl_seeds/*.hurl
+hurl -k --no-output --variable host=studio.uesio-dev.com --variable port=3009 libs/apps/uesio/tests/hurl_seeds/*.hurl
 
 export UESIO_CLI_LOGIN_METHOD=uesio/core.mock
 export UESIO_CLI_USERNAME=uesio
@@ -25,4 +25,4 @@ echo "Successfully deployed tests app to Studio. Running tests..."
 cd ../../../..
 
 # Run specs
-hurl --variable host=studio.uesio-dev.com --variable port=3009 --test libs/apps/uesio/tests/hurl_specs/*.hurl
+hurl -k --variable host=studio.uesio-dev.com --variable port=3009 --test libs/apps/uesio/tests/hurl_specs/*.hurl
