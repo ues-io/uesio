@@ -382,6 +382,8 @@ bash apps/platform/migrations_test/test_migrations.sh
 
 ## End-to-end Testing and Integration testing
 
+All E2E and integration tests can be run with `npm run tests-all`
+
 ### E2E testing with Cypress
 
 We use [Cypress](https://cypress.io) for writing end-to-end tests of the Uesio app. All E2E tests are defined in `cypress/e2e` directory.
@@ -390,10 +392,10 @@ E2E tests are the most expensive and most brittle, and as such should be used sp
 
 If you're running Uesio locally, you can use `npx cypress open` to launch Cypress' visual UI for running tests, or `npx cypress run` to just run the tests in a headless fashion.
 
-To simulate how Cypress tests are run in CI, run `bash run-e2e-tests.sh`. This script is run in Github Actions on master build, and spins up the Uesio app in Docker, along with all dependencies, to use for running tests.
+To simulate how Cypress tests are run in CI, run `npm run tests-e2e`. This script is run in Github Actions on master build, and spins up the Uesio app in Docker, along with all dependencies, to use for running tests.
 
 ### Integration / API testing with Hurl
 
 We use [Hurl](https://hurl.dev/) for running integration tests against Uesio APIs, and for performing load testing against APIs. Hurl provides a powerful text-based abstraction over `curl` suitable for defining suites of HTTP requests and assertions to make upon the responses.
 
-To run API integration tests, use `npm run integration-tests`. This will bring up a test database
+To run API integration tests, use `npm run tests-integration`

@@ -1,4 +1,4 @@
-POST https://studio.uesio-dev.com:3000/site/auth/uesio/core/mock/login
+POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
     "token": "{\"subject\":\"uesio\"}"
 }
@@ -10,15 +10,15 @@ session_id: cookie "sessid"
 user_id: jsonpath "$.user.id"
 
 # Delete the dev workspace if it already exists for tests app
-DELETE https://studio.uesio-dev.com:3000/site/api/v1/collection/uesio/studio/workspace?uesio/studio.name=eq.dev
+DELETE https://{{host}}:{{port}}/site/api/v1/collection/uesio/studio/workspace?uesio/studio.name=eq.dev
 HTTP 204
 
 # Delete the tests app if it already exists
-DELETE https://studio.uesio-dev.com:3000/site/api/v1/collection/uesio/studio/app?uesio/studio.name=eq.tests
+DELETE https://{{host}}:{{port}}/site/api/v1/collection/uesio/studio/app?uesio/studio.name=eq.tests
 HTTP 204
 
 # Create the tests app
-POST https://studio.uesio-dev.com:3000/site/wires/save
+POST https://{{host}}:{{port}}/site/wires/save
 {
     "wires": [
         {
@@ -45,7 +45,7 @@ HTTP 200
 app_id: jsonpath "$.wires[0].changes['1']['uesio/core.id']"
 
 # Create dev workspace
-POST https://studio.uesio-dev.com:3000/site/wires/save
+POST https://{{host}}:{{port}}/site/wires/save
 {
     "wires": [
         {

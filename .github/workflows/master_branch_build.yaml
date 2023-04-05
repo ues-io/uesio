@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - master
+      - component-slot-metadata
     secrets:
       GH_PAT:
         required: true
@@ -80,8 +81,8 @@ jobs:
       - name: Add studio subdomain to /etc/hosts
         run: |
           sudo echo "127.0.0.1 studio.uesio-dev.com" | sudo tee -a /etc/hosts
-      - name: Run End-to-End tests against app image in Docker
-        run: bash ./run-e2e-tests.sh
+      - name: Run E2E and API Integration tests against app in Docker
+        run: npm run tests-all
   update-dev-branch:
     name: Update Dev environment to latest image
     if: github.ref_name == 'master'

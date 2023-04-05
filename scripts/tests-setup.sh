@@ -23,6 +23,9 @@ if [[ -z "${GITSHA}" ]]; then
         export APP_IMAGE="$GITSHA"
     fi
 fi
+if [[ -z "${APP_IMAGE}" ]]; then
+    export APP_IMAGE="$GITSHA"
+fi
 
 # Spin up dependencies and the app, and run migrations againt the DB
 docker compose -f docker-compose-tests.yaml down --volumes
@@ -30,9 +33,3 @@ docker compose -f docker-compose-tests.yaml up -d
 # TODO: Wait for app to start to be available rather than sleeping...
 echo "Waiting for Uesio app to start..."
 sleep 5;
-# Run e2e tests with cypress
-export UESIO_APP_URL="https://studio.uesio-dev.com:3009"
-export UESIO_DEV=true
-npx cypress run
-# Kill all containers
-docker compose -f docker-compose-tests.yaml down
