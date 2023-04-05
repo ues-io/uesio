@@ -6,11 +6,11 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/thecloudmasters/clio/pkg/call"
 	"github.com/thecloudmasters/clio/pkg/config"
-	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
 var MockUserNames = []string{"ben", "abel", "wessel", "baxter", "zach", "uesio"}
@@ -21,6 +21,14 @@ type LoginMethodHandler struct {
 	Key     string
 	Label   string
 	Handler LoginHandler
+}
+
+func parseKey(key string) (string, string, error) {
+	keyArray := strings.Split(key, ".")
+	if len(keyArray) != 2 {
+		return "", "", errors.New("Invalid Key: " + key)
+	}
+	return keyArray[0], keyArray[1], nil
 }
 
 var mockHandler = &LoginMethodHandler{
@@ -147,7 +155,7 @@ func Login() (*UserMergeData, error) {
 		return nil, err
 	}
 
-	methodNamespace, methodName, err := meta.ParseKey(method)
+	methodNamespace, methodName, err := parseKey(method)
 	if err != nil {
 		return nil, err
 	}
