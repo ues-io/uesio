@@ -12,6 +12,10 @@ else
     bash ./create.sh
     echo "SSL Certificate and private key created!"
     cd ../../../
+    # Update CA certificates so that CLI and Curl will not complain when connecting
+    # to our local Uesio instance with self-signed certificate
+    sudo cp apps/platform/ssl/certificate.crt /usr/local/share/ca-certificates/
+    sudo update-ca-certificates
 fi
 
 # Ensure that we have a Uesio docker image to run
@@ -23,16 +27,13 @@ if [[ -z "${GITSHA}" ]]; then
         export APP_IMAGE="$GITSHA"
     fi
 fi
+if [[ -z "${APP_IMAGE}" ]]; then
+    export APP_IMAGE="$GITSHA"
+fi
 
 # Spin up dependencies and the app, and run migrations againt the DB
-docker compose -f docker-compose-tests.yaml down
+docker compose -f docker-compose-tests.yaml down --volumes
 docker compose -f docker-compose-tests.yaml up -d
 # TODO: Wait for app to start to be available rather than sleeping...
 echo "Waiting for Uesio app to start..."
 sleep 5;
-# Run e2e tests with cypress
-export UESIO_APP_URL="https://studio.uesio-dev.com:3009"
-export UESIO_DEV=true
-npx cypress run
-# Kill all containers
-docker compose -f docker-compose-tests.yaml down

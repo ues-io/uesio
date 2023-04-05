@@ -2,12 +2,15 @@ package print
 
 import (
 	"fmt"
-
-	"github.com/thecloudmasters/uesio/pkg/routing"
+	"github.com/thecloudmasters/clio/pkg/auth"
 )
 
-func PrintUser(user *routing.UserMergeData) {
-	fmt.Println(user.FirstName + " " + user.LastName + " " + user.Profile)
+func PrintUserSummary(user *auth.UserMergeData) string {
+	return fmt.Sprintf("%s %s (%s)", user.FirstName, user.LastName, user.Profile)
+}
+
+func PrintUser(user *auth.UserMergeData) {
+	fmt.Println(PrintUserSummary(user))
 }
 
 func PrintHost(host string) {

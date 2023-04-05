@@ -1,23 +1,15 @@
 package config
 
-import "github.com/zalando/go-keyring"
+const sessionIdProp = "sessionId"
 
 func GetSessionID() (string, error) {
-	id, err := keyring.Get("uesio", "clio")
-	if err != nil && err != keyring.ErrNotFound {
-		return "", err
-	}
-	return id, nil
+	return GetConfigValue(sessionIdProp)
 }
 
 func SetSessionID(id string) error {
-	return keyring.Set("uesio", "clio", id)
+	return SetConfigValue(sessionIdProp, id)
 }
 
 func DeleteSessionID() error {
-	appName, err := GetApp()
-	if err != nil {
-		return err
-	}
-	return keyring.Delete("uesio", appName)
+	return DeleteConfigValue(sessionIdProp)
 }

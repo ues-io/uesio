@@ -2,17 +2,14 @@ package pack
 
 import (
 	"errors"
+	"github.com/thecloudmasters/clio/pkg/goutils"
 	"strings"
 
 	"github.com/evanw/esbuild/pkg/api"
 )
 
 func GetGlobalsList(globalsMap map[string]string) []string {
-	globalsList := []string{}
-	for global := range globalsMap {
-		globalsList = append(globalsList, global)
-	}
-	return globalsList
+	return goutils.MapKeys(globalsMap)
 }
 
 func GetGlobalsPlugin(globalsMap map[string]string) api.Plugin {

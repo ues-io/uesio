@@ -2,7 +2,7 @@ package meta
 
 import (
 	"errors"
-
+	"fmt"
 	"github.com/francoispqt/gojay"
 	"gopkg.in/yaml.v3"
 )
@@ -22,24 +22,59 @@ func NewBaseComponent(namespace, name string) *Component {
 type Component struct {
 	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
-	Title          string   `yaml:"title,omitempty" json:"uesio/studio.title"`
-	Description    string   `yaml:"description,omitempty" json:"uesio/studio.description"`
-	Category       string   `yaml:"category,omitempty" json:"uesio/studio.category"`
-	Pack           string   `yaml:"pack,omitempty" json:"uesio/studio.pack"`
-	EntryPoint     string   `yaml:"entrypoint,omitempty" json:"uesio/studio.entrypoint"`
-	ConfigValues   []string `yaml:"configvalues,omitempty" json:"uesio/studio.configvalues"`
-	Variants       []string `yaml:"variants,omitempty" json:"uesio/studio.variants"`
-	Utilities      []string `yaml:"utilities,omitempty" json:"uesio/studio.utilities"`
+	Category       string    `yaml:"category,omitempty" json:"uesio/studio.category"`
+	Pack           string    `yaml:"pack,omitempty" json:"uesio/studio.pack"`
+	EntryPoint     string    `yaml:"entrypoint,omitempty" json:"uesio/studio.entrypoint"`
+	ConfigValues   []string  `yaml:"configvalues,omitempty" json:"uesio/studio.configvalues"`
+	Variants       []string  `yaml:"variants,omitempty" json:"uesio/studio.variants"`
+	Utilities      []string  `yaml:"utilities,omitempty" json:"uesio/studio.utilities"`
+	Slots          yaml.Node `yaml:"slots,omitempty" json:"uesio/studio.slots"`
 
 	// Builder Properties
+	Title             string    `yaml:"title,omitempty" json:"uesio/studio.title"`
 	Discoverable      bool      `yaml:"discoverable,omitempty" json:"uesio/studio.discoverable"`
+	Description       string    `yaml:"description,omitempty" json:"uesio/studio.description"`
 	Properties        yaml.Node `yaml:"properties" json:"uesio/studio.properties"`
 	DefaultDefinition yaml.Node `yaml:"defaultDefinition" json:"uesio/studio.defaultdefinition"`
 	Sections          yaml.Node `yaml:"sections" json:"uesio/studio.sections"`
 	Signals           yaml.Node `yaml:"signals" json:"uesio/studio.signals"`
+
+	// Internal only
+	slotPaths []string
+}
+
+type SlotDefinition struct {
+	Name string `yaml:"name"`
+	Path string `yaml:"path"`
 }
 
 type ComponentWrapper Component
+
+type SlotDef struct {
+	Name string
+	Path string
+}
+
+// GetSlotPaths returns a slice of JSONPointers for extracting component slots within an instance of this component
+func (c *Component) GetSlotPaths() []string {
+	if c.slotPaths == nil {
+		parsedSlots := make([]SlotDefinition, 0)
+		// Decode the slots into the parsedSlots
+		err := c.Slots.Decode(&parsedSlots)
+		if err != nil {
+			parsedSlots = []SlotDefinition{}
+		}
+		c.slotPaths = make([]string, len(parsedSlots))
+
+		// If the component has slots, we need to traverse the slots to find other components
+		// that need to be added to our dependencies
+		for i, parsedSlot := range parsedSlots {
+			c.slotPaths[i] = fmt.Sprintf("%s/%s", parsedSlot.Path, parsedSlot.Name)
+
+		}
+	}
+	return c.slotPaths
+}
 
 func (c *Component) GetBytes() ([]byte, error) {
 	return gojay.MarshalJSONObject(c)
@@ -52,6 +87,9 @@ func (c *Component) MarshalJSONObject(enc *gojay.Encoder) {
 	enc.AddStringKey("description", c.Description)
 	enc.AddStringKey("category", c.Category)
 	enc.AddBoolKey("discoverable", c.Discoverable)
+	if c.Slots.Content != nil {
+		enc.AddArrayKey("slots", (*YAMLDefinition)(&c.Slots))
+	}
 	if c.Properties.Content != nil {
 		enc.AddArrayKey("properties", (*YAMLDefinition)(&c.Properties))
 	}
