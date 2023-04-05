@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"gopkg.in/yaml.v3"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -17,7 +18,8 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 	"github.com/thecloudmasters/uesio/pkg/translate"
-	"gopkg.in/yaml.v3"
+
+	yptr "github.com/vmware-labs/yaml-jsonpointer"
 )
 
 var DEFAULT_BUILDER_PACK_NAMESPACE = "uesio/builder"
@@ -482,7 +484,7 @@ func getComponentAreaDeps(node *yaml.Node, depMap *ViewDepMap, session *sess.Ses
 			}
 
 			// Load a pre-parsed slot traversal map
-			slotsMap := compDef.GetSlotTraversalMap()
+			slotPaths := compDef.GetSlotPaths()
 
 			for i, prop := range comp.Content[1].Content {
 				if prop.Kind == yaml.ScalarNode && prop.Value == "uesio.variant" {
@@ -498,32 +500,23 @@ func getComponentAreaDeps(node *yaml.Node, depMap *ViewDepMap, session *sess.Ses
 						}
 					}
 				}
-				// if this node is one of our slots, we need to traverse the slot's children to load component deps
-				if slotNode, isPresent := slotsMap[prop.Value]; isPresent {
-					// If this is a terminal slot, get the children and fetch deps for each child
-					if slotNode.Type == meta.TerminalNode {
-						if err := getComponentAreaDeps(comp.Content[1].Content[i+1], depMap, session); err != nil {
-							return err
-						}
-					} else if slotNode.Type == meta.ArrayNode {
-						// We need to traverse all child items and parse them
-						arrayNode := comp.Content[1].Content[i+1]
-						for j := range arrayNode.Content {
-							childItem := arrayNode.Content[j]
-							for k, prop := range childItem.Content {
-								if prop.Kind == yaml.ScalarNode && prop.Value == slotNode.Name {
-									err := getComponentAreaDeps(childItem.Content[k+1], depMap, session)
-									if err != nil {
-										return err
-									}
-								}
-							}
-						}
-					}
-				}
 				err := getComponentAreaDeps(prop, depMap, session)
 				if err != nil {
 					return err
+				}
+			}
+			if len(slotPaths) > 0 {
+				for _, path := range slotPaths {
+					matchingNodes, err := yptr.FindAll(comp.Content[1], path)
+					if err != nil {
+						continue
+					}
+					for _, n := range matchingNodes {
+						err := getComponentAreaDeps(n, depMap, session)
+						if err != nil {
+							return err
+						}
+					}
 				}
 			}
 			if compName == "uesio/core.view" {

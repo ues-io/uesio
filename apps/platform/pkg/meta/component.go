@@ -2,8 +2,7 @@ package meta
 
 import (
 	"errors"
-	"strings"
-
+	"fmt"
 	"github.com/francoispqt/gojay"
 	"gopkg.in/yaml.v3"
 )
@@ -41,7 +40,7 @@ type Component struct {
 	Signals           yaml.Node `yaml:"signals" json:"uesio/studio.signals"`
 
 	// Internal only
-	slotTraversalMap map[string]*SlotTraversalNode
+	slotPaths []string
 }
 
 type SlotDefinition struct {
@@ -51,75 +50,30 @@ type SlotDefinition struct {
 
 type ComponentWrapper Component
 
-type SlotNodeType int
-
-const (
-	PropertyNode SlotNodeType = iota
-	ArrayNode    SlotNodeType = iota
-	TerminalNode SlotNodeType = iota
-)
-
-type SlotTraversalNode struct {
-	Name string
-	Type SlotNodeType
-	Next *SlotTraversalNode
-}
-
 type SlotDef struct {
 	Name string
 	Path string
 }
 
-func (c *Component) GetSlotTraversalMap() map[string]*SlotTraversalNode {
-	if c.slotTraversalMap == nil {
+// GetSlotPaths returns a slice of JSONPointers for extracting component slots within an instance of this component
+func (c *Component) GetSlotPaths() []string {
+	if c.slotPaths == nil {
 		parsedSlots := make([]SlotDefinition, 0)
 		// Decode the slots into the parsedSlots
 		err := c.Slots.Decode(&parsedSlots)
 		if err != nil {
 			parsedSlots = []SlotDefinition{}
 		}
-		c.slotTraversalMap = map[string]*SlotTraversalNode{}
+		c.slotPaths = make([]string, len(parsedSlots))
 
 		// If the component has slots, we need to traverse the slots to find other components
 		// that need to be added to our dependencies
-		for _, parsedSlot := range parsedSlots {
-			if parsedSlot.Path == "" {
-				c.slotTraversalMap[parsedSlot.Name] = &SlotTraversalNode{
-					Type: TerminalNode,
-				}
-			} else {
-				var currentSlot *SlotTraversalNode
-				// Parse the path as a YAML Path and add slot traversal nodes to the slots map
-				for _, part := range strings.Split(parsedSlot.Path, ".") {
-					// If the part contains a [*] then we need to parse it as an array.
-					// Otherwise, it's a simple property, and we can just add it
-					slotType := PropertyNode
-					slotName := part
-					if strings.Contains(part, "[*]") {
-						part = strings.Replace(part, "[*]", "", -1)
-						slotType = ArrayNode
-						slotName = parsedSlot.Name
-					}
-					// If we are at the root, then use the part as the map key
-					newSlot := &SlotTraversalNode{
-						Name: slotName,
-						Type: slotType,
-					}
-					if currentSlot == nil {
-						currentSlot = newSlot
-						c.slotTraversalMap[part] = currentSlot
-					} else {
-						// If we already have a current slot, then fill in current as the next node
-						currentSlot.Next = newSlot
-						currentSlot = newSlot
-					}
-				}
-
-			}
+		for i, parsedSlot := range parsedSlots {
+			c.slotPaths[i] = fmt.Sprintf("%s/%s", parsedSlot.Path, parsedSlot.Name)
 
 		}
 	}
-	return c.slotTraversalMap
+	return c.slotPaths
 }
 
 func (c *Component) GetBytes() ([]byte, error) {

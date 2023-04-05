@@ -16,7 +16,7 @@ category: DATA
 discoverable: true
 slots:
   - name: components
-    path: columns[*]
+    path: /columns/~{}
     providesContexts:
       - type: WIRE
         property: wire

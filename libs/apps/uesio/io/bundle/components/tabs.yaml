@@ -7,7 +7,7 @@ category: LAYOUT
 discoverable: true
 slots:
   - name: components
-    path: tabs[*]
+    path: /tabs/~{}
   - name: footer
 defaultDefinition:
   uesio.variant: uesio/io.default

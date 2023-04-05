@@ -1,4 +1,4 @@
-name: dependencies
+name: dependencies_grid_and_tabs
 definition:
   # Wires are how we pull in data
   wires:
@@ -29,7 +29,7 @@ definition:
                         label: One
                         components:
                           - uesio/io.barchart:
-                              title: "Animals by Species"
+                              title: "Animals by Genus"
                               series:
                                 - label: Animals
                                   name: animals
@@ -40,19 +40,5 @@ definition:
                                 source: DATA
                       - id: tab2
                         label: Two
-          - uesio/io.griditem:
-              # uesio.variant: uesio/studio.leftbar
-              components:
-                - uesio/io.titlebar:
-                    uesio.variant: uesio/io.nav
-                    title: This is a title
-                    actions:
-                      - uesio/io.button:
-                          icon: send
-                          uesio.id: send-btn
-                          text: Say Hello
-                          signals:
-                            - signal: notification/ADD
-                              severity: INFO
-                              details: Hello world!
+                        components:
   panels:
