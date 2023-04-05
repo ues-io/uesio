@@ -2,7 +2,7 @@ package pack
 
 import (
 	"errors"
-	"github.com/thecloudmasters/uesio/pkg/goutils"
+	"github.com/thecloudmasters/clio/pkg/goutils"
 	"strings"
 
 	"github.com/evanw/esbuild/pkg/api"

@@ -3,7 +3,7 @@ package param
 import (
 	"errors"
 	"fmt"
-	"github.com/thecloudmasters/uesio/pkg/goutils"
+	"github.com/thecloudmasters/clio/pkg/goutils"
 	"strings"
 
 	"github.com/AlecAivazis/survey/v2"
