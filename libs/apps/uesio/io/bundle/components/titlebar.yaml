@@ -5,6 +5,8 @@ pack: main
 entrypoint: components/titlebar/titlebar
 category: CONTENT
 discoverable: true
+slots:
+  - name: actions
 defaultDefinition:
   title: New Title
 properties:

@@ -3,6 +3,7 @@ package param
 import (
 	"errors"
 	"fmt"
+	"github.com/thecloudmasters/clio/pkg/goutils"
 	"strings"
 
 	"github.com/AlecAivazis/survey/v2"
@@ -206,11 +207,7 @@ func Ask(param meta.BotParamResponse, app, version, sessid string, answers map[s
 		answers[param.Name] = answer
 	case "FIELDTYPE":
 		var answer string
-		options := []string{}
-		for fieldType := range meta.GetFieldTypes() {
-			options = append(options, fieldType)
-		}
-
+		options := goutils.MapKeys(meta.GetFieldTypes())
 		err := survey.AskOne(&survey.Select{
 			Message: param.Prompt,
 			Options: options,

@@ -5,13 +5,19 @@ pack: main
 entrypoint: components/tabs/tabs
 category: LAYOUT
 discoverable: true
+slots:
+  - name: components
+    path: /tabs/~{}
+  - name: footer
 defaultDefinition:
   uesio.variant: uesio/io.default
   tabs:
     - id: tab1
       label: One
+      components: []
     - id: tab2
       label: Two
+      components: []
 properties:
   - name: tabs
     type: LIST
@@ -21,6 +27,7 @@ properties:
       title: Tab Properties
       defaultDefinition:
         label: New Tab
+        compoents: []
       properties:
         - name: id
           type: TEXT

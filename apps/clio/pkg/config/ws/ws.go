@@ -1,6 +1,8 @@
 package ws
 
 import (
+	"errors"
+
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/thecloudmasters/clio/pkg/config"
 	"github.com/thecloudmasters/clio/pkg/wire"
@@ -31,6 +33,14 @@ func SetWorkspacePrompt() (string, error) {
 	options, err := wire.GetAvailableWorkspaceNames()
 	if err != nil {
 		return "", err
+	}
+
+	// If there's only one workspace, just use that one.
+	if len(options) == 1 {
+		return options[0], SetWorkspace(options[0])
+	}
+	if len(options) == 0 {
+		return "", errors.New("no workspaces found for this app")
 	}
 
 	err = survey.AskOne(&survey.Select{

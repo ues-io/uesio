@@ -4,6 +4,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/cache"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/goutils"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -99,13 +100,7 @@ func runLicenseAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, 
 	if err != nil {
 		return err
 	}
-
-	index := 0
-	ids := make([]string, len(licensed))
-	for k := range licensed {
-		ids[index] = k
-		index++
-	}
+	ids := goutils.MapKeys(licensed)
 	// Bust the cache for all our visited namespaces
 	// But first find the namespaces
 	var apps meta.AppCollection
