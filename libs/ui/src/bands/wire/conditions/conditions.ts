@@ -77,7 +77,7 @@ const isValueCondition = (
 
 const isGroupCondition = (
 	condition: WireConditionState | undefined
-): condition is ValueConditionState => !!condition && condition.type === "GROUP"
+): condition is ValueConditionState => condition?.type === "GROUP"
 
 export { isValueCondition, isGroupCondition }
 

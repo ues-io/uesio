@@ -27,7 +27,7 @@ properties:
       title: Tab Properties
       defaultDefinition:
         label: New Tab
-        compoents: []
+        components: []
       properties:
         - name: id
           type: TEXT
