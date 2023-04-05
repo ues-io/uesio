@@ -44,10 +44,6 @@ jobs:
           REGISTRY_ID: ${{ secrets.AWS_ACCOUNT_ID_DEV }}
           IMAGE_TAG: ${{ steps.login-ecr.outputs.registry }}/uesio:${{ github.sha }}
         run: |
-          # install hurl for debian. Using the NPM package has SSL issues with node-keytar... really frustrating
-          curl -LO https://github.com/Orange-OpenSource/hurl/releases/download/2.0.1/hurl_2.0.1_amd64.deb
-          sudo apt update && sudo apt install ./hurl_2.0.1_amd64.deb
-
           # These exports need to run every time
           export GITSHA=$(echo ${FULL_SHA} | cut -c1-8)
           echo "GITSHA=`echo ${FULL_SHA} | cut -c1-8`" >> $GITHUB_ENV
@@ -87,6 +83,10 @@ jobs:
           sudo echo "127.0.0.1 studio.uesio-dev.com" | sudo tee -a /etc/hosts
       - name: Run E2E and API Integration tests against app in Docker
         run: |
+          # install hurl for debian. Using the NPM package has SSL issues with node-keytar... really frustrating
+          curl -LO https://github.com/Orange-OpenSource/hurl/releases/download/2.0.1/hurl_2.0.1_amd64.deb
+          sudo apt update && sudo apt install gnome-keyring ./hurl_2.0.1_amd64.deb
+
           # Run E2E and Integration tests
           npm run tests-all
   update-dev-branch:
