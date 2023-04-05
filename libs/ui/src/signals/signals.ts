@@ -42,6 +42,7 @@ const runMany = async (signals: SignalDefinition[], context: Context) => {
 			context = await run(signal, context)
 		} catch (error) {
 			context = context.addErrorFrame([getErrorString(error)])
+			console.error(error)
 		}
 
 		// Any errors in this frame are the result of the signal run above, nothing else
