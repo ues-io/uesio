@@ -146,7 +146,7 @@ func Login() (*UserMergeData, error) {
 		return nil, err
 	}
 
-	if currentUser.Profile == "uesio/studio.standard" {
+	if currentUser != nil && currentUser.Profile == "uesio/studio.standard" {
 		return currentUser, nil
 	}
 

@@ -12,6 +12,11 @@ func Check() (*UserMergeData, error) {
 		return nil, err
 	}
 
+	// If there's no current session id stored, no need to make check call
+	if sessid == "" {
+		return nil, nil
+	}
+
 	userResponse := &LoginResponse{}
 
 	err = call.GetJSON("site/auth/check", sessid, userResponse)

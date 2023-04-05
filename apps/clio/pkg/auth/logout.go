@@ -13,7 +13,10 @@ func Logout() (*UserMergeData, error) {
 	if err != nil {
 		return nil, err
 	}
-
+	// If there is no current session id, there's no need to make a logout call
+	if sessid == "" {
+		return nil, nil
+	}
 	resp, err := call.Request("POST", "site/auth/logout", nil, sessid)
 	if err != nil {
 		return nil, err
@@ -24,6 +27,7 @@ func Logout() (*UserMergeData, error) {
 	userResponse := &LoginResponse{}
 
 	err = json.NewDecoder(resp.Body).Decode(&userResponse)
+
 	if err != nil {
 		return nil, err
 	}

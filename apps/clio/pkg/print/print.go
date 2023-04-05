@@ -5,8 +5,12 @@ import (
 	"github.com/thecloudmasters/clio/pkg/auth"
 )
 
+func PrintUserSummary(user *auth.UserMergeData) string {
+	return fmt.Sprintf("%s %s (%s)", user.FirstName, user.LastName, user.Profile)
+}
+
 func PrintUser(user *auth.UserMergeData) {
-	fmt.Println(user.FirstName + " " + user.LastName + " " + user.Profile)
+	fmt.Println(PrintUserSummary(user))
 }
 
 func PrintHost(host string) {

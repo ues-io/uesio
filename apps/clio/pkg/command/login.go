@@ -9,15 +9,14 @@ import (
 
 func Login() error {
 
-	fmt.Println("Running Login Command")
+	fmt.Println("Logging in...")
 
 	user, err := auth.Login()
 	if err != nil {
 		return err
 	}
 
-	fmt.Println("Login Success")
-	print.PrintUser(user)
+	fmt.Println("Successfully logged in as user: " + print.PrintUserSummary(user))
 
 	return nil
 }

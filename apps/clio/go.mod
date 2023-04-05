@@ -8,12 +8,10 @@ require (
 	github.com/spf13/cobra v1.5.0
 	github.com/teris-io/shortid v0.0.0-20220617161101-71ec9f2aa569
 	github.com/thecloudmasters/uesio v0.0.0-00010101000000-000000000000
-	github.com/zalando/go-keyring v0.2.1
 )
 
 require (
 	github.com/PaesslerAG/gval v1.2.1 // indirect
-	github.com/alessio/shellescape v1.4.1 // indirect
 	github.com/aws/aws-sdk-go-v2 v1.16.16 // indirect
 	github.com/aws/aws-sdk-go-v2/config v1.17.7 // indirect
 	github.com/aws/aws-sdk-go-v2/credentials v1.12.20 // indirect
@@ -26,10 +24,8 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.13.5 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.16.19 // indirect
 	github.com/aws/smithy-go v1.13.3 // indirect
-	github.com/danieljoos/wincred v1.1.2 // indirect
 	github.com/dimchansky/utfbom v1.1.1 // indirect
 	github.com/francoispqt/gojay v1.2.13 // indirect
-	github.com/godbus/dbus/v5 v5.1.0 // indirect
 	github.com/gofrs/uuid v4.3.1+incompatible // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/gomodule/redigo v1.8.9 // indirect
@@ -42,7 +38,6 @@ require (
 	github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d // indirect
 	github.com/shopspring/decimal v1.3.1 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	github.com/stretchr/objx v0.5.0 // indirect
 	golang.org/x/net v0.0.0-20220923203811-8be639271d50 // indirect
 	golang.org/x/sys v0.0.0-20220919091848-fb04ddd9f9c8 // indirect
 	golang.org/x/term v0.0.0-20220919170432-7a66f970e087 // indirect
