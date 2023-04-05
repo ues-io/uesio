@@ -3,7 +3,6 @@ on:
   push:
     branches-ignore:
       - "master"
-      - "component-slot-metadata"
 
 jobs:
   build-and-test:
