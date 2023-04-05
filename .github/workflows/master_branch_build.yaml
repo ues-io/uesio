@@ -51,7 +51,7 @@ jobs:
           ls
           INSTALL_DIR=$PWD/tmpbin
           echo "install dir is $INSTALL_DIR"
-          curl -silent --location https://github.com/Orange-OpenSource/hurl/releases/download/2.0.1/hurl-2.0.1-x86_64-linux.tar.gz
+          curl -silent --location https://github.com/Orange-OpenSource/hurl/releases/download/2.0.1/hurl-2.0.1-x86_64-linux.tar.gz -o hurl.tar.gz
           ls
           tar xvf -C $INSTALL_DIR hurl-2.0.1-x86_64-linux.tar.gz
           ls
