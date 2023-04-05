@@ -2,7 +2,7 @@ import { FunctionComponent } from "react"
 import { definition, api, wire } from "@uesio/ui"
 import ToggleField from "../field/toggle"
 
-interface GroupFilterProps extends definition.UtilityProps {
+export interface GroupFilterProps extends definition.UtilityProps {
 	path: string
 	wire: wire.Wire
 	condition: wire.ValueConditionState

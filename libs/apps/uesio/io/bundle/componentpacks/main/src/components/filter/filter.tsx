@@ -5,7 +5,9 @@ import SelectFilter from "../../utilities/selectfilter/selectfilter"
 import WeekFilter from "../../utilities/weekfilter/weekfilter"
 import NumberFilter from "../../utilities/numberfilter/numberfilter"
 import CheckboxFilter from "../../utilities/checkboxfilter/checkboxfilter"
-import GroupFilter from "../../utilities/groupfilter/groupfilter"
+import GroupFilter, {
+	GroupFilterProps,
+} from "../../utilities/groupfilter/groupfilter"
 import { LabelPosition } from "../field/field"
 
 type FilterDefinition = {
@@ -20,7 +22,7 @@ type FilterDefinition = {
 
 type CommonProps = {
 	path: string
-	fieldMetadata?: collection.Field
+	fieldMetadata: collection.Field
 	wire: wire.Wire
 	condition: wire.ValueConditionState
 	isGroup: boolean
@@ -34,14 +36,9 @@ const getFilterContent = (
 	definition: FilterDefinition
 ) => {
 	const { displayAs } = definition
-	const { isGroup } = common
-
-	if (isGroup) {
-		return <GroupFilter {...common} />
-	}
 
 	const fieldMetadata = common.fieldMetadata
-	const type = fieldMetadata?.getType()
+	const type = fieldMetadata.getType()
 
 	switch (type) {
 		case "NUMBER":
@@ -116,8 +113,7 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 		condition,
 		variant:
 			definition["uesio.variant"] || "uesio/io.field:uesio/io.default",
-		isGroup,
-	} as CommonProps
+	}
 
 	return (
 		<FieldWrapper
@@ -126,7 +122,11 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 			context={context}
 			variant={definition.wrapperVariant}
 		>
-			{getFilterContent(common, definition)}
+			{isGroup ? (
+				<GroupFilter {...(common as GroupFilterProps)} />
+			) : (
+				getFilterContent(common as CommonProps, definition)
+			)}
 		</FieldWrapper>
 	)
 }
