@@ -5,6 +5,7 @@ import SelectFilter from "../../utilities/selectfilter/selectfilter"
 import WeekFilter from "../../utilities/weekfilter/weekfilter"
 import NumberFilter from "../../utilities/numberfilter/numberfilter"
 import CheckboxFilter from "../../utilities/checkboxfilter/checkboxfilter"
+import GroupFilter from "../../utilities/groupfilter/groupfilter"
 import { LabelPosition } from "../field/field"
 
 type FilterDefinition = {
@@ -22,15 +23,22 @@ type CommonProps = {
 	fieldMetadata: collection.Field
 	wire: wire.Wire
 	condition: wire.ValueConditionState
+	isGroup: boolean
 } & definition.UtilityProps
 
 const isValueCondition = wire.isValueCondition
+const isGroupCondition = wire.isGroupCondition
 
 const getFilterContent = (
 	common: CommonProps,
 	definition: FilterDefinition
 ) => {
 	const { displayAs } = definition
+	const { isGroup } = common
+
+	if (isGroup) {
+		return <GroupFilter {...common} />
+	}
 
 	const fieldMetadata = common.fieldMetadata
 	const type = fieldMetadata.getType()
@@ -80,7 +88,6 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 	const collection = wire.getCollection()
 	const existingCondition =
 		wire.getCondition(conditionId || path) || undefined
-
 	const fieldMetadata = collection.getField(
 		isValueCondition(existingCondition) ? existingCondition.field : fieldId
 	)
@@ -89,8 +96,11 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 
 	const condition = (existingCondition ||
 		getDefaultCondition(path, fieldMetadata)) as wire.ValueConditionState
-
-	const label = definition.label || fieldMetadata.getLabel()
+	const isGroup = isGroupCondition(condition)
+	const label =
+		definition.label || isGroup
+			? `Toggle group: ${condition.id}`
+			: fieldMetadata.getLabel()
 
 	const common = {
 		path,
@@ -100,6 +110,7 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 		condition,
 		variant:
 			definition["uesio.variant"] || "uesio/io.field:uesio/io.default",
+		isGroup,
 	}
 
 	return (
