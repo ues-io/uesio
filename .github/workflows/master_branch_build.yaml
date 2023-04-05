@@ -83,10 +83,8 @@ jobs:
           sudo echo "127.0.0.1 studio.uesio-dev.com" | sudo tee -a /etc/hosts
       - name: Run E2E and API Integration tests against app in Docker
         run: |
-          # Install Hurl for integration tests
-          curl --location --remote-name https://github.com/Orange-OpenSource/hurl/releases/download/2.0.1/hurl_2.0.1_amd64.deb
-          sudo apt update && apt install ./hurl_2.0.1_amd64.deb
           # Run E2E and Integration tests
+          alias hurl=./node_modules/@orangeopensource/hurl/bin/hurl
           npm run tests-all
   update-dev-branch:
     name: Update Dev environment to latest image
