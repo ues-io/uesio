@@ -5,10 +5,9 @@ import (
 
 	"github.com/thecloudmasters/clio/pkg/call"
 	"github.com/thecloudmasters/clio/pkg/config"
-	"github.com/thecloudmasters/uesio/pkg/routing"
 )
 
-func Logout() (*routing.UserMergeData, error) {
+func Logout() (*UserMergeData, error) {
 
 	sessid, err := config.GetSessionID()
 	if err != nil {
@@ -22,7 +21,7 @@ func Logout() (*routing.UserMergeData, error) {
 
 	defer resp.Body.Close()
 
-	userResponse := &routing.LoginResponse{}
+	userResponse := &LoginResponse{}
 
 	err = json.NewDecoder(resp.Body).Decode(&userResponse)
 	if err != nil {

@@ -11,7 +11,6 @@ import (
 	"github.com/thecloudmasters/clio/pkg/call"
 	"github.com/thecloudmasters/clio/pkg/config"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/routing"
 )
 
 var MockUserNames = []string{"ben", "abel", "wessel", "baxter", "zach", "uesio"}
@@ -131,7 +130,7 @@ func getLoginPayload() (string, map[string]string, error) {
 
 }
 
-func Login() (*routing.UserMergeData, error) {
+func Login() (*UserMergeData, error) {
 
 	// First check to see if you're already logged in
 	currentUser, err := Check()
@@ -169,7 +168,7 @@ func Login() (*routing.UserMergeData, error) {
 
 	defer resp.Body.Close()
 
-	userResponse := &routing.LoginResponse{}
+	userResponse := &LoginResponse{}
 
 	err = json.NewDecoder(resp.Body).Decode(&userResponse)
 	if err != nil {
