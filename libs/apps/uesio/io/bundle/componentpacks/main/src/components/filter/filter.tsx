@@ -20,7 +20,7 @@ type FilterDefinition = {
 
 type CommonProps = {
 	path: string
-	fieldMetadata: collection.Field
+	fieldMetadata?: collection.Field
 	wire: wire.Wire
 	condition: wire.ValueConditionState
 	isGroup: boolean
@@ -41,7 +41,7 @@ const getFilterContent = (
 	}
 
 	const fieldMetadata = common.fieldMetadata
-	const type = fieldMetadata.getType()
+	const type = fieldMetadata?.getType()
 
 	switch (type) {
 		case "NUMBER":
@@ -88,19 +88,25 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 	const collection = wire.getCollection()
 	const existingCondition =
 		wire.getCondition(conditionId || path) || undefined
+	// Field metadata is not needed for group conditions
 	const fieldMetadata = collection.getField(
 		isValueCondition(existingCondition) ? existingCondition.field : fieldId
 	)
 
-	if (!fieldMetadata) return null
-
-	const condition = (existingCondition ||
-		getDefaultCondition(path, fieldMetadata)) as wire.ValueConditionState
+	let condition = existingCondition
+	if (!condition && fieldMetadata) {
+		condition = getDefaultCondition(
+			path,
+			fieldMetadata
+		) as wire.ValueConditionState
+	}
 	const isGroup = isGroupCondition(condition)
 	const label =
-		definition.label || isGroup
-			? `Toggle group: ${condition.id}`
-			: fieldMetadata.getLabel()
+		definition.label || (isGroup && condition)
+			? `Toggle group: ${condition?.id}`
+			: fieldMetadata?.getLabel()
+
+	if (!condition) return null
 
 	const common = {
 		path,
@@ -111,7 +117,7 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 		variant:
 			definition["uesio.variant"] || "uesio/io.field:uesio/io.default",
 		isGroup,
-	}
+	} as CommonProps
 
 	return (
 		<FieldWrapper
