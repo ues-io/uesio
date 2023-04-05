@@ -452,22 +452,6 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 	return deps, nil
 }
 
-func parseSlotChildren(slot *yaml.Node, depMap *ViewDepMap, session *sess.Session) error {
-	// The contents should be in the next sibling to the prop node
-	slotChildren := slot.Content
-	if len(slotChildren) > 0 {
-		for _, childNode := range slotChildren {
-			if isComponentLike(childNode) {
-				err := getComponentAreaDeps(childNode, depMap, session)
-				if err != nil {
-					return err
-				}
-			}
-		}
-	}
-	return nil
-}
-
 func getComponentAreaDeps(node *yaml.Node, depMap *ViewDepMap, session *sess.Session) error {
 	if node == nil || node.Kind != yaml.SequenceNode {
 		return nil

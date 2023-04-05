@@ -14,8 +14,10 @@ defaultDefinition:
   tabs:
     - id: tab1
       label: One
+      components: []
     - id: tab2
       label: Two
+      components: []
 properties:
   - name: tabs
     type: LIST
@@ -25,6 +27,7 @@ properties:
       title: Tab Properties
       defaultDefinition:
         label: New Tab
+        compoents: []
       properties:
         - name: id
           type: TEXT
