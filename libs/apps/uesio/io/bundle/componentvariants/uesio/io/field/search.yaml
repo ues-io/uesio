@@ -1,0 +1,12 @@
+name: search
+label: Search
+definition:
+  uesio.styleTokens:
+    input:
+      - border
+      - border-slate-300
+      - p-2
+      - rounded
+      - text-sm
+      - outline-offset-0
+public: true

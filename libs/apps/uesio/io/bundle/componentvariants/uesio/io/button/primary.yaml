@@ -1,20 +1,11 @@
 name: primary
 label: Primary
-extends: uesio/io.default
+extends: uesio/io.secondary
 definition:
   uesio.styleTokens:
     root:
-      - focus:shadow
-      - hover:shadow
       - bg-red-500
       - border-red-700
-      - border
-      - min-w-[120px]
-      - px-3
-      - py-2
-      - rounded
     label:
-      - font-medium
       - text-slate-50
-      - uppercase
 public: true

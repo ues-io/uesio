@@ -3,11 +3,11 @@ import { definition, styles, context, wire } from "@uesio/ui"
 
 interface TextFieldProps extends definition.UtilityProps {
 	setValue?: (value: wire.FieldValue) => void
-	value: wire.FieldValue
+	value?: wire.FieldValue
 	mode?: context.FieldMode
 	readonly?: boolean
 	placeholder?: string
-	password?: boolean
+	type?: "search" | "password" | "text"
 	focusOnRender?: boolean
 }
 
@@ -16,7 +16,7 @@ const TextField: FunctionComponent<TextFieldProps> = (props) => {
 		setValue,
 		mode,
 		placeholder,
-		password,
+		type = "text",
 		readonly,
 		id,
 		focusOnRender,
@@ -36,8 +36,8 @@ const TextField: FunctionComponent<TextFieldProps> = (props) => {
 	return (
 		<input
 			id={id}
-			type={password ? "password" : "text"}
-			value={value || ""}
+			type={type}
+			value={value}
 			placeholder={placeholder}
 			className={styles.cx(classes.input, readonly && classes.readonly)}
 			disabled={readonly || mode === "READ"}

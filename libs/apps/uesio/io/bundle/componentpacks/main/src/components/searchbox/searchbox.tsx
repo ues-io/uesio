@@ -1,5 +1,7 @@
-import { styles, api, metadata, definition } from "@uesio/ui"
+import { api, metadata, definition } from "@uesio/ui"
 import debounce from "lodash/debounce"
+import TextField from "../../utilities/field/text"
+import FieldWrapper from "../../utilities/fieldwrapper/fieldwrapper"
 
 type SearchBoxDefinition = {
 	placeholder?: string
@@ -10,18 +12,6 @@ type SearchBoxDefinition = {
 const SearchBox: definition.UC<SearchBoxDefinition> = (props) => {
 	const { definition, context } = props
 	const wire = api.wire.useWire(definition.wire, context)
-	const classes = styles.useStyles(
-		{
-			root: {
-				margin: "16px 0",
-				fontSize: "9pt",
-			},
-			input: {
-				padding: "8px",
-			},
-		},
-		props
-	)
 	if (!wire) return null
 	const search = (searchValue: string) => {
 		api.signal.run(
@@ -36,16 +26,17 @@ const SearchBox: definition.UC<SearchBoxDefinition> = (props) => {
 	}
 	const debouncedRequest = debounce(search, 250)
 	return (
-		<div className={classes.root}>
-			<input
-				className={classes.input}
+		<FieldWrapper labelPosition="none" context={context}>
+			<TextField
+				context={context}
 				type="search"
+				variant="uesio/io.search"
 				placeholder={definition.placeholder || "Search"}
-				onChange={(event) => {
-					debouncedRequest(event.target.value)
+				setValue={(value) => {
+					debouncedRequest(value as string)
 				}}
 			/>
-		</div>
+		</FieldWrapper>
 	)
 }
 

@@ -1,40 +1,59 @@
 name: default
 label: Default
 definition:
-  uesio.styles:
+  uesio.styleTokens:
+    root:
+      - grid
+      - overflow-auto
     table:
-      border: "1px solid #ccc"
-      borderRadius: "8px"
-      borderSpacing: "0"
+      - border-separate
+      - rounded-lg
+      - border-spacing-0
+      - w-full
+      - border-slate-300
+      - border
     header:
-      borderBottom: "1px solid #ccc"
-      backgroundColor: "#f7f7f7"
+      - border-b
+      - border-slate-300
+      - bg-slate-100
     headerCell:
-      textTransform: "uppercase"
-      fontSize: 10pt
-      fontWeight: 400;
-      padding: 16px
-      color: "#555"
-      borderBottom: "1px solid #ccc"
-      borderRight: "1px solid #ccc"
-      whiteSpace: "nowrap"
+      - last:border-r-0
+      - uppercase
+      - text-[10pt]
+      - font-normal
+      - p-4
+      - text-slate-600
+      - border-b
+      - border-r
+      - border-slate-300
+      - whitespace-nowrap
+      - first:rounded-tl-lg
+      - last:rounded-tr-lg
     headerCellInner:
-      textAlign: left
-      display: grid
-      gridTemplateColumns: 1fr 0fr
-      alignItems: center
-    cell:
-      borderBottom: "1px solid #ccc"
-      borderRight: "1px solid #ccc"
-      padding: "0"
-    row:
-      ".defaultaction &:hover":
-        backgroundColor: "#f5f5f5"
-        cursor: "pointer"
-    rowDeleted:
-      backgroundColor: "#ffe9e9"
+      - text-left
+      - grid
+      - grid-cols-[1fr 0fr]
+      - items-center
+    rowNumberCell:
+      - whitespace-nowrap
+      - w-px
     rowNumber:
-      padding: 16px
-      color: "#777"
-      fontSize: 10pt
+      - text-center
+      - p-4
+      - text-slate-700
+      - text-[10pt]
+    cell:
+      - last:border-r-0
+      - border-b
+      - border-r
+      - border-slate-300
+      - p-0
+    body:
+      - "first:[&>tr:last-child>td]:rounded-bl-lg"
+      - "last:[&>tr:last-child>td]:rounded-br-lg"
+      - "[&>tr:last-child>td]:border-b-0"
+      - "hover:[&.hasRowAction>tr]:cursor-pointer"
+      - "hover:[&.hasRowAction>tr]:bg-slate-50"
+    rowDeleted:
+      - bg-red-100
 public: true
