@@ -25,6 +25,7 @@ type AcceptTypes = "IMAGE" | "AUDIO" | "VIDEO" | "DOCUMENT" | "ANY"
 type SelectOption = {
 	label: string
 	value: string
+	languageLabel?: string
 	disabled?: boolean
 }
 

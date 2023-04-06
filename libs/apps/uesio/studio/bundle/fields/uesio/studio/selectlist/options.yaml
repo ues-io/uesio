@@ -6,6 +6,10 @@ subfields:
   - name: label
     type: TEXT
     label: Label
+    # Todo: turn into reference field.
+  - name: languageLabel
+    type: TEXT
+    label: Language Label
   - name: value
     type: TEXT
     label: Value

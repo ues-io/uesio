@@ -7,9 +7,10 @@ import (
 )
 
 type SelectListOption struct {
-	Label    string `yaml:"label" json:"label"`
-	Value    string `yaml:"value" json:"value"`
-	Disabled bool   `yaml:"disabled" json:"disabled"`
+	Label         string `yaml:"label" json:"label"`
+	Value         string `yaml:"value" json:"value"`
+	LanguageLabel string `yaml:"languageLabel" json:"languageLabel"`
+	Disabled      bool   `yaml:"disabled" json:"disabled"`
 }
 
 type SelectList struct {

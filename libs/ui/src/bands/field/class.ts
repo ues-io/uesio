@@ -18,18 +18,21 @@ class Field {
 	getAccessible = () => this.source.accessible
 	getSelectMetadata = () => this.source.selectlist
 	getSelectOptions = (context: Context) => {
+		console.log({ all: this })
 		const selectMetadata = this.getSelectMetadata()
 		if (!selectMetadata) return []
 		if (selectMetadata.blank_option_label === undefined)
 			return selectMetadata.options || []
 
 		const mergedOptions = selectMetadata.options.map(
-			({ label, value }) => ({
-				label: context.merge(`$Label{${label}}`) as string,
+			({ label, languageLabel, value }) => ({
+				label: String(
+					context.merge(`$Label{${languageLabel}}`) || label
+				),
 				value,
 			})
 		)
-
+		console.log({ mergedOptions, options: selectMetadata.options })
 		return addBlankSelectOption(
 			mergedOptions,
 			context.merge(
