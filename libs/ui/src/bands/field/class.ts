@@ -1,4 +1,5 @@
 import { FieldMetadata } from "./types"
+import { Context } from "../../context/context"
 import { addBlankSelectOption } from "./utils"
 
 class Field {
@@ -16,14 +17,24 @@ class Field {
 	getUpdateable = () => this.source.updateable
 	getAccessible = () => this.source.accessible
 	getSelectMetadata = () => this.source.selectlist
-	getSelectOptions = () => {
+	getSelectOptions = (context: Context) => {
 		const selectMetadata = this.getSelectMetadata()
 		if (!selectMetadata) return []
 		if (selectMetadata.blank_option_label === undefined)
 			return selectMetadata.options || []
+
+		const mergedOptions = selectMetadata.options.map(
+			({ label, value }) => ({
+				label: context.merge(`$Label{${label}}`) as string,
+				value,
+			})
+		)
+
 		return addBlankSelectOption(
-			selectMetadata.options,
-			selectMetadata.blank_option_label
+			mergedOptions,
+			context.merge(
+				`$Label{${selectMetadata.blank_option_label}}`
+			) as string
 		)
 	}
 	getAccept = () => {
