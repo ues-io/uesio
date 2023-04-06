@@ -270,9 +270,10 @@ func LoadSelectListMetadata(key string, metadataCache *adapt.MetadataCache, sess
 			return err
 		}
 		selectListMetadata = &adapt.SelectListMetadata{
-			Name:             selectList.Name,
-			Options:          selectList.Options,
-			BlankOptionLabel: selectList.BlankOptionLabel,
+			Name:                     selectList.Name,
+			Options:                  selectList.Options,
+			BlankOptionLabel:         selectList.BlankOptionLabel,
+			BlankOptionLanguageLabel: selectList.BlankOptionLanguageLabel,
 		}
 	}
 

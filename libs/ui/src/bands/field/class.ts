@@ -18,7 +18,6 @@ class Field {
 	getAccessible = () => this.source.accessible
 	getSelectMetadata = () => this.source.selectlist
 	getSelectOptions = (context: Context) => {
-		console.log({ all: this })
 		const selectMetadata = this.getSelectMetadata()
 		if (!selectMetadata) return []
 		if (selectMetadata.blank_option_label === undefined)
@@ -32,13 +31,14 @@ class Field {
 				value,
 			})
 		)
-		console.log({ mergedOptions, options: selectMetadata.options })
-		return addBlankSelectOption(
-			mergedOptions,
+
+		const mergedBlankLabel = String(
 			context.merge(
-				`$Label{${selectMetadata.blank_option_label}}`
-			) as string
+				`$Label{${selectMetadata.blank_option_language_label}}`
+			) || selectMetadata.blank_option_label
 		)
+
+		return addBlankSelectOption(mergedOptions, mergedBlankLabel)
 	}
 	getAccept = () => {
 		switch (this.source.file?.accept) {
