@@ -29,30 +29,4 @@ const GridItem: definition.UC<GridItemDefinition> = (props) => {
 	)
 }
 
-/*
-const GridItemPropertyDefinition: builder.BuildPropertiesDefinition = {
-	title: "Grid Item",
-	description: "Grid Item",
-	link: "https://docs.ues.io/",
-	defaultDefinition: () => ({
-		components: [],
-	}),
-	properties: [
-		{
-			name: "column",
-			type: "TEXT",
-			label: "Column",
-		},
-		{
-			name: "area",
-			type: "TEXT",
-			label: "Area",
-		},
-	],
-	sections: [],
-	classes: ["root"],
-	type: "component",
-}
-*/
-
 export default GridItem

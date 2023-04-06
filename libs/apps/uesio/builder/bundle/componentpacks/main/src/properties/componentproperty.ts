@@ -68,7 +68,8 @@ type CheckboxProperty = {
 
 type ConditionProperty = {
 	type: "CONDITION"
-	wire: string
+	wire?: string
+	wireField?: string
 	filter?: (def: wire.WireConditionState) => boolean
 } & BaseProperty
 
@@ -95,7 +96,7 @@ type FieldsProperty = {
 
 type SelectProperty = {
 	type: "SELECT"
-	options: SelectOption[]
+	options: SelectOption[] | ((record: wire.PlainWireRecord) => SelectOption[])
 	required?: boolean
 	blankOptionLabel?: string
 } & BaseProperty

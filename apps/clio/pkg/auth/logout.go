@@ -5,16 +5,18 @@ import (
 
 	"github.com/thecloudmasters/clio/pkg/call"
 	"github.com/thecloudmasters/clio/pkg/config"
-	"github.com/thecloudmasters/uesio/pkg/routing"
 )
 
-func Logout() (*routing.UserMergeData, error) {
+func Logout() (*UserMergeData, error) {
 
 	sessid, err := config.GetSessionID()
 	if err != nil {
 		return nil, err
 	}
-
+	// If there is no current session id, there's no need to make a logout call
+	if sessid == "" {
+		return nil, nil
+	}
 	resp, err := call.Request("POST", "site/auth/logout", nil, sessid)
 	if err != nil {
 		return nil, err
@@ -22,9 +24,10 @@ func Logout() (*routing.UserMergeData, error) {
 
 	defer resp.Body.Close()
 
-	userResponse := &routing.LoginResponse{}
+	userResponse := &LoginResponse{}
 
 	err = json.NewDecoder(resp.Body).Decode(&userResponse)
+
 	if err != nil {
 		return nil, err
 	}

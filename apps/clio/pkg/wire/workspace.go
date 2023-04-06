@@ -2,14 +2,13 @@ package wire
 
 import (
 	"errors"
-
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 )
 
 func GetAvailableWorkspaceNames() ([]string, error) {
 	names := []string{}
 
-	workspaces, err := GetAvailaleWorkspaces()
+	workspaces, err := GetAvailableWorkspaces()
 	if err != nil {
 		return nil, err
 	}
@@ -29,7 +28,7 @@ func GetAvailableWorkspaceNames() ([]string, error) {
 	return names, nil
 }
 
-func GetAvailaleWorkspaces() (adapt.Collection, error) {
+func GetAvailableWorkspaces() (adapt.Collection, error) {
 
 	appID, err := GetAppID()
 	if err != nil {

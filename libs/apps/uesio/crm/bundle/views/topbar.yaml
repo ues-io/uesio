@@ -1,4 +1,5 @@
 name: topbar
+public: true
 definition:
   components:
     - uesio/io.grid:
@@ -15,7 +16,7 @@ definition:
                     uesio.styles:
                       root:
                         margin: 0 16px
-                    file: uesio/crm.logo
+                    file: uesio/core.logowhite
                     height: 30px
                     signals:
                       - signal: route/NAVIGATE

@@ -20,15 +20,36 @@ const getWireRequest = (
 	context: Context,
 	forceQuery?: boolean
 ): LoadRequest[] =>
-	wires.map((wire) => ({
-		...wire,
-		conditions: wire.conditions?.filter(
-			(condition) => condition.active !== false
-		),
-		batchnumber: resetBatchNumber ? 0 : wire.batchnumber,
-		params: context.getParams(),
-		...(forceQuery && { query: true }),
-	}))
+	wires.map(
+		({
+			// Select the specific properties that we want to include in the load,
+			// to avoid sending things like data/changes/originals which are not needed for loads
+			batchid,
+			batchnumber,
+			collection,
+			conditions,
+			fields,
+			name,
+			order,
+			query,
+			requirewriteaccess,
+			view,
+		}) => ({
+			batchid,
+			batchnumber: resetBatchNumber ? 0 : batchnumber,
+			collection,
+			conditions: conditions?.filter(
+				(condition) => condition.active !== false
+			),
+			fields,
+			name,
+			order,
+			params: context.getParams(),
+			query: forceQuery ? true : query,
+			requirewriteaccess,
+			view,
+		})
+	)
 
 export default async (
 	context: Context,

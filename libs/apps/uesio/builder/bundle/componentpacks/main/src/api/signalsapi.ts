@@ -1,5 +1,6 @@
 import { collection, context, definition, wire } from "@uesio/ui"
 import collectionSignals from "../signals/collection"
+import aiSignals from "../signals/ai"
 import botSignals from "../signals/bot"
 import notificationSignals from "../signals/notification"
 import panelSignals from "../signals/panel"
@@ -10,6 +11,7 @@ import { ComponentProperty } from "../properties/componentproperty"
 import { getComponentDef } from "./stateapi"
 
 const signalDefinitionRegistry: Record<string, SignalDescriptor> = {
+	...aiSignals,
 	...collectionSignals,
 	...botSignals,
 	...routeSignals,
@@ -19,6 +21,11 @@ const signalDefinitionRegistry: Record<string, SignalDescriptor> = {
 	...notificationSignals,
 }
 
+type SignalOutput = {
+	name: string
+	type: "TEXT" | "RECORD" | "MAP" | "LIST"
+}
+
 type SignalDescriptor = {
 	label: string
 	description: string
@@ -26,6 +33,7 @@ type SignalDescriptor = {
 		signal: SignalDefinition,
 		context: context.Context
 	) => ComponentProperty[]
+	outputs?: SignalOutput[]
 }
 
 type ComponentSignalDescriptor = {
@@ -35,6 +43,7 @@ type ComponentSignalDescriptor = {
 		context: context.Context
 	) => ComponentProperty[]
 	target?: string
+	outputs?: SignalOutput[]
 }
 
 type SignalDefinition = {
@@ -58,14 +67,27 @@ const allSignals = Object.entries(signalDefinitionRegistry).map(
 )
 allSignals.sort((a, b) => a.label.localeCompare(b.label))
 
-const defaultSignalProps = [
-	{
-		name: "signal",
-		label: "Signal",
-		type: "SELECT",
-		options: collection.addBlankSelectOption(allSignals),
-	},
-] as ComponentProperty[]
+type SelectOptionFilter = (option: wire.SelectOption) => boolean
+
+const getDefaultSignalProperties = (
+	optionsFilter?: SelectOptionFilter
+): ComponentProperty[] =>
+	[
+		{
+			name: "signal",
+			label: "Signal",
+			type: "SELECT",
+			options: collection.addBlankSelectOption(
+				optionsFilter ? allSignals.filter(optionsFilter) : allSignals
+			),
+		},
+	] as ComponentProperty[]
+
+const stepIdProperty = {
+	name: "stepId",
+	label: "Step Id",
+	type: "TEXT",
+} as ComponentProperty
 
 const COMPONENT_SIGNAL_PREFIX = "COMPONENT/"
 
@@ -99,8 +121,17 @@ const getSignalProperties = (
 			}
 		}
 	}
+	// If the user doesn't have permission to use AI signals, strip these out
+	let optionsFilter = undefined
+	const useAiSignalsFlag = context.getFeatureFlag("use_ai_signals")
+	if (!useAiSignalsFlag || !useAiSignalsFlag.value) {
+		optionsFilter = (option: wire.SelectOption) =>
+			!option.value.startsWith("ai/")
+	}
+
 	return [
-		...defaultSignalProps,
+		...getDefaultSignalProperties(optionsFilter),
+		...(descriptor && descriptor.outputs?.length ? [stepIdProperty] : []),
 		...(descriptor && descriptor.properties
 			? descriptor.properties(signalDefinition, context)
 			: []),
@@ -109,4 +140,9 @@ const getSignalProperties = (
 
 export { getSignalProperties }
 
-export type { SignalDefinition, SignalDescriptor, ComponentSignalDescriptor }
+export type {
+	SignalDefinition,
+	SignalDescriptor,
+	SignalOutput,
+	ComponentSignalDescriptor,
+}

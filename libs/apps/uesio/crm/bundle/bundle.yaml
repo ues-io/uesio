@@ -1,8 +1,9 @@
 name: uesio/crm
 loginRoute: uesio/core.login
-homeRoute: uesio/crm.home
-defaultTheme: uesio/crm.default
-publicProfile: uesio/crm.public
+homeRoute: uesio/crm.leads
+defaultTheme: uesio/core.default
+publicProfile: uesio/crm.staff
+favicon: uesio/core.logo
 dependencies:
   uesio/builder:
     version: v0.0.1

@@ -1,4 +1,5 @@
 name: account_details
+public: true
 definition:
   components:
     - uesio/core.view:

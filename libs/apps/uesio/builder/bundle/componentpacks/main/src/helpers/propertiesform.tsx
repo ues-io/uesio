@@ -45,9 +45,19 @@ const getWireFieldSelectOptions = (wireDef: wire.WireDefinition) => {
 		// If it's either an empty object or undefined, just return the key.
 		if (
 			!value ||
-			(typeof value === "object" && Object.keys(value).length === 0)
+			(typeof value === "object" && Object.keys(value).length === 0) ||
+			typeof value === "string"
 		) {
 			return key
+		}
+		if (wireDef.viewOnly) {
+			const viewOnlyField = value as wire.ViewOnlyField
+			if (
+				viewOnlyField?.type !== "MAP" &&
+				viewOnlyField?.type !== "LIST"
+			) {
+				return key
+			}
 		}
 		return Object.entries(value)
 			.map(([key2, value2]) => [`${key}->${key2}`, value2])
@@ -57,6 +67,34 @@ const getWireFieldSelectOptions = (wireDef: wire.WireDefinition) => {
 	return Object.entries(wireDef.fields)
 		.flatMap(([key, value]) => getFields(key, value))
 		.map((el) => ({ value: el, label: el } as SelectOption))
+}
+
+const getWireConditionSelectOptions = (wireDef: wire.WireDefinition) => {
+	const conditions: Array<SelectOption> = []
+
+	if (!wireDef || wireDef.viewOnly || !wireDef.conditions) return conditions
+
+	for (const condition of wireDef.conditions) {
+		if (!condition) continue
+
+		if (condition?.id) {
+			conditions.push({ value: condition.id, label: condition.id })
+		}
+
+		if (condition.type === "GROUP" && condition.conditions?.length) {
+			for (const subCondition of condition.conditions) {
+				if (!subCondition) continue
+
+				if (subCondition?.id) {
+					conditions.push({
+						value: subCondition.id,
+						label: `${condition.id} -> ${subCondition.id}`,
+					})
+				}
+			}
+		}
+	}
+	return conditions
 }
 
 const getFormFieldsFromProperties = (
@@ -83,10 +121,21 @@ const getSelectListMetadataFromOptions = (
 		options,
 	} as wire.SelectListMetadata)
 
-const getSelectListMetadata = (def: SelectProperty) =>
+const resolveOptions = (
+	def: SelectProperty,
+	currentValue: wire.PlainWireRecord
+): SelectOption[] => {
+	const { options } = def
+	return typeof options === "function" ? options(currentValue) : options
+}
+
+const getSelectListMetadata = (
+	def: SelectProperty,
+	currentValue: wire.PlainWireRecord
+) =>
 	getSelectListMetadataFromOptions(
 		def.name,
-		def.options.map(
+		resolveOptions(def, currentValue).map(
 			(o: SelectOption) =>
 				({
 					...o,
@@ -155,7 +204,7 @@ const getWireFieldFromPropertyDef = (
 	switch (type) {
 		case "SELECT":
 			return getBaseWireFieldDef(def, "SELECT", {
-				selectlist: getSelectListMetadata(def),
+				selectlist: getSelectListMetadata(def, currentValue),
 			})
 		case "KEY":
 			return getBaseWireFieldDef(def, "TEXT")
@@ -214,6 +263,23 @@ const getWireFieldFromPropertyDef = (
 			return getBaseWireFieldDef(def, "NUMBER")
 		case "CHECKBOX":
 			return getBaseWireFieldDef(def, "CHECKBOX")
+		case "CONDITION":
+			wireId = def.wireField
+				? (currentValue[def.wireField] as string)
+				: def.wire
+			wireDefinition =
+				wireId === undefined
+					? undefined
+					: getWireDefinition(context, wireId)
+			return getBaseWireFieldDef(def, `SELECT`, {
+				selectlist: getSelectListMetadataFromOptions(
+					name,
+					wireDefinition !== undefined
+						? getWireConditionSelectOptions(wireDefinition)
+						: [],
+					""
+				),
+			})
 		default:
 			return getBaseWireFieldDef(def, "TEXT")
 	}

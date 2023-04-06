@@ -22,6 +22,8 @@ const signals: Record<string, SignalDescriptor> = {
 			},
 			// TODO: Add Bot-specific Params!!!
 		],
+		// TODO: Change bot responses to be a named map
+		// outputs: [{ name: "result", type: "MAP" }],
 	},
 }
 export default signals

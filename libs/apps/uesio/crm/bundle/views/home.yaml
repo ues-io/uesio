@@ -1,22 +1,9 @@
 name: home
+public: true
 definition:
   components:
     - uesio/core.view:
         view: uesio/crm.topbar
-    - uesio/io.group:
-        columnGap: 10px
-        components:
-          - uesio/io.barchart:
-              title: New Bar Chart
-              series:
-                - label: New Series
-                  wire: leads
-                  valueField: uesio/core.id
-                  categoryField: uesio/crm.firstname
-          - uesio/io.metric:
-              title: New metric
-              value: $Sum{entries:uesio/crm.leads}
-              unit: "%"
     - uesio/io.grid:
         templateColumns: auto auto auto
         items:

@@ -28,6 +28,15 @@ func SetConfigValue(key, value string) error {
 	return SetConfigData(data)
 }
 
+func DeleteConfigValue(key string) error {
+	data, err := GetConfigData()
+	if err != nil {
+		return err
+	}
+	delete(data, key)
+	return SetConfigData(data)
+}
+
 func SetConfigData(data map[string]string) error {
 	f, err := os.Create(CONFIG_FILE)
 	if err != nil {
