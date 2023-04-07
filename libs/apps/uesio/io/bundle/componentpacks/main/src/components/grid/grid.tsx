@@ -12,6 +12,8 @@ type GridDefinition = {
 
 const Grid: definition.UC<GridDefinition> = (props) => {
 	const { definition, context } = props
+
+	// TODO: REMOVE THESE STYLING PROPERTIES
 	const gridCols = styles.getResponsiveStyles(
 		"gridTemplateColumns",
 		definition.templateColumns
@@ -33,6 +35,7 @@ const Grid: definition.UC<GridDefinition> = (props) => {
 	const rowGap = definition.rowGap && {
 		gridRowGap: definition.rowGap,
 	}
+	// END TODO
 
 	const classes = styles.useStyles(
 		{

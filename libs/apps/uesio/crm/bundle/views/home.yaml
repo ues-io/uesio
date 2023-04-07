@@ -5,7 +5,9 @@ definition:
     - uesio/core.view:
         view: uesio/crm.topbar
     - uesio/io.grid:
-        templateColumns: auto auto auto
+        uesio.styleTokens:
+          root:
+            - grid-cols-3
         items:
           - uesio/io.box:
               uesio.variant: uesio/io.section

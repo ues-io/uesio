@@ -1,0 +1,8 @@
+name: four
+label: Four Column Responsive
+extends: uesio/io.two
+definition:
+  uesio.styleTokens:
+    root:
+      - lg:grid-cols-4
+public: true

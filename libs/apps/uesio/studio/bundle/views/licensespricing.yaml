@@ -191,11 +191,7 @@ definition:
                                       uesio.variant: uesio/io.section
                                       components:
                                         - uesio/io.grid:
-                                            templateColumns:
-                                              xs: 1fr
-                                              md: 1fr 1fr
-                                              lg: 1fr 1fr 1fr 1fr
-                                            columnGap: 10px
+                                            uesio.variant: uesio/io.four
                                             items:
                                               - uesio/io.field:
                                                   fieldId: uesio/studio.monthlyprice

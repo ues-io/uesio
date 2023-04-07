@@ -9,8 +9,7 @@ definition:
         mode: EDIT
         components:
           - uesio/io.grid:
-              templateColumns: 1fr 1fr
-              columnGap: 10px
+              uesio.variant: uesio/io.two
               items:
                 - uesio/io.field:
                     fieldId: uesio/studio.user

@@ -1,0 +1,11 @@
+name: splash
+label: Responsive Splash Screen
+definition:
+  uesio.styleTokens:
+    root:
+      - grid-cols-1
+      - md:grid-cols-2
+      - lg:grid-cols-[5fr_7fr]
+      - bg-cover
+      - min-h-screen
+public: true

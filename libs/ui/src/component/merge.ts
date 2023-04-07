@@ -39,7 +39,9 @@ function mergeDeep(
 		if (typeof srcItem === "object" && srcItem !== null) {
 			if (Array.isArray(srcItem)) {
 				if (Array.isArray(dest[key])) {
-					dest[key] = arrayUnique(srcItem.concat(dest[key]))
+					dest[key] = arrayUnique(
+						(dest[key] as string[]).concat(srcItem)
+					)
 				} else {
 					dest[key] = srcItem
 				}

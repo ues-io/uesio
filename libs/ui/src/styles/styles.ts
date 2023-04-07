@@ -13,6 +13,7 @@ import {
 	parseVariantName,
 } from "../component/component"
 import { MetadataKey } from "../metadataexports"
+import { twMerge } from "tailwind-merge"
 
 type ResponsiveDefinition =
 	| string
@@ -89,18 +90,20 @@ function useStyles<K extends string>(
 	return Object.keys(defaults).reduce(
 		(classNames: Record<string, string>, className: K) => {
 			const classTokens = tokens[className] || []
-			classNames[className] = cx(
-				...classTokens,
-				css([
-					defaults[className],
-					existing?.[className],
-					{
-						label: getClassNameLabel(
-							props?.componentType,
-							className
-						),
-					},
-				])
+			classNames[className] = twMerge(
+				cx(
+					...classTokens,
+					css([
+						defaults[className],
+						existing?.[className],
+						{
+							label: getClassNameLabel(
+								props?.componentType,
+								className
+							),
+						},
+					])
+				)
 			)
 			return classNames
 		},
@@ -170,16 +173,18 @@ function useUtilityStyles<K extends string>(
 	return Object.keys(defaults).reduce(
 		(classNames: Record<string, string>, className: K) => {
 			const classTokens = tokens[className] || []
-			classNames[className] = cx(
-				...classTokens,
-				css([
-					defaults[className],
-					styles?.[className] as CSSInterpolation,
-				]),
-				props.classes?.[className],
-				// A bit weird here... Only apply the passed-in className prop to root styles.
-				// Otherwise, it would be applied to every class sent in as defaults.
-				className === "root" && props.className
+			classNames[className] = twMerge(
+				cx(
+					...classTokens,
+					css([
+						defaults[className],
+						styles?.[className] as CSSInterpolation,
+					]),
+					props.classes?.[className],
+					// A bit weird here... Only apply the passed-in className prop to root styles.
+					// Otherwise, it would be applied to every class sent in as defaults.
+					className === "root" && props.className
+				)
 			)
 			return classNames
 		},
