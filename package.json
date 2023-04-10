@@ -16,6 +16,7 @@
     "affected:lint": "nx affected:lint",
     "affected:test": "nx affected:test",
     "build": "nx build",
+    "build-cli": "nx build cli",
     "build-all": "nx run-many --target=build --all",
     "build-all-ignore-cache": "nx run-many --target=build --all --skip-nx-cache",
     "tests-e2e": "bash scripts/run-e2e-tests.sh",
