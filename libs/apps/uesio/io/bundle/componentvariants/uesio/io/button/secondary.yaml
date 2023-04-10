@@ -2,18 +2,18 @@ name: secondary
 label: Secondary
 extends: uesio/io.default
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      backgroundColor: "#f6f6f6"
-      fontWeight: 500
-      padding: 10px
-      color: "#555"
-      border: "1px solid #00000044"
-      boxShadow: "0 0 4px #00000033"
-      minWidth: 100px
-      borderRadius: 4px
-      "&:focus":
-        boxShadow: "0 0 6px #00000093"
+      - focus:shadow
+      - hover:shadow
+      - border-slate-400
+      - border
+      - min-w-[120px]
+      - px-3
+      - py-2
+      - rounded
     label:
-      textTransform: uppercase
+      - font-medium
+      - text-slate-600
+      - uppercase
 public: true

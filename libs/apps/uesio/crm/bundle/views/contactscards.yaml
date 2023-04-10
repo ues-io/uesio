@@ -117,7 +117,11 @@ definition:
                 - uesio/io.box:
                     components:
                       - uesio/io.grid:
-                          templateColumns: 120px 240px
+                          uesio.styleTokens:
+                            root:
+                              - grid-cols-[120px_240px]
+                              - grid-rows-1
+                              - items-center
                           items:
                             - uesio/io.box:
                                 components:
@@ -135,8 +139,10 @@ definition:
                                     boxShadow: "0 0 6px #00000033"
                                     padding: 4px
                             - uesio/io.grid:
-                                templateColumns: 1fr
-                                templateRows: 1fr 1fr
+                                uesio.styleTokens:
+                                  root:
+                                    - grid-cols-1
+                                    - grid-rows-2
                                 items:
                                   - uesio/io.text:
                                       text: ${uesio/crm.firstname}
@@ -165,8 +171,10 @@ definition:
                                           marginTop: -20px
                                           fontSize: 12px
                                   - uesio/io.grid:
-                                      templateColumns: 1fr 1fr
-                                      templateRows: 1fr  1fr
+                                      uesio.styleTokens:
+                                        root:
+                                          - grid-cols-2
+                                          - grid-rows-2
                                       items:
                                         - uesio/io.text:
                                             text: ${uesio/crm.email}
@@ -259,10 +267,6 @@ definition:
                                 uesio.styles:
                                   root:
                                     padding: 22px
-                          templateRows: 1fr
-                          uesio.styles:
-                            root:
-                              alignItems: center
                     uesio.styles:
                       root:
                         border: "1px solid #ccc"
@@ -294,8 +298,10 @@ definition:
                       mode: EDIT
                       components:
                         - uesio/io.grid:
-                            templateColumns: 1fr 1fr
-                            templateRows: 1fr 1fr 1fr
+                            uesio.styleTokens:
+                              root:
+                                - grid-cols-2
+                                - grid-rows-3
                             items:
                               - uesio/io.field:
                                   fieldId: uesio/crm.externalid
@@ -330,8 +336,10 @@ definition:
                       mode: EDIT
                       components:
                         - uesio/io.grid:
-                            templateColumns: 1fr 1fr
-                            templateRows: 1fr 1fr 1fr
+                            uesio.styleTokens:
+                              root:
+                                - grid-cols-2
+                                - grid-rows-3
                             items:
                               - uesio/io.field:
                                   fieldId: uesio/crm.mailing_street
@@ -352,8 +360,10 @@ definition:
                       mode: EDIT
                       components:
                         - uesio/io.grid:
-                            templateColumns: 1fr 1fr
-                            templateRows: 1fr 1fr 1fr
+                            uesio.styleTokens:
+                              root:
+                                - grid-cols-2
+                                - grid-rows-3
                             items:
                               - uesio/io.field:
                                   fieldId: uesio/crm.account
@@ -475,7 +485,9 @@ definition:
                           - uesio/io.box:
                               components:
                                 - uesio/io.grid:
-                                    templateColumns: 1fr
+                                    uesio.styleTokens:
+                                      root:
+                                        - grid-cols-1
                                     items:
                                       - uesio/io.box:
                                           components:
@@ -492,7 +504,6 @@ definition:
                                             root:
                                               boxShadow: "0 0 6px #00000033"
                                               padding: 4px
-                                    templateRows: ""
                                     uesio.styles:
                                       root:
                                         alignItems: center

@@ -118,11 +118,11 @@ definition:
                                         - signal: "route/REDIRECT"
                                           path: $Param{redirectUrl}
                       - uesio/io.grid:
-                          templateColumns: 1fr 1fr 1fr
-                          columnGap: 10px
-                          uesio.styles:
+                          uesio.styleTokens:
                             root:
-                              padding: 50px
+                              - template-cols-3
+                              - gap-x-4
+                              - p-10
                           items:
                             - uesio/io.metric:
                                 title: Payments

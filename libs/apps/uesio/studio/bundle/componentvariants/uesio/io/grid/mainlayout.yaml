@@ -1,8 +1,8 @@
 name: mainlayout
 label: Main Layout
 definition:
-  templateRows: 60px 1fr
-  templateColumns: 300px 1fr
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      minHeight: 100vh
+      - grid-cols-[300px_1fr]
+      - grid-rows-[60px_1fr]
+      - min-h-screen

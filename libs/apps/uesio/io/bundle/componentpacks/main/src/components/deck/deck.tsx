@@ -7,6 +7,8 @@ type DeckDefinition = GridDefinition & ListDefinition
 
 const Deck: definition.UC<DeckDefinition> = (props) => {
 	const { definition, context } = props
+
+	// TODO: REMOVE THESE STYLING PROPERTIES
 	const gridCols = styles.getResponsiveStyles(
 		"gridTemplateColumns",
 		definition.templateColumns
@@ -27,6 +29,7 @@ const Deck: definition.UC<DeckDefinition> = (props) => {
 	const gap = definition.gap && {
 		gridGap: definition.gap,
 	}
+	// END TODO
 
 	const classes = styles.useStyles(
 		{

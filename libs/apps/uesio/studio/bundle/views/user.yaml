@@ -156,16 +156,17 @@ definition:
                                           wire: "users"
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
-                          uesio.styles:
+                          uesio.styleTokens:
                             root:
-                              padding: 40px
+                              - p-10
                           components:
                             - uesio/io.grid:
-                                templateColumns:
-                                  sm: 1fr
-                                  md: 1fr 1fr
-                                  lg: 1fr 3fr
-                                columnGap: 40px
+                                uesio.styleTokens:
+                                  root:
+                                    - grid-cols-1
+                                    - md:grid-cols-2
+                                    - lg:grid-cols-[1fr_3fr]
+                                    - gap-x-10
                                 items:
                                   - uesio/io.griditem:
                                       components:
@@ -175,9 +176,9 @@ definition:
                                   - uesio/io.griditem:
                                       components:
                                         - uesio/io.box:
-                                            uesio.styles:
+                                            uesio.styleTokens:
                                               root:
-                                                text-align: right
+                                                - text-right
                                             components:
                                               - uesio/io.button:
                                                   uesio.variant: uesio/io.secondary
@@ -267,10 +268,10 @@ definition:
                                       uesio.variant: uesio/io.item
                                       content:
                                         - uesio/io.grid:
-                                            templateColumns: 1fr auto
-                                            uesio.styles:
+                                            uesio.styleTokens:
                                               root:
-                                                alignItems: center
+                                                - grid-cols-[1fr_auto]
+                                                - items-center
                                             items:
                                               - uesio/io.box:
                                                   components:
