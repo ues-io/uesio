@@ -221,7 +221,7 @@ definition:
                                 uesio.styleTokens:
                                   root:
                                     - pt-4
-                                text: Coming soom - Updates, News, and feature releases will be here for you to see when they come out.
+                                text: Coming soon - Updates, News, and feature releases will be here for you to see when they come out.
                                 element: div
                       - uesio/io.griditem:
                           components:
