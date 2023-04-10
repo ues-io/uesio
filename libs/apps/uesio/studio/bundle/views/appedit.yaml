@@ -9,7 +9,7 @@ definition:
         mode: EDIT
         components:
           - uesio/io.grid:
-              uesio.variant: uesio/io.two
+              uesio.variant: uesio/io.two_columns
               items:
                 - uesio/io.field:
                     fieldId: uesio/studio.user

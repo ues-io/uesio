@@ -41,7 +41,7 @@ definition:
                   padding: 40px
               components:
                 - uesio/io.grid:
-                    uesio.variant: uesio/io.four
+                    uesio.variant: uesio/io.four_columns
                     items:
                       - uesio/io.field:
                           fieldId: uesio/crm.name

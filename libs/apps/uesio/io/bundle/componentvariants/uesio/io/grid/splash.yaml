@@ -8,4 +8,5 @@ definition:
       - lg:grid-cols-[5fr_7fr]
       - bg-cover
       - min-h-screen
+      - bg-[url($File{uesio/core.splash})]
 public: true

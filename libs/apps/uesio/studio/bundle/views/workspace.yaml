@@ -91,7 +91,7 @@ definition:
                                       uesio.styleTokens:
                                         root:
                                           - p-10
-                                      uesio.variant: uesio/io.four
+                                      uesio.variant: uesio/io.four_columns
                                       items:
                                         - uesio/builder.metadatafield:
                                             fieldId: uesio/studio.homeroute

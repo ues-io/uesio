@@ -15,17 +15,6 @@ function mergeDefinitionMaps(
 	return result
 }
 
-function arrayUnique(array: unknown[]) {
-	const a = array.concat()
-	for (let i = 0; i < a.length; ++i) {
-		for (let j = i + 1; j < a.length; ++j) {
-			if (a[i] === a[j]) a.splice(j--, 1)
-		}
-	}
-
-	return a
-}
-
 // Will ignore null/undefined/empty string in the src obj
 function mergeDeep(
 	dest: DefinitionMap,
@@ -39,9 +28,7 @@ function mergeDeep(
 		if (typeof srcItem === "object" && srcItem !== null) {
 			if (Array.isArray(srcItem)) {
 				if (Array.isArray(dest[key])) {
-					dest[key] = arrayUnique(
-						(dest[key] as string[]).concat(srcItem)
-					)
+					dest[key] = (dest[key] as string[]).concat(srcItem)
 				} else {
 					dest[key] = srcItem
 				}

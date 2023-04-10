@@ -157,7 +157,7 @@ definition:
                               padding: 40px
                           components:
                             - uesio/io.grid:
-                                uesio.variant: uesio/io.four
+                                uesio.variant: uesio/io.four_columns
                                 items:
                                   - uesio/io.field:
                                       fieldId: uesio/studio.name
@@ -174,7 +174,7 @@ definition:
                                       metadataType: "FIELD"
                                       label: "Name Field"
                             - uesio/io.grid:
-                                uesio.variant: uesio/io.four
+                                uesio.variant: uesio/io.four_columns
                                 items:
                                   - uesio/io.field:
                                       fieldId: uesio/core.createdby

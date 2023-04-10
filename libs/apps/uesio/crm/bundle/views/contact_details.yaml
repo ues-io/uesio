@@ -63,7 +63,7 @@ definition:
                               - items-start
                           items:
                             - uesio/io.grid:
-                                uesio.variant: uesio/io.four
+                                uesio.variant: uesio/io.four_columns
                                 items:
                                   - uesio/io.field:
                                       fieldId: uesio/core.id

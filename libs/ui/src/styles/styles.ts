@@ -14,6 +14,7 @@ import {
 } from "../component/component"
 import { MetadataKey } from "../metadataexports"
 import { twMerge } from "tailwind-merge"
+import { Context } from "../context/context"
 
 type ResponsiveDefinition =
 	| string
@@ -90,7 +91,7 @@ function useStyles<K extends string>(
 	return Object.keys(defaults).reduce(
 		(classNames: Record<string, string>, className: K) => {
 			const classTokens = tokens[className] || []
-			classNames[className] = twMerge(
+			classNames[className] = processClassString(
 				cx(
 					...classTokens,
 					css([
@@ -103,7 +104,8 @@ function useStyles<K extends string>(
 							),
 						},
 					])
-				)
+				),
+				props?.context
 			)
 			return classNames
 		},
@@ -154,6 +156,10 @@ function getVariantTokens(
 	return variantDefinition?.["uesio.styleTokens"] as Record<string, string[]>
 }
 
+function processClassString(classes: string, context: Context | undefined) {
+	return twMerge(context ? context?.mergeString(classes) : classes)
+}
+
 function useUtilityStyles<K extends string>(
 	defaults: Record<K, CSSInterpolation>,
 	props: UtilityProps,
@@ -173,7 +179,7 @@ function useUtilityStyles<K extends string>(
 	return Object.keys(defaults).reduce(
 		(classNames: Record<string, string>, className: K) => {
 			const classTokens = tokens[className] || []
-			classNames[className] = twMerge(
+			classNames[className] = processClassString(
 				cx(
 					...classTokens,
 					css([
@@ -184,7 +190,8 @@ function useUtilityStyles<K extends string>(
 					// A bit weird here... Only apply the passed-in className prop to root styles.
 					// Otherwise, it would be applied to every class sent in as defaults.
 					className === "root" && props.className
-				)
+				),
+				props.context
 			)
 			return classNames
 		},

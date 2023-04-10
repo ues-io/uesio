@@ -7,7 +7,7 @@ interface TextFieldProps extends definition.UtilityProps {
 	mode?: context.FieldMode
 	readonly?: boolean
 	placeholder?: string
-	type?: "search" | "password" | "text"
+	type?: "search" | "password" | "text" | "email" | "tel" | "url"
 	focusOnRender?: boolean
 }
 

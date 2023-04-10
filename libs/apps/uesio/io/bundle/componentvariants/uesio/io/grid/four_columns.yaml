@@ -1,6 +1,6 @@
-name: four
+name: four_columns
 label: Four Column Responsive
-extends: uesio/io.two
+extends: uesio/io.two_columns
 definition:
   uesio.styleTokens:
     root:

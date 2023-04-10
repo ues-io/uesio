@@ -200,9 +200,7 @@ definition:
                             - uesio/io.text:
                                 text: "quickly."
                 - uesio/io.grid:
-                    uesio.styleTokens:
-                      root:
-                        - grid-cols-2
+                    uesio.variant: uesio/io.two_columns
                     items:
                       - uesio/io.griditem:
                           uesio.styles:
