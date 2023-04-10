@@ -7,7 +7,6 @@
 /apps/platform/platform/platform.js
 /apps/platform/userfiles
 /apps/platform/localbundlestore
-/libs/vendor
 /pgdata
 /.vscode
 package-lock.json

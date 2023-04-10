@@ -1,6 +1,6 @@
 {
 	"root": true,
-	"ignorePatterns": ["**/*", "libs/vendor"],
+	"ignorePatterns": ["**/*"],
 	"plugins": ["@nrwl/nx"],
 	"overrides": [
 		{

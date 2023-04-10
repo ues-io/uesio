@@ -37,7 +37,7 @@ const TextField: FunctionComponent<TextFieldProps> = (props) => {
 		<input
 			id={id}
 			type={type}
-			value={value}
+			value={value || ""}
 			placeholder={placeholder}
 			className={styles.cx(classes.input, readonly && classes.readonly)}
 			disabled={readonly || mode === "READ"}

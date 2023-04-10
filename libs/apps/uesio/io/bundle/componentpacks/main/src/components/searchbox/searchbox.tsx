@@ -2,6 +2,7 @@ import { api, metadata, definition } from "@uesio/ui"
 import debounce from "lodash/debounce"
 import TextField from "../../utilities/field/text"
 import FieldWrapper from "../../utilities/fieldwrapper/fieldwrapper"
+import { useState } from "react"
 
 type SearchBoxDefinition = {
 	placeholder?: string
@@ -12,6 +13,7 @@ type SearchBoxDefinition = {
 const SearchBox: definition.UC<SearchBoxDefinition> = (props) => {
 	const { definition, context } = props
 	const wire = api.wire.useWire(definition.wire, context)
+	const [text, setText] = useState("")
 	if (!wire) return null
 	const search = (searchValue: string) => {
 		api.signal.run(
@@ -32,9 +34,11 @@ const SearchBox: definition.UC<SearchBoxDefinition> = (props) => {
 				type="search"
 				variant="uesio/io.search"
 				placeholder={definition.placeholder || "Search"}
-				setValue={(value) => {
+				setValue={(value: string) => {
 					debouncedRequest(value as string)
+					setText(value)
 				}}
+				value={text}
 			/>
 		</FieldWrapper>
 	)
