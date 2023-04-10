@@ -374,10 +374,13 @@ definition:
                             columnGap: 8px
               - id: tasks
                 label: Tasks
+                components:
               - id: events
                 label: Events
+                components:
               - id: history
                 label: History
+                components:
             footer:
               - uesio/io.group:
                   columnGap: 10px
