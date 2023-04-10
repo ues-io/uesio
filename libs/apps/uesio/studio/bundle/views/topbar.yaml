@@ -8,11 +8,11 @@ definition:
         uesio.styleTokens:
           root:
             - grid-cols-[58px_1fr_1fr_0fr]
+            - bg-slate-100
         uesio.styles:
           root:
             alignItems: center
             height: 60px
-            backgroundColor: "#F2F2F2"
         items:
           # Uesio Logo
           - uesio/io.griditem:

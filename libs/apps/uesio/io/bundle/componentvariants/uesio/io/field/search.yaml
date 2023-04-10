@@ -4,10 +4,10 @@ definition:
   uesio.styleTokens:
     input:
       - border
-      - border-slate-300
+      - border-slate-400
       - px-2.5
       - py-1.5
       - rounded
-      - text-sm
+      - text-xs
       - outline-offset-0
 public: true

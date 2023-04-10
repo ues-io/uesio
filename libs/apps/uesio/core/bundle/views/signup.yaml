@@ -31,9 +31,6 @@ definition:
         uesio.variant: uesio/io.splash
         items:
           - uesio/io.griditem:
-              uesio.styles:
-                root:
-                  backgroundColor: "#f3f3f3"
               components:
                 - uesio/io.box:
                     uesio.styles:
