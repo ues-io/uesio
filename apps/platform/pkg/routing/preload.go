@@ -2,6 +2,7 @@ package routing
 
 import (
 	"encoding/json"
+	"github.com/thecloudmasters/uesio/pkg/goutils"
 )
 
 type ComponentMergeData struct {
@@ -31,19 +32,20 @@ func (cmd *ComponentsMergeData) AddItem(componentID string, state interface{}) {
 	}
 }
 
-type MetadataMergeData []Depable
+type MetadataMergeData struct {
+	deps map[string]Depable
+}
+
+func (mmd *MetadataMergeData) GetItems() []Depable {
+	return goutils.MapValues(mmd.deps)
+}
 
 func (mmd *MetadataMergeData) MarshalJSON() ([]byte, error) {
 
 	ids := make([]string, 0)
 	entityData := map[string]json.RawMessage{}
 
-	for _, dep := range *mmd {
-		key := dep.GetKey()
-		_, ok := entityData[key]
-		if ok {
-			continue
-		}
+	for key, dep := range mmd.deps {
 		ids = append(ids, key)
 		rawData, err := dep.GetBytes()
 		if err == nil {
@@ -62,11 +64,16 @@ func (mmd *MetadataMergeData) MarshalJSON() ([]byte, error) {
 }
 
 func NewItem() *MetadataMergeData {
-	return &MetadataMergeData{}
+	return &MetadataMergeData{
+		deps: map[string]Depable{},
+	}
 }
 
 func (mmd *MetadataMergeData) AddItem(dep Depable) {
-	*mmd = append(*mmd, dep)
+	key := dep.GetKey()
+	if _, exists := mmd.deps[key]; !exists {
+		mmd.deps[key] = dep
+	}
 }
 
 func NewPreloadMetadata() *PreloadMetadata {
