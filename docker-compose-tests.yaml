@@ -25,7 +25,7 @@ services:
       redis:
         condition: service_started
     ports:
-      - "3009:3000"
+      - "3000:3000"
     environment:
       REDIS_HOST: redis
       REDIS_PORT: 6379

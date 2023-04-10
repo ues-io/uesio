@@ -23,6 +23,12 @@ jobs:
         with:
           node-version: 18.15.0
           cache: "npm"
+      - name: Setup Uesio CLI Symlink
+        shell: bash
+        run: |
+          # Symlink for Uesio CLI, which is created in build and then used in subsequent builds and tests
+          mkdir -p dist/cli
+          sudo ln -s $PWD/dist/cli/uesio /usr/local/bin/uesio
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -43,7 +49,6 @@ jobs:
           REGISTRY_ID: ${{ secrets.AWS_ACCOUNT_ID_DEV }}
           IMAGE_TAG: ${{ steps.login-ecr.outputs.registry }}/uesio:${{ github.sha }}
         run: |
-
           # These exports need to run every time
           export GITSHA=$(echo ${FULL_SHA} | cut -c1-8)
           echo "GITSHA=`echo ${FULL_SHA} | cut -c1-8`" >> $GITHUB_ENV
