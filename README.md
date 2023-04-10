@@ -72,8 +72,10 @@ The `workspace.json` is the entry point for the **build**, **watcher**, **test**
 -   Set up SSL [here](#set-up-ssl).
 -   Set up local DNS [here](#set-up-local-dns).
 -   Start dependencies [here](#dependencies).
+-   Create a symlink for the Uesio CLI into your bin (NOT an alias, which won't work with `nx`):
+    -   Mac OS: `sudo ln -s ~/git/uesio/dist/cli/uesio /usr/local/bin`
+    -   Windows: `mklink C:\bin\uesio C:\Users\<USERNAME>\git\uesio\dist\cli\uesio`, and ensure `bin` is on path: `setx PATH "C:\bin;%PATH%`
 -   Build and run [here](#run).
--   Create an alias in your terminal, this will help to execute Uesio commands: `alias uesio="npm run uesio"`
 
 ---
 
@@ -134,7 +136,7 @@ nx build apps-uesio-crm
 On the frontend, the `source map` is enabled in webpack in `dev` mode. While developing you might want to rebuild on saving with the source map in the browser :
 
 ```
-cd ./libs/apps/uesio/core && clio pack --develop
+cd ./libs/apps/uesio/core && uesio pack --develop
 ```
 
 # Watch mode
@@ -382,7 +384,7 @@ bash apps/platform/migrations_test/test_migrations.sh
 
 ## End-to-end Testing and Integration testing
 
-All E2E and integration tests can be run with `npm run tests-all`
+All E2E and integration tests can be run exactly as they would in CI using `npm run tests-all`. This will spin up all dependencies, and a Dockerized version of the app, run integration and E2E tests against the app, and then spin down dependencies.
 
 ### E2E testing with Cypress
 
@@ -390,7 +392,7 @@ We use [Cypress](https://cypress.io) for writing end-to-end tests of the Uesio a
 
 E2E tests are the most expensive and most brittle, and as such should be used sparingly.
 
-If you're running Uesio locally, you can use `npx cypress open` to launch Cypress' visual UI for running tests, or `npx cypress run` to just run the tests in a headless fashion.
+If you're running Uesio locally, you can use `npx cypress open` to launch Cypress' visual UI for running tests, or `npm run tests-e2e` to just run the tests in a headless runner.
 
 To simulate how Cypress tests are run in CI, run `npm run tests-e2e`. This script is run in Github Actions on master build, and spins up the Uesio app in Docker, along with all dependencies, to use for running tests.
 
@@ -398,4 +400,4 @@ To simulate how Cypress tests are run in CI, run `npm run tests-e2e`. This scrip
 
 We use [Hurl](https://hurl.dev/) for running integration tests against Uesio APIs, and for performing load testing against APIs. Hurl provides a powerful text-based abstraction over `curl` suitable for defining suites of HTTP requests and assertions to make upon the responses.
 
-To run API integration tests, use `npm run tests-integration`
+To run API integration tests locally against your running Uesio container, use `npm run tests-integration`

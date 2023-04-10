@@ -2,6 +2,7 @@ package goutils
 
 import (
 	"reflect"
+	"sort"
 	"testing"
 )
 
@@ -19,17 +20,19 @@ func TestMapKeys(t *testing.T) {
 			"it should return all keys of the given map",
 			args[string, bool]{
 				inputMap: map[string]bool{
+					"baz": true,
 					"foo": true,
 					"bar": false,
-					"baz": true,
 				},
 			},
-			[]string{"foo", "bar", "baz"},
+			[]string{"bar", "baz", "foo"},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := MapKeys(tt.args.inputMap); !reflect.DeepEqual(got, tt.want) {
+			got := MapKeys(tt.args.inputMap)
+			sort.Strings(got)
+			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("MapKeys() = %v, want %v", got, tt.want)
 			}
 		})
