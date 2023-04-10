@@ -59,17 +59,19 @@ jobs:
           # Skip build if image already exists
           image_exists=$(bash ./scripts/ecr-image-exists.sh $REGISTRY_ID uesio $FULL_SHA)
 
+          npm ci
+
           if [[ "$image_exists" == "yes" ]]; then
               echo "Docker image already exists, skipping build and docker push"
               docker pull $IMAGE_TAG
               echo "APP_IMAGE=`echo ${IMAGE_TAG}`" >> $GITHUB_ENV
-              npm i cypress typescript
+              # We need to build the CLI so that we can run integration tests
+              npm run build-cli
               exit 0
           else
               echo "Image does not exist, building and pushing"
           fi
 
-          npm ci
           npm run prettier-check
           npm run affected:lint -- --base=origin/master --head=$GITHUB_SHA --parallel
           npm run build-all
