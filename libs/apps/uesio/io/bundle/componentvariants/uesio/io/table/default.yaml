@@ -49,11 +49,11 @@ definition:
       - border-slate-300
       - p-0
     body:
-      - "first:[&>tr:last-child>td]:rounded-bl-lg"
-      - "last:[&>tr:last-child>td]:rounded-br-lg"
+      - "[&>tr:last-child>td]:first:rounded-bl-lg"
+      - "[&>tr:last-child>td]:last:rounded-br-lg"
       - "[&>tr:last-child>td]:border-b-0"
-      - "hover:[&.hasRowAction>tr]:cursor-pointer"
-      - "hover:[&.hasRowAction>tr]:bg-slate-50"
+      - "[&.hasRowAction>tr]:hover:cursor-pointer"
+      - "[&.hasRowAction>tr]:hover:bg-slate-50"
     rowDeleted:
       - bg-red-100
 public: true

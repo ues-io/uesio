@@ -441,7 +441,6 @@
 							"cp node_modules/react-dom/umd/react-dom.development.js dist/vendor/",
 							"cp node_modules/react-dom/umd/react-dom.production.min.js dist/vendor/",
 							"cp node_modules/@emotion/css/dist/emotion-css.umd.* dist/vendor/",
-							"cp libs/vendor/tailwind/tailwind.min.js dist/vendor/",
 							"mkdir -p dist/vendor/monaco-editor/min/vs",
 							"mkdir -p dist/vendor/monaco-editor/min-maps",
 							"cp -r node_modules/monaco-editor/min/vs dist/vendor/monaco-editor/min",
