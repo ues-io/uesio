@@ -8,7 +8,8 @@ definition:
       - text-center
       - cursor-pointer
       - inline-grid
-      - grid-flow-column
+      - grid-flow-col
+      - justify-center
       - gap-x-2
       - items-center
       - bg-none
