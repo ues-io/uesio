@@ -111,7 +111,7 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 		case "TEXT":
 			content =
 				displayAs === "PASSWORD" ? (
-					<TextField {...common} password={true} />
+					<TextField {...common} type="password" />
 				) : (
 					<TextField {...common} />
 				)

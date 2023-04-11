@@ -11,16 +11,16 @@ definition:
             height: 120px
         items:
           - uesio/io.griditem:
-              uesio.styles:
+              uesio.styleTokens:
                 root:
-                  display: grid
+                  - grid
               area: main
               components:
                 - uesio/io.grid:
-                    templateColumns: 0fr 1fr 0fr
-                    uesio.styles:
+                    uesio.styleTokens:
                       root:
-                        alignItems: center
+                        - grid-cols-[max-content_1fr_0fr]
+                        - items-center
                     items:
                       - uesio/io.griditem:
                           components:

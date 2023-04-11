@@ -91,21 +91,6 @@ definition:
                                             - "installedapp"
                                         - signal: "route/NAVIGATE"
                                           path: app/$Param{app}/workspace/$Param{workspacename}
-                      # - uesio/io.box:
-                      #     uesio.variant: uesio/io.section
-                      #     uesio.styles:
-                      #       root:
-                      #         padding: 40px
-                      #     components:
-                      #       - uesio/io.grid:
-                      #           templateColumns:
-                      #             xs: 1fr
-                      #             md: 1fr 1fr
-                      #             lg: 1fr 1fr 1fr 1fr
-                      #           columnGap: 10px
-                      #           items:
-                      #             - uesio/io.field:
-                      #                 fieldId: uesio/core.uniquekey
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:

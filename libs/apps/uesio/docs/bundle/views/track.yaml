@@ -28,12 +28,12 @@ definition:
                           uesio.variant: uesio/docs.content
                           text: ${uesio/docs.description}
                 - uesio/io.deck:
-                    gap: 40px
-                    templateColumns: 1fr 1fr 1fr
-                    wire: lesson
-                    uesio.styles:
+                    uesio.styleTokens:
                       root:
-                        marginTop: 40px
+                        - mt-10
+                        - grid-cols-3
+                        - gap-10
+                    wire: lesson
                     components:
                       - uesio/io.tile:
                           uesio.variant: uesio/docs.trackcard
