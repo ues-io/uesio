@@ -89,7 +89,7 @@ jobs:
         with:
           file: apps/cli/dist/${{ matrix.asset_name }}/${{ matrix.artifact_name }}
           asset_name: ${{ matrix.asset_name }}
-          tag: ${{ inputs.releaseName }}
+          tag: ${{ env.releaseName }}
           overwrite: true
-          release_name: ${{ inputs.releaseName }}
-          body: ${{ inputs.releaseNotes }}
+          release_name: ${{ env.releaseName }}
+          body: ${{ env.releaseNotes }}
