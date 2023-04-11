@@ -5,6 +5,13 @@ pack: main
 entrypoint: components/deck/deck
 category: DATA
 discoverable: true
+slots:
+  - name: components
+    providesContexts:
+      - type: RECORD
+        wireProperty: wire
+      - type: FIELD_MODE
+        property: mode
 defaultDefinition:
   mode: READ
 properties:
