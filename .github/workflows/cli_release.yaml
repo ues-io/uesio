@@ -3,7 +3,7 @@ name: Uesio CLI Release
 on:
   push:
     branches:
-      - "cli-release"
+      - "cli-releases"
   # workflow_dispatch:
   #   inputs:
   #     releaseName:
