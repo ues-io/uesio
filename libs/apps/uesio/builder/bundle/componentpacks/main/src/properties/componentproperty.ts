@@ -8,6 +8,7 @@ type BaseProperty = {
 	type: string
 	placeholder?: string
 	readonly?: boolean
+	display?: boolean
 	displayConditions?: component.DisplayCondition[]
 }
 type TextProperty = {
@@ -89,8 +90,9 @@ type FieldPropertyBase = {
 
 type FieldMetadataProperty = {
 	type: "FIELD_METADATA"
-	field: string
-	metadataProperty: "displayType" // TODO: Add more properties here, e.g. referenceType, etc.
+	fieldProperty: string
+	wireProperty: string
+	metadataProperty: "type" // TODO: Add more properties here, e.g. referenceType, etc.
 } & BaseProperty
 
 type FieldProperty = {

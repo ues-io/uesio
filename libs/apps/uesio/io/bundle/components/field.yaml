@@ -29,7 +29,7 @@ properties:
   - name: fieldDisplayType
     type: FIELD_METADATA
     field: fieldId
-    metadataProperty: displayType
+    metadataProperty: type
   - name: label
     type: TEXT
     label: Label
