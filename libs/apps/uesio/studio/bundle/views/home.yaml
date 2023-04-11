@@ -146,20 +146,25 @@ definition:
               uesio.variant: uesio/studio.content
               components:
                 - uesio/io.box:
-                    uesio.styles:
+                    uesio.styleTokens:
                       root:
-                        backgroundSize: cover
-                        backgroundImage: url($File{uesio/core.splash})
-                        padding: 100px
-                        height: 60px
-                        color: "#FFFFFFC0"
+                        - -mt-10
+                        - -mx-10
+                        - mb-0
+                        - p-32
+                        - bg-black
+                        - bg-cover
+                        - bg-[url($File{uesio/core.splash})]
                 - uesio/io.box:
-                    uesio.styles:
+                    uesio.styleTokens:
                       root:
-                        backgroundSize: cover
-                        backgroundColor: rgb(22,22,22)
-                        padding: 40px 100px
-                        color: "#FFFFFFC0"
+                        - -mt-10
+                        - -mx-10
+                        - mb-10
+                        - py-10
+                        - px-24
+                        - text-[#FFFFFFC0]
+                        - bg-[rgb(22,22,22)]
                     components:
                       - uesio/io.box:
                           uesio.styles:
@@ -201,23 +206,24 @@ definition:
                                 text: "quickly."
                 - uesio/io.grid:
                     uesio.variant: uesio/io.two_columns
+                    uesio.styleTokens:
+                      root:
+                        - gap-x-10
+                        - p-14
                     items:
                       - uesio/io.griditem:
-                          uesio.styles:
-                            root:
-                              padding: 50px
                           components:
                             - uesio/io.button:
                                 uesio.variant: uesio/io.secondary
                                 text: Latest Updates & News
                             - uesio/io.text:
                                 uesio.variant: uesio/io.smallcontent
-                                text: Coming soom - Updates, News, and feature releases will be here for you to see when they come out.
+                                uesio.styleTokens:
+                                  root:
+                                    - pt-4
+                                text: Coming soon - Updates, News, and feature releases will be here for you to see when they come out.
                                 element: div
                       - uesio/io.griditem:
-                          uesio.styles:
-                            root:
-                              padding: 50px
                           components:
                             - uesio/io.button:
                                 uesio.variant: uesio/io.secondary
@@ -227,6 +233,9 @@ definition:
                                     path: "https://docs.$Site{domain}"
                             - uesio/io.text:
                                 uesio.variant: uesio/io.smallcontent
+                                uesio.styleTokens:
+                                  root:
+                                    - pt-4
                                 text: Documentation - Learn the basic concepts of ues.io and how to navigate the uesio/studio.
                                 element: div
 

@@ -15,14 +15,6 @@ import { install, defineConfig } from "@twind/core"
 import presetAutoprefix from "@twind/preset-autoprefix"
 import presetTailwind from "@twind/preset-tailwind"
 
-// activate twind - must be called at least once
-install(
-	defineConfig({
-		presets: [presetAutoprefix(), presetTailwind()],
-		hash: false,
-	})
-)
-
 // This applies the global styles
 injectGlobal({
 	body: {
@@ -98,6 +90,23 @@ const Route: UtilityComponent = (props) => {
 		theme,
 		view: makeViewId(viewId, "$root"),
 	})
+
+	const themeData = routeContext.getTheme()
+
+	// activate twind - must be called at least once
+	install(
+		defineConfig({
+			presets: [presetAutoprefix(), presetTailwind()],
+			hash: false,
+			theme: {
+				extend: {
+					colors: {
+						primary: themeData.definition.palette.primary,
+					},
+				},
+			},
+		})
+	)
 
 	if (workspace) {
 		routeContext = routeContext.setWorkspace(workspace)

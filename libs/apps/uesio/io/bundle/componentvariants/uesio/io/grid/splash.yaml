@@ -9,4 +9,5 @@ definition:
       - bg-cover
       - min-h-screen
       - bg-[url($File{uesio/core.splash})]
+      - "[&>*]:first:bg-slate-50"
 public: true
