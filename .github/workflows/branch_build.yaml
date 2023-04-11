@@ -3,7 +3,6 @@ on:
   push:
     branches-ignore:
       - "master"
-      - "cli-releases"
     tags-ignore:
       - "*"
 

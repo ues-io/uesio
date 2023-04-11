@@ -1,21 +1,18 @@
 name: Uesio CLI Release
 
 on:
-  push:
-    branches:
-      - "cli-releases"
-  # workflow_dispatch:
-  #   inputs:
-  #     releaseName:
-  #       description: "Release name"
-  #       required: true
-  #       default: "v0-0-1"
-  #       type: string
-  #     releaseNotes:
-  #       description: "Release notes"
-  #       required: true
-  #       default: "# Bug fixes\n - Fix One\n\n#Features\n - Feature one"
-  #       type: string
+  workflow_dispatch:
+    inputs:
+      releaseName:
+        description: "Release name"
+        required: true
+        default: "v0-0-1"
+        type: string
+      releaseNotes:
+        description: "Release notes"
+        required: true
+        default: "# Bug fixes\n - Fix One\n\n# Features\n - Feature one"
+        type: string
 
 jobs:
   validate:
@@ -25,8 +22,7 @@ jobs:
       - name: Validate workflow inputs
         shell: bash
         env:
-          # releaseName: ${{ inputs.releaseName }}
-          releaseName: "v0-0-1"
+          releaseName: ${{ inputs.releaseName }}
         run: |
           pattern="^v[0-9]{1,3}-[0-9]{1,3}-[0-9]{1,3}$"
           if [[ ! $releaseName =~ $pattern ]]; then
@@ -39,8 +35,8 @@ jobs:
     needs:
       - validate
     env:
-      releaseName: "v0-0-1"
-      releaseNotes: "# Bug fixes\n - Fix One\n\n#Features\n - Feature one"
+      releaseName: ${{ inputs.releaseName }}
+      releaseNotes: ${{ inputs.releaseNotes }}
     strategy:
       matrix:
         include:
