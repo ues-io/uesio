@@ -104,9 +104,10 @@ func (cm *CollectionMetadata) GetFullName() string {
 }
 
 type SelectListMetadata struct {
-	Name             string                  `json:"name"`
-	Options          []meta.SelectListOption `json:"options"`
-	BlankOptionLabel string                  `json:"blank_option_label"`
+	Name                     string                  `json:"name"`
+	Options                  []meta.SelectListOption `json:"options"`
+	BlankOptionLabel         string                  `json:"blank_option_label"`
+	BlankOptionLanguageLabel string                  `json:"blank_option_language_label"`
 }
 
 type FileMetadata struct {

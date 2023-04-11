@@ -145,9 +145,11 @@ const handlers: Record<MergeType, MergeHandler> = {
 	SelectList: (expression, context) => {
 		const wire = context.getWire()
 		const fieldMetadata = wire?.getCollection().getField(expression)
-		const selectListMetadata = fieldMetadata?.getSelectOptions()
+		const selectListMetadata = fieldMetadata?.getSelectOptions(context)
 		const value = context.getRecord()?.getFieldValue(expression)
-		return selectListMetadata?.find((el) => el.value === value)?.label || ""
+		const label =
+			selectListMetadata?.find((el) => el.value === value)?.label || ""
+		return context.getLabel(label) || ""
 	},
 	File: (expression, context) => getURLFromFullName(context, expression),
 	UserFile: (expression, context) => {
