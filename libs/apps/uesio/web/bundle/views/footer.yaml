@@ -15,11 +15,11 @@ definition:
               area: main
               components:
                 - uesio/io.grid:
-                    templateColumns: 0fr 1fr 3fr 1fr 1fr 1fr 1fr
-                    uesio.styles:
+                    uesio.styleTokens:
                       root:
-                        alignItems: center
-                        margin: 16px
+                        - grid-cols-[max-content_1fr_3fr_1fr_1fr_1fr_1fr]
+                        - items-center
+                        - m-4
                     items:
                       - uesio/io.griditem:
                           components:
@@ -27,16 +27,13 @@ definition:
                                 file: uesio/web.logowhite
                                 uesio.styles:
                                   root:
-                                    paddingRight: 15px
+                                    paddingRight: 48px
                       - uesio/io.griditem:
                           components:
                             - uesio/io.text:
                                 uesio.variant: uesio/web.footertext
                                 text: ©2023
                                 element: div
-                                uesio.styles:
-                                  root:
-                                    paddingBottom: 5px
                       - uesio/io.griditem:
                           components:
                             - uesio/io.text:

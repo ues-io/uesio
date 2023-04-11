@@ -111,7 +111,7 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 		case "TEXT":
 			content =
 				displayAs === "PASSWORD" ? (
-					<TextField {...common} password={true} />
+					<TextField {...common} type="password" />
 				) : (
 					<TextField {...common} />
 				)
@@ -126,7 +126,7 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 			content = <EmailField {...common} />
 			break
 		case "SELECT": {
-			selectOptions = fieldMetadata.getSelectOptions()
+			selectOptions = fieldMetadata.getSelectOptions(context)
 			content =
 				displayAs === "RADIO" ? (
 					<RadioButtons {...common} options={selectOptions} />
@@ -138,7 +138,7 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 		case "MULTISELECT":
 			multiSelectProps = {
 				...common,
-				options: fieldMetadata.getSelectOptions(),
+				options: fieldMetadata.getSelectOptions(context),
 				// Storage of Multiselect values in DB is a Map[string]boolean containing the values which are selected,
 				// but the renderers expect a simple array of selected values, so we need to convert to/from that format
 				setValue: (values: wire.PlainFieldValue[]) => {

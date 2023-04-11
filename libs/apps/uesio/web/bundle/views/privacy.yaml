@@ -13,10 +13,10 @@ definition:
               area: main
               components:
                 - uesio/io.grid:
-                    templateColumns: 400px 1fr
-                    uesio.styles:
+                    uesio.styleTokens:
                       root:
-                        padding: 80px
+                        - grid-cols-[400px_1fr]
+                        - p-20
                     items:
                       - uesio/io.griditem:
                           components:

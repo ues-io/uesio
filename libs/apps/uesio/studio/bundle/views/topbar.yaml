@@ -5,12 +5,14 @@ definition:
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
+        uesio.styleTokens:
+          root:
+            - grid-cols-[58px_1fr_1fr_0fr]
+            - bg-slate-100
         uesio.styles:
           root:
             alignItems: center
             height: 60px
-            backgroundColor: "#F2F2F2"
-        templateColumns: 58px 1fr 1fr 0fr
         items:
           # Uesio Logo
           - uesio/io.griditem:

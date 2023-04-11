@@ -118,7 +118,7 @@ func GetRoutingMergeData(route *meta.Route, workspace *meta.Workspace, metadata 
 	// Prepare wire data for server merge data
 	wireData := map[string]meta.Group{}
 	if metadata != nil && metadata.Wire != nil {
-		for _, entity := range *metadata.Wire {
+		for _, entity := range metadata.Wire.GetItems() {
 			wire := entity.(*adapt.LoadOp)
 			wireData[wire.WireName] = wire.Collection
 		}

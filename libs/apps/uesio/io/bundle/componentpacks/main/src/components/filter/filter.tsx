@@ -5,6 +5,9 @@ import SelectFilter from "../../utilities/selectfilter/selectfilter"
 import WeekFilter from "../../utilities/weekfilter/weekfilter"
 import NumberFilter from "../../utilities/numberfilter/numberfilter"
 import CheckboxFilter from "../../utilities/checkboxfilter/checkboxfilter"
+import GroupFilter, {
+	GroupFilterProps,
+} from "../../utilities/groupfilter/groupfilter"
 import { LabelPosition } from "../field/field"
 
 type FilterDefinition = {
@@ -22,9 +25,11 @@ type CommonProps = {
 	fieldMetadata: collection.Field
 	wire: wire.Wire
 	condition: wire.ValueConditionState
+	isGroup: boolean
 } & definition.UtilityProps
 
 const isValueCondition = wire.isValueCondition
+const isGroupCondition = wire.isGroupCondition
 
 const getFilterContent = (
 	common: CommonProps,
@@ -80,17 +85,25 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 	const collection = wire.getCollection()
 	const existingCondition =
 		wire.getCondition(conditionId || path) || undefined
-
+	// Field metadata is not needed for group conditions
 	const fieldMetadata = collection.getField(
 		isValueCondition(existingCondition) ? existingCondition.field : fieldId
 	)
 
-	if (!fieldMetadata) return null
+	let condition = existingCondition
+	if (!condition && fieldMetadata) {
+		condition = getDefaultCondition(
+			path,
+			fieldMetadata
+		) as wire.ValueConditionState
+	}
+	const isGroup = isGroupCondition(condition)
+	const label =
+		definition.label || (isGroup && condition)
+			? `Toggle group: ${condition?.id}`
+			: fieldMetadata?.getLabel()
 
-	const condition = (existingCondition ||
-		getDefaultCondition(path, fieldMetadata)) as wire.ValueConditionState
-
-	const label = definition.label || fieldMetadata.getLabel()
+	if (!condition) return null
 
 	const common = {
 		path,
@@ -109,7 +122,11 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 			context={context}
 			variant={definition.wrapperVariant}
 		>
-			{getFilterContent(common, definition)}
+			{isGroup ? (
+				<GroupFilter {...(common as GroupFilterProps)} />
+			) : (
+				getFilterContent(common as CommonProps, definition)
+			)}
 		</FieldWrapper>
 	)
 }

@@ -1,10 +1,9 @@
 import { FC } from "react"
-import { definition, styles, context, collection, wire } from "@uesio/ui"
+import { definition, styles, context, wire } from "@uesio/ui"
 
 interface ToggleFieldProps extends definition.UtilityProps {
 	setValue: (value: boolean) => void
 	value: wire.FieldValue
-	fieldMetadata: collection.Field
 	mode?: context.FieldMode
 }
 

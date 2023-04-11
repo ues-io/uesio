@@ -15,9 +15,11 @@ variants:
   - uesio/io.selectfield:uesio/io.default
   - uesio/io.customselectfield:uesio/io.default
   - uesio/io.menu:uesio/io.default
+slots:
+  - name: list
 properties:
   - name: fieldId
-    type: TEXT
+    type: FIELD
     label: Field Id
   - name: label
     type: TEXT

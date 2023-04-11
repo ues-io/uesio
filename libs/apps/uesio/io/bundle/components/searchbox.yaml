@@ -24,3 +24,5 @@ sections:
       - placeholder
   - type: STYLES
   - type: DISPLAY
+variants:
+  - uesio/io.field:uesio/io.search

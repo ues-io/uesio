@@ -5,6 +5,9 @@ category: LAYOUT
 pack: main
 entrypoint: components/box/box
 discoverable: true
+slots:
+  - name: components
 sections:
+  - type: SIGNALS
   - type: STYLES
   - type: DISPLAY

@@ -8,10 +8,10 @@
 			"schematics": {},
 			"architect": {
 				"build": {
-					"builder": "@nrwl/workspace:run-commands",
+					"builder": "nx:run-commands",
 					"options": {
 						"commands": [
-							"./../../../../dist/clio/clio pack",
+							"uesio pack",
 							"npx tsc --noEmit --project ./tsconfig.lib.json"
 						],
 						"parallel": false,
@@ -19,21 +19,21 @@
 					}
 				},
 				"watch": {
-					"builder": "@nrwl/workspace:run-commands",
+					"builder": "nx:run-commands",
 					"options": {
-						"command": "./../../../../dist/clio/clio pack -w",
+						"command": "uesio pack -w",
 						"cwd": "libs/apps/uesio/cms"
 					}
 				},
 				"deploy": {
-					"builder": "@nrwl/workspace:run-commands",
+					"builder": "nx:run-commands",
 					"options": {
-						"command": "./../../../../dist/clio/clio deploy",
+						"command": "uesio deploy",
 						"cwd": "libs/apps/uesio/cms"
 					}
 				},
 				"test": {
-					"builder": "@nrwl/workspace:run-commands",
+					"builder": "nx:run-commands",
 					"options": {
 						"command": "echo TODO: set up test for apps-uesio-cms.",
 						"cwd": "libs/apps/uesio/cms"
@@ -41,7 +41,7 @@
 				}
 			},
 			"tags": [],
-			"implicitDependencies": ["clio","ui"]
+			"implicitDependencies": ["cli","ui"]
 		},
 		"apps-uesio-core": {
 			"root": "libs/apps/uesio/core",
@@ -50,11 +50,11 @@
 			"schematics": {},
 			"architect": {
 				"build": {
-					"builder": "@nrwl/workspace:run-commands",
+					"builder": "nx:run-commands",
 					"outputs": ["libs/apps/uesio/core/bundle/componentpacks/app/dist"],
 					"options": {
 						"commands": [
-							"./../../../../dist/clio/clio pack",
+							"uesio pack",
 							"npx tsc --noEmit --project ./tsconfig.lib.json"
 						],
 						"parallel": false,
@@ -62,9 +62,9 @@
 					}
 				},
 				"watch": {
-					"builder": "@nrwl/workspace:run-commands",
+					"builder": "nx:run-commands",
 					"options": {
-						"command": "./../../../../dist/clio/clio pack -w",
+						"command": "uesio pack -w",
 						"cwd": "libs/apps/uesio/core"
 					}
 				},
@@ -75,7 +75,7 @@
 					}
 				},
 				"test": {
-					"builder": "@nrwl/workspace:run-commands",
+					"builder": "nx:run-commands",
 					"options": {
 						"command": "echo TODO: set up test for apps-uesio-core.",
 						"cwd": "libs/apps/uesio/core"
@@ -83,7 +83,7 @@
 				}
 			},
 			"tags": [],
-			"implicitDependencies": ["clio","ui"]
+			"implicitDependencies": ["cli","ui"]
 		},
 		"apps-uesio-crm": {
 			"root": "libs/apps/uesio/crm",
@@ -92,10 +92,10 @@
 			"schematics": {},
 			"architect": {
 				"build": {
-					"builder": "@nrwl/workspace:run-commands",
+					"builder": "nx:run-commands",
 					"options": {
 						"commands": [
-							"./../../../../dist/clio/clio pack",
+							"uesio pack",
 							"npx tsc --noEmit --project ./tsconfig.lib.json"
 						],
 						"parallel": false,
@@ -103,21 +103,21 @@
 					}
 				},
 				"watch": {
-					"builder": "@nrwl/workspace:run-commands",
+					"builder": "nx:run-commands",
 					"options": {
-						"command": "./../../../../dist/clio/clio pack -w",
+						"command": "uesio pack -w",
 						"cwd": "libs/apps/uesio/crm"
 					}
 				},
 				"deploy": {
-					"builder": "@nrwl/workspace:run-commands",
+					"builder": "nx:run-commands",
 					"options": {
-						"command": "./../../../../dist/clio/clio deploy",
+						"command": "uesio deploy",
 						"cwd": "libs/apps/uesio/crm"
 					}
 				},
 				"test": {
-					"builder": "@nrwl/workspace:run-commands",
+					"builder": "nx:run-commands",
 					"options": {
 						"command": "echo TODO: set up test for apps-uesio-crm.",
 						"cwd": "libs/apps/uesio/crm"
@@ -125,7 +125,7 @@
 				}
 			},
 			"tags": [],
-			"implicitDependencies": ["clio","ui"]
+			"implicitDependencies": ["cli","ui"]
 		},
 		"apps-uesio-docs": {
 			"root": "libs/apps/uesio/docs",
@@ -134,10 +134,10 @@
 			"schematics": {},
 			"architect": {
 				"build": {
-					"builder": "@nrwl/workspace:run-commands",
+					"builder": "nx:run-commands",
 					"options": {
 						"commands": [
-							"./../../../../dist/clio/clio pack",
+							"uesio pack",
 							"npx tsc --noEmit --project ./tsconfig.lib.json"
 						],
 						"parallel": false,
@@ -145,15 +145,15 @@
 					}
 				},
 				"watch": {
-					"builder": "@nrwl/workspace:run-commands",
+					"builder": "nx:run-commands",
 					"options": {
-						"command": "./../../../../dist/clio/clio pack -w",
+						"command": "uesio pack -w",
 						"cwd": "libs/apps/uesio/docs"
 					}
 				}
 			},
 			"tags": [],
-			"implicitDependencies": ["clio","ui"]
+			"implicitDependencies": ["cli","ui"]
 		},
 		"apps-uesio-io": {
 			"root": "libs/apps/uesio/io",
@@ -162,11 +162,11 @@
 			"schematics": {},
 			"architect": {
 				"build": {
-					"builder": "@nrwl/workspace:run-commands",
+					"builder": "nx:run-commands",
 					"outputs": ["libs/apps/uesio/io/bundle/componentpacks/main/dist"],
 					"options": {
 						"commands": [
-							"./../../../../dist/clio/clio pack",
+							"uesio pack",
 							"npx tsc --noEmit --project ./tsconfig.lib.json"
 						],
 						"parallel": false,
@@ -174,9 +174,9 @@
 					}
 				},
 				"watch": {
-					"builder": "@nrwl/workspace:run-commands",
+					"builder": "nx:run-commands",
 					"options": {
-						"command": "./../../../../dist/clio/clio pack -w",
+						"command": "uesio pack -w",
 						"cwd": "libs/apps/uesio/io"
 					}
 				},
@@ -188,7 +188,7 @@
 				}
 			},
 			"tags": [],
-			"implicitDependencies": ["clio","ui"]
+			"implicitDependencies": ["cli","ui"]
 		},
 		"apps-uesio-builder": {
 			"root": "libs/apps/uesio/builder",
@@ -197,11 +197,11 @@
 			"schematics": {},
 			"architect": {
 				"build": {
-					"builder": "@nrwl/workspace:run-commands",
+					"builder": "nx:run-commands",
 					"outputs": ["libs/apps/uesio/builder/bundle/componentpacks/main/dist"],
 					"options": {
 						"commands": [
-							"./../../../../dist/clio/clio pack",
+							"uesio pack",
 							"npx tsc --noEmit --project ./tsconfig.lib.json"
 						],
 						"parallel": false,
@@ -209,9 +209,9 @@
 					}
 				},
 				"watch": {
-					"builder": "@nrwl/workspace:run-commands",
+					"builder": "nx:run-commands",
 					"options": {
-						"command": "./../../../../dist/clio/clio pack -w",
+						"command": "uesio pack -w",
 						"cwd": "libs/apps/uesio/builder"
 					}
 				},
@@ -223,7 +223,7 @@
 				}
 			},
 			"tags": [],
-			"implicitDependencies": ["clio","ui"]
+			"implicitDependencies": ["cli","ui"]
 		},
 		"apps-uesio-studio": {
 			"root": "libs/apps/uesio/studio",
@@ -232,11 +232,11 @@
 			"schematics": {},
 			"architect": {
 				"build": {
-					"builder": "@nrwl/workspace:run-commands",
+					"builder": "nx:run-commands",
 					"outputs": ["libs/apps/uesio/studio/bundle/componentpacks/main/dist"],
 					"options": {
 						"commands": [
-							"./../../../../dist/clio/clio pack",
+							"uesio pack",
 							"npx tsc --noEmit --project ./tsconfig.lib.json"
 						],
 						"parallel": false,
@@ -244,9 +244,9 @@
 					}
 				},
 				"watch": {
-					"builder": "@nrwl/workspace:run-commands",
+					"builder": "nx:run-commands",
 					"options": {
-						"command": "./../../../../dist/clio/clio pack -w",
+						"command": "uesio pack -w",
 						"cwd": "libs/apps/uesio/studio"
 					}
 				},
@@ -266,41 +266,45 @@
 				}
 			},
 			"tags": [],
-			"implicitDependencies": ["clio","ui"]
+			"implicitDependencies": ["cli","ui"]
 		},
-		"clio": {
+		"cli": {
 			"projectType": "application",
-			"root": "apps/clio",
-			"sourceRoot": "apps/clio",
+			"root": "apps/cli",
+			"sourceRoot": "apps/cli",
 			"architect": {
 				"build": {
-					"builder": "@nrwl/workspace:run-commands",
+					"builder": "nx:run-commands",
 					"outputs": ["dist/clio"],
 					"options": {
-						"commands": ["go build -o ../../dist/clio/clio"],
-						"cwd": "apps/clio"
+						"commands": [
+							"go build -o ../../dist/cli/uesio"
+						],
+						"cwd": "apps/cli"
 					}
 				},
 				"watch": {
-					"builder": "@nrwl/workspace:run-commands",
+					"builder": "nx:run-commands",
 					"outputs": ["dist/clio"],
 					"options": {
-						"commands": ["go build -o ../../dist/clio/clio"],
-						"cwd": "apps/clio"
+						"commands": [
+							"go build -o ../../dist/cli/uesio"
+						],
+						"cwd": "apps/cli"
 					}
 				},
 				"lint": {
-					"builder": "@nrwl/workspace:run-commands",
+					"builder": "nx:run-commands",
 					"options": {
 						"command": "output=$(gofmt -l ./pkg/**) && echo \"$output\" && test -z \"$output\"",
-						"cwd": "apps/clio"
+						"cwd": "apps/cli"
 					}
 				},
 				"test": {
-					"builder": "@nrwl/workspace:run-commands",
+					"builder": "nx:run-commands",
 					"options": {
 						"command": "go test -v ./...",
-						"cwd": "apps/clio"
+						"cwd": "apps/cli"
 					}
 				}
 			},
@@ -313,7 +317,7 @@
 			"sourceRoot": "apps/platform",
 			"architect": {
 				"build": {
-					"builder": "@nrwl/workspace:run-commands",
+					"builder": "nx:run-commands",
 					"outputs": ["dist/platform"],
 					"options": {
 						"commands": ["go build -o ../../dist/platform/uesio"],
@@ -321,42 +325,42 @@
 					}
 				},
 				"lint": {
-					"builder": "@nrwl/workspace:run-commands",
+					"builder": "nx:run-commands",
 					"options": {
 						"command": "output=$(gofmt -l ./pkg/**) && echo \"$output\" && test -z \"$output\"",
 						"cwd": "apps/platform"
 					}
 				},
 				"seed": {
-					"builder": "@nrwl/workspace:run-commands",
+					"builder": "nx:run-commands",
 					"options": {
 						"command": "../../dist/platform/uesio seed",
 						"cwd": "apps/platform"
 					}
 				},
 				"serve": {
-					"builder": "@nrwl/workspace:run-commands",
+					"builder": "nx:run-commands",
 					"options": {
 						"command": "../../dist/platform/uesio serve",
 						"cwd": "apps/platform"
 					}
 				},
 				"worker": {
-					"builder": "@nrwl/workspace:run-commands",
+					"builder": "nx:run-commands",
 					"options": {
 						"command": "../../dist/platform/uesio worker",
 						"cwd": "apps/platform"
 					}
 				},
 				"build-image": {
-					"builder": "@nrwl/workspace:run-commands",
+					"builder": "nx:run-commands",
 					"options": {
 						"command": "export GITSHA=$(git rev-parse --short HEAD) && docker build --tag uesio:$GITSHA --tag uesio:latest -f ./apps/platform/Dockerfile .",
 						"cwd": "."
 					}
 				},
 				"test": {
-					"builder": "@nrwl/workspace:run-commands",
+					"builder": "nx:run-commands",
 					"options": {
 						"command": "go test -v ./...",
 						"cwd": "apps/platform"
@@ -372,11 +376,11 @@
 			"schematics": {},
 			"architect": {
 				"build": {
-					"builder": "@nrwl/workspace:run-commands",
+					"builder": "nx:run-commands",
 					"outputs": ["dist/ui"],
 					"options": {
 						"commands": [
-							"./../../dist/clio/clio packui",
+							"uesio packui",
 							"npx tsc --noEmit --project ./tsconfig.lib.json",
 							"npx tsc --project ./tsconfig.exports.json"
 						],
@@ -385,7 +389,7 @@
 					}
 				},
 				"publish": {
-					"builder": "@nrwl/workspace:run-commands",
+					"builder": "nx:run-commands",
 					"outputs": ["dist/ui"],
 					"options": {
 						"commands": [
@@ -399,10 +403,10 @@
 					}
 				},
 				"watch": {
-					"builder": "@nrwl/workspace:run-commands",
+					"builder": "nx:run-commands",
 					"outputs": ["dist/ui"],
 					"options": {
-						"command": "./../../dist/clio/clio packui --watch",
+						"command": "uesio packui --watch",
 						"cwd": "libs/ui"
 					}
 				},
@@ -422,7 +426,7 @@
 				}
 			},
 			"tags": [],
-			"implicitDependencies": ["clio"]
+			"implicitDependencies": ["cli"]
 		},
 		"vendor": {
 			"root": "libs/vendor",
@@ -431,7 +435,7 @@
 			"schematics": {},
 			"architect": {
 				"build": {
-					"builder": "@nrwl/workspace:run-commands",
+					"builder": "nx:run-commands",
 					"outputs": ["dist/vendor"],
 					"options": {
 						"commands": [
@@ -450,7 +454,7 @@
 						"parallel": false
 					},
 					"watch": {
-						"builder": "@nrwl/workspace:run-commands",
+						"builder": "nx:run-commands",
 						"options": {
 							"command": "echo TODO: watch libs/vendor",
 							"cwd": "libs/vendor"

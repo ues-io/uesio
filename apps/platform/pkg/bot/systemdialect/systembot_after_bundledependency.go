@@ -22,6 +22,8 @@ func runBundleDependencyAfterSaveBot(request *adapt.SaveOp, connection adapt.Con
 
 	LicenseTemplateDeps := adapt.Collection{}
 	visited := map[string]bool{}
+	corruptedLicenses := adapt.Collection{}
+
 	err := request.LoopInserts(func(change *adapt.ChangeItem) error {
 
 		applicensed, app, err := parseKey(change.UniqueKey)
@@ -42,6 +44,7 @@ func runBundleDependencyAfterSaveBot(request *adapt.SaveOp, connection adapt.Con
 			&existingLicense,
 			&datasource.PlatformLoadOptions{
 				Connection: connection,
+
 				Conditions: []adapt.LoadRequestCondition{
 					{
 						Field: adapt.UNIQUE_KEY_FIELD,
@@ -53,7 +56,14 @@ func runBundleDependencyAfterSaveBot(request *adapt.SaveOp, connection adapt.Con
 		)
 
 		if existingLicense.UniqueKey != "" {
-			return nil
+			// If the AppLicensed is nil, then this license is corrupted and needs to be recreated
+			if existingLicense.AppLicensed == nil {
+				corruptedLicenses = append(corruptedLicenses, &adapt.Item{
+					"uesio/core.id": existingLicense.ID,
+				})
+			} else {
+				return nil
+			}
 		}
 
 		var lt meta.LicenseTemplate
@@ -92,6 +102,21 @@ func runBundleDependencyAfterSaveBot(request *adapt.SaveOp, connection adapt.Con
 		return err
 	}
 
+	// Deletes first
+	if len(corruptedLicenses) > 0 {
+		err = datasource.SaveWithOptions([]datasource.SaveRequest{
+			{
+				Collection: "uesio/studio.license",
+				Wire:       "LicensedWire",
+				Deletes:    &corruptedLicenses,
+				Options: &adapt.SaveOptions{
+					Upsert: true,
+				},
+			},
+		}, session, datasource.GetConnectionSaveOptions(connection))
+	}
+
+	// Inserts next
 	err = datasource.SaveWithOptions([]datasource.SaveRequest{
 		{
 			Collection: "uesio/studio.license",

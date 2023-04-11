@@ -32,20 +32,19 @@ definition:
               area: main
               components:
                 - uesio/io.grid:
-                    templateColumns:
-                      sm: 1fr
-                      md: 350px 1fr
-                      lg: 450px 1fr
-                    columnGap: 40px
-                    uesio.styles:
+                    uesio.styleTokens:
                       root:
-                        padding: 80px
+                        - grid-cols-1
+                        - md:grid-cols-[350px_1fr]
+                        - lg:grid-cols-[450px_1fr]
+                        - gap-x-10
+                        - p-20
                     items:
                       - uesio/io.griditem:
                           components:
                             - uesio/io.text:
                                 uesio.variant: uesio/web.callout
-                                text: Stay in the loop ues.io
+                                text: Stay in the loop
                             - uesio/io.text:
                                 uesio.variant: uesio/web.calloutsub
                                 text: Join our private beta launch Q3 2023 and become one of the first to build Rome in a day.
