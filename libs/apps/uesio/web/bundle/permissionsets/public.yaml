@@ -10,12 +10,6 @@ views:
   uesio/web.terms: true
   uesio/web.topbar: true
 collections:
-  uesio/crm.lead:
-    read: true
-    create: true
-    edit: true
-    delete: true
-    fields: {}
 routes:
   uesio/web.earlyaccess: true
   uesio/web.earlyaccessthanks: true

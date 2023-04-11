@@ -3,4 +3,3 @@ path: privacy
 view: uesio/web.privacy
 theme: uesio/core.default
 title: $Site{title} - Privacy Policy
-tags: []

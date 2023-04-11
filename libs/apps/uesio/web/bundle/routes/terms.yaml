@@ -3,4 +3,3 @@ path: terms
 view: uesio/web.terms
 theme: uesio/core.default
 title: $Site{title} - Terms of Service
-tags: []
