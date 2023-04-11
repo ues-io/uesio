@@ -308,6 +308,23 @@ type SetterFunction = (a: wire.FieldValue, b: SelectOptionMetadata) => void
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const NoOp = function () {}
 
+const addToSettersMap = (
+	settersMap: Map<string, SetterFunction | SetterFunction[]>,
+	key: string,
+	setter: SetterFunction
+) => {
+	const existingSetter = settersMap.get(key)
+	if (existingSetter) {
+		if (Array.isArray(existingSetter)) {
+			existingSetter.push(setter)
+		} else {
+			settersMap.set(key, [existingSetter, setter])
+		}
+	} else {
+		settersMap.set(key, setter)
+	}
+}
+
 const parseProperties = (
 	properties: ComponentProperty[],
 	context: context.Context,
@@ -319,7 +336,7 @@ const parseProperties = (
 	properties?.forEach((property) => {
 		const { type } = property
 		const name = type === "COMPONENT_ID" ? "uesio.id" : property.name
-		let setter: SetterFunction | SetterFunction[] | undefined
+		let setter: SetterFunction
 		let value: wire.FieldValue
 		let sourceField: string
 		let sourceWire: string
@@ -340,14 +357,12 @@ const parseProperties = (
 			}
 			setter = NoOp
 		} else if (type === "FIELD_METADATA") {
-			sourceField = get(
-				context,
-				path.addLocal(property.fieldProperty)
-			) as string
-			sourceWire = get(
-				context,
-				path.addLocal(property.wireProperty)
-			) as string
+			sourceField =
+				(initialValue[property.fieldProperty] as string) ||
+				(get(context, path.addLocal(property.fieldProperty)) as string)
+			sourceWire = (initialValue[property.wireProperty] ||
+				get(context, path.addLocal(property.wireProperty)) ||
+				getClosestWireInContext(context, path)) as string
 			if (sourceField && sourceWire) {
 				// Get the initial value of the corresponding field metadata property
 				value = getFieldMetadata(context, sourceWire, sourceField)
@@ -367,19 +382,7 @@ const parseProperties = (
 						)
 					}
 				}
-				const existingSetters = setters.get(property.fieldProperty)
-				if (existingSetters) {
-					if (!Array.isArray(existingSetters)) {
-						setters.set(property.fieldProperty, [
-							existingSetters,
-							metadataSetter,
-						])
-					} else {
-						existingSetters.push(metadataSetter)
-					}
-				} else {
-					setters.set(property.fieldProperty, metadataSetter)
-				}
+				addToSettersMap(setters, property.fieldProperty, metadataSetter)
 			}
 			setter = NoOp
 		} else if (type === "MAP") {
@@ -408,18 +411,11 @@ const parseProperties = (
 					{}
 				)
 			}
-		} else if (type === "FIELD") {
-			setter = [
-				(value: string) => {
-					set(context, path.addLocal(name), value)
-				},
-			]
-			value = get(context, path.addLocal(name)) as string
 		} else {
 			setter = (value: string) => set(context, path.addLocal(name), value)
 			value = get(context, path.addLocal(name)) as string
 		}
-		setters.set(name, setter)
+		addToSettersMap(setters, name, setter)
 		initialValue[name] = value
 	})
 

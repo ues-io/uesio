@@ -27,8 +27,11 @@ properties:
     label: Field Id
     wireField: wire
   - name: fieldDisplayType
+    label: Display Type
     type: FIELD_METADATA
-    field: fieldId
+    display: false
+    fieldProperty: fieldId
+    wireProperty: wire
     metadataProperty: type
   - name: label
     type: TEXT
