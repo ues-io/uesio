@@ -1,18 +1,21 @@
 name: Uesio CLI Release
 
 on:
-  workflow_dispatch:
-    inputs:
-      releaseName:
-        description: "Release name"
-        required: true
-        default: "v0-0-1"
-        type: string
-      releaseNotes:
-        description: "Release notes"
-        required: true
-        default: "# Bug fixes\n - Fix One\n\n# Features\n - Feature one"
-        type: string
+  push:
+    branches:
+      - "cli-releases"
+  # workflow_dispatch:
+  #   inputs:
+  #     releaseTag:
+  #       description: "Release tag"
+  #       required: true
+  #       default: "v0-0-1"
+  #       type: string
+  #     releaseNotes:
+  #       description: "Release notes"
+  #       required: true
+  #       default: "# Bug fixes\n - Fix One\n\n# Features\n - Feature one"
+  #       type: string
 
 jobs:
   validate:
@@ -22,11 +25,12 @@ jobs:
       - name: Validate workflow inputs
         shell: bash
         env:
-          releaseName: ${{ inputs.releaseName }}
+          releaseTag: "v0-0-2"
+          # releaseTag: ${{ inputs.releaseTag }}
         run: |
           pattern="^v[0-9]{1,3}-[0-9]{1,3}-[0-9]{1,3}$"
-          if [[ ! $releaseName =~ $pattern ]]; then
-            echo "Invalid release name: $releaseName"
+          if [[ ! $releaseTag =~ $pattern ]]; then
+            echo "Invalid release tag: $releaseTag"
             exit 1
           fi
   publish:
@@ -35,8 +39,10 @@ jobs:
     needs:
       - validate
     env:
-      releaseName: ${{ inputs.releaseName }}
-      releaseNotes: ${{ inputs.releaseNotes }}
+      releaseTag: "v0-0-2"
+      releaseNotes: "These are the notes"
+      # releaseTag: ${{ inputs.releaseTag }}
+      # releaseNotes: ${{ inputs.releaseNotes }}
     strategy:
       matrix:
         include:
@@ -76,16 +82,19 @@ jobs:
           cache-dependency-path: apps/*/go.sum
       - name: Build CLI
         shell: bash
+        env:
+          outputPath: "dist/${{ matrix.asset_name }}/${{ matrix.artifact_name }}"
         run: |
           cd apps/cli
-          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o dist/${{ matrix.asset_name }}/${{ matrix.artifact_name }}
+          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o $outputPath
+          if [[ "${{ matrix.goos }}" != "windows" ]]; then chmod +x $outputPath; fi
           cd ../..
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
         with:
           file: apps/cli/dist/${{ matrix.asset_name }}/${{ matrix.artifact_name }}
           asset_name: ${{ matrix.asset_name }}
-          tag: ${{ env.releaseName }}
+          tag: ${{ env.releaseTag }}
           overwrite: true
-          release_name: ${{ env.releaseName }}
+          release_name: "Uesio CLI: ${{ env.releaseTag }}"
           body: ${{ env.releaseNotes }}
