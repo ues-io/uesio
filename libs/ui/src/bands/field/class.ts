@@ -25,19 +25,17 @@ class Field {
 
 		const mergedOptions = selectMetadata.options.map(
 			({ label, languageLabel, value }) => ({
-				label: String(
-					context.merge(`$Label{${languageLabel}}`) || label
-				),
+				label: languageLabel
+					? context.getLabel(languageLabel) || label
+					: label,
 				value,
 			})
 		)
 
-		const mergedBlankLabel = String(
-			context.merge(
-				`$Label{${selectMetadata.blank_option_language_label}}`
+		const mergedBlankLabel =
+			context.getLabel(
+				selectMetadata.blank_option_language_label || ""
 			) || selectMetadata.blank_option_label
-		)
-
 		return addBlankSelectOption(mergedOptions, mergedBlankLabel)
 	}
 	getAccept = () => {
