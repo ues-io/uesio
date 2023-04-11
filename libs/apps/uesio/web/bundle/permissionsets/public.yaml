@@ -9,6 +9,13 @@ views:
   uesio/web.privacy: true
   uesio/web.terms: true
   uesio/web.topbar: true
+collections:
+  uesio/crm.lead:
+    read: true
+    create: true
+    edit: true
+    delete: true
+    fields: {}
 routes:
   uesio/web.earlyaccess: true
   uesio/web.earlyaccessthanks: true
@@ -19,8 +26,9 @@ routes:
 files:
   uesio/web.logo: true
   uesio/web.logowhite: true
-collections:
-  uesio/crm.lead: true
+allowallcollections: false
 allowallviews: false
 allowallroutes: false
 allowallfiles: false
+modifyallrecords: false
+viewallrecords: false
