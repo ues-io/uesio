@@ -208,12 +208,15 @@ function getClassNameLabel(
 	return `${componentLabel}-${className}`
 }
 
+const mergeClasses = twMerge
+
 export type { ResponsiveDefinition, ThemeState }
 
 export {
 	defaultTheme,
 	getResponsiveStyles,
 	cx,
+	mergeClasses,
 	css,
 	useUtilityStyles,
 	useStyles,
