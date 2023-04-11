@@ -319,9 +319,10 @@ const parseProperties = (
 	properties?.forEach((property) => {
 		const { type } = property
 		const name = type === "COMPONENT_ID" ? "uesio.id" : property.name
-		let setter: SetterFunction
+		let setter: SetterFunction | SetterFunction[] | undefined
 		let value: wire.FieldValue
-		let fieldId: string
+		let sourceField: string
+		let sourceWire: string
 		if (type === "KEY") {
 			const [key] = path.pop()
 			if (key) {
@@ -339,12 +340,46 @@ const parseProperties = (
 			}
 			setter = NoOp
 		} else if (type === "FIELD_METADATA") {
-			fieldId = get(context, path.addLocal(property.field)) as string
-			if (fieldId) {
-				value = get(
-					context,
-					path.addLocal(property.field).addLocal(fieldId)
-				) as string
+			sourceField = get(
+				context,
+				path.addLocal(property.fieldProperty)
+			) as string
+			sourceWire = get(
+				context,
+				path.addLocal(property.wireProperty)
+			) as string
+			if (sourceField && sourceWire) {
+				// Get the initial value of the corresponding field metadata property
+				value = getFieldMetadata(context, sourceWire, sourceField)
+					?.source[property.metadataProperty] as string
+				// Add a setter to the source field so that whenever it changes, we also update this property
+				const metadataSetter = (newFieldId: string) => {
+					const newFieldMetadataProperty = getFieldMetadata(
+						context,
+						sourceWire,
+						newFieldId
+					)?.source[property.metadataProperty] as string
+					if (newFieldMetadataProperty !== undefined) {
+						set(
+							context,
+							path.addLocal(name),
+							newFieldMetadataProperty
+						)
+					}
+				}
+				const existingSetters = setters.get(property.fieldProperty)
+				if (existingSetters) {
+					if (!Array.isArray(existingSetters)) {
+						setters.set(property.fieldProperty, [
+							existingSetters,
+							metadataSetter,
+						])
+					} else {
+						existingSetters.push(metadataSetter)
+					}
+				} else {
+					setters.set(property.fieldProperty, metadataSetter)
+				}
 			}
 			setter = NoOp
 		} else if (type === "MAP") {
@@ -374,30 +409,12 @@ const parseProperties = (
 				)
 			}
 		} else if (type === "FIELD") {
-			setter = (
-				value: string,
-				additionalMetadata: SelectOptionMetadata
-			) => {
-				set(context, path.addLocal(name), value)
-				// Also populate the display type using selected metadata
-				set(
-					context,
-					path.addLocal(getDisplayTypeFieldName(name)),
-					additionalMetadata?.displayType
-				)
-			}
+			setter = [
+				(value: string) => {
+					set(context, path.addLocal(name), value)
+				},
+			]
 			value = get(context, path.addLocal(name)) as string
-			const wireId = property.wireField
-				? (get(context, path.addLocal(property.wireField)) as string)
-				: property.wireName
-			if (wireId) {
-				// Also populate the initial value of the display type field
-				const fieldMetadata = getFieldMetadata(context, wireId, name)
-				if (fieldMetadata) {
-					initialValue[getDisplayTypeFieldName(name)] =
-						fieldMetadata.getType()
-				}
-			}
 		} else {
 			setter = (value: string) => set(context, path.addLocal(name), value)
 			value = get(context, path.addLocal(name)) as string
@@ -450,10 +467,6 @@ function getClosestWireInContext(context: context.Context, path: FullPath) {
 		}
 	}
 	return wireId
-}
-
-function getDisplayTypeFieldName(name: string): string {
-	return name + "__displayType"
 }
 
 function getPropertyTabForSection(section: PropertiesPanelSection): Tab {
@@ -578,7 +591,12 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 					}
 				)}
 				onUpdate={(field: string, value: string) => {
-					setters.get(field)(value)
+					const setter = setters.get(field)
+					if (setter) {
+						Array.isArray(setter)
+							? setters.forEach((s) => s(value))
+							: setter(value)
+					}
 				}}
 				initialValue={initialValue}
 			/>
