@@ -11,6 +11,8 @@ jobs:
   publish:
     name: Build asset for ${{ matrix.goos }} - ${{ matrix.goarch }}
     runs-on: ${{ matrix.os }}
+    env:
+      releaseName: ${${{ github.ref }}//release-cli-/}
     strategy:
       matrix:
         include:
@@ -40,6 +42,9 @@ jobs:
             artifact_name: uesio
             asset_name: uesio-macos-arm64
     steps:
+      - name: Test
+        shell: bash
+        run: echo "release name is $releaseName"
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
@@ -56,11 +61,10 @@ jobs:
           cd ../..
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
-        env:
-          RELEASE_NAME: ${{ github.ref }}
         with:
           file: apps/cli/dist/${{ matrix.asset_name }}/${{ matrix.artifact_name }}
           asset_name: ${{ matrix.asset_name }}
-          tag: ${{ github.ref }}
+          tag: ${{ github.ref_name }}
           overwrite: true
-          release_name: ${RELEASE_NAME//release-cli-/}
+          release_name: $releaseName
+          body: "Uesio CLI Release $releaseName"
