@@ -19,7 +19,6 @@ definition:
         account:
           label: Company
           type: TEXT
-
       init:
         create: true
   # Components are how we describe the layout of our view
@@ -129,6 +128,5 @@ definition:
                                                         uesio/web.role: ${role}
                                                     - signal: route/NAVIGATE
                                                       path: "earlyaccessthanks"
-
     - uesio/core.view:
         view: uesio/web.footer
