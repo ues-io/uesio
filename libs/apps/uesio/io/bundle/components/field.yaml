@@ -18,9 +18,14 @@ variants:
 slots:
   - name: list
 properties:
+  - name: wire
+    type: WIRE
+    label: Wire
+    readonly: true
   - name: fieldId
     type: FIELD
     label: Field Id
+    wireField: wire
   - name: fieldDisplayType
     type: FIELD_METADATA
     field: fieldId

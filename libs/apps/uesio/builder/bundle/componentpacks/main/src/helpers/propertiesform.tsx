@@ -22,7 +22,7 @@ import {
 	getSectionLabel,
 	PropertiesPanelSection,
 } from "../api/propertysection"
-import { setSelectedPath } from "../api/stateapi"
+import { getComponentDef, setSelectedPath } from "../api/stateapi"
 import {
 	DisplayConditionProperties,
 	getDisplayConditionLabel,
@@ -330,6 +330,14 @@ const parseProperties = (
 				value = get(context, path) as string
 			}
 			setter = (value: string) => changeKey(context, path, value)
+		} else if (type === "WIRE" && property.readonly) {
+			// Special behavior --- if the wire property is readonly and there is no value,
+			// fetch the value from context
+			value = get(context, path.addLocal(name)) as string
+			if (!value) {
+				value = getClosestWireInContext(context, path)
+			}
+			setter = NoOp
 		} else if (type === "FIELD_METADATA") {
 			fieldId = get(context, path.addLocal(property.field)) as string
 			if (fieldId) {
@@ -402,6 +410,46 @@ const parseProperties = (
 		setters,
 		initialValue: initialValue as wire.PlainWireRecord,
 	}
+}
+
+// Finds the closest parent node that provides wire or record context,
+// and extracts the associated wire property from that node
+function getClosestWireInContext(context: context.Context, path: FullPath) {
+	let wireId
+	let [lastItem, newPath] = path.pop()
+	while (lastItem && !wireId) {
+		// If the current item looks like a metadata name, try to fetch it as a component type
+		if (lastItem && lastItem.includes("/")) {
+			const componentDef = getComponentDef(context, lastItem)
+			if (componentDef?.slots?.length) {
+				let match
+				outerLoop: for (const slot of componentDef.slots) {
+					if (!slot?.providesContexts) continue
+					for (const contextProvision of slot.providesContexts) {
+						if (
+							contextProvision?.type === "WIRE" ||
+							contextProvision?.type === "RECORD"
+						) {
+							match = contextProvision
+							break outerLoop
+						}
+					}
+				}
+				if (match && match.wireProperty) {
+					wireId = get(
+						context,
+						newPath.addLocal(lastItem).addLocal(match.wireProperty)
+					) as string
+				}
+			}
+		}
+		if (newPath) {
+			[lastItem, newPath] = newPath.pop()
+		} else {
+			break
+		}
+	}
+	return wireId
 }
 
 function getDisplayTypeFieldName(name: string): string {
