@@ -4,8 +4,6 @@ on:
   push:
     tags:
       - "release-cli-v[0-9]{1,2}-[0-9]{1,3}-[0-9]{1,3}"
-    branches-ignore:
-      - "*"
 
 jobs:
   publish:
