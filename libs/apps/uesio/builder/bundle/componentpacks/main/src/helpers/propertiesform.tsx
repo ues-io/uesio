@@ -456,7 +456,7 @@ function getClosestWireInContext(context: context.Context, path: FullPath) {
 			}
 		}
 		if (newPath) {
-			[lastItem, newPath] = newPath.pop()
+			;[lastItem, newPath] = newPath.pop()
 		} else {
 			break
 		}
