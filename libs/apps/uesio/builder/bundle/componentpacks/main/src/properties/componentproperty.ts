@@ -77,6 +77,7 @@ type ConditionProperty = {
 type WireProperty = {
 	type: "WIRE"
 	filter?: (def: wire.RegularWireDefinition) => boolean
+	defaultToContext?: boolean
 } & BaseProperty
 
 type WiresProperty = {
