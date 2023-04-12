@@ -3,7 +3,6 @@ package adapt
 import (
 	"encoding/json"
 	"errors"
-
 	"github.com/francoispqt/gojay"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"gopkg.in/yaml.v3"
@@ -183,8 +182,25 @@ func GetFieldsMap(fields []LoadRequestField, collectionMetadata *CollectionMetad
 			return nil, nil, nil, nil, err
 		}
 
+		// We need to ensure that all fields referenced in the formula field are also queried,
+		// otherwise our formula populations might fail.
 		if fieldMetadata.IsFormula {
 			formulaFields[fieldMetadata.GetFullName()] = fieldMetadata
+			expression := fieldMetadata.FormulaMetadata.Expression
+			if expression == "" {
+				continue
+			}
+			dependentFields, err := ExtractDependentFieldsFromExpression(expression, collectionMetadata)
+			if err != nil {
+				return nil, nil, nil, nil, err
+			}
+			for _, dependentFieldID := range dependentFields {
+				dependentFieldMetadata, err := collectionMetadata.GetField(dependentFieldID)
+				if err != nil {
+					return nil, nil, nil, nil, errors.New("Unknown field referenced in formula: " + dependentFieldID)
+				}
+				fieldIDMap.AddField(dependentFieldMetadata)
+			}
 			continue
 		}
 

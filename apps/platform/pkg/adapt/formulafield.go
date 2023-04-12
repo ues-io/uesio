@@ -3,6 +3,7 @@ package adapt
 import (
 	"context"
 	"fmt"
+	"github.com/thecloudmasters/uesio/pkg/goutils"
 	"unicode"
 
 	"github.com/PaesslerAG/gval"
@@ -45,6 +46,56 @@ func (re *RuntimeEvaluator) SelectGVal(ctx context.Context, k string) (interface
 	return re.item.GetField(k)
 }
 
+type CompileTimeEvaluator struct {
+	collectionMetadata *CollectionMetadata
+	referencedFieldIds map[string]bool
+}
+
+func NewCompileTimeEvaluator(collectionMetadata *CollectionMetadata) *CompileTimeEvaluator {
+	return &CompileTimeEvaluator{
+		collectionMetadata,
+		map[string]bool{},
+	}
+}
+
+func (re *CompileTimeEvaluator) SelectGVal(ctx context.Context, fieldId string) (interface{}, error) {
+	re.referencedFieldIds[fieldId] = true
+	// Return a dummy value of the correct type for the metadata type
+	//fieldMetadata, err := re.collectionMetadata.GetField(fieldId)
+	//if err != nil {
+	//	return nil, errors.New("Unknown field referenced in formula: " + fieldId)
+	//}
+	//return getDummyValueForFieldType(fieldMetadata.Type), nil
+	return "", nil
+}
+
+func getDummyValueForFieldType(metadataType string) interface{} {
+	switch metadataType {
+	case "NUMBER":
+		return 1
+	case "CHECKBOX":
+		return true
+	}
+	//TODO add others as needed
+	return "a"
+}
+
+func ExtractDependentFieldsFromExpression(expression string, collectionMetadata *CollectionMetadata) ([]string, error) {
+
+	// Parse the expression using an evaluator which merely grabs all referenced fields and adds them to a map
+	evaluator := NewCompileTimeEvaluator(collectionMetadata)
+
+	exec, err := UesioLanguage.NewEvaluable(expression)
+	if err != nil {
+		return nil, err
+	}
+
+	exec(context.Background(), evaluator)
+
+	return goutils.MapKeys(evaluator.referencedFieldIds), nil
+
+}
+
 func populateFormulaField(field *FieldMetadata, exec gval.Evaluable) evalFunc {
 	return func(item meta.Item) error {
 
@@ -78,7 +129,6 @@ func GetFormulaFunction(fields map[string]*FieldMetadata) evalFunc {
 			if expression == "" {
 				continue
 			}
-
 			exec, err := UesioLanguage.NewEvaluable(expression)
 			if err != nil {
 				continue
