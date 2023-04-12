@@ -1,0 +1,8 @@
+language: de
+labels:
+  uesio/io.cancel: stornieren
+  uesio/io.delete: löschen
+  uesio/io.edit: bearbeiten
+  uesio/io.preview: vorschau
+  uesio/io.save: speichern
+  uesio/io.copy: kopieren
