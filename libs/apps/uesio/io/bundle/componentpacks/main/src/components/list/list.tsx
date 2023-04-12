@@ -1,4 +1,4 @@
-import { api, component, signal, definition, context } from "@uesio/ui"
+import { api, component, signal, definition, context, wire } from "@uesio/ui"
 
 import { setEditMode, setReadMode, toggleMode } from "../../shared/mode"
 
@@ -7,6 +7,7 @@ type ListDefinition = {
 	wire?: string
 	mode?: context.FieldMode
 	components?: definition.DefinitionList
+	recordDisplay?: component.DisplayCondition[]
 }
 
 const signals: Record<string, signal.ComponentSignalDescriptor> = {
@@ -24,21 +25,34 @@ const List: definition.UC<ListDefinition> = (props) => {
 
 	if (!wire || !mode) return null
 
+	const itemContexts = component.useContextFilter<wire.WireRecord>(
+		wire.getData(),
+		definition.recordDisplay,
+		(record, context) => {
+			if (record && wire) {
+				context = context.addRecordFrame({
+					wire: wire.getId(),
+					record: record.getId(),
+					view: wire.getViewId(),
+				})
+			}
+			if (mode) {
+				context = context.addFieldModeFrame(mode)
+			}
+			return context
+		},
+		context
+	)
+
 	return (
 		<>
-			{wire.getData().map((record, i) => (
+			{itemContexts.map((recordContext, i) => (
 				<component.Slot
-					key={record.getId() || i}
+					key={recordContext.item.getId() || i}
 					definition={definition}
 					listName="components"
 					path={path}
-					context={context
-						.addRecordFrame({
-							wire: wire.getId(),
-							record: record.getId(),
-							view: wire.getViewId(),
-						})
-						.addFieldModeFrame(mode)}
+					context={recordContext.context}
 				/>
 			))}
 		</>
