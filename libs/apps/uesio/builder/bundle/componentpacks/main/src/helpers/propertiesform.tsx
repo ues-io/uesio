@@ -588,7 +588,7 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 					const setter = setters.get(field)
 					if (setter) {
 						Array.isArray(setter)
-							? setters.forEach((s) => s(value))
+							? setter.forEach((s) => s(value))
 							: setter(value)
 					}
 				}}
