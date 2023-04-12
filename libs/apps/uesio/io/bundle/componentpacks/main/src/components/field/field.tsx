@@ -20,6 +20,8 @@ import { ReferenceGroupFieldOptions } from "../../utilities/field/referencegroup
 import { UserFieldOptions } from "../../utilities/field/user"
 
 type FieldDefinition = {
+	// Wire will default to the context wire, but can optionally be overridden
+	wire?: string
 	fieldId: string
 	labelPosition?: LabelPosition
 	label?: string
@@ -69,6 +71,7 @@ const fileTextSignals: Record<string, signal.ComponentSignalDescriptor> = {
 const Field: definition.UC<FieldDefinition> = (props) => {
 	const { context, definition, path } = props
 	const {
+		wire: wireId,
 		fieldId,
 		placeholder,
 		displayAs,
@@ -83,9 +86,13 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 
 	const componentId = api.component.getComponentIdFromProps(props)
 
-	const record = context.getRecord()
-	const wire = context.getWire()
-	if (!wire || !record) return null
+	const wire = context.getWire(wireId)
+
+	if (!wire) return null
+
+	const record = context.getRecord(wire.getId())
+
+	if (!record) return null
 
 	const errors = record?.getErrors(fieldId)
 	const collection = wire.getCollection()
