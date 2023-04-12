@@ -1,7 +1,9 @@
 import { getAppBasePath } from "./paths"
 
+let atomic = 0
+
 export function getUniqueAppName() {
-	return `e2e_${Math.round(Math.random() * 1000)}_${new Date().getTime()}`
+	return `e2e${Math.round(Math.random() * 1000)}${atomic++}`
 }
 
 export function deleteApp(appName: string) {

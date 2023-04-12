@@ -2,12 +2,10 @@ name: nav
 label: Navigation
 extends: uesio/io.default
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      color: "$Theme{color.primary}"
-      fontWeight: 500
-      padding: 10px
-      textTransform: uppercase
-      "&:focus":
-        color: $Theme{color.primary}
+      - text-primary
+      - font-medium
+      - p-4
+      - uppercase
 public: true

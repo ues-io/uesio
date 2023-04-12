@@ -96,9 +96,6 @@ definition:
                                     panel: newView
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
-                    uesio.styles:
-                      root:
-                        padding: 40px
                     components:
                       - uesio/io.searchbox:
                           wire: allviews
@@ -136,9 +133,6 @@ definition:
                           uesio.variant: uesio/io.section
                           title: Installed Views
                       - uesio/io.table:
-                          uesio.styles:
-                            root:
-                              padding: 40px
                           wire: allviews
                           recordDisplay:
                             - field: uesio/studio.namespace

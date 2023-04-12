@@ -19,7 +19,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/templating"
 	"github.com/thecloudmasters/uesio/pkg/translate"
 
-	yptr "github.com/vmware-labs/yaml-jsonpointer"
+	yptr "github.com/zachelrath/yaml-jsonpointer"
 )
 
 var DEFAULT_BUILDER_PACK_NAMESPACE = "uesio/builder"

@@ -33,7 +33,7 @@ require (
 	github.com/spf13/cobra v1.5.0
 	github.com/stretchr/testify v1.8.2
 	github.com/teris-io/shortid v0.0.0-20220617161101-71ec9f2aa569
-	github.com/vmware-labs/yaml-jsonpointer v0.1.1
+	github.com/zachelrath/yaml-jsonpointer v0.2.0
 	golang.org/x/text v0.3.7
 	gopkg.in/yaml.v3 v3.0.1
 )

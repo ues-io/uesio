@@ -88,9 +88,6 @@ definition:
                                 uesio.variant: uesio/io.section
                                 components:
                                   - uesio/io.grid:
-                                      uesio.styleTokens:
-                                        root:
-                                          - p-10
                                       uesio.variant: uesio/io.four_columns
                                       items:
                                         - uesio/builder.metadatafield:
@@ -173,7 +170,6 @@ definition:
                                   - uesio/io.deck:
                                       uesio.id: installedbundleslist
                                       wire: installedapps
-                                      uesio.variant: uesio/io.section
                                       components:
                                         - uesio/io.tile:
                                             uesio.variant: uesio/io.item

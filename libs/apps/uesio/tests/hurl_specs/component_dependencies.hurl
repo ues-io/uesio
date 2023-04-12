@@ -24,6 +24,9 @@ jsonpath "$.dependencies.componentpack.entities['uesio/io.main'].name" == "main"
 jsonpath "$.dependencies.componentpack.entities['uesio/io.chart'].name" == "chart"
 jsonpath "$.dependencies.viewdef.entities['uesio/tests.dependencies_grid_and_tabs'].definition.wires.animals.collection" == "uesio/tests.animal"
 jsonpath "$.dependencies.componentvariant.entities['uesio/io.tabs:uesio/io.default'].component" == "uesio/io.tabs"
+# test loading of component variant dependencies
+jsonpath "$.dependencies.componentvariant.entities['uesio/io.tablabels:uesio/io.default'].component" == "uesio/io.tablabels"
+jsonpath "$.dependencies.componentvariant.entities['uesio/io.scrollpanel:uesio/io.default'].component" == "uesio/io.scrollpanel"
 
 # Fetch component pack dependencies - via workspace router - for a Group with nested chart
 GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/dependencies_group

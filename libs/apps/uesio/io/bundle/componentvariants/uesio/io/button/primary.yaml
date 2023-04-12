@@ -4,8 +4,8 @@ extends: uesio/io.secondary
 definition:
   uesio.styleTokens:
     root:
-      - bg-red-500
-      - border-red-700
+      - bg-primary
+      - border-orange-700
     label:
       - text-slate-50
 public: true

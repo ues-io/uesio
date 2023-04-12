@@ -1,3 +1,5 @@
 name: earlyaccessthanks
 path: earlyaccessthanks
 view: uesio/web.earlyaccessthanks
+theme: uesio/core.default
+title: ""

@@ -1,6 +1,6 @@
 name: field
-label: Field
 extends: uesio/io.default
+label: Field
 definition:
   uesio.styles:
     input:

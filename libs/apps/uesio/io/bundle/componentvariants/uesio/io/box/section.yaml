@@ -1,10 +1,11 @@
 name: section
 label: Section
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      backgroundColor: white
-      margin: 40px
-      borderRadius: 8px
-      boxShadow: rgb(0 0 0 / 3%) 0px 0px 4px
+      - shadow
+      - p-10
+      - bg-white
+      - rounded-lg
+      - my-10
 public: true

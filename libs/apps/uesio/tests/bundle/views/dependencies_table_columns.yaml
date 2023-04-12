@@ -17,6 +17,7 @@ definition:
     - uesio/io.table:
         wire: animals
         columns:
+          - fieldId: uesio/tests.genus
           - label: A column with a field and a chart
             components:
               - uesio/io.field:

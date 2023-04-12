@@ -25,9 +25,9 @@ definition:
                       - uesio/io.griditem:
                           components:
                             - uesio/io.image:
-                                uesio.styles:
+                                uesio.styleTokens:
                                   root:
-                                    margin: 16px
+                                    - m-4
                                 height: 55px
                                 file: uesio/web.logo
                                 signals:
@@ -37,10 +37,10 @@ definition:
                       - uesio/io.griditem:
                           components:
                             - uesio/io.group:
-                                uesio.styles:
+                                uesio.styleTokens:
                                   root:
-                                    margin: 20px
-                                columnGap: 40px
+                                    - m-5
+                                    - gap-x-10
                                 components:
                                   - uesio/io.group:
                                       components:

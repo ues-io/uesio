@@ -1,6 +1,7 @@
 name: home
 path: home
 view: uesio/web.home
+theme: uesio/core.default
 title: $Site{title}
 tags:
   - type: meta

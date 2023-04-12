@@ -1,14 +1,14 @@
 name: main
 label: Main
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      margin: 40px
+      - mb-10
     title:
-      color: "#444"
-      fontSize: "16pt"
-      textTransform: uppercase
+      - text-slate-900
+      - text-xl
     subtitle:
-      fontSize: "10pt"
-      color: "#777"
+      - text-slate-500
+      - text-sm
+      - font-light
 public: true
