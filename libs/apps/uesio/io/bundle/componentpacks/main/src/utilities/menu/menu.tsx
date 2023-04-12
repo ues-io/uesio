@@ -10,6 +10,8 @@ import {
 	useInteractions,
 	useDismiss,
 	useClick,
+	shift,
+	size,
 	useRole,
 	FloatingFocusManager,
 } from "@floating-ui/react"
@@ -40,24 +42,31 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 
 	const [isOpen, setIsOpen] = useState(false)
 	const [searchText, setSearchText] = useState("")
-
 	const floating = useFloating({
 		open: isOpen,
 		onOpenChange: setIsOpen,
 		placement: "bottom-start",
 		middleware: [
+			size({
+				padding: 5,
+				apply({ availableWidth, availableHeight, elements }) {
+					Object.assign(elements.floating.style, {
+						maxWidth: `${availableWidth}px`,
+						maxHeight: `${availableHeight}px`,
+					})
+				},
+			}),
 			offset(2),
 			autoPlacement({ allowedPlacements: ["top-start", "bottom-start"] }),
 		],
 		whileElementsMounted: autoUpdate,
 	})
 
-	const { x, y, strategy, refs } = floating
+	const { x, y, strategy, refs, placement } = floating
 
 	const listRef = useRef<(HTMLDivElement | null)[]>([])
 
 	const [activeIndex, setActiveIndex] = useState<number | null>(null)
-
 	const dismiss = useDismiss(floating.context)
 	const click = useClick(floating.context)
 	const role = useRole(floating.context, { role: "listbox" })
@@ -82,6 +91,21 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 		children,
 	} = props
 
+	const SearchEl = () =>
+		onSearch || searchFilter ? (
+			<input
+				type="text"
+				value={searchText}
+				autoFocus
+				className={classes.searchbox}
+				placeholder="Search..."
+				onChange={(e) => {
+					onSearch?.(e.target.value)
+					setSearchText(e.target.value)
+				}}
+			/>
+		) : null
+
 	return (
 		<>
 			<div tabIndex={0} ref={refs.setReference} {...getReferenceProps()}>
@@ -103,19 +127,7 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 							className={classes.menu}
 							{...getFloatingProps()}
 						>
-							{(onSearch || searchFilter) && (
-								<input
-									type="text"
-									value={searchText}
-									autoFocus
-									className={classes.searchbox}
-									placeholder="Search..."
-									onChange={(e) => {
-										onSearch?.(e.target.value)
-										setSearchText(e.target.value)
-									}}
-								/>
-							)}
+							{!placement.includes("top") && <SearchEl />}
 							{items
 								.filter((item) => {
 									if (!searchFilter) return true
@@ -156,6 +168,7 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 										{itemRenderer(item)}
 									</div>
 								))}
+							{placement.includes("top") && <SearchEl />}
 						</div>
 					</FloatingFocusManager>
 				)}
