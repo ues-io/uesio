@@ -1,6 +1,10 @@
 import { api, component, context, definition, wire } from "@uesio/ui"
 import { get, set, changeKey } from "../api/defapi"
-import { getAvailableWireIds, getWireDefinition } from "../api/wireapi"
+import {
+	getAvailableWireIds,
+	getFieldMetadata,
+	getWireDefinition,
+} from "../api/wireapi"
 import { FullPath } from "../api/path"
 import {
 	ComponentProperty,
@@ -17,7 +21,7 @@ import {
 	getSectionLabel,
 	PropertiesPanelSection,
 } from "../api/propertysection"
-import { setSelectedPath } from "../api/stateapi"
+import { getComponentDef, setSelectedPath } from "../api/stateapi"
 import {
 	DisplayConditionProperties,
 	getDisplayConditionLabel,
@@ -221,7 +225,6 @@ const getWireFieldFromPropertyDef = (
 					),
 				}
 			)
-
 		case "NAMESPACE":
 			return getBaseWireFieldDef(def, "SELECT", {
 				selectlist: getNamespaceSelectListMetadata(context, def),
@@ -304,6 +307,23 @@ type SetterFunction = (a: wire.FieldValue) => void
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const NoOp = function () {}
 
+const addToSettersMap = (
+	settersMap: Map<string, SetterFunction | SetterFunction[]>,
+	key: string,
+	setter: SetterFunction
+) => {
+	const existingSetter = settersMap.get(key)
+	if (existingSetter) {
+		if (Array.isArray(existingSetter)) {
+			existingSetter.push(setter)
+		} else {
+			settersMap.set(key, [existingSetter, setter])
+		}
+	} else {
+		settersMap.set(key, setter)
+	}
+}
+
 const parseProperties = (
 	properties: ComponentProperty[],
 	context: context.Context,
@@ -315,8 +335,11 @@ const parseProperties = (
 	properties?.forEach((property) => {
 		const { type } = property
 		const name = type === "COMPONENT_ID" ? "uesio.id" : property.name
-		let setter: SetterFunction
+		let setter: SetterFunction = (value: string) =>
+			set(context, path.addLocal(name), value)
 		let value: wire.FieldValue
+		let sourceField: string
+		let sourceWire: string
 		if (type === "KEY") {
 			const [key] = path.pop()
 			if (key) {
@@ -325,6 +348,42 @@ const parseProperties = (
 				value = get(context, path) as string
 			}
 			setter = (value: string) => changeKey(context, path, value)
+		} else if (type === "WIRE") {
+			value = get(context, path.addLocal(name)) as string
+			// Special behavior --- if the wire property is set to default to context,
+			// and there is no value, then fetch the value from context
+			if (!value && property.defaultToContext) {
+				value = getClosestWireInContext(context, path)
+			}
+		} else if (type === "FIELD_METADATA") {
+			sourceField =
+				(initialValue[property.fieldProperty] as string) ||
+				(get(context, path.addLocal(property.fieldProperty)) as string)
+			sourceWire = (initialValue[property.wireProperty] ||
+				get(context, path.addLocal(property.wireProperty)) ||
+				getClosestWireInContext(context, path)) as string
+			if (sourceField && sourceWire) {
+				// Get the initial value of the corresponding field metadata property
+				value = getFieldMetadata(context, sourceWire, sourceField)
+					?.source[property.metadataProperty] as string
+				// Add a setter to the source field so that whenever it changes, we also update this property
+				const metadataSetter = (newFieldId: string) => {
+					const newFieldMetadataProperty = getFieldMetadata(
+						context,
+						sourceWire,
+						newFieldId
+					)?.source[property.metadataProperty] as string
+					if (newFieldMetadataProperty !== undefined) {
+						set(
+							context,
+							path.addLocal(name),
+							newFieldMetadataProperty
+						)
+					}
+				}
+				addToSettersMap(setters, property.fieldProperty, metadataSetter)
+			}
+			setter = NoOp
 		} else if (type === "MAP") {
 			setter = NoOp
 			value = get(context, path.addLocal(name)) as Record<
@@ -352,10 +411,9 @@ const parseProperties = (
 				)
 			}
 		} else {
-			setter = (value: string) => set(context, path.addLocal(name), value)
 			value = get(context, path.addLocal(name)) as string
 		}
-		setters.set(name, setter)
+		addToSettersMap(setters, name, setter)
 		initialValue[name] = value
 	})
 
@@ -363,6 +421,46 @@ const parseProperties = (
 		setters,
 		initialValue: initialValue as wire.PlainWireRecord,
 	}
+}
+
+// Finds the closest parent node that provides wire or record context,
+// and extracts the associated wire property from that node
+function getClosestWireInContext(context: context.Context, path: FullPath) {
+	let wireId
+	let [lastItem, newPath] = path.pop()
+	while (lastItem && !wireId) {
+		// If the current item looks like a metadata name, try to fetch it as a component type
+		if (lastItem && lastItem.includes("/")) {
+			const componentDef = getComponentDef(context, lastItem)
+			if (componentDef?.slots?.length) {
+				let match
+				outerLoop: for (const slot of componentDef.slots) {
+					if (!slot?.providesContexts) continue
+					for (const contextProvision of slot.providesContexts) {
+						if (
+							contextProvision?.type === "WIRE" ||
+							contextProvision?.type === "RECORD"
+						) {
+							match = contextProvision
+							break outerLoop
+						}
+					}
+				}
+				if (match && match.wireProperty) {
+					wireId = get(
+						context,
+						newPath.addLocal(lastItem).addLocal(match.wireProperty)
+					) as string
+				}
+			}
+		}
+		if (newPath) {
+			;[lastItem, newPath] = newPath.pop()
+		} else {
+			break
+		}
+	}
+	return wireId
 }
 
 function getPropertyTabForSection(section: PropertiesPanelSection): Tab {
@@ -487,7 +585,12 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 					}
 				)}
 				onUpdate={(field: string, value: string) => {
-					setters.get(field)(value)
+					const setter = setters.get(field)
+					if (setter) {
+						Array.isArray(setter)
+							? setters.forEach((s) => s(value))
+							: setter(value)
+					}
 				}}
 				initialValue={initialValue}
 			/>

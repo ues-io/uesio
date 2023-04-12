@@ -18,9 +18,20 @@ variants:
 slots:
   - name: list
 properties:
+  - name: wire
+    type: WIRE
+    label: Wire
+    defaultToContext: true
   - name: fieldId
     type: FIELD
     label: Field Id
+    wireField: wire
+  - name: fieldDisplayType
+    type: FIELD_METADATA
+    display: false
+    wireProperty: wire
+    fieldProperty: fieldId
+    metadataProperty: type
   - name: label
     type: TEXT
     label: Label
@@ -38,24 +49,14 @@ properties:
     type: SELECT
     label: Display as
     options:
-      - label: "--None Selected--"
+      - label: Text
         value: ""
-      - label: MARKDOWN
-        value: MARKDOWN
-      - label: PASSWORD
+      - label: Password
         value: PASSWORD
-      - label: RADIO
-        value: RADIO
-      - label: TOGGLE
-        value: TOGGLE
-      - label: TEXT
+    displayConditions:
+      - type: fieldValue
+        field: fieldDisplayType
         value: TEXT
-      - label: IMAGE
-        value: IMAGE
-      - label: VIDEO
-        value: VIDEO
-      - label: PREVIEW
-        value: PREVIEW
 signals:
   UPLOAD_FILE:
     label: Upload File

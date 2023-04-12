@@ -8,10 +8,11 @@ interface SelectFieldProps extends definition.UtilityProps {
 	fieldMetadata: collection.Field
 	mode?: context.FieldMode
 	options: collection.SelectOption[] | null
+	readonly?: boolean
 }
 
 const SelectField: FunctionComponent<SelectFieldProps> = (props) => {
-	const { setValue, mode, options, id } = props
+	const { readonly, setValue, mode, options, id } = props
 	const value = props.value as string
 
 	if (mode === "READ") {
@@ -46,6 +47,7 @@ const SelectField: FunctionComponent<SelectFieldProps> = (props) => {
 		<div className={classes.root}>
 			<select
 				className={classes.input}
+				disabled={readonly}
 				onChange={(e) => setValue(e.target.value)}
 				value={value}
 				id={id}
