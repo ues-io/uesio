@@ -336,7 +336,8 @@ const parseProperties = (
 	properties?.forEach((property) => {
 		const { type } = property
 		const name = type === "COMPONENT_ID" ? "uesio.id" : property.name
-		let setter: SetterFunction
+		let setter: SetterFunction = (value: string) =>
+			set(context, path.addLocal(name), value)
 		let value: wire.FieldValue
 		let sourceField: string
 		let sourceWire: string
@@ -348,14 +349,13 @@ const parseProperties = (
 				value = get(context, path) as string
 			}
 			setter = (value: string) => changeKey(context, path, value)
-		} else if (type === "WIRE" && property.readonly) {
-			// Special behavior --- if the wire property is readonly and there is no value,
-			// fetch the value from context
+		} else if (type === "WIRE") {
 			value = get(context, path.addLocal(name)) as string
-			if (!value) {
+			// Special behavior --- if the wire property is set to default to context,
+			// and there is no value, then fetch the value from context
+			if (!value && property.defaultToContext) {
 				value = getClosestWireInContext(context, path)
 			}
-			setter = NoOp
 		} else if (type === "FIELD_METADATA") {
 			sourceField =
 				(initialValue[property.fieldProperty] as string) ||
@@ -412,7 +412,6 @@ const parseProperties = (
 				)
 			}
 		} else {
-			setter = (value: string) => set(context, path.addLocal(name), value)
 			value = get(context, path.addLocal(name)) as string
 		}
 		addToSettersMap(setters, name, setter)
