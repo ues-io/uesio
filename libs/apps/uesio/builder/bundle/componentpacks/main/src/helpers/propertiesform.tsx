@@ -10,7 +10,6 @@ import {
 	ComponentProperty,
 	getStyleVariantProperty,
 	SelectOption,
-	SelectOptionMetadata,
 	SelectProperty,
 } from "../properties/componentproperty"
 import PropertiesWrapper, {
@@ -303,7 +302,7 @@ const getWireFieldsFromProperties = (
 	)
 }
 
-type SetterFunction = (a: wire.FieldValue, b: SelectOptionMetadata) => void
+type SetterFunction = (a: wire.FieldValue) => void
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const NoOp = function () {}

@@ -150,12 +150,6 @@ type SelectOption = {
 	value: string // TODO This should be able to be a boolean or number as well
 	label: string
 	disabled?: boolean
-	metadata?: SelectOptionMetadata
-}
-// Extra metadata for special circumstances, such as FIELD properties
-// where we want to store the display type of the field
-type SelectOptionMetadata = {
-	displayType?: string
 }
 
 type ComponentProperty =
@@ -195,7 +189,6 @@ export type {
 	ListPropertyItemsDefinition,
 	ComponentProperty,
 	SelectOption,
-	SelectOptionMetadata,
 	SelectProperty,
 	WireProperty,
 	MapProperty,
