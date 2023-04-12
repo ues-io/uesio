@@ -7,31 +7,32 @@ definition:
     - uesio/io.grid:
         uesio.styleTokens:
           root:
-            - grid-cols-[58px_1fr_1fr_0fr]
+            - grid-cols-[auto_1fr_1fr_auto]
             - bg-slate-100
-        uesio.styles:
-          root:
-            alignItems: center
-            height: 60px
+            - h-[60px]
+            - items-center
+            - gap-2
         items:
           # Uesio Logo
           - uesio/io.griditem:
               components:
                 - uesio/io.image:
                     uesio.id: img-uesio-logo
-                    uesio.styles:
+                    uesio.styleTokens:
                       root:
-                        margin: 0 16px
-                        opacity: "0.8"
+                        - mx-4
+                        - opacity-80
+                      inner:
+                        - h-[34px]
                     file: uesio/core.logo
-                    height: 34px
                     signals:
                       - signal: "route/NAVIGATE"
                         path: "home"
           - uesio/io.griditem:
-              uesio.styles:
+              uesio.styleTokens:
                 root:
-                  display: flex
+                  - flex
+                  - gap-2
               components:
                 - uesio/io.list:
                     uesio.display:

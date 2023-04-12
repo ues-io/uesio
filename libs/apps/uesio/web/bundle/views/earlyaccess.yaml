@@ -37,14 +37,14 @@ definition:
                         - grid-cols-1
                         - md:grid-cols-[350px_1fr]
                         - lg:grid-cols-[450px_1fr]
-                        - gap-x-10
+                        - gap-x-12
                         - p-20
                     items:
                       - uesio/io.griditem:
                           components:
                             - uesio/io.text:
                                 uesio.variant: uesio/web.callout
-                                text: Stay in the loop
+                                text: Stay in the loop.
                             - uesio/io.text:
                                 uesio.variant: uesio/web.calloutsub
                                 text: Join our private beta launch Q3 2023 and become one of the first to build Rome in a day.
@@ -90,10 +90,12 @@ definition:
                                 mode: EDIT
                                 components:
                                   - uesio/io.box:
-                                      uesio.styles:
+                                      uesio.styleTokens:
                                         root:
-                                          backgroundColor: white
-                                          padding: 40px
+                                          - shadow
+                                          - bg-white
+                                          - p-10
+                                          - rounded-lg
                                       components:
                                         - uesio/io.field:
                                             uesio.variant: uesio/web.field
