@@ -50,7 +50,7 @@ const useDynamicWire = (
 		return () => {
 			remove(wireName, context)
 		}
-	}, [wireName, !!wireDef])
+	}, [wireName, wireDef, context])
 
 	// This Hook runs if any change is made to the wire definition,
 	// but we don't need to update as much state, so this logic is split out
@@ -63,7 +63,7 @@ const useDynamicWire = (
 			collections
 		)
 		dispatch(init([[initializedWires], collections]))
-	}, [wireName, JSON.stringify(wireDef)])
+	}, [wire, wireDef])
 	return wire
 }
 

@@ -23,8 +23,9 @@ const DynamicForm: definition.UtilityComponent<FormProps> = (props) => {
 		wireRef,
 	} = props
 
+	const wireId = "dynamicwire:" + id
 	const wire = api.wire.useDynamicWire(
-		"dynamicwire:" + id,
+		wireId,
 		{
 			viewOnly: true,
 			fields,
@@ -39,15 +40,14 @@ const DynamicForm: definition.UtilityComponent<FormProps> = (props) => {
 	// parent component can use this wire.
 	if (wireRef) wireRef.current = wire
 
-	const currentValueString = JSON.stringify(initialValue)
-
 	useEffect(() => {
 		if (!initialValue || !wire) return
 		const record = wire.getFirstRecord()
 		if (!record) return
-		if (JSON.stringify(record.source) === currentValueString) return
+		if (JSON.stringify(record.source) === JSON.stringify(initialValue))
+			return
 		record.setAll(initialValue)
-	}, [!!wire, currentValueString])
+	}, [wire, initialValue])
 
 	api.event.useEvent(
 		"wire.record.updated",
@@ -61,25 +61,29 @@ const DynamicForm: definition.UtilityComponent<FormProps> = (props) => {
 		[wire]
 	)
 
-	if (!wire) return null
-
 	return (
 		<List
 			path={path}
 			definition={{
 				mode: "EDIT",
+				wire: wireId,
 				components:
 					content ||
-					wire.getFields().map((field) => ({
+					wire?.getFields().map((field) => ({
 						"uesio/io.field": {
 							fieldId: field.id,
 						},
-					})),
+					})) ||
+					[],
 			}}
-			context={context.addWireFrame({
-				view: wire.getViewId(),
-				wire: wire.getId(),
-			})}
+			context={
+				wire
+					? context.addWireFrame({
+							view: wire.getViewId(),
+							wire: wire.getId(),
+					  })
+					: context
+			}
 		/>
 	)
 }
