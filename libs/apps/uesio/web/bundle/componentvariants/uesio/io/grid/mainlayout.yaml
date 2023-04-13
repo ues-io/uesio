@@ -4,7 +4,7 @@ definition:
   uesio.styleTokens:
     root:
       - grid-cols-[0_1fr_0]
-      - md:grid-cols-[1fr_900px_1fr]
-      - lg:grid-cols-[1fr_1080px_1fr]
+      - lg:grid-cols-[1fr_900px_1fr]
+      - xl:grid-cols-[1fr_1080px_1fr]
       - '[grid-template-areas:"._main_."]'
       - bg-slate-50

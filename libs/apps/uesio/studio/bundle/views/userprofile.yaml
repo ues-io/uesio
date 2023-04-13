@@ -77,9 +77,6 @@ definition:
                                 uesio.variant: uesio/io.section
                                 title: Profile Settings
                             - uesio/io.box:
-                                uesio.styles:
-                                  root:
-                                    padding: 40px
                                 components:
                                   - uesio/io.grid:
                                       uesio.styleTokens:
@@ -113,25 +110,12 @@ definition:
                                 uesio.variant: uesio/io.section
                                 title: Account Settings
                             - uesio/io.box:
-                                uesio.styles:
-                                  root:
-                                    maxWidth: 300px
-                                    padding: 40px
                                 components:
                                   - uesio/io.group:
-                                      uesio.styles:
-                                        root:
-                                          gridAutoColumns: initial
                                       components:
                                         - uesio/io.button:
                                             uesio.variant: uesio/io.primary
                                             text: Request Password Change
-                                            uesio.styles:
-                                              root:
-                                                marginTop: 26px
-                                                marginBottom: 60px
-                                              label:
-                                                textTransform: none
                                             signals:
                                               - signal: user/FORGOT_PASSWORD
                                                 onerror:

@@ -2,6 +2,6 @@ name: borderless
 extends: uesio/web.calltoaction
 label: Borderless
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      border: none
+      - border-transparent
