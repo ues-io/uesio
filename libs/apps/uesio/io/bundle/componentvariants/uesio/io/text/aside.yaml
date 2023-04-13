@@ -4,5 +4,6 @@ definition:
   uesio.styleTokens:
     root:
       - text-xs
-      - text-slate-400
+      - text-slate-500
+      - font-light
 public: true
