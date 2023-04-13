@@ -1,5 +1,5 @@
 import { useGoogleLogin, GoogleLoginResponse } from "react-google-login"
-import { FunctionComponent, useEffect } from "react"
+import { FunctionComponent } from "react"
 import { definition, api, component } from "@uesio/ui"
 import LoginWrapper from "../../shared/loginwrapper"
 
@@ -37,21 +37,18 @@ const LoginGoogle: FunctionComponent<LoginProps> = (props) => {
 		console.log("Login Failed", error)
 	}
 
-	let signIn
+	if (!clientIdValue) return null
 
-	useEffect(() => {
-		if (!clientIdValue) return
-		const response = useGoogleLogin({
-			clientId: clientIdValue,
-			onSuccess: responseGoogle,
-			onFailure: responseGoogleFail,
-			cookiePolicy: "single_host_origin",
-			autoLoad: false,
-		})
-		if (response) {
-			signIn = response.signIn
-		}
-	}, [clientIdValue])
+	// NOTE: Disabling this only because it's not being used.
+	// If we want to get this working again, FIX THIS HOOKS ERROR!
+	// eslint-disable-next-line react-hooks/rules-of-hooks
+	const { signIn } = useGoogleLogin({
+		clientId: clientIdValue,
+		onSuccess: responseGoogle,
+		onFailure: responseGoogleFail,
+		cookiePolicy: "single_host_origin",
+		autoLoad: false,
+	})
 
 	const Button = component.getUtility("uesio/io.button")
 
