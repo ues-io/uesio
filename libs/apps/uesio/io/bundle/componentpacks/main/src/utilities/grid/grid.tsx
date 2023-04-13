@@ -7,14 +7,15 @@ interface GridProps {
 const Grid: definition.UtilityComponent<GridProps> = (props) => {
 	const classes = styles.useUtilityStyles(
 		{
-			root: {
-				display: "grid",
-			},
+			root: {},
 		},
 		props
 	)
 	return (
-		<div onClick={props.onClick} className={classes.root}>
+		<div
+			onClick={props.onClick}
+			className={styles.cx("grid", classes.root)}
+		>
 			{props.children}
 		</div>
 	)

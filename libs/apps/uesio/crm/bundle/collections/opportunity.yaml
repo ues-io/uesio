@@ -1,7 +1,7 @@
 name: opportunity
+public: true
+label: opportunity
+pluralLabel: opportunities
 uniqueKey:
   - uesio/crm.externalid
 nameField: uesio/crm.name
-label: opportunity
-pluralLabel: opportunities
-public: true

@@ -1,15 +1,21 @@
 name: task_status
+public: true
 options:
   - label: Not started
     value: Not started
+    disabled: false
   - label: In Progress
     value: In Progress
+    disabled: false
   - label: On Hold
     value: On Hold
+    disabled: false
   - label: Completed
     value: Completed
+    disabled: false
   - label: Cancelled
     value: Cancelled
+    disabled: false
   - label: Needs Action
     value: Needs Action
-public: true
+    disabled: false

@@ -1,56 +1,97 @@
 name: leads
+public: true
 definition:
   components:
     - uesio/core.view:
         view: uesio/crm.topbar
+    - uesio/io.titlebar:
+        title: Leads
+        uesio.variant: uesio/io.secondary
+        actions:
+          - uesio/io.group:
+              components:
+                - uesio/io.button:
+                    signals:
+                      - signal: wire/EMPTY
+                        wire: new_lead
+                      - signal: wire/CREATE_RECORD
+                        wire: new_lead
+                      - signal: wire/UPDATE_RECORD
+                        wire: new_lead
+                        field: uesio/crm.status
+                        value: OPEN
+                      - signal: panel/OPEN
+                        panel: newlead
+                    text: New
+                    uesio.variant: uesio/io.secondary
+                    icon: add
+                - uesio/io.button:
+                    text: Save
+                    icon: check
+                    uesio.variant: uesio/io.primary
+                    signals:
+                      - signal: wire/SAVE
+                        wires:
+                          - leads
+                      - signal: wire/LOAD
+                        wires:
+                          - recent
+                    uesio.display:
+                      - type: wireHasChanges
+                        operator: EQUALS
+                        wire: leads
+                - uesio/io.button:
+                    text: Cancel
+                    icon: cancel
+                    uesio.variant: uesio/io.primary
+                    signals:
+                      - signal: wire/CANCEL
+                        wires:
+                          - leads
+                        wire: leads
+                    uesio.display:
+                      - type: wireHasChanges
+                        operator: EQUALS
+                        wire: leads
     - uesio/io.box:
         components:
-          - uesio/io.titlebar:
-              title: Leads
-              uesio.variant: uesio/io.main
-              actions:
-                - uesio/io.group:
-                    components:
-                      - uesio/io.button:
-                          signals:
-                            - signal: wire/CREATE_RECORD
-                              wire: leads
-                          text: New
-                          uesio.variant: uesio/io.secondary
-                          icon: add
-                      - uesio/io.button:
-                          text: Save
-                          icon: check
-                          uesio.variant: uesio/io.primary
-                          signals:
-                            - signal: wire/SAVE
-                              wires:
-                                - leads
-                            - signal: wire/LOAD
-                              wires:
-                                - closedleads
-                                - recent
-          - uesio/io.box:
+          - uesio/io.group:
+              columnGap: 10px
               components:
-                - uesio/io.group:
-                    columnGap: 10px
-                    components:
-                      - uesio/io.image:
-                          file: uesio/crm.leadstatus
-                          height: 2°80px
-                      - uesio/io.image:
-                          file: uesio/crm.leadratinggraph
-                          height: 280px°
+                - uesio/io.searchbox:
+                    wire: leads
+                    searchFields:
+                      - uesio/crm.firstname
+                      - uesio/crm.lastname
+                      - uesio/crm.account
                     uesio.styles:
                       root:
-                        paddingLeft: 80px
+                        paddingLeft: 40px
+                    searchfields:
+                      - uesio/crm.firstname
+                      - uesio/crm.lastname
+                      - uesio/crm.account
+                      - uesio/core.owner
+                - uesio/io.filter:
+                    wire: leads
+                    fieldId: uesio/crm.status
+                    labelPosition: top
+                    label: " "
+              alignItems: center
+              justifyContent: start
+          - uesio/io.grid:
+              uesio.styleTokens:
+                root:
+                  - grid-cols-1
+                  - grid-rows-1
+              items:
                 - uesio/io.box:
                     uesio.styles:
                       root:
                         padding: 20px
                     components:
                       - uesio/io.text:
-                          text: Open
+                          text: OPEN LEADS
                           element: div
                           align: left
                           uesio.variant: uesio/io.smalltitle
@@ -63,50 +104,90 @@ definition:
                             - text: Delete
                               signals:
                                 - signal: wire/TOGGLE_DELETE_STATUS
-                            - text: Convert Lead
-                              signals:
-                                - bot: uesio/crm.convertlead
-                                  signal: bot/CALL
                           columns:
                             - field: uesio/crm.firstname
                             - field: uesio/crm.lastname
                             - field: uesio/crm.account
-                            - field: uesio/crm.phone_business
+                              label: Company
+                              width: 220px
                             - field: uesio/crm.email
-                            - field: uesio/crm.mailing_city
-                            - field: uesio/crm.mailing_country
                             - field: uesio/crm.industry
                             - field: uesio/crm.status
-                            - field: uesio/core.updatedat
-                            - field: uesio/core.createdat
-                          uesio.id: leadsTable
+                            - field: uesio/crm.rating
+                            - field: uesio/crm.mailing_city
+                            - field: uesio/core.owner
+                          id: leadsTable
                           mode: EDIT
                           wire: leads
                           uesio.variant: uesio/io.default
-                    uesio.variant: uesio/io.section
+                          pagesize: 5
+                          uesio.styles:
+                            root:
+                              backgroundColor: white
+                    uesio.variant: ""
+              columnGap: 1px
+              rowGap: 8px
           - uesio/io.box:
-              uesio.variant: uesio/io.section
+              components:
+                - uesio/io.grid:
+                    items:
+                      - uesio/io.text:
+                          text: RECENT
+                          element: div
+                          align: left
+                      - uesio/io.table:
+                          rowactions:
+                            - text: View
+                              signals:
+                                - path: lead/${uesio/core.id}
+                                  signal: route/NAVIGATE
+                          columns:
+                            - field: uesio/crm.account
+                              label: Lead
+                              width: 320px
+                            - field: uesio/core.updatedat
+                              label: Updated
+                              width: 180px
+                          id: leadsTable
+                          mode: READ
+                          wire: recent
+                          uesio.variant: uesio/io.default
+                          pagesize: 5
+                          uesio.styles:
+                            root:
+                              backgroundColor: white
+                    uesio.styleTokens:
+                      root:
+                        - grid-cols-1
+                        - grid-rows-2
+              uesio.styles:
+                root:
+                  padding: 20px
+                  maxWidth: 550px
+          - uesio/io.box:
+              uesio.variant: ""
               components:
                 - uesio/io.text:
-                    text: Closed
+                    text: CLOSED LEADS
                     element: div
                     uesio.variant: uesio/io.smalltitle
                 - uesio/io.table:
-                    uesio.id: closedleadstable
-                    mode: READ
+                    rowactions:
+                      - text: View
+                        signals:
+                          - path: lead/${uesio/core.id}
+                            signal: route/NAVIGATE
+                    wire: closedleads
+                    pagesize: 5
                     columns:
+                      - field: uesio/crm.firstname
+                      - field: uesio/crm.lastname
+                      - field: uesio/crm.account
                       - field: uesio/crm.converted_to_contact
                       - field: uesio/crm.converted_to_account
                       - field: uesio/crm.converted_opportunity
                       - field: uesio/crm.converted_date
-                      - field: uesio/crm.firstname
-                      - field: uesio/crm.lastname
-                      - field: uesio/crm.mailing_city
-                      - field: uesio/crm.mailing_country
-                      - field: uesio/crm.industry
                       - field: uesio/crm.status
-                    wire: closedleads
-                    uesio.variant: uesio/io.default
               uesio.styles:
                 root:
                   padding: 20px
@@ -130,8 +211,17 @@ definition:
         uesio/crm.mailing_country: null
         uesio/crm.phone_business: null
         uesio/crm.status: null
+        uesio/crm.rating: null
         uesio/crm.industry: null
-      conditions: []
+        uesio/crm.image_url: null
+        uesio/crm.contact_image: null
+        uesio/core.createdby: null
+        uesio/core.owner: null
+      conditions:
+        - operator: EQ
+          field: uesio/crm.status
+          valueSource: VALUE
+          value: "OPEN"
     closedleads:
       type: ""
       fields:
@@ -151,12 +241,119 @@ definition:
         uesio/crm.converted_to_contact: null
       collection: uesio/crm.lead
       conditions:
-        - field: uesio/crm.status
-          value: CLOSED
+        - active: true
+          field: uesio/crm.status
+          operator: NOT_EQ
+          valueSource: VALUE
+          value: OPEN
     recent:
       type: ""
       fields:
         uesio/crm.account: null
         uesio/crm.lastname: null
         uesio/crm.firstname: null
+        uesio/core.updatedat: null
       collection: uesio/crm.lead
+      order:
+        - desc: true
+          field: uesio/core.updatedat
+      batchsize: 5
+      conditions: []
+    accounts:
+      collection: uesio/crm.account
+      fields:
+        uesio/crm.name: null
+        uesio/crm.description: null
+    contacts:
+      collection: uesio/crm.contact
+      fields:
+        uesio/crm.firstname: null
+        uesio/crm.lastname: null
+        uesio/crm.account: null
+        uesio/crm.email: null
+    new_lead:
+      batchsize: 1
+      collection: uesio/crm.lead
+      fields:
+        uesio/crm.account: {}
+        uesio/crm.firstname: {}
+        uesio/crm.lastname: {}
+        uesio/crm.email: {}
+        uesio/crm.status: {}
+        uesio/crm.title: {}
+        uesio/crm.website: {}
+        uesio/crm.rating: {}
+        uesio/crm.phone_mobile: {}
+        uesio/crm.phone_business: {}
+        uesio/crm.no_employees: {}
+        uesio/crm.mailing_city: {}
+        uesio/crm.mailing_country: {}
+        uesio/crm.industry: {}
+        uesio/crm.description: {}
+        uesio/crm.annual_revenue: {}
+  panels:
+    newlead:
+      uesio.type: uesio/io.dialog
+      components:
+        - uesio/io.grid:
+            uesio.styleTokens:
+              root:
+                - grid-cols-3
+                - grid-rows-1
+            items:
+              - uesio/io.list:
+                  mode: EDIT
+                  wire: new_lead
+                  components:
+                    - uesio/io.field:
+                        fieldId: uesio/crm.account
+                        displayAs: TEXT
+                        label: Company
+                    - uesio/io.field:
+                        fieldId: uesio/crm.title
+                    - uesio/io.field:
+                        fieldId: uesio/crm.firstname
+                    - uesio/io.field:
+                        fieldId: uesio/crm.lastname
+                    - uesio/io.field:
+                        fieldId: uesio/crm.email
+                    - uesio/io.field:
+                        fieldId: uesio/crm.annual_revenue
+                    - uesio/io.field:
+                        fieldId: uesio/crm.industry
+                    - uesio/io.field:
+                        fieldId: uesio/crm.mailing_street
+                    - uesio/io.field:
+                        fieldId: uesio/crm.mailing_city
+                    - uesio/io.field:
+                        fieldId: uesio/crm.mailing_country
+                    - uesio/io.field:
+                        fieldId: uesio/crm.description
+            columnGap: 12px
+            rowGap: 12px
+      width: 100%
+      height: 60%
+      title: New Lead
+      actions:
+        - uesio/io.button:
+            text: Save
+            icon: save
+            uesio.variant: uesio/io.secondary
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - new_lead
+              - signal: wire/LOAD
+                wires:
+                  - leads
+              - signal: panel/CLOSE
+                panel: newlead
+        - uesio/io.button:
+            text: Cancel
+            icon: cancel
+            uesio.variant: uesio/io.secondary
+            signals:
+              - signal: wire/CANCEL
+                wire: new_lead
+              - signal: panel/CLOSE
+                panel: newlead

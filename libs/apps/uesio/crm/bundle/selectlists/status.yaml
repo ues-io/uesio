@@ -1,11 +1,13 @@
 name: status
+public: true
 options:
-  - label: Qualified
-    value: QUALIFIED
   - label: Open
     value: OPEN
+    disabled: false
+  - label: Qualified
+    value: QUALIFIED
+    disabled: false
   - label: Disqualified
     value: DISQUALIFIED
-  - label: Closed
-    value: CLOSED
-public: true
+    disabled: false
+blank_option_label: No Status

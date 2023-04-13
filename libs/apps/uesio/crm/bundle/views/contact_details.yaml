@@ -1,4 +1,5 @@
 name: contact_details
+public: true
 definition:
   components:
     - uesio/core.view:
@@ -53,21 +54,16 @@ definition:
                         padding: 40px
                     components:
                       - uesio/io.grid:
-                          templateColumns:
-                            xs: 1fr
-                            md: 1fr 1fr
-                            lg: 2fr 1fr
-                          columnGap: 40px
-                          uesio.styles:
+                          uesio.styleTokens:
                             root:
-                              alignItems: start
+                              - grid-cols-1
+                              - md:grid-cols-2
+                              - lg:grid-cols-[2fr_1fr]
+                              - gap-x-10
+                              - items-start
                           items:
                             - uesio/io.grid:
-                                templateColumns:
-                                  xs: 1fr
-                                  md: 1fr 1fr
-                                  lg: 1fr 1fr 1fr 1fr
-                                columnGap: 10px
+                                uesio.variant: uesio/io.four_columns
                                 items:
                                   - uesio/io.field:
                                       fieldId: uesio/core.id

@@ -1,4 +1,5 @@
 name: opportunity_details
+public: true
 definition:
   components:
     - uesio/core.view:
@@ -40,11 +41,7 @@ definition:
                   padding: 40px
               components:
                 - uesio/io.grid:
-                    templateColumns:
-                      xs: 1fr
-                      md: 1fr 1fr
-                      lg: 1fr 1fr 1fr 1fr
-                    columnGap: 10px
+                    uesio.variant: uesio/io.four_columns
                     items:
                       - uesio/io.field:
                           fieldId: uesio/crm.name

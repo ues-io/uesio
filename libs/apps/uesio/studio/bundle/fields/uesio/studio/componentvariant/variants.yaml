@@ -1,0 +1,6 @@
+name: variants
+type: LIST
+label: Variants
+subtype: TEXT
+subfields:
+  - name: value

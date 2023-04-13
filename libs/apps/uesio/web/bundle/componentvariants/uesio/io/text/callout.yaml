@@ -1,9 +1,9 @@
 name: callout
 label: Callout
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      fontSize: 38pt
-      color: "#333"
-      fontFamily: Gosha
+      - text-5xl
+      - text-slate-800
+      - font-[Gosha]
   element: div

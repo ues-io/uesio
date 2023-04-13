@@ -4,9 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"mime"
 	"net/http"
-	"path/filepath"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -43,7 +41,7 @@ func respondYAML(w http.ResponseWriter, r *http.Request, v interface{}) {
 	}
 }
 
-func respondFile(w http.ResponseWriter, r *http.Request, fileRequest *FileRequest, stream io.ReadCloser) {
+func respondFile(w http.ResponseWriter, r *http.Request, fileRequest *FileRequest, stream io.ReadSeeker) {
 	if stream == nil {
 		w.WriteHeader(http.StatusNotFound)
 		w.Header().Set("Content-Type", "application/json")
@@ -57,29 +55,13 @@ func respondFile(w http.ResponseWriter, r *http.Request, fileRequest *FileReques
 		return
 	}
 
-	defer stream.Close()
-
 	w.Header().Set("Content-Disposition", fmt.Sprintf("; filename=\"%s\"", fileRequest.Path))
 	if fileRequest.TreatAsImmutable() {
 		w.Header().Set("Cache-Control", CacheFor1Year)
 	}
 
-	seeker, ok := stream.(io.ReadSeekCloser)
-	if ok {
-		http.ServeContent(w, r, fileRequest.Path, fileRequest.LastModified, seeker)
-		return
-	}
-
-	mimeType := mime.TypeByExtension(filepath.Ext(fileRequest.Path))
-
-	w.Header().Set("content-type", mimeType)
-
-	_, err := io.Copy(w, stream)
-	if err != nil {
-		logger.LogErrorWithTrace(r, err)
-		http.Error(w, "Failed to Transfer", http.StatusInternalServerError)
-		return
-	}
+	http.ServeContent(w, r, fileRequest.Path, fileRequest.LastModified, stream)
+	return
 
 }
 

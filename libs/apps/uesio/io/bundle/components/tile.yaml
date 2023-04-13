@@ -6,6 +6,9 @@ category: CONTENT
 description: A clickable tag representing a record.
 link: "https://docs.ues.io/"
 discoverable: true
+slots:
+  - name: avatar
+  - name: content
 variants:
   - uesio/io.text:uesio/io.icon
   - uesio/io.text:uesio/io.iconoutline

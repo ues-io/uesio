@@ -2,6 +2,7 @@ import { Context, injectDynamicContext, newContext } from "../context/context"
 import { SignalDefinition, SignalDescriptor } from "../definition/signal"
 import { getComponentSignalDefinition } from "../bands/component/signals"
 
+import aiSignals from "../bands/ai/signals"
 import collectionSignals from "../bands/collection/signals"
 import botSignals from "../bands/bot/signals"
 import routeSignals from "../bands/route/signals"
@@ -14,6 +15,7 @@ import debounce from "lodash/debounce"
 import { getErrorString } from "../utilexports"
 
 const registry: Record<string, SignalDescriptor> = {
+	...aiSignals,
 	...collectionSignals,
 	...botSignals,
 	...routeSignals,
@@ -40,6 +42,7 @@ const runMany = async (signals: SignalDefinition[], context: Context) => {
 			context = await run(signal, context)
 		} catch (error) {
 			context = context.addErrorFrame([getErrorString(error)])
+			console.error(error)
 		}
 
 		// Any errors in this frame are the result of the signal run above, nothing else

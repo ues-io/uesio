@@ -8,6 +8,7 @@ type BaseProperty = {
 	type: string
 	placeholder?: string
 	readonly?: boolean
+	display?: boolean
 	displayConditions?: component.DisplayCondition[]
 }
 type TextProperty = {
@@ -68,13 +69,15 @@ type CheckboxProperty = {
 
 type ConditionProperty = {
 	type: "CONDITION"
-	wire: string
+	wire?: string
+	wireField?: string
 	filter?: (def: wire.WireConditionState) => boolean
 } & BaseProperty
 
 type WireProperty = {
 	type: "WIRE"
 	filter?: (def: wire.RegularWireDefinition) => boolean
+	defaultToContext?: boolean
 } & BaseProperty
 
 type WiresProperty = {
@@ -86,6 +89,13 @@ type FieldPropertyBase = {
 	wireName?: string
 } & BaseProperty
 
+type FieldMetadataProperty = {
+	type: "FIELD_METADATA"
+	fieldProperty: string
+	wireProperty: string
+	metadataProperty: "type" // TODO: Add more properties here, e.g. referenceType, etc.
+} & BaseProperty
+
 type FieldProperty = {
 	type: "FIELD"
 } & FieldPropertyBase
@@ -95,7 +105,7 @@ type FieldsProperty = {
 
 type SelectProperty = {
 	type: "SELECT"
-	options: SelectOption[]
+	options: SelectOption[] | ((record: wire.PlainWireRecord) => SelectOption[])
 	required?: boolean
 	blankOptionLabel?: string
 } & BaseProperty
@@ -141,6 +151,7 @@ type SelectOption = {
 	label: string
 	disabled?: boolean
 }
+
 type ComponentProperty =
 	| BotProperty
 	| TextProperty
@@ -154,6 +165,7 @@ type ComponentProperty =
 	| ConditionProperty
 	| WireProperty
 	| WiresProperty
+	| FieldMetadataProperty
 	| FieldProperty
 	| FieldsProperty
 	| ComponentIdProperty

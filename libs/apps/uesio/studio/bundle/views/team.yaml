@@ -124,10 +124,10 @@ definition:
                                 uesio.variant: uesio/io.item
                                 content:
                                   - uesio/io.grid:
-                                      templateColumns: 1fr auto
-                                      uesio.styles:
+                                      uesio.styleTokens:
                                         root:
-                                          alignItems: center
+                                          - items-center
+                                          - grid-cols-[1fr_auto]
                                       items:
                                         - uesio/io.field:
                                             fieldId: uesio/studio.member

@@ -5,6 +5,9 @@ import SelectFilter from "../../utilities/selectfilter/selectfilter"
 import WeekFilter from "../../utilities/weekfilter/weekfilter"
 import NumberFilter from "../../utilities/numberfilter/numberfilter"
 import CheckboxFilter from "../../utilities/checkboxfilter/checkboxfilter"
+import GroupFilter, {
+	GroupFilterProps,
+} from "../../utilities/groupfilter/groupfilter"
 import { LabelPosition } from "../field/field"
 
 type FilterDefinition = {
@@ -21,8 +24,12 @@ type CommonProps = {
 	path: string
 	fieldMetadata: collection.Field
 	wire: wire.Wire
-	conditionId: string | undefined
+	condition: wire.ValueConditionState
+	isGroup: boolean
 } & definition.UtilityProps
+
+const isValueCondition = wire.isValueCondition
+const isGroupCondition = wire.isGroupCondition
 
 const getFilterContent = (
 	common: CommonProps,
@@ -50,6 +57,25 @@ const getFilterContent = (
 	}
 }
 
+const getDefaultCondition = (path: string, fieldMetadata: collection.Field) => {
+	const type = fieldMetadata.getType()
+
+	switch (type) {
+		case "DATE": {
+			return {
+				id: path,
+				operator: "IN",
+				field: fieldMetadata.getId(),
+			}
+		}
+		default:
+			return {
+				id: path,
+				field: fieldMetadata.getId(),
+			}
+	}
+}
+
 const Filter: definition.UC<FilterDefinition> = (props) => {
 	const { context, definition, path } = props
 	const { fieldId, conditionId } = definition
@@ -57,19 +83,34 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 	if (!wire) return null
 
 	const collection = wire.getCollection()
+	const existingCondition =
+		wire.getCondition(conditionId || path) || undefined
+	// Field metadata is not needed for group conditions
+	const fieldMetadata = collection.getField(
+		isValueCondition(existingCondition) ? existingCondition.field : fieldId
+	)
 
-	const fieldMetadata = collection.getField(fieldId)
+	let condition = existingCondition
+	if (!condition && fieldMetadata) {
+		condition = getDefaultCondition(
+			path,
+			fieldMetadata
+		) as wire.ValueConditionState
+	}
+	const isGroup = isGroupCondition(condition)
+	const label =
+		definition.label || (isGroup && condition)
+			? `Toggle group: ${condition?.id}`
+			: fieldMetadata?.getLabel()
 
-	if (!fieldMetadata) return null
-
-	const label = definition.label || fieldMetadata.getLabel()
+	if (!condition) return null
 
 	const common = {
 		path,
 		context,
 		fieldMetadata,
 		wire,
-		conditionId,
+		condition,
 		variant:
 			definition["uesio.variant"] || "uesio/io.field:uesio/io.default",
 	}
@@ -81,7 +122,11 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 			context={context}
 			variant={definition.wrapperVariant}
 		>
-			{getFilterContent(common, definition)}
+			{isGroup ? (
+				<GroupFilter {...(common as GroupFilterProps)} />
+			) : (
+				getFilterContent(common as CommonProps, definition)
+			)}
 		</FieldWrapper>
 	)
 }

@@ -160,7 +160,7 @@ func (b *WorkspaceBundleStore) GetAllItems(group meta.BundleableGroup, namespace
 
 }
 
-func (b *WorkspaceBundleStore) GetItemAttachment(item meta.AttachableItem, version string, path string, session *sess.Session) (time.Time, io.ReadCloser, error) {
+func (b *WorkspaceBundleStore) GetItemAttachment(item meta.AttachableItem, version string, path string, session *sess.Session) (time.Time, io.ReadSeeker, error) {
 	modTime := time.Time{}
 	err := b.GetItem(item, version, session, nil)
 	if err != nil {

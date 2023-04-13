@@ -18,6 +18,11 @@ var featureFlagStoreMap = map[string]FeatureFlagStore{}
 
 func GetFeatureFlags(session *sess.Session, user string) (*meta.FeatureFlagCollection, error) {
 	featureFlags := meta.FeatureFlagCollection{}
+
+	// Feature Flags are never associated with Workspaces, so we need to remove workspace context before querying,
+	// otherwise we will always get zero flags
+	session = session.RemoveWorkspaceContext()
+
 	err := bundle.LoadAllFromAny(&featureFlags, nil, session, nil)
 	if err != nil {
 		return nil, err
@@ -41,7 +46,6 @@ func GetFeatureFlags(session *sess.Session, user string) (*meta.FeatureFlagColle
 		ff.Value = value
 		ff.User = user
 	}
-
 	return &featureFlags, nil
 }
 

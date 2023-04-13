@@ -31,18 +31,8 @@ const Tile = forwardRef<HTMLDivElement, TileUtilityProps>((props, ref) => {
 	} = props
 	const classes = styles.useUtilityStyles(
 		{
-			root: {
-				all: "unset",
-				userSelect: "none",
-				"-webkitUserDrag": "element",
-				display: "flex",
-				...(onClick && {
-					cursor: "pointer",
-				}),
-			},
-			content: {
-				flex: 1,
-			},
+			root: {},
+			content: {},
 			avatar: {},
 			selected: {},
 		},
@@ -50,7 +40,9 @@ const Tile = forwardRef<HTMLDivElement, TileUtilityProps>((props, ref) => {
 		"uesio/io.tile"
 	)
 
-	const className = styles.cx(classes.root, isSelected && classes.selected)
+	const className = styles.mergeClasses(
+		styles.cx(classes.root, isSelected && classes.selected)
+	)
 	const avatarNode = avatar ? (
 		<div className={classes.avatar}>{avatar}</div>
 	) : undefined

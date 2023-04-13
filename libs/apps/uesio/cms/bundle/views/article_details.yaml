@@ -42,7 +42,9 @@ definition:
                 - uesio/io.field:
                     fieldId: uesio/cms.name
                 - uesio/io.grid:
-                    templateColumns: 1fr 1fr
+                    uesio.styleTokens:
+                      root:
+                        - grid-cols-2
                     columnGap: 10px
                     items:
                       - uesio/io.field:

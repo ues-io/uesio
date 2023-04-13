@@ -51,7 +51,7 @@
 			"uesio/core.uniquekey": "uesio/crm:maintainers"
 		},
 		"uesio/studio.member": {
-			"uesio/core.uniquekey": "gregg"
+			"uesio/core.uniquekey": "baxter"
 		}
 	},
 	{
@@ -106,7 +106,7 @@
 			"uesio/core.uniquekey": "uesio/cms:maintainers"
 		},
 		"uesio/studio.member": {
-			"uesio/core.uniquekey": "gregg"
+			"uesio/core.uniquekey": "baxter"
 		}
 	},
 	{
@@ -238,7 +238,7 @@
 			"uesio/core.uniquekey": "uesio/docs:maintainers"
 		},
 		"uesio/studio.member": {
-			"uesio/core.uniquekey": "gregg"
+			"uesio/core.uniquekey": "baxter"
 		}
 	},
 	{
@@ -293,7 +293,7 @@
 			"uesio/core.uniquekey": "uesio/web:maintainers"
 		},
 		"uesio/studio.member": {
-			"uesio/core.uniquekey": "gregg"
+			"uesio/core.uniquekey": "baxter"
 		}
 	},
 	{

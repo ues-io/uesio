@@ -276,6 +276,10 @@ func serve(cmd *cobra.Command, args []string) {
 	wr.HandleFunc("/secrets/"+itemParam, controller.SetSecret).Methods("POST")
 	sa.HandleFunc("/secrets/"+itemParam, controller.SetSecret).Methods("POST")
 
+	// AI autocompletion routes
+	wr.HandleFunc("/ai/complete", controller.AutocompleteHandler).Methods("POST")
+	sa.HandleFunc("/ai/complete", controller.AutocompleteHandler).Methods("POST")
+
 	// Feature Flag Routes
 	wr.HandleFunc("/featureflags", controller.FeatureFlag).Methods("GET")
 	sa.HandleFunc("/featureflags/{user}", controller.FeatureFlag).Methods("GET")
@@ -301,6 +305,9 @@ func serve(cmd *cobra.Command, args []string) {
 
 	// Experimental REST api route
 	sr.HandleFunc("/rest/"+itemParam, controller.Rest).Methods("GET")
+
+	// REST API routes
+	sr.HandleFunc("/api/v1/collection/"+itemParam, controller.DeleteRecordApi).Methods("DELETE")
 
 	// Add Invalid Routes to all subrouters to give 404s
 	invalidPath := "/{invalidroute:.*}"

@@ -1,11 +1,12 @@
 name: accounts
+public: true
 definition:
   components:
     - uesio/core.view:
         view: uesio/crm.topbar
     - uesio/io.titlebar:
         title: Accounts
-        uesio.variant: uesio/io.main
+        uesio.variant: uesio/io.secondary
         actions:
           - uesio/io.group:
               components:

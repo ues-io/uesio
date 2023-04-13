@@ -1,4 +1,5 @@
 name: sales_email
-managedBy: site
-store: platform
 public: true
+store: platform
+managedBy: site
+value: ""

@@ -45,13 +45,14 @@ const getFormFieldFromProperty = (
 	context: context.Context,
 	path: FullPath
 ) => {
-	const { name, type, displayConditions, readonly } = property
+	const { name, type, displayConditions, readonly, label } = property
 	const baseFieldDef = {
 		fieldId: name,
 		"uesio.id": `property:${name}`,
 		"uesio.variant": "uesio/builder.propfield",
 		"uesio.display": displayConditions,
 		labelPosition: "left",
+		label,
 		readonly,
 	}
 	switch (type) {
@@ -168,6 +169,15 @@ const getFormFieldFromProperty = (
 				},
 			}
 		}
+		case "CONDITION": {
+			return {
+				"uesio/io.field": {
+					...baseFieldDef,
+					displayAs: "SELECT",
+					wrapperVariant: "uesio/builder.propfield",
+				},
+			}
+		}
 		default:
 			return {
 				"uesio/io.field": {
@@ -193,7 +203,9 @@ const Property: definition.UC<Definition> = (props) => {
 		(property) => property.name === definition.propertyId
 	)
 
-	if (!property) return null
+	// Ignore properties which should never be visually displayed
+	// (e.g. a common use case for this is FIELD_METADATA properties)
+	if (!property || property.display === false) return null
 
 	return (
 		<component.Slot

@@ -6,89 +6,78 @@ on:
     secrets:
       GH_PAT:
         required: true
+      AWS_ACCOUNT_ID_DEV:
+        required: true
 
 jobs:
   build:
+    env:
+      FULL_SHA: ${{ github.sha }}
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [16.x]
-        go-version: [~1.19]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+      - name: Setup node
+        uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
-      - name: Use Go ${{ matrix.go-version }}
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ matrix.go-version }}
-        id: go
-      - name: Cache ~/.npm
-        uses: actions/cache@v2
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-${{ matrix.node-version }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.node-version }}-node-
-      - name: Install npm Dependencies
-        run: npm ci
-      - name: Cache ./node_modules/.cache for nx usage
-        uses: actions/cache@v2
-        with:
-          path: ./node_modules/.cache
-          key: ${{ runner.os }}-${{ matrix.node-version }}-node-cache-${{ hashFiles('./*.json') }}-${{ github.ref }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.node-version }}-node-cache-${{ hashFiles('./*.json') }}
-            ${{ runner.os }}-${{ matrix.node-version }}-node-cache-
-      - name: Cache Go modules
-        uses: actions/cache@v2
-        with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
-      - name: Lint
+          node-version: 18.15.0
+          cache: "npm"
+      - name: Setup Uesio CLI Symlink
         shell: bash
         run: |
-          npm run prettier-check
-          npm run affected:lint -- --base=origin/master --head=$GITHUB_SHA --parallel
-      - name: Build All
-        shell: bash
-        run: |
-          npm run build-all
-      - name: Test
-        shell: bash
-        run: |
-          npm run affected:test -- --base=origin/master --head=$GITHUB_SHA --parallel
-          npm run affected:e2e -- --base=origin/master --head=$GITHUB_SHA --parallel
+          # Symlink for Uesio CLI, which is created in build and then used in subsequent builds and tests
+          mkdir -p dist/cli
+          sudo ln -s $PWD/dist/cli/uesio /usr/local/bin/uesio
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
           aws-region: ${{ secrets.AWS_REGION_DEV }}
       - name: Login to Amazon ECR
         id: login-ecr
-        uses: aws-actions/amazon-ecr-login@aaf69d68aa3fb14c1d5a6be9ac61fe15b48453a2
-      - name: Compute short sha
-        id: shortsha
+        uses: aws-actions/amazon-ecr-login@v1.6.0
+      - name: Use Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.19
+          cache-dependency-path: apps/*/go.sum
+      - name: Build, test, and docker push to ECR
+        shell: bash
         env:
-          FULL_SHA: ${{ github.sha }}
-        run: echo "GITSHA=`echo ${FULL_SHA} | cut -c1-8`" >> $GITHUB_ENV
-      - name: Docker Build, Tag, and Push to ECR
-        id: dockerize
-        env:
+          REGISTRY_ID: ${{ secrets.AWS_ACCOUNT_ID_DEV }}
           IMAGE_TAG: ${{ steps.login-ecr.outputs.registry }}/uesio:${{ github.sha }}
-          FULL_SHA: ${{ github.sha }}
         run: |
+          # These exports need to run every time
+          export GITSHA=$(echo ${FULL_SHA} | cut -c1-8)
+          echo "GITSHA=`echo ${FULL_SHA} | cut -c1-8`" >> $GITHUB_ENV
           mkdir artifacts
           echo "$IMAGE_TAG" > ./artifacts/new_image.txt
           echo "$GITSHA" > ./artifacts/short_sha.txt
+
+          # Skip build if image already exists
+          image_exists=$(bash ./scripts/ecr-image-exists.sh $REGISTRY_ID uesio $FULL_SHA)
+
+          npm ci
+
+          if [[ "$image_exists" == "yes" ]]; then
+              echo "Docker image already exists, skipping build and docker push"
+              docker pull $IMAGE_TAG
+              echo "APP_IMAGE=`echo ${IMAGE_TAG}`" >> $GITHUB_ENV
+              # We need to build the CLI so that we can run integration tests
+              npm run build-cli
+              exit 0
+          else
+              echo "Image does not exist, building and pushing"
+          fi
+
+          npm run prettier-check
+          npm run affected:lint -- --base=origin/master --head=$GITHUB_SHA --parallel
+          npm run build-all
+          npm run affected:test -- --base=origin/master --head=$GITHUB_SHA --parallel
           docker build -t $IMAGE_TAG -t $GITSHA -f ./apps/platform/Dockerfile --build-arg GITSHA .
+          echo "APP_IMAGE=`echo ${GITSHA}`" >> $GITHUB_ENV
           docker push $IMAGE_TAG
       - name: Upload image id
         uses: actions/upload-artifact@v3
@@ -99,9 +88,14 @@ jobs:
       - name: Add studio subdomain to /etc/hosts
         run: |
           sudo echo "127.0.0.1 studio.uesio-dev.com" | sudo tee -a /etc/hosts
-      - name: Run End-to-End tests against app image in Docker
+      - name: Run E2E and API Integration tests against app in Docker
         run: |
-          bash ./run-e2e-tests.sh
+          # install hurl for debian. Using the NPM package has SSL issues with node-keytar... really frustrating
+          curl -LO https://github.com/Orange-OpenSource/hurl/releases/download/2.0.1/hurl_2.0.1_amd64.deb
+          sudo apt update && sudo apt install ./hurl_2.0.1_amd64.deb
+
+          # Run E2E and Integration tests
+          npm run tests-all
   update-dev-branch:
     name: Update Dev environment to latest image
     if: github.ref_name == 'master'
@@ -111,7 +105,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           repository: thecloudmasters/uesio-infra
-          token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your PAT
+          token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your personal Github access token
       - name: Download image id artifact
         uses: actions/download-artifact@v3
         with:

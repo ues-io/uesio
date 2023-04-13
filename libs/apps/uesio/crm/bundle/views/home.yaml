@@ -1,80 +1,86 @@
 name: home
+public: true
 definition:
   components:
     - uesio/core.view:
         view: uesio/crm.topbar
-    - uesio/io.box:
-        uesio.variant: uesio/io.section
-        components:
-          - uesio/io.titlebar:
-              uesio.variant: uesio/io.section
-              title: Recent Leads
-          - uesio/io.deck:
-              uesio.id: homeLeads
-              wire: leads
+    - uesio/io.grid:
+        uesio.styleTokens:
+          root:
+            - grid-cols-3
+        items:
+          - uesio/io.box:
               uesio.variant: uesio/io.section
               components:
-                - uesio/io.tile:
-                    uesio.variant: uesio/io.item
-                    signals:
-                      - signal: route/NAVIGATE
-                        path: lead/${uesio/core.id}
-                    content:
-                      - uesio/io.text:
-                          text: ${uesio/crm.firstname} ${uesio/crm.lastname}
-                    avatar:
-                      - uesio/io.text:
-                          uesio.variant: uesio/io.icon
-                          color: "#cccccc"
-                          text: emoji_people
-    - uesio/io.box:
-        uesio.variant: uesio/io.section
-        components:
-          - uesio/io.titlebar:
-              uesio.variant: uesio/io.section
-              title: Recent Accounts
-          - uesio/io.deck:
-              uesio.id: homeAccounts
-              wire: accounts
-              uesio.variant: uesio/io.section
-              components:
-                - uesio/io.tile:
-                    uesio.variant: uesio/io.item
-                    signals:
-                      - signal: route/NAVIGATE
-                        path: account/${uesio/core.id}
-                    content:
-                      - uesio/io.text:
-                          text: ${uesio/crm.name}
-                    avatar:
-                      - uesio/io.text:
-                          uesio.variant: uesio/io.icon
-                          color: "#ccc"
-                          text: business
-    - uesio/io.box:
-        uesio.variant: uesio/io.section
-        components:
-          - uesio/io.titlebar:
-              uesio.variant: uesio/io.section
-              title: Recent Contacts
-          - uesio/io.deck:
-              uesio.id: homeContacts
-              wire: contacts
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.section
+                    title: Recent Accounts
+                - uesio/io.deck:
+                    id: homeAccounts
+                    wire: accounts
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.tile:
+                          uesio.variant: uesio/io.item
+                          signals:
+                            - signal: route/NAVIGATE
+                              path: account/${uesio/core.id}
+                          content:
+                            - uesio/io.text:
+                                text: ${uesio/crm.name}
+                          avatar:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.icon
+                                color: "#ccc"
+                                text: business
+          - uesio/io.box:
               uesio.variant: uesio/io.section
               components:
-                - uesio/io.tile:
-                    uesio.variant: uesio/io.item
-                    signals:
-                      - signal: route/NAVIGATE
-                        path: contact/${uesio/core.id}
-                    content:
-                      - uesio/io.text:
-                          text: ${uesio/crm.firstname} ${uesio/crm.lastname}
-                    avatar:
-                      - uesio/io.text:
-                          uesio.variant: uesio/io.icon
-                          color: "#ccc"
-                          text: person
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.section
+                    title: Recent Leads
+                - uesio/io.deck:
+                    id: homeLeads
+                    wire: leads
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.tile:
+                          uesio.variant: uesio/io.item
+                          signals:
+                            - signal: route/NAVIGATE
+                              path: lead/${uesio/core.id}
+                          content:
+                            - uesio/io.text:
+                                text: ${uesio/crm.firstname} ${uesio/crm.lastname}
+                          avatar:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.icon
+                                color: "#cccccc"
+                                text: emoji_people
+          - uesio/io.box:
+              uesio.variant: uesio/io.section
+              components:
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.section
+                    title: Recent Contacts
+                - uesio/io.deck:
+                    id: homeContacts
+                    wire: contacts
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.tile:
+                          uesio.variant: uesio/io.item
+                          signals:
+                            - signal: route/NAVIGATE
+                              path: contact/${uesio/core.id}
+                          content:
+                            - uesio/io.text:
+                                text: ${uesio/crm.firstname} ${uesio/crm.lastname}
+                          avatar:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.icon
+                                color: "#ccc"
+                                text: person
   wires:
     accounts:
       collection: uesio/crm.account

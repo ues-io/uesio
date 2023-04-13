@@ -18,14 +18,14 @@ services:
       retries: 4
       start_period: 10s
   app:
-    image: "$GITSHA"
+    image: "$APP_IMAGE"
     depends_on:
       db:
         condition: service_healthy
       redis:
         condition: service_started
     ports:
-      - "3009:3000"
+      - "3000:3000"
     environment:
       REDIS_HOST: redis
       REDIS_PORT: 6379

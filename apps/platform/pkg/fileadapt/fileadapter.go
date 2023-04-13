@@ -19,7 +19,7 @@ type FileAdapter interface {
 
 type FileConnection interface {
 	Upload(fileData io.Reader, path string) error
-	Download(path string) (time.Time, io.ReadCloser, error)
+	Download(path string) (time.Time, io.ReadSeeker, error)
 	Delete(path string) error
 	List(path string) ([]string, error)
 	EmptyDir(path string) error

@@ -1,6 +1,8 @@
 name: account_details
 path: account/{recordid}
-view: uesio/crm.account_details
-theme: uesio/crm.default
-collection: uesio/crm.account
 viewtype: detail
+view: uesio/crm.account_details
+collection: uesio/crm.account
+theme: uesio/crm.default
+title: ""
+tags: []
