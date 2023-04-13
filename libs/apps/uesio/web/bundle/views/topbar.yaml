@@ -6,9 +6,6 @@ definition:
   components:
     - uesio/io.grid:
         uesio.variant: uesio/web.mainlayout
-        uesio.styles:
-          root:
-            height: 120px
         items:
           - uesio/io.griditem:
               uesio.styleTokens:
@@ -19,8 +16,9 @@ definition:
                 - uesio/io.grid:
                     uesio.styleTokens:
                       root:
-                        - grid-cols-[max-content_1fr_0fr]
+                        - grid-flow-col
                         - items-center
+                        - justify-between
                     items:
                       - uesio/io.griditem:
                           components:

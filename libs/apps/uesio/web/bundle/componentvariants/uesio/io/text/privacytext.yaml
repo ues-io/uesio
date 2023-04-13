@@ -1,13 +1,10 @@
 name: privacytext
 label: Callout
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      fontSize: 11pt
-      color: "#808B96"
-      minWidth: 1028px
-      lineHeight: 28px
-      paddingTop: 20px
-      paddingBottom: 0px
-      textAlign: justify
+      - text-sm
+      - text-slate-700
+      - my-6
+      - text-justify
   element: div

@@ -5,10 +5,10 @@ definition:
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
-        uesio.styles:
+        uesio.styleTokens:
           root:
-            backgroundColor: rgb(33,36,44)
-            minHeight: 400px
+            - bg-slate-900
+            - min-h-[400px]
         uesio.variant: uesio/web.mainlayout
         items:
           - uesio/io.griditem:
@@ -17,28 +17,23 @@ definition:
                 - uesio/io.grid:
                     uesio.styleTokens:
                       root:
-                        - grid-cols-[max-content_1fr_3fr_1fr_1fr_1fr_1fr]
+                        - grid-flow-row
+                        - md:grid-flow-col
                         - items-center
+                        - justify-between
                         - m-4
+                        - gap-2
                     items:
                       - uesio/io.griditem:
                           components:
                             - uesio/io.image:
                                 file: uesio/web.logowhite
-                                uesio.styles:
-                                  root:
-                                    paddingRight: 48px
+                                height: 55px
                       - uesio/io.griditem:
                           components:
                             - uesio/io.text:
                                 uesio.variant: uesio/web.footertext
-                                text: ©2023
-                                element: div
-                      - uesio/io.griditem:
-                          components:
-                            - uesio/io.text:
-                                uesio.variant: uesio/web.footertext
-                                text: The Cloud Masters LLC Switzerland - All rights reserved
+                                text: The Cloud Masters LLC Switzerland - All rights reserved ©2023
                                 element: div
                       - uesio/io.griditem:
                           components:
@@ -51,11 +46,11 @@ definition:
                       - uesio/io.griditem:
                           components:
                             - uesio/io.button:
-                              uesio.variant: uesio/web.footerlink
-                              text: Privacy policy
-                              signals:
-                                - signal: route/NAVIGATE
-                                  path: privacy
+                                uesio.variant: uesio/web.footerlink
+                                text: Privacy policy
+                                signals:
+                                  - signal: route/NAVIGATE
+                                    path: privacy
                       - uesio/io.griditem:
                           components:
                             - uesio/io.button:
