@@ -114,9 +114,6 @@ definition:
                                           path: "app/$Param{app}/workspace/$Param{workspacename}/selectlists"
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
-                          uesio.styles:
-                            root:
-                              padding: 40px
                           components:
                             - uesio/io.field:
                                 fieldId: uesio/studio.name

@@ -217,19 +217,11 @@ definition:
                     uesio.variant: uesio/io.section
                     components:
                       - uesio/io.box:
-                          uesio.styles:
-                            root:
-                              display: flex
-                              alignItems: center
-                              gap: 5px
-                              padding: 40px
-                              margin: 40px 40px 0 40px
                           components:
                             - uesio/io.linechart:
-                                uesio.styles:
+                                uesio.styleTokens:
                                   chart:
-                                    height: 300px
-                                    width: 400px
+                                    - h-[300px]
                                 series:
                                   - name: load
                                     label: Load
@@ -255,10 +247,9 @@ definition:
                                   source: DATA
                                   timeunit: MONTH
                             - uesio/io.barchart:
-                                uesio.styles:
+                                uesio.styleTokens:
                                   chart:
-                                    height: 300px
-                                    width: 400px
+                                    - h-[300px]
                                 series:
                                   - name: upload
                                     label: Upload Bytes

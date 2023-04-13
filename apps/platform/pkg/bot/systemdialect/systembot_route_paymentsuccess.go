@@ -21,7 +21,7 @@ func mutateRoute(route *meta.Route) {
 }
 
 func runPaymentSuccessRouteBot(route *meta.Route, uesioSession *sess.Session) error {
-
+	return nil
 	anonSession := sess.GetStudioAnonSession()
 	stripeKey, err := secretstore.GetSecretFromKey("uesio/studio.stripe_key", anonSession)
 	if err != nil {

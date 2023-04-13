@@ -146,9 +146,6 @@ definition:
                     title: Add a Bundle
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
-                    uesio.styles:
-                      root:
-                        padding: 40px
                     components:
                       - uesio/io.list:
                           wire: listing
@@ -162,11 +159,7 @@ definition:
                                     - grid-cols-1
                                     - md:grid-cols-2
                                 items:
-                                  - uesio/io.griditem:
-                                      uesio.styles:
-                                        root:
-                                          display: flex
-                                          flexFlow: column
+                                  - uesio/io.box:
                                       components:
                                         - uesio/io.text:
                                             element: h2
@@ -175,10 +168,6 @@ definition:
                                             element: p
                                             text: ${uesio/studio.description}
                                         - uesio/io.group:
-                                            uesio.styles:
-                                              root:
-                                                marginTop: auto
-
                                             components:
                                               # Install Button
                                               - uesio/io.button:
@@ -211,45 +200,12 @@ definition:
                                                         signals:
                                                           - signal: wire/MARK_FOR_DELETE
                                                           - signal: wire/SAVE
-
-                                  - uesio/io.griditem:
-                                      uesio.styles:
-                                        root:
-                                          background: "#eee"
-                                          backgroundColor: ${uesio/studio.app->uesio/studio.color}
-                                          paddingTop: 50%;
-                                          display: flex
-                                          alignItems: center
-                                          justifyContent: center
-                                          color: "#000"
-                                          position: relative
-                                      components:
-                                        - uesio/io.button:
-                                            uesio.styles:
-                                              root:
-                                                inset: 0 0 0 0
-                                                position: absolute
-                                                fontSize: 4em
-                                            icon: ${uesio/studio.app->uesio/studio.icon}
-                      # Section Description
-                      - uesio/io.box:
-                          components:
-                            - uesio/io.text:
-                                text: Description
-                                element: h2
-                            - uesio/io.text:
-                                text: Markdown content here
-                                element: p
-
-                      # Section versions
+                                  - uesio/io.box:
+                                      uesio.variant: uesio/studio.bundlelistingvisual
                       - uesio/io.text:
                           text: versions
                           element: h3
                       - uesio/io.group:
-                          uesio.styles:
-                            root:
-                              borderLeft: "1px solid #eee"
-
                           components:
                             - uesio/io.list:
                                 wire: versions
@@ -257,13 +213,6 @@ definition:
                                 uesio.id: versionsList
                                 components:
                                   - uesio/io.box:
-                                      uesio.styles:
-                                        root:
-                                          padding: 15px
-                                          borderRight: "1px solid #eee"
-                                          display: flex
-                                          justifyContent: center
-                                          flexFlow: column
                                       components:
                                         - uesio/io.text:
                                             text: ${uesio/studio.version}

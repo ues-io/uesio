@@ -18,7 +18,7 @@ definition:
                       root:
                         - grid-flow-col
                         - items-center
-                        - justify-between
+                        - justify-stretch
                     items:
                       - uesio/io.griditem:
                           components:
@@ -31,26 +31,22 @@ definition:
                                 signals:
                                   - signal: "route/NAVIGATE"
                                     path: home
-                      - uesio/io.griditem:
-                      - uesio/io.griditem:
+                      - uesio/io.group:
+                          uesio.styleTokens:
+                            root:
+                              - m-5
+                              - gap-4
+                              - justify-right
                           components:
-                            - uesio/io.group:
-                                uesio.styleTokens:
-                                  root:
-                                    - m-5
-                                    - gap-x-10
-                                components:
-                                  - uesio/io.group:
-                                      components:
-                                        - uesio/io.button:
-                                            uesio.variant: uesio/web.borderless
-                                            text: Stay updated
-                                            signals:
-                                              - signal: route/NAVIGATE
-                                                path: earlyaccess
-                                        - uesio/io.button:
-                                            uesio.variant: uesio/web.calltoaction
-                                            text: Login
-                                            signals:
-                                              - signal: "route/REDIRECT"
-                                                path: "https://studio.$Site{domain}"
+                            - uesio/io.button:
+                                uesio.variant: uesio/web.borderless
+                                text: Stay updated
+                                signals:
+                                  - signal: route/NAVIGATE
+                                    path: earlyaccess
+                            - uesio/io.button:
+                                uesio.variant: uesio/web.calltoaction
+                                text: Login
+                                signals:
+                                  - signal: "route/REDIRECT"
+                                    path: "https://studio.$Site{domain}"

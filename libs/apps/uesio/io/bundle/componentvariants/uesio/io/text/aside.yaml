@@ -1,8 +1,8 @@
 name: aside
 label: Aside
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      color: "#444"
-      fontSize: "9pt"
+      - text-xs
+      - text-slate-400
 public: true

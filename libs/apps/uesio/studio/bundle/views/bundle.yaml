@@ -91,9 +91,6 @@ definition:
                               path: "app/$Param{app}/workspace/${uesio/studio.name}"
                           content:
                             - uesio/io.text:
-                                uesio.styles:
-                                  root:
-                                    color: "#21242D"
                                 text: ${uesio/studio.name}
                           avatar:
                             - uesio/io.text:
@@ -114,9 +111,6 @@ definition:
                               path: "app/$Param{app}/site/${uesio/studio.name}"
                           content:
                             - uesio/io.text:
-                                uesio.styles:
-                                  root:
-                                    color: "#21242D"
                                 text: ${uesio/studio.name}
                           avatar:
                             - uesio/io.text:
@@ -145,9 +139,6 @@ definition:
                                           panel: deleteBundle
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
-                          uesio.styles:
-                            root:
-                              padding: 40px
                           components:
                             - uesio/io.grid:
                                 uesio.variant: uesio/io.four_columns

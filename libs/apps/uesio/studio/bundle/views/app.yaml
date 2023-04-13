@@ -154,7 +154,6 @@ definition:
                             - uesio/io.deck:
                                 uesio.id: teamslist
                                 wire: teams
-                                uesio.variant: uesio/io.section
                                 components:
                                   - uesio/io.tile:
                                       uesio.variant: uesio/io.item
