@@ -113,7 +113,7 @@ definition:
                                   - signal: "panel/TOGGLE"
                                     panel: "newUser"
                 - uesio/io.box:
-                    uesio.variant: uesio/io.paddedsection
+                    uesio.variant: uesio/io.section
                     components:
                       - uesio/io.searchbox:
                           wire: users

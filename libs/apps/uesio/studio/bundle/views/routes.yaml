@@ -93,7 +93,7 @@ definition:
                                   - signal: panel/TOGGLE
                                     panel: newRoute
                 - uesio/io.box:
-                    uesio.variant: uesio/io.paddedsection
+                    uesio.variant: uesio/io.section
                     components:
                       - uesio/io.searchbox:
                           wire: routes

@@ -1,16 +1,20 @@
+# This is currently used for the titles inside of side bars
+# for example our workspace sidebar uses this for the section
+# headers and small action area (like add new workspace)
 name: nav
 label: Nav
+extends: uesio/io.default
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      padding: 20px
+      - p-5
     title:
-      fontWeight: 300
-      fontSize: 9pt
-      color: "#21242D"
-      textTransform: uppercase
-      letterSpacing: 1px
+      - font-light
+      - text-xs
+      - text-slate-800
+      - uppercase
+      - tracking-wider
     subtitle:
-      fontSize: 9pt
-      color: "#777"
+      - text-xs
+      - text-slate-600
 public: true

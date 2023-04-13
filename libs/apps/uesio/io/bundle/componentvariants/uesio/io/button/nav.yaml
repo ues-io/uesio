@@ -6,6 +6,6 @@ definition:
     root:
       - text-primary
       - font-medium
-      - p-4
+      - p-2
       - uppercase
 public: true

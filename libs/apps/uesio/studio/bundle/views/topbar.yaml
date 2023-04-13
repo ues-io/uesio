@@ -40,9 +40,7 @@ definition:
                           uesio.variant: uesio/io.tag
                           content:
                             - uesio/io.text:
-                                uesio.variant: uesio/io.tag
                                 text: ${uesio/core.uniquekey}
-                                element: div
                           avatar:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.icon
@@ -61,9 +59,7 @@ definition:
                           uesio.variant: uesio/io.tag
                           content:
                             - uesio/io.text:
-                                uesio.variant: uesio/io.tag
                                 text: ${uesio/studio.app->uesio/core.uniquekey}
-                                element: div
                           avatar:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.icon
@@ -76,9 +72,7 @@ definition:
                           uesio.variant: uesio/io.tag
                           content:
                             - uesio/io.text:
-                                uesio.variant: uesio/io.tag
                                 text: ${uesio/studio.name}
-                                element: div
                           avatar:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.icon
@@ -97,9 +91,7 @@ definition:
                           uesio.variant: uesio/io.tag
                           content:
                             - uesio/io.text:
-                                uesio.variant: uesio/io.tag
                                 text: ${uesio/studio.app->uesio/core.uniquekey}
-                                element: div
                           avatar:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.icon
@@ -112,9 +104,7 @@ definition:
                           uesio.variant: uesio/io.tag
                           content:
                             - uesio/io.text:
-                                uesio.variant: uesio/io.tag
                                 text: ${uesio/studio.app->uesio/core.uniquekey}.${uesio/studio.major}.${uesio/studio.minor}.${uesio/studio.patch}
-                                element: div
                           avatar:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.icon
@@ -133,9 +123,7 @@ definition:
                           uesio.variant: uesio/io.tag
                           content:
                             - uesio/io.text:
-                                uesio.variant: uesio/io.tag
                                 text: ${uesio/studio.app->uesio/core.uniquekey}
-                                element: div
                           avatar:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.icon
@@ -148,9 +136,7 @@ definition:
                           uesio.variant: uesio/io.tag
                           content:
                             - uesio/io.text:
-                                uesio.variant: uesio/io.tag
                                 text: ${uesio/studio.name}
-                                element: div
                           avatar:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.icon
@@ -169,9 +155,7 @@ definition:
                           uesio.variant: uesio/io.tag
                           content:
                             - uesio/io.text:
-                                uesio.variant: uesio/io.tag
                                 text: ${uesio/studio.app->uesio/core.uniquekey}
-                                element: div
                           avatar:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.icon
@@ -184,9 +168,7 @@ definition:
                           uesio.variant: uesio/io.tag
                           content:
                             - uesio/io.text:
-                                uesio.variant: uesio/io.tag
                                 text: ${uesio/studio.name}
-                                element: div
                           avatar:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.icon
@@ -202,9 +184,7 @@ definition:
                           uesio.variant: uesio/io.tag
                           content:
                             - uesio/io.text:
-                                uesio.variant: uesio/io.tag
                                 text: $Param{itemType}
-                                element: div
                           avatar:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.icon
@@ -222,9 +202,7 @@ definition:
                           uesio.variant: uesio/io.tag
                           content:
                             - uesio/io.text:
-                                uesio.variant: uesio/io.tag
                                 text: $Param{itemName}
-                                element: div
                       - uesio/io.tile:
                           uesio.display:
                             - type: paramIsSet
@@ -238,9 +216,7 @@ definition:
                           uesio.variant: uesio/io.tag
                           content:
                             - uesio/io.text:
-                                uesio.variant: uesio/io.tag
                                 text: $Param{subItemName}
-                                element: div
           - uesio/io.group:
               components:
                 - uesio/io.button:
@@ -257,5 +233,8 @@ definition:
                       - signal: "route/NAVIGATE"
                         path: myprofile
                 - uesio/io.avatar:
+                    uesio.styleTokens:
+                      root:
+                        - ml-2
                     text: $User{initials}
                     image: $User{picture}

@@ -5,6 +5,6 @@ definition:
   uesio.styleTokens:
     root:
       - text-sm
-      - text-slate-700
+      - text-slate-800
       - p-5
 public: true
