@@ -101,11 +101,11 @@ definition:
         #   value: PERSON
   events:
     onload:
+      - signal: context/SET
+        type: SITE_ADMIN
+        name: $Param{sitename}
+        app: $Param{app}
       - signal: wire/LOAD
-        uesio.context:
-          siteadmin:
-            name: $Param{sitename}
-            app: $Param{app}
         wires:
           - users
           - loginmethods
@@ -135,7 +135,7 @@ definition:
               uesio.variant: uesio/studio.content
               components:
                 - uesio/io.list:
-                    id: userDeck
+                    uesio.id: userDeck
                     wire: users
                     mode: READ
                     components:
@@ -170,16 +170,17 @@ definition:
                                           wire: "users"
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
-                          uesio.styles:
+                          uesio.styleTokens:
                             root:
-                              padding: 40px
+                              - p-10
                           components:
                             - uesio/io.grid:
-                                templateColumns:
-                                  sm: 1fr
-                                  md: 1fr 1fr
-                                  lg: 1fr 3fr
-                                columnGap: 40px
+                                uesio.styleTokens:
+                                  root:
+                                    - grid-cols-1
+                                    - md:grid-cols-2
+                                    - lg:grid-cols-[1fr_3fr]
+                                    - gap-x-10
                                 items:
                                   - uesio/io.griditem:
                                       components:
@@ -189,9 +190,9 @@ definition:
                                   - uesio/io.griditem:
                                       components:
                                         - uesio/io.box:
-                                            uesio.styles:
+                                            uesio.styleTokens:
                                               root:
-                                                text-align: right
+                                                - text-right
                                             components:
                                               - uesio/io.button:
                                                   uesio.variant: uesio/io.secondary
@@ -209,7 +210,7 @@ definition:
                                             fieldId: uesio/core.username
                                         - uesio/io.field:
                                             fieldId: uesio/core.email
-                                        - uesio/studio.metadatafield:
+                                        - uesio/builder.metadatafield:
                                             uesio.context:
                                               siteadmin:
                                                 name: $Param{sitename}
@@ -273,7 +274,7 @@ definition:
                                             text: Add Method
                                             uesio.variant: uesio/io.secondary
                             - uesio/io.deck:
-                                id: loginmethodlist
+                                uesio.id: loginmethodlist
                                 wire: loginmethods
                                 uesio.variant: uesio/io.section
                                 components:
@@ -281,10 +282,10 @@ definition:
                                       uesio.variant: uesio/io.item
                                       content:
                                         - uesio/io.grid:
-                                            templateColumns: 1fr auto
-                                            uesio.styles:
+                                            uesio.styleTokens:
                                               root:
-                                                alignItems: center
+                                                - grid-cols-[1fr_auto]
+                                                - items-center
                                             items:
                                               - uesio/io.box:
                                                   components:
@@ -329,10 +330,16 @@ definition:
             text: Delete
             uesio.variant: uesio/io.primary
             signals:
+              - signal: context/SET
+                type: SITE_ADMIN
+                name: $Param{sitename}
+                app: $Param{app}
               - signal: wire/MARK_FOR_DELETE
               - signal: wire/SAVE
                 wires:
                   - "users"
+              - signal: context/CLEAR
+                type: SITE_ADMIN
               - signal: "route/NAVIGATE"
                 path: app/$Param{app}/site/$Param{sitename}/users
         - uesio/io.button:
@@ -348,11 +355,11 @@ definition:
       height: 500px
       components:
         - uesio/io.list:
-            id: newloginmethodlist
+            uesio.id: newloginmethodlist
             wire: newloginmethod
             mode: EDIT
             components:
-              - uesio/studio.metadatafield:
+              - uesio/builder.metadatafield:
                   uesio.context:
                     siteadmin:
                       name: $Param{sitename}

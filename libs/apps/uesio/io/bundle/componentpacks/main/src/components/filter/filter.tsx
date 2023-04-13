@@ -1,18 +1,35 @@
-import { FunctionComponent } from "react"
+import { api, collection, wire, definition, metadata } from "@uesio/ui"
+import FieldWrapper from "../../utilities/fieldwrapper/fieldwrapper"
+import MonthFilter from "../../utilities/monthfilter/monthfilter"
+import SelectFilter from "../../utilities/selectfilter/selectfilter"
+import WeekFilter from "../../utilities/weekfilter/weekfilter"
+import NumberFilter from "../../utilities/numberfilter/numberfilter"
+import CheckboxFilter from "../../utilities/checkboxfilter/checkboxfilter"
+import GroupFilter, {
+	GroupFilterProps,
+} from "../../utilities/groupfilter/groupfilter"
+import { LabelPosition } from "../field/field"
 
-import { FilterDefinition, FilterProps } from "./filterdefinition"
-import { component, hooks, collection, wire, definition } from "@uesio/ui"
-
-const SelectFilter = component.getUtility("uesio/io.selectfilter")
-const MonthFilter = component.getUtility("uesio/io.monthfilter")
-const WeekFilter = component.getUtility("uesio/io.weekfilter")
-const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
+type FilterDefinition = {
+	fieldId: string
+	wire: string
+	label?: string
+	labelPosition?: LabelPosition
+	displayAs?: string
+	wrapperVariant: metadata.MetadataKey
+	conditionId?: string
+}
 
 type CommonProps = {
+	path: string
 	fieldMetadata: collection.Field
 	wire: wire.Wire
-	conditionId: string | undefined
+	condition: wire.ValueConditionState
+	isGroup: boolean
 } & definition.UtilityProps
+
+const isValueCondition = wire.isValueCondition
+const isGroupCondition = wire.isGroupCondition
 
 const getFilterContent = (
 	common: CommonProps,
@@ -24,6 +41,10 @@ const getFilterContent = (
 	const type = fieldMetadata.getType()
 
 	switch (type) {
+		case "NUMBER":
+			return <NumberFilter {...common} />
+		case "CHECKBOX":
+			return <CheckboxFilter {...common} displayAs={displayAs} />
 		case "SELECT":
 			return <SelectFilter {...common} />
 		case "DATE": {
@@ -36,26 +57,60 @@ const getFilterContent = (
 	}
 }
 
-const Filter: FunctionComponent<FilterProps> = (props) => {
-	const { context, definition } = props
+const getDefaultCondition = (path: string, fieldMetadata: collection.Field) => {
+	const type = fieldMetadata.getType()
+
+	switch (type) {
+		case "DATE": {
+			return {
+				id: path,
+				operator: "IN",
+				field: fieldMetadata.getId(),
+			}
+		}
+		default:
+			return {
+				id: path,
+				field: fieldMetadata.getId(),
+			}
+	}
+}
+
+const Filter: definition.UC<FilterDefinition> = (props) => {
+	const { context, definition, path } = props
 	const { fieldId, conditionId } = definition
-	const uesio = hooks.useUesio(props)
-	const wire = uesio.wire.useWire(definition.wire)
+	const wire = api.wire.useWire(definition.wire, context)
 	if (!wire) return null
 
 	const collection = wire.getCollection()
+	const existingCondition =
+		wire.getCondition(conditionId || path) || undefined
+	// Field metadata is not needed for group conditions
+	const fieldMetadata = collection.getField(
+		isValueCondition(existingCondition) ? existingCondition.field : fieldId
+	)
 
-	const fieldMetadata = collection.getField(fieldId)
+	let condition = existingCondition
+	if (!condition && fieldMetadata) {
+		condition = getDefaultCondition(
+			path,
+			fieldMetadata
+		) as wire.ValueConditionState
+	}
+	const isGroup = isGroupCondition(condition)
+	const label =
+		definition.label || (isGroup && condition)
+			? `Toggle group: ${condition?.id}`
+			: fieldMetadata?.getLabel()
 
-	if (!fieldMetadata) return null
-
-	const label = definition.label || fieldMetadata.getLabel()
+	if (!condition) return null
 
 	const common = {
+		path,
 		context,
 		fieldMetadata,
 		wire,
-		conditionId,
+		condition,
 		variant:
 			definition["uesio.variant"] || "uesio/io.field:uesio/io.default",
 	}
@@ -67,7 +122,11 @@ const Filter: FunctionComponent<FilterProps> = (props) => {
 			context={context}
 			variant={definition.wrapperVariant}
 		>
-			{getFilterContent(common, definition)}
+			{isGroup ? (
+				<GroupFilter {...(common as GroupFilterProps)} />
+			) : (
+				getFilterContent(common as CommonProps, definition)
+			)}
 		</FieldWrapper>
 	)
 }

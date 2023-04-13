@@ -1,3 +1,0 @@
-name: metadataprop
-pack: main
-entrypoint: utilities/metadataprop/metadataprop.tsx

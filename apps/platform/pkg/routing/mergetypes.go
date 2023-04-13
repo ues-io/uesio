@@ -3,8 +3,8 @@ package routing
 import (
 	"encoding/json"
 
-	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
 type LoginResponse struct {
@@ -21,18 +21,25 @@ type RouteMergeData struct {
 	Path         string              `json:"path"`
 	Workspace    *WorkspaceMergeData `json:"workspace"`
 	Theme        string              `json:"theme"`
+	Title        string              `json:"title"`
 	Dependencies *PreloadMetadata    `json:"dependencies"`
+	Tags         []meta.Tag          `json:"tags"`
+}
+
+type UserPictureMergeData struct {
+	ID        string `json:"id"`
+	UpdatedAt int64  `json:"updatedat"`
 }
 
 type UserMergeData struct {
-	FirstName string `json:"firstname"`
-	LastName  string `json:"lastname"`
-	Profile   string `json:"profile"`
-	Site      string `json:"site"`
-	ID        string `json:"id"`
-	Username  string `json:"username"`
-	PictureID string `json:"picture"`
-	Language  string `json:"language"`
+	FirstName string                `json:"firstname"`
+	LastName  string                `json:"lastname"`
+	Profile   string                `json:"profile"`
+	Site      string                `json:"site"`
+	ID        string                `json:"id"`
+	Username  string                `json:"username"`
+	Picture   *UserPictureMergeData `json:"picture"`
+	Language  string                `json:"language"`
 }
 
 type SiteMergeData struct {
@@ -41,38 +48,24 @@ type SiteMergeData struct {
 	Version   string `json:"version"`
 	Domain    string `json:"domain"`
 	Subdomain string `json:"subdomain"`
+	Title     string `json:"title"`
+	EnableSEO bool   `json:"-"`
 }
 
 type WorkspaceMergeData struct {
-	Name string `json:"name"`
-	App  string `json:"app"`
-}
-
-type ComponentMergeData struct {
-	ID            string      `json:"id"`
-	ComponentType string      `json:"componentType"`
-	View          string      `json:"view"`
-	State         interface{} `json:"state"`
-}
-
-type ComponentsMergeData struct {
-	IDs      []string                      `json:"ids"`
-	Entities map[string]ComponentMergeData `json:"entities"`
-}
-
-type BuilderMergeData struct {
-	Namespaces map[string]datasource.MetadataResponse `json:"namespaces,omitempty"`
+	Name        string `json:"name"`
+	App         string `json:"app"`
+	Wrapper     string `json:"wrapper,omitempty"`
+	SlotWrapper string `json:"slotwrapper,omitempty"`
 }
 
 type MergeData struct {
-	Route     *RouteMergeData      `json:"route"`
-	User      *UserMergeData       `json:"user"`
-	Site      *SiteMergeData       `json:"site"`
-	Workspace *WorkspaceMergeData  `json:"workspace,omitempty"`
-	Component *ComponentsMergeData `json:"component,omitempty"`
-	BuildMode bool                 `json:"-"`
-	DevMode   bool                 `json:"-"`
-	Builder   *BuilderMergeData    `json:"builder"`
+	Route            *RouteMergeData     `json:"route"`
+	User             *UserMergeData      `json:"user"`
+	Site             *SiteMergeData      `json:"site"`
+	Workspace        *WorkspaceMergeData `json:"workspace,omitempty"`
+	DevMode          bool                `json:"-"`
+	StaticAssetsPath string              `json:"-"`
 	*PreloadMetadata
 }
 

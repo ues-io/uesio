@@ -86,7 +86,7 @@ definition:
                     uesio.variant: uesio/io.section
                     components:
                       - uesio/io.deck:
-                          id: configvaluesDeck
+                          uesio.id: configvaluesDeck
                           wire: configvalues
                           uesio.variant: uesio/io.section
                           components:
@@ -111,7 +111,7 @@ definition:
       height: 500px
       components:
         - uesio/io.list:
-            id: newconfigvaluelist
+            uesio.id: newconfigvaluelist
             wire: newconfigvalue
             mode: EDIT
             components:

@@ -1,4 +1,0 @@
-name: filecollectionid
-type: "TEXT"
-label: "File Collection Id"
-readOnly: true

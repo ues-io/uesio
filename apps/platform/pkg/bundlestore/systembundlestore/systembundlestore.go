@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -29,11 +30,6 @@ func getFile(namespace string, version string, objectname string, filename strin
 	return os.Open(filePath)
 }
 
-func getFileInfo(namespace string, version string, objectname string, filename string) (os.FileInfo, error) {
-	filePath := filepath.Join(getBasePath(namespace, version), objectname, filename)
-	return os.Stat(filePath)
-}
-
 func GetFilePaths(basePath string, group meta.BundleableGroup, conditions meta.BundleConditions, conn fileadapt.FileConnection) ([]string, error) {
 
 	cachedKeys, ok := bundle.GetFileListFromCache(basePath, conditions)
@@ -49,7 +45,7 @@ func GetFilePaths(basePath string, group meta.BundleableGroup, conditions meta.B
 	filteredPaths := []string{}
 
 	for _, path := range paths {
-		if group.FilterPath(path, conditions) {
+		if group.FilterPath(path, conditions, true) {
 			filteredPaths = append(filteredPaths, path)
 		}
 	}
@@ -62,7 +58,7 @@ func (b *SystemBundleStore) GetItem(item meta.BundleableItem, version string, se
 	key := item.GetKey()
 	namespace := item.GetNamespace()
 	fullCollectionName := item.GetCollectionName()
-	collectionName := item.GetBundleGroup().GetBundleFolderName()
+	collectionName := item.GetBundleFolderName()
 	app := session.GetContextAppName()
 	permSet := session.GetContextPermissions()
 
@@ -83,17 +79,17 @@ func (b *SystemBundleStore) GetItem(item meta.BundleableItem, version string, se
 		return nil
 	}
 
-	fileInfo, err := getFileInfo(namespace, version, collectionName, item.GetPath())
+	file, err := getFile(namespace, version, collectionName, item.GetPath())
+	if err != nil {
+		return err
+	}
+
+	fileInfo, err := file.Stat()
 	if err != nil {
 		return err
 	}
 
 	item.SetModified(fileInfo.ModTime())
-
-	file, err := getFile(namespace, version, collectionName, item.GetPath())
-	if err != nil {
-		return err
-	}
 
 	defer file.Close()
 	err = bundlestore.DecodeYAML(item, file)
@@ -140,11 +136,11 @@ func (b *SystemBundleStore) GetAllItems(group meta.BundleableGroup, namespace, v
 
 	for _, path := range paths {
 
-		retrievedItem, isDefinition := group.GetItemFromPath(path)
-		if retrievedItem == nil || !isDefinition {
+		retrievedItem := group.GetItemFromPath(path, namespace)
+		if retrievedItem == nil {
 			continue
 		}
-		retrievedItem.SetNamespace(namespace)
+
 		err = b.GetItem(retrievedItem, version, session, connection)
 		if err != nil {
 			if _, ok := err.(*bundlestore.PermissionError); ok {
@@ -158,32 +154,27 @@ func (b *SystemBundleStore) GetAllItems(group meta.BundleableGroup, namespace, v
 	return nil
 }
 
-func (b *SystemBundleStore) GetFileStream(version string, file *meta.File, session *sess.Session) (io.ReadCloser, error) {
-	return getFile(file.Namespace, version, "files", file.GetFilePath())
-}
-
-func (b *SystemBundleStore) GetBotStream(version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
-	return getFile(bot.Namespace, version, "bots", bot.GetBotFilePath())
-}
-
-func (b *SystemBundleStore) GetGenerateBotTemplateStream(template, version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
-	return getFile(bot.Namespace, version, "bots", bot.GetGenerateBotTemplateFilePath(template))
-}
-
-func (b *SystemBundleStore) GetComponentPackStream(version string, path string, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
-	fileInfo, err := getFileInfo(componentPack.Namespace, version, "componentpacks", path)
+func (b *SystemBundleStore) GetItemAttachment(item meta.AttachableItem, version string, path string, session *sess.Session) (time.Time, io.ReadSeeker, error) {
+	file, err := getFile(item.GetNamespace(), version, item.GetBundleFolderName(), filepath.Join(item.GetBasePath(), path))
 	if err != nil {
-		return nil, err
+		return time.Time{}, nil, err
 	}
-	componentPack.SetModified(fileInfo.ModTime())
-	return getFile(componentPack.Namespace, version, "componentpacks", path)
+	fileInfo, err := file.Stat()
+	if err != nil {
+		return time.Time{}, nil, err
+	}
+	return fileInfo.ModTime(), file, nil
 }
 
-func (b *SystemBundleStore) StoreItems(namespace string, version string, itemStreams []bundlestore.ItemStream, session *sess.Session) error {
+func (b *SystemBundleStore) GetAttachmentPaths(item meta.AttachableItem, version string, session *sess.Session) ([]string, error) {
+	return nil, nil
+}
+
+func (b *SystemBundleStore) StoreItem(namespace, version, path string, reader io.Reader, session *sess.Session) error {
 	return errors.New("Cannot Write to System Bundle Store")
 }
 
-func (b *SystemBundleStore) DeleteBundle(namespace string, version string, session *sess.Session) error {
+func (b *SystemBundleStore) DeleteBundle(namespace, version string, session *sess.Session) error {
 	return errors.New("Tried to delete bundle in System Bundle Store")
 }
 

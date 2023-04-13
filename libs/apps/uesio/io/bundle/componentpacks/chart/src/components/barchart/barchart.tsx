@@ -1,14 +1,18 @@
-import { FC } from "react"
-import { styles, hooks } from "@uesio/ui"
-import { Props } from "./barchartdefinition"
-
+import { styles, api, definition } from "@uesio/ui"
 import { Bar } from "react-chartjs-2"
 import { Chart, registerables } from "chart.js"
-import { aggregate } from "../../shared/aggregate"
+import { aggregate, SeriesDefinition } from "../../shared/aggregate"
+import { LabelsDefinition } from "../../shared/labels"
 Chart.register(...registerables)
 
-const ChartComponent: FC<Props> = (props) => {
-	const { definition } = props
+type BarChartDefinition = {
+	labels: LabelsDefinition
+	title?: string
+	series: SeriesDefinition[]
+}
+
+const ChartComponent: definition.UC<BarChartDefinition> = (props) => {
+	const { definition, context } = props
 	if (!definition || !definition.series || !definition.labels) {
 		console.warn("missing definition for chart")
 		return null
@@ -25,8 +29,6 @@ const ChartComponent: FC<Props> = (props) => {
 		props
 	)
 
-	const uesio = hooks.useUesio(props)
-
 	// Get a list of all wires used
 	const wireNames: string[] = []
 
@@ -34,7 +36,7 @@ const ChartComponent: FC<Props> = (props) => {
 		wireNames.push(series.wire)
 	})
 
-	const wires = uesio.wire.useWires(wireNames)
+	const wires = api.wire.useWires(wireNames, context)
 
 	const [datasets, categories] = aggregate(
 		wires,

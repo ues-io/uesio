@@ -1,121 +1,98 @@
-import { FunctionComponent } from "react"
+import {
+	api,
+	wire,
+	definition,
+	metadata,
+	signal,
+	collection,
+	styles,
+} from "@uesio/ui"
 
-import { FieldDefinition, FieldProps } from "./fielddefinition"
-import { component, collection, wire, context, definition } from "@uesio/ui"
-const TextField = component.getUtility("uesio/io.textfield")
-const SelectField = component.getUtility("uesio/io.selectfield")
-const RadioButtonsField = component.getUtility("uesio/io.radiobuttonsfield")
-const ToggleField = component.getUtility("uesio/io.togglefield")
-const CheckboxField = component.getUtility("uesio/io.checkboxfield")
-const MultiCheckField = component.getUtility("uesio/io.multicheckfield")
-const ReferenceField = component.getUtility("uesio/io.referencefield")
-const FileText = component.getUtility("uesio/io.filetext")
-const FileImage = component.getUtility("uesio/io.fileimage")
-const FileVideo = component.getUtility("uesio/io.filevideo")
-const FilePreview = component.getUtility("uesio/io.filepreview")
-const File = component.getUtility("uesio/io.file")
-const UserField = component.getUtility("uesio/io.userfield")
-const TimestampField = component.getUtility("uesio/io.timestampfield")
-const ListField = component.getUtility("uesio/io.listfield")
-const ListFieldDeck = component.getUtility("uesio/io.listfielddeck")
-const DateField = component.getUtility("uesio/io.datefield")
-const NumberField = component.getUtility("uesio/io.numberfield")
-const EmailField = component.getUtility("uesio/io.emailfield")
-const ReferenceGroupField = component.getUtility("uesio/io.referencegroupfield")
-const MarkDownField = component.getUtility("uesio/io.markdownfield")
-const FileMarkDown = component.getUtility("uesio/io.filemarkdown")
-const TextAreaField = component.getUtility("uesio/io.textareafield")
+import FieldWrapper from "../../utilities/fieldwrapper/fieldwrapper"
+import FieldUtility from "../../utilities/field/field"
 
-const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
+import { ListFieldOptions } from "../../utilities/field/listdeck"
+import { LongTextFieldOptions } from "../../utilities/field/textarea"
+import { MapFieldOptions } from "../../utilities/field/mapdeck"
+import { NumberFieldOptions } from "../../utilities/field/number"
+import { ReferenceFieldOptions } from "../../utilities/field/reference"
+import { ReferenceGroupFieldOptions } from "../../utilities/field/referencegroup"
+import { UserFieldOptions } from "../../utilities/field/user"
 
-type CommonProps = {
-	mode: context.FieldMode
-	fieldMetadata: collection.Field
+type FieldDefinition = {
+	// Wire will default to the context wire, but can optionally be overridden
+	wire?: string
 	fieldId: string
-	id?: string
-	value: wire.FieldValue
-	record: wire.WireRecord
-	wire: wire.Wire
-	setValue: (value: wire.FieldValue) => void
+	labelPosition?: LabelPosition
+	label?: string
+	displayAs?: string
+	reference?: ReferenceFieldOptions | ReferenceGroupFieldOptions
+	list?: ListFieldOptions
+	map?: MapFieldOptions
+	user?: UserFieldOptions
+	number?: NumberFieldOptions
+	longtext?: LongTextFieldOptions
 	placeholder?: string
-} & definition.UtilityProps
+	readonly?: boolean
+	wrapperVariant: metadata.MetadataKey
+} & definition.BaseDefinition
 
-const getFieldContent = (common: CommonProps, definition: FieldDefinition) => {
-	const { displayAs, reference, list, user } = definition
+type LabelPosition = "none" | "top" | "left"
 
-	const fieldMetadata = common.fieldMetadata
-	const type = fieldMetadata.getType()
-
-	switch (type) {
-		case "DATE":
-			return <DateField {...common} />
-		case "LONGTEXT": {
-			if (displayAs === "MARKDOWN") return <MarkDownField {...common} />
-			return <TextAreaField {...common} />
-		}
-		case "TEXT":
-			if (displayAs === "PASSWORD")
-				return <TextField {...common} password={true} />
-			return <TextField {...common} />
-		case "AUTONUMBER":
-			return <TextField {...common} />
-		case "NUMBER":
-			return <NumberField {...common} />
-		case "EMAIL":
-			return <EmailField {...common} />
-		case "SELECT": {
-			const selectOptions = fieldMetadata.getSelectOptions()
-			if (displayAs === "RADIO")
-				return <RadioButtonsField {...common} options={selectOptions} />
-			return <SelectField {...common} options={selectOptions} />
-		}
-		case "MULTISELECT": {
-			const selectOptions = fieldMetadata.getSelectOptions()
-			return <MultiCheckField {...common} options={selectOptions} />
-		}
-		case "CHECKBOX": {
-			if (displayAs === "TOGGLE") return <ToggleField {...common} />
-			return <CheckboxField {...common} />
-		}
-		case "REFERENCE":
-			return <ReferenceField {...common} options={reference} />
-		case "TIMESTAMP":
-			return <TimestampField {...common} />
-		case "FILE": {
-			if (displayAs === "TEXT") return <FileText {...common} />
-			if (displayAs === "IMAGE") return <FileImage {...common} />
-			if (displayAs === "VIDEO") return <FileVideo {...common} />
-			if (displayAs === "PREVIEW") return <FilePreview {...common} />
-			if (displayAs === "MARKDOWN") return <FileMarkDown {...common} />
-			return <File {...common} />
-		}
-		case "USER":
-			return <UserField {...common} options={user} />
-		case "LIST": {
-			if (displayAs === "DECK")
-				return <ListFieldDeck {...common} options={list} />
-			return (
-				<ListField
-					{...common}
-					subFields={fieldMetadata.source.subfields}
-					subType={fieldMetadata.source.subtype}
-				/>
-			)
-		}
-		case "REFERENCEGROUP":
-			return <ReferenceGroupField {...common} options={reference} />
-		default:
-			return null
-	}
+type UserFileMetadata = {
+	[collection.ID_FIELD]: string
+	["uesio/core.name"]: string
+	["uesio/core.mimetype"]: string
+	["uesio/core.path"]: string
+	["uesio/core.recordid"]: string
+	["uesio/core.collectionid"]: string
+	["uesio/core.fieldid"]?: string
+	["uesio/core.updatedat"]: string
 }
 
-const Field: FunctionComponent<FieldProps> = (props) => {
-	const { context, definition } = props
-	const { fieldId, id, placeholder } = definition
+const UPLOAD_FILE_EVENT = "component:uesio/io.field:upload"
+const CANCEL_FILE_EVENT = "component:uesio/io.field:cancel"
 
-	const record = context.getRecord()
-	const wire = context.getWire()
-	if (!wire || !record) return null
+const fileTextSignals: Record<string, signal.ComponentSignalDescriptor> = {
+	UPLOAD_FILE: {
+		dispatcher: (state, signal, context, platform, id) => {
+			api.event.publish(UPLOAD_FILE_EVENT, { target: id })
+			return state
+		},
+	},
+	CANCEL_FILE: {
+		dispatcher: (state, signal, context, platform, id) => {
+			api.event.publish(CANCEL_FILE_EVENT, { target: id })
+			return state
+		},
+	},
+}
+
+const Field: definition.UC<FieldDefinition> = (props) => {
+	const { context, definition, path } = props
+	const {
+		wire: wireId,
+		fieldId,
+		placeholder,
+		displayAs,
+		reference,
+		list,
+		map,
+		user,
+		number,
+		longtext,
+		readonly,
+	} = definition
+
+	const componentId = api.component.getComponentIdFromProps(props)
+
+	const wire = context.getWire(wireId)
+
+	if (!wire) return null
+
+	const record = context.getRecord(wire.getId())
+
+	if (!record) return null
 
 	const errors = record?.getErrors(fieldId)
 	const collection = wire.getCollection()
@@ -130,20 +107,38 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 		: fieldMetadata.getUpdateable()
 
 	const mode = (canEdit && context.getFieldMode()) || "READ"
+	const classes = styles.useStyles(
+		{
+			input: {},
+			readonly: {},
+		},
+		props
+	)
 
 	const common = {
+		classes,
+		readonly: readonly === true || mode === "READ",
+		path,
 		context,
 		mode,
 		fieldMetadata,
 		fieldId,
-		id,
+		id: componentId,
 		value: record.getFieldValue(fieldId),
-		setValue: (value: wire.FieldValue) => record.update(fieldId, value),
+		setValue: (value: wire.FieldValue) =>
+			record.update(fieldId, value, context),
 		record,
-		wire,
-		variant:
-			definition["uesio.variant"] || "uesio/io.field:uesio/io.default",
+		variant: definition["uesio.variant"],
 		placeholder,
+		displayAs,
+	}
+	const typeSpecific = {
+		reference,
+		list,
+		map,
+		user,
+		number,
+		longtext,
 	}
 
 	return (
@@ -154,9 +149,25 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 			variant={definition.wrapperVariant}
 			errors={errors}
 		>
-			{getFieldContent(common, definition)}
+			<FieldUtility {...common} {...typeSpecific} />
 		</FieldWrapper>
 	)
+}
+
+Field.signals = fileTextSignals
+
+export { fileTextSignals, UPLOAD_FILE_EVENT, CANCEL_FILE_EVENT }
+
+export type {
+	UserFileMetadata,
+	LabelPosition,
+	ListFieldOptions,
+	MapFieldOptions,
+	ReferenceFieldOptions,
+	ReferenceGroupFieldOptions,
+	UserFieldOptions,
+	NumberFieldOptions,
+	LongTextFieldOptions,
 }
 
 export default Field

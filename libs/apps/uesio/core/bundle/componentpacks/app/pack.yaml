@@ -1,16 +1,2 @@
 name: app
 public: true
-components:
-  view:
-    loginmock:
-      configvalues:
-        - uesio/core.mock_auth
-      utilities:
-        - uesio/io.button
-      variants:
-        - uesio/io.button:uesio/io.secondary
-    logingoogle:
-      utilities:
-        - uesio/io.button
-      variants:
-        - uesio/io.button:uesio/io.secondary

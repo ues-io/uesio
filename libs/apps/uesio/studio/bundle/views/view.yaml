@@ -58,7 +58,7 @@ definition:
               uesio.variant: uesio/studio.content
               components:
                 - uesio/io.list:
-                    id: viewsDeck
+                    uesio.id: viewsDeck
                     wire: views
                     mode: READ
                     components:
@@ -69,27 +69,34 @@ definition:
                             - uesio/io.group:
                                 components:
                                   - uesio/studio.previewbutton:
+                                      view: $Param{app}.${uesio/studio.name}
+                                      label: Preview
+                                      uesio.id: preview-view
                                       uesio.display:
                                         - type: wireHasNoChanges
                                           wire: views
+                                      hotkey: "meta+p"
+                                      uesio.context:
+                                        workspace:
+                                          name: $Param{workspacename}
+                                          app: $Param{app}
+                                  - uesio/studio.previewbutton:
+                                      view: $Param{app}.${uesio/studio.name}
+                                      label: "Build"
+                                      uesio.id: build-view
+                                      uesio.display:
+                                        - type: wireHasNoChanges
+                                          wire: views
+                                      hotkey: "meta+b"
+                                      buildMode: true
                                       uesio.context:
                                         workspace:
                                           name: $Param{workspacename}
                                           app: $Param{app}
                                   - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: "Build"
-                                      uesio.display:
-                                        - type: wireHasNoChanges
-                                          wire: views
-                                      hotkey: "command+b"
-                                      signals:
-                                        - signal: "route/REDIRECT"
-                                          path: "/workspace/$Param{app}/$Param{workspacename}/views/$Param{app}/${uesio/studio.name}/edit"
-                                  - uesio/io.button:
                                       uesio.variant: uesio/io.primary
                                       text: "Save"
-                                      hotkey: "command+s"
+                                      hotkey: "meta+s"
                                       uesio.display:
                                         - type: wireHasChanges
                                           wire: views
@@ -99,7 +106,7 @@ definition:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: "Cancel"
-                                      hotkey: "command+shift+."
+                                      hotkey: "meta+shift+."
                                       uesio.display:
                                         - type: wireHasChanges
                                           wire: views
@@ -124,11 +131,7 @@ definition:
                               padding: 40px
                           components:
                             - uesio/io.grid:
-                                templateColumns:
-                                  xs: 1fr
-                                  md: 1fr 1fr
-                                  lg: 1fr 1fr 1fr 1fr
-                                columnGap: 10px
+                                uesio.variant: uesio/io.four_columns
                                 items:
                                   - uesio/io.field:
                                       fieldId: uesio/studio.name

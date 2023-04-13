@@ -1,16 +1,16 @@
 import { FunctionComponent } from "react"
-import { definition, styles, component, wire } from "@uesio/ui"
-import { LabelPosition } from "../../components/field/fielddefinition"
+import { definition, styles, wire } from "@uesio/ui"
+import { LabelPosition } from "../../components/field/field"
+import FieldLabel from "../fieldlabel/fieldlabel"
+import Icon from "../icon/icon"
 
 interface FieldWrapperUtilityProps extends definition.UtilityProps {
 	label?: string
 	labelPosition?: LabelPosition
 	errors?: wire.SaveError[]
 }
-const Icon = component.getUtility("uesio/io.icon")
-const FieldLabel = component.getUtility("uesio/io.fieldlabel")
 
-const Text: FunctionComponent<FieldWrapperUtilityProps> = (props) => {
+const FieldWrapper: FunctionComponent<FieldWrapperUtilityProps> = (props) => {
 	const { label, labelPosition, children, context, errors } = props
 	const classes = styles.useUtilityStyles(
 		{
@@ -22,7 +22,8 @@ const Text: FunctionComponent<FieldWrapperUtilityProps> = (props) => {
 			erroricon: {},
 			error: {},
 		},
-		props
+		props,
+		"uesio/io.fieldwrapper"
 	)
 
 	return (
@@ -60,4 +61,4 @@ const Text: FunctionComponent<FieldWrapperUtilityProps> = (props) => {
 	)
 }
 
-export default Text
+export default FieldWrapper

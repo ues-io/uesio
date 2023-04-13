@@ -1,3 +1,49 @@
 name: group
+title: Group
+description: Create a horizontal line of inline elements.
+category: LAYOUT
 pack: main
-entrypoint: components/group/group.tsx
+entrypoint: components/group/group
+discoverable: true
+slots:
+  - name: components
+defaultDefinition:
+  columnGap: 10px
+properties:
+  - name: columnGap
+    type: TEXT
+    label: Column Gap
+  - name: alignItems
+    type: SELECT
+    label: Vertical alignment
+    options:
+      - label: Start
+        value: start
+      - label: Center
+        value: center
+      - label: End
+        value: end
+  - name: justifyContent
+    type: SELECT
+    label: Horizontal distribution
+    options:
+      - label: Start
+        value: start
+      - label: Center
+        value: center
+      - label: Space between
+        value: space-between
+      - label: Space around
+        value: space-around
+      - label: Space evenly
+        value: space-evenly
+      - label: End
+        value: end
+sections:
+  - type: HOME
+    properties:
+      - columnGap
+      - alignItems
+      - justifyContent
+  - type: STYLES
+  - type: DISPLAY

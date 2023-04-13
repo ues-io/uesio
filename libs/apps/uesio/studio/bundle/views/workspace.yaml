@@ -15,6 +15,7 @@ definition:
         uesio/studio.loginroute:
         uesio/studio.publicprofile:
         uesio/studio.defaulttheme:
+        uesio/studio.favicon:
       conditions:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
@@ -87,31 +88,28 @@ definition:
                                 uesio.variant: uesio/io.section
                                 components:
                                   - uesio/io.grid:
-                                      uesio.styles:
-                                        root:
-                                          padding: 40px
-                                      templateColumns:
-                                        xs: 1fr
-                                        md: 1fr 1fr
-                                        lg: 1fr 1fr 1fr 1fr
-                                      columnGap: 10px
+                                      uesio.variant: uesio/io.four_columns
                                       items:
-                                        - uesio/studio.metadatafield:
+                                        - uesio/builder.metadatafield:
                                             fieldId: uesio/studio.homeroute
                                             metadataType: "ROUTE"
                                             label: "Home Route"
-                                        - uesio/studio.metadatafield:
+                                        - uesio/builder.metadatafield:
                                             fieldId: uesio/studio.loginroute
                                             metadataType: "ROUTE"
                                             label: "Login Route"
-                                        - uesio/studio.metadatafield:
+                                        - uesio/builder.metadatafield:
                                             fieldId: uesio/studio.publicprofile
                                             metadataType: "PROFILE"
                                             label: "Public Profile"
-                                        - uesio/studio.metadatafield:
+                                        - uesio/builder.metadatafield:
                                             fieldId: uesio/studio.defaulttheme
                                             metadataType: "THEME"
                                             label: "Default Theme"
+                                        - uesio/builder.metadatafield:
+                                            fieldId: uesio/studio.favicon
+                                            metadataType: "FILE"
+                                            label: "Favicon"
                             - uesio/io.box:
                                 uesio.variant: uesio/io.section
                                 components:
@@ -131,27 +129,29 @@ definition:
                                                   text: Package New Version
                                                   signals:
                                                     - signal: notification/ADD
-                                                      id: newversion
+                                                      uesio.id: newversion
                                                       text: We are creating your new bundle
                                                       details: it may take a while, please wait until this notification disappears.
                                                       severity: info
+                                                    - signal: context/SET
+                                                      type: WORKSPACE
+                                                      name: $Param{workspacename}
+                                                      app: $Param{app}
                                                     - signal: "bot/CALL"
+                                                      stepId: createBundle
                                                       onerror:
                                                         signals:
                                                           - signal: notification/REMOVE
-                                                            id: newversion
+                                                            uesio.id: newversion
                                                       bot: "uesio/studio.createbundle"
-                                                      uesio.context:
-                                                        workspace:
-                                                          name: $Param{workspacename}
-                                                          app: $Param{app}
+                                                    - signal: context/CLEAR
+                                                      type: WORKSPACE
+                                                    - signal: notification/ADD
+                                                      uesio.id: newversion
+                                                      text: Bundle successfully created!
+                                                      severity: info
                                                     - signal: "route/NAVIGATE"
                                                       path: "app/$Param{app}"
-                                                      uesio.context:
-                                                        #This removes the workspace
-                                                        workspace:
-                                                          name:
-                                                          app:
                             - uesio/io.box:
                                 uesio.variant: uesio/io.section
                                 components:
@@ -168,9 +168,8 @@ definition:
                                                     - signal: "route/NAVIGATE"
                                                       path: "app/$Param{app}/workspace/$Param{workspacename}/bundlestore"
                                   - uesio/io.deck:
-                                      id: installedbundleslist
+                                      uesio.id: installedbundleslist
                                       wire: installedapps
-                                      uesio.variant: uesio/io.section
                                       components:
                                         - uesio/io.tile:
                                             uesio.variant: uesio/io.item
@@ -213,13 +212,13 @@ definition:
                 panel: deleteWorkspace
     editWorkspace:
       uesio.type: uesio/io.dialog
-      id: editWorkspace
+      uesio.id: editWorkspace
       title: Edit Workspace
       width: 400px
       height: 560px
       components:
         - uesio/io.list:
-            id: editWorkspaceList
+            uesio.id: editWorkspaceList
             wire: workspaces
             mode: EDIT
             uesio.context:
@@ -229,22 +228,26 @@ definition:
             components:
               - uesio/io.field:
                   fieldId: uesio/studio.name
-              - uesio/studio.metadatafield:
+              - uesio/builder.metadatafield:
                   fieldId: uesio/studio.homeroute
                   metadataType: "ROUTE"
                   label: "Home Route"
-              - uesio/studio.metadatafield:
+              - uesio/builder.metadatafield:
                   fieldId: uesio/studio.loginroute
                   metadataType: "ROUTE"
                   label: "Login Route"
-              - uesio/studio.metadatafield:
+              - uesio/builder.metadatafield:
                   fieldId: uesio/studio.publicprofile
                   metadataType: "PROFILE"
                   label: "Public Profile"
-              - uesio/studio.metadatafield:
+              - uesio/builder.metadatafield:
                   fieldId: uesio/studio.defaulttheme
                   metadataType: "THEME"
                   label: "Default Theme"
+              - uesio/builder.metadatafield:
+                  fieldId: uesio/studio.favicon
+                  metadataType: "FILE"
+                  label: "Favicon"
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary

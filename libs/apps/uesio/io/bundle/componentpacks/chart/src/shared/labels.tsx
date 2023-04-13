@@ -37,15 +37,17 @@ const getDayMonthYearDateKey = (date: Date) =>
 
 const getDateFromMonthYearKey = (key: string) => {
 	const [year, month] = key.split("-")
-	return new Date(parseInt(year, 10), parseInt(month, 10))
+	return new Date(Date.UTC(parseInt(year, 10), parseInt(month, 10)))
 }
 
 const getDateFromDayMonthYearKey = (key: string) => {
 	const [startyear, startmonth, startday] = key.split("-")
 	return new Date(
-		parseInt(startyear, 10),
-		parseInt(startmonth, 10),
-		parseInt(startday, 10)
+		Date.UTC(
+			parseInt(startyear, 10),
+			parseInt(startmonth, 10),
+			parseInt(startday, 10)
+		)
 	)
 }
 
@@ -102,43 +104,40 @@ const getDayDataLabels = (labels: DataLabels, categories: Categories) => {
 		d.toLocaleDateString(undefined, {
 			month: "short",
 			day: "2-digit",
+			timeZone: "UTC",
 		})
 
 	if (labels.timeunitfill === "MONTH") {
 		const start = getDateFromDayMonthYearKey(currentKey)
-		start.setDate(1)
+		start.setUTCDate(1)
 		currentKey = getDayMonthYearDateKey(start)
 
 		const end = getDateFromDayMonthYearKey(lastKey)
-		end.setDate(1)
-		end.setMonth(end.getMonth() + 1)
-		end.setDate(end.getDate() - 1)
+		end.setUTCDate(1)
+		end.setUTCMonth(end.getUTCMonth() + 1)
+		end.setUTCDate(end.getUTCDate() - 1)
 		lastKey = getDayMonthYearDateKey(end)
 	}
 
 	if (labels.timeunitfill === "WEEK") {
 		const start = getDateFromDayMonthYearKey(currentKey)
-		const startWeekDay = start.getDay()
-		start.setDate(start.getDate() - startWeekDay)
+		const startWeekDay = start.getUTCDay()
+		start.setUTCDate(start.getUTCDate() - startWeekDay)
 		currentKey = getDayMonthYearDateKey(start)
 
 		const end = getDateFromDayMonthYearKey(lastKey)
-		const endWeekDay = end.getDay()
-		end.setDate(end.getDate() + (6 - endWeekDay))
+		const endWeekDay = end.getUTCDay()
+		end.setUTCDate(end.getUTCDate() + (6 - endWeekDay))
 		lastKey = getDayMonthYearDateKey(end)
 	}
 
-	while (currentKey !== lastKey) {
+	while (currentKey <= lastKey) {
 		const d = getDateFromDayMonthYearKey(currentKey)
 		sortedCategories[currentKey] = getLabel(d)
-		d.setDate(d.getDate() + 1)
+		d.setUTCDate(d.getUTCDate() + 1)
 		currentKey = getDayMonthYearDateKey(d)
 	}
-	// Now add in the last key
-	if (currentKey === lastKey) {
-		const d = getDateFromDayMonthYearKey(currentKey)
-		sortedCategories[currentKey] = getLabel(d)
-	}
+
 	return sortedCategories
 }
 
@@ -164,18 +163,15 @@ const getMonthDataLabels = (
 		d.toLocaleDateString(undefined, {
 			month: "short",
 			year: "numeric",
+			timeZone: "UTC",
 		})
-	while (currentKey !== lastKey) {
+	while (currentKey <= lastKey) {
 		const d = getDateFromMonthYearKey(currentKey)
 		sortedCategories[currentKey] = getLabel(d)
-		d.setMonth(d.getMonth() + 1)
+		d.setUTCMonth(d.getUTCMonth() + 1)
 		currentKey = getMonthYearDateKey(d)
 	}
-	// Now add in the last key
-	if (currentKey === lastKey) {
-		const d = getDateFromMonthYearKey(currentKey)
-		sortedCategories[currentKey] = getLabel(d)
-	}
+
 	return sortedCategories
 }
 
@@ -290,4 +286,5 @@ const getLabelsForSeries = (
 	}
 }
 
-export { getCategoryFunc, getLabels, LabelsDefinition }
+export { getCategoryFunc, getLabels }
+export type { LabelsDefinition }

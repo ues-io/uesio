@@ -1,0 +1,5 @@
+name: proplistitem
+pack: main
+entrypoint: components/proplistitem/proplistitem
+utilities:
+  - uesio/io.expandpanel

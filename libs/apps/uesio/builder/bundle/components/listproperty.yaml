@@ -1,0 +1,10 @@
+name: listproperty
+pack: main
+entrypoint: components/listproperty/listproperty
+utilities:
+  - uesio/builder.listproperty
+  - uesio/builder.listpropertyitem
+  - uesio/io.titlebar
+  - uesio/io.button
+  - uesio/io.icon
+  - uesio/io.fieldwrapper

@@ -1,9 +1,19 @@
-import { FC } from "react"
+import { api, styles, signal, definition } from "@uesio/ui"
 
-import { VideoProps } from "./videodefinition"
-import { hooks, styles } from "@uesio/ui"
+type VideoDefinition = {
+	file?: string
+	src?: string
+	height?: string
+	controls?: boolean
+	width?: string
+	muted?: boolean
+	autoplay?: boolean
+	playsinline?: boolean
+	loop?: boolean
+	signals?: signal.SignalDefinition[]
+}
 
-const Video: FC<VideoProps> = (props) => {
+const Video: definition.UC<VideoDefinition> = (props) => {
 	const { definition, context } = props
 
 	const classes = styles.useStyles(
@@ -20,27 +30,28 @@ const Video: FC<VideoProps> = (props) => {
 		},
 		props
 	)
-	const uesio = hooks.useUesio(props)
 
 	return (
 		<div
 			className={classes.root}
 			onClick={
 				definition?.signals &&
-				uesio.signal.getHandler(definition.signals)
+				api.signal.getHandler(definition.signals, context)
 			}
 		>
 			<video
 				loop={definition.loop || false}
 				height={definition.height}
+				controls={definition.controls || true}
 				width={definition.width}
 				autoPlay={definition.autoplay || false}
 				muted={definition.muted || false}
+				playsInline={definition.playsinline || false}
 			>
 				<source
 					src={
 						definition.file
-							? uesio.file.getURLFromFullName(
+							? api.file.getURLFromFullName(
 									context,
 									definition.file
 							  )

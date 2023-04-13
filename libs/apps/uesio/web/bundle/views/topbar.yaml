@@ -11,66 +11,48 @@ definition:
             height: 120px
         items:
           - uesio/io.griditem:
-              uesio.styles:
+              uesio.styleTokens:
                 root:
-                  display: grid
+                  - grid
               area: main
               components:
                 - uesio/io.grid:
-                    templateColumns: 0fr 1fr 0fr
-                    uesio.styles:
+                    uesio.styleTokens:
                       root:
-                        alignItems: center
+                        - grid-cols-[max-content_1fr_0fr]
+                        - items-center
                     items:
                       - uesio/io.griditem:
                           components:
                             - uesio/io.image:
-                                uesio.styles:
+                                uesio.styleTokens:
                                   root:
-                                    margin: 16px
+                                    - m-4
                                 height: 55px
                                 file: uesio/web.logo
                                 signals:
                                   - signal: "route/NAVIGATE"
-                                    path: ""
+                                    path: home
                       - uesio/io.griditem:
                       - uesio/io.griditem:
                           components:
                             - uesio/io.group:
-                                uesio.styles:
+                                uesio.styleTokens:
                                   root:
-                                    margin: 20px
-                                columnGap: 40px
+                                    - m-5
+                                    - gap-x-10
                                 components:
                                   - uesio/io.group:
                                       components:
+                                        - uesio/io.button:
+                                            uesio.variant: uesio/web.borderless
+                                            text: Stay updated
+                                            signals:
+                                              - signal: route/NAVIGATE
+                                                path: earlyaccess
                                         - uesio/io.button:
                                             uesio.variant: uesio/web.calltoaction
                                             text: Login
                                             signals:
                                               - signal: "route/REDIRECT"
                                                 path: "https://studio.$Site{domain}"
-                                  # - uesio/io.group:
-                                  #     components:
-                                  #       - uesio/io.button:
-                                  #           uesio.variant: uesio/web.secondary
-                                  #           text: Blog
-                                  #           signals:
-                                  #             - signal: "route/NAVIGATE"
-                                  #               path: "blog"
-                                  # - uesio/io.group:
-                                  #     components:
-                                  #       - uesio/io.button:
-                                  #           uesio.variant: uesio/web.secondary
-                                  #           text: Docs
-                                  #           signals:
-                                  #             - signal: "route/REDIRECT"
-                                  #               path: "https://docs.$Site{domain}"
-                                  # - uesio/io.group:
-                                  #     components:
-                                  #       - uesio/io.button:
-                                  #           uesio.variant: uesio/web.calltoaction
-                                  #           text: Early Access
-                                  #           signals:
-                                  #             - signal: "route/NAVIGATE"
-                                  #               path: "earlyaccess"

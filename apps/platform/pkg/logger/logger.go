@@ -2,11 +2,8 @@ package logger
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
-	"os"
-	"strings"
 )
 
 // Entry defines a log entry.
@@ -45,20 +42,14 @@ func init() {
 	log.SetFlags(0)
 }
 
-// LogWithTrace function
-func LogWithTrace(r *http.Request, message, severity string) {
+func Info(message string) {
+	Log(message, INFO)
+}
 
-	projectID := os.Getenv("GOOGLE_CLOUD_PROJECT")
+func LogWithTrace(r *http.Request, message, severity string) {
 
 	// Derive the traceID associated with the current request.
 	var trace string
-	if projectID != "" {
-		traceHeader := r.Header.Get("X-Cloud-Trace-Context")
-		traceParts := strings.Split(traceHeader, "/")
-		if len(traceParts) > 0 && len(traceParts[0]) > 0 {
-			trace = fmt.Sprintf("projects/%s/traces/%s", projectID, traceParts[0])
-		}
-	}
 
 	log.Println(Entry{
 		Trace:    trace,

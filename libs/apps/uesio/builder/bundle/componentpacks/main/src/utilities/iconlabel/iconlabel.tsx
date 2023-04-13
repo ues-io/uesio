@@ -1,38 +1,37 @@
 import { FC } from "react"
 import { definition, styles, component } from "@uesio/ui"
 
-const Text = component.getUtility("uesio/io.text")
-const Tooltip = component.getUtility("uesio/io.tooltip")
-
 interface T extends definition.UtilityProps {
 	icon: string
 	color: string
 	text: string
 	tooltip?: string
+	fill?: boolean
 }
 
 const IconLabel: FC<T> = (props) => {
+	const Text = component.getUtility("uesio/io.text")
+	const Tooltip = component.getUtility("uesio/io.tooltip")
 	const { icon, color, text, tooltip, context } = props
+
+	const fill = props.fill === undefined ? true : props.fill
 
 	const classes = styles.useUtilityStyles(
 		{
-			root: {
-				display: "flex",
-				gap: "5px",
-				alignItems: "center",
-				fontSize: "10pt",
+			root: {},
+			icon: {
+				...(!icon && { visibility: "hidden" }),
+				fontVariationSettings: "'FILL' " + (fill ? "1" : "0"),
 			},
-			icon: {},
-			title: {
-				paddingTop: "1px",
-			},
+			title: {},
 		},
-		props
+		props,
+		"uesio/builder.iconlabel"
 	)
 	const iconElement = (
 		<Text
 			variant="uesio/io.icon"
-			text={icon}
+			text={icon || "circle"}
 			color={color}
 			classes={{
 				root: classes.icon,
@@ -43,7 +42,7 @@ const IconLabel: FC<T> = (props) => {
 	return (
 		<div className={classes.root}>
 			{tooltip ? (
-				<Tooltip text={tooltip} context={context}>
+				<Tooltip text={tooltip} offset={10} context={context}>
 					{iconElement}
 				</Tooltip>
 			) : (

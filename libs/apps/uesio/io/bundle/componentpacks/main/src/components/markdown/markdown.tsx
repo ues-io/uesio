@@ -1,14 +1,13 @@
-import { FunctionComponent } from "react"
+import { api, styles, context, definition } from "@uesio/ui"
+import MarkDownField from "../../utilities/markdownfield/markdownfield"
 
-import { MarkDownProps } from "./markdowndefinition"
-import { component, styles } from "@uesio/ui"
-import { MarkDownFieldProps } from "../../utilities/markdownfield/markdownfield"
+type MarkDownDefinition = {
+	file?: string
+	markdown?: string
+	mode: context.FieldMode
+}
 
-const MarkDownField = component.getUtility<MarkDownFieldProps>(
-	"uesio/io.markdownfield"
-)
-
-const MarkDown: FunctionComponent<MarkDownProps> = (props) => {
+const MarkDown: definition.UC<MarkDownDefinition> = (props) => {
 	const { definition, context } = props
 
 	const classes = styles.useStyles(
@@ -23,7 +22,11 @@ const MarkDown: FunctionComponent<MarkDownProps> = (props) => {
 			classes={classes}
 			variant={definition["uesio.variant"]}
 			context={context}
-			value={definition.markdown || ""}
+			value={
+				definition.file
+					? api.file.useFile(context, definition.file)
+					: context.merge(definition.markdown)
+			}
 			mode={"READ"}
 		/>
 	)

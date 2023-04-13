@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { component, definition, hooks } from "@uesio/ui"
+import { component, definition, api } from "@uesio/ui"
 
 type ConfigLoginsDefinition = {
 	user: string
@@ -10,11 +10,9 @@ interface Props extends definition.BaseProps {
 	definition: ConfigLoginsDefinition
 }
 
-const TitleBar = component.getUtility("uesio/io.titlebar")
-const Button = component.getUtility("uesio/io.button")
-
 const ConfigLogins: FunctionComponent<Props> = (props) => {
-	const uesio = hooks.useUesio(props)
+	const TitleBar = component.getUtility("uesio/io.titlebar")
+	const Button = component.getUtility("uesio/io.button")
 	const { context, definition } = props
 	const user = definition?.user ? context.mergeString(definition?.user) : ""
 	const email = definition?.email
@@ -28,7 +26,7 @@ const ConfigLogins: FunctionComponent<Props> = (props) => {
 		throw new Error("Must provide either siteadmin context")
 	}
 
-	const [signupmethods] = uesio.builder.useMetadataList(
+	const [signupmethods] = api.builder.useMetadataList(
 		context,
 		"SIGNUPMETHOD",
 		""
@@ -39,7 +37,7 @@ const ConfigLogins: FunctionComponent<Props> = (props) => {
 	}
 
 	const createLogin = async (key: string) => {
-		uesio.signal.runMany(
+		api.signal.runMany(
 			[
 				{
 					signal: "user/CREATE_LOGIN",
@@ -74,7 +72,7 @@ const ConfigLogins: FunctionComponent<Props> = (props) => {
 	}
 
 	const resetPassword = async (key: string) => {
-		uesio.signal.runMany(
+		api.signal.runMany(
 			[
 				{
 					signal: "user/FORGOT_PASSWORD",

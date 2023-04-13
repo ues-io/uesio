@@ -13,6 +13,8 @@ func GetAnonSession(site *meta.Site) *Session {
 	session.SetPermissions(&meta.PermissionSet{
 		AllowAllCollections: true,
 		ViewAllRecords:      true,
+		AllowAllRoutes:      true,
+		AllowAllViews:       true,
 	})
 
 	return session
@@ -24,11 +26,15 @@ func GetStudioAnonSession() *Session {
 
 func GetStudioSite() *meta.Site {
 	app := &meta.App{
-		UniqueKey: "uesio/studio",
+		BuiltIn: meta.BuiltIn{
+			UniqueKey: "uesio/studio",
+		},
 	}
 	site := &meta.Site{
-		UniqueKey: "uesio/studio:prod",
-		Name:      "prod",
+		BuiltIn: meta.BuiltIn{
+			UniqueKey: "uesio/studio:prod",
+		},
+		Name: "prod",
 		Bundle: &meta.Bundle{
 			App:   app,
 			Major: 0,

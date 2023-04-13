@@ -17,10 +17,10 @@ definition:
               area: main
               components:
                 - uesio/io.grid:
-                    templateColumns: 0fr 1fr 0fr
-                    uesio.styles:
+                    uesio.styleTokens:
                       root:
-                        alignItems: center
+                        - grid-cols-[0fr_1fr_0fr]
+                        - items-center
                     items:
                       - uesio/io.griditem:
                           components:

@@ -89,7 +89,7 @@ definition:
                     uesio.variant: uesio/io.section
                     components:
                       - uesio/io.deck:
-                          id: datasourcesDeck
+                          uesio.id: datasourcesDeck
                           wire: datasources
                           uesio.variant: uesio/io.section
                           components:
@@ -114,7 +114,7 @@ definition:
       height: 500px
       components:
         - uesio/io.list:
-            id: newdatasourcelist
+            uesio.id: newdatasourcelist
             wire: newdatasource
             mode: EDIT
             components:

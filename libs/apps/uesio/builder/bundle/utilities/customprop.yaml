@@ -1,3 +1,0 @@
-name: customprop
-pack: main
-entrypoint: utilities/customprop/customprop.tsx

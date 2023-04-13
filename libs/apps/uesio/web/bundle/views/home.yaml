@@ -13,10 +13,10 @@ definition:
               area: main
               components:
                 - uesio/io.grid:
-                    templateColumns: 460px 1fr
-                    uesio.styles:
+                    uesio.styleTokens:
                       root:
-                        padding: 80px
+                        - grid-cols-[460px_1fr]
+                        - p-20
                     items:
                       - uesio/io.griditem:
                           components:
@@ -25,7 +25,7 @@ definition:
                                 text: Create apps faster and easier.
                             - uesio/io.text:
                                 uesio.variant: uesio/web.calloutsub
-                                text: ues.io makes bulding, running, and selling web apps easier for developers and possible for everyone else.
+                                text: ues.io makes building, running, and selling web apps easier for developers and possible for everyone else.
     - uesio/io.grid:
         uesio.variant: uesio/web.mainlayout
         uesio.styles:
@@ -40,10 +40,10 @@ definition:
                     area: main
                     components:
                       - uesio/io.grid:
-                          templateColumns: 1fr 0fr 1fr
-                          uesio.styles:
+                          uesio.styleTokens:
                             root:
-                              padding: 180px
+                              - grid-cols-[1fr_0fr_1fr]
+                              - p-44
                           items:
                             - uesio/io.griditem:
                                 uesio.styles:
@@ -74,10 +74,9 @@ definition:
               area: main
               components:
                 - uesio/io.grid:
-                    templateColumns: 850px 1fr
-                    uesio.styles:
-                      root:
-                        padding: 80px
+                    root:
+                      - grid-cols-[850px_1fr]
+                      - p-20
                     items:
                       - uesio/io.griditem:
                           components:
@@ -91,10 +90,10 @@ definition:
               area: main
               components:
                 - uesio/io.grid:
-                    templateColumns: 1fr 400px
-                    uesio.styles:
+                    uesio.styleTokens:
                       root:
-                        padding: 80px
+                        - grid-cols-[1fr_400px]
+                        - p-20
                     items:
                       - uesio/io.griditem:
                       - uesio/io.griditem:

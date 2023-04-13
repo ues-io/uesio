@@ -25,7 +25,7 @@ type AcceptTypes = "IMAGE" | "AUDIO" | "VIDEO" | "DOCUMENT" | "ANY"
 type SelectOption = {
 	label: string
 	value: string
-	title?: string
+	languageLabel?: string
 	disabled?: boolean
 }
 
@@ -37,11 +37,12 @@ type SelectListMetadata = {
 	name: string
 	options: SelectOption[]
 	blank_option_label?: string
+	blank_option_language_label?: string
 }
 
 type FileMetadata = {
 	accept: AcceptTypes
-	filecollection: string
+	filesource: string
 }
 
 type ReferenceMetadata = {
@@ -70,10 +71,11 @@ type FieldMetadata = {
 	number?: NumberMetadata
 }
 
-export {
+export type {
 	FieldMetadata,
 	FieldMetadataMap,
 	SelectOption,
+	SelectListMetadata,
 	FieldType,
 	NumberMetadata,
 	ReferenceMetadata,

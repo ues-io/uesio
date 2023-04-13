@@ -1,11 +1,12 @@
-import { FunctionComponent } from "react"
+import { component, definition } from "@uesio/ui"
+import { default as IOTitleBar } from "../../utilities/titlebar/titlebar"
 
-import { TitleBarProps } from "./titlebardefinition"
-import { component } from "@uesio/ui"
+type TitleBarDefinition = {
+	title: string
+	subtitle: string
+}
 
-const IOTitleBar = component.getUtility("uesio/io.titlebar")
-
-const TitleBar: FunctionComponent<TitleBarProps> = (props) => {
+const TitleBar: definition.UC<TitleBarDefinition> = (props) => {
 	const { definition, path, context } = props
 
 	return (
@@ -19,7 +20,6 @@ const TitleBar: FunctionComponent<TitleBarProps> = (props) => {
 					definition={definition}
 					listName="actions"
 					path={path}
-					accepts={["uesio.standalone"]}
 					context={context}
 				/>
 			}

@@ -1,18 +1,14 @@
-import { AnyAction } from "redux"
-import { ThunkDispatch } from "redux-thunk"
-import { platform, Platform } from "../../platform/platform"
-import { RootState } from "../../store/store"
+import { platform } from "../../platform/platform"
 import { Dependencies } from "./types"
 import { setMany as setComponentVariant } from "../componentvariant"
 import { setMany as setConfigValue } from "../configvalue"
 import { setMany as setLabel } from "../label"
-import { setMany as setViewDef } from "../viewdef"
+import { upsertMany as setViewDef } from "../viewdef"
 import { setMany as setTheme } from "../theme"
-import { setMany as setMetadataText } from "../metadatatext"
 import { setMany as setFeatureFlag } from "../featureflag"
+import { setMany as setComponent } from "../component"
 import { initAll as initWire } from "../wire"
 import { init as initCollection } from "../collection"
-import { setNamespaceInfo } from "../builder"
 import { PlainViewDef } from "../../definition/viewdef"
 import { ComponentVariant } from "../../definition/componentvariant"
 import { ConfigValueState } from "../../definition/configvalue"
@@ -20,43 +16,42 @@ import { LabelState } from "../../definition/label"
 import { Context } from "../../context/context"
 import { parseKey } from "../../component/path"
 import { ThemeState } from "../../definition/theme"
-import { MetadataState } from "../metadata/types"
 import { FeatureFlagState } from "../../definition/featureflag"
 import { initExistingWire } from "../wire/operations/initialize"
-import { RegularWireDefinition } from "../../definition/wire"
 import { EntityState } from "@reduxjs/toolkit"
 import { PlainWire } from "../wire/types"
+import { dispatch } from "../../store/store"
+import { ComponentState } from "../component/types"
+import { PlainCollection, PlainCollectionMap } from "../collection/types"
 
 type Dep<T> = Record<string, T> | undefined
 
 const attachDefToWires = (
 	wires?: EntityState<PlainWire>,
-	viewdefs?: EntityState<PlainViewDef>
+	viewdefs?: EntityState<PlainViewDef>,
+	collections?: EntityState<PlainCollection>
 ) => {
 	if (!wires || !viewdefs) return
 	wires.ids.forEach((wirename) => {
 		const wire = wires.entities[wirename]
-		if (wire) {
-			const viewId = wire.view.split("(")[0]
-			const wireDef = viewdefs.entities?.[viewId]?.definition.wires?.[
-				wire.name
-			] as RegularWireDefinition
-			if (!wireDef)
-				throw new Error(
-					"Could not find wire def for wire: " +
-						wire.view +
-						" : " +
-						wire.name
-				)
-			wires.entities[wirename] = initExistingWire(wire, wireDef)
-		}
+		if (!wire) return
+
+		const viewId = wire.view.split("(")[0]
+		const wireDef =
+			viewdefs.entities?.[viewId]?.definition.wires?.[wire.name]
+		if (!wireDef)
+			throw new Error(
+				`Could not find wire def for wire: ${wire.view} : ${wire.name}`
+			)
+		wires.entities[wirename] = initExistingWire(
+			wire,
+			wireDef,
+			(collections?.entities || {}) as PlainCollectionMap
+		)
 	})
 }
 
-const dispatchRouteDeps = (
-	deps: Dependencies | undefined,
-	dispatch: ThunkDispatch<RootState, Platform, AnyAction>
-) => {
+const dispatchRouteDeps = (deps: Dependencies | undefined) => {
 	if (!deps) return
 
 	const viewdefs = deps.viewdef?.entities as Dep<PlainViewDef>
@@ -77,15 +72,12 @@ const dispatchRouteDeps = (
 	const themes = deps.theme?.entities as Dep<ThemeState>
 	if (themes) dispatch(setTheme(themes))
 
-	const metadatatext = deps.metadatatext?.entities as Dep<MetadataState>
-	if (metadatatext) dispatch(setMetadataText(metadatatext))
-
-	const namespaceinfo = deps.namespaces
-	if (namespaceinfo) dispatch(setNamespaceInfo(namespaceinfo))
+	const components = deps.component?.entities as Dep<ComponentState>
+	if (components) dispatch(setComponent(components))
 
 	const wires = deps.wire
 	if (wires && viewdefs) {
-		attachDefToWires(wires, deps.viewdef)
+		attachDefToWires(wires, deps.viewdef, deps.collection)
 		dispatch(initWire(wires))
 	}
 
@@ -93,31 +85,10 @@ const dispatchRouteDeps = (
 	if (collections) dispatch(initCollection(collections))
 }
 
-const getPackUrlsForDeps = (
-	deps: Dependencies | undefined,
-	context: Context,
-	includeBuilder?: boolean
-) =>
-	deps?.componentpack?.ids.flatMap((key) =>
-		getPackUrls(key as string, context, includeBuilder)
-	) || []
+const getPackUrlsForDeps = (deps: Dependencies | undefined, context: Context) =>
+	deps?.componentpack?.ids.map((key) => {
+		const [namespace, name] = parseKey(key as string)
+		return platform.getComponentPackURL(context, namespace, name)
+	}) || []
 
-const getPackUrls = (
-	key: string,
-	context: Context,
-	includeBuilder?: boolean
-) => {
-	const [namespace, name] = parseKey(key as string)
-	const runtime = platform.getComponentPackURL(context, namespace, name)
-	if (!includeBuilder) return [runtime]
-
-	const buildtime = platform.getComponentPackURL(
-		context,
-		namespace,
-		name,
-		true
-	)
-	return [runtime, buildtime]
-}
-
-export { dispatchRouteDeps, getPackUrlsForDeps, getPackUrls, attachDefToWires }
+export { dispatchRouteDeps, getPackUrlsForDeps, attachDefToWires }

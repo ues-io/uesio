@@ -2,3 +2,4 @@ name: login
 path: login
 view: uesio/core.login
 public: true
+title: Uesio - Login

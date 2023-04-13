@@ -3,10 +3,12 @@ package clickup
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/teris-io/shortid"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/integ"
+	"github.com/thecloudmasters/uesio/pkg/integ/web"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -18,8 +20,8 @@ type Task struct {
 	ID           string        `json:"id"`
 	Name         string        `json:"name"`
 	CustomFields []CustomField `json:"custom_fields"`
-	StartDate    string        `json:"start_date"`
-	DueDate      string        `json:"due_date"`
+	StartDate    int64         `json:"start_date,string"`
+	DueDate      int64         `json:"due_date,string"`
 	Status       *Status       `json:"status"`
 }
 
@@ -54,17 +56,9 @@ func TaskLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Se
 	}
 
 	// Verify that a type condition was provided
-	if op.Conditions == nil || len(op.Conditions) <= 0 {
-		return errors.New("Must Provide at least one condition")
+	if op.Conditions == nil || len(op.Conditions) != 2 {
+		return errors.New("Tasks can only be queried by type and task ID or list ID")
 	}
-
-	listIDCondition := op.Conditions[0]
-
-	if listIDCondition.Field != "tcm/timetracker.list" {
-		return errors.New("The first condition must be on the type field")
-	}
-
-	listID := listIDCondition.Value
 
 	collectionMetadata.SetField(&adapt.FieldMetadata{
 		Name:       "name",
@@ -76,20 +70,55 @@ func TaskLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Se
 		Label:      "Name",
 	})
 
-	if listID == "" || listID == nil {
+	conditionType := op.Conditions[0]
+	valueType := conditionType.Value
+	if valueType == "" || valueType == nil {
 		return nil
 	}
 
-	url := fmt.Sprintf("list/%v/task?archived=false&page=0&subtasks=false", listID)
+	conditionID := op.Conditions[1]
+	valueID := conditionID.Value.(string)
+	if valueID == "" {
+		return nil
+	}
 
 	data := &TaskResponse{}
 
-	err = integ.ExecByKey(&integ.IntegrationOptions{
-		URL:   url,
-		Cache: true,
-	}, nil, data, "tcm/timetracker.clickup", session)
+	webIntegration, err := integ.GetIntegration("tcm/timetracker.clickup", session)
 	if err != nil {
 		return err
+	}
+
+	if conditionType.Field == "tcm/timetracker.type" && valueType == "TASK" {
+
+		if strings.HasPrefix(valueID, "#") {
+			valueID = valueID[1:]
+		}
+
+		url := fmt.Sprintf("task/%v?include_subtasks=false", valueID)
+		ldata := &Task{}
+		err = webIntegration.RunAction("get", &web.GetActionOptions{
+			URL:          url,
+			Cache:        true,
+			ResponseData: ldata,
+		})
+		if err != nil {
+			return err
+		}
+		data.Tasks = append(data.Tasks, *ldata)
+	}
+
+	if conditionType.Field == "tcm/timetracker.type" && valueType == "LIST" {
+
+		url := fmt.Sprintf("list/%v/task?archived=false&page=0&subtasks=false", valueID)
+		err = webIntegration.RunAction("get", &web.GetActionOptions{
+			URL:          url,
+			Cache:        true,
+			ResponseData: data,
+		})
+		if err != nil {
+			return err
+		}
 	}
 
 	for _, task := range data.Tasks {
@@ -101,8 +130,8 @@ func TaskLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Se
 		opItem.SetField("uesio/core.id", fakeID)
 		opItem.SetField("tcm/timetracker.id", task.ID)
 		opItem.SetField("tcm/timetracker.name", task.Name)
-		opItem.SetField("tcm/timetracker.startdate", task.StartDate)
-		opItem.SetField("tcm/timetracker.duedate", task.DueDate)
+		opItem.SetField("tcm/timetracker.startdate", task.StartDate/1000)
+		opItem.SetField("tcm/timetracker.duedate", task.DueDate/1000)
 		if task.Status != nil {
 			opItem.SetField("tcm/timetracker.status", task.Status.Status)
 			opItem.SetField("tcm/timetracker.statuscolor", task.Status.Color)

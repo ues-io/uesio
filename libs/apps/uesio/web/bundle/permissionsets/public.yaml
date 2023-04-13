@@ -1,48 +1,28 @@
 name: public
 named: {}
 views:
-  uesio/web.contact: true
-  uesio/web.contactthanks: true
   uesio/web.earlyaccess: true
   uesio/web.earlyaccessthanks: true
   uesio/web.footer: true
   uesio/web.home: true
   uesio/web.preview: true
   uesio/web.privacy: true
-  uesio/web.team: true
   uesio/web.terms: true
   uesio/web.topbar: true
+collections:
 routes:
-  uesio/web.contact: true
-  uesio/web.contactthanks: true
   uesio/web.earlyaccess: true
   uesio/web.earlyaccessthanks: true
   uesio/web.home: true
   uesio/web.preview: true
   uesio/web.privacy: true
-  uesio/web.team: true
   uesio/web.terms: true
 files:
-  uesio/web.abel: true
-  uesio/web.accordion: true
-  uesio/web.albin: true
-  uesio/web.ben: true
-  uesio/web.cssexample: true
-  uesio/web.dryer: true
-  uesio/web.gregg: true
-  uesio/web.htmlexample: true
-  uesio/web.james: true
   uesio/web.logo: true
   uesio/web.logowhite: true
-  uesio/web.matti: true
-  uesio/web.osman: true
-  uesio/web.piano: true
-  uesio/web.primi: true
-  uesio/web.routeexample: true
-  uesio/web.viewexample: true
-  uesio/web.wessel: true
-collections:
-  uesio/crm.lead: true
+allowallcollections: false
 allowallviews: false
 allowallroutes: false
 allowallfiles: false
+modifyallrecords: false
+viewallrecords: false

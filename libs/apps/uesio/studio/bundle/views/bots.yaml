@@ -33,7 +33,6 @@ definition:
         uesio/studio.collection:
         uesio/studio.dialect:
         uesio/studio.type:
-        uesio/studio.content:
       init:
         query: false
         create: true
@@ -42,6 +41,12 @@ definition:
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: uesio/core.id
+        - field: uesio/studio.dialect
+          valueSource: VALUE
+          value: "TYPESCRIPT"
+        - field: uesio/studio.type
+          valueSource: VALUE
+          value: "LISTENER"
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -78,15 +83,18 @@ definition:
                           components:
                             - uesio/io.button:
                                 text: Create a New Bot
-                                uesio.variant: uesio/io.secondary
+                                uesio.variant: uesio/io.primary
+                                hotkey: "n"
                                 signals:
+                                  - signal: wire/RESET
+                                    wire: newbot
                                   - signal: panel/TOGGLE
                                     panel: newBot
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
                       - uesio/io.deck:
-                          id: botsDeck
+                          uesio.id: botsDeck
                           wire: bots
                           uesio.variant: uesio/io.section
                           components:
@@ -111,7 +119,7 @@ definition:
       height: 500px
       components:
         - uesio/io.list:
-            id: newbotlist
+            uesio.id: newbotlist
             wire: newbot
             mode: EDIT
             components:
@@ -125,9 +133,10 @@ definition:
                   uesio.display:
                     - field: uesio/studio.type
                       value: "LISTENER"
-                      type: "fieldNotEquals"
+                      type: "fieldValue"
+                      operator: "NOT_EQUALS"
                   components:
-                    - uesio/studio.metadatafield:
+                    - uesio/builder.metadatafield:
                         uesio.context:
                           workspace:
                             name: $Param{workspacename}
@@ -139,6 +148,7 @@ definition:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
             text: "Save"
+            hotkey: "meta+s"
             signals:
               - signal: wire/SAVE
                 wires:

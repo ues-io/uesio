@@ -1,30 +1,23 @@
 import { FunctionComponent } from "react"
-import { definition, component, hooks, wire, collection } from "@uesio/ui"
-
-const SelectField = component.getUtility("uesio/io.selectfield")
+import { definition, api, wire, collection } from "@uesio/ui"
+import SelectField from "../field/select"
 
 const addBlankSelectOption = collection.addBlankSelectOption
 
 interface SelectFilterProps extends definition.UtilityProps {
+	path: string
 	wire: wire.Wire
 	fieldMetadata: collection.Field
-	conditionId: string | undefined
+	condition: wire.ValueConditionState
 }
 
 const SelectFilter: FunctionComponent<SelectFilterProps> = (props) => {
-	const { wire, fieldMetadata, context } = props
-
-	const uesio = hooks.useUesio(props)
-	const conditionId = props.conditionId || props.path || ""
+	const { wire, fieldMetadata, context, condition } = props
 	const wireId = wire.getId()
-
-	const condition = (wire.getCondition(conditionId) || {
-		id: conditionId,
-		field: fieldMetadata.getId(),
-	}) as wire.ValueConditionState
 
 	return (
 		<SelectField
+			fieldMetadata={fieldMetadata}
 			context={context}
 			options={addBlankSelectOption(
 				fieldMetadata.getSelectMetadata()?.options || [],
@@ -33,7 +26,7 @@ const SelectFilter: FunctionComponent<SelectFilterProps> = (props) => {
 			variant={"uesio/io.filter"}
 			value={condition.value || ""}
 			setValue={(value: string) => {
-				uesio.signal.runMany(
+				api.signal.runMany(
 					[
 						{
 							signal: "wire/SET_CONDITION",

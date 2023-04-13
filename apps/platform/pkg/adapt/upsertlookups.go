@@ -24,15 +24,20 @@ func HandleUpsertLookup(
 	idMap := LocatorMap{}
 	for _, change := range op.Inserts {
 
-		// It's ok to not handle this error here, because we'll try to
-		// set the unique key again later when we have more data.
-		_ = SetUniqueKey(change)
-
-		if change.UniqueKey == "" {
-			continue
+		// For upserts, if you provide the actual unique key we will
+		// use that as a higher priority than the constructed unique
+		// key to get a match.
+		existingKey, err := change.GetFieldAsString(UNIQUE_KEY_FIELD)
+		if err != nil || existingKey == "" {
+			// As a fallback, we'll construct the unique key for you
+			constructedKey, err := GetUniqueKeyValue(change)
+			if err != nil || constructedKey == "" {
+				continue
+			}
+			existingKey = constructedKey
 		}
 
-		err := idMap.AddID(change.UniqueKey, ReferenceLocator{
+		err = idMap.AddID(existingKey, ReferenceLocator{
 			Item: change,
 		})
 		if err != nil {

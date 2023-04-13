@@ -1,41 +1,46 @@
-import { FC } from "react"
 import { usePanels } from "../bands/panel/selectors"
-import { ComponentInternal } from "../component/component"
-import { BaseProps } from "../definition/definition"
+import { Component } from "../component/component"
 import { PanelDefinitionMap } from "../definition/panel"
-import { Context } from "../context/context"
+import { UtilityComponent } from "../definition/definition"
+import { useViewDef } from "../bands/viewdef"
 
-const PanelArea: FC<BaseProps> = () => {
+type Props = {
+	panelId: string
+}
+
+const Panel: UtilityComponent<Props> = ({ panelId, context }) => {
+	const viewDef = useViewDef(context.getViewDefId())
+	const panels: PanelDefinitionMap | undefined = viewDef?.panels
+	if (!panels) return null
+	const panelDef = panels[panelId]
+	if (!panelDef) return null
+	const componentType = panelDef["uesio.type"]
+	if (!componentType) return null
+	return (
+		<Component
+			key={panelId}
+			definition={{ ...panelDef, id: panelId }}
+			path={`["panels"]["${panelId}"]`}
+			context={context}
+			componentType={componentType}
+		/>
+	)
+}
+
+const PanelArea: UtilityComponent = (props) => {
 	const panels = usePanels()
-
 	return (
 		<>
 			{panels &&
 				panels.map((panel) => {
-					const panelContext = new Context(panel.context || [])
-
-					const panelId = panel.id
-					if (!panelContext) return <></>
-					const viewDef = panelContext.getViewDef()
-					const panels: PanelDefinitionMap | undefined =
-						viewDef?.panels
-					if (!panels || !panelId) return null
-
-					const panelDef = panels[panelId]
-					if (!panelDef) return null
-					const componentType = panelDef["uesio.type"]
-
-					if (!componentType) return null
-
-					return [
-						<ComponentInternal
-							key={panelId}
-							definition={{ ...panelDef, id: panelId }}
-							path={`["panels"]["${panelId}"]`}
-							context={panelContext}
-							componentType={componentType}
-						/>,
-					]
+					if (!panel.context) return null
+					return (
+						<Panel
+							key={panel.id}
+							context={props.context.clone(panel.context)}
+							panelId={panel.id}
+						/>
+					)
 				})}
 		</>
 	)

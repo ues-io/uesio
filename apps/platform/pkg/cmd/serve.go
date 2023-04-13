@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"path/filepath"
 
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
 	"github.com/thecloudmasters/uesio/pkg/controller"
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 	//_ "net/http/pprof"
@@ -32,23 +32,55 @@ func getFullItemParam(paramName string) string {
 	return fmt.Sprintf("{%s:\\w+\\/\\w+\\.\\w+}", paramName)
 }
 
+func getFullItemOrTextParam(paramName string) string {
+	return fmt.Sprintf("{%s:(?:\\w+\\/\\w+\\.)?\\w+}", paramName)
+}
+
 var appParam = getNSParam("app")
 var nsParam = getNSParam("namespace")
 var itemParam = fmt.Sprintf("%s/{name}", nsParam)
-var groupingParam = getFullItemParam("grouping")
+
+// Version will either be a Uesio bundle version string, e.g. v1.2.3,
+// Or an 8-character short Git sha, e.g. abcd1234
+var versionedItemParam = nsParam + "/{version:(?:v[0-9]+\\.[0-9]+\\.[0-9]+)|(?:[a-z0-9]{8,})}/{name}"
+
+// Grouping values can either be full Uesio items (e.g. <user>/<app>.<name>) or simple values, e.g. "LISTENER",
+// so the regex here needs to support both
+var groupingParam = getFullItemOrTextParam("grouping")
 var collectionParam = getFullItemParam("collectionname")
+
+var (
+	fontsPrefix  = "/fonts"
+	staticPrefix = "/static"
+)
 
 func serve(cmd *cobra.Command, args []string) {
 
 	logger.Log("Running serv command!", logger.INFO)
 	r := mux.NewRouter()
 
+	cwd, err := os.Getwd()
+	if err != nil {
+		logger.LogError(err)
+		panic("Failed to obtain working directory")
+	}
+
+	// If we have gitsha, append that to the prefixes to enable us to have versioned assets
+	gitsha := os.Getenv("GITSHA")
+	cacheStaticAssets := gitsha != ""
+	staticAssetsPath := ""
+	if cacheStaticAssets {
+		staticAssetsPath = "/" + gitsha
+		file.SetAssetsPath(staticAssetsPath)
+		fontsPrefix = staticAssetsPath + fontsPrefix
+		staticPrefix = staticAssetsPath + staticPrefix
+	}
+
 	// Profiler Info
 	// r.PathPrefix("/debug/pprof").Handler(http.DefaultServeMux)
 
-	r.HandleFunc("/fonts/{filename}", controller.Fonts).Methods(http.MethodGet)
-	r.HandleFunc("/static/{filename:.*}", controller.Vendor).Methods(http.MethodGet)
-	r.HandleFunc("/favicon.ico", controller.ServeStatic(filepath.Join("platform", "favicon.ico"))).Methods(http.MethodGet)
+	r.Handle(fontsPrefix+"/{filename:.*}", controller.Fonts(cwd, fontsPrefix, cacheStaticAssets)).Methods(http.MethodGet)
+	r.Handle(staticPrefix+"/{filename:.*}", file.Vendor(cwd, staticPrefix, cacheStaticAssets)).Methods(http.MethodGet)
 	r.HandleFunc("/health", controller.Health).Methods(http.MethodGet)
 
 	// The workspace router
@@ -92,21 +124,25 @@ func serve(cmd *cobra.Command, args []string) {
 		middleware.LogRequestHandler,
 	)
 
+	// SEO Routes
+	lr.HandleFunc("/robots.txt", controller.Robots).Methods(http.MethodGet)
+	lr.HandleFunc("/favicon.ico", controller.Favicon).Methods(http.MethodGet)
+
 	// Userfile routes for site and workspace context
 	userfileUploadPath := "/userfiles/upload"
-	sr.HandleFunc(userfileUploadPath, controller.UploadUserFile).Methods(http.MethodPost)
-	wr.HandleFunc(userfileUploadPath, controller.UploadUserFile).Methods(http.MethodPost)
-	sa.HandleFunc(userfileUploadPath, controller.UploadUserFile).Methods(http.MethodPost)
+	sr.HandleFunc(userfileUploadPath, file.UploadUserFile).Methods(http.MethodPost)
+	wr.HandleFunc(userfileUploadPath, file.UploadUserFile).Methods(http.MethodPost)
+	sa.HandleFunc(userfileUploadPath, file.UploadUserFile).Methods(http.MethodPost)
 
 	userfileDeletePath := "/userfiles/delete/{fileid:.*}"
-	sr.HandleFunc(userfileDeletePath, controller.DeleteUserFile).Methods(http.MethodPost)
-	wr.HandleFunc(userfileDeletePath, controller.DeleteUserFile).Methods(http.MethodPost)
-	sa.HandleFunc(userfileDeletePath, controller.DeleteUserFile).Methods(http.MethodPost)
+	sr.HandleFunc(userfileDeletePath, file.DeleteUserFile).Methods(http.MethodPost)
+	wr.HandleFunc(userfileDeletePath, file.DeleteUserFile).Methods(http.MethodPost)
+	sa.HandleFunc(userfileDeletePath, file.DeleteUserFile).Methods(http.MethodPost)
 
 	userfileDownloadPath := "/userfiles/download"
-	sr.HandleFunc(userfileDownloadPath, controller.DownloadUserFile).Methods(http.MethodGet)
-	wr.HandleFunc(userfileDownloadPath, controller.DownloadUserFile).Methods(http.MethodGet)
-	sa.HandleFunc(userfileDownloadPath, controller.DownloadUserFile).Methods(http.MethodGet)
+	sr.HandleFunc(userfileDownloadPath, file.DownloadUserFile).Methods(http.MethodGet)
+	wr.HandleFunc(userfileDownloadPath, file.DownloadUserFile).Methods(http.MethodGet)
+	sa.HandleFunc(userfileDownloadPath, file.DownloadUserFile).Methods(http.MethodGet)
 
 	// Wire load and save routes for site and workspace context
 	wireLoadPath := "/wires/load"
@@ -128,10 +164,20 @@ func serve(cmd *cobra.Command, args []string) {
 	sr.HandleFunc(botParamPath, controller.GetBotParams).Methods(http.MethodGet)
 	wr.HandleFunc(botParamPath, controller.GetBotParams).Methods(http.MethodGet)
 
+	viewParamPath := fmt.Sprintf("/views/params/%s", itemParam)
+	wr.HandleFunc(viewParamPath, controller.GetViewParams).Methods(http.MethodGet)
+
+	//
 	// File (actual metadata, not userfiles) routes for site and workspace context
+
+	// Un-versioned file serving routes - for backwards compatibility, and for local development
 	filesPath := fmt.Sprintf("/files/%s", itemParam)
-	sr.HandleFunc(filesPath, controller.ServeFile).Methods(http.MethodGet)
-	wr.HandleFunc(filesPath, controller.ServeFile).Methods(http.MethodGet)
+	sr.HandleFunc(filesPath, file.ServeFile).Methods(http.MethodGet)
+	wr.HandleFunc(filesPath, file.ServeFile).Methods(http.MethodGet)
+	// Versioned file serving routes
+	versionedFilesPath := fmt.Sprintf("/files/%s", versionedItemParam)
+	sr.HandleFunc(versionedFilesPath, file.ServeFile).Methods(http.MethodGet)
+	wr.HandleFunc(versionedFilesPath, file.ServeFile).Methods(http.MethodGet)
 
 	// Explicit namespaced route page load access for site and workspace context
 	serveRoutePath := fmt.Sprintf("/app/%s/{route:.*}", nsParam)
@@ -149,16 +195,21 @@ func serve(cmd *cobra.Command, args []string) {
 	sr.HandleFunc(pathRoutePath, controller.Route).Methods(http.MethodGet)
 	wr.HandleFunc(pathRoutePath, controller.Route).Methods(http.MethodGet)
 
-	// Component pack routes for site and workspace context
+	// Currently the only component pack files which we support fetching are:
+	// - runtime.js
+	// - runtime.js.map
+	// NOTE: Gorilla Mux requires use of non-capturing groups, hence the use of ?: here
+	componentPackFileSuffix := "/{filename:(?:runtime\\.js(?:\\.map)?)}"
+
+	// Un-versioned Component pack routes - for backwards compatibility, and for local development
 	componentPackPath := fmt.Sprintf("/componentpacks/%s", itemParam)
-	sr.HandleFunc(componentPackPath+"/runtime.js", controller.ServeComponentPack(false)).Methods(http.MethodGet)
-	wr.HandleFunc(componentPackPath+"/runtime.js", controller.ServeComponentPack(false)).Methods(http.MethodGet)
-	sr.HandleFunc(componentPackPath+"/builder.js", controller.ServeComponentPack(true)).Methods(http.MethodGet)
-	wr.HandleFunc(componentPackPath+"/builder.js", controller.ServeComponentPack(true)).Methods(http.MethodGet)
-	sr.HandleFunc(componentPackPath+"/runtime.js.map", controller.ServeComponentPackMap(false)).Methods(http.MethodGet)
-	wr.HandleFunc(componentPackPath+"/runtime.js.map", controller.ServeComponentPackMap(false)).Methods(http.MethodGet)
-	sr.HandleFunc(componentPackPath+"/builder.js.map", controller.ServeComponentPackMap(true)).Methods(http.MethodGet)
-	wr.HandleFunc(componentPackPath+"/builder.js.map", controller.ServeComponentPackMap(true)).Methods(http.MethodGet)
+	sr.HandleFunc(componentPackPath+componentPackFileSuffix, file.ServeComponentPackFile).Methods(http.MethodGet)
+	wr.HandleFunc(componentPackPath+componentPackFileSuffix, file.ServeComponentPackFile).Methods(http.MethodGet)
+
+	// Versioned component pack file routes
+	versionedComponentPackPath := fmt.Sprintf("/componentpacks/%s", versionedItemParam)
+	sr.HandleFunc(versionedComponentPackPath+componentPackFileSuffix, file.ServeComponentPackFile).Methods(http.MethodGet)
+	wr.HandleFunc(versionedComponentPackPath+componentPackFileSuffix, file.ServeComponentPackFile).Methods(http.MethodGet)
 
 	// Workspace context specific routes
 	wr.HandleFunc("/metadata/deploy", controller.Deploy).Methods(http.MethodPost)
@@ -225,6 +276,10 @@ func serve(cmd *cobra.Command, args []string) {
 	wr.HandleFunc("/secrets/"+itemParam, controller.SetSecret).Methods("POST")
 	sa.HandleFunc("/secrets/"+itemParam, controller.SetSecret).Methods("POST")
 
+	// AI autocompletion routes
+	wr.HandleFunc("/ai/complete", controller.AutocompleteHandler).Methods("POST")
+	sa.HandleFunc("/ai/complete", controller.AutocompleteHandler).Methods("POST")
+
 	// Feature Flag Routes
 	wr.HandleFunc("/featureflags", controller.FeatureFlag).Methods("GET")
 	sa.HandleFunc("/featureflags/{user}", controller.FeatureFlag).Methods("GET")
@@ -240,6 +295,7 @@ func serve(cmd *cobra.Command, args []string) {
 	sr.HandleFunc("/auth/"+itemParam+"/login", controller.Login).Methods("POST")
 	sr.HandleFunc("/auth/"+itemParam+"/signup", controller.Signup).Methods("POST")
 	sr.HandleFunc("/auth/"+itemParam+"/signup/confirm", controller.ConfirmSignUp).Methods("POST")
+	sa.HandleFunc("/auth/"+itemParam+"/forgotpassword", controller.ForgotPassword).Methods("POST")
 	sr.HandleFunc("/auth/"+itemParam+"/forgotpassword", controller.ForgotPassword).Methods("POST")
 	sr.HandleFunc("/auth/"+itemParam+"/forgotpassword/confirm", controller.ConfirmForgotPassword).Methods("POST")
 	sr.HandleFunc("/auth/"+itemParam+"/checkavailability/{username}", controller.CheckAvailability).Methods("POST")
@@ -249,6 +305,9 @@ func serve(cmd *cobra.Command, args []string) {
 
 	// Experimental REST api route
 	sr.HandleFunc("/rest/"+itemParam, controller.Rest).Methods("GET")
+
+	// REST API routes
+	sr.HandleFunc("/api/v1/collection/"+itemParam, controller.DeleteRecordApi).Methods("DELETE")
 
 	// Add Invalid Routes to all subrouters to give 404s
 	invalidPath := "/{invalidroute:.*}"
@@ -264,20 +323,25 @@ func serve(cmd *cobra.Command, args []string) {
 	if port == "" {
 		port = "3000"
 	}
+	// Host can be blank by default, but in local development it should be set to "localhost"
+	// to prevent the annoying "Allow incoming connections" firewall warning on Mac OS
+	host := os.Getenv("HOST")
+	serveAddr := host + ":" + port
+
+	// Universal middlewares
+	r.Use(middleware.GZip())
 
 	useSSL := os.Getenv("UESIO_USE_HTTPS")
+	var serveErr error
 	if useSSL == "true" {
 		logger.Log("Service Started over SSL on Port: "+port, logger.INFO)
-		err := http.ListenAndServeTLS(":"+port, "ssl/certificate.crt", "ssl/private.key", r)
-		if err != nil {
-			logger.LogError(err)
-		}
+		serveErr = http.ListenAndServeTLS(serveAddr, "ssl/certificate.crt", "ssl/private.key", r)
 	} else {
 		logger.Log("Service Started on Port: "+port, logger.INFO)
-		err := http.ListenAndServe(":"+port, r)
-		if err != nil {
-			logger.LogError(err)
-		}
+		serveErr = http.ListenAndServe(serveAddr, r)
+	}
+	if serveErr != nil {
+		logger.LogError(serveErr)
 	}
 
 	// CORS Stuff we don't need right now

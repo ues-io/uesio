@@ -1,17 +1,19 @@
 name: checkitem
 label: Check Item
+extends: uesio/io.default
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      color: "#888"
-      fontWeight: 300
-      margin: 20px 0
-      alignItems: baseline
+      - text-slate-700
+      - font-light
+      - my-5
+      - align-baseline
+      - text-base
   avatar:
     - uesio/io.text:
-        uesio.styles:
+        uesio.styleTokens:
           root:
-            fontSize: 16pt
+            - text-3xl
         uesio.variant: uesio/io.icon
         color: green
         text: check

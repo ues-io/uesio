@@ -14,18 +14,13 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/usage"
 )
 
-func GetFileMetadataType(details *fileadapt.FileDetails) string {
+const PLATFORM_FILE_SOURCE = "uesio/core.platform"
+
+func GetFileType(details *fileadapt.FileDetails) string {
 	if details.FieldID == "" {
 		return "attachment"
 	}
-	return "field"
-}
-
-func GetFileUniqueName(details *fileadapt.FileDetails) string {
-	if details.FieldID == "" {
-		return details.Name
-	}
-	return details.FieldID
+	return "field:" + details.FieldID
 }
 
 func getUploadMetadataResponse(metadataResponse *adapt.MetadataCache, collectionID, fieldID string, session *sess.Session) error {
@@ -81,13 +76,13 @@ func Upload(ops []FileUploadOp, connection adapt.Connection, session *sess.Sessi
 
 		ufm := meta.UserFileMetadata{
 			CollectionID:  details.CollectionID,
-			MimeType:      mime.TypeByExtension(filepath.Ext(details.Name)),
+			MimeType:      mime.TypeByExtension(filepath.Ext(details.Path)),
 			FieldID:       details.FieldID,
-			Type:          GetFileMetadataType(details),
-			FileName:      details.Name,
-			Name:          GetFileUniqueName(details), // Different for file fields and attachments
+			Path:          details.Path,
+			Type:          GetFileType(details),
 			RecordID:      details.RecordID,
 			ContentLength: details.ContentLength,
+			FileSourceID:  PLATFORM_FILE_SOURCE,
 		}
 
 		if details.RecordID == "" {
@@ -123,6 +118,10 @@ func Upload(ops []FileUploadOp, connection adapt.Connection, session *sess.Sessi
 				ID: adapt.UNIQUE_KEY_FIELD,
 			},
 		}, adapt.UNIQUE_KEY_FIELD, session, func(item meta.Item, matchIndexes []adapt.ReferenceLocator, ID string) error {
+
+			if item == nil {
+				return errors.New("Could not match upload on unique key: " + ID)
+			}
 			//One collection with more than 1 fields of type File
 			for i := range matchIndexes {
 				match := matchIndexes[i].Item
@@ -140,46 +139,27 @@ func Upload(ops []FileUploadOp, connection adapt.Connection, session *sess.Sessi
 		}
 	}
 
+	tenantID := session.GetTenantID()
+
 	for index, ufm := range ufms {
 		err := getUploadMetadataResponse(metadataResponse, ufm.CollectionID, ufm.FieldID, session)
 		if err != nil {
 			return nil, err
 		}
 
-		collectionMetadata, fieldMetadata, err := getUploadMetadata(metadataResponse, ufm.CollectionID, ufm.FieldID)
+		fullPath := ufm.GetFullPath(tenantID)
+
+		conn, err := fileadapt.GetFileConnection(ufm.FileSourceID, session)
+		if err != nil {
+			return nil, err
+		}
+		err = conn.Upload(ops[index].Data, fullPath)
 		if err != nil {
 			return nil, err
 		}
 
-		fileCollectionID, err := fileadapt.GetFileCollectionID(collectionMetadata, fieldMetadata)
-		if err != nil {
-			return nil, err
-		}
-
-		ufc, fs, err := fileadapt.GetFileSourceAndCollection(fileCollectionID, session)
-		if err != nil {
-			return nil, err
-		}
-
-		path, err := ufc.GetFilePath(ufm)
-		if err != nil {
-			return nil, errors.New("error generating path for userfile: " + err.Error())
-		}
-
-		ufm.Path = path
-		ufm.FileCollectionID = fileCollectionID
-
-		conn, err := fileadapt.GetFileConnection(fs.GetKey(), session)
-		if err != nil {
-			return nil, err
-		}
-		err = conn.Upload(ops[index].Data, path)
-		if err != nil {
-			return nil, err
-		}
-
-		usage.RegisterEvent("UPLOAD", "FILESOURCE", fs.GetKey(), 0, session)
-		usage.RegisterEvent("UPLOAD_BYTES", "FILESOURCE", fs.GetKey(), ufm.ContentLength, session)
+		usage.RegisterEvent("UPLOAD", "FILESOURCE", ufm.FileSourceID, 0, session)
+		usage.RegisterEvent("UPLOAD_BYTES", "FILESOURCE", ufm.FileSourceID, ufm.ContentLength, session)
 	}
 
 	err := datasource.PlatformSave(datasource.PlatformSaveRequest{

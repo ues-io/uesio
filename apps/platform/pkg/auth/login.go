@@ -10,10 +10,10 @@ import (
 func getUserFromClaims(authSourceID string, claims *AuthenticationClaims, session *sess.Session) (*meta.User, error) {
 	// Bump our permissions a bit so we can make the next two queries
 	session.SetPermissions(&meta.PermissionSet{
-		CollectionRefs: map[string]bool{
-			"uesio/core.user":        true,
-			"uesio/core.userfile":    true,
-			"uesio/core.loginmethod": true,
+		CollectionRefs: map[string]meta.CollectionPermission{
+			"uesio/core.user":        {Read: true},
+			"uesio/core.userfile":    {Read: true},
+			"uesio/core.loginmethod": {Read: true},
 		},
 	})
 

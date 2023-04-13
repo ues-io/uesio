@@ -4,12 +4,20 @@ import { SaveRequestBatch } from "../load/saverequest"
 import { SaveResponseBatch } from "../load/saveresponse"
 import { Context } from "../context/context"
 import { MetadataType, METADATA } from "../bands/builder/types"
-import { Dependencies, RouteState } from "../bands/route/types"
+import { Dependencies, RouteState, RouteTag } from "../bands/route/types"
 import { Spec } from "../definition/definition"
 import { parseKey } from "../component/path"
 import { PlainWireRecord } from "../bands/wirerecord/types"
 import { ParamDefinition } from "../definition/param"
 import { UserState } from "../bands/user/types"
+
+// Hack for Monaco loader to be able to load assets from custom paths
+interface UesioWindow extends Window {
+	uesioStaticAssetsPath: string
+}
+
+const getStaticAssetsPath = () =>
+	(window as unknown as UesioWindow).uesioStaticAssetsPath
 
 type BotParams = {
 	[key: string]: string
@@ -49,6 +57,8 @@ type JobResponse = {
 type PathNavigateRequest = {
 	namespace: string
 	path: string
+	title?: string
+	tags?: RouteTag[]
 }
 
 type CollectionNavigateRequest = {
@@ -60,6 +70,14 @@ type CollectionNavigateRequest = {
 type MetadataInfo = {
 	color: string
 	icon: string
+	namespace: string
+	key: string
+}
+
+type NamespaceInfo = {
+	color: string
+	icon: string
+	namespace: string
 }
 
 type NavigateRequest = PathNavigateRequest | CollectionNavigateRequest
@@ -87,6 +105,20 @@ const getPrefix = (context: Context) => {
 		return `/siteadmin/${siteadmin.app}/${siteadmin.name}`
 	}
 	return "/site"
+}
+
+const getSiteBundleVersion = (context: Context) => {
+	const site = context.getSite()
+	const staticAssetsPath = getStaticAssetsPath()
+	if (site && site.version) {
+		// Special case --- if this is a Uesio-provided site, we don't (currently) ever update the bundle versions,
+		// but we DO update the static assets path for the whole Docker image, so use that. It will look like "/abcdefg"
+		if (site.app.startsWith("uesio/") && staticAssetsPath) {
+			return staticAssetsPath
+		}
+		return `/${site.version}`
+	}
+	return ""
 }
 
 const isPathRouteRequest = (
@@ -218,22 +250,41 @@ const platform = {
 		)
 		return respondJSON(response)
 	},
-	getFileURL: (context: Context, namespace: string, name: string) => {
+	getViewParams: async (
+		context: Context,
+		namespace: string,
+		name: string
+	): Promise<ParamDefinition[]> => {
 		const prefix = getPrefix(context)
-		return `${prefix}/files/${namespace}/${name}`
+		const response = await fetch(
+			`${prefix}/views/params/${namespace}/${name}`
+		)
+		return respondJSON(response)
 	},
-	getUserFileURL: (context: Context, userfileid: string) => {
+	getFileURL: (context: Context, namespace: string, name: string) => {
+		const siteBundleVersion = getSiteBundleVersion(context)
 		const prefix = getPrefix(context)
+		return `${prefix}/files/${namespace}${siteBundleVersion}/${name}`
+	},
+	getUserFileURL: (
+		context: Context,
+		userfileid: string,
+		fileVersion?: string
+	) => {
+		const prefix = getPrefix(context)
+		const fileVersionParam = fileVersion
+			? `&version=${encodeURIComponent(fileVersion)}`
+			: ""
 		return `${prefix}/userfiles/download?userfileid=${encodeURIComponent(
 			userfileid
-		)}`
+		)}${fileVersionParam}`
 	},
 	uploadFile: async (
 		context: Context,
 		fileData: File,
 		collectionID: string,
 		recordID: string,
-		fieldID: string
+		fieldID?: string
 	): Promise<PlainWireRecord> => {
 		const prefix = getPrefix(context)
 		const url = `${prefix}/userfiles/upload`
@@ -241,7 +292,7 @@ const platform = {
 		params.append("name", fileData.name)
 		params.append("collectionid", collectionID)
 		params.append("recordid", recordID)
-		params.append("fieldid", fieldID)
+		if (fieldID) params.append("fieldid", fieldID)
 
 		const response = await fetch(url + "?" + params.toString(), {
 			method: "POST",
@@ -267,12 +318,11 @@ const platform = {
 	getComponentPackURL: (
 		context: Context,
 		namespace: string,
-		name: string,
-		buildMode?: boolean
+		name: string
 	) => {
+		const siteBundleVersion = getSiteBundleVersion(context)
 		const prefix = getPrefix(context)
-		const buildModeSuffix = buildMode ? "builder.js" : "runtime.js"
-		return `${prefix}/componentpacks/${namespace}/${name}/${buildModeSuffix}`
+		return `${prefix}/componentpacks/${namespace}${siteBundleVersion}/${name}/runtime.js`
 	},
 	getMetadataList: async (
 		context: Context,
@@ -429,12 +479,14 @@ const platform = {
 		return respondJSON(response)
 	},
 	forgotPassword: async (
+		context: Context,
 		authSource: string,
 		requestBody: Record<string, string>
 	): Promise<void> => {
+		const prefix = getPrefix(context)
 		const [namespace, name] = parseKey(authSource)
 		const response = await postJSON(
-			`/site/auth/${namespace}/${name}/forgotpassword`,
+			`${prefix}/auth/${namespace}/${name}/forgotpassword`,
 			requestBody
 		)
 
@@ -505,13 +557,37 @@ const platform = {
 		)
 		return respondVoid(response)
 	},
+	autocomplete: async (
+		context: Context,
+		request: AutocompleteRequest
+	): Promise<AutocompleteResponse> => {
+		const prefix = getPrefix(context)
+		const response = await postJSON(`${prefix}/ai/complete`, request)
+		return respondJSON(response)
+	},
+	getStaticAssetsPath,
+}
+
+type AutocompleteRequest = {
+	input: string
+	format: string
+	model: string
+	maxResults?: number
+}
+
+type AutocompleteResponse = {
+	choices?: string[]
+	error?: string
 }
 
 type Platform = typeof platform
 
-export {
-	platform,
+export { platform }
+
+export type {
 	Platform,
+	AutocompleteRequest,
+	AutocompleteResponse,
 	BotResponse,
 	BotParams,
 	ConfigValueResponse,
@@ -522,5 +598,6 @@ export {
 	NavigateRequest,
 	JobResponse,
 	MetadataInfo,
+	NamespaceInfo,
 	LoginResponse,
 }

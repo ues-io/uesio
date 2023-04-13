@@ -1,21 +1,31 @@
 package meta
 
 type Site struct {
-	ID          string     `json:"uesio/core.id"`
-	UniqueKey   string     `json:"uesio/core.uniquekey"`
+	BuiltIn     `yaml:",inline"`
 	Name        string     `json:"uesio/studio.name"`
 	Bundle      *Bundle    `json:"uesio/studio.bundle"`
 	App         *App       `json:"uesio/studio.app"`
 	bundleDef   *BundleDef `json:"-"`
-	itemMeta    *ItemMeta  `json:"-"`
-	CreatedBy   *User      `json:"uesio/core.createdby"`
-	Owner       *User      `json:"uesio/core.owner"`
-	UpdatedBy   *User      `json:"uesio/core.updatedby"`
-	UpdatedAt   int64      `json:"uesio/core.updatedat"`
-	CreatedAt   int64      `json:"uesio/core.createdat"`
 	Domain      string
 	Subdomain   string
+	Title       string         `json:"uesio/studio.title"`
+	EnableSEO   bool           `json:"uesio/studio.enable_seo"`
 	Permissions *PermissionSet `json:"-"`
+}
+
+func (s *Site) Clone() *Site {
+	return &Site{
+		BuiltIn:     s.BuiltIn,
+		Name:        s.Name,
+		Bundle:      s.Bundle,
+		App:         s.App,
+		bundleDef:   s.bundleDef,
+		Domain:      s.Domain,
+		Subdomain:   s.Subdomain,
+		Title:       s.Title,
+		EnableSEO:   s.EnableSEO,
+		Permissions: nil, // Intentionally not cloning permissions
+	}
 }
 
 func (s *Site) GetFullName() string {
@@ -38,11 +48,7 @@ func (s *Site) GetAppBundle() *BundleDef {
 }
 
 func (s *Site) GetCollectionName() string {
-	return s.GetCollection().GetName()
-}
-
-func (s *Site) GetCollection() CollectionableGroup {
-	return &SiteCollection{}
+	return SITE_COLLECTION_NAME
 }
 
 func (s *Site) SetField(fieldName string, value interface{}) error {
@@ -59,12 +65,4 @@ func (s *Site) Loop(iter func(string, interface{}) error) error {
 
 func (s *Site) Len() int {
 	return StandardItemLen(s)
-}
-
-func (s *Site) GetItemMeta() *ItemMeta {
-	return s.itemMeta
-}
-
-func (s *Site) SetItemMeta(itemMeta *ItemMeta) {
-	s.itemMeta = itemMeta
 }

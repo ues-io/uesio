@@ -1,4 +1,5 @@
 import { FieldMetadata } from "./types"
+import { Context } from "../../context/context"
 import { addBlankSelectOption } from "./utils"
 
 class Field {
@@ -10,19 +11,32 @@ class Field {
 
 	getId = () => this.source.namespace + "." + this.source.name
 	getLabel = () => this.source.label
-	getReferenceMetadata = () => this.source.reference || undefined
+	getReferenceMetadata = () => this.source.reference
 	getType = () => this.source.type
 	getCreateable = () => this.source.createable
 	getUpdateable = () => this.source.updateable
 	getAccessible = () => this.source.accessible
-	getSelectMetadata = () => this.source.selectlist || null
-	getSelectOptions = () => {
+	getSelectMetadata = () => this.source.selectlist
+	getSelectOptions = (context: Context) => {
 		const selectMetadata = this.getSelectMetadata()
 		if (!selectMetadata) return []
-		return addBlankSelectOption(
-			selectMetadata.options,
-			selectMetadata.blank_option_label
+		if (selectMetadata.blank_option_label === undefined)
+			return selectMetadata.options || []
+
+		const mergedOptions = selectMetadata.options.map(
+			({ label, languageLabel, value }) => ({
+				label: languageLabel
+					? context.getLabel(languageLabel) || label
+					: label,
+				value,
+			})
 		)
+
+		const mergedBlankLabel =
+			context.getLabel(
+				selectMetadata.blank_option_language_label || ""
+			) || selectMetadata.blank_option_label
+		return addBlankSelectOption(mergedOptions, mergedBlankLabel)
 	}
 	getAccept = () => {
 		switch (this.source.file?.accept) {
@@ -38,11 +52,12 @@ class Field {
 				return ""
 		}
 	}
-	getNumberMetadata = () => this.source.number || null
+	getNumberMetadata = () => this.source.number
 	isReference = () =>
 		this.source.type === "REFERENCE" ||
 		this.source.type === "USER" ||
 		this.source.type === "FILE"
+	getSubFields = () => this.source.subfields
 }
 
 export default Field

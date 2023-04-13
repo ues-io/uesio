@@ -9,41 +9,61 @@ import (
 
 type TranslationCollection []*Translation
 
+var TRANSLATION_COLLECTION_NAME = "uesio/studio.translation"
+var TRANSLATION_FOLDER_NAME = "translations"
+
+// We have to hardcode these fields because translations don't have a uesio/studio.name
+// field that we want to query. If we used the StandardGetFields (like the other metadata items)
+// it would try to query for a name field that does not exist.
+var TRANSLATION_FIELDS = []string{
+	"uesio/core.id",
+	"uesio/core.uniquekey",
+	"uesio/core.createdby",
+	"uesio/core.owner",
+	"uesio/core.updatedby",
+	"uesio/core.updatedat",
+	"uesio/core.createdat",
+	"uesio/studio.labels",
+	"uesio/studio.language",
+	"uesio/studio.workspace",
+	"uesio/studio.public",
+}
+
 func (tc *TranslationCollection) GetName() string {
-	return "uesio/studio.translation"
+	return TRANSLATION_COLLECTION_NAME
 }
 
 func (tc *TranslationCollection) GetBundleFolderName() string {
-	return "translations"
+	return TRANSLATION_FOLDER_NAME
 }
 
 func (tc *TranslationCollection) GetFields() []string {
-	return StandardGetFields(&Translation{})
+	return TRANSLATION_FIELDS
 }
 
 func (tc *TranslationCollection) NewItem() Item {
 	return &Translation{}
 }
 
-func (tc *TranslationCollection) AddItem(item Item) {
+func (tc *TranslationCollection) AddItem(item Item) error {
 	*tc = append(*tc, item.(*Translation))
+	return nil
 }
 
-func (tc *TranslationCollection) GetItemFromPath(path string) (BundleableItem, bool) {
+func (tc *TranslationCollection) GetItemFromPath(path, namespace string) BundleableItem {
 
 	lang := strings.TrimSuffix(path, ".yaml")
 
 	_, err := language.ParseBase(lang)
 	if err != nil {
-		return nil, false
+		return nil
 	}
 
-	return &Translation{
-		Language: lang,
-	}, true
+	return NewBaseTranslation(namespace, lang)
+
 }
 
-func (tc *TranslationCollection) FilterPath(path string, conditions BundleConditions) bool {
+func (tc *TranslationCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	if conditions == nil {
 		return StandardPathFilter(path)
 	}
@@ -61,13 +81,9 @@ func (tc *TranslationCollection) FilterPath(path string, conditions BundleCondit
 	return true
 }
 
-func (tc *TranslationCollection) GetItem(index int) Item {
-	return (*tc)[index]
-}
-
 func (tc *TranslationCollection) Loop(iter GroupIterator) error {
-	for index := range *tc {
-		err := iter(tc.GetItem(index), strconv.Itoa(index))
+	for index, t := range *tc {
+		err := iter(t, strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -77,8 +93,4 @@ func (tc *TranslationCollection) Loop(iter GroupIterator) error {
 
 func (tc *TranslationCollection) Len() int {
 	return len(*tc)
-}
-
-func (tc *TranslationCollection) GetItems() interface{} {
-	return *tc
 }

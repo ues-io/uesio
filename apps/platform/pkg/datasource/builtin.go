@@ -93,7 +93,7 @@ func addAllBuiltinFields(collectionMetadata *adapt.CollectionMetadata) {
 func addBuiltinFields(collectionMetadata *adapt.CollectionMetadata, requestedFields FieldsMap) {
 	collectionMetadata.SetField(&ID_FIELD_METADATA)
 	collectionMetadata.SetField(&UNIQUE_KEY_FIELD_METADATA)
-	_, ok := requestedFields["uesio/core.owner"]
+	_, ok := requestedFields[adapt.OWNER_FIELD]
 	if ok {
 		collectionMetadata.SetField(&OWNER_FIELD_METADATA)
 	}

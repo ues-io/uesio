@@ -1,14 +1,22 @@
-import { FunctionComponent } from "react"
-import { component, styles, hooks } from "@uesio/ui"
-import { CodeProps } from "./codedefinition"
-import { CodeFieldUtilityProps } from "../../utilities/codefield/codefield"
+import { styles, api, definition } from "@uesio/ui"
+import { default as IOCodeField } from "../../utilities/codefield/codefield"
 
-const IOCodeField =
-	component.getUtility<CodeFieldUtilityProps>("uesio/io.codefield")
+type CodeFieldDefinition = {
+	language?: CodeFieldLanguage
+	file: string
+}
 
-const CodeField: FunctionComponent<CodeProps> = (props) => {
+type CodeFieldLanguage =
+	| "yaml"
+	| "json"
+	| "javascript"
+	| "typescript"
+	| "html"
+	| "css"
+
+const CodeField: definition.UC<CodeFieldDefinition> = (props) => {
 	const { definition, context } = props
-	const uesio = hooks.useUesio(props)
+
 	const classes = styles.useStyles(
 		{
 			root: {},
@@ -16,7 +24,7 @@ const CodeField: FunctionComponent<CodeProps> = (props) => {
 		props
 	)
 	const language = definition?.language || "yaml"
-	const fileContent = uesio.file.useFile(context, definition.file)
+	const fileContent = api.file.useFile(context, definition.file)
 
 	return (
 		<IOCodeField

@@ -1,6 +1,4 @@
-type ComponentPackState = {
+export type ComponentPackState = {
 	name: string
 	namespace: string
 }
-
-export { ComponentPackState }

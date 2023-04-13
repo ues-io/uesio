@@ -1,13 +1,11 @@
 import { FunctionComponent } from "react"
-import { definition, component, hooks, styles } from "@uesio/ui"
-
-const Button = component.getUtility("uesio/io.button")
-const Icon = component.getUtility("uesio/io.icon")
-const Group = component.getUtility("uesio/io.group")
+import { definition, component, hooks, styles, api } from "@uesio/ui"
 
 const BottomActions: FunctionComponent<definition.UtilityProps> = (props) => {
+	const Button = component.getUtility("uesio/io.button")
+	const Icon = component.getUtility("uesio/io.icon")
+	const Group = component.getUtility("uesio/io.group")
 	const { context } = props
-	const uesio = hooks.useUesio(props)
 
 	const classes = styles.useUtilityStyles(
 		{
@@ -32,22 +30,28 @@ const BottomActions: FunctionComponent<definition.UtilityProps> = (props) => {
 		props
 	)
 
-	const toggleCode = uesio.signal.getHandler([
-		{
-			signal: "component/uesio/builder.runtime/TOGGLE_CODE/codepanel",
-		},
-	])
+	const toggleCode = api.signal.getHandler(
+		[
+			{
+				signal: "component/uesio/builder.mainwrapper/TOGGLE_CODE/codepanel",
+			},
+		],
+		context
+	)
 
 	const setDimensions = (height: number, width: number) =>
-		uesio.signal.getHandler([
-			{
-				signal: "component/uesio/builder.runtime/SET_DIMENSIONS/dimensions",
-				height,
-				width,
-			},
-		])
+		api.signal.getHandler(
+			[
+				{
+					signal: "component/uesio/builder.mainwrapper/SET_DIMENSIONS/dimensions",
+					height,
+					width,
+				},
+			],
+			context
+		)
 
-	hooks.useHotKeyCallback("command+y", () => {
+	hooks.useHotKeyCallback("meta+y", () => {
 		toggleCode?.()
 	})
 
@@ -115,7 +119,7 @@ const BottomActions: FunctionComponent<definition.UtilityProps> = (props) => {
 					icon={<Icon context={context} icon="wysiwyg" />}
 					variant="uesio/builder.minoricontoolbar"
 					onClick={() => {
-						uesio.signal.run(
+						api.signal.run(
 							{ signal: "route/REDIRECT_TO_VIEW_CONFIG" },
 							props.context
 						)
@@ -132,7 +136,7 @@ const BottomActions: FunctionComponent<definition.UtilityProps> = (props) => {
 							return
 						}
 
-						uesio.signal.run(
+						api.signal.run(
 							{
 								signal: "route/REDIRECT",
 								path: `/app/${workspace.app}/workspace/${workspace.name}/views`,

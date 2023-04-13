@@ -26,6 +26,29 @@ func (im *ItemMeta) IsValidField(fieldName string) bool {
 	return true
 }
 
+type BuiltIn struct {
+	ID        string    `yaml:"-" json:"uesio/core.id"`
+	UniqueKey string    `yaml:"-" json:"uesio/core.uniquekey"`
+	itemMeta  *ItemMeta `yaml:"-" json:"-"`
+	CreatedBy *User     `yaml:"-" json:"uesio/core.createdby"`
+	Owner     *User     `yaml:"-" json:"uesio/core.owner"`
+	UpdatedBy *User     `yaml:"-" json:"uesio/core.updatedby"`
+	UpdatedAt int64     `yaml:"-" json:"uesio/core.updatedat"`
+	CreatedAt int64     `yaml:"-" json:"uesio/core.createdat"`
+}
+
+func (bi *BuiltIn) SetModified(mod time.Time) {
+	bi.UpdatedAt = mod.Unix()
+}
+
+func (bi *BuiltIn) GetItemMeta() *ItemMeta {
+	return bi.itemMeta
+}
+
+func (bi *BuiltIn) SetItemMeta(itemMeta *ItemMeta) {
+	bi.itemMeta = itemMeta
+}
+
 type BundleConditions map[string]string
 
 type CollectionableGroup interface {
@@ -37,7 +60,6 @@ type CollectionableGroup interface {
 type CollectionableItem interface {
 	Item
 	GetCollectionName() string
-	GetCollection() CollectionableGroup
 	GetItemMeta() *ItemMeta
 	SetItemMeta(*ItemMeta)
 }
@@ -45,13 +67,23 @@ type CollectionableItem interface {
 type BundleableGroup interface {
 	CollectionableGroup
 	GetBundleFolderName() string
-	FilterPath(string, BundleConditions) bool
-	GetItemFromPath(string) (BundleableItem, bool)
+	FilterPath(string, BundleConditions, bool) bool
+	GetItemFromPath(string, string) BundleableItem
+}
+
+type AttachableGroup interface {
+	BundleableGroup
+	IsDefinitionPath(string) bool
+}
+
+type AttachableItem interface {
+	BundleableItem
+	GetBasePath() string
 }
 
 type BundleableItem interface {
 	CollectionableItem
-	GetBundleGroup() BundleableGroup
+	GetBundleFolderName() string
 	GetPermChecker() *PermissionSet
 	GetKey() string
 	GetPath() string
@@ -78,7 +110,7 @@ func ParseKeyWithDefault(key, defaultNamespace string) (string, string, error) {
 	if len(keyArray) == 1 {
 		return defaultNamespace, key, nil
 	}
-	return "", "", errors.New("Invalid Key: " + key)
+	return "", "", errors.New("Invalid Key With Default: " + key)
 }
 
 func ParseNamespace(namespace string) (string, string, error) {
@@ -119,7 +151,11 @@ func StandardFieldGet(item CollectionableItem, fieldName string) (interface{}, e
 }
 
 func StandardFieldSet(item CollectionableItem, fieldName string, value interface{}) error {
-	return reflecttool.SetField(item, fieldName, value)
+	err := reflecttool.SetField(item, fieldName, value)
+	if err != nil {
+		err = errors.New("Failed to set field: " + fieldName + " on item: " + item.GetCollectionName())
+	}
+	return nil
 }
 
 func StandardItemLoop(item CollectionableItem, iter func(string, interface{}) error) error {
@@ -156,7 +192,6 @@ var METADATA_NAME_MAP = map[string]string{
 	"SECRET":           "secrets",
 	"THEME":            "themes",
 	"SELECTLIST":       "selectlists",
-	"FILECOLLECTION":   "filecollections",
 	"BOT":              "bots",
 	"CREDENTIALS":      "credentials",
 	"ROUTE":            "routes",
@@ -171,33 +206,32 @@ var METADATA_NAME_MAP = map[string]string{
 }
 
 var bundleableGroupMap = map[string]BundleableFactory{
-	(&SecretCollection{}).GetBundleFolderName():             func() BundleableGroup { return &SecretCollection{} },
-	(&ProfileCollection{}).GetBundleFolderName():            func() BundleableGroup { return &ProfileCollection{} },
-	(&PermissionSetCollection{}).GetBundleFolderName():      func() BundleableGroup { return &PermissionSetCollection{} },
-	(&ConfigValueCollection{}).GetBundleFolderName():        func() BundleableGroup { return &ConfigValueCollection{} },
-	(&DataSourceCollection{}).GetBundleFolderName():         func() BundleableGroup { return &DataSourceCollection{} },
-	(&FileSourceCollection{}).GetBundleFolderName():         func() BundleableGroup { return &FileSourceCollection{} },
-	(&FileCollection{}).GetBundleFolderName():               func() BundleableGroup { return &FileCollection{} },
-	(&FieldCollection{}).GetBundleFolderName():              func() BundleableGroup { return &FieldCollection{} },
-	(&BotCollection{}).GetBundleFolderName():                func() BundleableGroup { return &BotCollection{} },
-	(&CollectionCollection{}).GetBundleFolderName():         func() BundleableGroup { return &CollectionCollection{} },
-	(&SelectListCollection{}).GetBundleFolderName():         func() BundleableGroup { return &SelectListCollection{} },
-	(&RouteCollection{}).GetBundleFolderName():              func() BundleableGroup { return &RouteCollection{} },
-	(&ViewCollection{}).GetBundleFolderName():               func() BundleableGroup { return &ViewCollection{} },
-	(&ThemeCollection{}).GetBundleFolderName():              func() BundleableGroup { return &ThemeCollection{} },
-	(&CredentialCollection{}).GetBundleFolderName():         func() BundleableGroup { return &CredentialCollection{} },
-	(&ComponentPackCollection{}).GetBundleFolderName():      func() BundleableGroup { return &ComponentPackCollection{} },
-	(&ComponentVariantCollection{}).GetBundleFolderName():   func() BundleableGroup { return &ComponentVariantCollection{} },
-	(&UserFileCollectionCollection{}).GetBundleFolderName(): func() BundleableGroup { return &UserFileCollectionCollection{} },
-	(&FeatureFlagCollection{}).GetBundleFolderName():        func() BundleableGroup { return &FeatureFlagCollection{} },
-	(&LabelCollection{}).GetBundleFolderName():              func() BundleableGroup { return &LabelCollection{} },
-	(&TranslationCollection{}).GetBundleFolderName():        func() BundleableGroup { return &TranslationCollection{} },
-	(&AuthSourceCollection{}).GetBundleFolderName():         func() BundleableGroup { return &AuthSourceCollection{} },
-	(&UserAccessTokenCollection{}).GetBundleFolderName():    func() BundleableGroup { return &UserAccessTokenCollection{} },
-	(&SignupMethodCollection{}).GetBundleFolderName():       func() BundleableGroup { return &SignupMethodCollection{} },
-	(&IntegrationCollection{}).GetBundleFolderName():        func() BundleableGroup { return &IntegrationCollection{} },
-	(&ComponentCollection{}).GetBundleFolderName():          func() BundleableGroup { return &ComponentCollection{} },
-	(&UtilityCollection{}).GetBundleFolderName():            func() BundleableGroup { return &UtilityCollection{} },
+	(&SecretCollection{}).GetBundleFolderName():           func() BundleableGroup { return &SecretCollection{} },
+	(&ProfileCollection{}).GetBundleFolderName():          func() BundleableGroup { return &ProfileCollection{} },
+	(&PermissionSetCollection{}).GetBundleFolderName():    func() BundleableGroup { return &PermissionSetCollection{} },
+	(&ConfigValueCollection{}).GetBundleFolderName():      func() BundleableGroup { return &ConfigValueCollection{} },
+	(&DataSourceCollection{}).GetBundleFolderName():       func() BundleableGroup { return &DataSourceCollection{} },
+	(&FileSourceCollection{}).GetBundleFolderName():       func() BundleableGroup { return &FileSourceCollection{} },
+	(&FileCollection{}).GetBundleFolderName():             func() BundleableGroup { return &FileCollection{} },
+	(&FieldCollection{}).GetBundleFolderName():            func() BundleableGroup { return &FieldCollection{} },
+	(&BotCollection{}).GetBundleFolderName():              func() BundleableGroup { return &BotCollection{} },
+	(&CollectionCollection{}).GetBundleFolderName():       func() BundleableGroup { return &CollectionCollection{} },
+	(&SelectListCollection{}).GetBundleFolderName():       func() BundleableGroup { return &SelectListCollection{} },
+	(&RouteCollection{}).GetBundleFolderName():            func() BundleableGroup { return &RouteCollection{} },
+	(&ViewCollection{}).GetBundleFolderName():             func() BundleableGroup { return &ViewCollection{} },
+	(&ThemeCollection{}).GetBundleFolderName():            func() BundleableGroup { return &ThemeCollection{} },
+	(&CredentialCollection{}).GetBundleFolderName():       func() BundleableGroup { return &CredentialCollection{} },
+	(&ComponentPackCollection{}).GetBundleFolderName():    func() BundleableGroup { return &ComponentPackCollection{} },
+	(&ComponentVariantCollection{}).GetBundleFolderName(): func() BundleableGroup { return &ComponentVariantCollection{} },
+	(&FeatureFlagCollection{}).GetBundleFolderName():      func() BundleableGroup { return &FeatureFlagCollection{} },
+	(&LabelCollection{}).GetBundleFolderName():            func() BundleableGroup { return &LabelCollection{} },
+	(&TranslationCollection{}).GetBundleFolderName():      func() BundleableGroup { return &TranslationCollection{} },
+	(&AuthSourceCollection{}).GetBundleFolderName():       func() BundleableGroup { return &AuthSourceCollection{} },
+	(&UserAccessTokenCollection{}).GetBundleFolderName():  func() BundleableGroup { return &UserAccessTokenCollection{} },
+	(&SignupMethodCollection{}).GetBundleFolderName():     func() BundleableGroup { return &SignupMethodCollection{} },
+	(&IntegrationCollection{}).GetBundleFolderName():      func() BundleableGroup { return &IntegrationCollection{} },
+	(&ComponentCollection{}).GetBundleFolderName():        func() BundleableGroup { return &ComponentCollection{} },
+	(&UtilityCollection{}).GetBundleFolderName():          func() BundleableGroup { return &UtilityCollection{} },
 }
 
 func GetGroupingConditions(metadataType, grouping string) (BundleConditions, error) {

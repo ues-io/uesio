@@ -1,18 +1,35 @@
 import { Context } from "../context/context"
-import { BaseDefinition, DefinitionMap } from "../definition/definition"
-import { useUesio } from "../hooks/hooks"
+import { BaseDefinition } from "../definition/definition"
+import { wire as wireApi } from "../api/api"
+import { WireRecord } from "../wireexports"
 
-type DisplayOperator = "EQUALS" | "NOT_EQUALS" | undefined
+type RequireOnlyOne<T, Keys extends keyof T = keyof T> = Pick<
+	T,
+	Exclude<keyof T, Keys>
+> &
+	{
+		[K in Keys]-?: Required<Pick<T, K>> &
+			Partial<Record<Exclude<Keys, K>, undefined>>
+	}[Keys]
+
+type DisplayOperator = "EQUALS" | "NOT_EQUALS" | "IN" | "NOT IN" | undefined
 
 // If there is a record in context, only test against that record
 // If there is no record in context, test against all records in the wire.
-type FieldValueCondition = {
+
+interface FieldValueConditionBase {
 	type: "fieldValue" | undefined
 	wire?: string
 	field: string
 	operator: DisplayOperator
-	value: string
+	value?: string
+	values?: string[]
 }
+
+type FieldValueCondition = RequireOnlyOne<
+	FieldValueConditionBase,
+	"value" | "values"
+>
 
 type ParamIsSetCondition = {
 	type: "paramIsSet"
@@ -34,6 +51,7 @@ type ParamValueCondition = {
 type HasNoValueCondition = {
 	type: "hasNoValue"
 	value: unknown
+	wire?: string
 }
 
 type RecordIsNewCondition = {
@@ -47,6 +65,7 @@ type RecordIsNotNewCondition = {
 type HasValueCondition = {
 	type: "hasValue"
 	value: unknown
+	wire?: string
 }
 
 type CollectionContextCondition = {
@@ -80,6 +99,14 @@ type WireIsNotLoading = {
 	type: "wireIsNotLoading"
 	wire: string
 }
+type WireHasLoadedAllRecords = {
+	type: "wireHasLoadedAllRecords"
+	wire: string
+}
+type WireHasMoreRecordsToLoad = {
+	type: "wireHasMoreRecordsToLoad"
+	wire: string
+}
 type WireHasNoRecords = {
 	type: "wireHasNoRecords"
 	wire: string
@@ -89,7 +116,13 @@ type WireHasRecords = {
 	wire: string
 }
 
+type HasProfile = {
+	type: "hasProfile"
+	profile: string
+}
+
 type DisplayCondition =
+	| HasProfile
 	| WireHasChanges
 	| WireHasNoChanges
 	| HasNoValueCondition
@@ -107,6 +140,8 @@ type DisplayCondition =
 	| WireIsNotLoading
 	| WireHasNoRecords
 	| WireHasRecords
+	| WireHasLoadedAllRecords
+	| WireHasMoreRecordsToLoad
 
 type ItemContext<T> = {
 	item: T
@@ -115,6 +150,8 @@ type ItemContext<T> = {
 
 function compare(a: unknown, b: unknown, op: DisplayOperator) {
 	if (
+		op &&
+		op.includes("EQUALS") &&
 		a &&
 		b &&
 		Object.prototype.toString.call(a) +
@@ -125,7 +162,18 @@ function compare(a: unknown, b: unknown, op: DisplayOperator) {
 			"You're comparing objects in a display condition, this is probably an error"
 		)
 
-	return op === "NOT_EQUALS" ? a !== b : a === b
+	switch (op) {
+		case "NOT_EQUALS":
+			return a !== b
+		case "IN":
+		case "NOT IN":
+			if (Array.isArray(a)) {
+				return a.includes(b) === (op === "IN")
+			}
+			return false
+		default:
+			return a === b
+	}
 }
 
 function should(condition: DisplayCondition, context: Context) {
@@ -135,49 +183,41 @@ function should(condition: DisplayCondition, context: Context) {
 		return collection?.getFullName() === condition.collection
 	}
 
-	if (condition.type === "paramIsSet") {
+	if (condition.type === "paramIsSet")
 		return !!context.getParam(condition.param)
-	}
 
-	if (condition.type === "paramIsNotSet") {
+	if (condition.type === "paramIsNotSet")
 		return !context.getParam(condition.param)
-	}
 
-	if (condition.type === "fieldMode") {
+	if (condition.type === "fieldMode")
 		return condition.mode === context.getFieldMode()
-	}
 
-	if (condition.type === "featureFlag") {
+	if (condition.type === "featureFlag")
 		return !!context.getFeatureFlag(condition.name)?.value
-	}
 
-	if (condition.type === "recordIsNew") {
-		return !!context.getRecord()?.isNew()
-	}
+	if (condition.type === "recordIsNew") return !!context.getRecord()?.isNew()
 
-	if (condition.type === "recordIsNotNew") {
+	if (condition.type === "recordIsNotNew")
 		return !context.getRecord()?.isNew()
-	}
 
-	if (
-		condition.type === "wireHasChanges" ||
-		condition.type === "wireHasNoChanges"
-	) {
-		const ctx = condition.wire
-			? context.addFrame({ wire: condition.wire })
-			: context
-		const hasChanges = ctx.getWire()?.getChanges().length
-		return condition.type === "wireHasNoChanges" ? !hasChanges : hasChanges
+	if (condition.type === "hasProfile")
+		return context.getUser()?.profile === condition.profile
+
+	if (condition.type === "wireHasChanges") {
+		const wire = context.getWire(condition.wire)
+		return !!wire?.getChanges().length || !!wire?.getDeletes().length
+	}
+	if (condition.type === "wireHasNoChanges") {
+		const wire = context.getWire(condition.wire)
+		return !wire?.getChanges().length && !wire?.getDeletes().length
 	}
 
 	if (
 		condition.type === "wireIsLoading" ||
 		condition.type === "wireIsNotLoading"
 	) {
-		const ctx = condition.wire
-			? context.addFrame({ wire: condition.wire })
-			: context
-		const isLoading = ctx.getWire()?.isLoading()
+		const wire = context.getWire(condition.wire)
+		const isLoading = !!wire?.isLoading()
 		return condition.type === "wireIsNotLoading" ? !isLoading : isLoading
 	}
 
@@ -185,17 +225,26 @@ function should(condition: DisplayCondition, context: Context) {
 		condition.type === "wireHasRecords" ||
 		condition.type === "wireHasNoRecords"
 	) {
-		const ctx = condition.wire
-			? context.addFrame({ wire: condition.wire })
-			: context
-		const hasRecords = ctx.getWire()?.getData().length
+		const wire = context.getWire(condition.wire)
+		const hasRecords = !!wire?.getData().length
 		return condition.type === "wireHasNoRecords" ? !hasRecords : hasRecords
+	}
+
+	if (
+		condition.type === "wireHasLoadedAllRecords" ||
+		condition.type === "wireHasMoreRecordsToLoad"
+	) {
+		const hasAllRecords = !!context.getWire(condition.wire)?.hasAllRecords()
+		return condition.type === "wireHasMoreRecordsToLoad"
+			? !hasAllRecords
+			: hasAllRecords
 	}
 
 	const compareToValue =
 		typeof condition.value === "string"
 			? context.mergeString(condition.value as string)
-			: condition.value || ""
+			: condition.value ||
+			  (condition.type === "fieldValue" ? condition.values : "")
 
 	if (condition.type === "hasNoValue") return !compareToValue
 	if (condition.type === "hasValue") return !!compareToValue
@@ -207,40 +256,29 @@ function should(condition: DisplayCondition, context: Context) {
 		)
 
 	if (!condition.type || condition.type === "fieldValue") {
-		const ctx = condition.wire
-			? context.addFrame({ wire: condition.wire })
-			: context
-		const ctxRecord = ctx.getRecord()
-		// If we have a record in context, use it.
-		if (ctxRecord)
-			return compare(
+		const record = context.getRecord(condition.wire)
+		const comparator = (r: WireRecord) =>
+			compare(
 				compareToValue,
-				ctxRecord.getFieldValue(condition.field) || "",
+				condition.field ? r.getFieldValue(condition.field) || "" : "",
 				condition.operator
 			)
+		if (record) return comparator(record)
 
 		// If we have no record in context, test against all records in the wire.
-		const ctxWire = ctx.getWire()
-		if (ctxWire) {
-			const records = ctxWire.getData()
+		const wire = context.getWire(condition.wire)
+		if (!wire) return condition.operator === "NOT_EQUALS"
+		const records = wire.getData()
 
-			// When we check for false condition, we want to check every record.
-			const arrayMethod =
-				condition.operator === "NOT_EQUALS" ? "every" : "some"
+		// If there are no records, not_equal applies
+		if (!records.length) return condition.operator?.includes("NOT")
 
-			// If there are no records, not_equal applies
-			if (condition.operator === "NOT_EQUALS" && !records.length)
-				return true
+		// When we check for false condition, we want to check every record.
+		const arrayMethod = condition.operator?.includes("NOT")
+			? "every"
+			: "some"
 
-			return records[arrayMethod]((r) =>
-				compare(
-					compareToValue,
-					r.getFieldValue(condition.field) || "",
-					condition.operator
-				)
-			)
-		}
-		return false
+		return records[arrayMethod](comparator)
 	}
 
 	console.warn(`Unknown display condition type: ${condition.type}`)
@@ -279,12 +317,12 @@ const useShouldFilter = <T extends BaseDefinition>(
 		return conditions ? [conditions] : []
 	})
 
-	const uesio = useUesio({ context })
-	uesio.wire.useWires(
+	wireApi.useWires(
 		getWiresForConditions(
 			conditionsList?.flatMap((c) => c),
 			context
-		)
+		),
+		context
 	)
 
 	return items?.filter((item, index) =>
@@ -298,8 +336,7 @@ const useContextFilter = <T>(
 	contextFunc: (item: T, context: Context) => Context,
 	context: Context
 ): ItemContext<T>[] => {
-	const uesio = useUesio({ context })
-	uesio.wire.useWires(getWiresForConditions(conditions, context))
+	wireApi.useWires(getWiresForConditions(conditions, context), context)
 	return items.flatMap((item) => {
 		const newContext = contextFunc(item, context)
 		return shouldAll(conditions, newContext)
@@ -317,15 +354,14 @@ const useShould = (
 	conditions: DisplayCondition[] | undefined,
 	context: Context
 ) => {
-	const uesio = useUesio({ context })
-	uesio.wire.useWires(getWiresForConditions(conditions, context))
+	wireApi.useWires(getWiresForConditions(conditions, context), context)
 	return shouldAll(conditions, context)
 }
 
 function shouldHaveClass(
 	context: Context,
 	className: string,
-	definition?: DefinitionMap
+	definition?: BaseDefinition
 ) {
 	const classesLogic = definition?.["uesio.classes"] as
 		| Record<string, DisplayCondition[]>
@@ -338,9 +374,10 @@ function shouldHaveClass(
 
 export {
 	useShould,
+	shouldAll,
 	useShouldFilter,
 	useContextFilter,
 	shouldHaveClass,
-	DisplayCondition,
-	ItemContext,
 }
+
+export type { DisplayCondition, DisplayOperator, ItemContext }

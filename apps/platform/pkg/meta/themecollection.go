@@ -6,41 +6,42 @@ import (
 
 type ThemeCollection []*Theme
 
+var THEME_COLLECTION_NAME = "uesio/studio.theme"
+var THEME_FOLDER_NAME = "themes"
+var THEME_FIELDS = StandardGetFields(&Theme{})
+
 func (tc *ThemeCollection) GetName() string {
-	return "uesio/studio.theme"
+	return THEME_COLLECTION_NAME
 }
 
 func (tc *ThemeCollection) GetBundleFolderName() string {
-	return "themes"
+	return THEME_FOLDER_NAME
 }
 
 func (tc *ThemeCollection) GetFields() []string {
-	return StandardGetFields(&Theme{})
+	return THEME_FIELDS
 }
 
 func (tc *ThemeCollection) NewItem() Item {
 	return &Theme{}
 }
 
-func (tc *ThemeCollection) AddItem(item Item) {
+func (tc *ThemeCollection) AddItem(item Item) error {
 	*tc = append(*tc, item.(*Theme))
+	return nil
 }
 
-func (tc *ThemeCollection) GetItemFromPath(path string) (BundleableItem, bool) {
-	return &Theme{Name: StandardNameFromPath(path)}, true
+func (tc *ThemeCollection) GetItemFromPath(path, namespace string) BundleableItem {
+	return NewBaseTheme(namespace, StandardNameFromPath(path))
 }
 
-func (tc *ThemeCollection) FilterPath(path string, conditions BundleConditions) bool {
+func (tc *ThemeCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }
 
-func (tc *ThemeCollection) GetItem(index int) Item {
-	return (*tc)[index]
-}
-
 func (tc *ThemeCollection) Loop(iter GroupIterator) error {
-	for index := range *tc {
-		err := iter(tc.GetItem(index), strconv.Itoa(index))
+	for index, t := range *tc {
+		err := iter(t, strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -50,8 +51,4 @@ func (tc *ThemeCollection) Loop(iter GroupIterator) error {
 
 func (tc *ThemeCollection) Len() int {
 	return len(*tc)
-}
-
-func (tc *ThemeCollection) GetItems() interface{} {
-	return *tc
 }

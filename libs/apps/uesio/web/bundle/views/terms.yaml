@@ -13,7 +13,9 @@ definition:
               area: main
               components:
                 - uesio/io.grid:
-                    templateColumns: 800px 1fr
+                    uesio.styleTokens:
+                      root:
+                        - grid-cols-[800px_1fr]
                     uesio.styles:
                       root:
                         padding: 80px

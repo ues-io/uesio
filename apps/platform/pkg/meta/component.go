@@ -1,55 +1,119 @@
 package meta
 
 import (
+	"errors"
 	"fmt"
-	"time"
-
+	"github.com/francoispqt/gojay"
 	"gopkg.in/yaml.v3"
 )
 
+func NewComponent(key string) (*Component, error) {
+	namespace, name, err := ParseKey(key)
+	if err != nil {
+		return nil, errors.New("Bad Key for Component: " + key)
+	}
+	return NewBaseComponent(namespace, name), nil
+}
+
+func NewBaseComponent(namespace, name string) *Component {
+	return &Component{BundleableBase: NewBase(namespace, name)}
+}
+
 type Component struct {
-	ID        string     `yaml:"-" json:"uesio/core.id"`
-	UniqueKey string     `yaml:"-" json:"uesio/core.uniquekey"`
-	Name      string     `yaml:"name" json:"uesio/studio.name"`
-	Namespace string     `yaml:"-" json:"-"`
-	Workspace *Workspace `yaml:"-" json:"uesio/studio.workspace"`
-	itemMeta  *ItemMeta  `yaml:"-" json:"-"`
-	CreatedBy *User      `yaml:"-" json:"uesio/core.createdby"`
-	Owner     *User      `yaml:"-" json:"uesio/core.owner"`
-	UpdatedBy *User      `yaml:"-" json:"uesio/core.updatedby"`
-	UpdatedAt int64      `yaml:"-" json:"uesio/core.updatedat"`
-	CreatedAt int64      `yaml:"-" json:"uesio/core.createdat"`
-	Public    bool       `yaml:"public,omitempty" json:"uesio/studio.public"`
+	BuiltIn        `yaml:",inline"`
+	BundleableBase `yaml:",inline"`
+	Category       string    `yaml:"category,omitempty" json:"uesio/studio.category"`
+	Pack           string    `yaml:"pack,omitempty" json:"uesio/studio.pack"`
+	EntryPoint     string    `yaml:"entrypoint,omitempty" json:"uesio/studio.entrypoint"`
+	ConfigValues   []string  `yaml:"configvalues,omitempty" json:"uesio/studio.configvalues"`
+	Variants       []string  `yaml:"variants,omitempty" json:"uesio/studio.variants"`
+	Utilities      []string  `yaml:"utilities,omitempty" json:"uesio/studio.utilities"`
+	Slots          yaml.Node `yaml:"slots,omitempty" json:"uesio/studio.slots"`
+
+	// Builder Properties
+	Title             string    `yaml:"title,omitempty" json:"uesio/studio.title"`
+	Discoverable      bool      `yaml:"discoverable,omitempty" json:"uesio/studio.discoverable"`
+	Description       string    `yaml:"description,omitempty" json:"uesio/studio.description"`
+	Properties        yaml.Node `yaml:"properties" json:"uesio/studio.properties"`
+	DefaultDefinition yaml.Node `yaml:"defaultDefinition" json:"uesio/studio.defaultdefinition"`
+	Sections          yaml.Node `yaml:"sections" json:"uesio/studio.sections"`
+	Signals           yaml.Node `yaml:"signals" json:"uesio/studio.signals"`
+
+	// Internal only
+	slotPaths []string
+}
+
+type SlotDefinition struct {
+	Name string `yaml:"name"`
+	Path string `yaml:"path"`
 }
 
 type ComponentWrapper Component
 
+type SlotDef struct {
+	Name string
+	Path string
+}
+
+// GetSlotPaths returns a slice of JSONPointers for extracting component slots within an instance of this component
+func (c *Component) GetSlotPaths() []string {
+	if c.slotPaths == nil {
+		parsedSlots := make([]SlotDefinition, 0)
+		// Decode the slots into the parsedSlots
+		err := c.Slots.Decode(&parsedSlots)
+		if err != nil {
+			parsedSlots = []SlotDefinition{}
+		}
+		c.slotPaths = make([]string, len(parsedSlots))
+
+		// If the component has slots, we need to traverse the slots to find other components
+		// that need to be added to our dependencies
+		for i, parsedSlot := range parsedSlots {
+			c.slotPaths[i] = fmt.Sprintf("%s/%s", parsedSlot.Path, parsedSlot.Name)
+
+		}
+	}
+	return c.slotPaths
+}
+
+func (c *Component) GetBytes() ([]byte, error) {
+	return gojay.MarshalJSONObject(c)
+}
+
+func (c *Component) MarshalJSONObject(enc *gojay.Encoder) {
+	enc.AddStringKey("namespace", c.Namespace)
+	enc.AddStringKey("name", c.Name)
+	enc.AddStringKey("title", c.Title)
+	enc.AddStringKey("description", c.Description)
+	enc.AddStringKey("category", c.Category)
+	enc.AddBoolKey("discoverable", c.Discoverable)
+	if c.Slots.Content != nil {
+		enc.AddArrayKey("slots", (*YAMLDefinition)(&c.Slots))
+	}
+	if c.Properties.Content != nil {
+		enc.AddArrayKey("properties", (*YAMLDefinition)(&c.Properties))
+	}
+	if c.Sections.Content != nil {
+		enc.AddArrayKey("sections", (*YAMLDefinition)(&c.Sections))
+	}
+	if c.DefaultDefinition.Content != nil {
+		enc.AddObjectKey("defaultDefinition", (*YAMLDefinition)(&c.DefaultDefinition))
+	}
+	if c.Signals.Content != nil {
+		enc.AddObjectKey("signals", (*YAMLDefinition)(&c.Signals))
+	}
+}
+
+func (c *Component) IsNil() bool {
+	return c == nil
+}
+
 func (c *Component) GetCollectionName() string {
-	return c.GetBundleGroup().GetName()
+	return COMPONENT_COLLECTION_NAME
 }
 
-func (c *Component) GetCollection() CollectionableGroup {
-	return &ComponentCollection{}
-}
-
-func (c *Component) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s:%s", workspace, c.Name)
-}
-
-func (c *Component) GetBundleGroup() BundleableGroup {
-	return &ComponentCollection{}
-}
-
-func (c *Component) GetKey() string {
-	return fmt.Sprintf("%s.%s", c.Namespace, c.Name)
-}
-
-func (c *Component) GetPath() string {
-	return c.Name + ".yaml"
-}
-
-func (c *Component) GetPermChecker() *PermissionSet {
-	return nil
+func (c *Component) GetBundleFolderName() string {
+	return COMPONENT_FOLDER_NAME
 }
 
 func (c *Component) SetField(fieldName string, value interface{}) error {
@@ -60,32 +124,12 @@ func (c *Component) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(c, fieldName)
 }
 
-func (c *Component) GetNamespace() string {
-	return c.Namespace
-}
-
-func (c *Component) SetNamespace(namespace string) {
-	c.Namespace = namespace
-}
-
-func (c *Component) SetModified(mod time.Time) {
-	c.UpdatedAt = mod.UnixMilli()
-}
-
 func (c *Component) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(c, iter)
 }
 
 func (c *Component) Len() int {
 	return StandardItemLen(c)
-}
-
-func (c *Component) GetItemMeta() *ItemMeta {
-	return c.itemMeta
-}
-
-func (c *Component) SetItemMeta(itemMeta *ItemMeta) {
-	c.itemMeta = itemMeta
 }
 
 func (c *Component) UnmarshalYAML(node *yaml.Node) error {
@@ -97,5 +141,5 @@ func (c *Component) UnmarshalYAML(node *yaml.Node) error {
 }
 
 func (c *Component) IsPublic() bool {
-	return c.Public
+	return true
 }

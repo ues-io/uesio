@@ -1,3 +1,80 @@
 name: table
+title: Table
+description: View and edit tabular data.
 pack: main
-entrypoint: components/table/table.tsx
+entrypoint: components/table/table
+variants:
+  - uesio/io.tile:uesio/io.default
+  - uesio/io.titlebar:uesio/io.infotag
+  - uesio/io.table:uesio/io.default
+  - uesio/io.button:uesio/io.nav
+  - uesio/io.fieldwrapper:uesio/io.table
+  - uesio/io.field:uesio/io.table
+  - uesio/io.customselectfield:uesio/io.default
+  - uesio/io.menu:uesio/io.default
+category: DATA
+discoverable: true
+slots:
+  - name: components
+    path: /columns/~{}
+    providesContexts:
+      - type: WIRE
+        property: wire
+      - type: RECORD
+      - type: FIELD_MODE
+        property: mode
+  - name: header
+  - name: footer
+properties:
+  - name: wire
+    label: Wire
+    type: WIRE
+    required: true
+  - name: uesio.id
+    label: Table Id
+    type: COMPONENT_ID
+  - name: mode
+    label: Display Mode
+    type: SELECT
+    required: true
+    options:
+      - value: READ
+        label: Read
+      - value: EDIT
+        label: Edit
+  - name: pagesize
+    label: Page size
+    type: NUMBER
+    min: 5
+    max: 500
+    step: 5
+sections:
+  - type: HOME
+    properties:
+      - wire
+      - uesio.id
+      - mode
+      - pagesize
+  - type: CUSTOM
+    label: Columns
+    id: columns
+    viewDefinition:
+      - uesio/builder.tablecolumns: {}
+  - type: STYLES
+  - type: DISPLAY
+signals:
+  TOGGLE_MODE:
+    label: Toggle Mode
+    properties: []
+  SET_READ_MODE:
+    label: Set Read Mode
+    properties: []
+  SET_EDIT_MODE:
+    label: Set Edit Mode
+    properties: []
+  NEXT_PAGE:
+    label: Next Page
+    properties: []
+  PREV_PAGE:
+    label: Previous Page
+    properties: []

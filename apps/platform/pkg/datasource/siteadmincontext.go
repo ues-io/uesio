@@ -9,6 +9,39 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
+func GetSiteAdminSession(adminSite *meta.Site, currentSession *sess.Session) *sess.Session {
+	//This creates a copy of the session
+	siteAdminSession := currentSession.RemoveWorkspaceContext()
+
+	if adminSite == nil {
+		adminSite = currentSession.GetSite().Clone()
+	}
+
+	upgradeToSiteAdmin(adminSite, siteAdminSession)
+
+	return siteAdminSession
+
+}
+
+func upgradeToSiteAdmin(adminSite *meta.Site, adminSession *sess.Session) {
+	adminSite.Permissions = &meta.PermissionSet{
+		AllowAllViews:       true,
+		AllowAllRoutes:      true,
+		AllowAllFiles:       true,
+		AllowAllCollections: true,
+		ModifyAllRecords:    true,
+		ViewAllRecords:      true,
+	}
+
+	adminSession.SetSiteAdmin(adminSite)
+
+	adminSession.SetUser(&meta.User{
+		BuiltIn: meta.BuiltIn{
+			UniqueKey: "system",
+		},
+	})
+}
+
 func addSiteAdminContext(siteadmin *meta.Site, session *sess.Session, connection adapt.Connection) error {
 	site := session.GetSite()
 	perms := session.GetPermissions()
@@ -26,17 +59,6 @@ func addSiteAdminContext(siteadmin *meta.Site, session *sess.Session, connection
 		return errors.New("your profile does not allow you to administer sites")
 	}
 
-	// For now give siteadmin users access to everything.
-	// Get the siteadmin permissions and set them on the session
-	siteadmin.Permissions = &meta.PermissionSet{
-		AllowAllViews:       true,
-		AllowAllRoutes:      true,
-		AllowAllFiles:       true,
-		AllowAllCollections: true,
-		ModifyAllRecords:    true,
-		ViewAllRecords:      true,
-	}
-
 	siteadmin.Domain = site.Domain
 	siteadmin.Subdomain = site.Subdomain
 
@@ -44,16 +66,12 @@ func addSiteAdminContext(siteadmin *meta.Site, session *sess.Session, connection
 		return errors.New("No Bundle found for site to administer")
 	}
 
-	session.SetSiteAdmin(siteadmin)
+	upgradeToSiteAdmin(siteadmin, session)
 
 	bundleDef, err := bundle.GetAppBundle(session, connection)
 	if err != nil {
 		return err
 	}
-
-	session.SetUser(&meta.User{
-		UniqueKey: "system",
-	})
 
 	session.GetSiteAdmin().SetAppBundle(bundleDef)
 	return nil
@@ -99,6 +117,12 @@ func querySite(value, field string, connection adapt.Connection) (*meta.Site, er
 				},
 				{
 					ID: "uesio/studio.name",
+				},
+				{
+					ID: "uesio/studio.title",
+				},
+				{
+					ID: "uesio/studio.enable_seo",
 				},
 				{
 					ID: "uesio/studio.app",

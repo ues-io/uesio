@@ -1,27 +1,31 @@
-import { FunctionComponent } from "react"
+import { component, styles, definition } from "@uesio/ui"
+import { default as IOGrid } from "../../utilities/grid/grid"
 
-import { component, styles } from "@uesio/ui"
-import { GridProps } from "./griddefinition"
+type GridDefinition = {
+	templateColumns?: styles.ResponsiveDefinition
+	templateRows?: styles.ResponsiveDefinition
+	templateAreas?: styles.ResponsiveDefinition
+	columnGap?: string
+	rowGap?: string
+	gap?: string
+}
 
-const IOGrid = component.getUtility("uesio/io.grid")
-
-const Grid: FunctionComponent<GridProps> = (props) => {
+const Grid: definition.UC<GridDefinition> = (props) => {
 	const { definition, context } = props
+
+	// TODO: REMOVE THESE STYLING PROPERTIES
 	const gridCols = styles.getResponsiveStyles(
 		"gridTemplateColumns",
-		definition.templateColumns,
-		context
+		definition.templateColumns
 	)
 	const gridRows = styles.getResponsiveStyles(
 		"gridTemplateRows",
-		definition.templateRows,
-		context
+		definition.templateRows
 	)
 
 	const gridAreas = styles.getResponsiveStyles(
 		"gridTemplateAreas",
-		definition.templateAreas,
-		context
+		definition.templateAreas
 	)
 
 	const columnGap = definition.columnGap && {
@@ -31,6 +35,7 @@ const Grid: FunctionComponent<GridProps> = (props) => {
 	const rowGap = definition.rowGap && {
 		gridRowGap: definition.rowGap,
 	}
+	// END TODO
 
 	const classes = styles.useStyles(
 		{
@@ -50,15 +55,14 @@ const Grid: FunctionComponent<GridProps> = (props) => {
 				definition={definition}
 				listName="items"
 				path={props.path}
-				accepts={[
-					"uesio/io.griditem",
-					"uesio.standalone",
-					"uesio.field",
-				]}
 				context={context}
 			/>
 		</IOGrid>
 	)
 }
+
+Grid.displayName = "Grid"
+
+export type { GridDefinition }
 
 export default Grid

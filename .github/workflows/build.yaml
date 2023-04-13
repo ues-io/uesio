@@ -1,0 +1,35 @@
+name: Build and Test
+on:
+  workflow_call:
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Setup Uesio CLI Symlink
+        shell: bash
+        run: |
+          # Symlink for Uesio CLI, which is created in build and then used in subsequent builds and tests
+          mkdir -p dist/cli
+          sudo ln -s $PWD/dist/cli/uesio /usr/local/bin/uesio
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.15.0
+          cache: "npm"
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.19
+          cache-dependency-path: apps/*/go.sum
+      - name: Install, lint, build, test
+        shell: bash
+        run: |
+          npm ci
+          npm run prettier-check
+          npm run affected:lint -- --base=origin/master --head=$GITHUB_SHA --parallel
+          npm run build-all
+          npm run affected:test -- --base=origin/master --head=$GITHUB_SHA --parallel

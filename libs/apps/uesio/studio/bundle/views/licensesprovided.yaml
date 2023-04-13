@@ -78,7 +78,7 @@ definition:
               uesio.variant: uesio/studio.leftbar
               components:
                 - uesio/core.view:
-                    id: appnavview
+                    uesio.id: appnavview
                     view: uesio/studio.appnav
                     uesio.context:
                       wire: apps
@@ -118,7 +118,7 @@ definition:
                                         - type: wireHasRecords
                                           wire: licensetemplate
                       - uesio/io.table:
-                          id: licensesTable
+                          uesio.id: licensesTable
                           wire: licenses
                           uesio.styles:
                             root:
@@ -175,7 +175,7 @@ definition:
       height: 500px
       components:
         - uesio/io.list:
-            id: newlicenselist
+            uesio.id: newlicenselist
             wire: newlicense
             mode: EDIT
             components:

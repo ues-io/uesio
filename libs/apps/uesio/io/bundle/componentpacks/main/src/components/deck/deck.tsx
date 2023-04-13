@@ -1,22 +1,21 @@
-import { FunctionComponent } from "react"
+import { styles, definition } from "@uesio/ui"
+import List, { ListDefinition } from "../list/list"
+import { GridDefinition } from "../grid/grid"
+import { default as IOGrid } from "../../utilities/grid/grid"
 
-import { component, styles } from "@uesio/ui"
-import { DeckProps } from "./deckdefinition"
-import List from "../list/list"
+type DeckDefinition = GridDefinition & ListDefinition
 
-const IOGrid = component.getUtility("uesio/io.grid")
-
-const Deck: FunctionComponent<DeckProps> = (props) => {
+const Deck: definition.UC<DeckDefinition> = (props) => {
 	const { definition, context } = props
+
+	// TODO: REMOVE THESE STYLING PROPERTIES
 	const gridCols = styles.getResponsiveStyles(
 		"gridTemplateColumns",
-		definition.templateColumns,
-		context
+		definition.templateColumns
 	)
 	const gridRows = styles.getResponsiveStyles(
 		"gridTemplateRows",
-		definition.templateRows,
-		context
+		definition.templateRows
 	)
 
 	const columnGap = definition.columnGap && {
@@ -30,6 +29,7 @@ const Deck: FunctionComponent<DeckProps> = (props) => {
 	const gap = definition.gap && {
 		gridGap: definition.gap,
 	}
+	// END TODO
 
 	const classes = styles.useStyles(
 		{

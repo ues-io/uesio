@@ -1,6 +1,9 @@
 import { PlainCollection } from "../collection/types"
 import Collection from "../collection/class"
-import { appDispatch } from "../../store/store"
+import { dispatch } from "../../store/store"
+import { runMany } from "../../signals/signals"
+import { shouldAll } from "../../componentexports"
+import { WireEventType } from "../../definition/wire"
 import {
 	setRecord,
 	createRecord,
@@ -9,13 +12,13 @@ import {
 	cancel,
 	empty,
 	toggleCondition,
+	setConditionValue,
 	getFullWireId,
 } from "."
 import saveWiresOp from "./operations/save"
 import loadWireOp from "./operations/load"
-import updateRecordOp from "./operations/updaterecord"
 import { PlainWire } from "./types"
-import { Context, newContext } from "../../context/context"
+import { Context } from "../../context/context"
 import WireRecord from "../wirerecord/class"
 import { FieldValue, PlainWireRecord } from "../wirerecord/types"
 import { nanoid } from "@reduxjs/toolkit"
@@ -45,9 +48,19 @@ class Wire {
 			? Object.keys(this.source.changes).map((id) => this.getRecord(id))
 			: []
 
+	getDeletes = () =>
+		this.source?.deletes
+			? Object.keys(this.source.deletes).map((id) => this.getRecord(id))
+			: []
+
 	isLoading = () => this.source?.isLoading
+	hasAllRecords = () => !this.source?.more
 
 	getErrors = () => this.source?.errors
+
+	getErrorArray = () =>
+		this.source?.errors &&
+		Object.values(this.source.errors).flatMap((errgroup) => errgroup)
 
 	getViewId = () => this.source?.view
 	getRecord = (id: string) => new WireRecord(this.source.data[id], id, this)
@@ -68,17 +81,8 @@ class Wire {
 
 	getFields = () => this.source?.fields || {}
 
-	updateRecord = (recordId: string, record: FieldValue, path: string[]) => {
-		const context = newContext({
-			wire: this.getId(),
-			record: recordId,
-			view: this.getViewId(),
-		})
-		appDispatch()(updateRecordOp(context, path, record))
-	}
-
 	setRecord = (recordId: string, record: FieldValue, path: string[]) => {
-		appDispatch()(
+		dispatch(
 			setRecord({
 				entity: this.getFullId(),
 				recordId,
@@ -88,9 +92,13 @@ class Wire {
 		)
 	}
 
-	createRecord = (record: PlainWireRecord, prepend?: boolean) => {
-		const recordId = nanoid()
-		appDispatch()(
+	createRecord = (
+		record: PlainWireRecord,
+		prepend?: boolean,
+		recordId?: string
+	) => {
+		if (!recordId) recordId = nanoid()
+		dispatch(
 			createRecord({
 				entity: this.getFullId(),
 				record,
@@ -102,7 +110,7 @@ class Wire {
 	}
 
 	markRecordForDeletion = (recordId: string) => {
-		appDispatch()(
+		dispatch(
 			markForDelete({
 				entity: this.getFullId(),
 				recordId,
@@ -111,7 +119,7 @@ class Wire {
 	}
 
 	unmarkRecordForDeletion = (recordId: string) => {
-		appDispatch()(
+		dispatch(
 			unmarkForDelete({
 				entity: this.getFullId(),
 				recordId,
@@ -120,7 +128,7 @@ class Wire {
 	}
 
 	cancel = () => {
-		appDispatch()(
+		dispatch(
 			cancel({
 				entity: this.getFullId(),
 			})
@@ -128,7 +136,7 @@ class Wire {
 	}
 
 	empty = () => {
-		appDispatch()(
+		dispatch(
 			empty({
 				entity: this.getFullId(),
 			})
@@ -136,10 +144,20 @@ class Wire {
 	}
 
 	toggleCondition = (conditionId: string) => {
-		appDispatch()(
+		dispatch(
 			toggleCondition({
 				entity: this.getFullId(),
 				id: conditionId,
+			})
+		)
+	}
+
+	setConditionValue = (conditionId: string, value: FieldValue) => {
+		dispatch(
+			setConditionValue({
+				entity: this.getFullId(),
+				id: conditionId,
+				value,
 			})
 		)
 	}
@@ -149,11 +167,50 @@ class Wire {
 		return this
 	}
 
-	save = (context: Context) =>
-		appDispatch()(saveWiresOp(context, [this.getId()]))
+	save = (context: Context) => saveWiresOp(context, [this.getId()])
 
-	load = (context: Context) =>
-		appDispatch()(loadWireOp(context, [this.getId()]))
+	load = (context: Context) => loadWireOp(context, [this.getId()], true)
+
+	getEvents = () => this.source.events
+
+	handleEvent(type: WireEventType, context: Context): void
+	handleEvent(type: "onChange", context: Context, field: string): void
+	handleEvent(type: string, context: Context, field?: string): void {
+		const events = this.getEvents()
+		if (!events) return
+
+		// Backwards support
+		if (!Array.isArray(events)) {
+			if (!field || !context) return
+			const changeEvents = events.onChange
+
+			if (changeEvents) {
+				for (const changeEvent of changeEvents) {
+					if (changeEvent.field !== field) continue
+					runMany(changeEvent.signals, context)
+				}
+			}
+			return
+		}
+
+		// Todo: filter out events that can cause an infinite loop
+		events
+			.filter((event) => {
+				// Is it the event we want?
+				if (event.type !== type) return false
+				// Is it a changeEvent? if so we need check if we care about the changed field
+				if (
+					event.type === "onChange" &&
+					field &&
+					!event.fields?.includes(field)
+				)
+					return false
+				return shouldAll(event.conditions, context)
+			})
+			.forEach((event) => {
+				runMany(event?.signals || [], context)
+			})
+	}
 }
 
 export default Wire

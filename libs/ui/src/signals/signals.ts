@@ -1,36 +1,36 @@
-import { Context, ContextFrame } from "../context/context"
+import { Context, injectDynamicContext, newContext } from "../context/context"
 import { SignalDefinition, SignalDescriptor } from "../definition/signal"
-import { appDispatch } from "../store/store"
-import componentSignal from "../bands/component/signals"
+import { getComponentSignalDefinition } from "../bands/component/signals"
 
+import aiSignals from "../bands/ai/signals"
+import collectionSignals from "../bands/collection/signals"
 import botSignals from "../bands/bot/signals"
 import routeSignals from "../bands/route/signals"
 import userSignals from "../bands/user/signals"
 import wireSignals from "../bands/wire/signals"
 import panelSignals from "../bands/panel/signals"
 import notificationSignals from "../bands/notification/signals"
-import { additionalContext } from "../component/component"
+import contextSignals from "../context/signals"
 import debounce from "lodash/debounce"
 import { getErrorString } from "../utilexports"
+
 const registry: Record<string, SignalDescriptor> = {
+	...aiSignals,
+	...collectionSignals,
 	...botSignals,
 	...routeSignals,
 	...userSignals,
 	...wireSignals,
 	...panelSignals,
 	...notificationSignals,
+	...contextSignals,
 }
 
 const run = (signal: SignalDefinition, context: Context) => {
-	const descriptor = registry[signal.signal] || componentSignal
-	return appDispatch()(
-		descriptor.dispatcher(
-			signal,
-			additionalContext(
-				context,
-				signal?.["uesio.context"] as ContextFrame
-			)
-		)
+	const descriptor = registry[signal.signal] || getComponentSignalDefinition()
+	return descriptor.dispatcher(
+		signal,
+		injectDynamicContext(context, signal?.["uesio.context"])
 	)
 }
 
@@ -41,7 +41,8 @@ const runMany = async (signals: SignalDefinition[], context: Context) => {
 		try {
 			context = await run(signal, context)
 		} catch (error) {
-			context = context.addFrame({ errors: [getErrorString(error)] })
+			context = context.addErrorFrame([getErrorString(error)])
+			console.error(error)
 		}
 
 		// Any errors in this frame are the result of the signal run above, nothing else
@@ -58,7 +59,7 @@ const runMany = async (signals: SignalDefinition[], context: Context) => {
 							severity: "error",
 					  }))),
 			]
-			await runMany(signals, context.addFrame({}))
+			await runMany(signals, newContext())
 			if (!signal.onerror?.continue) break
 		}
 	}

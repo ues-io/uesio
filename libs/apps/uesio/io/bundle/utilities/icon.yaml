@@ -1,3 +1,3 @@
 name: icon
 pack: main
-entrypoint: utilities/icon/icon.tsx
+entrypoint: utilities/icon/icon

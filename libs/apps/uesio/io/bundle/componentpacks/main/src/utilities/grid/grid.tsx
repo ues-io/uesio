@@ -1,24 +1,26 @@
-import { FunctionComponent } from "react"
 import { definition, styles } from "@uesio/ui"
 
-interface GridProps extends definition.UtilityProps {
+interface GridProps {
 	onClick?: () => void
 }
 
-const Grid: FunctionComponent<GridProps> = (props) => {
+const Grid: definition.UtilityComponent<GridProps> = (props) => {
 	const classes = styles.useUtilityStyles(
 		{
-			root: {
-				display: "grid",
-			},
+			root: {},
 		},
 		props
 	)
 	return (
-		<div onClick={props.onClick} className={classes.root}>
+		<div
+			onClick={props.onClick}
+			className={styles.cx("grid", classes.root)}
+		>
 			{props.children}
 		</div>
 	)
 }
+
+Grid.displayName = "GridUtility"
 
 export default Grid

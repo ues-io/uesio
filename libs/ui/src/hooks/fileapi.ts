@@ -1,13 +1,11 @@
-import { Uesio } from "./hooks"
-import { getPlatform } from "../store/store"
 import { Context } from "../context/context"
-import WireRecord from "../bands/wirerecord/class"
 import { useEffect, useState } from "react"
 import { PlainWireRecord } from "../wireexports"
-import { ID_FIELD } from "../collectionexports"
+import { ID_FIELD, UPDATED_AT_FIELD } from "../collectionexports"
+import { platform } from "../platform/platform"
+const { deleteFile, uploadFile } = platform
 
-const getURL = (context: Context, namespace: string, name: string) =>
-	getPlatform().getFileURL(context, namespace, name)
+const getURL = platform.getFileURL
 
 const getURLFromFullName = (context: Context, fullName: string) => {
 	const [namespace, name] = fullName.split(".")
@@ -17,84 +15,65 @@ const getURLFromFullName = (context: Context, fullName: string) => {
 const getUserFileURL = (
 	context: Context,
 	userfileid: string | undefined,
-	cacheBuster?: string
+	fileVersion?: string
 ) => {
 	if (!userfileid) return ""
-	const platform = getPlatform()
-	const url = platform.getUserFileURL(context, userfileid)
-	return cacheBuster ? url + "&cb=" + cacheBuster : url
+	return platform.getUserFileURL(context, userfileid, fileVersion)
 }
 
-const deleteFile = (context: Context, userFileID: string) =>
-	getPlatform().deleteFile(context, userFileID)
-
-const uploadFile = (
+const useUserFile = (
 	context: Context,
-	fileData: File,
-	collectionID: string,
-	recordID: string,
-	fieldID: string
-) =>
-	getPlatform().uploadFile(context, fileData, collectionID, recordID, fieldID)
+	userFile: PlainWireRecord | undefined
+): [string, string, (value: string) => void, () => void, () => void] => {
+	const [content, setContent] = useState<string>("")
+	const [original, setOriginal] = useState<string>("")
+	const cancel = () => setContent(original)
+	const reset = () => setOriginal(content)
+	useEffect(() => {
+		const userFileId = userFile?.[ID_FIELD] as string
+		const updatedAt = userFile?.[UPDATED_AT_FIELD] as string
+		const fileUrl = getUserFileURL(context, userFileId, updatedAt)
+		if (!fileUrl) {
+			setContent("")
+			setOriginal("")
+			return
+		}
+		const fetchData = async () => {
+			const res = await fetch(fileUrl)
+			const text = await res.text()
+			setContent(text)
+			setOriginal(text)
+		}
+		fetchData()
+	}, [])
+	return [content, original, setContent, reset, cancel]
+}
 
-class FileAPI {
-	constructor(uesio: Uesio) {
-		this.uesio = uesio
-	}
-
-	uesio: Uesio
-
-	getURL = getURL
-	getURLFromFullName = getURLFromFullName
-	getUserFileURL = getUserFileURL
-	uploadFile = uploadFile
-	deleteFile = deleteFile
-
-	useUserFile = (context: Context, record: WireRecord, fieldId: string) => {
-		const [content, setContent] = useState<string>("")
-		useEffect(() => {
-			const userFile = record.getFieldValue<PlainWireRecord>(fieldId)
-			const userFileId = userFile?.[ID_FIELD] as string
-			const fileUrl = getUserFileURL(context, userFileId)
-			if (!fileUrl) {
-				setContent("")
-				return
-			}
-			const fetchData = async () => {
-				const res = await fetch(fileUrl)
-				const text = await res.text()
-				setContent(text)
-			}
-			fetchData()
-		}, [])
-		return content
-	}
-
-	useFile = (context: Context, fileId?: string) => {
-		const [content, setContent] = useState<string>("")
-		useEffect(() => {
-			if (!fileId) return
-			const fileUrl = this.uesio.file.getURLFromFullName(context, fileId)
-			if (!fileUrl) {
-				setContent("")
-				return
-			}
-			const fetchData = async () => {
-				const res = await fetch(fileUrl)
-				const text = await res.text()
-				setContent(text)
-			}
-			fetchData()
-		}, [])
-		return content
-	}
+const useFile = (context: Context, fileId?: string) => {
+	const [content, setContent] = useState<string>("")
+	useEffect(() => {
+		if (!fileId) return
+		const fileUrl = getURLFromFullName(context, fileId)
+		if (!fileUrl) {
+			setContent("")
+			return
+		}
+		const fetchData = async () => {
+			const res = await fetch(fileUrl)
+			const text = await res.text()
+			setContent(text)
+		}
+		fetchData()
+	}, [])
+	return content
 }
 
 export {
-	FileAPI,
 	getURL,
 	getURLFromFullName,
 	uploadFile,
 	deleteFile,
 	getUserFileURL,
+	useFile,
+	useUserFile,
 }

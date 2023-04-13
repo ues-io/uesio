@@ -8,16 +8,15 @@ type CodeFieldDefinition = {
 	id?: string
 }
 
-type CodeFieldLanguage = "yaml" | "json" | "javascript"
+type CodeFieldLanguage = "yaml" | "json" | "javascript" | "typescript"
 
 interface Props extends definition.BaseProps {
 	definition: CodeFieldDefinition
 }
 
-const IOCodeField = component.getUtility("uesio/io.codefield")
-const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
-
 const CodeField: FunctionComponent<Props> = (props) => {
+	const IOCodeField = component.getUtility("uesio/io.codefield")
+	const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 	const { context, definition } = props
 	const record = context.getRecord()
 	const wire = context.getWire()
@@ -36,7 +35,7 @@ const CodeField: FunctionComponent<Props> = (props) => {
 
 	const changeHandler = (newValue: string) => {
 		const oldValue = context.getRecord()?.getFieldValue(fieldId) || ""
-		if (newValue !== oldValue) record.update(fieldId, newValue)
+		if (newValue !== oldValue) record.update(fieldId, newValue, context)
 	}
 
 	return (

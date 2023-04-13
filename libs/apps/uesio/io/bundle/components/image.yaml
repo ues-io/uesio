@@ -1,3 +1,53 @@
 name: image
+title: Image
+description: Display an image.
+category: CONTENT
 pack: main
-entrypoint: components/image/image.tsx
+entrypoint: components/image/image
+discoverable: true
+defaultDefinition:
+  align: left
+  loading: lazy
+properties:
+  - name: file
+    type: METADATA
+    label: File
+    metadataType: FILE
+  - name: src
+    type: TEXT
+    label: URL
+  - name: height
+    type: TEXT
+    label: Height
+  - name: alt
+    type: TEXT
+    label: Alt text
+  - name: align
+    type: SELECT
+    label: Alignment
+    options:
+      - value: "left"
+        label: "Left"
+      - value: "center"
+        label: "Center"
+      - value: "right"
+        label: "Right"
+  - name: loading
+    type: SELECT
+    label: Loading
+    options:
+      - value: "lazy"
+        label: "Lazy"
+      - value: "eager"
+        label: "Eager"
+sections:
+  - type: HOME
+    properties:
+      - file
+      - src
+      - height
+      - alt
+      - align
+      - loading
+  - type: STYLES
+  - type: DISPLAY

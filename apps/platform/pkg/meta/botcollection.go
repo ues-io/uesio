@@ -9,56 +9,67 @@ import (
 
 type BotCollection []*Bot
 
+var BOT_COLLECTION_NAME = "uesio/studio.bot"
+var BOT_FOLDER_NAME = "bots"
+var BOT_FIELDS = StandardGetFields(&Bot{})
+
 func (bc *BotCollection) GetName() string {
-	return "uesio/studio.bot"
+	return BOT_COLLECTION_NAME
 }
 
 func (bc *BotCollection) GetBundleFolderName() string {
-	return "bots"
+	return BOT_FOLDER_NAME
 }
 
 func (bc *BotCollection) GetFields() []string {
-	return StandardGetFields(&Bot{})
+	return BOT_FIELDS
 }
 
 func (bc *BotCollection) NewItem() Item {
 	return &Bot{}
 }
 
-func (bc *BotCollection) AddItem(item Item) {
+func (bc *BotCollection) AddItem(item Item) error {
 	*bc = append(*bc, item.(*Bot))
+	return nil
 }
 
-func (bc *BotCollection) GetItemFromPath(path string) (BundleableItem, bool) {
+func (bc *BotCollection) GetItemFromPath(path, namespace string) BundleableItem {
 
 	parts := strings.Split(path, string(os.PathSeparator))
 	partLength := len(parts)
 	botType := parts[0]
 
 	if botType == "listener" || botType == "generator" {
-		if partLength != 3 || parts[2] != "bot.yaml" {
-			return nil, false
+		if partLength != 3 {
+			return nil
 		}
-		return &Bot{
-			Type: strings.ToUpper(botType),
-			Name: parts[1],
-		}, true
+		return NewBaseBot(strings.ToUpper(botType), "", namespace, parts[1])
 	}
 
 	if botType == "beforesave" || botType == "aftersave" {
-		if partLength != 6 || parts[5] != "bot.yaml" {
-			return nil, false
+		if partLength != 6 {
+			return nil
 		}
-		return &Bot{
-			Type:          strings.ToUpper(botType),
-			Name:          parts[4],
-			CollectionRef: fmt.Sprintf("%s/%s.%s", parts[1], parts[2], parts[3]),
-		}, true
+		collectionKey := fmt.Sprintf("%s/%s.%s", parts[1], parts[2], parts[3])
+		return NewBaseBot(strings.ToUpper(botType), collectionKey, namespace, parts[4])
 	}
-	return nil, false
+	return nil
 }
 
-func (bc *BotCollection) FilterPath(path string, conditions BundleConditions) bool {
+func (bc *BotCollection) IsDefinitionPath(path string) bool {
+	parts := strings.Split(path, string(os.PathSeparator))
+	botType := parts[0]
+	if botType == "listener" || botType == "generator" {
+		return parts[2] == "bot.yaml"
+	}
+	if botType == "beforesave" || botType == "aftersave" {
+		return parts[5] == "bot.yaml"
+	}
+	return false
+}
+
+func (bc *BotCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	collectionKey, hasCollection := conditions["uesio/studio.collection"]
 	botTypeKey, hasType := GetBotTypes()[conditions["uesio/studio.type"]]
 	parts := strings.Split(path, string(os.PathSeparator))
@@ -76,12 +87,17 @@ func (bc *BotCollection) FilterPath(path string, conditions BundleConditions) bo
 	}
 
 	if botType == "listener" || botType == "generator" {
-		return partLength == 3
+		if partLength != 3 {
+			return false
+		}
+		isDefinition := parts[2] == "bot.yaml"
+		return partLength == 3 && (isDefinition || !definitionOnly)
 	}
 	if botType == "beforesave" || botType == "aftersave" {
 		if partLength != 6 {
 			return false
 		}
+		isDefinition := parts[5] == "bot.yaml"
 		if hasCollection {
 			collectionNS, collectionName, err := ParseKey(collectionKey)
 			if err != nil {
@@ -95,18 +111,14 @@ func (bc *BotCollection) FilterPath(path string, conditions BundleConditions) bo
 				return false
 			}
 		}
-		return true
+		return isDefinition || !definitionOnly
 	}
 	return false
 }
 
-func (bc *BotCollection) GetItem(index int) Item {
-	return (*bc)[index]
-}
-
 func (bc *BotCollection) Loop(iter GroupIterator) error {
-	for index := range *bc {
-		err := iter(bc.GetItem(index), strconv.Itoa(index))
+	for index, b := range *bc {
+		err := iter(b, strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -116,8 +128,4 @@ func (bc *BotCollection) Loop(iter GroupIterator) error {
 
 func (bc *BotCollection) Len() int {
 	return len(*bc)
-}
-
-func (bc *BotCollection) GetItems() interface{} {
-	return *bc
 }

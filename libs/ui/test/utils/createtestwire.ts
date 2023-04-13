@@ -1,9 +1,8 @@
 // import { WireAPI } from "../../src/hooks/wireapi"
-import { useUesio } from "../../src/hooks/hooks"
+import * as api from "../../src/api/api"
 import { newContext } from "../../src/context/context"
 import { selectWire } from "../../src/bands/wire"
 
-import { platform } from "../../src/platform/platform"
 import { create } from "../../src/store/store"
 
 import { SignalDefinition } from "../../src/signalexports"
@@ -15,18 +14,14 @@ type T = {
 	wireDef: WireDefinition
 }
 const createTestWire = ({ signals, wireId, viewId, wireDef }: T) => {
-	const store = create(platform, {})
-	const context = newContext({ view: viewId })
+	const store = create({})
+	const context = newContext().addViewFrame({ view: viewId, viewDef: viewId })
 
-	const uesio = useUesio({
-		context,
-	})
-
-	uesio.wire.initWires(context, {
+	api.wire.initWires(context, {
 		[wireId]: wireDef,
 	})
 
-	const handler = uesio.signal.getHandler(signals)
+	const handler = api.signal.getHandler(signals, context)
 	handler && handler()
 
 	const myWire = selectWire(store.getState(), viewId, wireId)

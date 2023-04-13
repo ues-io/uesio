@@ -60,11 +60,17 @@ definition:
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
-                    title: Collections
-                    subtitle: insert data into the collections that are available for you.
+                    title: Collection
+                    subtitle: $Param{collectionname}
                     actions:
                       - uesio/io.group:
                           components:
+                            - uesio/io.button:
+                                signals:
+                                  - signal: "route/NAVIGATE"
+                                    path: "app/$Param{app}/site/$Param{sitename}/export/$Param{namespace}/$Param{collectionname}"
+                                text: Export Data
+                                uesio.variant: uesio/io.secondary
                             - uesio/io.button:
                                 signals:
                                   - signal: "route/NAVIGATE"

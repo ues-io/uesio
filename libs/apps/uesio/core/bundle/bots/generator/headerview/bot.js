@@ -18,7 +18,7 @@ function view(bot) {
 			collections: collections,
 			navcollections: navButtonYaml,
 		},
-		"headerview.yaml"
+		"templates/headerview.yaml"
 	)
 
 	bot.runGenerator("uesio/core", "view", {

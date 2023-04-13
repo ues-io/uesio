@@ -1,0 +1,9 @@
+name: default
+label: Default
+definition:
+  labelsVariant: uesio/io.default
+  panelVariant: uesio/io.default
+variants:
+  - uesio/io.tablabels:uesio/io.default
+  - uesio/io.scrollpanel:uesio/io.default
+public: true

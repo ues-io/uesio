@@ -2,32 +2,23 @@ package meta
 
 import (
 	"errors"
-	"fmt"
-	"time"
 
 	"gopkg.in/yaml.v3"
 )
 
 type SelectListOption struct {
-	Label string `yaml:"label" json:"label" json:"label"`
-	Value string `yaml:"value" json:"value" json:"value"`
+	Label         string `yaml:"label" json:"label"`
+	Value         string `yaml:"value" json:"value"`
+	LanguageLabel string `yaml:"languageLabel" json:"languageLabel"`
+	Disabled      bool   `yaml:"disabled" json:"disabled"`
 }
 
 type SelectList struct {
-	ID               string             `yaml:"-" json:"uesio/core.id"`
-	UniqueKey        string             `yaml:"-" json:"uesio/core.uniquekey"`
-	Name             string             `yaml:"name" json:"uesio/studio.name"`
-	Namespace        string             `yaml:"-" json:"-"`
-	Options          []SelectListOption `yaml:"options" json:"uesio/studio.options"`
-	BlankOptionLabel string             `yaml:"blank_option_label,omitempty" json:"uesio/studio.blank_option_label"`
-	Workspace        *Workspace         `yaml:"-" json:"uesio/studio.workspace"`
-	CreatedBy        *User              `yaml:"-" json:"uesio/core.createdby"`
-	Owner            *User              `yaml:"-" json:"uesio/core.owner"`
-	UpdatedBy        *User              `yaml:"-" json:"uesio/core.updatedby"`
-	UpdatedAt        int64              `yaml:"-" json:"uesio/core.updatedat"`
-	CreatedAt        int64              `yaml:"-" json:"uesio/core.createdat"`
-	itemMeta         *ItemMeta          `yaml:"-" json:"-"`
-	Public           bool               `yaml:"public,omitempty" json:"uesio/studio.public"`
+	BuiltIn                  `yaml:",inline"`
+	BundleableBase           `yaml:",inline"`
+	Options                  []SelectListOption `yaml:"options" json:"uesio/studio.options"`
+	BlankOptionLabel         string             `yaml:"blank_option_label,omitempty" json:"uesio/studio.blank_option_label"`
+	BlankOptionLanguageLabel string             `yaml:"blank_option_language_label,omitempty" json:"uesio/studio.blank_option_language_label"`
 }
 
 type SelectListWrapper SelectList
@@ -37,10 +28,11 @@ func NewSelectList(key string) (*SelectList, error) {
 	if err != nil {
 		return nil, errors.New("Bad Key for SelectList: " + key)
 	}
-	return &SelectList{
-		Name:      name,
-		Namespace: namespace,
-	}, nil
+	return NewBaseSelectList(namespace, name), nil
+}
+
+func NewBaseSelectList(namespace, name string) *SelectList {
+	return &SelectList{BundleableBase: NewBase(namespace, name)}
 }
 
 func NewSelectLists(keys map[string]bool) ([]BundleableItem, error) {
@@ -58,31 +50,11 @@ func NewSelectLists(keys map[string]bool) ([]BundleableItem, error) {
 }
 
 func (sl *SelectList) GetCollectionName() string {
-	return sl.GetBundleGroup().GetName()
+	return SELECTLIST_COLLECTION_NAME
 }
 
-func (sl *SelectList) GetCollection() CollectionableGroup {
-	return &SelectListCollection{}
-}
-
-func (sl *SelectList) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s:%s", workspace, sl.Name)
-}
-
-func (sl *SelectList) GetBundleGroup() BundleableGroup {
-	return &SelectListCollection{}
-}
-
-func (sl *SelectList) GetKey() string {
-	return fmt.Sprintf("%s.%s", sl.Namespace, sl.Name)
-}
-
-func (sl *SelectList) GetPath() string {
-	return sl.Name + ".yaml"
-}
-
-func (sl *SelectList) GetPermChecker() *PermissionSet {
-	return nil
+func (sl *SelectList) GetBundleFolderName() string {
+	return SELECTLIST_FOLDER_NAME
 }
 
 func (sl *SelectList) SetField(fieldName string, value interface{}) error {
@@ -93,18 +65,6 @@ func (sl *SelectList) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(sl, fieldName)
 }
 
-func (sl *SelectList) GetNamespace() string {
-	return sl.Namespace
-}
-
-func (sl *SelectList) SetNamespace(namespace string) {
-	sl.Namespace = namespace
-}
-
-func (sl *SelectList) SetModified(mod time.Time) {
-	sl.UpdatedAt = mod.UnixMilli()
-}
-
 func (sl *SelectList) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(sl, iter)
 }
@@ -113,22 +73,10 @@ func (sl *SelectList) Len() int {
 	return StandardItemLen(sl)
 }
 
-func (sl *SelectList) GetItemMeta() *ItemMeta {
-	return sl.itemMeta
-}
-
-func (sl *SelectList) SetItemMeta(itemMeta *ItemMeta) {
-	sl.itemMeta = itemMeta
-}
-
 func (sl *SelectList) UnmarshalYAML(node *yaml.Node) error {
 	err := validateNodeName(node, sl.Name)
 	if err != nil {
 		return err
 	}
 	return node.Decode((*SelectListWrapper)(sl))
-}
-
-func (sl *SelectList) IsPublic() bool {
-	return sl.Public
 }

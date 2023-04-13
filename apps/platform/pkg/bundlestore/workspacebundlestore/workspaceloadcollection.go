@@ -9,18 +9,14 @@ type WorkspaceLoadCollection struct {
 	Namespace  string
 }
 
-func (c *WorkspaceLoadCollection) GetItem(index int) meta.Item {
-	return c.Collection.GetItem(index)
-}
-
 func (c *WorkspaceLoadCollection) NewItem() meta.Item {
 	item := c.Collection.NewItem().(meta.BundleableItem)
 	item.SetNamespace(c.Namespace)
 	return item
 }
 
-func (c *WorkspaceLoadCollection) AddItem(item meta.Item) {
-	c.Collection.AddItem(item)
+func (c *WorkspaceLoadCollection) AddItem(item meta.Item) error {
+	return c.Collection.AddItem(item)
 }
 
 func (c *WorkspaceLoadCollection) Loop(iter meta.GroupIterator) error {
@@ -37,8 +33,4 @@ func (c *WorkspaceLoadCollection) GetFields() []string {
 
 func (c *WorkspaceLoadCollection) GetName() string {
 	return c.Collection.GetName()
-}
-
-func (c *WorkspaceLoadCollection) GetItems() interface{} {
-	return c.Collection.GetItems()
 }

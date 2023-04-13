@@ -1,6 +1,8 @@
 name: contact_details
 path: contact/{recordid}
-view: uesio/crm.contact_details
-theme: uesio/crm.default
-collection: uesio/crm.contact
 viewtype: detail
+view: uesio/crm.contact_details
+collection: uesio/crm.contact
+theme: uesio/crm.default
+title: ""
+tags: []

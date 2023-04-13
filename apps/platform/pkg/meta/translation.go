@@ -2,36 +2,28 @@ package meta
 
 import (
 	"fmt"
-	"time"
 
 	"gopkg.in/yaml.v3"
 )
 
+func NewBaseTranslation(namespace, language string) *Translation {
+	return &Translation{
+		Language: language,
+		BundleableBase: BundleableBase{
+			Namespace: namespace,
+		},
+	}
+}
+
 type Translation struct {
-	ID        string            `yaml:"-" json:"uesio/core.id"`
-	UniqueKey string            `yaml:"-" json:"uesio/core.uniquekey"`
-	Namespace string            `yaml:"-" json:"-"`
-	Workspace *Workspace        `yaml:"-" json:"uesio/studio.workspace"`
-	Labels    map[string]string `yaml:"labels" json:"uesio/studio.labels"`
-	Language  string            `yaml:"language" json:"uesio/studio.language"`
-	itemMeta  *ItemMeta         `yaml:"-" json:"-"`
-	CreatedBy *User             `yaml:"-" json:"uesio/core.createdby"`
-	Owner     *User             `yaml:"-" json:"uesio/core.owner"`
-	UpdatedBy *User             `yaml:"-" json:"uesio/core.updatedby"`
-	UpdatedAt int64             `yaml:"-" json:"uesio/core.updatedat"`
-	CreatedAt int64             `yaml:"-" json:"uesio/core.createdat"`
-	Public    bool              `yaml:"public,omitempty" json:"uesio/studio.public"`
+	BuiltIn        `yaml:",inline"`
+	BundleableBase `yaml:"-"`
+	Labels         map[string]string `yaml:"labels" json:"uesio/studio.labels"`
+	Language       string            `yaml:"language" json:"uesio/studio.language"`
+	Public         bool              `yaml:"public,omitempty" json:"uesio/studio.public"`
 }
 
 type TranslationWrapper Translation
-
-func (t *Translation) GetBundleGroup() BundleableGroup {
-	return &TranslationCollection{}
-}
-
-func (t *Translation) GetPermChecker() *PermissionSet {
-	return nil
-}
 
 func (t *Translation) GetKey() string {
 	return t.Language
@@ -45,24 +37,12 @@ func (t *Translation) GetDBID(workspace string) string {
 	return fmt.Sprintf("%s:%s", workspace, t.Language)
 }
 
-func (t *Translation) SetNamespace(namespace string) {
-	t.Namespace = namespace
-}
-
-func (t *Translation) GetNamespace() string {
-	return t.Namespace
-}
-
-func (t *Translation) SetModified(mod time.Time) {
-	t.UpdatedAt = mod.UnixMilli()
-}
-
 func (t *Translation) GetCollectionName() string {
-	return t.GetCollection().GetName()
+	return TRANSLATION_COLLECTION_NAME
 }
 
-func (t *Translation) GetCollection() CollectionableGroup {
-	return &TranslationCollection{}
+func (t *Translation) GetBundleFolderName() string {
+	return TRANSLATION_FOLDER_NAME
 }
 
 func (t *Translation) SetField(fieldName string, value interface{}) error {
@@ -74,19 +54,29 @@ func (t *Translation) GetField(fieldName string) (interface{}, error) {
 }
 
 func (t *Translation) Loop(iter func(string, interface{}) error) error {
-	return StandardItemLoop(t, iter)
+	itemMeta := t.GetItemMeta()
+	for _, fieldName := range TRANSLATION_FIELDS {
+		if itemMeta != nil && !itemMeta.IsValidField(fieldName) {
+			continue
+		}
+		val, err := t.GetField(fieldName)
+		if err != nil {
+			return err
+		}
+		err = iter(fieldName, val)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (t *Translation) IsPublic() bool {
+	return t.Public
 }
 
 func (t *Translation) Len() int {
-	return StandardItemLen(t)
-}
-
-func (t *Translation) GetItemMeta() *ItemMeta {
-	return t.itemMeta
-}
-
-func (t *Translation) SetItemMeta(itemMeta *ItemMeta) {
-	t.itemMeta = itemMeta
+	return len(TRANSLATION_FIELDS)
 }
 
 func (t *Translation) UnmarshalYAML(node *yaml.Node) error {
@@ -95,8 +85,4 @@ func (t *Translation) UnmarshalYAML(node *yaml.Node) error {
 		return err
 	}
 	return node.Decode((*TranslationWrapper)(t))
-}
-
-func (t *Translation) IsPublic() bool {
-	return t.Public
 }

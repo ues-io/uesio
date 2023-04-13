@@ -322,3 +322,10 @@ func (s *Session) GetContextPermissions() *meta.PermissionSet {
 	}
 	return s.permissions
 }
+
+func (s *Session) GetContextSite() *meta.Site {
+	if s.siteadmin != nil {
+		return s.GetSiteAdmin()
+	}
+	return s.GetSite()
+}

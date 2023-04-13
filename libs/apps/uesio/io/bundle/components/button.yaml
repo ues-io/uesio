@@ -1,3 +1,35 @@
 name: button
+title: Button
+description: Run signals based on user interaction.
+category: INTERACTION
 pack: main
-entrypoint: components/button/button.tsx
+entrypoint: components/button/button
+discoverable: true
+defaultDefinition:
+  text: New Button
+  icon: bolt
+  uesio.variant: uesio/io.secondary
+properties:
+  - name: text
+    type: TEXT
+    label: Text
+  - name: icon
+    type: ICON
+    label: Icon
+  - name: hotkey
+    type: TEXT
+    placeholder: meta+s
+    label: Hotkeys
+  - name: uesio.id
+    type: COMPONENT_ID
+    label: Button Id
+sections:
+  - type: HOME
+    properties:
+      - text
+      - icon
+      - hotkey
+      - uesio.id
+  - type: SIGNALS
+  - type: STYLES
+  - type: DISPLAY

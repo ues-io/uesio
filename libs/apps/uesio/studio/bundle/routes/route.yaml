@@ -2,3 +2,4 @@ name: route
 path: app/{app:\w*\/\w*}/workspace/{workspacename}/routes/{routename}
 view: uesio/studio.route
 theme: uesio/studio.default
+title: "Route: $Param{routename}"

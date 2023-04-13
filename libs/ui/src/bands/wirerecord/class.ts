@@ -1,7 +1,9 @@
 import get from "lodash/get"
+import { Context } from "../../context/context"
 import { ID_FIELD, UNIQUE_KEY_FIELD } from "../collection/types"
 import Wire from "../wire/class"
 import { FieldValue, PlainWireRecord } from "./types"
+import updateRecordOp from "../wire/operations/updaterecord"
 
 class WireRecord {
 	constructor(source: PlainWireRecord, id: string, wire: Wire) {
@@ -25,6 +27,15 @@ class WireRecord {
 			fieldNameParts.length === 1 ? fieldName : fieldNameParts
 		)
 	}
+	getDateValue = (fieldName: string) => {
+		const value = this.getFieldValue(fieldName)
+		if (!value) return undefined
+		// Dates are stored as strings
+		if (typeof value === "string") return new Date(value)
+		// Datetimes are store as numbers (seconds from epoch)
+		if (typeof value === "number") return new Date(value * 1000)
+		return undefined
+	}
 	getReferenceValue = (fieldName: string) => {
 		const plain = this.getFieldValue<PlainWireRecord>(fieldName)
 		if (!plain) return undefined
@@ -42,15 +53,17 @@ class WireRecord {
 		return errors?.[this.id + ":" + fieldId]
 	}
 
-	update = (fieldId: string, value: FieldValue) => {
+	update = (fieldId: string, value: FieldValue, context: Context) => {
 		const fieldNameParts = fieldId?.split("->")
-		return this.wire.updateRecord(this.id, value, fieldNameParts)
+		updateRecordOp(context, fieldNameParts, value, this)
 	}
 
 	set = (fieldId: string, value: FieldValue) => {
 		const fieldNameParts = fieldId?.split("->")
 		return this.wire.setRecord(this.id, value, fieldNameParts)
 	}
+
+	setAll = (value: PlainWireRecord) => this.wire.setRecord(this.id, value, [])
 }
 
 export default WireRecord

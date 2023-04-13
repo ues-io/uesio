@@ -1,23 +1,17 @@
 name: tag
 label: Tag
+extends: uesio/io.default
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      padding: 8px 12px
-      backgroundColor: "#fafafa"
-      borderRadius: 4px
-      boxShadow: "0 0 4px #00000007"
-      marginLeft: 8px
-      fontSize: 10pt
-      alignItems: center
-      maxWidth: 180px
+      - px-3
+      - py-1.5
+      - bg-white
+      - rounded
+      - shadow-sm
+      - text-sm
+      - max-width=[180px]
     content:
-      width: 100%
-      text-overflow: ellipsis
-      white-space: nowrap
-      display: block
-      overflow: hidden
-      margin: 0
-    avatar:
-      marginRight: 8px
+      - whitespace-nowrap
+      - text-ellipsis
 public: true

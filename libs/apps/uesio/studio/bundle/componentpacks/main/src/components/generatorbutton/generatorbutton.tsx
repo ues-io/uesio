@@ -1,33 +1,26 @@
-import { FunctionComponent, useState } from "react"
+import { useRef, useState } from "react"
+import { api, param, definition, component, wire } from "@uesio/ui"
+import { FloatingPortal } from "@floating-ui/react"
 import {
-	hooks,
-	param,
-	definition,
-	component,
-	wire,
-	context as ctx,
-} from "@uesio/ui"
+	getParamValues,
+	getWireFieldsFromParams,
+} from "../previewbutton/previewbutton"
 
 type GeneratorButtonDefinition = {
 	generator: string
 	label: string
 }
 
-interface Props extends definition.BaseProps {
-	definition: GeneratorButtonDefinition
+interface FormProps {
+	generator: string
+	setOpen: (value: boolean) => void
 }
-
-const Button = component.getUtility("uesio/io.button")
-const Dialog = component.getUtility("uesio/io.dialog")
-const Form = component.getUtility("uesio/io.form")
-
-const WIRE_NAME = "paramData"
 
 const getLayoutFieldFromParamDef = (def: param.ParamDefinition) => {
 	switch (def.type) {
 		case "METADATA":
 			return {
-				"uesio/studio.metadatafield": {
+				"uesio/builder.metadatafield": {
 					fieldId: def.name,
 					metadataType: def.metadataType,
 					grouping: def.grouping,
@@ -35,7 +28,7 @@ const getLayoutFieldFromParamDef = (def: param.ParamDefinition) => {
 			}
 		case "METADATAMULTI":
 			return {
-				"uesio/studio.multimetadatafield": {
+				"uesio/builder.multimetadatafield": {
 					fieldId: def.name,
 					metadataType: def.metadataType,
 					grouping: def.grouping,
@@ -50,38 +43,86 @@ const getLayoutFieldFromParamDef = (def: param.ParamDefinition) => {
 	}
 }
 
-const getLayoutFieldsFromParams = (
-	params: param.ParamDefinition[] | undefined
-) => {
-	if (!params) return []
-	return params.map((def) => getLayoutFieldFromParamDef(def))
-}
+const GeneratorForm: definition.UtilityComponent<FormProps> = (props) => {
+	const { context, generator, setOpen } = props
 
-const GeneratorButton: FunctionComponent<Props> = (props) => {
-	const { context, definition } = props
-	const { label, generator } = definition
-	const uesio = hooks.useUesio(props)
 	const [genNamespace, genName] = component.path.parseKey(generator)
 
-	const workspaceContext = context.getWorkspace()
-	if (!workspaceContext) throw new Error("No Workspace Context Provided")
+	const Dialog = component.getUtility("uesio/io.dialog")
+	const DynamicForm = component.getUtility("uesio/io.dynamicform")
+	const Group = component.getUtility("uesio/io.group")
+	const Button = component.getUtility("uesio/io.button")
 
-	const [open, setOpen] = useState<boolean>(false)
-
-	const [params] = uesio.bot.useParams(
+	const [params] = api.bot.useParams(
 		context,
 		genNamespace,
 		genName,
 		"generator"
 	)
 
-	uesio.wire.useDynamicWire(open ? WIRE_NAME : "", {
-		viewOnly: true,
-		fields: uesio.wire.getWireFieldsFromParams(params),
-		init: {
-			create: true,
-		},
-	})
+	const wireRef = useRef<wire.Wire | undefined>()
+
+	if (!params) return null
+
+	const onClick = async () => {
+		const result = wireRef.current?.getFirstRecord()
+		if (!result) return
+		await api.bot.callGenerator(
+			context,
+			genNamespace,
+			genName,
+			getParamValues(params, result)
+		)
+		setOpen(false)
+		return api.signal.run(
+			{
+				signal: "route/RELOAD",
+			},
+			context.deleteWorkspace()
+		)
+	}
+
+	return (
+		<FloatingPortal>
+			<Dialog
+				context={context}
+				width="400px"
+				height="500px"
+				onClose={() => setOpen(false)}
+				title="Set Generator Parameters"
+			>
+				<DynamicForm
+					context={context}
+					content={params.map((def) =>
+						getLayoutFieldFromParamDef(def)
+					)}
+					fields={getWireFieldsFromParams(params)}
+					submitLabel="Generate"
+					wireRef={wireRef}
+				/>
+				<Group justifyContent="end" context={context}>
+					<Button
+						context={context}
+						variant="uesio/io.primary"
+						label="Generate"
+						onClick={onClick}
+					/>
+				</Group>
+			</Dialog>
+		</FloatingPortal>
+	)
+}
+
+const GeneratorButton: definition.UC<GeneratorButtonDefinition> = (props) => {
+	const Button = component.getUtility("uesio/io.button")
+
+	const { context, definition } = props
+	const { label, generator } = definition
+
+	const workspaceContext = context.getWorkspace()
+	if (!workspaceContext) throw new Error("No Workspace Context Provided")
+
+	const [open, setOpen] = useState<boolean>(false)
 
 	return (
 		<>
@@ -92,37 +133,11 @@ const GeneratorButton: FunctionComponent<Props> = (props) => {
 				onClick={() => setOpen(true)}
 			/>
 			{open && (
-				<component.Panel key="generatorpanel" context={context}>
-					<Dialog
-						context={context}
-						width="400px"
-						height="500px"
-						onClose={() => setOpen(false)}
-						title="Set Generator Parameters"
-					>
-						<Form
-							wire={WIRE_NAME}
-							context={context}
-							content={getLayoutFieldsFromParams(params)}
-							submitLabel="Generate"
-							onSubmit={async (record: wire.WireRecord) => {
-								await uesio.bot.callGenerator(
-									context,
-									genNamespace,
-									genName,
-									uesio.wire.getParamValues(params, record)
-								)
-								setOpen(false)
-								return uesio.signal.run(
-									{
-										signal: "route/RELOAD",
-									},
-									new ctx.Context()
-								)
-							}}
-						/>
-					</Dialog>
-				</component.Panel>
+				<GeneratorForm
+					setOpen={setOpen}
+					generator={generator}
+					context={context}
+				/>
 			)}
 		</>
 	)

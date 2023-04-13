@@ -1,12 +1,15 @@
-import { FunctionComponent } from "react"
+import { component, styles, api, definition, signal } from "@uesio/ui"
+import { default as IOTile } from "../../utilities/tile/tile"
 
-import { component, styles, hooks } from "@uesio/ui"
-import { TileProps } from "./tiledefinition"
-import { TileUtilityProps } from "../../utilities/tile/tile"
+type TileDefinition = {
+	signals?: signal.SignalDefinition[]
+	avatar?: definition.DefinitionList
+	content?: definition.DefinitionList
+}
 
-const IOTile = component.getUtility<TileUtilityProps>("uesio/io.tile")
+const Tile: definition.UC<TileDefinition> = (props) => {
+	const { definition, context, path } = props
 
-const Tile: FunctionComponent<TileProps> = (props) => {
 	const classes = styles.useStyles(
 		{
 			root: {},
@@ -16,29 +19,32 @@ const Tile: FunctionComponent<TileProps> = (props) => {
 		},
 		props
 	)
-	const uesio = hooks.useUesio(props)
-	const { definition, context, path } = props
-	const handler = uesio.signal.getHandler(definition.signals)
 	const isSelected = component.shouldHaveClass(
 		context,
 		"selected",
 		definition
 	)
 
+	const [link, handler] = api.signal.useLinkHandler(
+		definition.signals,
+		context
+	)
+
 	return (
 		<IOTile
+			id={api.component.getComponentIdFromProps(props)}
 			classes={classes}
 			variant={definition["uesio.variant"]}
 			context={context}
 			onClick={handler}
 			isSelected={isSelected}
+			link={link}
 			avatar={
 				definition.avatar && (
 					<component.Slot
 						definition={definition}
 						listName="avatar"
 						path={path}
-						accepts={["uesio.standalone"]}
 						context={context}
 					/>
 				)
@@ -48,7 +54,6 @@ const Tile: FunctionComponent<TileProps> = (props) => {
 				definition={definition}
 				listName="content"
 				path={path}
-				accepts={["uesio.standalone"]}
 				context={context}
 			/>
 		</IOTile>

@@ -1,11 +1,14 @@
-import { FunctionComponent } from "react"
+import { component, styles, definition } from "@uesio/ui"
+import { default as IOGroup } from "../../utilities/group/group"
 
-import { component, styles } from "@uesio/ui"
-import { GroupProps } from "./groupdefinition"
+type GroupDefinition = {
+	columnGap: string
+	alignItems: string
+	justifyContent: string
+	components?: definition.DefinitionList
+}
 
-const IOGroup = component.getUtility("uesio/io.group")
-
-const Grid: FunctionComponent<GroupProps> = (props) => {
+const Grid: definition.UC<GroupDefinition> = (props) => {
 	const { context, definition, path } = props
 	const classes = styles.useStyles(
 		{
@@ -25,7 +28,6 @@ const Grid: FunctionComponent<GroupProps> = (props) => {
 				definition={definition}
 				listName="components"
 				path={path}
-				accepts={["uesio.standalone"]}
 				context={context}
 				direction="HORIZONTAL"
 			/>

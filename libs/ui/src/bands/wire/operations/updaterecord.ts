@@ -1,42 +1,36 @@
-import { ThunkFunc } from "../../../store/store"
-import { Context, getWire } from "../../../context/context"
-import { getFullWireId, updateRecord } from ".."
+import { Context } from "../../../context/context"
+import { updateRecord } from ".."
 import { FieldValue } from "../../wirerecord/types"
-import { runManyThrottled } from "../../../signals/signals"
+import { dispatch } from "../../../store/store"
+import { publish } from "../../../hooks/eventapi"
+import WireRecord from "../../wirerecord/class"
 
-export default (
-		context: Context,
-		path: string[],
-		value: FieldValue
-	): ThunkFunc =>
-	(dispatch) => {
-		const viewId = context.getViewId()
-		if (!viewId) return context
-		const recordId = context.getRecordId()
-		if (!recordId) return context
-		const wireId = context.getWireId()
-		if (!wireId) return context
-		const wire = getWire(viewId, wireId)
-		if (!wire) return context
+export default async (
+	context: Context,
+	path: string[],
+	value: FieldValue,
+	record: WireRecord
+) => {
+	const wire = record.getWire()
+	dispatch(
+		updateRecord({
+			recordId: record.id,
+			record: value,
+			entity: wire.getFullId(),
+			path,
+		})
+	)
 
-		dispatch(
-			updateRecord({
-				recordId,
-				record: value,
-				entity: getFullWireId(viewId, wireId),
-				path,
-			})
-		)
+	wire.handleEvent("onChange", context, path[0])
 
-		// Now run change events
-		const changeEvents = wire?.events?.onChange
+	// Publish events
+	publish("wire.record.updated", {
+		wireId: wire.getFullId(),
+		recordId: record.id,
+		field: path[0],
+		value,
+		record,
+	})
 
-		if (changeEvents) {
-			for (const changeEvent of changeEvents) {
-				if (changeEvent.field !== path[0]) continue
-				runManyThrottled(changeEvent.signals, context)
-			}
-		}
-
-		return context
-	}
+	return context
+}

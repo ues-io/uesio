@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
+
 	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -58,7 +60,10 @@ func getMetadataList(metadatatype, namespace, grouping string, session *sess.Ses
 			return nil, errors.New("Could not find app info for uesio/core")
 		}
 		for _, field := range datasource.BUILTIN_FIELDS {
-			collectionKeyMap[field.GetFullName()] = appInfo
+			collectionKeyMap[field.GetFullName()] = datasource.MetadataResponse{
+				NamespaceInfo: appInfo,
+				Key:           field.GetFullName(),
+			}
 		}
 	}
 
@@ -68,14 +73,17 @@ func getMetadataList(metadatatype, namespace, grouping string, session *sess.Ses
 		ns := bundleable.GetNamespace()
 		// Strip off the grouping part of the key
 		if grouping != "" {
-			key = strings.TrimPrefix(key, grouping+":")
+			key = strings.TrimPrefix(key, strings.ToLower(grouping)+":")
 		}
 
 		appInfo, ok := appData[ns]
 		if !ok {
 			return errors.New("Could not find app info for " + ns)
 		}
-		collectionKeyMap[key] = appInfo
+		collectionKeyMap[key] = datasource.MetadataResponse{
+			NamespaceInfo: appInfo,
+			Key:           key,
+		}
 		return nil
 	})
 	if err != nil {
@@ -101,6 +109,6 @@ func MetadataList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondJSON(w, r, &collectionKeyMap)
+	file.RespondJSON(w, r, &collectionKeyMap)
 
 }

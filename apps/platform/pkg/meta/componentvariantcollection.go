@@ -9,35 +9,39 @@ import (
 
 type ComponentVariantCollection []*ComponentVariant
 
+var COMPONENTVARIANT_COLLECTION_NAME = "uesio/studio.componentvariant"
+var COMPONENTVARIANT_FOLDER_NAME = "componentvariants"
+var COMPONENTVARIANT_FIELDS = StandardGetFields(&ComponentVariant{})
+
 func (cvc *ComponentVariantCollection) GetName() string {
-	return "uesio/studio.componentvariant"
+	return COMPONENTVARIANT_COLLECTION_NAME
 }
 
 func (cvc *ComponentVariantCollection) GetBundleFolderName() string {
-	return "componentvariants"
+	return COMPONENTVARIANT_FOLDER_NAME
 }
 
 func (cvc *ComponentVariantCollection) GetFields() []string {
-	return StandardGetFields(&ComponentVariant{})
+	return COMPONENTVARIANT_FIELDS
 }
 
 func (cvc *ComponentVariantCollection) NewItem() Item {
 	return &ComponentVariant{}
 }
 
-func (cvc *ComponentVariantCollection) AddItem(item Item) {
+func (cvc *ComponentVariantCollection) AddItem(item Item) error {
 	*cvc = append(*cvc, item.(*ComponentVariant))
+	return nil
 }
 
-func (cvc *ComponentVariantCollection) GetItemFromPath(path string) (BundleableItem, bool) {
+func (cvc *ComponentVariantCollection) GetItemFromPath(path, namespace string) BundleableItem {
 	parts := strings.Split(path, string(os.PathSeparator))
-	return &ComponentVariant{
-		Component: fmt.Sprintf("%s/%s.%s", parts[0], parts[1], parts[2]),
-		Name:      strings.TrimSuffix(parts[3], ".yaml"),
-	}, true
+	componentKey := fmt.Sprintf("%s/%s.%s", parts[0], parts[1], parts[2])
+	name := strings.TrimSuffix(parts[3], ".yaml")
+	return NewBaseComponentVariant(componentKey, namespace, name)
 }
 
-func (cvc *ComponentVariantCollection) FilterPath(path string, conditions BundleConditions) bool {
+func (cvc *ComponentVariantCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	componentKey, hasComponent := conditions["uesio/studio.component"]
 	parts := strings.Split(path, string(os.PathSeparator))
 	if len(parts) != 4 || !strings.HasSuffix(parts[3], ".yaml") {
@@ -60,13 +64,9 @@ func (cvc *ComponentVariantCollection) FilterPath(path string, conditions Bundle
 	return true
 }
 
-func (cvc *ComponentVariantCollection) GetItem(index int) Item {
-	return (*cvc)[index]
-}
-
 func (cvc *ComponentVariantCollection) Loop(iter GroupIterator) error {
-	for index := range *cvc {
-		err := iter(cvc.GetItem(index), strconv.Itoa(index))
+	for index, cv := range *cvc {
+		err := iter(cv, strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -76,8 +76,4 @@ func (cvc *ComponentVariantCollection) Loop(iter GroupIterator) error {
 
 func (cvc *ComponentVariantCollection) Len() int {
 	return len(*cvc)
-}
-
-func (cvc *ComponentVariantCollection) GetItems() interface{} {
-	return *cvc
 }

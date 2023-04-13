@@ -1,11 +1,12 @@
 name: accounts
+public: true
 definition:
   components:
     - uesio/core.view:
         view: uesio/crm.topbar
     - uesio/io.titlebar:
         title: Accounts
-        uesio.variant: uesio/io.main
+        uesio.variant: uesio/io.secondary
         actions:
           - uesio/io.group:
               components:
@@ -58,7 +59,7 @@ definition:
                 - field: uesio/crm.no_of_employees
                 - field: uesio/core.createdat
                 - field: uesio/core.updatedat
-              id: accountsTable
+              uesio.id: accountsTable
               mode: EDIT
               wire: accounts
   wires:

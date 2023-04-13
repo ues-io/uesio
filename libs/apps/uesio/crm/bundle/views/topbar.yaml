@@ -1,13 +1,14 @@
 name: topbar
+public: true
 definition:
   components:
     - uesio/io.grid:
-        uesio.styles:
+        uesio.styleTokens:
           root:
-            alignItems: center
-            height: 60px
-            backgroundColor: "#222"
-        templateColumns: 58px 0fr 1fr 0fr
+            - items-center
+            - h-[60px]
+            - bg-green-700
+            - grid-cols-[58px_0fr_1fr_0fr]
         items:
           - uesio/io.griditem:
               components:
@@ -15,7 +16,7 @@ definition:
                     uesio.styles:
                       root:
                         margin: 0 16px
-                    file: uesio/crm.logo
+                    file: uesio/core.logowhite
                     height: 30px
                     signals:
                       - signal: route/NAVIGATE
@@ -29,7 +30,7 @@ definition:
                           uesio.variant: uesio/io.nav
                           uesio.styles:
                             root:
-                              color: "#EEE"
+                              color: white
                       - uesio/io.button:
                           signals:
                             - signal: "route/NAVIGATE"
@@ -38,7 +39,7 @@ definition:
                           uesio.variant: uesio/io.nav
                           uesio.styles:
                             root:
-                              color: "#EEE"
+                              color: white
                       - uesio/io.button:
                           signals:
                             - collection: uesio/crm.contact
@@ -47,7 +48,7 @@ definition:
                           uesio.variant: uesio/io.nav
                           uesio.styles:
                             root:
-                              color: "#EEE"
+                              color: white
                       - uesio/io.button:
                           signals:
                             - signal: "route/NAVIGATE"
@@ -56,7 +57,7 @@ definition:
                           uesio.variant: uesio/io.nav
                           uesio.styles:
                             root:
-                              color: "#EEE"
+                              color: white
                       - uesio/io.button:
                           signals:
                             - signal: "route/NAVIGATE"
@@ -65,13 +66,13 @@ definition:
                           uesio.variant: uesio/io.nav
                           uesio.styles:
                             root:
-                              color: "#EEE"
+                              color: white
                       - uesio/io.button:
                           text: Products
                           uesio.variant: uesio/io.nav
                           uesio.styles:
                             root:
-                              color: "#EEE"
+                              color: white
           - uesio/io.griditem:
               uesio.styles:
                 root:

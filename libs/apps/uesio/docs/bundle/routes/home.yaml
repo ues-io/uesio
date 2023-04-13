@@ -2,4 +2,5 @@ name: home
 path: home
 view: uesio/docs.home
 theme: uesio/docs.default
+title: $Site{title} - Home
 public: true

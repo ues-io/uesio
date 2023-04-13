@@ -1,9 +1,14 @@
 package controller
 
 import (
+	"archive/zip"
 	"encoding/json"
 	"io"
 	"net/http"
+
+	"github.com/thecloudmasters/uesio/pkg/controller/bot"
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/retrieve"
 
 	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
@@ -11,7 +16,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/deploy"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
-	"github.com/thecloudmasters/uesio/pkg/retrieve"
 )
 
 func GenerateToWorkspace(w http.ResponseWriter, r *http.Request) {
@@ -31,15 +35,13 @@ func GenerateToWorkspace(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
 
-	files, err := datasource.CallGeneratorBot(namespace, name, params, nil, session)
-	if err != nil {
-		logger.LogErrorWithTrace(r, err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
 	retrieveData := bundlestore.GetFileReader(func(data io.Writer) error {
-		return retrieve.Zip(data, files, session)
+		zipwriter := zip.NewWriter(data)
+		err := datasource.CallGeneratorBot(retrieve.NewWriterCreator(zipwriter.Create), namespace, name, params, nil, session)
+		if err != nil {
+			return err
+		}
+		return zipwriter.Close()
 	})
 
 	err = deploy.Deploy(io.NopCloser(retrieveData), session)
@@ -49,7 +51,7 @@ func GenerateToWorkspace(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondJSON(w, r, &BotResponse{
+	file.RespondJSON(w, r, &bot.BotResponse{
 		Success: true,
 	})
 

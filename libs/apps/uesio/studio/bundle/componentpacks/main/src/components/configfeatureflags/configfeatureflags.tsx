@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { definition, hooks } from "@uesio/ui"
+import { definition, api } from "@uesio/ui"
 import ConfigFeatureFlagsItem from "./configfeatureflagsitem"
 
 type ConfigFeatureFlagsDefinition = {
@@ -10,18 +10,17 @@ interface Props extends definition.BaseProps {
 }
 
 const ConfigFeatureFlags: FunctionComponent<Props> = (props) => {
-	const uesio = hooks.useUesio(props)
 	const { context, definition } = props
 	const user = definition?.user ? context.mergeString(definition?.user) : ""
 
-	const [values] = uesio.featureflag.useFeatureFlags(context, user)
+	const [values] = api.featureflag.useFeatureFlags(context, user)
 
 	if (!values) {
 		return null
 	}
 
 	const handleSet = async (key: string, value: boolean) => {
-		await uesio.featureflag.set(context, key, value, user)
+		await api.featureflag.set(context, key, value, user)
 	}
 
 	return (

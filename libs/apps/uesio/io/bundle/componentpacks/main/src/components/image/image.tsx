@@ -1,9 +1,16 @@
-import { FC } from "react"
+import { api, signal, definition, styles } from "@uesio/ui"
 
-import { ImageProps } from "./imagedefinition"
-import { hooks, styles } from "@uesio/ui"
+type ImageDefinition = {
+	file?: string
+	height?: string
+	align?: "left" | "center" | "right"
+	signals?: signal.SignalDefinition[]
+	loading: "lazy" | "eager"
+	alt: string
+	src?: string
+}
 
-const Image: FC<ImageProps> = (props) => {
+const Image: definition.UC<ImageDefinition> = (props) => {
 	const { definition, context } = props
 
 	const classes = styles.useStyles(
@@ -21,23 +28,20 @@ const Image: FC<ImageProps> = (props) => {
 		},
 		props
 	)
-	const uesio = hooks.useUesio(props)
 
 	return (
 		<div
 			className={classes.root}
-			onClick={
-				definition?.signals &&
-				uesio.signal.getHandler(definition.signals)
-			}
+			onClick={api.signal.getHandler(definition.signals, context)}
 		>
 			<img
+				id={api.component.getComponentIdFromProps(props)}
 				className={classes.inner}
 				src={
 					definition.file
-						? uesio.file.getURLFromFullName(
+						? api.file.getURLFromFullName(
 								context,
-								definition.file
+								context.mergeString(definition.file)
 						  )
 						: context.mergeString(definition.src)
 				}

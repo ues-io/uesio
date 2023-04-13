@@ -1,8 +1,13 @@
 import { FunctionComponent, ReactNode } from "react"
-import { definition, styles, component } from "@uesio/ui"
-import { cx } from "@emotion/css"
+import { definition, styles } from "@uesio/ui"
+import CheckboxField from "../field/checkbox"
 
-interface TableUtilityProps<R, C> extends definition.UtilityProps {
+interface TableColumn {
+	width?: string
+}
+
+interface TableUtilityProps<R, C extends TableColumn>
+	extends definition.UtilityProps {
 	rows: R[]
 	columns: C[]
 	isDeletedFunc?: (row: R) => boolean
@@ -18,12 +23,11 @@ interface TableUtilityProps<R, C> extends definition.UtilityProps {
 	rowActionsFunc?: (row: R) => ReactNode
 }
 
-const CheckboxField = component.getUtility("uesio/io.checkboxfield")
-
-const Table: FunctionComponent<TableUtilityProps<unknown, unknown>> = (
+const Table: FunctionComponent<TableUtilityProps<unknown, TableColumn>> = (
 	props
 ) => {
 	const {
+		id,
 		columns,
 		rows,
 		rowNumberFunc,
@@ -41,59 +45,20 @@ const Table: FunctionComponent<TableUtilityProps<unknown, unknown>> = (
 	} = props
 	const classes = styles.useUtilityStyles(
 		{
-			root: {
-				display: "grid",
-				overflow: "auto",
-			},
-			table: {
-				width: "100%",
-				overflow: "hidden",
-			},
+			root: {},
+			table: {},
 			header: {},
-			headerCell: {
-				"&:last-child": {
-					borderRight: 0,
-				},
-			},
+			headerCell: {},
 			headerCellInner: {},
-			rowNumberCell: {
-				width: "1%",
-				whiteSpace: "nowrap",
-			},
-			rowNumber: {
-				textAlign: "center",
-			},
-			cell: {
-				"&:last-child": {
-					borderRight: 0,
-				},
-			},
-			row: {
-				"&:last-child>td": {
-					borderBottom: 0,
-				},
-				"& .unselected > .rownum": {
-					display: "block",
-				},
-				"& .unselected > .selectbox": {
-					display: "none",
-				},
-				"& .selected > .rownum": {
-					display: "none",
-				},
-				"& .selected > .selectbox": {
-					display: "block",
-				},
-				"&:hover .rownum": {
-					display: "none",
-				},
-				"&:hover .selectbox": {
-					display: "block",
-				},
-			},
+			rowNumberCell: {},
+			rowNumber: {},
+			cell: {},
+			body: {},
+			row: {},
 			rowDeleted: {},
 		},
-		props
+		props,
+		"uesio/io.table"
 	)
 
 	const getRowNumberHeaderCell = () => {
@@ -114,9 +79,19 @@ const Table: FunctionComponent<TableUtilityProps<unknown, unknown>> = (
 		if (isSelectedFunc && onSelectChange) {
 			const isSelected = isSelectedFunc(row, index)
 			return (
-				<div className={cx(isSelected ? "selected" : "unselected")}>
-					<div className="rownum">{rowNumberFunc?.(index + 1)}</div>
-					<div className="selectbox">
+				<>
+					<div
+						className={
+							isSelected ? "hidden" : "block group-hover:hidden"
+						}
+					>
+						{rowNumberFunc?.(index + 1)}
+					</div>
+					<div
+						className={
+							isSelected ? "block" : "hidden group-hover:block"
+						}
+					>
 						<CheckboxField
 							context={context}
 							value={isSelected}
@@ -126,7 +101,7 @@ const Table: FunctionComponent<TableUtilityProps<unknown, unknown>> = (
 							mode="EDIT"
 						/>
 					</div>
-				</div>
+				</>
 			)
 		}
 		return rowNumberFunc?.(index + 1)
@@ -134,12 +109,7 @@ const Table: FunctionComponent<TableUtilityProps<unknown, unknown>> = (
 
 	return (
 		<div className={classes.root}>
-			<table
-				className={styles.cx(
-					classes.table,
-					defaultActionFunc && "defaultaction"
-				)}
-			>
+			<table id={id} className={classes.table}>
 				<thead className={classes.header}>
 					<tr>
 						{(rowNumberFunc || isSelectedFunc) && (
@@ -154,7 +124,11 @@ const Table: FunctionComponent<TableUtilityProps<unknown, unknown>> = (
 							</th>
 						)}
 						{columns?.map((column, index) => (
-							<th key={index} className={classes.headerCell}>
+							<th
+								key={index}
+								className={classes.headerCell}
+								style={{ width: column?.width }}
+							>
 								<div className={classes.headerCellInner}>
 									{columnHeaderFunc(column)}
 									{columnMenuFunc && columnMenuFunc(column)}
@@ -169,7 +143,12 @@ const Table: FunctionComponent<TableUtilityProps<unknown, unknown>> = (
 						)}
 					</tr>
 				</thead>
-				<tbody>
+				<tbody
+					className={styles.cx(
+						classes.body,
+						defaultActionFunc && "hasRowAction"
+					)}
+				>
 					{rows.map((row, index) => (
 						<tr
 							onClick={
@@ -178,6 +157,7 @@ const Table: FunctionComponent<TableUtilityProps<unknown, unknown>> = (
 									: undefined
 							}
 							className={styles.cx(
+								"group",
 								classes.row,
 								isDeletedFunc?.(row) && classes.rowDeleted
 							)}
@@ -213,7 +193,5 @@ const Table: FunctionComponent<TableUtilityProps<unknown, unknown>> = (
 		</div>
 	)
 }
-
-export { TableUtilityProps }
 
 export default Table

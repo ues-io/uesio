@@ -6,41 +6,42 @@ import (
 
 type ViewCollection []*View
 
+var VIEW_COLLECTION_NAME = "uesio/studio.view"
+var VIEW_FOLDER_NAME = "views"
+var VIEW_FIELDS = StandardGetFields(&View{})
+
 func (vc *ViewCollection) GetName() string {
-	return "uesio/studio.view"
+	return VIEW_COLLECTION_NAME
 }
 
 func (vc *ViewCollection) GetBundleFolderName() string {
-	return "views"
+	return VIEW_FOLDER_NAME
 }
 
 func (vc *ViewCollection) GetFields() []string {
-	return StandardGetFields(&View{})
+	return VIEW_FIELDS
 }
 
 func (vc *ViewCollection) NewItem() Item {
 	return &View{}
 }
 
-func (vc *ViewCollection) AddItem(item Item) {
+func (vc *ViewCollection) AddItem(item Item) error {
 	*vc = append(*vc, item.(*View))
+	return nil
 }
 
-func (vc *ViewCollection) GetItemFromPath(path string) (BundleableItem, bool) {
-	return &View{Name: StandardNameFromPath(path)}, true
+func (vc *ViewCollection) GetItemFromPath(path, namespace string) BundleableItem {
+	return NewBaseView(namespace, StandardNameFromPath(path))
 }
 
-func (vc *ViewCollection) FilterPath(path string, conditions BundleConditions) bool {
+func (vc *ViewCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }
 
-func (vc *ViewCollection) GetItem(index int) Item {
-	return (*vc)[index]
-}
-
 func (vc *ViewCollection) Loop(iter GroupIterator) error {
-	for index := range *vc {
-		err := iter(vc.GetItem(index), strconv.Itoa(index))
+	for index, v := range *vc {
+		err := iter(v, strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -50,8 +51,4 @@ func (vc *ViewCollection) Loop(iter GroupIterator) error {
 
 func (vc *ViewCollection) Len() int {
 	return len(*vc)
-}
-
-func (vc *ViewCollection) GetItems() interface{} {
-	return *vc
 }

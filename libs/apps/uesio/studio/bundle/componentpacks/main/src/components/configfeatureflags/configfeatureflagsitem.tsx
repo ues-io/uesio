@@ -1,16 +1,15 @@
 import { FunctionComponent, useState } from "react"
 import { definition, component } from "@uesio/ui"
 
-const TitleBar = component.getUtility("uesio/io.titlebar")
-const ToggleField = component.getUtility("uesio/io.togglefield")
-
-interface Props extends definition.BaseProps {
+interface Props extends definition.UtilityProps {
 	title: string
 	value: boolean
 	handleSet: (key: string, value: boolean) => Promise<void>
 }
 
 const ConfigFeatureFlagsItem: FunctionComponent<Props> = (props) => {
+	const TitleBar = component.getUtility("uesio/io.titlebar")
+	const ToggleField = component.getUtility("uesio/io.togglefield")
 	const { context, title, value, handleSet } = props
 	const [state, setState] = useState(value)
 

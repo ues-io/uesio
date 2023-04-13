@@ -20,6 +20,8 @@ definition:
         uesio/core.id:
         uesio/studio.name:
         uesio/studio.bundle:
+        uesio/studio.title:
+        uesio/studio.enable_seo:
         uesio/studio.app:
           fields:
             uesio/core.id:
@@ -57,7 +59,7 @@ definition:
               uesio.variant: uesio/studio.content
               components:
                 - uesio/io.list:
-                    id: siteDeck
+                    uesio.id: siteDeck
                     wire: sites
                     mode: READ
                     components:
@@ -86,16 +88,16 @@ definition:
                               padding: 40px
                           components:
                             - uesio/io.grid:
-                                templateColumns:
-                                  xs: 1fr
-                                  md: 1fr 1fr
-                                  lg: 1fr 1fr 1fr 1fr
-                                columnGap: 10px
+                                uesio.variant: uesio/io.four_columns
                                 items:
                                   - uesio/io.field:
                                       fieldId: uesio/studio.name
                                   - uesio/io.field:
                                       fieldId: uesio/studio.bundle
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.title
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.enable_seo
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
@@ -164,7 +166,7 @@ definition:
       height: 500px
       components:
         - uesio/io.list:
-            id: editsiteslist
+            uesio.id: editsiteslist
             wire: sites
             mode: EDIT
             components:
@@ -172,6 +174,14 @@ definition:
                   fieldId: uesio/studio.name
               - uesio/io.field:
                   fieldId: uesio/studio.bundle
+                  reference:
+                    conditions:
+                      - field: uesio/studio.app
+                        value: ${uesio/studio.app->uesio/core.id}
+              - uesio/io.field:
+                  fieldId: uesio/studio.title
+              - uesio/io.field:
+                  fieldId: uesio/studio.enable_seo
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary

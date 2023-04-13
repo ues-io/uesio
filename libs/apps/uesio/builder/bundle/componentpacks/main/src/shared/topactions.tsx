@@ -1,13 +1,13 @@
 import { FunctionComponent } from "react"
 import { definition, component, hooks, styles } from "@uesio/ui"
-
-const Button = component.getUtility("uesio/io.button")
-const Group = component.getUtility("uesio/io.group")
+import { cancel, save, useHasChanges } from "../api/defapi"
 
 const TopActions: FunctionComponent<definition.UtilityProps> = (props) => {
-	const { context } = props
-	const uesio = hooks.useUesio(props)
-	const hasChanges = uesio.builder.useHasChanges()
+	const Button = component.getUtility("uesio/io.button")
+	const Group = component.getUtility("uesio/io.group")
+	const { context, id } = props
+
+	const hasChanges = useHasChanges(context)
 
 	const classes = styles.useUtilityStyles(
 		{
@@ -24,12 +24,12 @@ const TopActions: FunctionComponent<definition.UtilityProps> = (props) => {
 		props
 	)
 
-	hooks.useHotKeyCallback("command+s", () => {
-		uesio.builder.save()
+	hooks.useHotKeyCallback("meta+s", () => {
+		save(context)
 	})
 
-	hooks.useHotKeyCallback("command+shift+c", () => {
-		uesio.builder.cancel()
+	hooks.useHotKeyCallback("meta+shift+c", () => {
+		cancel(context)
 	})
 
 	return (
@@ -43,19 +43,21 @@ const TopActions: FunctionComponent<definition.UtilityProps> = (props) => {
 					<Button
 						context={context}
 						label="Save Changes"
+						id={`${id}:save-builder-changes`}
 						disabled={!hasChanges}
 						variant="uesio/builder.primarytoolbar"
 						onClick={() => {
-							uesio.builder.save()
+							save(context)
 						}}
 					/>
 					<Button
 						context={context}
+						id={`${id}:cancel-builder-changes`}
 						label="Cancel"
 						disabled={!hasChanges}
 						variant="uesio/builder.secondarytoolbar"
 						onClick={() => {
-							uesio.builder.cancel()
+							cancel(context)
 						}}
 					/>
 				</Group>

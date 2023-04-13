@@ -9,9 +9,8 @@ interface Props extends definition.BaseProps {
 	definition: ColorPickerDefinition
 }
 
-const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
-
 const ColorPicker: FunctionComponent<Props> = (props) => {
+	const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 	const {
 		context,
 		definition: { fieldId },
@@ -52,7 +51,7 @@ const ColorPicker: FunctionComponent<Props> = (props) => {
 	useEffect(() => {
 		if (!colorValue && record) {
 			// Update to a random color if we haven't set one.
-			record.update(fieldId, styles.colors.getRandomColor())
+			record.update(fieldId, styles.colors.getRandomColor(), context)
 		}
 	}, [])
 
@@ -87,7 +86,7 @@ const ColorPicker: FunctionComponent<Props> = (props) => {
 											[classes.selected]: isSelected,
 										})}
 										onClick={() =>
-											record.update(fieldId, hex)
+											record.update(fieldId, hex, context)
 										}
 										style={{
 											...(!isSelected && {

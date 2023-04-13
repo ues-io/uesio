@@ -6,41 +6,42 @@ import (
 
 type IntegrationCollection []*Integration
 
+var INTEGRATION_COLLECTION_NAME = "uesio/studio.integration"
+var INTEGRATION_FOLDER_NAME = "integrations"
+var INTEGRATION_FIELDS = StandardGetFields(&Integration{})
+
 func (ic *IntegrationCollection) GetName() string {
-	return "uesio/studio.integration"
+	return INTEGRATION_COLLECTION_NAME
 }
 
 func (ic *IntegrationCollection) GetBundleFolderName() string {
-	return "integrations"
+	return INTEGRATION_FOLDER_NAME
 }
 
 func (ic *IntegrationCollection) GetFields() []string {
-	return StandardGetFields(&Integration{})
+	return INTEGRATION_FIELDS
 }
 
 func (ic *IntegrationCollection) NewItem() Item {
 	return &Integration{}
 }
 
-func (ic *IntegrationCollection) AddItem(item Item) {
+func (ic *IntegrationCollection) AddItem(item Item) error {
 	*ic = append(*ic, item.(*Integration))
+	return nil
 }
 
-func (ic *IntegrationCollection) GetItemFromPath(path string) (BundleableItem, bool) {
-	return &Integration{Name: StandardNameFromPath(path)}, true
+func (ic *IntegrationCollection) GetItemFromPath(path, namespace string) BundleableItem {
+	return NewBaseIntegration(namespace, StandardNameFromPath(path))
 }
 
-func (ic *IntegrationCollection) FilterPath(path string, conditions BundleConditions) bool {
+func (ic *IntegrationCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }
 
-func (ic *IntegrationCollection) GetItem(index int) Item {
-	return (*ic)[index]
-}
-
 func (ic *IntegrationCollection) Loop(iter GroupIterator) error {
-	for index := range *ic {
-		err := iter(ic.GetItem(index), strconv.Itoa(index))
+	for index, i := range *ic {
+		err := iter(i, strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -50,8 +51,4 @@ func (ic *IntegrationCollection) Loop(iter GroupIterator) error {
 
 func (ic *IntegrationCollection) Len() int {
 	return len(*ic)
-}
-
-func (ic *IntegrationCollection) GetItems() interface{} {
-	return *ic
 }

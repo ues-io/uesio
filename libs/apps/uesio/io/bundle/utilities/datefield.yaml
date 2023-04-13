@@ -1,3 +1,3 @@
 name: datefield
 pack: main
-entrypoint: utilities/datefield/datefield.tsx
+entrypoint: utilities/field/date

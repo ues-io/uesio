@@ -1,15 +1,27 @@
-import { FunctionComponent, useState, useEffect } from "react"
-import { definition, styles, component } from "@uesio/ui"
-import { usePopper } from "react-popper"
-import type { Placement } from "@popperjs/core"
+import { FunctionComponent, useLayoutEffect } from "react"
+import { definition, styles } from "@uesio/ui"
+import {
+	useFloating,
+	autoUpdate,
+	hide,
+	autoPlacement,
+	Placement,
+	offset,
+	size,
+	FloatingPortal,
+} from "@floating-ui/react"
 
 interface TooltipProps extends definition.UtilityProps {
 	placement?: Placement
 	referenceEl: HTMLDivElement | null
 	onOutsideClick?: () => void
+	offset?: number
+	autoPlacement?: Placement[]
 	useFirstRelativeParent?: boolean
-	offset?: [number, number]
+	matchHeight?: boolean
 }
+
+const defaultPlacement: Placement[] = ["top", "bottom"]
 
 const getRelativeParent = (elem: Element | null): Element | null => {
 	if (!elem) return null
@@ -21,51 +33,61 @@ const getRelativeParent = (elem: Element | null): Element | null => {
 }
 
 const Popper: FunctionComponent<TooltipProps> = (props) => {
-	const [popperEl, setPopperEl] = useState<HTMLDivElement | null>(null)
-	const referenceEl = props.useFirstRelativeParent
-		? getRelativeParent(props.referenceEl)
-		: props.referenceEl
-	const popper = usePopper(referenceEl, popperEl, {
+	const autoPlacements = props.autoPlacement || defaultPlacement
+
+	const { x, y, strategy, refs, middlewareData } = useFloating({
+		whileElementsMounted: autoUpdate,
 		placement: props.placement,
-		modifiers: [
-			{ name: "offset", options: { offset: props.offset ?? [0, 6] } },
-			{ name: "preventOverflow", options: { padding: 6 } },
+		middleware: [
+			offset(props.offset),
+			autoPlacement({ allowedPlacements: autoPlacements }),
+			hide(),
+			...(props.matchHeight
+				? [
+						size({
+							apply({ rects, elements }) {
+								Object.assign(elements.floating.style, {
+									height: `${rects.reference.height}px`,
+								})
+							},
+						}),
+				  ]
+				: []),
 		],
 	})
 
-	useEffect(() => {
-		const checkIfClickedOutside = (e: MouseEvent) => {
-			// If the clicked target is outside the popper element
-			if (popperEl && !popperEl.contains(e.target as Element)) {
-				props.onOutsideClick && props.onOutsideClick()
-			}
-		}
-		document.addEventListener("mousedown", checkIfClickedOutside)
-		return () => {
-			document.removeEventListener("mousedown", checkIfClickedOutside)
-		}
-	})
+	useLayoutEffect(() => {
+		const referenceEl = props.useFirstRelativeParent
+			? getRelativeParent(props.referenceEl)
+			: props.referenceEl
+		refs.setReference(referenceEl)
+	}, [refs, props.referenceEl])
 
 	const classes = styles.useUtilityStyles(
 		{
-			popper: {
-				zIndex: 1,
-			},
+			popper: {},
 		},
 		props
 	)
 
 	return (
-		<component.Panel context={props.context}>
+		<FloatingPortal>
 			<div
+				ref={refs.setFloating}
+				style={{
+					position: strategy,
+					top: y ?? 0,
+					left: x ?? 0,
+					width: "max-content",
+					visibility: middlewareData.hide?.referenceHidden
+						? "hidden"
+						: "visible",
+				}}
 				className={classes.popper}
-				ref={setPopperEl}
-				style={popper.styles.popper}
-				{...popper.attributes.popper}
 			>
 				{props.children}
 			</div>
-		</component.Panel>
+		</FloatingPortal>
 	)
 }
 

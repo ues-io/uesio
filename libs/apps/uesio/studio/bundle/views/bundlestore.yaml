@@ -71,18 +71,16 @@ definition:
                     title: Add a Bundle
                 - uesio/io.deck:
                     wire: bundlelistings
-                    id: bundleListingList
+                    uesio.id: bundleListingList
                     mode: READ
-                    uesio.styles:
+                    uesio.styleTokens:
                       root:
-                        padding: 40px
-                        display: grid
-                        columnGap: 24px;
-                        rowGap: 24px
-                    templateColumns:
-                      xs: 1fr
-                      md: 1fr 1fr
-                      lg: 1fr 1fr 1fr
+                        - p-10
+                        - grid
+                        - gap-6
+                        - grid-cols-1
+                        - md:grid-cols-2
+                        - lg:grid-cols-3
                     components:
                       - uesio/io.tile:
                           uesio.styles:

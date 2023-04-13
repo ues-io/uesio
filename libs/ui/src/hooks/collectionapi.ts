@@ -1,32 +1,43 @@
-import { Uesio } from "./hooks"
-import { useCollection } from "../bands/collection/selectors"
+import {
+	useCollection as useColl,
+	getCollection as getColl,
+} from "../bands/collection/selectors"
 import { Context } from "../context/context"
-import { appDispatch, getPlatform } from "../store/store"
+
 import { useEffect } from "react"
 import getMetadata from "../bands/collection/operations/get"
-import { Collection } from "../collectionexports"
+import { platform } from "../platform/platform"
+import Collection from "../bands/collection/class"
 
-class CollectionAPI {
-	constructor(uesio: Uesio) {
-		this.uesio = uesio
-	}
-
-	uesio: Uesio
-
-	useCollection(context: Context, collectionName: string) {
-		const plainCollection = useCollection(collectionName)
-
-		useEffect(() => {
-			if (!plainCollection) {
-				appDispatch()(getMetadata(collectionName, context))
-			}
-		}, [])
-
-		return plainCollection && new Collection(plainCollection)
-	}
-
-	createJob = getPlatform().createJob
-	importData = getPlatform().importData
+type UseCollectionOptions = {
+	needAllFieldMetadata?: boolean
 }
 
-export { CollectionAPI }
+const useCollection = (
+	context: Context,
+	collectionName: string,
+	options?: UseCollectionOptions
+) => {
+	const plainCollection = useColl(collectionName)
+
+	useEffect(() => {
+		if (
+			!plainCollection ||
+			(!plainCollection.hasAllFields && options?.needAllFieldMetadata)
+		) {
+			getMetadata(collectionName, context)
+		}
+	}, [])
+
+	return plainCollection && new Collection(plainCollection)
+}
+
+const getCollection = (collectionName: string) => {
+	const plainCollection = getColl(collectionName)
+	return plainCollection && new Collection(plainCollection)
+}
+
+const createJob = platform.createJob
+const importData = platform.importData
+
+export { useCollection, getCollection, createJob, importData }

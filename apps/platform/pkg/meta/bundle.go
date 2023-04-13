@@ -10,7 +10,9 @@ func NewBundle(namespace string, major, minor, patch int, description string) (*
 
 	return &Bundle{
 		App: &App{
-			UniqueKey: namespace,
+			BuiltIn: BuiltIn{
+				UniqueKey: namespace,
+			},
 		},
 		Major:       major,
 		Minor:       minor,
@@ -32,20 +34,13 @@ func ParseVersionString(version string) (string, string, string, error) {
 }
 
 type Bundle struct {
-	ID          string    `json:"uesio/core.id"`
-	UniqueKey   string    `json:"uesio/core.uniquekey"`
-	Major       int       `json:"uesio/studio.major"`
-	Minor       int       `json:"uesio/studio.minor"`
-	Patch       int       `json:"uesio/studio.patch"`
-	App         *App      `json:"uesio/studio.app"`
-	Description string    `json:"uesio/studio.description"`
-	Version     string    `json:"uesio/studio.version"`
-	itemMeta    *ItemMeta `json:"-"`
-	CreatedBy   *User     `json:"uesio/core.createdby"`
-	Owner       *User     `json:"uesio/core.owner"`
-	UpdatedBy   *User     `json:"uesio/core.updatedby"`
-	UpdatedAt   int64     `json:"uesio/core.updatedat"`
-	CreatedAt   int64     `json:"uesio/core.createdat"`
+	BuiltIn     `yaml:",inline"`
+	Major       int    `json:"uesio/studio.major"`
+	Minor       int    `json:"uesio/studio.minor"`
+	Patch       int    `json:"uesio/studio.patch"`
+	App         *App   `json:"uesio/studio.app"`
+	Description string `json:"uesio/studio.description"`
+	Version     string `json:"uesio/studio.version"`
 }
 
 func (b *Bundle) GetVersionString() string {
@@ -53,11 +48,7 @@ func (b *Bundle) GetVersionString() string {
 }
 
 func (b *Bundle) GetCollectionName() string {
-	return b.GetCollection().GetName()
-}
-
-func (b *Bundle) GetCollection() CollectionableGroup {
-	return &BundleCollection{}
+	return BUNDLE_COLLECTION_NAME
 }
 
 func (b *Bundle) SetField(fieldName string, value interface{}) error {
@@ -74,12 +65,4 @@ func (b *Bundle) Loop(iter func(string, interface{}) error) error {
 
 func (b *Bundle) Len() int {
 	return StandardItemLen(b)
-}
-
-func (b *Bundle) GetItemMeta() *ItemMeta {
-	return b.itemMeta
-}
-
-func (b *Bundle) SetItemMeta(itemMeta *ItemMeta) {
-	b.itemMeta = itemMeta
 }

@@ -6,29 +6,29 @@ import (
 
 type WorkspaceCollection []*Workspace
 
+var WORKSPACE_COLLECTION_NAME = "uesio/studio.workspace"
+var WORKSPACE_FIELDS = StandardGetFields(&Workspace{})
+
 func (wc *WorkspaceCollection) GetName() string {
-	return "uesio/studio.workspace"
+	return WORKSPACE_COLLECTION_NAME
 }
 
 func (wc *WorkspaceCollection) GetFields() []string {
-	return StandardGetFields(&Workspace{})
-}
-
-func (wc *WorkspaceCollection) GetItem(index int) Item {
-	return (*wc)[index]
+	return WORKSPACE_FIELDS
 }
 
 func (wc *WorkspaceCollection) NewItem() Item {
 	return &Workspace{}
 }
 
-func (wc *WorkspaceCollection) AddItem(item Item) {
+func (wc *WorkspaceCollection) AddItem(item Item) error {
 	*wc = append(*wc, item.(*Workspace))
+	return nil
 }
 
 func (wc *WorkspaceCollection) Loop(iter GroupIterator) error {
-	for index := range *wc {
-		err := iter(wc.GetItem(index), strconv.Itoa(index))
+	for index, w := range *wc {
+		err := iter(w, strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -38,8 +38,4 @@ func (wc *WorkspaceCollection) Loop(iter GroupIterator) error {
 
 func (wc *WorkspaceCollection) Len() int {
 	return len(*wc)
-}
-
-func (wc *WorkspaceCollection) GetItems() interface{} {
-	return *wc
 }

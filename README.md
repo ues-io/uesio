@@ -26,20 +26,15 @@ As regards the **package naming** in Go, we do follow this [guideline](https://b
 
 -   [Cobra](https://github.com/spf13/cobra). CLI for Go application.
 -   [gorilla/mux](https://github.com/gorilla/mux). Web framework in Go.
--   [Package template](https://golang.org/pkg/text/template/). Template for rendering HTML by the Go web server.
--   [squirrel](https://github.com/Masterminds/squirrel). Go library for generating SQL query.
 -   [goja](https://github.com/dop251/goja). JavaScript engine implemented in Go.
 
 ## Frontend
 
 -   [Node.js](https://www.nodejs.org/). For package management, building process, for development and for our home-made cli application.
 -   [TypeScript](https://www.typescriptlang.org/). Wrapper around JavaScript.
--   [webpack](https://webpack.js.org/). Merge code source into one single static file.
--   [ts-loader](https://github.com/TypeStrong/ts-loader). Compilation TypeScript down to JavaScript as a webpack plugin.
 -   [React](https://reactjs.org/). Library for making UI elements.
 -   [Redux](https://redux.js.org/). Single source of truth for the entire application's data.
 -   [Redux-toolkit](https://redux-toolkit.js.org/). Bootstrap for Redux.
--   [Redux Thunk](https://github.com/reduxjs/redux-thunk). Middleware for Redux, for handling asynchronous redux-actions.
 
 # <a id="redux-architecture"></a> Redux architecture
 
@@ -49,54 +44,38 @@ See the [Uesio Specific Redux Docs](./docs/redux/README.md) on that matter.
 
 The present monorepo hosts several standalone **applications**, such as the `cli`.
 
-Sandalone **libraries** are located in the `libs` folder. These libs are components of the applications or container for sharing code between applications and libs.
+Standalone **libraries** are located in the `libs` folder. These libs are components of the applications or container for sharing code between applications and libs.
 
 The monorepo is managed by a tool called [nx](https://nx.dev/).
 `nx` has the particularity of having one single `package.json` for the whole monorepo.
 
 The `workspace.json` is the entry point for the **build**, **watcher**, **test**, **linting** processes for the whole monorepo. `nx.json` holds the configuration on dependency of apps/libs - esp. for the build process.
 
-For scaffolding a new lib, you can run the following script.
-
-```
-nx g @nrwl/workspace:library NEW_LIB
-```
-
 # Set up dev environment
 
 -   Install [homebrew](https://brew.sh/) (for macOS user)
 -   Install git
 -   Install GitHub Desktop [GitHub Desktop](https://desktop.github.com/)
--   ```
-    brew install wget
-    ```
 -   Install [nvm](https://github.com/nvm-sh/nvm) (for installing Node.js and npm)
--   Install the latest version of Node.js _via_ `nvm` :
-
-```
-  nvm install node
-```
-
+-   Install the latest version of Node.js _via_ `nvm`: `nvm install node`
 -   Install [Go](https://golang.org/dl/)
+-   Install the following brew packages:
+    -   `hurl` (for integration tests): `brew install hurl`
+    -   `jq` (for JSON manipulation in Shell): `brew install jq`
+    -   `wget` (for fetching URLs): `brew install wget`
 -   Install [VS Code](https://code.visualstudio.com/Download) and plugins (ESLint, Prettier, Go, GitLens). Do enable `format on save` in conjunction with the `Prettier`. Set up the `code` [environment variable](https://code.visualstudio.com/docs/setup/mac#_launching-from-the-command-line).
 -   Install the following [Google Chrome plugins](https://chrome.google.com/webstore) : `React Developers Tools`, `Redux DevTools`.
 -   _Optional_. Install [Oh My Zsh](https://ohmyz.sh/)
 -   _Optional_. [Add a SSH key to your github account](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
--   _Optional_. Install the `nx` cli globally.
-
-    ```
-    npm install -g nx
-    ```
-
+-   _Optional_. Install the `nx` cli globally: `npm i -g nx`
 -   Use Git clone and store this repository in your local machine
--   Do follow the instructions for setting up SSL [here](#set-up-ssl).
--   Do follow the instructions for environment variables [here](#environment-variables).
--   Do follow the instructions for setting up DNS [here](#set-up-local-dns).
--   Create an alias in your terminal, this will help to execute Uesio commands.
-
-    ```
-    alias uesio=“npm run uesio”
-    ```
+-   Set up SSL [here](#set-up-ssl).
+-   Set up local DNS [here](#set-up-local-dns).
+-   Start dependencies [here](#dependencies).
+-   Create a symlink for the Uesio CLI into your bin (NOT an alias, which won't work with `nx`):
+    -   Mac OS: `sudo ln -s ~/git/uesio/dist/cli/uesio /usr/local/bin`
+    -   Windows: `mklink C:\bin\uesio C:\Users\<USERNAME>\git\uesio\dist\cli\uesio`, and ensure `bin` is on path: `setx PATH "C:\bin;%PATH%`
+-   Build and run [here](#run).
 
 ---
 
@@ -126,24 +105,12 @@ nx g @nrwl/workspace:library NEW_LIB
 }
 ```
 
-# CLI .uesio file Setup
-
-Uesio has a CLI that requires a .uesio file in your home directory. It is formatted like so:
-
-```
-{"sessionId":"Xhv-LoI9VaEtxUnfuedUWKtX","workspaceId":"dev","appId":"crm"}
-```
-
-If you are starting on a fresh machine, you can supply the workspaceId and appId that you care about, and the CLI will run you through a login process and grab the sessionId and save it during the first command you attempt to execute.
-
 # Build
-
-The build process is done either by `webpack`, or our own `cli` or `go build` or the TypeScript compiler aka `tsc` depending on the application/library.
 
 -   Download and install the npm module dependencies :
 
 ```
-  npm install
+npm install
 ```
 
 ## Build all applications and libs
@@ -166,7 +133,7 @@ nx build apps-uesio-crm
 
 ## Build a dedicated app (with watcher and source map)
 
-On the frontend, the `source map` is enabled in webpack in `dev` mode. While developping you might want to rebuild on saving with the source map in the browser :
+On the frontend, the `source map` is enabled in webpack in `dev` mode. While developing you might want to rebuild on saving with the source map in the browser :
 
 ```
 cd ./libs/apps/uesio/core && uesio pack --develop
@@ -174,7 +141,7 @@ cd ./libs/apps/uesio/core && uesio pack --develop
 
 # Watch mode
 
-While developping you may want the entire monorepo to rebuild upon file saving.
+While developing you may want the entire monorepo to rebuild upon file saving.
 
 ```
 npm run watch-all
@@ -246,13 +213,70 @@ The installation process will output several commands that you can use to start 
 sudo brew services start dnsmasq
 ```
 
-# <a id="environment-variables"></a> Environment Variables
+                                                    |
+
+# <a id="dependencies"></a>Start dependencies
+
+1. Launch all local dependencies (e.g. Postgres) with Docker Compose:
+
+```
+docker compose up -d
+```
+
+2. Seed your local Postgres database with everything Uesio needs for local development
+
+```
+npm run nx -- seed platform
+```
+
+# <a id="dependencies"></a>Run the (web) application locally
+
+To run the app locally:
+
+```
+npm run nx -- serve platform
+open https://uesio-dev.com:3000
+```
+
+To run the app in Docker locally:
+
+```
+npm run in-docker
+open https://uesio-dev.com:3000
+```
+
+**NOTE**: Docker Compose aggressively caches, so to force the app to rebuild the image (e.g. to rebuild JS / Go source), use this instead:
+
+```
+npm run in-docker-force-build
+```
+
+## Worker jobs
+
+There are a number of worker jobs which Uesio runs in production, to handle things such as usage event aggregation, daily invoice generation, and potentially other future use cases (such as scheduled bots).
+
+To run the worker process, use `npm run nx -- worker platform` (Or `nx worker platform` if you have nx installed globally):
+
+```
+> nx run platform:worker
+
+{"message":"Running Uesio worker process","severity":"INFO"}
+{"message":"Scheduling job Invoices with schedule: @daily","severity":"INFO"}
+{"message":"Scheduling job Usage with schedule: * * * * *","severity":"INFO"}
+{"message":"Finished loading all jobs, starting scheduler now...","severity":"INFO"}
+{"message":"Cron job Invoices (1) next run will be at: Mar 22 00:00:00","severity":"INFO"}
+{"message":"Cron job Usage (2) next run will be at: Mar 21 20:09:00","severity":"INFO"}
+
+```
+
+# <a id="environment-variables"></a> (Optional) Environment Variables
 
 Do define the following environment variables in `~/.zshenv`. (If you are using Oh My Zsh)
 
 | Environment Variable         | Description                                                                                | Examples, Values & Help                                                                 |
 | ---------------------------- | ------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- |
 | UESIO_USE_HTTPS              | Use ssl or not                                                                             | true or false                                                                           |
+| HOST                         | Host to use for HTTP server. Set to "localhost" for local development                      | Defaults to ""                                                                          |
 | GOOGLE_CLOUD_PROJECT         | Google Cloud project ID                                                                    | test-cf94a                                                                              |
 | GOOGLE_CLOUD_API_KEY         | (Not needed for emulator use) The stringified JSON content of the application credentials  | (https://cloud.google.com/firestore/docs/quickstart-servers#set_up_authentication)      |
 | UESIO_SESSION_STORE          | Allows you to specify a storage location for user sessions.                                | filesystem or "" (Can be either empty, or "filesystem" if you want sessions to persist) |
@@ -264,78 +288,13 @@ Do define the following environment variables in `~/.zshenv`. (If you are using 
 | COGNITO_POOL_ID              | Pool Id for a Cognito Pool                                                                 |                                                                                         |
 | GOOGLE_CLIENT_ID             | Client ID for Google Sign In                                                               |
 
-# Seed Local Database with Test Data
-
-This creates test data & the basic data Uesio needs to start in you database.
-
-```
-npm run nx -- seed platform
-```
-
-# Run the application Locally
-
-```
-npm run nx -- serve platform
-```
-
-In a browser visit
-
-```
-https://uesio-dev.com:3000
-```
-
-# Local Development with a database in Docker
-
-0. Install [Docker Desktop](https://docs.docker.com/desktop/)
-1. Create a **docker container** based on a remote docker **image** - _e_._g_. `mysql`. - and tag a `CONTAINER_NAME` - _e_._g_. `mysql-container-uesio`.
-
-```
-  docker run --name mysql-container-uesio -p 3306:3306 -e MYSQL_ROOT_PASSWORD=tcm -d mysql
-```
-
-2. Check if your container is up and running. You have information about the container **id** and **name**.
-
-```
-  docker ps
-```
-
-3. Get in the container and create a database.
-
-```
-  docker exec -it CONTAINER_NAME /bin/bash
-```
-
-```
-  ./usr/bin/mysql --user=root --password=tcm
-```
-
-```
-  CREATE DATABASE `test-cf94a`;
-```
-
-4. _Optional_. Stop the container (which is as a normal process) when no need to have it running.
-
-```
-  docker stop CONTAINER_NAME
-```
-
-5. _Optional_. Start an existing container
-
-```
-  docker start CONTAINER_NAME
-```
-
-6. _Optional_. Remove the docker container when no longer needed.
-
-```
-  docker rm -f CONTAINER_NAME
-```
+                                                             |
 
 # npm dependencies
 
 As mentioned in the [monorepo](#monorepo-structure) section, a single `package.json` file describes the npm dependencies for the whole monorepo.
 
-All npm modules we used are installed as `development` dependency since uesio is not intended to be realeased as standalone npm module.
+All npm modules we used are installed as `development` dependency since uesio is not intended to be released as standalone npm module.
 
 Most of commmands you might run related to npm modules.
 
@@ -389,14 +348,56 @@ Most of commmands you might run related to npm modules.
 
 3. `docker push us-east1-docker.pkg.dev/uesio-317517/uesio/uesio:latest`
 
-# Running postgres locally
+### Migrations
+
+We use `golang-migrate` package for running SQL migrations. This package maintains the current state of migration runs via a `schema_migrations` table.
+
+#### install
 
 ```
-docker run --name some-postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=mysecretpassword -e POSTGRES_DB=postgresio -d -p 5432:5432 -v "/$(pwd)/pgdata:/var/lib/postgresql/data" postgres
+brew install golang-migrate
 ```
 
-# Running redis locally
+#### adding migrations
+
+New migrations can be created using `npm run migrate:create -- <SOME_NAME>`
+
+#### manually setting the migration "pointer"
+
+To forcibly set the migration version to latest (currently 3), use:
 
 ```
-docker run --name some-redis -d -p 6379:6379 redis
+export CONN_STR="postgres://postgres:mysecretpassword@localhost:5432/postgresio?sslmode=disable"
+migrate -path apps/platform/migrations -database "$CONN_STR" force 3
 ```
+
+This will skip running any migrations but update `schema_migrations` table to think you've run them all up through 3
+
+#### testing migrations
+
+To test running migrations (against a separate `pgtest` database alongside your main `postgresio` database for dev), do the following (run from THIS top-level directory!):
+
+```
+docker compose up -d
+bash apps/platform/migrations_test/test_migrations.sh
+```
+
+## End-to-end Testing and Integration testing
+
+All E2E and integration tests can be run exactly as they would in CI using `npm run tests-all`. This will spin up all dependencies, and a Dockerized version of the app, run integration and E2E tests against the app, and then spin down dependencies.
+
+### E2E testing with Cypress
+
+We use [Cypress](https://cypress.io) for writing end-to-end tests of the Uesio app. All E2E tests are defined in `cypress/e2e` directory.
+
+E2E tests are the most expensive and most brittle, and as such should be used sparingly.
+
+If you're running Uesio locally, you can use `npx cypress open` to launch Cypress' visual UI for running tests, or `npm run tests-e2e` to just run the tests in a headless runner.
+
+To simulate how Cypress tests are run in CI, run `npm run tests-e2e`. This script is run in Github Actions on master build, and spins up the Uesio app in Docker, along with all dependencies, to use for running tests.
+
+### Integration / API testing with Hurl
+
+We use [Hurl](https://hurl.dev/) for running integration tests against Uesio APIs, and for performing load testing against APIs. Hurl provides a powerful text-based abstraction over `curl` suitable for defining suites of HTTP requests and assertions to make upon the responses.
+
+To run API integration tests locally against your running Uesio container, use `npm run tests-integration`

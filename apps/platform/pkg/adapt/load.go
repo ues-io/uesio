@@ -24,6 +24,7 @@ type LoadOp struct {
 	RequireWriteAccess bool                   `json:"-"`
 	Params             map[string]string      `json:"-"`
 	Preloaded          bool                   `json:"preloaded"`
+	LoadAll            bool                   `json:"loadAll"`
 }
 
 func (op *LoadOp) GetBytes() ([]byte, error) {
@@ -56,6 +57,7 @@ func (op *LoadOp) UnmarshalJSONObject(dec *gojay.Decoder, key string) error {
 	case "collection":
 		// Do some extra stuff
 		op.Collection = &Collection{}
+		op.HasMoreBatches = true
 		return dec.String(&op.CollectionName)
 	case "name":
 		return dec.String(&op.WireName)
@@ -73,6 +75,10 @@ func (op *LoadOp) UnmarshalJSONObject(dec *gojay.Decoder, key string) error {
 		return dec.Bool(&op.Query)
 	case "params":
 		return decodeEmbed(dec, &op.Params)
+	case "batchnumber":
+		return dec.Int(&op.BatchNumber)
+	case "loadAll":
+		return dec.Bool(&op.LoadAll)
 	}
 
 	return nil
@@ -109,6 +115,7 @@ func (op *LoadOp) UnmarshalYAML(node *yaml.Node) error {
 	op.Fields = fields
 	op.Conditions = conditions
 	op.Order = order
+	op.LoadAll = meta.GetNodeValueAsBool(node, "loadAll", false)
 	return nil
 
 }
@@ -136,6 +143,11 @@ func (fm *FieldsMap) GetKeys() []string {
 
 var ID_FIELD = "uesio/core.id"
 var UNIQUE_KEY_FIELD = "uesio/core.uniquekey"
+var OWNER_FIELD = "uesio/core.owner"
+var CREATED_BY_FIELD = "uesio/core.createdby"
+var UPDATED_BY_FIELD = "uesio/core.updatedby"
+var CREATED_AT_FIELD = "uesio/core.createdat"
+var UPDATED_AT_FIELD = "uesio/core.updatedat"
 
 func (fm *FieldsMap) GetUniqueDBFieldNames(getDBFieldName func(*FieldMetadata) string) ([]string, error) {
 	if len(*fm) == 0 {

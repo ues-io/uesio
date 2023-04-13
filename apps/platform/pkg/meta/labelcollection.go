@@ -6,41 +6,42 @@ import (
 
 type LabelCollection []*Label
 
+var LABEL_COLLECTION_NAME = "uesio/studio.label"
+var LABEL_FOLDER_NAME = "labels"
+var LABEL_FIELDS = StandardGetFields(&Label{})
+
 func (lc *LabelCollection) GetName() string {
-	return "uesio/studio.label"
+	return LABEL_COLLECTION_NAME
 }
 
 func (lc *LabelCollection) GetBundleFolderName() string {
-	return "labels"
+	return LABEL_FOLDER_NAME
 }
 
 func (lc *LabelCollection) GetFields() []string {
-	return StandardGetFields(&Label{})
+	return LABEL_FIELDS
 }
 
 func (lc *LabelCollection) NewItem() Item {
 	return &Label{}
 }
 
-func (lc *LabelCollection) AddItem(item Item) {
+func (lc *LabelCollection) AddItem(item Item) error {
 	*lc = append(*lc, item.(*Label))
+	return nil
 }
 
-func (lc *LabelCollection) GetItemFromPath(path string) (BundleableItem, bool) {
-	return &Label{Name: StandardNameFromPath(path)}, true
+func (lc *LabelCollection) GetItemFromPath(path, namespace string) BundleableItem {
+	return NewBaseLabel(namespace, StandardNameFromPath(path))
 }
 
-func (lc *LabelCollection) FilterPath(path string, conditions BundleConditions) bool {
+func (lc *LabelCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }
 
-func (lc *LabelCollection) GetItem(index int) Item {
-	return (*lc)[index]
-}
-
 func (lc *LabelCollection) Loop(iter GroupIterator) error {
-	for index := range *lc {
-		err := iter(lc.GetItem(index), strconv.Itoa(index))
+	for index, l := range *lc {
+		err := iter(l, strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -50,8 +51,4 @@ func (lc *LabelCollection) Loop(iter GroupIterator) error {
 
 func (lc *LabelCollection) Len() int {
 	return len(*lc)
-}
-
-func (lc *LabelCollection) GetItems() interface{} {
-	return *lc
 }

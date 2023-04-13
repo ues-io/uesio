@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -30,7 +31,7 @@ func Load(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, msg, http.StatusBadRequest)
 		return
 	}
-	respondJSON(w, r, &adapt.LoadResponseBatch{
+	file.RespondJSON(w, r, &adapt.LoadResponseBatch{
 		Wires:       batch.Wires,
 		Collections: metadata.Collections,
 	})

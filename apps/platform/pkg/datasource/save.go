@@ -3,6 +3,7 @@ package datasource
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -93,11 +94,6 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 		metadataResponse = options.Metadata
 	}
 
-	platformConnection, err := GetPlatformConnection(session, options.Connections)
-	if err != nil {
-		return err
-	}
-
 	// Loop over the requests and batch per data source
 	for index := range requests {
 
@@ -116,7 +112,7 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 			return err
 		}
 
-		err = collections.Load(metadataResponse, session, platformConnection)
+		err = collections.Load(metadataResponse, session, nil)
 		if err != nil {
 			return err
 		}
@@ -142,7 +138,7 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 	// Get all the user access tokens that we'll need for this request
 	// TODO:
 	// Finally check for record level permissions and ability to do the save.
-	err = GenerateUserAccessTokens(metadataResponse, &LoadOptions{
+	err := GenerateUserAccessTokens(metadataResponse, &LoadOptions{
 		Metadata:    metadataResponse,
 		Connections: options.Connections,
 	}, session)
@@ -192,19 +188,10 @@ func applyBatches(dsKey string, batch []*adapt.SaveOp, connection adapt.Connecti
 
 	for _, op := range batch {
 
-		// Set Unique Keys For Inserts
-		err := op.LoopInserts(func(change *adapt.ChangeItem) error {
-			// It's ok to fail here creating unique keys
-			// We'll try again later after we've run some bots
-			_ = adapt.SetUniqueKey(change)
-			return nil
-		})
-		if err != nil {
-			op.AddError(adapt.NewGenericSaveError(err))
-			return err
-		}
+		permissions := session.GetContextPermissions()
+		collectionKey := op.Metadata.GetFullName()
 
-		err = adapt.FetchReferences(connection, op, session)
+		err := adapt.FetchReferences(connection, op, session)
 		if err != nil {
 			op.AddError(adapt.NewGenericSaveError(err))
 			return err
@@ -214,6 +201,24 @@ func applyBatches(dsKey string, batch []*adapt.SaveOp, connection adapt.Connecti
 		if err != nil {
 			op.AddError(adapt.NewGenericSaveError(err))
 			return err
+		}
+
+		if len(op.Inserts) > 0 {
+			if !permissions.HasCreatePermission(collectionKey) {
+				return fmt.Errorf("Profile %s does not have create access to the %s collection.", session.GetProfile(), collectionKey)
+			}
+		}
+
+		if len(op.Updates) > 0 {
+			if !permissions.HasEditPermission(collectionKey) {
+				return fmt.Errorf("Profile %s does not have edit access to the %s collection.", session.GetProfile(), collectionKey)
+			}
+		}
+
+		if len(op.Deletes) > 0 {
+			if !permissions.HasDeletePermission(collectionKey) {
+				return fmt.Errorf("Profile %s does not have delete access to the %s collection.", session.GetProfile(), collectionKey)
+			}
 		}
 
 		err = adapt.HandleOldValuesLookup(connection, op, session)
@@ -251,6 +256,15 @@ func applyBatches(dsKey string, batch []*adapt.SaveOp, connection adapt.Connecti
 			return err
 		}
 
+		// Set the unique keys for the last time
+		err = op.LoopChanges(func(change *adapt.ChangeItem) error {
+			return adapt.SetUniqueKey(change)
+		})
+		if err != nil {
+			op.AddError(adapt.NewGenericSaveError(err))
+			return err
+		}
+
 		err = Validate(op, connection, session)
 		if err != nil {
 			op.AddError(adapt.NewGenericSaveError(err))
@@ -260,15 +274,6 @@ func applyBatches(dsKey string, batch []*adapt.SaveOp, connection adapt.Connecti
 		// Check for validate errors here
 		if op.HasErrors() {
 			return adapt.NewGenericSaveError(errors.New("Error with validation"))
-		}
-
-		// Set the unique keys for the last time
-		err = op.LoopChanges(func(change *adapt.ChangeItem) error {
-			return adapt.SetUniqueKey(change)
-		})
-		if err != nil {
-			op.AddError(adapt.NewGenericSaveError(err))
-			return err
 		}
 
 		err = GenerateRecordChallengeTokens(op, connection, session)

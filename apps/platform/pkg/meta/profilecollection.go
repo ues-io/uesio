@@ -6,41 +6,42 @@ import (
 
 type ProfileCollection []*Profile
 
+var PROFILE_COLLECTION_NAME = "uesio/studio.profile"
+var PROFILE_FOLDER_NAME = "profiles"
+var PROFILE_FIELDS = StandardGetFields(&Profile{})
+
 func (pc *ProfileCollection) GetName() string {
-	return "uesio/studio.profile"
+	return PROFILE_COLLECTION_NAME
 }
 
 func (pc *ProfileCollection) GetBundleFolderName() string {
-	return "profiles"
+	return PROFILE_FOLDER_NAME
 }
 
 func (pc *ProfileCollection) GetFields() []string {
-	return StandardGetFields(&Profile{})
+	return PROFILE_FIELDS
 }
 
 func (pc *ProfileCollection) NewItem() Item {
 	return &Profile{}
 }
 
-func (pc *ProfileCollection) AddItem(item Item) {
+func (pc *ProfileCollection) AddItem(item Item) error {
 	*pc = append(*pc, item.(*Profile))
+	return nil
 }
 
-func (pc *ProfileCollection) GetItemFromPath(path string) (BundleableItem, bool) {
-	return &Profile{Name: StandardNameFromPath(path)}, true
+func (pc *ProfileCollection) GetItemFromPath(path, namespace string) BundleableItem {
+	return NewBaseProfile(namespace, StandardNameFromPath(path))
 }
 
-func (pc *ProfileCollection) FilterPath(path string, conditions BundleConditions) bool {
+func (pc *ProfileCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }
 
-func (pc *ProfileCollection) GetItem(index int) Item {
-	return (*pc)[index]
-}
-
 func (pc *ProfileCollection) Loop(iter GroupIterator) error {
-	for index := range *pc {
-		err := iter(pc.GetItem(index), strconv.Itoa(index))
+	for index, p := range *pc {
+		err := iter(p, strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -50,8 +51,4 @@ func (pc *ProfileCollection) Loop(iter GroupIterator) error {
 
 func (pc *ProfileCollection) Len() int {
 	return len(*pc)
-}
-
-func (pc *ProfileCollection) GetItems() interface{} {
-	return *pc
 }

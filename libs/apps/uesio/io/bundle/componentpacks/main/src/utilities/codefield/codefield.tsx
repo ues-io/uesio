@@ -1,21 +1,32 @@
-import { FunctionComponent } from "react"
-import { definition, styles, context } from "@uesio/ui"
-import Editor, { EditorProps, loader, OnChange } from "@monaco-editor/react"
+import { definition, styles, api, context } from "@uesio/ui"
+import Editor, { loader, Monaco, useMonaco } from "@monaco-editor/react"
 import type monaco from "monaco-editor"
+import { CodeFieldUtilityProps } from "./types"
+import { useEffect, useState } from "react"
 
-interface CodeFieldUtilityProps extends definition.UtilityProps {
-	setValue: OnChange
-	value: string
-	language?: string
-	mode?: context.FieldMode
-	options?: monaco.editor.IStandaloneEditorConstructionOptions
-	onMount?: EditorProps["onMount"]
+const staticAssetPath = api.platform.getStaticAssetsPath()
+const { useAsync } = api.component
+
+loader.config({
+	paths: { vs: staticAssetPath + "/static/vendor/monaco-editor/min/vs" },
+})
+
+const preprocessTypeFileURIs = (
+	uris: string[] | undefined,
+	context: context.Context
+) => {
+	if (uris === undefined) return []
+	return uris.map((uri) => context.mergeString(uri))
 }
 
-loader.config({ paths: { vs: "/static/vendor/monaco-editor/min/vs" } })
-
-const CodeField: FunctionComponent<CodeFieldUtilityProps> = (props) => {
-	const { setValue, value, language, options, onMount } = props
+const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
+	props
+) => {
+	const { setValue, value, language, options, onMount, context } = props
+	const typeDefinitionFileURIs = preprocessTypeFileURIs(
+		props.typeDefinitionFileURIs,
+		context
+	)
 	const classes = styles.useUtilityStyles(
 		{
 			input: {
@@ -23,8 +34,75 @@ const CodeField: FunctionComponent<CodeFieldUtilityProps> = (props) => {
 			},
 			readonly: {},
 		},
-		props
+		props,
+		"uesio/io.codefield"
 	)
+
+	const [loadedModels, setLoadedModels] = useState(
+		{} as Record<string, string>
+	)
+
+	const fileLoads = typeDefinitionFileURIs.map((uri: string) => ({
+		uri,
+		...useAsync({
+			cacheKey: `fetch-file-as-text-${uri}`,
+		}),
+	}))
+
+	useEffect(() => {
+		const fetchFile = async (uri: string) => {
+			const result = await fetch(uri)
+			if (result.status >= 400) {
+				throw new Error(
+					"Failed to load resource: " +
+						uri +
+						", result: " +
+						result.statusText
+				)
+			}
+
+			return await result.text()
+		}
+
+		fileLoads.forEach(({ run, uri }) => {
+			run(() => fetchFile(uri)).then(({ data, loading, error }) => {
+				if (data && !loading && !error) {
+					setLoadedModels({
+						...loadedModels,
+						[uri]: data as string,
+					})
+				}
+			})
+		})
+	}, [props.typeDefinitionFileURIs, JSON.stringify(loadedModels)])
+
+	function handleEditorWillMount(monaco: Monaco) {
+		const loadedTypeModelUris = Object.keys(loadedModels)
+		if (loadedTypeModelUris.length > 0) {
+			loadedTypeModelUris.forEach((uri) => {
+				const monacoUri = monaco.Uri.parse(uri)
+				if (!monaco.editor.getModel(monacoUri)) {
+					monaco.editor.createModel(
+						loadedModels[uri],
+						language,
+						monacoUri
+					)
+				}
+			})
+		}
+		monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true)
+	}
+
+	function handleEditorDidMount(
+		editor: monaco.editor.IStandaloneCodeEditor,
+		monaco: Monaco
+	) {
+		onMount?.(editor, monaco)
+	}
+
+	const monacoApi = useMonaco()
+
+	if (!monacoApi) return null
 
 	return (
 		<div className={classes.input}>
@@ -38,14 +116,13 @@ const CodeField: FunctionComponent<CodeFieldUtilityProps> = (props) => {
 					},
 					...options,
 				}}
-				language={language || "javascript"}
+				language={language || "typescript"}
 				onChange={setValue}
-				onMount={onMount}
+				beforeMount={handleEditorWillMount}
+				onMount={handleEditorDidMount}
 			/>
 		</div>
 	)
 }
-
-export { CodeFieldUtilityProps }
 
 export default CodeField

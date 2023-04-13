@@ -1,20 +1,10 @@
 import { FunctionComponent } from "react"
-import {
-	wire,
-	collection,
-	definition,
-	context,
-	component,
-	metadata,
-} from "@uesio/ui"
-import { ListFieldUtilityProps } from "../listfield/listfield"
-
-const ListField =
-	component.getUtility<ListFieldUtilityProps>("uesio/io.listfield")
+import { wire, collection, definition, context, metadata } from "@uesio/ui"
+import ListField from "../field/list"
 
 interface MapFieldUtilityProps extends definition.UtilityProps {
 	mode: context.FieldMode
-	value: wire.PlainWireRecord
+	value: wire.FieldValue
 	setValue: (value: wire.PlainWireRecord) => void
 	keyField: collection.FieldMetadata
 	valueField: collection.FieldMetadata
@@ -23,13 +13,15 @@ interface MapFieldUtilityProps extends definition.UtilityProps {
 	noAdd?: boolean
 	fieldVariant?: metadata.MetadataKey
 	labelVariant?: metadata.MetadataKey
+	path: string
+	fieldId: string
 }
 
 const MapField: FunctionComponent<MapFieldUtilityProps> = (props) => {
 	const {
+		fieldId,
 		mode,
 		context,
-		value,
 		keys,
 		setValue,
 		keyField,
@@ -38,8 +30,10 @@ const MapField: FunctionComponent<MapFieldUtilityProps> = (props) => {
 		noAdd,
 		fieldVariant,
 		labelVariant,
+		path,
 	} = props
 
+	const value = props.value as Record<string, wire.FieldValue>
 	const mapValue = keys
 		? {
 				...keys.reduce((obj, key) => ({ ...obj, [key]: null }), {}),
@@ -54,6 +48,8 @@ const MapField: FunctionComponent<MapFieldUtilityProps> = (props) => {
 
 	return (
 		<ListField
+			fieldId={fieldId}
+			path={path}
 			value={listValue}
 			autoAdd={autoAdd}
 			noAdd={noAdd}
@@ -82,5 +78,4 @@ const MapField: FunctionComponent<MapFieldUtilityProps> = (props) => {
 	)
 }
 
-export { MapFieldUtilityProps }
 export default MapField

@@ -1,15 +1,15 @@
-import { PropsWithChildren, forwardRef, FunctionComponent } from "react"
 import {
 	DefinitionMap,
-	BaseProps,
 	UtilityProps,
+	UC,
+	UtilityComponent,
 } from "../definition/definition"
-import { Context, ContextFrame } from "../context/context"
 import {
-	getBuildtimeLoader,
-	getRuntimeLoader,
-	getUtilityLoader,
-} from "./registry"
+	injectDynamicContext,
+	Context,
+	ContextOptions,
+} from "../context/context"
+import { getRuntimeLoader, getUtilityLoader } from "./registry"
 import NotFound from "../components/notfound"
 import { parseKey } from "./path"
 import { ComponentVariant } from "../definition/componentvariant"
@@ -17,50 +17,6 @@ import ErrorBoundary from "../components/errorboundary"
 import { mergeDefinitionMaps } from "./merge"
 import { MetadataKey } from "../bands/builder/types"
 import { useShould } from "./display"
-
-function additionalContext(context: Context, additional: ContextFrame) {
-	if (additional) {
-		const frame: ContextFrame = {}
-		const workspace = additional.workspace
-		const siteadmin = additional.siteadmin
-		const fieldMode = additional.fieldMode
-
-		if (workspace) {
-			frame.workspace = {
-				name: context.mergeString(workspace.name),
-				app: context.mergeString(workspace.app),
-			}
-		}
-		if (fieldMode) {
-			frame.fieldMode = fieldMode
-		}
-
-		if (siteadmin) {
-			frame.siteadmin = {
-				name: context.mergeString(siteadmin.name),
-				app: context.mergeString(siteadmin.app),
-			}
-		}
-		const wire = additional.wire
-		if (wire) {
-			frame.wire = wire
-		}
-		return context.addFrame(frame)
-	}
-	return context
-}
-
-function Component<T>(props: PropsWithChildren<BaseProps & T>) {
-	const { componentType, path } = props
-	return (
-		<ErrorBoundary {...props}>
-			<ComponentInternal
-				{...props}
-				path={`${path}["${componentType}"]`}
-			/>
-		</ErrorBoundary>
-	)
-}
 
 function getThemeOverride(
 	variant: ComponentVariant,
@@ -120,51 +76,33 @@ function mergeContextVariants(
 	return mergeDefinitionMaps(variantDefinition, definition, undefined)
 }
 
-const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
+const Component: UC<DefinitionMap> = (props) => {
 	const { componentType, context, definition } = props
 	if (definition && !useShould(definition["uesio.display"], context))
 		return null
 	if (!componentType) return <NotFound {...props} />
-	const isBuildMode = !!context.getBuildMode()
-	const RuntimeLoader = getRuntimeLoader(componentType) || NotFound
-	const BuildTimeLoader = isBuildMode
-		? getBuildtimeLoader(componentType)
-		: undefined
-	const Loader =
-		isBuildMode && BuildTimeLoader ? BuildTimeLoader : RuntimeLoader
+	const Loader = getRuntimeLoader(componentType) || NotFound
 
 	const mergedDefinition = mergeContextVariants(
 		definition,
 		componentType,
 		context
 	)
-
-	if (isBuildMode && !BuildTimeLoader) {
-		return (
-			<BuildWrapper {...props}>
-				<RuntimeLoader
-					{...props}
-					definition={mergedDefinition}
-					context={additionalContext(
-						context,
-						mergedDefinition?.["uesio.context"] as ContextFrame
-					)}
-				/>
-			</BuildWrapper>
-		)
-	}
-
 	return (
-		<Loader
-			{...props}
-			definition={mergedDefinition}
-			context={additionalContext(
-				context,
-				mergedDefinition?.["uesio.context"] as ContextFrame
-			)}
-		/>
+		<ErrorBoundary {...props}>
+			<Loader
+				{...props}
+				definition={mergedDefinition || {}}
+				context={injectDynamicContext(
+					context,
+					mergedDefinition?.["uesio.context"] as ContextOptions
+				)}
+			/>
+		</ErrorBoundary>
 	)
 }
+
+Component.displayName = "Component"
 
 const parseVariantName = (
 	fullName: MetadataKey | undefined,
@@ -181,66 +119,14 @@ const parseVariantName = (
 	return [key, `${keyNamespace}.default` as MetadataKey]
 }
 
-function getVariantStylesDef(
-	componentType: MetadataKey,
-	variantName: MetadataKey,
-	context: Context
-) {
-	const variant = context.getComponentVariant(componentType, variantName)
-	if (!variant) return {}
-	const variantDefinition = getDefinitionFromVariant(variant, context)
-	return variantDefinition?.["uesio.styles"] as DefinitionMap
-}
-
-const getVariantStyleInfo = (props: UtilityProps, key: MetadataKey) => {
-	const { variant, context, styles } = props
-	const [componentType, variantName] = parseVariantName(variant, key)
-	if (!variantName) {
-		return styles as DefinitionMap
-	}
-
-	const variantStyles = getVariantStylesDef(
-		componentType,
-		variantName,
-		context
-	)
-
-	if (!styles) {
-		return variantStyles
-	}
-
-	return mergeDefinitionMaps(
-		variantStyles,
-		styles as DefinitionMap,
-		undefined
-	)
-}
-
+// This is bad and should eventually go away when we do proper typing
+// for utilities.
 interface UtilityPropsPlus extends UtilityProps {
 	[x: string]: unknown
 }
 
 const getUtility = <T extends UtilityProps = UtilityPropsPlus>(
 	key: MetadataKey
-) => {
-	const returnFunc = forwardRef((props: T, ref) => {
-		const Loader = getUtilityLoader(key)
-		if (!Loader) throw "Could not load component: " + key
-		const styles = getVariantStyleInfo(props, key)
-		return (
-			<Loader ref={ref} {...props} styles={styles} componentType={key} />
-		)
-	})
-	returnFunc.displayName = key
-	return returnFunc
-}
-const BuildWrapper = getUtility("uesio/builder.buildwrapper")
+) => getUtilityLoader(key) as UtilityComponent<T>
 
-export {
-	ComponentInternal,
-	Component,
-	getDefinitionFromVariant,
-	additionalContext,
-	getUtility,
-	parseVariantName,
-}
+export { Component, getDefinitionFromVariant, getUtility, parseVariantName }

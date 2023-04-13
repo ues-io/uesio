@@ -2,7 +2,6 @@ package adapt
 
 import (
 	"errors"
-	"fmt"
 	"strconv"
 	"strings"
 
@@ -10,8 +9,8 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func GetUniqueKeyPart(item meta.Item, fieldName string) (string, error) {
-	value, err := GetFieldValue(item, fieldName)
+func GetUniqueKeyPart(change *ChangeItem, fieldName string) (string, error) {
+	value, err := change.GetField(fieldName)
 	if err != nil {
 		return "", err
 	}
@@ -27,16 +26,7 @@ func GetUniqueKeyPart(item meta.Item, fieldName string) (string, error) {
 	return GetFieldValueString(value, UNIQUE_KEY_FIELD)
 }
 
-func SetUniqueKey(change *ChangeItem) error {
-	if change.UniqueKey != "" {
-		return nil
-	}
-	// First see if the unique key already exists.
-	existingKey, err := change.GetFieldAsString(UNIQUE_KEY_FIELD)
-	if err == nil && existingKey != "" {
-		change.UniqueKey = existingKey
-		return nil
-	}
+func GetUniqueKeyValue(change *ChangeItem) (string, error) {
 	keyFields := change.Metadata.UniqueKey
 	if len(keyFields) == 0 {
 		keyFields = []string{ID_FIELD}
@@ -45,24 +35,21 @@ func SetUniqueKey(change *ChangeItem) error {
 	for i, keyField := range keyFields {
 		value, err := GetUniqueKeyPart(change, keyField)
 		if err != nil {
-			return fmt.Errorf("Failed to get part: %v : %+v : %v : %v : %v", keyField, change, keyFields, change.Metadata.GetFullName(), err)
-		}
-		if value == "" {
-			return fmt.Errorf("Required Unique Key Value Not Provided: %v : %v", change.Metadata.GetFullName(), keyField)
+			// If we can't get field data here, just use an empty string
+			value = ""
 		}
 		keyValues[i] = value
 	}
+	return strings.Join(keyValues, ":"), nil
+}
 
-	uniqueKey := strings.Join(keyValues, ":")
-
-	err = change.SetField(UNIQUE_KEY_FIELD, uniqueKey)
+func SetUniqueKey(change *ChangeItem) error {
+	uniqueKey, err := GetUniqueKeyValue(change)
 	if err != nil {
 		return err
 	}
-
 	change.UniqueKey = uniqueKey
-
-	return nil
+	return change.SetField(UNIQUE_KEY_FIELD, uniqueKey)
 }
 
 func HandleOldValuesLookup(
@@ -74,6 +61,54 @@ func HandleOldValuesLookup(
 	allFields := []LoadRequestField{}
 
 	for fieldID := range op.Metadata.Fields {
+
+		// TEMPORARY FIX:
+		// Currently we allow unique keys to contain pieces of reference fields, e.g.
+		// View’s Unique Key is: [workspace.app, workspace.name, name]
+		// “ben/jobs:dev:jobs”
+		// Where workspace.app = “ben/jobs”, workspace.name = “dev”, view = “jobs”
+		// (1) If the fields on the reference record (e.g. ‘workspace’) are changed — we
+		// don’t go update the unique key of Views, so we have inconsistent unique keys
+		// (2) When upserting the main record (e.g. a view), if we were to change either
+		// the workspace or the name of the view, but not BOTH, we would need to go
+		// lookup the other fields in order to reconstruct the unique key properly.
+
+		// PROPOSED LONG TERM FIX:
+		// Only allow level 1 fields to be in a unique key. E.g. we could store the
+		// stable id of the reference field (e.g. workspace id) but NOT any fields ON
+		// the workspace (e.g. workspace name, workspace app would NOT be allowed to be
+		// stored / used in the unique key for View)
+
+		fieldMetadata, err := op.Metadata.GetField(fieldID)
+		if err != nil {
+			return err
+		}
+		if IsReference(fieldMetadata.Type) {
+
+			isPartOfKey := false
+
+			for _, keypart := range op.Metadata.UniqueKey {
+				if keypart == fieldID {
+					isPartOfKey = true
+					break
+				}
+			}
+
+			if isPartOfKey {
+				allFields = append(allFields, LoadRequestField{
+					ID: fieldID,
+					Fields: []LoadRequestField{
+						{
+							ID: UNIQUE_KEY_FIELD,
+						},
+					},
+				})
+				continue
+			}
+
+		}
+		// END TEMPORARY FIX
+
 		allFields = append(allFields, LoadRequestField{
 			ID: fieldID,
 		})
@@ -103,6 +138,11 @@ func HandleOldValuesLookup(
 	}
 
 	return LoadLooper(connection, op.Metadata.GetFullName(), idMap, allFields, ID_FIELD, session, func(item meta.Item, matchIndexes []ReferenceLocator, ID string) error {
+
+		if item == nil {
+			return errors.New("Could not find record to update or delete: " + ID)
+		}
+
 		if len(matchIndexes) != 1 {
 			return errors.New("Bad OldValue Lookup Here: " + strconv.Itoa(len(matchIndexes)))
 		}

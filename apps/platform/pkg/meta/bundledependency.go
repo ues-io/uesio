@@ -3,17 +3,10 @@ package meta
 import "fmt"
 
 type BundleDependency struct {
-	ID        string     `json:"uesio/core.id"`
-	UniqueKey string     `json:"uesio/core.uniquekey"`
+	BuiltIn   `yaml:",inline"`
 	Workspace *Workspace `json:"uesio/studio.workspace"`
 	App       *App       `json:"uesio/studio.app"`
 	Bundle    *Bundle    `json:"uesio/studio.bundle"`
-	itemMeta  *ItemMeta  `json:"-"`
-	CreatedBy *User      `json:"uesio/core.createdby"`
-	Owner     *User      `json:"uesio/core.owner"`
-	UpdatedBy *User      `json:"uesio/core.updatedby"`
-	UpdatedAt int64      `json:"uesio/core.updatedat"`
-	CreatedAt int64      `json:"uesio/core.createdat"`
 }
 
 func (b *BundleDependency) GetVersionString() string {
@@ -39,11 +32,7 @@ func (b *BundleDependency) GetAppName() string {
 }
 
 func (b *BundleDependency) GetCollectionName() string {
-	return b.GetCollection().GetName()
-}
-
-func (b *BundleDependency) GetCollection() CollectionableGroup {
-	return &BundleDependencyCollection{}
+	return BUNDLEDEPENDENCY_COLLECTION_NAME
 }
 
 func (b *BundleDependency) SetField(fieldName string, value interface{}) error {
@@ -60,12 +49,4 @@ func (b *BundleDependency) Loop(iter func(string, interface{}) error) error {
 
 func (b *BundleDependency) Len() int {
 	return StandardItemLen(b)
-}
-
-func (b *BundleDependency) GetItemMeta() *ItemMeta {
-	return b.itemMeta
-}
-
-func (b *BundleDependency) SetItemMeta(itemMeta *ItemMeta) {
-	b.itemMeta = itemMeta
 }

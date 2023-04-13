@@ -2,3 +2,4 @@ name: bot
 path: app/{app:\w*\/\w*}/workspace/{workspacename}/bots/{botname}
 view: uesio/studio.bot
 theme: uesio/studio.default
+title: "Bot: $Param{botname}"

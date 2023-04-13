@@ -1,9 +1,0 @@
-name: public
-named: {}
-views: {}
-routes:
-  uesio/crm.login: true
-files: {}
-allowallviews: false
-allowallroutes: false
-allowallfiles: false

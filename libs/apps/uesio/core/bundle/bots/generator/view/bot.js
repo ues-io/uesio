@@ -1,7 +1,8 @@
 function view(bot) {
 	var name = bot.params.get("name")
 	var definition =
-		bot.params.get("definition") || bot.getTemplate("blankdefinition.yaml")
+		bot.params.get("definition") ||
+		bot.getTemplate("templates/blankdefinition.yaml")
 
 	bot.generateYamlFile(
 		"views/" + name + ".yaml",
@@ -9,6 +10,6 @@ function view(bot) {
 			name: name,
 			definition: definition,
 		},
-		"view.yaml"
+		"templates/view.yaml"
 	)
 }

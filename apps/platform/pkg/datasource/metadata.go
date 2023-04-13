@@ -30,6 +30,8 @@ func GetCollectionMetadata(e *meta.Collection) *adapt.CollectionMetadata {
 		RecordChallengeTokens: e.RecordChallengeTokens,
 		TableName:             e.TableName,
 		Public:                e.Public,
+		Label:                 e.Label,
+		PluralLabel:           e.PluralLabel,
 	}
 }
 
@@ -119,8 +121,8 @@ func GetSelectListMetadata(f *meta.Field) *adapt.SelectListMetadata {
 func GetFileMetadata(f *meta.Field) *adapt.FileMetadata {
 	if f.Type == "FILE" && f.FileMetadata != nil {
 		return &adapt.FileMetadata{
-			Accept:         f.FileMetadata.Accept,
-			FileCollection: f.FileMetadata.FileCollection,
+			Accept:     f.FileMetadata.Accept,
+			FileSource: f.FileMetadata.FileSource,
 		}
 	}
 	return nil
@@ -258,22 +260,20 @@ func LoadSelectListMetadata(key string, metadataCache *adapt.MetadataCache, sess
 	selectListMetadata, ok := metadataCache.SelectLists[selectListKey]
 
 	if !ok {
-		namespace, name, err := meta.ParseKey(selectListKey)
+
+		selectList, err := meta.NewSelectList(selectListKey)
 		if err != nil {
-			return errors.New("Field Key: " + selectListKey + ":" + err.Error())
+			return err
 		}
-		selectList := meta.SelectList{
-			Name:      name,
-			Namespace: namespace,
-		}
-		err = bundle.Load(&selectList, session, connection)
+		err = bundle.Load(selectList, session, connection)
 		if err != nil {
 			return err
 		}
 		selectListMetadata = &adapt.SelectListMetadata{
-			Name:             selectList.Name,
-			Options:          selectList.Options,
-			BlankOptionLabel: selectList.BlankOptionLabel,
+			Name:                     selectList.Name,
+			Options:                  selectList.Options,
+			BlankOptionLabel:         selectList.BlankOptionLabel,
+			BlankOptionLanguageLabel: selectList.BlankOptionLanguageLabel,
 		}
 	}
 
@@ -290,17 +290,4 @@ func LoadSelectListMetadata(key string, metadataCache *adapt.MetadataCache, sess
 	fieldMetadata.SelectListMetadata = selectListMetadata
 
 	return nil
-}
-
-func CollateMetadata(collectionKey string, collectionMetadata *adapt.CollectionMetadata, collatedMetadata map[string]*adapt.MetadataCache) {
-	dsKey := collectionMetadata.DataSource
-	_, ok := collatedMetadata[dsKey]
-	if !ok {
-		collatedMetadata[dsKey] = &adapt.MetadataCache{}
-	}
-	_, ok = collatedMetadata[dsKey].Collections[collectionKey]
-	if !ok {
-		cache := collatedMetadata[dsKey]
-		cache.AddCollection(collectionKey, collectionMetadata)
-	}
 }

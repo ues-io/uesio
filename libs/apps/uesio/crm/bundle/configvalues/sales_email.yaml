@@ -1,0 +1,5 @@
+name: sales_email
+public: true
+store: platform
+managedBy: site
+value: ""

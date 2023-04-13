@@ -1,18 +1,18 @@
 import { FunctionComponent } from "react"
 import { definition, styles, collection, component } from "@uesio/ui"
 
-interface Props extends definition.BaseProps {
+interface Props extends definition.UtilityProps {
 	csvOptions: collection.SelectOption[]
 	mapping: definition.ImportMapping | undefined
 	setMapping: (mapping: definition.ImportMapping) => void
 	removeMapping: () => void
 	field: collection.Field
 }
-const CheckboxField = component.getUtility("uesio/io.checkboxfield")
-const TextField = component.getUtility("uesio/io.textfield")
-const SelectField = component.getUtility("uesio/io.selectfield")
 
 const ImportBodyItem: FunctionComponent<Props> = (props) => {
+	const CheckboxField = component.getUtility("uesio/io.checkboxfield")
+	const TextField = component.getUtility("uesio/io.textfield")
+	const SelectField = component.getUtility("uesio/io.selectfield")
 	const { context, csvOptions, setMapping, removeMapping, field, mapping } =
 		props
 
@@ -38,7 +38,7 @@ const ImportBodyItem: FunctionComponent<Props> = (props) => {
 				alignItems: "center",
 			},
 		},
-		null
+		props
 	)
 
 	return (

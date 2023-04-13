@@ -26,15 +26,12 @@ func ViewPreview(buildMode bool) http.HandlerFunc {
 
 		session := middleware.GetSession(r)
 
-		view := meta.View{
-			Name:      viewName,
-			Namespace: viewNamespace,
-		}
+		view := meta.NewBaseView(viewNamespace, viewName)
 
 		// Make sure this is a legit view that we have access to
-		err := bundle.Load(&view, session, nil)
+		err := bundle.Load(view, session, nil)
 		if err != nil {
-			HandleMissingRoute(w, r, session, "", err)
+			HandleErrorRoute(w, r, session, "", err, false)
 			return
 		}
 
@@ -52,14 +49,14 @@ func ViewPreview(buildMode bool) http.HandlerFunc {
 
 		depsCache, err := routing.GetMetadataDeps(route, session)
 		if err != nil {
-			HandleErrorRoute(w, r, session, "", err)
+			HandleErrorRoute(w, r, session, "", err, false)
 			return
 		}
 
 		if buildMode {
 			err = routing.GetBuilderDependencies(viewNamespace, viewName, depsCache, session)
 			if err != nil {
-				HandleErrorRoute(w, r, session, "", err)
+				HandleErrorRoute(w, r, session, "", err, false)
 				return
 			}
 		}

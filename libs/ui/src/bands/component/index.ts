@@ -2,29 +2,19 @@ import { createEntityAdapter, createSlice } from "@reduxjs/toolkit"
 import { RootState } from "../../store/store"
 import { ComponentState } from "./types"
 import { set as setRoute } from "../route"
-import { Context } from "../../context/context"
 
 const componentAdapter = createEntityAdapter<ComponentState>({
 	selectId: (component) => component.id,
 })
-
-const makeComponentId = (
-	context: Context,
-	componentType: string,
-	id: string,
-	noRecordContext?: boolean
-) => {
-	const viewId = context.getViewId()
-	const recordId = context.getRecordId()
-	const recordSuffix = !noRecordContext && recordId ? `:${recordId}` : ""
-	return `${viewId}:${componentType}:${id}${recordSuffix}`
-}
 
 const componentSlice = createSlice({
 	name: "component",
 	initialState: componentAdapter.getInitialState(),
 	reducers: {
 		set: componentAdapter.upsertOne,
+		setMany: componentAdapter.upsertMany,
+		removeMany: componentAdapter.removeMany,
+		removeOne: componentAdapter.removeOne,
 	},
 	extraReducers: (builder) => {
 		builder.addCase(setRoute, componentAdapter.removeAll)
@@ -34,6 +24,6 @@ const componentSlice = createSlice({
 const selectors = componentAdapter.getSelectors(
 	(state: RootState) => state.component
 )
-export const { set } = componentSlice.actions
-export { selectors, makeComponentId }
+export const { set, setMany, removeMany, removeOne } = componentSlice.actions
+export { selectors }
 export default componentSlice.reducer

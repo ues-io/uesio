@@ -6,29 +6,29 @@ import (
 
 type AppCollection []*App
 
+var APP_COLLECTION_NAME = "uesio/studio.app"
+var APP_FIELDS = StandardGetFields(&App{})
+
 func (ac *AppCollection) GetName() string {
-	return "uesio/studio.app"
+	return APP_COLLECTION_NAME
 }
 
 func (ac *AppCollection) GetFields() []string {
-	return StandardGetFields(&App{})
-}
-
-func (ac *AppCollection) GetItem(index int) Item {
-	return (*ac)[index]
+	return APP_FIELDS
 }
 
 func (ac *AppCollection) NewItem() Item {
 	return &App{}
 }
 
-func (ac *AppCollection) AddItem(item Item) {
+func (ac *AppCollection) AddItem(item Item) error {
 	*ac = append(*ac, item.(*App))
+	return nil
 }
 
 func (ac *AppCollection) Loop(iter GroupIterator) error {
-	for index := range *ac {
-		err := iter(ac.GetItem(index), strconv.Itoa(index))
+	for index, a := range *ac {
+		err := iter(a, strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -38,8 +38,4 @@ func (ac *AppCollection) Loop(iter GroupIterator) error {
 
 func (ac *AppCollection) Len() int {
 	return len(*ac)
-}
-
-func (ac *AppCollection) GetItems() interface{} {
-	return *ac
 }

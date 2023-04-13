@@ -45,6 +45,9 @@ type CollectionMetadata struct {
 	RecordChallengeTokens []*meta.RecordChallengeTokenDefinition `json:"-"`
 	TableName             string                                 `json:"-"`
 	Public                bool                                   `json:"public"`
+	HasAllFields          bool                                   `json:"hasAllFields"`
+	Label                 string                                 `json:"label"`
+	PluralLabel           string                                 `json:"pluralLabel"`
 }
 
 func (cm *CollectionMetadata) IsWriteProtected() bool {
@@ -101,14 +104,15 @@ func (cm *CollectionMetadata) GetFullName() string {
 }
 
 type SelectListMetadata struct {
-	Name             string                  `json:"name"`
-	Options          []meta.SelectListOption `json:"options"`
-	BlankOptionLabel string                  `json:"blank_option_label"`
+	Name                     string                  `json:"name"`
+	Options                  []meta.SelectListOption `json:"options"`
+	BlankOptionLabel         string                  `json:"blank_option_label"`
+	BlankOptionLanguageLabel string                  `json:"blank_option_language_label"`
 }
 
 type FileMetadata struct {
-	Accept         string `json:"accept"`
-	FileCollection string `json:"filecollection"`
+	Accept     string `json:"accept"`
+	FileSource string `json:"filesource"`
 }
 
 type NumberMetadata struct {

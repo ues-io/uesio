@@ -1,3 +1,0 @@
-name: wiresprop
-pack: main
-entrypoint: utilities/wiresprop/wiresprop.tsx

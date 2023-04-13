@@ -2,13 +2,21 @@ import { Context } from "../../../context/context"
 import loadWiresOp from "../../wire/operations/load"
 import initializeWiresOp from "../../wire/operations/initialize"
 import { runMany } from "../../../signals/signals"
-import { appDispatch, getCurrentState } from "../../../store/store"
+import { getCurrentState } from "../../../store/store"
 import { selectWire } from "../../wire"
-import { dispatchRouteDeps } from "../../route/utils"
-import { batch } from "react-redux"
 import { useEffect, useRef } from "react"
-import { ViewDefinition } from "../../../definition/viewdef"
-import { platform } from "../../../platform/platform"
+import { ViewDefinition, ViewEventsDef } from "../../../definition/viewdef"
+
+const runEvents = async (
+	events: ViewEventsDef | undefined,
+	context: Context
+) => {
+	// Handle Events
+	const onloadEvents = events?.onload
+	if (onloadEvents) {
+		await runMany(onloadEvents, context)
+	}
+}
 
 const usePrevious = <T>(value: T): T | undefined => {
 	const ref = useRef<T>()
@@ -25,75 +33,74 @@ const useLoadWires = (
 	const viewDefId = context.getViewDefId()
 	if (!viewDefId) throw new Error("No View Def Context Provided")
 
-	useEffect(() => {
-		;(async () => {
-			if (context.getBuildMode()) {
-				if (!viewDef) {
-					const deps = await platform.getBuilderDeps(context)
-					if (!deps) throw new Error("Could not get View Def")
-					batch(() => {
-						dispatchRouteDeps(deps, appDispatch())
-					})
-				}
-			}
-		})()
-	}, [viewDefId])
-
 	if (!viewDef) throw new Error("Could not get View Def")
 
-	const params = context.getParams()
+	const route = context.getRoute()
+	if (!route) throw new Error("No Route in Context for View Load")
 
-	const oldParams = usePrevious(params)
-	const oldWires = usePrevious(viewDef.wires)
+	const params = context.getParams()
+	const wires = viewDef.wires
+	const events = viewDef.events
+
+	// Keeps track of the value of wires from the previous render
+	const prevWires = usePrevious(wires)
+	const prevRoute = usePrevious(route.path)
 
 	useEffect(() => {
 		;(async () => {
-			const wires = viewDef.wires || {}
+			if (!wires) return
 			const wireNames = Object.keys(wires)
 			if (!wireNames.length) return
 			const state = getCurrentState()
 
-			const paramsChanged = oldParams !== params
-
 			const viewId = context.getViewId()
 
+			// Only initialize wires that don't already exist in our redux store.
+			// This filters out our pre-loaded wires so they aren't initialized twice.
 			const wiresToInit = Object.fromEntries(
-				Object.entries(wires).flatMap(([wirename, wireDef]) => {
+				wireNames.flatMap((wirename) => {
+					const wireDef = wires[wirename]
 					const foundWire = selectWire(state, viewId, wirename)
-					const isPreloaded = foundWire?.preloaded
-					const isUnchanged =
-						!paramsChanged && wireDef === oldWires?.[wirename]
-					return isPreloaded || isUnchanged
-						? []
-						: [[wirename, wireDef]]
+					return foundWire ? [] : [[wirename, wireDef]]
 				})
 			)
 
 			if (Object.keys(wiresToInit).length) {
-				appDispatch()(initializeWiresOp(context, wiresToInit))
+				initializeWiresOp(context, wiresToInit)
 			}
 
-			const wiresToLoad = Object.fromEntries(
-				Object.entries(wires).flatMap(([wirename, wireDef]) => {
-					const isUnchanged =
-						!paramsChanged && wireDef === oldWires?.[wirename]
-					return isUnchanged ? [] : [[wirename, wireDef]]
-				})
-			)
-
-			if (Object.keys(wiresToLoad).length) {
-				await appDispatch()(
-					loadWiresOp(context, Object.keys(wiresToLoad))
-				)
+			if (wireNames.length) {
+				await loadWiresOp(context, wireNames)
 			}
-
-			// Handle Events
-			const onloadEvents = viewDef.events?.onload
-			if (onloadEvents) {
-				await runMany(onloadEvents, context)
-			}
+			await runEvents(events, context)
 		})()
-	}, [viewDefId, JSON.stringify(params), viewDef.wires])
+	}, [route.path, viewDefId, JSON.stringify(params)])
+
+	useEffect(() => {
+		;(async () => {
+			if (!wires || !prevWires) return
+			if (prevRoute !== route.path) return
+
+			// This filters out any wires whose definition did not change since the
+			// last time this hook was run. That way we only re-initialize and load
+			// wires that need it.
+			const changedWires = Object.entries(wires).flatMap(
+				([wirename, wire]) => {
+					const prev = prevWires[wirename]
+					if (!prev) return [wirename]
+					if (JSON.stringify(wire) !== JSON.stringify(prev))
+						return [wirename]
+					return []
+				}
+			)
+			if (!changedWires.length) return
+			const wiresToInit = Object.fromEntries(
+				changedWires.map((wirename) => [wirename, wires[wirename]])
+			)
+			initializeWiresOp(context, wiresToInit)
+			await loadWiresOp(context, changedWires)
+		})()
+	}, [JSON.stringify(wires)])
 }
 
 export { useLoadWires }

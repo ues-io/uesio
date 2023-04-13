@@ -81,7 +81,7 @@ definition:
                     uesio.variant: uesio/io.nav
                     title: Workspaces
                 - uesio/io.list:
-                    id: workspaceslist
+                    uesio.id: workspaceslist
                     wire: workspaces
                     components:
                       - uesio/io.tile:
@@ -104,7 +104,7 @@ definition:
                     uesio.variant: uesio/io.nav
                     title: Sites
                 - uesio/io.list:
-                    id: siteslist
+                    uesio.id: siteslist
                     wire: sites
                     components:
                       - uesio/io.tile:
@@ -127,7 +127,7 @@ definition:
               uesio.variant: uesio/studio.content
               components:
                 - uesio/io.list:
-                    id: bundleDeck
+                    uesio.id: bundleDeck
                     wire: bundles
                     mode: READ
                     components:
@@ -150,11 +150,7 @@ definition:
                               padding: 40px
                           components:
                             - uesio/io.grid:
-                                templateColumns:
-                                  xs: 1fr
-                                  md: 1fr 1fr
-                                  lg: 1fr 1fr 1fr 1fr
-                                columnGap: 10px
+                                uesio.variant: uesio/io.four_columns
                                 items:
                                   - uesio/io.field:
                                       fieldId: uesio/studio.major

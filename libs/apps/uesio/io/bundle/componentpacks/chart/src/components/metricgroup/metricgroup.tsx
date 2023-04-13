@@ -1,31 +1,27 @@
-import { FC } from "react"
-import { styles, hooks, component } from "@uesio/ui"
-import { Props } from "./metricgroupdefinition"
+import { api, component, definition, signal } from "@uesio/ui"
 
-import { aggregate } from "../../shared/aggregate"
+import { aggregate, SeriesDefinition } from "../../shared/aggregate"
+import { LabelsDefinition } from "../../shared/labels"
 
-const MetricUtility = component.getUtility("uesio/io.metric")
+type MetricGroupDefinition = {
+	labels: LabelsDefinition
+	title?: string
+	series: SeriesDefinition[]
+	signals?: signal.SignalDefinition[]
+}
 
-const MetricGroupComponent: FC<Props> = (props) => {
+const MetricGroupComponent: definition.UC<MetricGroupDefinition> = (props) => {
+	const MetricUtility = component.getUtility("uesio/io.metric")
 	const { definition, context } = props
 	if (!definition || !definition.series || !definition.labels) {
 		console.warn("missing definition for metric group")
 		return null
 	}
 
-	const classes = styles.useStyles(
-		{
-			root: {},
-		},
-		props
-	)
-
-	const uesio = hooks.useUesio(props)
-
 	// Get a list of all wires used
 	const wireNames = definition.series.map(({ wire }) => wire || "")
 
-	const wires = uesio.wire.useWires(wireNames)
+	const wires = api.wire.useWires(wireNames, context)
 
 	const [datasets, categories] = aggregate(
 		wires,
@@ -37,12 +33,10 @@ const MetricGroupComponent: FC<Props> = (props) => {
 		<>
 			{Object.keys(categories).map((category, i) => {
 				const value = datasets[0].data[i]
-				const handler = uesio.signal.getHandler(
+				const handler = api.signal.getHandler(
 					definition.signals,
-					props.context.addFrame({
-						params: {
-							category,
-						},
+					props.context.addComponentFrame("uesio/chart.metricgroup", {
+						category,
 					})
 				)
 				return (
@@ -58,8 +52,6 @@ const MetricGroupComponent: FC<Props> = (props) => {
 			})}
 		</>
 	)
-
-	return <div className={classes.root}>blah</div>
 }
 
 export default MetricGroupComponent

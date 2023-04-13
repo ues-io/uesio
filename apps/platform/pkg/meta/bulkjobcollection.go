@@ -6,29 +6,29 @@ import (
 
 type BulkJobCollection []*BulkJob
 
+var BULKJOB_COLLECTION_NAME = "uesio/core.bulkjob"
+var BULKJOB_FIELDS = StandardGetFields(&BulkJob{})
+
 func (bjc *BulkJobCollection) GetName() string {
-	return "uesio/core.bulkjob"
+	return BULKJOB_COLLECTION_NAME
 }
 
 func (bjc *BulkJobCollection) GetFields() []string {
-	return StandardGetFields(&BulkJob{})
-}
-
-func (bjc *BulkJobCollection) GetItem(index int) Item {
-	return (*bjc)[index]
+	return BULKJOB_FIELDS
 }
 
 func (bjc *BulkJobCollection) NewItem() Item {
 	return &BulkJob{}
 }
 
-func (bjc *BulkJobCollection) AddItem(item Item) {
+func (bjc *BulkJobCollection) AddItem(item Item) error {
 	*bjc = append(*bjc, item.(*BulkJob))
+	return nil
 }
 
 func (bjc *BulkJobCollection) Loop(iter GroupIterator) error {
-	for index := range *bjc {
-		err := iter(bjc.GetItem(index), strconv.Itoa(index))
+	for index, bj := range *bjc {
+		err := iter(bj, strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -38,8 +38,4 @@ func (bjc *BulkJobCollection) Loop(iter GroupIterator) error {
 
 func (bjc *BulkJobCollection) Len() int {
 	return len(*bjc)
-}
-
-func (bjc *BulkJobCollection) GetItems() interface{} {
-	return *bjc
 }

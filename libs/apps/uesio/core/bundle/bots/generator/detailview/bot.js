@@ -2,7 +2,7 @@ function view(bot) {
 	var name = bot.params.get("name")
 	var collection = bot.params.get("collection")
 	var fields = bot.params.get("fields")
-	var wirename = bot.params.get("wirename")
+	var wirename = name + "Wire"
 
 	var fieldsYaml = bot.repeatString(fields, "${key}:\n")
 	var formFieldsYaml = bot.repeatString(
@@ -17,7 +17,7 @@ function view(bot) {
 			formFields: formFieldsYaml,
 			wirename: wirename,
 		},
-		"detailview.yaml"
+		"templates/detailview.yaml"
 	)
 
 	bot.runGenerator("uesio/core", "view", {

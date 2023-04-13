@@ -3,7 +3,7 @@ import testWireSignal, {
 	defaultPlainWireProperties,
 } from "./utils"
 import { getCollection, testEnv } from "../utils/defaults"
-import { useUesio } from "../../src/hooks/hooks"
+import * as api from "../../src/api/api"
 import * as platformModule from "../../src/platform/platform"
 
 const { viewId, wireId, collectionId, ns } = testEnv
@@ -75,10 +75,7 @@ const tests: WireSignalTest[] = [
 			],
 		},
 		run: () => (wire, context) => {
-			const uesio = useUesio({
-				context,
-			})
-			const handler = uesio.signal.getHandler(
+			const handler = api.signal.getHandler(
 				[
 					{
 						signal: "wire/LOAD",

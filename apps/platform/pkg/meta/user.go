@@ -1,8 +1,7 @@
 package meta
 
 type User struct {
-	ID        string            `json:"uesio/core.id"`
-	UniqueKey string            `json:"uesio/core.uniquekey"`
+	BuiltIn   `yaml:",inline"`
 	FirstName string            `json:"uesio/core.firstname"`
 	LastName  string            `json:"uesio/core.lastname"`
 	Profile   string            `json:"uesio/core.profile"`
@@ -12,12 +11,10 @@ type User struct {
 	Type      string            `json:"uesio/core.type"`
 	Picture   *UserFileMetadata `json:"uesio/core.picture"`
 	Language  string            `json:"uesio/core.language"`
-	itemMeta  *ItemMeta         `json:"-"`
-	CreatedBy *User             `json:"uesio/core.createdby"`
-	Owner     *User             `json:"uesio/core.owner"`
-	UpdatedBy *User             `json:"uesio/core.updatedby"`
-	UpdatedAt int64             `json:"uesio/core.updatedat"`
-	CreatedAt int64             `json:"uesio/core.createdat"`
+}
+
+func (u *User) GetPicture() *UserFileMetadata {
+	return u.Picture
 }
 
 func (u *User) GetPictureID() string {
@@ -27,12 +24,15 @@ func (u *User) GetPictureID() string {
 	return ""
 }
 
-func (u *User) GetCollectionName() string {
-	return u.GetCollection().GetName()
+func (u *User) GetPictureUpdatedAt() int64 {
+	if u.Picture != nil {
+		return u.Picture.UpdatedAt
+	}
+	return 0
 }
 
-func (u *User) GetCollection() CollectionableGroup {
-	return &UserCollection{}
+func (u *User) GetCollectionName() string {
+	return USER_COLLECTION_NAME
 }
 
 func (u *User) SetField(fieldName string, value interface{}) error {
@@ -49,12 +49,4 @@ func (u *User) Loop(iter func(string, interface{}) error) error {
 
 func (u *User) Len() int {
 	return StandardItemLen(u)
-}
-
-func (u *User) GetItemMeta() *ItemMeta {
-	return u.itemMeta
-}
-
-func (u *User) SetItemMeta(itemMeta *ItemMeta) {
-	u.itemMeta = itemMeta
 }

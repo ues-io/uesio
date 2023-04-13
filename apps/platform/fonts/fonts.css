@@ -1,12 +1,13 @@
+{{define "fonts"}}
 /* roboto-300 - latin */
 @font-face {
 	font-family: "Roboto";
 	font-style: normal;
 	font-weight: 300;
 	src: local("Roboto Light"), local("Roboto-Light"),
-		url("/fonts/roboto-v20-latin-300.woff2") format("woff2"),
+		url("{{ .StaticAssetsPath }}/fonts/roboto-v20-latin-300.woff2") format("woff2"),
 		/* Chrome 26+, Opera 23+, Firefox 39+ */
-			url("/fonts/roboto-v20-latin-300.woff") format("woff"); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+			url("{{ .StaticAssetsPath }}/fonts/roboto-v20-latin-300.woff") format("woff"); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
 }
 /* roboto-regular - latin */
 @font-face {
@@ -14,9 +15,9 @@
 	font-style: normal;
 	font-weight: 400;
 	src: local("Roboto"), local("Roboto-Regular"),
-		url("/fonts/roboto-v20-latin-regular.woff2") format("woff2"),
+		url("{{ .StaticAssetsPath }}/fonts/roboto-v20-latin-regular.woff2") format("woff2"),
 		/* Chrome 26+, Opera 23+, Firefox 39+ */
-			url("/fonts/roboto-v20-latin-regular.woff") format("woff"); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+			url("{{ .StaticAssetsPath }}/fonts/roboto-v20-latin-regular.woff") format("woff"); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
 }
 /* roboto-500 - latin */
 @font-face {
@@ -24,9 +25,9 @@
 	font-style: normal;
 	font-weight: 500;
 	src: local("Roboto Medium"), local("Roboto-Medium"),
-		url("/fonts/roboto-v20-latin-500.woff2") format("woff2"),
+		url("{{ .StaticAssetsPath }}/fonts/roboto-v20-latin-500.woff2") format("woff2"),
 		/* Chrome 26+, Opera 23+, Firefox 39+ */
-			url("/fonts/roboto-v20-latin-500.woff") format("woff"); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+			url("{{ .StaticAssetsPath }}/fonts/roboto-v20-latin-500.woff") format("woff"); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
 }
 /* roboto-700 - latin */
 @font-face {
@@ -34,41 +35,43 @@
 	font-style: normal;
 	font-weight: 700;
 	src: local("Roboto Bold"), local("Roboto-Bold"),
-		url("/fonts/roboto-v20-latin-700.woff2") format("woff2"),
+		url("{{ .StaticAssetsPath }}/fonts/roboto-v20-latin-700.woff2") format("woff2"),
 		/* Chrome 26+, Opera 23+, Firefox 39+ */
-			url("/fonts/roboto-v20-latin-700.woff") format("woff"); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+			url("{{ .StaticAssetsPath }}/fonts/roboto-v20-latin-700.woff") format("woff"); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
 }
 
 @font-face {
 	font-family: "Material Icons";
 	font-style: normal;
 	font-weight: 400;
-	src: url("/fonts/materialsymbols.woff2") format("woff2");
+	src: url("{{ .StaticAssetsPath }}/fonts/materialsymbols.woff2") format("woff2");
 }
 
 @font-face {
 	font-family: Gosha;
-	src: url("/fonts/GoshaSans-Regular.otf") format("opentype");
+	src: url("{{ .StaticAssetsPath }}/fonts/GoshaSans-Regular.otf") format("opentype");
 }
 
 @font-face {
 	font-family: Gosha;
 	font-weight: bold;
-	src: url("/fonts/GoshaSans-Bold.otf") format("opentype");
+	src: url("{{ .StaticAssetsPath }}/fonts/GoshaSans-Bold.otf") format("opentype");
 }
 
 /* Greenlink */
 @font-face {
 	font-family: "Viga";
-	src: url("/fonts/Viga-Regular.ttf") format("truetype");
+	src: url("{{ .StaticAssetsPath }}/fonts/Viga-Regular.ttf") format("truetype");
 }
 @font-face {
 	font-family: "Lato";
-	src: url("/fonts/Lato-Regular.ttf") format("truetype");
+	src: url("{{ .StaticAssetsPath }}/fonts/Lato-Regular.ttf") format("truetype");
 }
 @font-face {
 	font-family: "Lato";
 	font-weight: bold;
-	src: url("/fonts/Lato-Bold.ttf") format("truetype");
+	src: url("{{ .StaticAssetsPath }}/fonts/Lato-Bold.ttf") format("truetype");
 }
 /*  */
+
+{{end}}

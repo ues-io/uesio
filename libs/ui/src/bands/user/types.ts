@@ -5,7 +5,12 @@ type UserState = {
 	firstname: string
 	lastname: string
 	profile: string
-	picture: string
+	picture: UserPictureState | null
 } | null
 
-export { UserState }
+type UserPictureState = {
+	id: string
+	updatedat: number
+}
+
+export type { UserState, UserPictureState }

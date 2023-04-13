@@ -68,11 +68,11 @@ definition:
           value: PERSON
   events:
     onload:
+      - signal: context/SET
+        type: SITE_ADMIN
+        name: $Param{sitename}
+        app: $Param{app}
       - signal: "wire/LOAD"
-        uesio.context:
-          siteadmin:
-            name: $Param{sitename}
-            app: $Param{app}
         wires:
           - users
   components:
@@ -107,17 +107,23 @@ definition:
                           components:
                             - uesio/io.button:
                                 text: "Add a User"
-                                uesio.variant: uesio/io.secondary
+                                hotkey: "n"
+                                uesio.variant: uesio/io.primary
                                 signals:
                                   - signal: "panel/TOGGLE"
                                     panel: "newUser"
                 - uesio/io.box:
-                    uesio.variant: uesio/io.section
+                    uesio.variant: uesio/io.paddedsection
                     components:
-                      - uesio/io.deck:
-                          id: userslist
+                      - uesio/io.searchbox:
                           wire: users
-                          uesio.variant: uesio/io.section
+                          searchfields:
+                            - uesio/studio.firstname
+                            - uesio/studio.lastname
+                            - uesio/studio.username
+                      - uesio/io.deck:
+                          uesio.id: userslist
+                          wire: users
                           components:
                             - uesio/io.tile:
                                 uesio.variant: uesio/io.item
@@ -144,10 +150,10 @@ definition:
       uesio.type: uesio/io.dialog
       title: Add a User
       width: 400px
-      height: 500px
+      height: 600px
       components:
         - uesio/io.list:
-            id: newuserlist
+            uesio.id: newuserlist
             wire: newuser
             mode: EDIT
             components:
@@ -159,7 +165,7 @@ definition:
                   fieldId: uesio/core.lastname
               - uesio/io.field:
                   fieldId: uesio/core.email
-              - uesio/studio.metadatafield:
+              - uesio/builder.metadatafield:
                   uesio.context:
                     siteadmin:
                       name: $Param{sitename}
@@ -172,22 +178,22 @@ definition:
             uesio.variant: uesio/io.primary
             text: "Save"
             signals:
+              - signal: context/SET
+                type: SITE_ADMIN
+                name: $Param{sitename}
+                app: $Param{app}
               - signal: wire/SAVE
                 wires:
                   - newuser
-                uesio.context:
-                  siteadmin:
-                    name: $Param{sitename}
-                    app: $Param{app}
+              - signal: wire/LOAD
+                wires:
+                  - users
               - signal: "panel/TOGGLE"
                 panel: "newUser"
               - signal: wire/EMPTY
                 wire: newuser
               - signal: wire/CREATE_RECORD
                 wire: newuser
-              - signal: wire/LOAD
-                wires:
-                  - users
         - uesio/io.button:
             uesio.variant: "uesio/io.secondary"
             text: "Cancel"

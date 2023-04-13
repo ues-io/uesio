@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux"
-import { RootState } from "../../store/store"
+import { getCurrentState, RootState } from "../../store/store"
 import { selectors } from "./adapter"
 import { PlainCollection } from "./types"
 
@@ -7,6 +7,10 @@ const useCollection = (collectionId: string | undefined) =>
 	useSelector((state: RootState) =>
 		collectionId ? selectors.selectById(state, collectionId) : undefined
 	)
+const getCollection = (collectionId: string | undefined) =>
+	collectionId
+		? selectors.selectById(getCurrentState(), collectionId)
+		: undefined
 const useCollections = (
 	collectionIds: string[]
 ): Record<string, PlainCollection | undefined> =>
@@ -16,4 +20,4 @@ const useCollections = (
 		)
 	)
 
-export { useCollection, useCollections }
+export { useCollection, useCollections, getCollection }

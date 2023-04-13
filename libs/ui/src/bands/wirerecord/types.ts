@@ -10,4 +10,4 @@ type PlainWireRecord = {
 
 type PlainFieldValue = string | number | boolean | undefined | null
 
-export { PlainWireRecord, FieldValue }
+export type { PlainWireRecord, FieldValue, PlainFieldValue }

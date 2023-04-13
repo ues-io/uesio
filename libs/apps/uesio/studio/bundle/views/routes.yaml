@@ -36,6 +36,7 @@ definition:
         uesio/studio.path:
         uesio/studio.view:
         uesio/studio.theme:
+        uesio/studio.title:
       conditions:
         - field: uesio/studio.workspace
           valueSource: LOOKUP
@@ -84,18 +85,24 @@ definition:
                       - uesio/io.group:
                           components:
                             - uesio/io.button:
+                                uesio.id: create-route
                                 text: Create a New Route
-                                uesio.variant: uesio/io.secondary
+                                hotkey: "n"
+                                uesio.variant: uesio/io.primary
                                 signals:
                                   - signal: panel/TOGGLE
                                     panel: newRoute
                 - uesio/io.box:
-                    uesio.variant: uesio/io.section
+                    uesio.variant: uesio/io.paddedsection
                     components:
-                      - uesio/io.deck:
-                          id: routesDeck
+                      - uesio/io.searchbox:
                           wire: routes
-                          uesio.variant: uesio/io.section
+                          searchfields:
+                            - uesio/studio.name
+                            - uesio/studio.path
+                      - uesio/io.deck:
+                          uesio.id: routesDeck
+                          wire: routes
                           components:
                             - uesio/io.tile:
                                 uesio.variant: uesio/io.item
@@ -118,7 +125,7 @@ definition:
       height: 500px
       components:
         - uesio/io.list:
-            id: newroutelist
+            uesio.id: newroutelist
             wire: newroute
             mode: EDIT
             uesio.context:
@@ -130,15 +137,18 @@ definition:
                   fieldId: uesio/studio.name
               - uesio/io.field:
                   fieldId: uesio/studio.path
-              - uesio/studio.metadatafield:
+              - uesio/builder.metadatafield:
                   fieldId: uesio/studio.view
                   metadataType: "VIEW"
                   label: "View"
-              - uesio/studio.metadatafield:
+              - uesio/builder.metadatafield:
                   fieldId: uesio/studio.theme
                   metadataType: "THEME"
                   label: "Theme"
-              - uesio/studio.metadatafield:
+              - uesio/io.field:
+                  fieldId: uesio/studio.title
+                  label: "Title"
+              - uesio/builder.metadatafield:
                   fieldId: uesio/studio.collection
                   metadataType: "COLLECTION"
                   label: "Collection"

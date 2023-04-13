@@ -1,0 +1,5 @@
+name: from_email
+public: true
+store: platform
+managedBy: site
+value: ""

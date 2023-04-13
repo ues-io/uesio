@@ -1,15 +1,22 @@
 import { CSSInterpolation } from "@emotion/css"
-import { ReactNode } from "react"
+import { FC, ReactNode } from "react"
 import yaml from "yaml"
 import { MetadataKey } from "../bands/builder/types"
 import { DisplayCondition } from "../component/display"
 import { Context } from "../context/context"
+import { ComponentSignalDescriptor } from "./signal"
 
 export type BaseDefinition = {
-	"uesio.styles"?: Record<string, Record<string, string>>
+	// "id" here is TEMPORARY - for backwards compatibility on components like Table/List/Deck that initially had "id"
+	// Once morandi / timetracker / etc. are migrated to using "uesio.id" in their metadata, we can remove this affordance.
+	id?: string
+	"uesio.id"?: string
+	"uesio.styles"?: DefinitionMap
+	"uesio.styleTokens"?: Record<string, string[]>
 	"uesio.variant"?: MetadataKey
 	"uesio.display"?: DisplayCondition[]
-} & DefinitionMap
+	"uesio.classes"?: DisplayCondition[]
+}
 
 export type YamlDoc = yaml.Document<yaml.Node>
 
@@ -40,34 +47,36 @@ export type UploadSpec = {
 	uploadfield?: string
 }
 
-export type BaseProps = {
-	definition?: BaseDefinition
-	index?: number
-	path?: string
+export type BaseProps<T = DefinitionMap> = {
+	definition: T & BaseDefinition
+	path: string
 	componentType?: MetadataKey
 	context: Context
 	children?: ReactNode
 }
 
+export type UC<T = DefinitionMap> = FC<BaseProps<T>> & {
+	signals?: Record<string, ComponentSignalDescriptor>
+}
+
+export type UtilityComponent<T = DefinitionMap> = FC<T & UtilityProps>
+
 export interface UtilityProps {
-	index?: number
-	path?: string
+	id?: string
 	variant?: MetadataKey
 	styles?: Record<string, CSSInterpolation>
+	styleTokens?: Record<string, string[]>
 	classes?: Record<string, string>
 	className?: string
 	context: Context
 	children?: ReactNode
-	componentType?: MetadataKey
 }
 
-export type DefinitionMap = {
-	[key: string]: Definition
-}
+export type DefinitionMap = Record<string, unknown>
 
 export type DefinitionList = DefinitionMap[]
 
-export type DefinitionValue = string | number | boolean | null | undefined
+export type DefinitionValue = unknown
 
 export type Definition =
 	| DefinitionValue

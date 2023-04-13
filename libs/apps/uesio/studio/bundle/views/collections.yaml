@@ -82,15 +82,14 @@ definition:
                           components:
                             - uesio/io.button:
                                 text: Create a New Collection
-                                uesio.variant: uesio/io.secondary
+                                hotkey: "n"
+                                uesio.variant: uesio/io.primary
+                                uesio.id: new-collection
                                 signals:
                                   - signal: panel/TOGGLE
                                     panel: newCollection
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
-                    uesio.styles:
-                      root:
-                        padding: 40px
                     components:
                       - uesio/io.searchbox:
                           wire: allcollections
@@ -103,9 +102,7 @@ definition:
                             - label: Collection
                               components:
                                 - uesio/studio.iconlabel:
-                                    uesio.styles:
-                                      root:
-                                        padding: 16px
+                                    uesio.variant: uesio/studio.namespacefield
                                     text: ${uesio/studio.name}
                                     icon: ${uesio/studio.appicon}
                                     color: ${uesio/studio.appcolor}
@@ -130,9 +127,6 @@ definition:
                           uesio.variant: uesio/io.section
                           title: Installed Collections
                       - uesio/io.table:
-                          uesio.styles:
-                            root:
-                              padding: 40px
                           wire: allcollections
                           recordDisplay:
                             - field: uesio/studio.namespace
@@ -142,9 +136,7 @@ definition:
                             - label: Collection
                               components:
                                 - uesio/studio.iconlabel:
-                                    uesio.styles:
-                                      root:
-                                        padding: 16px
+                                    uesio.variant: uesio/studio.namespacefield
                                     text: ${uesio/studio.name}
                                     icon: ${uesio/studio.appicon}
                                     color: ${uesio/studio.appcolor}
@@ -158,19 +150,23 @@ definition:
       height: 500px
       components:
         - uesio/io.list:
-            id: newcollectionlist
+            uesio.id: newcollectionlist
             wire: newcollection
             mode: EDIT
             components:
               - uesio/io.field:
                   fieldId: uesio/studio.name
+                  uesio.id: new-collection-name
               - uesio/io.field:
                   fieldId: uesio/studio.label
+                  uesio.id: new-collection-label
               - uesio/io.field:
                   fieldId: uesio/studio.plurallabel
+                  uesio.id: new-collection-plural-label
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
+            uesio.id: save-new-collection
             text: "Save"
             signals:
               - signal: wire/SAVE
@@ -180,6 +176,7 @@ definition:
                 path: "app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{app}/${uesio/studio.name}"
         - uesio/io.button:
             uesio.variant: "uesio/io.secondary"
+            uesio.id: cancel-new-collection
             text: "Cancel"
             signals:
               - signal: "panel/TOGGLE"

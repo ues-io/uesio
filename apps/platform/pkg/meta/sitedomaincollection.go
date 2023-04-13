@@ -6,29 +6,29 @@ import (
 
 type SiteDomainCollection []*SiteDomain
 
+var SITEDOMAIN_COLLECTION_NAME = "uesio/studio.sitedomain"
+var SITEDOMAIN_FIELDS = StandardGetFields(&SiteDomain{})
+
 func (sdc *SiteDomainCollection) GetName() string {
-	return "uesio/studio.sitedomain"
+	return SITEDOMAIN_COLLECTION_NAME
 }
 
 func (sdc *SiteDomainCollection) GetFields() []string {
-	return StandardGetFields(&SiteDomain{})
-}
-
-func (sdc *SiteDomainCollection) GetItem(index int) Item {
-	return (*sdc)[index]
+	return SITEDOMAIN_FIELDS
 }
 
 func (sdc *SiteDomainCollection) NewItem() Item {
 	return &SiteDomain{}
 }
 
-func (sdc *SiteDomainCollection) AddItem(item Item) {
+func (sdc *SiteDomainCollection) AddItem(item Item) error {
 	*sdc = append(*sdc, item.(*SiteDomain))
+	return nil
 }
 
 func (sdc *SiteDomainCollection) Loop(iter GroupIterator) error {
-	for index := range *sdc {
-		err := iter(sdc.GetItem(index), strconv.Itoa(index))
+	for index, sd := range *sdc {
+		err := iter(sd, strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -38,8 +38,4 @@ func (sdc *SiteDomainCollection) Loop(iter GroupIterator) error {
 
 func (sdc *SiteDomainCollection) Len() int {
 	return len(*sdc)
-}
-
-func (sdc *SiteDomainCollection) GetItems() interface{} {
-	return *sdc
 }

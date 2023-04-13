@@ -1,23 +1,17 @@
 import { FunctionComponent } from "react"
-import { definition, component, hooks, wire } from "@uesio/ui"
+import { definition, component, api, wire } from "@uesio/ui"
 
-interface Props extends definition.BaseProps {
+interface Props extends definition.UtilityProps {
 	namespace: string
 	value: wire.PlainWireRecord
 	setValue: (value: wire.PlainWireRecord) => void
 }
 
-const MapField = component.getUtility("uesio/io.mapfield")
-
 const TranslationItem: FunctionComponent<Props> = (props) => {
+	const MapField = component.getUtility("uesio/io.mapfield")
 	const { context, namespace, value, setValue } = props
-	const uesio = hooks.useUesio(props)
 
-	const [metadata] = uesio.builder.useMetadataList(
-		context,
-		"LABEL",
-		namespace
-	)
+	const [metadata] = api.builder.useMetadataList(context, "LABEL", namespace)
 
 	if (!metadata) return null
 

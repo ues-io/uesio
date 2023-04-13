@@ -6,12 +6,19 @@ import { FeatureFlagState } from "../../definition/featureflag"
 import { LabelState } from "../../definition/label"
 import { ThemeState } from "../../definition/theme"
 import { PlainViewDef } from "../../definition/viewdef"
-import { MetadataInfo } from "../../platform/platform"
+import { MetadataKey } from "../builder/types"
 import { PlainCollection } from "../collection/types"
-import { MetadataState } from "../metadata/types"
+import { ComponentState } from "../component/types"
 import { PlainWire } from "../wire/types"
 
-type TenantState = {
+type WorkspaceState = {
+	name: string
+	app: string
+	wrapper?: MetadataKey
+	slotwrapper?: MetadataKey
+}
+
+type SiteAdminState = {
 	name: string
 	app: string
 }
@@ -20,14 +27,20 @@ type Dependencies = {
 	theme?: EntityState<ThemeState>
 	viewdef?: EntityState<PlainViewDef>
 	componentvariant?: EntityState<ComponentVariant>
+	component?: EntityState<ComponentState>
 	componentpack?: EntityState<ComponentPackState>
 	configvalue?: EntityState<ConfigValueState>
 	featureflag?: EntityState<FeatureFlagState>
 	label?: EntityState<LabelState>
-	metadatatext?: EntityState<MetadataState>
-	namespaces?: Record<string, MetadataInfo>
 	wire?: EntityState<PlainWire>
 	collection?: EntityState<PlainCollection>
+}
+
+type RouteTag = {
+	location: string
+	type: string
+	name: string
+	content: string
 }
 
 type RouteState = {
@@ -35,10 +48,18 @@ type RouteState = {
 	params?: Record<string, string>
 	namespace: string
 	path: string
-	workspace?: TenantState
+	workspace?: WorkspaceState
 	theme: string
+	title: string
 	isLoading?: boolean
 	dependencies?: Dependencies
+	tags: RouteTag[]
 } | null
 
-export { RouteState, TenantState, Dependencies }
+export type {
+	RouteState,
+	RouteTag,
+	WorkspaceState,
+	SiteAdminState,
+	Dependencies,
+}

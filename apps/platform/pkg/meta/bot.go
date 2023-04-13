@@ -4,35 +4,39 @@ import (
 	"errors"
 	"fmt"
 	"path/filepath"
-	"time"
 
 	"gopkg.in/yaml.v3"
 )
 
+func NewBeforeSaveBot(namespace, name, collection string) *Bot {
+	return NewBaseBot("BEFORESAVE", collection, namespace, name)
+}
+
+func NewAfterSaveBot(namespace, name, collection string) *Bot {
+	return NewBaseBot("AFTERSAVE", collection, namespace, name)
+}
+
 func NewListenerBot(namespace, name string) *Bot {
-	return &Bot{
-		CollectionRef: "_",
-		Type:          "LISTENER",
-		Namespace:     namespace,
-		Name:          name,
-	}
+	return NewBaseBot("LISTENER", "", namespace, name)
 }
 
 func NewGeneratorBot(namespace, name string) *Bot {
-	return &Bot{
-		CollectionRef: "_",
-		Type:          "GENERATOR",
-		Namespace:     namespace,
-		Name:          name,
-	}
+	return NewBaseBot("GENERATOR", "", namespace, name)
 }
 
-func NewTriggerBot(botType, collectionKey, namespace, name string) *Bot {
+func NewRouteBot(namespace, name string) *Bot {
+	return NewBaseBot("ROUTE", "", namespace, name)
+}
+
+func NewLoadBot(namespace, name string) *Bot {
+	return NewBaseBot("LOAD", "", namespace, name)
+}
+
+func NewBaseBot(botType, collectionKey, namespace, name string) *Bot {
 	return &Bot{
-		CollectionRef: collectionKey,
-		Type:          botType,
-		Namespace:     namespace,
-		Name:          name,
+		CollectionRef:  collectionKey,
+		Type:           botType,
+		BundleableBase: NewBase(namespace, name),
 	}
 }
 
@@ -66,6 +70,7 @@ type BotParamResponse struct {
 	Default      string                      `json:"default"`
 	Choices      []string                    `json:"choices"`
 	Conditions   []BotParamConditionResponse `json:"conditions"`
+	Collection   string                      `json:"collection"`
 }
 
 type BotParams []BotParam
@@ -99,24 +104,13 @@ func (bp *BotParams) UnmarshalYAML(node *yaml.Node) error {
 }
 
 type Bot struct {
-	ID            string            `yaml:"-" json:"uesio/core.id"`
-	UniqueKey     string            `yaml:"-" json:"uesio/core.uniquekey"`
-	Name          string            `yaml:"name" json:"uesio/studio.name"`
-	CollectionRef string            `yaml:"collection,omitempty" json:"uesio/studio.collection"`
-	Namespace     string            `yaml:"-" json:"-"`
-	Type          string            `yaml:"type" json:"uesio/studio.type"`
-	Dialect       string            `yaml:"dialect" json:"uesio/studio.dialect"`
-	Params        BotParams         `yaml:"params,omitempty" json:"uesio/studio.params"`
-	Content       *UserFileMetadata `yaml:"-" json:"uesio/studio.content"`
-	FileContents  string            `yaml:"-" json:"-"`
-	Workspace     *Workspace        `yaml:"-" json:"uesio/studio.workspace"`
-	CreatedBy     *User             `yaml:"-" json:"uesio/core.createdby"`
-	Owner         *User             `yaml:"-" json:"uesio/core.owner"`
-	UpdatedBy     *User             `yaml:"-" json:"uesio/core.updatedby"`
-	UpdatedAt     int64             `yaml:"-" json:"uesio/core.updatedat"`
-	CreatedAt     int64             `yaml:"-" json:"uesio/core.createdat"`
-	itemMeta      *ItemMeta         `yaml:"-" json:"-"`
-	Public        bool              `yaml:"public,omitempty" json:"uesio/studio.public"`
+	BuiltIn        `yaml:",inline"`
+	BundleableBase `yaml:",inline"`
+	CollectionRef  string    `yaml:"collection,omitempty" json:"uesio/studio.collection"`
+	Type           string    `yaml:"type" json:"uesio/studio.type"`
+	Dialect        string    `yaml:"dialect" json:"uesio/studio.dialect"`
+	Params         BotParams `yaml:"params,omitempty" json:"uesio/studio.params"`
+	FileContents   string    `yaml:"-" json:"-"`
 }
 
 type BotWrapper Bot
@@ -127,12 +121,16 @@ func GetBotTypes() map[string]string {
 		"AFTERSAVE":  "aftersave",
 		"LISTENER":   "listener",
 		"GENERATOR":  "generator",
+		"LOAD":       "load",
+		"ROUTE":      "route",
 	}
 }
 
 func GetBotDialects() map[string]string {
 	return map[string]string{
 		"JAVASCRIPT": "javascript",
+		"SYSTEM":     "system",
+		"TYPESCRIPT": "typescript",
 	}
 }
 
@@ -146,7 +144,11 @@ func getBotTypeTypeKeyPart(typeKey string) (string, error) {
 }
 
 func (b *Bot) GetBotFilePath() string {
-	return filepath.Join(b.GetBasePath(), "bot.js")
+	botFile := "bot.js"
+	if b.Dialect == "TYPESCRIPT" {
+		botFile = "bot.ts"
+	}
+	return filepath.Join(b.GetBasePath(), botFile)
 }
 
 func (b *Bot) GetGenerateBotTemplateFilePath(template string) string {
@@ -154,19 +156,15 @@ func (b *Bot) GetGenerateBotTemplateFilePath(template string) string {
 }
 
 func (b *Bot) GetCollectionName() string {
-	return b.GetBundleGroup().GetName()
+	return BOT_COLLECTION_NAME
 }
 
-func (b *Bot) GetCollection() CollectionableGroup {
-	return &BotCollection{}
+func (b *Bot) GetBundleFolderName() string {
+	return BOT_FOLDER_NAME
 }
 
 func (b *Bot) GetDBID(workspace string) string {
 	return fmt.Sprintf("%s:%s:%s:%s", workspace, b.CollectionRef, b.Type, b.Name)
-}
-
-func (b *Bot) GetBundleGroup() BundleableGroup {
-	return &BotCollection{}
 }
 
 func (b *Bot) GetKey() string {
@@ -191,28 +189,12 @@ func (b *Bot) GetPath() string {
 	return filepath.Join(b.GetBasePath(), "bot.yaml")
 }
 
-func (b *Bot) GetPermChecker() *PermissionSet {
-	return nil
-}
-
 func (b *Bot) SetField(fieldName string, value interface{}) error {
 	return StandardFieldSet(b, fieldName, value)
 }
 
 func (b *Bot) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(b, fieldName)
-}
-
-func (b *Bot) GetNamespace() string {
-	return b.Namespace
-}
-
-func (b *Bot) SetNamespace(namespace string) {
-	b.Namespace = namespace
-}
-
-func (b *Bot) SetModified(mod time.Time) {
-	b.UpdatedAt = mod.UnixMilli()
 }
 
 func (b *Bot) Loop(iter func(string, interface{}) error) error {
@@ -223,22 +205,10 @@ func (b *Bot) Len() int {
 	return StandardItemLen(b)
 }
 
-func (b *Bot) GetItemMeta() *ItemMeta {
-	return b.itemMeta
-}
-
-func (b *Bot) SetItemMeta(itemMeta *ItemMeta) {
-	b.itemMeta = itemMeta
-}
-
 func (b *Bot) UnmarshalYAML(node *yaml.Node) error {
 	err := validateNodeName(node, b.Name)
 	if err != nil {
 		return err
 	}
 	return node.Decode((*BotWrapper)(b))
-}
-
-func (b *Bot) IsPublic() bool {
-	return b.Public
 }

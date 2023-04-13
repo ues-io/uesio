@@ -8,4 +8,4 @@ interface NotificationState {
 	path?: string
 }
 
-export { NotificationSeverity, NotificationState }
+export type { NotificationSeverity, NotificationState }

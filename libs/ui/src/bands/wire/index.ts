@@ -4,11 +4,15 @@ import {
 	EntityState,
 	PayloadAction,
 } from "@reduxjs/toolkit"
-import { SaveResponseBatch } from "../../load/saveresponse"
+import { SaveError, SaveResponseBatch } from "../../load/saveresponse"
 import { WireConditionState } from "../../wireexports"
 import { ID_FIELD, PlainCollection } from "../collection/types"
 import { createEntityReducer, EntityPayload, initEntity } from "../utils"
-import { FieldValue, PlainWireRecord } from "../wirerecord/types"
+import {
+	FieldValue,
+	PlainFieldValue,
+	PlainWireRecord,
+} from "../wirerecord/types"
 import { PlainWire } from "./types"
 import set from "lodash/set"
 import get from "lodash/get"
@@ -16,6 +20,7 @@ import { RootState } from "../../store/store"
 import { Context, getWire } from "../../context/context"
 import { useSelector } from "react-redux"
 import { MetadataKey } from "../builder/types"
+import { isValueCondition } from "./conditions/conditions"
 
 type DeletePayload = {
 	recordId: string
@@ -137,35 +142,44 @@ const getWiresFromDefinitonOrContext = (
 	return [wire]
 }
 
+const addErrorState = (
+	currentErrors: Record<string, SaveError[]> | undefined = {},
+	message: string,
+	recordId?: string,
+	fieldId?: string
+) => {
+	const recordFieldKey = `${recordId}:${fieldId}`
+	const newErrorItem = {
+		recordid: recordId,
+		fieldid: fieldId,
+		message,
+	}
+
+	const currentFieldErrors = currentErrors[recordFieldKey]
+
+	if (!currentFieldErrors) {
+		currentErrors[recordFieldKey] = []
+	}
+
+	currentErrors[recordFieldKey].push(newErrorItem)
+	return currentErrors
+}
+
 const wireSlice = createSlice({
 	name: "wire",
 	initialState: wireAdapter.getInitialState(),
 	reducers: {
 		initAll: initEntity<PlainWire>,
 		upsertMany: wireAdapter.upsertMany,
+		removeOne: wireAdapter.removeOne,
 		addError: createEntityReducer<AddErrorPayload, PlainWire>(
 			(state, { recordId, fieldId, message }) => {
-				const recordFieldKey = `${recordId}:${fieldId}`
-				const newErrorItem = {
-					recordid: recordId,
-					fieldid: fieldId,
+				state.errors = addErrorState(
+					state.errors,
 					message,
-				}
-
-				let errors = state.errors
-
-				if (!errors) {
-					errors = {}
-					state.errors = errors
-				}
-
-				const currentFieldErrors = errors[recordFieldKey]
-
-				if (!currentFieldErrors) {
-					errors[recordFieldKey] = []
-				}
-
-				errors[recordFieldKey].push(newErrorItem)
+					recordId,
+					fieldId
+				)
 			}
 		),
 		removeError: createEntityReducer<RemoveErrorPayload, PlainWire>(
@@ -175,8 +189,10 @@ const wireSlice = createSlice({
 		),
 		markForDelete: createEntityReducer<DeletePayload, PlainWire>(
 			(state, { recordId }) => {
+				const record = state.data[recordId]
+				if (!record) return
 				state.deletes[recordId] = {
-					[ID_FIELD]: state.data[recordId][ID_FIELD],
+					[ID_FIELD]: record[ID_FIELD],
 				}
 			}
 		),
@@ -260,8 +276,8 @@ const wireSlice = createSlice({
 			const condition = state.conditions.find(
 				(existingCondition) => existingCondition.id === id
 			)
-			if (condition?.valueSource === "VALUE") {
-				condition.value = value
+			if (isValueCondition(condition)) {
+				condition.value = value as PlainFieldValue
 			}
 		}),
 		removeCondition: createEntityReducer<RemoveConditionPayload, PlainWire>(
@@ -453,12 +469,14 @@ export {
 	useWires,
 	selectWire,
 	getFullWireId,
+	addErrorState,
 	getWireParts,
-	WireLoadAction,
 	selectors,
 	getWiresFromDefinitonOrContext,
 	addLookupWires,
 }
+
+export type { WireLoadAction }
 
 export const {
 	markForDelete,
@@ -482,6 +500,7 @@ export const {
 	removeCondition,
 	initAll,
 	upsertMany,
+	removeOne,
 	setConditionValue,
 	setIsLoading,
 } = wireSlice.actions

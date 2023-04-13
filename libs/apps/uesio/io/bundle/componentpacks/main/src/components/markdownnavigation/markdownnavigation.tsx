@@ -1,6 +1,11 @@
-import { FC } from "react"
-import { Props } from "./markdownnavigationdefinition"
-import { styles, hooks } from "@uesio/ui"
+import { styles, api, definition } from "@uesio/ui"
+import { UserFileMetadata } from "../field/field"
+
+type Definition = {
+	levels?: 1 | 2 | 3 | 4 | 5 | 6
+	mdField?: string
+	title?: string
+}
 
 const getHeadingOverview = (mdValue: string, level: 1 | 2 | 3 | 4 | 5 | 6) => {
 	const regXHeader = /(?<flag>#{1,6})\s+(?<content>.+)/g
@@ -27,9 +32,8 @@ const getHeadingOverview = (mdValue: string, level: 1 | 2 | 3 | 4 | 5 | 6) => {
 	}[]
 }
 
-const MarkdownNavigation: FC<Props> = (props) => {
+const MarkdownNavigation: definition.UC<Definition> = (props) => {
 	const { definition, context } = props
-	const uesio = hooks.useUesio(props)
 
 	const classes = styles.useStyles(
 		{
@@ -43,11 +47,11 @@ const MarkdownNavigation: FC<Props> = (props) => {
 	const record = context.getRecord()
 	const wire = context.getWire()
 	if (!wire || !record) return null
-	const value = uesio.file.useUserFile(
-		context,
-		record,
+	const userFile = record.getFieldValue(
 		definition.mdField || ""
-	)
+	) as UserFileMetadata
+	if (!userFile) return null
+	const value = api.file.useUserFile(context, userFile)
 
 	const headingOverview =
 		getHeadingOverview(String(value), definition.levels || 3) || []
@@ -83,5 +87,37 @@ const MarkdownNavigation: FC<Props> = (props) => {
 		</div>
 	) : null
 }
+
+/*
+const MarkdownNavigationPropertyDefinition: builder.BuildPropertiesDefinition =
+	{
+		title: "MarkdownNavigation",
+		description: "Visible impression obtained by a camera",
+		link: "https://docs.ues.io/",
+		defaultDefinition: () => ({}),
+		properties: [
+			{
+				name: "levels",
+				type: "METADATA",
+				metadataType: "FIELD",
+				label: "Markdown source",
+			},
+			{
+				name: "title",
+				type: "TEXT",
+				label: "Title",
+			},
+			{
+				name: "levels",
+				type: "NUMBER",
+				label: "Levels",
+			},
+		],
+		sections: [],
+		//traits: ["uesio.standalone"],
+		classes: ["root"],
+		type: "component",
+	}
+*/
 
 export default MarkdownNavigation

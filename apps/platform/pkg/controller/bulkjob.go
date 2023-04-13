@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/bulk"
@@ -32,7 +33,7 @@ func BulkJob(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondJSON(w, r, &bulk.JobResponse{
+	file.RespondJSON(w, r, &bulk.JobResponse{
 		ID: jobID,
 	})
 

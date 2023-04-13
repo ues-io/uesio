@@ -1,62 +1,62 @@
 import { FunctionComponent } from "react"
 import {
-	BaseDefinition,
 	DefinitionList,
+	DefinitionMap,
 	UtilityProps,
 } from "../definition/definition"
-import { Component, getUtility } from "../component/component"
-import { unWrapDefinition } from "../component/path"
+import { Component } from "../component/component"
 import { MetadataKey } from "../bands/builder/types"
+import { getUtilityLoader } from "../component/registry"
 
 interface SlotUtilityProps extends UtilityProps {
 	listName: string
-	definition?: BaseDefinition
-	accepts: string[]
+	path: string
+	definition?: DefinitionMap
 	direction?: "VERTICAL" | "HORIZONTAL"
 	label?: string
 	message?: string
 }
 
-const SlotBuilder = getUtility("uesio/builder.slotbuilder")
-
-const InnerSlot: FunctionComponent<SlotUtilityProps> = (props) => {
-	const { path, context, listName, definition } = props
-	if (!definition) return null
+const getSlotProps = (props: SlotUtilityProps) => {
+	const { path, context, listName } = props
+	const definition = props.definition as DefinitionMap
+	if (!definition) return []
 
 	const listDef = (definition?.[listName] || []) as DefinitionList
 	const listPath = path ? `${path}["${listName}"]` : `["${listName}"]`
 
+	return listDef.flatMap((itemDef, index) => {
+		if (!itemDef) return []
+		const componentType = Object.keys(itemDef)[0]
+		const unWrappedDef = itemDef[componentType]
+		return {
+			definition: unWrappedDef as DefinitionMap,
+			componentType: componentType as MetadataKey,
+			path: `${listPath}["${index}"]["${componentType}"]`,
+			context,
+		}
+	})
+}
+
+const Slot: FunctionComponent<SlotUtilityProps> = (props) => {
+	const slotWrapper = props.context.getCustomSlot()
+	if (slotWrapper) {
+		const Loader = getUtilityLoader(slotWrapper)
+		if (!Loader) throw "Could not load component: " + slotWrapper
+		return <Loader {...props} />
+	}
+
 	return (
 		<>
-			{listDef instanceof Array &&
-				listDef
-					.filter((el) => el)
-					.map((itemDef, index) => {
-						const [componentType, unWrappedDef] =
-							unWrapDefinition(itemDef)
-						return (
-							<Component
-								key={index}
-								componentType={componentType as MetadataKey}
-								definition={unWrappedDef}
-								index={index}
-								path={`${listPath}["${index}"]`}
-								context={context}
-							/>
-						)
-					})}
+			{getSlotProps(props).map((props, index) => (
+				<Component key={index} {...props} />
+			))}
 		</>
 	)
 }
 
-const Slot: FunctionComponent<SlotUtilityProps> = (props) =>
-	props.context.getBuildMode() ? (
-		<SlotBuilder {...props}>
-			<InnerSlot {...props} />
-		</SlotBuilder>
-	) : (
-		<InnerSlot {...props} />
-	)
+Slot.displayName = "Slot"
 
-export { SlotUtilityProps }
+export type { SlotUtilityProps }
+export { getSlotProps }
 export default Slot

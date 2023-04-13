@@ -2,6 +2,7 @@ package s3
 
 import (
 	"context"
+	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -23,7 +24,7 @@ func (c *Connection) List(path string) ([]string, error) {
 			return nil, err
 		}
 		for _, fileMetadata := range result.Contents {
-			paths = append(paths, *fileMetadata.Key)
+			paths = append(paths, strings.TrimPrefix(*fileMetadata.Key, path))
 		}
 	}
 

@@ -17,8 +17,30 @@ func getFieldNameWithAlias(fieldMetadata *adapt.FieldMetadata) string {
 	return fieldName + " AS \"" + fieldMetadata.GetFullName() + "\""
 }
 
+func getIDFieldName(tableAlias string) string {
+	return fmt.Sprintf("%s::text", getAliasedName("id", tableAlias))
+}
+
 func getFieldName(fieldMetadata *adapt.FieldMetadata, tableAlias string) string {
 	fieldName := fieldMetadata.GetFullName()
+
+	switch fieldName {
+	case adapt.ID_FIELD:
+		return getIDFieldName(tableAlias)
+	case adapt.UNIQUE_KEY_FIELD:
+		return getAliasedName("uniquekey", tableAlias)
+	case adapt.OWNER_FIELD:
+		return getAliasedName("owner", tableAlias)
+	case adapt.CREATED_BY_FIELD:
+		return getAliasedName("createdby", tableAlias)
+	case adapt.CREATED_AT_FIELD:
+		return fmt.Sprintf("date_part('epoch',%s)", getAliasedName("createdat", tableAlias))
+	case adapt.UPDATED_BY_FIELD:
+		return getAliasedName("updatedby", tableAlias)
+	case adapt.UPDATED_AT_FIELD:
+		return fmt.Sprintf("date_part('epoch',%s)", getAliasedName("updatedat", tableAlias))
+	}
+
 	fieldsField := getAliasedName("fields", tableAlias)
 	switch fieldMetadata.Type {
 	case "CHECKBOX":
@@ -98,18 +120,17 @@ func (c *Connection) Load(op *adapt.LoadOp, session *sess.Session) error {
 
 			tenantID := session.GetTenantIDForCollection(challengeMetadata.GetFullName())
 
-			refCollectionName, err := getDBCollectionName(challengeMetadata, tenantID)
-			if err != nil {
-				return err
-			}
+			refCollectionName := challengeMetadata.GetFullName()
 
 			newTable := currentTable + "sub"
 
-			currentTableFields := getAliasedName("fields", currentTable)
-			newTableFields := getAliasedName("fields", newTable)
-			newTableCollection := getAliasedName("collection", newTable)
+			accessFieldString := getFieldName(fieldMetadata, currentTable)
+			idFieldString := getIDFieldName(newTable)
 
-			joins = append(joins, fmt.Sprintf("LEFT OUTER JOIN data as \"%s\" ON %s->>'%s' = %s->>'%s' AND %s = '%s'", newTable, currentTableFields, accessField, newTableFields, adapt.ID_FIELD, newTableCollection, refCollectionName))
+			newTableCollection := getAliasedName("collection", newTable)
+			newTableTenant := getAliasedName("tenant", newTable)
+
+			joins = append(joins, fmt.Sprintf("LEFT OUTER JOIN data as \"%s\" ON %s = %s AND %s = '%s' AND %s = '%s'", newTable, accessFieldString, idFieldString, newTableCollection, refCollectionName, newTableTenant, tenantID))
 
 			accessFieldID = getAliasedName("id", newTable)
 
@@ -118,9 +139,9 @@ func (c *Connection) Load(op *adapt.LoadOp, session *sess.Session) error {
 		}
 
 		if op.RequireWriteAccess {
-			builder.addQueryPart(fmt.Sprintf("%s IN (SELECT fullid FROM tokens WHERE token = ANY(%s) AND readonly != true)", accessFieldID, builder.addValue(userTokens)))
+			builder.addQueryPart(fmt.Sprintf("%s IN (SELECT recordid FROM tokens WHERE token = ANY(%s) AND readonly != true)", accessFieldID, builder.addValue(userTokens)))
 		} else if collectionMetadata.IsReadProtected() {
-			builder.addQueryPart(fmt.Sprintf("%s IN (SELECT fullid FROM tokens WHERE token = ANY(%s))", accessFieldID, builder.addValue(userTokens)))
+			builder.addQueryPart(fmt.Sprintf("%s IN (SELECT recordid FROM tokens WHERE token = ANY(%s))", accessFieldID, builder.addValue(userTokens)))
 		}
 	}
 
@@ -197,15 +218,21 @@ func (c *Connection) Load(op *adapt.LoadOp, session *sess.Session) error {
 		}
 
 		item = op.Collection.NewItem()
-		op.Collection.AddItem(item)
+
 		err := rows.Scan(scanners...)
 		if err != nil {
 			return err
 		}
 
-		formulaPopulations(item)
-		//Ignore errors. if a formula cannot be evaluated, we should display the following records and not kill the execution
-		//TO-DO find a way to display the errors in each record
+		err = formulaPopulations(item)
+		if err != nil {
+			return err
+		}
+
+		err = op.Collection.AddItem(item)
+		if err != nil {
+			return err
+		}
 
 		index++
 

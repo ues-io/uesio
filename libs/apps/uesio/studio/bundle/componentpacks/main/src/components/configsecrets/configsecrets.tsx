@@ -1,21 +1,20 @@
 import { FunctionComponent, useState } from "react"
-import { definition, hooks, component } from "@uesio/ui"
-
-const TitleBar = component.getUtility("uesio/io.titlebar")
-const Button = component.getUtility("uesio/io.button")
-const Dialog = component.getUtility("uesio/io.dialog")
-const TextField = component.getUtility("uesio/io.textfield")
+import { definition, api, component } from "@uesio/ui"
+import { FloatingPortal } from "@floating-ui/react"
 
 const ConfigSecrets: FunctionComponent<definition.BaseProps> = (props) => {
-	const uesio = hooks.useUesio(props)
+	const TitleBar = component.getUtility("uesio/io.titlebar")
+	const Button = component.getUtility("uesio/io.button")
+	const Dialog = component.getUtility("uesio/io.dialog")
+	const TextField = component.getUtility("uesio/io.textfield")
 	const { context } = props
 
 	const valueType = props.definition?.valueType
 	const isSecret = valueType !== "config"
 
 	const [values, resetValues] = isSecret
-		? uesio.secret.useSecrets(context)
-		: uesio.configvalue.useConfigValues(context)
+		? api.secret.useSecrets(context)
+		: api.configvalue.useConfigValues(context)
 
 	const [state, setState] = useState({
 		selected: "",
@@ -41,8 +40,8 @@ const ConfigSecrets: FunctionComponent<definition.BaseProps> = (props) => {
 	}
 
 	const handleSet = async () => {
-		const api = isSecret ? uesio.secret : uesio.configvalue
-		await api.set(context, state.selected, state.value)
+		const apifunc = isSecret ? api.secret : api.configvalue
+		await apifunc.set(context, state.selected, state.value)
 		resetValues()
 		handleClose()
 	}
@@ -77,7 +76,7 @@ const ConfigSecrets: FunctionComponent<definition.BaseProps> = (props) => {
 				)
 			})}
 			{state.selected !== "" && (
-				<component.Panel context={context}>
+				<FloatingPortal>
 					<Dialog
 						width="400px"
 						height="300px"
@@ -107,7 +106,7 @@ const ConfigSecrets: FunctionComponent<definition.BaseProps> = (props) => {
 							}
 						/>
 					</Dialog>
-				</component.Panel>
+				</FloatingPortal>
 			)}
 		</>
 	)

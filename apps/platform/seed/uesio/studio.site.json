@@ -6,7 +6,8 @@
 		},
 		"uesio/studio.app": {
 			"uesio/core.uniquekey": "uesio/studio"
-		}
+		},
+		"uesio/studio.title": "Studio"
 	},
 	{
 		"uesio/studio.name": "prod",
@@ -15,7 +16,8 @@
 		},
 		"uesio/studio.app": {
 			"uesio/core.uniquekey": "uesio/docs"
-		}
+		},
+		"uesio/studio.title": "Uesio Docs"
 	},
 	{
 		"uesio/studio.name": "prod",
@@ -24,6 +26,7 @@
 		},
 		"uesio/studio.app": {
 			"uesio/core.uniquekey": "uesio/web"
-		}
+		},
+		"uesio/studio.title": "Uesio"
 	}
 ]

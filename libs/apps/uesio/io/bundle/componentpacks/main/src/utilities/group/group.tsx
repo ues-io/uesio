@@ -1,7 +1,6 @@
 import { FunctionComponent } from "react"
-import { definition, styles, component } from "@uesio/ui"
-
-const IOGrid = component.getUtility("uesio/io.grid")
+import { definition, styles } from "@uesio/ui"
+import Grid from "../grid/grid"
 
 interface GroupUtilityProps extends definition.UtilityProps {
 	columnGap?: string | number
@@ -24,12 +23,10 @@ const Group: FunctionComponent<GroupUtilityProps> = (props) => {
 		props
 	)
 	return (
-		<IOGrid classes={classes} context={context}>
+		<Grid classes={classes} context={context}>
 			{children}
-		</IOGrid>
+		</Grid>
 	)
 }
-
-export { GroupUtilityProps }
 
 export default Group

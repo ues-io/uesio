@@ -6,14 +6,15 @@ interface FieldLabelProps extends definition.UtilityProps {
 }
 
 const FieldLabel: FunctionComponent<FieldLabelProps> = (props) => {
-	const { label } = props
+	const { label, context } = props
 	const classes = styles.useUtilityStyles(
 		{
 			root: {},
 		},
-		props
+		props,
+		"uesio/io.fieldlabel"
 	)
-	return <div className={classes.root}>{label}</div>
+	return <div className={classes.root}>{context.merge(label)}</div>
 }
 
 export default FieldLabel

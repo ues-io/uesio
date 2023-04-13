@@ -89,19 +89,18 @@ definition:
                             - uesio/io.button:
                                 text: Create a New View
                                 uesio.variant: uesio/io.secondary
+                                hotkey: "n"
+                                uesio.id: new-view
                                 signals:
                                   - signal: panel/TOGGLE
                                     panel: newView
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
-                    uesio.styles:
-                      root:
-                        padding: 40px
                     components:
                       - uesio/io.searchbox:
                           wire: allviews
                       - uesio/io.table:
-                          id: viewsTable
+                          uesio.id: viewsTable
                           wire: allviews
                           recordDisplay:
                             - field: uesio/studio.namespace
@@ -110,9 +109,7 @@ definition:
                             - label: View
                               components:
                                 - uesio/studio.iconlabel:
-                                    uesio.styles:
-                                      root:
-                                        padding: 16px
+                                    uesio.variant: uesio/studio.namespacefield
                                     text: ${uesio/studio.name}
                                     icon: ${uesio/studio.appicon}
                                     color: ${uesio/studio.appcolor}
@@ -136,9 +133,6 @@ definition:
                           uesio.variant: uesio/io.section
                           title: Installed Views
                       - uesio/io.table:
-                          uesio.styles:
-                            root:
-                              padding: 40px
                           wire: allviews
                           recordDisplay:
                             - field: uesio/studio.namespace
@@ -148,9 +142,7 @@ definition:
                             - label: View
                               components:
                                 - uesio/studio.iconlabel:
-                                    uesio.styles:
-                                      root:
-                                        padding: 16px
+                                    uesio.variant: uesio/studio.namespacefield
                                     text: ${uesio/studio.name}
                                     icon: ${uesio/studio.appicon}
                                     color: ${uesio/studio.appcolor}
@@ -164,15 +156,17 @@ definition:
       height: 500px
       components:
         - uesio/io.list:
-            id: newviewlist
+            uesio.id: newviewlist
             wire: newview
             mode: EDIT
             components:
               - uesio/io.field:
                   fieldId: uesio/studio.name
+                  uesio.id: new-view-name
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
+            uesio.id: save-new-view
             text: "Save"
             signals:
               - signal: wire/SAVE

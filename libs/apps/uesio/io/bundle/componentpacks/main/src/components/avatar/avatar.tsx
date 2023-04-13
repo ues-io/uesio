@@ -1,11 +1,13 @@
-import { FunctionComponent } from "react"
+import { styles, definition } from "@uesio/ui"
 
-import { styles, component } from "@uesio/ui"
-import { AvatarProps } from "./avatardefinition"
+import { default as IOAvatar } from "../../utilities/avatar/avatar"
 
-const IOAvatar = component.getUtility("uesio/io.avatar")
+type AvatarDefinition = {
+	image?: string
+	text?: string
+}
 
-const Avatar: FunctionComponent<AvatarProps> = (props) => {
+const Avatar: definition.UC<AvatarDefinition> = (props) => {
 	const { definition, context } = props
 	const classes = styles.useStyles(
 		{

@@ -2,8 +2,8 @@ package fileadapt
 
 import (
 	"errors"
-	"fmt"
 	"io"
+	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -14,12 +14,12 @@ import (
 )
 
 type FileAdapter interface {
-	GetFileConnection(*adapt.Credentials) (FileConnection, error)
+	GetFileConnection(*adapt.Credentials, string) (FileConnection, error)
 }
 
 type FileConnection interface {
 	Upload(fileData io.Reader, path string) error
-	Download(path string) (io.ReadCloser, error)
+	Download(path string) (time.Time, io.ReadSeeker, error)
 	Delete(path string) error
 	List(path string) ([]string, error)
 	EmptyDir(path string) error
@@ -43,44 +43,6 @@ func RegisterFileAdapter(name string, adapter FileAdapter) {
 	adapterMap[name] = adapter
 }
 
-func GetFileSourceAndCollection(fileCollectionID string, session *sess.Session) (*meta.UserFileCollection, *meta.FileSource, error) {
-	ufc, err := meta.NewUserFileCollection(fileCollectionID)
-	if err != nil {
-		return nil, nil, errors.New("Failed to create file collection: " + err.Error())
-	}
-	err = bundle.Load(ufc, session, nil)
-	if err != nil {
-		return nil, nil, fmt.Errorf("No file collection found: %s, %s", fileCollectionID, err.Error())
-	}
-	fs, err := GetFileSource(ufc.FileSource, session)
-	if err != nil {
-		return nil, nil, errors.New("Failed to create file source")
-	}
-	return ufc, fs, nil
-}
-
-func GetFileSource(fileSourceID string, session *sess.Session) (*meta.FileSource, error) {
-	fs, err := meta.NewFileSource(fileSourceID)
-	if err != nil {
-		return nil, err
-	}
-	err = bundle.Load(fs, session, nil)
-	if err != nil {
-		return nil, errors.New("No file source found: " + fileSourceID + ", " + err.Error())
-	}
-	return fs, nil
-}
-
-func GetFileCollectionID(collectionMetadata *adapt.CollectionMetadata, fieldMetadata *adapt.FieldMetadata) (string, error) {
-	if fieldMetadata == nil {
-		return "", errors.New("No metadata setup for attachments yet: TODO!")
-	}
-	if fieldMetadata.FileMetadata.FileCollection == "" {
-		return "", errors.New("No FileCollection specified for this field: " + collectionMetadata.GetFullName() + " : " + fieldMetadata.GetFullName())
-	}
-	return fieldMetadata.FileMetadata.FileCollection, nil
-}
-
 func GetFileConnection(fileSourceID string, session *sess.Session) (FileConnection, error) {
 	fs, err := meta.NewFileSource(fileSourceID)
 	if err != nil {
@@ -100,5 +62,10 @@ func GetFileConnection(fileSourceID string, session *sess.Session) (FileConnecti
 		return nil, err
 	}
 
-	return fileAdapter.GetFileConnection(credentials)
+	mergedBucket, err := configstore.Merge(fs.Bucket, session)
+	if err != nil {
+		return nil, err
+	}
+
+	return fileAdapter.GetFileConnection(credentials, mergedBucket)
 }

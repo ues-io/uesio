@@ -1,23 +1,24 @@
 import { FC } from "react"
-import { definition, collection, component, wire } from "@uesio/ui"
-
-const FileVideo = component.getUtility("uesio/io.filevideo")
-const FileImage = component.getUtility("uesio/io.fileimage")
-const FileText = component.getUtility("uesio/io.filetext")
-const File = component.getUtility("uesio/io.file")
-const FileMarkDown = component.getUtility("uesio/io.filemarkdown")
+import { definition, context } from "@uesio/ui"
+import File from "../file/file"
+import FileText from "../filetext/filetext"
+import FileImage from "../fileimage/fileimage"
+import FileVideo from "../filevideo/filevideo"
+import { UserFileMetadata } from "../../components/field/field"
 
 interface FilePreviewProps extends definition.UtilityProps {
-	fieldMetadata: collection.Field
-	fieldId: string
-	record: wire.WireRecord
+	path: string
+	id?: string
+	mode?: context.FieldMode
+	userFile?: UserFileMetadata
+	onUpload: (files: FileList | null) => void
+	onDelete?: () => void
+	accept?: string
 }
 
 const FilePreview: FC<FilePreviewProps> = (props) => {
-	const { fieldId, record } = props
-
-	const userFile = record.getFieldValue<wire.PlainWireRecord>(fieldId)
-	const mimeType = userFile?.["uesio/core.mimetype"] as string
+	const { userFile } = props
+	const mimeType = userFile?.["uesio/core.mimetype"]
 	if (!mimeType) return <File {...props} />
 
 	const mime = mimeType.slice(0, mimeType.indexOf("/"))
@@ -30,7 +31,7 @@ const FilePreview: FC<FilePreviewProps> = (props) => {
 		case "text":
 			switch (subMime) {
 				case "markdown":
-					return <FileMarkDown {...props} />
+					return <FileText {...props} displayAs="MARKDOWN" />
 			}
 			return <FileText {...props} />
 		case "application":

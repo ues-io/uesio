@@ -118,11 +118,11 @@ definition:
                                         - signal: "route/REDIRECT"
                                           path: $Param{redirectUrl}
                       - uesio/io.grid:
-                          templateColumns: 1fr 1fr 1fr
-                          columnGap: 10px
-                          uesio.styles:
+                          uesio.styleTokens:
                             root:
-                              padding: 50px
+                              - template-cols-3
+                              - gap-x-4
+                              - p-10
                           items:
                             - uesio/io.metric:
                                 title: Payments
@@ -143,7 +143,7 @@ definition:
                           uesio.variant: uesio/io.section
                           title: Invoices
                       - uesio/io.table:
-                          id: invoiceTable
+                          uesio.id: invoiceTable
                           wire: invoices
                           pagesize: 10
                           uesio.styles:
@@ -174,7 +174,7 @@ definition:
                           uesio.variant: uesio/io.section
                           title: Payments
                       - uesio/io.table:
-                          id: paymentsTable
+                          uesio.id: paymentsTable
                           wire: payments
                           pagesize: 10
                           uesio.styles:

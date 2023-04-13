@@ -1,43 +1,65 @@
-import { hooks, component } from "@uesio/ui"
-import { FunctionComponent } from "react"
-import { useMode } from "../../shared/mode"
+import { api, component, signal, definition, context, wire } from "@uesio/ui"
 
-import { ListProps } from "./listdefinition"
+import { setEditMode, setReadMode, toggleMode } from "../../shared/mode"
 
-const List: FunctionComponent<ListProps> = (props) => {
+type ListDefinition = {
+	id?: string
+	wire?: string
+	mode?: context.FieldMode
+	components?: definition.DefinitionList
+	recordDisplay?: component.DisplayCondition[]
+}
+
+const signals: Record<string, signal.ComponentSignalDescriptor> = {
+	TOGGLE_MODE: toggleMode,
+	SET_READ_MODE: setReadMode,
+	SET_EDIT_MODE: setEditMode,
+}
+
+const List: definition.UC<ListDefinition> = (props) => {
 	const { path, context, definition } = props
-	const uesio = hooks.useUesio(props)
-	const wire = uesio.wire.useWire(definition.wire)
+	const wire = api.wire.useWire(definition.wire, context)
 
-	// If we got a wire from the definition, add it to context
-	const newContext = definition.wire
-		? context.addFrame({
-				wire: definition.wire,
-		  })
-		: context
-
-	const componentId = uesio.component.getId(definition.id)
-	const [mode] = useMode(componentId, definition.mode, props)
+	const componentId = api.component.getComponentIdFromProps(props)
+	const [mode] = api.component.useMode(componentId, definition.mode)
 
 	if (!wire || !mode) return null
 
+	const itemContexts = component.useContextFilter<wire.WireRecord>(
+		wire.getData(),
+		definition.recordDisplay,
+		(record, context) => {
+			if (record && wire) {
+				context = context.addRecordFrame({
+					wire: wire.getId(),
+					record: record.getId(),
+					view: wire.getViewId(),
+				})
+			}
+			if (mode) {
+				context = context.addFieldModeFrame(mode)
+			}
+			return context
+		},
+		context
+	)
+
 	return (
 		<>
-			{wire.getData().map((record, i) => (
+			{itemContexts.map((recordContext, i) => (
 				<component.Slot
-					key={record.getId() || i}
+					key={recordContext.item.getId() || i}
 					definition={definition}
 					listName="components"
 					path={path}
-					accepts={["uesio.standalone", "uesio.field"]}
-					context={newContext.addFrame({
-						record: record.getId(),
-						fieldMode: mode,
-					})}
+					context={recordContext.context}
 				/>
 			))}
 		</>
 	)
 }
 
+export type { ListDefinition }
+
+List.signals = signals
 export default List

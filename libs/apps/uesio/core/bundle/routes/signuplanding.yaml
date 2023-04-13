@@ -2,3 +2,4 @@ name: signuplanding
 path: signuplanding
 view: uesio/core.signuplanding
 public: true
+title: Welcome to Uesio!

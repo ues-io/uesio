@@ -1,3 +1,0 @@
-name: conditionprop
-pack: main
-entrypoint: utilities/conditionprop/conditionprop.tsx

@@ -2,3 +2,4 @@ name: sitecollections
 path: app/{app:\w*\/\w*}/site/{sitename}/collections
 view: uesio/studio.sitecollections
 theme: uesio/studio.default
+title: Site Collections

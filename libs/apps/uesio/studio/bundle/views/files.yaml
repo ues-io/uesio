@@ -19,7 +19,6 @@ definition:
       fields:
         uesio/core.id:
         uesio/studio.name:
-        uesio/studio.content:
         uesio/studio.workspace:
           fields:
             uesio/studio.app:
@@ -36,7 +35,6 @@ definition:
       fields:
         uesio/core.id:
         uesio/studio.name:
-        uesio/studio.content:
       conditions:
         - field: uesio/studio.workspace
           valueSource: LOOKUP
@@ -86,17 +84,21 @@ definition:
                           components:
                             - uesio/io.button:
                                 text: Create a New File
-                                uesio.variant: uesio/io.secondary
+                                uesio.variant: uesio/io.primary
+                                hotkey: "n"
                                 signals:
                                   - signal: panel/TOGGLE
                                     panel: newFile
                 - uesio/io.box:
-                    uesio.variant: uesio/io.section
+                    uesio.variant: uesio/io.paddedsection
                     components:
-                      - uesio/io.deck:
-                          id: filesDeck
+                      - uesio/io.searchbox:
                           wire: files
-                          uesio.variant: uesio/io.section
+                          searchfields:
+                            - uesio/studio.name
+                      - uesio/io.deck:
+                          uesio.id: filesDeck
+                          wire: files
                           components:
                             - uesio/io.tile:
                                 uesio.variant: uesio/io.item
@@ -119,7 +121,7 @@ definition:
       height: 500px
       components:
         - uesio/io.list:
-            id: newfilelist
+            uesio.id: newfilelist
             wire: newfile
             mode: EDIT
             components:

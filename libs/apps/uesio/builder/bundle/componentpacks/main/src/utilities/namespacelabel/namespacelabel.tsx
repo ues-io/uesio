@@ -1,26 +1,23 @@
-import { FC } from "react"
-import { definition, hooks, component } from "@uesio/ui"
+import { definition, metadata } from "@uesio/ui"
+import IconLabel from "../iconlabel/iconlabel"
 
-const IconLabel = component.getUtility("uesio/builder.iconlabel")
-
-interface T extends definition.UtilityProps {
+type NamespaceLabelProps = {
 	metadatakey: string // This can either be 'uesio/crm' or a full key like 'uesio/crm.name'
+	metadatainfo?: metadata.NamespaceInfo
 	title?: string
 }
 
-const NamespaceLabel: FC<T> = (props) => {
-	const uesio = hooks.useUesio(props)
-	const { metadatakey = "", title, context, classes } = props
+const NamespaceLabel: definition.UtilityComponent<NamespaceLabelProps> = (
+	props
+) => {
+	const { metadatakey = "", metadatainfo, title, context, classes } = props
 	const [ns, name] = metadatakey.split(".")
-	const nsInfo = uesio.builder.getNamespaceInfo(ns)
-
-	if (!nsInfo) return null
 
 	return (
 		<IconLabel
 			tooltip={ns}
-			color={nsInfo.color}
-			icon={nsInfo.icon}
+			color={metadatainfo?.color || ""}
+			icon={metadatainfo?.icon || ""}
 			text={title || name}
 			context={context}
 			classes={classes}

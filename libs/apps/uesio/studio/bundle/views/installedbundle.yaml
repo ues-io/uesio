@@ -71,7 +71,7 @@ definition:
               uesio.variant: uesio/studio.content
               components:
                 - uesio/io.list:
-                    id: installedDeck
+                    uesio.id: installedDeck
                     wire: installedapp
                     mode: READ
                     components:
@@ -91,21 +91,6 @@ definition:
                                             - "installedapp"
                                         - signal: "route/NAVIGATE"
                                           path: app/$Param{app}/workspace/$Param{workspacename}
-                      # - uesio/io.box:
-                      #     uesio.variant: uesio/io.section
-                      #     uesio.styles:
-                      #       root:
-                      #         padding: 40px
-                      #     components:
-                      #       - uesio/io.grid:
-                      #           templateColumns:
-                      #             xs: 1fr
-                      #             md: 1fr 1fr
-                      #             lg: 1fr 1fr 1fr 1fr
-                      #           columnGap: 10px
-                      #           items:
-                      #             - uesio/io.field:
-                      #                 fieldId: uesio/core.uniquekey
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
@@ -113,7 +98,7 @@ definition:
                           uesio.variant: uesio/io.section
                           title: Versions
                       - uesio/io.deck:
-                          id: versionslist
+                          uesio.id: versionslist
                           wire: versions
                           uesio.variant: uesio/io.section
                           components:

@@ -27,6 +27,7 @@ views:
   uesio/studio.installedbundle: true
   uesio/studio.permissionset: true
   uesio/studio.permissionsets: true
+  uesio/studio.permissionsetcollection: true
   uesio/studio.profile: true
   uesio/studio.profiles: true
   uesio/studio.route: true
@@ -52,6 +53,7 @@ views:
   uesio/studio.sitecollectiondata: true
   uesio/studio.collectionimport: true
   uesio/studio.sitecollectiondataimport: true
+  uesio/studio.sitecollectiondataexport: true
   uesio/studio.featureflags: true
   uesio/studio.featureflag: true
   uesio/studio.labels: true
@@ -60,6 +62,7 @@ views:
   uesio/studio.translation: true
   uesio/studio.collectionexport: true
   uesio/studio.collectionexportbatches: true
+  uesio/studio.sitecollectionexportbatches: true
   uesio/studio.authsources: true
   uesio/studio.authsource: true
   uesio/studio.siteusage: true
@@ -102,6 +105,7 @@ routes:
   uesio/studio.signup: true
   uesio/studio.permissionset: true
   uesio/studio.permissionsets: true
+  uesio/studio.permissionsetcollection: true
   uesio/studio.profile: true
   uesio/studio.profiles: true
   uesio/studio.route: true
@@ -124,6 +128,7 @@ routes:
   uesio/studio.sitecollectiondata: true
   uesio/studio.collectionimport: true
   uesio/studio.sitecollectiondataimport: true
+  uesio/studio.sitecollectiondataexport: true
   uesio/studio.featureflags: true
   uesio/studio.featureflag: true
   uesio/studio.labels: true
@@ -132,6 +137,7 @@ routes:
   uesio/studio.translation: true
   uesio/studio.collectionexport: true
   uesio/studio.collectionexportbatches: true
+  uesio/studio.sitecollectionexportbatches: true
   uesio/studio.siteusage: true
   uesio/studio.userprofile: true
   uesio/studio.changepassword: true
@@ -164,7 +170,6 @@ collections:
   uesio/studio.datasource: true
   uesio/studio.featureflag: true
   uesio/studio.field: true
-  uesio/studio.filecollection: true
   uesio/studio.file: true
   uesio/studio.filesource: true
   uesio/studio.integration: true

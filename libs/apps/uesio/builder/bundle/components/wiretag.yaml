@@ -1,0 +1,3 @@
+name: wiretag
+pack: main
+entrypoint: components/wiretag/wiretag

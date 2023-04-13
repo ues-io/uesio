@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"path/filepath"
-	"time"
 
 	"gopkg.in/yaml.v3"
 )
@@ -14,11 +13,14 @@ func NewField(collectionKey, fieldKey string) (*Field, error) {
 	if err != nil {
 		return nil, errors.New("Bad Key for Field: " + collectionKey + " : " + fieldKey)
 	}
+	return NewBaseField(collectionKey, namespace, name), nil
+}
+
+func NewBaseField(collectionKey, namespace, name string) *Field {
 	return &Field{
-		Name:          name,
-		Namespace:     namespace,
-		CollectionRef: collectionKey,
-	}, nil
+		BundleableBase: NewBase(namespace, name),
+		CollectionRef:  collectionKey,
+	}
 }
 
 func NewFields(keys map[string]bool, collectionKey string) ([]BundleableItem, error) {
@@ -36,17 +38,14 @@ func NewFields(keys map[string]bool, collectionKey string) ([]BundleableItem, er
 }
 
 type Field struct {
-	ID                     string                  `yaml:"-" json:"uesio/core.id"`
-	UniqueKey              string                  `yaml:"-" json:"uesio/core.uniquekey"`
-	Name                   string                  `yaml:"name" json:"uesio/studio.name"`
+	BuiltIn                `yaml:",inline"`
+	BundleableBase         `yaml:",inline"`
 	CollectionRef          string                  `yaml:"-" json:"uesio/studio.collection"`
-	Namespace              string                  `yaml:"-" json:"-"`
 	Type                   string                  `yaml:"type" json:"uesio/studio.type"`
 	Label                  string                  `yaml:"label" json:"uesio/studio.label"`
 	ReadOnly               bool                    `yaml:"readOnly,omitempty" json:"uesio/studio.readonly"`
 	CreateOnly             bool                    `yaml:"createOnly,omitempty" json:"uesio/studio.createonly"`
 	SelectList             string                  `yaml:"selectList,omitempty" json:"uesio/studio.selectlist"`
-	Workspace              *Workspace              `yaml:"-" json:"uesio/studio.workspace"`
 	Required               bool                    `yaml:"required,omitempty" json:"uesio/studio.required"`
 	NumberMetadata         *NumberMetadata         `yaml:"number,omitempty" json:"uesio/studio.number"`
 	FileMetadata           *FileMetadata           `yaml:"file,omitempty" json:"uesio/studio.file"`
@@ -56,12 +55,6 @@ type Field struct {
 	AutoNumberMetadata     *AutoNumberMetadata     `yaml:"autonumber,omitempty" json:"uesio/studio.autonumber"`
 	FormulaMetadata        *FormulaMetadata        `yaml:"formula,omitempty" json:"uesio/studio.formula"`
 	AutoPopulate           string                  `yaml:"autopopulate,omitempty" json:"uesio/studio.autopopulate"`
-	itemMeta               *ItemMeta               `yaml:"-" json:"-"`
-	CreatedBy              *User                   `yaml:"-" json:"uesio/core.createdby"`
-	Owner                  *User                   `yaml:"-" json:"uesio/core.owner"`
-	UpdatedBy              *User                   `yaml:"-" json:"uesio/core.updatedby"`
-	UpdatedAt              int64                   `yaml:"-" json:"uesio/core.updatedat"`
-	CreatedAt              int64                   `yaml:"-" json:"uesio/core.createdat"`
 	SubFields              []SubField              `yaml:"subfields,omitempty" json:"uesio/studio.subfields"`
 	SubType                string                  `yaml:"subtype,omitempty" json:"uesio/studio.subtype"`
 	LanguageLabel          string                  `yaml:"languageLabel,omitempty" json:"uesio/studio.languagelabel"`
@@ -93,19 +86,15 @@ func GetFieldTypes() map[string]bool {
 }
 
 func (f *Field) GetCollectionName() string {
-	return f.GetBundleGroup().GetName()
+	return FIELD_COLLECTION_NAME
 }
 
-func (f *Field) GetCollection() CollectionableGroup {
-	return &FieldCollection{}
+func (f *Field) GetBundleFolderName() string {
+	return FIELD_FOLDER_NAME
 }
 
 func (f *Field) GetDBID(workspace string) string {
 	return fmt.Sprintf("%s:%s:%s", workspace, f.CollectionRef, f.Name)
-}
-
-func (f *Field) GetBundleGroup() BundleableGroup {
-	return &FieldCollection{}
 }
 
 func (f *Field) GetKey() string {
@@ -118,10 +107,6 @@ func (f *Field) GetPath() string {
 	return filepath.Join(nsUser, appName, collectionName, f.Name) + ".yaml"
 }
 
-func (f *Field) GetPermChecker() *PermissionSet {
-	return nil
-}
-
 func (f *Field) SetField(fieldName string, value interface{}) error {
 	return StandardFieldSet(f, fieldName, value)
 }
@@ -130,32 +115,12 @@ func (f *Field) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(f, fieldName)
 }
 
-func (f *Field) GetNamespace() string {
-	return f.Namespace
-}
-
-func (f *Field) SetNamespace(namespace string) {
-	f.Namespace = namespace
-}
-
-func (f *Field) SetModified(mod time.Time) {
-	f.UpdatedAt = mod.UnixMilli()
-}
-
 func (f *Field) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(f, iter)
 }
 
 func (f *Field) Len() int {
 	return StandardItemLen(f)
-}
-
-func (f *Field) GetItemMeta() *ItemMeta {
-	return f.itemMeta
-}
-
-func (f *Field) SetItemMeta(itemMeta *ItemMeta) {
-	f.itemMeta = itemMeta
 }
 
 func (f *Field) UnmarshalYAML(node *yaml.Node) error {
@@ -209,7 +174,7 @@ func validateFileField(node *yaml.Node, fieldKey string) error {
 	if err != nil {
 		return fmt.Errorf("Invalid File metadata provided for field: " + fieldKey + " : " + err.Error())
 	}
-	return setDefaultValue(fileNode, "filecollection", "uesio/core.platform")
+	return setDefaultValue(fileNode, "filesource", "uesio/core.platform")
 }
 
 func validateNumberField(node *yaml.Node, fieldKey string) error {

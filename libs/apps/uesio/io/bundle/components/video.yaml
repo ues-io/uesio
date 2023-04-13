@@ -1,0 +1,56 @@
+name: video
+title: Video
+description: Display a video.
+category: CONTENT
+pack: main
+entrypoint: components/video/video
+discoverable: true
+defaultDefinition:
+  muted: false
+  loop: false
+  autoplay: true
+  controls: true
+  playsinline: true
+properties:
+  - name: file
+    type: METADATA
+    label: File
+    metadataType: FILE
+  - name: src
+    type: TEXT
+    label: URL
+  - name: height
+    type: TEXT
+    label: Height
+  - name: width
+    type: TEXT
+    label: Width
+  - name: muted
+    type: CHECKBOX
+    label: Muted
+  - name: loop
+    type: CHECKBOX
+    label: Loop
+  - name: autoplay
+    type: CHECKBOX
+    label: Auto play
+  - name: controls
+    type: CHECKBOX
+    label: Controls
+  - name: playsinline
+    type: CHECKBOX
+    label: Plays Inline
+sections:
+  - type: HOME
+    properties:
+      - file
+      - src
+      - height
+      - width
+      - muted
+      - loop
+      - autoplay
+      - controls
+      - playsinline
+  - type: STYLES
+  - type: DISPLAY

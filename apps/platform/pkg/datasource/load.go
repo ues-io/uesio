@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/merge"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
@@ -23,7 +24,7 @@ var specialRefs = map[string]SpecialReferences{
 		ReferenceMetadata: &adapt.ReferenceMetadata{
 			Collection: "uesio/core.userfile",
 		},
-		Fields: []string{"uesio/core.mimetype", "uesio/core.name", "uesio/core.filename"},
+		Fields: []string{"uesio/core.mimetype", "uesio/core.path", "uesio/core.updatedat"},
 	},
 	"USER": {
 		ReferenceMetadata: &adapt.ReferenceMetadata{
@@ -54,8 +55,6 @@ func processConditions(
 	session *sess.Session,
 ) error {
 
-	mergeFuncs := GetMergeFuncs(session, params)
-
 	for i, condition := range conditions {
 
 		if condition.Type == "SUBQUERY" || condition.Type == "GROUP" {
@@ -74,12 +73,16 @@ func processConditions(
 			if !ok {
 				continue
 			}
-			template, err := templating.NewWithFuncs(stringValue, templating.ForceErrorFunc, mergeFuncs)
+			template, err := templating.NewWithFuncs(stringValue, templating.ForceErrorFunc, merge.ServerMergeFuncs)
 			if err != nil {
 				return err
 			}
 
-			mergedValue, err := templating.Execute(template, nil)
+			mergedValue, err := templating.Execute(template, merge.ServerMergeData{
+				Session:     session,
+				ParamValues: params,
+			})
+
 			if err != nil {
 				return err
 			}
@@ -141,7 +144,6 @@ func getMetadataForLoad(
 	metadataResponse *adapt.MetadataCache,
 	ops []*adapt.LoadOp,
 	session *sess.Session,
-	connection adapt.Connection,
 ) error {
 	collectionKey := op.CollectionName
 
@@ -153,6 +155,11 @@ func getMetadataForLoad(
 	}
 
 	for _, requestField := range op.Fields {
+
+		if !session.GetContextPermissions().HasFieldReadPermission(collectionKey, requestField.ID) {
+			return fmt.Errorf("Profile %s does not have read access to the %s field.", session.GetProfile(), requestField.ID)
+		}
+
 		subFields := getSubFields(requestField.Fields)
 		err := collections.AddField(collectionKey, requestField.ID, subFields)
 		if err != nil {
@@ -198,7 +205,7 @@ func getMetadataForLoad(
 
 	}
 
-	err = collections.Load(metadataResponse, session, connection)
+	err = collections.Load(metadataResponse, session, nil)
 	if err != nil {
 		return err
 	}
@@ -276,13 +283,11 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 		return nil, err
 	}
 
-	platformConnection, err := GetPlatformConnection(session, options.Connections)
-	if err != nil {
-		return nil, err
-	}
-
 	// Loop over the ops and batch per data source
 	for _, op := range ops {
+		if !session.GetContextPermissions().HasCollectionReadPermission(op.CollectionName) {
+			return nil, fmt.Errorf("Profile %s does not have read access to the %s collection.", session.GetProfile(), op.CollectionName)
+		}
 		// Verify that the id field is present
 		hasIDField := false
 		hasUniqueKeyField := false
@@ -308,7 +313,7 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 			})
 		}
 
-		err := getMetadataForLoad(op, metadataResponse, ops, session, platformConnection)
+		err := getMetadataForLoad(op, metadataResponse, ops, session)
 		if err != nil {
 			return nil, fmt.Errorf("metadata: %s: %v", op.CollectionName, err)
 		}
@@ -371,13 +376,28 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 				continue
 			}
 
-			err = connection.Load(op, session)
+			err = loadData(op, connection, session)
 			if err != nil {
 				return nil, err
 			}
+
 			usage.RegisterEvent("LOAD", "COLLECTION", collectionMetadata.GetFullName(), 0, session)
 			usage.RegisterEvent("LOAD", "DATASOURCE", dsKey, 0, session)
 		}
 	}
 	return metadataResponse, nil
+}
+
+func loadData(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+
+	err := connection.Load(op, session)
+	if err != nil {
+		return err
+	}
+
+	if !op.LoadAll || !op.HasMoreBatches {
+		return nil
+	}
+
+	return loadData(op, connection, session)
 }

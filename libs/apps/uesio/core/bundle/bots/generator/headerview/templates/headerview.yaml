@@ -5,10 +5,12 @@ components:
   - uesio/io.grid:
       uesio.styles:
         root:
-          alignItems: center
           backgroundColor: ${backgroundcolor}
-          padding: 10px
-      templateColumns: 0fr 0fr 1fr 0fr
+      uesio.styleTokens:
+        root:
+          - items-center
+          - p-4
+          - grid-cols-[0fr_0fr_1fr_0fr]
       items:
         - uesio/io.griditem:
             components:
@@ -30,6 +32,7 @@ components:
             components:
               - uesio/io.button:
                   uesio.variant: uesio/io.nav
+                  uesio.id: logout
                   text: Log Out
                   signals:
                     - signal: "user/LOGOUT"

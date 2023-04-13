@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { definition, hooks, component } from "@uesio/ui"
+import { definition, api, component } from "@uesio/ui"
 
 type DataManagerDefinition = {
 	collectionId: string
@@ -27,11 +27,11 @@ const getWireDefinition = (
 
 const DataManager: FunctionComponent<Props> = (props) => {
 	const { context, definition } = props
-	const uesio = hooks.useUesio(props)
+
 	const collection = context.mergeString(definition.collectionId)
 	const namespace = context.mergeString(definition.namespace)
 
-	const [fieldsMeta] = uesio.builder.useMetadataList(
+	const [fieldsMeta] = api.builder.useMetadataList(
 		context,
 		"FIELD",
 		namespace,
@@ -40,7 +40,7 @@ const DataManager: FunctionComponent<Props> = (props) => {
 
 	const wireDef = getWireDefinition(collection, fieldsMeta)
 
-	const dataWire = uesio.wire.useDynamicWire(WIRE_NAME, wireDef)
+	const dataWire = api.wire.useDynamicWire(WIRE_NAME, wireDef, context)
 
 	if (!dataWire || !fieldsMeta) return null
 

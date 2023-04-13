@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/middleware"
@@ -8,7 +9,7 @@ import (
 )
 
 func AuthCheck(w http.ResponseWriter, r *http.Request) {
-	respondJSON(w, r, &routing.LoginResponse{
+	file.RespondJSON(w, r, &routing.LoginResponse{
 		User: GetUserMergeData(middleware.GetSession(r)),
 	})
 }

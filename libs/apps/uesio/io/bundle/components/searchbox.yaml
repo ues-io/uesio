@@ -1,3 +1,28 @@
 name: searchbox
+title: Search Box
 pack: main
-entrypoint: components/searchbox/searchbox.tsx
+entrypoint: components/searchbox/searchbox
+description: Filter a wire based on a user's text search.
+category: INTERACTION
+discoverable: true
+properties:
+  - name: wire
+    label: Wire
+    type: WIRE
+  - name: searchfields
+    label: Search Fields
+    type: FIELDS
+    wireField: wire
+  - name: placeholder
+    label: Placeholder
+    type: TEXT
+sections:
+  - type: HOME
+    properties:
+      - wire
+      - searchfields
+      - placeholder
+  - type: STYLES
+  - type: DISPLAY
+variants:
+  - uesio/io.field:uesio/io.search

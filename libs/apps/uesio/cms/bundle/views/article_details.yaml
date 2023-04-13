@@ -32,7 +32,7 @@ definition:
                     text: Cancel
                     uesio.variant: uesio/io.secondary
     - uesio/io.list:
-        id: articleList
+        uesio.id: articleList
         wire: articleWire
         mode: READ
         components:
@@ -42,7 +42,9 @@ definition:
                 - uesio/io.field:
                     fieldId: uesio/cms.name
                 - uesio/io.grid:
-                    templateColumns: 1fr 1fr
+                    uesio.styleTokens:
+                      root:
+                        - grid-cols-2
                     columnGap: 10px
                     items:
                       - uesio/io.field:
@@ -51,9 +53,9 @@ definition:
                           labelPosition: none
                           fieldId: uesio/cms.content
                           displayAs: MARKDOWN
-                          id: mdcontent
+                          uesio.id: mdcontent
                       - uesio/io.field:
                           fieldId: uesio/cms.content
                           labelPosition: none
                           displayAs: MARKDOWN
-                          id: mdcontent
+                          uesio.id: mdcontent

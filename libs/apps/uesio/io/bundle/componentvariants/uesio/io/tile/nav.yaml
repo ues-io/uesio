@@ -1,17 +1,16 @@
 name: nav
 label: Nav
+extends: uesio/io.default
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      padding: 10px 20px
-      color: "#444"
-      alignItems: center
+      - py-2.5
+      - px-5
+      - text-slate-700
+      - focus:bg-slate-100
+      - focus:outline-offset-[-1px]
     selected:
-      backgroundColor: $Theme{color.primary}
-      color: white
-    content:
-      verticalAlign: middle
-      fontSize: 10pt
-    avatar:
-      marginRight: 8px
+      - text-white
+      - bg-primary
+      - focus:bg-black
 public: true

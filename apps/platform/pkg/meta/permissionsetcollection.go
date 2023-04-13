@@ -6,41 +6,42 @@ import (
 
 type PermissionSetCollection []*PermissionSet
 
+var PERMISSIONSET_COLLECTION_NAME = "uesio/studio.permissionset"
+var PERMISSIONSET_FOLDER_NAME = "permissionsets"
+var PERMISSIONSET_FIELDS = StandardGetFields(&PermissionSet{})
+
 func (pc *PermissionSetCollection) GetName() string {
-	return "uesio/studio.permissionset"
+	return PERMISSIONSET_COLLECTION_NAME
 }
 
 func (pc *PermissionSetCollection) GetBundleFolderName() string {
-	return "permissionsets"
+	return PERMISSIONSET_FOLDER_NAME
 }
 
 func (pc *PermissionSetCollection) GetFields() []string {
-	return StandardGetFields(&PermissionSet{})
+	return PERMISSIONSET_FIELDS
 }
 
 func (pc *PermissionSetCollection) NewItem() Item {
 	return &PermissionSet{}
 }
 
-func (pc *PermissionSetCollection) AddItem(item Item) {
+func (pc *PermissionSetCollection) AddItem(item Item) error {
 	*pc = append(*pc, item.(*PermissionSet))
+	return nil
 }
 
-func (pc *PermissionSetCollection) GetItemFromPath(path string) (BundleableItem, bool) {
-	return &PermissionSet{Name: StandardNameFromPath(path)}, true
+func (pc *PermissionSetCollection) GetItemFromPath(path, namespace string) BundleableItem {
+	return NewBasePermissionSet(namespace, StandardNameFromPath(path))
 }
 
-func (pc *PermissionSetCollection) FilterPath(path string, conditions BundleConditions) bool {
+func (pc *PermissionSetCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }
 
-func (pc *PermissionSetCollection) GetItem(index int) Item {
-	return (*pc)[index]
-}
-
 func (pc *PermissionSetCollection) Loop(iter GroupIterator) error {
-	for index := range *pc {
-		err := iter(pc.GetItem(index), strconv.Itoa(index))
+	for index, p := range *pc {
+		err := iter(p, strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -50,8 +51,4 @@ func (pc *PermissionSetCollection) Loop(iter GroupIterator) error {
 
 func (pc *PermissionSetCollection) Len() int {
 	return len(*pc)
-}
-
-func (pc *PermissionSetCollection) GetItems() interface{} {
-	return *pc
 }

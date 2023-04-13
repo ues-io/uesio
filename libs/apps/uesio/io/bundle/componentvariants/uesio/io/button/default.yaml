@@ -1,11 +1,17 @@
 name: default
 label: Default
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      whiteSpace: nowrap
-      backgroundColor: inherit
-      fontSize: 10pt
-      "&:focus":
-        outline: none
+      - whitespace-nowrap
+      - bg-inherit
+      - text-center
+      - cursor-pointer
+      - inline-grid
+      - grid-flow-col
+      - justify-center
+      - gap-x-2
+      - items-center
+      - bg-none
+      - text-[10pt]
 public: true

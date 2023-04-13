@@ -22,11 +22,6 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-type FileRecord struct {
-	RecordUniqueKey string
-	FieldName       string
-}
-
 var ORDERED_ITEMS = [...]string{
 	"collections",
 	"selectlists",
@@ -47,6 +42,7 @@ var ORDERED_ITEMS = [...]string{
 	"useraccesstokens",
 	"signupmethods",
 	"secrets",
+	"configvalues",
 	"credentials",
 	"integrations",
 }
@@ -73,11 +69,9 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 
 	dep := map[string]meta.BundleableGroup{}
 
-	fileStreams := []bundlestore.ReadItemStream{}
-	// Maps a filename to a recordID
-	fileNameMap := map[string]FileRecord{}
-
 	by := meta.BundleDef{}
+
+	uploadOps := []filesource.FileUploadOp{}
 
 	// Read all the files from zip archive
 	for _, zipFile := range zipReader.File {
@@ -127,91 +121,63 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 
 		path := filepath.Join(filepath.Join(dirParts[1:]...), fileName)
 
-		if !collection.FilterPath(path, nil) {
+		if !collection.FilterPath(path, nil, false) {
 			continue
 		}
 
-		collectionItem, isDefinition := collection.GetItemFromPath(path)
+		attachableGroup, isAttachable := collection.(meta.AttachableGroup)
+
+		collectionItem := collection.GetItemFromPath(path, namespace)
 		if err != nil {
 			return err
 		}
 
+		if collectionItem == nil {
+			continue
+		}
+
+		isDefinition := true
+
+		if isAttachable {
+			isDefinition = attachableGroup.IsDefinitionPath(path)
+		}
+
 		if isDefinition {
 			collection.AddItem(collectionItem)
-			collectionItem.SetNamespace(namespace)
 			err = readZipFile(zipFile, collectionItem)
 			if err != nil {
 				return errors.New("Reading File: " + collectionItem.GetKey() + " : " + err.Error())
 			}
 
-			// Special handling for files
-			if metadataType == "files" {
-				file := collectionItem.(*meta.File)
-				fileNameMap[collection.GetName()+":"+file.GetFilePath()] = FileRecord{
-					RecordUniqueKey: file.GetDBID(workspace.UniqueKey),
-					FieldName:       "uesio/studio.content",
-				}
+			collectionItem.SetField("uesio/studio.workspace", workspace)
+
+			continue
+		}
+
+		if isAttachable {
+
+			attachableItem, isAttachableItem := collectionItem.(meta.AttachableItem)
+			if !isAttachableItem {
+				continue
 			}
 
-			// Special handling for bots
-			if metadataType == "bots" {
-				bot := collectionItem.(*meta.Bot)
-				fileNameMap[collection.GetName()+":"+bot.GetBotFilePath()] = FileRecord{
-					RecordUniqueKey: bot.GetDBID(workspace.UniqueKey),
-					FieldName:       "uesio/studio.content",
-				}
+			// If the collection item has a way to get a base path we can use it.
+			// Special handling for files and bots that have file data
+			f, err := zipFile.Open()
+			if err != nil {
+				return err
 			}
 
-			// Special handling for componentpacks
-			if metadataType == "componentpacks" {
-				cpack := collectionItem.(*meta.ComponentPack)
-				fileNameMap[collection.GetName()+":"+cpack.GetComponentPackFilePath(false)] = FileRecord{
-					RecordUniqueKey: cpack.GetDBID(workspace.UniqueKey),
-					FieldName:       "uesio/studio.runtimebundle",
-				}
-				fileNameMap[collection.GetName()+":"+cpack.GetComponentPackFilePath(true)] = FileRecord{
-					RecordUniqueKey: cpack.GetDBID(workspace.UniqueKey),
-					FieldName:       "uesio/studio.buildtimebundle",
-				}
-			}
-
-			collectionItem.SetField("uesio/studio.workspace", &meta.Workspace{
-				ID: workspace.ID,
+			uploadOps = append(uploadOps, filesource.FileUploadOp{
+				Data: f,
+				Details: &fileadapt.FileDetails{
+					Path:            strings.TrimPrefix(path, attachableItem.GetBasePath()+"/"),
+					CollectionID:    collection.GetName(),
+					RecordUniqueKey: collectionItem.GetDBID(workspace.UniqueKey),
+				},
 			})
-
-			continue
+			defer f.Close()
 		}
-
-		// Special handling for files and bots that have file data
-		f, err := zipFile.Open()
-		if err != nil {
-			return err
-		}
-		fileStreams = append(fileStreams, bundlestore.ReadItemStream{
-			Type:     collection.GetName(),
-			FileName: fileName,
-			Path:     path,
-			Data:     f,
-		})
-		defer f.Close()
-	}
-
-	uploadOps := []filesource.FileUploadOp{}
-
-	for _, fileStream := range fileStreams {
-		fileRecord, ok := fileNameMap[fileStream.Type+":"+fileStream.Path]
-		if !ok {
-			continue
-		}
-		uploadOps = append(uploadOps, filesource.FileUploadOp{
-			Data: fileStream.Data,
-			Details: &fileadapt.FileDetails{
-				Name:            fileStream.FileName,
-				CollectionID:    fileStream.Type,
-				RecordUniqueKey: fileRecord.RecordUniqueKey,
-				FieldID:         fileRecord.FieldName,
-			},
-		})
 	}
 
 	deps := meta.BundleDependencyCollection{}
@@ -222,29 +188,38 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 			return err
 		}
 		deps = append(deps, &meta.BundleDependency{
-			Workspace: &meta.Workspace{
-				ID: workspace.ID,
-			},
+			Workspace: workspace,
 			App: &meta.App{
-				UniqueKey: key,
+				BuiltIn: meta.BuiltIn{
+					UniqueKey: key,
+				},
 			},
 			Bundle: &meta.Bundle{
-				UniqueKey: strings.Join([]string{key, major, minor, patch}, ":"),
+				BuiltIn: meta.BuiltIn{
+					UniqueKey: strings.Join([]string{key, major, minor, patch}, ":"),
+				},
 			},
 		})
 	}
 
 	// Upload workspace properties like homeRoute and loginRoute
-	workspaceItem := (&meta.Workspace{
-		ID: workspace.ID,
-		App: &meta.App{
-			UniqueKey: namespace,
+	workspaceItem := &meta.Workspace{
+		BuiltIn: meta.BuiltIn{
+			ID: workspace.ID,
 		},
-		LoginRoute:    by.LoginRoute,
-		HomeRoute:     by.HomeRoute,
-		PublicProfile: by.PublicProfile,
-		DefaultTheme:  by.DefaultTheme,
-	})
+		App: &meta.App{
+			BuiltIn: meta.BuiltIn{
+				UniqueKey: namespace,
+			},
+		},
+		AppSettings: meta.AppSettings{
+			LoginRoute:    by.LoginRoute,
+			HomeRoute:     by.HomeRoute,
+			PublicProfile: by.PublicProfile,
+			DefaultTheme:  by.DefaultTheme,
+			Favicon:       by.Favicon,
+		},
+	}
 
 	// We set the valid fields here because it's an update and we don't want
 	// to overwrite the other fields
@@ -255,6 +230,7 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 			"uesio/studio.homeroute":     true,
 			"uesio/studio.publicprofile": true,
 			"uesio/studio.defaulttheme":  true,
+			"uesio/studio.favicon":       true,
 			"uesio/studio.app":           true,
 		},
 	})
@@ -280,7 +256,7 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 		}
 	}
 
-	connection, err := datasource.GetPlatformConnection(session.RemoveWorkspaceContext(), nil)
+	connection, err := datasource.GetPlatformConnection(nil, session.RemoveWorkspaceContext(), nil)
 	if err != nil {
 		return err
 	}

@@ -1,0 +1,3 @@
+name: listpropertyitem
+pack: main
+entrypoint: utilities/listpropertyitem/listpropertyitem

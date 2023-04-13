@@ -22,7 +22,6 @@ definition:
         uesio/studio.type:
         uesio/studio.dialect:
         uesio/studio.collection:
-        uesio/studio.content:
         uesio/core.updatedat:
         uesio/core.updatedby:
         uesio/core.createdat:
@@ -35,6 +34,20 @@ definition:
         - field: uesio/studio.name
           valueSource: PARAM
           param: botname
+    attachments:
+      collection: uesio/core.userfile
+      fields:
+        uesio/core.id:
+        uesio/core.path:
+        uesio/core.recordid:
+        uesio/core.collectionid:
+        uesio/core.mimetype:
+        uesio/core.updatedat:
+      conditions:
+        - field: uesio/core.recordid
+          valueSource: LOOKUP
+          lookupWire: bots
+          lookupField: uesio/core.id
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -64,7 +77,7 @@ definition:
               uesio.variant: uesio/studio.content
               components:
                 - uesio/io.list:
-                    id: botsDeck
+                    uesio.id: botsDeck
                     wire: bots
                     mode: READ
                     components:
@@ -75,27 +88,17 @@ definition:
                             - uesio/io.group:
                                 components:
                                   - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
+                                      uesio.variant: uesio/io.primary
                                       text: "Save"
                                       signals:
-                                        - signal: component/uesio/io.field/SAVE_FILE
+                                        - signal: component/uesio/io.fileattachment/UPLOAD_FILE
                                           target: botcontent
-                                        - signal: wire/LOAD
-                                          wires:
-                                            - workspaces
-                                            - bots
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: "Cancel"
                                       signals:
-                                        - signal: component/uesio/io.field/CANCEL_FILE
+                                        - signal: component/uesio/io.fileattachment/CANCEL_FILE
                                           target: botcontent
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: "Edit"
-                                      signals:
-                                        - signal: panel/TOGGLE
-                                          panel: editBot
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: "Delete"
@@ -109,11 +112,7 @@ definition:
                               padding: 40px
                           components:
                             - uesio/io.grid:
-                                templateColumns:
-                                  xs: 1fr
-                                  md: 1fr 1fr
-                                  lg: 1fr 1fr 1fr 1fr
-                                columnGap: 10px
+                                uesio.variant: uesio/io.four_columns
                                 items:
                                   - uesio/io.field:
                                       fieldId: uesio/studio.name
@@ -121,7 +120,7 @@ definition:
                                       fieldId: uesio/studio.type
                                   - uesio/io.field:
                                       fieldId: uesio/studio.dialect
-                                  - uesio/studio.metadatafield:
+                                  - uesio/builder.metadatafield:
                                       uesio.context:
                                         workspace:
                                           name: $Param{workspacename}
@@ -137,10 +136,16 @@ definition:
                                       fieldId: uesio/core.updatedby
                                   - uesio/io.field:
                                       fieldId: uesio/core.updatedat
-                            - uesio/io.field:
-                                fieldId: uesio/studio.content
-                                id: botcontent
-                                displayAs: TEXT
+                            - uesio/io.list:
+                                id: Attachments
+                                wire: attachments
+                                components:
+                                  - uesio/io.fileattachment:
+                                      uesio.id: botcontent
+                                      displayAs: TEXT
+                                      mode: EDIT
+                                      typeDefinitionFileURIs:
+                                        - $StaticFile{/ui/server/types/types.d.ts}
   panels:
     deleteBot:
       uesio.type: uesio/io.dialog
@@ -167,52 +172,3 @@ definition:
             signals:
               - signal: panel/TOGGLE
                 panel: deleteBot
-    editBot:
-      uesio.type: uesio/io.dialog
-      title: Edit Bot
-      width: 400px
-      height: 560px
-      components:
-        - uesio/io.list:
-            id: editBotList
-            wire: bots
-            mode: EDIT
-            components:
-              - uesio/io.field:
-                  fieldId: uesio/studio.name
-              - uesio/io.field:
-                  fieldId: uesio/studio.type
-              - uesio/io.field:
-                  fieldId: uesio/studio.dialect
-              - uesio/io.box:
-                  uesio.display:
-                    - field: uesio/studio.type
-                      value: "LISTENER"
-                      type: "fieldNotEquals"
-                  components:
-                    - uesio/studio.metadatafield:
-                        uesio.context:
-                          workspace:
-                            name: $Param{workspacename}
-                            app: $Param{app}
-                        fieldId: uesio/studio.collection
-                        metadataType: "COLLECTION"
-                        label: "Collection"
-      actions:
-        - uesio/io.button:
-            uesio.variant: uesio/io.primary
-            text: "Save"
-            signals:
-              - signal: wire/SAVE
-                wires:
-                  - bots
-              - signal: "panel/TOGGLE"
-                panel: "editBot"
-        - uesio/io.button:
-            uesio.variant: "uesio/io.secondary"
-            text: "Cancel"
-            signals:
-              - signal: wire/CANCEL
-                wire: bots
-              - signal: "panel/TOGGLE"
-                panel: "editBot"

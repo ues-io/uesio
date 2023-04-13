@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
@@ -27,11 +28,7 @@ func removeEmptyDir(path string) {
 	removeEmptyDir(filepath.Dir(path))
 }
 
-func (a *FileAdapter) GetFileConnection(credentials *adapt.Credentials) (fileadapt.FileConnection, error) {
-	bucket, ok := (*credentials)["bucket"]
-	if !ok {
-		return nil, errors.New("No bucket provided in credentials")
-	}
+func (a *FileAdapter) GetFileConnection(credentials *adapt.Credentials, bucket string) (fileadapt.FileConnection, error) {
 	return &Connection{
 		bucket: bucket,
 	}, nil
@@ -87,14 +84,18 @@ func (c *Connection) Upload(fileData io.Reader, path string) error {
 	return nil
 }
 
-func (c *Connection) Download(path string) (io.ReadCloser, error) {
+func (c *Connection) Download(path string) (time.Time, io.ReadSeeker, error) {
 	fullPath := filepath.Join(c.bucket, path)
 	outFile, err := os.Open(fullPath)
 	if err != nil {
 		fmt.Println("Error Reading File: " + err.Error())
-		return io.NopCloser(strings.NewReader("")), nil
+		return time.Time{}, strings.NewReader(""), nil
 	}
-	return outFile, nil
+	fileInfo, err := outFile.Stat()
+	if err != nil {
+		return time.Time{}, nil, err
+	}
+	return fileInfo.ModTime(), outFile, nil
 }
 
 func (c *Connection) Delete(path string) error {

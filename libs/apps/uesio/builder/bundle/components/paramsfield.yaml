@@ -1,0 +1,6 @@
+name: paramsfield
+pack: main
+entrypoint: components/paramsfield/paramsfield
+utilities:
+  - uesio/io.mapfield
+  - uesio/io.fieldwrapper

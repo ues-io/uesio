@@ -1,4 +1,3 @@
-import { FunctionComponent } from "react"
 import { definition, component, styles } from "@uesio/ui"
 
 type IconLabelDefinition = {
@@ -8,17 +7,10 @@ type IconLabelDefinition = {
 	tooltip?: string
 }
 
-interface Props extends definition.BaseProps {
-	definition: IconLabelDefinition
-}
-
-const IconLabelUtility = component.getUtility("uesio/builder.iconlabel")
-
-const IconLabel: FunctionComponent<Props> = (props) => {
-	const {
-		context,
-		definition: { icon, color, text, tooltip },
-	} = props
+const IconLabel: definition.UC<IconLabelDefinition> = (props) => {
+	const IconLabelUtility = component.getUtility("uesio/builder.iconlabel")
+	const { context, definition } = props
+	const { icon, color, text, tooltip } = definition
 
 	const classes = styles.useStyles(
 		{
@@ -26,9 +18,9 @@ const IconLabel: FunctionComponent<Props> = (props) => {
 		},
 		props
 	)
-
 	return (
 		<IconLabelUtility
+			variant={definition["uesio.variant"]}
 			classes={classes}
 			icon={icon}
 			color={color}

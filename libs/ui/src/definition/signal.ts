@@ -1,7 +1,5 @@
-import { Context } from "../context/context"
+import { Context, ContextOptions } from "../context/context"
 import { Definition } from "./definition"
-import { ThunkFunc } from "../store/store"
-import { PropDescriptor } from "../buildmode/buildpropdefinition"
 import { PlainComponentState } from "../bands/component/types"
 import { Draft } from "@reduxjs/toolkit"
 import { Platform } from "../platform/platform"
@@ -9,25 +7,21 @@ import { Platform } from "../platform/platform"
 type SignalDispatcher = (
 	signal: SignalDefinition,
 	context: Context
-) => ThunkFunc
+) => Promise<Context> | Context
 
 type ComponentSignalDispatcher<T> = (
 	state: Draft<T>,
 	signal: SignalDefinition,
 	context: Context,
-	platform: Platform
+	platform: Platform,
+	id: string
 ) => void
 
 type SignalDescriptor = {
-	label: string
-	description: string
-	properties: (signal: SignalDefinition) => PropDescriptor[]
 	dispatcher: SignalDispatcher
 }
 
 type ComponentSignalDescriptor<T = PlainComponentState> = {
-	label?: string
-	properties?: (signal: SignalDefinition) => PropDescriptor[]
 	dispatcher: ComponentSignalDispatcher<T>
 	target?: string
 }
@@ -35,6 +29,8 @@ type ComponentSignalDescriptor<T = PlainComponentState> = {
 type SignalDefinition = {
 	signal: string
 	[key: string]: Definition
+	"uesio.context"?: ContextOptions
+	stepId?: string
 	onerror?: {
 		continue: boolean
 		notify: boolean
@@ -42,4 +38,4 @@ type SignalDefinition = {
 	}
 }
 
-export { SignalDefinition, SignalDescriptor, ComponentSignalDescriptor }
+export type { SignalDefinition, SignalDescriptor, ComponentSignalDescriptor }

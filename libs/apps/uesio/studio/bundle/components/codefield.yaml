@@ -1,3 +1,7 @@
 name: codefield
 pack: main
-entrypoint: components/codefield/codefield.tsx
+entrypoint: components/codefield/codefield
+utilities:
+  - uesio/io.codefield
+variants:
+  - uesio/io.codefield:uesio/io.default

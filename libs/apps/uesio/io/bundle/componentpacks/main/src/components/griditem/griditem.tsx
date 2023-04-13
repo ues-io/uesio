@@ -1,8 +1,11 @@
-import { FunctionComponent } from "react"
-import { component, styles } from "@uesio/ui"
-import { GridItemProps } from "./griditemdefinition"
+import { component, styles, definition } from "@uesio/ui"
 
-const GridItem: FunctionComponent<GridItemProps> = (props) => {
+type GridItemDefinition = {
+	column?: string
+	area?: string
+}
+
+const GridItem: definition.UC<GridItemDefinition> = (props) => {
 	const { definition, context, path } = props
 	if (!definition) return <div />
 	const classes = styles.useStyles(
@@ -20,7 +23,6 @@ const GridItem: FunctionComponent<GridItemProps> = (props) => {
 				definition={definition}
 				listName="components"
 				path={path}
-				accepts={["uesio.standalone"]}
 				context={context}
 			/>
 		</div>

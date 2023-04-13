@@ -1,0 +1,74 @@
+name: metatags
+options:
+  # Standard tags
+  - label: Standard
+    disabled: true
+    value: "--standard--"
+  - label: author
+    value: author
+  - label: copyright
+    value: copyright
+  - label: date
+    value: date
+  - label: description
+    value: description
+  - label: generator
+    value: generator
+  - label: keywords
+    value: keywords
+  - label: language
+    value: language
+  - label: robots
+    value: robots
+  - label: subject
+    value: subject
+  # Google tags
+  - label: Google
+    disabled: true
+    value: "--google--"
+  - label: google
+    value: google
+  - label: googlebot
+    value: googlebot
+  - label: google-site-verification
+    value: google-site-verification
+  # OpenGraph tags
+  - label: OpenGraph
+    disabled: true
+    value: "--og--"
+  - label: og:title
+    value: og:title
+  - label: og:type
+    value: og:type
+  - label: og:url
+    value: og:url
+  - label: og:image
+    value: og:image
+  - label: og:site_name
+    value: og:site_name
+  - label: og:description
+    value: og:description
+  - label: og:email
+    value: og:email
+  - label: og:phone_number
+    value: og:phone_number
+  - label: application-name
+    value: application-name
+  - label: og:video
+    value: og:video
+  - label: og:video:height
+    value: og:video:height
+  - label: og:video:width
+    value: og:video:width
+  - label: og:video:type
+    value: og:video:type
+  - label: og:audio
+    value: og:audio
+  - label: og:audio:title
+    value: og:audio:title
+  - label: og:audio:artist
+    value: og:audio:artist
+  - label: og:audio:album
+    value: og:audio:album
+  - label: og:audio:type
+    value: og:audio:type

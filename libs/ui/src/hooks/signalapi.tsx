@@ -1,65 +1,107 @@
-import { SignalDefinition } from "../definition/signal"
-import { Uesio, useHotKeyCallback } from "./hooks"
+import {
+	ComponentSignalDescriptor,
+	SignalDefinition,
+	SignalDescriptor,
+} from "../definition/signal"
+import { getComponentSignalDefinition } from "../bands/component/signals"
 import { Context } from "../context/context"
-import componentSignal from "../bands/component/signals"
-import { PropDescriptor } from "../buildmode/buildpropdefinition"
-import { registry, run, runMany } from "../signals/signals"
-import { addBlankSelectOption } from "../collectionexports"
+import { run, runMany, registry } from "../signals/signals"
+import { useHotKeyCallback } from "./hotkeys"
+import { PathNavigateSignal } from "../bands/route/signals"
+import { getRouteUrlPrefix } from "../bands/route/operations"
+import { MouseEvent, useEffect, useRef } from "react"
 
-class SignalAPI {
-	constructor(uesio: Uesio) {
-		this.uesio = uesio
+const urlJoin = (...args: string[]) => args.join("/").replace(/[/]+/g, "/")
+
+const getNavigateLink = (
+	signals: SignalDefinition[] | undefined,
+	context: Context
+) => {
+	if (!signals || signals.length !== 1) return undefined
+	const signal = signals[0] as PathNavigateSignal
+	if (!signal.path) return undefined
+
+	if (signal.signal === "route/NAVIGATE") {
+		const prefix = getRouteUrlPrefix(context, signal.namespace)
+		return urlJoin(prefix, context.mergeString(signal.path))
 	}
 
-	uesio: Uesio
-
-	// Returns a handler function for running a list of signals
-	getHandler = (
-		signals: SignalDefinition[] | undefined,
-		context: Context = this.uesio.getContext()
-	) => {
-		if (!signals) return undefined
-		return async () => this.runMany(signals, context)
+	if (signal.signal === "route/REDIRECT") {
+		return context.mergeString(signal.path)
 	}
 
-	useRegisterHotKey = (
-		keycode: string | undefined,
-		signals: SignalDefinition[] | undefined
-	) =>
-		useHotKeyCallback(keycode, (event) => {
-			event.preventDefault()
-			this.getHandler(signals)?.()
-		})
-
-	runMany = async (signals: SignalDefinition[], context: Context) =>
-		runMany(signals, context)
-
-	run = (signal: SignalDefinition, context: Context) => run(signal, context)
-
-	getProperties = (signal: SignalDefinition) => {
-		const descriptor = registry[signal?.signal] || componentSignal
-		return [
-			...defaultSignalProps(),
-			...(descriptor.properties ? descriptor.properties(signal) : []),
-		]
-	}
+	return undefined
 }
 
-function defaultSignalProps(): PropDescriptor[] {
-	const signalIds = Object.keys(registry)
-	return [
-		{
-			name: "signal",
-			label: "Signal",
-			type: "SELECT",
-			options: addBlankSelectOption(
-				signalIds.map((signal) => ({
-					value: signal,
-					label: registry[signal].label || signal,
-					title: registry[signal].description || signal,
-				}))
-			),
+const useLinkHandler = (
+	signals: SignalDefinition[] | undefined,
+	context: Context,
+	setPendingState?: (isPending: boolean) => void
+) => {
+	const isMounted = useRef<boolean>(true)
+	useEffect(
+		() => () => {
+			isMounted.current = false
 		},
-	]
+		[]
+	)
+
+	const link = getNavigateLink(signals, context)
+	if (!signals) return [undefined, undefined] as const
+	return [
+		link,
+		async (e: MouseEvent) => {
+			// Allow the default behavior if the meta key is active
+			const isMeta = e.getModifierState("Meta")
+			if (isMeta) return
+			e.preventDefault()
+			setPendingState?.(true)
+			await runMany(signals, context)
+			isMounted.current && setPendingState?.(false)
+		},
+	] as const
 }
-export { SignalAPI }
+
+// Returns a handler function for running a list of signals
+const getHandler = (
+	signals: SignalDefinition[] | undefined,
+	context: Context
+) => {
+	if (!signals) return undefined
+	return () => runMany(signals, context)
+}
+
+const useRegisterHotKey = (
+	keycode: string | undefined,
+	signals: SignalDefinition[] | undefined,
+	context: Context
+) =>
+	useHotKeyCallback(
+		keycode,
+		(event) => {
+			event.preventDefault()
+			getHandler(signals, context)?.()
+		},
+		signals && signals.length > 0
+	)
+
+// Returns a map of all SignalDescriptors from the registry
+const getSignals = (): Record<string, SignalDescriptor> => ({
+	...registry,
+})
+
+// Returns the SignalDescriptor associated with the given signal name
+const getSignal = (signalType: string) => registry[signalType]
+
+export {
+	useLinkHandler,
+	getComponentSignalDefinition,
+	getSignal,
+	getSignals,
+	getHandler,
+	useRegisterHotKey,
+	runMany,
+	run,
+}
+
+export type { ComponentSignalDescriptor }

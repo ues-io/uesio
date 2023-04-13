@@ -2,3 +2,4 @@ name: routes
 path: app/{app:\w*\/\w*}/workspace/{workspacename}/routes
 view: uesio/studio.routes
 theme: uesio/studio.default
+title: Routes

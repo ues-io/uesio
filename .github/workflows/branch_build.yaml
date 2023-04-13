@@ -1,0 +1,11 @@
+name: Non-master branch build
+on:
+  push:
+    branches-ignore:
+      - "master"
+    tags-ignore:
+      - "*"
+
+jobs:
+  build-and-test:
+    uses: ./.github/workflows/build.yaml

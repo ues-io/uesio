@@ -1,0 +1,8 @@
+name: paddedsection
+label: Section with Padding
+extends: uesio/io.section
+definition:
+  uesio.styles:
+    root:
+      padding: 40px
+public: true

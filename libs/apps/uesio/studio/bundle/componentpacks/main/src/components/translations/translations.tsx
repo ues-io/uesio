@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { definition, hooks, wire } from "@uesio/ui"
+import { definition, api, wire } from "@uesio/ui"
 
 import TranslationItem from "./translationitem"
 
@@ -13,7 +13,7 @@ interface Props extends definition.BaseProps {
 
 const Translation: FunctionComponent<Props> = (props) => {
 	const { context, definition } = props
-	const uesio = hooks.useUesio(props)
+
 	const { fieldId } = definition
 	const wire = context.getWire()
 	const record = context.getRecord()
@@ -24,7 +24,7 @@ const Translation: FunctionComponent<Props> = (props) => {
 
 	const originalValue =
 		record.getFieldValue<wire.PlainWireRecord>(fieldId) || {}
-	const [namespaces] = uesio.builder.useAvailableNamespaces(context, "LABEL")
+	const [namespaces] = api.builder.useAvailableNamespaces(context, "LABEL")
 
 	if (!namespaces) return null
 
@@ -37,7 +37,7 @@ const Translation: FunctionComponent<Props> = (props) => {
 					namespace={entry}
 					context={context}
 					setValue={(value: wire.PlainWireRecord): void => {
-						record.update(fieldId, value)
+						record.update(fieldId, value, context)
 					}}
 				/>
 			))}

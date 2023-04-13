@@ -1,3 +1,59 @@
 name: tabs
+title: Tabs
+description: Organized view content in to tabbed sections
 pack: main
-entrypoint: components/tabs/tabs.tsx
+entrypoint: components/tabs/tabs
+category: LAYOUT
+discoverable: true
+slots:
+  - name: components
+    path: /tabs/~{}
+  - name: footer
+defaultDefinition:
+  uesio.variant: uesio/io.default
+  tabs:
+    - id: tab1
+      label: One
+      components: []
+    - id: tab2
+      label: Two
+      components: []
+properties:
+  - name: tabs
+    type: LIST
+    items:
+      addLabel: Add Tab
+      displayTemplate: "${label}"
+      title: Tab Properties
+      defaultDefinition:
+        label: New Tab
+        components: []
+      properties:
+        - name: id
+          type: TEXT
+          label: Tab Id
+        - name: label
+          type: TEXT
+          label: Tab Label
+      sections:
+        - type: HOME
+          properties:
+            - id
+            - label
+        # TODO: improve Tab component to have these features,
+        # then uncomment these sections :)
+        # - type: SIGNALS
+        #   name: onfirstload
+        #   label: 1st Load Signals
+        # - type: SIGNALS
+        #   name: onselect
+        #   label: On-select Signals
+        # - type: DISPLAY
+sections:
+  - label: Tabs
+    id: tabs
+    type: CUSTOM
+    properties:
+      - tabs
+  - type: STYLES
+  - type: DISPLAY

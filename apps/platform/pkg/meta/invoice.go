@@ -1,26 +1,15 @@
 package meta
 
 type Invoice struct {
-	ID        string    `json:"uesio/core.id"`
-	UniqueKey string    `json:"uesio/core.uniquekey"`
-	AutoID    string    `json:"uesio/studio.autoid"`
-	App       *App      `json:"uesio/studio.app"`
-	Date      string    `json:"uesio/studio.date"`
-	Total     float64   `json:"uesio/studio.total"`
-	itemMeta  *ItemMeta `json:"-"`
-	CreatedBy *User     `json:"uesio/core.createdby"`
-	Owner     *User     `json:"uesio/core.owner"`
-	UpdatedBy *User     `json:"uesio/core.updatedby"`
-	UpdatedAt int64     `json:"uesio/core.updatedat"`
-	CreatedAt int64     `json:"uesio/core.createdat"`
+	BuiltIn `yaml:",inline"`
+	AutoID  string  `json:"uesio/studio.autoid"`
+	App     *App    `json:"uesio/studio.app"`
+	Date    string  `json:"uesio/studio.date"`
+	Total   float64 `json:"uesio/studio.total"`
 }
 
 func (l *Invoice) GetCollectionName() string {
-	return l.GetCollection().GetName()
-}
-
-func (l *Invoice) GetCollection() CollectionableGroup {
-	return &InvoiceCollection{}
+	return INVOICE_COLLECTION_NAME
 }
 
 func (l *Invoice) SetField(fieldName string, value interface{}) error {
@@ -37,12 +26,4 @@ func (l *Invoice) Loop(iter func(string, interface{}) error) error {
 
 func (l *Invoice) Len() int {
 	return StandardItemLen(l)
-}
-
-func (l *Invoice) GetItemMeta() *ItemMeta {
-	return l.itemMeta
-}
-
-func (l *Invoice) SetItemMeta(itemMeta *ItemMeta) {
-	l.itemMeta = itemMeta
 }

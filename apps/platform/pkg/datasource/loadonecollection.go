@@ -5,25 +5,21 @@ import (
 )
 
 type LoadOneCollection struct {
-	Collection meta.CollectionableGroup
-	Item       meta.Item
-	Length     int
-}
-
-func (c *LoadOneCollection) GetItem(index int) meta.Item {
-	return c.Item
+	Item   meta.CollectionableItem
+	Length int
 }
 
 func (c *LoadOneCollection) NewItem() meta.Item {
 	return c.Item
 }
 
-func (c *LoadOneCollection) AddItem(item meta.Item) {
+func (c *LoadOneCollection) AddItem(item meta.Item) error {
 	c.Length++
+	return nil
 }
 
 func (c *LoadOneCollection) Loop(iter meta.GroupIterator) error {
-	return iter(c.GetItem(0), "0")
+	return iter(c.Item, "0")
 }
 
 func (c *LoadOneCollection) Len() int {
@@ -31,13 +27,9 @@ func (c *LoadOneCollection) Len() int {
 }
 
 func (c *LoadOneCollection) GetFields() []string {
-	return c.Collection.GetFields()
+	return meta.StandardGetFields(c.Item)
 }
 
 func (c *LoadOneCollection) GetName() string {
-	return c.Collection.GetName()
-}
-
-func (c *LoadOneCollection) GetItems() interface{} {
-	return []LoadOneCollection{*c}
+	return c.Item.GetCollectionName()
 }

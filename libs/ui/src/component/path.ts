@@ -1,6 +1,4 @@
 import toPath from "lodash/toPath"
-import { MetadataKey } from "../bands/builder/types"
-import { DefinitionMap } from "../definition/definition"
 
 const parseKey = (fullName: string): [string, string] => {
 	if (!fullName) {
@@ -30,18 +28,6 @@ const parseFieldKey = (fullName: string): [string, string, string, string] => {
 	return [collectionNamespace, collectionName, fieldNamespace, fieldName]
 }
 
-// Unwraps a definition from its key
-const getDefinitionKey = (definition: DefinitionMap) =>
-	Object.keys(definition)[0]
-
-// Unwraps a definition and returns the componentType and definition
-const unWrapDefinition = (
-	definition: DefinitionMap
-): [string, DefinitionMap] => {
-	const componentType = getDefinitionKey(definition)
-	return [componentType, definition[componentType] as DefinitionMap]
-}
-
 // Return the string representation of a path array.
 const fromPath = (pathArray: string[]) => {
 	if (!pathArray.length) {
@@ -50,16 +36,11 @@ const fromPath = (pathArray: string[]) => {
 	return `["${pathArray.join(`"]["`)}"]`
 }
 
-// Trims the last item of a path
-const getParentPath = (path: string) => {
-	const pathArray = toPath(path)
-	pathArray.pop()
-	return fromPath(pathArray)
-}
+// Removes the last item from a path
+const getParentPath = (path: string) => getAncestorPath(path, 1)
 
-const getParentPathArray = (pathArray: string[]) => pathArray.slice(0, -1)
-
-const getGrandParentPath = (path: string) => getParentPath(getParentPath(path))
+// Removes the last 2 items from a path
+const getGrandParentPath = (path: string) => getAncestorPath(path, 2)
 
 /**
  * Trims a path N levels up
@@ -74,21 +55,11 @@ const getAncestorPath = (path: string, n: number): string => {
 
 const getKeyAtPath = (path: string) => toPath(path).pop() || null
 
-const getFullPathParts = (path: string): [string, MetadataKey, string] => {
-	const pathArray = toPath(path)
-	const metadataType = pathArray.shift() || ""
-	const metadataItem = (pathArray.shift() || "") as MetadataKey
-	return [metadataType, metadataItem, fromPath(pathArray)]
-}
-
-const makeFullPath = (
-	metadataType: string,
-	metadataItem: string,
-	path: string
-) => `["${metadataType}"]["${metadataItem}"]${path}`
-
 const isNumberIndex = (index: string | null | undefined) =>
 	index && /^\d+$/.test(index)
+
+const isComponentIndex = (index: string | null | undefined) =>
+	index && /^\w+\/\w+\.\w+$/.test(index)
 
 // Trims a path to the closest index segment
 const getIndexPath = (path: string) => {
@@ -108,41 +79,18 @@ const getIndexFromPath = (path: string) => {
 	return indexString ? parseInt(indexString, 10) : null
 }
 
-const parseRelativePath = (relativePath: string, basePath: string) => {
-	// Clean strings starting with './', we don't need that
-	const niceString = relativePath.startsWith("./")
-		? relativePath.replace("./", "")
-		: relativePath
-	// get the N levels up the tree
-	const arr = niceString.split("../")
-
-	const startingPath = getAncestorPath(basePath, arr.length)
-	const endingPath = arr
-		.pop()
-		?.split("/")
-		.map((el) => `["${el}"]`)
-		.join("")
-
-	return startingPath + endingPath
-}
-
 export {
 	parseKey,
 	parseVariantKey,
 	parseFieldKey,
-	unWrapDefinition,
 	fromPath,
 	toPath,
 	getParentPath,
-	getParentPathArray,
 	getGrandParentPath,
 	getAncestorPath,
 	getKeyAtPath,
 	getIndexPath,
 	getIndexFromPath,
-	getDefinitionKey,
-	getFullPathParts,
-	makeFullPath,
 	isNumberIndex,
-	parseRelativePath,
+	isComponentIndex,
 }

@@ -1,0 +1,6 @@
+name: sitedomaintype
+options:
+  - label: Domain
+    value: domain
+  - label: Subdomain
+    value: subdomain

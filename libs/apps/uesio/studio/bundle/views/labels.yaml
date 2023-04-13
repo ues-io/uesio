@@ -79,17 +79,21 @@ definition:
                           components:
                             - uesio/io.button:
                                 text: Create a New Label
-                                uesio.variant: uesio/io.secondary
+                                uesio.variant: uesio/io.primary
+                                hotkey: "n"
                                 signals:
                                   - signal: panel/TOGGLE
                                     panel: newlabel
                 - uesio/io.box:
-                    uesio.variant: uesio/io.section
+                    uesio.variant: uesio/io.paddedsection
                     components:
-                      - uesio/io.deck:
-                          id: labelsDeck
+                      - uesio/io.searchbox:
                           wire: labels
-                          uesio.variant: uesio/io.section
+                          searchfields:
+                            - uesio/studio.name
+                      - uesio/io.deck:
+                          uesio.id: labelsDeck
+                          wire: labels
                           components:
                             - uesio/io.tile:
                                 uesio.variant: uesio/io.item
@@ -112,7 +116,7 @@ definition:
       height: 500px
       components:
         - uesio/io.list:
-            id: newlabellist
+            uesio.id: newlabellist
             wire: newlabel
             mode: EDIT
             components:

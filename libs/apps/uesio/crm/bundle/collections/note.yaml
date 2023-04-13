@@ -1,5 +1,5 @@
 name: note
-nameField: uesio/crm.name
+public: true
 label: note
 pluralLabel: notes
-public: true
+nameField: uesio/crm.name

@@ -1,6 +1,6 @@
 import { Context } from "../../context/context"
 import { SignalDefinition, SignalDescriptor } from "../../definition/signal"
-import { BotParams } from "../../platform/platform"
+import { BotParams, platform } from "../../platform/platform"
 import { parseKey } from "../../component/path"
 import { getErrorString } from "../utils"
 
@@ -15,44 +15,34 @@ interface CallSignal extends SignalDefinition {
 
 const signals: Record<string, SignalDescriptor> = {
 	[`${BOT_BAND}/CALL`]: {
-		dispatcher:
-			(signal: CallSignal, context: Context) =>
-			async (dispatch, getState, platform) => {
-				const [namespace, name] = parseKey(signal.bot)
-				const mergedParams = context.mergeStringMap(signal.params)
+		dispatcher: async (signalInvocation: CallSignal, context: Context) => {
+			const { bot, params } = signalInvocation
+			const [namespace, name] = parseKey(bot)
+			const mergedParams = context.mergeStringMap(params)
 
-				try {
-					const response = await platform.callBot(
-						context,
-						namespace,
-						name,
-						mergedParams || {}
+			try {
+				const response = await platform.callBot(
+					context,
+					namespace,
+					name,
+					mergedParams || {}
+				)
+
+				// If this invocation was given a stable identifier,
+				// expose its outputs for later use
+				if (response && signalInvocation.stepId) {
+					return context.addSignalOutputFrame(
+						signalInvocation.stepId,
+						response.params
 					)
-
-					return context.addFrame({ params: response.params })
-				} catch (error) {
-					const message = getErrorString(error)
-					return context.addFrame({ errors: [message] })
 				}
-
 				return context
-			},
-		label: "Call Bot",
-		description: "Call a Bot",
-		properties: (signal: CallSignal) => [
-			{
-				type: "NAMESPACE",
-				name: "namespace",
-				label: "Namespace",
-			},
-			{
-				type: "BOT",
-				namespace: signal.namespace,
-				botType: "LISTENER",
-				name: "bot",
-				label: "Bot",
-			},
-		],
+			} catch (error) {
+				// TODO: Recommend putting errors within signal output frame as well
+				const message = getErrorString(error)
+				return context.addErrorFrame([message])
+			}
+		},
 	},
 }
 export default signals

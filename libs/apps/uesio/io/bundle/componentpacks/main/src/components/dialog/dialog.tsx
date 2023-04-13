@@ -1,19 +1,26 @@
-import { FunctionComponent } from "react"
-import { definition, hooks, component } from "@uesio/ui"
-import { DialogUtilityProps } from "../../utilities/dialog/dialog"
+import { definition, api, component } from "@uesio/ui"
 
-const IODialog = component.getUtility<DialogUtilityProps>("uesio/io.dialog")
+import { default as IODialog } from "../../utilities/dialog/dialog"
 
-const Dialog: FunctionComponent<definition.BaseProps> = (props) => {
-	const uesio = hooks.useUesio(props)
+type DialogDefinition = {
+	title?: string
+	width?: string
+	height?: string
+	id?: string
+}
+
+const Dialog: definition.UC<DialogDefinition> = (props) => {
 	const { context, definition, path } = props
 	const panelId = definition?.id as string
-	const onClose = uesio.signal.getHandler([
-		{
-			signal: "panel/TOGGLE",
-			panel: panelId,
-		},
-	])
+	const onClose = api.signal.getHandler(
+		[
+			{
+				signal: "panel/TOGGLE",
+				panel: panelId,
+			},
+		],
+		context
+	)
 	if (!definition) return null
 	return (
 		<IODialog
@@ -23,26 +30,21 @@ const Dialog: FunctionComponent<definition.BaseProps> = (props) => {
 			height={definition.height as string | undefined}
 			title={definition.title as string | undefined}
 			actions={
-				definition?.actions && (
-					<component.Slot
-						definition={definition}
-						listName="actions"
-						path={path}
-						accepts={["uesio.standalone"]}
-						context={context}
-					/>
-				)
+				<component.Slot
+					definition={definition}
+					listName="actions"
+					path={path}
+					context={context}
+				/>
 			}
 		>
 			<component.Slot
 				definition={definition}
 				listName="components"
 				path={path}
-				accepts={["uesio.standalone"]}
 				context={context}
 			/>
 		</IODialog>
 	)
 }
-
 export default Dialog

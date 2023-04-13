@@ -1,36 +1,33 @@
-import { definition, component, hooks } from "@uesio/ui"
+import { definition, component } from "@uesio/ui"
 import { FunctionComponent, useEffect, useRef } from "react"
+import { FullPath } from "../../api/path"
+import { getBuildMode, useDragPath, useDropPath } from "../../api/stateapi"
 import { isDropAllowed } from "../../shared/dragdrop"
+import BuildWrapper from "../buildwrapper/buildwrapper"
 import PlaceHolder from "../placeholder/placeholder"
 
 const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
-	const {
-		accepts,
-		definition,
-		listName,
-		path,
-		direction,
-		label,
-		message,
-		context,
-	} = props
+	const { definition, listName, path, direction, label, message, context } =
+		props
+
+	const buildMode = getBuildMode(context)
 
 	const ref = useRef<HTMLDivElement>(null)
-	const uesio = hooks.useUesio(props)
+
 	const listDef = (definition?.[listName] || []) as definition.DefinitionList
 	const listPath = path ? `${path}["${listName}"]` : `["${listName}"]`
 	const size = listDef.length
+	const viewDefId = context.getViewDefId()
 
-	const [dragType, dragItem, dragPath] = uesio.builder.useDragNode()
-	const [, , dropPath] = uesio.builder.useDropNode()
-	const fullDragPath = component.path.makeFullPath(
-		dragType,
-		dragItem,
-		dragPath
-	)
+	const dragPath = useDragPath(context)
+	const dropPath = useDropPath(context)
+
+	const accepts = ["component", "viewdef" /* "componentvariant"*/]
 
 	const isHovering =
-		dropPath === `${listPath}["0"]` && isDropAllowed(accepts, fullDragPath)
+		dropPath.equals(
+			new FullPath("viewdef", viewDefId, `${listPath}["0"]`)
+		) && isDropAllowed(accepts, dragPath)
 
 	useEffect(() => {
 		const parentElem = ref?.current?.parentElement
@@ -38,9 +35,18 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 			parentElem.setAttribute("data-accepts", accepts.join(","))
 			parentElem.setAttribute("data-direction", direction || "")
 			parentElem.setAttribute("data-path", listPath)
-			parentElem.setAttribute("data-insertindex", size + "")
 		}
-	}, [path, size, accepts, direction])
+	}, [path, accepts, direction])
+
+	if (!buildMode) {
+		return (
+			<>
+				{component.getSlotProps(props).map((props, index) => (
+					<component.Component key={index} {...props} />
+				))}
+			</>
+		)
+	}
 
 	return (
 		<>
@@ -55,7 +61,13 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 					direction={direction}
 				/>
 			)}
-			{props.children}
+			<>
+				{component.getSlotProps(props).map((props, index) => (
+					<BuildWrapper key={index} {...props}>
+						<component.Component {...props} />
+					</BuildWrapper>
+				))}
+			</>
 		</>
 	)
 }

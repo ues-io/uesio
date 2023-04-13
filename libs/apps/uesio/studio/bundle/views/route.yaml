@@ -22,8 +22,10 @@ definition:
         uesio/studio.path:
         uesio/studio.view:
         uesio/studio.theme:
+        uesio/studio.title:
         uesio/studio.collection:
         uesio/studio.viewtype:
+        uesio/studio.tags:
       conditions:
         - field: uesio/studio.workspace
           valueSource: LOOKUP
@@ -61,7 +63,7 @@ definition:
               uesio.variant: uesio/studio.content
               components:
                 - uesio/io.list:
-                    id: routesDeck
+                    uesio.id: routesDeck
                     wire: routes
                     mode: READ
                     components:
@@ -73,6 +75,7 @@ definition:
                                 components:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
+                                      hotkey: "meta+p"
                                       text: $Label{uesio/io.preview}
                                       uesio.display:
                                         - type: fieldMode
@@ -92,6 +95,7 @@ definition:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.primary
                                       text: $Label{uesio/io.save}
+                                      hotkey: "meta+s"
                                       uesio.display:
                                         - type: fieldMode
                                           mode: EDIT
@@ -130,11 +134,7 @@ definition:
                               padding: 40px
                           components:
                             - uesio/io.grid:
-                                templateColumns:
-                                  xs: 1fr
-                                  md: 1fr 1fr
-                                  lg: 1fr 1fr 1fr 1fr
-                                columnGap: 10px
+                                uesio.variant: uesio/io.four_columns
                                 uesio.context:
                                   workspace:
                                     name: $Param{workspacename}
@@ -142,17 +142,29 @@ definition:
                                 items:
                                   - uesio/io.field:
                                       fieldId: uesio/studio.path
-                                  - uesio/studio.metadatafield:
+                                  - uesio/builder.metadatafield:
                                       fieldId: uesio/studio.view
                                       metadataType: "VIEW"
                                       label: "View"
-                                  - uesio/studio.metadatafield:
+                                  - uesio/builder.metadatafield:
                                       fieldId: uesio/studio.theme
                                       metadataType: "THEME"
                                       label: "Theme"
-                                  - uesio/studio.metadatafield:
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.title
+                                  - uesio/builder.metadatafield:
                                       fieldId: uesio/studio.collection
                                       metadataType: "COLLECTION"
                                       label: "Collection"
                                   - uesio/io.field:
                                       fieldId: uesio/studio.viewtype
+                      - uesio/io.titlebar:
+                          uesio.variant: uesio/io.main
+                          title: Search Engine Optimization
+                          subtitle: Route <meta> tags
+                      - uesio/io.box:
+                          uesio.variant: uesio/io.paddedsection
+                          components:
+                            - uesio/io.field:
+                                label: " "
+                                fieldId: uesio/studio.tags

@@ -6,29 +6,29 @@ import (
 
 type LicensePricingItemCollection []*LicensePricingItem
 
+var LICENSEPRICINGITEM_COLLECTION_NAME = "uesio/studio.licensepricingitem"
+var LICENSEPRICINGITEM_FIELDS = StandardGetFields(&LicensePricingItem{})
+
 func (lpic *LicensePricingItemCollection) GetName() string {
-	return "uesio/studio.licensepricingitem"
+	return LICENSEPRICINGITEM_COLLECTION_NAME
 }
 
 func (lpic *LicensePricingItemCollection) GetFields() []string {
-	return StandardGetFields(&LicensePricingItem{})
-}
-
-func (lpic *LicensePricingItemCollection) GetItem(index int) Item {
-	return (*lpic)[index]
+	return LICENSEPRICINGITEM_FIELDS
 }
 
 func (lpic *LicensePricingItemCollection) NewItem() Item {
 	return &LicensePricingItem{}
 }
 
-func (lpic *LicensePricingItemCollection) AddItem(item Item) {
+func (lpic *LicensePricingItemCollection) AddItem(item Item) error {
 	*lpic = append(*lpic, item.(*LicensePricingItem))
+	return nil
 }
 
 func (lpic *LicensePricingItemCollection) Loop(iter GroupIterator) error {
-	for index := range *lpic {
-		err := iter(lpic.GetItem(index), strconv.Itoa(index))
+	for index, lpi := range *lpic {
+		err := iter(lpi, strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -38,8 +38,4 @@ func (lpic *LicensePricingItemCollection) Loop(iter GroupIterator) error {
 
 func (lpic *LicensePricingItemCollection) Len() int {
 	return len(*lpic)
-}
-
-func (lpic *LicensePricingItemCollection) GetItems() interface{} {
-	return *lpic
 }

@@ -1,3 +1,25 @@
 name: tile
 pack: main
-entrypoint: components/tile/tile.tsx
+title: Tile
+entrypoint: components/tile/tile
+category: CONTENT
+description: A clickable tag representing a record.
+link: "https://docs.ues.io/"
+discoverable: true
+slots:
+  - name: avatar
+  - name: content
+variants:
+  - uesio/io.text:uesio/io.icon
+  - uesio/io.text:uesio/io.iconoutline
+properties:
+  - type: COMPONENT_ID
+    name: uesio.id
+    label: Component Id
+sections:
+  - type: HOME
+    properties:
+      - uesio.id
+  - type: SIGNALS
+  - type: STYLES
+  - type: DISPLAY

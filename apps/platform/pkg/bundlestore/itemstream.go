@@ -16,27 +16,3 @@ func GetFileReader(writeFunc func(io.Writer) error) io.Reader {
 	}()
 	return r
 }
-
-type ItemStreams []ItemStream
-
-func (is *ItemStreams) AddFile(fileName, fileType string, stream io.Reader) {
-	file := ItemStream{
-		FileName: fileName,
-		Type:     fileType,
-		File:     stream,
-	}
-	*is = append(*is, file)
-}
-
-type ItemStream struct {
-	Type     string
-	FileName string
-	File     io.Reader
-}
-
-type ReadItemStream struct {
-	Type     string
-	FileName string
-	Path     string
-	Data     io.ReadCloser
-}

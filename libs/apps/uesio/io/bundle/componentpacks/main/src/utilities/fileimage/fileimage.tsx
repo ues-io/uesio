@@ -1,37 +1,25 @@
 import { FunctionComponent, CSSProperties } from "react"
-import {
-	definition,
-	styles,
-	collection,
-	component,
-	context,
-	wire,
-	hooks,
-} from "@uesio/ui"
+import { definition, styles, collection, context, api } from "@uesio/ui"
 import { nanoid } from "@reduxjs/toolkit"
+import Icon from "../icon/icon"
+import { UserFileMetadata } from "../../components/field/field"
+import UploadArea from "../uploadarea/uploadarea"
 
 interface FileImageProps extends definition.UtilityProps {
-	width?: string
-	fieldMetadata: collection.Field
-	fieldId: string
 	id?: string
 	mode?: context.FieldMode
-	record: wire.WireRecord
-	wire: wire.Wire
+	userFile?: UserFileMetadata
+	onUpload: (files: FileList | null) => void
+	onDelete?: () => void
+	accept?: string
 }
 
-const Icon = component.getUtility("uesio/io.icon")
-const FileUploadArea = component.getUtility("uesio/io.fileuploadarea")
-
 const FileImage: FunctionComponent<FileImageProps> = (props) => {
-	const uesio = hooks.useUesio(props)
-	const { fieldMetadata, fieldId, record, context, wire, mode } = props
+	const { context, mode, userFile, accept, onUpload, onDelete } = props
 
-	const userFile = record.getFieldValue<wire.PlainWireRecord>(fieldId)
 	const userFileId = userFile?.[collection.ID_FIELD] as string
-	const userModDate = userFile?.["uesio/core.updatedat"] as string
-	const accept = fieldMetadata.getAccept()
-	const fileUrl = uesio.file.getUserFileURL(context, userFileId, userModDate)
+	const userModDate = userFile?.[collection.UPDATED_AT_FIELD]
+	const fileUrl = api.file.getUserFileURL(context, userFileId, userModDate)
 
 	const actionIconStyles: CSSProperties = {
 		cursor: "pointer",
@@ -83,12 +71,11 @@ const FileImage: FunctionComponent<FileImageProps> = (props) => {
 	const deleteLabelId = nanoid()
 
 	return (
-		<FileUploadArea
+		<UploadArea
+			onUpload={onUpload}
+			onDelete={onDelete}
 			context={context}
-			record={record}
-			wire={wire}
 			accept={accept}
-			fieldId={fieldId}
 			className={classes.root}
 			uploadLabelId={uploadLabelId}
 			deleteLabelId={deleteLabelId}
@@ -125,7 +112,7 @@ const FileImage: FunctionComponent<FileImageProps> = (props) => {
 					/>
 				</div>
 			)}
-		</FileUploadArea>
+		</UploadArea>
 	)
 }
 

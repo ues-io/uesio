@@ -1,16 +1,14 @@
-import { MetadataInfo } from "../../platform/platform"
-
 const METADATA = {
 	COLLECTION: "collections",
 	FIELD: "fields",
 	VIEW: "views",
 	DATASOURCE: "datasources",
 	AUTHSOURCE: "authsources",
+	FILESOURCE: "filesources",
 	SIGNUPMETHOD: "signupmethods",
 	SECRET: "secrets",
 	THEME: "themes",
 	SELECTLIST: "selectlists",
-	FILECOLLECTION: "filecollections",
 	BOT: "bots",
 	CREDENTIALS: "credentials",
 	ROUTE: "routes",
@@ -26,15 +24,6 @@ const METADATA = {
 type MetadataType = keyof typeof METADATA
 type MetadataKey = `${string}/${string}.${string}`
 
-type BuilderState = {
-	activeNode?: string
-	selectedNode?: string
-	draggingNode?: string
-	droppingNode?: string
-	lastModifiedNode?: string
-	namespaces?: Record<string, MetadataInfo>
-}
-
 type MetadataListResponse = {
 	metadataType: MetadataType
 	namespace: string
@@ -42,10 +31,5 @@ type MetadataListResponse = {
 	metadata: Record<string, boolean>
 }
 
-export {
-	BuilderState,
-	MetadataListResponse,
-	MetadataType,
-	METADATA,
-	MetadataKey,
-}
+export type { MetadataListResponse, MetadataType, MetadataKey }
+export { METADATA }

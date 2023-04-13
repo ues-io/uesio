@@ -1,3 +1,25 @@
 name: titlebar
+title: Title Bar
+description: A section description with a main title and subtitle.
 pack: main
-entrypoint: components/titlebar/titlebar.tsx
+entrypoint: components/titlebar/titlebar
+category: CONTENT
+discoverable: true
+slots:
+  - name: actions
+defaultDefinition:
+  title: New Title
+properties:
+  - name: title
+    label: Title
+    type: TEXT
+  - name: subtitle
+    label: Subtitle
+    type: TEXT
+sections:
+  - type: HOME
+    properties:
+      - title
+      - subtitle
+  - type: STYLES
+  - type: DISPLAY

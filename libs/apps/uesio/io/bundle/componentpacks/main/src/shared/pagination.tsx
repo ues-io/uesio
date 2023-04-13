@@ -1,4 +1,4 @@
-import { hooks, signal, definition } from "@uesio/ui"
+import { api, signal } from "@uesio/ui"
 import { useEffect } from "react"
 
 type PaginationState = {
@@ -10,8 +10,6 @@ const nextPage: signal.ComponentSignalDescriptor<PaginationState> = {
 		const currentPage = state.pagination ?? 0
 		state.pagination = currentPage + 1
 	},
-	label: "Next Page",
-	properties: () => [],
 }
 
 const prevPage: signal.ComponentSignalDescriptor<PaginationState> = {
@@ -19,18 +17,14 @@ const prevPage: signal.ComponentSignalDescriptor<PaginationState> = {
 		const currentPage = state.pagination ?? 0
 		state.pagination = currentPage - 1
 	},
-	label: "Previous Page",
-	properties: () => [],
 }
 
 const usePagination = (
 	id: string,
-	batch: string | undefined,
-	props: definition.BaseProps
+	batch: string | undefined
 ): [number | undefined, (page: number) => void] => {
-	const uesio = hooks.useUesio(props)
 	const batchId = batch || ""
-	const [currentPage, setPagination] = uesio.component.useStateSlice<
+	const [currentPage, setPagination] = api.component.useStateSlice<
 		number | undefined
 	>("pagination", id, 0)
 

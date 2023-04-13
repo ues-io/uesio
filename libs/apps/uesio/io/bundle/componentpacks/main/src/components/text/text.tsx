@@ -1,11 +1,14 @@
-import { FunctionComponent } from "react"
+import { styles, definition } from "@uesio/ui"
+import { AcceptedElements, default as IOText } from "../../utilities/text/text"
 
-import { TextProps } from "./textdefinition"
-import { component, styles } from "@uesio/ui"
+type TextDefinition = {
+	text?: string
+	element?: AcceptedElements
+	color?: string
+	align?: AlignSetting
+}
 
-const IOText = component.getUtility("uesio/io.text")
-
-const Text: FunctionComponent<TextProps> = (props) => {
+const Text: definition.UC<TextDefinition> = (props) => {
 	const { definition, context } = props
 	const classes = styles.useStyles(
 		{

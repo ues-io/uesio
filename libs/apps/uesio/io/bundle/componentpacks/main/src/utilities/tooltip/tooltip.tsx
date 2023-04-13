@@ -1,25 +1,45 @@
-import { FunctionComponent, useState } from "react"
+import { FunctionComponent, useRef, useState } from "react"
 import { definition, styles } from "@uesio/ui"
-import { usePopper } from "react-popper"
-import type { Placement } from "@popperjs/core"
+import {
+	useFloating,
+	useInteractions,
+	arrow,
+	offset,
+	shift,
+	useHover,
+	Placement,
+	FloatingPortal,
+} from "@floating-ui/react"
 
 interface TooltipUtilityProps extends definition.UtilityProps {
 	text: string
 	placement?: Placement
+	offset?: number
 }
 
 const Tooltip: FunctionComponent<TooltipUtilityProps> = (props) => {
-	const [referenceEl, setReferenceEl] = useState<HTMLDivElement | null>(null)
-	const [popperEl, setPopperEl] = useState<HTMLDivElement | null>(null)
-	const [arrowEl, setArrowEl] = useState<HTMLDivElement | null>(null)
+	const arrowRef = useRef<HTMLDivElement>(null)
 	const [open, setOpen] = useState<boolean>(false)
-	const popper = usePopper(referenceEl, popperEl, {
-		placement: props.placement,
-		modifiers: [
-			{ name: "arrow", options: { element: arrowEl } },
-			{ name: "offset", options: { offset: [0, 8] } },
-		],
+	const { x, y, strategy, refs, middlewareData, placement, context } =
+		useFloating({
+			open,
+			onOpenChange: setOpen,
+			placement: props.placement,
+			middleware: [
+				shift(),
+				offset(props.offset || 0),
+				arrow({
+					element: arrowRef,
+				}),
+			],
+		})
+
+	const hover = useHover(context, {
+		restMs: 400,
+		// if their cursor never rests, open it after 1000 ms (fallback)
+		delay: { open: 1000 },
 	})
+	const { getReferenceProps, getFloatingProps } = useInteractions([hover])
 
 	const classes = styles.useUtilityStyles(
 		{
@@ -31,6 +51,16 @@ const Tooltip: FunctionComponent<TooltipUtilityProps> = (props) => {
 				fontSize: "8pt",
 			},
 			arrow: {
+				...(middlewareData?.arrow && {
+					left:
+						middlewareData.arrow.x !== null
+							? `${middlewareData.arrow.x}px`
+							: "",
+					top:
+						middlewareData.arrow.y !== null
+							? `${middlewareData.arrow.y}px`
+							: "",
+				}),
 				position: "absolute",
 				width: "8px",
 				height: "8px",
@@ -45,16 +75,16 @@ const Tooltip: FunctionComponent<TooltipUtilityProps> = (props) => {
 					content: "''",
 					transform: "rotate(45deg)",
 				},
-				...(popper.state?.placement === "top" && {
+				...(placement === "top" && {
 					bottom: "-4px",
 				}),
-				...(popper.state?.placement === "bottom" && {
+				...(placement === "bottom" && {
 					top: "-4px",
 				}),
-				...(popper.state?.placement === "left" && {
+				...(placement === "left" && {
 					right: "-4px",
 				}),
-				...(popper.state?.placement === "right" && {
+				...(placement === "right" && {
 					left: "-4px",
 				}),
 			},
@@ -64,30 +94,29 @@ const Tooltip: FunctionComponent<TooltipUtilityProps> = (props) => {
 
 	return (
 		<>
-			<div
-				onMouseEnter={() => setOpen(true)}
-				onMouseLeave={() => setOpen(false)}
-				ref={setReferenceEl}
-			>
+			<div ref={refs.setReference} {...getReferenceProps()}>
 				{props.children}
 			</div>
-			{open && (
-				<div
-					className={classes.tooltip}
-					ref={setPopperEl}
-					style={popper.styles.popper}
-					{...popper.attributes.popper}
-				>
-					{props.text}
+			<FloatingPortal>
+				{open && (
 					<div
-						ref={setArrowEl}
-						className={classes.arrow}
-						style={popper.styles.arrow}
-					/>
-				</div>
-			)}
+						{...getFloatingProps()}
+						className={classes.tooltip}
+						ref={refs.setFloating}
+						style={{
+							position: strategy,
+							top: y ?? 0,
+							left: x ?? 0,
+							width: "max-content",
+						}}
+					>
+						{props.text}
+						<div ref={arrowRef} className={classes.arrow} />
+					</div>
+				)}
+			</FloatingPortal>
 		</>
 	)
 }
-export { TooltipUtilityProps }
+
 export default Tooltip

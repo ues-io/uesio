@@ -68,7 +68,7 @@ definition:
               uesio.variant: uesio/studio.content
               components:
                 - uesio/io.list:
-                    id: translationsDeck
+                    uesio.id: translationsDeck
                     wire: translations
                     mode: READ
                     components:
@@ -91,7 +91,7 @@ definition:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: "Cancel"
-                                      hotkey: "command+shift+."
+                                      hotkey: "meta+shift+."
                                       uesio.display:
                                         - type: wireHasChanges
                                           wire: translations
@@ -115,11 +115,7 @@ definition:
                               padding: 40px
                           components:
                             - uesio/io.grid:
-                                templateColumns:
-                                  xs: 1fr
-                                  md: 1fr 1fr
-                                  lg: 1fr 1fr 1fr 1fr
-                                columnGap: 10px
+                                uesio.variant: uesio/io.four_columns
                                 items:
                                   - uesio/io.field:
                                       fieldId: uesio/studio.language

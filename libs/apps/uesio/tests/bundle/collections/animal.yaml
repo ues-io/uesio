@@ -1,0 +1,7 @@
+name: animal
+uniqueKey:
+  - uesio/tests.genus
+  - uesio/tests.species
+nameField: uesio/tests.species
+label: Animal
+pluralLabel: Animals

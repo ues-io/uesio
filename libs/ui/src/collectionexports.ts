@@ -11,19 +11,23 @@ import {
 	PlainCollection,
 	ID_FIELD,
 	UNIQUE_KEY_FIELD,
+	UPDATED_AT_FIELD,
 } from "./bands/collection/types"
 import { addBlankSelectOption } from "./bands/field/utils"
 
-export {
-	Collection,
+export type {
 	PlainCollection,
-	Field,
 	FieldType,
 	SelectOption,
 	NumberMetadata,
 	FieldMetadataMap,
 	FieldMetadata,
+}
+export {
+	Field,
+	Collection,
 	addBlankSelectOption,
 	ID_FIELD,
 	UNIQUE_KEY_FIELD,
+	UPDATED_AT_FIELD,
 }

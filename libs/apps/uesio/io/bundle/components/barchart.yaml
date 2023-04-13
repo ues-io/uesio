@@ -1,3 +1,130 @@
 name: barchart
+title: Bar Chart
+description: Visualize data with bars.
+category: VISUALIZATION
 pack: chart
-entrypoint: components/barchart/barchart.tsx
+entrypoint: components/barchart/barchart
+defaultDefinition:
+  title: New Bar Chart
+discoverable: true
+properties:
+  - name: title
+    type: TEXT
+    label: Title
+  - name: series
+    type: LIST
+    items:
+      addLabel: Add Series
+      displayTemplate: "${label} - ${wire}"
+      title: Series Properties
+      defaultDefinition:
+        label: New Series
+      properties:
+        - name: name
+          label: Name
+          type: TEXT
+          required: true
+        - name: label
+          label: Label
+          type: TEXT
+          required: true
+        - name: wire
+          label: Wire
+          type: WIRE
+          required: true
+        - name: valueField
+          label: Value Field
+          # helpText: Determines what bucket the data point goes into
+          required: true
+          type: FIELD
+          wireField: wire
+        - name: categoryField
+          label: Category Field
+          # helpText: Determines the total value on the y axis
+          type: FIELD
+          wireField: wire
+  - name: labels
+    type: MAP
+    properties:
+      - name: source
+        label: Source
+        type: SELECT
+        options:
+          - value: WIRE
+            label: Wire
+          - value: VALUE
+            label: Value
+          - value: DATA
+            label: Data
+      # WIRE label fields
+      - name: wire
+        label: Wire
+        type: WIRE
+        displayConditions:
+          - type: fieldValue
+            field: source
+            operator: EQUALS
+            value: WIRE
+      - name: categoryField
+        label: Category Field
+        type: FIELD
+        wireField: wire
+        displayConditions:
+          - type: fieldValue
+            field: source
+            operator: EQUALS
+            value: WIRE
+      # VALUE label fields
+      - name: values
+        label: Values
+        type: LIST
+        items:
+          properties:
+            - name: key
+              label: Key
+              type: TEXT
+            - name: value
+              label: Value
+              type: TEXT
+      # DATA label fields
+      - name: timeunit
+        label: Time Unit
+        type: SELECT
+        options:
+          - value: YEAR
+            label: Year
+          - value: MONTH
+            label: Month
+          - value: DAY
+            label: Day
+        displayConditions:
+          - type: fieldValue
+            field: source
+            operator: EQUALS
+            value: DATA
+      - name: timeunitfill
+        label: Time Unit Fill
+        type: SELECT
+        options:
+          - value: MONTH
+            label: Month
+          - value: WEEK
+            label: Week
+        displayConditions:
+          - type: fieldValue
+            field: source
+            operator: EQUALS
+            value: DATA
+sections:
+  - type: HOME
+    properties:
+      - title
+      # TODO: Improve Labels
+      # - labels
+  - type: CUSTOM
+    id: series
+    label: Series
+    properties:
+      - series
+  - type: STYLES
+  - type: DISPLAY

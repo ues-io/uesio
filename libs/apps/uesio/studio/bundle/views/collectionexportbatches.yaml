@@ -48,11 +48,11 @@ definition:
         query: false
   events:
     onload:
+      - signal: context/SET
+        type: WORKSPACE
+        name: $Param{workspacename}
+        app: $Param{app}
       - signal: "wire/LOAD"
-        uesio.context:
-          workspace:
-            name: $Param{workspacename}
-            app: $Param{app}
         wires:
           - bulkbatches
 
@@ -85,7 +85,7 @@ definition:
               uesio.variant: uesio/studio.content
               components:
                 - uesio/io.list:
-                    id: collectionsDeck
+                    uesio.id: collectionsDeck
                     wire: collections
                     mode: READ
                     components:
@@ -105,7 +105,7 @@ definition:
                           uesio.variant: uesio/io.section
                           components:
                             - uesio/io.deck:
-                                id: bulkbatchesDeck
+                                uesio.id: bulkbatchesDeck
                                 wire: bulkbatches
                                 uesio.variant: uesio/io.section
                                 components:

@@ -5,23 +5,25 @@ definition:
   # Components are how we describe the layout of our view
   components:
     - uesio/io.list:
-        id: editapplist
+        uesio.id: editapplist
         mode: EDIT
         components:
           - uesio/io.grid:
-              templateColumns: 1fr 1fr
-              columnGap: 10px
+              uesio.variant: uesio/io.two_columns
               items:
                 - uesio/io.field:
                     fieldId: uesio/studio.user
+                    uesio.id: new-app-user
                     reference:
                       requirewriteaccess: true
                 - uesio/io.field:
                     fieldId: uesio/studio.name
+                    uesio.id: new-app-name
               uesio.display:
                 - type: recordIsNew
           - uesio/io.field:
               fieldId: uesio/studio.description
+              uesio.id: new-app-description
           - uesio/io.field:
               fieldId: uesio/studio.public
               display:

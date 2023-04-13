@@ -1,10 +1,14 @@
-import { FC } from "react"
-import { styles, component, hooks } from "@uesio/ui"
-import { Props } from "./metricdefinition"
+import { styles, api, definition, signal } from "@uesio/ui"
+import Metric from "../../utilities/metric/metric"
 
-const MetricUtility = component.getUtility("uesio/io.metric")
+type MetricDefinition = {
+	title?: string
+	unit?: string
+	value: string
+	signals?: signal.SignalDefinition[]
+}
 
-const MetricComponent: FC<Props> = (props) => {
+const MetricComponent: definition.UC<MetricDefinition> = (props) => {
 	const { definition, context } = props
 
 	const classes = styles.useStyles(
@@ -18,17 +22,15 @@ const MetricComponent: FC<Props> = (props) => {
 		props
 	)
 
-	const uesio = hooks.useUesio(props)
-	const handler = uesio.signal.getHandler(definition.signals)
 	const value = context.merge(definition.value)
 
 	return (
-		<MetricUtility
-			onClick={handler}
+		<Metric
+			onClick={api.signal.getHandler(definition.signals, context)}
 			classes={classes}
 			context={context}
 			title={definition.title}
-			value={value}
+			value={value as string}
 			unit={definition.unit}
 		/>
 	)

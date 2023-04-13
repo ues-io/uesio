@@ -5,36 +5,40 @@ definition:
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
-        uesio.styles:
+        uesio.styleTokens:
           root:
-            alignItems: center
-            height: 60px
-            backgroundColor: "#F2F2F2"
-        templateColumns: 58px 1fr 1fr 0fr
+            - grid-cols-[auto_1fr_1fr_auto]
+            - bg-slate-100
+            - h-[60px]
+            - items-center
+            - gap-2
         items:
           # Uesio Logo
           - uesio/io.griditem:
               components:
                 - uesio/io.image:
-                    uesio.styles:
+                    uesio.id: img-uesio-logo
+                    uesio.styleTokens:
                       root:
-                        margin: 0 16px
-                        opacity: "0.8"
+                        - mx-4
+                        - opacity-80
+                      inner:
+                        - h-[34px]
                     file: uesio/core.logo
-                    height: 34px
                     signals:
                       - signal: "route/NAVIGATE"
                         path: "home"
           - uesio/io.griditem:
-              uesio.styles:
+              uesio.styleTokens:
                 root:
-                  display: flex
+                  - flex
+                  - gap-2
               components:
                 - uesio/io.list:
                     uesio.display:
                       - type: collectionContext
                         collection: uesio/studio.app
-                    id: appslist
+                    uesio.id: appslist
                     components:
                       - uesio/io.tile:
                           uesio.variant: uesio/io.tag
@@ -52,7 +56,7 @@ definition:
                     uesio.display:
                       - type: collectionContext
                         collection: uesio/studio.site
-                    id: sitestag
+                    uesio.id: sitestag
                     components:
                       - uesio/io.tile:
                           signals:
@@ -88,7 +92,7 @@ definition:
                     uesio.display:
                       - type: collectionContext
                         collection: uesio/studio.bundle
-                    id: sitestag
+                    uesio.id: sitestag
                     components:
                       - uesio/io.tile:
                           signals:
@@ -124,7 +128,7 @@ definition:
                     uesio.display:
                       - type: collectionContext
                         collection: uesio/studio.team
-                    id: teamstag
+                    uesio.id: teamstag
                     components:
                       - uesio/io.tile:
                           signals:
@@ -160,7 +164,7 @@ definition:
                     uesio.display:
                       - type: collectionContext
                         collection: uesio/studio.workspace
-                    id: workspaceapptag
+                    uesio.id: workspaceapptag
                     components:
                       - uesio/io.tile:
                           signals:
@@ -248,11 +252,13 @@ definition:
               components:
                 - uesio/io.button:
                     uesio.variant: uesio/io.nav
+                    uesio.id: logout
                     text: Log Out
                     signals:
                       - signal: "user/LOGOUT"
                 - uesio/io.button:
                     uesio.variant: uesio/io.nav
+                    uesio.id: user-profile
                     text: Profile
                     signals:
                       - signal: "route/NAVIGATE"

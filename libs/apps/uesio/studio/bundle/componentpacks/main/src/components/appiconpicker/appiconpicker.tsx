@@ -10,8 +10,6 @@ interface Props extends definition.BaseProps {
 	definition: AppIconPickerDefinition
 }
 
-const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
-
 const APP_ICONS = [
 	"circle",
 	"change_history",
@@ -50,9 +48,9 @@ const APP_ICONS = [
 const getRandomIcon = () =>
 	APP_ICONS[Math.floor(Math.random() * APP_ICONS.length)]
 
-const Icon = component.getUtility("uesio/io.icon")
-
 const AppIconPicker: FunctionComponent<Props> = (props) => {
+	const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
+	const Icon = component.getUtility("uesio/io.icon")
 	const {
 		context,
 		definition: { fieldId, colorFieldId },
@@ -64,7 +62,7 @@ const AppIconPicker: FunctionComponent<Props> = (props) => {
 	useEffect(() => {
 		if (!iconValue && record) {
 			// Update to a random color if we haven't set one.
-			record.update(fieldId, getRandomIcon())
+			record.update(fieldId, getRandomIcon(), context)
 		}
 	}, [])
 
@@ -132,7 +130,7 @@ const AppIconPicker: FunctionComponent<Props> = (props) => {
 								[classes.selected]: isSelected,
 							})}
 							onClick={() => {
-								record.update(fieldId, icon)
+								record.update(fieldId, icon, context)
 							}}
 						>
 							<Icon

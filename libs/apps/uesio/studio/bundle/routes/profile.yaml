@@ -2,3 +2,4 @@ name: profile
 path: app/{app:\w*\/\w*}/workspace/{workspacename}/profiles/{profilename}
 view: uesio/studio.profile
 theme: uesio/studio.default
+title: "Profile: $Param{profilename}"

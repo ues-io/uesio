@@ -149,18 +149,18 @@ definition:
                     uesio.styles:
                       root:
                         padding: 40px
-
                     components:
                       - uesio/io.list:
                           wire: listing
                           mode: READ
-                          id: listingList
+                          uesio.id: listingList
                           components:
                             - uesio/io.grid:
-                                rowGap: 10px
-                                templateColumns:
-                                  xs: 1fr
-                                  md: 1fr 1fr
+                                uesio.styleTokens:
+                                  root:
+                                    - gap-4
+                                    - grid-cols-1
+                                    - md:grid-cols-2
                                 items:
                                   - uesio/io.griditem:
                                       uesio.styles:
@@ -254,7 +254,7 @@ definition:
                             - uesio/io.list:
                                 wire: versions
                                 mode: READ
-                                id: versionsList
+                                uesio.id: versionsList
                                 components:
                                   - uesio/io.box:
                                       uesio.styles:

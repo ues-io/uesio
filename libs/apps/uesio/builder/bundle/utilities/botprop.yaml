@@ -1,3 +1,0 @@
-name: botprop
-pack: main
-entrypoint: utilities/botprop/botprop.tsx

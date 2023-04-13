@@ -1,15 +1,17 @@
-import { FunctionComponent } from "react"
-import { hooks, styles, component } from "@uesio/ui"
-import { ButtonProps } from "./buttondefinition"
-import { IconUtilityProps } from "../../utilities/icon/icon"
-import { ButtonUtilityProps } from "../../utilities/button/button"
+import { api, styles, component, signal, definition } from "@uesio/ui"
+import { useState } from "react"
+import { default as IOButton } from "../../utilities/button/button"
+import Icon from "../../utilities/icon/icon"
 
-const IOButton = component.getUtility<ButtonUtilityProps>("uesio/io.button")
-const Icon = component.getUtility<IconUtilityProps>("uesio/io.icon")
+type ButtonDefinition = {
+	text?: string
+	icon?: string
+	signals?: signal.SignalDefinition[]
+	hotkey?: string
+}
 
-const Button: FunctionComponent<ButtonProps> = (props) => {
+const Button: definition.UC<ButtonDefinition> = (props) => {
 	const { definition, context } = props
-	const uesio = hooks.useUesio(props)
 	const classes = styles.useStyles(
 		{
 			root: {},
@@ -24,13 +26,25 @@ const Button: FunctionComponent<ButtonProps> = (props) => {
 		"selected",
 		definition
 	)
-	const handler = uesio.signal.getHandler(definition.signals)
-	uesio.signal.useRegisterHotKey(definition.hotkey, definition.signals)
+
+	const [isPending, setPending] = useState<boolean>(false)
+
+	const [link, handler] = api.signal.useLinkHandler(
+		definition.signals,
+		context,
+		setPending
+	)
+
+	api.signal.useRegisterHotKey(definition.hotkey, definition.signals, context)
+
 	return (
 		<IOButton
+			id={api.component.getComponentIdFromProps(props)}
 			variant={definition["uesio.variant"]}
 			classes={classes}
+			disabled={isPending}
 			label={definition.text}
+			link={link}
 			onClick={handler}
 			context={context}
 			isSelected={isSelected}

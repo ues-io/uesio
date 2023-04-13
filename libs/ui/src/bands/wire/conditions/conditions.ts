@@ -1,4 +1,4 @@
-import { FieldValue } from "../../wirerecord/types"
+import { PlainFieldValue } from "../../wirerecord/types"
 
 const PARAM = "PARAM"
 const LOOKUP = "LOOKUP"
@@ -27,8 +27,6 @@ type WireConditionState =
 	| GroupConditionState
 
 type ConditionBase = {
-	type?: typeof SEARCH | typeof GROUP
-	valueSource?: typeof VALUE | typeof LOOKUP | typeof PARAM
 	id?: string
 	operator?: ConditionOperators
 	active?: boolean
@@ -44,16 +42,19 @@ type GroupConditionState = ConditionBase & {
 type SearchConditionState = ConditionBase & {
 	type: typeof SEARCH
 	value: string
+	valueSource?: undefined
 	fields?: string[]
 }
 
 type ParamConditionState = ConditionBase & {
+	type?: undefined
 	field: string
 	valueSource: typeof PARAM
 	param: string
 }
 
 type LookupConditionState = ConditionBase & {
+	type?: undefined
 	field: string
 	valueSource: typeof LOOKUP
 	lookupWire: string
@@ -61,12 +62,26 @@ type LookupConditionState = ConditionBase & {
 }
 
 type ValueConditionState = ConditionBase & {
+	type?: undefined
 	field: string
-	valueSource: typeof VALUE
-	value: FieldValue
+	valueSource: typeof VALUE | undefined
+	value: PlainFieldValue
 }
 
-export {
+const isValueCondition = (
+	condition: WireConditionState | undefined
+): condition is ValueConditionState =>
+	!!condition &&
+	!condition.type &&
+	(condition.valueSource === "VALUE" || !condition.valueSource)
+
+const isGroupCondition = (
+	condition: WireConditionState | undefined
+): condition is ValueConditionState => condition?.type === "GROUP"
+
+export { isValueCondition, isGroupCondition }
+
+export type {
 	WireConditionState,
 	LookupConditionState,
 	ParamConditionState,

@@ -24,11 +24,14 @@ function mergeDeep(
 	if (!src) return dest
 	const srcKeys = Object.keys(src)
 	for (const key of srcKeys) {
-		if (typeof src[key] === "object" && src[key] !== null) {
-			if (Array.isArray(src[key])) {
-				// Just bail on arrays and set dest to src
-				// Can't really merge them well.
-				dest[key] = src[key]
+		const srcItem = src[key]
+		if (typeof srcItem === "object" && srcItem !== null) {
+			if (Array.isArray(srcItem)) {
+				if (Array.isArray(dest[key])) {
+					dest[key] = (dest[key] as string[]).concat(srcItem)
+				} else {
+					dest[key] = srcItem
+				}
 				continue
 			}
 			if (!dest[key] || typeof dest[key] !== "object") {

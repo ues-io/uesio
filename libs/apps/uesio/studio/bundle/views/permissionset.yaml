@@ -29,6 +29,8 @@ definition:
         uesio/studio.routerefs:
         uesio/studio.viewrefs:
         uesio/studio.collectionrefs:
+        uesio/studio.viewallrecords:
+        uesio/studio.modifyallrecords:
       conditions:
         - field: uesio/studio.workspace
           valueSource: LOOKUP
@@ -77,7 +79,6 @@ definition:
       fields:
         uesio/core.id:
         uesio/studio.name:
-        uesio/studio.content:
       conditions:
         - field: uesio/studio.workspace
           valueSource: LOOKUP
@@ -112,7 +113,7 @@ definition:
               uesio.variant: uesio/studio.content
               components:
                 - uesio/io.list:
-                    id: permissionsetsDeck
+                    uesio.id: permissionsetsDeck
                     wire: permissionsets
                     mode: READ
                     components:
@@ -131,6 +132,8 @@ definition:
                                       signals:
                                         - signal: component/uesio/io.list/TOGGLE_MODE
                                           target: permissionsetsDeck
+                                        - signal: component/uesio/io.table/TOGGLE_MODE
+                                          target: collectionPerms-table
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.primary
                                       text: $Label{uesio/io.save}
@@ -143,6 +146,8 @@ definition:
                                             - permissionsets
                                         - signal: component/uesio/io.list/TOGGLE_MODE
                                           target: permissionsetsDeck
+                                        - signal: component/uesio/io.table/TOGGLE_MODE
+                                          target: collectionPerms-table
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: $Label{uesio/io.cancel}
@@ -154,6 +159,8 @@ definition:
                                           wire: permissionsets
                                         - signal: component/uesio/io.list/TOGGLE_MODE
                                           target: permissionsetsDeck
+                                        - signal: component/uesio/io.table/TOGGLE_MODE
+                                          target: collectionPerms-table
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: $Label{uesio/io.delete}
@@ -171,14 +178,8 @@ definition:
                               padding: 40px
                           components:
                             - uesio/io.grid:
-                                templateColumns:
-                                  xs: 1fr
-                                  md: 1fr 1fr
-                                  lg: 1fr 1fr 1fr 1fr
-                                columnGap: 10px
+                                uesio.variant: uesio/io.four_columns
                                 items:
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.name
                                   - uesio/io.field:
                                       fieldId: uesio/studio.allowallfiles
                                       displayAs: "TOGGLE"
@@ -190,6 +191,12 @@ definition:
                                       displayAs: "TOGGLE"
                                   - uesio/io.field:
                                       fieldId: uesio/studio.allowallcollections
+                                      displayAs: "TOGGLE"
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.viewallrecords
+                                      displayAs: "TOGGLE"
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.modifyallrecords
                                       displayAs: "TOGGLE"
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
@@ -256,10 +263,32 @@ definition:
                                   root:
                                     padding: 40px
                                 components:
-                                  - uesio/studio.permissionpicker:
+                                  - uesio/studio.multipermissionpicker:
+                                      uesio.id: collectionPerms
                                       uesio.context:
                                         workspace:
                                           name: $Param{workspacename}
                                           app: $Param{app}
                                       fieldId: uesio/studio.collectionrefs
                                       wireName: collections
+                                      rowactions:
+                                        - text: Details
+                                          signals:
+                                            - path: app/$Param{app}/workspace/$Param{workspacename}/permissionsets/$Param{permissionsetname}/collection/${uesio/core.id}
+                                              signal: route/NAVIGATE
+                                      permissionFields:
+                                        - name: read
+                                          label: Read
+                                          type: CHECKBOX
+                                        - name: create
+                                          label: Create
+                                          type: CHECKBOX
+                                        - name: edit
+                                          label: Edit
+                                          type: CHECKBOX
+                                        - name: delete
+                                          label: Delete
+                                          type: CHECKBOX
+                                        - name: fields
+                                          label: Fields
+                                          type: MAP

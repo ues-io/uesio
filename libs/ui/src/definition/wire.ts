@@ -1,8 +1,13 @@
 import { WireDefault } from "../bands/wire/defaults/defaults"
-import { FieldType, ReferenceMetadata } from "../bands/field/types"
+import {
+	FieldType,
+	ReferenceMetadata,
+	SelectListMetadata,
+} from "../bands/field/types"
 import { SignalDefinition } from "./signal"
 import { WireConditionState } from "../bands/wire/conditions/conditions"
 import { MetadataKey } from "../bands/builder/types"
+import { DisplayCondition } from "../componentexports"
 type WireDefinitionMap = {
 	[key: string]: WireDefinition
 }
@@ -12,6 +17,7 @@ type ViewOnlyField = {
 	required: boolean
 	type: FieldType // get better type
 	reference?: ReferenceMetadata
+	selectlist?: SelectListMetadata
 	fields?: Record<string, ViewOnlyField>
 }
 
@@ -25,9 +31,32 @@ type OnChangeEvent = {
 	signals: SignalDefinition[]
 }
 
-type WireEvents = {
-	onChange: OnChangeEvent[]
-}
+// Todo: add all wire signal types
+type WireEventType =
+	| "onLoadSuccess"
+	| "onSaveSuccess"
+	| "onSaveError"
+	| "onChange"
+	| "onCancel"
+
+type WireEvents =
+	| {
+			onChange: OnChangeEvent[]
+	  }
+	| WireEvent[]
+
+type WireEvent<T = WireEventType> =
+	| {
+			type: "onChange"
+			fields?: string[]
+			conditions?: DisplayCondition[]
+			signals?: SignalDefinition[]
+	  }
+	| {
+			type: Exclude<T, "onChange">
+			signals?: SignalDefinition[]
+			conditions?: DisplayCondition[]
+	  }
 
 type WireDefinitionBase = {
 	defaults?: WireDefault[]
@@ -36,7 +65,7 @@ type WireDefinitionBase = {
 		create?: boolean
 	}
 	viewOnly?: boolean
-	events?: WireEvents
+	events?: WireEvent
 }
 
 type ViewOnlyWireDefinition = WireDefinitionBase & {
@@ -52,6 +81,7 @@ type RegularWireDefinition = WireDefinitionBase & {
 	batchsize?: number
 	conditions?: WireConditionState[]
 	requirewriteaccess?: boolean
+	loadAll?: boolean
 }
 
 type WireDefinition = ViewOnlyWireDefinition | RegularWireDefinition
@@ -67,10 +97,13 @@ type WireOrderDescription = {
 	desc: boolean
 }
 
-export {
+export type {
+	WireDefault,
 	WireDefinition,
 	WireDefinitionMap,
 	WireEvents,
+	WireEvent,
+	WireEventType,
 	WireFieldDefinition,
 	WireFieldDefinitionMap,
 	RegularWireDefinition,

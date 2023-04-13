@@ -86,7 +86,7 @@ definition:
                     uesio.variant: uesio/io.section
                     components:
                       - uesio/io.deck:
-                          id: translationsDeck
+                          uesio.id: translationsDeck
                           wire: translations
                           uesio.variant: uesio/io.section
                           components:
@@ -111,7 +111,7 @@ definition:
       height: 500px
       components:
         - uesio/io.list:
-            id: newtranslationlist
+            uesio.id: newtranslationlist
             wire: newtranslation
             mode: EDIT
             components:

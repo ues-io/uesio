@@ -6,29 +6,29 @@ import (
 
 type BundleCollection []*Bundle
 
+var BUNDLE_COLLECTION_NAME = "uesio/studio.bundle"
+var BUNDLE_FIELDS = StandardGetFields(&Bundle{})
+
 func (bc *BundleCollection) GetName() string {
-	return "uesio/studio.bundle"
+	return BUNDLE_COLLECTION_NAME
 }
 
 func (bc *BundleCollection) GetFields() []string {
-	return StandardGetFields(&Bundle{})
-}
-
-func (bc *BundleCollection) GetItem(index int) Item {
-	return (*bc)[index]
+	return BUNDLE_FIELDS
 }
 
 func (bc *BundleCollection) NewItem() Item {
 	return &Bundle{}
 }
 
-func (bc *BundleCollection) AddItem(item Item) {
+func (bc *BundleCollection) AddItem(item Item) error {
 	*bc = append(*bc, item.(*Bundle))
+	return nil
 }
 
 func (bc *BundleCollection) Loop(iter GroupIterator) error {
-	for index := range *bc {
-		err := iter(bc.GetItem(index), strconv.Itoa(index))
+	for index, b := range *bc {
+		err := iter(b, strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -38,8 +38,4 @@ func (bc *BundleCollection) Loop(iter GroupIterator) error {
 
 func (bc *BundleCollection) Len() int {
 	return len(*bc)
-}
-
-func (bc *BundleCollection) GetItems() interface{} {
-	return *bc
 }

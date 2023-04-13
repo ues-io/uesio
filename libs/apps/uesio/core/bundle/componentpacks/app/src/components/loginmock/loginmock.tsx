@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { definition, hooks, component } from "@uesio/ui"
+import { definition, api, component } from "@uesio/ui"
 import LoginWrapper from "../../shared/loginwrapper"
 type LoginDefinition = {
 	clientId: string
@@ -10,13 +10,13 @@ interface LoginProps extends definition.BaseProps {
 	definition: LoginDefinition
 }
 
-const Button = component.getUtility("uesio/io.button")
-const Grid = component.getUtility("uesio/io.grid")
+const MockUsernames = ["ben", "abel", "wessel", "baxter", "zach", "uesio"]
 
 const LoginMock: FunctionComponent<LoginProps> = (props) => {
-	const uesio = hooks.useUesio(props)
-	const { context, definition } = props
-	const useMock = uesio.view.useConfigValue("uesio/core.mock_auth")
+	const Button = component.getUtility("uesio/io.button")
+	const Grid = component.getUtility("uesio/io.grid")
+	const { context, definition, path } = props
+	const useMock = api.view.useConfigValue("uesio/core.mock_auth")
 
 	if (useMock !== "true") {
 		return null
@@ -35,12 +35,18 @@ const LoginMock: FunctionComponent<LoginProps> = (props) => {
 				}}
 				context={context}
 			>
-				{["ben", "abel", "wessel", "gregg"].map((user) => (
+				{MockUsernames.map((user) => (
 					<Button
 						key={user}
+						id={api.component.getComponentId(
+							`mock-login-${user}`,
+							"uesio/core.loginmock",
+							path,
+							context
+						)}
 						context={context}
 						onClick={(): void => {
-							uesio.signal.run(
+							api.signal.run(
 								{
 									signal: "user/LOGIN",
 									authSource: "uesio/core.mock",
@@ -57,7 +63,7 @@ const LoginMock: FunctionComponent<LoginProps> = (props) => {
 						styles={{
 							root: {
 								backgroundColor: "white",
-								width: "100%",
+								minWidth: "unset",
 								display: "block",
 							},
 							label: {

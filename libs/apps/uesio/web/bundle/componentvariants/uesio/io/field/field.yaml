@@ -1,0 +1,7 @@
+name: field
+extends: uesio/io.default
+label: Field
+definition:
+  uesio.styles:
+    input:
+      border-radius: 4px

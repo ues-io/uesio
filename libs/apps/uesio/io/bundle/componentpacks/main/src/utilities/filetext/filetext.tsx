@@ -1,67 +1,98 @@
 import { FunctionComponent } from "react"
+import { definition, context, api } from "@uesio/ui"
 import {
-	definition,
-	context,
-	collection,
-	component,
-	hooks,
-	wire,
-} from "@uesio/ui"
-import {
-	FieldState,
-	LabelPosition,
-} from "../../components/field/fielddefinition"
-import { CodeFieldUtilityProps } from "../codefield/codefield"
+	CANCEL_FILE_EVENT,
+	UPLOAD_FILE_EVENT,
+	UserFileMetadata,
+} from "../../components/field/field"
+import CodeField from "../codefield/codefield"
+import MarkDownField from "../markdownfield/markdownfield"
+import { MDOptions } from "../markdownfield/types"
 
 interface FileTextProps extends definition.UtilityProps {
-	label?: string
-	width?: string
-	fieldId: string
-	fieldMetadata: collection.Field
-	labelPosition?: LabelPosition
-	id?: string
+	path: string
 	mode?: context.FieldMode
-	record: wire.WireRecord
-	wire: wire.Wire
+	userFile?: UserFileMetadata
+	onUpload: (files: FileList | File | null) => void
+	displayAs?: string
+	options?: MDOptions
+	// An array of URIs which contain ambient type definitions to load in this code field
+	typeDefinitionFileURIs?: string[]
 }
 
-const CodeField =
-	component.getUtility<CodeFieldUtilityProps>("uesio/io.codefield")
+const stringToFile = (value: string, fileName: string, mimeType: string) => {
+	const blob = new Blob([value], {
+		type: mimeType,
+	})
+	return new File([blob], fileName, {
+		type: mimeType,
+	})
+}
 
 const FileText: FunctionComponent<FileTextProps> = (props) => {
-	const uesio = hooks.useUesio(props)
-	const { fieldId, record, wire, context, id } = props
+	const {
+		context,
+		userFile,
+		onUpload,
+		mode,
+		options,
+		displayAs,
+		id,
+		typeDefinitionFileURIs,
+	} = props
 
-	const userFile = record.getFieldValue<wire.PlainWireRecord>(fieldId)
-	const fileName = userFile?.["uesio/core.name"] as string
-	const mimeType = userFile?.["uesio/core.mimetype"] as string
-
-	const fileContent = uesio.file.useUserFile(context, record, fieldId)
-	const componentId = uesio.component.getId(id, "uesio/io.field")
-	const [state, setState] = uesio.component.useState<FieldState>(
-		componentId,
-		{
-			value: fileContent,
-			originalValue: fileContent,
-			recordId: record.getIdFieldValue() || "",
-			fieldId,
-			collectionId: wire.getCollection().getFullName(),
-			fileName,
-			mimeType,
-		}
+	const [content, original, setContent, reset, cancel] = api.file.useUserFile(
+		context,
+		userFile
 	)
+
+	const changeHandler = (value: string) => {
+		setContent(value)
+	}
+
+	api.event.useEvent(
+		UPLOAD_FILE_EVENT,
+		(e) => {
+			const isTarget = id && id.startsWith(e.detail.target)
+			if (!isTarget) return
+			if (!userFile) return
+			const fileName = userFile["uesio/core.path"]
+			const mimeType = userFile["uesio/core.mimetype"]
+			onUpload(stringToFile(content, fileName, mimeType))
+			reset()
+		},
+		[content]
+	)
+
+	api.event.useEvent(
+		CANCEL_FILE_EVENT,
+		(e) => {
+			const isTarget = id && id.startsWith(e.detail.target)
+			if (!isTarget) return
+			cancel()
+		},
+		[original]
+	)
+
+	if (displayAs === "MARKDOWN") {
+		return (
+			<MarkDownField
+				context={context}
+				value={content}
+				mode={mode}
+				setValue={changeHandler}
+				options={options}
+				variant={props.variant}
+			/>
+		)
+	}
 
 	return (
 		<CodeField
 			context={context}
-			value={state?.value || fileContent || ""}
-			setValue={(value: string) => {
-				if (!state) return
-				setState({
-					...state,
-					value,
-				})
-			}}
+			value={content}
+			setValue={changeHandler}
+			typeDefinitionFileURIs={typeDefinitionFileURIs}
 		/>
 	)
 }

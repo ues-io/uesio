@@ -46,6 +46,7 @@ const getDefaultValue = (
 		const path = toPath(item.lookupField.split("->"))
 		return get(firstRecord, path)
 	}
+	// TODO: Default to VALUE if nothing provided?
 	if (item.valueSource === "VALUE") {
 		return context.merge(item.value)
 	}
@@ -75,13 +76,12 @@ const getDefaultRecord = (
 		if (!field)
 			throw new Error("No metadata for field in default: " + fieldName)
 
-		if (value) {
-			const fieldNameParts = fieldName?.split("->")
-			if (field.isReference()) fieldNameParts.push(ID_FIELD)
-			set(defaultRecord, fieldNameParts, value)
-		}
+		const fieldNameParts = fieldName?.split("->")
+		if (field.isReference()) fieldNameParts.push(ID_FIELD)
+		set(defaultRecord, fieldNameParts, value)
 	})
 	return defaultRecord
 }
 
-export { LookupDefault, ValueDefault, WireDefault, getDefaultRecord }
+export type { LookupDefault, ValueDefault, WireDefault }
+export { getDefaultRecord }

@@ -9,6 +9,6 @@ function collection(bot) {
 			label: label,
 			pluralLabel: pluralLabel,
 		},
-		"collection.yaml"
+		"templates/collection.yaml"
 	)
 }

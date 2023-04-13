@@ -11,27 +11,18 @@ type CollectionMap struct {
 	IDs  []string
 }
 
-func (c *CollectionMap) GetItem(index int) meta.Item {
-	key := c.IDs[index]
-	item := c.Data[key]
-	return &item
-}
-
 func (c *CollectionMap) NewItem() meta.Item {
 	return nil
 }
 
-func (c *CollectionMap) AddItem(item meta.Item) {
-
-}
-
-func (c *CollectionMap) GetItems() interface{} {
+func (c *CollectionMap) AddItem(item meta.Item) error {
 	return nil
 }
 
 func (c *CollectionMap) Loop(iter meta.GroupIterator) error {
-	for index, key := range c.IDs {
-		err := iter(c.GetItem(index), key)
+	for _, key := range c.IDs {
+		item := c.Data[key]
+		err := iter(&item, key)
 		if err != nil {
 			return err
 		}

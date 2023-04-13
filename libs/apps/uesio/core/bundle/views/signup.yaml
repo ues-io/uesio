@@ -28,20 +28,9 @@ definition:
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
-        uesio.styles:
-          root:
-            backgroundSize: cover
-            backgroundImage: url($File{uesio/core.splash})
-            minHeight: 100vh
-        templateColumns:
-          xs: 1fr
-          md: 1fr 1fr
-          lg: 5fr 7fr
+        uesio.variant: uesio/io.splash
         items:
           - uesio/io.griditem:
-              uesio.styles:
-                root:
-                  backgroundColor: "#f3f3f3"
               components:
                 - uesio/io.box:
                     uesio.styles:
@@ -61,7 +50,7 @@ definition:
                               path: "https://$Site{domain}"
 
                       - uesio/io.list:
-                          id: credslist
+                          uesio.id: credslist
                           wire: userData
                           mode: EDIT
                           components:

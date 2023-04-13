@@ -1,28 +1,22 @@
-import { ChangeEvent, FunctionComponent } from "react"
-
-import { SearchBoxProps } from "./searchboxdefinition"
-import { styles, hooks } from "@uesio/ui"
+import { api, metadata, definition } from "@uesio/ui"
 import debounce from "lodash/debounce"
+import TextField from "../../utilities/field/text"
+import FieldWrapper from "../../utilities/fieldwrapper/fieldwrapper"
+import { useState } from "react"
 
-const SearchBox: FunctionComponent<SearchBoxProps> = (props) => {
+type SearchBoxDefinition = {
+	placeholder?: string
+	wire: string
+	searchFields: metadata.MetadataKey[]
+}
+
+const SearchBox: definition.UC<SearchBoxDefinition> = (props) => {
 	const { definition, context } = props
-	const uesio = hooks.useUesio(props)
-	const wire = uesio.wire.useWire(definition.wire)
-	const classes = styles.useStyles(
-		{
-			root: {
-				margin: "16px 0",
-				fontSize: "9pt",
-			},
-			input: {
-				padding: "8px",
-			},
-		},
-		props
-	)
+	const wire = api.wire.useWire(definition.wire, context)
+	const [text, setText] = useState("")
 	if (!wire) return null
 	const search = (searchValue: string) => {
-		uesio.signal.run(
+		api.signal.run(
 			{
 				signal: "wire/SEARCH",
 				search: searchValue,
@@ -34,16 +28,19 @@ const SearchBox: FunctionComponent<SearchBoxProps> = (props) => {
 	}
 	const debouncedRequest = debounce(search, 250)
 	return (
-		<div className={classes.root}>
-			<input
-				className={classes.input}
+		<FieldWrapper labelPosition="none" context={context}>
+			<TextField
+				context={context}
 				type="search"
+				variant="uesio/io.search"
 				placeholder={definition.placeholder || "Search"}
-				onChange={(event: ChangeEvent<HTMLInputElement>): void => {
-					debouncedRequest(event.target.value)
+				setValue={(value: string) => {
+					debouncedRequest(value as string)
+					setText(value)
 				}}
+				value={text}
 			/>
-		</div>
+		</FieldWrapper>
 	)
 }
 

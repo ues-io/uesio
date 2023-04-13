@@ -1,3 +1,60 @@
 name: filter
+title: Filter
+description: Applies conditions to a wire
 pack: main
-entrypoint: components/filter/filter.tsx
+entrypoint: components/filter/filter
+variants:
+  - uesio/io.selectfield:uesio/io.filter
+  - uesio/io.fieldlabel:uesio/io.default
+  - uesio/io.fieldwrapper:uesio/io.default
+category: INTERACTION
+discoverable: true
+properties:
+  - name: wire
+    label: Wire
+    type: WIRE
+    required: true
+  - name: fieldId
+    type: FIELD
+    label: Field
+    wireField: wire
+  - name: displayAs
+    type: SELECT
+    label: Display as
+    options:
+      - value: ""
+        label: "--None Selected--"
+      - label: Month
+        value: MONTH
+      - label: Week
+        value: WEEK
+      - label: Toggle
+        value: TOGGLE
+  - name: label
+    type: TEXT
+    label: Label
+  - name: labelPosition
+    type: SELECT
+    label: Label Position
+    options:
+      - label: None
+        value: none
+      - label: Top
+        value: top
+      - label: Left
+        value: left
+  - name: conditionId
+    type: CONDITION
+    label: Condition ID
+    wireField: wire
+sections:
+  - type: HOME
+    properties:
+      - wire
+      - fieldId
+      - displayAs
+      - label
+      - labelPosition
+      - conditionId
+  - type: STYLES
+  - type: DISPLAY

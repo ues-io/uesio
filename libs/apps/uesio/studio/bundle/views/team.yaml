@@ -90,7 +90,7 @@ definition:
               uesio.variant: uesio/studio.content
               components:
                 - uesio/io.list:
-                    id: teamDeck
+                    uesio.id: teamDeck
                     wire: teams
                     mode: READ
                     components:
@@ -116,7 +116,7 @@ definition:
                     uesio.variant: uesio/io.section
                     components:
                       - uesio/io.deck:
-                          id: teammembersslist
+                          uesio.id: teammembersslist
                           wire: teammembers
                           uesio.variant: uesio/io.section
                           components:
@@ -124,10 +124,10 @@ definition:
                                 uesio.variant: uesio/io.item
                                 content:
                                   - uesio/io.grid:
-                                      templateColumns: 1fr auto
-                                      uesio.styles:
+                                      uesio.styleTokens:
                                         root:
-                                          alignItems: center
+                                          - items-center
+                                          - grid-cols-[1fr_auto]
                                       items:
                                         - uesio/io.field:
                                             fieldId: uesio/studio.member
@@ -174,7 +174,7 @@ definition:
       height: 500px
       components:
         - uesio/io.list:
-            id: newteamlist
+            uesio.id: newteamlist
             wire: newteammember
             mode: EDIT
             components:

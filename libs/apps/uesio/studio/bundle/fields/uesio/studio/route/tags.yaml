@@ -1,0 +1,20 @@
+name: tags
+type: LIST
+label: Tags
+subtype: MAP
+subfields:
+  - name: type
+    label: Type
+    type: SELECT
+    selectList: uesio/studio.tagtype
+  - name: location
+    label: Location
+    type: SELECT
+    selectList: uesio/studio.taglocation
+  - name: name
+    label: Name
+    type: SELECT
+    selectList: uesio/studio.metatags
+  - name: content
+    type: TEXT
+    label: Content

@@ -1,3 +1,24 @@
 name: avatar
+title: Avatar
+description: Display an image or initials to represent a record.
+category: CONTENT
 pack: main
-entrypoint: components/avatar/avatar.tsx
+entrypoint: components/avatar/avatar
+discoverable: true
+defaultDefinition:
+  text: $User{initials}
+  image: $User{picture}
+properties:
+  - name: text
+    type: TEXT
+    label: Text
+  - name: image
+    type: TEXT
+    label: Image
+sections:
+  - type: HOME
+    properties:
+      - text
+      - image
+  - type: STYLES
+  - type: DISPLAY

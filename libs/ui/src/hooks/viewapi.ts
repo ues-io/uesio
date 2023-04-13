@@ -1,26 +1,20 @@
-import { Uesio } from "./hooks"
-import { useConfigValue } from "../bands/configvalue"
-import { getViewDef, useViewDef } from "../bands/viewdef"
+import { useConfigValue as useCV } from "../bands/configvalue"
+import { getViewDef, upsertOne, useViewDef } from "../bands/viewdef"
+import { parseKey } from "../component/path"
+import { ViewDefinition } from "../definition/viewdef"
+import { dispatch } from "../store/store"
 
-const VIEW_BAND = "view"
+const useConfigValue = (key: string) => useCV(key)?.value || ""
 
-class ViewAPI {
-	constructor(uesio: Uesio) {
-		this.uesio = uesio
-	}
-
-	uesio: Uesio
-
-	useViewDef(viewDefId: string) {
-		return useViewDef(viewDefId)
-	}
-
-	getViewDef(viewDefId: string) {
-		return getViewDef(viewDefId)
-	}
-	useConfigValue(key: string) {
-		return useConfigValue(key)?.value || ""
-	}
+const setViewDefinition = (key: string, definition: ViewDefinition) => {
+	const [namespace, name] = parseKey(key)
+	dispatch(
+		upsertOne({
+			name,
+			namespace,
+			definition,
+		})
+	)
 }
 
-export { ViewAPI, VIEW_BAND }
+export { useViewDef, getViewDef, useConfigValue, setViewDefinition }

@@ -1,3 +1,41 @@
 name: deck
+title: Deck
+description: Iterate over records in a wire and render content into a grid layout.
 pack: main
-entrypoint: components/deck/deck.tsx
+entrypoint: components/deck/deck
+category: DATA
+discoverable: true
+slots:
+  - name: components
+    providesContexts:
+      - type: RECORD
+        wireProperty: wire
+      - type: FIELD_MODE
+        property: mode
+defaultDefinition:
+  mode: READ
+properties:
+  - name: wire
+    label: Wire
+    type: WIRE
+    required: true
+  - name: uesio.id
+    label: Deck Id
+    type: COMPONENT_ID
+  - name: mode
+    label: Display Mode
+    type: SELECT
+    required: true
+    options:
+      - value: READ
+        label: Read
+      - value: EDIT
+        label: Edit
+sections:
+  - type: HOME
+    properties:
+      - wire
+      - uesio.id
+      - mode
+  - type: STYLES
+  - type: DISPLAY

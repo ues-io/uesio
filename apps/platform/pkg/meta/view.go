@@ -2,27 +2,15 @@ package meta
 
 import (
 	"errors"
-	"fmt"
-	"time"
 
 	"github.com/francoispqt/gojay"
 	"gopkg.in/yaml.v3"
 )
 
 type View struct {
-	ID         string     `yaml:"-" json:"uesio/core.id"`
-	UniqueKey  string     `yaml:"-" json:"uesio/core.uniquekey"`
-	Name       string     `yaml:"name" json:"uesio/studio.name"`
-	Namespace  string     `yaml:"-" json:"-"`
-	Definition yaml.Node  `yaml:"definition" json:"uesio/studio.definition"`
-	Workspace  *Workspace `yaml:"-" json:"uesio/studio.workspace"`
-	itemMeta   *ItemMeta  `yaml:"-" json:"-"`
-	CreatedBy  *User      `yaml:"-" json:"uesio/core.createdby"`
-	Owner      *User      `yaml:"-" json:"uesio/core.owner"`
-	UpdatedBy  *User      `yaml:"-" json:"uesio/core.updatedby"`
-	UpdatedAt  int64      `yaml:"-" json:"uesio/core.updatedat"`
-	CreatedAt  int64      `yaml:"-" json:"uesio/core.createdat"`
-	Public     bool       `yaml:"public,omitempty" json:"uesio/studio.public"`
+	BuiltIn        `yaml:",inline"`
+	BundleableBase `yaml:",inline"`
+	Definition     yaml.Node `yaml:"definition" json:"uesio/studio.definition"`
 }
 
 type ViewWrapper View
@@ -46,10 +34,11 @@ func NewView(key string) (*View, error) {
 	if err != nil {
 		return nil, errors.New("Bad Key for View: " + key)
 	}
-	return &View{
-		Name:      name,
-		Namespace: namespace,
-	}, nil
+	return NewBaseView(namespace, name), nil
+}
+
+func NewBaseView(namespace, name string) *View {
+	return &View{BundleableBase: NewBase(namespace, name)}
 }
 
 func NewViews(keys map[string]bool) ([]BundleableItem, error) {
@@ -67,27 +56,11 @@ func NewViews(keys map[string]bool) ([]BundleableItem, error) {
 }
 
 func (v *View) GetCollectionName() string {
-	return v.GetBundleGroup().GetName()
+	return VIEW_COLLECTION_NAME
 }
 
-func (v *View) GetCollection() CollectionableGroup {
-	return &ViewCollection{}
-}
-
-func (v *View) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s:%s", workspace, v.Name)
-}
-
-func (v *View) GetBundleGroup() BundleableGroup {
-	return &ViewCollection{}
-}
-
-func (v *View) GetKey() string {
-	return fmt.Sprintf("%s.%s", v.Namespace, v.Name)
-}
-
-func (v *View) GetPath() string {
-	return v.Name + ".yaml"
+func (v *View) GetBundleFolderName() string {
+	return VIEW_FOLDER_NAME
 }
 
 func (v *View) GetPermChecker() *PermissionSet {
@@ -100,43 +73,11 @@ func (v *View) GetPermChecker() *PermissionSet {
 }
 
 func (v *View) SetField(fieldName string, value interface{}) error {
-	if fieldName == "uesio/studio.definition" {
-		var definition yaml.Node
-		if value != nil {
-			err := yaml.Unmarshal([]byte(value.(string)), &definition)
-			if err != nil {
-				return err
-			}
-			if len(definition.Content) > 0 {
-				v.Definition = *definition.Content[0]
-			}
-		}
-		return nil
-	}
 	return StandardFieldSet(v, fieldName, value)
 }
 
 func (v *View) GetField(fieldName string) (interface{}, error) {
-	if fieldName == "uesio/studio.definition" {
-		bytes, err := yaml.Marshal(&v.Definition)
-		if err != nil {
-			return nil, err
-		}
-		return string(bytes), nil
-	}
 	return StandardFieldGet(v, fieldName)
-}
-
-func (v *View) GetNamespace() string {
-	return v.Namespace
-}
-
-func (v *View) SetNamespace(namespace string) {
-	v.Namespace = namespace
-}
-
-func (v *View) SetModified(mod time.Time) {
-	v.UpdatedAt = mod.UnixMilli()
 }
 
 func (v *View) Loop(iter func(string, interface{}) error) error {
@@ -145,18 +86,6 @@ func (v *View) Loop(iter func(string, interface{}) error) error {
 
 func (v *View) Len() int {
 	return StandardItemLen(v)
-}
-
-func (v *View) GetItemMeta() *ItemMeta {
-	return v.itemMeta
-}
-
-func (v *View) SetItemMeta(itemMeta *ItemMeta) {
-	v.itemMeta = itemMeta
-}
-
-func (v *View) IsPublic() bool {
-	return v.Public
 }
 
 func (v *View) UnmarshalYAML(node *yaml.Node) error {

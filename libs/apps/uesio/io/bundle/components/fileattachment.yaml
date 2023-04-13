@@ -1,0 +1,74 @@
+name: fileattachment
+pack: main
+title: File Attachment
+description: Displays a file attached to a record, and allows file to be updated/deleted
+category: DATA
+entrypoint: components/fileattachment/fileattachment
+variants:
+  - uesio/io.field:uesio/io.default
+  - uesio/io.codefield:uesio/io.default
+  - uesio/io.fieldlabel:uesio/io.default
+  - uesio/io.fieldwrapper:uesio/io.default
+defaultDefinition:
+  displayAs: FILE_UPLOAD
+properties:
+  - type: SELECT
+    name: displayAs
+    label: Display As
+    options:
+      - value: FILE_UPLOAD
+        label: File Upload with Preview
+      - value: IMAGE
+        label: Image
+      - value: MARKDOWN
+        label: Markdown
+      - value: PREVIEW
+        label: File Preview
+      - value: TEXT
+        label: Text
+      - value: VIDEO
+        label: Video
+  - type: SELECT
+    name: mode
+    label: Mode
+    options:
+      - value: EDIT
+        label: Edit
+      - value: READ
+        label: Read
+  - type: TEXT
+    name: accept
+    label: Mime Types to Accept (comma-separated)
+    placeholder: image/png,image/jpeg
+    displayConditions:
+      - type: fieldValue
+        field: displayAs
+        operator: IN
+        values:
+          - FILE_UPLOAD
+          - IMAGE
+          - VIDEO
+  - type: COMPONENT_ID
+    name: uesio.id
+    label: Component Id
+sections:
+  - type: HOME
+    properties:
+      - displayAs
+      - mode
+      - accept
+      - uesio.id
+  - id: onUploadSignals
+    label: On-Upload
+    type: SIGNALS
+  - id: onDeleteSignals
+    label: On-Delete
+    type: SIGNALS
+  - type: DISPLAY
+signals:
+  UPLOAD_FILE:
+    label: Upload File
+    properties: []
+  CANCEL_FILE:
+    label: Cancel File
+    properties: []

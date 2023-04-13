@@ -8,46 +8,51 @@ import (
 
 type FileCollection []*File
 
+var FILE_COLLECTION_NAME = "uesio/studio.file"
+var FILE_FOLDER_NAME = "files"
+var FILE_FIELDS = StandardGetFields(&File{})
+
 func (fc *FileCollection) GetName() string {
-	return "uesio/studio.file"
+	return FILE_COLLECTION_NAME
 }
 
 func (fc *FileCollection) GetBundleFolderName() string {
-	return "files"
+	return FILE_FOLDER_NAME
 }
 
 func (fc *FileCollection) GetFields() []string {
-	return StandardGetFields(&File{})
+	return FILE_FIELDS
 }
 
 func (fc *FileCollection) NewItem() Item {
 	return &File{}
 }
 
-func (fc *FileCollection) AddItem(item Item) {
+func (fc *FileCollection) AddItem(item Item) error {
 	*fc = append(*fc, item.(*File))
+	return nil
 }
 
-func (fc *FileCollection) GetItemFromPath(path string) (BundleableItem, bool) {
+func (fc *FileCollection) GetItemFromPath(path, namespace string) BundleableItem {
 	parts := strings.Split(path, string(os.PathSeparator))
-	if len(parts) != 2 || parts[1] != "file.yaml" {
-		// Ignore this file
-		return nil, false
-	}
-	return &File{Name: parts[0]}, true
+	return NewBaseFile(namespace, parts[0])
 }
 
-func (fc *FileCollection) FilterPath(path string, conditions BundleConditions) bool {
+func (fc *FileCollection) IsDefinitionPath(path string) bool {
+	parts := strings.Split(path, string(os.PathSeparator))
+	return len(parts) == 2 && parts[1] == "file.yaml"
+}
+
+func (fc *FileCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
+	if definitionOnly {
+		return fc.IsDefinitionPath(path)
+	}
 	return true
 }
 
-func (fc *FileCollection) GetItem(index int) Item {
-	return (*fc)[index]
-}
-
 func (fc *FileCollection) Loop(iter GroupIterator) error {
-	for index := range *fc {
-		err := iter(fc.GetItem(index), strconv.Itoa(index))
+	for index, f := range *fc {
+		err := iter(f, strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -57,8 +62,4 @@ func (fc *FileCollection) Loop(iter GroupIterator) error {
 
 func (fc *FileCollection) Len() int {
 	return len(*fc)
-}
-
-func (fc *FileCollection) GetItems() interface{} {
-	return *fc
 }

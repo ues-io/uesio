@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { definition, hooks, component, wire } from "@uesio/ui"
+import { definition, api, component, wire } from "@uesio/ui"
 
 type PermissionPickerDefinition = {
 	fieldId: string
@@ -10,19 +10,17 @@ interface Props extends definition.BaseProps {
 	definition: PermissionPickerDefinition
 }
 
-const CheckboxField = component.getUtility("uesio/io.checkboxfield")
-const TitleBar = component.getUtility("uesio/io.titlebar")
-
 const PermissionPicker: FunctionComponent<Props> = (props) => {
+	const CheckboxField = component.getUtility("uesio/io.checkboxfield")
+	const TitleBar = component.getUtility("uesio/io.titlebar")
 	const {
 		context,
 		definition: { fieldId, wireName },
 	} = props
 
-	const uesio = hooks.useUesio(props)
 	const record = context.getRecord()
 
-	const wire = uesio.wire.useWire(wireName || "")
+	const wire = api.wire.useWire(wireName || "", context)
 
 	const workspaceContext = context.getWorkspace()
 	if (!workspaceContext) throw new Error("No workspace context provided")
@@ -47,11 +45,11 @@ const PermissionPicker: FunctionComponent<Props> = (props) => {
 		const hasProperty = getValue(listRecord)
 		if (!hasProperty) {
 			const updValue = { ...value, [listRecord]: true }
-			record.update(fieldId, updValue)
+			record.update(fieldId, updValue, context)
 		} else {
 			const currentValue = value[listRecord]
 			const updValue = { ...value, [listRecord]: !currentValue }
-			record.update(fieldId, updValue)
+			record.update(fieldId, updValue, context)
 		}
 	}
 

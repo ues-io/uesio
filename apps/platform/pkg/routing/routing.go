@@ -8,6 +8,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/merge"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
@@ -15,13 +16,10 @@ import (
 
 func getHomeRoute(session *sess.Session) (*meta.Route, error) {
 	homeRoute := session.GetSite().GetAppBundle().HomeRoute
-	namespace, name, err := meta.ParseKey(homeRoute)
+
+	route, err := meta.NewRoute(homeRoute)
 	if err != nil {
 		return nil, err
-	}
-	route := &meta.Route{
-		Name:      name,
-		Namespace: namespace,
 	}
 	err = bundle.Load(route, session, nil)
 	if err != nil {
@@ -52,15 +50,13 @@ func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *
 
 	routematch := &mux.RouteMatch{}
 
-	matched := router.Match(r, routematch)
-
-	if !matched {
+	if matched := router.Match(r, routematch); !matched {
 		return nil, errors.New("No Route Match Found: " + path)
 	}
 
 	pathTemplate, err := routematch.Route.GetPathTemplate()
 	if err != nil {
-		return nil, errors.New("No Path Template For Route Found")
+		return nil, errors.New("no Path Template found for route")
 	}
 
 	pathTemplate = strings.Replace(pathTemplate, prefix, "", 1)
@@ -72,42 +68,37 @@ func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *
 		}
 	}
 
-	if route == nil {
-		return nil, errors.New("No Route Found in Cache")
-	}
-
-	// Process merge syntax for default route params
-	mergeFuncs := datasource.GetMergeFuncs(session, nil)
+	processedParams := map[string]string{}
 
 	for paramName, paramValue := range route.Params {
-		template, err := templating.NewWithFuncs(paramValue, templating.ForceErrorFunc, mergeFuncs)
+		template, err := templating.NewWithFuncs(paramValue, templating.ForceErrorFunc, merge.ServerMergeFuncs)
 		if err != nil {
 			return nil, err
 		}
 
-		mergedValue, err := templating.Execute(template, nil)
+		mergedValue, err := templating.Execute(template, merge.ServerMergeData{
+			Session:     session,
+			ParamValues: nil,
+		})
 		if err != nil {
 			return nil, err
 		}
 
-		route.Params[paramName] = mergedValue
-	}
-
-	if route.Params == nil {
-		route.Params = map[string]string{}
+		processedParams[paramName] = mergedValue
 	}
 
 	// Now add in querystring parameters
 	for k, v := range r.URL.Query() {
-		route.Params[k] = v[0]
+		processedParams[k] = v[0]
 	}
 
 	// Add the routematch params
 	for k, v := range routematch.Vars {
-		route.Params[k] = v
+		processedParams[k] = v
 	}
 
 	route.Path = path
+	route.Params = processedParams
 
 	return datasource.RunRouteBots(route, session)
 }

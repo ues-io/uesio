@@ -1,3 +1,29 @@
 name: dialog
 pack: main
-entrypoint: components/dialog/dialog.tsx
+entrypoint: components/dialog/dialog
+variants:
+  - uesio/io.titlebar:uesio/io.dialog
+slots:
+  - name: actions
+  - name: components
+defaultDefinition:
+  width: "60%"
+  height: "60%"
+  title: "New Panel"
+properties:
+  - name: panelid
+    label: Panel Id
+    required: true
+    type: KEY
+  - name: title
+    label: Title
+    required: false
+    type: TEXT
+  - name: width
+    label: Width
+    required: true
+    type: TEXT
+  - name: height
+    label: Height
+    required: true
+    type: TEXT

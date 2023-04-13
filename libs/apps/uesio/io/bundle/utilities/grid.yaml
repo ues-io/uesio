@@ -1,3 +1,6 @@
 name: grid
+title: Grid
+description: Layout areas of your page using low-level CSS grid functionality.
+category: LAYOUT
 pack: main
-entrypoint: utilities/grid/grid.tsx
+entrypoint: utilities/grid/grid

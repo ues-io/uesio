@@ -1,0 +1,16 @@
+name: propfield
+label: Property Field
+extends: uesio/io.default
+definition:
+  uesio.styles:
+    root:
+      padding: 2px 4px
+      borderRadius: 4px
+      border: "1px solid #00000022"
+      color: "#444"
+    selecteditemwrapper:
+      fontSize: 9pt
+    notfound:
+      fontSize: 9pt
+      padding: "4px 2px"
+public: true

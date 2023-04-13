@@ -1,11 +1,12 @@
 name: opportunities
+public: true
 definition:
   components:
     - uesio/core.view:
         view: uesio/crm.topbar
     - uesio/io.titlebar:
         title: Opportunities
-        uesio.variant: uesio/io.main
+        uesio.variant: uesio/io.secondary
         actions:
           - uesio/io.group:
               components:
@@ -40,11 +41,11 @@ definition:
             padding: 40px
         components:
           - uesio/io.grid:
-              templateColumns: 1fr 1fr
-              columnGap: 24px
-              uesio.styles:
+              uesio.styleTokens:
                 root:
-                  paddingBottom: 40px
+                  - grid-cols-2
+                  - gap-x-6
+                  - pb-10
               items:
                 - uesio/io.linechart:
                     uesio.styles:
@@ -98,7 +99,7 @@ definition:
                 - field: uesio/crm.close_date
                 - field: uesio/crm.expected_revenue
                 - field: uesio/crm.amount
-              id: opportunitiesTable
+              uesio.id: opportunitiesTable
               mode: EDIT
               wire: opportunities
   wires:

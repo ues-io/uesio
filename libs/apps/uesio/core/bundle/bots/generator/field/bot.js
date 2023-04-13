@@ -29,27 +29,32 @@ function field(bot) {
 			label: label,
 			collection: collectionKey,
 		},
-		"common.yaml"
+		"templates/common.yaml"
 	)
 
-	var number_definition = getDefinition("number.yaml", ["number_decimals"])
-	var reference_definition = getDefinition("reference.yaml", [
+	var number_definition = getDefinition("templates/number.yaml", [
+		"number_decimals",
+	])
+	var reference_definition = getDefinition("templates/reference.yaml", [
 		"ref_collection",
 	])
-	var selectlist_definition = getDefinition("selectlist.yaml", [
+	var selectlist_definition = getDefinition("templates/selectlist.yaml", [
 		"select_list",
 	])
-	var autonumber_definition = getDefinition("autonumber.yaml", [
+	var autonumber_definition = getDefinition("templates/autonumber.yaml", [
 		"autonumber_prefix",
 		"autonumber_leadingzeros",
 	])
 
-	var file_definition = getDefinition("file.yaml", ["accept"])
-	var referencegroup_definition = getDefinition("referencegroup.yaml", [
-		"referencegroup_collection",
-		"referencegroup_field",
-		"referencegroup_ondelete",
-	])
+	var file_definition = getDefinition("templates/file.yaml", ["accept"])
+	var referencegroup_definition = getDefinition(
+		"templates/referencegroup.yaml",
+		[
+			"referencegroup_collection",
+			"referencegroup_field",
+			"referencegroup_ondelete",
+		]
+	)
 
 	var field = [
 		common_definition,
@@ -69,6 +74,6 @@ function field(bot) {
 		{
 			definition: field,
 		},
-		"field.yaml"
+		"templates/field.yaml"
 	)
 }

@@ -2,8 +2,6 @@ package meta
 
 import (
 	"errors"
-	"fmt"
-	"time"
 
 	"gopkg.in/yaml.v3"
 )
@@ -13,57 +11,29 @@ func NewFileSource(key string) (*FileSource, error) {
 	if err != nil {
 		return nil, errors.New("Bad Key for FileSource")
 	}
-	return &FileSource{
-		Name:      name,
-		Namespace: namespace,
-	}, nil
+	return NewBaseFileSource(namespace, name), nil
+}
+
+func NewBaseFileSource(namespace, name string) *FileSource {
+	return &FileSource{BundleableBase: NewBase(namespace, name)}
 }
 
 type FileSource struct {
-	ID          string     `yaml:"-" json:"uesio/core.id"`
-	UniqueKey   string     `yaml:"-" json:"uesio/core.uniquekey"`
-	Name        string     `yaml:"-" json:"uesio/studio.name"`
-	Namespace   string     `yaml:"-" json:"-"`
-	Type        string     `yaml:"type,omitempty" json:"-"`
-	Credentials string     `yaml:"credentials" json:"uesio/studio.credentials"`
-	Workspace   *Workspace `yaml:"-" json:"uesio/studio.workspace"`
-	itemMeta    *ItemMeta  `yaml:"-" json:"-"`
-	CreatedBy   *User      `yaml:"-" json:"uesio/core.createdby"`
-	Owner       *User      `yaml:"-" json:"uesio/core.owner"`
-	UpdatedBy   *User      `yaml:"-" json:"uesio/core.updatedby"`
-	UpdatedAt   int64      `yaml:"-" json:"uesio/core.updatedat"`
-	CreatedAt   int64      `yaml:"-" json:"uesio/core.createdat"`
-	Public      bool       `yaml:"public,omitempty" json:"uesio/studio.public"`
+	BuiltIn        `yaml:",inline"`
+	BundleableBase `yaml:",inline"`
+	Type           string `yaml:"type,omitempty" json:"-"`
+	Credentials    string `yaml:"credentials" json:"uesio/studio.credentials"`
+	Bucket         string `yaml:"bucket" json:"uesio/studio.bucket"`
 }
 
 type FileSourceWrapper FileSource
 
 func (fs *FileSource) GetCollectionName() string {
-	return fs.GetBundleGroup().GetName()
+	return FILESOURCE_COLLECTION_NAME
 }
 
-func (fs *FileSource) GetCollection() CollectionableGroup {
-	return &FileSourceCollection{}
-}
-
-func (fs *FileSource) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s:%s", workspace, fs.Name)
-}
-
-func (fs *FileSource) GetBundleGroup() BundleableGroup {
-	return &FileSourceCollection{}
-}
-
-func (fs *FileSource) GetKey() string {
-	return fmt.Sprintf("%s.%s", fs.Namespace, fs.Name)
-}
-
-func (fs *FileSource) GetPath() string {
-	return fs.Name + ".yaml"
-}
-
-func (fs *FileSource) GetPermChecker() *PermissionSet {
-	return nil
+func (fs *FileSource) GetBundleFolderName() string {
+	return FILESOURCE_FOLDER_NAME
 }
 
 func (fs *FileSource) SetField(fieldName string, value interface{}) error {
@@ -74,18 +44,6 @@ func (fs *FileSource) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(fs, fieldName)
 }
 
-func (fs *FileSource) GetNamespace() string {
-	return fs.Namespace
-}
-
-func (fs *FileSource) SetNamespace(namespace string) {
-	fs.Namespace = namespace
-}
-
-func (fs *FileSource) SetModified(mod time.Time) {
-	fs.UpdatedAt = mod.UnixMilli()
-}
-
 func (fs *FileSource) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(fs, iter)
 }
@@ -94,22 +52,10 @@ func (fs *FileSource) Len() int {
 	return StandardItemLen(fs)
 }
 
-func (fs *FileSource) GetItemMeta() *ItemMeta {
-	return fs.itemMeta
-}
-
-func (fs *FileSource) SetItemMeta(itemMeta *ItemMeta) {
-	fs.itemMeta = itemMeta
-}
-
 func (fs *FileSource) UnmarshalYAML(node *yaml.Node) error {
 	err := validateNodeName(node, fs.Name)
 	if err != nil {
 		return err
 	}
 	return node.Decode((*FileSourceWrapper)(fs))
-}
-
-func (fs *FileSource) IsPublic() bool {
-	return fs.Public
 }

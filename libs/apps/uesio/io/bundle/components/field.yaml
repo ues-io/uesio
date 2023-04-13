@@ -1,3 +1,66 @@
 name: field
+title: Field
+description: An input control, such as a text box, select, etc.
+link: "https://docs.ues.io/"
 pack: main
-entrypoint: components/field/field.tsx
+entrypoint: components/field/field
+defaultDefinition: {}
+variants:
+  - uesio/io.field:uesio/io.default
+  - uesio/io.fieldlabel:uesio/io.default
+  - uesio/io.fieldwrapper:uesio/io.default
+  - uesio/io.tile:uesio/io.default
+  - uesio/io.titlebar:uesio/io.infotag
+  - uesio/io.listfield:uesio/io.default
+  - uesio/io.selectfield:uesio/io.default
+  - uesio/io.customselectfield:uesio/io.default
+  - uesio/io.menu:uesio/io.default
+slots:
+  - name: list
+properties:
+  - name: wire
+    type: WIRE
+    label: Wire
+    defaultToContext: true
+  - name: fieldId
+    type: FIELD
+    label: Field Id
+    wireField: wire
+  - name: fieldDisplayType
+    type: FIELD_METADATA
+    display: false
+    wireProperty: wire
+    fieldProperty: fieldId
+    metadataProperty: type
+  - name: label
+    type: TEXT
+    label: Label
+  - name: labelPosition
+    type: SELECT
+    label: Label Position
+    options:
+      - label: None
+        value: none
+      - label: Top
+        value: top
+      - label: Left
+        value: left
+  - name: displayAs
+    type: SELECT
+    label: Display as
+    options:
+      - label: Text
+        value: ""
+      - label: Password
+        value: PASSWORD
+    displayConditions:
+      - type: fieldValue
+        field: fieldDisplayType
+        value: TEXT
+signals:
+  UPLOAD_FILE:
+    label: Upload File
+    properties: []
+  CANCEL_FILE:
+    label: Cancel File
+    properties: []

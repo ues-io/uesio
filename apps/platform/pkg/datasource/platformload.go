@@ -16,6 +16,7 @@ type PlatformLoadOptions struct {
 	Orders     []adapt.LoadRequestOrder
 	Connection adapt.Connection
 	BatchSize  int
+	LoadAll    bool
 }
 
 func (plo *PlatformLoadOptions) GetConditionsDebug() string {
@@ -38,7 +39,7 @@ func NewRecordNotFoundError(message string) *RecordNotFoundError {
 	}
 }
 
-func getLoadRequestFields(fieldStrings []string) []adapt.LoadRequestField {
+func GetLoadRequestFields(fieldStrings []string) []adapt.LoadRequestField {
 	fields := []adapt.LoadRequestField{}
 	for _, field := range fieldStrings {
 		fields = append(fields, adapt.LoadRequestField{
@@ -55,7 +56,7 @@ func PlatformLoad(group meta.CollectionableGroup, options *PlatformLoadOptions, 
 	}
 	fields := options.Fields
 	if fields == nil {
-		fields = getLoadRequestFields(group.GetFields())
+		fields = GetLoadRequestFields(group.GetFields())
 	}
 	return doPlatformLoad(&adapt.LoadOp{
 		WireName:       group.GetName() + "Wire",
@@ -66,20 +67,20 @@ func PlatformLoad(group meta.CollectionableGroup, options *PlatformLoadOptions, 
 		Order:          options.Orders,
 		Query:          true,
 		BatchSize:      options.BatchSize,
-	}, options.Connection, session)
+	}, options, session)
 }
 
-func doPlatformLoad(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+func doPlatformLoad(op *adapt.LoadOp, options *PlatformLoadOptions, session *sess.Session) error {
 	_, err := Load([]*adapt.LoadOp{op}, session, &LoadOptions{
-		Connections: GetConnectionMap(connection),
-		Metadata:    GetConnectionMetadata(connection),
+		Connections: GetConnectionMap(options.Connection),
+		Metadata:    GetConnectionMetadata(options.Connection),
 	})
 	if err != nil {
 		return errors.New("Platform LoadFromSite Failed:" + err.Error())
 	}
 
-	if op.HasMoreBatches {
-		return doPlatformLoad(op, connection, session)
+	if options.LoadAll && op.HasMoreBatches {
+		return doPlatformLoad(op, options, session)
 	}
 
 	return nil
@@ -87,8 +88,7 @@ func doPlatformLoad(op *adapt.LoadOp, connection adapt.Connection, session *sess
 
 func PlatformLoadOne(item meta.CollectionableItem, options *PlatformLoadOptions, session *sess.Session) error {
 	collection := &LoadOneCollection{
-		Collection: item.GetCollection(),
-		Item:       item,
+		Item: item,
 	}
 
 	err := PlatformLoad(collection, options, session)

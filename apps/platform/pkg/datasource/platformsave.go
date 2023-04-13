@@ -24,8 +24,7 @@ func PlatformDelete(request meta.CollectionableGroup, connection adapt.Connectio
 
 func PlatformDeleteOne(item meta.CollectionableItem, connection adapt.Connection, session *sess.Session) error {
 	collection := &LoadOneCollection{
-		Collection: item.GetCollection(),
-		Item:       item,
+		Item: item,
 	}
 	return PlatformDelete(collection, connection, session)
 }
@@ -109,13 +108,15 @@ func PlatformSaveOne(item meta.CollectionableItem, options *adapt.SaveOptions, c
 func GetPlatformSaveOneRequest(item meta.CollectionableItem, options *adapt.SaveOptions) *PlatformSaveRequest {
 	return &PlatformSaveRequest{
 		Collection: &LoadOneCollection{
-			Collection: item.GetCollection(),
-			Item:       item,
+			Item: item,
 		},
 		Options: options,
 	}
 }
 
-func GetPlatformConnection(session *sess.Session, connections map[string]adapt.Connection) (adapt.Connection, error) {
-	return GetConnection("uesio/core.platform", nil, session, connections)
+func GetPlatformConnection(metadata *adapt.MetadataCache, session *sess.Session, connections map[string]adapt.Connection) (adapt.Connection, error) {
+	if metadata == nil {
+		metadata = &adapt.MetadataCache{}
+	}
+	return GetConnection("uesio/core.platform", metadata, session, connections)
 }

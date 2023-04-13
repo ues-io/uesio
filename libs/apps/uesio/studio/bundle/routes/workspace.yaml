@@ -2,3 +2,4 @@ name: workspace
 path: app/{app:\w*\/\w*}/workspace/{workspacename}
 view: uesio/studio.workspace
 theme: uesio/studio.default
+title: "Manage Workspace: $Param{workspacename}"

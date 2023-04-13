@@ -1,44 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>My view - Uesio</title>
+        <title>{{ .Route.Title }}</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no" />
+        {{- if .Route -}}
+            {{- if .Route.Tags -}}
+                {{- range .Route.Tags }}
+                    {{- if and (eq .Location "head") (eq .Type "meta") -}}
+        <meta name="{{.Name}}" content="{{.Content}}" data-uesio="true"/>
+                    {{- end -}}
+                {{- end -}}
+            {{- end -}}
+        {{- end }}
+        {{- if .Site -}}
+            {{- if (eq .Site.EnableSEO false) -}}
+        <meta name="robots" content="none"/>
+            {{- end -}}
+        {{- end }}
         <style>
-            {{template "fonts.css"}}
+            {{template "fonts" .}}
         </style>
         {{- if .DevMode -}}
-        <script src="/static/vendor/react.development.js"></script>
-        <script src="/static/vendor/react-dom.development.js"></script>
+        <script src="{{ .StaticAssetsPath }}/static/vendor/react.development.js"></script>
+        <script src="{{ .StaticAssetsPath }}/static/vendor/react-dom.development.js"></script>
         {{- else -}}
-        <script src="/static/vendor/react.production.min.js"></script>
-        <script src="/static/vendor/react-dom.production.min.js"></script>
+        <script src="{{ .StaticAssetsPath }}/static/vendor/react.production.min.js"></script>
+        <script src="{{ .StaticAssetsPath }}/static/vendor/react-dom.production.min.js"></script>
         {{- end -}}
-        <script src="/static/vendor/emotion-css.umd.min.js"></script>
-        <script src="/static/ui/uesio.js" type="module"></script>
+        <script src="{{ .StaticAssetsPath }}/static/vendor/emotion-css.umd.min.js"></script>
+        <script src="{{ .StaticAssetsPath }}/static/ui/uesio.js" type="module"></script>
     </head>
 <body>
     <div id="root"></div>
     <script type="module">
-        import * as uesio from "/static/ui/uesio.js"
+        import * as uesio from "{{ .StaticAssetsPath }}/static/ui/uesio.js"
         window.uesio = uesio
+        window.uesioStaticAssetsPath = "{{ .StaticAssetsPath }}"
     </script>
     {{$workspace := .Route.Workspace -}}
-    {{$buildMode := .BuildMode -}}
+    {{$site := .Site -}}
     {{- if .PreloadMetadata -}}
         {{- if .PreloadMetadata.ComponentPack -}}
-            {{- range .PreloadMetadata.ComponentPack.IDs -}}
-                {{- $packURL := getPackURL . $workspace false -}}
+            {{- range .PreloadMetadata.ComponentPack.GetItems -}}
+                {{- $packURL := getPackURL .GetKey $workspace $site -}}
                 {{- if $packURL -}}
                 <script src="{{$packURL}}" type="module"></script>
-                {{- end -}}
-            {{- end -}}
-            {{- if $buildMode -}}
-                {{- range .PreloadMetadata.ComponentPack.IDs -}}
-                    {{- $packURL := getPackURL . $workspace true -}}
-                    {{- if $packURL -}}
-                    <script src="{{$packURL}}" type="module"></script>
-                    {{- end -}}
                 {{- end -}}
             {{- end -}}
         {{- end -}}

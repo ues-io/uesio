@@ -1,15 +1,14 @@
-import { context, component, styles } from "@uesio/ui"
+import { context, styles } from "@uesio/ui"
 import React from "react"
-import { IconUtilityProps } from "../icon/icon"
 
 import { PrismLight as SyntaxHighlighter } from "react-syntax-highlighter"
 import { materialDark } from "react-syntax-highlighter/dist/esm/styles/prism"
-const IOButton = component.getUtility("uesio/io.button")
-const Icon = component.getUtility<IconUtilityProps>("uesio/io.icon")
 
 import bash from "react-syntax-highlighter/dist/esm/languages/prism/bash"
 import yaml from "react-syntax-highlighter/dist/esm/languages/prism/yaml"
 import { CodeProps, HeadingProps } from "react-markdown/lib/ast-to-react"
+import Button from "../button/button"
+import Icon from "../icon/icon"
 
 SyntaxHighlighter.registerLanguage("bash", bash)
 SyntaxHighlighter.registerLanguage("yaml", yaml)
@@ -48,7 +47,7 @@ const h = (
 							verticalAlign: "middle",
 						}}
 					>
-						<IOButton
+						<Button
 							variant="uesio/io.markdownaction"
 							icon={<Icon context={context} icon={"link"} />}
 							context={context}
@@ -75,7 +74,7 @@ const code = (
 	return !props.inline && match ? (
 		<div className={classes.codeblock}>
 			<div className={styles.cx(classes.codeToolbar, "codeToolbar")}>
-				<IOButton
+				<Button
 					variant="uesio/io.markdowncodeaction"
 					icon={<Icon context={context} icon={"copy"} />}
 					label={""}

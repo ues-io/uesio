@@ -3,13 +3,15 @@ package controller
 import (
 	"net/http"
 
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
+
 	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 )
 
-func GetParamConditionsResponse(conditions []meta.BotParamCondition) []meta.BotParamConditionResponse {
+func getParamConditionsResponse(conditions []meta.BotParamCondition) []meta.BotParamConditionResponse {
 	response := []meta.BotParamConditionResponse{}
 
 	for _, condition := range conditions {
@@ -23,7 +25,7 @@ func GetParamConditionsResponse(conditions []meta.BotParamCondition) []meta.BotP
 
 }
 
-func GetParamResponse(params meta.BotParams) meta.BotParamsResponse {
+func getParamResponse(params meta.BotParams) meta.BotParamsResponse {
 	response := meta.BotParamsResponse{}
 
 	for _, param := range params {
@@ -35,7 +37,7 @@ func GetParamResponse(params meta.BotParams) meta.BotParamsResponse {
 			Grouping:     param.Grouping,
 			Default:      param.Default,
 			Choices:      param.Choices,
-			Conditions:   GetParamConditionsResponse(param.Conditions),
+			Conditions:   getParamConditionsResponse(param.Conditions),
 		})
 	}
 
@@ -61,5 +63,5 @@ func GetBotParams(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
-	respondJSON(w, r, GetParamResponse(robot.Params))
+	file.RespondJSON(w, r, getParamResponse(robot.Params))
 }

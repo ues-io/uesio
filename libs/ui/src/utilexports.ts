@@ -1,6 +1,5 @@
 import get from "lodash/get"
 import toPath from "lodash/toPath"
-import { getErrorString, getWireFieldSelectOptions } from "./bands/utils"
-import * as yaml from "./yamlutils/yamlutils"
+import { getErrorString } from "./bands/utils"
 
-export { get, toPath, yaml, getErrorString, getWireFieldSelectOptions }
+export { get, toPath, getErrorString }

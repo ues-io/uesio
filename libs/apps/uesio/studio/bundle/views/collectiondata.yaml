@@ -63,7 +63,7 @@ definition:
               uesio.variant: uesio/studio.content
               components:
                 - uesio/io.list:
-                    id: collectionsDeck
+                    uesio.id: collectionsDeck
                     wire: collections
                     mode: READ
                     components:
@@ -112,6 +112,7 @@ definition:
                                               - signal: "wire/CREATE_RECORD"
                                                 wire: "collectionData"
                                                 prepend: true
+                                            hotkey: "n"
                             - uesio/io.box:
                                 uesio.styles:
                                   root:

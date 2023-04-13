@@ -134,7 +134,7 @@ definition:
               uesio.variant: uesio/studio.leftbar
               components:
                 - uesio/core.view:
-                    id: appnavview
+                    uesio.id: appnavview
                     view: uesio/studio.appnav
                     uesio.context:
                       wire: apps
@@ -178,7 +178,7 @@ definition:
                                         - signal: wire/SAVE
                                           wire: licensetemplate
                       - uesio/io.list:
-                          id: licensetemplateList
+                          uesio.id: licensetemplateList
                           wire: licensetemplate
                           mode: EDIT
                           components:
@@ -191,11 +191,7 @@ definition:
                                       uesio.variant: uesio/io.section
                                       components:
                                         - uesio/io.grid:
-                                            templateColumns:
-                                              xs: 1fr
-                                              md: 1fr 1fr
-                                              lg: 1fr 1fr 1fr 1fr
-                                            columnGap: 10px
+                                            uesio.variant: uesio/io.four_columns
                                             items:
                                               - uesio/io.field:
                                                   fieldId: uesio/studio.monthlyprice
@@ -219,7 +215,7 @@ definition:
                                   - type: wireHasRecords
                                     wire: licensetemplate
                       - uesio/io.table:
-                          id: licensepricingtemplateTable
+                          uesio.id: licensepricingtemplateTable
                           wire: licensepricingtemplate
                           uesio.styles:
                             root:
@@ -238,7 +234,7 @@ definition:
       height: 500px
       components:
         - uesio/io.list:
-            id: newlicenseTemplatelist
+            uesio.id: newlicenseTemplatelist
             wire: newlicensetemplate
             mode: EDIT
             components:
@@ -257,6 +253,8 @@ definition:
               - signal: wire/LOAD
                 wires:
                   - licensetemplate
+              - signal: wire/RESET
+                wire: newlicensepricingtemplate
               - signal: "panel/TOGGLE"
                 panel: "newLicenseTemplate"
         - uesio/io.button:
@@ -272,7 +270,7 @@ definition:
       height: 500px
       components:
         - uesio/io.list:
-            id: newlicensePricingTemplatelist
+            uesio.id: newlicensePricingTemplatelist
             wire: newlicensepricingtemplate
             mode: EDIT
             components:
