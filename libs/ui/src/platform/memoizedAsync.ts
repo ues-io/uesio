@@ -3,7 +3,7 @@ const cache = new Map()
 const defaultOptions: AsyncOptions = {
 	cacheKey: "",
 	refetch: false,
-	timeout: -1,
+	timeout: 5000,
 }
 
 export interface AsyncOptions {
@@ -36,6 +36,7 @@ export const memoizedAsync = <T>(
 			})
 		}
 		let timer: number
+		// If we have a timeout, setup a timer to reject the promise to prevent it from hanging forever
 		if (timeout > -1) {
 			timer = setTimeout(
 				() =>
@@ -46,7 +47,7 @@ export const memoizedAsync = <T>(
 				timeout
 			) as unknown as number
 		}
-		// Otherwise, indicate that we are currently fetching the data
+		// Otherwise, kick off a fetch of the data
 		asyncFn()
 			.then((res) => {
 				clearTimeout(timer)
