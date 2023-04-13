@@ -40,14 +40,14 @@ const ListPropertyItem: definition.UtilityComponent<Props> = (props) => {
 		itemChildren,
 	} = props
 
+	const selectedPath = useSelectedPath(context)
+
 	const record = context.getRecord()
+
+	if (!record) return null
+
 	const index = context.getRecordDataIndex(record)
 	const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
-
-	const viewDefId = context.getViewDefId() || ""
-	if (!viewDefId || !record) return null
-
-	const selectedPath = useSelectedPath(context)
 	const listItemPath = parentPath.addLocal(`${index}`)
 	const selected = selectedPath && selectedPath.startsWith(listItemPath)
 
