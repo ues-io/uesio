@@ -24,7 +24,7 @@ const List: definition.UC<ListDefinition> = (props) => {
 	const [mode] = api.component.useMode(componentId, definition.mode)
 
 	const itemContexts = component.useContextFilter<wire.WireRecord>(
-		(wire && wire.getData()) || [],
+		wire?.getData() || [],
 		definition.recordDisplay,
 		(record, context) => {
 			if (record && wire) {
