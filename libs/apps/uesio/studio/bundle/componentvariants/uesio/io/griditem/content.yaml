@@ -1,6 +1,7 @@
 name: content
 label: Content
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      backgroundColor: "#fafafa"
+      - bg-slate-50
+      - p-10

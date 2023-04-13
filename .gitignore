@@ -61,7 +61,6 @@ firebase-debug.log
 .firebaserc
 __debug_bin
 
-
 # Uesio binaries
 **/.clio
 **/.uesio

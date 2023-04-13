@@ -203,7 +203,9 @@ const Property: definition.UC<Definition> = (props) => {
 		(property) => property.name === definition.propertyId
 	)
 
-	if (!property) return null
+	// Ignore properties which should never be visually displayed
+	// (e.g. a common use case for this is FIELD_METADATA properties)
+	if (!property || property.display === false) return null
 
 	return (
 		<component.Slot

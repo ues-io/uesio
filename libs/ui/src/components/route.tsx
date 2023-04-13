@@ -11,6 +11,9 @@ import { Component } from "../component/component"
 import PanelArea from "./panelarea"
 import { makeViewId } from "../bands/view"
 import { UtilityComponent } from "../definition/definition"
+import { install, defineConfig } from "@twind/core"
+import presetAutoprefix from "@twind/preset-autoprefix"
+import presetTailwind from "@twind/preset-tailwind"
 
 // This applies the global styles
 injectGlobal({
@@ -23,12 +26,8 @@ injectGlobal({
 	},
 	/* apply a natural box layout model to all elements, but allowing components to change */
 	html: {
-		boxSizing: "border-box",
 		overflow: "auto",
 		height: "100vh",
-	},
-	"*": {
-		boxSizing: "inherit",
 	},
 })
 
@@ -91,6 +90,23 @@ const Route: UtilityComponent = (props) => {
 		theme,
 		view: makeViewId(viewId, "$root"),
 	})
+
+	const themeData = routeContext.getTheme()
+
+	// activate twind - must be called at least once
+	install(
+		defineConfig({
+			presets: [presetAutoprefix(), presetTailwind()],
+			hash: false,
+			theme: {
+				extend: {
+					colors: {
+						primary: themeData.definition.palette.primary,
+					},
+				},
+			},
+		})
+	)
 
 	if (workspace) {
 		routeContext = routeContext.setWorkspace(workspace)

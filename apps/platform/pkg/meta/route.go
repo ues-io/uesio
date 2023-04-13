@@ -35,7 +35,7 @@ type Route struct {
 	Params         map[string]string `yaml:"params,omitempty" json:"uesio/studio.params"`
 	ThemeRef       string            `yaml:"theme" json:"uesio/studio.theme"`
 	Title          string            `yaml:"title" json:"uesio/studio.title"`
-	Tags           []Tag             `yaml:"tags" json:"uesio/studio.tags"`
+	Tags           []Tag             `yaml:"tags,omitempty" json:"uesio/studio.tags"`
 }
 
 type RouteWrapper Route

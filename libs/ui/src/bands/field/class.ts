@@ -1,4 +1,5 @@
 import { FieldMetadata } from "./types"
+import { Context } from "../../context/context"
 import { addBlankSelectOption } from "./utils"
 
 class Field {
@@ -16,15 +17,26 @@ class Field {
 	getUpdateable = () => this.source.updateable
 	getAccessible = () => this.source.accessible
 	getSelectMetadata = () => this.source.selectlist
-	getSelectOptions = () => {
+	getSelectOptions = (context: Context) => {
 		const selectMetadata = this.getSelectMetadata()
 		if (!selectMetadata) return []
 		if (selectMetadata.blank_option_label === undefined)
 			return selectMetadata.options || []
-		return addBlankSelectOption(
-			selectMetadata.options,
-			selectMetadata.blank_option_label
+
+		const mergedOptions = selectMetadata.options.map(
+			({ label, languageLabel, value }) => ({
+				label: languageLabel
+					? context.getLabel(languageLabel) || label
+					: label,
+				value,
+			})
 		)
+
+		const mergedBlankLabel =
+			context.getLabel(
+				selectMetadata.blank_option_language_label || ""
+			) || selectMetadata.blank_option_label
+		return addBlankSelectOption(mergedOptions, mergedBlankLabel)
 	}
 	getAccept = () => {
 		switch (this.source.file?.accept) {

@@ -18,20 +18,10 @@ interface ButtonUtilityProps extends definition.UtilityProps {
 const Button: FunctionComponent<ButtonUtilityProps> = (props) => {
 	const classes = styles.useUtilityStyles(
 		{
-			root: {
-				all: "unset",
-				cursor: "pointer",
-				display: "inline-grid",
-				gridAutoFlow: "column",
-				columnGap: "8px",
-				alignItems: "center",
-				background: "none",
-			},
+			root: {},
 			label: {},
 			selected: {},
-			disabled: {
-				cursor: "default",
-			},
+			disabled: {},
 		},
 		props,
 		"uesio/io.button"

@@ -10,18 +10,6 @@ slots:
     accepts:
       - uesio/io.griditem
 properties:
-  - name: templateColumns
-    type: TEXT
-    label: Template Columns
-  - name: columnGap
-    type: TEXT
-    label: Column Gap
-  - name: templateRows
-    type: TEXT
-    label: Template Rows
-  - name: rowGap
-    type: TEXT
-    label: Row Gap
   - name: items
     type: LIST
     items:
@@ -31,10 +19,6 @@ properties:
 sections:
   - type: HOME
     properties:
-      - templateColumns
-      - columnGap
-      - templateRows
-      - rowGap
   - type: CUSTOM
     id: items
     label: Items

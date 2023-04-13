@@ -90,9 +90,6 @@ definition:
                                     panel: newCollection
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
-                    uesio.styles:
-                      root:
-                        padding: 40px
                     components:
                       - uesio/io.searchbox:
                           wire: allcollections
@@ -130,9 +127,6 @@ definition:
                           uesio.variant: uesio/io.section
                           title: Installed Collections
                       - uesio/io.table:
-                          uesio.styles:
-                            root:
-                              padding: 40px
                           wire: allcollections
                           recordDisplay:
                             - field: uesio/studio.namespace

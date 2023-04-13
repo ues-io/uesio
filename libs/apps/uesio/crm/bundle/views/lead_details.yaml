@@ -64,8 +64,11 @@ definition:
                   padding: 40px
               components:
                 - uesio/io.grid:
-                    templateColumns: 1fr 1fr 1fr 1fr
-                    columnGap: 10px
+                    uesio.styleTokens:
+                      root:
+                        - grid-cols-4
+                        - grid-rows-1
+                        - gap-x-4
                     items:
                       - uesio/io.list:
                           mode: EDIT
@@ -98,10 +101,12 @@ definition:
                                 fieldId: uesio/crm.mailing_state_province
                             - uesio/io.field:
                                 fieldId: uesio/crm.status
-                    templateRows: 1fr
                 - uesio/io.grid:
-                    templateColumns: "200px 200px 200px 200px 200px "
-                    columnGap: 10px
+                    uesio.styleTokens:
+                      root:
+                        - grid-cols-5
+                        - grid-rows-1
+                        - gap-x-4
                     items:
                       - uesio/io.field:
                           fieldId: uesio/core.createdat
@@ -113,7 +118,6 @@ definition:
                           fieldId: uesio/core.updatedby
                       - uesio/io.field:
                           fieldId: uesio/core.owner
-                    templateRows: 1fr
                     uesio.styles:
                       root:
                         border: 1px solid
