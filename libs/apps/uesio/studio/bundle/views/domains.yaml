@@ -2,6 +2,15 @@ name: domains
 definition:
   # Wires are how we pull in data
   wires:
+    deleteDomain:
+      viewOnly: true
+      fields:
+        name:
+          type: TEXT
+        type:
+          type: TEXT
+      init:
+        create: true
     apps:
       collection: uesio/studio.app
       fields:
@@ -109,42 +118,48 @@ definition:
                           components:
                             - uesio/io.tile:
                                 uesio.variant: uesio/io.item
+                                uesio.styleTokens:
+                                  content:
+                                    - flex
+                                    - justify-between
+                                    - flex-1
                                 content:
-                                  - uesio/io.box:
-                                      uesio.styles:
-                                        root:
-                                          display: flex
-                                          justifyContent: space-between
-                                      components:
-                                        # Top domain
-                                        - uesio/io.button:
-                                            uesio.display:
-                                              - field: uesio/studio.type
-                                                value: "domain"
-                                            icon: shield
-                                            text: "${uesio/studio.type}: ${uesio/studio.domain}"
-                                            signals:
-                                              - signal: "route/REDIRECT"
-                                                path: "https://${uesio/studio.domain}"
-                                                newtab: true
-                                        # Subdomain
-                                        - uesio/io.button:
-                                            uesio.display:
-                                              - field: uesio/studio.type
-                                                value: "subdomain"
-                                            icon: shield
-                                            text: "${uesio/studio.type}: ${uesio/studio.domain}"
-                                            signals:
-                                              - signal: "route/REDIRECT"
-                                                path: "https://${uesio/studio.domain}.$Site{domain}"
-                                                newtab: true
-                                        - uesio/io.button:
-                                            icon: delete
-                                            signals:
-                                              - signal: wire/MARK_FOR_DELETE
-                                              - signal: wire/SAVE
-                                                wires:
-                                                  - domains
+                                  # Top domain
+                                  - uesio/io.button:
+                                      uesio.display:
+                                        - field: uesio/studio.type
+                                          value: "domain"
+                                      icon: shield
+                                      text: "${uesio/studio.type}: ${uesio/studio.domain}"
+                                      signals:
+                                        - signal: "route/REDIRECT"
+                                          path: "https://${uesio/studio.domain}"
+                                          newtab: true
+                                  # Subdomain
+                                  - uesio/io.button:
+                                      uesio.display:
+                                        - field: uesio/studio.type
+                                          value: "subdomain"
+                                      icon: shield
+                                      text: "${uesio/studio.type}: ${uesio/studio.domain}"
+                                      signals:
+                                        - signal: "route/REDIRECT"
+                                          path: "https://${uesio/studio.domain}.$Site{domain}"
+                                          newtab: true
+                                  - uesio/io.button:
+                                      icon: delete
+                                      signals:
+                                        - signal: wire/MARK_FOR_DELETE
+                                        - signal: wire/UPDATE_RECORD
+                                          wire: deleteDomain
+                                          field: name
+                                          value: ${uesio/studio.domain}
+                                        - signal: wire/UPDATE_RECORD
+                                          wire: deleteDomain
+                                          field: type
+                                          value: ${uesio/studio.type}
+                                        - signal: panel/TOGGLE
+                                          panel: confirmDelete
 
   panels:
     newDomain:
@@ -192,3 +207,29 @@ definition:
                 panel: "newDomain"
               - signal: wire/RESET
                 wire: newdomain
+    confirmDelete:
+      uesio.type: uesio/io.dialog
+      title: Are you sure?
+      width: 400px
+      height: 500px
+      components:
+        - uesio/io.text:
+            text: Are you sure you want to delete the ${deleteDomain:type} ${deleteDomain:name}?
+      actions:
+        - uesio/io.button:
+            uesio.variant: uesio/io.primary
+            text: return
+            signals:
+              - signal: panel/TOGGLE
+                panel: confirmDelete
+              - signal: wire/CANCEL
+                wire: domains
+        - uesio/io.button:
+            uesio.variant: uesio/io.secondary
+            text: Confirm
+            signals:
+              - signal: panel/TOGGLE
+                panel: confirmDelete
+              - signal: wire/SAVE
+                wires:
+                  - domains
