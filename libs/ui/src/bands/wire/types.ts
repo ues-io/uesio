@@ -35,6 +35,7 @@ type PlainWire = {
 	viewOnly: boolean
 	fields: LoadRequestField[]
 	isLoading?: boolean
+	loadAll?: boolean
 }
 
 export type { PlainWire, OrderState }
