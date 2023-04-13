@@ -1,6 +1,7 @@
 import { api, wire, definition } from "@uesio/ui"
-import { MutableRefObject, useEffect } from "react"
+import { MutableRefObject } from "react"
 import List from "../../components/list/list"
+import { useDeepCompareEffect } from "react-use"
 
 interface FormProps extends definition.UtilityProps {
 	path: string
@@ -12,16 +13,7 @@ interface FormProps extends definition.UtilityProps {
 }
 
 const DynamicForm: definition.UtilityComponent<FormProps> = (props) => {
-	const {
-		context,
-		content,
-		id,
-		fields,
-		path,
-		onUpdate,
-		initialValue,
-		wireRef,
-	} = props
+	const { context, content, id, fields, path, onUpdate, initialValue } = props
 
 	const wireId = "dynamicwire:" + id
 	const wire = api.wire.useDynamicWire(
@@ -38,16 +30,17 @@ const DynamicForm: definition.UtilityComponent<FormProps> = (props) => {
 
 	// Set the passed in ref to the wire, so our
 	// parent component can use this wire.
-	if (wireRef) wireRef.current = wire
+	const externalWireRef = props.wireRef
+	if (externalWireRef) {
+		externalWireRef.current = wire
+	}
 
-	useEffect(() => {
+	useDeepCompareEffect(() => {
 		if (!initialValue || !wire) return
 		const record = wire.getFirstRecord()
 		if (!record) return
-		if (JSON.stringify(record.source) === JSON.stringify(initialValue))
-			return
 		record.setAll(initialValue)
-	}, [wire, initialValue])
+	}, [initialValue, !!wire])
 
 	api.event.useEvent(
 		"wire.record.updated",

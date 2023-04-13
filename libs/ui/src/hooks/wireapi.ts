@@ -13,7 +13,7 @@ import initWiresOp, {
 } from "../bands/wire/operations/initialize"
 import { Context } from "../context/context"
 import { WireDefinition } from "../definition/wire"
-import { useEffect } from "react"
+import { useDeepCompareEffect } from "react-use"
 import { dispatch } from "../store/store"
 import { PlainCollectionMap } from "../bands/collection/types"
 
@@ -41,7 +41,7 @@ const useDynamicWire = (
 ) => {
 	const wire = useWire(wireName, context)
 	// This Hook handles wireName changes --- there's a lot more work to do here.
-	useEffect(() => {
+	useDeepCompareEffect(() => {
 		if (!wireDef || !wireName) return
 		initWiresOp(context, {
 			[wireName]: wireDef,
@@ -50,11 +50,11 @@ const useDynamicWire = (
 		return () => {
 			remove(wireName, context)
 		}
-	}, [wireName, wireDef, context])
+	}, [wireName, wireDef])
 
 	// This Hook runs if any change is made to the wire definition,
 	// but we don't need to update as much state, so this logic is split out
-	useEffect(() => {
+	useDeepCompareEffect(() => {
 		if (!wire || !wireDef) return
 		const collections: PlainCollectionMap = {}
 		const initializedWires = initExistingWire(
@@ -63,7 +63,7 @@ const useDynamicWire = (
 			collections
 		)
 		dispatch(init([[initializedWires], collections]))
-	}, [wire, wireDef])
+	}, [!!wire, wireDef])
 	return wire
 }
 

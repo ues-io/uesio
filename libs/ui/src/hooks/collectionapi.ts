@@ -4,7 +4,7 @@ import {
 } from "../bands/collection/selectors"
 import { Context } from "../context/context"
 
-import { useEffect } from "react"
+import { useDeepCompareEffect } from "react-use"
 import getMetadata from "../bands/collection/operations/get"
 import { platform } from "../platform/platform"
 import Collection from "../bands/collection/class"
@@ -20,14 +20,14 @@ const useCollection = (
 ) => {
 	const plainCollection = useColl(collectionName)
 
-	useEffect(() => {
+	useDeepCompareEffect(() => {
 		if (
 			!plainCollection ||
 			(!plainCollection.hasAllFields && options?.needAllFieldMetadata)
 		) {
 			getMetadata(collectionName, context)
 		}
-	}, [])
+	}, [collectionName, options?.needAllFieldMetadata, plainCollection])
 
 	return plainCollection && new Collection(plainCollection)
 }
