@@ -133,10 +133,10 @@ definition:
                                       element: div
                                   - uesio/io.text:
                                       text: ${uesio/core.id}
-                                      uesio.styles:
+                                      uesio.styleTokens:
                                         root:
-                                          fontSize: 9pt
-                                          color: "#666"
+                                          - text-xs
+                                          - text-slate-400
                                       element: div
                                 signals:
                                   - signal: "route/NAVIGATE"

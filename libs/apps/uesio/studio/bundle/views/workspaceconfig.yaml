@@ -49,9 +49,6 @@ definition:
                           uesio.variant: uesio/io.section
                           title: Config Values
                       - uesio/io.box:
-                          uesio.styles:
-                            root:
-                              padding: 40px
                           components:
                             - uesio/studio.configsecrets:
                                 valueType: config
@@ -66,9 +63,6 @@ definition:
                           uesio.variant: uesio/io.section
                           title: Secrets
                       - uesio/io.box:
-                          uesio.styles:
-                            root:
-                              padding: 40px
                           components:
                             - uesio/studio.configsecrets:
                                 valueType: secrets
@@ -83,9 +77,6 @@ definition:
                           uesio.variant: uesio/io.section
                           title: Feature Flags
                       - uesio/io.box:
-                          uesio.styles:
-                            root:
-                              padding: 40px
                           components:
                             - uesio/studio.configfeatureflags:
                                 uesio.context:

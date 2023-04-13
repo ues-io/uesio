@@ -42,7 +42,9 @@ definition:
                         - px-20
                     items:
                       - uesio/io.box:
-                      - uesio/io.box:
+                          uesio.styleTokens:
+                            root:
+                              - md:col-start-2
                           components:
                             - uesio/io.box:
                                 uesio.styleTokens:
