@@ -4,6 +4,32 @@ import { combinePath, FullPath, parseFullPath } from "./path"
 import { PropertiesPanelSection } from "./propertysection"
 import { SignalDescriptor } from "./signalsapi"
 
+interface WireContextProvision {
+	type: "WIRE"
+	wireProperty: string
+}
+
+interface RecordContextProvision {
+	type: "RECORD"
+	wireProperty: string
+}
+
+interface FieldModeContextProvision {
+	type: "FIELD_MODE"
+	modeProperty: string
+}
+
+type SlotContextProvision =
+	| WireContextProvision
+	| RecordContextProvision
+	| FieldModeContextProvision
+
+type SlotDef = {
+	name: string
+	path?: string
+	providesContexts?: SlotContextProvision[]
+}
+
 type ComponentDef = {
 	name: string
 	namespace: string
@@ -11,6 +37,7 @@ type ComponentDef = {
 	description: string
 	category: string
 	discoverable: boolean
+	slots?: SlotDef[]
 	properties?: ComponentProperty[]
 	sections?: PropertiesPanelSection[]
 	defaultDefinition?: definition.DefinitionMap
@@ -181,4 +208,4 @@ export {
 	getSelectedViewPath,
 }
 
-export type { ComponentDef }
+export type { ComponentDef, SlotDef }

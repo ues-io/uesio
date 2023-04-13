@@ -25,6 +25,7 @@ type AcceptTypes = "IMAGE" | "AUDIO" | "VIDEO" | "DOCUMENT" | "ANY"
 type SelectOption = {
 	label: string
 	value: string
+	languageLabel?: string
 	disabled?: boolean
 }
 
@@ -36,6 +37,7 @@ type SelectListMetadata = {
 	name: string
 	options: SelectOption[]
 	blank_option_label?: string
+	blank_option_language_label?: string
 }
 
 type FileMetadata = {

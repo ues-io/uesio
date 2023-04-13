@@ -3,12 +3,12 @@ public: true
 definition:
   components:
     - uesio/io.grid:
-        uesio.styles:
+        uesio.styleTokens:
           root:
-            alignItems: center
-            height: 60px
-            backgroundColor: green
-        templateColumns: 58px 0fr 1fr 0fr
+            - items-center
+            - h-[60px]
+            - bg-green-700
+            - grid-cols-[58px_0fr_1fr_0fr]
         items:
           - uesio/io.griditem:
               components:

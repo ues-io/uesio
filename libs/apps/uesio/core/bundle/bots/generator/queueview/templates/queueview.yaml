@@ -6,11 +6,11 @@ wires:
 # Components determine the layout and composition of your view
 components:
   - uesio/io.grid:
-      templateColumns: 300px 1fr
-      templateRows: 0fr 1fr
-      uesio.styles:
+      uesio.styleTokens:
         root:
-          height: 100vh
+          - h-screen
+          - grid-cols-[300px_1fr]
+          - grid-rows-[0fr_1fr]
       items:
         - uesio/io.box:
             uesio.styles:

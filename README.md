@@ -57,33 +57,25 @@ The `workspace.json` is the entry point for the **build**, **watcher**, **test**
 -   Install git
 -   Install GitHub Desktop [GitHub Desktop](https://desktop.github.com/)
 -   Install [nvm](https://github.com/nvm-sh/nvm) (for installing Node.js and npm)
--   Install the latest version of Node.js _via_ `nvm` :
-
-```
-  nvm install node
-```
-
+-   Install the latest version of Node.js _via_ `nvm`: `nvm install node`
 -   Install [Go](https://golang.org/dl/)
+-   Install the following brew packages:
+    -   `hurl` (for integration tests): `brew install hurl`
+    -   `jq` (for JSON manipulation in Shell): `brew install jq`
+    -   `wget` (for fetching URLs): `brew install wget`
 -   Install [VS Code](https://code.visualstudio.com/Download) and plugins (ESLint, Prettier, Go, GitLens). Do enable `format on save` in conjunction with the `Prettier`. Set up the `code` [environment variable](https://code.visualstudio.com/docs/setup/mac#_launching-from-the-command-line).
 -   Install the following [Google Chrome plugins](https://chrome.google.com/webstore) : `React Developers Tools`, `Redux DevTools`.
 -   _Optional_. Install [Oh My Zsh](https://ohmyz.sh/)
 -   _Optional_. [Add a SSH key to your github account](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
--   _Optional_. Install the `nx` cli globally.
-
-    ```
-    npm install -g nx
-    ```
-
+-   _Optional_. Install the `nx` cli globally: `npm i -g nx`
 -   Use Git clone and store this repository in your local machine
 -   Set up SSL [here](#set-up-ssl).
 -   Set up local DNS [here](#set-up-local-dns).
 -   Start dependencies [here](#dependencies).
+-   Create a symlink for the Uesio CLI into your bin (NOT an alias, which won't work with `nx`):
+    -   Mac OS: `sudo ln -s ~/git/uesio/dist/cli/uesio /usr/local/bin`
+    -   Windows: `mklink C:\bin\uesio C:\Users\<USERNAME>\git\uesio\dist\cli\uesio`, and ensure `bin` is on path: `setx PATH "C:\bin;%PATH%`
 -   Build and run [here](#run).
--   Create an alias in your terminal, this will help to execute Uesio commands.
-
-    ```
-    alias uesio=“npm run uesio”
-    ```
 
 ---
 
@@ -144,7 +136,7 @@ nx build apps-uesio-crm
 On the frontend, the `source map` is enabled in webpack in `dev` mode. While developing you might want to rebuild on saving with the source map in the browser :
 
 ```
-cd ./libs/apps/uesio/core && clio pack --develop
+cd ./libs/apps/uesio/core && uesio pack --develop
 ```
 
 # Watch mode
@@ -246,7 +238,7 @@ npm run nx -- serve platform
 open https://uesio-dev.com:3000
 ```
 
-To run the app in Docker locally (without HTTPS):
+To run the app in Docker locally:
 
 ```
 npm run in-docker
@@ -390,15 +382,22 @@ docker compose up -d
 bash apps/platform/migrations_test/test_migrations.sh
 ```
 
-## End-to-end Testing and Component Testing
+## End-to-end Testing and Integration testing
 
-We use [Cypress](https://cypress.io) for writing end-to-end tests of the Uesio app, as well as testing of React Components.
+All E2E and integration tests can be run exactly as they would in CI using `npm run tests-all`. This will spin up all dependencies, and a Dockerized version of the app, run integration and E2E tests against the app, and then spin down dependencies.
 
-All tests are defined in `cypress` directory:
+### E2E testing with Cypress
 
--   e2e: End-to-End tests
--   component: React Component tests
+We use [Cypress](https://cypress.io) for writing end-to-end tests of the Uesio app. All E2E tests are defined in `cypress/e2e` directory.
 
-If you're running Uesio locally, you can use `npx cypress open` to launch Cypress' visual UI for running tests.
+E2E tests are the most expensive and most brittle, and as such should be used sparingly.
 
-To simulate how Cypress tests are run in CI, run `bash run-e2e-tests.sh`. This script is run in Github Actions on master build, and spins up the Uesio app in Docker, along with all dependencies, to use for running tests.
+If you're running Uesio locally, you can use `npx cypress open` to launch Cypress' visual UI for running tests, or `npm run tests-e2e` to just run the tests in a headless runner.
+
+To simulate how Cypress tests are run in CI, run `npm run tests-e2e`. This script is run in Github Actions on master build, and spins up the Uesio app in Docker, along with all dependencies, to use for running tests.
+
+### Integration / API testing with Hurl
+
+We use [Hurl](https://hurl.dev/) for running integration tests against Uesio APIs, and for performing load testing against APIs. Hurl provides a powerful text-based abstraction over `curl` suitable for defining suites of HTTP requests and assertions to make upon the responses.
+
+To run API integration tests locally against your running Uesio container, use `npm run tests-integration`

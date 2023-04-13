@@ -1,11 +1,9 @@
 name: mainlayout
 label: Main Layout
 definition:
-  templateAreas: '"left main right"'
-  templateColumns:
-    sm: 0 1fr 0
-    md: 1fr 900px 1fr
-    lg: 1fr 900px 1fr
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      backgroundColor: rgb(249,249,249)
+      - grid-cols-[0_1fr_0]
+      - md:grid-cols-[1fr_900px_1fr]
+      - '[grid-template-areas:"left_main_right"]'
+      - bg-slate-50

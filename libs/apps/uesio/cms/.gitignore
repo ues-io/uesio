@@ -6,3 +6,4 @@ bundle/componentpacks/*/*.LICENSE.txt
 bundle/componentpacks/*/dist
 .DS_Store
 .clio
+.uesio

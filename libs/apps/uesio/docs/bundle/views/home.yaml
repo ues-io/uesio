@@ -26,11 +26,11 @@ definition:
                     text: With the ues.io studio, we've created a new way to build web applications. Since ues.io is designed for both experienced web developers and beginners alike, we've created two learning tracks. One for each skill level.
                     element: p
                 - uesio/io.grid:
-                    columnGap: 40px
-                    templateColumns: 1fr 1fr
-                    uesio.styles:
+                    uesio.styleTokens:
                       root:
-                        marginTop: 40px
+                        - gap-10
+                        - mt-10
+                        - grid-cols-2
                     items:
                       - uesio/io.tile:
                           uesio.variant: uesio/docs.trackcard

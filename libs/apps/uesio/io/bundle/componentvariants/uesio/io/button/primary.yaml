@@ -1,19 +1,11 @@
 name: primary
 label: Primary
-extends: uesio/io.default
+extends: uesio/io.secondary
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      backgroundColor: "$Theme{color.primary}"
-      color: "#FFFFFFee"
-      fontWeight: 500
-      border: "1px solid rgb(200,74, 37)"
-      boxShadow: "0 0 4px #00000033"
-      minWidth: 100px
-      borderRadius: 4px
-      padding: 10px
-      "&:focus":
-        boxShadow: "0 0 6px #00000093"
+      - bg-primary
+      - border-orange-700
     label:
-      textTransform: uppercase
+      - text-slate-50
 public: true

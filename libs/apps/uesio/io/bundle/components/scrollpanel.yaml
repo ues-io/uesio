@@ -1,3 +1,7 @@
 name: scrollpanel
 pack: main
 entrypoint: components/scrollpanel/scrollpanel
+slots:
+  - name: components
+  - name: header
+  - name: footer

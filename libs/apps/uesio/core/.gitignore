@@ -8,3 +8,4 @@ bundle/componentpacks/*/dist
 *.js.map
 package-lock.json
 .clio
+.uesio

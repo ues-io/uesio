@@ -10,6 +10,7 @@ interface SelectFieldProps extends definition.UtilityProps {
 	fieldId: string
 	mode?: context.FieldMode
 	options: collection.SelectOption[] | null
+	readonly?: boolean
 }
 
 const RadioButtons: FC<SelectFieldProps> = (props) => {
@@ -21,6 +22,7 @@ const RadioButtons: FC<SelectFieldProps> = (props) => {
 		context,
 		fieldMetadata,
 		fieldId,
+		readonly,
 	} = props
 
 	const classes = styles.useUtilityStyles(
@@ -46,7 +48,7 @@ const RadioButtons: FC<SelectFieldProps> = (props) => {
 		<Fieldset
 			fieldLabel={fieldLabel}
 			context={context}
-			disabled={mode === "READ"}
+			disabled={readonly || mode === "READ"}
 		>
 			{options
 				?.filter(({ value }) => value)

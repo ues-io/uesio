@@ -19,7 +19,6 @@ definition:
         account:
           label: Company
           type: TEXT
-
       init:
         create: true
   # Components are how we describe the layout of our view
@@ -33,20 +32,19 @@ definition:
               area: main
               components:
                 - uesio/io.grid:
-                    templateColumns:
-                      sm: 1fr
-                      md: 350px 1fr
-                      lg: 450px 1fr
-                    columnGap: 40px
-                    uesio.styles:
+                    uesio.styleTokens:
                       root:
-                        padding: 80px
+                        - grid-cols-1
+                        - md:grid-cols-[350px_1fr]
+                        - lg:grid-cols-[450px_1fr]
+                        - gap-x-12
+                        - p-20
                     items:
                       - uesio/io.griditem:
                           components:
                             - uesio/io.text:
                                 uesio.variant: uesio/web.callout
-                                text: Stay in the loop ues.io
+                                text: Stay in the loop.
                             - uesio/io.text:
                                 uesio.variant: uesio/web.calloutsub
                                 text: Join our private beta launch Q3 2023 and become one of the first to build Rome in a day.
@@ -92,10 +90,12 @@ definition:
                                 mode: EDIT
                                 components:
                                   - uesio/io.box:
-                                      uesio.styles:
+                                      uesio.styleTokens:
                                         root:
-                                          backgroundColor: white
-                                          padding: 40px
+                                          - shadow
+                                          - bg-white
+                                          - p-10
+                                          - rounded-lg
                                       components:
                                         - uesio/io.field:
                                             uesio.variant: uesio/web.field
@@ -128,6 +128,5 @@ definition:
                                                         uesio/web.role: ${role}
                                                     - signal: route/NAVIGATE
                                                       path: "earlyaccessthanks"
-
     - uesio/core.view:
         view: uesio/web.footer
