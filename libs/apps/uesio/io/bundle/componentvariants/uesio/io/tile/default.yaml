@@ -1,14 +1,13 @@
 name: default
 label: Default
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      color: rgb(33, 36, 45)
-      margin: 0
-      alignItems: center
+      - select-none
+      - flex
+      - items-center
+      - gap-2
+      - text-sm
     content:
-      verticalAlign: middle
-      fontSize: 10pt
-    avatar:
-      marginRight: 14px
+      - align-middle
 public: true

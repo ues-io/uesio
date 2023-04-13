@@ -170,12 +170,7 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 				)
 			break
 		case "REFERENCE":
-			content = (
-				<ReferenceField
-					{...common}
-					options={reference as ReferenceFieldOptions}
-				/>
-			)
+			content = <ReferenceField {...common} options={reference} />
 			break
 		case "TIMESTAMP":
 			content = <TimestampField {...common} />
@@ -184,7 +179,9 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 			content = <FileField {...common} displayAs={displayAs} />
 			break
 		case "USER":
-			content = <UserField {...common} options={user} />
+			content = (
+				<UserField {...common} options={user} refoptions={reference} />
+			)
 			break
 		case "LIST":
 			content =

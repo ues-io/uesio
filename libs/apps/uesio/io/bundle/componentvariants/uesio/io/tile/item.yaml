@@ -1,18 +1,15 @@
 name: item
 label: Item
+extends: uesio/io.default
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      padding: 20px
-      color: rgb(33, 36, 45)
-      border: "1px solid #f0f0f0"
-      margin: 8px 0
-      borderRadius: 4px
-      backgroundColor: "#fcfcfc"
-      alignItems: center
-    content:
-      verticalAlign: middle
-      fontSize: 10pt
-    avatar:
-      marginRight: 14px
+      - gap-4
+      - text-slate-700
+      - bg-slate-50
+      - p-5
+      - border
+      - border-slate-200
+      - rounded
+      - my-2
 public: true
