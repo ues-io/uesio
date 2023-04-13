@@ -1,4 +1,4 @@
-import { useCollection, useCollections } from "../bands/collection/selectors"
+import { getCollection, useCollection } from "../bands/collection/selectors"
 import {
 	getFullWireId,
 	useWire as uWire,
@@ -81,7 +81,12 @@ const useWires = (
 	const collectionNames = Object.values(plainWires).map(
 		(plainWire) => plainWire?.collection || ""
 	)
-	const collections = useCollections(collectionNames)
+	const collections = Object.fromEntries(
+		collectionNames.map((collectionName) => [
+			collectionName,
+			getCollection(collectionName),
+		])
+	)
 
 	return Object.fromEntries(
 		Object.entries(plainWires).map(([, plainWire]) => {

@@ -1,5 +1,5 @@
 import { useGoogleLogin, GoogleLoginResponse } from "react-google-login"
-import { FunctionComponent } from "react"
+import { FunctionComponent, useEffect } from "react"
 import { definition, api, component } from "@uesio/ui"
 import LoginWrapper from "../../shared/loginwrapper"
 
@@ -37,15 +37,21 @@ const LoginGoogle: FunctionComponent<LoginProps> = (props) => {
 		console.log("Login Failed", error)
 	}
 
-	if (!clientIdValue) return null
+	let signIn
 
-	const { signIn } = useGoogleLogin({
-		clientId: clientIdValue,
-		onSuccess: responseGoogle,
-		onFailure: responseGoogleFail,
-		cookiePolicy: "single_host_origin",
-		autoLoad: false,
-	})
+	useEffect(() => {
+		if (!clientIdValue) return
+		const response = useGoogleLogin({
+			clientId: clientIdValue,
+			onSuccess: responseGoogle,
+			onFailure: responseGoogleFail,
+			cookiePolicy: "single_host_origin",
+			autoLoad: false,
+		})
+		if (response) {
+			signIn = response.signIn
+		}
+	}, [clientIdValue])
 
 	const Button = component.getUtility("uesio/io.button")
 
