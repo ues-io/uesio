@@ -13,7 +13,16 @@ interface FormProps extends definition.UtilityProps {
 }
 
 const DynamicForm: definition.UtilityComponent<FormProps> = (props) => {
-	const { context, content, id, fields, path, onUpdate, initialValue } = props
+	const {
+		context,
+		content,
+		id,
+		fields,
+		path,
+		onUpdate,
+		initialValue,
+		wireRef,
+	} = props
 
 	const wireId = "dynamicwire:" + id
 	const wire = api.wire.useDynamicWire(
@@ -30,9 +39,8 @@ const DynamicForm: definition.UtilityComponent<FormProps> = (props) => {
 
 	// Set the passed in ref to the wire, so our
 	// parent component can use this wire.
-	const externalWireRef = props.wireRef
-	if (externalWireRef) {
-		externalWireRef.current = wire
+	if (wireRef) {
+		wireRef.current = wire
 	}
 
 	useDeepCompareEffect(() => {
@@ -40,7 +48,7 @@ const DynamicForm: definition.UtilityComponent<FormProps> = (props) => {
 		const record = wire.getFirstRecord()
 		if (!record) return
 		record.setAll(initialValue)
-	}, [initialValue, !!wire])
+	}, [!!wire, initialValue])
 
 	api.event.useEvent(
 		"wire.record.updated",
