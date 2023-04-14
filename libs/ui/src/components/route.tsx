@@ -47,7 +47,7 @@ const Route: UtilityComponent = (props) => {
 			},
 			""
 		)
-	})
+	}, [route])
 
 	useEffect(() => {
 		window.onpopstate = (event: PopStateEvent) => {
@@ -76,7 +76,7 @@ const Route: UtilityComponent = (props) => {
 				true
 			)
 		}
-	}, [])
+	}, [site])
 
 	// Quit rendering early if we don't have our route yet
 	if (!route) return null
