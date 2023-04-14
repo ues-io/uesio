@@ -6,7 +6,6 @@ import { getCurrentState } from "../../../store/store"
 import { selectWire } from "../../wire"
 import { useEffect, useRef } from "react"
 import { ViewDefinition, ViewEventsDef } from "../../../definition/viewdef"
-import { useDeepCompareEffect } from "react-use"
 
 const runEvents = async (
 	events: ViewEventsDef | undefined,
@@ -46,7 +45,7 @@ const useLoadWires = (
 	const prevWires = usePrevious(wires)
 	const prevRoute = usePrevious(route.path)
 
-	useDeepCompareEffect(() => {
+	useEffect(() => {
 		;(async () => {
 			if (!wires) return
 			const wireNames = Object.keys(wires)
@@ -74,9 +73,9 @@ const useLoadWires = (
 			}
 			await runEvents(events, context)
 		})()
-	}, [route.path, viewDefId, params])
+	}, [route.path, viewDefId, JSON.stringify(params)])
 
-	useDeepCompareEffect(() => {
+	useEffect(() => {
 		;(async () => {
 			if (!wires || !prevWires) return
 			if (prevRoute !== route.path) return
@@ -100,7 +99,7 @@ const useLoadWires = (
 			initializeWiresOp(context, wiresToInit)
 			await loadWiresOp(context, changedWires)
 		})()
-	}, [wires])
+	}, [JSON.stringify(wires)])
 }
 
 export { useLoadWires }
