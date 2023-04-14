@@ -1,0 +1,6 @@
+name: paddedbox
+label: Paddedbox
+definition:
+  uesio.styleTokens:
+    root:
+      - p-6

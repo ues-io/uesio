@@ -1,22 +1,17 @@
 name: home
 definition:
   components:
-    - uesio/io.box:
-        uesio.styles:
-          root:
-            height: 120px
-        components:
-          - uesio/core.view:
-              view: uesio/docs.topbar
+    - uesio/core.view:
+        view: uesio/docs.topbar
     - uesio/io.grid:
         uesio.variant: uesio/docs.mainlayout
         items:
           - uesio/io.griditem:
               area: main
-              uesio.styles:
+              uesio.styleTokens:
                 root:
-                  minHeight: 100vh
-                  padding: 22px
+                  - min-h-screen
+                  - p-[20px]
               components:
                 - uesio/io.text:
                     uesio.variant: uesio/docs.smallcallout
@@ -40,16 +35,9 @@ definition:
                                 components:
                                   - uesio/io.text:
                                       text: directions_walk
-                                      uesio.variant: uesio/io.icon
-                                      uesio.styles:
-                                        root:
-                                          color: white
-                                          fontSize: 44pt
-                                          textShadow: "rgb(0 0 0 / 10%) 0px 0px 8px"
+                                      uesio.variant: uesio/docs.icon
                             - uesio/io.box:
-                                uesio.styles:
-                                  root:
-                                    padding: 24px
+                                uesio.variant: uesio/docs.paddedbox
                                 components:
                                   - uesio/io.text:
                                       uesio.variant: uesio/docs.smallcallout
@@ -84,22 +72,17 @@ definition:
                           content:
                             - uesio/io.box:
                                 uesio.variant: uesio/docs.trackcardheader
-                                uesio.styles:
+                                uesio.styleTokens:
                                   root:
-                                    backgroundPositionY: -100px
+                                    - h-[-100px]
+                                    - bg-center
+
                                 components:
                                   - uesio/io.text:
                                       text: directions_run
-                                      uesio.variant: uesio/io.icon
-                                      uesio.styles:
-                                        root:
-                                          color: white
-                                          fontSize: 44pt
-                                          textShadow: "rgb(0 0 0 / 10%) 0px 0px 8px"
+                                      uesio.variant: uesio/docs.icon
                             - uesio/io.box:
-                                uesio.styles:
-                                  root:
-                                    padding: 24px
+                                uesio.variant: uesio/docs.paddedbox
                                 components:
                                   - uesio/io.text:
                                       uesio.variant: uesio/docs.smallcallout
