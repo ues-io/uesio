@@ -91,6 +91,9 @@ definition:
                     components:
                       - uesio/io.tile:
                           uesio.variant: uesio/io.nav
+                          uesio.styleTokens:
+                            root:
+                              - gap-3
                           signals:
                             - signal: "route/NAVIGATE"
                               path: "app/${uesio/core.uniquekey}"

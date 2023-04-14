@@ -23,21 +23,8 @@ const SelectField: FunctionComponent<SelectFieldProps> = (props) => {
 
 	const classes = styles.useUtilityStyles(
 		{
-			root: {
-				position: "relative",
-				"&:after": {
-					content: '"expand_more"',
-					fontFamily: "Material Icons",
-					position: "absolute",
-					top: "50%",
-					transform: "translateY(-50%)",
-					pointerEvents: "none",
-					fontSize: "initial",
-				},
-			},
-			input: {
-				appearance: "none",
-			},
+			root: {},
+			input: {},
 		},
 		props,
 		"uesio/io.selectfield"
