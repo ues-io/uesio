@@ -1,4 +1,4 @@
-package datasource
+package systemdialect
 
 import (
 	"fmt"
@@ -36,13 +36,14 @@ func GetKeys(pattern string) ([]string, error) {
 
 func runRedisLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
 
-	//userID := session.GetUserID()
+	userID := session.GetUserID()
 
 	keys, err := GetKeys("session:*")
 	if err != nil {
 		return err
 	}
 	println(keys)
+	println(userID)
 
 	return nil
 
