@@ -1,23 +1,25 @@
 name: default
 label: Default
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
     title:
-      color: "#666"
-      fontSize: 8pt
-      textTransform: uppercase
-      padding: 8px 0
+      - text-slate-700
+      - text-xs
+      - uppercase
+      - pb-2
     valuewrapper:
-      padding: 20px 32px
-      backgroundColor: "#333"
-      borderRadius: 10pt
-      textAlign: center
+      - py-6
+      - px-8
+      - bg-slate-800
+      - rounded-2xl
+      - text-center
     value:
-      fontSize: 24pt
-      color: white
+      - text-4xl
+      - text-slate-50
+      - pb-2
     unit:
-      color: "#ccc"
-      fontSize: 8pt
-      textTransform: uppercase
+      - text-slate-200
+      - text-xs
+      - uppercase
 public: true
