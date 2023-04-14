@@ -59,12 +59,16 @@ const AppIconPicker: FunctionComponent<Props> = (props) => {
 	const record = context.getRecord()
 	const wire = context.getWire()
 
+	const iconValue = record?.getFieldValue(fieldId)
+	const color = record?.getFieldValue(colorFieldId) as string
+
 	useEffect(() => {
-		if (!iconValue && record) {
+		if (!iconValue) {
 			// Update to a random color if we haven't set one.
-			record.update(fieldId, getRandomIcon(), context)
+			record?.update(fieldId, getRandomIcon(), context)
 		}
-	}, [])
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [fieldId, iconValue])
 
 	if (!wire || !record) throw new Error("Record context not provided")
 
@@ -74,10 +78,6 @@ const AppIconPicker: FunctionComponent<Props> = (props) => {
 
 	if (!fieldMetadata || !colorFieldMetadata)
 		throw new Error("Invalid icon field or color field")
-
-	const iconValue = record.getFieldValue(fieldId)
-
-	const color = record.getFieldValue(colorFieldId) as string
 
 	const classes = styles.useStyles(
 		{
