@@ -3,22 +3,23 @@ type FieldMetadataMap = {
 }
 
 type FieldType =
+	| "AUTONUMBER"
+	| "CHECKBOX"
+	| "DATE"
+	| "EMAIL"
+	| "FILE"
+	| "LIST"
+	| "LONGTEXT"
+	| "MAP"
+	| "MULTISELECT"
 	| "NUMBER"
-	| "TEXT"
 	| "REFERENCE"
 	| "REFERENCEGROUP"
-	| "LONGTEXT"
 	| "SELECT"
-	| "CHECKBOX"
-	| "MULTISELECT"
-	| "DATE"
-	| "FILE"
-	| "MAP"
+	| "STRUCT"
+	| "TEXT"
 	| "TIMESTAMP"
-	| "LIST"
 	| "USER"
-	| "EMAIL"
-	| "AUTONUMBER"
 
 type AcceptTypes = "IMAGE" | "AUDIO" | "VIDEO" | "DOCUMENT" | "ANY"
 

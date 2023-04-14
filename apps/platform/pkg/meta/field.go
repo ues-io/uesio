@@ -82,6 +82,7 @@ func GetFieldTypes() map[string]bool {
 		"AUTONUMBER":     true,
 		"REFERENCEGROUP": true,
 		"FORMULA":        true,
+		"STRUCT":         true,
 	}
 }
 

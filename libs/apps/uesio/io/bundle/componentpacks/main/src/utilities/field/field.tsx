@@ -27,6 +27,7 @@ import ReferenceGroupField, {
 } from "../../utilities/field/referencegroup"
 import FileField from "../../utilities/field/file"
 import MapField from "../../utilities/mapfield/mapfield"
+import StructField from "../../utilities/structfield/structfield"
 import MapFieldDeck from "../../utilities/field/mapdeck"
 import { MapFieldOptions } from "../../components/field/field"
 
@@ -224,6 +225,15 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 						}}
 					/>
 				)
+			break
+		case "STRUCT":
+			content = (
+				<StructField
+					{...common}
+					subFields={fieldMetadata.source.subfields}
+					value={value as wire.PlainWireRecord}
+				/>
+			)
 			break
 		case "REFERENCEGROUP":
 			content = (

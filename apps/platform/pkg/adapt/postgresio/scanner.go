@@ -23,11 +23,11 @@ func (ds *DataScanner) Scan(src interface{}) error {
 		return (*ds.Item).SetField(fieldMetadata.GetFullName(), src)
 	}
 
-	if fieldMetadata.Type == "MAP" || fieldMetadata.Type == "MULTISELECT" {
+	if fieldMetadata.Type == "MAP" || fieldMetadata.Type == "MULTISELECT" || fieldMetadata.Type == "STRUCT" {
 		var mapdata map[string]interface{}
 		err := json.Unmarshal(src.([]byte), &mapdata)
 		if err != nil {
-			return errors.New("Postgresql map Unmarshal error: " + fieldMetadata.GetFullName() + " : " + err.Error())
+			return errors.New(fmt.Sprintf("Postgresql %s field Unmarshal error: %s : %s", fieldMetadata.Type, fieldMetadata.GetFullName(), err.Error()))
 		}
 		return (*ds.Item).SetField(fieldMetadata.GetFullName(), mapdata)
 	}
@@ -35,7 +35,7 @@ func (ds *DataScanner) Scan(src interface{}) error {
 		var arraydata []interface{}
 		err := json.Unmarshal(src.([]byte), &arraydata)
 		if err != nil {
-			return errors.New("Postgresql map Unmarshal error: " + fieldMetadata.GetFullName() + " : " + err.Error())
+			return errors.New("Postgresql LIST field Unmarshal error: " + fieldMetadata.GetFullName() + " : " + err.Error())
 		}
 		return (*ds.Item).SetField(fieldMetadata.GetFullName(), arraydata)
 	}
