@@ -13,10 +13,10 @@ const mergeCollection = (
 		collectionsToAdd[key] = collection
 
 		if (state.entities[key]) {
-			const exitingFields = state.entities[key]?.fields
+			const existingFields = state.entities[key]?.fields
 			const newFields = collection.fields
 			collectionsToAdd[key].fields = {
-				...exitingFields,
+				...existingFields,
 				...newFields,
 			}
 		}
