@@ -5,8 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"gopkg.in/yaml.v3"
 	"strings"
+
+	"gopkg.in/yaml.v3"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -76,7 +77,7 @@ func addVariantDep(deps *PreloadMetadata, key string, session *sess.Session) err
 	if err != nil {
 		return err
 	}
-	if variantDep.Extends != "" {
+	if variantDep.Extends != "" && key != variantDep.GetExtendsKey() {
 		qualifiedKey, err := getFullyQualifiedVariantKey(variantDep.Extends, variantDep.Component)
 		if err != nil {
 			return err
