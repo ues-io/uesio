@@ -42,6 +42,9 @@ const usePanels = (
 			document.removeEventListener("mousemove", throttledMouseHandler)
 			document.removeEventListener("mouseup", () => setDragging(false))
 		}
+		// NOTE: We do NOT want to add throttledMouseHandler to this deps list,
+		// like eslint is suggesting -- that creates a very bad experience
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [dragging])
 
 	return [setDragging, width]
