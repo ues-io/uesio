@@ -34,7 +34,7 @@ const CustomSelect: definition.UtilityComponent<CustomSelectProps<unknown>> = (
 	const classes = styles.useUtilityStyles(
 		{
 			root: {},
-			notfound: {},
+			input: {},
 			editbutton: {},
 			selecteditemwrapper: {},
 		},
@@ -54,10 +54,8 @@ const CustomSelect: definition.UtilityComponent<CustomSelectProps<unknown>> = (
 			variant={menuVariant}
 		>
 			<div className={classes.root}>
-				<div>
-					{!selectedItems.length && (
-						<div className={classes.notfound}>Nothing Selected</div>
-					)}
+				<div className={classes.input}>
+					{!selectedItems.length && <div>Nothing Selected</div>}
 					{selectedItems.map((item) => (
 						<div
 							key={getItemKey(item)}
@@ -79,13 +77,6 @@ const CustomSelect: definition.UtilityComponent<CustomSelectProps<unknown>> = (
 						</div>
 					))}
 				</div>
-				<button
-					tabIndex={-1}
-					className={classes.editbutton}
-					type="button"
-				>
-					<Icon icon="expand_more" context={context} />
-				</button>
 			</div>
 		</Menu>
 	)

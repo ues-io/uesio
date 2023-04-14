@@ -160,7 +160,7 @@ definition:
                           title: Search Engine Optimization
                           subtitle: Route <meta> tags
                       - uesio/io.box:
-                          uesio.variant: uesio/io.paddedsection
+                          uesio.variant: uesio/io.section
                           components:
                             - uesio/io.field:
                                 label: " "

@@ -1,9 +1,9 @@
 name: smallcontent
 label: Small Content
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      color: "#555"
-      fontSize: "10pt"
-      lineHeight: "18pt"
+      - text-slate-700
+      - text-sm
+      - font-light
 public: true

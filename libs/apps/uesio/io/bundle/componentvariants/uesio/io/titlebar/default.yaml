@@ -1,13 +1,22 @@
 name: default
 label: Default
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
+      - flex
+      - gap-5
+    content:
+      - flex
+      - flex-col
+      - grow
+      - justify-center
     title:
-      fontSize: 10pt
-      color: "#21242D"
-      fontWeight: bold
+      - text-slate-700
+      - text-base
     subtitle:
-      fontSize: 9pt
-      color: "#777"
+      - text-slate-500
+      - text-xs
+      - font-light
+    actions:
+      - relative
 public: true

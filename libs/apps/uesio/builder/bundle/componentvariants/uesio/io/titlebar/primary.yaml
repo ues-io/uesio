@@ -1,0 +1,17 @@
+name: primary
+label: Primary
+extends: uesio/io.default
+definition:
+  uesio.styleTokens:
+    root:
+      - bg-[$Theme{color.primary}]
+    content:
+      - p-2
+    title:
+      - text-white
+      - uppercase
+      - text-xs
+    subtitle:
+      - text-white
+      - font-light
+public: true

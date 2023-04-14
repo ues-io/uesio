@@ -32,7 +32,9 @@ definition:
     headerCellInner:
       - text-left
       - grid
-      - grid-cols-[1fr 0fr]
+      - grid-flow-col
+      - justify-between
+      - auto-cols-min
       - items-center
     rowNumberCell:
       - whitespace-nowrap

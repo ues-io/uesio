@@ -1,36 +1,20 @@
 name: default
 label: Default
+extends: uesio/io.selectfield:uesio/io.default
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      position: "relative"
-      width: "100%"
-      padding: 5px
-      border: "1px solid #00000044"
-      display: grid
-      gridTemplateColumns: 1fr min-content
-      alignItems: "center"
-      "&:focus":
-        outline: none
-        background: "#ddd"
-    notfound:
-      textTransform: "capitalize"
-      color: "#777"
-      padding: "3px 4px"
-      fontSize: 10pt
+      - grow
+    input:
+      - grid
+      - grid-flow-col
+      - auto-cols-max
     editbutton:
-      color: "#444"
-      border: "none"
-      outline: "none"
-      padding: "0px 3px 0px 0"
-      backgroundColor: "transparent"
-      fontSize: "initial"
-      cursor: "pointer"
+      - text-slate-700
     selecteditemwrapper:
-      display: inline-grid
-      gridTemplateColumns: 1fr min-content
-      fontSize: 10pt
-      alignItems: center
-      gap: 2px
-      padding: 2px 4px
+      - inline-grid
+      - grid-flow-col
+      - auto-cols-min
+      - gap-2
+      - mr-4
 public: true
