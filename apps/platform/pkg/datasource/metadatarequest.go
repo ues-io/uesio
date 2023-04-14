@@ -206,7 +206,7 @@ func ProcessFieldsMetadata(fields map[string]*adapt.FieldMetadata, collectionKey
 			}
 		}
 
-		if fieldMetadata.Type == "MAP" || fieldMetadata.Type == "LIST" {
+		if fieldMetadata.Type == "MAP" || fieldMetadata.Type == "STRUCT" || fieldMetadata.Type == "LIST" {
 			err := ProcessFieldsMetadata(fieldMetadata.SubFields, collectionKey, collection, metadataResponse, additionalRequests, newKey)
 			if err != nil {
 				return err

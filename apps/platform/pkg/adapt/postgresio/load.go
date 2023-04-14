@@ -49,7 +49,7 @@ func getFieldName(fieldMetadata *adapt.FieldMetadata, tableAlias string) string 
 		return fmt.Sprintf("(%s->>'%s')::bigint", fieldsField, fieldName)
 	case "NUMBER":
 		return fmt.Sprintf("%s->'%s'", fieldsField, fieldName)
-	case "MAP", "LIST", "MULTISELECT":
+	case "MAP", "LIST", "MULTISELECT", "STRUCT":
 		// Return just as bytes
 		return fmt.Sprintf("%s->'%s'", fieldsField, fieldName)
 	default:

@@ -1,0 +1,3 @@
+name: structfield
+pack: main
+entrypoint: utilities/structfield/structfield
