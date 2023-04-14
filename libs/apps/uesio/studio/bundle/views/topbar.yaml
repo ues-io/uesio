@@ -235,6 +235,6 @@ definition:
                 - uesio/io.avatar:
                     uesio.styleTokens:
                       root:
-                        - ml-2r
+                        - ml-3
                     text: $User{initials}
                     image: $User{picture}
