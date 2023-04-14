@@ -17,6 +17,7 @@ import {
 import { ComponentVariant } from "./definition/componentvariant"
 import PanelArea from "./components/panelarea"
 import ErrorBoundary from "./components/errorboundary"
+import ErrorMessage from "./components/errormessage"
 
 export type {
 	SlotUtilityProps,
@@ -28,6 +29,7 @@ export type {
 
 export {
 	Slot,
+	ErrorMessage,
 	ErrorBoundary,
 	getSlotProps,
 	View,

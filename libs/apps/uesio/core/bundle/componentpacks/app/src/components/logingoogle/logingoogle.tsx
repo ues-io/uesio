@@ -39,6 +39,9 @@ const LoginGoogle: FunctionComponent<LoginProps> = (props) => {
 
 	if (!clientIdValue) return null
 
+	// NOTE: Disabling this only because it's not being used.
+	// If we want to get this working again, FIX THIS HOOKS ERROR!
+	// eslint-disable-next-line react-hooks/rules-of-hooks
 	const { signIn } = useGoogleLogin({
 		clientId: clientIdValue,
 		onSuccess: responseGoogle,

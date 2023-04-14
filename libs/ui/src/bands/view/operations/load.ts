@@ -39,8 +39,7 @@ const useLoadWires = (
 	if (!route) throw new Error("No Route in Context for View Load")
 
 	const params = context.getParams()
-	const wires = viewDef.wires
-	const events = viewDef.events
+	const { wires, events } = viewDef
 
 	// Keeps track of the value of wires from the previous render
 	const prevWires = usePrevious(wires)

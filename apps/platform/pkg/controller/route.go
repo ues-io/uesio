@@ -158,13 +158,21 @@ func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Sess
 		route = getErrorRoute(path, err.Error())
 	}
 
-	// We can upgrade to the site session so we can be sure to have access to the
-	// the not found route.
+	// We can upgrade to the site session so we can be sure to have access to the not found route
 	adminSession := sess.GetAnonSession(session.GetSite())
 	depsCache, _ := routing.GetMetadataDeps(route, adminSession)
 
-	// If we're logged in, but still no route, return the uesio.notfound view
-	ExecuteIndexTemplate(w, route, depsCache, false, adminSession)
+	acceptHeader := r.Header.Get("Accept")
+	// Only serve an HTML response to user-agents who are requesting HTML (e.g. browsers)
+	// otherwise, don't serve any content at all, just return 404 status code
+	if strings.Contains(acceptHeader, "html") {
+		// Must write 404 status BEFORE executing index template
+		w.WriteHeader(http.StatusNotFound)
+		ExecuteIndexTemplate(w, route, depsCache, false, adminSession)
+		return
+	}
+	http.Error(w, "Not Found", http.StatusNotFound)
+	return
 }
 
 func ServeRoute(w http.ResponseWriter, r *http.Request) {

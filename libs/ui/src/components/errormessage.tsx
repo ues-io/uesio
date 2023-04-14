@@ -1,13 +1,12 @@
 import { FC, SyntheticEvent } from "react"
 import { getErrorString } from "../bands/utils"
-import { BaseProps } from "../definition/definition"
 
-interface Props extends BaseProps {
+interface Props {
+	title: string
 	error: Error
 }
 
 const slotError: FC<Props> = (props) => {
-	const cname = props.componentType
 	const message = getErrorString(props.error)
 
 	return (
@@ -30,7 +29,7 @@ const slotError: FC<Props> = (props) => {
 					margin: 0,
 				}}
 			>
-				{cname}
+				{props.title}
 			</p>
 			<pre style={{ whiteSpace: "normal" }}>{message}</pre>
 		</div>

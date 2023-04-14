@@ -32,6 +32,9 @@ const usePagination = (
 		if (currentPage !== 0) {
 			setPagination(0)
 		}
+		// We do NOT want to reset the pagination whenever currentPage changes,
+		// so we don't want to add currentPage or setPagination to the deps array
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [batchId])
 
 	return [currentPage, setPagination]

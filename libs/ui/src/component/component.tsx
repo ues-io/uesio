@@ -78,8 +78,7 @@ function mergeContextVariants(
 
 const Component: UC<DefinitionMap> = (props) => {
 	const { componentType, context, definition } = props
-	if (definition && !useShould(definition["uesio.display"], context))
-		return null
+	if (!useShould(definition?.["uesio.display"], context)) return null
 	if (!componentType) return <NotFound {...props} />
 	const Loader = getRuntimeLoader(componentType) || NotFound
 

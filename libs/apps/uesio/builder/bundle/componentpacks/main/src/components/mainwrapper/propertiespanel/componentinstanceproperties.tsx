@@ -59,6 +59,7 @@ const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 			sections={getSections(componentType as string, componentDef)}
 			title={componentDef.title || componentDef.name}
 			path={path}
+			id={path.combine()}
 		/>
 	)
 }

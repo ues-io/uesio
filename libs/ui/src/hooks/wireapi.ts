@@ -1,4 +1,4 @@
-import { useCollection, useCollections } from "../bands/collection/selectors"
+import { getCollection, useCollection } from "../bands/collection/selectors"
 import {
 	getFullWireId,
 	useWire as uWire,
@@ -14,6 +14,7 @@ import initWiresOp, {
 import { Context } from "../context/context"
 import { WireDefinition } from "../definition/wire"
 import { useEffect } from "react"
+import { useDeepCompareEffect } from "react-use"
 import { dispatch } from "../store/store"
 import { PlainCollectionMap } from "../bands/collection/types"
 
@@ -50,11 +51,12 @@ const useDynamicWire = (
 		return () => {
 			remove(wireName, context)
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [wireName, !!wireDef])
 
 	// This Hook runs if any change is made to the wire definition,
 	// but we don't need to update as much state, so this logic is split out
-	useEffect(() => {
+	useDeepCompareEffect(() => {
 		if (!wire || !wireDef) return
 		const collections: PlainCollectionMap = {}
 		const initializedWires = initExistingWire(
@@ -63,7 +65,7 @@ const useDynamicWire = (
 			collections
 		)
 		dispatch(init([[initializedWires], collections]))
-	}, [wireName, JSON.stringify(wireDef)])
+	}, [!!wire, wireDef])
 	return wire
 }
 
@@ -79,7 +81,12 @@ const useWires = (
 	const collectionNames = Object.values(plainWires).map(
 		(plainWire) => plainWire?.collection || ""
 	)
-	const collections = useCollections(collectionNames)
+	const collections = Object.fromEntries(
+		collectionNames.map((collectionName) => [
+			collectionName,
+			getCollection(collectionName),
+		])
+	)
 
 	return Object.fromEntries(
 		Object.entries(plainWires).map(([, plainWire]) => {
