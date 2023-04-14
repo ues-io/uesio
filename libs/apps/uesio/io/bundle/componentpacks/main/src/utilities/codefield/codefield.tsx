@@ -95,7 +95,7 @@ const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
 			}
 		})()
 		return
-	}, [props.typeDefinitionFileURIs])
+	}, [typeDefinitionFileURIs, loadedModels])
 
 	function handleEditorWillMount(monaco: Monaco) {
 		const loadedTypeModelUris = Object.keys(loadedModels)
