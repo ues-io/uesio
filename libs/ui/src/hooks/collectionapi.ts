@@ -3,11 +3,10 @@ import {
 	getCollection as getColl,
 } from "../bands/collection/selectors"
 import { Context } from "../context/context"
-
-import { useDeepCompareEffect } from "react-use"
 import getMetadata from "../bands/collection/operations/get"
 import { platform } from "../platform/platform"
 import Collection from "../bands/collection/class"
+import { useEffect, useMemo } from "react"
 
 type UseCollectionOptions = {
 	needAllFieldMetadata?: boolean
@@ -19,17 +18,26 @@ const useCollection = (
 	options?: UseCollectionOptions
 ) => {
 	const plainCollection = useColl(collectionName)
+	const contextMemo = useMemo(() => context, [context])
 
-	useDeepCompareEffect(() => {
+	useEffect(() => {
 		if (
 			!plainCollection ||
 			(!plainCollection.hasAllFields && options?.needAllFieldMetadata)
 		) {
-			getMetadata(collectionName, context)
+			getMetadata(collectionName, contextMemo)
 		}
-	}, [collectionName, options?.needAllFieldMetadata, plainCollection])
+	}, [
+		collectionName,
+		options?.needAllFieldMetadata,
+		plainCollection,
+		contextMemo,
+	])
 
-	return plainCollection && new Collection(plainCollection)
+	return useMemo(
+		() => (plainCollection ? new Collection(plainCollection) : undefined),
+		[plainCollection]
+	)
 }
 
 const getCollection = (collectionName: string) => {

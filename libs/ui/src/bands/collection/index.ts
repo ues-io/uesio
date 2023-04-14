@@ -10,15 +10,12 @@ const mergeCollection = (
 ) => {
 	const collectionsToAdd: PlainCollectionMap = {}
 	for (const [key, collection] of Object.entries(collections)) {
-		collectionsToAdd[key] = collection
-
-		if (state.entities[key]) {
-			const existingFields = state.entities[key]?.fields
-			const newFields = collection.fields
-			collectionsToAdd[key].fields = {
-				...existingFields,
-				...newFields,
-			}
+		collectionsToAdd[key] = {
+			...collection,
+			fields: {
+				...state.entities[key]?.fields,
+				...collection.fields,
+			},
 		}
 	}
 
