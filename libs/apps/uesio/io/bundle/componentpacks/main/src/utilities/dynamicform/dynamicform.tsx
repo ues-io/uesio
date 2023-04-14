@@ -62,6 +62,8 @@ const DynamicForm: definition.UtilityComponent<FormProps> = (props) => {
 		[wire]
 	)
 
+	if (!wire) return null
+
 	return (
 		<List
 			path={path}
@@ -70,21 +72,17 @@ const DynamicForm: definition.UtilityComponent<FormProps> = (props) => {
 				wire: wireId,
 				components:
 					content ||
-					wire?.getFields().map((field) => ({
+					wire.getFields().map((field) => ({
 						"uesio/io.field": {
 							fieldId: field.id,
 						},
 					})) ||
 					[],
 			}}
-			context={
-				wire
-					? context.addWireFrame({
-							view: wire.getViewId(),
-							wire: wire.getId(),
-					  })
-					: context
-			}
+			context={context.addWireFrame({
+				view: wire.getViewId(),
+				wire: wire.getId(),
+			})}
 		/>
 	)
 }
