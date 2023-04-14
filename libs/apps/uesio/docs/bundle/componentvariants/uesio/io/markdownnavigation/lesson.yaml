@@ -6,6 +6,7 @@ definition:
       - border-s-[#c7c7c7]
       - border-solid
       - border-l
+
       - pl-2
     nav:
     title:
@@ -32,6 +33,5 @@ definition:
       - ease-in-out
       - hover:opacity-[1]
       - hover:after:opacity-[1]
-    a:
-      - text-red-400
-      - no-underline
+      - "[&_a]:text-red-400"
+      - "[&_a]:no-underline"
