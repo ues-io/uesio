@@ -13,7 +13,7 @@ const useConfigValues = (context: Context) => {
 				.then(setValues)
 				.finally(() => (loading.current = false))
 		}
-	})
+	}, [values, context])
 	const reset = () => setValues(null)
 	return [values, reset] as [ConfigValueResponse[] | null, () => void]
 }
