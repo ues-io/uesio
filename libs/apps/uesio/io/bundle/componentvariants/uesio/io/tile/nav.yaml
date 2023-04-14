@@ -9,8 +9,12 @@ definition:
       - text-slate-700
       - focus:bg-slate-100
       - focus:outline-offset-[-1px]
+      - items-center
     selected:
       - text-white
       - bg-primary
       - focus:bg-black
+    avatar:
+      - text-base
+      - flex
 public: true

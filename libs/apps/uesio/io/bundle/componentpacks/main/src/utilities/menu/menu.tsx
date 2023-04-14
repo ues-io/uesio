@@ -84,7 +84,12 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 
 	return (
 		<>
-			<div tabIndex={0} ref={refs.setReference} {...getReferenceProps()}>
+			<div
+				className="flex"
+				tabIndex={0}
+				ref={refs.setReference}
+				{...getReferenceProps()}
+			>
 				{children}
 			</div>
 			<FloatingPortal>

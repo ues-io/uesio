@@ -3,8 +3,6 @@ label: Icon
 definition:
   uesio.styleTokens:
     root:
-      - text-[10pt]
       - font-[Material_Icons]
-      - align-middle
       - "[font-variation-settings:'FILL'_1]"
 public: true
