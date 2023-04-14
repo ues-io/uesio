@@ -41,7 +41,6 @@ definition:
       - w-px
     rowNumber:
       - text-center
-      - p-4
       - text-slate-700
       - text-[10pt]
     cell:
