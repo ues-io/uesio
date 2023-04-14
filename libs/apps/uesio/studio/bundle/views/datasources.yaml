@@ -91,7 +91,6 @@ definition:
                       - uesio/io.deck:
                           uesio.id: datasourcesDeck
                           wire: datasources
-                          uesio.variant: uesio/io.section
                           components:
                             - uesio/io.tile:
                                 uesio.variant: uesio/io.item

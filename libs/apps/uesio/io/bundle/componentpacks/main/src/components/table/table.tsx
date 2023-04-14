@@ -154,11 +154,7 @@ const Table: definition.UC<TableDefinition> = (props) => {
 
 	const rowActionsFunc = otherActions.length
 		? (recordContext: RecordContext) => (
-				<Group
-					styles={{ root: { padding: "0 16px" } }}
-					columnGap={0}
-					context={recordContext.context}
-				>
+				<Group context={recordContext.context}>
 					{otherActions.map((action, i) => {
 						const handler = api.signal.getHandler(
 							action.signals,

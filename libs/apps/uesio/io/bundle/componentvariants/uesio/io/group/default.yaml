@@ -1,0 +1,10 @@
+name: default
+label: Default
+definition:
+  uesio.styleTokens:
+    root:
+      - grid-flow-col
+      - gap-2
+      - items-center
+      - auto-cols-max
+public: true

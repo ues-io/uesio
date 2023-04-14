@@ -152,9 +152,6 @@ definition:
                                           panel: deleteCollection
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
-                          uesio.styles:
-                            root:
-                              padding: 40px
                           components:
                             - uesio/io.grid:
                                 uesio.variant: uesio/io.four_columns
@@ -210,9 +207,6 @@ definition:
                                         - signal: panel/TOGGLE
                                           panel: "newField"
                       - uesio/io.table:
-                          uesio.styles:
-                            root:
-                              padding: 40px
                           uesio.id: "fields"
                           wire: "fields"
                           mode: "READ"

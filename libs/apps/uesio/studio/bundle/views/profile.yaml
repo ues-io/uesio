@@ -122,9 +122,6 @@ definition:
                                           path: "app/$Param{app}/workspace/$Param{workspacename}/profiles"
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
-                          uesio.styles:
-                            root:
-                              padding: 40px
                           components:
                             - uesio/io.grid:
                                 uesio.variant: uesio/io.four_columns
@@ -138,9 +135,6 @@ definition:
                                 title: Permission Sets
                                 uesio.variant: uesio/io.section
                             - uesio/io.box:
-                                uesio.styles:
-                                  root:
-                                    padding: 40px
                                 components:
                                   - uesio/builder.multimetadatafield:
                                       fieldId: uesio/studio.permissionsetsrefs

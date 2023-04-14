@@ -6,6 +6,5 @@ definition:
     root:
       - bg-primary
       - border-orange-700
-    label:
       - text-slate-50
 public: true

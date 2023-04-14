@@ -173,9 +173,6 @@ definition:
                                           path: app/$Param{app}/workspace/$Param{workspacename}/permissionsets
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
-                          uesio.styles:
-                            root:
-                              padding: 40px
                           components:
                             - uesio/io.grid:
                                 uesio.variant: uesio/io.four_columns
@@ -205,9 +202,6 @@ definition:
                                 title: Files
                                 uesio.variant: uesio/io.section
                             - uesio/io.box:
-                                uesio.styles:
-                                  root:
-                                    padding: 40px
                                 components:
                                   - uesio/studio.permissionpicker:
                                       uesio.context:
@@ -223,9 +217,6 @@ definition:
                                 title: Routes
                                 uesio.variant: uesio/io.section
                             - uesio/io.box:
-                                uesio.styles:
-                                  root:
-                                    padding: 40px
                                 components:
                                   - uesio/studio.permissionpicker:
                                       uesio.context:
@@ -241,9 +232,6 @@ definition:
                                 title: Views
                                 uesio.variant: uesio/io.section
                             - uesio/io.box:
-                                uesio.styles:
-                                  root:
-                                    padding: 40px
                                 components:
                                   - uesio/studio.permissionpicker:
                                       uesio.context:
@@ -259,9 +247,6 @@ definition:
                                 title: Collections
                                 uesio.variant: uesio/io.section
                             - uesio/io.box:
-                                uesio.styles:
-                                  root:
-                                    padding: 40px
                                 components:
                                   - uesio/studio.multipermissionpicker:
                                       uesio.id: collectionPerms

@@ -13,9 +13,11 @@ definition:
       - py-2
       - rounded
       - bg-slate-100
+      - text-slate-600
     label:
       - font-medium
-      - text-slate-600
       - uppercase
       - tracking-wide
+    icon:
+      - text-inherit
 public: true

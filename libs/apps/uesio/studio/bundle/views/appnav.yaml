@@ -91,9 +91,6 @@ definition:
                   path: "app/$Param{app}/workspace/${uesio/studio.name}"
               content:
                 - uesio/io.text:
-                    uesio.styles:
-                      root:
-                        color: "#21242D"
                     text: ${uesio/studio.name}
               avatar:
                 - uesio/io.text:
@@ -121,9 +118,6 @@ definition:
                   path: "app/$Param{app}/site/${uesio/studio.name}"
               content:
                 - uesio/io.text:
-                    uesio.styles:
-                      root:
-                        color: "#21242D"
                     text: ${uesio/studio.name}
               avatar:
                 - uesio/io.text:
@@ -140,9 +134,6 @@ definition:
             path: "app/$Param{app}/licensesused"
         content:
           - uesio/io.text:
-              uesio.styles:
-                root:
-                  color: "#21242D"
               text: "Billing & Costs"
         avatar:
           - uesio/io.text:
@@ -156,9 +147,6 @@ definition:
             path: "app/$Param{app}/licensesprovided"
         content:
           - uesio/io.text:
-              uesio.styles:
-                root:
-                  color: "#21242D"
               text: "Pricing & Income"
         avatar:
           - uesio/io.text:

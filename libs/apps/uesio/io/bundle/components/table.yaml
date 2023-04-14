@@ -12,6 +12,7 @@ variants:
   - uesio/io.field:uesio/io.table
   - uesio/io.customselectfield:uesio/io.default
   - uesio/io.menu:uesio/io.default
+  - uesio/io.group:uesio/io.default
 category: DATA
 discoverable: true
 slots:

@@ -71,10 +71,6 @@ definition:
                     uesio.variant: uesio/io.section
                     components:
                       - uesio/io.box:
-                          uesio.styles:
-                            root:
-                              padding: 40px
-                              display: grid
                           components:
                             - uesio/io.table:
                                 wire: allcollections
