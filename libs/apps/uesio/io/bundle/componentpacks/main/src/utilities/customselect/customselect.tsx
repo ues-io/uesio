@@ -37,6 +37,7 @@ const CustomSelect: definition.UtilityComponent<CustomSelectProps<unknown>> = (
 			input: {},
 			editbutton: {},
 			selecteditemwrapper: {},
+			notfound: {},
 		},
 		props,
 		"uesio/io.customselectfield"
@@ -55,7 +56,9 @@ const CustomSelect: definition.UtilityComponent<CustomSelectProps<unknown>> = (
 		>
 			<div className={classes.root}>
 				<div className={classes.input}>
-					{!selectedItems.length && <div>Nothing Selected</div>}
+					{!selectedItems.length && (
+						<div className={classes.notfound}>Nothing Selected</div>
+					)}
 					{selectedItems.map((item) => (
 						<div
 							key={getItemKey(item)}

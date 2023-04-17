@@ -9,6 +9,9 @@ definition:
       - grid
       - grid-flow-col
       - auto-cols-max
+    notfound:
+      - text-slate-400
+      - font-light
     editbutton:
       - text-slate-700
     selecteditemwrapper:

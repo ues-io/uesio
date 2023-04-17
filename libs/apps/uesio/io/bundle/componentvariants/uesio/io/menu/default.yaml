@@ -10,20 +10,22 @@ definition:
       - rounded
       - overflow-hidden
       - shadow-lg
+    menuheader:
+      - grid
+      - bg-white
     menuitem:
       - cursor-pointer
-      - py-1
-      - px-2
+      - p-2
       - text-slate-700
+      - min-w-[200px]
     highlighted:
-      - bg-slate-100
+      - bg-slate-200
     searchbox:
+      - bg-slate-100
       - rounded
-      - m-1
+      - m-1.5
       - py-1
       - px-1.5
-      - border
-      - border-slate-300
       - placeholder:text-xs
       - placeholder:text-slate-400
 public: true
