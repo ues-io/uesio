@@ -20,6 +20,14 @@ export const respondVoid = async (response: Response) => {
 	return
 }
 
+export const getJSON = (url: string) =>
+	fetch(url, {
+		method: "GET",
+		headers: {
+			"Content-Type": "application/json",
+		},
+	}).then(respondJSON)
+
 export const postJSON = (url: string, body?: Record<string, unknown>) =>
 	fetch(url, {
 		method: "POST",
