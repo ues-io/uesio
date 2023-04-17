@@ -7,7 +7,6 @@ import {
 } from "../../components/field/field"
 import CodeField from "../codefield/codefield"
 import MarkDownField from "../markdownfield/markdownfield"
-import { MDOptions } from "../markdownfield/types"
 
 interface FileTextProps extends definition.UtilityProps {
 	path: string
@@ -15,7 +14,6 @@ interface FileTextProps extends definition.UtilityProps {
 	userFile?: UserFileMetadata
 	onUpload: (files: FileList | File | null) => void
 	displayAs?: string
-	options?: MDOptions
 	// An array of URIs which contain ambient type definitions to load in this code field
 	typeDefinitionFileURIs?: string[]
 }
@@ -35,7 +33,6 @@ const FileText: FunctionComponent<FileTextProps> = (props) => {
 		userFile,
 		onUpload,
 		mode,
-		options,
 		displayAs,
 		id,
 		typeDefinitionFileURIs,
@@ -55,9 +52,8 @@ const FileText: FunctionComponent<FileTextProps> = (props) => {
 		(e) => {
 			const isTarget = id && id.startsWith(e.detail.target)
 			if (!isTarget) return
-			if (!userFile) return
-			const fileName = userFile["uesio/core.path"]
-			const mimeType = userFile["uesio/core.mimetype"]
+			const fileName = userFile?.["uesio/core.path"] || "content.txt"
+			const mimeType = userFile?.["uesio/core.mimetype"] || "text/plain"
 			onUpload(stringToFile(content, fileName, mimeType))
 			reset()
 		},
@@ -74,14 +70,15 @@ const FileText: FunctionComponent<FileTextProps> = (props) => {
 		[original]
 	)
 
-	if (displayAs === "MARKDOWN") {
+	const language = displayAs === "MARKDOWN" ? "markdown" : undefined
+
+	if (displayAs === "MARKDOWN" && mode !== "EDIT") {
 		return (
 			<MarkDownField
 				context={context}
 				value={content}
 				mode={mode}
 				setValue={changeHandler}
-				options={options}
 				variant={props.variant}
 			/>
 		)
@@ -91,6 +88,7 @@ const FileText: FunctionComponent<FileTextProps> = (props) => {
 		<CodeField
 			context={context}
 			value={content}
+			language={language}
 			setValue={changeHandler}
 			typeDefinitionFileURIs={typeDefinitionFileURIs}
 		/>

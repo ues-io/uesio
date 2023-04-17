@@ -4,3 +4,4 @@ view: uesio/cms.articles
 theme: uesio/core.default
 collection: uesio/cms.article
 viewtype: list
+public: true

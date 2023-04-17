@@ -1,9 +1,0 @@
-name: markdowncodeaction
-label: markdowncodeaction
-extends: uesio/io.default
-definition:
-  uesio.styles:
-    root:
-      padding: 2px
-      color: "#fff"
-public: true
