@@ -6,14 +6,14 @@ definition:
   components:
     - uesio/io.grid:
         uesio.variant: uesio/docs.mainlayout
-        uesio.styles:
+        uesio.styleTokens:
           root:
-            height: 120px
+            - h-[120px]
         items:
           - uesio/io.griditem:
-              uesio.styles:
+              uesio.styleTokens:
                 root:
-                  display: grid
+                  - grid
               area: main
               components:
                 - uesio/io.grid:
@@ -25,10 +25,10 @@ definition:
                       - uesio/io.griditem:
                           components:
                             - uesio/io.image:
-                                uesio.styles:
+                                uesio.styleTokens:
                                   root:
-                                    margin: 16px
-                                height: 55px
+                                    - m-4
+                                    - h-14
                                 file: uesio/docs.logo
                                 signals:
                                   - signal: "route/REDIRECT"
@@ -37,9 +37,9 @@ definition:
                       - uesio/io.griditem:
                           components:
                             - uesio/io.group:
-                                uesio.styles:
+                                uesio.styleTokens:
                                   root:
-                                    margin: 20px
+                                    - m-5
                                 columnGap: 40px
                                 components:
                                   - uesio/io.group:
