@@ -1,21 +1,20 @@
 name: docsmarkdown
 label: Docs Markdown
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     markdown:
-      margin: 20px 0
-      fontSize: 0.9em
-      lineHeight: 1.6;
-      color: "#444444"
-      fontWeight: 300
-
-      "h1,h2,h3,h4,h5,h6":
-        fontFamily: Gosha
-        color: "#333"
-        fontWeight: 300
-
-      a:
-        color: rgb(251,96,78)
-        fontWeight: 300
-      p:
-        fontWeight: 300
+      - my-5
+      - mx-0
+      - text-[0.9em]
+      - leading-[1.6em]
+      - text-trueGray-700
+      - font-light
+    "h1,h2,h3,h4,h5,h6":
+      - font-[gosha]
+      - text-gray-700
+      - font-light
+    a:
+      - text-red-400
+      - font-light
+    p:
+      - font-light
