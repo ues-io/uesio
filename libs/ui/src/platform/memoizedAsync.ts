@@ -1,4 +1,4 @@
-import { respondJSON } from "./async"
+import { getJSON } from "./async"
 
 const cache = new Map()
 
@@ -116,7 +116,7 @@ export const memoizedAsync = <T>(
 
 export const memoizedGetJSON = <T>(url: string) => {
 	const cacheKey = `getJSON:${url}`
-	return memoizedAsync<T>(() => fetch(url).then(respondJSON), {
+	return memoizedAsync<T>(() => getJSON(url), {
 		cacheKey,
 	})
 		.then((res: AsyncResult<T>) => res.data)

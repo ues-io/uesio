@@ -10,7 +10,7 @@ import { parseKey } from "../component/path"
 import { PlainWireRecord } from "../bands/wirerecord/types"
 import { ParamDefinition } from "../definition/param"
 import { UserState } from "../bands/user/types"
-import { postJSON, respondJSON, respondVoid } from "./async"
+import { getJSON, postJSON, respondJSON, respondVoid } from "./async"
 import { memoizedGetJSON } from "./memoizedAsync"
 
 // Hack for Monaco loader to be able to load assets from custom paths
@@ -160,8 +160,7 @@ const platform = {
 	getRoute: async (
 		context: Context,
 		request: NavigateRequest
-	): Promise<RouteState> =>
-		memoizedGetJSON<RouteState>(getRouteUrl(context, request)),
+	): Promise<RouteState> => getJSON(getRouteUrl(context, request)),
 	loadData: async (
 		context: Context,
 		requestBody: LoadRequestBatch
