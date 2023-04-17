@@ -2,7 +2,10 @@ name: calltoaction
 label: Call to Action
 extends: uesio/docs.secondary
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      border: 2px solid rgb(251,96,78)
-      padding: 10px 30px
+      - border-2
+      - border-solid
+      - border-red-400
+      - py-2.5
+      - px-8

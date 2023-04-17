@@ -1,11 +1,12 @@
 name: content
 label: Main Content
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      fontSize: 11pt
-      lineHeight: 18pt
-      color: "#444"
-      fontWeight: 300
-      margin: 20px 0
-  element: div
+      - text-sm
+      - text-trueGray-700
+      - leading-6
+      - font-light
+      - my-5
+      - mx-0
+element: div
