@@ -1,4 +1,4 @@
-import { FunctionComponent, useState, useEffect } from "react"
+import { FunctionComponent, useState, useMemo, useEffect } from "react"
 import { definition, api, collection, util, component } from "@uesio/ui"
 import ImportBodyItem from "./importbodyitem"
 import ImportButton from "./importbutton"
@@ -30,6 +30,11 @@ const DataImport: FunctionComponent<Props> = (props) => {
 		file: null,
 	})
 
+	const memoCsvFields = useMemo(
+		() => uploaded.csvFields,
+		[uploaded.csvFields]
+	)
+
 	const changeUploaded = (
 		success: boolean,
 		csvFields: string[],
@@ -42,42 +47,40 @@ const DataImport: FunctionComponent<Props> = (props) => {
 		context,
 		collectionId
 	)
-	const collectionFields = Object.keys(
-		collectionInstance?.source.fields || {}
+	// useCollection returns a different Collection object every time.
+	// But we only need to recompute collectionFields if the collectionInstance's underlying fields have changed
+	const collectionFields = useMemo(
+		() => Object.keys(collectionInstance?.source.fields || {}),
+		[collectionInstance?.source.fields]
 	)
-
-	const getInitialMatch = (
-		csvFields: string[],
-		collectionFields: string[]
-	): Record<string, definition.ImportMapping> =>
-		csvFields.reduce((mapping, key) => {
-			const field = collectionInstance?.getField(key) || ""
-			return !field || !collectionFields.includes(key)
-				? mapping
-				: {
-						...mapping,
-						[field.getId()]: {
-							columnname: key,
-							type: "IMPORT",
-						},
-				  }
-		}, {})
 
 	const [spec, setSpec] = useState<definition.ImportSpec>({
 		jobtype: "IMPORT",
 		collection: collectionInstance?.getFullName() || "",
 		filetype: "CSV",
-		mappings: getInitialMatch(uploaded.csvFields, collectionFields),
+		mappings: {},
 	})
 
 	useEffect(() => {
-		uploaded.success &&
-			setSpec({
-				...spec,
+		if (uploaded.success) {
+			setSpec((previousSpec) => ({
+				...previousSpec,
 				collection: collectionInstance?.getFullName() || "",
-				mappings: getInitialMatch(uploaded.csvFields, collectionFields),
-			})
-	}, [uploaded])
+				mappings: memoCsvFields.reduce((mapping, key) => {
+					const field = collectionInstance?.getField(key) || ""
+					return !field || !collectionFields.includes(key)
+						? mapping
+						: {
+								...mapping,
+								[field.getId()]: {
+									columnname: key,
+									type: "IMPORT",
+								},
+						  }
+				}, {}),
+			}))
+		}
+	}, [uploaded.success, collectionFields, collectionInstance, memoCsvFields])
 
 	if (!collectionInstance) return null
 

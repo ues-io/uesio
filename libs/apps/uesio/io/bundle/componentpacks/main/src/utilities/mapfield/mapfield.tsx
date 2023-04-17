@@ -33,7 +33,7 @@ const MapField: FunctionComponent<MapFieldUtilityProps> = (props) => {
 		path,
 	} = props
 
-	const value = props.value as Record<string, wire.FieldValue>
+	const value = (props.value as Record<string, wire.FieldValue>) || {}
 	const mapValue = keys
 		? {
 				...keys.reduce((obj, key) => ({ ...obj, [key]: null }), {}),

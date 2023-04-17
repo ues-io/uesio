@@ -66,6 +66,10 @@ func (c *ComponentVariant) GetKey() string {
 	return fmt.Sprintf("%s:%s.%s", c.Component, c.Namespace, c.Name)
 }
 
+func (c *ComponentVariant) GetExtendsKey() string {
+	return fmt.Sprintf("%s:%s", c.Component, c.Extends)
+}
+
 func (c *ComponentVariant) GetPath() string {
 	componentNamespace, componentName, _ := ParseKey(c.Component)
 	nsUser, appName, _ := ParseNamespace(componentNamespace)

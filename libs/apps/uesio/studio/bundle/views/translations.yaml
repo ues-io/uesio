@@ -88,7 +88,6 @@ definition:
                       - uesio/io.deck:
                           uesio.id: translationsDeck
                           wire: translations
-                          uesio.variant: uesio/io.section
                           components:
                             - uesio/io.tile:
                                 uesio.variant: uesio/io.item

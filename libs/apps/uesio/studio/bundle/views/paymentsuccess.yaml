@@ -6,47 +6,40 @@ definition:
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
-        uesio.styles:
+        uesio.styleTokens:
           root:
-            alignItems: center
-            justifyItems: center
-            height: 100vh
-            backgroundColor: "#F2F2F2"
+            - justify-center
+            - items-center
+            - h-screen
+            - bg-slate-50
         items:
-          - uesio/io.griditem:
-              uesio.styles:
+          - uesio/io.box:
+              uesio.styleTokens:
                 root:
-                  textAlign: center
+                  - text-center
               components:
                 - uesio/io.text:
                     text: "✅"
-                    uesio.styles:
+                    uesio.styleTokens:
                       root:
-                        fontSize: 60pt
-                        padding: 20px
+                        - text-9xl
+                        - m-10
                     element: div
                 - uesio/io.text:
-                    text: Your payment was successful
-                    uesio.styles:
+                    text: Your payment was successful.
+                    uesio.styleTokens:
                       root:
-                        fontSize: 40pt
-                        fontWeight: bold
-                        color: "#00c410"
-                        lineHeight: 20px
-                        textShadow: 1px 1px rgba(250,250,250,.3)
-                        padding: 40px
+                        - text-4xl
+                        - m-1
                     element: div
                 - uesio/io.text:
-                    text: Thank you for your payment!
-                    uesio.styles:
+                    text: Thank you!
+                    uesio.styleTokens:
                       root:
-                        fontSize: 14pt
-                        fontWeight: bold
-                        color: "#00c410"
-                        lineHeight: 20px
-                        textShadow: 1px 1px rgba(250,250,250,.3)
-                        border: 1px solid "#fcc2c3"
-                        paddingBottom: 20px
+                        - text-2xl
+                        - text-slate-500
+                        - font-light
+                        - mb-10
                     element: div
                 - uesio/io.button:
                     uesio.variant: uesio/io.secondary

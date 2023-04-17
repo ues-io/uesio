@@ -185,9 +185,6 @@ definition:
                             - uesio/io.griditem:
                                 components:
                                   - uesio/io.box:
-                                      uesio.styles:
-                                        root:
-                                          paddingBottom: 20px
                                       uesio.variant: uesio/io.section
                                       components:
                                         - uesio/io.grid:
@@ -217,9 +214,6 @@ definition:
                       - uesio/io.table:
                           uesio.id: licensepricingtemplateTable
                           wire: licensepricingtemplate
-                          uesio.styles:
-                            root:
-                              padding: 40px
                           columns:
                             - field: uesio/studio.actiontype
                             - field: uesio/studio.metadatatype

@@ -3,7 +3,7 @@ import { DependencyList, useEffect } from "react"
 const useEvent = (
 	eventName: string,
 	callback: (event: CustomEvent) => void,
-	deps: DependencyList
+	deps: DependencyList = []
 ) => {
 	useEffect(() => {
 		document.addEventListener(eventName, callback)

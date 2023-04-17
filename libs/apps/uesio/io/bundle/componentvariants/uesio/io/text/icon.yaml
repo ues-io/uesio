@@ -1,10 +1,10 @@
 name: icon
 label: Icon
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      fontFamily: Material Icons
-      verticalAlign: middle
-      fontDisplay: block
-      fontVariationSettings: "'FILL' 1"
+      - inline-flex
+      - font-[Material_Icons]
+      - align-middle
+      - "[font-variation-settings:'FILL'_1]"
 public: true

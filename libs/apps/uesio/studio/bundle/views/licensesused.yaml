@@ -89,9 +89,6 @@ definition:
                           uesio.id: invoiceTable
                           wire: invoices
                           pagesize: 10
-                          uesio.styles:
-                            root:
-                              padding: 40px
                           columns:
                             - field: uesio/studio.autoid
                             - field: uesio/studio.total
@@ -112,25 +109,18 @@ definition:
                           uesio.id: licensesTable
                           wire: licenses
                           pagesize: 10
-                          uesio.styles:
-                            root:
-                              padding: 40px
                           columns:
                             - label: SOURCE APP
                               components:
                                 - uesio/studio.iconlabel:
-                                    uesio.styles:
-                                      root:
-                                        padding: 16px
+                                    uesio.variant: uesio/studio.namespacefield
                                     text: ${uesio/studio.app->uesio/studio.fullname}
                                     icon: ${uesio/studio.app->uesio/studio.icon}
                                     color: ${uesio/studio.app->uesio/studio.color}
                             - label: status
                               components:
                                 - uesio/studio.iconlabel:
-                                    uesio.styles:
-                                      root:
-                                        padding: 16px
+                                    uesio.variant: uesio/studio.namespacefield
                                     text: Active
                                     icon: verified
                                     color: rgb(29,173,113)
@@ -139,9 +129,7 @@ definition:
                                         value: true
                                         operator: EQUALS
                                 - uesio/studio.iconlabel:
-                                    uesio.styles:
-                                      root:
-                                        padding: 16px
+                                    uesio.variant: uesio/studio.namespacefield
                                     text: Inactive
                                     icon: cancel
                                     color: rgb(255,0,0)

@@ -81,9 +81,6 @@ definition:
                                           path: "app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{namespace}/$Param{collectionname}"
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
-                          uesio.styles:
-                            root:
-                              padding: 40px
                           components:
                             - uesio/io.box:
                                 components:

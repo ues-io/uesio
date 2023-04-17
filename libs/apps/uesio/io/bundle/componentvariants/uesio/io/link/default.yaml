@@ -1,9 +1,9 @@
 name: default
 label: Default
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      color: "$Theme{color.primary}"
-      fontSize: "9pt"
-      cursor: "pointer"
+      - text-primary
+      - text-sm
+      - cursor-pointer
 public: true

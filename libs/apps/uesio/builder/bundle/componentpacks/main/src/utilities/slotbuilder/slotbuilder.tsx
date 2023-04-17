@@ -6,6 +6,8 @@ import { isDropAllowed } from "../../shared/dragdrop"
 import BuildWrapper from "../buildwrapper/buildwrapper"
 import PlaceHolder from "../placeholder/placeholder"
 
+const accepts = ["component", "viewdef" /* "componentvariant"*/]
+
 const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 	const { definition, listName, path, direction, label, message, context } =
 		props
@@ -22,8 +24,6 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 	const dragPath = useDragPath(context)
 	const dropPath = useDropPath(context)
 
-	const accepts = ["component", "viewdef" /* "componentvariant"*/]
-
 	const isHovering =
 		dropPath.equals(
 			new FullPath("viewdef", viewDefId, `${listPath}["0"]`)
@@ -36,7 +36,7 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 			parentElem.setAttribute("data-direction", direction || "")
 			parentElem.setAttribute("data-path", listPath)
 		}
-	}, [path, accepts, direction])
+	}, [listPath, direction])
 
 	if (!buildMode) {
 		return (

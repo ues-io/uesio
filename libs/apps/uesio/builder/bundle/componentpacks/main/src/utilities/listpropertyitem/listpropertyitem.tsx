@@ -1,5 +1,4 @@
 import { definition, component, wire } from "@uesio/ui"
-import CloneKeyAction from "../../actions/clonekeyaction"
 import DeleteAction from "../../actions/deleteaction"
 import MoveActions from "../../actions/moveactions"
 import { FullPath } from "../../api/path"
@@ -10,6 +9,7 @@ import PropNodeTag from "../../utilities/propnodetag/propnodetag"
 import { ComponentProperty } from "../../properties/componentproperty"
 import { PropertiesPanelSection } from "../../api/propertysection"
 import { ReactNode } from "react"
+import CloneAction from "../../actions/cloneaction"
 
 export type PropertiesGetter = (
 	item: wire.PlainWireRecord
@@ -40,14 +40,14 @@ const ListPropertyItem: definition.UtilityComponent<Props> = (props) => {
 		itemChildren,
 	} = props
 
+	const selectedPath = useSelectedPath(context)
+
 	const record = context.getRecord()
+
+	if (!record) return null
+
 	const index = context.getRecordDataIndex(record)
 	const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
-
-	const viewDefId = context.getViewDefId() || ""
-	if (!viewDefId || !record) return null
-
-	const selectedPath = useSelectedPath(context)
 	const listItemPath = parentPath.addLocal(`${index}`)
 	const selected = selectedPath && selectedPath.startsWith(listItemPath)
 
@@ -90,7 +90,7 @@ const ListPropertyItem: definition.UtilityComponent<Props> = (props) => {
 				<BuildActionsArea context={context}>
 					<DeleteAction context={context} path={listItemPath} />
 					<MoveActions context={context} path={listItemPath} />
-					<CloneKeyAction context={context} path={listItemPath} />
+					<CloneAction context={context} path={listItemPath} />
 				</BuildActionsArea>
 			</IOExpandPanel>
 		</PropNodeTag>

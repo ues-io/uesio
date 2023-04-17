@@ -1,6 +1,6 @@
 import { Component } from "react"
 import { BaseProps } from "../definition/definition"
-import ComponentError from "./componenterror"
+import ErrorMessage from "./errormessage"
 
 interface State {
 	error: Error | null
@@ -24,7 +24,12 @@ class ErrorBoundary extends Component<BaseProps> {
 
 	public render() {
 		if (this.state.error) {
-			return <ComponentError {...this.props} error={this.state.error} />
+			return (
+				<ErrorMessage
+					error={this.state.error}
+					title={this.props.componentType || ""}
+				/>
+			)
 		}
 		return this.props.children
 	}

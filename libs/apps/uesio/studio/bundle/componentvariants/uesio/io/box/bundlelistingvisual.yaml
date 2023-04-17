@@ -1,21 +1,21 @@
 name: bundlelistingvisual
 label: Bundle Listing Visual
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      background: "#eee"
-      backgroundColor: ${uesio/studio.app->uesio/studio.color}
-      paddingTop: 50%;
-      display: flex
-      alignItems: center
-      justifyContent: center
-      color: white
-      position: relative
+      - bg-slate-50
+      - flex
+      - bg-[${uesio/studio.app->uesio/studio.color}]
+      - pt-[50%]
+      - items-center
+      - justify-center
+      - text-white
+      - relative
   components:
     - uesio/io.button:
-        uesio.styles:
+        uesio.styleTokens:
           root:
-            inset: 0 0 0 0
-            position: absolute
-            fontSize: 4em
+            - inset-0
+            - absolute
+            - text-6xl
         icon: ${uesio/studio.app->uesio/studio.icon}

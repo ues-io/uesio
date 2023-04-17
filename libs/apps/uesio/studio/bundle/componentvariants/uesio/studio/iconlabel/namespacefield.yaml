@@ -2,8 +2,9 @@ name: namespacefield
 label: Namespace Field
 extends: uesio/builder.iconlabel:uesio/builder.default
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      fontSize: "10pt"
-      padding: "16px"
+      - text-sm
+      - text-slate-700
+      - p-5
 public: true

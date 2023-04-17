@@ -39,8 +39,7 @@ const useLoadWires = (
 	if (!route) throw new Error("No Route in Context for View Load")
 
 	const params = context.getParams()
-	const wires = viewDef.wires
-	const events = viewDef.events
+	const { wires, events } = viewDef
 
 	// Keeps track of the value of wires from the previous render
 	const prevWires = usePrevious(wires)
@@ -74,6 +73,8 @@ const useLoadWires = (
 			}
 			await runEvents(events, context)
 		})()
+		// TODO: There is probably a better way to check than JSON.stringify() on params.
+		// consider useDeepCompareEffect(), or memoization
 	}, [route.path, viewDefId, JSON.stringify(params)])
 
 	useEffect(() => {
@@ -100,7 +101,8 @@ const useLoadWires = (
 			initializeWiresOp(context, wiresToInit)
 			await loadWiresOp(context, changedWires)
 		})()
-	}, [JSON.stringify(wires)])
+		// TODO: probably a better way to do this
+	}, [JSON.stringify(wires), route.path])
 }
 
 export { useLoadWires }

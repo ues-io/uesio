@@ -38,7 +38,6 @@ const Text: definition.UtilityComponent<TextProps> = (props) => {
 					color: props.context.mergeString(color),
 				}),
 				textAlign: align,
-				verticalAlign: "inherit",
 			},
 		},
 		props,

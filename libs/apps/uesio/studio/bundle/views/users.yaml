@@ -113,7 +113,7 @@ definition:
                                   - signal: "panel/TOGGLE"
                                     panel: "newUser"
                 - uesio/io.box:
-                    uesio.variant: uesio/io.paddedsection
+                    uesio.variant: uesio/io.section
                     components:
                       - uesio/io.searchbox:
                           wire: users
@@ -133,10 +133,7 @@ definition:
                                       element: div
                                   - uesio/io.text:
                                       text: ${uesio/core.id}
-                                      uesio.styleTokens:
-                                        root:
-                                          - text-xs
-                                          - text-slate-400
+                                      uesio.variant: uesio/io.aside
                                       element: div
                                 signals:
                                   - signal: "route/NAVIGATE"

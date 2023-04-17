@@ -48,10 +48,12 @@ const Button: FunctionComponent<ButtonUtilityProps> = (props) => {
 			href={link}
 			disabled={disabled}
 			onClick={onClick}
-			className={styles.cx(
-				classes.root,
-				disabled && classes.disabled,
-				isSelected && classes.selected
+			className={styles.mergeClasses(
+				styles.cx(
+					classes.root,
+					disabled && classes.disabled,
+					isSelected && classes.selected
+				)
 			)}
 		>
 			{icon}

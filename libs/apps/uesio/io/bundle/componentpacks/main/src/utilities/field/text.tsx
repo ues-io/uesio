@@ -24,9 +24,7 @@ const TextField: FunctionComponent<TextFieldProps> = (props) => {
 	const value = props.value as string
 	const classes = styles.useUtilityStyles(
 		{
-			input: {
-				resize: "none", // would be nicer to have this on implementation level
-			},
+			input: {},
 			readonly: {},
 		},
 		props,

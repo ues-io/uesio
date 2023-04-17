@@ -13,25 +13,11 @@ const TitleBar: FunctionComponent<TitleBarUtilityProps> = (props) => {
 	const { context, title, subtitle, subtitlenode, actions, onClick } = props
 	const classes = styles.useUtilityStyles(
 		{
-			root: {
-				display: "flex",
-				columnGap: "20px",
-			},
-			content: {
-				flex: 1,
-				display: "flex",
-				justifyContent: "center",
-				flexDirection: "column",
-			},
-			title: {
-				margin: 0,
-			},
-			subtitle: {
-				margin: 0,
-			},
-			actions: {
-				position: "relative",
-			},
+			root: {},
+			content: {},
+			title: {},
+			subtitle: {},
+			actions: {},
 		},
 		props,
 		"uesio/io.titlebar"
