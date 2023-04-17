@@ -51,21 +51,10 @@ const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 	const classes = styles.useUtilityStyles(
 		{
 			root: {},
-			row: {
-				gridTemplateColumns: `repeat(${numFields},1fr)${
-					editMode ? " 0fr" : ""
-				}`,
-				".deleteicon": {
-					opacity: "0",
-				},
-				"&:hover": {
-					".deleteicon": {
-						opacity: "1",
-					},
-				},
-			},
+			row: {},
 		},
-		props
+		props,
+		"uesio/io.listfield"
 	)
 
 	const getDefaultValue = () => (isText ? "" : {})
@@ -96,9 +85,11 @@ const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 	// Determine the set of fields to display, prioritizing view-level subfields
 	const subFieldDefinitions = subFields ? Object.keys(subFields) : undefined
 
+	const rowClasses = styles.cx(`grid-cols-${numFields}`, classes.row)
+
 	return (
 		<div className={classes.root}>
-			<Grid className={classes.row} context={context}>
+			<Grid className={rowClasses} context={context}>
 				{subFieldDefinitions &&
 					subFieldDefinitions.map((subfieldId) => {
 						const subfield = subFields[subfieldId]
@@ -145,7 +136,7 @@ const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 					) => (
 						<Grid
 							key={itemIndex}
-							className={classes.row}
+							className={rowClasses}
 							context={context}
 						>
 							{subFieldDefinitions &&
@@ -187,7 +178,7 @@ const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 								<IconButton
 									label="delete"
 									icon="delete"
-									className="deleteicon"
+									className="invisible group-hover:visible"
 									context={context}
 									onClick={() => {
 										setValue(
