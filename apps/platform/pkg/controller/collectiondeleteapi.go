@@ -107,7 +107,7 @@ func DeleteRecordApi(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		msg := "Error querying collection records to delete: " + err.Error()
-		logger.LogWithTrace(r, msg, logger.ERROR)
+		logger.Log(msg, logger.ERROR)
 		http.Error(w, msg, http.StatusBadRequest)
 		return
 	}
@@ -121,7 +121,7 @@ func DeleteRecordApi(w http.ResponseWriter, r *http.Request) {
 	err = datasource.HandleSaveRequestErrors(saveRequests, err)
 	if err != nil {
 		msg := "Delete failed: " + err.Error()
-		logger.LogWithTrace(r, msg, logger.ERROR)
+		logger.Log(msg, logger.ERROR)
 		http.Error(w, msg, http.StatusBadRequest)
 		return
 	}

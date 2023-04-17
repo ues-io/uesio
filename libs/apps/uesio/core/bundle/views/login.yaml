@@ -83,17 +83,13 @@ definition:
                                                       payload:
                                                         username: ${uesio/viewonly.username}
                                                         password: ${uesio/viewonly.password}
-                                        - uesio/io.group:
-                                            uesio.styles:
+                                        - uesio/io.button:
+                                            uesio.variant: uesio/io.nav
+                                            text: Forgot your password?
+                                            uesio.styleTokens:
                                               root:
-                                                gridAutoColumns: initial
-                                            components:
-                                              - uesio/io.button:
-                                                  uesio.variant: uesio/io.nav
-                                                  text: Forgot your password?
-                                                  uesio.styles:
-                                                    label:
-                                                      textTransform: none
-                                                  signals:
-                                                    - signal: route/REDIRECT
-                                                      path: requestpassword
+                                                - normal-case
+                                                - font-light
+                                            signals:
+                                              - signal: route/REDIRECT
+                                                path: requestpassword

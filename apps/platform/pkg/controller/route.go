@@ -26,7 +26,7 @@ func CollectionRoute(w http.ResponseWriter, r *http.Request) {
 	workspace := session.GetWorkspace()
 	route, err := routing.GetRouteFromCollection(r, collectionNamespace, collectionName, viewtype, id, session)
 	if err != nil {
-		logger.LogErrorWithTrace(r, err)
+		logger.LogError(err)
 		file.RespondJSON(w, r, &routing.RouteMergeData{
 			View:  "uesio/core.notfound",
 			Theme: "uesio/core.default",
@@ -37,14 +37,14 @@ func CollectionRoute(w http.ResponseWriter, r *http.Request) {
 
 	depsCache, err := routing.GetMetadataDeps(route, session)
 	if err != nil {
-		logger.LogErrorWithTrace(r, err)
+		logger.LogError(err)
 		return
 	}
 
 	routingMergeData, err := GetRoutingMergeData(route, workspace, depsCache, session)
 	// TODO: Display Internal Server Error page???
 	if err != nil {
-		logger.LogErrorWithTrace(r, err)
+		logger.LogError(err)
 		return
 	}
 
@@ -69,7 +69,7 @@ func Route(w http.ResponseWriter, r *http.Request) {
 
 	route, err := routing.GetRouteFromPath(r, namespace, path, prefix, session)
 	if err != nil {
-		logger.LogErrorWithTrace(r, err)
+		logger.LogError(err)
 		file.RespondJSON(w, r, &routing.RouteMergeData{
 			View:  "uesio/core.notfound",
 			Theme: "uesio/core.default",
@@ -79,7 +79,7 @@ func Route(w http.ResponseWriter, r *http.Request) {
 
 	depsCache, err := routing.GetMetadataDeps(route, session)
 	if err != nil {
-		logger.LogErrorWithTrace(r, err)
+		logger.LogError(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -87,7 +87,7 @@ func Route(w http.ResponseWriter, r *http.Request) {
 	routingMergeData, err := GetRoutingMergeData(route, workspace, depsCache, session)
 	// TODO: Display Internal Server Error page???
 	if err != nil {
-		logger.LogErrorWithTrace(r, err)
+		logger.LogError(err)
 		return
 	}
 
@@ -134,7 +134,7 @@ func getLoginRoute(session *sess.Session) (*meta.Route, error) {
 }
 
 func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Session, path string, err error, redirect bool) {
-	logger.LogWithTrace(r, "Error Getting Route: "+err.Error(), logger.INFO)
+	logger.Log("Error Getting Route: "+err.Error(), logger.INFO)
 	// If our profile is the public profile, redirect to the login route
 	if redirect && session.IsPublicProfile() {
 		loginRoute, err := getLoginRoute(session)

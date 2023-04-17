@@ -19,7 +19,6 @@ require (
 	github.com/fatih/color v1.13.0
 	github.com/felixge/httpsnoop v1.0.3
 	github.com/francoispqt/gojay v1.2.13
-	github.com/futurenda/google-auth-id-token-verifier v0.0.0-20170311140316-2a5b89f28b7e
 	github.com/gofrs/uuid v4.3.1+incompatible
 	github.com/golang-migrate/migrate/v4 v4.15.2
 	github.com/gomodule/redigo v1.8.9
@@ -90,7 +89,6 @@ require (
 	github.com/stripe/stripe-go/v74 v74.2.0
 	golang.org/x/crypto v0.0.0-20220924013350-4ba4fb4dd9e7 // indirect
 	golang.org/x/net v0.0.0-20220923203811-8be639271d50 // indirect
-	golang.org/x/oauth2 v0.0.0-20220909003341-f21342109be1 // indirect
 	golang.org/x/sys v0.0.0-20220919091848-fb04ddd9f9c8 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20220923205249-dd2d53f1fffc // indirect

@@ -19,7 +19,6 @@ const Button: FunctionComponent<ButtonUtilityProps> = (props) => {
 	const classes = styles.useUtilityStyles(
 		{
 			root: {},
-			label: {},
 			selected: {},
 			disabled: {},
 		},
@@ -57,9 +56,7 @@ const Button: FunctionComponent<ButtonUtilityProps> = (props) => {
 			)}
 		>
 			{icon}
-			{label && (
-				<span className={classes.label}>{context.merge(label)}</span>
-			)}
+			{label && <span>{context.merge(label)}</span>}
 		</Tag>
 	)
 
