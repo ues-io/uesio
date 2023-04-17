@@ -85,12 +85,11 @@ const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 	// Determine the set of fields to display, prioritizing view-level subfields
 	const subFieldDefinitions = subFields ? Object.keys(subFields) : undefined
 
+	const rowClasses = styles.cx(`grid-cols-${numFields}`, classes.row)
+
 	return (
 		<div className={classes.root}>
-			<Grid
-				className={styles.cx(`grid-cols-${numFields}`, classes.row)}
-				context={context}
-			>
+			<Grid className={rowClasses} context={context}>
 				{subFieldDefinitions &&
 					subFieldDefinitions.map((subfieldId) => {
 						const subfield = subFields[subfieldId]
@@ -137,10 +136,7 @@ const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 					) => (
 						<Grid
 							key={itemIndex}
-							className={styles.cx(
-								`grid-cols-${numFields}`,
-								classes.row
-							)}
+							className={rowClasses}
 							context={context}
 						>
 							{subFieldDefinitions &&
