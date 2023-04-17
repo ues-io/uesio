@@ -16,7 +16,8 @@ variants:
   - uesio/io.customselectfield:uesio/io.default
   - uesio/io.menu:uesio/io.default
 slots:
-  - name: list
+  - name: components
+    path: /list
 properties:
   - name: wire
     type: WIRE
