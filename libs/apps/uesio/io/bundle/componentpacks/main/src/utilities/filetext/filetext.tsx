@@ -52,12 +52,15 @@ const FileText: FunctionComponent<FileTextProps> = (props) => {
 		(e) => {
 			const isTarget = id && id.startsWith(e.detail.target)
 			if (!isTarget) return
-			const fileName = userFile?.["uesio/core.path"] || "content.txt"
-			const mimeType = userFile?.["uesio/core.mimetype"] || "text/plain"
-			onUpload(stringToFile(content, fileName, mimeType))
+			if (mode === "EDIT") {
+				const fileName = userFile?.["uesio/core.path"] || "content.txt"
+				const mimeType =
+					userFile?.["uesio/core.mimetype"] || "text/plain"
+				onUpload(stringToFile(content, fileName, mimeType))
+			}
 			reset()
 		},
-		[content]
+		[content, mode]
 	)
 
 	api.event.useEvent(
