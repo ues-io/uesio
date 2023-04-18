@@ -6,11 +6,14 @@ pack: chart
 entrypoint: components/barchart/barchart
 defaultDefinition:
   title: New Bar Chart
+  labels:
+    source: DATA
+    timeunit: WEEK
 discoverable: true
 properties:
   - name: title
     type: TEXT
-    label: Title
+    label: Bar Chart Title
   - name: series
     type: LIST
     items:
@@ -46,10 +49,12 @@ properties:
   - name: labels
     type: STRUCT
     label: Labels
+    display: false
     properties:
       - name: source
-        label: Source
+        label: Labels Source
         type: SELECT
+        blankOptionLabel: ""
         options:
           - value: WIRE
             label: Wire
@@ -59,11 +64,11 @@ properties:
             label: Data
       # WIRE label fields
       - name: wire
-        label: Wire
+        label: Labels Source Wire
         type: WIRE
         displayConditions:
           - type: fieldValue
-            field: source
+            field: labels->source
             operator: EQUALS
             value: WIRE
       - name: categoryField
@@ -72,12 +77,12 @@ properties:
         wireField: wire
         displayConditions:
           - type: fieldValue
-            field: source
+            field: labels->source
             operator: EQUALS
             value: WIRE
       # VALUE label fields
       - name: values
-        label: Values
+        label: Label Values
         type: LIST
         items:
           properties:
@@ -87,10 +92,16 @@ properties:
             - name: value
               label: Value
               type: TEXT
+        displayConditions:
+          - type: fieldValue
+            field: labels->source
+            operator: EQUALS
+            value: VALUE
       # DATA label fields
       - name: timeunit
-        label: Time Unit
+        label: Labels Time Unit
         type: SELECT
+        blankOptionLabel: ""
         options:
           - value: YEAR
             label: Year
@@ -100,12 +111,13 @@ properties:
             label: Day
         displayConditions:
           - type: fieldValue
-            field: source
+            field: labels->source
             operator: EQUALS
             value: DATA
       - name: timeunitfill
         label: Time Unit Fill
         type: SELECT
+        blankOptionLabel: ""
         options:
           - value: MONTH
             label: Month
@@ -113,14 +125,19 @@ properties:
             label: Week
         displayConditions:
           - type: fieldValue
-            field: source
+            field: labels->source
             operator: EQUALS
             value: DATA
 sections:
   - type: HOME
     properties:
       - title
-      - labels
+      - labels->source
+      - labels->wire
+      - labels->categoryField
+      - labels->values
+      - labels->timeunit
+      - labels->timeunitfill
   - type: CUSTOM
     id: series
     label: Series

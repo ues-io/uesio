@@ -12,12 +12,13 @@ variants:
 defaultDefinition:
   title: New metric group
   labels:
-    source: WIRE
+    source: DATA
+    timeunit: WEEK
 discoverable: true
 properties:
   - name: title
     type: TEXT
-    label: Title
+    label: Metric Group Title
   - name: series
     type: LIST
     items:
@@ -56,7 +57,7 @@ properties:
     display: false
     properties:
       - name: source
-        label: Source
+        label: Labels Source
         type: SELECT
         blankOptionLabel: ""
         options:
@@ -68,7 +69,7 @@ properties:
             label: Data
       # WIRE label fields
       - name: wire
-        label: Wire
+        label: Labels Source Wire
         type: WIRE
         displayConditions:
           - type: fieldValue
@@ -86,7 +87,7 @@ properties:
             value: WIRE
       # VALUE label fields
       - name: values
-        label: Values
+        label: Label Values
         type: LIST
         items:
           properties:
@@ -103,7 +104,7 @@ properties:
             value: VALUE
       # DATA label fields
       - name: timeunit
-        label: Time Unit
+        label: Labels Time Unit
         type: SELECT
         blankOptionLabel: ""
         options:
@@ -136,10 +137,6 @@ sections:
   - type: HOME
     properties:
       - title
-  - type: CUSTOM
-    id: labels
-    properties:
-      - labels
       - labels->source
       - labels->wire
       - labels->categoryField

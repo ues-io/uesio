@@ -1,5 +1,6 @@
 import { api, component, context, definition, wire } from "@uesio/ui"
-import { get, set, changeKey } from "../api/defapi"
+import { get, set as setDef, changeKey } from "../api/defapi"
+import set from "lodash/set"
 import {
 	getAvailableWireIds,
 	getFieldMetadata,
@@ -348,18 +349,42 @@ const parseProperties = (
 	properties: ComponentProperty[],
 	context: context.Context,
 	path: FullPath,
-	namePrefix = "",
 	setters: Map<string, SetterFunction | SetterFunction[]> = new Map(),
 	initialValue: wire.PlainWireRecord = {} as wire.PlainWireRecord
 ) => {
 	properties?.forEach((property) => {
 		const { type } = property
-		const name = `${namePrefix}${
-			type === "COMPONENT_ID" ? "uesio.id" : property.name
-		}`
-		const propPath = path.addLocal(name)
-		let setter: SetterFunction = (value: wire.PlainFieldValue) =>
-			set(context, path.addLocal(name), value)
+		const name = `${type === "COMPONENT_ID" ? "uesio.id" : property.name}`
+		const nameParts = name.split("->")
+		const isNestedProperty = nameParts.length > 1
+		const propPath = nameParts.reduce(
+			(newPath, part) => newPath.addLocal(part),
+			path
+		) as FullPath
+		let setter: SetterFunction = (value: wire.PlainFieldValue) => {
+			// We need to construct the wrapper
+			if (isNestedProperty) {
+				// e.g. "foo->bar" becomes ["foo", "bar"]
+				const [firstPart, ...rest] = nameParts
+				const wrapperPath = path.addLocal(firstPart)
+				// e.g. get the current value of "foo", if any
+				let wrapperValue = get(context, wrapperPath)
+				// If wrapper value is not an object, it's corrupted
+				if (typeof wrapperValue !== "object") {
+					wrapperValue = {}
+				} else {
+					wrapperValue = structuredClone(wrapperValue)
+				}
+				// Populate the JSON representation with the new value first,
+				// e.g. foo = { "bar": "baz" } ==> { "bar": value }
+				set(wrapperValue as object, rest.join("."), value)
+				// Finally, invoke the def api with the wrapper value
+				setDef(context, path.addLocal(firstPart), wrapperValue)
+			} else {
+				setDef(context, propPath, value)
+			}
+		}
+
 		let value: wire.FieldValue
 		let sourceField: string
 		let sourceWire: string
@@ -397,7 +422,7 @@ const parseProperties = (
 						newFieldId
 					)?.source[property.metadataProperty] as string
 					if (newFieldMetadataProperty !== undefined) {
-						set(context, propPath, newFieldMetadataProperty)
+						setDef(context, propPath, newFieldMetadataProperty)
 					}
 				}
 				addToSettersMap(setters, property.fieldProperty, metadataSetter)
@@ -410,7 +435,9 @@ const parseProperties = (
 				wire.PlainWireRecord
 			>
 		} else if (type === "STRUCT") {
-			value = (get(context, propPath) || {}) as Record<
+			setter = (value: Record<string, boolean>) =>
+				setDef(context, propPath, value)
+			value = get(context, propPath) as Record<
 				string,
 				wire.PlainWireRecord
 			>
@@ -423,7 +450,7 @@ const parseProperties = (
 			// which works with a Record<string, boolean> where the keys are values which
 			// should be present in the YAML list
 			setter = (value: Record<string, boolean>) =>
-				set(context, propPath, Object.keys(value))
+				setDef(context, propPath, Object.keys(value))
 			value = get(context, propPath) as string[]
 			if (value !== undefined) {
 				value = (value as string[]).reduce(
@@ -438,7 +465,9 @@ const parseProperties = (
 			value = get(context, propPath) as string
 		}
 		addToSettersMap(setters, name, setter)
-		initialValue[name] = value
+		if (value !== undefined) {
+			set(initialValue, name.replace("->", "."), value)
+		}
 	})
 
 	return {
@@ -495,7 +524,7 @@ function getPropertyTabForSection(section: PropertiesPanelSection): Tab {
 	}
 }
 
-export const findProperty = (
+const findProperty = (
 	propertyNameParts: string[],
 	properties: ComponentProperty[]
 ): ComponentProperty | undefined => {
@@ -515,6 +544,24 @@ export const findProperty = (
 	}
 }
 
+export const getProperty = (
+	propertyId: string,
+	properties: ComponentProperty[]
+): ComponentProperty | undefined => {
+	const nameParts = propertyId.split("->")
+	const isNestedProperty = nameParts.length > 1
+	const propertyMatch = findProperty(nameParts, properties)
+	if (propertyMatch && isNestedProperty) {
+		// If this is a nested field, then we need to use the fully-qualified field name for the property name,
+		// but if not, we can just use the original property object
+		return {
+			...propertyMatch,
+			name: propertyId,
+		} as ComponentProperty
+	}
+	return propertyMatch
+}
+
 function getPropertiesForSection(
 	section: CustomSection | HomeSection,
 	properties: ComponentProperty[]
@@ -522,8 +569,7 @@ function getPropertiesForSection(
 	if (section.properties?.length) {
 		const matchingProperties = []
 		for (const propertyId of section.properties) {
-			const nameParts = propertyId.split("->")
-			const propertyMatch = findProperty(nameParts, properties)
+			const propertyMatch = getProperty(propertyId, properties)
 			if (propertyMatch) {
 				matchingProperties.push(propertyMatch)
 			}
