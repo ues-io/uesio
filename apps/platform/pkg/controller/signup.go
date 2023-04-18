@@ -19,7 +19,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
 		msg := "Signup failed: " + err.Error()
-		logger.LogWithTrace(r, msg, logger.ERROR)
+		logger.Log(msg, logger.ERROR)
 		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
@@ -27,7 +27,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	signupMethod, err := auth.Signup(getSignupMethodID(mux.Vars(r)), payload, site)
 	if err != nil {
 		msg := "Signup failed: " + err.Error()
-		logger.LogWithTrace(r, msg, logger.ERROR)
+		logger.Log(msg, logger.ERROR)
 		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
@@ -35,7 +35,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	publicUser, err := auth.GetPublicUser(site, nil)
 	if err != nil {
 		msg := "Signup failed: " + err.Error()
-		logger.LogWithTrace(r, msg, logger.ERROR)
+		logger.Log(msg, logger.ERROR)
 		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
@@ -54,14 +54,14 @@ func ConfirmSignUp(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
 		msg := "Invalid request format: " + err.Error()
-		logger.LogWithTrace(r, msg, logger.ERROR)
+		logger.Log(msg, logger.ERROR)
 		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
 
 	err = auth.ConfirmSignUp(getSignupMethodID(mux.Vars(r)), payload, site)
 	if err != nil {
-		logger.LogErrorWithTrace(r, err)
+		logger.LogError(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

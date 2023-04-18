@@ -2,9 +2,10 @@ package controller
 
 import (
 	"encoding/json"
-	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"net/http"
 	"net/url"
+
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
 
 	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/auth"
@@ -30,7 +31,7 @@ func redirectResponse(w http.ResponseWriter, r *http.Request, redirectKey string
 	// Check for redirect parameter on the referrer
 	referer, err := url.Parse(r.Referer())
 	if err != nil {
-		logger.LogErrorWithTrace(r, err)
+		logger.LogError(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -46,7 +47,7 @@ func redirectResponse(w http.ResponseWriter, r *http.Request, redirectKey string
 		}
 		redirectNamespace, redirectRoute, err = meta.ParseKey(redirectKey)
 		if err != nil {
-			logger.LogErrorWithTrace(r, err)
+			logger.LogError(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -67,7 +68,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&loginRequest)
 	if err != nil {
 		msg := "Invalid request format: " + err.Error()
-		logger.LogWithTrace(r, msg, logger.ERROR)
+		logger.Log(msg, logger.ERROR)
 		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
@@ -77,7 +78,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	user, err := auth.Login(getAuthSourceID(mux.Vars(r)), loginRequest, s)
 	if err != nil {
-		logger.LogErrorWithTrace(r, err)
+		logger.LogError(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

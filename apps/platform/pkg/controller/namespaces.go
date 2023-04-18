@@ -1,8 +1,9 @@
 package controller
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"net/http"
+
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
 
 	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -46,7 +47,7 @@ func NamespaceList(w http.ResponseWriter, r *http.Request) {
 
 	namespaces, err := getNamespaces(metadatatype, session)
 	if err != nil {
-		logger.LogErrorWithTrace(r, err)
+		logger.LogError(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

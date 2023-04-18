@@ -9,12 +9,13 @@ const Grid: definition.UtilityComponent<GridProps> = (props) => {
 		{
 			root: {},
 		},
-		props
+		props,
+		"uesio/io.grid"
 	)
 	return (
 		<div
 			onClick={props.onClick}
-			className={styles.cx("grid", classes.root)}
+			className={styles.cx("grid", classes.root, props.className)}
 		>
 			{props.children}
 		</div>

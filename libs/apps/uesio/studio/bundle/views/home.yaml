@@ -163,7 +163,8 @@ definition:
                           uesio.styleTokens:
                             root:
                               - font-[Gosha]
-                              - text-[40pt]
+                              - text-5xl
+                              - mb-2
                           components:
                             - uesio/io.text:
                                 text: "Get started with "
@@ -171,6 +172,9 @@ definition:
                                 color: white
                                 text: ues.io
                       - uesio/io.box:
+                          uesio.styleTokens:
+                            root:
+                              - font-light
                           components:
                             - uesio/io.text:
                                 uesio.styleTokens:
