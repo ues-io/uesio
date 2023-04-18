@@ -3,14 +3,12 @@ package logger
 import (
 	"encoding/json"
 	"log"
-	"net/http"
 )
 
 // Entry defines a log entry.
 type Entry struct {
 	Message  string `json:"message"`
 	Severity string `json:"severity,omitempty"`
-	Trace    string `json:"logging.googleapis.com/trace,omitempty"`
 
 	// Stackdriver Log Viewer allows filtering and display of this as `jsonPayload.component`.
 	Component string `json:"component,omitempty"`
@@ -46,18 +44,6 @@ func Info(message string) {
 	Log(message, INFO)
 }
 
-func LogWithTrace(r *http.Request, message, severity string) {
-
-	// Derive the traceID associated with the current request.
-	var trace string
-
-	log.Println(Entry{
-		Trace:    trace,
-		Message:  message,
-		Severity: severity,
-	})
-}
-
 func Log(message, severity string) {
 	log.Println(Entry{
 		Message:  message,
@@ -67,8 +53,4 @@ func Log(message, severity string) {
 
 func LogError(err error) {
 	Log(err.Error(), ERROR)
-}
-
-func LogErrorWithTrace(r *http.Request, err error) {
-	LogWithTrace(r, err.Error(), ERROR)
 }

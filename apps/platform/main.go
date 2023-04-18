@@ -10,7 +10,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt/postgresio"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/auth/cognito"
-	"github.com/thecloudmasters/uesio/pkg/auth/google"
 	"github.com/thecloudmasters/uesio/pkg/auth/mock"
 	"github.com/thecloudmasters/uesio/pkg/bot/jsdialect"
 	"github.com/thecloudmasters/uesio/pkg/bot/systemdialect"
@@ -45,7 +44,6 @@ func init() {
 	adapt.RegisterAdapter("uesio.postgresio", &postgresio.Adapter{})
 
 	// Authentication Types
-	auth.RegisterAuthType("google", &google.Auth{})
 	val, _ := os.LookupEnv("UESIO_MOCK_AUTH")
 	if val == "true" {
 		auth.RegisterAuthType("mock", &mock.Auth{})

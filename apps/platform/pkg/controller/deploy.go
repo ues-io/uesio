@@ -12,7 +12,7 @@ func Deploy(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 	err := deploy.Deploy(r.Body, session)
 	if err != nil {
-		logger.LogErrorWithTrace(r, err)
+		logger.LogError(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

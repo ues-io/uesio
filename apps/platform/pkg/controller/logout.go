@@ -1,8 +1,9 @@
 package controller
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"net/http"
+
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
 
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/logger"
@@ -18,7 +19,7 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 	site := session.GetSite()
 	publicUser, err := auth.GetPublicUser(site, nil)
 	if err != nil {
-		logger.LogErrorWithTrace(r, err)
+		logger.LogError(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -31,7 +32,7 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 	}
 	redirectNamespace, redirectRoute, err := meta.ParseKey(loginRoute)
 	if err != nil {
-		logger.LogErrorWithTrace(r, err)
+		logger.LogError(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

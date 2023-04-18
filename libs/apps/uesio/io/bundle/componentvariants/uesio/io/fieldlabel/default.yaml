@@ -3,7 +3,7 @@ label: Default
 definition:
   uesio.styleTokens:
     root:
-      - align-left
+      - text-left
       - text-sm
       - pb-1
       - text-slate-600

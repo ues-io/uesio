@@ -23,7 +23,7 @@ func RespondJSON(w http.ResponseWriter, r *http.Request, v interface{}) {
 
 	err := json.NewEncoder(w).Encode(v)
 	if err != nil {
-		logger.LogErrorWithTrace(r, err)
+		logger.LogError(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -35,7 +35,7 @@ func respondYAML(w http.ResponseWriter, r *http.Request, v interface{}) {
 
 	err := yaml.NewEncoder(w).Encode(v)
 	if err != nil {
-		logger.LogErrorWithTrace(r, err)
+		logger.LogError(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -49,7 +49,7 @@ func respondFile(w http.ResponseWriter, r *http.Request, fileRequest *FileReques
 		resp["message"] = "Resource Not Found"
 		jsonResp, err := json.Marshal(resp)
 		if err != nil {
-			logger.LogErrorWithTrace(r, err)
+			logger.LogError(err)
 		}
 		w.Write(jsonResp)
 		return

@@ -1,7 +1,0 @@
-name: logingoogle
-pack: app
-entrypoint: components/logingoogle/logingoogle
-utilities:
-  - uesio/io.button
-variants:
-  - uesio/io.button:uesio/io.secondary
