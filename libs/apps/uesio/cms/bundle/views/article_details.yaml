@@ -34,13 +34,13 @@ definition:
                                 text: "Save"
                                 signals:
                                   - signal: component/uesio/io.field/UPLOAD_FILE
-                                    target: mdcontent
+                                    target: mdeditor
                             - uesio/io.button:
                                 uesio.variant: uesio/io.secondary
                                 text: "Cancel"
                                 signals:
                                   - signal: component/uesio/io.field/CANCEL_FILE
-                                    target: mdcontent
+                                    target: mdeditor
                 - uesio/io.field:
                     fieldId: uesio/cms.name
                 - uesio/io.grid:
@@ -55,9 +55,9 @@ definition:
                           labelPosition: none
                           fieldId: uesio/cms.content
                           displayAs: MARKDOWN
-                          uesio.id: mdcontent
+                          uesio.id: mdeditor
                       - uesio/io.field:
                           fieldId: uesio/cms.content
                           labelPosition: none
                           displayAs: MARKDOWN
-                          uesio.id: mdcontent
+                          uesio.id: mdpreview
