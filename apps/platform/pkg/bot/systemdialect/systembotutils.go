@@ -97,6 +97,15 @@ func (m *MetadataDependencyMap) GetItems() ([]meta.BundleableItem, error) {
 		items = append(items, selectlistItems...)
 	}
 
+	structs, ok := (*m)["struct"]
+	if ok {
+		structs, err := meta.NewStructs(structs)
+		if err != nil {
+			return nil, err
+		}
+		items = append(items, structs...)
+	}
+
 	return items, nil
 }
 

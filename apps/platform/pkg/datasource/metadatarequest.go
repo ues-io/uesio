@@ -37,6 +37,7 @@ type MetadataRequestOptions struct {
 type MetadataRequest struct {
 	Collections FieldsMap
 	SelectLists map[string]bool
+	Structs     map[string]bool
 	Options     *MetadataRequestOptions
 }
 
@@ -54,6 +55,20 @@ func (mr *MetadataRequest) AddCollection(collectionName string) error {
 	_, ok := mr.Collections[collectionName]
 	if !ok {
 		mr.Collections[collectionName] = FieldsMap{}
+	}
+	return nil
+}
+
+func (mr *MetadataRequest) AddStruct(structName string) error {
+	if structName == "" {
+		return fmt.Errorf("tried to add blank struct")
+	}
+	if mr.Structs == nil {
+		mr.Structs = map[string]bool{}
+	}
+	_, ok := mr.Structs[structName]
+	if !ok {
+		mr.Structs[structName] = true
 	}
 	return nil
 }
@@ -206,7 +221,14 @@ func ProcessFieldsMetadata(fields map[string]*adapt.FieldMetadata, collectionKey
 			}
 		}
 
-		if fieldMetadata.Type == "MAP" || fieldMetadata.Type == "STRUCT" || fieldMetadata.Type == "LIST" {
+		if fieldMetadata.Type == "STRUCT" {
+			structMetadata := fieldMetadata.StructMetadata
+			if structMetadata.Fields == nil {
+				additionalRequests.AddStruct(structMetadata.Name)
+			}
+		}
+
+		if fieldMetadata.Type == "MAP" || fieldMetadata.Type == "LIST" {
 			err := ProcessFieldsMetadata(fieldMetadata.SubFields, collectionKey, collection, metadataResponse, additionalRequests, newKey)
 			if err != nil {
 				return err

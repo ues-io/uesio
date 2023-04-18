@@ -1,6 +1,7 @@
 name: formula
-type: MAP
+type: STRUCT
 label: Formula
+struct: uesio/studio.formulaoptions
 subfields:
   - name: uesio/studio.expression
     label: Expression

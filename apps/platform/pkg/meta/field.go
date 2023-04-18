@@ -8,39 +8,41 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func NewField(collectionKey, fieldKey string) (*Field, error) {
+func NewCollectionField(collectionKey, fieldKey string) (*Field, error) {
 	namespace, name, err := ParseKey(fieldKey)
 	if err != nil {
 		return nil, errors.New("Bad Key for Field: " + collectionKey + " : " + fieldKey)
 	}
-	return NewBaseField(collectionKey, namespace, name), nil
+	return NewBaseCollectionField(collectionKey, namespace, name), nil
 }
 
-func NewBaseField(collectionKey, namespace, name string) *Field {
+func NewBaseCollectionField(collectionKey, namespace, name string) *Field {
 	return &Field{
 		BundleableBase: NewBase(namespace, name),
 		CollectionRef:  collectionKey,
 	}
 }
 
-func NewFields(keys map[string]bool, collectionKey string) ([]BundleableItem, error) {
-	items := []BundleableItem{}
-
-	for key := range keys {
-		newField, err := NewField(collectionKey, key)
-		if err != nil {
-			return nil, err
-		}
-		items = append(items, newField)
+func NewStructField(structKey, fieldKey string) (*Field, error) {
+	namespace, name, err := ParseKey(fieldKey)
+	if err != nil {
+		return nil, errors.New("Bad Key for Field: " + structKey + " : " + fieldKey)
 	}
+	return NewBaseStructField(structKey, namespace, name), nil
+}
 
-	return items, nil
+func NewBaseStructField(structKey, namespace, name string) *Field {
+	return &Field{
+		BundleableBase: NewBase(namespace, name),
+		StructRef:      structKey,
+	}
 }
 
 type Field struct {
 	BuiltIn                `yaml:",inline"`
 	BundleableBase         `yaml:",inline"`
 	CollectionRef          string                  `yaml:"-" json:"uesio/studio.collection"`
+	StructRef              string                  `yaml:"-" json:"uesio/studio.struct"`
 	Type                   string                  `yaml:"type" json:"uesio/studio.type"`
 	Label                  string                  `yaml:"label" json:"uesio/studio.label"`
 	ReadOnly               bool                    `yaml:"readOnly,omitempty" json:"uesio/studio.readonly"`
@@ -91,18 +93,35 @@ func (f *Field) GetCollectionName() string {
 }
 
 func (f *Field) GetBundleFolderName() string {
+	if f.StructRef != "" {
+		return STRUCT_FOLDER_NAME
+	}
 	return FIELD_FOLDER_NAME
 }
 
 func (f *Field) GetDBID(workspace string) string {
+	if f.StructRef != "" {
+		return fmt.Sprintf("struct:%s:%s:%s", workspace, f.StructRef, f.Name)
+	}
 	return fmt.Sprintf("%s:%s:%s", workspace, f.CollectionRef, f.Name)
 }
 
 func (f *Field) GetKey() string {
+	if f.StructRef != "" {
+		return fmt.Sprintf("struct:%s:%s.%s", f.StructRef, f.Namespace, f.Name)
+	}
 	return fmt.Sprintf("%s:%s.%s", f.CollectionRef, f.Namespace, f.Name)
 }
 
 func (f *Field) GetPath() string {
+	// struct fields will go within the "structs" folder (handled by the GetBundleFolderName method)
+	// in a folder named the same as the parent struct's name, e.g. "address/street1.yaml"
+	if f.StructRef != "" {
+		_, structName, _ := ParseKey(f.StructRef)
+		return filepath.Join(structName, f.Name) + ".yaml"
+	}
+	// collection fields go within the "fields" folder (handled by the GetBundleFolderName method)
+	// in a more complex folder structure: "<nsUser>/<appName>/<collectionName>/<fieldName>.yaml"
 	collectionNamespace, collectionName, _ := ParseKey(f.CollectionRef)
 	nsUser, appName, _ := ParseNamespace(collectionNamespace)
 	return filepath.Join(nsUser, appName, collectionName, f.Name) + ".yaml"
@@ -134,38 +153,36 @@ func (f *Field) UnmarshalYAML(node *yaml.Node) error {
 	if !ok {
 		return errors.New("Invalid Field Type for Field: " + f.GetKey() + " : " + fieldType)
 	}
-	if f.CollectionRef == "" {
-		return errors.New("Invalid Collection Value for Field: " + f.GetKey())
+	if f.CollectionRef == "" && f.StructRef == "" {
+		return errors.New("Invalid Field, either a collection or struct name must be provided: " + f.GetKey())
 	}
-	err = setMapNode(node, "collection", f.CollectionRef)
+	if f.CollectionRef != "" {
+		err = setMapNode(node, "collection", f.CollectionRef)
+		if err != nil {
+			return err
+		}
+	}
+	if f.StructRef != "" {
+		err = setMapNode(node, "struct", f.StructRef)
+		if err != nil {
+			return err
+		}
+	}
+
+	switch fieldType {
+	case "REFERENCE":
+		err = validateReferenceField(node, f.GetKey())
+	case "SELECT":
+		err = validateSelectListField(node, f.GetKey())
+	case "NUMBER":
+		err = validateNumberField(node, f.GetKey())
+	case "FILE":
+		err = validateFileField(node, f.GetKey())
+	case "STRUCT":
+		err = validateStructField(node, f.GetKey())
+	}
 	if err != nil {
 		return err
-	}
-
-	if fieldType == "REFERENCE" {
-		err := validateReferenceField(node, f.GetKey())
-		if err != nil {
-			return err
-		}
-	}
-	if fieldType == "SELECT" {
-		err := validateSelectListField(node, f.GetKey())
-		if err != nil {
-			return err
-		}
-	}
-	if fieldType == "NUMBER" {
-		err := validateNumberField(node, f.GetKey())
-		if err != nil {
-			return err
-		}
-	}
-
-	if fieldType == "FILE" {
-		err := validateFileField(node, f.GetKey())
-		if err != nil {
-			return err
-		}
 	}
 	return node.Decode((*FieldWrapper)(f))
 }
@@ -194,6 +211,14 @@ func validateSelectListField(node *yaml.Node, fieldKey string) error {
 	selectListName := GetNodeValueAsString(node, "selectList")
 	if selectListName == "" {
 		return fmt.Errorf("Invalid selectlist metadata provided for field: " + fieldKey + " : Missing select list name")
+	}
+	return nil
+}
+
+func validateStructField(node *yaml.Node, fieldKey string) error {
+	structName := GetNodeValueAsString(node, "struct")
+	if structName == "" {
+		return fmt.Errorf("Invalid struct name provided for field: " + fieldKey + " : Missing struct name")
 	}
 	return nil
 }

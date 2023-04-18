@@ -215,7 +215,7 @@ func getMetadataForLoad(
 		return err
 	}
 
-	// Now loop over fields and do some additional processing for reference fields
+	// Now loop over fields and do some additional processing for special fields
 	for i, requestField := range op.Fields {
 		fieldMetadata, err := collectionMetadata.GetField(requestField.ID)
 		if err != nil {
@@ -249,6 +249,12 @@ func getMetadataForLoad(
 
 			}
 
+		}
+
+		if fieldMetadata.Type == "STRUCT" {
+			// Do we need to request a load of struct metadata here???
+			fmt.Println("field metadata type is STRUCT: " + fieldMetadata.StructMetadata.Name)
+			metadataResponse.GetStruct(fieldMetadata.StructMetadata.Name)
 		}
 	}
 

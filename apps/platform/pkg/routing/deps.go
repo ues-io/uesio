@@ -288,6 +288,12 @@ func processView(key string, viewInstanceID string, deps *PreloadMetadata, param
 			deps.Collection.AddItem(collection)
 		}
 
+		if metadata.Structs != nil {
+			for _, structObject := range metadata.Structs {
+				deps.Struct.AddItem(structObject)
+			}
+		}
+
 		for _, op := range ops {
 			deps.Wire.AddItem(op)
 		}

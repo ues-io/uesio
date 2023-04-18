@@ -88,6 +88,7 @@ func NewPreloadMetadata() *PreloadMetadata {
 		FeatureFlag:      NewItem(),
 		Wire:             NewItem(),
 		Collection:       NewItem(),
+		Struct:           NewItem(),
 	}
 }
 
@@ -101,6 +102,7 @@ type PreloadMetadata struct {
 	FeatureFlag      *MetadataMergeData   `json:"featureflag,omitempty"`
 	Wire             *MetadataMergeData   `json:"wire,omitempty"`
 	Collection       *MetadataMergeData   `json:"collection,omitempty"`
+	Struct           *MetadataMergeData   `json:"struct,omitempty"`
 	Component        *ComponentsMergeData `json:"component,omitempty"`
 }
 

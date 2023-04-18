@@ -1,0 +1,178 @@
+name: structs
+definition:
+  # Wires are how we pull in data
+  wires:
+    workspaces:
+      collection: uesio/studio.workspace
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.app:
+          fields:
+            uesio/studio.color:
+            uesio/studio.icon:
+      conditions:
+        - field: uesio/core.uniquekey
+          value: $Param{app}:$Param{workspacename}
+    allcollections:
+      collection: uesio/studio.allmetadata
+      conditions:
+        - field: uesio/studio.type
+          value: "structs"
+    newstruct:
+      collection: uesio/studio.struct
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.label:
+        uesio/studio.workspace:
+        uesio/studio.namefield:
+        uesio/core.createdat:
+      conditions:
+        - field: uesio/studio.workspace
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio/core.id
+      init:
+        query: false
+        create: true
+      defaults:
+        - field: uesio/studio.workspace
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio/core.id
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/io.grid:
+        uesio.variant: uesio/studio.mainlayout
+        items:
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.topbar
+              components:
+                - uesio/core.view:
+                    view: uesio/studio.topbar
+                    uesio.context:
+                      wire: workspaces
+                    params:
+                      itemType: structs
+                      itemIcon: list
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.leftbar
+              components:
+                - uesio/core.view:
+                    uesio.context:
+                      wire: workspaces
+                    view: uesio/studio.workspacenav
+                    params:
+                      selected: structs
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.content
+              components:
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.main
+                    title: Structs
+                    subtitle: Structured groups of field
+                    actions:
+                      - uesio/io.group:
+                          components:
+                            - uesio/io.button:
+                                text: Create a New Struct
+                                hotkey: "n"
+                                uesio.variant: uesio/io.primary
+                                uesio.id: new-struct
+                                signals:
+                                  - signal: panel/TOGGLE
+                                    panel: newStruct
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.searchbox:
+                          wire: allstructs
+                      - uesio/io.table:
+                          wire: allstructs
+                          recordDisplay:
+                            - field: uesio/studio.namespace
+                              value: $Param{app}
+                          columns:
+                            - label: Struct
+                              components:
+                                - uesio/studio.iconlabel:
+                                    uesio.variant: uesio/studio.namespacefield
+                                    text: ${uesio/studio.name}
+                                    icon: ${uesio/studio.appicon}
+                                    color: ${uesio/studio.appcolor}
+                            - field: uesio/studio.label
+                            - field: uesio/core.updatedby
+                              user:
+                                subtitle: $Time{uesio/core.updatedat}
+                            - field: uesio/core.createdby
+                              user:
+                                subtitle: $Time{uesio/core.createdat}
+                          rowactions:
+                            - text: Details
+                              type: DEFAULT
+                              signals:
+                                - signal: route/NAVIGATE
+                                  path: "app/$Param{app}/workspace/$Param{workspacename}/structs/${uesio/studio.namespace}/${uesio/studio.name}"
+                          pagesize: 10
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.titlebar:
+                          uesio.variant: uesio/io.section
+                          title: Installed Structs
+                      - uesio/io.table:
+                          wire: allstructs
+                          recordDisplay:
+                            - field: uesio/studio.namespace
+                              operator: NOT_EQUALS
+                              value: $Param{app}
+                          columns:
+                            - label: Struct
+                              components:
+                                - uesio/studio.iconlabel:
+                                    uesio.variant: uesio/studio.namespacefield
+                                    text: ${uesio/studio.name}
+                                    icon: ${uesio/studio.appicon}
+                                    color: ${uesio/studio.appcolor}
+                            - field: uesio/studio.label
+                          pagesize: 10
+  panels:
+    newStruct:
+      uesio.type: uesio/io.dialog
+      title: Create a New Struct
+      width: 400px
+      height: 500px
+      components:
+        - uesio/io.list:
+            uesio.id: newstructlist
+            wire: newstruct
+            mode: EDIT
+            components:
+              - uesio/io.field:
+                  fieldId: uesio/studio.name
+                  uesio.id: new-struct-name
+              - uesio/io.field:
+                  fieldId: uesio/studio.label
+                  uesio.id: new-struct-label
+              - uesio/io.field:
+                  fieldId: uesio/studio.plurallabel
+                  uesio.id: new-struct-plural-label
+      actions:
+        - uesio/io.button:
+            uesio.variant: uesio/io.primary
+            uesio.id: save-new-struct
+            text: "Save"
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - "newstruct"
+              - signal: "route/NAVIGATE"
+                path: "app/$Param{app}/workspace/$Param{workspacename}/structs/$Param{app}/${uesio/studio.name}"
+        - uesio/io.button:
+            uesio.variant: "uesio/io.secondary"
+            uesio.id: cancel-new-struct
+            text: "Cancel"
+            signals:
+              - signal: "panel/TOGGLE"
+                panel: "newStruct"

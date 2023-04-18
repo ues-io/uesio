@@ -38,7 +38,7 @@ func (fc *FieldCollection) GetItemFromPath(path, namespace string) BundleableIte
 	parts := strings.Split(path, string(os.PathSeparator))
 	collectionKey := fmt.Sprintf("%s/%s.%s", parts[0], parts[1], parts[2])
 	name := strings.TrimSuffix(parts[3], ".yaml")
-	return NewBaseField(collectionKey, namespace, name)
+	return NewBaseCollectionField(collectionKey, namespace, name)
 }
 
 func (fc *FieldCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {

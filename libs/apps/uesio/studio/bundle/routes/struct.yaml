@@ -1,0 +1,5 @@
+name: collection
+path: app/{app:\w*\/\w*}/workspace/{workspacename}/structs/{namespace:\w*\/\w*}/{structname}
+view: uesio/studio.struct
+theme: uesio/studio.default
+title: "Struct: $Record{structs:uesio/studio.name}"

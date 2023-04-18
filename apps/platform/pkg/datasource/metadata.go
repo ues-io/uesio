@@ -64,6 +64,7 @@ func GetFieldMetadata(f *meta.Field, session *sess.Session) *adapt.FieldMetadata
 		IsFormula:              f.Type == "FORMULA",
 		Label:                  GetFieldLabel(f, session),
 		ReferenceMetadata:      GetReferenceMetadata(f),
+		StructMetadata:         GetStructMetadata(f),
 		ReferenceGroupMetadata: GetReferenceGroupMetadata(f),
 		FileMetadata:           GetFileMetadata(f),
 		NumberMetadata:         GetNumberMetadata(f),
@@ -177,6 +178,17 @@ func GetReferenceGroupMetadata(f *meta.Field) *adapt.ReferenceGroupMetadata {
 	return nil
 }
 
+func GetStructMetadata(f *meta.Field) *adapt.StructMetadata {
+	//if f.Type == "STRUCT" && f.ReferenceMetadata != nil {
+	if f.Type == "STRUCT" {
+		fmt.Println("--Requested to get struct metadata")
+		return &adapt.StructMetadata{
+			//StructName: f.Struct,
+		}
+	}
+	return nil
+}
+
 func GetValidationMetadata(f *meta.Field) *adapt.ValidationMetadata {
 	if f.ValidationMetadata != nil {
 		return &adapt.ValidationMetadata{
@@ -232,7 +244,7 @@ func LoadFieldsMetadata(keys []string, collectionKey string, collectionMetadata 
 	for _, key := range keys {
 		_, err := collectionMetadata.GetField(key)
 		if err != nil {
-			field, err := meta.NewField(collectionKey, key)
+			field, err := meta.NewCollectionField(collectionKey, key)
 			if err != nil {
 				return err
 			}

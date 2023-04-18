@@ -11,6 +11,7 @@ import (
 type MetadataCache struct {
 	Collections map[string]*CollectionMetadata
 	SelectLists map[string]*SelectListMetadata
+	Structs     map[string]*StructMetadata
 }
 
 func (mc *MetadataCache) AddCollection(key string, metadata *CollectionMetadata) {
@@ -26,6 +27,21 @@ func (mc *MetadataCache) GetCollection(key string) (*CollectionMetadata, error) 
 		return nil, errors.New("No metadata provided for collection: " + key)
 	}
 	return collectionMetadata, nil
+}
+
+func (mc *MetadataCache) AddStruct(key string, metadata *StructMetadata) {
+	if mc.Structs == nil {
+		mc.Structs = map[string]*StructMetadata{}
+	}
+	mc.Structs[key] = metadata
+}
+
+func (mc *MetadataCache) GetStruct(key string) (*StructMetadata, error) {
+	structMetadata, ok := mc.Structs[key]
+	if !ok {
+		return nil, errors.New("No metadata provided for struct: " + key)
+	}
+	return structMetadata, nil
 }
 
 type CollectionMetadata struct {
@@ -110,6 +126,29 @@ type SelectListMetadata struct {
 	BlankOptionLanguageLabel string                  `json:"blank_option_language_label"`
 }
 
+type StructMetadata struct {
+	Name       string                    `json:"name"`
+	Namespace  string                    `json:"namespace"`
+	Createable bool                      `json:"createable"`
+	Accessible bool                      `json:"accessible"`
+	Updateable bool                      `json:"updateable"`
+	Fields     map[string]*FieldMetadata `json:"fields"`
+	Access     string                    `json:"-"`
+	Public     bool                      `json:"public"`
+}
+
+func (s StructMetadata) GetKey() string {
+	return s.Namespace + "." + s.Name
+}
+
+func (s StructMetadata) GetBytes() ([]byte, error) {
+	bytes, err := json.Marshal(s)
+	if err != nil {
+		return nil, err
+	}
+	return bytes, nil
+}
+
 type FileMetadata struct {
 	Accept     string `json:"accept"`
 	FileSource string `json:"filesource"`
@@ -155,6 +194,7 @@ type FieldMetadata struct {
 	Type                   string                    `json:"type"`
 	Label                  string                    `json:"label"`
 	SelectListMetadata     *SelectListMetadata       `json:"selectlist,omitempty"`
+	StructMetadata         *StructMetadata           `json:"struct,omitempty"`
 	NumberMetadata         *NumberMetadata           `json:"number,omitempty"`
 	ReferenceMetadata      *ReferenceMetadata        `json:"reference,omitempty"`
 	ReferenceGroupMetadata *ReferenceGroupMetadata   `json:"referencegroup,omitempty"`

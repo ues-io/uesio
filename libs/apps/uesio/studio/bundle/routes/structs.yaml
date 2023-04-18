@@ -1,0 +1,5 @@
+name: structs
+path: app/{app:\w*\/\w*}/workspace/{workspacename}/structs
+view: uesio/studio.structs
+theme: uesio/studio.default
+title: Structs

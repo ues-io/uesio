@@ -3,16 +3,16 @@ type: LIST
 label: Sub Fields
 subtype: MAP
 subfields:
-  - name: studio.name
+  - name: uesio/studio.name
     label: Name
     type: TEXT
-  - name: studio.label
+  - name: uesio/studio.label
     label: Label
     type: TEXT
-  - name: studio.type
+  - name: uesio/studio.type
     label: Type
     type: SELECT
     selectList: uesio/studio.fieldtypes
-  - name: studio.selectlist
+  - name: uesio/studio.selectlist
     label: Select List
     type: TEXT

@@ -25,6 +25,7 @@ import (
 var ORDERED_ITEMS = [...]string{
 	"collections",
 	"selectlists",
+	"structs",
 	"fields",
 	"themes",
 	"views",
