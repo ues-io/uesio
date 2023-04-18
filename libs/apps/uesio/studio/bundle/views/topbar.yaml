@@ -24,7 +24,6 @@ definition:
                       root:
                         - mr-4
                         - opacity-80
-                      inner:
                         - h-[34px]
                     file: uesio/core.logo
                     signals:
