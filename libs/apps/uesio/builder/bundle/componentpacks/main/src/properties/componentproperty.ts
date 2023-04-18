@@ -195,7 +195,6 @@ export type {
 	ListPropertyItemsDefinition,
 	ComponentProperty,
 	SelectOption,
-	SelectOptionMetadata,
 	SelectProperty,
 	WireProperty,
 	MapProperty,

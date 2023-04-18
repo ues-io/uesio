@@ -210,6 +210,7 @@ const getWireFieldFromPropertyDef = (
 	const { name, type } = def
 	let wireId: string | undefined
 	let wireDefinition: wire.WireDefinition | undefined
+	let wireField
 	switch (type) {
 		case "SELECT":
 			return getBaseWireFieldDef(def, "SELECT", {
@@ -260,7 +261,16 @@ const getWireFieldFromPropertyDef = (
 		case "PARAMS":
 			return getBaseWireFieldDef(def, "MAP")
 		case "STRUCT":
-			return getBaseWireFieldDef(def, "STRUCT")
+			wireField = getBaseWireFieldDef(def, "STRUCT")
+			// Process each subField of STRUCT fields as separate subfield
+			wireField.fields = {}
+			getWireFieldsFromProperties(
+				def.properties,
+				context,
+				((currentValue || {})[def.name] || {}) as wire.PlainWireRecord,
+				wireField.fields
+			)
+			return wireField
 		case "LIST":
 			return getBaseWireFieldDef(def, "LIST")
 		case "COMPONENT_ID":
@@ -303,19 +313,8 @@ const getWireFieldsFromProperties = (
 ) => {
 	if (!properties || !properties.length) return wireFields
 	properties.forEach((def) => {
-		const wireField = (wireFields[
-			`${def.type === "COMPONENT_ID" ? "uesio.id" : def.name}`
-		] = getWireFieldFromPropertyDef(def, context, initialValue))
-		// Process each subField of STRUCT fields as separate subfield
-		if (def.type === "STRUCT") {
-			const subFields = (wireField.fields = {})
-			getWireFieldsFromProperties(
-				def.properties,
-				context,
-				((initialValue || {})[def.name] || {}) as wire.PlainWireRecord,
-				subFields
-			)
-		}
+		wireFields[`${def.type === "COMPONENT_ID" ? "uesio.id" : def.name}`] =
+			getWireFieldFromPropertyDef(def, context, initialValue)
 	})
 	return wireFields
 }

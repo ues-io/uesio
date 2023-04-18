@@ -51,6 +51,7 @@ properties:
         value: left
   # Number-only properties
   - name: number
+    label: Number properties
     type: STRUCT
     displayConditions:
       - type: fieldValue
@@ -68,6 +69,7 @@ properties:
         label: Step
   # Reference properties
   - name: reference
+    label: Reference properties
     type: STRUCT
     displayConditions:
       - type: fieldValue
