@@ -56,9 +56,7 @@ const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
 	)
 	const classes = styles.useUtilityStyles(
 		{
-			input: {
-				height: "320px",
-			},
+			input: {},
 			readonly: {},
 		},
 		props,

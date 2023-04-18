@@ -1,0 +1,17 @@
+name: default
+label: Default
+definition:
+  uesio.styleTokens:
+    h1:
+      - text-xl
+    h2:
+      - text-lg
+    h3:
+      - text-base
+    p:
+      - text-sm
+      - font-light
+    code:
+      - rounded-lg
+      - text-sm
+public: true
