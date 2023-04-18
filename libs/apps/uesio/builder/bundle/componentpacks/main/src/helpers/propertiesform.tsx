@@ -58,7 +58,8 @@ const getWireFieldSelectOptions = (wireDef: wire.WireDefinition) => {
 			const viewOnlyField = value as wire.ViewOnlyField
 			if (
 				viewOnlyField?.type !== "MAP" &&
-				viewOnlyField?.type !== "LIST"
+				viewOnlyField?.type !== "LIST" &&
+				viewOnlyField?.type !== "STRUCT"
 			) {
 				return key
 			}
@@ -103,15 +104,19 @@ const getWireConditionSelectOptions = (wireDef: wire.WireDefinition) => {
 
 const getFormFieldsFromProperties = (
 	properties: ComponentProperty[] | undefined,
-	path: FullPath
+	path: FullPath,
+	formFields: definition.DefinitionList = []
 ) => {
-	if (!properties) return []
-	return properties.map((prop) => ({
-		"uesio/builder.property": {
-			propertyId: prop.name,
-			path,
-		},
-	}))
+	if (!properties) return formFields
+	properties.forEach((prop) => {
+		formFields.push({
+			"uesio/builder.property": {
+				propertyId: prop.name,
+				path,
+			},
+		})
+	})
+	return formFields
 }
 
 const getSelectListMetadataFromOptions = (
@@ -187,7 +192,7 @@ const getBaseWireFieldDef = (
 	ComponentProperty: ComponentProperty,
 	type: wire.FieldType,
 	additional?: object
-) => {
+): wire.ViewOnlyField => {
 	const { name, label, required } = ComponentProperty
 	return {
 		label: label || name,
@@ -254,6 +259,8 @@ const getWireFieldFromPropertyDef = (
 		case "MAP":
 		case "PARAMS":
 			return getBaseWireFieldDef(def, "MAP")
+		case "STRUCT":
+			return getBaseWireFieldDef(def, "STRUCT")
 		case "LIST":
 			return getBaseWireFieldDef(def, "LIST")
 		case "COMPONENT_ID":
@@ -291,15 +298,26 @@ const getWireFieldFromPropertyDef = (
 const getWireFieldsFromProperties = (
 	properties: ComponentProperty[] | undefined,
 	context: context.Context,
-	initialValue: wire.PlainWireRecord
+	initialValue: wire.PlainWireRecord = {},
+	wireFields: Record<string, wire.ViewOnlyField> = {}
 ) => {
-	if (!properties) return {}
-	return Object.fromEntries(
-		properties.map((def) => [
-			def.type === "COMPONENT_ID" ? "uesio.id" : def.name,
-			getWireFieldFromPropertyDef(def, context, initialValue),
-		])
-	)
+	if (!properties || !properties.length) return wireFields
+	properties.forEach((def) => {
+		const wireField = (wireFields[
+			`${def.type === "COMPONENT_ID" ? "uesio.id" : def.name}`
+		] = getWireFieldFromPropertyDef(def, context, initialValue))
+		// Process each subField of STRUCT fields as separate subfield
+		if (def.type === "STRUCT") {
+			const subFields = (wireField.fields = {})
+			getWireFieldsFromProperties(
+				def.properties,
+				context,
+				((initialValue || {})[def.name] || {}) as wire.PlainWireRecord,
+				subFields
+			)
+		}
+	})
+	return wireFields
 }
 
 type SetterFunction = (a: wire.FieldValue) => void
@@ -327,15 +345,18 @@ const addToSettersMap = (
 const parseProperties = (
 	properties: ComponentProperty[],
 	context: context.Context,
-	path: FullPath
+	path: FullPath,
+	namePrefix = "",
+	setters: Map<string, SetterFunction | SetterFunction[]> = new Map(),
+	initialValue: wire.PlainWireRecord = {} as wire.PlainWireRecord
 ) => {
-	const setters = new Map()
-	const initialValue: wire.PlainWireRecord = {} as wire.PlainWireRecord
-
 	properties?.forEach((property) => {
 		const { type } = property
-		const name = type === "COMPONENT_ID" ? "uesio.id" : property.name
-		let setter: SetterFunction = (value: string) =>
+		const name = `${namePrefix}${
+			type === "COMPONENT_ID" ? "uesio.id" : property.name
+		}`
+		const propPath = path.addLocal(name)
+		let setter: SetterFunction = (value: wire.PlainFieldValue) =>
 			set(context, path.addLocal(name), value)
 		let value: wire.FieldValue
 		let sourceField: string
@@ -349,7 +370,7 @@ const parseProperties = (
 			}
 			setter = (value: string) => changeKey(context, path, value)
 		} else if (type === "WIRE") {
-			value = get(context, path.addLocal(name)) as string
+			value = get(context, propPath) as string
 			// Special behavior --- if the wire property is set to default to context,
 			// and there is no value, then fetch the value from context
 			if (!value && property.defaultToContext) {
@@ -374,11 +395,7 @@ const parseProperties = (
 						newFieldId
 					)?.source[property.metadataProperty] as string
 					if (newFieldMetadataProperty !== undefined) {
-						set(
-							context,
-							path.addLocal(name),
-							newFieldMetadataProperty
-						)
+						set(context, propPath, newFieldMetadataProperty)
 					}
 				}
 				addToSettersMap(setters, property.fieldProperty, metadataSetter)
@@ -386,21 +403,26 @@ const parseProperties = (
 			setter = NoOp
 		} else if (type === "MAP") {
 			setter = NoOp
-			value = get(context, path.addLocal(name)) as Record<
+			value = get(context, propPath) as Record<
+				string,
+				wire.PlainWireRecord
+			>
+		} else if (type === "STRUCT") {
+			value = (get(context, propPath) || {}) as Record<
 				string,
 				wire.PlainWireRecord
 			>
 		} else if (type === "LIST") {
 			setter = NoOp
-			value = get(context, path.addLocal(name)) as wire.PlainWireRecord[]
+			value = get(context, propPath) as wire.PlainWireRecord[]
 		} else if (type === "FIELDS" || type === "WIRES") {
 			// Values are stored as a list in the YAML,
 			// but we are rendering these using the Multiselect control,
 			// which works with a Record<string, boolean> where the keys are values which
 			// should be present in the YAML list
 			setter = (value: Record<string, boolean>) =>
-				set(context, path.addLocal(name), Object.keys(value))
-			value = get(context, path.addLocal(name)) as string[]
+				set(context, propPath, Object.keys(value))
+			value = get(context, propPath) as string[]
 			if (value !== undefined) {
 				value = (value as string[]).reduce(
 					(acc, curr) => ({
@@ -411,7 +433,7 @@ const parseProperties = (
 				)
 			}
 		} else {
-			value = get(context, path.addLocal(name)) as string
+			value = get(context, propPath) as string
 		}
 		addToSettersMap(setters, name, setter)
 		initialValue[name] = value
@@ -584,7 +606,7 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 						path,
 					}
 				)}
-				onUpdate={(field: string, value: string) => {
+				onUpdate={(field: string, value: wire.FieldValue) => {
 					const setter = setters.get(field)
 					if (setter) {
 						Array.isArray(setter)

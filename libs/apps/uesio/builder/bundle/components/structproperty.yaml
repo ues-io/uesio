@@ -1,0 +1,3 @@
+name: structproperty
+pack: main
+entrypoint: components/structproperty/structproperty

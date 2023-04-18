@@ -49,6 +49,34 @@ properties:
         value: top
       - label: Left
         value: left
+  # Number-only properties
+  - name: number
+    type: STRUCT
+    displayConditions:
+      - type: fieldValue
+        field: fieldDisplayType
+        value: NUMBER
+    properties:
+      - name: min
+        type: NUMBER
+        label: Min
+      - name: max
+        type: NUMBER
+        label: Max
+      - name: step
+        type: NUMBER
+        label: Step
+  # Reference properties
+  - name: reference
+    type: STRUCT
+    displayConditions:
+      - type: fieldValue
+        field: fieldDisplayType
+        value: REFERENCE
+    properties:
+      - name: displayTemplate
+        type: TEXT
+        label: Display Template
   - name: displayAs
     type: SELECT
     label: Display as

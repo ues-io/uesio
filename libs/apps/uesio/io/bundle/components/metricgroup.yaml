@@ -50,6 +50,7 @@ properties:
           wireField: wire
   - name: labels
     type: STRUCT
+    label: Labels
     properties:
       - name: source
         label: Source

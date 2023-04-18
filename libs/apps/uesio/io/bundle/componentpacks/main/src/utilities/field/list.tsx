@@ -22,6 +22,7 @@ interface ListFieldUtilityProps extends definition.UtilityProps {
 	subType?: string
 	autoAdd?: boolean
 	noAdd?: boolean
+	noDelete?: boolean
 	fieldVariant?: metadata.MetadataKey
 	labelVariant?: metadata.MetadataKey
 	options?: ListFieldOptions
@@ -36,6 +37,7 @@ const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 		context,
 		autoAdd,
 		noAdd,
+		noDelete,
 		fieldVariant,
 		labelVariant,
 		path,
@@ -110,7 +112,7 @@ const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 							/>
 						)
 					})}
-				{editMode && (
+				{editMode && !noAdd && (
 					<IconButton
 						label="add"
 						icon={autoAdd || noAdd ? "" : "add_circle"}
@@ -174,7 +176,7 @@ const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 										/>
 									)
 								})}
-							{editMode && (
+							{editMode && !noDelete && (
 								<IconButton
 									label="delete"
 									icon="delete"

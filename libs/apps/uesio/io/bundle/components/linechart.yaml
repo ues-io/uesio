@@ -45,6 +45,7 @@ properties:
           wireField: wire
   - name: labels
     type: STRUCT
+    label: Labels
     properties:
       - name: source
         label: Source
@@ -119,8 +120,7 @@ sections:
   - type: HOME
     properties:
       - title
-      # TODO: Improve Labels
-      # - labels
+      - labels
   - type: CUSTOM
     id: series
     label: Series
