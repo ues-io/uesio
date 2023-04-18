@@ -29,6 +29,9 @@ definition:
                             - uesio/io.image:
                                 file: uesio/web.logowhite
                                 height: 55px
+                                uesio.styleTokens:
+                                  root:
+                                    - h-[55px]
                       - uesio/io.griditem:
                           components:
                             - uesio/io.text:
