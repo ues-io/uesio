@@ -26,7 +26,7 @@ definition:
                                 uesio.styleTokens:
                                   root:
                                     - m-4
-                                height: 55px
+                                    - h-[55px]
                                 file: uesio/web.logo
                                 signals:
                                   - signal: "route/NAVIGATE"

@@ -19,21 +19,19 @@ definition:
     - uesio/io.grid:
         uesio.variant: uesio/io.splash
         items:
-          - uesio/io.griditem:
+          - uesio/io.box:
               components:
                 - uesio/io.box:
-                    uesio.styles:
+                    uesio.styleTokens:
                       root:
-                        maxWidth: 250px
-                        padding: 10px
-                        margin: 0 auto
-                        textAlign: center
+                        - max-w-[250px]
+                        - p-4
+                        - m-auto
+                        - text-center
                     components:
                       - uesio/io.image:
                           uesio.variant: uesio/core.fancy
                           file: uesio/core.logo
-                          height: 120px
-                          align: center
                           signals:
                             - signal: "route/REDIRECT"
                               path: "https://$Site{domain}"

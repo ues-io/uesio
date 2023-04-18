@@ -2,35 +2,11 @@ name: fancy
 label: Fancy
 public: true
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      willChange: filter
-      margin: 60px
-      # Little easter egg
-      "&:hover":
-        animationName: myEffect
-        animationDuration: 10s
-        animationIterationCount: infinite
-        "@keyframes myEffect":
-          "0%":
-            filter: invert(48%) sepia(13%) saturate(3207%) hue-rotate(0deg) brightness(15%) contrast(80%)
-          "10%":
-            filter: invert(48%) sepia(13%) saturate(3207%) hue-rotate(50deg) brightness(35%) contrast(80%)
-          "20%":
-            filter: invert(48%) sepia(13%) saturate(3207%) hue-rotate(150deg) brightness(55%) contrast(80%)
-          "30%":
-            filter: invert(48%) sepia(13%) saturate(3207%) hue-rotate(250deg) brightness(75%) contrast(80%)
-          "40%":
-            filter: invert(48%) sepia(13%) saturate(3207%) hue-rotate(50deg) brightness(95%) contrast(80%)
-          "50%":
-            filter: invert(48%) sepia(13%) saturate(3207%) hue-rotate(0deg) brightness(95%) contrast(80%)
-          "60%":
-            filter: invert(48%) sepia(13%) saturate(3207%) hue-rotate(50deg) brightness(95%) contrast(80%)
-          "70%":
-            filter: invert(48%) sepia(13%) saturate(3207%) hue-rotate(250deg) brightness(75%) contrast(80%)
-          "80%":
-            filter: invert(48%) sepia(13%) saturate(3207%) hue-rotate(150deg) brightness(55%) contrast(80%)
-          "90%":
-            filter: invert(48%) sepia(13%) saturate(3207%) hue-rotate(50deg) brightness(35%) contrast(80%)
-          "100%":
-            filter: invert(48%) sepia(13%) saturate(3207%) hue-rotate(0deg) brightness(15%) contrast(80%)
+      - m-12
+      - hover:animate-pulse
+      - hover:delay-500
+      - h-28
+      - mx-auto
+      - cursor-pointer

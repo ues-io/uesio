@@ -15,11 +15,11 @@ components:
         - uesio/io.griditem:
             components:
               - uesio/io.image:
-                  uesio.styles:
+                  uesio.styleTokens:
                     root:
-                      margin: 0 16px
+                      - mx-4
+                      - height-[${logoheight}]
                   file: ${logo}
-                  height: ${logoheight}
         - uesio/io.griditem:
             uesio.styles:
               root:
