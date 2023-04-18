@@ -44,7 +44,7 @@ properties:
           type: FIELD
           wireField: wire
   - name: labels
-    type: MAP
+    type: STRUCT
     properties:
       - name: source
         label: Source

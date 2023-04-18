@@ -49,7 +49,7 @@ properties:
           type: FIELD
           wireField: wire
   - name: labels
-    type: MAP
+    type: STRUCT
     properties:
       - name: source
         label: Source
@@ -124,8 +124,7 @@ sections:
   - type: HOME
     properties:
       - title
-      # TODO: Improve Labels
-      # - labels
+      - labels
   - type: CUSTOM
     id: series
     label: Series

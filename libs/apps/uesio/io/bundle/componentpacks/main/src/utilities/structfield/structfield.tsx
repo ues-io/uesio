@@ -20,10 +20,12 @@ interface StructFieldUtilityProps extends definition.UtilityProps {
 	fieldVariant?: metadata.MetadataKey
 	labelVariant?: metadata.MetadataKey
 	path: string
+	record: wire.WireRecord
 }
 
 const StructField: FunctionComponent<StructFieldUtilityProps> = (props) => {
 	const {
+		fieldId,
 		subFields,
 		mode,
 		context,
@@ -31,11 +33,11 @@ const StructField: FunctionComponent<StructFieldUtilityProps> = (props) => {
 		labelVariant,
 		path,
 		record,
-		value = {} as wire.PlainWireRecord,
 		setValue,
 	} = props
 
 	const recordId = record?.id
+	const value = props.value || {}
 
 	const classes = styles.useUtilityStyles(
 		{
@@ -47,18 +49,15 @@ const StructField: FunctionComponent<StructFieldUtilityProps> = (props) => {
 	const getNewValue = (
 		newFieldValue: wire.PlainFieldValue,
 		subfield: collection.FieldMetadata
-	) => {
-		if (!value) return value
-		return {
-			...value,
-			[subfield.name]: newFieldValue,
-		}
-	}
+	) => ({
+		...value,
+		[subfield.name]: newFieldValue,
+	})
 
 	const getValue = (
 		item: wire.PlainWireRecord | wire.FieldValue,
 		subfield: string
-	) => (item as wire.PlainWireRecord)?.[subfield] || ""
+	) => (item as wire.PlainWireRecord)?.[subfield] || undefined
 
 	if (!subFields) return null
 
@@ -79,10 +78,10 @@ const StructField: FunctionComponent<StructFieldUtilityProps> = (props) => {
 							/>
 							<Field
 								key={`${recordId}:field:${subfieldId}`}
-								fieldId={subfieldId}
+								fieldId={`${fieldId}->${subfieldId}`}
 								// TODO: Do we need a real wire record here???
 								record={{} as wire.WireRecord}
-								path={`${path}["${subfieldId}"]`}
+								path={path}
 								fieldMetadata={new collection.Field(subfield)}
 								value={subfieldValue}
 								mode={mode}

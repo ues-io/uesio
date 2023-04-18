@@ -117,6 +117,11 @@ type MapProperty = {
 	defaultKey: string
 } & BaseProperty
 
+type StructProperty = {
+	type: "STRUCT"
+	properties: ComponentProperty[]
+} & BaseProperty
+
 type ComponentPropertiesGetter = (
 	record: wire.PlainWireRecord
 ) => ComponentProperty[]
@@ -175,6 +180,7 @@ type ComponentProperty =
 	| ListProperty
 	| TextAreaProperty
 	| IconProperty
+	| StructProperty
 
 const getStyleVariantProperty = (componentType: string): ComponentProperty => ({
 	name: "uesio.variant",

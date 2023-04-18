@@ -1,5 +1,5 @@
 name: referencegroup
-type: MAP
+type: STRUCT
 label: Reference Group Metadata
 subfields:
   - name: uesio/studio.collection
