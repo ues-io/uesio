@@ -11,6 +11,8 @@ variants:
   - uesio/io.metric:uesio/io.default
 defaultDefinition:
   title: New metric group
+  labels:
+    source: WIRE
 discoverable: true
 properties:
   - name: title
@@ -51,10 +53,12 @@ properties:
   - name: labels
     type: STRUCT
     label: Labels
+    display: false
     properties:
       - name: source
         label: Source
         type: SELECT
+        blankOptionLabel: ""
         options:
           - value: WIRE
             label: Wire
@@ -68,7 +72,7 @@ properties:
         type: WIRE
         displayConditions:
           - type: fieldValue
-            field: source
+            field: labels->source
             operator: EQUALS
             value: WIRE
       - name: categoryField
@@ -77,7 +81,7 @@ properties:
         wireField: wire
         displayConditions:
           - type: fieldValue
-            field: source
+            field: labels->source
             operator: EQUALS
             value: WIRE
       # VALUE label fields
@@ -92,10 +96,16 @@ properties:
             - name: value
               label: Value
               type: TEXT
+        displayConditions:
+          - type: fieldValue
+            field: labels->source
+            operator: EQUALS
+            value: VALUE
       # DATA label fields
       - name: timeunit
         label: Time Unit
         type: SELECT
+        blankOptionLabel: ""
         options:
           - value: YEAR
             label: Year
@@ -105,12 +115,13 @@ properties:
             label: Day
         displayConditions:
           - type: fieldValue
-            field: source
+            field: labels->source
             operator: EQUALS
             value: DATA
       - name: timeunitfill
         label: Time Unit Fill
         type: SELECT
+        blankOptionLabel: ""
         options:
           - value: MONTH
             label: Month
@@ -118,14 +129,23 @@ properties:
             label: Week
         displayConditions:
           - type: fieldValue
-            field: source
+            field: labels->source
             operator: EQUALS
             value: DATA
 sections:
   - type: HOME
     properties:
       - title
+  - type: CUSTOM
+    id: labels
+    properties:
       - labels
+      - labels->source
+      - labels->wire
+      - labels->categoryField
+      - labels->values
+      - labels->timeunit
+      - labels->timeunitfill
   - type: CUSTOM
     id: series
     label: Series

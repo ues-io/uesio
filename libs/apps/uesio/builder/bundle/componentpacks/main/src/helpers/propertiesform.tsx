@@ -11,14 +11,17 @@ import {
 	getStyleVariantProperty,
 	SelectOption,
 	SelectProperty,
+	StructProperty,
 } from "../properties/componentproperty"
 import PropertiesWrapper, {
 	Tab,
 } from "../components/mainwrapper/propertiespanel/propertieswrapper"
 import {
+	CustomSection,
 	getSectionIcon,
 	getSectionId,
 	getSectionLabel,
+	HomeSection,
 	PropertiesPanelSection,
 } from "../api/propertysection"
 import { getComponentDef, setSelectedPath } from "../api/stateapi"
@@ -492,6 +495,45 @@ function getPropertyTabForSection(section: PropertiesPanelSection): Tab {
 	}
 }
 
+export const findProperty = (
+	propertyNameParts: string[],
+	properties: ComponentProperty[]
+): ComponentProperty | undefined => {
+	const propertyName = propertyNameParts.shift()
+	if (propertyNameParts.length === 0) {
+		return properties.find((p) => p.name === propertyName)
+	} else {
+		// Find a property of type STRUCT whose name matches the first part of the property name
+		const structProperty = properties.find(
+			(p) => p.name === propertyName && p.type === "STRUCT"
+		)
+		if (!structProperty) return undefined
+		return findProperty(
+			propertyNameParts,
+			(structProperty as StructProperty).properties
+		)
+	}
+}
+
+function getPropertiesForSection(
+	section: CustomSection | HomeSection,
+	properties: ComponentProperty[]
+): ComponentProperty[] {
+	if (section.properties?.length) {
+		const matchingProperties = []
+		for (const propertyId of section.properties) {
+			const nameParts = propertyId.split("->")
+			const propertyMatch = findProperty(nameParts, properties)
+			if (propertyMatch) {
+				matchingProperties.push(propertyMatch)
+			}
+		}
+		return matchingProperties
+	} else {
+		return properties
+	}
+}
+
 const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 	const DynamicForm = component.getUtility("uesio/io.dynamicform")
 	const { context, id, path, sections, title } = props
@@ -562,8 +604,9 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 					content = selectedSection?.viewDefinition
 				}
 				if (properties && selectedSection?.properties?.length) {
-					properties = properties.filter((property) =>
-						selectedSection?.properties?.includes(property.name)
+					properties = getPropertiesForSection(
+						selectedSection,
+						properties
 					)
 				}
 				break

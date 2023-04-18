@@ -2,6 +2,7 @@ import { definition, context, component } from "@uesio/ui"
 import { get } from "../../api/defapi"
 import { FullPath } from "../../api/path"
 import { ComponentProperty } from "../../properties/componentproperty"
+import { findProperty } from "../../helpers/propertiesform"
 
 type Definition = {
 	propertyId: string
@@ -205,10 +206,7 @@ const Property: definition.UC<Definition> = (props) => {
 
 	const properties = componentData.data.properties as ComponentProperty[]
 	const propertiesPath = componentData.data.path as FullPath
-
-	const property = properties.find(
-		(property) => property.name === definition.propertyId
-	)
+	const property = findProperty(definition.propertyId.split("->"), properties)
 
 	// Ignore properties which should never be visually displayed
 	// (e.g. a common use case for this is FIELD_METADATA properties)
