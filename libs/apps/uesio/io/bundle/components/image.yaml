@@ -6,7 +6,6 @@ pack: main
 entrypoint: components/image/image
 discoverable: true
 defaultDefinition:
-  align: left
   loading: lazy
 properties:
   - name: file
@@ -16,22 +15,9 @@ properties:
   - name: src
     type: TEXT
     label: URL
-  - name: height
-    type: TEXT
-    label: Height
   - name: alt
     type: TEXT
     label: Alt text
-  - name: align
-    type: SELECT
-    label: Alignment
-    options:
-      - value: "left"
-        label: "Left"
-      - value: "center"
-        label: "Center"
-      - value: "right"
-        label: "Right"
   - name: loading
     type: SELECT
     label: Loading

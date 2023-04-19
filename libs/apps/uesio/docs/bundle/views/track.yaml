@@ -1,22 +1,17 @@
 name: track
 definition:
   components:
-    - uesio/io.box:
-        uesio.styles:
-          root:
-            height: 120px
-        components:
-          - uesio/core.view:
-              view: uesio/docs.topbar
+    - uesio/core.view:
+        view: uesio/docs.topbar
     - uesio/io.grid:
         uesio.variant: uesio/docs.mainlayout
         items:
           - uesio/io.griditem:
               area: main
-              uesio.styles:
+              uesio.styleTokens:
                 root:
-                  minHeight: 100vh
-                  padding: 22px
+                  - min-h-screen
+                  - p-[22px]
               components:
                 - uesio/io.list:
                     wire: track
@@ -43,33 +38,34 @@ definition:
                           content:
                             - uesio/io.box:
                                 uesio.variant: uesio/docs.trackcardheader
-                                uesio.styles:
+                                uesio.styleTokens:
                                   root:
-                                    padding: 12px 24px
-                                    justifyContent: left
+                                    - py-[12px]
+                                    - px-[24px]
+                                    - justify-start
                                 components:
                                   - uesio/io.text:
                                       text: ${uesio/docs.order}
-                                      uesio.styles:
+                                      uesio.styleTokens:
                                         root:
-                                          color: white
-                                          fontSize: 20pt
-                                          textShadow: "rgb(0 0 0 / 10%) 0px 0px 8px"
+                                          - text-white
+                                          - text-[20pt]
+                                          - drop-shadow-[0_0_8px_rgba(0.0.0,0.1)]
                             - uesio/io.box:
-                                uesio.styles:
+                                uesio.styleTokens:
                                   root:
-                                    padding: 24px
+                                    - p-[24px]
                                 components:
                                   - uesio/io.text:
-                                      uesio.styles:
+                                      uesio.styleTokens:
                                         root:
-                                          fontSize: 12pt
+                                          - text-[12pt]
                                       uesio.variant: uesio/docs.smallcallout
                                       text: ${uesio/docs.article->uesio/cms.name}
                                   - uesio/io.text:
-                                      uesio.styles:
+                                      uesio.styleTokens:
                                         root:
-                                          fontSize: 10pt
+                                          - text-[10pt]
                                       uesio.variant: uesio/docs.content
                                       text: ${uesio/docs.article->uesio/cms.description}
   wires:

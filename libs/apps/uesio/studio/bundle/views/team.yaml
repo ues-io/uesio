@@ -118,7 +118,6 @@ definition:
                       - uesio/io.deck:
                           uesio.id: teammembersslist
                           wire: teammembers
-                          uesio.variant: uesio/io.section
                           components:
                             - uesio/io.tile:
                                 uesio.variant: uesio/io.item
@@ -198,10 +197,7 @@ definition:
                                 element: div
                             - uesio/io.text:
                                 text: ${uesio/core.username}
-                                uesio.styles:
-                                  root:
-                                    fontSize: 9pt
-                                    color: "#666"
+                                uesio.variant: uesio/io.aside
                                 element: div
                           avatar:
                             - uesio/io.avatar:

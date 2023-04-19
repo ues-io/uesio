@@ -1,7 +1,0 @@
-name: featurebox
-label: Feature Box
-definition:
-  uesio.styles:
-    root:
-      padding: 30px 0 20px 0
-      borderBottom: "1px solid #eee"

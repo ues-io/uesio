@@ -17,7 +17,7 @@ func Retrieve(w http.ResponseWriter, r *http.Request) {
 
 	err := retrieve.Retrieve(w, session)
 	if err != nil {
-		logger.LogErrorWithTrace(r, err)
+		logger.LogError(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

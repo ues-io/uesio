@@ -18,7 +18,7 @@ func CreateLogin(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
 		msg := "Create Login failed: " + err.Error()
-		logger.LogWithTrace(r, msg, logger.ERROR)
+		logger.Log(msg, logger.ERROR)
 		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
@@ -26,7 +26,7 @@ func CreateLogin(w http.ResponseWriter, r *http.Request) {
 	_, err = auth.CreateLogin(getSignupMethodID(mux.Vars(r)), payload, session)
 	if err != nil {
 		msg := "Create Login failed: " + err.Error()
-		logger.LogWithTrace(r, msg, logger.ERROR)
+		logger.Log(msg, logger.ERROR)
 		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}

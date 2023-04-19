@@ -1,22 +1,17 @@
 name: lesson
 definition:
   components:
-    - uesio/io.box:
-        uesio.styles:
-          root:
-            height: 120px
-        components:
-          - uesio/core.view:
-              view: uesio/docs.topbar
+    - uesio/core.view:
+        view: uesio/docs.topbar
     - uesio/io.grid:
         uesio.variant: uesio/docs.mainlayout
         items:
           - uesio/io.griditem:
               area: main
-              uesio.styles:
+              uesio.styleTokens:
                 root:
-                  minHeight: 100vh
-                  padding: 22px
+                  - min-h-screen
+                  - p-[22px]
               components:
                 - uesio/io.list:
                     wire: lesson
@@ -34,9 +29,9 @@ definition:
                           displayAs: MARKDOWN
           - uesio/io.griditem:
               area: right
-              uesio.styles:
+              uesio.styleTokens:
                 root:
-                  padding: 5px
+                  - p-[5px]
               components:
                 - uesio/io.list:
                     wire: lesson

@@ -9,8 +9,14 @@ definition:
       - text-slate-700
       - focus:bg-slate-100
       - focus:outline-offset-[-1px]
+      - items-center
+      - hover:bg-slate-50
     selected:
       - text-white
       - bg-primary
       - focus:bg-black
+      - hover:bg-primary
+    avatar:
+      - text-base
+      - flex
 public: true

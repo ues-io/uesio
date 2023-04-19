@@ -19,9 +19,6 @@ properties:
   - name: src
     type: TEXT
     label: URL
-  - name: height
-    type: TEXT
-    label: Height
   - name: width
     type: TEXT
     label: Width
@@ -45,7 +42,6 @@ sections:
     properties:
       - file
       - src
-      - height
       - width
       - muted
       - loop

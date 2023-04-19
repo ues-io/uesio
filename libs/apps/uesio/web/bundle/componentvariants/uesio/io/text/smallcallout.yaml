@@ -1,9 +1,0 @@
-name: smallcallout
-label: Small Callout
-definition:
-  uesio.styles:
-    root:
-      fontSize: 24pt
-      color: "#333"
-      fontFamily: Gosha
-  element: div

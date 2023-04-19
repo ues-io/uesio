@@ -215,9 +215,6 @@ definition:
                                 uesio.variant: uesio/io.section
                                 title: Feature Flags
                             - uesio/io.box:
-                                uesio.styles:
-                                  root:
-                                    padding: 40px
                                 components:
                                   - uesio/studio.configfeatureflags:
                                       uesio.context:
@@ -232,9 +229,6 @@ definition:
                                 uesio.variant: uesio/io.section
                                 title: Signup Methods
                             - uesio/io.box:
-                                uesio.styles:
-                                  root:
-                                    padding: 40px
                                 components:
                                   - uesio/studio.configlogins:
                                       uesio.context:
@@ -262,7 +256,6 @@ definition:
                             - uesio/io.deck:
                                 uesio.id: loginmethodlist
                                 wire: loginmethods
-                                uesio.variant: uesio/io.section
                                 components:
                                   - uesio/io.tile:
                                       uesio.variant: uesio/io.item

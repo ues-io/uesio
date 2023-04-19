@@ -1,5 +1,8 @@
+# This is currently used for the main titles of primary
+# content areas.
 name: main
 label: Main
+extends: uesio/io.default
 definition:
   uesio.styleTokens:
     root:
@@ -10,5 +13,4 @@ definition:
     subtitle:
       - text-slate-500
       - text-sm
-      - font-light
 public: true

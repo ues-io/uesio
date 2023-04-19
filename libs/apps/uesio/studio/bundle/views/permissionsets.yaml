@@ -88,7 +88,6 @@ definition:
                       - uesio/io.deck:
                           uesio.id: permissionsetsDeck
                           wire: permissionsets
-                          uesio.variant: uesio/io.section
                           components:
                             - uesio/io.tile:
                                 uesio.variant: uesio/io.item

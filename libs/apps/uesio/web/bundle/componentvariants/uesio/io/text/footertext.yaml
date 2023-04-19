@@ -1,9 +1,10 @@
 name: footertext
 label: Footer Text
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      color: "#888"
-      fontSize: 9pt
-      fontWeight: 300
-      whiteSpace: nowrap
+      - text-slate-400
+      - text-xs
+      - font-light
+      - whitespace-nowrap
+      - p-2

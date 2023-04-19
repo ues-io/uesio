@@ -34,6 +34,7 @@ const getWireRequest = (
 			query,
 			requirewriteaccess,
 			view,
+			loadAll,
 		}) => ({
 			batchid,
 			batchnumber: resetBatchNumber ? 0 : batchnumber,
@@ -48,6 +49,7 @@ const getWireRequest = (
 			query: forceQuery ? true : query,
 			requirewriteaccess,
 			view,
+			loadAll,
 		})
 	)
 

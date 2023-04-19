@@ -4,7 +4,6 @@ definition:
   uesio.styleTokens:
     root:
       - whitespace-nowrap
-      - bg-inherit
       - text-center
       - cursor-pointer
       - inline-grid
@@ -12,6 +11,5 @@ definition:
       - justify-center
       - gap-x-2
       - items-center
-      - bg-none
       - text-[10pt]
 public: true

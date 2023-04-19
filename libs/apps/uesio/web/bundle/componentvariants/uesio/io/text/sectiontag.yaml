@@ -1,9 +1,0 @@
-name: sectiontag
-label: Section Tag
-definition:
-  uesio.styles:
-    root:
-      fontSize: 9pt
-      color: rgb(109,187,169)
-      margin: 10px 0
-  element: div

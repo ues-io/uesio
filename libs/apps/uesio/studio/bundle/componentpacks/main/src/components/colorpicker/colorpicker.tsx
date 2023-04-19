@@ -47,17 +47,18 @@ const ColorPicker: FunctionComponent<Props> = (props) => {
 	)
 	const record = context.getRecord()
 	const wire = context.getWire()
+	const colorValue = record?.getFieldValue(fieldId)
 
 	useEffect(() => {
-		if (!colorValue && record) {
+		if (!colorValue) {
 			// Update to a random color if we haven't set one.
-			record.update(fieldId, styles.colors.getRandomColor(), context)
+			record?.update(fieldId, styles.colors.getRandomColor(), context)
 		}
-	}, [])
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [colorValue, fieldId])
 
 	if (!wire || !record) return null
 
-	const colorValue = record.getFieldValue(fieldId)
 	const collection = wire.getCollection()
 	const fieldMetadata = collection.getField(fieldId)
 

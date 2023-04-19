@@ -10,4 +10,5 @@ definition:
       - text-sm
     content:
       - align-middle
+      - grow
 public: true

@@ -1,10 +1,11 @@
 name: default
 label: Default
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      textAlign: left
-      fontSize: 10pt
-      paddingBottom: 4px
-      color: "#444"
+      - text-left
+      - text-sm
+      - pb-1
+      - text-slate-600
+      - font-light
 public: true

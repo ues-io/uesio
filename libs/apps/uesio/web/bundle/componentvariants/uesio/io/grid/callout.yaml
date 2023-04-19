@@ -1,0 +1,8 @@
+name: callout
+label: Callout
+definition:
+  uesio.styleTokens:
+    root:
+      - grid-cols-1
+      - md:grid-cols-[440px]
+      - p-20

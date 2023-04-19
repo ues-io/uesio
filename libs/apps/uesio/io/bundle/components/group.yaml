@@ -5,6 +5,8 @@ category: LAYOUT
 pack: main
 entrypoint: components/group/group
 discoverable: true
+variants:
+  - uesio/io.group:uesio/io.default
 slots:
   - name: components
 defaultDefinition:

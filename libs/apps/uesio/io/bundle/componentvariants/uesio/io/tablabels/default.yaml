@@ -1,15 +1,22 @@
 name: default
 label: Default
 definition:
-  uesio.styles:
+  uesio.styleTokens:
+    root:
+      - grid
+      - grid-flow-col
+      - auto-cols-max
     tab:
-      padding: 6px 10px
-      borderRadius: 8px
-      fontSize: 9pt
-      color: "#666"
-      marginRight: 8px
+      - px-4
+      - py-2
+      - rounded-lg
+      - text-sm
+      - text-slate-700
+      - mr-2
+      - cursor-pointer
     tabSelected:
-      backgroundColor: "#222"
-      color: white
-      fontWeight: bold
+      - bg-slate-800
+      - text-white
+      - font-medium
+      - cursor-default
 public: true

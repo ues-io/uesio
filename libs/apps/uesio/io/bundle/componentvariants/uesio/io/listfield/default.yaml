@@ -1,9 +1,12 @@
 name: default
 label: Default
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     row:
-      columnGap: "10px"
-      alignItems: "center"
-      margin: 10px 0
+      - grid
+      - grid-flow-col
+      - gap-4
+      - items-center
+      - mt-4
+      - group
 public: true

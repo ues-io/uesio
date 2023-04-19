@@ -10,6 +10,8 @@ import { parseKey } from "../component/path"
 import { PlainWireRecord } from "../bands/wirerecord/types"
 import { ParamDefinition } from "../definition/param"
 import { UserState } from "../bands/user/types"
+import { getJSON, postJSON, respondJSON, respondVoid } from "./async"
+import { memoizedGetJSON } from "./memoizedAsync"
 
 // Hack for Monaco loader to be able to load assets from custom paths
 interface UesioWindow extends Window {
@@ -154,48 +156,11 @@ const getRouteUrl = (context: Context, request: NavigateRequest) => {
 	throw new Error("Not a valid Route Request")
 }
 
-const respondJSON = async (response: Response) => {
-	if (response.status !== 200) {
-		const errorText = await response.text()
-		throw new Error(
-			errorText
-				? errorText
-				: "We are sorry, something went wrong on our side"
-		)
-	}
-
-	return response.json()
-}
-
-const respondVoid = async (response: Response) => {
-	if (response.status !== 200) {
-		const errorText = await response.text()
-		throw new Error(errorText)
-	}
-
-	return
-}
-
-const postJSON = (url: string, body?: Record<string, unknown>) =>
-	fetch(url, {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-		},
-		...(body && {
-			body: JSON.stringify(body),
-		}),
-	})
-
 const platform = {
 	getRoute: async (
 		context: Context,
 		request: NavigateRequest
-	): Promise<RouteState> => {
-		const routeUrl = getRouteUrl(context, request)
-		const response = await fetch(routeUrl)
-		return respondJSON(response)
-	},
+	): Promise<RouteState> => getJSON(getRouteUrl(context, request)),
 	loadData: async (
 		context: Context,
 		requestBody: LoadRequestBatch
@@ -342,13 +307,10 @@ const platform = {
 	getCollectionMetadata: async (
 		context: Context,
 		collectionName: string
-	): Promise<LoadResponseBatch> => {
-		const prefix = getPrefix(context)
-		const response = await fetch(
-			`${prefix}/collections/meta/${collectionName}`
-		)
-		return respondJSON(response)
-	},
+	): Promise<LoadResponseBatch> =>
+		memoizedGetJSON<LoadResponseBatch>(
+			`${getPrefix(context)}/collections/meta/${collectionName}`
+		),
 	getAvailableNamespaces: async (
 		context: Context,
 		metadataType?: MetadataType

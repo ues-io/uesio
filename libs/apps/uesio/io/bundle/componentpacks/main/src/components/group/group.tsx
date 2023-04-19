@@ -2,9 +2,6 @@ import { component, styles, definition } from "@uesio/ui"
 import { default as IOGroup } from "../../utilities/group/group"
 
 type GroupDefinition = {
-	columnGap: string
-	alignItems: string
-	justifyContent: string
 	components?: definition.DefinitionList
 }
 
@@ -17,13 +14,7 @@ const Grid: definition.UC<GroupDefinition> = (props) => {
 		props
 	)
 	return (
-		<IOGroup
-			classes={classes}
-			columnGap={definition.columnGap}
-			alignItems={definition.alignItems}
-			justifyContent={definition.justifyContent}
-			context={context}
-		>
+		<IOGroup classes={classes} context={context}>
 			<component.Slot
 				definition={definition}
 				listName="components"

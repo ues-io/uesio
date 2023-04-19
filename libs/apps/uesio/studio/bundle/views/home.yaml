@@ -91,24 +91,20 @@ definition:
                     components:
                       - uesio/io.tile:
                           uesio.variant: uesio/io.nav
+                          uesio.styleTokens:
+                            root:
+                              - gap-3
                           signals:
                             - signal: "route/NAVIGATE"
                               path: "app/${uesio/core.uniquekey}"
                           content:
                             - uesio/io.text:
-                                uesio.styles:
-                                  root:
-                                    color: "#21242D"
                                 text: ${uesio/core.uniquekey}
                                 element: div
                             - uesio/io.text:
                                 text: ${uesio/studio.description}
                                 element: div
-                                uesio.styles:
-                                  root:
-                                    fontSize: 9pt
-                                    color: "#777"
-                                    lineHeight: 16pt
+                                uesio.variant: uesio/io.aside
                           avatar:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.icon
@@ -132,9 +128,6 @@ definition:
                           uesio.variant: uesio/io.nav
                           content:
                             - uesio/io.text:
-                                uesio.styles:
-                                  root:
-                                    color: "#21242D"
                                 text: ${uesio/core.uniquekey}
                                 element: div
                           avatar:
@@ -167,10 +160,11 @@ definition:
                         - bg-[rgb(22,22,22)]
                     components:
                       - uesio/io.box:
-                          uesio.styles:
+                          uesio.styleTokens:
                             root:
-                              fontFamily: Gosha
-                              fontSize: 40pt
+                              - font-[Gosha]
+                              - text-5xl
+                              - mb-2
                           components:
                             - uesio/io.text:
                                 text: "Get started with "
@@ -178,29 +172,28 @@ definition:
                                 color: white
                                 text: ues.io
                       - uesio/io.box:
-                          uesio.styles:
+                          uesio.styleTokens:
                             root:
-                              lineHeight: 30px
-                              paddingTop: 10px
+                              - font-light
                           components:
                             - uesio/io.text:
-                                uesio.styles:
+                                uesio.styleTokens:
                                   root:
-                                    color: white
+                                    - text-white
                                 text: "Build "
                             - uesio/io.text:
                                 text: "web appliations declaratively. "
                             - uesio/io.text:
-                                uesio.styles:
+                                uesio.styleTokens:
                                   root:
-                                    color: white
+                                    - text-white
                                 text: "Reuse "
                             - uesio/io.text:
                                 text: "components from other apps. "
                             - uesio/io.text:
-                                uesio.styles:
+                                uesio.styleTokens:
                                   root:
-                                    color: white
+                                    - text-white
                                 text: "Iterate "
                             - uesio/io.text:
                                 text: "quickly."

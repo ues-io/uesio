@@ -23,6 +23,7 @@ const IconButton: FunctionComponent<IconButtonUtilityProps> = (props) => {
 		tooltipPlacement,
 		tooltipOffset,
 		onClick,
+		className,
 		disabled,
 		variant,
 		id,
@@ -31,6 +32,7 @@ const IconButton: FunctionComponent<IconButtonUtilityProps> = (props) => {
 	return (
 		<Button
 			id={id}
+			className={className}
 			onClick={onClick}
 			context={context}
 			tooltip={label}

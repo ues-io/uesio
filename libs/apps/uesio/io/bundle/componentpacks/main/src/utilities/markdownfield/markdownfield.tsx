@@ -1,97 +1,105 @@
-import { ChangeEvent, FunctionComponent } from "react"
+import { FC, ReactNode } from "react"
 import { definition, styles, context, wire } from "@uesio/ui"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
-import { code, h } from "./mdcomponents"
-import { MDOptions } from "./types"
-
-const defaultMDOptions: MDOptions = {
-	hashheadings: true,
-}
+import { PrismLight as SyntaxHighlighter } from "react-syntax-highlighter"
+import { materialDark } from "react-syntax-highlighter/dist/esm/styles/prism"
 
 interface MarkDownFieldProps extends definition.UtilityProps {
 	setValue?: (value: wire.FieldValue) => void
 	value: wire.FieldValue
 	mode?: context.FieldMode
-	options?: MDOptions
 }
 
-const MarkDownField: FunctionComponent<MarkDownFieldProps> = (props) => {
-	const { setValue, value, mode, context, options: userOptions } = props
-	const options = { ...defaultMDOptions, ...userOptions }
-	const readonly = mode === "READ"
+type HeadingElement = "h1" | "h2" | "h3" | "h4" | "h5" | "h6"
+
+type HeaderProps = {
+	level: number
+	className: string
+}
+
+const generateSlug = (content: ReactNode) => {
+	if (typeof content !== "string") {
+		return ""
+	}
+	const str = content
+		.replace(/^\s+|\s+$/g, "")
+		.toLowerCase()
+		.replace(/[^a-z0-9 -]/g, "")
+		.replace(/\s+/g, "-")
+		.replace(/-+/g, "-")
+	return str
+}
+
+const Heading: FC<HeaderProps> = ({ level, className, children }) => {
+	const Element = ("h" + level) as HeadingElement
+	return (
+		<Element id={generateSlug(children)} className={className}>
+			{children}
+		</Element>
+	)
+}
+
+const MarkDownField: definition.UtilityComponent<MarkDownFieldProps> = (
+	props
+) => {
+	const { value } = props
+
 	const classes = styles.useUtilityStyles(
 		{
-			root: {
-				".actions": {
-					opacity: 0,
-					color: "rgb(251,96,78)",
-					"&:hover": {
-						opacity: 1,
-					},
-				},
-			},
-			input: {
-				resize: "none",
-			},
-			readonly: {},
-			markdown: {},
-
-			codeToolbar: {
-				position: "absolute",
-				top: "0px",
-				right: " 0",
-				zIndex: 1,
-				padding: "5px",
-				opacity: 0,
-			},
-			"h1,h2,h3,h4,h5,h6": {
-				"&:hover .actions": {
-					opacity: 0.8,
-				},
-			},
-
-			codeblock: {
-				position: "relative",
-
-				"&:hover .codeToolbar": {
-					opacity: 1,
-				},
-			},
+			root: {},
+			h1: {},
+			h2: {},
+			h3: {},
+			h4: {},
+			h5: {},
+			h6: {},
+			p: {},
+			code: {},
 		},
-		props
+		props,
+		"uesio/io.markdownfield"
 	)
 
-	const commonProps = {
-		value: (value as string) || "",
-		className: styles.cx(classes.input, readonly && classes.readonly),
-		disabled: readonly,
-		onChange: (
-			event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-		) => setValue && setValue(event.target.value),
-	}
-
-	const hashheadings = options.hashheadings
-
-	return readonly ? (
-		<div className={classes.root}>
-			<ReactMarkdown
-				children={(value as string) || ""}
-				remarkPlugins={[remarkGfm]}
-				className={classes.markdown}
-				components={{
-					h1: (props) => h(props, context, classes, hashheadings),
-					h2: (props) => h(props, context, classes, hashheadings),
-					h3: (props) => h(props, context, classes, hashheadings),
-					h4: (props) => h(props, context, classes, hashheadings),
-					h5: (props) => h(props, context, classes, hashheadings),
-					h6: (props) => h(props, context, classes, hashheadings),
-					code: (props) => code(props, context, classes),
-				}}
-			/>
-		</div>
-	) : (
-		<textarea {...commonProps} rows={40} cols={40} />
+	return (
+		<ReactMarkdown
+			children={(value as string) || ""}
+			remarkPlugins={[remarkGfm]}
+			className={classes.root}
+			components={{
+				p: (props) => <p className={classes.p}>{props.children}</p>,
+				h1: (props) => <Heading {...props} className={classes.h1} />,
+				h2: (props) => <Heading {...props} className={classes.h2} />,
+				h3: (props) => <Heading {...props} className={classes.h3} />,
+				h4: (props) => <Heading {...props} className={classes.h4} />,
+				h5: (props) => <Heading {...props} className={classes.h5} />,
+				h6: (props) => <Heading {...props} className={classes.h6} />,
+				code: ({ node, inline, className, children, ...props }) => {
+					const match = /language-(\w+)/.exec(className || "")
+					return (
+						<div className={classes.code}>
+							{!inline && match ? (
+								<SyntaxHighlighter
+									{...props}
+									className={classes.code}
+									children={String(children).replace(
+										/\n$/,
+										""
+									)}
+									style={materialDark}
+									language={match[1]}
+									PreTag="div"
+								/>
+							) : (
+								<code {...props} className={className}>
+									{children}
+								</code>
+							)}
+						</div>
+					)
+				},
+			}}
+		/>
 	)
 }
 

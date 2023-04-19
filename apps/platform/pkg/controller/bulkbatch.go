@@ -1,8 +1,9 @@
 package controller
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"net/http"
+
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
 
 	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/bulk"
@@ -20,7 +21,7 @@ func BulkBatch(w http.ResponseWriter, r *http.Request) {
 	batch, err := bulk.NewBatch(r.Body, jobID, session)
 	if err != nil {
 		msg := "Failed Creating New Batch: " + err.Error()
-		logger.LogWithTrace(r, msg, logger.ERROR)
+		logger.Log(msg, logger.ERROR)
 		http.Error(w, msg, http.StatusBadRequest)
 		return
 	}

@@ -6,6 +6,5 @@ definition:
       - text-slate-500
       - text-lg
       - font-light
-      - mt-4
-      - mb-8
+      - my-4
   element: div

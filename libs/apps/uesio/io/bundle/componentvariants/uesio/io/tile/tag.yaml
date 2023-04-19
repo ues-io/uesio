@@ -1,3 +1,6 @@
+# This is currently only used in the studio.
+# If more general use cases are not found for this,
+# we should move it to the studio app.
 name: tag
 label: Tag
 extends: uesio/io.default
@@ -11,7 +14,13 @@ definition:
       - shadow-sm
       - text-sm
       - max-width=[180px]
+      - items-center
     content:
       - whitespace-nowrap
       - text-ellipsis
+      - text-slate-600
+      - text-[8pt]
+      - uppercase
+    avatar:
+      - flex
 public: true

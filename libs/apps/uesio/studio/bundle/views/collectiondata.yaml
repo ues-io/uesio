@@ -114,9 +114,6 @@ definition:
                                                 prepend: true
                                             hotkey: "n"
                             - uesio/io.box:
-                                uesio.styles:
-                                  root:
-                                    padding: 40px
                                 components:
                                   - uesio/studio.datamanager:
                                       collectionId: $Param{app}.$Param{collectionname}

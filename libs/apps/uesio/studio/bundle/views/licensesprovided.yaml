@@ -120,16 +120,11 @@ definition:
                       - uesio/io.table:
                           uesio.id: licensesTable
                           wire: licenses
-                          uesio.styles:
-                            root:
-                              padding: 40px
                           columns:
                             - label: LICENSED APP
                               components:
                                 - uesio/studio.iconlabel:
-                                    uesio.styles:
-                                      root:
-                                        padding: 16px
+                                    uesio.variant: uesio/studio.namespacefield
                                     text: ${uesio/studio.applicensed->uesio/studio.fullname}
                                     icon: ${uesio/studio.applicensed->uesio/studio.icon}
                                     color: ${uesio/studio.applicensed->uesio/studio.color}
@@ -137,9 +132,7 @@ definition:
                             - label: status
                               components:
                                 - uesio/studio.iconlabel:
-                                    uesio.styles:
-                                      root:
-                                        padding: 16px
+                                    uesio.variant: uesio/studio.namespacefield
                                     text: Active
                                     icon: verified
                                     color: rgb(29,173,113)
@@ -148,9 +141,7 @@ definition:
                                         value: true
                                         operator: EQUALS
                                 - uesio/studio.iconlabel:
-                                    uesio.styles:
-                                      root:
-                                        padding: 16px
+                                    uesio.variant: uesio/studio.namespacefield
                                     text: Inactive
                                     icon: cancel
                                     color: rgb(255,0,0)

@@ -28,7 +28,7 @@ func GenerateToWorkspace(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&params)
 	if err != nil {
 		msg := "Invalid request format: " + err.Error()
-		logger.LogWithTrace(r, msg, logger.ERROR)
+		logger.Log(msg, logger.ERROR)
 		http.Error(w, msg, http.StatusBadRequest)
 		return
 	}
@@ -46,7 +46,7 @@ func GenerateToWorkspace(w http.ResponseWriter, r *http.Request) {
 
 	err = deploy.Deploy(io.NopCloser(retrieveData), session)
 	if err != nil {
-		logger.LogErrorWithTrace(r, err)
+		logger.LogError(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

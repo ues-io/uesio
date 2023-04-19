@@ -142,9 +142,6 @@ definition:
                                 title: Fields
                                 uesio.variant: uesio/io.section
                             - uesio/io.box:
-                                uesio.styles:
-                                  root:
-                                    padding: 40px
                                 components:
                                   - uesio/studio.multipermissionpicker:
                                       uesio.id: fieldPerms

@@ -1,11 +1,13 @@
-import { definition, styles, api, context } from "@uesio/ui"
+import { component, definition, styles, api, context } from "@uesio/ui"
 import Editor, { loader, Monaco, useMonaco } from "@monaco-editor/react"
 import type monaco from "monaco-editor"
 import { CodeFieldUtilityProps } from "./types"
-import { useEffect, useState } from "react"
+import { useState } from "react"
+import { useDeepCompareEffect } from "react-use"
+const { ErrorMessage } = component
 
 const staticAssetPath = api.platform.getStaticAssetsPath()
-const { useAsync } = api.component
+const { memoizedAsync } = api.platform
 
 loader.config({
 	paths: { vs: staticAssetPath + "/static/vendor/monaco-editor/min/vs" },
@@ -19,19 +21,42 @@ const preprocessTypeFileURIs = (
 	return uris.map((uri) => context.mergeString(uri))
 }
 
+const fetchFile = async (uri: string) => {
+	const result = await fetch(uri, {
+		headers: {
+			Accept: "text/plain",
+		},
+	})
+	if (result.status >= 400) {
+		throw new Error(
+			"Failed to load file from URL: " +
+				uri +
+				(result.statusText ? ", result: " + result.statusText : "")
+		)
+	}
+	return await result.text()
+}
+
+// Not able to export this from platform for some reason, so redefining here
+type AsyncResult = {
+	data?: string
+	error?: string
+	loading: boolean
+}
+
 const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
 	props
 ) => {
 	const { setValue, value, language, options, onMount, context } = props
+	const [loading, setLoading] = useState(true)
+	const [loadingError, setLoadingError] = useState("")
 	const typeDefinitionFileURIs = preprocessTypeFileURIs(
 		props.typeDefinitionFileURIs,
 		context
 	)
 	const classes = styles.useUtilityStyles(
 		{
-			input: {
-				height: "320px",
-			},
+			input: {},
 			readonly: {},
 		},
 		props,
@@ -42,39 +67,33 @@ const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
 		{} as Record<string, string>
 	)
 
-	const fileLoads = typeDefinitionFileURIs.map((uri: string) => ({
-		uri,
-		...useAsync({
-			cacheKey: `fetch-file-as-text-${uri}`,
-		}),
-	}))
-
-	useEffect(() => {
-		const fetchFile = async (uri: string) => {
-			const result = await fetch(uri)
-			if (result.status >= 400) {
-				throw new Error(
-					"Failed to load resource: " +
-						uri +
-						", result: " +
-						result.statusText
+	useDeepCompareEffect(() => {
+		;(async () => {
+			try {
+				await Promise.all(
+					typeDefinitionFileURIs.map((uri) =>
+						memoizedAsync(() => fetchFile(uri), {
+							cacheKey: `fetch-file-as-text-${uri}`,
+							timeout: 5000,
+						}).then((result: AsyncResult) => {
+							const { data } = result
+							setLoadedModels({
+								...loadedModels,
+								[uri]: data as string,
+							})
+							return result
+						})
+					)
 				)
+			} catch (result) {
+				const { error } = result as AsyncResult
+				setLoadingError(error || "")
+			} finally {
+				setLoading(false)
 			}
-
-			return await result.text()
-		}
-
-		fileLoads.forEach(({ run, uri }) => {
-			run(() => fetchFile(uri)).then(({ data, loading, error }) => {
-				if (data && !loading && !error) {
-					setLoadedModels({
-						...loadedModels,
-						[uri]: data as string,
-					})
-				}
-			})
-		})
-	}, [props.typeDefinitionFileURIs, JSON.stringify(loadedModels)])
+		})()
+		return
+	}, [typeDefinitionFileURIs, loadedModels])
 
 	function handleEditorWillMount(monaco: Monaco) {
 		const loadedTypeModelUris = Object.keys(loadedModels)
@@ -101,8 +120,24 @@ const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
 	}
 
 	const monacoApi = useMonaco()
+	const languageModel = language || "typescript"
 
-	if (!monacoApi) return null
+	if (loading || !monacoApi) {
+		return <div>Loading language models for {languageModel}...</div>
+	}
+
+	if (!loading && loadingError) {
+		return (
+			<ErrorMessage
+				title="Code editor"
+				error={
+					new Error(
+						`Failed to load language models for code editor, error is: ${loadingError}`
+					)
+				}
+			/>
+		)
+	}
 
 	return (
 		<div className={classes.input}>
@@ -116,7 +151,7 @@ const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
 					},
 					...options,
 				}}
-				language={language || "typescript"}
+				language={languageModel}
 				onChange={setValue}
 				beforeMount={handleEditorWillMount}
 				onMount={handleEditorDidMount}

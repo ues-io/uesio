@@ -61,7 +61,7 @@ const Popper: FunctionComponent<TooltipProps> = (props) => {
 			? getRelativeParent(props.referenceEl)
 			: props.referenceEl
 		refs.setReference(referenceEl)
-	}, [refs, props.referenceEl])
+	}, [refs, props.referenceEl, props.useFirstRelativeParent])
 
 	const classes = styles.useUtilityStyles(
 		{

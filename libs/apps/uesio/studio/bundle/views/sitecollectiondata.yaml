@@ -110,9 +110,6 @@ definition:
                                         - signal: "wire/CREATE_RECORD"
                                           wire: "collectionData"
                       - uesio/io.box:
-                          uesio.styles:
-                            root:
-                              padding: 40px
                           components:
                             - uesio/studio.datamanager:
                                 collectionId: $Param{namespace}.$Param{collectionname}

@@ -120,9 +120,8 @@ definition:
                       - uesio/io.grid:
                           uesio.styleTokens:
                             root:
-                              - template-cols-3
-                              - gap-x-4
-                              - p-10
+                              - grid-cols-3
+                              - gap-4
                           items:
                             - uesio/io.metric:
                                 title: Payments
@@ -146,17 +145,11 @@ definition:
                           uesio.id: invoiceTable
                           wire: invoices
                           pagesize: 10
-                          uesio.styles:
-                            root:
-                              padding: 40px
                           columns:
                             - field: uesio/studio.autoid
                             - label: APP
                               components:
                                 - uesio/studio.iconlabel:
-                                    uesio.styles:
-                                      root:
-                                        padding: 16px
                                     text: ${uesio/studio.app->uesio/studio.fullname}
                                     icon: ${uesio/studio.app->uesio/studio.icon}
                                     color: ${uesio/studio.app->uesio/studio.color}
@@ -177,9 +170,6 @@ definition:
                           uesio.id: paymentsTable
                           wire: payments
                           pagesize: 10
-                          uesio.styles:
-                            root:
-                              padding: 40px
                           columns:
                             - field: uesio/studio.autoid
                             - field: uesio/studio.user
