@@ -96,11 +96,12 @@ const getFormFieldFromProperty = (
 			}
 		case "STRUCT":
 			return {
-				"uesio/io.field": {
-					...baseFieldDef,
-					wrapperVariant: "uesio/builder.propfield",
+				"uesio/builder.structproperty": {
+					property,
+					path,
 				},
 			}
+
 		case "LIST": {
 			return property.items
 				? {
