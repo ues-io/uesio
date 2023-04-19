@@ -275,7 +275,7 @@
 			"architect": {
 				"build": {
 					"builder": "nx:run-commands",
-					"outputs": ["dist/clio"],
+					"outputs": ["dist/cli"],
 					"options": {
 						"commands": [
 							"go build -o ../../dist/cli/uesio"
@@ -285,7 +285,7 @@
 				},
 				"watch": {
 					"builder": "nx:run-commands",
-					"outputs": ["dist/clio"],
+					"outputs": ["dist/cli"],
 					"options": {
 						"commands": [
 							"go build -o ../../dist/cli/uesio"
