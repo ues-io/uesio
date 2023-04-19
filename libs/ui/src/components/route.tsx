@@ -1,6 +1,6 @@
 import { useEffect } from "react"
 import { useRoute } from "../bands/route/selectors"
-import { injectGlobal, css } from "@emotion/css"
+import { css } from "@emotion/css"
 import Progress from "./progress"
 import View from "./view"
 import { useSite } from "../bands/site"
@@ -14,22 +14,6 @@ import { UtilityComponent } from "../definition/definition"
 import { install, defineConfig } from "@twind/core"
 import presetAutoprefix from "@twind/preset-autoprefix"
 import presetTailwind from "@twind/preset-tailwind"
-
-// This applies the global styles
-injectGlobal({
-	body: {
-		margin: 0,
-		fontFamily: "Roboto, Helvetica, Arial, sans-serif",
-		fontWeight: 400,
-		overflow: "auto",
-		height: "100%",
-	},
-	/* apply a natural box layout model to all elements, but allowing components to change */
-	html: {
-		overflow: "auto",
-		height: "100vh",
-	},
-})
 
 const Route: UtilityComponent = (props) => {
 	const site = useSite()
@@ -102,6 +86,9 @@ const Route: UtilityComponent = (props) => {
 				extend: {
 					colors: {
 						primary: themeData.definition.palette.primary,
+					},
+					fontFamily: {
+						sans: ["Roboto", "sans-serif"],
 					},
 				},
 			},
