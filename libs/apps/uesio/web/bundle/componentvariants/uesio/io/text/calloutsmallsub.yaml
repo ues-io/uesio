@@ -1,0 +1,9 @@
+name: calloutsmallsub
+label: Callout Small Sub
+extends: uesio/web.calloutsub
+definition:
+  uesio.styleTokens:
+    root:
+      - text-sm
+      - my-2
+  element: div
