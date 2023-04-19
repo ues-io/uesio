@@ -1,0 +1,8 @@
+name: nav
+label: Navigation
+extends: uesio/io.nav
+definition:
+  uesio.styleTokens:
+    root:
+      - text-white
+public: true

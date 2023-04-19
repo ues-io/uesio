@@ -8,9 +8,10 @@ definition:
             - items-center
             - h-[60px]
             - bg-green-700
-            - grid-cols-[58px_0fr_1fr_0fr]
+            - grid-flow-col
+            - justify-stretch
         items:
-          - uesio/io.griditem:
+          - uesio/io.group:
               components:
                 - uesio/io.image:
                     uesio.styleTokens:
@@ -21,77 +22,52 @@ definition:
                     signals:
                       - signal: route/NAVIGATE
                         path: "home"
-          - uesio/io.griditem:
-              components:
                 - uesio/io.group:
                     components:
                       - uesio/io.button:
                           text: Dashboard
-                          uesio.variant: uesio/io.nav
-                          uesio.styles:
-                            root:
-                              color: white
+                          uesio.variant: uesio/crm.nav
                       - uesio/io.button:
                           signals:
                             - signal: "route/NAVIGATE"
                               collection: uesio/crm.lead
                           text: Leads
-                          uesio.variant: uesio/io.nav
-                          uesio.styles:
-                            root:
-                              color: white
+                          uesio.variant: uesio/crm.nav
                       - uesio/io.button:
                           signals:
                             - collection: uesio/crm.contact
                               signal: route/NAVIGATE
                           text: Contacts
-                          uesio.variant: uesio/io.nav
-                          uesio.styles:
-                            root:
-                              color: white
+                          uesio.variant: uesio/crm.nav
                       - uesio/io.button:
                           signals:
                             - signal: "route/NAVIGATE"
                               collection: uesio/crm.account
                           text: Accounts
-                          uesio.variant: uesio/io.nav
-                          uesio.styles:
-                            root:
-                              color: white
+                          uesio.variant: uesio/crm.nav
                       - uesio/io.button:
                           signals:
                             - signal: "route/NAVIGATE"
                               collection: uesio/crm.opportunity
                           text: Opportunities
-                          uesio.variant: uesio/io.nav
-                          uesio.styles:
-                            root:
-                              color: white
-                      - uesio/io.button:
-                          text: Products
-                          uesio.variant: uesio/io.nav
-                          uesio.styles:
-                            root:
-                              color: white
-          - uesio/io.griditem:
-              uesio.styles:
+                          uesio.variant: uesio/crm.nav
+          - uesio/io.group:
+              uesio.styleTokens:
                 root:
-                  textAlign: right
+                  - justify-right
               components:
                 - uesio/io.button:
-                    uesio.variant: uesio/io.nav
-                    uesio.styles:
-                      root:
-                        color: "#EEE"
+                    uesio.variant: uesio/crm.nav
                     signals:
                       - signal: user/LOGOUT
                     text: Log Out
-          - uesio/io.griditem:
-              components:
                 - uesio/io.avatar:
-                    uesio.styles:
+                    uesio.variant: uesio/io.default
+                    uesio.styleTokens:
                       root:
-                        margin: 0 16px
+                        - mx-4
+                        - bg-white
+                        - text-green-700
                     text: $User{initials}
                     image: $User{picture}
         justify: space-between
