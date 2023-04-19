@@ -103,8 +103,11 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 	const isGroup = isGroupCondition(condition)
 
 	let label = definition.label
-	if (!label && isGroup) label = `Toggle group: ${condition?.id}`
-	if (!label) label = fieldMetadata?.getLabel()
+	if (!label) {
+		label = isGroup
+			? `Toggle group: ${condition?.id}`
+			: fieldMetadata?.getLabel()
+	}
 
 	const common = {
 		path,
