@@ -99,9 +99,10 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 	}
 	const isGroup = isGroupCondition(condition)
 	const label =
-		definition.label || (isGroup && condition)
+		definition.label ||
+		(isGroup && condition
 			? `Toggle group: ${condition?.id}`
-			: fieldMetadata?.getLabel()
+			: fieldMetadata?.getLabel())
 
 	if (!condition) return null
 
