@@ -5,4 +5,5 @@ definition:
   uesio.styleTokens:
     input:
       - p-0
+      - h-[320px]
 public: true

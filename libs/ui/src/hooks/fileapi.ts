@@ -29,10 +29,10 @@ const useUserFile = (
 	const [original, setOriginal] = useState<string>("")
 	const cancel = () => setContent(original)
 	const reset = () => setOriginal(content)
+	const userFileId = userFile?.[ID_FIELD] as string
+	const updatedAt = userFile?.[UPDATED_AT_FIELD] as string
+	const fileUrl = getUserFileURL(context, userFileId, updatedAt)
 	useEffect(() => {
-		const userFileId = userFile?.[ID_FIELD] as string
-		const updatedAt = userFile?.[UPDATED_AT_FIELD] as string
-		const fileUrl = getUserFileURL(context, userFileId, updatedAt)
 		if (!fileUrl) {
 			setContent("")
 			setOriginal("")
@@ -45,7 +45,7 @@ const useUserFile = (
 			setOriginal(text)
 		}
 		fetchData()
-	}, [])
+	}, [fileUrl])
 	return [content, original, setContent, reset, cancel]
 }
 
