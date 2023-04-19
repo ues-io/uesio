@@ -17,6 +17,7 @@ variants:
   - uesio/io.codefield:uesio/io.default
   - uesio/io.markdownfield:uesio/io.default
   - uesio/io.menu:uesio/io.default
+  - uesio/io.avatar:uesio/io.default
 slots:
   - name: components
     path: /list
