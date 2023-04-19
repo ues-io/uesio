@@ -41,7 +41,7 @@ const getGrouping = (
 	return get(context, path.setLocal(parsePath)) as string
 }
 
-const getFormFieldFromProperty = (
+export const getFormFieldFromProperty = (
 	property: ComponentProperty,
 	context: context.Context,
 	path: FullPath
@@ -96,11 +96,9 @@ const getFormFieldFromProperty = (
 			}
 		case "STRUCT":
 			return {
-				"uesio/io.field": {
-					...baseFieldDef,
-					wrapperVariant: "uesio/io.minimal",
-					labelVariant: "uesio/builder.propfield",
-					fieldVariant: "uesio/builder.propfield",
+				"uesio/builder.structproperty": {
+					property,
+					path,
 				},
 			}
 

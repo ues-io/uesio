@@ -68,18 +68,44 @@ properties:
       - name: step
         type: NUMBER
         label: Step
+  # Longtext field properties
+  - name: longtext
+    label: " "
+    type: STRUCT
+    displayConditions:
+      - type: fieldValue
+        field: fieldDisplayType
+        value: LONGTEXT
+    properties:
+      - name: cols
+        type: NUMBER
+        label: "# of Columns"
+      - name: rows
+        type: NUMBER
+        label: "# of Rows"
   # Reference properties
   - name: reference
-    label: Reference properties
+    label: " "
     type: STRUCT
     displayConditions:
       - type: fieldValue
         field: fieldDisplayType
         value: REFERENCE
     properties:
-      - name: displayTemplate
+      - name: template
         type: TEXT
         label: Display Template
+      - name: searchFields
+        type: FIELDS
+        wireField: wire
+        label: Search Fields
+      - name: returnFields
+        type: FIELDS
+        wireField: wire
+        label: Return Fields
+
+  # TODO: need each option to be "validFor" a specific field display type,
+  # so that we can have only one "displayAs" property which is valid for any field display type
   - name: displayAs
     type: SELECT
     label: Display as

@@ -68,10 +68,21 @@ const getWireFieldSelectOptions = (wireDef: wire.WireDefinition) => {
 				return key
 			}
 		}
-		return Object.entries(value)
+
+		// Recursively find all nested fields, which will be within "fields" property,
+		// in addition to any other top level fields on the object
+		if (typeof value?.fields === "object") {
+			return [key].concat(recursivelyGetFields(key, value.fields))
+		}
+		return key
+	}
+	const recursivelyGetFields = (
+		key: string,
+		value: Record<string, wire.ViewOnlyField> | wire.WireFieldDefinitionMap
+	) =>
+		Object.entries(value)
 			.map(([key2, value2]) => [`${key}->${key2}`, value2])
 			.flatMap(([key, value]) => getFields(key, value))
-	}
 
 	return Object.entries(wireDef.fields)
 		.flatMap(([key, value]) => getFields(key, value))
@@ -271,7 +282,7 @@ const getWireFieldFromPropertyDef = (
 			getWireFieldsFromProperties(
 				def.properties,
 				context,
-				((currentValue || {})[def.name] || {}) as wire.PlainWireRecord,
+				(currentValue || {}) as wire.PlainWireRecord,
 				wireField.fields
 			)
 			return wireField
