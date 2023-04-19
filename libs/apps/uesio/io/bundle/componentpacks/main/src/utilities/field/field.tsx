@@ -29,7 +29,7 @@ import FileField from "../../utilities/field/file"
 import MapField from "../../utilities/mapfield/mapfield"
 import StructField from "../../utilities/structfield/structfield"
 import MapFieldDeck from "../../utilities/field/mapdeck"
-import { MapFieldOptions } from "../../components/field/field"
+import { LabelPosition, MapFieldOptions } from "../../components/field/field"
 
 interface FieldProps extends definition.UtilityProps {
 	setValue: (value: wire.FieldValue) => void
@@ -51,6 +51,10 @@ interface FieldProps extends definition.UtilityProps {
 	number?: NumberFieldOptions
 	longtext?: LongTextFieldOptions
 	user?: UserFieldOptions
+	// Special variants for map/list/struct
+	fieldVariant?: metadata.MetadataKey
+	labelVariant?: metadata.MetadataKey
+	labelPosition?: LabelPosition
 }
 
 const Field: FunctionComponent<FieldProps> = (props) => {
@@ -74,6 +78,9 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 		record,
 		value,
 		variant,
+		fieldVariant,
+		labelVariant,
+		labelPosition,
 		classes,
 	} = props
 
@@ -91,6 +98,11 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 		variant,
 		value,
 		placeholder,
+	}
+
+	const complexFieldOptions = {
+		fieldVariant,
+		labelVariant,
 	}
 
 	let selectOptions: collection.SelectOption[]
@@ -191,6 +203,7 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 				) : (
 					<ListField
 						{...common}
+						{...complexFieldOptions}
 						options={list}
 						subFields={fieldMetadata.source.subfields}
 						subType={fieldMetadata.source.subtype}
@@ -204,6 +217,7 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 				) : (
 					<MapField
 						{...common}
+						{...complexFieldOptions}
 						keyField={{
 							name: "key",
 							label: "Label",
@@ -230,6 +244,8 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 			content = (
 				<StructField
 					{...common}
+					{...complexFieldOptions}
+					labelPosition={labelPosition}
 					subFields={fieldMetadata.source.subfields}
 					value={value as wire.PlainWireRecord}
 				/>

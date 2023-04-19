@@ -96,9 +96,11 @@ const getFormFieldFromProperty = (
 			}
 		case "STRUCT":
 			return {
-				"uesio/builder.structproperty": {
-					property,
-					path,
+				"uesio/io.field": {
+					...baseFieldDef,
+					wrapperVariant: "uesio/io.minimal",
+					labelVariant: "uesio/builder.propfield",
+					fieldVariant: "uesio/builder.propfield",
 				},
 			}
 

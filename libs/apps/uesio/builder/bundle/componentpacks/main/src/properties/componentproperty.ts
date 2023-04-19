@@ -8,7 +8,12 @@ type BaseProperty = {
 	type: string
 	placeholder?: string
 	readonly?: boolean
+	// If false, then the property will be stored in local state and YAML definition,
+	// but will not be displayed in the properties UI.
 	display?: boolean
+	// If false, then the property will be be stored ONLY in local state,
+	// but will NOT be stored in the YAML definition.
+	viewOnly?: boolean
 	displayConditions?: component.DisplayCondition[]
 }
 type TextProperty = {

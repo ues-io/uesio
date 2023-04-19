@@ -7,8 +7,9 @@ import {
 	metadata,
 	styles,
 } from "@uesio/ui"
-import FieldLabel from "../fieldlabel/fieldlabel"
 import Field from "../field/field"
+import FieldWrapper from "../fieldwrapper/fieldwrapper"
+import { LabelPosition } from "../../components/field/field"
 
 interface StructFieldUtilityProps extends definition.UtilityProps {
 	fieldId: string
@@ -19,6 +20,7 @@ interface StructFieldUtilityProps extends definition.UtilityProps {
 	subType?: string
 	fieldVariant?: metadata.MetadataKey
 	labelVariant?: metadata.MetadataKey
+	labelPosition?: LabelPosition
 	path: string
 	record: wire.WireRecord
 }
@@ -31,6 +33,7 @@ const StructField: FunctionComponent<StructFieldUtilityProps> = (props) => {
 		context,
 		fieldVariant,
 		labelVariant,
+		labelPosition,
 		path,
 		record,
 		setValue,
@@ -66,18 +69,16 @@ const StructField: FunctionComponent<StructFieldUtilityProps> = (props) => {
 			{Object.entries(subFields)
 				.filter(([subFieldId]) => !!subFieldId)
 				.map(([subfieldId, subfield]) => {
-					console.log("subfieldId", subfieldId)
 					const subfieldValue = getValue(value, subfieldId)
 					return (
-						<>
-							<FieldLabel
-								key={`${recordId}:label:${subfieldId}`}
-								label={subfield.label || subfield.name}
-								variant={labelVariant}
-								context={context}
-							/>
+						<FieldWrapper
+							label={subfield.label || subfield.name}
+							labelPosition={labelPosition}
+							context={context}
+							variant={labelVariant}
+							key={`${recordId}:field:${subfieldId}`}
+						>
 							<Field
-								key={`${recordId}:field:${subfieldId}`}
 								fieldId={`${fieldId}->${subfieldId}`}
 								// TODO: Do we need a real wire record here???
 								record={{} as wire.WireRecord}
@@ -95,7 +96,7 @@ const StructField: FunctionComponent<StructFieldUtilityProps> = (props) => {
 									)
 								}
 							/>
-						</>
+						</FieldWrapper>
 					)
 				})}
 		</div>

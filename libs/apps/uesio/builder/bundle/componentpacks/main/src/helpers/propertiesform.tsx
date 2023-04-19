@@ -353,7 +353,7 @@ const parseProperties = (
 	initialValue: wire.PlainWireRecord = {} as wire.PlainWireRecord
 ) => {
 	properties?.forEach((property) => {
-		const { type } = property
+		const { type, viewOnly } = property
 		const name = `${type === "COMPONENT_ID" ? "uesio.id" : property.name}`
 		const nameParts = name.split("->")
 		const isNestedProperty = nameParts.length > 1
@@ -362,6 +362,11 @@ const parseProperties = (
 			path
 		) as FullPath
 		let setter: SetterFunction = (value: wire.PlainFieldValue) => {
+			// If this is a viewOnly property, then we do NOT want to persist the value to YAML definition,
+			// it only exists in the UI.
+			if (viewOnly) {
+				return
+			}
 			// We need to construct the wrapper
 			if (isNestedProperty) {
 				// e.g. "foo->bar" becomes ["foo", "bar"]
@@ -416,6 +421,7 @@ const parseProperties = (
 					?.source[property.metadataProperty] as string
 				// Add a setter to the source field so that whenever it changes, we also update this property
 				const metadataSetter = (newFieldId: string) => {
+					if (viewOnly) return
 					const newFieldMetadataProperty = getFieldMetadata(
 						context,
 						sourceWire,
@@ -436,7 +442,7 @@ const parseProperties = (
 			>
 		} else if (type === "STRUCT") {
 			setter = (value: Record<string, boolean>) =>
-				setDef(context, propPath, value)
+				!viewOnly && setDef(context, propPath, value)
 			value = get(context, propPath) as Record<
 				string,
 				wire.PlainWireRecord
@@ -450,7 +456,7 @@ const parseProperties = (
 			// which works with a Record<string, boolean> where the keys are values which
 			// should be present in the YAML list
 			setter = (value: Record<string, boolean>) =>
-				setDef(context, propPath, Object.keys(value))
+				!viewOnly && setDef(context, propPath, Object.keys(value))
 			value = get(context, propPath) as string[]
 			if (value !== undefined) {
 				value = (value as string[]).reduce(
