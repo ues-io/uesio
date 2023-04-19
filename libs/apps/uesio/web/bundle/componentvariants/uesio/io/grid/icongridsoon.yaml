@@ -1,0 +1,17 @@
+name: icongridsoon
+label: Icon Grid Soon
+extends: uesio/web.icongrid
+definition:
+  uesio.styleTokens:
+    root:
+      - after:content-['Coming_Soon!']
+      - after:absolute
+      - after:text-slate-50
+      - after:text-[7pt]
+      - after:px-1.5
+      - after:py-1
+      - after:rounded
+      - after:bg-lime-500
+      - after:uppercase
+      - after:-rotate-3
+      - after:bottom-2

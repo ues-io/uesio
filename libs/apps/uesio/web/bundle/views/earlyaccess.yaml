@@ -28,101 +28,95 @@ definition:
     - uesio/io.grid:
         uesio.variant: uesio/web.mainlayout
         items:
-          - uesio/io.griditem:
-              area: main
-              components:
-                - uesio/io.grid:
-                    uesio.styleTokens:
-                      root:
-                        - grid-cols-1
-                        - lg:grid-cols-2
-                        - gap-x-14
-                        - p-20
-                    items:
-                      - uesio/io.griditem:
+          - uesio/io.grid:
+              uesio.styleTokens:
+                root:
+                  - grid-cols-1
+                  - lg:grid-cols-2
+                  - gap-14
+                  - my-20
+                  - mx-10
+                  - lg:mx-5
+              items:
+                - uesio/io.griditem:
+                    components:
+                      - uesio/io.text:
+                          uesio.variant: uesio/web.callout
+                          text: Stay in the loop.
+                      - uesio/io.text:
+                          uesio.variant: uesio/web.calloutsub
+                          text: Join our private beta launch Q3 2023.
+                      - uesio/io.box:
                           components:
-                            - uesio/io.text:
-                                uesio.variant: uesio/web.callout
-                                text: Stay in the loop.
-                            - uesio/io.text:
-                                uesio.variant: uesio/web.calloutsub
-                                text: Join our private beta launch Q3 2023 and become one of the first to build Rome in a day.
+                            - uesio/io.tile:
+                                uesio.variant: uesio/web.checkitem
+                                content:
+                                  - uesio/io.text:
+                                      text: No-code app builder extendable with code.
+                            - uesio/io.tile:
+                                uesio.variant: uesio/web.checkitem
+                                content:
+                                  - uesio/io.text:
+                                      text: Configure with markup or clicks simultaneously.
+                            - uesio/io.tile:
+                                uesio.variant: uesio/web.checkitem
+                                content:
+                                  - uesio/io.text:
+                                      text: Package configurations into reusuable bundles.
+                            - uesio/io.tile:
+                                uesio.variant: uesio/web.checkitem
+                                content:
+                                  - uesio/io.text:
+                                      text: Publish bundled applications to multiple sites.
+                            - uesio/io.tile:
+                                uesio.variant: uesio/web.checkitem
+                                content:
+                                  - uesio/io.text:
+                                      text: Usage-based pricing. Pay for usage, not users.
+                - uesio/io.griditem:
+                    components:
+                      - uesio/io.list:
+                          wire: newlead
+                          mode: EDIT
+                          components:
                             - uesio/io.box:
+                                uesio.styleTokens:
+                                  root:
+                                    - shadow
+                                    - bg-white
+                                    - p-10
+                                    - rounded-lg
                                 components:
-                                  - uesio/io.tile:
-                                      uesio.variant: uesio/web.checkitem
-                                      content:
-                                        - uesio/io.text:
-                                            text: No-code app builder extendable with code
-                                  - uesio/io.tile:
-                                      uesio.variant: uesio/web.checkitem
-                                      content:
-                                        - uesio/io.text:
-                                            text: Easily get under the covers while building and edit your code live
-                                  - uesio/io.tile:
-                                      uesio.variant: uesio/web.checkitem
-                                      content:
-                                        - uesio/io.text:
-                                            text: Reuse your software
-                                  - uesio/io.tile:
-                                      uesio.variant: uesio/web.checkitem
-                                      content:
-                                        - uesio/io.text:
-                                            text: Build, bundle and combine your apps and then publish as a new single application
-                                  - uesio/io.tile:
-                                      uesio.variant: uesio/web.checkitem
-                                      content:
-                                        - uesio/io.text:
-                                            text: Usage-based pricing
-                                  - uesio/io.tile:
-                                      uesio.variant: uesio/web.checkitem
-                                      content:
-                                        - uesio/io.text:
-                                            text: Build as much as you want and only pay for usage, not users
-                      - uesio/io.griditem:
-                          components:
-                            - uesio/io.list:
-                                wire: newlead
-                                mode: EDIT
-                                components:
-                                  - uesio/io.box:
+                                  - uesio/io.field:
+                                      uesio.variant: uesio/web.field
+                                      fieldId: firstname
+                                  - uesio/io.field:
+                                      uesio.variant: uesio/web.field
+                                      fieldId: lastname
+                                  - uesio/io.field:
+                                      uesio.variant: uesio/web.field
+                                      fieldId: email
+                                  - uesio/io.field:
+                                      uesio.variant: uesio/web.field
+                                      fieldId: account
+                                  - uesio/io.group:
                                       uesio.styleTokens:
                                         root:
-                                          - shadow
-                                          - bg-white
-                                          - p-10
-                                          - rounded-lg
+                                          - mt-6
                                       components:
-                                        - uesio/io.field:
-                                            uesio.variant: uesio/web.field
-                                            fieldId: firstname
-                                        - uesio/io.field:
-                                            uesio.variant: uesio/web.field
-                                            fieldId: lastname
-                                        - uesio/io.field:
-                                            uesio.variant: uesio/web.field
-                                            fieldId: email
-                                        - uesio/io.field:
-                                            uesio.variant: uesio/web.field
-                                            fieldId: account
-                                        - uesio/io.group:
-                                            uesio.styleTokens:
-                                              root:
-                                                - mt-6
-                                            components:
-                                              - uesio/io.button:
-                                                  uesio.variant: uesio/web.calltoaction
-                                                  text: Register
-                                                  signals:
-                                                    - bot: uesio/web.addlead
-                                                      signal: bot/CALL
-                                                      params:
-                                                        uesio/crm.firstname: ${firstname}
-                                                        uesio/crm.lastname: ${lastname}
-                                                        uesio/crm.email: ${email}
-                                                        uesio/crm.account: ${account}
-                                                        uesio/web.role: ${role}
-                                                    - signal: route/NAVIGATE
-                                                      path: "earlyaccessthanks"
+                                        - uesio/io.button:
+                                            uesio.variant: uesio/web.calltoaction
+                                            text: Register
+                                            signals:
+                                              - bot: uesio/web.addlead
+                                                signal: bot/CALL
+                                                params:
+                                                  uesio/crm.firstname: ${firstname}
+                                                  uesio/crm.lastname: ${lastname}
+                                                  uesio/crm.email: ${email}
+                                                  uesio/crm.account: ${account}
+                                                  uesio/web.role: ${role}
+                                              - signal: route/NAVIGATE
+                                                path: "earlyaccessthanks"
     - uesio/core.view:
         view: uesio/web.footer

@@ -1,0 +1,8 @@
+name: calloutsmall
+label: Callout Small
+extends: uesio/web.callout
+definition:
+  uesio.styleTokens:
+    root:
+      - text-3xl
+  element: div
