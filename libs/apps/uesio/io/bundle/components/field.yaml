@@ -50,6 +50,20 @@ properties:
         value: top
       - label: Left
         value: left
+  # TODO: need each option to be "validFor" a specific field display type,
+  # so that we can have only one "displayAs" property which is valid for any field display type
+  - name: displayAs
+    type: SELECT
+    label: Display as
+    options:
+      - label: Text
+        value: ""
+      - label: Password
+        value: PASSWORD
+    displayConditions:
+      - type: fieldValue
+        field: fieldDisplayType
+        value: TEXT
   # Number-only properties
   - name: number
     label: " "
@@ -103,21 +117,22 @@ properties:
         type: FIELDS
         wireField: wire
         label: Return Fields
-
-  # TODO: need each option to be "validFor" a specific field display type,
-  # so that we can have only one "displayAs" property which is valid for any field display type
-  - name: displayAs
-    type: SELECT
-    label: Display as
-    options:
-      - label: Text
-        value: ""
-      - label: Password
-        value: PASSWORD
-    displayConditions:
-      - type: fieldValue
-        field: fieldDisplayType
-        value: TEXT
+sections:
+  - type: HOME
+    id: uesio.home
+    properties:
+      - wire
+      - fieldId
+      - fieldDisplayType
+      - label
+      - labelPosition
+      - displayAs
+      # Display type specific properties
+      - number
+      - longtext
+      - reference
+  - type: STYLES
+  - type: DISPLAY
 signals:
   UPLOAD_FILE:
     label: Upload File
