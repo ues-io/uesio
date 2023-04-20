@@ -130,5 +130,4 @@ definition:
                                           name: $Param{workspacename}
                                           app: $Param{app}
                                       fieldId: uesio/studio.blank_option_language_label
-                                      metadataType: "LABEL"
-                                      label: "Blank Option Language Label"
+                                      metadataType: LABEL
