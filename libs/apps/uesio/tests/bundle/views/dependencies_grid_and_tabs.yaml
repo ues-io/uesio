@@ -23,7 +23,7 @@ definition:
               # uesio.variant: uesio/studio.topbar
               components:
                 - uesio/io.tabs:
-                    # INTENTIONALLY do NOT specify a variant, to test our server-side parsing of defaultDefinition
+                    # INTENTIONALLY do NOT specify a variant for tabs, to test our server-side parsing of defaultDefinition
                     # to load up the default variant for a component
                     tabs:
                       - id: tab1
@@ -41,5 +41,14 @@ definition:
                                 source: DATA
                       - id: tab2
                         label: Two
-                        components:
+    # Load buttons with and without a variant, to verify that the default variant is loaded for the button that has none
+    # but that the requested variant is preserved for the button that has a variant
+    - uesio/io.button:
+        text: No variant
+        icon: bolt
+    - uesio/io.button:
+        text: Primary variant
+        icon: bug
+        uesio.variant: uesio/io.primary
+
   panels:

@@ -8,7 +8,7 @@ discoverable: true
 defaultDefinition:
   text: New Button
   icon: bolt
-  uesio.variant: uesio/io.secondary
+  uesio.variant: uesio/io.default
 properties:
   - name: text
     type: TEXT

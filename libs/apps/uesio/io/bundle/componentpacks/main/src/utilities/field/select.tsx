@@ -13,7 +13,7 @@ interface SelectFieldProps extends definition.UtilityProps {
 
 const SelectField: FunctionComponent<SelectFieldProps> = (props) => {
 	const { readonly, setValue, mode, options, id } = props
-	const value = props.value as string
+	const value = (props.value as string) || ""
 
 	if (mode === "READ") {
 		const optionMatch = options?.find((option) => option.value === value)
