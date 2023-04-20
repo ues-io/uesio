@@ -1,58 +1,62 @@
-import { SignalDescriptor } from "../api/signalsapi"
+import { SignalBandDefinition, SignalDescriptor } from "../api/signalsapi"
 
 // The key for the entire band
-const ROUTE_BAND = "route"
+const BAND = "route"
 
 // Metadata for all of the signals in the band
-const signals: Record<string, SignalDescriptor> = {
-	[`${ROUTE_BAND}/REDIRECT`]: {
-		label: "Redirect",
-		description: "Route redirect",
-		properties: () => [
-			{
-				type: "TEXT",
-				name: "path",
-				label: "Path",
-			},
-		],
-	},
-	[`${ROUTE_BAND}/REDIRECT_TO_VIEW_CONFIG`]: {
-		label: "Redirect to View Config",
-		description: "Redirect to View Config",
-		properties: () => [],
-	},
-	[`${ROUTE_BAND}/RELOAD`]: {
-		label: "Reload",
-		description: "Reload route",
-		properties: () => [],
-	},
-	[`${ROUTE_BAND}/NAVIGATE`]: {
-		label: "Navigate",
-		description: "Navigate",
-		properties: () => [
-			{
-				type: "TEXT",
-				name: "path",
-				label: "Path",
-			},
-			{
-				type: "NAMESPACE",
-				name: "namespace",
-				label: "Namespace",
-			},
-			{
-				type: "METADATA",
-				name: "collection",
-				metadataType: "COLLECTION",
-				label: "Collection",
-			},
-			{
-				type: "TEXT",
-				name: "id",
-				label: "Record ID",
-			},
-		],
-	},
+const signals: SignalBandDefinition = {
+	band: BAND,
+	label: "Routes",
+	signals: {
+		[`${BAND}/REDIRECT`]: {
+			label: "Redirect to route",
+			description: "Route redirect",
+			properties: () => [
+				{
+					type: "TEXT",
+					name: "path",
+					label: "Path",
+				},
+			],
+		},
+		[`${BAND}/REDIRECT_TO_VIEW_CONFIG`]: {
+			label: "Redirect to View Config",
+			description: "Redirect to View Config",
+			properties: () => [],
+		},
+		[`${BAND}/RELOAD`]: {
+			label: "Reload current route",
+			description: "Reloads the current route",
+			properties: () => [],
+		},
+		[`${BAND}/NAVIGATE`]: {
+			label: "Navigate to route",
+			description: "Changes the route without reloading the browser",
+			properties: () => [
+				{
+					type: "TEXT",
+					name: "path",
+					label: "Path",
+				},
+				{
+					type: "NAMESPACE",
+					name: "namespace",
+					label: "Namespace",
+				},
+				{
+					type: "METADATA",
+					name: "collection",
+					metadataType: "COLLECTION",
+					label: "Collection",
+				},
+				{
+					type: "TEXT",
+					name: "id",
+					label: "Record ID",
+				},
+			],
+		},
+	} as Record<string, SignalDescriptor>,
 }
 
 export default signals
