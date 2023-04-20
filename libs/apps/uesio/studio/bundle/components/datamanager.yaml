@@ -4,8 +4,8 @@ entrypoint: components/datamanager/datamanager
 variants:
   - uesio/io.table:uesio/io.default
   - uesio/io.fieldwrapper:uesio/io.table
-  - uesio/io.field:uesio/io.table
   - uesio/io.customselectfield:uesio/io.default
   - uesio/io.menu:uesio/io.default
+  - uesio/io.button:uesio/io.rowaction
 utilities:
   - uesio/io.table
