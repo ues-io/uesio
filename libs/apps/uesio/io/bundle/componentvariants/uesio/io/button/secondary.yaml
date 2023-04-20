@@ -12,10 +12,11 @@ definition:
       - px-3
       - py-2
       - rounded
-      - bg-slate-100
-    label:
-      - font-medium
+      - bg-white
       - text-slate-600
+      - font-medium
       - uppercase
       - tracking-wide
+    icon:
+      - text-inherit
 public: true

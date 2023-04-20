@@ -19,17 +19,9 @@ const TabLabels: FunctionComponent<TabsUtilityProps> = (props) => {
 	const { tabs, selectedTab, setSelectedTab, context } = props
 	const classes = styles.useUtilityStyles(
 		{
-			root: {
-				display: "grid",
-				gridAutoFlow: "column",
-				gridAutoColumns: "min-content",
-			},
-			tab: {
-				cursor: "pointer",
-			},
-			tabSelected: {
-				cursor: "default",
-			},
+			root: {},
+			tab: {},
+			tabSelected: {},
 		},
 		props,
 		"uesio/io.tablabels"

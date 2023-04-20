@@ -63,7 +63,7 @@ const Paginator: FunctionComponent<PaginatorUtilityProps> = (props) => {
 
 	return (
 		<nav aria-label="pagination" className={classes.root}>
-			<Group alignItems="center" context={context}>
+			<Group context={context}>
 				<IconButton
 					icon="navigate_before"
 					onClick={prevPage}

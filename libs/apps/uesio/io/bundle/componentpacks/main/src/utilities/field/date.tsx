@@ -44,7 +44,7 @@ const DateField: definition.UtilityComponent<DateFieldProps> = (props) => {
 		<input
 			id={id}
 			className={styles.cx(classes.input, readonly && classes.readonly)}
-			value={value}
+			value={value || ""}
 			type="date"
 			disabled={readonly}
 			onChange={(event) => setValue(event.target.value)}

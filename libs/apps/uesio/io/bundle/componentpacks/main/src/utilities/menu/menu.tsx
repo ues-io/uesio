@@ -30,6 +30,7 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 		{
 			root: {},
 			menu: {},
+			menuheader: {},
 			menuitem: {},
 			highlighted: {},
 			searchbox: {},
@@ -84,7 +85,12 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 
 	return (
 		<>
-			<div tabIndex={0} ref={refs.setReference} {...getReferenceProps()}>
+			<div
+				className="flex"
+				tabIndex={0}
+				ref={refs.setReference}
+				{...getReferenceProps()}
+			>
 				{children}
 			</div>
 			<FloatingPortal>
@@ -103,19 +109,21 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 							className={classes.menu}
 							{...getFloatingProps()}
 						>
-							{(onSearch || searchFilter) && (
-								<input
-									type="text"
-									value={searchText}
-									autoFocus
-									className={classes.searchbox}
-									placeholder="Search..."
-									onChange={(e) => {
-										onSearch?.(e.target.value)
-										setSearchText(e.target.value)
-									}}
-								/>
-							)}
+							<div className={classes.menuheader}>
+								{(onSearch || searchFilter) && (
+									<input
+										type="text"
+										value={searchText}
+										autoFocus
+										className={classes.searchbox}
+										placeholder="Search..."
+										onChange={(e) => {
+											onSearch?.(e.target.value)
+											setSearchText(e.target.value)
+										}}
+									/>
+								)}
+							</div>
 							{items
 								.filter((item) => {
 									if (!searchFilter) return true

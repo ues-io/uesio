@@ -25,14 +25,14 @@ func ForgotPassword(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
 		msg := "Invalid request format: " + err.Error()
-		logger.LogWithTrace(r, msg, logger.ERROR)
+		logger.Log(msg, logger.ERROR)
 		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
 
 	err = auth.ForgotPassword(getSignupMethodID(mux.Vars(r)), payload, site)
 	if err != nil {
-		logger.LogErrorWithTrace(r, err)
+		logger.LogError(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -48,14 +48,14 @@ func ConfirmForgotPassword(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
 		msg := "Invalid request format: " + err.Error()
-		logger.LogWithTrace(r, msg, logger.ERROR)
+		logger.Log(msg, logger.ERROR)
 		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
 
 	err = auth.ConfirmForgotPassword(getSignupMethodID(mux.Vars(r)), payload, site)
 	if err != nil {
-		logger.LogErrorWithTrace(r, err)
+		logger.LogError(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

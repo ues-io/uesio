@@ -32,14 +32,15 @@ definition:
     headerCellInner:
       - text-left
       - grid
-      - grid-cols-[1fr 0fr]
+      - grid-flow-col
+      - justify-between
+      - auto-cols-min
       - items-center
     rowNumberCell:
       - whitespace-nowrap
       - w-px
     rowNumber:
       - text-center
-      - p-4
       - text-slate-700
       - text-[10pt]
     cell:

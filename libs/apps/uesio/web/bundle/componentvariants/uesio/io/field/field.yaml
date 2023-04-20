@@ -2,6 +2,6 @@ name: field
 extends: uesio/io.default
 label: Field
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     input:
-      border-radius: 4px
+      - rounded

@@ -9,142 +9,252 @@ definition:
     - uesio/io.grid:
         uesio.variant: uesio/web.mainlayout
         items:
-          - uesio/io.griditem:
-              area: main
-              components:
-                - uesio/io.grid:
-                    uesio.styleTokens:
-                      root:
-                        - grid-cols-[460px_1fr]
-                        - p-20
-                    items:
-                      - uesio/io.griditem:
-                          components:
-                            - uesio/io.text:
-                                uesio.variant: uesio/web.callout
-                                text: Create apps faster and easier.
-                            - uesio/io.text:
-                                uesio.variant: uesio/web.calloutsub
-                                text: ues.io makes building, running, and selling web apps easier for developers and possible for everyone else.
+          - uesio/io.grid:
+              uesio.variant: uesio/web.callout
+              items:
+                - uesio/io.box:
+                    components:
+                      - uesio/io.text:
+                          uesio.variant: uesio/web.callout
+                          text: Create apps faster and easier.
+                      - uesio/io.text:
+                          uesio.variant: uesio/web.calloutsub
+                          text: Build, run and deploy web apps with ues.io.
     - uesio/io.grid:
         uesio.variant: uesio/web.mainlayout
-        uesio.styles:
+        uesio.styleTokens:
           root:
-            backgroundSize: cover
-            backgroundImage: url($File{uesio/core.splash})
+            - bg-cover
+            - bg-[url($File{uesio/core.splash})]
         items:
-          - uesio/io.griditem:
-              area: main
-              components:
-                - uesio/io.griditem:
-                    area: main
+          - uesio/io.grid:
+              uesio.variant: uesio/web.callout_right
+              items:
+                - uesio/io.box:
                     components:
-                      - uesio/io.grid:
+                      - uesio/io.box:
                           uesio.styleTokens:
                             root:
-                              - grid-cols-[1fr_0fr_1fr]
-                              - p-44
-                          items:
-                            - uesio/io.griditem:
-                                uesio.styles:
-                                  root:
-                                    width: 700px
-                                    paddingLeft: 200px
-                                components:
-                                  - uesio/io.text:
-                                      uesio.styles:
-                                        root:
-                                          fontSize: 38pt
-                                          color: "white"
-                                          fontFamily: Gosha
-                                      element: div
-                                      text: Build Rome in a day.
-                                  - uesio/io.text:
-                                      uesio.styles:
-                                        root:
-                                          fontSize: 22pt
-                                          color: "white"
-                                          fontFamily: Gosha
-                                      element: div
-                                      text: The bundle store makes it easy.
-    - uesio/io.grid:
-        uesio.variant: uesio/web.mainlayout
-        items:
-          - uesio/io.griditem:
-              area: main
-              components:
-                - uesio/io.grid:
-                    root:
-                      - grid-cols-[850px_1fr]
-                      - p-20
-                    items:
-                      - uesio/io.griditem:
+                              - relative
                           components:
                             - uesio/io.text:
                                 uesio.variant: uesio/web.callout
-                                text: Build & Bundle - Share & Sell
+                                uesio.styleTokens:
+                                  root:
+                                    - text-white
+                                    - mix-blend-color-burn
+                                    - md:mix-blend-overlay
+                                    - absolute
+                                    - top-1
+                                element: div
+                                text: The platform for platforms.
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.callout
+                                uesio.styleTokens:
+                                  root:
+                                    - text-white
+                                element: div
+                                text: The platform for platforms.
+                      - uesio/io.text:
+                          uesio.variant: uesio/web.calloutsub
+                          uesio.styleTokens:
+                            root:
+                              - text-white
+                          element: div
+                          text: Distribute and monetize multi-tenant apps.
     - uesio/io.grid:
         uesio.variant: uesio/web.mainlayout
         items:
-          - uesio/io.griditem:
-              area: main
-              components:
+          - uesio/io.grid:
+              uesio.variant: uesio/web.callout_double
+              items:
                 - uesio/io.grid:
-                    uesio.styleTokens:
-                      root:
-                        - grid-cols-[1fr_400px]
-                        - p-20
+                    uesio.variant: uesio/web.icongrid
                     items:
-                      - uesio/io.griditem:
-                      - uesio/io.griditem:
+                      - uesio/io.text:
+                          uesio.variant: uesio/web.callouticon
+                          text: construction
+                      - uesio/io.box:
                           components:
-                            - uesio/io.box:
-                                uesio.variant: uesio/web.featurebox
-                                components:
-                                  - uesio/io.text:
-                                      uesio.variant: uesio/web.sectiontag
-                                      text: Base components
-                                  - uesio/io.text:
-                                      uesio.variant: uesio/web.smallcallout
-                                      text: Get started with a full featured component library
-                                  - uesio/io.text:
-                                      uesio.variant: uesio/web.smallcalloutsub
-                                      text: Create standard business applications fast with a complete set of ready-to-use components and fully fledgged applications.
-                            - uesio/io.box:
-                                uesio.variant: uesio/web.featurebox
-                                components:
-                                  - uesio/io.text:
-                                      uesio.variant: uesio/web.sectiontag
-                                      text: Community components
-                                  - uesio/io.text:
-                                      uesio.variant: uesio/web.smallcallout
-                                      text: Build even faster using community bundles
-                                  - uesio/io.text:
-                                      uesio.variant: uesio/web.smallcalloutsub
-                                      text: Choose from a large selection of pre-built applications or their individual nested components from the Uesio Bundle Store and pull them into your workspace.
-                            - uesio/io.box:
-                                uesio.variant: uesio/web.featurebox
-                                components:
-                                  - uesio/io.text:
-                                      uesio.variant: uesio/web.sectiontag
-                                      text: Custom components
-                                  - uesio/io.text:
-                                      uesio.variant: uesio/web.smallcallout
-                                      text: Enhance your app using React
-                                  - uesio/io.text:
-                                      uesio.variant: uesio/web.smallcalloutsub
-                                      text: For custom functionality, use React and Uesio's API hooks to connect to wires and signals.
-                            - uesio/io.box:
-                                uesio.variant: uesio/web.featurebox
-                                components:
-                                  - uesio/io.text:
-                                      uesio.variant: uesio/web.sectiontag
-                                      text: Back-end business logic
-                                  - uesio/io.text:
-                                      uesio.variant: uesio/web.smallcallout
-                                      text: Benefit from bots and validation rules
-                                  - uesio/io.text:
-                                      uesio.variant: uesio/web.smallcalloutsub
-                                      text: Write business logic using bots in Javascript (or Typescript)
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.calloutsmall
+                                text: Configure common patterns declaratively.
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.calloutsmallsub
+                                text: Use our built-in, ready-to-use components.
+                - uesio/io.grid:
+                    uesio.variant: uesio/web.icongrid
+                    items:
+                      - uesio/io.text:
+                          uesio.variant: uesio/web.callouticon
+                          text: code
+                      - uesio/io.box:
+                          components:
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.calloutsmall
+                                text: Extend with code for custom functionality.
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.calloutsmallsub
+                                text: Develop components and business logic with React and Typescript.
+    - uesio/io.grid:
+        uesio.variant: uesio/web.mainlayout
+        uesio.styleTokens:
+          root:
+            - bg-slate-900
+        items:
+          - uesio/io.grid:
+              uesio.variant: uesio/web.callout_center
+              items:
+                - uesio/io.grid:
+                    uesio.variant: uesio/web.icongrid
+                    items:
+                      - uesio/io.text:
+                          uesio.variant: uesio/web.callouticon
+                          text: psychology
+                      - uesio/io.text:
+                          uesio.styleTokens:
+                            root:
+                              - text-slate-400
+                              - text-lg
+                              - font-light
+                          text: For developers who want to rapidly build, deploy and refine enterprize-grade apps, our product is a simple, but powerful platform for the full lifecycle development of multi-tenant apps.
+    - uesio/io.grid:
+        uesio.variant: uesio/web.mainlayout
+        items:
+          - uesio/io.grid:
+              uesio.variant: uesio/web.callout_double
+              items:
+                - uesio/io.grid:
+                    uesio.variant: uesio/web.icongrid
+                    items:
+                      - uesio/io.text:
+                          uesio.variant: uesio/web.callouticon
+                          text: monitoring
+                      - uesio/io.box:
+                          components:
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.calloutsmall
+                                text: Usage-based pricing.
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.calloutsmallsub
+                                text: Build as much as you want. Only start paying for usage after publishing your app to your users.
+                - uesio/io.grid:
+                    uesio.variant: uesio/web.icongridsoon
+                    items:
+                      - uesio/io.text:
+                          uesio.variant: uesio/web.callouticon
+                          text: snowmobile
+                      - uesio/io.box:
+                          components:
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.calloutsmall
+                                text: Ultimate Portability.
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.calloutsmallsub
+                                text: Run ues.io in your own infrastructure on premise with our Docker image and Helm chart.
+                - uesio/io.grid:
+                    uesio.variant: uesio/web.icongrid
+                    items:
+                      - uesio/io.text:
+                          uesio.variant: uesio/web.callouticon
+                          text: eco
+                      - uesio/io.box:
+                          components:
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.calloutsmall
+                                text: Reuse your configuration.
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.calloutsmallsub
+                                text: Package components, data models, user interfaces and more into bundles. Then reuse them in your other apps.
+                - uesio/io.grid:
+                    uesio.variant: uesio/web.icongrid
+                    items:
+                      - uesio/io.text:
+                          uesio.variant: uesio/web.callouticon
+                          text: commit
+                      - uesio/io.box:
+                          components:
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.calloutsmall
+                                text: Manage configuration as code.
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.calloutsmallsub
+                                text: Create custom components and backend logic in your favorite IDE. Manage all configuration as code. Integrate with Git for source control.
+    - uesio/io.grid:
+        uesio.variant: uesio/web.mainlayout
+        uesio.styleTokens:
+          root:
+            - bg-cover
+            - bg-[url($File{uesio/core.splash})]
+        items:
+          - uesio/io.grid:
+              uesio.variant: uesio/web.callout_right
+              items:
+    - uesio/io.grid:
+        uesio.variant: uesio/web.mainlayout
+        uesio.styleTokens:
+          root:
+            - bg-slate-900
+        items:
+          - uesio/io.grid:
+              uesio.variant: uesio/web.callout_double
+              items:
+                - uesio/io.grid:
+                    uesio.variant: uesio/web.icongrid
+                    items:
+                      - uesio/io.text:
+                          uesio.variant: uesio/web.callouticondark
+                          text: storefront
+                      - uesio/io.box:
+                          components:
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.calloutsmalldark
+                                text: Metadata marketplace.
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.calloutsmallsubdark
+                                text: Share or charge for app bundles and components on the public ues.io meta marketplace.
+                - uesio/io.grid:
+                    uesio.variant: uesio/web.icongrid
+                    items:
+                      - uesio/io.text:
+                          uesio.variant: uesio/web.callouticondark
+                          text: security
+                      - uesio/io.box:
+                          components:
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.calloutsmalldark
+                                text: Fine-grained access control.
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.calloutsmallsubdark
+                                text: Build permission sets and profiles and assign them to different groups of users or individuals. Set record and object level security for all your data and users.
+                - uesio/io.grid:
+                    uesio.variant: uesio/web.icongrid
+                    items:
+                      - uesio/io.text:
+                          uesio.variant: uesio/web.callouticondark
+                          text: lock
+                      - uesio/io.box:
+                          components:
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.calloutsmalldark
+                                text: Immutable environments.
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.calloutsmallsubdark
+                                text: Full isolation of development and production environments. This provides an always available application for end users, removing risks from bugs.
+                - uesio/io.grid:
+                    uesio.variant: uesio/web.icongrid
+                    items:
+                      - uesio/io.text:
+                          uesio.variant: uesio/web.callouticondark
+                          text: diversity_3
+                      - uesio/io.box:
+                          components:
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.calloutsmalldark
+                                text: Team development.
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.calloutsmallsubdark
+                                text: Add team members to your project and collaborate on your apps.
+
     - uesio/core.view:
         view: uesio/web.footer

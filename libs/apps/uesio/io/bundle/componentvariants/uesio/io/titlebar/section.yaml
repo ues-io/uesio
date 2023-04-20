@@ -1,5 +1,9 @@
+# This is currently used for titles that are already inside of a
+# page section. I think of this as a level 2 title in a main
+# content area.
 name: section
 label: Section
+extends: uesio/io.default
 definition:
   uesio.styleTokens:
     root:
@@ -9,10 +13,4 @@ definition:
       - p-10
       - border-b
       - border-slate-200
-    title:
-      - text-slate-700
-      - text-base
-    subtitle:
-      - text-slate-500
-      - text-xs
 public: true

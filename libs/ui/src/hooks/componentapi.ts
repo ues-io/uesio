@@ -12,7 +12,6 @@ import { removeOne, set as setComponent } from "../bands/component"
 import { BaseProps, Definition } from "../definition/definition"
 import { useEffect } from "react"
 import { ComponentVariant } from "../definition/componentvariant"
-import { useAsync } from "./useasync"
 import {
 	Context,
 	FieldMode,
@@ -158,7 +157,6 @@ export {
 	getComponentId,
 	getComponentIdFromProps,
 	makeComponentId,
-	useAsync,
 	useMode,
 	useState,
 	setState,

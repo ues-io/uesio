@@ -26,7 +26,7 @@ func CollectionRoute(w http.ResponseWriter, r *http.Request) {
 	workspace := session.GetWorkspace()
 	route, err := routing.GetRouteFromCollection(r, collectionNamespace, collectionName, viewtype, id, session)
 	if err != nil {
-		logger.LogErrorWithTrace(r, err)
+		logger.LogError(err)
 		file.RespondJSON(w, r, &routing.RouteMergeData{
 			View:  "uesio/core.notfound",
 			Theme: "uesio/core.default",
@@ -37,14 +37,14 @@ func CollectionRoute(w http.ResponseWriter, r *http.Request) {
 
 	depsCache, err := routing.GetMetadataDeps(route, session)
 	if err != nil {
-		logger.LogErrorWithTrace(r, err)
+		logger.LogError(err)
 		return
 	}
 
 	routingMergeData, err := GetRoutingMergeData(route, workspace, depsCache, session)
 	// TODO: Display Internal Server Error page???
 	if err != nil {
-		logger.LogErrorWithTrace(r, err)
+		logger.LogError(err)
 		return
 	}
 
@@ -69,7 +69,7 @@ func Route(w http.ResponseWriter, r *http.Request) {
 
 	route, err := routing.GetRouteFromPath(r, namespace, path, prefix, session)
 	if err != nil {
-		logger.LogErrorWithTrace(r, err)
+		logger.LogError(err)
 		file.RespondJSON(w, r, &routing.RouteMergeData{
 			View:  "uesio/core.notfound",
 			Theme: "uesio/core.default",
@@ -79,7 +79,7 @@ func Route(w http.ResponseWriter, r *http.Request) {
 
 	depsCache, err := routing.GetMetadataDeps(route, session)
 	if err != nil {
-		logger.LogErrorWithTrace(r, err)
+		logger.LogError(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -87,7 +87,7 @@ func Route(w http.ResponseWriter, r *http.Request) {
 	routingMergeData, err := GetRoutingMergeData(route, workspace, depsCache, session)
 	// TODO: Display Internal Server Error page???
 	if err != nil {
-		logger.LogErrorWithTrace(r, err)
+		logger.LogError(err)
 		return
 	}
 
@@ -134,7 +134,7 @@ func getLoginRoute(session *sess.Session) (*meta.Route, error) {
 }
 
 func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Session, path string, err error, redirect bool) {
-	logger.LogWithTrace(r, "Error Getting Route: "+err.Error(), logger.INFO)
+	logger.Log("Error Getting Route: "+err.Error(), logger.INFO)
 	// If our profile is the public profile, redirect to the login route
 	if redirect && session.IsPublicProfile() {
 		loginRoute, err := getLoginRoute(session)
@@ -158,13 +158,21 @@ func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Sess
 		route = getErrorRoute(path, err.Error())
 	}
 
-	// We can upgrade to the site session so we can be sure to have access to the
-	// the not found route.
+	// We can upgrade to the site session so we can be sure to have access to the not found route
 	adminSession := sess.GetAnonSession(session.GetSite())
 	depsCache, _ := routing.GetMetadataDeps(route, adminSession)
 
-	// If we're logged in, but still no route, return the uesio.notfound view
-	ExecuteIndexTemplate(w, route, depsCache, false, adminSession)
+	acceptHeader := r.Header.Get("Accept")
+	// Only serve an HTML response to user-agents who are requesting HTML (e.g. browsers)
+	// otherwise, don't serve any content at all, just return 404 status code
+	if strings.Contains(acceptHeader, "html") {
+		// Must write 404 status BEFORE executing index template
+		w.WriteHeader(http.StatusNotFound)
+		ExecuteIndexTemplate(w, route, depsCache, false, adminSession)
+		return
+	}
+	http.Error(w, "Not Found", http.StatusNotFound)
+	return
 }
 
 func ServeRoute(w http.ResponseWriter, r *http.Request) {

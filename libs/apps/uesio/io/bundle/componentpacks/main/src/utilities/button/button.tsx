@@ -19,7 +19,6 @@ const Button: FunctionComponent<ButtonUtilityProps> = (props) => {
 	const classes = styles.useUtilityStyles(
 		{
 			root: {},
-			label: {},
 			selected: {},
 			disabled: {},
 		},
@@ -48,16 +47,16 @@ const Button: FunctionComponent<ButtonUtilityProps> = (props) => {
 			href={link}
 			disabled={disabled}
 			onClick={onClick}
-			className={styles.cx(
-				classes.root,
-				disabled && classes.disabled,
-				isSelected && classes.selected
+			className={styles.mergeClasses(
+				styles.cx(
+					classes.root,
+					disabled && classes.disabled,
+					isSelected && classes.selected
+				)
 			)}
 		>
 			{icon}
-			{label && (
-				<span className={classes.label}>{context.merge(label)}</span>
-			)}
+			{label && <span>{context.merge(label)}</span>}
 		</Tag>
 	)
 

@@ -114,15 +114,20 @@ definition:
                                           path: "app/$Param{app}/workspace/$Param{workspacename}/selectlists"
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
-                          uesio.styles:
-                            root:
-                              padding: 40px
                           components:
                             - uesio/io.field:
                                 fieldId: uesio/studio.name
                             - uesio/io.field:
                                 fieldId: uesio/studio.options
-                            - uesio/io.field:
-                                fieldId: uesio/studio.blank_option_label
-                            - uesio/io.field:
-                                fieldId: uesio/studio.blank_option_language_label
+                            - uesio/io.grid:
+                                uesio.variant: uesio/io.two_columns
+                                items:
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.blank_option_label
+                                  - uesio/builder.metadatafield:
+                                      uesio.context:
+                                        workspace:
+                                          name: $Param{workspacename}
+                                          app: $Param{app}
+                                      fieldId: uesio/studio.blank_option_language_label
+                                      metadataType: LABEL

@@ -13,11 +13,11 @@ definition:
           - uesio/io.griditem:
               components:
                 - uesio/io.image:
-                    uesio.styles:
+                    uesio.styleTokens:
                       root:
-                        margin: 0 16px
+                        - mx-4
+                        - h-[30px]
                     file: uesio/core.logowhite
-                    height: 30px
                     signals:
                       - signal: route/NAVIGATE
                         path: "home"

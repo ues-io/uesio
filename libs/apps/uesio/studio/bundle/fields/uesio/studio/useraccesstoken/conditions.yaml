@@ -1,7 +1,7 @@
 name: conditions
 type: LIST
 label: Conditions
-subtype: MAP
+subtype: STRUCT
 subfields:
   - name: field
     type: TEXT

@@ -34,9 +34,10 @@ const CustomSelect: definition.UtilityComponent<CustomSelectProps<unknown>> = (
 	const classes = styles.useUtilityStyles(
 		{
 			root: {},
-			notfound: {},
+			input: {},
 			editbutton: {},
 			selecteditemwrapper: {},
+			notfound: {},
 		},
 		props,
 		"uesio/io.customselectfield"
@@ -54,7 +55,7 @@ const CustomSelect: definition.UtilityComponent<CustomSelectProps<unknown>> = (
 			variant={menuVariant}
 		>
 			<div className={classes.root}>
-				<div>
+				<div className={classes.input}>
 					{!selectedItems.length && (
 						<div className={classes.notfound}>Nothing Selected</div>
 					)}
@@ -79,13 +80,6 @@ const CustomSelect: definition.UtilityComponent<CustomSelectProps<unknown>> = (
 						</div>
 					))}
 				</div>
-				<button
-					tabIndex={-1}
-					className={classes.editbutton}
-					type="button"
-				>
-					<Icon icon="expand_more" context={context} />
-				</button>
 			</div>
 		</Menu>
 	)

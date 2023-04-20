@@ -26,6 +26,8 @@ options:
     value: "REFERENCEGROUP"
   - label: "Select List"
     value: "SELECT"
+  - label: "Struct"
+    value: "STRUCT"
   - label: "Text"
     value: "TEXT"
   - label: "Timestamp"

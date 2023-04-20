@@ -123,7 +123,7 @@ const IconProp: definition.UC<Definition> = (props) => {
 							<>
 								<TitleBar
 									title={"Icons"}
-									variant="uesio/io.primary"
+									variant="uesio/builder.primary"
 									subtitle={"Material Icons"}
 									actions={
 										<IconButton

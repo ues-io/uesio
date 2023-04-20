@@ -8,7 +8,12 @@ type BaseProperty = {
 	type: string
 	placeholder?: string
 	readonly?: boolean
+	// If false, then the property will be stored in local state and YAML definition,
+	// but will not be displayed in the properties UI.
 	display?: boolean
+	// If false, then the property will be be stored ONLY in local state,
+	// but will NOT be stored in the YAML definition.
+	viewOnly?: boolean
 	displayConditions?: component.DisplayCondition[]
 }
 type TextProperty = {
@@ -117,6 +122,11 @@ type MapProperty = {
 	defaultKey: string
 } & BaseProperty
 
+type StructProperty = {
+	type: "STRUCT"
+	properties: ComponentProperty[]
+} & BaseProperty
+
 type ComponentPropertiesGetter = (
 	record: wire.PlainWireRecord
 ) => ComponentProperty[]
@@ -175,6 +185,7 @@ type ComponentProperty =
 	| ListProperty
 	| TextAreaProperty
 	| IconProperty
+	| StructProperty
 
 const getStyleVariantProperty = (componentType: string): ComponentProperty => ({
 	name: "uesio.variant",
@@ -193,6 +204,7 @@ export type {
 	WireProperty,
 	MapProperty,
 	ListProperty,
+	StructProperty,
 	IconProperty,
 }
 

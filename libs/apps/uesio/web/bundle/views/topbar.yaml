@@ -6,53 +6,41 @@ definition:
   components:
     - uesio/io.grid:
         uesio.variant: uesio/web.mainlayout
-        uesio.styles:
-          root:
-            height: 120px
         items:
-          - uesio/io.griditem:
+          - uesio/io.grid:
               uesio.styleTokens:
                 root:
-                  - grid
-              area: main
-              components:
-                - uesio/io.grid:
+                  - grid-flow-col
+                  - items-center
+                  - justify-stretch
+              items:
+                - uesio/io.griditem:
+                    components:
+                      - uesio/io.image:
+                          uesio.styleTokens:
+                            root:
+                              - m-4
+                              - h-[55px]
+                          file: uesio/web.logo
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: home
+                - uesio/io.group:
                     uesio.styleTokens:
                       root:
-                        - grid-cols-[max-content_1fr_0fr]
-                        - items-center
-                    items:
-                      - uesio/io.griditem:
-                          components:
-                            - uesio/io.image:
-                                uesio.styleTokens:
-                                  root:
-                                    - m-4
-                                height: 55px
-                                file: uesio/web.logo
-                                signals:
-                                  - signal: "route/NAVIGATE"
-                                    path: home
-                      - uesio/io.griditem:
-                      - uesio/io.griditem:
-                          components:
-                            - uesio/io.group:
-                                uesio.styleTokens:
-                                  root:
-                                    - m-5
-                                    - gap-x-10
-                                components:
-                                  - uesio/io.group:
-                                      components:
-                                        - uesio/io.button:
-                                            uesio.variant: uesio/web.borderless
-                                            text: Stay updated
-                                            signals:
-                                              - signal: route/NAVIGATE
-                                                path: earlyaccess
-                                        - uesio/io.button:
-                                            uesio.variant: uesio/web.calltoaction
-                                            text: Login
-                                            signals:
-                                              - signal: "route/REDIRECT"
-                                                path: "https://studio.$Site{domain}"
+                        - m-5
+                        - gap-4
+                        - justify-right
+                    components:
+                      - uesio/io.button:
+                          uesio.variant: uesio/web.borderless
+                          text: Stay updated
+                          signals:
+                            - signal: route/NAVIGATE
+                              path: earlyaccess
+                      - uesio/io.button:
+                          uesio.variant: uesio/web.calltoaction
+                          text: Login
+                          signals:
+                            - signal: "route/REDIRECT"
+                              path: "https://studio.$Site{domain}"

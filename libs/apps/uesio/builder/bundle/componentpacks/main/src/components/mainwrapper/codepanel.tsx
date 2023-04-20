@@ -196,7 +196,7 @@ const CodePanel: definition.UtilityComponent = (props) => {
 			variant="uesio/builder.mainsection"
 			header={
 				<TitleBar
-					variant="uesio/io.primary"
+					variant="uesio/builder.primary"
 					title={"code"}
 					actions={
 						<IconButton

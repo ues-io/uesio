@@ -90,7 +90,7 @@ definition:
                                   - signal: panel/TOGGLE
                                     panel: newFile
                 - uesio/io.box:
-                    uesio.variant: uesio/io.paddedsection
+                    uesio.variant: uesio/io.section
                     components:
                       - uesio/io.searchbox:
                           wire: files

@@ -1,27 +1,31 @@
 name: default
 label: Default
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     menu:
-      backgroundColor: "white"
-      fontSize: "10pt"
-      border: "1px solid #ccc"
-      borderRadius: "4px"
-      overflow: "hidden"
-      boxShadow: "0 0 4px #00000033"
+      - bg-white
+      - text-sm
+      - border
+      - border-slate-300
+      - rounded
+      - overflow-hidden
+      - shadow-lg
+    menuheader:
+      - grid
+      - bg-white
     menuitem:
-      cursor: "pointer"
-      padding: 7px 16px 7px 10px
-      fontSize: 10pt
+      - cursor-pointer
+      - p-2
+      - text-slate-700
+      - min-w-[200px]
     highlighted:
-      backgroundColor: "#eee"
+      - bg-slate-200
     searchbox:
-      minWidth: "200px"
-      borderRadius: "4px"
-      margin: "6px"
-      padding: "6px"
-      border: "1px solid #00000044"
-      "::placeholder":
-        fontSize: "9pt"
-        color: "#999"
+      - bg-slate-100
+      - rounded
+      - m-1.5
+      - py-1
+      - px-1.5
+      - placeholder:text-xs
+      - placeholder:text-slate-400
 public: true

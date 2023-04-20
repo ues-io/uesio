@@ -103,7 +103,7 @@ const PropertiesWrapper: definition.UtilityComponent<Props> = (props) => {
 					{title ? (
 						<TitleBar
 							title={title}
-							variant="uesio/io.primary"
+							variant="uesio/builder.primary"
 							subtitlenode={subtitlenode}
 							actions={
 								props.path && (

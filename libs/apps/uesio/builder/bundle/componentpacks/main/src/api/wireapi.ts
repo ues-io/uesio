@@ -29,7 +29,7 @@ const getFieldMetadata = (
 			`["wires"]["${wireId}"]["collection"]`
 		)
 	) as string
-	const collection = api.collection.useCollection(context, wireCollection)
+	const collection = api.collection.getCollection(wireCollection)
 	if (!collection) return
 	return collection.getField(fieldId)
 }

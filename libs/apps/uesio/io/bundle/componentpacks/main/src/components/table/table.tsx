@@ -28,6 +28,7 @@ import {
 	LongTextFieldOptions,
 	UserFieldOptions,
 } from "../field/field"
+import FieldWrapper from "../../utilities/fieldwrapper/fieldwrapper"
 
 type TableDefinition = {
 	wire: string
@@ -154,28 +155,26 @@ const Table: definition.UC<TableDefinition> = (props) => {
 
 	const rowActionsFunc = otherActions.length
 		? (recordContext: RecordContext) => (
-				<Group
-					styles={{ root: { padding: "0 16px" } }}
-					columnGap={0}
-					context={recordContext.context}
-				>
-					{otherActions.map((action, i) => {
-						const handler = api.signal.getHandler(
-							action.signals,
-							recordContext.context
-						)
-						return (
-							<Button
-								key={action.text + i}
-								variant="uesio/io.nav"
-								className="rowaction"
-								label={action.text}
-								context={recordContext.context}
-								onClick={handler}
-							/>
-						)
-					})}
-				</Group>
+				<FieldWrapper context={context} variant="uesio/io.table">
+					<Group context={recordContext.context}>
+						{otherActions.map((action, i) => {
+							const handler = api.signal.getHandler(
+								action.signals,
+								recordContext.context
+							)
+							return (
+								<Button
+									key={action.text + i}
+									variant="uesio/io.rowaction"
+									className="rowaction"
+									label={action.text}
+									context={recordContext.context}
+									onClick={handler}
+								/>
+							)
+						})}
+					</Group>
+				</FieldWrapper>
 		  )
 		: undefined
 

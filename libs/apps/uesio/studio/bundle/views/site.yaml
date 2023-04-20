@@ -83,9 +83,6 @@ definition:
                                           panel: deleteSite
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
-                          uesio.styles:
-                            root:
-                              padding: 40px
                           components:
                             - uesio/io.grid:
                                 uesio.variant: uesio/io.four_columns
@@ -105,9 +102,6 @@ definition:
                           uesio.variant: uesio/io.section
                           title: Config Values
                       - uesio/io.box:
-                          uesio.styles:
-                            root:
-                              padding: 40px
                           components:
                             - uesio/studio.configsecrets:
                                 valueType: config
@@ -122,9 +116,6 @@ definition:
                           uesio.variant: uesio/io.section
                           title: Secrets
                       - uesio/io.box:
-                          uesio.styles:
-                            root:
-                              padding: 40px
                           components:
                             - uesio/studio.configsecrets:
                                 valueType: secrets

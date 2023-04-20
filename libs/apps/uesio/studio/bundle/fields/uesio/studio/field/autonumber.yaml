@@ -1,5 +1,5 @@
 name: autonumber
-type: MAP
+type: STRUCT
 label: Autonumber Metadata
 subfields:
   - name: uesio/studio.leadingzeros

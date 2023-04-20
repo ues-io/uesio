@@ -1,36 +1,37 @@
 name: lesson
 label: Lesson navigation
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      borderLeft: "1px solid #c7c7c7"
-      paddingLeft: 8px
+      - border-s-[#c7c7c7]
+      - border-solid
+      - border-l
+
+      - pl-2
     nav:
     title:
-      fontFamily: Gosha
-      marginBottom: 0.25em
-    navItem:
-      position: relative
+      - font-[gosha]
+      - mb-[0.25em]
 
-      "&::after":
-        content: "''"
-        opacity: 0
-        transition: all 0.3s ease
-        display: block
-        position: absolute
-        width: 3px
-        left: -9.5px
-        backgroundColor: rgb(251,96,78)
-        height: 100%
-        top: 0
-      lineHeight: 1.6
-      opacity: 0.8
-      transition: all 0.3s ease
-      "&:hover":
-        opacity: 1
-        "&::after":
-          opacity: 1
-      a:
-        color: rgb(251,96,78)
-        # color: black
-        textDecoration: none
+    navItem:
+      - relative
+      - after:opacity-0
+      - after:transition-all
+      - after:duration-300
+      - after:ease-in-out
+      - after:block
+      - after:absolute
+      - after:w-[3px]
+      - after:left-[-9.5px]
+      - after:bg-[rgb(251,96,78)]
+      - after:h-full
+      - after:top-0
+      - leading-[1.6]
+      - opacity-[0.8]
+      - transition-all
+      - duration-300
+      - ease-in-out
+      - hover:opacity-[1]
+      - hover:after:opacity-[1]
+      - "[&_a]:text-red-400"
+      - "[&_a]:no-underline"
