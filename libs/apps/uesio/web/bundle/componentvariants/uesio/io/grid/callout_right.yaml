@@ -6,3 +6,4 @@ definition:
     root:
       - justify-end
       - py-28
+      - md:py-28

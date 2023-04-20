@@ -4,5 +4,6 @@ extends: uesio/web.callout
 definition:
   uesio.styleTokens:
     root:
-      - text-3xl
+      - text-2xl
+      - md:text-2xl
   element: div

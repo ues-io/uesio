@@ -8,5 +8,4 @@ definition:
       - px-10
       - xl:px-20
       - py-28
-      - gap-10
-      - xl:gap-20
+      - gap-20
