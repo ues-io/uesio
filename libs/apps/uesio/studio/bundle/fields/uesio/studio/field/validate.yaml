@@ -1,5 +1,5 @@
 name: validate
-type: MAP
+type: STRUCT
 label: Validate
 subfields:
   - name: uesio/studio.type
