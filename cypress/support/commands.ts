@@ -127,6 +127,31 @@ Cypress.Commands.add("visitRoute", (route: string) => {
 declare global {
 	namespace Cypress {
 		interface Chainable {
+			isVisible: () => boolean
+		}
+	}
+}
+
+// Access element whose parent is hidden
+Cypress.Commands.add(
+	"isVisible",
+	{
+		prevSubject: true,
+	},
+	(subject) => {
+		const isVisible = (elem: any) =>
+			!!(
+				elem.offsetWidth ||
+				elem.offsetHeight ||
+				elem.getClientRects().length
+			)
+		expect(isVisible(subject[0])).to.be.true
+	}
+)
+
+declare global {
+	namespace Cypress {
+		interface Chainable {
 			loginWithAppAndWorkspace(
 				appName: string,
 				workspaceName: string
