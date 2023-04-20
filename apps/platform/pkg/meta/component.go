@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/francoispqt/gojay"
+	yptr "github.com/zachelrath/yaml-jsonpointer"
 	"gopkg.in/yaml.v3"
 )
 
@@ -40,8 +41,11 @@ type Component struct {
 	Signals           yaml.Node `yaml:"signals" json:"uesio/studio.signals"`
 
 	// Internal only
-	slotPaths []string
+	slotPaths      []string
+	defaultVariant string
 }
+
+var no_default_variant = "--no-default--"
 
 type SlotDefinition struct {
 	Name string `yaml:"name"`
@@ -74,6 +78,29 @@ func (c *Component) GetSlotPaths() []string {
 		}
 	}
 	return c.slotPaths
+}
+
+// Returns the default variant for a Component by inspecting the default definition
+// and looking for the "uesio.variant" key
+func (c *Component) GetDefaultVariant() string {
+
+	// If we've already looked for a default variant, but there isn't one defined, return empty
+	if c.defaultVariant == no_default_variant {
+		return ""
+	}
+	if c.defaultVariant == "" {
+		if c.DefaultDefinition.Content != nil && len(c.DefaultDefinition.Content) >= 2 {
+			val, err := yptr.Find(&c.DefaultDefinition, "/uesio.variant")
+			if val != nil && err == nil && val.Value != "" {
+				// Check if it is a string
+				c.defaultVariant = val.Value
+				return c.defaultVariant
+			}
+		}
+		c.defaultVariant = no_default_variant
+		return ""
+	}
+	return c.defaultVariant
 }
 
 func (c *Component) GetBytes() ([]byte, error) {
