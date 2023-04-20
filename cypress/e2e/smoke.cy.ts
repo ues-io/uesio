@@ -20,7 +20,9 @@ describe("Uesio Sanity Smoke Tests", () => {
 			cy.get('[id*=":uesio/io.tile:collections"]').click()
 			cy.title().should("eq", "Collections")
 			cy.url().should("contain", `${workspaceBasePath}/collections`)
-			cy.getByIdFragment("button", "new-collection").should("be.visible")
+			cy.getByIdFragment("button", "new-collection")
+				.scrollIntoView()
+				.should("be.visible")
 			// Test the hotkey for creating a new collection
 			cy.hotkey("n")
 			// Fill out the form to create a new collection
