@@ -21,11 +21,7 @@ definition:
                           uesio.variant: uesio/web.calloutsub
                           text: Build, run and deploy web apps with ues.io.
     - uesio/io.grid:
-        uesio.variant: uesio/web.mainlayout
-        uesio.styleTokens:
-          root:
-            - bg-cover
-            - bg-[url($File{uesio/core.splash})]
+        uesio.variant: uesio/web.mainlayout_splash
         items:
           - uesio/io.grid:
               uesio.variant: uesio/web.callout_right
@@ -97,10 +93,7 @@ definition:
                                 uesio.variant: uesio/web.calloutsmallsub
                                 text: Develop components and business logic with React and Typescript.
     - uesio/io.grid:
-        uesio.variant: uesio/web.mainlayout
-        uesio.styleTokens:
-          root:
-            - bg-slate-900
+        uesio.variant: uesio/web.mainlayout_dark
         items:
           - uesio/io.grid:
               uesio.variant: uesio/web.callout_center
@@ -181,20 +174,13 @@ definition:
                                 uesio.variant: uesio/web.calloutsmallsub
                                 text: Create custom components and backend logic in your favorite IDE. Manage all configuration as code. Integrate with Git for source control.
     - uesio/io.grid:
-        uesio.variant: uesio/web.mainlayout
-        uesio.styleTokens:
-          root:
-            - bg-cover
-            - bg-[url($File{uesio/core.splash})]
+        uesio.variant: uesio/web.mainlayout_splash
         items:
           - uesio/io.grid:
               uesio.variant: uesio/web.callout_right
               items:
     - uesio/io.grid:
-        uesio.variant: uesio/web.mainlayout
-        uesio.styleTokens:
-          root:
-            - bg-slate-900
+        uesio.variant: uesio/web.mainlayout_dark
         items:
           - uesio/io.grid:
               uesio.variant: uesio/web.callout_double

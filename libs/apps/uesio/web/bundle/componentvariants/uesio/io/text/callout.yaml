@@ -3,7 +3,8 @@ label: Callout
 definition:
   uesio.styleTokens:
     root:
-      - text-5xl
+      - text-4xl
+      - md:text-5xl
       - text-slate-800
       - font-[Gosha]
   element: div

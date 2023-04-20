@@ -4,11 +4,15 @@ extends: uesio/io.icon
 definition:
   uesio.styleTokens:
     root:
-      - p-4
+      - p-3
+      - md:p-4
       - rounded-full
       - bg-white
-      - text-5xl
+      - text-3xl
+      - md:text-5xl
       - text-slate-400
       - shadow-sm
-      - "[font-variation-settings:'FILL'_1,'wght'_700]"
+      - "[font-variation-settings:'FILL'_1,'wght'_400]"
+      - "md:[font-variation-settings:'FILL'_1,'wght'_700]"
       - relative
+      - leading-none
