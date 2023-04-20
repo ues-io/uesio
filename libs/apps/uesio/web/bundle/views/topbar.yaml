@@ -7,46 +7,40 @@ definition:
     - uesio/io.grid:
         uesio.variant: uesio/web.mainlayout
         items:
-          - uesio/io.griditem:
+          - uesio/io.grid:
               uesio.styleTokens:
                 root:
-                  - grid
-              area: main
-              components:
-                - uesio/io.grid:
-                    uesio.styleTokens:
-                      root:
-                        - grid-flow-col
-                        - items-center
-                        - justify-stretch
-                    items:
-                      - uesio/io.griditem:
-                          components:
-                            - uesio/io.image:
-                                uesio.styleTokens:
-                                  root:
-                                    - m-4
-                                    - h-[55px]
-                                file: uesio/web.logo
-                                signals:
-                                  - signal: "route/NAVIGATE"
-                                    path: home
-                      - uesio/io.group:
+                  - grid-flow-col
+                  - items-center
+                  - justify-stretch
+              items:
+                - uesio/io.griditem:
+                    components:
+                      - uesio/io.image:
                           uesio.styleTokens:
                             root:
-                              - m-5
-                              - gap-4
-                              - justify-right
-                          components:
-                            - uesio/io.button:
-                                uesio.variant: uesio/web.borderless
-                                text: Stay updated
-                                signals:
-                                  - signal: route/NAVIGATE
-                                    path: earlyaccess
-                            - uesio/io.button:
-                                uesio.variant: uesio/web.calltoaction
-                                text: Login
-                                signals:
-                                  - signal: "route/REDIRECT"
-                                    path: "https://studio.$Site{domain}"
+                              - m-4
+                              - h-[55px]
+                          file: uesio/web.logo
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: home
+                - uesio/io.group:
+                    uesio.styleTokens:
+                      root:
+                        - m-5
+                        - gap-4
+                        - justify-right
+                    components:
+                      - uesio/io.button:
+                          uesio.variant: uesio/web.borderless
+                          text: Stay updated
+                          signals:
+                            - signal: route/NAVIGATE
+                              path: earlyaccess
+                      - uesio/io.button:
+                          uesio.variant: uesio/web.calltoaction
+                          text: Login
+                          signals:
+                            - signal: "route/REDIRECT"
+                              path: "https://studio.$Site{domain}"

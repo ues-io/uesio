@@ -1,0 +1,9 @@
+name: icongrid
+label: Icon Grid
+definition:
+  uesio.styleTokens:
+    root:
+      - grid-flow-col
+      - gap-8
+      - items-start
+      - relative
