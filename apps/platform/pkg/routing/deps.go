@@ -453,6 +453,16 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 	return deps, nil
 }
 
+func addComponentVariantDep(depMap *ViewDepMap, variantName string, compName string) error {
+	qualifiedKey, err := getFullyQualifiedVariantKey(variantName, compName)
+	if err != nil {
+		// TODO: We should probably return an error here at some point
+		return err
+	}
+	depMap.Variants[qualifiedKey] = true
+	return nil
+}
+
 func getComponentAreaDeps(node *yaml.Node, depMap *ViewDepMap, session *sess.Session) error {
 	if node == nil || node.Kind != yaml.SequenceNode {
 		return nil
@@ -471,17 +481,16 @@ func getComponentAreaDeps(node *yaml.Node, depMap *ViewDepMap, session *sess.Ses
 			// Load a pre-parsed slot traversal map
 			slotPaths := compDef.GetSlotPaths()
 
+			foundComponentVariant := false
+
 			for i, prop := range comp.Content[1].Content {
 				if prop.Kind == yaml.ScalarNode && prop.Value == "uesio.variant" {
 					if len(comp.Content[1].Content) > i {
 						valueNode := comp.Content[1].Content[i+1]
 						if valueNode.Kind == yaml.ScalarNode && valueNode.Value != "" {
-							qualifiedKey, err := getFullyQualifiedVariantKey(valueNode.Value, compName)
-							if err != nil {
-								// TODO: We should probably return an error here at some point
-								return err
+							if err = addComponentVariantDep(depMap, valueNode.Value, compName); err != nil {
+								foundComponentVariant = true
 							}
-							depMap.Variants[qualifiedKey] = true
 						}
 					}
 				}
@@ -490,6 +499,16 @@ func getComponentAreaDeps(node *yaml.Node, depMap *ViewDepMap, session *sess.Ses
 					return err
 				}
 			}
+			// If we did not find a specific component variant,
+			// see if this component type has a default variant,
+			// and if so, request it
+			if !foundComponentVariant {
+				defaultVariant := compDef.GetDefaultVariant()
+				if defaultVariant != "" {
+					addComponentVariantDep(depMap, defaultVariant, compName)
+				}
+			}
+
 			if len(slotPaths) > 0 {
 				for _, path := range slotPaths {
 					matchingNodes, err := yptr.FindAll(comp.Content[1], path)
