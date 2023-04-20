@@ -17,7 +17,7 @@ definition:
     selecteditemwrapper:
       - inline-grid
       - grid-flow-col
-      - auto-cols-max
+      - auto-cols-auto
       - gap-2
       - mr-4
 public: true
