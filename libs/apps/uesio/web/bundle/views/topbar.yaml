@@ -29,7 +29,8 @@ definition:
                     uesio.styleTokens:
                       root:
                         - m-5
-                        - gap-4
+                        - gap-2
+                        - md:gap-4
                         - justify-right
                     components:
                       - uesio/io.button:

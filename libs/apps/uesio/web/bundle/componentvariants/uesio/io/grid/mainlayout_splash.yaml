@@ -1,0 +1,9 @@
+name: mainlayout_splash
+label: Main Layout Splash
+extends: uesio/web.mainlayout
+definition:
+  uesio.styleTokens:
+    root:
+      - bg-[length:180%]
+      - md:bg-cover
+      - bg-[url($File{uesio/core.splash})]

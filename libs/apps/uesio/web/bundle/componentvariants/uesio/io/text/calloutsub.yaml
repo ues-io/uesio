@@ -4,7 +4,8 @@ definition:
   uesio.styleTokens:
     root:
       - text-slate-500
-      - text-lg
+      - text-sm
+      - md:text-lg
       - font-light
       - my-4
   element: div
