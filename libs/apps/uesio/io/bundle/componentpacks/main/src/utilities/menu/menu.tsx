@@ -10,7 +10,6 @@ import {
 	useInteractions,
 	useDismiss,
 	useClick,
-	shift,
 	size,
 	useRole,
 	FloatingFocusManager,
