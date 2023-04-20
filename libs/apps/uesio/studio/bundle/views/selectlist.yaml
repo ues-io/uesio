@@ -122,14 +122,8 @@ definition:
                             - uesio/io.grid:
                                 uesio.variant: uesio/io.two_columns
                                 items:
-                                  - uesio/builder.metadatafield:
-                                      uesio.context:
-                                        workspace:
-                                          name: $Param{workspacename}
-                                          app: $Param{app}
+                                  - uesio/io.field:
                                       fieldId: uesio/studio.blank_option_label
-                                      metadataType: "LABEL"
-                                      label: "Blank Option Label"
                                   - uesio/builder.metadatafield:
                                       uesio.context:
                                         workspace:
