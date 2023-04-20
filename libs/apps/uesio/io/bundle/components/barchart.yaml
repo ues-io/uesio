@@ -8,7 +8,7 @@ defaultDefinition:
   title: New Bar Chart
   labels:
     source: DATA
-    timeunit: WEEK
+    timeunit: MONTH
 discoverable: true
 properties:
   - name: title
@@ -48,20 +48,19 @@ properties:
           wireField: wire
   - name: labels
     type: STRUCT
-    label: Labels
-    display: false
+    label: " "
     properties:
       - name: source
         label: Labels Source
         type: SELECT
         blankOptionLabel: ""
         options:
-          - value: WIRE
-            label: Wire
-          - value: VALUE
-            label: Value
           - value: DATA
             label: Data
+          - value: WIRE
+            label: Wire
+          # - value: VALUE
+          #   label: Value
       # WIRE label fields
       - name: wire
         label: Labels Source Wire
@@ -74,37 +73,40 @@ properties:
       - name: categoryField
         label: Category Field
         type: FIELD
-        wireField: wire
+        wireField: labels->wire
         displayConditions:
           - type: fieldValue
             field: labels->source
             operator: EQUALS
             value: WIRE
       # VALUE label fields
-      - name: values
-        label: Label Values
-        type: LIST
-        items:
-          properties:
-            - name: key
-              label: Key
-              type: TEXT
-            - name: value
-              label: Value
-              type: TEXT
-        displayConditions:
-          - type: fieldValue
-            field: labels->source
-            operator: EQUALS
-            value: VALUE
+      # Not implemented at runtime, so doesn't work yet
+      # - name: values
+      #   label: Label Values
+      #   type: LIST
+      #   items:
+      #     addLabel: Add Label Value
+      #     properties:
+      #       - name: key
+      #         label: Key
+      #         type: TEXT
+      #       - name: value
+      #         label: Value
+      #         type: TEXT
+      #   displayConditions:
+      #     - type: fieldValue
+      #       field: labels->source
+      #       operator: EQUALS
+      #       value: VALUE
       # DATA label fields
       - name: timeunit
         label: Labels Time Unit
         type: SELECT
         blankOptionLabel: ""
         options:
-          - value: YEAR
-            label: Year
+          # Fails at runtime
+          # - value: YEAR
+          #   label: Year
           - value: MONTH
             label: Month
           - value: DAY
@@ -132,12 +134,7 @@ sections:
   - type: HOME
     properties:
       - title
-      - labels->source
-      - labels->wire
-      - labels->categoryField
-      - labels->values
-      - labels->timeunit
-      - labels->timeunitfill
+      - labels
   - type: CUSTOM
     id: series
     label: Series

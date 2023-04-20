@@ -1,6 +1,7 @@
 import { api, component, context, definition, wire } from "@uesio/ui"
-import { get, set as setDef, changeKey } from "../api/defapi"
+import { get as getDef, set as setDef, changeKey } from "../api/defapi"
 import set from "lodash/set"
+import get from "lodash/get"
 import {
 	getAvailableWireIds,
 	getFieldMetadata,
@@ -40,6 +41,9 @@ type Props = {
 	title?: string
 	sections?: PropertiesPanelSection[]
 }
+
+const PATH_ARROW = "->"
+const LODASH_PATH_SEPARATOR = "."
 
 const getWireFieldSelectOptions = (wireDef: wire.WireDefinition) => {
 	if (!wireDef || !wireDef.fields) return [] as SelectOption[]
@@ -81,7 +85,7 @@ const getWireFieldSelectOptions = (wireDef: wire.WireDefinition) => {
 		value: Record<string, wire.ViewOnlyField> | wire.WireFieldDefinitionMap
 	) =>
 		Object.entries(value)
-			.map(([key2, value2]) => [`${key}->${key2}`, value2])
+			.map(([key2, value2]) => [`${key}${PATH_ARROW}${key2}`, value2])
 			.flatMap(([key, value]) => getFields(key, value))
 
 	return Object.entries(wireDef.fields)
@@ -108,13 +112,29 @@ const getWireConditionSelectOptions = (wireDef: wire.WireDefinition) => {
 				if (subCondition?.id) {
 					conditions.push({
 						value: subCondition.id,
-						label: `${condition.id} -> ${subCondition.id}`,
+						label: `${condition.id} ${PATH_ARROW} ${subCondition.id}`,
 					})
 				}
 			}
 		}
 	}
 	return conditions
+}
+
+// lightweight wrapper around lodash get which uses simple object property retrieval
+// if there's no nested property syntax (i.e. "foo->bar" will use lodash get with "foo.bar")
+const getObjectProperty = (
+	object: wire.PlainWireRecord,
+	property: string
+): wire.PlainFieldValue => {
+	if (property.includes(PATH_ARROW)) {
+		return get(
+			object,
+			property.replace(PATH_ARROW, LODASH_PATH_SEPARATOR)
+		) as wire.PlainFieldValue
+	} else {
+		return object[property] as wire.PlainFieldValue
+	}
 }
 
 const getFormFieldsFromProperties = (
@@ -253,7 +273,7 @@ const getWireFieldFromPropertyDef = (
 		case "FIELDS":
 		case "FIELD":
 			wireId = def.wireField
-				? (currentValue[def.wireField] as string)
+				? (getObjectProperty(currentValue, def.wireField) as string)
 				: def.wireName
 			wireDefinition =
 				wireId === undefined
@@ -300,7 +320,7 @@ const getWireFieldFromPropertyDef = (
 			return getBaseWireFieldDef(def, "CHECKBOX")
 		case "CONDITION":
 			wireId = def.wireField
-				? (currentValue[def.wireField] as string)
+				? (getObjectProperty(currentValue, def.wireField) as string)
 				: def.wire
 			wireDefinition =
 				wireId === undefined
@@ -334,7 +354,7 @@ const getWireFieldsFromProperties = (
 	return wireFields
 }
 
-type SetterFunction = (a: wire.FieldValue) => void
+type SetterFunction = (value: wire.FieldValue, field?: string) => void
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const NoOp = function () {}
@@ -366,7 +386,7 @@ const parseProperties = (
 	properties?.forEach((property) => {
 		const { type, viewOnly } = property
 		const name = `${type === "COMPONENT_ID" ? "uesio.id" : property.name}`
-		const nameParts = name.split("->")
+		const nameParts = name.split(PATH_ARROW)
 		const isNestedProperty = nameParts.length > 1
 		const propPath = nameParts.reduce(
 			(newPath, part) => newPath.addLocal(part),
@@ -384,7 +404,7 @@ const parseProperties = (
 				const [firstPart, ...rest] = nameParts
 				const wrapperPath = path.addLocal(firstPart)
 				// e.g. get the current value of "foo", if any
-				let wrapperValue = get(context, wrapperPath)
+				let wrapperValue = getDef(context, wrapperPath)
 				// If wrapper value is not an object, it's corrupted
 				if (typeof wrapperValue !== "object") {
 					wrapperValue = {}
@@ -393,7 +413,11 @@ const parseProperties = (
 				}
 				// Populate the JSON representation with the new value first,
 				// e.g. foo = { "bar": "baz" } ==> { "bar": value }
-				set(wrapperValue as object, rest.join("."), value)
+				set(
+					wrapperValue as object,
+					rest.join(LODASH_PATH_SEPARATOR),
+					value
+				)
 				// Finally, invoke the def api with the wrapper value
 				setDef(context, path.addLocal(firstPart), wrapperValue)
 			} else {
@@ -409,11 +433,11 @@ const parseProperties = (
 			if (key) {
 				value = key
 			} else {
-				value = get(context, path) as string
+				value = getDef(context, path) as string
 			}
 			setter = (value: string) => changeKey(context, path, value)
 		} else if (type === "WIRE") {
-			value = get(context, propPath) as string
+			value = getDef(context, propPath) as string
 			// Special behavior --- if the wire property is set to default to context,
 			// and there is no value, then fetch the value from context
 			if (!value && property.defaultToContext) {
@@ -421,10 +445,19 @@ const parseProperties = (
 			}
 		} else if (type === "FIELD_METADATA") {
 			sourceField =
-				(initialValue[property.fieldProperty] as string) ||
-				(get(context, path.addLocal(property.fieldProperty)) as string)
-			sourceWire = (initialValue[property.wireProperty] ||
-				get(context, path.addLocal(property.wireProperty)) ||
+				(getObjectProperty(
+					initialValue,
+					property.fieldProperty
+				) as string) ||
+				(getDef(
+					context,
+					path.addLocal(property.fieldProperty)
+				) as string)
+			sourceWire = (getObjectProperty(
+				initialValue,
+				property.wireProperty
+			) ||
+				getDef(context, path.addLocal(property.wireProperty)) ||
 				getClosestWireInContext(context, path)) as string
 			if (sourceField && sourceWire) {
 				// Get the initial value of the corresponding field metadata property
@@ -447,20 +480,40 @@ const parseProperties = (
 			setter = NoOp
 		} else if (type === "MAP") {
 			setter = NoOp
-			value = get(context, propPath) as Record<
+			value = getDef(context, propPath) as Record<
 				string,
 				wire.PlainWireRecord
 			>
 		} else if (type === "STRUCT") {
-			setter = (value: Record<string, boolean>) =>
-				!viewOnly && setDef(context, propPath, value)
-			value = get(context, propPath) as Record<
+			setter = (value: wire.PlainFieldValue, field?: string) => {
+				if (viewOnly) return
+				// If a specific field was not provided,
+				// then we assume we were given the entire struct as our value
+				if (!field && typeof value === "object") {
+					setDef(context, propPath, value)
+				} else if (field) {
+					// If a specific field was provided, we need to first get our value
+					// and then update just a particular field on it
+					const currentValue = (getDef(context, propPath) ||
+						{}) as Record<string, wire.PlainWireRecord>
+					const newValue = {
+						...currentValue,
+					}
+					set(
+						newValue,
+						field.replace(PATH_ARROW, LODASH_PATH_SEPARATOR),
+						value
+					)
+					setDef(context, propPath, newValue)
+				}
+			}
+			value = getDef(context, propPath) as Record<
 				string,
 				wire.PlainWireRecord
 			>
 		} else if (type === "LIST") {
 			setter = NoOp
-			value = get(context, propPath) as wire.PlainWireRecord[]
+			value = getDef(context, propPath) as wire.PlainWireRecord[]
 		} else if (type === "FIELDS" || type === "WIRES") {
 			// Values are stored as a list in the YAML,
 			// but we are rendering these using the Multiselect control,
@@ -468,7 +521,7 @@ const parseProperties = (
 			// should be present in the YAML list
 			setter = (value: Record<string, boolean>) =>
 				!viewOnly && setDef(context, propPath, Object.keys(value))
-			value = get(context, propPath) as string[]
+			value = getDef(context, propPath) as string[]
 			if (value !== undefined) {
 				value = (value as string[]).reduce(
 					(acc, curr) => ({
@@ -479,11 +532,15 @@ const parseProperties = (
 				)
 			}
 		} else {
-			value = get(context, propPath) as string
+			value = getDef(context, propPath) as string
 		}
 		addToSettersMap(setters, name, setter)
 		if (value !== undefined) {
-			set(initialValue, name.replace("->", "."), value)
+			set(
+				initialValue,
+				name.replace(PATH_ARROW, LODASH_PATH_SEPARATOR),
+				value
+			)
 		}
 	})
 
@@ -517,7 +574,7 @@ function getClosestWireInContext(context: context.Context, path: FullPath) {
 					}
 				}
 				if (match && match.wireProperty) {
-					wireId = get(
+					wireId = getDef(
 						context,
 						newPath.addLocal(lastItem).addLocal(match.wireProperty)
 					) as string
@@ -565,7 +622,7 @@ export const getProperty = (
 	propertyId: string,
 	properties: ComponentProperty[]
 ): ComponentProperty | undefined => {
-	const nameParts = propertyId.split("->")
+	const nameParts = propertyId.split(PATH_ARROW)
 	const isNestedProperty = nameParts.length > 1
 	const propertyMatch = findProperty(nameParts, properties)
 	if (propertyMatch && isNestedProperty) {
@@ -712,11 +769,29 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 					}
 				)}
 				onUpdate={(field: string, value: wire.FieldValue) => {
-					const setter = setters.get(field)
+					let setter = setters.get(field)
+					let setterField: string | undefined
+					// If there is no setter, and the field is nested, then walk up the tree
+					// to see if there is a setter registered for the parent field
+					if (!setter) {
+						const fieldParts = field.split(PATH_ARROW)
+						if (fieldParts.length > 1) {
+							const popped = []
+							while (fieldParts.length) {
+								popped.push(fieldParts.pop())
+								const parentField = fieldParts.join(PATH_ARROW)
+								setter = setters.get(parentField)
+								if (setter) {
+									setterField = popped.join(PATH_ARROW)
+									break
+								}
+							}
+						}
+					}
 					if (setter) {
 						Array.isArray(setter)
-							? setter.forEach((s) => s(value))
-							: setter(value)
+							? setter.forEach((s) => s(value, setterField))
+							: setter(value, setterField)
 					}
 				}}
 				initialValue={initialValue}
