@@ -101,26 +101,38 @@ definition:
                                 components:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      text: "Edit"
+                                      text: $Label{uesio/io.edit}
+                                      uesio.display:
+                                        - type: fieldMode
+                                          mode: READ
                                       signals:
                                         - signal: component/uesio/io.list/TOGGLE_MODE
-                                          target: "fieldsDeck"
+                                          target: fieldsDeck
                                   - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: "Save"
+                                      uesio.variant: uesio/io.primary
+                                      text: $Label{uesio/io.save}
+                                      uesio.display:
+                                        - type: fieldMode
+                                          mode: EDIT
                                       signals:
                                         - signal: wire/SAVE
                                           wires:
-                                            - "fields"
+                                            - fields
+                                        - signal: component/uesio/io.list/TOGGLE_MODE
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      text: "Cancel"
+                                      text: $Label{uesio/io.cancel}
+                                      uesio.display:
+                                        - type: fieldMode
+                                          mode: EDIT
                                       signals:
                                         - signal: wire/CANCEL
-                                          wire: "fields"
+                                          wire: fields
+                                        - signal: component/uesio/io.list/TOGGLE_MODE
+                                          target: fieldsDeck
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      text: "Delete"
+                                      text: $Label{uesio/io.delete}
                                       signals:
                                         - signal: panel/TOGGLE
                                           panel: deleteField
@@ -239,7 +251,7 @@ definition:
                           uesio.variant: uesio/io.section
                           uesio.display:
                             - field: uesio/studio.type
-                              value: "MAP"
+                              value: MAP
                           uesio.styleTokens:
                             root:
                               - p-10
@@ -268,17 +280,17 @@ definition:
             uesio.variant: uesio/io.smallcontent
       actions:
         - uesio/io.button:
-            text: Delete
+            text: $Label{uesio/io.delete}
             uesio.variant: uesio/io.primary
             signals:
               - signal: wire/MARK_FOR_DELETE
               - signal: wire/SAVE
                 wires:
-                  - "fields"
-              - signal: "route/NAVIGATE"
-                path: "app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{namespace}/$Param{collectionname}"
+                  - fields
+              - signal: route/NAVIGATE
+                path: app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{namespace}/$Param{collectionname}
         - uesio/io.button:
-            text: Cancel
+            text: $Label{uesio/io.cancel}
             uesio.variant: uesio/io.secondary
             signals:
               - signal: panel/TOGGLE
