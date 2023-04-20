@@ -112,8 +112,6 @@ definition:
                                       uesio.variant: uesio/io.primary
                                       text: $Label{uesio/io.save}
                                       uesio.display:
-                                        - type: fieldMode
-                                          mode: EDIT
                                         - type: wireHasChanges
                                           wire: fields
                                       signals:
