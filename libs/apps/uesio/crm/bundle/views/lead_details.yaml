@@ -4,200 +4,186 @@ definition:
   components:
     - uesio/core.view:
         view: uesio/crm.topbar
-    - uesio/io.list:
-        uesio.id: leadList
-        wire: leads
-        mode: READ
+    - uesio/io.box:
+        uesio.variant: uesio/crm.content
         components:
-          - uesio/io.titlebar:
-              uesio.variant: uesio/io.main
-              title: ${uesio/crm.firstname} ${uesio/crm.lastname}
-              actions:
-                - uesio/io.group:
-                    components:
-                      - uesio/io.button:
-                          signals:
-                            - signal: wire/EMPTY
-                              wire: accs
-                            - signal: wire/EMPTY
-                              wire: contact
-                            - signal: panel/OPEN
-                              panel: convertlead
-                          text: Convert
-                          uesio.variant: uesio/io.secondary
-                          uesio.display:
-                            - type: wireHasNoChanges
-                              operator: EQUALS
-                              wire: leads
-                            - type: wireHasNoChanges
-                              operator: EQUALS
-                              wire: tasks
-                          icon: add_road
-                      - uesio/io.button:
-                          signals:
-                            - signal: wire/SAVE
-                              wires:
-                                - leads
-                                - tasks
-                                - events
-                          text: Save
-                          uesio.variant: uesio/io.primary
-                          icon: save
-                          uesio.display: []
-                      - uesio/io.button:
-                          signals:
-                            - signal: wire/CANCEL
-                              wire: leads
-                            - signal: wire/CANCEL
-                              wire: tasks
-                            - signal: wire/CANCEL
-                              wire: events
-                          text: Cancel
-                          uesio.variant: uesio/io.secondary
-                          icon: cancel
-                          uesio.display: []
-                    uesio.display: []
-          - uesio/io.box:
-              uesio.variant: ""
-              uesio.styles:
-                root:
-                  padding: 40px
+          - uesio/io.list:
+              uesio.id: leadList
+              wire: leads
+              mode: READ
               components:
-                - uesio/io.grid:
-                    uesio.styleTokens:
-                      root:
-                        - grid-cols-4
-                        - grid-rows-1
-                        - gap-x-4
-                    items:
-                      - uesio/io.list:
-                          mode: EDIT
-                          wire: leads
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.main
+                    title: ${uesio/crm.firstname} ${uesio/crm.lastname}
+                    actions:
+                      - uesio/io.group:
                           components:
-                            - uesio/io.field:
-                                fieldId: uesio/crm.account
-                                displayAs: TEXT
-                            - uesio/io.field:
-                                fieldId: uesio/crm.title
-                            - uesio/io.field:
-                                fieldId: uesio/crm.firstname
-                            - uesio/io.field:
-                                fieldId: uesio/crm.lastname
-                            - uesio/io.field:
-                                fieldId: uesio/crm.email
-                            - uesio/io.field:
-                                fieldId: uesio/crm.description
-                            - uesio/io.field:
-                                fieldId: uesio/crm.annual_revenue
-                            - uesio/io.field:
-                                fieldId: uesio/crm.industry
-                            - uesio/io.field:
-                                fieldId: uesio/crm.mailing_street
-                            - uesio/io.field:
-                                fieldId: uesio/crm.mailing_city
-                            - uesio/io.field:
-                                fieldId: uesio/crm.mailing_country
-                            - uesio/io.field:
-                                fieldId: uesio/crm.mailing_state_province
-                            - uesio/io.field:
-                                fieldId: uesio/crm.status
-                - uesio/io.grid:
-                    uesio.styleTokens:
-                      root:
-                        - grid-cols-5
-                        - grid-rows-1
-                        - gap-x-4
-                    items:
-                      - uesio/io.field:
-                          fieldId: uesio/core.createdat
-                      - uesio/io.field:
-                          fieldId: uesio/core.createdby
-                      - uesio/io.field:
-                          fieldId: uesio/core.updatedat
-                      - uesio/io.field:
-                          fieldId: uesio/core.updatedby
-                      - uesio/io.field:
-                          fieldId: uesio/core.owner
-                    uesio.styles:
-                      root:
-                        border: 1px solid
-                        padding: 5px
-                        color: lightgrey
-                - uesio/io.box:
-                    components:
-                      - uesio/io.tabs:
-                          tabs:
-                            - label: TASKS
-                              id: "0"
-                              components:
-                                - uesio/io.group:
-                                    columnGap: 10px
-                                    components:
-                                      - uesio/io.button:
-                                          text: NEW TASK
-                                          icon: bolt
-                                          uesio.variant: uesio/io.primary
-                                          signals:
-                                            - signal: wire/CREATE_RECORD
-                                              wire: tasks
-                                    alignItems: end
-                                    justifyContent: end
-                                    uesio.styles:
-                                      root:
-                                        padding: 10px
-                                - uesio/io.text:
-                                    text: TASKS
-                                    element: div
-                                    align: left
-                                    uesio.variant: uesio/io.smalltitle
-                                - uesio/io.table:
+                            - uesio/io.button:
+                                signals:
+                                  - signal: wire/EMPTY
+                                    wire: accs
+                                  - signal: wire/EMPTY
+                                    wire: contact
+                                  - signal: panel/OPEN
+                                    panel: convertlead
+                                text: Convert
+                                uesio.variant: uesio/io.secondary
+                                uesio.display:
+                                  - type: wireHasNoChanges
+                                    operator: EQUALS
+                                    wire: leads
+                                  - type: wireHasNoChanges
+                                    operator: EQUALS
                                     wire: tasks
-                                    columns:
-                                      - field: uesio/crm.name
-                                      - field: uesio/crm.subject
-                                      - field: uesio/crm.task_type
-                                      - field: uesio/crm.due_date_time
-                                    mode: EDIT
-                            - label: EVENTS
-                              id: "1"
-                              components:
-                                - uesio/io.group:
-                                    columnGap: 10px
-                                    components:
-                                      - uesio/io.button:
-                                          text: New Event
-                                          icon: bolt
-                                          uesio.variant: uesio/io.secondary
-                                          signals:
-                                            - signal: wire/CREATE_RECORD
-                                              wire: events
-                                    justifyContent: end
-                                    uesio.styles:
-                                      root:
-                                        padding: 20px
-                                - uesio/io.text:
-                                    text: EVENTS
-                                    element: div
-                                    align: left
-                                    uesio.variant: uesio/io.smalltitle
-                                - uesio/io.table:
+                                icon: add_road
+                            - uesio/io.button:
+                                signals:
+                                  - signal: wire/SAVE
+                                    wires:
+                                      - leads
+                                      - tasks
+                                      - events
+                                text: Save
+                                uesio.variant: uesio/io.primary
+                                icon: save
+                                uesio.display: []
+                            - uesio/io.button:
+                                signals:
+                                  - signal: wire/CANCEL
+                                    wire: leads
+                                  - signal: wire/CANCEL
+                                    wire: tasks
+                                  - signal: wire/CANCEL
                                     wire: events
-                                    mode: EDIT
-                                    pagesize: 10
-                                    columns:
-                                      - field: uesio/crm.start_date_time
-                                      - field: uesio/crm.end_date_time
-                                      - field: uesio/crm.name
-                                      - field: uesio/crm.event_type
-                                      - field: uesio/crm.subject
-                                      - field: uesio/crm.venue
-                                      - field: uesio/crm.remind_at
-                                      - field: uesio/crm.send_notification_email
-                                        displayAs: RADIO
-                          uesio.variant: uesio/io.default
-                    uesio.styles:
-                      root:
-                        paddingTop: 40px
+                                text: Cancel
+                                uesio.variant: uesio/io.secondary
+                                icon: cancel
+                                uesio.display: []
+                          uesio.display: []
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.grid:
+                          uesio.styleTokens:
+                            root:
+                              - grid-cols-4
+                              - grid-rows-1
+                              - gap-x-4
+                          items:
+                            - uesio/io.list:
+                                mode: EDIT
+                                wire: leads
+                                components:
+                                  - uesio/io.field:
+                                      fieldId: uesio/crm.account
+                                      displayAs: TEXT
+                                  - uesio/io.field:
+                                      fieldId: uesio/crm.title
+                                  - uesio/io.field:
+                                      fieldId: uesio/crm.firstname
+                                  - uesio/io.field:
+                                      fieldId: uesio/crm.lastname
+                                  - uesio/io.field:
+                                      fieldId: uesio/crm.email
+                                  - uesio/io.field:
+                                      fieldId: uesio/crm.description
+                                  - uesio/io.field:
+                                      fieldId: uesio/crm.annual_revenue
+                                  - uesio/io.field:
+                                      fieldId: uesio/crm.industry
+                                  - uesio/io.field:
+                                      fieldId: uesio/crm.mailing_street
+                                  - uesio/io.field:
+                                      fieldId: uesio/crm.mailing_city
+                                  - uesio/io.field:
+                                      fieldId: uesio/crm.mailing_country
+                                  - uesio/io.field:
+                                      fieldId: uesio/crm.mailing_state_province
+                                  - uesio/io.field:
+                                      fieldId: uesio/crm.status
+                      - uesio/io.grid:
+                          uesio.styleTokens:
+                            root:
+                              - grid-cols-5
+                              - grid-rows-1
+                              - gap-x-4
+                              - p-8
+                              - bg-slate-50
+                              - my-4
+                          items:
+                            - uesio/io.field:
+                                fieldId: uesio/core.createdat
+                            - uesio/io.field:
+                                fieldId: uesio/core.createdby
+                            - uesio/io.field:
+                                fieldId: uesio/core.updatedat
+                            - uesio/io.field:
+                                fieldId: uesio/core.updatedby
+                            - uesio/io.field:
+                                fieldId: uesio/core.owner
+                      - uesio/io.box:
+                          components:
+                            - uesio/io.tabs:
+                                tabs:
+                                  - label: TASKS
+                                    id: "0"
+                                    components:
+                                      - uesio/io.group:
+                                          columnGap: 10px
+                                          components:
+                                            - uesio/io.button:
+                                                text: NEW TASK
+                                                icon: bolt
+                                                uesio.variant: uesio/io.primary
+                                                signals:
+                                                  - signal: wire/CREATE_RECORD
+                                                    wire: tasks
+                                      - uesio/io.text:
+                                          text: TASKS
+                                          element: div
+                                          align: left
+                                          uesio.variant: uesio/io.smalltitle
+                                      - uesio/io.table:
+                                          wire: tasks
+                                          columns:
+                                            - field: uesio/crm.name
+                                            - field: uesio/crm.subject
+                                            - field: uesio/crm.task_type
+                                            - field: uesio/crm.due_date_time
+                                          mode: EDIT
+                                  - label: EVENTS
+                                    id: "1"
+                                    components:
+                                      - uesio/io.group:
+                                          components:
+                                            - uesio/io.button:
+                                                text: New Event
+                                                icon: bolt
+                                                uesio.variant: uesio/io.secondary
+                                                signals:
+                                                  - signal: wire/CREATE_RECORD
+                                                    wire: events
+                                          justifyContent: end
+                                      - uesio/io.text:
+                                          text: EVENTS
+                                          element: div
+                                          align: left
+                                          uesio.variant: uesio/io.smalltitle
+                                      - uesio/io.table:
+                                          wire: events
+                                          mode: EDIT
+                                          pagesize: 10
+                                          columns:
+                                            - field: uesio/crm.start_date_time
+                                            - field: uesio/crm.end_date_time
+                                            - field: uesio/crm.name
+                                            - field: uesio/crm.event_type
+                                            - field: uesio/crm.subject
+                                            - field: uesio/crm.venue
+                                            - field: uesio/crm.remind_at
+                                            - field: uesio/crm.send_notification_email
+                                              displayAs: RADIO
+                                uesio.variant: uesio/io.default
   wires:
     leads:
       collection: uesio/crm.lead
