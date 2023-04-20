@@ -340,6 +340,9 @@ const getWireFieldFromPropertyDef = (
 	}
 }
 
+const getPropertyId = (property: ComponentProperty) =>
+	`${property.type === "COMPONENT_ID" ? "uesio.id" : property.name}`
+
 const getWireFieldsFromProperties = (
 	properties: ComponentProperty[] | undefined,
 	context: context.Context,
@@ -348,8 +351,11 @@ const getWireFieldsFromProperties = (
 ) => {
 	if (!properties || !properties.length) return wireFields
 	properties.forEach((def) => {
-		wireFields[`${def.type === "COMPONENT_ID" ? "uesio.id" : def.name}`] =
-			getWireFieldFromPropertyDef(def, context, initialValue)
+		wireFields[getPropertyId(def)] = getWireFieldFromPropertyDef(
+			def,
+			context,
+			initialValue
+		)
 	})
 	return wireFields
 }
@@ -385,7 +391,7 @@ const parseProperties = (
 ) => {
 	properties?.forEach((property) => {
 		const { type, viewOnly } = property
-		const name = `${type === "COMPONENT_ID" ? "uesio.id" : property.name}`
+		const name = getPropertyId(property)
 		const nameParts = name.split(PATH_ARROW)
 		const isNestedProperty = nameParts.length > 1
 		const propPath = nameParts.reduce(
