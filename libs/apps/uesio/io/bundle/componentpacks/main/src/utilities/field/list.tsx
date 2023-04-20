@@ -23,7 +23,7 @@ interface ListFieldUtilityProps extends definition.UtilityProps {
 	autoAdd?: boolean
 	noAdd?: boolean
 	noDelete?: boolean
-	fieldVariant?: metadata.MetadataKey
+	subFieldVariant?: metadata.MetadataKey
 	labelVariant?: metadata.MetadataKey
 	options?: ListFieldOptions
 	path: string
@@ -38,7 +38,7 @@ const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 		autoAdd,
 		noAdd,
 		noDelete,
-		fieldVariant,
+		subFieldVariant,
 		labelVariant,
 		path,
 	} = props
@@ -161,7 +161,7 @@ const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 											value={subfieldValue}
 											mode={mode}
 											context={context}
-											variant={fieldVariant}
+											variant={subFieldVariant}
 											setValue={(
 												newFieldValue: wire.FieldValue
 											) =>

@@ -52,7 +52,7 @@ interface FieldProps extends definition.UtilityProps {
 	longtext?: LongTextFieldOptions
 	user?: UserFieldOptions
 	// Special variants for map/list/struct
-	fieldVariant?: metadata.MetadataKey
+	subFieldVariant?: metadata.MetadataKey
 	labelVariant?: metadata.MetadataKey
 	labelPosition?: LabelPosition
 }
@@ -78,7 +78,7 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 		record,
 		value,
 		variant,
-		fieldVariant,
+		subFieldVariant,
 		labelVariant,
 		labelPosition,
 		classes,
@@ -101,7 +101,7 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 	}
 
 	const complexFieldOptions = {
-		fieldVariant,
+		subFieldVariant,
 		labelVariant,
 	}
 

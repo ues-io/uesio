@@ -18,7 +18,7 @@ interface StructFieldUtilityProps extends definition.UtilityProps {
 	setValue: (value: wire.FieldValue) => void
 	subFields?: collection.FieldMetadataMap
 	subType?: string
-	fieldVariant?: metadata.MetadataKey
+	subFieldVariant?: metadata.MetadataKey
 	labelVariant?: metadata.MetadataKey
 	labelPosition?: LabelPosition
 	path: string
@@ -31,7 +31,7 @@ const StructField: FunctionComponent<StructFieldUtilityProps> = (props) => {
 		subFields,
 		mode,
 		context,
-		fieldVariant,
+		subFieldVariant,
 		labelVariant,
 		labelPosition,
 		path,
@@ -87,7 +87,7 @@ const StructField: FunctionComponent<StructFieldUtilityProps> = (props) => {
 								value={subfieldValue}
 								mode={mode}
 								context={context}
-								variant={fieldVariant}
+								variant={subFieldVariant}
 								setValue={(
 									newFieldValue: wire.PlainFieldValue
 								) =>
