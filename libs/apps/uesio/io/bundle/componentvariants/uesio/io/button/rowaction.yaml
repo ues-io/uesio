@@ -4,7 +4,8 @@ extends: uesio/io.default
 definition:
   uesio.styleTokens:
     root:
-      - text-primary
+      - text-slate-600
+      - hover:text-primary
       - py-2
       - px-4
       - uppercase
