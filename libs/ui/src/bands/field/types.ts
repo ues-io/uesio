@@ -28,6 +28,9 @@ type SelectOption = {
 	value: string
 	languageLabel?: string
 	disabled?: boolean
+	// Title is used for acccessibility, it renders as a tooltip
+	// if you hover over a SelectOption for long enough
+	title?: string
 }
 
 type NumberMetadata = {

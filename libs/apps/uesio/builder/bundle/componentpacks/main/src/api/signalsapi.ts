@@ -10,20 +10,28 @@ import wireSignals from "../signals/wire"
 import { ComponentProperty } from "../properties/componentproperty"
 import { getComponentDef } from "./stateapi"
 
-const signalDefinitionRegistry: Record<string, SignalDescriptor> = {
-	...aiSignals,
-	...collectionSignals,
-	...botSignals,
-	...routeSignals,
-	...userSignals,
-	...wireSignals,
-	...panelSignals,
-	...notificationSignals,
-}
+const signalBandDefinitions: SignalBandDefinition[] = [
+	// Ordered by perceived utility, not alphabetically. Up for debate as to which is better
+	wireSignals,
+	// TODO: Should we hide Bot signals if users don't have Bot feature flag activated?
+	notificationSignals,
+	panelSignals,
+	routeSignals,
+	botSignals,
+	collectionSignals,
+	userSignals,
+	aiSignals,
+]
 
 type SignalOutput = {
 	name: string
 	type: "TEXT" | "RECORD" | "MAP" | "LIST"
+}
+
+type SignalBandDefinition = {
+	band: string
+	label: string
+	signals: Record<string, SignalDescriptor>
 }
 
 type SignalDescriptor = {
@@ -58,14 +66,33 @@ type SignalDefinition = {
 	}
 }
 
-const allSignals = Object.entries(signalDefinitionRegistry).map(
-	([signal, signalDescriptor]) => ({
-		value: signal,
-		label: signalDescriptor.label || signal,
-		title: signalDescriptor.description || signal,
+const signalDescriptorsIndex = {} as Record<string, SignalDescriptor>
+
+const allSignalSelectOptions = signalBandDefinitions
+	.map(({ band, label, signals }) => {
+		const bandSignals = Object.entries(signals).map(
+			([signal, signalDescriptor]) => {
+				const { label, description } = signalDescriptor
+				// Add an index while we're here
+				signalDescriptorsIndex[signal] = signalDescriptor
+				// Construct a select option
+				return {
+					value: signal,
+					label: label || signal,
+					title: description || signal,
+				} as wire.SelectOption
+			}
+		) as wire.SelectOption[]
+		bandSignals.sort((a, b) => a.label.localeCompare(b.label))
+		bandSignals.unshift({
+			value: band,
+			label,
+			disabled: true,
+			title: label || band,
+		} as wire.SelectOption)
+		return bandSignals
 	})
-)
-allSignals.sort((a, b) => a.label.localeCompare(b.label))
+	.flat()
 
 type SelectOptionFilter = (option: wire.SelectOption) => boolean
 
@@ -78,7 +105,9 @@ const getDefaultSignalProperties = (
 			label: "Signal",
 			type: "SELECT",
 			options: collection.addBlankSelectOption(
-				optionsFilter ? allSignals.filter(optionsFilter) : allSignals
+				optionsFilter
+					? allSignalSelectOptions.filter(optionsFilter)
+					: allSignalSelectOptions
 			),
 		},
 	] as ComponentProperty[]
@@ -96,14 +125,15 @@ const getSignalProperties = (
 	context: context.Context
 ): ComponentProperty[] => {
 	const signalDefinition = signalPlainWireRecord as SignalDefinition
-	let descriptor = signalDefinitionRegistry[signalDefinition.signal]
+	const signalName = signalDefinition?.signal
+	let descriptor = signalDescriptorsIndex[signalName]
 	// Load Component-specific signal definitions dynamically from Component definition
 	if (
 		!descriptor &&
-		signalDefinition.signal &&
-		signalDefinition.signal.startsWith(COMPONENT_SIGNAL_PREFIX)
+		signalName &&
+		signalName.startsWith(COMPONENT_SIGNAL_PREFIX)
 	) {
-		const cmpSignalParts = signalDefinition.signal
+		const cmpSignalParts = signalName
 			.substring(COMPONENT_SIGNAL_PREFIX.length)
 			.split("/")
 		if (cmpSignalParts.length === 3) {
@@ -141,6 +171,7 @@ const getSignalProperties = (
 export { getSignalProperties }
 
 export type {
+	SignalBandDefinition,
 	SignalDefinition,
 	SignalDescriptor,
 	SignalOutput,
