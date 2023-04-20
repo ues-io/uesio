@@ -4,5 +4,5 @@ definition:
   uesio.styleTokens:
     root:
       - grid-cols-1
-      - md:grid-cols-[2fr_1fr]
+      - md:grid-cols-[440px]
       - p-20

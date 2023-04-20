@@ -11,11 +11,14 @@ variants:
   - uesio/io.metric:uesio/io.default
 defaultDefinition:
   title: New metric group
+  labels:
+    source: DATA
+    timeunit: MONTH
 discoverable: true
 properties:
   - name: title
     type: TEXT
-    label: Title
+    label: Metric Group Title
   - name: series
     type: LIST
     items:
@@ -49,67 +52,79 @@ properties:
           type: FIELD
           wireField: wire
   - name: labels
-    type: MAP
+    type: STRUCT
+    label: " "
     properties:
       - name: source
-        label: Source
+        label: Labels Source
         type: SELECT
+        blankOptionLabel: ""
         options:
-          - value: WIRE
-            label: Wire
-          - value: VALUE
-            label: Value
           - value: DATA
             label: Data
+          - value: WIRE
+            label: Wire
+          # - value: VALUE
+          #   label: Value
       # WIRE label fields
       - name: wire
-        label: Wire
+        label: Labels Source Wire
         type: WIRE
         displayConditions:
           - type: fieldValue
-            field: source
+            field: labels->source
             operator: EQUALS
             value: WIRE
       - name: categoryField
         label: Category Field
         type: FIELD
-        wireField: wire
+        wireField: labels->wire
         displayConditions:
           - type: fieldValue
-            field: source
+            field: labels->source
             operator: EQUALS
             value: WIRE
       # VALUE label fields
-      - name: values
-        label: Values
-        type: LIST
-        items:
-          properties:
-            - name: key
-              label: Key
-              type: TEXT
-            - name: value
-              label: Value
-              type: TEXT
+      # Not implemented at runtime, so doesn't work yet
+      # - name: values
+      #   label: Label Values
+      #   type: LIST
+      #   items:
+      #     addLabel: Add Label Value
+      #     properties:
+      #       - name: key
+      #         label: Key
+      #         type: TEXT
+      #       - name: value
+      #         label: Value
+      #         type: TEXT
+      #   displayConditions:
+      #     - type: fieldValue
+      #       field: labels->source
+      #       operator: EQUALS
+      #       value: VALUE
       # DATA label fields
       - name: timeunit
-        label: Time Unit
+        label: Labels Time Unit
         type: SELECT
+        blankOptionLabel: ""
         options:
-          - value: YEAR
-            label: Year
+          # Fails at runtime
+          # - value: YEAR
+          #   label: Year
           - value: MONTH
             label: Month
           - value: DAY
             label: Day
         displayConditions:
           - type: fieldValue
-            field: source
+            field: labels->source
             operator: EQUALS
             value: DATA
       - name: timeunitfill
         label: Time Unit Fill
         type: SELECT
+        blankOptionLabel: ""
         options:
           - value: MONTH
             label: Month
@@ -117,20 +132,18 @@ properties:
             label: Week
         displayConditions:
           - type: fieldValue
-            field: source
+            field: labels->source
             operator: EQUALS
             value: DATA
 sections:
   - type: HOME
     properties:
       - title
-      # TODO: Improve Labels
-      # - labels
+      - labels
   - type: CUSTOM
     id: series
     label: Series
     properties:
       - series
-  - type: SIGNALS
   - type: STYLES
   - type: DISPLAY

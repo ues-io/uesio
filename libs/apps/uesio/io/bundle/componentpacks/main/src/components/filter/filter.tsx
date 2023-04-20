@@ -97,13 +97,14 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 			fieldMetadata
 		) as wire.ValueConditionState
 	}
-	const isGroup = isGroupCondition(condition)
-	const label =
-		definition.label || (isGroup && condition)
-			? `Toggle group: ${condition?.id}`
-			: fieldMetadata?.getLabel()
 
 	if (!condition) return null
+
+	const isGroup = isGroupCondition(condition)
+
+	let label = definition.label
+	if (!label && isGroup) label = `Toggle group: ${condition?.id}`
+	if (!label) label = fieldMetadata?.getLabel()
 
 	const common = {
 		path,

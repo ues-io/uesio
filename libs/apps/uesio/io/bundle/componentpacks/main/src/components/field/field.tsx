@@ -35,6 +35,8 @@ type FieldDefinition = {
 	placeholder?: string
 	readonly?: boolean
 	wrapperVariant: metadata.MetadataKey
+	subFieldVariant?: metadata.MetadataKey
+	labelVariant?: metadata.MetadataKey
 } & definition.BaseDefinition
 
 type LabelPosition = "none" | "top" | "left"
@@ -82,6 +84,11 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		number,
 		longtext,
 		readonly,
+		wrapperVariant,
+		// Special variants used for Map/List/Struct fields
+		subFieldVariant,
+		labelVariant,
+		labelPosition,
 	} = definition
 
 	const componentId = api.component.getComponentIdFromProps(props)
@@ -131,6 +138,10 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		variant: definition["uesio.variant"],
 		placeholder,
 		displayAs,
+		subFieldVariant,
+		labelVariant,
+		// Some components have sub-fields that need to know about label position
+		labelPosition,
 	}
 	const typeSpecific = {
 		reference,
@@ -144,9 +155,9 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 	return (
 		<FieldWrapper
 			label={label}
-			labelPosition={definition.labelPosition}
+			labelPosition={labelPosition}
 			context={context}
-			variant={definition.wrapperVariant}
+			variant={wrapperVariant}
 			errors={errors}
 		>
 			<FieldUtility {...common} {...typeSpecific} />

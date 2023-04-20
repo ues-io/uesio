@@ -145,6 +145,22 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 	case "IS_NOT_BLANK":
 		builder.addQueryPart(fmt.Sprintf("%s IS NOT NULL", fieldName))
 
+	case "BETWEEN":
+
+		startOperator := ">"
+		endOperator := "<"
+
+		if condition.InclusiveStart {
+			startOperator = ">="
+		}
+
+		if condition.InclusiveEnd {
+			endOperator = "<="
+		}
+
+		builder.addQueryPart(fmt.Sprintf("%s %s %s", fieldName, startOperator, builder.addValue(condition.Start)))
+		builder.addQueryPart(fmt.Sprintf("%s %s %s", fieldName, endOperator, builder.addValue(condition.End)))
+
 	default:
 		if fieldMetadata.Type == "MULTISELECT" {
 			// Same as HAS_ANY

@@ -1,0 +1,9 @@
+name: callout_center
+label: Callout Center
+extends: uesio/web.callout
+definition:
+  uesio.styleTokens:
+    root:
+      - py-28
+      - justify-center
+      - md:grid-cols-[640px]

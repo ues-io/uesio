@@ -9,8 +9,7 @@ definition:
     - uesio/io.grid:
         uesio.variant: uesio/web.mainlayout
         items:
-          - uesio/io.griditem:
-              area: main
+          - uesio/io.box:
               uesio.styleTokens:
                 root:
                   - p-20
