@@ -17,6 +17,7 @@ definition:
                           signals:
                             - signal: wire/CREATE_RECORD
                               wire: accounts
+                              prepend: true
                           text: Create
                           uesio.variant: uesio/io.secondary
                       - uesio/io.button:

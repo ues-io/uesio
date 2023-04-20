@@ -19,6 +19,7 @@ definition:
                               wire: new_lead
                             - signal: wire/CREATE_RECORD
                               wire: new_lead
+                              prepend: true
                             - signal: wire/UPDATE_RECORD
                               wire: new_lead
                               field: uesio/crm.status

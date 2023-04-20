@@ -113,6 +113,7 @@ definition:
                         panel: newContact
                       - signal: wire/CREATE_RECORD
                         wire: newcontact
+                        prepend: true
                     icon: create
           - uesio/io.deck:
               wire: contacts
@@ -349,6 +350,7 @@ definition:
                             wire: newcontact
                           - signal: wire/CREATE_RECORD
                             wire: newcontact
+                            prepend: true
                         icon: save
                     - uesio/io.button:
                         text: Cancel
