@@ -216,15 +216,15 @@ definition:
             text: Are you sure you want to delete the ${deleteDomain:type} ${deleteDomain:name}?
       actions:
         - uesio/io.button:
-            uesio.variant: uesio/io.primary
-            text: return
+            uesio.variant: uesio/io.secondary
+            text: Cancel
             signals:
               - signal: panel/TOGGLE
                 panel: confirmDelete
               - signal: wire/CANCEL
                 wire: domains
         - uesio/io.button:
-            uesio.variant: uesio/io.secondary
+            uesio.variant: uesio/io.primary
             text: Confirm
             signals:
               - signal: panel/TOGGLE
