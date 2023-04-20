@@ -89,19 +89,19 @@ definition:
                                 components:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.primary
-                                      text: "Save"
+                                      text: $Label{uesio/io.save}
                                       signals:
                                         - signal: component/uesio/io.fileattachment/UPLOAD_FILE
                                           target: botcontent
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      text: "Cancel"
+                                      text: $Label{uesio/io.cancel}
                                       signals:
                                         - signal: component/uesio/io.fileattachment/CANCEL_FILE
                                           target: botcontent
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      text: "Delete"
+                                      text: $Label{uesio/io.delete}
                                       signals:
                                         - signal: panel/TOGGLE
                                           panel: deleteBot
@@ -154,7 +154,7 @@ definition:
             text: Are you sure you want to delete this bot?
       actions:
         - uesio/io.button:
-            text: Delete
+            text: $Label{uesio/io.delete}
             uesio.variant: uesio/io.primary
             signals:
               - signal: wire/MARK_FOR_DELETE
@@ -164,7 +164,7 @@ definition:
               - signal: "route/NAVIGATE"
                 path: "app/$Param{app}/workspace/$Param{workspacename}/bots"
         - uesio/io.button:
-            text: Cancel
+            text: $Label{uesio/io.cancel}
             uesio.variant: uesio/io.secondary
             signals:
               - signal: panel/TOGGLE
