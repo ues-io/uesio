@@ -15,15 +15,17 @@ type valueFunc func(data interface{}, mapping *meta.FieldMapping, index int) str
 type loaderFunc func(change adapt.Item, data interface{}) error
 
 const INVALID_TIMESTAMP_ERROR = "Invalid format for TIMESTAMP field '%s': value '%v' is not valid ISO-8601 UTC datetime or Unix timestamp"
+const INVALID_NUMBER_ERROR = "Invalid format for NUMBER field '%s': value '%v' is not a valid number"
 
 func getNumberLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
 	return func(change adapt.Item, data interface{}) error {
-		number, err := strconv.ParseFloat(getValue(data, mapping, index), 64)
-		if err != nil {
-			return errors.New("Invalid number format: " + fieldMetadata.GetFullName() + " : " + err.Error())
+		raw_val := getValue(data, mapping, index)
+		float_val, err := strconv.ParseFloat(raw_val, 64)
+		if err == nil {
+			change[fieldMetadata.GetFullName()] = float_val
+			return nil
 		}
-		change[fieldMetadata.GetFullName()] = number
-		return nil
+		return errors.New(fmt.Sprintf(INVALID_NUMBER_ERROR, fieldMetadata.GetFullName(), raw_val))
 	}
 }
 
