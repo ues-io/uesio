@@ -1,22 +1,26 @@
-import { SignalDescriptor } from "../api/signalsapi"
+import { SignalBandDefinition, SignalDescriptor } from "../api/signalsapi"
 
 // The key for the entire band
-const COLLECTION_BAND = "collection"
+const BAND = "collection"
 
 // Metadata for all of the signals in the band
-const signals: Record<string, SignalDescriptor> = {
-	[`${COLLECTION_BAND}/CREATE_JOB`]: {
-		label: "Create Export Job",
-		description: "Create Export Job for a collection",
-		properties: () => [
-			{
-				type: "METADATA",
-				name: "collection",
-				label: "Collection",
-				metadataType: "COLLECTION",
-			},
-		],
-	},
+const signals: SignalBandDefinition = {
+	band: BAND,
+	label: "Collections",
+	signals: {
+		[`${BAND}/CREATE_JOB`]: {
+			label: "Create Export Job",
+			description: "Create Export Job for a collection",
+			properties: () => [
+				{
+					type: "METADATA",
+					name: "collection",
+					label: "Collection",
+					metadataType: "COLLECTION",
+				},
+			],
+		},
+	} as Record<string, SignalDescriptor>,
 }
 
 export default signals

@@ -21,13 +21,14 @@ export default async (
 		})
 	)
 
-	wire.handleEvent("onChange", context, path[0])
+	const fullPath = path.join("->")
+	wire.handleEvent("onChange", context, fullPath)
 
 	// Publish events
 	publish("wire.record.updated", {
 		wireId: wire.getFullId(),
 		recordId: record.id,
-		field: path[0],
+		field: fullPath,
 		value,
 		record,
 	})

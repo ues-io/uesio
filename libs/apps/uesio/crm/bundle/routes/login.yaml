@@ -1,6 +1,6 @@
 name: login
 path: login
 view: uesio/core.login
-theme: uesio/crm.default
+theme: uesio/core.default
 title: Uesio - Login
 tags: []

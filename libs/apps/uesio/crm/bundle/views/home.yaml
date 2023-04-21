@@ -18,7 +18,6 @@ definition:
                 - uesio/io.deck:
                     id: homeAccounts
                     wire: accounts
-                    uesio.variant: uesio/io.section
                     components:
                       - uesio/io.tile:
                           uesio.variant: uesio/io.item
@@ -42,7 +41,6 @@ definition:
                 - uesio/io.deck:
                     id: homeLeads
                     wire: leads
-                    uesio.variant: uesio/io.section
                     components:
                       - uesio/io.tile:
                           uesio.variant: uesio/io.item
@@ -66,7 +64,6 @@ definition:
                 - uesio/io.deck:
                     id: homeContacts
                     wire: contacts
-                    uesio.variant: uesio/io.section
                     components:
                       - uesio/io.tile:
                           uesio.variant: uesio/io.item

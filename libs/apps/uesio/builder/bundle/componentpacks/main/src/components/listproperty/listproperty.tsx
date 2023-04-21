@@ -13,6 +13,8 @@ const ListProperty: definition.UC<Definition> = (props) => {
 	const { path, property } = definition
 	const itemsDefinition = property.items
 
+	if (!component.useShould(property?.displayConditions, context)) return null
+
 	const ListPropertyUtility = component.getUtility(
 		"uesio/builder.listproperty"
 	)

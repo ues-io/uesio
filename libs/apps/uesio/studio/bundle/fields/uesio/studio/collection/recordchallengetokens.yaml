@@ -1,7 +1,7 @@
 name: recordchallengetokens
 type: LIST
 label: Record Challenge Tokens
-subtype: MAP
+subtype: STRUCT
 subfields:
   - name: type
     type: TEXT

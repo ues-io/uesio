@@ -4,7 +4,7 @@ extends: uesio/io.default
 definition:
   uesio.styleTokens:
     root:
-      - p-4
+      - p-2
       - relative
-      - min-h-[52px]
+      - "[&>input]:bg-inherit"
 public: true

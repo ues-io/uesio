@@ -4,42 +4,41 @@ definition:
   components:
     - uesio/core.view:
         view: uesio/crm.topbar
-    - uesio/io.titlebar:
-        title: Accounts
-        uesio.variant: uesio/io.secondary
-        actions:
-          - uesio/io.group:
-              components:
-                - uesio/io.button:
-                    signals:
-                      - signal: wire/CREATE_RECORD
-                        wire: accounts
-                    text: Create
-                    uesio.variant: uesio/io.secondary
-                - uesio/io.button:
-                    signals:
-                      - signal: wire/SAVE
-                        wires:
-                          - accounts
-                    text: Save
-                    uesio.variant: uesio/io.secondary
-                - uesio/io.button:
-                    signals:
-                      - signal: wire/CANCEL
-                        wire: accounts
-                    text: Cancel
-                    uesio.variant: uesio/io.secondary
-                - uesio/io.button:
-                    signals:
-                      - signal: component/uesio/io.table/TOGGLE_MODE
-                        target: accountsTable
-                    text: Mode
-                    uesio.variant: uesio/io.secondary
     - uesio/io.box:
-        uesio.styles:
-          root:
-            padding: 40px
+        uesio.variant: uesio/crm.content
         components:
+          - uesio/io.titlebar:
+              title: Accounts
+              uesio.variant: uesio/io.main
+              actions:
+                - uesio/io.group:
+                    components:
+                      - uesio/io.button:
+                          signals:
+                            - signal: wire/CREATE_RECORD
+                              wire: accounts
+                              prepend: true
+                          text: Create
+                          uesio.variant: uesio/io.secondary
+                      - uesio/io.button:
+                          signals:
+                            - signal: wire/SAVE
+                              wires:
+                                - accounts
+                          text: Save
+                          uesio.variant: uesio/io.secondary
+                      - uesio/io.button:
+                          signals:
+                            - signal: wire/CANCEL
+                              wire: accounts
+                          text: Cancel
+                          uesio.variant: uesio/io.secondary
+                      - uesio/io.button:
+                          signals:
+                            - signal: component/uesio/io.table/TOGGLE_MODE
+                              target: accountsTable
+                          text: Mode
+                          uesio.variant: uesio/io.secondary
           - uesio/io.table:
               rowactions:
                 - text: Edit

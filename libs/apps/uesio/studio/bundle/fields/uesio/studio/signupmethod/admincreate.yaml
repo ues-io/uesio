@@ -1,5 +1,5 @@
 name: admincreate
-type: MAP
+type: STRUCT
 label: Admin Create Options
 subfields:
   - name: uesio/studio.emailsubject

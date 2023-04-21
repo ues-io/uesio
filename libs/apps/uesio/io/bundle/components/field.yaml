@@ -33,6 +33,7 @@ properties:
   - name: fieldDisplayType
     type: FIELD_METADATA
     display: false
+    viewOnly: true
     wireProperty: wire
     fieldProperty: fieldId
     metadataProperty: type
@@ -49,6 +50,8 @@ properties:
         value: top
       - label: Left
         value: left
+  # TODO: need each option to be "validFor" a specific field display type,
+  # so that we can have only one "displayAs" property which is valid for any field display type
   - name: displayAs
     type: SELECT
     label: Display as
@@ -61,6 +64,75 @@ properties:
       - type: fieldValue
         field: fieldDisplayType
         value: TEXT
+  # Number-only properties
+  - name: number
+    label: " "
+    type: STRUCT
+    displayConditions:
+      - type: fieldValue
+        field: fieldDisplayType
+        value: NUMBER
+    properties:
+      - name: min
+        type: NUMBER
+        label: Min
+      - name: max
+        type: NUMBER
+        label: Max
+      - name: step
+        type: NUMBER
+        label: Step
+  # Longtext field properties
+  - name: longtext
+    label: " "
+    type: STRUCT
+    displayConditions:
+      - type: fieldValue
+        field: fieldDisplayType
+        value: LONGTEXT
+    properties:
+      - name: cols
+        type: NUMBER
+        label: "# of Columns"
+      - name: rows
+        type: NUMBER
+        label: "# of Rows"
+  # Reference properties
+  - name: reference
+    label: " "
+    type: STRUCT
+    displayConditions:
+      - type: fieldValue
+        field: fieldDisplayType
+        value: REFERENCE
+    properties:
+      - name: template
+        type: TEXT
+        label: Display Template
+      - name: searchFields
+        type: FIELDS
+        wireField: wire
+        label: Search Fields
+      - name: returnFields
+        type: FIELDS
+        wireField: wire
+        label: Return Fields
+sections:
+  - type: HOME
+    id: uesio.home
+    properties:
+      - wire
+      - fieldId
+      - fieldDisplayType
+      - label
+      - labelPosition
+      - displayAs
+      # Display type specific properties
+      - number
+      - longtext
+      - reference
+  - type: STYLES
+  - type: DISPLAY
 signals:
   UPLOAD_FILE:
     label: Upload File
