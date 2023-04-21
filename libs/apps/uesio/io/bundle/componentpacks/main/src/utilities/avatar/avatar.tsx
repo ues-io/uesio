@@ -14,22 +14,15 @@ const Avatar: FunctionComponent<AvatarProps> = (props) => {
 	const bgImageClass = mergedImage ? `bg-[url(${mergedImage})]` : "initial"
 	const bgColorClass = mergedImage ? "bg-transparent" : "bg-primary"
 
-	const classes = styles.useUtilityStyles(
+	const classes = styles.useUtilityStyleTokens(
 		{
-			root: {},
+			root: [bgImageClass, bgColorClass],
 		},
 		props,
 		"uesio/io.avatar"
 	)
-	return (
-		<div
-			className={styles.mergeClasses(
-				styles.cx(bgImageClass, bgColorClass, classes.root)
-			)}
-		>
-			{!mergedImage && mergedText}
-		</div>
-	)
+
+	return <div className={classes.root}>{!mergedImage && mergedText}</div>
 }
 
 export default Avatar

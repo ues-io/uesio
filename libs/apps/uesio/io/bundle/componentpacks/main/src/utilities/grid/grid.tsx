@@ -5,18 +5,15 @@ interface GridProps {
 }
 
 const Grid: definition.UtilityComponent<GridProps> = (props) => {
-	const classes = styles.useUtilityStyles(
+	const classes = styles.useUtilityStyleTokens(
 		{
-			root: {},
+			root: ["grid"],
 		},
 		props,
 		"uesio/io.grid"
 	)
 	return (
-		<div
-			onClick={props.onClick}
-			className={styles.cx("grid", classes.root, props.className)}
-		>
+		<div onClick={props.onClick} className={classes.root}>
 			{props.children}
 		</div>
 	)
