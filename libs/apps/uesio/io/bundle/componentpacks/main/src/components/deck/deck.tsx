@@ -22,5 +22,6 @@ const Deck: definition.UC<ListDefinition> = (props) => {
 		</IOGrid>
 	)
 }
+Deck.signals = List.signals
 
 export default Deck
