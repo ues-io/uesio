@@ -93,13 +93,6 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 		children,
 	} = props
 
-	// useEffect(() => {
-	// 	if (isOpen && queryOnOpen) {
-	// 		onSearch?.("")
-	// 		setSearchText("")
-	// 	}
-	// }, [isOpen, queryOnOpen])
-
 	return (
 		<>
 			<div
