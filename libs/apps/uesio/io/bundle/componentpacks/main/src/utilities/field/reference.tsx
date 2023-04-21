@@ -19,6 +19,7 @@ export type ReferenceFieldOptions = {
 	template?: string
 	requirewriteaccess?: boolean
 	conditions?: wire.WireConditionState[]
+	queryOnOpen?: boolean
 }
 
 interface ReferenceFieldProps {
@@ -155,6 +156,7 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 				getItemKey={(item: wire.PlainWireRecord) =>
 					item[collection.ID_FIELD] as string
 				}
+				queryOnOpen={options?.queryOnOpen}
 			/>
 		)
 	}

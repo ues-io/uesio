@@ -289,6 +289,8 @@ definition:
                                   fieldId: uesio/crm.account
                                   label: Company Name
                                   labelPosition: top
+                                  reference:
+                                    queryOnOpen: true
                               - uesio/io.field:
                                   fieldId: uesio/crm.department
                               - uesio/io.field:

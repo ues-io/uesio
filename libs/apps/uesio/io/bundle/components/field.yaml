@@ -117,6 +117,9 @@ properties:
         type: FIELDS
         wireField: wire
         label: Return Fields
+      - name: queryOnOpen
+        type: CHECKBOX
+        label: Query on open
 sections:
   - type: HOME
     id: uesio.home

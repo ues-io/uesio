@@ -21,6 +21,7 @@ interface MenuButtonUtilityProps<T> extends definition.UtilityProps {
 	getItemKey: (item: T) => string
 	onSearch?: (search: string) => void
 	searchFilter?: (item: T, search: string) => boolean
+	queryOnOpen?: boolean
 }
 
 const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
@@ -39,12 +40,21 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 		"uesio/io.menu"
 	)
 
+	const queryOnOpen = props.queryOnOpen
 	const [isOpen, setIsOpen] = useState(false)
 	const [searchText, setSearchText] = useState("")
 
+	const onOpenChange = (open: boolean) => {
+		if (queryOnOpen) {
+			onSearch?.("")
+			setSearchText("")
+		}
+		setIsOpen(open)
+	}
+
 	const floating = useFloating({
 		open: isOpen,
-		onOpenChange: setIsOpen,
+		onOpenChange,
 		placement: "bottom-start",
 		middleware: [
 			offset(2),
@@ -82,6 +92,13 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 		getItemKey,
 		children,
 	} = props
+
+	// useEffect(() => {
+	// 	if (isOpen && queryOnOpen) {
+	// 		onSearch?.("")
+	// 		setSearchText("")
+	// 	}
+	// }, [isOpen, queryOnOpen])
 
 	return (
 		<>

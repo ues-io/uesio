@@ -13,6 +13,7 @@ type CustomSelectProps<T> = {
 	searchFilter?: (item: T, search: string) => boolean
 	itemRenderer: (item: T) => ReactNode
 	menuVariant?: metadata.MetadataKey
+	queryOnOpen?: boolean
 }
 
 const CustomSelect: definition.UtilityComponent<CustomSelectProps<unknown>> = (
@@ -29,6 +30,7 @@ const CustomSelect: definition.UtilityComponent<CustomSelectProps<unknown>> = (
 		itemRenderer,
 		context,
 		menuVariant,
+		queryOnOpen,
 	} = props
 
 	const classes = styles.useUtilityStyles(
@@ -53,6 +55,7 @@ const CustomSelect: definition.UtilityComponent<CustomSelectProps<unknown>> = (
 			searchFilter={searchFilter}
 			context={context}
 			variant={menuVariant}
+			queryOnOpen={queryOnOpen}
 		>
 			<div className={classes.root}>
 				<div className={classes.input}>
