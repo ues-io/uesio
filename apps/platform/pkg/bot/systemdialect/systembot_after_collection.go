@@ -12,6 +12,17 @@ import (
 )
 
 var STUDIO_UNIQUE_KEY_FIELD = "uesio/studio.uniquekey"
+var ACCEPTED_UNIQUE_KEY_TYPES = map[string]bool{
+	"TEXT":       true,
+	"NUMBER":     true,
+	"SELECT":     true,
+	"REFERENCE":  true,
+	"USER":       true,
+	"DATE":       true,
+	"TIMESTAMP":  true,
+	"EMAIL":      true,
+	"AUTONUMBER": true,
+}
 
 func parseUniquekeyToCollectionKey(uniquekey string) (string, error) {
 	//ben/greenlink:dev:companymember to ben/greenlink.companymember
@@ -203,8 +214,15 @@ func validateUniqueKey(request *adapt.SaveOp, connection adapt.Connection, sessi
 				if err != nil {
 					return errors.New("UniqueKey part " + stringVal + " not found:" + err.Error())
 				}
-				if subField.Type != "TEXT" || subField.GetFullName() == adapt.UNIQUE_KEY_FIELD {
-					return errors.New("UniqueKey can only be made up of fields of the text type")
+
+				if _, ok := ACCEPTED_UNIQUE_KEY_TYPES[subField.Type]; !ok || subField.GetFullName() == adapt.UNIQUE_KEY_FIELD {
+					keys := make([]string, 0, len(ACCEPTED_UNIQUE_KEY_TYPES))
+					for k := range ACCEPTED_UNIQUE_KEY_TYPES {
+						keys = append(keys, k)
+					}
+
+					keysStr := strings.Join(keys[:], ", ")
+					return errors.New("UniqueKey can only be made up of fields of type: " + keysStr)
 				}
 			}
 		}
