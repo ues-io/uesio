@@ -488,24 +488,37 @@ func getComponentAreaDeps(node *yaml.Node, depMap *ViewDepMap, session *sess.Ses
 					if len(comp.Content[1].Content) > i {
 						valueNode := comp.Content[1].Content[i+1]
 						if valueNode.Kind == yaml.ScalarNode && valueNode.Value != "" {
-							if err = addComponentVariantDep(depMap, valueNode.Value, compName); err != nil {
+							if err = addComponentVariantDep(depMap, valueNode.Value, compName); err == nil {
 								foundComponentVariant = true
 							}
 						}
 					}
-				}
-				err := getComponentAreaDeps(prop, depMap, session)
-				if err != nil {
-					return err
+				} else {
+					err := getComponentAreaDeps(prop, depMap, session)
+					if err != nil {
+						return err
+					}
 				}
 			}
 			// If we did not find a specific component variant,
 			// see if this component type has a default variant,
-			// and if so, request it
+			// and if so, request it, and populate it in the View YAML
+			// so that we know what variant to use client-side
 			if !foundComponentVariant {
 				defaultVariant := compDef.GetDefaultVariant()
 				if defaultVariant != "" {
-					addComponentVariantDep(depMap, defaultVariant, compName)
+					if err := addComponentVariantDep(depMap, defaultVariant, compName); err == nil {
+						comp.Content[1].Content = append(comp.Content[1].Content,
+							&yaml.Node{
+								Kind:  yaml.ScalarNode,
+								Value: "uesio.variant",
+							},
+							&yaml.Node{
+								Kind:  yaml.ScalarNode,
+								Value: defaultVariant,
+							},
+						)
+					}
 				}
 			}
 

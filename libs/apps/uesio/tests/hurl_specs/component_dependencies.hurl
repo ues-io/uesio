@@ -27,6 +27,14 @@ jsonpath "$.dependencies.componentvariant.entities['uesio/io.tabs:uesio/io.defau
 # test loading of component variant dependencies
 jsonpath "$.dependencies.componentvariant.entities['uesio/io.tablabels:uesio/io.default'].component" == "uesio/io.tablabels"
 jsonpath "$.dependencies.componentvariant.entities['uesio/io.scrollpanel:uesio/io.default'].component" == "uesio/io.scrollpanel"
+# test defaulting of variant for tabs component when not set in YAML
+jsonpath "$.dependencies.viewdef.entities['uesio/tests.dependencies_grid_and_tabs'].definition.components[0]['uesio/io.grid'].items[0]['uesio/io.griditem'].components[0]['uesio/io.tabs']['uesio.variant']" == "uesio/io.default"
+# verify that the default variant is loaded for button without a variant
+jsonpath "$.dependencies.viewdef.entities['uesio/tests.dependencies_grid_and_tabs'].definition.components[1]['uesio/io.button']['uesio.variant']" == "uesio/io.default"
+jsonpath "$.dependencies.componentvariant.entities['uesio/io.button:uesio/io.default'].component" == "uesio/io.button"
+# verify that the requested variant is loaded for button with a variant specified
+jsonpath "$.dependencies.viewdef.entities['uesio/tests.dependencies_grid_and_tabs'].definition.components[2]['uesio/io.button']['uesio.variant']" == "uesio/io.primary"
+jsonpath "$.dependencies.componentvariant.entities['uesio/io.button:uesio/io.primary'].component" == "uesio/io.button"
 
 # Fetch component pack dependencies - via workspace router - for a Group with nested chart
 GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/dependencies_group
