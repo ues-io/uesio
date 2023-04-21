@@ -3,7 +3,10 @@ label: Icon Grid
 definition:
   uesio.styleTokens:
     root:
-      - grid-flow-col
-      - gap-8
+      - grid-flow-row
+      - md:grid-flow-col
+      - gap-4
+      - md:gap-8
       - items-start
+      - justify-items-center
       - relative

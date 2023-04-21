@@ -231,7 +231,6 @@ const Table: definition.UC<TableDefinition> = (props) => {
 					longtext: column.longtext,
 					labelPosition: "none",
 					wrapperVariant: "uesio/io.table",
-					"uesio.variant": "uesio/io.field:uesio/io.table",
 				}}
 				{...sharedProps}
 			/>

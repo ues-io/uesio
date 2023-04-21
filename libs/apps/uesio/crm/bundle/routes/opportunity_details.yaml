@@ -3,6 +3,6 @@ path: opportunity/{recordid}
 viewtype: detail
 view: uesio/crm.opportunity_details
 collection: uesio/crm.opportunity
-theme: uesio/crm.default
+theme: uesio/core.default
 title: ""
 tags: []

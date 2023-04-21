@@ -7,5 +7,4 @@ utilities:
   - uesio/io.titlebar
 variants:
   - uesio/io.table:uesio/io.default
-  - uesio/io.field:uesio/io.table
   - uesio/io.fieldwrapper:uesio/io.table

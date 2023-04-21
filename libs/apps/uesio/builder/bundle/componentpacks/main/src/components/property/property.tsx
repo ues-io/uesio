@@ -2,6 +2,7 @@ import { definition, context, component } from "@uesio/ui"
 import { get } from "../../api/defapi"
 import { FullPath } from "../../api/path"
 import { ComponentProperty } from "../../properties/componentproperty"
+import { getProperty } from "../../helpers/propertiesform"
 
 type Definition = {
 	propertyId: string
@@ -40,7 +41,7 @@ const getGrouping = (
 	return get(context, path.setLocal(parsePath)) as string
 }
 
-const getFormFieldFromProperty = (
+export const getFormFieldFromProperty = (
 	property: ComponentProperty,
 	context: context.Context,
 	path: FullPath
@@ -93,6 +94,14 @@ const getFormFieldFromProperty = (
 					path,
 				},
 			}
+		case "STRUCT":
+			return {
+				"uesio/builder.structproperty": {
+					property,
+					path,
+				},
+			}
+
 		case "LIST": {
 			return property.items
 				? {
@@ -198,10 +207,7 @@ const Property: definition.UC<Definition> = (props) => {
 
 	const properties = componentData.data.properties as ComponentProperty[]
 	const propertiesPath = componentData.data.path as FullPath
-
-	const property = properties.find(
-		(property) => property.name === definition.propertyId
-	)
+	const property = getProperty(definition.propertyId, properties)
 
 	// Ignore properties which should never be visually displayed
 	// (e.g. a common use case for this is FIELD_METADATA properties)

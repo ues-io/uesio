@@ -3,6 +3,6 @@ path: lead/{recordid}
 viewtype: detail
 view: uesio/crm.lead_details
 collection: uesio/crm.lead
-theme: uesio/crm.default
+theme: uesio/core.default
 title: ""
 tags: []

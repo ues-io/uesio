@@ -5,10 +5,7 @@ definition:
     - uesio/core.view:
         view: uesio/crm.topbar
     - uesio/io.box:
-        uesio.styles:
-          root:
-            backgroundColor: "#fafafa"
-            overflow: auto
+        uesio.variant: uesio/crm.content
         components:
           - uesio/io.list:
               uesio.id: contactList
@@ -49,59 +46,47 @@ definition:
                                 uesio.variant: uesio/io.secondary
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
-                    uesio.styles:
-                      root:
-                        padding: 40px
                     components:
                       - uesio/io.grid:
-                          uesio.styleTokens:
-                            root:
-                              - grid-cols-1
-                              - md:grid-cols-2
-                              - lg:grid-cols-[2fr_1fr]
-                              - gap-x-10
-                              - items-start
+                          uesio.variant: uesio/io.four_columns
                           items:
-                            - uesio/io.grid:
-                                uesio.variant: uesio/io.four_columns
-                                items:
+                            - uesio/io.field:
+                                fieldId: uesio/core.id
+                            - uesio/io.field:
+                                fieldId: uesio/crm.firstname
+                            - uesio/io.field:
+                                fieldId: uesio/crm.lastname
+                            - uesio/io.field:
+                                fieldId: uesio/crm.gender
+                            - uesio/io.field:
+                                fieldId: uesio/crm.account
+                            - uesio/io.field:
+                                fieldId: uesio/crm.birthdate
+                            - uesio/io.field:
+                                fieldId: uesio/core.updatedat
+                            - uesio/io.field:
+                                fieldId: uesio/core.createdat
+                      - uesio/io.deck:
+                          wire: comments
+                          uesio.id: commentslist
+                          mode: READ
+                          components:
+                            - uesio/io.tile:
+                                content:
                                   - uesio/io.field:
-                                      fieldId: uesio/core.id
-                                  - uesio/io.field:
-                                      fieldId: uesio/crm.firstname
-                                  - uesio/io.field:
-                                      fieldId: uesio/crm.lastname
-                                  - uesio/io.field:
-                                      fieldId: uesio/crm.gender
-                                  - uesio/io.field:
-                                      fieldId: uesio/crm.account
-                                  - uesio/io.field:
-                                      fieldId: uesio/crm.birthdate
-                                  - uesio/io.field:
-                                      fieldId: uesio/core.updatedat
-                                  - uesio/io.field:
-                                      fieldId: uesio/core.createdat
-                            - uesio/io.deck:
-                                wire: comments
-                                uesio.id: commentslist
-                                mode: READ
-                                components:
-                                  - uesio/io.tile:
-                                      content:
+                                      fieldId: uesio/core.owner
+                                      labelPosition: none
+                                  - uesio/io.box:
+                                      uesio.styleTokens:
+                                        root:
+                                          - rounded
+                                          - bg-slate-50
+                                          - p-4
+                                      components:
                                         - uesio/io.field:
-                                            fieldId: uesio/core.owner
+                                            fieldId: uesio/crm.comment_body
+                                            displayAs: MARKDOWN
                                             labelPosition: none
-                                        - uesio/io.box:
-                                            uesio.styles:
-                                              root:
-                                                borderRadius: 8px
-                                                backgroundColor: "#f5f5f5"
-                                                padding: 10px 20px
-                                            components:
-                                              - uesio/io.field:
-                                                  fieldId: uesio/crm.comment_body
-                                                  displayAs: MARKDOWN
-                                                  labelPosition: none
   wires:
     contacts:
       collection: uesio/crm.contact
