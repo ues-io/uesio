@@ -1,6 +1,6 @@
 name: number
 type: MAP
-label: Number Metadata
+label: Number metadata
 subfields:
   - name: uesio/studio.decimals
     label: Decimals

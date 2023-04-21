@@ -14,5 +14,5 @@ subfields:
     type: SELECT
     selectList: uesio/studio.fieldtypes
   - name: studio.selectlist
-    label: Select List
+    label: Select list
     type: TEXT

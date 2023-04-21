@@ -117,36 +117,36 @@ definition:
                                 components:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      uesio.id: "export-collection-data"
-                                      text: "Export Data"
+                                      uesio.id: export-collection-data
+                                      text: Export Data
                                       signals:
-                                        - signal: "route/NAVIGATE"
-                                          path: "app/$Param{app}/workspace/$Param{workspacename}/export/$Param{namespace}/$Param{collectionname}"
+                                        - signal: route/NAVIGATE
+                                          path: app/$Param{app}/workspace/$Param{workspacename}/export/$Param{namespace}/$Param{collectionname}
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      uesio.id: "import-collection-data"
-                                      text: "Import Data"
+                                      uesio.id: import-collection-data
+                                      text: Import Data
                                       signals:
-                                        - signal: "route/NAVIGATE"
-                                          path: "app/$Param{app}/workspace/$Param{workspacename}/import/$Param{namespace}/$Param{collectionname}"
+                                        - signal: route/NAVIGATE
+                                          path: app/$Param{app}/workspace/$Param{workspacename}/import/$Param{namespace}/$Param{collectionname}
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      uesio.id: "manage-collection-data"
-                                      text: "Manage Data"
+                                      uesio.id: manage-collection-data
+                                      text: Manage Data
                                       signals:
-                                        - signal: "route/NAVIGATE"
-                                          path: "app/$Param{app}/workspace/$Param{workspacename}/data/$Param{namespace}/$Param{collectionname}"
+                                        - signal: route/NAVIGATE
+                                          path: app/$Param{app}/workspace/$Param{workspacename}/data/$Param{namespace}/$Param{collectionname}
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      uesio.id: "edit-collection"
-                                      text: "Edit"
+                                      uesio.id: edit-collection
+                                      text: $Label{uesio/io.edit}
                                       signals:
                                         - signal: panel/TOGGLE
                                           panel: editCollection
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      uesio.id: "delete-collection"
-                                      text: "Delete"
+                                      uesio.id: delete-collection
+                                      text: $Label{uesio/io.delete}
                                       signals:
                                         - signal: panel/TOGGLE
                                           panel: deleteCollection
@@ -168,8 +168,8 @@ definition:
                                           name: $Param{workspacename}
                                           app: $Param{app}
                                       fieldId: uesio/studio.namefield
-                                      metadataType: "FIELD"
-                                      label: "Name Field"
+                                      metadataType: FIELD
+                                      label: Name field
                             - uesio/io.grid:
                                 uesio.variant: uesio/io.four_columns
                                 items:
@@ -191,9 +191,9 @@ definition:
                             - uesio/io.group:
                                 components:
                                   - uesio/io.button:
-                                      uesio.variant: "uesio/io.primary"
-                                      uesio.id: "new-field"
-                                      text: "New Field"
+                                      uesio.variant: uesio/io.primary
+                                      uesio.id: new-field
+                                      text: New field
                                       hotkey: "n"
                                       signals:
                                         - signal: wire/EMPTY
@@ -203,18 +203,18 @@ definition:
                                         - signal: wire/UPDATE_RECORD
                                           wire: newfield
                                           field: uesio/studio.type
-                                          value: "TEXT"
+                                          value: TEXT
                                         - signal: panel/TOGGLE
-                                          panel: "newField"
+                                          panel: newField
                       - uesio/io.table:
-                          uesio.id: "fields"
-                          wire: "fields"
-                          mode: "READ"
+                          uesio.id: fields
+                          wire: fields
+                          mode: READ
                           rowactions:
-                            - text: Edit
+                            - text: $Label{uesio/io.edit}
                               signals:
-                                - signal: "route/NAVIGATE"
-                                  path: "app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{namespace}/$Param{collectionname}/fields/${uesio/studio.name}"
+                                - signal: route/NAVIGATE
+                                  path: app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{namespace}/$Param{collectionname}/fields/${uesio/studio.name}
                           columns:
                             - field: uesio/studio.name
                             - field: uesio/studio.type
@@ -223,33 +223,39 @@ definition:
   panels:
     deleteCollection:
       uesio.type: uesio/io.dialog
-      title: Delete Collection
+      title: $Label{uesio/io.delete} collection
       width: 400px
       height: 300px
       components:
         - uesio/io.text:
             text: Are you sure you want to delete this collection?
+            element: div
+            uesio.variant: uesio/io.smalltitle
+        - uesio/io.text:
+            text: You will never be able to access the information associated with this collection again.
+            element: div
+            uesio.variant: uesio/io.smallcontent
       actions:
         - uesio/io.button:
-            text: Delete
-            uesio.id: "confirm-delete-collection"
+            text: $Label{uesio/io.delete}
+            uesio.id: confirm-delete-collection
             uesio.variant: uesio/io.primary
             signals:
               - signal: wire/MARK_FOR_DELETE
               - signal: wire/SAVE
                 wires:
-                  - "collections"
-              - signal: "route/NAVIGATE"
-                path: "app/$Param{app}/workspace/$Param{workspacename}/collections"
+                  - collections
+              - signal: route/NAVIGATE
+                path: app/$Param{app}/workspace/$Param{workspacename}/collections
         - uesio/io.button:
-            text: Cancel
+            text: $Label{uesio/io.cancel}
             uesio.variant: uesio/io.secondary
             signals:
               - signal: panel/TOGGLE
                 panel: deleteCollection
     editCollection:
       uesio.type: uesio/io.dialog
-      title: Edit Collection
+      title: $Label{uesio/io.edit} collection
       width: 400px
       height: 560px
       components:
@@ -270,35 +276,35 @@ definition:
                   fieldId: uesio/studio.plurallabel
               - uesio/builder.metadatafield:
                   fieldId: uesio/studio.namefield
-                  metadataType: "FIELD"
-                  label: "Name Field"
+                  metadataType: FIELD
+                  label: Name field
                   grouping: $Param{app}.$Param{collectionname}
                   namespace: $Param{app}
               - uesio/builder.metadatafield:
                   fieldId: uesio/studio.datasource
-                  metadataType: "DATASOURCE"
-                  label: "Data Source"
+                  metadataType: DATASOURCE
+                  label: Data source
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
-            text: "Save"
+            text: $Label{uesio/io.save}
             signals:
               - signal: wire/SAVE
                 wires:
                   - collections
-              - signal: "panel/TOGGLE"
-                panel: "editCollection"
+              - signal: panel/TOGGLE
+                panel: editCollection
         - uesio/io.button:
-            uesio.variant: "uesio/io.secondary"
-            text: "Cancel"
+            uesio.variant: uesio/io.secondary
+            text: $Label{uesio/io.cancel}
             signals:
               - signal: wire/CANCEL
                 wire: collections
-              - signal: "panel/TOGGLE"
-                panel: "editCollection"
+              - signal: panel/TOGGLE
+                panel: editCollection
     newField:
       uesio.type: uesio/io.dialog
-      title: Create a New Field
+      title: Create a new field
       width: 400px
       height: 620px
       components:
@@ -313,126 +319,126 @@ definition:
             components:
               - uesio/io.field:
                   fieldId: uesio/studio.name
-                  uesio.id: "new-field-name"
+                  uesio.id: new-field-name
               - uesio/io.field:
                   fieldId: uesio/studio.type
-                  uesio.id: "new-field-type"
+                  uesio.id: new-field-type
               - uesio/io.field:
                   fieldId: uesio/studio.label
-                  uesio.id: "new-field-label"
+                  uesio.id: new-field-label
               - uesio/builder.metadatafield:
                   fieldId: uesio/studio.languagelabel
-                  uesio.id: "new-field-language-label"
-                  metadataType: "LABEL"
-                  label: "Language Label"
+                  uesio.id: new-field-language-label
+                  metadataType: LABEL
+                  label: Language label
               - uesio/io.box:
                   uesio.display:
                     - field: uesio/studio.type
-                      value: "REFERENCE"
+                      value: REFERENCE
                   components:
                     - uesio/builder.metadatafield:
                         fieldId: uesio/studio.reference->uesio/studio.collection
-                        metadataType: "COLLECTION"
-                        label: "Ref. Collection"
-                        uesio.id: "new-field-collection"
+                        metadataType: COLLECTION
+                        label: Ref. collection
+                        uesio.id: new-field-collection
               - uesio/io.box:
                   uesio.display:
                     - field: uesio/studio.type
-                      value: "FORMULA"
+                      value: FORMULA
                   components:
                     - uesio/io.field:
                         fieldId: uesio/studio.formula->uesio/studio.expression
-                        uesio.id: "new-field-formula-expression"
+                        uesio.id: new-field-formula-expression
                     - uesio/io.field:
                         fieldId: uesio/studio.formula->uesio/studio.returntype
-                        uesio.id: "new-field-formula-return-type"
+                        uesio.id: new-field-formula-return-type
               - uesio/io.box:
                   uesio.display:
                     - field: uesio/studio.type
-                      value: "TIMESTAMP"
+                      value: TIMESTAMP
                   components:
                     - uesio/io.field:
                         fieldId: uesio/studio.autopopulate
-                        uesio.id: "new-field-timestamp-autopopulate"
+                        uesio.id: new-field-timestamp-autopopulate
               - uesio/io.box:
                   uesio.display:
                     - field: uesio/studio.type
-                      value: "SELECT"
+                      value: SELECT
                   components:
                     - uesio/builder.metadatafield:
                         fieldId: uesio/studio.selectlist
-                        uesio.id: "new-field-selectlist"
-                        metadataType: "SELECTLIST"
-                        label: "Select List"
+                        uesio.id: new-field-selectlist
+                        metadataType: SELECTLIST
+                        label: Select list
               - uesio/io.box:
                   uesio.display:
                     - field: uesio/studio.type
-                      value: "AUTONUMBER"
+                      value: AUTONUMBER
                   components:
                     - uesio/io.field:
                         fieldId: uesio/studio.autonumber->uesio/studio.prefix
-                        uesio.id: "new-field-autonumber-prefix"
+                        uesio.id: new-field-autonumber-prefix
                     - uesio/io.field:
                         fieldId: uesio/studio.autonumber->uesio/studio.leadingzeros
-                        uesio.id: "new-field-autonumber-leading-zeros"
+                        uesio.id: new-field-autonumber-leading-zeros
               - uesio/io.box:
                   uesio.display:
                     - field: uesio/studio.type
-                      value: "NUMBER"
+                      value: NUMBER
                   components:
                     - uesio/io.field:
                         fieldId: uesio/studio.number->uesio/studio.decimals
-                        uesio.id: "new-field-number-decimals"
+                        uesio.id: new-field-number-decimals
               - uesio/io.box:
                   uesio.display:
                     - field: uesio/studio.type
-                      value: "MULTISELECT"
+                      value: MULTISELECT
                   components:
                     - uesio/builder.metadatafield:
                         fieldId: uesio/studio.selectlist
-                        metadataType: "SELECTLIST"
-                        label: "Select List"
-                        uesio.id: "new-field-multi-selectlist"
+                        metadataType: SELECTLIST
+                        label: Select list
+                        uesio.id: new-field-multi-selectlist
               - uesio/io.box:
                   uesio.display:
                     - field: uesio/studio.type
-                      value: "FILE"
+                      value: FILE
                   components:
                     - uesio/builder.metadatafield:
                         fieldId: uesio/studio.file->uesio/studio.filesource
-                        metadataType: "FILESOURCE"
-                        label: "File Source"
-                        uesio.id: "new-field-file-source"
+                        metadataType: FILESOURCE
+                        label: File Source
+                        uesio.id: new-field-file-source
                     - uesio/io.field:
                         fieldId: uesio/studio.file->uesio/studio.accept
-                        uesio.id: "new-field-file-accept"
+                        uesio.id: new-field-file-accept
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
-            uesio.id: "save-new-field"
-            text: "Save"
+            uesio.id: save-new-field
+            text: $Label{uesio/io.save}
             hotkey: "meta+s"
             signals:
               - signal: wire/SAVE
                 wires:
-                  - "newfield"
+                  - newfield
               - signal: wire/LOAD
                 wires:
-                  - "workspaces"
-                  - "fields"
+                  - workspaces
+                  - fields
               - signal: wire/EMPTY
                 wire: newfield
-              - signal: "panel/TOGGLE"
-                panel: "newField"
+              - signal: panel/TOGGLE
+                panel: newField
               - signal: notification/ADD
                 text: Field created!
                 severity: success
         - uesio/io.button:
-            uesio.variant: "uesio/io.secondary"
-            uesio.id: "cancel-new-field"
-            text: "Cancel"
+            uesio.variant: uesio/io.secondary
+            uesio.id: cancel-new-field
+            text: $Label{uesio/io.cancel}
             signals:
               - signal: wire/EMPTY
                 wire: newfield
-              - signal: "panel/TOGGLE"
-                panel: "newField"
+              - signal: panel/TOGGLE
+                panel: newField

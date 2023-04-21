@@ -1,6 +1,6 @@
 name: major
 type: NUMBER
-label: "Major version"
+label: Major version
 readOnly: true
 number:
   decimals: 0

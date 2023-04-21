@@ -1,6 +1,6 @@
 name: featureflagassignments
 type: REFERENCEGROUP
-label: Feature Flag Assignment
+label: Feature flag assignment
 referenceGroup:
   collection: uesio/core.featureflagassignment
   field: uesio/core.user

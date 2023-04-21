@@ -1,6 +1,6 @@
 name: uniquekey
 type: LIST
-label: Unique Key
+label: Unique key
 subtype: TEXT
 subfields:
   - name: field

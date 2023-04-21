@@ -1,6 +1,6 @@
 name: name
 type: TEXT
-label: Config Value name
+label: Config value name
 required: true
 createOnly: true
 validate:

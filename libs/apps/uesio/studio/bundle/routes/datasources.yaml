@@ -2,4 +2,4 @@ name: datasources
 path: app/{app:\w*\/\w*}/workspace/{workspacename}/datasources
 view: uesio/studio.datasources
 theme: uesio/studio.default
-title: Data Sources
+title: Data sources

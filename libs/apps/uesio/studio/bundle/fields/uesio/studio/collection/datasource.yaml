@@ -1,5 +1,5 @@
 name: datasource
 type: TEXT
-label: Data Source
+label: Data source
 required: true
 readOnly: true

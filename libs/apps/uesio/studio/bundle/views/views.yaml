@@ -18,7 +18,7 @@ definition:
       collection: uesio/studio.allmetadata
       conditions:
         - field: uesio/studio.type
-          value: "views"
+          value: views
     newview:
       collection: uesio/studio.view
       fields:
@@ -77,17 +77,17 @@ definition:
                                   workspace:
                                     name: $Param{workspacename}
                                     app: $Param{app}
-                                label: Generate List View
+                                label: Generate list view
                                 generator: uesio/core.listview
                             - uesio/studio.generatorbutton:
                                 uesio.context:
                                   workspace:
                                     name: $Param{workspacename}
                                     app: $Param{app}
-                                label: Generate Detail View
+                                label: Generate detail view
                                 generator: uesio/core.detailview
                             - uesio/io.button:
-                                text: Create a New View
+                                text: Create a new view
                                 uesio.variant: uesio/io.secondary
                                 hotkey: "n"
                                 uesio.id: new-view
@@ -124,7 +124,7 @@ definition:
                               type: DEFAULT
                               signals:
                                 - signal: route/NAVIGATE
-                                  path: "app/$Param{app}/workspace/$Param{workspacename}/views/${uesio/studio.name}"
+                                  path: app/$Param{app}/workspace/$Param{workspacename}/views/${uesio/studio.name}
                           pagesize: 10
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
@@ -151,7 +151,7 @@ definition:
   panels:
     newView:
       uesio.type: uesio/io.dialog
-      title: Create a New View
+      title: Create a new view
       width: 400px
       height: 500px
       components:
@@ -167,16 +167,16 @@ definition:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
             uesio.id: save-new-view
-            text: "Save"
+            text: $Label{uesio/io.save}
             signals:
               - signal: wire/SAVE
                 wires:
-                  - "newview"
-              - signal: "route/NAVIGATE"
-                path: "app/$Param{app}/workspace/$Param{workspacename}/views/${uesio/studio.name}"
+                  - newview
+              - signal: route/NAVIGATE
+                path: app/$Param{app}/workspace/$Param{workspacename}/views/${uesio/studio.name}
         - uesio/io.button:
-            uesio.variant: "uesio/io.secondary"
-            text: "Cancel"
+            uesio.variant: uesio/io.secondary
+            text: $Label{uesio/io.delete}
             signals:
-              - signal: "panel/TOGGLE"
-                panel: "newView"
+              - signal: panel/TOGGLE
+                panel: newView

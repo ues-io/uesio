@@ -2,4 +2,4 @@ name: permissionsets
 path: app/{app:\w*\/\w*}/workspace/{workspacename}/permissionsets
 view: uesio/studio.permissionsets
 theme: uesio/studio.default
-title: Permission Sets
+title: Permission sets

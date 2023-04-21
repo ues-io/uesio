@@ -1,5 +1,5 @@
 name: total
 type: NUMBER
-label: "Total"
+label: Total
 number:
   decimals: 0

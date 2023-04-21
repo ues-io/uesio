@@ -1,6 +1,6 @@
 name: componentpacks
 type: REFERENCEGROUP
-label: Component Packs
+label: Component packs
 referenceGroup:
   collection: uesio/studio.componentpack
   field: uesio/studio.workspace

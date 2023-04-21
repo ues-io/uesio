@@ -38,7 +38,7 @@ definition:
                     param: selected
                     value: collections
               signals:
-                - signal: "route/NAVIGATE"
+                - signal: route/NAVIGATE
                   path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/collections
               content:
                 - uesio/io.text:
@@ -59,7 +59,7 @@ definition:
                     param: selected
                     value: datasources
               signals:
-                - signal: "route/NAVIGATE"
+                - signal: route/NAVIGATE
                   path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/datasources
               content:
                 - uesio/io.text:
@@ -77,11 +77,11 @@ definition:
                     param: selected
                     value: selectlists
               signals:
-                - signal: "route/NAVIGATE"
+                - signal: route/NAVIGATE
                   path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/selectlists
               content:
                 - uesio/io.text:
-                    text: Select Lists
+                    text: Select lists
               avatar:
                 - uesio/io.text:
                     uesio.variant: uesio/io.icon
@@ -98,7 +98,7 @@ definition:
                     param: selected
                     value: views
               signals:
-                - signal: "route/NAVIGATE"
+                - signal: route/NAVIGATE
                   path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/views
               content:
                 - uesio/io.text:
@@ -116,7 +116,7 @@ definition:
                     param: selected
                     value: routes
               signals:
-                - signal: "route/NAVIGATE"
+                - signal: route/NAVIGATE
                   path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/routes
               content:
                 - uesio/io.text:
@@ -137,7 +137,7 @@ definition:
                     param: selected
                     value: components
               signals:
-                - signal: "route/NAVIGATE"
+                - signal: route/NAVIGATE
                   path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/components
               content:
                 - uesio/io.text:
@@ -155,7 +155,7 @@ definition:
                     param: selected
                     value: themes
               signals:
-                - signal: "route/NAVIGATE"
+                - signal: route/NAVIGATE
                   path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/themes
               content:
                 - uesio/io.text:
@@ -173,7 +173,7 @@ definition:
                     param: selected
                     value: labels
               signals:
-                - signal: "route/NAVIGATE"
+                - signal: route/NAVIGATE
                   path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/labels
               content:
                 - uesio/io.text:
@@ -197,7 +197,7 @@ definition:
                     param: selected
                     value: configvalues
               signals:
-                - signal: "route/NAVIGATE"
+                - signal: route/NAVIGATE
                   path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/configvalues
               content:
                 - uesio/io.text:
@@ -218,7 +218,7 @@ definition:
                     param: selected
                     value: credentials
               signals:
-                - signal: "route/NAVIGATE"
+                - signal: route/NAVIGATE
                   path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/credentials
               content:
                 - uesio/io.text:
@@ -236,7 +236,7 @@ definition:
                     param: selected
                     value: files
               signals:
-                - signal: "route/NAVIGATE"
+                - signal: route/NAVIGATE
                   path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/files
               content:
                 - uesio/io.text:
@@ -254,11 +254,11 @@ definition:
                     param: selected
                     value: permissionsets
               signals:
-                - signal: "route/NAVIGATE"
+                - signal: route/NAVIGATE
                   path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/permissionsets
               content:
                 - uesio/io.text:
-                    text: Permission Sets
+                    text: Permission sets
               avatar:
                 - uesio/io.text:
                     uesio.variant: uesio/io.icon
@@ -272,7 +272,7 @@ definition:
                     param: selected
                     value: profiles
               signals:
-                - signal: "route/NAVIGATE"
+                - signal: route/NAVIGATE
                   path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/profiles
               content:
                 - uesio/io.text:
@@ -293,7 +293,7 @@ definition:
                     param: selected
                     value: secrets
               signals:
-                - signal: "route/NAVIGATE"
+                - signal: route/NAVIGATE
                   path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/secrets
               content:
                 - uesio/io.text:
@@ -314,7 +314,7 @@ definition:
                     param: selected
                     value: featureflags
               signals:
-                - signal: "route/NAVIGATE"
+                - signal: route/NAVIGATE
                   path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/featureflags
               content:
                 - uesio/io.text:
@@ -332,7 +332,7 @@ definition:
                     param: selected
                     value: translations
               signals:
-                - signal: "route/NAVIGATE"
+                - signal: route/NAVIGATE
                   path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/translations
               content:
                 - uesio/io.text:
@@ -353,7 +353,7 @@ definition:
                     param: selected
                     value: authsources
               signals:
-                - signal: "route/NAVIGATE"
+                - signal: route/NAVIGATE
                   path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/authsources
               content:
                 - uesio/io.text:

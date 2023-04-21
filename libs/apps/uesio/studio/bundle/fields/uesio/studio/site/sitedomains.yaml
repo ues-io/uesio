@@ -1,6 +1,6 @@
 name: sitedomains
 type: REFERENCEGROUP
-label: Site Domains
+label: Site domains
 referenceGroup:
   collection: uesio/studio.sitedomain
   field: uesio/studio.site

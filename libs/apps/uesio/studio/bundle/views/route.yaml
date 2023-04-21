@@ -136,23 +136,23 @@ definition:
                                       fieldId: uesio/studio.path
                                   - uesio/builder.metadatafield:
                                       fieldId: uesio/studio.view
-                                      metadataType: "VIEW"
-                                      label: "View"
+                                      metadataType: VIEW
+                                      label: View
                                   - uesio/builder.metadatafield:
                                       fieldId: uesio/studio.theme
-                                      metadataType: "THEME"
-                                      label: "Theme"
+                                      metadataType: THEME
+                                      label: Theme
                                   - uesio/io.field:
                                       fieldId: uesio/studio.title
                                   - uesio/builder.metadatafield:
                                       fieldId: uesio/studio.collection
-                                      metadataType: "COLLECTION"
-                                      label: "Collection"
+                                      metadataType: COLLECTION
+                                      label: Collection
                                   - uesio/io.field:
                                       fieldId: uesio/studio.viewtype
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.main
-                          title: Search Engine Optimization
+                          title: Search engine optimization
                           subtitle: Route <meta> tags
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
@@ -163,7 +163,7 @@ definition:
   panels:
     deleteRoute:
       uesio.type: uesio/io.dialog
-      title: Delete Route
+      title: Delete route
       width: 400px
       height: 300px
       components:

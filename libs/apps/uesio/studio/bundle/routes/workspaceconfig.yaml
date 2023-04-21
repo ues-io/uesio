@@ -2,4 +2,4 @@ name: workspaceconfig
 path: app/{app:\w*\/\w*}/workspace/{workspacename}/configuration
 view: uesio/studio.workspaceconfig
 theme: uesio/studio.default
-title: "Workspace Config: $Param{workspacename}"
+title: "Workspace config: $Param{workspacename}"

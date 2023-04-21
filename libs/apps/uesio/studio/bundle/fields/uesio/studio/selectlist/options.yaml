@@ -8,7 +8,7 @@ subfields:
     label: Label
   - name: languageLabel
     type: TEXT
-    label: Language Label
+    label: Language label
   - name: value
     type: TEXT
     label: Value

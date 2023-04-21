@@ -2,4 +2,4 @@ name: siteusage
 path: app/{app:\w*\/\w*}/site/{sitename}/usage
 view: uesio/studio.siteusage
 theme: uesio/studio.default
-title: Site Usage
+title: Site usage

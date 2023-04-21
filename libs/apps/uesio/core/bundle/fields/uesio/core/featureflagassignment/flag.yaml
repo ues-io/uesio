@@ -1,4 +1,4 @@
 name: flag
-type: "TEXT"
+type: TEXT
 label: Flag
 required: true

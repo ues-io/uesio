@@ -154,94 +154,94 @@ definition:
                                       fieldId: uesio/studio.label
                                   - uesio/builder.metadatafield:
                                       fieldId: uesio/studio.languagelabel
-                                      metadataType: "LABEL"
-                                      label: "Language Label"
+                                      metadataType: LABEL
+                                      label: Language label
                                   - uesio/builder.metadatafield:
                                       fieldId: uesio/studio.collection
-                                      metadataType: "COLLECTION"
-                                      label: "Collection"
+                                      metadataType: COLLECTION
+                                      label: Collection
                                   - uesio/io.box:
                                       uesio.display:
                                         - field: uesio/studio.type
-                                          value: "REFERENCE"
+                                          value: REFERENCE
                                       components:
                                         - uesio/builder.metadatafield:
                                             fieldId: uesio/studio.reference->uesio/studio.collection
-                                            metadataType: "COLLECTION"
-                                            label: "Ref. Collection"
+                                            metadataType: COLLECTION
+                                            label: Ref. collection
                                   - uesio/io.box:
                                       uesio.display:
                                         - field: uesio/studio.type
-                                          value: "TIMESTAMP"
+                                          value: TIMESTAMP
                                       components:
                                         - uesio/io.field:
                                             fieldId: uesio/studio.autopopulate
                                   - uesio/io.box:
                                       uesio.display:
                                         - field: uesio/studio.type
-                                          value: "SELECT"
+                                          value: SELECT
                                       components:
                                         - uesio/builder.metadatafield:
                                             fieldId: uesio/studio.selectlist
-                                            metadataType: "SELECTLIST"
-                                            label: "Select List"
+                                            metadataType: SELECTLIST
+                                            label: Select list
                                   - uesio/io.box:
                                       uesio.display:
                                         - field: uesio/studio.type
-                                          value: "FILE"
+                                          value: FILE
                                       components:
                                         - uesio/builder.metadatafield:
                                             fieldId: uesio/studio.file->uesio/studio.filesource
-                                            metadataType: "FILESOURCE"
-                                            label: "File Source"
+                                            metadataType: FILESOURCE
+                                            label: File source
                                   - uesio/io.box:
                                       uesio.display:
                                         - field: uesio/studio.type
-                                          value: "FILE"
+                                          value: FILE
                                       components:
                                         - uesio/io.field:
                                             fieldId: uesio/studio.file->uesio/studio.accept
                                   - uesio/io.box:
                                       uesio.display:
                                         - field: uesio/studio.type
-                                          value: "NUMBER"
+                                          value: NUMBER
                                       components:
                                         - uesio/io.field:
                                             fieldId: uesio/studio.number->uesio/studio.decimals
                                   - uesio/io.box:
                                       uesio.display:
                                         - field: uesio/studio.type
-                                          value: "AUTONUMBER"
+                                          value: AUTONUMBER
                                       components:
                                         - uesio/io.field:
                                             fieldId: uesio/studio.autonumber->uesio/studio.prefix
                                   - uesio/io.box:
                                       uesio.display:
                                         - field: uesio/studio.type
-                                          value: "AUTONUMBER"
+                                          value: AUTONUMBER
                                       components:
                                         - uesio/io.field:
                                             fieldId: uesio/studio.autonumber->uesio/studio.leadingzeros
                                   - uesio/io.box:
                                       uesio.display:
                                         - field: uesio/studio.type
-                                          value: "MULTISELECT"
+                                          value: MULTISELECT
                                       components:
                                         - uesio/builder.metadatafield:
                                             fieldId: uesio/studio.selectlist
-                                            metadataType: "SELECTLIST"
-                                            label: "Select List"
+                                            metadataType: SELECTLIST
+                                            label: Select list
                                   - uesio/io.field:
                                       fieldId: uesio/studio.validate->uesio/studio.type
                                   - uesio/io.field:
                                       uesio.display:
                                         - field: uesio/studio.validate->uesio/studio.type
-                                          value: "REGEX"
+                                          value: REGEX
                                       fieldId: uesio/studio.validate->uesio/studio.regex
                                   - uesio/io.box:
                                       uesio.display:
                                         - field: uesio/studio.type
-                                          value: "FORMULA"
+                                          value: FORMULA
                                       components:
                                         - uesio/io.field:
                                             fieldId: uesio/studio.formula->uesio/studio.expression
@@ -266,7 +266,7 @@ definition:
   panels:
     deleteField:
       uesio.type: uesio/io.dialog
-      title: Delete Field
+      title: Delete field
       width: 400px
       height: 300px
       components:

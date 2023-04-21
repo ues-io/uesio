@@ -4,8 +4,8 @@ label: Params
 subType: MAP
 subFields:
   - name: studio.name
-    label: Parameter Name
+    label: Parameter name
     type: Text
   - name: studio.prompt
-    label: Parameter Prompt
+    label: Parameter prompt
     type: TEXT

@@ -1,3 +1,3 @@
-name: "workspace_admin"
-label: "Workspace Admin"
+name: workspace_admin
+label: Workspace admin
 description: "Ability to administer workspaces"

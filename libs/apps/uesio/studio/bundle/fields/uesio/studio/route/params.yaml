@@ -1,6 +1,6 @@
 name: params
 type: MAP
-label: Default Parameters
+label: Default parameters
 subtype: TEXT
 subfields:
   - name: value

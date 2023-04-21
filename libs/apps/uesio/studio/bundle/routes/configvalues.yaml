@@ -2,4 +2,4 @@ name: configvalues
 path: app/{app:\w*\/\w*}/workspace/{workspacename}/configvalues
 view: uesio/studio.configvalues
 theme: uesio/studio.default
-title: Config Values
+title: Config values

@@ -1,9 +1,9 @@
 name: autonumber
 type: MAP
-label: Autonumber Metadata
+label: Autonumber metadata
 subfields:
   - name: uesio/studio.leadingzeros
-    label: Leading Zeros
+    label: Leading zeros
     type: NUMBER
   - name: uesio/studio.prefix
     label: Prefix

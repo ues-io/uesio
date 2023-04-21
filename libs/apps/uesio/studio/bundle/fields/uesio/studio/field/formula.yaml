@@ -6,6 +6,6 @@ subfields:
     label: Expression
     type: TEXT
   - name: uesio/studio.returntype
-    label: Return Type
+    label: Return type
     type: SELECT
     selectList: uesio/studio.formulafieldreturntypes

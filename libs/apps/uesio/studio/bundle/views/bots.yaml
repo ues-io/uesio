@@ -82,7 +82,7 @@ definition:
                       - uesio/io.group:
                           components:
                             - uesio/io.button:
-                                text: Create a New Bot
+                                text: Create a new bot
                                 uesio.variant: uesio/io.primary
                                 hotkey: "n"
                                 signals:
@@ -100,8 +100,8 @@ definition:
                             - uesio/io.tile:
                                 uesio.variant: uesio/io.item
                                 signals:
-                                  - signal: "route/NAVIGATE"
-                                    path: "app/$Param{app}/workspace/$Param{workspacename}/bots/${uesio/studio.name}"
+                                  - signal: route/NAVIGATE
+                                    path: app/$Param{app}/workspace/$Param{workspacename}/bots/${uesio/studio.name}
                                 content:
                                   - uesio/io.text:
                                       text: ${uesio/studio.type} - ${uesio/studio.name}
@@ -113,7 +113,7 @@ definition:
   panels:
     newBot:
       uesio.type: uesio/io.dialog
-      title: Create a New Bot
+      title: Create a new bot
       width: 400px
       height: 500px
       components:
@@ -131,9 +131,9 @@ definition:
               - uesio/io.box:
                   uesio.display:
                     - field: uesio/studio.type
-                      value: "LISTENER"
-                      type: "fieldValue"
-                      operator: "NOT_EQUALS"
+                      value: LISTENER
+                      type: fieldValue
+                      operator: NOT_EQUALS
                   components:
                     - uesio/builder.metadatafield:
                         uesio.context:
@@ -141,22 +141,22 @@ definition:
                             name: $Param{workspacename}
                             app: $Param{app}
                         fieldId: uesio/studio.collection
-                        metadataType: "COLLECTION"
-                        label: "Collection"
+                        metadataType: COLLECTION
+                        label: Collection
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
-            text: "Save"
+            text: $Label{uesio/io.save}
             hotkey: "meta+s"
             signals:
               - signal: wire/SAVE
                 wires:
-                  - "newbot"
-              - signal: "route/NAVIGATE"
-                path: "app/$Param{app}/workspace/$Param{workspacename}/bots/${uesio/studio.name}"
+                  - newbot
+              - signal: route/NAVIGATE
+                path: app/$Param{app}/workspace/$Param{workspacename}/bots/${uesio/studio.name}
         - uesio/io.button:
-            uesio.variant: "uesio/io.secondary"
-            text: "Cancel"
+            uesio.variant: uesio/io.secondary
+            text: $Label{uesio/io.cancel}
             signals:
-              - signal: "panel/TOGGLE"
-                panel: "newBot"
+              - signal: panel/TOGGLE
+                panel: newBot

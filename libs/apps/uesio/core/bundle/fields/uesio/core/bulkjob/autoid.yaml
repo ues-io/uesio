@@ -1,6 +1,6 @@
 name: autoid
-type: "AUTONUMBER"
-label: "Auto ID"
+type: AUTONUMBER
+label: Auto ID
 autonumber:
-  prefix: "JOB"
+  prefix: JOB
   leadingZeros: 4

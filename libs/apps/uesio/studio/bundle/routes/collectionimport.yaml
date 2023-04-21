@@ -2,4 +2,4 @@ name: collectionimport
 path: app/{app:\w*\/\w*}/workspace/{workspacename}/import/{namespace:\w*\/\w*}/{collectionname}
 view: uesio/studio.collectionimport
 theme: uesio/studio.default
-title: "Import Collection Data: $Param{collectionname}"
+title: "Import collection data: $Param{collectionname}"

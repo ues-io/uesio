@@ -1,6 +1,6 @@
 name: initials
-type: "FORMULA"
-label: "Initials"
+type: FORMULA
+label: Initials
 formula:
   expression: "uesio/core.firstname ? FIRST(uesio/core.firstname) + FIRST(uesio/core.lastname) : FIRST(uesio/core.username)"
-  returntype: "TEXT"
+  returntype: TEXT

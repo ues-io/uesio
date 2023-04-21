@@ -78,7 +78,7 @@ definition:
                       - uesio/io.group:
                           components:
                             - uesio/io.button:
-                                text: Create a New Theme
+                                text: Create a new theme
                                 uesio.variant: uesio/io.secondary
                                 signals:
                                   - signal: panel/TOGGLE
@@ -93,8 +93,8 @@ definition:
                             - uesio/io.tile:
                                 uesio.variant: uesio/io.item
                                 signals:
-                                  - signal: "route/NAVIGATE"
-                                    path: "app/$Param{app}/workspace/$Param{workspacename}/themes/${uesio/studio.name}"
+                                  - signal: route/NAVIGATE
+                                    path: app/$Param{app}/workspace/$Param{workspacename}/themes/${uesio/studio.name}
                                 content:
                                   - uesio/io.text:
                                       text: ${uesio/studio.name}
@@ -106,7 +106,7 @@ definition:
   panels:
     newTheme:
       uesio.type: uesio/io.dialog
-      title: Create a New Theme
+      title: Create a new theme
       width: 400px
       height: 500px
       components:
@@ -120,16 +120,16 @@ definition:
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
-            text: "Save"
+            text: $Label{uesio/io.save}
             signals:
               - signal: wire/SAVE
                 wires:
-                  - "newtheme"
-              - signal: "route/NAVIGATE"
-                path: "app/$Param{app}/workspace/$Param{workspacename}/themes/${uesio/studio.name}"
+                  - newtheme
+              - signal: route/NAVIGATE
+                path: app/$Param{app}/workspace/$Param{workspacename}/themes/${uesio/studio.name}
         - uesio/io.button:
-            uesio.variant: "uesio/io.secondary"
-            text: "Cancel"
+            uesio.variant: uesio/io.secondary
+            text: $Label{uesio/io.cancel}
             signals:
-              - signal: "panel/TOGGLE"
-                panel: "newTheme"
+              - signal: panel/TOGGLE
+                panel: newTheme

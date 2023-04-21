@@ -1,6 +1,6 @@
 name: configvalues
 type: LIST
-label: Config Values
+label: Config values
 subtype: TEXT
 subfields:
   - name: value

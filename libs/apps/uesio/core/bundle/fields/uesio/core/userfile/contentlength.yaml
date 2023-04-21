@@ -1,5 +1,5 @@
 name: contentlength
 type: NUMBER
-label: "Content Length"
+label: Content length
 number:
   decimals: 0

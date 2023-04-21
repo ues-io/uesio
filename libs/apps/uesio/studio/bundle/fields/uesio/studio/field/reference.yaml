@@ -1,6 +1,6 @@
 name: reference
 type: MAP
-label: Reference Metadata
+label: Reference metadata
 subfields:
   - name: uesio/studio.collection
     label: Collection

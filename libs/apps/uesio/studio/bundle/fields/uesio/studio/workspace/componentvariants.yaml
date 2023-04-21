@@ -1,6 +1,6 @@
 name: componentvariants
 type: REFERENCEGROUP
-label: Component Variants
+label: Component variants
 referenceGroup:
   collection: uesio/studio.componentvariant
   field: uesio/studio.workspace

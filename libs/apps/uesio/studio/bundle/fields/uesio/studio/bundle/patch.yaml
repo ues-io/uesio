@@ -1,6 +1,6 @@
 name: patch
 type: NUMBER
-label: "Patch version"
+label: Patch version
 readOnly: true
 number:
   decimals: 0

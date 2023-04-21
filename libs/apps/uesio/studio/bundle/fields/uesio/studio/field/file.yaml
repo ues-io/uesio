@@ -3,7 +3,7 @@ type: MAP
 label: File Metadata
 subfields:
   - name: uesio/studio.filesource
-    label: File Source
+    label: File source
     type: TEXT
   - name: uesio/studio.accept
     label: Accept

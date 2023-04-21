@@ -1,4 +1,4 @@
 name: description
-type: "TEXT"
-label: "Bundle Description"
+type: TEXT
+label: Bundle description
 readOnly: true

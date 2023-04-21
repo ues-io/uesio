@@ -123,7 +123,7 @@ definition:
   panels:
     deleteTranslation:
       uesio.type: uesio/io.dialog
-      title: Delete Translation
+      title: Delete translation
       width: 400px
       height: 300px
       components:

@@ -105,12 +105,12 @@ definition:
                             - uesio/studio.codefield:
                                 fieldId: uesio/studio.definition
                                 height: 350px
-                                language: "yaml"
+                                language: yaml
 
   panels:
     deleteTheme:
       uesio.type: uesio/io.dialog
-      title: Delete Theme
+      title: Delete theme
       width: 400px
       height: 300px
       components:

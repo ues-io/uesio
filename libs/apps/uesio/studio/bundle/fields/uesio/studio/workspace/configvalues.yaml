@@ -1,6 +1,6 @@
 name: configvalues
 type: REFERENCEGROUP
-label: Config Values
+label: Config values
 referenceGroup:
   collection: uesio/studio.configvalue
   field: uesio/studio.workspace

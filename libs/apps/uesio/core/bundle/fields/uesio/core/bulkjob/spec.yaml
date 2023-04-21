@@ -3,10 +3,10 @@ type: MAP
 label: Spec
 subfields:
   - name: uesio/core.jobtype
-    label: Job Type
+    label: Job type
     type: TEXT
   - name: uesio/core.filetype
-    label: File Type
+    label: File type
     type: TEXT
   - name: uesio/core.collection
     label: Collection
@@ -15,5 +15,5 @@ subfields:
     label: Mappings
     type: MAP
   - name: uesio/core.uploadfield
-    label: Upload Field
+    label: Upload field
     type: Text

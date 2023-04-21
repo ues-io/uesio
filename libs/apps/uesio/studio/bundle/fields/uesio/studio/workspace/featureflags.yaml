@@ -1,6 +1,6 @@
 name: featureflags
 type: REFERENCEGROUP
-label: Feature Flags
+label: Feature flags
 referenceGroup:
   collection: uesio/studio.featureflag
   field: uesio/studio.workspace

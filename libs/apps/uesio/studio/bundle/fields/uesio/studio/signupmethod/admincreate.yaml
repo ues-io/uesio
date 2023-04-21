@@ -1,12 +1,12 @@
 name: admincreate
 type: MAP
-label: Admin Create Options
+label: Admin create options
 subfields:
   - name: uesio/studio.emailsubject
-    label: Email Subject
+    label: Email subject
     type: TEXT
   - name: uesio/studio.emailbody
-    label: Email Body
+    label: Email body
     type: TEXT
   - name: uesio/studio.redirect
     label: Redirect

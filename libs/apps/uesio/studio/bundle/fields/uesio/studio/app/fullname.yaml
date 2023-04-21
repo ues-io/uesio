@@ -1,5 +1,5 @@
 name: fullname
 type: TEXT
-label: Full Name
+label: Full name
 required: true
 createOnly: true

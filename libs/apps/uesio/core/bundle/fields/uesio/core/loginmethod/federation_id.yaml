@@ -1,3 +1,3 @@
 name: federation_id
-type: "TEXT"
-label: "Federation ID"
+type: TEXT
+label: Federation ID

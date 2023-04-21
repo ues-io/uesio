@@ -1,6 +1,6 @@
 name: bundledependencies
 type: REFERENCEGROUP
-label: Bundle Dependencies
+label: Bundle dependencies
 referenceGroup:
   collection: uesio/studio.bundledependency
   field: uesio/studio.workspace

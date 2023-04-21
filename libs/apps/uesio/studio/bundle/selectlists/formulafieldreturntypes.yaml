@@ -1,12 +1,12 @@
 name: formulafieldreturntypes
 options:
-  - label: "Check Box"
+  - label: "Check box"
     value: "CHECKBOX"
   - label: "Date"
     value: "DATE"
   - label: "Number"
     value: "NUMBER"
-  - label: "Long Text"
+  - label: "Long text"
     value: "LONGTEXT"
   - label: "Map"
     value: "MAP"

@@ -2,4 +2,4 @@ name: featureflags
 path: app/{app:\w*\/\w*}/workspace/{workspacename}/featureflags
 view: uesio/studio.featureflags
 theme: uesio/studio.default
-title: Feature Flags
+title: Feature flags

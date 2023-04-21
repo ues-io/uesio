@@ -2,4 +2,4 @@ name: permissionset
 path: app/{app:\w*\/\w*}/workspace/{workspacename}/permissionsets/{permissionsetname}
 view: uesio/studio.permissionset
 theme: uesio/studio.default
-title: "Perm Set: $Param{permissionsetname}"
+title: "Perm set: $Param{permissionsetname}"

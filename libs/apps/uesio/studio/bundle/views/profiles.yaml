@@ -77,7 +77,7 @@ definition:
                       - uesio/io.group:
                           components:
                             - uesio/io.button:
-                                text: Create a New Profile
+                                text: Create a new profile
                                 uesio.variant: uesio/io.secondary
                                 signals:
                                   - signal: panel/TOGGLE
@@ -92,8 +92,8 @@ definition:
                             - uesio/io.tile:
                                 uesio.variant: uesio/io.item
                                 signals:
-                                  - signal: "route/NAVIGATE"
-                                    path: "app/$Param{app}/workspace/$Param{workspacename}/profiles/${uesio/studio.name}"
+                                  - signal: route/NAVIGATE
+                                    path: app/$Param{app}/workspace/$Param{workspacename}/profiles/${uesio/studio.name}
                                 content:
                                   - uesio/io.text:
                                       text: ${uesio/studio.name}
@@ -105,7 +105,7 @@ definition:
   panels:
     newProfile:
       uesio.type: uesio/io.dialog
-      title: Create a New Profile
+      title: Create a new profile
       width: 400px
       height: 500px
       components:
@@ -119,16 +119,16 @@ definition:
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
-            text: "Save"
+            text: $Label{uesio/io.save}
             signals:
               - signal: wire/SAVE
                 wires:
-                  - "newprofile"
-              - signal: "route/NAVIGATE"
-                path: "app/$Param{app}/workspace/$Param{workspacename}/profiles/${uesio/studio.name}"
+                  - newprofile
+              - signal: route/NAVIGATE
+                path: app/$Param{app}/workspace/$Param{workspacename}/profiles/${uesio/studio.name}
         - uesio/io.button:
-            uesio.variant: "uesio/io.secondary"
-            text: "Cancel"
+            uesio.variant: uesio/io.secondary
+            text: $Label{uesio/io.cancel}
             signals:
-              - signal: "panel/TOGGLE"
-                panel: "newProfile"
+              - signal: panel/TOGGLE
+                panel: newProfile

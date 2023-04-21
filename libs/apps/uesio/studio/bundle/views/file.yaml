@@ -162,7 +162,7 @@ definition:
   panels:
     deleteFile:
       uesio.type: uesio/io.dialog
-      title: Delete File
+      title: Delete file
       width: 400px
       height: 300px
       components:

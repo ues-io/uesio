@@ -2,4 +2,4 @@ name: collectionexportbatches
 path: app/{app:\w*\/\w*}/workspace/{workspacename}/export/{namespace:\w*\/\w*}/{collectionname}/{jobid}/batches
 view: uesio/studio.collectionexportbatches
 theme: uesio/studio.default
-title: "Collection Export: $Param{collectionname}"
+title: "Collection export: $Param{collectionname}"

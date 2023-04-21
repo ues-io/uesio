@@ -119,7 +119,7 @@ definition:
                     components:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.main
-                          title: Permission Set - ${uesio/studio.name}
+                          title: Permission set - ${uesio/studio.name}
                           actions:
                             - uesio/io.group:
                                 components:
@@ -276,7 +276,7 @@ definition:
   panels:
     deletePermissonset:
       uesio.type: uesio/io.dialog
-      title: Delete Permission Set
+      title: Delete permission set
       width: 400px
       height: 300px
       components:

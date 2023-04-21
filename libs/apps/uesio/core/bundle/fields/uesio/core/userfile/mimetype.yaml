@@ -1,4 +1,4 @@
 name: mimetype
-type: "TEXT"
-label: "Mime Type"
+type: TEXT
+label: Mime type
 readOnly: true

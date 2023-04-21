@@ -1,6 +1,6 @@
 name: referencegroup
 type: MAP
-label: Reference Group Metadata
+label: Reference group metadata
 subfields:
   - name: uesio/studio.collection
     label: Collection
@@ -9,5 +9,5 @@ subfields:
     label: Collection
     type: TEXT
   - name: uesio/studio.ondelete
-    label: On Delete
+    label: On delete
     type: TEXT

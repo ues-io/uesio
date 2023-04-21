@@ -1,6 +1,6 @@
 name: username
-type: "TEXT"
-label: "Username"
+type: TEXT
+label: Username
 required: true
 createOnly: true
 validate:

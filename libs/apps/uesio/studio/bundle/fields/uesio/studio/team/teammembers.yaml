@@ -1,6 +1,6 @@
 name: teammembers
 type: REFERENCEGROUP
-label: Team Members
+label: Team members
 referenceGroup:
   collection: uesio/studio.teammember
   field: uesio/studio.team

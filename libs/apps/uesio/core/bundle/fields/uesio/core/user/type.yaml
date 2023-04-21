@@ -1,5 +1,5 @@
 name: type
-type: "TEXT"
-label: "Type"
+type: TEXT
+label: Type
 required: true
 createOnly: true

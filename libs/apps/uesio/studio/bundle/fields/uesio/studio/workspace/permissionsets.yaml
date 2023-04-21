@@ -1,6 +1,6 @@
 name: permissionsets
 type: REFERENCEGROUP
-label: Permission Sets
+label: Permission sets
 referenceGroup:
   collection: uesio/studio.permissionset
   field: uesio/studio.workspace

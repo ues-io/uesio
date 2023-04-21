@@ -130,11 +130,11 @@ definition:
                             - uesio/studio.codefield:
                                 fieldId: uesio/studio.definition
                                 height: 350px
-                                language: "yaml"
+                                language: yaml
   panels:
     deleteView:
       uesio.type: uesio/io.dialog
-      title: Delete View
+      title: Delete view
       width: 400px
       height: 300px
       components:

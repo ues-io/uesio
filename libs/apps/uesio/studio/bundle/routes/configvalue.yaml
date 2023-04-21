@@ -2,4 +2,4 @@ name: configvalue
 path: app/{app:\w*\/\w*}/workspace/{workspacename}/configvalues/{configvaluename}
 view: uesio/studio.configvalue
 theme: uesio/studio.default
-title: "Config Value: $Param{configvaluename}"
+title: "Config value: $Param{configvaluename}"

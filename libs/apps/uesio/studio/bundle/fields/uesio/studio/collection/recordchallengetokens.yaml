@@ -1,6 +1,6 @@
 name: recordchallengetokens
 type: LIST
-label: Record Challenge Tokens
+label: Record challenge tokens
 subtype: MAP
 subfields:
   - name: type

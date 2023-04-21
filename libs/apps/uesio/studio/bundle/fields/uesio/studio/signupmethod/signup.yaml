@@ -1,12 +1,12 @@
 name: signup
 type: MAP
-label: Signup Options
+label: Signup options
 subfields:
   - name: uesio/studio.emailsubject
-    label: Email Subject
+    label: Email subject
     type: TEXT
   - name: uesio/studio.emailbody
-    label: Email Body
+    label: Email body
     type: TEXT
   - name: uesio/studio.redirect
     label: Redirect
