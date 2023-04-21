@@ -52,7 +52,7 @@ const MultiMetadataField: definition.UC<MultiMetadataFieldDefinition> = (
 
 	const listprops = {
 		...props,
-		definition: { ...props.definition, label },
+		definition: { ...props.definition, label: "" },
 		noAdd: true,
 	}
 
