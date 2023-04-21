@@ -101,7 +101,9 @@ describe("Uesio Builder Tests", () => {
 			cy.get('[id*=":uesio/io.tile:views"]').click()
 			cy.title().should("eq", "Views")
 			cy.url().should("contain", `${workspaceBasePath}/views`)
-			cy.getByIdFragment("button", "new-view").should("be.visible")
+			cy.getByIdFragment("button", "new-view")
+				.scrollIntoView()
+				.should("be.visible")
 			// Test the hotkey for creating a new view
 			cy.hotkey("n")
 			// Fill out the form to create a new view

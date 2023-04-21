@@ -96,6 +96,9 @@ const navigate = async (
 		dispatch(setRoute(routeResponse))
 	})
 
+	// Always scroll to top of view after doing a route navigate
+	window.scrollTo(0, 0)
+
 	return context
 }
 

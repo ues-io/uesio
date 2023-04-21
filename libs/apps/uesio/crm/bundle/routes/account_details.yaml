@@ -3,6 +3,6 @@ path: account/{recordid}
 viewtype: detail
 view: uesio/crm.account_details
 collection: uesio/crm.account
-theme: uesio/crm.default
+theme: uesio/core.default
 title: ""
 tags: []

@@ -23,7 +23,8 @@ definition:
               # uesio.variant: uesio/studio.topbar
               components:
                 - uesio/io.tabs:
-                    uesio.variant: uesio/io.default
+                    # INTENTIONALLY do NOT specify a variant, to test our server-side parsing of defaultDefinition
+                    # to load up the default variant for a component
                     tabs:
                       - id: tab1
                         label: One

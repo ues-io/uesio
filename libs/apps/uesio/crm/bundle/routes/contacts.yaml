@@ -3,6 +3,6 @@ path: contacts
 viewtype: list
 view: uesio/crm.contacts
 collection: uesio/crm.contact
-theme: uesio/crm.default
+theme: uesio/core.default
 title: ""
 tags: []

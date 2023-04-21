@@ -4,69 +4,64 @@ definition:
   components:
     - uesio/core.view:
         view: uesio/crm.topbar
-    - uesio/io.titlebar:
-        title: Leads
-        uesio.variant: uesio/io.secondary
-        actions:
-          - uesio/io.group:
-              components:
-                - uesio/io.button:
-                    signals:
-                      - signal: wire/EMPTY
-                        wire: new_lead
-                      - signal: wire/CREATE_RECORD
-                        wire: new_lead
-                      - signal: wire/UPDATE_RECORD
-                        wire: new_lead
-                        field: uesio/crm.status
-                        value: OPEN
-                      - signal: panel/OPEN
-                        panel: newlead
-                    text: New
-                    uesio.variant: uesio/io.secondary
-                    icon: add
-                - uesio/io.button:
-                    text: Save
-                    icon: check
-                    uesio.variant: uesio/io.primary
-                    signals:
-                      - signal: wire/SAVE
-                        wires:
-                          - leads
-                      - signal: wire/LOAD
-                        wires:
-                          - recent
-                    uesio.display:
-                      - type: wireHasChanges
-                        operator: EQUALS
-                        wire: leads
-                - uesio/io.button:
-                    text: Cancel
-                    icon: cancel
-                    uesio.variant: uesio/io.primary
-                    signals:
-                      - signal: wire/CANCEL
-                        wires:
-                          - leads
-                        wire: leads
-                    uesio.display:
-                      - type: wireHasChanges
-                        operator: EQUALS
-                        wire: leads
     - uesio/io.box:
+        uesio.variant: uesio/crm.content
         components:
+          - uesio/io.titlebar:
+              title: Leads
+              uesio.variant: uesio/io.main
+              actions:
+                - uesio/io.group:
+                    components:
+                      - uesio/io.button:
+                          signals:
+                            - signal: wire/EMPTY
+                              wire: new_lead
+                            - signal: wire/CREATE_RECORD
+                              wire: new_lead
+                              prepend: true
+                            - signal: wire/UPDATE_RECORD
+                              wire: new_lead
+                              field: uesio/crm.status
+                              value: OPEN
+                            - signal: panel/OPEN
+                              panel: newlead
+                          text: New
+                          uesio.variant: uesio/io.secondary
+                          icon: add
+                      - uesio/io.button:
+                          text: Save
+                          icon: check
+                          uesio.variant: uesio/io.primary
+                          signals:
+                            - signal: wire/SAVE
+                              wires:
+                                - leads
+                            - signal: wire/LOAD
+                              wires:
+                                - recent
+                          uesio.display:
+                            - type: wireHasChanges
+                              operator: EQUALS
+                              wire: leads
+                      - uesio/io.button:
+                          text: Cancel
+                          icon: cancel
+                          uesio.variant: uesio/io.primary
+                          signals:
+                            - signal: wire/CANCEL
+                              wires:
+                                - leads
+                              wire: leads
+                          uesio.display:
+                            - type: wireHasChanges
+                              operator: EQUALS
+                              wire: leads
           - uesio/io.group:
               columnGap: 10px
               components:
                 - uesio/io.searchbox:
                     wire: leads
-                    searchFields:
-                      - uesio/crm.firstname
-                      - uesio/crm.lastname
-                      - uesio/crm.account
-                    uesio.styles:
-                      root:
-                        paddingLeft: 40px
                     searchfields:
                       - uesio/crm.firstname
                       - uesio/crm.lastname
@@ -86,9 +81,6 @@ definition:
                   - grid-rows-1
               items:
                 - uesio/io.box:
-                    uesio.styles:
-                      root:
-                        padding: 20px
                     components:
                       - uesio/io.text:
                           text: OPEN LEADS
@@ -121,9 +113,6 @@ definition:
                           wire: leads
                           uesio.variant: uesio/io.default
                           pagesize: 5
-                          uesio.styles:
-                            root:
-                              backgroundColor: white
                     uesio.variant: ""
               columnGap: 1px
               rowGap: 8px
@@ -153,17 +142,10 @@ definition:
                           wire: recent
                           uesio.variant: uesio/io.default
                           pagesize: 5
-                          uesio.styles:
-                            root:
-                              backgroundColor: white
                     uesio.styleTokens:
                       root:
                         - grid-cols-1
                         - grid-rows-2
-              uesio.styles:
-                root:
-                  padding: 20px
-                  maxWidth: 550px
           - uesio/io.box:
               uesio.variant: ""
               components:
@@ -188,14 +170,6 @@ definition:
                       - field: uesio/crm.converted_opportunity
                       - field: uesio/crm.converted_date
                       - field: uesio/crm.status
-              uesio.styles:
-                root:
-                  padding: 20px
-        uesio.styles:
-          root:
-            background: "#F0F0F0"
-            paddingBottom: 250px
-            paddingTop: 20px
   wires:
     leads:
       collection: uesio/crm.lead

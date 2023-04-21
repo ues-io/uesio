@@ -1,0 +1,7 @@
+name: mainlayout_dark
+label: Main Layout Dark
+extends: uesio/web.mainlayout
+definition:
+  uesio.styleTokens:
+    root:
+      - bg-slate-900

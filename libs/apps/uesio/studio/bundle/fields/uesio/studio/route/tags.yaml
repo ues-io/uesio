@@ -1,7 +1,7 @@
 name: tags
 type: LIST
 label: Tags
-subtype: MAP
+subtype: STRUCT
 subfields:
   - name: type
     label: Type

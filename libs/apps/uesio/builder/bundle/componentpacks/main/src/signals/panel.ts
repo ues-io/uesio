@@ -1,10 +1,14 @@
 import { context } from "@uesio/ui"
-import { SignalDefinition, SignalDescriptor } from "../api/signalsapi"
+import {
+	SignalBandDefinition,
+	SignalDefinition,
+	SignalDescriptor,
+} from "../api/signalsapi"
 import { getAvailablePanelIds } from "../api/panelapi"
 import { ComponentProperty } from "../properties/componentproperty"
 
 // The key for the entire band
-const PANEL_BAND = "panel"
+const BAND = "panel"
 
 const getPanelSelectOptions = (context: context.Context) =>
 	getAvailablePanelIds(context)?.map((panelId) => ({
@@ -27,27 +31,31 @@ const getPanelSelectProperties = (
 	] as ComponentProperty[]
 
 // Metadata for all of the signals in the band
-const signals: Record<string, SignalDescriptor> = {
-	[`${PANEL_BAND}/TOGGLE`]: {
-		label: "Toggle",
-		description: "Toggle panel status",
-		properties: getPanelSelectProperties,
-	},
-	[`${PANEL_BAND}/OPEN`]: {
-		label: "Open",
-		description: "Open panel",
-		properties: getPanelSelectProperties,
-	},
-	[`${PANEL_BAND}/CLOSE`]: {
-		label: "Close",
-		description: "Close panel",
-		properties: getPanelSelectProperties,
-	},
-	[`${PANEL_BAND}/CLOSE_ALL`]: {
-		label: "Close all",
-		description: "Close all panels",
-		properties: () => [],
-	},
+const signals: SignalBandDefinition = {
+	band: BAND,
+	label: "Panels",
+	signals: {
+		[`${BAND}/TOGGLE`]: {
+			label: "Toggle panel visibility",
+			description: "Toggle panel visibility",
+			properties: getPanelSelectProperties,
+		},
+		[`${BAND}/OPEN`]: {
+			label: "Open panel",
+			description: "Open panel",
+			properties: getPanelSelectProperties,
+		},
+		[`${BAND}/CLOSE`]: {
+			label: "Close panel",
+			description: "Close panel",
+			properties: getPanelSelectProperties,
+		},
+		[`${BAND}/CLOSE_ALL`]: {
+			label: "Close all panels",
+			description: "Close all panels",
+			properties: () => [],
+		},
+	} as Record<string, SignalDescriptor>,
 }
 
 export default signals

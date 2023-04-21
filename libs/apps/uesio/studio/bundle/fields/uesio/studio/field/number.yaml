@@ -1,5 +1,5 @@
 name: number
-type: MAP
+type: STRUCT
 label: Number metadata
 subfields:
   - name: uesio/studio.decimals

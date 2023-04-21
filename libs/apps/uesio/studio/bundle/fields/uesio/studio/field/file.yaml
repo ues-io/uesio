@@ -1,5 +1,5 @@
 name: file
-type: MAP
+type: STRUCT
 label: File Metadata
 subfields:
   - name: uesio/studio.filesource

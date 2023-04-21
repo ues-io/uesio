@@ -6,9 +6,9 @@ definition:
     root:
       - grow
     input:
-      - grid
-      - grid-flow-col
-      - auto-cols-max
+      - flex
+      - gap-2
+      - flex-wrap
     notfound:
       - text-slate-400
       - font-light
@@ -17,7 +17,7 @@ definition:
     selecteditemwrapper:
       - inline-grid
       - grid-flow-col
-      - auto-cols-min
+      - auto-cols-auto
       - gap-2
       - mr-4
 public: true

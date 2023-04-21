@@ -64,10 +64,8 @@ const ConstrainedInput: FunctionComponent<ConstrainedInputProps> = (props) => {
 			<div className={classes.innerWrapper}>
 				<TextField
 					mode={inEditMode ? "EDIT" : "READ"}
-					label={label}
 					value={keyValue}
 					setValue={setKeyValue}
-					labelPosition={labelPosition}
 					context={context}
 					focusOnRender={true}
 					variant={

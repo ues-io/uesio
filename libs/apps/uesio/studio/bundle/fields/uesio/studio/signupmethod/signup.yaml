@@ -1,5 +1,5 @@
 name: signup
-type: MAP
+type: STRUCT
 label: Signup options
 subfields:
   - name: uesio/studio.emailsubject

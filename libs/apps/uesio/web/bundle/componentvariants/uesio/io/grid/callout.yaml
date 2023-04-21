@@ -5,4 +5,5 @@ definition:
     root:
       - grid-cols-1
       - md:grid-cols-[440px]
-      - p-20
+      - p-12
+      - md:p-20

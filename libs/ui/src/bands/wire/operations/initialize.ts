@@ -10,7 +10,7 @@ import {
 } from "../../../definition/wire"
 import { PlainWire } from "../types"
 import { PlainCollection, PlainCollectionMap } from "../../collection/types"
-import { FieldMetadataMap } from "../../field/types"
+import { FieldMetadataMap, FieldMetadata } from "../../field/types"
 import { LoadRequestField } from "../../../load/loadrequest"
 
 const getFieldsRequest = (
@@ -57,11 +57,38 @@ const getViewOnlyWireDefInfo = (
 	viewOnly: true,
 })
 
+const viewOnlyNamespace = "uesio/viewonly"
+
+const getViewOnlyFieldMetadata = (
+	field: string,
+	fieldDef: ViewOnlyField
+): FieldMetadata => ({
+	accessible: true,
+	createable: true,
+	name: field,
+	updateable: true,
+	namespace: viewOnlyNamespace,
+	type: fieldDef.type,
+	label: fieldDef.label,
+	reference: fieldDef.reference,
+	selectlist: fieldDef.selectlist,
+	number: fieldDef.number,
+	subfields: fieldDef.fields
+		? Object.fromEntries(
+				Object.entries(fieldDef.fields).map(
+					([subfieldId, subfieldDef]) => [
+						subfieldId,
+						getViewOnlyFieldMetadata(subfieldId, subfieldDef),
+					]
+				)
+		  )
+		: undefined,
+})
+
 const getViewOnlyMetadata = (
 	wirename: string,
 	wireDef: ViewOnlyWireDefinition
 ) => {
-	const viewOnlyNamespace = "uesio/viewonly"
 	const fieldMetadata: FieldMetadataMap = {
 		"uesio/core.id": {
 			accessible: true,
@@ -75,18 +102,7 @@ const getViewOnlyMetadata = (
 	}
 	Object.keys(wireDef.fields).forEach((field) => {
 		const fieldDef = wireDef.fields[field]
-
-		fieldMetadata[field] = {
-			accessible: true,
-			createable: true,
-			name: field,
-			updateable: true,
-			namespace: viewOnlyNamespace,
-			type: fieldDef.type,
-			label: fieldDef.label,
-			reference: fieldDef.reference,
-			selectlist: fieldDef.selectlist,
-		}
+		fieldMetadata[field] = getViewOnlyFieldMetadata(field, fieldDef)
 	})
 	return {
 		name: wirename,

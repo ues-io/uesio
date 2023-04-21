@@ -7,7 +7,8 @@ definition:
       - border-[rgb(45,39,245)]
       - border-2
       - py-1.5
-      - px-6
+      - px-4
+      - md:px-6
       - text-sm
       - rounded-lg
       - font-[Gosha]

@@ -126,6 +126,10 @@ const ConditionsProperties: definition.UC = (props) => {
 					label: "Is Not Blank",
 					value: "IS_NOT_BLANK",
 				},
+				{
+					label: "Between",
+					value: "BETWEEN",
+				},
 			],
 			displayConditions: [
 				{
@@ -163,7 +167,92 @@ const ConditionsProperties: definition.UC = (props) => {
 					type: "fieldValue",
 					operator: "IN",
 					field: "operator",
-					values: ["EQ", "NOT_EQ", "GT", "LT", "GTE", "LTE", "IN"],
+					values: [
+						"EQ",
+						"NOT_EQ",
+						"GT",
+						"LT",
+						"GTE",
+						"LTE",
+						"IN",
+						"BETWEEN",
+					],
+				},
+			],
+		},
+		{
+			name: "start",
+			type: "TEXT",
+			label: "Start",
+			displayConditions: [
+				{
+					field: "valueSource",
+					value: "VALUE",
+					type: "fieldValue",
+					operator: "EQUALS",
+				},
+				{
+					type: "fieldValue",
+					operator: "EQUALS",
+					field: "operator",
+					value: "BETWEEN",
+				},
+			],
+		},
+		{
+			name: "end",
+			type: "TEXT",
+			label: "End",
+			displayConditions: [
+				{
+					field: "valueSource",
+					value: "VALUE",
+					type: "fieldValue",
+					operator: "EQUALS",
+				},
+				{
+					type: "fieldValue",
+					operator: "EQUALS",
+					field: "operator",
+					value: "BETWEEN",
+				},
+			],
+		},
+		{
+			name: "inclusiveStart",
+			type: "CHECKBOX",
+			label: "Inclusive Start",
+			displayConditions: [
+				{
+					field: "valueSource",
+					value: "VALUE",
+					type: "fieldValue",
+					operator: "EQUALS",
+				},
+				{
+					type: "fieldValue",
+					operator: "EQUALS",
+					field: "operator",
+					value: "BETWEEN",
+				},
+			],
+		},
+		{
+			name: "inclusiveEnd",
+			type: "CHECKBOX",
+			label: "Inclusive End",
+			displayConditions: [
+				{
+					field: "valueSource",
+					value: "VALUE",
+					type: "fieldValue",
+					operator: "EQUALS",
+				},
+				{
+					type: "fieldValue",
+					operator: "EQUALS",
+					field: "operator",
+					value: "BETWEEN",
 				},
 			],
 		},
@@ -177,6 +266,12 @@ const ConditionsProperties: definition.UC = (props) => {
 					value: "VALUE",
 					type: "fieldValue",
 					operator: "EQUALS",
+				},
+				{
+					type: "fieldValue",
+					field: "operator",
+					value: "BETWEEN",
+					operator: "NOT_EQUALS",
 				},
 			],
 		},

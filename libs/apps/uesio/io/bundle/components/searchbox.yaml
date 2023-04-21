@@ -9,7 +9,7 @@ properties:
   - name: wire
     label: Wire
     type: WIRE
-  - name: searchfields
+  - name: searchFields
     label: Search Fields
     type: FIELDS
     wireField: wire
@@ -20,7 +20,7 @@ sections:
   - type: HOME
     properties:
       - wire
-      - searchfields
+      - searchFields
       - placeholder
   - type: STYLES
   - type: DISPLAY

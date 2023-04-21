@@ -11,7 +11,8 @@ interface MapFieldUtilityProps extends definition.UtilityProps {
 	keys?: string[]
 	autoAdd?: boolean
 	noAdd?: boolean
-	fieldVariant?: metadata.MetadataKey
+	noDelete?: boolean
+	subFieldVariant?: metadata.MetadataKey
 	labelVariant?: metadata.MetadataKey
 	path: string
 	fieldId: string
@@ -28,7 +29,8 @@ const MapField: FunctionComponent<MapFieldUtilityProps> = (props) => {
 		valueField,
 		autoAdd,
 		noAdd,
-		fieldVariant,
+		noDelete,
+		subFieldVariant,
 		labelVariant,
 		path,
 	} = props
@@ -53,6 +55,7 @@ const MapField: FunctionComponent<MapFieldUtilityProps> = (props) => {
 			value={listValue}
 			autoAdd={autoAdd}
 			noAdd={noAdd}
+			noDelete={noDelete}
 			subType="MAP"
 			subFields={{
 				key: keyField,
@@ -73,7 +76,7 @@ const MapField: FunctionComponent<MapFieldUtilityProps> = (props) => {
 			mode={mode}
 			context={context}
 			labelVariant={labelVariant}
-			fieldVariant={fieldVariant}
+			subFieldVariant={subFieldVariant}
 		/>
 	)
 }

@@ -23,7 +23,16 @@ func populateAutoNumbers(field *adapt.FieldMetadata) validationFunc {
 		format := "%0" + strconv.Itoa(autoNumberMeta.LeadingZeros) + "d"
 		sufix := fmt.Sprintf(format, change.Autonumber)
 		an := autoNumberMeta.Prefix + "-" + sufix
-		err := change.FieldChanges.SetField(field.GetFullName(), an)
+
+		// See if we're trying to set this value for an insert.
+		// If so, don't set the autonumber and just keep its current
+		// value.
+		current, err := change.GetFieldAsString(field.GetFullName())
+		if err == nil && current != "" {
+			return nil
+		}
+
+		err = change.FieldChanges.SetField(field.GetFullName(), an)
 		if err != nil {
 			return adapt.NewSaveError(change.RecordKey, field.GetFullName(), err.Error())
 		}
