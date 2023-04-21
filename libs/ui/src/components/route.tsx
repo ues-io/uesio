@@ -11,7 +11,7 @@ import { Component } from "../component/component"
 import PanelArea from "./panelarea"
 import { makeViewId } from "../bands/view"
 import { UtilityComponent } from "../definition/definition"
-import { install, defineConfig } from "@twind/core"
+import { defineConfig, setup } from "@twind/core"
 import presetAutoprefix from "@twind/preset-autoprefix"
 import presetTailwind from "@twind/preset-tailwind"
 
@@ -78,7 +78,7 @@ const Route: UtilityComponent = (props) => {
 	const themeData = routeContext.getTheme()
 
 	// activate twind - must be called at least once
-	install(
+	setup(
 		defineConfig({
 			presets: [presetAutoprefix(), presetTailwind()],
 			hash: false,
@@ -92,7 +92,12 @@ const Route: UtilityComponent = (props) => {
 					},
 				},
 			},
-		})
+		}),
+		undefined,
+		// This is dumb. But twind doesn't have a nice api for creating a default
+		// instance without using the observer. So we can just give it an empty,
+		// non-attached div to observe :)
+		document.createElement("div")
 	)
 
 	if (workspace) {

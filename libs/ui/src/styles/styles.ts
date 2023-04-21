@@ -15,6 +15,7 @@ import {
 import { MetadataKey } from "../metadataexports"
 import { twMerge } from "tailwind-merge"
 import { Context } from "../context/context"
+import { tw } from "@twind/core"
 
 type ResponsiveDefinition =
 	| string
@@ -157,7 +158,37 @@ function getVariantTokens(
 }
 
 function processClassString(classes: string, context: Context | undefined) {
-	return twMerge(context ? context?.mergeString(classes) : classes)
+	return tw(twMerge(context ? context?.mergeString(classes) : classes))
+}
+
+function useUtilityStyleTokens(
+	defaults: Record<string, string[]>,
+	props: UtilityProps,
+	defaultVariantComponentType?: MetadataKey
+) {
+	const tokens = {
+		...getVariantTokens(props, defaultVariantComponentType),
+		...props.styleTokens,
+	}
+
+	return Object.keys(defaults).reduce(
+		(classNames: Record<string, string>, className: string) => {
+			const classTokens = tokens[className] || []
+			classNames[className] = processClassString(
+				cx(
+					defaults[className],
+					...classTokens,
+					props.classes?.[className],
+					// A bit weird here... Only apply the passed-in className prop to root styles.
+					// Otherwise, it would be applied to every class sent in as defaults.
+					className === "root" && props.className
+				),
+				props.context
+			)
+			return classNames
+		},
+		{} as Record<string, string>
+	)
 }
 
 function useUtilityStyles<K extends string>(
@@ -218,6 +249,7 @@ export {
 	cx,
 	mergeClasses,
 	css,
+	useUtilityStyleTokens,
 	useUtilityStyles,
 	useStyles,
 	colors,
