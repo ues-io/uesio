@@ -5,6 +5,7 @@ import botSignals from "../signals/bot"
 import notificationSignals from "../signals/notification"
 import panelSignals from "../signals/panel"
 import userSignals from "../signals/user"
+import toolsSignals from "../signals/tools"
 import routeSignals from "../signals/route"
 import wireSignals from "../signals/wire"
 import { ComponentProperty } from "../properties/componentproperty"
@@ -18,6 +19,7 @@ const signalBandDefinitions: SignalBandDefinition[] = [
 	panelSignals,
 	routeSignals,
 	botSignals,
+	toolsSignals,
 	collectionSignals,
 	userSignals,
 	aiSignals,
