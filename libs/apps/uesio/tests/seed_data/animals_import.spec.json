@@ -1,0 +1,16 @@
+{
+	"jobtype": "IMPORT",
+	"collection": "uesio/tests.animal",
+	"filetype": "CSV",
+	"mappings": {
+		"uesio/tests.genus": {
+			"columnname": "genus"
+		},
+		"uesio/tests.species": {
+			"columnname": "species"
+		},
+		"uesio/tests.total_population": {
+			"columnname": "total_population"
+		}
+	}
+}

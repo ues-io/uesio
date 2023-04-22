@@ -20,7 +20,9 @@ echo "Configuring workspace..."
 uesio work
 echo "Deploying tests app to Studio..."
 uesio deploy
-echo "Successfully deployed tests app to Studio. Running tests..."
+echo "Successfully deployed tests app to Studio. Upserting seed data..."
+uesio upsert -f seed_data/animals.csv -s seed_data/animals_import.spec.json
+echo "Successfully upserted seed data. Running tests..."
 
 cd ../../../..
 
