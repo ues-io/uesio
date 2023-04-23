@@ -16,7 +16,7 @@ components:
   - uesio/io.button:
       text: New Button
       icon: bolt
-      uesio.variant: uesio/io.secondary
+      uesio.variant: uesio/io.default
 `
 
 const setButtonPageDef = `# Wires connect to data in collections
@@ -26,7 +26,7 @@ components:
   - uesio/io.button:
       text: First
       icon: bolt
-      uesio.variant: uesio/io.secondary
+      uesio.variant: uesio/io.default
 `
 
 const cloneButtonPageDef = `# Wires connect to data in collections
@@ -36,11 +36,11 @@ components:
   - uesio/io.button:
       text: First
       icon: bolt
-      uesio.variant: uesio/io.secondary
+      uesio.variant: uesio/io.default
   - uesio/io.button:
       text: First
       icon: bolt
-      uesio.variant: uesio/io.secondary
+      uesio.variant: uesio/io.default
 `
 
 const setButtonPageDef2 = `# Wires connect to data in collections
@@ -50,11 +50,11 @@ components:
   - uesio/io.button:
       text: First
       icon: bolt
-      uesio.variant: uesio/io.secondary
+      uesio.variant: uesio/io.default
   - uesio/io.button:
       text: Second
       icon: bolt
-      uesio.variant: uesio/io.secondary
+      uesio.variant: uesio/io.default
 `
 
 const moveBackwardPageDef = `# Wires connect to data in collections
@@ -64,11 +64,11 @@ components:
   - uesio/io.button:
       text: Second
       icon: bolt
-      uesio.variant: uesio/io.secondary
+      uesio.variant: uesio/io.default
   - uesio/io.button:
       text: First
       icon: bolt
-      uesio.variant: uesio/io.secondary
+      uesio.variant: uesio/io.default
 `
 
 describe("Uesio Builder Tests", () => {
@@ -153,7 +153,9 @@ describe("Uesio Builder Tests", () => {
 				cloneButtonPageDef
 			)
 			// Select the second button
-			getCanvasElement('["components"]["1"]["uesio/io.button"]').click()
+			getCanvasElement('["components"]["1"]["uesio/io.button"]').click({
+				force: true,
+			})
 			// Change the text property again
 			cy.clearInput("property:text")
 			cy.typeInInput("property:text", "Second")
