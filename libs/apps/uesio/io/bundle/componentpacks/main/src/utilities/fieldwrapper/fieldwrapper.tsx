@@ -10,18 +10,20 @@ interface FieldWrapperUtilityProps extends definition.UtilityProps {
 	errors?: wire.SaveError[]
 }
 
+const StyleDefaults = Object.freeze({
+	root: {},
+	labelTop: {},
+	labelLeft: {},
+	label: {},
+	errorwrapper: {},
+	erroricon: {},
+	error: {},
+})
+
 const FieldWrapper: FunctionComponent<FieldWrapperUtilityProps> = (props) => {
 	const { label, labelPosition, children, context, errors } = props
 	const classes = styles.useUtilityStyles(
-		{
-			root: {},
-			labelTop: {},
-			labelLeft: {},
-			label: {},
-			errorwrapper: {},
-			erroricon: {},
-			error: {},
-		},
+		StyleDefaults,
 		props,
 		"uesio/io.fieldwrapper"
 	)

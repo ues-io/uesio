@@ -37,12 +37,14 @@ const ToggleField: FC<ToggleFieldProps> = (props) => {
 						height: "0",
 
 						"&:checked + .slider": {
+							// TODO: Delegate merging of styles here to styles.ts
 							backgroundColor: primaryColor,
 						},
 						"&:checked + .slider:before": {
 							transform: "translateX(1em)",
 						},
 						"&::focus + .slider": {
+							// TODO: Delegate merging of styles here to styles.ts
 							boxShadow: "0 0 1p " + primaryColor,
 						},
 					},

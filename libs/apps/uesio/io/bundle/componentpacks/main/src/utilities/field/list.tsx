@@ -29,6 +29,11 @@ interface ListFieldUtilityProps extends definition.UtilityProps {
 	path: string
 }
 
+const StyleDefaults = Object.freeze({
+	root: {},
+	row: {},
+})
+
 const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 	const {
 		subFields,
@@ -51,10 +56,7 @@ const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 	const numFields = subFields ? Object.keys(subFields).length : 0
 
 	const classes = styles.useUtilityStyles(
-		{
-			root: {},
-			row: {},
-		},
+		StyleDefaults,
 		props,
 		"uesio/io.listfield"
 	)

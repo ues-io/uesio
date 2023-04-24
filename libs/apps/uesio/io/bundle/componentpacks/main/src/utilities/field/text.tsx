@@ -11,6 +11,11 @@ interface TextFieldProps extends definition.UtilityProps {
 	focusOnRender?: boolean
 }
 
+const StyleDefaults = Object.freeze({
+	input: {},
+	readonly: {},
+})
+
 const TextField: FunctionComponent<TextFieldProps> = (props) => {
 	const {
 		setValue,
@@ -23,10 +28,7 @@ const TextField: FunctionComponent<TextFieldProps> = (props) => {
 	} = props
 	const value = props.value as string
 	const classes = styles.useUtilityStyles(
-		{
-			input: {},
-			readonly: {},
-		},
+		StyleDefaults,
 		props,
 		"uesio/io.field"
 	)

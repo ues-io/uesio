@@ -1,6 +1,7 @@
 import { definition, styles, context, collection, wire } from "@uesio/ui"
 import Fieldset from "../fieldset/fieldset"
 import CheckboxField from "./checkbox"
+import { CSSInterpolation } from "@emotion/css"
 
 interface SelectFieldProps {
 	setValue: (value: wire.PlainFieldValue[]) => void
@@ -11,6 +12,19 @@ interface SelectFieldProps {
 	options: collection.SelectOption[] | null
 }
 
+const StyleDefaults = Object.freeze({
+	input: {
+		appearance: "none",
+	},
+	option: {
+		display: "flex",
+		alignItems: "center",
+	},
+	label: {
+		userSelect: "none",
+	},
+} as Record<string, CSSInterpolation>)
+
 const MultiCheckField: definition.UtilityComponent<SelectFieldProps> = (
 	props
 ) => {
@@ -18,21 +32,7 @@ const MultiCheckField: definition.UtilityComponent<SelectFieldProps> = (
 
 	const selectedVals = props.value
 
-	const classes = styles.useUtilityStyles(
-		{
-			input: {
-				appearance: "none",
-			},
-			option: {
-				display: "flex",
-				alignItems: "center",
-			},
-			label: {
-				userSelect: "none",
-			},
-		},
-		props
-	)
+	const classes = styles.useUtilityStyles(StyleDefaults, props)
 
 	const fieldLabel = fieldMetadata.getLabel()
 
