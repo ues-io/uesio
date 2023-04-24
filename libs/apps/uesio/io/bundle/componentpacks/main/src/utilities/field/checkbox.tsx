@@ -1,6 +1,5 @@
-import { FunctionComponent } from "react"
+import { FunctionComponent, useEffect, useRef } from "react"
 import { definition, styles, context, wire } from "@uesio/ui"
-import Icon from "../icon/icon"
 
 interface CheckboxFieldProps extends definition.UtilityProps {
 	setValue: (value: boolean) => void
@@ -8,45 +7,37 @@ interface CheckboxFieldProps extends definition.UtilityProps {
 	mode?: context.FieldMode
 }
 
-const getIcon = (value: boolean | undefined) => {
-	if (value === undefined) return "indeterminate_check_box"
-	return value ? "check_box" : "check_box_outline_blank"
-}
-
 const CheckboxField: FunctionComponent<CheckboxFieldProps> = (props) => {
-	const { id, setValue, value, mode, context } = props
+	const { id, setValue, value, mode } = props
 	const readonly = mode === "READ"
 
 	const checked = value === true
-	const classes = styles.useUtilityStyles(
+	const classes = styles.useUtilityStyleTokens(
 		{
-			native: {
-				opacity: "0",
-				position: "absolute",
-				inset: "0 0 0 0",
-				cursor: readonly ? "inherit" : "pointer",
-			},
-			input: {
-				opacity: readonly ? 0.5 : 1,
-				cursor: readonly ? "inherit" : "pointer",
-				position: "relative",
-			},
-			readonly: {},
+			root: ["leading-[0]"],
+			input: [],
 		},
 		props
 	)
 
+	const checkRef = useRef<HTMLInputElement>(null)
+
+	useEffect(() => {
+		if (!checkRef.current) return
+		checkRef.current.indeterminate = value === undefined
+	}, [value])
+
 	return (
-		<div className={classes.input}>
+		<div className={classes.root}>
 			<input
+				ref={checkRef}
 				id={id}
-				className={classes.native}
+				className={classes.input}
 				checked={checked}
 				type="checkbox"
 				disabled={readonly}
 				onChange={(event) => setValue?.(event.target.checked)}
 			/>
-			<Icon context={context} icon={getIcon(value as boolean)} />
 		</div>
 	)
 }

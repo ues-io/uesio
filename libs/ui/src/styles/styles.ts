@@ -1,11 +1,10 @@
-import { CSSProperties } from "react"
 import { ThemeState } from "../definition/theme"
 import {
 	BaseProps,
 	DefinitionMap,
 	UtilityProps,
 } from "../definition/definition"
-import { css, cx, CSSInterpolation } from "@emotion/css"
+import { css, cx, CSSInterpolation, ClassNamesArg } from "@emotion/css"
 import { mergeDefinitionMaps } from "../component/merge"
 import * as colors from "./colors"
 import {
@@ -16,50 +15,6 @@ import { MetadataKey } from "../metadataexports"
 import { twMerge } from "tailwind-merge"
 import { Context } from "../context/context"
 import { tw } from "@twind/core"
-
-type ResponsiveDefinition =
-	| string
-	| {
-			xs?: string
-			sm?: string
-			md?: string
-			lg?: string
-			xl?: string
-	  }
-	| undefined
-
-type Breakpoint = "xs" | "sm" | "md" | "lg" | "xl"
-const getResponsiveStyles = (
-	styleType: string,
-	definition: ResponsiveDefinition
-): CSSProperties | undefined => {
-	if (!definition) return undefined
-	if (typeof definition === "string") {
-		return {
-			[styleType]: definition,
-		}
-	}
-
-	const breakpoints: Record<Breakpoint, number> = {
-		xs: 0,
-		sm: 600,
-		md: 960,
-		lg: 1280,
-		xl: 1920,
-	}
-
-	return Object.keys(breakpoints).reduce(
-		(props: Record<string, unknown>, breakpoint: Breakpoint) => {
-			if (definition[breakpoint]) {
-				props[`@media (min-width: ${breakpoints[breakpoint]}px)`] = {
-					[styleType]: definition[breakpoint],
-				}
-			}
-			return props
-		},
-		{}
-	)
-}
 
 const defaultTheme: ThemeState = {
 	name: "default",
@@ -91,22 +46,10 @@ function useStyles<K extends string>(
 	const tokens = props?.definition?.["uesio.styleTokens"] || {}
 	return Object.keys(defaults).reduce(
 		(classNames: Record<string, string>, className: K) => {
-			const classTokens = tokens[className] || []
-			classNames[className] = processClassString(
-				cx(
-					...classTokens,
-					css([
-						defaults[className],
-						existing?.[className],
-						{
-							label: getClassNameLabel(
-								props?.componentType,
-								className
-							),
-						},
-					])
-				),
-				props?.context
+			classNames[className] = process(
+				props?.context,
+				tokens[className],
+				css([defaults[className], existing?.[className]])
 			)
 			return classNames
 		},
@@ -157,8 +100,9 @@ function getVariantTokens(
 	return variantDefinition?.["uesio.styleTokens"] as Record<string, string[]>
 }
 
-function processClassString(classes: string, context: Context | undefined) {
-	return tw(twMerge(context ? context?.mergeString(classes) : classes))
+function process(context: Context | undefined, ...classes: ClassNamesArg[]) {
+	const output = cx(classes)
+	return tw(twMerge(context ? context?.mergeString(output) : output))
 }
 
 function useUtilityStyleTokens(
@@ -174,16 +118,14 @@ function useUtilityStyleTokens(
 	return Object.keys(defaults).reduce(
 		(classNames: Record<string, string>, className: string) => {
 			const classTokens = tokens[className] || []
-			classNames[className] = processClassString(
-				cx(
-					defaults[className],
-					...classTokens,
-					props.classes?.[className],
-					// A bit weird here... Only apply the passed-in className prop to root styles.
-					// Otherwise, it would be applied to every class sent in as defaults.
-					className === "root" && props.className
-				),
-				props.context
+			classNames[className] = process(
+				props.context,
+				defaults[className],
+				...classTokens,
+				props.classes?.[className],
+				// A bit weird here... Only apply the passed-in className prop to root styles.
+				// Otherwise, it would be applied to every class sent in as defaults.
+				className === "root" && props.className
 			)
 			return classNames
 		},
@@ -210,19 +152,17 @@ function useUtilityStyles<K extends string>(
 	return Object.keys(defaults).reduce(
 		(classNames: Record<string, string>, className: K) => {
 			const classTokens = tokens[className] || []
-			classNames[className] = processClassString(
-				cx(
-					...classTokens,
-					css([
-						defaults[className],
-						styles?.[className] as CSSInterpolation,
-					]),
-					props.classes?.[className],
-					// A bit weird here... Only apply the passed-in className prop to root styles.
-					// Otherwise, it would be applied to every class sent in as defaults.
-					className === "root" && props.className
-				),
-				props.context
+			classNames[className] = process(
+				props.context,
+				classTokens,
+				css([
+					defaults[className],
+					styles?.[className] as CSSInterpolation,
+				]),
+				props.classes?.[className],
+				// A bit weird here... Only apply the passed-in className prop to root styles.
+				// Otherwise, it would be applied to every class sent in as defaults.
+				className === "root" && props.className
 			)
 			return classNames
 		},
@@ -230,24 +170,12 @@ function useUtilityStyles<K extends string>(
 	)
 }
 
-function getClassNameLabel(
-	componentType: string | undefined,
-	className: string
-) {
-	//  "/" or "." bring terror to the DOM
-	const componentLabel = componentType?.replace(/\/|\./g, "-") || "unknown"
-	return `${componentLabel}-${className}`
-}
-
-const mergeClasses = twMerge
-
-export type { ResponsiveDefinition, ThemeState }
+export type { ThemeState }
 
 export {
 	defaultTheme,
-	getResponsiveStyles,
 	cx,
-	mergeClasses,
+	process,
 	css,
 	useUtilityStyleTokens,
 	useUtilityStyles,
