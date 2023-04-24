@@ -15,7 +15,6 @@ import { MetadataKey } from "../metadataexports"
 import { twMerge } from "tailwind-merge"
 import { Context } from "../context/context"
 import { tw } from "@twind/core"
-import { useMemo } from "react"
 
 const STYLES_PROPERTY = "uesio.styles"
 const TOKENS_PROPERTY = "uesio.styleTokens"
@@ -61,43 +60,33 @@ function useStyles<K extends string>(
 	defaults: Record<K, CSSInterpolation>,
 	props: BaseProps | null
 ) {
-	return useMemo(() => {
-		const existingStyleTokens = props?.definition?.[TOKENS_PROPERTY]
-		let existing = props?.definition?.[STYLES_PROPERTY]
-		if (existing) {
-			existing = mergeDefinitionMaps(
-				{},
-				existing,
-				props?.context
-			) as Record<string, CSSInterpolation>
-		}
+	const existingStyleTokens = props?.definition?.[TOKENS_PROPERTY]
+	let existing = props?.definition?.[STYLES_PROPERTY]
+	if (existing) {
+		existing = mergeDefinitionMaps({}, existing, props?.context) as Record<
+			string,
+			CSSInterpolation
+		>
+	}
 
-		const tokens = existingStyleTokens || {}
-		return Object.entries(defaults).reduce(
-			(
-				classNames: Record<string, string>,
-				entry: [K, CSSInterpolation]
-			) => {
-				const [className, defaultClasses] = entry
-				const existingStylesForClass = existing?.[
-					className
-				] as CSSInterpolation[]
-				classNames[className] = process(
-					props?.context,
-					tokens[className],
-					existingStylesForClass
-						? css(defaultClasses, existingStylesForClass)
-						: css(defaultClasses)
-				)
-				return classNames
-			},
-			{} as Record<K, string>
-		)
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [
-		props?.definition?.[STYLES_PROPERTY],
-		props?.definition?.[TOKENS_PROPERTY],
-	])
+	const tokens = existingStyleTokens || {}
+	return Object.entries(defaults).reduce(
+		(classNames: Record<string, string>, entry: [K, CSSInterpolation]) => {
+			const [className, defaultClasses] = entry
+			const existingStylesForClass = existing?.[
+				className
+			] as CSSInterpolation[]
+			classNames[className] = process(
+				props?.context,
+				tokens[className],
+				existingStylesForClass
+					? css(defaultClasses, existingStylesForClass)
+					: css(defaultClasses)
+			)
+			return classNames
+		},
+		{} as Record<K, string>
+	)
 }
 
 function getVariantDefinition(
@@ -153,37 +142,27 @@ function useUtilityStyleTokens(
 	props: UtilityProps,
 	defaultVariantComponentType?: MetadataKey
 ) {
-	return useMemo(() => {
-		const tokens = {
-			...getVariantTokens(props, defaultVariantComponentType),
-			...props.styleTokens,
-		}
-		return Object.entries(defaults).reduce(
-			(classNames: Record<string, string>, entry) => {
-				const [className, defaultClasses] = entry
-				const classTokens = tokens[className] || []
-				classNames[className] = process(
-					props.context,
-					defaultClasses,
-					...classTokens,
-					props.classes?.[className],
-					// A bit weird here... Only apply the passed-in className prop to root styles.
-					// Otherwise, it would be applied to every class sent in as defaults.
-					className === "root" && props.className
-				)
-				return classNames
-			},
-			{} as Record<string, string>
-		)
-		// Don't need to include defaults here as it shouldn't ever change
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [
-		defaultVariantComponentType,
-		props.className,
-		props.variant,
-		props.styles,
-		props.styleTokens,
-	])
+	const tokens = {
+		...getVariantTokens(props, defaultVariantComponentType),
+		...props.styleTokens,
+	}
+	return Object.entries(defaults).reduce(
+		(classNames: Record<string, string>, entry) => {
+			const [className, defaultClasses] = entry
+			const classTokens = tokens[className] || []
+			classNames[className] = process(
+				props.context,
+				defaultClasses,
+				...classTokens,
+				props.classes?.[className],
+				// A bit weird here... Only apply the passed-in className prop to root styles.
+				// Otherwise, it would be applied to every class sent in as defaults.
+				className === "root" && props.className
+			)
+			return classNames
+		},
+		{} as Record<string, string>
+	)
 }
 
 function useUtilityStyles<K extends string>(
@@ -191,53 +170,41 @@ function useUtilityStyles<K extends string>(
 	props: UtilityProps,
 	defaultVariantComponentType?: MetadataKey
 ) {
-	return useMemo(() => {
-		const variantStyles = getVariantStyles(
-			props,
-			defaultVariantComponentType
+	const variantStyles = getVariantStyles(props, defaultVariantComponentType)
+	const inlineStyles = props.styles as DefinitionMap
+	let styles: DefinitionMap
+	if (!inlineStyles || !Object.keys(inlineStyles).length) {
+		styles = variantStyles
+	} else {
+		styles = mergeDefinitionMaps(
+			getVariantStyles(props, defaultVariantComponentType),
+			props.styles as DefinitionMap,
+			props.context
 		)
-		const inlineStyles = props.styles as DefinitionMap
-		let styles: DefinitionMap
-		if (!inlineStyles || !Object.keys(inlineStyles).length) {
-			styles = variantStyles
-		} else {
-			styles = mergeDefinitionMaps(
-				getVariantStyles(props, defaultVariantComponentType),
-				props.styles as DefinitionMap,
-				props.context
+	}
+
+	const tokens = {
+		...getVariantTokens(props, defaultVariantComponentType),
+		...props.styleTokens,
+	}
+
+	return Object.entries(defaults).reduce(
+		(classNames: Record<string, string>, entry: [K, CSSInterpolation]) => {
+			const [className, defaultClasses] = entry
+			const classTokens = tokens[className] || []
+			classNames[className] = process(
+				props.context,
+				classTokens,
+				css([defaultClasses, styles?.[className] as CSSInterpolation]),
+				props.classes?.[className],
+				// A bit weird here... Only apply the passed-in className prop to root styles.
+				// Otherwise, it would be applied to every class sent in as defaults.
+				className === "root" && props.className
 			)
-		}
-
-		const tokens = {
-			...getVariantTokens(props, defaultVariantComponentType),
-			...props.styleTokens,
-		}
-
-		return Object.entries(defaults).reduce(
-			(
-				classNames: Record<string, string>,
-				entry: [K, CSSInterpolation]
-			) => {
-				const [className, defaultClasses] = entry
-				const classTokens = tokens[className] || []
-				classNames[className] = process(
-					props.context,
-					classTokens,
-					css([
-						defaultClasses,
-						styles?.[className] as CSSInterpolation,
-					]),
-					props.classes?.[className],
-					// A bit weird here... Only apply the passed-in className prop to root styles.
-					// Otherwise, it would be applied to every class sent in as defaults.
-					className === "root" && props.className
-				)
-				return classNames
-			},
-			{} as Record<K, string>
-		)
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [defaultVariantComponentType, props.styles, props.styleTokens, defaults])
+			return classNames
+		},
+		{} as Record<K, string>
+	)
 }
 
 export type { ThemeState }
