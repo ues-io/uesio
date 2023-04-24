@@ -72,12 +72,12 @@ definition:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
                     title: Translations
-                    subtitle: Something Clever
+                    subtitle: Something clever
                     actions:
                       - uesio/io.group:
                           components:
                             - uesio/io.button:
-                                text: Add New Language
+                                text: Add new language
                                 uesio.variant: uesio/io.secondary
                                 signals:
                                   - signal: panel/TOGGLE
@@ -92,8 +92,8 @@ definition:
                             - uesio/io.tile:
                                 uesio.variant: uesio/io.item
                                 signals:
-                                  - signal: "route/NAVIGATE"
-                                    path: "app/$Param{app}/workspace/$Param{workspacename}/translations/${uesio/studio.language}"
+                                  - signal: route/NAVIGATE
+                                    path: app/$Param{app}/workspace/$Param{workspacename}/translations/${uesio/studio.language}
                                 content:
                                   - uesio/io.text:
                                       text: ${uesio/studio.language}
@@ -105,7 +105,7 @@ definition:
   panels:
     newtranslation:
       uesio.type: uesio/io.dialog
-      title: Add New Language
+      title: Add new language
       width: 400px
       height: 500px
       components:
@@ -119,16 +119,16 @@ definition:
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
-            text: "Save"
+            text: $Label{uesio/io.save}
             signals:
               - signal: wire/SAVE
                 wires:
-                  - "newtranslation"
-              - signal: "route/NAVIGATE"
-                path: "app/$Param{app}/workspace/$Param{workspacename}/translations/${uesio/studio.language}"
+                  - newtranslation
+              - signal: route/NAVIGATE
+                path: app/$Param{app}/workspace/$Param{workspacename}/translations/${uesio/studio.language}
         - uesio/io.button:
-            uesio.variant: "uesio/io.secondary"
-            text: "Cancel"
+            uesio.variant: uesio/io.secondary
+            text: $Label{uesio/io.cancel}
             signals:
-              - signal: "panel/TOGGLE"
-                panel: "newtranslation"
+              - signal: panel/TOGGLE
+                panel: newtranslation

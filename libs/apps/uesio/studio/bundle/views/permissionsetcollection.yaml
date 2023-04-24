@@ -92,7 +92,7 @@ definition:
                     components:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.main
-                          title: Permission Set - ${uesio/studio.name}
+                          title: Permission set - ${uesio/studio.name}
                           subtitle: $Param{collectionid}
                           actions:
                             - uesio/io.group:
@@ -112,8 +112,8 @@ definition:
                                       uesio.variant: uesio/io.primary
                                       text: $Label{uesio/io.save}
                                       uesio.display:
-                                        - type: fieldMode
-                                          mode: EDIT
+                                        - type: wireHasChanges
+                                          wire: permissionsets
                                       signals:
                                         - signal: wire/SAVE
                                           wires:

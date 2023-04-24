@@ -81,8 +81,8 @@ definition:
                                       uesio.variant: uesio/io.primary
                                       text: $Label{uesio/io.save}
                                       uesio.display:
-                                        - type: fieldMode
-                                          mode: EDIT
+                                        - type: wireHasChanges
+                                          wire: labels
                                       signals:
                                         - signal: wire/SAVE
                                           wires:
@@ -104,12 +104,8 @@ definition:
                                       uesio.variant: uesio/io.secondary
                                       text: $Label{uesio/io.delete}
                                       signals:
-                                        - signal: wire/MARK_FOR_DELETE
-                                        - signal: wire/SAVE
-                                          wires:
-                                            - "labels"
-                                        - signal: "route/NAVIGATE"
-                                          path: "app/$Param{app}/workspace/$Param{workspacename}/labels"
+                                        - signal: panel/TOGGLE
+                                          panel: deleteLabel
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           components:
@@ -120,3 +116,35 @@ definition:
                                       fieldId: uesio/studio.name
                                   - uesio/io.field:
                                       fieldId: uesio/studio.value
+  panels:
+    deleteLabel:
+      uesio.type: uesio/io.dialog
+      title: Delete label
+      width: 400px
+      height: 300px
+      components:
+        - uesio/io.text:
+            text: Are you sure you want to delete this label?
+            element: div
+            uesio.variant: uesio/io.smalltitle
+        - uesio/io.text:
+            text: You will never be able to access the information associated with this label again.
+            element: div
+            uesio.variant: uesio/io.smallcontent
+      actions:
+        - uesio/io.button:
+            text: $Label{uesio/io.delete}
+            uesio.variant: uesio/io.primary
+            signals:
+              - signal: wire/MARK_FOR_DELETE
+              - signal: wire/SAVE
+                wires:
+                  - labels
+              - signal: route/NAVIGATE
+                path: app/$Param{app}/workspace/$Param{workspacename}/labels
+        - uesio/io.button:
+            text: $Label{uesio/io.cancel}
+            uesio.variant: uesio/io.secondary
+            signals:
+              - signal: panel/TOGGLE
+                panel: deleteLabel

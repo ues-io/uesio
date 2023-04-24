@@ -83,7 +83,7 @@ definition:
                       - uesio/io.group:
                           components:
                             - uesio/io.button:
-                                text: Create a New File
+                                text: Create a new file
                                 uesio.variant: uesio/io.primary
                                 hotkey: "n"
                                 signals:
@@ -103,8 +103,8 @@ definition:
                             - uesio/io.tile:
                                 uesio.variant: uesio/io.item
                                 signals:
-                                  - signal: "route/NAVIGATE"
-                                    path: "app/$Param{app}/workspace/$Param{workspacename}/files/${uesio/studio.name}"
+                                  - signal: route/NAVIGATE
+                                    path: app/$Param{app}/workspace/$Param{workspacename}/files/${uesio/studio.name}
                                 content:
                                   - uesio/io.text:
                                       text: ${uesio/studio.name}
@@ -116,7 +116,7 @@ definition:
   panels:
     newFile:
       uesio.type: uesio/io.dialog
-      title: Create a New File
+      title: Create a new file
       width: 400px
       height: 500px
       components:
@@ -130,16 +130,16 @@ definition:
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
-            text: "Save"
+            text: $Label{uesio/io.save}
             signals:
               - signal: wire/SAVE
                 wires:
-                  - "newfile"
-              - signal: "route/NAVIGATE"
-                path: "app/$Param{app}/workspace/$Param{workspacename}/files/${uesio/studio.name}"
+                  - newfile
+              - signal: route/NAVIGATE
+                path: app/$Param{app}/workspace/$Param{workspacename}/files/${uesio/studio.name}
         - uesio/io.button:
-            uesio.variant: "uesio/io.secondary"
-            text: "Cancel"
+            uesio.variant: uesio/io.secondary
+            text: $Label{uesio/io.cancel}
             signals:
-              - signal: "panel/TOGGLE"
-                panel: "newFile"
+              - signal: panel/TOGGLE
+                panel: newFile
