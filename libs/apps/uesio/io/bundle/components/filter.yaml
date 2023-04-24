@@ -18,6 +18,9 @@ properties:
     type: FIELD
     label: Field
     wireField: wire
+    displayConditions:
+      - type: hasNoValue
+        value: ${conditionId}
   - name: displayAs
     type: SELECT
     label: Display as
