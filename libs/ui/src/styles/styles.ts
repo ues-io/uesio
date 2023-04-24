@@ -236,7 +236,8 @@ function useUtilityStyles<K extends string>(
 			},
 			{} as Record<K, string>
 		)
-	}, [defaultVariantComponentType, props.styles, props.styleTokens])
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [defaultVariantComponentType, props.styles, props.styleTokens, defaults])
 }
 
 export type { ThemeState }

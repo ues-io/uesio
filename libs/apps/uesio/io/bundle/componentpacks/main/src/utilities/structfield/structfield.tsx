@@ -1,12 +1,5 @@
 import { FunctionComponent } from "react"
-import {
-	wire,
-	collection,
-	definition,
-	context,
-	metadata,
-	styles,
-} from "@uesio/ui"
+import { wire, collection, definition, context, metadata } from "@uesio/ui"
 import Field from "../field/field"
 import FieldWrapper from "../fieldwrapper/fieldwrapper"
 import { LabelPosition } from "../../components/field/field"
