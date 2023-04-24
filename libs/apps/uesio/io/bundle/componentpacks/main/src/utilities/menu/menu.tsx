@@ -81,6 +81,7 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 		activeIndex,
 		onNavigate: setActiveIndex,
 		focusItemOnOpen: false,
+		focusItemOnHover: false,
 	})
 
 	const { getReferenceProps, getFloatingProps, getItemProps } =
