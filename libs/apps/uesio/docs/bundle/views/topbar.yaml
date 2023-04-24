@@ -19,7 +19,7 @@ definition:
                 - uesio/io.grid:
                     uesio.styleTokens:
                       root:
-                        - grid-cols-[0fr_1fr_0fr]
+                        - grid-cols-[1fr_2fr_1fr]
                         - items-center
                     items:
                       - uesio/io.griditem:
