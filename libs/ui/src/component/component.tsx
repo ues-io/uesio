@@ -35,6 +35,8 @@ function getThemeOverride(
 }
 
 // A cache of full variant definitions, where all variant extensions have been resolved
+// NOTE: This cache will be persisted across all route navigations, and has no upper bound.
+// Consider adding a cache eviction policy if this becomes a problem.
 const expandedVariantDefinitionCache = {} as Record<string, DefinitionMap>
 
 function getDefinitionFromVariant(
