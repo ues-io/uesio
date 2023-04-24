@@ -45,7 +45,7 @@ function getDefinitionFromVariant(
 	let def = variant.definition
 	if (variant.extends) {
 		// To avoid expensive variant extension resolution, check cache first
-		const variantKey = getVariantKey(variant)
+		const variantKey = `${variant.component}:${getVariantKey(variant)}`
 		const cachedDef = expandedVariantDefinitionCache[variantKey]
 		if (cachedDef) {
 			def = cachedDef
