@@ -18,13 +18,13 @@ interface DialogPlainUtilityProps extends definition.UtilityProps {
 }
 
 const DialogPlain: FunctionComponent<DialogPlainUtilityProps> = (props) => {
-	const gridCols = `grid-cols-[minmax(${minPagePadding},_1fr)_minmax(auto,_${
+	const gridCols = `grid-cols-[minmax(${minPagePadding},1fr)_minmax(auto,${
 		props.width || "auto"
-	})_minmax(${minPagePadding},_1fr)]`
+	})_minmax(${minPagePadding},1fr)]`
 
-	const gridRows = `grid-rows-[minmax(${minPagePadding},_1fr)_minmax(auto,_${
+	const gridRows = `grid-rows-[minmax(${minPagePadding},1fr)_minmax(auto,${
 		props.height || "auto"
-	})_minmax(${minPagePadding},_1fr)]`
+	})_minmax(${minPagePadding},1fr)]`
 
 	const classes = styles.useUtilityStyleTokens(
 		{
