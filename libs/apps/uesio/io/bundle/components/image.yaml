@@ -18,6 +18,9 @@ properties:
   - name: height
     type: TEXT
     label: Height
+  - name: width
+    type: TEXT
+    label: Width
   - name: alt
     type: TEXT
     label: Alt text
@@ -35,6 +38,7 @@ sections:
       - file
       - src
       - height
+      - width
       - alt
       - align
       - loading
