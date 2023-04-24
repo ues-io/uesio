@@ -5,6 +5,7 @@ type VideoDefinition = {
 	src?: string
 	controls?: boolean
 	width?: string
+	height?: string
 	muted?: boolean
 	autoplay?: boolean
 	playsinline?: boolean
@@ -27,6 +28,7 @@ const Video: definition.UC<VideoDefinition> = (props) => {
 			className={classes.root}
 			loop={definition.loop || false}
 			controls={definition.controls || true}
+			height={definition.height}
 			width={definition.width}
 			autoPlay={definition.autoplay || false}
 			muted={definition.muted || false}
