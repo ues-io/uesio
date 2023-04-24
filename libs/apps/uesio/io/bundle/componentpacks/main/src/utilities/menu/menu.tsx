@@ -34,6 +34,7 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 			menuitem: {},
 			highlighted: {},
 			searchbox: {},
+			itemsarea: {},
 		},
 		props,
 		"uesio/io.menu"
@@ -124,46 +125,48 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 									/>
 								)}
 							</div>
-							{items
-								.filter((item) => {
-									if (!searchFilter) return true
-									if (!searchText) return true
-									return searchFilter(item, searchText)
-								})
-								.map((item, index) => (
-									<div
-										className={styles.cx(
-											classes.menuitem,
-											activeIndex === index &&
-												classes.highlighted
-										)}
-										key={getItemKey(item)}
-										tabIndex={
-											activeIndex === index ? 0 : -1
-										}
-										ref={(node) => {
-											listRef.current[index] = node
-										}}
-										role="option"
-										{...getItemProps({
-											// Handle pointer select.
-											onClick() {
-												onSelect(item)
-												setIsOpen(false)
-											},
-											// Handle keyboard select.
-											onKeyDown(event) {
-												if (event.key === "Enter") {
-													event.preventDefault()
+							<div className={classes.itemsarea}>
+								{items
+									.filter((item) => {
+										if (!searchFilter) return true
+										if (!searchText) return true
+										return searchFilter(item, searchText)
+									})
+									.map((item, index) => (
+										<div
+											className={styles.cx(
+												classes.menuitem,
+												activeIndex === index &&
+													classes.highlighted
+											)}
+											key={getItemKey(item)}
+											tabIndex={
+												activeIndex === index ? 0 : -1
+											}
+											ref={(node) => {
+												listRef.current[index] = node
+											}}
+											role="option"
+											{...getItemProps({
+												// Handle pointer select.
+												onClick() {
 													onSelect(item)
 													setIsOpen(false)
-												}
-											},
-										})}
-									>
-										{itemRenderer(item)}
-									</div>
-								))}
+												},
+												// Handle keyboard select.
+												onKeyDown(event) {
+													if (event.key === "Enter") {
+														event.preventDefault()
+														onSelect(item)
+														setIsOpen(false)
+													}
+												},
+											})}
+										>
+											{itemRenderer(item)}
+										</div>
+									))}
+							</div>
 						</div>
 					</FloatingFocusManager>
 				)}
