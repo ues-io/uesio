@@ -18,40 +18,42 @@ interface DialogPlainUtilityProps extends definition.UtilityProps {
 }
 
 const DialogPlain: FunctionComponent<DialogPlainUtilityProps> = (props) => {
-	const classes = styles.useUtilityStyles(
+	const gridCols = `grid-cols-[minmax(${minPagePadding},_1fr)_minmax(auto,_${
+		props.width || "auto"
+	})_minmax(${minPagePadding},_1fr)]`
+
+	const gridRows = `grid-rows-[minmax(${minPagePadding},_1fr)_minmax(auto,_${
+		props.height || "auto"
+	})_minmax(${minPagePadding},_1fr)]`
+
+	const classes = styles.useUtilityStyleTokens(
 		{
-			blocker: {
-				backdropFilter: "grayscale(50%) blur(5px) brightness(50%)",
-			},
-			root: {
-				position: "absolute",
-				top: 0,
-				bottom: 0,
-				height: "100%",
-				width: "100%",
-				display: "grid",
-				gridTemplateColumns: `minmax(${minPagePadding},1fr) minmax(auto,${
-					props.width || "auto"
-				}) minmax(${minPagePadding},1fr)`,
-				gridTemplateRows: `minmax(${minPagePadding},1fr) minmax(auto,${
-					props.height || "auto"
-				}) minmax(${minPagePadding},1fr)`,
-				pointerEvents: "none",
-			},
-			inner: {
-				boxShadow: "0 0 20px #0005",
-				borderRadius: "4px",
-				backgroundColor: "white",
-				gridRow: "2 / 3",
-				gridColumn: "2 / 3",
-				pointerEvents: "auto",
-			},
-			spacer: {
-				gridRow: "3",
-				gridColumn: "2 / 3",
-			},
+			blocker: [
+				"backdrop-blur-sm",
+				"backdrop-grayscale-[50%]",
+				"backdrop-brightness-50",
+			],
+			root: [
+				"absolute",
+				"inset-0",
+				"grid",
+				gridCols,
+				gridRows,
+				"pointer-events-none",
+			],
+			inner: [
+				"shadow-md",
+				"rounded",
+				"row-start-2",
+				"row-end-2",
+				"col-start-2",
+				"pointer-events-auto",
+				"bg-white",
+			],
+			spacer: ["row-start-3", "col-start-2", "col-end-3"],
 		},
-		props
+		props,
+		"uesio/io.dialogplain"
 	)
 
 	const floating = useFloating({
