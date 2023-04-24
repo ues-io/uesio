@@ -2,8 +2,8 @@ import { api, signal, definition, styles } from "@uesio/ui"
 
 type ImageDefinition = {
 	file?: string
-	height?: string
-	width?: string
+	height?: number
+	width?: number
 	signals?: signal.SignalDefinition[]
 	loading: "lazy" | "eager"
 	alt: string
@@ -16,8 +16,8 @@ const Image: definition.UC<ImageDefinition> = (props) => {
 	const classes = styles.useStyleTokens(
 		{
 			root: [
-				definition.height && `h-[${definition.height}]`,
-				definition.width && `w-[${definition.width}]`,
+				definition.height !== undefined && `h-[${definition.height}px]`,
+				definition.width !== undefined && `w-[${definition.width}px]`,
 			],
 		},
 		props
