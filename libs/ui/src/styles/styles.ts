@@ -186,88 +186,56 @@ function useUtilityStyleTokens(
 	])
 }
 
-let useUtilityStylesInvocations = 0
-let actualInvocationCount = 0
-let utilityStyleCacheHits = 0
-let innerFunctionCalls = 0
-
-setTimeout(() => {
-	console.info(
-		`useUtilityStyles INVOCATIONS: ${useUtilityStylesInvocations}, INNER function calls: ${innerFunctionCalls}, MISSES: ${actualInvocationCount}, HITS ${utilityStyleCacheHits} times.`
-	)
-}, 5000)
-
-const utilityStylesCache = {} as Record<string, Record<string, string>>
-
 function useUtilityStyles<K extends string>(
 	defaults: Record<K, CSSInterpolation>,
 	props: UtilityProps,
 	defaultVariantComponentType?: MetadataKey
 ) {
-	useUtilityStylesInvocations++
-
 	return useMemo(() => {
-		innerFunctionCalls++
-		const cacheKey = JSON.stringify({
-			defaultVariantComponentType,
-			className: props.className,
-			classes: props.classes,
-			styleTokens: props.styleTokens,
-			styles: props.styles,
-		})
-
-		if (utilityStylesCache[cacheKey]) {
-			utilityStyleCacheHits++
-			return utilityStylesCache[cacheKey]
+		const variantStyles = getVariantStyles(
+			props,
+			defaultVariantComponentType
+		)
+		const inlineStyles = props.styles as DefinitionMap
+		let styles: DefinitionMap
+		if (!inlineStyles || !Object.keys(inlineStyles).length) {
+			styles = variantStyles
 		} else {
-			actualInvocationCount++
-			const variantStyles = getVariantStyles(
-				props,
-				defaultVariantComponentType
+			styles = mergeDefinitionMaps(
+				getVariantStyles(props, defaultVariantComponentType),
+				props.styles as DefinitionMap,
+				props.context
 			)
-			const inlineStyles = props.styles as DefinitionMap
-			let styles: DefinitionMap
-			if (!inlineStyles || !Object.keys(inlineStyles).length) {
-				styles = variantStyles
-			} else {
-				styles = mergeDefinitionMaps(
-					getVariantStyles(props, defaultVariantComponentType),
-					props.styles as DefinitionMap,
-					props.context
-				)
-			}
-
-			const tokens = {
-				...getVariantTokens(props, defaultVariantComponentType),
-				...props.styleTokens,
-			}
-
-			const resolvedObject = Object.entries(defaults).reduce(
-				(
-					classNames: Record<string, string>,
-					entry: [K, CSSInterpolation]
-				) => {
-					const [className, defaultClasses] = entry
-					const classTokens = tokens[className] || []
-					classNames[className] = process(
-						props.context,
-						classTokens,
-						css([
-							defaultClasses,
-							styles?.[className] as CSSInterpolation,
-						]),
-						props.classes?.[className],
-						// A bit weird here... Only apply the passed-in className prop to root styles.
-						// Otherwise, it would be applied to every class sent in as defaults.
-						className === "root" && props.className
-					)
-					return classNames
-				},
-				{} as Record<K, string>
-			)
-			utilityStylesCache[cacheKey] = resolvedObject
-			return resolvedObject
 		}
+
+		const tokens = {
+			...getVariantTokens(props, defaultVariantComponentType),
+			...props.styleTokens,
+		}
+
+		return Object.entries(defaults).reduce(
+			(
+				classNames: Record<string, string>,
+				entry: [K, CSSInterpolation]
+			) => {
+				const [className, defaultClasses] = entry
+				const classTokens = tokens[className] || []
+				classNames[className] = process(
+					props.context,
+					classTokens,
+					css([
+						defaultClasses,
+						styles?.[className] as CSSInterpolation,
+					]),
+					props.classes?.[className],
+					// A bit weird here... Only apply the passed-in className prop to root styles.
+					// Otherwise, it would be applied to every class sent in as defaults.
+					className === "root" && props.className
+				)
+				return classNames
+			},
+			{} as Record<K, string>
+		)
 	}, [defaultVariantComponentType, props.styles, props.styleTokens])
 }
 
