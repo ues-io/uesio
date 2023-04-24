@@ -8,6 +8,7 @@ definition:
       fields:
         uesio/cms.content:
         uesio/cms.name:
+        uesio/cms.slug:
       conditions:
         - field: uesio/core.id
           value: $Param{recordid}
@@ -41,13 +42,15 @@ definition:
                                 signals:
                                   - signal: component/uesio/io.field/CANCEL_FILE
                                     target: mdeditor
-                - uesio/io.field:
-                    fieldId: uesio/cms.name
                 - uesio/io.grid:
-                    uesio.styleTokens:
-                      root:
-                        - grid-cols-2
-                    columnGap: 10px
+                    uesio.variant: uesio/io.two_columns
+                    items:
+                      - uesio/io.field:
+                          fieldId: uesio/cms.name
+                      - uesio/io.field:
+                          fieldId: uesio/cms.slug
+                - uesio/io.grid:
+                    uesio.variant: uesio/io.two_columns
                     items:
                       - uesio/io.field:
                           uesio.context:
