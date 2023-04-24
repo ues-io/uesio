@@ -13,6 +13,7 @@ definition:
       - max-h-64
       - flex
       - flex-col
+      - min-w-[200px]
     menuheader:
       - grid
       - bg-white

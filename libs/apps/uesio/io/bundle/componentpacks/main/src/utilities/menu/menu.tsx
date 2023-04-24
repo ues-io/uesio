@@ -43,9 +43,21 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 	const [isOpen, setIsOpen] = useState(false)
 	const [searchText, setSearchText] = useState("")
 
+	const getSearchItems = (searchText: string) => {
+		onSearch?.(searchText)
+		setSearchText(searchText)
+	}
+
+	const onOpenChange = (open: boolean) => {
+		if (open) {
+			getSearchItems(searchText)
+		}
+		setIsOpen(open)
+	}
+
 	const floating = useFloating({
 		open: isOpen,
-		onOpenChange: setIsOpen,
+		onOpenChange,
 		placement: "bottom-start",
 		middleware: [
 			offset(2),
@@ -69,6 +81,7 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 		activeIndex,
 		onNavigate: setActiveIndex,
 		focusItemOnOpen: false,
+		focusItemOnHover: false,
 	})
 
 	const { getReferenceProps, getFloatingProps, getItemProps } =
@@ -119,8 +132,7 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 										className={classes.searchbox}
 										placeholder="Search..."
 										onChange={(e) => {
-											onSearch?.(e.target.value)
-											setSearchText(e.target.value)
+											getSearchItems(e.target.value)
 										}}
 									/>
 								)}
