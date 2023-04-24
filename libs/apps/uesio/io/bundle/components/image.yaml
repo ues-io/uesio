@@ -15,6 +15,9 @@ properties:
   - name: src
     type: TEXT
     label: URL
+  - name: height
+    type: TEXT
+    label: Height
   - name: alt
     type: TEXT
     label: Alt text
