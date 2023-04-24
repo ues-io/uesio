@@ -17,6 +17,9 @@ import { Context } from "../context/context"
 import { tw } from "@twind/core"
 import { useMemo } from "react"
 
+const STYLES_PROPERTY = "uesio.styles"
+const TOKENS_PROPERTY = "uesio.styleTokens"
+
 const defaultTheme: ThemeState = {
 	name: "default",
 	namespace: "uesio/core",
@@ -59,25 +62,42 @@ function useStyles<K extends string>(
 	props: BaseProps | null
 ) {
 	return useMemo(() => {
-		const existing = mergeDefinitionMaps(
-			{},
-			props?.definition?.["uesio.styles"] || {},
-			props?.context
-		) as Record<string, CSSInterpolation>
+		const existingStyleTokens = props?.definition?.[TOKENS_PROPERTY]
+		let existing = props?.definition?.[STYLES_PROPERTY]
+		if (existing) {
+			existing = mergeDefinitionMaps(
+				{},
+				existing,
+				props?.context
+			) as Record<string, CSSInterpolation>
+		}
 
-		const tokens = props?.definition?.["uesio.styleTokens"] || {}
-		return Object.keys(defaults).reduce(
-			(classNames: Record<string, string>, className: K) => {
+		const tokens = existingStyleTokens || {}
+		return Object.entries(defaults).reduce(
+			(
+				classNames: Record<string, string>,
+				entry: [K, CSSInterpolation]
+			) => {
+				const [className, defaultClasses] = entry
+				const existingStylesForClass = existing?.[
+					className
+				] as CSSInterpolation[]
 				classNames[className] = process(
 					props?.context,
 					tokens[className],
-					css([defaults[className], existing?.[className]])
+					existingStylesForClass
+						? css(defaultClasses, existingStylesForClass)
+						: css(defaultClasses)
 				)
 				return classNames
 			},
 			{} as Record<K, string>
 		)
-	}, [])
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [
+		props?.definition?.[STYLES_PROPERTY],
+		props?.definition?.[TOKENS_PROPERTY],
+	])
 }
 
 function getVariantDefinition(
@@ -109,7 +129,7 @@ function getVariantStyles(
 	if (!variantDefinition) return {}
 	return mergeDefinitionMaps(
 		{},
-		variantDefinition?.["uesio.styles"] as DefinitionMap,
+		variantDefinition?.[STYLES_PROPERTY] as DefinitionMap,
 		props.context
 	)
 }
@@ -120,7 +140,7 @@ function getVariantTokens(
 ) {
 	const variantDefinition = getVariantDefinition(props, componentType)
 	if (!variantDefinition) return {}
-	return variantDefinition?.["uesio.styleTokens"] as Record<string, string[]>
+	return variantDefinition?.[TOKENS_PROPERTY] as Record<string, string[]>
 }
 
 function process(context: Context | undefined, ...classes: ClassNamesArg[]) {
@@ -157,7 +177,13 @@ function useUtilityStyleTokens(
 		)
 		// Don't need to include defaults here as it shouldn't ever change
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [defaultVariantComponentType, props])
+	}, [
+		defaultVariantComponentType,
+		props.className,
+		props.variant,
+		props.styles,
+		props.styleTokens,
+	])
 }
 
 function useUtilityStyles<K extends string>(
@@ -198,7 +224,13 @@ function useUtilityStyles<K extends string>(
 		)
 		// Don't need to include defaults here as it shouldn't ever change
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [defaultVariantComponentType, props])
+	}, [
+		defaultVariantComponentType,
+		props.className,
+		props.classes,
+		props.styleTokens,
+		props.styles,
+	])
 }
 
 export type { ThemeState }
