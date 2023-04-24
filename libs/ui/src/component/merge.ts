@@ -1,18 +1,18 @@
 import { Context } from "../context/context"
 import { DefinitionMap } from "../definition/definition"
 
-// Returns a new object that has a deep merge where source overrides
+// Returns a new object that has a deep merge where source overrides,
+// unless no sourceDef is provided, in which case we just return destDef
 function mergeDefinitionMaps(
 	destDef: DefinitionMap,
 	sourceDef: DefinitionMap,
 	context: Context | undefined
 ) {
-	//const key = JSON.stringify([destDef, sourceDef])
-	//if (cache[key]) return cache[key]
+	if (sourceDef === undefined) {
+		return destDef
+	}
 	const destClone = JSON.parse(JSON.stringify(destDef))
-	const result = mergeDeep(destClone, sourceDef, context)
-	//cache[key] = result
-	return result
+	return mergeDeep(destClone, sourceDef, context)
 }
 
 // Will ignore null/undefined/empty string in the src obj
