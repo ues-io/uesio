@@ -41,14 +41,6 @@ const StructField: FunctionComponent<StructFieldUtilityProps> = (props) => {
 
 	const recordId = record?.id
 	const value = props.value || {}
-
-	const classes = styles.useUtilityStyles(
-		{
-			root: {},
-		},
-		props
-	)
-
 	const getNewValue = (
 		newFieldValue: wire.PlainFieldValue,
 		subfield: collection.FieldMetadata
@@ -65,7 +57,7 @@ const StructField: FunctionComponent<StructFieldUtilityProps> = (props) => {
 	if (!subFields) return null
 
 	return (
-		<div className={classes.root}>
+		<div>
 			{Object.entries(subFields)
 				.filter(([subFieldId]) => !!subFieldId)
 				.map(([subfieldId, subfield]) => {
