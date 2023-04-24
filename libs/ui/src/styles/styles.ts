@@ -186,51 +186,89 @@ function useUtilityStyleTokens(
 	])
 }
 
+let useUtilityStylesInvocations = 0
+let actualInvocationCount = 0
+let utilityStyleCacheHits = 0
+let innerFunctionCalls = 0
+
+setTimeout(() => {
+	console.info(
+		`useUtilityStyles INVOCATIONS: ${useUtilityStylesInvocations}, INNER function calls: ${innerFunctionCalls}, MISSES: ${actualInvocationCount}, HITS ${utilityStyleCacheHits} times.`
+	)
+}, 5000)
+
+const utilityStylesCache = {} as Record<string, Record<string, string>>
+
 function useUtilityStyles<K extends string>(
 	defaults: Record<K, CSSInterpolation>,
 	props: UtilityProps,
 	defaultVariantComponentType?: MetadataKey
 ) {
+	useUtilityStylesInvocations++
+
 	return useMemo(() => {
-		const styles = mergeDefinitionMaps(
-			getVariantStyles(props, defaultVariantComponentType),
-			props.styles as DefinitionMap,
-			props.context
-		)
+		innerFunctionCalls++
+		const cacheKey = JSON.stringify({
+			defaultVariantComponentType,
+			className: props.className,
+			classes: props.classes,
+			styleTokens: props.styleTokens,
+			styles: props.styles,
+		})
 
-		const tokens = {
-			...getVariantTokens(props, defaultVariantComponentType),
-			...props.styleTokens,
-		}
-
-		return Object.keys(defaults).reduce(
-			(classNames: Record<string, string>, className: K) => {
-				const classTokens = tokens[className] || []
-				classNames[className] = process(
-					props.context,
-					classTokens,
-					css([
-						defaults[className],
-						styles?.[className] as CSSInterpolation,
-					]),
-					props.classes?.[className],
-					// A bit weird here... Only apply the passed-in className prop to root styles.
-					// Otherwise, it would be applied to every class sent in as defaults.
-					className === "root" && props.className
+		if (utilityStylesCache[cacheKey]) {
+			utilityStyleCacheHits++
+			return utilityStylesCache[cacheKey]
+		} else {
+			actualInvocationCount++
+			const variantStyles = getVariantStyles(
+				props,
+				defaultVariantComponentType
+			)
+			const inlineStyles = props.styles as DefinitionMap
+			let styles: DefinitionMap
+			if (!inlineStyles || !Object.keys(inlineStyles).length) {
+				styles = variantStyles
+			} else {
+				styles = mergeDefinitionMaps(
+					getVariantStyles(props, defaultVariantComponentType),
+					props.styles as DefinitionMap,
+					props.context
 				)
-				return classNames
-			},
-			{} as Record<K, string>
-		)
-		// Don't need to include defaults here as it shouldn't ever change
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [
-		defaultVariantComponentType,
-		props.className,
-		props.classes,
-		props.styleTokens,
-		props.styles,
-	])
+			}
+
+			const tokens = {
+				...getVariantTokens(props, defaultVariantComponentType),
+				...props.styleTokens,
+			}
+
+			const resolvedObject = Object.entries(defaults).reduce(
+				(
+					classNames: Record<string, string>,
+					entry: [K, CSSInterpolation]
+				) => {
+					const [className, defaultClasses] = entry
+					const classTokens = tokens[className] || []
+					classNames[className] = process(
+						props.context,
+						classTokens,
+						css([
+							defaultClasses,
+							styles?.[className] as CSSInterpolation,
+						]),
+						props.classes?.[className],
+						// A bit weird here... Only apply the passed-in className prop to root styles.
+						// Otherwise, it would be applied to every class sent in as defaults.
+						className === "root" && props.className
+					)
+					return classNames
+				},
+				{} as Record<K, string>
+			)
+			utilityStylesCache[cacheKey] = resolvedObject
+			return resolvedObject
+		}
+	}, [defaultVariantComponentType, props.styles, props.styleTokens])
 }
 
 export type { ThemeState }
