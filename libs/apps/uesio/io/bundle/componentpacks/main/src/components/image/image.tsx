@@ -13,9 +13,12 @@ type ImageDefinition = {
 const Image: definition.UC<ImageDefinition> = (props) => {
 	const { definition, context } = props
 
-	const classes = styles.useStyles(
+	const classes = styles.useStyleTokens(
 		{
-			root: {},
+			root: [
+				definition.height && `h-[${definition.height}]`,
+				definition.width && `w-[${definition.width}]`,
+			],
 		},
 		props
 	)
