@@ -50,7 +50,7 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 
 	const onOpenChange = (open: boolean) => {
 		if (open) {
-			getSearchItems("")
+			getSearchItems(searchText)
 		}
 		setIsOpen(open)
 	}
