@@ -87,9 +87,7 @@ const Table: FunctionComponent<TableUtilityProps<unknown, TableColumn>> = (
 						{rowNumberFunc?.(index + 1)}
 					</div>
 					<CheckboxField
-						classes={{
-							input: "numbercheck",
-						}}
+						className="numbercheck"
 						context={context}
 						value={isSelected}
 						setValue={(value: boolean) =>

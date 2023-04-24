@@ -14,6 +14,7 @@ import { UtilityComponent } from "../definition/definition"
 import { defineConfig, setup } from "@twind/core"
 import presetAutoprefix from "@twind/preset-autoprefix"
 import presetTailwind from "@twind/preset-tailwind"
+import { styles } from ".."
 
 const Route: UtilityComponent = (props) => {
 	const site = useSite()
@@ -99,6 +100,9 @@ const Route: UtilityComponent = (props) => {
 		// non-attached div to observe :)
 		document.createElement("div")
 	)
+
+	// We need to process the style classes we put on the root element in index.gohtml
+	styles.process(undefined, "h-screen overflow-auto")
 
 	if (workspace) {
 		routeContext = routeContext.setWorkspace(workspace)
