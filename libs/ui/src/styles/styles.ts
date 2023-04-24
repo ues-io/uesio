@@ -39,11 +39,12 @@ function useStyleTokens(
 ) {
 	const { definition, context } = props
 	const tokens = definition?.["uesio.styleTokens"] || {}
-	return Object.keys(defaults).reduce(
-		(classNames: Record<string, string>, className: string) => {
+	return Object.entries(defaults).reduce(
+		(classNames: Record<string, string>, entry) => {
+			const [className, defaultClasses] = entry
 			classNames[className] = process(
 				context,
-				defaults[className],
+				defaultClasses,
 				tokens[className]
 			)
 			return classNames
@@ -134,12 +135,13 @@ function useUtilityStyleTokens(
 		...props.styleTokens,
 	}
 
-	return Object.keys(defaults).reduce(
-		(classNames: Record<string, string>, className: string) => {
+	return Object.entries(defaults).reduce(
+		(classNames: Record<string, string>, entry) => {
+			const [className, defaultClasses] = entry
 			const classTokens = tokens[className] || []
 			classNames[className] = process(
 				props.context,
-				defaults[className],
+				defaultClasses,
 				...classTokens,
 				props.classes?.[className],
 				// A bit weird here... Only apply the passed-in className prop to root styles.
