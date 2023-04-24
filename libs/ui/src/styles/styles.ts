@@ -33,6 +33,26 @@ const defaultTheme: ThemeState = {
 	},
 }
 
+function useStyleTokens(
+	defaults: Record<string, ClassNamesArg[]>,
+	props: BaseProps
+) {
+	const { definition, context } = props
+	const tokens = definition?.["uesio.styleTokens"] || {}
+	return Object.entries(defaults).reduce(
+		(classNames: Record<string, string>, entry) => {
+			const [className, defaultClasses] = entry
+			classNames[className] = process(
+				context,
+				defaultClasses,
+				tokens[className]
+			)
+			return classNames
+		},
+		{}
+	)
+}
+
 function useStyles<K extends string>(
 	defaults: Record<K, CSSInterpolation>,
 	props: BaseProps | null
@@ -106,7 +126,7 @@ function process(context: Context | undefined, ...classes: ClassNamesArg[]) {
 }
 
 function useUtilityStyleTokens(
-	defaults: Record<string, string[]>,
+	defaults: Record<string, ClassNamesArg[]>,
 	props: UtilityProps,
 	defaultVariantComponentType?: MetadataKey
 ) {
@@ -115,12 +135,13 @@ function useUtilityStyleTokens(
 		...props.styleTokens,
 	}
 
-	return Object.keys(defaults).reduce(
-		(classNames: Record<string, string>, className: string) => {
+	return Object.entries(defaults).reduce(
+		(classNames: Record<string, string>, entry) => {
+			const [className, defaultClasses] = entry
 			const classTokens = tokens[className] || []
 			classNames[className] = process(
 				props.context,
-				defaults[className],
+				defaultClasses,
 				...classTokens,
 				props.classes?.[className],
 				// A bit weird here... Only apply the passed-in className prop to root styles.
@@ -176,9 +197,9 @@ export {
 	defaultTheme,
 	cx,
 	process,
-	css,
 	useUtilityStyleTokens,
 	useUtilityStyles,
+	useStyleTokens,
 	useStyles,
 	colors,
 }
