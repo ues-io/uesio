@@ -77,7 +77,7 @@ definition:
                       - uesio/io.group:
                           components:
                             - uesio/io.button:
-                                text: Create a new profile
+                                text: Create a New Profile
                                 uesio.variant: uesio/io.secondary
                                 signals:
                                   - signal: panel/TOGGLE
@@ -105,7 +105,7 @@ definition:
   panels:
     newProfile:
       uesio.type: uesio/io.dialog
-      title: Create a new profile
+      title: Create a New Profile
       width: 400px
       height: 500px
       components:

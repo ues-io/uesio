@@ -110,7 +110,7 @@ definition:
   panels:
     deleteTheme:
       uesio.type: uesio/io.dialog
-      title: Delete theme
+      title: Delete Theme
       width: 400px
       height: 300px
       components:

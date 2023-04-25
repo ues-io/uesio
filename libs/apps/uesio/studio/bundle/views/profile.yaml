@@ -128,14 +128,14 @@ definition:
                           uesio.variant: uesio/io.section
                           components:
                             - uesio/io.titlebar:
-                                title: Permission sets
+                                title: Permission Sets
                                 uesio.variant: uesio/io.section
                             - uesio/io.box:
                                 components:
                                   - uesio/builder.multimetadatafield:
                                       fieldId: uesio/studio.permissionsetsrefs
                                       metadataType: PERMISSIONSET
-                                      label: Select permission set
+                                      label: Select Permission Set
                                       uesio.context:
                                         workspace:
                                           name: $Param{workspacename}
@@ -143,7 +143,7 @@ definition:
   panels:
     deleteProfile:
       uesio.type: uesio/io.dialog
-      title: Delete profile
+      title: Delete Profile
       width: 400px
       height: 300px
       components:

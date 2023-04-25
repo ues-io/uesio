@@ -71,13 +71,13 @@ definition:
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
-                    title: Permission sets
+                    title: Permission Sets
                     subtitle: Ask not what you can do.
                     actions:
                       - uesio/io.group:
                           components:
                             - uesio/io.button:
-                                text: New permission set
+                                text: New Permission Set
                                 uesio.variant: uesio/io.secondary
                                 signals:
                                   - signal: panel/TOGGLE
@@ -105,7 +105,7 @@ definition:
   panels:
     newPermissionset:
       uesio.type: uesio/io.dialog
-      title: Create a new permission set
+      title: Create a New Permission Set
       width: 400px
       height: 500px
       components:

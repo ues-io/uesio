@@ -73,12 +73,12 @@ definition:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
                     title: Label
-                    subtitle: Something clever
+                    subtitle: Something Clever
                     actions:
                       - uesio/io.group:
                           components:
                             - uesio/io.button:
-                                text: Create a new label
+                                text: Create a New Label
                                 uesio.variant: uesio/io.primary
                                 hotkey: "n"
                                 signals:

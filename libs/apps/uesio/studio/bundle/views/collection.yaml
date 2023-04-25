@@ -169,7 +169,7 @@ definition:
                                           app: $Param{app}
                                       fieldId: uesio/studio.namefield
                                       metadataType: FIELD
-                                      label: Name field
+                                      label: Name Field
                             - uesio/io.grid:
                                 uesio.variant: uesio/io.four_columns
                                 items:
@@ -193,7 +193,7 @@ definition:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.primary
                                       uesio.id: new-field
-                                      text: New field
+                                      text: New Field
                                       hotkey: "n"
                                       signals:
                                         - signal: wire/EMPTY
@@ -223,7 +223,7 @@ definition:
   panels:
     deleteCollection:
       uesio.type: uesio/io.dialog
-      title: $Label{uesio/io.delete} collection
+      title: Delete Collection
       width: 400px
       height: 300px
       components:
@@ -255,7 +255,7 @@ definition:
                 panel: deleteCollection
     editCollection:
       uesio.type: uesio/io.dialog
-      title: $Label{uesio/io.edit} collection
+      title: Edit Collection
       width: 400px
       height: 560px
       components:
@@ -277,13 +277,13 @@ definition:
               - uesio/builder.metadatafield:
                   fieldId: uesio/studio.namefield
                   metadataType: FIELD
-                  label: Name field
+                  label: Name Field
                   grouping: $Param{app}.$Param{collectionname}
                   namespace: $Param{app}
               - uesio/builder.metadatafield:
                   fieldId: uesio/studio.datasource
                   metadataType: DATASOURCE
-                  label: Data source
+                  label: Data Source
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
@@ -304,7 +304,7 @@ definition:
                 panel: editCollection
     newField:
       uesio.type: uesio/io.dialog
-      title: Create a new field
+      title: Create a new Field
       width: 400px
       height: 620px
       components:
@@ -330,7 +330,7 @@ definition:
                   fieldId: uesio/studio.languagelabel
                   uesio.id: new-field-language-label
                   metadataType: LABEL
-                  label: Language label
+                  label: Language Label
               - uesio/io.box:
                   uesio.display:
                     - field: uesio/studio.type
@@ -339,7 +339,7 @@ definition:
                     - uesio/builder.metadatafield:
                         fieldId: uesio/studio.reference->uesio/studio.collection
                         metadataType: COLLECTION
-                        label: Ref. collection
+                        label: Ref. Collection
                         uesio.id: new-field-collection
               - uesio/io.box:
                   uesio.display:
@@ -369,7 +369,7 @@ definition:
                         fieldId: uesio/studio.selectlist
                         uesio.id: new-field-selectlist
                         metadataType: SELECTLIST
-                        label: Select list
+                        label: Select List
               - uesio/io.box:
                   uesio.display:
                     - field: uesio/studio.type
@@ -397,7 +397,7 @@ definition:
                     - uesio/builder.metadatafield:
                         fieldId: uesio/studio.selectlist
                         metadataType: SELECTLIST
-                        label: Select list
+                        label: Select List
                         uesio.id: new-field-multi-selectlist
               - uesio/io.box:
                   uesio.display:

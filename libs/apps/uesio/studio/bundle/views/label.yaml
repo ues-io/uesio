@@ -119,7 +119,7 @@ definition:
   panels:
     deleteLabel:
       uesio.type: uesio/io.dialog
-      title: Delete label
+      title: Delete Label
       width: 400px
       height: 300px
       components:

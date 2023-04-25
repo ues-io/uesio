@@ -152,7 +152,7 @@ definition:
                                       fieldId: uesio/studio.viewtype
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.main
-                          title: Search engine optimization
+                          title: Search Engine Optimization
                           subtitle: Route <meta> tags
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
@@ -163,7 +163,7 @@ definition:
   panels:
     deleteRoute:
       uesio.type: uesio/io.dialog
-      title: Delete route
+      title: Delete Route
       width: 400px
       height: 300px
       components:

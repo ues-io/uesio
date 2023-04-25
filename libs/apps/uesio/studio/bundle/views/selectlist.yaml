@@ -66,7 +66,7 @@ definition:
                     components:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.main
-                          title: Select list - ${uesio/studio.name}
+                          title: Select List - ${uesio/studio.name}
                           actions:
                             - uesio/io.group:
                                 components:
@@ -131,7 +131,7 @@ definition:
   panels:
     deleteSelectlist:
       uesio.type: uesio/io.dialog
-      title: Delete select list
+      title: Delete Select List
       width: 400px
       height: 300px
       components:

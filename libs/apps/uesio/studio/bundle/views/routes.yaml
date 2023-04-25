@@ -120,7 +120,7 @@ definition:
   panels:
     newRoute:
       uesio.type: uesio/io.dialog
-      title: Create a new route
+      title: Create a New Route
       width: 400px
       height: 500px
       components:

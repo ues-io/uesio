@@ -78,7 +78,7 @@ definition:
                       - uesio/io.group:
                           components:
                             - uesio/io.button:
-                                text: Create a new theme
+                                text: Create a New Theme
                                 uesio.variant: uesio/io.secondary
                                 signals:
                                   - signal: panel/TOGGLE
@@ -106,7 +106,7 @@ definition:
   panels:
     newTheme:
       uesio.type: uesio/io.dialog
-      title: Create a new theme
+      title: Create a New Theme
       width: 400px
       height: 500px
       components:

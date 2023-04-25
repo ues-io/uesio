@@ -92,7 +92,7 @@ definition:
                     components:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.main
-                          title: Permission set - ${uesio/studio.name}
+                          title: Permission Set - ${uesio/studio.name}
                           subtitle: $Param{collectionid}
                           actions:
                             - uesio/io.group:

@@ -83,7 +83,7 @@ definition:
                       - uesio/io.group:
                           components:
                             - uesio/io.button:
-                                text: Create a new file
+                                text: Create a New File
                                 uesio.variant: uesio/io.primary
                                 hotkey: "n"
                                 signals:

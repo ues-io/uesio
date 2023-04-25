@@ -134,7 +134,7 @@ definition:
   panels:
     deleteView:
       uesio.type: uesio/io.dialog
-      title: Delete view
+      title: Delete View
       width: 400px
       height: 300px
       components:

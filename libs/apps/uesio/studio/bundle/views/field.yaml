@@ -155,7 +155,7 @@ definition:
                                   - uesio/builder.metadatafield:
                                       fieldId: uesio/studio.languagelabel
                                       metadataType: LABEL
-                                      label: Language label
+                                      label: Language Label
                                   - uesio/builder.metadatafield:
                                       fieldId: uesio/studio.collection
                                       metadataType: COLLECTION
@@ -168,7 +168,7 @@ definition:
                                         - uesio/builder.metadatafield:
                                             fieldId: uesio/studio.reference->uesio/studio.collection
                                             metadataType: COLLECTION
-                                            label: Ref. collection
+                                            label: Ref. Collection
                                   - uesio/io.box:
                                       uesio.display:
                                         - field: uesio/studio.type
@@ -184,7 +184,7 @@ definition:
                                         - uesio/builder.metadatafield:
                                             fieldId: uesio/studio.selectlist
                                             metadataType: SELECTLIST
-                                            label: Select list
+                                            label: Select List
                                   - uesio/io.box:
                                       uesio.display:
                                         - field: uesio/studio.type
@@ -193,7 +193,7 @@ definition:
                                         - uesio/builder.metadatafield:
                                             fieldId: uesio/studio.file->uesio/studio.filesource
                                             metadataType: FILESOURCE
-                                            label: File source
+                                            label: File Source
                                   - uesio/io.box:
                                       uesio.display:
                                         - field: uesio/studio.type
@@ -230,7 +230,7 @@ definition:
                                         - uesio/builder.metadatafield:
                                             fieldId: uesio/studio.selectlist
                                             metadataType: SELECTLIST
-                                            label: Select list
+                                            label: Select List
                                   - uesio/io.field:
                                       fieldId: uesio/studio.validate->uesio/studio.type
                                   - uesio/io.field:
@@ -270,7 +270,7 @@ definition:
   panels:
     deleteField:
       uesio.type: uesio/io.dialog
-      title: Delete field
+      title: Delete Field
       width: 400px
       height: 300px
       components:

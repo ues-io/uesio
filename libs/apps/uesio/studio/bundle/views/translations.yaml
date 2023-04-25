@@ -72,12 +72,12 @@ definition:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
                     title: Translations
-                    subtitle: Something clever
+                    subtitle: Something Clever
                     actions:
                       - uesio/io.group:
                           components:
                             - uesio/io.button:
-                                text: Add new language
+                                text: Add New Language
                                 uesio.variant: uesio/io.secondary
                                 signals:
                                   - signal: panel/TOGGLE
@@ -105,7 +105,7 @@ definition:
   panels:
     newtranslation:
       uesio.type: uesio/io.dialog
-      title: Add new language
+      title: Add New Language
       width: 400px
       height: 500px
       components:

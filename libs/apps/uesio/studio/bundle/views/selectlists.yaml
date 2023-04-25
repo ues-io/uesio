@@ -72,13 +72,13 @@ definition:
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
-                    title: Select lists
+                    title: Select Lists
                     subtitle: Check it twice.
                     actions:
                       - uesio/io.group:
                           components:
                             - uesio/io.button:
-                                text: Create a new select list
+                                text: Create a New Select List
                                 hotkey: "n"
                                 uesio.variant: uesio/io.secondary
                                 signals:
@@ -111,7 +111,7 @@ definition:
   panels:
     newSelectlist:
       uesio.type: uesio/io.dialog
-      title: Create a new select list
+      title: Create a New Select List
       width: 400px
       height: 500px
       components:

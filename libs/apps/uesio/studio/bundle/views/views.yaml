@@ -77,17 +77,17 @@ definition:
                                   workspace:
                                     name: $Param{workspacename}
                                     app: $Param{app}
-                                label: Generate list view
+                                label: Generate List View
                                 generator: uesio/core.listview
                             - uesio/studio.generatorbutton:
                                 uesio.context:
                                   workspace:
                                     name: $Param{workspacename}
                                     app: $Param{app}
-                                label: Generate detail view
+                                label: Generate Detail View
                                 generator: uesio/core.detailview
                             - uesio/io.button:
-                                text: Create a new view
+                                text: Create a New View
                                 uesio.variant: uesio/io.secondary
                                 hotkey: "n"
                                 uesio.id: new-view
@@ -151,7 +151,7 @@ definition:
   panels:
     newView:
       uesio.type: uesio/io.dialog
-      title: Create a new view
+      title: Create a New View
       width: 400px
       height: 500px
       components:
