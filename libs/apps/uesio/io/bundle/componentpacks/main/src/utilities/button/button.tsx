@@ -15,13 +15,15 @@ interface ButtonUtilityProps extends definition.UtilityProps {
 	link?: string
 }
 
+const StyleDefaults = Object.freeze({
+	root: {},
+	selected: {},
+	disabled: {},
+})
+
 const Button: FunctionComponent<ButtonUtilityProps> = (props) => {
 	const classes = styles.useUtilityStyles(
-		{
-			root: {},
-			selected: {},
-			disabled: {},
-		},
+		StyleDefaults,
 		props,
 		"uesio/io.button"
 	)

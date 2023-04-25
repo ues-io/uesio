@@ -14,20 +14,19 @@ interface DialogUtilityProps extends definition.UtilityProps {
 	actions?: ReactNode
 }
 
+const StyleDefaults = {
+	root: {
+		gridTemplateRows: "auto 1fr auto",
+		height: "100%",
+	},
+	content: {
+		padding: "20px",
+		overflow: "auto",
+	},
+}
+
 const Dialog: FunctionComponent<DialogUtilityProps> = (props) => {
-	const classes = styles.useUtilityStyles(
-		{
-			root: {
-				gridTemplateRows: "auto 1fr auto",
-				height: "100%",
-			},
-			content: {
-				padding: "20px",
-				overflow: "auto",
-			},
-		},
-		props
-	)
+	const classes = styles.useUtilityStyles(StyleDefaults, props)
 	const { context, title, onClose, width, height, children, actions } = props
 	return (
 		<DialogPlain

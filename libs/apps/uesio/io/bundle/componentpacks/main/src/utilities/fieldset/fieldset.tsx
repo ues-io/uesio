@@ -6,23 +6,22 @@ interface Props extends definition.UtilityProps {
 	disabled: boolean
 }
 
+const StyleDefaults = Object.freeze({
+	fieldset: {
+		border: 0,
+		padding: "0.01em 0 0 0",
+		margin: 0,
+		minWidth: 0,
+	},
+	legend: {
+		display: "none",
+	},
+})
+
 const Fieldset: FC<Props> = (props) => {
 	const { children, fieldLabel, disabled } = props
 
-	const classes = styles.useUtilityStyles(
-		{
-			fieldset: {
-				border: 0,
-				padding: "0.01em 0 0 0",
-				margin: 0,
-				minWidth: 0,
-			},
-			legend: {
-				display: "none",
-			},
-		},
-		props
-	)
+	const classes = styles.useUtilityStyles(StyleDefaults, props)
 
 	return (
 		<fieldset className={classes.fieldset} disabled={disabled}>

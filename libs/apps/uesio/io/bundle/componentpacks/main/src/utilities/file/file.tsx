@@ -5,6 +5,7 @@ import Tile from "../tile/tile"
 import Icon from "../icon/icon"
 import UploadArea from "../uploadarea/uploadarea"
 import { UserFileMetadata } from "../../components/field/field"
+import { CSSInterpolation } from "@emotion/css"
 
 interface FileUtilityProps extends definition.UtilityProps {
 	id?: string
@@ -15,6 +16,40 @@ interface FileUtilityProps extends definition.UtilityProps {
 	accept?: string
 }
 
+const StyleDefaults = Object.freeze({
+	uploadarea: {
+		border: "1px dashed #eee",
+		borderRadius: "20px",
+		padding: "40px",
+		fontSize: "9pt",
+		color: "#999",
+		textAlign: "center",
+	},
+	filetag: {
+		padding: "4px 10px",
+		marginTop: "10px",
+		border: "1px solid #eee",
+		display: "inline-block",
+		borderRadius: "4px",
+		backgroundColor: "#f8f8f8",
+	},
+	filename: {
+		fontSize: "9pt",
+		color: "#777",
+		padding: "4px",
+	},
+	download: {
+		textDecoration: "none",
+		color: "inherit",
+	},
+	actionbutton: {
+		padding: "4px",
+		cursor: "pointer",
+		margin: "4px",
+		color: "#777",
+	},
+} as Record<string, CSSInterpolation>)
+
 const File: FunctionComponent<FileUtilityProps> = (props) => {
 	const { context, userFile, onUpload, onDelete, accept, mode } = props
 
@@ -23,42 +58,7 @@ const File: FunctionComponent<FileUtilityProps> = (props) => {
 	const fileName = userFile?.["uesio/core.path"]
 	const fileUrl = api.file.getUserFileURL(context, userFileId, fileModDate)
 
-	const classes = styles.useUtilityStyles(
-		{
-			uploadarea: {
-				border: "1px dashed #eee",
-				borderRadius: "20px",
-				padding: "40px",
-				fontSize: "9pt",
-				color: "#999",
-				textAlign: "center",
-			},
-			filetag: {
-				padding: "4px 10px",
-				marginTop: "10px",
-				border: "1px solid #eee",
-				display: "inline-block",
-				borderRadius: "4px",
-				backgroundColor: "#f8f8f8",
-			},
-			filename: {
-				fontSize: "9pt",
-				color: "#777",
-				padding: "4px",
-			},
-			download: {
-				textDecoration: "none",
-				color: "inherit",
-			},
-			actionbutton: {
-				padding: "4px",
-				cursor: "pointer",
-				margin: "4px",
-				color: "#777",
-			},
-		},
-		props
-	)
+	const classes = styles.useUtilityStyles(StyleDefaults, props)
 
 	const uploadLabelId = nanoid()
 	const deleteLabelId = nanoid()

@@ -32,6 +32,10 @@ const getRelativeParent = (elem: Element | null): Element | null => {
 	return getRelativeParent(parent)
 }
 
+const StyleDefaults = Object.freeze({
+	popper: {},
+})
+
 const Popper: FunctionComponent<TooltipProps> = (props) => {
 	const autoPlacements = props.autoPlacement || defaultPlacement
 
@@ -63,12 +67,7 @@ const Popper: FunctionComponent<TooltipProps> = (props) => {
 		refs.setReference(referenceEl)
 	}, [refs, props.referenceEl, props.useFirstRelativeParent])
 
-	const classes = styles.useUtilityStyles(
-		{
-			popper: {},
-		},
-		props
-	)
+	const classes = styles.useUtilityStyles(StyleDefaults, props)
 
 	return (
 		<FloatingPortal>

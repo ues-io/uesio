@@ -18,6 +18,13 @@ interface TileUtilityProps extends definition.UtilityProps {
 	link?: string
 }
 
+const StyleDefaults = Object.freeze({
+	root: {},
+	content: {},
+	avatar: {},
+	selected: {},
+})
+
 const Tile = forwardRef<HTMLDivElement, TileUtilityProps>((props, ref) => {
 	const {
 		avatar,
@@ -30,12 +37,7 @@ const Tile = forwardRef<HTMLDivElement, TileUtilityProps>((props, ref) => {
 		link,
 	} = props
 	const classes = styles.useUtilityStyles(
-		{
-			root: {},
-			content: {},
-			avatar: {},
-			selected: {},
-		},
+		StyleDefaults,
 		props,
 		"uesio/io.tile"
 	)

@@ -16,16 +16,18 @@ interface NumberFieldProps extends definition.UtilityProps {
 	placeholder?: string
 }
 
+const StyleDefaults = Object.freeze({
+	input: {},
+	readonly: {},
+})
+
 const NumberField: FunctionComponent<NumberFieldProps> = (props) => {
 	const { mode, placeholder, fieldMetadata, id, options, setValue } = props
 	const readonly = mode === "READ"
 	const value = props.value as number
 
 	const classes = styles.useUtilityStyles(
-		{
-			input: {},
-			readonly: {},
-		},
+		StyleDefaults,
 		props,
 		"uesio/io.field"
 	)
