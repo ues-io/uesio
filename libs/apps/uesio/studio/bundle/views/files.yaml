@@ -116,7 +116,7 @@ definition:
   panels:
     newFile:
       uesio.type: uesio/io.dialog
-      title: Create a new file
+      title: Create a New File
       width: 400px
       height: 500px
       components:

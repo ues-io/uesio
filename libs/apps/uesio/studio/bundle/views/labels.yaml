@@ -111,7 +111,7 @@ definition:
   panels:
     newlabel:
       uesio.type: uesio/io.dialog
-      title: Create a new label
+      title: Create a New Label
       width: 400px
       height: 500px
       components:

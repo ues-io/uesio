@@ -81,7 +81,7 @@ definition:
                       - uesio/io.group:
                           components:
                             - uesio/io.button:
-                                text: Create a new collection
+                                text: Create a New Collection
                                 hotkey: "n"
                                 uesio.variant: uesio/io.primary
                                 uesio.id: new-collection
@@ -145,7 +145,7 @@ definition:
   panels:
     newCollection:
       uesio.type: uesio/io.dialog
-      title: Create a new collection
+      title: Create a New Collection
       width: 400px
       height: 500px
       components:
