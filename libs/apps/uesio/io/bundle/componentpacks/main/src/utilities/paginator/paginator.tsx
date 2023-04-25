@@ -2,6 +2,7 @@ import { FunctionComponent } from "react"
 import { definition, styles } from "@uesio/ui"
 import Group from "../group/group"
 import IconButton from "../iconbutton/iconbutton"
+import { CSSInterpolation } from "@emotion/css"
 
 interface PaginatorUtilityProps extends definition.UtilityProps {
 	currentPage: number
@@ -10,33 +11,32 @@ interface PaginatorUtilityProps extends definition.UtilityProps {
 	loadMore?: () => Promise<void>
 }
 
+const StyleDefaults = Object.freeze({
+	root: {
+		display: "grid",
+		justifyItems: "center",
+		padding: "16px",
+	},
+	pagebutton: {
+		display: "inline-block",
+		borderRadius: "50%",
+		lineHeight: "28px",
+		width: "28px",
+		textAlign: "center",
+		fontSize: "9pt",
+		color: "#777",
+		cursor: "pointer",
+	},
+	currentpage: {
+		color: "white",
+		cursor: "default",
+		backgroundColor: "$Theme{color.primary}",
+	},
+} as Record<string, CSSInterpolation>)
+
 const Paginator: FunctionComponent<PaginatorUtilityProps> = (props) => {
 	const { currentPage, maxPages, setPage, loadMore, context } = props
-	const classes = styles.useUtilityStyles(
-		{
-			root: {
-				display: "grid",
-				justifyItems: "center",
-				padding: "16px",
-			},
-			pagebutton: {
-				display: "inline-block",
-				borderRadius: "50%",
-				lineHeight: "28px",
-				width: "28px",
-				textAlign: "center",
-				fontSize: "9pt",
-				color: "#777",
-				cursor: "pointer",
-			},
-			currentpage: {
-				color: "white",
-				cursor: "default",
-				backgroundColor: context.getTheme().definition.palette.primary,
-			},
-		},
-		props
-	)
+	const classes = styles.useUtilityStyles(StyleDefaults, props)
 
 	const page = currentPage >= maxPages ? maxPages - 1 : currentPage
 

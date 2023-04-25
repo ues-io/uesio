@@ -1,51 +1,12 @@
 import { component, styles, definition } from "@uesio/ui"
 import { default as IOGrid } from "../../utilities/grid/grid"
 
-type GridDefinition = {
-	templateColumns?: styles.ResponsiveDefinition
-	templateRows?: styles.ResponsiveDefinition
-	templateAreas?: styles.ResponsiveDefinition
-	columnGap?: string
-	rowGap?: string
-	gap?: string
-}
-
-const Grid: definition.UC<GridDefinition> = (props) => {
+const Grid: definition.UC = (props) => {
 	const { definition, context } = props
-
-	// TODO: REMOVE THESE STYLING PROPERTIES
-	const gridCols = styles.getResponsiveStyles(
-		"gridTemplateColumns",
-		definition.templateColumns
-	)
-	const gridRows = styles.getResponsiveStyles(
-		"gridTemplateRows",
-		definition.templateRows
-	)
-
-	const gridAreas = styles.getResponsiveStyles(
-		"gridTemplateAreas",
-		definition.templateAreas
-	)
-
-	const columnGap = definition.columnGap && {
-		gridColumnGap: definition.columnGap,
-	}
-
-	const rowGap = definition.rowGap && {
-		gridRowGap: definition.rowGap,
-	}
-	// END TODO
 
 	const classes = styles.useStyles(
 		{
-			root: {
-				...gridCols,
-				...gridRows,
-				...gridAreas,
-				...columnGap,
-				...rowGap,
-			},
+			root: {},
 		},
 		props
 	)
@@ -62,7 +23,5 @@ const Grid: definition.UC<GridDefinition> = (props) => {
 }
 
 Grid.displayName = "Grid"
-
-export type { GridDefinition }
 
 export default Grid

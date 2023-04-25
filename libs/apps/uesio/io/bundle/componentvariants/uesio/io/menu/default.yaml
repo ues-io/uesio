@@ -10,9 +10,16 @@ definition:
       - rounded
       - overflow-hidden
       - shadow-lg
+      - max-h-64
+      - flex
+      - flex-col
+      - min-w-[200px]
     menuheader:
       - grid
       - bg-white
+    itemsarea:
+      - grow
+      - overflow-y-auto
     menuitem:
       - cursor-pointer
       - p-2

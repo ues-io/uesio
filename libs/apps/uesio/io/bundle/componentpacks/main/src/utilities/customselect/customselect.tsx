@@ -15,6 +15,14 @@ type CustomSelectProps<T> = {
 	menuVariant?: metadata.MetadataKey
 }
 
+const StyleDefaults = Object.freeze({
+	root: {},
+	input: {},
+	editbutton: {},
+	selecteditemwrapper: {},
+	notfound: {},
+})
+
 const CustomSelect: definition.UtilityComponent<CustomSelectProps<unknown>> = (
 	props
 ) => {
@@ -32,13 +40,7 @@ const CustomSelect: definition.UtilityComponent<CustomSelectProps<unknown>> = (
 	} = props
 
 	const classes = styles.useUtilityStyles(
-		{
-			root: {},
-			input: {},
-			editbutton: {},
-			selecteditemwrapper: {},
-			notfound: {},
-		},
+		StyleDefaults,
 		props,
 		"uesio/io.customselectfield"
 	)

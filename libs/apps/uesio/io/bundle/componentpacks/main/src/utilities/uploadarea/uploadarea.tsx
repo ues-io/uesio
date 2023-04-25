@@ -9,16 +9,15 @@ interface UploadAreaProps extends definition.UtilityProps {
 	deleteLabelId?: string
 }
 
+const StyleDefaults = Object.freeze({
+	root: {},
+	fileinput: {
+		display: "none",
+	},
+})
+
 const UploadArea: FunctionComponent<UploadAreaProps> = (props) => {
-	const classes = styles.useUtilityStyles(
-		{
-			root: {},
-			fileinput: {
-				display: "none",
-			},
-		},
-		props
-	)
+	const classes = styles.useUtilityStyles(StyleDefaults, props)
 
 	const {
 		children,

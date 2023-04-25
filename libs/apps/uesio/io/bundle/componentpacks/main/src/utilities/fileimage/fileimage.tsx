@@ -4,6 +4,7 @@ import { nanoid } from "@reduxjs/toolkit"
 import Icon from "../icon/icon"
 import { UserFileMetadata } from "../../components/field/field"
 import UploadArea from "../uploadarea/uploadarea"
+import { CSSInterpolation } from "@emotion/css"
 
 interface FileImageProps extends definition.UtilityProps {
 	id?: string
@@ -14,6 +15,49 @@ interface FileImageProps extends definition.UtilityProps {
 	accept?: string
 }
 
+const actionIconStyles: CSSProperties = {
+	cursor: "pointer",
+	padding: "4px",
+	margin: "4px",
+	color: "white",
+	backdropFilter: "brightness(0.6)",
+	borderRadius: "4px",
+	display: "none",
+	position: "absolute",
+	top: "0",
+}
+
+const StyleDefaults = Object.freeze({
+	root: {
+		position: "relative",
+		"&:hover .hovershow": {
+			display: "block",
+		},
+	},
+	image: {
+		width: "100%",
+		display: "block",
+	},
+	editicon: {
+		right: "0",
+		...actionIconStyles,
+	},
+	deleteicon: {
+		left: "0",
+		...actionIconStyles,
+	},
+	nofile: {
+		display: "flex",
+		backgroundColor: "#f5f5f5",
+		justifyContent: "center",
+	},
+	nofileicon: {
+		fontSize: "80px",
+		padding: "32px",
+		color: "#ccc",
+	},
+} as Record<string, CSSInterpolation>)
+
 const FileImage: FunctionComponent<FileImageProps> = (props) => {
 	const { context, mode, userFile, accept, onUpload, onDelete } = props
 
@@ -21,51 +65,7 @@ const FileImage: FunctionComponent<FileImageProps> = (props) => {
 	const userModDate = userFile?.[collection.UPDATED_AT_FIELD]
 	const fileUrl = api.file.getUserFileURL(context, userFileId, userModDate)
 
-	const actionIconStyles: CSSProperties = {
-		cursor: "pointer",
-		padding: "4px",
-		margin: "4px",
-		color: "white",
-		backdropFilter: "brightness(0.6)",
-		borderRadius: "4px",
-		display: "none",
-		position: "absolute",
-		top: "0",
-	}
-
-	const classes = styles.useUtilityStyles(
-		{
-			root: {
-				position: "relative",
-				"&:hover .hovershow": {
-					display: "block",
-				},
-			},
-			image: {
-				width: "100%",
-				display: "block",
-			},
-			editicon: {
-				right: "0",
-				...actionIconStyles,
-			},
-			deleteicon: {
-				left: "0",
-				...actionIconStyles,
-			},
-			nofile: {
-				display: "flex",
-				backgroundColor: "#f5f5f5",
-				justifyContent: "center",
-			},
-			nofileicon: {
-				fontSize: "80px",
-				padding: "32px",
-				color: "#ccc",
-			},
-		},
-		props
-	)
+	const classes = styles.useUtilityStyles(StyleDefaults, props)
 
 	const uploadLabelId = nanoid()
 	const deleteLabelId = nanoid()
