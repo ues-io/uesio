@@ -20,11 +20,15 @@ properties:
     type: TEXT
     label: URL
   - name: height
-    type: TEXT
+    type: NUMBER
     label: Height
+    min: 100
+    step: 20
   - name: width
-    type: TEXT
+    type: NUMBER
     label: Width
+    min: 100
+    step: 20
   - name: muted
     type: CHECKBOX
     label: Muted
