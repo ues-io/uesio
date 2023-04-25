@@ -13,7 +13,7 @@ const LoginMock: definition.UC = (props) => {
 	}
 
 	return (
-		<Grid className="grid-cols-2 gap-2 pb-4" context={context}>
+		<Grid className="grid-cols-2 gap-2" context={context}>
 			{MockUsernames.map((user) => (
 				<Button
 					key={user}

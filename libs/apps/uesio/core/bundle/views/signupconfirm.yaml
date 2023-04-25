@@ -23,16 +23,12 @@ definition:
     - uesio/io.grid:
         uesio.variant: uesio/io.splash
         items:
-          - uesio/io.box:
-              components:
-                - uesio/io.box:
-                    uesio.styleTokens:
-                      root:
-                        - max-w-[250px]
-                        - p-4
-                        - m-auto
-                        - text-center
-                    components:
+          - uesio/io.grid:
+              uesio.variant: uesio/io.center
+              items:
+                - uesio/io.grid:
+                    uesio.variant: uesio/core.loginarea
+                    items:
                       - uesio/io.image:
                           uesio.variant: uesio/core.fancy
                           file: uesio/core.logo
@@ -44,35 +40,26 @@ definition:
                           wire: credentials
                           mode: EDIT
                           components:
-                            - uesio/io.field:
-                                fieldId: uesio/viewonly.username
-                            - uesio/io.field:
-                                fieldId: uesio/viewonly.verificationcode
-                            - uesio/io.group:
-                                uesio.styles:
-                                  root:
-                                    gridAutoColumns: initial
+                            - uesio/io.box:
                                 components:
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.primary
-                                      text: Confirm Account
-                                      uesio.styles:
-                                        root:
-                                          marginTop: 26px
-                                          marginBottom: 60px
-                                        label:
-                                          textTransform: none
+                                  - uesio/io.field:
+                                      fieldId: uesio/viewonly.username
+                                  - uesio/io.field:
+                                      fieldId: uesio/viewonly.verificationcode
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.primary
+                                text: Confirm Account
+                                signals:
+                                  - signal: user/SIGNUP_CONFIRM
+                                    onerror:
                                       signals:
-                                        - signal: user/SIGNUP_CONFIRM
-                                          onerror:
-                                            signals:
-                                              - signal: notification/ADD_ERRORS
-                                          signupMethod: uesio/core.platform
-                                          payload:
-                                            username: ${uesio/viewonly.username}
-                                            verificationcode: ${uesio/viewonly.verificationcode}
-                                        - signal: route/REDIRECT
-                                          path: login
+                                        - signal: notification/ADD_ERRORS
+                                    signupMethod: uesio/core.platform
+                                    payload:
+                                      username: ${uesio/viewonly.username}
+                                      verificationcode: ${uesio/viewonly.verificationcode}
+                                  - signal: route/REDIRECT
+                                    path: login
   params:
     code:
       type: TEXT

@@ -1,0 +1,10 @@
+name: center
+label: Center Content
+definition:
+  uesio.styleTokens:
+    root:
+      - items-center
+      - justify-center
+      - content-center
+      - gap-4
+public: true

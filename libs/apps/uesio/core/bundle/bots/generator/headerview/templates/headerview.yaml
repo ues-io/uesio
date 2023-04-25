@@ -3,14 +3,12 @@ wires:
 # Components are how we describe the layout of our view
 components:
   - uesio/io.grid:
-      uesio.styles:
-        root:
-          backgroundColor: ${backgroundcolor}
       uesio.styleTokens:
         root:
           - items-center
           - p-4
           - grid-cols-[0fr_0fr_1fr_0fr]
+          - bg-[${backgroundcolor}]
       items:
         - uesio/io.griditem:
             components:
@@ -21,14 +19,8 @@ components:
                       - height-[${logoheight}]
                   file: ${logo}
         - uesio/io.griditem:
-            uesio.styles:
-              root:
-                display: flex
             components: ${navcollections}
         - uesio/io.griditem:
-            uesio.styles:
-              root:
-                textAlign: right
             components:
               - uesio/io.button:
                   uesio.variant: uesio/io.nav
@@ -39,8 +31,5 @@ components:
         - uesio/io.griditem:
             components:
               - uesio/io.avatar:
-                  uesio.styles:
-                    root:
-                      margin: 0 16px
                   text: $User{initials}
                   image: $User{picture}

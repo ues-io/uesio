@@ -13,14 +13,12 @@ components:
           - grid-rows-[0fr_1fr]
       items:
         - uesio/io.box:
-            uesio.styles:
+            uesio.styleTokens:
               root:
-                gridColumn: 1 / 3
+                - grid-start-1
+                - grid-end-3
             components: ${headercontents}
         - uesio/io.box:
-            uesio.styles:
-              root:
-                marginLeft: 10px
             components:
               - uesio/io.list:
                   wire: ${wirename}
