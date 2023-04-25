@@ -1,23 +1,39 @@
 import { api, styles, signal, definition } from "@uesio/ui"
 
 type VideoDefinition = {
-	file?: string
-	src?: string
-	controls?: boolean
-	width?: string
-	muted?: boolean
 	autoplay?: boolean
-	playsinline?: boolean
+	controls?: boolean
+	file?: string
+	height?: number
 	loop?: boolean
+	muted?: boolean
+	playsinline?: boolean
 	signals?: signal.SignalDefinition[]
+	src?: string
+	width?: number
 }
 
 const Video: definition.UC<VideoDefinition> = (props) => {
 	const { definition, context } = props
+	const {
+		autoplay = false,
+		controls = true,
+		file,
+		height,
+		loop = false,
+		muted = false,
+		playsinline = false,
+		signals,
+		src,
+		width,
+	} = definition
 
-	const classes = styles.useStyles(
+	const classes = styles.useStyleTokens(
 		{
-			root: {},
+			root: [
+				height !== undefined && `h-[${height}px]`,
+				width !== undefined && `w-[${width}px]`,
+			],
 		},
 		props
 	)
@@ -25,22 +41,20 @@ const Video: definition.UC<VideoDefinition> = (props) => {
 	return (
 		<video
 			className={classes.root}
-			loop={definition.loop || false}
-			controls={definition.controls || true}
-			width={definition.width}
-			autoPlay={definition.autoplay || false}
-			muted={definition.muted || false}
-			playsInline={definition.playsinline || false}
-			onClick={
-				definition?.signals &&
-				api.signal.getHandler(definition.signals, context)
-			}
+			loop={loop}
+			controls={controls}
+			height={height}
+			width={width}
+			autoPlay={autoplay}
+			muted={muted}
+			playsInline={playsinline}
+			onClick={signals && api.signal.getHandler(signals, context)}
 		>
 			<source
 				src={
-					definition.file
-						? api.file.getURLFromFullName(context, definition.file)
-						: context.mergeString(definition.src)
+					file
+						? api.file.getURLFromFullName(context, file)
+						: context.mergeString(src)
 				}
 			/>
 			Your browser does not support the video tag.
