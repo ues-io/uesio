@@ -70,7 +70,7 @@ definition:
                                 components:
                                   - uesio/studio.previewbutton:
                                       view: $Param{app}.${uesio/studio.name}
-                                      label: Preview
+                                      label: $Label{uesio/io.preview}
                                       uesio.id: preview-view
                                       uesio.display:
                                         - type: wireHasNoChanges
@@ -82,7 +82,7 @@ definition:
                                           app: $Param{app}
                                   - uesio/studio.previewbutton:
                                       view: $Param{app}.${uesio/studio.name}
-                                      label: "Build"
+                                      label: $Label{uesio/io.build}
                                       uesio.id: build-view
                                       uesio.display:
                                         - type: wireHasNoChanges
@@ -95,7 +95,7 @@ definition:
                                           app: $Param{app}
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.primary
-                                      text: "Save"
+                                      text: $Label{uesio/io.save}
                                       hotkey: "meta+s"
                                       uesio.display:
                                         - type: wireHasChanges
@@ -105,7 +105,7 @@ definition:
                                           wire: views
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      text: "Cancel"
+                                      text: $Label{uesio/io.cancel}
                                       hotkey: "meta+shift+."
                                       uesio.display:
                                         - type: wireHasChanges
@@ -115,14 +115,10 @@ definition:
                                           wire: views
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      text: "Delete"
+                                      text: $Label{uesio/io.delete}
                                       signals:
-                                        - signal: wire/MARK_FOR_DELETE
-                                        - signal: wire/SAVE
-                                          wires:
-                                            - "views"
-                                        - signal: "route/NAVIGATE"
-                                          path: "app/$Param{app}/workspace/$Param{workspacename}/views"
+                                        - signal: panel/TOGGLE
+                                          panel: deleteView
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           components:
@@ -134,4 +130,36 @@ definition:
                             - uesio/studio.codefield:
                                 fieldId: uesio/studio.definition
                                 height: 350px
-                                language: "yaml"
+                                language: yaml
+  panels:
+    deleteView:
+      uesio.type: uesio/io.dialog
+      title: Delete View
+      width: 400px
+      height: 300px
+      components:
+        - uesio/io.text:
+            text: Are you sure you want to delete this view?
+            element: div
+            uesio.variant: uesio/io.smalltitle
+        - uesio/io.text:
+            text: You will never be able to access the information associated with this view again.
+            element: div
+            uesio.variant: uesio/io.smallcontent
+      actions:
+        - uesio/io.button:
+            text: $Label{uesio/io.delete}
+            uesio.variant: uesio/io.primary
+            signals:
+              - signal: wire/MARK_FOR_DELETE
+              - signal: wire/SAVE
+                wires:
+                  - views
+              - signal: route/NAVIGATE
+                path: app/$Param{app}/workspace/$Param{workspacename}/views
+        - uesio/io.button:
+            text: $Label{uesio/io.cancel}
+            uesio.variant: uesio/io.secondary
+            signals:
+              - signal: panel/TOGGLE
+                panel: deleteView
