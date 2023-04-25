@@ -30,11 +30,6 @@
         {{- end -}}
         <script src="{{ .StaticAssetsPath }}/static/vendor/emotion-css.umd.min.js"></script>
         <script src="{{ .StaticAssetsPath }}/static/ui/uesio.js" type="module"></script>
-
-        <!-- Preload key fonts -->
-        <link rel="preload" href="{{ .StaticAssetsPath }}/fonts/roboto-v20-latin-300.woff2" as="font" crossOrigin="anonymous"/>
-        <link rel="preload" href="{{ .StaticAssetsPath }}/fonts/roboto-v20-latin-500.woff2" as="font" crossOrigin="anonymous"/>
-        <link rel="preload" href="{{ .StaticAssetsPath }}/fonts/roboto-v20-latin-regular.woff2" as="font" crossOrigin="anonymous"/>
     </head>
 <body>
     <div id="root" class="h-screen overflow-auto"></div>
