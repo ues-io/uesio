@@ -15,6 +15,11 @@ import { defineConfig, setup } from "@twind/core"
 import presetAutoprefix from "@twind/preset-autoprefix"
 import presetTailwind from "@twind/preset-tailwind"
 import { styles } from ".."
+import FontFaceObserver from "fontfaceobserver"
+
+new FontFaceObserver("Material Icons").load(null, 20000).then(() => {
+	document.documentElement.classList.remove("noicons")
+})
 
 const Route: UtilityComponent = (props) => {
 	const site = useSite()
