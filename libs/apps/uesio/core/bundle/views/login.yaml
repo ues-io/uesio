@@ -19,16 +19,12 @@ definition:
     - uesio/io.grid:
         uesio.variant: uesio/io.splash
         items:
-          - uesio/io.box:
-              components:
-                - uesio/io.box:
-                    uesio.styleTokens:
-                      root:
-                        - max-w-[250px]
-                        - p-4
-                        - m-auto
-                        - text-center
-                    components:
+          - uesio/io.grid:
+              uesio.variant: uesio/io.center
+              items:
+                - uesio/io.grid:
+                    uesio.variant: uesio/core.loginarea
+                    items:
                       - uesio/io.image:
                           uesio.variant: uesio/core.fancy
                           file: uesio/core.logo
@@ -38,56 +34,45 @@ definition:
                       - uesio/core.loginmock:
                           text: Sign in with Mock
                           align: center
-                      - uesio/io.box:
+                      - uesio/io.list:
+                          uesio.id: credslist
+                          wire: credentials
+                          mode: EDIT
                           components:
-                            - uesio/io.list:
-                                uesio.id: credslist
-                                wire: credentials
-                                mode: EDIT
+                            - uesio/io.box:
                                 components:
-                                  - uesio/io.box:
-                                      uesio.styles:
-                                        root:
-                                          marginBottom: 10px
-                                      components:
-                                        - uesio/io.field:
-                                            fieldId: uesio/viewonly.username
-                                            uesio.id: username
-                                        - uesio/io.field:
-                                            fieldId: uesio/viewonly.password
-                                            uesio.id: password
-                                            displayAs: PASSWORD
-                                        - uesio/io.group:
-                                            uesio.styles:
-                                              root:
-                                                gridAutoColumns: initial
-                                            components:
-                                              - uesio/io.button:
-                                                  uesio.variant: uesio/io.primary
-                                                  uesio.id: sign-in
-                                                  text: Sign In
-                                                  uesio.styles:
-                                                    root:
-                                                      marginTop: 2em
-                                                      marginBottom: 1em
-                                                    label:
-                                                      textTransform: none
-                                                  signals:
-                                                    - signal: user/LOGIN
-                                                      onerror:
-                                                        signals:
-                                                          - signal: notification/ADD_ERRORS
-                                                      authSource: uesio/core.platform
-                                                      payload:
-                                                        username: ${uesio/viewonly.username}
-                                                        password: ${uesio/viewonly.password}
-                                        - uesio/io.button:
-                                            uesio.variant: uesio/io.nav
-                                            text: Forgot your password?
-                                            uesio.styleTokens:
-                                              root:
-                                                - normal-case
-                                                - font-light
+                                  - uesio/io.field:
+                                      fieldId: uesio/viewonly.username
+                                      uesio.id: username
+                                  - uesio/io.field:
+                                      fieldId: uesio/viewonly.password
+                                      uesio.id: password
+                                      displayAs: PASSWORD
+                            - uesio/io.grid:
+                                uesio.styleTokens:
+                                  root:
+                                    - gap-4
+                                items:
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.primary
+                                      uesio.id: sign-in
+                                      text: Sign In
+                                      signals:
+                                        - signal: user/LOGIN
+                                          onerror:
                                             signals:
-                                              - signal: route/REDIRECT
-                                                path: requestpassword
+                                              - signal: notification/ADD_ERRORS
+                                          authSource: uesio/core.platform
+                                          payload:
+                                            username: ${uesio/viewonly.username}
+                                            password: ${uesio/viewonly.password}
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.nav
+                                      text: Forgot your password?
+                                      uesio.styleTokens:
+                                        root:
+                                          - normal-case
+                                          - font-light
+                                      signals:
+                                        - signal: route/REDIRECT
+                                          path: requestpassword

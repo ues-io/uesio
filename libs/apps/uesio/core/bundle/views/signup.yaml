@@ -30,16 +30,12 @@ definition:
     - uesio/io.grid:
         uesio.variant: uesio/io.splash
         items:
-          - uesio/io.box:
-              components:
-                - uesio/io.box:
-                    uesio.styleTokens:
-                      root:
-                        - max-w-[250px]
-                        - p-4
-                        - m-auto
-                        - text-center
-                    components:
+          - uesio/io.grid:
+              uesio.variant: uesio/io.center
+              items:
+                - uesio/io.grid:
+                    uesio.variant: uesio/core.loginarea
+                    items:
                       - uesio/io.image:
                           uesio.variant: uesio/core.fancy
                           file: uesio/core.logo
@@ -62,22 +58,14 @@ definition:
                                       displayAs: PASSWORD
                                   - uesio/io.field:
                                       fieldId: uesio/viewonly.terms
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.primary
-                                      text: Create Account
-                                      uesio.styles:
-                                        root:
-                                          width: 100%
-                                          display: block
-                                          marginTop: 26px
-                                          marginBottom: 60px
-                                        label:
-                                          textTransform: none
-                                      signals:
-                                        - signal: user/SIGNUP
-                                          signupMethod: uesio/core.platform
-                                          requireds:
-                                          payload:
-                                            username: ${uesio/viewonly.username}
-                                            password: ${uesio/viewonly.password}
-                                            email: ${uesio/viewonly.email}
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.primary
+                                text: Create Account
+                                signals:
+                                  - signal: user/SIGNUP
+                                    signupMethod: uesio/core.platform
+                                    requireds:
+                                    payload:
+                                      username: ${uesio/viewonly.username}
+                                      password: ${uesio/viewonly.password}
+                                      email: ${uesio/viewonly.email}

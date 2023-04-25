@@ -6,42 +6,36 @@ definition:
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
-        uesio.styles:
+        uesio.variant: uesio/io.center
+        uesio.styleTokens:
           root:
-            alignItems: center
-            justifyItems: center
-            height: 100vh
-            backgroundColor: "#F2F2F2"
+            - h-screen
+            - text-center
+            - bg-slate-100
+            - text-slate-700
         items:
-          - uesio/io.griditem:
-              uesio.styles:
+          - uesio/io.text:
+              text: "😞"
+              uesio.styleTokens:
                 root:
-                  textAlign: center
-              components:
-                - uesio/io.text:
-                    text: "😞"
-                    uesio.styles:
-                      root:
-                        fontSize: 60pt
-                        padding: 20px
-                    element: div
-                - uesio/io.text:
-                    text: "Nothing to see here."
-                    uesio.styles:
-                      root:
-                        fontSize: 14pt
-                        fontWeight: bold
-                    element: div
-                - uesio/io.text:
-                    text: "You may need to log in again"
-                    uesio.styles:
-                      root:
-                        fontSize: 9pt
-                        paddingBottom: 20pt
-                    element: div
-                - uesio/io.button:
-                    uesio.variant: uesio/io.secondary
-                    text: "Go To Login Page"
-                    signals:
-                      - signal: "route/NAVIGATE"
-                        path: "login"
+                  - p-8
+                  - text-8xl
+              element: div
+          - uesio/io.text:
+              text: "Nothing to see here."
+              uesio.styleTokens:
+                root:
+                  - text-6xl
+              element: div
+          - uesio/io.text:
+              text: "You may need to log in again."
+              uesio.styleTokens:
+                root:
+                  - text-xl
+              element: div
+          - uesio/io.button:
+              uesio.variant: uesio/io.nav
+              text: "Go To Login Page"
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: "login"

@@ -47,9 +47,6 @@ components:
                   uesio.variant: uesio/io.section
                   components: ${formFields}
   - uesio/io.box:
-      uesio.styles:
-        root:
-          margin: 40px
       uesio.display:
         - type: paramIsNotSet
           param: recordid
