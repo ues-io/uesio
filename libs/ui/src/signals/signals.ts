@@ -9,6 +9,7 @@ import routeSignals from "../bands/route/signals"
 import userSignals from "../bands/user/signals"
 import wireSignals from "../bands/wire/signals"
 import panelSignals from "../bands/panel/signals"
+import toolsSignals from "../bands/tools/signals"
 import notificationSignals from "../bands/notification/signals"
 import contextSignals from "../context/signals"
 import debounce from "lodash/debounce"
@@ -22,6 +23,7 @@ const registry: Record<string, SignalDescriptor> = {
 	...userSignals,
 	...wireSignals,
 	...panelSignals,
+	...toolsSignals,
 	...notificationSignals,
 	...contextSignals,
 }

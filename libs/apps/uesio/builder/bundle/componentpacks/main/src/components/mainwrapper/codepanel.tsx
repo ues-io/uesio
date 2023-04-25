@@ -44,6 +44,17 @@ const getSelectedAreaDecorations = (range: monaco.Range, className: string) => [
 	},
 ]
 
+const StyleDefaults = Object.freeze({
+	highlightLines: {
+		backgroundColor: "rgb(255,238,240)",
+		animation: `lineshighlight ${ANIMATION_DURATION}s ease-in-out`,
+	},
+	lineDecoration: {
+		background: "lightblue",
+		opacity: 0.3,
+	},
+})
+
 const CodePanel: definition.UtilityComponent = (props) => {
 	const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
 	const TitleBar = component.getUtility("uesio/io.titlebar")
@@ -52,19 +63,7 @@ const CodePanel: definition.UtilityComponent = (props) => {
 
 	const { context, className } = props
 
-	const classes = styles.useUtilityStyles(
-		{
-			highlightLines: {
-				backgroundColor: "rgb(255,238,240)",
-				animation: `lineshighlight ${ANIMATION_DURATION}s ease-in-out`,
-			},
-			lineDecoration: {
-				background: "lightblue",
-				opacity: 0.3,
-			},
-		},
-		props
-	)
+	const classes = styles.useUtilityStyles(StyleDefaults, props)
 
 	const selectedPath = useSelectedViewPath(context)
 

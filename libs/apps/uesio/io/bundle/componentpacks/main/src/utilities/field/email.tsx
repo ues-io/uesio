@@ -8,15 +8,17 @@ interface EmailFieldProps extends definition.UtilityProps {
 	placeholder?: string
 }
 
+const StyleDefaults = Object.freeze({
+	input: {},
+	readonly: {},
+})
+
 const EmailField: FunctionComponent<EmailFieldProps> = (props) => {
 	const { setValue, mode, placeholder, id } = props
 	const value = props.value as string
 	const readonly = mode === "READ"
 	const classes = styles.useUtilityStyles(
-		{
-			input: {},
-			readonly: {},
-		},
+		StyleDefaults,
 		props,
 		"uesio/io.field"
 	)

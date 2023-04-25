@@ -3,37 +3,37 @@ import { FunctionComponent, useRef } from "react"
 import { CSSTransition } from "react-transition-group"
 
 import { definition, styles } from "@uesio/ui"
+import { CSSInterpolation } from "@emotion/css"
 
 interface ExpandPanelProps extends definition.UtilityProps {
 	expanded: boolean
 }
 
+const StyleDefaults = Object.freeze({
+	root: {
+		willChange: "max-height,min-height",
+		boxSizing: "border-box",
+		"&.expand-enter": {
+			opacity: "0",
+		},
+		"&.expand-enter-active, &.expand-enter-done": {
+			opacity: "1",
+			transition: "all 0.2s ease-in",
+		},
+		"&.expand-exit": {
+			opacity: "1",
+		},
+		"&.expand-exit-active, &.expand-exit-done": {
+			opacity: "0",
+			transition: "all 0.2s ease-in",
+		},
+	},
+} as Record<string, CSSInterpolation>)
+
 const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 	const { children, expanded } = props
 	const nodeRef = useRef<HTMLDivElement>(null)
-	const classes = styles.useUtilityStyles(
-		{
-			root: {
-				willChange: "max-height,min-height",
-				boxSizing: "border-box",
-				"&.expand-enter": {
-					opacity: "0",
-				},
-				"&.expand-enter-active, &.expand-enter-done": {
-					opacity: "1",
-					transition: "all 0.2s ease-in",
-				},
-				"&.expand-exit": {
-					opacity: "1",
-				},
-				"&.expand-exit-active, &.expand-exit-done": {
-					opacity: "0",
-					transition: "all 0.2s ease-in",
-				},
-			},
-		},
-		props
-	)
+	const classes = styles.useUtilityStyles(StyleDefaults, props)
 
 	const setMaxHeight = () => {
 		const node = nodeRef.current

@@ -11,9 +11,14 @@ interface SelectFieldProps extends definition.UtilityProps {
 	readonly?: boolean
 }
 
+const StyleDefaults = Object.freeze({
+	root: {},
+	input: {},
+})
+
 const SelectField: FunctionComponent<SelectFieldProps> = (props) => {
 	const { readonly, setValue, mode, options, id } = props
-	const value = props.value as string
+	const value = (props.value as string) || ""
 
 	if (mode === "READ") {
 		const optionMatch = options?.find((option) => option.value === value)
@@ -22,10 +27,7 @@ const SelectField: FunctionComponent<SelectFieldProps> = (props) => {
 	}
 
 	const classes = styles.useUtilityStyles(
-		{
-			root: {},
-			input: {},
-		},
+		StyleDefaults,
 		props,
 		"uesio/io.selectfield"
 	)

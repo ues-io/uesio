@@ -20,6 +20,11 @@ const datetimeLocal = (dt: Date) => {
 	return dt.toISOString().slice(0, 16)
 }
 
+const StyleDefaults = Object.freeze({
+	input: {},
+	readonly: {},
+})
+
 const TimestampField: FunctionComponent<TimestampFieldProps> = (props) => {
 	const { setValue, mode, id } = props
 
@@ -33,10 +38,7 @@ const TimestampField: FunctionComponent<TimestampFieldProps> = (props) => {
 	}
 
 	const classes = styles.useUtilityStyles(
-		{
-			input: {},
-			readonly: {},
-		},
+		StyleDefaults,
 		props,
 		"uesio/io.field"
 	)

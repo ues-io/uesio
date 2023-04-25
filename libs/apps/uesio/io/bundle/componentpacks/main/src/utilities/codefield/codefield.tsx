@@ -44,6 +44,11 @@ type AsyncResult = {
 	loading: boolean
 }
 
+const StyleDefaults = Object.freeze({
+	input: {},
+	readonly: {},
+})
+
 const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
 	props
 ) => {
@@ -55,10 +60,7 @@ const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
 		context
 	)
 	const classes = styles.useUtilityStyles(
-		{
-			input: {},
-			readonly: {},
-		},
+		StyleDefaults,
 		props,
 		"uesio/io.codefield"
 	)

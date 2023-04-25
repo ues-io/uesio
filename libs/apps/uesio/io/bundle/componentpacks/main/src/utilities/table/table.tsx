@@ -43,19 +43,19 @@ const Table: FunctionComponent<TableUtilityProps<unknown, TableColumn>> = (
 		cellFunc,
 		context,
 	} = props
-	const classes = styles.useUtilityStyles(
+	const classes = styles.useUtilityStyleTokens(
 		{
-			root: {},
-			table: {},
-			header: {},
-			headerCell: {},
-			headerCellInner: {},
-			rowNumberCell: {},
-			rowNumber: {},
-			cell: {},
-			body: {},
-			row: {},
-			rowDeleted: {},
+			root: [],
+			table: [],
+			header: [],
+			headerCell: [],
+			headerCellInner: [],
+			rowNumberCell: [],
+			rowNumber: [],
+			cell: [],
+			body: [],
+			row: ["group"],
+			rowDeleted: [],
 		},
 		props,
 		"uesio/io.table"
@@ -75,32 +75,26 @@ const Table: FunctionComponent<TableUtilityProps<unknown, TableColumn>> = (
 		}
 	}
 
-	const getRowNumberCell = (row: unknown, index: number) => {
-		if (isSelectedFunc && onSelectChange) {
-			const isSelected = isSelectedFunc(row, index)
+	const getRowNumberCell = (
+		row: unknown,
+		index: number,
+		isSelected: boolean
+	) => {
+		if (onSelectChange) {
 			return (
 				<>
-					<div
-						className={
-							isSelected ? "hidden" : "block group-hover:hidden"
-						}
-					>
+					<div className="numberlabel">
 						{rowNumberFunc?.(index + 1)}
 					</div>
-					<div
-						className={
-							isSelected ? "block" : "hidden group-hover:block"
+					<CheckboxField
+						className="numbercheck"
+						context={context}
+						value={isSelected}
+						setValue={(value: boolean) =>
+							onSelectChange(row, index, value)
 						}
-					>
-						<CheckboxField
-							context={context}
-							value={isSelected}
-							setValue={(value: boolean) =>
-								onSelectChange(row, index, value)
-							}
-							mode="EDIT"
-						/>
-					</div>
+						mode="EDIT"
+					/>
 				</>
 			)
 		}
@@ -149,45 +143,53 @@ const Table: FunctionComponent<TableUtilityProps<unknown, TableColumn>> = (
 						defaultActionFunc && "hasRowAction"
 					)}
 				>
-					{rows.map((row, index) => (
-						<tr
-							onClick={
-								defaultActionFunc
-									? () => defaultActionFunc(row)
-									: undefined
-							}
-							className={styles.cx(
-								"group",
-								classes.row,
-								isDeletedFunc?.(row) && classes.rowDeleted
-							)}
-							key={index + 1}
-						>
-							{(rowNumberFunc || isSelectedFunc) && (
-								<td
-									className={styles.cx(
-										classes.cell,
-										classes.rowNumberCell
-									)}
-									key="rownumbers"
-								>
-									<div className={classes.rowNumber}>
-										{getRowNumberCell(row, index)}
-									</div>
-								</td>
-							)}
-							{columns.map((column, i) => (
-								<td key={i} className={classes.cell}>
-									{cellFunc(column, row, i)}
-								</td>
-							))}
-							{rowActionsFunc && (
-								<td key="rowactions" className={classes.cell}>
-									{rowActionsFunc(row)}
-								</td>
-							)}
-						</tr>
-					))}
+					{rows.map((row, index) => {
+						const isSelected = isSelectedFunc?.(row, index) || false
+						return (
+							<tr
+								onClick={
+									defaultActionFunc
+										? () => defaultActionFunc(row)
+										: undefined
+								}
+								className={styles.cx(
+									classes.row,
+									isDeletedFunc?.(row) && classes.rowDeleted
+								)}
+								key={index + 1}
+							>
+								{(rowNumberFunc || isSelectedFunc) && (
+									<td
+										className={styles.cx(
+											classes.cell,
+											classes.rowNumberCell,
+											isSelected && "isselected"
+										)}
+										key="rownumbers"
+									>
+										{getRowNumberCell(
+											row,
+											index,
+											isSelected
+										)}
+									</td>
+								)}
+								{columns.map((column, i) => (
+									<td key={i} className={classes.cell}>
+										{cellFunc(column, row, i)}
+									</td>
+								))}
+								{rowActionsFunc && (
+									<td
+										key="rowactions"
+										className={classes.cell}
+									>
+										{rowActionsFunc(row)}
+									</td>
+								)}
+							</tr>
+						)
+					})}
 				</tbody>
 			</table>
 		</div>

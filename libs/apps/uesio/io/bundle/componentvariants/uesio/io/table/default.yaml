@@ -39,10 +39,15 @@ definition:
     rowNumberCell:
       - whitespace-nowrap
       - w-px
-    rowNumber:
       - text-center
       - text-slate-700
       - text-[10pt]
+      - "[&>.numberlabel]:block"
+      - "[&.isselected>.numberlabel]:hidden"
+      - "[&:hover>.numberlabel]:hidden"
+      - "[&>.numbercheck]:hidden"
+      - "[&.isselected>.numbercheck]:block"
+      - "[&:hover>.numbercheck]:block"
     cell:
       - last:border-r-0
       - border-b

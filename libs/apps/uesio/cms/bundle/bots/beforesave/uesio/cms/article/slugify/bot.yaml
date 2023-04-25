@@ -1,3 +1,4 @@
 name: slugify
 type: BEFORESAVE
 dialect: JAVASCRIPT
+public: true

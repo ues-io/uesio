@@ -15,6 +15,12 @@ properties:
   - name: src
     type: TEXT
     label: URL
+  - name: height
+    type: NUMBER
+    label: Height
+  - name: width
+    type: NUMBER
+    label: Width
   - name: alt
     type: TEXT
     label: Alt text
@@ -32,6 +38,7 @@ sections:
       - file
       - src
       - height
+      - width
       - alt
       - align
       - loading

@@ -15,13 +15,15 @@ interface ButtonUtilityProps extends definition.UtilityProps {
 	link?: string
 }
 
+const StyleDefaults = Object.freeze({
+	root: {},
+	selected: {},
+	disabled: {},
+})
+
 const Button: FunctionComponent<ButtonUtilityProps> = (props) => {
 	const classes = styles.useUtilityStyles(
-		{
-			root: {},
-			selected: {},
-			disabled: {},
-		},
+		StyleDefaults,
 		props,
 		"uesio/io.button"
 	)
@@ -47,12 +49,11 @@ const Button: FunctionComponent<ButtonUtilityProps> = (props) => {
 			href={link}
 			disabled={disabled}
 			onClick={onClick}
-			className={styles.mergeClasses(
-				styles.cx(
-					classes.root,
-					disabled && classes.disabled,
-					isSelected && classes.selected
-				)
+			className={styles.process(
+				undefined,
+				classes.root,
+				disabled && classes.disabled,
+				isSelected && classes.selected
 			)}
 		>
 			{icon}

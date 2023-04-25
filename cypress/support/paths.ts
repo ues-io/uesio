@@ -6,3 +6,10 @@ export const getBaseUrl = () => `${baseUrl}`
 export const getAppBasePath = (appName: string) => `/app/${username}/${appName}`
 export const getWorkspaceBasePath = (appName: string, workspaceName: string) =>
 	`${getAppBasePath(appName)}/workspace/${workspaceName}`
+export const getWorkspaceRoutePreviewPath = (
+	appName: string,
+	workspaceName: string,
+	username: string,
+	routePath: string
+) =>
+	`/workspace/${username}/${appName}/${workspaceName}/app/${username}/${appName}/${routePath}`

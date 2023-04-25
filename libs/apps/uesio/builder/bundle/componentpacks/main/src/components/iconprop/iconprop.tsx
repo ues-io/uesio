@@ -10,6 +10,37 @@ type Definition = {
 	path: FullPath
 }
 
+const StyleDefaults = Object.freeze({
+	icons: {
+		display: "grid",
+		overflow: "auto",
+		gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr 1fr",
+		padding: "16px",
+		rowGap: "14px",
+		background: "white",
+	},
+	search: {
+		marginBottom: "2px",
+		width: "100%",
+		height: "30px",
+		outline: 0,
+		borderWidth: "0 0 1px",
+		padding: "16px 8px",
+	},
+	iconfield: {
+		display: "grid",
+		gridTemplateColumns: "1fr min-content",
+		alignItems: "center",
+		columnGap: "8px",
+	},
+	iconpreview: {
+		backgroundColor: "#f0f0f0",
+		padding: "6px",
+		borderRadius: "20px",
+		fontSize: "8pt",
+	},
+})
+
 const IconProp: definition.UC<Definition> = (props) => {
 	const { context, definition } = props
 	const { path, property } = definition
@@ -38,39 +69,7 @@ const IconProp: definition.UC<Definition> = (props) => {
 				icon.toLowerCase().includes(searchTerm.toLocaleLowerCase())
 		  )
 
-	const classes = styles.useUtilityStyles(
-		{
-			icons: {
-				display: "grid",
-				overflow: "auto",
-				gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr 1fr",
-				padding: "16px",
-				rowGap: "14px",
-				background: "white",
-			},
-			search: {
-				marginBottom: "2px",
-				width: "100%",
-				height: "30px",
-				outline: 0,
-				borderWidth: "0 0 1px",
-				padding: "16px 8px",
-			},
-			iconfield: {
-				display: "grid",
-				gridTemplateColumns: "1fr min-content",
-				alignItems: "center",
-				columnGap: "8px",
-			},
-			iconpreview: {
-				backgroundColor: "#f0f0f0",
-				padding: "6px",
-				borderRadius: "20px",
-				fontSize: "8pt",
-			},
-		},
-		props
-	)
+	const classes = styles.useUtilityStyles(StyleDefaults, props)
 
 	const viewDefId = context.getViewDefId()
 	const record = context.getRecord()

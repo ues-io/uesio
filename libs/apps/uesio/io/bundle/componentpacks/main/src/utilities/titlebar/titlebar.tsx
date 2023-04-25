@@ -9,16 +9,18 @@ interface TitleBarUtilityProps extends definition.UtilityProps {
 	onClick?: () => void
 }
 
+const StyleDefaults = Object.freeze({
+	root: {},
+	content: {},
+	title: {},
+	subtitle: {},
+	actions: {},
+})
+
 const TitleBar: FunctionComponent<TitleBarUtilityProps> = (props) => {
 	const { context, title, subtitle, subtitlenode, actions, onClick } = props
 	const classes = styles.useUtilityStyles(
-		{
-			root: {},
-			content: {},
-			title: {},
-			subtitle: {},
-			actions: {},
-		},
+		StyleDefaults,
 		props,
 		"uesio/io.titlebar"
 	)
