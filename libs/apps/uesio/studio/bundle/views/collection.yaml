@@ -304,7 +304,7 @@ definition:
                 panel: editCollection
     newField:
       uesio.type: uesio/io.dialog
-      title: Create a new Field
+      title: Create a New Field
       width: 400px
       height: 620px
       components:
