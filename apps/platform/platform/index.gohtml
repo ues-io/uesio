@@ -30,6 +30,11 @@
         {{- end -}}
         <script src="{{ .StaticAssetsPath }}/static/vendor/emotion-css.umd.min.js"></script>
         <script src="{{ .StaticAssetsPath }}/static/ui/uesio.js" type="module"></script>
+
+        <!-- Fonts needed on almost every page -->
+        <link rel="preload" href="{{ .FontsPath }}/roboto-v20-latin-300.woff2" as="font" crossOrigin="anonymous"/>
+        <link rel="preload" href="{{ .FontsPath }}/roboto-v20-latin-500.woff2" as="font" crossOrigin="anonymous"/>
+        <link rel="preload" href="{{ .FontsPath }}/roboto-v20-latin-regular.woff2" as="font" crossOrigin="anonymous"/>
     </head>
 <body>
     <div id="root" class="h-screen overflow-auto"></div>
@@ -53,7 +58,6 @@
     <script type="module">
         uesio.loader(document.querySelector("#root"), {{.}});
     </script>
-    <!-- Preload material icons since they will be used on almost all pages, and take a while to download -->
-    <link rel="preload" href="{{ .StaticAssetsPath }}/fonts/materialsymbols.woff2" as="font" crossOrigin="anonymous"/>
+    <link rel="prefetch" href="{{ .FontsPath }}/materialsymbols.woff2" as="font" crossOrigin="anonymous"/>
 </body>
 </html>

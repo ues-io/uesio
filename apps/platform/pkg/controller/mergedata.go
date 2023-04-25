@@ -2,11 +2,12 @@ package controller
 
 import (
 	"fmt"
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 
 	// Using text/template here instead of html/template
 	// because we trust both the template and the merge data
@@ -210,6 +211,7 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 		DevMode:          devMode,
 		PreloadMetadata:  preload,
 		StaticAssetsPath: file.GetAssetsPath(),
+		FontsPath:        file.GetFontsPath(),
 	}
 
 	err = indexTemplate.Execute(w, mergeData)

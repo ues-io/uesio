@@ -66,6 +66,7 @@ type MergeData struct {
 	Workspace        *WorkspaceMergeData `json:"workspace,omitempty"`
 	DevMode          bool                `json:"-"`
 	StaticAssetsPath string              `json:"-"`
+	FontsPath        string              `json:"-"`
 	*PreloadMetadata
 }
 

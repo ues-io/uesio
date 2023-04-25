@@ -49,8 +49,10 @@ var versionedItemParam = nsParam + "/{version:(?:v[0-9]+\\.[0-9]+\\.[0-9]+)|(?:[
 var groupingParam = getFullItemOrTextParam("grouping")
 var collectionParam = getFullItemParam("collectionname")
 
+const FONTS_VERSION = 1
+
 var (
-	fontsPrefix  = "/fonts"
+	fontsPrefix  = fmt.Sprintf("/%d/fonts", FONTS_VERSION)
 	staticPrefix = "/static"
 )
 
@@ -64,22 +66,21 @@ func serve(cmd *cobra.Command, args []string) {
 		logger.LogError(err)
 		panic("Failed to obtain working directory")
 	}
-
-	// If we have gitsha, append that to the prefixes to enable us to have versioned assets
+	// If we have gitsha, append that to the static assets prefix to enable us to have versioned assets
 	gitsha := os.Getenv("GITSHA")
 	cacheStaticAssets := gitsha != ""
 	staticAssetsPath := ""
 	if cacheStaticAssets {
 		staticAssetsPath = "/" + gitsha
 		file.SetAssetsPath(staticAssetsPath)
-		fontsPrefix = staticAssetsPath + fontsPrefix
 		staticPrefix = staticAssetsPath + staticPrefix
 	}
+	file.SetFontsPath(fontsPrefix)
 
 	// Profiler Info
 	// r.PathPrefix("/debug/pprof").Handler(http.DefaultServeMux)
 
-	r.Handle(fontsPrefix+"/{filename:.*}", controller.Fonts(cwd, fontsPrefix, cacheStaticAssets)).Methods(http.MethodGet)
+	r.Handle(fontsPrefix+"/{filename:.*}", controller.Fonts(cwd, fontsPrefix)).Methods(http.MethodGet)
 	r.Handle(staticPrefix+"/{filename:.*}", file.Vendor(cwd, staticPrefix, cacheStaticAssets)).Methods(http.MethodGet)
 	r.HandleFunc("/health", controller.Health).Methods(http.MethodGet)
 
