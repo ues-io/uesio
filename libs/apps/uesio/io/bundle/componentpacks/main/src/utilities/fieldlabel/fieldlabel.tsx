@@ -5,12 +5,14 @@ interface FieldLabelProps extends definition.UtilityProps {
 	label?: string
 }
 
+const StyleDefaults = Object.freeze({
+	root: {},
+})
+
 const FieldLabel: FunctionComponent<FieldLabelProps> = (props) => {
 	const { label, context } = props
 	const classes = styles.useUtilityStyles(
-		{
-			root: {},
-		},
+		StyleDefaults,
 		props,
 		"uesio/io.fieldlabel"
 	)

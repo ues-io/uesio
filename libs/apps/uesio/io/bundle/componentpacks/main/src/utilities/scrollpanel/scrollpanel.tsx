@@ -6,13 +6,15 @@ interface ScrollPanelProps extends definition.UtilityProps {
 	footer?: ReactNode
 }
 
+const StyleDefaults = Object.freeze({
+	root: {},
+	inner: {},
+})
+
 const ScrollPanel = forwardRef<HTMLDivElement, ScrollPanelProps>(
 	(props, ref) => {
 		const classes = styles.useUtilityStyles(
-			{
-				root: {},
-				inner: {},
-			},
+			StyleDefaults,
 			props,
 			"uesio/io.scrollpanel"
 		)

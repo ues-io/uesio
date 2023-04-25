@@ -25,15 +25,17 @@ const parseDateConditionValue = (value: wire.FieldValue) => {
 	return value
 }
 
+const StyleDefaults = Object.freeze({
+	input: {},
+	readonly: {},
+})
+
 const MonthFilter: definition.UtilityComponent<MonthFilterProps> = (props) => {
 	const { wire, context, condition } = props
 	const wireId = wire.getId()
 
 	const classes = styles.useUtilityStyles(
-		{
-			input: {},
-			readonly: {},
-		},
+		StyleDefaults,
 		props,
 		"uesio/io.field"
 	)

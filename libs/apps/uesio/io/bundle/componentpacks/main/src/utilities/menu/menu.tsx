@@ -23,18 +23,21 @@ interface MenuButtonUtilityProps<T> extends definition.UtilityProps {
 	searchFilter?: (item: T, search: string) => boolean
 }
 
+const StyleDefaults = Object.freeze({
+	root: {},
+	menu: {},
+	menuheader: {},
+	menuitem: {},
+	highlighted: {},
+	searchbox: {},
+	itemsarea: {},
+})
+
 const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 	props
 ) => {
 	const classes = styles.useUtilityStyles(
-		{
-			root: {},
-			menu: {},
-			menuheader: {},
-			menuitem: {},
-			highlighted: {},
-			searchbox: {},
-		},
+		StyleDefaults,
 		props,
 		"uesio/io.menu"
 	)
@@ -42,9 +45,21 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 	const [isOpen, setIsOpen] = useState(false)
 	const [searchText, setSearchText] = useState("")
 
+	const getSearchItems = (searchText: string) => {
+		onSearch?.(searchText)
+		setSearchText(searchText)
+	}
+
+	const onOpenChange = (open: boolean) => {
+		if (open) {
+			getSearchItems(searchText)
+		}
+		setIsOpen(open)
+	}
+
 	const floating = useFloating({
 		open: isOpen,
-		onOpenChange: setIsOpen,
+		onOpenChange,
 		placement: "bottom-start",
 		middleware: [
 			offset(2),
@@ -68,6 +83,7 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 		activeIndex,
 		onNavigate: setActiveIndex,
 		focusItemOnOpen: false,
+		focusItemOnHover: false,
 	})
 
 	const { getReferenceProps, getFloatingProps, getItemProps } =
@@ -118,52 +134,53 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 										className={classes.searchbox}
 										placeholder="Search..."
 										onChange={(e) => {
-											onSearch?.(e.target.value)
-											setSearchText(e.target.value)
+											getSearchItems(e.target.value)
 										}}
 									/>
 								)}
 							</div>
-							{items
-								.filter((item) => {
-									if (!searchFilter) return true
-									if (!searchText) return true
-									return searchFilter(item, searchText)
-								})
-								.map((item, index) => (
-									<div
-										className={styles.cx(
-											classes.menuitem,
-											activeIndex === index &&
-												classes.highlighted
-										)}
-										key={getItemKey(item)}
-										tabIndex={
-											activeIndex === index ? 0 : -1
-										}
-										ref={(node) => {
-											listRef.current[index] = node
-										}}
-										role="option"
-										{...getItemProps({
-											// Handle pointer select.
-											onClick() {
-												onSelect(item)
-												setIsOpen(false)
-											},
-											// Handle keyboard select.
-											onKeyDown(event) {
-												if (event.key === "Enter") {
-													event.preventDefault()
+							<div className={classes.itemsarea}>
+								{items
+									.filter((item) => {
+										if (!searchFilter) return true
+										if (!searchText) return true
+										return searchFilter(item, searchText)
+									})
+									.map((item, index) => (
+										<div
+											className={styles.cx(
+												classes.menuitem,
+												activeIndex === index &&
+													classes.highlighted
+											)}
+											key={getItemKey(item)}
+											tabIndex={
+												activeIndex === index ? 0 : -1
+											}
+											ref={(node) => {
+												listRef.current[index] = node
+											}}
+											role="option"
+											{...getItemProps({
+												// Handle pointer select.
+												onClick() {
 													onSelect(item)
 													setIsOpen(false)
-												}
-											},
-										})}
-									>
-										{itemRenderer(item)}
-									</div>
-								))}
+												},
+												// Handle keyboard select.
+												onKeyDown(event) {
+													if (event.key === "Enter") {
+														event.preventDefault()
+														onSelect(item)
+														setIsOpen(false)
+													}
+												},
+											})}
+										>
+											{itemRenderer(item)}
+										</div>
+									))}
+							</div>
 						</div>
 					</FloatingFocusManager>
 				)}

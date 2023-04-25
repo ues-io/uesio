@@ -41,7 +41,7 @@
   "files": [],
   "devDependencies": {
     "@emotion/css": "^11.10.6",
-    "@floating-ui/react": "^0.19.2",
+    "@floating-ui/react": "^0.23.1",
     "@monaco-editor/react": "^4.4.6",
     "@nrwl/cli": "14.7.13",
     "@nrwl/eslint-plugin-nx": "14.7.13",

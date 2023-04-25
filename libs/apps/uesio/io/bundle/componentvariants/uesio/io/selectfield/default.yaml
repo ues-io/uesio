@@ -4,7 +4,7 @@ extends: uesio/io.field:uesio/io.default
 definition:
   uesio.styleTokens:
     root:
-      - after:right-3
+      - after:right-2
       - after:content-["expand\\_more"]
       - after:font-[Material_Icons]
       - after:text-slate-700

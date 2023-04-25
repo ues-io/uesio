@@ -18,6 +18,9 @@ import { mergeDefinitionMaps } from "./merge"
 import { MetadataKey } from "../bands/builder/types"
 import { useShould } from "./display"
 
+const getVariantKey = (variant: ComponentVariant): MetadataKey =>
+	`${variant.namespace}.${variant.name}` as MetadataKey
+
 function getThemeOverride(
 	variant: ComponentVariant,
 	context: Context
@@ -26,36 +29,47 @@ function getThemeOverride(
 	const theme = context.getTheme()
 	const overrides = theme?.definition?.variantOverrides
 	const override = overrides?.[componentType]?.[
-		variant.namespace + "." + variant.name
+		getVariantKey(variant)
 	] as DefinitionMap
 	return override
 }
+
+// A cache of full variant definitions, where all variant extensions have been resolved
+// NOTE: This cache will be persisted across all route navigations, and has no upper bound.
+// Consider adding a cache eviction policy if this becomes a problem.
+const expandedVariantDefinitionCache = {} as Record<string, DefinitionMap>
 
 function getDefinitionFromVariant(
 	variant: ComponentVariant | undefined,
 	context: Context
 ): DefinitionMap {
 	if (!variant) return {}
-	const def = variant.extends
-		? mergeDefinitionMaps(
-				getDefinitionFromVariant(
-					context.getComponentVariant(
-						variant.component,
-						variant.extends as MetadataKey
+	let def = variant.definition
+	if (variant.extends) {
+		// To avoid expensive variant extension resolution, check cache first
+		const variantKey = `${variant.component}:${getVariantKey(variant)}`
+		const cachedDef = expandedVariantDefinitionCache[variantKey]
+		if (cachedDef) {
+			def = cachedDef
+		} else {
+			def = expandedVariantDefinitionCache[variantKey] =
+				mergeDefinitionMaps(
+					getDefinitionFromVariant(
+						context.getComponentVariant(
+							variant.component,
+							variant.extends as MetadataKey
+						),
+						context
 					),
-					context
-				),
-				variant.definition,
-				undefined
-		  )
-		: variant.definition
+					def,
+					undefined
+				)
+		}
+	}
 
 	const override = getThemeOverride(variant, context)
-	return mergeDefinitionMaps(
-		def,
-		override ? { "uesio.styles": override } : {},
-		undefined
-	)
+	if (!override) return def
+	return mergeDefinitionMaps(def, { "uesio.styles": override }, undefined)
 }
 
 function mergeContextVariants(

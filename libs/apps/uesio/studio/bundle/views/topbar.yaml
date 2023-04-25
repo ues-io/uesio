@@ -24,7 +24,7 @@ definition:
                       root:
                         - mr-4
                         - opacity-80
-                        - h-[34px]
+                    height: 34
                     file: uesio/core.logo
                     signals:
                       - signal: "route/NAVIGATE"

@@ -1,6 +1,7 @@
 import { FC } from "react"
 import { definition, styles, context, collection, wire } from "@uesio/ui"
 import Fieldset from "../fieldset/fieldset"
+import { CSSInterpolation } from "@emotion/css"
 
 interface SelectFieldProps extends definition.UtilityProps {
 	setValue: (value: wire.FieldValue) => void
@@ -12,6 +13,21 @@ interface SelectFieldProps extends definition.UtilityProps {
 	options: collection.SelectOption[] | null
 	readonly?: boolean
 }
+
+const StyleDefaults = Object.freeze({
+	input: {
+		appearance: "none",
+	},
+	option: {
+		padding: "8px",
+		display: "flex",
+		alignItems: "center",
+		gap: "8px",
+	},
+	label: {
+		userSelect: "none",
+	},
+} as Record<string, CSSInterpolation>)
 
 const RadioButtons: FC<SelectFieldProps> = (props) => {
 	const {
@@ -25,23 +41,7 @@ const RadioButtons: FC<SelectFieldProps> = (props) => {
 		readonly,
 	} = props
 
-	const classes = styles.useUtilityStyles(
-		{
-			input: {
-				appearance: "none",
-			},
-			option: {
-				padding: "8px",
-				display: "flex",
-				alignItems: "center",
-				gap: "8px",
-			},
-			label: {
-				userSelect: "none",
-			},
-		},
-		props
-	)
+	const classes = styles.useUtilityStyles(StyleDefaults, props)
 
 	const fieldLabel = fieldMetadata.getLabel()
 	return (
