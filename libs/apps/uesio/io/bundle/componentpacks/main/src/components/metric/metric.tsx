@@ -6,10 +6,15 @@ type MetricDefinition = {
 	unit?: string
 	value: string
 	signals?: signal.SignalDefinition[]
+	wire?: string
 }
 
 const MetricComponent: definition.UC<MetricDefinition> = (props) => {
 	const { definition, context } = props
+
+	//This is here because we need to re-render the metric component
+	//we need to tranform the context.merge into a hook
+	api.wire.useWires([definition.wire || ""], context)
 
 	const classes = styles.useStyles(
 		{
