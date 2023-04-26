@@ -86,7 +86,7 @@ definition:
               uesio.variant: uesio/studio.content
               components:
                 - uesio/io.list:
-                    uesio.id: permissionsetsDeck
+                    uesio.id: permissionsetsList
                     wire: permissionsets
                     mode: READ
                     components:
@@ -104,10 +104,16 @@ definition:
                                         - type: fieldMode
                                           mode: READ
                                       signals:
-                                        - signal: component/uesio/io.list/TOGGLE_MODE
-                                          target: permissionsetsDeck
-                                        - signal: component/uesio/io.table/TOGGLE_MODE
-                                          target: fieldPerms-table
+                                        - signal: component/CALL
+                                          component: uesio/io.list
+                                          componentsignal: TOGGLE_MODE
+                                          targettype: specific
+                                          componentid: permissionsetsList
+                                        - signal: component/CALL
+                                          component: uesio/io.table
+                                          componentsignal: TOGGLE_MODE
+                                          targettype: specific
+                                          componentid: fieldPerms-table
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.primary
                                       text: $Label{uesio/io.save}
@@ -118,10 +124,16 @@ definition:
                                         - signal: wire/SAVE
                                           wires:
                                             - permissionsets
-                                        - signal: component/uesio/io.list/TOGGLE_MODE
-                                          target: permissionsetsDeck
-                                        - signal: component/uesio/io.table/TOGGLE_MODE
-                                          target: fieldPerms-table
+                                        - signal: component/CALL
+                                          component: uesio/io.list
+                                          componentsignal: TOGGLE_MODE
+                                          targettype: specific
+                                          componentid: permissionsetsList
+                                        - signal: component/CALL
+                                          component: uesio/io.table
+                                          componentsignal: TOGGLE_MODE
+                                          targettype: specific
+                                          componentid: fieldPerms-table
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: $Label{uesio/io.cancel}
@@ -131,10 +143,16 @@ definition:
                                       signals:
                                         - signal: wire/CANCEL
                                           wire: permissionsets
-                                        - signal: component/uesio/io.list/TOGGLE_MODE
-                                          target: permissionsetsDeck
-                                        - signal: component/uesio/io.table/TOGGLE_MODE
-                                          target: fieldPerms-table
+                                        - signal: component/CALL
+                                          component: uesio/io.list
+                                          componentsignal: TOGGLE_MODE
+                                          targettype: specific
+                                          componentid: permissionsetsList
+                                        - signal: component/CALL
+                                          component: uesio/io.table
+                                          componentsignal: TOGGLE_MODE
+                                          targettype: specific
+                                          componentid: fieldPerms-table
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           components:

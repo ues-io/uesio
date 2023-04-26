@@ -58,7 +58,7 @@ definition:
               uesio.variant: uesio/studio.content
               components:
                 - uesio/io.list:
-                    uesio.id: authsourcesDeck
+                    uesio.id: authsourcesList
                     wire: authsources
                     mode: READ
                     components:
@@ -72,8 +72,11 @@ definition:
                                       uesio.variant: uesio/io.secondary
                                       text: "Edit"
                                       signals:
-                                        - signal: component/io.list/TOGGLE_MODE
-                                          target: "authsourcesDeck"
+                                        - signal: component/CALL
+                                          component: uesio/io.list
+                                          componentsignal: TOGGLE_MODE
+                                          targettype: specific
+                                          componentid: authsourcesList
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: "Save"
@@ -95,7 +98,7 @@ definition:
                                         - signal: wire/SAVE
                                           wires:
                                             - "authsources"
-                                        - signal: "route/NAVIGATE"
+                                        - signal: route/NAVIGATE
                                           path: "app/$Param{app}/workspace/$Param{workspacename}/authsources"
                       - uesio/io.box:
                           uesio.variant: uesio/io.section

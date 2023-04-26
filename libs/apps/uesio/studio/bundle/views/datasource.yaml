@@ -59,7 +59,7 @@ definition:
               uesio.variant: uesio/studio.content
               components:
                 - uesio/io.list:
-                    uesio.id: datasourcesDeck
+                    uesio.id: datasourcesList
                     wire: datasources
                     mode: READ
                     components:
@@ -73,8 +73,11 @@ definition:
                                       uesio.variant: uesio/io.secondary
                                       text: "Edit"
                                       signals:
-                                        - signal: component/uesio/io.list/TOGGLE_MODE
-                                          target: "datasourcesDeck"
+                                        - signal: component/CALL
+                                          component: uesio/io.list
+                                          componentsignal: TOGGLE_MODE
+                                          targettype: specific
+                                          componentid: datasourcesList
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: "Save"

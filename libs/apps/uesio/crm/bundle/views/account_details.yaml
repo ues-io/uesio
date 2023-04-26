@@ -21,8 +21,11 @@ definition:
                           components:
                             - uesio/io.button:
                                 signals:
-                                  - signal: component/uesio/io.list/TOGGLE_MODE
-                                    target: accountList
+                                  - signal: component/CALL
+                                    component: uesio/io.list
+                                    componentsignal: TOGGLE_MODE
+                                    targettype: specific
+                                    componentid: accountList
                                 text: Edit
                                 uesio.variant: uesio/io.secondary
                             - uesio/io.button:

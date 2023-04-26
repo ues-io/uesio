@@ -91,14 +91,20 @@ definition:
                                       uesio.variant: uesio/io.primary
                                       text: "Save"
                                       signals:
-                                        - signal: component/uesio/io.fileattachment/UPLOAD_FILE
-                                          target: botcontent
+                                        - signal: component/CALL
+                                          component: uesio/io.fileattachment
+                                          componentsignal: UPLOAD_FILE
+                                          targettype: specific
+                                          componentid: botcontent
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: "Cancel"
                                       signals:
-                                        - signal: component/uesio/io.fileattachment/CANCEL_FILE
-                                          target: botcontent
+                                        - signal: component/CALL
+                                          component: uesio/io.fileattachment
+                                          componentsignal: CANCEL_FILE
+                                          targettype: specific
+                                          componentid: botcontent
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: "Delete"
