@@ -16,14 +16,13 @@ const IconLabel: FC<T> = (props) => {
 
 	const fill = props.fill === undefined ? true : props.fill
 
-	const classes = styles.useUtilityStyles(
+	const classes = styles.useUtilityStyleTokens(
 		{
-			root: {},
-			icon: {
-				...(!icon && { visibility: "hidden" }),
-				fontVariationSettings: "'FILL' " + (fill ? "1" : "0"),
-			},
-			title: {},
+			root: [],
+			icon: [
+				!icon && "hidden",
+				!fill && "[font-variation-settings:'FILL'_0]",
+			],
 		},
 		props,
 		"uesio/builder.iconlabel"
@@ -48,13 +47,7 @@ const IconLabel: FC<T> = (props) => {
 			) : (
 				iconElement
 			)}
-			<Text
-				text={text}
-				context={context}
-				classes={{
-					root: classes.title,
-				}}
-			/>
+			<Text text={text} context={context} />
 		</div>
 	)
 }

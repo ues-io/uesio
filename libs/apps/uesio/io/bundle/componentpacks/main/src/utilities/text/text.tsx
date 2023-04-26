@@ -1,14 +1,7 @@
 import { definition, styles } from "@uesio/ui"
+import { forwardRef } from "react"
 
-type AlignValues =
-	| "start"
-	| "end"
-	| "left"
-	| "right"
-	| "center"
-	| "justify"
-	| "match-parent"
-	| "inherit"
+type AlignValues = "start" | "end" | "left" | "right" | "center" | "justify"
 
 type AcceptedElements =
 	| "p"
@@ -22,31 +15,31 @@ type AcceptedElements =
 	| "h6"
 	| "pre"
 
-interface TextProps {
+interface TextProps extends definition.UtilityProps {
 	text?: string
 	element?: AcceptedElements
 	color?: string
 	align?: AlignValues
 }
 
-const Text: definition.UtilityComponent<TextProps> = (props) => {
-	const { text, element, color, align } = props
-	const classes = styles.useUtilityStyles(
+const Text = forwardRef<HTMLDivElement, TextProps>((props, ref) => {
+	const { text, element = "span", color, align } = props
+	const classes = styles.useUtilityStyleTokens(
 		{
-			root: {
-				...(color && {
-					color: props.context.mergeString(color),
-				}),
-				textAlign: align,
-			},
+			root: [color && `text-[color:${color}]`, align && `text-${align}`],
 		},
 		props,
 		"uesio/io.text"
 	)
-	const Tag = (element ? element : "span") as AcceptedElements
+	// The `as "div"` here is a hack to get typescript to not complain.
+	const Tag = element as "div"
 	const mergedText = props.context.mergeString(text)
-	return <Tag className={classes.root}>{mergedText}</Tag>
-}
+	return (
+		<Tag ref={ref} className={classes.root}>
+			{mergedText}
+		</Tag>
+	)
+})
 
 export type { AcceptedElements }
 

@@ -1,12 +1,9 @@
 name: default
 label: Default
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      display: "flex"
-      gap: "5px"
-      alignItems: "center"
-    icon:
-    title:
-      paddingTop: "1px"
+      - flex
+      - gap-1.5
+      - items-center
 public: true

@@ -37,9 +37,6 @@ properties:
         label: Heading 6
       - value: pre
         label: Preformatted Text
-  - name: color
-    type: TEXT
-    label: Color
   - name: align
     label: Align
     type: SELECT
@@ -60,10 +57,15 @@ properties:
         label: "justify"
       - value: "match-parent"
         label: "match-parent"
+  - name: color
+    type: TEXT
+    label: Color
 sections:
   - type: HOME
     properties:
       - text
-      - icon
+      - element
+      - align
+      - color
   - type: STYLES
   - type: DISPLAY

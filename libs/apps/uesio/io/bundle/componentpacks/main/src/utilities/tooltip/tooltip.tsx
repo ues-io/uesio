@@ -1,4 +1,10 @@
-import { FunctionComponent, useRef, useState } from "react"
+import {
+	FunctionComponent,
+	cloneElement,
+	isValidElement,
+	useRef,
+	useState,
+} from "react"
 import { definition, styles } from "@uesio/ui"
 import {
 	useFloating,
@@ -9,6 +15,7 @@ import {
 	useHover,
 	Placement,
 	FloatingPortal,
+	FloatingArrow,
 } from "@floating-ui/react"
 
 interface TooltipUtilityProps extends definition.UtilityProps {
@@ -18,21 +25,21 @@ interface TooltipUtilityProps extends definition.UtilityProps {
 }
 
 const Tooltip: FunctionComponent<TooltipUtilityProps> = (props) => {
-	const arrowRef = useRef<HTMLDivElement>(null)
+	const { children } = props
+	const arrowRef = useRef(null)
 	const [open, setOpen] = useState<boolean>(false)
-	const { x, y, strategy, refs, middlewareData, placement, context } =
-		useFloating({
-			open,
-			onOpenChange: setOpen,
-			placement: props.placement,
-			middleware: [
-				shift(),
-				offset(props.offset || 0),
-				arrow({
-					element: arrowRef,
-				}),
-			],
-		})
+	const { x, y, strategy, refs, context } = useFloating({
+		open,
+		onOpenChange: setOpen,
+		placement: props.placement,
+		middleware: [
+			shift(),
+			offset(props.offset || 0),
+			arrow({
+				element: arrowRef,
+			}),
+		],
+	})
 
 	const hover = useHover(context, {
 		restMs: 400,
@@ -41,62 +48,33 @@ const Tooltip: FunctionComponent<TooltipUtilityProps> = (props) => {
 	})
 	const { getReferenceProps, getFloatingProps } = useInteractions([hover])
 
-	const classes = styles.useUtilityStyles(
+	const classes = styles.useUtilityStyleTokens(
 		{
-			tooltip: {
-				padding: "6px",
-				background: "#222",
-				color: "#f5f5f5",
-				zIndex: 2,
-				fontSize: "8pt",
-			},
-			arrow: {
-				...(middlewareData?.arrow && {
-					left:
-						middlewareData.arrow.x !== null
-							? `${middlewareData.arrow.x}px`
-							: "",
-					top:
-						middlewareData.arrow.y !== null
-							? `${middlewareData.arrow.y}px`
-							: "",
-				}),
-				position: "absolute",
-				width: "8px",
-				height: "8px",
-				background: "inherit",
-				visibility: "hidden",
-				"&:before": {
-					position: "absolute",
-					width: "8px",
-					height: "8px",
-					background: "inherit",
-					visibility: "visible",
-					content: "''",
-					transform: "rotate(45deg)",
-				},
-				...(placement === "top" && {
-					bottom: "-4px",
-				}),
-				...(placement === "bottom" && {
-					top: "-4px",
-				}),
-				...(placement === "left" && {
-					right: "-4px",
-				}),
-				...(placement === "right" && {
-					left: "-4px",
-				}),
-			},
+			tooltip: [
+				"px-2",
+				"py-1.5",
+				"bg-slate-800",
+				"text-slate-100",
+				"z-10",
+				"text-xs",
+				"rounded",
+			],
+			arrow: ["fill-slate-800"],
 		},
 		props
 	)
 
 	return (
 		<>
-			<div ref={refs.setReference} {...getReferenceProps()}>
-				{props.children}
-			</div>
+			{isValidElement(children) &&
+				cloneElement(
+					children,
+					getReferenceProps({
+						ref: refs.setReference,
+						...props,
+						...children.props,
+					})
+				)}
 			<FloatingPortal>
 				{open && (
 					<div
@@ -111,7 +89,13 @@ const Tooltip: FunctionComponent<TooltipUtilityProps> = (props) => {
 						}}
 					>
 						{props.text}
-						<div ref={arrowRef} className={classes.arrow} />
+						<FloatingArrow
+							width={12}
+							height={6}
+							className={classes.arrow}
+							ref={arrowRef}
+							context={context}
+						/>
 					</div>
 				)}
 			</FloatingPortal>
