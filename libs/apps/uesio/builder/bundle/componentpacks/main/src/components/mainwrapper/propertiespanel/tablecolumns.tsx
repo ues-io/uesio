@@ -75,20 +75,29 @@ const TableColumns: definition.UC = (props) => {
 		if (column?.components?.length > 0) {
 			return [widthProperty, labelProperty]
 		}
-		const fieldId = {
-			name: "field",
-			label: "Field",
-			required: true,
-			type: "FIELD",
-			wireName,
-		} as ComponentProperty
-		const fieldProperties = (fieldComponentDef?.properties ||
+		const tableFieldProperties = [
+			{
+				name: "field",
+				label: "Field",
+				required: true,
+				type: "FIELD",
+				wireName,
+			},
+			{
+				name: "fieldDisplayType",
+				type: "FIELD_METADATA",
+				display: false,
+				viewOnly: true,
+				wireName,
+				fieldProperty: "field",
+				metadataProperty: "type",
+			},
+			widthProperty,
+		] as ComponentProperty[]
+
+		const ioFieldProperties = (fieldComponentDef?.properties ||
 			[]) as ComponentProperty[]
-		// This is a bit of a hack --- have to remove the "field" property from io field, which is normally readonly text,
-		// so that we can render it here as an editable FIELD type with a wire
-		return [fieldId, widthProperty].concat(
-			fieldProperties.filter((p) => p.name !== "fieldId")
-		)
+		return tableFieldProperties.concat(ioFieldProperties.slice(3))
 	}
 
 	const getColumnTitle = (column: ColumnDefinition) => {
