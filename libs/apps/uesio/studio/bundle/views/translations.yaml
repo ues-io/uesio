@@ -92,8 +92,8 @@ definition:
                             - uesio/io.tile:
                                 uesio.variant: uesio/io.item
                                 signals:
-                                  - signal: "route/NAVIGATE"
-                                    path: "app/$Param{app}/workspace/$Param{workspacename}/translations/${uesio/studio.language}"
+                                  - signal: route/NAVIGATE
+                                    path: app/$Param{app}/workspace/$Param{workspacename}/translations/${uesio/studio.language}
                                 content:
                                   - uesio/io.text:
                                       text: ${uesio/studio.language}
@@ -119,16 +119,16 @@ definition:
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
-            text: "Save"
+            text: $Label{uesio/io.save}
             signals:
               - signal: wire/SAVE
                 wires:
-                  - "newtranslation"
-              - signal: "route/NAVIGATE"
-                path: "app/$Param{app}/workspace/$Param{workspacename}/translations/${uesio/studio.language}"
+                  - newtranslation
+              - signal: route/NAVIGATE
+                path: app/$Param{app}/workspace/$Param{workspacename}/translations/${uesio/studio.language}
         - uesio/io.button:
-            uesio.variant: "uesio/io.secondary"
-            text: "Cancel"
+            uesio.variant: uesio/io.secondary
+            text: $Label{uesio/io.cancel}
             signals:
-              - signal: "panel/TOGGLE"
-                panel: "newtranslation"
+              - signal: panel/TOGGLE
+                panel: newtranslation

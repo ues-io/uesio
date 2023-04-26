@@ -18,7 +18,7 @@ definition:
       collection: uesio/studio.allmetadata
       conditions:
         - field: uesio/studio.type
-          value: "collections"
+          value: collections
     newcollection:
       collection: uesio/studio.collection
       fields:
@@ -45,7 +45,7 @@ definition:
           lookupField: uesio/core.id
         - field: uesio/studio.datasource
           valueSource: VALUE
-          value: "uesio/core.platform"
+          value: uesio/core.platform
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -118,7 +118,7 @@ definition:
                               type: DEFAULT
                               signals:
                                 - signal: route/NAVIGATE
-                                  path: "app/$Param{app}/workspace/$Param{workspacename}/collections/${uesio/studio.namespace}/${uesio/studio.name}"
+                                  path: app/$Param{app}/workspace/$Param{workspacename}/collections/${uesio/studio.namespace}/${uesio/studio.name}
                           pagesize: 10
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
@@ -167,17 +167,17 @@ definition:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
             uesio.id: save-new-collection
-            text: "Save"
+            text: $Label{uesio/io.save}
             signals:
               - signal: wire/SAVE
                 wires:
-                  - "newcollection"
-              - signal: "route/NAVIGATE"
-                path: "app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{app}/${uesio/studio.name}"
+                  - newcollection
+              - signal: route/NAVIGATE
+                path: app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{app}/${uesio/studio.name}
         - uesio/io.button:
-            uesio.variant: "uesio/io.secondary"
+            uesio.variant: uesio/io.secondary
             uesio.id: cancel-new-collection
-            text: "Cancel"
+            text: $Label{uesio/io.cancel}
             signals:
-              - signal: "panel/TOGGLE"
-                panel: "newCollection"
+              - signal: panel/TOGGLE
+                panel: newCollection

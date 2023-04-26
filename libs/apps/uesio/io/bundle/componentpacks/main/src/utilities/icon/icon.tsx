@@ -32,7 +32,9 @@ const Icon: FunctionComponent<IconUtilityProps> = (props) => {
 
 	if (props.icon === undefined) return null
 
-	return <span className={classes.root}>{props.icon}</span>
+	return (
+		<span className={styles.cx(classes.root, "isicon")}>{props.icon}</span>
+	)
 }
 
 export default Icon
