@@ -97,8 +97,9 @@ type FieldPropertyBase = {
 type FieldMetadataProperty = {
 	type: "FIELD_METADATA"
 	fieldProperty: string
-	wireProperty: string
 	metadataProperty: "type" // TODO: Add more properties here, e.g. referenceType, etc.
+	wireProperty?: string
+	wireName?: string
 } & BaseProperty
 
 type FieldProperty = {
