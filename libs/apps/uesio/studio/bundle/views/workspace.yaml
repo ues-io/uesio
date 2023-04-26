@@ -2,6 +2,20 @@ name: workspace
 definition:
   # Wires are how we pull in data
   wires:
+    apps:
+      collection: uesio/studio.app
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.description:
+        uesio/studio.color:
+        uesio/studio.user:
+        uesio/studio.public:
+        uesio/studio.icon:
+      conditions:
+        - field: uesio/core.uniquekey
+          valueSource: PARAM
+          param: app
     workspaces:
       collection: uesio/studio.workspace
       fields:
@@ -17,8 +31,12 @@ definition:
         uesio/studio.defaulttheme:
         uesio/studio.favicon:
       conditions:
-        - field: uesio/core.uniquekey
-          value: $Param{app}:$Param{workspacename}
+        - field: uesio/studio.name
+          value: $Param{workspacename}
+        - field: uesio/studio.app
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio/core.id
     installedapps:
       collection: uesio/studio.bundledependency
       fields:
