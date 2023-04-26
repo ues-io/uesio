@@ -50,6 +50,17 @@ properties:
         value: top
       - label: Left
         value: left
+  - name: placeholder
+    type: TEXT
+    label: Placeholder
+    displayConditions:
+      - type: fieldValue
+        field: fieldDisplayType
+        operator: IN
+        values:
+          - TEXT
+          - LONGTEXT
+          - REFERENCE
   # TODO: need each option to be "validFor" a specific field display type,
   # so that we can have only one "displayAs" property which is valid for any field display type
   - name: displayAs
@@ -126,6 +137,7 @@ sections:
       - fieldDisplayType
       - label
       - labelPosition
+      - placeholder
       - displayAs
       # Display type specific properties
       - number

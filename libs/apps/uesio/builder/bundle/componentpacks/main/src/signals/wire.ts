@@ -76,6 +76,11 @@ const signals: SignalBandDefinition = {
 					type: "WIRE",
 					label: "Wire",
 				},
+				{
+					name: "prepend",
+					type: "CHECKBOX",
+					label: "Prepend record to wire data (default: append)",
+				},
 			],
 			outputs: [
 				{ name: "record", type: "RECORD" },
