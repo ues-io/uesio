@@ -23,7 +23,7 @@ func GetUniqueKeyPart(change *ChangeItem, fieldName string) (string, error) {
 		return strconv.Itoa(intValue), nil
 	}
 
-	return GetFieldValueString(value, UNIQUE_KEY_FIELD)
+	return GetFieldValueString(value, ID_FIELD)
 }
 
 func GetUniqueKeyValue(change *ChangeItem) (string, error) {
