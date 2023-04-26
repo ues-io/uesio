@@ -26,7 +26,7 @@ const Text = forwardRef<HTMLDivElement, TextProps>((props, ref) => {
 	const { text, element = "span", color, align } = props
 	const classes = styles.useUtilityStyleTokens(
 		{
-			root: [color && `text-[${color}]`, align && `text-[${align}]`],
+			root: [color && `text-[color:${color}]`, align && `text-${align}`],
 		},
 		props,
 		"uesio/io.text"
