@@ -205,7 +205,9 @@ const CodePanel: definition.UtilityComponent = (props) => {
 							onClick={api.signal.getHandler(
 								[
 									{
-										signal: "component/uesio/builder.mainwrapper/TOGGLE_CODE",
+										signal: "component/CALL",
+										component: "uesio/builder.mainwrapper",
+										componentsignal: "TOGGLE_CODE",
 									},
 								],
 								context

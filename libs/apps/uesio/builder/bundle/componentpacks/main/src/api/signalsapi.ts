@@ -1,5 +1,6 @@
 import { collection, context, definition, wire } from "@uesio/ui"
 import collectionSignals from "../signals/collection"
+import componentSignals from "../signals/component"
 import aiSignals from "../signals/ai"
 import botSignals from "../signals/bot"
 import notificationSignals from "../signals/notification"
@@ -14,12 +15,13 @@ import { getComponentDef } from "./stateapi"
 const signalBandDefinitions: SignalBandDefinition[] = [
 	// Ordered by perceived utility, not alphabetically. Up for debate as to which is better
 	wireSignals,
-	// TODO: Should we hide Bot signals if users don't have Bot feature flag activated?
 	notificationSignals,
 	panelSignals,
 	routeSignals,
+	// TODO: Should we hide Bot signals if users don't have Bot feature flag activated?
 	botSignals,
 	toolsSignals,
+	componentSignals,
 	collectionSignals,
 	userSignals,
 	aiSignals,

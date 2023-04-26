@@ -33,8 +33,11 @@ components:
                   uesio.variant: uesio/io.secondary
               - uesio/io.button:
                   signals:
-                    - signal: component/uesio/io.table/TOGGLE_MODE
-                      target: ${wirename}-table
+                    - signal: component/CALL
+                      component: uesio/io.table
+                      componentsignal: TOGGLE_MODE
+                      targettype: specific
+                      componentid: ${wirename}Table
                   text: Mode
                   uesio.variant: uesio/io.secondary
   - uesio/io.box:
@@ -46,6 +49,6 @@ components:
                 signals:
                   - signal: wire/TOGGLE_DELETE_STATUS
             columns: ${tableColumns}
-            uesio.id: ${wirename}-table
+            uesio.id: ${wirename}Table
             mode: EDIT
             wire: ${wirename}

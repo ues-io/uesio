@@ -35,13 +35,16 @@ components:
                         uesio.variant: uesio/io.secondary
                     - uesio/io.button:
                         signals:
-                          - signal: component/uesio/io.table/TOGGLE_MODE
-                            target: ${wirename}-list
+                          - signal: component/CALL
+                            component: uesio/io.table
+                            componentsignal: TOGGLE_MODE
+                            targettype: specific
+                            componentid: ${wirename}List
                         text: Mode
                         uesio.variant: uesio/io.secondary
         - uesio/io.list:
             wire: ${wirename}
-            uesio.id: ${wirename}-list
+            uesio.id: ${wirename}List
             components:
               - uesio/io.box:
                   uesio.variant: uesio/io.section
