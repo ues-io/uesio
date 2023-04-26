@@ -44,6 +44,7 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 		context,
 		options,
 		path,
+		placeholder,
 		variant,
 	} = props
 
@@ -146,6 +147,7 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 				context={context}
 				selectedItems={value ? [value] : []}
 				onSearch={onSearch}
+				placeholder={placeholder}
 				onSelect={(item: wire.PlainWireRecord) => {
 					record.update(fieldId, item, context)
 				}}

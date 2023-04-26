@@ -67,7 +67,7 @@ type WireDefinitionBase = {
 		create?: boolean
 	}
 	viewOnly?: boolean
-	events?: WireEvent
+	events?: WireEvents
 }
 
 type ViewOnlyWireDefinition = WireDefinitionBase & {
