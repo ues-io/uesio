@@ -459,12 +459,21 @@ const parseProperties = (
 					context,
 					path.addLocal(property.fieldProperty)
 				) as string)
-			sourceWire = (getObjectProperty(
-				initialValue,
-				property.wireProperty
-			) ||
-				getDef(context, path.addLocal(property.wireProperty)) ||
-				getClosestWireInContext(context, path)) as string
+			sourceWire = property.wireName as string
+			if (!sourceWire && property.wireProperty) {
+				sourceWire =
+					(getObjectProperty(
+						initialValue,
+						property.wireProperty
+					) as string) ||
+					(getDef(
+						context,
+						path.addLocal(property.wireProperty)
+					) as string)
+			}
+			if (!sourceWire) {
+				sourceWire = getClosestWireInContext(context, path) as string
+			}
 			if (sourceField && sourceWire) {
 				// Get the initial value of the corresponding field metadata property
 				value = getFieldMetadata(context, sourceWire, sourceField)
