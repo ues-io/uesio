@@ -19,7 +19,6 @@ export type ReferenceFieldOptions = {
 	template?: string
 	requirewriteaccess?: boolean
 	conditions?: wire.WireConditionState[]
-	placeholder: string
 }
 
 interface ReferenceFieldProps {
@@ -29,6 +28,7 @@ interface ReferenceFieldProps {
 	mode: context.FieldMode
 	record: wire.WireRecord
 	options?: ReferenceFieldOptions
+	placeholder?: string
 }
 
 const isValueCondition = wire.isValueCondition
@@ -146,7 +146,7 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 				context={context}
 				selectedItems={value ? [value] : []}
 				onSearch={onSearch}
-				placeholder={options?.placeholder}
+				placeholder={props.placeholder}
 				onSelect={(item: wire.PlainWireRecord) => {
 					record.update(fieldId, item, context)
 				}}
