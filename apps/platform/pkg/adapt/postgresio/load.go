@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"os"
 	"strconv"
 	"strings"
 
@@ -11,6 +12,8 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
+
+var DEBUG_SQL = os.Getenv("UESIO_DEBUG_SQL") == "true"
 
 func getFieldNameWithAlias(fieldMetadata *adapt.FieldMetadata) string {
 	fieldName := getFieldName(fieldMetadata, "main")
@@ -180,7 +183,7 @@ func (c *Connection) Load(op *adapt.LoadOp, session *sess.Session) error {
 		loadQuery = loadQuery + "\nOFFSET " + strconv.Itoa(op.BatchSize*op.BatchNumber)
 	}
 
-	if op.Debug {
+	if DEBUG_SQL {
 		op.DebugQueryString = loadQuery
 	}
 

@@ -26,7 +26,6 @@ type LoadOp struct {
 	Params             map[string]string      `json:"-"`
 	Preloaded          bool                   `json:"preloaded"`
 	LoadAll            bool                   `json:"loadAll"`
-	Debug              bool                   `json:"-"`
 	DebugQueryString   string                 `json:"debugQueryString"`
 }
 
@@ -82,8 +81,6 @@ func (op *LoadOp) UnmarshalJSONObject(dec *gojay.Decoder, key string) error {
 		return dec.Int(&op.BatchNumber)
 	case "loadAll":
 		return dec.Bool(&op.LoadAll)
-	case "debug":
-		return dec.Bool(&op.Debug)
 	}
 
 	return nil
