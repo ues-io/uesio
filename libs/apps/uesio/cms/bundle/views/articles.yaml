@@ -42,8 +42,11 @@ definition:
                           uesio.variant: uesio/io.secondary
                       - uesio/io.button:
                           signals:
-                            - signal: component/uesio/io.table/TOGGLE_MODE
-                              target: table1
+                            - signal: component/CALL
+                              component: uesio/io.table
+                              componentsignal: TOGGLE_MODE
+                              targettype: specific
+                              componentid: table1
                           text: Mode
                           uesio.variant: uesio/io.secondary
           - uesio/io.table:

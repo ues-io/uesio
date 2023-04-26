@@ -34,14 +34,20 @@ definition:
                                 uesio.variant: uesio/io.primary
                                 text: "Save"
                                 signals:
-                                  - signal: component/uesio/io.field/UPLOAD_FILE
-                                    target: mdeditor
+                                  - signal: component/CALL
+                                    componenttype: uesio/io.field
+                                    componentsignal: UPLOAD_FILE
+                                    targettype: specific
+                                    componentid: mdeditor
                             - uesio/io.button:
                                 uesio.variant: uesio/io.secondary
                                 text: "Cancel"
                                 signals:
-                                  - signal: component/uesio/io.field/CANCEL_FILE
-                                    target: mdeditor
+                                  - signal: component/CALL
+                                    componenttype: uesio/io.field
+                                    componentsignal: CANCEL_FILE
+                                    targettype: specific
+                                    componentid: mdeditor
                 - uesio/io.grid:
                     uesio.variant: uesio/io.two_columns
                     items:

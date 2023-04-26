@@ -60,7 +60,7 @@ definition:
               uesio.variant: uesio/studio.content
               components:
                 - uesio/io.list:
-                    uesio.id: selectlistsDeck
+                    uesio.id: selectlistsList
                     wire: selectlists
                     mode: READ
                     components:
@@ -77,8 +77,11 @@ definition:
                                         - type: fieldMode
                                           mode: READ
                                       signals:
-                                        - signal: component/uesio/io.list/TOGGLE_MODE
-                                          target: selectlistsDeck
+                                        - signal: component/CALL
+                                          component: uesio/io.list
+                                          componentsignal: TOGGLE_MODE
+                                          targettype: specific
+                                          componentid: selectlistsList
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.primary
                                       text: $Label{uesio/io.save}
@@ -89,8 +92,11 @@ definition:
                                         - signal: wire/SAVE
                                           wires:
                                             - selectlists
-                                        - signal: component/uesio/io.list/TOGGLE_MODE
-                                          target: selectlistsDeck
+                                        - signal: component/CALL
+                                          component: uesio/io.list
+                                          componentsignal: TOGGLE_MODE
+                                          targettype: specific
+                                          componentid: selectlistsList
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: $Label{uesio/io.cancel}
@@ -100,8 +106,11 @@ definition:
                                       signals:
                                         - signal: wire/CANCEL
                                           wire: selectlists
-                                        - signal: component/uesio/io.list/TOGGLE_MODE
-                                          target: selectlistsDeck
+                                        - signal: component/CALL
+                                          component: uesio/io.list
+                                          componentsignal: TOGGLE_MODE
+                                          targettype: specific
+                                          componentid: selectlistsList
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: $Label{uesio/io.delete}
