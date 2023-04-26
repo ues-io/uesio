@@ -147,7 +147,7 @@ const signals: SignalBandDefinition = {
 					{
 						type: "TEXT",
 						name: "target",
-						label: "Target Components",
+						label: "Components Selector",
 						displayConditions: [
 							{
 								field: "targettype",

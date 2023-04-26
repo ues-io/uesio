@@ -8,6 +8,9 @@ properties:
     type: METADATA
     label: View
     metadataType: VIEW
+  - name: uesio.id
+    type: COMPONENT_ID
+    label: Component Id
   - name: params
     type: PARAMS
     label: Params
@@ -15,6 +18,7 @@ sections:
   - type: HOME
     properties:
       - view
+      - uesio.id
       - params
   - type: STYLES
   - type: DISPLAY
@@ -32,6 +36,8 @@ signals:
   SET_PARAMS:
     label: "Set Params"
     properties:
-      - name: params
-        type: MAP
-        label: Params
+      # TODO: Fix builder.paramsfield so that we can specify a viewProperty providing the View Id,
+      # vs just assuming there's a field "view" on the context record
+      # - name: params
+      #   type: PARAMS
+      #   label: Params
