@@ -21,7 +21,17 @@ sections:
 signals:
   SET_PARAM:
     label: "Set Param"
-    properties: []
+    properties:
+      - name: param
+        # TODO: Type "VIEW_PARAM" that's a dropdown of View parameters??
+        type: TEXT
+        label: Param Name
+      - name: value
+        type: TEXT
+        label: Param Value
   SET_PARAMS:
     label: "Set Params"
-    properties: []
+    properties:
+      - name: params
+        type: MAP
+        label: Params
