@@ -3,6 +3,7 @@ package adapt
 import (
 	"encoding/json"
 	"errors"
+	"sort"
 
 	"github.com/francoispqt/gojay"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -25,6 +26,8 @@ type LoadOp struct {
 	Params             map[string]string      `json:"-"`
 	Preloaded          bool                   `json:"preloaded"`
 	LoadAll            bool                   `json:"loadAll"`
+	Debug              bool                   `json:"-"`
+	DebugQueryString   string                 `json:"debugQueryString"`
 }
 
 func (op *LoadOp) GetBytes() ([]byte, error) {
@@ -79,6 +82,8 @@ func (op *LoadOp) UnmarshalJSONObject(dec *gojay.Decoder, key string) error {
 		return dec.Int(&op.BatchNumber)
 	case "loadAll":
 		return dec.Bool(&op.LoadAll)
+	case "debug":
+		return dec.Bool(&op.Debug)
 	}
 
 	return nil
@@ -164,6 +169,7 @@ func (fm *FieldsMap) GetUniqueDBFieldNames(getDBFieldName func(*FieldMetadata) s
 		dbNames[i] = k
 		i++
 	}
+	sort.Strings(dbNames)
 	return dbNames, nil
 }
 

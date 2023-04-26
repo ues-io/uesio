@@ -130,7 +130,7 @@ func (c *Connection) Load(op *adapt.LoadOp, session *sess.Session) error {
 			newTableCollection := getAliasedName("collection", newTable)
 			newTableTenant := getAliasedName("tenant", newTable)
 
-			joins = append(joins, fmt.Sprintf("LEFT OUTER JOIN data as \"%s\" ON %s = %s AND %s = '%s' AND %s = '%s'", newTable, accessFieldString, idFieldString, newTableCollection, refCollectionName, newTableTenant, tenantID))
+			joins = append(joins, fmt.Sprintf("LEFT OUTER JOIN data as \"%s\" ON %s = %s AND %s = '%s' AND %s = '%s'\n", newTable, accessFieldString, idFieldString, newTableCollection, refCollectionName, newTableTenant, tenantID))
 
 			accessFieldID = getAliasedName("id", newTable)
 
@@ -145,11 +145,11 @@ func (c *Connection) Load(op *adapt.LoadOp, session *sess.Session) error {
 		}
 	}
 
-	loadQuery := "SELECT " +
-		strings.Join(fieldIDs, ",") +
-		" FROM data as \"main\" " +
-		strings.Join(joins, " ") +
-		" WHERE " +
+	loadQuery := "SELECT\n" +
+		strings.Join(fieldIDs, ",\n") +
+		"\nFROM data as \"main\"\n" +
+		strings.Join(joins, "") +
+		"WHERE\n" +
 		builder.String()
 
 	orders := make([]string, len(op.Order))
@@ -170,14 +170,18 @@ func (c *Connection) Load(op *adapt.LoadOp, session *sess.Session) error {
 	}
 
 	if len(op.Order) > 0 {
-		loadQuery = loadQuery + " order by " + strings.Join(orders, ",")
+		loadQuery = loadQuery + "\nORDER BY " + strings.Join(orders, ",")
 	}
 	if op.BatchSize == 0 || op.BatchSize > adapt.MAX_LOAD_BATCH_SIZE {
 		op.BatchSize = adapt.MAX_LOAD_BATCH_SIZE
 	}
-	loadQuery = loadQuery + " limit " + strconv.Itoa(op.BatchSize+1)
+	loadQuery = loadQuery + "\nLIMIT " + strconv.Itoa(op.BatchSize+1)
 	if op.BatchNumber != 0 {
-		loadQuery = loadQuery + " offset " + strconv.Itoa(op.BatchSize*op.BatchNumber)
+		loadQuery = loadQuery + "\nOFFSET " + strconv.Itoa(op.BatchSize*op.BatchNumber)
+	}
+
+	if op.Debug {
+		op.DebugQueryString = loadQuery
 	}
 
 	//start := time.Now()

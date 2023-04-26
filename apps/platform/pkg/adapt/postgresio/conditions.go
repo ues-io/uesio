@@ -54,7 +54,7 @@ func (qb *QueryBuilder) String() string {
 	if conjunction == "" {
 		conjunction = "AND"
 	}
-	conjunctionWithSpace := fmt.Sprintf(" %s ", conjunction)
+	conjunctionWithSpace := fmt.Sprintf(" %s\n", conjunction)
 	if qb.Parent != nil {
 		// Use parens if we are a sub builder
 		return fmt.Sprintf("(%s)", strings.Join(qb.Parts, conjunctionWithSpace))
