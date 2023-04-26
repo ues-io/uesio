@@ -23,7 +23,7 @@ interface TextProps extends definition.UtilityProps {
 }
 
 const Text = forwardRef<HTMLDivElement, TextProps>((props, ref) => {
-	const { text, element, color, align } = props
+	const { text, element = "span", color, align } = props
 	const classes = styles.useUtilityStyleTokens(
 		{
 			root: [color && `text-[${color}]`, align && `text-[${align}]`],
@@ -32,7 +32,7 @@ const Text = forwardRef<HTMLDivElement, TextProps>((props, ref) => {
 		"uesio/io.text"
 	)
 	// The `as "div"` here is a hack to get typescript to not complain.
-	const Tag = (element ? element : "span") as "div"
+	const Tag = element as "div"
 	const mergedText = props.context.mergeString(text)
 	return (
 		<Tag ref={ref} className={classes.root}>
