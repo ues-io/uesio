@@ -14,8 +14,10 @@ properties:
     type: LIST
     items:
       addLabel: Add Grid Item
+      displayTemplate: "Grid Item $RecordIndex{}"
       defaultDefinition:
-        components: []
+        uesio/io.griditem:
+          components: []
 sections:
   - type: HOME
     properties:
