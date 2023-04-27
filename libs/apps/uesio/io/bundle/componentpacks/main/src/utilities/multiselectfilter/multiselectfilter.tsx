@@ -4,27 +4,26 @@ import MultiSelectField from "../field/multiselect"
 
 const addBlankSelectOption = collection.addBlankSelectOption
 
-interface SelectFilterProps extends definition.UtilityProps {
+interface MultiSelectFilterProps extends definition.UtilityProps {
 	path: string
 	wire: wire.Wire
 	fieldMetadata: collection.Field
 	condition: wire.ValueConditionState
 }
 
-const SelectFilter: FunctionComponent<SelectFilterProps> = (props) => {
+const MultiSelectFilter: FunctionComponent<MultiSelectFilterProps> = (props) => {
 	const { wire, fieldMetadata, context, condition } = props
 	const wireId = wire.getId()
-
 	return (
 		<MultiSelectField
 			fieldMetadata={fieldMetadata}
 			context={context}
 			options={addBlankSelectOption(
-				fieldMetadata.getSelectMetadata()?.options || [],
+				fieldMetadata.getSelectMetadata()?.options || fieldMetadata.getSelectMetadata()?.options,
 				"Any " + fieldMetadata.getLabel()
 			)}
 			variant={"uesio/io.filter"}
-			value={[condition.value] || [""]}
+			value={[condition.value]}
 			setValue={(value: string[]) => {
                 console.log("value: ", value)
 				api.signal.runMany(
@@ -50,4 +49,12 @@ const SelectFilter: FunctionComponent<SelectFilterProps> = (props) => {
 	)
 }
 
-export default SelectFilter
+export default MultiSelectFilter
+
+/*- active: true
+field: uesio/docs.multiselect
+operator: HAS_ANY
+valueSource: VALUE
+value:
+  - es
+  */

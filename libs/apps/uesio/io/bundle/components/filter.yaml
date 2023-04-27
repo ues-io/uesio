@@ -10,6 +10,13 @@ variants:
 category: INTERACTION
 discoverable: true
 properties:
+  - name: fieldDisplayType
+    type: FIELD_METADATA
+    display: false
+    viewOnly: true
+    wireProperty: wire
+    fieldProperty: fieldId
+    metadataProperty: type
   - name: wire
     label: Wire
     type: WIRE
@@ -21,6 +28,19 @@ properties:
     displayConditions:
       - type: hasNoValue
         value: ${conditionId}
+  - name: operator
+    type: SELECT
+    label: Operator
+    options:
+      - value: "HAS_ANY"
+        label: "Has Any"
+      - value: "HAS_ALL"
+        label: "Has All"
+    displayConditions:
+      - type: fieldValue
+        field: fieldDisplayType
+        operator: EQ
+        value: MULTISELECT
   - name: displayAs
     type: SELECT
     label: Display as
@@ -53,8 +73,10 @@ properties:
 sections:
   - type: HOME
     properties:
+      - fieldDisplayType
       - wire
       - fieldId
+      - operator
       - displayAs
       - label
       - labelPosition

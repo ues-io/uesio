@@ -19,6 +19,7 @@ type FilterDefinition = {
 	displayAs?: string
 	wrapperVariant: metadata.MetadataKey
 	conditionId?: string
+	operator?: string
 }
 
 type CommonProps = {
@@ -37,7 +38,6 @@ const getFilterContent = (
 	definition: FilterDefinition
 ) => {
 	const { displayAs } = definition
-
 	const fieldMetadata = common.fieldMetadata
 	const type = fieldMetadata.getType()
 
@@ -49,7 +49,7 @@ const getFilterContent = (
 		case "SELECT":
 			return <SelectFilter {...common} />
 		case "MULTISELECT":
-			return <MultiSelectFilter {...common} />
+			return <MultiSelectFilter {...common}/>
 		case "DATE": {
 			if (displayAs === "MONTH") return <MonthFilter {...common} />
 			if (displayAs === "WEEK") return <WeekFilter {...common} />
@@ -71,6 +71,13 @@ const getDefaultCondition = (path: string, fieldMetadata: collection.Field) => {
 				field: fieldMetadata.getId(),
 			}
 		}
+		case "MULTISELECT":{
+			return {
+				id: path,
+				operator: "HAS_ANY",
+				field: fieldMetadata.getId(),
+			}
+		}
 		default:
 			return {
 				id: path,
@@ -80,8 +87,8 @@ const getDefaultCondition = (path: string, fieldMetadata: collection.Field) => {
 }
 
 const Filter: definition.UC<FilterDefinition> = (props) => {
-	const { context, definition, path } = props
-	const { fieldId, conditionId } = definition
+	const { context, definition, path} = props
+	const { fieldId, conditionId} = definition
 	const wire = api.wire.useWire(definition.wire, context)
 	if (!wire) return null
 
