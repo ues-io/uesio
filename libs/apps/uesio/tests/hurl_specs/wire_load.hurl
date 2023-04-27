@@ -23,6 +23,8 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
+# If this test is failing for you, make sure you have `UESIO_DEBUG_SQL=true` set locally
+# and then re-run the app
 jsonpath "$.wires[0].debugQueryString" == ```
 SELECT
 main.id::text AS "uesio/core.id",
