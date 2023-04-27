@@ -36,14 +36,14 @@ const defaultTheme: ThemeState = {
 	},
 }
 
-function useStyleTokens(
-	defaults: Record<string, ClassNamesArg[]>,
+function useStyleTokens<K extends string>(
+	defaults: Record<K, ClassNamesArg[]>,
 	props: BaseProps
 ) {
 	const { definition, context } = props
 	const tokens = definition?.["uesio.styleTokens"] || {}
 	return Object.entries(defaults).reduce(
-		(classNames: Record<string, string>, entry) => {
+		(classNames, entry: [K, ClassNamesArg[]]) => {
 			const [className, defaultClasses] = entry
 			classNames[className] = process(
 				context,
@@ -52,7 +52,7 @@ function useStyleTokens(
 			)
 			return classNames
 		},
-		{}
+		{} as Record<K, string>
 	)
 }
 
@@ -137,8 +137,8 @@ function process(context: Context | undefined, ...classes: ClassNamesArg[]) {
 	return tw(twMerge(context ? context?.mergeString(output) : output))
 }
 
-function useUtilityStyleTokens(
-	defaults: Record<string, ClassNamesArg[]>,
+function useUtilityStyleTokens<K extends string>(
+	defaults: Record<K, ClassNamesArg[]>,
 	props: UtilityProps,
 	defaultVariantComponentType?: MetadataKey
 ) {
@@ -147,7 +147,7 @@ function useUtilityStyleTokens(
 		...props.styleTokens,
 	}
 	return Object.entries(defaults).reduce(
-		(classNames: Record<string, string>, entry) => {
+		(classNames, entry: [K, ClassNamesArg[]]) => {
 			const [className, defaultClasses] = entry
 			const classTokens = tokens[className] || []
 			classNames[className] = process(
@@ -161,7 +161,7 @@ function useUtilityStyleTokens(
 			)
 			return classNames
 		},
-		{} as Record<string, string>
+		{} as Record<K, string>
 	)
 }
 

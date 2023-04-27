@@ -19,24 +19,17 @@ const ImportBodyItem: FunctionComponent<Props> = (props) => {
 	if (!field) return null
 	const uesioField = field.getId()
 
-	const classes = styles.useUtilityStyles(
+	const classes = styles.useUtilityStyleTokens(
 		{
-			gridItem: {
-				display: "flex",
-				justifyContent: "start",
-				alignItems: "center",
-				background: "#f5f5f5",
-				marginBottom: "0.5em",
-				borderRadius: "0.5em",
-				border: "1px solid #eee",
-				overflow: "hidden",
-				minHeight: "43px",
-				cursor: mapping ? "cursor" : "pointer",
-			},
-			headerItem: {
-				padding: "2px",
-				alignItems: "center",
-			},
+			gridItem: [
+				"flex",
+				"justify-start",
+				"items-center",
+				"rounded",
+				"pt-2",
+			],
+			itemNameWrapper: ["flex", "grow", "items-center", "gap-2", "py-2"],
+			itemOptionsWrapper: ["flex", "items-center", "gap-2"],
 		},
 		props
 	)
@@ -52,19 +45,7 @@ const ImportBodyItem: FunctionComponent<Props> = (props) => {
 				})
 			}
 		>
-			{/* <div style={{ opacity: 0.3, fontSize: "0.8em" }}>{index}. </div> */}
-			<div
-				style={{
-					background: "#fff",
-					display: "flex",
-					alignSelf: "stretch",
-					alignItems: "center",
-					padding: "0 6px 0 6px",
-					minWidth: "200px",
-					flex: 1,
-					// flex: mapping ? 0 : 1,
-				}}
-			>
+			<div className={classes.itemNameWrapper}>
 				<CheckboxField
 					context={context}
 					setValue={() =>
@@ -78,80 +59,60 @@ const ImportBodyItem: FunctionComponent<Props> = (props) => {
 					value={!!mapping}
 					mode={"EDIT"}
 				/>
-				<div
-					style={{ opacity: mapping ? 1 : 0.5 }}
-					className={classes.headerItem}
-				>
-					{uesioField}
-				</div>
+				{uesioField}
 			</div>
 			{mapping && (
-				<div
-					style={{
-						display: "flex",
-						flex: 1,
-						padding: mapping ? "0 6px 0 6px" : 0,
-					}}
-				>
-					<div className={classes.headerItem}>
+				<div className={classes.itemOptionsWrapper}>
+					<SelectField
+						context={context}
+						label="Type"
+						value={mapping ? mapping.type : ""}
+						options={[
+							{
+								value: "IMPORT",
+								label: "Map Column",
+							},
+							{
+								value: "VALUE",
+								label: "Specify Value",
+							},
+						]}
+						setValue={(value: "IMPORT" | "VALUE") => {
+							value
+								? setMapping({
+										...(mapping || {}),
+										type: value,
+								  })
+								: removeMapping()
+						}}
+					/>
+					{mapping.type === "IMPORT" && (
 						<SelectField
 							context={context}
-							label="Type"
-							value={mapping ? mapping.type : ""}
-							options={[
-								{
-									value: "IMPORT",
-									label: "Map Column",
-								},
-								{
-									value: "VALUE",
-									label: "Specify Value",
-								},
-							]}
-							setValue={(value: "IMPORT" | "VALUE") => {
-								value
-									? setMapping({
-											...(mapping || {}),
-											type: value,
-									  })
-									: removeMapping()
+							label={"Column"}
+							value={mapping?.columnname}
+							options={csvOptions}
+							setValue={(value: string) => {
+								setMapping({
+									...mapping,
+									columnname: value,
+								})
 							}}
 						/>
-					</div>
-
-					{mapping.type === "IMPORT" && (
-						<div className={classes.headerItem}>
-							<SelectField
-								context={context}
-								label={"Column"}
-								value={mapping?.columnname}
-								options={csvOptions}
-								setValue={(value: string) => {
-									setMapping({
-										...mapping,
-										columnname: value,
-									})
-								}}
-							/>
-						</div>
 					)}
 					{mapping.type === "VALUE" && (
-						<div className={classes.headerItem}>
-							{
-								<TextField
-									context={context}
-									label={"Value"}
-									value={mapping?.value}
-									mode={"EDIT"}
-									setValue={(value: string) => {
-										setMapping({
-											...mapping,
-											value,
-										})
-									}}
-								/>
-							}
-						</div>
+						<TextField
+							context={context}
+							label={"Value"}
+							value={mapping?.value}
+							mode={"EDIT"}
+							setValue={(value: string) => {
+								setMapping({
+									...mapping,
+									value,
+								})
+							}}
+						/>
 					)}
 				</div>
 			)}

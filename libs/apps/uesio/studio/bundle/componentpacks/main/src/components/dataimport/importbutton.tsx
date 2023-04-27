@@ -41,21 +41,25 @@ const ImportButton: FunctionComponent<Props> = (props) => {
 
 	const uploadLabelId = nanoid()
 
-	const classes = styles.useUtilityStyles(
+	const classes = styles.useUtilityStyleTokens(
 		{
-			div: {
-				padding: "100px",
-				outline:
-					"dashed 1px " +
-					context.mergeString("$Theme{color.primary}"),
-				textAlign: "center",
-				color: "rgb(196, 195, 196)",
-			},
-			icon: {
-				fontSize: "80px",
-				padding: "32px",
-				color: context.mergeString("$Theme{color.primary}"),
-			},
+			div: [
+				"p-24",
+				"outline-1",
+				"outline-dashed",
+				"outline-primary",
+				"text-slate-700",
+				"font-light",
+				"text-sm",
+				"text-center",
+				"grid",
+				"items-center",
+				"justify-center",
+				"content-center",
+				"gap-4",
+				"rounded",
+			],
+			icon: ["text-7xl", "text-primary"],
 		},
 		props
 	)
