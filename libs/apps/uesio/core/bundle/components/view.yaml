@@ -14,6 +14,7 @@ properties:
   - name: params
     type: PARAMS
     label: Params
+    viewProperty: view
 sections:
   - type: HOME
     properties:
@@ -36,8 +37,9 @@ signals:
   SET_PARAMS:
     label: "Set Params"
     properties:
-      # TODO: Fix builder.paramsfield so that we can specify a viewProperty providing the View Id,
-      # vs just assuming there's a field "view" on the context record
-      # - name: params
-      #   type: PARAMS
-      #   label: Params
+      - name: params
+        type: PARAMS
+        label: Params
+        # In the "Run Component Signal" properties, componentid will specify
+        # which view that we want to invoke the signal on.
+        viewComponentIdProperty: componentid

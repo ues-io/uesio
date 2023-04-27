@@ -27,7 +27,8 @@ const MultiPermissionPicker: definition.UC<MultiPermissionPickerDefinition> = (
 	} = props
 	const fieldId = context.mergeString(props.definition.fieldId)
 	const uesioId =
-		props.definition["uesio.id"] || "multipermissionpicker" + fieldId
+		props.definition[component.COMPONENT_ID] ||
+		"multipermissionpicker" + fieldId
 	const dynamicTableId = uesioId + "-table"
 
 	const mode = context.getFieldMode() || "READ"

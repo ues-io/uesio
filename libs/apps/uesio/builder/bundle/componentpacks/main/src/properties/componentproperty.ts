@@ -151,6 +151,8 @@ type ListProperty = {
 
 type ParamsProperty = {
 	type: "PARAMS"
+	viewProperty?: string
+	viewComponentIdProperty?: string
 } & BaseProperty
 
 type IconProperty = {
