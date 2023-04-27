@@ -1,3 +1,5 @@
+import { DisplayCondition } from "../../componentexports"
+
 type FieldMetadataMap = {
 	[key: string]: FieldMetadata
 }
@@ -31,6 +33,7 @@ type SelectOption = {
 	// Title is used for acccessibility, it renders as a tooltip
 	// if you hover over a SelectOption for long enough
 	title?: string
+	validFor?: DisplayCondition[]
 }
 
 type NumberMetadata = {
