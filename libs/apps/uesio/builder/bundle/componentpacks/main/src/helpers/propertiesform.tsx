@@ -341,7 +341,11 @@ const getWireFieldFromPropertyDef = (
 }
 
 const getPropertyId = (property: ComponentProperty) =>
-	`${property.type === "COMPONENT_ID" ? "uesio.id" : property.name}`
+	`${
+		property.type === "COMPONENT_ID"
+			? component.COMPONENT_ID
+			: property.name
+	}`
 
 const getWireFieldsFromProperties = (
 	properties: ComponentProperty[] | undefined,

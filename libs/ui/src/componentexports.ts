@@ -18,6 +18,7 @@ import { ComponentVariant } from "./definition/componentvariant"
 import PanelArea from "./components/panelarea"
 import ErrorBoundary from "./components/errorboundary"
 import ErrorMessage from "./components/errormessage"
+const COMPONENT_ID = "uesio.id"
 
 export type {
 	SlotUtilityProps,
@@ -28,6 +29,7 @@ export type {
 }
 
 export {
+	COMPONENT_ID,
 	Slot,
 	ErrorMessage,
 	ErrorBoundary,
