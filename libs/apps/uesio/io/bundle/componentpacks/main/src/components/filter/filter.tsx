@@ -5,6 +5,7 @@ import SelectFilter from "../../utilities/selectfilter/selectfilter"
 import WeekFilter from "../../utilities/weekfilter/weekfilter"
 import NumberFilter from "../../utilities/numberfilter/numberfilter"
 import CheckboxFilter from "../../utilities/checkboxfilter/checkboxfilter"
+import MultiSelectFilter from "../../utilities/multiselectfilter/multiselectfilter"
 import GroupFilter, {
 	GroupFilterProps,
 } from "../../utilities/groupfilter/groupfilter"
@@ -47,6 +48,8 @@ const getFilterContent = (
 			return <CheckboxFilter {...common} displayAs={displayAs} />
 		case "SELECT":
 			return <SelectFilter {...common} />
+		case "MULTISELECT":
+			return <MultiSelectFilter {...common} />
 		case "DATE": {
 			if (displayAs === "MONTH") return <MonthFilter {...common} />
 			if (displayAs === "WEEK") return <WeekFilter {...common} />
