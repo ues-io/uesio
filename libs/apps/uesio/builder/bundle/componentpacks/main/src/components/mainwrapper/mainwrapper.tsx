@@ -1,15 +1,23 @@
 import { definition, hooks, component, api, styles } from "@uesio/ui"
 import Canvas from "./canvas"
 import { useBuilderState, useBuildMode } from "../../api/stateapi"
-import BuildArea from "./buildarea"
 import CodePanel from "./codepanel"
 import AdjustableWidthArea from "../../utilities/adjustablewidtharea/adjustablewidtharea"
 import PropertiesPanel from "./propertiespanel/propertiespanel"
 import ViewInfoPanel from "./viewinfopanel/viewinfopanel"
 import MainHeader from "./mainheader"
+import RightToolbar from "./righttoolbar"
 
 const StyleDefaults = Object.freeze({
-	root: ["bg-slate-50", "p-2", "gap-2"],
+	root: [
+		"bg-slate-50",
+		"p-2",
+		"gap-2",
+		"h-full",
+		"grid-cols-[auto_1fr]",
+		"auto-cols-auto",
+		"grid-rows-[100%]",
+	],
 	configarea: ["auto-rows-fr", "gap-2"],
 })
 
@@ -51,26 +59,25 @@ const MainWrapper: definition.UC = (props) => {
 			context={context}
 			header={<MainHeader context={builderContext} />}
 		>
-			<BuildArea
-				className={classes.root}
-				config={
-					<Grid context={context} className={classes.configarea}>
-						<PropertiesPanel context={builderContext} />
-						<ViewInfoPanel context={builderContext} />
-					</Grid>
-				}
-				code={
-					showCode && (
-						<AdjustableWidthArea context={context}>
-							<CodePanel context={builderContext} />
-						</AdjustableWidthArea>
-					)
-				}
-				showCode={showCode}
-				context={context}
-			>
+			<Grid className={classes.root} context={context}>
+				<Grid context={context} className={classes.configarea}>
+					<PropertiesPanel context={builderContext} />
+					<ViewInfoPanel context={builderContext} />
+				</Grid>
 				<Canvas context={context} children={props.children} />
-			</BuildArea>
+				{showCode && (
+					<AdjustableWidthArea
+						className="col-start-3"
+						context={context}
+					>
+						<CodePanel context={builderContext} />
+					</AdjustableWidthArea>
+				)}
+				<RightToolbar
+					className={`col-start-${showCode ? "4" : "3"}`}
+					context={context}
+				/>
+			</Grid>
 		</ScrollPanel>
 	)
 }
