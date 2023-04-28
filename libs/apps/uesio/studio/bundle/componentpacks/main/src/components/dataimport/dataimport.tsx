@@ -127,21 +127,30 @@ const DataImport: FunctionComponent<Props> = (props) => {
 
 	return (
 		<>
-			<div className={classes.root}>
-				<ImportButton
-					changeUploaded={changeUploaded}
-					context={context}
-					type={uploaded.success ? "button" : "area"}
-				/>
-				{uploaded.success && (
-					<Button
+			<div>
+				{!uploaded.success && (
+					<ImportButton
+						changeUploaded={changeUploaded}
 						context={context}
-						variant={"uesio/io.primary"}
-						onClick={() => {
-							uploaded.file && upload(uploaded.file)
-						}}
-						label={"start import"}
+						type={"area"}
 					/>
+				)}
+				{uploaded.success && (
+					<div className={classes.root}>
+						<Button
+							context={context}
+							variant={"uesio/io.primary"}
+							onClick={() => {
+								uploaded.file && upload(uploaded.file)
+							}}
+							label={"start import"}
+						/>
+						<ImportButton
+							changeUploaded={changeUploaded}
+							context={context}
+							type={"button"}
+						/>
+					</div>
 				)}
 			</div>
 

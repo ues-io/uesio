@@ -22,14 +22,28 @@ const ImportBodyItem: FunctionComponent<Props> = (props) => {
 	const classes = styles.useUtilityStyleTokens(
 		{
 			gridItem: [
-				"flex",
-				"justify-start",
+				"grid",
+				"grid-cols-3",
 				"items-center",
 				"rounded",
 				"pt-2",
 			],
-			itemNameWrapper: ["flex", "grow", "items-center", "gap-2", "py-2"],
-			itemOptionsWrapper: ["flex", "items-center", "gap-2"],
+			itemNameWrapper: [
+				"flex",
+				"grow",
+				"items-center",
+				"gap-2",
+				"py-2",
+				"col-span-1",
+			],
+			itemOptionsWrapper: [
+				"flex",
+				"items-center",
+				"gap-2",
+				"bg-slate-100",
+				"border-2",
+				"col-span-2",
+			],
 		},
 		props
 	)
