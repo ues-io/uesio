@@ -31,7 +31,10 @@ const MultiSelectField: FunctionComponent<SelectFieldProps> = (props) => {
 		return <span>{displayLabel || ""}</span>
 	}
 
-	const classes = styles.useUtilityStyles(StyleDefaults, props)
+	const classes = styles.useUtilityStyles(
+		StyleDefaults,
+		props,
+	)
 
 	return (
 		<select

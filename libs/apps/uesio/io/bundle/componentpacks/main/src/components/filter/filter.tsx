@@ -19,7 +19,7 @@ type FilterDefinition = {
 	displayAs?: string
 	wrapperVariant: metadata.MetadataKey
 	conditionId?: string
-	operator?: string
+	conditionOperator: string
 }
 
 type CommonProps = {
@@ -60,9 +60,10 @@ const getFilterContent = (
 	}
 }
 
-const getDefaultCondition = (path: string, fieldMetadata: collection.Field) => {
+const getDefaultCondition = (path: string, fieldMetadata: collection.Field, conditionOperator: string ) => {
 	const type = fieldMetadata.getType()
-
+	console.log("conditionOperator: ",conditionOperator)
+	console.log("path: ",path)
 	switch (type) {
 		case "DATE": {
 			return {
@@ -74,7 +75,7 @@ const getDefaultCondition = (path: string, fieldMetadata: collection.Field) => {
 		case "MULTISELECT":{
 			return {
 				id: path,
-				operator: "HAS_ANY",
+				operator: conditionOperator || "HAS_ANY",
 				field: fieldMetadata.getId(),
 			}
 		}
@@ -88,7 +89,7 @@ const getDefaultCondition = (path: string, fieldMetadata: collection.Field) => {
 
 const Filter: definition.UC<FilterDefinition> = (props) => {
 	const { context, definition, path} = props
-	const { fieldId, conditionId} = definition
+	const { fieldId, conditionId, conditionOperator} = definition
 	const wire = api.wire.useWire(definition.wire, context)
 	if (!wire) return null
 
@@ -104,7 +105,8 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 	if (!condition && fieldMetadata) {
 		condition = getDefaultCondition(
 			path,
-			fieldMetadata
+			fieldMetadata,
+			conditionOperator,
 		) as wire.ValueConditionState
 	}
 

@@ -28,14 +28,20 @@ properties:
     displayConditions:
       - type: hasNoValue
         value: ${conditionId}
-  - name: operator
+  - name: conditionOperator
     type: SELECT
-    label: Operator
+    label: Condition Operator
     options:
-      - value: "HAS_ANY"
-        label: "Has Any"
-      - value: "HAS_ALL"
-        label: "Has All"
+      - value: HAS_ANY
+        label: Has Any
+        #validFor:
+        #- field: fieldDisplayType
+        #value: MULTISELECT
+      - value: HAS_ALL
+        label: Has All
+        #validFor:
+        #- field: fieldDisplayType
+        #value: MULTISELECT
     displayConditions:
       - type: fieldValue
         field: fieldDisplayType
@@ -49,10 +55,19 @@ properties:
         label: "--None Selected--"
       - label: Month
         value: MONTH
+        #validFor:
+        #- field: fieldDisplayType
+        #value: DATE
       - label: Week
         value: WEEK
+        #validFor:
+        #- field: fieldDisplayType
+        #value: DATE
       - label: Toggle
         value: TOGGLE
+        #validFor:
+        #- field: fieldDisplayType
+        #value: CHECKBOX
   - name: label
     type: TEXT
     label: Label
@@ -76,7 +91,7 @@ sections:
       - fieldDisplayType
       - wire
       - fieldId
-      - operator
+      - conditionOperator
       - displayAs
       - label
       - labelPosition
