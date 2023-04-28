@@ -12,7 +12,7 @@ const HeaderCrumbs: definition.UtilityComponent = (props) => {
 			<Tile
 				context={context}
 				onClick={() => {
-					const workspace = props.context.getWorkspace()
+					const workspace = context.getWorkspace()
 					if (!workspace) {
 						return
 					}
@@ -35,7 +35,7 @@ const HeaderCrumbs: definition.UtilityComponent = (props) => {
 				onClick={() => {
 					api.signal.run(
 						{ signal: "route/REDIRECT_TO_VIEW_CONFIG" },
-						props.context
+						context
 					)
 				}}
 				variant="uesio/io.tag"
