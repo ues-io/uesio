@@ -50,12 +50,13 @@ type RowAction = {
 
 type ColumnDefinition = {
 	field: string
+	displayAs?: string
+	label: string
+	width?: string
 	reference?: ReferenceFieldOptions
 	user?: UserFieldOptions
 	number?: NumberFieldOptions
 	longtext?: LongTextFieldOptions
-	label: string
-	width?: string
 	components: definition.DefinitionList
 } & definition.BaseDefinition
 
@@ -231,6 +232,7 @@ const Table: definition.UC<TableDefinition> = (props) => {
 					longtext: column.longtext,
 					labelPosition: "none",
 					wrapperVariant: "uesio/io.table",
+					displayAs: column.displayAs,
 				}}
 				{...sharedProps}
 			/>

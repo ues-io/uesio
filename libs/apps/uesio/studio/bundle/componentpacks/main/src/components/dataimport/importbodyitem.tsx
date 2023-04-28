@@ -1,8 +1,8 @@
 import { FunctionComponent } from "react"
-import { definition, styles, collection, component } from "@uesio/ui"
+import { definition, styles, collection, component, wire } from "@uesio/ui"
 
 interface Props extends definition.UtilityProps {
-	csvOptions: collection.SelectOption[]
+	csvOptions: wire.SelectOption[]
 	mapping: definition.ImportMapping | undefined
 	setMapping: (mapping: definition.ImportMapping) => void
 	removeMapping: () => void
