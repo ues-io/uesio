@@ -16,7 +16,7 @@ const StructProperty: definition.UC<Definition> = (props) => {
 
 	const { property } = definition
 
-	if (!component.useShould(property?.displayConditions, context)) return null
+	if (!component.shouldAll(property?.displayConditions, context)) return null
 
 	const structProperties = property.properties as ComponentProperty[]
 	const path = definition.path.combine()

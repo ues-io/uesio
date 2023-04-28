@@ -11,10 +11,11 @@ import set from "lodash/set"
 
 const LOOKUP = "LOOKUP"
 const VALUE = "VALUE"
+const PARAM = "PARAM"
 
 type WireDefaultBase = {
 	field: string
-	valueSource?: typeof VALUE | typeof LOOKUP
+	valueSource?: typeof VALUE | typeof LOOKUP | typeof PARAM
 }
 
 type LookupDefault = WireDefaultBase & {
@@ -27,8 +28,12 @@ type ValueDefault = WireDefaultBase & {
 	valueSource: typeof VALUE
 	value: string
 }
+type ParamDefault = WireDefaultBase & {
+	valueSource: typeof PARAM
+	param: string
+}
 
-type WireDefault = ValueDefault | LookupDefault
+type WireDefault = ValueDefault | LookupDefault | ParamDefault
 
 const getDefaultValue = (
 	context: Context,
@@ -49,6 +54,10 @@ const getDefaultValue = (
 	// TODO: Default to VALUE if nothing provided?
 	if (item.valueSource === "VALUE") {
 		return context.merge(item.value)
+	}
+
+	if (item.valueSource === "PARAM") {
+		return context.getParam(item.param)
 	}
 }
 
@@ -77,7 +86,10 @@ const getDefaultRecord = (
 			throw new Error("No metadata for field in default: " + fieldName)
 
 		const fieldNameParts = fieldName?.split("->")
+
 		if (field.isReference()) fieldNameParts.push(ID_FIELD)
+		if (field.isReference() && !value) return
+
 		set(defaultRecord, fieldNameParts, value)
 	})
 	return defaultRecord
