@@ -1,82 +1,73 @@
 import { definition, component, api } from "@uesio/ui"
 
+type SizerProps = {
+	icon: string
+	height: number
+	width: number
+}
+
+const SizerButton: definition.UtilityComponent<SizerProps> = ({
+	context,
+	icon,
+	height,
+	width,
+}) => {
+	const Button = component.getUtility("uesio/io.button")
+	const Icon = component.getUtility("uesio/io.icon")
+	return (
+		<Button
+			context={context}
+			label=""
+			icon={
+				<Icon context={context} weight={300} fill={false} icon={icon} />
+			}
+			variant="uesio/builder.minoricontoolbar"
+			onClick={api.signal.getHandler(
+				[
+					{
+						signal: "component/CALL",
+						component: "uesio/builder.mainwrapper",
+						componentsignal: "SET_DIMENSIONS",
+						height,
+						width,
+					},
+				],
+				context
+			)}
+		/>
+	)
+}
+
 const DeviceSizer: definition.UtilityComponent = (props) => {
 	const { context } = props
 	const Group = component.getUtility("uesio/io.group")
-	const Button = component.getUtility("uesio/io.button")
-	const Icon = component.getUtility("uesio/io.icon")
-
-	const setDimensions = (height: number, width: number) =>
-		api.signal.getHandler(
-			[
-				{
-					signal: "component/CALL",
-					component: "uesio/builder.mainwrapper",
-					componentsignal: "SET_DIMENSIONS",
-					height,
-					width,
-				},
-			],
-			context
-		)
 
 	return (
 		<Group className="ml-4" context={context}>
-			<Button
+			<SizerButton
+				icon="desktop_windows"
+				height={0}
+				width={0}
 				context={context}
-				label=""
-				icon={
-					<Icon
-						context={context}
-						weight={300}
-						fill={false}
-						icon="desktop_windows"
-					/>
-				}
-				variant="uesio/builder.minoricontoolbar"
-				onClick={setDimensions(0, 0)}
 			/>
-			<Button
+
+			<SizerButton
+				icon="laptop"
+				height={0}
+				width={1200}
 				context={context}
-				label=""
-				icon={
-					<Icon
-						context={context}
-						weight={300}
-						fill={false}
-						icon="laptop"
-					/>
-				}
-				variant="uesio/builder.minoricontoolbar"
-				onClick={setDimensions(0, 1200)}
 			/>
-			<Button
+			<SizerButton
+				icon="tablet"
+				height={1024}
+				width={768}
 				context={context}
-				label=""
-				icon={
-					<Icon
-						context={context}
-						weight={300}
-						fill={false}
-						icon="tablet"
-					/>
-				}
-				variant="uesio/builder.minoricontoolbar"
-				onClick={setDimensions(1024, 768)}
 			/>
-			<Button
+			<SizerButton
+				icon="smartphone"
+				height={667}
+				width={375}
 				context={context}
-				label=""
-				icon={
-					<Icon
-						context={context}
-						weight={300}
-						fill={false}
-						icon="smartphone"
-					/>
-				}
-				variant="uesio/builder.minoricontoolbar"
-				onClick={setDimensions(667, 375)}
 			/>
 		</Group>
 	)

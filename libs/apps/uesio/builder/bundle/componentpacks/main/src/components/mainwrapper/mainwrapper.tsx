@@ -8,6 +8,11 @@ import PropertiesPanel from "./propertiespanel/propertiespanel"
 import ViewInfoPanel from "./viewinfopanel/viewinfopanel"
 import MainHeader from "./mainheader"
 
+const StyleDefaults = Object.freeze({
+	root: ["bg-slate-50", "p-2", "gap-2"],
+	configarea: ["auto-rows-fr", "gap-2"],
+})
+
 const MainWrapper: definition.UC = (props) => {
 	const { context } = props
 	const Grid = component.getUtility("uesio/io.grid")
@@ -17,13 +22,7 @@ const MainWrapper: definition.UC = (props) => {
 
 	const builderContext = context.addThemeFrame("uesio/studio.default")
 
-	const classes = styles.useStyleTokens(
-		{
-			root: ["bg-slate-50", "p-2", "gap-2"],
-			configarea: ["auto-rows-fr", "gap-2"],
-		},
-		props
-	)
+	const classes = styles.useStyleTokens(StyleDefaults, props)
 
 	hooks.useHotKeyCallback(
 		"meta+u",
