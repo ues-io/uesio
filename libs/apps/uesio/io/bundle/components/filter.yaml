@@ -27,6 +27,8 @@ properties:
     options:
       - value: ""
         label: "--None Selected--"
+      - label: Date
+        value: DATE
       - label: Month
         value: MONTH
       - label: Week

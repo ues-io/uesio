@@ -3,6 +3,7 @@ import FieldWrapper from "../../utilities/fieldwrapper/fieldwrapper"
 import MonthFilter from "../../utilities/monthfilter/monthfilter"
 import SelectFilter from "../../utilities/selectfilter/selectfilter"
 import WeekFilter from "../../utilities/weekfilter/weekfilter"
+import DateFilter from "../../utilities/datefilter/datefilter"
 import NumberFilter from "../../utilities/numberfilter/numberfilter"
 import CheckboxFilter from "../../utilities/checkboxfilter/checkboxfilter"
 import GroupFilter, {
@@ -48,6 +49,7 @@ const getFilterContent = (
 		case "SELECT":
 			return <SelectFilter {...common} />
 		case "DATE": {
+			if (displayAs === "DATE") return <DateFilter {...common} />
 			if (displayAs === "MONTH") return <MonthFilter {...common} />
 			if (displayAs === "WEEK") return <WeekFilter {...common} />
 			return null
@@ -59,7 +61,6 @@ const getFilterContent = (
 
 const getDefaultCondition = (path: string, fieldMetadata: collection.Field) => {
 	const type = fieldMetadata.getType()
-
 	switch (type) {
 		case "DATE": {
 			return {
