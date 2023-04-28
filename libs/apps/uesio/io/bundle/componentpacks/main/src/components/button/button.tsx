@@ -12,12 +12,12 @@ type ButtonDefinition = {
 
 const Button: definition.UC<ButtonDefinition> = (props) => {
 	const { definition, context } = props
-	const classes = styles.useStyles(
+	const classes = styles.useStyleTokens(
 		{
-			root: {},
-			label: {},
-			selected: {},
-			icon: {},
+			root: [],
+			label: [],
+			selected: [],
+			icon: [],
 		},
 		props
 	)

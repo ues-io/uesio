@@ -1,11 +1,10 @@
 name: minoricontoolbar
 label: Minor Icon Toolbar Button
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      color: "#444"
-      padding: 6px
-      fontSize: 10pt
-      whiteSpace: nowrap
-      textTransform: uppercase
+      - text-slate-700
+      - px-2
+      - text-sm
+      - leading-1
 public: true

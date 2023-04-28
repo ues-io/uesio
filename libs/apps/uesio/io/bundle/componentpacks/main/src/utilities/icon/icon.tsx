@@ -4,10 +4,13 @@ import { definition, styles } from "@uesio/ui"
 interface IconUtilityProps extends definition.UtilityProps {
 	icon?: string
 	fill?: boolean
+	weight?: number
 }
 
 const Icon: FunctionComponent<IconUtilityProps> = (props) => {
 	const fill = props.fill === undefined ? true : props.fill
+	const weight = props.weight === undefined ? 400 : props.weight
+
 	const classes = styles.useUtilityStyleTokens(
 		{
 			root: [
@@ -16,7 +19,10 @@ const Icon: FunctionComponent<IconUtilityProps> = (props) => {
 				"font-[Material_Icons]",
 				"leading-none",
 				"align-middle",
-				`[font-variation-settings:'FILL'_${fill ? "1" : "0"}]`,
+
+				`[font-variation-settings:'FILL'_${
+					fill ? "1" : "0"
+				},'wght'_${weight}]`,
 			],
 		},
 		props,

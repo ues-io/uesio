@@ -1,36 +1,32 @@
-import { CSSInterpolation } from "@emotion/css"
 import { definition, component, styles } from "@uesio/ui"
 import { ReactNode } from "react"
 
 type Props = {
 	config?: ReactNode
 	code?: ReactNode
+	showCode?: boolean
 }
 
-const StyleDefaults = {
-	root: {
-		gridTemplateColumns: "auto 1fr auto",
-		gridTemplateRows: "100%",
-		padding: "6px",
-		rowGap: "6px",
-	},
-	column: {
-		display: "grid",
-		gridTemplateRows: "100%",
-		position: "relative",
-	},
-} as Record<string, CSSInterpolation>
-
 const BuildArea: definition.UtilityComponent<Props> = (props) => {
-	const { context, children, code, config } = props
+	const { context, children, code, config, showCode } = props
 	const Grid = component.getUtility("uesio/io.grid")
-	const classes = styles.useUtilityStyles(StyleDefaults, props)
+	const classes = styles.useUtilityStyleTokens(
+		{
+			root: [
+				"h-full",
+				showCode ? "grid-cols-[auto_1fr_auto]" : "grid-cols-[auto_1fr]",
+				"grid-rows-[100%]",
+			],
+			column: ["grid", "grid-rows-[100%]", "relative"],
+		},
+		props
+	)
 
 	return (
 		<Grid context={context} className={classes.root}>
 			<div className={classes.column}>{config}</div>
 			<div className={classes.column}>{children}</div>
-			<div className={classes.column}>{code}</div>
+			{showCode && <div className={classes.column}>{code}</div>}
 		</Grid>
 	)
 }

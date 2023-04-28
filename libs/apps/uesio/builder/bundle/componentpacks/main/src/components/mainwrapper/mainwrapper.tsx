@@ -6,27 +6,23 @@ import CodePanel from "./codepanel"
 import AdjustableWidthArea from "../../utilities/adjustablewidtharea/adjustablewidtharea"
 import PropertiesPanel from "./propertiespanel/propertiespanel"
 import ViewInfoPanel from "./viewinfopanel/viewinfopanel"
+import MainHeader from "./mainheader"
+
+const StyleDefaults = Object.freeze({
+	root: ["bg-slate-50", "p-2", "gap-2"],
+	configarea: ["auto-rows-fr", "gap-2"],
+})
 
 const MainWrapper: definition.UC = (props) => {
 	const { context } = props
 	const Grid = component.getUtility("uesio/io.grid")
+	const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
 
 	const [buildMode, setBuildMode] = useBuildMode(context)
 
 	const builderContext = context.addThemeFrame("uesio/studio.default")
 
-	const classes = styles.useStyles(
-		{
-			root: {
-				height: "100vh",
-			},
-			configarea: {
-				gridAutoRows: "1fr",
-				gap: "6px",
-			},
-		},
-		props
-	)
+	const classes = styles.useStyleTokens(StyleDefaults, props)
 
 	hooks.useHotKeyCallback(
 		"meta+u",
@@ -50,25 +46,32 @@ const MainWrapper: definition.UC = (props) => {
 	}
 
 	return (
-		<BuildArea
-			className={classes.root}
-			config={
-				<Grid context={context} className={classes.configarea}>
-					<PropertiesPanel context={builderContext} />
-					<ViewInfoPanel context={builderContext} />
-				</Grid>
-			}
-			code={
-				showCode && (
-					<AdjustableWidthArea context={context}>
-						<CodePanel context={builderContext} />
-					</AdjustableWidthArea>
-				)
-			}
+		<ScrollPanel
+			variant="uesio/io.default"
 			context={context}
+			header={<MainHeader context={builderContext} />}
 		>
-			<Canvas context={context} children={props.children} />
-		</BuildArea>
+			<BuildArea
+				className={classes.root}
+				config={
+					<Grid context={context} className={classes.configarea}>
+						<PropertiesPanel context={builderContext} />
+						<ViewInfoPanel context={builderContext} />
+					</Grid>
+				}
+				code={
+					showCode && (
+						<AdjustableWidthArea context={context}>
+							<CodePanel context={builderContext} />
+						</AdjustableWidthArea>
+					)
+				}
+				showCode={showCode}
+				context={context}
+			>
+				<Canvas context={context} children={props.children} />
+			</BuildArea>
+		</ScrollPanel>
 	)
 }
 
