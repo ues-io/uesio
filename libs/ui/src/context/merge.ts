@@ -145,10 +145,10 @@ const handlers: Record<MergeType, MergeHandler> = {
 			return `${context.getRecordDataIndex() || 0}`
 		}
 		if (expression === "isNew") {
-			return `${record?.isNew || ""}`
+			return `${record?.isNew() || false}`
 		}
 		if (expression === "isDeleted") {
-			return `${record?.isDeleted || ""}`
+			return `${record?.isDeleted() || false}`
 		}
 		return ""
 	},
