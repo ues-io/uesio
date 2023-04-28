@@ -3,14 +3,18 @@ label: mainsection
 definition:
   uesio.styleTokens:
     root:
-      - bg-slate-900
-      - p-4
+      - bg-[$Theme{color.primary}]
+      - p-2
       - gap-2
+      - grid
+      - grid-flow-col
+      - auto-cols-max
+      - leading-none
     tab:
       - uppercase
-      - px-4
-      - py-2
-      - text-xs
+      - px-1.5
+      - py-1
+      - text-[8pt]
       - rounded
       - text-slate-100
       - whitespace-nowrap

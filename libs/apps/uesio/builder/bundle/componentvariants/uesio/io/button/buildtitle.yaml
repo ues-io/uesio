@@ -1,15 +1,12 @@
 name: buildtitle
 label: Build Title
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      color: white
-      padding: 8px
-      fontSize: 9pt
-      whiteSpace: nowrap
-      backgroundColor: inherit
-      textTransform: uppercase
-      "&:focus":
-        outline: none
-        color: $Theme{color.primary}
+      - text-white
+      - m-1
+      - p-1
+      - text-xs
+      - leading-none
+      - whitespace-nowrap
 public: true

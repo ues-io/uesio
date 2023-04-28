@@ -21,14 +21,14 @@ const DeviceSizer: definition.UtilityComponent = (props) => {
 		)
 
 	return (
-		<Group alignItems="center" context={context}>
+		<Group className="ml-4" context={context}>
 			<Button
 				context={context}
 				label=""
 				icon={
 					<Icon
 						context={context}
-						weight={200}
+						weight={300}
 						fill={false}
 						icon="desktop_windows"
 					/>
@@ -42,7 +42,7 @@ const DeviceSizer: definition.UtilityComponent = (props) => {
 				icon={
 					<Icon
 						context={context}
-						weight={200}
+						weight={300}
 						fill={false}
 						icon="laptop"
 					/>
@@ -56,7 +56,7 @@ const DeviceSizer: definition.UtilityComponent = (props) => {
 				icon={
 					<Icon
 						context={context}
-						weight={200}
+						weight={300}
 						fill={false}
 						icon="tablet"
 					/>
@@ -70,7 +70,7 @@ const DeviceSizer: definition.UtilityComponent = (props) => {
 				icon={
 					<Icon
 						context={context}
-						weight={200}
+						weight={300}
 						fill={false}
 						icon="smartphone"
 					/>

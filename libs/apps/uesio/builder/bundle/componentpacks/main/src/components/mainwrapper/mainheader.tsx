@@ -2,6 +2,7 @@ import { definition, component, styles } from "@uesio/ui"
 import SaveCancelArea from "./savecancelarea"
 import DeviceSizer from "./devicesizer"
 import HeaderActions from "./headeractions"
+import HeaderCrumbs from "./headercrumbs"
 
 const MainHeader: definition.UtilityComponent = (props) => {
 	const { context, id } = props
@@ -37,8 +38,9 @@ const MainHeader: definition.UtilityComponent = (props) => {
 					file="uesio/core.logo"
 					context={context}
 				/>
+				<HeaderCrumbs context={context} />
+				<DeviceSizer context={context} />
 			</Group>
-			<DeviceSizer context={context} />
 			<Group context={context}>
 				<SaveCancelArea id={id} context={context} />
 				<HeaderActions context={context} />

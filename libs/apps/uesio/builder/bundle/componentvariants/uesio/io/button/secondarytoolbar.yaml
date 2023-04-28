@@ -10,8 +10,8 @@ definition:
       - text-xs
       - text-[8pt]
       - uppercase
-      - border-2
-      - border-white
+      - border
+      - border-slate-200
       - whitespace-nowrap
-      - bg-slate-200
+      - bg-slate-50
 public: true

@@ -117,7 +117,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 		{
 			root: ["overflow-hidden", "h-full", "relative"],
 
-			scrollwrapper: ["overflow-auto", "h-full", "w-full", "p-10"],
+			scrollwrapper: ["overflow-auto", "h-full", "w-full"],
 
 			outerwrapper: [
 				"relative",

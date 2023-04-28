@@ -24,41 +24,9 @@ const HeaderActions: definition.UtilityComponent = (props) => {
 	return (
 		<Group alignItems="right" context={context}>
 			<Button
-				context={props.context}
-				label=""
-				icon={<Icon weight={200} context={context} icon="wysiwyg" />}
-				variant="uesio/builder.minoricontoolbar"
-				onClick={() => {
-					api.signal.run(
-						{ signal: "route/REDIRECT_TO_VIEW_CONFIG" },
-						props.context
-					)
-				}}
-			/>
-			<Button
-				context={props.context}
-				label=""
-				icon={<Icon weight={200} context={context} icon="view_quilt" />}
-				variant="uesio/builder.minoricontoolbar"
-				onClick={() => {
-					const workspace = props.context.getWorkspace()
-					if (!workspace) {
-						return
-					}
-
-					api.signal.run(
-						{
-							signal: "route/REDIRECT",
-							path: `/app/${workspace.app}/workspace/${workspace.name}/views`,
-						},
-						props.context
-					)
-				}}
-			/>
-			<Button
 				context={context}
 				label=""
-				icon={<Icon weight={200} context={context} icon="code" />}
+				icon={<Icon weight={300} context={context} icon="code" />}
 				variant="uesio/builder.minoricontoolbar"
 				onClick={toggleCode}
 			/>

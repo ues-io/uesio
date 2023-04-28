@@ -19,7 +19,7 @@ const MainWrapper: definition.UC = (props) => {
 
 	const classes = styles.useStyleTokens(
 		{
-			root: ["bg-slate-50", "p-2"],
+			root: ["bg-slate-50", "p-2", "gap-2"],
 			configarea: ["auto-rows-fr", "gap-2"],
 		},
 		props
