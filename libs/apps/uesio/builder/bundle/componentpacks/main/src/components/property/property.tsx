@@ -4,6 +4,8 @@ import { FullPath } from "../../api/path"
 import { ComponentProperty } from "../../properties/componentproperty"
 import { getProperty } from "../../helpers/propertiesform"
 
+const { COMPONENT_ID } = component
+
 type Definition = {
 	propertyId: string
 	path: FullPath
@@ -49,7 +51,7 @@ export const getFormFieldFromProperty = (
 	const { name, type, displayConditions, readonly, label } = property
 	const baseFieldDef = {
 		fieldId: name,
-		"uesio.id": `property:${name}`,
+		[COMPONENT_ID]: `property:${name}`,
 		"uesio.variant": "uesio/builder.propfield",
 		"uesio.display": displayConditions,
 		labelPosition: "left",
@@ -126,7 +128,7 @@ export const getFormFieldFromProperty = (
 			return {
 				"uesio/builder.keyfield": {
 					...baseFieldDef,
-					fieldId: "uesio.id",
+					fieldId: COMPONENT_ID,
 					wrapperVariant: "uesio/builder.propfield",
 				},
 			}
@@ -155,6 +157,8 @@ export const getFormFieldFromProperty = (
 					...baseFieldDef,
 					wrapperVariant: "uesio/builder.propfield",
 					labelPosition: "none",
+					viewIdField: property.viewProperty,
+					viewComponentIdField: property.viewComponentIdProperty,
 				},
 			}
 		}

@@ -11,7 +11,6 @@ import { FullPath } from "../api/path"
 import {
 	ComponentProperty,
 	getStyleVariantProperty,
-	SelectOption,
 	SelectProperty,
 	StructProperty,
 } from "../properties/componentproperty"
@@ -46,7 +45,7 @@ const PATH_ARROW = "->"
 const LODASH_PATH_SEPARATOR = "."
 
 const getWireFieldSelectOptions = (wireDef: wire.WireDefinition) => {
-	if (!wireDef || !wireDef.fields) return [] as SelectOption[]
+	if (!wireDef || !wireDef.fields) return [] as wire.SelectOption[]
 
 	const getFields = (
 		key: string,
@@ -90,11 +89,11 @@ const getWireFieldSelectOptions = (wireDef: wire.WireDefinition) => {
 
 	return Object.entries(wireDef.fields)
 		.flatMap(([key, value]) => getFields(key, value))
-		.map((el) => ({ value: el, label: el } as SelectOption))
+		.map((el) => ({ value: el, label: el } as wire.SelectOption))
 }
 
 const getWireConditionSelectOptions = (wireDef: wire.WireDefinition) => {
-	const conditions: Array<SelectOption> = []
+	const conditions: Array<wire.SelectOption> = []
 
 	if (!wireDef || wireDef.viewOnly || !wireDef.conditions) return conditions
 
@@ -156,7 +155,7 @@ const getFormFieldsFromProperties = (
 
 const getSelectListMetadataFromOptions = (
 	propertyName: string,
-	options: SelectOption[],
+	options: wire.SelectOption[],
 	blankOptionLabel?: string
 ) =>
 	({
@@ -168,7 +167,7 @@ const getSelectListMetadataFromOptions = (
 const resolveOptions = (
 	def: SelectProperty,
 	currentValue: wire.PlainWireRecord
-): SelectOption[] => {
+): wire.SelectOption[] => {
 	const { options } = def
 	return typeof options === "function" ? options(currentValue) : options
 }
@@ -180,7 +179,7 @@ const getSelectListMetadata = (
 	getSelectListMetadataFromOptions(
 		def.name,
 		resolveOptions(def, currentValue).map(
-			(o: SelectOption) =>
+			(o: wire.SelectOption) =>
 				({
 					...o,
 				} as wire.SelectOption)
@@ -341,7 +340,11 @@ const getWireFieldFromPropertyDef = (
 }
 
 const getPropertyId = (property: ComponentProperty) =>
-	`${property.type === "COMPONENT_ID" ? "uesio.id" : property.name}`
+	`${
+		property.type === "COMPONENT_ID"
+			? component.COMPONENT_ID
+			: property.name
+	}`
 
 const getWireFieldsFromProperties = (
 	properties: ComponentProperty[] | undefined,
@@ -459,12 +462,21 @@ const parseProperties = (
 					context,
 					path.addLocal(property.fieldProperty)
 				) as string)
-			sourceWire = (getObjectProperty(
-				initialValue,
-				property.wireProperty
-			) ||
-				getDef(context, path.addLocal(property.wireProperty)) ||
-				getClosestWireInContext(context, path)) as string
+			sourceWire = property.wireName as string
+			if (!sourceWire && property.wireProperty) {
+				sourceWire =
+					(getObjectProperty(
+						initialValue,
+						property.wireProperty
+					) as string) ||
+					(getDef(
+						context,
+						path.addLocal(property.wireProperty)
+					) as string)
+			}
+			if (!sourceWire) {
+				sourceWire = getClosestWireInContext(context, path) as string
+			}
 			if (sourceField && sourceWire) {
 				// Get the initial value of the corresponding field metadata property
 				value = getFieldMetadata(context, sourceWire, sourceField)

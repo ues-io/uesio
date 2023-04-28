@@ -48,8 +48,11 @@ definition:
                     uesio.variant: uesio/io.secondary
                 - uesio/io.button:
                     signals:
-                      - signal: component/uesio/io.table/TOGGLE_MODE
-                        target: animals
+                      - signal: component/CALL
+                        component: uesio/io.table
+                        componentsignal: TOGGLE_MODE
+                        targettype: specific
+                        componentid: animalsTable
                       - signal: notification/ADD
                         severity: INFO
                         message: "Mode toggled"
@@ -73,6 +76,6 @@ definition:
                 - field: uesio/core.owner
                 - field: uesio/core.createdby
                 - field: uesio/core.createdat
-              uesio.id: animals
+              uesio.id: animalsTable
               mode: EDIT
               wire: animals

@@ -27,7 +27,10 @@ components:
                         uesio.variant: uesio/io.item
                         content: ${cardcontents}
                         signals:
-                          - signal: component/uesio/core.view/SET_PARAM
+                          - signal: component/CALL
+                            component: uesio/core.view
+                            componentsignal: SET_PARAM
+                            targettype: specific
                             target: detailview
                             param: recordid
                             value: ${uesio/core.id}

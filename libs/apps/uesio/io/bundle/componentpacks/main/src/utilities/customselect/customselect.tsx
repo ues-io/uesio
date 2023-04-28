@@ -13,6 +13,7 @@ type CustomSelectProps<T> = {
 	searchFilter?: (item: T, search: string) => boolean
 	itemRenderer: (item: T) => ReactNode
 	menuVariant?: metadata.MetadataKey
+	placeholder?: string
 }
 
 const StyleDefaults = Object.freeze({
@@ -59,7 +60,10 @@ const CustomSelect: definition.UtilityComponent<CustomSelectProps<unknown>> = (
 			<div className={classes.root}>
 				<div className={classes.input}>
 					{!selectedItems.length && (
-						<div className={classes.notfound}>Nothing Selected</div>
+						<div className={classes.notfound}>
+							{context.merge(props.placeholder) ||
+								"Nothing selected"}
+						</div>
 					)}
 					{selectedItems.map((item) => (
 						<div

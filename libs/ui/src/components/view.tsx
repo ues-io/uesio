@@ -8,6 +8,7 @@ import {
 	SignalDefinition,
 } from "../definition/signal"
 import { BaseDefinition, UC } from "../definition/definition"
+import { COMPONENT_ID } from "../componentexports"
 
 interface SetParamSignal extends SignalDefinition {
 	param: string
@@ -53,7 +54,7 @@ const View: UC<ViewDefinition> = (props) => {
 	const { params, view: viewDefId } = definition
 	// Backwards compatibility for definition.id
 	// TODO: Remove when all instances of this are fixed
-	const uesioId = definition["uesio.id"] || definition.id || path || "$root"
+	const uesioId = definition[COMPONENT_ID] || definition.id || path || "$root"
 	const viewId = makeViewId(viewDefId, uesioId)
 
 	const isSubView = !!path

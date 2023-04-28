@@ -19,6 +19,7 @@ import {
 	isRecordContextFrame,
 } from "../context/context"
 import { MetadataKey } from "../bands/builder/types"
+import { COMPONENT_ID } from "../componentexports"
 
 const getComponentId = (
 	namedId: string | undefined,
@@ -32,7 +33,7 @@ const getComponentIdFromProps = (props: BaseProps) => {
 	// on components like Table/List/Deck that initially had "id"
 	// Once morandi / timetracker / etc. are migrated to using "uesio.id"
 	// in their metadata, we can remove this affordance.
-	let userDefinedId = props.definition["uesio.id"] || props.definition.id
+	let userDefinedId = props.definition[COMPONENT_ID] || props.definition.id
 	// Optimization --- IF and only if we KNOW that the id for this component is user-defined (vs the path)
 	// then run mergeString() to resolve any merge variables that may be present in the id
 	if (userDefinedId) {

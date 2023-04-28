@@ -82,7 +82,7 @@ definition:
               uesio.variant: uesio/studio.content
               components:
                 - uesio/io.list:
-                    uesio.id: filesDeck
+                    uesio.id: filesList
                     wire: files
                     mode: READ
                     components:
@@ -99,8 +99,11 @@ definition:
                                         - type: fieldMode
                                           mode: READ
                                       signals:
-                                        - signal: component/uesio/io.list/TOGGLE_MODE
-                                          target: filesDeck
+                                        - signal: component/CALL
+                                          component: uesio/io.list
+                                          componentsignal: TOGGLE_MODE
+                                          targettype: specific
+                                          componentid: filesList
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.primary
                                       text: $Label{uesio/io.save}
@@ -111,8 +114,11 @@ definition:
                                         - signal: wire/SAVE
                                           wires:
                                             - files
-                                        - signal: component/uesio/io.list/TOGGLE_MODE
-                                          target: filesDeck
+                                        - signal: component/CALL
+                                          component: uesio/io.list
+                                          componentsignal: TOGGLE_MODE
+                                          targettype: specific
+                                          componentid: filesList
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: $Label{uesio/io.cancel}
@@ -122,8 +128,11 @@ definition:
                                       signals:
                                         - signal: wire/CANCEL
                                           wire: files
-                                        - signal: component/uesio/io.list/TOGGLE_MODE
-                                          target: filesDeck
+                                        - signal: component/CALL
+                                          component: uesio/io.list
+                                          componentsignal: TOGGLE_MODE
+                                          targettype: specific
+                                          componentid: filesList
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: $Label{uesio/io.delete}

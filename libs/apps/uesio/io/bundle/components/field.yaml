@@ -50,20 +50,81 @@ properties:
         value: top
       - label: Left
         value: left
-  # TODO: need each option to be "validFor" a specific field display type,
-  # so that we can have only one "displayAs" property which is valid for any field display type
+  - name: placeholder
+    type: TEXT
+    label: Placeholder
+    displayConditions:
+      - type: fieldValue
+        field: fieldDisplayType
+        operator: IN
+        values:
+          - TEXT
+          - LONGTEXT
+          - REFERENCE
   - name: displayAs
     type: SELECT
     label: Display as
     options:
       - label: Text
         value: ""
+        validFor:
+          - field: fieldDisplayType
+            operator: IN
+            type: fieldValue
+            values:
+              - TEXT
+              - LONGTEXT
+      - label: Select
+        value: ""
+        validFor:
+          - field: fieldDisplayType
+            value: SELECT
+      - label: Checkboxes
+        value: ""
+        validFor:
+          - field: fieldDisplayType
+            value: MULTISELECT
+      - label: Checkbox
+        value: ""
+        validFor:
+          - field: fieldDisplayType
+            value: CHECKBOX
       - label: Password
         value: PASSWORD
+        validFor:
+          - field: fieldDisplayType
+            value: TEXT
+      - label: Markdown
+        value: MARKDOWN
+        validFor:
+          - field: fieldDisplayType
+            value: LONGTEXT
+      - label: Multiselect
+        value: SELECT
+        validFor:
+          - field: fieldDisplayType
+            value: MULTISELECT
+      - label: Radio buttons
+        value: RADIO
+        validFor:
+          - field: fieldDisplayType
+            value: SELECT
+      - label: Toggle
+        value: TOGGLE
+        validFor:
+          - field: fieldDisplayType
+            value: CHECKBOX
     displayConditions:
       - type: fieldValue
         field: fieldDisplayType
-        value: TEXT
+        operator: IN
+        values:
+          - CHECKBOX
+          - LONGTEXT
+          - MULTISELECT
+          - REFERENCE
+          - SELECT
+          - TEXT
   # Number-only properties
   - name: number
     label: " "
@@ -126,6 +187,7 @@ sections:
       - fieldDisplayType
       - label
       - labelPosition
+      - placeholder
       - displayAs
       # Display type specific properties
       - number

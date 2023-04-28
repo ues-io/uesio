@@ -67,7 +67,6 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 		longtext,
 		context,
 		displayAs,
-		readonly,
 		setValue,
 		mode,
 		placeholder,
@@ -83,6 +82,20 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 		labelPosition,
 		classes,
 	} = props
+
+	let readonly = false
+	if (props.readonly !== undefined) {
+		readonly = props.readonly
+	} else if (fieldMetadata) {
+		if (record?.isNew?.() && fieldMetadata.getCreateable() === false) {
+			readonly = true
+		} else if (
+			(!record || !record?.isNew?.()) &&
+			fieldMetadata.getUpdateable() === false
+		) {
+			readonly = true
+		}
+	}
 
 	const common = {
 		classes,
@@ -105,7 +118,7 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 		labelVariant,
 	}
 
-	let selectOptions: collection.SelectOption[]
+	let selectOptions: wire.SelectOption[]
 	let multiSelectProps
 	let content: ReactElement
 
