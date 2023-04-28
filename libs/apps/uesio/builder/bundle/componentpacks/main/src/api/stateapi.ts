@@ -5,6 +5,7 @@ import { PropertiesPanelSection } from "./propertysection"
 import { SignalDescriptor } from "./signalsapi"
 import { get } from "./defapi"
 import pointer from "json-pointer"
+const { COMPONENT_ID } = component
 const {
 	getExternalState,
 	getExternalStates,
@@ -198,78 +199,144 @@ type ViewDef = {
 	panels?: Record<string, object>
 }
 
+// For each component of the requested type in the context view definition
+// which has a "uesio.id" property, return the value of that property.
 const getComponentIdsOfType = (
 	context: ctx.Context,
 	componentType: string | undefined
 ) => {
-	if (!componentType) return [] as string[]
 	// Traverse the view def tree to extract all Component Ids of the given type,
 	// using "uesio.id" as the unique key
 	const componentIds = [] as string[]
+	if (componentType) {
+		walkViewComponents(context, (type, definition) => {
+			const { [COMPONENT_ID]: id } = definition
+			if (type === componentType && id) {
+				componentIds.push(id as string)
+			}
+			return true
+		})
+	}
+	return componentIds
+}
+// Find a Component definition by its uesio unique id
+const getComponentById = (context: ctx.Context, componentId: string) => {
+	let targetComponentDef: definition.BaseDefinition | undefined
+	walkViewComponents(context, (_, definition) => {
+		const { [COMPONENT_ID]: id } = definition
+		if (id === componentId) {
+			targetComponentDef = definition
+			return false
+		}
+		return true
+	})
+	return targetComponentDef
+}
+
+type ComponentEntry = Record<string, definition.BaseDefinition>
+type PanelDef = {
+	components?: ComponentEntry[]
+	actions?: ComponentEntry[]
+} & definition.BaseDefinition
+
+// A generic tree walker for all components in the context view definition.
+// Visits each component in the components array and in each panel's components,
+// and uses each component's slot metadata to visit any components in each slot.
+// If visit returns false, the walk is immediately terminated.
+const walkViewComponents = (
+	context: ctx.Context,
+	visit: (
+		componentType: string,
+		definition: definition.BaseDefinition
+	) => boolean
+) => {
 	const viewPath = new FullPath("viewdef", context.getViewDefId(), "")
 	const viewDef = get(context, viewPath) as ViewDef
 	// Start traversing!
 	if (viewDef?.components?.length) {
-		findComponentsOfTypeWithIdInComponentsArray(
-			context,
+		const keepWalking = walkComponentsArray(
 			viewDef.components,
-			componentType,
-			componentIds
+			context,
+			visit
 		)
+		if (!keepWalking) {
+			return
+		}
 	}
-	// TODO: Traverse panels too!
-
-	return componentIds
+	// Traverse panel components and actions, if there are any
+	if (viewDef?.panels) {
+		for (const panel of Object.values(viewDef.panels) as PanelDef[]) {
+			if (panel?.components?.length) {
+				const keepWalking = walkComponentsArray(
+					panel.components,
+					context,
+					visit
+				)
+				if (!keepWalking) {
+					return
+				}
+			}
+			if (panel?.actions?.length) {
+				const keepWalking = walkComponentsArray(
+					panel.actions,
+					context,
+					visit
+				)
+				if (!keepWalking) {
+					return
+				}
+			}
+		}
+	}
 }
 
-type ComponentEntry = Record<string, definition.BaseDefinition>
-
-const findComponentsOfTypeWithIdInComponentsArray = (
-	context: ctx.Context,
+// Internal function that visits each in the given components array
+const walkComponentsArray = (
 	components: ComponentEntry[],
-	targetComponentType: string,
-	componentIds: string[]
-) => {
-	components.forEach((component) => {
+	context: ctx.Context,
+	visit: (
+		componentType: string,
+		definition: definition.BaseDefinition
+	) => boolean
+): boolean => {
+	for (const component of components) {
 		// If this is truly a Uesio component, it will look like this:
 		// { <componentType>: { <definition> }}
-		if (typeof component !== "object") return
+		if (typeof component !== "object") continue
 		const keys = Object.keys(component)
-		if (keys.length !== 1) return
+		if (keys.length !== 1) continue
 		const componentType = keys[0] as string
 		const props = component[componentType]
-		// First check if this is our target component type and if it has a "uesio.id",
-		// in which case we want to add it to the list of componentIds
-		if (componentType === targetComponentType && props["uesio.id"]) {
-			componentIds.push(props["uesio.id"])
-		}
+		// Visit this component
+		const keepWalking = visit(componentType, props)
+		if (!keepWalking) return false
 		// Next, check if this component type has slots, in which case we need to traverse the slots
 		const componentDef = getComponentDef(context, componentType)
-		if (!componentDef?.slots?.length) return
+		if (!componentDef?.slots?.length) continue
 		// Okay we have slots, so we need to traverse and recurse
-		componentDef.slots.forEach((slot) => {
+		for (const slot of componentDef.slots) {
 			// If there is not a path, then use name as path
 			const { path = slot.name } = slot
-			if (path) {
-				let slotComponents: ComponentEntry[] | undefined
-				try {
-					slotComponents = pointer.get(
-						props,
-						path.startsWith("/") ? path : `/${path}`
-					) as ComponentEntry[]
-				} catch (e) {
-					// eslint-disable-next-line no-empty
-				}
-				slotComponents?.length &&
-					findComponentsOfTypeWithIdInComponentsArray(
-						context,
-						slotComponents,
-						targetComponentType,
-						componentIds
-					)
+			if (!path) continue
+			let slotComponents: ComponentEntry[] | undefined
+			try {
+				slotComponents = pointer.get(
+					props,
+					path.startsWith("/") ? path : `/${path}`
+				) as ComponentEntry[]
+			} catch (e) {
+				// eslint-disable-next-line no-empty
 			}
-		})
-	})
+			if (!slotComponents?.length) continue
+			const keepWalking = walkComponentsArray(
+				slotComponents,
+				context,
+				visit
+			)
+			if (!keepWalking) return false
+		}
+	}
+	return true
 }
 
 export {
@@ -282,6 +349,7 @@ export {
 	getBuilderNamespaces,
 	getBuilderNamespace,
 	getBuilderState,
+	getComponentById,
 	getComponentDefs,
 	getComponentDef,
 	getComponentIdsOfType,
@@ -298,6 +366,7 @@ export {
 	setSelectedPath,
 	useSelectedViewPath,
 	getSelectedViewPath,
+	walkViewComponents,
 }
 
 export type { ComponentDef, SlotDef }

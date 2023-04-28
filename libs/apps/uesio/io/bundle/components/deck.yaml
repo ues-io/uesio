@@ -20,7 +20,7 @@ properties:
     type: WIRE
     required: true
   - name: uesio.id
-    label: Deck Id
+    label: Component Id
     type: COMPONENT_ID
   - name: mode
     label: Display Mode
