@@ -35,7 +35,7 @@ const HeaderCrumbs: definition.UtilityComponent = (props) => {
 				onClick={() => {
 					api.signal.run(
 						{ signal: "route/REDIRECT_TO_VIEW_CONFIG" },
-						props.context
+						context
 					)
 				}}
 				variant="uesio/io.tag"
