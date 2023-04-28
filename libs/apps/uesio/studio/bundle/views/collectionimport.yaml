@@ -82,12 +82,10 @@ definition:
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           components:
-                            - uesio/io.box:
-                                components:
-                                  - uesio/studio.dataimport:
-                                      collectionId: $Param{namespace}.$Param{collectionname}
-                                      namespace: $Param{app}
-                                      uesio.context:
-                                        workspace:
-                                          name: $Param{workspacename}
-                                          app: $Param{app}
+                            - uesio/studio.dataimport:
+                                collectionId: $Param{namespace}.$Param{collectionname}
+                                namespace: $Param{app}
+                                uesio.context:
+                                  workspace:
+                                    name: $Param{workspacename}
+                                    app: $Param{app}
