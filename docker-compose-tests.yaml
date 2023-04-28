@@ -48,6 +48,7 @@ services:
       UESIO_USERFILES_BUCKET_NAME: uesiofiles-dev
       UESIO_MOCK_AUTH: "true"
       UESIO_USE_HTTPS: "true"
+      UESIO_DEBUG_SQL: "true"
       PORT: 3000
     volumes:
       - ./apps/platform/ssl:/ssl

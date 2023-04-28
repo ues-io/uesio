@@ -4,7 +4,6 @@ public: true
 definition:
   uesio.styleTokens:
     root:
-      - mx-12
       - hover:animate-pulse
       - hover:delay-500
       - h-28
