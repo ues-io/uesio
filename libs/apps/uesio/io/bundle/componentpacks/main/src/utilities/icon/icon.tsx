@@ -10,6 +10,7 @@ interface IconUtilityProps extends definition.UtilityProps {
 const Icon: FunctionComponent<IconUtilityProps> = (props) => {
 	const fill = props.fill === undefined ? true : props.fill
 	const weight = props.weight === undefined ? 400 : props.weight
+
 	const classes = styles.useUtilityStyleTokens(
 		{
 			root: [
@@ -18,6 +19,7 @@ const Icon: FunctionComponent<IconUtilityProps> = (props) => {
 				"font-[Material_Icons]",
 				"leading-none",
 				"align-middle",
+
 				`[font-variation-settings:'FILL'_${
 					fill ? "1" : "0"
 				},'wght'_${weight}]`,
@@ -29,9 +31,7 @@ const Icon: FunctionComponent<IconUtilityProps> = (props) => {
 
 	if (props.icon === undefined) return null
 
-	return (
-		<span className={styles.cx(classes.root, "isicon")}>{props.icon}</span>
-	)
+	return <span className={classes.root}>{props.icon}</span>
 }
 
 export default Icon
