@@ -5,6 +5,7 @@ import SelectFilter from "../../utilities/selectfilter/selectfilter"
 import WeekFilter from "../../utilities/weekfilter/weekfilter"
 import NumberFilter from "../../utilities/numberfilter/numberfilter"
 import CheckboxFilter from "../../utilities/checkboxfilter/checkboxfilter"
+import TimestampFilter from "../../utilities/timestampfilter/timestampfilter"
 import GroupFilter, {
 	GroupFilterProps,
 } from "../../utilities/groupfilter/groupfilter"
@@ -47,6 +48,8 @@ const getFilterContent = (
 			return <CheckboxFilter {...common} displayAs={displayAs} />
 		case "SELECT":
 			return <SelectFilter {...common} />
+		case "TIMESTAMP":
+			return <TimestampFilter {...common} />
 		case "DATE": {
 			if (displayAs === "MONTH") return <MonthFilter {...common} />
 			if (displayAs === "WEEK") return <WeekFilter {...common} />
@@ -61,7 +64,7 @@ const getDefaultCondition = (path: string, fieldMetadata: collection.Field) => {
 	const type = fieldMetadata.getType()
 
 	switch (type) {
-		case "DATE": {
+		case "DATE" || "TIMESTAMP": {
 			return {
 				id: path,
 				operator: "IN",

@@ -1,0 +1,3 @@
+name: timestampfilter
+pack: main
+entrypoint: utilities/timestampfilter/timestampfilter
