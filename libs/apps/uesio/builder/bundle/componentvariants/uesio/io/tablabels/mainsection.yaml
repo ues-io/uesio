@@ -1,19 +1,20 @@
 name: mainsection
 label: mainsection
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      backgroundColor: "$Theme{color.primary}"
-      padding: 8px
-      columnGap: 4px
+      - bg-slate-900
+      - p-4
+      - gap-2
     tab:
-      textTransform: uppercase
-      padding: 4px 8px
-      fontSize: 8pt
-      borderRadius: 4px
-      color: white
-      whiteSpace: nowrap
+      - uppercase
+      - px-4
+      - py-2
+      - text-xs
+      - rounded
+      - text-slate-100
+      - whitespace-nowrap
     tabSelected:
-      color: "#444"
-      backgroundColor: white
+      - text-slate-700
+      - bg-slate-50
 public: true

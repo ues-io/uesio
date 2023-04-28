@@ -4,27 +4,24 @@ import { definition, styles } from "@uesio/ui"
 interface IconUtilityProps extends definition.UtilityProps {
 	icon?: string
 	fill?: boolean
+	weight?: number
 }
 
 const Icon: FunctionComponent<IconUtilityProps> = (props) => {
 	const fill = props.fill === undefined ? true : props.fill
-	const classes = styles.useUtilityStyles(
+	const weight = props.weight === undefined ? 400 : props.weight
+	const classes = styles.useUtilityStyleTokens(
 		{
-			root: {
-				fontFamily: "Material Icons",
-				fontWeight: "normal",
-				fontStyle: "normal",
-				display: "inline-block",
-				lineHeight: 1,
-				textTransform: "none",
-				letterSpacing: "normal",
-				verticalAlign: "middle",
-				wordWrap: "normal",
-				whiteSpace: "nowrap",
-				direction: "ltr",
-				fontDisplay: "block",
-				fontVariationSettings: "'FILL' " + (fill ? "1" : "0"),
-			},
+			root: [
+				"inline-block",
+				"isicon",
+				"font-[Material_Icons]",
+				"leading-none",
+				"align-middle",
+				`[font-variation-settings:'FILL'_${
+					fill ? "1" : "0"
+				},'wght'_${weight}]`,
+			],
 		},
 		props,
 		"uesio/io.icon"

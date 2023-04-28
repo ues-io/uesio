@@ -1,4 +1,5 @@
 import { api, signal, definition, styles } from "@uesio/ui"
+import { default as IOImage } from "../../utilities/image/image"
 
 type ImageDefinition = {
 	file?: string
@@ -12,34 +13,27 @@ type ImageDefinition = {
 
 const Image: definition.UC<ImageDefinition> = (props) => {
 	const { definition, context } = props
+	const { loading, src, file, width, height, alt } = definition
 
 	const classes = styles.useStyleTokens(
 		{
-			root: [
-				definition.height !== undefined && `h-[${definition.height}px]`,
-				definition.width !== undefined && `w-[${definition.width}px]`,
-			],
+			root: [],
 		},
 		props
 	)
 
 	return (
-		<img
-			onClick={api.signal.getHandler(definition.signals, context)}
+		<IOImage
 			id={api.component.getComponentIdFromProps(props)}
+			onClick={api.signal.getHandler(definition.signals, context)}
+			context={context}
+			loading={loading}
 			className={classes.root}
-			src={
-				definition.file
-					? api.file.getURLFromFullName(
-							context,
-							context.mergeString(definition.file)
-					  )
-					: context.mergeString(definition.src)
-			}
-			loading={definition.loading}
-			alt={definition.alt}
-			height={definition.height}
-			width={definition.width}
+			src={src}
+			file={file}
+			alt={alt}
+			height={height}
+			width={width}
 		/>
 	)
 }
