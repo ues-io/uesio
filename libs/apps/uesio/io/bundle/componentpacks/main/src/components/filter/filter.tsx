@@ -19,7 +19,7 @@ type FilterDefinition = {
 	displayAs?: string
 	wrapperVariant: metadata.MetadataKey
 	conditionId?: string
-	conditionOperator: string
+	multiselectOperator: string
 }
 
 type CommonProps = {
@@ -49,7 +49,7 @@ const getFilterContent = (
 		case "SELECT":
 			return <SelectFilter {...common} />
 		case "MULTISELECT":
-			return <MultiSelectFilter {...common}/>
+			return <MultiSelectFilter {...common} />
 		case "DATE": {
 			if (displayAs === "MONTH") return <MonthFilter {...common} />
 			if (displayAs === "WEEK") return <WeekFilter {...common} />
@@ -60,10 +60,12 @@ const getFilterContent = (
 	}
 }
 
-const getDefaultCondition = (path: string, fieldMetadata: collection.Field, conditionOperator: string ) => {
+const getDefaultCondition = (
+	path: string,
+	fieldMetadata: collection.Field,
+	multiselectOperator: string
+) => {
 	const type = fieldMetadata.getType()
-	console.log("conditionOperator: ",conditionOperator)
-	console.log("path: ",path)
 	switch (type) {
 		case "DATE": {
 			return {
@@ -72,10 +74,10 @@ const getDefaultCondition = (path: string, fieldMetadata: collection.Field, cond
 				field: fieldMetadata.getId(),
 			}
 		}
-		case "MULTISELECT":{
+		case "MULTISELECT": {
 			return {
 				id: path,
-				operator: conditionOperator || "HAS_ANY",
+				operator: multiselectOperator || "HAS_ANY",
 				field: fieldMetadata.getId(),
 			}
 		}
@@ -88,8 +90,8 @@ const getDefaultCondition = (path: string, fieldMetadata: collection.Field, cond
 }
 
 const Filter: definition.UC<FilterDefinition> = (props) => {
-	const { context, definition, path} = props
-	const { fieldId, conditionId, conditionOperator} = definition
+	const { context, definition, path } = props
+	const { fieldId, conditionId, multiselectOperator } = definition
 	const wire = api.wire.useWire(definition.wire, context)
 	if (!wire) return null
 
@@ -106,7 +108,7 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 		condition = getDefaultCondition(
 			path,
 			fieldMetadata,
-			conditionOperator,
+			multiselectOperator
 		) as wire.ValueConditionState
 	}
 

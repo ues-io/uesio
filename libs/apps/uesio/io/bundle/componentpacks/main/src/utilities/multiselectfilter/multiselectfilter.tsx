@@ -11,7 +11,9 @@ interface MultiSelectFilterProps extends definition.UtilityProps {
 	condition: wire.ValueConditionState
 }
 
-const MultiSelectFilter: FunctionComponent<MultiSelectFilterProps> = (props) => {
+const MultiSelectFilter: FunctionComponent<MultiSelectFilterProps> = (
+	props
+) => {
 	const { wire, fieldMetadata, context, condition } = props
 	const wireId = wire.getId()
 	return (
@@ -19,13 +21,13 @@ const MultiSelectFilter: FunctionComponent<MultiSelectFilterProps> = (props) => 
 			fieldMetadata={fieldMetadata}
 			context={context}
 			options={addBlankSelectOption(
-				fieldMetadata.getSelectMetadata()?.options || fieldMetadata.getSelectMetadata()?.options,
+				fieldMetadata.getSelectMetadata()?.options ||
+					fieldMetadata.getSelectMetadata()?.options,
 				"Any " + fieldMetadata.getLabel()
 			)}
 			variant={"uesio/io.filter"}
 			value={[condition.value]}
 			setValue={(value: string[]) => {
-                console.log("value: ", value)
 				api.signal.runMany(
 					[
 						{
@@ -50,11 +52,3 @@ const MultiSelectFilter: FunctionComponent<MultiSelectFilterProps> = (props) => 
 }
 
 export default MultiSelectFilter
-
-/*- active: true
-field: uesio/docs.multiselect
-operator: HAS_ANY
-valueSource: VALUE
-value:
-  - es
-  */
