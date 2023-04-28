@@ -12,7 +12,7 @@ const HeaderCrumbs: definition.UtilityComponent = (props) => {
 			<Tile
 				context={context}
 				onClick={() => {
-					const workspace = props.context.getWorkspace()
+					const workspace = context.getWorkspace()
 					if (!workspace) {
 						return
 					}
