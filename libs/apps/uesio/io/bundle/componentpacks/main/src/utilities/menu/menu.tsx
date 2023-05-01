@@ -24,19 +24,19 @@ interface MenuButtonUtilityProps<T> extends definition.UtilityProps {
 }
 
 const StyleDefaults = Object.freeze({
-	root: {},
-	menu: {},
-	menuheader: {},
-	menuitem: {},
-	highlighted: {},
-	searchbox: {},
-	itemsarea: {},
+	root: [],
+	menu: [],
+	menuheader: [],
+	menuitem: [],
+	highlighted: [],
+	searchbox: [],
+	itemsarea: [],
 })
 
 const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 	props
 ) => {
-	const classes = styles.useUtilityStyles(
+	const classes = styles.useUtilityStyleTokens(
 		StyleDefaults,
 		props,
 		"uesio/io.menu"

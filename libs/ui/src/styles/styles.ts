@@ -12,9 +12,15 @@ import {
 	parseVariantName,
 } from "../component/component"
 import { MetadataKey } from "../metadataexports"
-import { twMerge } from "tailwind-merge"
+import { extendTailwindMerge } from "tailwind-merge"
 import { Context } from "../context/context"
 import { tw } from "@twind/core"
+
+const twMerge = extendTailwindMerge({
+	classGroups: {
+		"font-size": ["xxs"],
+	},
+})
 
 const STYLES_PROPERTY = "uesio.styles"
 const TOKENS_PROPERTY = "uesio.styleTokens"

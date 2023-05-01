@@ -5,7 +5,7 @@ definition:
     root:
       - bg-slate-50
       - text-slate-500
-      - text-[7pt]
+      - text-xxs
       - px-2
       - py-1
       - rounded

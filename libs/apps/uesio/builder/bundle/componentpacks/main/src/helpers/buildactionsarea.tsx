@@ -9,7 +9,7 @@ const BuildActionsArea: definition.UtilityComponent<Props> = (props) => {
 		{
 			root: [
 				"flex",
-				`justify-${props.justify}`,
+				`justify-${props.justify || "end"}`,
 				"px-2",
 				"py-1",
 				"relative",
