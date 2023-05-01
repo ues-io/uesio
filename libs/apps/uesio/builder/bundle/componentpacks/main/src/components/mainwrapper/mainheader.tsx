@@ -1,7 +1,5 @@
 import { definition, component, styles } from "@uesio/ui"
 import SaveCancelArea from "./savecancelarea"
-import DeviceSizer from "./devicesizer"
-import HeaderActions from "./headeractions"
 import HeaderCrumbs from "./headercrumbs"
 
 const StyleDefaults = Object.freeze({
@@ -38,11 +36,9 @@ const MainHeader: definition.UtilityComponent = (props) => {
 					context={context}
 				/>
 				<HeaderCrumbs context={context} />
-				<DeviceSizer context={context} />
 			</Group>
-			<Group context={context}>
+			<Group context={context} className="gap-3">
 				<SaveCancelArea id={id} context={context} />
-				<HeaderActions context={context} />
 				<Avatar
 					className={classes.avatar}
 					image="$User{picture}"

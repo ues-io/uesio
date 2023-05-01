@@ -40,10 +40,10 @@ const SizerButton: definition.UtilityComponent<SizerProps> = ({
 
 const DeviceSizer: definition.UtilityComponent = (props) => {
 	const { context } = props
-	const Group = component.getUtility("uesio/io.group")
+	const Grid = component.getUtility("uesio/io.grid")
 
 	return (
-		<Group className="ml-4" context={context}>
+		<Grid className="grid-rows-auto" context={context}>
 			<SizerButton
 				icon="desktop_windows"
 				height={0}
@@ -69,7 +69,7 @@ const DeviceSizer: definition.UtilityComponent = (props) => {
 				width={375}
 				context={context}
 			/>
-		</Group>
+		</Grid>
 	)
 }
 

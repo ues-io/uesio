@@ -4,7 +4,7 @@ definition:
   uesio.styleTokens:
     root:
       - text-slate-700
-      - px-2
+      - p-2
       - text-sm
       - leading-1
 public: true
