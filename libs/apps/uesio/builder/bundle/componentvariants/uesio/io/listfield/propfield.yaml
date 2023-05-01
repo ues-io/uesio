@@ -1,11 +1,8 @@
 name: propfield
 label: Property Field
+extends: uesio/io.listfield
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      margin: 8px
-    row:
-      columnGap: "8px"
-      alignItems: "center"
-      margin: 8px 0
+      - text-xs
 public: true

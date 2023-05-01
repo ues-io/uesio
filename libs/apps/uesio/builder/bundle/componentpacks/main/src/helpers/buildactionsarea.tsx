@@ -5,15 +5,16 @@ type Props = {
 }
 
 const BuildActionsArea: definition.UtilityComponent<Props> = (props) => {
-	const classes = styles.useUtilityStyles(
+	const classes = styles.useUtilityStyleTokens(
 		{
-			root: {
-				display: "flex",
-				justifyContent: props.justify || "end",
-				padding: "8px",
-				position: "relative",
-				backgroundColor: "#fafafa",
-			},
+			root: [
+				"flex",
+				`justify-${props.justify}`,
+				"px-2",
+				"py-1",
+				"relative",
+				"bg-slate-50",
+			],
 		},
 		props
 	)

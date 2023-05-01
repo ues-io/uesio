@@ -8,6 +8,7 @@ import { getBuilderNamespace, setSelectedPath } from "../../../../api/stateapi"
 import BuildActionsArea from "../../../../helpers/buildactionsarea"
 import NamespaceLabel from "../../../../utilities/namespacelabel/namespacelabel"
 import PropNodeTag from "../../../../utilities/propnodetag/propnodetag"
+import ItemTag from "../../../../utilities/itemtag/itemtag"
 
 interface T extends definition.UtilityProps {
 	collectionKey: string
@@ -18,6 +19,7 @@ interface T extends definition.UtilityProps {
 }
 const FieldPropTag: FC<T> = (props) => {
 	const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
+	const Text = component.getUtility("uesio/io.text")
 	const { fieldId, fieldDef, collectionKey, context, path, selectedPath } =
 		props
 
@@ -47,7 +49,7 @@ const FieldPropTag: FC<T> = (props) => {
 				e.stopPropagation()
 			}}
 		>
-			<div className="tagroot">
+			<ItemTag context={context}>
 				<NamespaceLabel
 					context={context}
 					metadatainfo={nsInfo}
@@ -61,20 +63,27 @@ const FieldPropTag: FC<T> = (props) => {
 								setExpanded(!expanded)
 								e.stopPropagation()
 							}}
-							className="infotag"
 						>
-							{subFields.length}
+							<Text
+								text={subFields.length + ""}
+								context={context}
+								variant="uesio/builder.infobadge"
+							/>
 						</span>
 					)}
-					<span className="infotag">{fieldMetadata.getType()}</span>
+					<Text
+						text={fieldMetadata.getType()}
+						context={context}
+						variant="uesio/builder.infobadge"
+					/>
 				</div>
-			</div>
+			</ItemTag>
 			{subFields && subFields.length > 0 && (
 				<IOExpandPanel
 					context={context}
 					expanded={expanded || hasSelectedChild}
 				>
-					<div className="subarea">
+					<div>
 						{subFields.map((fieldId) => {
 							const subFieldsPath = path.addLocal("fields")
 							const referenceMetadata =
@@ -82,7 +91,6 @@ const FieldPropTag: FC<T> = (props) => {
 							if (!referenceMetadata) return null
 							return (
 								<FieldPropTag
-									variant="uesio/builder.subpropnodetag"
 									collectionKey={referenceMetadata.collection}
 									fieldId={fieldId}
 									path={subFieldsPath.addLocal(fieldId)}

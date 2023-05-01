@@ -2,12 +2,11 @@ name: propfield
 extends: uesio/io.default
 label: Property Field
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      margin: 8px
-      padding: 0
+      - m-2
+      - p-0
     label:
-      color: "#444"
-      fontSize: 9pt
-      padding: 0
+      - text-xs
+      - p-0
 public: true

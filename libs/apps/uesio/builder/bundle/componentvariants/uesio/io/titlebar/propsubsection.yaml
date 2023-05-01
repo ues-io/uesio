@@ -1,11 +1,11 @@
 name: propsubsection
 label: Property Sub Section
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      padding: 8px
-      color: rgb(68, 68, 68)
-      backgroundColor: "#f5f5f5"
-      fontSize: 8pt
-      textTransform: uppercase
+      - p-2
+      - text-slate-700
+      - bg-slate-50
+      - text-xs
+      - uppercase
 public: true
