@@ -5,6 +5,7 @@ import SelectFilter from "../../utilities/selectfilter/selectfilter"
 import WeekFilter from "../../utilities/weekfilter/weekfilter"
 import NumberFilter from "../../utilities/numberfilter/numberfilter"
 import CheckboxFilter from "../../utilities/checkboxfilter/checkboxfilter"
+import SearchBoxFilter from "../../utilities/searchboxfilter/searchboxfilter"
 import GroupFilter, {
 	GroupFilterProps,
 } from "../../utilities/groupfilter/groupfilter"
@@ -39,8 +40,17 @@ const getFilterContent = (
 
 	const fieldMetadata = common.fieldMetadata
 	const type = fieldMetadata.getType()
-
 	switch (type) {
+		case "EMAIL":
+			return <SearchBoxFilter {...common} />
+		case "LONGTEXT":
+			return <SearchBoxFilter {...common} />
+		case "TEXT":
+			return <SearchBoxFilter {...common} />
+		case "FILE":
+			return <SearchBoxFilter {...common} />
+		case "USER":
+			return <SearchBoxFilter {...common} />
 		case "NUMBER":
 			return <NumberFilter {...common} />
 		case "CHECKBOX":
