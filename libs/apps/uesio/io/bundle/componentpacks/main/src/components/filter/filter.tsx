@@ -37,14 +37,14 @@ const getFilterContent = (
 	common: CommonProps,
 	definition: FilterDefinition
 ) => {
-	const { displayAs } = definition
+	const { displayAs, placeholder } = definition
 	const fieldMetadata = common.fieldMetadata
 	const type = fieldMetadata.getType()
 	switch (type) {
 		case "TEXT":
 		case "LONGTEXT":
 		case "EMAIL":
-			return <SearchBoxFilter {...common} />
+			return <SearchBoxFilter {...common} placeholder={placeholder} />
 		case "NUMBER":
 			return <NumberFilter {...common} />
 		case "CHECKBOX":
