@@ -4,19 +4,25 @@ import SearchBox from "../../components/searchbox/searchbox"
 interface SearchBoxFilterProps extends definition.UtilityProps {
 	path: string
 	wire: wire.Wire
-    fieldMetadata: collection.Field
+	fieldMetadata: collection.Field
+	placeholder?: string
 }
 
 const SearchBoxFilter: FunctionComponent<SearchBoxFilterProps> = (props) => {
-	const { wire, context, fieldMetadata, path } = props
+	const { wire, context, fieldMetadata, path, placeholder } = props
 	const wireId = wire.getId()
-    const fieldId = fieldMetadata.getId() as metadata.MetadataKey
-    const placeholder = fieldMetadata.getLabel()
+	const fieldId = fieldMetadata.getId() as metadata.MetadataKey
+
 	return (
 		<SearchBox
-            path={path}
+			path={path}
 			context={context}
-			definition={{ wire: wireId, searchFields: [fieldId as metadata.MetadataKey], placeholder: `Search ${placeholder}`}}
+			definition={{
+				wire: wireId,
+				searchFields: [fieldId],
+				placeholder:
+					placeholder || `Search ${fieldMetadata.getLabel()}`,
+			}}
 		/>
 	)
 }

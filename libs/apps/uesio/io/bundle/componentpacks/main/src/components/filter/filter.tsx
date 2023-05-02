@@ -19,6 +19,7 @@ type FilterDefinition = {
 	displayAs?: string
 	wrapperVariant: metadata.MetadataKey
 	conditionId?: string
+	placeholder?: string
 }
 
 type CommonProps = {
@@ -37,19 +38,12 @@ const getFilterContent = (
 	definition: FilterDefinition
 ) => {
 	const { displayAs } = definition
-
 	const fieldMetadata = common.fieldMetadata
 	const type = fieldMetadata.getType()
 	switch (type) {
-		case "EMAIL":
-			return <SearchBoxFilter {...common} />
-		case "LONGTEXT":
-			return <SearchBoxFilter {...common} />
 		case "TEXT":
-			return <SearchBoxFilter {...common} />
-		case "FILE":
-			return <SearchBoxFilter {...common} />
-		case "USER":
+		case "LONGTEXT":
+		case "EMAIL":
 			return <SearchBoxFilter {...common} />
 		case "NUMBER":
 			return <NumberFilter {...common} />
