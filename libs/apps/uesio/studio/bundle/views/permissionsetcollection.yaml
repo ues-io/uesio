@@ -143,6 +143,10 @@ definition:
                                       signals:
                                         - signal: wire/CANCEL
                                           wire: permissionsets
+                                        - signal: wire/RESET
+                                          wire: permissionsets
+                                        - signal: wire/LOAD
+                                          wire: permissionsets
                                         - signal: component/CALL
                                           component: uesio/io.list
                                           componentsignal: TOGGLE_MODE
