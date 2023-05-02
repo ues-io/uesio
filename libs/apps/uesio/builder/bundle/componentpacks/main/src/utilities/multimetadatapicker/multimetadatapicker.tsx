@@ -41,7 +41,6 @@ const MultiMetadataPicker: definition.UtilityComponent<
 	)
 
 	const items = metadata ? Object.values(metadata) : []
-
 	const renderer = (item: metadata.MetadataInfo) => (
 		<NamespaceLabel
 			metadatakey={item.key}
@@ -56,6 +55,12 @@ const MultiMetadataPicker: definition.UtilityComponent<
 		  )
 		: []
 
+	const toSelectItems = selectedItems
+		? items
+				.filter((x) => !selectedItems.includes(x))
+				.concat(selectedItems.filter((x) => !items.includes(x)))
+		: items
+
 	return (
 		<FieldWrapper
 			labelPosition={labelPosition}
@@ -65,7 +70,7 @@ const MultiMetadataPicker: definition.UtilityComponent<
 			errors={error ? [{ message: error }] : []}
 		>
 			<CustomSelect
-				items={items}
+				items={toSelectItems}
 				itemRenderer={renderer}
 				variant={variant}
 				context={context}
