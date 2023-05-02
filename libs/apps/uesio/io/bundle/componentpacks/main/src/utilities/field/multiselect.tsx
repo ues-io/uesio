@@ -13,10 +13,7 @@ interface SelectFieldProps extends definition.UtilityProps {
 const MultiSelectField: FunctionComponent<SelectFieldProps> = (props) => {
 	const CustomSelect = component.getUtility("uesio/io.customselect")
 	const Text = component.getUtility("uesio/io.text")
-
 	const { setValue, value, mode, options, context } = props
-
-	console.log({ options })
 
 	if (mode === "READ") {
 		let displayLabel
