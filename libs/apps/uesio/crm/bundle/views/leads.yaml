@@ -58,7 +58,6 @@ definition:
                               operator: EQUALS
                               wire: leads
           - uesio/io.group:
-              columnGap: 10px
               components:
                 - uesio/io.searchbox:
                     wire: leads
@@ -72,8 +71,6 @@ definition:
                     fieldId: uesio/crm.status
                     labelPosition: top
                     label: " "
-              alignItems: center
-              justifyContent: start
           - uesio/io.grid:
               uesio.styleTokens:
                 root:

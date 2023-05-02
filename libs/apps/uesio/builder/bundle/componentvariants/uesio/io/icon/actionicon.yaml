@@ -1,7 +1,7 @@
 name: actionicon
 label: Action Icon
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      fontSize: 9pt
+      - text-sm
 public: true

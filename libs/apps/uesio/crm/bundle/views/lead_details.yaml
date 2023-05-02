@@ -163,7 +163,6 @@ definition:
                                                 signals:
                                                   - signal: wire/CREATE_RECORD
                                                     wire: events
-                                          justifyContent: end
                                       - uesio/io.text:
                                           text: EVENTS
                                           element: div

@@ -1,4 +1,4 @@
-import { definition, metadata, collection } from "@uesio/ui"
+import { definition, metadata, collection, component } from "@uesio/ui"
 import { remove, set } from "../../../../api/defapi"
 import { FullPath } from "../../../../api/path"
 
@@ -7,6 +7,7 @@ import ActionButton from "../../../../helpers/actionbutton"
 import BuildActionsArea from "../../../../helpers/buildactionsarea"
 import NamespaceLabel from "../../../../utilities/namespacelabel/namespacelabel"
 import PropNodeTag from "../../../../utilities/propnodetag/propnodetag"
+import ItemTag from "../../../../utilities/itemtag/itemtag"
 
 type Props = {
 	setReferencePath: (path: FullPath) => void
@@ -15,6 +16,7 @@ type Props = {
 	selected: boolean
 }
 const FieldSelectPropTag: definition.UtilityComponent<Props> = (props) => {
+	const Text = component.getUtility("uesio/io.text")
 	const { fieldMetadata, context, path, selected, setReferencePath } = props
 	const fieldId = fieldMetadata.getId()
 
@@ -33,7 +35,7 @@ const FieldSelectPropTag: definition.UtilityComponent<Props> = (props) => {
 				selected ? remove(context, path) : set(context, path, {})
 			}}
 		>
-			<div className="tagroot">
+			<ItemTag context={context}>
 				<NamespaceLabel
 					context={context}
 					metadatainfo={nsInfo}
@@ -41,8 +43,12 @@ const FieldSelectPropTag: definition.UtilityComponent<Props> = (props) => {
 					title={fieldMetadata.getLabel()}
 				/>
 
-				<span className="infotag">{fieldMetadata.getType()}</span>
-			</div>
+				<Text
+					variant="uesio/builder.infobadge"
+					text={fieldMetadata.getType()}
+					context={context}
+				/>
+			</ItemTag>
 			{referenceMetadata && (
 				<BuildActionsArea context={context}>
 					<ActionButton

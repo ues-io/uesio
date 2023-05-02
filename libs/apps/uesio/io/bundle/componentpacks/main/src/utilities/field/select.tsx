@@ -19,8 +19,8 @@ interface SelectFieldProps extends definition.UtilityProps {
 }
 
 const StyleDefaults = Object.freeze({
-	root: {},
-	input: {},
+	root: [],
+	input: [],
 })
 
 const SelectField: FunctionComponent<SelectFieldProps> = (props) => {
@@ -33,7 +33,7 @@ const SelectField: FunctionComponent<SelectFieldProps> = (props) => {
 		return <TextField {...props} value={valueLabel} />
 	}
 
-	const classes = styles.useUtilityStyles(
+	const classes = styles.useUtilityStyleTokens(
 		StyleDefaults,
 		props,
 		"uesio/io.selectfield"

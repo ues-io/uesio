@@ -41,15 +41,15 @@ const Heading: FC<HeaderProps> = ({ level, className, children }) => {
 }
 
 const StyleDefaults = Object.freeze({
-	root: {},
-	h1: {},
-	h2: {},
-	h3: {},
-	h4: {},
-	h5: {},
-	h6: {},
-	p: {},
-	code: {},
+	root: [],
+	h1: [],
+	h2: [],
+	h3: [],
+	h4: [],
+	h5: [],
+	h6: [],
+	p: [],
+	code: [],
 })
 
 const MarkDownField: definition.UtilityComponent<MarkDownFieldProps> = (
@@ -57,7 +57,7 @@ const MarkDownField: definition.UtilityComponent<MarkDownFieldProps> = (
 ) => {
 	const { value } = props
 
-	const classes = styles.useUtilityStyles(
+	const classes = styles.useUtilityStyleTokens(
 		StyleDefaults,
 		props,
 		"uesio/io.markdownfield"

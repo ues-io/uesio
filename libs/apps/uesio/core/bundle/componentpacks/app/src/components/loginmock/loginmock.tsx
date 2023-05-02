@@ -39,13 +39,8 @@ const LoginMock: definition.UC = (props) => {
 						)
 					}}
 					variant="uesio/io.secondary"
-					styles={{
-						root: {
-							backgroundColor: "white",
-							minWidth: "unset",
-							display: "block",
-							textTransform: "capitalize",
-						},
+					styleTokens={{
+						root: ["bg-white", "min-w-min", "capitalize"],
 					}}
 					label={user}
 				/>

@@ -5,6 +5,7 @@ import {
 	setSelectedPath,
 	useSelectedPath,
 } from "../../../api/stateapi"
+import ItemTag from "../../../utilities/itemtag/itemtag"
 
 const ComponentTypeProperties: definition.UtilityComponent = (props) => {
 	const { context } = props
@@ -16,13 +17,13 @@ const ComponentTypeProperties: definition.UtilityComponent = (props) => {
 
 	return (
 		<PropertiesWrapper
-			context={props.context}
+			context={context}
 			className={props.className}
 			path={selectedPath}
 			title={componentDef.title || componentDef.name}
 			onUnselect={() => setSelectedPath(context)}
 		>
-			<div>{componentDef.description}</div>
+			<ItemTag context={context} description={componentDef.description} />
 		</PropertiesWrapper>
 	)
 }

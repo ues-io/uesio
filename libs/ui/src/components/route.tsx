@@ -96,6 +96,9 @@ const Route: UtilityComponent = (props) => {
 					fontFamily: {
 						sans: ["Roboto", "sans-serif"],
 					},
+					fontSize: {
+						xxs: ["8pt", "16px"],
+					},
 				},
 			},
 		}),

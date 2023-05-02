@@ -8,6 +8,7 @@ import {
 import { ComponentProperty } from "../../../properties/componentproperty"
 
 import PropNodeTag from "../../../utilities/propnodetag/propnodetag"
+import ItemTag from "../../../utilities/itemtag/itemtag"
 
 type ColumnDefinition = {
 	field: string
@@ -124,7 +125,9 @@ const TableColumns: definition.UC = (props) => {
 					selected={selectedPath.startsWith(itemPath)}
 					context={context}
 				>
-					<div className="tagroot">{getComponentType(component)}</div>
+					<ItemTag context={context}>
+						{getComponentType(component)}
+					</ItemTag>
 				</PropNodeTag>
 			)
 		})
