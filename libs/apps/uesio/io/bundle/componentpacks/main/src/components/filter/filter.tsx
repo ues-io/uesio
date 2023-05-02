@@ -58,15 +58,25 @@ const getFilterContent = (
 	}
 }
 
-const getDefaultCondition = (path: string, fieldMetadata: collection.Field) => {
+const getDefaultCondition = (
+	path: string,
+	fieldMetadata: collection.Field,
+	displayAs: string
+) => {
 	const type = fieldMetadata.getType()
 	switch (type) {
 		case "DATE": {
-			return {
-				id: path,
-				operator: "IN",
-				field: fieldMetadata.getId(),
-			}
+			return !displayAs
+				? {
+						id: path,
+						operator: "EQ",
+						field: fieldMetadata.getId(),
+				  }
+				: {
+						id: path,
+						operator: "IN",
+						field: fieldMetadata.getId(),
+				  }
 		}
 		default:
 			return {
@@ -78,7 +88,7 @@ const getDefaultCondition = (path: string, fieldMetadata: collection.Field) => {
 
 const Filter: definition.UC<FilterDefinition> = (props) => {
 	const { context, definition, path } = props
-	const { fieldId, conditionId } = definition
+	const { fieldId, conditionId, displayAs } = definition
 	const wire = api.wire.useWire(definition.wire, context)
 	if (!wire) return null
 
@@ -94,7 +104,8 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 	if (!condition && fieldMetadata) {
 		condition = getDefaultCondition(
 			path,
-			fieldMetadata
+			fieldMetadata,
+			displayAs || ""
 		) as wire.ValueConditionState
 	}
 

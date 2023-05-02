@@ -46,7 +46,6 @@ const DateFilter: definition.UtilityComponent<DateFilterProps> = (props) => {
 								...condition,
 								value,
 								active: !!value,
-								operator: "EQ",
 							},
 						},
 						{
