@@ -47,14 +47,14 @@ function useStyleTokens<K extends string>(
 	props: BaseProps
 ) {
 	const { definition, context } = props
-	const tokens = definition?.["uesio.styleTokens"] || {}
+	const inlineTokens = definition?.["uesio.styleTokens"] || {}
 	return Object.entries(defaults).reduce(
 		(classNames, entry: [K, ClassNamesArg[]]) => {
 			const [className, defaultClasses] = entry
 			classNames[className] = process(
 				context,
 				defaultClasses,
-				tokens[className]
+				inlineTokens[className]
 			)
 			return classNames
 		},
@@ -148,22 +148,23 @@ function useUtilityStyleTokens<K extends string>(
 	props: UtilityProps,
 	defaultVariantComponentType?: MetadataKey
 ) {
-	const tokens = {
-		...getVariantTokens(props, defaultVariantComponentType),
-		...props.styleTokens,
-	}
+	const variantTokens = getVariantTokens(props, defaultVariantComponentType)
+	const inlineTokens = props.styleTokens || {}
+
 	return Object.entries(defaults).reduce(
 		(classNames, entry: [K, ClassNamesArg[]]) => {
 			const [className, defaultClasses] = entry
-			const classTokens = tokens[className] || []
+			const classVariantTokens = variantTokens[className] || []
+			const classInlineTokens = inlineTokens[className] || []
 			classNames[className] = process(
 				props.context,
 				defaultClasses,
-				...classTokens,
+				classVariantTokens,
 				props.classes?.[className],
 				// A bit weird here... Only apply the passed-in className prop to root styles.
 				// Otherwise, it would be applied to every class sent in as defaults.
-				className === "root" && props.className
+				className === "root" && props.className,
+				classInlineTokens
 			)
 			return classNames
 		},
