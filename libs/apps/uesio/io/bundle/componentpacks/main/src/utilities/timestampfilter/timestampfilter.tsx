@@ -4,7 +4,7 @@ interface TimestampFilter {
 	path: string
 	wire: wire.Wire
 	fieldMetadata: collection.Field
-    condition: wire.ValueConditionState
+	condition: wire.ValueConditionState
 }
 
 const toTimestamp = (date: string) => {
@@ -22,24 +22,28 @@ const StyleDefaults = Object.freeze({
 	readonly: {},
 })
 
-const TimestampFilter: definition.UtilityComponent<TimestampFilter> = (props) => {
+const TimestampFilter: definition.UtilityComponent<TimestampFilter> = (
+	props
+) => {
 	const { wire, context, condition } = props
 	const wireId = wire.getId()
-    const timestamp = condition.value as number
-    const date = new Date(timestamp * 1000)
+	const timestamp = condition.value as number
+	const date = new Date(timestamp * 1000)
 	const classes = styles.useUtilityStyles(
 		StyleDefaults,
 		props,
 		"uesio/io.field"
-    )
+	)
 	return (
 		<input
 			value={timestamp && datetimeLocal(date)}
 			className={classes.input}
-            type="datetime-local"
-            step="1"
+			type="datetime-local"
+			step="1"
 			onChange={(event) => {
-				const value = event.target.value ? toTimestamp(event.target.value) : null
+				const value = event.target.value
+					? toTimestamp(event.target.value)
+					: null
 				api.signal.runMany(
 					[
 						{
