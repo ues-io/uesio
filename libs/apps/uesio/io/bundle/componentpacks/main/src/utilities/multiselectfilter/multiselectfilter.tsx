@@ -2,8 +2,6 @@ import { FunctionComponent } from "react"
 import { definition, api, wire, collection } from "@uesio/ui"
 import MultiSelectField from "../field/multiselect"
 
-const addBlankSelectOption = collection.addBlankSelectOption
-
 interface MultiSelectFilterProps extends definition.UtilityProps {
 	path: string
 	wire: wire.Wire
@@ -20,32 +18,40 @@ const MultiSelectFilter: FunctionComponent<MultiSelectFilterProps> = (
 		<MultiSelectField
 			fieldMetadata={fieldMetadata}
 			context={context}
-			options={addBlankSelectOption(
-				fieldMetadata.getSelectMetadata()?.options ||
-					fieldMetadata.getSelectMetadata()?.options,
-				"Any " + fieldMetadata.getLabel()
-			)}
+			options={fieldMetadata.getSelectMetadata()?.options || []}
 			variant={"uesio/io.filter"}
-			value={[condition.value]}
+			value={Array.isArray(condition.value) ? condition.value : []}
 			setValue={(value: string[]) => {
-				api.signal.runMany(
-					[
-						{
-							signal: "wire/SET_CONDITION",
-							wire: wireId,
-							condition: {
-								...condition,
-								value,
-								active: !!value,
-							},
-						},
-						{
-							signal: "wire/LOAD",
-							wires: [wireId],
-						},
-					],
-					context
-				)
+				const signals =
+					value && value.length === 0
+						? [
+								{
+									signal: "wire/REMOVE_CONDITION",
+									wire: wireId,
+									conditionId: condition.id,
+								},
+								{
+									signal: "wire/LOAD",
+									wires: [wireId],
+								},
+						  ]
+						: [
+								{
+									signal: "wire/SET_CONDITION",
+									wire: wireId,
+									condition: {
+										...condition,
+										value,
+										active: !!value,
+									},
+								},
+								{
+									signal: "wire/LOAD",
+									wires: [wireId],
+								},
+						  ]
+
+				api.signal.runMany(signals, context)
 			}}
 		/>
 	)

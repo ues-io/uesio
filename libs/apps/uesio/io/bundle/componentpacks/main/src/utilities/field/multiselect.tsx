@@ -1,6 +1,5 @@
-import { ChangeEvent, FunctionComponent } from "react"
-import { definition, styles, context, collection, wire } from "@uesio/ui"
-import { CSSInterpolation } from "@emotion/css"
+import { FunctionComponent } from "react"
+import { component, definition, context, collection, wire } from "@uesio/ui"
 
 interface SelectFieldProps extends definition.UtilityProps {
 	setValue: (value: wire.PlainFieldValue[]) => void
@@ -11,14 +10,14 @@ interface SelectFieldProps extends definition.UtilityProps {
 	options: wire.SelectOption[] | null
 }
 
-const StyleDefaults = Object.freeze({
-	input: {
-		appearance: "none",
-	},
-} as Record<string, CSSInterpolation>)
-
 const MultiSelectField: FunctionComponent<SelectFieldProps> = (props) => {
-	const { setValue, value, mode, options } = props
+	const CustomSelect = component.getUtility("uesio/io.customselect")
+	const Text = component.getUtility("uesio/io.text")
+
+	const { setValue, value, mode, options, context } = props
+
+	console.log({ options })
+
 	if (mode === "READ") {
 		let displayLabel
 		if (value !== undefined && value.length) {
@@ -31,28 +30,33 @@ const MultiSelectField: FunctionComponent<SelectFieldProps> = (props) => {
 		return <span>{displayLabel || ""}</span>
 	}
 
-	const classes = styles.useUtilityStyles(StyleDefaults, props)
+	const items = options || []
+	const renderer = (item: collection.SelectOption) => (
+		<Text text={item.label} context={context} />
+	)
+	const selectedItems = items
+		? items.filter((item: collection.SelectOption) =>
+				value.includes(item.value)
+		  )
+		: []
 
 	return (
-		<select
-			multiple
-			className={classes.input}
-			onChange={(event: ChangeEvent<HTMLSelectElement>) => {
-				setValue(
-					Array.from(
-						event.target.selectedOptions,
-						(option) => option.value
-					)
-				)
-			}}
-			value={value as string[]}
-		>
-			{options?.map((option) => (
-				<option key={option.value} value={option.value}>
-					{option.label}
-				</option>
-			))}
-		</select>
+		<CustomSelect
+			items={items}
+			itemRenderer={renderer}
+			context={context}
+			selectedItems={selectedItems}
+			onSelect={(item: collection.SelectOption) =>
+				setValue([...value, item.value])
+			}
+			onUnSelect={(item: collection.SelectOption) =>
+				setValue(value.filter((el) => el !== item.value))
+			}
+			searchFilter={(item: collection.SelectOption, search: string) =>
+				item.label.includes(search)
+			}
+			getItemKey={(item: collection.SelectOption) => item.value}
+		/>
 	)
 }
 
