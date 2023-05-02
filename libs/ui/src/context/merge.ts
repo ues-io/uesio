@@ -15,7 +15,7 @@ type MergeType =
 	| "User"
 	| "Time"
 	| "Date"
-	| "RecordId"
+	| "RecordMeta"
 	| "Theme"
 	| "File"
 	| "UserFile"
@@ -133,7 +133,25 @@ const handlers: Record<MergeType, MergeHandler> = {
 		if (!value) return ""
 		return value.toLocaleDateString(undefined, { timeZone: "UTC" })
 	},
-	RecordId: (expression, context) => context.getRecordId() || "",
+	RecordMeta: (expression, context) => {
+		const record = context.getRecord()
+		if (expression === "id") {
+			return record?.getId() || ""
+		}
+		if (expression === "uniqueKey") {
+			return record?.getUniqueKey() || ""
+		}
+		if (expression === "index") {
+			return `${context.getRecordDataIndex() || 0}`
+		}
+		if (expression === "isNew") {
+			return `${record?.isNew() || false}`
+		}
+		if (expression === "isDeleted") {
+			return `${record?.isDeleted() || false}`
+		}
+		return ""
+	},
 	Theme: (expression, context) => {
 		const [scope, value] = expression.split(".")
 		const theme = context.getTheme()

@@ -1,15 +1,17 @@
 name: secondarytoolbar
 label: Secondary Toolbar Button
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      color: "#888"
-      padding: 6px 14px
-      fontSize: 8pt
-      borderRadius: 8px
-      letterSpacing: 0.8px
-      border: "1px solid #eee"
-      whiteSpace: nowrap
-      textTransform: uppercase
-      backgroundColor: white
+      - text-slate-600
+      - px-3
+      - py-1
+      - rounded
+      - text-xs
+      - text-[8pt]
+      - uppercase
+      - border
+      - border-slate-200
+      - whitespace-nowrap
+      - bg-slate-50
 public: true

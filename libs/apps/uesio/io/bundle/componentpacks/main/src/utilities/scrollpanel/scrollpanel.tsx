@@ -7,13 +7,13 @@ interface ScrollPanelProps extends definition.UtilityProps {
 }
 
 const StyleDefaults = Object.freeze({
-	root: {},
-	inner: {},
+	root: [],
+	inner: [],
 })
 
 const ScrollPanel = forwardRef<HTMLDivElement, ScrollPanelProps>(
 	(props, ref) => {
-		const classes = styles.useUtilityStyles(
+		const classes = styles.useUtilityStyleTokens(
 			StyleDefaults,
 			props,
 			"uesio/io.scrollpanel"

@@ -10,7 +10,7 @@ interface SelectFieldProps extends definition.UtilityProps {
 	fieldMetadata: collection.Field
 	fieldId: string
 	mode?: context.FieldMode
-	options: collection.SelectOption[] | null
+	options: wire.SelectOption[] | null
 	readonly?: boolean
 }
 

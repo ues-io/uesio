@@ -10,14 +10,12 @@ interface UploadAreaProps extends definition.UtilityProps {
 }
 
 const StyleDefaults = Object.freeze({
-	root: {},
-	fileinput: {
-		display: "none",
-	},
+	root: [],
+	fileinput: ["hidden"],
 })
 
 const UploadArea: FunctionComponent<UploadAreaProps> = (props) => {
-	const classes = styles.useUtilityStyles(StyleDefaults, props)
+	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
 	const {
 		children,

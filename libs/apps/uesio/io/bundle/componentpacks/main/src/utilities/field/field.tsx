@@ -118,7 +118,7 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 		labelVariant,
 	}
 
-	let selectOptions: collection.SelectOption[]
+	let selectOptions: wire.SelectOption[]
 	let multiSelectProps
 	let content: ReactElement
 
