@@ -4,7 +4,7 @@ interface DateFilterProps {
 	path: string
 	wire: wire.Wire
 	fieldMetadata: collection.Field
-    condition: wire.ValueConditionState
+	condition: wire.ValueConditionState
 }
 
 const parseDateConditionValue = (value: wire.FieldValue) => {
@@ -16,15 +16,15 @@ const parseDateConditionValue = (value: wire.FieldValue) => {
 }
 
 const StyleDefaults = Object.freeze({
-	input: {},
-	readonly: {},
+	input: [],
+	readonly: [],
 })
 
 const DateFilter: definition.UtilityComponent<DateFilterProps> = (props) => {
 	const { wire, context, condition } = props
 	const wireId = wire.getId()
 
-	const classes = styles.useUtilityStyles(
+	const classes = styles.useUtilityStyleTokens(
 		StyleDefaults,
 		props,
 		"uesio/io.field"
@@ -45,8 +45,8 @@ const DateFilter: definition.UtilityComponent<DateFilterProps> = (props) => {
 							condition: {
 								...condition,
 								value,
-                                active: !!value,
-                                operator: "EQ"
+								active: !!value,
+								operator: "EQ",
 							},
 						},
 						{

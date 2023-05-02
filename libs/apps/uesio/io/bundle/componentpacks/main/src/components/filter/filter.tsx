@@ -49,10 +49,9 @@ const getFilterContent = (
 		case "SELECT":
 			return <SelectFilter {...common} />
 		case "DATE": {
-			if (displayAs === "DATE") return <DateFilter {...common} />
 			if (displayAs === "MONTH") return <MonthFilter {...common} />
 			if (displayAs === "WEEK") return <WeekFilter {...common} />
-			return null
+			return <DateFilter {...common} />
 		}
 		default:
 			return null
