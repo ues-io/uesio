@@ -64,8 +64,7 @@ const getDefaultCondition = (path: string, fieldMetadata: collection.Field) => {
 	const type = fieldMetadata.getType()
 
 	switch (type) {
-		case "DATE":
-		case "TIMESTAMP": {
+		case "DATE" || "TIMESTAMP": {
 			return {
 				id: path,
 				operator: "IN",

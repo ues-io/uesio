@@ -5,7 +5,6 @@ interface TimestampFilter {
 	wire: wire.Wire
 	fieldMetadata: collection.Field
     condition: wire.ValueConditionState
-    value: wire.FieldValue
 }
 
 const toTimestamp = (date: string) => {
@@ -26,7 +25,7 @@ const StyleDefaults = Object.freeze({
 const TimestampFilter: definition.UtilityComponent<TimestampFilter> = (props) => {
 	const { wire, context, condition } = props
 	const wireId = wire.getId()
-    const timestamp = props.value as number
+    const timestamp = condition.value as number
     const date = new Date(timestamp * 1000)
 	const classes = styles.useUtilityStyles(
 		StyleDefaults,
