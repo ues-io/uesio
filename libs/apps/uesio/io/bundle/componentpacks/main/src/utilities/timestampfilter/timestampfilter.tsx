@@ -14,7 +14,7 @@ const toTimestamp = (date: string) => {
 
 const datetimeLocal = (dt: Date) => {
 	dt.setMinutes(dt.getMinutes() - dt.getTimezoneOffset())
-	return dt.toISOString().slice(0, 16)
+	return dt.toISOString().slice(0, 19)
 }
 
 const StyleDefaults = Object.freeze({
