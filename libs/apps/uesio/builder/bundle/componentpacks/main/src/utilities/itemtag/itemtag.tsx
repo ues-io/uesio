@@ -4,23 +4,16 @@ type Props = {
 	description?: string
 }
 
+const StyleDefaults = Object.freeze({
+	root: ["m-2"],
+	title: ["grid", "align-middle", "mb-1", "grid-flow-col", "justify-between"],
+	desc: ["text-xs", "font-light"],
+})
+
 const ItemTag: definition.UtilityComponent<Props> = (props) => {
 	const { description, children } = props
 
-	const classes = styles.useUtilityStyleTokens(
-		{
-			root: ["m-2"],
-			title: [
-				"grid",
-				"align-middle",
-				"mb-1",
-				"grid-flow-col",
-				"justify-between",
-			],
-			desc: ["text-xs", "font-light"],
-		},
-		props
-	)
+	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
 	return (
 		<div className={classes.root}>
