@@ -14,6 +14,13 @@ properties:
     label: Wire
     type: WIRE
     required: true
+  - name: conditionId
+    type: CONDITION
+    label: Condition ID
+    wireField: wire
+    displayConditions:
+      - type: hasNoValue
+        value: ${fieldId}
   - name: fieldId
     type: FIELD
     label: Field
@@ -48,18 +55,14 @@ properties:
         value: top
       - label: Left
         value: left
-  - name: conditionId
-    type: CONDITION
-    label: Condition ID
-    wireField: wire
 sections:
   - type: HOME
     properties:
       - wire
+      - conditionId
       - fieldId
       - displayAs
       - label
       - labelPosition
-      - conditionId
   - type: STYLES
   - type: DISPLAY

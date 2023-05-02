@@ -48,6 +48,33 @@ properties:
     min: 5
     max: 500
     step: 5
+  - name: rowactions
+    type: LIST
+    items:
+      addLabel: Add Row Action
+      displayTemplate: "${text}"
+      title: Row Action Properties
+      defaultDefinition:
+        text: New action
+      properties:
+        - name: text
+          label: Label
+          type: TEXT
+          required: true
+        - name: type
+          label: Type
+          type: SELECT
+          options:
+            - value: ""
+              label: Standalone
+            - value: DEFAULT
+              label: Row on-click
+      sections:
+        - type: HOME
+          properties:
+            - text
+            - type
+        - type: SIGNALS
 sections:
   - type: HOME
     properties:
@@ -60,6 +87,11 @@ sections:
     id: columns
     viewDefinition:
       - uesio/builder.tablecolumns: {}
+  - type: CUSTOM
+    label: Actions
+    id: rowactions
+    properties:
+      - rowactions
   - type: STYLES
   - type: DISPLAY
 signals:

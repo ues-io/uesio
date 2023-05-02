@@ -1,5 +1,12 @@
 import { FunctionComponent } from "react"
-import { definition, styles, context, collection, wire } from "@uesio/ui"
+import {
+	definition,
+	styles,
+	context,
+	collection,
+	wire,
+	component,
+} from "@uesio/ui"
 import TextField from "./text"
 
 interface SelectFieldProps extends definition.UtilityProps {
@@ -7,7 +14,7 @@ interface SelectFieldProps extends definition.UtilityProps {
 	value: wire.FieldValue
 	fieldMetadata: collection.Field
 	mode?: context.FieldMode
-	options: collection.SelectOption[] | null
+	options: wire.SelectOption[] | null
 	readonly?: boolean
 }
 
@@ -17,7 +24,7 @@ const StyleDefaults = Object.freeze({
 })
 
 const SelectField: FunctionComponent<SelectFieldProps> = (props) => {
-	const { readonly, setValue, mode, options, id } = props
+	const { readonly, setValue, mode, options, id, context } = props
 	const value = (props.value as string) || ""
 
 	if (mode === "READ") {
@@ -41,15 +48,15 @@ const SelectField: FunctionComponent<SelectFieldProps> = (props) => {
 				value={value}
 				id={id}
 			>
-				{options?.map((option) => (
-					<option
-						disabled={option.disabled}
-						key={option.value}
-						value={option.value}
-					>
-						{option.label}
-					</option>
-				))}
+				{options
+					?.filter(({ validFor }) =>
+						component.shouldAll(validFor, context)
+					)
+					.map(({ disabled, value, label }) => (
+						<option disabled={disabled} key={value} value={value}>
+							{label}
+						</option>
+					))}
 			</select>
 		</div>
 	)

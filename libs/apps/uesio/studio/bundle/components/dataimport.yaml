@@ -4,6 +4,7 @@ entrypoint: components/dataimport/dataimport
 variants:
   - uesio/io.selectfield:uesio/io.default
   - uesio/io.fieldlabel:uesio/io.default
+  - uesio/io.button:uesio/io.primary
 utilities:
   - uesio/io.tile
   - uesio/io.selectfield

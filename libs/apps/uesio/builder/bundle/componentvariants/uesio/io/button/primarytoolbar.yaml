@@ -2,10 +2,9 @@ name: primarytoolbar
 label: Primary Toolbar Button
 extends: uesio/builder.secondarytoolbar
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      color: "white"
-      fontWeight: 500
-      backgroundColor: rgb(255,94,47)
-      border: 1px solid rgb(255,94,47)
+      - text-white
+      - bg-[$Theme{color.primary}]
+      - border-transparent
 public: true

@@ -52,43 +52,40 @@ const usePanels = (
 	return [setDragging, width]
 }
 
+const separatorStyles = [
+	"flex",
+	"items-center",
+	"cursor-ew-resize",
+	"absolute",
+	"inset-0",
+	"h-full",
+	"group",
+	"z-10",
+	"w-2",
+]
+
+const grabberStyles = [
+	"bg-[rgb(255,94,47)]",
+	"w-1",
+	"h-12",
+	"rounded",
+	"-translate-x-1/2",
+	"opacity-50",
+	"cursor-ew-resize",
+	"transition-all",
+	"absolute",
+	"group-hover:opacity-100",
+]
+
 const AdjustableWidthArea: definition.UtilityComponent = (props) => {
 	const slideRef = useRef<HTMLDivElement>(null)
 	const [setDragging, codePanelWidth] = usePanels(slideRef.current)
 
-	const classes = styles.useUtilityStyles(
+	const classes = styles.useUtilityStyleTokens(
 		{
-			root: {
-				width: codePanelWidth + "px",
-			},
-			separator: {
-				display: "flex",
-				alignItems: "center",
-				cursor: "ew-resize",
-				width: "10px",
-				position: "absolute",
-				left: 0,
-				top: 0,
-				height: "100%",
-				zIndex: 1,
-
-				"&:hover span, &:active span": {
-					opacity: 1,
-					cursor: "ew-resize",
-				},
-			},
-			grabber: {
-				backgroundColor: "rgb(255, 94, 47)",
-				width: "4px",
-				height: "8em",
-				borderRadius: "6px",
-				transform: "translateX(-50%)",
-				opacity: 0.5,
-				cursor: "ew-resize",
-				maxHeight: "6em",
-				transition: "all 0.125s ease",
-				position: "absolute",
-			},
+			root: [`w-[${codePanelWidth + "px"}]`, "relative"],
+			separator: separatorStyles,
+			grabber: grabberStyles,
 		},
 		props
 	)
