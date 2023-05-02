@@ -1,0 +1,3 @@
+name: datefilter
+pack: main
+entrypoint: utilities/datefilter/datefilter
