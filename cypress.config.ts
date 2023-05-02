@@ -5,6 +5,7 @@ const studio_base_url =
 const automation_username = process.env.UESIO_AUTOMATION_USERNAME || "uesio"
 const automation_password = process.env.UESIO_AUTOMATION_PASSWORD
 const use_mock_login = process.env.UESIO_DEV
+const in_ci = process.env.CI === "true"
 
 if (!use_mock_login && !automation_password) {
 	throw new Error("UESIO_AUTOMATION_PASSWORD was not provided")
@@ -19,6 +20,7 @@ export default defineConfig({
 	},
 	video: false,
 	env: {
+		in_ci,
 		studio_base_url,
 		automation_password,
 		automation_username,

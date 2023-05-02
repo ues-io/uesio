@@ -1,8 +1,6 @@
 import { FunctionComponent, DragEvent } from "react"
 import { definition, component, styles, api, context as ctx } from "@uesio/ui"
 import { isDropAllowed, isNextSlot } from "../../shared/dragdrop"
-import TopActions from "../../shared/topactions"
-import BottomActions from "../../shared/bottomactions"
 import {
 	getComponentDef,
 	setDropPath,
@@ -115,37 +113,25 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 	const width = dimensions && dimensions[0]
 	const height = dimensions && dimensions[1]
 
-	const classes = styles.useUtilityStyles(
+	const classes = styles.useUtilityStyleTokens(
 		{
-			root: {
-				overflow: "hidden",
-				height: "100%",
-				padding: "30px 18px",
-				position: "relative",
-			},
+			root: ["overflow-hidden", "h-full", "relative"],
 
-			scrollwrapper: {
-				overflow: "auto",
-				height: "100%",
-				width: "100%",
-				padding: "8px",
-			},
+			scrollwrapper: ["overflow-auto", "h-full", "w-full"],
 
-			outerwrapper: {
-				position: "relative",
-				borderRadius: "8px",
-				overflow: "auto",
-				boxShadow: "rgb(0 0 0 / 10%) 0px 0px 8px",
-				background: "white",
-				width: width ? width + "px" : "100%",
-				height: height ? height + "px" : "100%",
-				margin: "0 auto",
-				transition: "all 0.3s ease",
-			},
-			contentwrapper: {
-				overflow: "auto",
-				height: "100%",
-			},
+			outerwrapper: [
+				"relative",
+				"overflow-auto",
+				"bg-white",
+				`w-[${width ? width + "px" : "100%"}]`,
+				`h-[${height ? height + "px" : "100%"}]`,
+				"mx-auto",
+				"transition-all",
+				"border",
+				"border-slate-300",
+				"rounded-md",
+			],
+			contentwrapper: ["overflow-auto", "h-full"],
 		},
 		props
 	)
@@ -234,7 +220,6 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 			onDrop={onDrop}
 			className={classes.root}
 		>
-			<TopActions id="topactions" context={context} />
 			<div className={classes.scrollwrapper}>
 				<div className={classes.outerwrapper}>
 					<div className={classes.contentwrapper}>
@@ -242,7 +227,6 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 					</div>
 				</div>
 			</div>
-			<BottomActions context={context} />
 		</div>
 	)
 }

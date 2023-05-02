@@ -289,7 +289,7 @@ const shouldAll = (
 	conditions: DisplayCondition[] | undefined,
 	context: Context
 ) => {
-	if (!conditions || !conditions.length) return true
+	if (!conditions?.length) return true
 	return conditions.every((condition) => should(condition, context))
 }
 

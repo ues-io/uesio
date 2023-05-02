@@ -1,32 +1,36 @@
 import { definition, hooks, component, api, styles } from "@uesio/ui"
 import Canvas from "./canvas"
 import { useBuilderState, useBuildMode } from "../../api/stateapi"
-import BuildArea from "./buildarea"
 import CodePanel from "./codepanel"
 import AdjustableWidthArea from "../../utilities/adjustablewidtharea/adjustablewidtharea"
 import PropertiesPanel from "./propertiespanel/propertiespanel"
 import ViewInfoPanel from "./viewinfopanel/viewinfopanel"
+import MainHeader from "./mainheader"
+import RightToolbar from "./righttoolbar"
+
+const StyleDefaults = Object.freeze({
+	root: [
+		"bg-slate-50",
+		"p-2",
+		"gap-2",
+		"h-full",
+		"grid-cols-[auto_1fr]",
+		"auto-cols-auto",
+		"grid-rows-[100%]",
+	],
+	configarea: ["auto-rows-fr", "gap-2"],
+})
 
 const MainWrapper: definition.UC = (props) => {
 	const { context } = props
 	const Grid = component.getUtility("uesio/io.grid")
+	const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
 
 	const [buildMode, setBuildMode] = useBuildMode(context)
 
 	const builderContext = context.addThemeFrame("uesio/studio.default")
 
-	const classes = styles.useStyles(
-		{
-			root: {
-				height: "100vh",
-			},
-			configarea: {
-				gridAutoRows: "1fr",
-				gap: "6px",
-			},
-		},
-		props
-	)
+	const classes = styles.useStyleTokens(StyleDefaults, props)
 
 	hooks.useHotKeyCallback(
 		"meta+u",
@@ -50,25 +54,31 @@ const MainWrapper: definition.UC = (props) => {
 	}
 
 	return (
-		<BuildArea
-			className={classes.root}
-			config={
+		<ScrollPanel
+			variant="uesio/io.default"
+			context={context}
+			header={<MainHeader context={builderContext} />}
+		>
+			<Grid className={classes.root} context={context}>
 				<Grid context={context} className={classes.configarea}>
 					<PropertiesPanel context={builderContext} />
 					<ViewInfoPanel context={builderContext} />
 				</Grid>
-			}
-			code={
-				showCode && (
-					<AdjustableWidthArea context={context}>
+				<Canvas context={context} children={props.children} />
+				{showCode && (
+					<AdjustableWidthArea
+						className="col-start-3"
+						context={context}
+					>
 						<CodePanel context={builderContext} />
 					</AdjustableWidthArea>
-				)
-			}
-			context={context}
-		>
-			<Canvas context={context} children={props.children} />
-		</BuildArea>
+				)}
+				<RightToolbar
+					className={`col-start-${showCode ? "4" : "3"}`}
+					context={context}
+				/>
+			</Grid>
+		</ScrollPanel>
 	)
 }
 

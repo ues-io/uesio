@@ -8,7 +8,7 @@ interface SelectFieldProps extends definition.UtilityProps {
 	width?: string
 	fieldMetadata: collection.Field
 	mode?: context.FieldMode
-	options: collection.SelectOption[] | null
+	options: wire.SelectOption[] | null
 }
 
 const StyleDefaults = Object.freeze({

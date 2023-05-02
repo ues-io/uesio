@@ -2,11 +2,12 @@ name: mainsection
 label: mainsection
 extends: uesio/io.default
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      borderRadius: "6px"
-      boxShadow: "rgb(0 0 0 / 10%) 0px 0px 8px"
-      background: "white"
-      position: relative
-      overflow: hidden
+      - bg-white
+      - relative
+      - rounded
+      - overflow-hidden
+      - shadow-lg
+      - shadow-slate-200
 public: true

@@ -1,5 +1,5 @@
 import { FunctionComponent, useState, useMemo, useEffect } from "react"
-import { definition, api, collection, util, component } from "@uesio/ui"
+import { definition, api, collection, util, component, styles } from "@uesio/ui"
 import ImportBodyItem from "./importbodyitem"
 import ImportButton from "./importbutton"
 
@@ -21,6 +21,13 @@ interface State {
 const DataImport: FunctionComponent<Props> = (props) => {
 	const Button = component.getUtility("uesio/io.button")
 	const { context, definition } = props
+
+	const classes = styles.useUtilityStyleTokens(
+		{
+			root: ["flex", "gap-4", "justify-between"],
+		},
+		props
+	)
 
 	const collectionId = context.mergeString(definition.collectionId)
 
@@ -120,23 +127,30 @@ const DataImport: FunctionComponent<Props> = (props) => {
 
 	return (
 		<>
-			<div style={{ display: "flex", gap: "5px", marginBottom: "1em" }}>
-				<div style={{ flex: 1 }}>
+			<div>
+				{!uploaded.success && (
 					<ImportButton
 						changeUploaded={changeUploaded}
 						context={context}
-						type={uploaded.success ? "button" : "area"}
+						type={"area"}
 					/>
-				</div>
+				)}
 				{uploaded.success && (
-					<Button
-						context={context}
-						variant={"uesio/io.primary"}
-						onClick={() => {
-							uploaded.file && upload(uploaded.file)
-						}}
-						label={"start import"}
-					/>
+					<div className={classes.root}>
+						<Button
+							context={context}
+							variant={"uesio/io.primary"}
+							onClick={() => {
+								uploaded.file && upload(uploaded.file)
+							}}
+							label={"start import"}
+						/>
+						<ImportButton
+							changeUploaded={changeUploaded}
+							context={context}
+							type={"button"}
+						/>
+					</div>
 				)}
 			</div>
 

@@ -111,7 +111,9 @@ type FieldsProperty = {
 
 type SelectProperty = {
 	type: "SELECT"
-	options: SelectOption[] | ((record: wire.PlainWireRecord) => SelectOption[])
+	options:
+		| wire.SelectOption[]
+		| ((record: wire.PlainWireRecord) => wire.SelectOption[])
 	required?: boolean
 	blankOptionLabel?: string
 } & BaseProperty
@@ -159,12 +161,6 @@ type IconProperty = {
 	type: "ICON"
 } & BaseProperty
 
-type SelectOption = {
-	value: string // TODO This should be able to be a boolean or number as well
-	label: string
-	disabled?: boolean
-}
-
 type ComponentProperty =
 	| BotProperty
 	| TextProperty
@@ -202,7 +198,6 @@ export type {
 	BotProperty,
 	ListPropertyItemsDefinition,
 	ComponentProperty,
-	SelectOption,
 	SelectProperty,
 	WireProperty,
 	MapProperty,
