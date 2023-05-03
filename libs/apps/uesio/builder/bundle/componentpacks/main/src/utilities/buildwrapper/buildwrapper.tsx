@@ -124,13 +124,11 @@ const BuildWrapper: definition.UC = (props) => {
 					index={index}
 					isHovering={true}
 					context={context}
+					data-placeholder="true"
 				/>
 			)}
 			<div
-				data-index={index}
 				ref={setAnchorEl}
-				data-accepts={[].join(",")}
-				data-path={path}
 				onDragStart={(e) => {
 					// We do this because we don't want
 					// this component to always be draggable
@@ -212,6 +210,7 @@ const BuildWrapper: definition.UC = (props) => {
 					isHovering={true}
 					context={context}
 					hideIfNotLast={true}
+					data-placeholder="true"
 				/>
 			)}
 		</>
