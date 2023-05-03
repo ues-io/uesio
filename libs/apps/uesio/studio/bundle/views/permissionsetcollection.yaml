@@ -141,8 +141,6 @@ definition:
                                         - type: fieldMode
                                           mode: EDIT
                                       signals:
-                                        - signal: wire/CANCEL
-                                          wire: permissionsets
                                         - signal: wire/RESET
                                           wire: permissionsets
                                         - signal: wire/LOAD
