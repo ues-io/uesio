@@ -66,6 +66,7 @@ type ValueConditionState = ConditionBase & {
 	field: string
 	valueSource: typeof VALUE | undefined
 	value: PlainFieldValue
+	values: PlainFieldValue[]
 	start?: PlainFieldValue
 	end?: PlainFieldValue
 	inclusiveStart?: boolean

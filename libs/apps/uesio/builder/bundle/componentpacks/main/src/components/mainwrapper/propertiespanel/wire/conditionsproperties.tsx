@@ -276,6 +276,29 @@ const ConditionsProperties: definition.UC = (props) => {
 			],
 		},
 		{
+			name: "values",
+			type: "LIST",
+			label: "Values",
+			items: {
+				title: "Value",
+				addLabel: "Add Value",
+				// displayTemplate: (record: wire.PlainWireRecord) =>
+				// 	getDisplayConditionLabel(
+				// 		record as component.DisplayCondition
+				// 	),
+				// defaultDefinition: { operator: "EQUALS" },
+				// properties: DisplayConditionProperties,
+			},
+			displayConditions: [
+				{
+					field: "valueSource",
+					value: "VALUE",
+					type: "fieldValue",
+					operator: "EQUALS",
+				},
+			],
+		},
+		{
 			name: "active",
 			type: "CHECKBOX",
 			label: "Active by default",
