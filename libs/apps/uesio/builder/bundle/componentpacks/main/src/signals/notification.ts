@@ -34,6 +34,11 @@ const signals: SignalBandDefinition = {
 					name: "details",
 					label: "Details",
 				},
+				{
+					type: "TEXT",
+					name: "id",
+					label: "ID",
+				},
 			],
 		},
 		[`${BAND}/REMOVE`]: {

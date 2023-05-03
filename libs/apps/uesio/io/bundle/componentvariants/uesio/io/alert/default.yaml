@@ -1,0 +1,9 @@
+name: default
+label: Default
+definition:
+  uesio.styleTokens:
+    root:
+      - text-slate-200
+      - rounded-full
+      - bg-white
+public: true

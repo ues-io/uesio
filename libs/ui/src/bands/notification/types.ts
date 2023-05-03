@@ -1,4 +1,4 @@
-type NotificationSeverity = "success" | "error" | "warning" | "info"
+type NotificationSeverity = "success" | "error" | "warning" | "info" | "loading"
 
 interface NotificationState {
 	id: string
