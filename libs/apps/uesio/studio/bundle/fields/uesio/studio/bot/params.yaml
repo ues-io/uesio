@@ -9,7 +9,7 @@ subfields:
   - name: type
     label: Parameter Type
     type: SELECT
-    selectList: uesio/studio.fieldtypes
+    selectList: uesio/studio.botparamtypes
   - name: required
     label: Required
     type: CHECKBOX
