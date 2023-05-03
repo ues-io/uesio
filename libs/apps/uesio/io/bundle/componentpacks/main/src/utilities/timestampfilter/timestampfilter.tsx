@@ -18,8 +18,8 @@ const datetimeLocal = (dt: Date) => {
 }
 
 const StyleDefaults = Object.freeze({
-	input: {},
-	readonly: {},
+	input: [],
+	readonly: [],
 })
 
 const TimestampFilter: definition.UtilityComponent<TimestampFilter> = (
@@ -29,7 +29,7 @@ const TimestampFilter: definition.UtilityComponent<TimestampFilter> = (
 	const wireId = wire.getId()
 	const timestamp = condition.value as number
 	const date = new Date(timestamp * 1000)
-	const classes = styles.useUtilityStyles(
+	const classes = styles.useUtilityStyleTokens(
 		StyleDefaults,
 		props,
 		"uesio/io.field"
