@@ -2,11 +2,11 @@ name: component
 dialect: "JAVASCRIPT"
 type: "GENERATOR"
 params:
-  pack:
+  - name: pack
     prompt: Component Pack Name
     type: METADATANAME
     default: main
-  name:
+  - name: name
     prompt: Component Name
     type: METADATANAME
 public: true

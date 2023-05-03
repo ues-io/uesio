@@ -97,6 +97,10 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.
 		return nil, err
 	}
 
-	return nil, datasource.CreateBundle(appID, workspace.Name, bundle, wsbs, session)
+	return map[string]interface{}{
+		"major": major,
+		"minor": minor,
+		"patch": patch,
+	}, datasource.CreateBundle(appID, workspace.Name, bundle, wsbs, session)
 
 }
