@@ -49,17 +49,16 @@ const MultiMetadataPicker: definition.UtilityComponent<
 		/>
 	)
 
-	const selectedItems = items
-		? items.filter((item: metadata.MetadataInfo) =>
-				value.includes(item.key)
-		  )
-		: []
-
-	const toSelectItems = selectedItems
-		? items
-				.filter((x) => !selectedItems.includes(x))
-				.concat(selectedItems.filter((x) => !items.includes(x)))
-		: items
+	const selectedItems = [], unselectedItems = [];
+	if (items) {
+	   for (const item of items) {
+		   if (value.includes(item.key)) {
+			   selectedItems.push(item)
+		   } else {
+			   unselectedItems.push(item)
+		   }
+	   }
+	}
 
 	return (
 		<FieldWrapper
@@ -70,7 +69,7 @@ const MultiMetadataPicker: definition.UtilityComponent<
 			errors={error ? [{ message: error }] : []}
 		>
 			<CustomSelect
-				items={toSelectItems}
+				items={unselectedItems}
 				itemRenderer={renderer}
 				variant={variant}
 				context={context}

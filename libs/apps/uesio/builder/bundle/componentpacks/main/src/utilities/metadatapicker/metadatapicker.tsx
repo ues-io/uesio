@@ -54,12 +54,6 @@ const MetadataPicker: definition.UtilityComponent<MetadataPickerProps> = (
 		? items.filter((item: metadata.MetadataInfo) => item.key === value)
 		: []
 
-	const toSelectItems = selectedItems
-		? items
-				.filter((x) => !selectedItems.includes(x))
-				.concat(selectedItems.filter((x) => !items.includes(x)))
-		: items
-
 	return (
 		<FieldWrapper
 			labelPosition={labelPosition}
@@ -69,7 +63,7 @@ const MetadataPicker: definition.UtilityComponent<MetadataPickerProps> = (
 			errors={error ? [{ message: error }] : []}
 		>
 			<CustomSelect
-				items={toSelectItems}
+				items={items}
 				itemRenderer={renderer}
 				variant={variant}
 				context={context}
