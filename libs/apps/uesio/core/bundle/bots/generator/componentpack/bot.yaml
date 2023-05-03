@@ -2,7 +2,7 @@ name: componentpack
 dialect: "JAVASCRIPT"
 type: "GENERATOR"
 params:
-  name:
+  - name: name
     prompt: Component Pack Name
     type: METADATANAME
     default: main
