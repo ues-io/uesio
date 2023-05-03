@@ -1,11 +1,8 @@
-import { useState } from "react"
 import { definition, styles, component } from "@uesio/ui"
 import PlaceHolder from "../placeholder/placeholder"
 import {
 	getBuilderNamespaces,
 	getComponentDef,
-	setDragPath,
-	setDropPath,
 	useDragPath,
 	useDropPath,
 } from "../../api/stateapi"
@@ -15,7 +12,6 @@ const BuildWrapper: definition.UC = (props) => {
 	const Text = component.getUtility("uesio/io.text")
 
 	const { children, path, context, componentType } = props
-	const [canDrag, setCanDrag] = useState(false)
 
 	const dragPath = useDragPath(context)
 	const dropPath = useDropPath(context)
@@ -34,16 +30,7 @@ const BuildWrapper: definition.UC = (props) => {
 	// from: ["components"]["0"]["mycomponent"]
 	// to:   ["components"]["0"]
 	const parent = fullPath.parent()
-	const [trueindex, grandparent] = parent.popIndex()
-
-	// Special handling for sibling records where the item being dragged
-	// has a lower index than this item. We need the item being dragged
-	// to not take up a spot so we reduce the index by one.
-	let index = trueindex
-	if (dragPath.isSet() && dragPath.itemType === "viewdef") {
-		const [dragIndex, dragParent] = dragPath.parent().popIndex()
-		if (dragParent.equals(grandparent) && dragIndex < index) index--
-	}
+	const [index, grandparent] = parent.popIndex()
 
 	const isDragging = dragPath.equals(fullPath)
 	const addBeforePlaceholder = grandparent
@@ -110,30 +97,8 @@ const BuildWrapper: definition.UC = (props) => {
 					data-placeholder="true"
 				/>
 			)}
-			<div
-				onDragStart={(e) => {
-					// We do this because we don't want
-					// this component to always be draggable
-					// that's why we do the setCanDrag thing
-					e.stopPropagation()
-					if (!dragPath.equals(fullPath)) {
-						setTimeout(() => {
-							setDragPath(context, fullPath)
-						})
-					}
-				}}
-				onDragEnd={() => {
-					setDropPath(context)
-					setDragPath(context)
-				}}
-				className={classes.root}
-				draggable={canDrag}
-			>
-				<div
-					className={classes.header}
-					onMouseDown={() => setCanDrag(true)}
-					onMouseUp={() => dragPath && setCanDrag(false)}
-				>
+			<div className={classes.root}>
+				<div className={classes.header}>
 					<Text
 						variant="uesio/io.icon"
 						className={classes.titleicon}

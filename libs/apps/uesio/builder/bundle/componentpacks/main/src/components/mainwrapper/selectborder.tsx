@@ -1,5 +1,9 @@
 import { definition, component, styles } from "@uesio/ui"
-import { useSelectedComponentPath } from "../../api/stateapi"
+import {
+	useSelectedComponentPath,
+	setDragPath,
+	useDragPath,
+} from "../../api/stateapi"
 import { useEffect, useState } from "react"
 import { FullPath } from "../../api/path"
 import DeleteAction from "../../actions/deleteaction"
@@ -7,7 +11,12 @@ import MoveActions from "../../actions/moveactions"
 import CloneAction from "../../actions/cloneaction"
 
 const StyleDefaults = Object.freeze({
-	selected: ["outline", "outline-2", "outline-blue-600"],
+	selected: [
+		"outline",
+		"outline-2",
+		"outline-blue-600",
+		"-outline-offset-[1px]",
+	],
 	popper: ["bg-blue-600", "rounded"],
 })
 
@@ -17,6 +26,8 @@ const SelectBorder: definition.UtilityComponent = (props) => {
 	const Popper = component.getUtility("uesio/io.popper")
 
 	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
+
+	const dragPath = useDragPath(context)
 
 	const selectedComponentPath = useSelectedComponentPath(context)
 
@@ -40,8 +51,27 @@ const SelectBorder: definition.UtilityComponent = (props) => {
 	}
 
 	useEffect(() => {
+		const onDragStart = (e: DragEvent) => {
+			// We do this because we don't want
+			// this component to always be draggable
+			// that's why we do the setCanDrag thing
+			e.stopPropagation()
+			if (!dragPath.equals(selectedComponentPath)) {
+				setTimeout(() => {
+					setDragPath(context, selectedComponentPath)
+				})
+			}
+		}
+
+		const onDragEnd = () => {
+			setDragPath(context)
+		}
+
 		if (selectedChild) {
 			selectedChild.classList.remove(...StyleDefaults.selected)
+			selectedChild.removeEventListener("dragstart", onDragStart)
+			selectedChild.removeEventListener("dragend", onDragEnd)
+			selectedChild.setAttribute("draggable", "false")
 		}
 
 		if (!selectedSlotPath) {
@@ -65,6 +95,9 @@ const SelectBorder: definition.UtilityComponent = (props) => {
 			if (index === selectedChildIndex) {
 				// We found our correct child ref.
 				child.classList.add(...StyleDefaults.selected)
+				child.addEventListener("dragstart", onDragStart)
+				child.addEventListener("dragend", onDragEnd)
+				child.setAttribute("draggable", "true")
 				setSelectedChild(child)
 			}
 			index++
