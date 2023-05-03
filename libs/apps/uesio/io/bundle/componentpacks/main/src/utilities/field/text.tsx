@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react"
+import { FunctionComponent, useState } from "react"
 import { definition, styles, context, wire } from "@uesio/ui"
 
 interface TextFieldProps extends definition.UtilityProps {
@@ -26,7 +26,10 @@ const TextField: FunctionComponent<TextFieldProps> = (props) => {
 		id,
 		focusOnRender,
 	} = props
-	const value = props.value as string
+	const [currentValue, setCurrentValue] = useState<string>(
+		`${props.value || ""}`
+	)
+
 	const classes = styles.useUtilityStyleTokens(
 		StyleDefaults,
 		props,
@@ -39,11 +42,14 @@ const TextField: FunctionComponent<TextFieldProps> = (props) => {
 		<input
 			id={id}
 			type={type}
-			value={value || ""}
+			value={currentValue || ""}
+			onBlur={({ target: { value } }) =>
+				value !== props.value ? setValue?.(value) : null
+			}
 			placeholder={placeholder}
 			className={styles.cx(classes.input, isReadMode && classes.readonly)}
 			disabled={isReadMode}
-			onChange={(event) => setValue?.(event.target.value)}
+			onChange={(event) => setCurrentValue(event.target.value)}
 			ref={(input: HTMLInputElement) => focusOnRender && input?.focus()}
 		/>
 	)
