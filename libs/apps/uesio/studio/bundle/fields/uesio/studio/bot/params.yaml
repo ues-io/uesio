@@ -1,11 +1,15 @@
 name: params
 type: LIST
 label: Params
-subType: STRUCT
-subFields:
-  - name: studio.name
+subtype: STRUCT
+subfields:
+  - name: name
     label: Parameter Name
-    type: Text
-  - name: studio.prompt
-    label: Parameter Prompt
     type: TEXT
+  - name: type
+    label: Parameter Type
+    type: SELECT
+    selectList: uesio/studio.fieldtypes
+  - name: required
+    label: Required
+    type: CHECKBOX

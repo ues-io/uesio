@@ -2,7 +2,14 @@ import { MetadataType } from "../bands/builder/types"
 
 type ParamBase = {
 	name: string
-	type: "RECORD" | "TEXT" | "METADATA" | "METADATAMULTI" | "METADATANAME"
+	type:
+		| "RECORD"
+		| "TEXT"
+		| "METADATA"
+		| "METADATAMULTI"
+		| "METADATANAME"
+		| "NUMBER"
+		| "CHECKBOX"
 	required?: boolean
 	default?: string
 	prompt?: string
@@ -16,6 +23,16 @@ type RecordParam = ParamBase & {
 type TextParam = ParamBase & {
 	type: "TEXT"
 	defaultValue: string
+}
+
+type NumberParam = ParamBase & {
+	type: "NUMBER"
+	defaultValue: number
+}
+
+type CheckboxParam = ParamBase & {
+	type: "CHECKBOX"
+	defaultValue: boolean
 }
 
 type MetadataParam = ParamBase & {
@@ -37,6 +54,8 @@ type MetadataNameParam = ParamBase & {
 export type ParamDefinition =
 	| RecordParam
 	| TextParam
+	| CheckboxParam
+	| NumberParam
 	| MetadataParam
 	| MetadataMultiParam
 	| MetadataNameParam

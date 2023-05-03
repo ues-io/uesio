@@ -41,8 +41,8 @@ func NewBaseBot(botType, collectionKey, namespace, name string) *Bot {
 }
 
 type BotParamCondition struct {
-	Param string      `yaml:"param" json:"uesio/studio.param"`
-	Value interface{} `yaml:"value" json:"uesio/studio.value"`
+	Param string      `yaml:"param" json:"param"`
+	Value interface{} `yaml:"value" json:"value"`
 }
 
 type BotParamConditionResponse struct {
@@ -51,14 +51,15 @@ type BotParamConditionResponse struct {
 }
 
 type BotParam struct {
-	Name         string              `yaml:"name" json:"uesio/studio.name"`
-	Prompt       string              `yaml:"prompt" json:"uesio/studio.prompt"`
-	Type         string              `yaml:"type" json:"uesio/studio.type"`
-	MetadataType string              `yaml:"metadataType" json:"uesio/studio.metadatatype"`
-	Grouping     string              `yaml:"grouping" json:"uesio/studio.grouping"`
-	Default      string              `yaml:"default" json:"uesio/studio.default"`
-	Choices      []string            `yaml:"choices" json:"uesio/studio.choices"`
-	Conditions   []BotParamCondition `yaml:"conditions,omitempty" json:"uesio/studio.conditions"`
+	Name         string              `yaml:"name" json:"name"`
+	Prompt       string              `yaml:"prompt" json:"prompt"`
+	Type         string              `yaml:"type" json:"type"`
+	MetadataType string              `yaml:"metadataType" json:"metadatatype"`
+	Grouping     string              `yaml:"grouping" json:"grouping"`
+	Required     bool                `yaml:"required" json:"required"`
+	Default      string              `yaml:"default" json:"default"`
+	Choices      []string            `yaml:"choices" json:"choices"`
+	Conditions   []BotParamCondition `yaml:"conditions,omitempty" json:"conditions"`
 }
 
 type BotParamResponse struct {
@@ -68,6 +69,7 @@ type BotParamResponse struct {
 	MetadataType string                      `json:"metadataType,omitempty"`
 	Grouping     string                      `json:"grouping"`
 	Default      string                      `json:"default"`
+	Required     bool                        `json:"required"`
 	Choices      []string                    `json:"choices"`
 	Conditions   []BotParamConditionResponse `json:"conditions"`
 	Collection   string                      `json:"collection"`
