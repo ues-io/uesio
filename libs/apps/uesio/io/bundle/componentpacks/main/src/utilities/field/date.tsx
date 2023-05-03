@@ -8,8 +8,8 @@ type DateFieldProps = {
 }
 
 const StyleDefaults = Object.freeze({
-	input: {},
-	readonly: {},
+	input: [],
+	readonly: [],
 })
 
 const DateField: definition.UtilityComponent<DateFieldProps> = (props) => {
@@ -36,7 +36,7 @@ const DateField: definition.UtilityComponent<DateFieldProps> = (props) => {
 		)
 	}
 
-	const classes = styles.useUtilityStyles(
+	const classes = styles.useUtilityStyleTokens(
 		StyleDefaults,
 		props,
 		"uesio/io.field"

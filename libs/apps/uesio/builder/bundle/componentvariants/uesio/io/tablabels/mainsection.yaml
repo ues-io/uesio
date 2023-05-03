@@ -12,11 +12,10 @@ definition:
       - leading-none
     tab:
       - uppercase
-      - px-1.5
-      - py-1
+      - p-1.5
       - text-[8pt]
       - rounded
-      - text-slate-100
+      - text-white
       - whitespace-nowrap
     tabSelected:
       - text-slate-700

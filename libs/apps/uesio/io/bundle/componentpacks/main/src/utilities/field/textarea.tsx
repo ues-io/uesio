@@ -1,6 +1,5 @@
 import { ChangeEvent, FunctionComponent } from "react"
 import { definition, styles, context, wire } from "@uesio/ui"
-import { CSSInterpolation } from "@emotion/css"
 
 export type LongTextFieldOptions = {
 	cols?: number
@@ -16,17 +15,15 @@ interface TextAreaFieldProps extends definition.UtilityProps {
 }
 
 const StyleDefaults = Object.freeze({
-	input: {
-		resize: "none", // would be nicer to have this on implementation level
-	},
-	readonly: {},
-} as Record<string, CSSInterpolation>)
+	input: [],
+	readonly: [],
+})
 
 const TextAreaField: FunctionComponent<TextAreaFieldProps> = (props) => {
 	const { id, mode, placeholder, options, setValue } = props
 	const value = props.value as string
 	const readonly = mode === "READ"
-	const classes = styles.useUtilityStyles(
+	const classes = styles.useUtilityStyleTokens(
 		StyleDefaults,
 		props,
 		"uesio/io.field"
