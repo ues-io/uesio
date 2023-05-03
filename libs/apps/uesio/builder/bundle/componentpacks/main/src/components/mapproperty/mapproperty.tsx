@@ -43,7 +43,7 @@ const MapProperty: definition.UC<Definition> = (props) => {
 				<BuildActionsArea justify="space-around" context={context}>
 					<Button
 						context={context}
-						variant="uesio/builder.actionbutton"
+						variant="uesio/builder.panelactionbutton"
 						icon={
 							<Icon
 								context={context}

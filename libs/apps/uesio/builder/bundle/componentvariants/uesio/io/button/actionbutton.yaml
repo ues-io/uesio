@@ -1,17 +1,15 @@
 name: actionbutton
 label: Action Button
+extends: uesio/io.default
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      color: "#444"
-      padding: 4px 8px
-      fontSize: 8pt
-      whiteSpace: nowrap
-      backgroundColor: inherit
-      textTransform: uppercase
-      "&:focus":
-        outline: none
-        color: $Theme{color.primary}
+      - text-slate-600
+      - p-2
+      - text-xs
+      - whitespace-nowrap
+      - uppercase
+      - leading-none
     disabled:
-      opacity: "0.3"
+      - opacity-30
 public: true

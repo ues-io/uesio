@@ -16,14 +16,14 @@ interface TabsUtilityProps extends definition.UtilityProps {
 }
 
 const StyleDefaults = Object.freeze({
-	root: {},
-	tab: {},
-	tabSelected: {},
+	root: [],
+	tab: [],
+	tabSelected: [],
 })
 
 const TabLabels: FunctionComponent<TabsUtilityProps> = (props) => {
 	const { tabs, selectedTab, setSelectedTab, context } = props
-	const classes = styles.useUtilityStyles(
+	const classes = styles.useUtilityStyleTokens(
 		StyleDefaults,
 		props,
 		"uesio/io.tablabels"

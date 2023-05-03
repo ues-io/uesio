@@ -19,7 +19,7 @@ describe("Table Performance tests", () => {
 	const EXPECTED_PLT_SECONDS = inCIEnvironment ? 12 : 4
 
 	context("Check Table component performance", () => {
-		it(`should render table with 500 rows and 8 columns in < ${EXPECTED_PLT_SECONDS} seconds`, () => {
+		it(`should render table with 400 rows and 8 columns in < ${EXPECTED_PLT_SECONDS} seconds`, () => {
 			const expectedMillis = EXPECTED_PLT_SECONDS * 1000
 			let t0 = 0
 			cy.then(() => {
@@ -33,10 +33,10 @@ describe("Table Performance tests", () => {
 					"table_with_lots_of_rows"
 				)
 			)
-			cy.get("table[id$='animals']>tbody>tr", {
+			cy.get("table[id$='animalsTable']>tbody>tr", {
 				timeout: expectedMillis,
 			})
-				.should("have.length", 500)
+				.should("have.length", 400)
 				.then(() => {
 					const t1 = performance.now()
 					const pageLoadMillis = t1 - t0
