@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"path/filepath"
+	"strconv"
 
 	"gopkg.in/yaml.v3"
 )
@@ -41,8 +42,8 @@ func NewBaseBot(botType, collectionKey, namespace, name string) *Bot {
 }
 
 type BotParamCondition struct {
-	Param string      `yaml:"param" json:"uesio/studio.param"`
-	Value interface{} `yaml:"value" json:"uesio/studio.value"`
+	Param string      `yaml:"param" json:"param"`
+	Value interface{} `yaml:"value" json:"value"`
 }
 
 type BotParamConditionResponse struct {
@@ -51,14 +52,15 @@ type BotParamConditionResponse struct {
 }
 
 type BotParam struct {
-	Name         string              `yaml:"name" json:"uesio/studio.name"`
-	Prompt       string              `yaml:"prompt" json:"uesio/studio.prompt"`
-	Type         string              `yaml:"type" json:"uesio/studio.type"`
-	MetadataType string              `yaml:"metadataType" json:"uesio/studio.metadatatype"`
-	Grouping     string              `yaml:"grouping" json:"uesio/studio.grouping"`
-	Default      string              `yaml:"default" json:"uesio/studio.default"`
-	Choices      []string            `yaml:"choices" json:"uesio/studio.choices"`
-	Conditions   []BotParamCondition `yaml:"conditions,omitempty" json:"uesio/studio.conditions"`
+	Name         string              `yaml:"name" json:"name"`
+	Prompt       string              `yaml:"prompt,omitempty" json:"prompt"`
+	Type         string              `yaml:"type" json:"type"`
+	MetadataType string              `yaml:"metadataType,omitempty" json:"metadatatype"`
+	Grouping     string              `yaml:"grouping,omitempty" json:"grouping"`
+	Required     bool                `yaml:"required" json:"required"`
+	Default      string              `yaml:"default,omitempty" json:"default"`
+	Choices      []string            `yaml:"choices,omitempty" json:"choices"`
+	Conditions   []BotParamCondition `yaml:"conditions,omitempty" json:"conditions"`
 }
 
 type BotParamResponse struct {
@@ -68,6 +70,7 @@ type BotParamResponse struct {
 	MetadataType string                      `json:"metadataType,omitempty"`
 	Grouping     string                      `json:"grouping"`
 	Default      string                      `json:"default"`
+	Required     bool                        `json:"required"`
 	Choices      []string                    `json:"choices"`
 	Conditions   []BotParamConditionResponse `json:"conditions"`
 	Collection   string                      `json:"collection"`
@@ -76,32 +79,6 @@ type BotParamResponse struct {
 type BotParams []BotParam
 
 type BotParamsResponse []BotParamResponse
-
-func (bp *BotParams) UnmarshalYAML(node *yaml.Node) error {
-	if *bp == nil {
-		*bp = *(&[]BotParam{})
-	}
-	for i := range node.Content {
-		if i%2 == 0 {
-
-			var key string
-			var value BotParam
-			err := node.Content[i].Decode(&key)
-			if err != nil {
-				return err
-			}
-			err = node.Content[i+1].Decode(&value)
-			if err != nil {
-				return err
-			}
-
-			value.Name = key
-			*bp = append(*bp, value)
-		}
-	}
-
-	return nil
-}
 
 type Bot struct {
 	BuiltIn        `yaml:",inline"`
@@ -211,4 +188,51 @@ func (b *Bot) UnmarshalYAML(node *yaml.Node) error {
 		return err
 	}
 	return node.Decode((*BotWrapper)(b))
+}
+
+type BotParamValidationError struct {
+	Message string
+	Param   string
+}
+
+func (e *BotParamValidationError) Error() string {
+	return fmt.Sprintf("%s: %s", e.Message, e.Param)
+}
+
+func NewParamError(message string, param string) error {
+	return &BotParamValidationError{Param: param, Message: message}
+}
+
+// ValidateParams checks validates received a map of provided bot params
+// agaisnt any bot parameter metadata defined for the Bot
+func (b *Bot) ValidateParams(params map[string]interface{}) error {
+
+	for _, param := range b.Params {
+		paramValue := params[param.Name]
+		// First check for requiredness
+		if paramValue == nil {
+			if param.Required {
+				return NewParamError("missing required param", param.Name)
+			} else {
+				// Don't bother performing any further validation if the param is not provided
+				// and is not required
+				continue
+			}
+		}
+		// Next do type-specific validation
+		switch param.Type {
+		case "NUMBER":
+			// Cast to the corresponding type
+			_, ok := paramValue.(float64)
+			if !ok {
+				return NewParamError("could not convert param to number", param.Name)
+			}
+		case "CHECKBOX":
+			// Cast to the corresponding type
+			if _, err := strconv.ParseBool(paramValue.(string)); err != nil {
+				return NewParamError("param value must either be 'true' or 'false'", param.Name)
+			}
+		}
+	}
+	return nil
 }

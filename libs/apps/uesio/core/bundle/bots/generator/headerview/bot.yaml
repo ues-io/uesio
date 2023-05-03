@@ -2,22 +2,22 @@ name: headerview
 dialect: "JAVASCRIPT"
 type: "GENERATOR"
 params:
-  name:
+  - name: name
     prompt: View Name
     type: METADATANAME
-  logo:
+  - name: logo
     prompt: Logo
     type: METADATA
     metadataType: FILE
-  logoheight:
+  - name: logoheight
     prompt: Logo Height
     type: TEXT
     default: 36px
-  backgroundcolor:
+  - name: backgroundcolor
     prompt: Background Color
     type: TEXT
     default: rgb(32,29,29)
-  collections:
+  - name: collections
     prompt: Collections
     type: METADATAMULTI
     metadataType: COLLECTION

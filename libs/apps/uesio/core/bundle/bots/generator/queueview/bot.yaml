@@ -2,26 +2,26 @@ name: queueview
 dialect: "JAVASCRIPT"
 type: "GENERATOR"
 params:
-  name:
+  - name: name
     prompt: View Name
     type: METADATANAME
-  collection:
+  - name: collection
     prompt: Collection
     type: METADATA
     metadataType: COLLECTION
-  fields:
+  - name: fields
     prompt: Fields
     type: METADATAMULTI
     metadataType: FIELD
     grouping: ${collection}
-  detailview:
+  - name: detailview
     prompt: Detail View
     type: METADATA
     metadataType: VIEW
-  addheaderview:
+  - name: addheaderview
     prompt: Add Header View?
     type: BOOL
-  headerview:
+  - name: headerview
     prompt: Header View
     type: METADATA
     metadataType: VIEW
