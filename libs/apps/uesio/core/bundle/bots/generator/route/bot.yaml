@@ -2,16 +2,16 @@ name: route
 dialect: "JAVASCRIPT"
 type: "GENERATOR"
 params:
-  name:
+  - name: name
     prompt: Route name
     type: METADATANAME
-  path:
+  - name: path
     prompt: Path
-  view:
+  - name: view
     prompt: select a view
     type: METADATA
     metadataType: VIEW
-  theme:
+  - name: theme
     prompt: select a theme
     type: METADATA
     metadataType: THEME
