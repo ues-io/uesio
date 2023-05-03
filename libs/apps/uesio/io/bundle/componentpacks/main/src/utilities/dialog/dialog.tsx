@@ -14,19 +14,14 @@ interface DialogUtilityProps extends definition.UtilityProps {
 	actions?: ReactNode
 }
 
-const StyleDefaults = {
-	root: {
-		gridTemplateRows: "auto 1fr auto",
-		height: "100%",
-	},
-	content: {
-		padding: "20px",
-		overflow: "auto",
-	},
-}
+const StyleDefaults = Object.freeze({
+	root: ["grid-rows-[auto_1fr_auto]", "h-full"],
+	content: ["p-5", "overflow-auto"],
+	footer: ["p-5", "justify-end"],
+})
 
 const Dialog: FunctionComponent<DialogUtilityProps> = (props) => {
-	const classes = styles.useUtilityStyles(StyleDefaults, props)
+	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 	const { context, title, onClose, width, height, children, actions } = props
 	return (
 		<DialogPlain
@@ -50,15 +45,7 @@ const Dialog: FunctionComponent<DialogUtilityProps> = (props) => {
 					}
 				/>
 				<div className={classes.content}>{children}</div>
-				<Group
-					styles={{
-						root: {
-							justifyContent: "end",
-							padding: "20px",
-						},
-					}}
-					context={context}
-				>
+				<Group className={classes.footer} context={context}>
 					{actions}
 				</Group>
 			</Grid>

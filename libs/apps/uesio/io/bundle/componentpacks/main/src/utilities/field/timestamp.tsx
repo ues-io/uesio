@@ -21,8 +21,8 @@ const datetimeLocal = (dt: Date) => {
 }
 
 const StyleDefaults = Object.freeze({
-	input: {},
-	readonly: {},
+	input: [],
+	readonly: [],
 })
 
 const TimestampField: FunctionComponent<TimestampFieldProps> = (props) => {
@@ -37,7 +37,7 @@ const TimestampField: FunctionComponent<TimestampFieldProps> = (props) => {
 		return <TextField {...props} value={value} mode="READ" />
 	}
 
-	const classes = styles.useUtilityStyles(
+	const classes = styles.useUtilityStyleTokens(
 		StyleDefaults,
 		props,
 		"uesio/io.field"

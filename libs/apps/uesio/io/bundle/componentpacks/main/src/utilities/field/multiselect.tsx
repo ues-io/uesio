@@ -1,6 +1,5 @@
 import { ChangeEvent, FunctionComponent } from "react"
 import { definition, styles, context, collection, wire } from "@uesio/ui"
-import { CSSInterpolation } from "@emotion/css"
 
 interface SelectFieldProps extends definition.UtilityProps {
 	setValue: (value: wire.PlainFieldValue[]) => void
@@ -12,10 +11,8 @@ interface SelectFieldProps extends definition.UtilityProps {
 }
 
 const StyleDefaults = Object.freeze({
-	input: {
-		appearance: "none",
-	},
-} as Record<string, CSSInterpolation>)
+	input: [],
+})
 
 const MultiSelectField: FunctionComponent<SelectFieldProps> = (props) => {
 	const { setValue, value, mode, options } = props
@@ -31,7 +28,7 @@ const MultiSelectField: FunctionComponent<SelectFieldProps> = (props) => {
 		return <span>{displayLabel || ""}</span>
 	}
 
-	const classes = styles.useUtilityStyles(StyleDefaults, props)
+	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
 	return (
 		<select

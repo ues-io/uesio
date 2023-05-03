@@ -26,6 +26,7 @@ const getWireRequest = (
 			// to avoid sending things like data/changes/originals which are not needed for loads
 			batchid,
 			batchnumber,
+			batchsize,
 			collection,
 			conditions,
 			fields,
@@ -38,6 +39,7 @@ const getWireRequest = (
 		}) => ({
 			batchid,
 			batchnumber: resetBatchNumber ? 0 : batchnumber,
+			batchsize,
 			collection,
 			conditions: conditions?.filter(
 				(condition) => condition.active !== false

@@ -1,0 +1,23 @@
+name: simple_wire_load
+definition:
+  # Wires connect to data in collections
+  wires:
+    animals:
+      collection: uesio/tests.animal
+      fields:
+        uesio/tests.genus:
+        uesio/tests.species:
+        uesio/tests.total_population:
+        uesio/tests.lookalike:
+        uesio/tests.ancestor:
+        uesio/core.owner:
+        uesio/core.updatedby:
+        uesio/core.updatedat:
+        uesio/core.createdby:
+        uesio/core.createdat:
+      order:
+        - field: uesio/tests.genus
+        - field: uesio/tests.species
+      batchsize: 10
+  # Components determine the layout and composition of your view
+  components:

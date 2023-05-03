@@ -57,7 +57,7 @@ const ListProperty: definition.UtilityComponent<Props> = (props) => {
 						<Button
 							context={context}
 							key={label}
-							variant="uesio/builder.actionbutton"
+							variant="uesio/builder.panelactionbutton"
 							icon={
 								<Icon
 									context={context}

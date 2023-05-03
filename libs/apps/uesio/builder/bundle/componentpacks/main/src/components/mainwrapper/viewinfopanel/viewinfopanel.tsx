@@ -7,6 +7,18 @@ import { getComponentDef } from "../../../api/stateapi"
 
 const defaultPanelComponentType = "uesio/io.dialog"
 
+const SimpleTagContent = [
+	{
+		"uesio/io.text": {
+			"uesio.styleTokens": {
+				root: ["m-2"],
+			},
+			element: "div",
+			text: "${key}",
+		},
+	},
+]
+
 const ViewInfoPanel: definition.UtilityComponent = (props) => {
 	const { context } = props
 
@@ -32,14 +44,7 @@ const ViewInfoPanel: definition.UtilityComponent = (props) => {
 		},
 		{
 			name: "panels",
-			content: [
-				{
-					"uesio/io.text": {
-						element: "div",
-						text: "${key}",
-					},
-				},
-			],
+			content: SimpleTagContent,
 			defaultDefinition: {
 				"uesio.type": defaultPanelComponentType,
 				components: [],
@@ -51,14 +56,7 @@ const ViewInfoPanel: definition.UtilityComponent = (props) => {
 		},
 		{
 			name: "params",
-			content: [
-				{
-					"uesio/io.text": {
-						element: "div",
-						text: "${key}",
-					},
-				},
-			],
+			content: SimpleTagContent,
 			defaultDefinition: {
 				type: "RECORD",
 				required: true,

@@ -11,5 +11,5 @@ definition:
       - justify-center
       - gap-x-2
       - items-center
-      - text-[10pt]
+      - text-sm
 public: true

@@ -7,33 +7,26 @@ interface Props {
 	actions?: ReactNode
 }
 
+const StyleDefaults = Object.freeze({
+	root: ["flex", "p-2", "relative", "bg-slate-50", "align-center", "gap-2"],
+	input: [
+		"grow",
+		"text-xs",
+		"px-2",
+		"py-1.5",
+		"rounded",
+		"border",
+		"border-slate-200",
+		"text-slate-700",
+		"outline-offset-0",
+	],
+	actions: ["grow-0"],
+})
+
 const SearchArea: definition.UtilityComponent<Props> = (props) => {
 	const { searchTerm, setSearchTerm, actions } = props
 
-	const classes = styles.useUtilityStyles(
-		{
-			root: {
-				display: "flex",
-				padding: "8px",
-				position: "relative",
-				backgroundColor: "#fafafa",
-				alignItems: "center",
-				gap: "6px",
-			},
-			input: {
-				flex: 1,
-				fontSize: "8pt",
-				padding: "6px 8px",
-				borderRadius: "8px",
-				border: "1px solid #ddd",
-				color: "#777",
-			},
-			actions: {
-				flex: 0,
-			},
-		},
-		props
-	)
+	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 	return (
 		<div className={classes.root}>
 			<input

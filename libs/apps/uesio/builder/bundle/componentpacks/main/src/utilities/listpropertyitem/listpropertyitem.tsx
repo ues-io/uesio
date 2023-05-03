@@ -10,6 +10,7 @@ import { ComponentProperty } from "../../properties/componentproperty"
 import { PropertiesPanelSection } from "../../api/propertysection"
 import { ReactNode } from "react"
 import CloneAction from "../../actions/cloneaction"
+import ItemTag from "../itemtag/itemtag"
 
 export type PropertiesGetter = (
 	item: wire.PlainWireRecord
@@ -80,11 +81,11 @@ const ListPropertyItem: definition.UtilityComponent<Props> = (props) => {
 				)
 			}
 		>
-			<div className="tagroot">
+			<ItemTag context={context}>
 				{typeof displayTemplate === "function"
 					? displayTemplate(record.source)
 					: context.merge(displayTemplate)}
-			</div>
+			</ItemTag>
 			{itemChildren?.(record.source, index as number)}
 			<IOExpandPanel context={context} expanded={selected}>
 				<BuildActionsArea context={context}>
