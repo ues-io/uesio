@@ -1,10 +1,9 @@
-import { component, definition } from "@uesio/ui"
-import { useDefinition } from "../../../api/defapi"
+import { definition } from "@uesio/ui"
 import { isStylesSection } from "../../../api/propertysection"
 import {
 	ComponentDef,
 	getComponentDef,
-	useSelectedPath,
+	useSelectedComponentPath,
 } from "../../../api/stateapi"
 import PropertiesForm from "../../../helpers/propertiesform"
 
@@ -28,21 +27,7 @@ function getSections(componentType: string, componentDef?: ComponentDef) {
 const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 	const { context } = props
 
-	const selectedPath = useSelectedPath(context)
-
-	const selectedDef = useDefinition(selectedPath)
-
-	const [key] = selectedPath.pop()
-
-	let path = selectedPath
-
-	// If our topmost key was an index we need to get the next one
-	// from the definition
-	if (component.path.isNumberIndex(key) && selectedDef) {
-		path = selectedPath.addLocal(Object.keys(selectedDef)[0])
-	}
-	// Trim our path down to our nearest component
-	path = path.trim()
+	const path = useSelectedComponentPath(context)
 
 	const [componentType] = path.pop()
 	const componentDef = getComponentDef(context, componentType)

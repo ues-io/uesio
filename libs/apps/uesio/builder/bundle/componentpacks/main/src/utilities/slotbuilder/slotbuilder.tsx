@@ -28,11 +28,10 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 
 	useEffect(() => {
 		const parentElem = ref?.current?.parentElement
-		if (parentElem) {
-			parentElem.setAttribute("data-accepts", accepts.join(","))
-			parentElem.setAttribute("data-direction", direction || "")
-			parentElem.setAttribute("data-path", listPath)
-		}
+		if (!parentElem) return
+		parentElem.setAttribute("data-accepts", accepts.join(","))
+		parentElem.setAttribute("data-direction", direction || "")
+		parentElem.setAttribute("data-path", listPath)
 	}, [listPath, direction])
 
 	if (!buildMode) {
@@ -62,13 +61,11 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 					direction={direction}
 				/>
 			)}
-			<>
-				{component.getSlotProps(props).map((props, index) => (
-					<BuildWrapper key={index} {...props}>
-						<component.Component {...props} />
-					</BuildWrapper>
-				))}
-			</>
+			{component.getSlotProps(props).map((props, index) => (
+				<BuildWrapper key={index} {...props}>
+					<component.Component {...props} />
+				</BuildWrapper>
+			))}
 		</>
 	)
 }

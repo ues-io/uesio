@@ -1,4 +1,4 @@
-import { FunctionComponent, DragEvent } from "react"
+import { FunctionComponent, DragEvent, MouseEvent } from "react"
 import { definition, component, styles, api, context as ctx } from "@uesio/ui"
 import {
 	getComponentDef,
@@ -7,10 +7,12 @@ import {
 	useBuilderState,
 	useDragPath,
 	useDropPath,
+	setSelectedPath,
 } from "../../api/stateapi"
 import { add, move } from "../../api/defapi"
 import { FullPath } from "../../api/path"
 import { batch } from "react-redux"
+import SelectBorder from "./selectborder"
 
 const isDropAllowed = (accepts: string[], dragNode: FullPath): boolean => {
 	for (const accept of accepts) {
@@ -51,7 +53,7 @@ const handleDrop = (
 
 // This function uses the mouse position and the bounding boxes of the slot's
 // children to determine the index of the drop.
-const getIndex = (slotTarget: Element | null, e: DragEvent): number => {
+const getDragIndex = (slotTarget: Element | null, e: DragEvent): number => {
 	let index = 0
 	if (!slotTarget) return index
 	const dataDirection =
@@ -75,6 +77,27 @@ const getIndex = (slotTarget: Element | null, e: DragEvent): number => {
 				: bounds.top + bounds.height / 2 <= e.pageY + window.scrollY
 
 		if (!isChildBeforePosition) break
+		index++
+	}
+
+	return index
+}
+
+// This function uses the mouse position and the bounding boxes of the slot's
+// children to determine the index of the drop.
+const getClickIndex = (
+	slotTarget: Element | null,
+	prevTarget: Element | null
+) => {
+	if (!prevTarget || !slotTarget) return undefined
+	let index = 0
+
+	// loop over targets children
+	for (const child of Array.from(slotTarget.children)) {
+		// If the child was a placeholder, and not a real component
+		// in this slot, we can skip it.
+		if (child.getAttribute("data-placeholder") === "true") continue
+		if (child === prevTarget) break
 		index++
 	}
 
@@ -162,7 +185,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 		}
 
 		if (validPath && dropPath && dragPath) {
-			const index = getIndex(slotTarget, e)
+			const index = getDragIndex(slotTarget, e)
 			let usePath = `${validPath}["${index}"]`
 			if (usePath === component.path.getParentPath(dragPath.localPath)) {
 				// Don't drop on ourselves, just move to the next index
@@ -191,17 +214,43 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 		handleDrop(dragPath, dropPath, context)
 	}
 
+	const onClick = (e: MouseEvent) => {
+		// Step 1: Find the closest slot that is accepting the current dragpath.
+		let slotTarget = e.target as Element | null
+		let prevTarget = null as Element | null
+		let validPath = ""
+		while (slotTarget !== null && slotTarget !== e.currentTarget) {
+			validPath = slotTarget.getAttribute("data-path") || ""
+			if (validPath) {
+				break
+			}
+			prevTarget = slotTarget
+			slotTarget = slotTarget.parentElement || null
+		}
+
+		if (validPath) {
+			const index = getClickIndex(slotTarget, prevTarget)
+			const usePath = `${validPath}["${index}"]`
+			setSelectedPath(
+				context,
+				new FullPath("viewdef", viewDefId, usePath)
+			)
+		}
+	}
+
 	return (
 		<div
 			onDragLeave={onDragLeave}
 			onDragOver={onDragOver}
 			onDrop={onDrop}
+			onClick={onClick}
 			className={classes.root}
 		>
 			<div className={classes.scrollwrapper}>
 				<div className={classes.outerwrapper}>
 					<div className={classes.contentwrapper}>
 						{props.children}
+						<SelectBorder context={context} />
 					</div>
 				</div>
 			</div>
