@@ -1,4 +1,4 @@
-import { ListenerBotApi } from "uesio/bots"
+import { ListenerBotApi, Record as WireRecord } from "uesio/bots"
 function addlead(bot: ListenerBotApi) {
 	const fields = [
 		"uesio/crm.firstname",
@@ -8,9 +8,12 @@ function addlead(bot: ListenerBotApi) {
 	]
 
 	const values = fields.reduce(
-		(prev, key) => ({ ...prev, [key]: bot.params.get(key).toLowerCase() }),
+		(prev, key) => ({
+			...prev,
+			[key]: ((bot.params.get(key) as string) || "").toLowerCase(),
+		}),
 		{}
-	)
+	) as Record<string, string>
 
 	// TODO: callbots can't throw errors yet. Uncomment when they can
 	const labels = {
@@ -19,13 +22,13 @@ function addlead(bot: ListenerBotApi) {
 		"uesio/crm.email": "email",
 		"uesio/web.role": "role",
 		"uesio/crm.account": "company",
-	}
+	} as Record<string, string>
 	for (const key in values) {
 		if (!values[key]) throw new Error(`missing ${labels[key]}`)
 	}
 
 	// Save the lead in our leads collection
-	bot.asAdmin.save("uesio/crm.lead", [values])
+	bot.asAdmin.save("uesio/crm.lead", [values as unknown as WireRecord])
 
 	// Send an email to the user
 	const salesEmail = bot.asAdmin.getConfigValue("uesio/crm.sales_email")

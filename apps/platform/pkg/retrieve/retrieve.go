@@ -4,6 +4,7 @@ import (
 	"archive/zip"
 	"errors"
 	"io"
+	"os"
 	"path/filepath"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -130,6 +131,45 @@ func RetrieveBundle(create WriterCreator, namespace, version string, bs bundlest
 	err = encoder.Encode(by)
 	if err != nil {
 		return errors.New("Failed to encode bundle.yaml file into YAML: " + err.Error())
+	}
+
+	wd, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+
+	// Add uesio/bots types
+	source, err := os.Open(filepath.Join(wd, "../../dist/ui/types/server/index.d.ts"))
+	if err != nil {
+		return err
+	}
+	defer source.Close()
+
+	f, err = create(filepath.Join("generated", "@uesio", "bots.d.ts"))
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	_, err = io.Copy(f, source)
+	if err != nil {
+		return errors.New("Failed to create uesio server types file: " + err.Error())
+	}
+
+	// Add @uesio/ui module types
+	source, err = os.Open(filepath.Join(wd, "../../dist/ui/types/client/index.d.ts"))
+	if err != nil {
+		return err
+	}
+	defer source.Close()
+
+	f, err = create(filepath.Join("generated", "@uesio", "ui.d.ts"))
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	_, err = io.Copy(f, source)
+	if err != nil {
+		return errors.New("Failed to create uesio ui types file: " + err.Error())
 	}
 
 	return nil
