@@ -40,9 +40,6 @@ func GetAppID() (string, error) {
 				{
 					ID: "uesio/studio.name",
 				},
-				{
-					ID: "uesio/studio.namespace",
-				},
 			},
 			Conditions: []adapt.LoadRequestCondition{
 				{
