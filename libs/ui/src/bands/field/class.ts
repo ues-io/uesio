@@ -36,10 +36,9 @@ class Field {
 			context.getLabel(
 				selectMetadata.blank_option_language_label || ""
 			) || selectMetadata.blank_option_label
-		if (this.source.type === "MULTISELECT") {
-			return mergedOptions
-		}
-		return addBlankSelectOption(mergedOptions, mergedBlankLabel)
+		return this.source.type && this.source.type === "MULTISELECT"
+			? mergedOptions
+			: addBlankSelectOption(mergedOptions, mergedBlankLabel)
 	}
 	getAccept = () => {
 		switch (this.source.file?.accept) {
