@@ -3,10 +3,7 @@ dialect: "JAVASCRIPT"
 type: "GENERATOR"
 params:
   name:
-    prompt: ComponentPack Name
+    prompt: Component Pack Name
     type: METADATANAME
-  components:
-    prompt: components
-    type: METADATAMULTI
-    metadataType: COMPONENT
+    default: main
 public: true
