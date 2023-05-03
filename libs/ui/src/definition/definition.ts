@@ -15,7 +15,7 @@ export type BaseDefinition = {
 	"uesio.styleTokens"?: Record<string, string[]>
 	"uesio.variant"?: MetadataKey
 	"uesio.display"?: DisplayCondition[]
-	"uesio.classes"?: string[]
+	"uesio.classes"?: DisplayCondition[]
 }
 
 export type YamlDoc = yaml.Document<yaml.Node>

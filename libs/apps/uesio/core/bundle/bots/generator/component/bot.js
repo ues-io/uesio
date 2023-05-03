@@ -5,9 +5,7 @@ function collection(bot) {
 	// Generate the component TSX file
 	bot.generateFile(
 		`componentpacks/${pack}/src/components/${name}/${name}.tsx`,
-		{
-			componentName,
-		},
+		{},
 		"templates/component.template.tsx"
 	)
 	// Generate the component YAML file

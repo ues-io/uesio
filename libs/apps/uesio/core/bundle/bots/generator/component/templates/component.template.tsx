@@ -1,15 +1,15 @@
 import { FunctionComponent } from "react"
 import { styles, definition } from "@uesio/ui"
 
-type ${componentName}Definition = {
+type ComponentDefinition = {
 	text: string
 }
 
 interface Props extends definition.BaseProps {
-	definition: ${componentName}Definition
+	definition: ComponentDefinition
 }
 
-const ${componentName}: FunctionComponent<Props> = (props) => {
+const Component: FunctionComponent<Props> = (props) => {
 	const { text } = props.definition
 	const classes = styles.useStyles(
 		{
@@ -22,4 +22,4 @@ const ${componentName}: FunctionComponent<Props> = (props) => {
 	return <div className={classes.root}>{text}</div>
 }
 
-export default ${componentName}
+export default Component
