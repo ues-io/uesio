@@ -31,14 +31,7 @@ func init() {
 
 	appCommand.AddCommand(appInitCommand, appCloneCommand)
 
-	// DEPRECATED COMMANDS
-	oldInitCommand := &cobra.Command{
-		Use:   "init",
-		Short: "uesio init",
-		Run:   appInit,
-	}
-
-	rootCmd.AddCommand(appCommand, oldInitCommand)
+	rootCmd.AddCommand(appCommand)
 
 }
 
