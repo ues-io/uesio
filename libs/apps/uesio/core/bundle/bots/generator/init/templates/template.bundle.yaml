@@ -4,5 +4,3 @@ dependencies:
     version: v0.0.1
   uesio/io:
     version: v0.0.1
-  uesio/builder:
-    version: v0.0.1
