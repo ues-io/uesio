@@ -1,20 +1,13 @@
 name: smallpropnodetag
 label: Small Property Node Tag
+extends: uesio/builder.propnodetag
 definition:
-  uesio.styles:
+  uesio.styleTokens:
     root:
-      border: "1px solid #ddd"
-      fontSize: "7pt"
-      color: "#444"
-      borderRadius: 8px
-      overflow: hidden
-      backgroundColor: white
-      userSelect: none
-      marginRight: "4px"
-      marginTop: "2px"
-      display: "inline-block"
+      - text-[8pt]
+      - inline-block
+      - m-0
     content:
-      padding: 2px 6px 3px 6px
-    selected:
-      border: "1px solid $Theme{color.primary}"
+      - px-2
+      - py-1
 public: true

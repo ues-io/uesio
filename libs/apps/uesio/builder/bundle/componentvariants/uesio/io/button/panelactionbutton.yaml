@@ -1,0 +1,12 @@
+name: panelactionbutton
+label: Panel Action Button
+extends: uesio/builder.actionbutton
+definition:
+  uesio.styleTokens:
+    root:
+      - bg-slate-100
+      - px-3
+      - py-1.5
+      - rounded-md
+      - hover:bg-slate-200
+public: true

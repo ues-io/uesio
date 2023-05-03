@@ -28,3 +28,8 @@ cd ../../../..
 
 # Run specs
 hurl -k --variable host=studio.uesio-dev.com --variable port=3000 --test libs/apps/uesio/tests/hurl_specs/*.hurl
+
+# FYI if you want to view the output of the request made by a specific hurl spec,
+# you can comment out the assertions of the last hurl request made in a hurl file, and then run the spec
+# without the "--test" flag, like this
+#hurl --variable host=studio.uesio-dev.com --variable port=3000 libs/apps/uesio/tests/hurl_specs/wire_load.hurl | jq "."

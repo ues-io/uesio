@@ -1,12 +1,12 @@
 import { definition, styles } from "@uesio/ui"
 
 const StyleDefaults = Object.freeze({
-	input: {},
-	readonly: {},
+	input: [],
+	readonly: [],
 })
 
 const ReadOnlyField: definition.UtilityComponent = (props) => {
-	const classes = styles.useUtilityStyles(
+	const classes = styles.useUtilityStyleTokens(
 		StyleDefaults,
 		props,
 		"uesio/io.field"

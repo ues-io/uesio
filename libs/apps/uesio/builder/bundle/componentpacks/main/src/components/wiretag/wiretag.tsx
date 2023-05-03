@@ -2,6 +2,7 @@ import { definition, metadata, api } from "@uesio/ui"
 import { getBuilderNamespace } from "../../api/stateapi"
 import IconLabel from "../../utilities/iconlabel/iconlabel"
 import NamespaceLabel from "../../utilities/namespacelabel/namespacelabel"
+import ItemTag from "../../utilities/itemtag/itemtag"
 
 const WireTag: definition.UC = (props) => {
 	const { context } = props
@@ -25,7 +26,7 @@ const WireTag: definition.UC = (props) => {
 	const hasErrors = errors.length > 0
 
 	return (
-		<div className="tagroot">
+		<ItemTag context={context}>
 			<IconLabel
 				icon={hasErrors ? "error" : "check_circle"}
 				fill={false}
@@ -39,7 +40,7 @@ const WireTag: definition.UC = (props) => {
 				context={context}
 				metadatakey={collection}
 			/>
-		</div>
+		</ItemTag>
 	)
 }
 
