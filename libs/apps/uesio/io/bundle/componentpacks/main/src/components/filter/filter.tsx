@@ -68,12 +68,6 @@ const getDefaultCondition = (
 ) => {
 	const type = fieldMetadata.getType()
 	switch (type) {
-		case "TIMESTAMP":
-			return {
-				id: path,
-				operator: "IN",
-				field: fieldMetadata.getId(),
-			}
 		case "DATE": {
 			return !displayAs
 				? {
