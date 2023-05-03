@@ -49,15 +49,16 @@ const MultiMetadataPicker: definition.UtilityComponent<
 		/>
 	)
 
-	const selectedItems = [], unselectedItems = [];
+	const selectedItems = [],
+		unselectedItems = []
 	if (items) {
-	   for (const item of items) {
-		   if (value.includes(item.key)) {
-			   selectedItems.push(item)
-		   } else {
-			   unselectedItems.push(item)
-		   }
-	   }
+		for (const item of items) {
+			if (value.includes(item.key)) {
+				selectedItems.push(item)
+			} else {
+				unselectedItems.push(item)
+			}
+		}
 	}
 
 	return (
