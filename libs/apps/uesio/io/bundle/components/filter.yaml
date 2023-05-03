@@ -35,7 +35,7 @@ properties:
     displayConditions:
       - type: hasNoValue
         value: ${conditionId}
-  - name: multiselectOperator
+  - name: operator
     type: SELECT
     label: Condition Operator
     options:
@@ -95,7 +95,7 @@ sections:
       - wire
       - conditionId
       - fieldId
-      - multiselectOperator
+      - operator
       - displayAs
       - label
       - labelPosition
