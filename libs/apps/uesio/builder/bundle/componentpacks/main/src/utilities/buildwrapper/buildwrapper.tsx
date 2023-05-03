@@ -91,7 +91,6 @@ const BuildWrapper: definition.UC = (props) => {
 			{addBeforePlaceholder && (
 				<PlaceHolder
 					label={""}
-					index={index}
 					isHovering={true}
 					context={context}
 					data-placeholder="true"
@@ -115,7 +114,6 @@ const BuildWrapper: definition.UC = (props) => {
 			{addAfterPlaceholder && (
 				<PlaceHolder
 					label={""}
-					index={index + 1}
 					isHovering={true}
 					context={context}
 					hideIfNotLast={true}

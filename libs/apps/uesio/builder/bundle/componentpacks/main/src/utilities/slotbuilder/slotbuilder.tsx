@@ -55,7 +55,6 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 				<PlaceHolder
 					label={label}
 					message={message}
-					index={0}
 					isHovering={isHovering}
 					context={context}
 					direction={direction}
