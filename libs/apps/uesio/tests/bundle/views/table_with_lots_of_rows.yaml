@@ -18,6 +18,7 @@ definition:
       order:
         - field: uesio/tests.genus
         - field: uesio/tests.species
+      batchsize: 400
   # Components determine the layout and composition of your view
   components:
     - uesio/io.titlebar:

@@ -45,8 +45,8 @@ type AsyncResult = {
 }
 
 const StyleDefaults = Object.freeze({
-	input: {},
-	readonly: {},
+	input: [],
+	readonly: [],
 })
 
 const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
@@ -59,7 +59,7 @@ const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
 		props.typeDefinitionFileURIs,
 		context
 	)
-	const classes = styles.useUtilityStyles(
+	const classes = styles.useUtilityStyleTokens(
 		StyleDefaults,
 		props,
 		"uesio/io.codefield"

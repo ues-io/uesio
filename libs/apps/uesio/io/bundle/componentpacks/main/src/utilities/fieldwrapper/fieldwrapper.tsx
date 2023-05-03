@@ -11,18 +11,18 @@ interface FieldWrapperUtilityProps extends definition.UtilityProps {
 }
 
 const StyleDefaults = Object.freeze({
-	root: {},
-	labelTop: {},
-	labelLeft: {},
-	label: {},
-	errorwrapper: {},
-	erroricon: {},
-	error: {},
+	root: [],
+	labelTop: [],
+	labelLeft: [],
+	label: [],
+	errorwrapper: [],
+	erroricon: [],
+	error: [],
 })
 
 const FieldWrapper: FunctionComponent<FieldWrapperUtilityProps> = (props) => {
 	const { label, labelPosition, children, context, errors } = props
-	const classes = styles.useUtilityStyles(
+	const classes = styles.useUtilityStyleTokens(
 		StyleDefaults,
 		props,
 		"uesio/io.fieldwrapper"

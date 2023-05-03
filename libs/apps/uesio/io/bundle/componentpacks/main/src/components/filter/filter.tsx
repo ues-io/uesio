@@ -3,6 +3,7 @@ import FieldWrapper from "../../utilities/fieldwrapper/fieldwrapper"
 import MonthFilter from "../../utilities/monthfilter/monthfilter"
 import SelectFilter from "../../utilities/selectfilter/selectfilter"
 import WeekFilter from "../../utilities/weekfilter/weekfilter"
+import DateFilter from "../../utilities/datefilter/datefilter"
 import NumberFilter from "../../utilities/numberfilter/numberfilter"
 import CheckboxFilter from "../../utilities/checkboxfilter/checkboxfilter"
 import MultiSelectFilter from "../../utilities/multiselectfilter/multiselectfilter"
@@ -53,7 +54,7 @@ const getFilterContent = (
 		case "DATE": {
 			if (displayAs === "MONTH") return <MonthFilter {...common} />
 			if (displayAs === "WEEK") return <WeekFilter {...common} />
-			return null
+			return <DateFilter {...common} />
 		}
 		default:
 			return null
@@ -63,16 +64,23 @@ const getFilterContent = (
 const getDefaultCondition = (
 	path: string,
 	fieldMetadata: collection.Field,
-	multiselectOperator: string
+	multiselectOperator: string,
+	displayAs: string
 ) => {
 	const type = fieldMetadata.getType()
 	switch (type) {
 		case "DATE": {
-			return {
-				id: path,
-				operator: "IN",
-				field: fieldMetadata.getId(),
-			}
+			return !displayAs
+				? {
+						id: path,
+						operator: "EQ",
+						field: fieldMetadata.getId(),
+				  }
+				: {
+						id: path,
+						operator: "IN",
+						field: fieldMetadata.getId(),
+				  }
 		}
 		case "MULTISELECT": {
 			return {
@@ -91,7 +99,7 @@ const getDefaultCondition = (
 
 const Filter: definition.UC<FilterDefinition> = (props) => {
 	const { context, definition, path } = props
-	const { fieldId, conditionId, multiselectOperator } = definition
+	const { fieldId, conditionId, multiselectOperator, displayAs } = definition
 	const wire = api.wire.useWire(definition.wire, context)
 	if (!wire) return null
 
@@ -108,7 +116,8 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 		condition = getDefaultCondition(
 			path,
 			fieldMetadata,
-			multiselectOperator
+			multiselectOperator,
+			displayAs || ""
 		) as wire.ValueConditionState
 	}
 

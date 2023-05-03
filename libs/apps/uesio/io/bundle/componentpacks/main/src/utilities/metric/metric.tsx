@@ -9,15 +9,15 @@ interface MetricProps {
 }
 
 const StyleDefaults = Object.freeze({
-	root: {},
-	title: {},
-	valuewrapper: {},
-	value: {},
-	unit: {},
+	root: [],
+	title: [],
+	valuewrapper: [],
+	value: [],
+	unit: [],
 })
 
 const Metric: definition.UtilityComponent<MetricProps> = (props) => {
-	const classes = styles.useUtilityStyles(
+	const classes = styles.useUtilityStyleTokens(
 		StyleDefaults,
 		props,
 		"uesio/io.metric"

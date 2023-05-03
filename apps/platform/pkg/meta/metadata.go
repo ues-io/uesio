@@ -6,6 +6,7 @@ import (
 	"os"
 	"reflect"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -333,6 +334,22 @@ func GetNodeValueAsBool(node *yaml.Node, key string, defaultValue bool) bool {
 		return defaultValue
 	}
 	return keyNode.Value != "false"
+}
+
+func GetNodeValueAsInt(node *yaml.Node, key string, defaultValue int) int {
+	keyNode, err := GetMapNode(node, key)
+	if err != nil {
+		return defaultValue
+	}
+	if keyNode.Kind != yaml.ScalarNode {
+		return defaultValue
+	}
+
+	intVal, err := strconv.Atoi(keyNode.Value)
+	if err != nil {
+		return defaultValue
+	}
+	return intVal
 }
 
 func addNodeToMap(mapNode *yaml.Node, key string, valueNode *yaml.Node) {

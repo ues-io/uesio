@@ -18,6 +18,7 @@ import PropNodeTag from "../../../utilities/propnodetag/propnodetag"
 import { FullPath } from "../../../api/path"
 import SearchArea from "../../../helpers/searcharea"
 import { add } from "../../../api/defapi"
+import ItemTag from "../../../utilities/itemtag/itemtag"
 
 const getUtility = component.getUtility
 
@@ -29,11 +30,9 @@ type VariantsBlockProps = {
 const VariantsBlock: FC<VariantsBlockProps> = (props) => {
 	const { context, variants, isSelected } = props
 
-	const classes = styles.useUtilityStyles(
+	const classes = styles.useUtilityStyleTokens(
 		{
-			root: {
-				padding: "0px 10px 10px 10px",
-			},
+			root: ["m-2", "flex", "flex-wrap", "gap-2"],
 		},
 		props
 	)
@@ -148,13 +147,16 @@ type CategoryBlockProps = {
 } & definition.UtilityProps
 
 const CategoryBlock: FC<CategoryBlockProps> = (props) => {
-	const classes = styles.useUtilityStyles(
+	const classes = styles.useUtilityStyleTokens(
 		{
-			categoryLabel: {
-				margin: "16px 10px 0 10px",
-				fontSize: "8pt",
-				fontWeight: "300",
-			},
+			categoryLabel: [
+				"mx-2",
+				"mt-4",
+				"-mb-1",
+				"text-xs",
+				"font-light",
+				"text-slate-500",
+			],
 		},
 		props
 	)
@@ -192,23 +194,7 @@ type ComponentTagProps = {
 } & definition.UtilityProps
 
 const ComponentTag: FC<ComponentTagProps> = (props) => {
-	const Text = getUtility("uesio/io.text")
 	const { context, component } = props
-	const classes = styles.useUtilityStyles(
-		{
-			root: {},
-			title: {
-				verticalAlign: "middle",
-				marginBottom: "0.5em",
-			},
-			desc: {
-				fontSize: "0.9em",
-				fontWeight: 300,
-				margin: "0",
-			},
-		},
-		props
-	)
 
 	const nsInfo = getBuilderNamespace(
 		context,
@@ -216,41 +202,21 @@ const ComponentTag: FC<ComponentTagProps> = (props) => {
 	)
 
 	return (
-		<div className={classes.root}>
+		<ItemTag description={component.description} context={context}>
 			<NamespaceLabel
 				metadatakey={component.namespace}
 				metadatainfo={nsInfo}
 				title={component.title || component.name}
 				context={context}
-				classes={{
-					root: classes.title,
-				}}
 			/>
-
-			<Text
-				element="p"
-				text={component.description}
-				context={context}
-				classes={{
-					root: classes.desc,
-				}}
-			/>
-		</div>
+		</ItemTag>
 	)
 }
 
 const ComponentsPanel: definition.UC = (props) => {
 	const ScrollPanel = getUtility("uesio/io.scrollpanel")
 	const { context } = props
-	const classes = styles.useUtilityStyles(
-		{
-			root: {
-				overflow: "auto",
-				flex: 1,
-			},
-		},
-		props
-	)
+
 	const [searchTerm, setSearchTerm] = useState("")
 	const searchTermLC = searchTerm?.toLowerCase()
 	const components = pickBy(
@@ -317,11 +283,7 @@ const ComponentsPanel: definition.UC = (props) => {
 			}
 			context={context}
 		>
-			<div
-				onDragStart={onDragStart}
-				onDragEnd={onDragEnd}
-				className={classes.root}
-			>
+			<div onDragStart={onDragStart} onDragEnd={onDragEnd}>
 				{categoryOrder.map((category) => (
 					<CategoryBlock
 						key={category}
