@@ -40,13 +40,14 @@ func (nopWriterCloser) Close() error { return nil }
 const (
 	bundleDirectory = "bundle"
 	generatedDir    = "generated"
-	uesioTypesDir   = "@uesio"
+	uesioTypesDir   = "@types/@uesio"
+	clientTypesSrc  = "../../dist/ui/types/client"
 )
 
 func Retrieve(writer io.Writer, session *sess.Session) error {
 	workspace := session.GetWorkspace()
 	if workspace == nil {
-		return errors.New("No Workspace provided for retrieve")
+		return errors.New("no Workspace provided for retrieve")
 	}
 	namespace := workspace.GetAppFullName()
 	version, bs, err := bundle.GetBundleStoreWithVersion(namespace, session)
@@ -61,23 +62,32 @@ func Retrieve(writer io.Writer, session *sess.Session) error {
 	if err != nil {
 		return err
 	}
-	wd, err := os.Getwd()
-	if err != nil {
-		return err
-	}
-	// Add generated type files
-	// @uesio/bots
-	err = addGeneratedFile(create, filepath.Join(wd, "../../dist/ui/types/server/index.d.ts"), filepath.Join("generated", "@uesio", "bots.d.ts"))
-	if err != nil {
-		return err
-	}
-	// @uesio/ui
-	err = addGeneratedFile(create, filepath.Join(wd, "../../dist/ui/types/client/index.d.ts"), filepath.Join("generated", "@uesio", "ui.d.ts"))
+	// Retrieve generated TypeScript files
+	err = retrieveGeneratedFiles(generatedDir, create)
 	if err != nil {
 		return err
 	}
 
 	return zipwriter.Close()
+}
+
+func retrieveGeneratedFiles(targetDirectory string, create WriterCreator) error {
+	wd, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+	// Add all Uesio-provided types
+	err = copyFileIntoZip(create, filepath.Join(wd, clientTypesSrc, "index.d.ts"), filepath.Join(generatedDir, uesioTypesDir, "index.d.ts"))
+	if err != nil {
+		return err
+	}
+	// Add package.json to generated directory so that TS will know where to find the types
+	err = copyFileIntoZip(create, filepath.Join(wd, clientTypesSrc, "package.json"), filepath.Join(generatedDir, uesioTypesDir, "package.json"))
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // RetrieveBundle retrieves the content of a specific bundle version into the designated targetDirectory
@@ -163,7 +173,7 @@ func RetrieveBundle(targetDirectory string, create WriterCreator, namespace, ver
 
 }
 
-func addGeneratedFile(create WriterCreator, sourcePath, targetPath string) error {
+func copyFileIntoZip(create WriterCreator, sourcePath, targetPath string) error {
 	source, err := os.Open(sourcePath)
 	if err != nil {
 		return err
