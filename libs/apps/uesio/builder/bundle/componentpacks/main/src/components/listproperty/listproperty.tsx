@@ -1,5 +1,5 @@
 import { definition, component, wire, collection } from "@uesio/ui"
-import { add } from "../../api/defapi"
+import { add, set } from "../../api/defapi"
 import { FullPath } from "../../api/path"
 import { ListProperty as LP } from "../../properties/componentproperty"
 
@@ -86,9 +86,14 @@ const ListProperty: definition.UC<Definition> = (props) => {
 			mode={"EDIT"}
 			context={context}
 			//variant={subFieldVariant}
-			setValue={(value: wire.FieldValue) =>
-				record.update("values", value, context)
-			}
+			setValue={(value: wire.FieldValue) => {
+				set(context, listPropertyPath, value)
+				// set(
+				// 	context,
+				// 	listPropertyPath.addLocal(`${items?.length || 0}`),
+				// 	itemsDefinition?.defaultDefinition || {}
+				// )
+			}}
 		/>
 	)
 }
