@@ -2,14 +2,14 @@ name: listview
 dialect: "JAVASCRIPT"
 type: "GENERATOR"
 params:
-  name:
+  - name: name
     prompt: View Name
     type: METADATANAME
-  collection:
+  - name: collection
     prompt: Collection
     type: METADATA
     metadataType: COLLECTION
-  fields:
+  - name: fields
     prompt: Fields
     type: METADATAMULTI
     metadataType: FIELD

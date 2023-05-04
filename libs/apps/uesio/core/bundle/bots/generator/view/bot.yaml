@@ -2,7 +2,7 @@ name: view
 dialect: "JAVASCRIPT"
 type: "GENERATOR"
 params:
-  name:
+  - name: name
     prompt: View name
     type: METADATANAME
 public: true

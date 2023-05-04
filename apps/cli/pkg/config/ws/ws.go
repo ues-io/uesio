@@ -2,7 +2,6 @@ package ws
 
 import (
 	"errors"
-
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/thecloudmasters/cli/pkg/config"
 	"github.com/thecloudmasters/cli/pkg/wire"
@@ -16,21 +15,20 @@ func SetWorkspace(value string) error {
 	return config.SetConfigValue("workspace", value)
 }
 
-func GetWorkspacePrompt() (string, error) {
-	value, err := GetWorkspace()
-	if err != nil {
-		return "", err
-	}
-	if value == "" {
-		return SetWorkspacePrompt()
-	}
-	return value, nil
-}
-
-func SetWorkspacePrompt() (string, error) {
+func SetWorkspacePrompt(username string, appId string) (string, error) {
 	workspace := ""
 
-	options, err := wire.GetAvailableWorkspaceNames()
+	appID := appId
+	var err error
+
+	if appID == "" {
+		appID, err = wire.GetAppID()
+		if err != nil {
+			return "", err
+		}
+	}
+
+	options, err := wire.GetAvailableWorkspaceNames(appID)
 	if err != nil {
 		return "", err
 	}
@@ -40,7 +38,23 @@ func SetWorkspacePrompt() (string, error) {
 		return options[0], SetWorkspace(options[0])
 	}
 	if len(options) == 0 {
-		return "", errors.New("no workspaces found for this app")
+
+		if username == "" {
+			return "", errors.New("no workspaces found")
+		}
+
+		var newWorkspace string
+		err = survey.AskOne(&survey.Select{
+			Message: "No workspaces found. Enter a workspace name",
+			Default: "dev",
+		}, &newWorkspace)
+
+		// Invoke workspace creation API to create a default "dev" workspace
+		_, err := wire.CreateNewWorkspace(username, appID, newWorkspace)
+		if err != nil {
+			return "", errors.New("unable to create new workspace for app")
+		}
+		return newWorkspace, SetWorkspace(newWorkspace)
 	}
 
 	err = survey.AskOne(&survey.Select{

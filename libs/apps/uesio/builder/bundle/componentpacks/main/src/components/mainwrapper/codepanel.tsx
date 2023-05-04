@@ -224,12 +224,8 @@ const CodePanel: definition.UtilityComponent = (props) => {
 				context={context}
 				value={fullYaml}
 				options={monacoOptions}
-				styles={{
-					input: {
-						padding: 0,
-						height: "100%",
-						border: "none",
-					},
+				styleTokens={{
+					input: ["h-full", "border-0"],
 				}}
 				language="yaml"
 				setValue={

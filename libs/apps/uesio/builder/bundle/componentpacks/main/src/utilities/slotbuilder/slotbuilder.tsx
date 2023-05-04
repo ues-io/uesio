@@ -1,8 +1,7 @@
 import { definition, component } from "@uesio/ui"
 import { FunctionComponent, useEffect, useRef } from "react"
 import { FullPath } from "../../api/path"
-import { getBuildMode, useDragPath, useDropPath } from "../../api/stateapi"
-import { isDropAllowed } from "../../shared/dragdrop"
+import { getBuildMode, useDropPath } from "../../api/stateapi"
 import BuildWrapper from "../buildwrapper/buildwrapper"
 import PlaceHolder from "../placeholder/placeholder"
 
@@ -21,13 +20,11 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 	const size = listDef.length
 	const viewDefId = context.getViewDefId()
 
-	const dragPath = useDragPath(context)
 	const dropPath = useDropPath(context)
 
-	const isHovering =
-		dropPath.equals(
-			new FullPath("viewdef", viewDefId, `${listPath}["0"]`)
-		) && isDropAllowed(accepts, dragPath)
+	const isHovering = dropPath.equals(
+		new FullPath("viewdef", viewDefId, `${listPath}["0"]`)
+	)
 
 	useEffect(() => {
 		const parentElem = ref?.current?.parentElement
@@ -50,7 +47,11 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 
 	return (
 		<>
-			<div ref={ref} style={{ display: "contents" }} />
+			<div
+				data-placeholder="true"
+				ref={ref}
+				style={{ display: "none" }}
+			/>
 			{size === 0 && (
 				<PlaceHolder
 					label={label}

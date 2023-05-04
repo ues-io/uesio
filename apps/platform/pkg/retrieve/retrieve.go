@@ -70,7 +70,7 @@ func RetrieveBundle(create WriterCreator, namespace, version string, bs bundlest
 
 			path := item.(meta.BundleableItem).GetPath()
 
-			f, err := create(filepath.Join(metadataType, path))
+			f, err := create(filepath.Join("bundle", metadataType, path))
 			if err != nil {
 				return errors.New("Failed to create " + metadataType + " file: " + path + ": " + err.Error())
 			}
@@ -95,7 +95,7 @@ func RetrieveBundle(create WriterCreator, namespace, version string, bs bundlest
 					if err != nil {
 						return err
 					}
-					f, err := create(filepath.Join(metadataType, attachableItem.GetBasePath(), path))
+					f, err := create(filepath.Join("bundle", metadataType, attachableItem.GetBasePath(), path))
 					if err != nil {
 						return err
 					}
@@ -116,9 +116,10 @@ func RetrieveBundle(create WriterCreator, namespace, version string, bs bundlest
 
 	}
 
+	// Add bundle.yaml
 	by := session.GetWorkspace().GetAppBundle()
 
-	f, err := create("bundle.yaml")
+	f, err := create(filepath.Join("bundle", "bundle.yaml"))
 	if err != nil {
 		return errors.New("Failed to create bundle.yaml file: " + err.Error())
 	}
