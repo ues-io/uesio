@@ -68,11 +68,11 @@ const TextField: FC<TextFieldProps> = (props) => {
 		<input
 			id={id}
 			type={type}
-			{...updateProps}
 			placeholder={placeholder}
 			className={styles.cx(classes.input, isReadMode && classes.readonly)}
 			disabled={isReadMode}
 			ref={(input: HTMLInputElement) => focusOnRender && input?.focus()}
+			{...updateProps}
 		/>
 	)
 }
