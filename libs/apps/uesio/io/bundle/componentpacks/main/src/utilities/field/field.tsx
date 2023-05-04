@@ -29,10 +29,15 @@ import FileField from "../../utilities/field/file"
 import MapField from "../../utilities/mapfield/mapfield"
 import StructField from "../../utilities/structfield/structfield"
 import MapFieldDeck from "../../utilities/field/mapdeck"
-import { LabelPosition, MapFieldOptions } from "../../components/field/field"
+import {
+	ApplyChanges,
+	FieldValueSetter,
+	LabelPosition,
+	MapFieldOptions,
+} from "../../components/field/field"
 
 interface FieldProps extends definition.UtilityProps {
-	setValue: (value: wire.FieldValue) => void
+	setValue: FieldValueSetter
 	value: wire.FieldValue
 	mode: context.FieldMode
 	placeholder?: string
@@ -44,6 +49,7 @@ interface FieldProps extends definition.UtilityProps {
 	path: string
 	record: wire.WireRecord
 	displayAs?: string
+	applyChanges?: ApplyChanges
 	// Type specific
 	reference?: ReferenceFieldOptions | ReferenceGroupFieldOptions
 	list?: ListFieldOptions
@@ -59,28 +65,29 @@ interface FieldProps extends definition.UtilityProps {
 
 const Field: FunctionComponent<FieldProps> = (props) => {
 	const {
-		reference,
-		list,
-		map,
-		user,
-		number,
-		longtext,
+		applyChanges,
+		classes,
 		context,
 		displayAs,
-		setValue,
-		mode,
-		placeholder,
-		id,
-		path,
 		fieldId,
 		fieldMetadata,
+		id,
+		labelPosition,
+		labelVariant,
+		list,
+		longtext,
+		map,
+		mode,
+		number,
+		path,
+		placeholder,
 		record,
+		reference,
+		setValue,
+		subFieldVariant,
+		user,
 		value,
 		variant,
-		subFieldVariant,
-		labelVariant,
-		labelPosition,
-		classes,
 	} = props
 
 	let readonly = false
@@ -98,19 +105,20 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 	}
 
 	const common = {
+		applyChanges,
 		classes,
-		path,
 		context,
-		mode,
-		fieldMetadata,
 		fieldId,
+		fieldMetadata,
 		id,
-		record,
-		readonly,
-		setValue,
-		variant,
-		value,
+		mode,
+		path,
 		placeholder,
+		readonly,
+		record,
+		setValue,
+		value,
+		variant,
 	}
 
 	const complexFieldOptions = {
