@@ -9,5 +9,8 @@ definition:
     input:
       - text-xs
       - px-1.5
-      - py-1
+    notfound:
+      - py-1.5
+    selecteditemwrapper:
+      - my-1
 public: true

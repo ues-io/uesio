@@ -14,7 +14,7 @@ const CheckboxField: FunctionComponent<CheckboxFieldProps> = (props) => {
 	const checked = value === true
 	const classes = styles.useUtilityStyleTokens(
 		{
-			root: ["leading-[0]"],
+			root: ["leading-none"],
 			input: [],
 		},
 		props

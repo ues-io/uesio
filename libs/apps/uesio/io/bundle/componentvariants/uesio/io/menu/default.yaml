@@ -25,6 +25,7 @@ definition:
       - p-2
       - text-slate-700
       - min-w-[200px]
+      - hover:bg-slate-100
     highlighted:
       - bg-slate-200
     searchbox:
