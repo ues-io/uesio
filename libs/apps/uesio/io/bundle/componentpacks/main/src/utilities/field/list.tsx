@@ -19,8 +19,7 @@ interface ListFieldUtilityProps extends definition.UtilityProps {
 	value: wire.FieldValue
 	setValue: (value: wire.FieldValue) => void
 	subFields?: collection.FieldMetadataMap
-	subType?: string
-	autoAdd?: boolean
+	subType?: collection.FieldType
 	noAdd?: boolean
 	noDelete?: boolean
 	subFieldVariant?: metadata.MetadataKey
@@ -34,13 +33,15 @@ const StyleDefaults = Object.freeze({
 	row: [],
 })
 
+const isStructOrMap = (subType: string | undefined) =>
+	subType === "STRUCT" || subType === "MAP"
+
 const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 	const {
 		subFields,
 		subType,
 		mode,
 		context,
-		autoAdd,
 		noAdd,
 		noDelete,
 		subFieldVariant,
@@ -52,8 +53,6 @@ const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 		value: (wire.PlainWireRecord | wire.FieldValue)[]
 	) => void
 	const editMode = mode === "EDIT"
-	const isText = subType === "TEXT"
-	const numFields = subFields ? Object.keys(subFields).length : 0
 
 	const classes = styles.useUtilityStyleTokens(
 		StyleDefaults,
@@ -61,141 +60,161 @@ const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 		"uesio/io.listfield"
 	)
 
-	const getDefaultValue = () => (isText ? "" : {})
+	const getFields = (): collection.FieldMetadataMap => {
+		if (isStructOrMap(subType)) {
+			return subFields || {}
+		}
 
-	const getNewValue = (
-		newFieldValue: wire.FieldValue,
-		subfield: collection.FieldMetadata,
-		index: number
+		return {
+			value: {
+				name: "value",
+				namespace: "",
+				type: subType || "TEXT",
+				createable: true,
+				accessible: true,
+				updateable: true,
+				label: "Value",
+			},
+		}
+	}
+
+	const setIndividualValue = (
+		index: number,
+		subField: wire.FieldMetadata,
+		value: wire.FieldValue
+	) => {
+		setValue(makeIndividualValue(index, subField, value))
+	}
+
+	const makeIndividualValue = (
+		index: number,
+		subField: wire.FieldMetadata,
+		newFieldValue: wire.FieldValue
 	) => {
 		if (!value) return value
 		const newValue = [...value]
-		newValue[index] = isText
-			? newFieldValue
-			: {
-					...(newValue[index] as wire.PlainWireRecord),
-					[subfield.name]: newFieldValue,
-			  }
+		if (isStructOrMap(subType)) {
+			newValue[index] = {
+				...(newValue[index] as wire.PlainWireRecord),
+				[subField.name]: newFieldValue,
+			}
+		} else {
+			newValue[index] = newFieldValue
+		}
 		return newValue
 	}
 
-	const getValue = (
-		item: wire.PlainWireRecord | wire.FieldValue,
-		subfield: collection.FieldMetadata
-	) => (isText ? item : (item as wire.PlainWireRecord)[subfield.name] || "")
+	const getIndividualValue = (
+		item: wire.FieldValue,
+		subField: wire.FieldMetadata
+	): wire.FieldValue => {
+		if (isStructOrMap(subType)) {
+			return (item as wire.PlainWireRecord)[subField.name]
+		}
+		return item
+	}
 
-	if (!subFields) return null
+	const addIndividualValue = () => {
+		const newValue = value ? [...value] : []
+		newValue.push(getDefaultValue())
+		setValue(newValue)
+	}
 
-	// Determine the set of fields to display, prioritizing view-level subfields
-	const subFieldDefinitions = subFields ? Object.keys(subFields) : undefined
+	const removeIndividualValue = (index: number) => {
+		setValue(value.filter((_, i) => i !== index))
+	}
 
-	const rowClasses = styles.cx(`grid-cols-${numFields}`, classes.row)
+	const getDefaultValue = (): wire.FieldValue => {
+		if (isStructOrMap(subType)) return {}
+		if (subType === "NUMBER") return 0
+		return ""
+	}
+
+	const fields = getFields()
+	const fieldKeys = Object.keys(fields)
+
+	if (!fieldKeys.length) return null
+
+	const rowClasses = styles.cx(`grid-cols-${fieldKeys.length}`, classes.row)
 
 	return (
 		<div className={classes.root}>
 			<Grid className={rowClasses} context={context}>
-				{subFieldDefinitions &&
-					subFieldDefinitions.map((subfieldId) => {
-						const subfield = subFields[subfieldId]
-						return (
-							<FieldLabel
-								key={
-									subfield.label ||
-									subfield.name ||
-									subfieldId
-								}
-								label={
-									isText
-										? ""
-										: subfield.label || subfield.name
-								}
-								variant={labelVariant}
-								context={context}
-							/>
-						)
-					})}
+				{fieldKeys.map((subfieldId) => {
+					const subfield = fields[subfieldId]
+					return (
+						<FieldLabel
+							key={subfield.label || subfield.name || subfieldId}
+							label={subfield.label || subfield.name}
+							variant={labelVariant}
+							context={context}
+						/>
+					)
+				})}
 				{editMode && !noAdd && (
 					<IconButton
 						label="add"
-						icon={autoAdd || noAdd ? "" : "add_circle"}
+						icon={noAdd ? "" : "add_circle"}
 						context={context}
 						className="editicon"
-						onClick={() => {
-							// We have to do this in a way that doesn't mutate listValue
-							// since it can be readonly.
-							const newValue = value ? [...value] : []
-							newValue.push(getDefaultValue())
-							setValue(newValue)
-						}}
-						disabled={autoAdd || noAdd}
+						onClick={addIndividualValue}
+						disabled={noAdd}
 					/>
 				)}
 			</Grid>
-			{value
-				?.concat(autoAdd && editMode ? [getDefaultValue()] : [])
-				.map(
-					(
-						item: wire.PlainWireRecord | wire.FieldValue,
-						itemIndex
-					) => (
-						<Grid
-							key={itemIndex}
-							className={rowClasses}
-							context={context}
-						>
-							{subFieldDefinitions &&
-								subFieldDefinitions.map((subfieldId) => {
-									const subfield = subFields[subfieldId]
-									const subfieldValue = getValue(
-										item,
-										subfield
-									)
-									return (
-										<Field
-											key={`${itemIndex}_${subfieldId}`}
-											fieldId={subfieldId}
-											// TODO: If we need to use real wire records here, we'll need to convert item into a WireRecord
-											record={{} as wire.WireRecord}
-											path={`${path}["${itemIndex}"]`}
-											fieldMetadata={
-												new collection.Field(subfield)
-											}
-											value={subfieldValue}
-											mode={mode}
-											context={context}
-											variant={subFieldVariant}
-											setValue={(
-												newFieldValue: wire.FieldValue
-											) =>
-												setValue(
-													getNewValue(
-														newFieldValue,
-														subfield,
-														itemIndex
-													)
-												)
-											}
-										/>
-									)
-								})}
-							{editMode && !noDelete && (
-								<IconButton
-									label="delete"
-									icon="delete"
-									className="invisible group-hover:visible"
+			{value?.map(
+				(item: wire.PlainWireRecord | wire.FieldValue, itemIndex) => (
+					<Grid
+						key={itemIndex}
+						className={rowClasses}
+						context={context}
+					>
+						{fieldKeys.map((subfieldId) => {
+							const subfield = fields[subfieldId]
+							const subfieldValue = getIndividualValue(
+								item,
+								subfield
+							)
+							return (
+								<Field
+									key={`${itemIndex}_${subfieldId}`}
+									fieldId={subfieldId}
+									// TODO: If we need to use real wire records here, we'll need to convert item into a WireRecord
+									record={{} as wire.WireRecord}
+									path={`${path}["${itemIndex}"]`}
+									fieldMetadata={
+										new collection.Field(subfield)
+									}
+									value={subfieldValue}
+									mode={mode}
 									context={context}
-									onClick={() => {
-										setValue(
-											value.filter(
-												(_, i) => i !== itemIndex
-											)
+									variant={subFieldVariant}
+									setValue={(
+										newFieldValue: wire.FieldValue
+									) =>
+										setIndividualValue(
+											itemIndex,
+											subfield,
+											newFieldValue
 										)
-									}}
+									}
 								/>
-							)}
-						</Grid>
-					)
-				)}
+							)
+						})}
+						{editMode && !noDelete && (
+							<IconButton
+								label="delete"
+								icon="delete"
+								className="invisible group-hover:visible"
+								context={context}
+								onClick={() => {
+									removeIndividualValue(itemIndex)
+								}}
+							/>
+						)}
+					</Grid>
+				)
+			)}
 		</div>
 	)
 }
