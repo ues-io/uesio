@@ -50,11 +50,7 @@ const MultiMetadataPicker: definition.UtilityComponent<
 		/>
 	)
 
-	const selectedItems = items
-		? items.filter((item: metadata.MetadataInfo) =>
-				value.includes(item.key)
-		  )
-		: []
+	const isSelected = (item: metadata.MetadataInfo) => value.includes(item.key)
 
 	return (
 		<FieldWrapper
@@ -69,7 +65,8 @@ const MultiMetadataPicker: definition.UtilityComponent<
 				itemRenderer={renderer}
 				variant={variant}
 				context={context}
-				selectedItems={selectedItems}
+				isSelected={isSelected}
+				isMulti={true}
 				onSelect={(item: metadata.MetadataInfo) =>
 					setValue([...value, item.key])
 				}
