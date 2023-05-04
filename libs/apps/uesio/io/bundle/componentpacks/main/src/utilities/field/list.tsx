@@ -33,8 +33,7 @@ const StyleDefaults = Object.freeze({
 	row: [],
 })
 
-const isStructOrMap = (subType: string | undefined) =>
-	subType === "STRUCT" || subType === "MAP"
+const VALID_SUBTYPES = ["STRUCT", "TEXT", "NUMBER"]
 
 const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 	const {
@@ -60,8 +59,13 @@ const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 		"uesio/io.listfield"
 	)
 
+	// For now we just support a few subtypes for this list renderer.
+	// We can definitely add more.
+	if (!subType || !VALID_SUBTYPES.includes(subType))
+		throw new Error("Invalid subtype for list renderer: " + subType)
+
 	const getFields = (): collection.FieldMetadataMap => {
-		if (isStructOrMap(subType)) {
+		if (subType === "STRUCT") {
 			return subFields || {}
 		}
 
@@ -69,7 +73,7 @@ const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 			value: {
 				name: "value",
 				namespace: "",
-				type: subType || "TEXT",
+				type: subType,
 				createable: true,
 				accessible: true,
 				updateable: true,
@@ -93,7 +97,7 @@ const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 	) => {
 		if (!value) return value
 		const newValue = [...value]
-		if (isStructOrMap(subType)) {
+		if (subType === "STRUCT") {
 			newValue[index] = {
 				...(newValue[index] as wire.PlainWireRecord),
 				[subField.name]: newFieldValue,
@@ -108,7 +112,7 @@ const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 		item: wire.FieldValue,
 		subField: wire.FieldMetadata
 	): wire.FieldValue => {
-		if (isStructOrMap(subType)) {
+		if (subType === "STRUCT") {
 			return (item as wire.PlainWireRecord)[subField.name]
 		}
 		return item
@@ -125,7 +129,7 @@ const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 	}
 
 	const getDefaultValue = (): wire.FieldValue => {
-		if (isStructOrMap(subType)) return {}
+		if (subType === "STRUCT") return {}
 		if (subType === "NUMBER") return 0
 		return ""
 	}
