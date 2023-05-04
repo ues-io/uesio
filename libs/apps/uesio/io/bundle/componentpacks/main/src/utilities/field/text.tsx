@@ -50,8 +50,6 @@ const TextField: FC<TextFieldProps> = (props) => {
 		focusOnRender,
 	} = props
 
-	console.log({ props })
-
 	const updateProps = useUpdate(
 		updateOnBlur,
 		setValue,
