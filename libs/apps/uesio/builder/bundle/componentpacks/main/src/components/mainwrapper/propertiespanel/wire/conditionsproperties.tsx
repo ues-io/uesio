@@ -287,7 +287,7 @@ const ConditionsProperties: definition.UC = (props) => {
 				// 	getDisplayConditionLabel(
 				// 		record as component.DisplayCondition
 				// 	),
-				defaultDefinition: "NEWVALUE",
+				// defaultDefinition: "NEWVALUE",
 				// properties: DisplayConditionProperties,
 			},
 			displayConditions: [

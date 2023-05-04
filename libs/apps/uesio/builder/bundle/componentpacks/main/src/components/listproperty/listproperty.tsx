@@ -65,17 +65,6 @@ const ListProperty: definition.UC<Definition> = (props) => {
 					namespace: "",
 					type: "LIST",
 					subtype: itemsDefinition.subtype,
-					subfields: {
-						value: {
-							name: "value",
-							label: "Value",
-							namespace: "",
-							type: itemsDefinition.subtype,
-							createable: true,
-							accessible: true,
-							updateable: true,
-						},
-					},
 					createable: true,
 					accessible: true,
 					updateable: true,
@@ -88,11 +77,6 @@ const ListProperty: definition.UC<Definition> = (props) => {
 			//variant={subFieldVariant}
 			setValue={(value: wire.FieldValue) => {
 				set(context, listPropertyPath, value)
-				// set(
-				// 	context,
-				// 	listPropertyPath.addLocal(`${items?.length || 0}`),
-				// 	itemsDefinition?.defaultDefinition || {}
-				// )
 			}}
 		/>
 	)
