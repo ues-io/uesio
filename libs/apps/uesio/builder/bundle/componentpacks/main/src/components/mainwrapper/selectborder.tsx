@@ -42,7 +42,9 @@ const SelectBorder: definition.UtilityComponent = (props) => {
 	if (
 		selectedComponentPath.isSet() &&
 		selectedComponentPath.itemType === "viewdef" &&
-		selectedComponentPath.itemName === viewDefId
+		selectedComponentPath.itemName === viewDefId &&
+		selectedComponentPath.localPath &&
+		selectedComponentPath.size() > 1
 	) {
 		selectedParentPath = selectedComponentPath.parent()
 		const [componentIndex, restOfPath] = selectedParentPath.popIndex()
