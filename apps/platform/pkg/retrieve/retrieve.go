@@ -3,6 +3,7 @@ package retrieve
 import (
 	"archive/zip"
 	"errors"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -36,7 +37,11 @@ type nopWriterCloser struct {
 
 func (nopWriterCloser) Close() error { return nil }
 
-const bundleDirectory = "bundle"
+const (
+	bundleDirectory = "bundle"
+	generatedDir    = "generated"
+	uesioTypesDir   = "@uesio"
+)
 
 func Retrieve(writer io.Writer, session *sess.Session) error {
 	workspace := session.GetWorkspace()
@@ -50,14 +55,32 @@ func Retrieve(writer io.Writer, session *sess.Session) error {
 	}
 	// Create a new zip archive.
 	zipwriter := zip.NewWriter(writer)
-	// Write Bundle contents into the bundle directory
-	err = RetrieveBundle(bundleDirectory, NewWriterCreator(zipwriter.Create), namespace, version, bs, session)
+	create := NewWriterCreator(zipwriter.Create)
+	// Retrieve bundle contents
+	err = RetrieveBundle(bundleDirectory, create, namespace, version, bs, session)
 	if err != nil {
 		return err
 	}
+	wd, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+	// Add generated type files
+	// uesio/bots
+	err = addGeneratedFile(create, filepath.Join(wd, "../../dist/ui/types/server/index.d.ts"), filepath.Join("generated", "@uesio", "bots.d.ts"))
+	if err != nil {
+		return err
+	}
+	// @uesio/ui
+	err = addGeneratedFile(create, filepath.Join(wd, "../../dist/ui/types/client/index.d.ts"), filepath.Join("generated", "@uesio", "ui.d.ts"))
+	if err != nil {
+		return err
+	}
+
 	return zipwriter.Close()
 }
 
+// RetrieveBundle retrieves the content of a specific bundle version into the designated targetDirectory
 func RetrieveBundle(targetDirectory string, create WriterCreator, namespace, version string, bs bundlestore.BundleStore, session *sess.Session) error {
 
 	for _, metadataType := range meta.GetMetadataTypes() {
@@ -67,7 +90,7 @@ func RetrieveBundle(targetDirectory string, create WriterCreator, namespace, ver
 		}
 		err = bs.GetAllItems(group, namespace, version, nil, session, nil)
 		if err != nil {
-			return errors.New("Failed to retrieve items of type: " + metadataType + ": " + err.Error())
+			return errors.New("failed to retrieve items of type: " + metadataType + ": " + err.Error())
 		}
 
 		err = group.Loop(func(item meta.Item, _ string) error {
@@ -76,7 +99,7 @@ func RetrieveBundle(targetDirectory string, create WriterCreator, namespace, ver
 
 			f, err := create(filepath.Join(targetDirectory, metadataType, path))
 			if err != nil {
-				return errors.New("Failed to create " + metadataType + " file: " + path + ": " + err.Error())
+				return errors.New("failed to create " + metadataType + " file: " + path + ": " + err.Error())
 			}
 			defer f.Close()
 
@@ -84,7 +107,7 @@ func RetrieveBundle(targetDirectory string, create WriterCreator, namespace, ver
 			encoder.SetIndent(2)
 			err = encoder.Encode(item)
 			if err != nil {
-				return errors.New("Failed to encode metadata item of type " + metadataType + " into YAML: " + path + ": " + err.Error())
+				return errors.New("failed to encode metadata item of type " + metadataType + " into YAML: " + path + ": " + err.Error())
 			}
 
 			attachableItem, isAttachable := item.(meta.AttachableItem)
@@ -125,7 +148,7 @@ func RetrieveBundle(targetDirectory string, create WriterCreator, namespace, ver
 
 	f, err := create(filepath.Join(targetDirectory, "bundle.yaml"))
 	if err != nil {
-		return errors.New("Failed to create bundle.yaml file: " + err.Error())
+		return errors.New("failed to create bundle.yaml file: " + err.Error())
 	}
 	defer f.Close()
 
@@ -133,48 +156,28 @@ func RetrieveBundle(targetDirectory string, create WriterCreator, namespace, ver
 	encoder.SetIndent(2)
 	err = encoder.Encode(by)
 	if err != nil {
-		return errors.New("Failed to encode bundle.yaml file into YAML: " + err.Error())
-	}
-
-	wd, err := os.Getwd()
-	if err != nil {
-		return err
-	}
-
-	// Add uesio/bots types
-	source, err := os.Open(filepath.Join(wd, "../../dist/ui/types/server/index.d.ts"))
-	if err != nil {
-		return err
-	}
-	defer source.Close()
-
-	f, err = create(filepath.Join("generated", "@uesio", "bots.d.ts"))
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-	_, err = io.Copy(f, source)
-	if err != nil {
-		return errors.New("Failed to create uesio server types file: " + err.Error())
-	}
-
-	// Add @uesio/ui module types
-	source, err = os.Open(filepath.Join(wd, "../../dist/ui/types/client/index.d.ts"))
-	if err != nil {
-		return err
-	}
-	defer source.Close()
-
-	f, err = create(filepath.Join("generated", "@uesio", "ui.d.ts"))
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-	_, err = io.Copy(f, source)
-	if err != nil {
-		return errors.New("Failed to create uesio ui types file: " + err.Error())
+		return errors.New("failed to encode bundle.yaml file into YAML: " + err.Error())
 	}
 
 	return nil
 
+}
+
+func addGeneratedFile(create WriterCreator, sourcePath, targetPath string) error {
+	source, err := os.Open(sourcePath)
+	if err != nil {
+		return err
+	}
+	defer source.Close()
+
+	f, err := create(targetPath)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	_, err = io.Copy(f, source)
+	if err != nil {
+		return fmt.Errorf("failed to create file at path %s : %s", targetPath, err.Error())
+	}
+	return nil
 }
