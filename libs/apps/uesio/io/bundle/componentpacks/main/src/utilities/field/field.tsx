@@ -85,8 +85,6 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 		updateOnBlur,
 	} = props
 
-	console.log({ field: updateOnBlur })
-
 	let readonly = false
 	if (props.readonly !== undefined) {
 		readonly = props.readonly

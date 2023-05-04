@@ -31,9 +31,11 @@ const useUpdate = (
 		onChange: (e) =>
 			delayUntilBlur
 				? setCurrentValue?.(e.target.value)
-				: setValue?.(currentValue),
+				: setValue?.(e.target.value),
 		onBlur: () =>
-			currentValue !== initialValue ? setValue?.(currentValue) : null,
+			delayUntilBlur && currentValue !== initialValue
+				? setValue?.(currentValue)
+				: null,
 		currentValue,
 	}
 }
