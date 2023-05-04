@@ -35,6 +35,8 @@ type nopWriterCloser struct {
 
 func (nopWriterCloser) Close() error { return nil }
 
+const bundleDirectory = "bundle"
+
 func Retrieve(writer io.Writer, session *sess.Session) error {
 	workspace := session.GetWorkspace()
 	if workspace == nil {
@@ -47,14 +49,15 @@ func Retrieve(writer io.Writer, session *sess.Session) error {
 	}
 	// Create a new zip archive.
 	zipwriter := zip.NewWriter(writer)
-	err = RetrieveBundle(NewWriterCreator(zipwriter.Create), namespace, version, bs, session)
+	// Write Bundle contents into the bundle directory
+	err = RetrieveBundle(bundleDirectory, NewWriterCreator(zipwriter.Create), namespace, version, bs, session)
 	if err != nil {
 		return err
 	}
 	return zipwriter.Close()
 }
 
-func RetrieveBundle(create WriterCreator, namespace, version string, bs bundlestore.BundleStore, session *sess.Session) error {
+func RetrieveBundle(targetDirectory string, create WriterCreator, namespace, version string, bs bundlestore.BundleStore, session *sess.Session) error {
 
 	for _, metadataType := range meta.GetMetadataTypes() {
 		group, err := meta.GetBundleableGroupFromType(metadataType)
@@ -70,7 +73,7 @@ func RetrieveBundle(create WriterCreator, namespace, version string, bs bundlest
 
 			path := item.(meta.BundleableItem).GetPath()
 
-			f, err := create(filepath.Join("bundle", metadataType, path))
+			f, err := create(filepath.Join(targetDirectory, metadataType, path))
 			if err != nil {
 				return errors.New("Failed to create " + metadataType + " file: " + path + ": " + err.Error())
 			}
@@ -95,7 +98,7 @@ func RetrieveBundle(create WriterCreator, namespace, version string, bs bundlest
 					if err != nil {
 						return err
 					}
-					f, err := create(filepath.Join("bundle", metadataType, attachableItem.GetBasePath(), path))
+					f, err := create(filepath.Join(targetDirectory, metadataType, attachableItem.GetBasePath(), path))
 					if err != nil {
 						return err
 					}
@@ -119,7 +122,7 @@ func RetrieveBundle(create WriterCreator, namespace, version string, bs bundlest
 	// Add bundle.yaml
 	by := session.GetWorkspace().GetAppBundle()
 
-	f, err := create(filepath.Join("bundle", "bundle.yaml"))
+	f, err := create(filepath.Join(targetDirectory, "bundle.yaml"))
 	if err != nil {
 		return errors.New("Failed to create bundle.yaml file: " + err.Error())
 	}
