@@ -37,6 +37,7 @@ type FieldDefinition = {
 	wrapperVariant: metadata.MetadataKey
 	subFieldVariant?: metadata.MetadataKey
 	labelVariant?: metadata.MetadataKey
+	updateOnBlur?: boolean
 } & definition.BaseDefinition
 
 type LabelPosition = "none" | "top" | "left"
@@ -89,6 +90,7 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		subFieldVariant,
 		labelVariant,
 		labelPosition,
+		updateOnBlur,
 	} = definition
 
 	const componentId = api.component.getComponentIdFromProps(props)
@@ -140,6 +142,7 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		displayAs,
 		subFieldVariant,
 		labelVariant,
+		updateOnBlur,
 		// Some components have sub-fields that need to know about label position
 		labelPosition,
 	}

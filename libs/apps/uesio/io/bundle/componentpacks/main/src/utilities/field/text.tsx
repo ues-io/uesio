@@ -1,4 +1,4 @@
-import { FunctionComponent, useState } from "react"
+import React, { FC, useState } from "react"
 import { definition, styles, context, wire } from "@uesio/ui"
 
 interface TextFieldProps extends definition.UtilityProps {
@@ -9,6 +9,7 @@ interface TextFieldProps extends definition.UtilityProps {
 	placeholder?: string
 	type?: "search" | "password" | "text" | "email" | "tel" | "url"
 	focusOnRender?: boolean
+	updateOnBlur?: boolean
 }
 
 const StyleDefaults = Object.freeze({
@@ -16,17 +17,44 @@ const StyleDefaults = Object.freeze({
 	readonly: [],
 })
 
-const TextField: FunctionComponent<TextFieldProps> = (props) => {
+const useUpdate = (
+	delayUntilBlur: boolean,
+	setValue: ((value: wire.FieldValue) => void) | undefined,
+	initialValue: string
+): {
+	onChange: React.ChangeEventHandler<HTMLInputElement>
+	onBlur: React.FocusEventHandler<HTMLInputElement>
+	currentValue: string
+} => {
+	const [currentValue, setCurrentValue] = useState(initialValue)
+	return {
+		onChange: (e) =>
+			delayUntilBlur
+				? setCurrentValue?.(e.target.value)
+				: setValue?.(currentValue),
+		onBlur: () =>
+			currentValue !== initialValue ? setValue?.(currentValue) : null,
+		currentValue,
+	}
+}
+
+const TextField: FC<TextFieldProps> = (props) => {
 	const {
 		setValue,
 		mode,
 		placeholder,
 		type = "text",
 		readonly,
+		updateOnBlur = false,
 		id,
 		focusOnRender,
 	} = props
-	const [currentValue, setCurrentValue] = useState<string>(
+
+	console.log({ props })
+
+	const updateProps = useUpdate(
+		updateOnBlur,
+		setValue,
 		`${props.value || ""}`
 	)
 
@@ -42,14 +70,10 @@ const TextField: FunctionComponent<TextFieldProps> = (props) => {
 		<input
 			id={id}
 			type={type}
-			value={currentValue || ""}
-			onBlur={({ target: { value } }) =>
-				value !== props.value ? setValue?.(value) : null
-			}
+			{...updateProps}
 			placeholder={placeholder}
 			className={styles.cx(classes.input, isReadMode && classes.readonly)}
 			disabled={isReadMode}
-			onChange={(event) => setCurrentValue(event.target.value)}
 			ref={(input: HTMLInputElement) => focusOnRender && input?.focus()}
 		/>
 	)

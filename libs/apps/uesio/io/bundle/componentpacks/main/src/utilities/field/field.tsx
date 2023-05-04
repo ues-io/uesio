@@ -55,6 +55,7 @@ interface FieldProps extends definition.UtilityProps {
 	subFieldVariant?: metadata.MetadataKey
 	labelVariant?: metadata.MetadataKey
 	labelPosition?: LabelPosition
+	updateOnBlur?: boolean
 }
 
 const Field: FunctionComponent<FieldProps> = (props) => {
@@ -81,7 +82,10 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 		labelVariant,
 		labelPosition,
 		classes,
+		updateOnBlur,
 	} = props
+
+	console.log({ field: updateOnBlur })
 
 	let readonly = false
 	if (props.readonly !== undefined) {
@@ -111,6 +115,7 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 		variant,
 		value,
 		placeholder,
+		updateOnBlur,
 	}
 
 	const complexFieldOptions = {
