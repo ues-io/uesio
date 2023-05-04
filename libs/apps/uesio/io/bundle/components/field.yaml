@@ -61,6 +61,15 @@ properties:
           - TEXT
           - LONGTEXT
           - REFERENCE
+  - name: updateOnBlur
+    type: CHECKBOX
+    label: Update onBlur
+    displayConditions:
+      - type: fieldValue
+        field: fieldDisplayType
+        operator: IN
+        values:
+          - TEXT
   - name: displayAs
     type: SELECT
     label: Display as
@@ -193,6 +202,7 @@ sections:
       - number
       - longtext
       - reference
+      - updateOnBlur
   - type: STYLES
   - type: DISPLAY
 signals:
