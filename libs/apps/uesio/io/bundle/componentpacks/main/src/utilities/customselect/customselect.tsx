@@ -70,9 +70,15 @@ const CustomSelect: definition.UtilityComponent<CustomSelectProps<unknown>> = (
 		  }
 		: itemRenderer
 
+	const onSelectFunc = isMulti
+		? (item: unknown) => {
+				isSelected(item) ? onUnSelect(item) : onSelect(item)
+		  }
+		: onSelect
+
 	return (
 		<Menu
-			onSelect={onSelect}
+			onSelect={onSelectFunc}
 			getItemKey={getItemKey}
 			itemRenderer={renderer}
 			items={items}
