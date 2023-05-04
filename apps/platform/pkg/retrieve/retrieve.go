@@ -66,7 +66,7 @@ func Retrieve(writer io.Writer, session *sess.Session) error {
 		return err
 	}
 	// Add generated type files
-	// uesio/bots
+	// @uesio/bots
 	err = addGeneratedFile(create, filepath.Join(wd, "../../dist/ui/types/server/index.d.ts"), filepath.Join("generated", "@uesio", "bots.d.ts"))
 	if err != nil {
 		return err

@@ -24,7 +24,7 @@
 		"baseUrl": ".",
 		"paths": {
 			"@uesio/ui": ["libs/ui/src/index.ts"],
-			"uesio/bots": ["libs/ui/src/public_types/server/index.d.ts"]
+			"@uesio/bots": ["libs/ui/src/public_types/server/index.d.ts"]
 		}
 	},
 	"exclude": ["node_modules", "tmp"]

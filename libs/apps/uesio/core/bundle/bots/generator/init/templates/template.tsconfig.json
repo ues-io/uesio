@@ -24,7 +24,7 @@
 		"baseUrl": ".",
 		"paths": {
 			"@uesio/ui": ["generated/@uesio/ui.d.ts"],
-			"uesio/bots": ["generated/@uesio/bots.d.ts"]
+			"@uesio/bots": ["generated/@uesio/bots.d.ts"]
 		}
 	},
 	"exclude": ["node_modules", "tmp"]
