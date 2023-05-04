@@ -380,9 +380,7 @@
 					"outputs": ["dist/ui"],
 					"options": {
 						"commands": [
-							"uesio packui",
-							"npx tsc --noEmit --project ./tsconfig.lib.json",
-							"npx tsc --project ./tsconfig.exports.json"
+							"bash build.sh"
 						],
 						"parallel": false,
 						"cwd": "libs/ui"
