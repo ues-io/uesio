@@ -1,4 +1,4 @@
-import { definition, component, wire } from "@uesio/ui"
+import { definition, component, wire, collection } from "@uesio/ui"
 import { add } from "../../api/defapi"
 import { FullPath } from "../../api/path"
 import { ListProperty as LP } from "../../properties/componentproperty"
@@ -18,6 +18,7 @@ const ListProperty: definition.UC<Definition> = (props) => {
 	const ListPropertyUtility = component.getUtility(
 		"uesio/builder.listproperty"
 	)
+	const Field = component.getUtility("uesio/io.field")
 
 	const viewDefId = context.getViewDefId() || ""
 	const record = context.getRecord()
@@ -39,7 +40,7 @@ const ListProperty: definition.UC<Definition> = (props) => {
 		},
 	]
 
-	return (
+	return !itemsDefinition?.subtype ? (
 		<ListPropertyUtility
 			itemProperties={itemsDefinition?.properties}
 			itemPropertiesSections={itemsDefinition?.sections}
@@ -49,6 +50,45 @@ const ListProperty: definition.UC<Definition> = (props) => {
 			path={listPropertyPath}
 			items={items}
 			context={context}
+		/>
+	) : (
+		<Field
+			key={"values"}
+			//fieldId={subfieldId}
+			// TODO: If we need to use real wire records here, we'll need to convert item into a WireRecord
+			record={{} as wire.WireRecord}
+			path={listPropertyPath}
+			labelPosition={"top"}
+			fieldMetadata={
+				new collection.Field({
+					name: "values",
+					namespace: "",
+					type: "LIST",
+					subtype: itemsDefinition.subtype,
+					subfields: {
+						value: {
+							name: "value",
+							label: "Value",
+							namespace: "",
+							type: itemsDefinition.subtype,
+							createable: true,
+							accessible: true,
+							updateable: true,
+						},
+					},
+					createable: true,
+					accessible: true,
+					updateable: true,
+					label: "Values",
+				})
+			}
+			value={items}
+			mode={"EDIT"}
+			context={context}
+			//variant={subFieldVariant}
+			setValue={(value: wire.FieldValue) =>
+				record.update("values", value, context)
+			}
 		/>
 	)
 }

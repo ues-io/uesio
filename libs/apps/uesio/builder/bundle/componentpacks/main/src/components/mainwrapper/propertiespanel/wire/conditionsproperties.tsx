@@ -282,11 +282,12 @@ const ConditionsProperties: definition.UC = (props) => {
 			items: {
 				title: "Value",
 				addLabel: "Add Value",
+				subtype: "TEXT",
 				// displayTemplate: (record: wire.PlainWireRecord) =>
 				// 	getDisplayConditionLabel(
 				// 		record as component.DisplayCondition
 				// 	),
-				// defaultDefinition: { operator: "EQUALS" },
+				defaultDefinition: "NEWVALUE",
 				// properties: DisplayConditionProperties,
 			},
 			displayConditions: [

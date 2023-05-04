@@ -143,6 +143,7 @@ interface ListPropertyItemsDefinition {
 	title?: string
 	defaultDefinition?: definition.DefinitionMap
 	sections?: PropertiesPanelSection[]
+	subtype?: wire.FieldType
 }
 
 type ListProperty = {
