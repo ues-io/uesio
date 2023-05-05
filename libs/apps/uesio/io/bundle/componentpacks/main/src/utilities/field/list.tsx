@@ -70,7 +70,7 @@ const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 		}
 
 		return {
-			["value"]: {
+			value: {
 				name: "value",
 				namespace: "",
 				type: subType,
