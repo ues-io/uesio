@@ -8,7 +8,7 @@
 		"**/*.spec.ts",
 		"**/*.test.ts",
 		"jest.config.ts",
-		"src/public_types/*"
+		"src/public_types/**/*"
 	],
 	"include": ["**/*.ts*"]
 }

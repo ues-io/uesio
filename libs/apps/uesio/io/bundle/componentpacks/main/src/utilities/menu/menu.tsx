@@ -21,6 +21,7 @@ interface MenuButtonUtilityProps<T> extends definition.UtilityProps {
 	getItemKey: (item: T) => string
 	onSearch?: (search: string) => void
 	searchFilter?: (item: T, search: string) => boolean
+	closeOnSelect?: boolean
 }
 
 const StyleDefaults = Object.freeze({
@@ -97,6 +98,7 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 		searchFilter,
 		getItemKey,
 		children,
+		closeOnSelect = true,
 	} = props
 
 	return (
@@ -165,14 +167,16 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 												// Handle pointer select.
 												onClick() {
 													onSelect(item)
-													setIsOpen(false)
+													closeOnSelect &&
+														setIsOpen(false)
 												},
 												// Handle keyboard select.
 												onKeyDown(event) {
 													if (event.key === "Enter") {
 														event.preventDefault()
 														onSelect(item)
-														setIsOpen(false)
+														closeOnSelect &&
+															setIsOpen(false)
 													}
 												},
 											})}

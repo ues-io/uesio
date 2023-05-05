@@ -2,19 +2,19 @@ name: theme
 dialect: "JAVASCRIPT"
 type: "GENERATOR"
 params:
-  name:
+  - name: name
     prompt: Theme name
     type: METADATANAME
-  primary:
+  - name: primary
     prompt: primary color
-  secondary:
+  - name: secondary
     prompt: secondary color
-  error:
+  - name: error
     prompt: error color
-  warning:
+  - name: warning
     prompt: warning color
-  info:
+  - name: info
     prompt: info color
-  success:
+  - name: success
     prompt: success color
 public: true

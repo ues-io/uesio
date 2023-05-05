@@ -1,4 +1,17 @@
-import { SignalBandDefinition, SignalDescriptor } from "../api/signalsapi"
+import {
+	SignalBandDefinition,
+	SignalDefinition,
+	SignalDescriptor,
+} from "../api/signalsapi"
+import {
+	ComponentProperty,
+	StructProperty,
+} from "../properties/componentproperty"
+import { api } from "@uesio/ui"
+
+interface CallBotSignal extends SignalDefinition {
+	bot: string
+}
 
 // The key for the entire band
 const BAND = "bot"
@@ -9,16 +22,43 @@ const signals: SignalBandDefinition = {
 		[`${BAND}/CALL`]: {
 			label: "Call Bot",
 			description: "Call a Bot",
-			properties: () => [
-				{
-					type: "METADATA",
-					metadataType: "BOT",
-					groupingValue: "LISTENER",
-					name: "bot",
-					label: "Bot",
-				},
-				// TODO: Add Bot-specific Params!!!
-			],
+			properties: (signal: CallBotSignal, context) => {
+				const props = [
+					{
+						type: "METADATA",
+						metadataType: "BOT",
+						groupingValue: "LISTENER",
+						name: "bot",
+						label: "Bot",
+					},
+				] as ComponentProperty[]
+				// Fetch bot params
+				if (signal.bot) {
+					const parts = signal.bot.split("/")
+					const [params] = api.bot.useParams(
+						context,
+						parts[0],
+						parts[1].split(".").join("/"),
+						"listener"
+					)
+					if (params && params.length) {
+						props.push({
+							type: "STRUCT",
+							name: "params",
+							label: "Parameters",
+							properties: params.map(
+								({ name, type, required }) =>
+									({
+										type,
+										name,
+										required,
+									} as ComponentProperty)
+							) as ComponentProperty[],
+						} as StructProperty)
+					}
+				}
+				return props
+			},
 			// TODO: Change bot responses to be a named map
 			// outputs: [{ name: "result", type: "MAP" }],
 		},

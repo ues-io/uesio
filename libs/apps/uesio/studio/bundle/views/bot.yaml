@@ -22,6 +22,11 @@ definition:
         uesio/studio.type:
         uesio/studio.dialect:
         uesio/studio.collection:
+        uesio/studio.params:
+          fields:
+            name:
+            type:
+            required:
         uesio/core.updatedat:
         uesio/core.updatedby:
         uesio/core.createdat:
@@ -91,6 +96,9 @@ definition:
                                       uesio.variant: uesio/io.primary
                                       text: "Save"
                                       signals:
+                                        - signal: wire/SAVE
+                                          wires:
+                                            - bots
                                         - signal: component/CALL
                                           component: uesio/io.fileattachment
                                           componentsignal: UPLOAD_FILE
@@ -100,6 +108,9 @@ definition:
                                       uesio.variant: uesio/io.secondary
                                       text: "Cancel"
                                       signals:
+                                        - signal: wire/CANCEL
+                                          wires:
+                                            - bots
                                         - signal: component/CALL
                                           component: uesio/io.fileattachment
                                           componentsignal: CANCEL_FILE
@@ -148,7 +159,23 @@ definition:
                                       displayAs: TEXT
                                       mode: EDIT
                                       typeDefinitionFileURIs:
-                                        - $StaticFile{/ui/server/types/types.d.ts}
+                                        - $StaticFile{/ui/types/server/bots.d.ts}
+                            - uesio/io.box:
+                                uesio.variant: uesio/io.section
+                                components:
+                                  - uesio/io.list:
+                                      uesio.id: botParams
+                                      wire: bots
+                                      mode: EDIT
+                                      components:
+                                        - uesio/io.titlebar:
+                                            uesio.variant: uesio/io.section
+                                            title: Bot Parameters
+                                        - uesio/io.field:
+                                            fieldId: uesio/studio.params
+                                            label: " "
+                                            mode: EDIT
+
   panels:
     deleteBot:
       uesio.type: uesio/io.dialog

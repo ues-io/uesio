@@ -1,0 +1,27 @@
+{
+	"compileOnSave": false,
+	"compilerOptions": {
+		"jsx": "react-jsx",
+		"noImplicitAny": true,
+		"noImplicitThis": true,
+		"strictNullChecks": true,
+		"esModuleInterop": true,
+		"allowJs": false,
+		"rootDir": ".",
+		"sourceMap": true,
+		"declaration": false,
+		"moduleResolution": "node",
+		"importHelpers": true,
+		"noUnusedLocals": true,
+		"target": "es6",
+		"module": "esnext",
+		"typeRoots": ["node_modules/@types", "generated/@types"],
+		"lib": ["es2019", "dom"],
+		"skipLibCheck": true,
+		"skipDefaultLibCheck": true,
+		"useUnknownInCatchVariables": true,
+		"isolatedModules": true,
+		"baseUrl": "."
+	},
+	"exclude": ["node_modules", "tmp"]
+}

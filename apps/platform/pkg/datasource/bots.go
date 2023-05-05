@@ -181,6 +181,11 @@ func CallListenerBot(namespace, name string, params map[string]interface{}, conn
 		return nil, err
 	}
 
+	err = robot.ValidateParams(params)
+	if err != nil {
+		return nil, err
+	}
+
 	dialect, err := bot.GetBotDialect(robot.Dialect)
 	if err != nil {
 		return nil, err

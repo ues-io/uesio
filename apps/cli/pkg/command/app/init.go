@@ -1,8 +1,9 @@
-package command
+package app
 
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	"github.com/thecloudmasters/cli/pkg/auth"
@@ -11,40 +12,25 @@ import (
 	"github.com/thecloudmasters/cli/pkg/param"
 	"github.com/thecloudmasters/cli/pkg/wire"
 	"github.com/thecloudmasters/cli/pkg/zip"
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
 func getAnswerInfo(sessid string) (map[string]interface{}, error) {
-	users, err := wire.Load("uesio/core.user", &wire.LoadOptions{
-		Fields: []adapt.LoadRequestField{{
-			ID: "uesio/core.username",
-		}},
-		RequireWriteAccess: true,
-	})
+	users, err := wire.GetAvailableUsernames()
 	if err != nil {
-		return nil, err
-	}
-
-	options := []string{}
-	for _, user := range users {
-		username, err := user.GetFieldAsString("uesio/core.username")
-		if err != nil {
-			return nil, err
-		}
-		options = append(options, username)
+		return nil, errors.New("Unable to retrieve users from studio")
 	}
 
 	return param.AskMany(&meta.BotParamsResponse{
 		{
 			Name:    "user",
-			Prompt:  "Select user or org",
-			Choices: options,
+			Prompt:  "Select user or organization",
+			Choices: users,
 			Type:    "LIST",
 		},
 		{
 			Name:   "app",
-			Prompt: "App Name",
+			Prompt: "App Name (a-z, 0-9, or _ only)",
 			Type:   "METADATANAME",
 		},
 		{
@@ -83,9 +69,10 @@ func getAnswers(sessid string) (string, string, string, string, error) {
 	return username, appname, color, icon, nil
 }
 
-func Initialize() error {
+func AppInit() error {
 
-	fmt.Println("Running Initialize Command")
+	// TODO: Only log this in verbose mode, and use a logging api
+	fmt.Println("Running app:init command")
 
 	_, err := auth.Login()
 	if err != nil {
@@ -99,6 +86,7 @@ func Initialize() error {
 
 	app, err := config.GetApp()
 	if err != nil {
+
 		// Create an app
 		fmt.Println("No bundle info found. Let's create a new app.")
 		username, appname, color, icon, err := getAnswers(sessid)
@@ -136,7 +124,7 @@ func Initialize() error {
 		return err
 	}
 
-	fmt.Println("Init Success")
+	fmt.Println("Successfully created App")
 
 	return nil
 }
