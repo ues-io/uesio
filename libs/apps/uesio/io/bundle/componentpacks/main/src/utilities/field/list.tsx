@@ -26,8 +26,6 @@ interface ListFieldUtilityProps extends definition.UtilityProps {
 	labelVariant?: metadata.MetadataKey
 	options?: ListFieldOptions
 	path: string
-	defaultName?: string
-	defaultLabel?: string
 }
 
 const StyleDefaults = Object.freeze({
@@ -48,8 +46,6 @@ const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 		subFieldVariant,
 		labelVariant,
 		path,
-		defaultName,
-		defaultLabel,
 	} = props
 	const value = props.value as (wire.PlainWireRecord | wire.FieldValue)[]
 	const setValue = props.setValue as (
@@ -74,14 +70,14 @@ const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 		}
 
 		return {
-			[defaultName || "value"]: {
-				name: defaultName || "value",
+			["value"]: {
+				name: "value",
 				namespace: "",
 				type: subType,
 				createable: true,
 				accessible: true,
 				updateable: true,
-				label: defaultLabel || "Value",
+				label: "Value",
 			},
 		}
 	}

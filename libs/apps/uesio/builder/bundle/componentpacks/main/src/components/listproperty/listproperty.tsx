@@ -40,7 +40,20 @@ const ListProperty: definition.UC<Definition> = (props) => {
 		},
 	]
 
-	return !property?.subtype ? (
+	return property?.subtype === "TEXT" || property?.subtype === "NUMBER" ? (
+		<ListField
+			fieldId={property.name}
+			path={path}
+			value={items}
+			subType={property.subtype}
+			setValue={(value: wire.FieldValue) => {
+				set(context, listPropertyPath, value)
+			}}
+			mode={"EDIT"}
+			context={context}
+			labelVariant={"uesio/builder.default"}
+		/>
+	) : (
 		<ListPropertyUtility
 			itemProperties={itemsDefinition?.properties}
 			itemPropertiesSections={itemsDefinition?.sections}
@@ -50,22 +63,6 @@ const ListProperty: definition.UC<Definition> = (props) => {
 			path={listPropertyPath}
 			items={items}
 			context={context}
-		/>
-	) : (
-		<ListField
-			fieldId={property.name}
-			path={path}
-			value={items}
-			subType={property.subtype}
-			defaultName={property.name}
-			defaultLabel={property.label}
-			setValue={(value: wire.FieldValue) => {
-				set(context, listPropertyPath, value)
-			}}
-			mode={"EDIT"}
-			context={context}
-			labelVariant={"uesio/builder.default"}
-			// subFieldVariant={subFieldVariant}
 		/>
 	)
 }
