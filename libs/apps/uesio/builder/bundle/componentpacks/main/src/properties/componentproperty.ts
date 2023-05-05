@@ -137,18 +137,17 @@ type ComponentPropertiesGetter = (
 type DisplayTemplateGetter = (record: wire.PlainWireRecord) => string
 
 interface ListPropertyItemsDefinition {
-	properties: ComponentProperty[] | ComponentPropertiesGetter
-	addLabel: string
-	displayTemplate: string | DisplayTemplateGetter
-	title?: string
+	addLabel?: string
 	defaultDefinition?: definition.DefinitionMap
+	displayTemplate?: string | DisplayTemplateGetter
+	properties?: ComponentProperty[] | ComponentPropertiesGetter
 	sections?: PropertiesPanelSection[]
+	title?: string
 }
 
 type ListProperty = {
 	type: "LIST"
-	components?: definition.DefinitionList
-	items?: ListPropertyItemsDefinition
+	items: ListPropertyItemsDefinition
 	subtype?: wire.FieldType
 } & BaseProperty
 
