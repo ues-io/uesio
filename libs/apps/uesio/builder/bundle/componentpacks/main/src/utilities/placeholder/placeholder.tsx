@@ -4,7 +4,6 @@ import { FC } from "react"
 
 interface T extends definition.UtilityProps {
 	isHovering: boolean
-	index: number
 	label?: string
 	message?: string
 	hideIfNotLast?: boolean
@@ -15,7 +14,6 @@ const PlaceHolder: FC<T> = (props) => {
 		isHovering,
 		label = "Empty Component Area",
 		message,
-		index,
 		hideIfNotLast,
 		direction,
 	} = props
@@ -70,11 +68,7 @@ const PlaceHolder: FC<T> = (props) => {
 		props
 	)
 	return (
-		<div
-			className={classes.wrapper}
-			data-placeholder="true"
-			data-index={index}
-		>
+		<div className={classes.wrapper} data-placeholder="true">
 			{isVertical && (
 				<div>
 					{label && <div className={classes.label}>{label}</div>}

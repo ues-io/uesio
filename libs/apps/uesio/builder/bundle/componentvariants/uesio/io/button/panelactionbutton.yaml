@@ -9,4 +9,5 @@ definition:
       - py-1.5
       - rounded-md
       - hover:bg-slate-200
+      - text-slate-600
 public: true
