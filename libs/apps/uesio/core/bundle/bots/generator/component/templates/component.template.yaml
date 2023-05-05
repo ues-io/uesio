@@ -10,7 +10,7 @@ properties:
     name: text
     label: Text
 defaultDefinition:
-    text: Hello world
+  text: Hello world
 sections:
   - type: HOME
     properties:

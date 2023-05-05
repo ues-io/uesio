@@ -3,6 +3,7 @@ package workspace
 import (
 	"errors"
 	"fmt"
+	"path/filepath"
 
 	"github.com/thecloudmasters/cli/pkg/auth"
 	"github.com/thecloudmasters/cli/pkg/call"
@@ -11,9 +12,14 @@ import (
 	"github.com/thecloudmasters/cli/pkg/zip"
 )
 
-func Deploy() error {
+func Deploy(sourceDir string) error {
 
-	fmt.Println("Running Deploy Command")
+	sourceDirDescription := sourceDir
+	if sourceDir == "." {
+		sourceDirDescription = "current directory"
+	}
+
+	fmt.Printf("Deploying metadata to studio from %s ... \n", sourceDirDescription)
 
 	_, err := auth.Login()
 	if err != nil {
@@ -39,7 +45,7 @@ func Deploy() error {
 		return err
 	}
 
-	payload := zip.ZipDir("bundle")
+	payload := zip.ZipDir(filepath.Join(sourceDir, "bundle"))
 
 	url := fmt.Sprintf("workspace/%s/%s/metadata/deploy", app, workspace)
 

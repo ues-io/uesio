@@ -1,31 +1,15 @@
 {
 	"root": true,
-	"ignorePatterns": ["**/*"],
-	"plugins": ["@nrwl/nx", "react-hooks"],
+	"extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
+	"parser": "@typescript-eslint/parser",
+	"parserOptions": { "project": ["./tsconfig.json"] },
+	"plugins": ["@typescript-eslint", "react", "react-hooks"],
 	"overrides": [
-		{
-			"files": ["*.ts", "*.tsx"],
-			"extends": ["plugin:@nrwl/nx/typescript"],
-			"rules": {}
-		},
-		{
-			"files": ["*.js", "*.jsx"],
-			"extends": ["plugin:@nrwl/nx/javascript"],
-			"rules": {}
-		},
-		{
-			"files": ["**/*.spec.ts", "**/*.spec.tsx", "**/test/utils/*.ts"],
-			"env": {
-				"jest": true,
-				"browser": true
-			}
-		},
 		{
 			"files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
 			"env": {
 				"browser": true
 			},
-			"plugins": ["react"],
 			"rules": {
 				"array-callback-return": "error",
 				"dot-notation": "error",
@@ -49,7 +33,6 @@
 				],
 				"react/jsx-closing-bracket-location": "error",
 				"react-hooks/rules-of-hooks": "error",
-				"react-hooks/exhaustive-deps": "warn",
 				"@typescript-eslint/naming-convention": [
 					"error",
 					{
@@ -61,19 +44,6 @@
 				"@typescript-eslint/no-unused-vars": [
 					"error",
 					{ "ignoreRestSiblings": true }
-				],
-				"@nrwl/nx/enforce-module-boundaries": [
-					"error",
-					{
-						"enforceBuildableLibDependency": true,
-						"allow": [],
-						"depConstraints": [
-							{
-								"sourceTag": "*",
-								"onlyDependOnLibsWithTags": ["*"]
-							}
-						]
-					}
 				]
 			}
 		}
