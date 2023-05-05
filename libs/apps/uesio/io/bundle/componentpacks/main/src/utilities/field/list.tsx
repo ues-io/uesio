@@ -33,7 +33,7 @@ const StyleDefaults = Object.freeze({
 	row: [],
 })
 
-const VALID_SUBTYPES = ["STRUCT", "TEXT", "NUMBER"]
+const SUPPORTED_SUBTYPES = ["STRUCT", "TEXT", "NUMBER"]
 
 const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 	const {
@@ -61,8 +61,8 @@ const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 
 	// For now we just support a few subtypes for this list renderer.
 	// We can definitely add more.
-	if (!subType || !VALID_SUBTYPES.includes(subType))
-		throw new Error("Invalid subtype for list renderer: " + subType)
+	if (!subType || !SUPPORTED_SUBTYPES.includes(subType))
+		throw new Error("Subtype not supported for list renderer: " + subType)
 
 	const getFields = (): collection.FieldMetadataMap => {
 		if (subType === "STRUCT") {
