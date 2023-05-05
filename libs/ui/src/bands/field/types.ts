@@ -74,7 +74,7 @@ type FieldMetadata = {
 	referencegroup?: ReferenceGroupMetadata
 	subfields?: FieldMetadataMap
 	file?: FileMetadata
-	subtype?: string
+	subtype?: FieldType
 	number?: NumberMetadata
 }
 
