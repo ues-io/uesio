@@ -143,13 +143,13 @@ interface ListPropertyItemsDefinition {
 	title?: string
 	defaultDefinition?: definition.DefinitionMap
 	sections?: PropertiesPanelSection[]
-	subtype?: wire.FieldType
 }
 
 type ListProperty = {
 	type: "LIST"
 	components?: definition.DefinitionList
 	items?: ListPropertyItemsDefinition
+	subtype?: wire.FieldType
 } & BaseProperty
 
 type ParamsProperty = {

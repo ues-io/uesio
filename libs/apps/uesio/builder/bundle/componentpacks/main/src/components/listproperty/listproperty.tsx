@@ -1,4 +1,4 @@
-import { definition, component, wire, collection } from "@uesio/ui"
+import { definition, component, wire } from "@uesio/ui"
 import { add, set } from "../../api/defapi"
 import { FullPath } from "../../api/path"
 import { ListProperty as LP } from "../../properties/componentproperty"
@@ -18,7 +18,7 @@ const ListProperty: definition.UC<Definition> = (props) => {
 	const ListPropertyUtility = component.getUtility(
 		"uesio/builder.listproperty"
 	)
-	const Field = component.getUtility("uesio/io.field")
+	const ListField = component.getUtility("uesio/io.listfield")
 
 	const viewDefId = context.getViewDefId() || ""
 	const record = context.getRecord()
@@ -40,7 +40,7 @@ const ListProperty: definition.UC<Definition> = (props) => {
 		},
 	]
 
-	return !itemsDefinition?.subtype ? (
+	return !property?.subtype ? (
 		<ListPropertyUtility
 			itemProperties={itemsDefinition?.properties}
 			itemPropertiesSections={itemsDefinition?.sections}
@@ -52,32 +52,20 @@ const ListProperty: definition.UC<Definition> = (props) => {
 			context={context}
 		/>
 	) : (
-		<Field
-			key={"values"}
-			//fieldId={subfieldId}
-			// TODO: If we need to use real wire records here, we'll need to convert item into a WireRecord
-			record={{} as wire.WireRecord}
-			path={listPropertyPath}
-			labelPosition={"top"}
-			fieldMetadata={
-				new collection.Field({
-					name: "values",
-					namespace: "",
-					type: "LIST",
-					subtype: itemsDefinition.subtype,
-					createable: true,
-					accessible: true,
-					updateable: true,
-					label: "Values",
-				})
-			}
+		<ListField
+			fieldId={property.name}
+			path={path}
 			value={items}
-			mode={"EDIT"}
-			context={context}
-			//variant={subFieldVariant}
+			subType={property.subtype}
+			defaultName={property.name}
+			defaultLabel={property.label}
 			setValue={(value: wire.FieldValue) => {
 				set(context, listPropertyPath, value)
 			}}
+			mode={"EDIT"}
+			context={context}
+			labelVariant={"uesio/builder.default"}
+			// subFieldVariant={subFieldVariant}
 		/>
 	)
 }

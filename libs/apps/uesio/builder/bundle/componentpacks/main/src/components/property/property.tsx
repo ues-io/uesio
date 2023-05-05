@@ -105,24 +105,25 @@ export const getFormFieldFromProperty = (
 			}
 
 		case "LIST": {
-			return property.items
-				? {
-						"uesio/builder.listproperty": {
-							path,
-							property,
-						},
-				  }
-				: {
-						"uesio/io.field": {
-							fieldId: property.name,
-							wrapperVariant: "uesio/io.minimal",
-							displayAs: "DECK",
-							labelPosition: "none",
-							list: {
-								components: property.components,
-							},
-						},
-				  }
+			//TO-DO ASK ZACH for this usecase
+			//property.items ?
+			return {
+				"uesio/builder.listproperty": {
+					path,
+					property,
+				},
+			}
+			// : {
+			// 		"uesio/io.field": {
+			// 			fieldId: property.name,
+			// 			wrapperVariant: "uesio/io.minimal",
+			// 			displayAs: "DECK",
+			// 			labelPosition: "none",
+			// 			list: {
+			// 				components: property.components,
+			// 			},
+			// 		},
+			//   }
 		}
 		case "COMPONENT_ID": {
 			return {

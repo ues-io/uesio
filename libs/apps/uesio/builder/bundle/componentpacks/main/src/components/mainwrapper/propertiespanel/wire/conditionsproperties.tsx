@@ -279,17 +279,7 @@ const ConditionsProperties: definition.UC = (props) => {
 			name: "values",
 			type: "LIST",
 			label: "Values",
-			items: {
-				title: "Value",
-				addLabel: "Add Value",
-				subtype: "TEXT",
-				// displayTemplate: (record: wire.PlainWireRecord) =>
-				// 	getDisplayConditionLabel(
-				// 		record as component.DisplayCondition
-				// 	),
-				// defaultDefinition: "NEWVALUE",
-				// properties: DisplayConditionProperties,
-			},
+			subtype: "TEXT",
 			displayConditions: [
 				{
 					field: "valueSource",
