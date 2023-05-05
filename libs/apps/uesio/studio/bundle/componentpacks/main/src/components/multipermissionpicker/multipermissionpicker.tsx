@@ -1,5 +1,6 @@
 import { definition, api, component, wire, signal } from "@uesio/ui"
 import omit from "lodash/omit"
+import { useRef, MutableRefObject } from "react"
 
 type PermissionFieldDefinition = wire.FieldMetadata
 
@@ -8,6 +9,7 @@ type MultiPermissionPickerDefinition = {
 	wireName: string
 	permissionFields: PermissionFieldDefinition[]
 	rowactions?: RowAction[]
+	wireRef?: MutableRefObject<wire.Wire | undefined>
 }
 
 type RowAction = {
@@ -30,7 +32,7 @@ const MultiPermissionPicker: definition.UC<MultiPermissionPickerDefinition> = (
 		props.definition[component.COMPONENT_ID] ||
 		"multipermissionpicker" + fieldId
 	const dynamicTableId = uesioId + "-table"
-
+	const dynamicwire = useRef(props.definition.wireRef)
 	const mode = context.getFieldMode() || "READ"
 
 	const DynamicTable = component.getUtility("uesio/io.dynamictable")
@@ -45,6 +47,8 @@ const MultiPermissionPicker: definition.UC<MultiPermissionPickerDefinition> = (
 	if (!wire || !permsStorageRecord) {
 		return null
 	}
+
+	console.log(dynamicwire.current)
 
 	const collection = wire.getCollection()
 	const nameField = collection.getNameField()
@@ -117,6 +121,43 @@ const MultiPermissionPicker: definition.UC<MultiPermissionPickerDefinition> = (
 		}
 	}, {})
 
+	const dynwire = api.wire.useWire("dynamicwire:fieldPerms-table", context)
+	console.log("dynwire?.getId(): ", dynwire?.getId())
+	console.log("dynwire.getData: ", dynwire?.getData())
+	console.log("dynwire.getChanges: ", dynwire?.getChanges())
+	console.log("dynwire.getFields: ", dynwire?.getFields())
+
+	api.event.useEvent(
+		"wire.cancelled",
+		(e) => {
+			console.log("cancelled")
+			if (!dynamicwire || !e.detail || !wire) return
+			const { fullWireId } = e.detail
+			console.log("fullWireId", fullWireId)
+			if (fullWireId !== wire.getFullId())
+				Object.entries(getInitialValues).forEach(([recordId]) => {
+					api.signal.run(
+						{
+							signal: "wire/SET_RECORD",
+							wire: dynwire?.getId(),
+							field: recordId,
+							value: {
+								read: false,
+								edit: false,
+							},
+						},
+						context
+					)
+					console.warn("recordId: ", recordId)
+				})
+			console.warn(
+				"after cancel dynwire.getChanges: ",
+				dynwire?.getChanges()
+			)
+		},
+		[wire, getInitialValues, dynwire]
+	)
+
 	const tableFields = [
 		{
 			name: ID_FIELD,
@@ -143,6 +184,7 @@ const MultiPermissionPicker: definition.UC<MultiPermissionPickerDefinition> = (
 			initialValues={getInitialValues}
 			onUpdate={handlePermUpdate}
 			rowactions={rowactions}
+			wireRef={props.definition.wireRef}
 		/>
 	)
 }

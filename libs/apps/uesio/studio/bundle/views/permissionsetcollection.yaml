@@ -142,17 +142,18 @@ definition:
                                           mode: EDIT
                                       signals:
                                         - signal: wire/CANCEL
-                                          wire: permissionsets
-                                        - signal: component/CALL
-                                          component: uesio/io.list
-                                          componentsignal: TOGGLE_MODE
-                                          targettype: specific
-                                          componentid: permissionsetsList
-                                        - signal: component/CALL
-                                          component: uesio/io.table
-                                          componentsignal: TOGGLE_MODE
-                                          targettype: specific
-                                          componentid: fieldPerms-table
+                                          wire: dynamicwire:fieldPerms-table
+                                        #- signal: component/CALL
+                                        # component: uesio/io.list
+                                        #componentsignal: TOGGLE_MODE
+                                        #targettype: specific
+                                        #componentid: permissionsetsList
+                                        # - signal: component/CALL
+                                        #  component: uesio/io.table
+                                        # componentsignal: TOGGLE_MODE
+                                        #targettype: specific
+                                        #componentid: fieldPerms-table
+
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           components:
