@@ -1,4 +1,4 @@
-import { AfterSaveBotApi } from "uesio/bots"
+import { AfterSaveBotApi } from "@uesio/bots"
 
 function addlead(bot: AfterSaveBotApi) {
 	// bot.inserts.get().forEach(function (change) {

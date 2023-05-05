@@ -7,7 +7,7 @@ interface Props extends definition.UtilityProps {
 }
 
 const StyleDefaults = Object.freeze({
-	fieldset: [],
+	fieldset: ["grid", "gap-2", "p-2"],
 	legend: ["hidden"],
 })
 

@@ -380,23 +380,7 @@
 					"outputs": ["dist/ui"],
 					"options": {
 						"commands": [
-							"uesio packui",
-							"npx tsc --noEmit --project ./tsconfig.lib.json",
-							"npx tsc --project ./tsconfig.exports.json"
-						],
-						"parallel": false,
-						"cwd": "libs/ui"
-					}
-				},
-				"publish": {
-					"builder": "nx:run-commands",
-					"outputs": ["dist/ui"],
-					"options": {
-						"commands": [
-							"npx tsc --build",
-							"cd publish && npm version --no-git-tag-version patch",
-							"cp ./publish/package.json ../../dist/ui/package.json",
-							"cp ./publish/.npmignore ../../dist/ui/.npmignore"
+							"bash build.sh"
 						],
 						"parallel": false,
 						"cwd": "libs/ui"
