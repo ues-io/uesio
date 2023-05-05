@@ -159,7 +159,7 @@ definition:
                                       displayAs: TEXT
                                       mode: EDIT
                                       typeDefinitionFileURIs:
-                                        - $StaticFile{/ui/server/types/types.d.ts}
+                                        - $StaticFile{/ui/types/server/bots.d.ts}
                             - uesio/io.box:
                                 uesio.variant: uesio/io.section
                                 components:

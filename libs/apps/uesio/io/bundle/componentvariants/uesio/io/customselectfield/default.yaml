@@ -9,15 +9,23 @@ definition:
       - flex
       - gap-2
       - flex-wrap
+      - py-0
     notfound:
       - text-slate-400
       - font-light
+      - py-2
     editbutton:
       - text-slate-700
+      - leading-none
     selecteditemwrapper:
       - inline-grid
       - grid-flow-col
       - auto-cols-auto
       - gap-2
-      - mr-4
+      - bg-slate-100
+      - rounded-full
+      - pl-2.5
+      - pr-1.5
+      - py-0.5
+      - my-1.5
 public: true
