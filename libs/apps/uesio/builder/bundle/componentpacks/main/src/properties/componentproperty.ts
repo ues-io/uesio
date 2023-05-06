@@ -147,7 +147,7 @@ interface ListPropertyItemsDefinition {
 
 type ListProperty = {
 	type: "LIST"
-	items: ListPropertyItemsDefinition
+	items?: ListPropertyItemsDefinition
 	subtype?: wire.FieldType
 } & BaseProperty
 
