@@ -17,8 +17,11 @@ function getConditionTitle(condition: wire.WireConditionState): string {
 
 	if (condition.valueSource === "VALUE") {
 		const valueCondition = condition as wire.ValueConditionState
+		const valuesString = valueCondition.values
+			? "(" + valueCondition.values.join(",") + ")"
+			: valueCondition.value
 		return `${valueCondition.field} ${valueCondition.operator || ""} ${
-			valueCondition.value || ""
+			valuesString || ""
 		}`
 	}
 
@@ -133,6 +136,10 @@ const ConditionsProperties: definition.UC = (props) => {
 					{
 						label: "In",
 						value: "IN",
+					},
+					{
+						label: "Not In",
+						value: "NOT IN",
 					},
 					{
 						label: "Is Blank",

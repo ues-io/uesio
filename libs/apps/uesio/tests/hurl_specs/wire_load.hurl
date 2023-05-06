@@ -162,3 +162,85 @@ jsonpath "$.dependencies.wire.entities['uesio/tests.simple_wire_load($root):anim
 jsonpath "$.dependencies.wire.entities['uesio/tests.simple_wire_load($root):animals'].preloaded" == true
 jsonpath "$.dependencies.wire.entities['uesio/tests.simple_wire_load($root):animals'].loadAll" == false
 jsonpath "$.dependencies.wire.entities['uesio/tests.simple_wire_load($root):animals'].data[*]['uesio/core.id']" count == 10
+
+# Wire load with IN condition and values
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.animal",
+            "query":true,
+            "conditions": [
+                {
+                    "field": "uesio/tests.species",
+                    "operator": "IN",
+                    "values": [
+                        "Jerrine"
+                    ]
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].debugQueryString" == ```
+SELECT
+main.id::text AS "uesio/core.id",
+main.uniquekey AS "uesio/core.uniquekey"
+FROM data as "main"
+WHERE
+main.collection = $1 AND
+main.tenant = $2 AND
+main.fields->>'uesio/tests.species' IN ($3)
+ORDER BY main.id::text asc
+LIMIT 501```
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" count == 2
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "MacAughtrie:Jerrine"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "McCreary:Jerrine"
+
+# Wire load with NOT IN condition and values
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.animal",
+            "query":true,
+            "conditions": [
+                {
+                    "field": "uesio/tests.genus",
+                    "operator": "NOT IN",
+                    "values": [
+                        "Plaster",
+                        "Lathe"
+                    ]
+                },
+                {
+                    "field": "uesio/tests.species",
+                    "operator": "IN",
+                    "values": [
+                        "Franklin",
+                        "Benjamin"
+                    ]
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].debugQueryString" == ```
+SELECT
+main.id::text AS "uesio/core.id",
+main.uniquekey AS "uesio/core.uniquekey"
+FROM data as "main"
+WHERE
+main.collection = $1 AND
+main.tenant = $2 AND
+main.fields->>'uesio/tests.genus' NOT IN ($3,$4) AND
+main.fields->>'uesio/tests.species' IN ($5,$6)
+ORDER BY main.id::text asc
+LIMIT 501```
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" == "Soitoux:Franklin"

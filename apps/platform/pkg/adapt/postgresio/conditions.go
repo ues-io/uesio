@@ -3,6 +3,7 @@ package postgresio
 import (
 	"errors"
 	"fmt"
+	"reflect"
 	"strconv"
 	"strings"
 
@@ -107,11 +108,35 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 
 	fieldName := getFieldName(fieldMetadata, tableAlias)
 	switch condition.Operator {
-	case "IN":
+	case "IN", "NOT IN":
 		if fieldMetadata.Type == "DATE" {
 			return processDateRangeCondition(condition, fieldName, builder)
 		}
-		builder.addQueryPart(fmt.Sprintf("%s = ANY(%s)", fieldName, builder.addValue(condition.Value)))
+		if condition.Values != nil {
+			if reflect.TypeOf(condition.Values).Kind() == reflect.Slice {
+				switch values := condition.Values.(type) {
+				case []interface{}:
+					if numValues := len(values); numValues > 0 {
+						safeValues := make([]string, numValues, numValues)
+						for i, val := range values {
+							safeValues[i] = builder.addValue(val)
+						}
+						builder.addQueryPart(fmt.Sprintf("%s %s (%s)", fieldName, condition.Operator, strings.Join(safeValues, ",")))
+					}
+				default:
+					fmt.Printf("Unsupported type for values array: %T\n", values)
+				}
+			} else {
+				return errors.New(condition.Operator + " requires a values array to be provided")
+			}
+		} else {
+			useOperator := "= ANY"
+			if condition.Operator == "NOT IN" {
+				useOperator = "<> ANY"
+			}
+			builder.addQueryPart(fmt.Sprintf("%s %s (%s)", fieldName, useOperator, builder.addValue(condition.Value)))
+		}
+
 	case "HAS_ANY":
 		if fieldMetadata.Type != "MULTISELECT" {
 			return errors.New("Operator HAS_ANY only works with fieldType MULTI_SELECT")
