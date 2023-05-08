@@ -9,6 +9,7 @@ import { SignalDefinition } from "./signal"
 import { WireConditionState } from "../bands/wire/conditions/conditions"
 import { MetadataKey } from "../bands/builder/types"
 import { DisplayCondition } from "../componentexports"
+import { PlainWireRecord } from "../bands/wirerecord/types"
 type WireDefinitionMap = {
 	[key: string]: WireDefinition
 }
@@ -73,6 +74,7 @@ type WireDefinitionBase = {
 type ViewOnlyWireDefinition = WireDefinitionBase & {
 	viewOnly: true
 	fields: Record<string, ViewOnlyField>
+	initialValues?: Record<string, PlainWireRecord>
 }
 
 type RegularWireDefinition = WireDefinitionBase & {

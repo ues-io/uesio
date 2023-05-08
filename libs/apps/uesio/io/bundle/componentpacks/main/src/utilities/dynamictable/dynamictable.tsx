@@ -1,6 +1,5 @@
 import { api, component, context, wire, definition, signal } from "@uesio/ui"
 import { MutableRefObject } from "react"
-import { useDeepCompareEffect } from "react-use"
 
 type RowAction = {
 	text: string
@@ -49,6 +48,7 @@ const DynamicTable: definition.UtilityComponent<DynamicTableProps> = (
 			init: {
 				create: false,
 			},
+			initialValues,
 		},
 		context
 	)
@@ -56,17 +56,6 @@ const DynamicTable: definition.UtilityComponent<DynamicTableProps> = (
 	// Set the passed in ref to the wire, so our
 	// parent component can use this wire.
 	if (wireRef) wireRef.current = wire
-
-	useDeepCompareEffect(() => {
-		if (!wire || !initialValues) return
-		if (!wire.getData().length) {
-			Object.entries(initialValues).forEach(
-				([recordId, initialValue]) => {
-					wire.createRecord(initialValue, false, recordId)
-				}
-			)
-		}
-	}, [!!wire, initialValues])
 
 	api.event.useEvent(
 		"wire.record.updated",

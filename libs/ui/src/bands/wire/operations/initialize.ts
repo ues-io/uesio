@@ -54,6 +54,7 @@ const getViewOnlyWireDefInfo = (
 ) => ({
 	...getBaseWireDefInfo(wireDef),
 	collection: getMetadataFullName(metadata),
+	data: wireDef.initialValues,
 	viewOnly: true,
 })
 
