@@ -3,9 +3,13 @@ function init(bot) {
 	var params = {
 		name,
 	}
-	bot.generateFile(".gitignore", params, "templates/template.gitignore")
-	bot.generateFile("tsconfig.json", {}, "templates/template.tsconfig.json")
-	bot.generateFile("package.json", params, "templates/template.package.json")
+	var templatePrefix = "templates/template."
+	bot.generateFile(".gitignore", params, `${templatePrefix}gitignore`)
+	bot.generateFile("tsconfig.json", {}, `${templatePrefix}tsconfig.json`)
+	bot.generateFile(".eslintrc.json", {}, `${templatePrefix}eslintrc.json`)
+	bot.generateFile(".prettierrc.yaml", {}, `${templatePrefix}prettierrc.yaml`)
+	bot.generateFile(".prettierignore", {}, `${templatePrefix}prettierignore`)
+	bot.generateFile("package.json", params, `${templatePrefix}package.json`)
 	bot.generateFile(
 		"bundle/bundle.yaml",
 		params,

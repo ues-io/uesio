@@ -11,7 +11,7 @@ func Work() error {
 
 	fmt.Println("Running Set Workspace Command")
 
-	workspace, err := ws.SetWorkspacePrompt("", "")
+	workspace, err := ws.SetWorkspacePrompt("")
 	if err != nil {
 		return err
 	}

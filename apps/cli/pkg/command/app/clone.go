@@ -1,10 +1,16 @@
 package app
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/thecloudmasters/cli/pkg/config/ws"
 	"sort"
+
+	"github.com/thecloudmasters/cli/pkg/call"
+	"github.com/thecloudmasters/cli/pkg/zip"
+
+	"github.com/thecloudmasters/cli/pkg/config/ws"
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/thecloudmasters/cli/pkg/auth"
@@ -47,12 +53,12 @@ func askUserToSelectApp(sessid string) (*wire.App, error) {
 	return appsResult[answer], nil
 }
 
-func AppClone() error {
+func AppClone(targetDir string) error {
 
 	// TODO: Only log this in verbose mode, and use a logging api
 	fmt.Println("Running app:clone command")
 
-	user, err := auth.Login()
+	_, err := auth.Login()
 	if err != nil {
 		return err
 	}
@@ -71,14 +77,35 @@ func AppClone() error {
 
 	// Prompt user to select a workspace (TODO: or bundle version) to clone from
 	// if there are no workspaces, create one first
-	workspaceName, err := ws.SetWorkspacePrompt(user.Username, app.ID)
+	workspaceName, err := ws.SetWorkspacePrompt(app.ID)
 
 	if err != nil {
 		return err
 	}
 
-	err = workspace.RetrieveBundleForAppWorkspace(app.FullName, workspaceName)
+	// Run the init generator on the app
+	generateURL := "version/uesio/core/uesio/core/v0.0.1/metadata/generate/init"
+
+	payloadBytes := &bytes.Buffer{}
+
+	err = json.NewEncoder(payloadBytes).Encode(&map[string]string{"name": app.FullName})
 	if err != nil {
+		return err
+	}
+	resp, err := call.Request("POST", generateURL, payloadBytes, sessid)
+	if err != nil {
+		return err
+	}
+
+	if err = zip.Unzip(resp.Body, targetDir); err != nil {
+		return err
+	}
+
+	if err = workspace.RetrieveBundleForAppWorkspace(app.FullName, workspaceName, targetDir); err != nil {
+		return err
+	}
+
+	if err = installDeps(targetDir); err != nil {
 		return err
 	}
 
