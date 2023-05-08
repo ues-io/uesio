@@ -120,14 +120,6 @@ function getOperatorOptions(fieldDisplayType: string | undefined) {
 			label: "Between",
 			value: "BETWEEN",
 		},
-		{
-			label: "Has Any",
-			value: "HAS_ANY",
-		},
-		{
-			label: "Has All",
-			value: "HAS_ALL",
-		},
 	]
 }
 
