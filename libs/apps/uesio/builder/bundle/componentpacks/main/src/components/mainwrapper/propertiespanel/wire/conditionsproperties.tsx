@@ -153,6 +153,14 @@ const ConditionsProperties: definition.UC = (props) => {
 						label: "Between",
 						value: "BETWEEN",
 					},
+					{
+						label: "Has Any",
+						value: "HAS_ANY",
+					},
+					{
+						label: "Has All",
+						value: "HAS_ALL",
+					},
 				],
 				displayConditions: [
 					{
@@ -295,7 +303,13 @@ const ConditionsProperties: definition.UC = (props) => {
 						type: "fieldValue",
 						field: "operator",
 						operator: "NOT IN",
-						values: ["IN", "NOT IN", "BETWEEN"],
+						values: [
+							"IN",
+							"NOT IN",
+							"BETWEEN",
+							"HAS_ANY",
+							"HAS_ALL",
+						],
 					},
 				],
 			},
@@ -315,7 +329,7 @@ const ConditionsProperties: definition.UC = (props) => {
 						field: "operator",
 						type: "fieldValue",
 						operator: "IN",
-						values: ["IN", "NOT IN"],
+						values: ["IN", "NOT IN", "HAS_ANY", "HAS_ALL"],
 					},
 				],
 			},
