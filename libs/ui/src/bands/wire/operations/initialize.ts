@@ -53,8 +53,8 @@ const getViewOnlyWireDefInfo = (
 	metadata: PlainCollection
 ) => ({
 	...getBaseWireDefInfo(wireDef),
+	...(wireDef.initialValues && { data: wireDef.initialValues }),
 	collection: getMetadataFullName(metadata),
-	data: wireDef.initialValues,
 	viewOnly: true,
 })
 
