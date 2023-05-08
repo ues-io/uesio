@@ -116,20 +116,18 @@ func processConditions(
 
 			values := make([]interface{}, 0, lookupOp.Collection.Len())
 			err := lookupOp.Collection.Loop(func(item meta.Item, index string) error {
-
 				value, err := item.GetField(condition.LookupField)
 				if err != nil {
 					return err
 				}
 				values = append(values, value)
 				return nil
-
 			})
 			if err != nil {
 				return err
 			}
 
-			conditions[i].Value = values
+			conditions[i].Values = values
 			conditions[i].ValueSource = ""
 			//always IN
 			conditions[i].Operator = "IN"

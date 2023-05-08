@@ -77,7 +77,7 @@ const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 				createable: true,
 				accessible: true,
 				updateable: true,
-				label: "Value",
+				label: " ",
 			},
 		}
 	}
