@@ -19,6 +19,7 @@ const ListProperty: definition.UC<Definition> = (props) => {
 		"uesio/builder.listproperty"
 	)
 	const ListField = component.getUtility("uesio/io.listfield")
+	const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 
 	const viewDefId = context.getViewDefId() || ""
 	const record = context.getRecord()
@@ -41,18 +42,26 @@ const ListProperty: definition.UC<Definition> = (props) => {
 	]
 
 	return !itemsDefinition ? (
-		<ListField
-			fieldId={property.name}
-			path={path}
-			value={items}
-			subType={property.subtype}
-			setValue={(value: wire.FieldValue) => {
-				set(context, listPropertyPath, value)
-			}}
-			mode={"EDIT"}
+		<FieldWrapper
+			label={property.label}
+			labelPosition={"left"}
 			context={context}
-			labelVariant={"uesio/builder.default"}
-		/>
+			variant={"uesio/builder.propfield"}
+		>
+			<ListField
+				fieldId={property.name}
+				path={path}
+				value={items}
+				subType={property.subtype}
+				setValue={(value: wire.FieldValue) => {
+					set(context, listPropertyPath, value)
+				}}
+				mode={"EDIT"}
+				context={context}
+				labelVariant={"uesio/builder.propfield"}
+				subFieldVariant={"uesio/builder.propfield"}
+			/>
+		</FieldWrapper>
 	) : (
 		<ListPropertyUtility
 			itemProperties={itemsDefinition?.properties}

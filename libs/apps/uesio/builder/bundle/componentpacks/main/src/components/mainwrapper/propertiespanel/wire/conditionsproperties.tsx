@@ -54,6 +54,82 @@ function getValuesSubType(fieldDisplayType: string | undefined) {
 	}
 	return fieldDisplayType
 }
+function getOperatorOptions(fieldDisplayType: string | undefined) {
+	if (fieldDisplayType === "MULTISELECT")
+		return [
+			{
+				label: "",
+				value: "",
+			},
+			{
+				label: "Has Any",
+				value: "HAS_ANY",
+			},
+			{
+				label: "Has All",
+				value: "HAS_ALL",
+			},
+		]
+
+	return [
+		{
+			label: "",
+			value: "",
+		},
+		{
+			label: "Equals",
+			value: "EQ",
+		},
+		{
+			label: "Not Equal To",
+			value: "NOT_EQ",
+		},
+		{
+			label: "Greater Than",
+			value: "GT",
+		},
+		{
+			label: "Less Than",
+			value: "LT",
+		},
+		{
+			label: "Greater Than or Equal To",
+			value: "GTE",
+		},
+		{
+			label: "Less Than or Equal To",
+			value: "LTE",
+		},
+		{
+			label: "In",
+			value: "IN",
+		},
+		{
+			label: "Not In",
+			value: "NOT IN",
+		},
+		{
+			label: "Is Blank",
+			value: "IS_BLANK",
+		},
+		{
+			label: "Is Not Blank",
+			value: "IS_NOT_BLANK",
+		},
+		{
+			label: "Between",
+			value: "BETWEEN",
+		},
+		{
+			label: "Has Any",
+			value: "HAS_ANY",
+		},
+		{
+			label: "Has All",
+			value: "HAS_ALL",
+		},
+	]
+}
 
 const ConditionsProperties: definition.UC = (props) => {
 	const { context } = props
@@ -111,64 +187,7 @@ const ConditionsProperties: definition.UC = (props) => {
 				name: "operator",
 				type: "SELECT",
 				label: "Operator",
-				options: [
-					{
-						label: "",
-						value: "",
-					},
-					{
-						label: "Equals",
-						value: "EQ",
-					},
-					{
-						label: "Not Equal To",
-						value: "NOT_EQ",
-					},
-					{
-						label: "Greater Than",
-						value: "GT",
-					},
-					{
-						label: "Less Than",
-						value: "LT",
-					},
-					{
-						label: "Greater Than or Equal To",
-						value: "GTE",
-					},
-					{
-						label: "Less Than or Equal To",
-						value: "LTE",
-					},
-					{
-						label: "In",
-						value: "IN",
-					},
-					{
-						label: "Not In",
-						value: "NOT IN",
-					},
-					{
-						label: "Is Blank",
-						value: "IS_BLANK",
-					},
-					{
-						label: "Is Not Blank",
-						value: "IS_NOT_BLANK",
-					},
-					{
-						label: "Between",
-						value: "BETWEEN",
-					},
-					{
-						label: "Has Any",
-						value: "HAS_ANY",
-					},
-					{
-						label: "Has All",
-						value: "HAS_ALL",
-					},
-				],
+				options: getOperatorOptions(fieldDisplayType),
 				displayConditions: [
 					{
 						operator: "NOT_EQUALS",
