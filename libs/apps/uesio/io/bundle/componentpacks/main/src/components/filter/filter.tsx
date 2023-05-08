@@ -6,7 +6,7 @@ import WeekFilter from "../../utilities/weekfilter/weekfilter"
 import DateFilter from "../../utilities/datefilter/datefilter"
 import NumberFilter from "../../utilities/numberfilter/numberfilter"
 import CheckboxFilter from "../../utilities/checkboxfilter/checkboxfilter"
-import SearchBoxFilter from "../../utilities/searchboxfilter/searchboxfilter"
+import TextFilter from "../../utilities/textfilter/textfilter"
 import TimestampFilter from "../../utilities/timestampfilter/timestampfilter"
 import GroupFilter, {
 	GroupFilterProps,
@@ -46,7 +46,7 @@ const getFilterContent = (
 		case "TEXT":
 		case "LONGTEXT":
 		case "EMAIL":
-			return <SearchBoxFilter {...common} placeholder={placeholder} />
+			return <TextFilter {...common} placeholder={placeholder} />
 		case "NUMBER":
 			return <NumberFilter {...common} />
 		case "CHECKBOX":

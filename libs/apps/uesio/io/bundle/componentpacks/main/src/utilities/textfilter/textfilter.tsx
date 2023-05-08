@@ -8,7 +8,7 @@ interface SearchBoxFilterProps extends definition.UtilityProps {
 	placeholder?: string
 }
 
-const SearchBoxFilter: FunctionComponent<SearchBoxFilterProps> = (props) => {
+const TextFilter: FunctionComponent<SearchBoxFilterProps> = (props) => {
 	const { wire, context, fieldMetadata, path, placeholder } = props
 	const wireId = wire.getId()
 	const fieldId = fieldMetadata.getId() as metadata.MetadataKey
@@ -27,4 +27,4 @@ const SearchBoxFilter: FunctionComponent<SearchBoxFilterProps> = (props) => {
 	)
 }
 
-export default SearchBoxFilter
+export default TextFilter
