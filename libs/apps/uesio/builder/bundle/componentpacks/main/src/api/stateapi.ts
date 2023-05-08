@@ -3,7 +3,7 @@ import { ComponentProperty } from "../properties/componentproperty"
 import { combinePath, FullPath, parseFullPath } from "./path"
 import { PropertiesPanelSection } from "./propertysection"
 import { SignalDescriptor } from "./signalsapi"
-import { get } from "./defapi"
+import { get, useDefinition } from "./defapi"
 import pointer from "json-pointer"
 const { COMPONENT_ID } = component
 const {
@@ -128,6 +128,27 @@ const useBuildMode = (context: ctx.Context) =>
 
 const useSelectedPath = (context: ctx.Context) =>
 	parseFullPath(useBuilderExternalState<string>(context, "selected"))
+
+// This gets the normalized path of the selected component.
+// Even if the selected path includes a property of that component,
+// we ignore it.
+const useSelectedComponentPath = (context: ctx.Context) => {
+	const selectedPath = useSelectedPath(context)
+
+	const selectedDef = useDefinition(selectedPath)
+
+	const [key] = selectedPath.pop()
+
+	let path = selectedPath
+
+	// If our topmost key was an index we need to get the next one
+	// from the definition
+	if (component.path.isNumberIndex(key) && selectedDef) {
+		path = selectedPath.addLocal(Object.keys(selectedDef)[0])
+	}
+	// Trim our path down to our nearest component
+	return path.trim()
+}
 
 const useSelectedViewPath = (context: ctx.Context) => {
 	const fullPath = useBuilderExternalState<string>(context, "selected")
@@ -364,6 +385,7 @@ export {
 	useSelectedPath,
 	getSelectedPath,
 	setSelectedPath,
+	useSelectedComponentPath,
 	useSelectedViewPath,
 	getSelectedViewPath,
 	walkViewComponents,
