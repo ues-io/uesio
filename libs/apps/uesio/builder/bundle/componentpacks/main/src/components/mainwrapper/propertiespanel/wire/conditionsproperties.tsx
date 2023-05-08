@@ -48,6 +48,13 @@ function getConditionTitle(condition: wire.WireConditionState): string {
 	return "NEW_VALUE"
 }
 
+function getValuesSubType(fieldDisplayType: string | undefined) {
+	if (fieldDisplayType === "SELECT" || fieldDisplayType === "MULTISELECT") {
+		return "TEXT"
+	}
+	return fieldDisplayType
+}
+
 const ConditionsProperties: definition.UC = (props) => {
 	const { context } = props
 	const ListPropertyUtility = component.getUtility(
@@ -317,7 +324,7 @@ const ConditionsProperties: definition.UC = (props) => {
 				name: "values",
 				type: "LIST",
 				label: "Values",
-				subtype: fieldDisplayType || "TEXT",
+				subtype: getValuesSubType(fieldDisplayType),
 				displayConditions: [
 					{
 						field: "valueSource",

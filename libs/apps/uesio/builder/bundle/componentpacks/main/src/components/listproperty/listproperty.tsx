@@ -40,7 +40,7 @@ const ListProperty: definition.UC<Definition> = (props) => {
 		},
 	]
 
-	return property.subtype === "TEXT" || property.subtype === "NUMBER" ? (
+	return !itemsDefinition ? (
 		<ListField
 			fieldId={property.name}
 			path={path}
