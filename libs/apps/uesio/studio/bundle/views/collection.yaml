@@ -50,6 +50,7 @@ definition:
       conditions:
         - field: uesio/studio.collection
           value: $Param{app}.$Param{collectionname}
+          id: fullCollectionName
         - field: uesio/studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
@@ -193,6 +194,28 @@ definition:
                                 components:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.primary
+                                      uesio.id: save-fields
+                                      text: Save field changes
+                                      hotkey: "meta+s"
+                                      signals:
+                                        - signal: wire/SAVE
+                                          wires:
+                                            - fields
+                                      uesio.display:
+                                        - type: wireHasChanges
+                                          wire: fields
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.secondary
+                                      uesio.id: save-fields
+                                      text: Cancel
+                                      signals:
+                                        - signal: wire/CANCEL
+                                          wire: fields
+                                      uesio.display:
+                                        - type: wireHasChanges
+                                          wire: fields
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.primary
                                       uesio.id: new-field
                                       text: New Field
                                       hotkey: "n"
@@ -216,11 +239,23 @@ definition:
                               signals:
                                 - signal: route/NAVIGATE
                                   path: app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{namespace}/$Param{collectionname}/fields/${uesio/studio.name}
+                            - text: $Label{uesio/io.delete}
+                              signals:
+                                - signal: wire/MARK_FOR_DELETE
+                                  wire: fields
                           columns:
                             - field: uesio/studio.name
                             - field: uesio/studio.type
                             - field: uesio/studio.label
                             - field: uesio/studio.languagelabel
+                      - uesio/studio.suggestedfields:
+                          uesio.id: suggestedfields
+                          fieldWire: fields
+                          collectionWire: collections
+                          uesio.context:
+                            workspace:
+                              name: $Param{workspacename}
+                              app: $Param{app}
   panels:
     deleteCollection:
       uesio.type: uesio/io.dialog
