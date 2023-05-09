@@ -48,12 +48,6 @@ function getConditionTitle(condition: wire.WireConditionState): string {
 	return "NEW_VALUE"
 }
 
-function getValuesSubType(fieldDisplayType: string | undefined) {
-	if (fieldDisplayType === "SELECT" || fieldDisplayType === "MULTISELECT") {
-		return "TEXT"
-	}
-	return fieldDisplayType
-}
 function getOperatorOptions(fieldDisplayType: string | undefined) {
 	if (fieldDisplayType === "MULTISELECT")
 		return [
@@ -144,14 +138,17 @@ const ConditionsProperties: definition.UC = (props) => {
 		parentPath: FullPath,
 		itemState: wire.PlainWireRecord
 	) => {
-		const fieldDisplayType =
+		const fieldMetadata =
 			itemState.field && wireName
 				? getFieldMetadata(
 						context,
 						wireName as string,
 						itemState.field as string
-				  )?.getType()
+				  )
 				: undefined
+
+		const fieldDisplayType = fieldMetadata?.getType() || undefined
+
 		return [
 			{
 				name: "id",
@@ -226,6 +223,8 @@ const ConditionsProperties: definition.UC = (props) => {
 							"IN",
 							"NOT IN",
 							"BETWEEN",
+							"HAS_ANY",
+							"HAS_ALL",
 						],
 					},
 				],
@@ -335,7 +334,14 @@ const ConditionsProperties: definition.UC = (props) => {
 				name: "values",
 				type: "LIST",
 				label: "Values",
-				subtype: getValuesSubType(fieldDisplayType),
+				subtype: fieldDisplayType,
+				subtypeOptions:
+					fieldDisplayType === "CHECKBOX"
+						? [
+								{ label: "True", value: true },
+								{ label: "False", value: false },
+						  ]
+						: fieldMetadata?.getSelectOptions(context),
 				displayConditions: [
 					{
 						field: "valueSource",

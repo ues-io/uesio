@@ -149,6 +149,7 @@ type ListProperty = {
 	type: "LIST"
 	items?: ListPropertyItemsDefinition
 	subtype?: wire.FieldType
+	subtypeOptions?: wire.SelectOption[]
 } & BaseProperty
 
 type ParamsProperty = {

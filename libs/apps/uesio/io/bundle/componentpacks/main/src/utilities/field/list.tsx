@@ -33,8 +33,6 @@ const StyleDefaults = Object.freeze({
 	row: [],
 })
 
-const SUPPORTED_SUBTYPES = ["STRUCT", "TEXT", "NUMBER"]
-
 const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 	const {
 		subFields,
@@ -47,6 +45,9 @@ const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 		labelVariant,
 		path,
 	} = props
+
+	if (!subType) return null
+
 	const value = props.value as (wire.PlainWireRecord | wire.FieldValue)[]
 	const setValue = props.setValue as (
 		value: (wire.PlainWireRecord | wire.FieldValue)[]
@@ -58,11 +59,6 @@ const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 		props,
 		"uesio/io.listfield"
 	)
-
-	// For now we just support a few subtypes for this list renderer.
-	// We can definitely add more.
-	if (!subType || !SUPPORTED_SUBTYPES.includes(subType))
-		throw new Error("Subtype not supported for list renderer: " + subType)
 
 	const getFields = (): collection.FieldMetadataMap => {
 		if (subType === "STRUCT") {
