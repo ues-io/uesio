@@ -421,11 +421,10 @@ const parseProperties = (
 		if (onChange?.length) {
 			onChangeHandlers[name] = onChange
 		}
-		let setter: SetterFunction = (
-			value: wire.PlainFieldValue,
-			_field: string,
-			record: wire.WireRecord
-		) => {
+		let setter: SetterFunction = (value: wire.PlainFieldValue) => {
+			if (viewOnly) {
+				return
+			}
 			// We need to construct the wrapper
 			if (isNestedProperty) {
 				// e.g. "foo->bar" becomes ["foo", "bar"]
@@ -447,21 +446,9 @@ const parseProperties = (
 				// Populate the JSON representation with the new value first,
 				// e.g. foo = { "bar": "baz" } ==> { "bar": value }
 				set(wrapperValue, rest.join(LODASH_PATH_SEPARATOR), value)
-				// Update in-memory representation
-				record?.set(name, wrapperValue)
-				// If this is a viewOnly property, then we do NOT want to persist the value to YAML definition,
-				// it only exists in the UI.
-				if (viewOnly) {
-					return
-				}
 				// Invoke the def api to update YAML with the wrapper value object
 				setDef(context, path.addLocal(firstPart), wrapperValue)
 			} else {
-				// Update in-memory representation
-				record?.set(name, value)
-				if (viewOnly) {
-					return
-				}
 				// Invoke def api to update YAML
 				setDef(context, propPath, value)
 			}
@@ -526,7 +513,8 @@ const parseProperties = (
 						newFieldId
 					)?.source[property.metadataProperty] as string
 					if (newFieldMetadataProperty !== undefined) {
-						// Update in-memory representation
+						// Update in-memory representation for this field, since we are computing it here,
+						// we need to apply it to the record
 						record?.update(name, newFieldMetadataProperty, context)
 						if (viewOnly) return
 						// Update YAML
@@ -543,11 +531,8 @@ const parseProperties = (
 				wire.PlainWireRecord
 			>
 		} else if (type === "STRUCT") {
-			setter = (
-				value: wire.PlainFieldValue,
-				field: string,
-				record: wire.WireRecord
-			) => {
+			setter = (value: wire.PlainFieldValue, field: string) => {
+				if (viewOnly) return
 				let newValue: wire.PlainFieldValue | wire.PlainWireRecord =
 					undefined
 				// If a specific field was not provided,
@@ -568,9 +553,6 @@ const parseProperties = (
 						value
 					)
 				}
-				// Update in-memory representation
-				record?.set(name, newValue)
-				if (viewOnly) return
 				// Update YAML definition
 				setDef(context, propPath, newValue)
 			}
@@ -586,15 +568,9 @@ const parseProperties = (
 			// but we are rendering these using the Multiselect control,
 			// which works with a Record<string, boolean> where the keys are values which
 			// should be present in the YAML list
-			setter = (
-				value: Record<string, boolean>,
-				field: string,
-				record: wire.WireRecord
-			) => {
-				const newValue = Object.keys(value)
-				// Update the in-memory value record
-				record?.set(name, newValue)
+			setter = (value: Record<string, boolean>) => {
 				if (viewOnly) return
+				const newValue = Object.keys(value)
 				// Update the YAML def
 				setDef(context, propPath, newValue)
 			}
