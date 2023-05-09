@@ -37,6 +37,28 @@ properties:
     wireProperty: wire
     fieldProperty: fieldId
     metadataProperty: type
+    onChange:
+      - conditions:
+          - type: fieldValue
+            field: fieldDisplayType
+            operator: NOT_EQUALS
+            value: REFERENCE
+        updates:
+          - field: reference
+      - conditions:
+          - type: fieldValue
+            field: fieldDisplayType
+            operator: NOT_EQUALS
+            value: NUMBER
+        updates:
+          - field: number
+      - conditions:
+          - type: fieldValue
+            field: fieldDisplayType
+            operator: NOT_EQUALS
+            value: LONGTEXT
+        updates:
+          - field: longtext
   - name: label
     type: TEXT
     label: Label

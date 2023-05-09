@@ -1,6 +1,16 @@
 import { component, definition, metadata, wire } from "@uesio/ui"
 import { PropertiesPanelSection } from "../api/propertysection"
 
+type FieldUpdate = {
+	field: string
+	value: wire.PlainFieldValue
+}
+
+type PropertyOnChange = {
+	conditions?: component.DisplayCondition[]
+	updates: FieldUpdate[]
+}
+
 type BaseProperty = {
 	name: string
 	label?: string
@@ -15,6 +25,8 @@ type BaseProperty = {
 	// but will NOT be stored in the YAML definition.
 	viewOnly?: boolean
 	displayConditions?: component.DisplayCondition[]
+	// Updates to perform when this property's value is changed.
+	onChange?: PropertyOnChange[]
 }
 type TextProperty = {
 	type: "TEXT"
@@ -204,6 +216,7 @@ export type {
 	ListProperty,
 	StructProperty,
 	IconProperty,
+	PropertyOnChange,
 }
 
 export { getStyleVariantProperty }

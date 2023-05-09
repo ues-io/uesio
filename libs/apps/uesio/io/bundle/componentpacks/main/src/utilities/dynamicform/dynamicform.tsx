@@ -7,7 +7,11 @@ interface FormProps extends definition.UtilityProps {
 	path: string
 	fields: Record<string, wire.ViewOnlyField>
 	content?: definition.DefinitionList
-	onUpdate?: (field: string, value: wire.FieldValue) => void
+	onUpdate?: (
+		field: string,
+		value: wire.FieldValue,
+		record: wire.WireRecord
+	) => void
 	initialValue?: wire.PlainWireRecord
 	wireRef?: MutableRefObject<wire.Wire | undefined>
 }
@@ -56,8 +60,9 @@ const DynamicForm: definition.UtilityComponent<FormProps> = (props) => {
 			if (!onUpdate || !e.detail || !wire) return
 			const { wireId, recordId, field, value } = e.detail
 			if (wireId !== wire?.getFullId()) return
-			if (recordId !== wire?.getFirstRecord().getId()) return
-			onUpdate?.(field, value)
+			const record = wire?.getFirstRecord()
+			if (recordId !== record?.getId()) return
+			onUpdate?.(field, value, record)
 		},
 		[wire]
 	)

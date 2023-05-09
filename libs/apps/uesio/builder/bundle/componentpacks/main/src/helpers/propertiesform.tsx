@@ -363,7 +363,11 @@ const getWireFieldsFromProperties = (
 	return wireFields
 }
 
-type SetterFunction = (value: wire.FieldValue, field?: string) => void
+type SetterFunction = (
+	value: wire.FieldValue,
+	field: string | undefined,
+	record: wire.WireRecord
+) => void
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const NoOp = function () {}
@@ -385,6 +389,19 @@ const addToSettersMap = (
 	}
 }
 
+const getPropPathFromName = (
+	name: string,
+	path: FullPath
+): [FullPath, string[], boolean] => {
+	const nameParts = name.split(PATH_ARROW)
+	const isNestedProperty = nameParts.length > 1
+	const propPath = nameParts.reduce(
+		(newPath, part) => newPath.addLocal(part),
+		path
+	) as FullPath
+	return [propPath, nameParts, isNestedProperty]
+}
+
 const parseProperties = (
 	properties: ComponentProperty[],
 	context: context.Context,
@@ -393,14 +410,12 @@ const parseProperties = (
 	initialValue: wire.PlainWireRecord = {} as wire.PlainWireRecord
 ) => {
 	properties?.forEach((property) => {
-		const { type, viewOnly } = property
+		const { onChange: onChangeHandlers, type, viewOnly } = property
 		const name = getPropertyId(property)
-		const nameParts = name.split(PATH_ARROW)
-		const isNestedProperty = nameParts.length > 1
-		const propPath = nameParts.reduce(
-			(newPath, part) => newPath.addLocal(part),
+		const [propPath, nameParts, isNestedProperty] = getPropPathFromName(
+			name,
 			path
-		) as FullPath
+		)
 		let setter: SetterFunction = (value: wire.PlainFieldValue) => {
 			// If this is a viewOnly property, then we do NOT want to persist the value to YAML definition,
 			// it only exists in the UI.
@@ -559,6 +574,31 @@ const parseProperties = (
 				name.replace(PATH_ARROW, LODASH_PATH_SEPARATOR),
 				value
 			)
+		}
+		if (onChangeHandlers?.length) {
+			addToSettersMap(setters, name, () => {
+				const onChangeHandlerContext =
+					context.addRecordDataFrame(initialValue)
+				onChangeHandlers.forEach((onChange) => {
+					if (
+						!onChange.conditions?.length ||
+						component.shouldAll(
+							onChange.conditions,
+							onChangeHandlerContext
+						)
+					) {
+						onChange.updates.forEach(
+							({ field: targetField, value: newValue }) => {
+								const [targetPath] = getPropPathFromName(
+									targetField,
+									path
+								)
+								setDef(context, targetPath, newValue)
+							}
+						)
+					}
+				})
+			})
 		}
 	})
 
@@ -786,7 +826,11 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 						path,
 					}
 				)}
-				onUpdate={(field: string, value: wire.FieldValue) => {
+				onUpdate={(
+					field: string,
+					value: wire.FieldValue,
+					record: wire.WireRecord
+				) => {
 					let setter = setters.get(field)
 					let setterField: string | undefined
 					// If there is no setter, and the field is nested, then walk up the tree
@@ -807,9 +851,17 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 						}
 					}
 					if (setter) {
+						console.log(
+							"running setters for field: " +
+								field +
+								", with new value: " +
+								value
+						)
 						Array.isArray(setter)
-							? setter.forEach((s) => s(value, setterField))
-							: setter(value, setterField)
+							? setter.forEach((s) => {
+									s(value, setterField, record)
+							  })
+							: setter(value, setterField, record)
 					}
 				}}
 				initialValue={initialValue}
