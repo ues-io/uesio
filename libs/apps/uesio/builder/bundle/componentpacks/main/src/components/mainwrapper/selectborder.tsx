@@ -2,7 +2,11 @@ import { definition, component, styles } from "@uesio/ui"
 import {
 	useSelectedComponentPath,
 	setDragPath,
+	ComponentDef,
+	getComponentDef,
+	getBuilderNamespaces,
 	useDragPath,
+	setSelectedPath,
 } from "../../api/stateapi"
 import { useEffect, useState } from "react"
 import { FullPath } from "../../api/path"
@@ -11,12 +15,30 @@ import MoveActions from "../../actions/moveactions"
 import CloneAction from "../../actions/cloneaction"
 
 const StyleDefaults = Object.freeze({
+	header: [
+		"bg-white",
+		"flex",
+		"items-center",
+		"text-xxs",
+		"m-0.5",
+		"gap-1",
+		"p-1.5",
+		"rounded-sm",
+		"font-light",
+		"uppercase",
+		"leading-none",
+		"cursor-grab",
+	],
+	titletext: ["grow"],
+	actionarea: ["text-white"],
+	closebutton: ["text-slate-700", "p-0", "m-0"],
 	selected: [
-		"outline",
+		"outline-dashed",
 		"outline-2",
 		"outline-blue-600",
-		"-outline-offset-[1px]",
+		"-outline-offset-[2px]",
 	],
+	arrow: ["fill-blue-600"],
 	popper: ["bg-blue-600", "rounded"],
 })
 
@@ -24,18 +46,21 @@ const SelectBorder: definition.UtilityComponent = (props) => {
 	const context = props.context
 
 	const Popper = component.getUtility("uesio/io.popper")
+	const Text = component.getUtility("uesio/io.text")
+	const IconButton = component.getUtility("uesio/io.iconbutton")
 
 	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
-
-	const dragPath = useDragPath(context)
 
 	const selectedComponentPath = useSelectedComponentPath(context)
 
 	const [selectedChild, setSelectedChild] = useState<Element>()
 
+	const isDragging = useDragPath(context).isSet()
+
 	let selectedChildIndex = 0
 	let selectedParentPath: FullPath | undefined = undefined
 	let selectedSlotPath: FullPath | undefined = undefined
+	let selectedComponentDef: ComponentDef | undefined = undefined
 
 	const viewDefId = context.getViewDefId()
 
@@ -46,34 +71,17 @@ const SelectBorder: definition.UtilityComponent = (props) => {
 		selectedComponentPath.localPath &&
 		selectedComponentPath.size() > 1
 	) {
-		selectedParentPath = selectedComponentPath.parent()
-		const [componentIndex, restOfPath] = selectedParentPath.popIndex()
+		const [componentType, parentPath] = selectedComponentPath.pop()
+		const [componentIndex, grandParentPath] = parentPath.popIndex()
 		selectedChildIndex = componentIndex
-		selectedSlotPath = restOfPath
+		selectedParentPath = parentPath
+		selectedSlotPath = grandParentPath
+		selectedComponentDef = getComponentDef(context, componentType)
 	}
 
 	useEffect(() => {
-		const onDragStart = (e: DragEvent) => {
-			// We do this because we don't want
-			// this component to always be draggable
-			// that's why we do the setCanDrag thing
-			e.stopPropagation()
-			if (!dragPath.equals(selectedComponentPath)) {
-				setTimeout(() => {
-					setDragPath(context, selectedComponentPath)
-				})
-			}
-		}
-
-		const onDragEnd = () => {
-			setDragPath(context)
-		}
-
 		if (selectedChild) {
 			selectedChild.classList.remove(...StyleDefaults.selected)
-			selectedChild.removeEventListener("dragstart", onDragStart)
-			selectedChild.removeEventListener("dragend", onDragEnd)
-			selectedChild.setAttribute("draggable", "false")
 		}
 
 		if (!selectedSlotPath) {
@@ -94,36 +102,66 @@ const SelectBorder: definition.UtilityComponent = (props) => {
 			// in this slot, we can skip it.
 			if (child.getAttribute("data-placeholder") === "true") continue
 
-			if (index === selectedChildIndex) {
+			if (index === selectedChildIndex && !isDragging) {
 				// We found our correct child ref.
 				child.classList.add(...StyleDefaults.selected)
-				child.addEventListener("dragstart", onDragStart)
-				child.addEventListener("dragend", onDragEnd)
-				child.setAttribute("draggable", "true")
 				setSelectedChild(child)
 			}
 			index++
 		}
-	}, [selectedSlotPath, selectedChildIndex, selectedChild])
+	}, [selectedSlotPath, selectedChildIndex, selectedChild, isDragging])
 
-	return (
-		<>
-			{selectedChild && selectedParentPath && (
-				<Popper
-					referenceEl={selectedChild}
-					context={context}
-					placement="top"
-					offset={8}
-					classes={{
-						popper: classes.popper,
+	if (!selectedChild || !selectedParentPath || !selectedComponentDef)
+		return null
+
+	const nsInfo = getBuilderNamespaces(context)[selectedComponentDef.namespace]
+	const componentTitle =
+		selectedComponentDef.title || selectedComponentDef.name
+
+	return isDragging ? null : (
+		<Popper
+			referenceEl={selectedChild}
+			context={context}
+			placement="top"
+			offset={8}
+			arrow={true}
+			classes={classes}
+		>
+			<div data-actionbar="true">
+				<div
+					className={classes.header}
+					draggable
+					onDragStart={() => {
+						setTimeout(() => {
+							setDragPath(context, selectedComponentPath)
+						})
+					}}
+					onDragEnd={() => {
+						setDragPath(context)
 					}}
 				>
+					<Text
+						variant="uesio/io.icon"
+						text={nsInfo.icon}
+						color={nsInfo.color}
+						context={context}
+					/>
+					<span className={classes.titletext}>{componentTitle}</span>
+					<IconButton
+						context={context}
+						variant="uesio/builder.buildtitle"
+						className={classes.closebutton}
+						icon="close"
+						onClick={() => setSelectedPath(context)}
+					/>
+				</div>
+				<div className={classes.actionarea}>
 					<DeleteAction context={context} path={selectedParentPath} />
 					<MoveActions context={context} path={selectedParentPath} />
 					<CloneAction context={context} path={selectedParentPath} />
-				</Popper>
-			)}
-		</>
+				</div>
+			</div>
+		</Popper>
 	)
 }
 

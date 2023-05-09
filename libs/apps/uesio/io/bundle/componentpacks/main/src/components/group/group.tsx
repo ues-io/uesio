@@ -20,6 +20,7 @@ const Grid: definition.UC<GroupDefinition> = (props) => {
 				listName="components"
 				path={path}
 				context={context}
+				label="Group Components"
 				direction="HORIZONTAL"
 			/>
 		</IOGroup>

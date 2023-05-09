@@ -1,5 +1,5 @@
 import { FunctionComponent, DragEvent, MouseEvent } from "react"
-import { definition, component, styles, api, context as ctx } from "@uesio/ui"
+import { definition, styles, api, context as ctx } from "@uesio/ui"
 import {
 	getComponentDef,
 	setDropPath,
@@ -186,11 +186,9 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 
 		if (validPath && dropPath && dragPath) {
 			const index = getDragIndex(slotTarget, e)
-			let usePath = `${validPath}["${index}"]`
-			if (usePath === component.path.getParentPath(dragPath.localPath)) {
-				// Don't drop on ourselves, just move to the next index
-				usePath = `${validPath}["${index + 1}"]`
-			}
+
+			const usePath = `${validPath}["${index}"]`
+
 			if (dropPath.localPath !== usePath) {
 				setDropPath(
 					context,
@@ -220,6 +218,12 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 		let prevTarget = null as Element | null
 		let validPath = ""
 		while (slotTarget !== null && slotTarget !== e.currentTarget) {
+			const isActionBar =
+				slotTarget.getAttribute("data-actionbar") === "true"
+			if (isActionBar) {
+				// Cut out early if we're in the actionbar
+				return
+			}
 			validPath = slotTarget.getAttribute("data-path") || ""
 			if (validPath) {
 				break
@@ -227,6 +231,8 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 			prevTarget = slotTarget
 			slotTarget = slotTarget.parentElement || null
 		}
+
+		e.stopPropagation()
 
 		if (validPath) {
 			const index = getClickIndex(slotTarget, prevTarget)
@@ -243,7 +249,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 			onDragLeave={onDragLeave}
 			onDragOver={onDragOver}
 			onDrop={onDrop}
-			onClick={onClick}
+			onClickCapture={onClick}
 			className={classes.root}
 		>
 			<div className={classes.scrollwrapper}>
