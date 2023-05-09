@@ -568,11 +568,17 @@ const parseProperties = (
 			// but we are rendering these using the Multiselect control,
 			// which works with a Record<string, boolean> where the keys are values which
 			// should be present in the YAML list
-			setter = (value: Record<string, boolean>) => {
-				if (viewOnly) return
-				const newValue = Object.keys(value)
-				// Update the YAML def
-				setDef(context, propPath, newValue)
+			setter = (value: Record<string, boolean>) =>
+				!viewOnly && setDef(context, propPath, Object.keys(value))
+			value = getDef(context, propPath) as string[]
+			if (value !== undefined) {
+				value = (value as string[]).reduce(
+					(acc, curr) => ({
+						...acc,
+						[curr]: true,
+					}),
+					{}
+				)
 			}
 		} else {
 			value = getDef(context, propPath) as string
