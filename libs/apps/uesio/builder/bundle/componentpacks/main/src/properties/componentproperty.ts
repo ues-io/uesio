@@ -1,4 +1,4 @@
-import { component, definition, metadata, wire } from "@uesio/ui"
+import { component, context, definition, metadata, wire } from "@uesio/ui"
 import { PropertiesPanelSection } from "../api/propertysection"
 
 type FieldUpdate = {
@@ -143,7 +143,8 @@ type StructProperty = {
 } & BaseProperty
 
 type ComponentPropertiesGetter = (
-	record: wire.PlainWireRecord
+	record: wire.PlainWireRecord,
+	context: context.Context
 ) => ComponentProperty[]
 
 type DisplayTemplateGetter = (record: wire.PlainWireRecord) => string
@@ -208,15 +209,17 @@ const getStyleVariantProperty = (componentType: string): ComponentProperty => ({
 
 export type {
 	BotProperty,
-	ListPropertyItemsDefinition,
 	ComponentProperty,
-	SelectProperty,
-	WireProperty,
-	MapProperty,
-	ListProperty,
-	StructProperty,
+	FieldProperty,
+	FieldMetadataProperty,
 	IconProperty,
+	ListProperty,
+	ListPropertyItemsDefinition,
+	MapProperty,
 	PropertyOnChange,
+	SelectProperty,
+	StructProperty,
+	WireProperty,
 }
 
 export { getStyleVariantProperty }

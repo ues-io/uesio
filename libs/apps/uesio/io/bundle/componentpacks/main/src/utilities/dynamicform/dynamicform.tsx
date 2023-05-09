@@ -14,12 +14,14 @@ interface FormProps extends definition.UtilityProps {
 	) => void
 	initialValue?: wire.PlainWireRecord
 	wireRef?: MutableRefObject<wire.Wire | undefined>
+	events?: wire.WireEvent[]
 }
 
 const DynamicForm: definition.UtilityComponent<FormProps> = (props) => {
 	const {
 		context,
 		content,
+		events,
 		id,
 		fields,
 		path,
@@ -33,6 +35,7 @@ const DynamicForm: definition.UtilityComponent<FormProps> = (props) => {
 		wireId,
 		{
 			viewOnly: true,
+			events,
 			fields,
 			init: {
 				create: true,

@@ -1,4 +1,4 @@
-import { definition, component, wire } from "@uesio/ui"
+import { definition, component, context, wire } from "@uesio/ui"
 import DeleteAction from "../../actions/deleteaction"
 import MoveActions from "../../actions/moveactions"
 import { FullPath } from "../../api/path"
@@ -13,7 +13,8 @@ import CloneAction from "../../actions/cloneaction"
 import ItemTag from "../itemtag/itemtag"
 
 export type PropertiesGetter = (
-	item: wire.PlainWireRecord
+	item: wire.PlainWireRecord,
+	context: context.Context
 ) => ComponentProperty[]
 
 type ItemStringGetter = (item: wire.PlainWireRecord) => string
@@ -73,7 +74,7 @@ const ListPropertyItem: definition.UtilityComponent<Props> = (props) => {
 						}
 						properties={
 							typeof itemProperties === "function"
-								? itemProperties(record.source)
+								? itemProperties(record.source, context)
 								: itemProperties
 						}
 						sections={itemPropertiesSections}
