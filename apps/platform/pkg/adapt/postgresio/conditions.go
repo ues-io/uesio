@@ -108,7 +108,7 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 
 	fieldName := getFieldName(fieldMetadata, tableAlias)
 	switch condition.Operator {
-	case "IN", "NOT IN":
+	case "IN", "NOT_IN":
 		if fieldMetadata.Type == "DATE" {
 			return processDateRangeCondition(condition, fieldName, builder)
 		}
@@ -131,7 +131,7 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 			}
 		} else {
 			useOperator := "= ANY"
-			if condition.Operator == "NOT IN" {
+			if condition.Operator == "NOT_IN" {
 				useOperator = "<> ANY"
 			}
 			builder.addQueryPart(fmt.Sprintf("%s %s (%s)", fieldName, useOperator, builder.addValue(condition.Value)))
