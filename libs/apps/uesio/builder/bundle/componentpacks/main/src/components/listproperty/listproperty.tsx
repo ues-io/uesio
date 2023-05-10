@@ -1,5 +1,5 @@
 import { definition, component, wire } from "@uesio/ui"
-import { add } from "../../api/defapi"
+import { add, set } from "../../api/defapi"
 import { FullPath } from "../../api/path"
 import { ListProperty as LP } from "../../properties/componentproperty"
 
@@ -18,6 +18,8 @@ const ListProperty: definition.UC<Definition> = (props) => {
 	const ListPropertyUtility = component.getUtility(
 		"uesio/builder.listproperty"
 	)
+	const ListField = component.getUtility("uesio/io.listfield")
+	const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 
 	const viewDefId = context.getViewDefId() || ""
 	const record = context.getRecord()
@@ -39,7 +41,28 @@ const ListProperty: definition.UC<Definition> = (props) => {
 		},
 	]
 
-	return (
+	return !itemsDefinition ? (
+		<FieldWrapper
+			label={property.label}
+			labelPosition={"left"}
+			context={context}
+			variant={"uesio/builder.propfield"}
+		>
+			<ListField
+				fieldId={property.name}
+				path={path}
+				value={items}
+				subType={property.subtype}
+				setValue={(value: wire.FieldValue) => {
+					set(context, listPropertyPath, value)
+				}}
+				mode={"EDIT"}
+				context={context}
+				labelVariant={"uesio/builder.propfield"}
+				subFieldVariant={"uesio/builder.propfield"}
+			/>
+		</FieldWrapper>
+	) : (
 		<ListPropertyUtility
 			itemProperties={itemsDefinition?.properties}
 			itemPropertiesSections={itemsDefinition?.sections}

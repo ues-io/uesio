@@ -2,6 +2,7 @@ package ws
 
 import (
 	"errors"
+
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/thecloudmasters/cli/pkg/config"
 	"github.com/thecloudmasters/cli/pkg/wire"
@@ -15,7 +16,7 @@ func SetWorkspace(value string) error {
 	return config.SetConfigValue("workspace", value)
 }
 
-func SetWorkspacePrompt(username string, appId string) (string, error) {
+func SetWorkspacePrompt(appId string) (string, error) {
 	workspace := ""
 
 	appID := appId
@@ -39,20 +40,20 @@ func SetWorkspacePrompt(username string, appId string) (string, error) {
 	}
 	if len(options) == 0 {
 
-		if username == "" {
-			return "", errors.New("no workspaces found")
-		}
-
 		var newWorkspace string
-		err = survey.AskOne(&survey.Select{
-			Message: "No workspaces found. Enter a workspace name",
+		err = survey.AskOne(&survey.Input{
+			Message: "No workspaces found. Enter a workspace name (using a-z or 0-9 only)",
 			Default: "dev",
 		}, &newWorkspace)
 
-		// Invoke workspace creation API to create a default "dev" workspace
-		_, err := wire.CreateNewWorkspace(username, appID, newWorkspace)
 		if err != nil {
-			return "", errors.New("unable to create new workspace for app")
+			return "", err
+		}
+
+		// Invoke workspace creation API to create a default "dev" workspace
+		_, err := wire.CreateNewWorkspace(appID, newWorkspace)
+		if err != nil {
+			return "", errors.New("unable to create new workspace for app: " + err.Error())
 		}
 		return newWorkspace, SetWorkspace(newWorkspace)
 	}

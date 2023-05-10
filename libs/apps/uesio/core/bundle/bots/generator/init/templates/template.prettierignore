@@ -1,0 +1,6 @@
+
+/bundle/componentpacks/*/dist
+package-lock.json
+package.json
+generated
+node_modules

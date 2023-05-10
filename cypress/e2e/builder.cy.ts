@@ -141,7 +141,7 @@ describe("Uesio Builder Tests", () => {
 			// Verify the selection
 			getBuilderState("selected").should(
 				"eq",
-				`viewdef:${fullViewName}:["components"]["0"]["uesio/io.button"]`
+				`viewdef:${fullViewName}:["components"]["0"]`
 			)
 			// Change the text property
 			cy.clearInput("property:text")

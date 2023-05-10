@@ -152,6 +152,7 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 		name: "values",
 		type: "LIST",
 		label: "Values",
+		subtype: "TEXT",
 		displayConditions: [
 			{
 				field: "type",

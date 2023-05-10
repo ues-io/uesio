@@ -5,7 +5,11 @@ import {
 	setSelectedPath,
 	useSelectedPath,
 } from "../../../api/stateapi"
-import { ComponentProperty } from "../../../properties/componentproperty"
+import {
+	ComponentProperty,
+	FieldMetadataProperty,
+	FieldProperty,
+} from "../../../properties/componentproperty"
 
 import PropNodeTag from "../../../utilities/propnodetag/propnodetag"
 import ItemTag from "../../../utilities/itemtag/itemtag"
@@ -76,29 +80,32 @@ const TableColumns: definition.UC = (props) => {
 		if (column?.components?.length > 0) {
 			return [widthProperty, labelProperty]
 		}
-		const tableFieldProperties = [
-			{
-				name: "field",
-				label: "Field",
-				required: true,
-				type: "FIELD",
-				wireName,
-			},
-			{
-				name: "fieldDisplayType",
-				type: "FIELD_METADATA",
-				display: false,
-				viewOnly: true,
-				wireName,
-				fieldProperty: "field",
-				metadataProperty: "type",
-			},
-			widthProperty,
-		] as ComponentProperty[]
-
 		const ioFieldProperties = (fieldComponentDef?.properties ||
 			[]) as ComponentProperty[]
-		return tableFieldProperties.concat(ioFieldProperties.slice(3))
+
+		const fieldProperty = {
+			...ioFieldProperties.find((p) => p.name === "fieldId"),
+			wireName,
+			name: "field",
+			label: "Field",
+		} as FieldProperty
+		delete fieldProperty.wireField
+
+		const fieldDisplayTypeProperty = {
+			...ioFieldProperties.find((p) => p.name === "fieldDisplayType"),
+			wireName,
+			fieldProperty: "field",
+		} as FieldMetadataProperty
+		delete fieldDisplayTypeProperty.wireProperty
+
+		const tableFieldProperties = [
+			fieldProperty,
+			fieldDisplayTypeProperty,
+			widthProperty,
+			labelProperty,
+		] as ComponentProperty[]
+
+		return tableFieldProperties.concat(ioFieldProperties.slice(5))
 	}
 
 	const getColumnTitle = (column: ColumnDefinition) => {

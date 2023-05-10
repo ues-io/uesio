@@ -162,8 +162,13 @@ func Ask(param meta.BotParamResponse, app, version, sessid string, answers map[s
 		answers[param.Name] = answer
 	case "METADATANAME":
 		var answer string
-		err := survey.AskOne(&survey.Input{
+		defaultValue, err := mergeParam(param.Default, answers)
+		if err != nil {
+			return err
+		}
+		err = survey.AskOne(&survey.Input{
 			Message: param.Prompt,
+			Default: defaultValue,
 		}, &answer, survey.WithValidator(metadataValidator))
 		if err != nil {
 			return err

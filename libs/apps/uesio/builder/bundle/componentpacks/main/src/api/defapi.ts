@@ -75,6 +75,13 @@ const set = (
 ) => {
 	const current = getMetadataValue(context, path)
 	if (!current) return
+
+	// If the new definition is undefined, interpret this as a "remove"
+	if (definition === undefined) {
+		remove(context, path)
+		return
+	}
+
 	const yamlDoc = parse(current)
 	const pathArray = component.path.toPath(path.localPath)
 	const parentPath = getParentPathArray(pathArray)
