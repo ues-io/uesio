@@ -120,6 +120,14 @@ function getOperatorOptions(fieldDisplayType: string | undefined) {
 	]
 }
 
+function getValuePropertyType(fieldDisplayType: wire.FieldType | undefined) {
+	// TODO: Add additional property types here to support things like DATE, SELECT, etc.
+	if (fieldDisplayType === "CHECKBOX" || fieldDisplayType === "NUMBER") {
+		return fieldDisplayType
+	}
+	return "TEXT"
+}
+
 const ConditionsProperties: definition.UC = (props) => {
 	const { context } = props
 	const ListPropertyUtility = component.getUtility(
@@ -375,7 +383,7 @@ const ConditionsProperties: definition.UC = (props) => {
 			},
 			{
 				name: "value",
-				type: getValuePropertyType(fieldDisplayType || "TEXT"),
+				type: getValuePropertyType(fieldDisplayType),
 				label: "Value",
 				displayConditions: [
 					{
@@ -400,8 +408,8 @@ const ConditionsProperties: definition.UC = (props) => {
 				subtypeOptions:
 					fieldDisplayType === "CHECKBOX"
 						? [
-								{ label: "True", value: true },
-								{ label: "False", value: false },
+								{ label: "True", value: "true" },
+								{ label: "False", value: "false" },
 						  ]
 						: fieldMetadata?.getSelectOptions(context),
 				displayConditions: [
