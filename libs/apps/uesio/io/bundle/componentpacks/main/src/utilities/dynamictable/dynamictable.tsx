@@ -48,7 +48,7 @@ const DynamicTable: definition.UtilityComponent<DynamicTableProps> = (
 			init: {
 				create: false,
 			},
-			initialValues,
+			data: initialValues,
 		},
 		context
 	)

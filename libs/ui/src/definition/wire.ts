@@ -74,7 +74,7 @@ type WireDefinitionBase = {
 type ViewOnlyWireDefinition = WireDefinitionBase & {
 	viewOnly: true
 	fields: Record<string, ViewOnlyField>
-	initialValues?: Record<string, PlainWireRecord>
+	data?: Record<string, PlainWireRecord>
 }
 
 type RegularWireDefinition = WireDefinitionBase & {
