@@ -11,6 +11,7 @@ import { FullPath } from "../api/path"
 import {
 	ComponentProperty,
 	getStyleVariantProperty,
+	PropertyOnChange,
 	SelectProperty,
 	StructProperty,
 } from "../properties/componentproperty"
@@ -363,7 +364,11 @@ const getWireFieldsFromProperties = (
 	return wireFields
 }
 
-type SetterFunction = (value: wire.FieldValue, field?: string) => void
+type SetterFunction = (
+	value: wire.FieldValue,
+	field: string | undefined,
+	record: wire.WireRecord
+) => void
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const NoOp = function () {}
@@ -385,25 +390,38 @@ const addToSettersMap = (
 	}
 }
 
+const getPropPathFromName = (
+	name: string,
+	path: FullPath
+): [FullPath, string[], boolean] => {
+	const nameParts = name.split(PATH_ARROW)
+	const isNestedProperty = nameParts.length > 1
+	const propPath = nameParts.reduce(
+		(newPath, part) => newPath.addLocal(part),
+		path
+	) as FullPath
+	return [propPath, nameParts, isNestedProperty]
+}
+
 const parseProperties = (
 	properties: ComponentProperty[],
 	context: context.Context,
 	path: FullPath,
 	setters: Map<string, SetterFunction | SetterFunction[]> = new Map(),
-	initialValue: wire.PlainWireRecord = {} as wire.PlainWireRecord
+	initialValue: wire.PlainWireRecord = {} as wire.PlainWireRecord,
+	onChangeHandlers: Record<string, PropertyOnChange[]> = {}
 ) => {
 	properties?.forEach((property) => {
-		const { type, viewOnly } = property
+		const { onChange, type, viewOnly } = property
 		const name = getPropertyId(property)
-		const nameParts = name.split(PATH_ARROW)
-		const isNestedProperty = nameParts.length > 1
-		const propPath = nameParts.reduce(
-			(newPath, part) => newPath.addLocal(part),
+		const [propPath, nameParts, isNestedProperty] = getPropPathFromName(
+			name,
 			path
-		) as FullPath
+		)
+		if (onChange?.length) {
+			onChangeHandlers[name] = onChange
+		}
 		let setter: SetterFunction = (value: wire.PlainFieldValue) => {
-			// If this is a viewOnly property, then we do NOT want to persist the value to YAML definition,
-			// it only exists in the UI.
 			if (viewOnly) {
 				return
 			}
@@ -413,23 +431,25 @@ const parseProperties = (
 				const [firstPart, ...rest] = nameParts
 				const wrapperPath = path.addLocal(firstPart)
 				// e.g. get the current value of "foo", if any
-				let wrapperValue = getDef(context, wrapperPath)
+				let wrapperValue = getDef(
+					context,
+					wrapperPath
+				) as wire.PlainWireRecord
 				// If wrapper value is not an object, it's corrupted
 				if (typeof wrapperValue !== "object") {
-					wrapperValue = {}
+					wrapperValue = {} as wire.PlainWireRecord
 				} else {
-					wrapperValue = structuredClone(wrapperValue)
+					wrapperValue = structuredClone(
+						wrapperValue
+					) as wire.PlainWireRecord
 				}
 				// Populate the JSON representation with the new value first,
 				// e.g. foo = { "bar": "baz" } ==> { "bar": value }
-				set(
-					wrapperValue as object,
-					rest.join(LODASH_PATH_SEPARATOR),
-					value
-				)
-				// Finally, invoke the def api with the wrapper value
+				set(wrapperValue, rest.join(LODASH_PATH_SEPARATOR), value)
+				// Invoke the def api to update YAML with the wrapper value object
 				setDef(context, path.addLocal(firstPart), wrapperValue)
 			} else {
+				// Invoke def api to update YAML
 				setDef(context, propPath, value)
 			}
 		}
@@ -454,24 +474,24 @@ const parseProperties = (
 			}
 		} else if (type === "FIELD_METADATA") {
 			sourceField =
-				(getObjectProperty(
-					initialValue,
-					property.fieldProperty
-				) as string) ||
 				(getDef(
 					context,
 					path.addLocal(property.fieldProperty)
+				) as string) ||
+				(getObjectProperty(
+					initialValue,
+					property.fieldProperty
 				) as string)
 			sourceWire = property.wireName as string
 			if (!sourceWire && property.wireProperty) {
 				sourceWire =
-					(getObjectProperty(
-						initialValue,
-						property.wireProperty
-					) as string) ||
 					(getDef(
 						context,
 						path.addLocal(property.wireProperty)
+					) as string) ||
+					(getObjectProperty(
+						initialValue,
+						property.wireProperty
 					) as string)
 			}
 			if (!sourceWire) {
@@ -482,14 +502,22 @@ const parseProperties = (
 				value = getFieldMetadata(context, sourceWire, sourceField)
 					?.source[property.metadataProperty] as string
 				// Add a setter to the source field so that whenever it changes, we also update this property
-				const metadataSetter = (newFieldId: string) => {
-					if (viewOnly) return
+				const metadataSetter = (
+					newFieldId: string,
+					_fieldBeingUpdated: string,
+					record: wire.WireRecord
+				) => {
 					const newFieldMetadataProperty = getFieldMetadata(
 						context,
 						sourceWire,
 						newFieldId
 					)?.source[property.metadataProperty] as string
 					if (newFieldMetadataProperty !== undefined) {
+						// Update in-memory representation for this field, since we are computing it here,
+						// we need to apply it to the record
+						record?.update(name, newFieldMetadataProperty, context)
+						if (viewOnly) return
+						// Update YAML
 						setDef(context, propPath, newFieldMetadataProperty)
 					}
 				}
@@ -503,27 +531,30 @@ const parseProperties = (
 				wire.PlainWireRecord
 			>
 		} else if (type === "STRUCT") {
-			setter = (value: wire.PlainFieldValue, field?: string) => {
+			setter = (value: wire.PlainFieldValue, field: string) => {
 				if (viewOnly) return
+				let newValue: wire.PlainFieldValue | wire.PlainWireRecord =
+					undefined
 				// If a specific field was not provided,
 				// then we assume we were given the entire struct as our value
 				if (!field && typeof value === "object") {
-					setDef(context, propPath, value)
+					newValue = value
 				} else if (field) {
 					// If a specific field was provided, we need to first get our value
 					// and then update just a particular field on it
 					const currentValue = (getDef(context, propPath) ||
 						{}) as Record<string, wire.PlainWireRecord>
-					const newValue = {
+					newValue = {
 						...currentValue,
-					}
+					} as wire.PlainWireRecord
 					set(
 						newValue,
 						field.replace(PATH_ARROW, LODASH_PATH_SEPARATOR),
 						value
 					)
-					setDef(context, propPath, newValue)
 				}
+				// Update YAML definition
+				setDef(context, propPath, newValue)
 			}
 			value = getDef(context, propPath) as Record<
 				string,
@@ -565,6 +596,7 @@ const parseProperties = (
 	return {
 		setters,
 		initialValue: initialValue as wire.PlainWireRecord,
+		onChangeHandlers,
 	}
 }
 
@@ -672,15 +704,9 @@ function getPropertiesForSection(
 	}
 }
 
-const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
-	const DynamicForm = component.getUtility("uesio/io.dynamicform")
-	const { context, id, path, sections, title } = props
-
-	const [selectedTab, setSelectedTab] = useState<string>(
-		sections ? getSectionId(sections[0]) : ""
-	)
-
+const getPropertiesAndContent = (props: Props, selectedTab: string) => {
 	let { content, properties } = props
+	const { sections } = props
 
 	if (sections && sections.length) {
 		const selectedSection =
@@ -723,8 +749,10 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 						name: selectedSectionId,
 						type: "LIST",
 						items: {
-							properties: (record: wire.PlainWireRecord) =>
-								getSignalProperties(record, context),
+							properties: (
+								record: wire.PlainWireRecord,
+								context: context.Context
+							) => getSignalProperties(record, context),
 							displayTemplate: "${signal}",
 							addLabel: "New Signal",
 							title: "Signal Properties",
@@ -751,7 +779,22 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 		}
 	}
 
-	const { setters, initialValue } = parseProperties(
+	return {
+		content,
+		properties,
+	}
+}
+
+const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
+	const DynamicForm = component.getUtility("uesio/io.dynamicform")
+	const { context, id, path, sections, title } = props
+
+	const [selectedTab, setSelectedTab] = useState<string>(
+		sections ? getSectionId(sections[0]) : ""
+	)
+	const { content, properties } = getPropertiesAndContent(props, selectedTab)
+
+	const { setters, initialValue, onChangeHandlers } = parseProperties(
 		properties || [],
 		context,
 		path
@@ -786,7 +829,11 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 						path,
 					}
 				)}
-				onUpdate={(field: string, value: wire.FieldValue) => {
+				onUpdate={(
+					field: string,
+					value: wire.FieldValue,
+					record: wire.WireRecord
+				) => {
 					let setter = setters.get(field)
 					let setterField: string | undefined
 					// If there is no setter, and the field is nested, then walk up the tree
@@ -808,8 +855,40 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 					}
 					if (setter) {
 						Array.isArray(setter)
-							? setter.forEach((s) => s(value, setterField))
-							: setter(value, setterField)
+							? setter.forEach((s) => {
+									s(value, setterField, record)
+							  })
+							: setter(value, setterField, record)
+					}
+					// Finally, once all setters have run, apply any on-Change handlers
+					if (onChangeHandlers[field]?.length) {
+						const onChangeHandlerContext = context.addRecordFrame({
+							record: record.getId(),
+							wire: record.getWire().getId(),
+						})
+						onChangeHandlers[field].forEach((onChange) => {
+							if (
+								!onChange.conditions?.length ||
+								component.shouldAll(
+									onChange.conditions,
+									onChangeHandlerContext
+								)
+							) {
+								onChange.updates?.forEach(
+									({
+										field: targetField,
+										value: newValue,
+									}) => {
+										const [targetPath] =
+											getPropPathFromName(
+												targetField,
+												path
+											)
+										setDef(context, targetPath, newValue)
+									}
+								)
+							}
+						})
 					}
 				}}
 				initialValue={initialValue}
