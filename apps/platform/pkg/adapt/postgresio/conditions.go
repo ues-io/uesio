@@ -121,7 +121,11 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 						for i, val := range values {
 							safeValues[i] = builder.addValue(val)
 						}
-						builder.addQueryPart(fmt.Sprintf("%s %s (%s)", fieldName, condition.Operator, strings.Join(safeValues, ",")))
+						useOperator := "IN"
+						if condition.Operator == "NOT_IN" {
+							useOperator = "NOT IN"
+						}
+						builder.addQueryPart(fmt.Sprintf("%s %s (%s)", fieldName, useOperator, strings.Join(safeValues, ",")))
 					}
 				default:
 					fmt.Printf("Unsupported type for values array: %T\n", values)
