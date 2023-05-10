@@ -218,12 +218,6 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 		let prevTarget = null as Element | null
 		let validPath = ""
 		while (slotTarget !== null && slotTarget !== e.currentTarget) {
-			const isActionBar =
-				slotTarget.getAttribute("data-actionbar") === "true"
-			if (isActionBar) {
-				// Cut out early if we're in the actionbar
-				return
-			}
 			validPath = slotTarget.getAttribute("data-path") || ""
 			if (validPath) {
 				break
@@ -249,7 +243,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 			onDragLeave={onDragLeave}
 			onDragOver={onDragOver}
 			onDrop={onDrop}
-			onClickCapture={onClick}
+			onClick={onClick}
 			className={classes.root}
 		>
 			<div className={classes.scrollwrapper}>

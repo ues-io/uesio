@@ -132,7 +132,7 @@ const SelectBorder: definition.UtilityComponent = (props) => {
 			arrow={true}
 			classes={classes}
 		>
-			<div data-actionbar="true">
+			<div>
 				<div
 					className={classes.header}
 					draggable

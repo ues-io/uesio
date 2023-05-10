@@ -9,7 +9,6 @@ type TabDefinition = {
 
 type TabsDefinition = {
 	tabs?: TabDefinition[]
-	footer?: definition.DefinitionList
 	panelVariant?: metadata.MetadataKey
 	labelsVariant?: metadata.MetadataKey
 }
@@ -39,17 +38,6 @@ const Tabs: definition.UC<TabsDefinition> = (props) => {
 					tabs={tabs}
 					context={context}
 				/>
-			}
-			footer={
-				<div>
-					<component.Slot
-						definition={definition}
-						listName="footer"
-						path={path}
-						label="footer"
-						context={context}
-					/>
-				</div>
 			}
 		>
 			<component.Slot
