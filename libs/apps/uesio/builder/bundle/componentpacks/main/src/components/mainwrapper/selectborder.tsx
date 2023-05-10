@@ -33,11 +33,15 @@ const StyleDefaults = Object.freeze({
 	actionarea: ["text-white"],
 	closebutton: ["text-slate-700", "p-0", "m-0"],
 	selected: [
-		"outline-dashed",
-		"outline-2",
-		"outline-blue-600",
-		"-outline-offset-[2px]",
+		"after:absolute",
+		"after:inset-0",
+		"after:pointer-events-none",
+		"after:outline-dashed",
+		"after:outline-2",
+		"after:outline-blue-600",
+		"after:-outline-offset-[2px]",
 	],
+	selectedAlways: ["relative"],
 	arrow: ["fill-blue-600"],
 	popper: ["bg-blue-600", "rounded"],
 })
@@ -105,6 +109,7 @@ const SelectBorder: definition.UtilityComponent = (props) => {
 			if (index === selectedChildIndex && !isDragging) {
 				// We found our correct child ref.
 				child.classList.add(...StyleDefaults.selected)
+				child.classList.add(...StyleDefaults.selectedAlways)
 				setSelectedChild(child)
 			}
 			index++

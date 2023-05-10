@@ -41,13 +41,15 @@ const Tabs: definition.UC<TabsDefinition> = (props) => {
 				/>
 			}
 			footer={
-				<component.Slot
-					definition={definition}
-					listName="footer"
-					path={path}
-					label="footer"
-					context={context}
-				/>
+				<div>
+					<component.Slot
+						definition={definition}
+						listName="footer"
+						path={path}
+						label="footer"
+						context={context}
+					/>
+				</div>
 			}
 		>
 			<component.Slot
@@ -55,7 +57,7 @@ const Tabs: definition.UC<TabsDefinition> = (props) => {
 				listName="components"
 				path={`${path}["tabs"]["${selectedIndex}"]`}
 				context={context}
-				label={selectedTab?.label}
+				label={`Tab ${selectedTab?.label} Components`}
 			/>
 		</ScrollPanel>
 	)
