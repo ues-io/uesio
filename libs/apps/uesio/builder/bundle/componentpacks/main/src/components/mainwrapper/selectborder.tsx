@@ -32,12 +32,7 @@ const StyleDefaults = Object.freeze({
 	titletext: ["grow"],
 	actionarea: ["text-white"],
 	closebutton: ["text-slate-700", "p-0", "m-0"],
-	selected: [
-		"outline-dashed",
-		"outline-2",
-		"outline-blue-600",
-		"-outline-offset-[2px]",
-	],
+	selected: ["outline-dashed", "outline-2", "outline-blue-600"],
 	arrow: ["fill-blue-600"],
 	popper: ["bg-blue-600", "rounded"],
 })

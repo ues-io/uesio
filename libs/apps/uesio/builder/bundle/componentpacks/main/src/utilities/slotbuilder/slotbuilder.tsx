@@ -1,35 +1,32 @@
 import { definition, component, styles } from "@uesio/ui"
 import { FunctionComponent, useEffect, useRef } from "react"
 import { FullPath } from "../../api/path"
-import { getBuildMode, useDragPath, useDropPath } from "../../api/stateapi"
+import { getBuildMode, useBuilderState, useDropPath } from "../../api/stateapi"
 import BuildWrapper from "../buildwrapper/buildwrapper"
 import PlaceHolder from "../placeholder/placeholder"
 
 const accepts = ["component", "viewdef" /* "componentvariant"*/]
 
 const StyleDefaults = Object.freeze({
-	slotDragging: [
+	slotTagOn: [
 		"relative",
-		"pt-[33px]",
+		"pt-[29px]",
 		"before:absolute",
 		"before:content-[attr(data-title)]",
-		"before:text-[7pt]",
+		"before:text-slate-600",
+		"before:text-[8pt]",
 		"before:uppercase",
-		"before:text-slate-700",
 		"before:block",
 		"before:top-0",
 		"before:left-0",
 		"before:right-0",
 		"before:p-2",
-		"before:bg-slate-100",
 		"before:leading-none",
+		"before:bg-slate-100",
 		"before:border-b",
-		"before:border-b-slate-300",
-		"before:border-t-[6px]",
-		"before:border-t-white",
+		"before:border-slate-300",
 	],
-	slotAlways: ["transition-all"],
-	placeholder: [],
+	slotTag: ["transition-all"],
 })
 
 const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
@@ -44,14 +41,14 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 	const size = listDef.length
 	const viewDefId = context.getViewDefId()
 
-	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
+	styles.useUtilityStyleTokens(StyleDefaults, props)
 
 	const dropPath = useDropPath(context)
-	const dragPath = useDragPath(context)
-	const isDragging = dragPath.isSet()
 	const isHovering = dropPath.equals(
 		new FullPath("viewdef", viewDefId, `${listPath}["0"]`)
 	)
+
+	const [showSlotTags] = useBuilderState<boolean>(props.context, "slottags")
 
 	useEffect(() => {
 		const parentElem = ref?.current?.parentElement
@@ -60,16 +57,16 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 		parentElem.setAttribute("data-direction", direction || "")
 		parentElem.setAttribute("data-path", listPath)
 		parentElem.setAttribute("data-title", label || `${listName} slot`)
-		parentElem.classList.add(...StyleDefaults.slotAlways)
+		parentElem.classList.add(...StyleDefaults.slotTag)
 	}, [listPath, listName, label, direction])
 
 	useEffect(() => {
 		const parentElem = ref?.current?.parentElement
 		if (!parentElem) return
-		isDragging
-			? parentElem.classList.add(...StyleDefaults.slotDragging)
-			: parentElem.classList.remove(...StyleDefaults.slotDragging)
-	}, [isDragging])
+		showSlotTags
+			? parentElem.classList.add(...StyleDefaults.slotTagOn)
+			: parentElem.classList.remove(...StyleDefaults.slotTagOn)
+	}, [showSlotTags])
 
 	if (!buildMode) {
 		return (
@@ -94,7 +91,6 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 					isHovering={isHovering}
 					context={context}
 					direction={direction}
-					className={classes.placeholder}
 				/>
 			)}
 			{component.getSlotProps(props).map((props, index) => (
