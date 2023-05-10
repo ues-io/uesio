@@ -15,6 +15,7 @@ const StyleDefaults = Object.freeze({
 		"before:content-[attr(data-title)]",
 		"before:text-slate-500",
 		"before:text-[8pt]",
+		"before:font-light",
 		"before:uppercase",
 		"before:block",
 		"before:top-0",
