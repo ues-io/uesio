@@ -61,7 +61,7 @@ const CodePanel: definition.UtilityComponent = (props) => {
 	const IconButton = component.getUtility("uesio/io.iconbutton")
 	const IOCodeField = component.getUtility("uesio/io.codefield")
 
-	const { context, className } = props
+	const { context } = props
 
 	const classes = styles.useUtilityStyles(StyleDefaults, props)
 
@@ -218,7 +218,6 @@ const CodePanel: definition.UtilityComponent = (props) => {
 				/>
 			}
 			context={context}
-			className={className}
 		>
 			<IOCodeField
 				context={context}
