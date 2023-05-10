@@ -1,9 +1,15 @@
-import { definition, component, wire } from "@uesio/ui"
+import { definition, component, wire, collection, context } from "@uesio/ui"
 import { add, get } from "../../../../api/defapi"
 import { FullPath } from "../../../../api/path"
 import { useSelectedPath } from "../../../../api/stateapi"
 import { getFieldMetadata } from "../../../../api/wireapi"
-import { ComponentProperty } from "../../../../properties/componentproperty"
+import {
+	ComponentProperty,
+	TextProperty,
+	NumberProperty,
+	CheckboxProperty,
+	SelectProperty,
+} from "../../../../properties/componentproperty"
 
 function getConditionPropertiesPanelTitle(
 	condition: wire.WireConditionState
@@ -120,12 +126,49 @@ function getOperatorOptions(fieldDisplayType: string | undefined) {
 	]
 }
 
-function getValuePropertyType(fieldDisplayType: wire.FieldType | undefined) {
-	// TODO: Add additional property types here to support things like DATE, SELECT, etc.
-	if (fieldDisplayType === "CHECKBOX" || fieldDisplayType === "NUMBER") {
-		return fieldDisplayType
+function getValueProperty(
+	fieldDisplayType: wire.FieldType | undefined,
+	fieldMetadata: collection.Field | undefined,
+	context: context.Context
+): TextProperty | NumberProperty | CheckboxProperty | SelectProperty {
+	// TODO: Add additional property types here to support things like DATE
+
+	const baseValueProp = {
+		name: "value",
+		label: "Value",
+		displayConditions: [
+			{
+				field: "valueSource",
+				value: "VALUE",
+				type: "fieldValue",
+				operator: "EQUALS",
+			},
+			{
+				type: "fieldValue",
+				field: "operator",
+				operator: "NOT_IN",
+				values: multiValueOperators.concat(["BETWEEN"]),
+			},
+		],
 	}
-	return "TEXT"
+
+	if (fieldDisplayType === "CHECKBOX") {
+		return { ...baseValueProp, type: "CHECKBOX" } as CheckboxProperty
+	}
+
+	if (fieldDisplayType === "NUMBER") {
+		return { ...baseValueProp, type: "NUMBER" } as NumberProperty
+	}
+
+	if (fieldDisplayType === "SELECT") {
+		return {
+			...baseValueProp,
+			type: "SELECT",
+			options: fieldMetadata?.getSelectOptions(context),
+		} as SelectProperty
+	}
+
+	return { ...baseValueProp, type: "TEXT" } as TextProperty
 }
 
 const ConditionsProperties: definition.UC = (props) => {
@@ -382,23 +425,7 @@ const ConditionsProperties: definition.UC = (props) => {
 				],
 			},
 			{
-				name: "value",
-				type: getValuePropertyType(fieldDisplayType),
-				label: "Value",
-				displayConditions: [
-					{
-						field: "valueSource",
-						value: "VALUE",
-						type: "fieldValue",
-						operator: "EQUALS",
-					},
-					{
-						type: "fieldValue",
-						field: "operator",
-						operator: "NOT_IN",
-						values: multiValueOperators.concat(["BETWEEN"]),
-					},
-				],
+				...getValueProperty(fieldDisplayType, fieldMetadata, context),
 			},
 			{
 				name: "values",

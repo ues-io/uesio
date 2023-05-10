@@ -222,6 +222,9 @@ export type {
 	SelectProperty,
 	StructProperty,
 	WireProperty,
+	TextProperty,
+	NumberProperty,
+	CheckboxProperty,
 }
 
 export { getStyleVariantProperty }

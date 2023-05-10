@@ -50,6 +50,7 @@ const ListProperty: definition.UC<Definition> = (props) => {
 			variant={"uesio/builder.propfield"}
 		>
 			{property.subtype === "CHECKBOX" ||
+			property.subtype === "SELECT" ||
 			property.subtype === "MULTISELECT" ? (
 				<MultiSelectField
 					fieldId={property.name}
