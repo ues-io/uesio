@@ -5,16 +5,17 @@ import { dispatch } from "../../../store/store"
 import { publish } from "../../../hooks/eventapi"
 import WireRecord from "../../wirerecord/class"
 
-export default async (
+export default (
 	context: Context,
 	path: string[],
 	value: FieldValue,
 	record: WireRecord
 ) => {
 	const wire = record.getWire()
+	const recordId = record.id
 	dispatch(
 		updateRecord({
-			recordId: record.id,
+			recordId,
 			record: value,
 			entity: wire.getFullId(),
 			path,
@@ -22,15 +23,21 @@ export default async (
 	)
 
 	const fullPath = path.join("->")
+
+	// NOTE: Order here is important, we must run internal handlers first
+	// before broadcasting to the external world
+
+	// FIRST - run event handlers defined on the wire itself
 	wire.handleEvent("onChange", context, fullPath)
 
-	// Publish events
+	// SECOND - publish events to notify external subscribers
+	const latestRecord = wire.getRecord(recordId)
 	publish("wire.record.updated", {
 		wireId: wire.getFullId(),
 		recordId: record.id,
 		field: fullPath,
 		value,
-		record,
+		record: latestRecord,
 	})
 
 	return context

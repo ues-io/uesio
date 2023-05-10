@@ -1,13 +1,23 @@
-import { definition, component, wire } from "@uesio/ui"
+import { definition, component, wire, collection, context } from "@uesio/ui"
 import { add, get } from "../../../../api/defapi"
 import { FullPath } from "../../../../api/path"
 import { useSelectedPath } from "../../../../api/stateapi"
+import { getFieldMetadata } from "../../../../api/wireapi"
+import {
+	ComponentProperty,
+	TextProperty,
+	NumberProperty,
+	CheckboxProperty,
+	SelectProperty,
+} from "../../../../properties/componentproperty"
 
 function getConditionPropertiesPanelTitle(
 	condition: wire.WireConditionState
 ): string {
 	return `${condition.type === "GROUP" ? "Group " : ""} Condition Properties`
 }
+
+const multiValueOperators = ["HAS_ANY", "HAS_ALL", "IN", "NOT_IN"]
 
 function getConditionTitle(condition: wire.WireConditionState): string {
 	if (condition.type === "GROUP" && !condition.valueSource) {
@@ -16,8 +26,11 @@ function getConditionTitle(condition: wire.WireConditionState): string {
 
 	if (condition.valueSource === "VALUE") {
 		const valueCondition = condition as wire.ValueConditionState
+		const valuesString = valueCondition.values
+			? "(" + valueCondition.values.join(",") + ")"
+			: valueCondition.value
 		return `${valueCondition.field} ${valueCondition.operator || ""} ${
-			valueCondition.value || ""
+			valuesString || ""
 		}`
 	}
 
@@ -44,6 +57,120 @@ function getConditionTitle(condition: wire.WireConditionState): string {
 	return "NEW_VALUE"
 }
 
+function getOperatorOptions(fieldDisplayType: string | undefined) {
+	if (fieldDisplayType === "MULTISELECT")
+		return [
+			{
+				label: "",
+				value: "",
+			},
+			{
+				label: "Has Any",
+				value: "HAS_ANY",
+			},
+			{
+				label: "Has All",
+				value: "HAS_ALL",
+			},
+		]
+
+	return [
+		{
+			label: "",
+			value: "",
+		},
+		{
+			label: "Equals",
+			value: "EQ",
+		},
+		{
+			label: "Not Equal To",
+			value: "NOT_EQ",
+		},
+		{
+			label: "Greater Than",
+			value: "GT",
+		},
+		{
+			label: "Less Than",
+			value: "LT",
+		},
+		{
+			label: "Greater Than or Equal To",
+			value: "GTE",
+		},
+		{
+			label: "Less Than or Equal To",
+			value: "LTE",
+		},
+		{
+			label: "In",
+			value: "IN",
+		},
+		{
+			label: "Not In",
+			value: "NOT_IN",
+		},
+		{
+			label: "Is Blank",
+			value: "IS_BLANK",
+		},
+		{
+			label: "Is Not Blank",
+			value: "IS_NOT_BLANK",
+		},
+		{
+			label: "Between",
+			value: "BETWEEN",
+		},
+	]
+}
+
+function getValueProperty(
+	fieldDisplayType: wire.FieldType | undefined,
+	fieldMetadata: collection.Field | undefined,
+	context: context.Context
+): TextProperty | NumberProperty | CheckboxProperty | SelectProperty {
+	// TODO: Add additional property types here to support things like DATE
+
+	const baseValueProp = {
+		name: "value",
+		label: "Value",
+		displayConditions: [
+			{
+				field: "valueSource",
+				value: "VALUE",
+				type: "fieldValue",
+				operator: "EQUALS",
+			},
+			{
+				type: "fieldValue",
+				field: "operator",
+				operator: "NOT_IN",
+				values: multiValueOperators.concat(["BETWEEN"]),
+			},
+		],
+	}
+
+	if (fieldDisplayType === "CHECKBOX") {
+		return { ...baseValueProp, type: "CHECKBOX" } as CheckboxProperty
+	}
+
+	if (fieldDisplayType === "NUMBER") {
+		return { ...baseValueProp, type: "NUMBER" } as NumberProperty
+	}
+
+	if (fieldDisplayType === "SELECT") {
+		return {
+			...baseValueProp,
+			type: "SELECT",
+			options: fieldMetadata?.getSelectOptions(context),
+		} as SelectProperty
+	}
+
+	return { ...baseValueProp, type: "TEXT" } as TextProperty
+}
+
 const ConditionsProperties: definition.UC = (props) => {
 	const { context } = props
 	const ListPropertyUtility = component.getUtility(
@@ -57,312 +184,365 @@ const ConditionsProperties: definition.UC = (props) => {
 	const selectedPath = useSelectedPath(context)
 	const wirePath = selectedPath.trimToSize(2)
 	const conditionsPath = wirePath.addLocal(propertyName)
+	const [wireName] = wirePath.pop()
 
 	const items = get(context, conditionsPath) as wire.WireConditionState[]
 
-	const getProperties = (parentPath: FullPath) => [
-		{
-			name: "id",
-			type: "TEXT",
-			label: "Condition Id",
-		},
-		{
-			name: "field",
-			type: "METADATA",
-			metadataType: "FIELD",
-			label: "Field",
-			groupingPath: `${"../".repeat(parentPath.size() - 3)}../collection`,
-			displayConditions: [
-				{
-					operator: "NOT_EQUALS",
-					field: "type",
-					value: "GROUP",
-					type: "fieldValue",
-				},
-			],
-		},
-		{
-			name: "operator",
-			type: "SELECT",
-			label: "Operator",
-			options: [
-				{
-					label: "",
-					value: "",
-				},
-				{
-					label: "Equals",
-					value: "EQ",
-				},
-				{
-					label: "Not Equal To",
-					value: "NOT_EQ",
-				},
-				{
-					label: "Greater Than",
-					value: "GT",
-				},
-				{
-					label: "Less Than",
-					value: "LT",
-				},
-				{
-					label: "Greater Than or Equal To",
-					value: "GTE",
-				},
-				{
-					label: "Less Than or Equal To",
-					value: "LTE",
-				},
-				{
-					label: "In",
-					value: "IN",
-				},
-				{
-					label: "Is Blank",
-					value: "IS_BLANK",
-				},
-				{
-					label: "Is Not Blank",
-					value: "IS_NOT_BLANK",
-				},
-				{
-					label: "Between",
-					value: "BETWEEN",
-				},
-			],
-			displayConditions: [
-				{
-					operator: "NOT_EQUALS",
-					field: "type",
-					value: "GROUP",
-					type: "fieldValue",
-				},
-			],
-		},
-		{
-			name: "valueSource",
-			type: "SELECT",
-			label: "Value Source",
-			options: [
-				{
-					label: "",
-					value: "",
-				},
-				{
-					label: "Value",
-					value: "VALUE",
-				},
-				{
-					label: "Lookup",
-					value: "LOOKUP",
-				},
-				{
-					label: "Param",
-					value: "PARAM",
-				},
-			],
-			displayConditions: [
-				{
-					type: "fieldValue",
-					operator: "IN",
-					field: "operator",
-					values: [
-						"EQ",
-						"NOT_EQ",
-						"GT",
-						"LT",
-						"GTE",
-						"LTE",
-						"IN",
-						"BETWEEN",
-					],
-				},
-			],
-		},
-		{
-			name: "start",
-			type: "TEXT",
-			label: "Start",
-			displayConditions: [
-				{
-					field: "valueSource",
-					value: "VALUE",
-					type: "fieldValue",
-					operator: "EQUALS",
-				},
-				{
-					type: "fieldValue",
-					operator: "EQUALS",
-					field: "operator",
-					value: "BETWEEN",
-				},
-			],
-		},
-		{
-			name: "end",
-			type: "TEXT",
-			label: "End",
-			displayConditions: [
-				{
-					field: "valueSource",
-					value: "VALUE",
-					type: "fieldValue",
-					operator: "EQUALS",
-				},
-				{
-					type: "fieldValue",
-					operator: "EQUALS",
-					field: "operator",
-					value: "BETWEEN",
-				},
-			],
-		},
-		{
-			name: "inclusiveStart",
-			type: "CHECKBOX",
-			label: "Inclusive Start",
-			displayConditions: [
-				{
-					field: "valueSource",
-					value: "VALUE",
-					type: "fieldValue",
-					operator: "EQUALS",
-				},
-				{
-					type: "fieldValue",
-					operator: "EQUALS",
-					field: "operator",
-					value: "BETWEEN",
-				},
-			],
-		},
-		{
-			name: "inclusiveEnd",
-			type: "CHECKBOX",
-			label: "Inclusive End",
-			displayConditions: [
-				{
-					field: "valueSource",
-					value: "VALUE",
-					type: "fieldValue",
-					operator: "EQUALS",
-				},
-				{
-					type: "fieldValue",
-					operator: "EQUALS",
-					field: "operator",
-					value: "BETWEEN",
-				},
-			],
-		},
-		{
-			name: "value",
-			type: "TEXT",
-			label: "Value",
-			displayConditions: [
-				{
-					field: "valueSource",
-					value: "VALUE",
-					type: "fieldValue",
-					operator: "EQUALS",
-				},
-				{
-					type: "fieldValue",
-					field: "operator",
-					value: "BETWEEN",
-					operator: "NOT_EQUALS",
-				},
-			],
-		},
-		{
-			name: "active",
-			type: "CHECKBOX",
-			label: "Active by default",
-		},
-		{
-			name: "lookupWire",
-			type: "WIRE",
-			label: "Lookup Wire",
-			displayConditions: [
-				{
-					field: "valueSource",
-					value: "LOOKUP",
-					type: "fieldValue",
-					operator: "EQUALS",
-				},
-			],
-		},
-		{
-			name: "lookupField",
-			type: "FIELD",
-			label: "Lookup Field",
-			wireField: "lookupWire",
-			displayConditions: [
-				{
-					field: "valueSource",
-					value: "LOOKUP",
-					type: "fieldValue",
-					operator: "EQUALS",
-				},
-			],
-		},
-		{
-			name: "param",
-			type: "PARAM",
-			label: "Param",
-			displayConditions: [
-				{
-					field: "valueSource",
-					value: "PARAM",
-					type: "fieldValue",
-					operator: "EQUALS",
-				},
-			],
-		},
-		{
-			name: "type",
-			type: "SELECT",
-			label: "Type",
-			options: [
-				{
-					label: "Group",
-					value: "GROUP",
-				},
-			],
-			displayConditions: [
-				{
-					field: "type",
-					value: "GROUP",
-					type: "fieldValue",
-					operator: "EQUALS",
-				},
-			],
-		},
-		{
-			name: "conjunction",
-			type: "SELECT",
-			label: "Conjunction",
-			options: [
-				{
-					label: "AND",
-					value: "AND",
-				},
-				{
-					label: "OR",
-					value: "OR",
-				},
-			],
-			displayConditions: [
-				{
-					field: "type",
-					value: "GROUP",
-					type: "fieldValue",
-					operator: "EQUALS",
-				},
-			],
-		},
-	]
+	const getProperties = (
+		parentPath: FullPath,
+		itemState: wire.PlainWireRecord
+	): ComponentProperty[] => {
+		const fieldMetadata =
+			itemState.field && wireName
+				? getFieldMetadata(
+						context,
+						wireName as string,
+						itemState.field as string
+				  )
+				: undefined
+
+		const fieldDisplayType = fieldMetadata?.getType() || undefined
+
+		return [
+			{
+				name: "id",
+				type: "TEXT",
+				label: "Condition Id",
+			},
+			{
+				name: "field",
+				type: "METADATA",
+				metadataType: "FIELD",
+				label: "Field",
+				groupingPath: `${"../".repeat(
+					parentPath.size() - 3
+				)}../collection`,
+				displayConditions: [
+					{
+						operator: "NOT_EQUALS",
+						field: "type",
+						value: "GROUP",
+						type: "fieldValue",
+					},
+				],
+				onChange: [
+					{
+						// Clear out all of these wire condition properties whenever field is changed
+						updates: [
+							"operator",
+							"value",
+							"values",
+							"start",
+							"end",
+							"inclusiveStart",
+							"inclusiveEnd",
+						].map((field) => ({ field })),
+					},
+				],
+			},
+			{
+				name: "operator",
+				type: "SELECT",
+				label: "Operator",
+				options: getOperatorOptions(fieldDisplayType),
+				displayConditions: [
+					{
+						operator: "NOT_EQUALS",
+						field: "type",
+						value: "GROUP",
+						type: "fieldValue",
+					},
+				],
+				onChange: [
+					// Clear out value if operator IS NOW a multi-value operator
+					{
+						updates: [
+							{
+								field: "value",
+							},
+						],
+						conditions: [
+							{
+								field: "operator",
+								operator: "IN",
+								values: multiValueOperators,
+								type: "fieldValue",
+							},
+						],
+					},
+					// Clear out values (PLURAL) if operator IS NO LONGER a multi-value operator
+					{
+						updates: [
+							{
+								field: "values",
+							},
+						],
+						conditions: [
+							{
+								field: "operator",
+								operator: "NOT_IN",
+								values: multiValueOperators,
+								type: "fieldValue",
+							},
+						],
+					},
+					// Clear out special BETWEEN properties if operator is not BETWEEN
+					{
+						conditions: [
+							{
+								field: "operator",
+								operator: "NOT_EQUALS",
+								value: "BETWEEN",
+								type: "fieldValue",
+							},
+						],
+						updates: [
+							"start",
+							"end",
+							"inclusiveStart",
+							"inclusiveEnd",
+						].map((field) => ({ field })),
+					},
+				],
+			},
+			{
+				name: "valueSource",
+				type: "SELECT",
+				label: "Value Source",
+				options: [
+					{
+						label: "",
+						value: "",
+					},
+					{
+						label: "Value",
+						value: "VALUE",
+					},
+					{
+						label: "Lookup",
+						value: "LOOKUP",
+					},
+					{
+						label: "Param",
+						value: "PARAM",
+					},
+				],
+				displayConditions: [
+					{
+						type: "fieldValue",
+						operator: "IN",
+						field: "operator",
+						values: [
+							"EQ",
+							"NOT_EQ",
+							"GT",
+							"LT",
+							"GTE",
+							"LTE",
+							"IN",
+							"NOT_IN",
+							"BETWEEN",
+							"HAS_ANY",
+							"HAS_ALL",
+						],
+					},
+				],
+			},
+			{
+				name: "start",
+				type: "TEXT",
+				label: "Start",
+				displayConditions: [
+					{
+						field: "valueSource",
+						value: "VALUE",
+						type: "fieldValue",
+						operator: "EQUALS",
+					},
+					{
+						type: "fieldValue",
+						operator: "EQUALS",
+						field: "operator",
+						value: "BETWEEN",
+					},
+				],
+			},
+			{
+				name: "end",
+				type: "TEXT",
+				label: "End",
+				displayConditions: [
+					{
+						field: "valueSource",
+						value: "VALUE",
+						type: "fieldValue",
+						operator: "EQUALS",
+					},
+					{
+						type: "fieldValue",
+						operator: "EQUALS",
+						field: "operator",
+						value: "BETWEEN",
+					},
+				],
+			},
+			{
+				name: "inclusiveStart",
+				type: "CHECKBOX",
+				label: "Inclusive Start",
+				displayConditions: [
+					{
+						field: "valueSource",
+						value: "VALUE",
+						type: "fieldValue",
+						operator: "EQUALS",
+					},
+					{
+						type: "fieldValue",
+						operator: "EQUALS",
+						field: "operator",
+						value: "BETWEEN",
+					},
+				],
+			},
+			{
+				name: "inclusiveEnd",
+				type: "CHECKBOX",
+				label: "Inclusive End",
+				displayConditions: [
+					{
+						field: "valueSource",
+						value: "VALUE",
+						type: "fieldValue",
+						operator: "EQUALS",
+					},
+					{
+						type: "fieldValue",
+						operator: "EQUALS",
+						field: "operator",
+						value: "BETWEEN",
+					},
+				],
+			},
+			{
+				...getValueProperty(fieldDisplayType, fieldMetadata, context),
+			},
+			{
+				name: "values",
+				type: "LIST",
+				label: "Values",
+				subtype: fieldDisplayType,
+				subtypeOptions:
+					fieldDisplayType === "CHECKBOX"
+						? [
+								{ label: "True", value: "true" },
+								{ label: "False", value: "false" },
+						  ]
+						: fieldMetadata?.getSelectOptions(context),
+				displayConditions: [
+					{
+						field: "valueSource",
+						value: "VALUE",
+						type: "fieldValue",
+						operator: "EQUALS",
+					},
+					{
+						field: "operator",
+						type: "fieldValue",
+						operator: "IN",
+						values: multiValueOperators,
+					},
+				],
+			},
+			{
+				name: "active",
+				type: "CHECKBOX",
+				label: "Active by default",
+			},
+			{
+				name: "lookupWire",
+				type: "WIRE",
+				label: "Lookup Wire",
+				displayConditions: [
+					{
+						field: "valueSource",
+						value: "LOOKUP",
+						type: "fieldValue",
+						operator: "EQUALS",
+					},
+				],
+			},
+			{
+				name: "lookupField",
+				type: "FIELD",
+				label: "Lookup Field",
+				wireField: "lookupWire",
+				displayConditions: [
+					{
+						field: "valueSource",
+						value: "LOOKUP",
+						type: "fieldValue",
+						operator: "EQUALS",
+					},
+				],
+			},
+			{
+				name: "param",
+				type: "PARAM",
+				label: "Param",
+				displayConditions: [
+					{
+						field: "valueSource",
+						value: "PARAM",
+						type: "fieldValue",
+						operator: "EQUALS",
+					},
+				],
+			},
+			{
+				name: "type",
+				type: "SELECT",
+				label: "Type",
+				options: [
+					{
+						label: "Group",
+						value: "GROUP",
+					},
+				],
+				displayConditions: [
+					{
+						field: "type",
+						value: "GROUP",
+						type: "fieldValue",
+						operator: "EQUALS",
+					},
+				],
+			},
+			{
+				name: "conjunction",
+				type: "SELECT",
+				label: "Conjunction",
+				options: [
+					{
+						label: "AND",
+						value: "AND",
+					},
+					{
+						label: "OR",
+						value: "OR",
+					},
+				],
+				displayConditions: [
+					{
+						field: "type",
+						value: "GROUP",
+						type: "fieldValue",
+						operator: "EQUALS",
+					},
+				],
+			},
+		]
+	}
 
 	const defaultConditionDef = { active: true }
 
@@ -422,7 +602,9 @@ const ConditionsProperties: definition.UC = (props) => {
 					},
 				]}
 				items={items}
-				itemProperties={getProperties(conditionsPath)}
+				itemProperties={(itemState: wire.PlainWireRecord) =>
+					getProperties(conditionsPath, itemState)
+				}
 				itemDisplayTemplate={getConditionTitle}
 				itemPropertiesPanelTitle={getConditionPropertiesPanelTitle}
 				itemChildren={(
@@ -454,9 +636,14 @@ const ConditionsProperties: definition.UC = (props) => {
 										displayTemplate={getConditionTitle(
 											conditionOnGroup
 										)}
-										itemProperties={getProperties(
-											conditionOnGroupPath
-										)}
+										itemProperties={(
+											itemState: wire.PlainWireRecord
+										) =>
+											getProperties(
+												conditionOnGroupPath,
+												itemState
+											)
+										}
 										itemPropertiesPanelTitle="Condition Properties"
 									/>
 								)
