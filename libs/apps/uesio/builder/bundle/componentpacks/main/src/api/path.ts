@@ -19,6 +19,9 @@ class FullPath {
 		this.itemName === path.itemName &&
 		this.localPath === path.localPath
 
+	isSameItem = (path: FullPath) =>
+		this.itemType === path.itemType && this.itemName === path.itemName
+
 	startsWith = (path: FullPath) =>
 		this.itemType === path.itemType &&
 		this.itemName === path.itemName &&
@@ -79,6 +82,13 @@ class FullPath {
 		return [parseInt(numString, 10) || 0, newPath]
 	}
 
+	popIndexAndType = (): [string, number, FullPath] => {
+		const [componentType, parentPath] = this.pop()
+		if (!componentType) throw new Error("Invalid component path")
+		const [index, newPath] = parentPath.popIndex()
+		return [componentType, index, newPath]
+	}
+
 	parent = () =>
 		new FullPath(
 			this.itemType,
@@ -86,16 +96,7 @@ class FullPath {
 			component.path.getParentPath(this.localPath)
 		)
 
-	nextSibling = () => {
-		const [index, rest] = this.popIndex()
-		return new FullPath(
-			this.itemType,
-			this.itemName,
-			`${rest.localPath}["${index + 1}"]`
-		)
-	}
-
-	isSet = () => this.itemType && this.itemName
+	isSet = () => !!(this.itemType && this.itemName)
 
 	clone = () => new FullPath(this.itemType, this.itemName, this.localPath)
 

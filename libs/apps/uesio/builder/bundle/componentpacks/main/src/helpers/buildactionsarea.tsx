@@ -13,6 +13,7 @@ const BuildActionsArea: definition.UtilityComponent<Props> = (props) => {
 				"p-2",
 				"relative",
 				"bg-slate-50",
+				"text-slate-700",
 			],
 		},
 		props

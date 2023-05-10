@@ -38,6 +38,9 @@ const run = (signal: SignalDefinition, context: Context) => {
 
 // TODO: write tests
 const runMany = async (signals: SignalDefinition[], context: Context) => {
+	// If we have a custom slot context, don't run signals
+	const slotWrapper = context.getCustomSlot()
+	if (slotWrapper) return context
 	for (const signal of signals) {
 		// Some signal handlers don't handle errors, so we catch them here
 		try {

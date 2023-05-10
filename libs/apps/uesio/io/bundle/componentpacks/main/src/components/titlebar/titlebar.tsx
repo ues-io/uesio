@@ -21,6 +21,7 @@ const TitleBar: definition.UC<TitleBarDefinition> = (props) => {
 					listName="actions"
 					path={path}
 					context={context}
+					label="Title Bar Actions"
 				/>
 			}
 		/>
