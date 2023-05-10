@@ -102,8 +102,8 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 				value: "IN",
 			},
 			{
-				label: "NOT IN",
-				value: "NOT IN",
+				label: "NOT_IN",
+				value: "NOT_IN",
 			},
 		],
 
@@ -142,8 +142,8 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 			},
 			{
 				field: "operator",
-				operator: "NOT IN",
-				values: ["IN", "NOT IN"],
+				operator: "NOT_IN",
+				values: ["IN", "NOT_IN"],
 				type: "fieldValue",
 			},
 		],
@@ -164,7 +164,7 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 				field: "operator",
 				operator: "IN",
 				type: "fieldValue",
-				values: ["IN", "NOT IN"],
+				values: ["IN", "NOT_IN"],
 			},
 		],
 	},
@@ -229,7 +229,7 @@ const getShortOperator = (operator: component.DisplayOperator) =>
 		EQUALS: "=",
 		NOT_EQUALS: "!=",
 		IN: "in",
-		"NOT IN": "not in",
+		NOT_IN: "not in",
 	}[operator || "EQUALS"])
 
 export const getDisplayConditionLabel = (

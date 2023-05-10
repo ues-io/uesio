@@ -3,7 +3,8 @@ import { PropertiesPanelSection } from "../api/propertysection"
 
 type FieldUpdate = {
 	field: string
-	value: wire.PlainFieldValue
+	// If value is undefined, then the field's value will be cleared from YAML definition.
+	value?: wire.PlainFieldValue
 }
 
 type PropertyOnChange = {
