@@ -18,11 +18,11 @@ const PlaceHolder: FC<T> = (props) => {
 				isHovering ? "text-white" : "text-slate-700",
 				"text-[8pt]",
 				"uppercase",
-				"font-medium",
+				isHovering ? "font-medium" : "font-light",
 			],
 			root: [
 				isHovering ? "bg-slate-600" : "bg-slate-100",
-				"px-4",
+				"px-2",
 				"py-1.5",
 				"grid",
 				"my-1.5",
