@@ -29,7 +29,7 @@ const MultiSelectField: definition.UtilityComponent<SelectFieldProps> = (
 	const items = options || []
 	const renderer = (item: collection.SelectOption) => item.label
 	const isSelected = (item: collection.SelectOption) =>
-		value.includes(item.value)
+		value && value.includes(item.value)
 
 	return (
 		<CustomSelect

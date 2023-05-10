@@ -19,6 +19,7 @@ const ListProperty: definition.UC<Definition> = (props) => {
 		"uesio/builder.listproperty"
 	)
 	const ListField = component.getUtility("uesio/io.listfield")
+	const MultiSelectField = component.getUtility("uesio/io.multiselectfield")
 	const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 
 	const viewDefId = context.getViewDefId() || ""
@@ -48,19 +49,38 @@ const ListProperty: definition.UC<Definition> = (props) => {
 			context={context}
 			variant={"uesio/builder.propfield"}
 		>
-			<ListField
-				fieldId={property.name}
-				path={path}
-				value={items}
-				subType={property.subtype}
-				setValue={(value: wire.FieldValue) => {
-					set(context, listPropertyPath, value)
-				}}
-				mode={"EDIT"}
-				context={context}
-				labelVariant={"uesio/builder.propfield"}
-				subFieldVariant={"uesio/builder.propfield"}
-			/>
+			{property.subtype === "CHECKBOX" ||
+			property.subtype === "SELECT" ||
+			property.subtype === "MULTISELECT" ? (
+				<MultiSelectField
+					fieldId={property.name}
+					path={path}
+					value={items || []}
+					subType={property.subtype}
+					setValue={(value: wire.FieldValue) => {
+						set(context, listPropertyPath, value)
+					}}
+					mode={"EDIT"}
+					context={context}
+					labelVariant={"uesio/builder.propfield"}
+					subFieldVariant={"uesio/builder.propfield"}
+					options={property?.subtypeOptions}
+				/>
+			) : (
+				<ListField
+					fieldId={property.name}
+					path={path}
+					value={items}
+					subType={property.subtype}
+					setValue={(value: wire.FieldValue) => {
+						set(context, listPropertyPath, value)
+					}}
+					mode={"EDIT"}
+					context={context}
+					labelVariant={"uesio/builder.propfield"}
+					subFieldVariant={"uesio/builder.propfield"}
+				/>
+			)}
 		</FieldWrapper>
 	) : (
 		<ListPropertyUtility
