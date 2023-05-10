@@ -1,0 +1,20 @@
+name: list
+type: LIST
+label: List
+subtype: STRUCT
+subfields:
+  - name: item1
+    type: TEXT
+    label: Item 1
+  - name: item2
+    type: TEXT
+    label: Item 2
+  - name: item3
+    type: TEXT
+    label: Item 3
+  - name: item4
+    type: TEXT
+    label: Item 4
+  - name: item5
+    type: TEXT
+    label: Item 5

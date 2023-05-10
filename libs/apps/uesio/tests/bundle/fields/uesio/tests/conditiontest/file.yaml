@@ -1,0 +1,6 @@
+name: file
+type: FILE
+label: file
+file:
+  accept: IMAGE
+  filesource: uesio/core.platform

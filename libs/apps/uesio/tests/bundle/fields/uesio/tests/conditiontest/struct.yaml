@@ -1,0 +1,10 @@
+name: struct
+type: STRUCT
+label: struct
+subfields:
+  - name: uesio/tests.text
+    label: Text
+    type: TEXT
+  - name: uesio/tests.longtext
+    label: Long Text
+    type: LONGTEXT
