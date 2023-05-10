@@ -211,7 +211,7 @@ Accept: application/json
             "conditions": [
                 {
                     "field": "uesio/tests.genus",
-                    "operator": "NOT IN",
+                    "operator": "NOT_IN",
                     "values": [
                         "Plaster",
                         "Lathe"

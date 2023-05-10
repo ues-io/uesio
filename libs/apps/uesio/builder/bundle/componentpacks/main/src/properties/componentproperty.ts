@@ -1,5 +1,16 @@
-import { component, definition, metadata, wire } from "@uesio/ui"
+import { component, context, definition, metadata, wire } from "@uesio/ui"
 import { PropertiesPanelSection } from "../api/propertysection"
+
+type FieldUpdate = {
+	field: string
+	// If value is undefined, then the field's value will be cleared from YAML definition.
+	value?: wire.PlainFieldValue
+}
+
+type PropertyOnChange = {
+	conditions?: component.DisplayCondition[]
+	updates: FieldUpdate[]
+}
 
 type BaseProperty = {
 	name: string
@@ -15,6 +26,8 @@ type BaseProperty = {
 	// but will NOT be stored in the YAML definition.
 	viewOnly?: boolean
 	displayConditions?: component.DisplayCondition[]
+	// Updates to perform when this property's value is changed.
+	onChange?: PropertyOnChange[]
 }
 type TextProperty = {
 	type: "TEXT"
@@ -131,7 +144,8 @@ type StructProperty = {
 } & BaseProperty
 
 type ComponentPropertiesGetter = (
-	record: wire.PlainWireRecord
+	record: wire.PlainWireRecord,
+	context: context.Context
 ) => ComponentProperty[]
 
 type DisplayTemplateGetter = (record: wire.PlainWireRecord) => string
@@ -197,14 +211,17 @@ const getStyleVariantProperty = (componentType: string): ComponentProperty => ({
 
 export type {
 	BotProperty,
-	ListPropertyItemsDefinition,
 	ComponentProperty,
-	SelectProperty,
-	WireProperty,
-	MapProperty,
-	ListProperty,
-	StructProperty,
+	FieldProperty,
+	FieldMetadataProperty,
 	IconProperty,
+	ListProperty,
+	ListPropertyItemsDefinition,
+	MapProperty,
+	PropertyOnChange,
+	SelectProperty,
+	StructProperty,
+	WireProperty,
 }
 
 export { getStyleVariantProperty }
