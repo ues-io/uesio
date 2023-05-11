@@ -35,7 +35,7 @@ definition:
                     components:
                       - uesio/io.button:
                           uesio.variant: uesio/web.borderless
-                          text: Register now for early access - June 28!
+                          text: Early Access
                           signals:
                             - signal: route/NAVIGATE
                               path: earlyaccess

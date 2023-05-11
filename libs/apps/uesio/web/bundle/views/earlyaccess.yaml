@@ -50,7 +50,7 @@ definition:
                     components:
                       - uesio/io.text:
                           uesio.variant: uesio/web.callout
-                          text: Register now for early access - June 28!
+                          text: Register for early access
                       - uesio/io.text:
                           uesio.variant: uesio/web.calloutsub
                           text: For an exclusive preview, join us for our beta release webinar on June 28 (10:00 PT, 13:00 ET, 19:00 CEST). Register now for free and receive early access to ues.io.
