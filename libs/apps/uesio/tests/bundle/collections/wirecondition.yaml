@@ -1,0 +1,6 @@
+name: wirecondition
+uniqueKey:
+  - uesio/tests.autonumber
+nameField: uesio/tests.text
+label: Wire Condtion Test Data
+pluralLabel: Wire Conditions Test Data

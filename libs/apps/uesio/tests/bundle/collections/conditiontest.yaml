@@ -1,7 +1,0 @@
-name: conditiontest
-uniqueKey:
-  - uesio/tests.autonumber
-  - uesio/tests.number
-nameField: uesio/tests.text
-label: Condition Test
-pluralLabel: Condtion Tests
