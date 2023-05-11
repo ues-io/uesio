@@ -53,10 +53,9 @@ type SiteMergeData struct {
 }
 
 type WorkspaceMergeData struct {
-	Name        string `json:"name"`
-	App         string `json:"app"`
-	Wrapper     string `json:"wrapper,omitempty"`
-	SlotWrapper string `json:"slotwrapper,omitempty"`
+	Name    string `json:"name"`
+	App     string `json:"app"`
+	Wrapper string `json:"wrapper,omitempty"`
 }
 
 type MergeData struct {

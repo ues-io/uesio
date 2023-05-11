@@ -2,13 +2,12 @@ import { useEffect } from "react"
 import { useRoute } from "../bands/route/selectors"
 import { css } from "@emotion/css"
 import Progress from "./progress"
-import View from "./view"
+import { ViewArea } from "./view"
 import { useSite } from "../bands/site"
 import { Context } from "../context/context"
 import { navigate, redirect } from "../bands/route/operations"
 import NotificationArea from "./notificationarea"
 import { Component } from "../component/component"
-import PanelArea from "./panelarea"
 import { makeViewId } from "../bands/view"
 import { UtilityComponent } from "../definition/definition"
 import { defineConfig, setup } from "@twind/core"
@@ -120,26 +119,6 @@ const Route: UtilityComponent = (props) => {
 		routeContext = routeContext.setSite(site)
 	}
 
-	const routeContextWithSlot = workspace?.slotwrapper
-		? routeContext.setCustomSlot(workspace.slotwrapper)
-		: routeContext
-
-	// View and PanelArea both need their own unique context stacks in order to prevent issues,
-	// so we need to generate a unique context stack for each by cloning
-	const view = (
-		<>
-			<View
-				context={routeContextWithSlot}
-				definition={{
-					view: viewId,
-					params,
-				}}
-				path=""
-			/>
-			<PanelArea context={routeContextWithSlot} />
-		</>
-	)
-
 	return (
 		<>
 			{workspace ? (
@@ -147,12 +126,20 @@ const Route: UtilityComponent = (props) => {
 					context={routeContext}
 					componentType={workspace.wrapper}
 					path=""
-					definition={{}}
-				>
-					{view}
-				</Component>
+					definition={{
+						view: viewId,
+						params,
+					}}
+				/>
 			) : (
-				view
+				<ViewArea
+					context={routeContext}
+					definition={{
+						view: viewId,
+						params,
+					}}
+					path=""
+				/>
 			)}
 			<Progress isAnimating={!!route.isLoading} context={props.context} />
 			<div

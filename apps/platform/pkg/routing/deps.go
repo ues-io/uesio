@@ -27,7 +27,6 @@ var DEFAULT_BUILDER_PACK_NAMESPACE = "uesio/builder"
 var DEFAULT_BUILDER_PACK_NAME = "main"
 
 var DEFAULT_BUILDER_COMPONENT = "uesio/builder.mainwrapper"
-var DEFAULT_BUILDER_SLOT = "uesio/builder.slotbuilder"
 
 func getBuilderComponentID(view string) string {
 	return fmt.Sprintf("%s($root):%s", view, DEFAULT_BUILDER_COMPONENT)
