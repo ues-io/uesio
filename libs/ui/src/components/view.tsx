@@ -87,7 +87,7 @@ const View: UC<ViewDefinition> = (props) => {
 			listName="components"
 			path=""
 			context={viewContext}
-			message="Drag and drop any component here to get started."
+			label="View Components"
 		/>
 	)
 }

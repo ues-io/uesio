@@ -1,4 +1,4 @@
-import { FunctionComponent, useLayoutEffect } from "react"
+import { FunctionComponent, useLayoutEffect, useRef } from "react"
 import { definition, styles } from "@uesio/ui"
 import {
 	useFloating,
@@ -9,6 +9,8 @@ import {
 	offset,
 	size,
 	FloatingPortal,
+	arrow,
+	FloatingArrow,
 } from "@floating-ui/react"
 
 interface TooltipProps extends definition.UtilityProps {
@@ -19,6 +21,7 @@ interface TooltipProps extends definition.UtilityProps {
 	autoPlacement?: Placement[]
 	useFirstRelativeParent?: boolean
 	matchHeight?: boolean
+	arrow?: boolean
 }
 
 const defaultPlacement: Placement[] = ["top", "bottom"]
@@ -34,13 +37,17 @@ const getRelativeParent = (elem: Element | null): Element | null => {
 
 const StyleDefaults = Object.freeze({
 	popper: [],
+	arrow: [],
 })
 
 const Popper: FunctionComponent<TooltipProps> = (props) => {
 	const autoPlacements = props.autoPlacement || defaultPlacement
 
-	const { x, y, strategy, refs, middlewareData } = useFloating({
-		whileElementsMounted: autoUpdate,
+	const arrowRef = useRef(null)
+
+	const { x, y, strategy, refs, middlewareData, context } = useFloating({
+		whileElementsMounted: (...args) =>
+			autoUpdate(...args, { animationFrame: true }),
 		placement: props.placement,
 		middleware: [
 			offset(props.offset),
@@ -54,6 +61,13 @@ const Popper: FunctionComponent<TooltipProps> = (props) => {
 									height: `${rects.reference.height}px`,
 								})
 							},
+						}),
+				  ]
+				: []),
+			...(props.arrow
+				? [
+						arrow({
+							element: arrowRef,
 						}),
 				  ]
 				: []),
@@ -85,6 +99,15 @@ const Popper: FunctionComponent<TooltipProps> = (props) => {
 				className={classes.popper}
 			>
 				{props.children}
+				{props.arrow && (
+					<FloatingArrow
+						width={12}
+						height={6}
+						className={classes.arrow}
+						ref={arrowRef}
+						context={context}
+					/>
+				)}
 			</div>
 		</FloatingPortal>
 	)

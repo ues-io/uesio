@@ -1,0 +1,16 @@
+name: indextag
+label: Index Tag
+definition:
+  uesio.styleTokens:
+    root:
+      - text-slate-700
+      - text-xs
+      - overflow-hidden
+      - select-none
+      - bg-slate-50
+      - m-1
+    selected:
+      - border-r-4
+      - border-[$Theme{color.primary}]
+      - bg-slate-200
+public: true

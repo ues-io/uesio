@@ -61,7 +61,7 @@ const CodePanel: definition.UtilityComponent = (props) => {
 	const IconButton = component.getUtility("uesio/io.iconbutton")
 	const IOCodeField = component.getUtility("uesio/io.codefield")
 
-	const { context, className } = props
+	const { context } = props
 
 	const classes = styles.useUtilityStyles(StyleDefaults, props)
 
@@ -218,18 +218,13 @@ const CodePanel: definition.UtilityComponent = (props) => {
 				/>
 			}
 			context={context}
-			className={className}
 		>
 			<IOCodeField
 				context={context}
 				value={fullYaml}
 				options={monacoOptions}
-				styles={{
-					input: {
-						padding: 0,
-						height: "100%",
-						border: "none",
-					},
+				styleTokens={{
+					input: ["h-full", "border-0"],
 				}}
 				language="yaml"
 				setValue={

@@ -9,7 +9,6 @@ type TabDefinition = {
 
 type TabsDefinition = {
 	tabs?: TabDefinition[]
-	footer?: definition.DefinitionList
 	panelVariant?: metadata.MetadataKey
 	labelsVariant?: metadata.MetadataKey
 }
@@ -40,22 +39,13 @@ const Tabs: definition.UC<TabsDefinition> = (props) => {
 					context={context}
 				/>
 			}
-			footer={
-				<component.Slot
-					definition={definition}
-					listName="footer"
-					path={path}
-					label="footer"
-					context={context}
-				/>
-			}
 		>
 			<component.Slot
 				definition={selectedTab}
 				listName="components"
 				path={`${path}["tabs"]["${selectedIndex}"]`}
 				context={context}
-				label={selectedTab?.label}
+				label={`Tab ${selectedTab?.label} Components`}
 			/>
 		</ScrollPanel>
 	)

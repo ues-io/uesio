@@ -23,6 +23,7 @@ const Box: definition.UC<BoxDefinition> = (props) => {
 				listName="components"
 				path={path}
 				context={context}
+				label="Box Components"
 			/>
 		</div>
 	)

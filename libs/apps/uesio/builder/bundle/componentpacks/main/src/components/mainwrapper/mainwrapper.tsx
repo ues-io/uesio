@@ -7,6 +7,7 @@ import PropertiesPanel from "./propertiespanel/propertiespanel"
 import ViewInfoPanel from "./viewinfopanel/viewinfopanel"
 import MainHeader from "./mainheader"
 import RightToolbar from "./righttoolbar"
+import IndexPanel from "./indexpanel"
 
 const StyleDefaults = Object.freeze({
 	root: [
@@ -48,10 +49,15 @@ const MainWrapper: definition.UC = (props) => {
 	})
 
 	const [showCode] = useBuilderState<boolean>(props.context, "codepanel")
+	const [showIndex] = useBuilderState<boolean>(props.context, "indexpanel")
 
 	if (!buildMode) {
 		return <>{props.children}</>
 	}
+
+	const indexPanelIndex = 3
+	const codePanelIndex = indexPanelIndex + (showIndex ? 1 : 0)
+	const rightPanelIndex = codePanelIndex + (showCode ? 1 : 0)
 
 	return (
 		<ScrollPanel
@@ -65,16 +71,24 @@ const MainWrapper: definition.UC = (props) => {
 					<ViewInfoPanel context={builderContext} />
 				</Grid>
 				<Canvas context={context} children={props.children} />
+				{showIndex && (
+					<AdjustableWidthArea
+						className={`col-start-${indexPanelIndex}`}
+						context={context}
+					>
+						<IndexPanel context={builderContext} />
+					</AdjustableWidthArea>
+				)}
 				{showCode && (
 					<AdjustableWidthArea
-						className="col-start-3"
+						className={`col-start-${codePanelIndex}`}
 						context={context}
 					>
 						<CodePanel context={builderContext} />
 					</AdjustableWidthArea>
 				)}
 				<RightToolbar
-					className={`col-start-${showCode ? "4" : "3"}`}
+					className={`col-start-${rightPanelIndex}`}
 					context={context}
 				/>
 			</Grid>
@@ -86,6 +100,14 @@ MainWrapper.signals = {
 	TOGGLE_CODE: {
 		dispatcher: (state) => !state,
 		target: "codepanel",
+	},
+	TOGGLE_INDEX: {
+		dispatcher: (state) => !state,
+		target: "indexpanel",
+	},
+	TOGGLE_SLOT_TAGS: {
+		dispatcher: (state) => !state,
+		target: "slottags",
 	},
 	SET_DIMENSIONS: {
 		dispatcher: (state, payload) => [payload.width, payload.height],

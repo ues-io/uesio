@@ -51,6 +51,7 @@ definition:
                                 components:
                                   - uesio/io.field:
                                       fieldId: uesio/viewonly.username
+                                      applyChanges: onBlur
                                   - uesio/io.field:
                                       fieldId: uesio/viewonly.email
                                   - uesio/io.field:

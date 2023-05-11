@@ -119,9 +119,11 @@ Cypress.Commands.add("hotkey", (hotkey: string) => {
 // while access the correct URL.  This ensures Uesio gets fed the subdomains it needs (e.g. "studio")
 // even though the URL we are visiting can be "localhost:3000" or "app:3000" (in docker network)
 Cypress.Commands.add("visitRoute", (route: string) => {
-	cy.visit(`${baseUrl}${route.startsWith("/") ? route : "/" + route}`, {
+	const targetUrl = `${baseUrl}${route.startsWith("/") ? route : "/" + route}`
+	cy.visit(targetUrl, {
 		headers: {},
 	})
+	cy.url().should("include", route)
 })
 
 declare global {

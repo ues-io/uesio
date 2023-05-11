@@ -21,7 +21,7 @@ func Logger(message string) {
 type TSDialect struct {
 }
 
-const DefaultListenerBotBody = `import { ListenerBotApi } from "uesio/bots"
+const DefaultListenerBotBody = `import { ListenerBotApi } from "@uesio/bots"
 
 function %s(bot: ListenerBotApi) {
     const a = bot.params.get("a") as number
@@ -29,7 +29,7 @@ function %s(bot: ListenerBotApi) {
     bot.addResult("answer", a + b)
 }`
 
-const DefaultBeforeSaveBotBody = `import { BeforeSaveBotApi } from "uesio/bots"
+const DefaultBeforeSaveBotBody = `import { BeforeSaveBotApi } from "@uesio/bots"
 
 function %s(bot: BeforeSaveBotApi) {
 	bot.inserts.get().forEach(function (change) {
@@ -40,7 +40,7 @@ function %s(bot: BeforeSaveBotApi) {
 	});
 }`
 
-const DefaultAfterSaveBotBody = `import { AfterSaveBotApi } from "uesio/bots"
+const DefaultAfterSaveBotBody = `import { AfterSaveBotApi } from "@uesio/bots"
 
 function %s(bot: AfterSaveBotApi) {
 	bot.inserts.get().forEach(function (change) {

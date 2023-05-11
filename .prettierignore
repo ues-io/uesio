@@ -13,6 +13,7 @@ package-lock.json
 package.json
 nx.json
 workspace.json
+**/*.template.yaml
 
 # Ignore because it uses Go template variables and as such fails prettier CSS parsing
 /apps/platform/fonts/fonts.css

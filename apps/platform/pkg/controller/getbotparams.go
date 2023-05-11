@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 
@@ -48,15 +49,20 @@ func GetBotParams(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	namespace := vars["namespace"]
 	name := vars["name"]
-	metadataType := vars["type"]
+	metadataType := strings.ToUpper(vars["type"])
 	session := middleware.GetSession(r)
 
-	if metadataType != "generator" {
-		http.Error(w, "Wrong bot type", http.StatusInternalServerError)
+	if metadataType != "GENERATOR" && metadataType != "LISTENER" {
+		http.Error(w, "Wrong bot type", http.StatusBadRequest)
 		return
 	}
 
-	robot := meta.NewGeneratorBot(namespace, name)
+	var robot *meta.Bot
+	if metadataType == "GENERATOR" {
+		robot = meta.NewGeneratorBot(namespace, name)
+	} else if metadataType == "LISTENER" {
+		robot = meta.NewListenerBot(namespace, name)
+	}
 
 	err := bundle.Load(robot, session, nil)
 	if err != nil {

@@ -1,14 +1,16 @@
-import { FunctionComponent } from "react"
+import { FC, useEffect, useState } from "react"
 import { definition, styles, context, wire } from "@uesio/ui"
+import { FieldValueSetter, ApplyChanges } from "../../components/field/field"
 
 interface TextFieldProps extends definition.UtilityProps {
-	setValue?: (value: wire.FieldValue) => void
-	value?: wire.FieldValue
-	mode?: context.FieldMode
-	readonly?: boolean
-	placeholder?: string
-	type?: "search" | "password" | "text" | "email" | "tel" | "url"
+	applyChanges?: ApplyChanges
 	focusOnRender?: boolean
+	mode?: context.FieldMode
+	placeholder?: string
+	readonly?: boolean
+	setValue?: FieldValueSetter
+	type?: "search" | "password" | "text" | "email" | "tel" | "url"
+	value?: wire.FieldValue
 }
 
 const StyleDefaults = Object.freeze({
@@ -16,17 +18,18 @@ const StyleDefaults = Object.freeze({
 	readonly: [],
 })
 
-const TextField: FunctionComponent<TextFieldProps> = (props) => {
+const TextField: FC<TextFieldProps> = (props) => {
 	const {
-		setValue,
+		applyChanges,
+		focusOnRender,
+		id,
 		mode,
 		placeholder,
-		type = "text",
 		readonly,
-		id,
-		focusOnRender,
+		setValue,
+		type = "text",
 	} = props
-	const value = props.value as string
+
 	const classes = styles.useUtilityStyleTokens(
 		StyleDefaults,
 		props,
@@ -34,17 +37,28 @@ const TextField: FunctionComponent<TextFieldProps> = (props) => {
 	)
 
 	const isReadMode = readonly || mode === "READ"
+	const applyOnBlur = applyChanges === "onBlur"
+
+	const [value, setControlledValue] = useState(props.value || "")
+
+	useEffect(() => {
+		setControlledValue(props.value || "")
+	}, [props.value])
 
 	return (
 		<input
 			id={id}
 			type={type}
-			value={value || ""}
 			placeholder={placeholder}
 			className={styles.cx(classes.input, isReadMode && classes.readonly)}
 			disabled={isReadMode}
-			onChange={(event) => setValue?.(event.target.value)}
 			ref={(input: HTMLInputElement) => focusOnRender && input?.focus()}
+			value={value as string}
+			onChange={(e) => {
+				setControlledValue(e.target.value)
+				!applyOnBlur && setValue?.(e.target.value)
+			}}
+			onBlur={(e) => applyOnBlur && setValue?.(e.target.value)}
 		/>
 	)
 }

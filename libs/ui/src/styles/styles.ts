@@ -149,13 +149,13 @@ function useUtilityStyleTokens<K extends string>(
 	defaultVariantComponentType?: MetadataKey
 ) {
 	const variantTokens = getVariantTokens(props, defaultVariantComponentType)
-	const inlineTokens = props.styleTokens || {}
+	const inlineTokens = props.styleTokens
 
 	return Object.entries(defaults).reduce(
 		(classNames, entry: [K, ClassNamesArg[]]) => {
 			const [className, defaultClasses] = entry
-			const classVariantTokens = variantTokens[className] || []
-			const classInlineTokens = inlineTokens[className] || []
+			const classVariantTokens = variantTokens?.[className] || []
+			const classInlineTokens = inlineTokens?.[className] || []
 			classNames[className] = process(
 				props.context,
 				defaultClasses,

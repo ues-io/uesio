@@ -6,6 +6,7 @@ import WeekFilter from "../../utilities/weekfilter/weekfilter"
 import DateFilter from "../../utilities/datefilter/datefilter"
 import NumberFilter from "../../utilities/numberfilter/numberfilter"
 import CheckboxFilter from "../../utilities/checkboxfilter/checkboxfilter"
+import TimestampFilter from "../../utilities/timestampfilter/timestampfilter"
 import GroupFilter, {
 	GroupFilterProps,
 } from "../../utilities/groupfilter/groupfilter"
@@ -48,6 +49,8 @@ const getFilterContent = (
 			return <CheckboxFilter {...common} displayAs={displayAs} />
 		case "SELECT":
 			return <SelectFilter {...common} />
+		case "TIMESTAMP":
+			return <TimestampFilter {...common} />
 		case "DATE": {
 			if (displayAs === "MONTH") return <MonthFilter {...common} />
 			if (displayAs === "WEEK") return <WeekFilter {...common} />

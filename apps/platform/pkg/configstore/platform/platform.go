@@ -21,6 +21,11 @@ func (cs *ConfigStore) Get(key string, session *sess.Session) (string, error) {
 					Value: key,
 				},
 			},
+			Fields: []adapt.LoadRequestField{
+				{
+					ID: "uesio/core.value",
+				},
+			},
 		},
 		session)
 	if err != nil {
