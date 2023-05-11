@@ -1,6 +1,6 @@
 name: mainlayout_splash
-label: Main Layout Splash
 extends: uesio/web.mainlayout
+label: Main Layout Splash
 definition:
   uesio.styleTokens:
     root:

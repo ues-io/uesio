@@ -10,7 +10,12 @@ views:
   uesio/web.terms: true
   uesio/web.topbar: true
 collections:
-  uesio/core.configstorevalue: true
+  uesio/core.configstorevalue:
+    read: true
+    create: true
+    edit: true
+    delete: true
+    fields: {}
 routes:
   uesio/web.earlyaccess: true
   uesio/web.earlyaccessthanks: true
