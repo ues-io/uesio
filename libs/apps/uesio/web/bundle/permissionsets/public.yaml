@@ -9,13 +9,7 @@ views:
   uesio/web.privacy: true
   uesio/web.terms: true
   uesio/web.topbar: true
-collections:
-  uesio/core.configstorevalue:
-    read: true
-    create: true
-    edit: true
-    delete: true
-    fields: {}
+collections: {}
 routes:
   uesio/web.earlyaccess: true
   uesio/web.earlyaccessthanks: true
