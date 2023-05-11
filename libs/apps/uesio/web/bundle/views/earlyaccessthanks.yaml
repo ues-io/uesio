@@ -17,7 +17,7 @@ definition:
                       root:
                         - grid-cols-1
                         - md:grid-cols-[350px_1fr]
-                        - lg:grid-cols-[450px_1fr]
+                        - lg:grid-cols-[450px]
                         - gap-x-10
                         - p-20
                     items:
@@ -25,9 +25,9 @@ definition:
                           components:
                             - uesio/io.text:
                                 uesio.variant: uesio/web.callout
-                                text: Thanks for registering.
+                                text: Thanks for registering for ues.io exclusive early access and webinar on June 28!
                             - uesio/io.text:
                                 uesio.variant: uesio/web.calloutsub
-                                text: We'll send you an email or something cool like that.
+                                text: You will receive further details by email shortly.
     - uesio/core.view:
         view: uesio/web.footer
