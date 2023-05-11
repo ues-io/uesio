@@ -1,9 +1,15 @@
-import { definition, component, wire } from "@uesio/ui"
+import { definition, component, wire, collection, context } from "@uesio/ui"
 import { add, get } from "../../../../api/defapi"
 import { FullPath } from "../../../../api/path"
 import { useSelectedPath } from "../../../../api/stateapi"
 import { getFieldMetadata } from "../../../../api/wireapi"
-import { ComponentProperty } from "../../../../properties/componentproperty"
+import {
+	ComponentProperty,
+	TextProperty,
+	NumberProperty,
+	CheckboxProperty,
+	SelectProperty,
+} from "../../../../properties/componentproperty"
 
 function getConditionPropertiesPanelTitle(
 	condition: wire.WireConditionState
@@ -51,20 +57,6 @@ function getConditionTitle(condition: wire.WireConditionState): string {
 	return "NEW_VALUE"
 }
 
-function getValuePropertyType(fieldDisplayType: wire.FieldType) {
-	// TODO: Add additional property types here to support things like DATE, SELECT, etc.
-	if (fieldDisplayType === "CHECKBOX" || fieldDisplayType === "NUMBER") {
-		return fieldDisplayType
-	}
-	return "TEXT"
-}
-
-function getValuesSubType(fieldDisplayType: string | undefined) {
-	if (fieldDisplayType === "SELECT" || fieldDisplayType === "MULTISELECT") {
-		return "TEXT"
-	}
-	return fieldDisplayType
-}
 function getOperatorOptions(fieldDisplayType: string | undefined) {
 	if (fieldDisplayType === "MULTISELECT")
 		return [
@@ -134,6 +126,51 @@ function getOperatorOptions(fieldDisplayType: string | undefined) {
 	]
 }
 
+function getValueProperty(
+	fieldDisplayType: wire.FieldType | undefined,
+	fieldMetadata: collection.Field | undefined,
+	context: context.Context
+): TextProperty | NumberProperty | CheckboxProperty | SelectProperty {
+	// TODO: Add additional property types here to support things like DATE
+
+	const baseValueProp = {
+		name: "value",
+		label: "Value",
+		displayConditions: [
+			{
+				field: "valueSource",
+				value: "VALUE",
+				type: "fieldValue",
+				operator: "EQUALS",
+			},
+			{
+				type: "fieldValue",
+				field: "operator",
+				operator: "NOT_IN",
+				values: multiValueOperators.concat(["BETWEEN"]),
+			},
+		],
+	}
+
+	if (fieldDisplayType === "CHECKBOX") {
+		return { ...baseValueProp, type: "CHECKBOX" } as CheckboxProperty
+	}
+
+	if (fieldDisplayType === "NUMBER") {
+		return { ...baseValueProp, type: "NUMBER" } as NumberProperty
+	}
+
+	if (fieldDisplayType === "SELECT") {
+		return {
+			...baseValueProp,
+			type: "SELECT",
+			options: fieldMetadata?.getSelectOptions(context),
+		} as SelectProperty
+	}
+
+	return { ...baseValueProp, type: "TEXT" } as TextProperty
+}
+
 const ConditionsProperties: definition.UC = (props) => {
 	const { context } = props
 	const ListPropertyUtility = component.getUtility(
@@ -155,14 +192,17 @@ const ConditionsProperties: definition.UC = (props) => {
 		parentPath: FullPath,
 		itemState: wire.PlainWireRecord
 	): ComponentProperty[] => {
-		const fieldDisplayType =
+		const fieldMetadata =
 			itemState.field && wireName
 				? getFieldMetadata(
 						context,
 						wireName as string,
 						itemState.field as string
-				  )?.getType()
+				  )
 				: undefined
+
+		const fieldDisplayType = fieldMetadata?.getType() || undefined
+
 		return [
 			{
 				name: "id",
@@ -302,6 +342,8 @@ const ConditionsProperties: definition.UC = (props) => {
 							"IN",
 							"NOT_IN",
 							"BETWEEN",
+							"HAS_ANY",
+							"HAS_ALL",
 						],
 					},
 				],
@@ -383,29 +425,20 @@ const ConditionsProperties: definition.UC = (props) => {
 				],
 			},
 			{
-				name: "value",
-				type: getValuePropertyType(fieldDisplayType || "TEXT"),
-				label: "Value",
-				displayConditions: [
-					{
-						field: "valueSource",
-						value: "VALUE",
-						type: "fieldValue",
-						operator: "EQUALS",
-					},
-					{
-						type: "fieldValue",
-						field: "operator",
-						operator: "NOT_IN",
-						values: multiValueOperators.concat(["BETWEEN"]),
-					},
-				],
+				...getValueProperty(fieldDisplayType, fieldMetadata, context),
 			},
 			{
 				name: "values",
 				type: "LIST",
 				label: "Values",
-				subtype: getValuesSubType(fieldDisplayType) as wire.FieldType,
+				subtype: fieldDisplayType,
+				subtypeOptions:
+					fieldDisplayType === "CHECKBOX"
+						? [
+								{ label: "True", value: "true" },
+								{ label: "False", value: "false" },
+						  ]
+						: fieldMetadata?.getSelectOptions(context),
 				displayConditions: [
 					{
 						field: "valueSource",

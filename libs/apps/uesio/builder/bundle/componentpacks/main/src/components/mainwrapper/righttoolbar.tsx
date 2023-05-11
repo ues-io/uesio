@@ -24,8 +24,23 @@ const RightToolbar: definition.UtilityComponent = (props) => {
 		context
 	)
 
+	const toggleSlotTags = api.signal.getHandler(
+		[
+			{
+				signal: "component/CALL",
+				component: "uesio/builder.mainwrapper",
+				componentsignal: "TOGGLE_SLOT_TAGS",
+			},
+		],
+		context
+	)
+
 	hooks.useHotKeyCallback("meta+y", () => {
 		toggleCode?.()
+	})
+
+	hooks.useHotKeyCallback("meta+e", () => {
+		toggleSlotTags?.()
 	})
 
 	return (
@@ -37,10 +52,23 @@ const RightToolbar: definition.UtilityComponent = (props) => {
 					icon={<Icon context={context} icon="code" />}
 					variant="uesio/builder.minoricontoolbar"
 					onClick={toggleCode}
+					tooltip="Show Code"
+					tooltipPlacement="left"
 				/>
 			</div>
 			<div className={classes.panel}>
 				<DeviceSizer context={context} />
+			</div>
+			<div className={classes.panel}>
+				<Button
+					context={context}
+					label=""
+					icon={<Icon context={context} icon="expand" />}
+					variant="uesio/builder.minoricontoolbar"
+					onClick={toggleSlotTags}
+					tooltip="Expand Slots"
+					tooltipPlacement="left"
+				/>
 			</div>
 		</div>
 	)

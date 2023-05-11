@@ -163,6 +163,7 @@ type ListProperty = {
 	type: "LIST"
 	items?: ListPropertyItemsDefinition
 	subtype?: wire.FieldType
+	subtypeOptions?: wire.SelectOption[]
 } & BaseProperty
 
 type ParamsProperty = {
@@ -221,6 +222,9 @@ export type {
 	SelectProperty,
 	StructProperty,
 	WireProperty,
+	TextProperty,
+	NumberProperty,
+	CheckboxProperty,
 }
 
 export { getStyleVariantProperty }

@@ -14,7 +14,6 @@ interface SlotUtilityProps extends UtilityProps {
 	definition?: DefinitionMap
 	direction?: "VERTICAL" | "HORIZONTAL"
 	label?: string
-	message?: string
 }
 
 const getSlotProps = (props: SlotUtilityProps) => {
