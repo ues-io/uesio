@@ -45,7 +45,7 @@ definition:
           desc: true
       conditions:
         - field: uesio/core.collection
-          value: $Param{app}.$Param{collectionname}
+          value: $Param{namespace}.$Param{collectionname}
       init:
         query: false
   events:
