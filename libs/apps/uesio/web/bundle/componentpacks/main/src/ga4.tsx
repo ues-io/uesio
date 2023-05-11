@@ -7,7 +7,6 @@ const Ga4: FC<definition.BaseProps> = ({ context }) => {
 	const MEASUREMENT_ID = api.view.useConfigValue(
 		"uesio/web.ga4_measurement_id"
 	)
-	// "G-1WLYF635CR"
 
 	useEffect(() => {
 		if (!MEASUREMENT_ID) {
