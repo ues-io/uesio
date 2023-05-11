@@ -51,7 +51,7 @@ var no_default_variant = "--no-default--"
 
 type SlotDefinition struct {
 	Name string `yaml:"name"`
-	Path string `yaml:"path"`
+	Path string `yaml:"path,omitempty"`
 }
 
 type ComponentWrapper Component
