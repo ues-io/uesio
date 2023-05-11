@@ -1,5 +1,6 @@
 name: text
 title: Text
+icon: text_fields
 description: Display text content
 category: CONTENT
 pack: main

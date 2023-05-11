@@ -1,5 +1,6 @@
 name: box
 title: Box
+icon: check_box_outline_blank
 description: A container that can group other components and apply styles around them.
 category: LAYOUT
 pack: main
