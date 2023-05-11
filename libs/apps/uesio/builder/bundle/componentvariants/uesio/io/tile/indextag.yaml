@@ -12,5 +12,5 @@ definition:
     selected:
       - border-r-4
       - border-[$Theme{color.primary}]
-      - bg-slate-100
+      - bg-slate-200
 public: true
