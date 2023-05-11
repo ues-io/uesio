@@ -10,7 +10,6 @@ const Ga4: FC<definition.BaseProps> = ({ context }) => {
 
 	useEffect(() => {
 		if (!MEASUREMENT_ID) {
-			console.log("missing measurement id")
 			return
 		}
 		ReactGA.initialize(MEASUREMENT_ID)
