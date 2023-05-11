@@ -65,6 +65,7 @@ const IndexComponent: definition.UC = (props) => {
 							title={`${componentDef.title || componentDef.name}${
 								componentId ? ` (${componentId})` : ""
 							}`}
+							icon={componentDef.icon}
 							context={context}
 						/>
 					</ItemTag>

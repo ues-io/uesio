@@ -1,5 +1,6 @@
 name: barchart
 title: Bar Chart
+icon: bar_chart
 description: Visualize data with bars.
 category: VISUALIZATION
 pack: chart

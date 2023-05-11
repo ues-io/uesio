@@ -1,5 +1,6 @@
 name: list
 title: List
+icon: format_list_bulleted
 description: Iterate over records in a wire and render content in the context of each record.
 category: DATA
 pack: main

@@ -3,6 +3,7 @@ package meta
 import (
 	"errors"
 	"fmt"
+
 	"github.com/francoispqt/gojay"
 	yptr "github.com/zachelrath/yaml-jsonpointer"
 	"gopkg.in/yaml.v3"
@@ -33,6 +34,7 @@ type Component struct {
 
 	// Builder Properties
 	Title             string    `yaml:"title,omitempty" json:"uesio/studio.title"`
+	Icon              string    `yaml:"icon,omitempty" json:"uesio/studio.icon"`
 	Discoverable      bool      `yaml:"discoverable,omitempty" json:"uesio/studio.discoverable"`
 	Description       string    `yaml:"description,omitempty" json:"uesio/studio.description"`
 	Properties        yaml.Node `yaml:"properties" json:"uesio/studio.properties"`
@@ -114,6 +116,9 @@ func (c *Component) MarshalJSONObject(enc *gojay.Encoder) {
 	enc.AddStringKey("description", c.Description)
 	enc.AddStringKey("category", c.Category)
 	enc.AddBoolKey("discoverable", c.Discoverable)
+	if c.Icon != "" {
+		enc.AddStringKey("icon", c.Icon)
+	}
 	if c.Slots.Content != nil {
 		enc.AddArrayKey("slots", (*YAMLDefinition)(&c.Slots))
 	}
