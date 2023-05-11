@@ -10,6 +10,7 @@ views:
   uesio/web.terms: true
   uesio/web.topbar: true
 collections:
+  uesio/core.configstorevalue: true
 routes:
   uesio/web.earlyaccess: true
   uesio/web.earlyaccessthanks: true
