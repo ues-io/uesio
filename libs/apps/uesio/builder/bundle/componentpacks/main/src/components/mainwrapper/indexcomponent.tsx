@@ -19,6 +19,7 @@ const StyleDefaults = Object.freeze({
 
 const IndexComponent: definition.UC = (props) => {
 	const { componentType, context, path, definition } = props
+	const { [component.COMPONENT_ID]: componentId } = definition
 	const componentDef = getComponentDef(context, componentType)
 	const classes = styles.useStyleTokens(StyleDefaults, props)
 
@@ -31,33 +32,44 @@ const IndexComponent: definition.UC = (props) => {
 	if (!componentDef) return null
 	const nsInfo = getBuilderNamespaces(context)[componentDef.namespace]
 	const isSelected = selectedPath.equals(fullPath)
+	const searchTerm = (context.getComponentData("uesio/builder.indexpanel")
+		?.data?.searchTerm || "") as string
+
+	const isVisible =
+		!searchTerm ||
+		componentType?.includes(searchTerm) ||
+		componentId?.includes(searchTerm)
 
 	return (
 		<div>
-			<PropNodeTag
-				variant="uesio/builder.indextag"
-				context={context}
-				key={path}
-				onClick={() => {
-					setSelectedPath(context, fullPath)
-				}}
-				selected={isSelected}
-			>
-				<ItemTag
-					classes={{
-						root: classes.tag,
-						title: classes.tagtitle,
-					}}
+			{isVisible && (
+				<PropNodeTag
+					variant="uesio/builder.indextag"
 					context={context}
+					key={path}
+					onClick={() => {
+						setSelectedPath(context, fullPath)
+					}}
+					selected={isSelected}
 				>
-					<NamespaceLabel
-						metadatakey={componentDef.namespace}
-						metadatainfo={nsInfo}
-						title={componentDef.title || componentDef.name}
+					<ItemTag
+						classes={{
+							root: classes.tag,
+							title: classes.tagtitle,
+						}}
 						context={context}
-					/>
-				</ItemTag>
-			</PropNodeTag>
+					>
+						<NamespaceLabel
+							metadatakey={componentDef.namespace}
+							metadatainfo={nsInfo}
+							title={`${componentDef.title || componentDef.name}${
+								componentId ? ` (${componentId})` : ""
+							}`}
+							context={context}
+						/>
+					</ItemTag>
+				</PropNodeTag>
+			)}
 
 			<div className={isSelected ? classes.slotSelected : classes.slot}>
 				{componentDef.slots?.map((slot) =>
