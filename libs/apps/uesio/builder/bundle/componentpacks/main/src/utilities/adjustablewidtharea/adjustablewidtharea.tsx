@@ -79,11 +79,11 @@ const grabberStyles = [
 
 const AdjustableWidthArea: definition.UtilityComponent = (props) => {
 	const slideRef = useRef<HTMLDivElement>(null)
-	const [setDragging, codePanelWidth] = usePanels(slideRef.current)
+	const [setDragging, width] = usePanels(slideRef.current)
 
 	const classes = styles.useUtilityStyleTokens(
 		{
-			root: [`w-[${codePanelWidth + "px"}]`, "relative"],
+			root: [`w-[${width + "px"}]`, "relative"],
 			separator: separatorStyles,
 			grabber: grabberStyles,
 		},
