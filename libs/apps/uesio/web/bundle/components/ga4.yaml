@@ -1,0 +1,9 @@
+name: ga4
+title: Google Analytics 4
+description: Google analytics 4
+category: LAYOUT
+pack: main
+entrypoint: ga4
+discoverable: true
+configvalues:
+  - uesio/web.ga4_measurement_id
