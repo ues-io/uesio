@@ -73,7 +73,7 @@ const RightToolbar: definition.UtilityComponent = (props) => {
 					}
 					variant="uesio/builder.minoricontoolbar"
 					onClick={toggleIndex}
-					tooltip="Toggle Index Panel"
+					tooltip="Toggle Index Panel ⌘I"
 					tooltipPlacement="left"
 				/>
 				<Button
@@ -82,7 +82,7 @@ const RightToolbar: definition.UtilityComponent = (props) => {
 					icon={<Icon context={context} icon="code" />}
 					variant="uesio/builder.minoricontoolbar"
 					onClick={toggleCode}
-					tooltip="Toggle Code Panel"
+					tooltip="Toggle Code Panel ⌘Y"
 					tooltipPlacement="left"
 				/>
 			</div>
@@ -96,7 +96,7 @@ const RightToolbar: definition.UtilityComponent = (props) => {
 					icon={<Icon context={context} icon="expand" />}
 					variant="uesio/builder.minoricontoolbar"
 					onClick={toggleSlotTags}
-					tooltip="Expand Slots"
+					tooltip="Expand Slots ⌘E"
 					tooltipPlacement="left"
 				/>
 			</div>
