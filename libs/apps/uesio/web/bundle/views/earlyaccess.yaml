@@ -16,9 +16,17 @@ definition:
         email:
           label: Email
           type: TEXT
+          required: true
         account:
           label: Company
           type: TEXT
+        title:
+          label: Title
+          type: TEXT
+        location:
+          label: Location (country, city, state)
+          type: TEXT
+          required: true
       init:
         create: true
   # Components are how we describe the layout of our view
@@ -36,16 +44,16 @@ definition:
                   - gap-14
                   - my-20
                   - mx-10
-                  - lg:mx-5
+                  - lg:mx-4
               items:
                 - uesio/io.griditem:
                     components:
                       - uesio/io.text:
                           uesio.variant: uesio/web.callout
-                          text: Stay in the loop.
+                          text: Register now for early access - June 28!
                       - uesio/io.text:
                           uesio.variant: uesio/web.calloutsub
-                          text: Join our private beta launch Q3 2023.
+                          text: For an exclusive preview, join us for our beta release webinar on June 28 (10:00 PT, 13:00 ET, 19:00 CEST). Register now for free and receive early access to ues.io.
                       - uesio/io.box:
                           components:
                             - uesio/io.tile:
@@ -99,6 +107,12 @@ definition:
                                   - uesio/io.field:
                                       uesio.variant: uesio/web.field
                                       fieldId: account
+                                  - uesio/io.field:
+                                      uesio.variant: uesio/web.field
+                                      fieldId: title
+                                  - uesio/io.field:
+                                      uesio.variant: uesio/web.field
+                                      fieldId: location
                                   - uesio/io.group:
                                       uesio.styleTokens:
                                         root:
@@ -115,8 +129,9 @@ definition:
                                                   uesio/crm.lastname: ${lastname}
                                                   uesio/crm.email: ${email}
                                                   uesio/crm.account: ${account}
-                                                  uesio/web.role: ${role}
+                                                  uesio/crm.title: ${title}
+                                                  uesio/crm.location: ${location}
                                               - signal: route/NAVIGATE
-                                                path: "earlyaccessthanks"
+                                                path: earlyaccessthanks
     - uesio/core.view:
         view: uesio/web.footer

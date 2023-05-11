@@ -5,6 +5,8 @@ function addlead(bot: ListenerBotApi) {
 		"uesio/crm.lastname",
 		"uesio/crm.email",
 		"uesio/crm.account",
+		"uesio/crm.title",
+		"uesio/crm.location",
 	]
 
 	const values = fields.reduce(
@@ -20,8 +22,9 @@ function addlead(bot: ListenerBotApi) {
 		"uesio/crm.firstname": "first name",
 		"uesio/crm.lastname": "last name",
 		"uesio/crm.email": "email",
-		"uesio/web.role": "role",
 		"uesio/crm.account": "company",
+		"uesio/crm.title": "title",
+		"uesio/crm.location": "location",
 	} as Record<string, string>
 	for (const key in values) {
 		if (!values[key]) throw new Error(`missing ${labels[key]}`)
@@ -55,8 +58,9 @@ function addlead(bot: ListenerBotApi) {
 			firstname: values["uesio/crm.firstname"],
 			lastname: values["uesio/crm.lastname"],
 			email: values["uesio/crm.email"],
-			role: values["uesio/web.role"],
 			account: values["uesio/crm.account"],
+			title: values["uesio/crm.title"],
+			location: values["uesio/crm.location"],
 		},
 	})
 }
