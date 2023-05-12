@@ -47,7 +47,7 @@ const TimestampField: FunctionComponent<TimestampFieldProps> = (props) => {
 		<input
 			id={id}
 			className={styles.cx(classes.input, readonly && classes.readonly)}
-			value={timestamp && datetimeLocal(date)}
+			value={timestamp ? datetimeLocal(date) : ""}
 			type="datetime-local"
 			step="1"
 			disabled={readonly}
