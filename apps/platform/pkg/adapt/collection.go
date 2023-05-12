@@ -1,11 +1,10 @@
 package adapt
 
 import (
+	"bytes"
 	"encoding/json"
-	"fmt"
 	"strconv"
 
-	"github.com/francoispqt/gojay"
 	"github.com/teris-io/shortid"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
@@ -33,25 +32,28 @@ func (c *Collection) UnmarshalJSON(data []byte) error {
 }
 
 func (c *Collection) MarshalJSON() ([]byte, error) {
-	return gojay.MarshalJSONObject(c)
-}
-
-func (c *Collection) MarshalJSONObject(enc *gojay.Encoder) {
-	for _, item := range *c {
+	var buf bytes.Buffer
+	buf.WriteByte('{')
+	for i, item := range *c {
+		if i > 0 {
+			buf.WriteByte(',')
+		}
+		tempid, err := shortid.Generate()
+		if err != nil {
+			return nil, err
+		}
+		buf.WriteByte('"')
+		buf.WriteString(tempid)
+		buf.WriteByte('"')
+		buf.WriteByte(':')
 		data, err := json.Marshal(item)
 		if err != nil {
-			fmt.Println("Error Marshalling Collection")
-			break
+			return nil, err
 		}
-
-		embed := gojay.EmbeddedJSON(data)
-		tempid, _ := shortid.Generate()
-		enc.AddEmbeddedJSONKey(tempid, &embed)
+		buf.Write(data)
 	}
-}
-
-func (c *Collection) IsNil() bool {
-	return c == nil
+	buf.WriteByte('}')
+	return buf.Bytes(), nil
 }
 
 func (c *Collection) NewItem() meta.Item {
