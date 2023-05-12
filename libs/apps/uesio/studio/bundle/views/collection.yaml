@@ -61,6 +61,7 @@ definition:
         uesio/core.id:
         uesio/studio.name:
         uesio/studio.type:
+        uesio/studio.subtype:
         uesio/studio.label:
         uesio/studio.languagelabel:
         uesio/studio.autonumber:
@@ -412,6 +413,18 @@ definition:
                     - uesio/io.field:
                         fieldId: uesio/studio.file->uesio/studio.accept
                         uesio.id: new-field-file-accept
+              - uesio/io.box:
+                  uesio.display:
+                    - field: uesio/studio.type
+                      operator: IN
+                      type: fieldValue
+                      values:
+                        - LIST
+                        - MAP
+                  components:
+                    - uesio/io.field:
+                        fieldId: uesio/studio.subtype
+                        uesio.id: new-field-subtype
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
