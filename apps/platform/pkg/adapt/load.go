@@ -15,19 +15,21 @@ type LoadOp struct {
 	WireName           string                 `json:"name"`
 	View               string                 `json:"view"`
 	Collection         meta.Group             `json:"data"`
-	Conditions         []LoadRequestCondition `json:"-"`
-	Fields             []LoadRequestField     `json:"-"`
+	Conditions         []LoadRequestCondition `json:"conditions"`
+	Fields             []LoadRequestField     `json:"fields"`
 	Query              bool                   `json:"query"`
-	Order              []LoadRequestOrder     `json:"-"`
+	Order              []LoadRequestOrder     `json:"order"`
 	BatchSize          int                    `json:"batchsize"`
 	BatchNumber        int                    `json:"batchnumber"`
 	HasMoreBatches     bool                   `json:"more"`
-	RequireWriteAccess bool                   `json:"-"`
-	Params             map[string]string      `json:"-"`
+	RequireWriteAccess bool                   `json:"requirewriteaccess"`
+	Params             map[string]string      `json:"params"`
 	Preloaded          bool                   `json:"preloaded"`
 	LoadAll            bool                   `json:"loadAll"`
 	DebugQueryString   string                 `json:"debugQueryString"`
 }
+
+type LoadOpWrapper LoadOp
 
 func (op *LoadOp) GetBytes() ([]byte, error) {
 	bytes, err := json.Marshal(op)
@@ -42,7 +44,9 @@ func (op *LoadOp) GetKey() string {
 }
 
 func (op *LoadOp) UnmarshalJSON(data []byte) error {
-	return gojay.UnmarshalJSONObject(data, op)
+	op.Collection = &Collection{}
+	op.HasMoreBatches = true
+	return json.Unmarshal(data, (*LoadOpWrapper)(op))
 }
 
 func decodeEmbed(dec *gojay.Decoder, v interface{}) error {
@@ -54,39 +58,6 @@ func decodeEmbed(dec *gojay.Decoder, v interface{}) error {
 	return json.Unmarshal(data, v)
 }
 
-func (op *LoadOp) UnmarshalJSONObject(dec *gojay.Decoder, key string) error {
-	switch key {
-	case "collection":
-		// Do some extra stuff
-		op.Collection = &Collection{}
-		op.HasMoreBatches = true
-		return dec.String(&op.CollectionName)
-	case "name":
-		return dec.String(&op.WireName)
-	case "view":
-		return dec.String(&op.View)
-	case "conditions":
-		return decodeEmbed(dec, &op.Conditions)
-	case "order":
-		return decodeEmbed(dec, &op.Order)
-	case "fields":
-		return decodeEmbed(dec, &op.Fields)
-	case "requirewriteaccess":
-		return dec.Bool(&op.RequireWriteAccess)
-	case "query":
-		return dec.Bool(&op.Query)
-	case "params":
-		return decodeEmbed(dec, &op.Params)
-	case "batchnumber":
-		return dec.Int(&op.BatchNumber)
-	case "batchsize":
-		return dec.Int(&op.BatchSize)
-	case "loadAll":
-		return dec.Bool(&op.LoadAll)
-	}
-
-	return nil
-}
 func (op *LoadOp) NKeys() int {
 	return 0
 }
