@@ -64,6 +64,10 @@ func getReferenceLoader(index int, mapping *meta.FieldMapping, fieldMetadata *ad
 func getTimestampLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
 	return func(change adapt.Item, data interface{}) error {
 		stringValue := getValue(data, mapping, index)
+		// If there's no value, there's nothing to do
+		if stringValue == "" {
+			return nil
+		}
 		// First parse as RFC3339 UTC
 		t, err := time.Parse(time.RFC3339, stringValue)
 		if err != nil {

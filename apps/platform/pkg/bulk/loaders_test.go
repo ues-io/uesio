@@ -33,6 +33,12 @@ func Test_TimestampLoader(t *testing.T) {
 		wantErr string
 	}{
 		{
+			"ignore blank values",
+			"",
+			nil,
+			"",
+		},
+		{
 			"parse timestamp from RFC3339",
 			"2022-11-18T03:19:02Z",
 			int64(1668741542),
@@ -65,8 +71,13 @@ func Test_TimestampLoader(t *testing.T) {
 			} else {
 				assert.Nil(t, err)
 				val, err := changeItem.GetField(fieldMetadata.GetFullName())
-				assert.Nil(t, err)
-				assert.Equalf(t, tt.want, val, "TimestampLoader(%s)", tt.input)
+				if tt.want == nil {
+					assert.NotNil(t, err)
+					assert.Equal(t, err.Error(), "Field not found: "+fieldMetadata.GetFullName())
+				} else {
+					assert.Nil(t, err)
+					assert.Equalf(t, tt.want, val, "TimestampLoader(%s)", tt.input)
+				}
 			}
 		})
 	}
