@@ -1,6 +1,6 @@
 name: calloutsmallsub
-label: Callout Small Sub
 extends: uesio/web.calloutsub
+label: Callout Small Sub
 definition:
   uesio.styleTokens:
     root:

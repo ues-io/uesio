@@ -1,6 +1,6 @@
 name: icongridsoon
-label: Icon Grid Soon
 extends: uesio/web.icongrid
+label: Icon Grid Soon
 definition:
   uesio.styleTokens:
     root:

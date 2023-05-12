@@ -241,6 +241,5 @@ definition:
                             - uesio/io.text:
                                 uesio.variant: uesio/web.calloutsmallsubdark
                                 text: Add team members to your project and collaborate on your apps.
-
     - uesio/core.view:
         view: uesio/web.footer

@@ -19,7 +19,7 @@ const Ga4: FC<definition.BaseProps> = ({ context }) => {
 			hitType: "pageview",
 			page: path,
 		})
-	}, [path])
+	}, [MEASUREMENT_ID, path])
 
 	return null
 }

@@ -134,9 +134,13 @@ func getDepsForComponent(component *meta.Component, deps *PreloadMetadata, sessi
 
 	deps.ComponentPack.AddItem(pack)
 
+	// need an admin session for retrieving config values
+	// in order to prevent users from having to have read on the uesio/core.configvalue table
+	adminSession := datasource.GetSiteAdminSession(session.GetSite(), session)
+
 	for _, key := range component.ConfigValues {
 
-		value, err := configstore.GetValueFromKey(key, session)
+		value, err := configstore.GetValueFromKey(key, adminSession)
 		if err != nil {
 			return err
 		}
