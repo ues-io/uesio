@@ -1,0 +1,13 @@
+{
+	"jobtype": "IMPORT",
+	"collection": "uesio/tests.wire_reference",
+	"filetype": "CSV",
+	"mappings": {
+		"uesio/tests.autonumber_reference": {
+			"columnname": "autonumber_reference"
+		},
+		"uesio/tests.text_reference": {
+			"columnname": "text_reference"
+		}
+	}
+}

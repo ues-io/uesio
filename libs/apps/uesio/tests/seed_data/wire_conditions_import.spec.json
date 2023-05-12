@@ -1,6 +1,6 @@
 {
 	"jobtype": "IMPORT",
-	"collection": "uesio/tests.wirecondition",
+	"collection": "uesio/tests.wire_condition",
 	"filetype": "CSV",
 	"mappings": {
 		"uesio/tests.autonumber": {
@@ -29,7 +29,9 @@
 		},
 		"uesio/tests.timestamp": {
 			"columnname": "timestamp"
+		},
+		"uesio/tests.select": {
+			"columnname": "select"
 		}
 	}
 }
-
