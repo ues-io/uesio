@@ -1,8 +1,9 @@
-import { FC, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { definition, styles, context, wire } from "@uesio/ui"
 import { FieldValueSetter, ApplyChanges } from "../../components/field/field"
+import Icon from "../icon/icon"
 
-interface TextFieldProps extends definition.UtilityProps {
+interface TextFieldProps {
 	applyChanges?: ApplyChanges
 	focusOnRender?: boolean
 	mode?: context.FieldMode
@@ -14,13 +15,16 @@ interface TextFieldProps extends definition.UtilityProps {
 }
 
 const StyleDefaults = Object.freeze({
-	input: [],
+	input: ["grow"],
 	readonly: [],
+	wrapper: ["flex"],
+	toggle: ["pl-3"],
 })
 
-const TextField: FC<TextFieldProps> = (props) => {
+const TextField: definition.UtilityComponent<TextFieldProps> = (props) => {
 	const {
 		applyChanges,
+		context,
 		focusOnRender,
 		id,
 		mode,
@@ -28,6 +32,7 @@ const TextField: FC<TextFieldProps> = (props) => {
 		readonly,
 		setValue,
 		type = "text",
+		value = "",
 	} = props
 
 	const classes = styles.useUtilityStyleTokens(
@@ -39,27 +44,52 @@ const TextField: FC<TextFieldProps> = (props) => {
 	const isReadMode = readonly || mode === "READ"
 	const applyOnBlur = applyChanges === "onBlur"
 
-	const [value, setControlledValue] = useState(props.value || "")
+	const [controlledValue, setControlledValue] = useState(value)
+	const [useType, setType] = useState(type)
 
 	useEffect(() => {
-		setControlledValue(props.value || "")
-	}, [props.value])
+		setControlledValue(value)
+	}, [value])
 
 	return (
-		<input
-			id={id}
-			type={type}
-			placeholder={placeholder}
-			className={styles.cx(classes.input, isReadMode && classes.readonly)}
-			disabled={isReadMode}
-			ref={(input: HTMLInputElement) => focusOnRender && input?.focus()}
-			value={value as string}
-			onChange={(e) => {
-				setControlledValue(e.target.value)
-				!applyOnBlur && setValue?.(e.target.value)
-			}}
-			onBlur={(e) => applyOnBlur && setValue?.(e.target.value)}
-		/>
+		<div className={styles.cx(classes.wrapper)}>
+			<input
+				id={id}
+				type={useType}
+				placeholder={placeholder}
+				className={styles.cx(
+					classes.input,
+					isReadMode && classes.readonly
+				)}
+				disabled={isReadMode}
+				ref={(input: HTMLInputElement) =>
+					focusOnRender && input?.focus()
+				}
+				value={controlledValue as string}
+				onChange={(e) => {
+					setControlledValue(e.target.value)
+					!applyOnBlur && setValue?.(e.target.value)
+				}}
+				onBlur={(e) => applyOnBlur && setValue?.(e.target.value)}
+			/>
+			{type === "password" && (
+				<a
+					href="#"
+					className={styles.cx(classes.toggle)}
+					title="Show/hide password"
+					onClick={() =>
+						setType(useType === "password" ? "text" : "password")
+					}
+				>
+					<Icon
+						icon={
+							useType === "password" ? "remove_red_eye" : "lock"
+						}
+						context={context}
+					/>
+				</a>
+			)}
+		</div>
 	)
 }
 
