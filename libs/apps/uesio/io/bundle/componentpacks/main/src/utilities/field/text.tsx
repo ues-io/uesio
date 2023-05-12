@@ -15,16 +15,18 @@ interface TextFieldProps {
 }
 
 const StyleDefaults = Object.freeze({
-	input: ["grow"],
+	input: [],
 	readonly: [],
-	wrapper: ["flex", "relative"],
+	wrapper: ["relative"],
 	toggle: [
 		"absolute",
-		"right-3",
+		"right-0",
 		"top-0",
 		"bottom-0",
 		"leading-none",
 		"text-slate-700",
+		"m-2",
+		"px-1",
 	],
 	password: ["pr-8"],
 })
@@ -61,7 +63,7 @@ const TextField: definition.UtilityComponent<TextFieldProps> = (props) => {
 	}, [value])
 
 	return (
-		<div className={styles.cx(classes.wrapper)}>
+		<div className={classes.wrapper}>
 			<input
 				id={id}
 				type={useType}
@@ -85,7 +87,7 @@ const TextField: definition.UtilityComponent<TextFieldProps> = (props) => {
 			{isPassword && (
 				<button
 					className={classes.toggle}
-					title="Show/hide password"
+					title={useType ? "Show password" : "Hide password"}
 					onClick={() =>
 						setType(useType === "password" ? "text" : "password")
 					}
