@@ -1,0 +1,6 @@
+name: subtype
+options:
+  - label: "Struct"
+    value: "STRUCT"
+  - label: "Text"
+    value: "TEXT"
