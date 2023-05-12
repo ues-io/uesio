@@ -33,6 +33,12 @@ func Test_TimestampLoader(t *testing.T) {
 		wantErr string
 	}{
 		{
+			"ignore blank values",
+			"",
+			nil,
+			"",
+		},
+		{
 			"parse timestamp from RFC3339",
 			"2022-11-18T03:19:02Z",
 			int64(1668741542),
@@ -65,8 +71,13 @@ func Test_TimestampLoader(t *testing.T) {
 			} else {
 				assert.Nil(t, err)
 				val, err := changeItem.GetField(fieldMetadata.GetFullName())
-				assert.Nil(t, err)
-				assert.Equalf(t, tt.want, val, "TimestampLoader(%s)", tt.input)
+				if tt.want == nil {
+					assert.NotNil(t, err)
+					assert.Equal(t, err.Error(), "Field not found: "+fieldMetadata.GetFullName())
+				} else {
+					assert.Nil(t, err)
+					assert.Equalf(t, tt.want, val, "TimestampLoader(%s)", tt.input)
+				}
 			}
 		})
 	}
@@ -137,6 +148,176 @@ func Test_NumberLoader(t *testing.T) {
 				val, err := changeItem.GetField(fieldMetadata.GetFullName())
 				assert.Nil(t, err)
 				assert.Equalf(t, tt.want, val, "NumberLoader(%s)", tt.input)
+			}
+		})
+	}
+}
+
+func Test_MultiselectLoader(t *testing.T) {
+
+	fieldMetadata := &adapt.FieldMetadata{
+		Type: "MULTISELECT",
+		Name: "status",
+		SelectListMetadata: &adapt.SelectListMetadata{
+			Name: "status",
+			Options: []meta.SelectListOption{
+				{
+					Label: "Registered",
+					Value: "REGISTERED",
+				},
+				{
+					Label: "Completed",
+					Value: "COMPLETED",
+				},
+			},
+		},
+		Namespace: "uesio/core",
+	}
+
+	mapping := &meta.FieldMapping{
+		Type:       "IMPORT",
+		ColumnName: "some_column_name",
+	}
+
+	getValue := func(data interface{}, mapping *meta.FieldMapping, index int) string {
+		record := data.([]string)
+		return record[index]
+	}
+
+	tests := []struct {
+		name    string
+		input   string
+		want    interface{}
+		wantErr string
+	}{
+		{
+			"parse multiselect from empty string",
+			"",
+			nil,
+			"",
+		},
+		{
+			"parse multiselect from valid JSON array",
+			"[\"COMPLETED\",\"REGISTERED\"]",
+			map[string]bool{
+				"COMPLETED":  true,
+				"REGISTERED": true,
+			},
+			"",
+		},
+		{
+			"return error if input is not an expected format",
+			"asjdfkasdjf",
+			nil,
+			"invalid Multiselect field value",
+		},
+	}
+	for _, tt := range tests {
+		t.Run("it should "+tt.name, func(t *testing.T) {
+			changeItem := &adapt.Item{}
+			data := []string{
+				tt.input,
+			}
+			loaderFunc := getMultiSelectLoader(0, mapping, fieldMetadata, getValue)
+			err := loaderFunc(*changeItem, data)
+			if tt.wantErr != "" {
+				assert.Errorf(t, err, tt.wantErr)
+				assert.Equal(t, err.Error(), tt.wantErr)
+			} else {
+				assert.Nil(t, err)
+				val, err := changeItem.GetField(fieldMetadata.GetFullName())
+				// There should not be a field value if the want is ""
+				if tt.want == nil {
+					assert.NotNil(t, err)
+					assert.Equal(t, err.Error(), "Field not found: "+fieldMetadata.GetFullName())
+				} else {
+					assert.Nil(t, err)
+					assert.Equalf(t, tt.want, val, "MultiselectLoader(%s)", tt.input)
+				}
+			}
+		})
+	}
+}
+
+func Test_MapLoader(t *testing.T) {
+
+	fieldMetadata := &adapt.FieldMetadata{
+		Type:      "MAP",
+		Name:      "status",
+		Namespace: "uesio/core",
+	}
+
+	mapping := &meta.FieldMapping{
+		Type:       "IMPORT",
+		ColumnName: "some_column_name",
+	}
+
+	getValue := func(data interface{}, mapping *meta.FieldMapping, index int) string {
+		record := data.([]string)
+		return record[index]
+	}
+
+	tests := []struct {
+		name    string
+		input   string
+		want    map[string]interface{}
+		wantErr string
+	}{
+		{
+			"parse MAP from empty string",
+			"",
+			nil,
+			"",
+		},
+		{
+			"parse MAP from valid JSON object",
+			"{\"chattanooga\":{\"is_accurate\":false,\"latitude\":34.555,\"longitude\":-12.12},\"nashville\":{\"is_accurate\":false,\"latitude\":35.555,\"longitude\":-14.12}}",
+			map[string]interface{}{
+				"chattanooga": map[string]interface{}{
+					"is_accurate": false,
+					"latitude":    34.555,
+					"longitude":   -12.12,
+				},
+				"nashville": map[string]interface{}{
+					"is_accurate": false,
+					"latitude":    35.555,
+					"longitude":   -14.12,
+				},
+			},
+			"",
+		},
+		{
+			"return error if input is not an expected format",
+			"asjdfkasdjf",
+			nil,
+			"invalid MAP field value",
+		},
+	}
+	for _, tt := range tests {
+		t.Run("it should "+tt.name, func(t *testing.T) {
+			changeItem := &adapt.Item{}
+			data := []string{
+				tt.input,
+			}
+			loaderFunc := getMapLoader(0, mapping, fieldMetadata, getValue)
+			err := loaderFunc(*changeItem, data)
+			if tt.wantErr != "" {
+				assert.Errorf(t, err, tt.wantErr)
+				assert.Equal(t, err.Error(), tt.wantErr)
+			} else {
+				assert.Nil(t, err)
+				val, err := changeItem.GetField(fieldMetadata.GetFullName())
+				// There should not be a field value if the want is ""
+				if tt.want == nil {
+					assert.NotNil(t, err)
+					assert.Equal(t, err.Error(), "Field not found: "+fieldMetadata.GetFullName())
+				} else {
+					assert.Nil(t, err)
+					mapVal := val.(map[string]interface{})
+					for k, v := range tt.want {
+						assert.Equalf(t, v, mapVal[k], "MapLoader(%s)", tt.input)
+					}
+				}
 			}
 		})
 	}
