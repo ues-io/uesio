@@ -29,8 +29,8 @@ func getStringValue(fieldMetadata *adapt.FieldMetadata, value interface{}) (stri
 		}
 		return string(byteValue), nil
 	case "MULTISELECT":
-		// Multiselects are stored in DB as map[string]bool
-		// To be consise, but also allow for nested commas/quotes within the Multiselect value,
+		// Multi-select fields are stored in DB as map[string]bool
+		// To be concise, but also allow for nested commas/quotes within the Multiselect value,
 		// we serialize to a JSON array
 		values := goutils.MapKeys(value.(map[string]interface{}))
 		sort.Strings(values)

@@ -1,10 +1,10 @@
 package bulk
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -92,16 +92,31 @@ func getDateLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.F
 	}
 }
 
+// Multi-select fields are stored in DB as map[string]bool
+// To be concise, but also allow for nested commas/quotes within the Multiselect value,
+// we serialize to a JSON array
 func getMultiSelectLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
 	return func(change adapt.Item, data interface{}) error {
-		raw_val := getValue(data, mapping, index)
-		strArray := strings.Split(raw_val, ",")
-		validNames := map[string]bool{}
-		for _, s := range strArray {
-			validNames[s] = true
+		rawVal := getValue(data, mapping, index)
+		// If there's no data, just do an early return
+		if rawVal == "" || rawVal == "[]" {
+			return nil
 		}
-		if len(validNames) != 0 {
-			change[fieldMetadata.GetFullName()] = validNames
+		maxLen := 0
+		if fieldMetadata != nil && fieldMetadata.SelectListMetadata != nil && fieldMetadata.SelectListMetadata.Options != nil {
+			maxLen = len(fieldMetadata.SelectListMetadata.Options)
+		}
+		validVals := make([]string, 0, maxLen)
+		err := json.Unmarshal([]byte(rawVal), &validVals)
+		if err != nil {
+			return errors.New("invalid Multiselect field value")
+		}
+		if len(validVals) != 0 {
+			valuesMap := map[string]bool{}
+			for _, s := range validVals {
+				valuesMap[s] = true
+			}
+			change[fieldMetadata.GetFullName()] = valuesMap
 		}
 		return nil
 	}
