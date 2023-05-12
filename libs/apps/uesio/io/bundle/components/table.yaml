@@ -1,5 +1,6 @@
 name: table
 title: Table
+icon: table
 description: View and edit tabular data.
 pack: main
 entrypoint: components/table/table

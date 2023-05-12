@@ -2,11 +2,12 @@ package controller
 
 import (
 	"fmt"
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 
 	// Using text/template here instead of html/template
 	// because we trust both the template and the merge data
@@ -91,10 +92,9 @@ func GetWorkspaceMergeData(workspace *meta.Workspace) *routing.WorkspaceMergeDat
 	}
 
 	return &routing.WorkspaceMergeData{
-		Name:        workspace.Name,
-		App:         workspace.GetAppFullName(),
-		Wrapper:     routing.DEFAULT_BUILDER_COMPONENT,
-		SlotWrapper: routing.DEFAULT_BUILDER_SLOT,
+		Name:    workspace.Name,
+		App:     workspace.GetAppFullName(),
+		Wrapper: routing.DEFAULT_BUILDER_COMPONENT,
 	}
 }
 

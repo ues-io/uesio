@@ -7,6 +7,7 @@ import PropertiesPanel from "./propertiespanel/propertiespanel"
 import ViewInfoPanel from "./viewinfopanel/viewinfopanel"
 import MainHeader from "./mainheader"
 import RightToolbar from "./righttoolbar"
+import IndexPanel from "./indexpanel"
 
 const StyleDefaults = Object.freeze({
 	root: [
@@ -21,14 +22,17 @@ const StyleDefaults = Object.freeze({
 	configarea: ["auto-rows-fr", "gap-2"],
 })
 
-const MainWrapper: definition.UC = (props) => {
-	const { context } = props
+const MainWrapper: definition.UC<component.ViewComponentDefinition> = (
+	props
+) => {
+	const { context, definition, path } = props
 	const Grid = component.getUtility("uesio/io.grid")
 	const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
 
 	const [buildMode, setBuildMode] = useBuildMode(context)
 
 	const builderContext = context.addThemeFrame("uesio/studio.default")
+	const canvasContext = context.setCustomSlot("uesio/builder.slotbuilder")
 
 	const classes = styles.useStyleTokens(StyleDefaults, props)
 
@@ -48,10 +52,23 @@ const MainWrapper: definition.UC = (props) => {
 	})
 
 	const [showCode] = useBuilderState<boolean>(props.context, "codepanel")
+	const [showIndex] = useBuilderState<boolean>(props.context, "indexpanel")
 
 	if (!buildMode) {
-		return <>{props.children}</>
+		return (
+			<>
+				<component.ViewArea
+					context={context}
+					definition={definition}
+					path={path}
+				/>
+			</>
+		)
 	}
+
+	const indexPanelIndex = 3
+	const codePanelIndex = indexPanelIndex + (showIndex ? 1 : 0)
+	const rightPanelIndex = codePanelIndex + (showCode ? 1 : 0)
 
 	return (
 		<ScrollPanel
@@ -64,17 +81,31 @@ const MainWrapper: definition.UC = (props) => {
 					<PropertiesPanel context={builderContext} />
 					<ViewInfoPanel context={builderContext} />
 				</Grid>
-				<Canvas context={context} children={props.children} />
+				<Canvas context={canvasContext}>
+					<component.ViewArea
+						context={canvasContext}
+						definition={definition}
+						path={path}
+					/>
+				</Canvas>
+				{showIndex && (
+					<AdjustableWidthArea
+						className={`col-start-${indexPanelIndex}`}
+						context={context}
+					>
+						<IndexPanel context={builderContext} />
+					</AdjustableWidthArea>
+				)}
 				{showCode && (
 					<AdjustableWidthArea
-						className="col-start-3"
+						className={`col-start-${codePanelIndex}`}
 						context={context}
 					>
 						<CodePanel context={builderContext} />
 					</AdjustableWidthArea>
 				)}
 				<RightToolbar
-					className={`col-start-${showCode ? "4" : "3"}`}
+					className={`col-start-${rightPanelIndex}`}
 					context={context}
 				/>
 			</Grid>
@@ -86,6 +117,10 @@ MainWrapper.signals = {
 	TOGGLE_CODE: {
 		dispatcher: (state) => !state,
 		target: "codepanel",
+	},
+	TOGGLE_INDEX: {
+		dispatcher: (state) => !state,
+		target: "indexpanel",
 	},
 	TOGGLE_SLOT_TAGS: {
 		dispatcher: (state) => !state,

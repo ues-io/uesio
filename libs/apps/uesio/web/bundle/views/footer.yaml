@@ -4,6 +4,7 @@ definition:
   wires:
   # Components are how we describe the layout of our view
   components:
+    - uesio/web.ga4:
     - uesio/io.grid:
         uesio.styleTokens:
           root:

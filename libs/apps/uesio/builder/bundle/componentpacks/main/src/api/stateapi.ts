@@ -50,6 +50,7 @@ type ComponentDef = {
 	description: string
 	category: string
 	discoverable: boolean
+	icon?: string
 	slots?: SlotDef[]
 	properties?: ComponentProperty[]
 	sections?: PropertiesPanelSection[]

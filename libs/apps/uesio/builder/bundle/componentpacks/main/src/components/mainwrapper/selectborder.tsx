@@ -1,8 +1,7 @@
-import { definition, component, styles } from "@uesio/ui"
+import { definition, component, styles, context } from "@uesio/ui"
 import {
 	useSelectedComponentPath,
 	setDragPath,
-	ComponentDef,
 	getComponentDef,
 	getBuilderNamespaces,
 	useDragPath,
@@ -44,7 +43,51 @@ const StyleDefaults = Object.freeze({
 	selectedAlways: ["relative"],
 	arrow: ["fill-blue-600"],
 	popper: ["bg-blue-600", "rounded"],
+	dragging: ["opacity-20"],
 })
+
+const getComponentInfoFromPath = (path: FullPath, context: context.Context) => {
+	const isValid =
+		path.isSet() &&
+		path.itemType === "viewdef" &&
+		path.itemName === context.getViewDefId() &&
+		path.localPath &&
+		path.size() > 1
+	if (!isValid) {
+		return [undefined, undefined, undefined, undefined] as const
+	}
+	const [componentType, parentPath] = path.pop()
+	const [componentIndex, grandParentPath] = parentPath.popIndex()
+	const componentDef = getComponentDef(context, componentType)
+	return [componentIndex, parentPath, grandParentPath, componentDef] as const
+}
+
+const getTargetFromSlotIndex = (slotPath: FullPath, index: number) => {
+	const indexPlaceHolder = document.querySelector(
+		`[data-path="${CSS.escape(
+			slotPath.localPath
+		)}"]>[data-index="${index}"]`
+	)
+
+	if (!indexPlaceHolder) {
+		return null
+	}
+
+	const target = indexPlaceHolder.nextSibling as Element | null
+	if (!target) {
+		return null
+	}
+
+	// If the next sibling is a placeholder, we have a problem.
+	// most likely the component we were trying to render didn't
+	// return a dom element.
+	if (target.getAttribute("data-placeholder") === "true") {
+		console.log("problem selecting item!")
+		return null
+	}
+
+	return target
+}
 
 const SelectBorder: definition.UtilityComponent = (props) => {
 	const context = props.context
@@ -58,63 +101,74 @@ const SelectBorder: definition.UtilityComponent = (props) => {
 	const selectedComponentPath = useSelectedComponentPath(context)
 
 	const [selectedChild, setSelectedChild] = useState<Element>()
+	const [draggingChild, setDraggingChild] = useState<Element>()
 
-	const isDragging = useDragPath(context).isSet()
+	const dragPath = useDragPath(context)
+	const isDragging = dragPath.isSet()
 
-	let selectedChildIndex = 0
-	let selectedParentPath: FullPath | undefined = undefined
-	let selectedSlotPath: FullPath | undefined = undefined
-	let selectedComponentDef: ComponentDef | undefined = undefined
+	const [
+		selectedChildIndex,
+		selectedParentPath,
+		selectedSlotPath,
+		selectedComponentDef,
+	] = getComponentInfoFromPath(selectedComponentPath, context)
 
-	const viewDefId = context.getViewDefId()
-
-	if (
-		selectedComponentPath.isSet() &&
-		selectedComponentPath.itemType === "viewdef" &&
-		selectedComponentPath.itemName === viewDefId &&
-		selectedComponentPath.localPath &&
-		selectedComponentPath.size() > 1
-	) {
-		const [componentType, parentPath] = selectedComponentPath.pop()
-		const [componentIndex, grandParentPath] = parentPath.popIndex()
-		selectedChildIndex = componentIndex
-		selectedParentPath = parentPath
-		selectedSlotPath = grandParentPath
-		selectedComponentDef = getComponentDef(context, componentType)
-	}
-
+	// Handle figuring out what the selected element is so that we can
+	// Add some styling to it.
 	useEffect(() => {
 		if (selectedChild) {
 			selectedChild.classList.remove(...StyleDefaults.selected)
 		}
 
-		if (!selectedSlotPath) {
+		if (!selectedSlotPath || isDragging) {
 			setSelectedChild(undefined)
 			return
 		}
-		const parentElem = document.querySelector(
-			`[data-path="${CSS.escape(selectedSlotPath.localPath)}"]`
+
+		const target = getTargetFromSlotIndex(
+			selectedSlotPath,
+			selectedChildIndex
 		)
-		if (!parentElem) {
+
+		if (!target) {
 			setSelectedChild(undefined)
 			return
 		}
 
-		let index = 0
-		for (const child of Array.from(parentElem.children)) {
-			// If the child was a placeholder, and not a real component
-			// in this slot, we can skip it.
-			if (child.getAttribute("data-placeholder") === "true") continue
-
-			if (index === selectedChildIndex && !isDragging) {
-				// We found our correct child ref.
-				child.classList.add(...StyleDefaults.selected)
-				child.classList.add(...StyleDefaults.selectedAlways)
-				setSelectedChild(child)
-			}
-			index++
-		}
+		target.classList.add(...StyleDefaults.selected)
+		target.classList.add(...StyleDefaults.selectedAlways)
+		setSelectedChild(target)
 	}, [selectedSlotPath, selectedChildIndex, selectedChild, isDragging])
+
+	const [draggingChildIndex, , draggingSlotPath, ,] =
+		getComponentInfoFromPath(dragPath, context)
+
+	// Handle figuring out what the dragging element is so that we can
+	// Add some styling to it.
+	useEffect(() => {
+		if (draggingChild) {
+			draggingChild.classList.remove(...StyleDefaults.dragging)
+		}
+
+		if (!draggingSlotPath) {
+			setDraggingChild(undefined)
+			return
+		}
+
+		const target = getTargetFromSlotIndex(
+			draggingSlotPath,
+			draggingChildIndex
+		)
+
+		if (!target) {
+			setDraggingChild(undefined)
+			return
+		}
+
+		// We found our correct child ref.
+		target.classList.add(...StyleDefaults.dragging)
+		setDraggingChild(target)
+	}, [draggingSlotPath, draggingChildIndex, draggingChild])
 
 	if (!selectedChild || !selectedParentPath || !selectedComponentDef)
 		return null
