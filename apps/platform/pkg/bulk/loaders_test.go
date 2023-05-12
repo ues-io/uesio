@@ -323,3 +323,84 @@ func Test_MapLoader(t *testing.T) {
 		})
 	}
 }
+
+func Test_ListLoader(t *testing.T) {
+
+	fieldMetadata := &adapt.FieldMetadata{
+		Type:      "LIST",
+		Name:      "status",
+		Namespace: "uesio/core",
+	}
+
+	mapping := &meta.FieldMapping{
+		Type:       "IMPORT",
+		ColumnName: "some_column_name",
+	}
+
+	getValue := func(data interface{}, mapping *meta.FieldMapping, index int) string {
+		record := data.([]string)
+		return record[index]
+	}
+
+	tests := []struct {
+		name    string
+		input   string
+		want    []interface{}
+		wantErr string
+	}{
+		{
+			"parse LIST from empty string",
+			"",
+			[]interface{}{},
+			"",
+		},
+		{
+			"parse LIST from empty JSON array",
+			"[]",
+			[]interface{}{},
+			"",
+		},
+		{
+			"parse LIST from valid JSON array of strings",
+			"[\"bar\",\"foo\"]",
+			[]interface{}{"bar", "foo"},
+			"",
+		},
+		{
+			"parse LIST from valid JSON array of numbers",
+			"[1,2]",
+			[]interface{}{1.0, 2.0},
+			"",
+		},
+		{
+			"return error if input is not an expected format",
+			"asjdfkasdjf",
+			nil,
+			"invalid LIST field value",
+		},
+	}
+	for _, tt := range tests {
+		t.Run("it should "+tt.name, func(t *testing.T) {
+			changeItem := &adapt.Item{}
+			data := []string{
+				tt.input,
+			}
+			loaderFunc := getListLoader(0, mapping, fieldMetadata, getValue)
+			err := loaderFunc(*changeItem, data)
+			if tt.wantErr != "" {
+				assert.Errorf(t, err, tt.wantErr)
+				assert.Equal(t, err.Error(), tt.wantErr)
+			} else {
+				assert.Nil(t, err)
+				val, err := changeItem.GetField(fieldMetadata.GetFullName())
+				assert.Nil(t, err)
+				listVal, ok := val.([]interface{})
+				assert.True(t, ok, "expected val to be a list, but it was not: "+tt.input)
+				assert.Equal(t, len(listVal), len(tt.want))
+				for idx, el := range tt.want {
+					assert.Equalf(t, listVal[idx], el, "ListLoader(%s)", tt.input)
+				}
+			}
+		})
+	}
+}
