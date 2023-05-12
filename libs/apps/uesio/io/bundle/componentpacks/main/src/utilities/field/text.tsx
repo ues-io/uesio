@@ -18,7 +18,14 @@ const StyleDefaults = Object.freeze({
 	input: ["grow"],
 	readonly: [],
 	wrapper: ["flex", "relative"],
-	toggle: ["absolute", "right-3", "top-1"],
+	toggle: [
+		"absolute",
+		"right-3",
+		"top-0",
+		"bottom-0",
+		"leading-none",
+		"text-slate-700",
+	],
 	password: ["pr-8"],
 })
 
@@ -77,14 +84,21 @@ const TextField: definition.UtilityComponent<TextFieldProps> = (props) => {
 			/>
 			{isPassword && (
 				<button
-					className={styles.cx(classes.toggle)}
+					className={classes.toggle}
 					title="Show/hide password"
 					onClick={() =>
 						setType(useType === "password" ? "text" : "password")
 					}
 					tabIndex={0}
 				>
-					<Icon icon={"remove_red_eye"} context={context} />
+					<Icon
+						icon={
+							useType === "password"
+								? "visibility"
+								: "visibility_off"
+						}
+						context={context}
+					/>
 				</button>
 			)}
 		</div>
