@@ -1,6 +1,7 @@
 package bulk
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strconv"
@@ -87,6 +88,28 @@ func getDateLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.F
 		}
 
 		change[fieldMetadata.GetFullName()] = t.Format(timeutils.ISO8601Date)
+		return nil
+	}
+}
+
+func getStructLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
+	return func(change adapt.Item, data interface{}) error {
+		raw_val := getValue(data, mapping, index)
+		if raw_val != "" {
+			var json_val map[string]interface{}
+			if err := json.Unmarshal([]byte(raw_val), &json_val); err != nil {
+				return errors.New("Invalid struct format: " + fieldMetadata.GetFullName() + " : " + err.Error())
+			}
+
+			cleanMap := make(map[string]interface{}, len(fieldMetadata.SubFields))
+			for key := range fieldMetadata.SubFields {
+				value, ok := json_val[key]
+				if ok {
+					cleanMap[key] = value
+				}
+			}
+			change[fieldMetadata.GetFullName()] = cleanMap
+		}
 		return nil
 	}
 }
