@@ -17,8 +17,9 @@ interface TextFieldProps {
 const StyleDefaults = Object.freeze({
 	input: ["grow"],
 	readonly: [],
-	wrapper: ["flex"],
-	toggle: ["pl-3"],
+	wrapper: ["flex", "relative"],
+	toggle: ["absolute", "right-3", "top-1"],
+	password: ["pr-8"],
 })
 
 const TextField: definition.UtilityComponent<TextFieldProps> = (props) => {
@@ -43,6 +44,7 @@ const TextField: definition.UtilityComponent<TextFieldProps> = (props) => {
 
 	const isReadMode = readonly || mode === "READ"
 	const applyOnBlur = applyChanges === "onBlur"
+	const isPassword = type === "password"
 
 	const [controlledValue, setControlledValue] = useState(value)
 	const [useType, setType] = useState(type)
@@ -59,7 +61,8 @@ const TextField: definition.UtilityComponent<TextFieldProps> = (props) => {
 				placeholder={placeholder}
 				className={styles.cx(
 					classes.input,
-					isReadMode && classes.readonly
+					isReadMode && classes.readonly,
+					isPassword && classes.password
 				)}
 				disabled={isReadMode}
 				ref={(input: HTMLInputElement) =>
@@ -72,22 +75,17 @@ const TextField: definition.UtilityComponent<TextFieldProps> = (props) => {
 				}}
 				onBlur={(e) => applyOnBlur && setValue?.(e.target.value)}
 			/>
-			{type === "password" && (
-				<a
-					href="#"
+			{isPassword && (
+				<button
 					className={styles.cx(classes.toggle)}
 					title="Show/hide password"
 					onClick={() =>
 						setType(useType === "password" ? "text" : "password")
 					}
+					tabIndex={0}
 				>
-					<Icon
-						icon={
-							useType === "password" ? "remove_red_eye" : "lock"
-						}
-						context={context}
-					/>
-				</a>
+					<Icon icon={"remove_red_eye"} context={context} />
+				</button>
 			)}
 		</div>
 	)
