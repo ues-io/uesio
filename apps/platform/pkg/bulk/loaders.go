@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -87,6 +88,21 @@ func getDateLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.F
 		}
 
 		change[fieldMetadata.GetFullName()] = t.Format(timeutils.ISO8601Date)
+		return nil
+	}
+}
+
+func getMultiSelectLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
+	return func(change adapt.Item, data interface{}) error {
+		raw_val := getValue(data, mapping, index)
+		strArray := strings.Split(raw_val, ",")
+		validNames := map[string]bool{}
+		for _, s := range strArray {
+			validNames[s] = true
+		}
+		if len(validNames) != 0 {
+			change[fieldMetadata.GetFullName()] = validNames
+		}
 		return nil
 	}
 }
