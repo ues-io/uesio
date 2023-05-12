@@ -1,6 +1,6 @@
 name: mainlayout_dark
-label: Main Layout Dark
 extends: uesio/web.mainlayout
+label: Main Layout Dark
 definition:
   uesio.styleTokens:
     root:
