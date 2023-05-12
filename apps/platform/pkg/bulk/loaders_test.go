@@ -193,7 +193,7 @@ func Test_MultiselectLoader(t *testing.T) {
 		{
 			"parse multiselect from empty string",
 			"",
-			nil,
+			map[string]bool{},
 			"",
 		},
 		{
@@ -226,14 +226,8 @@ func Test_MultiselectLoader(t *testing.T) {
 			} else {
 				assert.Nil(t, err)
 				val, err := changeItem.GetField(fieldMetadata.GetFullName())
-				// There should not be a field value if the want is ""
-				if tt.want == nil {
-					assert.NotNil(t, err)
-					assert.Equal(t, err.Error(), "Field not found: "+fieldMetadata.GetFullName())
-				} else {
-					assert.Nil(t, err)
-					assert.Equalf(t, tt.want, val, "MultiselectLoader(%s)", tt.input)
-				}
+				assert.Nil(t, err)
+				assert.Equalf(t, tt.want, val, "MultiselectLoader(%s)", tt.input)
 			}
 		})
 	}
@@ -266,7 +260,13 @@ func Test_MapLoader(t *testing.T) {
 		{
 			"parse MAP from empty string",
 			"",
-			nil,
+			map[string]interface{}{},
+			"",
+		},
+		{
+			"parse MAP from empty JSON object",
+			"{}",
+			map[string]interface{}{},
 			"",
 		},
 		{
@@ -307,15 +307,16 @@ func Test_MapLoader(t *testing.T) {
 			} else {
 				assert.Nil(t, err)
 				val, err := changeItem.GetField(fieldMetadata.GetFullName())
-				// There should not be a field value if the want is ""
-				if tt.want == nil {
-					assert.NotNil(t, err)
-					assert.Equal(t, err.Error(), "Field not found: "+fieldMetadata.GetFullName())
-				} else {
-					assert.Nil(t, err)
-					mapVal := val.(map[string]interface{})
-					for k, v := range tt.want {
-						assert.Equalf(t, v, mapVal[k], "MapLoader(%s)", tt.input)
+				assert.Nil(t, err)
+				mapVal, ok := val.(map[string]interface{})
+				assert.True(t, ok, "expected val to be a map, but it was not: "+tt.input)
+				for k, wantV := range tt.want {
+					assert.Equalf(t, wantV, mapVal[k], "MapLoader(%s)", tt.input)
+					if wantMapValue, ok := wantV.(map[string]interface{}); ok {
+						actualMapVal := mapVal[k].(map[string]interface{})
+						for k1, v2 := range wantMapValue {
+							assert.Equalf(t, v2, actualMapVal[k1], "MapLoader(%s)", tt.input)
+						}
 					}
 				}
 			}

@@ -102,26 +102,25 @@ func getDateLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.F
 func getMultiSelectLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
 	return func(change adapt.Item, data interface{}) error {
 		rawVal := getValue(data, mapping, index)
+		valuesMap := map[string]bool{}
 		// If there's no data, just do an early return
-		if rawVal == "" || rawVal == "[]" {
-			return nil
-		}
-		maxLen := 0
-		if fieldMetadata != nil && fieldMetadata.SelectListMetadata != nil && fieldMetadata.SelectListMetadata.Options != nil {
-			maxLen = len(fieldMetadata.SelectListMetadata.Options)
-		}
-		validVals := make([]string, 0, maxLen)
-		err := json.Unmarshal([]byte(rawVal), &validVals)
-		if err != nil {
-			return errors.New("invalid Multiselect field value")
-		}
-		if len(validVals) != 0 {
-			valuesMap := map[string]bool{}
-			for _, s := range validVals {
-				valuesMap[s] = true
+		if rawVal != "" && rawVal != "[]" {
+			maxLen := 0
+			if fieldMetadata != nil && fieldMetadata.SelectListMetadata != nil && fieldMetadata.SelectListMetadata.Options != nil {
+				maxLen = len(fieldMetadata.SelectListMetadata.Options)
 			}
-			change[fieldMetadata.GetFullName()] = valuesMap
+			validVals := make([]string, 0, maxLen)
+			err := json.Unmarshal([]byte(rawVal), &validVals)
+			if err != nil {
+				return errors.New("invalid Multiselect field value")
+			}
+			if len(validVals) != 0 {
+				for _, s := range validVals {
+					valuesMap[s] = true
+				}
+			}
 		}
+		change[fieldMetadata.GetFullName()] = valuesMap
 		return nil
 	}
 }
@@ -130,14 +129,13 @@ func getMultiSelectLoader(index int, mapping *meta.FieldMapping, fieldMetadata *
 func getMapLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
 	return func(change adapt.Item, data interface{}) error {
 		rawVal := getValue(data, mapping, index)
-		// If there's no data, just do an early return
-		if rawVal == "" || rawVal == "{}" {
-			return nil
-		}
 		value := map[string]interface{}{}
-		err := json.Unmarshal([]byte(rawVal), &value)
-		if err != nil {
-			return fmt.Errorf("invalid %s field value", fieldMetadata.Type)
+		// If there's no data, just use the empty map
+		if rawVal != "" && rawVal != "{}" {
+			err := json.Unmarshal([]byte(rawVal), &value)
+			if err != nil {
+				return fmt.Errorf("invalid %s field value", fieldMetadata.Type)
+			}
 		}
 		change[fieldMetadata.GetFullName()] = value
 		return nil
@@ -148,14 +146,13 @@ func getMapLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.Fi
 func getListLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
 	return func(change adapt.Item, data interface{}) error {
 		rawVal := getValue(data, mapping, index)
-		// If there's no data, just do an early return
-		if rawVal == "" || rawVal == "[]" {
-			return nil
-		}
 		value := []interface{}{}
-		err := json.Unmarshal([]byte(rawVal), &value)
-		if err != nil {
-			return fmt.Errorf("invalid LIST field value")
+		// If there's no data, just use the empty slice
+		if rawVal != "" && rawVal != "[]" {
+			err := json.Unmarshal([]byte(rawVal), &value)
+			if err != nil {
+				return fmt.Errorf("invalid LIST field value")
+			}
 		}
 		change[fieldMetadata.GetFullName()] = value
 		return nil
