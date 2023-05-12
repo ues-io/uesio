@@ -1,12 +1,15 @@
 package bulk
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"math"
+	"sort"
 	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/goutils"
 )
 
 func getStringValue(fieldMetadata *adapt.FieldMetadata, value interface{}) (string, error) {
@@ -19,6 +22,23 @@ func getStringValue(fieldMetadata *adapt.FieldMetadata, value interface{}) (stri
 		return adapt.GetReferenceKey(value)
 	}
 	switch fieldMetadata.Type {
+	case "LIST", "STRUCT", "MAP":
+		byteValue, err := json.Marshal(value)
+		if err != nil {
+			return "", fmt.Errorf("Failed to serialize: " + fieldMetadata.GetFullName() + ": " + err.Error())
+		}
+		return string(byteValue), nil
+	case "MULTISELECT":
+		// Multiselects are stored in DB as map[string]bool
+		// To be consise, but also allow for nested commas/quotes within the Multiselect value,
+		// we serialize to a JSON array
+		values := goutils.MapKeys(value.(map[string]interface{}))
+		sort.Strings(values)
+		byteValue, err := json.Marshal(values)
+		if err != nil {
+			return "", fmt.Errorf("Failed to serialize: " + fieldMetadata.GetFullName() + ": " + err.Error())
+		}
+		return string(byteValue), nil
 	case "TIMESTAMP":
 		// Export TIMESTAMPs in RFC3339/ISO-8601 datetime format
 		// Depending on how the timestamp was created, it may be a float64 or int64,
