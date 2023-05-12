@@ -1,5 +1,0 @@
-name: select
-type: SELECT
-label: Select
-required: true
-selectList: uesio/tests.selectlist

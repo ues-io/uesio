@@ -2,4 +2,4 @@ name: reference
 type: REFERENCE
 label: Reference
 reference:
-  collection: uesio/tests.conditiontest
+  collection: uesio/tests.wirecondition

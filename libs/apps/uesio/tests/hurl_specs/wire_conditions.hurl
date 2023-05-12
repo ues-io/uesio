@@ -21,7 +21,7 @@ Accept: application/json
 {
     "wires": [
         {
-            "collection":"uesio/tests.conditiontest",
+            "collection":"uesio/tests.wirecondition",
             "query":true,
             "batchsize":2
         }
@@ -60,7 +60,7 @@ Accept: application/json
 {
     "wires": [
         {
-            "collection":"uesio/tests.conditiontest",
+            "collection":"uesio/tests.wirecondition",
             "query":true,
             "conditions": [
                 {
@@ -96,7 +96,7 @@ Accept: application/json
 {
     "wires": [
         {
-            "collection":"uesio/tests.conditiontest",
+            "collection":"uesio/tests.wirecondition",
             "query":true,
             "conditions": [
                 {
@@ -131,7 +131,7 @@ Accept: application/json
 {
     "wires": [
         {
-            "collection":"uesio/tests.conditiontest",
+            "collection":"uesio/tests.wirecondition",
             "query":true,
             "conditions": [
                 {
@@ -164,7 +164,7 @@ Accept: application/json
 {
     "wires": [
         {
-            "collection":"uesio/tests.conditiontest",
+            "collection":"uesio/tests.wirecondition",
             "query":true,
             "conditions": [
                 {
@@ -207,7 +207,7 @@ Accept: application/json
 {
     "wires": [
         {
-            "collection":"uesio/tests.conditiontest",
+            "collection":"uesio/tests.wirecondition",
             "query":true,
             "conditions": [
                 {
@@ -243,7 +243,7 @@ Accept: application/json
 {
     "wires": [
         {
-            "collection":"uesio/tests.conditiontest",
+            "collection":"uesio/tests.wirecondition",
             "query":true,
             "conditions": [
                 {
@@ -278,7 +278,7 @@ Accept: application/json
 {
     "wires": [
         {
-            "collection":"uesio/tests.conditiontest",
+            "collection":"uesio/tests.wirecondition",
             "query":true,
             "conditions": [
                 {
@@ -311,7 +311,7 @@ Accept: application/json
 {
     "wires": [
         {
-            "collection":"uesio/tests.conditiontest",
+            "collection":"uesio/tests.wirecondition",
             "query":true,
             "conditions": [
                 {
