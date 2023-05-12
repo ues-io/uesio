@@ -287,6 +287,13 @@ definition:
                             - uesio/io.field:
                                 label: " "
                                 fieldId: uesio/studio.subfields
+                                uesio.display:
+                                  - field: uesio/studio.subtype
+                                    type: fieldValue
+                                    operator: NOT_IN
+                                    values:
+                                      - TEXT
+                                      - NUMBER
   panels:
     deleteField:
       uesio.type: uesio/io.dialog
