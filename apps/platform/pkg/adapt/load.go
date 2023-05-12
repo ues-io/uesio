@@ -5,7 +5,6 @@ import (
 	"errors"
 	"sort"
 
-	"github.com/francoispqt/gojay"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"gopkg.in/yaml.v3"
 )
@@ -47,19 +46,6 @@ func (op *LoadOp) UnmarshalJSON(data []byte) error {
 	op.Collection = &Collection{}
 	op.HasMoreBatches = true
 	return json.Unmarshal(data, (*LoadOpWrapper)(op))
-}
-
-func decodeEmbed(dec *gojay.Decoder, v interface{}) error {
-	var data gojay.EmbeddedJSON
-	err := dec.EmbeddedJSON(&data)
-	if err != nil {
-		return err
-	}
-	return json.Unmarshal(data, v)
-}
-
-func (op *LoadOp) NKeys() int {
-	return 0
 }
 
 func (op *LoadOp) UnmarshalYAML(node *yaml.Node) error {
