@@ -404,3 +404,100 @@ func Test_ListLoader(t *testing.T) {
 		})
 	}
 }
+
+func Test_StructLoader(t *testing.T) {
+
+	fieldMetadata := &adapt.FieldMetadata{
+		Type:      "STRUCT",
+		Name:      "location",
+		Namespace: "uesio/core",
+		SubFields: map[string]*adapt.FieldMetadata{
+			"latitude": &adapt.FieldMetadata{
+				Name: "latitude",
+				Type: "NUMBER",
+			},
+			"longitude": &adapt.FieldMetadata{
+				Name: "longitude",
+				Type: "NUMBER",
+			},
+		},
+	}
+
+	mapping := &meta.FieldMapping{
+		Type:       "IMPORT",
+		ColumnName: "some_column_name",
+	}
+
+	getValue := func(data interface{}, mapping *meta.FieldMapping, index int) string {
+		record := data.([]string)
+		return record[index]
+	}
+
+	tests := []struct {
+		name    string
+		input   string
+		want    map[string]interface{}
+		wantErr string
+	}{
+		{
+			"parse STRUCT from empty string",
+			"",
+			map[string]interface{}{},
+			"",
+		},
+		{
+			"parse STRUCT from empty JSON object",
+			"{}",
+			map[string]interface{}{},
+			"",
+		},
+		{
+			"parse STRUCT from valid JSON object",
+			"{\"latitude\":35.555,\"longitude\":-14.12}",
+			map[string]interface{}{
+				"latitude":  35.555,
+				"longitude": -14.12,
+			},
+			"",
+		},
+		{
+			"ignore fields in JSON object not present in STRUCT",
+			"{\"latitude\":35.555,\"longitude\":-14.12,\"foo\":\"bar\"}",
+			map[string]interface{}{
+				"latitude":  35.555,
+				"longitude": -14.12,
+			},
+			"",
+		},
+		{
+			"return error if input is not an expected format",
+			"asjdfkasdjf",
+			nil,
+			"Invalid struct format: uesio/core.location : invalid character 'a' looking for beginning of value",
+		},
+	}
+	for _, tt := range tests {
+		t.Run("it should "+tt.name, func(t *testing.T) {
+			changeItem := &adapt.Item{}
+			data := []string{
+				tt.input,
+			}
+			loaderFunc := getStructLoader(0, mapping, fieldMetadata, getValue)
+			err := loaderFunc(*changeItem, data)
+			if tt.wantErr != "" {
+				assert.Errorf(t, err, tt.wantErr)
+				assert.Equal(t, err.Error(), tt.wantErr)
+			} else {
+				assert.Nil(t, err)
+				val, err := changeItem.GetField(fieldMetadata.GetFullName())
+				assert.Nil(t, err)
+				mapVal, ok := val.(map[string]interface{})
+				assert.True(t, ok, "expected val to be a map, but it was not: "+tt.input)
+				assert.Equal(t, len(mapVal), len(tt.want))
+				for k, wantV := range tt.want {
+					assert.Equalf(t, wantV, mapVal[k], "MapLoader(%s)", tt.input)
+				}
+			}
+		})
+	}
+}
