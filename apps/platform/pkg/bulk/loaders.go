@@ -96,6 +96,29 @@ func getDateLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.F
 	}
 }
 
+// Struct fields are stored in DB as a JSON object
+func getStructLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
+	return func(change adapt.Item, data interface{}) error {
+		rawVal := getValue(data, mapping, index)
+		cleanMap := make(map[string]interface{}, len(fieldMetadata.SubFields))
+		if rawVal != "" && rawVal != "{}" {
+			var jsonVal map[string]interface{}
+			if err := json.Unmarshal([]byte(rawVal), &jsonVal); err != nil {
+				return errors.New("Invalid struct format: " + fieldMetadata.GetFullName() + " : " + err.Error())
+			}
+			// Only allow valid subfields, ignore all other fields
+			for key := range fieldMetadata.SubFields {
+				value, ok := jsonVal[key]
+				if ok {
+					cleanMap[key] = value
+				}
+			}
+		}
+		change[fieldMetadata.GetFullName()] = cleanMap
+		return nil
+	}
+}
+
 // Multi-select fields are stored in DB as map[string]bool
 // To be concise, but also allow for nested commas/quotes within the Multiselect value,
 // we serialize to a JSON array

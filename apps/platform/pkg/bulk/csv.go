@@ -109,10 +109,12 @@ func processCSV(body io.ReadCloser, spec *meta.JobSpec, metadata *adapt.Metadata
 			loader = getTimestampLoader
 		case "MULTISELECT":
 			loader = getMultiSelectLoader
-		case "MAP", "STRUCT":
+		case "MAP":
 			loader = getMapLoader
 		case "LIST":
 			loader = getListLoader
+		case "STRUCT":
+			loader = getStructLoader
 		default:
 			loader = getTextLoader
 		}
