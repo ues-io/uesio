@@ -59,7 +59,7 @@ const TextField: definition.UtilityComponent<TextFieldProps> = (props) => {
 	const [useType, setType] = useState(type)
 
 	useEffect(() => {
-		setControlledValue(value)
+		setControlledValue(value || "")
 	}, [value])
 
 	return (
@@ -77,7 +77,7 @@ const TextField: definition.UtilityComponent<TextFieldProps> = (props) => {
 				ref={(input: HTMLInputElement) =>
 					focusOnRender && input?.focus()
 				}
-				value={controlledValue as string}
+				value={(controlledValue as string) || ""}
 				onChange={(e) => {
 					setControlledValue(e.target.value)
 					!applyOnBlur && setValue?.(e.target.value)
@@ -87,7 +87,11 @@ const TextField: definition.UtilityComponent<TextFieldProps> = (props) => {
 			{isPassword && (
 				<button
 					className={classes.toggle}
-					title={useType ? "Show password" : "Hide password"}
+					title={
+						useType === "password"
+							? "Show password"
+							: "Hide password"
+					}
 					onClick={() =>
 						setType(useType === "password" ? "text" : "password")
 					}
