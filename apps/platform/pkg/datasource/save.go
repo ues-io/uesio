@@ -24,53 +24,28 @@ type SaveRequest struct {
 	Options    *adapt.SaveOptions `json:"options"`
 }
 
+type SaveRequestImpl struct {
+	Collection string               `json:"collection"`
+	Wire       string               `json:"wire"`
+	Changes    *adapt.CollectionMap `json:"changes"`
+	Deletes    *adapt.CollectionMap `json:"deletes"`
+	Errors     []adapt.SaveError    `json:"errors"`
+	Options    *adapt.SaveOptions   `json:"options"`
+}
+
 func (sr *SaveRequest) UnmarshalJSON(b []byte) error {
-	data := make(map[string]json.RawMessage)
+
+	data := SaveRequestImpl{}
 	err := json.Unmarshal(b, &data)
 	if err != nil {
 		return err
 	}
-	for k, v := range data {
-		switch k {
-		case "collection":
-			s := ""
-			err := json.Unmarshal(v, &s)
-			if err != nil {
-				return err
-			}
-			sr.Collection = s
-		case "wire":
-			s := ""
-			err := json.Unmarshal(v, &s)
-			if err != nil {
-				return err
-			}
-			sr.Wire = s
-		case "changes":
-			c := adapt.CollectionMap{}
-			err := json.Unmarshal(v, &c)
-			if err != nil {
-				return err
-			}
-			sr.Changes = &c
-		case "deletes":
-			d := adapt.CollectionMap{}
-			err := json.Unmarshal(v, &d)
-			if err != nil {
-				return err
-			}
-			sr.Deletes = &d
-		case "options":
-			o := adapt.SaveOptions{}
-			err := json.Unmarshal(v, &o)
-			if err != nil {
-				return err
-			}
-			sr.Options = &o
-		}
-
-	}
-
+	sr.Collection = data.Collection
+	sr.Wire = data.Wire
+	sr.Changes = data.Changes
+	sr.Deletes = data.Deletes
+	sr.Errors = data.Errors
+	sr.Options = data.Options
 	return nil
 }
 

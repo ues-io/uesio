@@ -20,6 +20,9 @@ func (c *CollectionMap) AddItem(item meta.Item) error {
 }
 
 func (c *CollectionMap) Loop(iter meta.GroupIterator) error {
+	if c == nil {
+		return nil
+	}
 	for _, key := range c.IDs {
 		item := c.Data[key]
 		err := iter(&item, key)
