@@ -1,6 +1,7 @@
 package bulk
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strconv"
@@ -63,6 +64,10 @@ func getReferenceLoader(index int, mapping *meta.FieldMapping, fieldMetadata *ad
 func getTimestampLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
 	return func(change adapt.Item, data interface{}) error {
 		stringValue := getValue(data, mapping, index)
+		// If there's no value, there's nothing to do
+		if stringValue == "" {
+			return nil
+		}
 		// First parse as RFC3339 UTC
 		t, err := time.Parse(time.RFC3339, stringValue)
 		if err != nil {
@@ -87,6 +92,69 @@ func getDateLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.F
 		}
 
 		change[fieldMetadata.GetFullName()] = t.Format(timeutils.ISO8601Date)
+		return nil
+	}
+}
+
+// Multi-select fields are stored in DB as map[string]bool
+// To be concise, but also allow for nested commas/quotes within the Multiselect value,
+// we serialize to a JSON array
+func getMultiSelectLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
+	return func(change adapt.Item, data interface{}) error {
+		rawVal := getValue(data, mapping, index)
+		valuesMap := map[string]bool{}
+		// If there's no data, just do an early return
+		if rawVal != "" && rawVal != "[]" {
+			maxLen := 0
+			if fieldMetadata != nil && fieldMetadata.SelectListMetadata != nil && fieldMetadata.SelectListMetadata.Options != nil {
+				maxLen = len(fieldMetadata.SelectListMetadata.Options)
+			}
+			validVals := make([]string, 0, maxLen)
+			err := json.Unmarshal([]byte(rawVal), &validVals)
+			if err != nil {
+				return errors.New("invalid Multiselect field value")
+			}
+			if len(validVals) != 0 {
+				for _, s := range validVals {
+					valuesMap[s] = true
+				}
+			}
+		}
+		change[fieldMetadata.GetFullName()] = valuesMap
+		return nil
+	}
+}
+
+// We serialize STRUCT and MAP fields to a JSON object
+func getMapLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
+	return func(change adapt.Item, data interface{}) error {
+		rawVal := getValue(data, mapping, index)
+		value := map[string]interface{}{}
+		// If there's no data, just use the empty map
+		if rawVal != "" && rawVal != "{}" {
+			err := json.Unmarshal([]byte(rawVal), &value)
+			if err != nil {
+				return fmt.Errorf("invalid %s field value", fieldMetadata.Type)
+			}
+		}
+		change[fieldMetadata.GetFullName()] = value
+		return nil
+	}
+}
+
+// We serialize LIST fields to a JSON array
+func getListLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
+	return func(change adapt.Item, data interface{}) error {
+		rawVal := getValue(data, mapping, index)
+		value := []interface{}{}
+		// If there's no data, just use the empty slice
+		if rawVal != "" && rawVal != "[]" {
+			err := json.Unmarshal([]byte(rawVal), &value)
+			if err != nil {
+				return fmt.Errorf("invalid LIST field value")
+			}
+		}
+		change[fieldMetadata.GetFullName()] = value
 		return nil
 	}
 }
