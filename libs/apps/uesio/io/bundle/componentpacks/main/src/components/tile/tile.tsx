@@ -7,18 +7,17 @@ type TileDefinition = {
 	content?: definition.DefinitionList
 }
 
+const StyleDefaults = Object.freeze({
+	root: [],
+	content: [],
+	avatar: [],
+	selected: [],
+})
+
 const Tile: definition.UC<TileDefinition> = (props) => {
 	const { definition, context, path } = props
 
-	const classes = styles.useStyles(
-		{
-			root: {},
-			content: {},
-			avatar: {},
-			selected: {},
-		},
-		props
-	)
+	const classes = styles.useStyleTokens(StyleDefaults, props)
 	const isSelected = component.shouldHaveClass(
 		context,
 		"selected",

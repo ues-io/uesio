@@ -11,7 +11,6 @@ export type BaseDefinition = {
 	// Once morandi / timetracker / etc. are migrated to using "uesio.id" in their metadata, we can remove this affordance.
 	id?: string
 	"uesio.id"?: string
-	"uesio.styles"?: DefinitionMap
 	"uesio.styleTokens"?: Record<string, string[]>
 	"uesio.variant"?: MetadataKey
 	"uesio.display"?: DisplayCondition[]

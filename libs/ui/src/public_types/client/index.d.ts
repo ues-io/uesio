@@ -47,7 +47,6 @@ export type Definition =
 	| DefinitionMap[]
 export type BaseDefinition = {
 	"uesio.id"?: string
-	"uesio.styles"?: DefinitionMap
 	"uesio.styleTokens"?: Record<string, string[]>
 	"uesio.variant"?: MetadataKey
 	"uesio.classes"?: string
@@ -103,16 +102,11 @@ declare function useStyleTokens(
 	defaults: Record<string, ClassNamesArg[]>,
 	props: BaseProps
 ): Record<string, string>
-declare function useStyles(
-	defaults: Record<string, CSSInterpolation>,
-	props: BaseProps | null
-): Record<string, string>
 
 export const styles = {
 	useUtilityStyleTokens,
 	useUtilityStyles,
 	useStyleTokens,
-	useStyles,
 }
 
 //
@@ -165,7 +159,6 @@ export namespace definition {
 		| DefinitionMap[]
 	export type BaseDefinition = {
 		"uesio.id"?: string
-		"uesio.styles"?: DefinitionMap
 		"uesio.styleTokens"?: Record<string, string[]>
 		"uesio.variant"?: MetadataKey
 		"uesio.classes"?: string
