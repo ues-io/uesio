@@ -9,6 +9,7 @@ import (
 
 var gzipContentTypesAllowList = []string{
 	"application/json",
+	"text/json",
 	"text/html",
 	"application/javascript",
 	"text/javascript",
