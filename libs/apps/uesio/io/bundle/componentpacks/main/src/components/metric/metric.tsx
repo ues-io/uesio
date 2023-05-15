@@ -9,6 +9,14 @@ type MetricDefinition = {
 	wire?: string
 }
 
+const StyleDefaults = Object.freeze({
+	root: [],
+	title: [],
+	valuewrapper: [],
+	value: [],
+	unit: [],
+})
+
 const MetricComponent: definition.UC<MetricDefinition> = (props) => {
 	const { definition, context } = props
 
@@ -16,16 +24,7 @@ const MetricComponent: definition.UC<MetricDefinition> = (props) => {
 	//we need to tranform the context.merge into a hook
 	api.wire.useWires([definition.wire || ""], context)
 
-	const classes = styles.useStyles(
-		{
-			root: {},
-			title: {},
-			valuewrapper: {},
-			value: {},
-			unit: {},
-		},
-		props
-	)
+	const classes = styles.useStyleTokens(StyleDefaults, props)
 
 	const value = context.merge(definition.value)
 

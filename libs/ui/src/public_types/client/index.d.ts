@@ -103,16 +103,11 @@ declare function useStyleTokens(
 	defaults: Record<string, ClassNamesArg[]>,
 	props: BaseProps
 ): Record<string, string>
-declare function useStyles(
-	defaults: Record<string, CSSInterpolation>,
-	props: BaseProps | null
-): Record<string, string>
 
 export const styles = {
 	useUtilityStyleTokens,
 	useUtilityStyles,
 	useStyleTokens,
-	useStyles,
 }
 
 //

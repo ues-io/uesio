@@ -32,18 +32,17 @@ const getHeadingOverview = (mdValue: string, level: 1 | 2 | 3 | 4 | 5 | 6) => {
 	}[]
 }
 
+const StyleDefaults = Object.freeze({
+	root: [],
+	title: [],
+	nav: [],
+	navItem: [],
+})
+
 const MarkdownNavigation: definition.UC<Definition> = (props) => {
 	const { definition, context } = props
 
-	const classes = styles.useStyles(
-		{
-			root: {},
-			title: {},
-			nav: {},
-			navItem: {},
-		},
-		props
-	)
+	const classes = styles.useStyleTokens(StyleDefaults, props)
 	const record = context.getRecord()
 	const wire = context.getWire()
 	if (!wire || !record) return null

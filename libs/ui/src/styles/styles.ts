@@ -62,39 +62,6 @@ function useStyleTokens<K extends string>(
 	)
 }
 
-function useStyles<K extends string>(
-	defaults: Record<K, CSSInterpolation>,
-	props: BaseProps | null
-) {
-	const existingStyleTokens = props?.definition?.[TOKENS_PROPERTY]
-	let existing = props?.definition?.[STYLES_PROPERTY]
-	if (existing) {
-		existing = mergeDefinitionMaps({}, existing, props?.context) as Record<
-			string,
-			CSSInterpolation
-		>
-	}
-
-	const tokens = existingStyleTokens || {}
-	return Object.entries(defaults).reduce(
-		(classNames: Record<string, string>, entry: [K, CSSInterpolation]) => {
-			const [className, defaultClasses] = entry
-			const existingStylesForClass = existing?.[
-				className
-			] as CSSInterpolation[]
-			classNames[className] = process(
-				props?.context,
-				tokens[className],
-				existingStylesForClass
-					? css(defaultClasses, existingStylesForClass)
-					: css(defaultClasses)
-			)
-			return classNames
-		},
-		{} as Record<K, string>
-	)
-}
-
 function getVariantDefinition(
 	props: UtilityProps,
 	componentType: MetadataKey | undefined
@@ -223,6 +190,5 @@ export {
 	useUtilityStyleTokens,
 	useUtilityStyles,
 	useStyleTokens,
-	useStyles,
 	colors,
 }

@@ -5,14 +5,13 @@ type GroupDefinition = {
 	components?: definition.DefinitionList
 }
 
+const StyleDefaults = Object.freeze({
+	root: [],
+})
+
 const Grid: definition.UC<GroupDefinition> = (props) => {
 	const { context, definition, path } = props
-	const classes = styles.useStyles(
-		{
-			root: {},
-		},
-		props
-	)
+	const classes = styles.useStyleTokens(StyleDefaults, props)
 	return (
 		<IOGroup classes={classes} context={context}>
 			<component.Slot

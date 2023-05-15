@@ -70,6 +70,10 @@ const signals: Record<string, signal.ComponentSignalDescriptor> = {
 	PREV_PAGE: prevPage,
 }
 
+const StyleDefaults = Object.freeze({
+	root: [],
+})
+
 const Table: definition.UC<TableDefinition> = (props) => {
 	const { path, context, definition } = props
 	const wire = api.wire.useWire(definition.wire, context)
@@ -126,12 +130,7 @@ const Table: definition.UC<TableDefinition> = (props) => {
 
 	if (!wire || !mode || !path || currentPage === undefined) return null
 
-	const classes = styles.useStyles(
-		{
-			root: {},
-		},
-		props
-	)
+	const classes = styles.useStyleTokens(StyleDefaults, props)
 
 	const collection = wire.getCollection()
 
