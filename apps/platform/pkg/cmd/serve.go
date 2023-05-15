@@ -5,8 +5,6 @@ import (
 	"net/http"
 	"os"
 
-	"golang.org/x/net/http2"
-
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
 	"github.com/thecloudmasters/uesio/pkg/controller"
@@ -342,14 +340,6 @@ func serve(cmd *cobra.Command, args []string) {
 	server := &http.Server{
 		Addr:    serveAddr,
 		Handler: r,
-	}
-	if os.Getenv("UESIO_USE_HTTP_2") == "true" {
-		err = http2.ConfigureServer(server, &http2.Server{})
-		if err != nil {
-			logger.LogError(err)
-			return
-		}
-		logger.Log("Service started using HTTP2 🚀", logger.INFO)
 	}
 
 	useSSL := os.Getenv("UESIO_USE_HTTPS")
