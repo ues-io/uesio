@@ -1,6 +1,6 @@
 # vendor
 
-This module generates loads in static NPM vendor dependences, e.g. React, React DOM, and copies them into a /vendor folder within the /dist directory, along with a manifest which can be read by server-side code to know where these vendored assets are located, so that corresponding URLs can be precomputed server-side and used when we are rendering the index.gohtml template.
+This module generates static NPM vendor dependences, e.g. React, React DOM, and copies them into a /vendor folder within the /dist directory, along with a manifest which can be read by server-side code to know where these vendored assets are located, so that corresponding URLs can be precomputed server-side and used when we are rendering the index.gohtml template.
 
 For example, if you run `nx build vendor`, you should see an output `manifest.json` generated within the `/dist/vendor` folder looking something like this:
 

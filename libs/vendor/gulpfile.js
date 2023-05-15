@@ -22,17 +22,17 @@ const modules = [
 		dest: "umd",
 	},
 	{
-		name: [REACT_DOM],
+		name: REACT_DOM,
 		path: `umd/react-dom.${devMode ? "development" : "production.min"}.js`,
 		dest: "umd",
 	},
 	{
-		name: [EMOTION],
+		name: EMOTION,
 		path: "dist/emotion-css.umd.min.js",
 		dest: "dist",
 	},
 	{
-		name: [MONACO],
+		name: MONACO,
 		src: "min/vs/**",
 		dest: "min/vs",
 	},
