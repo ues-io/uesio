@@ -2,6 +2,7 @@ package meta
 
 import (
 	"fmt"
+	"os"
 	"strings"
 )
 
@@ -38,15 +39,17 @@ func (ufm *UserFileMetadata) Len() int {
 }
 
 func (ufm *UserFileMetadata) GetFullPath(tenantID string) string {
-	tenantPath := strings.ReplaceAll(tenantID, ":", "/")
-	return fmt.Sprintf("files/%s/%s", tenantPath, ufm.GetRelativePath())
+	OsPath := string(os.PathSeparator)
+	tenantPath := strings.ReplaceAll(tenantID, ":", OsPath)
+	return fmt.Sprintf("files%s%s%s%s", OsPath, tenantPath, OsPath, ufm.GetRelativePath())
 }
 
 func (ufm *UserFileMetadata) GetRelativePath() string {
-	collectionPath := strings.ReplaceAll(ufm.CollectionID, ".", "/")
-	fieldPath := strings.ReplaceAll(ufm.FieldID, ".", "/")
+	OsPath := string(os.PathSeparator)
+	collectionPath := strings.ReplaceAll(ufm.CollectionID, ".", OsPath)
+	fieldPath := strings.ReplaceAll(ufm.FieldID, ".", OsPath)
 	if ufm.FieldID != "" {
-		return fmt.Sprintf("%s/%s/field/%s/%s", collectionPath, ufm.RecordID, fieldPath, ufm.Path)
+		return fmt.Sprintf("%s%s%s%s%s%s%s%s%s%s", collectionPath, OsPath, ufm.RecordID, OsPath, "field", OsPath, fieldPath, OsPath, ufm.Path, OsPath)
 	}
-	return fmt.Sprintf("%s/%s/attachment/%s", collectionPath, ufm.RecordID, ufm.Path)
+	return fmt.Sprintf("%s%s%s%s%s%s%s", collectionPath, OsPath, ufm.RecordID, OsPath, "attachment", OsPath, ufm.Path)
 }
