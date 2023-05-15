@@ -13,13 +13,23 @@ import { UserState } from "../bands/user/types"
 import { getJSON, postJSON, respondJSON, respondVoid } from "./async"
 import { memoizedGetJSON } from "./memoizedAsync"
 
-// Hack for Monaco loader to be able to load assets from custom paths
+// Allows us to load static vendor assets, such as Monaco modules, from custom paths
+// and for us to load Uesio-app-versioned files from the server
 interface UesioWindow extends Window {
 	uesioStaticAssetsPath: string
+	vendorAssetsHost: string
+	// This is a hack to ensure we always load the correct version of Monaco
+	monacoEditorVersion: string
 }
 
 const getStaticAssetsPath = () =>
 	(window as unknown as UesioWindow).uesioStaticAssetsPath
+
+const getVendorAssetsPath = () =>
+	(window as unknown as UesioWindow).vendorAssetsHost + "/static/vendor"
+
+const getMonacoEditorVersion = () =>
+	(window as unknown as UesioWindow).monacoEditorVersion
 
 type BotParams = {
 	[key: string]: string
@@ -527,6 +537,8 @@ const platform = {
 		const response = await postJSON(`${prefix}/ai/complete`, request)
 		return respondJSON(response)
 	},
+	getMonacoEditorVersion,
+	getVendorAssetsPath,
 	getStaticAssetsPath,
 }
 

@@ -409,7 +409,8 @@
 					}
 				}
 			},
-			"tags": []
+			"tags": [],
+			"implicitDependencies": ["vendor"]
 		},
 		"ui": {
 			"root": "libs/ui",
@@ -465,17 +466,7 @@
 					"outputs": ["dist/vendor"],
 					"options": {
 						"commands": [
-							"mkdir -p dist/vendor",
-							"cp node_modules/react/umd/react.development.js dist/vendor/",
-							"cp node_modules/react/umd/react.production.min.js dist/vendor/",
-							"cp node_modules/react-dom/umd/react-dom.development.js dist/vendor/",
-							"cp node_modules/react-dom/umd/react-dom.production.min.js dist/vendor/",
-							"cp node_modules/@emotion/css/dist/emotion-css.umd.* dist/vendor/",
-							"mkdir -p dist/vendor/monaco-editor/min/vs",
-							"mkdir -p dist/vendor/monaco-editor/min-maps",
-							"cp -r node_modules/monaco-editor/min/vs dist/vendor/monaco-editor/min",
-							"cp -r node_modules/monaco-editor/min-maps/vs dist/vendor/monaco-editor/min-maps",
-							"echo Done!"
+							"gulp -f libs/vendor/gulpfile.js"
 						],
 						"parallel": false
 					},
