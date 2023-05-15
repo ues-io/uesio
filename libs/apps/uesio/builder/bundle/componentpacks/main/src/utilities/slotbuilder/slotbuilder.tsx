@@ -11,6 +11,7 @@ const StyleDefaults = Object.freeze({
 	slotTagOn: [
 		"relative",
 		"pt-[29px]",
+		"!h-max",
 		"before:absolute",
 		"before:content-[attr(data-title)]",
 		"before:text-slate-500",
