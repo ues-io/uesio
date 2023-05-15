@@ -31,8 +31,7 @@ func NewExportBatch(job meta.BulkJob, session *sess.Session) (*meta.BulkBatch, e
 	}
 
 	tenantID := strings.ReplaceAll(session.GetTenantID(), "/", "_")
-	time := strings.ReplaceAll(time.Now().Format(time.RFC3339), ":", "_")
-	fileName := fmt.Sprintf("uesio_export_%s_%s.zip", tenantID, time)
+	fileName := strings.ReplaceAll(fmt.Sprintf("uesio_export_%s_%s.zip", tenantID, time.Now().Format(time.RFC3339)), ":", "_")
 
 	details := &fileadapt.FileDetails{
 		Path:         fileName,
