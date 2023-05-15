@@ -190,66 +190,51 @@ const SelectBorder: definition.UtilityComponent = (props) => {
 	const componentTitle =
 		selectedComponentDef.title || selectedComponentDef.name
 
-	return isDragging ? null : (
-		<>
-			{selectedChildren && selectedChildren.length && (
-				<Popper
-					referenceEl={selectedChildren[0]}
-					context={context}
-					placement="top"
-					offset={8}
-					arrow={true}
-					classes={classes}
+	return !isDragging && selectedChildren?.length ? (
+		<Popper
+			referenceEl={selectedChildren[0]}
+			context={context}
+			placement="top"
+			offset={8}
+			arrow={true}
+			classes={classes}
+		>
+			<div>
+				<div
+					className={classes.header}
+					draggable
+					onDragStart={() => {
+						setTimeout(() => {
+							setDragPath(context, selectedComponentPath)
+						})
+					}}
+					onDragEnd={() => {
+						setDragPath(context)
+					}}
 				>
-					<div>
-						<div
-							className={classes.header}
-							draggable
-							onDragStart={() => {
-								setTimeout(() => {
-									setDragPath(context, selectedComponentPath)
-								})
-							}}
-							onDragEnd={() => {
-								setDragPath(context)
-							}}
-						>
-							<Text
-								variant="uesio/io.icon"
-								text={nsInfo.icon}
-								color={nsInfo.color}
-								context={context}
-							/>
-							<span className={classes.titletext}>
-								{componentTitle}
-							</span>
-							<IconButton
-								context={context}
-								variant="uesio/builder.buildtitle"
-								className={classes.closebutton}
-								icon="close"
-								onClick={() => setSelectedPath(context)}
-							/>
-						</div>
-						<div className={classes.actionarea}>
-							<DeleteAction
-								context={context}
-								path={selectedParentPath}
-							/>
-							<MoveActions
-								context={context}
-								path={selectedParentPath}
-							/>
-							<CloneAction
-								context={context}
-								path={selectedParentPath}
-							/>
-						</div>
-					</div>
-				</Popper>
-			)}
-		</>
-	)
+					<Text
+						variant="uesio/io.icon"
+						text={nsInfo.icon}
+						color={nsInfo.color}
+						context={context}
+					/>
+					<span className={classes.titletext}>{componentTitle}</span>
+					<IconButton
+						context={context}
+						variant="uesio/builder.buildtitle"
+						className={classes.closebutton}
+						icon="close"
+						onClick={() => setSelectedPath(context)}
+					/>
+				</div>
+				<div className={classes.actionarea}>
+					<DeleteAction context={context} path={selectedParentPath} />
+					<MoveActions context={context} path={selectedParentPath} />
+					<CloneAction context={context} path={selectedParentPath} />
+				</div>
+			</div>
+		</Popper>
+	) : null
 }
 
 export default SelectBorder
