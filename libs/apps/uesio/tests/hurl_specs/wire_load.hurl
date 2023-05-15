@@ -47,6 +47,7 @@ Accept: application/json
             "query":true,
             "conditions": [
                 {
+                    "id": "mycoolid",
                     "field": "uesio/tests.species",
                     "value": "Jerrine"
                 }
@@ -67,6 +68,7 @@ main.tenant = $2 AND
 main.fields->>'uesio/tests.species' = $3
 ORDER BY main.id::text asc
 LIMIT 501```
+jsonpath "$.wires[0].id" == "mycoolid"
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" count == 2
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "MacAughtrie:Jerrine"
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "McCreary:Jerrine"
