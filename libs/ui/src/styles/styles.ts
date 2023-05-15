@@ -22,7 +22,6 @@ const twMerge = extendTailwindMerge({
 	},
 })
 
-const STYLES_PROPERTY = "uesio.styles"
 const TOKENS_PROPERTY = "uesio.styleTokens"
 
 const defaultTheme: ThemeState = {
@@ -37,7 +36,6 @@ const defaultTheme: ThemeState = {
 			info: "#2196f3",
 			success: "#4caf50",
 		},
-		variantOverrides: {},
 		spacing: 8,
 	},
 }
@@ -81,19 +79,6 @@ function getVariantDefinition(
 	)
 	if (!variant) return undefined
 	return getDefinitionFromVariant(variant, props.context)
-}
-
-function getVariantStyles(
-	props: UtilityProps,
-	componentType: MetadataKey | undefined
-) {
-	const variantDefinition = getVariantDefinition(props, componentType)
-	if (!variantDefinition) return {}
-	return mergeDefinitionMaps(
-		{},
-		variantDefinition?.[STYLES_PROPERTY] as DefinitionMap,
-		props.context
-	)
 }
 
 function getVariantTokens(
@@ -144,14 +129,13 @@ function useUtilityStyles<K extends string>(
 	props: UtilityProps,
 	defaultVariantComponentType?: MetadataKey
 ) {
-	const variantStyles = getVariantStyles(props, defaultVariantComponentType)
 	const inlineStyles = props.styles as DefinitionMap
 	let styles: DefinitionMap
 	if (!inlineStyles || !Object.keys(inlineStyles).length) {
-		styles = variantStyles
+		styles = {}
 	} else {
 		styles = mergeDefinitionMaps(
-			getVariantStyles(props, defaultVariantComponentType),
+			{},
 			props.styles as DefinitionMap,
 			props.context
 		)

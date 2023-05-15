@@ -21,19 +21,6 @@ import { useShould } from "./display"
 const getVariantKey = (variant: ComponentVariant): MetadataKey =>
 	`${variant.namespace}.${variant.name}` as MetadataKey
 
-function getThemeOverride(
-	variant: ComponentVariant,
-	context: Context
-): DefinitionMap {
-	const componentType = variant.component
-	const theme = context.getTheme()
-	const overrides = theme?.definition?.variantOverrides
-	const override = overrides?.[componentType]?.[
-		getVariantKey(variant)
-	] as DefinitionMap
-	return override
-}
-
 // A cache of full variant definitions, where all variant extensions have been resolved
 // NOTE: This cache will be persisted across all route navigations, and has no upper bound.
 // Consider adding a cache eviction policy if this becomes a problem.
@@ -44,32 +31,23 @@ function getDefinitionFromVariant(
 	context: Context
 ): DefinitionMap {
 	if (!variant) return {}
-	let def = variant.definition
-	if (variant.extends) {
-		// To avoid expensive variant extension resolution, check cache first
-		const variantKey = `${variant.component}:${getVariantKey(variant)}`
-		const cachedDef = expandedVariantDefinitionCache[variantKey]
-		if (cachedDef) {
-			def = cachedDef
-		} else {
-			def = expandedVariantDefinitionCache[variantKey] =
-				mergeDefinitionMaps(
-					getDefinitionFromVariant(
-						context.getComponentVariant(
-							variant.component,
-							variant.extends as MetadataKey
-						),
-						context
-					),
-					def,
-					undefined
-				)
-		}
-	}
+	if (!variant.extends) return variant.definition
 
-	const override = getThemeOverride(variant, context)
-	if (!override) return def
-	return mergeDefinitionMaps(def, { "uesio.styles": override }, undefined)
+	// To avoid expensive variant extension resolution, check cache first
+	const variantKey = `${variant.component}:${getVariantKey(variant)}`
+	const cachedDef = expandedVariantDefinitionCache[variantKey]
+	if (cachedDef) return cachedDef
+	return (expandedVariantDefinitionCache[variantKey] = mergeDefinitionMaps(
+		getDefinitionFromVariant(
+			context.getComponentVariant(
+				variant.component,
+				variant.extends as MetadataKey
+			),
+			context
+		),
+		variant.definition,
+		undefined
+	))
 }
 
 function mergeContextVariants(

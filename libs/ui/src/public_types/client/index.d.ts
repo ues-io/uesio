@@ -47,7 +47,6 @@ export type Definition =
 	| DefinitionMap[]
 export type BaseDefinition = {
 	"uesio.id"?: string
-	"uesio.styles"?: DefinitionMap
 	"uesio.styleTokens"?: Record<string, string[]>
 	"uesio.variant"?: MetadataKey
 	"uesio.classes"?: string
@@ -160,7 +159,6 @@ export namespace definition {
 		| DefinitionMap[]
 	export type BaseDefinition = {
 		"uesio.id"?: string
-		"uesio.styles"?: DefinitionMap
 		"uesio.styleTokens"?: Record<string, string[]>
 		"uesio.variant"?: MetadataKey
 		"uesio.classes"?: string
