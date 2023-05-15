@@ -24,6 +24,7 @@ func unmarshalConditions(node *yaml.Node) ([]LoadRequestCondition, error) {
 }
 
 type LoadRequestCondition struct {
+	ID             string                 `json:"id" bot:"id" yaml:"id"`
 	Field          string                 `json:"field" bot:"field" yaml:"field"`
 	Value          interface{}            `json:"value" bot:"value" yaml:"value"`
 	Values         interface{}            `json:"values" bot:"values" yaml:"values"`
