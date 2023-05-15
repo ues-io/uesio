@@ -1,7 +1,17 @@
 # vendor
 
-This library was generated with [Nx](https://nx.dev).
+This module generates loads in static NPM vendor dependences, e.g. React, React DOM, and copies them into a /vendor folder within the /dist directory, along with a manifest which can be read by server-side code to know where these vendored assets are located, so that corresponding URLs can be precomputed server-side and used when we are rendering the index.gohtml template.
 
-## Running unit tests
+For example, if you run `nx build vendor`, you should see an output `manifest.json` generated within the `/dist/vendor` folder looking something like this:
 
-This is just a set of build commands for downloading static vendor files like react/redux/etc.
+```
+{"react":{"version":"17.0.2","path":"umd/react.development.js"},"react-dom":{"version":"17.0.2","path":"umd/react-dom.development.js"},"@emotion/css":{"version":"11.10.6","path":"dist/emotion-css.umd.min.js"},"monaco-editor":{"version":"0.34.0"}}
+```
+
+## Adding a vendor dependency
+
+If you need to add a vendor dependency, do the following:
+
+1. `use npm install --save-dev <DEP_NAME@VERSION>` to install the dependency, and update the package.json
+2. Update `gulpfile.js` in the `// BEGIN EDITABLE REGION` section to add the name of the module and the path to the file that you want to load.
+3. To test, re-run `npm run build-all`. The file should be loaded

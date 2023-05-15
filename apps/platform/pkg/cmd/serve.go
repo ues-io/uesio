@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"os"
 
+	"golang.org/x/net/http2"
+
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
 	"github.com/thecloudmasters/uesio/pkg/controller"
@@ -54,6 +56,10 @@ var (
 	staticPrefix = "/static"
 )
 
+// Vendored scripts live under /static but do NOT get the GITSHA of the Uesio app,
+// because they are not expected to change with the GITSHA, but are truly static, immutable
+const vendorScriptsPrefix = "/static/vendor"
+
 func serve(cmd *cobra.Command, args []string) {
 
 	logger.Log("Running serv command!", logger.INFO)
@@ -69,6 +75,7 @@ func serve(cmd *cobra.Command, args []string) {
 	gitsha := os.Getenv("GITSHA")
 	cacheStaticAssets := gitsha != ""
 	staticAssetsPath := ""
+
 	if cacheStaticAssets {
 		staticAssetsPath = "/" + gitsha
 		file.SetAssetsPath(staticAssetsPath)
@@ -80,7 +87,8 @@ func serve(cmd *cobra.Command, args []string) {
 	// r.PathPrefix("/debug/pprof").Handler(http.DefaultServeMux)
 
 	r.Handle(fontsPrefix+"/{filename:.*}", controller.Fonts(cwd, fontsPrefix, cacheStaticAssets)).Methods(http.MethodGet)
-	r.Handle(staticPrefix+"/{filename:.*}", file.Vendor(cwd, staticPrefix, cacheStaticAssets)).Methods(http.MethodGet)
+	r.Handle(vendorScriptsPrefix+"/{filename:.*}", file.ServeVendorScript(cwd, vendorScriptsPrefix, cacheStaticAssets)).Methods(http.MethodGet)
+	r.Handle(staticPrefix+"/{filename:.*}", file.Static(cwd, staticPrefix, cacheStaticAssets)).Methods(http.MethodGet)
 	r.HandleFunc("/health", controller.Health).Methods(http.MethodGet)
 
 	// The workspace router
@@ -331,14 +339,27 @@ func serve(cmd *cobra.Command, args []string) {
 	// Universal middlewares
 	r.Use(middleware.GZip())
 
+	server := &http.Server{
+		Addr:    serveAddr,
+		Handler: r,
+	}
+	if os.Getenv("UESIO_USE_HTTP_2") == "true" {
+		err = http2.ConfigureServer(server, &http2.Server{})
+		if err != nil {
+			logger.LogError(err)
+			return
+		}
+		logger.Log("Service started using HTTP2 🚀", logger.INFO)
+	}
+
 	useSSL := os.Getenv("UESIO_USE_HTTPS")
 	var serveErr error
 	if useSSL == "true" {
 		logger.Log("Service Started over SSL on Port: "+port, logger.INFO)
-		serveErr = http.ListenAndServeTLS(serveAddr, "ssl/certificate.crt", "ssl/private.key", r)
+		serveErr = server.ListenAndServeTLS("ssl/certificate.crt", "ssl/private.key")
 	} else {
 		logger.Log("Service Started on Port: "+port, logger.INFO)
-		serveErr = http.ListenAndServe(serveAddr, r)
+		serveErr = server.ListenAndServe()
 	}
 	if serveErr != nil {
 		logger.LogError(serveErr)
