@@ -16,7 +16,20 @@ func (c *Collection) UnmarshalJSON(data []byte) error {
 	err := json.Unmarshal(data, &jsonObj)
 	if err != nil {
 		// We failed at unmarshalling to an object. It's probably an array
-		return json.Unmarshal(data, c)
+		// Since we've overridden the UnmarshalJSON for this type,
+		// we can't just unmarshall straight into c, so unmarshall into an alias
+		// and then move over the items
+		var items []*Item
+		err = json.Unmarshal(data, &items)
+		if err != nil {
+			return err
+		}
+		for _, item := range items {
+			err := c.AddItem(item)
+			if err != nil {
+				return err
+			}
+		}
 	}
 
 	for _, data := range jsonObj {
