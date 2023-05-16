@@ -24,14 +24,14 @@ import (
 var indexTemplate *template.Template
 
 func init() {
-	baseDir := ""
 	wd, _ := os.Getwd()
+	baseDir := wd
 	// Handle path resolution issues when running tests
 	if strings.Contains(wd, filepath.Join("pkg", "")) {
 		baseDir = filepath.Join(wd, "..", "..")
 	}
 	indexPath := filepath.Join(baseDir, "platform", "index.gohtml")
-	cssPath := filepath.Join(baseDir, "fonts", "fonts.css")
+	cssPath := filepath.Join(baseDir, "..", "..", "dist", "vendor", "fonts", "fonts.css")
 	indexTemplate = template.Must(template.New("index.gohtml").Funcs(template.FuncMap{
 		"getPackURL": getPackUrl,
 	}).ParseFiles(indexPath, cssPath))
@@ -206,7 +206,7 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 		PreloadMetadata:     preload,
 		MonacoEditorVersion: file.GetMonacoEditorVersion(),
 		StaticAssetsPath:    file.GetAssetsPath(),
-		VendorAssetsHost:    file.GetVendorAssetsHost(),
+		StaticAssetsHost:    file.GetAssetsHost(),
 		VendorScriptUrls:    vendorScriptUrls,
 	}
 	// Initiate early preloads of all vendor scripts via Link headers

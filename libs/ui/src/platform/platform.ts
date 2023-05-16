@@ -17,7 +17,7 @@ import { memoizedGetJSON } from "./memoizedAsync"
 // and for us to load Uesio-app-versioned files from the server
 interface UesioWindow extends Window {
 	uesioStaticAssetsPath: string
-	vendorAssetsHost: string
+	uesioStaticAssetsHost: string
 	// This is a hack to ensure we always load the correct version of Monaco
 	monacoEditorVersion: string
 }
@@ -25,8 +25,8 @@ interface UesioWindow extends Window {
 const getStaticAssetsPath = () =>
 	(window as unknown as UesioWindow).uesioStaticAssetsPath
 
-const getVendorAssetsPath = () =>
-	(window as unknown as UesioWindow).vendorAssetsHost + "/static/vendor"
+const getStaticAssetsHost = () =>
+	(window as unknown as UesioWindow).uesioStaticAssetsHost
 
 const getMonacoEditorVersion = () =>
 	(window as unknown as UesioWindow).monacoEditorVersion
@@ -538,7 +538,7 @@ const platform = {
 		return respondJSON(response)
 	},
 	getMonacoEditorVersion,
-	getVendorAssetsPath,
+	getStaticAssetsHost,
 	getStaticAssetsPath,
 }
 
