@@ -7,16 +7,12 @@ import { useDeepCompareEffect } from "react-use"
 const { ErrorMessage } = component
 
 const monacoEditorVersion = api.platform.getMonacoEditorVersion()
-const vendorAssetsPath = api.platform.getVendorAssetsPath()
+const staticAssetsHost = api.platform.getStaticAssetsHost()
 const { memoizedAsync } = api.platform
 
 loader.config({
 	paths: {
-		vs:
-			vendorAssetsPath +
-			"/monaco-editor/" +
-			monacoEditorVersion +
-			"/min/vs",
+		vs: `${staticAssetsHost}/static/vendor/monaco-editor/${monacoEditorVersion}/min/vs`,
 	},
 })
 
