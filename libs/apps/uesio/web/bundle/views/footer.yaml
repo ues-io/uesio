@@ -27,10 +27,7 @@ definition:
                     components:
                       - uesio/io.image:
                           file: uesio/web.logowhite
-                          height: 55px
-                          uesio.styleTokens:
-                            root:
-                              - h-[55px]
+                          height: 55
                 - uesio/io.griditem:
                     components:
                       - uesio/io.text:
@@ -65,7 +62,7 @@ definition:
                     components:
                       - uesio/io.image:
                           file: uesio/web.swissmade
-                          height: 55px
+                          height: 40
                           uesio.styleTokens:
                             root:
-                              - h-[55px]
+                              - m-2.5
