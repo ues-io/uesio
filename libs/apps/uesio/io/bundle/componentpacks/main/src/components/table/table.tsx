@@ -27,6 +27,7 @@ import {
 	ReferenceFieldOptions,
 	LongTextFieldOptions,
 	UserFieldOptions,
+	ApplyChanges,
 } from "../field/field"
 import FieldWrapper from "../../utilities/fieldwrapper/fieldwrapper"
 
@@ -53,6 +54,7 @@ type ColumnDefinition = {
 	displayAs?: string
 	label: string
 	width?: string
+	applyChanges?: ApplyChanges
 	reference?: ReferenceFieldOptions
 	user?: UserFieldOptions
 	number?: NumberFieldOptions
@@ -225,6 +227,7 @@ const Table: definition.UC<TableDefinition> = (props) => {
 			<component.Component
 				componentType="uesio/io.field"
 				definition={{
+					applyChanges: column.applyChanges,
 					fieldId: column.field,
 					user: column.user,
 					reference: column.reference,

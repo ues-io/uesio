@@ -42,7 +42,6 @@ properties:
       - updates:
           - field: displayAs
           - field: placeholder
-          - field: applyChanges
       # If the display type is now a type for which display-type specific properties are not relevant,
       # clear out these old properties
       - updates:
@@ -66,6 +65,15 @@ properties:
             field: fieldDisplayType
             operator: NOT_EQUALS
             value: LONGTEXT
+      - updates:
+          - field: applyChanges
+        conditions:
+          - type: fieldValue
+            field: fieldDisplayType
+            operator: NOT_IN
+            values:
+              - TEXT
+              - NUMBER
   - name: label
     type: TEXT
     label: Label
@@ -104,6 +112,7 @@ properties:
         operator: IN
         values:
           - TEXT
+          - NUMBER
   - name: displayAs
     type: SELECT
     label: Display as
