@@ -19,39 +19,5 @@ definition:
         - field: uesio/tests.genus
         - field: uesio/tests.species
       batchsize: 10
-    condition:
-      collection: uesio/tests.wire_condition
-      fields:
-        uesio/tests.autonumber:
-        uesio/tests.checkbox:
-        uesio/tests.date:
-        uesio/tests.email:
-        uesio/tests.longtext:
-        uesio/tests.number:
-        uesio/tests.reference:
-        uesio/tests.select:
-        uesio/tests.text:
-        uesio/tests.timestamp:
-        uesio/core.owner:
-        uesio/core.updatedby:
-        uesio/core.updatedat:
-        uesio/core.createdby:
-        uesio/core.createdat:
-      order:
-        - field: uesio/tests.autonumber
-      batchsize: 10
-    reference:
-      collection: uesio/tests.wire_reference
-      fields:
-        uesio/tests.autonumber_reference:
-        uesio/tests.text_reference:
-        uesio/core.owner:
-        uesio/core.updatedby:
-        uesio/core.updatedat:
-        uesio/core.createdby:
-        uesio/core.createdat:
-      order:
-        - field: uesio/tests.autonumber_reference
-      batchsize: 10
   # Components determine the layout and composition of your view
   components:

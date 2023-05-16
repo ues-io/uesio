@@ -20,7 +20,7 @@ definition:
         uesio/core.id:
         uesio/studio.name:
         uesio/studio.namefield:
-        uesio/studio.workspace: 
+        uesio/studio.workspace:
         uesio/studio.datasource:
         uesio/core.updatedat:
         uesio/core.updatedby:
