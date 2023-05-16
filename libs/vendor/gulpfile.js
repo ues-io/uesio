@@ -2,6 +2,7 @@ const gulp = require("gulp")
 const fs = require("fs")
 const packageLock = require("../../package-lock.json")
 const distVendor = "../../dist/vendor"
+const fontsSrc = "fonts/**"
 const nodeModules = "../../node_modules"
 const devMode = process.env.UESIO_DEV === "true"
 
@@ -82,13 +83,17 @@ const scriptTasks = modules.map(({ src, dest, path, name: module }) => {
 	}
 })
 
+const moveFonts = () =>
+	gulp.src(fontsSrc).pipe(gulp.dest(`${distVendor}/fonts`))
+
 /*
  * Specify if tasks run in series or parallel using `gulp.series` and `gulp.parallel`
  */
 const build = gulp.series(
 	clean,
 	gulp.parallel.apply(this, scriptTasks),
-	generateVendorManifest
+	generateVendorManifest,
+	moveFonts
 )
 
 /*

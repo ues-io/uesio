@@ -50,13 +50,12 @@ var groupingParam = getFullItemOrTextParam("grouping")
 var collectionParam = getFullItemParam("collectionname")
 
 var (
-	fontsPrefix  = "/fonts"
 	staticPrefix = "/static"
 )
 
-// Vendored scripts live under /static but do NOT get the GITSHA of the Uesio app,
+// Vendored scripts/fonts live under /static but do NOT get the GITSHA of the Uesio app,
 // because they are not expected to change with the GITSHA, but are truly static, immutable
-const vendorScriptsPrefix = "/static/vendor"
+const vendorPrefix = "/static/vendor"
 
 func serve(cmd *cobra.Command, args []string) {
 
@@ -77,15 +76,13 @@ func serve(cmd *cobra.Command, args []string) {
 	if cacheStaticAssets {
 		staticAssetsPath = "/" + gitsha
 		file.SetAssetsPath(staticAssetsPath)
-		fontsPrefix = staticAssetsPath + fontsPrefix
 		staticPrefix = staticAssetsPath + staticPrefix
 	}
 
 	// Profiler Info
 	// r.PathPrefix("/debug/pprof").Handler(http.DefaultServeMux)
 
-	r.Handle(fontsPrefix+"/{filename:.*}", controller.Fonts(cwd, fontsPrefix, cacheStaticAssets)).Methods(http.MethodGet)
-	r.Handle(vendorScriptsPrefix+"/{filename:.*}", file.ServeVendorScript(cwd, vendorScriptsPrefix, cacheStaticAssets)).Methods(http.MethodGet)
+	r.Handle(vendorPrefix+"/{filename:.*}", file.ServeVendor(vendorPrefix, cacheStaticAssets)).Methods(http.MethodGet)
 	r.Handle(staticPrefix+"/{filename:.*}", file.Static(cwd, staticPrefix, cacheStaticAssets)).Methods(http.MethodGet)
 	r.HandleFunc("/health", controller.Health).Methods(http.MethodGet)
 

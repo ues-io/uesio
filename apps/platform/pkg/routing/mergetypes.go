@@ -66,7 +66,7 @@ type MergeData struct {
 
 	MonacoEditorVersion string   `json:"-"`
 	StaticAssetsPath    string   `json:"-"`
-	VendorAssetsHost    string   `json:"-"`
+	StaticAssetsHost    string   `json:"-"`
 	VendorScriptUrls    []string `json:"-"`
 	*PreloadMetadata
 }
