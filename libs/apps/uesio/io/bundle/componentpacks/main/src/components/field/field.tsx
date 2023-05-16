@@ -75,6 +75,11 @@ const fileTextSignals: Record<string, signal.ComponentSignalDescriptor> = {
 	},
 }
 
+const StyleDefaults = Object.freeze({
+	input: [],
+	readonly: [],
+})
+
 const Field: definition.UC<FieldDefinition> = (props) => {
 	const { context, definition, path } = props
 	const {
@@ -120,13 +125,7 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		: fieldMetadata.getUpdateable()
 
 	const mode = (canEdit && context.getFieldMode()) || "READ"
-	const classes = styles.useStyles(
-		{
-			input: {},
-			readonly: {},
-		},
-		props
-	)
+	const classes = styles.useStyleTokens(StyleDefaults, props)
 
 	const common = {
 		classes,

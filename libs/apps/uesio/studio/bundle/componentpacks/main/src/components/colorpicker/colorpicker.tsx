@@ -9,42 +9,32 @@ interface Props extends definition.BaseProps {
 	definition: ColorPickerDefinition
 }
 
+const StyleDefaults = Object.freeze({
+	root: [
+		"leading-none",
+		"grid",
+		"grid-cols-[repeat(16,_minmax(0,_1fr))]",
+		"gap-1",
+		"cursor-pointer",
+	],
+	color: [
+		"h-[13px]",
+		"w-[13px]",
+		"inline-block",
+		"m-0.5",
+		"rounded-full",
+		"transition-all",
+	],
+	selected: ["h-[17px]", "w-[17px]", "bg-white", "border-[5px]", "m-0"],
+})
+
 const ColorPicker: FunctionComponent<Props> = (props) => {
 	const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 	const {
 		context,
 		definition: { fieldId },
 	} = props
-	const classes = styles.useStyles(
-		{
-			root: {
-				lineHeight: 0,
-				display: "grid",
-				gridTemplateColumns: "1fr 1fr 1fr 1fr",
-				gridTemplateRows: "1fr 1fr 1fr 1fr",
-				gridAutoFlow: "column",
-				columnGap: "4px",
-				cursor: "pointer",
-			},
-			color: {
-				height: "13px",
-				width: "13px",
-				display: "inline-block",
-				margin: "2px",
-				borderRadius: "20px",
-				transition: "all 0.2s ease-in",
-			},
-			selected: {
-				height: "17px",
-				width: "17px",
-				backgroundColor: "white",
-				borderWidth: "5px",
-				borderStyle: "solid",
-				margin: "0px",
-			},
-		},
-		props
-	)
+	const classes = styles.useStyleTokens(StyleDefaults, props)
 	const record = context.getRecord()
 	const wire = context.getWire()
 	const colorValue = record?.getFieldValue(fieldId)
@@ -73,36 +63,36 @@ const ColorPicker: FunctionComponent<Props> = (props) => {
 			fieldId={fieldId}
 		>
 			<div className={classes.root}>
-				{styles.colors.ACCENT_COLORS.map((color, index) => {
-					const palette = styles.colors.COLORS[color]
-					return (
-						<div key={index}>
-							{styles.colors.MEDIUM_SHADES.map((shade) => {
-								const hex = palette[shade]
-								const isSelected = colorValue === hex
-								return (
-									<div
-										key={`${color}-${shade}`}
-										className={styles.cx(classes.color, {
-											[classes.selected]: isSelected,
-										})}
-										onClick={() =>
-											record.update(fieldId, hex, context)
-										}
-										style={{
-											...(!isSelected && {
-												backgroundColor: hex,
-											}),
-											...(isSelected && {
-												borderColor: hex,
-											}),
-										}}
-									/>
-								)
-							})}
-						</div>
-					)
-				})}
+				{styles.colors.MEDIUM_SHADES.map((shade) =>
+					styles.colors.ACCENT_COLORS.map((color) => {
+						const palette = styles.colors.COLORS[color]
+						const hex = palette[shade]
+						const isSelected = colorValue === hex
+						return (
+							<div
+								key={`${color}-${shade}`}
+								className={styles.process(
+									undefined,
+									classes.color,
+									{
+										[classes.selected]: isSelected,
+									}
+								)}
+								onClick={() =>
+									record.update(fieldId, hex, context)
+								}
+								style={{
+									...(!isSelected && {
+										backgroundColor: hex,
+									}),
+									...(isSelected && {
+										borderColor: hex,
+									}),
+								}}
+							/>
+						)
+					})
+				)}
 			</div>
 		</FieldWrapper>
 	)

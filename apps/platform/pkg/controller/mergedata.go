@@ -21,7 +21,21 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
-var indexTemplate, cssTemplate *template.Template
+var indexTemplate *template.Template
+
+func init() {
+	baseDir := ""
+	wd, _ := os.Getwd()
+	// Handle path resolution issues when running tests
+	if strings.Contains(wd, filepath.Join("pkg", "")) {
+		baseDir = filepath.Join(wd, "..", "..")
+	}
+	indexPath := filepath.Join(baseDir, "platform", "index.gohtml")
+	cssPath := filepath.Join(baseDir, "fonts", "fonts.css")
+	indexTemplate = template.Must(template.New("index.gohtml").Funcs(template.FuncMap{
+		"getPackURL": getPackUrl,
+	}).ParseFiles(indexPath, cssPath))
+}
 
 func getPackUrl(key string, workspace *routing.WorkspaceMergeData, site *routing.SiteMergeData) string {
 	namespace, name, err := meta.ParseKey(key)
@@ -49,20 +63,6 @@ func getPackUrl(key string, workspace *routing.WorkspaceMergeData, site *routing
 
 	return fmt.Sprintf("/site/componentpacks/%s/%s%s/%s/%s", user, namepart, siteBundleVersion, name, filePath)
 
-}
-
-func init() {
-	baseDir := ""
-	wd, _ := os.Getwd()
-	// Handle path resolution issues when running tests
-	if strings.Contains(wd, "pkg/") {
-		baseDir = filepath.Join(wd, "..", "..")
-	}
-	indexPath := filepath.Join(baseDir, "platform", "index.gohtml")
-	cssPath := filepath.Join(baseDir, "fonts", "fonts.css")
-	indexTemplate = template.Must(template.New("index.gohtml").Funcs(template.FuncMap{
-		"getPackURL": getPackUrl,
-	}).ParseFiles(indexPath, cssPath))
 }
 
 func GetUserMergeData(session *sess.Session) *routing.UserMergeData {
@@ -190,12 +190,6 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 	site := session.GetSite()
 	workspace := session.GetWorkspace()
 
-	devMode := false
-	val, _ := os.LookupEnv("UESIO_DEV")
-	if val == "true" {
-		devMode = true
-	}
-
 	routingMergeData, err := GetRoutingMergeData(route, workspace, preload, session)
 	if err != nil {
 		msg := "Error getting route merge data: " + err.Error()
@@ -203,13 +197,21 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 		return
 	}
 
+	vendorScriptUrls := file.GetVendorScriptUrls()
+
 	mergeData := routing.MergeData{
-		Route:            routingMergeData,
-		User:             GetUserMergeData(session),
-		Site:             GetSiteMergeData(site),
-		DevMode:          devMode,
-		PreloadMetadata:  preload,
-		StaticAssetsPath: file.GetAssetsPath(),
+		Route:               routingMergeData,
+		User:                GetUserMergeData(session),
+		Site:                GetSiteMergeData(site),
+		PreloadMetadata:     preload,
+		MonacoEditorVersion: file.GetMonacoEditorVersion(),
+		StaticAssetsPath:    file.GetAssetsPath(),
+		VendorAssetsHost:    file.GetVendorAssetsHost(),
+		VendorScriptUrls:    vendorScriptUrls,
+	}
+	// Initiate early preloads of all vendor scripts via Link headers
+	for _, script := range vendorScriptUrls {
+		w.Header().Add("Link", fmt.Sprintf("<%s>; rel=preload; as=script", script))
 	}
 
 	err = indexTemplate.Execute(w, mergeData)

@@ -48,6 +48,25 @@ const APP_ICONS = [
 const getRandomIcon = () =>
 	APP_ICONS[Math.floor(Math.random() * APP_ICONS.length)]
 
+const StyleDefaults = Object.freeze({
+	root: [
+		"leading-none",
+		"grid",
+		"grid-cols-8",
+		"cursor-pointer",
+		"justify-items-left",
+	],
+	iconwrapper: [
+		"inline-block",
+		"rounded-full",
+		"p-1",
+		"border-[5px]",
+		"transition-all",
+		"border-transparent",
+	],
+	icon: ["text-[14pt]"],
+})
+
 const AppIconPicker: FunctionComponent<Props> = (props) => {
 	const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 	const Icon = component.getUtility("uesio/io.icon")
@@ -79,38 +98,7 @@ const AppIconPicker: FunctionComponent<Props> = (props) => {
 	if (!fieldMetadata || !colorFieldMetadata)
 		throw new Error("Invalid icon field or color field")
 
-	const classes = styles.useStyles(
-		{
-			root: {
-				lineHeight: 0,
-				display: "grid",
-				gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr",
-				gridTemplateRows: "36px 36px 36px 36px",
-				columnGap: "4px",
-				cursor: "pointer",
-				justifyItems: "center",
-				alignItems: "center",
-			},
-			iconwrapper: {
-				display: "inline-block",
-				borderRadius: "20px",
-				color: "#555",
-				padding: "4px",
-				transition: "all 0.2s ease-in",
-				borderWidth: "0px",
-				borderStyle: "solid",
-				borderColor: color,
-			},
-			icon: {
-				fontSize: "14pt",
-			},
-			selected: {
-				borderWidth: "5px",
-				color,
-			},
-		},
-		props
-	)
+	const classes = styles.useStyleTokens(StyleDefaults, props)
 
 	return (
 		<FieldWrapper
@@ -126,9 +114,12 @@ const AppIconPicker: FunctionComponent<Props> = (props) => {
 					return (
 						<div
 							key={index}
-							className={styles.cx(classes.iconwrapper, {
-								[classes.selected]: isSelected,
-							})}
+							className={styles.process(
+								undefined,
+								classes.iconwrapper,
+								isSelected && `border-[${color}]`,
+								isSelected && `text-[${color}]`
+							)}
 							onClick={() => {
 								record.update(fieldId, icon, context)
 							}}

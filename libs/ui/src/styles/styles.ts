@@ -22,7 +22,6 @@ const twMerge = extendTailwindMerge({
 	},
 })
 
-const STYLES_PROPERTY = "uesio.styles"
 const TOKENS_PROPERTY = "uesio.styleTokens"
 
 const defaultTheme: ThemeState = {
@@ -37,7 +36,6 @@ const defaultTheme: ThemeState = {
 			info: "#2196f3",
 			success: "#4caf50",
 		},
-		variantOverrides: {},
 		spacing: 8,
 	},
 }
@@ -55,39 +53,6 @@ function useStyleTokens<K extends string>(
 				context,
 				defaultClasses,
 				inlineTokens[className]
-			)
-			return classNames
-		},
-		{} as Record<K, string>
-	)
-}
-
-function useStyles<K extends string>(
-	defaults: Record<K, CSSInterpolation>,
-	props: BaseProps | null
-) {
-	const existingStyleTokens = props?.definition?.[TOKENS_PROPERTY]
-	let existing = props?.definition?.[STYLES_PROPERTY]
-	if (existing) {
-		existing = mergeDefinitionMaps({}, existing, props?.context) as Record<
-			string,
-			CSSInterpolation
-		>
-	}
-
-	const tokens = existingStyleTokens || {}
-	return Object.entries(defaults).reduce(
-		(classNames: Record<string, string>, entry: [K, CSSInterpolation]) => {
-			const [className, defaultClasses] = entry
-			const existingStylesForClass = existing?.[
-				className
-			] as CSSInterpolation[]
-			classNames[className] = process(
-				props?.context,
-				tokens[className],
-				existingStylesForClass
-					? css(defaultClasses, existingStylesForClass)
-					: css(defaultClasses)
 			)
 			return classNames
 		},
@@ -114,19 +79,6 @@ function getVariantDefinition(
 	)
 	if (!variant) return undefined
 	return getDefinitionFromVariant(variant, props.context)
-}
-
-function getVariantStyles(
-	props: UtilityProps,
-	componentType: MetadataKey | undefined
-) {
-	const variantDefinition = getVariantDefinition(props, componentType)
-	if (!variantDefinition) return {}
-	return mergeDefinitionMaps(
-		{},
-		variantDefinition?.[STYLES_PROPERTY] as DefinitionMap,
-		props.context
-	)
 }
 
 function getVariantTokens(
@@ -177,14 +129,13 @@ function useUtilityStyles<K extends string>(
 	props: UtilityProps,
 	defaultVariantComponentType?: MetadataKey
 ) {
-	const variantStyles = getVariantStyles(props, defaultVariantComponentType)
 	const inlineStyles = props.styles as DefinitionMap
 	let styles: DefinitionMap
 	if (!inlineStyles || !Object.keys(inlineStyles).length) {
-		styles = variantStyles
+		styles = {}
 	} else {
 		styles = mergeDefinitionMaps(
-			getVariantStyles(props, defaultVariantComponentType),
+			{},
 			props.styles as DefinitionMap,
 			props.context
 		)
@@ -223,6 +174,5 @@ export {
 	useUtilityStyleTokens,
 	useUtilityStyles,
 	useStyleTokens,
-	useStyles,
 	colors,
 }

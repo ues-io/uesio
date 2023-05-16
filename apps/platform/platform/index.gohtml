@@ -21,14 +21,9 @@
         <style>
             {{template "fonts" .}}
         </style>
-        {{- if .DevMode -}}
-        <script src="{{ .StaticAssetsPath }}/static/vendor/react.development.js"></script>
-        <script src="{{ .StaticAssetsPath }}/static/vendor/react-dom.development.js"></script>
-        {{- else -}}
-        <script src="{{ .StaticAssetsPath }}/static/vendor/react.production.min.js"></script>
-        <script src="{{ .StaticAssetsPath }}/static/vendor/react-dom.production.min.js"></script>
+        {{- range .VendorScriptUrls }}
+        <script src="{{.}}"></script>
         {{- end -}}
-        <script src="{{ .StaticAssetsPath }}/static/vendor/emotion-css.umd.min.js"></script>
         <script src="{{ .StaticAssetsPath }}/static/ui/uesio.js" type="module"></script>
     </head>
 <body>
@@ -37,6 +32,8 @@
         import * as uesio from "{{ .StaticAssetsPath }}/static/ui/uesio.js"
         window.uesio = uesio
         window.uesioStaticAssetsPath = "{{ .StaticAssetsPath }}"
+        window.vendorAssetsHost = "{{ .VendorAssetsHost }}"
+        window.monacoEditorVersion = "{{ .MonacoEditorVersion }}"
     </script>
     {{$workspace := .Route.Workspace -}}
     {{$site := .Site -}}

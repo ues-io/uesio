@@ -25,6 +25,7 @@ export const getJSON = (url: string) =>
 		method: "GET",
 		headers: {
 			"Content-Type": "application/json",
+			"Accept-Encoding": "gzip, deflate",
 		},
 	}).then(respondJSON)
 
