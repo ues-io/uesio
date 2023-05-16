@@ -1,9 +1,10 @@
-import { ChangeEvent, useState } from "react"
+import { useState } from "react"
 import { component, styles, definition } from "@uesio/ui"
 import { setSelectedPath, useSelectedPath } from "../../api/stateapi"
 import { FullPath } from "../../api/path"
 import { IconProperty } from "../../properties/componentproperty"
 import { materialIcons } from "../../icons/materialicons"
+import PropertiesWrapper from "../mainwrapper/propertiespanel/propertieswrapper"
 
 type Definition = {
 	property: IconProperty
@@ -11,34 +12,9 @@ type Definition = {
 }
 
 const StyleDefaults = Object.freeze({
-	icons: {
-		display: "grid",
-		overflow: "auto",
-		gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr 1fr",
-		padding: "16px",
-		rowGap: "14px",
-		background: "white",
-	},
-	search: {
-		marginBottom: "2px",
-		width: "100%",
-		height: "30px",
-		outline: 0,
-		borderWidth: "0 0 1px",
-		padding: "16px 8px",
-	},
-	iconfield: {
-		display: "grid",
-		gridTemplateColumns: "1fr min-content",
-		alignItems: "center",
-		columnGap: "8px",
-	},
-	iconpreview: {
-		backgroundColor: "#f0f0f0",
-		padding: "6px",
-		borderRadius: "20px",
-		fontSize: "8pt",
-	},
+	icons: ["grid", "overflow-auto", "grid-cols-6", "p-4", "gap-4"],
+	iconfield: ["grid", "grid-cols-[1fr_min-content]", "items-center", "gap-2"],
+	iconpreview: ["bg-slate-100", "p-2", "rounded-full", "text-xs"],
 })
 
 const IconProp: definition.UC<Definition> = (props) => {
@@ -48,9 +24,7 @@ const IconProp: definition.UC<Definition> = (props) => {
 	const TextField = component.getUtility("uesio/io.textfield")
 	const Popper = component.getUtility("uesio/io.popper")
 	const IconButton = component.getUtility("uesio/io.iconbutton")
-	const TitleBar = component.getUtility("uesio/io.titlebar")
 	const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
-	const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
 
 	const iconPropPath = path.addLocal(property.name)
 	const selectedPath = useSelectedPath(context)
@@ -59,9 +33,6 @@ const IconProp: definition.UC<Definition> = (props) => {
 	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
 
 	const [searchTerm, setSearchTerm] = useState("")
-	const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-		setSearchTerm(event.target.value)
-	}
 
 	const results = !searchTerm
 		? materialIcons
@@ -69,7 +40,7 @@ const IconProp: definition.UC<Definition> = (props) => {
 				icon.toLowerCase().includes(searchTerm.toLocaleLowerCase())
 		  )
 
-	const classes = styles.useUtilityStyles(StyleDefaults, props)
+	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
 	const viewDefId = context.getViewDefId()
 	const record = context.getRecord()
@@ -116,36 +87,13 @@ const IconProp: definition.UC<Definition> = (props) => {
 					autoPlacement={["right-start"]}
 					useFirstRelativeParent
 				>
-					<ScrollPanel
-						variant="uesio/builder.mainsection"
-						header={
-							<>
-								<TitleBar
-									title={"Icons"}
-									variant="uesio/builder.primary"
-									subtitle={"Material Icons"}
-									actions={
-										<IconButton
-											context={context}
-											variant="uesio/builder.buildtitle"
-											icon="close"
-											onClick={() =>
-												setSelectedPath(context, path)
-											}
-										/>
-									}
-									context={context}
-								/>
-								<input
-									className={classes.search}
-									value={searchTerm}
-									onChange={handleChange}
-									type="search"
-									placeholder="Search..."
-								/>
-							</>
-						}
+					<PropertiesWrapper
+						title="Select an Icon"
+						path={iconPropPath}
 						context={context}
+						searchTerm={searchTerm}
+						setSearchTerm={setSearchTerm}
+						onUnselect={() => setSelectedPath(context, path)}
 					>
 						<div className={classes.icons}>
 							{results.map((iconName) => (
@@ -163,7 +111,7 @@ const IconProp: definition.UC<Definition> = (props) => {
 								/>
 							))}
 						</div>
-					</ScrollPanel>
+					</PropertiesWrapper>
 				</Popper>
 			)}
 		</div>

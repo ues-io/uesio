@@ -10,6 +10,11 @@ interface ConstrainedInputProps extends definition.UtilityProps {
 	textVariant?: metadata.MetadataKey
 }
 
+const StyleDefaults = Object.freeze({
+	root: ["grid", "grid-cols-[1fr_max-content]", "gap-1"],
+	button: ["p-1"],
+})
+
 const ConstrainedInput: FunctionComponent<ConstrainedInputProps> = (props) => {
 	const {
 		context,
@@ -42,14 +47,8 @@ const ConstrainedInput: FunctionComponent<ConstrainedInputProps> = (props) => {
 	const TextField = component.getUtility("uesio/io.textfield")
 	const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 
-	const classes = styles.useUtilityStyles(
-		{
-			innerWrapper: {
-				display: "inline-grid",
-				gridTemplateColumns: "80% 20%",
-				gridTemplateRows: "1",
-			},
-		},
+	const classes = styles.useUtilityStyleTokens(
+		StyleDefaults,
 		props,
 		"uesio/io.field"
 	)
@@ -61,7 +60,7 @@ const ConstrainedInput: FunctionComponent<ConstrainedInputProps> = (props) => {
 			context={context}
 			variant={fieldWrapperVariant}
 		>
-			<div className={classes.innerWrapper}>
+			<div className={classes.root}>
 				<TextField
 					mode={inEditMode ? "EDIT" : "READ"}
 					value={keyValue}
@@ -76,10 +75,11 @@ const ConstrainedInput: FunctionComponent<ConstrainedInputProps> = (props) => {
 					onClick={onClickButton}
 					icon={inEditMode ? "save" : "edit"}
 					context={context}
-					tooltip={
+					label={
 						inEditMode ? "Apply change" : "Click to change value"
 					}
 					tooltipPlacement={"bottom-start"}
+					className={classes.button}
 				/>
 			</div>
 		</FieldWrapper>

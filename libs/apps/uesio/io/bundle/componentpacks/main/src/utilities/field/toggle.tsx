@@ -10,85 +10,45 @@ interface ToggleFieldProps extends definition.UtilityProps {
 const ToggleField: FC<ToggleFieldProps> = (props) => {
 	const { setValue, value, mode } = props
 
-	const {
-		definition: {
-			palette: { primary: primaryColor },
-		},
-	} = props.context.getTheme()
-
 	const readonly = mode === "READ"
 	const checked = value === true
-	const classes = styles.useUtilityStyles(
+	const classes = styles.useUtilityStyleTokens(
 		{
-			root: {
-				display: "flex",
-				justifyContent: "center",
-				flexFlow: "column",
-				userSelect: "none",
-				".switch": {
-					position: "relative",
-					display: "inline-block",
-					width: "2.5em",
-					height: "1.5em",
+			root: ["w-full", "text-center"],
+			switch: [
+				"[&:has(:focus-visible)]:(outline(& 2 offset-2 blue-600))",
+				"relative",
+				"inline-block",
+				"w-[2.5em]",
+				"h-[1.5em]",
+				"bg-slate-200",
+				"transition-colors",
+				"duration-100",
+				checked && "bg-slate-800",
+				"rounded-full",
+				mode === "READ" ? "cursor-not-allowed" : "cursor-pointer",
+			],
 
-					input: {
-						opacity: "0",
-						width: "0",
-						height: "0",
-
-						"&:checked + .slider": {
-							// TODO: Delegate merging of styles here to styles.ts
-							backgroundColor: primaryColor,
-						},
-						"&:checked + .slider:before": {
-							transform: "translateX(1em)",
-						},
-						"&::focus + .slider": {
-							// TODO: Delegate merging of styles here to styles.ts
-							boxShadow: "0 0 1p " + primaryColor,
-						},
-					},
-					".slider": {
-						position: "absolute",
-						backgroundColor: "#ccc",
-						cursor: mode === "READ" ? "not-allowed" : "pointer",
-						inset: "0 0 0 0",
-						transition: ".4s",
-
-						"&.round": {
-							borderRadius: "34px",
-						},
-						"&.round:before": {
-							borderRadius: "50%",
-						},
-
-						"&:before": {
-							position: "absolute",
-							content: '""',
-							height: "1em",
-							width: "1em",
-							left: "4px",
-							bottom: "4px",
-							backgroundColor: "white",
-							transition: ".4s",
-
-							"@media (prefers-reduced-motion: reduce)": {
-								transition: "none",
-							},
-						},
-					},
-				},
-			},
-			native: {},
-			input: {},
-			readonly: {},
+			slider: [
+				"absolute",
+				"h-[1em]",
+				"w-[1em]",
+				"left-1",
+				"bottom-1",
+				"bg-white",
+				"transition-transform",
+				"duration-300",
+				"rounded-full",
+				checked && "translate-x-4",
+			],
+			native: ["opacity-0", "w-0", "h-0"],
 		},
 		props
 	)
 
 	return (
-		<label title="toggle" className={classes.root}>
-			<div className="switch">
+		<div className={classes.root}>
+			<label className={classes.switch} title="toggle">
 				<input
 					className={classes.native}
 					checked={checked}
@@ -96,9 +56,9 @@ const ToggleField: FC<ToggleFieldProps> = (props) => {
 					disabled={readonly}
 					onChange={(event): void => setValue(event.target.checked)}
 				/>
-				<span className="slider round" />
-			</div>
-		</label>
+				<span className={classes.slider} />
+			</label>
+		</div>
 	)
 }
 

@@ -1,6 +1,5 @@
 import { useEffect } from "react"
 import { useRoute } from "../bands/route/selectors"
-import { css } from "@emotion/css"
 import Progress from "./progress"
 import { ViewArea } from "./view"
 import { useSite } from "../bands/site"
@@ -143,7 +142,7 @@ const Route: UtilityComponent = (props) => {
 			)}
 			<Progress isAnimating={!!route.isLoading} context={props.context} />
 			<div
-				className={css({
+				style={{
 					position: "fixed",
 					right: "2em",
 					bottom: "2em",
@@ -151,7 +150,7 @@ const Route: UtilityComponent = (props) => {
 					rowGap: "10px",
 					marginLeft: "2em",
 					width: "350px",
-				})}
+				}}
 			>
 				<NotificationArea context={props.context} />
 			</div>

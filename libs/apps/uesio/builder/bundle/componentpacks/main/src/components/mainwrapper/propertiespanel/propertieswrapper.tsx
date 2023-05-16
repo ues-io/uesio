@@ -39,25 +39,19 @@ const PropertiesWrapper: definition.UtilityComponent<Props> = (props) => {
 		context,
 	} = props
 
-	const classes = styles.useUtilityStyles(
+	const classes = styles.useUtilityStyleTokens(
 		{
-			root: {
-				width: "300px",
-			},
-			crumbwrapper: {
-				lineHeight: "10px",
-			},
-			crumb: {
-				background: "white",
-				height: "3px",
-				width: "3px",
-				display: "inline-block",
-				marginRight: "3px",
-				borderRadius: "3px",
-			},
-			tabsTitle: {
-				paddingBottom: tabs ? "2px" : "8px",
-			},
+			root: ["w-[300px]"],
+			crumbwrapper: ["leading-3"],
+			crumb: [
+				"bg-white",
+				"h-[3px]",
+				"w-[3px]",
+				"inline-block",
+				"mr-[3px]",
+				"rounded-full",
+			],
+			tabsTitle: [`pb-[${tabs ? "2px" : "8px"}]`],
 		},
 		props
 	)

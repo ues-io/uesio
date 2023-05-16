@@ -11,7 +11,6 @@ const devMode = process.env.UESIO_DEV === "true"
 // MODULE NAMES
 const REACT = "react"
 const REACT_DOM = "react-dom"
-const EMOTION = "@emotion/css"
 const MONACO = "monaco-editor"
 
 // NOTE: Modules are loaded in the sequence of this array
@@ -25,11 +24,6 @@ const modules = [
 		name: REACT_DOM,
 		path: `umd/react-dom.${devMode ? "development" : "production.min"}.js`,
 		dest: "umd",
-	},
-	{
-		name: EMOTION,
-		path: "dist/emotion-css.umd.min.js",
-		dest: "dist",
 	},
 	{
 		name: MONACO,
