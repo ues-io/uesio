@@ -82,7 +82,11 @@ const TextField: definition.UtilityComponent<TextFieldProps> = (props) => {
 					setControlledValue(e.target.value)
 					!applyOnBlur && setValue?.(e.target.value)
 				}}
-				onBlur={(e) => applyOnBlur && setValue?.(e.target.value)}
+				onBlur={(e) =>
+					applyOnBlur &&
+					value !== e.target.value &&
+					setValue?.(e.target.value)
+				}
 			/>
 			{isPassword && (
 				<button
