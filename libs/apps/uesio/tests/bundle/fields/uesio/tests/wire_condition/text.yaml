@@ -1,3 +1,4 @@
 name: text
 type: TEXT
 label: Text
+required: true
