@@ -9,7 +9,7 @@ POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 }
 HTTP 200
 
-# Test a wire load with no conditions
+# Test a wire load with no conditions on wire with collection wire_condition
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 
@@ -38,10 +38,35 @@ ORDER BY main.id::text asc
 LIMIT 3```
 jsonpath "$.wires[0].data[*]" count == 2
 
+# Test a wire load with no conditions on wire with collection wire_reference
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
 
-#   valueSource: VALUE
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.wire_reference",
+            "query": true,
+            "batchsize":2
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].debugQueryString" == ```
+SELECT
+main.id::text AS "uesio/core.id",
+main.uniquekey AS "uesio/core.uniquekey"
+FROM data as "main"
+WHERE
+main.collection = $1 AND
+main.tenant = $2
+ORDER BY main.id::text asc
+LIMIT 3```
+jsonpath "$.wires[0].data[*]" count == 2
 
-# Operator: EQ
+
+# Operator: EQ | valueSource: VALUE
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -75,7 +100,8 @@ ORDER BY main.id::text asc
 LIMIT 501```
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" == "ID-001"
 
-# Operator: NOT_EQ
+
+# Operator: NOT_EQ | valueSource: VALUE
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -110,7 +136,7 @@ ORDER BY main.id::text asc
 LIMIT 501```
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" count == 8
 
-# Operator: IN
+# Operator: IN | valueSource: VALUE
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -148,7 +174,61 @@ jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-001"
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-002"
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" count == 2
 
-# Operator: NOT IN
+# Operator: IN | valueSource: LOOKUP
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.wire_reference",
+            "name":"reference",
+            "fields": [
+                {
+                    "id":"uesio/tests.autonumber_reference"
+                }
+            ],
+            "query":true
+        },
+        {
+            "collection":"uesio/tests.wire_condition",
+            "name":"condition",
+            "query":true,
+            "conditions": [
+                {
+                    "field": "uesio/tests.autonumber",
+                    "operator": "IN",
+                    "valueSource": "LOOKUP",
+                    "lookupWire": "reference",
+                    "lookupField": "uesio/tests.autonumber_reference"
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[1].debugQueryString" == ```
+SELECT
+main.id::text AS "uesio/core.id",
+main.uniquekey AS "uesio/core.uniquekey"
+FROM data as "main"
+WHERE
+main.collection = $1 AND
+main.tenant = $2 AND
+main.fields->>'uesio/tests.autonumber' IN ($3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+ORDER BY main.id::text asc
+LIMIT 501```
+jsonpath "$.wires[1].data[*]['uesio/core.uniquekey']" includes "ID-001"
+jsonpath "$.wires[1].data[*]['uesio/core.uniquekey']" includes "ID-002"
+jsonpath "$.wires[1].data[*]['uesio/core.uniquekey']" includes "ID-003"
+jsonpath "$.wires[1].data[*]['uesio/core.uniquekey']" includes "ID-004"
+jsonpath "$.wires[1].data[*]['uesio/core.uniquekey']" includes "ID-005"
+jsonpath "$.wires[1].data[*]['uesio/core.uniquekey']" includes "ID-006"
+jsonpath "$.wires[1].data[*]['uesio/core.uniquekey']" includes "ID-007"
+jsonpath "$.wires[1].data[*]['uesio/core.uniquekey']" includes "ID-008"
+jsonpath "$.wires[1].data[*]['uesio/core.uniquekey']" includes "ID-009"
+jsonpath "$.wires[1].data[*]['uesio/core.uniquekey']" count == 9
+# Operator: NOT_IN | valueSource: VALUE
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -191,7 +271,7 @@ jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-007"
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-008"
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-009"
 
-# Operator: IS_BLANK
+# Operator: IS_BLANK | valueSource: VALUE
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -225,7 +305,7 @@ LIMIT 501```
 # TODO jsonpath
 
 
-# Operator: IS_NOT_BLANK
+# Operator: IS_NOT_BLANK | valueSource: VALUE
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
