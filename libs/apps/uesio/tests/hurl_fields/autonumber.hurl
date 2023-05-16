@@ -228,6 +228,7 @@ jsonpath "$.wires[1].data[*]['uesio/core.uniquekey']" includes "ID-007"
 jsonpath "$.wires[1].data[*]['uesio/core.uniquekey']" includes "ID-008"
 jsonpath "$.wires[1].data[*]['uesio/core.uniquekey']" includes "ID-009"
 jsonpath "$.wires[1].data[*]['uesio/core.uniquekey']" count == 9
+
 # Operator: NOT_IN | valueSource: VALUE
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
@@ -271,6 +272,56 @@ jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-007"
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-008"
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-009"
 
+# Operator: NOT_IN | valueSource: LOOKUP
+# Does not work right now
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.wire_reference",
+            "name":"reference",
+            "fields": [
+                {
+                    "id":"uesio/tests.autonumber_reference"
+                }
+            ],
+            "query":true
+        },
+        {
+            "collection":"uesio/tests.wire_condition",
+            "name":"condition",
+            "query":true,
+            "conditions": [
+                {
+                    "field": "uesio/tests.autonumber",
+                    "operator": "NOT_IN",
+                    "valueSource": "LOOKUP",
+                    "lookupWire": "reference",
+                    "lookupField": "uesio/tests.autonumber_reference"
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[1].debugQueryString" == ```
+SELECT
+main.id::text AS "uesio/core.id",
+main.uniquekey AS "uesio/core.uniquekey"
+FROM data as "main"
+WHERE
+main.collection = $1 AND
+main.tenant = $2 AND
+main.fields->>'uesio/tests.autonumber' NOT_IN ($3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+ORDER BY main.id::text asc
+LIMIT 501```
+jsonpath "$.wires[0].data[*]" not exists
+
+# The debugQueryString is
+
+
 # Operator: IS_BLANK | valueSource: VALUE
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
@@ -302,6 +353,7 @@ main.tenant = $2 AND
 main.fields->>'uesio/tests.autonumber' IS NULL
 ORDER BY main.id::text asc
 LIMIT 501```
+ jsonpath "$.wires[0].data[*]" not exists
 # TODO jsonpath
 
 
