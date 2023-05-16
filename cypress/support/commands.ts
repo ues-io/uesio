@@ -60,6 +60,19 @@ Cypress.Commands.add(
 	}
 )
 
+Cypress.Commands.add(
+	"selectReferenceField",
+	(idFragment: string, value: string) => {
+		cy.get(idContainsSelector("div", idFragment)).click()
+		cy.focused().type(value)
+		cy.get(
+			`[id^="floatingMenu"][id*="${idFragment}"] + div div[role="option"]`
+		)
+			.first()
+			.click()
+	}
+)
+
 // Gets an input element whose id contains a given string, and types a string into it
 Cypress.Commands.add("typeInInput", (idFragment: string, value: string) => {
 	cy.get(idContainsSelector("input", idFragment)).type(value)
@@ -139,6 +152,10 @@ declare global {
 				elementType: string,
 				id: string,
 				timeout?: number
+			): Chainable<void>
+			setReferenceField(
+				idFragment: string,
+				value: string
 			): Chainable<void>
 			typeInInput(inputIdFragment: string, value: string): Chainable<void>
 			clearInput(inputIdFragment: string): Chainable<void>
