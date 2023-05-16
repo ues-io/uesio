@@ -133,7 +133,11 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 				"border-slate-300",
 				"rounded-md",
 			],
-			contentwrapper: ["overflow-auto", "h-full"],
+			contentwrapper: [
+				"overflow-auto",
+				"h-full",
+				"[container-type:inline-size]",
+			],
 		},
 		props
 	)

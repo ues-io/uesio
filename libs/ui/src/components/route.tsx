@@ -9,7 +9,7 @@ import NotificationArea from "./notificationarea"
 import { Component } from "../component/component"
 import { makeViewId } from "../bands/view"
 import { UtilityComponent } from "../definition/definition"
-import { defineConfig, setup } from "@twind/core"
+import { Preset, defineConfig, setup } from "@twind/core"
 import presetAutoprefix from "@twind/preset-autoprefix"
 import presetTailwind from "@twind/preset-tailwind"
 import { styles } from ".."
@@ -18,6 +18,17 @@ import FontFaceObserver from "fontfaceobserver"
 new FontFaceObserver("Material Icons").load(null, 20000).then(() => {
 	document.documentElement.classList.remove("noicons")
 })
+
+// This converts all our @media queries to @container queries
+const presetContainerQueries = () =>
+	({
+		finalize: (rule) => {
+			if (rule.r && rule.r.length > 0 && rule.r[0].startsWith("@media")) {
+				rule.r[0] = rule.r[0].replace("@media", "@container")
+			}
+			return rule
+		},
+	} as Preset)
 
 const Route: UtilityComponent = (props) => {
 	const site = useSite()
@@ -84,7 +95,11 @@ const Route: UtilityComponent = (props) => {
 	// activate twind - must be called at least once
 	setup(
 		defineConfig({
-			presets: [presetAutoprefix(), presetTailwind()],
+			presets: [
+				presetAutoprefix(),
+				presetTailwind(),
+				presetContainerQueries(),
+			],
 			hash: false,
 			theme: {
 				extend: {
