@@ -8,6 +8,12 @@ on:
         required: true
       AWS_ACCOUNT_ID_DEV:
         required: true
+      AWS_ACCESS_KEY_STATIC_ASSETS:
+        required: true
+      AWS_SECRET_ACCESS_KEY_STATIC_ASSETS:
+        required: true
+      AWS_STATIC_ASSETS_BUCKET:
+        required: true
 
 jobs:
   build:
@@ -43,6 +49,12 @@ jobs:
         with:
           go-version: 1.19
           cache-dependency-path: apps/*/go.sum
+      - name: Export GITSHA
+        shell: bash
+        run: |
+          # These exports need to run every time
+          export GITSHA=$(echo ${FULL_SHA} | cut -c1-8)
+          echo "GITSHA=`echo ${FULL_SHA} | cut -c1-8`" >> $GITHUB_ENV
       - name: Build, test, and docker push to ECR
         shell: bash
         env:
@@ -50,8 +62,6 @@ jobs:
           IMAGE_TAG: ${{ steps.login-ecr.outputs.registry }}/uesio:${{ github.sha }}
         run: |
           # These exports need to run every time
-          export GITSHA=$(echo ${FULL_SHA} | cut -c1-8)
-          echo "GITSHA=`echo ${FULL_SHA} | cut -c1-8`" >> $GITHUB_ENV
           mkdir artifacts
           echo "$IMAGE_TAG" > ./artifacts/new_image.txt
           echo "$GITSHA" > ./artifacts/short_sha.txt

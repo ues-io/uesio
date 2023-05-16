@@ -12,6 +12,8 @@ on:
         required: true
       AWS_STATIC_ASSETS_BUCKET:
         required: true
+      AWS_REGION:
+        required: true
 
 jobs:
   build_and_test:
@@ -48,21 +50,27 @@ jobs:
           npm run affected:test -- --base=origin/master --head=$GITHUB_SHA --parallel
           export GITSHA=$(echo ${GITHUB_SHA} | cut -c1-8)
           echo "GITSHA=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_ENV
-      - uses: shallwefootball/s3-upload-action@v1.3.3
+      - uses: Noelware/s3-action@691f113810fbb2c987cd89664f769e8a32a6edea
         name: Upload vendor files to S3
         id: s3UploadVendor
         with:
-          aws_key_id: ${{ secrets.AWS_ACCESS_KEY_STATIC_ASSETS }}
-          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY_STATIC_ASSETS}}
-          aws_bucket: ${{ secrets.AWS_STATIC_ASSETS_BUCKET }}
-          source_dir: "dist/vendor"
-          destination_dir: "static/vendor"
-      - uses: shallwefootball/s3-upload-action@v1.3.3
+          directories: |
+            ./dist/vendor
+          access-key-id: ${{ secrets.AWS_ACCESS_KEY_STATIC_ASSETS }}
+          bucket: ${{ secrets.AWS_STATIC_ASSETS_BUCKET }}
+          secret-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_STATIC_ASSETS}}
+          prefix: /static/vendor
+          region: ${{ secrets.AWS_REGION }}
+          object-acl: ""
+      - uses: Noelware/s3-action@691f113810fbb2c987cd89664f769e8a32a6edea
         name: Upload Uesio static files to S3
         id: s3UploadUesio
         with:
-          aws_key_id: ${{ secrets.AWS_ACCESS_KEY_STATIC_ASSETS }}
-          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY_STATIC_ASSETS}}
-          aws_bucket: ${{ secrets.AWS_STATIC_ASSETS_BUCKET }}
-          source_dir: "dist/ui"
-          destination_dir: "$GITSHA/static/ui"
+          directories: |
+            ./dist/ui
+          access-key-id: ${{ secrets.AWS_ACCESS_KEY_STATIC_ASSETS }}
+          bucket: ${{ secrets.AWS_STATIC_ASSETS_BUCKET }}
+          secret-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_STATIC_ASSETS}}
+          prefix: "/$GITSHA/static/ui"
+          region: ${{ secrets.AWS_REGION }}
+          object-acl: ""
