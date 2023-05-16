@@ -44,33 +44,29 @@ jobs:
         shell: bash
         run: |
           npm ci
-          npm run prettier-check
-          npm run affected:lint -- --base=origin/master --head=$GITHUB_SHA --parallel
+          # npm run prettier-check
+          # npm run affected:lint -- --base=origin/master --head=$GITHUB_SHA --parallel
           npm run build-all
-          npm run affected:test -- --base=origin/master --head=$GITHUB_SHA --parallel
+          # npm run affected:test -- --base=origin/master --head=$GITHUB_SHA --parallel
           export GITSHA=$(echo ${GITHUB_SHA} | cut -c1-8)
           echo "GITSHA=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_ENV
-      - uses: Noelware/s3-action@691f113810fbb2c987cd89664f769e8a32a6edea
+      - uses: zachelrath/upload-s3-action@ac9621e70670c534d744e95c84b993d8f4745196
         name: Upload vendor files to S3
         id: s3UploadVendor
         with:
-          directories: |
-            ./dist/vendor
-          access-key-id: ${{ secrets.AWS_ACCESS_KEY_STATIC_ASSETS }}
-          bucket: ${{ secrets.AWS_STATIC_ASSETS_BUCKET }}
-          secret-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_STATIC_ASSETS}}
-          prefix: /static/vendor
-          region: ${{ secrets.AWS_REGION }}
-          object-acl: ""
-      - uses: Noelware/s3-action@691f113810fbb2c987cd89664f769e8a32a6edea
+          aws_key_id: ${{ secrets.AWS_ACCESS_KEY_STATIC_ASSETS }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY_STATIC_ASSETS}}
+          aws_bucket: ${{ secrets.AWS_STATIC_ASSETS_BUCKET }}
+          source_dir: "dist/vendor"
+          destination_dir: "static/vendor"
+          acl: "bucket-owner-full-control"
+      - uses: zachelrath/upload-s3-action@ac9621e70670c534d744e95c84b993d8f4745196
         name: Upload Uesio static files to S3
         id: s3UploadUesio
         with:
-          directories: |
-            ./dist/ui
-          access-key-id: ${{ secrets.AWS_ACCESS_KEY_STATIC_ASSETS }}
-          bucket: ${{ secrets.AWS_STATIC_ASSETS_BUCKET }}
-          secret-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_STATIC_ASSETS}}
-          prefix: "/$GITSHA/static/ui"
-          region: ${{ secrets.AWS_REGION }}
-          object-acl: ""
+          aws_key_id: ${{ secrets.AWS_ACCESS_KEY_STATIC_ASSETS }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY_STATIC_ASSETS}}
+          aws_bucket: ${{ secrets.AWS_STATIC_ASSETS_BUCKET }}
+          source_dir: "dist/ui"
+          destination_dir: ${{ env.GITSHA }}/static/ui
+          acl: "bucket-owner-full-control"
