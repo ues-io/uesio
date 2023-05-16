@@ -61,3 +61,11 @@ definition:
                           signals:
                             - signal: route/NAVIGATE
                               path: terms
+                - uesio/io.griditem:
+                    components:
+                      - uesio/io.image:
+                          file: uesio/web.swissmade
+                          height: 55px
+                          uesio.styleTokens:
+                            root:
+                              - h-[55px]

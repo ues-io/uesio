@@ -110,7 +110,7 @@ definition:
                               - text-slate-400
                               - text-lg
                               - font-light
-                          text: For developers who want to rapidly build, deploy and refine enterprize-grade apps, our product is a simple, but powerful platform for the full lifecycle development of multi-tenant apps.
+                          text: For developers who want to rapidly build, deploy and refine enterprize-grade apps, our product is a simple but powerful platform for the full lifecycle development of multi-tenant apps.
     - uesio/io.grid:
         uesio.variant: uesio/web.mainlayout
         items:
