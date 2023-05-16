@@ -1,4 +1,4 @@
-import { FunctionComponent, useState } from "react"
+import { FunctionComponent, useEffect, useState } from "react"
 import { definition, styles, context, collection, wire } from "@uesio/ui"
 import { ApplyChanges } from "../../components/field/field"
 
@@ -23,6 +23,19 @@ const StyleDefaults = Object.freeze({
 	readonly: [],
 })
 
+const parseNumberValue = (
+	value: number | undefined = 0,
+	decimals: number,
+	readonly: boolean
+) =>
+	parseFloat(
+		`${
+			readonly && value !== undefined && typeof value === "number"
+				? (value as number).toFixed(decimals)
+				: value
+		}`
+	)
+
 const NumberField: FunctionComponent<NumberFieldProps> = (props) => {
 	const {
 		mode,
@@ -32,9 +45,9 @@ const NumberField: FunctionComponent<NumberFieldProps> = (props) => {
 		options,
 		setValue,
 		applyChanges,
+		value = 0,
 	} = props
 	const readonly = mode === "READ"
-	const value = props.value as number
 	const applyOnBlur = applyChanges === "onBlur"
 
 	const classes = styles.useUtilityStyleTokens(
@@ -44,12 +57,18 @@ const NumberField: FunctionComponent<NumberFieldProps> = (props) => {
 	)
 
 	const numberOptions = fieldMetadata?.getNumberMetadata()
-	const decimals = numberOptions?.decimals ? numberOptions.decimals : 2
-	const initialValue = parseInt(
-		`${readonly && value ? value.toFixed(decimals) : value}`,
-		10
+	const decimals = numberOptions?.decimals || 2
+	const [controlledValue, setControlledValue] = useState<number>(
+		parseNumberValue(value as number, decimals, readonly)
 	)
-	const [controlledValue, setControlledValue] = useState<number>(initialValue)
+	useEffect(() => {
+		const newValue = parseNumberValue(
+			value as number,
+			decimals,
+			readonly
+		) as number
+		setControlledValue(newValue)
+	}, [value, decimals, readonly])
 
 	return (
 		<input
@@ -65,7 +84,8 @@ const NumberField: FunctionComponent<NumberFieldProps> = (props) => {
 			}}
 			onBlur={() =>
 				applyOnBlur &&
-				initialValue !== controlledValue &&
+				parseNumberValue(value as number, decimals, readonly) !==
+					controlledValue &&
 				setValue?.(controlledValue)
 			}
 			placeholder={placeholder}
