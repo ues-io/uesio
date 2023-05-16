@@ -432,4 +432,4 @@ definition:
                     uesio.variant: uesio/web.privacytext
                     text: Customer acknowledges that TCM has adopted an Organization, Management and Control Model pursuant to Legislative Decree 231/2001 to prevent crimes provided for therein and commits to comply with the principles contained in the above Legislative Decree 231/2001 and in the ues.io Code of Conduct. Customer also acknowledges and agrees that the violation of the principles and the provisions contained in Legislative Decree 231/2001 and in the ues.io Code of Conduct by Customer may entitle ues.io, based on the severity of the violation, to terminate this Agreement for cause as set out in Section 11.3(i) above.
     - uesio/core.view:
-        view: uesio/web.footer
+        view: uesio/web.footerr
