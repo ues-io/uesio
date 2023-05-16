@@ -26,7 +26,6 @@ func Pack(options *PackOptions) error {
 		"react":        "React",
 		"react-dom":    "ReactDOM",
 		"@uesio/ui":    "uesio",
-		"@emotion/css": "emotion",
 	}
 
 	entryPoints, err := pack.CreateEntryFiles()

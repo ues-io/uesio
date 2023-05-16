@@ -1,12 +1,10 @@
-import { FunctionComponent, CSSProperties } from "react"
 import { definition, styles, collection, context, api } from "@uesio/ui"
 import { nanoid } from "@reduxjs/toolkit"
 import Icon from "../icon/icon"
 import { UserFileMetadata } from "../../components/field/field"
 import UploadArea from "../uploadarea/uploadarea"
-import { CSSInterpolation } from "@emotion/css"
 
-interface FileImageProps extends definition.UtilityProps {
+interface FileImageProps {
 	id?: string
 	mode?: context.FieldMode
 	userFile?: UserFileMetadata
@@ -15,57 +13,35 @@ interface FileImageProps extends definition.UtilityProps {
 	accept?: string
 }
 
-const actionIconStyles: CSSProperties = {
-	cursor: "pointer",
-	padding: "4px",
-	margin: "4px",
-	color: "white",
-	backdropFilter: "brightness(0.6)",
-	borderRadius: "4px",
-	display: "none",
-	position: "absolute",
-	top: "0",
-}
-
 const StyleDefaults = Object.freeze({
-	root: {
-		position: "relative",
-		"&:hover .hovershow": {
-			display: "block",
-		},
-	},
-	image: {
-		width: "100%",
-		display: "block",
-	},
-	editicon: {
-		right: "0",
-		...actionIconStyles,
-	},
-	deleteicon: {
-		left: "0",
-		...actionIconStyles,
-	},
-	nofile: {
-		display: "flex",
-		backgroundColor: "#f5f5f5",
-		justifyContent: "center",
-	},
-	nofileicon: {
-		fontSize: "80px",
-		padding: "32px",
-		color: "#ccc",
-	},
-} as Record<string, CSSInterpolation>)
+	root: ["relative", "group"],
+	actionicon: [
+		"group-hover:block",
+		"cursor-pointer",
+		"p-2",
+		"text-white",
+		"backdrop-brightness-75",
+		"hidden",
+		"absolute",
+		"top-0",
+		"m-2",
+		"leading-none",
+	],
+	image: ["w-full"],
+	editicon: ["right-0"],
+	deleteicon: ["left-0"],
+	nofile: ["flex", "bg-slate-100", "justify-center"],
+	nofileicon: ["text-4xl", "p-8", "text-slate-400"],
+})
 
-const FileImage: FunctionComponent<FileImageProps> = (props) => {
+const FileImage: definition.UtilityComponent<FileImageProps> = (props) => {
 	const { context, mode, userFile, accept, onUpload, onDelete } = props
 
 	const userFileId = userFile?.[collection.ID_FIELD] as string
 	const userModDate = userFile?.[collection.UPDATED_AT_FIELD]
 	const fileUrl = api.file.getUserFileURL(context, userFileId, userModDate)
 
-	const classes = styles.useUtilityStyles(StyleDefaults, props)
+	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
 	const uploadLabelId = nanoid()
 	const deleteLabelId = nanoid()
@@ -83,7 +59,10 @@ const FileImage: FunctionComponent<FileImageProps> = (props) => {
 			{mode === "EDIT" && (
 				<>
 					<label
-						className={styles.cx(classes.editicon, "hovershow")}
+						className={styles.cx(
+							classes.editicon,
+							classes.actionicon
+						)}
 						htmlFor={uploadLabelId}
 					>
 						<Icon context={context} icon="edit" />
@@ -92,7 +71,7 @@ const FileImage: FunctionComponent<FileImageProps> = (props) => {
 						<label
 							className={styles.cx(
 								classes.deleteicon,
-								"hovershow"
+								classes.actionicon
 							)}
 							htmlFor={deleteLabelId}
 						>
@@ -115,5 +94,7 @@ const FileImage: FunctionComponent<FileImageProps> = (props) => {
 		</UploadArea>
 	)
 }
+
+export { StyleDefaults }
 
 export default FileImage

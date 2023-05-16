@@ -3,37 +3,25 @@ import { FunctionComponent, useRef } from "react"
 import { CSSTransition } from "react-transition-group"
 
 import { definition, styles } from "@uesio/ui"
-import { CSSInterpolation } from "@emotion/css"
 
 interface ExpandPanelProps extends definition.UtilityProps {
 	expanded: boolean
 }
 
 const StyleDefaults = Object.freeze({
-	root: {
-		willChange: "max-height,min-height",
-		boxSizing: "border-box",
-		"&.expand-enter": {
-			opacity: "0",
-		},
-		"&.expand-enter-active, &.expand-enter-done": {
-			opacity: "1",
-			transition: "all 0.2s ease-in",
-		},
-		"&.expand-exit": {
-			opacity: "1",
-		},
-		"&.expand-exit-active, &.expand-exit-done": {
-			opacity: "0",
-			transition: "all 0.2s ease-in",
-		},
-	},
-} as Record<string, CSSInterpolation>)
+	root: ["transition-all"],
+	enter: ["opacity-0"],
+	enteractive: ["opacity-1"],
+	enterdone: ["opacity-1"],
+	exit: ["opacity-1"],
+	exitactive: ["opacity-0"],
+	exitdone: ["opacity-0"],
+})
 
 const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 	const { children, expanded } = props
 	const nodeRef = useRef<HTMLDivElement>(null)
-	const classes = styles.useUtilityStyles(StyleDefaults, props)
+	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
 	const setMaxHeight = () => {
 		const node = nodeRef.current
@@ -66,13 +54,20 @@ const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 				mountOnEnter={true}
 				in={expanded}
 				timeout={200}
-				classNames={"expand"}
 				onEnter={zeroMaxHeight}
 				onEntering={setMaxHeight}
 				onEntered={unsetMaxHeight}
 				onExit={setMaxHeight}
 				onExiting={zeroMaxHeight}
 				onExited={unsetMaxHeight}
+				classNames={{
+					enter: "enter",
+					enterActive: "enteractive",
+					enterDone: "enterdone",
+					exit: "exit",
+					exitActive: "exitactive",
+					exitDone: "exitdone",
+				}}
 			>
 				<div ref={nodeRef} className={classes.root}>
 					{children}

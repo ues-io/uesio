@@ -1,5 +1,5 @@
-import { CSSInterpolation, ClassNamesArg } from "@emotion/css"
 import { FC, ReactNode } from "react"
+import { Class } from "@twind/core"
 
 type Context = {
 	/**
@@ -30,7 +30,6 @@ export type UtilityComponent<T = DefinitionMap> = FC<T & UtilityProps>
 export interface UtilityProps {
 	id?: string
 	variant?: MetadataKey
-	styles?: Record<string, CSSInterpolation>
 	styleTokens?: Record<string, string[]>
 	classes?: Record<string, string>
 	className?: string
@@ -88,24 +87,18 @@ type MetadataKey = `${string}/${string}.${string}`
 // STYLES
 //
 
-declare function useUtilityStyles(
-	defaults: Record<string, ClassNamesArg[]>,
-	props: UtilityProps,
-	defaultVariantComponentType?: MetadataKey
-): Record<string, string>
 declare function useUtilityStyleTokens(
-	defaults: Record<string, ClassNamesArg[]>,
+	defaults: Record<string, Class[]>,
 	props: UtilityProps,
 	defaultVariantComponentType?: MetadataKey
 ): Record<string, string>
 declare function useStyleTokens(
-	defaults: Record<string, ClassNamesArg[]>,
+	defaults: Record<string, Class[]>,
 	props: BaseProps
 ): Record<string, string>
 
 export const styles = {
 	useUtilityStyleTokens,
-	useUtilityStyles,
 	useStyleTokens,
 }
 
@@ -142,7 +135,6 @@ export namespace definition {
 	interface UtilityProps {
 		id?: string
 		variant?: MetadataKey
-		styles?: Record<string, CSSInterpolation>
 		styleTokens?: Record<string, string[]>
 		classes?: Record<string, string>
 		className?: string

@@ -1,4 +1,3 @@
-import { CSSInterpolation } from "@emotion/css"
 import { FC, ReactNode } from "react"
 import yaml from "yaml"
 import { MetadataKey } from "../bands/builder/types"
@@ -63,7 +62,6 @@ export type UtilityComponent<T = DefinitionMap> = FC<T & UtilityProps>
 export interface UtilityProps {
 	id?: string
 	variant?: MetadataKey
-	styles?: Record<string, CSSInterpolation>
 	styleTokens?: Record<string, string[]>
 	classes?: Record<string, string>
 	className?: string
