@@ -131,7 +131,7 @@ func processConditions(
 			conditions[i].ValueSource = ""
 			//default "IN"
 			if conditions[i].Operator == "" {
-    			conditions[i].Operator = "IN"
+				conditions[i].Operator = "IN"
 			}
 		}
 	}
