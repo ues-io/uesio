@@ -15,9 +15,9 @@ import { Context } from "../context/context"
 import { WireDefinition } from "../definition/wire"
 import { useEffect } from "react"
 import { useDeepCompareEffect } from "react-use"
-import { dispatch } from "../store/store"
+import { dispatch, getCurrentState } from "../store/store"
 import { PlainCollectionMap } from "../bands/collection/types"
-
+import { selectWire } from "../bands/wire/index"
 // Wraps our store's useWire result (POJO) in a nice Wire class
 // with convenience methods to make the api easier to consume for end users.
 const useWire = (wireId: string | undefined, context: Context) => {
@@ -107,4 +107,16 @@ const loadWires = loadWiresOp
 
 const initWires = initWiresOp
 
-export { useWire, useDynamicWire, useWires, loadWires, initWires }
+const getExternalState = (
+	viewId: string | undefined,
+	wireName: string | undefined
+) => selectWire(getCurrentState(), viewId, wireName)
+
+export {
+	useWire,
+	useDynamicWire,
+	useWires,
+	loadWires,
+	initWires,
+	getExternalState,
+}

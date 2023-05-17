@@ -1,0 +1,53 @@
+/// <reference types="cypress" />
+
+import { getWorkspaceRoutePreviewPath } from "../support/paths"
+
+describe("Conditions tests", () => {
+	// Use the tests app and dev workspace, which will exist if Integration Tests have been run
+	const appName = "tests"
+	const workspaceName = "dev"
+	const username = Cypress.env("automation_username")
+	const inCIEnvironment = Cypress.env("in_ci")
+
+	before(() => {
+		cy.login()
+	})
+
+	// Expected page load time in seconds
+	// NOTE - this time is very variable based on how powerful the host system is, so while this may
+	// consistently be twice as fast on a powerful Mac, in Github it can be 2-3 times slower. Crazy.
+	const EXPECTED_PLT_SECONDS = inCIEnvironment ? 12 : 6
+	const viewName = "table_with_lots_of_rows"
+
+	context("Test the Search condition using the search box", () => {
+		it("should return 2 records", () => {
+			const expectedMillis = EXPECTED_PLT_SECONDS * 1000
+			cy.visitRoute(
+				getWorkspaceRoutePreviewPath(
+					appName,
+					workspaceName,
+					username,
+					viewName
+				)
+			)
+			cy.typeInInput("table-search", "Abb")
+			cy.get("table[id$='animalsTable']>tbody>tr", {
+				timeout: expectedMillis,
+			}).should("have.length", 2)
+
+			cy.getWireState(
+				"uesio/tests.table_with_lots_of_rows($root)",
+				"animals"
+			)
+				.its("conditions")
+				.should("have.length", 1)
+				.each(($condition) => {
+					cy.wrap($condition).should("deep.include", {
+						id: "uesio.search",
+						value: "Abb",
+						type: "SEARCH",
+					})
+				})
+		})
+	})
+})

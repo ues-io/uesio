@@ -62,6 +62,11 @@ definition:
     - uesio/io.box:
         uesio.variant: uesio/io.section
         components:
+          - uesio/io.searchbox:
+              uesio.id: table-search
+              wire: animals
+              searchfields:
+                - uesio/tests.species
           - uesio/io.table:
               rowactions:
                 - text: Delete
