@@ -133,6 +133,9 @@ func processConditions(
 			if conditions[i].Operator == "" {
 				conditions[i].Operator = "IN"
 			}
+			if !(conditions[i].Operator == "IN" || conditions[i].Operator == "NOT_IN") {
+				return errors.New("Invalid operator for lookup: " + conditions[i].Operator)
+			}
 		}
 	}
 
