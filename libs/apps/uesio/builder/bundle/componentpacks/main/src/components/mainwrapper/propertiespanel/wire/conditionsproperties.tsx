@@ -36,9 +36,12 @@ function getConditionTitle(condition: wire.WireConditionState): string {
 
 	if (condition.valueSource === "PARAM") {
 		const valueCondition = condition as wire.ParamConditionState
+		const valuesString = valueCondition.params
+			? "(" + valueCondition.params.join(",") + ")"
+			: valueCondition.param
 		return `${valueCondition.field} ${
 			valueCondition.operator || ""
-		} Param{${valueCondition.param}}`
+		} Param{${valuesString}}`
 	}
 
 	if (condition.valueSource === "LOOKUP") {
@@ -487,6 +490,25 @@ const ConditionsProperties: definition.UC = (props) => {
 				],
 			},
 			{
+				name: "params",
+				type: "PARAM",
+				label: "Params",
+				displayConditions: [
+					{
+						field: "valueSource",
+						value: "PARAM",
+						type: "fieldValue",
+						operator: "EQUALS",
+					},
+					{
+						field: "operator",
+						type: "fieldValue",
+						operator: "IN",
+						values: multiValueOperators,
+					},
+				],
+			},
+			{
 				name: "param",
 				type: "PARAM",
 				label: "Param",
@@ -499,6 +521,7 @@ const ConditionsProperties: definition.UC = (props) => {
 					},
 				],
 			},
+
 			{
 				name: "type",
 				type: "SELECT",
