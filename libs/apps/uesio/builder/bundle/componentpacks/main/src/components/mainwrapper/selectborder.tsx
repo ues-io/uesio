@@ -88,6 +88,10 @@ const getTargetsFromSlotIndex = (slotPath: FullPath, index: number) => {
 
 	const targets: Element[] = []
 	indexPlaceHolders.forEach((placeHolder) => {
+		if (placeHolder.getAttribute("data-placeholder") === null) {
+			targets.push(placeHolder)
+			return null
+		}
 		const target = placeHolder.nextSibling as Element | null
 		if (!target || target.getAttribute("data-placeholder") === "true") {
 			return null
@@ -153,10 +157,10 @@ const SelectBorder: definition.UtilityComponent<Props> = (props) => {
 		const targets: Element[] = []
 		indexPlaceHolders.forEach((placeHolder) => {
 			const target = placeHolder.nextSibling as Element | null
-			if (!target || target.getAttribute("data-placeholder") !== "true") {
+			if (target && target.getAttribute("data-placeholder") !== "true") {
 				return null
 			}
-			targets.push(target)
+			targets.push(placeHolder)
 		})
 
 		targets.forEach((target) => {
