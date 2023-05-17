@@ -154,9 +154,9 @@ definition:
                                   - uesio/io.field:
                                       fieldId: uesio/studio.description
                                   - uesio/io.field:
-                                      fieldId: uesio/core.createdat
-                                  - uesio/io.field:
                                       fieldId: uesio/core.createdby
+                                      user:
+                                        subtitle: $Time{uesio/core.createdat}
   panels:
     deleteBundle:
       uesio.type: uesio/io.dialog

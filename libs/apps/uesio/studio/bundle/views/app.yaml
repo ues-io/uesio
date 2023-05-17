@@ -134,8 +134,9 @@ definition:
                           columns:
                             - field: uesio/studio.version
                             - field: uesio/studio.description
-                            - field: uesio/core.createdat
                             - field: uesio/core.createdby
+                              user:
+                                subtitle: $Time{uesio/core.createdat}
                           rowactions:
                             - text: Details
                               signals:
