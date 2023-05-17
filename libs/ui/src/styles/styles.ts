@@ -1,11 +1,6 @@
 import { ThemeState } from "../definition/theme"
-import {
-	BaseProps,
-	DefinitionMap,
-	UtilityProps,
-} from "../definition/definition"
-import { css, cx, CSSInterpolation, ClassNamesArg } from "@emotion/css"
-import { mergeDefinitionMaps } from "../component/merge"
+import { BaseProps, UtilityProps } from "../definition/definition"
+
 import * as colors from "./colors"
 import {
 	getDefinitionFromVariant,
@@ -14,7 +9,7 @@ import {
 import { MetadataKey } from "../metadataexports"
 import { extendTailwindMerge } from "tailwind-merge"
 import { Context } from "../context/context"
-import { tw } from "@twind/core"
+import { tw, cx, Class } from "@twind/core"
 
 const twMerge = extendTailwindMerge({
 	classGroups: {
@@ -41,13 +36,13 @@ const defaultTheme: ThemeState = {
 }
 
 function useStyleTokens<K extends string>(
-	defaults: Record<K, ClassNamesArg[]>,
+	defaults: Record<K, Class[]>,
 	props: BaseProps
 ) {
 	const { definition, context } = props
 	const inlineTokens = definition?.["uesio.styleTokens"] || {}
 	return Object.entries(defaults).reduce(
-		(classNames, entry: [K, ClassNamesArg[]]) => {
+		(classNames, entry: [K, Class[]]) => {
 			const [className, defaultClasses] = entry
 			classNames[className] = process(
 				context,
@@ -90,13 +85,13 @@ function getVariantTokens(
 	return variantDefinition?.[TOKENS_PROPERTY] as Record<string, string[]>
 }
 
-function process(context: Context | undefined, ...classes: ClassNamesArg[]) {
+function process(context: Context | undefined, ...classes: Class[]) {
 	const output = cx(classes)
 	return tw(twMerge(context ? context?.mergeString(output) : output))
 }
 
 function useUtilityStyleTokens<K extends string>(
-	defaults: Record<K, ClassNamesArg[]>,
+	defaults: Record<K, Class[]>,
 	props: UtilityProps,
 	defaultVariantComponentType?: MetadataKey
 ) {
@@ -104,7 +99,7 @@ function useUtilityStyleTokens<K extends string>(
 	const inlineTokens = props.styleTokens
 
 	return Object.entries(defaults).reduce(
-		(classNames, entry: [K, ClassNamesArg[]]) => {
+		(classNames, entry: [K, Class[]]) => {
 			const [className, defaultClasses] = entry
 			const classVariantTokens = variantTokens?.[className] || []
 			const classInlineTokens = inlineTokens?.[className] || []
@@ -124,47 +119,6 @@ function useUtilityStyleTokens<K extends string>(
 	)
 }
 
-function useUtilityStyles<K extends string>(
-	defaults: Record<K, CSSInterpolation>,
-	props: UtilityProps,
-	defaultVariantComponentType?: MetadataKey
-) {
-	const inlineStyles = props.styles as DefinitionMap
-	let styles: DefinitionMap
-	if (!inlineStyles || !Object.keys(inlineStyles).length) {
-		styles = {}
-	} else {
-		styles = mergeDefinitionMaps(
-			{},
-			props.styles as DefinitionMap,
-			props.context
-		)
-	}
-
-	const tokens = {
-		...getVariantTokens(props, defaultVariantComponentType),
-		...props.styleTokens,
-	}
-
-	return Object.entries(defaults).reduce(
-		(classNames: Record<string, string>, entry: [K, CSSInterpolation]) => {
-			const [className, defaultClasses] = entry
-			const classTokens = tokens[className] || []
-			classNames[className] = process(
-				props.context,
-				classTokens,
-				css([defaultClasses, styles?.[className] as CSSInterpolation]),
-				props.classes?.[className],
-				// A bit weird here... Only apply the passed-in className prop to root styles.
-				// Otherwise, it would be applied to every class sent in as defaults.
-				className === "root" && props.className
-			)
-			return classNames
-		},
-		{} as Record<K, string>
-	)
-}
-
 export type { ThemeState }
 
 export {
@@ -172,7 +126,6 @@ export {
 	cx,
 	process,
 	useUtilityStyleTokens,
-	useUtilityStyles,
 	useStyleTokens,
 	colors,
 }

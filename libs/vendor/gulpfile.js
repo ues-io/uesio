@@ -2,6 +2,7 @@ const gulp = require("gulp")
 const fs = require("fs")
 const packageLock = require("../../package-lock.json")
 const distVendor = "../../dist/vendor"
+const fontsSrc = "fonts/**"
 const nodeModules = "../../node_modules"
 const devMode = process.env.UESIO_DEV === "true"
 
@@ -11,7 +12,6 @@ const devMode = process.env.UESIO_DEV === "true"
 // MODULE NAMES
 const REACT = "react"
 const REACT_DOM = "react-dom"
-const EMOTION = "@emotion/css"
 const MONACO = "monaco-editor"
 
 // NOTE: Modules are loaded in the sequence of this array
@@ -25,11 +25,6 @@ const modules = [
 		name: REACT_DOM,
 		path: `umd/react-dom.${devMode ? "development" : "production.min"}.js`,
 		dest: "umd",
-	},
-	{
-		name: EMOTION,
-		path: "dist/emotion-css.umd.min.js",
-		dest: "dist",
 	},
 	{
 		name: MONACO,
@@ -82,13 +77,17 @@ const scriptTasks = modules.map(({ src, dest, path, name: module }) => {
 	}
 })
 
+const moveFonts = () =>
+	gulp.src(fontsSrc).pipe(gulp.dest(`${distVendor}/fonts`))
+
 /*
  * Specify if tasks run in series or parallel using `gulp.series` and `gulp.parallel`
  */
 const build = gulp.series(
 	clean,
 	gulp.parallel.apply(this, scriptTasks),
-	generateVendorManifest
+	generateVendorManifest,
+	moveFonts
 )
 
 /*

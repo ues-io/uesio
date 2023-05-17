@@ -4,13 +4,13 @@ const {
 	loadData,
 	getMonacoEditorVersion,
 	getStaticAssetsPath,
-	getVendorAssetsPath,
+	getStaticAssetsHost,
 } = platform
 
 export {
 	loadData,
 	getMonacoEditorVersion,
 	getStaticAssetsPath,
-	getVendorAssetsPath,
+	getStaticAssetsHost,
 	memoizedAsync,
 }

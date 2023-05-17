@@ -1,5 +1,6 @@
-import { ChangeEvent, FunctionComponent } from "react"
+import { FunctionComponent, useEffect, useState } from "react"
 import { definition, styles, context, collection, wire } from "@uesio/ui"
+import { ApplyChanges } from "../../components/field/field"
 
 export type NumberFieldOptions = {
 	step?: number
@@ -8,6 +9,7 @@ export type NumberFieldOptions = {
 }
 
 interface NumberFieldProps extends definition.UtilityProps {
+	applyChanges?: ApplyChanges
 	setValue: (value: wire.FieldValue) => void
 	value: wire.FieldValue
 	fieldMetadata: collection.Field
@@ -21,10 +23,32 @@ const StyleDefaults = Object.freeze({
 	readonly: [],
 })
 
+const parseNumberValue = (
+	value: number | undefined = 0,
+	decimals: number,
+	readonly: boolean
+) =>
+	parseFloat(
+		`${
+			readonly && value !== undefined && typeof value === "number"
+				? (value as number).toFixed(decimals)
+				: value
+		}`
+	)
+
 const NumberField: FunctionComponent<NumberFieldProps> = (props) => {
-	const { mode, placeholder, fieldMetadata, id, options, setValue } = props
+	const {
+		mode,
+		placeholder,
+		fieldMetadata,
+		id,
+		options,
+		setValue,
+		applyChanges,
+		value = 0,
+	} = props
 	const readonly = mode === "READ"
-	const value = props.value as number
+	const applyOnBlur = applyChanges === "onBlur"
 
 	const classes = styles.useUtilityStyleTokens(
 		StyleDefaults,
@@ -33,22 +57,37 @@ const NumberField: FunctionComponent<NumberFieldProps> = (props) => {
 	)
 
 	const numberOptions = fieldMetadata?.getNumberMetadata()
-
-	const decimals = numberOptions?.decimals ? numberOptions.decimals : 2
-	const lvalue = readonly && value ? value.toFixed(decimals) : value
+	const decimals = numberOptions?.decimals || 2
+	const [controlledValue, setControlledValue] = useState<number>(
+		parseNumberValue(value as number, decimals, readonly)
+	)
+	useEffect(() => {
+		const newValue = parseNumberValue(
+			value as number,
+			decimals,
+			readonly
+		) as number
+		setControlledValue(newValue)
+	}, [value, decimals, readonly])
 
 	return (
 		<input
 			id={id}
-			value={lvalue === 0 || lvalue ? lvalue : ""}
+			value={controlledValue}
 			className={styles.cx(classes.input, readonly && classes.readonly)}
 			type="number"
 			disabled={readonly}
-			onChange={(event: ChangeEvent<HTMLInputElement>): void => {
-				setValue(
-					event.target.value ? parseFloat(event.target.value) : null
-				)
+			onChange={(e) => {
+				const number = parseFloat(e.target.value)
+				setControlledValue(number)
+				!applyOnBlur && setValue?.(number)
 			}}
+			onBlur={() =>
+				applyOnBlur &&
+				parseNumberValue(value as number, decimals, readonly) !==
+					controlledValue &&
+				setValue?.(controlledValue)
+			}
 			placeholder={placeholder}
 			step={options?.step}
 			min={options?.min}

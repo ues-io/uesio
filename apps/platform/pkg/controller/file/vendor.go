@@ -17,6 +17,7 @@ type vendorScript struct {
 	Version string `json:"version"`
 }
 
+var vendorDistDir string
 var vendorScriptUrls []string
 var vendorAssetsHost string
 var monacoEditorVersion string
@@ -29,10 +30,12 @@ func init() {
 	if strings.Contains(wd, appsPlatformDir) {
 		baseDir, _, _ = strings.Cut(wd, appsPlatformDir)
 	}
+	vendorAssetsHost = GetAssetsHost()
 
-	vendorAssetsHost = ""
-
-	manifestFilePath := filepath.Join(baseDir, "dist", "vendor", "manifest.json")
+	// Read in the vendor manifest file (from local filesystem)
+	// so that we can build the list of vendor script URLs
+	vendorDistDir = filepath.Join(baseDir, "dist", "vendor")
+	manifestFilePath := filepath.Join(vendorDistDir, "manifest.json")
 	vendorScriptsManifestFile, err := ioutil.ReadFile(manifestFilePath)
 
 	if err != nil {
@@ -75,9 +78,9 @@ func GetVendorScriptUrls() []string {
 	return vendorScriptUrls
 }
 
-// ServeVendorScript is a handler for serving a vendored script file, e.g. React / React DOM, etc.
-func ServeVendorScript(currentWorkingDirectory, routePrefix string, cache bool) http.Handler {
-	fileServer := http.FileServer(http.Dir(filepath.Join(currentWorkingDirectory, "..", "..", "dist", "vendor")))
+// ServeVendor is a handler for serving a vendored script/font file, e.g. React / Material Icons / fonts, etc.
+func ServeVendor(routePrefix string, cache bool) http.Handler {
+	fileServer := http.FileServer(http.Dir(vendorDistDir))
 	handler := http.StripPrefix(routePrefix, fileServer)
 	if cache {
 		handler = middleware.With1YearCache(handler)

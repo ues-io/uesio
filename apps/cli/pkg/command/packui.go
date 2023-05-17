@@ -31,7 +31,6 @@ func PackUI(options *PackOptions) error {
 		//"redux":       "Redux",
 		//"react-redux": "ReactRedux",
 		//"yaml":         "yaml",
-		"@emotion/css": "emotion",
 	}
 	globalsList := pack.GetGlobalsList(globalsMap)
 
