@@ -1,6 +1,4 @@
 name: wire_condition
-uniqueKey:
-  - uesio/tests.autonumber
 nameField: uesio/tests.text
 public: true
 label: Wire Condtion Test Data
