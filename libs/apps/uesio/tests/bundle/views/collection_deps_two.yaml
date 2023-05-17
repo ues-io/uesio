@@ -1,0 +1,24 @@
+name: collection_deps_two
+definition:
+  # Wires connect to data in collections
+  wires:
+    animals1:
+      collection: uesio/tests.animal
+      fields:
+        uesio/core.createdat:
+        uesio/tests.lookalike:
+          fields:
+            uesio/tests.genus:
+      batchsize: 4
+    animals2:
+      collection: uesio/tests.animal
+      fields:
+        uesio/tests.genus:
+        uesio/core.updatedat:
+        uesio/tests.ancestor:
+      batchsize: 5
+  # Components determine the layout and composition of your view
+  components:
+    - uesio/core.view:
+        uesio.id: depsOne
+        view: uesio/tests.collection_deps_one

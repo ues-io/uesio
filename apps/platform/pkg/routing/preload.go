@@ -36,6 +36,15 @@ type MetadataMergeData struct {
 	deps map[string]Depable
 }
 
+func (mmd *MetadataMergeData) AddItemIfNotExists(dep Depable) (Depable, bool) {
+	key := dep.GetKey()
+	if existingItem, exists := mmd.deps[key]; exists {
+		return existingItem, true
+	}
+	mmd.deps[key] = dep
+	return nil, false
+}
+
 func (mmd *MetadataMergeData) GetItems() []Depable {
 	return goutils.MapValues(mmd.deps)
 }
