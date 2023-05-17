@@ -1,0 +1,21 @@
+name: collection_deps_one
+definition:
+  # Wires connect to data in collections
+  wires:
+    animals1:
+      collection: uesio/tests.animal
+      fields:
+        uesio/tests.genus:
+        uesio/tests.species:
+      batchsize: 2
+    animals2:
+      collection: uesio/tests.animal
+      fields:
+        uesio/tests.genus:
+        uesio/tests.lookalike:
+          fields:
+            uesio/tests.species:
+        uesio/tests.total_population:
+      batchsize: 3
+  # Components determine the layout and composition of your view
+  components:

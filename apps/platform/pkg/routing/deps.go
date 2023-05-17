@@ -288,7 +288,14 @@ func processView(key string, viewInstanceID string, deps *PreloadMetadata, param
 		}
 
 		for _, collection := range metadata.Collections {
-			deps.Collection.AddItem(collection)
+			// If this collection is already in the metadata, we need to merge the new and existing
+			// to create a union of all metadata requested by any wires
+			if existingItem, alreadyExists := deps.Collection.AddItemIfNotExists(collection); alreadyExists {
+				// Cast to CollectionMetadata so that we can use nicer methods
+				existingCollection := existingItem.(*adapt.CollectionMetadata)
+				// Merge the inbound collection with the existing collection
+				existingCollection.Merge(collection)
+			}
 		}
 
 		for _, op := range ops {
