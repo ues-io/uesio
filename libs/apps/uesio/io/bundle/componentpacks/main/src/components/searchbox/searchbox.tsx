@@ -50,7 +50,6 @@ const SearchBox: definition.UC<SearchBoxDefinition> = (props) => {
 
 	useEffect(
 		() => () => {
-			console.log("cancelling our debounced search")
 			debouncedSearch.cancel()
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -65,9 +64,7 @@ const SearchBox: definition.UC<SearchBoxDefinition> = (props) => {
 				variant="uesio/io.search"
 				placeholder={definition.placeholder || "Search"}
 				setValue={(value: string) => {
-					console.log("setting text to " + value)
 					setText(value)
-					console.log("calling debouncedSearch with value: " + value)
 					debouncedSearch(value)
 				}}
 				value={text}
