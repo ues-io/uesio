@@ -8,15 +8,13 @@ type TextDefinition = {
 	align?: AlignSetting
 }
 
+const StyleDefaults = Object.freeze({
+	root: [],
+})
+
 const Text: definition.UC<TextDefinition> = (props) => {
 	const { definition, context } = props
-
-	const classes = styles.useStyles(
-		{
-			root: {},
-		},
-		props
-	)
+	const classes = styles.useStyleTokens(StyleDefaults, props)
 	return (
 		<IOText
 			id={api.component.getComponentIdFromProps(props)}

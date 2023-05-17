@@ -62,31 +62,27 @@ const getComponentInfoFromPath = (path: FullPath, context: context.Context) => {
 	return [componentIndex, parentPath, grandParentPath, componentDef] as const
 }
 
-const getTargetFromSlotIndex = (slotPath: FullPath, index: number) => {
-	const indexPlaceHolder = document.querySelector(
+const getTargetsFromSlotIndex = (slotPath: FullPath, index: number) => {
+	const indexPlaceHolders = document.querySelectorAll(
 		`[data-path="${CSS.escape(
 			slotPath.localPath
 		)}"]>[data-index="${index}"]`
 	)
 
-	if (!indexPlaceHolder) {
+	if (!indexPlaceHolders.length) {
 		return null
 	}
 
-	const target = indexPlaceHolder.nextSibling as Element | null
-	if (!target) {
-		return null
-	}
+	const targets: Element[] = []
+	indexPlaceHolders.forEach((placeHolder) => {
+		const target = placeHolder.nextSibling as Element | null
+		if (!target || target.getAttribute("data-placeholder") === "true") {
+			return null
+		}
+		targets.push(target)
+	})
 
-	// If the next sibling is a placeholder, we have a problem.
-	// most likely the component we were trying to render didn't
-	// return a dom element.
-	if (target.getAttribute("data-placeholder") === "true") {
-		console.log("problem selecting item!")
-		return null
-	}
-
-	return target
+	return targets
 }
 
 const SelectBorder: definition.UtilityComponent = (props) => {
@@ -100,8 +96,11 @@ const SelectBorder: definition.UtilityComponent = (props) => {
 
 	const selectedComponentPath = useSelectedComponentPath(context)
 
-	const [selectedChild, setSelectedChild] = useState<Element>()
-	const [draggingChild, setDraggingChild] = useState<Element>()
+	const [selectedChildren, setSelectedChildren] = useState<Element[]>()
+	const [draggingChildren, setDraggingChildren] = useState<Element[]>()
+
+	const selectedLength = selectedChildren ? selectedChildren.length : 0
+	const draggingLength = draggingChildren ? draggingChildren.length : 0
 
 	const dragPath = useDragPath(context)
 	const isDragging = dragPath.isSet()
@@ -113,73 +112,87 @@ const SelectBorder: definition.UtilityComponent = (props) => {
 		selectedComponentDef,
 	] = getComponentInfoFromPath(selectedComponentPath, context)
 
+	const selectedSlotPathString = selectedSlotPath?.combine() || ""
+
 	// Handle figuring out what the selected element is so that we can
 	// Add some styling to it.
 	useEffect(() => {
-		if (selectedChild) {
-			selectedChild.classList.remove(...StyleDefaults.selected)
+		if (selectedChildren) {
+			selectedChildren.forEach((child) => {
+				child.classList.remove(...StyleDefaults.selected)
+			})
 		}
 
 		if (!selectedSlotPath || isDragging) {
-			setSelectedChild(undefined)
+			setSelectedChildren(undefined)
 			return
 		}
 
-		const target = getTargetFromSlotIndex(
+		const targets = getTargetsFromSlotIndex(
 			selectedSlotPath,
 			selectedChildIndex
 		)
 
-		if (!target) {
-			setSelectedChild(undefined)
+		if (!targets) {
+			setSelectedChildren(undefined)
 			return
 		}
 
-		target.classList.add(...StyleDefaults.selected)
-		target.classList.add(...StyleDefaults.selectedAlways)
-		setSelectedChild(target)
-	}, [selectedSlotPath, selectedChildIndex, selectedChild, isDragging])
+		targets.forEach((target) => {
+			target.classList.add(...StyleDefaults.selected)
+			target.classList.add(...StyleDefaults.selectedAlways)
+		})
+
+		setSelectedChildren(targets)
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [selectedSlotPathString, selectedChildIndex, selectedLength, isDragging])
 
 	const [draggingChildIndex, , draggingSlotPath, ,] =
 		getComponentInfoFromPath(dragPath, context)
 
+	const draggingSlotPathString = draggingSlotPath?.combine() || ""
+
 	// Handle figuring out what the dragging element is so that we can
 	// Add some styling to it.
 	useEffect(() => {
-		if (draggingChild) {
-			draggingChild.classList.remove(...StyleDefaults.dragging)
+		if (draggingChildren) {
+			draggingChildren.forEach((child) => {
+				child.classList.remove(...StyleDefaults.dragging)
+			})
 		}
 
 		if (!draggingSlotPath) {
-			setDraggingChild(undefined)
+			setDraggingChildren(undefined)
 			return
 		}
 
-		const target = getTargetFromSlotIndex(
+		const targets = getTargetsFromSlotIndex(
 			draggingSlotPath,
 			draggingChildIndex
 		)
 
-		if (!target) {
-			setDraggingChild(undefined)
+		if (!targets) {
+			setDraggingChildren(undefined)
 			return
 		}
 
-		// We found our correct child ref.
-		target.classList.add(...StyleDefaults.dragging)
-		setDraggingChild(target)
-	}, [draggingSlotPath, draggingChildIndex, draggingChild])
+		targets.forEach((target) => {
+			target.classList.add(...StyleDefaults.dragging)
+		})
+		setDraggingChildren(targets)
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [draggingSlotPathString, draggingChildIndex, draggingLength])
 
-	if (!selectedChild || !selectedParentPath || !selectedComponentDef)
+	if (!selectedChildren || !selectedParentPath || !selectedComponentDef)
 		return null
 
 	const nsInfo = getBuilderNamespaces(context)[selectedComponentDef.namespace]
 	const componentTitle =
 		selectedComponentDef.title || selectedComponentDef.name
 
-	return isDragging ? null : (
+	return !isDragging && selectedChildren?.length ? (
 		<Popper
-			referenceEl={selectedChild}
+			referenceEl={selectedChildren[0]}
 			context={context}
 			placement="top"
 			offset={8}
@@ -221,7 +234,7 @@ const SelectBorder: definition.UtilityComponent = (props) => {
 				</div>
 			</div>
 		</Popper>
-	)
+	) : null
 }
 
 export default SelectBorder

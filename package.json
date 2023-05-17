@@ -40,7 +40,6 @@
   },
   "files": [],
   "devDependencies": {
-    "@emotion/css": "^11.10.6",
     "@floating-ui/react": "^0.23.1",
     "@monaco-editor/react": "^4.4.6",
     "@nrwl/cli": "14.7.13",
@@ -75,6 +74,7 @@
     "eslint-plugin-react": "^7.31.8",
     "eslint-plugin-react-hooks": "^4.6.0",
     "fontfaceobserver": "^2.3.0",
+    "gulp": "^4.0.2",
     "jest": "29.0.3",
     "jest-environment-jsdom": "^29.0.3",
     "json-pointer": "^0.6.2",

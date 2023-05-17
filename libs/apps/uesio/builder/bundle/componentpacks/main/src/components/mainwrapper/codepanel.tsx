@@ -11,8 +11,6 @@ import { setContent, useContent } from "../../api/defapi"
 import yaml from "yaml"
 import { getNodeAtOffset, getNodeAtPath, parse } from "../../yaml/yamlutils"
 
-const ANIMATION_DURATION = 3000
-
 const getNodeLines = (node: yaml.Node, model: monaco.editor.ITextModel) => {
 	const range = node.range
 	if (!range || !range.length) return []
@@ -45,14 +43,7 @@ const getSelectedAreaDecorations = (range: monaco.Range, className: string) => [
 ]
 
 const StyleDefaults = Object.freeze({
-	highlightLines: {
-		backgroundColor: "rgb(255,238,240)",
-		animation: `lineshighlight ${ANIMATION_DURATION}s ease-in-out`,
-	},
-	lineDecoration: {
-		background: "lightblue",
-		opacity: 0.3,
-	},
+	lineDecoration: ["bg-blue-100"],
 })
 
 const CodePanel: definition.UtilityComponent = (props) => {
@@ -63,7 +54,7 @@ const CodePanel: definition.UtilityComponent = (props) => {
 
 	const { context } = props
 
-	const classes = styles.useUtilityStyles(StyleDefaults, props)
+	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
 	const selectedPath = useSelectedViewPath(context)
 

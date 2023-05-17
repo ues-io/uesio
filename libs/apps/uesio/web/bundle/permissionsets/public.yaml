@@ -20,6 +20,7 @@ routes:
 files:
   uesio/web.logo: true
   uesio/web.logowhite: true
+  uesio/web.swissmade: true
 allowallcollections: false
 allowallviews: false
 allowallroutes: false

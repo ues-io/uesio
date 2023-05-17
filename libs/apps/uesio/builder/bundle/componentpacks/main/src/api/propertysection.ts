@@ -38,7 +38,7 @@ interface DisplaySection extends BaseSection {
 }
 
 interface StylesSection extends BaseSection {
-	id: "uesio.styles"
+	id: "uesio.styleTokens"
 	label: "Styles"
 	type: "STYLES"
 	componentType: string
@@ -64,7 +64,7 @@ const HOME_ICON = "home"
 
 const STYLES_LABEL = "Styles"
 const STYLES_TYPE = "STYLES"
-const STYLES_ID = "uesio.styles"
+const STYLES_ID = "uesio.styleTokens"
 
 const getStylesSection = (componentType: string): StylesSection => ({
 	id: STYLES_ID,
@@ -93,7 +93,7 @@ const getSectionId = (s: PropertiesPanelSection): string => {
 		case HOME_TYPE:
 			return s.id || HOME_ID
 		case STYLES_TYPE:
-			return s.id || "uesio.styles"
+			return s.id || "uesio.styleTokens"
 		case "DISPLAY":
 			return s.id || "uesio.display"
 		case "SIGNALS":
