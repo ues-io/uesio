@@ -16,7 +16,6 @@ const search = (
 	searchFields: string[],
 	context: context.Context
 ) => {
-	console.log("invoking wire/SEARCH with search value " + searchValue)
 	api.signal.run(
 		{
 			signal: "wire/SEARCH",
