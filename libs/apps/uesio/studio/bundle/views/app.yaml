@@ -18,7 +18,7 @@ definition:
           param: app
     bundles:
       collection: uesio/studio.bundle
-      batchsize: 20
+      batchsize: 50
       fields:
         uesio/core.id:
         uesio/studio.major:
@@ -26,6 +26,8 @@ definition:
         uesio/studio.patch:
         uesio/studio.version:
         uesio/studio.description:
+        uesio/core.createdat:
+        uesio/core.createdby:
       conditions:
         - field: uesio/studio.app
           valueSource: LOOKUP
@@ -128,12 +130,14 @@ definition:
                                 uesio.id: bundlesTable
                                 wire: bundles
                                 mode: READ
-                                pagesize: 20
+                                pagesize: 5
                                 columns:
                                   - field: uesio/studio.version
                                   - field: uesio/studio.description
+                                  - field: uesio/core.createdat
+                                  - field: uesio/core.createdby
                                 rowactions:
-                                  - type: DEFAULT
+                                  - text: Details
                                     signals:
                                       - signal: "route/NAVIGATE"
                                         path: "app/$Param{app}/bundle/${uesio/studio.major}/${uesio/studio.minor}/${uesio/studio.patch}"

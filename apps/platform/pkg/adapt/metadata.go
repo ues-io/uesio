@@ -103,6 +103,31 @@ func (cm *CollectionMetadata) GetFullName() string {
 	return cm.Namespace + "." + cm.Name
 }
 
+func (cm *CollectionMetadata) Merge(other *CollectionMetadata) {
+	otherHasFields := len(other.Fields) > 0
+	// Shortcuts --- if either the current or the other indicates that it "HasAllFields",
+	// then we will use its fields
+	if cm.HasAllFields {
+		return
+	} else if other.HasAllFields && otherHasFields {
+		cm.Fields = other.Fields
+		cm.HasAllFields = true
+		return
+	}
+	// If the other collection has no fields, there's nothing else to do
+	if !otherHasFields {
+		return
+	}
+	// If we have no fields but the other collection has fields, use its fields
+	if len(cm.Fields) == 0 {
+		cm.Fields = other.Fields
+		return
+	}
+	// Otherwise, we need to do a merge, injecting all fields from other which we don't have already,
+	// and doing a "deep" merge of any fields that we DO already have, to ensure we get subfields too
+	MergeFieldMaps(cm.Fields, other.Fields)
+}
+
 type SelectListMetadata struct {
 	Name                     string                  `json:"name"`
 	Options                  []meta.SelectListOption `json:"options"`
@@ -167,6 +192,38 @@ type FieldMetadata struct {
 	SubType                string                    `json:"subtype,omitempty"`
 	ColumnName             string                    `json:"-"`
 	IsFormula              bool                      `json:"-"`
+}
+
+func MergeFieldMaps(target, other map[string]*FieldMetadata) {
+	for otherFieldId, otherFieldMetadata := range other {
+		targetFieldMetadata, exists := target[otherFieldId]
+		// Easy case --- if we don't have the field yet, just add it
+		if !exists {
+			target[otherFieldId] = otherFieldMetadata
+		} else {
+			// Do a deep (recursive) merge on sub-fields
+			targetFieldMetadata.Merge(otherFieldMetadata)
+		}
+	}
+}
+
+// Merge performs a deep merge that extends our field metadata with the other's field metadata,
+// mutating the original struct in place.
+func (fm *FieldMetadata) Merge(other *FieldMetadata) {
+	// Mainly we are just merging SubFields, everything else is assumed to be present in both already
+	otherHasSubFields := len(other.SubFields) > 0
+	// Case 1 --- other metadata has no subfields. We are done.
+	if !otherHasSubFields {
+		return
+	}
+	weHaveSubFields := len(fm.SubFields) > 0
+	// Case 2 --- other has subfields, but we don't. Just grab other's subfields.
+	if !weHaveSubFields {
+		fm.SubFields = other.SubFields
+		return
+	}
+	// Case 3 --- both have subfields. Do a recursive merge.
+	MergeFieldMaps(fm.SubFields, other.SubFields)
 }
 
 func (fm *FieldMetadata) GetFullName() string {

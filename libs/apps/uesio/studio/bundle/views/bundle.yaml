@@ -42,6 +42,8 @@ definition:
         uesio/studio.minor:
         uesio/studio.patch:
         uesio/studio.description:
+        uesio/core.createdby:
+        uesio/core.createdat:
         uesio/studio.app:
           fields:
             uesio/core.id:
@@ -151,6 +153,10 @@ definition:
                                       fieldId: uesio/studio.patch
                                   - uesio/io.field:
                                       fieldId: uesio/studio.description
+                                  - uesio/io.field:
+                                      fieldId: uesio/core.createdat
+                                  - uesio/io.field:
+                                      fieldId: uesio/core.createdby
   panels:
     deleteBundle:
       uesio.type: uesio/io.dialog
