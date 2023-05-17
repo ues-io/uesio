@@ -11,6 +11,8 @@ import { setContent, useContent } from "../../api/defapi"
 import yaml from "yaml"
 import { getNodeAtOffset, getNodeAtPath, parse } from "../../yaml/yamlutils"
 
+type YamlDoc = yaml.Document<yaml.Node>
+
 const getNodeLines = (node: yaml.Node, model: monaco.editor.ITextModel) => {
 	const range = node.range
 	if (!range || !range.length) return []
@@ -62,7 +64,7 @@ const CodePanel: definition.UtilityComponent = (props) => {
 
 	const yamlDoc = parse(fullYaml)
 
-	const ast = useRef<definition.YamlDoc | undefined>(yamlDoc)
+	const ast = useRef<YamlDoc | undefined>(yamlDoc)
 	ast.current = yamlDoc
 
 	const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | undefined>(

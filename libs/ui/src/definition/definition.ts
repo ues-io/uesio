@@ -1,5 +1,4 @@
 import { FC, ReactNode } from "react"
-import yaml from "yaml"
 import { MetadataKey } from "../bands/builder/types"
 import { DisplayCondition } from "../component/display"
 import { Context } from "../context/context"
@@ -15,8 +14,6 @@ export type BaseDefinition = {
 	"uesio.display"?: DisplayCondition[]
 	"uesio.classes"?: DisplayCondition[]
 }
-
-export type YamlDoc = yaml.Document<yaml.Node>
 
 export type ImportMapping = {
 	type: "IMPORT" | "VALUE"
