@@ -129,8 +129,10 @@ func processConditions(
 
 			conditions[i].Values = values
 			conditions[i].ValueSource = ""
-			//always IN
-			conditions[i].Operator = "IN"
+			//default "IN"
+			if conditions[i].Operator == "" {
+    			conditions[i].Operator = "IN"
+			}
 		}
 	}
 
