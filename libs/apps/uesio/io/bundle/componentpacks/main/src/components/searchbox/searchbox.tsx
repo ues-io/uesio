@@ -28,23 +28,21 @@ const search = (
 }
 
 const SearchBox: definition.UC<SearchBoxDefinition> = (props) => {
-	const { definition, context } = props
+	const {
+		definition: { placeholder = "Search", searchFields, wire },
+		context,
+	} = props
 	const [text, setText] = useState("")
 
 	const debouncedSearch = useMemo(
 		() =>
 			debounce(
 				(searchText: string) =>
-					search(
-						searchText,
-						definition.wire,
-						definition.searchFields,
-						context
-					),
+					search(searchText, wire, searchFields, context),
 				300
 			),
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[definition.wire, definition.searchFields]
+		[wire, searchFields]
 	)
 
 	useEffect(
@@ -52,7 +50,7 @@ const SearchBox: definition.UC<SearchBoxDefinition> = (props) => {
 			debouncedSearch.cancel()
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[definition.wire, definition.searchFields]
+		[wire, searchFields]
 	)
 
 	return (
@@ -61,7 +59,7 @@ const SearchBox: definition.UC<SearchBoxDefinition> = (props) => {
 				context={context}
 				type="search"
 				variant="uesio/io.search"
-				placeholder={definition.placeholder || "Search"}
+				placeholder={placeholder}
 				setValue={(value: string) => {
 					setText(value)
 					debouncedSearch(value)
