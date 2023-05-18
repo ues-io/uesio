@@ -10,7 +10,8 @@ definition:
       - gap-2
       - flex-wrap
       - py-1.5
-      - px-1.5
+      - pl-1.5
+      - pr-7
     notfound:
       - text-slate-400
       - font-light

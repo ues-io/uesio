@@ -8,7 +8,8 @@ definition:
       - after:text-xs
     input:
       - text-xs
-      - px-1
+      - pl-1
+      - pr-4
       - py-1
     notfound:
     selecteditemwrapper:
