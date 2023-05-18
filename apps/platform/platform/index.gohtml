@@ -24,7 +24,7 @@
         {{- range .VendorScriptUrls }}
         <script src="{{.}}"></script>
         {{- end -}}
-        <script src="{{ .StaticAssetsHost }}{{ .StaticAssetsPath }}/static/ui/uesio.js" type="module"></script>
+        <script src="{{ .StaticAssetsHost }}{{ .StaticAssetsPath }}/static/ui/uesio.js" type="module" crossorigin="true"></script>
     </head>
 <body>
     <div id="root" class="h-screen overflow-auto"></div>
