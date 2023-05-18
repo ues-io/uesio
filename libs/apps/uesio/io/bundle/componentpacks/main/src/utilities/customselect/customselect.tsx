@@ -25,6 +25,7 @@ const StyleDefaults = Object.freeze({
 	input: [],
 	editbutton: [],
 	selecteditemwrapper: [],
+	selectediteminner: [],
 	notfound: [],
 })
 
@@ -101,7 +102,9 @@ const CustomSelect: definition.UtilityComponent<CustomSelectProps<unknown>> = (
 							key={getItemKey(item)}
 							className={classes.selecteditemwrapper}
 						>
-							{itemRenderer(item)}
+							<div className={classes.selectediteminner}>
+								{itemRenderer(item)}
+							</div>
 							<button
 								tabIndex={-1}
 								className={classes.editbutton}
