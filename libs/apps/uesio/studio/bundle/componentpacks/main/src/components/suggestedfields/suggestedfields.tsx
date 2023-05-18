@@ -1,5 +1,6 @@
 import { component, definition, api, wire, context, styles } from "@uesio/ui"
 import { useEffect, useState } from "react"
+import { parse } from "best-effort-json-parser"
 
 type ComponentDefinition = {
 	collectionWire: string
@@ -74,32 +75,9 @@ const handleAutocompleteData = (
 		return
 	}
 	if (response.choices?.length) {
-		let data = response.choices[0] as string
-		// Data is pretty ugly here, so we'll need to clean it up
-		while (data.includes("\n")) {
-			data = data.replace(/\\n(\s|\\t)*/g, "").replace(/\n/g, "")
-		}
-		data = data.trim()
-
-		if (!data.includes("[")) {
-			if (!data.startsWith("{")) {
-				data = "{" + data
-			}
-			data = "[" + data
-		} else {
-			data = data.substring(data.indexOf("["))
-		}
-
-		if (!data.includes("]")) {
-			if (!data.endsWith("}") && data.includes("},")) {
-				// Go back to the "last known good point"
-				data = data.substring(0, data.lastIndexOf("},") + 1)
-			}
-			data = data + "]"
-		}
-
+		const data = response.choices[0] as string
 		try {
-			const dataArray: SuggestedField[] = JSON.parse(data)
+			const dataArray: SuggestedField[] = parse(data)
 			if (dataArray?.length) {
 				dataArray.forEach((val) => {
 					fieldWire.createRecord(
