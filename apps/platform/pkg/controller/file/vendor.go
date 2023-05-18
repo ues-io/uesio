@@ -82,6 +82,9 @@ func GetVendorScriptUrls() []string {
 func ServeVendor(routePrefix string, cache bool) http.Handler {
 	fileServer := http.FileServer(http.Dir(vendorDistDir))
 	handler := http.StripPrefix(routePrefix, fileServer)
+	if vendorAssetsHost != "" {
+		handler = middleware.WithAccessControlAllowOriginHeader(handler, "*")
+	}
 	if cache {
 		handler = middleware.With1YearCache(handler)
 	}
