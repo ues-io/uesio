@@ -13,7 +13,7 @@ const MultiSelectField: definition.UtilityComponent<SelectFieldProps> = (
 	props
 ) => {
 	const CustomSelect = component.getUtility("uesio/io.customselect")
-	const { setValue, value, mode, options, context } = props
+	const { setValue, value, mode, options, context, variant } = props
 	if (mode === "READ") {
 		let displayLabel
 		if (value !== undefined && value.length) {
@@ -37,6 +37,7 @@ const MultiSelectField: definition.UtilityComponent<SelectFieldProps> = (
 			itemRenderer={renderer}
 			context={context}
 			isMulti={true}
+			variant={variant}
 			isSelected={isSelected}
 			onSelect={(item: collection.SelectOption) =>
 				setValue([...value, item.value])
