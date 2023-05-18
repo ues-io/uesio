@@ -9,16 +9,16 @@ import (
 type SelectListOption struct {
 	Label         string `yaml:"label" json:"label"`
 	Value         string `yaml:"value" json:"value"`
-	LanguageLabel string `yaml:"languageLabel,omitempty" json:"languageLabel"`
-	Disabled      bool   `yaml:"disabled,omitempty" json:"disabled"`
+	LanguageLabel string `yaml:"languageLabel,omitempty" json:"languageLabel,omitempty"`
+	Disabled      bool   `yaml:"disabled,omitempty" json:"disabled,omitempty"`
 }
 
 type SelectList struct {
 	BuiltIn                  `yaml:",inline"`
 	BundleableBase           `yaml:",inline"`
 	Options                  []SelectListOption `yaml:"options" json:"uesio/studio.options"`
-	BlankOptionLabel         string             `yaml:"blank_option_label,omitempty" json:"uesio/studio.blank_option_label"`
-	BlankOptionLanguageLabel string             `yaml:"blank_option_language_label,omitempty" json:"uesio/studio.blank_option_language_label"`
+	BlankOptionLabel         string             `yaml:"blank_option_label,omitempty" json:"uesio/studio.blank_option_label,omitempty"`
+	BlankOptionLanguageLabel string             `yaml:"blank_option_language_label,omitempty" json:"uesio/studio.blank_option_language_label,omitempty"`
 }
 
 type SelectListWrapper SelectList
