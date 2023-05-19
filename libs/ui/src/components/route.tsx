@@ -123,7 +123,7 @@ const Route: UtilityComponent = (props) => {
 	)
 
 	// We need to process the style classes we put on the root element in index.gohtml
-	styles.process(undefined, "h-screen overflow-auto hidden")
+	styles.process(undefined, "h-screen overflow-auto hidden contents")
 
 	if (workspace) {
 		routeContext = routeContext.setWorkspace(workspace)
