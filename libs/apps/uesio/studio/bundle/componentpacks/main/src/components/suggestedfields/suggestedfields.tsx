@@ -100,9 +100,7 @@ const handleAutocompleteData = (
 	if (response.choices?.length) {
 		const data = response.choices[0] as string
 		try {
-			console.log("raw data", data)
 			const dataArray: SuggestedField[] = parse(data)
-			console.log("parsed data", dataArray)
 			if (dataArray?.length) {
 				dataArray.forEach((val) => {
 					fieldWire.createRecord(
