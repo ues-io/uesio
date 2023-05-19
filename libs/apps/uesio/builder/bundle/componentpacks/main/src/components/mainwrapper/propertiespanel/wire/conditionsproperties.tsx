@@ -76,7 +76,6 @@ function getOperatorOptions(fieldDisplayType: string | undefined) {
 				value: "HAS_ALL",
 			},
 		]
-
 	return [
 		{
 			label: "",
@@ -273,11 +272,43 @@ const ConditionsProperties: definition.UC = (props) => {
 							},
 						],
 					},
+					// Clear out param if operator IS NOW a multi-value operator
+					{
+						updates: [
+							{
+								field: "param",
+							},
+						],
+						conditions: [
+							{
+								field: "operator",
+								operator: "IN",
+								values: multiValueOperators,
+								type: "fieldValue",
+							},
+						],
+					},
 					// Clear out values (PLURAL) if operator IS NO LONGER a multi-value operator
 					{
 						updates: [
 							{
 								field: "values",
+							},
+						],
+						conditions: [
+							{
+								field: "operator",
+								operator: "NOT_IN",
+								values: multiValueOperators,
+								type: "fieldValue",
+							},
+						],
+					},
+					// Clear out params (PLURAL) if operator IS NO LONGER a multi-value operator
+					{
+						updates: [
+							{
+								field: "params",
 							},
 						],
 						conditions: [
@@ -491,8 +522,10 @@ const ConditionsProperties: definition.UC = (props) => {
 			},
 			{
 				name: "params",
-				type: "PARAM",
+				type: "LIST",
 				label: "Params",
+				subtype: fieldDisplayType,
+				subtypeOptions: fieldMetadata?.getSelectOptions(context),
 				displayConditions: [
 					{
 						field: "valueSource",
@@ -519,9 +552,14 @@ const ConditionsProperties: definition.UC = (props) => {
 						type: "fieldValue",
 						operator: "EQUALS",
 					},
+					{
+						field: "operator",
+						type: "fieldValue",
+						operator: "NOT_IN",
+						values: multiValueOperators,
+					},
 				],
 			},
-
 			{
 				name: "type",
 				type: "SELECT",
