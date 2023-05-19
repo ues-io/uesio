@@ -47,6 +47,7 @@ definition:
         uesio/studio.selectlist:
         uesio/studio.autopopulate:
         uesio/studio.languagelabel:
+        uesio/studio.number:
       conditions:
         - field: uesio/studio.collection
           value: $Param{app}.$Param{collectionname}

@@ -21,7 +21,26 @@ type ValueConditionState = {
 	value: string
 }
 
-const getUesioFieldFromSuggestedField = (
+type NumberFieldMetadata = {
+	"uesio/studio.decimals"?: number
+}
+
+type CollectionFieldExtraMetadata = {
+	"uesio/studio.number"?: NumberFieldMetadata
+}
+
+const parameterizedTypeRegex =
+	/^(numeric|decimal|varchar|char)\((\d{1,})(,(\d{1,}))\)$/
+
+const capitalizeFirst = (str: string) =>
+	str.charAt(0).toUpperCase() + str.slice(1)
+
+const setNumberFieldDecimals = (
+	decimals: number,
+	inObject: CollectionFieldExtraMetadata
+) => (inObject["uesio/studio.number"] = { "uesio/studio.decimals": decimals })
+
+export const getUesioFieldFromSuggestedField = (
 	suggestedField: SuggestedField,
 	collectionName: string,
 	workspaceId: string
@@ -31,18 +50,21 @@ const getUesioFieldFromSuggestedField = (
 	// const length: number | undefined = undefined
 	let uesioType = "TEXT"
 	const sqlType = type.toLocaleLowerCase()
+	const extras: CollectionFieldExtraMetadata = {}
+	const partMatches = sqlType.match(parameterizedTypeRegex)
 
-	// if (sqlType.includes("char")) {
-	// 	if (type.includes("(")) {
-	// 		length = parseInt(
-	// 			type.substring(type.indexOf("(") + 1, type.lastIndexOf(")")),
-	// 			10
-	// 		)
-	// 	}
 	if (sqlType.includes("int")) {
 		uesioType = "NUMBER"
+		setNumberFieldDecimals(0, extras)
+	} else if (sqlType.startsWith("numeric") || sqlType.startsWith("decimal")) {
+		uesioType = "NUMBER"
+		if (partMatches?.length === 5 && partMatches[4] !== undefined) {
+			setNumberFieldDecimals(parseInt(partMatches[4], 10), extras)
+		}
 	} else if (sqlType.includes("serial")) {
 		uesioType = "AUTONUMBER"
+	} else if (sqlType.includes("boolean")) {
+		uesioType = "CHECKBOX"
 	} else if (sqlType.includes("timestamp")) {
 		uesioType = "TIMESTAMP"
 	} else if (sqlType.includes("date")) {
@@ -52,12 +74,13 @@ const getUesioFieldFromSuggestedField = (
 	return {
 		"uesio/studio.name": getUesioFieldNameFromLabel(label),
 		"uesio/studio.type": uesioType,
-		"uesio/studio.label": label,
+		"uesio/studio.label": capitalizeFirst(label),
 		// "uesio/studio.length": length,
 		"uesio/studio.collection": collectionName,
 		"uesio/studio.workspace": {
 			"uesio/core.id": workspaceId,
 		},
+		...extras,
 	}
 }
 
@@ -77,7 +100,9 @@ const handleAutocompleteData = (
 	if (response.choices?.length) {
 		const data = response.choices[0] as string
 		try {
+			console.log("raw data", data)
 			const dataArray: SuggestedField[] = parse(data)
+			console.log("parsed data", dataArray)
 			if (dataArray?.length) {
 				dataArray.forEach((val) => {
 					fieldWire.createRecord(
