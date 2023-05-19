@@ -114,21 +114,31 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 		}
 		if condition.Values != nil {
 			if reflect.TypeOf(condition.Values).Kind() == reflect.Slice {
+				var safeValues []string
 				switch values := condition.Values.(type) {
 				case []interface{}:
 					if numValues := len(values); numValues > 0 {
-						safeValues := make([]string, numValues, numValues)
+						safeValues = make([]string, numValues, numValues)
 						for i, val := range values {
 							safeValues[i] = builder.addValue(val)
 						}
-						useOperator := "IN"
-						if condition.Operator == "NOT_IN" {
-							useOperator = "NOT IN"
+					}
+				case []string:
+					if numValues := len(values); numValues > 0 {
+						safeValues = make([]string, numValues, numValues)
+						for i, val := range values {
+							safeValues[i] = builder.addValue(val)
 						}
-						builder.addQueryPart(fmt.Sprintf("%s %s (%s)", fieldName, useOperator, strings.Join(safeValues, ",")))
 					}
 				default:
 					fmt.Printf("Unsupported type for values array: %T\n", values)
+				}
+				if safeValues != nil {
+					useOperator := "IN"
+					if condition.Operator == "NOT_IN" {
+						useOperator = "NOT IN"
+					}
+					builder.addQueryPart(fmt.Sprintf("%s %s (%s)", fieldName, useOperator, strings.Join(safeValues, ",")))
 				}
 			} else {
 				return errors.New(condition.Operator + " requires a values array to be provided")

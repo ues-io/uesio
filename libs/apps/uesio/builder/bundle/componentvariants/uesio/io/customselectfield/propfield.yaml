@@ -8,9 +8,11 @@ definition:
       - after:text-xs
     input:
       - text-xs
-      - px-1.5
+      - pl-1
+      - pr-4
+      - py-1
+      - gap-1
     notfound:
-      - py-1.5
     selecteditemwrapper:
-      - my-1
+      - my-0
 public: true
