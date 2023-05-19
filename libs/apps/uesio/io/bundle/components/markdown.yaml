@@ -4,6 +4,7 @@ entrypoint: components/markdown/markdown
 title: MarkDown
 description: Display formatted markdown text.
 category: CONTENT
+icon: format_list_numbered
 discoverable: true
 defaultDefinition:
   markdown: markdown Goes Here

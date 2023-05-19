@@ -5,6 +5,9 @@ link: "https://docs.ues.io/"
 pack: main
 entrypoint: components/field/field
 defaultDefinition: {}
+discoverable: true
+category: DATA
+icon: select_check_box
 variants:
   - uesio/io.field:uesio/io.default
   - uesio/io.fieldlabel:uesio/io.default
