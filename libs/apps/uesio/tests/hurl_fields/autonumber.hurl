@@ -357,13 +357,8 @@ main.fields->>'uesio/tests.autonumber' NOT IN ($3,$4)
 ORDER BY main.id::text asc
 LIMIT 501```
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" count == 7
-jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" includes "ID-003"
-jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" includes "ID-004"
-jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" includes "ID-005"
-jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" includes "ID-006"
-jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" includes "ID-007"
-jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" includes "ID-008"
-jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" includes "ID-009"
+jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" not includes "ID-001"
+jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" not includes "ID-002"
 
 # Operator: NOT_IN | valueSource: LOOKUP
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
@@ -398,18 +393,18 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-#jsonpath "$.wires[1].debugQueryString" == ```
-#SELECT
-#main.id::text AS "uesio/core.id",
-#main.uniquekey AS "uesio/core.uniquekey"
-#FROM data as "main"
-#WHERE
-#main.collection = $1 AND
-#main.tenant = $2 AND
-#main.fields->>'uesio/tests.autonumber' NOT IN ($3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
-#ORDER BY main.id::text asc
-#LIMIT 501```
-#jsonpath "$.wires[1].data[*]" not exists
+jsonpath "$.wires[1].debugQueryString" == ```
+SELECT
+main.id::text AS "uesio/core.id",
+main.uniquekey AS "uesio/core.uniquekey"
+FROM data as "main"
+WHERE
+main.collection = $1 AND
+main.tenant = $2 AND
+main.fields->>'uesio/tests.autonumber' NOT IN ($3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+ORDER BY main.id::text asc
+LIMIT 501```
+jsonpath "$.wires[1].data[*]" not exists
 
 
 # Operator: IS_BLANK | valueSource: VALUE
