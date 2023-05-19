@@ -104,7 +104,7 @@ func processConditions(
 			for _, param := range condition.Params {
 				value, ok := params[param]
 				if !ok {
-					return errors.New("Invalid Condition: " + param)
+					return errors.New("Invalid Condition, parameter not provided: " + param)
 				}
 				values = append(values, value)
 			}
