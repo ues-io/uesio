@@ -320,6 +320,52 @@ jsonpath "$.wires[1].data[*]['uesio/tests.autonumber']" includes "ID-008"
 jsonpath "$.wires[1].data[*]['uesio/tests.autonumber']" includes "ID-009"
 jsonpath "$.wires[1].data[*]['uesio/core.uniquekey']" count == 9
 
+# Operator: IN | valueSource: PARAM
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.wire_condition",
+            "fields": [{"id": "uesio/tests.autonumber"}],
+            "query":true,
+            "params": {
+                "param1": "ID-001",
+                "param2": "ID-002"
+            },
+            "conditions": [
+                {
+                    "active": true,
+                    "field": "uesio/tests.autonumber",
+                    "operator": "IN",
+                    "valueSource": "PARAM",
+                    "params": [
+                        "param1",
+                        "param2"
+                    ]
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].debugQueryString" == ```
+SELECT
+main.fields->>'uesio/tests.autonumber' AS "uesio/tests.autonumber",
+main.id::text AS "uesio/core.id",
+main.uniquekey AS "uesio/core.uniquekey"
+FROM data as "main"
+WHERE
+main.collection = $1 AND
+main.tenant = $2 AND
+main.fields->>'uesio/tests.autonumber' IN ($3,$4)
+ORDER BY main.id::text asc
+LIMIT 501```
+jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" count == 2
+jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" includes "ID-001"
+jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" includes "ID-002"
+
 # Operator: NOT_IN | valueSource: VALUE
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
@@ -406,6 +452,53 @@ ORDER BY main.id::text asc
 LIMIT 501```
 jsonpath "$.wires[1].data[*]" not exists
 
+# Operator: NOT_IN | valueSource: PARAM
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.wire_condition",
+            "fields": [{"id": "uesio/tests.autonumber"}],
+            "query":true,
+            "params": {
+                "param1": "ID-001",
+                "param2": "ID-002",
+                "param3": "ID-003"
+            },
+            "conditions": [
+                {
+                    "active": true,
+                    "field": "uesio/tests.autonumber",
+                    "operator": "NOT_IN",
+                    "valueSource": "PARAM",
+                    "params": [
+                        "param1",
+                        "param2",
+                        "param3"
+                    ]
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].debugQueryString" == ```
+SELECT
+main.fields->>'uesio/tests.autonumber' AS "uesio/tests.autonumber",
+main.id::text AS "uesio/core.id",
+main.uniquekey AS "uesio/core.uniquekey"
+FROM data as "main"
+WHERE
+main.collection = $1 AND
+main.tenant = $2 AND
+main.fields->>'uesio/tests.autonumber' NOT IN ($3,$4,$5)
+ORDER BY main.id::text asc
+LIMIT 501```
+jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" not includes "ID-001"
+jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" not includes "ID-002"
+jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" not includes "ID-003"
 
 # Operator: IS_BLANK | valueSource: VALUE
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
