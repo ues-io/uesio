@@ -10,6 +10,7 @@ defaultDefinition:
   labels:
     source: DATA
     timeunit: MONTH
+    timeunitfill: WEEK
 discoverable: true
 properties:
   - name: title
