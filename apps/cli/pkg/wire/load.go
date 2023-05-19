@@ -9,9 +9,9 @@ import (
 )
 
 type LoadOptions struct {
-	Conditions         []adapt.LoadRequestCondition `json:"conditions"`
-	Fields             []adapt.LoadRequestField     `json:"fields"`
-	Orders             []adapt.LoadRequestOrder     `json:"order"`
+	Conditions         []adapt.LoadRequestCondition `json:"conditions,omitempty"`
+	Fields             []adapt.LoadRequestField     `json:"fields,omitempty"`
+	Orders             []adapt.LoadRequestOrder     `json:"order,omitempty"`
 	RequireWriteAccess bool                         `json:"requirewriteaccess"`
 }
 

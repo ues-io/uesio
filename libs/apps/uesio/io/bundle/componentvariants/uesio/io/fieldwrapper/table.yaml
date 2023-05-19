@@ -6,5 +6,5 @@ definition:
     root:
       - p-2
       - relative
-      - "[&>input]:bg-inherit"
+      - "[&_input]:bg-inherit"
 public: true

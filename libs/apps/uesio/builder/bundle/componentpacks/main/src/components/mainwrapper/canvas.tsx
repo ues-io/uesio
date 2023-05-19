@@ -83,8 +83,6 @@ const getDragIndex = (slotTarget: Element | null, e: DragEvent): number => {
 	return index
 }
 
-// This function uses the mouse position and the bounding boxes of the slot's
-// children to determine the index of the drop.
 const getClickIndex = (
 	slotTarget: Element | null,
 	prevTarget: Element | null
@@ -133,7 +131,11 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 				"border-slate-300",
 				"rounded-md",
 			],
-			contentwrapper: ["overflow-auto", "h-full"],
+			contentwrapper: [
+				"overflow-auto",
+				"h-full",
+				"[container-type:inline-size]",
+			],
 		},
 		props
 	)
@@ -250,7 +252,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 				<div className={classes.outerwrapper}>
 					<div className={classes.contentwrapper}>
 						{props.children}
-						<SelectBorder context={context} />
+						<SelectBorder viewdef={viewDef} context={context} />
 					</div>
 				</div>
 			</div>

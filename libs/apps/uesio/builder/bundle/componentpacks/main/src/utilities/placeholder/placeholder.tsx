@@ -14,22 +14,19 @@ const PlaceHolder: FC<T> = (props) => {
 	const classes = styles.useUtilityStyleTokens(
 		{
 			label: [
-				"m-1",
-				isHovering ? "text-white" : "text-slate-700",
+				isHovering ? "text-white" : "text-blue-400",
 				"text-[8pt]",
 				"uppercase",
 				isHovering ? "font-medium" : "font-light",
 			],
 			root: [
-				isHovering ? "bg-slate-600" : "bg-slate-100",
-				"px-2",
-				"py-1.5",
+				isHovering ? "bg-blue-600" : "bg-blue-50",
+				"py-2",
+				"px-3",
 				"grid",
-				"my-1.5",
+				"my-1",
 				"rounded-md",
 				"items-center",
-				"border",
-				isHovering ? "border-slate-800" : "border-slate-200",
 			],
 		},
 		props
