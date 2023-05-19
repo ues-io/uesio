@@ -8,6 +8,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/cache"
 	"net/http"
 	"os"
+	"strings"
 
 	openai "github.com/sashabaranov/go-openai"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
@@ -17,6 +18,49 @@ import (
 )
 
 var client *openai.Client
+
+var sampleCollectionFieldsSuggestedResult = `[
+  {
+    "type": "SERIAL",
+    "label": "ID"
+  },
+  {
+    "type": "VARCHAR(50)",
+    "label": "Name"
+  },
+  {
+    "type": "INTEGER",
+    "label": "Quantity"
+  },
+  {
+    "type": "DECIMAL(10,2)",
+    "label": "Price"
+  },
+  {
+    "type": "DATE",
+    "label": "Date Added"
+  },
+  {
+    "type": "VARCHAR(50)",
+    "label": "Supplier"
+  },
+  {
+    "type": "VARCHAR(50)",
+    "label": "Category"
+  },
+  {
+    "type": "VARCHAR(50)",
+    "label": "Location"
+  },
+  {
+    "type": "BOOLEAN",
+    "label": "Availability"
+  },
+  {
+    "type": "TEXT",
+    "label": "Description"
+  }
+]`
 
 func init() {
 	token := os.Getenv("OPENAI_API_KEY")
@@ -34,6 +78,10 @@ type AutocompleteRequest struct {
 
 func (r *AutocompleteRequest) ToString() string {
 	return fmt.Sprintf("%s-%s-%s-%d", r.Input, r.Model, r.Format, r.MaxResults)
+}
+
+func (r *AutocompleteRequest) GetRedisKey() string {
+	return fmt.Sprintf("openai-request:%s-%s-%s-%d", r.Input, r.Model, r.Format, r.MaxResults)
 }
 
 type AutocompleteResponse struct {
@@ -109,6 +157,14 @@ func AutocompleteHandler(w http.ResponseWriter, r *http.Request) {
 func Autocomplete(request *AutocompleteRequest) ([]string, error) {
 
 	if client == nil {
+		// Hack to facilitate local development, where a dev might not have the API key
+		if strings.HasPrefix(request.Input, "I am creating a new PostgreSQL database table") {
+			// Return a canned response
+			return []string{
+				sampleCollectionFieldsSuggestedResult,
+			}, nil
+		}
+
 		return nil, errors.New("api token not configured, autocomplete service unavailable")
 	}
 
