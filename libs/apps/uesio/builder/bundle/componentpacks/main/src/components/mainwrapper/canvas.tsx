@@ -213,8 +213,6 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 			}
 		}
 
-		e.stopPropagation()
-
 		if (validPath) {
 			setSelectedPath(
 				context,
