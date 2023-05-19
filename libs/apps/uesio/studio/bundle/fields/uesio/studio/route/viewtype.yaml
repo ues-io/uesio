@@ -1,3 +1,4 @@
 name: viewtype
-type: TEXT
+type: SELECT
 label: View Type
+selectList: uesio/studio.viewtype

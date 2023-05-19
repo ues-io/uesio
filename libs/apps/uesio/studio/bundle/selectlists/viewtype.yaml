@@ -1,0 +1,6 @@
+name: viewtype
+options:
+  - label: List
+    value: list
+  - label: Detail
+    value: detail

@@ -159,6 +159,9 @@ definition:
                                       label: Collection
                                   - uesio/io.field:
                                       fieldId: uesio/studio.viewtype
+                                      uesio.display:
+                                        - value: ${uesio/studio.collection}
+                                          type: hasValue
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.main
                           title: Search Engine Optimization

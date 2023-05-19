@@ -37,6 +37,8 @@ definition:
         uesio/studio.view:
         uesio/studio.theme:
         uesio/studio.title:
+        uesio/studio.collection:
+        uesio/studio.viewtype:
       conditions:
         - field: uesio/studio.workspace
           valueSource: LOOKUP
@@ -152,6 +154,11 @@ definition:
                   fieldId: uesio/studio.collection
                   metadataType: COLLECTION
                   label: Collection
+              - uesio/io.field:
+                  fieldId: uesio/studio.viewtype
+                  uesio.display:
+                    - value: ${uesio/studio.collection}
+                      type: hasValue
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
