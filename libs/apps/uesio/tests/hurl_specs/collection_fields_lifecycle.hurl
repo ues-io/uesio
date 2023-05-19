@@ -1,0 +1,285 @@
+###################################################################
+# Tests creating a collection, fields, and collection cascade delete
+###################################################################
+
+# Test as a logged-in user so that we don't get redirected to the login page
+POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+{
+    "token": "{\"subject\":\"uesio\"}"
+}
+
+# Get the dev workspace id so we can test saving collections/fields
+POST https://{{host}}:{{port}}/site/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/studio.app",
+            "name": "app",
+            "query":true,
+            "fields": [
+                {
+                    "id": "uesio/core.id"
+                },
+                {
+                    "id": "uesio/studio.fullname"
+                }
+            ],
+            "conditions": [
+                {
+                    "field": "uesio/studio.fullname",
+                    "value": "uesio/tests"
+                }
+            ]
+        },
+        {
+            "collection":"uesio/studio.workspace",
+            "name": "workspace",
+            "query":true,
+            "fields": [
+                {
+                    "id": "uesio/core.id"
+                },
+                {
+                    "id": "uesio/studio.name"
+                }
+            ],
+            "conditions": [
+                {
+                    "field": "uesio/studio.name",
+                    "value": "dev"
+                },
+                {
+                    "field": "uesio/studio.app",
+                    "valueSource": "LOOKUP",
+                    "operator": "IN",
+                    "lookupWire": "app",
+                    "lookupField": "uesio/core.id"
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].data[*]['uesio/studio.fullname']" == "uesio/tests"
+jsonpath "$.wires[1].data[*]['uesio/studio.name']" == "dev"
+[Captures]
+app_id: jsonpath "$.wires[0].data[*]['uesio/core.id']"
+app_fullname: jsonpath "$.wires[0].data[*]['uesio/studio.fullname']"
+workspace_id: jsonpath "$.wires[1].data[*]['uesio/core.id']"
+
+# Create a collection
+POST https://{{host}}:{{port}}/site/wires/save
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/studio.collection",
+            "deletes":{},
+            "changes":{
+                "temp1":{
+                    "uesio/studio.datasource": "uesio/core.platform",
+                    "uesio/studio.name":"rare_and_unusual_object",
+                    "uesio/studio.label":"Rare and unusual object",
+                    "uesio/studio.plurallabel":"Rare and unusual objects",
+                    "uesio/studio.workspace": {
+                        "uesio/core.id": "{{workspace_id}}"
+                    }
+                }
+            },
+            "wire":"mywire"
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" == null
+
+# Create fields associated with the collection
+POST https://{{host}}:{{port}}/site/wires/save
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/studio.field",
+            "deletes":{},
+            "changes":{
+                "temp1":{
+                    "uesio/studio.collection":"{{app_fullname}}.rare_and_unusual_object",
+                    "uesio/studio.name":"object_name",
+                    "uesio/studio.label":"Object Name",
+                    "uesio/studio.type":"TEXT",
+                    "uesio/studio.workspace": {
+                        "uesio/core.id": "{{workspace_id}}"
+                    }
+                },
+                "temp2":{
+                    "uesio/studio.collection":"{{app_fullname}}.rare_and_unusual_object",
+                    "uesio/studio.name":"estimated_value",
+                    "uesio/studio.label":"Estimated Value",
+                    "uesio/studio.type":"NUMBER",
+                    "uesio/studio.number->uesio/studio.decimals":2,
+                    "uesio/studio.workspace": {
+                        "uesio/core.id": "{{workspace_id}}"
+                    }
+                }
+            },
+            "wire":"mywire"
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" == null
+
+# Verify the collection and field were saved successfully
+POST https://{{host}}:{{port}}/site/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/studio.collection",
+            "id": "collection",
+            "query":true,
+            "fields": [
+                {
+                    "id": "uesio/studio.name"
+                },
+                {
+                    "id": "uesio/studio.label"
+                },
+                {
+                    "id": "uesio/studio.plurallabel"
+                }
+            ],
+            "conditions": [
+                {
+                    "field": "uesio/studio.name",
+                    "value": "rare_and_unusual_object"
+                },
+                {
+                    "field": "uesio/studio.workspace",
+                    "value": "{{workspace_id}}"
+                }
+            ]
+        },
+        {
+            "collection":"uesio/studio.field",
+            "id": "fields",
+            "query":true,
+            "fields": [
+                {
+                    "id": "uesio/studio.name"
+                },
+                {
+                    "id": "uesio/studio.label"
+                },
+                {
+                    "id": "uesio/studio.type"
+                },
+                {
+                    "id": "uesio/studio.collection"
+                }
+            ],
+            "conditions": [
+                {
+                    "field": "uesio/studio.collection",
+                    "value": "{{app_fullname}}.rare_and_unusual_object"
+                }
+            ],
+            "order": [
+                {
+                    "field": "uesio/studio.name",
+                    "direction": "ASC"
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].data[*]['uesio/studio.name']" == "rare_and_unusual_object"
+jsonpath "$.wires[0].data[*]['uesio/studio.label']" == "Rare and unusual object"
+jsonpath "$.wires[0].data[*]['uesio/studio.plurallabel']" == "Rare and unusual objects"
+jsonpath "$.wires[1].data[*]['uesio/core.id']" count == 2
+jsonpath "$.wires[1].data[*]['uesio/studio.collection']" includes "{{app_fullname}}.rare_and_unusual_object"
+jsonpath "$.wires[1].data[*]['uesio/studio.name']" includes "estimated_value"
+jsonpath "$.wires[1].data[*]['uesio/studio.label']" includes "Object Name"
+jsonpath "$.wires[1].data[*]['uesio/studio.type']" includes "NUMBER"
+[Captures]
+collection_id: jsonpath "$.wires[0].data[*]['uesio/core.id']"
+
+# Delete the collection
+POST https://{{host}}:{{port}}/site/wires/save
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/studio.collection",
+            "deletes":{
+                "{{collection_id}}": {
+                    "uesio/core.id": "{{collection_id}}",
+                    "uesio/studio.workspace": {
+                        "uesio/core.id": "{{workspace_id}}"
+                    }
+                }
+            },
+            "changes":{},
+            "wire":"mywire"
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" == null
+
+# Verify that the collection and fields were deleted successfully
+POST https://{{host}}:{{port}}/site/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/studio.collection",
+            "query":true,
+            "fields": [
+                {
+                    "id": "uesio/core.id"
+                }
+            ],
+            "conditions": [
+                {
+                    "field": "uesio/studio.name",
+                    "value": "rare_and_unusual_object"
+                },
+                {
+                    "field": "uesio/studio.workspace",
+                    "value": "{{workspace_id}}"
+                }
+            ]
+        },
+        {
+            "collection":"uesio/studio.field",
+            "query":true,
+            "fields": [
+                {
+                    "id": "uesio/core.id"
+                }
+            ],
+            "conditions": [
+                {
+                    "field": "uesio/studio.collection",
+                    "value": "{{app_fullname}}.rare_and_unusual_object"
+                },
+                {
+                    "field": "uesio/studio.workspace",
+                    "value": "{{workspace_id}}"
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].data[*]" not exists
+jsonpath "$.wires[1].data[*]" not exists

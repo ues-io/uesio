@@ -6,6 +6,10 @@ html.noicons .isicon {
 	width: 1lh;
 }
 
+html {
+	container-type: inline-size
+}
+
 /* roboto-300 - latin */
 @font-face {
 	font-family: "Roboto";
