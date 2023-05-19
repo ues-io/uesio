@@ -119,6 +119,8 @@ const SuggestedFields: definition.UC<ComponentDefinition> = (props) => {
 			fieldWire: fieldWireName,
 		},
 	} = props
+
+	const canUseAiFeatures = !!context.getFeatureFlag("use_ai_signals")?.value
 	const IOImage = component.getUtility("uesio/io.image")
 	const classes = styles.useStyleTokens(StyleDefaults, props)
 
@@ -150,7 +152,8 @@ const SuggestedFields: definition.UC<ComponentDefinition> = (props) => {
 
 	useEffect(() => {
 		// Don't run if we already have data
-		if (hasRunBefore || fieldWire?.getData().length) return
+		if (hasRunBefore || fieldWire?.getData().length || !canUseAiFeatures)
+			return
 
 		setLoading(true)
 
@@ -182,7 +185,7 @@ const SuggestedFields: definition.UC<ComponentDefinition> = (props) => {
 		})
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [prompt, hasRunBefore, fieldWire?.getData().length])
+	}, [prompt, hasRunBefore, fieldWire?.getData().length, canUseAiFeatures])
 
 	return isLoading ? (
 		<div className={classes.root}>
