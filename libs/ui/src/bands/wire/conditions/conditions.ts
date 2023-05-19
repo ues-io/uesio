@@ -51,8 +51,8 @@ type ParamConditionState = ConditionBase & {
 	type?: undefined
 	field: string
 	valueSource: typeof PARAM
-	params?: string[]
 	param: string
+	params?: string[]
 }
 
 type LookupConditionState = ConditionBase & {

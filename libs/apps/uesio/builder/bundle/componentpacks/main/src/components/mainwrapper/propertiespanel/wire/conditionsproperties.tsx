@@ -525,7 +525,6 @@ const ConditionsProperties: definition.UC = (props) => {
 				type: "LIST",
 				label: "Params",
 				subtype: fieldDisplayType,
-				subtypeOptions: fieldMetadata?.getSelectOptions(context),
 				displayConditions: [
 					{
 						field: "valueSource",
