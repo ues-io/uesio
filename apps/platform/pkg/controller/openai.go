@@ -5,13 +5,15 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/thecloudmasters/uesio/pkg/cache"
+	"net/http"
+	"os"
+
 	openai "github.com/sashabaranov/go-openai"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/featureflagstore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
-	"net/http"
-	"os"
 )
 
 var client *openai.Client
@@ -30,9 +32,26 @@ type AutocompleteRequest struct {
 	MaxResults int    `json:"maxResults"`
 }
 
+func (r *AutocompleteRequest) ToString() string {
+	return fmt.Sprintf("%s-%s-%s-%d", r.Input, r.Model, r.Format, r.MaxResults)
+}
+
 type AutocompleteResponse struct {
 	Choices []string `json:"choices,omitempty"`
 	Error   string   `json:"error,omitempty"`
+}
+
+func getCachedResponse(req *AutocompleteRequest) (*AutocompleteResponse, error) {
+	var response AutocompleteResponse
+	err := cache.Get(req.ToString(), &response)
+	if err != nil {
+		return nil, err
+	}
+	return &response, nil
+}
+
+func cacheResponse(req *AutocompleteRequest, response *AutocompleteResponse) error {
+	return cache.Set(req.ToString(), response)
 }
 
 func AutocompleteHandler(w http.ResponseWriter, r *http.Request) {
@@ -69,20 +88,19 @@ func AutocompleteHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Invoke OpenAI
-	choices, err := Autocomplete(&req)
-
-	// Static input for testing
-	//choices := []string{
-	//	`Here's an example of a JavaScript function that computes the nth Fibonacci number:function fibonacci(n) {  if (n === 0 || n === 1) {    return n;  } else {    return fibonacci(n - 1) + fibonacci(n - 2);  }}console.log(fibonacci(7)); // Output: 13This function takes a single argument, n, which represents the position of the desired Fibonacci number in the sequence. It uses recursion to compute the value of the nth Fibonacci number by summing the values of the two preceding numbers in the sequence. The base case of the recursion is when n is 0 or 1, in which case the function simply returns n.In the example above, the function is called with an argument of 7, which corresponds to the 8th Fibonacci number in the sequence (since the sequence starts at 0). The function returns the value 13, which is indeed the 8th Fibonacci number.`,
-	//}
-
-	autocompleteResponse := &AutocompleteResponse{}
-
-	if err != nil {
-		autocompleteResponse.Error = err.Error()
-	} else {
-		autocompleteResponse.Choices = choices
+	// Check if we already have this response in cache
+	autocompleteResponse, err := getCachedResponse(&req)
+	if autocompleteResponse == nil || err != nil {
+		// Invoke OpenAI
+		autocompleteResponse = &AutocompleteResponse{}
+		choices, err := Autocomplete(&req)
+		if err != nil {
+			autocompleteResponse.Error = err.Error()
+		} else {
+			autocompleteResponse.Choices = choices
+			// Cache our response
+			cacheResponse(&req, autocompleteResponse)
+		}
 	}
 
 	file.RespondJSON(w, r, autocompleteResponse)
