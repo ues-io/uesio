@@ -15,6 +15,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/featureflagstore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
+	"github.com/twmb/murmur3"
 )
 
 var client *openai.Client
@@ -76,12 +77,17 @@ type AutocompleteRequest struct {
 	MaxResults int    `json:"maxResults"`
 }
 
-func (r *AutocompleteRequest) ToString() string {
-	return fmt.Sprintf("%s-%s-%s-%d", r.Input, r.Model, r.Format, r.MaxResults)
+func (r *AutocompleteRequest) hashCode() uint64 {
+	hasher := murmur3.New64()
+	_, err := hasher.Write([]byte(fmt.Sprintf("%s-%s-%s-%d", r.Input, r.Model, r.Format, r.MaxResults)))
+	if err != nil {
+		return 0
+	}
+	return hasher.Sum64()
 }
 
 func (r *AutocompleteRequest) GetRedisKey() string {
-	return fmt.Sprintf("openai-request:%s-%s-%s-%d", r.Input, r.Model, r.Format, r.MaxResults)
+	return fmt.Sprintf("openai-request:%d", r.hashCode())
 }
 
 type AutocompleteResponse struct {
@@ -91,7 +97,7 @@ type AutocompleteResponse struct {
 
 func getCachedResponse(req *AutocompleteRequest) (*AutocompleteResponse, error) {
 	var response AutocompleteResponse
-	err := cache.Get(req.ToString(), &response)
+	err := cache.Get(req.GetRedisKey(), &response)
 	if err != nil {
 		return nil, err
 	}
@@ -99,7 +105,7 @@ func getCachedResponse(req *AutocompleteRequest) (*AutocompleteResponse, error) 
 }
 
 func cacheResponse(req *AutocompleteRequest, response *AutocompleteResponse) error {
-	return cache.Set(req.ToString(), response)
+	return cache.Set(req.GetRedisKey(), response)
 }
 
 func AutocompleteHandler(w http.ResponseWriter, r *http.Request) {
