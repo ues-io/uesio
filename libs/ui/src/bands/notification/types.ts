@@ -6,6 +6,7 @@ interface NotificationState {
 	text: string
 	details?: string
 	path?: string
+	duration?: number
 }
 
 export type { NotificationSeverity, NotificationState }

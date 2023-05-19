@@ -1,3 +1,4 @@
+import { useEffect } from "react"
 import { useNotifications } from "../bands/notification/selectors"
 import { UtilityComponent } from "../definition/definition"
 import { dispatch } from "../store/store"
@@ -9,6 +10,15 @@ const NotificationArea: UtilityComponent = (props) => {
 	const notifications = useNotifications()
 
 	if (!notifications.length) return null
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			notifications.forEach((notification) =>
+				dispatch(removeNotification(notification.id))
+			)
+		}, 5000)
+
+		return () => clearTimeout(timer)
+	}, [notifications])
 
 	return (
 		<>
@@ -28,6 +38,7 @@ const NotificationArea: UtilityComponent = (props) => {
 						onClick={() => {
 							dispatch(removeNotification(notification.id))
 						}}
+						duration={notification.duration}
 					/>
 				))}
 		</>

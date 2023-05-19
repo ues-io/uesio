@@ -30,7 +30,7 @@ func preventUpdate(field *adapt.FieldMetadata) validationFunc {
 
 		oldValue, err := change.FieldChanges.GetField(field.GetFullName())
 		if err != nil {
-			return adapt.NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" has no old value")
+			return adapt.NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" has no old value", 5)
 		}
 
 		// Since we're autopopulating this, allow the update to go through
@@ -44,7 +44,7 @@ func preventUpdate(field *adapt.FieldMetadata) validationFunc {
 		}
 
 		// Fail we have an attempted change on an unupdateable field
-		return adapt.NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" is not updateable: "+change.IDValue)
+		return adapt.NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" is not updateable: "+change.IDValue, 5)
 	}
 }
 
@@ -52,7 +52,7 @@ func validateRequired(field *adapt.FieldMetadata) validationFunc {
 	return func(change *adapt.ChangeItem) *adapt.SaveError {
 		val, err := change.FieldChanges.GetField(field.GetFullName())
 		if (change.IsNew && err != nil) || val == "" {
-			return adapt.NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" is required")
+			return adapt.NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" is required", 5)
 		}
 		return nil
 	}
@@ -63,7 +63,7 @@ func validateEmail(field *adapt.FieldMetadata) validationFunc {
 		val, err := change.FieldChanges.GetField(field.GetFullName())
 		if err == nil && val != "" {
 			if !isEmailValid(fmt.Sprintf("%v", val)) {
-				return adapt.NewSaveError(change.RecordKey, field.GetFullName(), field.Label+" is not a valid email address")
+				return adapt.NewSaveError(change.RecordKey, field.GetFullName(), field.Label+" is not a valid email address", 5)
 			}
 		}
 		return nil
@@ -74,13 +74,13 @@ func validateRegex(field *adapt.FieldMetadata) validationFunc {
 	regex, err := regexp.Compile(field.ValidationMetadata.Regex)
 	if err != nil {
 		return func(change *adapt.ChangeItem) *adapt.SaveError {
-			return adapt.NewSaveError(change.RecordKey, field.GetFullName(), "Regex for the field: "+field.Label+" is not valid")
+			return adapt.NewSaveError(change.RecordKey, field.GetFullName(), "Regex for the field: "+field.Label+" is not valid", 5)
 		}
 	}
 	return func(change *adapt.ChangeItem) *adapt.SaveError {
 		val, err := change.FieldChanges.GetField(field.GetFullName())
 		if err == nil && !regex.MatchString(fmt.Sprintf("%v", val)) {
-			return adapt.NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" don't match regex: "+field.ValidationMetadata.Regex)
+			return adapt.NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" don't match regex: "+field.ValidationMetadata.Regex, 5)
 		}
 		return nil
 	}
@@ -90,7 +90,7 @@ func validateMetadata(field *adapt.FieldMetadata) validationFunc {
 	return func(change *adapt.ChangeItem) *adapt.SaveError {
 		val, err := change.FieldChanges.GetField(field.GetFullName())
 		if err == nil && !meta.IsValidMetadataName(fmt.Sprintf("%v", val)) {
-			return adapt.NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" failed metadata validation, no capital letters or special characters allowed")
+			return adapt.NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" failed metadata validation, no capital letters or special characters allowed", 5)
 		}
 		return nil
 	}
@@ -109,7 +109,7 @@ func validateYaml(field *adapt.FieldMetadata) validationFunc {
 		}
 		err = yaml.Unmarshal([]byte(stringVal), node)
 		if err != nil {
-			return adapt.NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" is not valid YAML: "+err.Error())
+			return adapt.NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" is not valid YAML: "+err.Error(), 5)
 		}
 		return nil
 	}
@@ -122,7 +122,7 @@ func validateNumber(field *adapt.FieldMetadata) validationFunc {
 		_, isInt64 := val.(int64)
 		_, isInt := val.(int)
 		if err == nil && !isFloat && !isInt64 && !isInt {
-			return adapt.NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" is not a valid number")
+			return adapt.NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" is not a valid number", 5)
 		}
 		return nil
 	}

@@ -39,7 +39,7 @@ func NewBeforeSaveAPI(op *adapt.SaveOp, connection adapt.Connection, session *se
 }
 
 func (bs *BeforeSaveAPI) AddError(message string) {
-	bs.op.AddError(adapt.NewSaveError("", "", message))
+	bs.op.AddError(adapt.NewSaveError("", "", message, 5))
 }
 
 func (bs *BeforeSaveAPI) Load(request BotLoadOp) (*adapt.Collection, error) {
