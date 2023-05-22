@@ -1,4 +1,3 @@
-import { useEffect } from "react"
 import { useNotifications } from "../bands/notification/selectors"
 import { UtilityComponent } from "../definition/definition"
 import { dispatch } from "../store/store"
@@ -8,17 +7,6 @@ import { getUtility } from "../component/component"
 const NotificationArea: UtilityComponent = (props) => {
 	const Alert = getUtility("uesio/io.alert")
 	const notifications = useNotifications()
-
-	if (!notifications.length) return null
-	useEffect(() => {
-		const timer = setTimeout(() => {
-			notifications.forEach((notification) =>
-				dispatch(removeNotification(notification.id))
-			)
-		}, 5000)
-
-		return () => clearTimeout(timer)
-	}, [notifications])
 
 	return (
 		<>
