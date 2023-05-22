@@ -2,3 +2,4 @@ name: collection
 type: TEXT
 label: Collection
 required: true
+createOnly: true

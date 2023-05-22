@@ -2,3 +2,4 @@ name: route
 type: TEXT
 label: Route
 required: true
+createOnly: true

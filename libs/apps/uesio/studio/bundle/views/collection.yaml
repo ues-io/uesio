@@ -263,6 +263,25 @@ definition:
                                 components:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.primary
+                                      text: Save
+                                      signals:
+                                        - signal: wire/SAVE
+                                          wires:
+                                            - routeassignments
+                                      uesio.display:
+                                        - type: wireHasChanges
+                                          wire: routeassignments
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.secondary
+                                      text: Cancel
+                                      signals:
+                                        - signal: wire/CANCEL
+                                          wire: routeassignments
+                                      uesio.display:
+                                        - type: wireHasChanges
+                                          wire: routeassignments
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.primary
                                       text: New Route Assignment
                                       signals:
                                         - signal: wire/EMPTY
@@ -271,6 +290,9 @@ definition:
                                           wire: newrouteassignment
                                         - signal: panel/TOGGLE
                                           panel: newRouteAssignment
+                                      uesio.display:
+                                        - type: wireHasNoChanges
+                                          wire: routeassignments
                       - uesio/io.table:
                           wire: routeassignments
                           mode: READ
@@ -404,13 +426,12 @@ definition:
                 severity: success
         - uesio/io.button:
             uesio.variant: uesio/io.secondary
-            uesio.id: cancel-new-field
             text: $Label{uesio/io.cancel}
             signals:
               - signal: wire/EMPTY
-                wire: newfield
+                wire: newrouteassignment
               - signal: panel/TOGGLE
-                panel: newField
+                panel: newRouteAssignment
     newField:
       uesio.type: uesio/io.dialog
       title: Create a New Field
