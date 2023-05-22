@@ -14,7 +14,7 @@ func Truncate(w http.ResponseWriter, r *http.Request) {
 	tenantID := session.GetTenantID()
 
 	if tenantID == "site:uesio/studio:prod" {
-		err := errors.New("can't truncate studio data")
+		err := errors.New("cannot truncate Studio data")
 		logger.LogError(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
