@@ -24,7 +24,7 @@ type RouteAssignment struct {
 	BundleableBase `yaml:"-"`
 	Type           string `yaml:"type" json:"uesio/studio.type"`
 	RouteRef       string `yaml:"route" json:"uesio/studio.route"`
-	Collection     string `yaml:"collection" json:"uesio/studio.collection"`
+	Collection     string `yaml:"-" json:"uesio/studio.collection"`
 }
 
 type RouteAssignmentWrapper RouteAssignment
