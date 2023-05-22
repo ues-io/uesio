@@ -4,7 +4,7 @@ import { useDropPath } from "../../api/stateapi"
 import { FullPath } from "../../api/path"
 
 const BuildWrapper: definition.UC = (props) => {
-	const { children, path, context } = props
+	const { children, path, context, componentType } = props
 
 	const dropPath = useDropPath(context)
 
@@ -26,15 +26,15 @@ const BuildWrapper: definition.UC = (props) => {
 	}
 
 	return (
-		<>
+		<div
+			className="contents"
+			data-placeholder="true"
+			data-index={index}
+			data-component={componentType}
+		>
 			{addBeforePlaceholder && (
 				<PlaceHolder label="0" isHovering={true} context={context} />
 			)}
-			<div
-				className="hidden"
-				data-placeholder="true"
-				data-index={index}
-			/>
 			{children}
 			{addAfterPlaceholder && (
 				<PlaceHolder
@@ -43,7 +43,7 @@ const BuildWrapper: definition.UC = (props) => {
 					context={context}
 				/>
 			)}
-		</>
+		</div>
 	)
 }
 

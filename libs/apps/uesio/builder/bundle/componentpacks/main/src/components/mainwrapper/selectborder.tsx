@@ -44,6 +44,18 @@ const StyleDefaults = Object.freeze({
 	arrow: ["fill-blue-600"],
 	popper: ["bg-blue-600", "rounded"],
 	dragging: ["opacity-20"],
+	empty: [
+		"bg-blue-50",
+		"py-2",
+		"px-3",
+		"my-1",
+		"text-blue-400",
+		"text-[8pt]",
+		"font-light",
+		"rounded",
+		"uppercase",
+	],
+	emptyRemove: ["contents"],
 })
 
 const getComponentInfoFromPath = (path: FullPath, context: context.Context) => {
@@ -63,29 +75,31 @@ const getComponentInfoFromPath = (path: FullPath, context: context.Context) => {
 }
 
 const getTargetsFromSlotIndex = (slotPath: FullPath, index: number) => {
-	const indexPlaceHolders = document.querySelectorAll(
+	const targetWrappers = document.querySelectorAll(
 		`[data-path="${CSS.escape(
 			slotPath.localPath
 		)}"]>[data-index="${index}"]`
 	)
-
-	if (!indexPlaceHolders.length) {
-		return null
-	}
-
 	const targets: Element[] = []
-	indexPlaceHolders.forEach((placeHolder) => {
-		const target = placeHolder.nextSibling as Element | null
-		if (!target || target.getAttribute("data-placeholder") === "true") {
+	targetWrappers.forEach((target) => {
+		const children = target.querySelectorAll("&>*:not([data-placeholder])")
+		if (children.length) {
+			children.forEach((child) => {
+				targets.push(child)
+			})
 			return null
 		}
+		target.classList.remove("contents")
 		targets.push(target)
 	})
-
 	return targets
 }
 
-const SelectBorder: definition.UtilityComponent = (props) => {
+type Props = {
+	viewdef: definition.DefinitionMap
+}
+
+const SelectBorder: definition.UtilityComponent<Props> = (props) => {
 	const context = props.context
 
 	const Popper = component.getUtility("uesio/io.popper")
@@ -98,6 +112,8 @@ const SelectBorder: definition.UtilityComponent = (props) => {
 
 	const [selectedChildren, setSelectedChildren] = useState<Element[]>()
 	const [draggingChildren, setDraggingChildren] = useState<Element[]>()
+	const [emptyComponents, setEmptyComponents] =
+		useState<NodeListOf<Element>>()
 
 	const selectedLength = selectedChildren ? selectedChildren.length : 0
 	const draggingLength = draggingChildren ? draggingChildren.length : 0
@@ -113,6 +129,36 @@ const SelectBorder: definition.UtilityComponent = (props) => {
 	] = getComponentInfoFromPath(selectedComponentPath, context)
 
 	const selectedSlotPathString = selectedSlotPath?.combine() || ""
+
+	useEffect(() => {
+		if (emptyComponents) {
+			emptyComponents.forEach((child) => {
+				child.classList.remove(...StyleDefaults.empty)
+				child.classList.add(...StyleDefaults.emptyRemove)
+				child.setAttribute("data-placeholder", "true")
+				child.innerHTML = ""
+			})
+		}
+		const targets = document.querySelectorAll(
+			`[data-path]>[data-component]:empty`
+		)
+
+		if (!targets.length) {
+			setEmptyComponents(undefined)
+			return
+		}
+
+		targets.forEach((target) => {
+			target.classList.add(...StyleDefaults.empty)
+			target.classList.remove(...StyleDefaults.emptyRemove)
+			target.removeAttribute("data-placeholder")
+			target.innerHTML =
+				"Invisible Component: " + target.getAttribute("data-component")
+		})
+
+		setEmptyComponents(targets)
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [props.viewdef])
 
 	// Handle figuring out what the selected element is so that we can
 	// Add some styling to it.

@@ -99,6 +99,19 @@ func processConditions(
 			conditions[i].ValueSource = ""
 		}
 
+		if condition.ValueSource == "PARAM" && len(condition.Params) > 0 {
+			var values []string
+			for _, param := range condition.Params {
+				value, ok := params[param]
+				if !ok {
+					return errors.New("Invalid Condition, parameter not provided: " + param)
+				}
+				values = append(values, value)
+			}
+			conditions[i].Values = values
+			conditions[i].ValueSource = ""
+		}
+
 		if condition.ValueSource == "LOOKUP" && condition.LookupWire != "" && condition.LookupField != "" {
 
 			// Look through the previous wires to find the one to look up on.
@@ -129,8 +142,13 @@ func processConditions(
 
 			conditions[i].Values = values
 			conditions[i].ValueSource = ""
-			//always IN
-			conditions[i].Operator = "IN"
+			//default "IN"
+			if conditions[i].Operator == "" {
+				conditions[i].Operator = "IN"
+			}
+			if !(conditions[i].Operator == "IN" || conditions[i].Operator == "NOT_IN") {
+				return errors.New("Invalid operator for lookup: " + conditions[i].Operator)
+			}
 		}
 	}
 

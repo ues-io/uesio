@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/middleware"
@@ -15,6 +16,8 @@ import (
 type vendorScript struct {
 	Path    string `json:"path"`
 	Version string `json:"version"`
+	Preload bool   `json:"preload"`
+	Order   int    `json:"order"`
 }
 
 var vendorDistDir string
@@ -43,27 +46,48 @@ func init() {
 		panic(err)
 	}
 
-	vendorScriptUrls = []string{}
 	vendorManifest := map[string]vendorScript{}
 
-	err = json.Unmarshal([]byte(vendorScriptsManifestFile), &vendorManifest)
+	err = json.Unmarshal(vendorScriptsManifestFile, &vendorManifest)
 
 	if err != nil {
 		fmt.Println("Unable to parse vendor scripts manifest")
 		panic(err)
 	}
 
+	type orderedScriptLoad struct {
+		url   string
+		order int
+	}
+
+	orderedScriptLoads := make([]orderedScriptLoad, 0, len(vendorManifest))
+
 	for scriptModule, scriptManifest := range vendorManifest {
 		if scriptModule == "monaco-editor" {
 			monacoEditorVersion = scriptManifest.Version
 		}
-		if scriptManifest.Path == "" {
+		if !scriptManifest.Preload || scriptManifest.Path == "" {
 			continue
 		}
 		scriptUrl := fmt.Sprintf("%s/static/vendor/%s/%s/%s", vendorAssetsHost, scriptModule, scriptManifest.Version, scriptManifest.Path)
-		vendorScriptUrls = append(vendorScriptUrls, scriptUrl)
+
+		orderedScriptLoads = append(orderedScriptLoads, orderedScriptLoad{
+			order: scriptManifest.Order,
+			url:   scriptUrl,
+		})
 	}
 
+	// Sort the script loads by their order
+	sort.Slice(orderedScriptLoads, func(i, j int) bool {
+		return orderedScriptLoads[i].order < orderedScriptLoads[j].order
+	})
+
+	vendorScriptUrls = make([]string, len(orderedScriptLoads), len(orderedScriptLoads))
+
+	// Now output an actual array of script urls
+	for i, scriptLoad := range orderedScriptLoads {
+		vendorScriptUrls[i] = scriptLoad.url
+	}
 }
 
 func GetMonacoEditorVersion() string {
@@ -82,6 +106,9 @@ func GetVendorScriptUrls() []string {
 func ServeVendor(routePrefix string, cache bool) http.Handler {
 	fileServer := http.FileServer(http.Dir(vendorDistDir))
 	handler := http.StripPrefix(routePrefix, fileServer)
+	if vendorAssetsHost != "" {
+		handler = middleware.WithAccessControlAllowOriginHeader(handler, "*")
+	}
 	if cache {
 		handler = middleware.With1YearCache(handler)
 	}
