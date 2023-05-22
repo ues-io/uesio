@@ -219,6 +219,7 @@ func serve(cmd *cobra.Command, args []string) {
 	wr.HandleFunc("/metadata/retrieve", controller.Retrieve).Methods(http.MethodGet, http.MethodPost)
 	wr.HandleFunc("/metadata/generate/"+itemParam, controller.GenerateToWorkspace).Methods(http.MethodPost)
 	wr.HandleFunc("/metadata/builder/"+itemParam, controller.BuilderMetadata).Methods(http.MethodGet)
+	wr.HandleFunc("/data/truncate", controller.Truncate).Methods(http.MethodGet)
 
 	// Get Collection Metadata (We may be able to get rid of this someday...)
 	collectionMetadataPath := fmt.Sprintf("/collections/meta/%s", collectionParam)
