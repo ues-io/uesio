@@ -1,0 +1,5 @@
+name: parampicker
+pack: main
+entrypoint: components/parampicker/parampicker
+utilities:
+  - uesio/io.fieldwrapper

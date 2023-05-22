@@ -150,6 +150,13 @@ export const getFormFieldFromProperty = (
 				},
 			}
 		}
+		case "PARAM": {
+			return {
+				"uesio/builder.parampicker": {
+					...baseFieldDef,
+				},
+			}
+		}
 		case "TEXT_AREA": {
 			return {
 				"uesio/io.field": {
