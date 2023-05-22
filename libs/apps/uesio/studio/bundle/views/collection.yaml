@@ -215,6 +215,17 @@ definition:
                                       uesio.display:
                                         - type: wireHasChanges
                                           wire: fields
+                                  - uesio/studio.suggestedfields:
+                                      uesio.id: suggestedfields
+                                      fieldWire: fields
+                                      collectionWire: collections
+                                      uesio.context:
+                                        workspace:
+                                          name: $Param{workspacename}
+                                          app: $Param{app}
+                                      uesio.display:
+                                        - type: featureFlag
+                                          name: use_ai_signals
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.primary
                                       uesio.id: new-field
@@ -231,6 +242,9 @@ definition:
                                           value: TEXT
                                         - signal: panel/TOGGLE
                                           panel: newField
+                                      uesio.display:
+                                        - type: wireHasNoChanges
+                                          wire: fields
                       - uesio/io.table:
                           uesio.id: fields
                           wire: fields
@@ -249,14 +263,6 @@ definition:
                             - field: uesio/studio.type
                             - field: uesio/studio.label
                             - field: uesio/studio.languagelabel
-                      - uesio/studio.suggestedfields:
-                          uesio.id: suggestedfields
-                          fieldWire: fields
-                          collectionWire: collections
-                          uesio.context:
-                            workspace:
-                              name: $Param{workspacename}
-                              app: $Param{app}
   panels:
     deleteCollection:
       uesio.type: uesio/io.dialog

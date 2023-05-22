@@ -1,5 +1,5 @@
 import { component, definition, api, wire, context, styles } from "@uesio/ui"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { parse } from "best-effort-json-parser"
 
 type ComponentDefinition = {
@@ -131,7 +131,7 @@ const handleAutocompleteData = (
 }
 
 const StyleDefaults = Object.freeze({
-	root: ["animate-pulse", "place-content-center", "w-full", "mt-2"],
+	pulse: ["animate-pulse"],
 })
 
 const SuggestedFields: definition.UC<ComponentDefinition> = (props) => {
@@ -144,18 +144,15 @@ const SuggestedFields: definition.UC<ComponentDefinition> = (props) => {
 	} = props
 
 	const canUseAiFeatures = !!context.getFeatureFlag("use_ai_signals")?.value
-	const IOImage = component.getUtility("uesio/io.image")
+
+	const Button = component.getUtility("uesio/io.button")
+	const Icon = component.getUtility("uesio/io.icon")
+
 	const classes = styles.useStyleTokens(StyleDefaults, props)
 
-	const fieldWire = api.wire.useWire(
-		fieldWireName || "",
-		context
-	) as wire.Wire
-	const collectionWire = api.wire.useWire(
-		collectionWireName || "",
-		context
-	) as wire.Wire
-	const workspaceWire = api.wire.useWire("workspaces", context) as wire.Wire
+	const fieldWire = api.wire.useWire(fieldWireName || "", context)
+	const collectionWire = api.wire.useWire(collectionWireName || "", context)
+	const workspaceWire = api.wire.useWire("workspaces", context)
 	const workspaceId = workspaceWire
 		?.getFirstRecord()
 		?.getIdFieldValue() as string
@@ -170,55 +167,58 @@ const SuggestedFields: definition.UC<ComponentDefinition> = (props) => {
 
 	const prompt = `I am creating a new PostgreSQL database table to store ${pluralLabel}. Suggest 10 relevant columns for this new table, output as a JSON array of JSON objects, with each JSON object having 2 properties: (1) type - the PostgreSQL column type (2) label - the name of the column`
 
-	const [hasRunBefore, setHasRunBefore] = useState(false)
 	const [isLoading, setLoading] = useState(false)
 
-	useEffect(() => {
-		// Don't run if we already have data
-		if (hasRunBefore || fieldWire?.getData().length || !canUseAiFeatures)
-			return
+	const hasFields = fieldWire?.getData().length
 
-		setLoading(true)
+	return !hasFields ? (
+		<Button
+			context={context}
+			label="Suggest Fields"
+			variant="uesio/io.secondary"
+			disabled={isLoading}
+			icon={
+				<Icon
+					icon="magic_button"
+					context={context}
+					className={isLoading ? classes.pulse : ""}
+				/>
+			}
+			onClick={() => {
+				// Don't run if we already have data
+				if (!fieldWire || hasFields || !canUseAiFeatures) return
 
-		const signalResult = api.signal.run(
-			{
-				signal: "ai/AUTOCOMPLETE",
-				model: "gpt-3.5-turbo",
-				format: "chat",
-				input: prompt,
-				stepId: "autocomplete",
-				maxResults: 1,
-			},
-			context
-		) as Promise<context.Context>
+				setLoading(true)
 
-		signalResult.then((resultContext) => {
-			const result = resultContext.getSignalOutputs("autocomplete")
+				const signalResult = api.signal.run(
+					{
+						signal: "ai/AUTOCOMPLETE",
+						model: "gpt-3.5-turbo",
+						format: "chat",
+						input: prompt,
+						stepId: "autocomplete",
+						maxResults: 1,
+					},
+					context
+				) as Promise<context.Context>
 
-			handleAutocompleteData(
-				context,
-				fieldWire,
-				result.data,
-				targetCollectionName,
-				workspaceId
-			)
+				signalResult.then((resultContext) => {
+					const result =
+						resultContext.getSignalOutputs("autocomplete")
 
-			setLoading(false)
-			setHasRunBefore(true)
-		})
+					result &&
+						handleAutocompleteData(
+							context,
+							fieldWire,
+							result.data,
+							targetCollectionName,
+							workspaceId
+						)
 
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [prompt, hasRunBefore, fieldWire?.getData().length, canUseAiFeatures])
-
-	return isLoading ? (
-		<div className={classes.root}>
-			<IOImage
-				file="uesio/studio.openailogo"
-				width="200"
-				height="205"
-				context={context.removeWorkspace()}
-			/>
-		</div>
+					setLoading(false)
+				})
+			}}
+		/>
 	) : null
 }
 

@@ -27,7 +27,7 @@ const Button: definition.UC<ButtonDefinition> = (props) => {
 		definition
 	)
 
-	const [isPending, setPending] = useState<boolean>(false)
+	const [isPending, setPending] = useState(false)
 
 	const [link, handler] = api.signal.useLinkHandler(
 		definition.signals,
