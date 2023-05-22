@@ -62,7 +62,7 @@ const Alert: FunctionComponent<AlertProps> = (props) => {
 		props
 	)
 	useEffect(() => {
-		let time = typeof duration === "number" ? duration : 5
+		let time = typeof duration === "number" ? duration : 10
 		if (time > 0) {
 			time = time * 1000
 			const timer = setTimeout(() => {
