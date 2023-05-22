@@ -21,7 +21,7 @@ func NewBaseRouteAssignment(collectionKey, namespace, viewType string) *RouteAss
 
 type RouteAssignment struct {
 	BuiltIn        `yaml:",inline"`
-	BundleableBase `yaml:",inline"`
+	BundleableBase `yaml:"-"`
 	Type           string `yaml:"type" json:"uesio/studio.type"`
 	RouteRef       string `yaml:"route" json:"uesio/studio.route"`
 	Collection     string `yaml:"collection" json:"uesio/studio.collection"`
@@ -68,11 +68,8 @@ func (r *RouteAssignment) Len() int {
 }
 
 func (r *RouteAssignment) UnmarshalYAML(node *yaml.Node) error {
-	err := validateNodeName(node, r.Name)
-	if err != nil {
-		return err
-	}
-	err = validateRequiredMetadataItem(node, "collection")
+
+	err := validateRequiredMetadataItem(node, "collection")
 	if err != nil {
 		return err
 	}

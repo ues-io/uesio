@@ -21,7 +21,6 @@ definition:
         uesio/studio.name:
         uesio/studio.path:
         uesio/studio.view:
-        uesio/studio.collection:
       conditions:
         - field: uesio/studio.workspace
           valueSource: LOOKUP
@@ -148,10 +147,6 @@ definition:
               - uesio/io.field:
                   fieldId: uesio/studio.title
                   label: Title
-              - uesio/builder.metadatafield:
-                  fieldId: uesio/studio.collection
-                  metadataType: COLLECTION
-                  label: Collection
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
