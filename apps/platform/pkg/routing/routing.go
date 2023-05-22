@@ -112,12 +112,14 @@ func GetRouteFromCollection(r *http.Request, namespace, collection string, viewt
 		return nil, err
 	}
 
-	for _, item := range routes {
-		if item.Collection == namespace+"."+collection && item.ViewType == viewtype {
-			route = item
-			break
+	/*
+		for _, item := range routes {
+			if item.Collection == namespace+"."+collection && item.ViewType == viewtype {
+				route = item
+				break
+			}
 		}
-	}
+	*/
 
 	if route == nil {
 		return nil, errors.New("No route found with this collection and view type: " + namespace + "." + collection + " : " + viewtype)

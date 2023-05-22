@@ -54,7 +54,20 @@ definition:
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: uesio/core.id
-
+    routeassignments:
+      collection: uesio/studio.routeassignment
+      fields:
+        uesio/core.id:
+        uesio/studio.type:
+        uesio/studio.collection:
+        uesio/studio.route:
+      conditions:
+        - field: uesio/studio.collection
+          value: $Param{app}.$Param{collectionname}
+        - field: uesio/studio.workspace
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio/core.id
     newfield:
       collection: uesio/studio.field
       fields:
@@ -66,6 +79,24 @@ definition:
         uesio/studio.languagelabel:
         uesio/studio.autonumber:
         uesio/studio.number:
+      init:
+        query: false
+        create: true
+      defaults:
+        - field: uesio/studio.collection
+          valueSource: VALUE
+          value: $Param{app}.$Param{collectionname}
+        - field: uesio/studio.workspace
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio/core.id
+    newrouteassignment:
+      collection: uesio/studio.routeassignment
+      fields:
+        uesio/core.id:
+        uesio/studio.type:
+        uesio/studio.collection:
+        uesio/studio.route:
       init:
         query: false
         create: true
@@ -221,6 +252,35 @@ definition:
                             - field: uesio/studio.type
                             - field: uesio/studio.label
                             - field: uesio/studio.languagelabel
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.titlebar:
+                          uesio.variant: uesio/io.section
+                          title: Route Assignments
+                          actions:
+                            - uesio/io.group:
+                                components:
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.primary
+                                      text: New Route Assignment
+                                      signals:
+                                        - signal: wire/EMPTY
+                                          wire: newrouteassignment
+                                        - signal: wire/CREATE_RECORD
+                                          wire: newrouteassignment
+                                        - signal: panel/TOGGLE
+                                          panel: newRouteAssignment
+                      - uesio/io.table:
+                          wire: routeassignments
+                          mode: READ
+                          rowactions:
+                            - text: $Label{uesio/io.delete}
+                              signals:
+                                - signal: wire/MARK_FOR_DELETE
+                          columns:
+                            - field: uesio/studio.type
+                            - field: uesio/studio.route
   panels:
     deleteCollection:
       uesio.type: uesio/io.dialog
@@ -303,6 +363,54 @@ definition:
                 wire: collections
               - signal: panel/TOGGLE
                 panel: editCollection
+    newRouteAssignment:
+      uesio.type: uesio/io.dialog
+      title: Create a new Route Assignment
+      width: 400px
+      height: 600px
+      components:
+        - uesio/io.list:
+            wire: newrouteassignment
+            mode: EDIT
+            uesio.context:
+              workspace:
+                name: $Param{workspacename}
+                app: $Param{app}
+            components:
+              - uesio/io.field:
+                  fieldId: uesio/studio.type
+              - uesio/builder.metadatafield:
+                  fieldId: uesio/studio.route
+                  metadataType: ROUTE
+      actions:
+        - uesio/io.button:
+            uesio.variant: uesio/io.primary
+            text: $Label{uesio/io.save}
+            hotkey: "meta+s"
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - newrouteassignment
+              - signal: wire/LOAD
+                wires:
+                  - workspaces
+                  - routeassignments
+              - signal: wire/EMPTY
+                wire: newrouteassignment
+              - signal: panel/TOGGLE
+                panel: newRouteAssignment
+              - signal: notification/ADD
+                text: Route assignment created!
+                severity: success
+        - uesio/io.button:
+            uesio.variant: uesio/io.secondary
+            uesio.id: cancel-new-field
+            text: $Label{uesio/io.cancel}
+            signals:
+              - signal: wire/EMPTY
+                wire: newfield
+              - signal: panel/TOGGLE
+                panel: newField
     newField:
       uesio.type: uesio/io.dialog
       title: Create a New Field
