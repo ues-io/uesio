@@ -785,6 +785,66 @@ const getPropertiesAndContent = (props: Props, selectedTab: string) => {
 	}
 }
 
+const onUpdate = (
+	field: string,
+	value: wire.FieldValue,
+	record: wire.WireRecord,
+	context: context.Context,
+	path: FullPath,
+	setters: Map<string, SetterFunction | SetterFunction[]>,
+	onChangeHandlers: Record<string, PropertyOnChange[]>
+) => {
+	let setter = setters.get(field)
+	let setterField: string | undefined
+	// If there is no setter, and the field is nested, then walk up the tree
+	// to see if there is a setter registered for the parent field
+	if (!setter) {
+		const fieldParts = field.split(PATH_ARROW)
+		if (fieldParts.length > 1) {
+			const popped = []
+			while (fieldParts.length) {
+				popped.push(fieldParts.pop())
+				const parentField = fieldParts.join(PATH_ARROW)
+				setter = setters.get(parentField)
+				if (setter) {
+					setterField = popped.join(PATH_ARROW)
+					break
+				}
+			}
+		}
+	}
+	if (setter) {
+		Array.isArray(setter)
+			? setter.forEach((s) => {
+					s(value, setterField, record)
+			  })
+			: setter(value, setterField, record)
+	}
+	// Finally, once all setters have run, apply any on-Change handlers
+	if (onChangeHandlers[field]?.length) {
+		const onChangeHandlerContext = context.addRecordFrame({
+			record: record.getId(),
+			wire: record.getWire().getId(),
+		})
+		onChangeHandlers[field].forEach((onChange) => {
+			if (
+				!onChange.conditions?.length ||
+				component.shouldAll(onChange.conditions, onChangeHandlerContext)
+			) {
+				onChange.updates?.forEach(
+					({ field: targetField, value: newValue }) => {
+						const [targetPath] = getPropPathFromName(
+							targetField,
+							path
+						)
+						setDef(context, targetPath, newValue)
+					}
+				)
+			}
+		})
+	}
+}
+
 const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 	const DynamicForm = component.getUtility("uesio/io.dynamicform")
 	const { context, id, path, sections, title } = props
@@ -835,62 +895,15 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 					value: wire.FieldValue,
 					record: wire.WireRecord
 				) => {
-					let setter = setters.get(field)
-					let setterField: string | undefined
-					// If there is no setter, and the field is nested, then walk up the tree
-					// to see if there is a setter registered for the parent field
-					if (!setter) {
-						const fieldParts = field.split(PATH_ARROW)
-						if (fieldParts.length > 1) {
-							const popped = []
-							while (fieldParts.length) {
-								popped.push(fieldParts.pop())
-								const parentField = fieldParts.join(PATH_ARROW)
-								setter = setters.get(parentField)
-								if (setter) {
-									setterField = popped.join(PATH_ARROW)
-									break
-								}
-							}
-						}
-					}
-					if (setter) {
-						Array.isArray(setter)
-							? setter.forEach((s) => {
-									s(value, setterField, record)
-							  })
-							: setter(value, setterField, record)
-					}
-					// Finally, once all setters have run, apply any on-Change handlers
-					if (onChangeHandlers[field]?.length) {
-						const onChangeHandlerContext = context.addRecordFrame({
-							record: record.getId(),
-							wire: record.getWire().getId(),
-						})
-						onChangeHandlers[field].forEach((onChange) => {
-							if (
-								!onChange.conditions?.length ||
-								component.shouldAll(
-									onChange.conditions,
-									onChangeHandlerContext
-								)
-							) {
-								onChange.updates?.forEach(
-									({
-										field: targetField,
-										value: newValue,
-									}) => {
-										const [targetPath] =
-											getPropPathFromName(
-												targetField,
-												path
-											)
-										setDef(context, targetPath, newValue)
-									}
-								)
-							}
-						})
-					}
+					onUpdate(
+						field,
+						value,
+						record,
+						context,
+						path,
+						setters,
+						onChangeHandlers
+					)
 				}}
 				initialValue={initialValue}
 			/>
