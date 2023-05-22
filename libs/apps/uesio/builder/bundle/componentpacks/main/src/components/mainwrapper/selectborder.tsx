@@ -58,13 +58,16 @@ const StyleDefaults = Object.freeze({
 	emptyRemove: ["contents"],
 })
 
+const nonComponentPaths = ["wires", "params"]
+
 const getComponentInfoFromPath = (path: FullPath, context: context.Context) => {
 	const isValid =
 		path.isSet() &&
 		path.itemType === "viewdef" &&
 		path.itemName === context.getViewDefId() &&
 		path.localPath &&
-		path.size() > 1
+		path.size() > 1 &&
+		!nonComponentPaths.includes(path.trimToSize(1).pop()[0] as string)
 	if (!isValid) {
 		return [undefined, undefined, undefined, undefined] as const
 	}
