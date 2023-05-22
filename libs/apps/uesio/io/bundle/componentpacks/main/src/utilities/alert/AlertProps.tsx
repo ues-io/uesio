@@ -5,6 +5,6 @@ export interface AlertProps extends definition.UtilityProps {
 	details?: string
 	severity?: notification.NotificationSeverity
 	onClick?: () => void
-	duration?: number | boolean
+	duration?: number
 	key: string
 }

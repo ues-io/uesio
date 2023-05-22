@@ -4,7 +4,6 @@ type SaveError struct {
 	RecordID string `json:"recordid"`
 	FieldID  string `json:"fieldid"`
 	Message  string `json:"message"`
-	Duration int    `json:"duration"`
 }
 
 func (se *SaveError) Error() string {
@@ -19,11 +18,10 @@ func NewGenericSaveError(err error) *SaveError {
 	}
 }
 
-func NewSaveError(recordID string, fieldID, message string, duration int) *SaveError {
+func NewSaveError(recordID string, fieldID, message string) *SaveError {
 	return &SaveError{
 		RecordID: recordID,
 		FieldID:  fieldID,
 		Message:  message,
-		Duration: duration,
 	}
 }

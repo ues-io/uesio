@@ -8,6 +8,8 @@ const NotificationArea: UtilityComponent = (props) => {
 	const Alert = getUtility("uesio/io.alert")
 	const notifications = useNotifications()
 
+	if (!notifications.length) return null
+
 	return (
 		<>
 			{notifications

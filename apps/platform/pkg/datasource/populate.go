@@ -18,7 +18,7 @@ func populateAutoNumbers(field *adapt.FieldMetadata) validationFunc {
 
 		autoNumberMeta := field.AutoNumberMetadata
 		if autoNumberMeta == nil {
-			return adapt.NewSaveError(change.RecordKey, field.GetFullName(), "Missing autonumber metadata", 5)
+			return adapt.NewSaveError(change.RecordKey, field.GetFullName(), "Missing autonumber metadata")
 		}
 		format := "%0" + strconv.Itoa(autoNumberMeta.LeadingZeros) + "d"
 		sufix := fmt.Sprintf(format, change.Autonumber)
@@ -34,7 +34,7 @@ func populateAutoNumbers(field *adapt.FieldMetadata) validationFunc {
 
 		err = change.FieldChanges.SetField(field.GetFullName(), an)
 		if err != nil {
-			return adapt.NewSaveError(change.RecordKey, field.GetFullName(), err.Error(), 5)
+			return adapt.NewSaveError(change.RecordKey, field.GetFullName(), err.Error())
 		}
 
 		return nil
@@ -48,7 +48,7 @@ func populateTimestamps(field *adapt.FieldMetadata, timestamp int64) validationF
 		if ((field.AutoPopulate == "CREATE") && change.IsNew) || field.AutoPopulate == "UPDATE" {
 			err := change.FieldChanges.SetField(field.GetFullName(), timestamp)
 			if err != nil {
-				return adapt.NewSaveError(change.RecordKey, field.GetFullName(), err.Error(), 5)
+				return adapt.NewSaveError(change.RecordKey, field.GetFullName(), err.Error())
 			}
 		}
 		return nil
@@ -70,7 +70,7 @@ func populateUser(field *adapt.FieldMetadata, user *meta.User) validationFunc {
 				},
 			})
 			if err != nil {
-				return adapt.NewSaveError(change.RecordKey, field.GetFullName(), err.Error(), 5)
+				return adapt.NewSaveError(change.RecordKey, field.GetFullName(), err.Error())
 			}
 		}
 		return nil
