@@ -43,11 +43,22 @@ const signals: SignalBandDefinition = {
 					name: "namespace",
 					label: "Namespace",
 				},
+			],
+		},
+		[`${BAND}/NAVIGATE_TO_ASSIGNMENT`]: {
+			label: "Navigate to route assignment",
+			description: "Changes the route without reloading the browser",
+			properties: () => [
 				{
 					type: "METADATA",
 					name: "collection",
 					metadataType: "COLLECTION",
 					label: "Collection",
+				},
+				{
+					type: "TEXT",
+					name: "type",
+					label: "View Type",
 				},
 				{
 					type: "TEXT",

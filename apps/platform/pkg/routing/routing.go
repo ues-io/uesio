@@ -103,26 +103,35 @@ func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *
 	return datasource.RunRouteBots(route, session)
 }
 
-func GetRouteFromCollection(r *http.Request, namespace, collection string, viewtype string, recordID string, session *sess.Session) (*meta.Route, error) {
+func GetRouteFromAssignment(r *http.Request, namespace, collection string, viewtype string, recordID string, session *sess.Session) (*meta.Route, error) {
 
-	var route *meta.Route
-	var routes meta.RouteCollection
-	err := bundle.LoadAllFromAny(&routes, nil, session, nil)
+	var routeassignment *meta.RouteAssignment
+	var routeassignments meta.RouteAssignmentCollection
+
+	err := bundle.LoadAllFromAny(&routeassignments, map[string]string{"uesio/studio.collection": namespace + "." + collection}, session, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	/*
-		for _, item := range routes {
-			if item.Collection == namespace+"."+collection && item.ViewType == viewtype {
-				route = item
-				break
-			}
+	for _, item := range routeassignments {
+		if item.Type == viewtype {
+			routeassignment = item
+			break
 		}
-	*/
+	}
 
-	if route == nil {
+	if routeassignment == nil {
 		return nil, errors.New("No route found with this collection and view type: " + namespace + "." + collection + " : " + viewtype)
+	}
+
+	route, err := meta.NewRoute(routeassignment.RouteRef)
+	if err != nil {
+		return nil, err
+	}
+
+	err = bundle.Load(route, session, nil)
+	if err != nil {
+		return nil, err
 	}
 
 	if viewtype == "detail" {
