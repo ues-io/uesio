@@ -42,7 +42,14 @@ func init() {
 	}
 	workspaceCreateCmd.Flags().StringVarP(&name, "name", "n", "", "Name for new workspace")
 
-	workspaceCommand.AddCommand(workspaceCreateCmd, workspaceDeployCmd, workspaceRetrieveCmd)
+	workspaceTruncateCmd := &cobra.Command{
+		Use:   "truncate",
+		Short: "Truncate a workspace",
+		Long:  "Truncate data from a workspace for the context app",
+		Run:   workspaceTruncate,
+	}
+
+	workspaceCommand.AddCommand(workspaceCreateCmd, workspaceDeployCmd, workspaceRetrieveCmd, workspaceTruncateCmd)
 
 	//
 	// DEPRECATED aliases for retrieve and deploy
@@ -82,6 +89,14 @@ func workspaceDeploy(cmd *cobra.Command, args []string) {
 
 func workspaceCreate(cmd *cobra.Command, args []string) {
 	err := workspace.Create(name)
+	if err != nil {
+		fmt.Println("Error: " + err.Error())
+		return
+	}
+}
+
+func workspaceTruncate(cmd *cobra.Command, args []string) {
+	err := workspace.Truncate()
 	if err != nil {
 		fmt.Println("Error: " + err.Error())
 		return
