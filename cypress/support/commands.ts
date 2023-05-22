@@ -61,7 +61,7 @@ Cypress.Commands.add(
 )
 
 Cypress.Commands.add(
-	"selectReferenceField",
+	"setReferenceField",
 	(idFragment: string, value: string) => {
 		cy.get(idContainsSelector("div", idFragment)).click()
 		cy.focused().type(value)
