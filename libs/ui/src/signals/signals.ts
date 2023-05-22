@@ -62,7 +62,6 @@ const runMany = async (signals: SignalDefinition[], context: Context) => {
 							signal: "notification/ADD",
 							text,
 							severity: "error",
-							duration: 5,
 					  }))),
 			]
 			await runMany(signals, newContext())

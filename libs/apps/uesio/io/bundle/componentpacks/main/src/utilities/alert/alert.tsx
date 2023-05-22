@@ -7,7 +7,7 @@ interface AlertProps extends definition.UtilityProps {
 	severity?: notification.NotificationSeverity
 	onClick?: () => void
 	duration?: number
-	key: string
+	id: string
 }
 
 const types = {
@@ -30,7 +30,7 @@ const types = {
 }
 
 const Alert: FunctionComponent<AlertProps> = (props) => {
-	const { text, severity, context, details, key, duration } = props
+	const { text, severity, context, details, id, duration } = props
 	let alertType = types[severity || "error"]
 	if (!alertType) {
 		alertType = types.error
@@ -62,23 +62,22 @@ const Alert: FunctionComponent<AlertProps> = (props) => {
 		props
 	)
 	useEffect(() => {
-		if (duration && duration > 0) {
-			const time = duration * 1000
+		let time = typeof duration === "number" ? duration : 5
+		if (time > 0) {
+			time = time * 1000
 			const timer = setTimeout(() => {
-				if (duration && duration > 0) {
-					api.signal.run(
-						{
-							signal: "notification/REMOVE",
-							id: key,
-						},
-						context
-					)
-				}
+				api.signal.run(
+					{
+						signal: "notification/REMOVE",
+						id,
+					},
+					context
+				)
 			}, time)
 
 			return () => clearTimeout(timer)
 		}
-	}, [duration, key, context])
+	}, [duration, id, context])
 
 	const mergedText = context.merge(text)
 	const mergedDetails = context.merge(details)
