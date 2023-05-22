@@ -1,9 +1,9 @@
-import { FunctionComponent, MouseEvent, ReactNode } from "react"
+import { MouseEvent, ReactNode } from "react"
 import { definition, styles } from "@uesio/ui"
 import Tooltip from "../tooltip/tooltip"
 import { Placement } from "@floating-ui/react"
 
-interface ButtonUtilityProps extends definition.UtilityProps {
+interface ButtonUtilityProps {
 	onClick?: (e: MouseEvent) => void
 	label?: string
 	isSelected?: boolean
@@ -21,7 +21,7 @@ const StyleDefaults = Object.freeze({
 	disabled: [],
 })
 
-const Button: FunctionComponent<ButtonUtilityProps> = (props) => {
+const Button: definition.UtilityComponent<ButtonUtilityProps> = (props) => {
 	const classes = styles.useUtilityStyleTokens(
 		StyleDefaults,
 		props,

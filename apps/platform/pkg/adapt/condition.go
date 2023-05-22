@@ -29,6 +29,7 @@ type LoadRequestCondition struct {
 	Value          interface{}            `json:"value,omitempty" bot:"value" yaml:"value"`
 	Values         interface{}            `json:"values,omitempty" bot:"values" yaml:"values"`
 	Param          string                 `json:"param,omitempty" yaml:"param"`
+	Params         []string               `json:"params,omitempty" yaml:"params"`
 	ValueSource    string                 `json:"valueSource,omitempty" yaml:"valueSource"`
 	Type           string                 `json:"type,omitempty" bot:"type" yaml:"type"`
 	Operator       string                 `json:"operator,omitempty" bot:"operator" yaml:"operator"`

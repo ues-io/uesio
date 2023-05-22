@@ -31,9 +31,7 @@ const getMonthYearDateKey = (date: Date) =>
 	`${date.getUTCFullYear()}-${(date.getUTCMonth() + "").padStart(2, "0")}`
 
 const getDayMonthYearDateKey = (date: Date) =>
-	`${date.getUTCFullYear()}-${(date.getUTCMonth() + "").padStart(2, "0")}-${(
-		date.getUTCDate() + ""
-	).padStart(2, "0")}`
+	`${getMonthYearDateKey(date)}-${(date.getUTCDate() + "").padStart(2, "0")}`
 
 const getDateFromMonthYearKey = (key: string) => {
 	const [year, month] = key.split("-")
@@ -59,6 +57,7 @@ const getCategoryFunc = (
 	const fieldId = categoryField.getId()
 	switch (fieldType) {
 		case "DATE":
+		case "TIMESTAMP":
 			return (record: wire.WireRecord) => {
 				const value = record.getFieldValue<string>(fieldId)
 				if (!value) return ""
@@ -249,6 +248,7 @@ const getDataLabels = (
 
 	switch (fieldType) {
 		case "DATE":
+		case "TIMESTAMP":
 			return getDateDataLabels(wire, labels, categoryField)
 		case "REFERENCE":
 		case "USER":
