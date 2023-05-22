@@ -33,7 +33,7 @@ func NewAfterSaveAPI(request *adapt.SaveOp, connection adapt.Connection, session
 }
 
 func (as *AfterSaveAPI) AddError(message string) {
-	as.op.AddError(adapt.NewSaveError("", "", message, 5))
+	as.op.AddError(adapt.NewSaveError("", "", message))
 }
 
 func (as *AfterSaveAPI) Save(collection string, changes adapt.Collection) error {
