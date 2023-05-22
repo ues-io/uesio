@@ -799,6 +799,7 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 		context,
 		path
 	)
+	const pathString = path?.combine()
 
 	return (
 		<PropertiesWrapper
@@ -813,7 +814,7 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 		>
 			<DynamicForm
 				id={id}
-				path={path?.combine()}
+				path={pathString}
 				fields={getWireFieldsFromProperties(
 					properties,
 					context,
@@ -826,7 +827,7 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 					"uesio/builder.propertiesform",
 					{
 						properties,
-						path,
+						path: pathString,
 					}
 				)}
 				onUpdate={(
