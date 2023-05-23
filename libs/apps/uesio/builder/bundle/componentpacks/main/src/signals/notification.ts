@@ -34,6 +34,36 @@ const signals: SignalBandDefinition = {
 					name: "details",
 					label: "Details",
 				},
+				{
+					type: "SELECT",
+					name: "duration",
+					label: "Duration",
+					blankOptionLabel: "Select to Add (s)",
+					options: [
+						{ label: "1", value: "1" },
+						{ label: "2", value: "2" },
+						{ label: "5", value: "5" },
+						{ label: "10", value: "10" },
+						{ label: "30", value: "30" },
+					],
+					onChange: [
+						{
+							updates: [
+								{
+									field: "duration",
+								},
+							],
+							conditions: [
+								{
+									field: "duration",
+									operator: "EQ",
+									value: "",
+									type: "fieldValue",
+								},
+							],
+						},
+					],
+				},
 			],
 		},
 		[`${BAND}/REMOVE`]: {

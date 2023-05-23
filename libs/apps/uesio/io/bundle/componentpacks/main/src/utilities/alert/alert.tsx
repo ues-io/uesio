@@ -1,12 +1,13 @@
 import { FunctionComponent, useEffect } from "react"
 import { definition, styles, notification, api } from "@uesio/ui"
 import Icon from "../icon/icon"
+import { parseInt } from "lodash"
 interface AlertProps extends definition.UtilityProps {
 	text?: string
 	details?: string
 	severity?: notification.NotificationSeverity
 	onClick?: () => void
-	duration?: number
+	duration?: string
 	id: string
 }
 
@@ -62,20 +63,21 @@ const Alert: FunctionComponent<AlertProps> = (props) => {
 		props
 	)
 	useEffect(() => {
-		let time = typeof duration === "number" ? duration : 10
-		if (time > 0) {
-			time = time * 1000
-			const timer = setTimeout(() => {
-				api.signal.run(
-					{
-						signal: "notification/REMOVE",
-						id,
-					},
-					context
-				)
-			}, time)
-
-			return () => clearTimeout(timer)
+		if (duration) {
+			let time = parseInt(duration)
+			if (!Number.isNaN(time) && time > 0) {
+				time = time * 1000
+				const timer = setTimeout(() => {
+					api.signal.run(
+						{
+							signal: "notification/REMOVE",
+							id,
+						},
+						context
+					)
+				}, time)
+				return () => clearTimeout(timer)
+			}
 		}
 	}, [duration, id, context])
 
