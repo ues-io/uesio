@@ -1,4 +1,4 @@
-import { FieldMetadata } from "./types"
+import { FieldMetadata, SelectOption } from "./types"
 import { Context } from "../../context/context"
 import { addBlankSelectOption } from "./utils"
 
@@ -24,14 +24,15 @@ class Field {
 			return selectMetadata.options || []
 
 		const mergedOptions = selectMetadata.options.map(
-			({ label, languageLabel, value, disabled, title }) => ({
-				label: languageLabel
-					? context.getLabel(languageLabel) || label
-					: label,
-				value,
-				disabled,
-				title,
-			})
+			({ label, languageLabel, value, disabled, title }) =>
+				({
+					label: languageLabel
+						? context.getLabel(languageLabel) || label
+						: label,
+					value,
+					disabled,
+					title,
+				} as SelectOption)
 		)
 
 		const mergedBlankLabel =
