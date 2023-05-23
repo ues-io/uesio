@@ -17,14 +17,6 @@ uesio logout
 uesio sethost
 uesio login
 
-#DEV workspace
-echo "Configuring dev workspace..."
-uesio work -n dev
-echo "Deploying tests app to Studio dev workspace..."
-uesio deploy
-echo "Successfully deployed tests app to Studio. Upserting seed data into dev workspace..."
-uesio upsert -f seed_data/animals.csv -s seed_data/animals_import.spec.json
-
 #truncatetests workspace
 echo "Changing to truncatetests workspace..."
 uesio work -n truncatetests
@@ -32,6 +24,14 @@ echo "Deploying tests app to Studio truncatetests workspace..."
 uesio deploy
 echo "Upserting seed data into truncatetests workspace..."
 uesio upsert -f seed_data/animals_lite.csv -s seed_data/animals_import.spec.json
+
+#DEV workspace
+echo "Configuring dev workspace..."
+uesio work -n dev
+echo "Deploying tests app to Studio dev workspace..."
+uesio deploy
+echo "Successfully deployed tests app to Studio. Upserting seed data into dev workspace..."
+uesio upsert -f seed_data/animals.csv -s seed_data/animals_import.spec.json
 
 echo "Successfully upserted seed data. Running tests..."
 
