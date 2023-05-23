@@ -31,6 +31,7 @@ const BuildWrapper: definition.UC = (props) => {
 			data-placeholder="true"
 			data-index={index}
 			data-component={componentType}
+			data-empty-label={"Invisible Component: " + componentType}
 		>
 			{addBeforePlaceholder && (
 				<PlaceHolder label="0" isHovering={true} context={context} />

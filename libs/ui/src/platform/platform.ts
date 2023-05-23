@@ -541,6 +541,7 @@ type AutocompleteRequest = {
 	format: string
 	model: string
 	maxResults?: number
+	useCache?: boolean
 }
 
 type AutocompleteResponse = {
