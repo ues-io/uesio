@@ -39,13 +39,10 @@ const signals: SignalBandDefinition = {
 					name: "duration",
 					label: "Duration",
 					blankOptionLabel: "Select to Add (s)",
-					options: [
-						{ label: "1", value: "1" },
-						{ label: "2", value: "2" },
-						{ label: "5", value: "5" },
-						{ label: "10", value: "10" },
-						{ label: "30", value: "30" },
-					],
+					options: [1, 2, 3, 5, 8, 10, 30].map((v) => ({
+						label: `${v}`,
+						value: `${v}`,
+					})),
 					onChange: [
 						{
 							updates: [
