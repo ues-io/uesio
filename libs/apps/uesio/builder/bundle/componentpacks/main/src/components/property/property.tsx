@@ -1,6 +1,6 @@
 import { definition, context, component } from "@uesio/ui"
 import { get } from "../../api/defapi"
-import { FullPath } from "../../api/path"
+import { FullPath, parseFullPath } from "../../api/path"
 import { ComponentProperty } from "../../properties/componentproperty"
 import { getProperty } from "../../helpers/propertiesform"
 
@@ -198,7 +198,7 @@ const Property: definition.UC<Definition> = (props) => {
 	)
 
 	const properties = componentData.data.properties as ComponentProperty[]
-	const propertiesPath = componentData.data.path as FullPath
+	const propertiesPath = parseFullPath(componentData.data.path as string)
 	const property = getProperty(definition.propertyId, properties)
 
 	// Ignore properties which should never be visually displayed

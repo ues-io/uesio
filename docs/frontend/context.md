@@ -74,22 +74,22 @@ For example, if you had a step named "convertLead" that called a "uesio/crm.conv
 
 you could access the "account.id" and "opportunity.id" properties, respectively, via this syntax: `$SignalOutput[convertLead][account.id]}` and `$SignalOutput[convertLead][opportunity.id]}`
 
-### Component Outputs
+### Component frames
 
-Components can also attach arbitrary pieces of information to the context stack which are relevant to that Component using "Component Outputs".
+Components can also attach arbitrary pieces of information to the context stack which are relevant to that Component using "Component Frames".
 
 For instance, the "uesio/chart.metricgroup" Component attaches a "category" property to the context when you select a particular category, allowing you to run signals based on that category, such as navigating to a route which expects a category as a param.
 
-Component Outputs can be added to a context via the following method:
+Component frames can be added to a context via the following method:
 
 ```
-context.addComponentOutput(componentType: string, data: object)
+context.addComponentFrame(componentType: string, data: object)
 ```
 
 For example:
 
 ```
-context.addComponentOutput("uesio/chart.metricgroup", {
+context.addComponentFrame("uesio/chart.metricgroup", {
     category: "manufacturing"
 })
 ```
