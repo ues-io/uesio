@@ -58,7 +58,7 @@ const signals: SignalBandDefinition = {
 				},
 				{
 					type: "SELECT",
-					name: "type",
+					name: "viewtype",
 					label: "View Type",
 					options: [
 						{
@@ -73,7 +73,7 @@ const signals: SignalBandDefinition = {
 				},
 				{
 					type: "TEXT",
-					name: "id",
+					name: "recordid",
 					label: "Record ID",
 					displayConditions: [
 						{
