@@ -5,6 +5,8 @@ description: Visualize data with lines.
 category: VISUALIZATION
 pack: chart
 entrypoint: components/linechart/linechart
+utilities:
+  - uesio/io.chart
 defaultDefinition:
   title: New Line Chart
   labels:
