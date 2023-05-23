@@ -26,5 +26,5 @@ func runWorkspaceTruncateListenerBot(params map[string]interface{}, connection a
 		return nil, err
 	}
 
-	return nil, connection.Truncate(tenantID)
+	return nil, connection.TruncateTenantData(tenantID)
 }

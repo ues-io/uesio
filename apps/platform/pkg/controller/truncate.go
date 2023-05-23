@@ -26,13 +26,25 @@ func Truncate(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	err = connection.BeginTransaction()
-	err = connection.Truncate(tenantID)
 	if err != nil {
 		logger.LogError(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	err = connection.CommitTransaction()
 
+	err = connection.TruncateTenantData(tenantID)
+	if err != nil {
+		logger.LogError(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = connection.CommitTransaction()
+	if err != nil {
+		logger.LogError(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }

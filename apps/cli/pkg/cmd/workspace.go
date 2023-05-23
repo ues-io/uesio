@@ -44,8 +44,8 @@ func init() {
 
 	workspaceTruncateCmd := &cobra.Command{
 		Use:   "truncate",
-		Short: "Truncate a workspace",
-		Long:  "Truncate data from a workspace for the context app",
+		Short: "Delete all data in the workspace",
+		Long:  "Deletes all data from all collections in the current workspace",
 		Run:   workspaceTruncate,
 	}
 

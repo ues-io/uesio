@@ -43,7 +43,7 @@ func Truncate() error {
 		return err
 	}
 
-	fmt.Println("Truncate Success")
+	fmt.Printf("Successfully deleted all data from all collections in workspace %s\n", workspace)
 
 	defer resp.Body.Close()
 

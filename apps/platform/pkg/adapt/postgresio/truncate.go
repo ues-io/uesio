@@ -7,12 +7,13 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/jackc/pgx/v4"
+	"github.com/thecloudmasters/uesio/pkg/logger"
 )
 
 const TRUNCATE_QUERY = "DELETE FROM public.data WHERE tenant = $1"
 
-func (c *Connection) Truncate(tenantID string) error {
-	fmt.Println("Truncate data from tenant: " + tenantID)
+func (c *Connection) TruncateTenantData(tenantID string) error {
+	logger.Log("Truncating all data from tenant: "+tenantID, logger.INFO)
 
 	db := c.GetClient()
 	batch := &pgx.Batch{}
@@ -24,9 +25,8 @@ func (c *Connection) Truncate(tenantID string) error {
 	for i := 0; i < execCount; i++ {
 		_, err := results.Exec()
 		if err != nil {
-			fmt.Println("Error truncating data from tenant: " + tenantID)
 			results.Close()
-			return err
+			return fmt.Errorf("Error truncating data from tenant '%s': %s", tenantID, err.Error())
 		}
 	}
 	results.Close()
