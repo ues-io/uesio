@@ -54,6 +54,7 @@ const StyleDefaults = Object.freeze({
 		"font-light",
 		"rounded",
 		"uppercase",
+		"before:content-[attr(data-empty-label)]",
 	],
 	emptyRemove: ["contents"],
 })
@@ -141,7 +142,6 @@ const SelectBorder: definition.UtilityComponent<Props> = (props) => {
 				child.classList.remove(...StyleDefaults.empty)
 				child.classList.add(...StyleDefaults.emptyRemove)
 				child.setAttribute("data-placeholder", "true")
-				child.innerHTML = ""
 			})
 		}
 		const targets = document.querySelectorAll(
@@ -157,8 +157,6 @@ const SelectBorder: definition.UtilityComponent<Props> = (props) => {
 			target.classList.add(...StyleDefaults.empty)
 			target.classList.remove(...StyleDefaults.emptyRemove)
 			target.removeAttribute("data-placeholder")
-			target.innerHTML =
-				"Invisible Component: " + target.getAttribute("data-component")
 		})
 
 		setEmptyComponents(targets)
