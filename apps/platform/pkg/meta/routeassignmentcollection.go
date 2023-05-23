@@ -12,7 +12,7 @@ type RouteAssignmentCollection []*RouteAssignment
 var ROUTE_ASSIGNMENT_COLLECTION_NAME = "uesio/studio.routeassignment"
 var ROUTE_ASSIGNMENT_FOLDER_NAME = "routeassignments"
 
-// We have to hardcode these fields because translations don't have a uesio/studio.name
+// We have to hardcode these fields because route assignments don't have a uesio/studio.name
 // field that we want to query. If we used the StandardGetFields (like the other metadata items)
 // it would try to query for a name field that does not exist.
 var ROUTE_ASSIGNMENT_FIELDS = []string{

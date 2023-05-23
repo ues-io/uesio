@@ -31,7 +31,7 @@ const signals: SignalBandDefinition = {
 		},
 		[`${BAND}/NAVIGATE`]: {
 			label: "Navigate to route",
-			description: "Changes the route without reloading the browser",
+			description: "Changes the route based on the path provided",
 			properties: () => [
 				{
 					type: "TEXT",
@@ -47,7 +47,8 @@ const signals: SignalBandDefinition = {
 		},
 		[`${BAND}/NAVIGATE_TO_ASSIGNMENT`]: {
 			label: "Navigate to route assignment",
-			description: "Changes the route without reloading the browser",
+			description:
+				"Changes the route returned by the specified route assignment",
 			properties: () => [
 				{
 					type: "METADATA",
@@ -56,14 +57,30 @@ const signals: SignalBandDefinition = {
 					label: "Collection",
 				},
 				{
-					type: "TEXT",
+					type: "SELECT",
 					name: "type",
 					label: "View Type",
+					options: [
+						{
+							value: "list",
+							label: "List View",
+						},
+						{
+							value: "detail",
+							label: "Detail View",
+						},
+					],
 				},
 				{
 					type: "TEXT",
 					name: "id",
 					label: "Record ID",
+					displayConditions: [
+						{
+							field: "type",
+							value: "detail",
+						},
+					],
 				},
 			],
 		},
