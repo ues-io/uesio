@@ -11,6 +11,7 @@ interface AutocompleteSignal extends SignalDefinition {
 	model: string
 	format: string
 	maxResults?: number | string
+	useCache?: boolean
 }
 
 const signals: Record<string, SignalDescriptor> = {
@@ -19,7 +20,8 @@ const signals: Record<string, SignalDescriptor> = {
 			signalInvocation: AutocompleteSignal,
 			context: Context
 		) => {
-			const { input, model, format, maxResults } = signalInvocation
+			const { input, model, format, maxResults, useCache } =
+				signalInvocation
 
 			try {
 				const response: AutocompleteResponse =
@@ -31,6 +33,7 @@ const signals: Record<string, SignalDescriptor> = {
 							context.merge(maxResults) as string,
 							10
 						),
+						useCache,
 					})
 
 				if (response?.error) {
