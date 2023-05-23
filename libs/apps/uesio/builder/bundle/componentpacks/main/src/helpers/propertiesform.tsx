@@ -138,21 +138,15 @@ const getObjectProperty = (
 }
 
 const getFormFieldsFromProperties = (
-	properties: ComponentProperty[] | undefined,
-	path: FullPath,
-	formFields: definition.DefinitionList = []
-) => {
-	if (!properties) return formFields
-	properties.forEach((prop) => {
-		formFields.push({
-			"uesio/builder.property": {
-				propertyId: prop.name,
-				path,
-			},
-		})
-	})
-	return formFields
-}
+	properties: ComponentProperty[] = [],
+	path: FullPath
+) =>
+	properties.map((property) => ({
+		"uesio/builder.property": {
+			property,
+			path,
+		},
+	}))
 
 const getSelectListMetadataFromOptions = (
 	propertyName: string,
@@ -668,7 +662,7 @@ const findProperty = (
 	}
 }
 
-export const getProperty = (
+const getProperty = (
 	propertyId: string,
 	properties: ComponentProperty[]
 ): ComponentProperty | undefined => {
@@ -883,13 +877,7 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 				content={
 					content || getFormFieldsFromProperties(properties, path)
 				}
-				context={context.addComponentFrame(
-					"uesio/builder.propertiesform",
-					{
-						properties,
-						path: pathString,
-					}
-				)}
+				context={context}
 				onUpdate={(
 					field: string,
 					value: wire.FieldValue,

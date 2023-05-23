@@ -1,13 +1,12 @@
 import { definition, context, component } from "@uesio/ui"
 import { get } from "../../api/defapi"
-import { FullPath, parseFullPath } from "../../api/path"
+import { FullPath } from "../../api/path"
 import { ComponentProperty } from "../../properties/componentproperty"
-import { getProperty } from "../../helpers/propertiesform"
 
 const { COMPONENT_ID } = component
 
 type Definition = {
-	propertyId: string
+	property: ComponentProperty
 	path: FullPath
 }
 
@@ -192,14 +191,7 @@ export const getFormFieldFromProperty = (
 
 const Property: definition.UC<Definition> = (props) => {
 	const { context, path, definition } = props
-
-	const componentData = context.getComponentData(
-		"uesio/builder.propertiesform"
-	)
-
-	const properties = componentData.data.properties as ComponentProperty[]
-	const propertiesPath = parseFullPath(componentData.data.path as string)
-	const property = getProperty(definition.propertyId, properties)
+	const { property, path: propertiesPath } = definition
 
 	// Ignore properties which should never be visually displayed
 	// (e.g. a common use case for this is FIELD_METADATA properties)
