@@ -1,5 +1,6 @@
 name: code
 title: Code
+icon: code
 description: Displays the syntax highlighted text of a file.
 pack: main
 entrypoint: components/code/code

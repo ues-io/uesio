@@ -1,5 +1,5 @@
 import { FunctionComponent, DragEvent, MouseEvent } from "react"
-import { definition, component, styles, api, context as ctx } from "@uesio/ui"
+import { definition, styles, api, context as ctx } from "@uesio/ui"
 import {
 	getComponentDef,
 	setDropPath,
@@ -65,40 +65,21 @@ const getDragIndex = (slotTarget: Element | null, e: DragEvent): number => {
 	for (const child of Array.from(slotTarget.children)) {
 		// If the child was a placeholder, and not a real component
 		// in this slot, we can skip it.
-		if (child.getAttribute("data-placeholder") === "true") continue
+		for (const grandchild of Array.from(child.children)) {
+			if (grandchild.getAttribute("data-placeholder") === "true") continue
 
-		// If we're a real component, we need to find the midpoint of our
-		// position, and see if the cursor is greater than or less than it.
-		const bounds = child.getBoundingClientRect()
+			// If we're a real component, we need to find the midpoint of our
+			// position, and see if the cursor is greater than or less than it.
+			const bounds = grandchild.getBoundingClientRect()
 
-		const isChildBeforePosition =
-			dataDirection === "HORIZONTAL"
-				? bounds.left + bounds.width / 2 <= e.pageX + window.scrollX
-				: bounds.top + bounds.height / 2 <= e.pageY + window.scrollY
+			const isChildBeforePosition =
+				dataDirection === "HORIZONTAL"
+					? bounds.left + bounds.width / 2 <= e.pageX + window.scrollX
+					: bounds.top + bounds.height / 2 <= e.pageY + window.scrollY
 
-		if (!isChildBeforePosition) break
-		index++
-	}
-
-	return index
-}
-
-// This function uses the mouse position and the bounding boxes of the slot's
-// children to determine the index of the drop.
-const getClickIndex = (
-	slotTarget: Element | null,
-	prevTarget: Element | null
-) => {
-	if (!prevTarget || !slotTarget) return undefined
-	let index = 0
-
-	// loop over targets children
-	for (const child of Array.from(slotTarget.children)) {
-		// If the child was a placeholder, and not a real component
-		// in this slot, we can skip it.
-		if (child.getAttribute("data-placeholder") === "true") continue
-		if (child === prevTarget) break
-		index++
+			if (!isChildBeforePosition) break
+			index++
+		}
 	}
 
 	return index
@@ -133,7 +114,11 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 				"border-slate-300",
 				"rounded-md",
 			],
-			contentwrapper: ["overflow-auto", "h-full"],
+			contentwrapper: [
+				"overflow-auto",
+				"h-full",
+				"[container-type:inline-size]",
+			],
 		},
 		props
 	)
@@ -186,11 +171,9 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 
 		if (validPath && dropPath && dragPath) {
 			const index = getDragIndex(slotTarget, e)
-			let usePath = `${validPath}["${index}"]`
-			if (usePath === component.path.getParentPath(dragPath.localPath)) {
-				// Don't drop on ourselves, just move to the next index
-				usePath = `${validPath}["${index + 1}"]`
-			}
+
+			const usePath = `${validPath}["${index}"]`
+
 			if (dropPath.localPath !== usePath) {
 				setDropPath(
 					context,
@@ -216,24 +199,24 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 
 	const onClick = (e: MouseEvent) => {
 		// Step 1: Find the closest slot that is accepting the current dragpath.
-		let slotTarget = e.target as Element | null
-		let prevTarget = null as Element | null
+		let target = e.target as Element | null
+
 		let validPath = ""
-		while (slotTarget !== null && slotTarget !== e.currentTarget) {
-			validPath = slotTarget.getAttribute("data-path") || ""
-			if (validPath) {
+		while (target !== null && target !== e.currentTarget) {
+			const index = target.getAttribute("data-index") || ""
+			target = target.parentElement
+			if (!target) break
+			const path = target.getAttribute("data-path") || ""
+			if (index && path) {
+				validPath = `${path}["${index}"]`
 				break
 			}
-			prevTarget = slotTarget
-			slotTarget = slotTarget.parentElement || null
 		}
 
 		if (validPath) {
-			const index = getClickIndex(slotTarget, prevTarget)
-			const usePath = `${validPath}["${index}"]`
 			setSelectedPath(
 				context,
-				new FullPath("viewdef", viewDefId, usePath)
+				new FullPath("viewdef", viewDefId, validPath)
 			)
 		}
 	}
@@ -250,7 +233,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 				<div className={classes.outerwrapper}>
 					<div className={classes.contentwrapper}>
 						{props.children}
-						<SelectBorder context={context} />
+						<SelectBorder viewdef={viewDef} context={context} />
 					</div>
 				</div>
 			</div>

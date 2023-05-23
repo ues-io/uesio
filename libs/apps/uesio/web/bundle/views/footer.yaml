@@ -4,6 +4,7 @@ definition:
   wires:
   # Components are how we describe the layout of our view
   components:
+    - uesio/web.ga4:
     - uesio/io.grid:
         uesio.styleTokens:
           root:
@@ -26,10 +27,7 @@ definition:
                     components:
                       - uesio/io.image:
                           file: uesio/web.logowhite
-                          height: 55px
-                          uesio.styleTokens:
-                            root:
-                              - h-[55px]
+                          height: 55
                 - uesio/io.griditem:
                     components:
                       - uesio/io.text:
@@ -60,3 +58,11 @@ definition:
                           signals:
                             - signal: route/NAVIGATE
                               path: terms
+                - uesio/io.griditem:
+                    components:
+                      - uesio/io.image:
+                          file: uesio/web.swissmade
+                          height: 40
+                          uesio.styleTokens:
+                            root:
+                              - m-2.5

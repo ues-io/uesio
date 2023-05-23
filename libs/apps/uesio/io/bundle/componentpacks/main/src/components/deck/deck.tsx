@@ -3,15 +3,14 @@ import List, { ListDefinition } from "../list/list"
 
 import { default as IOGrid } from "../../utilities/grid/grid"
 
+const StyleDefaults = Object.freeze({
+	root: [],
+})
+
 const Deck: definition.UC<ListDefinition> = (props) => {
 	const { definition, context } = props
 
-	const classes = styles.useStyles(
-		{
-			root: {},
-		},
-		props
-	)
+	const classes = styles.useStyleTokens(StyleDefaults, props)
 	return (
 		<IOGrid
 			variant={definition["uesio.variant"]}

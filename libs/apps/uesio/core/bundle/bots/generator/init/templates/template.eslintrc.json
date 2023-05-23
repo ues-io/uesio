@@ -1,0 +1,51 @@
+{
+	"root": true,
+	"extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
+	"parser": "@typescript-eslint/parser",
+	"parserOptions": { "project": ["./tsconfig.json"] },
+	"plugins": ["@typescript-eslint", "react", "react-hooks"],
+	"overrides": [
+		{
+			"files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+			"env": {
+				"browser": true
+			},
+			"rules": {
+				"array-callback-return": "error",
+				"dot-notation": "error",
+				"prefer-arrow-callback": "error",
+				"arrow-body-style": "error",
+				"no-undef": "error",
+				"no-nested-ternary": "error",
+				"no-unneeded-ternary": "error",
+				"object-shorthand": "error",
+				"no-duplicate-imports": "error",
+				"eqeqeq": "error",
+				"radix": "error",
+				"no-new-wrappers": "error",
+				"react/jsx-key": "error",
+				"react/self-closing-comp": [
+					"error",
+					{
+						"component": true,
+						"html": true
+					}
+				],
+				"react/jsx-closing-bracket-location": "error",
+				"react-hooks/rules-of-hooks": "error",
+				"@typescript-eslint/naming-convention": [
+					"error",
+					{
+						"selector": "variable",
+						"format": ["camelCase", "PascalCase", "UPPER_CASE"]
+					}
+				],
+				"@typescript-eslint/no-explicit-any": "error",
+				"@typescript-eslint/no-unused-vars": [
+					"error",
+					{ "ignoreRestSiblings": true }
+				]
+			}
+		}
+	]
+}

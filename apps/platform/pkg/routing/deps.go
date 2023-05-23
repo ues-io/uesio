@@ -27,7 +27,6 @@ var DEFAULT_BUILDER_PACK_NAMESPACE = "uesio/builder"
 var DEFAULT_BUILDER_PACK_NAME = "main"
 
 var DEFAULT_BUILDER_COMPONENT = "uesio/builder.mainwrapper"
-var DEFAULT_BUILDER_SLOT = "uesio/builder.slotbuilder"
 
 func getBuilderComponentID(view string) string {
 	return fmt.Sprintf("%s($root):%s", view, DEFAULT_BUILDER_COMPONENT)
@@ -135,9 +134,13 @@ func getDepsForComponent(component *meta.Component, deps *PreloadMetadata, sessi
 
 	deps.ComponentPack.AddItem(pack)
 
+	// need an admin session for retrieving config values
+	// in order to prevent users from having to have read on the uesio/core.configvalue table
+	adminSession := datasource.GetSiteAdminSession(session.GetSite(), session)
+
 	for _, key := range component.ConfigValues {
 
-		value, err := configstore.GetValueFromKey(key, session)
+		value, err := configstore.GetValueFromKey(key, adminSession)
 		if err != nil {
 			return err
 		}
@@ -285,7 +288,14 @@ func processView(key string, viewInstanceID string, deps *PreloadMetadata, param
 		}
 
 		for _, collection := range metadata.Collections {
-			deps.Collection.AddItem(collection)
+			// If this collection is already in the metadata, we need to merge the new and existing
+			// to create a union of all metadata requested by any wires
+			if existingItem, alreadyExists := deps.Collection.AddItemIfNotExists(collection); alreadyExists {
+				// Cast to CollectionMetadata so that we can use nicer methods
+				existingCollection := existingItem.(*adapt.CollectionMetadata)
+				// Merge the inbound collection with the existing collection
+				existingCollection.Merge(collection)
+			}
 		}
 
 		for _, op := range ops {

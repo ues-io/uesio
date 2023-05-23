@@ -9,9 +9,9 @@ import (
 )
 
 type LoadOptions struct {
-	Conditions         []adapt.LoadRequestCondition `json:"conditions"`
-	Fields             []adapt.LoadRequestField     `json:"fields"`
-	Orders             []adapt.LoadRequestOrder     `json:"order"`
+	Conditions         []adapt.LoadRequestCondition `json:"conditions,omitempty"`
+	Fields             []adapt.LoadRequestField     `json:"fields,omitempty"`
+	Orders             []adapt.LoadRequestOrder     `json:"order,omitempty"`
 	RequireWriteAccess bool                         `json:"requirewriteaccess"`
 }
 
@@ -35,13 +35,15 @@ type LoadResBatch struct {
 	Wires []LoadResponse `json:"wires"`
 }
 
+const ERROR_INVALID_NUMBER_OF_RECORDS_FOR_LOAD_ONE = "Invalid number of records returned from LoadOne"
+
 func LoadOne(collectionName string, options *LoadOptions) (*adapt.Item, error) {
 	result, err := Load(collectionName, options)
 	if err != nil {
 		return nil, err
 	}
 	if len(result) != 1 {
-		return nil, errors.New("Invalid number of records returned from LoadOne")
+		return nil, errors.New(ERROR_INVALID_NUMBER_OF_RECORDS_FOR_LOAD_ONE)
 	}
 	return result[0], nil
 }

@@ -39,6 +39,11 @@ const handleChange = (
 	}
 }
 
+const StyleDefaults = Object.freeze({
+	root: [],
+	input: ["hidden"],
+})
+
 const Bulkjob: FunctionComponent<Props> = (props) => {
 	const Button = component.getUtility("uesio/io.button")
 	const {
@@ -46,15 +51,7 @@ const Bulkjob: FunctionComponent<Props> = (props) => {
 		context,
 	} = props
 
-	const classes = styles.useStyles(
-		{
-			root: {},
-			input: {
-				display: "none",
-			},
-		},
-		props
-	)
+	const classes = styles.useStyleTokens(StyleDefaults, props)
 
 	const record = context.getRecord()
 	const wire = context.getWire()

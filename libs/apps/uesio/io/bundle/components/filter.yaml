@@ -1,5 +1,6 @@
 name: filter
 title: Filter
+icon: filter_alt
 description: Applies conditions to a wire
 pack: main
 entrypoint: components/filter/filter

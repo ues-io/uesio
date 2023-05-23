@@ -1,5 +1,6 @@
 name: searchbox
 title: Search Box
+icon: search
 pack: main
 entrypoint: components/searchbox/searchbox
 description: Filter a wire based on a user's text search.

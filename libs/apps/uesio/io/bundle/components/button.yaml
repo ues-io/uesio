@@ -1,5 +1,6 @@
 name: button
 title: Button
+icon: smart_button
 description: Run signals based on user interaction.
 category: INTERACTION
 pack: main

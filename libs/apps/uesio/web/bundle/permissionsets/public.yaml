@@ -9,7 +9,7 @@ views:
   uesio/web.privacy: true
   uesio/web.terms: true
   uesio/web.topbar: true
-collections:
+collections: {}
 routes:
   uesio/web.earlyaccess: true
   uesio/web.earlyaccessthanks: true
@@ -20,6 +20,7 @@ routes:
 files:
   uesio/web.logo: true
   uesio/web.logowhite: true
+  uesio/web.swissmade: true
 allowallcollections: false
 allowallviews: false
 allowallroutes: false

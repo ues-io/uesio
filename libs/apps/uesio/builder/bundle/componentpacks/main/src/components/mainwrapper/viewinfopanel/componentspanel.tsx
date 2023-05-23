@@ -25,17 +25,17 @@ const getUtility = component.getUtility
 type VariantsBlockProps = {
 	variants: component.ComponentVariant[]
 	isSelected: (itemtype: string, itemname: metadata.MetadataKey) => boolean
+	component: ComponentDef
 } & definition.UtilityProps
 
-const VariantsBlock: FC<VariantsBlockProps> = (props) => {
-	const { context, variants, isSelected } = props
+const StyleDefaults = Object.freeze({
+	root: ["m-2", "flex", "flex-wrap", "gap-2"],
+})
 
-	const classes = styles.useUtilityStyleTokens(
-		{
-			root: ["m-2", "flex", "flex-wrap", "gap-2"],
-		},
-		props
-	)
+const VariantsBlock: FC<VariantsBlockProps> = (props) => {
+	const { component, context, variants, isSelected } = props
+
+	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
 	return (
 		<div className={classes.root}>
@@ -66,6 +66,7 @@ const VariantsBlock: FC<VariantsBlockProps> = (props) => {
 							metadatakey={variant.namespace}
 							metadatainfo={nsInfo}
 							title={variant.name}
+							icon={component.icon}
 							context={context}
 						/>
 					</PropNodeTag>
@@ -132,6 +133,7 @@ const ComponentBlock: FC<ComponentBlockProps> = (props) => {
 						isSelected={isSelected}
 						variants={validVariants}
 						context={context}
+						component={componentDef}
 					/>
 				)}
 			</IOExpandPanel>
@@ -208,6 +210,7 @@ const ComponentTag: FC<ComponentTagProps> = (props) => {
 				metadatainfo={nsInfo}
 				title={component.title || component.name}
 				context={context}
+				icon={component.icon}
 			/>
 		</ItemTag>
 	)

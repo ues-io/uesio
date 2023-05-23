@@ -1,5 +1,5 @@
-import { CSSInterpolation, ClassNamesArg } from "@emotion/css"
 import { FC, ReactNode } from "react"
+import { Class } from "@twind/core"
 
 type Context = {
 	/**
@@ -30,7 +30,6 @@ export type UtilityComponent<T = DefinitionMap> = FC<T & UtilityProps>
 export interface UtilityProps {
 	id?: string
 	variant?: MetadataKey
-	styles?: Record<string, CSSInterpolation>
 	styleTokens?: Record<string, string[]>
 	classes?: Record<string, string>
 	className?: string
@@ -47,7 +46,6 @@ export type Definition =
 	| DefinitionMap[]
 export type BaseDefinition = {
 	"uesio.id"?: string
-	"uesio.styles"?: DefinitionMap
 	"uesio.styleTokens"?: Record<string, string[]>
 	"uesio.variant"?: MetadataKey
 	"uesio.classes"?: string
@@ -89,30 +87,19 @@ type MetadataKey = `${string}/${string}.${string}`
 // STYLES
 //
 
-declare function useUtilityStyles(
-	defaults: Record<string, ClassNamesArg[]>,
-	props: UtilityProps,
-	defaultVariantComponentType?: MetadataKey
-): Record<string, string>
 declare function useUtilityStyleTokens(
-	defaults: Record<string, ClassNamesArg[]>,
+	defaults: Record<string, Class[]>,
 	props: UtilityProps,
 	defaultVariantComponentType?: MetadataKey
 ): Record<string, string>
 declare function useStyleTokens(
-	defaults: Record<string, ClassNamesArg[]>,
+	defaults: Record<string, Class[]>,
 	props: BaseProps
-): Record<string, string>
-declare function useStyles(
-	defaults: Record<string, CSSInterpolation>,
-	props: BaseProps | null
 ): Record<string, string>
 
 export const styles = {
 	useUtilityStyleTokens,
-	useUtilityStyles,
 	useStyleTokens,
-	useStyles,
 }
 
 //
@@ -148,7 +135,6 @@ export namespace definition {
 	interface UtilityProps {
 		id?: string
 		variant?: MetadataKey
-		styles?: Record<string, CSSInterpolation>
 		styleTokens?: Record<string, string[]>
 		classes?: Record<string, string>
 		className?: string
@@ -165,7 +151,6 @@ export namespace definition {
 		| DefinitionMap[]
 	export type BaseDefinition = {
 		"uesio.id"?: string
-		"uesio.styles"?: DefinitionMap
 		"uesio.styleTokens"?: Record<string, string[]>
 		"uesio.variant"?: MetadataKey
 		"uesio.classes"?: string

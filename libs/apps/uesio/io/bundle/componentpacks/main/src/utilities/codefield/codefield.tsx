@@ -6,11 +6,14 @@ import { useState } from "react"
 import { useDeepCompareEffect } from "react-use"
 const { ErrorMessage } = component
 
-const staticAssetPath = api.platform.getStaticAssetsPath()
+const monacoEditorVersion = api.platform.getMonacoEditorVersion()
+const staticAssetsHost = api.platform.getStaticAssetsHost()
 const { memoizedAsync } = api.platform
 
 loader.config({
-	paths: { vs: staticAssetPath + "/static/vendor/monaco-editor/min/vs" },
+	paths: {
+		vs: `${staticAssetsHost}/static/vendor/monaco-editor/${monacoEditorVersion}/min/vs`,
+	},
 })
 
 const preprocessTypeFileURIs = (

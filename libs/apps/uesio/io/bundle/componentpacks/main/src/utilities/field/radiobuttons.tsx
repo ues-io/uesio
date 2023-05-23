@@ -1,9 +1,7 @@
-import { FC } from "react"
 import { definition, styles, context, collection, wire } from "@uesio/ui"
 import Fieldset from "../fieldset/fieldset"
-import { CSSInterpolation } from "@emotion/css"
 
-interface SelectFieldProps extends definition.UtilityProps {
+interface SelectFieldProps {
 	setValue: (value: wire.FieldValue) => void
 	value?: wire.FieldValue
 	width?: string
@@ -15,21 +13,11 @@ interface SelectFieldProps extends definition.UtilityProps {
 }
 
 const StyleDefaults = Object.freeze({
-	input: {
-		appearance: "none",
-	},
-	option: {
-		padding: "8px",
-		display: "flex",
-		alignItems: "center",
-		gap: "8px",
-	},
-	label: {
-		userSelect: "none",
-	},
-} as Record<string, CSSInterpolation>)
+	option: ["flex", "items-center", "gap-2"],
+	label: ["text-sm", "text-slate-600", "font-light"],
+})
 
-const RadioButtons: FC<SelectFieldProps> = (props) => {
+const RadioButtons: definition.UtilityComponent<SelectFieldProps> = (props) => {
 	const {
 		setValue,
 		value = {},
@@ -37,11 +25,11 @@ const RadioButtons: FC<SelectFieldProps> = (props) => {
 		options,
 		context,
 		fieldMetadata,
-		fieldId,
 		readonly,
+		id,
 	} = props
 
-	const classes = styles.useUtilityStyles(StyleDefaults, props)
+	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
 	const fieldLabel = fieldMetadata.getLabel()
 	return (
@@ -53,7 +41,7 @@ const RadioButtons: FC<SelectFieldProps> = (props) => {
 			{options
 				?.filter(({ value }) => value)
 				.map((option) => {
-					const optionId = `${fieldId}_radio_${option.value}`.replace(
+					const optionId = `${id}_radio_${option.value}`.replace(
 						/ /g,
 						"_"
 					)
@@ -64,7 +52,7 @@ const RadioButtons: FC<SelectFieldProps> = (props) => {
 								value={option.value}
 								type={"radio"}
 								checked={option.value === value}
-								name={fieldMetadata.getId()}
+								name={optionId}
 								onChange={(e) => setValue(e.target.value)}
 							/>
 							<label className={classes.label} htmlFor={optionId}>

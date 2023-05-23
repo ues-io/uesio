@@ -12,6 +12,8 @@ options:
     value: "FILE"
   - label: "Formula"
     value: "FORMULA"
+  - label: "List"
+    value: "LIST"
   - label: "Long Text"
     value: "LONGTEXT"
   - label: "Map"

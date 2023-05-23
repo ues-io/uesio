@@ -1,3 +1,4 @@
 name: subtype
-type: TEXT
+type: SELECT
 label: Sub Type
+selectList: uesio/studio.subtype

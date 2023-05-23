@@ -7,15 +7,14 @@ type MarkDownDefinition = {
 	mode: context.FieldMode
 }
 
+const StyleDefaults = Object.freeze({
+	root: [],
+})
+
 const MarkDown: definition.UC<MarkDownDefinition> = (props) => {
 	const { definition, context } = props
 
-	const classes = styles.useStyles(
-		{
-			root: {},
-		},
-		props
-	)
+	const classes = styles.useStyleTokens(StyleDefaults, props)
 
 	return (
 		<MarkDownField

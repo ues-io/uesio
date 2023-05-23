@@ -3,11 +3,8 @@ public: true
 options:
   - label: Open
     value: OPEN
-    disabled: false
   - label: Qualified
     value: QUALIFIED
-    disabled: false
   - label: Disqualified
     value: DISQUALIFIED
-    disabled: false
 blank_option_label: No Status

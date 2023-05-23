@@ -1,6 +1,6 @@
 name: callout_center
-label: Callout Center
 extends: uesio/web.callout
+label: Callout Center
 definition:
   uesio.styleTokens:
     root:

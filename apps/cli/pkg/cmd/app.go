@@ -7,6 +7,8 @@ import (
 	"github.com/thecloudmasters/cli/pkg/command/app"
 )
 
+var targetDir string
+
 func init() {
 
 	// Add "app" prefix command
@@ -28,6 +30,7 @@ func init() {
 		Long:  "Fetches an app's metadata from the Uesio studio and sets up a local project",
 		Run:   appClone,
 	}
+	appCloneCommand.Flags().StringVarP(&targetDir, "dir", "d", "", "Directory to clone into. Defaults to current directory")
 
 	appCommand.AddCommand(appInitCommand, appCloneCommand)
 
@@ -44,7 +47,7 @@ func appInit(cmd *cobra.Command, args []string) {
 }
 
 func appClone(cmd *cobra.Command, args []string) {
-	err := app.AppClone()
+	err := app.AppClone(targetDir)
 	if err != nil {
 		fmt.Println("Error: " + err.Error())
 		return

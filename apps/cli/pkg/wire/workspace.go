@@ -14,6 +14,9 @@ func GetAvailableWorkspaceNames(appID string) ([]string, error) {
 		return nil, err
 	}
 
+	if len(workspaces) == 0 {
+		return names, nil
+	}
 	for _, item := range workspaces {
 		wsName, err := item.GetField("uesio/studio.name")
 		if err != nil {
@@ -49,14 +52,13 @@ func GetAvailableWorkspaces(appID string) (adapt.Collection, error) {
 
 }
 
-func CreateNewWorkspace(user, appId, workspaceName string) (map[string]interface{}, error) {
+func CreateNewWorkspace(appId, workspaceName string) (map[string]interface{}, error) {
 	response, err := Save("uesio/studio.workspace", []map[string]interface{}{
 		{
 			"uesio/studio.name": workspaceName,
-			"uesio/studio.user": map[string]interface{}{
-				"uesio/core.uniquekey": user,
+			"uesio/studio.app": map[string]interface{}{
+				"uesio/core.id": appId,
 			},
-			"uesio/studio.app": appId,
 		},
 	})
 	if err != nil {

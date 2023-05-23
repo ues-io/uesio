@@ -2,11 +2,12 @@ package controller
 
 import (
 	"fmt"
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 
 	// Using text/template here instead of html/template
 	// because we trust both the template and the merge data
@@ -20,7 +21,21 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
-var indexTemplate, cssTemplate *template.Template
+var indexTemplate *template.Template
+
+func init() {
+	wd, _ := os.Getwd()
+	baseDir := wd
+	// Handle path resolution issues when running tests
+	if strings.Contains(wd, filepath.Join("pkg", "")) {
+		baseDir = filepath.Join(wd, "..", "..")
+	}
+	indexPath := filepath.Join(baseDir, "platform", "index.gohtml")
+	cssPath := filepath.Join(baseDir, "..", "..", "dist", "vendor", "fonts", "fonts.css")
+	indexTemplate = template.Must(template.New("index.gohtml").Funcs(template.FuncMap{
+		"getPackURL": getPackUrl,
+	}).ParseFiles(indexPath, cssPath))
+}
 
 func getPackUrl(key string, workspace *routing.WorkspaceMergeData, site *routing.SiteMergeData) string {
 	namespace, name, err := meta.ParseKey(key)
@@ -50,20 +65,6 @@ func getPackUrl(key string, workspace *routing.WorkspaceMergeData, site *routing
 
 }
 
-func init() {
-	baseDir := ""
-	wd, _ := os.Getwd()
-	// Handle path resolution issues when running tests
-	if strings.Contains(wd, "pkg/") {
-		baseDir = filepath.Join(wd, "..", "..")
-	}
-	indexPath := filepath.Join(baseDir, "platform", "index.gohtml")
-	cssPath := filepath.Join(baseDir, "fonts", "fonts.css")
-	indexTemplate = template.Must(template.New("index.gohtml").Funcs(template.FuncMap{
-		"getPackURL": getPackUrl,
-	}).ParseFiles(indexPath, cssPath))
-}
-
 func GetUserMergeData(session *sess.Session) *routing.UserMergeData {
 	userInfo := session.GetUserInfo()
 	userPicture := userInfo.GetPicture()
@@ -91,10 +92,9 @@ func GetWorkspaceMergeData(workspace *meta.Workspace) *routing.WorkspaceMergeDat
 	}
 
 	return &routing.WorkspaceMergeData{
-		Name:        workspace.Name,
-		App:         workspace.GetAppFullName(),
-		Wrapper:     routing.DEFAULT_BUILDER_COMPONENT,
-		SlotWrapper: routing.DEFAULT_BUILDER_SLOT,
+		Name:    workspace.Name,
+		App:     workspace.GetAppFullName(),
+		Wrapper: routing.DEFAULT_BUILDER_COMPONENT,
 	}
 }
 
@@ -190,12 +190,6 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 	site := session.GetSite()
 	workspace := session.GetWorkspace()
 
-	devMode := false
-	val, _ := os.LookupEnv("UESIO_DEV")
-	if val == "true" {
-		devMode = true
-	}
-
 	routingMergeData, err := GetRoutingMergeData(route, workspace, preload, session)
 	if err != nil {
 		msg := "Error getting route merge data: " + err.Error()
@@ -203,14 +197,24 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 		return
 	}
 
+	vendorScriptUrls := file.GetVendorScriptUrls()
+
 	mergeData := routing.MergeData{
-		Route:            routingMergeData,
-		User:             GetUserMergeData(session),
-		Site:             GetSiteMergeData(site),
-		DevMode:          devMode,
-		PreloadMetadata:  preload,
-		StaticAssetsPath: file.GetAssetsPath(),
+		Route:               routingMergeData,
+		User:                GetUserMergeData(session),
+		Site:                GetSiteMergeData(site),
+		PreloadMetadata:     preload,
+		MonacoEditorVersion: file.GetMonacoEditorVersion(),
+		StaticAssetsPath:    file.GetAssetsPath(),
+		StaticAssetsHost:    file.GetAssetsHost(),
+		VendorScriptUrls:    vendorScriptUrls,
 	}
+	// Initiate early preloads of all vendor scripts via Link headers
+	// TODO: Header order seems to be non-deterministic, so unless we can guarantee the order, or load these as modules
+	// which get invoked in a fixed order later on, we can't use this approach for things like React/ReactDOM
+	// for _, script := range vendorScriptUrls {
+	// 	w.Header().Add("Link", fmt.Sprintf("<%s>; rel=preload; as=script", script))
+	// }
 
 	err = indexTemplate.Execute(w, mergeData)
 	if err != nil {

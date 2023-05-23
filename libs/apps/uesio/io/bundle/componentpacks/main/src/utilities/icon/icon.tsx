@@ -1,4 +1,3 @@
-import { FunctionComponent } from "react"
 import { definition, styles } from "@uesio/ui"
 
 interface IconUtilityProps extends definition.UtilityProps {
@@ -7,9 +6,8 @@ interface IconUtilityProps extends definition.UtilityProps {
 	weight?: number
 }
 
-const Icon: FunctionComponent<IconUtilityProps> = (props) => {
-	const fill = props.fill === undefined ? true : props.fill
-	const weight = props.weight === undefined ? 400 : props.weight
+const Icon: definition.UtilityComponent<IconUtilityProps> = (props) => {
+	const { fill = true, weight = 400 } = props
 
 	const classes = styles.useUtilityStyleTokens(
 		{

@@ -17,7 +17,7 @@ const toTimestamp = (date: string) => {
 
 const datetimeLocal = (dt: Date) => {
 	dt.setMinutes(dt.getMinutes() - dt.getTimezoneOffset())
-	return dt.toISOString().slice(0, 16)
+	return dt.toISOString().slice(0, 19)
 }
 
 const StyleDefaults = Object.freeze({
@@ -47,8 +47,9 @@ const TimestampField: FunctionComponent<TimestampFieldProps> = (props) => {
 		<input
 			id={id}
 			className={styles.cx(classes.input, readonly && classes.readonly)}
-			value={timestamp && datetimeLocal(date)}
+			value={timestamp ? datetimeLocal(date) : ""}
 			type="datetime-local"
+			step="1"
 			disabled={readonly}
 			onChange={(event) =>
 				setValue(

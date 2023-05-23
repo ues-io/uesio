@@ -94,20 +94,33 @@ func processCSV(body io.ReadCloser, spec *meta.JobSpec, metadata *adapt.Metadata
 			}
 		}
 
-		if fieldMetadata.Type == "CHECKBOX" {
-			loaderFuncs = append(loaderFuncs, getBooleanLoader(index, &mapping, fieldMetadata, valueGetter))
-		} else if fieldMetadata.Type == "NUMBER" {
-			loaderFuncs = append(loaderFuncs, getNumberLoader(index, &mapping, fieldMetadata, valueGetter))
-		} else if fieldMetadata.Type == "REFERENCE" {
-			loaderFuncs = append(loaderFuncs, getReferenceLoader(index, &mapping, fieldMetadata, valueGetter))
-		} else if fieldMetadata.Type == "DATE" {
-			loaderFuncs = append(loaderFuncs, getDateLoader(index, &mapping, fieldMetadata, valueGetter))
-		} else if fieldMetadata.Type == "TIMESTAMP" {
-			loaderFuncs = append(loaderFuncs, getTimestampLoader(index, &mapping, fieldMetadata, valueGetter))
-		} else {
-			loaderFuncs = append(loaderFuncs, getTextLoader(index, &mapping, fieldMetadata, valueGetter))
-		}
+		var loader func(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc
 
+		switch fieldMetadata.Type {
+		case "CHECKBOX":
+			loader = getBooleanLoader
+		case "NUMBER":
+			loader = getNumberLoader
+		case "REFERENCE":
+			loader = getReferenceLoader
+		case "DATE":
+			loader = getDateLoader
+		case "TIMESTAMP":
+			loader = getTimestampLoader
+		case "MULTISELECT":
+			loader = getMultiSelectLoader
+		case "MAP":
+			loader = getMapLoader
+		case "LIST":
+			loader = getListLoader
+		case "STRUCT":
+			loader = getStructLoader
+		default:
+			loader = getTextLoader
+		}
+		if loader != nil {
+			loaderFuncs = append(loaderFuncs, loader(index, &mapping, fieldMetadata, valueGetter))
+		}
 	}
 
 	for {

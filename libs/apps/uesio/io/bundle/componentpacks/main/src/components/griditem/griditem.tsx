@@ -1,22 +1,13 @@
 import { component, styles, definition } from "@uesio/ui"
 
-type GridItemDefinition = {
-	column?: string
-	area?: string
-}
+const StyleDefaults = Object.freeze({
+	root: [],
+})
 
-const GridItem: definition.UC<GridItemDefinition> = (props) => {
+const GridItem: definition.UC = (props) => {
 	const { definition, context, path } = props
 	if (!definition) return <div />
-	const classes = styles.useStyles(
-		{
-			root: {
-				gridColumn: definition.column,
-				gridArea: definition.area,
-			},
-		},
-		props
-	)
+	const classes = styles.useStyleTokens(StyleDefaults, props)
 	return (
 		<div className={classes.root}>
 			<component.Slot

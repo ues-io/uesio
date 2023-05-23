@@ -11,6 +11,12 @@ type BarChartDefinition = {
 	series: SeriesDefinition[]
 }
 
+const StyleDefaults = Object.freeze({
+	root: ["min-w-0"],
+	title: [],
+	chart: [],
+})
+
 const ChartComponent: definition.UC<BarChartDefinition> = (props) => {
 	const { definition, context } = props
 	if (!definition || !definition.series || !definition.labels) {
@@ -18,16 +24,7 @@ const ChartComponent: definition.UC<BarChartDefinition> = (props) => {
 		return null
 	}
 
-	const classes = styles.useStyles(
-		{
-			root: {
-				minWidth: 0,
-			},
-			title: {},
-			chart: {},
-		},
-		props
-	)
+	const classes = styles.useStyleTokens(StyleDefaults, props)
 
 	// Get a list of all wires used
 	const wireNames: string[] = []

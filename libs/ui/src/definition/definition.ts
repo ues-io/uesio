@@ -1,6 +1,4 @@
-import { CSSInterpolation } from "@emotion/css"
 import { FC, ReactNode } from "react"
-import yaml from "yaml"
 import { MetadataKey } from "../bands/builder/types"
 import { DisplayCondition } from "../component/display"
 import { Context } from "../context/context"
@@ -11,14 +9,11 @@ export type BaseDefinition = {
 	// Once morandi / timetracker / etc. are migrated to using "uesio.id" in their metadata, we can remove this affordance.
 	id?: string
 	"uesio.id"?: string
-	"uesio.styles"?: DefinitionMap
 	"uesio.styleTokens"?: Record<string, string[]>
 	"uesio.variant"?: MetadataKey
 	"uesio.display"?: DisplayCondition[]
 	"uesio.classes"?: DisplayCondition[]
 }
-
-export type YamlDoc = yaml.Document<yaml.Node>
 
 export type ImportMapping = {
 	type: "IMPORT" | "VALUE"
@@ -64,7 +59,6 @@ export type UtilityComponent<T = DefinitionMap> = FC<T & UtilityProps>
 export interface UtilityProps {
 	id?: string
 	variant?: MetadataKey
-	styles?: Record<string, CSSInterpolation>
 	styleTokens?: Record<string, string[]>
 	classes?: Record<string, string>
 	className?: string
