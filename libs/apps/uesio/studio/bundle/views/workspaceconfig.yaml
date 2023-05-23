@@ -130,7 +130,7 @@ definition:
               - signal: panel/TOGGLE
                 panel: clearData
               - signal: notification/ADD
-                text: all data has been cleared
+                text: Successfully deleted all data from all collections in workspace $Param{workspacename}
                 severity: info
         - uesio/io.button:
             text: $Label{uesio/io.cancel}

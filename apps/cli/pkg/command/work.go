@@ -7,13 +7,17 @@ import (
 	"github.com/thecloudmasters/cli/pkg/print"
 )
 
-func Work() error {
+func Work(workspaceName string) error {
 
 	fmt.Println("Running Set Workspace Command")
 
-	workspace, err := ws.SetWorkspacePrompt("")
-	if err != nil {
-		return err
+	workspace := workspaceName
+	if workspaceName == "" {
+		workspacePromt, err := ws.SetWorkspacePrompt("")
+		if err != nil {
+			return err
+		}
+		workspace = workspacePromt
 	}
 
 	fmt.Println("Successfully set Workspace")
