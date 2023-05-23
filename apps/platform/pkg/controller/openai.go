@@ -5,10 +5,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/thecloudmasters/uesio/pkg/cache"
 	"net/http"
 	"os"
 	"strings"
+
+	"github.com/thecloudmasters/uesio/pkg/cache"
 
 	openai "github.com/sashabaranov/go-openai"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
@@ -75,6 +76,7 @@ type AutocompleteRequest struct {
 	Model      string `json:"model"`
 	Format     string `json:"format"`
 	MaxResults int    `json:"maxResults"`
+	UseCache   bool   `json:"useCache"`
 }
 
 func (r *AutocompleteRequest) hashCode() uint64 {
@@ -132,18 +134,21 @@ func AutocompleteHandler(w http.ResponseWriter, r *http.Request) {
 
 	err = flags.Loop(func(item meta.Item, index string) error {
 		featureFlag := item.(*meta.FeatureFlag)
-		if featureFlag.GetNamespace() == "uesio/studio" && featureFlag.Name == "use_ai_signals" && featureFlag.Value == true {
+		if featureFlag.GetNamespace() == "uesio/studio" && featureFlag.Name == "use_ai_signals" && featureFlag.Value {
 			hasUseAiFlag = true
 		}
 		return nil
 	})
-	if err != nil || hasUseAiFlag == false {
+	if err != nil || !hasUseAiFlag {
 		http.Error(w, "You do not have permission to use this feature", http.StatusForbidden)
 		return
 	}
 
-	// Check if we already have this response in cache
-	autocompleteResponse, err := getCachedResponse(&req)
+	var autocompleteResponse *AutocompleteResponse
+	if req.UseCache {
+		// Check if we already have this response in cache
+		autocompleteResponse, err = getCachedResponse(&req)
+	}
 	if autocompleteResponse == nil || err != nil {
 		// Invoke OpenAI
 		autocompleteResponse = &AutocompleteResponse{}
@@ -152,8 +157,10 @@ func AutocompleteHandler(w http.ResponseWriter, r *http.Request) {
 			autocompleteResponse.Error = err.Error()
 		} else {
 			autocompleteResponse.Choices = choices
-			// Cache our response
-			cacheResponse(&req, autocompleteResponse)
+			if req.UseCache {
+				// Cache our response
+				cacheResponse(&req, autocompleteResponse)
+			}
 		}
 	}
 
