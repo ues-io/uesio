@@ -150,8 +150,7 @@ routes:
   uesio/studio.invoice: true
   uesio/studio.userpayments: true
   uesio/studio.paymentsuccess: true
-files:
-  uesio/studio.openailogo: true
+files: {}
 collections:
   uesio/studio.allmetadata: true
   uesio/studio.authsource: true
