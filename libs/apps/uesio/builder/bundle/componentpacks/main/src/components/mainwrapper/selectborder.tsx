@@ -82,7 +82,9 @@ const getTargetsFromSlotIndex = (slotPath: FullPath, index: number) => {
 	)
 	const targets: Element[] = []
 	targetWrappers.forEach((target) => {
-		const children = target.querySelectorAll("&>*:not([data-placeholder])")
+		const children = target.querySelectorAll(
+			":scope>:not([data-placeholder])"
+		)
 		if (children.length) {
 			children.forEach((child) => {
 				targets.push(child)
