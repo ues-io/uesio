@@ -314,10 +314,6 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 		return err
 	}
 
-	// Clear out the wire dependency, we don't want to send any wire data to the client.
-	deps.Wire = nil
-	deps.Collection = nil
-
 	deps.ViewDef.AddItem(view)
 
 	var viewBytes bytes.Buffer
