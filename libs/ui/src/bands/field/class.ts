@@ -24,11 +24,13 @@ class Field {
 			return selectMetadata.options || []
 
 		const mergedOptions = selectMetadata.options.map(
-			({ label, languageLabel, value }) => ({
+			({ label, languageLabel, value, disabled, title }) => ({
 				label: languageLabel
 					? context.getLabel(languageLabel) || label
 					: label,
 				value,
+				disabled,
+				title,
 			})
 		)
 
