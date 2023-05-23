@@ -146,6 +146,7 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 				variant={"uesio/io.customselectfield:uesio/io.default"}
 				context={context}
 				selectedItems={value ? [value] : []}
+				isSelected={() => false}
 				onSearch={onSearch}
 				placeholder={placeholder}
 				onSelect={(item: wire.PlainWireRecord) => {

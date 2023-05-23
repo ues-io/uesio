@@ -36,7 +36,7 @@ components:
                     - uesio/io.button:
                         signals:
                           - signal: component/CALL
-                            component: uesio/io.table
+                            component: uesio/io.list
                             componentsignal: TOGGLE_MODE
                             targettype: specific
                             componentid: ${wirename}List

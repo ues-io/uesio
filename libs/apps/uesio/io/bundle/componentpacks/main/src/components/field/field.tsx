@@ -37,7 +37,12 @@ type FieldDefinition = {
 	wrapperVariant: metadata.MetadataKey
 	subFieldVariant?: metadata.MetadataKey
 	labelVariant?: metadata.MetadataKey
+	applyChanges?: ApplyChanges
 } & definition.BaseDefinition
+
+type FieldValueSetter = (value: wire.FieldValue) => void
+
+type ApplyChanges = "onBlur" | ""
 
 type LabelPosition = "none" | "top" | "left"
 
@@ -70,6 +75,11 @@ const fileTextSignals: Record<string, signal.ComponentSignalDescriptor> = {
 	},
 }
 
+const StyleDefaults = Object.freeze({
+	input: [],
+	readonly: [],
+})
+
 const Field: definition.UC<FieldDefinition> = (props) => {
 	const { context, definition, path } = props
 	const {
@@ -89,6 +99,7 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		subFieldVariant,
 		labelVariant,
 		labelPosition,
+		applyChanges,
 	} = definition
 
 	const componentId = api.component.getComponentIdFromProps(props)
@@ -114,13 +125,7 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		: fieldMetadata.getUpdateable()
 
 	const mode = (canEdit && context.getFieldMode()) || "READ"
-	const classes = styles.useStyles(
-		{
-			input: {},
-			readonly: {},
-		},
-		props
-	)
+	const classes = styles.useStyleTokens(StyleDefaults, props)
 
 	const common = {
 		classes,
@@ -140,6 +145,7 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		displayAs,
 		subFieldVariant,
 		labelVariant,
+		applyChanges,
 		// Some components have sub-fields that need to know about label position
 		labelPosition,
 	}
@@ -170,6 +176,8 @@ Field.signals = fileTextSignals
 export { fileTextSignals, UPLOAD_FILE_EVENT, CANCEL_FILE_EVENT }
 
 export type {
+	ApplyChanges,
+	FieldValueSetter,
 	UserFileMetadata,
 	LabelPosition,
 	ListFieldOptions,

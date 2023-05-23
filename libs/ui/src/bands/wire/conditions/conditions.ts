@@ -16,6 +16,7 @@ type ConditionOperators =
 	| "GTE"
 	| "LTE"
 	| "IN"
+	| "NOT_IN"
 	| "IS_BLANK"
 	| "IS_NOT_BLANK"
 
@@ -50,7 +51,8 @@ type ParamConditionState = ConditionBase & {
 	type?: undefined
 	field: string
 	valueSource: typeof PARAM
-	param: string
+	param?: string
+	params?: string[]
 }
 
 type LookupConditionState = ConditionBase & {
@@ -66,6 +68,7 @@ type ValueConditionState = ConditionBase & {
 	field: string
 	valueSource: typeof VALUE | undefined
 	value: PlainFieldValue
+	values?: PlainFieldValue[]
 	start?: PlainFieldValue
 	end?: PlainFieldValue
 	inclusiveStart?: boolean

@@ -5,7 +5,6 @@ import Tile from "../tile/tile"
 import Icon from "../icon/icon"
 import UploadArea from "../uploadarea/uploadarea"
 import { UserFileMetadata } from "../../components/field/field"
-import { CSSInterpolation } from "@emotion/css"
 
 interface FileUtilityProps extends definition.UtilityProps {
 	id?: string
@@ -17,38 +16,28 @@ interface FileUtilityProps extends definition.UtilityProps {
 }
 
 const StyleDefaults = Object.freeze({
-	uploadarea: {
-		border: "1px dashed #eee",
-		borderRadius: "20px",
-		padding: "40px",
-		fontSize: "9pt",
-		color: "#999",
-		textAlign: "center",
-	},
-	filetag: {
-		padding: "4px 10px",
-		marginTop: "10px",
-		border: "1px solid #eee",
-		display: "inline-block",
-		borderRadius: "4px",
-		backgroundColor: "#f8f8f8",
-	},
-	filename: {
-		fontSize: "9pt",
-		color: "#777",
-		padding: "4px",
-	},
-	download: {
-		textDecoration: "none",
-		color: "inherit",
-	},
-	actionbutton: {
-		padding: "4px",
-		cursor: "pointer",
-		margin: "4px",
-		color: "#777",
-	},
-} as Record<string, CSSInterpolation>)
+	uploadarea: [
+		"border(& dashed slate-200)",
+		"rounded-lg",
+		"p-10",
+		"text-xs",
+		"text-slate-400",
+		"align-center",
+	],
+
+	filetag: [
+		"p-1",
+		"my-2",
+		"border",
+		"border-slate-200",
+		"inline-block",
+		"rounded",
+		"bg-slate-100",
+	],
+	filename: ["text-xs", "text-slate-700", "px-2", "py1"],
+	download: [],
+	actionbutton: ["p-1", "cursor-pointer", "m-1", "text-slate-700"],
+})
 
 const File: FunctionComponent<FileUtilityProps> = (props) => {
 	const { context, userFile, onUpload, onDelete, accept, mode } = props
@@ -58,7 +47,7 @@ const File: FunctionComponent<FileUtilityProps> = (props) => {
 	const fileName = userFile?.["uesio/core.path"]
 	const fileUrl = api.file.getUserFileURL(context, userFileId, fileModDate)
 
-	const classes = styles.useUtilityStyles(StyleDefaults, props)
+	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
 	const uploadLabelId = nanoid()
 	const deleteLabelId = nanoid()
@@ -79,7 +68,7 @@ const File: FunctionComponent<FileUtilityProps> = (props) => {
 				</UploadArea>
 			)}
 
-			{userFile && (
+			{userFileId && (
 				<Tile context={context} className={classes.filetag}>
 					<span className={classes.filename}>{fileName}</span>
 					<a href={fileUrl} className={classes.download}>

@@ -1,5 +1,6 @@
 name: linechart
 title: Line Chart
+icon: show_chart
 description: Visualize data with lines.
 category: VISUALIZATION
 pack: chart
@@ -9,6 +10,7 @@ defaultDefinition:
   labels:
     source: DATA
     timeunit: MONTH
+    timeunitfill: WEEK
 discoverable: true
 properties:
   - name: title

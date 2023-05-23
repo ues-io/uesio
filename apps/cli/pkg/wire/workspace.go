@@ -2,17 +2,21 @@ package wire
 
 import (
 	"errors"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 )
 
-func GetAvailableWorkspaceNames() ([]string, error) {
+func GetAvailableWorkspaceNames(appID string) ([]string, error) {
 	names := []string{}
 
-	workspaces, err := GetAvailableWorkspaces()
+	workspaces, err := GetAvailableWorkspaces(appID)
 	if err != nil {
 		return nil, err
 	}
 
+	if len(workspaces) == 0 {
+		return names, nil
+	}
 	for _, item := range workspaces {
 		wsName, err := item.GetField("uesio/studio.name")
 		if err != nil {
@@ -28,13 +32,7 @@ func GetAvailableWorkspaceNames() ([]string, error) {
 	return names, nil
 }
 
-func GetAvailableWorkspaces() (adapt.Collection, error) {
-
-	appID, err := GetAppID()
-	if err != nil {
-		return nil, err
-	}
-
+func GetAvailableWorkspaces(appID string) (adapt.Collection, error) {
 	return Load(
 		"uesio/studio.workspace",
 		&LoadOptions{
@@ -52,4 +50,20 @@ func GetAvailableWorkspaces() (adapt.Collection, error) {
 		},
 	)
 
+}
+
+func CreateNewWorkspace(appId, workspaceName string) (map[string]interface{}, error) {
+	response, err := Save("uesio/studio.workspace", []map[string]interface{}{
+		{
+			"uesio/studio.name": workspaceName,
+			"uesio/studio.app": map[string]interface{}{
+				"uesio/core.id": appId,
+			},
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return response[0], nil
 }

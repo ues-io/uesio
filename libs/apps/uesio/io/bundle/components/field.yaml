@@ -5,6 +5,9 @@ link: "https://docs.ues.io/"
 pack: main
 entrypoint: components/field/field
 defaultDefinition: {}
+discoverable: true
+category: DATA
+icon: select_check_box
 variants:
   - uesio/io.field:uesio/io.default
   - uesio/io.fieldlabel:uesio/io.default
@@ -37,6 +40,43 @@ properties:
     wireProperty: wire
     fieldProperty: fieldId
     metadataProperty: type
+    onChange:
+      # Always clear out the following when the display type changes
+      - updates:
+          - field: displayAs
+          - field: placeholder
+      # If the display type is now a type for which display-type specific properties are not relevant,
+      # clear out these old properties
+      - updates:
+          - field: reference
+        conditions:
+          - type: fieldValue
+            field: fieldDisplayType
+            operator: NOT_EQUALS
+            value: REFERENCE
+      - updates:
+          - field: number
+        conditions:
+          - type: fieldValue
+            field: fieldDisplayType
+            operator: NOT_EQUALS
+            value: NUMBER
+      - updates:
+          - field: longtext
+        conditions:
+          - type: fieldValue
+            field: fieldDisplayType
+            operator: NOT_EQUALS
+            value: LONGTEXT
+      - updates:
+          - field: applyChanges
+        conditions:
+          - type: fieldValue
+            field: fieldDisplayType
+            operator: NOT_IN
+            values:
+              - TEXT
+              - NUMBER
   - name: label
     type: TEXT
     label: Label
@@ -61,6 +101,21 @@ properties:
           - TEXT
           - LONGTEXT
           - REFERENCE
+  - name: applyChanges
+    type: SELECT
+    label: "Apply field changes"
+    options:
+      - value: ""
+        label: "Immediately (as user types)"
+      - value: "onBlur"
+        label: "On blur (when user tabs away)"
+    displayConditions:
+      - type: fieldValue
+        field: fieldDisplayType
+        operator: IN
+        values:
+          - TEXT
+          - NUMBER
   - name: displayAs
     type: SELECT
     label: Display as
@@ -189,6 +244,7 @@ sections:
       - labelPosition
       - placeholder
       - displayAs
+      - applyChanges
       # Display type specific properties
       - number
       - longtext

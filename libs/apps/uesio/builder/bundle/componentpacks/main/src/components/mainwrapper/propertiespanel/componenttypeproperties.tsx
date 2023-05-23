@@ -28,6 +28,6 @@ const ComponentTypeProperties: definition.UtilityComponent = (props) => {
 	)
 }
 
-ComponentTypeProperties.displayName = "WireProperties"
+ComponentTypeProperties.displayName = "ComponentTypeProperties"
 
 export default ComponentTypeProperties

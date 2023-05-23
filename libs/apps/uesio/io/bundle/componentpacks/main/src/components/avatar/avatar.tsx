@@ -7,14 +7,13 @@ type AvatarDefinition = {
 	text?: string
 }
 
+const StyleDefaults = Object.freeze({
+	root: [],
+})
+
 const Avatar: definition.UC<AvatarDefinition> = (props) => {
 	const { definition, context } = props
-	const classes = styles.useStyles(
-		{
-			root: {},
-		},
-		props
-	)
+	const classes = styles.useStyleTokens(StyleDefaults, props)
 	return (
 		<IOAvatar
 			image={definition.image}

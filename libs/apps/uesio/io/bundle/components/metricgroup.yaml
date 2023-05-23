@@ -1,5 +1,6 @@
 name: metricgroup
 title: Metric Group
+icon: numbers
 description: A group of metric boxes
 category: VISUALIZATION
 pack: chart

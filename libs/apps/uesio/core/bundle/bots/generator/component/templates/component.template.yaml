@@ -1,0 +1,19 @@
+name: ${name}
+category: DATA
+pack: ${pack}
+entrypoint: components/${name}/${name}
+title: ${componentName}
+discoverable: true
+description: A sample component that outputs text
+properties:
+  - type: TEXT
+    name: text
+    label: Text
+defaultDefinition:
+  text: Hello world
+sections:
+  - type: HOME
+    properties:
+      - text
+  - type: STYLES
+  - type: DISPLAY

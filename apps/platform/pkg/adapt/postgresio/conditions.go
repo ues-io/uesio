@@ -3,6 +3,7 @@ package postgresio
 import (
 	"errors"
 	"fmt"
+	"reflect"
 	"strconv"
 	"strings"
 
@@ -107,22 +108,60 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 
 	fieldName := getFieldName(fieldMetadata, tableAlias)
 	switch condition.Operator {
-	case "IN":
+	case "IN", "NOT_IN":
 		if fieldMetadata.Type == "DATE" {
 			return processDateRangeCondition(condition, fieldName, builder)
 		}
-		builder.addQueryPart(fmt.Sprintf("%s = ANY(%s)", fieldName, builder.addValue(condition.Value)))
+		if condition.Values != nil {
+			if reflect.TypeOf(condition.Values).Kind() == reflect.Slice {
+				var safeValues []string
+				switch values := condition.Values.(type) {
+				case []interface{}:
+					if numValues := len(values); numValues > 0 {
+						safeValues = make([]string, numValues, numValues)
+						for i, val := range values {
+							safeValues[i] = builder.addValue(val)
+						}
+					}
+				case []string:
+					if numValues := len(values); numValues > 0 {
+						safeValues = make([]string, numValues, numValues)
+						for i, val := range values {
+							safeValues[i] = builder.addValue(val)
+						}
+					}
+				default:
+					fmt.Printf("Unsupported type for values array: %T\n", values)
+				}
+				if safeValues != nil {
+					useOperator := "IN"
+					if condition.Operator == "NOT_IN" {
+						useOperator = "NOT IN"
+					}
+					builder.addQueryPart(fmt.Sprintf("%s %s (%s)", fieldName, useOperator, strings.Join(safeValues, ",")))
+				}
+			} else {
+				return errors.New(condition.Operator + " requires a values array to be provided")
+			}
+		} else {
+			useOperator := "= ANY"
+			if condition.Operator == "NOT_IN" {
+				useOperator = "<> ANY"
+			}
+			builder.addQueryPart(fmt.Sprintf("%s %s (%s)", fieldName, useOperator, builder.addValue(condition.Value)))
+		}
+
 	case "HAS_ANY":
 		if fieldMetadata.Type != "MULTISELECT" {
 			return errors.New("Operator HAS_ANY only works with fieldType MULTI_SELECT")
 		}
-		builder.addQueryPart(fmt.Sprintf("%s ?| %s", fieldName, builder.addValue(condition.Value)))
+		builder.addQueryPart(fmt.Sprintf("%s ?| %s", fieldName, builder.addValue(condition.Values)))
 
 	case "HAS_ALL":
 		if fieldMetadata.Type != "MULTISELECT" {
 			return errors.New("Operator HAS_ALL only works with fieldType MULTI_SELECT")
 		}
-		builder.addQueryPart(fmt.Sprintf("%s ?& %s", fieldName, builder.addValue(condition.Value)))
+		builder.addQueryPart(fmt.Sprintf("%s ?& %s", fieldName, builder.addValue(condition.Values)))
 
 	case "NOT_EQ":
 		builder.addQueryPart(fmt.Sprintf("%s is distinct from %s", fieldName, builder.addValue(condition.Value)))
@@ -164,7 +203,7 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 	default:
 		if fieldMetadata.Type == "MULTISELECT" {
 			// Same as HAS_ANY
-			builder.addQueryPart(fmt.Sprintf("%s ?| %s", fieldName, builder.addValue(condition.Value)))
+			builder.addQueryPart(fmt.Sprintf("%s ?| %s", fieldName, builder.addValue(condition.Values)))
 		}
 		builder.addQueryPart(fmt.Sprintf("%s = %s", fieldName, builder.addValue(condition.Value)))
 	}

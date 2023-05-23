@@ -6,6 +6,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/controller/bot"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 
 	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -31,6 +32,13 @@ func CallListenerBot(w http.ResponseWriter, r *http.Request) {
 
 	returnParams, err := datasource.CallListenerBot(namespace, name, params, nil, session)
 	if err != nil {
+
+		// Validation errors should be returned as BadRequest
+		if _, ok := err.(*meta.BotParamValidationError); ok {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
 		logger.LogError(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

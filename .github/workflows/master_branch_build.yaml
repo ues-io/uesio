@@ -104,7 +104,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          repository: thecloudmasters/uesio-infra
+          repository: TheCloudMasters/uesio-infra
           token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your personal Github access token
       - name: Download image id artifact
         uses: actions/download-artifact@v3

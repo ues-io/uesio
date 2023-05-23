@@ -5,6 +5,7 @@ title: Grid
 description: Layout areas of your page using low-level CSS grid functionality.
 category: LAYOUT
 discoverable: true
+icon: border_all
 slots:
   - name: items
     accepts:

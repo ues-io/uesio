@@ -88,8 +88,12 @@ describe("Uesio Builder Tests", () => {
 	const getComponentBankElement = (id: string) =>
 		cy.get(`[data-type="component:${id}"]`)
 
-	const getCanvasElement = (path: string) =>
-		cy.get(`[data-path="${CSS.escape(path)}"]`)
+	const getCanvasElement = (slotpath: string, index: number) =>
+		cy
+			.get(`[data-path="${CSS.escape(slotpath)}"]`)
+			.children(`[data-index="${index}"]`)
+			.children()
+			.first()
 
 	before(() => {
 		cy.loginWithAppAndWorkspace(appName, workspaceName)
@@ -133,11 +137,11 @@ describe("Uesio Builder Tests", () => {
 				addButtonPageDef
 			)
 			// Select the button
-			getCanvasElement('["components"]["0"]["uesio/io.button"]').click()
+			getCanvasElement('["components"]', 0).click()
 			// Verify the selection
 			getBuilderState("selected").should(
 				"eq",
-				`viewdef:${fullViewName}:["components"]["0"]["uesio/io.button"]`
+				`viewdef:${fullViewName}:["components"]["0"]`
 			)
 			// Change the text property
 			cy.clearInput("property:text")
@@ -153,7 +157,7 @@ describe("Uesio Builder Tests", () => {
 				cloneButtonPageDef
 			)
 			// Select the second button
-			getCanvasElement('["components"]["1"]["uesio/io.button"]').click({
+			getCanvasElement('["components"]', 1).click({
 				force: true,
 			})
 			// Change the text property again

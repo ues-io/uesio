@@ -1,11 +1,10 @@
 package adapt
 
 import (
+	"bytes"
 	"encoding/json"
-	"fmt"
 	"strconv"
 
-	"github.com/francoispqt/gojay"
 	"github.com/teris-io/shortid"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
@@ -13,52 +12,51 @@ import (
 type Collection []*Item
 
 func (c *Collection) UnmarshalJSON(data []byte) error {
-	err := gojay.UnmarshalJSONObject(data, c)
+	var jsonObj map[string]json.RawMessage
+	err := json.Unmarshal(data, &jsonObj)
 	if err != nil {
-		return gojay.UnmarshalJSONArray(data, c)
+		// We failed at unmarshalling to an object. It's probably an array
+		// Since we've overridden the UnmarshalJSON for this type,
+		// we can't just unmarshall straight into c, so unmarshall into an alias
+		type Alias Collection
+		return json.Unmarshal(data, (*Alias)(c))
 	}
-	return err
-}
 
-func (c *Collection) UnmarshalJSONArray(dec *gojay.Decoder) error {
-	item := &Item{}
-	err := decodeEmbed(dec, item)
-	if err != nil {
-		return err
+	for _, data := range jsonObj {
+		item := &Item{}
+		err = json.Unmarshal(data, item)
+		if err != nil {
+			return err
+		}
+		*c = append(*c, item)
 	}
-	*c = append(*c, item)
+
 	return nil
 }
 
-func (c *Collection) UnmarshalJSONObject(dec *gojay.Decoder, key string) error {
-	// Ignore the key and add to the collection
-	return c.UnmarshalJSONArray(dec)
-}
-
-func (c *Collection) NKeys() int {
-	return 0
-}
-
 func (c *Collection) MarshalJSON() ([]byte, error) {
-	return gojay.MarshalJSONObject(c)
-}
-
-func (c *Collection) MarshalJSONObject(enc *gojay.Encoder) {
-	for _, item := range *c {
+	var buf bytes.Buffer
+	buf.WriteByte('{')
+	for i, item := range *c {
+		if i > 0 {
+			buf.WriteByte(',')
+		}
+		tempid, err := shortid.Generate()
+		if err != nil {
+			return nil, err
+		}
+		buf.WriteByte('"')
+		buf.WriteString(tempid)
+		buf.WriteByte('"')
+		buf.WriteByte(':')
 		data, err := json.Marshal(item)
 		if err != nil {
-			fmt.Println("Error Marshalling Collection")
-			break
+			return nil, err
 		}
-
-		embed := gojay.EmbeddedJSON(data)
-		tempid, _ := shortid.Generate()
-		enc.AddEmbeddedJSONKey(tempid, &embed)
+		buf.Write(data)
 	}
-}
-
-func (c *Collection) IsNil() bool {
-	return c == nil
+	buf.WriteByte('}')
+	return buf.Bytes(), nil
 }
 
 func (c *Collection) NewItem() meta.Item {

@@ -23,10 +23,9 @@ func Pack(options *PackOptions) error {
 	start := time.Now()
 
 	globalsMap := map[string]string{
-		"react":        "React",
-		"react-dom":    "ReactDOM",
-		"@uesio/ui":    "uesio",
-		"@emotion/css": "emotion",
+		"react":     "React",
+		"react-dom": "ReactDOM",
+		"@uesio/ui": "uesio",
 	}
 
 	entryPoints, err := pack.CreateEntryFiles()

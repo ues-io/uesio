@@ -1,5 +1,3 @@
-import { DefinitionMap } from "./definition"
-
 interface Palette {
 	primary: string
 	secondary: string
@@ -17,7 +15,6 @@ type ThemeState = {
 	definition: {
 		spacing: number
 		palette: Palette
-		variantOverrides: Record<string, DefinitionMap>
 	}
 }
 

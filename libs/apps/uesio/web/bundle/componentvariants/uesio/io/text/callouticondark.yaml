@@ -1,6 +1,6 @@
 name: callouticondark
-label: Callout Icon Dark
 extends: uesio/web.callouticon
+label: Callout Icon Dark
 definition:
   uesio.styleTokens:
     root:

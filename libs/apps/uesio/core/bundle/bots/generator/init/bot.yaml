@@ -2,7 +2,7 @@ name: init
 dialect: "JAVASCRIPT"
 type: "GENERATOR"
 params:
-  name:
+  - name: name
     prompt: App Name
     type: METADATANAME
 public: true

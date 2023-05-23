@@ -1,6 +1,6 @@
 name: calloutsmall
-label: Callout Small
 extends: uesio/web.callout
+label: Callout Small
 definition:
   uesio.styleTokens:
     root:

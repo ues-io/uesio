@@ -9,6 +9,9 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
+// Retrieve bundle assets into root directory
+var targetDirectory = ""
+
 // Only used in isolation for seeds where we allow overriding the same version with new assets
 func StoreBundleAssets(namespace, sourceversion, destversion string, source bundlestore.BundleStore, session *sess.Session) error {
 	dest, err := bundlestore.GetBundleStore(namespace, session.RemoveWorkspaceContext())
@@ -23,7 +26,8 @@ func StoreBundleAssets(namespace, sourceversion, destversion string, source bund
 		}()
 		return w, nil
 	}
-	return retrieve.RetrieveBundle(creator, namespace, sourceversion, source, session)
+
+	return retrieve.RetrieveBundle(targetDirectory, creator, namespace, sourceversion, source, session)
 
 }
 
