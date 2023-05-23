@@ -29,7 +29,7 @@ Accept: application/json
     "wires": [
         {
             "collection":"uesio/tests.animal",
-            "query":true,
+            "query":true
         }
     ]
 }
