@@ -174,7 +174,7 @@ const SuggestedFields: definition.UC<ComponentDefinition> = (props) => {
 	return !hasFields ? (
 		<Button
 			context={context}
-			label="Suggest Fields"
+			label={isLoading ? "Suggesting fields..." : "Suggest Fields"}
 			variant="uesio/io.secondary"
 			disabled={isLoading}
 			icon={
