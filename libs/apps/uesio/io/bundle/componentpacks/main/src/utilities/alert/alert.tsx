@@ -1,7 +1,6 @@
 import { FunctionComponent, useEffect } from "react"
 import { definition, styles, notification, api } from "@uesio/ui"
 import Icon from "../icon/icon"
-import { parseInt } from "lodash"
 interface AlertProps extends definition.UtilityProps {
 	text?: string
 	details?: string
@@ -64,7 +63,7 @@ const Alert: FunctionComponent<AlertProps> = (props) => {
 	)
 	useEffect(() => {
 		if (duration) {
-			let time = parseInt(duration)
+			let time = parseInt(duration, 10)
 			if (!Number.isNaN(time) && time > 0) {
 				time = time * 1000
 				const timer = setTimeout(() => {
