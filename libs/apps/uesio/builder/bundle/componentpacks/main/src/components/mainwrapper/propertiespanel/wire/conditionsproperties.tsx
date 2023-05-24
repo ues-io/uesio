@@ -78,18 +78,6 @@ function getOperatorOptions(fieldDisplayType: string | undefined) {
 			},
 		]
 	return [
-		...(fieldDisplayType && textAlikeFiledTypes.includes(fieldDisplayType)
-			? [
-					{
-						label: "Contains",
-						value: "CONTAINS",
-					},
-					{
-						label: "Starts With",
-						value: "STARTS_WITH",
-					},
-			  ]
-			: []),
 		{
 			label: "",
 			value: "",
@@ -138,6 +126,18 @@ function getOperatorOptions(fieldDisplayType: string | undefined) {
 			label: "Between",
 			value: "BETWEEN",
 		},
+		...(fieldDisplayType && textAlikeFiledTypes.includes(fieldDisplayType)
+			? [
+					{
+						label: "Contains",
+						value: "CONTAINS",
+					},
+					{
+						label: "Starts With",
+						value: "STARTS_WITH",
+					},
+			  ]
+			: []),
 	]
 }
 
