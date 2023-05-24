@@ -214,7 +214,8 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 
 	case "STARTS_WITH":
 		if !isTextAlike(fieldMetadata.Type) {
-			return errors.New("Operator STARTS_WITH only works with TEXT alike field types")
+```suggestion
+			return fmt.Errorf("Operator STARTS_WITH is not supported for field type %s", fieldMetadata.Type)
 		}
 		builder.addQueryPart(fmt.Sprintf("%s ILIKE %s", fieldName, builder.addValue(fmt.Sprintf("%v%%", condition.Value))))
 
