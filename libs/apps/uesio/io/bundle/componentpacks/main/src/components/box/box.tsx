@@ -14,6 +14,7 @@ const Box: definition.UC<BoxDefinition> = (props) => {
 	const { definition, context, path } = props
 	return (
 		<div
+			id={api.component.getComponentIdFromProps(props)}
 			className={classes.root}
 			onClick={api.signal.getHandler(definition.signals, context)}
 		>
