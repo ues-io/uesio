@@ -14,7 +14,6 @@ definition:
         uesio/studio.homeroute:
         uesio/studio.loginroute:
         uesio/studio.publicprofile:
-        uesio/studio.defaulttheme:
         uesio/studio.favicon:
       conditions:
         - field: uesio/core.uniquekey
@@ -102,10 +101,6 @@ definition:
                                             fieldId: uesio/studio.publicprofile
                                             metadataType: "PROFILE"
                                             label: "Public Profile"
-                                        - uesio/builder.metadatafield:
-                                            fieldId: uesio/studio.defaulttheme
-                                            metadataType: "THEME"
-                                            label: "Default Theme"
                                         - uesio/builder.metadatafield:
                                             fieldId: uesio/studio.favicon
                                             metadataType: "FILE"
