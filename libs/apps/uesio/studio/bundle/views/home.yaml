@@ -113,6 +113,9 @@ definition:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.nav
                     title: My Organizations
+                    uesio.display:
+                      - type: featureFlag
+                        name: use_organizations
                     actions:
                       - uesio/io.button:
                           icon: add
@@ -123,6 +126,9 @@ definition:
                 - uesio/io.list:
                     uesio.id: orglist
                     wire: orgs
+                    uesio.display:
+                      - type: featureFlag
+                        name: use_organizations
                     components:
                       - uesio/io.tile:
                           uesio.variant: uesio/io.nav
