@@ -115,7 +115,7 @@ definition:
                     title: My Organizations
                     uesio.display:
                       - type: featureFlag
-                        name: use_organizations
+                        name: manage_organizations
                     actions:
                       - uesio/io.button:
                           icon: add
@@ -128,7 +128,7 @@ definition:
                     wire: orgs
                     uesio.display:
                       - type: featureFlag
-                        name: use_organizations
+                        name: manage_organizations
                     components:
                       - uesio/io.tile:
                           uesio.variant: uesio/io.nav
