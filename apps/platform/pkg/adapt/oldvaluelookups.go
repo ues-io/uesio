@@ -140,6 +140,12 @@ func HandleOldValuesLookup(
 	return LoadLooper(connection, op.Metadata.GetFullName(), idMap, allFields, ID_FIELD, session, func(item meta.Item, matchIndexes []ReferenceLocator, ID string) error {
 
 		if item == nil {
+			// This should result in an error, unless we have explicitly indicated that
+			// we do not care if records are missing (which they may be if we are doing a cascade delete
+			// and some bot has already deleted them)
+			if op.Options.IgnoreMissingRecords {
+				return nil
+			}
 			return errors.New("Could not find record to update or delete: " + ID)
 		}
 

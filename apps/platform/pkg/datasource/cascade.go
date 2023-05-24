@@ -170,6 +170,9 @@ func performCascadeDeletes(op *adapt.SaveOp, connection adapt.Connection, sessio
 				Collection: collectionKey,
 				Wire:       "CascadeDelete",
 				Deletes:    &ids,
+				Options: &adapt.SaveOptions{
+					IgnoreMissingRecords: true,
+				},
 			})
 		}
 	}

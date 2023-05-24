@@ -162,7 +162,7 @@ const Table: definition.UC<TableDefinition> = (props) => {
 					<Group context={recordContext.context}>
 						{otherActions
 							.filter((action) =>
-								component.useShould(
+								component.shouldAll(
 									action[component.DISPLAY_CONDITIONS],
 									recordContext.context
 								)
