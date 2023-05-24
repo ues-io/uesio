@@ -63,3 +63,23 @@ POST https://{{host}}:{{port}}/site/wires/save
     ]
 }
 HTTP 200
+
+# Create truncatetests workspace
+POST https://{{host}}:{{port}}/site/wires/save
+{
+    "wires": [
+        {
+            "wire": "newworkspace",
+            "collection":"uesio/studio.workspace",
+            "changes": {
+                "1": {
+                    "uesio/studio.app": {
+                        "uesio/core.id": "{{app_id}}"
+                    },
+                    "uesio/studio.name": "truncatetests"
+                }
+            }
+        }
+    ]
+}
+HTTP 200

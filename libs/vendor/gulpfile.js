@@ -20,11 +20,15 @@ const modules = [
 		name: REACT,
 		path: `umd/react.${devMode ? "development" : "production.min"}.js`,
 		dest: "umd",
+		preload: true,
+		order: 1,
 	},
 	{
 		name: REACT_DOM,
 		path: `umd/react-dom.${devMode ? "development" : "production.min"}.js`,
 		dest: "umd",
+		preload: true,
+		order: 2,
 	},
 	{
 		name: MONACO,
@@ -46,12 +50,14 @@ function clean(cb) {
 
 function generateVendorManifest(cb) {
 	const vendorManifest = modules.reduce(
-		(manifestObj, { name: module, path }) => {
+		(manifestObj, { name: module, path, preload = false, order }) => {
 			const { version } = packageLock.packages[`node_modules/${module}`]
 			console.log(`Using ${module}@${version}`)
 			manifestObj[module] = {
 				version,
 				path,
+				preload,
+				order,
 			}
 			return manifestObj
 		},

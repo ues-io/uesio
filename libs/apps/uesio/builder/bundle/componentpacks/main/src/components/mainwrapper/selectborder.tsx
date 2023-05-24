@@ -45,7 +45,6 @@ const StyleDefaults = Object.freeze({
 	popper: ["bg-blue-600", "rounded"],
 	dragging: ["opacity-20"],
 	empty: [
-		"block",
 		"bg-blue-50",
 		"py-2",
 		"px-3",
@@ -55,9 +54,12 @@ const StyleDefaults = Object.freeze({
 		"font-light",
 		"rounded",
 		"uppercase",
+		"before:content-[attr(data-empty-label)]",
 	],
-	emptyRemove: ["hidden"],
+	emptyRemove: ["contents"],
 })
+
+const nonComponentPaths = ["wires", "params"]
 
 const getComponentInfoFromPath = (path: FullPath, context: context.Context) => {
 	const isValid =
@@ -65,7 +67,8 @@ const getComponentInfoFromPath = (path: FullPath, context: context.Context) => {
 		path.itemType === "viewdef" &&
 		path.itemName === context.getViewDefId() &&
 		path.localPath &&
-		path.size() > 1
+		path.size() > 1 &&
+		!nonComponentPaths.includes(path.trimToSize(1).pop()[0] as string)
 	if (!isValid) {
 		return [undefined, undefined, undefined, undefined] as const
 	}
@@ -76,29 +79,25 @@ const getComponentInfoFromPath = (path: FullPath, context: context.Context) => {
 }
 
 const getTargetsFromSlotIndex = (slotPath: FullPath, index: number) => {
-	const indexPlaceHolders = document.querySelectorAll(
+	const targetWrappers = document.querySelectorAll(
 		`[data-path="${CSS.escape(
 			slotPath.localPath
 		)}"]>[data-index="${index}"]`
 	)
-
-	if (!indexPlaceHolders.length) {
-		return null
-	}
-
 	const targets: Element[] = []
-	indexPlaceHolders.forEach((placeHolder) => {
-		if (placeHolder.getAttribute("data-placeholder") === null) {
-			targets.push(placeHolder)
+	targetWrappers.forEach((target) => {
+		const children = target.querySelectorAll(
+			":scope>:not([data-placeholder])"
+		)
+		if (children.length) {
+			children.forEach((child) => {
+				targets.push(child)
+			})
 			return null
 		}
-		const target = placeHolder.nextSibling as Element | null
-		if (!target || target.getAttribute("data-placeholder") === "true") {
-			return null
-		}
+		target.classList.remove("contents")
 		targets.push(target)
 	})
-
 	return targets
 }
 
@@ -119,7 +118,8 @@ const SelectBorder: definition.UtilityComponent<Props> = (props) => {
 
 	const [selectedChildren, setSelectedChildren] = useState<Element[]>()
 	const [draggingChildren, setDraggingChildren] = useState<Element[]>()
-	const [emptyComponents, setEmptyComponents] = useState<Element[]>()
+	const [emptyComponents, setEmptyComponents] =
+		useState<NodeListOf<Element>>()
 
 	const selectedLength = selectedChildren ? selectedChildren.length : 0
 	const draggingLength = draggingChildren ? draggingChildren.length : 0
@@ -142,33 +142,21 @@ const SelectBorder: definition.UtilityComponent<Props> = (props) => {
 				child.classList.remove(...StyleDefaults.empty)
 				child.classList.add(...StyleDefaults.emptyRemove)
 				child.setAttribute("data-placeholder", "true")
-				child.innerHTML = ""
 			})
 		}
-		const indexPlaceHolders = document.querySelectorAll(
-			`[data-path]>[data-component]`
+		const targets = document.querySelectorAll(
+			`[data-path]>[data-component]:empty`
 		)
 
-		if (!indexPlaceHolders.length) {
+		if (!targets.length) {
 			setEmptyComponents(undefined)
 			return
 		}
-
-		const targets: Element[] = []
-		indexPlaceHolders.forEach((placeHolder) => {
-			const target = placeHolder.nextSibling as Element | null
-			if (target && target.getAttribute("data-placeholder") !== "true") {
-				return null
-			}
-			targets.push(placeHolder)
-		})
 
 		targets.forEach((target) => {
 			target.classList.add(...StyleDefaults.empty)
 			target.classList.remove(...StyleDefaults.emptyRemove)
 			target.removeAttribute("data-placeholder")
-			target.innerHTML =
-				"Invisible Component: " + target.getAttribute("data-component")
 		})
 
 		setEmptyComponents(targets)

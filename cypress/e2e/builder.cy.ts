@@ -91,9 +91,9 @@ describe("Uesio Builder Tests", () => {
 	const getCanvasElement = (slotpath: string, index: number) =>
 		cy
 			.get(`[data-path="${CSS.escape(slotpath)}"]`)
+			.children(`[data-index="${index}"]`)
 			.children()
-			.not("[data-placeholder]")
-			.eq(index)
+			.first()
 
 	before(() => {
 		cy.loginWithAppAndWorkspace(appName, workspaceName)

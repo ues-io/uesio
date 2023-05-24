@@ -65,38 +65,21 @@ const getDragIndex = (slotTarget: Element | null, e: DragEvent): number => {
 	for (const child of Array.from(slotTarget.children)) {
 		// If the child was a placeholder, and not a real component
 		// in this slot, we can skip it.
-		if (child.getAttribute("data-placeholder") === "true") continue
+		for (const grandchild of Array.from(child.children)) {
+			if (grandchild.getAttribute("data-placeholder") === "true") continue
 
-		// If we're a real component, we need to find the midpoint of our
-		// position, and see if the cursor is greater than or less than it.
-		const bounds = child.getBoundingClientRect()
+			// If we're a real component, we need to find the midpoint of our
+			// position, and see if the cursor is greater than or less than it.
+			const bounds = grandchild.getBoundingClientRect()
 
-		const isChildBeforePosition =
-			dataDirection === "HORIZONTAL"
-				? bounds.left + bounds.width / 2 <= e.pageX + window.scrollX
-				: bounds.top + bounds.height / 2 <= e.pageY + window.scrollY
+			const isChildBeforePosition =
+				dataDirection === "HORIZONTAL"
+					? bounds.left + bounds.width / 2 <= e.pageX + window.scrollX
+					: bounds.top + bounds.height / 2 <= e.pageY + window.scrollY
 
-		if (!isChildBeforePosition) break
-		index++
-	}
-
-	return index
-}
-
-const getClickIndex = (
-	slotTarget: Element | null,
-	prevTarget: Element | null
-) => {
-	if (!prevTarget || !slotTarget) return undefined
-	let index = 0
-
-	// loop over targets children
-	for (const child of Array.from(slotTarget.children)) {
-		// If the child was a placeholder, and not a real component
-		// in this slot, we can skip it.
-		if (child.getAttribute("data-placeholder") === "true") continue
-		if (child === prevTarget) break
-		index++
+			if (!isChildBeforePosition) break
+			index++
+		}
 	}
 
 	return index
@@ -216,26 +199,24 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 
 	const onClick = (e: MouseEvent) => {
 		// Step 1: Find the closest slot that is accepting the current dragpath.
-		let slotTarget = e.target as Element | null
-		let prevTarget = null as Element | null
+		let target = e.target as Element | null
+
 		let validPath = ""
-		while (slotTarget !== null && slotTarget !== e.currentTarget) {
-			validPath = slotTarget.getAttribute("data-path") || ""
-			if (validPath) {
+		while (target !== null && target !== e.currentTarget) {
+			const index = target.getAttribute("data-index") || ""
+			target = target.parentElement
+			if (!target) break
+			const path = target.getAttribute("data-path") || ""
+			if (index && path) {
+				validPath = `${path}["${index}"]`
 				break
 			}
-			prevTarget = slotTarget
-			slotTarget = slotTarget.parentElement || null
 		}
 
-		e.stopPropagation()
-
 		if (validPath) {
-			const index = getClickIndex(slotTarget, prevTarget)
-			const usePath = `${validPath}["${index}"]`
 			setSelectedPath(
 				context,
-				new FullPath("viewdef", viewDefId, usePath)
+				new FullPath("viewdef", viewDefId, validPath)
 			)
 		}
 	}
