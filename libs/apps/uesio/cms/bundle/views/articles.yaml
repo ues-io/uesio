@@ -53,7 +53,7 @@ definition:
               rowactions:
                 - text: View
                   signals:
-                    - signal: route/NAVIGATE
+                    - signal: route/NAVIGATE_TO_ASSIGNMENT
                       collection: uesio/cms.article
                       viewtype: detail
                       recordid: ${uesio/core.id}

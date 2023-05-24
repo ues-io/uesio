@@ -189,10 +189,10 @@ func serve(cmd *cobra.Command, args []string) {
 
 	// Route navigation apis for site and workspace context
 	collectionRoutePath := fmt.Sprintf("/routes/collection/%s/{viewtype}", itemParam)
-	sr.HandleFunc(collectionRoutePath, controller.CollectionRoute).Methods(http.MethodGet)
-	wr.HandleFunc(collectionRoutePath, controller.CollectionRoute).Methods(http.MethodGet)
-	sr.HandleFunc(collectionRoutePath+"/{id}", controller.CollectionRoute).Methods(http.MethodGet)
-	wr.HandleFunc(collectionRoutePath+"/{id}", controller.CollectionRoute).Methods(http.MethodGet)
+	sr.HandleFunc(collectionRoutePath, controller.RouteAssignment).Methods(http.MethodGet)
+	wr.HandleFunc(collectionRoutePath, controller.RouteAssignment).Methods(http.MethodGet)
+	sr.HandleFunc(collectionRoutePath+"/{id}", controller.RouteAssignment).Methods(http.MethodGet)
+	wr.HandleFunc(collectionRoutePath+"/{id}", controller.RouteAssignment).Methods(http.MethodGet)
 
 	pathRoutePath := fmt.Sprintf("/routes/path/%s/{route:.*}", nsParam)
 	sr.HandleFunc(pathRoutePath, controller.Route).Methods(http.MethodGet)
