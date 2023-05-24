@@ -18,7 +18,7 @@ describe("Search Condition", () => {
 	// NOTE - this time is very variable based on how powerful the host system is, so while this may
 	// consistently be twice as fast on a powerful Mac, in Github it can be 2-3 times slower. Crazy.
 	const EXPECTED_PLT_SECONDS = inCIEnvironment ? 12 : 6
-	const viewName = "table_for_conditions_test"
+	const viewName = "search_condition"
 
 	context("Test the Searchbox component & the SEARCH condition", () => {
 		it("should return 2 records", () => {

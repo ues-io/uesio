@@ -1,4 +1,4 @@
-name: table_for_conditions_test
+name: search_condition
 definition:
   # Wires connect to data in collections
   wires:
