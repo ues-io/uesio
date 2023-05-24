@@ -1,4 +1,4 @@
-name: search_condition
+name: eq_condition
 definition:
   # Wires connect to data in collections
   wires:
@@ -15,9 +15,9 @@ definition:
         uesio/core.updatedat:
         uesio/core.createdby:
         uesio/core.createdat:
-      order:
+      conditions:
         - field: uesio/tests.genus
-        - field: uesio/tests.species
+          value: Fowlie
   # Components determine the layout and composition of your view
   components:
     - uesio/io.titlebar:
@@ -26,11 +26,6 @@ definition:
     - uesio/io.box:
         uesio.variant: uesio/io.section
         components:
-          - uesio/io.searchbox:
-              uesio.id: table-search
-              wire: animals
-              searchfields:
-                - uesio/tests.species
           - uesio/io.table:
               columns:
                 - field: uesio/tests.genus
