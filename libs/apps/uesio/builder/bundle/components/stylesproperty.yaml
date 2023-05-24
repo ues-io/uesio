@@ -1,0 +1,8 @@
+name: stylesproperty
+pack: main
+entrypoint: components/stylesproperty/stylesproperty
+utilities:
+  - uesio/io.titlebar
+  - uesio/io.pillbox
+  - uesio/io.button
+  - uesio/io.icon

@@ -87,6 +87,15 @@ const TextField: definition.UtilityComponent<TextFieldProps> = (props) => {
 					value !== e.target.value &&
 					setValue?.(e.target.value)
 				}
+				onKeyPress={(e) => {
+					if (
+						applyOnBlur &&
+						e.key === "Enter" &&
+						value !== e.currentTarget.value
+					) {
+						setValue?.(e.currentTarget.value)
+					}
+				}}
 			/>
 			{isPassword && (
 				<button

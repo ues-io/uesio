@@ -3,7 +3,8 @@
 	"ignorePatterns": [
 		"!**/*",
 		"bundle/bots/*",
-		"bundle/componentpacks/*/*.js*"
+		"bundle/componentpacks/*/*.js*",
+		"build/*"
 	],
 	"rules": {},
 	"overrides": [
