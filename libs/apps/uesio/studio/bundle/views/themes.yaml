@@ -73,78 +73,11 @@ definition:
                       - uesio/io.group:
                           components:
                             - uesio/io.button:
-                                text: $Label{uesio/io.edit}
-                                uesio.variant: uesio/io.secondary
-                                uesio.display:
-                                  - type: wireHasNoChanges
-                                    wire: workspaces
-                                signals:
-                                  - signal: component/CALL
-                                    component: uesio/io.list
-                                    componentsignal: TOGGLE_MODE
-                                    targettype: specific
-                                    componentid: editDefaultTheme
-                            - uesio/io.button:
-                                uesio.variant: uesio/io.primary
-                                text: $Label{uesio/io.save}
-                                uesio.display:
-                                  - type: wireHasChanges
-                                    wire: workspaces
-                                signals:
-                                  - signal: wire/SAVE
-                                    wires:
-                                      - workspaces
-                                  - signal: component/CALL
-                                    component: uesio/io.list
-                                    componentsignal: TOGGLE_MODE
-                                    targettype: specific
-                                    componentid: editDefaultTheme
-                            - uesio/io.button:
-                                text: $Label{uesio/io.cancel}
-                                uesio.variant: uesio/io.secondary
-                                uesio.display:
-                                  - type: wireHasChanges
-                                    wire: workspaces
-                                signals:
-                                  - signal: wire/CANCEL
-                                    wire: workspaces
-                                  - signal: component/CALL
-                                    component: uesio/io.list
-                                    componentsignal: TOGGLE_MODE
-                                    targettype: specific
-                                    componentid: editDefaultTheme
-                            - uesio/io.button:
                                 text: Create a New Theme
                                 uesio.variant: uesio/io.secondary
                                 signals:
                                   - signal: panel/TOGGLE
                                     panel: newTheme
-                                  - signal: wire/CANCEL
-                                    wire: workspaces
-                                  - signal: component/CALL
-                                    component: uesio/io.list
-                                    componentsignal: TOGGLE_MODE
-                                    targettype: specific
-                                    componentid: editDefaultTheme
-                - uesio/io.box:
-                    uesio.variant: uesio/io.section
-                    components:
-                      - uesio/io.grid:
-                          uesio.variant: uesio/io.four_columns
-                          items:
-                            - uesio/io.list:
-                                uesio.id: editDefaultTheme
-                                wire: workspaces
-                                mode: READ
-                                uesio.context:
-                                  workspace:
-                                    name: $Param{workspacename}
-                                    app: $Param{app}
-                                components:
-                                  - uesio/builder.metadatafield:
-                                      fieldId: uesio/studio.defaulttheme
-                                      metadataType: "THEME"
-                                      label: "Default Theme"
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
@@ -170,9 +103,42 @@ definition:
                             - field: uesio/core.createdby
                               user:
                                 subtitle: $Time{uesio/core.createdat}
+                            - label:
+                              components:
+                                - uesio/io.box:
+                                    uesio.styleTokens:
+                                      root:
+                                        - flex
+                                        - justify-center
+                                    components:
+                                      - uesio/io.text:
+                                          text: Default
+                                          element: div
+                                          variant: uesio/io.icon
+                                          uesio.display:
+                                            - type: fieldValue
+                                              operator: EQUALS
+                                              value: $Param{app}.${uesio/studio.name}
+                                              wire: workspaces
+                                              field: uesio/studio.defaulttheme
+                                      - uesio/io.button:
+                                          text: Make Default
+                                          variant: uesio/io.rowaction
+                                          uesio.display:
+                                            - field: uesio/studio.defaulttheme
+                                              wire: workspaces
+                                              value: $Param{app}.${uesio/studio.name}
+                                              operator: NOT_EQUALS
+                                          signals:
+                                            - signal: wire/UPDATE_RECORD
+                                              wire: workspaces
+                                              field: uesio/studio.defaulttheme
+                                              value: $Param{app}.${uesio/studio.name}
+                                            - signal: wire/SAVE
+                                              wires:
+                                                - workspaces
                           rowactions:
                             - text: Details
-                              type: DEFAULT
                               signals:
                                 - signal: route/NAVIGATE
                                   path: app/$Param{app}/workspace/$Param{workspacename}/themes/${uesio/studio.name}
