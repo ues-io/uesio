@@ -1,4 +1,4 @@
-import { styles, definition } from "@uesio/ui"
+import { api, styles, definition } from "@uesio/ui"
 import { AcceptedElements, default as IOText } from "../../utilities/text/text"
 
 type TextDefinition = {
@@ -17,6 +17,7 @@ const Text: definition.UC<TextDefinition> = (props) => {
 	const classes = styles.useStyleTokens(StyleDefaults, props)
 	return (
 		<IOText
+			id={api.component.getComponentIdFromProps(props)}
 			classes={classes}
 			variant={definition["uesio.variant"]}
 			context={context}
