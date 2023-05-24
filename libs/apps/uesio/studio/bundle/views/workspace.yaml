@@ -11,11 +11,8 @@ definition:
           fields:
             uesio/studio.color:
             uesio/studio.icon:
-        uesio/studio.homeroute:
-        uesio/studio.loginroute:
         uesio/studio.publicprofile:
         uesio/studio.defaulttheme:
-        uesio/studio.favicon:
       conditions:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
@@ -91,14 +88,6 @@ definition:
                                       uesio.variant: uesio/io.four_columns
                                       items:
                                         - uesio/builder.metadatafield:
-                                            fieldId: uesio/studio.homeroute
-                                            metadataType: "ROUTE"
-                                            label: "Home Route"
-                                        - uesio/builder.metadatafield:
-                                            fieldId: uesio/studio.loginroute
-                                            metadataType: "ROUTE"
-                                            label: "Login Route"
-                                        - uesio/builder.metadatafield:
                                             fieldId: uesio/studio.publicprofile
                                             metadataType: "PROFILE"
                                             label: "Public Profile"
@@ -106,10 +95,6 @@ definition:
                                             fieldId: uesio/studio.defaulttheme
                                             metadataType: "THEME"
                                             label: "Default Theme"
-                                        - uesio/builder.metadatafield:
-                                            fieldId: uesio/studio.favicon
-                                            metadataType: "FILE"
-                                            label: "Favicon"
                             - uesio/io.box:
                                 uesio.variant: uesio/io.section
                                 components:

@@ -11,6 +11,9 @@ definition:
           fields:
             uesio/studio.color:
             uesio/studio.icon:
+        uesio/studio.homeroute:
+        uesio/studio.loginroute:
+        uesio/studio.favicon:
       conditions:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
@@ -83,6 +86,49 @@ definition:
                     actions:
                       - uesio/io.group:
                           components:
+                            - uesio/io.group:
+                          components:
+                            - uesio/io.button:
+                                text: $Label{uesio/io.edit}
+                                uesio.variant: uesio/io.secondary
+                                uesio.display:
+                                  - type: wireHasNoChanges
+                                    wire: workspaces
+                                signals:
+                                  - signal: component/CALL
+                                    component: uesio/io.list
+                                    componentsignal: TOGGLE_MODE
+                                    targettype: specific
+                                    componentid: editRoutes
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.primary
+                                text: $Label{uesio/io.save}
+                                uesio.display:
+                                  - type: wireHasChanges
+                                    wire: workspaces
+                                signals:
+                                  - signal: wire/SAVE
+                                    wires:
+                                      - workspaces
+                                  - signal: component/CALL
+                                    component: uesio/io.list
+                                    componentsignal: TOGGLE_MODE
+                                    targettype: specific
+                                    componentid: editRoutes
+                            - uesio/io.button:
+                                text: $Label{uesio/io.cancel}
+                                uesio.variant: uesio/io.secondary
+                                uesio.display:
+                                  - type: wireHasChanges
+                                    wire: workspaces
+                                signals:
+                                  - signal: wire/CANCEL
+                                    wire: workspaces
+                                  - signal: component/CALL
+                                    component: uesio/io.list
+                                    componentsignal: TOGGLE_MODE
+                                    targettype: specific
+                                    componentid: editRoutes
                             - uesio/io.button:
                                 uesio.id: create-route
                                 text: Create a New Route
@@ -91,6 +137,40 @@ definition:
                                 signals:
                                   - signal: panel/TOGGLE
                                     panel: newRoute
+                                  - signal: wire/CANCEL
+                                    wire: workspaces
+                                  - signal: component/CALL
+                                    component: uesio/io.list
+                                    componentsignal: TOGGLE_MODE
+                                    targettype: specific
+                                    componentid: editRoutes
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.grid:
+                          uesio.variant: uesio/io.four_columns
+                          items:
+                          - uesio/io.list:
+                              uesio.id: editRoutes
+                              wire: workspaces
+                              mode: READ
+                              uesio.context:
+                                workspace:
+                                  name: $Param{workspacename}
+                                  app: $Param{app}
+                              components:
+                                - uesio/builder.metadatafield:
+                                    fieldId: uesio/studio.homeroute
+                                    metadataType: "ROUTE"
+                                    label: "Home Route"
+                                - uesio/builder.metadatafield:
+                                    fieldId: uesio/studio.loginroute
+                                    metadataType: "ROUTE"
+                                    label: "Login Route"
+                                - uesio/builder.metadatafield:
+                                    fieldId: uesio/studio.favicon
+                                    metadataType: "FILE"
+                                    label: "Favicon"
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
