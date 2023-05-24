@@ -208,7 +208,7 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 
 	case "CONTAINS":
 		if !isTextAlike(fieldMetadata.Type) {
-			return errors.New("Operator CONTAINS only works with TEXT alike field types")
+			return fmt.Errorf("Operator CONTAINS is not supported for field type %s", fieldMetadata.Type)
 		}
 		builder.addQueryPart(fmt.Sprintf("%s ILIKE %s", fieldName, builder.addValue(fmt.Sprintf("%%%v%%", condition.Value))))
 
