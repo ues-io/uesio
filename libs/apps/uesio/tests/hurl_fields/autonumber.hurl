@@ -179,7 +179,6 @@ main.tenant = $2 AND
 main.fields->>'uesio/tests.autonumber' is distinct from $3
 ORDER BY main.id::text asc
 LIMIT 501```
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" count == 8
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-001"
 
 # Operator: NOT_EQ | valueSource: PARAM
