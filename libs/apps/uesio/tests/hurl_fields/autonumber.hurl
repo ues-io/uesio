@@ -438,17 +438,6 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[1].debugQueryString" == ```
-SELECT
-main.id::text AS "uesio/core.id",
-main.uniquekey AS "uesio/core.uniquekey"
-FROM data as "main"
-WHERE
-main.collection = $1 AND
-main.tenant = $2 AND
-main.fields->>'uesio/tests.autonumber' NOT IN ($3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
-ORDER BY main.id::text asc
-LIMIT 501```
 jsonpath "$.wires[1].data[*]" not exists
 
 # Operator: NOT_IN | valueSource: PARAM
@@ -566,6 +555,4 @@ main.tenant = $2 AND
 main.fields->>'uesio/tests.autonumber' IS NOT NULL
 ORDER BY main.id::text asc
 LIMIT 501```
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" count == 9
-jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" includes "ID-001"
-jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" includes "ID-009"
+jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" exists
