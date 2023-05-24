@@ -42,6 +42,14 @@ definition:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
                     title: Configuration
+                    actions:
+                      - uesio/io.button:
+                          uesio.variant: uesio/io.secondary
+                          text: Delete all workspace data
+                          icon: layers_clear
+                          signals:
+                            - signal: panel/TOGGLE
+                              panel: clearData
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
@@ -83,3 +91,43 @@ definition:
                                   workspace:
                                     name: $Param{workspacename}
                                     app: $Param{app}
+  panels:
+    clearData:
+      uesio.type: uesio/io.dialog
+      title: Clear All Workspace Data
+      width: 400px
+      height: 300px
+      components:
+        - uesio/io.text:
+            text: Are you sure you want to clear all the workspace data?
+            element: div
+            uesio.variant: uesio/io.smalltitle
+        - uesio/io.text:
+            text: You will never be able to access the workspace data again.
+            element: div
+            uesio.variant: uesio/io.smallcontent
+      actions:
+        - uesio/io.button:
+            text: Clear
+            uesio.variant: uesio/io.primary
+            signals:
+              - signal: context/SET
+                type: WORKSPACE
+                name: $Param{workspacename}
+                app: $Param{app}
+              - signal: bot/CALL
+                bot: uesio/studio.workspacetruncate
+                onerror:
+                  signals:
+                    - signal: notification/ADD_ERRORS
+              - signal: panel/TOGGLE
+                panel: clearData
+              - signal: notification/ADD
+                text: Successfully deleted all data from all collections in workspace $Param{workspacename}
+                severity: info
+        - uesio/io.button:
+            text: $Label{uesio/io.cancel}
+            uesio.variant: uesio/io.secondary
+            signals:
+              - signal: panel/TOGGLE
+                panel: clearData
