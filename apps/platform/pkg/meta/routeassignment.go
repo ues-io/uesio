@@ -69,7 +69,7 @@ func (r *RouteAssignment) Len() int {
 
 func (r *RouteAssignment) UnmarshalYAML(node *yaml.Node) error {
 
-	err := validateRequiredMetadataItem(node, "collection")
+	err := setMapNode(node, "collection", r.Collection)
 	if err != nil {
 		return err
 	}
