@@ -125,6 +125,13 @@ definition:
                                 signals:
                                   - signal: panel/TOGGLE
                                     panel: newTheme
+                                  - signal: wire/CANCEL
+                                    wire: workspaces
+                                  - signal: component/CALL
+                                    component: uesio/io.list
+                                    componentsignal: TOGGLE_MODE
+                                    targettype: specific
+                                    componentid: editDefaultTheme
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
