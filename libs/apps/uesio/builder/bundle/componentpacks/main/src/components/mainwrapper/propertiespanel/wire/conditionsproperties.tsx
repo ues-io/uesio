@@ -391,6 +391,8 @@ const ConditionsProperties: definition.UC = (props) => {
 							"BETWEEN",
 							"HAS_ANY",
 							"HAS_ALL",
+							"CONTAINS",
+							"STARTS_WITH",
 						],
 					},
 				],
