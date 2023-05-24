@@ -42,6 +42,14 @@ definition:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
                     title: Configuration
+                    actions:
+                      - uesio/io.button:
+                          uesio.variant: uesio/io.secondary
+                          text: Delete all workspace data
+                          icon: layers_clear
+                          signals:
+                            - signal: panel/TOGGLE
+                              panel: clearData
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
@@ -83,21 +91,6 @@ definition:
                                   workspace:
                                     name: $Param{workspacename}
                                     app: $Param{app}
-                - uesio/io.box:
-                    uesio.variant: uesio/io.section
-                    components:
-                      - uesio/io.titlebar:
-                          uesio.variant: uesio/io.section
-                          title: Advance Settings
-                      - uesio/io.box:
-                          components:
-                            - uesio/io.button:
-                                uesio.variant: uesio/io.secondary
-                                text: Clear data
-                                icon: layers_clear
-                                signals:
-                                  - signal: panel/TOGGLE
-                                    panel: clearData
   panels:
     clearData:
       uesio.type: uesio/io.dialog

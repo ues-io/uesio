@@ -31,7 +31,7 @@ echo "dev workspace should be clear"
 cd ../../../..
 
 # Run specs
-hurl --very-verbose -k --variable host=studio.uesio-dev.com --variable port=3000 --test libs/apps/uesio/tests/hurl_specs_single_run/truncate_tenant_data_cli.hurl
+hurl -k --variable host=studio.uesio-dev.com --variable port=3000 --test libs/apps/uesio/tests/hurl_specs_single_run/truncate_tenant_data_cli.hurl
 
 
 # Kill all Docker containers
