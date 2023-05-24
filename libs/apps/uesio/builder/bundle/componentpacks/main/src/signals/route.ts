@@ -77,7 +77,7 @@ const signals: SignalBandDefinition = {
 					label: "Record ID",
 					displayConditions: [
 						{
-							field: "type",
+							field: "viewtype",
 							value: "detail",
 						},
 					],
