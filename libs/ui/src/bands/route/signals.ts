@@ -2,11 +2,11 @@ import { parseKey } from "../../component/path"
 import { Context } from "../../context/context"
 import { SignalDefinition, SignalDescriptor } from "../../definition/signal"
 import {
-	CollectionNavigateRequest,
+	AssignmentNavigateRequest,
 	PathNavigateRequest,
 } from "../../platform/platform"
 import { getCurrentState } from "../../store/store"
-import { navigate, redirect } from "./operations"
+import { navigate, navigateToAssignment, redirect } from "./operations"
 
 // The key for the entire band
 const ROUTE_BAND = "route"
@@ -18,9 +18,7 @@ interface RedirectSignal extends SignalDefinition {
 
 type PathNavigateSignal = SignalDefinition & PathNavigateRequest
 
-type CollectionNavigateSignal = SignalDefinition & CollectionNavigateRequest
-
-type NavigateSignal = PathNavigateSignal | CollectionNavigateSignal
+type AssignmentNavigateSignal = SignalDefinition & AssignmentNavigateRequest
 
 // "Signal Handlers" for all of the signals in the band
 const signals: Record<string, SignalDescriptor> = {
@@ -53,8 +51,12 @@ const signals: Record<string, SignalDescriptor> = {
 		},
 	},
 	[`${ROUTE_BAND}/NAVIGATE`]: {
-		dispatcher: (signal: NavigateSignal, context: Context) =>
+		dispatcher: (signal: PathNavigateSignal, context: Context) =>
 			navigate(context, signal),
+	},
+	[`${ROUTE_BAND}/NAVIGATE_TO_ASSIGNMENT`]: {
+		dispatcher: (signal: AssignmentNavigateSignal, context: Context) =>
+			navigateToAssignment(context, signal),
 	},
 }
 

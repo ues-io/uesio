@@ -99,6 +99,7 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 		getItemKey,
 		children,
 		closeOnSelect = true,
+		id,
 	} = props
 
 	return (
@@ -106,6 +107,7 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 			<div
 				className="flex"
 				tabIndex={0}
+				id={id}
 				ref={refs.setReference}
 				{...getReferenceProps()}
 			>
@@ -127,7 +129,10 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 							className={classes.menu}
 							{...getFloatingProps()}
 						>
-							<div className={classes.menuheader}>
+							<div
+								id={`floatingMenu-${id}`}
+								className={classes.menuheader}
+							>
 								{(onSearch || searchFilter) && (
 									<input
 										type="text"

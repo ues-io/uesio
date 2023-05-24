@@ -189,10 +189,10 @@ func serve(cmd *cobra.Command, args []string) {
 
 	// Route navigation apis for site and workspace context
 	collectionRoutePath := fmt.Sprintf("/routes/collection/%s/{viewtype}", itemParam)
-	sr.HandleFunc(collectionRoutePath, controller.CollectionRoute).Methods(http.MethodGet)
-	wr.HandleFunc(collectionRoutePath, controller.CollectionRoute).Methods(http.MethodGet)
-	sr.HandleFunc(collectionRoutePath+"/{id}", controller.CollectionRoute).Methods(http.MethodGet)
-	wr.HandleFunc(collectionRoutePath+"/{id}", controller.CollectionRoute).Methods(http.MethodGet)
+	sr.HandleFunc(collectionRoutePath, controller.RouteAssignment).Methods(http.MethodGet)
+	wr.HandleFunc(collectionRoutePath, controller.RouteAssignment).Methods(http.MethodGet)
+	sr.HandleFunc(collectionRoutePath+"/{id}", controller.RouteAssignment).Methods(http.MethodGet)
+	wr.HandleFunc(collectionRoutePath+"/{id}", controller.RouteAssignment).Methods(http.MethodGet)
 
 	pathRoutePath := fmt.Sprintf("/routes/path/%s/{route:.*}", nsParam)
 	sr.HandleFunc(pathRoutePath, controller.Route).Methods(http.MethodGet)
@@ -219,6 +219,7 @@ func serve(cmd *cobra.Command, args []string) {
 	wr.HandleFunc("/metadata/retrieve", controller.Retrieve).Methods(http.MethodGet, http.MethodPost)
 	wr.HandleFunc("/metadata/generate/"+itemParam, controller.GenerateToWorkspace).Methods(http.MethodPost)
 	wr.HandleFunc("/metadata/builder/"+itemParam, controller.BuilderMetadata).Methods(http.MethodGet)
+	wr.HandleFunc("/data/truncate", controller.Truncate).Methods(http.MethodPost)
 
 	// Get Collection Metadata (We may be able to get rid of this someday...)
 	collectionMetadataPath := fmt.Sprintf("/collections/meta/%s", collectionParam)

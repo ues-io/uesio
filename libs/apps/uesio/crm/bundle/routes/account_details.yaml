@@ -1,7 +1,5 @@
 name: account_details
 path: account/{recordid}
-viewtype: detail
 view: uesio/crm.account_details
-collection: uesio/crm.account
 theme: uesio/core.default
 title: ""

@@ -132,6 +132,11 @@ const signals: SignalBandDefinition = {
 					name: "maxResults",
 					label: "Max Results",
 				},
+				{
+					type: "CHECKBOX",
+					name: "useCache",
+					label: "Cache responses",
+				},
 			],
 			outputs: [{ name: "choices", type: "LIST" }],
 		},
