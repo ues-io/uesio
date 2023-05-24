@@ -28,6 +28,8 @@ const NotificationArea: UtilityComponent = (props) => {
 						onClick={() => {
 							dispatch(removeNotification(notification.id))
 						}}
+						id={notification.id}
+						duration={notification.duration}
 					/>
 				))}
 		</>

@@ -15,7 +15,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func CollectionRoute(w http.ResponseWriter, r *http.Request) {
+func RouteAssignment(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	collectionName := vars["name"]
 	collectionNamespace := vars["namespace"]
@@ -24,7 +24,7 @@ func CollectionRoute(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
 	workspace := session.GetWorkspace()
-	route, err := routing.GetRouteFromCollection(r, collectionNamespace, collectionName, viewtype, id, session)
+	route, err := routing.GetRouteFromAssignment(r, collectionNamespace, collectionName, viewtype, id, session)
 	if err != nil {
 		logger.LogError(err)
 		file.RespondJSON(w, r, &routing.RouteMergeData{

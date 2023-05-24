@@ -1,7 +1,5 @@
 name: contact_details
 path: contact/{recordid}
-viewtype: detail
 view: uesio/crm.contact_details
-collection: uesio/crm.contact
 theme: uesio/core.default
 title: ""
