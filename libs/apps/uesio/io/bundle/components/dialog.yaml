@@ -27,3 +27,13 @@ properties:
     label: Height
     required: true
     type: TEXT
+sections:
+  - type: HOME
+    properties:
+      - panelid
+      - title
+      - width
+      - height
+  - type: SIGNALS
+    id: afterClose
+    label: On-close Signals

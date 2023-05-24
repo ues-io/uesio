@@ -133,6 +133,40 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].errors" == null
 
+# Create a route assignment associated with the collection
+POST https://{{host}}:{{port}}/site/wires/save
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/studio.routeassignment",
+            "deletes":{},
+            "changes":{
+                "temp1":{
+                    "uesio/studio.collection":"{{app_fullname}}.rare_and_unusual_object",
+                    "uesio/studio.route":"{{app_fullname}}.simple_wire_load",
+                    "uesio/studio.type":"list",
+                    "uesio/studio.workspace": {
+                        "uesio/core.id": "{{workspace_id}}"
+                    }
+                },
+                "temp2":{
+                    "uesio/studio.collection":"{{app_fullname}}.rare_and_unusual_object",
+                    "uesio/studio.route":"{{app_fullname}}.dependencies_group",
+                    "uesio/studio.type":"detail",
+                    "uesio/studio.workspace": {
+                        "uesio/core.id": "{{workspace_id}}"
+                    }
+                }
+            },
+            "wire":"mywire"
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" == null
+
 # Verify the collection and field were saved successfully
 POST https://{{host}}:{{port}}/site/wires/load
 Accept: application/json
@@ -194,6 +228,34 @@ Accept: application/json
                     "direction": "ASC"
                 }
             ]
+        },
+        {
+            "collection":"uesio/studio.routeassignment",
+            "id": "fields",
+            "query":true,
+            "fields": [
+                {
+                    "id": "uesio/studio.route"
+                },
+                {
+                    "id": "uesio/studio.type"
+                },
+                {
+                    "id": "uesio/studio.collection"
+                }
+            ],
+            "conditions": [
+                {
+                    "field": "uesio/studio.collection",
+                    "value": "{{app_fullname}}.rare_and_unusual_object"
+                }
+            ],
+            "order": [
+                {
+                    "field": "uesio/studio.type",
+                    "direction": "ASC"
+                }
+            ]
         }
     ]
 }
@@ -207,6 +269,9 @@ jsonpath "$.wires[1].data[*]['uesio/studio.collection']" includes "{{app_fullnam
 jsonpath "$.wires[1].data[*]['uesio/studio.name']" includes "estimated_value"
 jsonpath "$.wires[1].data[*]['uesio/studio.label']" includes "Object Name"
 jsonpath "$.wires[1].data[*]['uesio/studio.type']" includes "NUMBER"
+jsonpath "$.wires[2].data[*]['uesio/core.id']" count == 2
+jsonpath "$.wires[2].data[*]['uesio/studio.collection']" includes "{{app_fullname}}.rare_and_unusual_object"
+jsonpath "$.wires[2].data[*]['uesio/studio.type']" includes "list"
 [Captures]
 collection_id: jsonpath "$.wires[0].data[*]['uesio/core.id']"
 
@@ -276,6 +341,25 @@ Accept: application/json
                     "value": "{{workspace_id}}"
                 }
             ]
+        },
+        {
+            "collection":"uesio/studio.routeassignment",
+            "query":true,
+            "fields": [
+                {
+                    "id": "uesio/core.id"
+                }
+            ],
+            "conditions": [
+                {
+                    "field": "uesio/studio.collection",
+                    "value": "{{app_fullname}}.rare_and_unusual_object"
+                },
+                {
+                    "field": "uesio/studio.workspace",
+                    "value": "{{workspace_id}}"
+                }
+            ]
         }
     ]
 }
@@ -283,3 +367,4 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data[*]" not exists
 jsonpath "$.wires[1].data[*]" not exists
+jsonpath "$.wires[2].data[*]" not exists

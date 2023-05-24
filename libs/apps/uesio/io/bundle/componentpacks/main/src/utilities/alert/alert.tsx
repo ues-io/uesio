@@ -1,12 +1,13 @@
-import { FunctionComponent } from "react"
-import { definition, styles, notification } from "@uesio/ui"
+import { FunctionComponent, useEffect } from "react"
+import { definition, styles, notification, api } from "@uesio/ui"
 import Icon from "../icon/icon"
-
 interface AlertProps extends definition.UtilityProps {
 	text?: string
 	details?: string
 	severity?: notification.NotificationSeverity
 	onClick?: () => void
+	duration?: string
+	id: string
 }
 
 const types = {
@@ -29,7 +30,7 @@ const types = {
 }
 
 const Alert: FunctionComponent<AlertProps> = (props) => {
-	const { text, severity, context, details } = props
+	const { text, severity, context, details, id, duration } = props
 	let alertType = types[severity || "error"]
 	if (!alertType) {
 		alertType = types.error
@@ -60,6 +61,24 @@ const Alert: FunctionComponent<AlertProps> = (props) => {
 		},
 		props
 	)
+	useEffect(() => {
+		if (duration) {
+			let time = parseInt(duration, 10)
+			if (!Number.isNaN(time) && time > 0) {
+				time = time * 1000
+				const timer = setTimeout(() => {
+					api.signal.run(
+						{
+							signal: "notification/REMOVE",
+							id,
+						},
+						context
+					)
+				}, time)
+				return () => clearTimeout(timer)
+			}
+		}
+	}, [duration, id, context])
 
 	const mergedText = context.merge(text)
 	const mergedDetails = context.merge(details)

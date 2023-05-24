@@ -1,10 +1,15 @@
 import { Context } from "../../context/context"
 import { set as setRoute, setLoading } from "."
-import { NavigateRequest, platform } from "../../platform/platform"
+import {
+	PathNavigateRequest,
+	AssignmentNavigateRequest,
+	platform,
+} from "../../platform/platform"
 import { batch } from "react-redux"
 import { loadScripts } from "../../hooks/usescripts"
 import { dispatchRouteDeps, getPackUrlsForDeps } from "./utils"
 import { dispatch } from "../../store/store"
+import { RouteState } from "./types"
 
 const redirect = (context: Context, path: string, newTab?: boolean) => {
 	const mergedPath = context.mergeString(path)
@@ -33,20 +38,34 @@ const getRouteUrlPrefix = (context: Context, namespace: string | undefined) => {
 	return "/"
 }
 
+const navigateToAssignment = async (
+	context: Context,
+	request: AssignmentNavigateRequest
+) => {
+	dispatch(setLoading())
+	const routeResponse = await platform.getRouteAssignment(context, request)
+	return handleNavigateResponse(context, routeResponse)
+}
+
 const navigate = async (
 	context: Context,
-	request: NavigateRequest,
+	request: PathNavigateRequest,
 	noPushState?: boolean
 ) => {
 	dispatch(setLoading())
+	const routeResponse = await platform.getRoute(context, request)
+	return handleNavigateResponse(context, routeResponse, noPushState)
+}
+
+const handleNavigateResponse = async (
+	context: Context,
+	routeResponse: RouteState,
+	noPushState?: boolean
+) => {
+	if (!routeResponse) return context
+	const deps = routeResponse.dependencies
 
 	const workspace = context.getWorkspace()
-
-	const routeResponse = await platform.getRoute(context, request)
-
-	if (!routeResponse) return context
-
-	const deps = routeResponse.dependencies
 
 	if (!noPushState) {
 		const prefix = getRouteUrlPrefix(context, routeResponse.namespace)
@@ -102,4 +121,4 @@ const navigate = async (
 	return context
 }
 
-export { getRouteUrlPrefix, redirect, navigate }
+export { getRouteUrlPrefix, redirect, navigate, navigateToAssignment }

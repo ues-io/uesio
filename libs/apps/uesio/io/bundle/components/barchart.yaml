@@ -5,6 +5,8 @@ description: Visualize data with bars.
 category: VISUALIZATION
 pack: chart
 entrypoint: components/barchart/barchart
+utilities:
+  - uesio/io.chart
 defaultDefinition:
   title: New Bar Chart
   labels:

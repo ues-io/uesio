@@ -1,4 +1,4 @@
-import { definition, api, component } from "@uesio/ui"
+import { definition, api, component, signal } from "@uesio/ui"
 
 import { default as IODialog } from "../../utilities/dialog/dialog"
 
@@ -7,28 +7,29 @@ type DialogDefinition = {
 	width?: string
 	height?: string
 	id?: string
+	afterClose?: signal.SignalDefinition[]
 }
 
 const Dialog: definition.UC<DialogDefinition> = (props) => {
 	const { context, definition, path } = props
+	if (!definition) return null
 	const panelId = definition?.id as string
 	const onClose = api.signal.getHandler(
 		[
 			{
 				signal: "panel/TOGGLE",
 				panel: panelId,
-			},
+			} as signal.SignalDefinition,
 		],
 		context
 	)
-	if (!definition) return null
 	return (
 		<IODialog
 			onClose={onClose}
 			context={context}
-			width={definition.width as string | undefined}
-			height={definition.height as string | undefined}
-			title={definition.title as string | undefined}
+			width={definition.width as string}
+			height={definition.height as string}
+			title={definition.title as string}
 			actions={
 				<component.Slot
 					definition={definition}
