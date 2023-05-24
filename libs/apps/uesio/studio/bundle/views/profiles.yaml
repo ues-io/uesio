@@ -11,6 +11,7 @@ definition:
           fields:
             uesio/studio.color:
             uesio/studio.icon:
+        uesio/studio.publicprofile:
       conditions:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
@@ -77,11 +78,78 @@ definition:
                       - uesio/io.group:
                           components:
                             - uesio/io.button:
+                                text: $Label{uesio/io.edit}
+                                uesio.variant: uesio/io.secondary
+                                uesio.display:
+                                  - type: wireHasNoChanges
+                                    wire: workspaces
+                                signals:
+                                  - signal: component/CALL
+                                    component: uesio/io.list
+                                    componentsignal: TOGGLE_MODE
+                                    targettype: specific
+                                    componentid: editProfiles
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.primary
+                                text: $Label{uesio/io.save}
+                                uesio.display:
+                                  - type: wireHasChanges
+                                    wire: workspaces
+                                signals:
+                                  - signal: wire/SAVE
+                                    wires:
+                                      - workspaces
+                                  - signal: component/CALL
+                                    component: uesio/io.list
+                                    componentsignal: TOGGLE_MODE
+                                    targettype: specific
+                                    componentid: editProfiles
+                            - uesio/io.button:
+                                text: $Label{uesio/io.cancel}
+                                uesio.variant: uesio/io.secondary
+                                uesio.display:
+                                  - type: wireHasChanges
+                                    wire: workspaces
+                                signals:
+                                  - signal: wire/CANCEL
+                                    wire: workspaces
+                                  - signal: component/CALL
+                                    component: uesio/io.list
+                                    componentsignal: TOGGLE_MODE
+                                    targettype: specific
+                                    componentid: editProfiles
+                            - uesio/io.button:
                                 text: Create a New Profile
                                 uesio.variant: uesio/io.secondary
                                 signals:
                                   - signal: panel/TOGGLE
                                     panel: newProfile
+                                  - signal: wire/CANCEL
+                                    wire: workspaces
+                                  - signal: component/CALL
+                                    component: uesio/io.list
+                                    componentsignal: TOGGLE_MODE
+                                    targettype: specific
+                                    componentid: editProfiles
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.grid:
+                          uesio.variant: uesio/io.four_columns
+                          items:
+                            - uesio/io.list:
+                                uesio.id: editProfiles
+                                wire: workspaces
+                                mode: READ
+                                uesio.context:
+                                  workspace:
+                                    name: $Param{workspacename}
+                                    app: $Param{app}
+                                components:
+                                  - uesio/builder.metadatafield:
+                                      fieldId: uesio/studio.publicprofile
+                                      metadataType: "PROFILE"
+                                      label: "Public Profile"
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
