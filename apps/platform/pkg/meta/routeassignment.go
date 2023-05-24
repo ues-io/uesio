@@ -60,7 +60,21 @@ func (r *RouteAssignment) GetField(fieldName string) (interface{}, error) {
 }
 
 func (r *RouteAssignment) Loop(iter func(string, interface{}) error) error {
-	return StandardItemLoop(r, iter)
+	itemMeta := r.GetItemMeta()
+	for _, fieldName := range ROUTE_ASSIGNMENT_FIELDS {
+		if itemMeta != nil && !itemMeta.IsValidField(fieldName) {
+			continue
+		}
+		val, err := r.GetField(fieldName)
+		if err != nil {
+			return err
+		}
+		err = iter(fieldName, val)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (r *RouteAssignment) Len() int {
