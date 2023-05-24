@@ -1,8 +1,9 @@
 /// <reference types="cypress" />
 
+import { getViewID } from "cypress/support/views"
 import { getWorkspaceRoutePreviewPath } from "../support/paths"
 
-describe("Conditions tests", () => {
+describe("Search Condition", () => {
 	// Use the tests app and dev workspace, which will exist if Integration Tests have been run
 	const appName = "tests"
 	const workspaceName = "dev"
@@ -17,9 +18,9 @@ describe("Conditions tests", () => {
 	// NOTE - this time is very variable based on how powerful the host system is, so while this may
 	// consistently be twice as fast on a powerful Mac, in Github it can be 2-3 times slower. Crazy.
 	const EXPECTED_PLT_SECONDS = inCIEnvironment ? 12 : 6
-	const viewName = "table_with_lots_of_rows"
+	const viewName = "table_for_conditions_test"
 
-	context("Test the Search condition using the search box", () => {
+	context("Test the Searchbox component & the SEARCH condition", () => {
 		it("should return 2 records", () => {
 			const expectedMillis = EXPECTED_PLT_SECONDS * 1000
 			cy.visitRoute(
@@ -35,10 +36,7 @@ describe("Conditions tests", () => {
 				timeout: expectedMillis,
 			}).should("have.length", 2)
 
-			cy.getWireState(
-				"uesio/tests.table_with_lots_of_rows($root)",
-				"animals"
-			)
+			cy.getWireState(getViewID(username, appName, viewName), "animals")
 				.its("conditions")
 				.should("have.length", 1)
 				.each(($condition) => {

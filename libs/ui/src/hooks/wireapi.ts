@@ -107,16 +107,9 @@ const loadWires = loadWiresOp
 
 const initWires = initWiresOp
 
-const getExternalState = (
+const getWireState = (
 	viewId: string | undefined,
 	wireName: string | undefined
 ) => selectWire(getCurrentState(), viewId, wireName)
 
-export {
-	useWire,
-	useDynamicWire,
-	useWires,
-	loadWires,
-	initWires,
-	getExternalState,
-}
+export { useWire, useDynamicWire, useWires, loadWires, initWires, getWireState }

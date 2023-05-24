@@ -1,0 +1,4 @@
+name: table_for_conditions_test
+path: table_for_conditions_test
+view: uesio/tests.table_for_conditions_test
+title: View Used for testing conditions
