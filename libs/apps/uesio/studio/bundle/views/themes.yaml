@@ -14,7 +14,8 @@ definition:
         uesio/studio.defaulttheme:
       conditions:
         - field: uesio/core.uniquekey
-          value: $Param{app}:$Param{workspacename}
+          valueSource: MERGE
+          expression: $Param{app}:$Param{workspacename}
     allthemes:
       collection: uesio/studio.allmetadata
       conditions:

@@ -67,13 +67,8 @@ func processConditions(
 			continue
 		}
 
-		if condition.ValueSource == "" || condition.ValueSource == "VALUE" {
-			// make sure the condition value is a string
-			stringValue, ok := condition.Value.(string)
-			if !ok {
-				continue
-			}
-			template, err := templating.NewWithFuncs(stringValue, templating.ForceErrorFunc, merge.ServerMergeFuncs)
+		if condition.ValueSource == "MERGE" && condition.Expression != "" {
+			template, err := templating.NewWithFuncs(condition.Expression, templating.ForceErrorFunc, merge.ServerMergeFuncs)
 			if err != nil {
 				return err
 			}
