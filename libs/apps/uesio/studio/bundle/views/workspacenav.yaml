@@ -186,6 +186,24 @@ definition:
               uesio.variant: uesio/io.nav
               title: Admin
           - uesio/io.tile:
+              uesio.variant: uesio/io.nav
+              uesio.id: packaging
+              uesio.classes:
+                selected:
+                  - type: paramValue
+                    param: selected
+                    value: packaging
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/packaging
+              content:
+                - uesio/io.text:
+                    text: Packaging
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: backpack
+          - uesio/io.tile:
               uesio.display:
                 - type: featureFlag
                   name: manage_config_values
