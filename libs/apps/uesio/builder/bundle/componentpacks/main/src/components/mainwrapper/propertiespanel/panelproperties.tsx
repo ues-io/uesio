@@ -1,7 +1,7 @@
 import { definition } from "@uesio/ui"
 import PropertiesForm from "../../../helpers/propertiesform"
 import { getComponentDef, useSelectedPath } from "../../../api/stateapi"
-import { get } from "../../../api/defapi"
+import { get, useDefinition } from "../../../api/defapi"
 import { ComponentProperty } from "../../../properties/componentproperty"
 export const panelComponentTypeProp = "uesio.type"
 const defaultPanelComponentType = "uesio/io.dialog"
@@ -19,6 +19,8 @@ const panelProperties = [
 const PanelProperties: definition.UtilityComponent = (props) => {
 	const { context } = props
 	const path = useSelectedPath(context).trimToSize(2)
+	// force rerender if definition changes - otherwise, properties won't update
+	useDefinition(path)
 	const componentDef = getComponentDef(
 		context,
 		get(context, path.addLocal(panelComponentTypeProp)) as string
