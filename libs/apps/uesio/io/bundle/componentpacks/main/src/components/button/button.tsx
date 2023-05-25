@@ -10,17 +10,16 @@ type ButtonDefinition = {
 	hotkey?: string
 }
 
+const StyleDefaults = Object.freeze({
+	root: [],
+	label: [],
+	selected: [],
+	icon: [],
+})
+
 const Button: definition.UC<ButtonDefinition> = (props) => {
 	const { definition, context } = props
-	const classes = styles.useStyleTokens(
-		{
-			root: [],
-			label: [],
-			selected: [],
-			icon: [],
-		},
-		props
-	)
+	const classes = styles.useStyleTokens(StyleDefaults, props)
 	const isSelected = component.shouldHaveClass(
 		context,
 		"selected",

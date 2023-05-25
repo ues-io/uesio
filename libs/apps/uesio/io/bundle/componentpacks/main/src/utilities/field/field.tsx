@@ -154,7 +154,13 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 			content = <TextField {...common} />
 			break
 		case "NUMBER":
-			content = <NumberField {...common} options={number} />
+			content = (
+				<NumberField
+					{...common}
+					options={number}
+					type={displayAs === "SLIDER" ? "range" : "number"}
+				/>
+			)
 			break
 		case "EMAIL":
 			content = <EmailField {...common} />

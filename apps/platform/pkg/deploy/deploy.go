@@ -29,6 +29,7 @@ var ORDERED_ITEMS = [...]string{
 	"themes",
 	"views",
 	"routes",
+	"routeassignments",
 	"files",
 	"bots",
 	"permissionsets",
