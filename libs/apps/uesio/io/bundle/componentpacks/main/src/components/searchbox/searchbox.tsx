@@ -5,9 +5,10 @@ import FieldWrapper from "../../utilities/fieldwrapper/fieldwrapper"
 import { useEffect, useMemo, useState } from "react"
 
 type SearchBoxDefinition = {
-	placeholder?: string
 	wire: string
 	searchFields: metadata.MetadataKey[]
+	focusOnRender?: boolean
+	placeholder?: string
 }
 
 const search = (
@@ -29,7 +30,12 @@ const search = (
 
 const SearchBox: definition.UC<SearchBoxDefinition> = (props) => {
 	const {
-		definition: { placeholder = "Search", searchFields, wire },
+		definition: {
+			placeholder = "Search",
+			searchFields,
+			wire,
+			focusOnRender = false,
+		},
 		context,
 	} = props
 	const [text, setText] = useState("")
@@ -65,6 +71,7 @@ const SearchBox: definition.UC<SearchBoxDefinition> = (props) => {
 					debouncedSearch(value)
 				}}
 				value={text}
+				focusOnRender={focusOnRender}
 			/>
 		</FieldWrapper>
 	)

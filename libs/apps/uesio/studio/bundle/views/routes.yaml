@@ -96,6 +96,7 @@ definition:
                     components:
                       - uesio/io.searchbox:
                           wire: routes
+                          focusOnRender: true
                           searchfields:
                             - uesio/studio.name
                             - uesio/studio.path
