@@ -1,4 +1,4 @@
-import { definition } from "@uesio/ui"
+import { component, definition } from "@uesio/ui"
 
 type PropertyPanelSectionType =
 	| "HOME"
@@ -75,7 +75,7 @@ const getStylesSection = (componentType: string): StylesSection => ({
 })
 
 const DISPLAY_SECTION: DisplaySection = {
-	id: "uesio.display",
+	id: component.DISPLAY_CONDITIONS,
 	label: "Display",
 	type: "DISPLAY",
 	icon: "",
@@ -95,7 +95,7 @@ const getSectionId = (s: PropertiesPanelSection): string => {
 		case STYLES_TYPE:
 			return s.id || "uesio.styleTokens"
 		case "DISPLAY":
-			return s.id || "uesio.display"
+			return s.id || component.DISPLAY_CONDITIONS
 		case "SIGNALS":
 			return s.id || "signals"
 		default:

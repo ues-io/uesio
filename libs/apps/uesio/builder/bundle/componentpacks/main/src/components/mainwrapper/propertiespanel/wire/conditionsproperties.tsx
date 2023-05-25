@@ -18,6 +18,7 @@ function getConditionPropertiesPanelTitle(
 }
 
 const multiValueOperators = ["HAS_ANY", "HAS_ALL", "IN", "NOT_IN"]
+const textAlikeFiledTypes = ["TEXT", "AUTONUMBER", "EMAIL", "LONGTEXT"]
 
 function getConditionTitle(condition: wire.WireConditionState): string {
 	if (condition.type === "GROUP" && !condition.valueSource) {
@@ -125,6 +126,18 @@ function getOperatorOptions(fieldDisplayType: string | undefined) {
 			label: "Between",
 			value: "BETWEEN",
 		},
+		...(fieldDisplayType && textAlikeFiledTypes.includes(fieldDisplayType)
+			? [
+					{
+						label: "Contains",
+						value: "CONTAINS",
+					},
+					{
+						label: "Starts With",
+						value: "STARTS_WITH",
+					},
+			  ]
+			: []),
 	]
 }
 
@@ -378,6 +391,8 @@ const ConditionsProperties: definition.UC = (props) => {
 							"BETWEEN",
 							"HAS_ANY",
 							"HAS_ALL",
+							"CONTAINS",
+							"STARTS_WITH",
 						],
 					},
 				],

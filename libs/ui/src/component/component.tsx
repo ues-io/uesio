@@ -17,6 +17,7 @@ import ErrorBoundary from "../components/errorboundary"
 import { mergeDefinitionMaps } from "./merge"
 import { MetadataKey } from "../bands/builder/types"
 import { useShould } from "./display"
+import { DISPLAY_CONDITIONS } from "../componentexports"
 
 const getVariantKey = (variant: ComponentVariant): MetadataKey =>
 	`${variant.namespace}.${variant.name}` as MetadataKey
@@ -70,7 +71,7 @@ function mergeContextVariants(
 
 const Component: UC<DefinitionMap> = (props) => {
 	const { componentType, context, definition } = props
-	if (!useShould(definition?.["uesio.display"], context)) return null
+	if (!useShould(definition?.[DISPLAY_CONDITIONS], context)) return null
 	if (!componentType) return <NotFound {...props} />
 	const Loader = getRuntimeLoader(componentType) || NotFound
 
