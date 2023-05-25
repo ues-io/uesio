@@ -96,7 +96,6 @@ func processConditions(
 				return errors.New("Invalid Condition: " + condition.Param)
 			}
 			conditions[i].Value = value
-			conditions[i].ValueSource = ""
 		}
 
 		if condition.ValueSource == "PARAM" && len(condition.Params) > 0 {
@@ -109,7 +108,6 @@ func processConditions(
 				values = append(values, value)
 			}
 			conditions[i].Values = values
-			conditions[i].ValueSource = ""
 		}
 
 		if condition.ValueSource == "LOOKUP" && condition.LookupWire != "" && condition.LookupField != "" {
