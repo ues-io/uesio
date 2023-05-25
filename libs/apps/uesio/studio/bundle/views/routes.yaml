@@ -72,43 +72,112 @@ definition:
           - uesio/io.griditem:
               uesio.variant: uesio/studio.content
               components:
-                - uesio/io.titlebar:
-                    uesio.variant: uesio/io.main
-                    title: Routes
-                    subtitle: Not until we are lost do we begin to understand ourselves.
-                    actions:
-                      - uesio/io.group:
+                - uesio/io.list:
+                    uesio.id: editRoutes
+                    wire: workspaces
+                    mode: READ
+                    components:
+                      - uesio/io.titlebar:
+                          uesio.variant: uesio/io.main
+                          title: Routes
+                          subtitle: Not until we are lost do we begin to understand ourselves.
+                          actions:
+                            - uesio/io.group:
+                                components:
+                                  - uesio/io.button:
+                                      text: $Label{uesio/io.edit}
+                                      uesio.variant: uesio/io.secondary
+                                      uesio.display:
+                                        - type: fieldMode
+                                          mode: READ
+                                      signals:
+                                        - signal: component/CALL
+                                          component: uesio/io.list
+                                          componentsignal: TOGGLE_MODE
+                                          targettype: specific
+                                          componentid: editRoutes
+                                        - signal: component/CALL
+                                          component: uesio/io.list
+                                          componentsignal: TOGGLE_MODE
+                                          targettype: specific
+                                          componentid: routes
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.primary
+                                      text: $Label{uesio/io.save}
+                                      uesio.display:
+                                        - type: wireHasChanges
+                                          wire: workspaces
+                                      signals:
+                                        - signal: wire/SAVE
+                                          wires:
+                                            - workspaces
+                                        - signal: component/CALL
+                                          component: uesio/io.list
+                                          componentsignal: TOGGLE_MODE
+                                          targettype: specific
+                                          componentid: editRoutes
+                                        - signal: component/CALL
+                                          component: uesio/io.list
+                                          componentsignal: TOGGLE_MODE
+                                          targettype: specific
+                                          componentid: routes
+                                  - uesio/io.button:
+                                      text: $Label{uesio/io.cancel}
+                                      uesio.variant: uesio/io.secondary
+                                      uesio.display:
+                                        - type: fieldMode
+                                          mode: EDIT
+                                      signals:
+                                        - signal: wire/CANCEL
+                                          wire: workspaces
+                                        - signal: component/CALL
+                                          component: uesio/io.list
+                                          componentsignal: TOGGLE_MODE
+                                          targettype: specific
+                                          componentid: editRoutes
+                                        - signal: component/CALL
+                                          component: uesio/io.list
+                                          componentsignal: TOGGLE_MODE
+                                          targettype: specific
+                                          componentid: routes
+                                  - uesio/io.button:
+                                      uesio.id: create-route
+                                      text: Create a New Route
+                                      hotkey: "n"
+                                      uesio.variant: uesio/io.primary
+                                      uesio.display:
+                                        - type: fieldMode
+                                          mode: READ
+                                      signals:
+                                        - signal: panel/TOGGLE
+                                          panel: newRoute
+                      - uesio/io.box:
+                          uesio.variant: uesio/io.section
                           components:
-                            - uesio/io.button:
-                                uesio.id: edit-favicon
-                                text: Edit Favicon
-                                hotkey: "s"
-                                uesio.variant: uesio/io.primary
-                                signals:
-                                  - signal: panel/TOGGLE
-                                    panel: editFavicon
-                                  - signal: wire/CANCEL
-                                    wire: workspaces
-                                  - signal: component/CALL
-                                    component: uesio/io.list
-                                    componentsignal: TOGGLE_MODE
-                                    targettype: specific
-                                    componentid: editRoutes
-                            - uesio/io.button:
-                                uesio.id: create-route
-                                text: Create a New Route
-                                hotkey: "n"
-                                uesio.variant: uesio/io.primary
-                                signals:
-                                  - signal: panel/TOGGLE
-                                    panel: newRoute
-                                  - signal: wire/CANCEL
-                                    wire: workspaces
-                                  - signal: component/CALL
-                                    component: uesio/io.list
-                                    componentsignal: TOGGLE_MODE
-                                    targettype: specific
-                                    componentid: editRoutes
+                            - uesio/io.grid:
+                                uesio.variant: uesio/io.four_columns
+                                items:
+                                  - uesio/io.list:
+                                      uesio.id: routes
+                                      wire: workspaces
+                                      mode: READ
+                                      uesio.context:
+                                        workspace:
+                                          name: $Param{workspacename}
+                                          app: $Param{app}
+                                      components:
+                                        - uesio/builder.metadatafield:
+                                            fieldId: uesio/studio.homeroute
+                                            metadataType: "ROUTE"
+                                            label: "Home Route"
+                                        - uesio/builder.metadatafield:
+                                            fieldId: uesio/studio.loginroute
+                                            metadataType: "ROUTE"
+                                            label: "Login Route"
+                                        - uesio/builder.metadatafield:
+                                            fieldId: uesio/studio.favicon
+                                            metadataType: "FILE"
+                                            label: "Favicon"
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
@@ -117,6 +186,9 @@ definition:
                       - uesio/io.table:
                           uesio.id: routesTable
                           wire: allroutes
+                          recordDisplay:
+                            - field: uesio/studio.namespace
+                              value: $Param{app}
                           columns:
                             - label: Path - View
                               components:
@@ -161,40 +233,6 @@ definition:
                                   wire: allroutes
                                   value: $Param{app}
                                   operator: EQUALS
-                            - text: Make Home
-                              uesio.display:
-                                - field: uesio/studio.homeroute
-                                  wire: workspaces
-                                  value: ${uesio/studio.view}
-                                  operator: NOT_EQUALS
-                              signals:
-                                - signal: wire/UPDATE_RECORD
-                                  wire: workspaces
-                                  field: uesio/studio.homeroute
-                                  value: ${uesio/studio.view}
-                                - signal: wire/SAVE
-                                  wires:
-                                    - workspaces
-                                - signal: wire/LOAD
-                                  wires:
-                                    - allroutes
-                            - text: Make Login
-                              uesio.display:
-                                - field: uesio/studio.loginroute
-                                  wire: workspaces
-                                  value: ${uesio/studio.view}
-                                  operator: NOT_EQUALS
-                              signals:
-                                - signal: wire/UPDATE_RECORD
-                                  wire: workspaces
-                                  field: uesio/studio.loginroute
-                                  value: ${uesio/studio.view}
-                                - signal: wire/SAVE
-                                  wires:
-                                    - workspaces
-                                - signal: wire/LOAD
-                                  wires:
-                                    - allroutes
                           pagesize: 10
   panels:
     newRoute:
