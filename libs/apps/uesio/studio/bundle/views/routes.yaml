@@ -111,6 +111,9 @@ definition:
                                         - signal: wire/SAVE
                                           wires:
                                             - workspaces
+                                        - signal: wire/LOAD
+                                          wires:
+                                            - allroutes
                                         - signal: component/CALL
                                           component: uesio/io.list
                                           componentsignal: TOGGLE_MODE
