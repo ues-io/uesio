@@ -1,0 +1,6 @@
+name: autonumber
+type: AUTONUMBER
+label: Autonumber
+autonumber:
+  prefix: ID
+  leadingZeros: 3
