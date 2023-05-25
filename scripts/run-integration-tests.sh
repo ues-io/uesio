@@ -40,7 +40,8 @@ echo "Successfully upserted seed data. Running tests..."
 cd ../../../..
 
 # Run specs
-# hurl -k --variable host=studio.uesio-dev.com --variable port=3000 --test libs/apps/uesio/tests/hurl_specs/*.hurl
+hurl -k --variable host=studio.uesio-dev.com --variable port=3000 --test libs/apps/uesio/tests/hurl_specs/*.hurl
+# Run field condition tests
 hurl -k --variable host=studio.uesio-dev.com --variable port=3000 --test libs/apps/uesio/tests/hurl_fields/*.hurl
 
 
