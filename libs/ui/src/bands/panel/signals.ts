@@ -15,7 +15,8 @@ interface ToggleSignal extends SignalDefinition {
 const runPanelAfterCloseSignals = (panelId: string, context: Context) => {
 	const afterCloseSignals =
 		context.getViewDef()?.panels?.[panelId]?.afterClose
-	if (afterCloseSignals?.length) {
+	// Don't run after-close signals in the builder (signified by presence of a custom slot)
+	if (afterCloseSignals?.length && !context.getCustomSlot()) {
 		return runMany(afterCloseSignals, context)
 	}
 	return context
