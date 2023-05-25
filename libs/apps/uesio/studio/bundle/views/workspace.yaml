@@ -12,7 +12,6 @@ definition:
             uesio/studio.color:
             uesio/studio.icon:
         uesio/studio.publicprofile:
-        uesio/studio.favicon:
       conditions:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
@@ -91,10 +90,6 @@ definition:
                                             fieldId: uesio/studio.publicprofile
                                             metadataType: "PROFILE"
                                             label: "Public Profile"
-                                        - uesio/builder.metadatafield:
-                                            fieldId: uesio/studio.favicon
-                                            metadataType: "FILE"
-                                            label: "Favicon"
                             - uesio/io.box:
                                 uesio.variant: uesio/io.section
                                 components:
