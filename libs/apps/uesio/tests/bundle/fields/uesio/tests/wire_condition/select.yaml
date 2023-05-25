@@ -1,0 +1,4 @@
+name: select
+type: SELECT
+label: Select
+selectList: uesio/tests.selectlist
