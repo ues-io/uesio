@@ -1,0 +1,5 @@
+name: reference
+type: REFERENCE
+label: Reference
+reference:
+  collection: uesio/tests.wire_condition

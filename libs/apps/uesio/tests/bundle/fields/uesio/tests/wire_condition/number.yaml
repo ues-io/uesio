@@ -1,0 +1,5 @@
+name: number
+type: NUMBER
+label: Number
+number:
+  decimals: 0
