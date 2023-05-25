@@ -111,20 +111,18 @@ definition:
                                 - uesio/io.box:
                                     uesio.styleTokens:
                                       root:
-                                        - m-2
+                                        - pl-4
                                     components:
                                       - uesio/io.text:
                                           text: ${uesio/studio.name}
-                                      - uesio/io.box:
-                                          components:
-                                            - uesio/io.text:
-                                                text: " (Public)"
-                                                uesio.display:
-                                                  - type: fieldValue
-                                                    operator: EQUALS
-                                                    value: ${uesio/studio.namespace}.${uesio/studio.name}
-                                                    wire: workspaces
-                                                    field: uesio/studio.publicprofile
+                                      - uesio/io.text:
+                                          text: " (Public)"
+                                          uesio.display:
+                                            - type: fieldValue
+                                              operator: EQUALS
+                                              value: ${uesio/studio.namespace}.${uesio/studio.name}
+                                              wire: workspaces
+                                              field: uesio/studio.publicprofile
                             - field: uesio/core.updatedby
                               user:
                                 subtitle: $Time{uesio/core.updatedat}
