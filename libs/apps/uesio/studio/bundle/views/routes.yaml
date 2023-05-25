@@ -121,6 +121,11 @@ definition:
                                           componentsignal: TOGGLE_MODE
                                           targettype: specific
                                           componentid: workspaceRouteProperties
+                                        - signal: component/CALL
+                                          component: uesio/io.list
+                                          componentsignal: TOGGLE_MODE
+                                          targettype: specific
+                                          componentid: editRoutes
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.primary
                                       text: $Label{uesio/io.save}
@@ -136,6 +141,11 @@ definition:
                                           componentsignal: TOGGLE_MODE
                                           targettype: specific
                                           componentid: workspaceRouteProperties
+                                        - signal: component/CALL
+                                          component: uesio/io.list
+                                          componentsignal: TOGGLE_MODE
+                                          targettype: specific
+                                          componentid: editRoutes
                                   - uesio/io.button:
                                       text: $Label{uesio/io.cancel}
                                       uesio.variant: uesio/io.secondary
@@ -150,6 +160,11 @@ definition:
                                           componentsignal: TOGGLE_MODE
                                           targettype: specific
                                           componentid: workspaceRouteProperties
+                                        - signal: component/CALL
+                                          component: uesio/io.list
+                                          componentsignal: TOGGLE_MODE
+                                          targettype: specific
+                                          componentid: editRoutes
                                   - uesio/io.button:
                                       uesio.id: create-route
                                       text: Create a New Route
@@ -285,36 +300,3 @@ definition:
             signals:
               - signal: panel/TOGGLE
                 panel: newRoute
-    editFavicon:
-      uesio.type: uesio/io.dialog
-      title: Edit Favicon
-      width: 400px
-      height: 500px
-      components:
-        - uesio/io.list:
-            uesio.id: editFaviconList
-            wire: workspaces
-            mode: EDIT
-            uesio.context:
-              workspace:
-                name: $Param{workspacename}
-                app: $Param{app}
-            components:
-              - uesio/builder.metadatafield:
-                  fieldId: uesio/studio.favicon
-                  metadataType: "FILE"
-                  label: "Favicon"
-      actions:
-        - uesio/io.button:
-            uesio.variant: uesio/io.primary
-            text: $Label{uesio/io.save}
-            signals:
-              - signal: wire/SAVE
-                wires:
-                  - workspaces
-        - uesio/io.button:
-            uesio.variant: uesio/io.secondary
-            text: $Label{uesio/io.cancel}
-            signals:
-              - signal: panel/TOGGLE
-                panel: editFavicon
