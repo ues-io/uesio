@@ -18,6 +18,7 @@ import { ComponentVariant } from "./definition/componentvariant"
 import ErrorBoundary from "./components/errorboundary"
 import ErrorMessage from "./components/errormessage"
 const COMPONENT_ID = "uesio.id"
+const DISPLAY_CONDITIONS = "uesio.display"
 
 export type {
 	SlotUtilityProps,
@@ -29,6 +30,7 @@ export type {
 }
 
 export {
+	DISPLAY_CONDITIONS,
 	COMPONENT_ID,
 	Slot,
 	ErrorMessage,

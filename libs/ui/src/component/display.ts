@@ -2,6 +2,7 @@ import { Context } from "../context/context"
 import { BaseDefinition } from "../definition/definition"
 import { wire as wireApi } from "../api/api"
 import { WireRecord } from "../wireexports"
+import { DISPLAY_CONDITIONS } from "../componentexports"
 
 type RequireOnlyOne<T, Keys extends keyof T = keyof T> = Pick<
 	T,
@@ -313,7 +314,7 @@ const useShouldFilter = <T extends BaseDefinition>(
 	context: Context
 ) => {
 	const conditionsList = items.flatMap((item) => {
-		const conditions = item["uesio.display"]
+		const conditions = item[DISPLAY_CONDITIONS]
 		return conditions ? [conditions] : []
 	})
 

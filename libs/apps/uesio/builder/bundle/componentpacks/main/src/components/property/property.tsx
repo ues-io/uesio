@@ -3,7 +3,7 @@ import { get } from "../../api/defapi"
 import { FullPath } from "../../api/path"
 import { ComponentProperty } from "../../properties/componentproperty"
 
-const { COMPONENT_ID } = component
+const { COMPONENT_ID, DISPLAY_CONDITIONS } = component
 
 type Definition = {
 	property: ComponentProperty
@@ -52,7 +52,7 @@ export const getFormFieldFromProperty = (
 		fieldId: name,
 		[COMPONENT_ID]: `property:${name}`,
 		"uesio.variant": "uesio/builder.propfield",
-		"uesio.display": displayConditions,
+		[DISPLAY_CONDITIONS]: displayConditions,
 		labelPosition: "left",
 		label,
 		readonly,

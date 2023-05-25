@@ -302,7 +302,7 @@ func validateNodeName(node *yaml.Node, expectedName string) error {
 func validateRequiredMetadataItem(node *yaml.Node, property string) error {
 	value := GetNodeValueAsString(node, property)
 	if value == "" {
-		return fmt.Errorf("Required Metadata Propety Missing: %s", property)
+		return fmt.Errorf("Required Metadata Property Missing: %s", property)
 	}
 	namespace, _, err := ParseKey(value)
 	if err != nil {
