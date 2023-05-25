@@ -11,6 +11,7 @@ definition:
           fields:
             uesio/studio.color:
             uesio/studio.icon:
+        uesio/studio.publicprofile:
       conditions:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
@@ -121,6 +122,22 @@ definition:
                                           componentid: profilesList
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
+                                      text: Use as public profile
+                                      uesio.display:
+                                        - field: uesio/studio.publicprofile
+                                          wire: workspaces
+                                          value: ${uesio/studio.namespace}.${uesio/studio.name}
+                                          operator: NOT_EQUALS
+                                      signals:
+                                        - signal: wire/UPDATE_RECORD
+                                          wire: workspaces
+                                          field: uesio/studio.publicprofile
+                                          value: ${uesio/studio.namespace}.${uesio/studio.name}
+                                        - signal: wire/SAVE
+                                          wires:
+                                            - workspaces
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.secondary
                                       text: $Label{uesio/io.delete}
                                       signals:
                                         - signal: panel/TOGGLE
@@ -144,7 +161,7 @@ definition:
                                   - uesio/builder.multimetadatafield:
                                       fieldId: uesio/studio.permissionsetsrefs
                                       metadataType: PERMISSIONSET
-                                      label: Select Permission Set
+                                      label: Permission Sets assigned to this Profile
                                       uesio.context:
                                         workspace:
                                           name: $Param{workspacename}
