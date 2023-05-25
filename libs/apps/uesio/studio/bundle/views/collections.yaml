@@ -93,6 +93,7 @@ definition:
                     components:
                       - uesio/io.searchbox:
                           wire: allcollections
+                          focusOnRender: true
                       - uesio/io.table:
                           wire: allcollections
                           recordDisplay:
