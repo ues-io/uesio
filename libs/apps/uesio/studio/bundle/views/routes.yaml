@@ -175,6 +175,9 @@ definition:
                                 - signal: wire/SAVE
                                   wires:
                                     - workspaces
+                                - signal: wire/LOAD
+                                  wires:
+                                    - allroutes
                             - text: Make Login
                               uesio.display:
                                 - field: uesio/studio.loginroute
@@ -189,6 +192,9 @@ definition:
                                 - signal: wire/SAVE
                                   wires:
                                     - workspaces
+                                - signal: wire/LOAD
+                                  wires:
+                                    - allroutes
                           pagesize: 10
   panels:
     newRoute:
