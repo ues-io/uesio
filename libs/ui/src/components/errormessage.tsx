@@ -4,6 +4,7 @@ import { getErrorString } from "../bands/utils"
 interface Props {
 	title: string
 	error: Error
+	id: string
 }
 
 const slotError: FC<Props> = (props) => {
@@ -14,6 +15,7 @@ const slotError: FC<Props> = (props) => {
 			onClick={(event: SyntheticEvent) => {
 				event.stopPropagation()
 			}}
+			id={props.id}
 			style={{
 				color: "rgba(255, 128, 128)",
 				padding: "10px 10px 2px",
