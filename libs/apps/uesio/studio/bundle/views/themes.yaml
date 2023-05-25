@@ -83,6 +83,7 @@ definition:
                     components:
                       - uesio/io.searchbox:
                           wire: allthemes
+                          focusOnRender: true
                       - uesio/io.table:
                           uesio.id: themesTable
                           wire: allthemes
