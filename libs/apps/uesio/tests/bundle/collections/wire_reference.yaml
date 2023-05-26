@@ -1,7 +1,0 @@
-name: wire_reference
-uniqueKey:
-  - uesio/tests.autonumber_reference
-nameField: uesio/tests.text_reference
-public: true
-label: Reference Collection
-pluralLabel: Reference Collections

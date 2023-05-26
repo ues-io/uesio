@@ -1,6 +1,0 @@
-name: autonumber_reference
-type: AUTONUMBER
-label: Autonumber Reference
-autonumber:
-  prefix: ID
-  leadingZeros: 3
