@@ -1,8 +1,15 @@
-import { component, definition, metadata, styles, wire } from "@uesio/ui"
+import {
+	component,
+	definition,
+	metadata,
+	platform,
+	styles,
+	wire,
+} from "@uesio/ui"
 import { FullPath, parseFullPath } from "../../api/path"
 import { get, set } from "../../api/defapi"
 import { getComponentDef } from "../../api/stateapi"
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import PropertiesWrapper from "../mainwrapper/propertiespanel/propertieswrapper"
 
 type Props = {
@@ -59,6 +66,31 @@ const StylesProperty: definition.UC<Props> = (props) => {
 			token,
 		])
 	}
+	const [tailwindTokens, setTailwindTokens] = useState<wire.SelectOption[]>(
+		[] as wire.SelectOption[]
+	)
+
+	useEffect(() => {
+		// Fetch tailwind tokens
+		const tailwindClassesUrl = platform.platform.getComponentPackURL(
+			context,
+			"uesio/builder",
+			"main",
+			"tailwind-classes.json"
+		)
+		console.log("tailwind classes url", tailwindClassesUrl)
+		platform.platform
+			.memoizedGetJSON<string[]>(tailwindClassesUrl)
+			.then((tokens) => {
+				console.log("got tailwind tokens", tokens)
+				setTailwindTokens(
+					tokens.map((token) => ({
+						label: token,
+						value: token,
+					}))
+				)
+			})
+	}, [])
 
 	return (
 		<div ref={anchorEl}>
@@ -117,18 +149,18 @@ const StylesProperty: definition.UC<Props> = (props) => {
 					>
 						<ConstrainedInput
 							context={context}
-							mode="EDIT"
 							value=""
 							setValue={(value: wire.FieldValue) => {
 								addRegionToken(value as string)
 								setShowPopper(false)
 							}}
 							label="Token Name"
-							labelPosition="LEFT"
-							fieldComponentType="uesio/io.textfield"
+							labelPosition="left"
+							fieldComponentType="uesio/builder.autocompletefield"
 							fieldComponentProps={{
 								variant:
 									"uesio/io.field:uesio/builder.propfield",
+								options: tailwindTokens,
 							}}
 						/>
 					</PropertiesWrapper>

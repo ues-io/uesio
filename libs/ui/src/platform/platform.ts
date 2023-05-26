@@ -287,11 +287,12 @@ const platform = {
 	getComponentPackURL: (
 		context: Context,
 		namespace: string,
-		name: string
+		name: string,
+		path = "runtime.js"
 	) => {
 		const siteBundleVersion = getSiteBundleVersion(context)
 		const prefix = getPrefix(context)
-		return `${prefix}/componentpacks/${namespace}${siteBundleVersion}/${name}/runtime.js`
+		return `${prefix}/componentpacks/${namespace}${siteBundleVersion}/${name}/${path}`
 	},
 	getMetadataList: async (
 		context: Context,
@@ -510,6 +511,10 @@ const platform = {
 		)
 		return respondJSON(response)
 	},
+	getStaticAssetAsJSON: async <T>(path: string): Promise<T> =>
+		memoizedGetJSON<T>(
+			`${getStaticAssetsHost()}${getStaticAssetsPath()}${path}`
+		),
 	createLogin: async (
 		context: Context,
 		signupMethod: string,
@@ -534,6 +539,7 @@ const platform = {
 	getMonacoEditorVersion,
 	getStaticAssetsHost,
 	getStaticAssetsPath,
+	memoizedGetJSON,
 }
 
 type AutocompleteRequest = {
