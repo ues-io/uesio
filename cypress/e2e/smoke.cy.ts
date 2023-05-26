@@ -23,8 +23,8 @@ describe("Uesio Sanity Smoke Tests", () => {
 			cy.getByIdFragment("button", "new-collection")
 				.scrollIntoView()
 				.should("be.visible")
-			// Test the hotkey for creating a new collection
-			cy.hotkey("n")
+			// Click the new collection button
+			cy.clickButton("new-collection")
 			// Fill out the form to create a new collection
 			cy.typeInInput("new-collection-label", "Animal")
 			cy.typeInInput("new-collection-plural-label", "Animals")
@@ -38,7 +38,8 @@ describe("Uesio Sanity Smoke Tests", () => {
 			cy.title().should("eq", "Collection: animal")
 			cy.getByIdFragment("table", "fields").scrollIntoView()
 			// Create a CHECKBOX field
-			cy.hotkey("n")
+			// Click the new field button
+			cy.clickButton("new-field")
 			cy.typeInInput("new-field-name", "is_extinct")
 			cy.typeInInput("new-field-label", "Is Extinct")
 			cy.changeSelectValue("new-field-type", "CHECKBOX")
@@ -69,7 +70,8 @@ describe("Uesio Sanity Smoke Tests", () => {
 				.first()
 				.should("have.value", "Is Extinct")
 			// Create a NUMBER field
-			cy.hotkey("n")
+			// Click the new field button
+			cy.clickButton("new-field")
 			cy.typeInInput("new-field-name", "estimated_population")
 			cy.typeInInput("new-field-label", "Estimated Population")
 			cy.changeSelectValue("new-field-type", "NUMBER")

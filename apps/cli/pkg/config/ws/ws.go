@@ -2,23 +2,23 @@ package ws
 
 import (
 	"errors"
-	"fmt"
-
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/thecloudmasters/cli/pkg/config"
 	"github.com/thecloudmasters/cli/pkg/wire"
 )
 
+// GetWorkspace Returns the name of the current workspace
 func GetWorkspace() (string, error) {
 	return config.GetConfigValue("workspace")
 }
 
-func SetWorkspace(value string) error {
-	return config.SetConfigValue("workspace", value)
+// SetWorkspace Updates local config to set the name of the current workspace
+func SetWorkspace(workspaceName string) error {
+	return config.SetConfigValue("workspace", workspaceName)
 }
 
 func SetWorkspacePrompt(appId string) (string, error) {
-	workspace := ""
+	workspaceName := ""
 
 	appID := appId
 	var err error
@@ -41,64 +41,30 @@ func SetWorkspacePrompt(appId string) (string, error) {
 	}
 	if len(options) == 0 {
 
-		var newWorkspace string
+		var newWorkspaceName string
 		err = survey.AskOne(&survey.Input{
 			Message: "No workspaces found. Enter a workspace name (using a-z or 0-9 only)",
 			Default: "dev",
-		}, &newWorkspace)
+		}, &newWorkspaceName)
 
 		if err != nil {
 			return "", err
 		}
 
 		// Invoke workspace creation API to create a default "dev" workspace
-		_, err := wire.CreateNewWorkspace(appID, newWorkspace)
+		_, err := wire.CreateNewWorkspace(appID, newWorkspaceName)
 		if err != nil {
 			return "", errors.New("unable to create new workspace for app: " + err.Error())
 		}
-		return newWorkspace, SetWorkspace(newWorkspace)
+		return newWorkspaceName, SetWorkspace(newWorkspaceName)
 	}
 
 	err = survey.AskOne(&survey.Select{
 		Message: "Select a workspace.",
 		Options: options,
-	}, &workspace)
+	}, &workspaceName)
 	if err != nil {
 		return "", err
 	}
-	return workspace, SetWorkspace(workspace)
-}
-
-func SetWorkspaceByID(appId string, workspace string) (string, error) {
-
-	appID := appId
-	var err error
-
-	if appID == "" {
-		appID, err = wire.GetAppID()
-		if err != nil {
-			return "", err
-		}
-	}
-
-	options, err := wire.GetAvailableWorkspaceNames(appID)
-	if err != nil {
-		return "", err
-	}
-
-	if contains(options, workspace) {
-		return workspace, SetWorkspace(workspace)
-	}
-
-	return "", fmt.Errorf("Workspace: '%s' not found", workspace)
-
-}
-
-func contains(options []string, ws string) bool {
-	for _, option := range options {
-		if option == ws {
-			return true
-		}
-	}
-	return false
+	return workspaceName, SetWorkspace(workspaceName)
 }

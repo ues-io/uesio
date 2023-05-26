@@ -32,6 +32,9 @@
 		},
 		"uesio/tests.select": {
 			"columnname": "select"
+		},
+		"uesio/tests.name": {
+			"columnname": "name"
 		}
 	}
 }

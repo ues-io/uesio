@@ -94,6 +94,7 @@ definition:
                     components:
                       - uesio/io.searchbox:
                           wire: files
+                          focusOnRender: true
                           searchfields:
                             - uesio/studio.name
                       - uesio/io.deck:

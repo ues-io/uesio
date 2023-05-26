@@ -1,7 +1,7 @@
 name: wire_condition
-nameField: uesio/tests.text
 public: true
 label: Wire Condtion Test Data
 pluralLabel: Wire Conditions Test Data
 uniqueKey:
-  - uesio/tests.autonumber
+  - uesio/tests.name
+nameField: uesio/tests.name
