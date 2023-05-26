@@ -21,10 +21,10 @@ func PrintHost(host string) {
 	fmt.Println("Host: " + host)
 }
 
-func PrintWorkspace(workspace string) {
-	if workspace == "" {
-		fmt.Println("No Active Workspace Set")
+func PrintWorkspace(workspaceName string) {
+	if workspaceName == "" {
+		fmt.Println("No active workspace set")
 		return
 	}
-	fmt.Println("Workspace: " + workspace)
+	fmt.Println("Workspace: " + workspaceName)
 }

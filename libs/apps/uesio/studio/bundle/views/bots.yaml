@@ -93,6 +93,11 @@ definition:
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
+                      - uesio/io.searchbox:
+                          wire: bots
+                          focusOnRender: true
+                          searchFields:
+                            - uesio/studio.name
                       - uesio/io.deck:
                           uesio.id: botsDeck
                           wire: bots

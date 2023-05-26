@@ -2,30 +2,25 @@ package command
 
 import (
 	"fmt"
-
 	"github.com/thecloudmasters/cli/pkg/config/ws"
-	"github.com/thecloudmasters/cli/pkg/print"
 )
 
-func Work(workspace string) error {
+func Work(workspaceName string) error {
 
-	fmt.Println("Running Set Workspace Command")
-
-	if workspace == "" {
-		workspacePromt, err := ws.SetWorkspacePrompt("")
+	if workspaceName == "" {
+		workspacePrompt, err := ws.SetWorkspacePrompt("")
 		if err != nil {
 			return err
 		}
-		workspace = workspacePromt
+		workspaceName = workspacePrompt
 	}
 
-	_, err := ws.SetWorkspaceByID("", workspace)
+	err := ws.SetWorkspace(workspaceName)
 	if err != nil {
 		return err
 	}
 
-	fmt.Println("Successfully set Workspace")
-	print.PrintWorkspace(workspace)
+	fmt.Printf("Active workspace updated to: %s\n", workspaceName)
 
 	return nil
 }
