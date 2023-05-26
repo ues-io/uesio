@@ -11,7 +11,7 @@ import { get, set } from "../../api/defapi"
 import { getComponentDef } from "../../api/stateapi"
 import { useEffect, useRef, useState } from "react"
 import PropertiesWrapper from "../mainwrapper/propertiespanel/propertieswrapper"
-import AutocompleteField from "../../utilities/autocompletefield/autocompletefield"
+import TailwindClassPicker from "../../utilities/tailwindclasspicker/tailwindclasspicker"
 
 type Props = {
 	componentType: metadata.MetadataKey
@@ -65,8 +65,8 @@ const StylesProperty: definition.UC<Props> = (props) => {
 			token,
 		])
 	}
-	const [tailwindTokens, setTailwindTokens] = useState<wire.SelectOption[]>(
-		[] as wire.SelectOption[]
+	const [tailwindTokens, setTailwindTokens] = useState<string[][]>(
+		[] as string[][]
 	)
 
 	useEffect(
@@ -80,14 +80,7 @@ const StylesProperty: definition.UC<Props> = (props) => {
 			)
 			platform.platform
 				.memoizedGetJSON<string[][]>(tailwindClassesUrl)
-				.then((tokenTuples) => {
-					setTailwindTokens(
-						tokenTuples.map(([tailwindClassName, cssPrepared]) => ({
-							value: tailwindClassName,
-							label: cssPrepared,
-						}))
-					)
-				})
+				.then(setTailwindTokens)
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[]
@@ -154,7 +147,7 @@ const StylesProperty: definition.UC<Props> = (props) => {
 							context={context}
 							variant="uesio/builder.propfield"
 						>
-							<AutocompleteField
+							<TailwindClassPicker
 								id="style-token-picker"
 								context={context}
 								value=""
@@ -165,7 +158,7 @@ const StylesProperty: definition.UC<Props> = (props) => {
 								focusOnRender
 								applyChanges="onBlur"
 								variant="uesio/io.field:uesio/builder.propfield"
-								options={tailwindTokens}
+								parsedTokens={tailwindTokens}
 							/>
 						</FieldWrapper>
 					</PropertiesWrapper>

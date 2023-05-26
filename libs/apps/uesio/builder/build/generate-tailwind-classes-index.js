@@ -1,6 +1,7 @@
 const tailwindCssClassSearch = require("@dtinth/tailwind-css-class-search")
 const fs = require("fs")
 const Path = require("path")
+const { parseTailwindCss } = require("./tailwind-css-class-parser")
 
 // Read CSS file
 const loadTailwindCss = async (url) => {
@@ -15,26 +16,14 @@ const tailwindUrl = "https://unpkg.com/tailwindcss@2/dist/tailwind.css"
 const originalLog = console.log
 
 return loadTailwindCss(tailwindUrl)
-	.then((css) => {
-		// this library is really noisy and verbose when parsing classes,
-		// so temporarily disable the console log function
-		console.log = () => {}
-		return tailwindCssClassSearch(css)
-	})
-	.then((searchIndex) => {
-		// Restore the log
-		console.log = originalLog
-		if (!searchIndex.entries.length > 1000) {
+	.then(parseTailwindCss)
+	.then((parsedTokens) => {
+		if (!parsedTokens.length > 1000) {
 			// Something is wrong, bail out
 			throw new Error(
 				"Found fewer Tailwind class names than we were expecting, something went wrong."
 			)
 		}
-		const parsedResults = searchIndex.entries.map((entry) => [
-			entry.className,
-			entry.cssPrepared.target,
-		])
-		parsedResults.sort((a, b) => a[0].localeCompare(b[0]))
 		const targetPath = Path.join(
 			__dirname,
 			"..",
@@ -44,10 +33,10 @@ return loadTailwindCss(tailwindUrl)
 			"dist",
 			"tailwind-classes.json"
 		)
-		fs.writeFileSync(targetPath, JSON.stringify(parsedResults))
+		fs.writeFileSync(targetPath, JSON.stringify(parsedTokens))
 		console.log(" ")
 		console.info(
-			`Successfully generated Tailwind CSS class index with ${parsedResults.length} classes to ${targetPath}`
+			`Successfully generated Tailwind CSS class index with ${parsedTokens.length} classes to ${targetPath}`
 		)
 		console.log(" ")
 	})
