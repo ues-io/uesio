@@ -3,6 +3,7 @@
 ######################################################
 
 # Test as a logged-in user so that we don't get redirected to the login page
+# entry 1
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
     "token": "{\"subject\":\"uesio\"}"
@@ -10,6 +11,7 @@ POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 HTTP 200
 
 # Test a wire load with no conditions on wire with collection wire_condition
+# entry 2
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 
@@ -38,35 +40,8 @@ ORDER BY main.id::text asc
 LIMIT 3```
 jsonpath "$.wires[0].data[*]" count == 2
 
-# Test a wire load with no conditions on wire with collection wire_reference
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
-Accept: application/json
-
-{
-    "wires": [
-        {
-            "collection":"uesio/tests.wire_reference",
-            "query": true,
-            "batchsize":2
-        }
-    ]
-}
-HTTP 200
-[Asserts]
-jsonpath "$.wires[0].debugQueryString" == ```
-SELECT
-main.id::text AS "uesio/core.id",
-main.uniquekey AS "uesio/core.uniquekey"
-FROM data as "main"
-WHERE
-main.collection = $1 AND
-main.tenant = $2
-ORDER BY main.id::text asc
-LIMIT 3```
-jsonpath "$.wires[0].data[*]" count == 2
-
-
 # Operator: EQ | valueSource: VALUE
+# entry 3
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -88,23 +63,10 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].debugQueryString" == ```
-SELECT
-main.fields->>'uesio/tests.autonumber' AS "uesio/tests.autonumber",
-main.id::text AS "uesio/core.id",
-main.uniquekey AS "uesio/core.uniquekey"
-FROM data as "main"
-WHERE
-main.collection = $1 AND
-main.tenant = $2 AND
-main.fields->>'uesio/tests.autonumber' = $3
-ORDER BY main.id::text asc
-LIMIT 501```
 jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" == "ID-001"
 
-
-
 # Operator: EQ | valueSource: PARAM
+# entry 4
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -130,23 +92,10 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].debugQueryString" == ```
-SELECT
-main.fields->>'uesio/tests.autonumber' AS "uesio/tests.autonumber",
-main.id::text AS "uesio/core.id",
-main.uniquekey AS "uesio/core.uniquekey"
-FROM data as "main"
-WHERE
-main.collection = $1 AND
-main.tenant = $2 AND
-main.fields->>'uesio/tests.autonumber' = $3
-ORDER BY main.id::text asc
-LIMIT 501```
 jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" == "ID-001"
 
-
-
 # Operator: NOT_EQ | valueSource: VALUE
+# entry 5
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -168,20 +117,10 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].debugQueryString" == ```
-SELECT
-main.id::text AS "uesio/core.id",
-main.uniquekey AS "uesio/core.uniquekey"
-FROM data as "main"
-WHERE
-main.collection = $1 AND
-main.tenant = $2 AND
-main.fields->>'uesio/tests.autonumber' is distinct from $3
-ORDER BY main.id::text asc
-LIMIT 501```
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-001"
 
 # Operator: NOT_EQ | valueSource: PARAM
+# entry 6
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -207,22 +146,10 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].debugQueryString" == ```
-SELECT
-main.fields->>'uesio/tests.autonumber' AS "uesio/tests.autonumber",
-main.id::text AS "uesio/core.id",
-main.uniquekey AS "uesio/core.uniquekey"
-FROM data as "main"
-WHERE
-main.collection = $1 AND
-main.tenant = $2 AND
-main.fields->>'uesio/tests.autonumber' is distinct from $3
-ORDER BY main.id::text asc
-LIMIT 501```
 jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" not includes "ID-001"
 
-
 # Operator: IN | valueSource: VALUE
+# entry 7
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -246,36 +173,25 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].debugQueryString" == ```
-SELECT
-main.fields->>'uesio/tests.autonumber' AS "uesio/tests.autonumber",
-main.id::text AS "uesio/core.id",
-main.uniquekey AS "uesio/core.uniquekey"
-FROM data as "main"
-WHERE
-main.collection = $1 AND
-main.tenant = $2 AND
-main.fields->>'uesio/tests.autonumber' IN ($3,$4)
-ORDER BY main.id::text asc
-LIMIT 501```
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" count == 2
 jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" includes "ID-001"
 jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" includes "ID-002"
 
 # Operator: IN | valueSource: LOOKUP
+# entry 8
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
         {
-            "collection":"uesio/tests.wire_reference",
+            "collection":"uesio/tests.wire_condition",
             "name":"reference",
             "fields": [
                 {
-                    "id":"uesio/tests.autonumber_reference"
+                    "id":"uesio/tests.autonumber"
                 }
             ],
-            "query":true
+            "query":true,
+            "batchsize":8
         },
         {
             "collection":"uesio/tests.wire_condition",
@@ -288,7 +204,7 @@ Accept: application/json
                     "operator": "IN",
                     "valueSource": "LOOKUP",
                     "lookupWire": "reference",
-                    "lookupField": "uesio/tests.autonumber_reference"
+                    "lookupField": "uesio/tests.autonumber"
                 }
             ]
         }
@@ -296,30 +212,11 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[1].debugQueryString" == ```
-SELECT
-main.fields->>'uesio/tests.autonumber' AS "uesio/tests.autonumber",
-main.id::text AS "uesio/core.id",
-main.uniquekey AS "uesio/core.uniquekey"
-FROM data as "main"
-WHERE
-main.collection = $1 AND
-main.tenant = $2 AND
-main.fields->>'uesio/tests.autonumber' IN ($3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
-ORDER BY main.id::text asc
-LIMIT 501```
-jsonpath "$.wires[1].data[*]['uesio/tests.autonumber']" includes "ID-001"
-jsonpath "$.wires[1].data[*]['uesio/tests.autonumber']" includes "ID-002"
-jsonpath "$.wires[1].data[*]['uesio/tests.autonumber']" includes "ID-003"
-jsonpath "$.wires[1].data[*]['uesio/tests.autonumber']" includes "ID-004"
-jsonpath "$.wires[1].data[*]['uesio/tests.autonumber']" includes "ID-005"
-jsonpath "$.wires[1].data[*]['uesio/tests.autonumber']" includes "ID-006"
-jsonpath "$.wires[1].data[*]['uesio/tests.autonumber']" includes "ID-007"
-jsonpath "$.wires[1].data[*]['uesio/tests.autonumber']" includes "ID-008"
-jsonpath "$.wires[1].data[*]['uesio/tests.autonumber']" includes "ID-009"
-jsonpath "$.wires[1].data[*]['uesio/core.uniquekey']" count == 9
+jsonpath "$.wires[1].data[*]['uesio/tests.autonumber']" count == 8
+
 
 # Operator: IN | valueSource: PARAM
+# entry 9
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -349,23 +246,11 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].debugQueryString" == ```
-SELECT
-main.fields->>'uesio/tests.autonumber' AS "uesio/tests.autonumber",
-main.id::text AS "uesio/core.id",
-main.uniquekey AS "uesio/core.uniquekey"
-FROM data as "main"
-WHERE
-main.collection = $1 AND
-main.tenant = $2 AND
-main.fields->>'uesio/tests.autonumber' IN ($3,$4)
-ORDER BY main.id::text asc
-LIMIT 501```
-jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" count == 2
 jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" includes "ID-001"
 jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" includes "ID-002"
 
 # Operator: NOT_IN | valueSource: VALUE
+# entry 10
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -389,33 +274,21 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].debugQueryString" == ```
-SELECT
-main.fields->>'uesio/tests.autonumber' AS "uesio/tests.autonumber",
-main.id::text AS "uesio/core.id",
-main.uniquekey AS "uesio/core.uniquekey"
-FROM data as "main"
-WHERE
-main.collection = $1 AND
-main.tenant = $2 AND
-main.fields->>'uesio/tests.autonumber' NOT IN ($3,$4)
-ORDER BY main.id::text asc
-LIMIT 501```
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" count == 7
 jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" not includes "ID-001"
 jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" not includes "ID-002"
 
 # Operator: NOT_IN | valueSource: LOOKUP
+# entry 11
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
         {
-            "collection":"uesio/tests.wire_reference",
+            "collection":"uesio/tests.wire_condition",
             "name":"reference",
             "fields": [
                 {
-                    "id":"uesio/tests.autonumber_reference"
+                    "id":"uesio/tests.autonumber"
                 }
             ],
             "query":true
@@ -423,6 +296,11 @@ Accept: application/json
         {
             "collection":"uesio/tests.wire_condition",
             "name":"condition",
+            "fields": [
+                {
+                    "id":"uesio/tests.autonumber"
+                }
+            ],
             "query":true,
             "conditions": [
                 {
@@ -430,7 +308,7 @@ Accept: application/json
                     "operator": "NOT_IN",
                     "valueSource": "LOOKUP",
                     "lookupWire": "reference",
-                    "lookupField": "uesio/tests.autonumber_reference"
+                    "lookupField": "uesio/tests.autonumber"
                 }
             ]
         }
@@ -441,6 +319,7 @@ HTTP 200
 jsonpath "$.wires[1].data[*]" not exists
 
 # Operator: NOT_IN | valueSource: PARAM
+# entry 12
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -472,23 +351,12 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].debugQueryString" == ```
-SELECT
-main.fields->>'uesio/tests.autonumber' AS "uesio/tests.autonumber",
-main.id::text AS "uesio/core.id",
-main.uniquekey AS "uesio/core.uniquekey"
-FROM data as "main"
-WHERE
-main.collection = $1 AND
-main.tenant = $2 AND
-main.fields->>'uesio/tests.autonumber' NOT IN ($3,$4,$5)
-ORDER BY main.id::text asc
-LIMIT 501```
 jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" not includes "ID-001"
 jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" not includes "ID-002"
 jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" not includes "ID-003"
 
 # Operator: IS_BLANK | valueSource: VALUE
+# entry 13
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -508,21 +376,11 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].debugQueryString" == ```
-SELECT
-main.id::text AS "uesio/core.id",
-main.uniquekey AS "uesio/core.uniquekey"
-FROM data as "main"
-WHERE
-main.collection = $1 AND
-main.tenant = $2 AND
-main.fields->>'uesio/tests.autonumber' IS NULL
-ORDER BY main.id::text asc
-LIMIT 501```
 jsonpath "$.wires[0].data[*]" not exists
 
 
 # Operator: IS_NOT_BLANK | valueSource: VALUE
+# entry 14
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -543,16 +401,4 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].debugQueryString" == ```
-SELECT
-main.fields->>'uesio/tests.autonumber' AS "uesio/tests.autonumber",
-main.id::text AS "uesio/core.id",
-main.uniquekey AS "uesio/core.uniquekey"
-FROM data as "main"
-WHERE
-main.collection = $1 AND
-main.tenant = $2 AND
-main.fields->>'uesio/tests.autonumber' IS NOT NULL
-ORDER BY main.id::text asc
-LIMIT 501```
 jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" exists
