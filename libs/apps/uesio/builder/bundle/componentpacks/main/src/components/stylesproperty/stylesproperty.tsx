@@ -1,22 +1,37 @@
-import { component, definition, metadata } from "@uesio/ui"
-import { FullPath } from "../../api/path"
+import { component, definition, metadata, styles, wire } from "@uesio/ui"
+import { FullPath, parseFullPath } from "../../api/path"
 import { get, set } from "../../api/defapi"
 import { getComponentDef } from "../../api/stateapi"
+import { useRef, useState } from "react"
+import PropertiesWrapper from "../mainwrapper/propertiespanel/propertieswrapper"
 
 type Props = {
 	componentType: metadata.MetadataKey
 	componentPath: FullPath
 }
 
+const StyleDefaults = Object.freeze({
+	titlebar: ["grid", "grid-cols-2", "grid-flow-col", "auto-cols-max"],
+})
+
 const StylesProperty: definition.UC<Props> = (props) => {
 	const {
 		context,
+		path,
 		definition: { componentPath, componentType },
 	} = props
+	const classes = styles.useStyleTokens(StyleDefaults, props)
 
 	const TitleBar = component.getUtility("uesio/io.titlebar")
 	const PillBox = component.getUtility("uesio/io.pillbox")
+	const Button = component.getUtility("uesio/io.button")
 	const tokensPath = componentPath.addLocal("uesio.styleTokens")
+	const Popper = component.getUtility("uesio/io.popper")
+	const ConstrainedInput = component.getUtility(
+		"uesio/builder.constrainedinput"
+	)
+	const anchorEl = useRef<HTMLDivElement>(null)
+
 	const tokensByRegion = (get(context, tokensPath) || {}) as Record<
 		string,
 		string[]
@@ -33,16 +48,23 @@ const StylesProperty: definition.UC<Props> = (props) => {
 		})
 	}
 
+	const [showPopper, setShowPopper] = useState(false)
+	const [contextRegionName, setContextRegionName] = useState("")
+
+	const addRegionToken = (token: string) => {
+		const regionTokens =
+			tokensByRegion[contextRegionName] || ([] as string[])
+		setRegionTokens(contextRegionName, [
+			...regionTokens.filter((t) => t !== token),
+			token,
+		])
+	}
+
 	return (
-		<>
+		<div ref={anchorEl}>
 			{Object.keys(styleRegions).map((regionName) => {
 				const regionTokens =
 					tokensByRegion[regionName] || ([] as string[])
-				const addRegionToken = (token: string) =>
-					setRegionTokens(regionName, [
-						...regionTokens.filter((t) => t !== token),
-						token,
-					])
 				const removeRegionToken = (deletedVal: string) => {
 					setRegionTokens(
 						regionName,
@@ -54,19 +76,65 @@ const StylesProperty: definition.UC<Props> = (props) => {
 						<TitleBar
 							title={regionName}
 							variant="uesio/builder.propsubsection"
+							className={classes.titlebar}
 							context={context}
+							actions={
+								<Button
+									variant="uesio/builder.panelactionbutton"
+									context={context}
+									label="+"
+									icon="add style token"
+									onClick={() => {
+										setShowPopper(true)
+										setContextRegionName(regionName)
+									}}
+								/>
+							}
 						/>
 						<PillBox
 							context={context}
 							items={regionTokens}
 							onDelete={removeRegionToken}
-							onAdd={addRegionToken}
-							addLabel="Add Token"
 						/>
 					</div>
 				)
 			})}
-		</>
+			{showPopper && anchorEl && (
+				<Popper
+					referenceEl={anchorEl.current}
+					context={context}
+					placement="right-start"
+					autoPlacement={["right-start"]}
+					offset={6}
+					useFirstRelativeParent
+					matchHeight
+				>
+					<PropertiesWrapper
+						context={context}
+						path={parseFullPath(path)}
+						title={"Select a style token"}
+						onUnselect={() => setShowPopper(false)}
+					>
+						<ConstrainedInput
+							context={context}
+							mode="EDIT"
+							value=""
+							setValue={(value: wire.FieldValue) => {
+								addRegionToken(value as string)
+								setShowPopper(false)
+							}}
+							label="Token Name"
+							labelPosition="LEFT"
+							fieldComponentType="uesio/io.textfield"
+							fieldComponentProps={{
+								variant:
+									"uesio/io.field:uesio/builder.propfield",
+							}}
+						/>
+					</PropertiesWrapper>
+				</Popper>
+			)}
+		</div>
 	)
 }
 

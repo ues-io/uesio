@@ -26,13 +26,13 @@ const Pill: definition.UtilityComponent<Props> = (props) => {
 	const { children, onClick, value } = props
 	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 	return (
-		<button
+		<div
 			className={classes.root}
 			aria-label={value}
 			onClick={() => onClick?.(value)}
 		>
 			<span className={classes.content}>{children}</span>
-		</button>
+		</div>
 	)
 }
 Pill.displayName = "Pill"

@@ -14,9 +14,18 @@ type Props = {
 }
 
 const StyleDefaults = Object.freeze({
-	root: ["flex", "items-center", "rounded", "p-2px", "mr-2"],
-	remover: [],
+	root: [
+		"flex",
+		"gap-2",
+		"flex-wrap",
+		"items-center",
+		"rounded",
+		"p-1",
+		"mx-2",
+	],
+	remover: ["text-slate-700", "px-2", "cursor-pointer"],
 	addWrapper: ["p-4"],
+	pill: ["cursor-text"],
 })
 
 const PillBox: definition.UtilityComponent<Props> = (props) => {
@@ -36,13 +45,27 @@ const PillBox: definition.UtilityComponent<Props> = (props) => {
 		<div className={classes.root}>
 			{items.map((item) => (
 				<Pill
+					className={classes.pill}
 					key={item}
 					context={context}
 					value={item}
 					onClick={onSelect}
 				>
-					{item}
-					{onDelete && <span className={classes.remover}>X</span>}
+					<span>{item}</span>
+					{onDelete && (
+						<button
+							tabIndex={-1}
+							className={classes.remover}
+							type="button"
+							onClick={(event) => {
+								event.preventDefault() // Prevent the label from triggering
+								event.stopPropagation()
+								onDelete(item)
+							}}
+						>
+							<Icon icon="close" context={context} />
+						</button>
+					)}
 				</Pill>
 			))}
 			{onAdd && !showNewItem && (
