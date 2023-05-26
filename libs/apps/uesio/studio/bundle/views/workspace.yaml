@@ -14,25 +14,7 @@ definition:
       conditions:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
-    installedapps:
-      collection: uesio/studio.bundledependency
-      fields:
-        uesio/core.id:
-        uesio/studio.bundle:
-          fields:
-            uesio/studio.app:
-              fields:
-                uesio/studio.color:
-                uesio/studio.icon:
-            uesio/studio.major:
-            uesio/studio.minor:
-            uesio/studio.patch:
-            uesio/studio.version:
-      conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
+
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -74,71 +56,12 @@ definition:
                                               - signal: "route/NAVIGATE"
                                                 path: app/$Param{app}/workspace/$Param{workspacename}/configuration
                                         - uesio/io.button:
-                                            uesio.variant: uesio/io.secondary
-                                            text: Package New Version
-                                            signals:
-                                              - signal: notification/ADD
-                                                uesio.id: newversion
-                                                text: We are creating your new bundle
-                                                details: it may take a while, please wait until this notification disappears.
-                                                severity: info
-                                              - signal: context/SET
-                                                type: WORKSPACE
-                                                name: $Param{workspacename}
-                                                app: $Param{app}
-                                              - signal: "bot/CALL"
-                                                stepId: createBundle
-                                                onerror:
-                                                  signals:
-                                                    - signal: notification/REMOVE
-                                                      uesio.id: newversion
-                                                bot: "uesio/studio.createbundle"
-                                              - signal: context/CLEAR
-                                                type: WORKSPACE
-                                              - signal: notification/ADD
-                                                uesio.id: newversion
-                                                text: Bundle successfully created!
-                                                severity: info
-                                              - signal: "route/NAVIGATE"
-                                                path: "app/$Param{app}"
-                                        - uesio/io.button:
                                             text: Delete
                                             uesio.variant: uesio/io.secondary
                                             signals:
                                               - signal: panel/TOGGLE
                                                 panel: deleteWorkspace
-                            - uesio/io.box:
-                                uesio.variant: uesio/io.section
-                                components:
-                                  - uesio/io.titlebar:
-                                      uesio.variant: uesio/io.section
-                                      title: Installed Bundles
-                                      actions:
-                                        - uesio/io.group:
-                                            components:
-                                              - uesio/io.button:
-                                                  text: "Browse Bundle Store"
-                                                  uesio.variant: uesio/io.secondary
-                                                  signals:
-                                                    - signal: "route/NAVIGATE"
-                                                      path: "app/$Param{app}/workspace/$Param{workspacename}/bundlestore"
-                                  - uesio/io.deck:
-                                      uesio.id: installedbundleslist
-                                      wire: installedapps
-                                      components:
-                                        - uesio/io.tile:
-                                            uesio.variant: uesio/io.item
-                                            signals:
-                                              - signal: "route/NAVIGATE"
-                                                path: "app/$Param{app}/workspace/$Param{workspacename}/installed/${uesio/core.uniquekey}"
-                                            content:
-                                              - uesio/io.text:
-                                                  text: ${uesio/studio.bundle->uesio/studio.app->uesio/core.uniquekey} v${["uesio/studio.bundle"]["uesio/studio.version"]}
-                                            avatar:
-                                              - uesio/io.text:
-                                                  uesio.variant: uesio/io.icon
-                                                  color: "${uesio/studio.bundle->uesio/studio.app->uesio/studio.color}"
-                                                  text: "${uesio/studio.bundle->uesio/studio.app->uesio/studio.icon}"
+
   panels:
     deleteWorkspace:
       uesio.type: uesio/io.dialog

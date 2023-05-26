@@ -6,12 +6,16 @@ definition:
       collection: uesio/studio.app
       fields:
         uesio/core.id:
+        uesio/studio.bundles:
+          fields:
+            uesio/core.id:
         uesio/studio.name:
         uesio/studio.description:
         uesio/studio.color:
         uesio/studio.user:
         uesio/studio.public:
         uesio/studio.icon:
+        uesio/studio.workspaces:
       conditions:
         - field: uesio/core.uniquekey
           valueSource: PARAM
@@ -26,6 +30,7 @@ definition:
         uesio/studio.patch:
         uesio/studio.version:
         uesio/studio.description:
+        uesio/studio.workspace:
         uesio/core.createdat:
         uesio/core.createdby:
       conditions:
@@ -40,6 +45,14 @@ definition:
           desc: true
         - field: uesio/studio.patch
           desc: true
+    bundless:
+      collection: uesio/studio.bundledependency
+      batchsize: 50
+      fields:
+        uesio/studio.app:
+        uesio/studio.bundle:
+        uesio/studio.workspace:
+
     teams:
       collection: uesio/studio.team
       fields:
@@ -134,6 +147,7 @@ definition:
                           columns:
                             - field: uesio/studio.version
                             - field: uesio/studio.description
+                            - field: uesio/studio.workspace
                             - field: uesio/core.createdby
                               user:
                                 subtitle: $Time{uesio/core.createdat}

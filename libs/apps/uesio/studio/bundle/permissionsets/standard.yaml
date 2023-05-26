@@ -23,6 +23,7 @@ views:
   uesio/studio.field: true
   uesio/studio.file: true
   uesio/studio.files: true
+  uesio/studio.packaging: true
   uesio/studio.home: true
   uesio/studio.installedbundle: true
   uesio/studio.permissionset: true
@@ -99,6 +100,7 @@ routes:
   uesio/studio.field: true
   uesio/studio.file: true
   uesio/studio.files: true
+  uesio/studio.packaging: true
   uesio/studio.home: true
   uesio/studio.installedbundle: true
   uesio/studio.login: true

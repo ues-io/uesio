@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func NewBundle(namespace string, major, minor, patch int, description string) (*Bundle, error) {
+func NewBundle(namespace string, major, minor, patch int, description string, workspace string) (*Bundle, error) {
 
 	return &Bundle{
 		App: &App{
@@ -18,6 +18,7 @@ func NewBundle(namespace string, major, minor, patch int, description string) (*
 		Minor:       minor,
 		Patch:       patch,
 		Description: description,
+		Workspace:   workspace,
 	}, nil
 }
 
@@ -41,6 +42,7 @@ type Bundle struct {
 	App         *App   `json:"uesio/studio.app"`
 	Description string `json:"uesio/studio.description"`
 	Version     string `json:"uesio/studio.version"`
+	Workspace   string `json:"uesio/studio.workspace"`
 }
 
 func (b *Bundle) GetVersionString() string {

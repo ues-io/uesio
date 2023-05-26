@@ -1,4 +1,4 @@
 name: installedbundle
-path: app/{app:\w*\/\w*}/workspace/{workspacename}/installed/{bundledep:.*}
+path: app/{app:\w*\/\w*}/workspace/{workspacename}/packaging/{bundledep:.*}
 view: uesio/studio.installedbundle
 theme: uesio/studio.default

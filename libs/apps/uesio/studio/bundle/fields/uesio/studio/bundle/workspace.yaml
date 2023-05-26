@@ -1,0 +1,7 @@
+name: workspace
+type: REFERENCEGROUP
+label: Workspace
+referenceGroup:
+  collection: uesio/studio.workspace
+  field: uesio/studio.name
+  onDelete: CASCADE
