@@ -1,4 +1,3 @@
-const tailwindCssClassSearch = require("@dtinth/tailwind-css-class-search")
 const fs = require("fs")
 const Path = require("path")
 const { parseTailwindCss } = require("./tailwind-css-class-parser")
@@ -12,8 +11,6 @@ const loadTailwindCss = async (url) => {
 }
 
 const tailwindUrl = "https://unpkg.com/tailwindcss@2/dist/tailwind.css"
-
-const originalLog = console.log
 
 return loadTailwindCss(tailwindUrl)
 	.then(parseTailwindCss)

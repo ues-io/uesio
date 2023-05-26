@@ -1,0 +1,7 @@
+name: tailwindclasspicker
+pack: main
+entrypoint: utilities/tailwindclasspicker/tailwindclasspicker
+utilities:
+  - uesio/builder.comboboxfield
+  - uesio/io.textfield
+  - uesio/io.menu

@@ -17,7 +17,7 @@ const walk = (tree, prefix, items = []) => {
 			if (classes.length === 0) {
 				// skip
 			} else if (classes.length > 1) {
-				console.log("Found more than 1 classes:", selector)
+				// console.log("Found more than 1 classes:", selector)
 			} else if (child.block) {
 				const declarations = child.block.children
 					.map((node) => {
@@ -66,7 +66,7 @@ const walk = (tree, prefix, items = []) => {
 	}
 }
 
-export const parseTailwindCss = (css) => {
+const parseTailwindCss = (css) => {
 	console.log("Parsing CSS...")
 	const ast = csstree.toPlainObject(csstree.parse(css))
 	const items = []
@@ -86,13 +86,16 @@ export const parseTailwindCss = (css) => {
 		entry.results.push({ css, prefix, declarations })
 	}
 	console.log("Parsing entries...")
-	const parsed = entries.map((entry) => {
+	entries.sort((a, b) => a.className.localeCompare(b.className))
+	return entries.map((entry) => {
 		const classNamePrepared = fuzzysort.prepare(entry.className)
 		const cssPrepared = fuzzysort.prepare(
 			entry.results.map((r) => r.css).join(" ")
 		)
 		return [classNamePrepared, cssPrepared]
 	})
-	parsed.sort((a, b) => a[0].localeCompare(b[0]))
-	return parsed
+}
+
+module.exports = {
+	parseTailwindCss,
 }

@@ -155,9 +155,6 @@ const StylesProperty: definition.UC<Props> = (props) => {
 									addRegionToken(value as string)
 									setShowPopper(false)
 								}}
-								focusOnRender
-								applyChanges="onBlur"
-								variant="uesio/io.field:uesio/builder.propfield"
 								parsedTokens={tailwindTokens}
 							/>
 						</FieldWrapper>
