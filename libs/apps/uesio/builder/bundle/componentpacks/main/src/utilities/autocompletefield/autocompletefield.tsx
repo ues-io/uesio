@@ -1,6 +1,8 @@
-import { definition, styles, wire } from "@uesio/ui"
+import { component, definition, wire } from "@uesio/ui"
+import { useMemo } from "react"
 
 interface AutocompleteFieldProps {
+	applyChanges?: "onBlur" | "onChange"
 	focusOnRender?: boolean
 	options: wire.SelectOption[]
 	placeholder?: string
@@ -8,52 +10,27 @@ interface AutocompleteFieldProps {
 	value?: wire.FieldValue
 }
 
-const StyleDefaults = Object.freeze({
-	input: [],
-	wrapper: [],
-})
-
 const AutocompleteField: definition.UtilityComponent<AutocompleteFieldProps> = (
 	props
 ) => {
-	const {
-		focusOnRender,
-		id,
-		options,
-		placeholder,
-		setValue,
-		value = "",
-	} = props
-
-	const classes = styles.useUtilityStyleTokens(
-		StyleDefaults,
-		props,
-		"uesio/io.field"
-	)
+	const { id, options } = props
+	const TextField = component.getUtility("uesio/io.textfield")
 	const listId = `${id}-datalist`
-
-	return (
-		<div className={classes.wrapper}>
+	const dataList = useMemo(
+		() => (
 			<datalist id={listId}>
 				{options.map((optionDef) => (
 					<option key={optionDef.value} {...optionDef} />
 				))}
 			</datalist>
-			<input
-				id={id}
-				list={listId}
-				name={id}
-				placeholder={placeholder}
-				className={classes.input}
-				ref={(input: HTMLInputElement) =>
-					focusOnRender && input?.focus()
-				}
-				value={(value as string) || ""}
-				onChange={(e) => {
-					setValue?.(e.target.value)
-				}}
-			/>
-		</div>
+		),
+		[listId, options]
+	)
+	return (
+		<>
+			{dataList}
+			<TextField {...props} list={listId} />
+		</>
 	)
 }
 

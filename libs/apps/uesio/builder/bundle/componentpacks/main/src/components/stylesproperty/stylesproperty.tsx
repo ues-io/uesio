@@ -11,6 +11,7 @@ import { get, set } from "../../api/defapi"
 import { getComponentDef } from "../../api/stateapi"
 import { useEffect, useRef, useState } from "react"
 import PropertiesWrapper from "../mainwrapper/propertiespanel/propertieswrapper"
+import AutocompleteField from "../../utilities/autocompletefield/autocompletefield"
 
 type Props = {
 	componentType: metadata.MetadataKey
@@ -34,9 +35,7 @@ const StylesProperty: definition.UC<Props> = (props) => {
 	const Button = component.getUtility("uesio/io.button")
 	const tokensPath = componentPath.addLocal("uesio.styleTokens")
 	const Popper = component.getUtility("uesio/io.popper")
-	const ConstrainedInput = component.getUtility(
-		"uesio/builder.constrainedinput"
-	)
+	const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 	const anchorEl = useRef<HTMLDivElement>(null)
 
 	const tokensByRegion = (get(context, tokensPath) || {}) as Record<
@@ -70,27 +69,29 @@ const StylesProperty: definition.UC<Props> = (props) => {
 		[] as wire.SelectOption[]
 	)
 
-	useEffect(() => {
-		// Fetch tailwind tokens
-		const tailwindClassesUrl = platform.platform.getComponentPackURL(
-			context,
-			"uesio/builder",
-			"main",
-			"tailwind-classes.json"
-		)
-		console.log("tailwind classes url", tailwindClassesUrl)
-		platform.platform
-			.memoizedGetJSON<string[]>(tailwindClassesUrl)
-			.then((tokens) => {
-				console.log("got tailwind tokens", tokens)
-				setTailwindTokens(
-					tokens.map((token) => ({
-						label: token,
-						value: token,
-					}))
-				)
-			})
-	}, [])
+	useEffect(
+		() => {
+			// Fetch tailwind tokens
+			const tailwindClassesUrl = platform.platform.getComponentPackURL(
+				context,
+				"uesio/builder",
+				"main",
+				"tailwind-classes.json"
+			)
+			platform.platform
+				.memoizedGetJSON<string[][]>(tailwindClassesUrl)
+				.then((tokenTuples) => {
+					setTailwindTokens(
+						tokenTuples.map(([tailwindClassName, cssPrepared]) => ({
+							value: tailwindClassName,
+							label: cssPrepared,
+						}))
+					)
+				})
+		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[]
+	)
 
 	return (
 		<div ref={anchorEl}>
@@ -147,22 +148,26 @@ const StylesProperty: definition.UC<Props> = (props) => {
 						title={"Select a style token"}
 						onUnselect={() => setShowPopper(false)}
 					>
-						<ConstrainedInput
-							context={context}
-							value=""
-							setValue={(value: wire.FieldValue) => {
-								addRegionToken(value as string)
-								setShowPopper(false)
-							}}
-							label="Token Name"
+						<FieldWrapper
+							label="Style token"
 							labelPosition="left"
-							fieldComponentType="uesio/builder.autocompletefield"
-							fieldComponentProps={{
-								variant:
-									"uesio/io.field:uesio/builder.propfield",
-								options: tailwindTokens,
-							}}
-						/>
+							context={context}
+							variant="uesio/builder.propfield"
+						>
+							<AutocompleteField
+								id="style-token-picker"
+								context={context}
+								value=""
+								setValue={(value: wire.FieldValue) => {
+									addRegionToken(value as string)
+									setShowPopper(false)
+								}}
+								focusOnRender
+								applyChanges="onBlur"
+								variant="uesio/io.field:uesio/builder.propfield"
+								options={tailwindTokens}
+							/>
+						</FieldWrapper>
 					</PropertiesWrapper>
 				</Popper>
 			)}

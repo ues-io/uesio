@@ -6,4 +6,5 @@ utilities:
   - uesio/io.pillbox
   - uesio/io.button
   - uesio/io.icon
+  - uesio/io.textfield
   - uesio/builder.autocompletefield

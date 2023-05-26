@@ -6,6 +6,7 @@ import Icon from "../icon/icon"
 interface TextFieldProps {
 	applyChanges?: ApplyChanges
 	focusOnRender?: boolean
+	list?: string
 	mode?: context.FieldMode
 	placeholder?: string
 	readonly?: boolean
@@ -37,6 +38,7 @@ const TextField: definition.UtilityComponent<TextFieldProps> = (props) => {
 		context,
 		focusOnRender,
 		id,
+		list,
 		mode,
 		placeholder,
 		readonly,
@@ -67,6 +69,7 @@ const TextField: definition.UtilityComponent<TextFieldProps> = (props) => {
 			<input
 				id={id}
 				type={useType}
+				list={list}
 				placeholder={placeholder}
 				className={styles.cx(
 					classes.input,

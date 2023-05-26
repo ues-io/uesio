@@ -30,9 +30,11 @@ return loadTailwindCss(tailwindUrl)
 				"Found fewer Tailwind class names than we were expecting, something went wrong."
 			)
 		}
-		const allClassNames = searchIndex.entries.map(
-			(entry) => entry.className
-		)
+		const parsedResults = searchIndex.entries.map((entry) => [
+			entry.className,
+			entry.cssPrepared.target,
+		])
+		parsedResults.sort((a, b) => a[0].localeCompare(b[0]))
 		const targetPath = Path.join(
 			__dirname,
 			"..",
@@ -42,10 +44,10 @@ return loadTailwindCss(tailwindUrl)
 			"dist",
 			"tailwind-classes.json"
 		)
-		fs.writeFileSync(targetPath, JSON.stringify(allClassNames))
+		fs.writeFileSync(targetPath, JSON.stringify(parsedResults))
 		console.log(" ")
 		console.info(
-			`Successfully generated Tailwind CSS class index with ${allClassNames.length} classes to ${targetPath}`
+			`Successfully generated Tailwind CSS class index with ${parsedResults.length} classes to ${targetPath}`
 		)
 		console.log(" ")
 	})
