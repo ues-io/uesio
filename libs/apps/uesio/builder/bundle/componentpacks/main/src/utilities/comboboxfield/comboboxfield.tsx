@@ -8,13 +8,16 @@ type ComboboxProps = {
 	placeholder?: string
 	setValue?: (value: wire.PlainFieldValue) => void
 	value?: wire.FieldValue
-	items: wire.SelectOption[]
 	onSearch: (search: string) => Promise<wire.SelectOption[]>
 	textVariant?: metadata.MetadataKey
+	menuVariant?: metadata.MetadataKey
+	iconButtonVariant?: metadata.MetadataKey
+	variant?: metadata.MetadataKey
 }
 
 const StyleDefaults = Object.freeze({
 	root: [],
+	button: [],
 	input: [],
 	itemwrapper: [],
 	iteminner: [],
@@ -25,60 +28,68 @@ const ComboboxField: definition.UtilityComponent<ComboboxProps> = (props) => {
 		context,
 		focusOnRender,
 		id,
-		items,
 		placeholder,
 		setValue,
 		value,
+		iconButtonVariant,
+		menuVariant,
 		textVariant,
+		variant = "uesio/io.default",
 	} = props
 	const Menu = component.getUtility("uesio/io.menu")
 	const TextField = component.getUtility("uesio/io.textfield")
-	// const classes = styles.useUtilityStyleTokens(
-	// 	StyleDefaults,
-	// 	props,
-	// 	"uesio/io.default"
-	// )
-	const Button = component.getUtility("uesio/io.button")
+	const IconButton = component.getUtility("uesio/io.iconbutton")
+	const classes = styles.useUtilityStyleTokens(StyleDefaults, props, variant)
+
 	const renderer = (item: wire.SelectOption) => (
 		<div>{`${item.value} (${item.label})`}</div>
 	)
 	const getItemKey = (item: wire.SelectOption) => item.value
+
+	const [items, setItems] = useState<wire.SelectOption[]>([])
+	console.log("rerendering comboboxfield")
 	const onSearch = debounce(async (search: string) => {
-		const result = await props.onSearch(search)
-		console.log("awaited results", result)
-		return result
+		const results = await props.onSearch(search)
+		setItems(results)
 	}, 200)
 
-	const [controlledValue, setControlledValue] = useState(value)
-
 	return (
-		<>
+		<div className={classes.root}>
 			<TextField
 				context={context}
 				mode="EDIT"
 				focusOnRender={focusOnRender}
 				placeholder={placeholder}
 				applyChanges="onBlur"
-				setValue={setValue}
-				value={controlledValue}
+				setValue={(v: string) => {
+					if (!v?.trim()) return
+					setValue?.(v)
+				}}
+				value={value}
 				id={`${id}-text-input`}
 				variant={textVariant}
 			/>
 			<Menu
-				onSelect={setControlledValue}
+				onSelect={(v: string) => v && setValue?.(v)}
 				getItemKey={getItemKey}
 				itemRenderer={renderer}
 				items={items}
 				onSearch={onSearch}
 				// searchFilter={searchFilter}
 				context={context}
-				variant="uesio/io.default"
+				variant={menuVariant}
 				closeOnSelect={true}
+				open={true}
 				id={`${id}-menu`}
 			>
-				<Button icon="search" label="Select" context={context} />
+				<IconButton
+					icon="arrow_downward"
+					context={context}
+					className={classes.button}
+					variant={iconButtonVariant}
+				/>
 			</Menu>
-		</>
+		</div>
 	)
 }
 

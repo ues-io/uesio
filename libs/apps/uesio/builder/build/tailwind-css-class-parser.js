@@ -88,10 +88,8 @@ const parseTailwindCss = (css) => {
 	console.log("Parsing entries...")
 	entries.sort((a, b) => a.className.localeCompare(b.className))
 	return entries.map((entry) => {
-		const classNamePrepared = fuzzysort.prepare(entry.className)
-		const cssPrepared = fuzzysort.prepare(
-			entry.results.map((r) => r.css).join(" ")
-		)
+		const classNamePrepared = entry.className
+		const cssPrepared = entry.results.map((r) => r.css).join(" ")
 		return [classNamePrepared, cssPrepared]
 	})
 }

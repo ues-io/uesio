@@ -3,7 +3,11 @@ label: Default
 definition:
   uesio.styleTokens:
     root:
-      - grow
+      - grid
+      - grid-cols-[1fr_max-content]
+      - gap-1
+    button:
+      - p-1
     input:
       - flex
       - gap-2

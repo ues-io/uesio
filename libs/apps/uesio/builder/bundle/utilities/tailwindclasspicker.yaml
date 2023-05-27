@@ -5,3 +5,8 @@ utilities:
   - uesio/builder.comboboxfield
   - uesio/io.textfield
   - uesio/io.menu
+variants:
+  - uesio/io.menu:uesio/io.default
+  - uesio/io.iconbutton:uesio/io.primary
+  - uesio/io.comboboxfield:uesio/io.default
+  - uesio/io.field:uesio/builder.propfield
