@@ -16,7 +16,7 @@ type ComboboxProps = {
 }
 
 const StyleDefaults = Object.freeze({
-	root: [],
+	root: ["grid", "grid-cols-3", "gap-1"],
 	button: [],
 	input: [],
 	itemwrapper: [],
@@ -39,6 +39,7 @@ const ComboboxField: definition.UtilityComponent<ComboboxProps> = (props) => {
 	const Menu = component.getUtility("uesio/io.menu")
 	const TextField = component.getUtility("uesio/io.textfield")
 	const IconButton = component.getUtility("uesio/io.iconbutton")
+	const Button = component.getUtility("uesio/io.button")
 	const classes = styles.useUtilityStyleTokens(StyleDefaults, props, variant)
 
 	const renderer = (item: wire.SelectOption) => (
@@ -49,9 +50,15 @@ const ComboboxField: definition.UtilityComponent<ComboboxProps> = (props) => {
 	const [items, setItems] = useState<wire.SelectOption[]>([])
 	console.log("rerendering comboboxfield")
 	const onSearch = debounce(async (search: string) => {
+		if (!search?.trim().length) return
 		const results = await props.onSearch(search)
-		setItems(results)
+		if (results && results.length > 0) {
+			setItems(results)
+		}
 	}, 200)
+	const [controlledValue, setControlledValue] = useState<string>(
+		(value || "") as string
+	)
 
 	return (
 		<div className={classes.root}>
@@ -60,17 +67,19 @@ const ComboboxField: definition.UtilityComponent<ComboboxProps> = (props) => {
 				mode="EDIT"
 				focusOnRender={focusOnRender}
 				placeholder={placeholder}
-				applyChanges="onBlur"
+				applyChanges="onChange"
 				setValue={(v: string) => {
-					if (!v?.trim()) return
-					setValue?.(v)
+					if (v && v !== controlledValue) setControlledValue(v)
 				}}
-				value={value}
+				value={controlledValue}
 				id={`${id}-text-input`}
 				variant={textVariant}
 			/>
 			<Menu
-				onSelect={(v: string) => v && setValue?.(v)}
+				onSelect={(v: string) => {
+					console.log("on select running")
+					if (v && v !== controlledValue) setControlledValue(v)
+				}}
 				getItemKey={getItemKey}
 				itemRenderer={renderer}
 				items={items}
@@ -79,7 +88,6 @@ const ComboboxField: definition.UtilityComponent<ComboboxProps> = (props) => {
 				context={context}
 				variant={menuVariant}
 				closeOnSelect={true}
-				open={true}
 				id={`${id}-menu`}
 			>
 				<IconButton
@@ -89,6 +97,14 @@ const ComboboxField: definition.UtilityComponent<ComboboxProps> = (props) => {
 					variant={iconButtonVariant}
 				/>
 			</Menu>
+			<Button
+				label="Go"
+				context={context}
+				onClick={() => {
+					setValue?.(controlledValue)
+				}}
+				variant="uesio/io.button:uesio/builder.actionbutton"
+			/>
 		</div>
 	)
 }

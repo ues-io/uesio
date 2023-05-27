@@ -17,7 +17,6 @@ type SortResult = {
 const TailwindClassPicker: definition.UtilityComponent<Props> = (props) => {
 	const { context, setValue, value, parsedTokens } = props
 	const ComboboxField = component.getUtility("uesio/builder.comboboxfield")
-	// const Button = component.getUtility("uesio/io.button")
 
 	const tailwindClasses = useMemo(
 		() =>
@@ -58,13 +57,6 @@ const TailwindClassPicker: definition.UtilityComponent<Props> = (props) => {
 			iconButtonVariant="uesio/io.iconbutton:uesio/io.primary"
 			menuVariant="uesio/io.menu:uesio/io.default"
 		/>
-		// <Button
-		// 	icon="save"
-		// 	label="Add this token"
-		// 	context={context}
-		// 	onClick={() =>
-		// 		setValue()
-		// </>
 	)
 }
 
