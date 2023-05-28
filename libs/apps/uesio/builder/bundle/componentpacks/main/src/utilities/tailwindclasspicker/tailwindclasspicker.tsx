@@ -16,7 +16,9 @@ type SortResult = {
 
 const TailwindClassPicker: definition.UtilityComponent<Props> = (props) => {
 	const { context, setValue, value, parsedTokens } = props
-	const ComboboxField = component.getUtility("uesio/builder.comboboxfield")
+	const AutocompleteField = component.getUtility(
+		"uesio/builder.autocompletefield"
+	)
 
 	const tailwindClasses = useMemo(
 		() =>
@@ -28,8 +30,11 @@ const TailwindClassPicker: definition.UtilityComponent<Props> = (props) => {
 			})),
 		[parsedTokens]
 	)
+	const itemRenderer = (item: wire.SelectOption) =>
+		`${item.value} (${item.label})`
+	const getItemKey = (item: wire.SelectOption) => item.value
 
-	const search = (text: string) => {
+	const search = async (text: string) => {
 		if (text?.trim() === "") return []
 		return fuzzysort
 			.go<SortResult>(text, tailwindClasses, {
@@ -46,16 +51,16 @@ const TailwindClassPicker: definition.UtilityComponent<Props> = (props) => {
 			)
 	}
 	return (
-		<ComboboxField
+		<AutocompleteField
 			context={context}
 			applyChanges="onBlur"
 			focusOnRender
 			setValue={setValue}
 			value={value}
 			onSearch={search}
-			textVariant="uesio/io.field:uesio/builder.propfield"
-			iconButtonVariant="uesio/io.iconbutton:uesio/io.primary"
-			menuVariant="uesio/io.menu:uesio/io.default"
+			itemRenderer={itemRenderer}
+			getItemKey={getItemKey}
+			placeholder="padding, border, etc."
 		/>
 	)
 }
