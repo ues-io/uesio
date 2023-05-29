@@ -18,7 +18,11 @@ func NewBundle(namespace string, major, minor, patch int, description string, wo
 		Minor:       minor,
 		Patch:       patch,
 		Description: description,
-		Workspace:   workspace,
+		Workspace: &Workspace{
+			BuiltIn: BuiltIn{
+				UniqueKey: namespace + ":" + workspace,
+			},
+		},
 	}, nil
 }
 
@@ -36,13 +40,13 @@ func ParseVersionString(version string) (string, string, string, error) {
 
 type Bundle struct {
 	BuiltIn     `yaml:",inline"`
-	Major       int    `json:"uesio/studio.major"`
-	Minor       int    `json:"uesio/studio.minor"`
-	Patch       int    `json:"uesio/studio.patch"`
-	App         *App   `json:"uesio/studio.app"`
-	Description string `json:"uesio/studio.description"`
-	Version     string `json:"uesio/studio.version"`
-	Workspace   string `json:"uesio/studio.workspace"`
+	Major       int        `json:"uesio/studio.major"`
+	Minor       int        `json:"uesio/studio.minor"`
+	Patch       int        `json:"uesio/studio.patch"`
+	App         *App       `json:"uesio/studio.app"`
+	Description string     `json:"uesio/studio.description"`
+	Version     string     `json:"uesio/studio.version"`
+	Workspace   *Workspace `json:"uesio/studio.workspace"`
 }
 
 func (b *Bundle) GetVersionString() string {
