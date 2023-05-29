@@ -149,7 +149,7 @@ HTTP 200
 jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" != true
 
 # Operator: IS_BLANK | valueSource: VALUE
-# entry 13
+# entry 7
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -174,7 +174,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes false
 
 
 # Operator: IS_NOT_BLANK | valueSource: VALUE
-# entry 14
+# entry 8
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
