@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func NewBundle(namespace string, major, minor, patch int, description string, workspace string) (*Bundle, error) {
+func NewBundle(namespace string, major, minor, patch int, description string, workspace *Workspace) (*Bundle, error) {
 
 	return &Bundle{
 		App: &App{
@@ -20,7 +20,7 @@ func NewBundle(namespace string, major, minor, patch int, description string, wo
 		Description: description,
 		Workspace: &Workspace{
 			BuiltIn: BuiltIn{
-				UniqueKey: namespace + ":" + workspace,
+				UniqueKey: workspace.UniqueKey,
 			},
 		},
 	}, nil

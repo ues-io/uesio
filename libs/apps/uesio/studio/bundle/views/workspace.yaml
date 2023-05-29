@@ -14,7 +14,6 @@ definition:
       conditions:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
-
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -61,7 +60,6 @@ definition:
                                             signals:
                                               - signal: panel/TOGGLE
                                                 panel: deleteWorkspace
-
   panels:
     deleteWorkspace:
       uesio.type: uesio/io.dialog

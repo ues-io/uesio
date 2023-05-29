@@ -13,7 +13,6 @@ import (
 func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
 
 	appID := session.GetContextAppName()
-	workspaceName := session.GetWorkspace().Name
 
 	if appID == "" {
 		return nil, errors.New("Error creating a new bundle, missing app")
@@ -87,7 +86,7 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.
 		patch = lastBundle.Patch + 1
 	}
 
-	bundle, err := meta.NewBundle(appID, major, minor, patch, "", workspaceName)
+	bundle, err := meta.NewBundle(appID, major, minor, patch, "", workspace)
 	if err != nil {
 		return nil, err
 	}
