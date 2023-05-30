@@ -14,17 +14,15 @@ definition:
                   - items-center
                   - justify-stretch
               items:
-                - uesio/io.griditem:
-                    components:
-                      - uesio/io.image:
-                          uesio.styleTokens:
-                            root:
-                              - m-4
-                              - h-[55px]
-                          file: uesio/web.logo
-                          signals:
-                            - signal: route/NAVIGATE
-                              path: home
+                - uesio/io.image:
+                    uesio.styleTokens:
+                      root:
+                        - m-4
+                    height: 55
+                    file: uesio/web.logo
+                    signals:
+                      - signal: route/NAVIGATE
+                        path: home
                 - uesio/io.group:
                     uesio.styleTokens:
                       root:
