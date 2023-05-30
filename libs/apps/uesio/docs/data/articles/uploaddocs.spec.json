@@ -1,5 +1,4 @@
 {
 	"jobtype": "UPLOADFILES",
-	"collection": "uesio/cms.article",
-	"uploadfield": "uesio/cms.content"
+	"collection": "uesio/cms.article"
 }
