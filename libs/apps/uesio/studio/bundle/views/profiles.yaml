@@ -11,6 +11,7 @@ definition:
           fields:
             uesio/studio.color:
             uesio/studio.icon:
+        uesio/studio.publicprofile:
       conditions:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
@@ -19,11 +20,23 @@ definition:
       fields:
         uesio/core.id:
         uesio/studio.name:
+        uesio/core.updatedat:
+        uesio/core.createdat:
+        uesio/core.createdby:
+        uesio/core.updatedby:
       conditions:
         - field: uesio/studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: uesio/core.id
+      order:
+        - field: uesio/core.updatedat
+          direction: desc
+    allprofiles:
+      collection: uesio/studio.allmetadata
+      conditions:
+        - field: uesio/studio.type
+          value: profiles
     newprofile:
       collection: uesio/studio.profile
       fields:
@@ -77,7 +90,7 @@ definition:
                       - uesio/io.group:
                           components:
                             - uesio/io.button:
-                                text: Create a New Profile
+                                text: Create a new Profile
                                 uesio.variant: uesio/io.secondary
                                 signals:
                                   - signal: panel/TOGGLE
@@ -85,23 +98,60 @@ definition:
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
-                      - uesio/io.deck:
-                          uesio.id: profilesDeck
+                      - uesio/io.searchbox:
                           wire: profiles
-                          components:
-                            - uesio/io.tile:
-                                uesio.variant: uesio/io.item
-                                signals:
-                                  - signal: route/NAVIGATE
-                                    path: app/$Param{app}/workspace/$Param{workspacename}/profiles/${uesio/studio.name}
-                                content:
-                                  - uesio/io.text:
-                                      text: ${uesio/studio.name}
-                                avatar:
-                                  - uesio/io.text:
-                                      uesio.variant: uesio/io.icon
-                                      color: "#ccc"
-                                      text: group
+                          searchfields:
+                            - uesio/studio.name
+                      - uesio/io.table:
+                          uesio.id: profilesTable
+                          wire: profiles
+                          columns:
+                            - label: Profile Name
+                              components:
+                                - uesio/io.box:
+                                    uesio.styleTokens:
+                                      root:
+                                        - pl-4
+                                    components:
+                                      - uesio/io.text:
+                                          text: ${uesio/studio.name}
+                                      - uesio/io.text:
+                                          text: " (Public)"
+                                          uesio.display:
+                                            - type: fieldValue
+                                              operator: EQUALS
+                                              value: ${uesio/studio.namespace}.${uesio/studio.name}
+                                              wire: workspaces
+                                              field: uesio/studio.publicprofile
+                            - field: uesio/core.updatedby
+                              user:
+                                subtitle: $Time{uesio/core.updatedat}
+                            - field: uesio/core.createdby
+                              user:
+                                subtitle: $Time{uesio/core.createdat}
+                          rowactions:
+                            - text: Details
+                              signals:
+                                - signal: route/NAVIGATE
+                                  path: app/$Param{app}/workspace/$Param{workspacename}/profiles/${uesio/studio.name}
+                          pagesize: 10
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.titlebar:
+                          title: Installed Profiles
+                      - uesio/io.table:
+                          uesio.id: installedProfilesTable
+                          wire: allprofiles
+                          columns:
+                            - label: Profile Name
+                              components:
+                                - uesio/studio.iconlabel:
+                                    uesio.variant: uesio/studio.namespacefield
+                                    text: ${uesio/studio.name}
+                                    icon: ${uesio/studio.appicon}
+                                    color: ${uesio/studio.appcolor}
+
   panels:
     newProfile:
       uesio.type: uesio/io.dialog

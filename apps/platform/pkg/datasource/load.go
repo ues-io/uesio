@@ -68,8 +68,13 @@ func processConditions(
 		}
 
 		if condition.ValueSource == "" || condition.ValueSource == "VALUE" {
+
+			if condition.RawValues != nil {
+				conditions[i].Values = condition.RawValues
+			}
+
 			// make sure the condition value is a string
-			stringValue, ok := condition.Value.(string)
+			stringValue, ok := condition.RawValue.(string)
 			if !ok {
 				continue
 			}
@@ -96,7 +101,6 @@ func processConditions(
 				return errors.New("Invalid Condition: " + condition.Param)
 			}
 			conditions[i].Value = value
-			conditions[i].ValueSource = ""
 		}
 
 		if condition.ValueSource == "PARAM" && len(condition.Params) > 0 {
@@ -109,7 +113,6 @@ func processConditions(
 				values = append(values, value)
 			}
 			conditions[i].Values = values
-			conditions[i].ValueSource = ""
 		}
 
 		if condition.ValueSource == "LOOKUP" && condition.LookupWire != "" && condition.LookupField != "" {
@@ -141,7 +144,6 @@ func processConditions(
 			}
 
 			conditions[i].Values = values
-			conditions[i].ValueSource = ""
 			//default "IN"
 			if conditions[i].Operator == "" {
 				conditions[i].Operator = "IN"
