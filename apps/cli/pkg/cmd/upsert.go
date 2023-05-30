@@ -9,10 +9,11 @@ import (
 
 func init() {
 
+	// Deprecated - use uesio workspace upsert instead
 	upsertCommand := &cobra.Command{
 		Use:   "upsert",
 		Short: "uesio upsert",
-		Run:   upsert,
+		Run:   workspaceUpsert,
 	}
 	upsertCommand.PersistentFlags().StringP("spec", "s", "", "Filename of upsert specification")
 	upsertCommand.PersistentFlags().StringP("file", "f", "", "Filename of data to upsert")
@@ -22,12 +23,12 @@ func init() {
 
 }
 
-func upsert(cmd *cobra.Command, args []string) {
+func workspaceUpsert(cmd *cobra.Command, args []string) {
 	spec, _ := cmd.Flags().GetString("spec")
 	file, _ := cmd.Flags().GetString("file")
 	collection, _ := cmd.Flags().GetString("collection")
 
-	err := command.Upsert(&command.UpsertOptions{
+	err := command.UpsertToWorkspace(&command.UpsertOptions{
 		SpecFile:   spec,
 		DataFile:   file,
 		Collection: collection,

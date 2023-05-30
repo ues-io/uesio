@@ -24,6 +24,11 @@ var systemBundles = map[string]bool{
 	"uesio/builder": true,
 }
 
+func IsSystemBundle(namespace string) bool {
+	_, isSystemBundle := systemBundles[namespace]
+	return isSystemBundle
+}
+
 func RegisterBundleStore(name string, store BundleStore) {
 	bundleStoreMap[name] = store
 }
@@ -78,8 +83,7 @@ func GetBundleStore(namespace string, session *sess.Session) (BundleStore, error
 		return GetBundleStoreByType("workspace")
 	}
 
-	_, isSystemBundle := systemBundles[namespace]
-	if isSystemBundle {
+	if IsSystemBundle(namespace) {
 		return GetBundleStoreByType("system")
 	}
 
