@@ -73,7 +73,7 @@ definition:
                                 text: Package New Version
                                 signals:
                                   - signal: notification/ADD
-                                    uesio.id: newversion
+                                    id: newversion
                                     text: We are creating your new bundle
                                     details: it may take a while, please wait until this notification disappears.
                                     severity: info
@@ -81,27 +81,23 @@ definition:
                                     type: WORKSPACE
                                     name: $Param{workspacename}
                                     app: $Param{app}
-                                  - signal: "bot/CALL"
+                                  - signal: bot/CALL
                                     stepId: createBundle
                                     onerror:
                                       signals:
                                         - signal: notification/REMOVE
-                                          uesio.id: newversion
-                                    bot: "uesio/studio.createbundle"
+                                          id: newversion
+                                    bot: uesio/studio.createbundle
                                   - signal: context/CLEAR
                                     type: WORKSPACE
-                                  - signal: notification/ADD
-                                    uesio.id: newversion
-                                    text: Bundle successfully created!
-                                    severity: info
-                                  - signal: "route/NAVIGATE"
-                                    path: "app/$Param{app}"
+                                  - signal: route/NAVIGATE
+                                    path: app/$Param{app}
                             - uesio/io.button:
                                 uesio.variant: uesio/io.secondary
                                 text: View Bundels
                                 signals:
-                                  - signal: "route/NAVIGATE"
-                                    path: "app/$Param{app}"
+                                  - signal: route/NAVIGATE
+                                    path: app/$Param{app}
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
