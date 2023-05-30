@@ -55,9 +55,11 @@ const TailwindClassPicker: definition.UtilityComponent<Props> = (props) => {
 			context={context}
 			applyChanges="onBlur"
 			focusOnRender
-			setValue={setValue}
 			value={value}
 			onSearch={search}
+			onSelect={(item: wire.SelectOption) => {
+				setValue?.(item.value)
+			}}
 			itemRenderer={itemRenderer}
 			getItemKey={getItemKey}
 			placeholder="padding, border, etc."

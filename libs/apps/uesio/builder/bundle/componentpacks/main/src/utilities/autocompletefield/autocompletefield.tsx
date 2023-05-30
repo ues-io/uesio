@@ -23,6 +23,7 @@ interface AutocompleteFieldUtilityProps<T> extends definition.UtilityProps {
 	placeholder?: string
 	closeOnSelect?: boolean
 	open?: boolean
+	maxDisplayItems?: number
 }
 
 const StyleDefaults = Object.freeze({
@@ -38,29 +39,46 @@ const StyleDefaults = Object.freeze({
 const AutocompleteField: definition.UtilityComponent<
 	AutocompleteFieldUtilityProps<unknown>
 > = (props) => {
+	const {
+		itemRenderer,
+		onSelect,
+		onSearch,
+		searchFilter,
+		getItemKey,
+		closeOnSelect = true,
+		placeholder,
+		id,
+		open = false,
+		maxDisplayItems = 20,
+	} = props
 	const classes = styles.useUtilityStyleTokens(
 		StyleDefaults,
 		props,
 		"uesio/io.menu"
 	)
 
-	const [isOpen, setIsOpen] = useState(props.open || false)
+	const [isOpen, setIsOpen] = useState(open)
 	const [searchText, setSearchText] = useState("")
 	const [items, setItems] = useState<unknown[] | undefined>([])
 
 	const getSearchItems = async (newSearchText: string) => {
 		if (newSearchText !== searchText) {
 			const results = await onSearch?.(newSearchText)
-			setItems(results)
-			setSearchText(newSearchText)
+			if (results && results.length) {
+				console.log("got " + results.length + "results, setting items")
+				// Only return first N items of array
+				setItems(results.slice(0, maxDisplayItems))
+				console.log("setting search text to " + newSearchText)
+				setSearchText(newSearchText)
+			}
 		}
 	}
 
 	const onOpenChange = (open: boolean) => {
-		if (open) {
-			getSearchItems(searchText)
+		console.log("on open change, open=" + open + ", isOpen=" + isOpen)
+		if (open !== isOpen) {
+			setIsOpen(open)
 		}
-		setIsOpen(open)
 	}
 
 	const floating = useFloating({
@@ -95,17 +113,6 @@ const AutocompleteField: definition.UtilityComponent<
 	const { getReferenceProps, getFloatingProps, getItemProps } =
 		useInteractions([click, dismiss, role, listNavigation])
 
-	const {
-		itemRenderer,
-		onSelect,
-		onSearch,
-		searchFilter,
-		getItemKey,
-		closeOnSelect = true,
-		placeholder,
-		id,
-	} = props
-
 	return (
 		<>
 			<div
@@ -122,8 +129,7 @@ const AutocompleteField: definition.UtilityComponent<
 					className={classes.searchbox}
 					placeholder={placeholder || "Search..."}
 					onChange={(e) => {
-						// Open the menu if we have results
-						if (e.target.value?.length && !open) {
+						if (!isOpen && e.target.value?.length) {
 							setIsOpen(true)
 						}
 						getSearchItems(e.target.value)
