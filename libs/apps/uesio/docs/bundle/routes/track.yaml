@@ -1,5 +1,0 @@
-name: track
-path: track/{track}
-view: uesio/docs.track
-theme: uesio/docs.default
-public: true
