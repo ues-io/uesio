@@ -18,6 +18,11 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.
 		return nil, errors.New("Error creating a new bundle, missing app")
 	}
 
+	_, isSystemBundle := bundlestore.SystemBundles[appID]
+	if isSystemBundle {
+		return nil, errors.New("Error creating a new bundle, the providede app is a system app")
+	}
+
 	workspace := session.GetWorkspace()
 
 	if workspace == nil {

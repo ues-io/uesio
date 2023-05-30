@@ -13,7 +13,7 @@ import (
 
 var bundleStoreMap = map[string]BundleStore{}
 
-var systemBundles = map[string]bool{
+var SystemBundles = map[string]bool{
 	"uesio/core":    true,
 	"uesio/studio":  true,
 	"uesio/io":      true,
@@ -78,7 +78,7 @@ func GetBundleStore(namespace string, session *sess.Session) (BundleStore, error
 		return GetBundleStoreByType("workspace")
 	}
 
-	_, isSystemBundle := systemBundles[namespace]
+	_, isSystemBundle := SystemBundles[namespace]
 	if isSystemBundle {
 		return GetBundleStoreByType("system")
 	}
