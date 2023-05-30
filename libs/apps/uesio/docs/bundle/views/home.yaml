@@ -1,114 +1,51 @@
 name: home
 definition:
+  wires:
+    article:
+      collection: uesio/cms.article
+      fields:
+        uesio/core.id:
+        uesio/cms.slug:
+        uesio/cms.name:
+        uesio/cms.description:
+        uesio/cms.content:
+      conditions:
+        - field: uesio/cms.slug
+          param: slug
+          valueSource: PARAM
   components:
     - uesio/core.view:
         view: uesio/docs.topbar
     - uesio/io.grid:
         uesio.variant: uesio/docs.mainlayout
         items:
-          - uesio/io.griditem:
-              area: main
+          - uesio/io.box:
+              uesio.styleTokens:
+                root:
+                  - fixed
+                  - left-0
+                  - w-72
+                  - top-[89px]
+                  - bottom-0
+                  - overflow-auto
+              components:
+                - uesio/core.view:
+                    view: uesio/docs.navbar
+          - uesio/io.box:
               uesio.styleTokens:
                 root:
                   - min-h-screen
-                  - p-[20px]
+                  - p-6
+                  - ml-72
+                  - lg:mr-60
+                  - mr-10
+                  - mb-60
               components:
-                - uesio/io.text:
-                    uesio.variant: uesio/docs.smallcallout
-                    text: Learn to build apps with ues.io
-                - uesio/io.text:
-                    uesio.variant: uesio/docs.content
-                    text: With the ues.io studio, we've created a new way to build web applications. Since ues.io is designed for both experienced web developers and beginners alike, we've created two learning tracks. One for each skill level.
-                    element: p
-                - uesio/io.grid:
-                    uesio.styleTokens:
-                      root:
-                        - gap-10
-                        - mt-10
-                        - grid-cols-2
-                    items:
-                      - uesio/io.tile:
-                          uesio.variant: uesio/docs.trackcard
-                          content:
-                            - uesio/io.box:
-                                uesio.variant: uesio/docs.trackcardheader
-                                components:
-                                  - uesio/io.text:
-                                      text: directions_walk
-                                      uesio.variant: uesio/docs.icon
-                            - uesio/io.box:
-                                uesio.variant: uesio/docs.paddedbox
-                                components:
-                                  - uesio/io.text:
-                                      uesio.variant: uesio/docs.smallcallout
-                                      text: No-Coder
-                                  - uesio/io.text:
-                                      uesio.variant: uesio/docs.content
-                                      text: The no-coder track focuses on our click-and-drag app building tools. Anyone can build amazing apps with the ues.io studio.
-                                      element: p
-                                  - uesio/io.tile:
-                                      uesio.variant: uesio/docs.checkitem
-                                      content:
-                                        - uesio/io.text:
-                                            text: Learn the ues.io studio
-                                  - uesio/io.tile:
-                                      uesio.variant: uesio/docs.checkitem
-                                      content:
-                                        - uesio/io.text:
-                                            text: Create with clicks, not code.
-                                  - uesio/io.tile:
-                                      uesio.variant: uesio/docs.checkitem
-                                      content:
-                                        - uesio/io.text:
-                                            text: Anyone can do it!
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/docs.calltoaction
-                                      text: Get Started
-                                      signals:
-                                        - signal: "route/NAVIGATE"
-                                          path: "track/no-coder"
-                      - uesio/io.tile:
-                          uesio.variant: uesio/docs.trackcard
-                          content:
-                            - uesio/io.box:
-                                uesio.variant: uesio/docs.trackcardheader
-                                uesio.styleTokens:
-                                  root:
-                                    - h-[-100px]
-                                    - bg-center
-
-                                components:
-                                  - uesio/io.text:
-                                      text: directions_run
-                                      uesio.variant: uesio/docs.icon
-                            - uesio/io.box:
-                                uesio.variant: uesio/docs.paddedbox
-                                components:
-                                  - uesio/io.text:
-                                      uesio.variant: uesio/docs.smallcallout
-                                      text: Coder
-                                  - uesio/io.text:
-                                      uesio.variant: uesio/docs.content
-                                      text: Choose the coder track if you already have experience developing modern web applications with code and want to dive into advanced features.
-                                      element: p
-                                  - uesio/io.tile:
-                                      uesio.variant: uesio/docs.checkitem
-                                      content:
-                                        - uesio/io.text:
-                                            text: Version control with Git
-                                  - uesio/io.tile:
-                                      uesio.variant: uesio/docs.checkitem
-                                      content:
-                                        - uesio/io.text:
-                                            text: Command line interface
-                                  - uesio/io.tile:
-                                      uesio.variant: uesio/docs.checkitem
-                                      content:
-                                        - uesio/io.text:
-                                            text: Create components with React
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/docs.calltoaction
-                                      text: Let's Go!
-                                      signals:
-                                        - signal: "route/NAVIGATE"
-                                          path: "track/coder"
+                - uesio/io.list:
+                    wire: article
+                    components:
+                      - uesio/io.field:
+                          uesio.variant: uesio/io.markdownfield:uesio/docs.docsmarkdown
+                          fieldId: uesio/cms.content
+                          labelPosition: none
+                          displayAs: MARKDOWN

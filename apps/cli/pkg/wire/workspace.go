@@ -1,8 +1,6 @@
 package wire
 
 import (
-	"errors"
-
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 )
 
@@ -18,15 +16,11 @@ func GetAvailableWorkspaceNames(appID string) ([]string, error) {
 		return names, nil
 	}
 	for _, item := range workspaces {
-		wsName, err := item.GetField("uesio/studio.name")
+		wsName, err := item.GetFieldAsString("uesio/studio.name")
 		if err != nil {
 			return nil, err
 		}
-		wsString, ok := wsName.(string)
-		if !ok {
-			return nil, errors.New("Could not convert workspace name to string")
-		}
-		names = append(names, wsString)
+		names = append(names, wsName)
 	}
 
 	return names, nil
@@ -43,8 +37,8 @@ func GetAvailableWorkspaces(appID string) (adapt.Collection, error) {
 			},
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field: "uesio/studio.app",
-					Value: appID,
+					Field:    "uesio/studio.app",
+					RawValue: appID,
 				},
 			},
 		},
