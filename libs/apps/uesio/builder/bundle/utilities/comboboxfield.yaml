@@ -1,7 +1,0 @@
-name: comboboxfield
-pack: main
-entrypoint: utilities/comboboxfield/comboboxfield
-utilities:
-  - uesio/io.textfield
-  - uesio/io.menu
-  - uesio/io.iconbutton
