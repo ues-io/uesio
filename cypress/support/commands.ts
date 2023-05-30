@@ -124,7 +124,7 @@ Cypress.Commands.add("getComponentState", (componentId: string) => {
 })
 
 Cypress.Commands.add("getWireState", (viewId: string, wireName: string) => {
-	cy.window().its("uesio.api.wire").invoke("getWireState", viewId, wireName)
+	cy.window().its("uesio.api.wire").invoke("getWire", viewId, wireName)
 })
 
 // Enters a global hotkey
