@@ -1,5 +1,0 @@
-name: total_population
-type: NUMBER
-label: Total Population
-number:
-  decimals: 0

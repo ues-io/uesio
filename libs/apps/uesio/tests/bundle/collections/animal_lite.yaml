@@ -1,7 +1,0 @@
-name: animal_lite
-uniqueKey:
-  - uesio/tests.genus
-  - uesio/tests.species
-nameField: uesio/tests.species
-label: Animal Lite
-pluralLabel: Animals Lite

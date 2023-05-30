@@ -1,5 +1,0 @@
-name: genus
-type: TEXT
-label: Genus
-required: true
-createOnly: true
