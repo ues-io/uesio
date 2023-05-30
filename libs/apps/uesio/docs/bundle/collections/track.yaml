@@ -1,6 +1,0 @@
-name: track
-label: Track
-pluralLabel: tracks
-nameField: uesio/docs.slug
-uniqueKey:
-  - uesio/docs.slug

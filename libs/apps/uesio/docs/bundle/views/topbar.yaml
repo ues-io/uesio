@@ -5,72 +5,64 @@ definition:
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
-        uesio.variant: uesio/docs.mainlayout
         uesio.styleTokens:
           root:
-            - h-[120px]
+            - border
+            - border-b-1
+            - border-slate-200
+            - sticky
+            - top-0
+            - backdrop-blur
+            - bg-slate-50/95
+            - z-10
+        uesio.variant: uesio/docs.mainlayout
         items:
-          - uesio/io.griditem:
+          - uesio/io.grid:
               uesio.styleTokens:
                 root:
-                  - grid
-              area: main
-              components:
-                - uesio/io.grid:
+                  - grid-flow-col
+                  - items-center
+                  - justify-stretch
+              items:
+                - uesio/io.image:
                     uesio.styleTokens:
                       root:
-                        - grid-cols-[1fr_2fr_1fr]
-                        - items-center
-                    items:
-                      - uesio/io.griditem:
+                        - m-4
+                    height: 55
+                    file: uesio/docs.logo
+                    signals:
+                      - signal: "route/REDIRECT"
+                        path: "https://$Site{domain}"
+                - uesio/io.group:
+                    uesio.styleTokens:
+                      root:
+                        - m-5
+                        - gap-2
+                        - md:gap-4
+                        - justify-right
+                    columnGap: 40px
+                    components:
+                      - uesio/io.group:
                           components:
-                            - uesio/io.image:
-                                uesio.styleTokens:
-                                  root:
-                                    - m-4
-                                    - h-14
-                                file: uesio/docs.logo
+                            - uesio/io.button:
+                                uesio.variant: uesio/docs.borderless
+                                text: Docs
+                                signals:
+                                  - signal: "route/NAVIGATE"
+                                    path: "home"
+                      - uesio/io.group:
+                          components:
+                            - uesio/io.button:
+                                uesio.variant: uesio/docs.borderless
+                                text: Early Access
                                 signals:
                                   - signal: "route/REDIRECT"
-                                    path: "https://$Site{domain}"
-                      - uesio/io.griditem:
-                      - uesio/io.griditem:
+                                    path: "https://$Site{domain}/earlyaccess"
+                      - uesio/io.group:
                           components:
-                            - uesio/io.group:
-                                uesio.styleTokens:
-                                  root:
-                                    - m-5
-                                columnGap: 40px
-                                components:
-                                  - uesio/io.group:
-                                      components:
-                                        - uesio/io.button:
-                                            uesio.variant: uesio/docs.secondary
-                                            text: Login
-                                            signals:
-                                              - signal: "route/REDIRECT"
-                                                path: "https://studio.$Site{domain}"
-                                  - uesio/io.group:
-                                      components:
-                                        - uesio/io.button:
-                                            uesio.variant: uesio/docs.secondary
-                                            text: Blog
-                                            signals:
-                                              - signal: "route/NAVIGATE"
-                                                path: "blog"
-                                  - uesio/io.group:
-                                      components:
-                                        - uesio/io.button:
-                                            uesio.variant: uesio/docs.secondary
-                                            text: Docs
-                                            signals:
-                                              - signal: "route/NAVIGATE"
-                                                path: "home"
-                                  - uesio/io.group:
-                                      components:
-                                        - uesio/io.button:
-                                            uesio.variant: uesio/docs.calltoaction
-                                            text: Early Access
-                                            signals:
-                                              - signal: "route/NAVIGATE"
-                                                path: "earlyaccess"
+                            - uesio/io.button:
+                                uesio.variant: uesio/docs.calltoaction
+                                text: Login
+                                signals:
+                                  - signal: "route/REDIRECT"
+                                    path: "https://studio.$Site{domain}"
