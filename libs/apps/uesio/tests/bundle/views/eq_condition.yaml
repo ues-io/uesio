@@ -2,40 +2,34 @@ name: eq_condition
 definition:
   # Wires connect to data in collections
   wires:
-    animals:
-      collection: uesio/tests.animal_lite
+    conditions:
+      collection: uesio/tests.wire_condition
       fields:
-        uesio/tests.genus:
-        uesio/tests.species:
-        uesio/tests.total_population:
-        uesio/tests.lookalike:
-        uesio/tests.ancestor:
+        uesio/tests.name:
+        uesio/tests.select:
         uesio/core.owner:
         uesio/core.updatedby:
         uesio/core.updatedat:
         uesio/core.createdby:
         uesio/core.createdat:
       conditions:
-        - field: uesio/tests.genus
-          value: Fowlie
+        - field: uesio/tests.name
+          value: ID-002
   # Components determine the layout and composition of your view
   components:
     - uesio/io.titlebar:
-        title: uesio/tests.animal_lite
+        title: uesio/tests.wire_condition
         uesio.variant: uesio/io.main
     - uesio/io.box:
         uesio.variant: uesio/io.section
         components:
           - uesio/io.table:
               columns:
-                - field: uesio/tests.genus
-                - field: uesio/tests.species
-                - field: uesio/tests.total_population
-                - field: uesio/tests.lookalike
-                - field: uesio/tests.ancestor
+                - field: uesio/tests.name
+                - field: uesio/tests.select
                 - field: uesio/core.owner
                 - field: uesio/core.createdby
                 - field: uesio/core.createdat
-              uesio.id: animalsTable
+              uesio.id: conditionsTable
               mode: EDIT
-              wire: animals
+              wire: conditions

@@ -31,18 +31,21 @@ describe("Search Condition", () => {
 					viewName
 				)
 			)
-			cy.typeInInput("table-search", "Abb")
-			cy.get("table[id$='animalsTable']>tbody>tr", {
+			cy.typeInInput("table-search", "ID-007")
+			cy.get("table[id$='conditionsTable']>tbody>tr", {
 				timeout: expectedMillis,
-			}).should("have.length", 2)
+			}).should("have.length", 1)
 
-			cy.getWireState(getViewID(username, appName, viewName), "animals")
+			cy.getWireState(
+				getViewID(username, appName, viewName),
+				"conditions"
+			)
 				.its("conditions")
 				.should("have.length", 1)
 				.each(($condition) => {
 					cy.wrap($condition).should("deep.include", {
 						id: "uesio.search",
-						value: "Abb",
+						value: "ID-007",
 						type: "SEARCH",
 					})
 				})

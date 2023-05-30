@@ -31,17 +31,20 @@ describe("EQ Condition", () => {
 					viewName
 				)
 			)
-			cy.get("table[id$='animalsTable']>tbody>tr", {
+			cy.get("table[id$='conditionsTable']>tbody>tr", {
 				timeout: expectedMillis,
 			}).should("have.length", 1)
 
-			cy.getWireState(getViewID(username, appName, viewName), "animals")
+			cy.getWireState(
+				getViewID(username, appName, viewName),
+				"conditions"
+			)
 				.its("conditions")
 				.should("have.length", 1)
 				.each(($condition) => {
 					cy.wrap($condition).should("deep.include", {
-						field: "uesio/tests.genus",
-						value: "Fowlie",
+						field: "uesio/tests.name",
+						value: "ID-002",
 					})
 				})
 		})
