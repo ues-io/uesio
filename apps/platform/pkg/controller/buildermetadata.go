@@ -21,6 +21,10 @@ func BuilderMetadata(w http.ResponseWriter, r *http.Request) {
 
 	deps := routing.NewPreloadMetadata()
 
+	// Clear out the wire dependency, we don't want to send any wire data to the client.
+	deps.Wire = nil
+	deps.Collection = nil
+
 	err := routing.GetBuilderDependencies(namespace, name, deps, session)
 	if err != nil {
 		msg := "Failed Getting Builder Metadata: " + err.Error()

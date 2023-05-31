@@ -3,7 +3,6 @@ label: Main Layout
 definition:
   uesio.styleTokens:
     root:
-      - grid-cols-[0_1fr_0]
-      - md:grid-cols-[1fr_900px_1fr]
-      - '[grid-template-areas:"left_main_right"]'
+      - grid-cols-[1fr]
+      - justify-center
       - bg-slate-50

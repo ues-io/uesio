@@ -73,7 +73,7 @@ type PathNavigateRequest = {
 	tags?: RouteTag[]
 }
 
-type CollectionNavigateRequest = {
+type AssignmentNavigateRequest = {
 	collection: string
 	viewtype?: string
 	recordid?: string
@@ -91,8 +91,6 @@ type NamespaceInfo = {
 	icon: string
 	namespace: string
 }
-
-type NavigateRequest = PathNavigateRequest | CollectionNavigateRequest
 
 type LoginResponse = LoginResponsePath | LoginResponseRedirect
 
@@ -133,44 +131,40 @@ const getSiteBundleVersion = (context: Context) => {
 	return ""
 }
 
-const isPathRouteRequest = (
-	request: NavigateRequest
-): request is PathNavigateRequest => "path" in request
+const platform = {
+	getRoute: async (
+		context: Context,
+		request: PathNavigateRequest
+	): Promise<RouteState> => {
+		const prefix = getPrefix(context)
 
-const isCollectionRouteRequest = (
-	request: NavigateRequest
-): request is CollectionNavigateRequest => "collection" in request
-
-const getRouteUrl = (context: Context, request: NavigateRequest) => {
-	const prefix = getPrefix(context)
-	if (isPathRouteRequest(request)) {
 		// This is the namespace of the viewdef in context. We can assume if a namespace isn't
 		// provided, they want to navigate within the same namespace.
 		const viewDefId = context.getViewDefId() || ""
 		const [viewDefNamespace] = parseKey(viewDefId)
 		const namespace = request.namespace || viewDefNamespace || ""
-		return `${prefix}/routes/path/${namespace}/${context.mergeString(
-			request.path
-		)}`
-	}
-	if (isCollectionRouteRequest(request)) {
+
+		return getJSON(
+			`${prefix}/routes/path/${namespace}/${context.mergeString(
+				request.path
+			)}`
+		)
+	},
+	getRouteAssignment: async (
+		context: Context,
+		request: AssignmentNavigateRequest
+	): Promise<RouteState> => {
+		const prefix = getPrefix(context)
 		const [namespace, name] = parseKey(request.collection)
 		const viewtype = request.viewtype || "list"
-		return (
-			`${prefix}/routes/collection/${namespace}/${name}/${viewtype}` +
-			(request.recordid
-				? `/${context.mergeString(request.recordid)}`
-				: "")
-		)
-	}
-	throw new Error("Not a valid Route Request")
-}
 
-const platform = {
-	getRoute: async (
-		context: Context,
-		request: NavigateRequest
-	): Promise<RouteState> => getJSON(getRouteUrl(context, request)),
+		return getJSON(
+			`${prefix}/routes/collection/${namespace}/${name}/${viewtype}` +
+				(request.recordid
+					? `/${context.mergeString(request.recordid)}`
+					: "")
+		)
+	},
 	loadData: async (
 		context: Context,
 		requestBody: LoadRequestBatch
@@ -547,6 +541,7 @@ type AutocompleteRequest = {
 	format: string
 	model: string
 	maxResults?: number
+	useCache?: boolean
 }
 
 type AutocompleteResponse = {
@@ -568,8 +563,7 @@ export type {
 	SecretResponse,
 	FeatureFlagResponse,
 	PathNavigateRequest,
-	CollectionNavigateRequest,
-	NavigateRequest,
+	AssignmentNavigateRequest,
 	JobResponse,
 	MetadataInfo,
 	NamespaceInfo,

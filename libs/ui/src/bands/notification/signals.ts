@@ -14,6 +14,7 @@ interface AddNotificationSignal extends SignalDefinition {
 	text: string
 	details: string
 	path?: string
+	duration?: string
 }
 
 interface RemoveNotificationSignal extends SignalDefinition {
@@ -31,6 +32,7 @@ const signals: Record<string, SignalDescriptor> = {
 					text: context.mergeString(signal.text),
 					details: context.mergeString(signal.details),
 					path: signal.path,
+					...(signal.duration && { duration: signal.duration }),
 				})
 			)
 			return context

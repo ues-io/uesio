@@ -89,6 +89,7 @@ definition:
                     components:
                       - uesio/io.searchbox:
                           wire: labels
+                          focusOnRender: true
                           searchfields:
                             - uesio/studio.name
                       - uesio/io.deck:

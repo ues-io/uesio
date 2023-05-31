@@ -24,6 +24,19 @@ interface TooltipUtilityProps extends definition.UtilityProps {
 	offset?: number
 }
 
+const StyleDefaults = Object.freeze({
+	tooltip: [
+		"px-2",
+		"py-1.5",
+		"bg-slate-800",
+		"text-slate-100",
+		"z-10",
+		"text-xs",
+		"rounded",
+	],
+	arrow: ["fill-slate-800"],
+})
+
 const Tooltip: FunctionComponent<TooltipUtilityProps> = (props) => {
 	const { children } = props
 	const arrowRef = useRef(null)
@@ -48,21 +61,7 @@ const Tooltip: FunctionComponent<TooltipUtilityProps> = (props) => {
 	})
 	const { getReferenceProps, getFloatingProps } = useInteractions([hover])
 
-	const classes = styles.useUtilityStyleTokens(
-		{
-			tooltip: [
-				"px-2",
-				"py-1.5",
-				"bg-slate-800",
-				"text-slate-100",
-				"z-10",
-				"text-xs",
-				"rounded",
-			],
-			arrow: ["fill-slate-800"],
-		},
-		props
-	)
+	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
 	return (
 		<>

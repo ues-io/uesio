@@ -46,7 +46,7 @@ definition:
               rowactions:
                 - text: Edit
                   signals:
-                    - signal: route/NAVIGATE
+                    - signal: route/NAVIGATE_TO_ASSIGNMENT
                       collection: uesio/crm.account
                       viewtype: detail
                       recordid: ${uesio/core.id}

@@ -18,6 +18,7 @@ type CustomSelectProps<T> = {
 	menuVariant?: metadata.MetadataKey
 	placeholder?: string
 	isMulti?: boolean
+	id?: string
 }
 
 const StyleDefaults = Object.freeze({
@@ -45,6 +46,7 @@ const CustomSelect: definition.UtilityComponent<CustomSelectProps<unknown>> = (
 		context,
 		menuVariant,
 		isMulti,
+		id,
 	} = props
 
 	const classes = styles.useUtilityStyleTokens(
@@ -88,6 +90,7 @@ const CustomSelect: definition.UtilityComponent<CustomSelectProps<unknown>> = (
 			context={context}
 			variant={menuVariant}
 			closeOnSelect={!isMulti}
+			id={id}
 		>
 			<div className={classes.root}>
 				<div className={classes.input}>

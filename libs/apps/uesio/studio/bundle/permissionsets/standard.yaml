@@ -150,7 +150,7 @@ routes:
   uesio/studio.invoice: true
   uesio/studio.userpayments: true
   uesio/studio.paymentsuccess: true
-files:
+files: {}
 collections:
   uesio/studio.allmetadata: true
   uesio/studio.authsource: true
@@ -176,6 +176,7 @@ collections:
   uesio/studio.permissionset: true
   uesio/studio.profile: true
   uesio/studio.route: true
+  uesio/studio.routeassignment: true
   uesio/studio.secret: true
   uesio/studio.selectlist: true
   uesio/studio.sitedomain: true

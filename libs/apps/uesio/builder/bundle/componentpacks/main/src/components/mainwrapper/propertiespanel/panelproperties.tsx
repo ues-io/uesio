@@ -1,9 +1,9 @@
-import { definition, context } from "@uesio/ui"
+import { definition } from "@uesio/ui"
 import PropertiesForm from "../../../helpers/propertiesform"
-import { useSelectedPath, getComponentDef } from "../../../api/stateapi"
-import { get } from "../../../api/defapi"
+import { getComponentDef, useSelectedPath } from "../../../api/stateapi"
+import { get, useDefinition } from "../../../api/defapi"
 import { ComponentProperty } from "../../../properties/componentproperty"
-const panelComponentTypeProp = "uesio.type"
+export const panelComponentTypeProp = "uesio.type"
 const defaultPanelComponentType = "uesio/io.dialog"
 
 const panelProperties = [
@@ -16,27 +16,23 @@ const panelProperties = [
 	},
 ] as ComponentProperty[]
 
-const getPanelComponentProperties = (
-	context: context.Context,
-	componentType: string
-) => getComponentDef(context, componentType)?.properties || []
-
 const PanelProperties: definition.UtilityComponent = (props) => {
 	const { context } = props
-	const path = useSelectedPath(context)
-	const properties = panelProperties.concat(
-		getPanelComponentProperties(
-			context,
-			get(context, path.addLocal(panelComponentTypeProp)) as string
-		)
+	const path = useSelectedPath(context).trimToSize(2)
+	// force rerender if definition changes - otherwise, properties won't update
+	useDefinition(path)
+	const componentDef = getComponentDef(
+		context,
+		get(context, path.addLocal(panelComponentTypeProp)) as string
 	)
 	return (
 		<PropertiesForm
-			title={"Panel Properties"}
-			id={path.combine()}
 			context={context}
-			properties={properties}
 			path={path}
+			id={path.combine()}
+			title={"Panel Properties"}
+			properties={panelProperties.concat(componentDef?.properties || [])}
+			sections={componentDef?.sections}
 		/>
 	)
 }

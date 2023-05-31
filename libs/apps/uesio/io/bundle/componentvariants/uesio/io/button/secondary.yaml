@@ -17,6 +17,8 @@ definition:
       - font-medium
       - uppercase
       - tracking-wide
+      - disabled:opacity-50
+      - disabled:hover:shadow-none
     icon:
       - text-inherit
 public: true

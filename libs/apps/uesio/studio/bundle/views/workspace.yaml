@@ -11,11 +11,6 @@ definition:
           fields:
             uesio/studio.color:
             uesio/studio.icon:
-        uesio/studio.homeroute:
-        uesio/studio.loginroute:
-        uesio/studio.publicprofile:
-        uesio/studio.defaulttheme:
-        uesio/studio.favicon:
       conditions:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
@@ -73,85 +68,45 @@ definition:
                                   - uesio/io.group:
                                       components:
                                         - uesio/io.button:
-                                            text: Edit
+                                            text: Configuration
                                             uesio.variant: uesio/io.secondary
                                             signals:
-                                              - signal: panel/TOGGLE
-                                                panel: editWorkspace
+                                              - signal: "route/NAVIGATE"
+                                                path: app/$Param{app}/workspace/$Param{workspacename}/configuration
+                                        - uesio/io.button:
+                                            uesio.variant: uesio/io.secondary
+                                            text: Package New Version
+                                            signals:
+                                              - signal: notification/ADD
+                                                uesio.id: newversion
+                                                text: We are creating your new bundle
+                                                details: it may take a while, please wait until this notification disappears.
+                                                severity: info
+                                              - signal: context/SET
+                                                type: WORKSPACE
+                                                name: $Param{workspacename}
+                                                app: $Param{app}
+                                              - signal: "bot/CALL"
+                                                stepId: createBundle
+                                                onerror:
+                                                  signals:
+                                                    - signal: notification/REMOVE
+                                                      uesio.id: newversion
+                                                bot: "uesio/studio.createbundle"
+                                              - signal: context/CLEAR
+                                                type: WORKSPACE
+                                              - signal: notification/ADD
+                                                uesio.id: newversion
+                                                text: Bundle successfully created!
+                                                severity: info
+                                              - signal: "route/NAVIGATE"
+                                                path: "app/$Param{app}"
                                         - uesio/io.button:
                                             text: Delete
                                             uesio.variant: uesio/io.secondary
                                             signals:
                                               - signal: panel/TOGGLE
                                                 panel: deleteWorkspace
-                            - uesio/io.box:
-                                uesio.variant: uesio/io.section
-                                components:
-                                  - uesio/io.grid:
-                                      uesio.variant: uesio/io.four_columns
-                                      items:
-                                        - uesio/builder.metadatafield:
-                                            fieldId: uesio/studio.homeroute
-                                            metadataType: "ROUTE"
-                                            label: "Home Route"
-                                        - uesio/builder.metadatafield:
-                                            fieldId: uesio/studio.loginroute
-                                            metadataType: "ROUTE"
-                                            label: "Login Route"
-                                        - uesio/builder.metadatafield:
-                                            fieldId: uesio/studio.publicprofile
-                                            metadataType: "PROFILE"
-                                            label: "Public Profile"
-                                        - uesio/builder.metadatafield:
-                                            fieldId: uesio/studio.defaulttheme
-                                            metadataType: "THEME"
-                                            label: "Default Theme"
-                                        - uesio/builder.metadatafield:
-                                            fieldId: uesio/studio.favicon
-                                            metadataType: "FILE"
-                                            label: "Favicon"
-                            - uesio/io.box:
-                                uesio.variant: uesio/io.section
-                                components:
-                                  - uesio/io.titlebar:
-                                      uesio.variant: uesio/io.section
-                                      actions:
-                                        - uesio/io.group:
-                                            components:
-                                              - uesio/io.button:
-                                                  uesio.variant: uesio/io.secondary
-                                                  text: Configuration
-                                                  signals:
-                                                    - signal: "route/NAVIGATE"
-                                                      path: app/$Param{app}/workspace/$Param{workspacename}/configuration
-                                              - uesio/io.button:
-                                                  uesio.variant: uesio/io.secondary
-                                                  text: Package New Version
-                                                  signals:
-                                                    - signal: notification/ADD
-                                                      uesio.id: newversion
-                                                      text: We are creating your new bundle
-                                                      details: it may take a while, please wait until this notification disappears.
-                                                      severity: info
-                                                    - signal: context/SET
-                                                      type: WORKSPACE
-                                                      name: $Param{workspacename}
-                                                      app: $Param{app}
-                                                    - signal: "bot/CALL"
-                                                      stepId: createBundle
-                                                      onerror:
-                                                        signals:
-                                                          - signal: notification/REMOVE
-                                                            uesio.id: newversion
-                                                      bot: "uesio/studio.createbundle"
-                                                    - signal: context/CLEAR
-                                                      type: WORKSPACE
-                                                    - signal: notification/ADD
-                                                      uesio.id: newversion
-                                                      text: Bundle successfully created!
-                                                      severity: info
-                                                    - signal: "route/NAVIGATE"
-                                                      path: "app/$Param{app}"
                             - uesio/io.box:
                                 uesio.variant: uesio/io.section
                                 components:
@@ -210,59 +165,3 @@ definition:
             signals:
               - signal: panel/TOGGLE
                 panel: deleteWorkspace
-    editWorkspace:
-      uesio.type: uesio/io.dialog
-      uesio.id: editWorkspace
-      title: Edit Workspace
-      width: 400px
-      height: 560px
-      components:
-        - uesio/io.list:
-            uesio.id: editWorkspaceList
-            wire: workspaces
-            mode: EDIT
-            uesio.context:
-              workspace:
-                name: $Param{workspacename}
-                app: $Param{app}
-            components:
-              - uesio/io.field:
-                  fieldId: uesio/studio.name
-              - uesio/builder.metadatafield:
-                  fieldId: uesio/studio.homeroute
-                  metadataType: "ROUTE"
-                  label: "Home Route"
-              - uesio/builder.metadatafield:
-                  fieldId: uesio/studio.loginroute
-                  metadataType: "ROUTE"
-                  label: "Login Route"
-              - uesio/builder.metadatafield:
-                  fieldId: uesio/studio.publicprofile
-                  metadataType: "PROFILE"
-                  label: "Public Profile"
-              - uesio/builder.metadatafield:
-                  fieldId: uesio/studio.defaulttheme
-                  metadataType: "THEME"
-                  label: "Default Theme"
-              - uesio/builder.metadatafield:
-                  fieldId: uesio/studio.favicon
-                  metadataType: "FILE"
-                  label: "Favicon"
-      actions:
-        - uesio/io.button:
-            uesio.variant: uesio/io.primary
-            text: "Save"
-            signals:
-              - signal: wire/SAVE
-                wires:
-                  - workspaces
-              - signal: "panel/TOGGLE"
-                panel: "editWorkspace"
-        - uesio/io.button:
-            uesio.variant: uesio/io.secondary
-            text: "Cancel"
-            signals:
-              - signal: wire/CANCEL
-                wire: workspaces
-              - signal: "panel/TOGGLE"
-                panel: "editWorkspace"

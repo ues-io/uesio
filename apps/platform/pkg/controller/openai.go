@@ -5,16 +5,64 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
+	"os"
+	"strings"
+
+	"github.com/thecloudmasters/uesio/pkg/cache"
+
 	openai "github.com/sashabaranov/go-openai"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/featureflagstore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
-	"net/http"
-	"os"
+	"github.com/twmb/murmur3"
 )
 
 var client *openai.Client
+
+var sampleCollectionFieldsSuggestedResult = `[
+  {
+    "type": "SERIAL",
+    "label": "ID"
+  },
+  {
+    "type": "VARCHAR(50)",
+    "label": "Name"
+  },
+  {
+    "type": "INTEGER",
+    "label": "Quantity"
+  },
+  {
+    "type": "DECIMAL(10,2)",
+    "label": "Price"
+  },
+  {
+    "type": "DATE",
+    "label": "Date Added"
+  },
+  {
+    "type": "VARCHAR(50)",
+    "label": "Supplier"
+  },
+  {
+    "type": "VARCHAR(50)",
+    "label": "Category"
+  },
+  {
+    "type": "VARCHAR(50)",
+    "label": "Location"
+  },
+  {
+    "type": "BOOLEAN",
+    "label": "Availability"
+  },
+  {
+    "type": "TEXT",
+    "label": "Description"
+  }
+]`
 
 func init() {
 	token := os.Getenv("OPENAI_API_KEY")
@@ -28,11 +76,38 @@ type AutocompleteRequest struct {
 	Model      string `json:"model"`
 	Format     string `json:"format"`
 	MaxResults int    `json:"maxResults"`
+	UseCache   bool   `json:"useCache"`
+}
+
+func (r *AutocompleteRequest) hashCode() uint64 {
+	hasher := murmur3.New64()
+	_, err := hasher.Write([]byte(fmt.Sprintf("%s-%s-%s-%d", r.Input, r.Model, r.Format, r.MaxResults)))
+	if err != nil {
+		return 0
+	}
+	return hasher.Sum64()
+}
+
+func (r *AutocompleteRequest) GetRedisKey() string {
+	return fmt.Sprintf("openai-request:%d", r.hashCode())
 }
 
 type AutocompleteResponse struct {
 	Choices []string `json:"choices,omitempty"`
 	Error   string   `json:"error,omitempty"`
+}
+
+func getCachedResponse(req *AutocompleteRequest) (*AutocompleteResponse, error) {
+	var response AutocompleteResponse
+	err := cache.Get(req.GetRedisKey(), &response)
+	if err != nil {
+		return nil, err
+	}
+	return &response, nil
+}
+
+func cacheResponse(req *AutocompleteRequest, response *AutocompleteResponse) error {
+	return cache.Set(req.GetRedisKey(), response)
 }
 
 func AutocompleteHandler(w http.ResponseWriter, r *http.Request) {
@@ -59,30 +134,34 @@ func AutocompleteHandler(w http.ResponseWriter, r *http.Request) {
 
 	err = flags.Loop(func(item meta.Item, index string) error {
 		featureFlag := item.(*meta.FeatureFlag)
-		if featureFlag.GetNamespace() == "uesio/studio" && featureFlag.Name == "use_ai_signals" && featureFlag.Value == true {
+		if featureFlag.GetNamespace() == "uesio/studio" && featureFlag.Name == "use_ai_signals" && featureFlag.Value {
 			hasUseAiFlag = true
 		}
 		return nil
 	})
-	if err != nil || hasUseAiFlag == false {
+	if err != nil || !hasUseAiFlag {
 		http.Error(w, "You do not have permission to use this feature", http.StatusForbidden)
 		return
 	}
 
-	// Invoke OpenAI
-	choices, err := Autocomplete(&req)
-
-	// Static input for testing
-	//choices := []string{
-	//	`Here's an example of a JavaScript function that computes the nth Fibonacci number:function fibonacci(n) {  if (n === 0 || n === 1) {    return n;  } else {    return fibonacci(n - 1) + fibonacci(n - 2);  }}console.log(fibonacci(7)); // Output: 13This function takes a single argument, n, which represents the position of the desired Fibonacci number in the sequence. It uses recursion to compute the value of the nth Fibonacci number by summing the values of the two preceding numbers in the sequence. The base case of the recursion is when n is 0 or 1, in which case the function simply returns n.In the example above, the function is called with an argument of 7, which corresponds to the 8th Fibonacci number in the sequence (since the sequence starts at 0). The function returns the value 13, which is indeed the 8th Fibonacci number.`,
-	//}
-
-	autocompleteResponse := &AutocompleteResponse{}
-
-	if err != nil {
-		autocompleteResponse.Error = err.Error()
-	} else {
-		autocompleteResponse.Choices = choices
+	var autocompleteResponse *AutocompleteResponse
+	if req.UseCache {
+		// Check if we already have this response in cache
+		autocompleteResponse, err = getCachedResponse(&req)
+	}
+	if autocompleteResponse == nil || err != nil {
+		// Invoke OpenAI
+		autocompleteResponse = &AutocompleteResponse{}
+		choices, err := Autocomplete(&req)
+		if err != nil {
+			autocompleteResponse.Error = err.Error()
+		} else {
+			autocompleteResponse.Choices = choices
+			if req.UseCache {
+				// Cache our response
+				cacheResponse(&req, autocompleteResponse)
+			}
+		}
 	}
 
 	file.RespondJSON(w, r, autocompleteResponse)
@@ -91,6 +170,14 @@ func AutocompleteHandler(w http.ResponseWriter, r *http.Request) {
 func Autocomplete(request *AutocompleteRequest) ([]string, error) {
 
 	if client == nil {
+		// Hack to facilitate local development, where a dev might not have the API key
+		if strings.HasPrefix(request.Input, "I am creating a new PostgreSQL database table") {
+			// Return a canned response
+			return []string{
+				sampleCollectionFieldsSuggestedResult,
+			}, nil
+		}
+
 		return nil, errors.New("api token not configured, autocomplete service unavailable")
 	}
 

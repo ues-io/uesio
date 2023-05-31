@@ -34,6 +34,33 @@ const signals: SignalBandDefinition = {
 					name: "details",
 					label: "Details",
 				},
+				{
+					type: "SELECT",
+					name: "duration",
+					label: "Duration",
+					blankOptionLabel: "Select to Add (s)",
+					options: [1, 2, 3, 5, 8, 10, 30].map((v) => ({
+						label: `${v}`,
+						value: `${v}`,
+					})),
+					onChange: [
+						{
+							updates: [
+								{
+									field: "duration",
+								},
+							],
+							conditions: [
+								{
+									field: "duration",
+									operator: "EQ",
+									value: "",
+									type: "fieldValue",
+								},
+							],
+						},
+					],
+				},
 			],
 		},
 		[`${BAND}/REMOVE`]: {

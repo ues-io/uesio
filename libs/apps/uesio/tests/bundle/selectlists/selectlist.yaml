@@ -1,0 +1,13 @@
+name: selectlist
+options:
+  - label: One
+    value: one
+  - label: Two
+    value: two
+  - label: Three
+    value: three
+  - label: Four
+    value: four
+  - label: Five
+    value: five
+public: true
