@@ -157,6 +157,7 @@ const Route: UtilityComponent = (props) => {
 			)}
 			<Progress isAnimating={!!route.isLoading} context={props.context} />
 			<div
+				id="notificationsArea"
 				style={{
 					position: "fixed",
 					right: "2em",
