@@ -19,7 +19,7 @@ definition:
       collection: uesio/studio.allmetadata
       conditions:
         - field: uesio/studio.type
-          value: themes
+          value: recentItems
     newtheme:
       collection: uesio/studio.theme
       fields:

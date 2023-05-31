@@ -35,7 +35,13 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		return errors.New("The first condition must be on the type field")
 	}
 
-	group, err := meta.GetBundleableGroupFromType(typeCondition.Value.(string))
+	typeConditionValue := typeCondition.Value.(string)
+
+	// if typeConditionValue == "recentItems" {
+	// 	return connection.LoadMany(*adapt.LoadManyOp{{}}, session)
+	// }
+
+	group, err := meta.GetBundleableGroupFromType(typeConditionValue)
 	if err != nil {
 		return errors.New("Invalid Metadata Type provided for type condition")
 	}

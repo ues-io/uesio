@@ -28,6 +28,11 @@ type LoadOp struct {
 	DebugQueryString   string                 `json:"debugQueryString"`
 }
 
+type LoadManyOp struct {
+	LoadOp
+	CollectionNames []string `json:"collections"`
+}
+
 type LoadOpWrapper LoadOp
 
 func (op *LoadOp) GetBytes() ([]byte, error) {
