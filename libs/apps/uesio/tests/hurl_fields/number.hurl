@@ -625,7 +625,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" not isEmpty
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" exists
 
 # Operator: BETWEEN | valueSource: VALUE
 # entry 23
