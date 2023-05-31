@@ -32,7 +32,7 @@ uesio work -n truncatetests
 echo "Deploying tests app to Studio truncatetests workspace..."
 uesio deploy
 echo "Upserting seed data into truncatetests workspace..."
-uesio upsert -f seed_data/animals_lite.csv -s seed_data/animals_import.spec.json
+uesio upsert -f seed_data/wire_conditions.csv -s seed_data/wire_conditions_import.spec.json
 
 echo "Successfully upserted seed data. Running tests..."
 
