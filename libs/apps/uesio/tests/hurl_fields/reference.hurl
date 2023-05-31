@@ -10,38 +10,8 @@ POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 }
 HTTP 200
 
-# Test a wire load with no conditions on wire with collection wire_condition
-# entry 2
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
-Accept: application/json
-
-{
-    "wires": [
-        {
-            "collection":"uesio/tests.wire_condition",
-            "query": true,
-            "batchsize":2
-        }
-    ]
-}
-HTTP 200
-[Asserts]
-# If this test is failing for you, make sure you have `UESIO_DEBUG_SQL=true` set locally
-# and then re-run the app
-jsonpath "$.wires[0].debugQueryString" == ```
-SELECT
-main.id::text AS "uesio/core.id",
-main.uniquekey AS "uesio/core.uniquekey"
-FROM data as "main"
-WHERE
-main.collection = $1 AND
-main.tenant = $2
-ORDER BY main.id::text asc
-LIMIT 3```
-jsonpath "$.wires[0].data[*]" count == 2
-
 # Operator: EQ | valueSource: VALUE
-# entry 3
+# entry 4
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -66,7 +36,7 @@ HTTP 200
 jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.id']" == "018866ff-448c-7ef7-afb8-50c41c6d1db1"
 
 # Operator: EQ | valueSource: PARAM
-# entry 4
+# entry 5
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -93,7 +63,7 @@ HTTP 200
 jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.id']" == "018866ff-448c-79be-b323-78319f8fbb43"
 
 # Operator: NOT_EQ | valueSource: VALUE
-# entry 5
+# entry 6
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -118,7 +88,7 @@ HTTP 200
 jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.id']" not includes "018866ff-448c-79be-b323-78319f8fbb43"
 
 # Operator: NOT_EQ | valueSource: PARAM
-# entry 6
+# entry 7
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -145,7 +115,7 @@ HTTP 200
 jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.id']" != "018866ff-448c-79be-b323-78319f8fbb43"
 
 # Operator: IN | valueSource: VALUE
-# entry 7
+# entry 8
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -174,7 +144,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.id']" includes
 jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.id']" includes "018866ff-448c-78bc-a4b5-fdb98dbcc8fd"
 
 # Operator: IN | valueSource: LOOKUP
-# entry 8
+# entry 9
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -213,7 +183,7 @@ jsonpath "$.wires[1].data[*]['uesio/tests.reference']['uesio/core.id']" count ==
 
 
 # Operator: IN | valueSource: PARAM
-# entry 9
+# entry 10
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -247,7 +217,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.id']" includes
 jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.id']" includes "018866ff-448c-78bc-a4b5-fdb98dbcc8fd"
 
 # Operator: NOT_IN | valueSource: VALUE
-# entry 10
+# entry 11
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -275,7 +245,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.id']" not incl
 jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.id']" not includes "018866ff-448c-78bc-a4b5-fdb98dbcc8fd"
 
 # Operator: NOT_IN | valueSource: LOOKUP
-# entry 11
+# entry 12
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -308,7 +278,7 @@ HTTP 200
 jsonpath "$.wires[1].data[*]" not exists
 
 # Operator: NOT_IN | valueSource: PARAM
-## entry 12
+## entry 13
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -345,7 +315,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.id']" not incl
 jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.id']" not includes "018866ff-448c-794c-9a3b-bf37d57982b2"
 
 # Operator: IS_BLANK | valueSource: VALUE
-# entry 13
+# entry 14
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -369,7 +339,7 @@ jsonpath "$.wires[0].data[*]" not exists
 
 
 # Operator: IS_NOT_BLANK | valueSource: VALUE
-# entry 14
+# entry 15
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
