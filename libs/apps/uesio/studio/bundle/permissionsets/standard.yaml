@@ -201,5 +201,6 @@ collections:
   uesio/studio.invoice: true
   uesio/studio.invoicelineitem: true
   uesio/studio.payment: true
+  uesio/cms.article: true
 modifyallrecords: false
 viewallrecords: false

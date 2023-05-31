@@ -62,6 +62,28 @@ definition:
         - field: uesio/core.profile
           valueSource: VALUE
           value: uesio/studio.standard
+    articles:
+      batchsize: 4
+      collection: uesio/cms.article
+      fields:
+        uesio/cms.name:
+        uesio/cms.description:
+        uesio/cms.slug:
+        uesio/core.createdat:
+      init:
+        query: false
+      order:
+        - desc: true
+          field: uesio/core.createdat
+  events:
+    onload:
+      - signal: context/SET
+        type: SITE_ADMIN
+        name: prod
+        app: uesio/docs
+      - signal: wire/LOAD
+        wires:
+          - articles
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -212,32 +234,33 @@ definition:
                     items:
                       - uesio/io.griditem:
                           components:
-                            - uesio/io.button:
-                                uesio.variant: uesio/io.secondary
-                                text: Latest Updates & News
-                            - uesio/io.text:
-                                uesio.variant: uesio/io.smallcontent
-                                uesio.styleTokens:
-                                  root:
-                                    - pt-4
-                                text: Coming soon - Updates, News, and feature releases will be here for you to see when they come out.
-                                element: div
+                            - uesio/io.titlebar:
+                                uesio.variant: uesio/io.main
+                                title: Learn ues.io with Recent Documentation
+                                subtitle: Learn the basic concepts of ues.io and how to navigate the uesio/studio.
+                            - uesio/io.list:
+                                wire: articles
+                                mode: READ
+                                components:
+                                  - uesio/io.tile:
+                                      uesio.variant: uesio/io.item
+                                      content:
+                                        - uesio/io.text:
+                                            text: ${uesio/cms.name}
+                                            element: div
+                                        - uesio/io.text:
+                                            text: ${uesio/cms.description}
+                                            uesio.variant: uesio/io.smallcontent
+                                            element: div
+                                      signals:
+                                        - signal: "route/REDIRECT"
+                                          path: "https://docs.$Site{domain}/${uesio/cms.slug}"
                       - uesio/io.griditem:
                           components:
-                            - uesio/io.button:
-                                uesio.variant: uesio/io.secondary
-                                text: Learn ues.io
-                                signals:
-                                  - signal: "route/REDIRECT"
-                                    path: "https://docs.$Site{domain}"
-                            - uesio/io.text:
-                                uesio.variant: uesio/io.smallcontent
-                                uesio.styleTokens:
-                                  root:
-                                    - pt-4
-                                text: Documentation - Learn the basic concepts of ues.io and how to navigate the uesio/studio.
-                                element: div
-
+                            - uesio/io.titlebar:
+                                uesio.variant: uesio/io.main
+                                title: Latest Updates & News
+                                subtitle: Coming soon - Updates, News, and feature releases will be here for you to see when they come out.
   panels:
     newApp:
       uesio.type: uesio/io.dialog

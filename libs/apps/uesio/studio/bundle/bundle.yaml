@@ -10,3 +10,7 @@ dependencies:
     version: "v0.0.1"
   uesio/io:
     version: "v0.0.1"
+  uesio/cms:
+    version: "v0.0.1"
+  uesio/docs:
+    version: "v0.0.1"
