@@ -43,7 +43,7 @@ definition:
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
-                    title: Configuration
+                    title: Workspace Settings
                     actions:
                       - uesio/io.button:
                           uesio.variant: uesio/io.secondary
