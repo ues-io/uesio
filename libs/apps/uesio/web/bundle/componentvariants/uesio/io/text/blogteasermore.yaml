@@ -1,0 +1,10 @@
+name: blogteasermore
+label: Blog Teaser More
+definition:
+  uesio.styleTokens:
+    root:
+      - text-base
+      - text-blue-600
+      - font-light
+      - mt-2
+  element: div
