@@ -64,6 +64,7 @@ const useFile = (context: Context, fileId?: string) => {
 			setContent(text)
 		}
 		fetchData()
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 	return content
 }

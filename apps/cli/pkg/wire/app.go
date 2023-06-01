@@ -103,8 +103,8 @@ func GetApp() (*App, error) {
 			Fields: appRequestFields,
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field: "uesio/core.uniquekey",
-					Value: app,
+					Field:    "uesio/core.uniquekey",
+					RawValue: app,
 				},
 			},
 		},

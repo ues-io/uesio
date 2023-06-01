@@ -10,6 +10,7 @@ import (
 	"github.com/thecloudmasters/cli/pkg/auth"
 	"github.com/thecloudmasters/cli/pkg/call"
 	"github.com/thecloudmasters/cli/pkg/config"
+	"github.com/thecloudmasters/cli/pkg/config/siteadmin"
 	"github.com/thecloudmasters/cli/pkg/config/ws"
 	"github.com/thecloudmasters/cli/pkg/zip"
 	"github.com/thecloudmasters/uesio/pkg/bulk"
@@ -22,8 +23,12 @@ type UpsertOptions struct {
 	Collection string
 }
 
-func createJob(app, workspace, sessid string, spec *meta.JobSpecRequest) (*bulk.JobResponse, error) {
-	url := fmt.Sprintf("workspace/%s/%s/bulk/job", app, workspace)
+func getUrlPrefix(tenanttype, app, tenant string) string {
+	return fmt.Sprintf("%s/%s/%s", tenanttype, app, tenant)
+}
+
+func createJob(prefix, sessid string, spec *meta.JobSpecRequest) (*bulk.JobResponse, error) {
+	url := fmt.Sprintf("%s/bulk/job", prefix)
 	jobResponse := &bulk.JobResponse{}
 
 	err := call.PostJSON(url, sessid, spec, jobResponse)
@@ -45,7 +50,7 @@ func getImportPayload(jobType, dataFile string) (io.Reader, error) {
 	return nil, errors.New("Invalid Job Type: " + jobType)
 }
 
-func runBatch(app, workspace, sessid, dataFile, jobID string, spec *meta.JobSpecRequest) (*bulk.BatchResponse, error) {
+func runBatch(prefix, sessid, dataFile, jobID string, spec *meta.JobSpecRequest) (*bulk.BatchResponse, error) {
 	payload, err := getImportPayload(spec.JobType, dataFile)
 	if err != nil {
 		return nil, err
@@ -53,7 +58,7 @@ func runBatch(app, workspace, sessid, dataFile, jobID string, spec *meta.JobSpec
 
 	fmt.Println("Upserting...", dataFile)
 
-	url := fmt.Sprintf("workspace/%s/%s/bulk/job/%s/batch", app, workspace, jobID)
+	url := fmt.Sprintf("%s/bulk/job/%s/batch", prefix, jobID)
 
 	resp, err := call.Request("POST", url, payload, sessid)
 	if err != nil {
@@ -107,17 +112,7 @@ func getSpec(options *UpsertOptions) (*meta.JobSpecRequest, error) {
 	return spec, nil
 }
 
-func Upsert(options *UpsertOptions) error {
-
-	if options == nil {
-		options = &UpsertOptions{}
-	}
-
-	if options.DataFile == "" {
-		return errors.New("No Data File Specified")
-	}
-
-	fmt.Println("Running Upsert Command")
+func UpsertToWorkspace(options *UpsertOptions) error {
 
 	_, err := auth.Login()
 	if err != nil {
@@ -138,6 +133,45 @@ func Upsert(options *UpsertOptions) error {
 		return errors.New("No active workspace is set. Use \"uesio work\" to set one.")
 	}
 
+	return Upsert(getUrlPrefix("workspace", app, workspace), options)
+}
+
+func UpsertToSite(options *UpsertOptions) error {
+
+	_, err := auth.Login()
+	if err != nil {
+		return err
+	}
+
+	app, err := config.GetApp()
+	if err != nil {
+		return err
+	}
+
+	site, err := siteadmin.GetSiteAdmin()
+	if err != nil {
+		return err
+	}
+
+	if site == "" {
+		return errors.New("No active site is set. Use \"uesio siteadmin\" to set one.")
+	}
+
+	return Upsert(getUrlPrefix("siteadmin", app, site), options)
+}
+
+func Upsert(prefix string, options *UpsertOptions) error {
+
+	if options == nil {
+		options = &UpsertOptions{}
+	}
+
+	if options.DataFile == "" {
+		return errors.New("No Data File Specified")
+	}
+
+	fmt.Println("Running Upsert Command")
+
 	sessid, err := config.GetSessionID()
 	if err != nil {
 		return err
@@ -148,12 +182,12 @@ func Upsert(options *UpsertOptions) error {
 		return err
 	}
 
-	jobResponse, err := createJob(app, workspace, sessid, spec)
+	jobResponse, err := createJob(prefix, sessid, spec)
 	if err != nil {
 		return err
 	}
 
-	batchResponse, err := runBatch(app, workspace, sessid, options.DataFile, jobResponse.ID, spec)
+	batchResponse, err := runBatch(prefix, sessid, options.DataFile, jobResponse.ID, spec)
 	if err != nil {
 		return err
 	}
