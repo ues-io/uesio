@@ -35,7 +35,7 @@ const tests: WireSignalTest[] = [
 						field: "ben/planets.name",
 						valueSource: "VALUE",
 						value: "kepler",
-						inactive: false,
+						inactive: true,
 					},
 				],
 			}),
