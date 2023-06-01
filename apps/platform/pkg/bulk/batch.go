@@ -24,8 +24,9 @@ func NewBatch(body io.ReadCloser, jobID string, session *sess.Session) (*meta.Bu
 		&datasource.PlatformLoadOptions{
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field: adapt.ID_FIELD,
-					Value: jobID,
+					Field:  adapt.ID_FIELD,
+					Value:  jobID,
+					Active: true,
 				},
 			},
 		},

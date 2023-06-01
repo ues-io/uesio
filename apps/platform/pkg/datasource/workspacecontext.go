@@ -52,8 +52,9 @@ func AddWorkspaceContextByKey(workspaceKey string, session *sess.Session, connec
 			Connection: connection,
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field: adapt.UNIQUE_KEY_FIELD,
-					Value: workspaceKey,
+					Field:  adapt.UNIQUE_KEY_FIELD,
+					Value:  workspaceKey,
+					Active: true,
 				},
 			},
 		},
@@ -73,8 +74,9 @@ func AddWorkspaceContextByID(workspaceID string, session *sess.Session, connecti
 			Connection: connection,
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field: adapt.ID_FIELD,
-					Value: workspaceID,
+					Field:  adapt.ID_FIELD,
+					Value:  workspaceID,
+					Active: true,
 				},
 			},
 		},

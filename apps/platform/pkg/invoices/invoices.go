@@ -2,6 +2,9 @@ package invoices
 
 import (
 	"errors"
+	"strings"
+	"time"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -10,8 +13,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 	"github.com/thecloudmasters/uesio/pkg/translate"
-	"strings"
-	"time"
 )
 
 func InvoicingJob() error {
@@ -143,12 +144,14 @@ func CreateInvoice(app *meta.App, connection adapt.Connection, session *sess.Ses
 			Connection: connection,
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field: "uesio/studio.applicensed",
-					Value: app.ID,
+					Field:  "uesio/studio.applicensed",
+					Value:  app.ID,
+					Active: true,
 				},
 				{
-					Field: "uesio/studio.active",
-					Value: true,
+					Field:  "uesio/studio.active",
+					Value:  true,
+					Active: true,
 				},
 			},
 		},
@@ -195,6 +198,7 @@ func CreateInvoice(app *meta.App, connection adapt.Connection, session *sess.Ses
 					Field:    "uesio/studio.license",
 					Operator: "IN",
 					Value:    licenseIDs,
+					Active:   true,
 				},
 			},
 		},
@@ -221,23 +225,27 @@ func CreateInvoice(app *meta.App, connection adapt.Connection, session *sess.Ses
 		&datasource.PlatformLoadOptions{
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field: "uesio/studio.app",
-					Value: app.ID,
+					Field:  "uesio/studio.app",
+					Value:  app.ID,
+					Active: true,
 				},
 				{
 					Field:    "uesio/studio.metadatatype",
 					Operator: "IN",
 					Value:    metadatatypes,
+					Active:   true,
 				},
 				{
 					Field:    "uesio/studio.day",
 					Operator: "GTE",
 					Value:    firstOfMonth.Format("2006-01-02"),
+					Active:   true,
 				},
 				{
 					Field:    "uesio/studio.day",
 					Operator: "LTE",
 					Value:    lastOfMonth.Format("2006-01-02"),
+					Active:   true,
 				},
 			},
 		},

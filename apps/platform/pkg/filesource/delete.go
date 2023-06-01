@@ -16,8 +16,9 @@ func Delete(userFileID string, session *sess.Session) error {
 		&datasource.PlatformLoadOptions{
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field: adapt.ID_FIELD,
-					Value: userFileID,
+					Field:  adapt.ID_FIELD,
+					Value:  userFileID,
+					Active: true,
 				},
 			},
 		},

@@ -208,8 +208,9 @@ func getUser(field, value string, session *sess.Session, connection adapt.Connec
 			},
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field: field,
-					Value: value,
+					Field:  field,
+					Value:  value,
+					Active: true,
 				},
 			},
 		},
@@ -265,12 +266,14 @@ func GetLoginMethod(claims *AuthenticationClaims, authSourceID string, session *
 		&datasource.PlatformLoadOptions{
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field: "uesio/core.auth_source",
-					Value: authSourceID,
+					Field:  "uesio/core.auth_source",
+					Value:  authSourceID,
+					Active: true,
 				},
 				{
-					Field: "uesio/core.federation_id",
-					Value: claims.Subject,
+					Field:  "uesio/core.federation_id",
+					Value:  claims.Subject,
+					Active: true,
 				},
 			},
 		},

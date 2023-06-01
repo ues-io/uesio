@@ -40,6 +40,7 @@ func GetLicenses(namespace string, connection adapt.Connection) (map[string]*met
 				Field:    adapt.UNIQUE_KEY_FIELD,
 				Value:    namespace,
 				Operator: "=",
+				Active:   true,
 			},
 		},
 	}, anonSession)
@@ -67,6 +68,7 @@ func GetLicenses(namespace string, connection adapt.Connection) (map[string]*met
 					Field:    "uesio/studio.applicensed",
 					Value:    app.ID,
 					Operator: "=",
+					Active:   true,
 				},
 			},
 		},

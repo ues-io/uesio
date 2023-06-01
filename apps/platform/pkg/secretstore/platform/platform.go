@@ -17,8 +17,9 @@ func (ss *SecretStore) Get(key string, session *sess.Session) (string, error) {
 		&datasource.PlatformLoadOptions{
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field: adapt.UNIQUE_KEY_FIELD,
-					Value: key,
+					Field:  adapt.UNIQUE_KEY_FIELD,
+					Value:  key,
+					Active: true,
 				},
 			},
 			Fields: []adapt.LoadRequestField{

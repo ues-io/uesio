@@ -113,6 +113,7 @@ func HandleReferencesGroup(
 					Field:    ref.Field.ReferenceGroupMetadata.Field,
 					Operator: "IN",
 					Value:    ids,
+					Active:   true,
 				},
 			},
 			Query: true,

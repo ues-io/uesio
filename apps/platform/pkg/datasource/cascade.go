@@ -106,6 +106,7 @@ func getCascadeDeletes(
 							Field:    referenceGroupMetadata.Field,
 							Value:    ids,
 							Operator: "IN",
+							Active:   true,
 						},
 					},
 					Query: true,

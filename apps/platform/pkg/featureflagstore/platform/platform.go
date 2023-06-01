@@ -26,6 +26,7 @@ func (ffs *FeatureFlagStore) Get(user string, assignments *meta.FeatureFlagAssig
 					Field:    "uesio/core.user",
 					Value:    user,
 					Operator: "=",
+					Active:   true,
 				},
 			},
 		},

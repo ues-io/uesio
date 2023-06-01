@@ -63,6 +63,7 @@ func parseConditionFromQueryValue(paramName string, paramValue string) adapt.Loa
 		ValueSource: "VALUE",
 		Type:        "fieldValue",
 		Operator:    operator,
+		Active:      true,
 	}
 }
 

@@ -52,6 +52,7 @@ func processItems(items []meta.BundleableItem, session *sess.Session, connection
 					Field:    adapt.UNIQUE_KEY_FIELD,
 					Value:    locatorMap.GetIDs(),
 					Operator: "IN",
+					Active:   true,
 				},
 			}}, session.RemoveWorkspaceContext())
 		if err != nil {
@@ -97,8 +98,9 @@ func (b *WorkspaceBundleStore) GetItem(item meta.BundleableItem, version string,
 	return datasource.PlatformLoadOne(item, &datasource.PlatformLoadOptions{
 		Conditions: []adapt.LoadRequestCondition{
 			{
-				Field: adapt.UNIQUE_KEY_FIELD,
-				Value: item.GetDBID(workspace.UniqueKey),
+				Field:  adapt.UNIQUE_KEY_FIELD,
+				Value:  item.GetDBID(workspace.UniqueKey),
+				Active: true,
 			},
 		},
 		Connection: connection,
@@ -137,15 +139,17 @@ func (b *WorkspaceBundleStore) GetAllItems(group meta.BundleableGroup, namespace
 	// Add the workspace id as a condition
 	loadConditions := []adapt.LoadRequestCondition{
 		{
-			Field: "uesio/studio.workspace",
-			Value: session.GetWorkspaceID(),
+			Field:  "uesio/studio.workspace",
+			Value:  session.GetWorkspaceID(),
+			Active: true,
 		},
 	}
 
 	for field, value := range conditions {
 		loadConditions = append(loadConditions, adapt.LoadRequestCondition{
-			Field: field,
-			Value: value,
+			Field:  field,
+			Value:  value,
+			Active: true,
 		})
 	}
 
@@ -192,8 +196,9 @@ func (b *WorkspaceBundleStore) GetAttachmentPaths(item meta.AttachableItem, vers
 		&datasource.PlatformLoadOptions{
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field: "uesio/core.recordid",
-					Value: recordID,
+					Field:  "uesio/core.recordid",
+					Value:  recordID,
+					Active: true,
 				},
 			},
 		},
@@ -265,6 +270,7 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 					Field:    "uesio/studio.workspace",
 					Value:    workspace.ID,
 					Operator: "=",
+					Active:   true,
 				},
 			},
 		},

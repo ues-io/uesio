@@ -47,8 +47,9 @@ func runBundleDependencyAfterSaveBot(request *adapt.SaveOp, connection adapt.Con
 
 				Conditions: []adapt.LoadRequestCondition{
 					{
-						Field: adapt.UNIQUE_KEY_FIELD,
-						Value: pairKey,
+						Field:  adapt.UNIQUE_KEY_FIELD,
+						Value:  pairKey,
+						Active: true,
 					},
 				},
 			},
@@ -73,8 +74,9 @@ func runBundleDependencyAfterSaveBot(request *adapt.SaveOp, connection adapt.Con
 				Connection: connection,
 				Conditions: []adapt.LoadRequestCondition{
 					{
-						Field: adapt.UNIQUE_KEY_FIELD,
-						Value: app,
+						Field:  adapt.UNIQUE_KEY_FIELD,
+						Value:  app,
+						Active: true,
 					},
 				},
 			},

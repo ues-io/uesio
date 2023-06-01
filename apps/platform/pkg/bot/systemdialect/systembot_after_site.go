@@ -73,6 +73,7 @@ func clearHostCacheForSite(request *adapt.SaveOp, connection adapt.Connection, s
 				Field:    "uesio/studio.site",
 				Value:    ids,
 				Operator: "IN",
+				Active:   true,
 			},
 		},
 		Connection: connection,

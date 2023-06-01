@@ -40,8 +40,9 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.
 			},
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field: adapt.UNIQUE_KEY_FIELD,
-					Value: appID,
+					Field:  adapt.UNIQUE_KEY_FIELD,
+					Value:  appID,
+					Active: true,
 				},
 			},
 		},
@@ -71,8 +72,9 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.
 			},
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field: "uesio/studio.app",
-					Value: app.ID,
+					Field:  "uesio/studio.app",
+					Value:  app.ID,
+					Active: true,
 				},
 			},
 		},

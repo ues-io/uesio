@@ -19,12 +19,14 @@ func DownloadAttachment(recordID string, path string, session *sess.Session) (io
 		&datasource.PlatformLoadOptions{
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field: "uesio/core.recordid",
-					Value: recordID,
+					Field:  "uesio/core.recordid",
+					Value:  recordID,
+					Active: true,
 				},
 				{
-					Field: "uesio/core.path",
-					Value: path,
+					Field:  "uesio/core.path",
+					Value:  path,
+					Active: true,
 				},
 			},
 		},
@@ -45,8 +47,9 @@ func Download(userFileID string, session *sess.Session) (io.ReadSeeker, *meta.Us
 		&datasource.PlatformLoadOptions{
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field: adapt.ID_FIELD,
-					Value: userFileID,
+					Field:  adapt.ID_FIELD,
+					Value:  userFileID,
+					Active: true,
 				},
 			},
 		},

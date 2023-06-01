@@ -35,6 +35,7 @@ func cleanBundleFiles(request *adapt.SaveOp, connection adapt.Connection, sessio
 				Field:    "uesio/studio.bundle",
 				Value:    ids,
 				Operator: "IN",
+				Active:   true,
 			},
 		},
 		Connection: connection,

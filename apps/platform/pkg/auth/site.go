@@ -22,12 +22,14 @@ func getDomain(domainType, domain string) (*meta.SiteDomain, error) {
 			},
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field: "uesio/studio.domain",
-					Value: domain,
+					Field:  "uesio/studio.domain",
+					Value:  domain,
+					Active: true,
 				},
 				{
-					Field: "uesio/studio.type",
-					Value: domainType,
+					Field:  "uesio/studio.type",
+					Value:  domainType,
+					Active: true,
 				},
 			},
 		},

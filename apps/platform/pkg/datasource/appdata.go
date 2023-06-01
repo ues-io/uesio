@@ -27,6 +27,7 @@ func GetAppData(namespaces []string) (map[string]NamespaceInfo, error) {
 				Field:    adapt.UNIQUE_KEY_FIELD,
 				Operator: "IN",
 				Value:    namespaces,
+				Active:   true,
 			},
 		},
 		Fields: []adapt.LoadRequestField{

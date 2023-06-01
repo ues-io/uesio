@@ -163,8 +163,9 @@ func querySite(value, field string, connection adapt.Connection) (*meta.Site, er
 			},
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field: field,
-					Value: value,
+					Field:  field,
+					Value:  value,
+					Active: true,
 				},
 			},
 		},

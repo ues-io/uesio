@@ -88,6 +88,7 @@ func GenerateUserAccessTokens(metadata *adapt.MetadataCache, loadOptions *LoadOp
 					Field:    condition.Field,
 					Value:    session.GetUserID(),
 					Operator: "=",
+					Active:   true,
 				})
 			}
 

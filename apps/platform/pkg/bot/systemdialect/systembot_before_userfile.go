@@ -27,6 +27,7 @@ func runUserFileBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection
 					Field:    adapt.ID_FIELD,
 					Value:    userFileIdsBeingDeleted,
 					Operator: "IN",
+					Active:   true,
 				},
 			},
 			Connection: connection,

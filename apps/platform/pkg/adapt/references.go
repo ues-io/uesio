@@ -121,6 +121,7 @@ func LoadLooper(
 				Field:    matchField,
 				Operator: "IN",
 				Value:    ids,
+				Active:   true,
 			},
 		},
 		Query: true,

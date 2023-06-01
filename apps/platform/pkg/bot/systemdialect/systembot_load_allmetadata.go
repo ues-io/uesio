@@ -60,8 +60,9 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 	}
 
 	remainingConditions = append(remainingConditions, adapt.LoadRequestCondition{
-		Field: "uesio/studio.workspace",
-		Value: inContextSession.GetWorkspaceID(),
+		Field:  "uesio/studio.workspace",
+		Value:  inContextSession.GetWorkspaceID(),
+		Active: true,
 	})
 
 	metadata, err := datasource.Load([]*adapt.LoadOp{{

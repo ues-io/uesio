@@ -1,6 +1,7 @@
 package adapt
 
 import (
+	"encoding/json"
 	"errors"
 	"strings"
 
@@ -22,6 +23,22 @@ func unmarshalConditions(node *yaml.Node) ([]LoadRequestCondition, error) {
 
 	return conditions, nil
 }
+
+func (lrc *LoadRequestCondition) UnmarshalYAML(node *yaml.Node) error {
+	err := node.Decode((*LoadRequestConditionWrapper)(lrc))
+	if err != nil {
+		return err
+	}
+	lrc.Active = meta.GetNodeValueAsBool(node, "active", true)
+	return nil
+}
+
+func (lrc *LoadRequestCondition) UnmarshalJSON(data []byte) error {
+	lrc.Active = true
+	return json.Unmarshal(data, (*LoadRequestConditionWrapper)(lrc))
+}
+
+type LoadRequestConditionWrapper LoadRequestCondition
 
 type LoadRequestCondition struct {
 	ID             string                 `json:"id,omitempty" bot:"id" yaml:"id"`
@@ -46,6 +63,7 @@ type LoadRequestCondition struct {
 	End            interface{}            `json:"end,omitempty" bot:"end" yaml:"end"`
 	InclusiveStart bool                   `json:"inclusiveStart,omitempty" bot:"inclusiveStart" yaml:"inclusiveStart"`
 	InclusiveEnd   bool                   `json:"inclusiveEnd,omitempty" bot:"inclusiveEnd" yaml:"inclusiveEnd"`
+	Active         bool                   `json:"active" bot:"active" yaml:"active"`
 }
 
 func GetStringSlice(input interface{}) ([]string, error) {

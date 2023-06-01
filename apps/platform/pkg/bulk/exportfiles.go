@@ -23,8 +23,9 @@ func exportFiles(create retrieve.WriterCreator, spec *meta.JobSpec, session *ses
 		&datasource.PlatformLoadOptions{
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field: "uesio/core.collectionid",
-					Value: spec.Collection,
+					Field:  "uesio/core.collectionid",
+					Value:  spec.Collection,
+					Active: true,
 				},
 			},
 		},

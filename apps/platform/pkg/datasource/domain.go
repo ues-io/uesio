@@ -23,8 +23,9 @@ func QueryDomainFromSite(siteID string) (*meta.SiteDomain, error) {
 			},
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field: "uesio/studio.site",
-					Value: siteID,
+					Field:  "uesio/studio.site",
+					Value:  siteID,
+					Active: true,
 				},
 			},
 			BatchSize: 1,
