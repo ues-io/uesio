@@ -36,6 +36,8 @@ definition:
                     uesio.context:
                       wire: workspaces
                     view: uesio/studio.workspacenav
+                    params:
+                      selected: settings
           - uesio/io.griditem:
               uesio.variant: uesio/studio.content
               components:
