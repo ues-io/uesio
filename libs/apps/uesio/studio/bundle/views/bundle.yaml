@@ -42,6 +42,7 @@ definition:
         uesio/studio.minor:
         uesio/studio.patch:
         uesio/studio.description:
+        uesio/studio.workspace:
         uesio/core.createdby:
         uesio/core.createdat:
         uesio/studio.app:
@@ -79,46 +80,13 @@ definition:
           - uesio/io.griditem:
               uesio.variant: uesio/studio.leftbar
               components:
-                - uesio/io.titlebar:
-                    uesio.variant: uesio/io.nav
-                    title: Workspaces
-                - uesio/io.list:
-                    uesio.id: workspaceslist
-                    wire: workspaces
-                    components:
-                      - uesio/io.tile:
-                          uesio.variant: uesio/io.nav
-                          signals:
-                            - signal: "route/NAVIGATE"
-                              path: "app/$Param{app}/workspace/${uesio/studio.name}"
-                          content:
-                            - uesio/io.text:
-                                text: ${uesio/studio.name}
-                          avatar:
-                            - uesio/io.text:
-                                uesio.variant: uesio/io.icon
-                                color: "#ccc"
-                                text: handyman
-                - uesio/io.titlebar:
-                    uesio.variant: uesio/io.nav
-                    title: Sites
-                - uesio/io.list:
-                    uesio.id: siteslist
-                    wire: sites
-                    components:
-                      - uesio/io.tile:
-                          uesio.variant: uesio/io.nav
-                          signals:
-                            - signal: "route/NAVIGATE"
-                              path: "app/$Param{app}/site/${uesio/studio.name}"
-                          content:
-                            - uesio/io.text:
-                                text: ${uesio/studio.name}
-                          avatar:
-                            - uesio/io.text:
-                                uesio.variant: uesio/io.icon
-                                color: "#ccc"
-                                text: public
+                - uesio/core.view:
+                    uesio.id: appnavview
+                    view: uesio/studio.appnav
+                    uesio.context:
+                      wire: apps
+                    params:
+                      app: $Param{app}
           - uesio/io.griditem:
               uesio.variant: uesio/studio.content
               components:
@@ -153,6 +121,8 @@ definition:
                                       fieldId: uesio/studio.patch
                                   - uesio/io.field:
                                       fieldId: uesio/studio.description
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.workspace
                                   - uesio/io.field:
                                       fieldId: uesio/core.createdby
                                       user:
