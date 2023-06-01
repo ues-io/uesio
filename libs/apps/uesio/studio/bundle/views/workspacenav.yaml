@@ -6,81 +6,87 @@ definition:
   components:
     - uesio/io.list:
         components:
-          - uesio/io.titlebar:
-              uesio.variant: uesio/io.nav
-              title: Workspace Admin
-          - uesio/io.tile:
-              uesio.variant: uesio/io.nav
-              uesio.id: home
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: home
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}
-              content:
-                - uesio/io.text:
-                    text: Home
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: home
-          - uesio/io.tile:
-              uesio.variant: uesio/io.nav
-              uesio.id: settings
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: settings
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/configuration
-              content:
-                - uesio/io.text:
-                    text: Settings
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: settings
-          - uesio/io.tile:
-              uesio.variant: uesio/io.nav
-              uesio.id: installed
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: installed
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/installed
-              content:
-                - uesio/io.text:
-                    text: Installed Bundles
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: backpack
-          - uesio/io.tile:
-              uesio.variant: uesio/io.nav
-              uesio.id: packaging
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: packaging
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/packaging
-              content:
-                - uesio/io.text:
-                    text: Packaging
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: package
+          - uesio/io.box:
+              uesio.styleTokens:
+                root:
+                  - pb-3
+                  - bg-slate-100
+              components:
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.nav
+                    title: Workspace Admin
+                - uesio/io.tile:
+                    uesio.variant: uesio/io.nav
+                    uesio.id: home
+                    uesio.classes:
+                      selected:
+                        - type: paramValue
+                          param: selected
+                          value: home
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}
+                    content:
+                      - uesio/io.text:
+                          text: Home
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: home
+                - uesio/io.tile:
+                    uesio.variant: uesio/io.nav
+                    uesio.id: settings
+                    uesio.classes:
+                      selected:
+                        - type: paramValue
+                          param: selected
+                          value: settings
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/configuration
+                    content:
+                      - uesio/io.text:
+                          text: Settings
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: settings
+                - uesio/io.tile:
+                    uesio.variant: uesio/io.nav
+                    uesio.id: installed
+                    uesio.classes:
+                      selected:
+                        - type: paramValue
+                          param: selected
+                          value: installed
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/installed
+                    content:
+                      - uesio/io.text:
+                          text: Installed Bundles
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: backpack
+                - uesio/io.tile:
+                    uesio.variant: uesio/io.nav
+                    uesio.id: packaging
+                    uesio.classes:
+                      selected:
+                        - type: paramValue
+                          param: selected
+                          value: packaging
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/packaging
+                    content:
+                      - uesio/io.text:
+                          text: Packaging
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: package
           - uesio/io.titlebar:
               uesio.variant: uesio/io.nav
               title: Data Structure & Content
