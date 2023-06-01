@@ -37,7 +37,7 @@ uesio upsert -f seed_data/wire_conditions.csv -s seed_data/wire_conditions_impor
 echo "Successfully upserted seed data. Running tests..."
 
 # Run specs
-hurl -k --variable host=studio.uesio-dev.com --variable port=3000 --test hurl_specs/*.hurl
+hurl --very-verbose -k --variable host=studio.uesio-dev.com --variable port=3000 --test hurl_specs/*.hurl
 # Run field condition tests
 hurl -k --variable host=studio.uesio-dev.com --variable port=3000 --test hurl_fields/*.hurl
 

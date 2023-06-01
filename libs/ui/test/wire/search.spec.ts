@@ -38,7 +38,7 @@ const tests: WireSignalTest[] = [
 					{
 						type: "SEARCH",
 						value: SEARCH_VALUE,
-						active: true,
+						inactive: false,
 						id: SEARCH_CONDITION_ID,
 						fields: ["ben/planets.name"],
 					},
