@@ -85,6 +85,14 @@ const getDefaultCondition = (
 						field: fieldMetadata.getId(),
 				  }
 		}
+		case "TEXT":
+		case "LONGTEXT":
+		case "EMAIL":
+			return {
+				id: path,
+				operator: "CONTAINS",
+				field: fieldMetadata.getId(),
+			}
 		default:
 			return {
 				id: path,

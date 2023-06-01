@@ -48,10 +48,10 @@ properties:
     type: SELECT
     label: Label Position
     options:
-      - label: None
-        value: none
       - label: Top
         value: top
+      - label: None
+        value: none
       - label: Left
         value: left
   - name: placeholder
