@@ -11,6 +11,8 @@ definition:
                 root:
                   - pb-3
                   - bg-slate-100
+                  - m-2
+                  - rounded-lg
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.nav
