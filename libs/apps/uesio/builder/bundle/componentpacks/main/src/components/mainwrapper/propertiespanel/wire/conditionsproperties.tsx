@@ -619,13 +619,12 @@ const ConditionsProperties: definition.UC = (props) => {
 		]
 	}
 
-	const defaultConditionDef = { inactive: false }
+	const defaultConditionDef = {}
 
 	const defaultConditionGroupDef = {
 		type: "GROUP",
 		conjunction: "AND",
 		conditions: [defaultConditionDef],
-		inactive: false,
 	}
 
 	return (
