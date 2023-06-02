@@ -67,7 +67,7 @@ HTTP 200
 jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 1
 
 # Operator: NOT_EQ | valueSource: VALUE
-# entry 5
+# entry 4
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -92,7 +92,7 @@ HTTP 200
 jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes 1
 
 # Operator: NOT_EQ | valueSource: PARAM
-# entry 6
+# entry 5
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -121,7 +121,7 @@ HTTP 200
 jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes 1
 
 # Operator: GT | valueSource: VALUE
-# entry 7
+# entry 6
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -147,7 +147,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes 1
 jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes 2
 
 # Operator: GT | valueSource: PARAM
-# entry 8
+# entry 7
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -177,7 +177,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes 1
 jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes 2
 
 # Operator: LT | valueSource: VALUE
-# entry 9
+# entry 8
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -204,7 +204,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 2
 jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes 3
 
 # Operator: LT | valueSource: PARAM
-# entry 10
+# entry 9
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -235,7 +235,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 2
 jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes 3
 
 # Operator: GTE | valueSource: VALUE
-# entry 11
+# entry 10
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -261,7 +261,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes 1
 jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 2
 jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 3
 # Operator: GTE | valueSource: PARAM
-# entry 12
+# entry 11
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -292,7 +292,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 2
 jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 3
 
 # Operator: LTE | valueSource: VALUE
-# entry 13
+# entry 12
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -319,7 +319,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 2
 jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes 3
 
 # Operator: LTE | valueSource: PARAM
-# entry 14
+# entry 13
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -350,7 +350,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 2
 jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes 3
 
 # Operator: IN | valueSource: VALUE
-# entry 15
+# entry 14
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -379,7 +379,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 1
 jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 2
 
 # Operator: IN | valueSource: LOOKUP
-# entry 16
+# entry 15
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -419,7 +419,7 @@ jsonpath "$.wires[1].data[*]['uesio/tests.number']" count == 8
 
 
 # Operator: IN | valueSource: PARAM
-# entry 17
+# entry 16
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -453,7 +453,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 1
 jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 2
 
 # Operator: NOT_IN | valueSource: VALUE
-# entry 18
+# entry 17
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -481,7 +481,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes 1
 jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes 2
 
 # Operator: NOT_IN | valueSource: LOOKUP
-# entry 19
+# entry 18
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -514,7 +514,7 @@ HTTP 200
 jsonpath "$.wires[1].data[*]" not exists
 
 # Operator: NOT_IN | valueSource: PARAM
-## entry 20
+## entry 19
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -551,7 +551,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes 2
 jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes 3
 
 # Operator: IS_BLANK | valueSource: VALUE
-# entry 21
+# entry 20
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -575,7 +575,7 @@ jsonpath "$.wires[0].data[*]" not exists
 
 
 # Operator: IS_NOT_BLANK | valueSource: VALUE
-# entry 22
+# entry 21
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -599,7 +599,7 @@ HTTP 200
 jsonpath "$.wires[0].data[*]['uesio/tests.number']" exists
 
 # Operator: BETWEEN | valueSource: VALUE
-# entry 23
+# entry 22
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -627,7 +627,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 2
 jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 3
 
 # Operator: BETWEEN | valueSource: VALUE
-# entry 24
+# entry 23
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
