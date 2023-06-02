@@ -80,7 +80,6 @@ Accept: application/json
             },
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.email",
                     "operator": "EQ",
                     "valueSource": "PARAM",
@@ -105,7 +104,6 @@ Accept: application/json
             "query":true,
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.email",
                     "operator": "NOT_EQ",
                     "value": "test1@test.com",
@@ -134,7 +132,6 @@ Accept: application/json
             },
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.email",
                     "operator": "NOT_EQ",
                     "valueSource": "PARAM",
@@ -231,7 +228,6 @@ Accept: application/json
             },
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.email",
                     "operator": "IN",
                     "valueSource": "PARAM",
@@ -335,7 +331,6 @@ Accept: application/json
             },
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.email",
                     "operator": "NOT_IN",
                     "valueSource": "PARAM",
@@ -366,7 +361,6 @@ Accept: application/json
             "query":true,
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.email",
                     "operator": "IS_BLANK"
                 }
@@ -391,7 +385,6 @@ Accept: application/json
             "query":true,
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.email",
                     "operator": "IS_NOT_BLANK"
                 }
