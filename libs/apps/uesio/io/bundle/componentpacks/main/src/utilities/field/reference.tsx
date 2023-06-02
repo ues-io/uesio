@@ -122,7 +122,6 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 						{
 							type: "SEARCH",
 							value: search,
-							active: true,
 							fields: searchFields,
 						},
 					],
