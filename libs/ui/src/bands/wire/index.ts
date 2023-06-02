@@ -307,7 +307,6 @@ const wireSlice = createSlice({
 				state.conditions = Object.assign([], state.conditions, {
 					[conditionIndex]: {
 						...oldCondition,
-						//TO-DO
 						inactive: !oldCondition.inactive,
 					},
 				})
