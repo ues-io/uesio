@@ -1,0 +1,5 @@
+name: blog
+path: blog
+view: uesio/web.blog
+theme: uesio/core.default
+title: ues.io Blog

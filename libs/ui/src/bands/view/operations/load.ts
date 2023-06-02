@@ -75,6 +75,7 @@ const useLoadWires = (
 		})()
 		// TODO: There is probably a better way to check than JSON.stringify() on params.
 		// consider useDeepCompareEffect(), or memoization
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [route.path, viewDefId, JSON.stringify(params)])
 
 	useEffect(() => {
@@ -102,6 +103,7 @@ const useLoadWires = (
 			await loadWiresOp(context, changedWires)
 		})()
 		// TODO: probably a better way to do this
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [JSON.stringify(wires), route.path])
 }
 

@@ -1,0 +1,3 @@
+name: sidepanel
+pack: main
+entrypoint: utilities/sidepanel/sidepanel
