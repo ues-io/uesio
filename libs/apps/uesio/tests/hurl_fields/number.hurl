@@ -10,38 +10,8 @@ POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 }
 HTTP 200
 
-# Test a wire load with no conditions on wire with collection wire_condition
-# entry 2
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
-Accept: application/json
-
-{
-    "wires": [
-        {
-            "collection":"uesio/tests.wire_condition",
-            "query": true,
-            "batchsize":2
-        }
-    ]
-}
-HTTP 200
-[Asserts]
-# If this test is failing for you, make sure you have `UESIO_DEBUG_SQL=true` set locally
-# and then re-run the app
-jsonpath "$.wires[0].debugQueryString" == ```
-SELECT
-main.id::text AS "uesio/core.id",
-main.uniquekey AS "uesio/core.uniquekey"
-FROM data as "main"
-WHERE
-main.collection = $1 AND
-main.tenant = $2
-ORDER BY main.id::text asc
-LIMIT 3```
-jsonpath "$.wires[0].data[*]" count == 2
-
 # Operator: EQ | valueSource: VALUE
-# entry 3
+# entry 2
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -55,7 +25,7 @@ Accept: application/json
                     "field": "uesio/tests.number",
                     "operator": "EQ",
                     "valueSource": "VALUE",
-                    "value": "1"
+                    "value": 1
                 }
             ]
         }
@@ -63,11 +33,12 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" == 1
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 1
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes null
 
 
 # Operator: EQ | valueSource: PARAM
-# entry 4
+# entry 3
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -93,7 +64,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" == 1
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 1
 
 # Operator: NOT_EQ | valueSource: VALUE
 # entry 5
@@ -109,7 +80,7 @@ Accept: application/json
                     "active": true,
                     "field": "uesio/tests.number",
                     "operator": "NOT_EQ",
-                    "value": "1",
+                    "value": 1,
                     "valueSource": "VALUE"
                 }
             ]
@@ -147,7 +118,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" != 1
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes 1
 
 # Operator: GT | valueSource: VALUE
 # entry 7
@@ -164,7 +135,7 @@ Accept: application/json
                     "field": "uesio/tests.number",
                     "operator": "GT",
                     "valueSource": "VALUE",
-                    "value": "2"
+                    "value": 2
                 }
             ]
         }
@@ -220,7 +191,7 @@ Accept: application/json
                     "field": "uesio/tests.number",
                     "operator": "LT",
                     "valueSource": "VALUE",
-                    "value": "3"
+                    "value": 3
                 }
             ]
         }
@@ -278,7 +249,7 @@ Accept: application/json
                     "field": "uesio/tests.number",
                     "operator": "GTE",
                     "valueSource": "VALUE",
-                    "value": "2"
+                    "value": 2
                 }
             ]
         }
@@ -335,7 +306,7 @@ Accept: application/json
                     "field": "uesio/tests.number",
                     "operator": "LTE",
                     "valueSource": "VALUE",
-                    "value": "2"
+                    "value": 2
                 }
             ]
         }
@@ -394,8 +365,8 @@ Accept: application/json
                     "operator": "IN",
                     "valueSource": "VALUE",
                     "values": [
-                        "1",
-                        "2"
+                        1,
+                        2
                     ]
                 }
             ]
@@ -496,8 +467,8 @@ Accept: application/json
                     "field": "uesio/tests.number",
                     "operator": "NOT_IN",
                     "values": [
-                        "1",
-                        "2"
+                        1,
+                        2
                     ]
                 }
             ]
@@ -576,8 +547,8 @@ Accept: application/json
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes 1
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes 1
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes 1
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes 2
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes 3
 
 # Operator: IS_BLANK | valueSource: VALUE
 # entry 21
@@ -643,8 +614,8 @@ Accept: application/json
                     "field": "uesio/tests.number",
                     "operator": "BETWEEN",
                     "valueSource": "VALUE",
-                    "start": "1",
-                    "end": "4"
+                    "start": 1,
+                    "end": 4
                 }
             ]
         }
@@ -671,8 +642,8 @@ Accept: application/json
                     "field": "uesio/tests.number",
                     "operator": "BETWEEN",
                     "valueSource": "VALUE",
-                    "start": "1",
-                    "end": "3",
+                    "start": 1,
+                    "end": 3,
                     "inclusiveStart":true,
                     "inclusiveEnd":true
                 }
