@@ -33,7 +33,7 @@ Accept: application/json
 }
 HTTP 400
 
-# Operator: EQ | valueSource: VALUE
+# Operator: EQ | valueSource: VALUE | Boolean true
 # entry 2
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
@@ -71,6 +71,47 @@ LIMIT 501```
 jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" includes true
 jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes null
 jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes false
+
+# Operator: EQ | valueSource: VALUE | String "false"
+# NOTE this test depends on postgresql boolean conversion
+# entry 2
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.wire_condition",
+            "fields": [{"id": "uesio/tests.checkbox"}],
+            "query": true,
+            "conditions": [
+                {
+                    "field": "uesio/tests.checkbox",
+                    "operator": "EQ",
+                    "valueSource": "VALUE",
+                    "value": "false"
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].debugQueryString" == ```
+SELECT
+(main.fields->>'uesio/tests.checkbox')::boolean AS "uesio/tests.checkbox",
+main.id::text AS "uesio/core.id",
+main.uniquekey AS "uesio/core.uniquekey"
+FROM data as "main"
+WHERE
+main.collection = $1 AND
+main.tenant = $2 AND
+(main.fields->>'uesio/tests.checkbox')::boolean = $3
+ORDER BY main.id::text asc
+LIMIT 501```
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" includes false
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes null
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes true
+
 
 # Operator: EQ | valueSource: PARAM
 # entry 3
