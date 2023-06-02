@@ -34,7 +34,7 @@ Accept: application/json
 HTTP 400
 
 # Operator: EQ | valueSource: VALUE | Boolean true
-# entry 2
+# entry 3
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -74,7 +74,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes false
 
 # Operator: EQ | valueSource: VALUE | String "false"
 # NOTE this test depends on postgresql boolean conversion
-# entry 2
+# entry 4
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -114,7 +114,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes true
 
 
 # Operator: EQ | valueSource: PARAM
-# entry 3
+# entry 5
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -144,7 +144,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes null
 jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes false
 
 # Operator: NOT_EQ | valueSource: VALUE
-# entry 4
+# entry 6
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -170,7 +170,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" includes false
 jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes true
 
 # Operator: NOT_EQ | valueSource: PARAM
-# entry 5
+# entry 7
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -199,7 +199,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes true
 jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" includes false
 
 # Operator: IS_BLANK | valueSource: VALUE
-# entry 6
+# entry 8
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -222,7 +222,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes true
 jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes false
 
 # Operator: IS_NOT_BLANK | valueSource: VALUE
-# entry 7
+# entry 9
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
