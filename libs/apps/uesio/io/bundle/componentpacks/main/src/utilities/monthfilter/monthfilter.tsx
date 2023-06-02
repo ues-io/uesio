@@ -55,7 +55,7 @@ const MonthFilter: definition.UtilityComponent<MonthFilterProps> = (props) => {
 							condition: {
 								...condition,
 								value,
-								active: !!value,
+								inactive: !value,
 							},
 						},
 						{

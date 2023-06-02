@@ -81,7 +81,6 @@ Accept: application/json
             },
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.number",
                     "operator": "EQ",
                     "valueSource": "PARAM",
@@ -106,7 +105,6 @@ Accept: application/json
             "query":true,
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.number",
                     "operator": "NOT_EQ",
                     "value": "1",
@@ -135,7 +133,6 @@ Accept: application/json
             },
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.number",
                     "operator": "NOT_EQ",
                     "valueSource": "PARAM",
@@ -190,7 +187,6 @@ Accept: application/json
             },
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.number",
                     "operator": "GT",
                     "valueSource": "PARAM",
@@ -247,7 +243,6 @@ Accept: application/json
             },
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.number",
                     "operator": "LT",
                     "valueSource": "PARAM",
@@ -304,7 +299,6 @@ Accept: application/json
             },
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.number",
                     "operator": "GTE",
                     "valueSource": "PARAM",
@@ -362,7 +356,6 @@ Accept: application/json
             },
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.number",
                     "operator": "LTE",
                     "valueSource": "PARAM",
@@ -463,7 +456,6 @@ Accept: application/json
             },
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.number",
                     "operator": "IN",
                     "valueSource": "PARAM",
@@ -559,7 +551,6 @@ Accept: application/json
             },
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.number",
                     "operator": "NOT_IN",
                     "valueSource": "PARAM",
@@ -590,7 +581,6 @@ Accept: application/json
             "query":true,
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.number",
                     "operator": "IS_BLANK"
                 }
@@ -615,7 +605,6 @@ Accept: application/json
             "query":true,
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.number",
                     "operator": "IS_NOT_BLANK"
                 }
@@ -639,7 +628,6 @@ Accept: application/json
             "query":true,
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.number",
                     "operator": "BETWEEN",
                     "valueSource": "VALUE",
@@ -667,7 +655,6 @@ Accept: application/json
             "query":true,
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.number",
                     "operator": "BETWEEN",
                     "valueSource": "VALUE",

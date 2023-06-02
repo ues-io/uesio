@@ -80,7 +80,6 @@ Accept: application/json
             },
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.checkbox",
                     "operator": "EQ",
                     "valueSource": "PARAM",
@@ -134,7 +133,6 @@ Accept: application/json
             },
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.checkbox",
                     "operator": "NOT_EQ",
                     "valueSource": "PARAM",
@@ -159,7 +157,6 @@ Accept: application/json
             "query":true,
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.checkbox",
                     "operator": "IS_BLANK"
                 }
@@ -185,7 +182,6 @@ Accept: application/json
             "query":true,
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.checkbox",
                     "operator": "IS_NOT_BLANK"
                 }

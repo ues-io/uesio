@@ -80,7 +80,6 @@ Accept: application/json
             },
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.select",
                     "operator": "EQ",
                     "valueSource": "PARAM",
@@ -105,7 +104,6 @@ Accept: application/json
             "query":true,
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.select",
                     "operator": "NOT_EQ",
                     "value": "one",
@@ -134,7 +132,6 @@ Accept: application/json
             },
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.select",
                     "operator": "NOT_EQ",
                     "valueSource": "PARAM",
@@ -234,7 +231,6 @@ Accept: application/json
             },
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.select",
                     "operator": "IN",
                     "valueSource": "PARAM",
@@ -338,7 +334,6 @@ Accept: application/json
             },
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.select",
                     "operator": "NOT_IN",
                     "valueSource": "PARAM",
@@ -369,7 +364,6 @@ Accept: application/json
             "query":true,
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.select",
                     "operator": "IS_BLANK"
                 }
@@ -394,7 +388,6 @@ Accept: application/json
             "query":true,
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.select",
                     "operator": "IS_NOT_BLANK"
                 }
