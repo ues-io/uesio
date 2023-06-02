@@ -5,4 +5,4 @@ definition:
     root:
       - grid-cols-[300px_1fr]
       - grid-rows-[60px_1fr]
-      - min-h-screen
+      - h-screen
