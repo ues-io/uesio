@@ -24,7 +24,7 @@ const CheckboxField: FunctionComponent<CheckboxFieldProps> = (props) => {
 
 	useEffect(() => {
 		if (!checkRef.current) return
-		checkRef.current.indeterminate = value === undefined
+		checkRef.current.indeterminate = value === undefined || value === null
 	}, [value])
 
 	return (

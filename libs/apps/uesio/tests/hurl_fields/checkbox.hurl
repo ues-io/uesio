@@ -123,3 +123,53 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes true
 jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" includes false
+
+# Operator: IS_BLANK | valueSource: VALUE
+# entry 6
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.wire_condition",
+            "query":true,
+            "conditions": [
+                {
+                    "active": true,
+                    "field": "uesio/tests.checkbox",
+                    "operator": "IS_BLANK"
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes true
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes false
+
+# Operator: IS_NOT_BLANK | valueSource: VALUE
+# entry 7
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.wire_condition",
+            "fields": [{"id": "uesio/tests.checkbox"}],
+            "query":true,
+            "conditions": [
+                {
+                    "active": true,
+                    "field": "uesio/tests.checkbox",
+                    "operator": "IS_NOT_BLANK"
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" includes true
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" includes false
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes null
