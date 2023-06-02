@@ -55,7 +55,7 @@ Accept: application/json
                     "field": "uesio/tests.number",
                     "operator": "EQ",
                     "valueSource": "VALUE",
-                    "value": "1"
+                    "value": 1
                 }
             ]
         }
@@ -109,7 +109,7 @@ Accept: application/json
                     "active": true,
                     "field": "uesio/tests.number",
                     "operator": "NOT_EQ",
-                    "value": "1",
+                    "value": 1,
                     "valueSource": "VALUE"
                 }
             ]
@@ -164,7 +164,7 @@ Accept: application/json
                     "field": "uesio/tests.number",
                     "operator": "GT",
                     "valueSource": "VALUE",
-                    "value": "2"
+                    "value": 2
                 }
             ]
         }
@@ -220,7 +220,7 @@ Accept: application/json
                     "field": "uesio/tests.number",
                     "operator": "LT",
                     "valueSource": "VALUE",
-                    "value": "3"
+                    "value": 3
                 }
             ]
         }
@@ -278,7 +278,7 @@ Accept: application/json
                     "field": "uesio/tests.number",
                     "operator": "GTE",
                     "valueSource": "VALUE",
-                    "value": "2"
+                    "value": 2
                 }
             ]
         }
@@ -335,7 +335,7 @@ Accept: application/json
                     "field": "uesio/tests.number",
                     "operator": "LTE",
                     "valueSource": "VALUE",
-                    "value": "2"
+                    "value": 2
                 }
             ]
         }
@@ -394,8 +394,8 @@ Accept: application/json
                     "operator": "IN",
                     "valueSource": "VALUE",
                     "values": [
-                        "1",
-                        "2"
+                        1,
+                        2
                     ]
                 }
             ]
@@ -496,8 +496,8 @@ Accept: application/json
                     "field": "uesio/tests.number",
                     "operator": "NOT_IN",
                     "values": [
-                        "1",
-                        "2"
+                        1,
+                        2
                     ]
                 }
             ]
