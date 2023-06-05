@@ -213,14 +213,73 @@ definition:
             view: uesio/studio.appedit
             uesio.context:
               wire: apps
-      actions:
         - uesio/io.button:
             uesio.variant: "uesio/io.primary"
             text: "Save"
             signals:
               - signal: wire/SAVE
-              - signal: "panel/TOGGLE"
-                panel: "editApp"
+
+        - uesio/io.button:
+            uesio.variant: "uesio/io.primary"
+            text: "Save"
+            signals:
+              - signal: wire/SAVE
+
+        - uesio/io.button:
+            uesio.variant: "uesio/io.primary"
+            text: "Save"
+            signals:
+              - signal: wire/SAVE
+        - uesio/io.button:
+            uesio.variant: "uesio/io.primary"
+            text: "Save"
+            signals:
+              - signal: wire/SAVE
+        - uesio/io.button:
+            uesio.variant: "uesio/io.primary"
+            text: "Save"
+            signals:
+              - signal: wire/SAVE
+
+        - uesio/io.button:
+            uesio.variant: "uesio/io.primary"
+            text: "Save"
+            signals:
+              - signal: wire/SAVE
+
+        - uesio/io.button:
+            uesio.variant: "uesio/io.primary"
+            text: "Save"
+            signals:
+              - signal: wire/SAVE
+        - uesio/io.button:
+            uesio.variant: "uesio/io.primary"
+            text: "Save"
+            signals:
+              - signal: wire/SAVE
+        - uesio/io.button:
+            uesio.variant: "uesio/io.primary"
+            text: "Save"
+            signals:
+              - signal: wire/SAVE
+
+        - uesio/io.button:
+            uesio.variant: "uesio/io.primary"
+            text: "Save"
+            signals:
+              - signal: wire/SAVE
+
+        - uesio/io.button:
+            uesio.variant: "uesio/io.primary"
+            text: "Save"
+            signals:
+              - signal: wire/SAVE
+        - uesio/io.button:
+            uesio.variant: "uesio/io.primary"
+            text: "Save"
+            signals:
+              - signal: wire/SAVE
+      actions:
         - uesio/io.button:
             uesio.variant: "uesio/io.secondary"
             text: "Cancel"
