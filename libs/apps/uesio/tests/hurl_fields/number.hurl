@@ -408,7 +408,6 @@ Accept: application/json
 HTTP 200
 [Asserts]
 jsonpath "$.wires[1].data[*]['uesio/tests.number']" count == 8
-                        
 
 
 # Operator: IN | valueSource: PARAM
