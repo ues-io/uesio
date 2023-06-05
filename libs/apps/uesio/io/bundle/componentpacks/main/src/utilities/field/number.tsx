@@ -31,18 +31,15 @@ const parseNumberValue = (
 	decimals: number,
 	readonly: boolean
 ) => {
-	const parsedValue = parseFloat(
+	if (value && isNaN(value)) return undefined
+
+	return parseFloat(
 		`${
 			readonly && value !== undefined && typeof value === "number"
 				? (value as number).toFixed(decimals)
 				: value
 		}`
 	)
-	if (!isNaN(parsedValue)) {
-		return parsedValue
-	} else {
-		return undefined
-	}
 }
 
 const NumberField: FunctionComponent<NumberFieldProps> = (props) => {
@@ -57,6 +54,9 @@ const NumberField: FunctionComponent<NumberFieldProps> = (props) => {
 		value,
 		type = "number",
 	} = props
+
+	console.log({ value })
+
 	const readonly = mode === "READ"
 	const applyOnBlur = applyChanges === "onBlur"
 
@@ -85,9 +85,10 @@ const NumberField: FunctionComponent<NumberFieldProps> = (props) => {
 
 	// the input element will throw an error if a null/undefined value is provided to it,
 	// so we need to provide an empty string if there is a non-numeric value for the field
-	const displayValue = !(controlledValue && controlledValue !== 0)
-		? ""
-		: controlledValue
+	const displayValue =
+		controlledValue && isNaN(controlledValue) ? "" : controlledValue
+
+	console.log({ displayValue, controlledValue })
 
 	return (
 		<div className={classes.wrapper}>
