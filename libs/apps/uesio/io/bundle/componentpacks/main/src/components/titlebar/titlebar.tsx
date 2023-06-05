@@ -1,4 +1,4 @@
-import { component, definition } from "@uesio/ui"
+import { component, definition, styles } from "@uesio/ui"
 import { default as IOTitleBar } from "../../utilities/titlebar/titlebar"
 
 type TitleBarDefinition = {
@@ -6,11 +6,18 @@ type TitleBarDefinition = {
 	subtitle: string
 }
 
+const StyleDefaults = Object.freeze({
+	root: [],
+})
+
 const TitleBar: definition.UC<TitleBarDefinition> = (props) => {
 	const { definition, path, context } = props
 
+	const classes = styles.useStyleTokens(StyleDefaults, props)
+
 	return (
 		<IOTitleBar
+			classes={classes}
 			context={context}
 			variant={definition["uesio.variant"]}
 			title={definition.title}
