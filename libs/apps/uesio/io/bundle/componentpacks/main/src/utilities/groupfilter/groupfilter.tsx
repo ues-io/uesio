@@ -16,7 +16,7 @@ const GroupFilter: FunctionComponent<GroupFilterProps> = (props) => {
 		<ToggleField
 			context={context}
 			variant={"uesio/io.filter"}
-			value={condition.active}
+			value={condition.inactive}
 			setValue={() => {
 				api.signal.runMany(
 					[

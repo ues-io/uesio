@@ -157,6 +157,8 @@ routes:
 files: {}
 collections:
   uesio/studio.allmetadata: true
+  uesio/studio.blogentry: true
+  uesio/studio.recentdoc: true
   uesio/studio.authsource: true
   uesio/studio.signupmethod: true
   uesio/studio.app: true

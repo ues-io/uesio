@@ -52,7 +52,6 @@ Accept: application/json
             },
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.number",
                     "operator": "EQ",
                     "valueSource": "PARAM",
@@ -77,7 +76,6 @@ Accept: application/json
             "query":true,
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.number",
                     "operator": "NOT_EQ",
                     "value": 1,
@@ -106,7 +104,6 @@ Accept: application/json
             },
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.number",
                     "operator": "NOT_EQ",
                     "valueSource": "PARAM",
@@ -161,7 +158,6 @@ Accept: application/json
             },
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.number",
                     "operator": "GT",
                     "valueSource": "PARAM",
@@ -218,7 +214,6 @@ Accept: application/json
             },
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.number",
                     "operator": "LT",
                     "valueSource": "PARAM",
@@ -275,7 +270,6 @@ Accept: application/json
             },
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.number",
                     "operator": "GTE",
                     "valueSource": "PARAM",
@@ -333,7 +327,6 @@ Accept: application/json
             },
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.number",
                     "operator": "LTE",
                     "valueSource": "PARAM",
@@ -434,7 +427,6 @@ Accept: application/json
             },
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.number",
                     "operator": "IN",
                     "valueSource": "PARAM",
@@ -530,7 +522,6 @@ Accept: application/json
             },
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.number",
                     "operator": "NOT_IN",
                     "valueSource": "PARAM",
@@ -561,7 +552,6 @@ Accept: application/json
             "query":true,
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.number",
                     "operator": "IS_BLANK"
                 }
@@ -586,7 +576,6 @@ Accept: application/json
             "query":true,
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.number",
                     "operator": "IS_NOT_BLANK"
                 }
@@ -638,12 +627,40 @@ Accept: application/json
             "query":true,
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.number",
                     "operator": "BETWEEN",
                     "valueSource": "VALUE",
                     "start": 1,
                     "end": 3,
+                    "start": "1",
+                    "end": "4"
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 2
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 3
+
+# Operator: BETWEEN | valueSource: VALUE
+# entry 24
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.wire_condition",
+            "fields": [{"id": "uesio/tests.number"}],
+            "query":true,
+            "conditions": [
+                {
+                    "field": "uesio/tests.number",
+                    "operator": "BETWEEN",
+                    "valueSource": "VALUE",
+                    "start": "1",
+                    "end": "3",
                     "inclusiveStart":true,
                     "inclusiveEnd":true
                 }

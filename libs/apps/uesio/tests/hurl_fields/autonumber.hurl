@@ -80,7 +80,6 @@ Accept: application/json
             },
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.autonumber",
                     "operator": "EQ",
                     "valueSource": "PARAM",
@@ -105,7 +104,6 @@ Accept: application/json
             "query":true,
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.autonumber",
                     "operator": "NOT_EQ",
                     "value": "ID-001",
@@ -134,7 +132,6 @@ Accept: application/json
             },
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.autonumber",
                     "operator": "NOT_EQ",
                     "valueSource": "PARAM",
@@ -231,7 +228,6 @@ Accept: application/json
             },
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.autonumber",
                     "operator": "IN",
                     "valueSource": "PARAM",
@@ -335,7 +331,6 @@ Accept: application/json
             },
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.autonumber",
                     "operator": "NOT_IN",
                     "valueSource": "PARAM",
@@ -366,7 +361,6 @@ Accept: application/json
             "query":true,
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.autonumber",
                     "operator": "IS_BLANK"
                 }
@@ -391,7 +385,6 @@ Accept: application/json
             "query":true,
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.autonumber",
                     "operator": "IS_NOT_BLANK"
                 }
