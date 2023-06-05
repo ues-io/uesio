@@ -632,35 +632,6 @@ Accept: application/json
                     "valueSource": "VALUE",
                     "start": 1,
                     "end": 3,
-                    "start": "1",
-                    "end": "4"
-                }
-            ]
-        }
-    ]
-}
-HTTP 200
-[Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 2
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 3
-
-# Operator: BETWEEN | valueSource: VALUE
-# entry 24
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
-Accept: application/json
-{
-    "wires": [
-        {
-            "collection":"uesio/tests.wire_condition",
-            "fields": [{"id": "uesio/tests.number"}],
-            "query":true,
-            "conditions": [
-                {
-                    "field": "uesio/tests.number",
-                    "operator": "BETWEEN",
-                    "valueSource": "VALUE",
-                    "start": "1",
-                    "end": "3",
                     "inclusiveStart":true,
                     "inclusiveEnd":true
                 }
