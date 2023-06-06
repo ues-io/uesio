@@ -14,7 +14,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
-func getHomeRoute(session *sess.Session) (*meta.Route, error) {
+func GetHomeRoute(session *sess.Session) (*meta.Route, error) {
 	homeRoute := session.GetSite().GetAppBundle().HomeRoute
 
 	route, err := meta.NewRoute(homeRoute)

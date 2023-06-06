@@ -2,13 +2,15 @@ package controller
 
 import (
 	"fmt"
-	"github.com/thecloudmasters/uesio/pkg/bundle"
-	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/middleware"
 	"io"
 	"net/http"
 	"sort"
 	"strings"
+
+	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/middleware"
+	"github.com/thecloudmasters/uesio/pkg/routing"
 )
 
 const (
@@ -37,6 +39,9 @@ func Robots(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// If the home route is accessible by a guest, then we need to add it to the allow paths
+	homeRoute, _ := routing.GetHomeRoute(session)
+
 	var routes meta.RouteCollection
 
 	// Load all public routes to get their paths. We are assuming that a crawler would have a public guest session,
@@ -48,20 +53,36 @@ func Robots(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Append to the robots the routes we want to allow
-	writeAllowPaths(w, getPublicRoutePaths(routes))
+	writeAllowPreamble(w)
+	writeAllowPaths(w, getPublicRoutePaths(routes), homeRoute)
 
 }
 
-func writeAllowPaths(w io.Writer, publicRoutes map[string]bool) {
+func writeAllowPreamble(w io.Writer) {
+	w.Write([]byte("\nUser-agent: *"))
+}
+
+func writeAllowPaths(w io.Writer, publicRoutes map[string]bool, homeRoute *meta.Route) {
 	// To have a stable output, we need to sort the keys
 	keys := make([]string, 0, len(publicRoutes))
+	addHomeRoute := false
 	for k, _ := range publicRoutes {
 		keys = append(keys, k)
+		if homeRoute != nil && k == homeRoute.Path {
+			addHomeRoute = true
+		}
 	}
 	sort.Strings(keys)
 	for _, path := range keys {
 		w.Write([]byte(fmt.Sprintf(allowPath, path)))
 	}
+	// Add the home route last, only if it is accessible by a guest
+	if addHomeRoute {
+		w.Write([]byte(fmt.Sprintf(allowPath, "/")))
+	}
+	// Add static paths
+	w.Write([]byte(fmt.Sprintf(allowPath, "/static/*")))
+	w.Write([]byte(fmt.Sprintf(allowPath, "/favicon.ico")))
 }
 
 func getPublicRoutePaths(routes meta.RouteCollection) map[string]bool {
