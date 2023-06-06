@@ -55,7 +55,7 @@ const useControlledInputNumber = <T extends HTMLInputElement>(
 
 			console.log({ isNumeric })
 
-			isNumeric && setValue?.(valueAsNumber)
+			isNumeric ? setValue?.(valueAsNumber) : setValue?.(null)
 		},
 	}
 }
