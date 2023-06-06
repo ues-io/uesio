@@ -1,6 +1,7 @@
-import { ChangeEvent, FunctionComponent } from "react"
+import { FC } from "react"
 import { definition, styles, context, wire } from "@uesio/ui"
-
+import { ApplyChanges } from "../../components/field/field"
+import useControlledInput from "../../shared/useControlledFieldValue"
 export type LongTextFieldOptions = {
 	cols?: number
 	rows?: number
@@ -12,6 +13,7 @@ interface TextAreaFieldProps extends definition.UtilityProps {
 	mode?: context.FieldMode
 	placeholder?: string
 	options?: LongTextFieldOptions
+	applyChanges?: ApplyChanges
 }
 
 const StyleDefaults = Object.freeze({
@@ -19,10 +21,17 @@ const StyleDefaults = Object.freeze({
 	readonly: [],
 })
 
-const TextAreaField: FunctionComponent<TextAreaFieldProps> = (props) => {
-	const { id, mode, placeholder, options, setValue } = props
+const TextAreaField: FC<TextAreaFieldProps> = (props) => {
+	const { id, mode, placeholder, options, setValue, applyChanges } = props
 	const value = props.value as string
 	const readonly = mode === "READ"
+
+	const controlledInputProps = useControlledInput(
+		value,
+		setValue,
+		applyChanges
+	)
+
 	const classes = styles.useUtilityStyleTokens(
 		StyleDefaults,
 		props,
@@ -31,13 +40,10 @@ const TextAreaField: FunctionComponent<TextAreaFieldProps> = (props) => {
 
 	const commonProps = {
 		id,
-		value: value || "",
 		placeholder,
+		...controlledInputProps,
 		className: styles.cx(classes.input, readonly && classes.readonly),
 		disabled: readonly,
-		onChange: (
-			event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-		) => setValue(event.target.value),
 		rows: options?.rows,
 		cols: options?.cols,
 	}
