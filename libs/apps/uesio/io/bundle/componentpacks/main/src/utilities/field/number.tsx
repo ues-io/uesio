@@ -1,6 +1,7 @@
-import { FunctionComponent, useEffect, useState } from "react"
+import { FunctionComponent } from "react"
 import { definition, styles, context, collection, wire } from "@uesio/ui"
 import { ApplyChanges } from "../../components/field/field"
+import { useControlledInputNumber } from "../../shared/useControlledFieldValue"
 
 export type NumberFieldOptions = {
 	step?: number
@@ -27,19 +28,20 @@ const StyleDefaults = Object.freeze({
 })
 
 const parseNumberValue = (
-	value: number | undefined,
+	value: string | number,
 	decimals: number,
 	readonly: boolean
 ) => {
-	if (value && isNaN(value)) return undefined
-
-	return parseFloat(
-		`${
-			readonly && value !== undefined && typeof value === "number"
-				? (value as number).toFixed(decimals)
-				: value
-		}`
-	)
+	if (isNaN(value as number)) return value.toString()
+	return readonly
+		? parseFloat(
+				`${
+					value &&
+					typeof value === "number" &&
+					value.toFixed(decimals)
+				}`
+		  )
+		: value
 }
 
 const NumberField: FunctionComponent<NumberFieldProps> = (props) => {
@@ -51,14 +53,24 @@ const NumberField: FunctionComponent<NumberFieldProps> = (props) => {
 		options,
 		setValue,
 		applyChanges,
-		value,
 		type = "number",
 	} = props
 
-	console.log({ value })
+	console.log("NumberField")
+	console.log(typeof props.value)
+	console.log(props.value)
 
 	const readonly = mode === "READ"
-	const applyOnBlur = applyChanges === "onBlur"
+	const numberOptions = fieldMetadata?.getNumberMetadata()
+	const decimals = numberOptions?.decimals || 2
+
+	const { onChange, onBlur, value } = useControlledInputNumber(
+		props.value as string | number,
+		setValue,
+		applyChanges
+	)
+
+	const displayValue = parseNumberValue(value, decimals, readonly)
 
 	const classes = styles.useUtilityStyleTokens(
 		StyleDefaults,
@@ -66,56 +78,23 @@ const NumberField: FunctionComponent<NumberFieldProps> = (props) => {
 		"uesio/io.field"
 	)
 
-	const numberOptions = fieldMetadata?.getNumberMetadata()
-	const decimals = numberOptions?.decimals || 2
-	const [controlledValue, setControlledValue] = useState<number | undefined>(
-		parseNumberValue(value as number, decimals, readonly)
-	)
-	useEffect(() => {
-		const newValue = parseNumberValue(
-			value as number,
-			decimals,
-			readonly
-		) as number
-		if (!isNaN(newValue) && newValue !== controlledValue) {
-			setControlledValue(newValue)
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [value, decimals, readonly])
-
-	// the input element will throw an error if a null/undefined value is provided to it,
-	// so we need to provide an empty string if there is a non-numeric value for the field
-	const displayValue =
-		controlledValue && isNaN(controlledValue) ? "" : controlledValue
-
-	console.log({ displayValue, controlledValue })
-
 	return (
 		<div className={classes.wrapper}>
 			<input
 				id={id}
-				value={displayValue}
 				className={styles.cx(
 					classes.input,
 					readonly && classes.readonly
 				)}
 				type={type}
+				onChange={onChange}
+				onBlur={onBlur}
 				disabled={readonly}
-				onChange={(e) => {
-					const number = parseFloat(e.target.value)
-					setControlledValue(number)
-					!applyOnBlur && setValue?.(number)
-				}}
-				onBlur={() =>
-					applyOnBlur &&
-					parseNumberValue(value as number, decimals, readonly) !==
-						controlledValue &&
-					setValue?.(controlledValue)
-				}
 				placeholder={placeholder}
 				step={options?.step}
 				min={options?.min}
 				max={options?.max}
+				value={displayValue}
 				title={`${displayValue}`}
 			/>
 			{type === "range" ? (
