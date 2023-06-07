@@ -42,6 +42,11 @@ func (ds *DataScanner) Scan(src interface{}) error {
 
 	if fieldMetadata.Type == "NUMBER" {
 		stringValue := src.(string)
+
+		if stringValue == "null" {
+			return (*ds.Item).SetField(fieldMetadata.GetFullName(), nil)
+		}
+
 		f, err := strconv.ParseFloat(stringValue, 64)
 		if err != nil {
 			firstChar := stringValue[0:1]

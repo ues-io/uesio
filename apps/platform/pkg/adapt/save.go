@@ -133,10 +133,6 @@ func (ci *ChangeItem) MarshalJSONObject(enc *gojay.Encoder) {
 			return nil
 		}
 
-		if value == nil {
-			return nil
-		}
-
 		jsonValue, err := json.Marshal(value)
 		if err != nil {
 			return errors.New("Error getting json value: " + fieldMetadata.GetFullName())
