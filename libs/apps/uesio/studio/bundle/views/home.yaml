@@ -167,7 +167,7 @@ definition:
                         - py-10
                         - px-24
                         - text-[#FFFFFFC0]
-                        - bg-[rgb(22,22,22)]
+                        - bg-neutral-900
                     components:
                       - uesio/io.box:
                           uesio.styleTokens:
@@ -213,14 +213,18 @@ definition:
                       root:
                         - gap-x-12
                         - px-14
-                        - py-4
+                        - py-2
                     items:
                       - uesio/io.griditem:
                           components:
                             - uesio/io.titlebar:
                                 uesio.variant: uesio/io.main
                                 title: Latest Updates & News
-                                subtitle: Coming soon - Updates, News, and feature releases will be here for you to see when they come out.
+                                uesio.styleTokens:
+                                  root:
+                                    - border-b-4
+                                    - border-neutral-900
+                                    - pb-1
                             - uesio/io.list:
                                 wire: blogentries
                                 mode: READ
@@ -248,7 +252,11 @@ definition:
                             - uesio/io.titlebar:
                                 uesio.variant: uesio/io.main
                                 title: Recent Documentation
-                                subtitle: Learn the basic concepts of ues.io and how to navigate the uesio/studio.
+                                uesio.styleTokens:
+                                  root:
+                                    - border-b-4
+                                    - border-neutral-900
+                                    - pb-1
                             - uesio/io.list:
                                 wire: recentdocs
                                 mode: READ

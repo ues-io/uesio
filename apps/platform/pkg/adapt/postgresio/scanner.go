@@ -25,7 +25,7 @@ func (ds *DataScanner) Scan(src interface{}) error {
 
 	if fieldMetadata.Type == "MAP" || fieldMetadata.Type == "MULTISELECT" || fieldMetadata.Type == "STRUCT" {
 		var mapdata map[string]interface{}
-		err := json.Unmarshal(src.([]byte), &mapdata)
+		err := json.Unmarshal([]byte(src.(string)), &mapdata)
 		if err != nil {
 			return errors.New(fmt.Sprintf("Postgresql %s field Unmarshal error: %s : %s", fieldMetadata.Type, fieldMetadata.GetFullName(), err.Error()))
 		}
@@ -33,7 +33,7 @@ func (ds *DataScanner) Scan(src interface{}) error {
 	}
 	if fieldMetadata.Type == "LIST" {
 		var arraydata []interface{}
-		err := json.Unmarshal(src.([]byte), &arraydata)
+		err := json.Unmarshal([]byte(src.(string)), &arraydata)
 		if err != nil {
 			return errors.New("Postgresql LIST field Unmarshal error: " + fieldMetadata.GetFullName() + " : " + err.Error())
 		}
@@ -41,7 +41,7 @@ func (ds *DataScanner) Scan(src interface{}) error {
 	}
 
 	if fieldMetadata.Type == "NUMBER" {
-		stringValue := string(src.([]byte))
+		stringValue := src.(string)
 		f, err := strconv.ParseFloat(stringValue, 64)
 		if err != nil {
 			firstChar := stringValue[0:1]
