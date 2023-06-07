@@ -43,6 +43,7 @@ func (ds *DataScanner) Scan(src interface{}) error {
 	if fieldMetadata.Type == "NUMBER" {
 		stringValue := src.(string)
 
+		//we get the direct jsonb from the postgres driver
 		if stringValue == "null" {
 			return (*ds.Item).SetField(fieldMetadata.GetFullName(), nil)
 		}
