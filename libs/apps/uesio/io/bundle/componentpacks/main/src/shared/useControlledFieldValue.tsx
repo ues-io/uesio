@@ -32,11 +32,8 @@ const useControlledInputNumber = <T extends HTMLInputElement>(
 	const [controlledValue, setControlledValue] = useState(value)
 
 	useEffect(() => {
-		console.log("useEffect", value)
 		setControlledValue(value)
 	}, [value])
-
-	console.log({ controlledValue })
 
 	return {
 		value:
@@ -46,15 +43,8 @@ const useControlledInputNumber = <T extends HTMLInputElement>(
 		onChange: (e: ChangeEvent<T>) => {
 			const valueAsNumber = e.target.valueAsNumber
 			const valueAsString = e.target.value
-
-			console.log("onChange valueAsNumber", valueAsNumber)
-			console.log("onChange valueAsString", valueAsString)
 			setControlledValue(valueAsString)
-
 			const isNumeric = !isNaN(valueAsNumber)
-
-			console.log({ isNumeric })
-
 			isNumeric ? setValue?.(valueAsNumber) : setValue?.(null)
 		},
 	}
