@@ -35,7 +35,6 @@ const StylesProperty: definition.UC<Props> = (props) => {
 	const Button = component.getUtility("uesio/io.button")
 	const tokensPath = componentPath.addLocal("uesio.styleTokens")
 	const Popper = component.getUtility("uesio/io.popper")
-	const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 	const anchorEl = useRef<HTMLDivElement>(null)
 
 	const tokensByRegion = (get(context, tokensPath) || {}) as Record<
@@ -138,26 +137,19 @@ const StylesProperty: definition.UC<Props> = (props) => {
 					<PropertiesWrapper
 						context={context}
 						path={parseFullPath(path)}
-						title={"Select a style token"}
+						title={"Select a style token: " + contextRegionName}
 						onUnselect={() => setShowPopper(false)}
 					>
-						<FieldWrapper
-							label="Style token"
-							labelPosition="left"
+						<TailwindClassPicker
+							id="style-token-picker"
 							context={context}
-							variant="uesio/builder.propfield"
-						>
-							<TailwindClassPicker
-								id="style-token-picker"
-								context={context}
-								value=""
-								setValue={(value: wire.FieldValue) => {
-									addRegionToken(value as string)
-									setShowPopper(false)
-								}}
-								parsedTokens={tailwindTokens}
-							/>
-						</FieldWrapper>
+							value=""
+							setValue={(value: wire.FieldValue) => {
+								addRegionToken(value as string)
+								//setShowPopper(false)
+							}}
+							parsedTokens={tailwindTokens}
+						/>
 					</PropertiesWrapper>
 				</Popper>
 			)}

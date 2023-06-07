@@ -1,7 +1,7 @@
 import { component, definition, wire } from "@uesio/ui"
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
 import fuzzysort from "fuzzysort"
-// import type Prepared from "fuzzysort"
+import SearchArea from "../../helpers/searcharea"
 
 type Props = {
 	setValue?: (value: wire.PlainFieldValue) => void
@@ -15,10 +15,8 @@ type SortResult = {
 }
 
 const TailwindClassPicker: definition.UtilityComponent<Props> = (props) => {
-	const { context, setValue, value, parsedTokens } = props
-	const AutocompleteField = component.getUtility(
-		"uesio/builder.autocompletefield"
-	)
+	const { context, setValue, parsedTokens } = props
+	const Button = component.getUtility("uesio/io.button")
 
 	const tailwindClasses = useMemo(
 		() =>
@@ -30,40 +28,32 @@ const TailwindClassPicker: definition.UtilityComponent<Props> = (props) => {
 			})),
 		[parsedTokens]
 	)
-	const itemRenderer = (item: wire.SelectOption) =>
-		`${item.value} (${item.label})`
-	const getItemKey = (item: wire.SelectOption) => item.value
 
-	const search = async (text: string) => {
-		if (text?.trim() === "") return []
-		return fuzzysort
-			.go<SortResult>(text, tailwindClasses, {
-				keys: ["classNamePrepared", "cssPrepared"],
-				// allowTypo: false,
-				// threshold: -10000,
-			})
-			.map(
-				(r) =>
-					({
-						value: r.obj.className,
-						label: r.obj.css,
-					} as wire.SelectOption)
-			)
-	}
+	const [searchTerm, setSearchTerm] = useState("")
+
+	const results = fuzzysort.go<SortResult>(searchTerm, tailwindClasses, {
+		keys: ["classNamePrepared", "cssPrepared"],
+		// allowTypo: false,
+		// threshold: -10000,
+	})
+
 	return (
-		<AutocompleteField
-			context={context}
-			applyChanges="onBlur"
-			focusOnRender
-			value={value}
-			onSearch={search}
-			onSelect={(item: wire.SelectOption) => {
-				setValue?.(item.value)
-			}}
-			itemRenderer={itemRenderer}
-			getItemKey={getItemKey}
-			placeholder="padding, border, etc."
-		/>
+		<>
+			<SearchArea
+				searchTerm={searchTerm}
+				setSearchTerm={setSearchTerm}
+				context={context}
+			/>
+			{results.map((element) => (
+				<Button
+					variant="uesio/builder.panelactionbutton"
+					key={element.obj.className}
+					label={element.obj.className}
+					context={context}
+					onClick={() => setValue?.(element.obj.className)}
+				/>
+			))}
+		</>
 	)
 }
 
