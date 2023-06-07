@@ -1,6 +1,8 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { definition, styles, context, wire } from "@uesio/ui"
 import { FieldValueSetter, ApplyChanges } from "../../components/field/field"
+import useControlledInput from "../../shared/useControlledFieldValue"
+
 import Icon from "../icon/icon"
 
 interface TextFieldProps {
@@ -52,17 +54,16 @@ const TextField: definition.UtilityComponent<TextFieldProps> = (props) => {
 		props,
 		"uesio/io.field"
 	)
+	const controlledInputProps = useControlledInput(
+		value as string,
+		setValue,
+		applyChanges
+	)
 
 	const isReadMode = readonly || mode === "READ"
-	const applyOnBlur = applyChanges === "onBlur"
 	const isPassword = type === "password"
 
-	const [controlledValue, setControlledValue] = useState(value)
 	const [useType, setType] = useState(type)
-
-	useEffect(() => {
-		setControlledValue(value || "")
-	}, [value])
 
 	return (
 		<div className={classes.wrapper}>
@@ -80,25 +81,7 @@ const TextField: definition.UtilityComponent<TextFieldProps> = (props) => {
 				ref={(input: HTMLInputElement) =>
 					focusOnRender && input?.focus()
 				}
-				value={(controlledValue as string) || ""}
-				onChange={(e) => {
-					setControlledValue(e.target.value)
-					!applyOnBlur && setValue?.(e.target.value)
-				}}
-				onBlur={(e) =>
-					applyOnBlur &&
-					value !== e.target.value &&
-					setValue?.(e.target.value)
-				}
-				onKeyPress={(e) => {
-					if (
-						applyOnBlur &&
-						e.key === "Enter" &&
-						value !== e.currentTarget.value
-					) {
-						setValue?.(e.currentTarget.value)
-					}
-				}}
+				{...controlledInputProps}
 			/>
 			{isPassword && (
 				<button

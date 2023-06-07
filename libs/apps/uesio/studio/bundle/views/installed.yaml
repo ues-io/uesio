@@ -1,0 +1,98 @@
+name: installed
+definition:
+  # Wires are how we pull in data
+  wires:
+    workspaces:
+      collection: uesio/studio.workspace
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.app:
+          fields:
+            uesio/studio.color:
+            uesio/studio.icon:
+      conditions:
+        - field: uesio/core.uniquekey
+          value: $Param{app}:$Param{workspacename}
+    installedapps:
+      collection: uesio/studio.bundledependency
+      fields:
+        uesio/core.id:
+        uesio/studio.bundle:
+          fields:
+            uesio/core.uniquekey:
+            uesio/studio.app:
+              fields:
+                uesio/studio.color:
+                uesio/studio.icon:
+                uesio/core.uniquekey:
+            uesio/studio.major:
+            uesio/studio.minor:
+            uesio/studio.patch:
+            uesio/studio.version:
+      conditions:
+        - field: uesio/studio.workspace
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio/core.id
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/io.grid:
+        uesio.variant: uesio/studio.mainlayout
+        items:
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.topbar
+              components:
+                - uesio/core.view:
+                    view: uesio/studio.topbar
+                    uesio.context:
+                      wire: workspaces
+                    params:
+                      itemType: installed
+                      itemIcon: backpack
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.leftbar
+              components:
+                - uesio/core.view:
+                    uesio.context:
+                      wire: workspaces
+                    view: uesio/studio.workspacenav
+                    params:
+                      selected: installed
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.content
+              components:
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.main
+                    title: Installed Bundles
+                    actions:
+                      - uesio/io.group:
+                          components:
+                            - uesio/io.button:
+                                text: "Browse Bundle Store"
+                                uesio.variant: uesio/io.secondary
+                                signals:
+                                  - signal: "route/NAVIGATE"
+                                    path: "app/$Param{app}/workspace/$Param{workspacename}/bundlestore"
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.table:
+                          uesio.id: installedbundlestable
+                          wire: installedapps
+                          columns:
+                            - label: Bundle Name
+                              components:
+                                - uesio/studio.iconlabel:
+                                    uesio.variant: uesio/studio.namespacefield
+                                    text: ${uesio/studio.bundle->uesio/studio.app->uesio/core.uniquekey}
+                                    icon: ${uesio/studio.bundle->uesio/studio.app->uesio/studio.icon}
+                                    color: ${uesio/studio.bundle->uesio/studio.app->uesio/studio.color}
+
+                            - field: uesio/studio.bundle->uesio/studio.version
+                          rowactions:
+                            - text: Details
+                              signals:
+                                - signal: route/NAVIGATE
+                                  path: app/$Param{app}/workspace/$Param{workspacename}/installed/${uesio/core.uniquekey}
+                          pagesize: 10

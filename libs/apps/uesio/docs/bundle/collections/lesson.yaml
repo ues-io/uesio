@@ -1,6 +1,0 @@
-name: lesson
-label: Lesson
-pluralLabel: Lessons
-uniqueKey:
-  - uesio/docs.slug
-  - uesio/docs.track

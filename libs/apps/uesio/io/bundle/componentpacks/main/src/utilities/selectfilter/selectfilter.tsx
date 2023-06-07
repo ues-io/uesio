@@ -34,7 +34,7 @@ const SelectFilter: FunctionComponent<SelectFilterProps> = (props) => {
 							condition: {
 								...condition,
 								value,
-								active: !!value,
+								inactive: !value,
 							},
 						},
 						{

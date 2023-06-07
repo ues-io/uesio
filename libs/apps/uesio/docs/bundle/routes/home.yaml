@@ -1,6 +1,8 @@
 name: home
-path: home
+path: ""
 view: uesio/docs.home
 theme: uesio/docs.default
-title: $Site{title} - Home
+title: Documentation - What is ues.io
+params:
+  slug: home
 public: true

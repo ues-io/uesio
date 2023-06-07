@@ -2,10 +2,11 @@ package postgresio
 
 import (
 	"context"
+	"errors"
 
-	"github.com/jackc/pgconn"
-	"github.com/jackc/pgx/v4"
-	"github.com/jackc/pgx/v4/pgxpool"
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 )
 
@@ -33,10 +34,18 @@ func (c *Connection) GetMetadata() *adapt.MetadataCache {
 }
 
 func (c *Connection) BeginTransaction() error {
-	txn, err := c.client.Begin(context.Background())
+	if c.transaction != nil {
+		return errors.New("A transaction on this connection has already started")
+	}
+	client, err := connectForSave(c.credentials)
+	if err != nil {
+		return nil
+	}
+	txn, err := client.Begin(context.Background())
 	if err != nil {
 		return err
 	}
+	c.client = client
 	c.transaction = txn
 	return nil
 }
