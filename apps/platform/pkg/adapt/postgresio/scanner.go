@@ -53,21 +53,25 @@ func (s *DataScanner) Scan(src interface{}) error {
 }
 
 func ScanJSON(dest, src interface{}) error {
-	err := json.Unmarshal([]byte(src.(string)), dest)
-	if err != nil {
-		return err
-	}
-	return nil
+	return json.Unmarshal([]byte(src.(string)), dest)
 }
 
 func ScanList(src interface{}) (interface{}, error) {
 	var listdata []interface{}
-	return listdata, ScanJSON(&listdata, src)
+	err := ScanJSON(&listdata, src)
+	if err != nil {
+		return nil, err
+	}
+	return listdata, nil
 }
 
 func ScanMap(src interface{}) (interface{}, error) {
 	var mapdata map[string]interface{}
-	return mapdata, ScanJSON(&mapdata, src)
+	err := ScanJSON(&mapdata, src)
+	if err != nil {
+		return nil, err
+	}
+	return mapdata, nil
 }
 
 func ScanNumber(src interface{}) (interface{}, error) {
