@@ -1,9 +1,0 @@
-node_modules/
-bundle/componentpacks/*/*.bundle.js
-bundle/componentpacks/*/*.entry.ts
-bundle/componentpacks/*/*.js.gz
-bundle/componentpacks/*/*.LICENSE.txt
-bundle/componentpacks/*/dist
-.DS_Store
-.uesio
-generated
