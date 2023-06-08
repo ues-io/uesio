@@ -6,12 +6,9 @@ import (
 	"strconv"
 
 	"github.com/jackc/pgx/v5"
-	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
-
-var scanMap = pgtype.NewMap()
 
 type JSONNumber float64
 
@@ -24,25 +21,12 @@ func (num *JSONNumber) UnmarshalJSON(b []byte) error {
 		return err
 	}
 
-	if s == "" {
-		return nil
-	}
-
 	val, err := strconv.ParseFloat(s, 64)
 	if err != nil {
 		return err
 	}
 	*num = JSONNumber(val)
 	return nil
-}
-
-func init() {
-	var arraydata []interface{}
-	scanMap.RegisterDefaultPgType(&arraydata, "json")
-	var mapdata map[string]interface{}
-	scanMap.RegisterDefaultPgType(&mapdata, "json")
-	var numberdata JSONNumber
-	scanMap.RegisterDefaultPgType(&numberdata, "json")
 }
 
 type ScanFunc func(src interface{}) (interface{}, error)
@@ -69,8 +53,7 @@ func (s *DataScanner) Scan(src interface{}) error {
 }
 
 func ScanJSON(dest, src interface{}) error {
-	scanner := scanMap.SQLScanner(dest)
-	err := scanner.Scan(src)
+	err := json.Unmarshal([]byte(src.(string)), dest)
 	if err != nil {
 		return err
 	}
@@ -79,22 +62,26 @@ func ScanJSON(dest, src interface{}) error {
 
 func ScanList(src interface{}) (interface{}, error) {
 	var listdata []interface{}
-	return &listdata, ScanJSON(&listdata, src)
+	return listdata, ScanJSON(&listdata, src)
 }
 
 func ScanMap(src interface{}) (interface{}, error) {
 	var mapdata map[string]interface{}
-	return &mapdata, ScanJSON(&mapdata, src)
+	return mapdata, ScanJSON(&mapdata, src)
 }
 
 func ScanNumber(src interface{}) (interface{}, error) {
-	var numberdata JSONNumber
+	var numberdata *JSONNumber
 	err := ScanJSON(&numberdata, src)
 	if err != nil {
-		return nil, err
+		// If we get an error parsing the json, just continue with the load
+		// We'll set the value to nil
+		return nil, nil
 	}
-	floatdata := float64(numberdata)
-	return &floatdata, nil
+	if numberdata == nil {
+		return nil, nil
+	}
+	return float64(*numberdata), nil
 }
 
 func ScanReference(src interface{}) (interface{}, error) {

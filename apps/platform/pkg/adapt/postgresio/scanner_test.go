@@ -17,64 +17,68 @@ func TestScanner(t *testing.T) {
 		expectErr    error
 	}
 
-	var eight = float64(8)
-	var nilFloat = new(float64)
-
 	var tests = []testCase{
 		{
 			"Number - Normal",
 			ScanNumber,
 			"8",
-			&eight,
+			float64(8),
+			nil,
+		},
+		{
+			"Number - Zero",
+			ScanNumber,
+			"0",
+			float64(0),
 			nil,
 		},
 		{
 			"Number - Null",
 			ScanNumber,
 			"null",
-			nilFloat,
+			nil,
 			nil,
 		},
 		{
 			"Number - String",
 			ScanNumber,
 			"\"8\"",
-			&eight,
+			float64(8),
 			nil,
 		},
 		{
 			"Number - Empty String",
 			ScanNumber,
 			"\"\"",
-			nilFloat,
+			nil,
 			nil,
 		},
 		{
 			"List - Empty",
 			ScanList,
 			"[]",
-			&[]interface{}{},
+			[]interface{}{},
 			nil,
 		},
 		{
 			"List - Strings",
 			ScanList,
 			"[\"foo\",\"bar\"]",
-			&[]interface{}{"foo", "bar"},
+			[]interface{}{"foo", "bar"},
 			nil,
 		},
 		{
 			"List - Numbers",
 			ScanList,
 			"[1,2]",
-			&[]interface{}{float64(1), float64(2)},
+			[]interface{}{float64(1), float64(2)},
 			nil,
 		},
 		{
 			"Map - Strings",
 			ScanMap,
 			"{\"foo\":\"bar\"}",
-			&map[string]interface{}{"foo": "bar"},
+			map[string]interface{}{"foo": "bar"},
 			nil,
 		},
 	}
