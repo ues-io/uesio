@@ -1,8 +1,6 @@
-
 [![](https://godoc.org/github.com/github.com/zachelrath/yaml-jsonpointer?status.svg)](https://pkg.go.dev/github.com/zachelrath/yaml-jsonpointer?tab=doc)
 [![Go Report Card](https://goreportcard.com/badge/github.com/zachelrath/yaml-jsonpointer)](https://goreportcard.com/report/github.com/zachelrath/yaml-jsonpointer)
 ![](https://github.com/zachelrath/yaml-jsonpointer/workflows/CI/badge.svg)
-
 
 # yaml-jsonpointer
 

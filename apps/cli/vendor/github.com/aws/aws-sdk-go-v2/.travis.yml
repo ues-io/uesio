@@ -3,29 +3,28 @@ sudo: true
 dist: bionic
 
 branches:
-  only:
-    - main
+    only:
+        - main
 
 os:
-  - linux
-  - osx
-  # Travis doesn't work with windows and Go tip
-  #- windows
+    - linux
+    - osx
+    # Travis doesn't work with windows and Go tip
+    #- windows
 
 go:
-  - tip
+    - tip
 
 matrix:
-  allow_failures:
-    - go: tip
+    allow_failures:
+        - go: tip
 
 before_install:
-  - if [ "$TRAVIS_OS_NAME" = "windows" ]; then choco install make; fi
-  - (cd /tmp/; go get golang.org/x/lint/golint)
+    - if [ "$TRAVIS_OS_NAME" = "windows" ]; then choco install make; fi
+    - (cd /tmp/; go get golang.org/x/lint/golint)
 
 env:
-  - EACHMODULE_CONCURRENCY=4
+    - EACHMODULE_CONCURRENCY=4
 
 script:
-  - make ci-test-no-generate;
-
+    - make ci-test-no-generate;

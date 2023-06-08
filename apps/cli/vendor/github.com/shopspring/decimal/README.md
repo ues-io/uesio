@@ -8,17 +8,17 @@ _Note:_ Decimal library can "only" represent numbers with a maximum of 2^31 digi
 
 ## Features
 
- * The zero-value is 0, and is safe to use without initialization
- * Addition, subtraction, multiplication with no loss of precision
- * Division with specified precision
- * Database/sql serialization/deserialization
- * JSON and XML serialization/deserialization
+-   The zero-value is 0, and is safe to use without initialization
+-   Addition, subtraction, multiplication with no loss of precision
+-   Division with specified precision
+-   Database/sql serialization/deserialization
+-   JSON and XML serialization/deserialization
 
 ## Install
 
 Run `go get github.com/shopspring/decimal`
 
-## Requirements 
+## Requirements
 
 Decimal library requires Go version `>=1.7`
 
@@ -63,8 +63,8 @@ http://godoc.org/github.com/shopspring/decimal
 
 ## Production Usage
 
-* [Spring](https://shopspring.com/), since August 14, 2014.
-* If you are using this in production, please let us know!
+-   [Spring](https://shopspring.com/), since August 14, 2014.
+-   If you are using this in production, please let us know!
 
 ## FAQ
 
@@ -119,7 +119,7 @@ In contrast, it's difficult to make such mistakes with decimal. Decimals
 behave like other go numbers types: even though `a = b` will not deep copy
 `b` into `a`, it is impossible to modify a Decimal, since all Decimal methods
 return new Decimals and do not modify the originals. The downside is that
-this causes extra allocations, so Decimal is less performant.  My assumption
+this causes extra allocations, so Decimal is less performant. My assumption
 is that if you're using Decimals, you probably care more about correctness
 than performance.
 

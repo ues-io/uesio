@@ -59,51 +59,51 @@ go test
 
 Colors
 
-* black
-* red
-* green
-* yellow
-* blue
-* magenta
-* cyan
-* white
-* 0...255 (256 colors)
+-   black
+-   red
+-   green
+-   yellow
+-   blue
+-   magenta
+-   cyan
+-   white
+-   0...255 (256 colors)
 
 Foreground Attributes
 
-* B = Blink
-* b = bold
-* h = high intensity (bright)
-* d = dim
-* i = inverse
-* s = strikethrough
-* u = underline
+-   B = Blink
+-   b = bold
+-   h = high intensity (bright)
+-   d = dim
+-   i = inverse
+-   s = strikethrough
+-   u = underline
 
 Background Attributes
 
-* h = high intensity (bright)
+-   h = high intensity (bright)
 
 ## Constants
 
-* ansi.Reset
-* ansi.DefaultBG
-* ansi.DefaultFG
-* ansi.Black
-* ansi.Red
-* ansi.Green
-* ansi.Yellow
-* ansi.Blue
-* ansi.Magenta
-* ansi.Cyan
-* ansi.White
-* ansi.LightBlack
-* ansi.LightRed
-* ansi.LightGreen
-* ansi.LightYellow
-* ansi.LightBlue
-* ansi.LightMagenta
-* ansi.LightCyan
-* ansi.LightWhite
+-   ansi.Reset
+-   ansi.DefaultBG
+-   ansi.DefaultFG
+-   ansi.Black
+-   ansi.Red
+-   ansi.Green
+-   ansi.Yellow
+-   ansi.Blue
+-   ansi.Magenta
+-   ansi.Cyan
+-   ansi.White
+-   ansi.LightBlack
+-   ansi.LightRed
+-   ansi.LightGreen
+-   ansi.LightYellow
+-   ansi.LightBlue
+-   ansi.LightMagenta
+-   ansi.LightCyan
+-   ansi.LightWhite
 
 ## References
 
@@ -120,4 +120,3 @@ color on Windows.
 Copyright (c) 2013 Mario Gutierrez mario@mgutz.com
 
 See the file LICENSE for copying permission.
-

@@ -10,20 +10,20 @@ This project and its contibutors are expected to uphold the [Go Community Code o
 
 ## Getting help
 
-* [Open an issue](https://github.com/AlecAivazis/survey/issues/new/choose)
-* Reach out to `@AlecAivazis` or `@mislav` in the Gophers slack (please use only when urgent)
+-   [Open an issue](https://github.com/AlecAivazis/survey/issues/new/choose)
+-   Reach out to `@AlecAivazis` or `@mislav` in the Gophers slack (please use only when urgent)
 
 ## Submitting a contribution
 
 When submitting a contribution,
 
-- Try to make a series of smaller changes instead of one large change
-- Provide a description of each change that you are proposing
-- Reference the issue addressed by your pull request (if there is one)
-- Document all new exported Go APIs
-- Update the project's README when applicable
-- Include unit tests if possible
-- Contributions with visual ramifications or interaction changes should be accompanied with an integration test—see below for details.
+-   Try to make a series of smaller changes instead of one large change
+-   Provide a description of each change that you are proposing
+-   Reference the issue addressed by your pull request (if there is one)
+-   Document all new exported Go APIs
+-   Update the project's README when applicable
+-   Include unit tests if possible
+-   Contributions with visual ramifications or interaction changes should be accompanied with an integration test—see below for details.
 
 ## Writing and running tests
 

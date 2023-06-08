@@ -389,7 +389,6 @@ prompt := &survey.Input{
 survey.AskOne(prompt, &number, survey.WithRemoveSelectNone())
 ```
 
-
 ### Changing the input rune
 
 In some situations, `?` is a perfectly valid response. To handle this, you can change the rune that survey

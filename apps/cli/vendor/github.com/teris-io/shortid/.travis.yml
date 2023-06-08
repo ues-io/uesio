@@ -1,19 +1,17 @@
 language: go
 arch:
-  - amd64
-  - ppc64le
+    - amd64
+    - ppc64le
 go:
-  - 1.8
+    - 1.8
 
 before_install:
-  - go get
-  - touch coverage.txt
-  - pip install --user codecov
+    - go get
+    - touch coverage.txt
+    - pip install --user codecov
 
 script:
-  - go test -coverprofile=coverage.txt -covermode=atomic ./...
+    - go test -coverprofile=coverage.txt -covermode=atomic ./...
 
 after_success:
-  - codecov
-
-
+    - codecov

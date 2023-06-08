@@ -10,23 +10,22 @@ The package is heavily inspired by the node.js [shortid][nodeshortid] library (s
 
 The easiest way to start generating Ids is:
 
-	fmt.Printf(shortid.Generate())
-	fmt.Printf(shortid.Generate())
+    fmt.Printf(shortid.Generate())
+    fmt.Printf(shortid.Generate())
 
 The recommended one is to initialise and reuse a generator specific to a given worker:
 
-	sid, err := shortid.New(1, shortid.DefaultABC, 2342)
+    sid, err := shortid.New(1, shortid.DefaultABC, 2342)
 
-	// then either:
-	fmt.Printf(sid.Generate())
-	fmt.Printf(sid.Generate())
+    // then either:
+    fmt.Printf(sid.Generate())
+    fmt.Printf(sid.Generate())
 
-	// or:
-	shortid.SetDefault(sid)
-	// followed by:
-	fmt.Printf(shortid.Generate())
-	fmt.Printf(shortid.Generate())
-
+    // or:
+    shortid.SetDefault(sid)
+    // followed by:
+    fmt.Printf(shortid.Generate())
+    fmt.Printf(shortid.Generate())
 
 ### Id Length
 
@@ -36,19 +35,19 @@ rarely it can go beyond that during continuous generation at full throttle on hi
 hardware. A test generating 500k Ids at full throttle on conventional hardware generated the
 following Ids at the head and the tail (length > 9 is expected for this test):
 
-	-NDveu-9Q
-	iNove6iQ9J
-	NVDve6-9Q
-	VVDvc6i99J
-	NVovc6-QQy
-	VVoveui9QC
-	...
-	tFmGc6iQQs
-	KpTvcui99k
-	KFTGcuiQ9p
-	KFmGeu-Q9O
-	tFTvcu-QQt
-	tpTveu-99u
+    -NDveu-9Q
+    iNove6iQ9J
+    NVDve6-9Q
+    VVDvc6i99J
+    NVovc6-QQy
+    VVoveui9QC
+    ...
+    tFmGc6iQQs
+    KpTvcui99k
+    KFTGcuiQ9p
+    KFmGeu-Q9O
+    tFTvcu-QQt
+    tpTveu-99u
 
 ### Life span
 
@@ -62,13 +61,13 @@ up to 32 workers all providing unique sequences from each other.
 Although heavily inspired by the node.js [shortid][nodeshortid] library this is
 not just a Go port. This implementation
 
-* is safe to concurrency (test included);
-* does not require any yearly version/epoch resets (test included);
-* provides stable Id size over a the whole range of operation at the rate of 1ms (test included);
-* guarantees no collisions: due to guaranteed fixed size of Ids between milliseconds and because
-multiple requests within the same ms lead to longer Ids with the prefix unique to the ms (tests
-included);
-* supports 32 instead of 16 workers (test included)
+-   is safe to concurrency (test included);
+-   does not require any yearly version/epoch resets (test included);
+-   provides stable Id size over a the whole range of operation at the rate of 1ms (test included);
+-   guarantees no collisions: due to guaranteed fixed size of Ids between milliseconds and because
+    multiple requests within the same ms lead to longer Ids with the prefix unique to the ms (tests
+    included);
+-   supports 32 instead of 16 workers (test included)
 
 The algorithm uses less randomness than the original node.js implementation, which permits to extend
 the life span as well as reduce and guarantee the length. In general terms, each Id has the
@@ -85,7 +84,7 @@ implement an algorithm with e.g. more randomness, but with longer Ids and shorte
 
 ### License and copyright
 
-	Copyright (c) 2016. Oleg Sklyar and teris.io. MIT license applies. All rights reserved.
+    Copyright (c) 2016. Oleg Sklyar and teris.io. MIT license applies. All rights reserved.
 
 **[Original algorithm][nodeshortid]:** Copyright (c) 2015 Dylan Greene, contributors. The same MIT
 license applies. Many thanks to Dylan for putting together the original node.js library, which
@@ -95,15 +94,11 @@ inspired this "port":
 
 [go]: https://golang.org
 [nodeshortid]: https://github.com/dylang/shortid
-
 [build]: https://travis-ci.org/teris-io/shortid
 [buildimage]: https://travis-ci.org/teris-io/shortid.svg?branch=master
-
 [codecov]: https://codecov.io/github/teris-io/shortid?branch=master
 [codecovimage]: https://codecov.io/github/teris-io/shortid/coverage.svg?branch=master
-
 [card]: http://goreportcard.com/report/teris-io/shortid
 [cardimage]: https://goreportcard.com/badge/github.com/teris-io/shortid
-
 [docs]: https://godoc.org/github.com/teris-io/shortid
 [docsimage]: http://img.shields.io/badge/godoc-reference-blue.svg?style=flat

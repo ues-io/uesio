@@ -13,52 +13,52 @@ Gval (Go eVALuate) provides support for evaluating arbitrary expressions, in par
 
 Gval can evaluate expressions with parameters, arimethetic, logical, and string operations:
 
-- basic expression: [10 > 0](https://pkg.go.dev/github.com/PaesslerAG/gval/#example-Evaluate-Basic)
-- parameterized expression: [foo > 0](https://pkg.go.dev/github.com/PaesslerAG/gval/#example-Evaluate-Parameter)
-- nested parameterized expression: [foo.bar > 0](https://pkg.go.dev/github.com/PaesslerAG/gval/#example-Evaluate-NestedParameter)
-- arithmetic expression: [(requests_made * requests_succeeded / 100) >= 90](https://pkg.go.dev/github.com/PaesslerAG/gval/#example-Evaluate-Arithmetic)
-- string expression: [http_response_body == "service is ok"](https://pkg.go.dev/github.com/PaesslerAG/gval/#example-Evaluate-String)
-- float64 expression: [(mem_used / total_mem) * 100](https://pkg.go.dev/github.com/PaesslerAG/gval/#example-Evaluate-Float64)
+-   basic expression: [10 > 0](https://pkg.go.dev/github.com/PaesslerAG/gval/#example-Evaluate-Basic)
+-   parameterized expression: [foo > 0](https://pkg.go.dev/github.com/PaesslerAG/gval/#example-Evaluate-Parameter)
+-   nested parameterized expression: [foo.bar > 0](https://pkg.go.dev/github.com/PaesslerAG/gval/#example-Evaluate-NestedParameter)
+-   arithmetic expression: [(requests_made \* requests_succeeded / 100) >= 90](https://pkg.go.dev/github.com/PaesslerAG/gval/#example-Evaluate-Arithmetic)
+-   string expression: [http_response_body == "service is ok"](https://pkg.go.dev/github.com/PaesslerAG/gval/#example-Evaluate-String)
+-   float64 expression: [(mem_used / total_mem) \* 100](https://pkg.go.dev/github.com/PaesslerAG/gval/#example-Evaluate-Float64)
 
 It can easily be extended with custom functions or operators:
 
-- custom date comparator: [date(\`2014-01-02\`) > date(\`2014-01-01 23:59:59\`)](https://pkg.go.dev/github.com/PaesslerAG/gval/#example-Evaluate-DateComparison)
-- string length: [strlen("someReallyLongInputString") <= 16](https://pkg.go.dev/github.com/PaesslerAG/gval/#example-Evaluate-Strlen)
+-   custom date comparator: [date(\`2014-01-02\`) > date(\`2014-01-01 23:59:59\`)](https://pkg.go.dev/github.com/PaesslerAG/gval/#example-Evaluate-DateComparison)
+-   string length: [strlen("someReallyLongInputString") <= 16](https://pkg.go.dev/github.com/PaesslerAG/gval/#example-Evaluate-Strlen)
 
 You can parse gval.Expressions once and re-use them multiple times. Parsing is the compute-intensive phase of the process, so if you intend to use the same expression with different parameters, just parse it once:
 
-- [Parsing and Evaluation](https://pkg.go.dev/github.com/PaesslerAG/gval/#example-Evaluable)
+-   [Parsing and Evaluation](https://pkg.go.dev/github.com/PaesslerAG/gval/#example-Evaluable)
 
 The normal Go-standard order of operators is respected. When writing an expression, be sure that you either order the operators correctly, or use parentheses to clarify which portions of an expression should be run first.
 
 Strings, numbers, and booleans can be used like in Go:
 
-- [(7 < "47" == true ? "hello world!\n\u263a") + \` more text\`](https://pkg.go.dev/github.com/PaesslerAG/gval/#example-Evaluate-Encoding)
+-   [(7 < "47" == true ? "hello world!\n\u263a") + \` more text\`](https://pkg.go.dev/github.com/PaesslerAG/gval/#example-Evaluate-Encoding)
 
 ## Parameter
 
 Variables can be accessed via string literals. They can be used for values with string keys if the parameter is a `map[string]interface{}` or `map[interface{}]interface{}` and for fields or methods if the parameter is a struct.
 
-- [foo > 0](https://pkg.go.dev/github.com/PaesslerAG/gval/#example-Evaluate-Parameter)
+-   [foo > 0](https://pkg.go.dev/github.com/PaesslerAG/gval/#example-Evaluate-Parameter)
 
 ### Bracket Selector
 
 Map and array elements and Struct Field can be accessed via `[]`.
 
-- [foo[0]](https://pkg.go.dev/github.com/PaesslerAG/gval/#example-Evaluate-Array)
-- [foo["b" + "a" + "r"]](https://pkg.go.dev/github.com/PaesslerAG/gval/#example-Evaluate-ExampleEvaluate_ComplexAccessor)
+-   [foo[0]](https://pkg.go.dev/github.com/PaesslerAG/gval/#example-Evaluate-Array)
+-   [foo["b" + "a" + "r"]](https://pkg.go.dev/github.com/PaesslerAG/gval/#example-Evaluate-ExampleEvaluate_ComplexAccessor)
 
 ### Dot Selector
 
 A nested variable with a name containing only letters and underscores can be accessed via a dot selector.
 
-- [foo.bar > 0](https://pkg.go.dev/github.com/PaesslerAG/gval/#example-Evaluate-NestedParameter)
+-   [foo.bar > 0](https://pkg.go.dev/github.com/PaesslerAG/gval/#example-Evaluate-NestedParameter)
 
 ### Custom Selector
 
 Parameter names like `response-time` will be interpreted as `response` minus `time`. While gval doesn't support these parameter names directly, you can easily access them via a custom extension like [JSON Path](https://github.com/PaesslerAG/jsonpath):
 
-- [$["response-time"]](https://pkg.go.dev/github.com/PaesslerAG/gval/#example-Evaluate-Jsonpath)
+-   [$["response-time"]](https://pkg.go.dev/github.com/PaesslerAG/gval/#example-Evaluate-Jsonpath)
 
 Jsonpath is also suitable for accessing array elements.
 
@@ -66,7 +66,7 @@ Jsonpath is also suitable for accessing array elements.
 
 If you have structs in your parameters, you can access their fields and methods in the usual way:
 
-- [foo.Hello + foo.World()](https://pkg.go.dev/github.com/PaesslerAG/gval/#example-Evaluate-FlatAccessor)
+-   [foo.Hello + foo.World()](https://pkg.go.dev/github.com/PaesslerAG/gval/#example-Evaluate-FlatAccessor)
 
 It also works if the parameter is a struct directly
 [Hello + World()](https://pkg.go.dev/github.com/PaesslerAG/gval/#example-Evaluate-Accessor)
@@ -79,25 +79,25 @@ This may be convenient but note that using accessors on strucs makes the express
 
 The default language is in serveral sub languages like text, arithmetic or propositional logic defined. See [Godoc](https://pkg.go.dev/github.com/PaesslerAG/gval/#Gval) for details. All sub languages are merged into gval.Full which contains the following elements:
 
-- Modifiers: `+` `-` `/` `*` `&` `|` `^` `**` `%` `>>` `<<`
-- Comparators: `>` `>=` `<` `<=` `==` `!=` `=~` `!~`
-- Logical ops: `||` `&&`
-- Numeric constants, as 64-bit floating point (`12345.678`)
-- String constants (double quotes: `"foobar"`)
-- Date function 'Date(x)', using any permutation of RFC3339, ISO8601, ruby date, or unix date
-- Boolean constants: `true` `false`
-- Parentheses to control order of evaluation `(` `)`
-- Json Arrays : `[1, 2, "foo"]`
-- Json Objects : `{"a":1, "b":2, "c":"foo"}`
-- Prefixes: `!` `-` `~`
-- Ternary conditional: `?` `:`
-- Null coalescence: `??`
+-   Modifiers: `+` `-` `/` `*` `&` `|` `^` `**` `%` `>>` `<<`
+-   Comparators: `>` `>=` `<` `<=` `==` `!=` `=~` `!~`
+-   Logical ops: `||` `&&`
+-   Numeric constants, as 64-bit floating point (`12345.678`)
+-   String constants (double quotes: `"foobar"`)
+-   Date function 'Date(x)', using any permutation of RFC3339, ISO8601, ruby date, or unix date
+-   Boolean constants: `true` `false`
+-   Parentheses to control order of evaluation `(` `)`
+-   Json Arrays : `[1, 2, "foo"]`
+-   Json Objects : `{"a":1, "b":2, "c":"foo"}`
+-   Prefixes: `!` `-` `~`
+-   Ternary conditional: `?` `:`
+-   Null coalescence: `??`
 
 ## Customize
 
 Gval is completly customizable. Every constant, function or operator can be defined separately and existing expression languages can be reused:
 
-- [foo.Hello + foo.World()](https://pkg.go.dev/github.com/PaesslerAG/gval/#example-Language)
+-   [foo.Hello + foo.World()](https://pkg.go.dev/github.com/PaesslerAG/gval/#example-Language)
 
 For details see [Godoc](https://pkg.go.dev/github.com/PaesslerAG/gval).
 
@@ -112,8 +112,8 @@ Function receives next part of the path and can return any type of var that is a
 
 A list of external libraries for gval. Feel free to add your own library.
 
-- [gvalstrings](https://github.com/generikvault/gvalstrings) parse single quoted strings in gval.
-- [jsonpath](https://github.com/PaesslerAG/jsonpath) full support for jsonpath in gval.
+-   [gvalstrings](https://github.com/generikvault/gvalstrings) parse single quoted strings in gval.
+-   [jsonpath](https://github.com/PaesslerAG/jsonpath) full support for jsonpath in gval.
 
 ## Performance
 
@@ -124,7 +124,7 @@ The library comes with a bunch of benchmarks to measure the performance of parsi
 
 For a very rough idea of performance, here are the results from a benchmark run on a Dell Latitude E7470 Win 10 i5-6300U.
 
-``` text
+```text
 BenchmarkGval/const_evaluation-4                               500000000                 3.57 ns/op
 BenchmarkGval/const_parsing-4                                    1000000              1144 ns/op
 BenchmarkGval/single_parameter_evaluation-4                     10000000               165 ns/op
@@ -159,5 +159,6 @@ ok
 
 Gval is designed with easy expandability in mind and API breaks will be avoided if possible. If API breaks are unavoidable they wil be explicitly stated via an increased major version number.
 
--------------------------------------
+---
+
 Credits to Reene French for the gophers.
