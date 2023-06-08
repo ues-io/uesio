@@ -335,13 +335,6 @@
 						"cwd": "apps/cli"
 					}
 				},
-				"lint": {
-					"builder": "nx:run-commands",
-					"options": {
-						"command": "output=$(gofmt -l ./pkg/**) && echo \"$output\" && test -z \"$output\"",
-						"cwd": "apps/cli"
-					}
-				},
 				"test": {
 					"builder": "nx:run-commands",
 					"options": {
@@ -363,13 +356,6 @@
 					"outputs": ["dist/platform"],
 					"options": {
 						"commands": ["go build -o ../../dist/platform/uesio"],
-						"cwd": "apps/platform"
-					}
-				},
-				"lint": {
-					"builder": "nx:run-commands",
-					"options": {
-						"command": "output=$(gofmt -l ./pkg/**) && echo \"$output\" && test -z \"$output\"",
 						"cwd": "apps/platform"
 					}
 				},
