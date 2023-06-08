@@ -1,0 +1,283 @@
+# github.com/AlecAivazis/survey/v2 v2.3.6
+## explicit; go 1.13
+github.com/AlecAivazis/survey/v2
+github.com/AlecAivazis/survey/v2/core
+github.com/AlecAivazis/survey/v2/terminal
+# github.com/PaesslerAG/gval v1.2.1
+## explicit; go 1.15
+github.com/PaesslerAG/gval
+# github.com/aws/aws-sdk-go-v2 v1.16.16
+## explicit; go 1.15
+github.com/aws/aws-sdk-go-v2
+github.com/aws/aws-sdk-go-v2/aws
+github.com/aws/aws-sdk-go-v2/aws/defaults
+github.com/aws/aws-sdk-go-v2/aws/middleware
+github.com/aws/aws-sdk-go-v2/aws/protocol/query
+github.com/aws/aws-sdk-go-v2/aws/protocol/restjson
+github.com/aws/aws-sdk-go-v2/aws/protocol/xml
+github.com/aws/aws-sdk-go-v2/aws/ratelimit
+github.com/aws/aws-sdk-go-v2/aws/retry
+github.com/aws/aws-sdk-go-v2/aws/signer/internal/v4
+github.com/aws/aws-sdk-go-v2/aws/signer/v4
+github.com/aws/aws-sdk-go-v2/aws/transport/http
+github.com/aws/aws-sdk-go-v2/internal/rand
+github.com/aws/aws-sdk-go-v2/internal/sdk
+github.com/aws/aws-sdk-go-v2/internal/sdkio
+github.com/aws/aws-sdk-go-v2/internal/strings
+github.com/aws/aws-sdk-go-v2/internal/sync/singleflight
+github.com/aws/aws-sdk-go-v2/internal/timeconv
+# github.com/aws/aws-sdk-go-v2/config v1.17.7
+## explicit; go 1.15
+github.com/aws/aws-sdk-go-v2/config
+# github.com/aws/aws-sdk-go-v2/credentials v1.12.20
+## explicit; go 1.15
+github.com/aws/aws-sdk-go-v2/credentials
+github.com/aws/aws-sdk-go-v2/credentials/ec2rolecreds
+github.com/aws/aws-sdk-go-v2/credentials/endpointcreds
+github.com/aws/aws-sdk-go-v2/credentials/endpointcreds/internal/client
+github.com/aws/aws-sdk-go-v2/credentials/processcreds
+github.com/aws/aws-sdk-go-v2/credentials/ssocreds
+github.com/aws/aws-sdk-go-v2/credentials/stscreds
+# github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.12.17
+## explicit; go 1.15
+github.com/aws/aws-sdk-go-v2/feature/ec2/imds
+github.com/aws/aws-sdk-go-v2/feature/ec2/imds/internal/config
+# github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.23
+## explicit; go 1.15
+github.com/aws/aws-sdk-go-v2/internal/configsources
+# github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.17
+## explicit; go 1.15
+github.com/aws/aws-sdk-go-v2/internal/endpoints/v2
+# github.com/aws/aws-sdk-go-v2/internal/ini v1.3.24
+## explicit; go 1.15
+github.com/aws/aws-sdk-go-v2/internal/ini
+# github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.17
+## explicit; go 1.15
+github.com/aws/aws-sdk-go-v2/service/internal/presigned-url
+# github.com/aws/aws-sdk-go-v2/service/sso v1.11.23
+## explicit; go 1.15
+github.com/aws/aws-sdk-go-v2/service/sso
+github.com/aws/aws-sdk-go-v2/service/sso/internal/endpoints
+github.com/aws/aws-sdk-go-v2/service/sso/types
+# github.com/aws/aws-sdk-go-v2/service/ssooidc v1.13.5
+## explicit; go 1.15
+github.com/aws/aws-sdk-go-v2/service/ssooidc
+github.com/aws/aws-sdk-go-v2/service/ssooidc/internal/endpoints
+github.com/aws/aws-sdk-go-v2/service/ssooidc/types
+# github.com/aws/aws-sdk-go-v2/service/sts v1.16.19
+## explicit; go 1.15
+github.com/aws/aws-sdk-go-v2/service/sts
+github.com/aws/aws-sdk-go-v2/service/sts/internal/endpoints
+github.com/aws/aws-sdk-go-v2/service/sts/types
+# github.com/aws/smithy-go v1.13.3
+## explicit; go 1.15
+github.com/aws/smithy-go
+github.com/aws/smithy-go/auth/bearer
+github.com/aws/smithy-go/context
+github.com/aws/smithy-go/document
+github.com/aws/smithy-go/encoding
+github.com/aws/smithy-go/encoding/httpbinding
+github.com/aws/smithy-go/encoding/json
+github.com/aws/smithy-go/encoding/xml
+github.com/aws/smithy-go/internal/sync/singleflight
+github.com/aws/smithy-go/io
+github.com/aws/smithy-go/logging
+github.com/aws/smithy-go/middleware
+github.com/aws/smithy-go/ptr
+github.com/aws/smithy-go/rand
+github.com/aws/smithy-go/time
+github.com/aws/smithy-go/transport/http
+github.com/aws/smithy-go/transport/http/internal/io
+# github.com/dimchansky/utfbom v1.1.1
+## explicit
+github.com/dimchansky/utfbom
+# github.com/evanw/esbuild v0.14.50
+## explicit; go 1.13
+github.com/evanw/esbuild/internal/api_helpers
+github.com/evanw/esbuild/internal/ast
+github.com/evanw/esbuild/internal/bundler
+github.com/evanw/esbuild/internal/cache
+github.com/evanw/esbuild/internal/compat
+github.com/evanw/esbuild/internal/config
+github.com/evanw/esbuild/internal/css_ast
+github.com/evanw/esbuild/internal/css_lexer
+github.com/evanw/esbuild/internal/css_parser
+github.com/evanw/esbuild/internal/css_printer
+github.com/evanw/esbuild/internal/fs
+github.com/evanw/esbuild/internal/graph
+github.com/evanw/esbuild/internal/helpers
+github.com/evanw/esbuild/internal/js_ast
+github.com/evanw/esbuild/internal/js_lexer
+github.com/evanw/esbuild/internal/js_parser
+github.com/evanw/esbuild/internal/js_printer
+github.com/evanw/esbuild/internal/logger
+github.com/evanw/esbuild/internal/renamer
+github.com/evanw/esbuild/internal/resolver
+github.com/evanw/esbuild/internal/runtime
+github.com/evanw/esbuild/internal/sourcemap
+github.com/evanw/esbuild/internal/xxhash
+github.com/evanw/esbuild/pkg/api
+# github.com/francoispqt/gojay v1.2.13
+## explicit; go 1.12
+github.com/francoispqt/gojay
+# github.com/go-openapi/jsonpointer v0.19.5
+## explicit; go 1.13
+github.com/go-openapi/jsonpointer
+# github.com/go-openapi/swag v0.19.14
+## explicit; go 1.11
+github.com/go-openapi/swag
+# github.com/gofrs/uuid v4.3.1+incompatible
+## explicit
+github.com/gofrs/uuid
+# github.com/golang/protobuf v1.5.2
+## explicit; go 1.9
+github.com/golang/protobuf/proto
+# github.com/gomodule/redigo v1.8.9
+## explicit; go 1.16
+github.com/gomodule/redigo/redis
+# github.com/icza/session v1.2.0
+## explicit
+github.com/icza/session
+# github.com/inconshreveable/mousetrap v1.0.1
+## explicit; go 1.18
+github.com/inconshreveable/mousetrap
+# github.com/josharian/intern v1.0.0
+## explicit; go 1.5
+github.com/josharian/intern
+# github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51
+## explicit
+github.com/kballard/go-shellquote
+# github.com/kr/pretty v0.3.0
+## explicit; go 1.12
+# github.com/mailru/easyjson v0.7.6
+## explicit; go 1.12
+github.com/mailru/easyjson/buffer
+github.com/mailru/easyjson/jlexer
+github.com/mailru/easyjson/jwriter
+# github.com/mattn/go-colorable v0.1.13
+## explicit; go 1.15
+github.com/mattn/go-colorable
+# github.com/mattn/go-isatty v0.0.16
+## explicit; go 1.15
+github.com/mattn/go-isatty
+# github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d
+## explicit
+github.com/mgutz/ansi
+# github.com/shopspring/decimal v1.3.1
+## explicit; go 1.13
+github.com/shopspring/decimal
+# github.com/spf13/cobra v1.5.0
+## explicit; go 1.15
+github.com/spf13/cobra
+# github.com/spf13/pflag v1.0.5
+## explicit; go 1.12
+github.com/spf13/pflag
+# github.com/teris-io/shortid v0.0.0-20220617161101-71ec9f2aa569
+## explicit; go 1.18
+github.com/teris-io/shortid
+# github.com/thecloudmasters/uesio v0.0.0-00010101000000-000000000000 => ../platform
+## explicit; go 1.20
+github.com/thecloudmasters/uesio/pkg/adapt
+github.com/thecloudmasters/uesio/pkg/bot
+github.com/thecloudmasters/uesio/pkg/bulk
+github.com/thecloudmasters/uesio/pkg/bundle
+github.com/thecloudmasters/uesio/pkg/bundlestore
+github.com/thecloudmasters/uesio/pkg/bundlestore/systembundlestore
+github.com/thecloudmasters/uesio/pkg/cache
+github.com/thecloudmasters/uesio/pkg/configstore
+github.com/thecloudmasters/uesio/pkg/creds
+github.com/thecloudmasters/uesio/pkg/datasource
+github.com/thecloudmasters/uesio/pkg/fileadapt
+github.com/thecloudmasters/uesio/pkg/fileadapt/localfiles
+github.com/thecloudmasters/uesio/pkg/filesource
+github.com/thecloudmasters/uesio/pkg/goutils
+github.com/thecloudmasters/uesio/pkg/licensing
+github.com/thecloudmasters/uesio/pkg/localcache
+github.com/thecloudmasters/uesio/pkg/merge
+github.com/thecloudmasters/uesio/pkg/meta
+github.com/thecloudmasters/uesio/pkg/reflecttool
+github.com/thecloudmasters/uesio/pkg/retrieve
+github.com/thecloudmasters/uesio/pkg/secretstore
+github.com/thecloudmasters/uesio/pkg/sess
+github.com/thecloudmasters/uesio/pkg/templating
+github.com/thecloudmasters/uesio/pkg/timeutils
+github.com/thecloudmasters/uesio/pkg/translate
+github.com/thecloudmasters/uesio/pkg/usage
+github.com/thecloudmasters/uesio/pkg/usage/usage_common
+# github.com/zachelrath/yaml-jsonpointer v0.2.0
+## explicit; go 1.19
+github.com/zachelrath/yaml-jsonpointer
+# golang.org/x/net v0.6.0
+## explicit; go 1.17
+golang.org/x/net/context
+# golang.org/x/sys v0.5.0
+## explicit; go 1.17
+golang.org/x/sys/internal/unsafeheader
+golang.org/x/sys/plan9
+golang.org/x/sys/unix
+golang.org/x/sys/windows
+# golang.org/x/term v0.5.0
+## explicit; go 1.17
+golang.org/x/term
+# golang.org/x/text v0.7.0
+## explicit; go 1.17
+golang.org/x/text/internal/language
+golang.org/x/text/internal/language/compact
+golang.org/x/text/internal/tag
+golang.org/x/text/language
+golang.org/x/text/transform
+golang.org/x/text/width
+# google.golang.org/appengine v1.6.7
+## explicit; go 1.11
+google.golang.org/appengine
+google.golang.org/appengine/datastore
+google.golang.org/appengine/datastore/internal/cloudkey
+google.golang.org/appengine/datastore/internal/cloudpb
+google.golang.org/appengine/internal
+google.golang.org/appengine/internal/app_identity
+google.golang.org/appengine/internal/base
+google.golang.org/appengine/internal/datastore
+google.golang.org/appengine/internal/log
+google.golang.org/appengine/internal/memcache
+google.golang.org/appengine/internal/modules
+google.golang.org/appengine/internal/remote_api
+google.golang.org/appengine/log
+google.golang.org/appengine/memcache
+# google.golang.org/protobuf v1.28.1
+## explicit; go 1.11
+google.golang.org/protobuf/encoding/prototext
+google.golang.org/protobuf/encoding/protowire
+google.golang.org/protobuf/internal/descfmt
+google.golang.org/protobuf/internal/descopts
+google.golang.org/protobuf/internal/detrand
+google.golang.org/protobuf/internal/encoding/defval
+google.golang.org/protobuf/internal/encoding/messageset
+google.golang.org/protobuf/internal/encoding/tag
+google.golang.org/protobuf/internal/encoding/text
+google.golang.org/protobuf/internal/errors
+google.golang.org/protobuf/internal/filedesc
+google.golang.org/protobuf/internal/filetype
+google.golang.org/protobuf/internal/flags
+google.golang.org/protobuf/internal/genid
+google.golang.org/protobuf/internal/impl
+google.golang.org/protobuf/internal/order
+google.golang.org/protobuf/internal/pragma
+google.golang.org/protobuf/internal/set
+google.golang.org/protobuf/internal/strs
+google.golang.org/protobuf/internal/version
+google.golang.org/protobuf/proto
+google.golang.org/protobuf/reflect/protodesc
+google.golang.org/protobuf/reflect/protoreflect
+google.golang.org/protobuf/reflect/protoregistry
+google.golang.org/protobuf/runtime/protoiface
+google.golang.org/protobuf/runtime/protoimpl
+google.golang.org/protobuf/types/descriptorpb
+# gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c
+## explicit; go 1.11
+# gopkg.in/yaml.v2 v2.4.0
+## explicit; go 1.15
+gopkg.in/yaml.v2
+# gopkg.in/yaml.v3 v3.0.1
+## explicit
+gopkg.in/yaml.v3
+# github.com/thecloudmasters/uesio => ../platform
