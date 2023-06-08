@@ -133,7 +133,6 @@ func setPointer(to reflect.Value, from reflect.Value) error {
 func setPrimative(to reflect.Value, from reflect.Value) error {
 	fromType := from.Type()
 	toType := to.Type()
-
 	if !fromType.AssignableTo(toType) {
 		if from.CanConvert(toType) {
 			to.Set(from.Convert(toType))
