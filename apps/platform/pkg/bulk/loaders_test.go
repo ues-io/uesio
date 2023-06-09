@@ -126,6 +126,12 @@ func Test_NumberLoader(t *testing.T) {
 			"",
 		},
 		{
+			"blank value should be nil",
+			"",
+			nil,
+			"",
+		},
+		{
 			"return error if input is not an expected format",
 			"2022/12/13",
 			nil,
