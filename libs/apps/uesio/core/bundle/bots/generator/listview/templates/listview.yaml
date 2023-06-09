@@ -5,50 +5,55 @@ wires:
     fields: ${fields}
 # Components determine the layout and composition of your view
 components:
-  - uesio/io.titlebar:
-      title: ${collection}
-      uesio.variant: uesio/io.main
-      actions:
-        - uesio/io.group:
-            components:
-              - uesio/io.button:
-                  signals:
-                    - signal: wire/CREATE_RECORD
-                      wire: ${wirename}
-                  text: Create
-                  uesio.variant: uesio/io.primary
-              - uesio/io.button:
-                  signals:
-                    - signal: wire/SAVE
-                      wires:
-                        - ${wirename}
-                  text: Save
-                  hotkey: "meta+s"
-                  uesio.variant: uesio/io.secondary
-              - uesio/io.button:
-                  signals:
-                    - signal: wire/CANCEL
-                      wire: ${wirename}
-                  text: Cancel
-                  uesio.variant: uesio/io.secondary
-              - uesio/io.button:
-                  signals:
-                    - signal: component/CALL
-                      component: uesio/io.table
-                      componentsignal: TOGGLE_MODE
-                      targettype: specific
-                      componentid: ${wirename}Table
-                  text: Mode
-                  uesio.variant: uesio/io.secondary
   - uesio/io.box:
-      uesio.variant: uesio/io.section
+      uesio.styleTokens:
+        root:
+          - p-10
       components:
-        - uesio/io.table:
-            rowactions:
-              - text: Delete
-                signals:
-                  - signal: wire/TOGGLE_DELETE_STATUS
-            columns: ${tableColumns}
-            uesio.id: ${wirename}Table
-            mode: EDIT
-            wire: ${wirename}
+        - uesio/io.titlebar:
+            title: ${collection}
+            uesio.variant: uesio/io.main
+            actions:
+              - uesio/io.group:
+                  components:
+                    - uesio/io.button:
+                        signals:
+                          - signal: wire/CREATE_RECORD
+                            wire: ${wirename}
+                        text: Create
+                        uesio.variant: uesio/io.primary
+                    - uesio/io.button:
+                        signals:
+                          - signal: wire/SAVE
+                            wires:
+                              - ${wirename}
+                        text: Save
+                        hotkey: "meta+s"
+                        uesio.variant: uesio/io.secondary
+                    - uesio/io.button:
+                        signals:
+                          - signal: wire/CANCEL
+                            wire: ${wirename}
+                        text: Cancel
+                        uesio.variant: uesio/io.secondary
+                    - uesio/io.button:
+                        signals:
+                          - signal: component/CALL
+                            component: uesio/io.table
+                            componentsignal: TOGGLE_MODE
+                            targettype: specific
+                            componentid: ${wirename}Table
+                        text: Mode
+                        uesio.variant: uesio/io.secondary
+        - uesio/io.box:
+            components:
+              - uesio/io.table:
+                  rowactions:
+                    - text: Delete
+                      signals:
+                        - signal: wire/TOGGLE_DELETE_STATUS
+                  columns: ${tableColumns}
+                  uesio.id: ${wirename}Table
+                  mode: EDIT
+                  wire: ${wirename}
+                  pagesize: 10
