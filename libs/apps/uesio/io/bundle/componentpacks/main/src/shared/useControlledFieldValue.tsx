@@ -25,4 +25,29 @@ const useControlledInput = <T extends HTMLInputElement | HTMLTextAreaElement>(
 	}
 }
 
-export default useControlledInput
+const useControlledInputNumber = <T extends HTMLInputElement>(
+	value: string | number,
+	setValue: FieldValueSetter | undefined
+) => {
+	const [controlledValue, setControlledValue] = useState(value)
+
+	useEffect(() => {
+		setControlledValue(value)
+	}, [value])
+
+	return {
+		value:
+			controlledValue === null || controlledValue === undefined
+				? ""
+				: controlledValue,
+		onChange: (e: ChangeEvent<T>) => {
+			const valueAsNumber = e.target.valueAsNumber
+			const valueAsString = e.target.value
+			setControlledValue(valueAsString)
+			const isNumeric = !isNaN(valueAsNumber)
+			isNumeric ? setValue?.(valueAsNumber) : setValue?.(null)
+		},
+	}
+}
+
+export { useControlledInput, useControlledInputNumber }
