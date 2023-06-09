@@ -21,6 +21,10 @@ const INVALID_NUMBER_ERROR = "Invalid format for NUMBER field '%s': value '%v' i
 func getNumberLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
 	return func(change adapt.Item, data interface{}) error {
 		raw_val := getValue(data, mapping, index)
+		if raw_val == "" {
+			change[fieldMetadata.GetFullName()] = nil
+			return nil
+		}
 		float_val, err := strconv.ParseFloat(raw_val, 64)
 		if err == nil {
 			change[fieldMetadata.GetFullName()] = float_val
