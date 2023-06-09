@@ -1,7 +1,7 @@
 import { FC } from "react"
 import { definition, styles, context, wire } from "@uesio/ui"
 import { ApplyChanges } from "../../components/field/field"
-import useControlledInput from "../../shared/useControlledFieldValue"
+import { useControlledInput } from "../../shared/useControlledFieldValue"
 export type LongTextFieldOptions = {
 	cols?: number
 	rows?: number
