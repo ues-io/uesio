@@ -34,7 +34,7 @@ func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *
 	var routes meta.RouteCollection
 
 	if path == "" {
-		return getHomeRoute(session)
+		return GetHomeRoute(session)
 	}
 
 	err := bundle.LoadAll(&routes, namespace, nil, session, nil)
