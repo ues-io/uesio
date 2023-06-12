@@ -192,7 +192,7 @@ definition:
                                     - text-white
                                 text: "Build "
                             - uesio/io.text:
-                                text: "web appliations declaratively. "
+                                text: "web applications declaratively. "
                             - uesio/io.text:
                                 uesio.styleTokens:
                                   root:
@@ -247,6 +247,7 @@ definition:
                                       signals:
                                         - signal: "route/REDIRECT"
                                           path: "https://$Site{domain}/blog/${uesio/cms.slug}"
+                                          newtab: true
                       - uesio/io.griditem:
                           components:
                             - uesio/io.titlebar:
@@ -280,6 +281,7 @@ definition:
                                       signals:
                                         - signal: "route/REDIRECT"
                                           path: "https://docs.$Site{domain}/${uesio/cms.slug}"
+                                          newtab: true
   panels:
     newApp:
       uesio.type: uesio/io.dialog
