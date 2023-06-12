@@ -52,6 +52,7 @@ const TranslationItem: FunctionComponent<Props> = (props) => {
 				keyField={{
 					name: "key",
 					label: "Label",
+					updateable: false,
 				}}
 				valueField={{
 					name: "value",
