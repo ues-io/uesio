@@ -9,9 +9,29 @@ import {
 import { dispatch } from "../../../store/store"
 import { getErrorString } from "../../utils"
 import { platform } from "../../../platform/platform"
+import { PlainWireRecord } from "../../wirerecord/types"
+import { ID_FIELD, TMP_ID } from "../../collection/types"
+import { PlainWire } from "../types"
 
 const getErrorStrings = (response: SaveResponse) =>
 	response.errors?.map((error) => error.message) || []
+
+const excludeEmptyDeletes = (wire: PlainWire) => {
+	const deletes = wire.deletes
+	const changes = wire.changes
+
+	const keyToExclude: string[] = []
+	Object.keys(deletes).forEach(
+		(key) => deletes[key][ID_FIELD] === TMP_ID && keyToExclude.push(key)
+	)
+
+	const clearChanges = <Record<string, PlainWireRecord>>{}
+	Object.keys(changes).forEach((key) => {
+		!keyToExclude.includes(key) && (clearChanges[key] = changes[key])
+	})
+
+	return clearChanges
+}
 
 export default async (context: Context, wires?: string[]) => {
 	// Turn the list of wires into a load request
@@ -22,8 +42,11 @@ export default async (context: Context, wires?: string[]) => {
 
 	const requests = wiresToSave.flatMap((wire) => {
 		const wireId = getFullWireId(wire.view, wire.name)
-		const hasChanges = Object.keys(wire.changes).length
+		const changes = excludeEmptyDeletes(wire)
+
+		const hasChanges = Object.keys(changes).length
 		const hasDeletes = Object.keys(wire.deletes).length
+
 		// Check to see if we need to go to the serve
 		if (!hasChanges && !hasDeletes) {
 			response.wires.push({
@@ -38,7 +61,7 @@ export default async (context: Context, wires?: string[]) => {
 			{
 				wire: wireId,
 				collection: wire.collection,
-				changes: wire.changes || {},
+				changes: changes || {},
 				deletes: wire.deletes || {},
 			},
 		]

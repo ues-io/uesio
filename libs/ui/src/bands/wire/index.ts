@@ -6,7 +6,7 @@ import {
 } from "@reduxjs/toolkit"
 import { SaveError, SaveResponseBatch } from "../../load/saveresponse"
 import { WireConditionState } from "../../wireexports"
-import { ID_FIELD, PlainCollection } from "../collection/types"
+import { ID_FIELD, PlainCollection, TMP_ID } from "../collection/types"
 import { createEntityReducer, EntityPayload, initEntity } from "../utils"
 import {
 	FieldValue,
@@ -191,8 +191,9 @@ const wireSlice = createSlice({
 			(state, { recordId }) => {
 				const record = state.data[recordId]
 				if (!record) return
+				const IdValue = record[ID_FIELD]
 				state.deletes[recordId] = {
-					[ID_FIELD]: record[ID_FIELD],
+					[ID_FIELD]: IdValue ? IdValue : TMP_ID,
 				}
 			}
 		),

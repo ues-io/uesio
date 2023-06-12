@@ -21,5 +21,6 @@ export type PlainCollectionMap = {
 const ID_FIELD = "uesio/core.id"
 const UNIQUE_KEY_FIELD = "uesio/core.uniquekey"
 const UPDATED_AT_FIELD = "uesio/core.updatedat"
+const TMP_ID = "TMP_ID"
 
-export { ID_FIELD, UNIQUE_KEY_FIELD, UPDATED_AT_FIELD }
+export { ID_FIELD, UNIQUE_KEY_FIELD, UPDATED_AT_FIELD, TMP_ID }

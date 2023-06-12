@@ -110,6 +110,11 @@ func splitSave(request *SaveRequest, collectionMetadata *adapt.CollectionMetadat
 			if err != nil || idValue == nil || idValue.(string) == "" {
 				return errors.New("bad id value for delete item")
 			}
+
+			if idValue == adapt.TMP_ID {
+				return nil
+			}
+
 			opList.addDelete(item, idValue.(string))
 			return nil
 		})
