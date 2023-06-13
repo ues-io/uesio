@@ -6,31 +6,37 @@ usernameRegex: "^[a-z0-9_]+$"
 # TO-DO this works for now but we want this signup method to be full core.
 landingRoute: uesio/studio.signuplanding
 adminCreate:
-  emailSubject: "User Created in ${site} ${app}"
+  emailSubject: "User created in ${app} (${siteName})"
   emailBody: |
-    A user account has been created for you in ${site} ${app}.
-    Your username is: ${username} .
-
-    You can set your password and log in using the link below:
+    A user account has been created for you in ${app} (${siteName}).<br/>
+    Your username is: ${username}.<br/>
+    <br/>
+    You can set your password and log in using the link below:<br/>
     ${link}
   redirect: "site/app/uesio/core/changepassword"
 signup:
-  emailSubject: "User Created in ${site} ${app}"
+  emailSubject: "Welcome to ${siteTitle}!"
   emailBody: |
-    A user account has been created for you in ${site} ${app}.
-
-    You can confirm your account using the link below:
-    ${link}
-  redirect: "site/app/uesio/core/signupconfirm"
+    Hi ${username},<br/>
+    <br/>
+    Thank you for registering for an account with ${siteTitle}!<br/>
+    <br/>
+    To complete your account set up, please confirm using the link below:<br/>
+    ${link}<br/>
+    <br/>
+    Cheers!<br/>
+    <br/>
+    The team at ${siteTitle}
+  redirect: "auth/uesio/core/platform/signup/v2/confirm"
 forgotPassword:
-  emailSubject: "password change request in ${site} ${app}"
+  emailSubject: "Password change requested in ${app} (${siteName})"
   emailBody: |
-    Hi ${username},
-
-    There was a request to change your password!
-
-    If you did not make this request then please ignore this email.
-
+    Hi ${username},<br/>
+    <br/>
+    There was a request to change your password!<br/>
+    <br/>
+    If you did not make this request then please ignore this email.<br/>
+    <br/>
     Otherwise, please click this link to change your password: ${link}
 
   redirect: "site/app/uesio/core/changepassword"

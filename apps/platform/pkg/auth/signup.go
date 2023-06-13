@@ -2,6 +2,7 @@ package auth
 
 import (
 	"errors"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"regexp"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -62,7 +63,12 @@ func Signup(signupMethodID string, payload map[string]interface{}, site *meta.Si
 
 	email, _ := GetPayloadValue(payload, "email")
 
-	err = CreateUser(username, email, signupMethod, session)
+	userMeta, err := createUser(username, email, signupMethod)
+	if err != nil {
+		return nil, err
+	}
+
+	err = datasource.PlatformSaveOne(userMeta, nil, nil, session)
 	if err != nil {
 		return nil, err
 	}

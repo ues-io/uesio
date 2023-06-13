@@ -42,7 +42,7 @@ func redirectResponse(w http.ResponseWriter, r *http.Request, redirectKey string
 
 	if redirectPath == "" {
 		if redirectKey == "" {
-			http.Error(w, "No Redirect Route Specfied", http.StatusInternalServerError)
+			http.Error(w, "No redirect route specified", http.StatusInternalServerError)
 			return
 		}
 		redirectNamespace, redirectRoute, err = meta.ParseKey(redirectKey)
