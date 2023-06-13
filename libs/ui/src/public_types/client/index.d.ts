@@ -276,26 +276,6 @@ export namespace definition {
 	}
 }
 
-// interface SignalDefinition {
-//     signal: string;
-//     stepId?: string;
-// }
-
-// type SignalApi = {
-//     /**
-//      * Returns a handler function for running a list of signals
-//      * @param signals Array of Signals to run
-//      * @param context Context object
-//      * @returns handler function
-//      */
-//     getHandler: (signals: SignalDefinition[] | undefined, context: Context) => () => Context;
-// };
-
-// const Api: {
-//     signal: SignalApi;
-//     wire: WireApi;
-// };
-
 const PARAM = "PARAM"
 const LOOKUP = "LOOKUP"
 const VALUE = "VALUE"
@@ -417,7 +397,45 @@ type WireRecord = {
 }
 // type useWire = (wireId: string, context: Context) => Wire;
 
+interface SignalDefinition {
+	signal: string
+	stepId?: string
+}
+
+// API
+export namespace api {
+	export namespace signal {
+		/**
+		 * Returns a handler function for running a list of signals
+		 * @param signals Array of Signals to run
+		 * @param context Context object
+		 * @returns handler function
+		 */
+		export function getHandler(
+			signals: SignalDefinition[] | undefined,
+			context: Context
+		): () => Context
+
+		export { getHandler }
+	}
+
+	export namespace view {
+		/**
+		 * A hook for retrieving the stored value of a Config Value
+		 * @param signals Array of Signals to run
+		 * @param context Context object
+		 * @returns handler function
+		 */
+		export function useConfigValue(configValueName: MetadataKey): string
+
+		export { useConfigValue }
+	}
+
+	export default { signal, view }
+}
+
 export default {
+	api,
 	component,
 	definition,
 	styles,
