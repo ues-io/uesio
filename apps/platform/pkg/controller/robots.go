@@ -74,9 +74,11 @@ func writeAllowPath(w io.Writer, path string) (int, error) {
 }
 
 // Adds all JS/CSS/Fonts, favicon, and vendored asset routes
-func writeAllowedCorePaths(w http.ResponseWriter) {
-	writeAllowPath(w, "/static/*")
+func writeAllowedCorePaths(w io.Writer) {
+	writeAllowPath(w, "/static/vendor/*")
+	writeAllowPath(w, "/*/static/ui/*")
 	writeAllowPath(w, "/favicon.ico")
+	writeAllowPath(w, "/site/componentpacks/*")
 }
 
 func writeAllowedStaticFiles(w io.Writer, publicFiles map[string]bool) {

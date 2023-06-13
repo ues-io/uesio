@@ -174,3 +174,18 @@ Allow: /site/files/luigi/pasta/*/foo`,
 		})
 	}
 }
+
+func Test_writeAllowedCorePaths(t *testing.T) {
+
+	b := bytes.Buffer{}
+	expected := `
+Allow: /static/vendor/*
+Allow: /*/static/ui/*
+Allow: /favicon.ico
+Allow: /site/componentpacks/*`
+
+	t.Run("test allowed core paths", func(t *testing.T) {
+		writeAllowedCorePaths(&b)
+		assert.Equal(t, expected, string(b.Bytes()))
+	})
+}
