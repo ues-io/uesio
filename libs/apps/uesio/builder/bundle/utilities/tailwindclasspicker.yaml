@@ -2,10 +2,8 @@ name: tailwindclasspicker
 pack: main
 entrypoint: utilities/tailwindclasspicker/tailwindclasspicker
 utilities:
-  - uesio/builder.autocompletefield
+  - uesio/io.button
   - uesio/io.textfield
-  - uesio/io.menu
 variants:
-  - uesio/io.menu:uesio/io.default
-  - uesio/io.iconbutton:uesio/io.primary
+  - uesio/io.button:uesio/builder.tailwindtoken
   - uesio/io.field:uesio/builder.propfield

@@ -45,7 +45,7 @@ func ServeComponentPackFile(w http.ResponseWriter, r *http.Request) {
 		modTime = componentPack.UpdatedAt
 	}
 
-	usePath := "pack.js" 
+	usePath := "pack.js"
 	if path != "runtime.js" && strings.HasSuffix(path, ".json") {
 		usePath = path
 	}

@@ -14,6 +14,8 @@ type SortResult = {
 	css: string
 }
 
+const maxDisplayResults = 25
+
 const TailwindClassPicker: definition.UtilityComponent<Props> = (props) => {
 	const { context, setValue, parsedTokens } = props
 	const Button = component.getUtility("uesio/io.button")
@@ -31,28 +33,43 @@ const TailwindClassPicker: definition.UtilityComponent<Props> = (props) => {
 
 	const [searchTerm, setSearchTerm] = useState("")
 
-	const results = fuzzysort.go<SortResult>(searchTerm, tailwindClasses, {
-		keys: ["classNamePrepared", "cssPrepared"],
-		// allowTypo: false,
-		// threshold: -10000,
-	})
+	const results = fuzzysort
+		.go<SortResult>(searchTerm, tailwindClasses, {
+			keys: ["classNamePrepared", "cssPrepared"],
+			// allowTypo: false,
+			// threshold: -10000,
+		})
+		.slice(0, maxDisplayResults)
 
 	return (
 		<>
 			<SearchArea
+				placeholder="Enter a Tailwind class or CSS property..."
 				searchTerm={searchTerm}
 				setSearchTerm={setSearchTerm}
 				context={context}
+				onSelect={() => {
+					setValue?.(searchTerm)
+				}}
 			/>
-			{results.map((element) => (
+			{results.map(({ obj: { className, css } }) => (
 				<Button
-					variant="uesio/builder.panelactionbutton"
-					key={element.obj.className}
-					label={element.obj.className}
+					variant="uesio/builder.tailwindtoken"
+					key={className}
+					label={`${className} (${css})}`}
 					context={context}
-					onClick={() => setValue?.(element.obj.className)}
+					onClick={() => setValue?.(className)}
 				/>
 			))}
+			{searchTerm && results.length === 0 && (
+				<Button
+					variant="uesio/builder.tailwindtoken"
+					key={searchTerm}
+					label={searchTerm + " (custom)"}
+					context={context}
+					onClick={() => setValue?.(searchTerm)}
+				/>
+			)}
 		</>
 	)
 }
