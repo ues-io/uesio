@@ -14,8 +14,16 @@ views:
 collections:
   uesio/cms.article:
     read: true
+    create: false
+    edit: false
+    delete: false
+    fields: {}
   uesio/core.userfile:
     read: true
+    create: false
+    edit: false
+    delete: false
+    fields: {}
 routes:
   uesio/web.blog: true
   uesio/web.blogentry: true
