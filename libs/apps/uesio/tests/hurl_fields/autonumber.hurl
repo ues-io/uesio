@@ -184,24 +184,31 @@ Accept: application/json
             "name":"reference",
             "fields": [
                 {
-                    "id":"uesio/tests.autonumber"
+                    "id":"uesio/core.uniquekey"
                 }
             ],
             "query":true,
-            "batchsize":8
+            "conditions": [
+                {
+                    "field": "uesio/core.uniquekey",
+                    "operator": "EQ",
+                    "valueSource": "VALUE",
+                    "value": "ID-001"
+                }
+            ]
         },
         {
             "collection":"uesio/tests.wire_condition",
-            "fields": [{"id": "uesio/tests.autonumber"}],
+            "fields": [{"id": "uesio/core.uniquekey"},{"id": "uesio/tests.autonumber"}],
             "name":"condition",
             "query":true,
             "conditions": [
                 {
-                    "field": "uesio/tests.autonumber",
+                    "field": "uesio/core.uniquekey",
                     "operator": "IN",
                     "valueSource": "LOOKUP",
                     "lookupWire": "reference",
-                    "lookupField": "uesio/tests.autonumber"
+                    "lookupField": "uesio/core.uniquekey"
                 }
             ]
         }
@@ -209,7 +216,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[1].data[*]['uesio/tests.autonumber']" count == 8
+jsonpath "$.wires[1].data[*]['uesio/tests.autonumber']" isString
+jsonpath "$.wires[1].data[*]['uesio/tests.autonumber']" == "ID-001"
+jsonpath "$.wires[1].data[*]['uesio/core.uniquekey']" == "ID-001"
 
 
 # Operator: IN | valueSource: PARAM

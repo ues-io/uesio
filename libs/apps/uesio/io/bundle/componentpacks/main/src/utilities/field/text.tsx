@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { definition, styles, context, wire } from "@uesio/ui"
 import { FieldValueSetter, ApplyChanges } from "../../components/field/field"
-import useControlledInput from "../../shared/useControlledFieldValue"
+import { useControlledInput } from "../../shared/useControlledFieldValue"
 
 import Icon from "../icon/icon"
 
