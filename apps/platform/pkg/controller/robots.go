@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
-	staticFiles "github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/goutils"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
@@ -139,10 +138,10 @@ func getPublicRoutePaths(routes meta.RouteCollection) map[string]bool {
 	return publicRouteNames
 }
 
-const filePath = `/site/files/%s%s/%s`
+const filePath = `/site/files/%s/*/%s`
 
 func getFilePath(appFullName, fileName string) string {
-	return fmt.Sprintf(filePath, appFullName, staticFiles.GetAssetsPath(), fileName)
+	return fmt.Sprintf(filePath, appFullName, fileName)
 }
 
 func getPublicFilePaths(files meta.FileCollection, site *meta.Site) map[string]bool {

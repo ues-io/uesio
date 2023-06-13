@@ -3,7 +3,6 @@ package controller
 import (
 	"bytes"
 	"github.com/stretchr/testify/assert"
-	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"testing"
 )
@@ -94,9 +93,6 @@ Allow: /$`,
 
 func Test_getPublicFilePaths(t *testing.T) {
 
-	currentAssetsPath := file.GetAssetsPath()
-	file.SetAssetsPath("/abcd1234")
-
 	contextSite := &meta.Site{
 		App: &meta.App{
 			BuiltIn: meta.BuiltIn{
@@ -135,8 +131,8 @@ func Test_getPublicFilePaths(t *testing.T) {
 			},
 			contextSite,
 			map[string]bool{
-				"/site/files/luigi/pasta/abcd1234/bar": true,
-				"/site/files/luigi/pasta/abcd1234/foo": true,
+				"/site/files/luigi/pasta/*/bar": true,
+				"/site/files/luigi/pasta/*/foo": true,
 			},
 		},
 	}
@@ -145,13 +141,9 @@ func Test_getPublicFilePaths(t *testing.T) {
 			assert.Equalf(t, tt.want, getPublicFilePaths(tt.files, tt.site), "getPublicFilePaths(%v)", tt.files)
 		})
 	}
-	file.SetAssetsPath(currentAssetsPath)
 }
 
 func Test_writeAllowedStaticFiles(t *testing.T) {
-
-	currentAssetsPath := file.GetAssetsPath()
-	file.SetAssetsPath("/abcd1234")
 
 	tests := []struct {
 		name       string
@@ -166,12 +158,12 @@ func Test_writeAllowedStaticFiles(t *testing.T) {
 		{
 			"should return an Allow entry for each file, in stable alphabetical order",
 			map[string]bool{
-				"/site/files/luigi/pasta/abcd1234/bar": true,
-				"/site/files/luigi/pasta/abcd1234/foo": true,
+				"/site/files/luigi/pasta/*/bar": true,
+				"/site/files/luigi/pasta/*/foo": true,
 			},
 			`
-Allow: /site/files/luigi/pasta/abcd1234/bar
-Allow: /site/files/luigi/pasta/abcd1234/foo`,
+Allow: /site/files/luigi/pasta/*/bar
+Allow: /site/files/luigi/pasta/*/foo`,
 		},
 	}
 	for _, tt := range tests {
@@ -181,5 +173,4 @@ Allow: /site/files/luigi/pasta/abcd1234/foo`,
 			assert.Equal(t, tt.wantOutput, string(buffer.Bytes()))
 		})
 	}
-	file.SetAssetsPath(currentAssetsPath)
 }
