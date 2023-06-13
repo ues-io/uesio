@@ -59,6 +59,5 @@ definition:
                           signals:
                             - signal: "route/NAVIGATE"
                               path: blog/${uesio/cms.slug}
-
     - uesio/core.view:
         view: uesio/web.footer

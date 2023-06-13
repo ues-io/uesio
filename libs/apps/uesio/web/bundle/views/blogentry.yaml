@@ -36,6 +36,5 @@ definition:
                           fieldId: uesio/cms.content
                           labelPosition: none
                           displayAs: MARKDOWN
-
     - uesio/core.view:
         view: uesio/web.footer
