@@ -2,8 +2,6 @@ package postgresio
 
 import (
 	"context"
-	"fmt"
-
 	"github.com/francoispqt/gojay"
 	"github.com/jackc/pgx/v5"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -132,7 +130,7 @@ func (c *Connection) Save(request *adapt.SaveOp, session *sess.Session) error {
 	for i := 0; i < execCount; i++ {
 		_, err := results.Exec()
 		if err != nil {
-			fmt.Println("Error saving: " + request.Metadata.GetFullName())
+			//fmt.Println("Error saving: " + request.Metadata.GetFullName())
 			results.Close()
 			return err
 		}
