@@ -1,5 +1,7 @@
 package adapt
 
+import "github.com/jackc/pgx/v5/pgconn"
+
 type SaveError struct {
 	RecordID string `json:"recordid"`
 	FieldID  string `json:"fieldid"`
@@ -11,6 +13,16 @@ func (se *SaveError) Error() string {
 }
 
 func NewGenericSaveError(err error) *SaveError {
+	if pgError, ok := err.(*pgconn.PgError); ok {
+		// Handle Postgres duplicate key constraints
+		if pgError.Code == "23505" && pgError.Message == "duplicate key value violates unique constraint \"unique_idx\"" {
+			return &SaveError{
+				RecordID: "",
+				FieldID:  "",
+				Message:  "Unable to create duplicate record",
+			}
+		}
+	}
 	return &SaveError{
 		RecordID: "",
 		FieldID:  "",
