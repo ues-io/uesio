@@ -10,3 +10,5 @@ utilities:
   - uesio/io.menu
   - uesio/builder.autocompletefield
   - uesio/builder.tailwindclasspicker
+variants:
+  - uesio/io.titlebar:uesio/builder.propsubsection

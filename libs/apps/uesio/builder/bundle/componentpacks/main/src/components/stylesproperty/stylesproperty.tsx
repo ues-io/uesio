@@ -20,6 +20,7 @@ type Props = {
 
 const StyleDefaults = Object.freeze({
 	titlebar: ["grid", "grid-cols-2", "grid-flow-col", "auto-cols-max"],
+	focusedRegion: ["border", "border-[$Theme{color.primary}]"],
 })
 
 const StylesProperty: definition.UC<Props> = (props) => {
@@ -97,7 +98,14 @@ const StylesProperty: definition.UC<Props> = (props) => {
 					)
 				}
 				return (
-					<div key={regionName}>
+					<div
+						key={regionName}
+						className={
+							regionName === contextRegionName
+								? classes.focusedRegion
+								: ""
+						}
+					>
 						<TitleBar
 							title={regionName}
 							variant="uesio/builder.propsubsection"
@@ -107,8 +115,7 @@ const StylesProperty: definition.UC<Props> = (props) => {
 								<Button
 									variant="uesio/builder.panelactionbutton"
 									context={context}
-									label="+"
-									icon="add style token"
+									label="add style token"
 									onClick={() => {
 										setShowPopper(true)
 										setContextRegionName(regionName)
