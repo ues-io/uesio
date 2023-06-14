@@ -634,13 +634,8 @@ Accept: application/json
             "query":true,
             "conditions": [
                 {
-                    "field": "uesio/core.uniquekey",
-                    "operator": "IN",
-                    "valueSource": "VALUE",
-                    "values": [
-                        "ID-008",
-                        "ID-009"
-                    ]
+                    "field": "uesio/tests.number",
+                    "operator": "IS_BLANK",
                 }
            ]
                 
