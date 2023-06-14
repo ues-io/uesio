@@ -26,6 +26,7 @@ type Connection interface {
 	BeginTransaction() error
 	CommitTransaction() error
 	RollbackTransaction() error
+	GetRecentMetadata(*LoadOp, *sess.Session) error
 }
 
 var adapterMap = map[string]Adapter{}

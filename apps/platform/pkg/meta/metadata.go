@@ -28,14 +28,15 @@ func (im *ItemMeta) IsValidField(fieldName string) bool {
 }
 
 type BuiltIn struct {
-	ID        string    `yaml:"-" json:"uesio/core.id"`
-	UniqueKey string    `yaml:"-" json:"uesio/core.uniquekey"`
-	itemMeta  *ItemMeta `yaml:"-" json:"-"`
-	CreatedBy *User     `yaml:"-" json:"uesio/core.createdby"`
-	Owner     *User     `yaml:"-" json:"uesio/core.owner"`
-	UpdatedBy *User     `yaml:"-" json:"uesio/core.updatedby"`
-	UpdatedAt int64     `yaml:"-" json:"uesio/core.updatedat"`
-	CreatedAt int64     `yaml:"-" json:"uesio/core.createdat"`
+	ID         string    `yaml:"-" json:"uesio/core.id"`
+	UniqueKey  string    `yaml:"-" json:"uesio/core.uniquekey"`
+	itemMeta   *ItemMeta `yaml:"-" json:"-"`
+	CreatedBy  *User     `yaml:"-" json:"uesio/core.createdby"`
+	Owner      *User     `yaml:"-" json:"uesio/core.owner"`
+	UpdatedBy  *User     `yaml:"-" json:"uesio/core.updatedby"`
+	UpdatedAt  int64     `yaml:"-" json:"uesio/core.updatedat"`
+	CreatedAt  int64     `yaml:"-" json:"uesio/core.createdat"`
+	Collection string    `yaml:"-" json:"uesio/core.collection"`
 }
 
 func (bi *BuiltIn) SetModified(mod time.Time) {

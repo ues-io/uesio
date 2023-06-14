@@ -143,6 +143,8 @@ func (b *SystemDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adap
 		botFunction = runBlogEntryLoadBot
 	case "uesio/studio.recentdoc":
 		botFunction = runRecentDocLoadBot
+	case "uesio/studio.recentmetadata":
+		botFunction = runRecentMetadataLoadBot
 	case "tcm/timetracker.project":
 		botFunction = clickup.ProjectLoadBot
 	case "tcm/timetracker.task":

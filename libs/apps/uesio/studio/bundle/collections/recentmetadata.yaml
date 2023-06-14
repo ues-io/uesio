@@ -1,0 +1,5 @@
+name: recentmetadata
+type: DYNAMIC
+nameField: uesio/studio.name
+label: Recent Metadata
+pluralLabel: Recent Metadata

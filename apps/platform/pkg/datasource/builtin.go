@@ -79,6 +79,16 @@ var UPDATEDAT_FIELD_METADATA = adapt.FieldMetadata{
 	AutoPopulate: "UPDATE",
 }
 
+var COLLECTION_FIELD_METADATA = adapt.FieldMetadata{
+	Name:       "collection",
+	Namespace:  "uesio/core",
+	Createable: false,
+	Accessible: true,
+	Updateable: false,
+	Type:       "TEXT",
+	Label:      "Collection",
+}
+
 func addAllBuiltinFields(collectionMetadata *adapt.CollectionMetadata) {
 	collectionMetadata.SetField(&ID_FIELD_METADATA)
 	collectionMetadata.SetField(&UNIQUE_KEY_FIELD_METADATA)
@@ -87,6 +97,7 @@ func addAllBuiltinFields(collectionMetadata *adapt.CollectionMetadata) {
 	collectionMetadata.SetField(&UPDATEDBY_FIELD_METADATA)
 	collectionMetadata.SetField(&CREATEDAT_FIELD_METADATA)
 	collectionMetadata.SetField(&UPDATEDAT_FIELD_METADATA)
+	collectionMetadata.SetField(&COLLECTION_FIELD_METADATA)
 	return
 }
 
@@ -113,6 +124,9 @@ func addBuiltinFields(collectionMetadata *adapt.CollectionMetadata, requestedFie
 	if ok {
 		collectionMetadata.SetField(&UPDATEDAT_FIELD_METADATA)
 	}
-
+	_, ok = requestedFields["uesio/core.collection"]
+	if ok {
+		collectionMetadata.SetField(&COLLECTION_FIELD_METADATA)
+	}
 	return
 }
