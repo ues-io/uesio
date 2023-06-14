@@ -113,9 +113,9 @@ func Test_resolveBundleParameters(t *testing.T) {
 					Patch: 2,
 				},
 				params: map[string]interface{}{
-					"major":       1,
-					"minor":       3,
-					"patch":       0,
+					"major":       float64(1),
+					"minor":       float64(3),
+					"patch":       float64(0),
 					"description": "Minor release",
 				},
 			},

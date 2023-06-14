@@ -2,7 +2,6 @@ package systemdialect
 
 import (
 	"errors"
-
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -147,6 +146,9 @@ func GetMapKeyAsInt(key string, m map[string]interface{}) (int, bool) {
 	if value, ok := m[key]; ok {
 		if intValue, isInt := value.(int); isInt {
 			return intValue, true
+		}
+		if floatValue, isFloat := value.(float64); isFloat {
+			return int(floatValue), true
 		}
 	}
 	return 0, false
