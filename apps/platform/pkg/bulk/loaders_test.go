@@ -126,6 +126,12 @@ func Test_NumberLoader(t *testing.T) {
 			"",
 		},
 		{
+			"blank value should be nil",
+			"",
+			nil,
+			"",
+		},
+		{
 			"return error if input is not an expected format",
 			"2022/12/13",
 			nil,
@@ -412,11 +418,11 @@ func Test_StructLoader(t *testing.T) {
 		Name:      "location",
 		Namespace: "uesio/core",
 		SubFields: map[string]*adapt.FieldMetadata{
-			"latitude": &adapt.FieldMetadata{
+			"latitude": {
 				Name: "latitude",
 				Type: "NUMBER",
 			},
-			"longitude": &adapt.FieldMetadata{
+			"longitude": {
 				Name: "longitude",
 				Type: "NUMBER",
 			},

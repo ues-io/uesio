@@ -1,5 +1,4 @@
 {
 	"jobtype": "UPLOADFILES",
-	"collection": "uesio/crm.contact",
-	"uploadfield": "uesio/crm.image"
+	"collection": "uesio/crm.contact"
 }

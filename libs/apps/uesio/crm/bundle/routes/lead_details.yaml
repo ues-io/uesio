@@ -1,7 +1,5 @@
 name: lead_details
 path: lead/{recordid}
-viewtype: detail
 view: uesio/crm.lead_details
-collection: uesio/crm.lead
 theme: uesio/core.default
 title: ""

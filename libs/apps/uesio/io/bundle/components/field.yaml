@@ -120,6 +120,8 @@ properties:
     type: SELECT
     label: Display as
     options:
+      - value: ""
+        label: "--None Selected--"
       - label: Text
         value: ""
         validFor:
@@ -169,6 +171,11 @@ properties:
         validFor:
           - field: fieldDisplayType
             value: CHECKBOX
+      - label: Slider
+        value: SLIDER
+        validFor:
+          - field: fieldDisplayType
+            value: NUMBER
     displayConditions:
       - type: fieldValue
         field: fieldDisplayType
@@ -180,6 +187,7 @@ properties:
           - REFERENCE
           - SELECT
           - TEXT
+          - NUMBER
   # Number-only properties
   - name: number
     label: " "

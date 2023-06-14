@@ -68,11 +68,19 @@ func processConditions(
 		}
 
 		if condition.ValueSource == "" || condition.ValueSource == "VALUE" {
-			// make sure the condition value is a string
-			stringValue, ok := condition.Value.(string)
+
+			if condition.RawValues != nil {
+				conditions[i].Values = condition.RawValues
+			}
+
+			stringValue, ok := condition.RawValue.(string)
 			if !ok {
+				if condition.RawValue != nil {
+					conditions[i].Value = condition.RawValue
+				}
 				continue
 			}
+
 			template, err := templating.NewWithFuncs(stringValue, templating.ForceErrorFunc, merge.ServerMergeFuncs)
 			if err != nil {
 				return err
@@ -82,12 +90,12 @@ func processConditions(
 				Session:     session,
 				ParamValues: params,
 			})
-
 			if err != nil {
 				return err
 			}
 
 			conditions[i].Value = mergedValue
+
 		}
 
 		if condition.ValueSource == "PARAM" && condition.Param != "" {
@@ -96,7 +104,6 @@ func processConditions(
 				return errors.New("Invalid Condition: " + condition.Param)
 			}
 			conditions[i].Value = value
-			conditions[i].ValueSource = ""
 		}
 
 		if condition.ValueSource == "PARAM" && len(condition.Params) > 0 {
@@ -109,7 +116,6 @@ func processConditions(
 				values = append(values, value)
 			}
 			conditions[i].Values = values
-			conditions[i].ValueSource = ""
 		}
 
 		if condition.ValueSource == "LOOKUP" && condition.LookupWire != "" && condition.LookupField != "" {
@@ -141,7 +147,6 @@ func processConditions(
 			}
 
 			conditions[i].Values = values
-			conditions[i].ValueSource = ""
 			//default "IN"
 			if conditions[i].Operator == "" {
 				conditions[i].Operator = "IN"

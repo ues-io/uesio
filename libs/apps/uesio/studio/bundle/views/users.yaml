@@ -117,6 +117,7 @@ definition:
                     components:
                       - uesio/io.searchbox:
                           wire: users
+                          focusOnRender: true
                           searchfields:
                             - uesio/studio.firstname
                             - uesio/studio.lastname

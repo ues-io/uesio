@@ -47,6 +47,7 @@ type RowAction = {
 	text: string
 	signals: signal.SignalDefinition[]
 	type?: "DEFAULT"
+	[component.DISPLAY_CONDITIONS]?: component.DisplayCondition[]
 }
 
 type ColumnDefinition = {
@@ -159,22 +160,32 @@ const Table: definition.UC<TableDefinition> = (props) => {
 		? (recordContext: RecordContext) => (
 				<FieldWrapper context={context} variant="uesio/io.table">
 					<Group context={recordContext.context}>
-						{otherActions.map((action, i) => {
-							const handler = api.signal.getHandler(
-								action.signals,
-								recordContext.context
+						{otherActions
+							.filter((action) =>
+								component.shouldAll(
+									action[component.DISPLAY_CONDITIONS],
+									recordContext.context
+								)
 							)
-							return (
-								<Button
-									key={action.text + i}
-									variant="uesio/io.rowaction"
-									className="rowaction"
-									label={action.text}
-									context={recordContext.context}
-									onClick={handler}
-								/>
-							)
-						})}
+							.map((action, i) => {
+								const handler = api.signal.getHandler(
+									// Don't run row action signals in View Builder
+									context.getCustomSlot()
+										? []
+										: action.signals,
+									recordContext.context
+								)
+								return (
+									<Button
+										key={action.text + i}
+										variant="uesio/io.rowaction"
+										className="rowaction"
+										label={action.text}
+										context={recordContext.context}
+										onClick={handler}
+									/>
+								)
+							})}
 					</Group>
 				</FieldWrapper>
 		  )

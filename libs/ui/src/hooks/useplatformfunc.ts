@@ -25,6 +25,7 @@ const usePlatformFunc = <T>(
 				}
 			})()
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, deps || [])
 	return [value, error]
 }

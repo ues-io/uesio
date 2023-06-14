@@ -178,12 +178,12 @@ definition:
   panels:
     deleteApp:
       uesio.type: uesio/io.dialog
-      title: You are about to delete you app ${uesio/studio.name}.
+      title: You are about to delete app ${uesio/studio.name}.
       width: 400px
       height: 300px
       components:
         - uesio/io.text:
-            text: All your data ${uesio/studio.name} will be permanently removed and you won't be able to see it again, including the all your views, fields and collections.
+            text: All your data for ${uesio/studio.name} will be permanently removed and you won't be able to see it again, including all associated views, fields and collections.
             element: p
       actions:
         - uesio/io.button:
@@ -194,7 +194,7 @@ definition:
               - signal: wire/MARK_FOR_DELETE
               - signal: wire/SAVE
                 wires:
-                  - "apps"
+                  - apps
               - signal: "route/NAVIGATE"
                 path: "home"
         - uesio/io.button:
@@ -215,19 +215,17 @@ definition:
               wire: apps
       actions:
         - uesio/io.button:
-            uesio.variant: "uesio/io.primary"
-            text: "Save"
+            uesio.variant: uesio/io.primary
+            text: Save
             signals:
               - signal: wire/SAVE
-              - signal: "panel/TOGGLE"
-                panel: "editApp"
         - uesio/io.button:
-            uesio.variant: "uesio/io.secondary"
-            text: "Cancel"
+            uesio.variant: uesio/io.secondary
+            text: Cancel
             signals:
               - signal: wire/CANCEL
-              - signal: "panel/TOGGLE"
-                panel: "editApp"
+              - signal: panel/TOGGLE
+                panel: editApp
     newTeam:
       uesio.type: uesio/io.dialog
       title: Create a New Team

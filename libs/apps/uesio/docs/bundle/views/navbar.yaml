@@ -1,0 +1,192 @@
+name: navbar
+definition:
+  # Wires are how we pull in data
+  wires:
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/io.box:
+        uesio.styleTokens:
+          root:
+            - p-6
+        components:
+          - uesio/io.box:
+              uesio.variant: uesio/docs.navsection
+              components:
+                - uesio/io.text:
+                    uesio.variant: uesio/docs.navheader
+                    text: Getting Started
+                - uesio/io.tile:
+                    uesio.variant: uesio/docs.navitem
+                    content:
+                      - uesio/io.text:
+                          text: Introduction
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: home
+                - uesio/io.tile:
+                    uesio.variant: uesio/docs.navitem
+                    content:
+                      - uesio/io.text:
+                          text: Create a use.io account
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: create-account
+                - uesio/io.tile:
+                    uesio.variant: uesio/docs.navitem
+                    content:
+                      - uesio/io.text:
+                          text: Create your first app
+                - uesio/io.tile:
+                    uesio.variant: uesio/docs.navitem
+                    content:
+                      - uesio/io.text:
+                          text: Deploy your app to a site
+          - uesio/io.box:
+              uesio.variant: uesio/docs.navsection
+              components:
+                - uesio/io.text:
+                    uesio.variant: uesio/docs.navheader
+                    text: Core Concepts
+                - uesio/io.tile:
+                    uesio.variant: uesio/docs.navitem
+                    content:
+                      - uesio/io.text:
+                          text: Declarative App Development
+                - uesio/io.tile:
+                    uesio.variant: uesio/docs.navitem
+                    content:
+                      - uesio/io.text:
+                          text: Multi-tenant Apps
+                - uesio/io.tile:
+                    uesio.variant: uesio/docs.navitem
+                    content:
+                      - uesio/io.text:
+                          text: The ues.io Runtime
+                - uesio/io.tile:
+                    uesio.variant: uesio/docs.navitem
+                    content:
+                      - uesio/io.text:
+                          text: The ues.io Security Model
+                - uesio/io.tile:
+                    uesio.variant: uesio/docs.navitem
+                    content:
+                      - uesio/io.text:
+                          text: Deployment and App Bundles
+                - uesio/io.tile:
+                    uesio.variant: uesio/docs.navitem
+                    content:
+                      - uesio/io.text:
+                          text: The Bundle Store
+                - uesio/io.tile:
+                    uesio.variant: uesio/docs.navitem
+                    content:
+                      - uesio/io.text:
+                          text: Wires and Signals
+                - uesio/io.tile:
+                    uesio.variant: uesio/docs.navitem
+                    content:
+                      - uesio/io.text:
+                          text: Generators
+          - uesio/io.box:
+              uesio.variant: uesio/docs.navsection
+              components:
+                - uesio/io.text:
+                    uesio.variant: uesio/docs.navheader
+                    text: Guides
+                - uesio/io.tile:
+                    uesio.variant: uesio/docs.navitem
+                    content:
+                      - uesio/io.text:
+                          text: Using the ues.io CLI
+                - uesio/io.tile:
+                    uesio.variant: uesio/docs.navitem
+                    content:
+                      - uesio/io.text:
+                          text: Creating Custom Components
+                - uesio/io.tile:
+                    uesio.variant: uesio/docs.navitem
+                    content:
+                      - uesio/io.text:
+                          text: Self-hosting with ues.io server
+          - uesio/io.box:
+              uesio.variant: uesio/docs.navsection
+              components:
+                - uesio/io.text:
+                    uesio.variant: uesio/docs.navheader
+                    text: Metadata Types
+                - uesio/io.tile:
+                    uesio.variant: uesio/docs.navitem
+                    content:
+                      - uesio/io.text:
+                          text: Collections and Select Lists
+                - uesio/io.tile:
+                    uesio.variant: uesio/docs.navitem
+                    content:
+                      - uesio/io.text:
+                          text: Files
+                - uesio/io.tile:
+                    uesio.variant: uesio/docs.navitem
+                    content:
+                      - uesio/io.text:
+                          text: Routes
+                - uesio/io.tile:
+                    uesio.variant: uesio/docs.navitem
+                    content:
+                      - uesio/io.text:
+                          text: Views
+                - uesio/io.tile:
+                    uesio.variant: uesio/docs.navitem
+                    content:
+                      - uesio/io.text:
+                          text: Components
+                - uesio/io.tile:
+                    uesio.variant: uesio/docs.navitem
+                    content:
+                      - uesio/io.text:
+                          text: Translations and Labels
+                - uesio/io.tile:
+                    uesio.variant: uesio/docs.navitem
+                    content:
+                      - uesio/io.text:
+                          text: Secrets and Config Values
+                - uesio/io.tile:
+                    uesio.variant: uesio/docs.navitem
+                    content:
+                      - uesio/io.text:
+                          text: Profiles and Permission Sets
+                - uesio/io.tile:
+                    uesio.variant: uesio/docs.navitem
+                    content:
+                      - uesio/io.text:
+                          text: Bots
+          - uesio/io.box:
+              uesio.variant: uesio/docs.navsection
+              components:
+                - uesio/io.text:
+                    uesio.variant: uesio/docs.navheader
+                    text: Built-in Components
+                - uesio/io.tile:
+                    uesio.variant: uesio/docs.navitem
+                    content:
+                      - uesio/io.text:
+                          text: Layout Components
+                - uesio/io.tile:
+                    uesio.variant: uesio/docs.navitem
+                    content:
+                      - uesio/io.text:
+                          text: Content Components
+                - uesio/io.tile:
+                    uesio.variant: uesio/docs.navitem
+                    content:
+                      - uesio/io.text:
+                          text: Data Components
+                - uesio/io.tile:
+                    uesio.variant: uesio/docs.navitem
+                    content:
+                      - uesio/io.text:
+                          text: Interaction Components
+                - uesio/io.tile:
+                    uesio.variant: uesio/docs.navitem
+                    content:
+                      - uesio/io.text:
+                          text: Visualization Compoments

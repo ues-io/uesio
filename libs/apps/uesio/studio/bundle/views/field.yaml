@@ -74,7 +74,7 @@ definition:
                     params:
                       itemType: collections
                       itemIcon: list
-                      itemName: $Param{collectionname}
+                      itemCollectionName: $Param{collectionname}
                       subItemType: collections
                       subItemName: $Param{fieldname}
           - uesio/io.griditem:

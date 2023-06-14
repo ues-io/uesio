@@ -23,8 +23,10 @@ views:
   uesio/studio.field: true
   uesio/studio.file: true
   uesio/studio.files: true
+  uesio/studio.installed: true
   uesio/studio.home: true
   uesio/studio.installedbundle: true
+  uesio/studio.packaging: true
   uesio/studio.permissionset: true
   uesio/studio.permissionsets: true
   uesio/studio.permissionsetcollection: true
@@ -99,10 +101,12 @@ routes:
   uesio/studio.field: true
   uesio/studio.file: true
   uesio/studio.files: true
+  uesio/studio.installed: true
   uesio/studio.home: true
   uesio/studio.installedbundle: true
   uesio/studio.login: true
   uesio/studio.signup: true
+  uesio/studio.packaging: true
   uesio/studio.permissionset: true
   uesio/studio.permissionsets: true
   uesio/studio.permissionsetcollection: true
@@ -150,9 +154,11 @@ routes:
   uesio/studio.invoice: true
   uesio/studio.userpayments: true
   uesio/studio.paymentsuccess: true
-files:
+files: {}
 collections:
   uesio/studio.allmetadata: true
+  uesio/studio.blogentry: true
+  uesio/studio.recentdoc: true
   uesio/studio.authsource: true
   uesio/studio.signupmethod: true
   uesio/studio.app: true
@@ -176,6 +182,7 @@ collections:
   uesio/studio.permissionset: true
   uesio/studio.profile: true
   uesio/studio.route: true
+  uesio/studio.routeassignment: true
   uesio/studio.secret: true
   uesio/studio.selectlist: true
   uesio/studio.sitedomain: true

@@ -1,0 +1,8 @@
+name: blogteaserdescription
+label: Blog Teaser Description
+definition:
+  uesio.styleTokens:
+    root:
+      - text-base
+      - font-light
+  element: div

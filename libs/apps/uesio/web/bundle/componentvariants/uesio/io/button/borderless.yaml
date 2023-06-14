@@ -5,3 +5,4 @@ definition:
   uesio.styleTokens:
     root:
       - border-transparent
+      - md:px-4

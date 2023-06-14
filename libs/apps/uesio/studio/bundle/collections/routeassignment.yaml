@@ -1,0 +1,8 @@
+name: routeassignment
+uniqueKey:
+  - uesio/studio.workspace
+  - uesio/studio.collection
+  - uesio/studio.type
+nameField: uesio/core.uniquekey
+label: routeassignment
+pluralLabel: routeassignments

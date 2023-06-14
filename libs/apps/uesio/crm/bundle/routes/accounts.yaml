@@ -1,7 +1,5 @@
 name: accounts
 path: accounts
-viewtype: list
 view: uesio/crm.accounts
-collection: uesio/crm.account
 theme: uesio/core.default
 title: ""

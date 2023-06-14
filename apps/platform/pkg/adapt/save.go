@@ -133,10 +133,6 @@ func (ci *ChangeItem) MarshalJSONObject(enc *gojay.Encoder) {
 			return nil
 		}
 
-		if value == nil {
-			return nil
-		}
-
 		jsonValue, err := json.Marshal(value)
 		if err != nil {
 			return errors.New("Error getting json value: " + fieldMetadata.GetFullName())
@@ -270,7 +266,8 @@ func (ci *ChangeItem) GetUpdatedByID() (string, error) {
 }
 
 type SaveOptions struct {
-	Upsert bool `json:"upsert"`
+	Upsert               bool `json:"upsert"`
+	IgnoreMissingRecords bool `json:"ignoreMissingRecords"`
 }
 
 func GetValueInt(value interface{}) (int64, error) {

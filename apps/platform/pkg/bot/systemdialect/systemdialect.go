@@ -99,6 +99,8 @@ func (b *SystemDialect) CallBot(bot *meta.Bot, params map[string]interface{}, co
 		botFunction = runCreateBundleListenerBot
 	case "listener:uesio/studio.makepayment":
 		botFunction = runMakePaymentListenerBot
+	case "listener:uesio/studio.workspacetruncate":
+		botFunction = runWorkspaceTruncateListenerBot
 	}
 
 	if botFunction == nil {
@@ -137,6 +139,10 @@ func (b *SystemDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adap
 	switch op.CollectionName {
 	case "uesio/studio.allmetadata":
 		botFunction = runAllMetadataLoadBot
+	case "uesio/studio.blogentry":
+		botFunction = runBlogEntryLoadBot
+	case "uesio/studio.recentdoc":
+		botFunction = runRecentDocLoadBot
 	case "tcm/timetracker.project":
 		botFunction = clickup.ProjectLoadBot
 	case "tcm/timetracker.task":

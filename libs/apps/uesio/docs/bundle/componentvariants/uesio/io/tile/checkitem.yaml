@@ -3,18 +3,21 @@ label: Check Item
 definition:
   uesio.styleTokens:
     root:
-      - text-trueGray-700
-      - my-6
-      - mx-0
-      - items-baseline
-      - text-[10pt]
+      - text-slate-800
+      - my-2
+      - text-sm
+      - flex
+      - font-light
+      - items-center
     content:
-      - align-middle
+      - grow
+    avatar:
+      - pr-2
   avatar:
     - uesio/io.text:
         uesio.styleTokens:
           root:
-            - text-[16pt]
+            - text-xl
+            - text-blue-600
         uesio.variant: uesio/io.icon
-        color: rgb(248, 113, 113)
         text: check_circle

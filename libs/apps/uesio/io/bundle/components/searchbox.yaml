@@ -17,12 +17,16 @@ properties:
   - name: placeholder
     label: Placeholder
     type: TEXT
+  - name: focusOnRender
+    label: Focus on render
+    type: CHECKBOX
 sections:
   - type: HOME
     properties:
       - wire
       - searchFields
       - placeholder
+      - focusOnRender
   - type: STYLES
   - type: DISPLAY
 variants:

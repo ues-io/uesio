@@ -1,0 +1,6 @@
+name: article
+path: "{slug}"
+view: uesio/docs.home
+theme: uesio/docs.default
+title: Documentation - What is ues.io
+public: true

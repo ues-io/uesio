@@ -99,6 +99,7 @@ definition:
                     components:
                       - uesio/io.searchbox:
                           wire: allviews
+                          focusOnRender: true
                       - uesio/io.table:
                           uesio.id: viewsTable
                           wire: allviews

@@ -63,6 +63,13 @@ func (qb *QueryBuilder) String() string {
 	return strings.Join(qb.Parts, conjunctionWithSpace)
 }
 
+func isTextAlike(fieldType string) bool {
+	if fieldType == "TEXT" || fieldType == "AUTONUMBER" || fieldType == "EMAIL" || fieldType == "LONGTEXT" {
+		return true
+	}
+	return false
+}
+
 func processSearchCondition(condition adapt.LoadRequestCondition, collectionMetadata *adapt.CollectionMetadata, metadata *adapt.MetadataCache, builder *QueryBuilder, tableAlias string, session *sess.Session) error {
 
 	nameFieldMetadata, err := collectionMetadata.GetNameField()
@@ -185,7 +192,6 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 		builder.addQueryPart(fmt.Sprintf("%s IS NOT NULL", fieldName))
 
 	case "BETWEEN":
-
 		startOperator := ">"
 		endOperator := "<"
 
@@ -199,6 +205,18 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 
 		builder.addQueryPart(fmt.Sprintf("%s %s %s", fieldName, startOperator, builder.addValue(condition.Start)))
 		builder.addQueryPart(fmt.Sprintf("%s %s %s", fieldName, endOperator, builder.addValue(condition.End)))
+
+	case "CONTAINS":
+		if !isTextAlike(fieldMetadata.Type) {
+			return fmt.Errorf("Operator CONTAINS is not supported for field type %s", fieldMetadata.Type)
+		}
+		builder.addQueryPart(fmt.Sprintf("%s ILIKE %s", fieldName, builder.addValue(fmt.Sprintf("%%%v%%", condition.Value))))
+
+	case "STARTS_WITH":
+		if !isTextAlike(fieldMetadata.Type) {
+			return fmt.Errorf("Operator STARTS_WITH is not supported for field type %s", fieldMetadata.Type)
+		}
+		builder.addQueryPart(fmt.Sprintf("%s ILIKE %s", fieldName, builder.addValue(fmt.Sprintf("%v%%", condition.Value))))
 
 	default:
 		if fieldMetadata.Type == "MULTISELECT" {
@@ -264,6 +282,11 @@ func processConditionList(conditions []adapt.LoadRequestCondition, collectionMet
 	builder.addQueryPart(fmt.Sprintf("%s = %s", getAliasedName("collection", tableAlias), builder.addValue(collectionName)))
 	builder.addQueryPart(fmt.Sprintf("%s = %s", getAliasedName("tenant", tableAlias), builder.addValue(tenantID)))
 	for _, condition := range conditions {
+
+		if condition.Inactive {
+			continue
+		}
+
 		err := processCondition(condition, collectionMetadata, metadata, builder, tableAlias, session)
 		if err != nil {
 			return err

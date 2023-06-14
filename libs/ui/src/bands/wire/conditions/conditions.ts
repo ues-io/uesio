@@ -30,7 +30,7 @@ type WireConditionState =
 type ConditionBase = {
 	id?: string
 	operator?: ConditionOperators
-	active?: boolean
+	inactive?: boolean
 }
 
 type GroupConditionState = ConditionBase & {

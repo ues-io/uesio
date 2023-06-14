@@ -1,0 +1,32 @@
+name: blogmarkdown
+extends: uesio/io.default
+label: Blog Markdown
+definition:
+  uesio.styleTokens:
+    h1:
+      - text-4xl
+    h2:
+      - text-2xl
+    h3:
+      - text-base
+    h6:
+      - text-xs
+      - text-slate-500
+      - font-light
+      - uppercase
+    p:
+      - my-6
+      - text-base
+    code:
+      - rounded-lg
+      - text-sm
+    ol:
+      - list-decimal
+      - list-inside
+      - font-light
+      - my-6
+    li:
+      - font-light
+      - my-6
+    a:
+      - text-blue-600

@@ -1,6 +1,8 @@
-import { FunctionComponent, useEffect, useState } from "react"
+import { FunctionComponent } from "react"
 import { definition, styles, context, collection, wire } from "@uesio/ui"
 import { ApplyChanges } from "../../components/field/field"
+import { useControlledInputNumber } from "../../shared/useControlledFieldValue"
+import ReadOnlyField from "./readonly"
 
 export type NumberFieldOptions = {
 	step?: number
@@ -16,39 +18,35 @@ interface NumberFieldProps extends definition.UtilityProps {
 	mode?: context.FieldMode
 	options?: NumberFieldOptions
 	placeholder?: string
+	type?: "number" | "range"
 }
 
 const StyleDefaults = Object.freeze({
 	input: [],
 	readonly: [],
+	wrapper: ["flex"],
+	rangevalue: ["p-2"],
 })
-
-const parseNumberValue = (
-	value: number | undefined = 0,
-	decimals: number,
-	readonly: boolean
-) =>
-	parseFloat(
-		`${
-			readonly && value !== undefined && typeof value === "number"
-				? (value as number).toFixed(decimals)
-				: value
-		}`
-	)
 
 const NumberField: FunctionComponent<NumberFieldProps> = (props) => {
 	const {
 		mode,
 		placeholder,
+		variant,
+		context,
 		fieldMetadata,
 		id,
 		options,
 		setValue,
-		applyChanges,
-		value = 0,
+		type = "number",
 	} = props
+
+	const value = props.value as number | string
 	const readonly = mode === "READ"
-	const applyOnBlur = applyChanges === "onBlur"
+	const numberOptions = fieldMetadata?.getNumberMetadata()
+	const decimals = numberOptions?.decimals || 2
+
+	const controlledInputProps = useControlledInputNumber(value, setValue)
 
 	const classes = styles.useUtilityStyleTokens(
 		StyleDefaults,
@@ -56,44 +54,38 @@ const NumberField: FunctionComponent<NumberFieldProps> = (props) => {
 		"uesio/io.field"
 	)
 
-	const numberOptions = fieldMetadata?.getNumberMetadata()
-	const decimals = numberOptions?.decimals || 2
-	const [controlledValue, setControlledValue] = useState<number>(
-		parseNumberValue(value as number, decimals, readonly)
-	)
-	useEffect(() => {
-		const newValue = parseNumberValue(
-			value as number,
-			decimals,
-			readonly
-		) as number
-		setControlledValue(newValue)
-	}, [value, decimals, readonly])
-
-	return (
-		<input
-			id={id}
-			value={controlledValue}
-			className={styles.cx(classes.input, readonly && classes.readonly)}
-			type="number"
-			disabled={readonly}
-			onChange={(e) => {
-				const number = parseFloat(e.target.value)
-				setControlledValue(number)
-				!applyOnBlur && setValue?.(number)
-			}}
-			onBlur={() =>
-				applyOnBlur &&
-				parseNumberValue(value as number, decimals, readonly) !==
-					controlledValue &&
-				setValue?.(controlledValue)
-			}
-			placeholder={placeholder}
-			step={options?.step}
-			min={options?.min}
-			max={options?.max}
-		/>
-	)
+	if (mode === "READ") {
+		return (
+			<ReadOnlyField variant={variant} context={context}>
+				{typeof value === "number" ? value.toFixed(decimals) : value}
+			</ReadOnlyField>
+		)
+	} else {
+		return (
+			<div className={classes.wrapper}>
+				<input
+					id={id}
+					className={styles.cx(
+						classes.input,
+						readonly && classes.readonly
+					)}
+					{...controlledInputProps}
+					type={type}
+					disabled={readonly}
+					placeholder={placeholder}
+					step={options?.step}
+					min={options?.min}
+					max={options?.max}
+					title={`${controlledInputProps.value}`}
+				/>
+				{type === "range" ? (
+					<span className={classes.rangevalue}>
+						{controlledInputProps.value}
+					</span>
+				) : null}
+			</div>
+		)
+	}
 }
 
 export default NumberField
