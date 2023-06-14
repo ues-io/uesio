@@ -623,3 +623,122 @@ HTTP 200
 jsonpath "$.wires[0].data[*]['uesio/tests.date']" exists
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-010"
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-009"
+
+# Operator: BETWEEN | valueSource: VALUE
+# entry 23
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.wire_condition",
+            "fields": [{"id": "uesio/tests.date"}],
+            "query":true,
+            "conditions": [
+                {
+                    "active": true,
+                    "field": "uesio/tests.date",
+                    "operator": "BETWEEN",
+                    "valueSource": "VALUE",
+                    "start": "2023-05-10",
+                    "end": "2023-05-14"
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-12"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-13"
+
+# Operator: BETWEEN | valueSource: VALUE | inclusiveStart and inclusiveEnd
+# entry 25
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.wire_condition",
+            "fields": [{"id": "uesio/tests.date"}],
+            "query":true,
+            "conditions": [
+                {
+                    "field": "uesio/tests.date",
+                    "operator": "BETWEEN",
+                    "valueSource": "VALUE",
+                    "start": "2023-05-10",
+                    "end": "2023-05-13",
+                    "inclusiveStart":true,
+                    "inclusiveEnd":true
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-10"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-12"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-13"
+
+
+# Operator: BETWEEN | valueSource: VALUE | inclusiveStart but not inclusiveEnd
+# entry 26
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.wire_condition",
+            "fields": [{"id": "uesio/tests.date"}],
+            "query":true,
+            "conditions": [
+                {
+                    "field": "uesio/tests.date",
+                    "operator": "BETWEEN",
+                    "valueSource": "VALUE",
+                    "start": "2023-05-10",
+                    "end": "2023-05-13",
+                    "inclusiveStart":true,
+                    "inclusiveEnd":false
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-10"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-12"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-13"
+
+# Operator: BETWEEN | valueSource: VALUE | not inclusiveStart but inclusiveEnd
+# entry 27
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.wire_condition",
+            "fields": [{"id": "uesio/tests.date"}],
+            "query":true,
+            "conditions": [
+                {
+                    "field": "uesio/tests.date",
+                    "operator": "BETWEEN",
+                    "valueSource": "VALUE",
+                    "start": "2023-05-10",
+                    "end": "2023-05-13",
+                    "inclusiveStart":false,
+                    "inclusiveEnd":true
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-10"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-12"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-13"
