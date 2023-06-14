@@ -635,10 +635,9 @@ Accept: application/json
             "conditions": [
                 {
                     "field": "uesio/tests.number",
-                    "operator": "IS_BLANK",
+                    "operator": "IS_BLANK"
                 }
            ]
-                
         }
     ]
 }
@@ -647,8 +646,6 @@ HTTP 200
 jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes null
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-008"
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-009"
-
-
 
 # Operator: IS_NOT_BLANK | valueSource: VALUE
 # entry 23
