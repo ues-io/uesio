@@ -31,7 +31,7 @@ definition:
           lookupField: uesio/core.id
       order:
         - field: uesio/core.updatedat
-          direction: desc
+          desc: true
     allprofiles:
       collection: uesio/studio.allmetadata
       conditions:

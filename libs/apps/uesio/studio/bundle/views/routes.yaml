@@ -38,7 +38,7 @@ definition:
           lookupField: uesio/core.id
       order:
         - field: uesio/core.updatedat
-          direction: DESC
+          desc: true
     allroutes:
       collection: uesio/studio.allmetadata
       conditions:
@@ -46,7 +46,7 @@ definition:
           value: routes
       order:
         - field: uesio/core.updatedat
-          direction: DESC
+          desc: true
     newroute:
       collection: uesio/studio.route
       fields:
