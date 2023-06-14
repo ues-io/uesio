@@ -36,12 +36,6 @@ sections:
   - type: DISPLAY
 styleRegions:
   root:
-    widgets:
-      - padding
   label:
-    widgets:
-      - padding
   selected:
   icon:
-    widgets:
-      - padding
