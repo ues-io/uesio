@@ -51,6 +51,15 @@ func GetConnection(dataSourceKey string, metadata *adapt.MetadataCache, session 
 		return nil, err
 	}
 
-	return adapter.GetConnection(credentials, metadata, dataSourceKey)
+	connection, err := adapter.GetConnection(credentials, metadata, dataSourceKey)
 
+	if err != nil {
+		return nil, err
+	}
+
+	if connections != nil && connection != nil {
+		connections[dataSourceKey] = connection
+	}
+
+	return connection, nil
 }
