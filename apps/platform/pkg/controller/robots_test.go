@@ -2,9 +2,10 @@ package controller
 
 import (
 	"bytes"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"testing"
 )
 
 func Test_getPublicRoutePaths(t *testing.T) {
@@ -86,7 +87,7 @@ Allow: /$`,
 		t.Run(tt.name, func(t *testing.T) {
 			buffer := bytes.NewBuffer([]byte{})
 			writeAllowedRoutePaths(buffer, tt.publicRoutes, tt.homeRoute)
-			assert.Equal(t, tt.wantOutput, string(buffer.Bytes()))
+			assert.Equal(t, tt.wantOutput, buffer.String())
 		})
 	}
 }
@@ -170,7 +171,7 @@ Allow: /site/files/luigi/pasta/*/foo`,
 		t.Run(tt.name, func(t *testing.T) {
 			buffer := bytes.NewBuffer([]byte{})
 			writeAllowedStaticFiles(buffer, tt.files)
-			assert.Equal(t, tt.wantOutput, string(buffer.Bytes()))
+			assert.Equal(t, tt.wantOutput, buffer.String())
 		})
 	}
 }
@@ -186,6 +187,6 @@ Allow: /site/componentpacks/*`
 
 	t.Run("test allowed core paths", func(t *testing.T) {
 		writeAllowedCorePaths(&b)
-		assert.Equal(t, expected, string(b.Bytes()))
+		assert.Equal(t, expected, b.String())
 	})
 }
