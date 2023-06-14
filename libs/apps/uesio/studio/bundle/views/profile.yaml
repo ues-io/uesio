@@ -104,13 +104,13 @@ definition:
                                       uesio.display:
                                         - field: uesio/studio.publicprofile
                                           wire: workspaces
-                                          value: ${uesio/studio.namespace}.${uesio/studio.name}
+                                          value: $Param{app}.${uesio/studio.name}
                                           operator: NOT_EQUALS
                                       signals:
                                         - signal: wire/UPDATE_RECORD
                                           wire: workspaces
                                           field: uesio/studio.publicprofile
-                                          value: ${uesio/studio.namespace}.${uesio/studio.name}
+                                          value: $Param{app}.${uesio/studio.name}
                                         - signal: wire/SAVE
                                           wires:
                                             - workspaces
@@ -120,7 +120,7 @@ definition:
                                       uesio.display:
                                         - field: uesio/studio.publicprofile
                                           wire: workspaces
-                                          value: ${uesio/studio.namespace}.${uesio/studio.name}
+                                          value: $Param{app}.${uesio/studio.name}
                                           operator: EQUALS
                                       signals:
                                         - signal: wire/UPDATE_RECORD
@@ -136,7 +136,7 @@ definition:
                                       uesio.display:
                                         - field: uesio/studio.publicprofile
                                           wire: workspaces
-                                          value: ${uesio/studio.namespace}.${uesio/studio.name}
+                                          value: $Param{app}.${uesio/studio.name}
                                           operator: NOT_EQUALS
                                       signals:
                                         - signal: panel/TOGGLE

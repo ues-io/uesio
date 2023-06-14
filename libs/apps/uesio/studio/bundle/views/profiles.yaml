@@ -120,7 +120,7 @@ definition:
                                           uesio.display:
                                             - type: fieldValue
                                               operator: EQUALS
-                                              value: ${uesio/studio.namespace}.${uesio/studio.name}
+                                              value: $Param{app}.${uesio/studio.name}
                                               wire: workspaces
                                               field: uesio/studio.publicprofile
                             - field: uesio/core.updatedby
