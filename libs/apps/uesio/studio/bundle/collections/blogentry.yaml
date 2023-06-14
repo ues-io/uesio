@@ -1,0 +1,4 @@
+name: blogentry
+type: DYNAMIC
+label: Blog Entry
+pluralLabel: Blog Entries

@@ -28,7 +28,7 @@ const CheckboxFilter: FunctionComponent<CheckboxFilterProps> = (props) => {
 							condition: {
 								...condition,
 								value,
-								active: !!value,
+								inactive: !value,
 							},
 						},
 						{
@@ -54,7 +54,7 @@ const CheckboxFilter: FunctionComponent<CheckboxFilterProps> = (props) => {
 							condition: {
 								...condition,
 								value,
-								active: !!value,
+								inactive: !value,
 							},
 						},
 						{

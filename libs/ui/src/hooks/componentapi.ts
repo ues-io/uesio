@@ -99,6 +99,7 @@ const useState = <T extends PlainComponentState>(
 		if (state === undefined) {
 			stateSetter(initialState)
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [componentId])
 
 	return [state ?? initialState, stateSetter]
@@ -123,6 +124,7 @@ const useStateSlice = <T extends Definition>(
 		if (state === undefined && initialState !== undefined) {
 			stateSetter(initialState)
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [componentId])
 
 	return [state ?? initialState, stateSetter]

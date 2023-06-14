@@ -41,9 +41,7 @@ const getWireRequest = (
 			batchnumber: resetBatchNumber ? 0 : batchnumber,
 			batchsize,
 			collection,
-			conditions: conditions?.filter(
-				(condition) => condition.active !== false
-			),
+			conditions,
 			fields,
 			name,
 			order,

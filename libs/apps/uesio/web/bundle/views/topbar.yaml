@@ -26,11 +26,43 @@ definition:
                 - uesio/io.group:
                     uesio.styleTokens:
                       root:
+                        - grid
+                        - md:hidden
+                        - justify-right
+                        - m-5
+                    components:
+                      - uesio/io.button:
+                          uesio.styleTokens:
+                            root:
+                              - text-xl
+                              - text-blue-600
+                              - p-2
+                          icon: menu
+                          signals:
+                            - signal: panel/TOGGLE
+                              panel: navmenu
+                - uesio/io.group:
+                    uesio.styleTokens:
+                      root:
+                        - hidden
+                        - md:grid
                         - m-5
                         - gap-2
                         - md:gap-4
                         - justify-right
                     components:
+                      - uesio/io.button:
+                          uesio.variant: uesio/web.borderless
+                          text: Docs
+                          signals:
+                            - signal: route/REDIRECT
+                              path: https://docs.$Site{domain}
+                      - uesio/io.button:
+                          uesio.variant: uesio/web.borderless
+                          text: Blog
+                          signals:
+                            - signal: route/NAVIGATE
+                              path: blog
                       - uesio/io.button:
                           uesio.variant: uesio/web.borderless
                           text: Early Access
@@ -40,6 +72,42 @@ definition:
                       - uesio/io.button:
                           uesio.variant: uesio/web.calltoaction
                           text: Login
+                          uesio.styleTokens:
+                            root:
+                              - ml-4
                           signals:
                             - signal: route/REDIRECT
                               path: https://studio.$Site{domain}
+  panels:
+    navmenu:
+      uesio.type: uesio/io.sidepanel
+      components:
+        - uesio/io.group:
+            uesio.styleTokens:
+              root:
+                - grid-flow-row
+            components:
+              - uesio/io.button:
+                  uesio.variant: uesio/web.borderless
+                  text: Docs
+                  signals:
+                    - signal: route/REDIRECT
+                      path: https://docs.$Site{domain}
+              - uesio/io.button:
+                  uesio.variant: uesio/web.borderless
+                  text: Blog
+                  signals:
+                    - signal: route/NAVIGATE
+                      path: blog
+              - uesio/io.button:
+                  uesio.variant: uesio/web.borderless
+                  text: Early Access
+                  signals:
+                    - signal: route/NAVIGATE
+                      path: earlyaccess
+              - uesio/io.button:
+                  uesio.variant: uesio/web.borderless
+                  text: Login
+                  signals:
+                    - signal: route/REDIRECT
+                      path: https://studio.$Site{domain}
