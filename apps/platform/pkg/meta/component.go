@@ -41,6 +41,7 @@ type Component struct {
 	DefaultDefinition yaml.Node `yaml:"defaultDefinition,omitempty" json:"uesio/studio.defaultdefinition"`
 	Sections          yaml.Node `yaml:"sections,omitempty" json:"uesio/studio.sections"`
 	Signals           yaml.Node `yaml:"signals,omitempty" json:"uesio/studio.signals"`
+	StyleRegions      yaml.Node `yaml:"styleRegions,omitempty" json:"uesio/studio.styleregions"`
 
 	// Internal only
 	slotPaths      []string
@@ -133,6 +134,9 @@ func (c *Component) MarshalJSONObject(enc *gojay.Encoder) {
 	}
 	if c.Signals.Content != nil {
 		enc.AddObjectKey("signals", (*YAMLDefinition)(&c.Signals))
+	}
+	if c.StyleRegions.Content != nil {
+		enc.AddObjectKey("styleRegions", (*YAMLDefinition)(&c.StyleRegions))
 	}
 }
 

@@ -20,6 +20,12 @@ definition:
         uesio/core.id:
         uesio/studio.name:
         uesio/studio.bundle:
+          fields:
+            uesio/core.id:
+            uesio/studio.major:
+            uesio/studio.minor:
+            uesio/studio.patch:
+            uesio/studio.version:
         uesio/studio.title:
         uesio/studio.enable_seo:
         uesio/studio.app:
@@ -36,6 +42,25 @@ definition:
           valueSource: LOOKUP
           lookupWire: apps
           lookupField: uesio/core.id
+    latestbundle:
+      collection: uesio/studio.bundle
+      fields:
+        uesio/core.id:
+        uesio/core.createdat:
+        uesio/studio.major:
+        uesio/studio.minor:
+        uesio/studio.patch:
+        uesio/studio.version:
+        uesio/studio.app:
+      batchsize: 1
+      conditions:
+        - field: uesio/studio.app
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio/core.id
+      order:
+        - field: uesio/core.createdat
+          desc: true
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -69,6 +94,39 @@ definition:
                           actions:
                             - uesio/io.group:
                                 components:
+                                  - uesio/io.button:
+                                      text: "Update to latest bundle"
+                                      uesio.variant: uesio/io.primary
+                                      uesio.display:
+                                        - field: uesio/studio.bundle->uesio/studio.version
+                                          operator: NOT_EQUALS
+                                          value: $Record{latestbundle:uesio/studio.version}
+                                      signals:
+                                        - signal: notification/ADD
+                                          severity: info
+                                          text: Fetching latest bundle for app...
+                                          duration: 3
+                                        - signal: wire/LOAD
+                                          wires:
+                                            - latestbundle
+                                        - signal: wire/UPDATE_RECORD
+                                          wire: sites
+                                          field: uesio/studio.bundle->uesio/core.id
+                                          value: $Record{latestbundle:uesio/core.id}
+                                        - signal: notification/ADD
+                                          severity: info
+                                          text: Updating site to bundle $Record{latestbundle:uesio/studio.version} ...
+                                          duration: 3
+                                        - signal: wire/SAVE
+                                          wires:
+                                            - sites
+                                        - signal: wire/LOAD
+                                          wires:
+                                            - sites
+                                        - signal: notification/ADD
+                                          severity: success
+                                          text: Successfully updated site to latest bundle version!
+                                          duration: 3
                                   - uesio/io.button:
                                       text: "Edit"
                                       uesio.variant: uesio/io.secondary
