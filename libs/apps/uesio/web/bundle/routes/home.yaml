@@ -8,3 +8,7 @@ tags:
     location: head
     name: description
     content: The platform for platforms - ues.io makes building, running, and selling web apps easier for developers and possible for everyone else.
+  - type: link
+    location: head
+    name: canonical
+    content: $Site{url}

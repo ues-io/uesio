@@ -21,6 +21,7 @@ const (
 	defaultRobots     = `User-agent: *
 Disallow: *`
 	allowPath = "\nAllow: %s"
+	filePath  = `/site/files/%s/*/%s`
 )
 
 var defaultRobotsBytes = []byte(defaultRobots)
@@ -98,7 +99,7 @@ func writeAllowedRoutePaths(w io.Writer, publicRoutes map[string]bool, homeRoute
 	if homeRoute != nil {
 		normalizedHomeRoutePath = normalizePath(homeRoute.Path)
 	}
-	for k, _ := range publicRoutes {
+	for k := range publicRoutes {
 		keys = append(keys, k)
 		if homeRoute != nil && k == normalizedHomeRoutePath {
 			addHomeRoute = true
@@ -139,8 +140,6 @@ func getPublicRoutePaths(routes meta.RouteCollection) map[string]bool {
 	}
 	return publicRouteNames
 }
-
-const filePath = `/site/files/%s/*/%s`
 
 func getFilePath(appFullName, fileName string) string {
 	return fmt.Sprintf(filePath, appFullName, fileName)

@@ -182,6 +182,11 @@ const handlers: Record<MergeType, MergeHandler> = {
 	},
 	Site: (expression, context) => {
 		const site = context.getSite()
+		if (expression === "url") {
+			return `https://${site?.subdomain ? site.subdomain + "." : ""}${
+				site?.domain
+			}`
+		}
 		return site?.[expression as keyof SiteState] || ""
 	},
 	StaticFile: (expression) => getStaticAssetsPath() + "/static" + expression,

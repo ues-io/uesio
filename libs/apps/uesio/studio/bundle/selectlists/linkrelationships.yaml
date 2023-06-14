@@ -1,0 +1,35 @@
+name: linkrelationships
+options:
+  # Standard tags
+  - label: alternate
+    value: alternate
+  - label: author
+    value: author
+  - label: canonical
+    value: canonical
+  - label: dns-prefetch
+    value: dns-prefetch
+  - label: help
+    value: help
+  - label: icon
+    value: icon
+  - label: license
+    value: license
+  - label: next
+    value: next
+  - label: pingback
+    value: pingback
+  - label: preconnect
+    value: preconnect
+  - label: prefetch
+    value: prefetch
+  - label: preload
+    value: preload
+  - label: prerender
+    value: prerender
+  - label: prev
+    value: prev
+  - label: search
+    value: search
+  - label: stylesheet
+    value: stylesheet
