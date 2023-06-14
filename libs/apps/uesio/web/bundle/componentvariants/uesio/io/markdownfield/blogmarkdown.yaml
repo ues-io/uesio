@@ -1,6 +1,6 @@
 name: blogmarkdown
-label: Blog Markdown
 extends: uesio/io.default
+label: Blog Markdown
 definition:
   uesio.styleTokens:
     h1:
