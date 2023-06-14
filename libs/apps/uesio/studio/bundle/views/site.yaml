@@ -128,13 +128,13 @@ definition:
                                           text: Successfully updated site to latest bundle version!
                                           duration: 3
                                   - uesio/io.button:
-                                      text: "Edit"
+                                      text: $Label{uesio/io.edit}
                                       uesio.variant: uesio/io.secondary
                                       signals:
                                         - signal: "panel/TOGGLE"
                                           panel: "editSite"
                                   - uesio/io.button:
-                                      text: Delete
+                                      text: $Label{uesio/io.delete}
                                       uesio.variant: uesio/io.secondary
                                       signals:
                                         - signal: panel/TOGGLE
@@ -193,7 +193,7 @@ definition:
             element: p
       actions:
         - uesio/io.button:
-            text: Delete
+            text: $Label{uesio/io.delete}
             uesio.variant: uesio/io.primary
             signals:
               - signal: wire/MARK_FOR_DELETE
@@ -203,7 +203,7 @@ definition:
               - signal: "route/NAVIGATE"
                 path: "app/$Param{app}"
         - uesio/io.button:
-            text: Cancel
+            text: $Label{uesio/io.cancel}
             uesio.variant: uesio/io.secondary
             signals:
               - signal: panel/TOGGLE
@@ -234,7 +234,7 @@ definition:
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
-            text: "Save"
+            text: $Label{uesio/io.save}
             signals:
               - signal: wire/SAVE
                 wires:
@@ -243,7 +243,7 @@ definition:
                 panel: "editSite"
         - uesio/io.button:
             uesio.variant: "uesio/io.secondary"
-            text: "Cancel"
+            text: $Label{uesio/io.cancel}
             signals:
               - signal: "panel/TOGGLE"
                 panel: "editSite"

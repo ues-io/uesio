@@ -182,7 +182,7 @@ definition:
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
-            text: "Save"
+            text: $Label{uesio/io.save}
             signals:
               - signal: wire/SAVE
                 wires:
@@ -200,7 +200,7 @@ definition:
                   - domains
         - uesio/io.button:
             uesio.variant: "uesio/io.secondary"
-            text: "Cancel"
+            text: $Label{uesio/io.cancel}
             signals:
               - signal: "panel/TOGGLE"
                 panel: "newDomain"
@@ -217,7 +217,7 @@ definition:
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.secondary
-            text: Cancel
+            text: $Label{uesio/io.cancel}
             signals:
               - signal: panel/TOGGLE
                 panel: confirmDelete

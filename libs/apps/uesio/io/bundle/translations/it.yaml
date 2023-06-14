@@ -1,7 +1,9 @@
 language: it
 labels:
   uesio/io.cancel: Annula
+  uesio/io.copy: Copia
   uesio/io.delete: Elimina
   uesio/io.edit: Modifica
   uesio/io.preview: Vedere
   uesio/io.save: Salva
+public: true

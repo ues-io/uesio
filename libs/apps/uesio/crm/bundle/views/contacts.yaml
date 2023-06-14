@@ -327,7 +327,7 @@ definition:
                             panel: addPic
                         icon: add_a_photo
                     - uesio/io.button:
-                        text: Save
+                        text: $Label{uesio/io.save}
                         uesio.variant: uesio/io.primary
                         signals:
                           - signal: panel/CLOSE
@@ -353,7 +353,7 @@ definition:
                             prepend: true
                         icon: save
                     - uesio/io.button:
-                        text: Cancel
+                        text: $Label{uesio/io.cancel}
                         uesio.variant: uesio/io.secondary
                         signals:
                           - signal: panel/CLOSE
@@ -438,7 +438,7 @@ definition:
         - uesio/io.group:
             components:
               - uesio/io.button:
-                  text: Delete
+                  text: $Label{uesio/io.delete}
                   signals:
                     - signal: wire/MARK_FOR_DELETE
                       wires:
@@ -454,7 +454,7 @@ definition:
                   uesio.variant: uesio/io.primary
                   icon: delete
               - uesio/io.button:
-                  text: Cancel
+                  text: $Label{uesio/io.cancel}
                   signals:
                     - signal: wire/UNMARK_FOR_DELETE
                       wires:
