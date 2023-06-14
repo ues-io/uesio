@@ -73,11 +73,14 @@ func processConditions(
 				conditions[i].Values = condition.RawValues
 			}
 
-			// make sure the condition value is a string
 			stringValue, ok := condition.RawValue.(string)
 			if !ok {
+				if condition.RawValue != nil {
+					conditions[i].Value = condition.RawValue
+				}
 				continue
 			}
+
 			template, err := templating.NewWithFuncs(stringValue, templating.ForceErrorFunc, merge.ServerMergeFuncs)
 			if err != nil {
 				return err
@@ -87,12 +90,12 @@ func processConditions(
 				Session:     session,
 				ParamValues: params,
 			})
-
 			if err != nil {
 				return err
 			}
 
 			conditions[i].Value = mergedValue
+
 		}
 
 		if condition.ValueSource == "PARAM" && condition.Param != "" {

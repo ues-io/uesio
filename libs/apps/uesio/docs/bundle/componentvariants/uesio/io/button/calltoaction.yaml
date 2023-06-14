@@ -1,11 +1,15 @@
 name: calltoaction
 label: Call to Action
-extends: uesio/docs.secondary
 definition:
   uesio.styleTokens:
     root:
+      - text-[rgb(45,39,245)]
+      - border-[rgb(45,39,245)]
       - border-2
-      - border-solid
-      - border-red-400
-      - py-2.5
-      - px-8
+      - py-1.5
+      - px-4
+      - md:px-6
+      - text-sm
+      - rounded-lg
+      - font-[Gosha]
+      - whitespace-nowrap

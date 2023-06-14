@@ -40,7 +40,6 @@ const TranslationItem: FunctionComponent<Props> = (props) => {
 			<MapField
 				value={namespaceValues}
 				noAdd
-				subType="MAP"
 				setValue={(value: wire.PlainWireRecord) =>
 					setValue({
 						...nonNamespaceValues,
@@ -53,6 +52,7 @@ const TranslationItem: FunctionComponent<Props> = (props) => {
 				keyField={{
 					name: "key",
 					label: "Label",
+					updateable: false,
 				}}
 				valueField={{
 					name: "value",

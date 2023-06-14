@@ -20,7 +20,6 @@ export default async (
 					condition: {
 						type: "SEARCH",
 						value: search,
-						active: true,
 						id: SEARCH_CONDITION_ID,
 						fields,
 					},

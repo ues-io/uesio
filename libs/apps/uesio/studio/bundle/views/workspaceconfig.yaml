@@ -36,12 +36,14 @@ definition:
                     uesio.context:
                       wire: workspaces
                     view: uesio/studio.workspacenav
+                    params:
+                      selected: settings
           - uesio/io.griditem:
               uesio.variant: uesio/studio.content
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
-                    title: Configuration
+                    title: Workspace Settings
                     actions:
                       - uesio/io.button:
                           uesio.variant: uesio/io.secondary

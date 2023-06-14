@@ -116,7 +116,7 @@ func AppInit() error {
 	var appObject *wire.App
 	if appFullName != "" {
 		appObject, err = wire.GetApp()
-		if err != nil && err.Error() != wire.ERROR_INVALID_NUMBER_OF_RECORDS_FOR_LOAD_ONE {
+		if err != nil && err.Error() != wire.ERROR_ZERO_RECORDS_FOR_LOAD_ONE {
 			return err
 		}
 	}
