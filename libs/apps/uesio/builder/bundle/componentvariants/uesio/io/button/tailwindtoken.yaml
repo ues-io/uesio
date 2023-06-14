@@ -1,0 +1,18 @@
+name: tailwindtoken
+label: Tailwind Token
+extends: uesio/io.default
+definition:
+  uesio.styleTokens:
+    root:
+      - bg-slate-100
+      - hover:bg-slate-200
+      - focus:bg-slate-300
+      - px-3
+      - text-xs
+      - py-1.5
+      - whitespace-nowrap
+      - leading-none
+      - rounded-md
+      - text-slate-600
+
+public: true

@@ -14,15 +14,16 @@ import {
 	FloatingFocusManager,
 } from "@floating-ui/react"
 
-interface MenuButtonUtilityProps<T> extends definition.UtilityProps {
+interface AutocompleteFieldUtilityProps<T> extends definition.UtilityProps {
 	itemRenderer: (item: T) => ReactNode
 	onSelect: (item: T) => void
-	items: T[]
 	getItemKey: (item: T) => string
-	onSearch?: (search: string) => void
+	onSearch?: (search: string) => Promise<T[]>
 	searchFilter?: (item: T, search: string) => boolean
+	placeholder?: string
 	closeOnSelect?: boolean
 	open?: boolean
+	maxDisplayItems?: number
 }
 
 const StyleDefaults = Object.freeze({
@@ -35,28 +36,49 @@ const StyleDefaults = Object.freeze({
 	itemsarea: [],
 })
 
-const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
-	props
-) => {
+const AutocompleteField: definition.UtilityComponent<
+	AutocompleteFieldUtilityProps<unknown>
+> = (props) => {
+	const {
+		itemRenderer,
+		onSelect,
+		onSearch,
+		searchFilter,
+		getItemKey,
+		closeOnSelect = true,
+		placeholder,
+		id,
+		open = false,
+		maxDisplayItems = 20,
+	} = props
 	const classes = styles.useUtilityStyleTokens(
 		StyleDefaults,
 		props,
 		"uesio/io.menu"
 	)
 
-	const [isOpen, setIsOpen] = useState(props.open || false)
+	const [isOpen, setIsOpen] = useState(open)
 	const [searchText, setSearchText] = useState("")
+	const [items, setItems] = useState<unknown[] | undefined>([])
 
-	const getSearchItems = (searchText: string) => {
-		onSearch?.(searchText)
-		setSearchText(searchText)
+	const getSearchItems = async (newSearchText: string) => {
+		if (newSearchText !== searchText) {
+			const results = await onSearch?.(newSearchText)
+			if (results && results.length) {
+				console.log("got " + results.length + "results, setting items")
+				// Only return first N items of array
+				setItems(results.slice(0, maxDisplayItems))
+				console.log("setting search text to " + newSearchText)
+				setSearchText(newSearchText)
+			}
+		}
 	}
 
 	const onOpenChange = (open: boolean) => {
-		if (open) {
-			getSearchItems(searchText)
+		console.log("on open change, open=" + open + ", isOpen=" + isOpen)
+		if (open !== isOpen) {
+			setIsOpen(open)
 		}
-		setIsOpen(open)
 	}
 
 	const floating = useFloating({
@@ -91,18 +113,6 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 	const { getReferenceProps, getFloatingProps, getItemProps } =
 		useInteractions([click, dismiss, role, listNavigation])
 
-	const {
-		items,
-		itemRenderer,
-		onSelect,
-		onSearch,
-		searchFilter,
-		getItemKey,
-		children,
-		closeOnSelect = true,
-		id,
-	} = props
-
 	return (
 		<>
 			<div
@@ -112,7 +122,19 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 				ref={refs.setReference}
 				{...getReferenceProps()}
 			>
-				{children}
+				<input
+					type="text"
+					value={searchText}
+					autoFocus
+					className={classes.searchbox}
+					placeholder={placeholder || "Search..."}
+					onChange={(e) => {
+						if (!isOpen && e.target.value?.length) {
+							setIsOpen(true)
+						}
+						getSearchItems(e.target.value)
+					}}
+				/>
 			</div>
 			<FloatingPortal>
 				{isOpen && (
@@ -130,31 +152,14 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 							className={classes.menu}
 							{...getFloatingProps()}
 						>
-							<div
-								id={`floatingMenu-${id}`}
-								className={classes.menuheader}
-							>
-								{(onSearch || searchFilter) && (
-									<input
-										type="text"
-										value={searchText}
-										autoFocus
-										className={classes.searchbox}
-										placeholder="Search..."
-										onChange={(e) => {
-											getSearchItems(e.target.value)
-										}}
-									/>
-								)}
-							</div>
 							<div className={classes.itemsarea}>
 								{items
-									.filter((item) => {
+									?.filter((item) => {
 										if (!searchFilter) return true
 										if (!searchText) return true
 										return searchFilter(item, searchText)
 									})
-									.map((item, index) => (
+									?.map((item, index) => (
 										<div
 											className={styles.cx(
 												classes.menuitem,
@@ -199,4 +204,4 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 	)
 }
 
-export default Menu
+export default AutocompleteField

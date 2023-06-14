@@ -266,3 +266,6 @@ signals:
   CANCEL_FILE:
     label: Cancel File
     properties: []
+styleRegions:
+  input:
+  readonly:
