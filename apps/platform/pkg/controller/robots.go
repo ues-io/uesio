@@ -66,7 +66,7 @@ func Robots(w http.ResponseWriter, r *http.Request) {
 	// Append to the robots the routes we want to allow
 	writeAllowedRoutePaths(w, getPublicRoutePaths(routes), homeRoute)
 	writeAllowedCorePaths(w)
-	writeAllowedStaticFiles(w, getPublicFilePaths(files, contextSite))
+	writeAllowedStaticFiles(w, getPublicFilePaths(files))
 
 }
 
@@ -145,12 +145,12 @@ func getFilePath(appFullName, fileName string) string {
 	return fmt.Sprintf(filePath, appFullName, fileName)
 }
 
-func getPublicFilePaths(files meta.FileCollection, site *meta.Site) map[string]bool {
+func getPublicFilePaths(files meta.FileCollection) map[string]bool {
 	publicFilePaths := map[string]bool{}
 
 	// Build a unique list of public file paths
 	for _, file := range files {
-		publicFilePaths[getFilePath(site.GetAppFullName(), file.Name)] = true
+		publicFilePaths[getFilePath(file.GetNamespace(), file.Name)] = true
 	}
 	return publicFilePaths
 }
