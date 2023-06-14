@@ -46,6 +46,7 @@ type LoadRequestCondition struct {
 	End            interface{}            `json:"end,omitempty" bot:"end" yaml:"end"`
 	InclusiveStart bool                   `json:"inclusiveStart,omitempty" bot:"inclusiveStart" yaml:"inclusiveStart"`
 	InclusiveEnd   bool                   `json:"inclusiveEnd,omitempty" bot:"inclusiveEnd" yaml:"inclusiveEnd"`
+	Inactive       bool                   `json:"inactive" bot:"inactive" yaml:"inactive"`
 }
 
 func GetStringSlice(input interface{}) ([]string, error) {

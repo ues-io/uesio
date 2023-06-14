@@ -1,0 +1,15 @@
+name: sidepanel
+pack: main
+entrypoint: components/sidepanel/sidepanel
+slots:
+  - name: components
+defaultDefinition:
+properties:
+  - name: panelid
+    label: Panel Id
+    required: true
+    type: KEY
+sections:
+  - type: HOME
+    properties:
+      - panelid

@@ -53,7 +53,7 @@ const MapField: FunctionComponent<MapFieldUtilityProps> = (props) => {
 			value={listValue}
 			noAdd={noAdd}
 			noDelete={noDelete}
-			subType="MAP"
+			subType="STRUCT"
 			subFields={{
 				key: keyField,
 				value: valueField,

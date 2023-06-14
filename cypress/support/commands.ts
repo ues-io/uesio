@@ -123,6 +123,10 @@ Cypress.Commands.add("getComponentState", (componentId: string) => {
 		.invoke("getExternalState", componentId)
 })
 
+Cypress.Commands.add("getWireState", (viewId: string, wireName: string) => {
+	cy.window().its("uesio.api.wire").invoke("getWire", viewId, wireName)
+})
+
 // Enters a global hotkey
 Cypress.Commands.add("hotkey", (hotkey: string) => {
 	cy.get("body").type(hotkey)
@@ -162,6 +166,7 @@ declare global {
 			clickButton(idFragment: string): Chainable<void>
 			clickButtonIfExists(idFragment: string): Chainable<void>
 			getComponentState(componentId: string): Chainable<void>
+			getWireState(viewId: string, wireName: string): Chainable<void>
 			hotkey(hotkey: string): Chainable<void>
 			changeSelectValue(
 				selectElementIdFragment: string,

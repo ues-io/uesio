@@ -80,7 +80,6 @@ Accept: application/json
             },
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.email",
                     "operator": "EQ",
                     "valueSource": "PARAM",
@@ -105,7 +104,6 @@ Accept: application/json
             "query":true,
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.email",
                     "operator": "NOT_EQ",
                     "value": "test1@test.com",
@@ -134,7 +132,6 @@ Accept: application/json
             },
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.email",
                     "operator": "NOT_EQ",
                     "valueSource": "PARAM",
@@ -187,24 +184,31 @@ Accept: application/json
             "name":"reference",
             "fields": [
                 {
-                    "id":"uesio/tests.email"
+                    "id":"uesio/core.uniquekey"
                 }
             ],
             "query":true,
-            "batchsize":8
+            "conditions": [
+                {
+                    "field": "uesio/core.uniquekey",
+                    "operator": "EQ",
+                    "valueSource": "VALUE",
+                    "value": "ID-001"
+                }
+            ]
         },
         {
             "collection":"uesio/tests.wire_condition",
-            "fields": [{"id": "uesio/tests.email"}],
+            "fields": [{"id": "uesio/core.uniquekey"},{"id": "uesio/tests.email"}],
             "name":"condition",
             "query":true,
             "conditions": [
                 {
-                    "field": "uesio/tests.email",
+                    "field": "uesio/core.uniquekey",
                     "operator": "IN",
                     "valueSource": "LOOKUP",
                     "lookupWire": "reference",
-                    "lookupField": "uesio/tests.email"
+                    "lookupField": "uesio/core.uniquekey"
                 }
             ]
         }
@@ -212,7 +216,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[1].data[*]['uesio/tests.email']" count == 8
+jsonpath "$.wires[1].data[*]['uesio/tests.email']" isString
+jsonpath "$.wires[1].data[*]['uesio/tests.email']" == "test1@test.com"
+jsonpath "$.wires[1].data[*]['uesio/core.uniquekey']" == "ID-001"
 
 
 # Operator: IN | valueSource: PARAM
@@ -231,7 +237,6 @@ Accept: application/json
             },
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.email",
                     "operator": "IN",
                     "valueSource": "PARAM",
@@ -335,7 +340,6 @@ Accept: application/json
             },
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.email",
                     "operator": "NOT_IN",
                     "valueSource": "PARAM",
@@ -366,7 +370,6 @@ Accept: application/json
             "query":true,
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.email",
                     "operator": "IS_BLANK"
                 }
@@ -391,7 +394,6 @@ Accept: application/json
             "query":true,
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.email",
                     "operator": "IS_NOT_BLANK"
                 }
