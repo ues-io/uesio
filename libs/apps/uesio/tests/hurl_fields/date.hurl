@@ -10,8 +10,31 @@ POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 }
 HTTP 200
 
-# Operator: EQ | valueSource: VALUE
+# Operator: EQ | valueSource: VALUE | Bad Value
 # entry 2
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.wire_condition",
+            "fields": [{"id": "uesio/tests.date"}],
+            "query": true,
+            "conditions": [
+                {
+                    "field": "uesio/tests.date",
+                    "operator": "EQ",
+                    "valueSource": "VALUE",
+                    "value": 20230510
+                }
+            ]
+        }
+    ]
+}
+HTTP 400
+
+# Operator: EQ | valueSource: VALUE
+# entry 3
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -36,7 +59,7 @@ HTTP 200
 jsonpath "$.wires[0].data[*]['uesio/tests.date']" == "2023-05-10"
 
 # Operator: EQ | valueSource: PARAM
-# entry 3
+# entry 4
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -65,7 +88,7 @@ HTTP 200
 jsonpath "$.wires[0].data[*]['uesio/tests.date']" == "2023-05-10"
 
 # Operator: NOT_EQ | valueSource: VALUE
-# entry 4
+# entry 5
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -90,7 +113,7 @@ HTTP 200
 jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-10"
 
 # Operator: NOT_EQ | valueSource: PARAM
-# entry 5
+# entry 6
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -119,7 +142,7 @@ HTTP 200
 jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-10"
 
 # Operator: GT | valueSource: VALUE
-# entry 6
+# entry 7
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -145,7 +168,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-10"
 jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-12"
 
 # Operator: GT | valueSource: PARAM
-# entry 7
+# entry 8
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -175,7 +198,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-10"
 jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-12"
 
 # Operator: LT | valueSource: VALUE
-# entry 8
+# entry 9
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -202,7 +225,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-12"
 jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-13"
 
 # Operator: LT | valueSource: PARAM
-# entry 9
+# entry 10
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -233,7 +256,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-12"
 jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-13"
 
 # Operator: GTE | valueSource: VALUE
-# entry 10
+# entry 11
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -258,8 +281,9 @@ HTTP 200
 jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-10"
 jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-12"
 jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-13"
+
 # Operator: GTE | valueSource: PARAM
-# entry 11
+# entry 12
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -290,7 +314,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-12"
 jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-13"
 
 # Operator: LTE | valueSource: VALUE
-# entry 12
+# entry 13
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -317,7 +341,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-12"
 jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-13"
 
 # Operator: LTE | valueSource: PARAM
-# entry 13
+# entry 14
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -348,7 +372,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-12"
 jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-13"
 
 # Operator: IN | valueSource: VALUE
-# entry 14
+# entry 15
 #POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 #Accept: application/json
 #{
@@ -377,7 +401,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-13"
 #jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-12"
 
 # Operator: IN | valueSource: LOOKUP
-# entry 15
+# entry 16
 #POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 #Accept: application/json
 #{
@@ -417,7 +441,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-13"
 
 
 # Operator: IN | valueSource: PARAM
-# entry 16
+# entry 17
 #POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 #Accept: application/json
 #{
@@ -451,7 +475,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-13"
 #jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-12"
 
 # Operator: NOT_IN | valueSource: VALUE
-# entry 17
+# entry 18
 #POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 #Accept: application/json
 #{
@@ -479,7 +503,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-13"
 #jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-12"
 
 # Operator: NOT_IN | valueSource: LOOKUP
-# entry 18
+# entry 19
 #POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 #Accept: application/json
 #{
@@ -512,7 +536,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-13"
 #jsonpath "$.wires[1].data[*]" not exists
 
 # Operator: NOT_IN | valueSource: PARAM
-## entry 19
+## entry 20
 #POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 #Accept: application/json
 #{
@@ -549,13 +573,14 @@ jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-13"
 #jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-13"
 
 # Operator: IS_BLANK | valueSource: VALUE
-# entry 20
+# entry 21
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
         {
             "collection":"uesio/tests.wire_condition",
+            "fields": [{"id": "uesio/tests.date"},{"id": "uesio/core.uniquekey"}],
             "query":true,
             "conditions": [
                 {
@@ -569,18 +594,19 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]" not exists
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-010"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-009"
 
 
 # Operator: IS_NOT_BLANK | valueSource: VALUE
-# entry 21
+# entry 22
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
         {
             "collection":"uesio/tests.wire_condition",
-            "fields": [{"id": "uesio/tests.date"}],
+            "fields": [{"id": "uesio/tests.date"},{"id": "uesio/core.uniquekey"}],
             "query":true,
             "conditions": [
                 {
@@ -595,3 +621,5 @@ Accept: application/json
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data[*]['uesio/tests.date']" exists
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-010"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-009"
