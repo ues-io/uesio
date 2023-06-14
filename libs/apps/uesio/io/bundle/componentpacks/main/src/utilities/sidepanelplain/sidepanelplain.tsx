@@ -16,25 +16,12 @@ interface SidePanelUtilityProps extends definition.UtilityProps {
 const SidePanelPlain: FunctionComponent<SidePanelUtilityProps> = (props) => {
 	const classes = styles.useUtilityStyleTokens(
 		{
-			blocker: [
-				"backdrop-blur-sm",
-				"backdrop-grayscale-[50%]",
-				"backdrop-brightness-50",
-			],
-			root: ["absolute", "inset-0", "pointer-events-none"],
-			inner: [
-				"shadow-md",
-				"inset-y-0",
-				"right-0",
-				"pointer-events-auto",
-				"bg-white",
-				"w-10/12",
-				"max-w-xs",
-				"absolute",
-			],
+			blocker: [],
+			root: [],
+			inner: [],
 		},
 		props,
-		"uesio/io.dialogplain"
+		"uesio/io.sidepanel"
 	)
 
 	const floating = useFloating({
@@ -49,9 +36,8 @@ const SidePanelPlain: FunctionComponent<SidePanelUtilityProps> = (props) => {
 		referencePress: true,
 		bubbles: false,
 	})
-
 	const { getFloatingProps, getReferenceProps } = useInteractions([dismiss])
-
+	console.log("plain classes:", classes)
 	return (
 		<FloatingOverlay
 			className={classes.blocker}

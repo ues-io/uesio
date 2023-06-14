@@ -3,7 +3,9 @@ pack: main
 entrypoint: components/sidepanel/sidepanel
 slots:
   - name: components
-defaultDefinition:
+variants:
+  - uesio/io.sidepanel:uesio/io.default
+  - uesio/io.sidepanel:uesio/io.black
 properties:
   - name: panelid
     label: Panel Id

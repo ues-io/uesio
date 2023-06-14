@@ -1,0 +1,31 @@
+name: black
+label: Black
+definition:
+  uesio.styleTokens:
+    blocker:
+      - backdrop-blur-sm
+      - backdrop-grayscale-[50%]
+      - backdrop-brightness-50
+      - pointer-events-auto
+    root:
+      - absolute
+      - inset-0
+      - grid-rows-[40px_1fr]
+    inner:
+      - shadow-md
+      - inset-y-0
+      - right-0
+      - pointer-events-auto
+      - w-10/12
+      - max-w-xs
+      - absolute
+      - bg-black
+    header:
+      - text-right
+    content:
+      - p-4
+    icon:
+      - text-2xl
+      - m-2
+      - p-1
+public: true
