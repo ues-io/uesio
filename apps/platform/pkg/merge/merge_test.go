@@ -2,13 +2,14 @@ package merge
 
 import (
 	"errors"
+	"reflect"
+	"regexp"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
-	"reflect"
-	"regexp"
-	"testing"
 )
 
 func Test_extractRegexParams(t *testing.T) {
@@ -130,6 +131,37 @@ func Test_serverMergeFuncs(t *testing.T) {
 			},
 			"title",
 			"Acme Inc",
+			nil,
+		},
+		{
+			"Site: url with domain and subdomain",
+			"Site",
+			ServerMergeData{
+				Session: sess.New(&meta.User{
+					FirstName: "Luigi",
+					LastName:  "Vampa",
+				}, &meta.Site{
+					Domain:    "acme.com",
+					Subdomain: "www",
+				}),
+			},
+			"url",
+			"https://www.acme.com",
+			nil,
+		},
+		{
+			"Site: url without subdomain",
+			"Site",
+			ServerMergeData{
+				Session: sess.New(&meta.User{
+					FirstName: "Luigi",
+					LastName:  "Vampa",
+				}, &meta.Site{
+					Domain: "acme.com",
+				}),
+			},
+			"url",
+			"https://acme.com",
 			nil,
 		},
 		{
