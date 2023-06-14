@@ -11,9 +11,65 @@ definition:
           fields:
             uesio/studio.color:
             uesio/studio.icon:
+            uesio/core.id:
       conditions:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
+    latestbundle:
+      collection: uesio/studio.bundle
+      fields:
+        uesio/core.id:
+        uesio/core.createdat:
+        uesio/studio.major:
+        uesio/studio.minor:
+        uesio/studio.patch:
+        uesio/studio.version:
+        uesio/studio.app:
+      batchsize: 1
+      conditions:
+        - field: uesio/studio.app
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio/studio.app->uesio/core.id
+      order:
+        - field: uesio/core.createdat
+          desc: true
+    newbundle:
+      viewOnly: true
+      init:
+        create: true
+      fields:
+        major:
+          type: NUMBER
+          label: Major version
+          number:
+            decimals: 0
+        minor:
+          type: NUMBER
+          label: Minor version
+          number:
+            decimals: 0
+        patch:
+          type: NUMBER
+          label: Patch version
+          number:
+            decimals: 0
+        description:
+          type: TEXT
+          label: Bundle description
+      defaults:
+        - field: major
+          valueSource: LOOKUP
+          lookupWire: latestbundle
+          lookupField: uesio/studio.major
+        - field: minor
+          valueSource: LOOKUP
+          lookupWire: latestbundle
+          lookupField: uesio/studio.minor
+        - field: patch
+          valueSource: LOOKUP
+          lookupWire: latestbundle
+          lookupField: uesio/studio.patch
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -48,32 +104,89 @@ definition:
                       - uesio/io.group:
                           components:
                             - uesio/io.button:
-                                uesio.variant: uesio/io.secondary
-                                text: Package New Version
+                                text: Package new version
+                                hotkey: "n"
+                                uesio.variant: uesio/io.primary
+                                uesio.id: package-new-version
                                 signals:
-                                  - signal: notification/ADD
-                                    id: newversion
-                                    text: We are creating your new bundle
-                                    details: it may take a while, please wait until this notification disappears.
-                                    severity: info
-                                  - signal: context/SET
-                                    type: WORKSPACE
-                                    name: $Param{workspacename}
-                                    app: $Param{app}
-                                  - signal: bot/CALL
-                                    stepId: createBundle
-                                    onerror:
-                                      signals:
-                                        - signal: notification/REMOVE
-                                          id: newversion
-                                    bot: uesio/studio.createbundle
-                                  - signal: context/CLEAR
-                                    type: WORKSPACE
-                                  - signal: route/NAVIGATE
-                                    path: app/$Param{app}
+                                  - signal: wire/RESET
+                                    wire: newbundle
+                                  - signal: panel/TOGGLE
+                                    panel: newBundle
                             - uesio/io.button:
                                 uesio.variant: uesio/io.secondary
                                 text: View Bundles
                                 signals:
                                   - signal: route/NAVIGATE
                                     path: app/$Param{app}
+  panels:
+    newBundle:
+      uesio.type: uesio/io.dialog
+      title: Package new bundle version
+      width: 400px
+      height: 500px
+      components:
+        - uesio/io.list:
+            uesio.id: newbundle
+            wire: newbundle
+            mode: EDIT
+            components:
+              - uesio/io.field:
+                  fieldId: major
+                  uesio.id: new-bundle-major
+                  number:
+                    min: 0
+                    step: 1
+              - uesio/io.field:
+                  fieldId: minor
+                  uesio.id: new-bundle-minor
+                  number:
+                    min: 0
+                    step: 1
+              - uesio/io.field:
+                  fieldId: patch
+                  uesio.id: new-bundle-patch
+                  number:
+                    min: 0
+                    step: 1
+              - uesio/io.field:
+                  fieldId: description
+                  uesio.id: new-bundle-description
+      actions:
+        - uesio/io.button:
+            uesio.variant: uesio/io.primary
+            uesio.id: initiate-new-bundle-creation
+            text: Package new version
+            signals:
+              - signal: notification/ADD
+                id: newversion
+                text: We are creating your new bundle
+                details: it may take a while, please wait until this notification disappears.
+                severity: info
+              - signal: context/SET
+                type: WORKSPACE
+                name: $Param{workspacename}
+                app: $Param{app}
+              - signal: bot/CALL
+                stepId: createBundle
+                onerror:
+                  signals:
+                    - signal: notification/REMOVE
+                      id: newversion
+                bot: uesio/studio.createbundle
+                params:
+                  major: $Record{newbundle:major}
+                  minor: $Record{newbundle:minor}
+                  patch: $Record{newbundle:patch}
+                  description: $Record{newbundle:description}
+              - signal: context/CLEAR
+                type: WORKSPACE
+              - signal: route/NAVIGATE
+                path: app/$Param{app}
+        - uesio/io.button:
+            uesio.variant: uesio/io.secondary
+            uesio.id: cancel-new-bundle-creation
+            text: $Label{uesio/io.cancel}
+            signals:
+              - signal: panel/TOGGLE
+                panel: newBundle
