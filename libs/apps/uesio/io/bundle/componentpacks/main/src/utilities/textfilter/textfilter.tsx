@@ -34,7 +34,7 @@ const TextFilter: FunctionComponent<TextFilterProps> = (props) => {
 			context
 		)
 	}
-	const debouncedRequest = debounce(search, 800)
+	const debouncedRequest = debounce(search, 600)
 
 	return (
 		<TextField
