@@ -107,7 +107,7 @@ definition:
                                       text: Add Member
                                       uesio.variant: uesio/io.secondary
                                   - uesio/io.button:
-                                      text: "Delete"
+                                      text: $Label{uesio/io.delete}
                                       signals:
                                         - signal: panel/TOGGLE
                                           panel: deleteTeam
@@ -151,7 +151,7 @@ definition:
             text: Are you sure you want to delete this team?
       actions:
         - uesio/io.button:
-            text: Delete
+            text: $Label{uesio/io.delete}
             uesio.variant: uesio/io.primary
             signals:
               - signal: wire/MARK_FOR_DELETE
@@ -161,7 +161,7 @@ definition:
               - signal: "route/NAVIGATE"
                 path: "app/$Param{app}"
         - uesio/io.button:
-            text: Cancel
+            text: $Label{uesio/io.cancel}
             uesio.variant: uesio/io.secondary
             signals:
               - signal: panel/TOGGLE
@@ -206,7 +206,7 @@ definition:
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
-            text: Save
+            text: $Label{uesio/io.save}
             signals:
               - signal: wire/SAVE
                 wires:
@@ -222,7 +222,7 @@ definition:
                 panel: newMember
         - uesio/io.button:
             uesio.variant: uesio/io.secondary
-            text: "Cancel"
+            text: $Label{uesio/io.cancel}
             signals:
               - signal: panel/TOGGLE
                 panel: newMember
