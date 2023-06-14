@@ -39,15 +39,6 @@ return loadTailwindCss(tailwindUrl)
 				"Found fewer Tailwind class names than we were expecting, something went wrong."
 			)
 		}
-		const targetPath = Path.join(
-			__dirname,
-			"..",
-			"bundle",
-			"componentpacks",
-			"main",
-			"dist",
-			"tailwind-classes.json"
-		)
 		fs.writeFileSync(targetPath, JSON.stringify(parsedTokens))
 		console.log(" ")
 		console.info(
