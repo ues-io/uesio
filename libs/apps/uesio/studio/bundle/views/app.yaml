@@ -215,19 +215,17 @@ definition:
               wire: apps
       actions:
         - uesio/io.button:
-            uesio.variant: "uesio/io.primary"
-            text: "Save"
+            uesio.variant: uesio/io.primary
+            text: Save
             signals:
               - signal: wire/SAVE
-              - signal: "panel/TOGGLE"
-                panel: "editApp"
         - uesio/io.button:
-            uesio.variant: "uesio/io.secondary"
-            text: "Cancel"
+            uesio.variant: uesio/io.secondary
+            text: Cancel
             signals:
               - signal: wire/CANCEL
-              - signal: "panel/TOGGLE"
-                panel: "editApp"
+              - signal: panel/TOGGLE
+                panel: editApp
     newTeam:
       uesio.type: uesio/io.dialog
       title: Create a New Team

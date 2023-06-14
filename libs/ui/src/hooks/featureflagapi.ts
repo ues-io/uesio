@@ -15,7 +15,8 @@ const useFeatureFlags = (context: Context, user: string) => {
 				.then(setFeatureFlags)
 				.finally(() => (loading.current = false))
 		}
-	})
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
 	const reset = () => setFeatureFlags(null)
 	return [featureflags, reset] as [FeatureFlagResponse[] | null, () => void]
 }

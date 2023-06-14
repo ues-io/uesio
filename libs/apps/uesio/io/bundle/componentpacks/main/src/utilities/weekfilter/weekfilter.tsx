@@ -73,7 +73,7 @@ const WeekFilter: FunctionComponent<WeekFilterProps> = (props) => {
 							condition: {
 								...condition,
 								value,
-								active: !!value,
+								inactive: !value,
 							},
 						},
 						{

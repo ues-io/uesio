@@ -80,7 +80,6 @@ Accept: application/json
             },
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.select",
                     "operator": "EQ",
                     "valueSource": "PARAM",
@@ -105,7 +104,6 @@ Accept: application/json
             "query":true,
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.select",
                     "operator": "NOT_EQ",
                     "value": "one",
@@ -134,7 +132,6 @@ Accept: application/json
             },
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.select",
                     "operator": "NOT_EQ",
                     "valueSource": "PARAM",
@@ -189,25 +186,25 @@ Accept: application/json
             "query":true,
             "conditions": [
                 {
-                    "field": "uesio/tests.select",
+                    "field": "uesio/core.uniquekey",
                     "operator": "EQ",
                     "valueSource": "VALUE",
-                    "value": "one"
+                    "value": "ID-001"
                 }
             ]
         },
         {
             "collection":"uesio/tests.wire_condition",
-            "fields": [{"id": "uesio/tests.select"}],
+            "fields": [{"id": "uesio/core.uniquekey"},{"id": "uesio/tests.select"}],
             "name":"condition",
             "query":true,
             "conditions": [
                 {
-                    "field": "uesio/tests.select",
+                    "field": "uesio/core.uniquekey",
                     "operator": "IN",
                     "valueSource": "LOOKUP",
                     "lookupWire": "reference",
-                    "lookupField": "uesio/tests.select"
+                    "lookupField": "uesio/core.uniquekey"
                 }
             ]
         }
@@ -215,7 +212,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[1].data[*]['uesio/tests.select']" == "one" 
+jsonpath "$.wires[1].data[*]['uesio/tests.select']" isString
+jsonpath "$.wires[1].data[*]['uesio/tests.select']" == "one"
+jsonpath "$.wires[1].data[*]['uesio/core.uniquekey']" == "ID-001"
 
 
 # Operator: IN | valueSource: PARAM
@@ -234,7 +233,6 @@ Accept: application/json
             },
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.select",
                     "operator": "IN",
                     "valueSource": "PARAM",
@@ -338,7 +336,6 @@ Accept: application/json
             },
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.select",
                     "operator": "NOT_IN",
                     "valueSource": "PARAM",
@@ -369,7 +366,6 @@ Accept: application/json
             "query":true,
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.select",
                     "operator": "IS_BLANK"
                 }
@@ -394,7 +390,6 @@ Accept: application/json
             "query":true,
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.select",
                     "operator": "IS_NOT_BLANK"
                 }

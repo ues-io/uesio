@@ -65,6 +65,10 @@ __debug_bin
 **/.uesio
 /uesio
 
+# Uesio Component Packs and Types
+**/bundle/componentpacks/*/dist/
+**/generated/
+
 # Cypress
 cypress/downloads
 cypress/screenshots
