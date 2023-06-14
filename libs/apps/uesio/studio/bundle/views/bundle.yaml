@@ -42,7 +42,6 @@ definition:
         uesio/studio.minor:
         uesio/studio.patch:
         uesio/studio.description:
-        uesio/studio.workspace:
         uesio/core.createdby:
         uesio/core.createdat:
         uesio/studio.app:
