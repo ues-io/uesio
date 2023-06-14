@@ -82,16 +82,15 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.
 		return nil, err
 	}
 
-	major := 0
-	minor := 0
-	patch := 1
+	var lastBundle *meta.Bundle
 
 	if len(bundles) != 0 {
-		lastBundle := bundles[0]
-		patch = lastBundle.Patch + 1
+		lastBundle = bundles[0]
 	}
 
-	bundle, err := meta.NewBundle(appID, major, minor, patch, "")
+	major, minor, patch, description := resolveBundleParameters(params, lastBundle)
+
+	bundle, err := meta.NewBundle(appID, major, minor, patch, description)
 	if err != nil {
 		return nil, err
 	}
@@ -102,9 +101,53 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.
 	}
 
 	return map[string]interface{}{
-		"major": major,
-		"minor": minor,
-		"patch": patch,
+		"major":       major,
+		"minor":       minor,
+		"patch":       patch,
+		"description": description,
 	}, datasource.CreateBundle(appID, workspace.Name, bundle, wsbs, session)
 
+}
+
+// resolveBundleParameters determines the major/minor/patch and description for the new Bundle,
+// using the following cascade in order of priority:
+// 1. bot params (major/minor/patch MUST be all defined in order to qualify)
+// 2. increment just patch using most recent bundle
+// 3. default to 0.0.1
+func resolveBundleParameters(params map[string]interface{}, lastBundle *meta.Bundle) (major, minor, patch int, description string) {
+	description = ""
+
+	if descriptionParam, hasDescriptionParam := params["description"]; hasDescriptionParam {
+		if stringValue, isString := descriptionParam.(string); isString {
+			description = stringValue
+		}
+	}
+	major = 0
+	minor = 0
+	patch = 1
+
+	// Prioritize params, but require major AND minor AND patch
+	majorParam, hasValidMajorParam := GetMapKeyAsInt("major", params)
+	minorParam, hasValidMinorParam := GetMapKeyAsInt("minor", params)
+	patchParam, hasValidPatchParam := GetMapKeyAsInt("patch", params)
+
+	if hasValidMajorParam && hasValidMinorParam && hasValidPatchParam {
+		major = majorParam
+		minor = minorParam
+		patch = patchParam
+	} else if lastBundle != nil {
+		major = lastBundle.Major
+		minor = lastBundle.Minor
+		patch = lastBundle.Patch + 1
+	}
+	return major, minor, patch, description
+}
+
+func GetMapKeyAsInt(key string, m map[string]interface{}) (int, bool) {
+	if value, ok := m[key]; ok {
+		if intValue, isInt := value.(int); isInt {
+			return intValue, true
+		}
+	}
+	return 0, false
 }
