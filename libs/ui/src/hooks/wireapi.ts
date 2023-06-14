@@ -11,7 +11,7 @@ import loadWiresOp from "../bands/wire/operations/load"
 import initWiresOp, {
 	initExistingWire,
 } from "../bands/wire/operations/initialize"
-import { Context } from "../context/context"
+import { Context, getWire } from "../context/context"
 import { WireDefinition } from "../definition/wire"
 import { useEffect } from "react"
 import { useDeepCompareEffect } from "react-use"
@@ -107,4 +107,4 @@ const loadWires = loadWiresOp
 
 const initWires = initWiresOp
 
-export { useWire, useDynamicWire, useWires, loadWires, initWires }
+export { useWire, useDynamicWire, useWires, loadWires, initWires, getWire }

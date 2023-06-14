@@ -52,7 +52,7 @@ const TimestampFilter: definition.UtilityComponent<TimestampFilter> = (
 							condition: {
 								...condition,
 								value,
-								active: !!value,
+								inactive: !value,
 							},
 						},
 						{

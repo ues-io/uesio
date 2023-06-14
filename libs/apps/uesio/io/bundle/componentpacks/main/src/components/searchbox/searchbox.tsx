@@ -62,6 +62,7 @@ const SearchBox: definition.UC<SearchBoxDefinition> = (props) => {
 	return (
 		<FieldWrapper labelPosition="none" context={context}>
 			<TextField
+				id={api.component.getComponentIdFromProps(props)}
 				context={context}
 				type="search"
 				variant="uesio/io.search"

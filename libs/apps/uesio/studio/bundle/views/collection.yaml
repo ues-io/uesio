@@ -125,7 +125,7 @@ definition:
                     params:
                       itemType: collections
                       itemIcon: list
-                      itemName: $Param{collectionname}
+                      itemCollectionName: $Param{collectionname}
           - uesio/io.griditem:
               uesio.variant: uesio/studio.leftbar
               components:

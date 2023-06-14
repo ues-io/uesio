@@ -91,8 +91,7 @@ definition:
                 - uesio/io.text:
                     uesio.variant: uesio/web.privacytext
                     text: |-
-                      Access. You have the right to access the Personal Information we hold about you, and to receive an explanation of how we use it and who we share it with.
-                      Correction. You have the right to correct any Personal Information we hold about you that is inaccurate or incomplete.
+                      Access. You have the right to correct any Personal Information we hold about you that is inaccurate or incomplete.
                       Erasure. You have the right to request for your Personal Information to be erased or deleted. Object to processing. You have the right to object to our processing of your Personal Information where we are relying on a legitimate interest or if we are processing your Personal Information for direct marketing purposes.
                       Restrict processing. You have a right in certain circumstances to stop us from processing your Personal Information other than for storage purposes.
                       Portability. You have the right to receive, in a structured, commonly used and machine-readable format, Personal Information that you have provided to us if we process it on the basis of our contract with you, or with your consent, or to request that we transfer such Personal Information to a third party.

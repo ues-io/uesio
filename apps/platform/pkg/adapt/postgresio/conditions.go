@@ -282,6 +282,11 @@ func processConditionList(conditions []adapt.LoadRequestCondition, collectionMet
 	builder.addQueryPart(fmt.Sprintf("%s = %s", getAliasedName("collection", tableAlias), builder.addValue(collectionName)))
 	builder.addQueryPart(fmt.Sprintf("%s = %s", getAliasedName("tenant", tableAlias), builder.addValue(tenantID)))
 	for _, condition := range conditions {
+
+		if condition.Inactive {
+			continue
+		}
+
 		err := processCondition(condition, collectionMetadata, metadata, builder, tableAlias, session)
 		if err != nil {
 			return err

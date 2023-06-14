@@ -10,37 +10,30 @@ POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 }
 HTTP 200
 
-# Test a wire load with no conditions on wire with collection wire_condition
+# Operator: EQ | valueSource: VALUE | Bad Value
 # entry 2
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
-
 {
     "wires": [
         {
             "collection":"uesio/tests.wire_condition",
+            "fields": [{"id": "uesio/tests.checkbox"}],
             "query": true,
-            "batchsize":2
+            "conditions": [
+                {
+                    "field": "uesio/tests.checkbox",
+                    "operator": "EQ",
+                    "valueSource": "VALUE",
+                    "value": "BAD_VALUE"
+                }
+            ]
         }
     ]
 }
-HTTP 200
-[Asserts]
-# If this test is failing for you, make sure you have `UESIO_DEBUG_SQL=true` set locally
-# and then re-run the app
-jsonpath "$.wires[0].debugQueryString" == ```
-SELECT
-main.id::text AS "uesio/core.id",
-main.uniquekey AS "uesio/core.uniquekey"
-FROM data as "main"
-WHERE
-main.collection = $1 AND
-main.tenant = $2
-ORDER BY main.id::text asc
-LIMIT 3```
-jsonpath "$.wires[0].data[*]" count == 2
+HTTP 400
 
-# Operator: EQ | valueSource: VALUE
+# Operator: EQ | valueSource: VALUE | Boolean true
 # entry 3
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
@@ -55,7 +48,7 @@ Accept: application/json
                     "field": "uesio/tests.checkbox",
                     "operator": "EQ",
                     "valueSource": "VALUE",
-                    "value": "true"
+                    "value": true
                 }
             ]
         }
@@ -63,10 +56,65 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" != false
+jsonpath "$.wires[0].debugQueryString" == ```
+SELECT
+(main.fields->>'uesio/tests.checkbox')::boolean AS "uesio/tests.checkbox",
+main.id::text AS "uesio/core.id",
+main.uniquekey AS "uesio/core.uniquekey"
+FROM data as "main"
+WHERE
+main.collection = $1 AND
+main.tenant = $2 AND
+(main.fields->>'uesio/tests.checkbox')::boolean = $3
+ORDER BY main.id::text asc
+LIMIT 501```
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" includes true
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes null
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes false
+
+# Operator: EQ | valueSource: VALUE | String "false"
+# NOTE this test depends on postgresql boolean conversion
+# entry 4
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.wire_condition",
+            "fields": [{"id": "uesio/tests.checkbox"}],
+            "query": true,
+            "conditions": [
+                {
+                    "field": "uesio/tests.checkbox",
+                    "operator": "EQ",
+                    "valueSource": "VALUE",
+                    "value": "false"
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].debugQueryString" == ```
+SELECT
+(main.fields->>'uesio/tests.checkbox')::boolean AS "uesio/tests.checkbox",
+main.id::text AS "uesio/core.id",
+main.uniquekey AS "uesio/core.uniquekey"
+FROM data as "main"
+WHERE
+main.collection = $1 AND
+main.tenant = $2 AND
+(main.fields->>'uesio/tests.checkbox')::boolean = $3
+ORDER BY main.id::text asc
+LIMIT 501```
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" includes false
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes null
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes true
+
 
 # Operator: EQ | valueSource: PARAM
-# entry 4
+# entry 5
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -80,7 +128,6 @@ Accept: application/json
             },
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.checkbox",
                     "operator": "EQ",
                     "valueSource": "PARAM",
@@ -92,10 +139,12 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" != false
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" includes true
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes null
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes false
 
 # Operator: NOT_EQ | valueSource: VALUE
-# entry 5
+# entry 6
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -109,7 +158,7 @@ Accept: application/json
                     "field": "uesio/tests.checkbox",
                     "operator": "NOT_EQ",
                     "valueSource": "VALUE",
-                    "value": "true"
+                    "value": true
                 }
             ]
         }
@@ -117,10 +166,11 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" != true
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" includes false
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes true
 
 # Operator: NOT_EQ | valueSource: PARAM
-# entry 6
+# entry 7
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -134,7 +184,6 @@ Accept: application/json
             },
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.checkbox",
                     "operator": "NOT_EQ",
                     "valueSource": "PARAM",
@@ -146,10 +195,11 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" != true
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes true
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" includes false
 
 # Operator: IS_BLANK | valueSource: VALUE
-# entry 7
+# entry 8
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -159,7 +209,6 @@ Accept: application/json
             "query":true,
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.checkbox",
                     "operator": "IS_BLANK"
                 }
@@ -172,9 +221,8 @@ HTTP 200
 jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes true
 jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes false
 
-
 # Operator: IS_NOT_BLANK | valueSource: VALUE
-# entry 8
+# entry 9
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -185,7 +233,6 @@ Accept: application/json
             "query":true,
             "conditions": [
                 {
-                    "active": true,
                     "field": "uesio/tests.checkbox",
                     "operator": "IS_NOT_BLANK"
                 }
@@ -197,3 +244,4 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" includes true
 jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" includes false
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes null
