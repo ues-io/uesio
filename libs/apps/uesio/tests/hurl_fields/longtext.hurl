@@ -10,8 +10,31 @@ POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 }
 HTTP 200
 
-# Operator: EQ | valueSource: VALUE
+# Operator: EQ | valueSource: VALUE | Bad Value as number
 # entry 2
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.wire_condition",
+            "fields": [{"id": "uesio/tests.longtext"}],
+            "query": true,
+            "conditions": [
+                {
+                    "field": "uesio/tests.longtext",
+                    "operator": "EQ",
+                    "valueSource": "VALUE",
+                    "value": 1
+                }
+            ]
+        }
+    ]
+}
+HTTP 400
+
+# Operator: EQ | valueSource: VALUE as string
+# entry 3
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -33,10 +56,22 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
+jsonpath "$.wires[0].debugQueryString" == ```
+SELECT
+main.fields->>'uesio/tests.longtext' AS "uesio/tests.longtext",
+main.id::text AS "uesio/core.id",
+main.uniquekey AS "uesio/core.uniquekey"
+FROM data as "main"
+WHERE
+main.collection = $1 AND
+main.tenant = $2 AND
+main.fields->>'uesio/tests.longtext' = $3
+ORDER BY main.id::text asc
+LIMIT 501```
 jsonpath "$.wires[0].data[*]['uesio/tests.longtext']" == "test text1"
 
 # Operator: EQ | valueSource: PARAM
-# entry 3
+# entry 4
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -65,13 +100,14 @@ HTTP 200
 jsonpath "$.wires[0].data[*]['uesio/tests.longtext']" == "test text1"
 
 # Operator: NOT_EQ | valueSource: VALUE
-# entry 4
+# entry 5
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
         {
             "collection":"uesio/tests.wire_condition",
+            "fields": [{"id": "uesio/tests.longtext"}],
             "query":true,
             "conditions": [
                 {
@@ -90,7 +126,7 @@ HTTP 200
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "test text1"
 
 # Operator: NOT_EQ | valueSource: PARAM
-# entry 5
+# entry 6
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -119,7 +155,7 @@ HTTP 200
 jsonpath "$.wires[0].data[*]['uesio/tests.longtext']" not includes "test text1"
 
 # Operator: STARTS_WITH | valueSource: VALUE
-# entry 6
+# entry 7
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -134,7 +170,7 @@ Accept: application/json
                     "field": "uesio/tests.longtext",
                     "operator": "STARTS_WITH",
                     "valueSource": "VALUE",
-                    "value": "test"
+                    "value": "test text"
                 }
             ]
         }
@@ -147,8 +183,47 @@ jsonpath "$.wires[0].data[*]['uesio/tests.longtext']" includes "test text2"
 jsonpath "$.wires[0].data[*]['uesio/tests.longtext']" includes "test text3"
 jsonpath "$.wires[0].data[*]['uesio/tests.longtext']" not includes ""
 
+# Operator: STARTS_WITH | valueSource: VALUE | Bad Value
+# NOTE Postgresql uses ILIKE to query the data matching 1 --> no data
+# entry 8
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.wire_condition",
+            "fields": [{"id": "uesio/tests.longtext"}],
+            "query":true,
+            "conditions": [
+                {
+                    "active": true,
+                    "field": "uesio/tests.longtext",
+                    "operator": "STARTS_WITH",
+                    "valueSource": "VALUE",
+                    "value": 1
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].debugQueryString" == ```
+SELECT
+main.fields->>'uesio/tests.longtext' AS "uesio/tests.longtext",
+main.id::text AS "uesio/core.id",
+main.uniquekey AS "uesio/core.uniquekey"
+FROM data as "main"
+WHERE
+main.collection = $1 AND
+main.tenant = $2 AND
+main.fields->>'uesio/tests.longtext' ILIKE $3
+ORDER BY main.id::text asc
+LIMIT 501```
+jsonpath "$.wires[0].data[*]" not exists
+
 # Operator: STARTS_WITH | valueSource: PARAM
-# entry 7
+# entry 9
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -180,7 +255,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.longtext']" includes "test text3"
 jsonpath "$.wires[0].data[*]['uesio/tests.longtext']" not includes ""
 
 # Operator: IN | valueSource: VALUE
-# entry 8
+# entry 10
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -208,7 +283,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.longtext']" includes "test text1"
 jsonpath "$.wires[0].data[*]['uesio/tests.longtext']" includes "test text2"
 
 # Operator: IN | valueSource: LOOKUP
-# entry 9
+# entry 11
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -218,31 +293,31 @@ Accept: application/json
             "name":"reference",
             "fields": [
                 {
-                    "id":"uesio/tests.longtext"
+                    "id":"uesio/core.uniquekey"
                 }
             ],
             "query":true,
             "conditions": [
                 {
-                    "field": "uesio/tests.longtext",
+                    "field": "uesio/core.uniquekey",
                     "operator": "EQ",
                     "valueSource": "VALUE",
-                    "value": "test text1"
+                    "value": "ID-001"
                 }
             ]
         },
         {
             "collection":"uesio/tests.wire_condition",
-            "fields": [{"id": "uesio/tests.longtext"}],
+            "fields": [{"id": "uesio/core.uniquekey"},{"id": "uesio/tests.longtext"}],
             "name":"condition",
             "query":true,
             "conditions": [
                 {
-                    "field": "uesio/tests.longtext",
+                    "field": "uesio/core.uniquekey",
                     "operator": "IN",
                     "valueSource": "LOOKUP",
                     "lookupWire": "reference",
-                    "lookupField": "uesio/tests.longtext"
+                    "lookupField": "uesio/core.uniquekey"
                 }
             ]
         }
@@ -250,11 +325,13 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
+jsonpath "$.wires[1].data[*]['uesio/tests.longtext']" isString
 jsonpath "$.wires[1].data[*]['uesio/tests.longtext']" == "test text1"
+jsonpath "$.wires[1].data[*]['uesio/core.uniquekey']" == "ID-001"
 
 
 # Operator: IN | valueSource: PARAM
-# entry 10
+# entry 12
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -288,7 +365,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.longtext']" includes "test text1"
 jsonpath "$.wires[0].data[*]['uesio/tests.longtext']" includes "test text2"
 
 # Operator: NOT_IN | valueSource: VALUE
-# entry 11
+# entry 13
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -316,7 +393,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.longtext']" not includes "test text1"
 jsonpath "$.wires[0].data[*]['uesio/tests.longtext']" not includes "test text2"
 
 # Operator: NOT_IN | valueSource: LOOKUP
-# entry 12
+# entry 14
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -357,7 +434,7 @@ HTTP 200
 jsonpath "$.wires[1].data[*]['uesio/tests.longtext']" not includes "test text1"
 
 # Operator: NOT_IN | valueSource: PARAM
-# entry 13
+# entry 15
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -395,7 +472,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.longtext']" not includes "test text3"
 
 # Operator: IS_BLANK | valueSource: VALUE
 # This should return all text fields which are an empty string.
-# entry 14
+# entry 16
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -420,7 +497,7 @@ jsonpath "$.wires[0].data[*]" not exists
 
 # Operator: IS_NOT_BLANK | valueSource: VALUE
 # This should return all text fields which are not an empty string.
-# entry 15
+# entry 17
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
