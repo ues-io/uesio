@@ -36,6 +36,11 @@ func getNumberLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt
 
 func getBooleanLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
 	return func(change adapt.Item, data interface{}) error {
+		raw_val := getValue(data, mapping, index)
+		if raw_val == "" {
+			change[fieldMetadata.GetFullName()] = nil
+			return nil
+		}
 		change[fieldMetadata.GetFullName()] = getValue(data, mapping, index) == "true"
 		return nil
 	}
