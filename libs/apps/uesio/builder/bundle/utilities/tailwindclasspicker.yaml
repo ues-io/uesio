@@ -1,0 +1,9 @@
+name: tailwindclasspicker
+pack: main
+entrypoint: utilities/tailwindclasspicker/tailwindclasspicker
+utilities:
+  - uesio/io.button
+  - uesio/io.textfield
+variants:
+  - uesio/io.button:uesio/builder.tailwindtoken
+  - uesio/io.field:uesio/builder.propfield

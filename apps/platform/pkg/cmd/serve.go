@@ -32,17 +32,22 @@ func getFullItemParam(paramName string) string {
 	return fmt.Sprintf("{%s:\\w+\\/\\w+\\.\\w+}", paramName)
 }
 
+func getMetadataItemParam(paramName string) string {
+	return fmt.Sprintf("{%s:\\w+}", paramName)
+}
+
 func getFullItemOrTextParam(paramName string) string {
 	return fmt.Sprintf("{%s:(?:\\w+\\/\\w+\\.)?\\w+}", paramName)
 }
 
 var appParam = getNSParam("app")
 var nsParam = getNSParam("namespace")
-var itemParam = fmt.Sprintf("%s/{name}", nsParam)
+var nameParam = getMetadataItemParam("name")
+var itemParam = fmt.Sprintf("%s/%s", nsParam, nameParam)
 
 // Version will either be a Uesio bundle version string, e.g. v1.2.3,
 // Or an 8-character short Git sha, e.g. abcd1234
-var versionedItemParam = nsParam + "/{version:(?:v[0-9]+\\.[0-9]+\\.[0-9]+)|(?:[a-z0-9]{8,})}/{name}"
+var versionedItemParam = fmt.Sprintf("%s/{version:(?:v[0-9]+\\.[0-9]+\\.[0-9]+)|(?:[a-z0-9]{8,})}/%s", nsParam, nameParam)
 
 // Grouping values can either be full Uesio items (e.g. <user>/<app>.<name>) or simple values, e.g. "LISTENER",
 // so the regex here needs to support both
@@ -198,11 +203,8 @@ func serve(cmd *cobra.Command, args []string) {
 	sr.HandleFunc(pathRoutePath, controller.Route).Methods(http.MethodGet)
 	wr.HandleFunc(pathRoutePath, controller.Route).Methods(http.MethodGet)
 
-	// Currently the only component pack files which we support fetching are:
-	// - runtime.js
-	// - runtime.js.map
 	// NOTE: Gorilla Mux requires use of non-capturing groups, hence the use of ?: here
-	componentPackFileSuffix := "/{filename:(?:runtime\\.js(?:\\.map)?)}"
+	componentPackFileSuffix := "/{filename:[a-zA-Z0-9\\-_]+\\.(?:json|js|xml|txt){1}(?:\\.map)?}"
 
 	// Un-versioned Component pack routes - for backwards compatibility, and for local development
 	componentPackPath := fmt.Sprintf("/componentpacks/%s", itemParam)
@@ -211,8 +213,11 @@ func serve(cmd *cobra.Command, args []string) {
 
 	// Versioned component pack file routes
 	versionedComponentPackPath := fmt.Sprintf("/componentpacks/%s", versionedItemParam)
-	sr.HandleFunc(versionedComponentPackPath+componentPackFileSuffix, file.ServeComponentPackFile).Methods(http.MethodGet)
-	wr.HandleFunc(versionedComponentPackPath+componentPackFileSuffix, file.ServeComponentPackFile).Methods(http.MethodGet)
+
+	versionedComponentPackFinal := versionedComponentPackPath + componentPackFileSuffix
+
+	sr.HandleFunc(versionedComponentPackFinal, file.ServeComponentPackFile).Methods(http.MethodGet)
+	wr.HandleFunc(versionedComponentPackFinal, file.ServeComponentPackFile).Methods(http.MethodGet)
 
 	// Workspace context specific routes
 	wr.HandleFunc("/metadata/deploy", controller.Deploy).Methods(http.MethodPost)

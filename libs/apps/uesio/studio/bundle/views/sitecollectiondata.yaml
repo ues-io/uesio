@@ -92,14 +92,14 @@ definition:
                                 components:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      text: "Save"
+                                      text: $Label{uesio/io.save}
                                       signals:
                                         - signal: "wire/SAVE"
                                           wires:
                                             - "collectionData"
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      text: "Cancel"
+                                      text: $Label{uesio/io.cancel}
                                       signals:
                                         - signal: "wire/CANCEL"
                                           wire: "collectionData"
