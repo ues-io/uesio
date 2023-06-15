@@ -471,7 +471,6 @@ jsonpath "$.wires[0].data[*]['uesio/tests.longtext']" not includes "test text2"
 jsonpath "$.wires[0].data[*]['uesio/tests.longtext']" not includes "test text3"
 
 # Operator: IS_BLANK | valueSource: VALUE
-# This should return all text fields which are an empty string.
 # entry 16
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
@@ -479,6 +478,7 @@ Accept: application/json
     "wires": [
         {
             "collection":"uesio/tests.wire_condition",
+            "fields": [{"id": "uesio/tests.longtext"},{"id": "uesio/core.uniquekey"}],
             "query":true,
             "conditions": [
                 {
@@ -492,11 +492,11 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]" not exists
-# jsonpath "$.wires[0].data[*]['uesio/tests.longtext']" == "" or not exits
+jsonpath "$.wires[0].data[*]['uesio/tests.longtext']" includes ""
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-007"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-008"
 
 # Operator: IS_NOT_BLANK | valueSource: VALUE
-# This should return all text fields which are not an empty string.
 # entry 17
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
@@ -504,7 +504,7 @@ Accept: application/json
     "wires": [
         {
             "collection":"uesio/tests.wire_condition",
-            "fields": [{"id": "uesio/tests.longtext"}],
+            "fields": [{"id": "uesio/tests.longtext"},{"id": "uesio/core.uniquekey"}],
             "query":true,
             "conditions": [
                 {
@@ -518,5 +518,6 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-# jsonpath "$.wires[0].data[*]['uesio/tests.longtext']" != ""
-jsonpath "$.wires[0].data[*]['uesio/tests.longtext']" exists
+jsonpath "$.wires[0].data[*]['uesio/tests.longtext']" not includes ""
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-007"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-008"
