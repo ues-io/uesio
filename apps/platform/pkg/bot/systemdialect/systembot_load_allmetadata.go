@@ -17,27 +17,27 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 	workspace := op.Params["workspacename"]
 	site := op.Params["sitename"]
 	if workspace == "" && site == "" {
-		return errors.New("No Workspace Name or Site Name Parameter Provided")
+		return errors.New("no workspace name or site name parameter provided")
 	}
 	app := op.Params["app"]
 	if app == "" {
-		return errors.New("No App Parameter Provided")
+		return errors.New("no app parameter provided")
 	}
 
 	// Verify that a type condition was provided
 	if op.Conditions == nil || len(op.Conditions) <= 0 {
-		return errors.New("Must Provide at least one condition")
+		return errors.New("must provide at least one condition")
 	}
 
 	typeCondition, remainingConditions := op.Conditions[0], op.Conditions[1:]
 
 	if typeCondition.Field != "uesio/studio.type" {
-		return errors.New("The first condition must be on the type field")
+		return errors.New("the first condition must be on the type field")
 	}
 
 	group, err := meta.GetBundleableGroupFromType(typeCondition.Value.(string))
 	if err != nil {
-		return errors.New("Invalid Metadata Type provided for type condition")
+		return errors.New("invalid metadata type provided for type condition")
 	}
 
 	//This creates a copy of the session
@@ -135,9 +135,7 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 	// Get the metadata list
 	namespaces := inContextSession.GetContextNamespaces()
 	appNames := []string{}
-	for _, ns := range namespaces {
-		appNames = append(appNames, ns)
-	}
+	appNames = append(appNames, namespaces...)
 
 	appData, err := datasource.GetAppData(appNames)
 	if err != nil {
@@ -147,7 +145,7 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 	err = op.Collection.Loop(func(item meta.Item, index string) error {
 		appInfo, ok := appData[app]
 		if !ok {
-			return errors.New("Invalid Namespace: Could not get app data")
+			return errors.New("invalid namespace: could not get app data")
 		}
 
 		item.SetField("uesio/studio.namespace", app)
@@ -169,7 +167,7 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 
 		appInfo, ok := appData[namespace]
 		if !ok {
-			return errors.New("Invalid Namespace: Could not get app data")
+			return errors.New("invalid namespace: could not get app data")
 		}
 		opItem.SetField("uesio/studio.namespace", namespace)
 		opItem.SetField("uesio/studio.appicon", appInfo.Icon)

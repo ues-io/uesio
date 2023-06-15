@@ -290,7 +290,11 @@ func processConditionList(conditions []adapt.LoadRequestCondition, collectionMet
 
 	collectionName := collectionMetadata.GetFullName()
 
-	builder.addQueryPart(fmt.Sprintf("%s = %s", getAliasedName("collection", tableAlias), builder.addValue(collectionName)))
+	//we don't filter by collection if we want recent metadata
+	if collectionName != "uesio/studio.recentmetadata" {
+		builder.addQueryPart(fmt.Sprintf("%s = %s", getAliasedName("collection", tableAlias), builder.addValue(collectionName)))
+	}
+
 	builder.addQueryPart(fmt.Sprintf("%s = %s", getAliasedName("tenant", tableAlias), builder.addValue(tenantID)))
 	for _, condition := range conditions {
 

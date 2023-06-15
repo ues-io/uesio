@@ -225,7 +225,7 @@ definition:
                               param: itemType
                           signals:
                             - signal: "route/NAVIGATE"
-                              path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/collections/${uesio/studio.app->uesio/core.uniquekey}/$Param{itemCollectionName}
+                              path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/collections/$Param{itemCollectionName}
                           uesio.variant: uesio/io.tag
                           content:
                             - uesio/io.text:
