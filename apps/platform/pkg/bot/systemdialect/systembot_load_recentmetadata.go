@@ -14,10 +14,6 @@ func runRecentMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 	//intercepts the collection uesio/studio.recentmetadata & enhances the LoadOp
 	//Add the required metadata to compleat the operation
 
-	//SMART WAY of GETTING THE WS (Open to other ways of doing this)
-	//add the end I just need to get the workspace ID but preserv the orignial session
-	// for the query
-
 	workspace := op.Params["workspacename"]
 	if workspace == "" {
 		return errors.New("No Workspace Name Parameter Provided")
@@ -43,8 +39,6 @@ func runRecentMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 	if workspaceID == "" {
 		return errors.New("Error getting recent metadata, missing workspace id")
 	}
-
-	//END
 
 	var fields = []adapt.LoadRequestField{
 		{ID: "uesio/studio.name"},
@@ -116,6 +110,9 @@ func runRecentMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 	})
 
 	recentmetadataCollectionMetadata.SetField(&datasource.COLLECTION_FIELD)
+	recentmetadataCollectionMetadata.SetField(&datasource.UPDATEDBY_FIELD_METADATA)
+	recentmetadataCollectionMetadata.SetField(&datasource.UPDATEDAT_FIELD_METADATA)
+	recentmetadataCollectionMetadata.SetField(&datasource.UNIQUE_KEY_FIELD_METADATA)
 
 	return connection.Load(newOp, inContextSession)
 
