@@ -77,7 +77,7 @@ definition:
                               type: DEFAULT
                               signals:
                                 - signal: route/NAVIGATE
-                                  path: app/$Param{app}/workspace/$Param{workspacename}/themes/${uesio/studio.name}
+                                  path: app/$Param{app}/workspace/$Param{workspacename}/${uesio/core.collection}/${uesio/studio.name}
                           pagesize: 10
   panels:
     deleteWorkspace:

@@ -3,9 +3,11 @@ package systemdialect
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -114,6 +116,29 @@ func runRecentMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 	recentmetadataCollectionMetadata.SetField(&datasource.UPDATEDAT_FIELD_METADATA)
 	recentmetadataCollectionMetadata.SetField(&datasource.UNIQUE_KEY_FIELD_METADATA)
 
-	return connection.Load(newOp, inContextSession)
+	err = connection.Load(newOp, inContextSession)
+	if err != nil {
+		return err
+	}
+
+	return newOp.Collection.Loop(func(item meta.Item, index string) error {
+		collection, err := item.GetField("uesio/core.collection")
+		if err != nil {
+			return err
+		}
+
+		collectionValue, ok := collection.(string)
+		if !ok {
+			return errors.New("Invalid Collection Value")
+		}
+
+		_, colleccollectionName, err := meta.ParseKey(collectionValue)
+
+		err = item.SetField("uesio/core.collection", meta.METADATA_NAME_MAP[strings.ToUpper(colleccollectionName)])
+		if err != nil {
+			return err
+		}
+		return nil
+	})
 
 }
