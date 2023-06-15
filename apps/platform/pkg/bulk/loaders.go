@@ -41,7 +41,7 @@ func getBooleanLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adap
 			change[fieldMetadata.GetFullName()] = nil
 			return nil
 		}
-		change[fieldMetadata.GetFullName()] = getValue(data, mapping, index) == "true"
+		change[fieldMetadata.GetFullName()] = raw_val == "true"
 		return nil
 	}
 }
