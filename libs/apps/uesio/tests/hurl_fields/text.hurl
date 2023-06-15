@@ -455,7 +455,6 @@ jsonpath "$.wires[0].data[*]['uesio/tests.text']" not includes "text 2"
 jsonpath "$.wires[0].data[*]['uesio/tests.text']" not includes "text 3"
 
 # Operator: IS_BLANK | valueSource: VALUE
-# This should return all text fields which are an empty string.
 # entry 16
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
@@ -463,7 +462,7 @@ Accept: application/json
     "wires": [
         {
             "collection":"uesio/tests.wire_condition",
-            "fields": [{"id": "uesio/tests.text"}],
+            "fields": [{"id": "uesio/tests.text"},{"id":"uesio/core.uniquekey"}],
             "query":true,
             "conditions": [
                 {
@@ -477,11 +476,11 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]" not exists
-# jsonpath "$.wires[0].data[*]['uesio/tests.text']" == "" or not exits
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-006"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-005"
+jsonpath "$.wires[0].data[*]['uesio/tests.text']" includes ""
 
 # Operator: IS_NOT_BLANK | valueSource: VALUE
-# This should return all text fields which are not an empty string.
 # entry 17
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
@@ -489,7 +488,7 @@ Accept: application/json
     "wires": [
         {
             "collection":"uesio/tests.wire_condition",
-            "fields": [{"id": "uesio/tests.text"}],
+            "fields": [{"id": "uesio/tests.text"},{"id":"uesio/core.uniquekey"}],
             "query":true,
             "conditions": [
                 {
@@ -503,5 +502,6 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-# jsonpath "$.wires[0].data[*]['uesio/tests.text']" != ""
-jsonpath "$.wires[0].data[*]['uesio/tests.text']" exists
+jsonpath "$.wires[0].data[*]['uesio/tests.text']" not includes ""
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-006"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-005"
