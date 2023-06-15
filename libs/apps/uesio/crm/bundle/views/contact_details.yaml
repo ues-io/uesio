@@ -32,20 +32,20 @@ definition:
                                     componentsignal: TOGGLE_MODE
                                     targettype: specific
                                     componentid: contactList
-                                text: Edit
+                                text: $Label{uesio/io.edit}
                                 uesio.variant: uesio/io.secondary
                             - uesio/io.button:
                                 signals:
                                   - signal: wire/SAVE
                                     wires:
                                       - contacts
-                                text: Save
+                                text: $Label{uesio/io.save}
                                 uesio.variant: uesio/io.secondary
                             - uesio/io.button:
                                 signals:
                                   - signal: wire/CANCEL
                                     wire: contacts
-                                text: Cancel
+                                text: $Label{uesio/io.cancel}
                                 uesio.variant: uesio/io.secondary
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
@@ -151,7 +151,7 @@ definition:
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
-            text: "Save"
+            text: $Label{uesio/io.save}
             signals:
               - signal: wire/SAVE
                 wires:
@@ -165,7 +165,7 @@ definition:
                 panel: newComment
         - uesio/io.button:
             uesio.variant: "uesio/io.secondary"
-            text: "Cancel"
+            text: $Label{uesio/io.cancel}
             signals:
               - signal: wire/RESET
                 wire: newcomment

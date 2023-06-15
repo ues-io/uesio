@@ -2,3 +2,5 @@ name: tagtype
 options:
   - label: meta
     value: meta
+  - label: link
+    value: link

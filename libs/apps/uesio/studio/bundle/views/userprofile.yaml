@@ -53,7 +53,7 @@ definition:
                                 components:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      text: "Edit"
+                                      text: $Label{uesio/io.edit}
                                       signals:
                                         - signal: component/CALL
                                           component: uesio/io.list
@@ -62,14 +62,14 @@ definition:
                                           componentid: userList
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      text: "Save"
+                                      text: $Label{uesio/io.save}
                                       signals:
                                         - signal: wire/SAVE
                                           wires:
                                             - "users"
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      text: "Cancel"
+                                      text: $Label{uesio/io.cancel}
                                       signals:
                                         - signal: wire/CANCEL
                                           wire: "users"

@@ -16,10 +16,7 @@ func getParamConditionsResponse(conditions []meta.BotParamCondition) []meta.BotP
 	response := []meta.BotParamConditionResponse{}
 
 	for _, condition := range conditions {
-		response = append(response, meta.BotParamConditionResponse{
-			Param: condition.Param,
-			Value: condition.Value,
-		})
+		response = append(response, meta.BotParamConditionResponse(condition))
 	}
 
 	return response

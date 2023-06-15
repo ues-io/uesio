@@ -25,13 +25,13 @@ definition:
                             - signal: wire/SAVE
                               wires:
                                 - accounts
-                          text: Save
+                          text: $Label{uesio/io.save}
                           uesio.variant: uesio/io.secondary
                       - uesio/io.button:
                           signals:
                             - signal: wire/CANCEL
                               wire: accounts
-                          text: Cancel
+                          text: $Label{uesio/io.cancel}
                           uesio.variant: uesio/io.secondary
                       - uesio/io.button:
                           signals:
@@ -44,13 +44,13 @@ definition:
                           uesio.variant: uesio/io.secondary
           - uesio/io.table:
               rowactions:
-                - text: Edit
+                - text: $Label{uesio/io.edit}
                   signals:
                     - signal: route/NAVIGATE_TO_ASSIGNMENT
                       collection: uesio/crm.account
                       viewtype: detail
                       recordid: ${uesio/core.id}
-                - text: Delete
+                - text: $Label{uesio/io.delete}
                   signals:
                     - signal: wire/TOGGLE_DELETE_STATUS
               columns:

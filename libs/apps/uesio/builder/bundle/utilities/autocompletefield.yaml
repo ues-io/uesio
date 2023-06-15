@@ -1,0 +1,5 @@
+name: autocompletefield
+pack: main
+entrypoint: utilities/autocompletefield/autocompletefield
+utilities:
+  - uesio/io.textfield

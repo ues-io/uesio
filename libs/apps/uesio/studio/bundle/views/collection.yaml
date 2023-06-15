@@ -239,7 +239,7 @@ definition:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       uesio.id: save-fields
-                                      text: Cancel
+                                      text: $Label{uesio/io.cancel}
                                       signals:
                                         - signal: wire/CANCEL
                                           wire: fields
@@ -305,7 +305,7 @@ definition:
                                 components:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.primary
-                                      text: Save
+                                      text: $Label{uesio/io.save}
                                       signals:
                                         - signal: wire/SAVE
                                           wires:
@@ -315,7 +315,7 @@ definition:
                                           wire: routeassignments
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      text: Cancel
+                                      text: $Label{uesio/io.cancel}
                                       signals:
                                         - signal: wire/CANCEL
                                           wire: routeassignments

@@ -145,7 +145,7 @@ definition:
                                       uesio.context:
                                         wire: licenses
                                       uesio.variant: uesio/io.primary
-                                      text: "Save"
+                                      text: $Label{uesio/io.save}
                                       uesio.display:
                                         - type: wireHasChanges
                                           wire: licenses
@@ -181,7 +181,7 @@ definition:
                                 uesio.context:
                                   wire: licensepricingitem
                                 uesio.variant: uesio/io.primary
-                                text: "Save"
+                                text: $Label{uesio/io.save}
                                 uesio.display:
                                   - type: wireHasChanges
                                     wire: licensepricingitem
@@ -227,7 +227,7 @@ definition:
       actions:
         - uesio/io.button:
             uesio.variant: "uesio/io.primary"
-            text: "Save"
+            text: $Label{uesio/io.save}
             signals:
               - signal: wire/SAVE
                 wires:
@@ -241,7 +241,7 @@ definition:
                 panel: "newLicensePricingItem"
         - uesio/io.button:
             uesio.variant: "uesio/io.secondary"
-            text: "Cancel"
+            text: $Label{uesio/io.cancel}
             signals:
               - signal: "panel/TOGGLE"
                 panel: "newLicensePricingItem"

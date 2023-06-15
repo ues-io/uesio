@@ -174,7 +174,7 @@ definition:
             uesio.id: "save-workspace"
             uesio.context:
               wire: newworkspace
-            text: "Save"
+            text: $Label{uesio/io.save}
             signals:
               - signal: "wire/SAVE"
                 wires:
@@ -183,7 +183,7 @@ definition:
                 path: "app/$Param{app}/workspace/${newworkspace:uesio/studio.name}"
         - uesio/io.button:
             uesio.variant: "uesio/io.secondary"
-            text: "Cancel"
+            text: $Label{uesio/io.cancel}
             signals:
               - signal: "panel/TOGGLE"
                 panel: "newWorkspace"
@@ -211,7 +211,7 @@ definition:
       actions:
         - uesio/io.button:
             uesio.variant: "uesio/io.primary"
-            text: "Save"
+            text: $Label{uesio/io.save}
             signals:
               - signal: wire/SAVE
                 wires:
@@ -220,7 +220,7 @@ definition:
                 path: "app/$Param{app}/site/${newsite:uesio/studio.name}"
         - uesio/io.button:
             uesio.variant: "uesio/io.secondary"
-            text: "Cancel"
+            text: $Label{uesio/io.cancel}
             signals:
               - signal: "panel/TOGGLE"
                 panel: "newSite"

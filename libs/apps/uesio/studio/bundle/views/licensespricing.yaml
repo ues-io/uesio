@@ -170,7 +170,7 @@ definition:
                                       uesio.context:
                                         wire: licensetemplate
                                       uesio.variant: uesio/io.primary
-                                      text: "Save"
+                                      text: $Label{uesio/io.save}
                                       uesio.display:
                                         - type: wireHasChanges
                                           wire: licensetemplate
@@ -239,7 +239,7 @@ definition:
       actions:
         - uesio/io.button:
             uesio.variant: "uesio/io.primary"
-            text: "Save"
+            text: $Label{uesio/io.save}
             signals:
               - signal: wire/SAVE
                 wires:
@@ -253,7 +253,7 @@ definition:
                 panel: "newLicenseTemplate"
         - uesio/io.button:
             uesio.variant: "uesio/io.secondary"
-            text: "Cancel"
+            text: $Label{uesio/io.cancel}
             signals:
               - signal: "panel/TOGGLE"
                 panel: "newLicenseTemplate"
@@ -279,7 +279,7 @@ definition:
       actions:
         - uesio/io.button:
             uesio.variant: "uesio/io.primary"
-            text: "Save"
+            text: $Label{uesio/io.save}
             signals:
               - signal: wire/SAVE
                 wires:
@@ -293,7 +293,7 @@ definition:
                 panel: "newLicensePricingTemplate"
         - uesio/io.button:
             uesio.variant: "uesio/io.secondary"
-            text: "Cancel"
+            text: $Label{uesio/io.cancel}
             signals:
               - signal: "panel/TOGGLE"
                 panel: "newLicensePricingTemplate"

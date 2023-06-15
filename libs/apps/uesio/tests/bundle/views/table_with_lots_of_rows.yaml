@@ -38,14 +38,14 @@ definition:
                       - signal: wire/SAVE
                         wires:
                           - animals
-                    text: Save
+                    text: $Label{uesio/io.save}
                     hotkey: "meta+s"
                     uesio.variant: uesio/io.secondary
                 - uesio/io.button:
                     signals:
                       - signal: wire/CANCEL
                         wire: animals
-                    text: Cancel
+                    text: $Label{uesio/io.cancel}
                     uesio.variant: uesio/io.secondary
                 - uesio/io.button:
                     signals:
@@ -64,7 +64,7 @@ definition:
         components:
           - uesio/io.table:
               rowactions:
-                - text: Delete
+                - text: $Label{uesio/io.delete}
                   signals:
                     - signal: wire/TOGGLE_DELETE_STATUS
               columns:

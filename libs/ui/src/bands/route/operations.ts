@@ -84,19 +84,29 @@ const handleNavigateResponse = async (
 
 	// Route title and tags should be pre-merged by the server, so we just need to go synchronize them
 	document.title = routeResponse.title || "Uesio"
-	// Remove any existing route-injected meta tags
+	// Remove any existing route-injected tags
 	document
-		.querySelectorAll("meta[data-uesio]")
+		.querySelectorAll("meta[data-uesio], link[data-uesio]")
 		.forEach((elem) => elem.remove())
-	// Add any meta tags defined by the route
+	// Add any head tags defined by the route
 	if (routeResponse.tags?.length) {
 		const headEl = document.getElementsByTagName("head")[0]
-		routeResponse.tags.forEach((tag) => {
-			if (tag.location === "head" && tag.type === "meta") {
-				const metaTag = document.createElement("meta")
-				headEl.appendChild(metaTag)
-				metaTag.setAttribute("content", tag.content)
-				metaTag.setAttribute("data-uesio", "true")
+		routeResponse.tags.forEach(({ content, location, name, type }) => {
+			if (location === "head") {
+				let newEl
+				if (type === "meta") {
+					newEl = document.createElement("meta")
+					newEl.setAttribute("name", name)
+					newEl.setAttribute("content", content)
+				} else if (type === "link") {
+					newEl = document.createElement("link")
+					newEl.setAttribute("rel", name)
+					newEl.setAttribute("href", content)
+				}
+				if (newEl) {
+					newEl.setAttribute("data-uesio", "true")
+					headEl.appendChild(newEl)
+				}
 			}
 		})
 	}
