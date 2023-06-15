@@ -2,8 +2,10 @@ import { definition, styles } from "@uesio/ui"
 import { ReactNode } from "react"
 
 interface Props {
+	placeholder?: string
 	searchTerm: string | undefined
 	setSearchTerm: (searchTerm: string) => void
+	onSelect?: (value: string) => void
 	actions?: ReactNode
 }
 
@@ -24,7 +26,7 @@ const StyleDefaults = Object.freeze({
 })
 
 const SearchArea: definition.UtilityComponent<Props> = (props) => {
-	const { searchTerm, setSearchTerm, actions } = props
+	const { searchTerm, setSearchTerm, actions, onSelect, placeholder } = props
 
 	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 	return (
@@ -35,7 +37,14 @@ const SearchArea: definition.UtilityComponent<Props> = (props) => {
 				value={searchTerm || ""}
 				onChange={(e) => setSearchTerm(e.target.value.toLowerCase())}
 				type="search"
-				placeholder="Search..."
+				placeholder={placeholder || "Search..."}
+				onKeyPress={(e) => {
+					if (e.key === "Enter" && onSelect) {
+						e.preventDefault()
+						e.stopPropagation()
+						onSelect(e.currentTarget.value)
+					}
+				}}
 			/>
 			{actions && <div className={classes.actions}>{actions}</div>}
 		</div>

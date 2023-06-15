@@ -6,3 +6,12 @@ title: Documentation - What is ues.io
 params:
   slug: home
 public: true
+tags:
+  - type: meta
+    location: head
+    name: description
+    content: Home page for ues.io documentation
+  - type: link
+    location: head
+    name: canonical
+    content: $Site{url}

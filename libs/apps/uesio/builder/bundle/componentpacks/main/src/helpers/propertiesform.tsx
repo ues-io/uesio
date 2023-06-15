@@ -700,7 +700,7 @@ function getPropertiesForSection(
 
 const getPropertiesAndContent = (props: Props, selectedTab: string) => {
 	let { content, properties } = props
-	const { sections } = props
+	const { path, sections } = props
 
 	if (sections && sections.length) {
 		const selectedSection =
@@ -734,6 +734,20 @@ const getPropertiesAndContent = (props: Props, selectedTab: string) => {
 			case "STYLES": {
 				properties = [
 					getStyleVariantProperty(selectedSection.componentType),
+				]
+				content = [
+					{
+						"uesio/builder.property": {
+							property: properties[0],
+							path,
+						},
+					},
+					{
+						"uesio/builder.stylesproperty": {
+							componentType: selectedSection.componentType,
+							componentPath: path,
+						},
+					},
 				]
 				break
 			}

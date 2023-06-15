@@ -298,7 +298,7 @@ definition:
             uesio.variant: "uesio/io.primary"
             uesio.id: "save-new-app"
             hotkey: "meta+s"
-            text: "Save"
+            text: $Label{uesio/io.save}
             signals:
               - signal: wire/SAVE
                 wires:
@@ -307,7 +307,7 @@ definition:
                 path: "app/${uesio/core.uniquekey}"
         - uesio/io.button:
             uesio.variant: "uesio/io.secondary"
-            text: "Cancel"
+            text: $Label{uesio/io.cancel}
             signals:
               - signal: "panel/TOGGLE"
                 panel: "newApp"
@@ -331,7 +331,7 @@ definition:
             uesio.variant: "uesio/io.primary"
             uesio.id: "save-new-org"
             hotkey: "meta+s"
-            text: "Save"
+            text: $Label{uesio/io.save}
             signals:
               - signal: wire/SAVE
                 wires:
@@ -345,7 +345,7 @@ definition:
                 wire: neworg
         - uesio/io.button:
             uesio.variant: "uesio/io.secondary"
-            text: "Cancel"
+            text: $Label{uesio/io.cancel}
             signals:
               - signal: "panel/TOGGLE"
                 panel: "newOrg"

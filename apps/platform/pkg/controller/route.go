@@ -145,7 +145,7 @@ func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Sess
 				if requestedPath != "" && requestedPath != "/" {
 					redirectPath = redirectPath + "?r=" + requestedPath
 				}
-				http.Redirect(w, r, redirectPath, 302)
+				http.Redirect(w, r, redirectPath, http.StatusFound)
 				return
 			}
 		}
@@ -172,7 +172,6 @@ func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Sess
 		return
 	}
 	http.Error(w, "Not Found", http.StatusNotFound)
-	return
 }
 
 func ServeRoute(w http.ResponseWriter, r *http.Request) {

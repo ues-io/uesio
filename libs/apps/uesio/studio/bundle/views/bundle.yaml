@@ -42,7 +42,6 @@ definition:
         uesio/studio.minor:
         uesio/studio.patch:
         uesio/studio.description:
-        uesio/studio.workspace:
         uesio/core.createdby:
         uesio/core.createdat:
         uesio/studio.app:
@@ -102,7 +101,7 @@ definition:
                             - uesio/io.group:
                                 components:
                                   - uesio/io.button:
-                                      text: Delete
+                                      text: $Label{uesio/io.delete}
                                       uesio.variant: uesio/io.secondary
                                       signals:
                                         - signal: panel/TOGGLE
@@ -122,8 +121,6 @@ definition:
                                   - uesio/io.field:
                                       fieldId: uesio/studio.description
                                   - uesio/io.field:
-                                      fieldId: uesio/studio.workspace
-                                  - uesio/io.field:
                                       fieldId: uesio/core.createdby
                                       user:
                                         subtitle: $Time{uesio/core.createdat}
@@ -138,7 +135,7 @@ definition:
             text: Are you sure you want to delete this bundle?
       actions:
         - uesio/io.button:
-            text: Delete
+            text: $Label{uesio/io.delete}
             uesio.variant: uesio/io.primary
             signals:
               - signal: wire/MARK_FOR_DELETE
@@ -148,7 +145,7 @@ definition:
               - signal: "route/NAVIGATE"
                 path: "app/$Param{app}"
         - uesio/io.button:
-            text: Cancel
+            text: $Label{uesio/io.cancel}
             uesio.variant: uesio/io.secondary
             signals:
               - signal: panel/TOGGLE
