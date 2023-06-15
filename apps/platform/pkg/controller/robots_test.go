@@ -2,9 +2,10 @@ package controller
 
 import (
 	"bytes"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"testing"
 )
 
 func Test_getPublicRoutePaths(t *testing.T) {
@@ -86,31 +87,21 @@ Allow: /$`,
 		t.Run(tt.name, func(t *testing.T) {
 			buffer := bytes.NewBuffer([]byte{})
 			writeAllowedRoutePaths(buffer, tt.publicRoutes, tt.homeRoute)
-			assert.Equal(t, tt.wantOutput, string(buffer.Bytes()))
+			assert.Equal(t, tt.wantOutput, buffer.String())
 		})
 	}
 }
 
 func Test_getPublicFilePaths(t *testing.T) {
 
-	contextSite := &meta.Site{
-		App: &meta.App{
-			BuiltIn: meta.BuiltIn{
-				UniqueKey: "luigi/pasta",
-			},
-		},
-	}
-
 	tests := []struct {
 		name  string
 		files meta.FileCollection
-		site  *meta.Site
 		want  map[string]bool
 	}{
 		{
 			"no static files",
 			meta.FileCollection{},
-			contextSite,
 			map[string]bool{},
 		},
 		{
@@ -124,21 +115,20 @@ func Test_getPublicFilePaths(t *testing.T) {
 				},
 				&meta.File{
 					BundleableBase: meta.BundleableBase{
-						Namespace: "luigi/pasta",
+						Namespace: "uesio/core",
 						Name:      "bar",
 					},
 				},
 			},
-			contextSite,
 			map[string]bool{
-				"/site/files/luigi/pasta/*/bar": true,
 				"/site/files/luigi/pasta/*/foo": true,
+				"/site/files/uesio/core/*/bar":  true,
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.Equalf(t, tt.want, getPublicFilePaths(tt.files, tt.site), "getPublicFilePaths(%v)", tt.files)
+			assert.Equalf(t, tt.want, getPublicFilePaths(tt.files), "getPublicFilePaths(%v)", tt.files)
 		})
 	}
 }
@@ -159,18 +149,18 @@ func Test_writeAllowedStaticFiles(t *testing.T) {
 			"should return an Allow entry for each file, in stable alphabetical order",
 			map[string]bool{
 				"/site/files/luigi/pasta/*/bar": true,
-				"/site/files/luigi/pasta/*/foo": true,
+				"/site/files/uesio/core/*/foo":  true,
 			},
 			`
 Allow: /site/files/luigi/pasta/*/bar
-Allow: /site/files/luigi/pasta/*/foo`,
+Allow: /site/files/uesio/core/*/foo`,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			buffer := bytes.NewBuffer([]byte{})
 			writeAllowedStaticFiles(buffer, tt.files)
-			assert.Equal(t, tt.wantOutput, string(buffer.Bytes()))
+			assert.Equal(t, tt.wantOutput, buffer.String())
 		})
 	}
 }
@@ -186,6 +176,6 @@ Allow: /site/componentpacks/*`
 
 	t.Run("test allowed core paths", func(t *testing.T) {
 		writeAllowedCorePaths(&b)
-		assert.Equal(t, expected, string(b.Bytes()))
+		assert.Equal(t, expected, b.String())
 	})
 }

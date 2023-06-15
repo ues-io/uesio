@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from "react"
+import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react"
 import { FieldValueSetter, ApplyChanges } from "./../components/field/field"
 
 const useControlledInput = <T extends HTMLInputElement | HTMLTextAreaElement>(
@@ -22,6 +22,15 @@ const useControlledInput = <T extends HTMLInputElement | HTMLTextAreaElement>(
 			applyOnBlur &&
 			value !== e.target.value &&
 			setValue?.(e.target.value),
+		onKeyPress: (e: KeyboardEvent<T>) => {
+			if (
+				applyOnBlur &&
+				e.key === "Enter" &&
+				value !== e.currentTarget.value
+			) {
+				setValue?.(e.currentTarget.value)
+			}
+		},
 	}
 }
 
