@@ -64,7 +64,7 @@ func (qb *QueryBuilder) String() string {
 }
 
 func isTextAlike(fieldType string) bool {
-	if fieldType == "TEXT" || fieldType == "AUTONUMBER" || fieldType == "EMAIL" || fieldType == "LONGTEXT" {
+	if fieldType == "TEXT" || fieldType == "AUTONUMBER" || fieldType == "EMAIL" || fieldType == "LONGTEXT" || fieldType == "SELECT" {
 		return true
 	}
 	return false
