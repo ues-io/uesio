@@ -194,7 +194,7 @@ Accept: application/json
         }
     ]
 }
-HTTP 400
+HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes true
 jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" includes false
