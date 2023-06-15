@@ -70,7 +70,7 @@ ORDER BY main.id::text asc
 LIMIT 501```
 jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" == 978310860
 
-# Operator: EQ | valueSource: VALUE | value as string (ISO-8601 UTC datetime)
+# Operator: EQ | valueSource: VALUE | Bad Value value as string (ISO-8601 UTC datetime)
 # entry 4
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
