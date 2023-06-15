@@ -70,7 +70,7 @@ definition:
                                 components:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      text: "Edit"
+                                      text: $Label{uesio/io.edit}
                                       signals:
                                         - signal: component/CALL
                                           component: uesio/io.list
@@ -79,20 +79,20 @@ definition:
                                           componentid: authsourcesList
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      text: "Save"
+                                      text: $Label{uesio/io.save}
                                       signals:
                                         - signal: wire/SAVE
                                           wires:
                                             - "authsources"
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      text: "Cancel"
+                                      text: $Label{uesio/io.cancel}
                                       signals:
                                         - signal: wire/CANCEL
                                           wire: "authsources"
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      text: "Delete"
+                                      text: $Label{uesio/io.delete}
                                       signals:
                                         - signal: wire/MARK_FOR_DELETE
                                         - signal: wire/SAVE

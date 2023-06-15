@@ -2,4 +2,4 @@ name: earlyaccess
 path: earlyaccess
 view: uesio/web.earlyaccess
 theme: uesio/core.default
-title: ""
+title: $Site{title} - Register for early access

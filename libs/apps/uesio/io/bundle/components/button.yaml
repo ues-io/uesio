@@ -34,3 +34,8 @@ sections:
   - type: SIGNALS
   - type: STYLES
   - type: DISPLAY
+styleRegions:
+  root:
+  label:
+  selected:
+  icon:

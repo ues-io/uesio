@@ -21,6 +21,7 @@ const (
 	defaultRobots     = `User-agent: *
 Disallow: *`
 	allowPath = "\nAllow: %s"
+	filePath  = `/site/files/%s/*/%s`
 )
 
 var defaultRobotsBytes = []byte(defaultRobots)
@@ -65,7 +66,7 @@ func Robots(w http.ResponseWriter, r *http.Request) {
 	// Append to the robots the routes we want to allow
 	writeAllowedRoutePaths(w, getPublicRoutePaths(routes), homeRoute)
 	writeAllowedCorePaths(w)
-	writeAllowedStaticFiles(w, getPublicFilePaths(files, contextSite))
+	writeAllowedStaticFiles(w, getPublicFilePaths(files))
 
 }
 
@@ -98,7 +99,7 @@ func writeAllowedRoutePaths(w io.Writer, publicRoutes map[string]bool, homeRoute
 	if homeRoute != nil {
 		normalizedHomeRoutePath = normalizePath(homeRoute.Path)
 	}
-	for k, _ := range publicRoutes {
+	for k := range publicRoutes {
 		keys = append(keys, k)
 		if homeRoute != nil && k == normalizedHomeRoutePath {
 			addHomeRoute = true
@@ -140,18 +141,16 @@ func getPublicRoutePaths(routes meta.RouteCollection) map[string]bool {
 	return publicRouteNames
 }
 
-const filePath = `/site/files/%s/*/%s`
-
 func getFilePath(appFullName, fileName string) string {
 	return fmt.Sprintf(filePath, appFullName, fileName)
 }
 
-func getPublicFilePaths(files meta.FileCollection, site *meta.Site) map[string]bool {
+func getPublicFilePaths(files meta.FileCollection) map[string]bool {
 	publicFilePaths := map[string]bool{}
 
 	// Build a unique list of public file paths
 	for _, file := range files {
-		publicFilePaths[getFilePath(site.GetAppFullName(), file.Name)] = true
+		publicFilePaths[getFilePath(file.GetNamespace(), file.Name)] = true
 	}
 	return publicFilePaths
 }
