@@ -25,13 +25,13 @@ definition:
                             - signal: wire/SAVE
                               wires:
                                 - opportunities
-                          text: Save
+                          text: $Label{uesio/io.save}
                           uesio.variant: uesio/io.secondary
                       - uesio/io.button:
                           signals:
                             - signal: wire/CANCEL
                               wire: opportunities
-                          text: Cancel
+                          text: $Label{uesio/io.cancel}
                           uesio.variant: uesio/io.secondary
                       - uesio/io.button:
                           signals:
@@ -87,11 +87,11 @@ definition:
                       timeunit: MONTH
           - uesio/io.table:
               rowactions:
-                - text: Edit
+                - text: $Label{uesio/io.edit}
                   signals:
                     - path: opportunity/${uesio/core.id}
                       signal: route/NAVIGATE
-                - text: Delete
+                - text: $Label{uesio/io.delete}
                   signals:
                     - signal: wire/TOGGLE_DELETE_STATUS
               columns:

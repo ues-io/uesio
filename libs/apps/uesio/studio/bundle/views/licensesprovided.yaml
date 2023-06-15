@@ -154,7 +154,7 @@ definition:
                               signals:
                                 - signal: route/NAVIGATE
                                   path: app/$Param{app}/licensespricing/applicensed/${uesio/studio.applicensed->uesio/studio.fullname}
-                            # - text: Delete
+                            # - text: $Label{uesio/io.delete}
                             #   signals:
                             #     - signal: wire/TOGGLE_DELETE_STATUS
                           pagesize: 10
@@ -179,7 +179,7 @@ definition:
       actions:
         - uesio/io.button:
             uesio.variant: "uesio/io.primary"
-            text: "Save"
+            text: $Label{uesio/io.save}
             signals:
               - signal: wire/SAVE
                 wires:
@@ -191,7 +191,7 @@ definition:
                 panel: "newLicense"
         - uesio/io.button:
             uesio.variant: "uesio/io.secondary"
-            text: "Cancel"
+            text: $Label{uesio/io.cancel}
             signals:
               - signal: "panel/TOGGLE"
                 panel: "newLicense"

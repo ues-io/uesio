@@ -44,9 +44,7 @@ func getMetadataList(metadatatype, namespace, grouping string, session *sess.Ses
 		}
 		namespaces := session.GetContextNamespaces()
 		appNames = []string{}
-		for _, ns := range namespaces {
-			appNames = append(appNames, ns)
-		}
+		appNames = append(appNames, namespaces...)
 	}
 
 	appData, err := datasource.GetAppData(appNames)
@@ -57,7 +55,7 @@ func getMetadataList(metadatatype, namespace, grouping string, session *sess.Ses
 	if (namespace == "uesio/core" || namespace == "") && metadatatype == "fields" {
 		appInfo, ok := appData["uesio/core"]
 		if !ok {
-			return nil, errors.New("Could not find app info for uesio/core")
+			return nil, errors.New("could not find app info for uesio/core")
 		}
 		for _, field := range datasource.BUILTIN_FIELDS {
 			collectionKeyMap[field.GetFullName()] = datasource.MetadataResponse{
