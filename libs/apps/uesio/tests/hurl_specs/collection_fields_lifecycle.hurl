@@ -275,6 +275,27 @@ jsonpath "$.wires[2].data[*]['uesio/studio.type']" includes "list"
 [Captures]
 collection_id: jsonpath "$.wires[0].data[*]['uesio/core.id']"
 
+# Test the studio recentmetadata collection
+POST https://{{host}}:{{port}}/site/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection": "uesio/studio.recentmetadata",
+            "id": "recentmetadata",
+            "query": true,
+            "params": {
+                "app": "uesio/tests",
+                "workspacename": "dev"
+            }
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].data[*]" count >= 1
+jsonpath "$.wires[0].data[*]['uesio/studio.name']" != ""
+
 # Delete the collection
 POST https://{{host}}:{{port}}/site/wires/save
 Accept: application/json
