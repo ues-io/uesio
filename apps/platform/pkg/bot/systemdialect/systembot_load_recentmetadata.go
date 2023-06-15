@@ -11,8 +11,8 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-//intercepts the collection uesio/studio.recentmetadata & enhances the LoadOp
-//Add the required metadata to complete the operation
+// intercepts the collection uesio/studio.recentmetadata & enhances the LoadOp
+// Add the required metadata to complete the operation
 func runRecentMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
 
 	workspace := op.Params["workspacename"]
@@ -30,12 +30,12 @@ func runRecentMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 	//This creates a copy of the session
 	inContextSession := session.RemoveWorkspaceContext()
 
-	err := datasource.AddWorkspaceContextByKey(workspaceKey, session, connection)
+	err := datasource.AddWorkspaceContextByKey(workspaceKey, inContextSession, connection)
 	if err != nil {
 		return err
 	}
 
-	workspaceID := session.GetWorkspaceID()
+	workspaceID := inContextSession.GetWorkspaceID()
 
 	if workspaceID == "" {
 		return errors.New("unable to retrieve recent metadata, workspace id is missing")
