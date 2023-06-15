@@ -11,19 +11,18 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
+//intercepts the collection uesio/studio.recentmetadata & enhances the LoadOp
+//Add the required metadata to complete the operation
 func runRecentMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
-
-	//intercepts the collection uesio/studio.recentmetadata & enhances the LoadOp
-	//Add the required metadata to compleat the operation
 
 	workspace := op.Params["workspacename"]
 	if workspace == "" {
-		return errors.New("No Workspace Name Parameter Provided")
+		return errors.New("no workspace name parameter provided")
 	}
 
 	app := op.Params["app"]
 	if app == "" {
-		return errors.New("No App Parameter Provided")
+		return errors.New("no app parameter provided")
 	}
 
 	workspaceKey := fmt.Sprintf("%s:%s", app, workspace)
@@ -39,7 +38,7 @@ func runRecentMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 	workspaceID := session.GetWorkspaceID()
 
 	if workspaceID == "" {
-		return errors.New("Error getting recent metadata, missing workspace id")
+		return errors.New("unable to retrieve recent metadata, workspace id is missing")
 	}
 
 	var fields = []adapt.LoadRequestField{
@@ -129,12 +128,12 @@ func runRecentMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 
 		collectionValue, ok := collection.(string)
 		if !ok {
-			return errors.New("Invalid Collection Value")
+			return errors.New("invalid collection value")
 		}
 
-		_, colleccollectionName, err := meta.ParseKey(collectionValue)
+		_, collectionName, err := meta.ParseKey(collectionValue)
 
-		err = item.SetField("uesio/core.collection", meta.METADATA_NAME_MAP[strings.ToUpper(colleccollectionName)])
+		err = item.SetField("uesio/core.collection", meta.METADATA_NAME_MAP[strings.ToUpper(collectionName)])
 		if err != nil {
 			return err
 		}
