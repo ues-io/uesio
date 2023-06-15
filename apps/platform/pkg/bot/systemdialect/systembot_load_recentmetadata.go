@@ -27,7 +27,8 @@ func runRecentMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 
 	workspaceKey := fmt.Sprintf("%s:%s", app, workspace)
 
-	//This creates a copy of the session
+	// We need to obtain the workspace id in order to have a condition on the uesio/studio.workspace field,
+	// which contains the UUID of the workspace associated with studio data.
 	inContextSession := session.RemoveWorkspaceContext()
 
 	err := datasource.AddWorkspaceContextByKey(workspaceKey, inContextSession, connection)
@@ -70,8 +71,14 @@ func runRecentMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 		Collection:     op.Collection,
 		Conditions: []adapt.LoadRequestCondition{
 			{
-				Field: "uesio/studio.workspace",
-				Value: workspaceID,
+				Field:    "uesio/studio.workspace",
+				Value:    workspaceID,
+				Operator: "EQ",
+			},
+			{
+				Field:    "uesio/studio.name",
+				Value:    nil,
+				Operator: "NOT_EQ",
 			},
 		},
 		Fields: fields,
@@ -99,7 +106,6 @@ func runRecentMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 		Type:       "TEXT",
 		Label:      "Name",
 	})
-
 	recentmetadataCollectionMetadata.SetField(&adapt.FieldMetadata{
 		Name:       "workspace",
 		Namespace:  "uesio/studio",
@@ -109,13 +115,13 @@ func runRecentMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 		Type:       "TEXT",
 		Label:      "Workspace",
 	})
-
 	recentmetadataCollectionMetadata.SetField(&datasource.COLLECTION_FIELD)
 	recentmetadataCollectionMetadata.SetField(&datasource.UPDATEDBY_FIELD_METADATA)
 	recentmetadataCollectionMetadata.SetField(&datasource.UPDATEDAT_FIELD_METADATA)
 	recentmetadataCollectionMetadata.SetField(&datasource.UNIQUE_KEY_FIELD_METADATA)
 
-	err = connection.Load(newOp, inContextSession)
+	// We need to query with the original session
+	err = connection.Load(newOp, session)
 	if err != nil {
 		return err
 	}
