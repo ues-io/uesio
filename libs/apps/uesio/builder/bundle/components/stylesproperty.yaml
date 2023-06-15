@@ -1,0 +1,14 @@
+name: stylesproperty
+pack: main
+entrypoint: components/stylesproperty/stylesproperty
+utilities:
+  - uesio/io.titlebar
+  - uesio/io.pillbox
+  - uesio/io.button
+  - uesio/io.icon
+  - uesio/io.textfield
+  - uesio/io.menu
+  - uesio/builder.autocompletefield
+  - uesio/builder.tailwindclasspicker
+variants:
+  - uesio/io.titlebar:uesio/builder.propsubsection

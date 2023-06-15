@@ -30,7 +30,7 @@ definition:
                           uesio.variant: uesio/io.secondary
                           icon: add
                       - uesio/io.button:
-                          text: Save
+                          text: $Label{uesio/io.save}
                           icon: check
                           uesio.variant: uesio/io.primary
                           signals:
@@ -45,7 +45,7 @@ definition:
                               operator: EQUALS
                               wire: leads
                       - uesio/io.button:
-                          text: Cancel
+                          text: $Label{uesio/io.cancel}
                           icon: cancel
                           uesio.variant: uesio/io.primary
                           signals:
@@ -90,7 +90,7 @@ definition:
                               signals:
                                 - path: lead/${uesio/core.id}
                                   signal: route/NAVIGATE
-                            - text: Delete
+                            - text: $Label{uesio/io.delete}
                               signals:
                                 - signal: wire/TOGGLE_DELETE_STATUS
                           columns:
@@ -307,7 +307,7 @@ definition:
       title: New Lead
       actions:
         - uesio/io.button:
-            text: Save
+            text: $Label{uesio/io.save}
             icon: save
             uesio.variant: uesio/io.secondary
             signals:
@@ -320,7 +320,7 @@ definition:
               - signal: panel/CLOSE
                 panel: newlead
         - uesio/io.button:
-            text: Cancel
+            text: $Label{uesio/io.cancel}
             icon: cancel
             uesio.variant: uesio/io.secondary
             signals:

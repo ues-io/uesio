@@ -6,9 +6,92 @@ definition:
   components:
     - uesio/io.list:
         components:
+          - uesio/io.box:
+              uesio.styleTokens:
+                root:
+                  - pb-3
+                  - bg-slate-100
+                  - m-2
+                  - rounded-lg
+              components:
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.nav
+                    title: Workspace Admin
+                - uesio/io.tile:
+                    uesio.variant: uesio/io.nav
+                    uesio.id: home
+                    uesio.classes:
+                      selected:
+                        - type: paramValue
+                          param: selected
+                          value: home
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}
+                    content:
+                      - uesio/io.text:
+                          text: Home
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: home
+                - uesio/io.tile:
+                    uesio.variant: uesio/io.nav
+                    uesio.id: settings
+                    uesio.classes:
+                      selected:
+                        - type: paramValue
+                          param: selected
+                          value: settings
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/configuration
+                    content:
+                      - uesio/io.text:
+                          text: Settings
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: settings
+                - uesio/io.tile:
+                    uesio.variant: uesio/io.nav
+                    uesio.id: installed
+                    uesio.classes:
+                      selected:
+                        - type: paramValue
+                          param: selected
+                          value: installed
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/installed
+                    content:
+                      - uesio/io.text:
+                          text: Installed Bundles
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: backpack
+                - uesio/io.tile:
+                    uesio.variant: uesio/io.nav
+                    uesio.id: packaging
+                    uesio.classes:
+                      selected:
+                        - type: paramValue
+                          param: selected
+                          value: packaging
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/packaging
+                    content:
+                      - uesio/io.text:
+                          text: Packaging
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: package
           - uesio/io.titlebar:
               uesio.variant: uesio/io.nav
-              title: Data
+              title: Data Structure & Content
           - uesio/io.tile:
               uesio.display:
                 - type: featureFlag
@@ -86,6 +169,24 @@ definition:
                 - uesio/io.text:
                     uesio.variant: uesio/io.icon
                     text: playlist_add_check
+          - uesio/io.tile:
+              uesio.variant: uesio/io.nav
+              uesio.id: files
+              uesio.classes:
+                selected:
+                  - type: paramValue
+                    param: selected
+                    value: files
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/files
+              content:
+                - uesio/io.text:
+                    text: Files
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: collections
           - uesio/io.titlebar:
               uesio.variant: uesio/io.nav
               title: User Interface
@@ -164,27 +265,45 @@ definition:
                 - uesio/io.text:
                     uesio.variant: uesio/io.icon
                     text: palette
+          - uesio/io.titlebar:
+              uesio.variant: uesio/io.nav
+              title: Security & Access
           - uesio/io.tile:
               uesio.variant: uesio/io.nav
-              uesio.id: labels
+              uesio.id: permission-sets
               uesio.classes:
                 selected:
                   - type: paramValue
                     param: selected
-                    value: labels
+                    value: permissionsets
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/labels
+                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/permissionsets
               content:
                 - uesio/io.text:
-                    text: Labels
+                    text: Permission Sets
               avatar:
                 - uesio/io.text:
                     uesio.variant: uesio/io.icon
-                    text: label
-          - uesio/io.titlebar:
+                    text: rule
+          - uesio/io.tile:
               uesio.variant: uesio/io.nav
-              title: Admin
+              uesio.id: profiles
+              uesio.classes:
+                selected:
+                  - type: paramValue
+                    param: selected
+                    value: profiles
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/profiles
+              content:
+                - uesio/io.text:
+                    text: Profiles
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: group
           - uesio/io.tile:
               uesio.display:
                 - type: featureFlag
@@ -228,60 +347,6 @@ definition:
                     uesio.variant: uesio/io.icon
                     text: vpn_key
           - uesio/io.tile:
-              uesio.variant: uesio/io.nav
-              uesio.id: files
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: files
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/files
-              content:
-                - uesio/io.text:
-                    text: Files
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: collections
-          - uesio/io.tile:
-              uesio.variant: uesio/io.nav
-              uesio.id: permission-sets
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: permissionsets
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/permissionsets
-              content:
-                - uesio/io.text:
-                    text: Permission Sets
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: rule
-          - uesio/io.tile:
-              uesio.variant: uesio/io.nav
-              uesio.id: profiles
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: profiles
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/profiles
-              content:
-                - uesio/io.text:
-                    text: Profiles
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: group
-          - uesio/io.tile:
               uesio.display:
                 - type: featureFlag
                   name: manage_secrets
@@ -324,24 +389,6 @@ definition:
                     uesio.variant: uesio/io.icon
                     text: new_releases
           - uesio/io.tile:
-              uesio.variant: uesio/io.nav
-              uesio.id: translations
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: translations
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/translations
-              content:
-                - uesio/io.text:
-                    text: Translations
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: translate
-          - uesio/io.tile:
               uesio.display:
                 - type: featureFlag
                   name: manage_auth_methods
@@ -362,3 +409,42 @@ definition:
                 - uesio/io.text:
                     uesio.variant: uesio/io.icon
                     text: dynamic_feed
+          - uesio/io.titlebar:
+              uesio.variant: uesio/io.nav
+              title: Internationalization
+          - uesio/io.tile:
+              uesio.variant: uesio/io.nav
+              uesio.id: labels
+              uesio.classes:
+                selected:
+                  - type: paramValue
+                    param: selected
+                    value: labels
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/labels
+              content:
+                - uesio/io.text:
+                    text: Labels
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: label
+          - uesio/io.tile:
+              uesio.variant: uesio/io.nav
+              uesio.id: translations
+              uesio.classes:
+                selected:
+                  - type: paramValue
+                    param: selected
+                    value: translations
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/translations
+              content:
+                - uesio/io.text:
+                    text: Translations
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: translate

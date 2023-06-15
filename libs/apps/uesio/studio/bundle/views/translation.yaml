@@ -29,16 +29,6 @@ definition:
         - field: uesio/studio.language
           valueSource: PARAM
           param: translationname
-    labels:
-      collection: uesio/studio.label
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-      # conditions:
-      #   - field: uesio/studio.workspace
-      #     valueSource: LOOKUP
-      #     lookupWire: workspaces
-      #     lookupField: uesio/core.id
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:

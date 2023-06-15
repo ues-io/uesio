@@ -5,3 +5,5 @@ definition:
     root:
       - bg-slate-50
       - p-10
+      - h-full
+      - overflow-auto

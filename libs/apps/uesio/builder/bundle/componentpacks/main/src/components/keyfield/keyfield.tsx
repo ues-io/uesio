@@ -5,13 +5,12 @@ type KeyFieldDefinition = {
 	label?: string
 	labelPosition?: string
 	wrapperVariant?: metadata.MetadataKey
-	textVariant?: metadata.MetadataKey
 }
 
 const KeyField: definition.UC<KeyFieldDefinition> = (props) => {
 	const {
 		context,
-		definition: { fieldId, wrapperVariant, textVariant, labelPosition },
+		definition: { fieldId, wrapperVariant, labelPosition },
 	} = props
 
 	const ConstrainedInput = component.getUtility(
@@ -41,7 +40,10 @@ const KeyField: definition.UC<KeyFieldDefinition> = (props) => {
 			labelPosition={labelPosition}
 			context={context}
 			fieldWrapperVariant={wrapperVariant}
-			textVariant={textVariant}
+			fieldComponentType="uesio/io.textfield"
+			fieldComponentProps={{
+				variant: "uesio/io.field:uesio/builder.propfield",
+			}}
 		/>
 	)
 }

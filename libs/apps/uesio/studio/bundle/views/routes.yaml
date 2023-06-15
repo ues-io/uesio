@@ -38,7 +38,7 @@ definition:
           lookupField: uesio/core.id
       order:
         - field: uesio/core.updatedat
-          direction: DESC
+          desc: true
     allroutes:
       collection: uesio/studio.allmetadata
       conditions:
@@ -46,7 +46,7 @@ definition:
           value: routes
       order:
         - field: uesio/core.updatedat
-          direction: DESC
+          desc: true
     newroute:
       collection: uesio/studio.route
       fields:
@@ -216,8 +216,8 @@ definition:
                           uesio.id: routesTable
                           wire: routes
                           columns:
-                            - field: uesio/studio.view
                             - field: uesio/studio.path
+                            - field: uesio/studio.view
                             - field: uesio/core.updatedby
                               user:
                                 subtitle: $Time{uesio/core.updatedat}
@@ -244,6 +244,7 @@ definition:
                               value: $Param{app}
                               operator: NOT_EQUALS
                           columns:
+                            - field: uesio/studio.path
                             - label: View
                               components:
                                 - uesio/studio.iconlabel:
@@ -251,7 +252,6 @@ definition:
                                     text: ${uesio/studio.view}
                                     icon: ${uesio/studio.appicon}
                                     color: ${uesio/studio.appcolor}
-                            - field: uesio/studio.path
                           pagesize: 10
   panels:
     newRoute:

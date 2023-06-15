@@ -10,6 +10,7 @@ const useEvent = (
 		return () => {
 			document.removeEventListener(eventName, callback)
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, deps)
 }
 

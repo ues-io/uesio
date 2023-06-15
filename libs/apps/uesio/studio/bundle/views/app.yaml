@@ -101,14 +101,14 @@ definition:
                             - uesio/io.group:
                                 components:
                                   - uesio/io.button:
-                                      text: Edit
+                                      text: $Label{uesio/io.edit}
                                       uesio.id: edit-app
                                       uesio.variant: uesio/io.secondary
                                       signals:
                                         - signal: panel/TOGGLE
                                           panel: editApp
                                   - uesio/io.button:
-                                      text: Delete
+                                      text: $Label{uesio/io.delete}
                                       uesio.id: delete-app
                                       uesio.variant: uesio/io.secondary
                                       signals:
@@ -187,7 +187,7 @@ definition:
             element: p
       actions:
         - uesio/io.button:
-            text: Delete
+            text: $Label{uesio/io.delete}
             uesio.id: confirm-delete-app
             uesio.variant: uesio/io.primary
             signals:
@@ -198,7 +198,7 @@ definition:
               - signal: "route/NAVIGATE"
                 path: "home"
         - uesio/io.button:
-            text: Cancel
+            text: $Label{uesio/io.cancel}
             uesio.variant: uesio/io.secondary
             signals:
               - signal: panel/TOGGLE
@@ -215,19 +215,17 @@ definition:
               wire: apps
       actions:
         - uesio/io.button:
-            uesio.variant: "uesio/io.primary"
-            text: "Save"
+            uesio.variant: uesio/io.primary
+            text: $Label{uesio/io.save}
             signals:
               - signal: wire/SAVE
-              - signal: "panel/TOGGLE"
-                panel: "editApp"
         - uesio/io.button:
-            uesio.variant: "uesio/io.secondary"
-            text: "Cancel"
+            uesio.variant: uesio/io.secondary
+            text: $Label{uesio/io.cancel}
             signals:
               - signal: wire/CANCEL
-              - signal: "panel/TOGGLE"
-                panel: "editApp"
+              - signal: panel/TOGGLE
+                panel: editApp
     newTeam:
       uesio.type: uesio/io.dialog
       title: Create a New Team
@@ -244,7 +242,7 @@ definition:
       actions:
         - uesio/io.button:
             uesio.variant: "uesio/io.primary"
-            text: "Save"
+            text: $Label{uesio/io.save}
             signals:
               - signal: wire/SAVE
                 wires:
@@ -253,7 +251,7 @@ definition:
                 path: "app/$Param{app}/teams/${uesio/studio.name}"
         - uesio/io.button:
             uesio.variant: "uesio/io.secondary"
-            text: "Cancel"
+            text: $Label{uesio/io.cancel}
             signals:
               - signal: "panel/TOGGLE"
                 panel: "newTeam"

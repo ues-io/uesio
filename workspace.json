@@ -244,9 +244,10 @@
 					"options": {
 						"commands": [
 							"uesio pack",
-							"npx tsc --noEmit --project ./tsconfig.lib.json"
+							"npx tsc --noEmit --project ./tsconfig.lib.json",
+							"node ./build/generate-tailwind-classes-index.js"
 						],
-						"parallel": false,
+						"parallel": true,
 						"cwd": "libs/apps/uesio/builder"
 					}
 				},

@@ -14,7 +14,7 @@ Accept: application/json
 {
     "wires": [
         {
-            "collection":"uesio/tests.animal",
+            "collection":"uesio/tests.wire_condition",
             "query":true
         }
     ]
