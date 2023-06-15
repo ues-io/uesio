@@ -10,7 +10,7 @@ POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 }
 HTTP 200
 
-# Operator: EQ | valueSource: VALUE
+# Operator: EQ | valueSource: VALUE | Bad Value
 # entry 2
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
@@ -25,18 +25,15 @@ Accept: application/json
                     "field": "uesio/tests.timestamp",
                     "operator": "EQ",
                     "valueSource": "VALUE",
-                    "value": "978307260"
+                    "value": "BAD_VALUE"
                 }
             ]
         }
     ]
 }
-HTTP 200
-[Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" == 978307260
+HTTP 400
 
-
-# Operator: EQ | valueSource: PARAM
+# Operator: EQ | valueSource: VALUE | value as string
 # entry 3
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
@@ -45,8 +42,94 @@ Accept: application/json
         {
             "collection":"uesio/tests.wire_condition",
             "fields": [{"id": "uesio/tests.timestamp"}],
+            "query": true,
+            "conditions": [
+                {
+                    "field": "uesio/tests.timestamp",
+                    "operator": "EQ",
+                    "valueSource": "VALUE",
+                    "value": "978310860"
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].debugQueryString" == ```
+SELECT
+(main.fields->>'uesio/tests.timestamp')::bigint AS "uesio/tests.timestamp",
+main.id::text AS "uesio/core.id",
+main.uniquekey AS "uesio/core.uniquekey"
+FROM data as "main"
+WHERE
+main.collection = $1 AND
+main.tenant = $2 AND
+(main.fields->>'uesio/tests.timestamp')::bigint = $3
+ORDER BY main.id::text asc
+LIMIT 501```
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" == 978310860
+
+# Operator: EQ | valueSource: VALUE | value as string (ISO-8601 UTC datetime)
+# entry 4
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.wire_condition",
+            "fields": [{"id": "uesio/tests.timestamp"}],
+            "query": true,
+            "conditions": [
+                {
+                    "field": "uesio/tests.timestamp",
+                    "operator": "EQ",
+                    "valueSource": "VALUE",
+                    "value": "2001-01-01T01:01:00Z"
+                }
+            ]
+        }
+    ]
+}
+HTTP 400
+
+# Operator: EQ | valueSource: VALUE | value as number (unix timestamp)
+# entry 5
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.wire_condition",
+            "fields": [{"id": "uesio/tests.timestamp"}],
+            "query": true,
+            "conditions": [
+                {
+                    "field": "uesio/tests.timestamp",
+                    "operator": "EQ",
+                    "valueSource": "VALUE",
+                    "value": 978310860
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" == 978310860
+
+
+# Operator: EQ | valueSource: PARAM
+# entry 6
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.wire_condition",
+            "fields": [{"id": "uesio/tests.timestamp"}],
             "query":true,
-            "params": {"timestamp": "978307260"},
+            "params": {"timestamp": "978310860"},
             "conditions": [
                 {
                     "active": true,
@@ -61,10 +144,10 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" == 978307260
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" == 978310860
 
 # Operator: NOT_EQ | valueSource: VALUE
-# entry 4
+# entry 7
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -77,7 +160,7 @@ Accept: application/json
                     "active": true,
                     "field": "uesio/tests.timestamp",
                     "operator": "NOT_EQ",
-                    "value": "978307260",
+                    "value": 978310860,
                     "valueSource": "VALUE"
                 }
             ]
@@ -86,10 +169,10 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes 978307260
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes 978310860
 
 # Operator: NOT_EQ | valueSource: PARAM
-# entry 5
+# entry 8
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -98,7 +181,7 @@ Accept: application/json
             "collection":"uesio/tests.wire_condition",
             "fields": [{"id": "uesio/tests.timestamp"}],
             "query":true,
-            "params": {"timestamp": "978307260"},
+            "params": {"timestamp": "978310860"},
             "conditions": [
                 {
                     "active": true,
@@ -113,10 +196,10 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes 978307260
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes 978310860
 
 # Operator: GT | valueSource: VALUE
-# entry 6
+# entry 9
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -130,7 +213,7 @@ Accept: application/json
                     "field": "uesio/tests.timestamp",
                     "operator": "GT",
                     "valueSource": "VALUE",
-                    "value": "1012611720"
+                    "value": 1012611720
                 }
             ]
         }
@@ -138,11 +221,11 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes 978307260
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes 978310860
 jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes 1012611720
 
 # Operator: GT | valueSource: PARAM
-# entry 7
+# entry 10
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -166,11 +249,11 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes 978307260
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes 978310860
 jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes 1012611720
 
 # Operator: LT | valueSource: VALUE
-# entry 8
+# entry 11
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -184,7 +267,7 @@ Accept: application/json
                     "field": "uesio/tests.timestamp",
                     "operator": "LT",
                     "valueSource": "VALUE",
-                    "value": "1046656980"
+                    "value": 1046656980
                 }
             ]
         }
@@ -192,12 +275,12 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 978307260
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 978310860
 jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 1012611720
 jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes 1046656980
 
 # Operator: LT | valueSource: PARAM
-# entry 9
+# entry 12
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -221,93 +304,11 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 978307260
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 978310860
 jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 1012611720
 jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes 1046656980
 
 # Operator: GTE | valueSource: VALUE
-# entry 10
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
-Accept: application/json
-{
-    "wires": [
-        {
-            "collection":"uesio/tests.wire_condition",
-            "fields": [{"id": "uesio/tests.timestamp"}],
-            "query": true,
-            "conditions": [
-                {
-                    "field": "uesio/tests.timestamp",
-                    "operator": "GTE",
-                    "valueSource": "VALUE",
-                    "value": "1012611720"
-                }
-            ]
-        }
-    ]
-}
-HTTP 200
-[Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes 978307260
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 1012611720
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 1046656980
-# Operator: GTE | valueSource: PARAM
-# entry 11
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
-Accept: application/json
-{
-    "wires": [
-        {
-            "collection":"uesio/tests.wire_condition",
-            "fields": [{"id": "uesio/tests.timestamp"}],
-            "query":true,
-            "params": {"timestamp": "1012611720"},
-            "conditions": [
-                {
-                    "active": true,
-                    "field": "uesio/tests.timestamp",
-                    "operator": "GTE",
-                    "valueSource": "PARAM",
-                    "param": "timestamp"
-                }
-            ]
-        }
-    ]
-}
-HTTP 200
-[Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes 978307260
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 1012611720
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 1046656980
-
-# Operator: LTE | valueSource: VALUE
-# entry 12
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
-Accept: application/json
-{
-    "wires": [
-        {
-            "collection":"uesio/tests.wire_condition",
-            "fields": [{"id": "uesio/tests.timestamp"}],
-            "query": true,
-            "conditions": [
-                {
-                    "field": "uesio/tests.timestamp",
-                    "operator": "LTE",
-                    "valueSource": "VALUE",
-                    "value": "1012611720"
-                }
-            ]
-        }
-    ]
-}
-HTTP 200
-[Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 978307260
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 1012611720
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes 1046656980
-
-# Operator: LTE | valueSource: PARAM
 # entry 13
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
@@ -316,6 +317,89 @@ Accept: application/json
         {
             "collection":"uesio/tests.wire_condition",
             "fields": [{"id": "uesio/tests.timestamp"}],
+            "query": true,
+            "conditions": [
+                {
+                    "field": "uesio/tests.timestamp",
+                    "operator": "GTE",
+                    "valueSource": "VALUE",
+                    "value": 1012611720
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes 978310860
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 1012611720
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 1046656980
+
+# Operator: GTE | valueSource: PARAM
+# entry 14
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.wire_condition",
+            "fields": [{"id": "uesio/tests.timestamp"}],
+            "query":true,
+            "params": {"timestamp": "1012611720"},
+            "conditions": [
+                {
+                    "active": true,
+                    "field": "uesio/tests.timestamp",
+                    "operator": "GTE",
+                    "valueSource": "PARAM",
+                    "param": "timestamp"
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes 978310860
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 1012611720
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 1046656980
+
+# Operator: LTE | valueSource: VALUE
+# entry 15
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.wire_condition",
+            "fields": [{"id": "uesio/tests.timestamp"}],
+            "query": true,
+            "conditions": [
+                {
+                    "field": "uesio/tests.timestamp",
+                    "operator": "LTE",
+                    "valueSource": "VALUE",
+                    "value": 1012611720
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 978310860
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 1012611720
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes 1046656980
+
+# Operator: LTE | valueSource: PARAM
+# entry 16
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.wire_condition",
+            "fields": [{"id": "uesio/tests.timestamp"}],
             "query":true,
             "params": {"timestamp": "1012611720"},
             "conditions": [
@@ -332,12 +416,12 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 978307260
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 978310860
 jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 1012611720
 jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes 1046656980
 
 # Operator: IN | valueSource: VALUE
-# entry 14
+# entry 17
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -352,8 +436,8 @@ Accept: application/json
                     "operator": "IN",
                     "valueSource": "VALUE",
                     "values": [
-                        "1012611720",
-                        "1046656980"
+                        1012611720,
+                        1046656980
                     ]
                 }
             ]
@@ -366,7 +450,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 1012611720
 jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 1046656980
 
 # Operator: IN | valueSource: LOOKUP
-# entry 15
+# entry 18
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -374,22 +458,29 @@ Accept: application/json
         {
             "collection":"uesio/tests.wire_condition",
             "name":"reference",
-            "fields": [{"id":"uesio/tests.timestamp"}],
+            "fields": [{"id":"uesio/tests.timestamp"},{"id":"uesio/core.uniquekey"}],
             "query":true,
-            "batchsize":8
+            "conditions": [
+                {
+                    "field": "uesio/core.uniquekey",
+                    "operator": "EQ",
+                    "valueSource": "VALUE",
+                    "value": "ID-001"
+                }
+            ]
         },
         {
             "collection":"uesio/tests.wire_condition",
-            "fields": [{"id": "uesio/tests.timestamp"}],
+            "fields": [{"id": "uesio/core.uniquekey"},{"id": "uesio/tests.timestamp"}],
             "name":"condition",
             "query":true,
             "conditions": [
                 {
-                    "field": "uesio/tests.timestamp",
+                    "field": "uesio/core.uniquekey",
                     "operator": "IN",
                     "valueSource": "LOOKUP",
                     "lookupWire": "reference",
-                    "lookupField": "uesio/tests.timestamp"
+                    "lookupField": "uesio/core.uniquekey"
                 }
             ]
         }
@@ -397,10 +488,11 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[1].data[*]['uesio/tests.timestamp']" count == 8
+jsonpath "$.wires[1].data[*]['uesio/tests.timestamp']" == 978310860
+jsonpath "$.wires[1].data[*]['uesio/core.uniquekey']" == "ID-001"
 
 # Operator: IN | valueSource: PARAM
-# entry 16
+# entry 19
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -434,7 +526,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 1012611720
 jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 1046656980
 
 # Operator: NOT_IN | valueSource: VALUE
-# entry 17
+# entry 20
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -448,8 +540,8 @@ Accept: application/json
                     "field": "uesio/tests.timestamp",
                     "operator": "NOT_IN",
                     "values": [
-                        "1046656980",
-                        "1081044244"
+                        1046656980,
+                        1081044244
                     ]
                 }
             ]
@@ -462,7 +554,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes 1046656980
 jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes 1081044244
 
 # Operator: NOT_IN | valueSource: LOOKUP
-# entry 18
+# entry 21
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -495,7 +587,7 @@ HTTP 200
 jsonpath "$.wires[1].data[*]" not exists
 
 # Operator: NOT_IN | valueSource: PARAM
-## entry 19
+## entry 22
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -505,7 +597,7 @@ Accept: application/json
             "fields": [{"id": "uesio/tests.timestamp"}],
             "query":true,
             "params": {
-                "timestamp1": "978307260",
+                "timestamp1": "978310860",
                 "timestamp2": "1046656980",
                 "timestamp3": "1081044244"
             },
@@ -527,18 +619,19 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes 978307260
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes 978310860
 jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes 1046656980
 jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes 1081044244
 
 # Operator: IS_BLANK | valueSource: VALUE
-# entry 20
+# entry 23
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
         {
             "collection":"uesio/tests.wire_condition",
+            "fields": [{"id": "uesio/core.uniquekey"},{"id": "uesio/tests.timestamp"}],
             "query":true,
             "conditions": [
                 {
@@ -552,18 +645,19 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]" not exists
-
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-009"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-010"
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes null
 
 # Operator: IS_NOT_BLANK | valueSource: VALUE
-# entry 21
+# entry 24
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
         {
             "collection":"uesio/tests.wire_condition",
-            "fields": [{"id": "uesio/tests.timestamp"}],
+            "fields": [{"id": "uesio/core.uniquekey"},{"id": "uesio/tests.timestamp"}],
             "query":true,
             "conditions": [
                 {
@@ -578,10 +672,13 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" exists
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes null
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-009"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-010"
+
 
 # Operator: BETWEEN | valueSource: VALUE
-# entry 22
+# entry 25
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -596,8 +693,8 @@ Accept: application/json
                     "field": "uesio/tests.timestamp",
                     "operator": "BETWEEN",
                     "valueSource": "VALUE",
-                    "start": "978307260",
-                    "end": "1081044244"
+                    "start": 978310860,
+                    "end": 1081044244
                 }
             ]
         }
@@ -609,7 +706,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 1012611720
 jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 1046656980
 
 # Operator: BETWEEN | valueSource: VALUE
-# entry 23
+# entry 26
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -624,8 +721,8 @@ Accept: application/json
                     "field": "uesio/tests.timestamp",
                     "operator": "BETWEEN",
                     "valueSource": "VALUE",
-                    "start": "978307260",
-                    "end": "1046656980",    
+                    "start": 978310860,
+                    "end": 1046656980,    
                     "inclusiveStart":true,
                     "inclusiveEnd":true
                 }
@@ -635,6 +732,6 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 978307260
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 978310860
 jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 1012611720
 jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 1046656980
