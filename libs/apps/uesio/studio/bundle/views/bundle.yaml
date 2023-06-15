@@ -121,8 +121,6 @@ definition:
                                   - uesio/io.field:
                                       fieldId: uesio/studio.description
                                   - uesio/io.field:
-                                      fieldId: uesio/studio.workspace
-                                  - uesio/io.field:
                                       fieldId: uesio/core.createdby
                                       user:
                                         subtitle: $Time{uesio/core.createdat}
