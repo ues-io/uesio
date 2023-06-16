@@ -17,6 +17,7 @@ type loaderFunc func(change adapt.Item, data interface{}) error
 
 const INVALID_TIMESTAMP_ERROR = "Invalid format for TIMESTAMP field '%s': value '%v' is not valid ISO-8601 UTC datetime or Unix timestamp"
 const INVALID_NUMBER_ERROR = "Invalid format for NUMBER field '%s': value '%v' is not a valid number"
+const INVALID_CHECKBOX_ERROR = "Invalid format for CHECKBOX field '%s': value '%v' is not a valid boolean"
 
 func getNumberLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
 	return func(change adapt.Item, data interface{}) error {
@@ -41,8 +42,12 @@ func getBooleanLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adap
 			change[fieldMetadata.GetFullName()] = nil
 			return nil
 		}
-		change[fieldMetadata.GetFullName()] = raw_val == "true"
-		return nil
+		boolean_val, err := strconv.ParseBool((raw_val))
+		if err == nil {
+			change[fieldMetadata.GetFullName()] = boolean_val == true
+			return nil
+		}
+		return errors.New(fmt.Sprintf(INVALID_CHECKBOX_ERROR, fieldMetadata.GetFullName(), raw_val))
 	}
 }
 
