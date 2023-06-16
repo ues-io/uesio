@@ -155,21 +155,21 @@ definition:
                                       text: Export Data
                                       signals:
                                         - signal: route/NAVIGATE
-                                          path: app/$Param{app}/workspace/$Param{workspacename}/export/$Param{namespace}/$Param{collectionname}
+                                          path: app/$Param{app}/workspace/$Param{workspacename}/export/$Param{app}/$Param{collectionname}
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       uesio.id: import-collection-data
                                       text: Import Data
                                       signals:
                                         - signal: route/NAVIGATE
-                                          path: app/$Param{app}/workspace/$Param{workspacename}/import/$Param{namespace}/$Param{collectionname}
+                                          path: app/$Param{app}/workspace/$Param{workspacename}/import/$Param{app}/$Param{collectionname}
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       uesio.id: manage-collection-data
                                       text: Manage Data
                                       signals:
                                         - signal: route/NAVIGATE
-                                          path: app/$Param{app}/workspace/$Param{workspacename}/data/$Param{namespace}/$Param{collectionname}
+                                          path: app/$Param{app}/workspace/$Param{workspacename}/data/$Param{app}/$Param{collectionname}
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       uesio.id: edit-collection
@@ -284,7 +284,7 @@ definition:
                             - text: $Label{uesio/io.edit}
                               signals:
                                 - signal: route/NAVIGATE
-                                  path: app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{namespace}/$Param{collectionname}/fields/${uesio/studio.name}
+                                  path: app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{app}/$Param{collectionname}/fields/${uesio/studio.name}
                             - text: $Label{uesio/io.delete}
                               signals:
                                 - signal: wire/MARK_FOR_DELETE

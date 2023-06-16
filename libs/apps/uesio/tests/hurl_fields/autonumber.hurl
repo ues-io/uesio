@@ -368,6 +368,11 @@ Accept: application/json
         {
             "collection":"uesio/tests.wire_condition",
             "query":true,
+            "fields": [
+                {
+                    "id":"uesio/tests.autonumber"
+                }
+            ],
             "conditions": [
                 {
                     "field": "uesio/tests.autonumber",
@@ -379,7 +384,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]" not exists
+jsonpath "$.wires[0].data['uesio/tests.autonumber']" not exists
 
 
 # Operator: IS_NOT_BLANK | valueSource: VALUE
