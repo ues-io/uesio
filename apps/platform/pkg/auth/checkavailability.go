@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"fmt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
@@ -23,7 +24,7 @@ func CheckAvailability(signupMethodID string, testUsername string, site *meta.Si
 	}
 
 	if !matchesRegex(username, signupMethod.UsernameRegex) {
-		return nil, err
+		return nil, fmt.Errorf("username does not match required pattern: %s", signupMethod.UsernameFormatExplanation)
 	}
 
 	return GetUserByKey(username, session, nil)

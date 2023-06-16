@@ -49,3 +49,10 @@ func Login(authSourceID string, payload map[string]interface{}, session *sess.Se
 	return getUserFromClaims(authSourceID, claims, session)
 
 }
+
+func LoginWithoutPassword(authSourceID string, payload map[string]interface{}, session *sess.Session) (*meta.User, error) {
+	claims := &AuthenticationClaims{
+		Subject: payload["username"].(string),
+	}
+	return getUserFromClaims(authSourceID, claims, session)
+}

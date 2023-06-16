@@ -3,7 +3,7 @@ import { SignalBandDefinition, SignalDescriptor } from "../api/signalsapi"
 // The key for the entire band
 const BAND = "user"
 
-// Metadata for all of the signals in the band
+// Metadata for all signals in the band
 const signals: SignalBandDefinition = {
 	band: BAND,
 	label: "User",
@@ -11,23 +11,6 @@ const signals: SignalBandDefinition = {
 		[`${BAND}/SIGNUP`]: {
 			label: "Signup",
 			description: "Signup",
-			properties: () => [
-				{
-					name: "signupMethod",
-					label: "Signup Method",
-					type: "TEXT",
-				},
-				{
-					name: "payload",
-					label: "Payload",
-					type: "TEXT", // TODO: Fix this
-				},
-			],
-		},
-		[`${BAND}/SIGNUP_CONFIRM`]: {
-			label: "Signup Confirmation",
-			description:
-				"Confirm a user's verification code received during signup",
 			properties: () => [
 				{
 					name: "signupMethod",
