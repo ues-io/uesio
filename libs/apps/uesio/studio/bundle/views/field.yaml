@@ -319,7 +319,7 @@ definition:
                 wires:
                   - fields
               - signal: route/NAVIGATE
-                path: app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{namespace}/$Param{collectionname}
+                path: app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{collectionname}
         - uesio/io.button:
             text: $Label{uesio/io.cancel}
             uesio.variant: uesio/io.secondary
