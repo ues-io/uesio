@@ -39,6 +39,19 @@ definition:
       init:
         create: true
       fields:
+        type:
+          type: SELECT
+          label: Release type
+          selectlist:
+            options:
+              - label: Major
+                value: major
+              - label: Minor
+                value: minor
+              - label: Patch
+                value: patch
+              - label: Custom
+                value: custom
         major:
           type: NUMBER
           label: Major version
@@ -58,6 +71,9 @@ definition:
           type: TEXT
           label: Bundle description
       defaults:
+        - field: type
+          valueSource: VALUE
+          value: patch
         - field: major
           valueSource: LOOKUP
           lookupWire: latestbundle
@@ -124,7 +140,7 @@ definition:
       uesio.type: uesio/io.dialog
       title: Package new bundle version
       width: 400px
-      height: 500px
+      height: 660px
       components:
         - uesio/io.list:
             uesio.id: newbundle
@@ -132,20 +148,33 @@ definition:
             mode: EDIT
             components:
               - uesio/io.field:
+                  fieldId: type
+                  uesio.id: new-bundle-type
+                  displayAs: RADIO
+              - uesio/io.field:
                   fieldId: major
                   uesio.id: new-bundle-major
+                  uesio.display:
+                    - field: type
+                      value: custom
                   number:
                     min: 0
                     step: 1
               - uesio/io.field:
                   fieldId: minor
                   uesio.id: new-bundle-minor
+                  uesio.display:
+                    - field: type
+                      value: custom
                   number:
                     min: 0
                     step: 1
               - uesio/io.field:
                   fieldId: patch
                   uesio.id: new-bundle-patch
+                  uesio.display:
+                    - field: type
+                      value: custom
                   number:
                     min: 0
                     step: 1
@@ -175,6 +204,7 @@ definition:
                       id: newversion
                 bot: uesio/studio.createbundle
                 params:
+                  type: $Record{newbundle:type}
                   major: $Record{newbundle:major}
                   minor: $Record{newbundle:minor}
                   patch: $Record{newbundle:patch}

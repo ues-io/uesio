@@ -85,7 +85,7 @@ func Test_resolveBundleParameters(t *testing.T) {
 			"",
 		},
 		{
-			"allow major version increase with minor/patch set to 0",
+			"allow custom major release",
 			args{
 				lastBundle: &meta.Bundle{
 					Major: 1,
@@ -94,18 +94,18 @@ func Test_resolveBundleParameters(t *testing.T) {
 				},
 				params: map[string]interface{}{
 					"major":       2,
-					"minor":       0,
-					"patch":       0,
+					"minor":       1,
+					"patch":       1,
 					"description": "Major release",
 				},
 			},
 			2,
-			0,
-			0,
+			1,
+			1,
 			"Major release",
 		},
 		{
-			"allow minor version increase with patch set to 0",
+			"allow custom minor release",
 			args{
 				lastBundle: &meta.Bundle{
 					Major: 1,
@@ -113,16 +113,71 @@ func Test_resolveBundleParameters(t *testing.T) {
 					Patch: 2,
 				},
 				params: map[string]interface{}{
-					"major":       float64(1),
-					"minor":       float64(3),
-					"patch":       float64(0),
-					"description": "Minor release",
+					// Use string values to simulate requests from the Studio UI
+					"major":       "2",
+					"minor":       "4",
+					"patch":       "5",
+					"description": "custom minor release",
+				},
+			},
+			2,
+			4,
+			5,
+			"custom minor release",
+		},
+		{
+			"major release",
+			args{
+				lastBundle: &meta.Bundle{
+					Major: 1,
+					Minor: 2,
+					Patch: 2,
+				},
+				params: map[string]interface{}{
+					"type":        "major",
+					"description": "Spring release",
+				},
+			},
+			2,
+			0,
+			0,
+			"Spring release",
+		},
+		{
+			"minor release",
+			args{
+				lastBundle: &meta.Bundle{
+					Major: 1,
+					Minor: 2,
+					Patch: 2,
+				},
+				params: map[string]interface{}{
+					"type":        "minor",
+					"description": "Spring point release",
 				},
 			},
 			1,
 			3,
 			0,
-			"Minor release",
+			"Spring point release",
+		},
+		{
+			"patch release",
+			args{
+				lastBundle: &meta.Bundle{
+					Major: 1,
+					Minor: 2,
+					Patch: 2,
+				},
+				params: map[string]interface{}{
+					"type":        "patch",
+					"description": "Nightly build",
+				},
+			},
+			1,
+			2,
+			3,
+			"Nightly build",
 		},
 	}
 	for _, tt := range tests {

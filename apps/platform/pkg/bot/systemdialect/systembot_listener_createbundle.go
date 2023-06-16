@@ -7,6 +7,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"strconv"
 )
 
 func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
@@ -110,31 +111,60 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.
 
 // resolveBundleParameters determines the major/minor/patch and description for the new Bundle,
 // using the following cascade in order of priority:
-// 1. bot params (major/minor/patch MUST be all defined in order to qualify)
-// 2. increment just patch using most recent bundle
-// 3. default to 0.0.1
+// 1. bot params - using release type, and the most recent bundle
+// 2. bot params - manual, using major/minor/patch, which MUST be all defined in order to qualify)
+// 3. default to just doing a patch with the most recent bundle, if there is one
+// 4. if NO recent bundle / all else fails --- start with 0.0.1
 func resolveBundleParameters(params map[string]interface{}, lastBundle *meta.Bundle) (major, minor, patch int, description string) {
 	description = ""
+
+	releaseType := ""
+
+	if releaseTypeParam, hasReleaseTypeParam := params["type"]; hasReleaseTypeParam {
+		if stringValue, isString := releaseTypeParam.(string); isString {
+			releaseType = stringValue
+		}
+	}
 
 	if descriptionParam, hasDescriptionParam := params["description"]; hasDescriptionParam {
 		if stringValue, isString := descriptionParam.(string); isString {
 			description = stringValue
 		}
 	}
+
+	majorParam, hasValidMajorParam := GetMapKeyAsInt("major", params)
+	minorParam, hasValidMinorParam := GetMapKeyAsInt("minor", params)
+	patchParam, hasValidPatchParam := GetMapKeyAsInt("patch", params)
+
 	major = 0
 	minor = 0
 	patch = 1
 
 	// Prioritize params, but require major AND minor AND patch
-	majorParam, hasValidMajorParam := GetMapKeyAsInt("major", params)
-	minorParam, hasValidMinorParam := GetMapKeyAsInt("minor", params)
-	patchParam, hasValidPatchParam := GetMapKeyAsInt("patch", params)
 
-	if hasValidMajorParam && hasValidMinorParam && hasValidPatchParam {
+	// If we have a valid release type, and we have a recent bundle,
+	// then just increment the corresponding numbers on that bundle.
+	if lastBundle != nil && (releaseType == "major" || releaseType == "minor" || releaseType == "patch") {
+		switch releaseType {
+		case "major":
+			major = lastBundle.Major + 1
+			minor = 0
+			patch = 0
+		case "minor":
+			major = lastBundle.Major
+			minor = lastBundle.Minor + 1
+			patch = 0
+		case "patch":
+			major = lastBundle.Major
+			minor = lastBundle.Minor
+			patch = lastBundle.Patch + 1
+		}
+	} else if hasValidMajorParam && hasValidMinorParam && hasValidPatchParam {
 		major = majorParam
 		minor = minorParam
 		patch = patchParam
 	} else if lastBundle != nil {
+		// Default to doing a patch increment
 		major = lastBundle.Major
 		minor = lastBundle.Minor
 		patch = lastBundle.Patch + 1
@@ -149,6 +179,13 @@ func GetMapKeyAsInt(key string, m map[string]interface{}) (int, bool) {
 		}
 		if floatValue, isFloat := value.(float64); isFloat {
 			return int(floatValue), true
+		}
+		if stringValue, isString := value.(string); isString {
+			intValue, err := strconv.Atoi(stringValue)
+			if err != nil {
+				return 0, false
+			}
+			return intValue, true
 		}
 	}
 	return 0, false

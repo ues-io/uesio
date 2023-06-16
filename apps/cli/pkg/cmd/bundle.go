@@ -7,7 +7,7 @@ import (
 	"github.com/thecloudmasters/cli/pkg/command/bundle"
 )
 
-var majorVersion, minorVersion, patchVersion, bundleDescription string
+var releaseType, majorVersion, minorVersion, patchVersion, bundleDescription string
 
 func init() {
 
@@ -22,6 +22,7 @@ func init() {
 		Run:   createBundle,
 	}
 	createBundleCommand.Flags().StringVarP(&bundleDescription, "description", "d", "", "Text describing this bundle")
+	createBundleCommand.Flags().StringVarP(&releaseType, "type", "t", "", "The release type, one of ['major','minor','patch','custom']")
 	createBundleCommand.Flags().StringVarP(&majorVersion, "major", "m", "", "The major release number for this bundle")
 	createBundleCommand.Flags().StringVarP(&minorVersion, "minor", "n", "", "The minor release number for this bundle")
 	createBundleCommand.Flags().StringVarP(&patchVersion, "patch", "p", "", "The patch release number for this bundle")
@@ -33,7 +34,7 @@ func init() {
 }
 
 func createBundle(cmd *cobra.Command, args []string) {
-	err := bundle.CreateBundle(majorVersion, minorVersion, patchVersion, bundleDescription)
+	err := bundle.CreateBundle(releaseType, majorVersion, minorVersion, patchVersion, bundleDescription)
 	if err != nil {
 		fmt.Println("Error: " + err.Error())
 		return

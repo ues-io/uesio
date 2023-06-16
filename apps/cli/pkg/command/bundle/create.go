@@ -16,7 +16,7 @@ type CallBotResponse struct {
 	Error   string                 `json:"error,omitempty"`
 }
 
-func CreateBundle(majorVersion, minorVersion, patchVersion, bundleDescription string) error {
+func CreateBundle(releaseType, majorVersion, minorVersion, patchVersion, bundleDescription string) error {
 
 	_, err := auth.Login()
 	if err != nil {
@@ -56,8 +56,9 @@ func CreateBundle(majorVersion, minorVersion, patchVersion, bundleDescription st
 	if bundleDescription != "" {
 		botInputs["description"] = bundleDescription
 	}
-
-	fmt.Println("Bot inputs are: %v", botInputs)
+	if releaseType != "" {
+		botInputs["type"] = releaseType
+	}
 
 	botResponse := &CallBotResponse{}
 
@@ -78,6 +79,10 @@ func CreateBundle(majorVersion, minorVersion, patchVersion, bundleDescription st
 }
 
 func addVersionNumberToInputsIfInt(version, inputName string, botInputs map[string]interface{}) error {
+	// Ignore param if not provided
+	if version == "" {
+		return nil
+	}
 	versionInt, err := strconv.Atoi(version)
 	if err != nil {
 		return fmt.Errorf("invalid %s version - must be an integer", inputName)
