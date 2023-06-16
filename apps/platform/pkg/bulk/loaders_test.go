@@ -184,15 +184,15 @@ func Test_BooleanLoader(t *testing.T) {
 		wantErr string
 	}{
 		{
-			"parse boolan value true",
+			"parse boolean value true",
 			"true",
-			bool(true),
+			true,
 			"",
 		},
 		{
-			"parse boolan value false",
+			"parse boolean value false",
 			"false",
-			bool(false),
+			false,
 			"",
 		},
 		{
@@ -203,9 +203,9 @@ func Test_BooleanLoader(t *testing.T) {
 		},
 		{
 			"return error if input can not be parsed as boolean",
-			"notbool",
+			"not a boolean",
 			nil,
-			"Invalid format for CHECKBOX field 'uesio/core.checkbox': value 'notbool' is not a valid boolean",
+			"Invalid format for CHECKBOX field 'uesio/core.checkbox': value 'not a boolean' is not a valid boolean",
 		},
 	}
 	for _, tt := range tests {
