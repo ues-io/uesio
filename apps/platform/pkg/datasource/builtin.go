@@ -79,6 +79,16 @@ var UPDATEDAT_FIELD_METADATA = adapt.FieldMetadata{
 	AutoPopulate: "UPDATE",
 }
 
+var COLLECTION_FIELD = adapt.FieldMetadata{
+	Name:       "collection",
+	Namespace:  "uesio/core",
+	Createable: false,
+	Accessible: true,
+	Updateable: false,
+	Type:       "TEXT",
+	Label:      "Collection",
+}
+
 func addAllBuiltinFields(collectionMetadata *adapt.CollectionMetadata) {
 	collectionMetadata.SetField(&ID_FIELD_METADATA)
 	collectionMetadata.SetField(&UNIQUE_KEY_FIELD_METADATA)
