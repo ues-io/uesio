@@ -10,8 +10,69 @@ POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 }
 HTTP 200
 
-# Operator: EQ | valueSource: VALUE | Bad Value
+# WIRE LOAD to get uuid from uniquekey ID-001
 # entry 2
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.wire_condition",
+            "name":"reference",
+            "fields": [
+                {
+                    "id":"uesio/core.uniquekey"
+                }
+            ],
+            "query":true,
+            "conditions": [
+                {
+                    "field": "uesio/core.uniquekey",
+                    "operator": "EQ",
+                    "valueSource": "VALUE",
+                    "value": "ID-001"
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Captures]
+ID001-UUID: jsonpath "$.wires[0].data[*]['uesio/core.id']"
+
+# WIRE LOAD to get uuid from uniquekey ID-002
+# entry 3
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.wire_condition",
+            "name":"reference",
+            "fields": [
+                {
+                    "id":"uesio/core.uniquekey"
+                }
+            ],
+            "query":true,
+            "conditions": [
+                {
+                    "field": "uesio/core.uniquekey",
+                    "operator": "EQ",
+                    "valueSource": "VALUE",
+                    "value": "ID-002"
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Captures]
+ID002-UUID: jsonpath "$.wires[0].data[*]['uesio/core.id']"
+
+
+# Operator: EQ | valueSource: VALUE | Bad Value
+# entry 4
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -33,8 +94,8 @@ Accept: application/json
 }
 HTTP 400
 
-# Operator: EQ | valueSource: VALUE
-# entry 3
+# Operator: EQ | valueSource: VALUE | Self reference (ID-001 --> ID-001)
+# entry 5
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -48,7 +109,7 @@ Accept: application/json
                     "field": "uesio/tests.reference",
                     "operator": "EQ",
                     "valueSource": "VALUE",
-                    "value": "0188bf16-fa95-77d7-b1f4-000bdabc86d8"
+                    "value": "{{ID001-UUID}}"
                 }
             ]
         }
@@ -58,8 +119,33 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" == "ID-001"
 
+# Operator: EQ | valueSource: VALUE | Reference to another record (ID-004 --> ID-005)
+# entry 6
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.wire_condition",
+            "fields": [{"id":"uesio/core.uniquekey"},{"id": "uesio/tests.reference"}],
+            "query": true,
+            "conditions": [
+                {
+                    "field": "uesio/core.uniquekey",
+                    "operator": "EQ",
+                    "valueSource": "VALUE",
+                    "value": "ID-004"
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" == "ID-005"
+
 # Operator: EQ | valueSource: PARAM
-# entry 4
+# entry 7
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -68,7 +154,7 @@ Accept: application/json
             "collection":"uesio/tests.wire_condition",
             "fields": [{"id": "uesio/tests.reference"}],
             "query":true,
-            "params": {"reference": "0188bf16-fa95-77d7-b1f4-000bdabc86d8"},
+            "params": {"reference": "{{ID001-UUID}}"},
             "conditions": [
                 {
                     "active": true,
@@ -86,7 +172,7 @@ HTTP 200
 jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" == "ID-001"
 
 # Operator: NOT_EQ | valueSource: VALUE
-# entry 5
+# entry 8
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -99,7 +185,7 @@ Accept: application/json
                     "active": true,
                     "field": "uesio/tests.reference",
                     "operator": "NOT_EQ",
-                    "value": "0188bf16-fa95-77d7-b1f4-000bdabc86d8",
+                    "value": "{{ID001-UUID}}",
                     "valueSource": "VALUE"
                 }
             ]
@@ -111,7 +197,7 @@ HTTP 200
 jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" not includes "ID-001"
 
 # Operator: NOT_EQ | valueSource: PARAM
-# entry 6
+# entry 9
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -120,7 +206,7 @@ Accept: application/json
             "collection":"uesio/tests.wire_condition",
             "fields": [{"id": "uesio/tests.reference"}],
             "query":true,
-            "params": {"reference": "0188bf16-fa95-77d7-b1f4-000bdabc86d8"},
+            "params": {"reference": "{{ID001-UUID}}"},
             "conditions": [
                 {
                     "active": true,
@@ -138,7 +224,7 @@ HTTP 200
 jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" not includes "ID-001"
 
 # Operator: IN | valueSource: VALUE
-# entry 7
+# entry 10
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -153,8 +239,8 @@ Accept: application/json
                     "operator": "IN",
                     "valueSource": "VALUE",
                     "values": [
-                        "0188bf16-fa95-77d7-b1f4-000bdabc86d8",
-                        "0188bf16-fa95-7a43-8422-b665772dedb5"
+                        "{{ID001-UUID}}",
+                        "{{ID002-UUID}}"
                     ]
                 }
             ]
@@ -167,7 +253,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" i
 jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" includes "ID-002"
 
 # Operator: IN | valueSource: LOOKUP
-# entry 8
+# entry 11
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -209,7 +295,7 @@ jsonpath "$.wires[1].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" =
 
 
 # Operator: IN | valueSource: PARAM
-# entry 9
+# entry 12
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -219,8 +305,8 @@ Accept: application/json
             "fields": [{"id": "uesio/tests.reference"},{"id": "uesio/core.uniquekey"}],
             "query":true,
             "params": {
-                "reference1": "0188bf16-fa95-77d7-b1f4-000bdabc86d8",
-                "reference2": "0188bf16-fa95-7a43-8422-b665772dedb5"
+                "reference1": "{{ID001-UUID}}",
+                "reference2": "{{ID002-UUID}}"
             },
             "conditions": [
                 {
@@ -244,7 +330,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" i
 jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" not includes "ID-003"
 
 # Operator: NOT_IN | valueSource: VALUE
-# entry 10
+# entry 13
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -258,8 +344,8 @@ Accept: application/json
                     "field": "uesio/tests.reference",
                     "operator": "NOT_IN",
                     "values": [
-                        "0188bf16-fa95-77d7-b1f4-000bdabc86d8",
-                        "0188bf16-fa95-7a43-8422-b665772dedb5"
+                        "{{ID001-UUID}}",
+                        "{{ID002-UUID}}"
                     ]
                 }
             ]
@@ -273,7 +359,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" n
 jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" includes "ID-003"
 
 # Operator: NOT_IN | valueSource: LOOKUP
-# entry 11
+# entry 14
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -314,7 +400,7 @@ HTTP 200
 jsonpath "$.wires[1].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" not includes "ID-001"
 
 # Operator: NOT_IN | valueSource: PARAM
-## entry 12
+## entry 15
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -324,8 +410,8 @@ Accept: application/json
             "fields": [{"id": "uesio/tests.reference"},{"id": "uesio/core.uniquekey"}],
             "query":true,
             "params": {
-                "reference1": "0188bf16-fa95-77d7-b1f4-000bdabc86d8",
-                "reference2": "0188bf16-fa95-7a43-8422-b665772dedb5"
+                "reference1": "{{ID001-UUID}}",
+                "reference2": "{{ID002-UUID}}"
             },
             "conditions": [
                 {
@@ -348,7 +434,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" n
 jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" not includes "ID-002"
 
 # Operator: IS_BLANK | valueSource: VALUE
-# entry 13
+# entry 16
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -373,7 +459,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.reference']" includes null
 
 
 # Operator: IS_NOT_BLANK | valueSource: VALUE
-# entry 14
+# entry 17
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
