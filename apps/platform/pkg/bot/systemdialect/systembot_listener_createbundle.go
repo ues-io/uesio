@@ -140,11 +140,13 @@ func resolveBundleParameters(params map[string]interface{}, lastBundle *meta.Bun
 	minor = 0
 	patch = 1
 
-	// Prioritize params, but require major AND minor AND patch
+	// Require major AND minor AND patch to do a "custom" release
+	hasValidParams := hasValidMajorParam && hasValidMinorParam && hasValidPatchParam
 
 	// If we have a valid release type, and we have a recent bundle,
 	// then just increment the corresponding numbers on that bundle.
-	if lastBundle != nil && (releaseType == "major" || releaseType == "minor" || releaseType == "patch") {
+	// Also, default to a patch release if we don't have valid release numbers.
+	if lastBundle != nil && (releaseType == "major" || releaseType == "minor" || releaseType == "patch" || (releaseType == "" && !hasValidParams)) {
 		switch releaseType {
 		case "major":
 			major = lastBundle.Major + 1
@@ -154,20 +156,15 @@ func resolveBundleParameters(params map[string]interface{}, lastBundle *meta.Bun
 			major = lastBundle.Major
 			minor = lastBundle.Minor + 1
 			patch = 0
-		case "patch":
+		default:
 			major = lastBundle.Major
 			minor = lastBundle.Minor
 			patch = lastBundle.Patch + 1
 		}
-	} else if hasValidMajorParam && hasValidMinorParam && hasValidPatchParam {
+	} else if hasValidParams {
 		major = majorParam
 		minor = minorParam
 		patch = patchParam
-	} else if lastBundle != nil {
-		// Default to doing a patch increment
-		major = lastBundle.Major
-		minor = lastBundle.Minor
-		patch = lastBundle.Patch + 1
 	}
 	return major, minor, patch, description
 }
