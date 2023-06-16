@@ -44,7 +44,7 @@ func getBooleanLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adap
 		}
 		booleanVal, err := strconv.ParseBool(rawVal)
 		if err == nil {
-			change[fieldMetadata.GetFullName()] = booleanVal == true
+			change[fieldMetadata.GetFullName()] = booleanVal
 			return nil
 		}
 		return errors.New(fmt.Sprintf(InvalidCheckboxError, fieldMetadata.GetFullName(), rawVal))
