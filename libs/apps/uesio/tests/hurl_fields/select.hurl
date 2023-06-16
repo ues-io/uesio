@@ -363,6 +363,7 @@ Accept: application/json
     "wires": [
         {
             "collection":"uesio/tests.wire_condition",
+            "fields": [{"id": "uesio/tests.select"},{"id": "uesio/core.uniquekey"}],
             "query":true,
             "conditions": [
                 {
@@ -375,8 +376,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]" not exists
-
+jsonpath "$.wires[0].data[*]['uesio/tests.select']" includes ""
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-009"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-010"
 
 # Operator: IS_NOT_BLANK | valueSource: VALUE
 # entry 14
@@ -386,7 +388,7 @@ Accept: application/json
     "wires": [
         {
             "collection":"uesio/tests.wire_condition",
-            "fields": [{"id": "uesio/tests.select"}],
+            "fields": [{"id": "uesio/tests.select"},{"id": "uesio/core.uniquekey"}],
             "query":true,
             "conditions": [
                 {
@@ -399,4 +401,6 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.select']" exists
+jsonpath "$.wires[0].data[*]['uesio/tests.select']" not includes ""
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-009"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-010"
