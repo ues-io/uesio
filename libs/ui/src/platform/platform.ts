@@ -10,7 +10,14 @@ import { parseKey } from "../component/path"
 import { PlainWireRecord } from "../bands/wirerecord/types"
 import { ParamDefinition } from "../definition/param"
 import { UserState } from "../bands/user/types"
-import { getJSON, postJSON, respondJSON, respondVoid } from "./async"
+import {
+	getJSON,
+	postBinary,
+	post,
+	postJSON,
+	respondJSON,
+	respondVoid,
+} from "./async"
 import { memoizedGetJSON } from "./memoizedAsync"
 
 // Allows us to load static vendor assets, such as Monaco modules, from custom paths
@@ -271,14 +278,11 @@ const platform = {
 		params.append("recordid", recordID)
 		if (fieldID) params.append("fieldid", fieldID)
 
-		const response = await fetch(url + "?" + params.toString(), {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/octet-stream",
-			},
-			body: fileData,
-		})
-
+		const response = await postBinary(
+			context,
+			url + "?" + params.toString(),
+			fileData
+		)
 		return respondJSON(response)
 	},
 	deleteFile: async (
@@ -287,9 +291,7 @@ const platform = {
 	): Promise<BotResponse> => {
 		const prefix = getPrefix(context)
 		const url = `${prefix}/userfiles/delete/${userFileID}`
-		const response = await fetch(url, {
-			method: "POST",
-		})
+		const response = await post(context, url)
 		return respondJSON(response)
 	},
 	getComponentPackURL: (
@@ -428,7 +430,7 @@ const platform = {
 		username: string
 	): Promise<void> => {
 		const [namespace, name] = parseKey(signupMethod)
-		const response = await postJSON(
+		const response = await post(
 			context,
 			`/site/auth/${namespace}/${name}/checkavailability/${username}`
 		)
@@ -448,7 +450,7 @@ const platform = {
 		return respondJSON(response)
 	},
 	logout: async (context: Context): Promise<LoginResponse> => {
-		const response = await postJSON(context, "/site/auth/logout")
+		const response = await post(context, "/site/auth/logout")
 		return respondJSON(response)
 	},
 	forgotPassword: async (
@@ -493,15 +495,7 @@ const platform = {
 	): Promise<void> => {
 		const prefix = getPrefix(context)
 		const url = `${prefix}/bulk/job/${jobId}/batch`
-		const response = await fetch(url, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/octet-stream",
-			},
-			redirect: "manual",
-			body: fileData,
-		})
-
+		const response = await postBinary(context, url, fileData)
 		return respondVoid(response)
 	},
 	getBuilderDeps: async (context: Context): Promise<Dependencies> => {

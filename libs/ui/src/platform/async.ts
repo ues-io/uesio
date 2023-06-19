@@ -31,28 +31,54 @@ function interceptPlatformRedirects(response: Response) {
 	}
 }
 
+function addOriginalSessionHashHeader(
+	context: Context,
+	headers: Record<string, string> = {}
+) {
+	const session = context.getSession()
+	if (session && headers) {
+		headers["x-uesio-osh"] = session.hash
+	}
+	return headers
+}
+
 export const getJSON = (context: Context, url: string) =>
 	fetch(url, {
 		method: "GET",
-		headers: {
+		headers: addOriginalSessionHashHeader(context, {
 			"Content-Type": "application/json",
 			"Accept-Encoding": "gzip, deflate",
-			"x-uesio-osh": context.getSession()?.hash || "",
-		},
+		}),
 	}).then(respondJSON)
+
+export const post = (context: Context, url: string) =>
+	fetch(url, {
+		method: "POST",
+		headers: addOriginalSessionHashHeader(context),
+	})
 
 export const postJSON = (
 	context: Context,
 	url: string,
-	body?: Record<string, unknown>
+	body: Record<string, unknown>
 ) =>
 	fetch(url, {
 		method: "POST",
-		headers: {
+		headers: addOriginalSessionHashHeader(context, {
 			"Content-Type": "application/json",
-			"x-uesio-osh": context.getSession()?.hash || "",
-		},
-		...(body && {
-			body: JSON.stringify(body),
 		}),
+		body: JSON.stringify(body),
+	})
+
+export const postBinary = (
+	context: Context,
+	url: string,
+	body: string | Blob | File
+) =>
+	fetch(url, {
+		method: "POST",
+		headers: addOriginalSessionHashHeader(context, {
+			"Content-Type": "application/octet-stream",
+		}),
+		body,
 	})
