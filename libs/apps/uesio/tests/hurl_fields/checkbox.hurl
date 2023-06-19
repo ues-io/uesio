@@ -167,6 +167,7 @@ Accept: application/json
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" includes false
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" includes null
 jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes true
 
 # Operator: NOT_EQ | valueSource: PARAM
@@ -197,6 +198,7 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes true
 jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" includes false
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" includes null
 
 # Operator: IS_BLANK | valueSource: VALUE
 # entry 8
@@ -206,6 +208,7 @@ Accept: application/json
     "wires": [
         {
             "collection":"uesio/tests.wire_condition",
+            "fields": [{"id": "uesio/tests.checkbox"},{"id": "uesio/core.uniquekey"}],
             "query":true,
             "conditions": [
                 {
@@ -218,8 +221,11 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" includes null
 jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes true
 jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes false
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-005"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-006"
 
 # Operator: IS_NOT_BLANK | valueSource: VALUE
 # entry 9
@@ -229,7 +235,7 @@ Accept: application/json
     "wires": [
         {
             "collection":"uesio/tests.wire_condition",
-            "fields": [{"id": "uesio/tests.checkbox"}],
+            "fields": [{"id": "uesio/tests.checkbox"},{"id": "uesio/core.uniquekey"}],
             "query":true,
             "conditions": [
                 {
@@ -245,3 +251,5 @@ HTTP 200
 jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" includes true
 jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" includes false
 jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes null
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-005"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-006"

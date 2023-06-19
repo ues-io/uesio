@@ -15,29 +15,39 @@ import (
 type valueFunc func(data interface{}, mapping *meta.FieldMapping, index int) string
 type loaderFunc func(change adapt.Item, data interface{}) error
 
-const INVALID_TIMESTAMP_ERROR = "Invalid format for TIMESTAMP field '%s': value '%v' is not valid ISO-8601 UTC datetime or Unix timestamp"
-const INVALID_NUMBER_ERROR = "Invalid format for NUMBER field '%s': value '%v' is not a valid number"
+const InvalidTimestampError = "Invalid format for TIMESTAMP field '%s': value '%v' is not valid ISO-8601 UTC datetime or Unix timestamp"
+const InvalidNumberError = "Invalid format for NUMBER field '%s': value '%v' is not a valid number"
+const InvalidCheckboxError = "Invalid format for CHECKBOX field '%s': value '%v' is not a valid boolean"
 
 func getNumberLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
 	return func(change adapt.Item, data interface{}) error {
-		raw_val := getValue(data, mapping, index)
-		if raw_val == "" {
+		rawVal := getValue(data, mapping, index)
+		if rawVal == "" {
 			change[fieldMetadata.GetFullName()] = nil
 			return nil
 		}
-		float_val, err := strconv.ParseFloat(raw_val, 64)
+		floatVal, err := strconv.ParseFloat(rawVal, 64)
 		if err == nil {
-			change[fieldMetadata.GetFullName()] = float_val
+			change[fieldMetadata.GetFullName()] = floatVal
 			return nil
 		}
-		return errors.New(fmt.Sprintf(INVALID_NUMBER_ERROR, fieldMetadata.GetFullName(), raw_val))
+		return errors.New(fmt.Sprintf(InvalidNumberError, fieldMetadata.GetFullName(), rawVal))
 	}
 }
 
 func getBooleanLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
 	return func(change adapt.Item, data interface{}) error {
-		change[fieldMetadata.GetFullName()] = getValue(data, mapping, index) == "true"
-		return nil
+		rawVal := getValue(data, mapping, index)
+		if rawVal == "" {
+			change[fieldMetadata.GetFullName()] = nil
+			return nil
+		}
+		booleanVal, err := strconv.ParseBool(rawVal)
+		if err == nil {
+			change[fieldMetadata.GetFullName()] = booleanVal
+			return nil
+		}
+		return errors.New(fmt.Sprintf(InvalidCheckboxError, fieldMetadata.GetFullName(), rawVal))
 	}
 }
 
@@ -78,7 +88,7 @@ func getTimestampLoader(index int, mapping *meta.FieldMapping, fieldMetadata *ad
 			// Try parsing as Unix Timestamp
 			int64Val, err := strconv.ParseInt(stringValue, 10, 64)
 			if err != nil {
-				return errors.New(fmt.Sprintf(INVALID_TIMESTAMP_ERROR, fieldMetadata.GetFullName(), stringValue))
+				return errors.New(fmt.Sprintf(InvalidTimestampError, fieldMetadata.GetFullName(), stringValue))
 			}
 			t = time.Unix(int64Val, 0)
 		}

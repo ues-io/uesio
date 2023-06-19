@@ -1,4 +1,4 @@
-import { definition, component, styles } from "@uesio/ui"
+import { api, definition, component, styles } from "@uesio/ui"
 import SaveCancelArea from "./savecancelarea"
 import HeaderCrumbs from "./headercrumbs"
 
@@ -25,7 +25,18 @@ const MainHeader: definition.UtilityComponent = (props) => {
 	const Avatar = component.getUtility("uesio/io.avatar")
 
 	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
-
+	const [homeLogoLink, homeLogoOnClick] = api.signal.useLinkHandler(
+		[
+			{
+				// Have to use REDIRECT in order for path to be resolved to top-level "/home"
+				// and because we are switching in/out of workspace / site mode,
+				// otherwise the resolved URL will be /workspace/...lots of stuff.../home which is NOT what we want
+				signal: "route/REDIRECT",
+				path: "/home",
+			},
+		],
+		context
+	)
 	return (
 		<Grid className={classes.root} context={context}>
 			<Group context={context}>
@@ -34,6 +45,8 @@ const MainHeader: definition.UtilityComponent = (props) => {
 					height="28"
 					file="uesio/core.logo"
 					context={context}
+					onClick={homeLogoOnClick}
+					link={homeLogoLink}
 				/>
 				<HeaderCrumbs context={context} />
 			</Group>

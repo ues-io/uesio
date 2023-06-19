@@ -13,10 +13,6 @@ interface SignupSignal extends SignalDefinition {
 	signupMethod: string
 	payload: Record<string, string>
 }
-interface SignupConfirmSignal extends SignalDefinition {
-	signupMethod: string
-	payload: Record<string, string>
-}
 interface UsernameTestSignal extends SignalDefinition {
 	username: string
 	signupMethod: string
@@ -40,14 +36,6 @@ const signals: Record<string, SignalDescriptor> = {
 	[`${USER_BAND}/SIGNUP`]: {
 		dispatcher: (signal: SignupSignal, context: Context) =>
 			operations.signup(context, signal.signupMethod, signal.payload),
-	},
-	[`${USER_BAND}/SIGNUP_CONFIRM`]: {
-		dispatcher: (signal: SignupConfirmSignal, context: Context) =>
-			operations.signUpConfirm(
-				context,
-				signal.signupMethod,
-				signal.payload
-			),
 	},
 	[`${USER_BAND}/LOGIN`]: {
 		dispatcher: (signal: LoginSignal, context: Context) =>

@@ -1,5 +1,0 @@
-name: signupconfirm
-path: signupconfirm
-view: uesio/core.signupconfirm
-public: true
-title: Uesio - Verify Email
