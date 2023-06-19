@@ -176,6 +176,10 @@ type IconProperty = {
 	type: "ICON"
 } & BaseProperty
 
+type DateProperty = {
+	type: "DATE"
+} & BaseProperty
+
 type ComponentProperty =
 	| BotProperty
 	| TextProperty
@@ -200,6 +204,7 @@ type ComponentProperty =
 	| TextAreaProperty
 	| IconProperty
 	| StructProperty
+	| DateProperty
 
 const getStyleVariantProperty = (componentType: string): ComponentProperty => ({
 	name: "uesio.variant",
@@ -225,6 +230,7 @@ export type {
 	TextProperty,
 	NumberProperty,
 	CheckboxProperty,
+	DateProperty,
 }
 
 export { getStyleVariantProperty }

@@ -594,7 +594,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-010"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-008"
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-009"
 
 
@@ -621,7 +621,7 @@ Accept: application/json
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data[*]['uesio/tests.date']" exists
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-010"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-008"
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-009"
 
 # Operator: BETWEEN | valueSource: VALUE

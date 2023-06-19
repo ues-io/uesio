@@ -9,6 +9,7 @@ import {
 	NumberProperty,
 	CheckboxProperty,
 	SelectProperty,
+	DateProperty,
 } from "../../../../properties/componentproperty"
 
 function getConditionPropertiesPanelTitle(
@@ -145,7 +146,12 @@ function getValueProperty(
 	fieldDisplayType: wire.FieldType | undefined,
 	fieldMetadata: collection.Field | undefined,
 	context: context.Context
-): TextProperty | NumberProperty | CheckboxProperty | SelectProperty {
+):
+	| TextProperty
+	| NumberProperty
+	| CheckboxProperty
+	| SelectProperty
+	| DateProperty {
 	// TODO: Add additional property types here to support things like DATE
 
 	const baseValueProp = {
@@ -173,6 +179,10 @@ function getValueProperty(
 
 	if (fieldDisplayType === "NUMBER") {
 		return { ...baseValueProp, type: "NUMBER" } as NumberProperty
+	}
+
+	if (fieldDisplayType === "DATE") {
+		return { ...baseValueProp, type: "DATE" } as DateProperty
 	}
 
 	if (fieldDisplayType === "SELECT") {
