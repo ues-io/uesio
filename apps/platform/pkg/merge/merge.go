@@ -3,9 +3,10 @@ package merge
 import (
 	"errors"
 	"fmt"
+	"regexp"
+
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
-	"regexp"
 )
 
 type ServerMergeData struct {
@@ -57,6 +58,16 @@ var ServerMergeFuncs = map[string]interface{}{
 			return siteInfo.Title, nil
 		case "name":
 			return siteInfo.Name, nil
+		case "domain":
+			return siteInfo.Domain, nil
+		case "subdomain":
+			return siteInfo.Subdomain, nil
+		case "url":
+			url := "https://"
+			if siteInfo.Subdomain != "" {
+				url += siteInfo.Subdomain + "."
+			}
+			return url + siteInfo.Domain, nil
 		}
 		return nil, nil
 	},

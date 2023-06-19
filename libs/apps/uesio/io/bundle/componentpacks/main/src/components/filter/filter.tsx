@@ -7,6 +7,7 @@ import DateFilter from "../../utilities/datefilter/datefilter"
 import NumberFilter from "../../utilities/numberfilter/numberfilter"
 import CheckboxFilter from "../../utilities/checkboxfilter/checkboxfilter"
 import MultiSelectFilter from "../../utilities/multiselectfilter/multiselectfilter"
+import TextFilter from "../../utilities/textfilter/textfilter"
 import TimestampFilter from "../../utilities/timestampfilter/timestampfilter"
 import GroupFilter, {
 	GroupFilterProps,
@@ -21,7 +22,8 @@ type FilterDefinition = {
 	displayAs?: string
 	wrapperVariant: metadata.MetadataKey
 	conditionId?: string
-	operator: string
+	placeholder?: string
+	operator?: string
 }
 
 type CommonProps = {
@@ -39,11 +41,14 @@ const getFilterContent = (
 	common: CommonProps,
 	definition: FilterDefinition
 ) => {
-	const { displayAs } = definition
+	const { displayAs, placeholder } = definition
 	const fieldMetadata = common.fieldMetadata
 	const type = fieldMetadata.getType()
-
 	switch (type) {
+		case "TEXT":
+		case "LONGTEXT":
+		case "EMAIL":
+			return <TextFilter {...common} placeholder={placeholder} />
 		case "NUMBER":
 			return <NumberFilter {...common} />
 		case "CHECKBOX":
@@ -92,6 +97,14 @@ const getDefaultCondition = (
 				field: fieldMetadata.getId(),
 			}
 		}
+		case "TEXT":
+		case "LONGTEXT":
+		case "EMAIL":
+			return {
+				id: path,
+				operator: "CONTAINS",
+				field: fieldMetadata.getId(),
+			}
 		default:
 			return {
 				id: path,
@@ -102,7 +115,7 @@ const getDefaultCondition = (
 
 const Filter: definition.UC<FilterDefinition> = (props) => {
 	const { context, definition, path } = props
-	const { fieldId, conditionId, operator, displayAs } = definition
+	const { fieldId, conditionId, operatoroperator, displayAs } = definition
 	const wire = api.wire.useWire(definition.wire, context)
 	if (!wire) return null
 

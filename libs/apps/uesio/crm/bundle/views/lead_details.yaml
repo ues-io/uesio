@@ -43,7 +43,7 @@ definition:
                                       - leads
                                       - tasks
                                       - events
-                                text: Save
+                                text: $Label{uesio/io.save}
                                 uesio.variant: uesio/io.primary
                                 icon: save
                                 uesio.display: []
@@ -55,7 +55,7 @@ definition:
                                     wire: tasks
                                   - signal: wire/CANCEL
                                     wire: events
-                                text: Cancel
+                                text: $Label{uesio/io.cancel}
                                 uesio.variant: uesio/io.secondary
                                 icon: cancel
                                 uesio.display: []

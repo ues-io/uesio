@@ -51,11 +51,13 @@ definition:
                                 components:
                                   - uesio/io.field:
                                       fieldId: uesio/viewonly.username
+                                      label: Username (a-z, 0-9, or _)
                                       applyChanges: onBlur
                                   - uesio/io.field:
                                       fieldId: uesio/viewonly.email
                                   - uesio/io.field:
                                       fieldId: uesio/viewonly.password
+                                      label: Password
                                       displayAs: PASSWORD
                                   - uesio/io.field:
                                       fieldId: uesio/viewonly.terms

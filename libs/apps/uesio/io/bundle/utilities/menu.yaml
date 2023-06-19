@@ -1,0 +1,3 @@
+name: menu
+pack: main
+entrypoint: utilities/menu/menu

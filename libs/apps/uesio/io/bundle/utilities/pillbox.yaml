@@ -1,0 +1,3 @@
+name: pillbox
+pack: main
+entrypoint: utilities/pillbox/pillbox

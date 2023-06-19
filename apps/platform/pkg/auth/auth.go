@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"unicode"
 
 	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -153,23 +154,46 @@ func getSiteFromDomain(domainType, domainValue string) (*meta.Site, error) {
 	return site, nil
 }
 
-func CreateUser(username string, email string, signupMethod *meta.SignupMethod, session *sess.Session) error {
+func createUser(username string, email string, signupMethod *meta.SignupMethod) (*meta.User, error) {
 
 	if signupMethod.Profile == "" {
-		return errors.New("Signup Method: " + signupMethod.Name + " is missing the profile property")
+		return nil, fmt.Errorf("signup method %s is missing the profile property", signupMethod.GetKey())
 	}
 
+	firstName, lastName := getNamePartsFromUsername(username)
+
 	user := &meta.User{
-		Username: username,
-		Profile:  signupMethod.Profile,
-		Type:     "PERSON",
+		Username:  username,
+		Profile:   signupMethod.Profile,
+		Type:      "PERSON",
+		Language:  "en",
+		FirstName: capitalize(firstName),
+		LastName:  capitalize(lastName),
 	}
 
 	if email != "" {
 		user.Email = email
 	}
 
-	return datasource.PlatformSaveOne(user, nil, nil, session)
+	return user, nil
+}
+
+func capitalize(str string) string {
+	runes := []rune(str)
+	runes[0] = unicode.ToUpper(runes[0])
+	return string(runes)
+}
+
+func getNamePartsFromUsername(username string) (first, last string) {
+	if len(username) >= 3 {
+		for _, sep := range []string{".", "_", "-"} {
+			if strings.Contains(username, sep) {
+				parts := strings.Split(username, sep)
+				return parts[0], parts[1]
+			}
+		}
+	}
+	return username, username
 }
 
 func getUser(field, value string, session *sess.Session, connection adapt.Connection) (*meta.User, error) {
@@ -334,11 +358,17 @@ func boostPayloadWithTemplate(username string, payload map[string]interface{}, s
 
 	link := fmt.Sprintf("%s/%s?code={####}&username=%s", host, options.Redirect, username)
 
+	siteTitle := site.Title
+	if siteTitle == "" {
+		siteTitle = site.Name
+	}
+
 	templateMergeValues := map[string]interface{}{
-		"app":      site.GetAppFullName(),
-		"site":     site.Name,
-		"link":     link,
-		"username": username,
+		"app":       site.GetAppFullName(),
+		"siteName":  site.Name,
+		"siteTitle": siteTitle,
+		"link":      link,
+		"username":  username,
 	}
 
 	subjectTemplate, err := templating.NewTemplateWithValidKeysOnly(options.EmailSubject)

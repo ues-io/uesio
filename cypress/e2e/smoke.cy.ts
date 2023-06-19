@@ -4,7 +4,7 @@ import { deleteApp, getUniqueAppName } from "../support/testdata"
 import { getWorkspaceBasePath } from "../support/paths"
 
 describe("Uesio Sanity Smoke Tests", () => {
-	const username = Cypress.env("automation_username")
+	// const username = Cypress.env("automation_username")
 
 	const appName = getUniqueAppName()
 	const workspaceName = "test"
@@ -33,7 +33,7 @@ describe("Uesio Sanity Smoke Tests", () => {
 			// Verify we get taken to the collection detail
 			cy.url().should(
 				"contain",
-				`${workspaceBasePath}/collections/${username}/${appName}/animal`
+				`${workspaceBasePath}/collections/animal`
 			)
 			cy.title().should("eq", "Collection: animal")
 			cy.getByIdFragment("table", "fields").scrollIntoView()

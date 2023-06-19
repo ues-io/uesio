@@ -509,12 +509,6 @@ class Context {
 		return newContext
 	}
 
-	removeWorkspace = () => {
-		const newContext = this.clone()
-		delete newContext.workspace
-		return newContext
-	}
-
 	setSite = (site: SiteState) => {
 		const newContext = this.clone()
 		newContext.site = site

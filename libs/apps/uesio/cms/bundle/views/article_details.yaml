@@ -32,7 +32,7 @@ definition:
                           components:
                             - uesio/io.button:
                                 uesio.variant: uesio/io.primary
-                                text: "Save"
+                                text: $Label{uesio/io.save}
                                 signals:
                                   - signal: component/CALL
                                     componenttype: uesio/io.field
@@ -41,7 +41,7 @@ definition:
                                     componentid: mdeditor
                             - uesio/io.button:
                                 uesio.variant: uesio/io.secondary
-                                text: "Cancel"
+                                text: $Label{uesio/io.cancel}
                                 signals:
                                   - signal: component/CALL
                                     componenttype: uesio/io.field

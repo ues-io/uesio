@@ -64,7 +64,7 @@ func (qb *QueryBuilder) String() string {
 }
 
 func isTextAlike(fieldType string) bool {
-	if fieldType == "TEXT" || fieldType == "AUTONUMBER" || fieldType == "EMAIL" || fieldType == "LONGTEXT" {
+	if fieldType == "TEXT" || fieldType == "AUTONUMBER" || fieldType == "EMAIL" || fieldType == "LONGTEXT" || fieldType == "SELECT" {
 		return true
 	}
 	return false
@@ -114,6 +114,7 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 	}
 
 	fieldName := getFieldName(fieldMetadata, tableAlias)
+	isTextType := isTextAlike(fieldMetadata.Type)
 	switch condition.Operator {
 	case "IN", "NOT_IN":
 		if fieldMetadata.Type == "DATE" {
@@ -125,14 +126,14 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 				switch values := condition.Values.(type) {
 				case []interface{}:
 					if numValues := len(values); numValues > 0 {
-						safeValues = make([]string, numValues, numValues)
+						safeValues = make([]string, numValues)
 						for i, val := range values {
 							safeValues[i] = builder.addValue(val)
 						}
 					}
 				case []string:
 					if numValues := len(values); numValues > 0 {
-						safeValues = make([]string, numValues, numValues)
+						safeValues = make([]string, numValues)
 						for i, val := range values {
 							safeValues[i] = builder.addValue(val)
 						}
@@ -186,11 +187,21 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 		builder.addQueryPart(fmt.Sprintf("%s <= %s", fieldName, builder.addValue(condition.Value)))
 
 	case "IS_BLANK":
-		builder.addQueryPart(fmt.Sprintf("%s IS NULL", fieldName))
-
+		if fieldMetadata.Type == "CHECKBOX" || fieldMetadata.Type == "TIMESTAMP" {
+			builder.addQueryPart(fmt.Sprintf("%s IS NULL", fieldName))
+		} else if isTextType {
+			builder.addQueryPart(fmt.Sprintf("((%s IS NULL) OR (%s = 'null') OR (%s = ''))", fieldName, fieldName, fieldName))
+		} else {
+			builder.addQueryPart(fmt.Sprintf("((%s IS NULL) OR (%s = 'null'))", fieldName, fieldName))
+		}
 	case "IS_NOT_BLANK":
-		builder.addQueryPart(fmt.Sprintf("%s IS NOT NULL", fieldName))
-
+		if fieldMetadata.Type == "CHECKBOX" || fieldMetadata.Type == "TIMESTAMP" {
+			builder.addQueryPart(fmt.Sprintf("%s IS NOT NULL", fieldName))
+		} else if isTextType {
+			builder.addQueryPart(fmt.Sprintf("((%s IS NOT NULL) AND (%s != 'null') AND (%s != ''))", fieldName, fieldName, fieldName))
+		} else {
+			builder.addQueryPart(fmt.Sprintf("((%s IS NOT NULL) AND (%s != 'null'))", fieldName, fieldName))
+		}
 	case "BETWEEN":
 		startOperator := ">"
 		endOperator := "<"
@@ -207,13 +218,13 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 		builder.addQueryPart(fmt.Sprintf("%s %s %s", fieldName, endOperator, builder.addValue(condition.End)))
 
 	case "CONTAINS":
-		if !isTextAlike(fieldMetadata.Type) {
+		if !isTextType {
 			return fmt.Errorf("Operator CONTAINS is not supported for field type %s", fieldMetadata.Type)
 		}
 		builder.addQueryPart(fmt.Sprintf("%s ILIKE %s", fieldName, builder.addValue(fmt.Sprintf("%%%v%%", condition.Value))))
 
 	case "STARTS_WITH":
-		if !isTextAlike(fieldMetadata.Type) {
+		if !isTextType {
 			return fmt.Errorf("Operator STARTS_WITH is not supported for field type %s", fieldMetadata.Type)
 		}
 		builder.addQueryPart(fmt.Sprintf("%s ILIKE %s", fieldName, builder.addValue(fmt.Sprintf("%v%%", condition.Value))))
@@ -279,7 +290,11 @@ func processConditionList(conditions []adapt.LoadRequestCondition, collectionMet
 
 	collectionName := collectionMetadata.GetFullName()
 
-	builder.addQueryPart(fmt.Sprintf("%s = %s", getAliasedName("collection", tableAlias), builder.addValue(collectionName)))
+	//we don't filter by collection if we want recent metadata
+	if collectionName != "uesio/studio.recentmetadata" {
+		builder.addQueryPart(fmt.Sprintf("%s = %s", getAliasedName("collection", tableAlias), builder.addValue(collectionName)))
+	}
+
 	builder.addQueryPart(fmt.Sprintf("%s = %s", getAliasedName("tenant", tableAlias), builder.addValue(tenantID)))
 	for _, condition := range conditions {
 
