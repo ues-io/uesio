@@ -42,14 +42,14 @@ properties:
     options:
       - value: HAS_ANY
         label: Has Any
-        #validFor:
-        #- field: fieldDisplayType
-        #value: MULTISELECT
+        validFor:
+          - field: fieldDisplayType
+            value: MULTISELECT
       - value: HAS_ALL
         label: Has All
-        #validFor:
-        #- field: fieldDisplayType
-        #value: MULTISELECT
+        validFor:
+          - field: fieldDisplayType
+            value: MULTISELECT
     displayConditions:
       - type: fieldValue
         field: fieldDisplayType
@@ -63,19 +63,19 @@ properties:
         label: "--None Selected--"
       - label: Month
         value: MONTH
-        #validFor:
-        #- field: fieldDisplayType
-        #value: DATE
+        validFor:
+          - field: fieldDisplayType
+            value: DATE
       - label: Week
         value: WEEK
-        #validFor:
-        #- field: fieldDisplayType
-        #value: DATE
+        validFor:
+          - field: fieldDisplayType
+            value: DATE
       - label: Toggle
         value: TOGGLE
-        #validFor:
-        #- field: fieldDisplayType
-        #value: CHECKBOX
+        validFor:
+          - field: fieldDisplayType
+            value: CHECKBOX
   - name: label
     type: TEXT
     label: Label
