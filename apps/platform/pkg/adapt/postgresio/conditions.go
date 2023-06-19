@@ -117,7 +117,8 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 	isTextType := isTextAlike(fieldMetadata.Type)
 	switch condition.Operator {
 	case "IN", "NOT_IN":
-		if fieldMetadata.Type == "DATE" {
+		//IF we got values use normal flow
+		if fieldMetadata.Type == "DATE" && condition.Values == nil {
 			return processDateRangeCondition(condition, fieldName, builder)
 		}
 		if condition.Values != nil {
