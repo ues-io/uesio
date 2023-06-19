@@ -41,7 +41,7 @@ const MultiSelectFilter: FunctionComponent<MultiSelectFilterProps> = (
 									wire: wireId,
 									condition: {
 										...condition,
-										values: value,
+										value,
 										active: !!value,
 									},
 								},
