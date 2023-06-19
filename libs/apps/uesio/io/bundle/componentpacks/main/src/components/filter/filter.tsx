@@ -23,7 +23,7 @@ type FilterDefinition = {
 	wrapperVariant: metadata.MetadataKey
 	conditionId?: string
 	placeholder?: string
-	operator?: string
+	operator: string
 }
 
 type CommonProps = {
@@ -115,7 +115,7 @@ const getDefaultCondition = (
 
 const Filter: definition.UC<FilterDefinition> = (props) => {
 	const { context, definition, path } = props
-	const { fieldId, conditionId, operatoroperator, displayAs } = definition
+	const { fieldId, conditionId, operator, displayAs } = definition
 	const wire = api.wire.useWire(definition.wire, context)
 	if (!wire) return null
 
