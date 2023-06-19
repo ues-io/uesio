@@ -33,24 +33,6 @@ const signup = async (
 	return responseRedirect(response, context)
 }
 
-const signUpConfirm = async (
-	context: Context,
-	signupMethod: string,
-	payload: Payload
-) => {
-	if (!payload)
-		throw new Error("No credentials were provided for signup confirmation.")
-	const mergedPayload = context.mergeStringMap(payload)
-	const mergedSignupMethod = context.mergeString(signupMethod)
-	try {
-		await platform.signUpConfirm(mergedSignupMethod, mergedPayload)
-		return context
-	} catch (error) {
-		const message = getErrorString(error)
-		return context.addErrorFrame([message])
-	}
-}
-
 const login = async (
 	context: Context,
 	authSource: string,
@@ -155,7 +137,6 @@ export default {
 	login,
 	logout,
 	signup,
-	signUpConfirm,
 	checkAvailability,
 	forgotPassword,
 	forgotPasswordConfirm,

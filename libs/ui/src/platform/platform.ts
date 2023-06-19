@@ -407,18 +407,6 @@ const platform = {
 		)
 		return respondJSON(response)
 	},
-	signUpConfirm: async (
-		signupMethod: string,
-		requestBody: Record<string, string>
-	): Promise<void> => {
-		const [namespace, name] = parseKey(signupMethod)
-		const response = await postJSON(
-			`/site/auth/${namespace}/${name}/signup/confirm`,
-			requestBody
-		)
-
-		return respondVoid(response)
-	},
 	checkAvailability: async (
 		signupMethod: string,
 		username: string

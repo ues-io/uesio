@@ -7,14 +7,12 @@ views:
   uesio/core.signup: true
   uesio/core.changepassword: true
   uesio/core.requestpassword: true
-  uesio/core.signupconfirm: true
   uesio/core.signuplanding: true
 routes:
   uesio/core.login: true
   uesio/core.signup: true
   uesio/core.changepassword: true
   uesio/core.requestpassword: true
-  uesio/core.signupconfirm: true
   uesio/core.signuplanding: true
 files:
   uesio/core.logo: true
