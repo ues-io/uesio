@@ -1,3 +1,5 @@
+import { Context } from "../context/context"
+
 export const respondJSON = async (response: Response) => {
 	interceptPlatformRedirects(response)
 	if (response.status !== 200) {
@@ -29,20 +31,26 @@ function interceptPlatformRedirects(response: Response) {
 	}
 }
 
-export const getJSON = (url: string) =>
+export const getJSON = (context: Context, url: string) =>
 	fetch(url, {
 		method: "GET",
 		headers: {
 			"Content-Type": "application/json",
 			"Accept-Encoding": "gzip, deflate",
+			"x-uesio-osh": context.getSession()?.hash || "",
 		},
 	}).then(respondJSON)
 
-export const postJSON = (url: string, body?: Record<string, unknown>) =>
+export const postJSON = (
+	context: Context,
+	url: string,
+	body?: Record<string, unknown>
+) =>
 	fetch(url, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
+			"x-uesio-osh": context.getSession()?.hash || "",
 		},
 		...(body && {
 			body: JSON.stringify(body),

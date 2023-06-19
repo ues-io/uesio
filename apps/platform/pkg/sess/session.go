@@ -2,6 +2,7 @@ package sess
 
 import (
 	"fmt"
+	"github.com/twmb/murmur3"
 	"net/http"
 	"time"
 
@@ -47,7 +48,7 @@ func New(user *meta.User, site *meta.Site) *Session {
 }
 
 func Logout(w http.ResponseWriter, publicUser *meta.User, s *Session) *Session {
-	// Remove the logged out session
+	// Remove the logged-out session
 	session.Remove(*s.browserSession, w)
 	site := s.GetSite()
 	// Login as the public user
@@ -339,4 +340,16 @@ func (s *Session) GetContextSite() *meta.Site {
 		return s.GetSiteAdmin()
 	}
 	return s.GetSite()
+}
+
+func (s *Session) GetSessionIdHash() string {
+	bs := *s.GetBrowserSession()
+	if bs != nil {
+		hasher := murmur3.New64()
+		_, err := hasher.Write([]byte(bs.ID()))
+		if err == nil {
+			return fmt.Sprintf("%d", hasher.Sum64())
+		}
+	}
+	return ""
 }

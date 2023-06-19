@@ -28,7 +28,11 @@ const signup = async (
 	if (!payload) return context
 	const mergedPayload = context.mergeStringMap(payload)
 	const mergedSignupMethod = context.mergeString(signupMethod)
-	const response = await platform.signup(mergedSignupMethod, mergedPayload)
+	const response = await platform.signup(
+		context,
+		mergedSignupMethod,
+		mergedPayload
+	)
 	dispatch(setUser(response.user))
 	return responseRedirect(response, context)
 }
@@ -43,7 +47,7 @@ const signUpConfirm = async (
 	const mergedPayload = context.mergeStringMap(payload)
 	const mergedSignupMethod = context.mergeString(signupMethod)
 	try {
-		await platform.signUpConfirm(mergedSignupMethod, mergedPayload)
+		await platform.signUpConfirm(context, mergedSignupMethod, mergedPayload)
 		return context
 	} catch (error) {
 		const message = getErrorString(error)
@@ -59,7 +63,11 @@ const login = async (
 	if (!payload) throw new Error("No credentials were provided for login.")
 	const mergedPayload = context.mergeStringMap(payload)
 	try {
-		const response = await platform.login(authSource, mergedPayload)
+		const response = await platform.login(
+			context,
+			authSource,
+			mergedPayload
+		)
 		dispatch(setUser(response.user))
 		return responseRedirect(response, context)
 	} catch (error) {
@@ -70,7 +78,7 @@ const login = async (
 }
 
 const logout = async (context: Context) => {
-	const response = await platform.logout()
+	const response = await platform.logout(context)
 	dispatch(setUser(response.user))
 	return responseRedirect(response, context)
 }
@@ -85,7 +93,11 @@ const checkAvailability = async (
 	if (mergedUsername) {
 		const mergedSignupMethod = context.mergeString(signupMethod)
 		try {
-			await platform.checkAvailability(mergedSignupMethod, mergedUsername)
+			await platform.checkAvailability(
+				context,
+				mergedSignupMethod,
+				mergedUsername
+			)
 			wireRemoveError(context, usernameFieldId)
 			return context
 		} catch (error) {
@@ -131,7 +143,11 @@ const forgotPasswordConfirm = async (
 	const mergedPayload = context.mergeStringMap(payload)
 	const mergedSignupMethod = context.mergeString(signupMethod)
 	try {
-		await platform.forgotPasswordConfirm(mergedSignupMethod, mergedPayload)
+		await platform.forgotPasswordConfirm(
+			context,
+			mergedSignupMethod,
+			mergedPayload
+		)
 		return context
 	} catch (error) {
 		const message = getErrorString(error)
