@@ -20,10 +20,10 @@ const MultiSelectFilter: FunctionComponent<MultiSelectFilterProps> = (
 			context={context}
 			options={fieldMetadata.getSelectMetadata()?.options || []}
 			variant={"uesio/io.filter"}
-			value={Array.isArray(condition.value) ? condition.value : []}
-			setValue={(value: string[]) => {
+			value={Array.isArray(condition.values) ? condition.values : []}
+			setValue={(values: string[]) => {
 				const signals =
-					value && value.length === 0
+					values && values.length === 0
 						? [
 								{
 									signal: "wire/REMOVE_CONDITION",
@@ -41,8 +41,8 @@ const MultiSelectFilter: FunctionComponent<MultiSelectFilterProps> = (
 									wire: wireId,
 									condition: {
 										...condition,
-										value,
-										active: !!value,
+										values,
+										active: !!values,
 									},
 								},
 								{
