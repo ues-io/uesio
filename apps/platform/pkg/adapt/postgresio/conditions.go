@@ -106,23 +106,6 @@ func processSearchCondition(condition adapt.LoadRequestCondition, collectionMeta
 	}
 	return nil
 }
-func addTrue(value interface{}) []map[string]bool {
-	interfaceSlice, ok := value.([]interface{})
-	if !ok {
-		return nil
-	}
-
-	result := make([]map[string]bool, len(interfaceSlice))
-	for i, v := range interfaceSlice {
-		if str, ok := v.(string); ok {
-			result[i] = map[string]bool{str: true}
-		} else {
-			return nil
-		}
-	}
-
-	return result
-}
 
 func processValueCondition(condition adapt.LoadRequestCondition, collectionMetadata *adapt.CollectionMetadata, metadata *adapt.MetadataCache, builder *QueryBuilder, tableAlias string, session *sess.Session) error {
 	fieldMetadata, err := collectionMetadata.GetField(condition.Field)
@@ -180,13 +163,13 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 		if fieldMetadata.Type != "MULTISELECT" {
 			return errors.New("Operator HAS_ANY only works with fieldType MULTI_SELECT")
 		}
-		builder.addQueryPart(fmt.Sprintf("%s @> ANY(%s::jsonb[]) ", fieldName, builder.addValue(addTrue(condition.Value))))
+		builder.addQueryPart(fmt.Sprintf("%s ?| %s", fieldName, builder.addValue(condition.Values)))
 
 	case "HAS_ALL":
 		if fieldMetadata.Type != "MULTISELECT" {
 			return errors.New("Operator HAS_ALL only works with fieldType MULTI_SELECT")
 		}
-		builder.addQueryPart(fmt.Sprintf("%s @> ALL(%s::jsonb[]) ", fieldName, builder.addValue(addTrue(condition.Value))))
+		builder.addQueryPart(fmt.Sprintf("%s ?& %s", fieldName, builder.addValue(condition.Values)))
 
 	case "NOT_EQ":
 		builder.addQueryPart(fmt.Sprintf("%s is distinct from %s", fieldName, builder.addValue(condition.Value)))
@@ -249,7 +232,7 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 	default:
 		if fieldMetadata.Type == "MULTISELECT" {
 			// Same as HAS_ANY
-			builder.addQueryPart(fmt.Sprintf("%s @> ANY(%s::jsonb[]) ", fieldName, builder.addValue(addTrue(condition.Value))))
+			builder.addQueryPart(fmt.Sprintf("%s ?| %s", fieldName, builder.addValue(condition.Values)))
 		}
 		builder.addQueryPart(fmt.Sprintf("%s = %s", fieldName, builder.addValue(condition.Value)))
 	}
