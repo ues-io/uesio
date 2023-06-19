@@ -1,4 +1,5 @@
 export const respondJSON = async (response: Response) => {
+	interceptPlatformRedirects(response)
 	if (response.status !== 200) {
 		const errorText = await response.text()
 		throw new Error(
@@ -12,12 +13,20 @@ export const respondJSON = async (response: Response) => {
 }
 
 export const respondVoid = async (response: Response) => {
+	interceptPlatformRedirects(response)
 	if (response.status !== 200) {
 		const errorText = await response.text()
 		throw new Error(errorText)
 	}
 
 	return
+}
+
+function interceptPlatformRedirects(response: Response) {
+	const locationHeader = response.headers.get("location")
+	if (locationHeader) {
+		window.location.href = locationHeader
+	}
 }
 
 export const getJSON = (url: string) =>

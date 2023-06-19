@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"github.com/thecloudmasters/uesio/pkg/sess"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -48,10 +49,14 @@ func AuthenticateSiteAdmin(next http.Handler) http.Handler {
 		vars := mux.Vars(r)
 		appName := vars["app"]
 		siteName := vars["site"]
-		err := datasource.AddSiteAdminContextByKey(appName+":"+siteName, GetSession(r), nil)
+		s := GetSession(r)
+		if s.IsExpired() {
+			removeSessionAndRedirectToLoginRoute(w, r, s)
+			return
+		}
+		err := datasource.AddSiteAdminContextByKey(appName+":"+siteName, s, nil)
 		if err != nil {
-			logger.LogError(err)
-			http.Error(w, "Failed querying site admin: "+err.Error(), http.StatusInternalServerError)
+			removeSessionAndRedirectToLoginRoute(w, r, s)
 			return
 		}
 		next.ServeHTTP(w, r)
@@ -63,14 +68,25 @@ func AuthenticateWorkspace(next http.Handler) http.Handler {
 		vars := mux.Vars(r)
 		appName := vars["app"]
 		workspaceName := vars["workspace"]
-		err := datasource.AddWorkspaceContextByKey(appName+":"+workspaceName, GetSession(r), nil)
+		s := GetSession(r)
+		if s.IsExpired() {
+			removeSessionAndRedirectToLoginRoute(w, r, s)
+			return
+		}
+		err := datasource.AddWorkspaceContextByKey(appName+":"+workspaceName, s, nil)
 		if err != nil {
-			logger.LogError(err)
-			http.Error(w, "Failed querying workspace: "+err.Error(), http.StatusInternalServerError)
+			removeSessionAndRedirectToLoginRoute(w, r, s)
 			return
 		}
 		next.ServeHTTP(w, r)
 	})
+}
+
+func removeSessionAndRedirectToLoginRoute(w http.ResponseWriter, r *http.Request, s *sess.Session) {
+	// Remove the session and redirect to login page
+	session.Remove(*s.GetBrowserSession(), w)
+	auth.RedirectToLoginRoute(w, r.WithContext(SetSession(r, s)), s)
+	return
 }
 
 func AuthenticateVersion(next http.Handler) http.Handler {

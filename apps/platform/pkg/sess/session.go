@@ -3,6 +3,7 @@ package sess
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -191,6 +192,16 @@ func (s *Session) getBrowserSessionAttribute(key string) string {
 
 func (s *Session) GetBrowserSession() *session.Session {
 	return s.browserSession
+}
+
+// IsExpired returns true if the browser session's last access time, plus the timeout duration,
+// is prior to the current timestamp.
+func (s *Session) IsExpired() bool {
+	if s.browserSession == nil {
+		return true
+	}
+	val := *s.browserSession
+	return val.Accessed().Add(val.Timeout()).Before(time.Now())
 }
 
 func (s *Session) GetUserInfo() *meta.User {
