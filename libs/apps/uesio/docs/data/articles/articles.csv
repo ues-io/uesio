@@ -1,3 +1,4 @@
 slug,name,description
 home,Introduction,Learn to build and deploy apps with ues.io
-create-account,Create a ues.io account,Sign up for a ues.io account to access the studio.
+create-account,Create a studio account,Sign up for a ues.io account to access the studio.
+first-app,Create your first app,"Learn about apps and workspaces"
