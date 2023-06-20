@@ -36,6 +36,7 @@ definition:
                     content:
                       - uesio/io.text:
                           text: Create your first app
+                          path: first-app
                 - uesio/io.tile:
                     uesio.variant: uesio/docs.navitem
                     content:

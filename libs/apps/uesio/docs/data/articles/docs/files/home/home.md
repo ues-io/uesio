@@ -1,8 +1,8 @@
 # Introduction
 
-###### Learn to build and deploy apps with ues.io
+##### Learn to build and deploy apps with ues.io
 
-Welcome to ues.io documentation site. This article will give an explanation of what ues.io is and why we built it.
+Welcome to ues.io! This article will explain what ues.io is and why we built it.
 
 ## What is ues.io?
 
