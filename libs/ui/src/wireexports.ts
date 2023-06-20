@@ -29,6 +29,7 @@ import {
 	WireConditionState,
 	isValueCondition,
 	isGroupCondition,
+	ConditionOperators,
 } from "./bands/wire/conditions/conditions"
 import { SaveResponse, SaveResponseBatch, SaveError } from "./load/saveresponse"
 import { LoadResponseBatch } from "./load/loadresponse"
@@ -36,6 +37,7 @@ import { LoadRequestField } from "./load/loadrequest"
 import { PlainWire } from "./bands/wire/types"
 
 export type {
+	ConditionOperators,
 	FieldMetadata,
 	FieldType,
 	FieldValue,

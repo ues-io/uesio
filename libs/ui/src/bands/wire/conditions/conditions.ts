@@ -19,6 +19,8 @@ type ConditionOperators =
 	| "NOT_IN"
 	| "IS_BLANK"
 	| "IS_NOT_BLANK"
+	| "HAS_ANY"
+	| "HAS_ALL"
 
 type WireConditionState =
 	| ParamConditionState
@@ -89,6 +91,7 @@ const isGroupCondition = (
 export { isValueCondition, isGroupCondition }
 
 export type {
+	ConditionOperators,
 	WireConditionState,
 	LookupConditionState,
 	ParamConditionState,
