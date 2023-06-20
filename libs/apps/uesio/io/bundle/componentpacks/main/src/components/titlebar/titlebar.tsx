@@ -8,6 +8,10 @@ type TitleBarDefinition = {
 
 const StyleDefaults = Object.freeze({
 	root: [],
+	content: [],
+	title: [],
+	subtitle: [],
+	actions: [],
 })
 
 const TitleBar: definition.UC<TitleBarDefinition> = (props) => {

@@ -76,6 +76,19 @@ definition:
           - uesio/io.button:
               icon: add
               uesio.id: add-workspace
+              uesio.variant: uesio/studio.navctawithpointer
+              uesio.display:
+                - type: wireHasNoRecords
+                  wire: workspaces
+              signals:
+                - signal: panel/TOGGLE
+                  panel: newWorkspace
+          - uesio/io.button:
+              icon: add
+              uesio.id: add-workspace-2
+              uesio.display:
+                - type: wireHasRecords
+                  wire: workspaces
               signals:
                 - signal: panel/TOGGLE
                   panel: newWorkspace
