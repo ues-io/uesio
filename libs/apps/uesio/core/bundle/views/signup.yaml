@@ -100,7 +100,7 @@ definition:
                                   - wire: userData
                                     field: uesio/viewonly.terms
                                     value: false
-                                uesio.variant: uesio/io.primary
+                                uesio.variant: uesio/io.secondary
                                 uesio.styleTokens:
                                   root:
                                     - disabled
@@ -121,11 +121,6 @@ definition:
                                   - signal: user/SIGNUP
                                     signupMethod: uesio/core.platform
                                     requireds:
-                                      fields:
-                                        - field: uesio/viewonly.terms
-                                          operator: EQ
-                                          value: true
-                                          valueSource: VALUE
                                     payload:
                                       username: ${uesio/viewonly.username}
                                       password: ${uesio/viewonly.password}
