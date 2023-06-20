@@ -18,21 +18,6 @@ var featureFlagStoreMap = map[string]FeatureFlagStore{}
 
 func GetFeatureFlags(session *sess.Session, user string) (*meta.FeatureFlagCollection, error) {
 	featureFlags := meta.FeatureFlagCollection{}
-
-	currentPermissions := session.GetPermissions()
-
-	if currentPermissions.CollectionRefs != nil {
-		currentPermissions.CollectionRefs["uesio/core.featureflagassignment"] = meta.CollectionPermission{Read: true}
-		currentPermissions.CollectionRefs["uesio/core.user"] = meta.CollectionPermission{Read: true}
-	} else {
-		currentPermissions.CollectionRefs = map[string]meta.CollectionPermission{
-			"uesio/core.featureflagassignment": {Read: true},
-			"uesio/core.user":                  {Read: true},
-		}
-	}
-
-	session.SetPermissions(currentPermissions)
-
 	err := bundle.LoadAllFromAny(&featureFlags, nil, session, nil)
 	if err != nil {
 		return nil, err
