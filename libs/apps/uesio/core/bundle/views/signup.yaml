@@ -93,6 +93,7 @@ definition:
                                                       - font-light
                                                   signals:
                                                     - signal: route/REDIRECT
+                                                      newtab: true
                                                       path: "https://ues.io/terms"
 
                             - uesio/io.button:
