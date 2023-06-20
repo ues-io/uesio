@@ -100,6 +100,10 @@ func getTimestampLoader(index int, mapping *meta.FieldMapping, fieldMetadata *ad
 func getDateLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
 	return func(change adapt.Item, data interface{}) error {
 		stringValue := getValue(data, mapping, index)
+		// If there's no value, there's nothing to do
+		if stringValue == "" {
+			return nil
+		}
 		t, err := time.Parse(timeutils.ISO8601Date, stringValue)
 		if err != nil {
 			return errors.New("Invalid date format: " + fieldMetadata.GetFullName() + " : " + err.Error())
