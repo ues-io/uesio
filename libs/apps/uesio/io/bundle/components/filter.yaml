@@ -76,6 +76,13 @@ properties:
         validFor:
           - field: fieldDisplayType
             value: CHECKBOX
+    displayConditions:
+      - type: fieldValue
+        field: fieldDisplayType
+        operator: IN
+        values:
+          - DATE
+          - CHECKBOX
   - name: label
     type: TEXT
     label: Label
@@ -92,6 +99,14 @@ properties:
   - name: placeholder
     label: Placeholder
     type: TEXT
+    displayConditions:
+      - type: fieldValue
+        field: fieldDisplayType
+        operator: IN
+        values:
+          - TEXT
+          - LONGTEXT
+          - EMAIL
 sections:
   - type: HOME
     properties:

@@ -23,7 +23,7 @@ type FilterDefinition = {
 	wrapperVariant: metadata.MetadataKey
 	conditionId?: string
 	placeholder?: string
-	operator: string
+	operator: wire.ConditionOperators
 }
 
 type CommonProps = {
@@ -41,7 +41,7 @@ const getFilterContent = (
 	common: CommonProps,
 	definition: FilterDefinition
 ) => {
-	const { displayAs, placeholder } = definition
+	const { displayAs, placeholder, operator } = definition
 	const fieldMetadata = common.fieldMetadata
 	const type = fieldMetadata.getType()
 	switch (type) {
@@ -56,7 +56,7 @@ const getFilterContent = (
 		case "SELECT":
 			return <SelectFilter {...common} />
 		case "MULTISELECT":
-			return <MultiSelectFilter {...common} />
+			return <MultiSelectFilter {...common} operator={operator} />
 		case "TIMESTAMP":
 			return <TimestampFilter {...common} />
 		case "DATE": {
@@ -72,7 +72,7 @@ const getFilterContent = (
 const getDefaultCondition = (
 	path: string,
 	fieldMetadata: collection.Field,
-	operator: string,
+	operator: wire.ConditionOperators,
 	displayAs: string
 ) => {
 	const type = fieldMetadata.getType()
@@ -124,17 +124,21 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 		wire.getCondition(conditionId || path) || undefined
 	// Field metadata is not needed for group conditions
 	const fieldMetadata = collection.getField(
-		isValueCondition(existingCondition) ? existingCondition.field : fieldId
+		conditionId && isValueCondition(existingCondition)
+			? existingCondition.field
+			: fieldId
 	)
 
 	let condition = existingCondition
-	if (!condition && fieldMetadata) {
-		condition = getDefaultCondition(
-			path,
-			fieldMetadata,
-			operator,
-			displayAs || ""
-		) as wire.ValueConditionState
+	if (fieldMetadata) {
+		if (!condition || condition.operator !== operator) {
+			condition = getDefaultCondition(
+				path,
+				fieldMetadata,
+				operator,
+				displayAs || ""
+			) as wire.ValueConditionState
+		}
 	}
 
 	if (!condition) return null
