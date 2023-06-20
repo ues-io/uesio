@@ -29,7 +29,7 @@ definition:
       defaults:
         - field: uesio/viewonly.terms
           valueSource: VALUE
-          value: true
+          value: false
 
   # Components are how we describe the layout of our view
   components:
@@ -57,7 +57,7 @@ definition:
                                 components:
                                   - uesio/io.field:
                                       fieldId: uesio/viewonly.username
-                                      label: Username (a-z, 0-9, or _)
+                                      label: Username (lowercase a-z, 0-9, or _)
                                       applyChanges: onBlur
                                   - uesio/io.field:
                                       fieldId: uesio/viewonly.email
@@ -83,7 +83,7 @@ definition:
                                                 - inline
                                             components:
                                               - uesio/io.text:
-                                                  text: I agree to the ues.io
+                                                  text: I agree to the terms and conditions of the
                                                   uesio.variant: uesio/io.smallcontent
                                               - uesio/io.button:
                                                   text: Master Subscription Agreement.
