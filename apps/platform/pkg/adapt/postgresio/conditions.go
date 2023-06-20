@@ -64,7 +64,7 @@ func (qb *QueryBuilder) String() string {
 }
 
 func isTextAlike(fieldType string) bool {
-	if fieldType == "TEXT" || fieldType == "AUTONUMBER" || fieldType == "EMAIL" || fieldType == "LONGTEXT" || fieldType == "SELECT" {
+	if fieldType == "TEXT" || fieldType == "AUTONUMBER" || fieldType == "EMAIL" || fieldType == "LONGTEXT" || fieldType == "SELECT" || fieldType == "DATE" {
 		return true
 	}
 	return false
@@ -117,7 +117,8 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 	isTextType := isTextAlike(fieldMetadata.Type)
 	switch condition.Operator {
 	case "IN", "NOT_IN":
-		if fieldMetadata.Type == "DATE" {
+		//IF we got values use normal flow
+		if fieldMetadata.Type == "DATE" && condition.Values == nil {
 			return processDateRangeCondition(condition, fieldName, builder)
 		}
 		if condition.Values != nil {

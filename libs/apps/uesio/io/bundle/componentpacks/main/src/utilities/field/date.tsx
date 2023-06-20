@@ -1,5 +1,6 @@
 import { definition, styles, context, wire } from "@uesio/ui"
 import TextField from "./text"
+import { useControlledInput } from "../../shared/useControlledFieldValue"
 
 type DateFieldProps = {
 	setValue: (value: wire.FieldValue) => void
@@ -15,8 +16,8 @@ const StyleDefaults = Object.freeze({
 const DateField: definition.UtilityComponent<DateFieldProps> = (props) => {
 	const { setValue, mode, id } = props
 
-	// TODO: Better type checking here
 	const value = props.value as string
+	const controlledInputProps = useControlledInput(value, setValue, "")
 
 	const readonly = mode === "READ"
 
@@ -46,10 +47,9 @@ const DateField: definition.UtilityComponent<DateFieldProps> = (props) => {
 		<input
 			id={id}
 			className={styles.cx(classes.input, readonly && classes.readonly)}
-			value={value || ""}
+			{...controlledInputProps}
 			type="date"
 			disabled={readonly}
-			onChange={(event) => setValue(event.target.value)}
 		/>
 	)
 }
