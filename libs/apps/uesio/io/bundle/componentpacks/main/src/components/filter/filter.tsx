@@ -6,6 +6,7 @@ import WeekFilter from "../../utilities/weekfilter/weekfilter"
 import DateFilter from "../../utilities/datefilter/datefilter"
 import NumberFilter from "../../utilities/numberfilter/numberfilter"
 import CheckboxFilter from "../../utilities/checkboxfilter/checkboxfilter"
+import MultiSelectFilter from "../../utilities/multiselectfilter/multiselectfilter"
 import TextFilter from "../../utilities/textfilter/textfilter"
 import TimestampFilter from "../../utilities/timestampfilter/timestampfilter"
 import GroupFilter, {
@@ -22,6 +23,7 @@ type FilterDefinition = {
 	wrapperVariant: metadata.MetadataKey
 	conditionId?: string
 	placeholder?: string
+	operator: wire.ConditionOperators
 }
 
 type CommonProps = {
@@ -39,7 +41,7 @@ const getFilterContent = (
 	common: CommonProps,
 	definition: FilterDefinition
 ) => {
-	const { displayAs, placeholder } = definition
+	const { displayAs, placeholder, operator } = definition
 	const fieldMetadata = common.fieldMetadata
 	const type = fieldMetadata.getType()
 	switch (type) {
@@ -53,6 +55,8 @@ const getFilterContent = (
 			return <CheckboxFilter {...common} displayAs={displayAs} />
 		case "SELECT":
 			return <SelectFilter {...common} />
+		case "MULTISELECT":
+			return <MultiSelectFilter {...common} operator={operator} />
 		case "TIMESTAMP":
 			return <TimestampFilter {...common} />
 		case "DATE": {
@@ -68,6 +72,7 @@ const getFilterContent = (
 const getDefaultCondition = (
 	path: string,
 	fieldMetadata: collection.Field,
+	operator: wire.ConditionOperators,
 	displayAs: string
 ) => {
 	const type = fieldMetadata.getType()
@@ -84,6 +89,13 @@ const getDefaultCondition = (
 						operator: "IN",
 						field: fieldMetadata.getId(),
 				  }
+		}
+		case "MULTISELECT": {
+			return {
+				id: path,
+				operator: operator || "HAS_ANY",
+				field: fieldMetadata.getId(),
+			}
 		}
 		case "TEXT":
 		case "LONGTEXT":
@@ -103,7 +115,7 @@ const getDefaultCondition = (
 
 const Filter: definition.UC<FilterDefinition> = (props) => {
 	const { context, definition, path } = props
-	const { fieldId, conditionId, displayAs } = definition
+	const { fieldId, conditionId, operator, displayAs } = definition
 	const wire = api.wire.useWire(definition.wire, context)
 	if (!wire) return null
 
@@ -112,16 +124,21 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 		wire.getCondition(conditionId || path) || undefined
 	// Field metadata is not needed for group conditions
 	const fieldMetadata = collection.getField(
-		isValueCondition(existingCondition) ? existingCondition.field : fieldId
+		conditionId && isValueCondition(existingCondition)
+			? existingCondition.field
+			: fieldId
 	)
 
 	let condition = existingCondition
-	if (!condition && fieldMetadata) {
-		condition = getDefaultCondition(
-			path,
-			fieldMetadata,
-			displayAs || ""
-		) as wire.ValueConditionState
+	if (fieldMetadata) {
+		if (!condition || condition.operator !== operator) {
+			condition = getDefaultCondition(
+				path,
+				fieldMetadata,
+				operator,
+				displayAs || ""
+			) as wire.ValueConditionState
+		}
 	}
 
 	if (!condition) return null
