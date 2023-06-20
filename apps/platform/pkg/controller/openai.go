@@ -124,7 +124,7 @@ func AutocompleteHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Check if the user has the Use AI Signals feature flag
 	session := middleware.GetSession(r)
-	flags, err := featureflagstore.GetStudioFeatureFlags(session.GetUserID())
+	flags, err := featureflagstore.GetFeatureFlags(session, session.GetUserID())
 	if err != nil {
 		http.Error(w, "You do not have permission to use this feature", http.StatusForbidden)
 		return
