@@ -96,3 +96,8 @@ func SetValue(cv *meta.FeatureFlag, value bool, user *meta.User, session *sess.S
 	}
 	return store.Set(ffa, session)
 }
+
+func GetStudioFeatureFlags(user string) (*meta.FeatureFlagCollection, error) {
+	session := sess.GetStudioAnonSession()
+	return GetFeatureFlags(session, user)
+}

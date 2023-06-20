@@ -433,7 +433,7 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 		return nil, errors.New("Failed to get translated labels: " + err.Error())
 	}
 
-	featureflags, err := featureflagstore.GetFeatureFlags(session, session.GetUserID())
+	featureflags, err := featureflagstore.GetStudioFeatureFlags(session.GetUserID())
 	if err != nil {
 		return nil, errors.New("Failed to get feature flags: " + err.Error())
 	}
