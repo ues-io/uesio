@@ -166,6 +166,7 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-10"
 jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-12"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-15"
 
 # Operator: GT | valueSource: PARAM
 # entry 8
@@ -196,6 +197,7 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-10"
 jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-12"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-15"
 
 # Operator: LT | valueSource: VALUE
 # entry 9
@@ -446,8 +448,6 @@ HTTP 200
 jsonpath "$.wires[1].data[*]['uesio/tests.date']" isString
 jsonpath "$.wires[1].data[*]['uesio/tests.date']" == "2023-05-10"
 jsonpath "$.wires[1].data[*]['uesio/core.uniquekey']" == "ID-001"
-                        
-
 
 # Operator: IN | valueSource: PARAM
 # entry 17
@@ -606,7 +606,6 @@ HTTP 200
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-008"
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-009"
 
-
 # Operator: IS_NOT_BLANK | valueSource: VALUE
 # entry 22
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
@@ -678,8 +677,8 @@ Accept: application/json
                     "valueSource": "VALUE",
                     "start": "2023-05-10",
                     "end": "2023-05-13",
-                    "inclusiveStart":true,
-                    "inclusiveEnd":true
+                    "inclusiveStart": true,
+                    "inclusiveEnd": true
                 }
             ]
         }
@@ -691,7 +690,6 @@ jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-10"
 jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-12"
 jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-13"
 
-
 # Operator: BETWEEN | valueSource: VALUE | inclusiveStart but not inclusiveEnd
 # entry 26
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
@@ -701,7 +699,7 @@ Accept: application/json
         {
             "collection":"uesio/tests.wire_condition",
             "fields": [{"id": "uesio/tests.date"}],
-            "query":true,
+            "query": true,
             "conditions": [
                 {
                     "field": "uesio/tests.date",
@@ -709,8 +707,8 @@ Accept: application/json
                     "valueSource": "VALUE",
                     "start": "2023-05-10",
                     "end": "2023-05-13",
-                    "inclusiveStart":true,
-                    "inclusiveEnd":false
+                    "inclusiveStart": true,
+                    "inclusiveEnd": false
                 }
             ]
         }
@@ -739,8 +737,8 @@ Accept: application/json
                     "valueSource": "VALUE",
                     "start": "2023-05-10",
                     "end": "2023-05-13",
-                    "inclusiveStart":false,
-                    "inclusiveEnd":true
+                    "inclusiveStart": false,
+                    "inclusiveEnd": true
                 }
             ]
         }
