@@ -47,14 +47,18 @@ const handleDrop = (
 	context: ctx.Context
 ): void => {
 	switch (drag.itemType) {
-		case "component": {
-			addComponentToCanvas(context, drag, drop)
-			break
-		}
+		case "component":
 		case "componentvariant": {
-			addComponentToCanvas(context, drag, drop, {
-				"uesio.variant": drag.localPath,
-			})
+			addComponentToCanvas(
+				context,
+				drag,
+				drop,
+				drag.itemType === "componentvariant"
+					? {
+							"uesio.variant": drag.localPath,
+					  }
+					: {}
+			)
 			break
 		}
 		case "viewdef": {
