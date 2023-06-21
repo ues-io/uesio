@@ -6,6 +6,7 @@ export interface CodeFieldUtilityProps {
 	setValue: OnChange
 	value: string
 	language?: string
+	theme?: string
 	mode?: context.FieldMode
 	options?: monaco.editor.IStandaloneEditorConstructionOptions
 	onMount?: EditorProps["onMount"]

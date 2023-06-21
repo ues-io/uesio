@@ -23,8 +23,41 @@ type ColumnDefinition = {
 	// longtext?: LongTextFieldOptions
 	// label: string
 	components: definition.DefinitionList
+	type?: "" | "custom"
 } & definition.BaseDefinition
 
+const columnTypeProperty = {
+	name: "type",
+	type: "SELECT",
+	label: "Column Type",
+	options: [
+		{ value: "", label: "Field" },
+		{ value: "custom", label: "Components" },
+	],
+	// Populate / remove components array if this field is changed
+	onChange: [
+		{
+			conditions: [
+				{
+					field: "type",
+					value: "custom",
+					type: "fieldValue",
+				},
+			] as component.DisplayCondition[],
+			updates: [{ field: "components", value: [] }, { field: "field" }],
+		},
+		{
+			conditions: [
+				{
+					field: "type",
+					value: "",
+					type: "fieldValue",
+				},
+			] as component.DisplayCondition[],
+			updates: [{ field: "components" }],
+		},
+	],
+} as ComponentProperty
 const labelProperty = {
 	name: "label",
 	type: "TEXT",
@@ -37,6 +70,17 @@ const widthProperty = {
 }
 
 const TABLE_TYPE = "uesio/io.table"
+
+const isCustomColumn = (column: ColumnDefinition) =>
+	column?.components?.length > 0 || column?.type === "custom"
+
+const getColumnTitle = (column: ColumnDefinition) => {
+	if (isCustomColumn(column)) {
+		return "Components" + (column.label ? `: ${column.label}` : "")
+	} else {
+		return `Field: ${column?.field || '["Not set"]'}`
+	}
+}
 
 const TableColumns: definition.UC = (props) => {
 	const { context } = props
@@ -77,8 +121,8 @@ const TableColumns: definition.UC = (props) => {
 	const getColumnProperties = (column: ColumnDefinition) => {
 		// If the column has components, then the individual components can be edited through their child components,
 		// but we still want to specify COLUMN properties
-		if (column?.components?.length > 0) {
-			return [widthProperty, labelProperty]
+		if (isCustomColumn(column)) {
+			return [columnTypeProperty, widthProperty, labelProperty]
 		}
 		const ioFieldProperties = (fieldComponentDef?.properties ||
 			[]) as ComponentProperty[]
@@ -99,6 +143,7 @@ const TableColumns: definition.UC = (props) => {
 		delete fieldDisplayTypeProperty.wireProperty
 
 		const tableFieldProperties = [
+			columnTypeProperty,
 			fieldProperty,
 			fieldDisplayTypeProperty,
 			widthProperty,
@@ -106,14 +151,6 @@ const TableColumns: definition.UC = (props) => {
 		] as ComponentProperty[]
 
 		return tableFieldProperties.concat(ioFieldProperties.slice(5))
-	}
-
-	const getColumnTitle = (column: ColumnDefinition) => {
-		if (column?.components?.length > 0) {
-			return "Components" + (column.label ? `: ${column.label}` : "")
-		} else {
-			return `Field: ${column?.field || '["Not set"]'}`
-		}
 	}
 
 	const getItemChildren = (column: ColumnDefinition, itemIndex: number) => {

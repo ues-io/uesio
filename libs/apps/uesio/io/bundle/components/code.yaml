@@ -32,11 +32,20 @@ properties:
     type: METADATA
     label: File
     metadataType: FILE
+  - type: SELECT
+    name: theme
+    label: Theme
+    options:
+      - value: vs-light
+        label: Light
+      - value: vs-dark
+        label: Dark
 sections:
   - type: HOME
     properties:
       - label
       - language
       - file
+      - theme
   - type: STYLES
   - type: DISPLAY
