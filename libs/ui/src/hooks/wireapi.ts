@@ -17,6 +17,7 @@ import { useEffect } from "react"
 import { useDeepCompareEffect } from "react-use"
 import { dispatch } from "../store/store"
 import { PlainCollectionMap } from "../bands/collection/types"
+import { wire } from ".."
 
 // Wraps our store's useWire result (POJO) in a nice Wire class
 // with convenience methods to make the api easier to consume for end users.
@@ -38,15 +39,20 @@ const remove = (wireId: string, context: Context) => {
 const useDynamicWire = (
 	wireName: string,
 	wireDef: WireDefinition | null,
-	context: Context
+	context: Context,
+	initialValues?: Record<string, wire.PlainWireRecord>
 ) => {
 	const wire = useWire(wireName, context)
 	// This Hook handles wireName changes --- there's a lot more work to do here.
 	useEffect(() => {
 		if (!wireDef || !wireName) return
-		initWiresOp(context, {
-			[wireName]: wireDef,
-		})
+		initWiresOp(
+			context,
+			{
+				[wireName]: wireDef,
+			},
+			initialValues
+		)
 		loadWiresOp(context, [wireName])
 		return () => {
 			remove(wireName, context)

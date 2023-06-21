@@ -48,9 +48,9 @@ const DynamicTable: definition.UtilityComponent<DynamicTableProps> = (
 			init: {
 				create: false,
 			},
-			data: initialValues,
 		},
-		context
+		context,
+		initialValues
 	)
 
 	// Set the passed in ref to the wire, so our

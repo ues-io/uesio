@@ -12,6 +12,7 @@ import { PlainWire } from "../types"
 import { PlainCollection, PlainCollectionMap } from "../../collection/types"
 import { FieldMetadataMap, FieldMetadata } from "../../field/types"
 import { LoadRequestField } from "../../../load/loadrequest"
+import { PlainWireRecord } from "../../wirerecord/types"
 
 const getFieldsRequest = (
 	fields?: WireFieldDefinitionMap | Record<string, ViewOnlyField>
@@ -50,10 +51,11 @@ const getWireDefInfo = (wireDef: RegularWireDefinition) => ({
 
 const getViewOnlyWireDefInfo = (
 	wireDef: ViewOnlyWireDefinition,
-	metadata: PlainCollection
+	metadata: PlainCollection,
+	initialValues?: Record<string, PlainWireRecord>
 ) => ({
 	...getBaseWireDefInfo(wireDef),
-	...(wireDef.data && { data: wireDef.data }),
+	...(initialValues && { data: initialValues }),
 	collection: getMetadataFullName(metadata),
 	viewOnly: true,
 })
@@ -158,14 +160,15 @@ const initWire = (
 	viewId: string,
 	wirename: string,
 	wireDef: WireDefinition,
-	collections: PlainCollectionMap
+	collections: PlainCollectionMap,
+	initialValues?: Record<string, PlainWireRecord>
 ): PlainWire => {
 	if (wireDef.viewOnly) {
 		const collection = getViewOnlyMetadata(wirename, wireDef)
 		collections[getMetadataFullName(collection)] = collection
 		return {
 			...getNewPlainWireBase(viewId, wirename),
-			...getViewOnlyWireDefInfo(wireDef, collection),
+			...getViewOnlyWireDefInfo(wireDef, collection, initialValues),
 		} as PlainWire
 	}
 
@@ -179,7 +182,8 @@ export { initExistingWire }
 
 export default (
 	context: Context,
-	wireDefs: Record<string, WireDefinition | undefined>
+	wireDefs: Record<string, WireDefinition | undefined>,
+	initialValues?: Record<string, PlainWireRecord>
 ) => {
 	const collections: PlainCollectionMap = {}
 	const viewId = context.getViewId()
@@ -189,7 +193,7 @@ export default (
 		const wireDef =
 			wireDefs[wirename] || context.getViewDef()?.wires?.[wirename]
 		if (!wireDef) throw new Error("Could not get wire def")
-		return initWire(viewId, wirename, wireDef, collections)
+		return initWire(viewId, wirename, wireDef, collections, initialValues)
 	})
 
 	dispatch(init([initializedWires, collections]))
