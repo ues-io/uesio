@@ -2,9 +2,10 @@ package sess
 
 import (
 	"fmt"
-	"github.com/twmb/murmur3"
 	"net/http"
 	"time"
+
+	"github.com/twmb/murmur3"
 
 	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -192,6 +193,9 @@ func (s *Session) getBrowserSessionAttribute(key string) string {
 }
 
 func (s *Session) GetBrowserSession() *session.Session {
+	if s == nil {
+		return nil
+	}
 	return s.browserSession
 }
 
@@ -343,13 +347,14 @@ func (s *Session) GetContextSite() *meta.Site {
 }
 
 func (s *Session) GetSessionIdHash() string {
-	bs := *s.GetBrowserSession()
-	if bs != nil {
-		hasher := murmur3.New64()
-		_, err := hasher.Write([]byte(bs.ID()))
-		if err == nil {
-			return fmt.Sprintf("%d", hasher.Sum64())
-		}
+	bs := (*s).GetBrowserSession()
+	if bs == nil {
+		return ""
 	}
-	return ""
+	hasher := murmur3.New64()
+	_, err := hasher.Write([]byte((*bs).ID()))
+	if err != nil {
+		return ""
+	}
+	return fmt.Sprintf("%d", hasher.Sum64())
 }
