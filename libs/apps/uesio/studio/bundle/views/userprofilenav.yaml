@@ -29,7 +29,7 @@ definition:
           - uesio/io.tile:
               uesio.display:
                 - type: featureFlag
-                  name: manage_billing
+                  name: manage_billing_licensing
               uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
