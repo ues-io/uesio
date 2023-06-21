@@ -145,6 +145,10 @@ func getMultiSelectLoader(index int, mapping *meta.FieldMapping, fieldMetadata *
 		rawVal := getValue(data, mapping, index)
 		valuesMap := map[string]bool{}
 		// If there's no data, just do an early return
+		if rawVal == "" || rawVal == "[]" {
+			change[fieldMetadata.GetFullName()] = nil
+			return nil
+		}
 		if rawVal != "" && rawVal != "[]" {
 			maxLen := 0
 			if fieldMetadata != nil && fieldMetadata.SelectListMetadata != nil && fieldMetadata.SelectListMetadata.Options != nil {
