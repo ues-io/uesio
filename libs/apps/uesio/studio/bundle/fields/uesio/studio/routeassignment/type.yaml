@@ -1,0 +1,6 @@
+name: type
+type: SELECT
+label: Type
+selectList: uesio/studio.routeassignmenttype
+required: true
+createOnly: true

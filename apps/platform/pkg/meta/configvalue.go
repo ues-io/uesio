@@ -13,7 +13,7 @@ type ConfigValue struct {
 	BundleableBase `yaml:",inline"`
 	Store          string `yaml:"store,omitempty" json:"uesio/studio.store"`
 	ManagedBy      string `yaml:"managedBy,omitempty" json:"uesio/studio.managedby"`
-	Value          string
+	Value          string `yaml:"-" json:"-"`
 }
 
 type ConfigValueWrapper ConfigValue

@@ -32,13 +32,13 @@ definition:
                             - signal: wire/SAVE
                               wires:
                                 - articles
-                          text: Save
+                          text: $Label{uesio/io.save}
                           uesio.variant: uesio/io.secondary
                       - uesio/io.button:
                           signals:
                             - signal: wire/CANCEL
                               wire: articles
-                          text: Cancel
+                          text: $Label{uesio/io.cancel}
                           uesio.variant: uesio/io.secondary
                       - uesio/io.button:
                           signals:
@@ -53,11 +53,11 @@ definition:
               rowactions:
                 - text: View
                   signals:
-                    - signal: route/NAVIGATE
+                    - signal: route/NAVIGATE_TO_ASSIGNMENT
                       collection: uesio/cms.article
                       viewtype: detail
                       recordid: ${uesio/core.id}
-                - text: Delete
+                - text: $Label{uesio/io.delete}
                   signals:
                     - signal: wire/TOGGLE_DELETE_STATUS
               columns:

@@ -3,12 +3,13 @@ package bulk
 import (
 	"archive/zip"
 	"bytes"
+	"encoding/csv"
 	"errors"
 	"io"
 	"io/ioutil"
-	"path/filepath"
-	"strings"
+	"os"
 
+	"github.com/dimchansky/utfbom"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
@@ -42,27 +43,82 @@ func NewFileUploadBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Sess
 
 	uploadOps := []filesource.FileUploadOp{}
 	// Read all the files from zip archive
-	for _, zipFile := range zipReader.File {
-		fileName := zipFile.Name
-		f, err := zipFile.Open()
+
+	// First open upload.csv
+	manifest, err := zipReader.Open("upload.csv")
+	if err != nil {
+		return nil, errors.New("No upload upload.csv manifiest file provided")
+	}
+
+	defer manifest.Close()
+
+	r := csv.NewReader(utfbom.SkipOnly(manifest))
+	r.LazyQuotes = true
+
+	// Handle the header row
+	headerRow, err := r.Read()
+	if err != nil {
+		return nil, err
+	}
+
+	columnIndexes := map[string]int{}
+	for index, columnName := range headerRow {
+		columnIndexes[columnName] = index
+	}
+
+	for {
+		record, err := r.Read()
+		if err == io.EOF {
+			break
+		}
 		if err != nil {
 			return nil, err
 		}
 
-		// For this to work, the filename (without the extension) must
-		// be the uniquekey of the record to attach to
-		path := fileName
-		uniqueRecordKey := strings.TrimSuffix(path, filepath.Ext(path))
+		recordIDIndex, ok := columnIndexes["uesio/core.recordid"]
+		if !ok {
+			return nil, errors.New("No record id column provided in upload.csv")
+		}
+
+		fieldIDIndex, ok := columnIndexes["uesio/core.fieldid"]
+		if !ok {
+			return nil, errors.New("No field id column provided in upload.csv")
+		}
+
+		pathIndex, ok := columnIndexes["uesio/core.path"]
+		if !ok {
+			return nil, errors.New("No path column provided in upload.csv")
+		}
+
+		recordid := record[recordIDIndex]
+		if recordid == "" {
+			return nil, errors.New("No record id provided for upload")
+		}
+
+		path := record[pathIndex]
+		if path == "" {
+			return nil, errors.New("No path provided for upload")
+		}
+
+		// It's ok for fieldid to be an empty string.
+		// That means it's an attachment
+		fieldid := record[fieldIDIndex]
+
+		f, err := zipReader.Open("files" + string(os.PathSeparator) + path)
+		if err != nil {
+			return nil, errors.New("No file found at path: " + path)
+		}
 		uploadOps = append(uploadOps, filesource.FileUploadOp{
 			Data: f,
 			Details: &fileadapt.FileDetails{
 				Path:            path,
 				CollectionID:    spec.Collection,
-				RecordUniqueKey: uniqueRecordKey,
-				FieldID:         spec.UploadField,
+				RecordUniqueKey: recordid,
+				FieldID:         fieldid,
 			},
 		})
 		defer f.Close()
+
 	}
 
 	connection, err := datasource.GetPlatformConnection(metadata, session, nil)

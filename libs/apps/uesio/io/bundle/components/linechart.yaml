@@ -1,14 +1,18 @@
 name: linechart
 title: Line Chart
+icon: show_chart
 description: Visualize data with lines.
 category: VISUALIZATION
 pack: chart
 entrypoint: components/linechart/linechart
+utilities:
+  - uesio/io.chart
 defaultDefinition:
   title: New Line Chart
   labels:
     source: DATA
     timeunit: MONTH
+    timeunitfill: WEEK
 discoverable: true
 properties:
   - name: title

@@ -23,3 +23,8 @@ sections:
   - type: SIGNALS
   - type: STYLES
   - type: DISPLAY
+styleRegions:
+  root:
+  content:
+  avatar:
+  selected:

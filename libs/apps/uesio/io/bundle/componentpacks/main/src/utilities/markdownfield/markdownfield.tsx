@@ -49,13 +49,18 @@ const StyleDefaults = Object.freeze({
 	h5: [],
 	h6: [],
 	p: [],
+	ol: [],
+	ul: [],
+	li: [],
 	code: [],
+	a: [],
+	img: ["max-w-md"],
 })
 
 const MarkDownField: definition.UtilityComponent<MarkDownFieldProps> = (
 	props
 ) => {
-	const { value } = props
+	const { context, value = "" } = props
 
 	const classes = styles.useUtilityStyleTokens(
 		StyleDefaults,
@@ -65,7 +70,7 @@ const MarkDownField: definition.UtilityComponent<MarkDownFieldProps> = (
 
 	return (
 		<ReactMarkdown
-			children={(value as string) || ""}
+			children={context.merge(value as string) as string}
 			remarkPlugins={[remarkGfm]}
 			className={classes.root}
 			components={{
@@ -76,6 +81,15 @@ const MarkDownField: definition.UtilityComponent<MarkDownFieldProps> = (
 				h4: (props) => <Heading {...props} className={classes.h4} />,
 				h5: (props) => <Heading {...props} className={classes.h5} />,
 				h6: (props) => <Heading {...props} className={classes.h6} />,
+				ol: (props) => <ol className={classes.ol}>{props.children}</ol>,
+				ul: (props) => <ul className={classes.ul}>{props.children}</ul>,
+				li: (props) => <li className={classes.li}>{props.children}</li>,
+				img: (props) => <img className={classes.img} {...props} />,
+				a: (props) => (
+					<a className={classes.a} href={props.href}>
+						{props.children}
+					</a>
+				),
 				code: ({ node, inline, className, children, ...props }) => {
 					const match = /language-(\w+)/.exec(className || "")
 					return (

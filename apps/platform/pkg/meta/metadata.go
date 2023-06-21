@@ -154,7 +154,7 @@ func StandardFieldGet(item CollectionableItem, fieldName string) (interface{}, e
 func StandardFieldSet(item CollectionableItem, fieldName string, value interface{}) error {
 	err := reflecttool.SetField(item, fieldName, value)
 	if err != nil {
-		err = errors.New("Failed to set field: " + fieldName + " on item: " + item.GetCollectionName())
+		return fmt.Errorf("Failed to set field: %s on item: %s: %w", fieldName, item.GetCollectionName(), err)
 	}
 	return nil
 }
@@ -219,6 +219,7 @@ var bundleableGroupMap = map[string]BundleableFactory{
 	(&CollectionCollection{}).GetBundleFolderName():       func() BundleableGroup { return &CollectionCollection{} },
 	(&SelectListCollection{}).GetBundleFolderName():       func() BundleableGroup { return &SelectListCollection{} },
 	(&RouteCollection{}).GetBundleFolderName():            func() BundleableGroup { return &RouteCollection{} },
+	(&RouteAssignmentCollection{}).GetBundleFolderName():  func() BundleableGroup { return &RouteAssignmentCollection{} },
 	(&ViewCollection{}).GetBundleFolderName():             func() BundleableGroup { return &ViewCollection{} },
 	(&ThemeCollection{}).GetBundleFolderName():            func() BundleableGroup { return &ThemeCollection{} },
 	(&CredentialCollection{}).GetBundleFolderName():       func() BundleableGroup { return &CredentialCollection{} },
@@ -301,7 +302,7 @@ func validateNodeName(node *yaml.Node, expectedName string) error {
 func validateRequiredMetadataItem(node *yaml.Node, property string) error {
 	value := GetNodeValueAsString(node, property)
 	if value == "" {
-		return fmt.Errorf("Required Metadata Propety Missing: %s", property)
+		return fmt.Errorf("Required Metadata Property Missing: %s", property)
 	}
 	namespace, _, err := ParseKey(value)
 	if err != nil {

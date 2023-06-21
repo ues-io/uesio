@@ -91,9 +91,9 @@ describe("Uesio Builder Tests", () => {
 	const getCanvasElement = (slotpath: string, index: number) =>
 		cy
 			.get(`[data-path="${CSS.escape(slotpath)}"]`)
+			.children(`[data-index="${index}"]`)
 			.children()
-			.not("[data-placeholder]")
-			.eq(index)
+			.first()
 
 	before(() => {
 		cy.loginWithAppAndWorkspace(appName, workspaceName)
@@ -108,8 +108,8 @@ describe("Uesio Builder Tests", () => {
 			cy.getByIdFragment("button", "new-view")
 				.scrollIntoView()
 				.should("be.visible")
-			// Test the hotkey for creating a new view
-			cy.hotkey("n")
+			// Click the new view button
+			cy.clickButton("new-view")
 			// Fill out the form to create a new view
 			cy.typeInInput("new-view-name", viewName)
 			cy.clickButton("save-new-view")

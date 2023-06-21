@@ -35,7 +35,7 @@ const Text = forwardRef<HTMLDivElement, TextProps>((props, ref) => {
 	const Tag = element as "div"
 	const mergedText = props.context.mergeString(text)
 	return (
-		<Tag ref={ref} className={classes.root}>
+		<Tag ref={ref} className={classes.root} id={props.id}>
 			{mergedText}
 		</Tag>
 	)

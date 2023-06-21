@@ -1,0 +1,8 @@
+name: calloutsection
+label: Callout section
+extends: uesio/io.section
+definition:
+  uesio.styleTokens:
+    root:
+      - bg-yellow-100
+      - text-xl

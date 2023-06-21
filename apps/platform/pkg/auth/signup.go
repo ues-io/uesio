@@ -2,6 +2,7 @@ package auth
 
 import (
 	"errors"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"regexp"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -47,7 +48,7 @@ func Signup(signupMethodID string, payload map[string]interface{}, site *meta.Si
 	}
 
 	if !matchesRegex(username, signupMethod.UsernameRegex) {
-		return nil, errors.New("Signup failed: Regex validation failed")
+		return nil, errors.New("username does not match required pattern: " + signupMethod.UsernameFormatExplanation)
 	}
 
 	err = boostPayloadWithTemplate(username, payload, site, &signupMethod.Signup)
@@ -62,7 +63,12 @@ func Signup(signupMethodID string, payload map[string]interface{}, site *meta.Si
 
 	email, _ := GetPayloadValue(payload, "email")
 
-	err = CreateUser(username, email, signupMethod, session)
+	userMeta, err := createUser(username, email, signupMethod)
+	if err != nil {
+		return nil, err
+	}
+
+	err = datasource.PlatformSaveOne(userMeta, nil, nil, session)
 	if err != nil {
 		return nil, err
 	}

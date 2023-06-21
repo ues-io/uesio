@@ -1,6 +1,6 @@
 name: checkitem
-label: Check Item
 extends: uesio/io.default
+label: Check Item
 definition:
   uesio.styleTokens:
     root:

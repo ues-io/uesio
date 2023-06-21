@@ -3,7 +3,8 @@ import { PropertiesPanelSection } from "../api/propertysection"
 
 type FieldUpdate = {
 	field: string
-	value: wire.PlainFieldValue
+	// If value is undefined, then the field's value will be cleared from YAML definition.
+	value?: wire.PlainFieldValue
 }
 
 type PropertyOnChange = {
@@ -162,6 +163,7 @@ type ListProperty = {
 	type: "LIST"
 	items?: ListPropertyItemsDefinition
 	subtype?: wire.FieldType
+	subtypeOptions?: wire.SelectOption[]
 } & BaseProperty
 
 type ParamsProperty = {
@@ -172,6 +174,10 @@ type ParamsProperty = {
 
 type IconProperty = {
 	type: "ICON"
+} & BaseProperty
+
+type DateProperty = {
+	type: "DATE"
 } & BaseProperty
 
 type ComponentProperty =
@@ -198,6 +204,7 @@ type ComponentProperty =
 	| TextAreaProperty
 	| IconProperty
 	| StructProperty
+	| DateProperty
 
 const getStyleVariantProperty = (componentType: string): ComponentProperty => ({
 	name: "uesio.variant",
@@ -220,6 +227,10 @@ export type {
 	SelectProperty,
 	StructProperty,
 	WireProperty,
+	TextProperty,
+	NumberProperty,
+	CheckboxProperty,
+	DateProperty,
 }
 
 export { getStyleVariantProperty }

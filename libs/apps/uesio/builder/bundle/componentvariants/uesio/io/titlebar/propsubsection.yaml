@@ -1,5 +1,6 @@
 name: propsubsection
 label: Property Sub Section
+extends: uesio/io.default
 definition:
   uesio.styleTokens:
     root:
@@ -8,4 +9,8 @@ definition:
       - bg-slate-50
       - text-xs
       - uppercase
+    title:
+      - text-slate-400
+      - text-base
+      - text-xs
 public: true

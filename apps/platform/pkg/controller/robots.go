@@ -2,21 +2,26 @@ package controller
 
 import (
 	"fmt"
-	"github.com/thecloudmasters/uesio/pkg/bundle"
-	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/middleware"
+
 	"io"
 	"net/http"
 	"sort"
 	"strings"
+
+	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/goutils"
+	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/middleware"
+	"github.com/thecloudmasters/uesio/pkg/routing"
 )
 
 const (
 	contentTypeHeader = "Content-Type"
 	plainText         = "text/plain"
 	defaultRobots     = `User-agent: *
-Disallow: /`
+Disallow: *`
 	allowPath = "\nAllow: %s"
+	filePath  = `/site/files/%s/*/%s`
 )
 
 var defaultRobotsBytes = []byte(defaultRobots)
@@ -37,31 +42,86 @@ func Robots(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var routes meta.RouteCollection
+	// If the home route is accessible by a guest, then we need to add it to the allowed paths
+	homeRoute, _ := routing.GetHomeRoute(session)
 
-	// Load all public routes to get their paths. We are assuming that a crawler would have a public guest session,
-	// so we can just let our permissions system do the work of finding which routes are accessible)
+	var routes meta.RouteCollection
+	var files meta.FileCollection
+
+	// Load all public routes to get their paths, along with public files.
+	// We are assuming that a crawler would have a public guest session,
+	// so we can just let our permissions system do the work of finding which routes/files are accessible)
 	err := bundle.LoadAllFromAny(&routes, nil, session, nil)
 
 	if err != nil || len(routes) == 0 {
 		return
 	}
 
+	err = bundle.LoadAllFromAny(&files, nil, session, nil)
+
+	if err != nil {
+		return
+	}
+
 	// Append to the robots the routes we want to allow
-	writeAllowPaths(w, getPublicRoutePaths(routes))
+	writeAllowedRoutePaths(w, getPublicRoutePaths(routes), homeRoute)
+	writeAllowedCorePaths(w)
+	writeAllowedStaticFiles(w, getPublicFilePaths(files))
 
 }
 
-func writeAllowPaths(w io.Writer, publicRoutes map[string]bool) {
+func writeAllowPath(w io.Writer, path string) (int, error) {
+	return w.Write([]byte(fmt.Sprintf(allowPath, path)))
+}
+
+// Adds all JS/CSS/Fonts, favicon, and vendored asset routes
+func writeAllowedCorePaths(w io.Writer) {
+	writeAllowPath(w, "/static/vendor/*")
+	writeAllowPath(w, "/*/static/ui/*")
+	writeAllowPath(w, "/favicon.ico")
+	writeAllowPath(w, "/site/componentpacks/*")
+}
+
+func writeAllowedStaticFiles(w io.Writer, publicFiles map[string]bool) {
+	// To have a stable output, we need to sort the keys
+	keys := goutils.MapKeys(publicFiles)
+	sort.Strings(keys)
+	for _, path := range keys {
+		writeAllowPath(w, path)
+	}
+}
+
+func writeAllowedRoutePaths(w io.Writer, publicRoutes map[string]bool, homeRoute *meta.Route) {
 	// To have a stable output, we need to sort the keys
 	keys := make([]string, 0, len(publicRoutes))
-	for k, _ := range publicRoutes {
+	addHomeRoute := false
+	normalizedHomeRoutePath := ""
+	if homeRoute != nil {
+		normalizedHomeRoutePath = normalizePath(homeRoute.Path)
+	}
+	for k := range publicRoutes {
 		keys = append(keys, k)
+		if homeRoute != nil && k == normalizedHomeRoutePath {
+			addHomeRoute = true
+		}
 	}
 	sort.Strings(keys)
 	for _, path := range keys {
-		w.Write([]byte(fmt.Sprintf(allowPath, path)))
+		writeAllowPath(w, path)
 	}
+	// Add the home route last, only if it is accessible by a guest
+	if addHomeRoute {
+		// We need to add the end-of-line instruction $ because otherwise this would
+		// functionally be a * that would cancel out our Disallow directive
+		writeAllowPath(w, "/$")
+	}
+}
+
+func normalizePath(path string) string {
+	if !strings.HasPrefix(path, "/") {
+		return fmt.Sprintf("/%s", path)
+	}
+	return path
 }
 
 func getPublicRoutePaths(routes meta.RouteCollection) map[string]bool {
@@ -76,10 +136,21 @@ func getPublicRoutePaths(routes meta.RouteCollection) map[string]bool {
 		if firstMergeIndex > -1 {
 			path = path[:firstMergeIndex]
 		}
-		if !strings.HasPrefix(path, "/") {
-			path = fmt.Sprintf("/%s", path)
-		}
-		publicRouteNames[path] = true
+		publicRouteNames[normalizePath(path)] = true
 	}
 	return publicRouteNames
+}
+
+func getFilePath(appFullName, fileName string) string {
+	return fmt.Sprintf(filePath, appFullName, fileName)
+}
+
+func getPublicFilePaths(files meta.FileCollection) map[string]bool {
+	publicFilePaths := map[string]bool{}
+
+	// Build a unique list of public file paths
+	for _, file := range files {
+		publicFilePaths[getFilePath(file.GetNamespace(), file.Name)] = true
+	}
+	return publicFilePaths
 }

@@ -42,6 +42,8 @@ func getFieldName(fieldMetadata *adapt.FieldMetadata, tableAlias string) string 
 		return getAliasedName("updatedby", tableAlias)
 	case adapt.UPDATED_AT_FIELD:
 		return fmt.Sprintf("date_part('epoch',%s)", getAliasedName("updatedat", tableAlias))
+	case adapt.COLLECTION_FIELD:
+		return getAliasedName("collection", tableAlias)
 	}
 
 	fieldsField := getAliasedName("fields", tableAlias)
@@ -50,9 +52,7 @@ func getFieldName(fieldMetadata *adapt.FieldMetadata, tableAlias string) string 
 		return fmt.Sprintf("(%s->>'%s')::boolean", fieldsField, fieldName)
 	case "TIMESTAMP":
 		return fmt.Sprintf("(%s->>'%s')::bigint", fieldsField, fieldName)
-	case "NUMBER":
-		return fmt.Sprintf("%s->'%s'", fieldsField, fieldName)
-	case "MAP", "LIST", "MULTISELECT", "STRUCT":
+	case "NUMBER", "MAP", "LIST", "MULTISELECT", "STRUCT":
 		// Return just as bytes
 		return fmt.Sprintf("%s->'%s'", fieldsField, fieldName)
 	default:
@@ -197,27 +197,13 @@ func (c *Connection) Load(op *adapt.LoadOp, session *sess.Session) error {
 	}
 	defer rows.Close()
 
-	cols := rows.FieldDescriptions()
-	if err != nil {
-		return errors.New("Failed to load columns in PostgreSQL:" + err.Error())
-	}
-
 	var item meta.Item
-	index := 0
-	scanners := make([]interface{}, len(cols))
 
-	for i, col := range cols {
-		scanners[i] = &DataScanner{
-			Item:       &item,
-			Field:      fieldMap[string(col.Name)],
-			References: &referencedCollections,
-		}
-	}
+	scanners := getScanners(&item, rows, fieldMap, &referencedCollections)
 
 	op.HasMoreBatches = false
-
 	formulaPopulations := adapt.GetFormulaFunction(formulaFields)
-
+	index := 0
 	for rows.Next() {
 		if op.BatchSize == index {
 			op.HasMoreBatches = true

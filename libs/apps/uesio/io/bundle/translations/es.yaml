@@ -1,7 +1,9 @@
 language: es
 labels:
   uesio/io.cancel: Cancelar
+  uesio/io.copy: Duplicar
   uesio/io.delete: Borrar
   uesio/io.edit: Editar
   uesio/io.preview: Vista Previa
   uesio/io.save: Guardar
+public: true

@@ -117,6 +117,7 @@ definition:
                     components:
                       - uesio/io.searchbox:
                           wire: users
+                          focusOnRender: true
                           searchfields:
                             - uesio/studio.firstname
                             - uesio/studio.lastname
@@ -173,7 +174,7 @@ definition:
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
-            text: "Save"
+            text: $Label{uesio/io.save}
             signals:
               - signal: context/SET
                 type: SITE_ADMIN
@@ -193,7 +194,7 @@ definition:
                 wire: newuser
         - uesio/io.button:
             uesio.variant: "uesio/io.secondary"
-            text: "Cancel"
+            text: $Label{uesio/io.cancel}
             signals:
               - signal: "panel/TOGGLE"
                 panel: "newUser"

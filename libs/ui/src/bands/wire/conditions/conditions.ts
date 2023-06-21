@@ -16,8 +16,11 @@ type ConditionOperators =
 	| "GTE"
 	| "LTE"
 	| "IN"
+	| "NOT_IN"
 	| "IS_BLANK"
 	| "IS_NOT_BLANK"
+	| "HAS_ANY"
+	| "HAS_ALL"
 
 type WireConditionState =
 	| ParamConditionState
@@ -29,7 +32,7 @@ type WireConditionState =
 type ConditionBase = {
 	id?: string
 	operator?: ConditionOperators
-	active?: boolean
+	inactive?: boolean
 }
 
 type GroupConditionState = ConditionBase & {
@@ -50,7 +53,8 @@ type ParamConditionState = ConditionBase & {
 	type?: undefined
 	field: string
 	valueSource: typeof PARAM
-	param: string
+	param?: string
+	params?: string[]
 }
 
 type LookupConditionState = ConditionBase & {
@@ -87,6 +91,7 @@ const isGroupCondition = (
 export { isValueCondition, isGroupCondition }
 
 export type {
+	ConditionOperators,
 	WireConditionState,
 	LookupConditionState,
 	ParamConditionState,

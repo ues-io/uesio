@@ -60,6 +60,19 @@ Cypress.Commands.add(
 	}
 )
 
+Cypress.Commands.add(
+	"setReferenceField",
+	(idFragment: string, value: string) => {
+		cy.get(idContainsSelector("div", idFragment)).click()
+		cy.focused().type(value)
+		cy.get(
+			`[id^="floatingMenu"][id*="${idFragment}"] + div div[role="option"]`
+		)
+			.first()
+			.click()
+	}
+)
+
 // Gets an input element whose id contains a given string, and types a string into it
 Cypress.Commands.add("typeInInput", (idFragment: string, value: string) => {
 	cy.get(idContainsSelector("input", idFragment)).type(value)
@@ -110,6 +123,10 @@ Cypress.Commands.add("getComponentState", (componentId: string) => {
 		.invoke("getExternalState", componentId)
 })
 
+Cypress.Commands.add("getWireState", (viewId: string, wireName: string) => {
+	cy.window().its("uesio.api.wire").invoke("getWire", viewId, wireName)
+})
+
 // Enters a global hotkey
 Cypress.Commands.add("hotkey", (hotkey: string) => {
 	cy.get("body").type(hotkey)
@@ -140,11 +157,16 @@ declare global {
 				id: string,
 				timeout?: number
 			): Chainable<void>
+			setReferenceField(
+				idFragment: string,
+				value: string
+			): Chainable<void>
 			typeInInput(inputIdFragment: string, value: string): Chainable<void>
 			clearInput(inputIdFragment: string): Chainable<void>
 			clickButton(idFragment: string): Chainable<void>
 			clickButtonIfExists(idFragment: string): Chainable<void>
 			getComponentState(componentId: string): Chainable<void>
+			getWireState(viewId: string, wireName: string): Chainable<void>
 			hotkey(hotkey: string): Chainable<void>
 			changeSelectValue(
 				selectElementIdFragment: string,

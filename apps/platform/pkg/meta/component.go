@@ -3,6 +3,7 @@ package meta
 import (
 	"errors"
 	"fmt"
+
 	"github.com/francoispqt/gojay"
 	yptr "github.com/zachelrath/yaml-jsonpointer"
 	"gopkg.in/yaml.v3"
@@ -33,12 +34,14 @@ type Component struct {
 
 	// Builder Properties
 	Title             string    `yaml:"title,omitempty" json:"uesio/studio.title"`
+	Icon              string    `yaml:"icon,omitempty" json:"uesio/studio.icon"`
 	Discoverable      bool      `yaml:"discoverable,omitempty" json:"uesio/studio.discoverable"`
 	Description       string    `yaml:"description,omitempty" json:"uesio/studio.description"`
-	Properties        yaml.Node `yaml:"properties" json:"uesio/studio.properties"`
-	DefaultDefinition yaml.Node `yaml:"defaultDefinition" json:"uesio/studio.defaultdefinition"`
-	Sections          yaml.Node `yaml:"sections" json:"uesio/studio.sections"`
-	Signals           yaml.Node `yaml:"signals" json:"uesio/studio.signals"`
+	Properties        yaml.Node `yaml:"properties,omitempty" json:"uesio/studio.properties"`
+	DefaultDefinition yaml.Node `yaml:"defaultDefinition,omitempty" json:"uesio/studio.defaultdefinition"`
+	Sections          yaml.Node `yaml:"sections,omitempty" json:"uesio/studio.sections"`
+	Signals           yaml.Node `yaml:"signals,omitempty" json:"uesio/studio.signals"`
+	StyleRegions      yaml.Node `yaml:"styleRegions,omitempty" json:"uesio/studio.styleregions"`
 
 	// Internal only
 	slotPaths      []string
@@ -49,7 +52,7 @@ var no_default_variant = "--no-default--"
 
 type SlotDefinition struct {
 	Name string `yaml:"name"`
-	Path string `yaml:"path"`
+	Path string `yaml:"path,omitempty"`
 }
 
 type ComponentWrapper Component
@@ -114,6 +117,9 @@ func (c *Component) MarshalJSONObject(enc *gojay.Encoder) {
 	enc.AddStringKey("description", c.Description)
 	enc.AddStringKey("category", c.Category)
 	enc.AddBoolKey("discoverable", c.Discoverable)
+	if c.Icon != "" {
+		enc.AddStringKey("icon", c.Icon)
+	}
 	if c.Slots.Content != nil {
 		enc.AddArrayKey("slots", (*YAMLDefinition)(&c.Slots))
 	}
@@ -128,6 +134,9 @@ func (c *Component) MarshalJSONObject(enc *gojay.Encoder) {
 	}
 	if c.Signals.Content != nil {
 		enc.AddObjectKey("signals", (*YAMLDefinition)(&c.Signals))
+	}
+	if c.StyleRegions.Content != nil {
+		enc.AddObjectKey("styleRegions", (*YAMLDefinition)(&c.StyleRegions))
 	}
 }
 

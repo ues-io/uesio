@@ -1,44 +1,78 @@
-import { api, metadata, definition } from "@uesio/ui"
+import { api, metadata, definition, context } from "@uesio/ui"
 import debounce from "lodash/debounce"
 import TextField from "../../utilities/field/text"
 import FieldWrapper from "../../utilities/fieldwrapper/fieldwrapper"
-import { useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 
 type SearchBoxDefinition = {
-	placeholder?: string
 	wire: string
 	searchFields: metadata.MetadataKey[]
+	focusOnRender?: boolean
+	placeholder?: string
+}
+
+const search = (
+	searchValue: string,
+	wire: string,
+	searchFields: string[],
+	context: context.Context
+) => {
+	api.signal.run(
+		{
+			signal: "wire/SEARCH",
+			search: searchValue,
+			wire,
+			searchFields,
+		},
+		context
+	)
 }
 
 const SearchBox: definition.UC<SearchBoxDefinition> = (props) => {
-	const { definition, context } = props
-	const wire = api.wire.useWire(definition.wire, context)
+	const {
+		definition: {
+			placeholder = "Search",
+			searchFields,
+			wire,
+			focusOnRender = false,
+		},
+		context,
+	} = props
 	const [text, setText] = useState("")
-	if (!wire) return null
-	const search = (searchValue: string) => {
-		api.signal.run(
-			{
-				signal: "wire/SEARCH",
-				search: searchValue,
-				wire: wire.getId(),
-				searchFields: definition.searchFields,
-			},
-			context
-		)
-	}
-	const debouncedRequest = debounce(search, 250)
+
+	const debouncedSearch = useMemo(
+		() =>
+			debounce(
+				(searchText: string) =>
+					search(searchText, wire, searchFields, context),
+				300
+			),
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[wire, searchFields]
+	)
+
+	useEffect(
+		() => () => {
+			debouncedSearch.cancel()
+		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[wire, searchFields]
+	)
+
 	return (
 		<FieldWrapper labelPosition="none" context={context}>
 			<TextField
+				id={api.component.getComponentIdFromProps(props)}
 				context={context}
 				type="search"
 				variant="uesio/io.search"
-				placeholder={definition.placeholder || "Search"}
+				placeholder={placeholder}
 				setValue={(value: string) => {
-					debouncedRequest(value as string)
 					setText(value)
+					debouncedSearch(value)
 				}}
 				value={text}
+				focusOnRender={focusOnRender}
 			/>
 		</FieldWrapper>
 	)

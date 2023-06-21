@@ -5,6 +5,9 @@ link: "https://docs.ues.io/"
 pack: main
 entrypoint: components/field/field
 defaultDefinition: {}
+discoverable: true
+category: DATA
+icon: select_check_box
 variants:
   - uesio/io.field:uesio/io.default
   - uesio/io.fieldlabel:uesio/io.default
@@ -42,7 +45,6 @@ properties:
       - updates:
           - field: displayAs
           - field: placeholder
-          - field: applyChanges
       # If the display type is now a type for which display-type specific properties are not relevant,
       # clear out these old properties
       - updates:
@@ -66,6 +68,15 @@ properties:
             field: fieldDisplayType
             operator: NOT_EQUALS
             value: LONGTEXT
+      - updates:
+          - field: applyChanges
+        conditions:
+          - type: fieldValue
+            field: fieldDisplayType
+            operator: NOT_IN
+            values:
+              - TEXT
+              - NUMBER
   - name: label
     type: TEXT
     label: Label
@@ -104,10 +115,13 @@ properties:
         operator: IN
         values:
           - TEXT
+          - NUMBER
   - name: displayAs
     type: SELECT
     label: Display as
     options:
+      - value: ""
+        label: "--None Selected--"
       - label: Text
         value: ""
         validFor:
@@ -157,6 +171,11 @@ properties:
         validFor:
           - field: fieldDisplayType
             value: CHECKBOX
+      - label: Slider
+        value: SLIDER
+        validFor:
+          - field: fieldDisplayType
+            value: NUMBER
     displayConditions:
       - type: fieldValue
         field: fieldDisplayType
@@ -168,6 +187,7 @@ properties:
           - REFERENCE
           - SELECT
           - TEXT
+          - NUMBER
   # Number-only properties
   - name: number
     label: " "
@@ -246,3 +266,6 @@ signals:
   CANCEL_FILE:
     label: Cancel File
     properties: []
+styleRegions:
+  input:
+  readonly:

@@ -1,10 +1,15 @@
 import { Context } from "../../context/context"
 import { set as setRoute, setLoading } from "."
-import { NavigateRequest, platform } from "../../platform/platform"
+import {
+	PathNavigateRequest,
+	AssignmentNavigateRequest,
+	platform,
+} from "../../platform/platform"
 import { batch } from "react-redux"
 import { loadScripts } from "../../hooks/usescripts"
 import { dispatchRouteDeps, getPackUrlsForDeps } from "./utils"
 import { dispatch } from "../../store/store"
+import { RouteState } from "./types"
 
 const redirect = (context: Context, path: string, newTab?: boolean) => {
 	const mergedPath = context.mergeString(path)
@@ -33,20 +38,34 @@ const getRouteUrlPrefix = (context: Context, namespace: string | undefined) => {
 	return "/"
 }
 
+const navigateToAssignment = async (
+	context: Context,
+	request: AssignmentNavigateRequest
+) => {
+	dispatch(setLoading())
+	const routeResponse = await platform.getRouteAssignment(context, request)
+	return handleNavigateResponse(context, routeResponse)
+}
+
 const navigate = async (
 	context: Context,
-	request: NavigateRequest,
+	request: PathNavigateRequest,
 	noPushState?: boolean
 ) => {
 	dispatch(setLoading())
+	const routeResponse = await platform.getRoute(context, request)
+	return handleNavigateResponse(context, routeResponse, noPushState)
+}
+
+const handleNavigateResponse = async (
+	context: Context,
+	routeResponse: RouteState,
+	noPushState?: boolean
+) => {
+	if (!routeResponse) return context
+	const deps = routeResponse.dependencies
 
 	const workspace = context.getWorkspace()
-
-	const routeResponse = await platform.getRoute(context, request)
-
-	if (!routeResponse) return context
-
-	const deps = routeResponse.dependencies
 
 	if (!noPushState) {
 		const prefix = getRouteUrlPrefix(context, routeResponse.namespace)
@@ -65,19 +84,29 @@ const navigate = async (
 
 	// Route title and tags should be pre-merged by the server, so we just need to go synchronize them
 	document.title = routeResponse.title || "Uesio"
-	// Remove any existing route-injected meta tags
+	// Remove any existing route-injected tags
 	document
-		.querySelectorAll("meta[data-uesio]")
+		.querySelectorAll("meta[data-uesio], link[data-uesio]")
 		.forEach((elem) => elem.remove())
-	// Add any meta tags defined by the route
+	// Add any head tags defined by the route
 	if (routeResponse.tags?.length) {
 		const headEl = document.getElementsByTagName("head")[0]
-		routeResponse.tags.forEach((tag) => {
-			if (tag.location === "head" && tag.type === "meta") {
-				const metaTag = document.createElement("meta")
-				headEl.appendChild(metaTag)
-				metaTag.setAttribute("content", tag.content)
-				metaTag.setAttribute("data-uesio", "true")
+		routeResponse.tags.forEach(({ content, location, name, type }) => {
+			if (location === "head") {
+				let newEl
+				if (type === "meta") {
+					newEl = document.createElement("meta")
+					newEl.setAttribute("name", name)
+					newEl.setAttribute("content", content)
+				} else if (type === "link") {
+					newEl = document.createElement("link")
+					newEl.setAttribute("rel", name)
+					newEl.setAttribute("href", content)
+				}
+				if (newEl) {
+					newEl.setAttribute("data-uesio", "true")
+					headEl.appendChild(newEl)
+				}
 			}
 		})
 	}
@@ -102,4 +131,4 @@ const navigate = async (
 	return context
 }
 
-export { getRouteUrlPrefix, redirect, navigate }
+export { getRouteUrlPrefix, redirect, navigate, navigateToAssignment }

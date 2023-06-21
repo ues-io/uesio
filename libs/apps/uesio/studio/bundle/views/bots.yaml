@@ -93,6 +93,11 @@ definition:
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
+                      - uesio/io.searchbox:
+                          wire: bots
+                          focusOnRender: true
+                          searchFields:
+                            - uesio/studio.name
                       - uesio/io.deck:
                           uesio.id: botsDeck
                           wire: bots
@@ -146,7 +151,7 @@ definition:
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
-            text: "Save"
+            text: $Label{uesio/io.save}
             hotkey: "meta+s"
             signals:
               - signal: wire/SAVE
@@ -156,7 +161,7 @@ definition:
                 path: "app/$Param{app}/workspace/$Param{workspacename}/bots/${uesio/studio.name}"
         - uesio/io.button:
             uesio.variant: "uesio/io.secondary"
-            text: "Cancel"
+            text: $Label{uesio/io.cancel}
             signals:
               - signal: "panel/TOGGLE"
                 panel: "newBot"

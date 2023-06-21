@@ -1,5 +1,6 @@
 name: filter
 title: Filter
+icon: filter_alt
 description: Applies conditions to a wire
 pack: main
 entrypoint: components/filter/filter
@@ -10,6 +11,13 @@ variants:
 category: INTERACTION
 discoverable: true
 properties:
+  - name: fieldDisplayType
+    type: FIELD_METADATA
+    display: false
+    viewOnly: true
+    wireProperty: wire
+    fieldProperty: fieldId
+    metadataProperty: type
   - name: wire
     label: Wire
     type: WIRE
@@ -28,6 +36,25 @@ properties:
     displayConditions:
       - type: hasNoValue
         value: ${conditionId}
+  - name: operator
+    type: SELECT
+    label: Condition Operator
+    options:
+      - value: HAS_ANY
+        label: Has Any
+        validFor:
+          - field: fieldDisplayType
+            value: MULTISELECT
+      - value: HAS_ALL
+        label: Has All
+        validFor:
+          - field: fieldDisplayType
+            value: MULTISELECT
+    displayConditions:
+      - type: fieldValue
+        field: fieldDisplayType
+        operator: EQ
+        value: MULTISELECT
   - name: displayAs
     type: SELECT
     label: Display as
@@ -36,10 +63,26 @@ properties:
         label: "--None Selected--"
       - label: Month
         value: MONTH
+        validFor:
+          - field: fieldDisplayType
+            value: DATE
       - label: Week
         value: WEEK
+        validFor:
+          - field: fieldDisplayType
+            value: DATE
       - label: Toggle
         value: TOGGLE
+        validFor:
+          - field: fieldDisplayType
+            value: CHECKBOX
+    displayConditions:
+      - type: fieldValue
+        field: fieldDisplayType
+        operator: IN
+        values:
+          - DATE
+          - CHECKBOX
   - name: label
     type: TEXT
     label: Label
@@ -47,20 +90,34 @@ properties:
     type: SELECT
     label: Label Position
     options:
-      - label: None
-        value: none
       - label: Top
         value: top
+      - label: None
+        value: none
       - label: Left
         value: left
+  - name: placeholder
+    label: Placeholder
+    type: TEXT
+    displayConditions:
+      - type: fieldValue
+        field: fieldDisplayType
+        operator: IN
+        values:
+          - TEXT
+          - LONGTEXT
+          - EMAIL
 sections:
   - type: HOME
     properties:
+      - fieldDisplayType
       - wire
       - conditionId
       - fieldId
+      - operator
       - displayAs
       - label
       - labelPosition
+      - placeholder
   - type: STYLES
   - type: DISPLAY

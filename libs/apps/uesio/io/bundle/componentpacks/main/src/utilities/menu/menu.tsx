@@ -22,6 +22,7 @@ interface MenuButtonUtilityProps<T> extends definition.UtilityProps {
 	onSearch?: (search: string) => void
 	searchFilter?: (item: T, search: string) => boolean
 	closeOnSelect?: boolean
+	open?: boolean
 }
 
 const StyleDefaults = Object.freeze({
@@ -43,7 +44,7 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 		"uesio/io.menu"
 	)
 
-	const [isOpen, setIsOpen] = useState(false)
+	const [isOpen, setIsOpen] = useState(props.open || false)
 	const [searchText, setSearchText] = useState("")
 
 	const getSearchItems = (searchText: string) => {
@@ -99,6 +100,7 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 		getItemKey,
 		children,
 		closeOnSelect = true,
+		id,
 	} = props
 
 	return (
@@ -106,6 +108,7 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 			<div
 				className="flex"
 				tabIndex={0}
+				id={id}
 				ref={refs.setReference}
 				{...getReferenceProps()}
 			>
@@ -127,7 +130,10 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 							className={classes.menu}
 							{...getFloatingProps()}
 						>
-							<div className={classes.menuheader}>
+							<div
+								id={`floatingMenu-${id}`}
+								className={classes.menuheader}
+							>
 								{(onSearch || searchFilter) && (
 									<input
 										type="text"

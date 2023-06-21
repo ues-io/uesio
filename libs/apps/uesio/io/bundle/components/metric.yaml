@@ -1,5 +1,6 @@
 name: metric
 title: Metric
+icon: numbers
 description: A metric box
 category: VISUALIZATION
 pack: main
@@ -31,3 +32,9 @@ sections:
   - type: SIGNALS
   - type: STYLES
   - type: DISPLAY
+styleRegions:
+  root:
+  title:
+  valuewrapper:
+  value:
+  unit:

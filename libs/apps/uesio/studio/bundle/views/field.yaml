@@ -46,6 +46,7 @@ definition:
         uesio/studio.languagelabel:
         uesio/studio.number:
         uesio/studio.subfields:
+        uesio/studio.subtype:
         uesio/studio.formula:
         uesio/studio.autonumber:
       conditions:
@@ -73,7 +74,7 @@ definition:
                     params:
                       itemType: collections
                       itemIcon: list
-                      itemName: $Param{collectionname}
+                      itemCollectionName: $Param{collectionname}
                       subItemType: collections
                       subItemName: $Param{fieldname}
           - uesio/io.griditem:
@@ -266,6 +267,7 @@ definition:
                               values:
                                 - MAP
                                 - STRUCT
+                                - LIST
                           uesio.styleTokens:
                             root:
                               - p-10
@@ -274,9 +276,24 @@ definition:
                                 uesio.variant: uesio/io.main
                                 title: Sub fields
                             - uesio/io.field:
+                                fieldId: uesio/studio.subtype
+                                uesio.display:
+                                  - field: uesio/studio.type
+                                    type: fieldValue
+                                    operator: IN
+                                    values:
+                                      - MAP
+                                      - LIST
+                            - uesio/io.field:
                                 label: " "
                                 fieldId: uesio/studio.subfields
-                                mode: EDIT
+                                uesio.display:
+                                  - field: uesio/studio.subtype
+                                    type: fieldValue
+                                    operator: NOT_IN
+                                    values:
+                                      - TEXT
+                                      - NUMBER
   panels:
     deleteField:
       uesio.type: uesio/io.dialog
@@ -302,7 +319,7 @@ definition:
                 wires:
                   - fields
               - signal: route/NAVIGATE
-                path: app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{namespace}/$Param{collectionname}
+                path: app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{collectionname}
         - uesio/io.button:
             text: $Label{uesio/io.cancel}
             uesio.variant: uesio/io.secondary

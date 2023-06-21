@@ -15,7 +15,6 @@ type WorkspaceState = {
 	name: string
 	app: string
 	wrapper?: MetadataKey
-	slotwrapper?: MetadataKey
 }
 
 type SiteAdminState = {

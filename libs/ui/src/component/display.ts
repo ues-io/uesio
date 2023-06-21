@@ -2,6 +2,7 @@ import { Context } from "../context/context"
 import { BaseDefinition } from "../definition/definition"
 import { wire as wireApi } from "../api/api"
 import { WireRecord } from "../wireexports"
+import { DISPLAY_CONDITIONS } from "../componentexports"
 
 type RequireOnlyOne<T, Keys extends keyof T = keyof T> = Pick<
 	T,
@@ -12,7 +13,7 @@ type RequireOnlyOne<T, Keys extends keyof T = keyof T> = Pick<
 			Partial<Record<Exclude<Keys, K>, undefined>>
 	}[Keys]
 
-type DisplayOperator = "EQUALS" | "NOT_EQUALS" | "IN" | "NOT IN" | undefined
+type DisplayOperator = "EQUALS" | "NOT_EQUALS" | "IN" | "NOT_IN" | undefined
 
 // If there is a record in context, only test against that record
 // If there is no record in context, test against all records in the wire.
@@ -166,7 +167,7 @@ function compare(a: unknown, b: unknown, op: DisplayOperator) {
 		case "NOT_EQUALS":
 			return a !== b
 		case "IN":
-		case "NOT IN":
+		case "NOT_IN":
 			if (Array.isArray(a)) {
 				return a.includes(b) === (op === "IN")
 			}
@@ -313,7 +314,7 @@ const useShouldFilter = <T extends BaseDefinition>(
 	context: Context
 ) => {
 	const conditionsList = items.flatMap((item) => {
-		const conditions = item["uesio.display"]
+		const conditions = item[DISPLAY_CONDITIONS]
 		return conditions ? [conditions] : []
 	})
 

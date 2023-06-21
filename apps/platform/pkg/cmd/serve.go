@@ -32,17 +32,22 @@ func getFullItemParam(paramName string) string {
 	return fmt.Sprintf("{%s:\\w+\\/\\w+\\.\\w+}", paramName)
 }
 
+func getMetadataItemParam(paramName string) string {
+	return fmt.Sprintf("{%s:\\w+}", paramName)
+}
+
 func getFullItemOrTextParam(paramName string) string {
 	return fmt.Sprintf("{%s:(?:\\w+\\/\\w+\\.)?\\w+}", paramName)
 }
 
 var appParam = getNSParam("app")
 var nsParam = getNSParam("namespace")
-var itemParam = fmt.Sprintf("%s/{name}", nsParam)
+var nameParam = getMetadataItemParam("name")
+var itemParam = fmt.Sprintf("%s/%s", nsParam, nameParam)
 
 // Version will either be a Uesio bundle version string, e.g. v1.2.3,
 // Or an 8-character short Git sha, e.g. abcd1234
-var versionedItemParam = nsParam + "/{version:(?:v[0-9]+\\.[0-9]+\\.[0-9]+)|(?:[a-z0-9]{8,})}/{name}"
+var versionedItemParam = fmt.Sprintf("%s/{version:(?:v[0-9]+\\.[0-9]+\\.[0-9]+)|(?:[a-z0-9]{8,})}/%s", nsParam, nameParam)
 
 // Grouping values can either be full Uesio items (e.g. <user>/<app>.<name>) or simple values, e.g. "LISTENER",
 // so the regex here needs to support both
@@ -50,9 +55,12 @@ var groupingParam = getFullItemOrTextParam("grouping")
 var collectionParam = getFullItemParam("collectionname")
 
 var (
-	fontsPrefix  = "/fonts"
 	staticPrefix = "/static"
 )
+
+// Vendored scripts/fonts live under /static but do NOT get the GITSHA of the Uesio app,
+// because they are not expected to change with the GITSHA, but are truly static, immutable
+const vendorPrefix = "/static/vendor"
 
 func serve(cmd *cobra.Command, args []string) {
 
@@ -69,18 +77,18 @@ func serve(cmd *cobra.Command, args []string) {
 	gitsha := os.Getenv("GITSHA")
 	cacheStaticAssets := gitsha != ""
 	staticAssetsPath := ""
+
 	if cacheStaticAssets {
 		staticAssetsPath = "/" + gitsha
 		file.SetAssetsPath(staticAssetsPath)
-		fontsPrefix = staticAssetsPath + fontsPrefix
 		staticPrefix = staticAssetsPath + staticPrefix
 	}
 
 	// Profiler Info
 	// r.PathPrefix("/debug/pprof").Handler(http.DefaultServeMux)
 
-	r.Handle(fontsPrefix+"/{filename:.*}", controller.Fonts(cwd, fontsPrefix, cacheStaticAssets)).Methods(http.MethodGet)
-	r.Handle(staticPrefix+"/{filename:.*}", file.Vendor(cwd, staticPrefix, cacheStaticAssets)).Methods(http.MethodGet)
+	r.Handle(vendorPrefix+"/{filename:.*}", file.ServeVendor(vendorPrefix, cacheStaticAssets)).Methods(http.MethodGet)
+	r.Handle(staticPrefix+"/{filename:.*}", file.Static(cwd, staticPrefix, cacheStaticAssets)).Methods(http.MethodGet)
 	r.HandleFunc("/health", controller.Health).Methods(http.MethodGet)
 
 	// The workspace router
@@ -186,20 +194,17 @@ func serve(cmd *cobra.Command, args []string) {
 
 	// Route navigation apis for site and workspace context
 	collectionRoutePath := fmt.Sprintf("/routes/collection/%s/{viewtype}", itemParam)
-	sr.HandleFunc(collectionRoutePath, controller.CollectionRoute).Methods(http.MethodGet)
-	wr.HandleFunc(collectionRoutePath, controller.CollectionRoute).Methods(http.MethodGet)
-	sr.HandleFunc(collectionRoutePath+"/{id}", controller.CollectionRoute).Methods(http.MethodGet)
-	wr.HandleFunc(collectionRoutePath+"/{id}", controller.CollectionRoute).Methods(http.MethodGet)
+	sr.HandleFunc(collectionRoutePath, controller.RouteAssignment).Methods(http.MethodGet)
+	wr.HandleFunc(collectionRoutePath, controller.RouteAssignment).Methods(http.MethodGet)
+	sr.HandleFunc(collectionRoutePath+"/{id}", controller.RouteAssignment).Methods(http.MethodGet)
+	wr.HandleFunc(collectionRoutePath+"/{id}", controller.RouteAssignment).Methods(http.MethodGet)
 
 	pathRoutePath := fmt.Sprintf("/routes/path/%s/{route:.*}", nsParam)
 	sr.HandleFunc(pathRoutePath, controller.Route).Methods(http.MethodGet)
 	wr.HandleFunc(pathRoutePath, controller.Route).Methods(http.MethodGet)
 
-	// Currently the only component pack files which we support fetching are:
-	// - runtime.js
-	// - runtime.js.map
 	// NOTE: Gorilla Mux requires use of non-capturing groups, hence the use of ?: here
-	componentPackFileSuffix := "/{filename:(?:runtime\\.js(?:\\.map)?)}"
+	componentPackFileSuffix := "/{filename:[a-zA-Z0-9\\-_]+\\.(?:json|js|xml|txt){1}(?:\\.map)?}"
 
 	// Un-versioned Component pack routes - for backwards compatibility, and for local development
 	componentPackPath := fmt.Sprintf("/componentpacks/%s", itemParam)
@@ -208,14 +213,18 @@ func serve(cmd *cobra.Command, args []string) {
 
 	// Versioned component pack file routes
 	versionedComponentPackPath := fmt.Sprintf("/componentpacks/%s", versionedItemParam)
-	sr.HandleFunc(versionedComponentPackPath+componentPackFileSuffix, file.ServeComponentPackFile).Methods(http.MethodGet)
-	wr.HandleFunc(versionedComponentPackPath+componentPackFileSuffix, file.ServeComponentPackFile).Methods(http.MethodGet)
+
+	versionedComponentPackFinal := versionedComponentPackPath + componentPackFileSuffix
+
+	sr.HandleFunc(versionedComponentPackFinal, file.ServeComponentPackFile).Methods(http.MethodGet)
+	wr.HandleFunc(versionedComponentPackFinal, file.ServeComponentPackFile).Methods(http.MethodGet)
 
 	// Workspace context specific routes
 	wr.HandleFunc("/metadata/deploy", controller.Deploy).Methods(http.MethodPost)
 	wr.HandleFunc("/metadata/retrieve", controller.Retrieve).Methods(http.MethodGet, http.MethodPost)
 	wr.HandleFunc("/metadata/generate/"+itemParam, controller.GenerateToWorkspace).Methods(http.MethodPost)
 	wr.HandleFunc("/metadata/builder/"+itemParam, controller.BuilderMetadata).Methods(http.MethodGet)
+	wr.HandleFunc("/data/truncate", controller.Truncate).Methods(http.MethodPost)
 
 	// Get Collection Metadata (We may be able to get rid of this someday...)
 	collectionMetadataPath := fmt.Sprintf("/collections/meta/%s", collectionParam)
@@ -294,11 +303,11 @@ func serve(cmd *cobra.Command, args []string) {
 	sa.HandleFunc("/auth/"+itemParam+"/createlogin", controller.CreateLogin).Methods("POST")
 	sr.HandleFunc("/auth/"+itemParam+"/login", controller.Login).Methods("POST")
 	sr.HandleFunc("/auth/"+itemParam+"/signup", controller.Signup).Methods("POST")
-	sr.HandleFunc("/auth/"+itemParam+"/signup/confirm", controller.ConfirmSignUp).Methods("POST")
 	sa.HandleFunc("/auth/"+itemParam+"/forgotpassword", controller.ForgotPassword).Methods("POST")
 	sr.HandleFunc("/auth/"+itemParam+"/forgotpassword", controller.ForgotPassword).Methods("POST")
 	sr.HandleFunc("/auth/"+itemParam+"/forgotpassword/confirm", controller.ConfirmForgotPassword).Methods("POST")
 	sr.HandleFunc("/auth/"+itemParam+"/checkavailability/{username}", controller.CheckAvailability).Methods("POST")
+	lr.HandleFunc(fmt.Sprintf("/auth/%s/signup/v2/confirm", itemParam), controller.ConfirmSignUpV2).Methods("GET")
 
 	sr.HandleFunc("/auth/logout", controller.Logout).Methods("POST")
 	sr.HandleFunc("/auth/check", controller.AuthCheck).Methods("GET")
@@ -331,14 +340,19 @@ func serve(cmd *cobra.Command, args []string) {
 	// Universal middlewares
 	r.Use(middleware.GZip())
 
+	server := &http.Server{
+		Addr:    serveAddr,
+		Handler: r,
+	}
+
 	useSSL := os.Getenv("UESIO_USE_HTTPS")
 	var serveErr error
 	if useSSL == "true" {
 		logger.Log("Service Started over SSL on Port: "+port, logger.INFO)
-		serveErr = http.ListenAndServeTLS(serveAddr, "ssl/certificate.crt", "ssl/private.key", r)
+		serveErr = server.ListenAndServeTLS("ssl/certificate.crt", "ssl/private.key")
 	} else {
 		logger.Log("Service Started on Port: "+port, logger.INFO)
-		serveErr = http.ListenAndServe(serveAddr, r)
+		serveErr = server.ListenAndServe()
 	}
 	if serveErr != nil {
 		logger.LogError(serveErr)

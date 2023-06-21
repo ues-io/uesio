@@ -1,6 +1,6 @@
 name: callout_right
-label: Callout Right
 extends: uesio/web.callout
+label: Callout Right
 definition:
   uesio.styleTokens:
     root:

@@ -53,19 +53,21 @@ type SiteMergeData struct {
 }
 
 type WorkspaceMergeData struct {
-	Name        string `json:"name"`
-	App         string `json:"app"`
-	Wrapper     string `json:"wrapper,omitempty"`
-	SlotWrapper string `json:"slotwrapper,omitempty"`
+	Name    string `json:"name"`
+	App     string `json:"app"`
+	Wrapper string `json:"wrapper,omitempty"`
 }
 
 type MergeData struct {
-	Route            *RouteMergeData     `json:"route"`
-	User             *UserMergeData      `json:"user"`
-	Site             *SiteMergeData      `json:"site"`
-	Workspace        *WorkspaceMergeData `json:"workspace,omitempty"`
-	DevMode          bool                `json:"-"`
-	StaticAssetsPath string              `json:"-"`
+	Route     *RouteMergeData     `json:"route"`
+	User      *UserMergeData      `json:"user"`
+	Site      *SiteMergeData      `json:"site"`
+	Workspace *WorkspaceMergeData `json:"workspace,omitempty"`
+
+	MonacoEditorVersion string   `json:"-"`
+	StaticAssetsPath    string   `json:"-"`
+	StaticAssetsHost    string   `json:"-"`
+	VendorScriptUrls    []string `json:"-"`
 	*PreloadMetadata
 }
 

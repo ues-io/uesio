@@ -51,6 +51,7 @@ const List: definition.UC<ListDefinition> = (props) => {
 					listName="components"
 					path={path}
 					context={recordContext.context}
+					label="List Components"
 				/>
 			))}
 		</>

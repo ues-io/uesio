@@ -1,4 +1,5 @@
 name: cardimage
+public: true
 label: Card Image
 definition:
   uesio.styleTokens:
@@ -6,4 +7,3 @@ definition:
       - h-full
       - w-full
       - rounded-none
-public: true

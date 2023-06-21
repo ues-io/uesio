@@ -6,27 +6,50 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/jackc/pgx/v4/pgxpool"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 )
 
 type Adapter struct {
 }
 
-// TODO: Figure out a way to clean up and close unused clients
+// We're creating two different connection pool pools.
+// One for loads that are not part of a transaction,
+// and the other pool for save transactions.
+// This eliminates an resource contention issue when
+// the pools get full. They should not be dependent on
+// each other to finish.
 var clientPool = map[string]*pgxpool.Pool{}
+var saveClientPool = map[string]*pgxpool.Pool{}
 var lock sync.RWMutex
 
 func connect(credentials *adapt.Credentials) (*pgxpool.Pool, error) {
+	return checkPoolCache(clientPool, credentials)
+}
+
+func connectForSave(credentials *adapt.Credentials) (*pgxpool.Pool, error) {
+	return checkPoolCache(saveClientPool, credentials)
+}
+
+func checkPoolCache(cache map[string]*pgxpool.Pool, credentials *adapt.Credentials) (*pgxpool.Pool, error) {
 	hash := credentials.GetHash()
 	// Check the pool for a client
 	lock.RLock()
-	client, ok := clientPool[hash]
+	client, ok := cache[hash]
 	lock.RUnlock()
 	if ok {
 		return client, nil
 	}
-	return getConnection(credentials, hash)
+	pool, err := getConnection(credentials, hash)
+	if err != nil {
+		return nil, err
+	}
+
+	lock.Lock()
+	defer lock.Unlock()
+
+	cache[hash] = pool
+	return pool, nil
 }
 
 func getConnection(credentials *adapt.Credentials, hash string) (*pgxpool.Pool, error) {
@@ -57,7 +80,7 @@ func getConnection(credentials *adapt.Credentials, hash string) (*pgxpool.Pool, 
 
 	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s "+"password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 
-	db, err := pgxpool.Connect(context.Background(), psqlInfo)
+	db, err := pgxpool.New(context.Background(), psqlInfo)
 	if err != nil {
 		return nil, err
 	}
@@ -66,11 +89,6 @@ func getConnection(credentials *adapt.Credentials, hash string) (*pgxpool.Pool, 
 	if err != nil {
 		return nil, err
 	}
-
-	lock.Lock()
-	defer lock.Unlock()
-
-	clientPool[hash] = db
 
 	return db, nil
 }

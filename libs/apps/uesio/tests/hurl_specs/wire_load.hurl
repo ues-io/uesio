@@ -47,6 +47,7 @@ Accept: application/json
             "query":true,
             "conditions": [
                 {
+                    "id": "mycoolid",
                     "field": "uesio/tests.species",
                     "value": "Jerrine"
                 }
@@ -67,6 +68,47 @@ main.tenant = $2 AND
 main.fields->>'uesio/tests.species' = $3
 ORDER BY main.id::text asc
 LIMIT 501```
+jsonpath "$.wires[0].conditions[0].id" == "mycoolid"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" count == 2
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "MacAughtrie:Jerrine"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "McCreary:Jerrine"
+
+# Test a wire load with a param merge condition
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.animal",
+            "query":true,
+            "conditions": [
+                {
+                    "id": "mycoolid",
+                    "field": "uesio/tests.species",
+                    "value": "$Param{myparam}"
+                }
+            ],
+            "params": {
+                "myparam": "Jerrine"
+            }
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].debugQueryString" == ```
+SELECT
+main.id::text AS "uesio/core.id",
+main.uniquekey AS "uesio/core.uniquekey"
+FROM data as "main"
+WHERE
+main.collection = $1 AND
+main.tenant = $2 AND
+main.fields->>'uesio/tests.species' = $3
+ORDER BY main.id::text asc
+LIMIT 501```
+jsonpath "$.wires[0].conditions[0].id" == "mycoolid"
+jsonpath "$.wires[0].conditions[0].value" == "$Param{myparam}"
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" count == 2
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "MacAughtrie:Jerrine"
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "McCreary:Jerrine"
@@ -211,7 +253,7 @@ Accept: application/json
             "conditions": [
                 {
                     "field": "uesio/tests.genus",
-                    "operator": "NOT IN",
+                    "operator": "NOT_IN",
                     "values": [
                         "Plaster",
                         "Lathe"

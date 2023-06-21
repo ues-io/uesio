@@ -1,14 +1,18 @@
 name: barchart
 title: Bar Chart
+icon: bar_chart
 description: Visualize data with bars.
 category: VISUALIZATION
 pack: chart
 entrypoint: components/barchart/barchart
+utilities:
+  - uesio/io.chart
 defaultDefinition:
   title: New Bar Chart
   labels:
     source: DATA
     timeunit: MONTH
+    timeunitfill: WEEK
 discoverable: true
 properties:
   - name: title

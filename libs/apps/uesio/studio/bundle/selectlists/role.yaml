@@ -1,4 +1,4 @@
-name: access
+name: role
 options:
   - label: "None"
     value: "none"

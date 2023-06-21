@@ -24,53 +24,28 @@ type SaveRequest struct {
 	Options    *adapt.SaveOptions `json:"options"`
 }
 
+type SaveRequestImpl struct {
+	Collection string               `json:"collection"`
+	Wire       string               `json:"wire"`
+	Changes    *adapt.CollectionMap `json:"changes"`
+	Deletes    *adapt.CollectionMap `json:"deletes"`
+	Errors     []adapt.SaveError    `json:"errors"`
+	Options    *adapt.SaveOptions   `json:"options"`
+}
+
 func (sr *SaveRequest) UnmarshalJSON(b []byte) error {
-	data := make(map[string]json.RawMessage)
+
+	data := SaveRequestImpl{}
 	err := json.Unmarshal(b, &data)
 	if err != nil {
 		return err
 	}
-	for k, v := range data {
-		switch k {
-		case "collection":
-			s := ""
-			err := json.Unmarshal(v, &s)
-			if err != nil {
-				return err
-			}
-			sr.Collection = s
-		case "wire":
-			s := ""
-			err := json.Unmarshal(v, &s)
-			if err != nil {
-				return err
-			}
-			sr.Wire = s
-		case "changes":
-			c := adapt.CollectionMap{}
-			err := json.Unmarshal(v, &c)
-			if err != nil {
-				return err
-			}
-			sr.Changes = &c
-		case "deletes":
-			d := adapt.CollectionMap{}
-			err := json.Unmarshal(v, &d)
-			if err != nil {
-				return err
-			}
-			sr.Deletes = &d
-		case "options":
-			o := adapt.SaveOptions{}
-			err := json.Unmarshal(v, &o)
-			if err != nil {
-				return err
-			}
-			sr.Options = &o
-		}
-
-	}
-
+	sr.Collection = data.Collection
+	sr.Wire = data.Wire
+	sr.Changes = data.Changes
+	sr.Deletes = data.Deletes
+	sr.Errors = data.Errors
+	sr.Options = data.Options
 	return nil
 }
 
@@ -85,7 +60,9 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 
 func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *SaveOptions) error {
 	if options == nil {
-		options = &SaveOptions{}
+		options = &SaveOptions{
+			Connections: map[string]adapt.Connection{},
+		}
 	}
 	collated := map[string][]*adapt.SaveOp{}
 	metadataResponse := &adapt.MetadataCache{}
@@ -184,6 +161,12 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 	return nil
 }
 
+func HandleErrorAndAddToSaveOp(op *adapt.SaveOp, err error) *adapt.SaveError {
+	saveError := adapt.NewGenericSaveError(err)
+	op.AddError(saveError)
+	return saveError
+}
+
 func applyBatches(dsKey string, batch []*adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 
 	for _, op := range batch {
@@ -193,14 +176,12 @@ func applyBatches(dsKey string, batch []*adapt.SaveOp, connection adapt.Connecti
 
 		err := adapt.FetchReferences(connection, op, session)
 		if err != nil {
-			op.AddError(adapt.NewGenericSaveError(err))
-			return err
+			return HandleErrorAndAddToSaveOp(op, err)
 		}
 
 		err = adapt.HandleUpsertLookup(connection, op, session)
 		if err != nil {
-			op.AddError(adapt.NewGenericSaveError(err))
-			return err
+			return HandleErrorAndAddToSaveOp(op, err)
 		}
 
 		if len(op.Inserts) > 0 {
@@ -223,14 +204,12 @@ func applyBatches(dsKey string, batch []*adapt.SaveOp, connection adapt.Connecti
 
 		err = adapt.HandleOldValuesLookup(connection, op, session)
 		if err != nil {
-			op.AddError(adapt.NewGenericSaveError(err))
-			return err
+			return HandleErrorAndAddToSaveOp(op, err)
 		}
 
 		err = Populate(op, connection, session)
 		if err != nil {
-			op.AddError(adapt.NewGenericSaveError(err))
-			return err
+			return HandleErrorAndAddToSaveOp(op, err)
 		}
 
 		// Check for population errors here
@@ -240,8 +219,7 @@ func applyBatches(dsKey string, batch []*adapt.SaveOp, connection adapt.Connecti
 
 		err = runBeforeSaveBots(op, connection, session)
 		if err != nil {
-			op.AddError(adapt.NewGenericSaveError(err))
-			return err
+			return HandleErrorAndAddToSaveOp(op, err)
 		}
 
 		// Check for before save errors here
@@ -252,8 +230,7 @@ func applyBatches(dsKey string, batch []*adapt.SaveOp, connection adapt.Connecti
 		// Fetch References again.
 		err = adapt.FetchReferences(connection, op, session)
 		if err != nil {
-			op.AddError(adapt.NewGenericSaveError(err))
-			return err
+			return HandleErrorAndAddToSaveOp(op, err)
 		}
 
 		// Set the unique keys for the last time
@@ -261,14 +238,12 @@ func applyBatches(dsKey string, batch []*adapt.SaveOp, connection adapt.Connecti
 			return adapt.SetUniqueKey(change)
 		})
 		if err != nil {
-			op.AddError(adapt.NewGenericSaveError(err))
-			return err
+			return HandleErrorAndAddToSaveOp(op, err)
 		}
 
 		err = Validate(op, connection, session)
 		if err != nil {
-			op.AddError(adapt.NewGenericSaveError(err))
-			return err
+			return HandleErrorAndAddToSaveOp(op, err)
 		}
 
 		// Check for validate errors here
@@ -278,26 +253,22 @@ func applyBatches(dsKey string, batch []*adapt.SaveOp, connection adapt.Connecti
 
 		err = GenerateRecordChallengeTokens(op, connection, session)
 		if err != nil {
-			op.AddError(adapt.NewGenericSaveError(err))
-			return err
+			return HandleErrorAndAddToSaveOp(op, err)
 		}
 
 		err = performCascadeDeletes(op, connection, session)
 		if err != nil {
-			op.AddError(adapt.NewGenericSaveError(err))
-			return err
+			return HandleErrorAndAddToSaveOp(op, err)
 		}
 
 		err = connection.Save(op, session)
 		if err != nil {
-			op.AddError(adapt.NewGenericSaveError(err))
-			return err
+			return HandleErrorAndAddToSaveOp(op, err)
 		}
 
 		err = runAfterSaveBots(op, connection, session)
 		if err != nil {
-			op.AddError(adapt.NewGenericSaveError(err))
-			return err
+			return HandleErrorAndAddToSaveOp(op, err)
 		}
 
 		// Check for after save errors here

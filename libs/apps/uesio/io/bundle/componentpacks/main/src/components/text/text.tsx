@@ -1,4 +1,4 @@
-import { styles, definition } from "@uesio/ui"
+import { api, styles, definition } from "@uesio/ui"
 import { AcceptedElements, default as IOText } from "../../utilities/text/text"
 
 type TextDefinition = {
@@ -8,16 +8,16 @@ type TextDefinition = {
 	align?: AlignSetting
 }
 
+const StyleDefaults = Object.freeze({
+	root: [],
+})
+
 const Text: definition.UC<TextDefinition> = (props) => {
 	const { definition, context } = props
-	const classes = styles.useStyles(
-		{
-			root: {},
-		},
-		props
-	)
+	const classes = styles.useStyleTokens(StyleDefaults, props)
 	return (
 		<IOText
+			id={api.component.getComponentIdFromProps(props)}
 			classes={classes}
 			variant={definition["uesio.variant"]}
 			context={context}

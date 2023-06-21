@@ -93,6 +93,7 @@ definition:
                     components:
                       - uesio/io.searchbox:
                           wire: allcollections
+                          focusOnRender: true
                       - uesio/io.table:
                           wire: allcollections
                           recordDisplay:
@@ -118,7 +119,7 @@ definition:
                               type: DEFAULT
                               signals:
                                 - signal: route/NAVIGATE
-                                  path: app/$Param{app}/workspace/$Param{workspacename}/collections/${uesio/studio.namespace}/${uesio/studio.name}
+                                  path: app/$Param{app}/workspace/$Param{workspacename}/collections/${uesio/studio.name}
                           pagesize: 10
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
@@ -173,7 +174,7 @@ definition:
                 wires:
                   - newcollection
               - signal: route/NAVIGATE
-                path: app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{app}/${uesio/studio.name}
+                path: app/$Param{app}/workspace/$Param{workspacename}/collections/${uesio/studio.name}
         - uesio/io.button:
             uesio.variant: uesio/io.secondary
             uesio.id: cancel-new-collection

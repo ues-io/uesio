@@ -1,5 +1,6 @@
 name: searchbox
 title: Search Box
+icon: search
 pack: main
 entrypoint: components/searchbox/searchbox
 description: Filter a wire based on a user's text search.
@@ -16,12 +17,16 @@ properties:
   - name: placeholder
     label: Placeholder
     type: TEXT
+  - name: focusOnRender
+    label: Focus on render
+    type: CHECKBOX
 sections:
   - type: HOME
     properties:
       - wire
       - searchFields
       - placeholder
+      - focusOnRender
   - type: STYLES
   - type: DISPLAY
 variants:

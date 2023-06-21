@@ -26,6 +26,10 @@ definition:
         - field: uesio/core.username
           desc: false
       requirewriteaccess: true
+    blogentries:
+      collection: uesio/studio.blogentry
+    recentdocs:
+      collection: uesio/studio.recentdoc
     newapp:
       collection: uesio/studio.app
       fields:
@@ -82,7 +86,24 @@ definition:
                       - uesio/io.button:
                           icon: add
                           uesio.id: add-app
+                          uesio.variant: uesio/studio.navctawithpointer
+                          uesio.display:
+                            - type: wireHasNoRecords
+                              wire: apps
                           signals:
+                            - signal: wire/RESET
+                              wire: newApp
+                            - signal: panel/TOGGLE
+                              panel: newApp
+                      - uesio/io.button:
+                          icon: add
+                          uesio.id: add-app-2
+                          uesio.display:
+                            - type: wireHasRecords
+                              wire: apps
+                          signals:
+                            - signal: wire/RESET
+                              wire: newApp
                             - signal: panel/TOGGLE
                               panel: newApp
                 - uesio/io.list:
@@ -113,6 +134,9 @@ definition:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.nav
                     title: My Organizations
+                    uesio.display:
+                      - type: featureFlag
+                        name: manage_organizations
                     actions:
                       - uesio/io.button:
                           icon: add
@@ -123,6 +147,9 @@ definition:
                 - uesio/io.list:
                     uesio.id: orglist
                     wire: orgs
+                    uesio.display:
+                      - type: featureFlag
+                        name: manage_organizations
                     components:
                       - uesio/io.tile:
                           uesio.variant: uesio/io.nav
@@ -157,7 +184,7 @@ definition:
                         - py-10
                         - px-24
                         - text-[#FFFFFFC0]
-                        - bg-[rgb(22,22,22)]
+                        - bg-neutral-900
                     components:
                       - uesio/io.box:
                           uesio.styleTokens:
@@ -182,7 +209,7 @@ definition:
                                     - text-white
                                 text: "Build "
                             - uesio/io.text:
-                                text: "web appliations declaratively. "
+                                text: "web applications declaratively. "
                             - uesio/io.text:
                                 uesio.styleTokens:
                                   root:
@@ -197,41 +224,117 @@ definition:
                                 text: "Iterate "
                             - uesio/io.text:
                                 text: "quickly."
+                - uesio/io.box:
+                    uesio.variant: uesio/studio.calloutsection
+                    uesio.styleTokens:
+                      root:
+                        - mb-4
+                        - mx-14
+                    uesio.display:
+                      - type: wireHasNoRecords
+                        wire: apps
+                    components:
+                      - uesio/io.text:
+                          text: 👋 Welcome! 👋 We're glad you're here. 🤗
+                          element: h1
+                          uesio.styleTokens:
+                            root:
+                              - text-3xl
+                              - mb-2
+                      - uesio/io.group:
+                          components:
+                            - uesio/io.text:
+                                text: To create your first app, click the
+                                element: h2
+                            - uesio/io.button:
+                                uesio.variant: uesio/studio.navcta
+                                icon: +
+                                uesio.styleTokens:
+                                  root:
+                                    - pb-2
+                                signals:
+                                  - signal: wire/RESET
+                                    wire: newApp
+                                  - signal: panel/TOGGLE
+                                    panel: newApp
+                            - uesio/io.text:
+                                text: button in the top left.
+                                element: h2
                 - uesio/io.grid:
                     uesio.variant: uesio/io.two_columns
                     uesio.styleTokens:
                       root:
-                        - gap-x-10
-                        - p-14
+                        - gap-x-12
+                        - px-14
+                        - py-2
                     items:
                       - uesio/io.griditem:
                           components:
-                            - uesio/io.button:
-                                uesio.variant: uesio/io.secondary
-                                text: Latest Updates & News
-                            - uesio/io.text:
-                                uesio.variant: uesio/io.smallcontent
+                            - uesio/io.titlebar:
+                                uesio.variant: uesio/io.main
+                                title: Latest Updates & News
                                 uesio.styleTokens:
                                   root:
-                                    - pt-4
-                                text: Coming soon - Updates, News, and feature releases will be here for you to see when they come out.
-                                element: div
+                                    - border-b-4
+                                    - border-neutral-900
+                                    - pb-1
+                            - uesio/io.list:
+                                wire: blogentries
+                                mode: READ
+                                components:
+                                  - uesio/io.tile:
+                                      uesio.styleTokens:
+                                        root:
+                                          - -m-4
+                                          - p-4
+                                          - hover:bg-slate-100
+                                          - rounded-lg
+                                      content:
+                                        - uesio/io.text:
+                                            text: ${uesio/cms.name}
+                                            element: div
+                                        - uesio/io.text:
+                                            text: ${uesio/cms.description}
+                                            uesio.variant: uesio/io.smallcontent
+                                            element: div
+                                      signals:
+                                        - signal: "route/REDIRECT"
+                                          path: "https://$Site{domain}/blog/${uesio/cms.slug}"
+                                          newtab: true
                       - uesio/io.griditem:
                           components:
-                            - uesio/io.button:
-                                uesio.variant: uesio/io.secondary
-                                text: Learn ues.io
-                                signals:
-                                  - signal: "route/REDIRECT"
-                                    path: "https://docs.$Site{domain}"
-                            - uesio/io.text:
-                                uesio.variant: uesio/io.smallcontent
+                            - uesio/io.titlebar:
+                                uesio.variant: uesio/io.main
+                                title: Recent Documentation
                                 uesio.styleTokens:
                                   root:
-                                    - pt-4
-                                text: Documentation - Learn the basic concepts of ues.io and how to navigate the uesio/studio.
-                                element: div
-
+                                    - border-b-4
+                                    - border-neutral-900
+                                    - pb-1
+                            - uesio/io.list:
+                                wire: recentdocs
+                                mode: READ
+                                components:
+                                  - uesio/io.tile:
+                                      uesio.styleTokens:
+                                        root:
+                                          - -m-4
+                                          - p-4
+                                          - hover:bg-slate-100
+                                          - rounded-lg
+                                          - mb-4
+                                      content:
+                                        - uesio/io.text:
+                                            text: ${uesio/cms.name}
+                                            element: div
+                                        - uesio/io.text:
+                                            text: ${uesio/cms.description}
+                                            uesio.variant: uesio/io.smallcontent
+                                            element: div
+                                      signals:
+                                        - signal: "route/REDIRECT"
+                                          path: "https://docs.$Site{domain}/${uesio/cms.slug}"
+                                          newtab: true
   panels:
     newApp:
       uesio.type: uesio/io.dialog
@@ -248,7 +351,7 @@ definition:
             uesio.variant: "uesio/io.primary"
             uesio.id: "save-new-app"
             hotkey: "meta+s"
-            text: "Save"
+            text: $Label{uesio/io.save}
             signals:
               - signal: wire/SAVE
                 wires:
@@ -257,7 +360,7 @@ definition:
                 path: "app/${uesio/core.uniquekey}"
         - uesio/io.button:
             uesio.variant: "uesio/io.secondary"
-            text: "Cancel"
+            text: $Label{uesio/io.cancel}
             signals:
               - signal: "panel/TOGGLE"
                 panel: "newApp"
@@ -281,7 +384,7 @@ definition:
             uesio.variant: "uesio/io.primary"
             uesio.id: "save-new-org"
             hotkey: "meta+s"
-            text: "Save"
+            text: $Label{uesio/io.save}
             signals:
               - signal: wire/SAVE
                 wires:
@@ -295,7 +398,7 @@ definition:
                 wire: neworg
         - uesio/io.button:
             uesio.variant: "uesio/io.secondary"
-            text: "Cancel"
+            text: $Label{uesio/io.cancel}
             signals:
               - signal: "panel/TOGGLE"
                 panel: "newOrg"

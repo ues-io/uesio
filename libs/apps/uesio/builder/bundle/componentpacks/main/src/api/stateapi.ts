@@ -43,6 +43,10 @@ type SlotDef = {
 	providesContexts?: SlotContextProvision[]
 }
 
+type StyleRegion = {
+	widgets?: string[]
+}
+
 type ComponentDef = {
 	name: string
 	namespace: string
@@ -50,11 +54,13 @@ type ComponentDef = {
 	description: string
 	category: string
 	discoverable: boolean
+	icon?: string
 	slots?: SlotDef[]
 	properties?: ComponentProperty[]
 	sections?: PropertiesPanelSection[]
 	defaultDefinition?: definition.DefinitionMap
 	signals?: Record<string, SignalDescriptor>
+	styleRegions?: Record<string, StyleRegion>
 }
 
 const getBuilderComponentId = (context: ctx.Context, id: string) =>

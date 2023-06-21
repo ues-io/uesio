@@ -1,5 +1,6 @@
 name: avatar
 title: Avatar
+icon: person_filled
 description: Display an image or initials to represent a record.
 category: CONTENT
 pack: main

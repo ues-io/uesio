@@ -7,7 +7,8 @@ import {
 	ComponentSignalDescriptor,
 	SignalDefinition,
 } from "../definition/signal"
-import { BaseDefinition, UC } from "../definition/definition"
+import { UC } from "../definition/definition"
+import PanelArea from "../components/panelarea"
 import { COMPONENT_ID } from "../componentexports"
 
 interface SetParamSignal extends SignalDefinition {
@@ -44,12 +45,23 @@ const signals: Record<string, ComponentSignalDescriptor> = {
 	},
 }
 
-type ViewDefinition = {
+type ViewComponentDefinition = {
 	view: string
 	params?: Record<string, string>
-} & BaseDefinition
+}
 
-const View: UC<ViewDefinition> = (props) => {
+const ViewArea: UC<ViewComponentDefinition> = ({
+	context,
+	definition,
+	path,
+}) => (
+	<>
+		<View context={context} definition={definition} path={path} />
+		<PanelArea context={context} />
+	</>
+)
+
+const View: UC<ViewComponentDefinition> = (props) => {
 	const { path, context, definition } = props
 	const { params, view: viewDefId } = definition
 	// Backwards compatibility for definition.id
@@ -87,12 +99,15 @@ const View: UC<ViewDefinition> = (props) => {
 			listName="components"
 			path=""
 			context={viewContext}
-			message="Drag and drop any component here to get started."
+			label="View Components"
 		/>
 	)
 }
 
 View.signals = signals
 View.displayName = "View"
+
+export { ViewArea }
+export type { ViewComponentDefinition }
 
 export default View

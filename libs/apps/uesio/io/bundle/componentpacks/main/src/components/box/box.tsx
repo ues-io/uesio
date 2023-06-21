@@ -4,17 +4,17 @@ type BoxDefinition = {
 	signals?: signal.SignalDefinition[]
 }
 
+const StyleDefaults = Object.freeze({
+	root: [],
+})
+
 const Box: definition.UC<BoxDefinition> = (props) => {
-	const classes = styles.useStyles(
-		{
-			root: {},
-		},
-		props
-	)
+	const classes = styles.useStyleTokens(StyleDefaults, props)
 
 	const { definition, context, path } = props
 	return (
 		<div
+			id={api.component.getComponentIdFromProps(props)}
 			className={classes.root}
 			onClick={api.signal.getHandler(definition.signals, context)}
 		>
@@ -23,6 +23,7 @@ const Box: definition.UC<BoxDefinition> = (props) => {
 				listName="components"
 				path={path}
 				context={context}
+				label="Box Components"
 			/>
 		</div>
 	)

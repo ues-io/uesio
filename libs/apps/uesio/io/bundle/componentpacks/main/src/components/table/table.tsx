@@ -27,6 +27,7 @@ import {
 	ReferenceFieldOptions,
 	LongTextFieldOptions,
 	UserFieldOptions,
+	ApplyChanges,
 } from "../field/field"
 import FieldWrapper from "../../utilities/fieldwrapper/fieldwrapper"
 
@@ -46,6 +47,7 @@ type RowAction = {
 	text: string
 	signals: signal.SignalDefinition[]
 	type?: "DEFAULT"
+	[component.DISPLAY_CONDITIONS]?: component.DisplayCondition[]
 }
 
 type ColumnDefinition = {
@@ -53,6 +55,7 @@ type ColumnDefinition = {
 	displayAs?: string
 	label: string
 	width?: string
+	applyChanges?: ApplyChanges
 	reference?: ReferenceFieldOptions
 	user?: UserFieldOptions
 	number?: NumberFieldOptions
@@ -69,6 +72,10 @@ const signals: Record<string, signal.ComponentSignalDescriptor> = {
 	NEXT_PAGE: nextPage,
 	PREV_PAGE: prevPage,
 }
+
+const StyleDefaults = Object.freeze({
+	root: [],
+})
 
 const Table: definition.UC<TableDefinition> = (props) => {
 	const { path, context, definition } = props
@@ -126,12 +133,7 @@ const Table: definition.UC<TableDefinition> = (props) => {
 
 	if (!wire || !mode || !path || currentPage === undefined) return null
 
-	const classes = styles.useStyles(
-		{
-			root: {},
-		},
-		props
-	)
+	const classes = styles.useStyleTokens(StyleDefaults, props)
 
 	const collection = wire.getCollection()
 
@@ -158,22 +160,32 @@ const Table: definition.UC<TableDefinition> = (props) => {
 		? (recordContext: RecordContext) => (
 				<FieldWrapper context={context} variant="uesio/io.table">
 					<Group context={recordContext.context}>
-						{otherActions.map((action, i) => {
-							const handler = api.signal.getHandler(
-								action.signals,
-								recordContext.context
+						{otherActions
+							.filter((action) =>
+								component.shouldAll(
+									action[component.DISPLAY_CONDITIONS],
+									recordContext.context
+								)
 							)
-							return (
-								<Button
-									key={action.text + i}
-									variant="uesio/io.rowaction"
-									className="rowaction"
-									label={action.text}
-									context={recordContext.context}
-									onClick={handler}
-								/>
-							)
-						})}
+							.map((action, i) => {
+								const handler = api.signal.getHandler(
+									// Don't run row action signals in View Builder
+									context.getCustomSlot()
+										? []
+										: action.signals,
+									recordContext.context
+								)
+								return (
+									<Button
+										key={action.text + i}
+										variant="uesio/io.rowaction"
+										className="rowaction"
+										label={action.text}
+										context={recordContext.context}
+										onClick={handler}
+									/>
+								)
+							})}
 					</Group>
 				</FieldWrapper>
 		  )
@@ -225,6 +237,7 @@ const Table: definition.UC<TableDefinition> = (props) => {
 			<component.Component
 				componentType="uesio/io.field"
 				definition={{
+					applyChanges: column.applyChanges,
 					fieldId: column.field,
 					user: column.user,
 					reference: column.reference,

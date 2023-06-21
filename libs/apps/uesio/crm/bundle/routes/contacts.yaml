@@ -1,8 +1,5 @@
 name: contacts
 path: contacts
-viewtype: list
 view: uesio/crm.contacts
-collection: uesio/crm.contact
 theme: uesio/core.default
 title: ""
-tags: []

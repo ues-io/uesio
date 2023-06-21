@@ -6,11 +6,9 @@ type ComponentDefinition = {
 
 const Component: definition.UC<ComponentDefinition> = (props) => {
 	const { text } = props.definition
-	const classes = styles.useStyles(
+	const classes = styles.useStyleTokens(
 		{
-			root: {
-				color: "green",
-			},
+			root: ["text-green-600"],
 		},
 		props
 	)

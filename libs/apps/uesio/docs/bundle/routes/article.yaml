@@ -1,0 +1,6 @@
+name: article
+path: "{slug}"
+view: uesio/docs.home
+theme: uesio/docs.default
+title: ues.io - $Record{article:uesio/cms.name}
+public: true

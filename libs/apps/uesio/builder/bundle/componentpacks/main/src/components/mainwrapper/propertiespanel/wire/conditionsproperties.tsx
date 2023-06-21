@@ -1,14 +1,25 @@
-import { definition, component, wire } from "@uesio/ui"
+import { definition, component, wire, collection, context } from "@uesio/ui"
 import { add, get } from "../../../../api/defapi"
 import { FullPath } from "../../../../api/path"
 import { useSelectedPath } from "../../../../api/stateapi"
 import { getFieldMetadata } from "../../../../api/wireapi"
+import {
+	ComponentProperty,
+	TextProperty,
+	NumberProperty,
+	CheckboxProperty,
+	SelectProperty,
+	DateProperty,
+} from "../../../../properties/componentproperty"
 
 function getConditionPropertiesPanelTitle(
 	condition: wire.WireConditionState
 ): string {
 	return `${condition.type === "GROUP" ? "Group " : ""} Condition Properties`
 }
+
+const multiValueOperators = ["HAS_ANY", "HAS_ALL", "IN", "NOT_IN"]
+const textAlikeFiledTypes = ["TEXT", "AUTONUMBER", "EMAIL", "LONGTEXT"]
 
 function getConditionTitle(condition: wire.WireConditionState): string {
 	if (condition.type === "GROUP" && !condition.valueSource) {
@@ -27,9 +38,12 @@ function getConditionTitle(condition: wire.WireConditionState): string {
 
 	if (condition.valueSource === "PARAM") {
 		const valueCondition = condition as wire.ParamConditionState
+		const valuesString = valueCondition.params
+			? "(" + valueCondition.params.join(",") + ")"
+			: valueCondition.param
 		return `${valueCondition.field} ${
 			valueCondition.operator || ""
-		} Param{${valueCondition.param}}`
+		} Param{${valuesString}}`
 	}
 
 	if (condition.valueSource === "LOOKUP") {
@@ -48,12 +62,6 @@ function getConditionTitle(condition: wire.WireConditionState): string {
 	return "NEW_VALUE"
 }
 
-function getValuesSubType(fieldDisplayType: string | undefined) {
-	if (fieldDisplayType === "SELECT" || fieldDisplayType === "MULTISELECT") {
-		return "TEXT"
-	}
-	return fieldDisplayType
-}
 function getOperatorOptions(fieldDisplayType: string | undefined) {
 	if (fieldDisplayType === "MULTISELECT")
 		return [
@@ -70,7 +78,6 @@ function getOperatorOptions(fieldDisplayType: string | undefined) {
 				value: "HAS_ALL",
 			},
 		]
-
 	return [
 		{
 			label: "",
@@ -106,7 +113,7 @@ function getOperatorOptions(fieldDisplayType: string | undefined) {
 		},
 		{
 			label: "Not In",
-			value: "NOT IN",
+			value: "NOT_IN",
 		},
 		{
 			label: "Is Blank",
@@ -120,7 +127,73 @@ function getOperatorOptions(fieldDisplayType: string | undefined) {
 			label: "Between",
 			value: "BETWEEN",
 		},
+		...(fieldDisplayType && textAlikeFiledTypes.includes(fieldDisplayType)
+			? [
+					{
+						label: "Contains",
+						value: "CONTAINS",
+					},
+					{
+						label: "Starts With",
+						value: "STARTS_WITH",
+					},
+			  ]
+			: []),
 	]
+}
+
+function getValueProperty(
+	fieldDisplayType: wire.FieldType | undefined,
+	fieldMetadata: collection.Field | undefined,
+	context: context.Context
+):
+	| TextProperty
+	| NumberProperty
+	| CheckboxProperty
+	| SelectProperty
+	| DateProperty {
+	// TODO: Add additional property types here to support things like DATE
+
+	const baseValueProp = {
+		name: "value",
+		label: "Value",
+		displayConditions: [
+			{
+				field: "valueSource",
+				value: "VALUE",
+				type: "fieldValue",
+				operator: "EQUALS",
+			},
+			{
+				type: "fieldValue",
+				field: "operator",
+				operator: "NOT_IN",
+				values: multiValueOperators.concat(["BETWEEN"]),
+			},
+		],
+	}
+
+	if (fieldDisplayType === "CHECKBOX") {
+		return { ...baseValueProp, type: "CHECKBOX" } as CheckboxProperty
+	}
+
+	if (fieldDisplayType === "NUMBER") {
+		return { ...baseValueProp, type: "NUMBER" } as NumberProperty
+	}
+
+	if (fieldDisplayType === "DATE") {
+		return { ...baseValueProp, type: "DATE" } as DateProperty
+	}
+
+	if (fieldDisplayType === "SELECT") {
+		return {
+			...baseValueProp,
+			type: "SELECT",
+			options: fieldMetadata?.getSelectOptions(context),
+		} as SelectProperty
+	}
+
+	return { ...baseValueProp, type: "TEXT" } as TextProperty
 }
 
 const ConditionsProperties: definition.UC = (props) => {
@@ -143,15 +216,18 @@ const ConditionsProperties: definition.UC = (props) => {
 	const getProperties = (
 		parentPath: FullPath,
 		itemState: wire.PlainWireRecord
-	) => {
-		const fieldDisplayType =
+	): ComponentProperty[] => {
+		const fieldMetadata =
 			itemState.field && wireName
 				? getFieldMetadata(
 						context,
 						wireName as string,
 						itemState.field as string
-				  )?.getType()
+				  )
 				: undefined
+
+		const fieldDisplayType = fieldMetadata?.getType() || undefined
+
 		return [
 			{
 				name: "id",
@@ -174,6 +250,20 @@ const ConditionsProperties: definition.UC = (props) => {
 						type: "fieldValue",
 					},
 				],
+				onChange: [
+					{
+						// Clear out all of these wire condition properties whenever field is changed
+						updates: [
+							"operator",
+							"value",
+							"values",
+							"start",
+							"end",
+							"inclusiveStart",
+							"inclusiveEnd",
+						].map((field) => ({ field })),
+					},
+				],
 			},
 			{
 				name: "operator",
@@ -186,6 +276,89 @@ const ConditionsProperties: definition.UC = (props) => {
 						field: "type",
 						value: "GROUP",
 						type: "fieldValue",
+					},
+				],
+				onChange: [
+					// Clear out value if operator IS NOW a multi-value operator
+					{
+						updates: [
+							{
+								field: "value",
+							},
+						],
+						conditions: [
+							{
+								field: "operator",
+								operator: "IN",
+								values: multiValueOperators,
+								type: "fieldValue",
+							},
+						],
+					},
+					// Clear out param if operator IS NOW a multi-value operator
+					{
+						updates: [
+							{
+								field: "param",
+							},
+						],
+						conditions: [
+							{
+								field: "operator",
+								operator: "IN",
+								values: multiValueOperators,
+								type: "fieldValue",
+							},
+						],
+					},
+					// Clear out values (PLURAL) if operator IS NO LONGER a multi-value operator
+					{
+						updates: [
+							{
+								field: "values",
+							},
+						],
+						conditions: [
+							{
+								field: "operator",
+								operator: "NOT_IN",
+								values: multiValueOperators,
+								type: "fieldValue",
+							},
+						],
+					},
+					// Clear out params (PLURAL) if operator IS NO LONGER a multi-value operator
+					{
+						updates: [
+							{
+								field: "params",
+							},
+						],
+						conditions: [
+							{
+								field: "operator",
+								operator: "NOT_IN",
+								values: multiValueOperators,
+								type: "fieldValue",
+							},
+						],
+					},
+					// Clear out special BETWEEN properties if operator is not BETWEEN
+					{
+						conditions: [
+							{
+								field: "operator",
+								operator: "NOT_EQUALS",
+								value: "BETWEEN",
+								type: "fieldValue",
+							},
+						],
+						updates: [
+							"start",
+							"end",
+							"inclusiveStart",
+							"inclusiveEnd",
+						].map((field) => ({ field })),
 					},
 				],
 			},
@@ -224,8 +397,12 @@ const ConditionsProperties: definition.UC = (props) => {
 							"GTE",
 							"LTE",
 							"IN",
-							"NOT IN",
+							"NOT_IN",
 							"BETWEEN",
+							"HAS_ANY",
+							"HAS_ALL",
+							"CONTAINS",
+							"STARTS_WITH",
 						],
 					},
 				],
@@ -307,35 +484,20 @@ const ConditionsProperties: definition.UC = (props) => {
 				],
 			},
 			{
-				name: "value",
-				type: fieldDisplayType || "TEXT",
-				label: "Value",
-				displayConditions: [
-					{
-						field: "valueSource",
-						value: "VALUE",
-						type: "fieldValue",
-						operator: "EQUALS",
-					},
-					{
-						type: "fieldValue",
-						field: "operator",
-						operator: "NOT IN",
-						values: [
-							"IN",
-							"NOT IN",
-							"BETWEEN",
-							"HAS_ANY",
-							"HAS_ALL",
-						],
-					},
-				],
+				...getValueProperty(fieldDisplayType, fieldMetadata, context),
 			},
 			{
 				name: "values",
 				type: "LIST",
 				label: "Values",
-				subtype: getValuesSubType(fieldDisplayType),
+				subtype: fieldDisplayType,
+				subtypeOptions:
+					fieldDisplayType === "CHECKBOX"
+						? [
+								{ label: "True", value: "true" },
+								{ label: "False", value: "false" },
+						  ]
+						: fieldMetadata?.getSelectOptions(context),
 				displayConditions: [
 					{
 						field: "valueSource",
@@ -347,14 +509,14 @@ const ConditionsProperties: definition.UC = (props) => {
 						field: "operator",
 						type: "fieldValue",
 						operator: "IN",
-						values: ["IN", "NOT IN", "HAS_ANY", "HAS_ALL"],
+						values: multiValueOperators,
 					},
 				],
 			},
 			{
-				name: "active",
+				name: "inactive",
 				type: "CHECKBOX",
-				label: "Active by default",
+				label: "Inactive by default",
 			},
 			{
 				name: "lookupWire",
@@ -384,6 +546,26 @@ const ConditionsProperties: definition.UC = (props) => {
 				],
 			},
 			{
+				name: "params",
+				type: "LIST",
+				label: "Params",
+				subtype: fieldDisplayType,
+				displayConditions: [
+					{
+						field: "valueSource",
+						value: "PARAM",
+						type: "fieldValue",
+						operator: "EQUALS",
+					},
+					{
+						field: "operator",
+						type: "fieldValue",
+						operator: "IN",
+						values: multiValueOperators,
+					},
+				],
+			},
+			{
 				name: "param",
 				type: "PARAM",
 				label: "Param",
@@ -393,6 +575,12 @@ const ConditionsProperties: definition.UC = (props) => {
 						value: "PARAM",
 						type: "fieldValue",
 						operator: "EQUALS",
+					},
+					{
+						field: "operator",
+						type: "fieldValue",
+						operator: "NOT_IN",
+						values: multiValueOperators,
 					},
 				],
 			},
@@ -441,13 +629,12 @@ const ConditionsProperties: definition.UC = (props) => {
 		]
 	}
 
-	const defaultConditionDef = { active: true }
+	const defaultConditionDef = {}
 
 	const defaultConditionGroupDef = {
 		type: "GROUP",
 		conjunction: "AND",
 		conditions: [defaultConditionDef],
-		active: true,
 	}
 
 	return (

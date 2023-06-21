@@ -31,9 +31,14 @@ if [[ -z "${APP_IMAGE}" ]]; then
     export APP_IMAGE="$GITSHA"
 fi
 
+export APP_HOST="https://studio.uesio-dev.com:3000"
+
 # Spin up dependencies and the app, and run migrations againt the DB
 docker compose -f docker-compose-tests.yaml down --volumes
 docker compose -f docker-compose-tests.yaml up -d
-# TODO: Wait for app to start to be available rather than sleeping...
 echo "Waiting for Uesio app to start..."
-sleep 5;
+# curl the app's /health route in a loop and sleep 1 second until we get a 200
+until $(curl --output /dev/null --silent --fail $APP_HOST/health); do
+    printf '.'
+    sleep 1
+done

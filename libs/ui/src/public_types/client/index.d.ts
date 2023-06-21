@@ -1,5 +1,61 @@
-import { CSSInterpolation, ClassNamesArg } from "@emotion/css"
 import { FC, ReactNode } from "react"
+import { Class } from "@twind/core"
+
+type FieldMode = "READ" | "EDIT"
+
+type SiteState = {
+	name: string
+	app: string
+	domain: string
+	subdomain: string
+	version: string
+	title?: string
+}
+
+type RouteState = {
+	view: string
+	params?: Record<string, string>
+	namespace: string
+	path: string
+	theme: string
+	title: string
+	isLoading?: boolean
+} | null
+
+type UserState = {
+	id: string
+	username: string
+	site: string
+	firstname: string
+	lastname: string
+	profile: string
+	picture: UserPictureState | null
+} | null
+
+type UserPictureState = {
+	id: string
+	updatedat: number
+}
+
+interface Palette {
+	primary: string
+	secondary: string
+	error: string
+	warning: string
+	info: string
+	success: string
+	// Allow any key as well, but require a minimum of the above
+	[key: string]: string
+}
+
+type ThemeState = {
+	name: string
+	namespace: string
+	definition: {
+		spacing: number
+		palette: Palette
+	}
+}
 
 type Context = {
 	/**
@@ -18,6 +74,69 @@ type Context = {
 	 * @returns the merged text
 	 */
 	merge: (text: string) => string
+	/**
+	 * Returns the mode of the closest context FIELD_MODE frame, or "READ" if no such frame is in context.
+	 * @returns FieldMode
+	 */
+	getFieldMode: () => FieldMode
+	/**
+	 * Returns the translated value of a given label by its API name
+	 * @param String - the label's API name, e.g. "create_new"
+	 * @returns translated label
+	 */
+	getLabel: (labelName: string) => UserState
+	/**
+	 * Returns the value of a given View parameter, if present
+	 * @param String - the parameter name
+	 * @returns parameter value
+	 */
+	getParam: (paramName: string) => string
+	/**
+	 * Returns a map of all provided View parameters
+	 * @returns all parameter values
+	 */
+	getParams: () => Record<string, string>
+	/**
+	 * Returns either the closest context Record from a RecordFrame or a RecordDataFrame
+	 * or the closest context Record in the specified Wire.
+	 * @returns WireRecord object
+	 */
+	getRecord: (wireId?: string) => WireRecord
+	/**
+	 * Returns the id of the closest context Record
+	 * @returns string
+	 */
+	getRecordId: () => string
+	/**
+	 * Returns the state of the context Route
+	 * @returns RouteState object
+	 */
+	getRoute: () => RouteState
+	/**
+	 * Returns info about the current Site
+	 * @returns Wire object
+	 */
+	getSite: () => SiteState
+	/**
+	 * Returns the context Theme definition
+	 * @returns ThemeState
+	 */
+	getTheme: () => ThemeState
+	/**
+	 * Returns the API name of the context Theme
+	 * @returns string
+	 */
+	getThemeId: () => string
+	/**
+	 * Returns the logged-in user
+	 * @returns UserState object
+	 */
+	getUser: () => UserState
+	/**
+	 * Returns either the closest context Wire, or the Wire with the given ID
+	 * @returns Wire object
+	 */
+	getWire: (wireId?: string) => Wire
 }
 
 type ComponentSignalDescriptor = {
@@ -30,7 +149,6 @@ export type UtilityComponent<T = DefinitionMap> = FC<T & UtilityProps>
 export interface UtilityProps {
 	id?: string
 	variant?: MetadataKey
-	styles?: Record<string, CSSInterpolation>
 	styleTokens?: Record<string, string[]>
 	classes?: Record<string, string>
 	className?: string
@@ -47,7 +165,6 @@ export type Definition =
 	| DefinitionMap[]
 export type BaseDefinition = {
 	"uesio.id"?: string
-	"uesio.styles"?: DefinitionMap
 	"uesio.styleTokens"?: Record<string, string[]>
 	"uesio.variant"?: MetadataKey
 	"uesio.classes"?: string
@@ -89,30 +206,19 @@ type MetadataKey = `${string}/${string}.${string}`
 // STYLES
 //
 
-declare function useUtilityStyles(
-	defaults: Record<string, ClassNamesArg[]>,
-	props: UtilityProps,
-	defaultVariantComponentType?: MetadataKey
-): Record<string, string>
 declare function useUtilityStyleTokens(
-	defaults: Record<string, ClassNamesArg[]>,
+	defaults: Record<string, Class[]>,
 	props: UtilityProps,
 	defaultVariantComponentType?: MetadataKey
 ): Record<string, string>
 declare function useStyleTokens(
-	defaults: Record<string, ClassNamesArg[]>,
+	defaults: Record<string, Class[]>,
 	props: BaseProps
-): Record<string, string>
-declare function useStyles(
-	defaults: Record<string, CSSInterpolation>,
-	props: BaseProps | null
 ): Record<string, string>
 
 export const styles = {
 	useUtilityStyleTokens,
-	useUtilityStyles,
 	useStyleTokens,
-	useStyles,
 }
 
 //
@@ -148,7 +254,6 @@ export namespace definition {
 	interface UtilityProps {
 		id?: string
 		variant?: MetadataKey
-		styles?: Record<string, CSSInterpolation>
 		styleTokens?: Record<string, string[]>
 		classes?: Record<string, string>
 		className?: string
@@ -165,32 +270,11 @@ export namespace definition {
 		| DefinitionMap[]
 	export type BaseDefinition = {
 		"uesio.id"?: string
-		"uesio.styles"?: DefinitionMap
 		"uesio.styleTokens"?: Record<string, string[]>
 		"uesio.variant"?: MetadataKey
 		"uesio.classes"?: string
 	}
 }
-
-// interface SignalDefinition {
-//     signal: string;
-//     stepId?: string;
-// }
-
-// type SignalApi = {
-//     /**
-//      * Returns a handler function for running a list of signals
-//      * @param signals Array of Signals to run
-//      * @param context Context object
-//      * @returns handler function
-//      */
-//     getHandler: (signals: SignalDefinition[] | undefined, context: Context) => () => Context;
-// };
-
-// const Api: {
-//     signal: SignalApi;
-//     wire: WireApi;
-// };
 
 const PARAM = "PARAM"
 const LOOKUP = "LOOKUP"
@@ -217,7 +301,7 @@ type WireCondition =
 type ConditionBase = {
 	id?: string
 	operator?: ConditionOperators
-	active?: boolean
+	inactive?: boolean
 }
 type GroupCondition = ConditionBase & {
 	type: typeof GROUP
@@ -313,7 +397,45 @@ type WireRecord = {
 }
 // type useWire = (wireId: string, context: Context) => Wire;
 
+interface SignalDefinition {
+	signal: string
+	stepId?: string
+}
+
+// API
+export namespace api {
+	export namespace signal {
+		/**
+		 * Returns a handler function for running a list of signals
+		 * @param signals Array of Signals to run
+		 * @param context Context object
+		 * @returns handler function
+		 */
+		export function getHandler(
+			signals: SignalDefinition[] | undefined,
+			context: Context
+		): () => Context
+
+		export { getHandler }
+	}
+
+	export namespace view {
+		/**
+		 * A hook for retrieving the stored value of a Config Value
+		 * @param signals Array of Signals to run
+		 * @param context Context object
+		 * @returns handler function
+		 */
+		export function useConfigValue(configValueName: MetadataKey): string
+
+		export { useConfigValue }
+	}
+
+	export default { signal, view }
+}
+
 export default {
+	api,
 	component,
 	definition,
 	styles,

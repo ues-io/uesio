@@ -58,7 +58,7 @@ definition:
                       wire: workspaces
                     params:
                       itemType: installed
-                      itemIcon: inventory_2
+                      itemIcon: backpack
                       itemName: $Param{bundledep}
           - uesio/io.griditem:
               uesio.variant: uesio/studio.leftbar
@@ -67,6 +67,8 @@ definition:
                     uesio.context:
                       wire: workspaces
                     view: uesio/studio.workspacenav
+                    params:
+                      selected: installed
           - uesio/io.griditem:
               uesio.variant: uesio/studio.content
               components:

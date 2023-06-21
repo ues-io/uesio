@@ -138,21 +138,15 @@ const getObjectProperty = (
 }
 
 const getFormFieldsFromProperties = (
-	properties: ComponentProperty[] | undefined,
-	path: FullPath,
-	formFields: definition.DefinitionList = []
-) => {
-	if (!properties) return formFields
-	properties.forEach((prop) => {
-		formFields.push({
-			"uesio/builder.property": {
-				propertyId: prop.name,
-				path,
-			},
-		})
-	})
-	return formFields
-}
+	properties: ComponentProperty[] = [],
+	path: FullPath
+) =>
+	properties.map((property) => ({
+		"uesio/builder.property": {
+			property,
+			path,
+		},
+	}))
 
 const getSelectListMetadataFromOptions = (
 	propertyName: string,
@@ -318,6 +312,8 @@ const getWireFieldFromPropertyDef = (
 			return getBaseWireFieldDef(def, "NUMBER")
 		case "CHECKBOX":
 			return getBaseWireFieldDef(def, "CHECKBOX")
+		case "DATE":
+			return getBaseWireFieldDef(def, "DATE")
 		case "CONDITION":
 			wireId = def.wireField
 				? (getObjectProperty(currentValue, def.wireField) as string)
@@ -668,7 +664,7 @@ const findProperty = (
 	}
 }
 
-export const getProperty = (
+const getProperty = (
 	propertyId: string,
 	properties: ComponentProperty[]
 ): ComponentProperty | undefined => {
@@ -706,7 +702,7 @@ function getPropertiesForSection(
 
 const getPropertiesAndContent = (props: Props, selectedTab: string) => {
 	let { content, properties } = props
-	const { sections } = props
+	const { path, sections } = props
 
 	if (sections && sections.length) {
 		const selectedSection =
@@ -740,6 +736,20 @@ const getPropertiesAndContent = (props: Props, selectedTab: string) => {
 			case "STYLES": {
 				properties = [
 					getStyleVariantProperty(selectedSection.componentType),
+				]
+				content = [
+					{
+						"uesio/builder.property": {
+							property: properties[0],
+							path,
+						},
+					},
+					{
+						"uesio/builder.stylesproperty": {
+							componentType: selectedSection.componentType,
+							componentPath: path,
+						},
+					},
 				]
 				break
 			}
@@ -785,6 +795,66 @@ const getPropertiesAndContent = (props: Props, selectedTab: string) => {
 	}
 }
 
+const onUpdate = (
+	field: string,
+	value: wire.FieldValue,
+	record: wire.WireRecord,
+	context: context.Context,
+	path: FullPath,
+	setters: Map<string, SetterFunction | SetterFunction[]>,
+	onChangeHandlers: Record<string, PropertyOnChange[]>
+) => {
+	let setter = setters.get(field)
+	let setterField: string | undefined
+	// If there is no setter, and the field is nested, then walk up the tree
+	// to see if there is a setter registered for the parent field
+	if (!setter) {
+		const fieldParts = field.split(PATH_ARROW)
+		if (fieldParts.length > 1) {
+			const popped = []
+			while (fieldParts.length) {
+				popped.push(fieldParts.pop())
+				const parentField = fieldParts.join(PATH_ARROW)
+				setter = setters.get(parentField)
+				if (setter) {
+					setterField = popped.join(PATH_ARROW)
+					break
+				}
+			}
+		}
+	}
+	if (setter) {
+		Array.isArray(setter)
+			? setter.forEach((s) => {
+					s(value, setterField, record)
+			  })
+			: setter(value, setterField, record)
+	}
+	// Finally, once all setters have run, apply any on-Change handlers
+	if (onChangeHandlers[field]?.length) {
+		const onChangeHandlerContext = context.addRecordFrame({
+			record: record.getId(),
+			wire: record.getWire().getId(),
+		})
+		onChangeHandlers[field].forEach((onChange) => {
+			if (
+				!onChange.conditions?.length ||
+				component.shouldAll(onChange.conditions, onChangeHandlerContext)
+			) {
+				onChange.updates?.forEach(
+					({ field: targetField, value: newValue }) => {
+						const [targetPath] = getPropPathFromName(
+							targetField,
+							path
+						)
+						setDef(context, targetPath, newValue)
+					}
+				)
+			}
+		})
+	}
+}
+
 const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 	const DynamicForm = component.getUtility("uesio/io.dynamicform")
 	const { context, id, path, sections, title } = props
@@ -799,6 +869,7 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 		context,
 		path
 	)
+	const pathString = path?.combine()
 
 	return (
 		<PropertiesWrapper
@@ -813,7 +884,7 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 		>
 			<DynamicForm
 				id={id}
-				path={path?.combine()}
+				path={pathString}
 				fields={getWireFieldsFromProperties(
 					properties,
 					context,
@@ -822,74 +893,21 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 				content={
 					content || getFormFieldsFromProperties(properties, path)
 				}
-				context={context.addComponentFrame(
-					"uesio/builder.propertiesform",
-					{
-						properties,
-						path,
-					}
-				)}
+				context={context}
 				onUpdate={(
 					field: string,
 					value: wire.FieldValue,
 					record: wire.WireRecord
 				) => {
-					let setter = setters.get(field)
-					let setterField: string | undefined
-					// If there is no setter, and the field is nested, then walk up the tree
-					// to see if there is a setter registered for the parent field
-					if (!setter) {
-						const fieldParts = field.split(PATH_ARROW)
-						if (fieldParts.length > 1) {
-							const popped = []
-							while (fieldParts.length) {
-								popped.push(fieldParts.pop())
-								const parentField = fieldParts.join(PATH_ARROW)
-								setter = setters.get(parentField)
-								if (setter) {
-									setterField = popped.join(PATH_ARROW)
-									break
-								}
-							}
-						}
-					}
-					if (setter) {
-						Array.isArray(setter)
-							? setter.forEach((s) => {
-									s(value, setterField, record)
-							  })
-							: setter(value, setterField, record)
-					}
-					// Finally, once all setters have run, apply any on-Change handlers
-					if (onChangeHandlers[field]?.length) {
-						const onChangeHandlerContext = context.addRecordFrame({
-							record: record.getId(),
-							wire: record.getWire().getId(),
-						})
-						onChangeHandlers[field].forEach((onChange) => {
-							if (
-								!onChange.conditions?.length ||
-								component.shouldAll(
-									onChange.conditions,
-									onChangeHandlerContext
-								)
-							) {
-								onChange.updates?.forEach(
-									({
-										field: targetField,
-										value: newValue,
-									}) => {
-										const [targetPath] =
-											getPropPathFromName(
-												targetField,
-												path
-											)
-										setDef(context, targetPath, newValue)
-									}
-								)
-							}
-						})
-					}
+					onUpdate(
+						field,
+						value,
+						record,
+						context,
+						path,
+						setters,
+						onChangeHandlers
+					)
 				}}
 				initialValue={initialValue}
 			/>

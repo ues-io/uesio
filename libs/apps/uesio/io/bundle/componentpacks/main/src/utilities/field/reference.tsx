@@ -46,6 +46,7 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 		path,
 		placeholder,
 		variant,
+		id,
 	} = props
 
 	const referencedCollection = api.collection.useCollection(
@@ -121,7 +122,6 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 						{
 							type: "SEARCH",
 							value: search,
-							active: true,
 							fields: searchFields,
 						},
 					],
@@ -141,6 +141,7 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 	} else {
 		return (
 			<CustomSelect
+				id={id}
 				items={items}
 				itemRenderer={renderer}
 				variant={"uesio/io.customselectfield:uesio/io.default"}

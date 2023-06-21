@@ -22,20 +22,20 @@ definition:
                               componentsignal: TOGGLE_MODE
                               targettype: specific
                               componentid: opportunityList
-                          text: Edit
+                          text: $Label{uesio/io.edit}
                           uesio.variant: uesio/io.secondary
                       - uesio/io.button:
                           signals:
                             - signal: wire/SAVE
                               wires:
                                 - opportunities
-                          text: Save
+                          text: $Label{uesio/io.save}
                           uesio.variant: uesio/io.secondary
                       - uesio/io.button:
                           signals:
                             - signal: wire/CANCEL
                               wire: opportunities
-                          text: Cancel
+                          text: $Label{uesio/io.cancel}
                           uesio.variant: uesio/io.secondary
           - uesio/io.box:
               uesio.variant: uesio/io.section

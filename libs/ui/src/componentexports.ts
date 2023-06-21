@@ -1,5 +1,5 @@
 import Slot, { SlotUtilityProps, getSlotProps } from "./components/slot"
-import View from "./components/view"
+import { ViewArea, ViewComponentDefinition } from "./components/view"
 import NotificationArea from "./components/notificationarea"
 import * as path from "./component/path"
 import * as registry from "./component/registry"
@@ -15,10 +15,10 @@ import {
 	DisplayOperator,
 } from "./component/display"
 import { ComponentVariant } from "./definition/componentvariant"
-import PanelArea from "./components/panelarea"
 import ErrorBoundary from "./components/errorboundary"
 import ErrorMessage from "./components/errormessage"
 const COMPONENT_ID = "uesio.id"
+const DISPLAY_CONDITIONS = "uesio.display"
 
 export type {
 	SlotUtilityProps,
@@ -26,20 +26,21 @@ export type {
 	ItemContext,
 	DisplayCondition,
 	DisplayOperator,
+	ViewComponentDefinition,
 }
 
 export {
+	DISPLAY_CONDITIONS,
 	COMPONENT_ID,
 	Slot,
 	ErrorMessage,
 	ErrorBoundary,
 	getSlotProps,
-	View,
+	ViewArea,
 	path,
 	registry,
 	getUtility,
 	Component,
-	PanelArea,
 	NotificationArea,
 	shouldHaveClass,
 	useShould,

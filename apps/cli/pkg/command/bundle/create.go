@@ -2,6 +2,8 @@ package bundle
 
 import (
 	"fmt"
+	"strconv"
+
 	"github.com/thecloudmasters/cli/pkg/auth"
 	"github.com/thecloudmasters/cli/pkg/call"
 	"github.com/thecloudmasters/cli/pkg/config"
@@ -14,7 +16,7 @@ type CallBotResponse struct {
 	Error   string                 `json:"error,omitempty"`
 }
 
-func CreateBundle() error {
+func CreateBundle(releaseType, majorVersion, minorVersion, patchVersion, bundleDescription string) error {
 
 	_, err := auth.Login()
 	if err != nil {
@@ -38,7 +40,26 @@ func CreateBundle() error {
 
 	createBundleURL := fmt.Sprintf("workspace/%s/%s/bots/call/uesio/studio/createbundle", appName, workspaceName)
 
-	botInputs := map[string]string{}
+	botInputs := map[string]interface{}{}
+	err = addVersionNumberToInputsIfInt(majorVersion, "major", botInputs)
+	if err != nil {
+		return err
+	}
+	err = addVersionNumberToInputsIfInt(minorVersion, "minor", botInputs)
+	if err != nil {
+		return err
+	}
+	err = addVersionNumberToInputsIfInt(patchVersion, "patch", botInputs)
+	if err != nil {
+		return err
+	}
+	if bundleDescription != "" {
+		botInputs["description"] = bundleDescription
+	}
+	if releaseType != "" {
+		botInputs["type"] = releaseType
+	}
+
 	botResponse := &CallBotResponse{}
 
 	err = call.PostJSON(createBundleURL, sessid, botInputs, botResponse)
@@ -54,5 +75,18 @@ func CreateBundle() error {
 		return fmt.Errorf("unable to create new bundle version: %s", botResponse.Error)
 	}
 
+	return nil
+}
+
+func addVersionNumberToInputsIfInt(version, inputName string, botInputs map[string]interface{}) error {
+	// Ignore param if not provided
+	if version == "" {
+		return nil
+	}
+	versionInt, err := strconv.Atoi(version)
+	if err != nil {
+		return fmt.Errorf("invalid %s version - must be an integer", inputName)
+	}
+	botInputs[inputName] = versionInt
 	return nil
 }

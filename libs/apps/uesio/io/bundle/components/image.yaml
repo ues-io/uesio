@@ -1,5 +1,6 @@
 name: image
 title: Image
+icon: image
 description: Display an image.
 category: CONTENT
 pack: main

@@ -1,0 +1,6 @@
+name: routeassignmenttype
+options:
+  - label: "List View"
+    value: "list"
+  - label: "Detail View"
+    value: "detail"

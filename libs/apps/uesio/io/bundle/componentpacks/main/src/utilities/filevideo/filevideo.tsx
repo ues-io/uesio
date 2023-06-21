@@ -1,12 +1,11 @@
-import { FunctionComponent, CSSProperties } from "react"
 import { definition, styles, collection, context, api } from "@uesio/ui"
 import { nanoid } from "@reduxjs/toolkit"
 import Icon from "../icon/icon"
 import { UserFileMetadata } from "../../components/field/field"
 import UploadArea from "../uploadarea/uploadarea"
-import { CSSInterpolation } from "@emotion/css"
+import { StyleDefaults } from "../fileimage/fileimage"
 
-interface FileVideoProps extends definition.UtilityProps {
+interface FileVideoProps {
 	id?: string
 	mode?: context.FieldMode
 	userFile?: UserFileMetadata
@@ -17,50 +16,7 @@ interface FileVideoProps extends definition.UtilityProps {
 	autoplay?: boolean
 }
 
-const actionIconStyles: CSSProperties = {
-	cursor: "pointer",
-	padding: "4px",
-	margin: "4px",
-	color: "white",
-	backdropFilter: "brightness(0.6)",
-	borderRadius: "4px",
-	display: "none",
-	position: "absolute",
-	top: "0",
-}
-
-const StyleDefaults = Object.freeze({
-	root: {
-		position: "relative",
-		"&:hover .hovershow": {
-			display: "block",
-		},
-	},
-	image: {
-		width: "100%",
-		display: "block",
-	},
-	editicon: {
-		right: "0",
-		...actionIconStyles,
-	},
-	deleteicon: {
-		left: "0",
-		...actionIconStyles,
-	},
-	nofile: {
-		display: "flex",
-		backgroundColor: "#f5f5f5",
-		justifyContent: "center",
-	},
-	nofileicon: {
-		fontSize: "80px",
-		padding: "32px",
-		color: "#ccc",
-	},
-} as Record<string, CSSInterpolation>)
-
-const FileVideo: FunctionComponent<FileVideoProps> = (props) => {
+const FileVideo: definition.UtilityComponent<FileVideoProps> = (props) => {
 	const {
 		mode,
 		context,
@@ -76,7 +32,7 @@ const FileVideo: FunctionComponent<FileVideoProps> = (props) => {
 	const userModDate = userFile?.[collection.UPDATED_AT_FIELD]
 	const fileUrl = api.file.getUserFileURL(context, userFileId, userModDate)
 
-	const classes = styles.useUtilityStyles(StyleDefaults, props)
+	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
 	const uploadLabelId = nanoid()
 	const deleteLabelId = nanoid()
@@ -94,7 +50,10 @@ const FileVideo: FunctionComponent<FileVideoProps> = (props) => {
 			{mode === "EDIT" && (
 				<>
 					<label
-						className={styles.cx(classes.editicon, "hovershow")}
+						className={styles.cx(
+							classes.editicon,
+							classes.actionicon
+						)}
 						htmlFor={uploadLabelId}
 					>
 						<Icon context={context} icon="edit" />
@@ -103,7 +62,7 @@ const FileVideo: FunctionComponent<FileVideoProps> = (props) => {
 						<label
 							className={styles.cx(
 								classes.deleteicon,
-								"hovershow"
+								classes.actionicon
 							)}
 							htmlFor={deleteLabelId}
 						>

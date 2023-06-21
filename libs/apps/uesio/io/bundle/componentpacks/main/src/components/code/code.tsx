@@ -14,15 +14,14 @@ type CodeFieldLanguage =
 	| "html"
 	| "css"
 
+const StyleDefaults = Object.freeze({
+	root: [],
+})
+
 const CodeField: definition.UC<CodeFieldDefinition> = (props) => {
 	const { definition, context } = props
 
-	const classes = styles.useStyles(
-		{
-			root: {},
-		},
-		props
-	)
+	const classes = styles.useStyleTokens(StyleDefaults, props)
 	const language = definition?.language || "yaml"
 	const fileContent = api.file.useFile(context, definition.file)
 

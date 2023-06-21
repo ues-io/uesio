@@ -3,10 +3,7 @@ public: true
 options:
   - label: high
     value: HIGH
-    disabled: false
   - label: medium
     value: MEDIUM
-    disabled: false
   - label: low
     value: LOW
-    disabled: false
