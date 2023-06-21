@@ -202,7 +202,7 @@ func (c *Connection) Load(op *adapt.LoadOp, session *sess.Session) error {
 	scanners := getScanners(&item, rows, fieldMap, &referencedCollections)
 
 	op.HasMoreBatches = false
-	formulaPopulations := adapt.GetFormulaFunction(formulaFields, collectionMetadata)
+	formulaPopulations := adapt.GetFormulaFunction(formulaFields)
 	index := 0
 	for rows.Next() {
 		if op.BatchSize == index {
