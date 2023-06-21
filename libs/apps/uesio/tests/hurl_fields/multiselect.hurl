@@ -11,7 +11,7 @@ POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 HTTP 200
 
 # Operator: HAS_ANY | valueSource: VALUE | as string
-# entry 13
+# entry 2
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -23,6 +23,7 @@ Accept: application/json
             "conditions": [
                 {
                     "field": "uesio/tests.multiselect",
+                    "valueSource": "VALUE",
                     "operator": "HAS_ANY",
                     "values": [
                         "one",
@@ -40,7 +41,7 @@ jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-002"
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-003"
 
 # Operator: HAS_ANY | valueSource: VALUE | Bad Value | as number
-# entry 13
+# entry 3
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -52,6 +53,7 @@ Accept: application/json
             "conditions": [
                 {
                     "field": "uesio/tests.multiselect",
+                    "valueSource": "VALUE",
                     "operator": "HAS_ANY",
                     "values": [
                         1,
@@ -65,8 +67,42 @@ Accept: application/json
 HTTP 400
 [Asserts]
 
+# Operator: HAS_ANY | valueSource: PARAM
+# entry 4
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.wire_condition",
+            "query":true,
+            "fields": [{"id":"uesio/tests.multiselect"},{"id":"uesio/core.uniquekey"}],
+            "params": {
+                "one": "one",
+                "two": "two"
+            },
+            "conditions": [
+                {
+                    "field": "uesio/tests.multiselect",
+                    "valueSource": "PARAM",
+                    "operator": "HAS_ANY",
+                    "params": [
+                        "one",
+                        "two"
+                    ]
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-001"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-002"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-003"
+
 # Operator: HAS_ALL | valueSource: VALUE | as string
-# entry 13
+# entry 5
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -78,6 +114,7 @@ Accept: application/json
             "conditions": [
                 {
                     "field": "uesio/tests.multiselect",
+                    "valueSource": "VALUE",
                     "operator": "HAS_ALL",
                     "values": [
                         "one",
@@ -93,7 +130,7 @@ HTTP 200
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" == "ID-003"
 
 # Operator: HAS_ALL | valueSource: VALUE | Bad Value | as number
-# entry 13
+# entry 6
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -105,7 +142,8 @@ Accept: application/json
             "conditions": [
                 {
                     "field": "uesio/tests.multiselect",
-                    "operator": "HAS_ANY",
+                    "valueSource": "VALUE",
+                    "operator": "HAS_ALL",
                     "values": [
                         1,
                         2
@@ -118,8 +156,40 @@ Accept: application/json
 HTTP 400
 [Asserts]
 
+# Operator: HAS_ALL | valueSource: PARAM
+# entry 7
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.wire_condition",
+            "query":true,
+            "fields": [{"id":"uesio/tests.multiselect"},{"id":"uesio/core.uniquekey"}],
+            "params": {
+                "one": "one",
+                "two": "two"
+            },
+            "conditions": [
+                {
+                    "field": "uesio/tests.multiselect",
+                    "valueSource": "PARAM",
+                    "operator": "HAS_ALL",
+                    "params": [
+                        "one",
+                        "two"
+                    ]
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" == "ID-003"
+
 # Operator: IS_BLANK | valueSource: VALUE
-# entry 13
+# entry 8
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -148,7 +218,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.multiselect']" includes null
 
 
 # Operator: IS_NOT_BLANK | valueSource: VALUE
-# entry 14
+# entry 9
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
