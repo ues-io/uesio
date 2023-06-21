@@ -269,7 +269,7 @@ func Test_MultiselectLoader(t *testing.T) {
 		{
 			"parse multiselect from empty string",
 			"",
-			map[string]bool{},
+			nil,
 			"",
 		},
 		{
