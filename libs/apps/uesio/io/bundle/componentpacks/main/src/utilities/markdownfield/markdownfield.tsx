@@ -49,12 +49,12 @@ const StyleDefaults = Object.freeze({
 	h5: [],
 	h6: [],
 	p: [],
-	ol: ["pl-8", "list-decimal"],
-	ul: ["pl-8", "list-disc"],
+	ol: [],
+	ul: [],
 	li: [],
 	code: [],
 	a: [],
-	img: ["max-w-md"],
+	img: [],
 })
 
 const MarkDownField: definition.UtilityComponent<MarkDownFieldProps> = (
@@ -92,26 +92,23 @@ const MarkDownField: definition.UtilityComponent<MarkDownFieldProps> = (
 				),
 				code: ({ node, inline, className, children, ...props }) => {
 					const match = /language-(\w+)/.exec(className || "")
-					return (
+					return !inline && match ? (
 						<div className={classes.code}>
-							{!inline && match ? (
-								<SyntaxHighlighter
-									{...props}
-									className={classes.code}
-									children={String(children).replace(
-										/\n$/,
-										""
-									)}
-									style={materialDark}
-									language={match[1]}
-									PreTag="div"
-								/>
-							) : (
-								<code {...props} className={className}>
-									{children}
-								</code>
-							)}
+							<SyntaxHighlighter
+								{...props}
+								className={classes.code}
+								children={String(children).replace(/\n$/, "")}
+								style={materialDark}
+								language={match[1]}
+								PreTag="div"
+							/>
 						</div>
+					) : (
+						<span className={classes.code}>
+							<code {...props} className={className}>
+								{children}
+							</code>
+						</span>
 					)
 				},
 			}}

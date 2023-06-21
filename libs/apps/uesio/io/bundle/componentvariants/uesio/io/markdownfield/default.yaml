@@ -14,4 +14,14 @@ definition:
     code:
       - rounded-lg
       - text-sm
+    ol:
+      - pl-8
+      - list-decimal
+    ul:
+      - pl-8
+      - list-disc
+    img:
+      - max-w-md
+    li:
+      - my-1
 public: true
