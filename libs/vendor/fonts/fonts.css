@@ -13,6 +13,7 @@ html {
 /* roboto-300 - latin */
 @font-face {
 	font-family: "Roboto";
+	font-display: swap;
 	font-style: normal;
 	font-weight: 300;
 	src: local("Roboto Light"), local("Roboto-Light"),
@@ -23,6 +24,7 @@ html {
 /* roboto-regular - latin */
 @font-face {
 	font-family: "Roboto";
+	font-display: swap;
 	font-style: normal;
 	font-weight: 400;
 	src: local("Roboto"), local("Roboto-Regular"),
@@ -33,6 +35,7 @@ html {
 /* roboto-500 - latin */
 @font-face {
 	font-family: "Roboto";
+	font-display: swap;
 	font-style: normal;
 	font-weight: 500;
 	src: local("Roboto Medium"), local("Roboto-Medium"),
@@ -43,6 +46,7 @@ html {
 /* roboto-700 - latin */
 @font-face {
 	font-family: "Roboto";
+	font-display: swap;
 	font-style: normal;
 	font-weight: 700;
 	src: local("Roboto Bold"), local("Roboto-Bold"),
@@ -56,30 +60,36 @@ html {
 	font-style: normal;
 	font-weight: 400;
 	src: url("{{ .StaticAssetsHost }}/static/vendor/fonts/material-symbols/v1/materialsymbols.woff2") format("woff2");
+	font-display: swap;
 }
 
 @font-face {
 	font-family: Gosha;
 	src: url("{{ .StaticAssetsHost }}/static/vendor/fonts/gosha-sans/v1/GoshaSans-Regular.otf") format("opentype");
+	font-display: swap;
 }
 
 @font-face {
 	font-family: Gosha;
 	font-weight: bold;
 	src: url("{{ .StaticAssetsHost }}/static/vendor/fonts/gosha-sans/v1/GoshaSans-Bold.otf") format("opentype");
+	font-display: swap;
 }
 
 /* Greenlink */
 @font-face {
 	font-family: "Viga";
+	font-display: swap;
 	src: url("{{ .StaticAssetsHost }}/static/vendor/fonts/viga/v1/Viga-Regular.ttf") format("truetype");
 }
 @font-face {
 	font-family: "Lato";
+	font-display: swap;
 	src: url("{{ .StaticAssetsHost }}/static/vendor/fonts/lato/v1/Lato-Regular.ttf") format("truetype");
 }
 @font-face {
 	font-family: "Lato";
+	font-display: swap;
 	font-weight: bold;
 	src: url("{{ .StaticAssetsHost }}/static/vendor/fonts/lato/v1/Lato-Bold.ttf") format("truetype");
 }
