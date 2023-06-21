@@ -11,6 +11,22 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
+//This is a short & temporary version for the CUG
+//like this we have controll of what we show in the recent table
+//until we create all the routeassignments in the studio
+
+var supportedCollections = []string{
+	"uesio/studio.collection",
+	"uesio/studio.view",
+	"uesio/studio.profile",
+	"uesio/studio.permissionset",
+	"uesio/studio.route",
+	"uesio/studio.selectlist",
+	"uesio/studio.file",
+	"uesio/studio.label",
+	"uesio/studio.theme",
+}
+
 // intercepts the collection uesio/studio.recentmetadata & enhances the LoadOp
 // Add the required metadata to complete the operation
 func runRecentMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
@@ -79,6 +95,11 @@ func runRecentMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 				Field:    "uesio/studio.name",
 				Value:    nil,
 				Operator: "NOT_EQ",
+			},
+			{
+				Field:    "uesio/core.collection",
+				Operator: "IN",
+				Values:   supportedCollections,
 			},
 		},
 		Fields: fields,

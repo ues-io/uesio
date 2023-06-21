@@ -21,11 +21,11 @@ const MarkDown: definition.UC<MarkDownDefinition> = (props) => {
 			classes={classes}
 			variant={definition["uesio.variant"]}
 			context={context}
-			value={
+			value={context.merge(
 				definition.file
 					? api.file.useFile(context, definition.file)
-					: context.merge(definition.markdown)
-			}
+					: definition.markdown
+			)}
 			mode={"READ"}
 		/>
 	)

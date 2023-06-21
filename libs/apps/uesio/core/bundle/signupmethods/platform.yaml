@@ -3,7 +3,7 @@ authsource: uesio/core.platform
 profile: uesio/studio.standard
 usernameTemplate: ${username}
 usernameRegex: "^[a-z0-9_]+$"
-usernameFormatExplanation: "a-z, 0-9, and underscore only"
+usernameFormatExplanation: "lowercase a-z, 0-9, and underscore only"
 # TO-DO this works for now but we want this signup method to be full core.
 landingRoute: uesio/studio.signuplanding
 adminCreate:

@@ -3,6 +3,7 @@ import { configureStore, EntityState } from "@reduxjs/toolkit"
 import collection from "../bands/collection"
 import route from "../bands/route"
 import user from "../bands/user"
+import session from "../bands/session"
 import component from "../bands/component"
 import wire from "../bands/wire"
 import site, { SiteState } from "../bands/site"
@@ -16,6 +17,7 @@ import featureflag from "../bands/featureflag"
 import notification from "../bands/notification"
 import { RouteState } from "../bands/route/types"
 import { UserState } from "../bands/user/types"
+import { SessionState } from "../bands/session/types"
 import { PlainViewDef } from "../definition/viewdef"
 import { ThemeState } from "../definition/theme"
 import { ComponentVariant } from "../definition/componentvariant"
@@ -29,6 +31,7 @@ import { attachDefToWires } from "../bands/route/utils"
 type InitialState = {
 	route?: RouteState
 	user?: UserState
+	session?: SessionState
 	site?: SiteState
 	theme?: EntityState<ThemeState>
 	viewdef?: EntityState<PlainViewDef>
@@ -55,6 +58,7 @@ const create = (initialState: InitialState) => {
 			component,
 			route,
 			user,
+			session,
 			theme,
 			panel,
 			notification,

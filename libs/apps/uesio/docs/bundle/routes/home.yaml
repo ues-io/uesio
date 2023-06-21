@@ -1,5 +1,5 @@
 name: home
-path: ""
+path: home
 view: uesio/docs.home
 theme: uesio/docs.default
 title: Documentation - What is ues.io

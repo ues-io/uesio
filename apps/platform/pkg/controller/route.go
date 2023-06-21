@@ -1,13 +1,13 @@
 package controller
 
 import (
+	"github.com/thecloudmasters/uesio/pkg/auth"
 	"net/http"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 
 	"github.com/gorilla/mux"
-	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
@@ -121,33 +121,12 @@ func getErrorRoute(path string, err string) *meta.Route {
 	}
 }
 
-func getLoginRoute(session *sess.Session) (*meta.Route, error) {
-	loginRoute, err := meta.NewRoute(session.GetLoginRoute())
-	if err != nil {
-		return nil, err
-	}
-	err = bundle.Load(loginRoute, session, nil)
-	if err != nil {
-		return nil, err
-	}
-	return loginRoute, nil
-}
-
 func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Session, path string, err error, redirect bool) {
 	logger.Log("Error Getting Route: "+err.Error(), logger.INFO)
 	// If our profile is the public profile, redirect to the login route
 	if redirect && session.IsPublicProfile() {
-		loginRoute, err := getLoginRoute(session)
-		if err == nil {
-			requestedPath := r.URL.Path
-			redirectPath := "/" + loginRoute.Path
-			if redirectPath != requestedPath {
-				if requestedPath != "" && requestedPath != "/" {
-					redirectPath = redirectPath + "?r=" + requestedPath
-				}
-				http.Redirect(w, r, redirectPath, http.StatusFound)
-				return
-			}
+		if auth.RedirectToLoginRoute(w, r, session) {
+			return
 		}
 	}
 

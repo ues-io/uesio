@@ -76,6 +76,19 @@ definition:
           - uesio/io.button:
               icon: add
               uesio.id: add-workspace
+              uesio.variant: uesio/studio.navctawithpointer
+              uesio.display:
+                - type: wireHasNoRecords
+                  wire: workspaces
+              signals:
+                - signal: panel/TOGGLE
+                  panel: newWorkspace
+          - uesio/io.button:
+              icon: add
+              uesio.id: add-workspace-2
+              uesio.display:
+                - type: wireHasRecords
+                  wire: workspaces
               signals:
                 - signal: panel/TOGGLE
                   panel: newWorkspace
@@ -127,6 +140,9 @@ definition:
     - uesio/io.titlebar:
         uesio.variant: uesio/io.nav
         title: Licenses
+        uesio.display:
+          - type: featureFlag
+            name: manage_billing_licensing
     - uesio/io.tile:
         uesio.variant: uesio/io.nav
         signals:

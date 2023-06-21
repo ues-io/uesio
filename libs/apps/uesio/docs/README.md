@@ -1,7 +1,15 @@
-# apps-io
+# uesio docs
 
-This library was generated with [Nx](https://nx.dev).
+Uesio docs are deployed as a Uesio site, with all actual documentation being written in Markdown files, which live within [data/articles/docs](./data/articles/docs/)
 
-## Running unit tests
+# Editing docs
 
-Run `nx test apps-docs` to execute the unit tests via [Jest](https://jestjs.io).
+1. Deploy uesio docs app
+2. Upsert doc articles into your workspace
+
+```
+uesio deploy
+./seed.sh
+```
+
+To upsert doc articles into a site, use `./seedprod.sh`
