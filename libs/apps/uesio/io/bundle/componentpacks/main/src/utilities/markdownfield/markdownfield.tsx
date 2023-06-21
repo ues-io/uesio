@@ -49,12 +49,12 @@ const StyleDefaults = Object.freeze({
 	h5: [],
 	h6: [],
 	p: [],
-	ol: ["pl-8", "list-decimal"],
-	ul: ["pl-8", "list-disc"],
+	ol: [],
+	ul: [],
 	li: [],
 	code: [],
 	a: [],
-	img: ["max-w-md"],
+	img: [],
 })
 
 const MarkDownField: definition.UtilityComponent<MarkDownFieldProps> = (
