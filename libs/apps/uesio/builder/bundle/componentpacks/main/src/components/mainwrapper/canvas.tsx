@@ -21,6 +21,26 @@ const isDropAllowed = (accepts: string[], dragNode: FullPath): boolean => {
 	return false
 }
 
+const addComponentToCanvas = (
+	context: ctx.Context,
+	drag: FullPath,
+	drop: FullPath,
+	extraDef?: definition.Definition
+) => {
+	const componentDef = getComponentDef(context, drag.itemName)
+	if (!componentDef) return
+	batch(() => {
+		add(context, drop, {
+			[drag.itemName]: {
+				...(componentDef.defaultDefinition || {}),
+				...(extraDef || {}),
+			},
+		})
+		setDropPath(context)
+		setDragPath(context)
+	})
+}
+
 const handleDrop = (
 	drag: FullPath,
 	drop: FullPath,
@@ -28,14 +48,12 @@ const handleDrop = (
 ): void => {
 	switch (drag.itemType) {
 		case "component": {
-			const componentDef = getComponentDef(context, drag.itemName)
-			if (!componentDef) return
-			batch(() => {
-				add(context, drop, {
-					[drag.itemName]: componentDef.defaultDefinition || {},
-				})
-				setDropPath(context)
-				setDragPath(context)
+			addComponentToCanvas(context, drag, drop)
+			break
+		}
+		case "componentvariant": {
+			addComponentToCanvas(context, drag, drop, {
+				"uesio.variant": drag.localPath,
 			})
 			break
 		}
