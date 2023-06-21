@@ -193,9 +193,6 @@ func (s *Session) getBrowserSessionAttribute(key string) string {
 }
 
 func (s *Session) GetBrowserSession() *session.Session {
-	if s == nil {
-		return nil
-	}
 	return s.browserSession
 }
 
