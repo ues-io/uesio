@@ -27,6 +27,9 @@ definition:
                     uesio.variant: uesio/io.icon
                     text: person
           - uesio/io.tile:
+              uesio.display:
+                - type: featureFlag
+                  name: manage_billing
               uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:

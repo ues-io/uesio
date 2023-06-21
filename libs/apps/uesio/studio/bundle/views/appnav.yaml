@@ -141,6 +141,9 @@ definition:
         uesio.variant: uesio/io.nav
         title: Licenses
     - uesio/io.tile:
+        uesio.display:
+          - type: featureFlag
+            name: manage_billing
         uesio.variant: uesio/io.nav
         signals:
           - signal: "route/NAVIGATE"
@@ -154,6 +157,9 @@ definition:
               color: "#ccc"
               text: receipt_long
     - uesio/io.tile:
+        uesio.display:
+          - type: featureFlag
+            name: manage_licensing
         uesio.variant: uesio/io.nav
         signals:
           - signal: "route/NAVIGATE"
