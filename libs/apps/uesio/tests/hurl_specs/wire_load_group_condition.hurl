@@ -1,5 +1,5 @@
 ######################################################
-# Tests loading a wire
+# Tests loading a wire with group conditions
 ######################################################
 
 # Test as a logged-in user so that we don't get redirected to the login page
