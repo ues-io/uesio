@@ -4,6 +4,7 @@ import { default as IOCodeField } from "../../utilities/codefield/codefield"
 type CodeFieldDefinition = {
 	language?: CodeFieldLanguage
 	file: string
+	theme?: string
 }
 
 type CodeFieldLanguage =
@@ -34,6 +35,7 @@ const CodeField: definition.UC<CodeFieldDefinition> = (props) => {
 			}}
 			language={language}
 			context={context}
+			theme={definition?.theme}
 			options={{
 				lineNumbersMinChars: 0,
 			}}
