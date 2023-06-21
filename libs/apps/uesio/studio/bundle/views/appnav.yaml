@@ -140,6 +140,9 @@ definition:
     - uesio/io.titlebar:
         uesio.variant: uesio/io.nav
         title: Licenses
+        uesio.display:
+          - type: featureFlag
+            name: manage_billing_licensing
     - uesio/io.tile:
         uesio.variant: uesio/io.nav
         signals:
