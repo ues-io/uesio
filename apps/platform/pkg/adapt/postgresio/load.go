@@ -93,7 +93,7 @@ func (c *Connection) Load(op *adapt.LoadOp, session *sess.Session) error {
 
 	builder := NewQueryBuilder()
 
-	err = processConditionList(op.Conditions, collectionMetadata, metadata, builder, "main", session)
+	err = processConditionListForTenant(op.Conditions, collectionMetadata, metadata, builder, "main", session)
 	if err != nil {
 		return err
 	}
@@ -202,7 +202,7 @@ func (c *Connection) Load(op *adapt.LoadOp, session *sess.Session) error {
 	scanners := getScanners(&item, rows, fieldMap, &referencedCollections)
 
 	op.HasMoreBatches = false
-	formulaPopulations := adapt.GetFormulaFunction(formulaFields)
+	formulaPopulations := adapt.GetFormulaFunction(formulaFields, collectionMetadata)
 	index := 0
 	for rows.Next() {
 		if op.BatchSize == index {

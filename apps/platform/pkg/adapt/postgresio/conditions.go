@@ -274,7 +274,7 @@ func processSubQueryCondition(condition adapt.LoadRequestCondition, collectionMe
 	}
 
 	subConditionsBuilder := builder.getSubBuilder("")
-	err = processConditionList(condition.SubConditions, subCollectionMetadata, metadata, subConditionsBuilder, subTableAlias, session)
+	err = processConditionListForTenant(condition.SubConditions, subCollectionMetadata, metadata, subConditionsBuilder, subTableAlias, session)
 	if err != nil {
 		return err
 	}
@@ -286,7 +286,7 @@ func processSubQueryCondition(condition adapt.LoadRequestCondition, collectionMe
 	return nil
 }
 
-func processConditionList(conditions []adapt.LoadRequestCondition, collectionMetadata *adapt.CollectionMetadata, metadata *adapt.MetadataCache, builder *QueryBuilder, tableAlias string, session *sess.Session) error {
+func processConditionListForTenant(conditions []adapt.LoadRequestCondition, collectionMetadata *adapt.CollectionMetadata, metadata *adapt.MetadataCache, builder *QueryBuilder, tableAlias string, session *sess.Session) error {
 	tenantID := session.GetTenantIDForCollection(collectionMetadata.GetFullName())
 
 	collectionName := collectionMetadata.GetFullName()
@@ -297,6 +297,10 @@ func processConditionList(conditions []adapt.LoadRequestCondition, collectionMet
 	}
 
 	builder.addQueryPart(fmt.Sprintf("%s = %s", getAliasedName("tenant", tableAlias), builder.addValue(tenantID)))
+	return processConditionList(conditions, collectionMetadata, metadata, builder, tableAlias, session)
+}
+
+func processConditionList(conditions []adapt.LoadRequestCondition, collectionMetadata *adapt.CollectionMetadata, metadata *adapt.MetadataCache, builder *QueryBuilder, tableAlias string, session *sess.Session) error {
 	for _, condition := range conditions {
 
 		if condition.Inactive {
