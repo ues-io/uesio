@@ -1,3 +1,4 @@
 uesio/core.recordid,uesio/core.fieldid,uesio/core.path
 home,uesio/cms.content,home/home.md
 create-account,uesio/cms.content,create-account/create-account.md
+first-app,uesio/cms.content,first-app/first-app.md

@@ -86,7 +86,24 @@ definition:
                       - uesio/io.button:
                           icon: add
                           uesio.id: add-app
+                          uesio.variant: uesio/studio.navctawithpointer
+                          uesio.display:
+                            - type: wireHasNoRecords
+                              wire: apps
                           signals:
+                            - signal: wire/RESET
+                              wire: newApp
+                            - signal: panel/TOGGLE
+                              panel: newApp
+                      - uesio/io.button:
+                          icon: add
+                          uesio.id: add-app-2
+                          uesio.display:
+                            - type: wireHasRecords
+                              wire: apps
+                          signals:
+                            - signal: wire/RESET
+                              wire: newApp
                             - signal: panel/TOGGLE
                               panel: newApp
                 - uesio/io.list:
@@ -207,6 +224,42 @@ definition:
                                 text: "Iterate "
                             - uesio/io.text:
                                 text: "quickly."
+                - uesio/io.box:
+                    uesio.variant: uesio/studio.calloutsection
+                    uesio.styleTokens:
+                      root:
+                        - mb-4
+                        - mx-14
+                    uesio.display:
+                      - type: wireHasNoRecords
+                        wire: apps
+                    components:
+                      - uesio/io.text:
+                          text: 👋 Welcome! 👋 We're glad you're here. 🤗
+                          element: h1
+                          uesio.styleTokens:
+                            root:
+                              - text-3xl
+                              - mb-2
+                      - uesio/io.group:
+                          components:
+                            - uesio/io.text:
+                                text: To create your first app, click the
+                                element: h2
+                            - uesio/io.button:
+                                uesio.variant: uesio/studio.navcta
+                                icon: +
+                                uesio.styleTokens:
+                                  root:
+                                    - pb-2
+                                signals:
+                                  - signal: wire/RESET
+                                    wire: newApp
+                                  - signal: panel/TOGGLE
+                                    panel: newApp
+                            - uesio/io.text:
+                                text: button in the top left.
+                                element: h2
                 - uesio/io.grid:
                     uesio.variant: uesio/io.two_columns
                     uesio.styleTokens:
