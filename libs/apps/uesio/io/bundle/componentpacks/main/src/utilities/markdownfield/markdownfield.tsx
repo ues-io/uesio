@@ -54,12 +54,13 @@ const StyleDefaults = Object.freeze({
 	li: [],
 	code: [],
 	a: [],
+	img: ["max-w-md"],
 })
 
 const MarkDownField: definition.UtilityComponent<MarkDownFieldProps> = (
 	props
 ) => {
-	const { value } = props
+	const { context, value = "" } = props
 
 	const classes = styles.useUtilityStyleTokens(
 		StyleDefaults,
@@ -69,7 +70,7 @@ const MarkDownField: definition.UtilityComponent<MarkDownFieldProps> = (
 
 	return (
 		<ReactMarkdown
-			children={(value as string) || ""}
+			children={context.merge(value as string) as string}
 			remarkPlugins={[remarkGfm]}
 			className={classes.root}
 			components={{
@@ -83,6 +84,7 @@ const MarkDownField: definition.UtilityComponent<MarkDownFieldProps> = (
 				ol: (props) => <ol className={classes.ol}>{props.children}</ol>,
 				ul: (props) => <ul className={classes.ul}>{props.children}</ul>,
 				li: (props) => <li className={classes.li}>{props.children}</li>,
+				img: (props) => <img className={classes.img} {...props} />,
 				a: (props) => (
 					<a className={classes.a} href={props.href}>
 						{props.children}

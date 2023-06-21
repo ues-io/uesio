@@ -19,9 +19,9 @@ At this point, you've already interacted with 4 different apps owned by the uesi
 
 Before we move on, go ahead and create your first app by clicking the + button in the top left.
 
-![Create your first app]($File{createnewapp} "create your first app")
+![Create your first app]($File{uesio/docs.createnewapp} "create your first app")
 
-![New app dialog]($File{newappdialog} "new app dialog")
+![New app dialog]($File{uesio/docs.newappdialog} "new app dialog")
 
 👩‍💻 **CLI** 👨🏿‍💻
 
