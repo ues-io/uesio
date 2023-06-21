@@ -42,13 +42,18 @@ type ParamIsNotSetCondition = {
 	param: string
 }
 
-type ParamValueCondition = {
+type ParamValueConditionBase = {
 	type: "paramValue"
 	param: string
 	operator: DisplayOperator
 	value?: string
 	values?: string[]
 }
+
+type ParamValueCondition = RequireOnlyOne<
+	ParamValueConditionBase,
+	"value" | "values"
+>
 
 type HasNoValueCondition = {
 	type: "hasNoValue"
