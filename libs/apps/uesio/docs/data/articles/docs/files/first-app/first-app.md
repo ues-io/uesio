@@ -29,10 +29,43 @@ Before we move on, go ahead and create your first app by clicking the + button i
 
 ## Workspaces
 
-To add metadata to an app, you need to add a **Workspace** to your app.
+To add metadata to an app, you need to add a **workspace** to your app.
 
-A Workspace is a named environment where you can make changes to an app's metadata. Workspaces are created from the ues.io Studio, and can be either long-lived or transient.
+A workspace is a named environment where you can make changes to an app's metadata. workspaces are created from the ues.io Studio, and can be either long-lived or transient.
 
-For those familiar with Git, a Workspace is similar to a Git branch. You could just have one Workspace and do all your work there, or you could have one long-lived "main" Workspace and have each team member do all of their work on short-lived "feature" Workspaces, and merge changes into the "main" workspace with Git and a continuous-integration process.
+For those familiar with Git, a workspace is similar to a Git branch. You could just have one workspace and do all your work there, or you could have one long-lived "main" workspace and have each team member do all of their work on short-lived "feature" workspaces, and merge changes into the "main" workspace with Git and a continuous-integration process.
 
-To start out though, you really just need a single Workspace, so let's go ahead and create one now.
+To start out though, you really just need a single workspace, so let's go ahead and create one now.
+
+Click the + button in the top left to create a workspace. Try "dev" as the name.
+
+## Collections, views, and routes
+
+Now that you've got a workspace, it's time to add some metadata to your app!
+
+There are several high-level [metadata types](metadata-types/home) you can add in ues.io, which we'll just briefly summarize here:
+
+-   **Data Structure and Content**:
+    -   [Collections](metadata-types/collections): Basically, these are declarative database tables / spreadsheets. Used for structured data storage
+    -   [Files](metadata-types/files): Static, unstructured content. Usually images, but could be textual content as well.
+-   **User Interface**:
+    -   [Views](metadata-types/views): An assembly of [components](metadata-types/components) and [wires](concepts/wires) that comprise an interactive user interface (often called called "pages" in other tools). Views can contain other Views, and can be accessed via Routes.
+    -   [Routes](metadata-types/routes): The URL paths that you can use to access a View. Can contain path/query-string parameters which are sent to Views.
+-   **Security & Access**:
+    -   [Permission Sets](metadata-types/profiles-and-permission-sets): A logical grouping of access control settings, such as the ability for a user to create and edit a collection, go to a route, or view a file.
+    -   [Profiles](metadata-types/profiles-and-permission-sets): A set of permission sets. Users can be assigned only one profile.
+
+There's lots more, but for now, we'll just stick to these.
+
+## Collections
+
+Apps don't do much Without data! Fortunately, ues.io comes with a built-in multi-tenant database, which you work with by adding **collections**. On each collection, you define one or more "fields" (aka "columns" if you've used SQL before) to capture structured data of different types.
+
+Let's start by adding a collection `animal` which we'll use for our collection manager app example.
+
+1. Click on "Collections", then either type "n" or click on "Create new collection".
+2. Enter "animal", "Animal", "Animals", and click Save.
+
+Great! Now let's enter "n" again to add a "New Field" to our collection:
+
+We can do this repeatedly.
