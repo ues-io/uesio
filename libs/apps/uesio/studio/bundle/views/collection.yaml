@@ -254,9 +254,6 @@ definition:
                                         workspace:
                                           name: $Param{workspacename}
                                           app: $Param{app}
-                                      uesio.display:
-                                        - type: featureFlag
-                                          name: use_ai_signals
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.primary
                                       uesio.id: new-field

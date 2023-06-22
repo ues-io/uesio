@@ -143,8 +143,6 @@ const SuggestedFields: definition.UC<ComponentDefinition> = (props) => {
 		},
 	} = props
 
-	const canUseAiFeatures = !!context.getFeatureFlag("use_ai_signals")?.value
-
 	const Button = component.getUtility("uesio/io.button")
 	const Icon = component.getUtility("uesio/io.icon")
 
@@ -186,7 +184,7 @@ const SuggestedFields: definition.UC<ComponentDefinition> = (props) => {
 			}
 			onClick={() => {
 				// Don't run if we already have data
-				if (!fieldWire || hasFields || !canUseAiFeatures) return
+				if (!fieldWire || hasFields) return
 
 				setLoading(true)
 
