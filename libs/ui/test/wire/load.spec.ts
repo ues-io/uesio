@@ -23,7 +23,6 @@ const tests: WireSignalTest[] = [
 		run: () => {
 			const spy = jest
 				.spyOn(platformModule.platform, "loadData")
-				.mockResolvedValue({ wires: [] } as never)
 				.mockImplementation(() =>
 					Promise.resolve({
 						collections: {

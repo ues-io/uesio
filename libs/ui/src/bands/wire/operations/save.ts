@@ -9,6 +9,8 @@ import {
 import { dispatch } from "../../../store/store"
 import { getErrorString } from "../../utils"
 import { platform } from "../../../platform/platform"
+import { ID_FIELD } from "../../collection/types"
+import { PlainWireRecord } from "../../wirerecord/types"
 
 const getErrorStrings = (response: SaveResponse) =>
 	response.errors?.map((error) => error.message) || []
@@ -22,55 +24,80 @@ export default async (context: Context, wires?: string[]) => {
 
 	const requests = wiresToSave.flatMap((wire) => {
 		const wireId = getFullWireId(wire.view, wire.name)
-		const hasChanges = Object.keys(wire.changes).length
-		const hasDeletes = Object.keys(wire.deletes).length
-		// Check to see if we need to go to the serve
-		if (!hasChanges && !hasDeletes) {
-			response.wires.push({
-				wire: wireId,
-				errors: [],
-				changes: {},
-				deletes: {},
-			})
-			return []
-		}
-		return [
-			{
-				wire: wireId,
-				collection: wire.collection,
-				changes: wire.changes || {},
-				deletes: wire.deletes || {},
-			},
-		]
+
+		const deletes = wire.deletes
+		const changes = wire.changes
+
+		const serverChanges: Record<string, PlainWireRecord> = {}
+		const serverDeletes: Record<string, PlainWireRecord> = {}
+		const clientChanges: Record<string, PlainWireRecord> = {}
+		const clientDeletes: Record<string, PlainWireRecord> = {}
+
+		// If we're deleting this item, then we don't need to process its changes.
+		Object.keys(changes).forEach((key) => {
+			if (!deletes[key]) {
+				serverChanges[key] = changes[key]
+			} else {
+				clientChanges[key] = {}
+			}
+		})
+
+		// If we're trying to delete an item that was never persisted, don't bother.
+		Object.keys(deletes).forEach((key) => {
+			if (deletes[key][ID_FIELD]) {
+				serverDeletes[key] = deletes[key]
+			} else {
+				clientDeletes[key] = {}
+			}
+		})
+
+		response.wires.push({
+			wire: wireId,
+			errors: [],
+			changes: clientChanges,
+			deletes: clientDeletes,
+		})
+
+		const hasServerChanges = Object.keys(serverChanges).length
+		const hasServerDeletes = Object.keys(serverDeletes).length
+
+		return hasServerChanges || hasServerDeletes
+			? [
+					{
+						wire: wireId,
+						collection: wire.collection,
+						changes: serverChanges,
+						deletes: serverDeletes,
+					},
+			  ]
+			: []
 	})
 
-	if (!requests.length) {
-		return context
-	}
-
-	// Combine the server responses with the ones that did not need to go to the server.
-	try {
-		const serverResponse = await platform.saveData(context, {
-			wires: requests,
-		})
-		serverResponse.wires.forEach((wire) => {
-			response.wires.push(wire)
-		})
-	} catch (error) {
-		const message = getErrorString(error)
-
-		requests.forEach((req) => {
-			response.wires.push({
-				wire: req.wire,
-				errors: [
-					{
-						message,
-					},
-				],
-				changes: {},
-				deletes: {},
+	if (requests.length) {
+		// Combine the server responses with the ones that did not need to go to the server.
+		try {
+			const serverResponse = await platform.saveData(context, {
+				wires: requests,
 			})
-		})
+			serverResponse.wires.forEach((wire) => {
+				response.wires.push(wire)
+			})
+		} catch (error) {
+			const message = getErrorString(error)
+
+			requests.forEach((req) => {
+				response.wires.push({
+					wire: req.wire,
+					errors: [
+						{
+							message,
+						},
+					],
+					changes: {},
+					deletes: {},
+				})
+			})
+		}
 	}
 
 	dispatch(save(response))
