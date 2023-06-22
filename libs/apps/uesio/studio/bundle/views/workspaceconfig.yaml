@@ -101,18 +101,18 @@ definition:
                                 uesio.styleTokens:
                                   root:
                                     - mb-5
-                                title: Flush workspace data
-                                subtitle: Once you flush workspace data, there is no going back. Please be certain.
+                                title: Remove workspace data
+                                subtitle: Once you remove workspace data, it is not recoverable!
                                 actions:
                                   - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: Flush
+                                      uesio.variant: uesio/io.destructive
+                                      text: Remove all workspace data
                                       signals:
                                         - signal: panel/TOGGLE
-                                          panel: clearData
+                                          panel: removeAllWorkspaceData
                             - uesio/io.titlebar:
                                 title: Delete workspace
-                                subtitle: Once you delete a workspace, there is no going back. Please be certain.
+                                subtitle: Once you delete a workspace, all associated metadata in the workspace will also be deleted. Please be sure this what you want to do!
                                 actions:
                                   - uesio/io.group:
                                       components:
@@ -120,20 +120,20 @@ definition:
                                             wire: workspaces
                                             components:
                                               - uesio/io.button:
-                                                  text: $Label{uesio/io.delete}
-                                                  uesio.variant: uesio/io.secondary
+                                                  text: Delete this workspace
+                                                  uesio.variant: uesio/io.destructive
                                                   signals:
                                                     - signal: panel/TOGGLE
                                                       panel: deleteWorkspace
   panels:
-    clearData:
+    removeAllWorkspaceData:
       uesio.type: uesio/io.dialog
-      title: Clear All Workspace Data
+      title: Remove all workspace data
       width: 400px
       height: 300px
       components:
         - uesio/io.text:
-            text: Are you sure you want to clear all the workspace data?
+            text: Are you sure you want to remove all the workspace data?
             element: div
             uesio.variant: uesio/io.smalltitle
         - uesio/io.text:
@@ -142,7 +142,7 @@ definition:
             uesio.variant: uesio/io.smallcontent
       actions:
         - uesio/io.button:
-            text: Clear
+            text: Yes, remove all data
             uesio.variant: uesio/io.primary
             signals:
               - signal: context/SET
@@ -155,16 +155,16 @@ definition:
                   signals:
                     - signal: notification/ADD_ERRORS
               - signal: panel/TOGGLE
-                panel: clearData
+                panel: removeAllWorkspaceData
               - signal: notification/ADD
-                text: Successfully deleted all data from all collections in workspace $Param{workspacename}
+                text: Successfully removed all data from all collections in workspace $Param{workspacename}
                 severity: info
         - uesio/io.button:
             text: $Label{uesio/io.cancel}
             uesio.variant: uesio/io.secondary
             signals:
               - signal: panel/TOGGLE
-                panel: clearData
+                panel: removeAllWorkspaceData
     deleteWorkspace:
       uesio.type: uesio/io.dialog
       title: Delete Workspace
