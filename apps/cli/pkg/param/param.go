@@ -3,8 +3,9 @@ package param
 import (
 	"errors"
 	"fmt"
-	"github.com/thecloudmasters/cli/pkg/goutils"
 	"strings"
+
+	"github.com/thecloudmasters/cli/pkg/goutils"
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/thecloudmasters/cli/pkg/call"
@@ -131,7 +132,14 @@ func Ask(param meta.BotParamResponse, app, version, sessid string, answers map[s
 	if param.Conditions != nil {
 		for _, condition := range param.Conditions {
 			value := answers[condition.Param]
-			if value != condition.Value {
+			if condition.Type == "hasValue" || condition.Type == "hasNoValue" {
+				hasValue := condition.Value != nil && condition.Value != ""
+				if condition.Type == "hasValue" && !hasValue {
+					return nil
+				} else if condition.Type == "hasNoValue" && hasValue {
+					return nil
+				}
+			} else if value != condition.Value {
 				return nil
 			}
 		}
