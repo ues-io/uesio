@@ -103,13 +103,16 @@ const handleAutocompleteData = (
 			const dataArray: SuggestedField[] = parse(data)
 			if (dataArray?.length) {
 				dataArray.forEach((val) => {
-					fieldWire.createRecord(
-						getUesioFieldFromSuggestedField(
-							val,
-							collectionName,
-							workspaceId
+					// We need at least label and type to do anything useful
+					if (val && val.label && val.type) {
+						fieldWire.createRecord(
+							getUesioFieldFromSuggestedField(
+								val,
+								collectionName,
+								workspaceId
+							)
 						)
-					)
+					}
 				})
 				// Turn the table into edit mode
 				api.signal.run(
