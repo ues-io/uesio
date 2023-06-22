@@ -283,12 +283,7 @@ definition:
                                 mode: READ
                                 components:
                                   - uesio/io.tile:
-                                      uesio.styleTokens:
-                                        root:
-                                          - -m-4
-                                          - p-4
-                                          - hover:bg-slate-100
-                                          - rounded-lg
+                                      uesio.variant: uesio/io.action
                                       content:
                                         - uesio/io.text:
                                             text: ${uesio/cms.name}
@@ -316,13 +311,7 @@ definition:
                                 mode: READ
                                 components:
                                   - uesio/io.tile:
-                                      uesio.styleTokens:
-                                        root:
-                                          - -m-4
-                                          - p-4
-                                          - hover:bg-slate-100
-                                          - rounded-lg
-                                          - mb-4
+                                      uesio.variant: uesio/io.action
                                       content:
                                         - uesio/io.text:
                                             text: ${uesio/cms.name}
