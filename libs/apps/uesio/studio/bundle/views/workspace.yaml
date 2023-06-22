@@ -52,18 +52,11 @@ definition:
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
-                      - uesio/io.titlebar:
-                          uesio.variant: uesio/io.section
-                          title: Let's get started
-                          uesio.styleTokens:
-                            title:
-                              - text-xl
                       - uesio/io.grid:
                           uesio.variant: uesio/io.two_columns
                           uesio.styleTokens:
                             root:
                               - gap-x-12
-                              - px-14
                               - py-2
                           items:
                             - uesio/io.griditem:
