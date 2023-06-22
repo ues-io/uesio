@@ -1,0 +1,7 @@
+name: suggestedwiredatabutton
+pack: main
+entrypoint: components/suggestedwiredatabutton/suggestedwiredatabutton
+utilities:
+  - uesio/io.image
+  - uesio/io.button
+  - uesio/studio.suggestdatabutton
