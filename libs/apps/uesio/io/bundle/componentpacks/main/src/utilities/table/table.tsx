@@ -193,8 +193,10 @@ const Table: FunctionComponent<TableUtilityProps<unknown, TableColumn>> = (
 					})}
 				</tbody>
 			</table>
-			{(!rows || rows.length <= 0) && (
-				<div className={classes.noData}>No data avaiable</div>
+			{(!rows || rows.length < 1) && (
+				<div className={classes.noData}>
+					{context.getLabel("uesio/io.no_data_available")}
+				</div>
 			)}
 		</div>
 	)
