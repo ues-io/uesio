@@ -1,5 +1,12 @@
 import { FC, DragEvent, useState } from "react"
-import { definition, component, api, styles, metadata } from "@uesio/ui"
+import {
+	definition,
+	component,
+	api,
+	styles,
+	metadata,
+	context,
+} from "@uesio/ui"
 
 import groupBy from "lodash/groupBy"
 import pickBy from "lodash/pickBy"
@@ -22,6 +29,29 @@ import ItemTag from "../../../utilities/itemtag/itemtag"
 
 const getUtility = component.getUtility
 
+const addComponentToCanvas = (
+	context: context.Context,
+	componentDef: ComponentDef,
+	extraDef?: definition.Definition
+) => {
+	const { namespace, name } = componentDef
+	const fullName = `${namespace}.${name}` as metadata.MetadataKey
+	add(
+		context,
+		new FullPath(
+			"viewdef",
+			context.getViewDefId(),
+			component.path.fromPath(["components", "0"])
+		),
+		{
+			[fullName]: {
+				...(componentDef.defaultDefinition || {}),
+				...(extraDef || {}),
+			},
+		}
+	)
+}
+
 type VariantsBlockProps = {
 	variants: component.ComponentVariant[]
 	isSelected: (itemtype: string, itemname: metadata.MetadataKey) => boolean
@@ -33,8 +63,7 @@ const StyleDefaults = Object.freeze({
 })
 
 const VariantsBlock: FC<VariantsBlockProps> = (props) => {
-	const { component, context, variants, isSelected } = props
-
+	const { component: componentDef, context, variants, isSelected } = props
 	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
 	return (
@@ -50,12 +79,20 @@ const VariantsBlock: FC<VariantsBlockProps> = (props) => {
 				return (
 					<PropNodeTag
 						key={variantKey}
-						onClick={(e: MouseEvent) => {
+						// onClick={(e: MouseEvent) => {
+						// 	e.stopPropagation()
+						// 	setSelectedPath(
+						// 		context,
+						// 		new FullPath("componentvariant", variantKey)
+						// 	)
+						// }}
+						onDoubleClick={(e) => {
+							// Have to stop propagation to prevent the Component's onDoubleClick
+							// from running as well
 							e.stopPropagation()
-							setSelectedPath(
-								context,
-								new FullPath("componentvariant", variantKey)
-							)
+							addComponentToCanvas(context, componentDef, {
+								"uesio.variant": variantKey,
+							})
 						}}
 						selected={isSelected("componentvariant", variantKey)}
 						draggable={`componentvariant:${variantKey}`}
@@ -66,7 +103,7 @@ const VariantsBlock: FC<VariantsBlockProps> = (props) => {
 							metadatakey={variant.namespace}
 							metadatainfo={nsInfo}
 							title={variant.name}
-							icon={component.icon}
+							icon={componentDef.icon}
 							context={context}
 						/>
 					</PropNodeTag>
@@ -108,17 +145,7 @@ const ComponentBlock: FC<ComponentBlockProps> = (props) => {
 				setSelectedPath(context, new FullPath("component", fullName))
 			}}
 			onDoubleClick={() => {
-				add(
-					context,
-					new FullPath(
-						"viewdef",
-						context.getViewDefId(),
-						component.path.fromPath(["components", "0"])
-					),
-					{
-						[fullName]: componentDef.defaultDefinition || {},
-					}
-				)
+				addComponentToCanvas(context, componentDef)
 			}}
 			draggable={`component:${fullName}`}
 			selected={isSelected("component", fullName)}

@@ -16,6 +16,8 @@ interface FileTextProps extends definition.UtilityProps {
 	displayAs?: string
 	// An array of URIs which contain ambient type definitions to load in this code field
 	typeDefinitionFileURIs?: string[]
+	// The Monaco Editor theme to use if rendering a code editor
+	theme?: string
 }
 
 const stringToFile = (value: string, fileName: string, mimeType: string) => {
@@ -36,6 +38,7 @@ const FileText: FunctionComponent<FileTextProps> = (props) => {
 		displayAs,
 		id,
 		typeDefinitionFileURIs,
+		theme,
 	} = props
 
 	const [content, original, setContent, reset, cancel] = api.file.useUserFile(
@@ -94,6 +97,7 @@ const FileText: FunctionComponent<FileTextProps> = (props) => {
 			language={language}
 			setValue={changeHandler}
 			typeDefinitionFileURIs={typeDefinitionFileURIs}
+			theme={theme}
 		/>
 	)
 }

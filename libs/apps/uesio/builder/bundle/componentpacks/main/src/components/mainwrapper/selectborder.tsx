@@ -189,7 +189,9 @@ const SelectBorder: definition.UtilityComponent<Props> = (props) => {
 
 		targets.forEach((target) => {
 			target.classList.add(...StyleDefaults.selected)
-			target.classList.add(...StyleDefaults.selectedAlways)
+			if (!target.classList.contains("absolute")) {
+				target.classList.add(...StyleDefaults.selectedAlways)
+			}
 		})
 
 		setSelectedChildren(targets)

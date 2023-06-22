@@ -15,7 +15,7 @@ definition:
       - font-light
       - uppercase
     p:
-      - my-6
+      - my-4
       - text-base
     code:
       - rounded-lg
@@ -24,9 +24,9 @@ definition:
       - list-decimal
       - list-inside
       - font-light
-      - my-6
+      - my-4
     li:
       - font-light
-      - my-6
+      - my-4
     a:
       - text-blue-600
