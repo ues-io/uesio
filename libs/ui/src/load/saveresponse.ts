@@ -13,9 +13,7 @@ type SaveResponse = {
 	deletes: ChangeResults
 }
 
-type ChangeResults = {
-	[key: string]: Record<string, PlainWireRecord>
-}
+type ChangeResults = Record<string, PlainWireRecord>
 
 type SaveResponseBatch = {
 	wires: SaveResponse[]
