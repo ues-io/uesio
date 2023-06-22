@@ -65,6 +65,13 @@ func getPackUrl(key string, workspace *routing.WorkspaceMergeData, site *routing
 
 }
 
+func GetSessionMergeData(session *sess.Session) *routing.SessionMergeData {
+	return &routing.SessionMergeData{
+		Hash: session.GetSessionIdHash(),
+	}
+
+}
+
 func GetUserMergeData(session *sess.Session) *routing.UserMergeData {
 	userInfo := session.GetUserInfo()
 	userPicture := userInfo.GetPicture()
@@ -202,6 +209,7 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 	mergeData := routing.MergeData{
 		Route:               routingMergeData,
 		User:                GetUserMergeData(session),
+		Session:             GetSessionMergeData(session),
 		Site:                GetSiteMergeData(site),
 		PreloadMetadata:     preload,
 		MonacoEditorVersion: file.GetMonacoEditorVersion(),

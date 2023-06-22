@@ -3,6 +3,9 @@ package sess
 import (
 	"fmt"
 	"net/http"
+	"time"
+
+	"github.com/twmb/murmur3"
 
 	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -46,7 +49,7 @@ func New(user *meta.User, site *meta.Site) *Session {
 }
 
 func Logout(w http.ResponseWriter, publicUser *meta.User, s *Session) *Session {
-	// Remove the logged out session
+	// Remove the logged-out session
 	session.Remove(*s.browserSession, w)
 	site := s.GetSite()
 	// Login as the public user
@@ -193,6 +196,16 @@ func (s *Session) GetBrowserSession() *session.Session {
 	return s.browserSession
 }
 
+// IsExpired returns true if the browser session's last access time, plus the timeout duration,
+// is prior to the current timestamp.
+func (s *Session) IsExpired() bool {
+	if s.browserSession == nil {
+		return true
+	}
+	val := *s.browserSession
+	return val.Accessed().Add(val.Timeout()).Before(time.Now())
+}
+
 func (s *Session) GetUserInfo() *meta.User {
 	return s.user
 }
@@ -328,4 +341,17 @@ func (s *Session) GetContextSite() *meta.Site {
 		return s.GetSiteAdmin()
 	}
 	return s.GetSite()
+}
+
+func (s *Session) GetSessionIdHash() string {
+	bs := (*s).GetBrowserSession()
+	if bs == nil {
+		return ""
+	}
+	hasher := murmur3.New64()
+	_, err := hasher.Write([]byte((*bs).ID()))
+	if err != nil {
+		return ""
+	}
+	return fmt.Sprintf("%d", hasher.Sum64())
 }

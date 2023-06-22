@@ -140,6 +140,9 @@ definition:
     - uesio/io.titlebar:
         uesio.variant: uesio/io.nav
         title: Licenses
+        uesio.display:
+          - type: featureFlag
+            name: manage_billing_licensing
     - uesio/io.tile:
         uesio.variant: uesio/io.nav
         signals:
@@ -153,6 +156,9 @@ definition:
               uesio.variant: uesio/io.icon
               color: "#ccc"
               text: receipt_long
+        uesio.display:
+          - type: featureFlag
+            name: manage_billing_licensing
     - uesio/io.tile:
         uesio.variant: uesio/io.nav
         signals:
@@ -166,6 +172,9 @@ definition:
               uesio.variant: uesio/io.icon
               color: "#ccc"
               text: payments
+        uesio.display:
+          - type: featureFlag
+            name: manage_billing_licensing
   panels:
     newWorkspace:
       uesio.type: uesio/io.dialog
