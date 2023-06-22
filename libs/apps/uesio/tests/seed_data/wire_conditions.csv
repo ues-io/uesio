@@ -1,4 +1,4 @@
-autonumber,checkbox,date,email,longtext,number,reference,text,timestamp,select,name,multi
+autonumber,checkbox,date,email,longtext,number,reference,text,timestamp,select,name,multiselect
 ID-001,true,2023-05-10,test1@test.com,test text1,1,ID-001,text 1,2001-01-01T01:01:00Z,one,ID-001,"[""one""]"
 ID-002,true,2023-05-12,test2@test.com,test text2,2,ID-002,text 2,1012611720,two,ID-002,"[""two""]"
 ID-003,true,2023-05-13,test3@test.com,test text3,3,ID-003,text 3,1046656980,three,ID-003,"[""one"",""two""]"

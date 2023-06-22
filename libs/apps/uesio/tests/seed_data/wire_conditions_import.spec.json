@@ -37,7 +37,7 @@
 			"columnname": "name"
 		},
 		"uesio/tests.multiselect": {
-			"columnname": "multi"
+			"columnname": "multiselect"
 		}
 	}
 }
