@@ -35,6 +35,9 @@ const parameterizedTypeRegex =
 const capitalizeFirst = (str: string) =>
 	str.charAt(0).toUpperCase() + str.slice(1)
 
+const sanitizeSuggestedLabel = (str: string) =>
+	capitalizeFirst(str).replace(/_/g, " ")
+
 const setNumberFieldDecimals = (
 	decimals: number,
 	inObject: CollectionFieldExtraMetadata
@@ -74,7 +77,7 @@ export const getUesioFieldFromSuggestedField = (
 	return {
 		"uesio/studio.name": getUesioFieldNameFromLabel(label),
 		"uesio/studio.type": uesioType,
-		"uesio/studio.label": capitalizeFirst(label),
+		"uesio/studio.label": sanitizeSuggestedLabel(label),
 		// "uesio/studio.length": length,
 		"uesio/studio.collection": collectionName,
 		"uesio/studio.workspace": {
