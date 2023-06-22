@@ -145,22 +145,26 @@ func getMultiSelectLoader(index int, mapping *meta.FieldMapping, fieldMetadata *
 		rawVal := getValue(data, mapping, index)
 		valuesMap := map[string]bool{}
 		// If there's no data, just do an early return
-		if rawVal != "" && rawVal != "[]" {
-			maxLen := 0
-			if fieldMetadata != nil && fieldMetadata.SelectListMetadata != nil && fieldMetadata.SelectListMetadata.Options != nil {
-				maxLen = len(fieldMetadata.SelectListMetadata.Options)
-			}
-			validVals := make([]string, 0, maxLen)
-			err := json.Unmarshal([]byte(rawVal), &validVals)
-			if err != nil {
-				return errors.New("invalid Multiselect field value")
-			}
-			if len(validVals) != 0 {
-				for _, s := range validVals {
-					valuesMap[s] = true
-				}
+		if rawVal == "" || rawVal == "[]" {
+			change[fieldMetadata.GetFullName()] = nil
+			return nil
+		}
+
+		maxLen := 0
+		if fieldMetadata != nil && fieldMetadata.SelectListMetadata != nil && fieldMetadata.SelectListMetadata.Options != nil {
+			maxLen = len(fieldMetadata.SelectListMetadata.Options)
+		}
+		validVals := make([]string, 0, maxLen)
+		err := json.Unmarshal([]byte(rawVal), &validVals)
+		if err != nil {
+			return errors.New("invalid Multiselect field value")
+		}
+		if len(validVals) != 0 {
+			for _, s := range validVals {
+				valuesMap[s] = true
 			}
 		}
+
 		change[fieldMetadata.GetFullName()] = valuesMap
 		return nil
 	}
