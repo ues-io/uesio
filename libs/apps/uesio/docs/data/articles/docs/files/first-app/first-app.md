@@ -66,6 +66,20 @@ Let's start by adding a collection `animal` which we'll use for our collection m
 1. Click on "Collections", then either type "n" or click on "Create new collection".
 2. Enter "animal", "Animal", "Animals", and click Save.
 
-Great! Now, we can either use "Suggest Fields" to let AI suggest fields for us, or we can manually add fields using "Create new field". Let's try out the Suggest Fields and see what we get:
+Great! Now, we can either use "Suggest Fields" to let AI suggest fields for us, or we can manually add fields using "Create new field". Let's try out the "Suggest Fields" and see what we get:
 
-We can do this repeatedly
+![Suggest fields]($File{uesio/docs.suggestfieldsbutton} "use ai to suggest fields")
+
+Cool! This is a great starting point for our collection. Let's go ahead and "Save Field Changes" to add these fields to our collection.
+
+![Suggest fields output]($File{uesio/docs.suggestfieldsoutput} "suggested fields")
+
+We can also add our own fields if we want, but this will do for now.
+
+## Adding data to collections
+
+Now that we've got a collection and some fields, let's do something with it!
+
+To help with building and testing apps, workspaces can have their own collection data, which is isolated just to the workspace. Once we publish the first version of our app and deploy it to a real site with real users, we'll see that the data for those sites is completely separate --- workspace collection data is just for testing of our apps.
+
+We can manage the data in a workspace collection using the "Manage Data" button, "Import Data" from a CSV file, or even "Export Data" to a CSV. Any data / metadata you put into ues.io, you can get out!
