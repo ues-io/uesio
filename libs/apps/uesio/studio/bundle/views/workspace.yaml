@@ -111,7 +111,7 @@ definition:
                                             text: Collections
                                             element: div
                                         - uesio/io.text:
-                                            text: Jump right in and start building your database. Ask yourself what information do I need to store?
+                                            text: Define your data types with ues.io's built-in database.
                                             uesio.variant: uesio/io.smallcontent
                                             element: div
                                       signals:
@@ -124,7 +124,7 @@ definition:
                                             text: Views
                                             element: div
                                         - uesio/io.text:
-                                            text: How to show or insert data in my collections? the answer is with views!
+                                            text: Build user interfaces with dynamic components that interact with your collections.
                                             uesio.variant: uesio/io.smallcontent
                                             element: div
                                       signals:
@@ -137,7 +137,7 @@ definition:
                                             text: Routes
                                             element: div
                                         - uesio/io.text:
-                                            text: Where should users go to access the views?
+                                            text: Choose the URL paths where users can access your views.
                                             uesio.variant: uesio/io.smallcontent
                                             element: div
                                       signals:
@@ -150,7 +150,7 @@ definition:
                                             text: Permission Sets
                                             element: div
                                         - uesio/io.text:
-                                            text: Who can access what and why?
+                                            text: Grant users access to your metadata.
                                             uesio.variant: uesio/io.smallcontent
                                             element: div
                                       signals:
