@@ -38,17 +38,32 @@ var UesioLanguage = gval.NewLanguage(
 type evalFunc func(item meta.Item) error
 
 type RuntimeEvaluator struct {
-	item meta.Item
+	item               meta.Item
+	collectionMetadata *CollectionMetadata
 }
 
 func (re *RuntimeEvaluator) SelectGVal(ctx context.Context, k string) (interface{}, error) {
-	return re.item.GetField(k)
+
+	fieldMetadata, err := re.collectionMetadata.GetField(k)
+	if err != nil {
+		return nil, err
+	}
+	value, err := re.item.GetField(k)
+	if err != nil {
+		return nil, err
+	}
+	if fieldMetadata.Type == "NUMBER" {
+		if value == nil {
+			return 0, nil
+		}
+	}
+	return value, nil
 }
 
-func populateFormulaField(field *FieldMetadata, exec gval.Evaluable) evalFunc {
+func populateFormulaField(field *FieldMetadata, collectionMetadata *CollectionMetadata, exec gval.Evaluable) evalFunc {
 	return func(item meta.Item) error {
 
-		evaluator := &RuntimeEvaluator{item: item}
+		evaluator := &RuntimeEvaluator{item: item, collectionMetadata: collectionMetadata}
 
 		value, err := exec(context.Background(), evaluator)
 		if err != nil {
@@ -65,7 +80,7 @@ func populateFormulaField(field *FieldMetadata, exec gval.Evaluable) evalFunc {
 	}
 }
 
-func GetFormulaFunction(fields map[string]*FieldMetadata) evalFunc {
+func GetFormulaFunction(fields map[string]*FieldMetadata, collectionMetadata *CollectionMetadata) evalFunc {
 
 	populations := []evalFunc{}
 	for _, field := range fields {
@@ -83,7 +98,7 @@ func GetFormulaFunction(fields map[string]*FieldMetadata) evalFunc {
 			if err != nil {
 				continue
 			}
-			populations = append(populations, populateFormulaField(field, exec))
+			populations = append(populations, populateFormulaField(field, collectionMetadata, exec))
 		}
 	}
 
