@@ -38,7 +38,7 @@ const TextField: definition.UtilityComponent<TextFieldProps> = (props) => {
 	const {
 		applyChanges,
 		context,
-		focusOnRender,
+		focusOnRender = false,
 		id,
 		list,
 		mode,
@@ -78,9 +78,7 @@ const TextField: definition.UtilityComponent<TextFieldProps> = (props) => {
 					isPassword && classes.password
 				)}
 				disabled={isReadMode}
-				ref={(input: HTMLInputElement) =>
-					focusOnRender && input?.focus()
-				}
+				autoFocus={focusOnRender}
 				{...controlledInputProps}
 			/>
 			{isPassword && (

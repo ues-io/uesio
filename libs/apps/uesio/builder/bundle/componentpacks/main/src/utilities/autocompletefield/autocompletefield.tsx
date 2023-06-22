@@ -40,6 +40,7 @@ const AutocompleteField: definition.UtilityComponent<
 	AutocompleteFieldUtilityProps<unknown>
 > = (props) => {
 	const {
+		context,
 		itemRenderer,
 		onSelect,
 		onSearch,
@@ -65,17 +66,14 @@ const AutocompleteField: definition.UtilityComponent<
 		if (newSearchText !== searchText) {
 			const results = await onSearch?.(newSearchText)
 			if (results && results.length) {
-				console.log("got " + results.length + "results, setting items")
 				// Only return first N items of array
 				setItems(results.slice(0, maxDisplayItems))
-				console.log("setting search text to " + newSearchText)
 				setSearchText(newSearchText)
 			}
 		}
 	}
 
 	const onOpenChange = (open: boolean) => {
-		console.log("on open change, open=" + open + ", isOpen=" + isOpen)
 		if (open !== isOpen) {
 			setIsOpen(open)
 		}
@@ -127,7 +125,10 @@ const AutocompleteField: definition.UtilityComponent<
 					value={searchText}
 					autoFocus
 					className={classes.searchbox}
-					placeholder={placeholder || "Search..."}
+					placeholder={
+						placeholder ||
+						`${context.getLabel("uesio/io.search")}...`
+					}
 					onChange={(e) => {
 						if (!isOpen && e.target.value?.length) {
 							setIsOpen(true)

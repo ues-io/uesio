@@ -26,6 +26,7 @@ type FieldDefinition = {
 	labelPosition?: LabelPosition
 	label?: string
 	displayAs?: string
+	focusOnRender?: boolean
 	reference?: ReferenceFieldOptions | ReferenceGroupFieldOptions
 	list?: ListFieldOptions
 	map?: MapFieldOptions
@@ -96,6 +97,7 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		fieldId,
 		placeholder,
 		displayAs,
+		focusOnRender,
 		reference,
 		list,
 		map,
@@ -144,6 +146,7 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		mode,
 		fieldMetadata,
 		fieldId,
+		focusOnRender,
 		id: componentId,
 		value: record.getFieldValue(fieldId),
 		setValue: (value: wire.FieldValue) =>

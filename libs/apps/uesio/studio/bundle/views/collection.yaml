@@ -489,6 +489,7 @@ definition:
               - uesio/io.field:
                   fieldId: uesio/studio.name
                   uesio.id: new-field-name
+                  focusOnRender: true
               - uesio/io.field:
                   fieldId: uesio/studio.type
                   uesio.id: new-field-type

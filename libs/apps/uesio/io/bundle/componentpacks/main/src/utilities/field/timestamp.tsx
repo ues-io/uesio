@@ -8,6 +8,7 @@ interface TimestampFieldProps extends definition.UtilityProps {
 	width?: string
 	fieldMetadata: collection.Field
 	mode?: context.FieldMode
+	focusOnRender?: boolean
 }
 
 const toTimestamp = (date: string) => {
@@ -26,7 +27,7 @@ const StyleDefaults = Object.freeze({
 })
 
 const TimestampField: FunctionComponent<TimestampFieldProps> = (props) => {
-	const { setValue, mode, id } = props
+	const { focusOnRender, setValue, mode, id } = props
 
 	const timestamp = props.value as number
 	const readonly = mode === "READ"
@@ -56,6 +57,7 @@ const TimestampField: FunctionComponent<TimestampFieldProps> = (props) => {
 					event.target.value ? toTimestamp(event.target.value) : null
 				)
 			}
+			autoFocus={focusOnRender}
 		/>
 	)
 }

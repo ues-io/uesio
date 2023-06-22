@@ -92,6 +92,7 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 		useInteractions([click, dismiss, role, listNavigation])
 
 	const {
+		context,
 		items,
 		itemRenderer,
 		onSelect,
@@ -140,7 +141,9 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 										value={searchText}
 										autoFocus
 										className={classes.searchbox}
-										placeholder="Search..."
+										placeholder={`${context.getLabel(
+											"uesio/io.search"
+										)}...`}
 										onChange={(e) => {
 											getSearchItems(e.target.value)
 										}}
