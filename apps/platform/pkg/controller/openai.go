@@ -13,9 +13,6 @@ import (
 
 	openai "github.com/sashabaranov/go-openai"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
-	"github.com/thecloudmasters/uesio/pkg/featureflagstore"
-	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/middleware"
 	"github.com/twmb/murmur3"
 )
 
@@ -119,28 +116,6 @@ func AutocompleteHandler(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	// Check if the user has the Use AI Signals feature flag
-	session := middleware.GetSession(r)
-	flags, err := featureflagstore.GetFeatureFlags(session, session.GetUserID())
-	if err != nil {
-		http.Error(w, "You do not have permission to use this feature", http.StatusForbidden)
-		return
-	}
-
-	hasUseAiFlag := false
-
-	err = flags.Loop(func(item meta.Item, index string) error {
-		featureFlag := item.(*meta.FeatureFlag)
-		if featureFlag.GetNamespace() == "uesio/studio" && featureFlag.Name == "use_ai_signals" && featureFlag.Value {
-			hasUseAiFlag = true
-		}
-		return nil
-	})
-	if err != nil || !hasUseAiFlag {
-		http.Error(w, "You do not have permission to use this feature", http.StatusForbidden)
 		return
 	}
 
