@@ -1,3 +1,4 @@
+import { Context } from "../context/context"
 import { getJSON } from "./async"
 
 const cache = new Map()
@@ -114,9 +115,9 @@ export const memoizedAsync = <T>(
 		}
 	})
 
-export const memoizedGetJSON = <T>(url: string) => {
+export const memoizedGetJSON = <T>(context: Context, url: string) => {
 	const cacheKey = `getJSON:${url}`
-	return memoizedAsync<T>(() => getJSON(url), {
+	return memoizedAsync<T>(() => getJSON(context, url), {
 		cacheKey,
 	})
 		.then((res: AsyncResult<T>) => res.data)

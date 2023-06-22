@@ -10,7 +10,14 @@ import { parseKey } from "../component/path"
 import { PlainWireRecord } from "../bands/wirerecord/types"
 import { ParamDefinition } from "../definition/param"
 import { UserState } from "../bands/user/types"
-import { getJSON, postJSON, respondJSON, respondVoid } from "./async"
+import {
+	getJSON,
+	postBinary,
+	post,
+	postJSON,
+	respondJSON,
+	respondVoid,
+} from "./async"
 import { memoizedGetJSON } from "./memoizedAsync"
 
 // Allows us to load static vendor assets, such as Monaco modules, from custom paths
@@ -105,7 +112,7 @@ type LoginResponseRedirect = {
 	redirectRouteName: string
 }
 
-const getPrefix = (context: Context) => {
+export const getPrefix = (context: Context) => {
 	const workspace = context.getWorkspace()
 	if (workspace && workspace.app && workspace.name) {
 		return `/workspace/${workspace.app}/${workspace.name}`
@@ -145,6 +152,7 @@ const platform = {
 		const namespace = request.namespace || viewDefNamespace || ""
 
 		return getJSON(
+			context,
 			`${prefix}/routes/path/${namespace}/${context.mergeString(
 				request.path
 			)}`
@@ -159,6 +167,7 @@ const platform = {
 		const viewtype = request.viewtype || "list"
 
 		return getJSON(
+			context,
 			`${prefix}/routes/collection/${namespace}/${name}/${viewtype}` +
 				(request.recordid
 					? `/${context.mergeString(request.recordid)}`
@@ -170,7 +179,11 @@ const platform = {
 		requestBody: LoadRequestBatch
 	): Promise<LoadResponseBatch> => {
 		const prefix = getPrefix(context)
-		const response = await postJSON(`${prefix}/wires/load`, requestBody)
+		const response = await postJSON(
+			context,
+			`${prefix}/wires/load`,
+			requestBody
+		)
 		return respondJSON(response)
 	},
 	saveData: async (
@@ -178,7 +191,11 @@ const platform = {
 		requestBody: SaveRequestBatch
 	): Promise<SaveResponseBatch> => {
 		const prefix = getPrefix(context)
-		const response = await postJSON(`${prefix}/wires/save`, requestBody)
+		const response = await postJSON(
+			context,
+			`${prefix}/wires/save`,
+			requestBody
+		)
 		return respondJSON(response)
 	},
 	callBot: async (
@@ -189,6 +206,7 @@ const platform = {
 	): Promise<BotResponse> => {
 		const prefix = getPrefix(context)
 		const response = await postJSON(
+			context,
 			`${prefix}/bots/call/${namespace}/${name}`,
 			params
 		)
@@ -202,6 +220,7 @@ const platform = {
 	): Promise<BotResponse> => {
 		const prefix = getPrefix(context)
 		const response = await postJSON(
+			context,
 			`${prefix}/metadata/generate/${namespace}/${name}`,
 			params
 		)
@@ -212,24 +231,20 @@ const platform = {
 		namespace: string,
 		name: string,
 		type: string
-	): Promise<ParamDefinition[]> => {
-		const prefix = getPrefix(context)
-		const response = await fetch(
-			`${prefix}/bots/params/${type}/${namespace}/${name}`
-		)
-		return respondJSON(response)
-	},
+	): Promise<ParamDefinition[]> =>
+		getJSON(
+			context,
+			`${getPrefix(context)}/bots/params/${type}/${namespace}/${name}`
+		),
 	getViewParams: async (
 		context: Context,
 		namespace: string,
 		name: string
-	): Promise<ParamDefinition[]> => {
-		const prefix = getPrefix(context)
-		const response = await fetch(
-			`${prefix}/views/params/${namespace}/${name}`
-		)
-		return respondJSON(response)
-	},
+	): Promise<ParamDefinition[]> =>
+		getJSON(
+			context,
+			`${getPrefix(context)}/views/params/${namespace}/${name}`
+		),
 	getFileURL: (context: Context, namespace: string, name: string) => {
 		const siteBundleVersion = getSiteBundleVersion(context)
 		const prefix = getPrefix(context)
@@ -263,14 +278,11 @@ const platform = {
 		params.append("recordid", recordID)
 		if (fieldID) params.append("fieldid", fieldID)
 
-		const response = await fetch(url + "?" + params.toString(), {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/octet-stream",
-			},
-			body: fileData,
-		})
-
+		const response = await postBinary(
+			context,
+			url + "?" + params.toString(),
+			fileData
+		)
 		return respondJSON(response)
 	},
 	deleteFile: async (
@@ -279,9 +291,7 @@ const platform = {
 	): Promise<BotResponse> => {
 		const prefix = getPrefix(context)
 		const url = `${prefix}/userfiles/delete/${userFileID}`
-		const response = await fetch(url, {
-			method: "POST",
-		})
+		const response = await post(context, url)
 		return respondJSON(response)
 	},
 	getComponentPackURL: (
@@ -304,16 +314,17 @@ const platform = {
 		const mdType = METADATA[metadataType]
 		const groupingUrl = grouping ? `/${grouping}` : ""
 		const namespaceUrl = namespace ? `/namespace/${namespace}` : ""
-		const response = await fetch(
+		return getJSON(
+			context,
 			`${prefix}/metadata/types/${mdType}${namespaceUrl}/list${groupingUrl}`
 		)
-		return respondJSON(response)
 	},
 	getCollectionMetadata: async (
 		context: Context,
 		collectionName: string
 	): Promise<LoadResponseBatch> =>
 		memoizedGetJSON<LoadResponseBatch>(
+			context,
 			`${getPrefix(context)}/collections/meta/${collectionName}`
 		),
 	getAvailableNamespaces: async (
@@ -323,18 +334,10 @@ const platform = {
 		const prefix = getPrefix(context)
 		const mdType = metadataType && METADATA[metadataType]
 		const mdTypeUrl = mdType ? `/${mdType}` : ""
-		const response = await fetch(
-			`${prefix}/metadata/namespaces${mdTypeUrl}`
-		)
-		return respondJSON(response)
+		return getJSON(context, `${prefix}/metadata/namespaces${mdTypeUrl}`)
 	},
-	getConfigValues: async (
-		context: Context
-	): Promise<ConfigValueResponse[]> => {
-		const prefix = getPrefix(context)
-		const response = await fetch(`${prefix}/configvalues`)
-		return respondJSON(response)
-	},
+	getConfigValues: async (context: Context): Promise<ConfigValueResponse[]> =>
+		getJSON(context, `${getPrefix(context)}/configvalues`),
 	setConfigValue: async (
 		context: Context,
 		key: string,
@@ -343,6 +346,7 @@ const platform = {
 		const prefix = getPrefix(context)
 		const [namespace, name] = parseKey(key)
 		const response = await postJSON(
+			context,
 			`${prefix}/configvalues/${namespace}/${name}`,
 			{
 				value,
@@ -350,11 +354,8 @@ const platform = {
 		)
 		return respondJSON(response)
 	},
-	getSecrets: async (context: Context): Promise<SecretResponse[]> => {
-		const prefix = getPrefix(context)
-		const response = await fetch(`${prefix}/secrets`)
-		return respondJSON(response)
-	},
+	getSecrets: async (context: Context): Promise<SecretResponse[]> =>
+		getJSON(context, `${getPrefix(context)}/secrets`),
 	setSecret: async (
 		context: Context,
 		key: string,
@@ -363,6 +364,7 @@ const platform = {
 		const prefix = getPrefix(context)
 		const [namespace, name] = parseKey(key)
 		const response = await postJSON(
+			context,
 			`${prefix}/secrets/${namespace}/${name}`,
 			{
 				value,
@@ -373,12 +375,11 @@ const platform = {
 	getFeatureFlags: async (
 		context: Context,
 		user?: string
-	): Promise<FeatureFlagResponse[]> => {
-		const prefix = getPrefix(context)
-		const userUrl = user ? `/${user}` : ""
-		const response = await fetch(`${prefix}/featureflags${userUrl}`)
-		return respondJSON(response)
-	},
+	): Promise<FeatureFlagResponse[]> =>
+		getJSON(
+			context,
+			`${getPrefix(context)}/featureflags${user ? `/${user}` : ""}`
+		),
 	setFeatureFlag: async (
 		context: Context,
 		key: string,
@@ -388,6 +389,7 @@ const platform = {
 		const prefix = getPrefix(context)
 		const [namespace, name] = parseKey(key)
 		const response = await postJSON(
+			context,
 			`${prefix}/featureflags/${namespace}/${name}`,
 			{
 				value,
@@ -397,52 +399,58 @@ const platform = {
 		return respondJSON(response)
 	},
 	signup: async (
+		context: Context,
 		signupMethod: string,
 		requestBody: Record<string, string>
 	): Promise<LoginResponse> => {
 		const [namespace, name] = parseKey(signupMethod)
 		const response = await postJSON(
+			context,
 			`/site/auth/${namespace}/${name}/signup`,
 			requestBody
 		)
 		return respondJSON(response)
 	},
 	signUpConfirm: async (
+		context: Context,
 		signupMethod: string,
 		requestBody: Record<string, string>
 	): Promise<void> => {
 		const [namespace, name] = parseKey(signupMethod)
 		const response = await postJSON(
+			context,
 			`/site/auth/${namespace}/${name}/signup/confirm`,
 			requestBody
 		)
-
 		return respondVoid(response)
 	},
 	checkAvailability: async (
+		context: Context,
 		signupMethod: string,
 		username: string
 	): Promise<void> => {
 		const [namespace, name] = parseKey(signupMethod)
-		const response = await postJSON(
+		const response = await post(
+			context,
 			`/site/auth/${namespace}/${name}/checkavailability/${username}`
 		)
 		return respondVoid(response)
 	},
 	login: async (
+		context: Context,
 		authSource: string,
 		requestBody: Record<string, string>
 	): Promise<LoginResponse> => {
 		const [namespace, name] = parseKey(authSource)
 		const response = await postJSON(
+			context,
 			`/site/auth/${namespace}/${name}/login`,
 			requestBody
 		)
-
 		return respondJSON(response)
 	},
-	logout: async (): Promise<LoginResponse> => {
-		const response = await postJSON("/site/auth/logout")
+	logout: async (context: Context): Promise<LoginResponse> => {
+		const response = await post(context, "/site/auth/logout")
 		return respondJSON(response)
 	},
 	forgotPassword: async (
@@ -453,34 +461,31 @@ const platform = {
 		const prefix = getPrefix(context)
 		const [namespace, name] = parseKey(authSource)
 		const response = await postJSON(
+			context,
 			`${prefix}/auth/${namespace}/${name}/forgotpassword`,
 			requestBody
 		)
-
 		return respondVoid(response)
 	},
 	forgotPasswordConfirm: async (
+		context: Context,
 		authSource: string,
 		requestBody: Record<string, string>
 	): Promise<void> => {
 		const [namespace, name] = parseKey(authSource)
 		const response = await postJSON(
+			context,
 			`/site/auth/${namespace}/${name}/forgotpassword/confirm`,
 			requestBody
 		)
-
 		return respondVoid(response)
 	},
 	createJob: async (context: Context, spec: Spec): Promise<JobResponse> => {
-		const prefix = getPrefix(context)
-		const url = `${prefix}/bulk/job`
-		const response = await fetch(url, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(spec),
-		})
+		const response = await postJSON(
+			context,
+			`${getPrefix(context)}/bulk/job`,
+			spec
+		)
 		return respondJSON(response)
 	},
 	importData: async (
@@ -490,15 +495,7 @@ const platform = {
 	): Promise<void> => {
 		const prefix = getPrefix(context)
 		const url = `${prefix}/bulk/job/${jobId}/batch`
-
-		const response = await fetch(url, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/octet-stream",
-			},
-			body: fileData,
-		})
-
+		const response = await postBinary(context, url, fileData)
 		return respondVoid(response)
 	},
 	getBuilderDeps: async (context: Context): Promise<Dependencies> => {
@@ -506,13 +503,17 @@ const platform = {
 		const viewId = context.getViewDefId()
 		if (!viewId) throw new Error("No View Context Provided")
 		const [namespace, name] = parseKey(viewId)
-		const response = await fetch(
+		return getJSON(
+			context,
 			`${prefix}/metadata/builder/${namespace}/${name}`
 		)
-		return respondJSON(response)
 	},
-	getStaticAssetAsJSON: async <T>(path: string): Promise<T> =>
+	getStaticAssetAsJSON: async <T>(
+		context: Context,
+		path: string
+	): Promise<T> =>
 		memoizedGetJSON<T>(
+			context,
 			`${getStaticAssetsHost()}${getStaticAssetsPath()}${path}`
 		),
 	createLogin: async (
@@ -523,6 +524,7 @@ const platform = {
 		const prefix = getPrefix(context)
 		const [namespace, name] = parseKey(signupMethod)
 		const response = await postJSON(
+			context,
 			`${prefix}/auth/${namespace}/${name}/createlogin`,
 			requestBody
 		)
@@ -533,7 +535,11 @@ const platform = {
 		request: AutocompleteRequest
 	): Promise<AutocompleteResponse> => {
 		const prefix = getPrefix(context)
-		const response = await postJSON(`${prefix}/ai/complete`, request)
+		const response = await postJSON(
+			context,
+			`${prefix}/ai/complete`,
+			request
+		)
 		return respondJSON(response)
 	},
 	getMonacoEditorVersion,

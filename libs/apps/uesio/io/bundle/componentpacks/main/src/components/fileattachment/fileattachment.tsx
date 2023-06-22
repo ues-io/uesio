@@ -11,6 +11,8 @@ type FileDefinition = {
 	displayAs?: string
 	accept?: string
 	mode?: context.FieldMode
+	// The Monaco editor theme to use
+	theme?: string
 	// An array of URIs which contain ambient type definitions to load in this code field
 	typeDefinitionFileURIs?: string[]
 	// Signals to run after a file is uploaded
@@ -25,9 +27,10 @@ const FileAttachment: definition.UC<FileDefinition> = (props) => {
 		accept,
 		displayAs,
 		mode,
-		typeDefinitionFileURIs,
 		onUploadSignals,
 		onDeleteSignals,
+		theme,
+		typeDefinitionFileURIs,
 	} = definition
 	const id = api.component.getComponentIdFromProps(props)
 
@@ -106,6 +109,7 @@ const FileAttachment: definition.UC<FileDefinition> = (props) => {
 				<FileText
 					{...common}
 					typeDefinitionFileURIs={typeDefinitionFileURIs}
+					theme={theme}
 				/>
 			)
 		case "IMAGE":

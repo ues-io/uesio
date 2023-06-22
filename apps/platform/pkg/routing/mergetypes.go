@@ -58,10 +58,16 @@ type WorkspaceMergeData struct {
 	Wrapper string `json:"wrapper,omitempty"`
 }
 
+type SessionMergeData struct {
+	Hash    string `json:"hash"`
+	Expires string `json:"expires"`
+}
+
 type MergeData struct {
 	Route     *RouteMergeData     `json:"route"`
 	User      *UserMergeData      `json:"user"`
 	Site      *SiteMergeData      `json:"site"`
+	Session   *SessionMergeData   `json:"session,omitempty"`
 	Workspace *WorkspaceMergeData `json:"workspace,omitempty"`
 
 	MonacoEditorVersion string   `json:"-"`

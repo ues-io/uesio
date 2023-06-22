@@ -51,6 +51,14 @@ properties:
   - type: COMPONENT_ID
     name: uesio.id
     label: Component Id
+  - type: SELECT
+    name: theme
+    label: Theme
+    options:
+      - value: vs-light
+        label: Light
+      - value: vs-dark
+        label: Dark
 sections:
   - type: HOME
     properties:
@@ -58,6 +66,7 @@ sections:
       - mode
       - accept
       - uesio.id
+      - theme
   - id: onUploadSignals
     label: On-Upload
     type: SIGNALS

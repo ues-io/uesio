@@ -5,7 +5,7 @@ import { getBuildMode, useBuilderState, useDropPath } from "../../api/stateapi"
 import BuildWrapper from "../buildwrapper/buildwrapper"
 import PlaceHolder from "../placeholder/placeholder"
 
-const accepts = ["component", "viewdef" /* "componentvariant"*/]
+const accepts = ["component", "viewdef", "componentvariant"]
 
 const StyleDefaults = Object.freeze({
 	slotTagOn: [
