@@ -312,6 +312,8 @@ const getWireFieldFromPropertyDef = (
 			return getBaseWireFieldDef(def, "NUMBER")
 		case "CHECKBOX":
 			return getBaseWireFieldDef(def, "CHECKBOX")
+		case "TIMESTAMP":
+			return getBaseWireFieldDef(def, "TIMESTAMP")
 		case "DATE":
 			return getBaseWireFieldDef(def, "DATE")
 		case "CONDITION":

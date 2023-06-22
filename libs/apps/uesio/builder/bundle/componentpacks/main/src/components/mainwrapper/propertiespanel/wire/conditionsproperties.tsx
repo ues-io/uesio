@@ -1,16 +1,18 @@
-import { definition, component, wire, collection, context } from "@uesio/ui"
+import {
+	definition,
+	component,
+	wire,
+	collection,
+	context,
+	api,
+} from "@uesio/ui"
 import { add, get } from "../../../../api/defapi"
 import { FullPath } from "../../../../api/path"
 import { useSelectedPath } from "../../../../api/stateapi"
 import { getFieldMetadata } from "../../../../api/wireapi"
-import {
-	ComponentProperty,
-	TextProperty,
-	NumberProperty,
-	CheckboxProperty,
-	SelectProperty,
-	DateProperty,
-} from "../../../../properties/componentproperty"
+import * as prop from "../../../../properties/componentproperty"
+import * as operators from "../../../shared/operatorproperties"
+import { WireConditionState } from "libs/ui/src/wireexports"
 
 function getConditionPropertiesPanelTitle(
 	condition: wire.WireConditionState
@@ -19,7 +21,16 @@ function getConditionPropertiesPanelTitle(
 }
 
 const multiValueOperators = ["HAS_ANY", "HAS_ALL", "IN", "NOT_IN"]
-const textAlikeFiledTypes = ["TEXT", "AUTONUMBER", "EMAIL", "LONGTEXT"]
+const ValueOperators = [
+	"EQ",
+	"NOT_EQ",
+	"GT",
+	"LT",
+	"GTE",
+	"LTE",
+	"CONTAINS",
+	"START_WITH",
+]
 
 function getConditionTitle(condition: wire.WireConditionState): string {
 	if (condition.type === "GROUP" && !condition.valueSource) {
@@ -62,96 +73,120 @@ function getConditionTitle(condition: wire.WireConditionState): string {
 	return "NEW_VALUE"
 }
 
-function getOperatorOptions(fieldDisplayType: string | undefined) {
-	if (fieldDisplayType === "MULTISELECT")
-		return [
-			{
-				label: "",
-				value: "",
-			},
-			{
-				label: "Has Any",
-				value: "HAS_ANY",
-			},
-			{
-				label: "Has All",
-				value: "HAS_ALL",
-			},
-		]
-	return [
-		{
-			label: "",
-			value: "",
-		},
-		{
-			label: "Equals",
-			value: "EQ",
-		},
-		{
-			label: "Not Equal To",
-			value: "NOT_EQ",
-		},
-		{
-			label: "Greater Than",
-			value: "GT",
-		},
-		{
-			label: "Less Than",
-			value: "LT",
-		},
-		{
-			label: "Greater Than or Equal To",
-			value: "GTE",
-		},
-		{
-			label: "Less Than or Equal To",
-			value: "LTE",
-		},
-		{
-			label: "In",
-			value: "IN",
-		},
-		{
-			label: "Not In",
-			value: "NOT_IN",
-		},
-		{
-			label: "Is Blank",
-			value: "IS_BLANK",
-		},
-		{
-			label: "Is Not Blank",
-			value: "IS_NOT_BLANK",
-		},
-		{
-			label: "Between",
-			value: "BETWEEN",
-		},
-		...(fieldDisplayType && textAlikeFiledTypes.includes(fieldDisplayType)
-			? [
-					{
-						label: "Contains",
-						value: "CONTAINS",
-					},
-					{
-						label: "Starts With",
-						value: "STARTS_WITH",
-					},
-			  ]
-			: []),
-	]
+function getOperatorOptions(
+	fieldDisplayType: string | undefined,
+	condition: WireConditionState
+) {
+	let o = operators
+	let options = [{ label: "", value: "" }]
+	let valueSource = condition?.valueSource
+	if (fieldDisplayType && valueSource) {
+		switch (valueSource) {
+			case "LOOKUP": {
+				return options.concat(o.INNOTIN)
+			}
+			case "PARAM": {
+				switch (fieldDisplayType) {
+					case "EMAIL":
+					case "LIST":
+					case "REFERENCE":
+					case "SELECT":
+					case "AUTONUMBER": {
+						return options.concat(o.EQNOTEQ, o.INNOTIN)
+					}
+					case "NUMBER":
+					case "TIMESTAMP":
+					case "DATE": {
+						return options.concat(
+							o.EQNOTEQ,
+							o.GTLT,
+							o.GTELTE,
+							o.INNOTIN
+						)
+					}
+					case "TEXT":
+					case "LONGTEXT": {
+						return options.concat(o.EQNOTEQ, [
+							o.STARTWITH,
+							o.CONTAINS,
+						])
+					}
+					case "REFERENCEGROUP":
+					case "MULTISELECT": {
+						return options.concat(o.ANYHASALL)
+					}
+					default:
+						return options.concat(o.EQNOTEQ)
+				}
+			}
+			case "VALUE": {
+				switch (fieldDisplayType) {
+					case "EMAIL":
+					case "LIST":
+					case "REFERENCE":
+					case "SELECT":
+					case "AUTONUMBER": {
+						return options.concat(
+							o.EQNOTEQ,
+							o.INNOTIN,
+							o.BLANKNOTBLANK
+						)
+					}
+					case "FILE":
+					case "STRUCT":
+					case "CHECKBOX": {
+						return options.concat(o.EQNOTEQ, o.BLANKNOTBLANK)
+					}
+					case "NUMBER":
+					case "TIMESTAMP":
+					case "DATE": {
+						return options.concat(
+							o.EQNOTEQ,
+							o.GTLT,
+							o.GTELTE,
+							o.INNOTIN,
+							o.BLANKNOTBLANK,
+							[o.BETWEEN]
+						)
+					}
+					case "LONGTEXT":
+					case "TEXT": {
+						return options.concat(
+							o.EQNOTEQ,
+							[o.STARTWITH, o.CONTAINS],
+							o.BLANKNOTBLANK
+						)
+					}
+					case "MULTISELECT": {
+						return options.concat(o.ANYHASALL, o.BLANKNOTBLANK)
+					}
+					case "REFERENCEGROUP": {
+						return options.concat(o.ANYHASALL)
+					}
+					default:
+						return options.concat(o.EQNOTEQ)
+				}
+			}
+		}
+	}
+	return []
 }
 
-function getValueProperty(
-	fieldDisplayType: wire.FieldType | undefined,
-	fieldMetadata: collection.Field | undefined,
+function getValueProperty({
+	fieldDisplayType,
+	fieldMetadata,
+	context,
+}: {
+	fieldDisplayType: wire.FieldType | undefined
+	fieldMetadata: collection.Field | undefined
 	context: context.Context
-):
-	| TextProperty
-	| NumberProperty
-	| CheckboxProperty
-	| SelectProperty
-	| DateProperty {
+}):
+	| prop.TextProperty
+	| prop.NumberProperty
+	| prop.CheckboxProperty
+	| prop.SelectProperty
+	| prop.DateProperty
+	| prop.TimestampProperty {
 	// TODO: Add additional property types here to support things like DATE
 
 	const baseValueProp = {
@@ -159,30 +194,39 @@ function getValueProperty(
 		label: "Value",
 		displayConditions: [
 			{
-				field: "valueSource",
-				value: "VALUE",
-				type: "fieldValue",
-				operator: "EQUALS",
-			},
-			{
 				type: "fieldValue",
 				field: "operator",
 				operator: "NOT_IN",
 				values: multiValueOperators.concat(["BETWEEN"]),
 			},
+			{
+				type: "fieldValue",
+				field: "operator",
+				operator: "IN",
+				values: ValueOperators,
+			},
 		],
 	}
-
 	if (fieldDisplayType === "CHECKBOX") {
-		return { ...baseValueProp, type: "CHECKBOX" } as CheckboxProperty
+		return {
+			...baseValueProp,
+			type: "CHECKBOX",
+		} as prop.CheckboxProperty
 	}
 
 	if (fieldDisplayType === "NUMBER") {
-		return { ...baseValueProp, type: "NUMBER" } as NumberProperty
+		return { ...baseValueProp, type: "NUMBER" } as prop.NumberProperty
 	}
 
 	if (fieldDisplayType === "DATE") {
-		return { ...baseValueProp, type: "DATE" } as DateProperty
+		return { ...baseValueProp, type: "DATE" } as prop.DateProperty
+	}
+
+	if (fieldDisplayType === "TIMESTAMP") {
+		return {
+			...baseValueProp,
+			type: "TIMESTAMP",
+		} as prop.TimestampProperty
 	}
 
 	if (fieldDisplayType === "SELECT") {
@@ -190,13 +234,16 @@ function getValueProperty(
 			...baseValueProp,
 			type: "SELECT",
 			options: fieldMetadata?.getSelectOptions(context),
-		} as SelectProperty
+		} as prop.SelectProperty
 	}
 
-	return { ...baseValueProp, type: "TEXT" } as TextProperty
+	return { ...baseValueProp, type: "TEXT" } as prop.TextProperty
 }
 
-const ConditionsProperties: definition.UC = (props) => {
+const ConditionsProperties: definition.UC = (
+	props,
+	condition: WireConditionState
+) => {
 	const { context } = props
 	const ListPropertyUtility = component.getUtility(
 		"uesio/builder.listproperty"
@@ -207,16 +254,41 @@ const ConditionsProperties: definition.UC = (props) => {
 
 	const propertyName = "conditions"
 	const selectedPath = useSelectedPath(context)
+	const selectedPathSize = selectedPath ? selectedPath.size() : null
 	const wirePath = selectedPath.trimToSize(2)
 	const conditionsPath = wirePath.addLocal(propertyName)
 	const [wireName] = wirePath.pop()
-
 	const items = get(context, conditionsPath) as wire.WireConditionState[]
+	const conditions = api.wire.useWire(wireName, context)?.getConditions()
+	const mainConditionId = selectedPath
+		.trimToSize(4)
+		.pop()[0]
+		?.valueOf() as string
+
+	const getCondition = () => {
+		if (conditions && selectedPathSize) {
+			if (selectedPathSize > 4) {
+				let subConditionId = selectedPath.pop()[0]?.valueOf() as string
+				let subConditionsPath = selectedPath.trimToSize(5)
+				let subConditions = get(
+					context,
+					subConditionsPath
+				) as wire.WireConditionState[]
+				return subConditions[parseInt(subConditionId)]
+			} else {
+				return condition
+					? conditions[parseInt(mainConditionId)]
+					: condition
+			}
+		}
+	}
+
+	const selectedCondition = getCondition() || condition
 
 	const getProperties = (
 		parentPath: FullPath,
 		itemState: wire.PlainWireRecord
-	): ComponentProperty[] => {
+	): prop.ComponentProperty[] => {
 		const fieldMetadata =
 			itemState.field && wireName
 				? getFieldMetadata(
@@ -225,7 +297,6 @@ const ConditionsProperties: definition.UC = (props) => {
 						itemState.field as string
 				  )
 				: undefined
-
 		const fieldDisplayType = fieldMetadata?.getType() || undefined
 
 		return [
@@ -266,15 +337,105 @@ const ConditionsProperties: definition.UC = (props) => {
 				],
 			},
 			{
-				name: "operator",
+				name: "valueSource",
 				type: "SELECT",
-				label: "Operator",
-				options: getOperatorOptions(fieldDisplayType),
+				label: "Value Source",
+				options: [
+					{
+						label: "",
+						value: "",
+					},
+					{
+						label: "Value",
+						value: "VALUE",
+					},
+					{
+						label: "Lookup",
+						value: "LOOKUP",
+					},
+					{
+						label: "Param",
+						value: "PARAM",
+					},
+				],
 				displayConditions: [
 					{
 						operator: "NOT_EQUALS",
 						field: "type",
 						value: "GROUP",
+						type: "fieldValue",
+					},
+				],
+				onChange: [
+					// Clear out value if operator IS NOW a multi-value operator
+					{
+						updates: [
+							{
+								field: "operator",
+								value: "",
+							},
+						],
+					},
+				],
+			},
+			{
+				name: "lookupWire",
+				type: "WIRE",
+				label: "Lookup Wire",
+				displayConditions: [
+					{
+						field: "valueSource",
+						value: "LOOKUP",
+						type: "fieldValue",
+						operator: "EQUALS",
+					},
+				],
+			},
+			{
+				name: "lookupField",
+				type: "FIELD",
+				label: "Lookup Field",
+				wireField: "lookupWire",
+				displayConditions: [
+					{
+						field: "valueSource",
+						value: "LOOKUP",
+						type: "fieldValue",
+						operator: "EQUALS",
+					},
+					{
+						operator: "NOT_EQUALS",
+						field: "lookupWire",
+						value: "",
+						type: "fieldValue",
+					},
+				],
+			},
+			{
+				name: "operator",
+				type: "SELECT",
+				label: "Operator",
+				options: getOperatorOptions(
+					fieldDisplayType,
+					selectedCondition
+				),
+				displayConditions: [
+					{
+						operator: "EQUALS",
+						field: "conjunction",
+						value: "",
+						type: "fieldValue",
+					},
+					{
+						operator: "NOT_EQUALS",
+						field: "field",
+						value: "",
+						type: "fieldValue",
+					},
+					{
+						operator: "NOT_EQUALS",
+						field: "valueSource",
+						value: "",
 						type: "fieldValue",
 					},
 				],
@@ -363,51 +524,6 @@ const ConditionsProperties: definition.UC = (props) => {
 				],
 			},
 			{
-				name: "valueSource",
-				type: "SELECT",
-				label: "Value Source",
-				options: [
-					{
-						label: "",
-						value: "",
-					},
-					{
-						label: "Value",
-						value: "VALUE",
-					},
-					{
-						label: "Lookup",
-						value: "LOOKUP",
-					},
-					{
-						label: "Param",
-						value: "PARAM",
-					},
-				],
-				displayConditions: [
-					{
-						type: "fieldValue",
-						operator: "IN",
-						field: "operator",
-						values: [
-							"EQ",
-							"NOT_EQ",
-							"GT",
-							"LT",
-							"GTE",
-							"LTE",
-							"IN",
-							"NOT_IN",
-							"BETWEEN",
-							"HAS_ANY",
-							"HAS_ALL",
-							"CONTAINS",
-							"STARTS_WITH",
-						],
-					},
-				],
-			},
-			{
 				name: "start",
 				type: "TEXT",
 				label: "Start",
@@ -484,7 +600,11 @@ const ConditionsProperties: definition.UC = (props) => {
 				],
 			},
 			{
-				...getValueProperty(fieldDisplayType, fieldMetadata, context),
+				...getValueProperty({
+					fieldDisplayType,
+					fieldMetadata,
+					context,
+				}),
 			},
 			{
 				name: "values",
@@ -500,16 +620,16 @@ const ConditionsProperties: definition.UC = (props) => {
 						: fieldMetadata?.getSelectOptions(context),
 				displayConditions: [
 					{
-						field: "valueSource",
-						value: "VALUE",
-						type: "fieldValue",
-						operator: "EQUALS",
-					},
-					{
 						field: "operator",
 						type: "fieldValue",
 						operator: "IN",
 						values: multiValueOperators,
+					},
+					{
+						field: "valueSource",
+						type: "fieldValue",
+						operator: "NOT_EQUALS",
+						value: "LOOKUP",
 					},
 				],
 			},
@@ -518,33 +638,7 @@ const ConditionsProperties: definition.UC = (props) => {
 				type: "CHECKBOX",
 				label: "Inactive by default",
 			},
-			{
-				name: "lookupWire",
-				type: "WIRE",
-				label: "Lookup Wire",
-				displayConditions: [
-					{
-						field: "valueSource",
-						value: "LOOKUP",
-						type: "fieldValue",
-						operator: "EQUALS",
-					},
-				],
-			},
-			{
-				name: "lookupField",
-				type: "FIELD",
-				label: "Lookup Field",
-				wireField: "lookupWire",
-				displayConditions: [
-					{
-						field: "valueSource",
-						value: "LOOKUP",
-						type: "fieldValue",
-						operator: "EQUALS",
-					},
-				],
-			},
+
 			{
 				name: "params",
 				type: "LIST",
@@ -562,6 +656,12 @@ const ConditionsProperties: definition.UC = (props) => {
 						type: "fieldValue",
 						operator: "IN",
 						values: multiValueOperators,
+					},
+					{
+						operator: "NOT_EQUALS",
+						field: "id",
+						value: "",
+						type: "fieldValue",
 					},
 				],
 			},
@@ -581,6 +681,12 @@ const ConditionsProperties: definition.UC = (props) => {
 						type: "fieldValue",
 						operator: "NOT_IN",
 						values: multiValueOperators,
+					},
+					{
+						operator: "NOT_EQUALS",
+						field: "id",
+						value: "",
+						type: "fieldValue",
 					},
 				],
 			},
