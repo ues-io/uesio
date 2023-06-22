@@ -14,6 +14,7 @@ interface TextAreaFieldProps extends definition.UtilityProps {
 	placeholder?: string
 	options?: LongTextFieldOptions
 	applyChanges?: ApplyChanges
+	focusOnRender?: boolean
 }
 
 const StyleDefaults = Object.freeze({
@@ -22,7 +23,15 @@ const StyleDefaults = Object.freeze({
 })
 
 const TextAreaField: FC<TextAreaFieldProps> = (props) => {
-	const { id, mode, placeholder, options, setValue, applyChanges } = props
+	const {
+		id,
+		mode,
+		placeholder,
+		options,
+		setValue,
+		applyChanges,
+		focusOnRender = false,
+	} = props
 	const value = props.value as string
 	const readonly = mode === "READ"
 
@@ -48,7 +57,7 @@ const TextAreaField: FC<TextAreaFieldProps> = (props) => {
 		cols: options?.cols,
 	}
 
-	return <textarea {...commonProps} />
+	return <textarea {...commonProps} autoFocus={focusOnRender} />
 }
 
 export default TextAreaField

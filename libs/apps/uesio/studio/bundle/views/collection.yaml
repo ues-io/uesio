@@ -92,6 +92,9 @@ definition:
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: uesio/core.id
+        - field: uesio/studio.type
+          valueSource: VALUE
+          value: TEXT
     newrouteassignment:
       collection: uesio/studio.routeassignment
       fields:
@@ -260,14 +263,8 @@ definition:
                                       text: New Field
                                       hotkey: "n"
                                       signals:
-                                        - signal: wire/EMPTY
+                                        - signal: wire/RESET
                                           wire: newfield
-                                        - signal: wire/CREATE_RECORD
-                                          wire: newfield
-                                        - signal: wire/UPDATE_RECORD
-                                          wire: newfield
-                                          field: uesio/studio.type
-                                          value: TEXT
                                         - signal: panel/TOGGLE
                                           panel: newField
                                       uesio.display:
@@ -473,9 +470,9 @@ definition:
                 panel: newRouteAssignment
     newField:
       uesio.type: uesio/io.dialog
-      title: Create a New Field
-      width: 400px
-      height: 620px
+      title: Create a new field
+      width: 440px
+      height: 660px
       components:
         - uesio/io.list:
             uesio.id: newfieldlist
@@ -489,6 +486,7 @@ definition:
               - uesio/io.field:
                   fieldId: uesio/studio.name
                   uesio.id: new-field-name
+                  focusOnRender: true
               - uesio/io.field:
                   fieldId: uesio/studio.type
                   uesio.id: new-field-type
@@ -596,24 +594,43 @@ definition:
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
-            uesio.id: save-new-field
-            text: $Label{uesio/io.save}
+            uesio.id: save-field-and-add-another
+            text: Save and new
             hotkey: "meta+s"
             signals:
               - signal: wire/SAVE
                 wires:
                   - newfield
+              - signal: notification/ADD
+                text: "New field successfully created: $Record{newfield:uesio/studio.name}"
+                severity: success
+                duration: "3"
+              - signal: wire/RESET
+                wire: newfield
               - signal: wire/LOAD
                 wires:
                   - workspaces
                   - fields
-              - signal: wire/EMPTY
+        - uesio/io.button:
+            uesio.variant: uesio/io.secondary
+            uesio.id: save-new-field
+            text: $Label{uesio/io.save}
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - newfield
+              - signal: notification/ADD
+                text: "New field successfully created: $Record{newfield:uesio/studio.name}"
+                severity: success
+                duration: "3"
+              - signal: wire/LOAD
+                wires:
+                  - workspaces
+                  - fields
+              - signal: wire/RESET
                 wire: newfield
               - signal: panel/TOGGLE
                 panel: newField
-              - signal: notification/ADD
-                text: Field created!
-                severity: success
         - uesio/io.button:
             uesio.variant: uesio/io.secondary
             uesio.id: cancel-new-field

@@ -26,7 +26,14 @@ const StyleDefaults = Object.freeze({
 })
 
 const SearchArea: definition.UtilityComponent<Props> = (props) => {
-	const { searchTerm, setSearchTerm, actions, onSelect, placeholder } = props
+	const {
+		context,
+		searchTerm,
+		setSearchTerm,
+		actions,
+		onSelect,
+		placeholder,
+	} = props
 
 	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 	return (
@@ -37,7 +44,9 @@ const SearchArea: definition.UtilityComponent<Props> = (props) => {
 				value={searchTerm || ""}
 				onChange={(e) => setSearchTerm(e.target.value.toLowerCase())}
 				type="search"
-				placeholder={placeholder || "Search..."}
+				placeholder={
+					placeholder || `${context.getLabel("uesio/io.search")}...`
+				}
 				onKeyPress={(e) => {
 					if (e.key === "Enter" && onSelect) {
 						e.preventDefault()

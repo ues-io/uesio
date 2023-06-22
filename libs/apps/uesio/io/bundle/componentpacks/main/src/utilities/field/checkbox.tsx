@@ -5,20 +5,20 @@ interface CheckboxFieldProps extends definition.UtilityProps {
 	setValue: (value: boolean) => void
 	value: wire.FieldValue
 	mode?: context.FieldMode
+	focusOnRender?: boolean
 }
 
+const StyleDefaults = Object.freeze({
+	root: ["leading-none"],
+	input: [],
+})
+
 const CheckboxField: FunctionComponent<CheckboxFieldProps> = (props) => {
-	const { id, setValue, value, mode } = props
+	const { focusOnRender = false, id, setValue, value, mode } = props
 	const readonly = mode === "READ"
 
 	const checked = value === true
-	const classes = styles.useUtilityStyleTokens(
-		{
-			root: ["leading-none"],
-			input: [],
-		},
-		props
-	)
+	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
 	const checkRef = useRef<HTMLInputElement>(null)
 
@@ -37,6 +37,7 @@ const CheckboxField: FunctionComponent<CheckboxFieldProps> = (props) => {
 				type="checkbox"
 				disabled={readonly}
 				onChange={(event) => setValue?.(event.target.checked)}
+				autoFocus={focusOnRender}
 			/>
 		</div>
 	)

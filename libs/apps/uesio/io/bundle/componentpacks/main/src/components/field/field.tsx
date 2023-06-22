@@ -26,6 +26,7 @@ type FieldDefinition = {
 	labelPosition?: LabelPosition
 	label?: string
 	displayAs?: string
+	focusOnRender?: boolean
 	reference?: ReferenceFieldOptions | ReferenceGroupFieldOptions
 	list?: ListFieldOptions
 	map?: MapFieldOptions
@@ -75,6 +76,15 @@ const fileTextSignals: Record<string, signal.ComponentSignalDescriptor> = {
 	},
 }
 
+const fieldSignals: Record<string, signal.ComponentSignalDescriptor> = {
+	FOCUS: {
+		dispatcher: (state, signal, context, platform, id) => {
+			api.event.publish(UPLOAD_FILE_EVENT, { target: id })
+			return state
+		},
+	},
+}
+
 const StyleDefaults = Object.freeze({
 	input: [],
 	readonly: [],
@@ -87,6 +97,7 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		fieldId,
 		placeholder,
 		displayAs,
+		focusOnRender,
 		reference,
 		list,
 		map,
@@ -135,6 +146,7 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		mode,
 		fieldMetadata,
 		fieldId,
+		focusOnRender,
 		id: componentId,
 		value: record.getFieldValue(fieldId),
 		setValue: (value: wire.FieldValue) =>
@@ -171,7 +183,10 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 	)
 }
 
-Field.signals = fileTextSignals
+Field.signals = {
+	...fileTextSignals,
+	...fieldSignals,
+}
 
 export { fileTextSignals, UPLOAD_FILE_EVENT, CANCEL_FILE_EVENT }
 

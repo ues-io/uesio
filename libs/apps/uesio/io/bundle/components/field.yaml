@@ -260,6 +260,9 @@ sections:
   - type: STYLES
   - type: DISPLAY
 signals:
+  FOCUS:
+    label: Set focus on this field
+    properties: []
   UPLOAD_FILE:
     label: Upload File
     properties: []
