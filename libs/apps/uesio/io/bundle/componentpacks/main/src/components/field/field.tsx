@@ -76,15 +76,6 @@ const fileTextSignals: Record<string, signal.ComponentSignalDescriptor> = {
 	},
 }
 
-const fieldSignals: Record<string, signal.ComponentSignalDescriptor> = {
-	FOCUS: {
-		dispatcher: (state, signal, context, platform, id) => {
-			api.event.publish(UPLOAD_FILE_EVENT, { target: id })
-			return state
-		},
-	},
-}
-
 const StyleDefaults = Object.freeze({
 	input: [],
 	readonly: [],
@@ -183,10 +174,7 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 	)
 }
 
-Field.signals = {
-	...fileTextSignals,
-	...fieldSignals,
-}
+Field.signals = fileTextSignals
 
 export { fileTextSignals, UPLOAD_FILE_EVENT, CANCEL_FILE_EVENT }
 
