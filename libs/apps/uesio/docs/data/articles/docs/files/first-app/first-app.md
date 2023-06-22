@@ -66,6 +66,6 @@ Let's start by adding a collection `animal` which we'll use for our collection m
 1. Click on "Collections", then either type "n" or click on "Create new collection".
 2. Enter "animal", "Animal", "Animals", and click Save.
 
-Great! Now let's enter "n" again to add a "New Field" to our collection:
+Great! Now, we can either use "Suggest Fields" to let AI suggest fields for us, or we can manually add fields using "Create new field". Let's try out the Suggest Fields and see what we get:
 
-We can do this repeatedly.
+We can do this repeatedly
