@@ -12,7 +12,6 @@ import { useSelectedPath } from "../../../../api/stateapi"
 import { getFieldMetadata } from "../../../../api/wireapi"
 import * as prop from "../../../../properties/componentproperty"
 import * as operators from "../../../shared/operatorproperties"
-import { WireConditionState } from "libs/ui/src/wireexports"
 
 function getConditionPropertiesPanelTitle(
 	condition: wire.WireConditionState
@@ -75,11 +74,11 @@ function getConditionTitle(condition: wire.WireConditionState): string {
 
 function getOperatorOptions(
 	fieldDisplayType: string | undefined,
-	condition: WireConditionState
+	condition: wire.WireConditionState
 ) {
-	let o = operators
-	let options = [{ label: "", value: "" }]
-	let valueSource = condition?.valueSource
+	const o = operators
+	const options = [{ label: "", value: "" }]
+	const valueSource = condition?.valueSource
 	if (fieldDisplayType && valueSource) {
 		switch (valueSource) {
 			case "LOOKUP": {
@@ -242,7 +241,7 @@ function getValueProperty({
 
 const ConditionsProperties: definition.UC = (
 	props,
-	condition: WireConditionState
+	condition: wire.WireConditionState
 ) => {
 	const { context } = props
 	const ListPropertyUtility = component.getUtility(
@@ -268,9 +267,11 @@ const ConditionsProperties: definition.UC = (
 	const getCondition = () => {
 		if (conditions && selectedPathSize) {
 			if (selectedPathSize > 4) {
-				let subConditionId = selectedPath.pop()[0]?.valueOf() as string
-				let subConditionsPath = selectedPath.trimToSize(5)
-				let subConditions = get(
+				const subConditionId = selectedPath
+					.pop()[0]
+					?.valueOf() as string
+				const subConditionsPath = selectedPath.trimToSize(5)
+				const subConditions = get(
 					context,
 					subConditionsPath
 				) as wire.WireConditionState[]
