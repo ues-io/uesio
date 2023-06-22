@@ -31,6 +31,8 @@ var validGenerators = map[string]bool{
 	"theme":         true,
 	"route":         true,
 	"view":          true,
+	"listview":      true,
+	"detailview":    true,
 }
 
 func generate(cmd *cobra.Command, args []string) {
