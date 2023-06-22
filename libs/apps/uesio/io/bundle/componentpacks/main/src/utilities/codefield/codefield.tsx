@@ -55,7 +55,8 @@ const StyleDefaults = Object.freeze({
 const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
 	props
 ) => {
-	const { setValue, value, language, options, onMount, context } = props
+	const { setValue, value, language, options, onMount, context, theme } =
+		props
 	const [loading, setLoading] = useState(true)
 	const [loadingError, setLoadingError] = useState("")
 	const typeDefinitionFileURIs = preprocessTypeFileURIs(
@@ -156,6 +157,7 @@ const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
 					},
 					...options,
 				}}
+				theme={theme}
 				language={languageModel}
 				onChange={setValue}
 				beforeMount={handleEditorWillMount}

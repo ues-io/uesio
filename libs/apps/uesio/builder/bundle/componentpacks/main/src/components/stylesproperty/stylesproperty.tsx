@@ -79,7 +79,7 @@ const StylesProperty: definition.UC<Props> = (props) => {
 				"tailwind-classes.json"
 			)
 			platform.platform
-				.memoizedGetJSON<string[][]>(tailwindClassesUrl)
+				.memoizedGetJSON<string[][]>(context, tailwindClassesUrl)
 				.then(setTailwindTokens)
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps

@@ -42,12 +42,18 @@ type ParamIsNotSetCondition = {
 	param: string
 }
 
-type ParamValueCondition = {
+type ParamValueConditionBase = {
 	type: "paramValue"
 	param: string
 	operator: DisplayOperator
-	value: string
+	value?: string
+	values?: string[]
 }
+
+type ParamValueCondition = RequireOnlyOne<
+	ParamValueConditionBase,
+	"value" | "values"
+>
 
 type HasNoValueCondition = {
 	type: "hasNoValue"
@@ -241,18 +247,20 @@ function should(condition: DisplayCondition, context: Context) {
 			: hasAllRecords
 	}
 
+	const canHaveMultipleValues =
+		condition.type === "fieldValue" || condition.type === "paramValue"
+
 	const compareToValue =
 		typeof condition.value === "string"
 			? context.mergeString(condition.value as string)
-			: condition.value ||
-			  (condition.type === "fieldValue" ? condition.values : "")
+			: condition.value || (canHaveMultipleValues ? condition.values : "")
 
 	if (condition.type === "hasNoValue") return !compareToValue
 	if (condition.type === "hasValue") return !!compareToValue
 	if (condition.type === "paramValue")
 		return compare(
-			context.getParam(condition.param),
 			compareToValue,
+			context.getParam(condition.param),
 			condition.operator
 		)
 

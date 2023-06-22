@@ -1,4 +1,7 @@
+import { Context } from "../context/context"
+
 export const respondJSON = async (response: Response) => {
+	interceptPlatformRedirects(response)
 	if (response.status !== 200) {
 		const errorText = await response.text()
 		throw new Error(
@@ -12,6 +15,7 @@ export const respondJSON = async (response: Response) => {
 }
 
 export const respondVoid = async (response: Response) => {
+	interceptPlatformRedirects(response)
 	if (response.status !== 200) {
 		const errorText = await response.text()
 		throw new Error(errorText)
@@ -20,22 +24,61 @@ export const respondVoid = async (response: Response) => {
 	return
 }
 
-export const getJSON = (url: string) =>
+function interceptPlatformRedirects(response: Response) {
+	const locationHeader = response.headers.get("location")
+	if (locationHeader) {
+		window.location.href = locationHeader
+	}
+}
+
+function addOriginalSessionHashHeader(
+	context: Context,
+	headers: Record<string, string> = {}
+) {
+	const session = context.getSession()
+	if (session && headers) {
+		headers["x-uesio-osh"] = session.hash
+	}
+	return headers
+}
+
+export const getJSON = (context: Context, url: string) =>
 	fetch(url, {
 		method: "GET",
-		headers: {
+		headers: addOriginalSessionHashHeader(context, {
 			"Content-Type": "application/json",
 			"Accept-Encoding": "gzip, deflate",
-		},
+		}),
 	}).then(respondJSON)
 
-export const postJSON = (url: string, body?: Record<string, unknown>) =>
+export const post = (context: Context, url: string) =>
 	fetch(url, {
 		method: "POST",
-		headers: {
+		headers: addOriginalSessionHashHeader(context),
+	})
+
+export const postJSON = (
+	context: Context,
+	url: string,
+	body: Record<string, unknown>
+) =>
+	fetch(url, {
+		method: "POST",
+		headers: addOriginalSessionHashHeader(context, {
 			"Content-Type": "application/json",
-		},
-		...(body && {
-			body: JSON.stringify(body),
 		}),
+		body: JSON.stringify(body),
+	})
+
+export const postBinary = (
+	context: Context,
+	url: string,
+	body: string | Blob | File
+) =>
+	fetch(url, {
+		method: "POST",
+		headers: addOriginalSessionHashHeader(context, {
+			"Content-Type": "application/octet-stream",
+		}),
+		body,
 	})
