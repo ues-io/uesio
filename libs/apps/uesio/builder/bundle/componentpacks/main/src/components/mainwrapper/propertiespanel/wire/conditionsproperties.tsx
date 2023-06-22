@@ -275,10 +275,10 @@ const ConditionsProperties: definition.UC = (
 					context,
 					subConditionsPath
 				) as wire.WireConditionState[]
-				return subConditions[parseInt(subConditionId)]
+				return subConditions[parseInt(subConditionId, 10)]
 			} else {
 				return condition
-					? conditions[parseInt(mainConditionId)]
+					? conditions[parseInt(mainConditionId, 10)]
 					: condition
 			}
 		}
