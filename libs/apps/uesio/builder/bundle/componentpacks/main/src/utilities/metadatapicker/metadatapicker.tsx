@@ -12,6 +12,25 @@ interface MetadataPickerProps {
 	fieldWrapperVariant?: metadata.MetadataKey
 }
 
+export const sortMetadata = (
+	metadata: Record<string, metadata.MetadataInfo>,
+	contextApp?: string
+): metadata.MetadataInfo[] => {
+	// Prioritize same-app metadata items in the list
+	const values = Object.values(metadata)
+	values.sort((a, b) => {
+		if (contextApp) {
+			const aInApp = a.namespace === contextApp
+			const bInApp = b.namespace === contextApp
+			if (aInApp && bInApp) return 0
+			if (aInApp && !bInApp) return -1
+			if (bInApp && !aInApp) return 1
+		}
+		return a.key.localeCompare(b.key)
+	})
+	return values
+}
+
 const MetadataPicker: definition.UtilityComponent<MetadataPickerProps> = (
 	props
 ) => {
@@ -39,8 +58,10 @@ const MetadataPicker: definition.UtilityComponent<MetadataPickerProps> = (
 		"",
 		grouping
 	)
+	const contextApp =
+		context.getWorkspace()?.app || context.getSiteAdmin()?.app
 
-	const items = metadata ? Object.values(metadata) : []
+	const items = metadata ? sortMetadata(metadata, contextApp) : []
 
 	const renderer = (item: metadata.MetadataInfo) => (
 		<NamespaceLabel
