@@ -1,16 +1,16 @@
 import { FunctionComponent } from "react"
-import { definition, api, component } from "@uesio/ui"
+import { definition, api, component, metadata } from "@uesio/ui"
 
 type DataManagerDefinition = {
 	collectionId: string
 	namespace: string
+	wireId: string
+	tableId: string
 }
 
 interface Props extends definition.BaseProps {
 	definition: DataManagerDefinition
 }
-
-const WIRE_NAME = "collectionData"
 
 const getWireDefinition = (
 	collection: string,
@@ -25,22 +25,47 @@ const getWireDefinition = (
 	}
 }
 
-const DataManager: FunctionComponent<Props> = (props) => {
-	const { context, definition } = props
+type ColumnDefinition = {
+	field: string
+}
 
-	const collection = context.mergeString(definition.collectionId)
-	const namespace = context.mergeString(definition.namespace)
+const getColumns = (
+	fieldsMeta: Record<string, metadata.MetadataInfo>
+): ColumnDefinition[] => {
+	const fields = Object.values(fieldsMeta)
+	fields.sort((a, b) =>
+		a.key
+			.replace(a.namespace, "")
+			.localeCompare(b.key.replace(b.namespace, ""))
+	)
+	return fields.map((field) => ({
+		field: field.key,
+	}))
+}
+
+const DataManager: FunctionComponent<Props> = (props) => {
+	const {
+		context,
+		definition: {
+			collectionId,
+			namespace,
+			wireId = "collectionData",
+			tableId = "collectionDataTable",
+		},
+	} = props
+
+	const collection = context.mergeString(collectionId)
 
 	const [fieldsMeta] = api.builder.useMetadataList(
 		context,
 		"FIELD",
-		namespace,
+		context.mergeString(namespace),
 		collection
 	)
 
 	const wireDef = getWireDefinition(collection, fieldsMeta)
 
-	const dataWire = api.wire.useDynamicWire(WIRE_NAME, wireDef, context)
+	const dataWire = api.wire.useDynamicWire(wireId, wireDef, context)
 
 	if (!dataWire || !fieldsMeta) return null
 
@@ -48,8 +73,8 @@ const DataManager: FunctionComponent<Props> = (props) => {
 		<component.Component
 			componentType="uesio/io.table"
 			definition={{
-				id: "collectionDataTable",
-				wire: WIRE_NAME,
+				id: tableId,
+				wire: wireId,
 				mode: "EDIT",
 				rownumbers: true,
 				selectable: true,
@@ -64,9 +89,7 @@ const DataManager: FunctionComponent<Props> = (props) => {
 						],
 					},
 				],
-				columns: Object.keys(fieldsMeta).map((field) => ({
-					field,
-				})),
+				columns: getColumns(fieldsMeta),
 			}}
 			path={props.path}
 			context={context}
