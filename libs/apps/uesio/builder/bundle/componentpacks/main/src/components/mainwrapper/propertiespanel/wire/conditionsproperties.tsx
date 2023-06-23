@@ -10,7 +10,15 @@ import { add, get } from "../../../../api/defapi"
 import { FullPath } from "../../../../api/path"
 import { useSelectedPath } from "../../../../api/stateapi"
 import { getFieldMetadata } from "../../../../api/wireapi"
-import * as prop from "../../../../properties/componentproperty"
+import {
+	ComponentProperty,
+	TextProperty,
+	NumberProperty,
+	CheckboxProperty,
+	SelectProperty,
+	DateProperty,
+	TimestampProperty,
+} from "../../../../properties/componentproperty"
 import * as operators from "../../../shared/operatorproperties"
 
 function getConditionPropertiesPanelTitle(
@@ -76,13 +84,12 @@ function getOperatorOptions(
 	fieldDisplayType: string | undefined,
 	condition: wire.WireConditionState
 ) {
-	const o = operators
 	const options = [{ label: "", value: "" }]
 	const valueSource = condition?.valueSource
 	if (fieldDisplayType && valueSource) {
 		switch (valueSource) {
 			case "LOOKUP": {
-				return options.concat(o.INNOTIN)
+				return options.concat(operators.INNOTIN)
 			}
 			case "PARAM": {
 				switch (fieldDisplayType) {
@@ -91,31 +98,34 @@ function getOperatorOptions(
 					case "REFERENCE":
 					case "SELECT":
 					case "AUTONUMBER": {
-						return options.concat(o.EQNOTEQ, o.INNOTIN)
+						return options.concat(
+							operators.EQNOTEQ,
+							operators.INNOTIN
+						)
 					}
 					case "NUMBER":
 					case "TIMESTAMP":
 					case "DATE": {
 						return options.concat(
-							o.EQNOTEQ,
-							o.GTLT,
-							o.GTELTE,
-							o.INNOTIN
+							operators.EQNOTEQ,
+							operators.GTLT,
+							operators.GTELTE,
+							operators.INNOTIN
 						)
 					}
 					case "TEXT":
 					case "LONGTEXT": {
-						return options.concat(o.EQNOTEQ, [
-							o.STARTWITH,
-							o.CONTAINS,
+						return options.concat(operators.EQNOTEQ, [
+							operators.STARTWITH,
+							operators.CONTAINS,
 						])
 					}
 					case "REFERENCEGROUP":
 					case "MULTISELECT": {
-						return options.concat(o.ANYHASALL)
+						return options.concat(operators.ANYHASALL)
 					}
 					default:
-						return options.concat(o.EQNOTEQ)
+						return options.concat(operators.EQNOTEQ)
 				}
 			}
 			case "VALUE": {
@@ -126,44 +136,50 @@ function getOperatorOptions(
 					case "SELECT":
 					case "AUTONUMBER": {
 						return options.concat(
-							o.EQNOTEQ,
-							o.INNOTIN,
-							o.BLANKNOTBLANK
+							operators.EQNOTEQ,
+							operators.INNOTIN,
+							operators.BLANKNOTBLANK
 						)
 					}
 					case "FILE":
 					case "STRUCT":
 					case "CHECKBOX": {
-						return options.concat(o.EQNOTEQ, o.BLANKNOTBLANK)
+						return options.concat(
+							operators.EQNOTEQ,
+							operators.BLANKNOTBLANK
+						)
 					}
 					case "NUMBER":
 					case "TIMESTAMP":
 					case "DATE": {
 						return options.concat(
-							o.EQNOTEQ,
-							o.GTLT,
-							o.GTELTE,
-							o.INNOTIN,
-							o.BLANKNOTBLANK,
-							[o.BETWEEN]
+							operators.EQNOTEQ,
+							operators.GTLT,
+							operators.GTELTE,
+							operators.INNOTIN,
+							operators.BLANKNOTBLANK,
+							[operators.BETWEEN]
 						)
 					}
 					case "LONGTEXT":
 					case "TEXT": {
 						return options.concat(
-							o.EQNOTEQ,
-							[o.STARTWITH, o.CONTAINS],
-							o.BLANKNOTBLANK
+							operators.EQNOTEQ,
+							[operators.STARTWITH, operators.CONTAINS],
+							operators.BLANKNOTBLANK
 						)
 					}
 					case "MULTISELECT": {
-						return options.concat(o.ANYHASALL, o.BLANKNOTBLANK)
+						return options.concat(
+							operators.ANYHASALL,
+							operators.BLANKNOTBLANK
+						)
 					}
 					case "REFERENCEGROUP": {
-						return options.concat(o.ANYHASALL)
+						return options.concat(operators.ANYHASALL)
 					}
 					default:
-						return options.concat(o.EQNOTEQ)
+						return options.concat(operators.EQNOTEQ)
 				}
 			}
 		}
@@ -180,14 +196,12 @@ function getValueProperty({
 	fieldMetadata: collection.Field | undefined
 	context: context.Context
 }):
-	| prop.TextProperty
-	| prop.NumberProperty
-	| prop.CheckboxProperty
-	| prop.SelectProperty
-	| prop.DateProperty
-	| prop.TimestampProperty {
-	// TODO: Add additional property types here to support things like DATE
-
+	| TextProperty
+	| NumberProperty
+	| CheckboxProperty
+	| SelectProperty
+	| DateProperty
+	| TimestampProperty {
 	const baseValueProp = {
 		name: "value",
 		label: "Value",
@@ -210,22 +224,22 @@ function getValueProperty({
 		return {
 			...baseValueProp,
 			type: "CHECKBOX",
-		} as prop.CheckboxProperty
+		} as CheckboxProperty
 	}
 
 	if (fieldDisplayType === "NUMBER") {
-		return { ...baseValueProp, type: "NUMBER" } as prop.NumberProperty
+		return { ...baseValueProp, type: "NUMBER" } as NumberProperty
 	}
 
 	if (fieldDisplayType === "DATE") {
-		return { ...baseValueProp, type: "DATE" } as prop.DateProperty
+		return { ...baseValueProp, type: "DATE" } as DateProperty
 	}
 
 	if (fieldDisplayType === "TIMESTAMP") {
 		return {
 			...baseValueProp,
 			type: "TIMESTAMP",
-		} as prop.TimestampProperty
+		} as TimestampProperty
 	}
 
 	if (fieldDisplayType === "SELECT") {
@@ -233,10 +247,10 @@ function getValueProperty({
 			...baseValueProp,
 			type: "SELECT",
 			options: fieldMetadata?.getSelectOptions(context),
-		} as prop.SelectProperty
+		} as SelectProperty
 	}
 
-	return { ...baseValueProp, type: "TEXT" } as prop.TextProperty
+	return { ...baseValueProp, type: "TEXT" } as TextProperty
 }
 
 const ConditionsProperties: definition.UC = (
@@ -289,7 +303,7 @@ const ConditionsProperties: definition.UC = (
 	const getProperties = (
 		parentPath: FullPath,
 		itemState: wire.PlainWireRecord
-	): prop.ComponentProperty[] => {
+	): ComponentProperty[] => {
 		const fieldMetadata =
 			itemState.field && wireName
 				? getFieldMetadata(
