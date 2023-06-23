@@ -53,12 +53,12 @@ const getUesioFieldFromSuggestedFieldTests = [
 		name: "date",
 		input: {
 			type: "date",
-			label: "some date",
+			label: "date_of_birth",
 		},
 		expected: {
-			"uesio/studio.name": "some_date",
+			"uesio/studio.name": "date_of_birth",
 			"uesio/studio.type": "DATE",
-			"uesio/studio.label": "Some date",
+			"uesio/studio.label": "Date of birth",
 		},
 	},
 	{
@@ -123,20 +123,22 @@ const getUesioFieldFromSuggestedFieldTests = [
 	},
 ]
 
-getUesioFieldFromSuggestedFieldTests.forEach((def) => {
-	test(def.name, () => {
-		expect(
-			getUesioFieldFromSuggestedField(
-				def.input,
-				sampleCollectionName,
-				sampleWorkspaceId
-			)
-		).toEqual({
-			...def.expected,
-			"uesio/studio.collection": sampleCollectionName,
-			"uesio/studio.workspace": {
-				"uesio/core.id": sampleWorkspaceId,
-			},
+describe("AI Suggested Fields", () => {
+	getUesioFieldFromSuggestedFieldTests.forEach((def) => {
+		test(def.name, () => {
+			expect(
+				getUesioFieldFromSuggestedField(
+					def.input,
+					sampleCollectionName,
+					sampleWorkspaceId
+				)
+			).toEqual({
+				...def.expected,
+				"uesio/studio.collection": sampleCollectionName,
+				"uesio/studio.workspace": {
+					"uesio/core.id": sampleWorkspaceId,
+				},
+			})
 		})
 	})
 })
