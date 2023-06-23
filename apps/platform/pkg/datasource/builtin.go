@@ -79,14 +79,14 @@ var UPDATEDAT_FIELD_METADATA = adapt.FieldMetadata{
 	AutoPopulate: "UPDATE",
 }
 
-var COLLECTION_FIELD = adapt.FieldMetadata{
-	Name:       "collection",
+var DYNAMIC_COLLECTION_FIELD = adapt.FieldMetadata{
+	Name:       "dynamiccollection",
 	Namespace:  "uesio/core",
 	Createable: false,
 	Accessible: true,
 	Updateable: false,
 	Type:       "TEXT",
-	Label:      "Collection",
+	Label:      "Dynamic Collection",
 }
 
 func addAllBuiltinFields(collectionMetadata *adapt.CollectionMetadata) {
