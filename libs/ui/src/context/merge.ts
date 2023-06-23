@@ -171,9 +171,8 @@ const handlers: Record<MergeType, MergeHandler> = {
 	},
 	File: (expression, context) => getURLFromFullName(context, expression),
 	UserFile: (expression, context) => {
-		const file = context
-			.getRecord()
-			?.getFieldValue<PlainWireRecord>(expression)
+		const record = context.getRecord()
+		const file = record?.getFieldValue<PlainWireRecord>(expression)
 		if (!file) return ""
 		const fileId = file[ID_FIELD] as string
 		if (!fileId) return ""

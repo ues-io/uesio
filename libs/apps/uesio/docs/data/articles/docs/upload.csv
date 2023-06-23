@@ -1,4 +1,13 @@
 uesio/core.recordid,uesio/core.fieldid,uesio/core.path
 home,uesio/cms.content,home/home.md
-create-account,uesio/cms.content,create-account/create-account.md
+first-app,,first-app/generatedlistview.png
+first-app,,first-app/suggestfieldsbutton.png
+first-app,,first-app/aigenerateddata.png
+first-app,,first-app/suggestfieldsoutput.png
+first-app,,first-app/createnewapp.png
 first-app,uesio/cms.content,first-app/first-app.md
+first-app,,first-app/listviewgeneratorparams.png
+first-app,,first-app/generatesampledata.png
+first-app,,first-app/routepreview.png
+first-app,,first-app/newappdialog.png
+create-account,uesio/cms.content,create-account/create-account.md

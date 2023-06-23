@@ -4,7 +4,10 @@ import FileImage from "../fileimage/fileimage"
 import FileVideo from "../filevideo/filevideo"
 import FilePreview from "../filepreview/filepreview"
 import File from "../file/file"
-import { UserFileMetadata } from "../../components/field/field"
+import {
+	MarkdownFieldOptions,
+	UserFileMetadata,
+} from "../../components/field/field"
 
 interface FileUtilityProps {
 	path: string
@@ -15,12 +18,14 @@ interface FileUtilityProps {
 	mode?: context.FieldMode
 	record: wire.WireRecord
 	displayAs?: string
+	markdownOptions?: MarkdownFieldOptions
 }
 
 const FileField: definition.UtilityComponent<FileUtilityProps> = (props) => {
 	const {
 		displayAs,
 		context,
+		markdownOptions,
 		mode,
 		id,
 		variant,
@@ -78,7 +83,7 @@ const FileField: definition.UtilityComponent<FileUtilityProps> = (props) => {
 	switch (displayAs) {
 		case "TEXT":
 		case "MARKDOWN":
-			return <FileText {...common} />
+			return <FileText {...common} markdownOptions={markdownOptions} />
 		case "IMAGE":
 			return <FileImage {...common} />
 		case "VIDEO":

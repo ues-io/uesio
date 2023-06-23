@@ -19,9 +19,9 @@ At this point, you've already interacted with 4 different apps owned by the uesi
 
 Before we move on, go ahead and create your first app by clicking the + button in the top left.
 
-![Create your first app]($File{uesio/docs.createnewapp} "create your first app")
+![Create your first app](./createnewapp.png "create your first app")
 
-![New app dialog]($File{uesio/docs.newappdialog} "new app dialog")
+![New app dialog](./newappdialog.png "new app dialog")
 
 👩‍💻 **CLI** 👨🏿‍💻
 
@@ -68,11 +68,11 @@ Let's start by adding a collection `animal` which we'll use for our collection m
 
 Great! Now, we can either use "Suggest Fields" to let AI suggest fields for us, or we can manually add fields using "Create new field". Let's try out the "Suggest Fields" and see what we get:
 
-![Suggest fields]($File{uesio/docs.suggestfieldsbutton} "use ai to suggest fields")
+![Suggest fields](./suggestfieldsbutton.png "use ai to suggest fields")
 
 Cool! This is a great starting point for our collection. Let's go ahead and "Save Field Changes" to add these fields to our collection.
 
-![Suggest fields output]($File{uesio/docs.suggestfieldsoutput} "suggested fields")
+![Suggest fields output](./suggestfieldsoutput.png "suggested fields")
 
 We can also add our own fields if we want, but this will do for now.
 
@@ -84,9 +84,15 @@ To help with building and testing apps, workspaces can have their own collection
 
 We can manage the data in a workspace collection using the "Manage Data" button, "Import Data" from a CSV file, or even "Export Data" to a CSV. Any data / metadata you put into ues.io, you can get out!
 
+To quickly data to a collection, though, we can use "Generate sample data", which will use some AI magic to create data matching our collection fields specification.
+
+![Generate sample data](./generatesampledata.png "generate sample data")
+
+![AI generated data](./aigenerateddata.png "AI generated data")
+
 ## Views
 
-Okay, we've got our data set up, now it's time to build a view to interact with it!
+Okay, now that we've got some data, it's time to build a view to interact with it!
 
 Click on "Views" in the sidebar.
 
@@ -98,3 +104,54 @@ For Views, two super-common patterns for which ues.io provides built-in generato
 -   **Detail view**: for viewing/editing a single collection record
 
 Let's use "Generate List View".
+
+👩‍💻 **CLI** 👨🏿‍💻
+
+> `uesio generate listview`
+
+First, select the collection we want to use (e.g. "animals"), then pick the fields from that collection that we want to display in our list view.
+
+![Generator params](./listviewgeneratorparams.png "list view generator params")
+
+![list view result](./generatedlistview.png "Generated list view")
+
+At this point, we _could_ click on our view to enter the View Builder, which is where the real magic of ues.io happens, but we'll wait on that just a bit, until we've rounded out our whirlwind tour :)
+
+## Routes
+
+Now that we've got a view, we need a URL path at which users can access it.
+
+Since this is view displays a list of animals, it would be great if we could go to "/animals" in our browser to see this list, so let's create a route to make that happen.
+
+1. Click on **Routes** in the left nav.
+2. Click the **Create new route** button (or hotkey "n")
+3. Enter **animals** for name and path, then select **animal_list** as the view.
+4. Select the default theme.
+5. Click save.
+
+👩‍💻 **CLI** 👨🏿‍💻
+
+> `uesio generate route`
+
+![create route dialog](./createroute.png "Create route")
+
+Great! Now, click **Preview**
+
+🎉 Hurray! We've got ourselves a working app. We can create, edit, delete, and save the records in our animals collection.
+
+![route preview](./routepreview.png "route preview")
+
+## Conclusion
+
+With that, we've got ourselves a working app!
+
+Let's take a quick moment to consider everything we did _not_ have to do:
+
+-   Write a backend API for creating, updating, and deleting data
+-   Setup and configure a frontend component framework
+-   Find, assemble, and/or write any UI component code
+-   Write code to connect our components to our backend APIs
+
+That's just scratching the surface. There's _so_ much more wheel that ues.io is saving us from having to reinvent, and we've barely scratched the surface of what it can do.
+
+Now, let's talk about how to deploy this to users using sites.
