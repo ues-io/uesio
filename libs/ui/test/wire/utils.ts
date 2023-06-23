@@ -44,12 +44,15 @@ export const testWireSignal = async ({
 	})
 	const handler = api.signal.getHandler(signals, context)
 	if (signals && !handler) throw new Error("No signal handler")
-	if (handler) await handler()
+	let resultContext = context
+	if (handler) {
+		resultContext = await handler()
+	}
 
 	const wire = selectWire(store.getState(), view, wireId)
 
 	if (!wire) throw new Error("Wire not created")
-	test(wire, context)
+	test(wire, resultContext)
 }
 
 export const defaultPlainWireProperties = {

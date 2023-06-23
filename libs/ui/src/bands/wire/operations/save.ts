@@ -51,15 +51,15 @@ export default async (context: Context, wires?: string[]) => {
 			}
 		})
 
+		const hasServerChanges = Object.keys(serverChanges).length > 0
+		const hasServerDeletes = Object.keys(serverDeletes).length > 0
+
 		response.wires.push({
 			wire: wireId,
 			errors: [],
 			changes: clientChanges,
 			deletes: clientDeletes,
 		})
-
-		const hasServerChanges = Object.keys(serverChanges).length
-		const hasServerDeletes = Object.keys(serverDeletes).length
 
 		return hasServerChanges || hasServerDeletes
 			? [
@@ -79,8 +79,28 @@ export default async (context: Context, wires?: string[]) => {
 			const serverResponse = await platform.saveData(context, {
 				wires: requests,
 			})
-			serverResponse.wires.forEach((wire) => {
-				response.wires.push(wire)
+			serverResponse.wires.forEach((serverWire) => {
+				// See if we already have a wire in there, and if so, merge in the changes/deletes
+				const clientWireMatchIdx = response.wires.findIndex(
+					(clientWire) => clientWire.wire === serverWire.wire
+				)
+				if (clientWireMatchIdx === -1) {
+					response.wires.push(serverWire)
+				} else {
+					const clientWire = response.wires[clientWireMatchIdx]
+					response.wires[clientWireMatchIdx] = {
+						wire: serverWire.wire,
+						errors: serverWire.errors,
+						changes: {
+							...(clientWire.changes || {}),
+							...(serverWire.changes || {}),
+						},
+						deletes: {
+							...(clientWire.deletes || {}),
+							...(serverWire.deletes || {}),
+						},
+					}
+				}
 			})
 		} catch (error) {
 			const message = getErrorString(error)
