@@ -1,0 +1,16 @@
+name: destructive
+label: Destructive
+extends: uesio/io.secondary
+definition:
+  uesio.styleTokens:
+    root:
+      - bg-slate-100
+      - border-slate-300
+      - text-red-700
+      - hover:bg-red-600
+      - hover:border-black-100
+      - hover:text-white
+      - focus:bg-red-600
+      - focus:border-black-100
+      - focus:text-white
+public: true

@@ -1,5 +1,6 @@
 import { definition, component, api, metadata } from "@uesio/ui"
 import NamespaceLabel from "../namespacelabel/namespacelabel"
+import { sortMetadata } from "../metadatapicker/metadatapicker"
 
 interface MultiMetadataPickerProps {
 	value: string[]
@@ -39,8 +40,10 @@ const MultiMetadataPicker: definition.UtilityComponent<
 		"",
 		grouping
 	)
+	const contextApp =
+		context.getWorkspace()?.app || context.getSiteAdmin()?.app
 
-	const items = metadata ? Object.values(metadata) : []
+	const items = metadata ? sortMetadata(metadata, contextApp) : []
 
 	const renderer = (item: metadata.MetadataInfo) => (
 		<NamespaceLabel

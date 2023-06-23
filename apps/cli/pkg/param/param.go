@@ -3,8 +3,10 @@ package param
 import (
 	"errors"
 	"fmt"
-	"github.com/thecloudmasters/cli/pkg/goutils"
+	"regexp"
 	"strings"
+
+	"github.com/thecloudmasters/cli/pkg/goutils"
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/thecloudmasters/cli/pkg/call"
@@ -131,7 +133,14 @@ func Ask(param meta.BotParamResponse, app, version, sessid string, answers map[s
 	if param.Conditions != nil {
 		for _, condition := range param.Conditions {
 			value := answers[condition.Param]
-			if value != condition.Value {
+			if condition.Type == "hasValue" || condition.Type == "hasNoValue" {
+				hasValue := value != nil && value != ""
+				if condition.Type == "hasValue" && !hasValue {
+					return nil
+				} else if condition.Type == "hasNoValue" && hasValue {
+					return nil
+				}
+			} else if value != condition.Value {
 				return nil
 			}
 		}
@@ -150,6 +159,9 @@ func Ask(param meta.BotParamResponse, app, version, sessid string, answers map[s
 		if err != nil {
 			return err
 		}
+		if answer == "" && defaultValue != "" {
+			answer = defaultValue
+		}
 		answers[param.Name] = answer
 	case "BOOL":
 		var answer bool
@@ -163,6 +175,11 @@ func Ask(param meta.BotParamResponse, app, version, sessid string, answers map[s
 	case "METADATANAME":
 		var answer string
 		defaultValue, err := mergeParam(param.Default, answers)
+		// strip out any namespaces from the default value
+		isNamespacedValue, err := regexp.MatchString("\\w+\\/\\w+\\.\\w+", defaultValue)
+		if err == nil && isNamespacedValue {
+			defaultValue = strings.Split(defaultValue, ".")[1]
+		}
 		if err != nil {
 			return err
 		}
@@ -172,6 +189,9 @@ func Ask(param meta.BotParamResponse, app, version, sessid string, answers map[s
 		}, &answer, survey.WithValidator(metadataValidator))
 		if err != nil {
 			return err
+		}
+		if answer == "" && defaultValue != "" {
+			answer = defaultValue
 		}
 		answers[param.Name] = answer
 	case "METADATA":

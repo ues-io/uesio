@@ -3,7 +3,6 @@ import { collection, definition, metadata, context, wire } from "@uesio/ui"
 
 import CheckboxField from "../../utilities/field/checkbox"
 import DateField from "../../utilities/field/date"
-import EmailField from "../../utilities/field/email"
 import MarkDownField from "../../utilities/markdownfield/markdownfield"
 import MultiCheckField from "../../utilities/field/multicheck"
 import MultiSelectField from "../../utilities/field/multiselect"
@@ -49,6 +48,7 @@ interface FieldProps extends definition.UtilityProps {
 	path: string
 	record: wire.WireRecord
 	displayAs?: string
+	focusOnRender?: boolean
 	applyChanges?: ApplyChanges
 	// Type specific
 	reference?: ReferenceFieldOptions | ReferenceGroupFieldOptions
@@ -71,6 +71,7 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 		displayAs,
 		fieldId,
 		fieldMetadata,
+		focusOnRender,
 		id,
 		labelPosition,
 		labelVariant,
@@ -110,6 +111,7 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 		context,
 		fieldId,
 		fieldMetadata,
+		focusOnRender,
 		id,
 		mode,
 		path,
@@ -161,9 +163,6 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 					type={displayAs === "SLIDER" ? "range" : "number"}
 				/>
 			)
-			break
-		case "EMAIL":
-			content = <EmailField {...common} />
 			break
 		case "SELECT": {
 			selectOptions = fieldMetadata.getSelectOptions(context)

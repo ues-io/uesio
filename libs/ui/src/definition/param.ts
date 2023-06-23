@@ -1,5 +1,11 @@
 import { MetadataType } from "../bands/builder/types"
 
+export type ParamCondition = {
+	param: string
+	value?: string | boolean | number
+	type: "fieldValue" | "hasValue" | "hasNoValue"
+}
+
 type ParamBase = {
 	name: string
 	type:
@@ -13,6 +19,7 @@ type ParamBase = {
 	required?: boolean
 	default?: string
 	prompt?: string
+	conditions?: ParamCondition[]
 }
 
 type RecordParam = ParamBase & {

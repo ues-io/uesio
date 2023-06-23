@@ -16,29 +16,52 @@ interface FormProps {
 	setOpen: (value: boolean) => void
 }
 
+const getDisplayConditionsFromBotParamConditions = (
+	conditions: param.ParamCondition[] = []
+) => {
+	if (!conditions.length) return conditions
+	return conditions.map(({ type, param, value }) => {
+		if (type === "hasValue" || type === "hasNoValue") {
+			return {
+				type,
+				value: "${" + param + "}",
+			}
+		} else {
+			return {
+				field: param,
+				value,
+			}
+		}
+	}) as component.DisplayCondition[]
+}
+
 const getLayoutFieldFromParamDef = (def: param.ParamDefinition) => {
+	const fieldCommon = {
+		fieldId: def.name,
+		"uesio.display": getDisplayConditionsFromBotParamConditions(
+			def.conditions
+		),
+	}
 	switch (def.type) {
 		case "METADATA":
 			return {
 				"uesio/builder.metadatafield": {
-					fieldId: def.name,
 					metadataType: def.metadataType,
 					grouping: def.grouping,
+					...fieldCommon,
 				},
 			}
 		case "METADATAMULTI":
 			return {
 				"uesio/builder.multimetadatafield": {
-					fieldId: def.name,
 					metadataType: def.metadataType,
 					grouping: def.grouping,
+					...fieldCommon,
 				},
 			}
 		default:
 			return {
-				"uesio/io.field": {
-					fieldId: def.name,
-				},
+				"uesio/io.field": fieldCommon,
 			}
 	}
 }

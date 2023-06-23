@@ -44,11 +44,13 @@ func NewBaseBot(botType, collectionKey, namespace, name string) *Bot {
 type BotParamCondition struct {
 	Param string      `yaml:"param" json:"param"`
 	Value interface{} `yaml:"value" json:"value"`
+	Type  string      `yaml:"type,omitempty" json:"type"`
 }
 
 type BotParamConditionResponse struct {
 	Param string      `json:"param"`
 	Value interface{} `json:"value"`
+	Type  string      `json:"type"`
 }
 
 type BotParam struct {

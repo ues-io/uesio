@@ -4,6 +4,8 @@ labels:
   uesio/io.copy: kopieren
   uesio/io.delete: löschen
   uesio/io.edit: bearbeiten
+  uesio/io.no_data_available: keine daten verfügbar
   uesio/io.preview: vorschau
   uesio/io.save: speichern
+  uesio/io.search: suchen
 public: true

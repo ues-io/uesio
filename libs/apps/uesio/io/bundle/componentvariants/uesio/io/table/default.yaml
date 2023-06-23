@@ -62,4 +62,16 @@ definition:
       - "[&.hasRowAction>tr]:hover:bg-slate-50"
     rowDeleted:
       - bg-red-100
+    noData:
+      - border-b
+      - border-r
+      - border-l
+      - border-slate-300
+      - text-center
+      - rounded-br-lg
+      - rounded-bl-lg
+      - p-4
+      - text-slate-500
+      - text-sm
+      - font-light
 public: true

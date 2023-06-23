@@ -6,6 +6,7 @@ type DateFieldProps = {
 	setValue: (value: wire.FieldValue) => void
 	value: wire.FieldValue
 	mode?: context.FieldMode
+	focusOnRender?: boolean
 }
 
 const StyleDefaults = Object.freeze({
@@ -14,7 +15,7 @@ const StyleDefaults = Object.freeze({
 })
 
 const DateField: definition.UtilityComponent<DateFieldProps> = (props) => {
-	const { setValue, mode, id } = props
+	const { focusOnRender = false, setValue, mode, id } = props
 
 	const value = props.value as string
 	const controlledInputProps = useControlledInput(value, setValue, "")
@@ -50,6 +51,7 @@ const DateField: definition.UtilityComponent<DateFieldProps> = (props) => {
 			{...controlledInputProps}
 			type="date"
 			disabled={readonly}
+			autoFocus={focusOnRender}
 		/>
 	)
 }

@@ -346,7 +346,7 @@ const wireSlice = createSlice({
 				const wireState = state.entities[wireId]
 				if (!wireState) return
 
-				if (wire.errors) {
+				if (wire.errors && wire.errors.length) {
 					wireState.errors = {}
 					const errorObj = wireState.errors
 					wire.errors.forEach((error) => {

@@ -19,6 +19,7 @@ interface NumberFieldProps extends definition.UtilityProps {
 	options?: NumberFieldOptions
 	placeholder?: string
 	type?: "number" | "range"
+	focusOnRender?: boolean
 }
 
 const StyleDefaults = Object.freeze({
@@ -39,6 +40,7 @@ const NumberField: FunctionComponent<NumberFieldProps> = (props) => {
 		options,
 		setValue,
 		type = "number",
+		focusOnRender = false,
 	} = props
 
 	const value = props.value as number | string
@@ -77,6 +79,7 @@ const NumberField: FunctionComponent<NumberFieldProps> = (props) => {
 					min={options?.min}
 					max={options?.max}
 					title={`${controlledInputProps.value}`}
+					autoFocus={focusOnRender}
 				/>
 				{type === "range" ? (
 					<span className={classes.rangevalue}>

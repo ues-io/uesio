@@ -31,7 +31,7 @@ const search = (
 const SearchBox: definition.UC<SearchBoxDefinition> = (props) => {
 	const {
 		definition: {
-			placeholder = "Search",
+			placeholder = props.context.getLabel("uesio/io.search"),
 			searchFields,
 			wire,
 			focusOnRender = false,

@@ -2,9 +2,6 @@ name: listview
 dialect: "JAVASCRIPT"
 type: "GENERATOR"
 params:
-  - name: name
-    prompt: View Name
-    type: METADATANAME
   - name: collection
     prompt: Collection
     type: METADATA
@@ -14,4 +11,11 @@ params:
     type: METADATAMULTI
     metadataType: FIELD
     grouping: ${collection}
+    conditions:
+      - param: collection
+        type: hasValue
+  - name: name
+    prompt: View Name (optional)
+    type: METADATANAME
+    default: ${collection}_list
 public: true
