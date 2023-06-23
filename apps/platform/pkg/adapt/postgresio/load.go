@@ -42,7 +42,7 @@ func getFieldName(fieldMetadata *adapt.FieldMetadata, tableAlias string) string 
 		return getAliasedName("updatedby", tableAlias)
 	case adapt.UPDATED_AT_FIELD:
 		return fmt.Sprintf("date_part('epoch',%s)", getAliasedName("updatedat", tableAlias))
-	case adapt.COLLECTION_FIELD:
+	case adapt.DYNAMIC_COLLECTION_FIELD:
 		return getAliasedName("collection", tableAlias)
 	}
 
