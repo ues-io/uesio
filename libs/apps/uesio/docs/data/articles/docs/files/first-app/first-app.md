@@ -76,10 +76,25 @@ Cool! This is a great starting point for our collection. Let's go ahead and "Sav
 
 We can also add our own fields if we want, but this will do for now.
 
-## Adding data to collections
-
 Now that we've got a collection and some fields, let's do something with it!
+
+### Aside: Collection data
 
 To help with building and testing apps, workspaces can have their own collection data, which is isolated just to the workspace. Once we publish the first version of our app and deploy it to a real site with real users, we'll see that the data for those sites is completely separate --- workspace collection data is just for testing of our apps.
 
 We can manage the data in a workspace collection using the "Manage Data" button, "Import Data" from a CSV file, or even "Export Data" to a CSV. Any data / metadata you put into ues.io, you can get out!
+
+## Views
+
+Okay, we've got our data set up, now it's time to build a view to interact with it!
+
+Click on "Views" in the sidebar.
+
+Although we can (and often will) build Views from scratch, a fast way to get started is to use ues.io's powerful [generators](concepts/generators). Generators use templated metadata definitions to let you rapidly create metadata according to common patterns.
+
+For Views, two super-common patterns for which ues.io provides built-in generators are:
+
+-   **List view**: for interacting with a list of records in a collection
+-   **Detail view**: for viewing/editing a single collection record
+
+Let's use "Generate List View".
