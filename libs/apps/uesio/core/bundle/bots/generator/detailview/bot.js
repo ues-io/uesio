@@ -1,8 +1,9 @@
 function view(bot) {
-	var name = bot.params.get("name")
 	var collection = bot.params.get("collection")
+	var lastPartOfCollection = collection?.split(".")[1]
 	var fields = bot.params.get("fields")
-	var wirename = collection?.split(".")[1] || name
+	var name = bot.params.get("name") || `${lastPartOfCollection}_detail`
+	var wirename = lastPartOfCollection || name
 	var fieldsYaml = bot.repeatString(fields, "${key}:\n")
 	var formFieldsYaml = bot.repeatString(
 		fields,

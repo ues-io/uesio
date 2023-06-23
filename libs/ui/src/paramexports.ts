@@ -1,3 +1,3 @@
-import { ParamDefinition } from "./definition/param"
+import { ParamCondition, ParamDefinition } from "./definition/param"
 
-export type { ParamDefinition }
+export type { ParamCondition, ParamDefinition }
