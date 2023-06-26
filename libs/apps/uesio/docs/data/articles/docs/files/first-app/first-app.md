@@ -43,17 +43,17 @@ Click the + button in the top left to create a workspace. Try "dev" as the name.
 
 Now that you've got a workspace, it's time to add some metadata to your app!
 
-There are several high-level [metadata types](metadata-types/home) you can add in ues.io, which we'll just briefly summarize here:
+There are several high-level [metadata types](home) you can add in ues.io, which we'll just briefly summarize here:
 
 -   **Data Structure and Content**:
-    -   [Collections](metadata-types/collections): Basically, these are declarative database tables / spreadsheets. Used for structured data storage
-    -   [Files](metadata-types/files): Static, unstructured content. Usually images, but could be textual content as well.
+    -   [Collections](collections): Basically, these are declarative database tables / spreadsheets. Used for structured data storage
+    -   [Files](files): Static, unstructured content. Usually images, but could be textual content as well.
 -   **User Interface**:
-    -   [Views](metadata-types/views): An assembly of [components](metadata-types/components) and [wires](concepts/wires) that comprise an interactive user interface (often called called "pages" in other tools). Views can contain other Views, and can be accessed via Routes.
-    -   [Routes](metadata-types/routes): The URL paths that you can use to access a View. Can contain path/query-string parameters which are sent to Views.
+    -   [Views](views): An assembly of [components](components) and [wires](wires) that comprise an interactive user interface (often called called "pages" in other tools). Views can contain other Views, and can be accessed via Routes.
+    -   [Routes](routes): The URL paths that you can use to access a View. Can contain path/query-string parameters which are sent to Views.
 -   **Security & Access**:
-    -   [Permission Sets](metadata-types/profiles-and-permission-sets): A logical grouping of access control settings, such as the ability for a user to create and edit a collection, go to a route, or view a file.
-    -   [Profiles](metadata-types/profiles-and-permission-sets): A set of permission sets. Users can be assigned only one profile.
+    -   [Permission Sets](profiles-and-permission-sets): A logical grouping of access control settings, such as the ability for a user to create and edit a collection, go to a route, or view a file.
+    -   [Profiles](profiles-and-permission-sets): A set of permission sets. Users can be assigned only one profile.
 
 There's lots more, but for now, we'll just stick to these.
 
@@ -96,7 +96,7 @@ Okay, now that we've got some data, it's time to build a view to interact with i
 
 Click on "Views" in the sidebar.
 
-Although we can (and often will) build Views from scratch, a fast way to get started is to use ues.io's powerful [generators](concepts/generators). Generators use templated metadata definitions to let you rapidly create metadata according to common patterns.
+Although we can (and often will) build Views from scratch, a fast way to get started is to use ues.io's powerful [generators](generators). Generators use templated metadata definitions to let you rapidly create metadata according to common patterns.
 
 For Views, two super-common patterns for which ues.io provides built-in generators are:
 
