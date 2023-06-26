@@ -6,7 +6,9 @@ import {
 	UserFileMetadata,
 } from "../../components/field/field"
 import CodeField from "../codefield/codefield"
-import MarkDownField from "../markdownfield/markdownfield"
+import MarkDownField, {
+	MarkdownFieldOptions,
+} from "../markdownfield/markdownfield"
 
 interface FileTextProps extends definition.UtilityProps {
 	path: string
@@ -18,6 +20,8 @@ interface FileTextProps extends definition.UtilityProps {
 	typeDefinitionFileURIs?: string[]
 	// The Monaco Editor theme to use if rendering a code editor
 	theme?: string
+	// Markdown options
+	markdownOptions?: MarkdownFieldOptions
 }
 
 const stringToFile = (value: string, fileName: string, mimeType: string) => {
@@ -34,6 +38,7 @@ const FileText: FunctionComponent<FileTextProps> = (props) => {
 		context,
 		userFile,
 		onUpload,
+		markdownOptions,
 		mode,
 		displayAs,
 		id,
@@ -86,6 +91,7 @@ const FileText: FunctionComponent<FileTextProps> = (props) => {
 				mode={mode}
 				setValue={changeHandler}
 				variant={props.variant}
+				options={markdownOptions}
 			/>
 		)
 	}
