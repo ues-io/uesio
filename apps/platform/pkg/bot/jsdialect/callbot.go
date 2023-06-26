@@ -16,7 +16,7 @@ func (acba *AdminCallBotAPI) Save(collection string, changes adapt.Collection) e
 	return botSave(collection, changes, datasource.GetSiteAdminSession(acba.Session), acba.Connection)
 }
 
-func (acba *AdminCallBotAPI) RunIntegrationAction(integrationID string, action string, options interface{}) error {
+func (acba *AdminCallBotAPI) RunIntegrationAction(integrationID string, action string, options interface{}) (interface{}, error) {
 	return runIntegrationAction(integrationID, action, options, datasource.GetSiteAdminSession(acba.Session))
 }
 
@@ -48,7 +48,7 @@ func (bs *CallBotAPI) Load(request BotLoadOp) (*adapt.Collection, error) {
 	return botLoad(request, bs.Session, bs.Connection)
 }
 
-func (bs *CallBotAPI) RunIntegrationAction(integrationID string, action string, options interface{}) error {
+func (bs *CallBotAPI) RunIntegrationAction(integrationID string, action string, options interface{}) (interface{}, error) {
 	return runIntegrationAction(integrationID, action, options, bs.Session)
 }
 

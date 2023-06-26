@@ -14,6 +14,7 @@ import {
 	toggleCondition,
 	setConditionValue,
 	getFullWireId,
+	reset,
 } from "."
 import saveWiresOp from "./operations/save"
 import loadWireOp from "./operations/load"
@@ -144,6 +145,14 @@ class Wire {
 	cancel = () => {
 		dispatch(
 			cancel({
+				entity: this.getFullId(),
+			})
+		)
+	}
+
+	reset = () => {
+		dispatch(
+			reset({
 				entity: this.getFullId(),
 			})
 		)
