@@ -355,7 +355,9 @@ const getProperties = (
 						{
 							field: "operator",
 							operator: "IN",
-							values: multiValueOperators,
+							values: multiValueOperators.concat(
+								blankNotBlankOperators
+							),
 							type: "fieldValue",
 						},
 					],
