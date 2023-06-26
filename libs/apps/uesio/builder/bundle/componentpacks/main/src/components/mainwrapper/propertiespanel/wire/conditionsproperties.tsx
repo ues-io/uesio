@@ -10,6 +10,7 @@ import {
 	CheckboxProperty,
 	SelectProperty,
 	DateProperty,
+	TimestampProperty,
 } from "../../../../properties/componentproperty"
 
 function getConditionPropertiesPanelTitle(
@@ -151,7 +152,8 @@ function getValueProperty(
 	| NumberProperty
 	| CheckboxProperty
 	| SelectProperty
-	| DateProperty {
+	| DateProperty
+	| TimestampProperty {
 	// TODO: Add additional property types here to support things like DATE
 
 	const baseValueProp = {
@@ -183,6 +185,10 @@ function getValueProperty(
 
 	if (fieldDisplayType === "DATE") {
 		return { ...baseValueProp, type: "DATE" } as DateProperty
+	}
+
+	if (fieldDisplayType === "TIMESTAMP") {
+		return { ...baseValueProp, type: "TIMESTAMP" } as TimestampProperty
 	}
 
 	if (fieldDisplayType === "SELECT") {
