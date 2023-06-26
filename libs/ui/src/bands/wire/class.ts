@@ -14,6 +14,7 @@ import {
 	toggleCondition,
 	setConditionValue,
 	getFullWireId,
+	reset,
 } from "."
 import saveWiresOp from "./operations/save"
 import loadWireOp from "./operations/load"
