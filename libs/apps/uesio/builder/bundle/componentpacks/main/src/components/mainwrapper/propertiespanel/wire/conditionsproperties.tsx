@@ -22,6 +22,12 @@ function getConditionPropertiesPanelTitle(
 const multiValueOperators = ["HAS_ANY", "HAS_ALL", "IN", "NOT_IN"]
 const blankNotBlankOperators = ["IS_BLANK", "IS_NOT_BLANK"]
 
+type BaseProperty = {
+	name: string
+	label?: string
+	displayConditions?: component.DisplayCondition[]
+}
+
 function getConditionTitle(condition: wire.WireConditionState): string {
 	if (condition.type === "GROUP" && !condition.valueSource) {
 		return `GROUP ${condition.conjunction}`
@@ -169,7 +175,8 @@ function getOperatorOptions(
 	return []
 }
 
-function getValueProperty(
+function getDynamicProperty(
+	baseProp: BaseProperty,
 	fieldDisplayType: wire.FieldType | undefined,
 	fieldMetadata: collection.Field | undefined,
 	context: context.Context
@@ -181,65 +188,36 @@ function getValueProperty(
 	| DateProperty {
 	// TODO: Add additional property types here to support things like DATE
 
-	const baseValueProp = {
-		name: "value",
-		label: "Value",
-		displayConditions: [
-			{
-				field: "valueSource",
-				value: "VALUE",
-				type: "fieldValue",
-				operator: "EQUALS",
-			},
-			{
-				type: "fieldValue",
-				field: "operator",
-				operator: "NOT_IN",
-				values: multiValueOperators.concat([
-					...blankNotBlankOperators,
-					"BETWEEN",
-				]),
-			},
-			{
-				operator: "NOT_EQUALS",
-				field: "operator",
-				value: "",
-				type: "fieldValue",
-			},
-		],
-	}
-
 	if (fieldDisplayType === "CHECKBOX") {
-		return { ...baseValueProp, type: "CHECKBOX" } as CheckboxProperty
+		return { ...baseProp, type: "CHECKBOX" } as CheckboxProperty
 	}
 
 	if (fieldDisplayType === "NUMBER") {
-		return { ...baseValueProp, type: "NUMBER" } as NumberProperty
+		return { ...baseProp, type: "NUMBER" } as NumberProperty
 	}
 
 	if (fieldDisplayType === "DATE") {
-		return { ...baseValueProp, type: "DATE" } as DateProperty
+		return { ...baseProp, type: "DATE" } as DateProperty
 	}
 
 	if (fieldDisplayType === "SELECT") {
 		return {
-			...baseValueProp,
+			...baseProp,
 			type: "SELECT",
 			options: fieldMetadata?.getSelectOptions(context),
 		} as SelectProperty
 	}
 
-	return { ...baseValueProp, type: "TEXT" } as TextProperty
+	return { ...baseProp, type: "TEXT" } as TextProperty
 }
 
 const getProperties = (
 	wireName: string | undefined,
 	parentPath: FullPath,
 	itemState: wire.PlainWireRecord,
+	viewParams: wire.ParamConditionState,
 	context: context.Context
 ): ComponentProperty[] => {
-	console.log({ wireName, parentPath, itemState })
-
 	const fieldMetadata =
 		itemState.field && wireName
 			? getFieldMetadata(
@@ -248,8 +226,6 @@ const getProperties = (
 					itemState.field as string
 			  )
 			: undefined
-
-	console.log({ fieldMetadata })
 
 	const fieldDisplayType = fieldMetadata?.getType() || undefined
 	const valueSource = itemState.valueSource
@@ -285,6 +261,10 @@ const getProperties = (
 						"end",
 						"inclusiveStart",
 						"inclusiveEnd",
+						"param",
+						"params",
+						"lookupWire",
+						"lookupField",
 					].map((field) => ({ field })),
 				},
 			],
@@ -321,7 +301,7 @@ const getProperties = (
 			],
 			onChange: [
 				{
-					// Clear out all of these wire condition properties whenever field is changed
+					// Clear out all of these wire condition properties valueSource field is changed
 					updates: [
 						"operator",
 						"value",
@@ -330,6 +310,10 @@ const getProperties = (
 						"end",
 						"inclusiveStart",
 						"inclusiveEnd",
+						"param",
+						"params",
+						"lookupWire",
+						"lookupField",
 					].map((field) => ({ field })),
 				},
 			],
@@ -444,42 +428,54 @@ const getProperties = (
 			],
 		},
 		{
-			name: "start",
-			type: "TEXT",
-			label: "Start",
-			displayConditions: [
+			...getDynamicProperty(
 				{
-					field: "valueSource",
-					value: "VALUE",
-					type: "fieldValue",
-					operator: "EQUALS",
+					name: "start",
+					label: "Start",
+					displayConditions: [
+						{
+							field: "valueSource",
+							value: "VALUE",
+							type: "fieldValue",
+							operator: "EQUALS",
+						},
+						{
+							type: "fieldValue",
+							operator: "EQUALS",
+							field: "operator",
+							value: "BETWEEN",
+						},
+					],
 				},
-				{
-					type: "fieldValue",
-					operator: "EQUALS",
-					field: "operator",
-					value: "BETWEEN",
-				},
-			],
+				fieldDisplayType,
+				fieldMetadata,
+				context
+			),
 		},
 		{
-			name: "end",
-			type: "TEXT",
-			label: "End",
-			displayConditions: [
+			...getDynamicProperty(
 				{
-					field: "valueSource",
-					value: "VALUE",
-					type: "fieldValue",
-					operator: "EQUALS",
+					name: "end",
+					label: "End",
+					displayConditions: [
+						{
+							field: "valueSource",
+							value: "VALUE",
+							type: "fieldValue",
+							operator: "EQUALS",
+						},
+						{
+							type: "fieldValue",
+							operator: "EQUALS",
+							field: "operator",
+							value: "BETWEEN",
+						},
+					],
 				},
-				{
-					type: "fieldValue",
-					operator: "EQUALS",
-					field: "operator",
-					value: "BETWEEN",
-				},
-			],
+				fieldDisplayType,
+				fieldMetadata,
+				context
+			),
 		},
 		{
 			name: "inclusiveStart",
@@ -520,7 +516,38 @@ const getProperties = (
 			],
 		},
 		{
-			...getValueProperty(fieldDisplayType, fieldMetadata, context),
+			...getDynamicProperty(
+				{
+					name: "value",
+					label: "Value",
+					displayConditions: [
+						{
+							field: "valueSource",
+							value: "VALUE",
+							type: "fieldValue",
+							operator: "EQUALS",
+						},
+						{
+							type: "fieldValue",
+							field: "operator",
+							operator: "NOT_IN",
+							values: multiValueOperators.concat([
+								...blankNotBlankOperators,
+								"BETWEEN",
+							]),
+						},
+						{
+							operator: "NOT_EQUALS",
+							field: "operator",
+							value: "",
+							type: "fieldValue",
+						},
+					],
+				},
+				fieldDisplayType,
+				fieldMetadata,
+				context
+			),
 		},
 		{
 			name: "values",
@@ -567,6 +594,15 @@ const getProperties = (
 					type: "fieldValue",
 				},
 			],
+			onChange: [
+				{
+					updates: [
+						{
+							field: "lookupField",
+						},
+					],
+				},
+			],
 		},
 		{
 			name: "lookupField",
@@ -592,7 +628,11 @@ const getProperties = (
 			name: "params",
 			type: "LIST",
 			label: "Params",
-			subtype: fieldDisplayType,
+			subtype: "SELECT",
+			subtypeOptions: Object.keys(viewParams).map((param) => ({
+				label: param,
+				value: param,
+			})),
 			displayConditions: [
 				{
 					field: "valueSource",
@@ -610,8 +650,14 @@ const getProperties = (
 		},
 		{
 			name: "param",
-			type: "PARAM",
+			type: "SELECT",
 			label: "Param",
+			options: collection.addBlankSelectOption(
+				Object.keys(viewParams).map((param) => ({
+					label: param,
+					value: param,
+				}))
+			),
 			displayConditions: [
 				{
 					field: "valueSource",
@@ -706,6 +752,10 @@ const ConditionsProperties: definition.UC = (props) => {
 		conditions: [defaultConditionDef],
 	}
 
+	const viewPath = selectedPath.trim()
+	const paramsPath = viewPath.addLocal("params")
+	const viewParams = get(context, paramsPath) as wire.ParamConditionState
+
 	return (
 		<>
 			<ListPropertyUtility
@@ -756,7 +806,13 @@ const ConditionsProperties: definition.UC = (props) => {
 				]}
 				items={items}
 				itemProperties={(itemState: wire.PlainWireRecord) =>
-					getProperties(wireName, conditionsPath, itemState, context)
+					getProperties(
+						wireName,
+						conditionsPath,
+						itemState,
+						viewParams,
+						context
+					)
 				}
 				itemDisplayTemplate={getConditionTitle}
 				itemPropertiesPanelTitle={getConditionPropertiesPanelTitle}
@@ -796,6 +852,7 @@ const ConditionsProperties: definition.UC = (props) => {
 												wireName,
 												conditionOnGroupPath,
 												itemState,
+												viewParams,
 												context
 											)
 										}
