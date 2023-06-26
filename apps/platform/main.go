@@ -76,9 +76,9 @@ func init() {
 	bot.RegisterBotDialect("typescript", &tsdialect.TSDialect{})
 
 	// Integration Types
-	integ.RegisterConfigStore("web", &web.WebIntegration{})
-	integ.RegisterConfigStore("sendgrid", &sendgrid.SendGridIntegration{})
 
+	integ.RegisterIntegration("web", &web.WebIntegration{})
+	integ.RegisterIntegration("sendgrid", &sendgrid.SendGridIntegration{})
 }
 
 func main() {
