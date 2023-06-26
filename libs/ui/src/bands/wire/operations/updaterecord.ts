@@ -3,16 +3,15 @@ import { updateRecord } from ".."
 import { FieldValue } from "../../wirerecord/types"
 import { dispatch } from "../../../store/store"
 import { publish } from "../../../hooks/eventapi"
-import WireRecord from "../../wirerecord/class"
+import Wire from "../class"
 
 export default (
 	context: Context,
 	path: string[],
 	value: FieldValue,
-	record: WireRecord
+	wire: Wire,
+	recordId: string
 ) => {
-	const wire = record.getWire()
-	const recordId = record.id
 	dispatch(
 		updateRecord({
 			recordId,
@@ -34,7 +33,7 @@ export default (
 	const latestRecord = wire.getRecord(recordId)
 	publish("wire.record.updated", {
 		wireId: wire.getFullId(),
-		recordId: record.id,
+		recordId,
 		field: fullPath,
 		value,
 		record: latestRecord,

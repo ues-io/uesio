@@ -3,7 +3,6 @@ import { Context } from "../../context/context"
 import { ID_FIELD, UNIQUE_KEY_FIELD } from "../collection/types"
 import Wire from "../wire/class"
 import { FieldValue, PlainWireRecord } from "./types"
-import updateRecordOp from "../wire/operations/updaterecord"
 
 class WireRecord {
 	constructor(source: PlainWireRecord, id: string, wire: Wire) {
@@ -53,17 +52,13 @@ class WireRecord {
 		return errors?.[this.id + ":" + fieldId]
 	}
 
-	update = (fieldId: string, value: FieldValue, context: Context) => {
-		const fieldNameParts = fieldId?.split("->")
-		updateRecordOp(context, fieldNameParts, value, this)
-	}
+	update = (fieldId: string, value: FieldValue, context: Context) =>
+		this.wire.updateRecord(context, this.id, value, fieldId)
 
-	set = (fieldId: string, value: FieldValue) => {
-		const fieldNameParts = fieldId?.split("->")
-		return this.wire.setRecord(this.id, value, fieldNameParts)
-	}
+	set = (fieldId: string, value: FieldValue) =>
+		this.wire.setRecord(this.id, value, fieldId)
 
-	setAll = (value: PlainWireRecord) => this.wire.setRecord(this.id, value, [])
+	setAll = (value: PlainWireRecord) => this.wire.setRecord(this.id, value)
 }
 
 export default WireRecord

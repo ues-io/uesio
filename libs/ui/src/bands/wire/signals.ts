@@ -3,7 +3,6 @@ import toggleDeleteOp from "./operations/toggledelete"
 import markForDeleteOp from "./operations/markfordelete"
 import unMarkForDeleteOp from "./operations/unmarkfordelete"
 import createRecordOp from "./operations/createrecord"
-import updateRecordOp from "./operations/updaterecord"
 import cancelWireOp from "./operations/cancel"
 import emptyWireOp from "./operations/empty"
 import resetWireOp from "./operations/reset"
@@ -151,12 +150,14 @@ const signals: Record<string, SignalDescriptor> = {
 				}
 			}
 			if (!record) return context
-			return updateRecordOp(
-				context,
-				signal.field.split("->"),
-				context.merge(signal.value),
-				record
-			)
+			return record
+				.getWire()
+				.updateRecord(
+					context,
+					record.getId(),
+					context.merge(signal.value),
+					signal.field
+				)
 		},
 	},
 	[`${WIRE_BAND}/CANCEL`]: {

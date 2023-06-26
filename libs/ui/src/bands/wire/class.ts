@@ -17,6 +17,7 @@ import {
 } from "."
 import saveWiresOp from "./operations/save"
 import loadWireOp from "./operations/load"
+import updateRecordOp from "./operations/updaterecord"
 import { PlainWire } from "./types"
 import { Context } from "../../context/context"
 import WireRecord from "../wirerecord/class"
@@ -81,16 +82,24 @@ class Wire {
 
 	getFields = () => this.source?.fields || {}
 
-	setRecord = (recordId: string, record: FieldValue, path: string[]) => {
+	setRecord = (recordId: string, record: FieldValue, path?: string) => {
 		dispatch(
 			setRecord({
 				entity: this.getFullId(),
 				recordId,
 				record,
-				path,
+				path: path?.split("->") || [],
 			})
 		)
 	}
+
+	updateRecord = (
+		context: Context,
+		recordId: string,
+		record: FieldValue,
+		path?: string
+	) =>
+		updateRecordOp(context, path?.split("->") || [], record, this, recordId)
 
 	createRecord = (
 		record: PlainWireRecord,
