@@ -16,7 +16,7 @@ type IntegrationType interface {
 }
 
 type IntegrationConnection interface {
-	RunAction(actionName string, requestOptions interface{}) error
+	RunAction(actionName string, requestOptions interface{}) (interface{}, error)
 }
 
 var integrationTypeMap = map[string]IntegrationType{}
