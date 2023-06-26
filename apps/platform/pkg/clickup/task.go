@@ -97,7 +97,7 @@ func TaskLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Se
 
 		url := fmt.Sprintf("task/%v?include_subtasks=false", valueID)
 		ldata := &Task{}
-		err = webIntegration.RunAction("get", &web.GetActionOptions{
+		_, err = webIntegration.RunAction("get", &web.GetActionOptions{
 			URL:          url,
 			Cache:        true,
 			ResponseData: ldata,
@@ -111,7 +111,7 @@ func TaskLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Se
 	if conditionType.Field == "tcm/timetracker.type" && valueType == "LIST" {
 
 		url := fmt.Sprintf("list/%v/task?archived=false&page=0&subtasks=false", valueID)
-		err = webIntegration.RunAction("get", &web.GetActionOptions{
+		_, err = webIntegration.RunAction("get", &web.GetActionOptions{
 			URL:          url,
 			Cache:        true,
 			ResponseData: data,

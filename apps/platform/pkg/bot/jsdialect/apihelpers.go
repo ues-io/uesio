@@ -44,11 +44,11 @@ func botLoad(request BotLoadOp, session *sess.Session, connection adapt.Connecti
 	return collection, nil
 }
 
-func runIntegrationAction(integrationID string, action string, options interface{}, session *sess.Session) error {
+func runIntegrationAction(integrationID string, action string, options interface{}, session *sess.Session) (interface{}, error) {
 
 	integration, err := integ.GetIntegration(integrationID, session)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	return integration.RunAction(action, options)

@@ -13,6 +13,7 @@ type AfterSaveAPI struct {
 	op         *adapt.SaveOp
 	session    *sess.Session
 	connection adapt.Connection
+	AsAdmin    AdminCallBotAPI `bot:"asAdmin"`
 }
 
 func NewAfterSaveAPI(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) *AfterSaveAPI {
@@ -29,6 +30,10 @@ func NewAfterSaveAPI(request *adapt.SaveOp, connection adapt.Connection, session
 		session:    session,
 		op:         request,
 		connection: connection,
+		AsAdmin: AdminCallBotAPI{
+			Session:    session,
+			Connection: connection,
+		},
 	}
 }
 
@@ -44,7 +49,7 @@ func (bs *AfterSaveAPI) Load(request BotLoadOp) (*adapt.Collection, error) {
 	return botLoad(request, bs.session, bs.connection)
 }
 
-func (bs *AfterSaveAPI) RunIntegrationAction(integrationID string, action string, options interface{}) error {
+func (bs *AfterSaveAPI) RunIntegrationAction(integrationID string, action string, options interface{}) (interface{}, error) {
 	return runIntegrationAction(integrationID, action, options, bs.session)
 }
 
