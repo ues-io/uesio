@@ -64,8 +64,6 @@ func (sic *StripeIntegrationConnection) Checkout(requestOptions interface{}) (in
 		return nil, errors.New("No API Key provided")
 	}
 
-	fmt.Println("Doing Stripe Integration")
-	fmt.Println(apikey)
 	stripe.Key = apikey
 
 	lineItems := []*stripe.CheckoutSessionLineItemParams{}
@@ -91,7 +89,6 @@ func (sic *StripeIntegrationConnection) Checkout(requestOptions interface{}) (in
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(s.URL)
 	return s.URL, nil
 
 }
