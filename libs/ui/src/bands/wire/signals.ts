@@ -124,7 +124,7 @@ const signals: Record<string, SignalDescriptor> = {
 		dispatcher: (signal: CreateRecordSignal, context: Context) => {
 			const newContext = createRecordOp({
 				context,
-				wirename: signal.wire,
+				wireName: signal.wire,
 				prepend: signal.prepend,
 			})
 			// Add the newly-created record as a named Signal Output if this step has id

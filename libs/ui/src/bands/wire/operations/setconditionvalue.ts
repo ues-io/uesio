@@ -4,7 +4,7 @@ import { setConditionValue, getFullWireId } from ".."
 
 export default (
 	context: Context,
-	wirename: string,
+	wireName: string,
 	conditionId: string,
 	value: string | number | boolean | undefined
 ) => {
@@ -12,7 +12,7 @@ export default (
 	if (viewId)
 		dispatch(
 			setConditionValue({
-				entity: getFullWireId(viewId, wirename),
+				entity: getFullWireId(viewId, wireName),
 				id: conditionId,
 				value,
 			})

@@ -27,23 +27,25 @@ const mergeDefaultRecord = ({
 	...(record || {}),
 })
 
-const createRecordOp = ({
-	context,
-	wirename,
-	prepend,
-	record,
-}: {
+type CreateRecordOpOptions = {
 	context: Context
 	record?: PlainWireRecord
-	wirename: string
+	wireName: string
 	prepend?: boolean
-}) => {
+}
+
+const createRecordOp = ({
+	context,
+	wireName,
+	prepend,
+	record,
+}: CreateRecordOpOptions) => {
 	const viewId = context.getViewId()
 	if (!viewId) return context
 
 	const recordId = nanoid()
 	const state = getCurrentState()
-	const wireId = getFullWireId(viewId, wirename)
+	const wireId = getFullWireId(viewId, wireName)
 	const wire = state.wire.entities[wireId]
 	if (!wire) return context
 	dispatch(
@@ -56,27 +58,29 @@ const createRecordOp = ({
 	)
 	return context.addRecordFrame({
 		record: recordId,
-		wire: wirename,
+		wire: wireName,
 		view: viewId,
 	})
+}
+
+type CreateRecordsOpOptions = {
+	context: Context
+	records: PlainWireRecord[]
+	wireName: string
+	prepend?: boolean
 }
 
 const createRecordsOp = ({
 	context,
 	records,
-	wirename,
+	wireName,
 	prepend,
-}: {
-	context: Context
-	records: PlainWireRecord[]
-	wirename: string
-	prepend?: boolean
-}) => {
+}: CreateRecordsOpOptions) => {
 	const viewId = context.getViewId()
 	if (!viewId) return context
 
 	const state = getCurrentState()
-	const wireId = getFullWireId(viewId, wirename)
+	const wireId = getFullWireId(viewId, wireName)
 	const wire = state.wire.entities[wireId]
 	if (!wire) return context
 

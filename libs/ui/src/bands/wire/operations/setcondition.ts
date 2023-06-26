@@ -5,14 +5,14 @@ import { WireConditionState } from "../conditions/conditions"
 
 export default (
 	context: Context,
-	wirename: string,
+	wireName: string,
 	condition: WireConditionState
 ) => {
 	const viewId = context.getViewId()
 	if (viewId)
 		dispatch(
 			addCondition({
-				entity: getFullWireId(viewId, wirename),
+				entity: getFullWireId(viewId, wireName),
 				condition,
 			})
 		)

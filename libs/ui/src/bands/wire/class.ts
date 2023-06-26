@@ -120,7 +120,7 @@ class Wire {
 		context: Context
 		records: PlainWireRecord[]
 		prepend?: boolean
-	}) => createRecordsOp({ context, records, prepend, wirename: this.getId() })
+	}) => createRecordsOp({ context, records, prepend, wireName: this.getId() })
 
 	markRecordForDeletion = (recordId: string) => {
 		dispatch(

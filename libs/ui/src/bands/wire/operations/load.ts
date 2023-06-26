@@ -119,7 +119,7 @@ export default async (
 		dispatch(load([allResults, response.collections]))
 		allResults.forEach((wire) => {
 			if (wire.create && !Object.keys(wire.data).length) {
-				createRecordOp({ context, wirename: wire.name })
+				createRecordOp({ context, wireName: wire.name })
 			}
 		})
 	})
