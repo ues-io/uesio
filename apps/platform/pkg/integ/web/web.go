@@ -38,14 +38,14 @@ type WebIntegrationConnection struct {
 	credentials *adapt.Credentials
 }
 
-func (wic *WebIntegrationConnection) RunAction(actionName string, requestOptions interface{}) error {
+func (wic *WebIntegrationConnection) RunAction(actionName string, requestOptions interface{}) (interface{}, error) {
 
 	switch actionName {
 	case "get":
-		return wic.Get(requestOptions)
+		return nil, wic.Get(requestOptions)
 	}
 
-	return errors.New("Invalid Action Name for Web Integration")
+	return nil, errors.New("Invalid Action Name for Web Integration")
 
 }
 
