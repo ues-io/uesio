@@ -2,7 +2,6 @@ package stripe
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/stripe/stripe-go/v74"
 	"github.com/stripe/stripe-go/v74/checkout/session"
