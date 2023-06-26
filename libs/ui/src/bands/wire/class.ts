@@ -135,6 +135,14 @@ class Wire {
 		)
 	}
 
+	reset = () => {
+		dispatch(
+			reset({
+				entity: this.getFullId(),
+			})
+		)
+	}
+
 	empty = () => {
 		dispatch(
 			empty({
