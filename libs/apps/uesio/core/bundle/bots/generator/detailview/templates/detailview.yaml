@@ -12,6 +12,9 @@ components:
       uesio.display:
         - type: paramIsSet
           param: recordid
+      uesio.styleTokens:
+        root:
+          - p-10
       components:
         - uesio/io.titlebar:
             title: ${collection}
@@ -53,6 +56,9 @@ components:
       uesio.display:
         - type: paramIsNotSet
           param: recordid
+      uesio.styleTokens:
+        root:
+          - p-10
       components:
         - uesio/io.text:
             text: Select a record
