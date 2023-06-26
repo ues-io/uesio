@@ -629,7 +629,7 @@ const getProperties = (
 			type: "LIST",
 			label: "Params",
 			subtype: "SELECT",
-			subtypeOptions: Object.keys(viewParams).map((param) => ({
+			subtypeOptions: Object.keys(viewParams || {}).map((param) => ({
 				label: param,
 				value: param,
 			})),
@@ -653,7 +653,7 @@ const getProperties = (
 			type: "SELECT",
 			label: "Param",
 			options: collection.addBlankSelectOption(
-				Object.keys(viewParams).map((param) => ({
+				Object.keys(viewParams || {}).map((param) => ({
 					label: param,
 					value: param,
 				}))
