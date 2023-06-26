@@ -29,7 +29,7 @@ export default (
 					state.collection.entities,
 					wire
 				),
-				...record,
+				...(record || {}),
 			},
 			entity: wireId,
 			prepend: !!prepend,
