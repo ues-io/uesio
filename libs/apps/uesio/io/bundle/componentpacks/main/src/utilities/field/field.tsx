@@ -181,13 +181,17 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 				// Storage of Multiselect values in DB is a Map[string]boolean containing the values which are selected,
 				// but the renderers expect a simple array of selected values, so we need to convert to/from that format
 				setValue: (values: wire.PlainFieldValue[]) => {
-					// Set the false/true value, then filter out the false values before setting
-					common.setValue(
-						values.reduce(
-							(acc, val) => ({ ...acc, [val as string]: true }),
-							{}
-						)
-					)
+					values.length
+						? common.setValue(
+								values.reduce(
+									(acc, val) => ({
+										...acc,
+										[val as string]: true,
+									}),
+									{}
+								)
+						  )
+						: common.setValue(null)
 				},
 				value: common.value
 					? Object.keys(common.value as Record<string, boolean>)
