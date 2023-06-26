@@ -76,6 +76,17 @@ interface AfterSaveBotApi extends BeforeSaveBotApi {
 		options: unknown
 	) => void
 	getConfigValue: (configValueKey: string) => string
+	asAdmin: AsAdminApi
+}
+interface AsAdminApi {
+	load: (loadRequest: LoadRequest) => Record[]
+	save: (collectionName: string, records: Record[]) => void
+	runIntegrationAction: (
+		integration: string,
+		action: string,
+		options: unknown
+	) => void
+	getConfigValue: (configValueKey: string) => string
 }
 interface ListenerBotApi {
 	addResult: (key: string, value: FieldValue | undefined) => void
@@ -88,16 +99,7 @@ interface ListenerBotApi {
 		options: unknown
 	) => void
 	getConfigValue: (configValueKey: string) => string
-	asAdmin: {
-		load: (loadRequest: LoadRequest) => Record[]
-		save: (collectionName: string, records: Record[]) => void
-		runIntegrationAction: (
-			integration: string,
-			action: string,
-			options: unknown
-		) => void
-		getConfigValue: (configValueKey: string) => string
-	}
+	asAdmin: AsAdminApi
 }
 export type {
 	ListenerBotApi,
