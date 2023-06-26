@@ -13,6 +13,18 @@ definition:
         - field: uesio/cms.slug
           param: slug
           valueSource: PARAM
+    attachments:
+      collection: uesio/core.userfile
+      fields:
+        uesio/core.id:
+        uesio/core.path:
+        uesio/core.recordid:
+        uesio/core.updatedat:
+      conditions:
+        - field: uesio/core.recordid
+          valueSource: LOOKUP
+          lookupWire: article
+          lookupField: uesio/core.id
   components:
     - uesio/core.view:
         view: uesio/docs.topbar
@@ -49,3 +61,5 @@ definition:
                           fieldId: uesio/cms.content
                           labelPosition: none
                           displayAs: MARKDOWN
+                          markdown:
+                            attachmentsWire: attachments

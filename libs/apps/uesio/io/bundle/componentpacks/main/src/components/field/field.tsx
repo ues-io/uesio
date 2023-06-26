@@ -14,6 +14,10 @@ import FieldUtility from "../../utilities/field/field"
 import { ListFieldOptions } from "../../utilities/field/listdeck"
 import { LongTextFieldOptions } from "../../utilities/field/textarea"
 import { MapFieldOptions } from "../../utilities/field/mapdeck"
+import {
+	MarkdownComponentOptions,
+	MarkdownFieldOptions,
+} from "../../utilities/markdownfield/markdownfield"
 import { NumberFieldOptions } from "../../utilities/field/number"
 import { ReferenceFieldOptions } from "../../utilities/field/reference"
 import { ReferenceGroupFieldOptions } from "../../utilities/field/referencegroup"
@@ -30,6 +34,7 @@ type FieldDefinition = {
 	reference?: ReferenceFieldOptions | ReferenceGroupFieldOptions
 	list?: ListFieldOptions
 	map?: MapFieldOptions
+	markdown?: MarkdownComponentOptions
 	user?: UserFieldOptions
 	number?: NumberFieldOptions
 	longtext?: LongTextFieldOptions
@@ -95,6 +100,7 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		user,
 		number,
 		longtext,
+		markdown: markdownComponentOptions,
 		readonly,
 		wrapperVariant,
 		// Special variants used for Map/List/Struct fields
@@ -152,10 +158,24 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		// Some components have sub-fields that need to know about label position
 		labelPosition,
 	}
+
+	let markdown: MarkdownFieldOptions | undefined
+	if (markdownComponentOptions?.attachmentsWire) {
+		const attachmentsWire = context.getWire(
+			markdownComponentOptions?.attachmentsWire
+		)
+		if (attachmentsWire) {
+			markdown = {
+				attachments: attachmentsWire.getData() || [],
+			}
+		}
+	}
+
 	const typeSpecific = {
 		reference,
 		list,
 		map,
+		markdown,
 		user,
 		number,
 		longtext,
@@ -185,6 +205,7 @@ export type {
 	LabelPosition,
 	ListFieldOptions,
 	MapFieldOptions,
+	MarkdownFieldOptions,
 	ReferenceFieldOptions,
 	ReferenceGroupFieldOptions,
 	UserFieldOptions,
