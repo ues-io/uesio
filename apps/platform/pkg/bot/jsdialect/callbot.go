@@ -13,19 +13,19 @@ type AdminCallBotAPI struct {
 }
 
 func (acba *AdminCallBotAPI) Save(collection string, changes adapt.Collection) error {
-	return botSave(collection, changes, datasource.GetSiteAdminSession(nil, acba.Session), acba.Connection)
+	return botSave(collection, changes, datasource.GetSiteAdminSession(acba.Session), acba.Connection)
 }
 
 func (acba *AdminCallBotAPI) RunIntegrationAction(integrationID string, action string, options interface{}) error {
-	return runIntegrationAction(integrationID, action, options, datasource.GetSiteAdminSession(nil, acba.Session))
+	return runIntegrationAction(integrationID, action, options, datasource.GetSiteAdminSession(acba.Session))
 }
 
 func (acba *AdminCallBotAPI) GetConfigValue(configValueKey string) (string, error) {
-	return configstore.GetValueFromKey(configValueKey, datasource.GetSiteAdminSession(nil, acba.Session))
+	return configstore.GetValueFromKey(configValueKey, datasource.GetSiteAdminSession(acba.Session))
 }
 
 func (acba *AdminCallBotAPI) Load(request BotLoadOp) (*adapt.Collection, error) {
-	return botLoad(request, datasource.GetSiteAdminSession(nil, acba.Session), acba.Connection)
+	return botLoad(request, datasource.GetSiteAdminSession(acba.Session), acba.Connection)
 }
 
 type CallBotAPI struct {

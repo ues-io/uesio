@@ -136,7 +136,7 @@ func getDepsForComponent(component *meta.Component, deps *PreloadMetadata, sessi
 
 	// need an admin session for retrieving config values
 	// in order to prevent users from having to have read on the uesio/core.configvalue table
-	adminSession := datasource.GetSiteAdminSession(session.GetSite(), session)
+	adminSession := datasource.GetSiteAdminSession(session)
 
 	for _, key := range component.ConfigValues {
 
@@ -435,7 +435,7 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 
 	// need an admin session for retrieving feature falgs
 	// in order to prevent users from having to have read on the uesio/core.featureflagassignment table
-	adminSession := datasource.GetSiteAdminSession(session.GetSite(), session)
+	adminSession := datasource.GetSiteAdminSession(session)
 
 	featureflags, err := featureflagstore.GetFeatureFlags(adminSession, session.GetUserID())
 	if err != nil {
