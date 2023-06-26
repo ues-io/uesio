@@ -10,10 +10,12 @@ import (
 )
 
 func GetSiteAdminSession(currentSession *sess.Session) *sess.Session {
+	// We don't need to get an admin session if we're in a workspace context
+	// We already are the admin user.
 	if currentSession.GetWorkspace() != nil {
 		return currentSession
 	}
-	//This creates a copy of the session
+	// This creates a copy of the session
 	siteAdminSession := currentSession.RemoveWorkspaceContext()
 
 	adminSite := currentSession.GetSite().Clone()
