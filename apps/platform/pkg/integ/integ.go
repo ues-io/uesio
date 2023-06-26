@@ -29,7 +29,7 @@ func GetIntegrationType(integrationTypeName string) (IntegrationType, error) {
 	return integrationType, nil
 }
 
-func RegisterConfigStore(name string, integrationType IntegrationType) {
+func RegisterIntegration(name string, integrationType IntegrationType) {
 	integrationTypeMap[name] = integrationType
 }
 
