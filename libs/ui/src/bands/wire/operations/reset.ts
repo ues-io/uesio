@@ -2,7 +2,7 @@ import { dispatch, getCurrentState } from "../../../store/store"
 import { Context } from "../../../context/context"
 import { reset, getFullWireId } from ".."
 import { batch } from "react-redux"
-import createrecord from "./createrecord"
+import { createRecordOp } from "./createrecord"
 
 export default (context: Context, wirename: string) => {
 	const viewId = context.getViewId()
@@ -21,7 +21,7 @@ export default (context: Context, wirename: string) => {
 			})
 		)
 		if (wire.create) {
-			createrecord(context, wirename)
+			createRecordOp({ context, wirename })
 		}
 	})
 

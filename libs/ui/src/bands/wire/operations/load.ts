@@ -9,7 +9,7 @@ import {
 	addErrorState,
 } from ".."
 import { dispatch } from "../../../store/store"
-import createrecord from "./createrecord"
+import { createRecordOp } from "./createrecord"
 import partition from "lodash/partition"
 import { batch } from "react-redux"
 import { platform } from "../../../platform/platform"
@@ -119,7 +119,7 @@ export default async (
 		dispatch(load([allResults, response.collections]))
 		allResults.forEach((wire) => {
 			if (wire.create && !Object.keys(wire.data).length) {
-				createrecord(context, wire.name)
+				createRecordOp({ context, wirename: wire.name })
 			}
 		})
 	})
