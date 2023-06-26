@@ -251,8 +251,12 @@ definition:
                                           wire: fields
                                   - uesio/studio.suggestedfields:
                                       uesio.id: suggestedfields
+                                      uesio.display:
+                                        - type: wireHasNoRecords
+                                          wire: fields
                                       fieldWire: fields
                                       collectionWire: collections
+                                      targetTableId: fields
                                       uesio.context:
                                         workspace:
                                           name: $Param{workspacename}
@@ -279,6 +283,8 @@ definition:
                               signals:
                                 - signal: route/NAVIGATE
                                   path: app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{app}/$Param{collectionname}/fields/${uesio/studio.name}
+                              uesio.display:
+                                - type: recordIsNotNew
                             - text: $Label{uesio/io.delete}
                               signals:
                                 - signal: wire/MARK_FOR_DELETE

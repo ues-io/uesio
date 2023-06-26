@@ -61,7 +61,7 @@ func runRecentMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 	var fields = []adapt.LoadRequestField{
 		{ID: "uesio/studio.name"},
 		{ID: "uesio/studio.workspace"},
-		{ID: "uesio/core.collection"},
+		{ID: "uesio/core.dynamiccollection"},
 		{ID: "uesio/core.updatedby", Fields: []adapt.LoadRequestField{
 			{
 				ID: "uesio/core.firstname",
@@ -97,7 +97,7 @@ func runRecentMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 				Operator: "NOT_EQ",
 			},
 			{
-				Field:    "uesio/core.collection",
+				Field:    "uesio/core.dynamiccollection",
 				Operator: "IN",
 				Values:   supportedCollections,
 			},
@@ -136,7 +136,7 @@ func runRecentMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 		Type:       "TEXT",
 		Label:      "Workspace",
 	})
-	recentmetadataCollectionMetadata.SetField(&datasource.COLLECTION_FIELD)
+	recentmetadataCollectionMetadata.SetField(&datasource.DYNAMIC_COLLECTION_FIELD)
 	recentmetadataCollectionMetadata.SetField(&datasource.UPDATEDBY_FIELD_METADATA)
 	recentmetadataCollectionMetadata.SetField(&datasource.UPDATEDAT_FIELD_METADATA)
 	recentmetadataCollectionMetadata.SetField(&datasource.UNIQUE_KEY_FIELD_METADATA)
@@ -148,7 +148,7 @@ func runRecentMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 	}
 
 	return newOp.Collection.Loop(func(item meta.Item, index string) error {
-		collection, err := item.GetField("uesio/core.collection")
+		collection, err := item.GetField("uesio/core.dynamiccollection")
 		if err != nil {
 			return err
 		}
@@ -160,7 +160,7 @@ func runRecentMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 
 		_, collectionName, err := meta.ParseKey(collectionValue)
 
-		err = item.SetField("uesio/core.collection", meta.METADATA_NAME_MAP[strings.ToUpper(collectionName)])
+		err = item.SetField("uesio/core.dynamiccollection", meta.METADATA_NAME_MAP[strings.ToUpper(collectionName)])
 		if err != nil {
 			return err
 		}

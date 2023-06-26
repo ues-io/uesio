@@ -1,6 +1,7 @@
 import { getUesioFieldFromSuggestedField } from "./suggestedfields"
 
-const sampleCollectionName = "uesio/tests.foo"
+const sampleCollectionName = "uesio/tests.inventory"
+const samplePluralLabel = "Inventories"
 const sampleWorkspaceId = "1234"
 
 const getUesioFieldFromSuggestedFieldTests = [
@@ -95,6 +96,10 @@ const getUesioFieldFromSuggestedFieldTests = [
 			"uesio/studio.name": "inventory_id",
 			"uesio/studio.type": "AUTONUMBER",
 			"uesio/studio.label": "Inventory ID",
+			"uesio/studio.autonumber": {
+				"uesio/studio.leadingzeros": 4,
+				"uesio/studio.prefix": "IN",
+			},
 		},
 	},
 	{
@@ -130,6 +135,7 @@ describe("AI Suggested Fields", () => {
 				getUesioFieldFromSuggestedField(
 					def.input,
 					sampleCollectionName,
+					samplePluralLabel,
 					sampleWorkspaceId
 				)
 			).toEqual({

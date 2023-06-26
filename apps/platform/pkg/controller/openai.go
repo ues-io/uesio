@@ -162,7 +162,7 @@ func Autocomplete(request *AutocompleteRequest) ([]string, error) {
 		maxResults = 1
 	}
 	// mas tokens = mas $$$$
-	maxTokens := 200
+	maxTokens := 2000
 
 	var outputs []string
 

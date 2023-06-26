@@ -78,7 +78,7 @@ definition:
                                       text: "Collection Configuration"
                                       signals:
                                         - signal: "route/NAVIGATE"
-                                          path: "app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{namespace}/$Param{collectionname}"
+                                          path: "app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{collectionname}"
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           uesio.context:
@@ -93,28 +93,56 @@ definition:
                                   - uesio/io.group:
                                       components:
                                         - uesio/io.button:
-                                            uesio.variant: uesio/io.secondary
+                                            uesio.variant: uesio/io.primary
+                                            uesio.display:
+                                              - type: wireHasChanges
+                                                wire: collectionData
                                             text: $Label{uesio/io.save}
+                                            hotkey: "meta+s"
                                             signals:
-                                              - signal: "wire/SAVE"
+                                              - signal: wire/SAVE
                                                 wires:
-                                                  - "collectionData"
+                                                  - collectionData
                                         - uesio/io.button:
                                             uesio.variant: uesio/io.secondary
                                             text: $Label{uesio/io.cancel}
+                                            uesio.display:
+                                              - type: wireHasChanges
+                                                wire: collectionData
                                             signals:
-                                              - signal: "wire/CANCEL"
-                                                wire: "collectionData"
+                                              - signal: wire/CANCEL
+                                                wire: collectionData
+                                        - uesio/io.button:
+                                            uesio.variant: uesio/io.primary
+                                            text: "Create"
+                                            uesio.display:
+                                              - type: wireHasNoChanges
+                                                wire: collectionData
+                                            signals:
+                                              - signal: wire/CREATE_RECORD
+                                                wire: collectionData
+                                                prepend: true
+                                            hotkey: "n"
                                         - uesio/io.button:
                                             uesio.variant: uesio/io.secondary
                                             text: "Create"
+                                            uesio.display:
+                                              - type: wireHasChanges
+                                                wire: collectionData
                                             signals:
-                                              - signal: "wire/CREATE_RECORD"
-                                                wire: "collectionData"
+                                              - signal: wire/CREATE_RECORD
+                                                wire: collectionData
                                                 prepend: true
-                                            hotkey: "n"
+                                        - uesio/studio.suggestedwiredatabutton:
+                                            wire: collectionData
+                                            targetTableId: collectionDataTable
+                                            uesio.display:
+                                              - type: wireHasNoChanges
+                                                wire: collectionData
                             - uesio/io.box:
                                 components:
                                   - uesio/studio.datamanager:
                                       collectionId: $Param{app}.$Param{collectionname}
                                       namespace: $Param{app}
+                                      wireId: collectionData
+                                      tableId: collectionDataTable

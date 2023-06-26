@@ -1,15 +1,9 @@
-import { component, definition, api, wire, context, styles } from "@uesio/ui"
-import { useState } from "react"
-import { parse } from "best-effort-json-parser"
+import { component, definition, api, wire } from "@uesio/ui"
 
 type ComponentDefinition = {
 	collectionWire: string
 	fieldWire: string
-}
-
-type AutocompleteResponse = {
-	choices?: string[]
-	errors?: string[]
+	targetTableId?: string
 }
 
 type SuggestedField = {
@@ -25,8 +19,14 @@ type NumberFieldMetadata = {
 	"uesio/studio.decimals"?: number
 }
 
+type AutonumberFieldMetadata = {
+	"uesio/studio.leadingzeros"?: number
+	"uesio/studio.prefix"?: string
+}
+
 type CollectionFieldExtraMetadata = {
 	"uesio/studio.number"?: NumberFieldMetadata
+	"uesio/studio.autonumber"?: AutonumberFieldMetadata
 }
 
 const parameterizedTypeRegex =
@@ -46,6 +46,7 @@ const setNumberFieldDecimals = (
 export const getUesioFieldFromSuggestedField = (
 	suggestedField: SuggestedField,
 	collectionName: string,
+	collectionPluralLabel: string,
 	workspaceId: string
 ) => {
 	const { type, label } = suggestedField
@@ -66,6 +67,12 @@ export const getUesioFieldFromSuggestedField = (
 		}
 	} else if (sqlType.includes("serial")) {
 		uesioType = "AUTONUMBER"
+		extras["uesio/studio.autonumber"] = {
+			"uesio/studio.prefix": collectionPluralLabel
+				.toUpperCase()
+				.substring(0, 2),
+			"uesio/studio.leadingzeros": 4,
+		}
 	} else if (sqlType.includes("boolean")) {
 		uesioType = "CHECKBOX"
 	} else if (sqlType.includes("timestamp")) {
@@ -90,55 +97,28 @@ export const getUesioFieldFromSuggestedField = (
 const getUesioFieldNameFromLabel = (label: string) =>
 	label.toLowerCase().replace(/[^a-z0-9]/g, "_") as string
 
-const handleAutocompleteData = (
-	context: context.Context,
-	fieldWire: wire.Wire,
-	response: AutocompleteResponse,
+const handleResults = (
 	collectionName: string,
-	workspaceId: string
+	collectionPluralLabel: string,
+	workspaceId: string,
+	suggestedFields: SuggestedField[],
+	fieldWire?: wire.Wire
 ) => {
-	if (response.errors) {
-		return
-	}
-	if (response.choices?.length) {
-		const data = response.choices[0] as string
-		try {
-			const dataArray: SuggestedField[] = parse(data)
-			if (dataArray?.length) {
-				dataArray.forEach((val) => {
-					// We need at least label and type to do anything useful
-					if (val && val.label && val.type) {
-						fieldWire.createRecord(
-							getUesioFieldFromSuggestedField(
-								val,
-								collectionName,
-								workspaceId
-							)
-						)
-					}
-				})
-				// Turn the table into edit mode
-				api.signal.run(
-					{
-						signal: "component/CALL",
-						component: "uesio/io.table",
-						componentsignal: "SET_EDIT_MODE",
-						targettype: "specific",
-						componentid: "fields",
-					},
-					context
-				) as Promise<context.Context>
-			}
-		} catch (e) {
-			console.error(e)
-			// eslint-disable-next-line no-empty
+	if (!fieldWire) return
+	suggestedFields.forEach((val) => {
+		// We need at least label and type to do anything useful
+		if (val && val.label && val.type) {
+			fieldWire.createRecord(
+				getUesioFieldFromSuggestedField(
+					val,
+					collectionName,
+					collectionPluralLabel,
+					workspaceId
+				)
+			)
 		}
-	}
+	})
 }
-
-const StyleDefaults = Object.freeze({
-	pulse: ["animate-pulse"],
-})
 
 const SuggestedFields: definition.UC<ComponentDefinition> = (props) => {
 	const {
@@ -146,13 +126,13 @@ const SuggestedFields: definition.UC<ComponentDefinition> = (props) => {
 		definition: {
 			collectionWire: collectionWireName,
 			fieldWire: fieldWireName,
+			targetTableId,
 		},
 	} = props
 
-	const Button = component.getUtility("uesio/io.button")
-	const Icon = component.getUtility("uesio/io.icon")
-
-	const classes = styles.useStyleTokens(StyleDefaults, props)
+	const SuggestDataButton = component.getUtility(
+		"uesio/studio.suggestdatabutton"
+	)
 
 	const fieldWire = api.wire.useWire(fieldWireName || "", context)
 	const collectionWire = api.wire.useWire(collectionWireName || "", context)
@@ -161,69 +141,31 @@ const SuggestedFields: definition.UC<ComponentDefinition> = (props) => {
 		?.getFirstRecord()
 		?.getIdFieldValue() as string
 	const targetCollection = collectionWire?.getFirstRecord()
-	const pluralLabel = targetCollection?.getFieldValue(
+	const pluralLabel = (targetCollection?.getFieldValue(
 		"uesio/studio.plurallabel"
-	)
+	) || "") as string
 	const targetCollectionName = context.mergeString(
 		(fieldWire?.getCondition("fullCollectionName") as ValueConditionState)
 			.value
 	)
-
-	const prompt = `I am creating a new PostgreSQL database table to store ${pluralLabel}. Suggest 10 relevant columns for this new table, output as a JSON array of JSON objects, with each JSON object having 2 properties: (1) type - the PostgreSQL column type (2) label - the name of the column`
-
-	const [isLoading, setLoading] = useState(false)
-
-	const hasFields = fieldWire?.getData().length
-
-	return !hasFields ? (
-		<Button
+	return (
+		<SuggestDataButton
 			context={context}
-			label={isLoading ? "Suggesting fields..." : "Suggest Fields"}
-			variant="uesio/io.secondary"
-			disabled={isLoading}
-			icon={
-				<Icon
-					icon="magic_button"
-					context={context}
-					className={isLoading ? classes.pulse : ""}
-				/>
-			}
-			onClick={() => {
-				// Don't run if we already have data
-				if (!fieldWire || hasFields) return
-
-				setLoading(true)
-
-				const signalResult = api.signal.run(
-					{
-						signal: "ai/AUTOCOMPLETE",
-						model: "gpt-3.5-turbo",
-						format: "chat",
-						input: prompt,
-						stepId: "autocomplete",
-						maxResults: 1,
-					},
-					context
-				) as Promise<context.Context>
-
-				signalResult.then((resultContext) => {
-					const result =
-						resultContext.getSignalOutputs("autocomplete")
-
-					result &&
-						handleAutocompleteData(
-							context,
-							fieldWire,
-							result.data,
-							targetCollectionName,
-							workspaceId
-						)
-
-					setLoading(false)
-				})
+			prompt={`I am creating a new PostgreSQL database table to store ${pluralLabel}. Suggest 10 relevant columns for this new table, output as a JSON array of JSON objects, with each JSON object having 2 properties: (1) type - the PostgreSQL column type (2) label - the name of the column`}
+			label={"Suggest Fields"}
+			loadingLabel={"Suggesting fields..."}
+			targetTableId={targetTableId}
+			handleResults={(results: SuggestedField[]) => {
+				handleResults(
+					targetCollectionName,
+					pluralLabel,
+					workspaceId,
+					results,
+					fieldWire
+				)
 			}}
 		/>
-	) : null
+	)
 }
 
 export default SuggestedFields
