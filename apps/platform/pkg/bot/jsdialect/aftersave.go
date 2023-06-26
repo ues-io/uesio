@@ -44,7 +44,7 @@ func (bs *AfterSaveAPI) Load(request BotLoadOp) (*adapt.Collection, error) {
 	return botLoad(request, bs.session, bs.connection)
 }
 
-func (bs *AfterSaveAPI) RunIntegrationAction(integrationID string, action string, options interface{}) error {
+func (bs *AfterSaveAPI) RunIntegrationAction(integrationID string, action string, options interface{}) (interface{}, error) {
 	return runIntegrationAction(integrationID, action, options, bs.session)
 }
 
