@@ -3,8 +3,14 @@ import { Context } from "../../../context/context"
 import { nanoid } from "@reduxjs/toolkit"
 import { createRecord, getFullWireId } from ".."
 import { getDefaultRecord } from "../defaults/defaults"
+import { PlainWireRecord } from "../../wirerecord/types"
 
-export default (context: Context, wirename: string, prepend?: boolean) => {
+export default (
+	context: Context,
+	wirename: string,
+	prepend?: boolean,
+	record?: PlainWireRecord
+) => {
 	const viewId = context.getViewId()
 	if (!viewId) return context
 
@@ -16,12 +22,15 @@ export default (context: Context, wirename: string, prepend?: boolean) => {
 	dispatch(
 		createRecord({
 			recordId,
-			record: getDefaultRecord(
-				context,
-				state.wire.entities,
-				state.collection.entities,
-				wire
-			),
+			record: {
+				...getDefaultRecord(
+					context,
+					state.wire.entities,
+					state.collection.entities,
+					wire
+				),
+				...record,
+			},
 			entity: wireId,
 			prepend: !!prepend,
 		})
