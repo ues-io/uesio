@@ -7,13 +7,13 @@ const SEARCH_CONDITION_ID = "uesio.search"
 
 export default async (
 	context: Context,
-	wirename: string,
+	wireName: string,
 	search: string,
 	fields?: string[]
 ) => {
 	const viewId = context.getViewId()
 	if (!viewId) return context
-	const entity = getFullWireId(viewId, wirename)
+	const entity = getFullWireId(viewId, wireName)
 	dispatch(
 		search
 			? addCondition({
@@ -31,6 +31,6 @@ export default async (
 			  })
 	)
 
-	await loadWiresOp(context, [wirename])
+	await loadWiresOp(context, [wireName])
 	return context
 }

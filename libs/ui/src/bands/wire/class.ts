@@ -23,6 +23,7 @@ import { Context } from "../../context/context"
 import WireRecord from "../wirerecord/class"
 import { FieldValue, PlainWireRecord } from "../wirerecord/types"
 import { nanoid } from "@reduxjs/toolkit"
+import { createRecordsOp } from "./operations/createrecord"
 
 class Wire {
 	constructor(source?: PlainWire) {
@@ -98,6 +99,7 @@ class Wire {
 		prepend?: boolean,
 		recordId?: string
 	) => {
+		// TODO: This code should be converted to using createRecordOp
 		if (!recordId) recordId = nanoid()
 		dispatch(
 			createRecord({
@@ -109,6 +111,16 @@ class Wire {
 		)
 		return this.getRecord(recordId)
 	}
+
+	createRecords = ({
+		context,
+		records,
+		prepend,
+	}: {
+		context: Context
+		records: PlainWireRecord[]
+		prepend?: boolean
+	}) => createRecordsOp({ context, records, prepend, wireName: this.getId() })
 
 	markRecordForDeletion = (recordId: string) => {
 		dispatch(

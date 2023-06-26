@@ -2,7 +2,7 @@ import { Context } from "../../context/context"
 import toggleDeleteOp from "./operations/toggledelete"
 import markForDeleteOp from "./operations/markfordelete"
 import unMarkForDeleteOp from "./operations/unmarkfordelete"
-import createRecordOp from "./operations/createrecord"
+import { createRecordOp } from "./operations/createrecord"
 import updateRecordOp from "./operations/updaterecord"
 import cancelWireOp from "./operations/cancel"
 import emptyWireOp from "./operations/empty"
@@ -122,11 +122,11 @@ const signals: Record<string, SignalDescriptor> = {
 	},
 	[`${WIRE_BAND}/CREATE_RECORD`]: {
 		dispatcher: (signal: CreateRecordSignal, context: Context) => {
-			const newContext = createRecordOp(
+			const newContext = createRecordOp({
 				context,
-				signal.wire,
-				signal.prepend
-			)
+				wireName: signal.wire,
+				prepend: signal.prepend,
+			})
 			// Add the newly-created record as a named Signal Output if this step has id
 			if (signal.stepId) {
 				const record = newContext.getRecord()
