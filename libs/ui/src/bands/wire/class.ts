@@ -17,11 +17,13 @@ import {
 } from "."
 import saveWiresOp from "./operations/save"
 import loadWireOp from "./operations/load"
+import createRecordOp from "./operations/createrecord"
 import { PlainWire } from "./types"
 import { Context } from "../../context/context"
 import WireRecord from "../wirerecord/class"
 import { FieldValue, PlainWireRecord } from "../wirerecord/types"
 import { nanoid } from "@reduxjs/toolkit"
+import { batch } from "react-redux"
 
 class Wire {
 	constructor(source?: PlainWire) {
@@ -107,6 +109,18 @@ class Wire {
 			})
 		)
 		return this.getRecord(recordId)
+	}
+
+	createRecords = (
+		context: Context,
+		records: PlainWireRecord[],
+		prepend?: boolean
+	) => {
+		batch(() => {
+			records.forEach((record) => {
+				createRecordOp(context, this.getId(), prepend, record)
+			})
+		})
 	}
 
 	markRecordForDeletion = (recordId: string) => {
