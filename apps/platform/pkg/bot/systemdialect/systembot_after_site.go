@@ -7,6 +7,9 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
+const defaultSitePublicProfile = "uesio/core.public"
+const bundleField = "uesio/studio.bundle->uesio/core.id"
+
 func runSiteAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 
 	err := request.LoopInserts(func(change *adapt.ChangeItem) error {
@@ -21,10 +24,10 @@ func runSiteAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, ses
 			return err
 		}
 
-		defaultSitePublicProfile := siteAdminSession.GetPublicProfile()
+		publicProfile := siteAdminSession.GetPublicProfile()
 
-		if defaultSitePublicProfile == "" {
-			defaultSitePublicProfile = "uesio/core.public"
+		if publicProfile == "" {
+			publicProfile = defaultSitePublicProfile
 		}
 
 		newDeps := adapt.Collection{}
@@ -34,13 +37,13 @@ func runSiteAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, ses
 			"uesio/core.type":      "PERSON",
 			"uesio/core.firstname": "System",
 			"uesio/core.lastname":  "User",
-			"uesio/core.profile":   defaultSitePublicProfile,
+			"uesio/core.profile":   publicProfile,
 		}, &adapt.Item{
 			"uesio/core.username":  "guest",
 			"uesio/core.type":      "PERSON",
 			"uesio/core.firstname": "Guest",
 			"uesio/core.lastname":  "User",
-			"uesio/core.profile":   defaultSitePublicProfile,
+			"uesio/core.profile":   publicProfile,
 		})
 
 		// We can't bulkify this because we need to be in the context
@@ -50,6 +53,65 @@ func runSiteAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, ses
 				Collection: "uesio/core.user",
 				Wire:       "defaultusers",
 				Changes:    &newDeps,
+				Options: &adapt.SaveOptions{
+					Upsert: true,
+				},
+			},
+		}, siteAdminSession, datasource.GetConnectionSaveOptions(connection))
+
+	})
+	if err != nil {
+		return err
+	}
+
+	err = request.LoopUpdates(func(change *adapt.ChangeItem) error {
+
+		siteID := change.IDValue
+
+		// Whenever the site BUNDLE has changed, we need to synchronize the public profile
+		// using the new app bundle version
+		oldBundle, err := change.GetOldFieldAsString(bundleField)
+		if err != nil {
+			return err
+		}
+		newBundle, err := change.GetFieldAsString(bundleField)
+		if err != nil {
+			return err
+		}
+
+		// If bundle hasn't changed, we're done
+		if oldBundle == newBundle {
+			return nil
+		}
+
+		//This creates a copy of the session
+		siteAdminSession := session.RemoveWorkspaceContext()
+
+		err = datasource.AddSiteAdminContextByID(siteID, siteAdminSession, connection)
+		if err != nil {
+			return err
+		}
+
+		newPublicProfile := siteAdminSession.GetPublicProfile()
+		if newPublicProfile == "" {
+			newPublicProfile = defaultSitePublicProfile
+		}
+
+		updatedUsers := adapt.Collection{
+			&adapt.Item{
+				"uesio/core.username":  "guest",
+				"uesio/core.uniquekey": "guest",
+				"uesio/core.profile":   newPublicProfile,
+			},
+		}
+
+		// We can't bulkify this because we need to be in the context
+		// of each site when we do these updates.
+		return datasource.SaveWithOptions([]datasource.SaveRequest{
+			{
+				Collection: "uesio/core.user",
+				Wire:       "updateUsers",
+				Changes:    &updatedUsers,
 				Options: &adapt.SaveOptions{
 					Upsert: true,
 				},
