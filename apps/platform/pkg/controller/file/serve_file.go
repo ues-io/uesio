@@ -13,7 +13,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 
 	"github.com/thecloudmasters/uesio/pkg/logger"
-	"gopkg.in/yaml.v3"
 )
 
 const CacheFor1Year = "private, no-transform, max-age=31536000, s-maxage=31536000"
@@ -28,19 +27,6 @@ func RespondJSON(w http.ResponseWriter, r *http.Request, v interface{}) {
 		return
 	}
 }
-
-// TODO: UNUSED
-func respondYAML(w http.ResponseWriter, r *http.Request, v interface{}) {
-	w.Header().Set("content-type", "text/yaml")
-
-	err := yaml.NewEncoder(w).Encode(v)
-	if err != nil {
-		logger.LogError(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-}
-
 func respondFile(w http.ResponseWriter, r *http.Request, fileRequest *FileRequest, stream io.ReadSeeker) {
 	if stream == nil {
 		w.WriteHeader(http.StatusNotFound)
@@ -75,14 +61,12 @@ func ServeFileContent(file *meta.File, version string, w http.ResponseWriter, r 
 		http.Error(w, "Not Found", http.StatusNotFound)
 		return
 	}
-
 	_, stream, err := bundle.GetItemAttachment(file, file.Path, session)
 	if err != nil {
 		logger.LogError(err)
 		http.Error(w, "Failed File Download", http.StatusInternalServerError)
 		return
 	}
-
 	respondFile(w, r, &FileRequest{
 		Path:         file.Path,
 		LastModified: time.Unix(file.UpdatedAt, 0),
@@ -93,11 +77,6 @@ func ServeFileContent(file *meta.File, version string, w http.ResponseWriter, r 
 
 func ServeFile(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	namespace := vars["namespace"]
-	name := vars["name"]
-	resourceVersion := vars["version"]
-
-	file := meta.NewBaseFile(namespace, name)
-
-	ServeFileContent(file, resourceVersion, w, r)
+	file := meta.NewBaseFile(vars["namespace"], vars["name"])
+	ServeFileContent(file, vars["version"], w, r)
 }

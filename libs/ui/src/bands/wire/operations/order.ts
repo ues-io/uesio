@@ -5,7 +5,7 @@ import { MetadataKey } from "../../builder/types"
 
 export const add = (
 	context: Context,
-	wirename: string,
+	wireName: string,
 	field: MetadataKey,
 	desc: boolean
 ) => {
@@ -13,7 +13,7 @@ export const add = (
 	if (viewId)
 		dispatch(
 			addOrder({
-				entity: getFullWireId(viewId, wirename),
+				entity: getFullWireId(viewId, wireName),
 				order: {
 					field,
 					desc,
@@ -25,7 +25,7 @@ export const add = (
 
 export const set = (
 	context: Context,
-	wirename: string,
+	wireName: string,
 	order: { field: MetadataKey; desc: boolean }[]
 ) => {
 	const viewId = context.getViewId()
@@ -36,7 +36,7 @@ export const set = (
 	if (viewId)
 		dispatch(
 			setOrder({
-				entity: getFullWireId(viewId, wirename),
+				entity: getFullWireId(viewId, wireName),
 				order,
 			})
 		)
@@ -45,14 +45,14 @@ export const set = (
 
 export const remove = (
 	context: Context,
-	wirename: string,
+	wireName: string,
 	fields: MetadataKey[]
 ) => {
 	const viewId = context.getViewId()
 	if (viewId)
 		dispatch(
 			removeOrder({
-				entity: getFullWireId(viewId, wirename),
+				entity: getFullWireId(viewId, wireName),
 				fields,
 			})
 		)

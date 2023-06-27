@@ -6,7 +6,7 @@ Welcome to ues.io! This article will explain what ues.io is and why we built it.
 
 ## What is ues.io?
 
-Ues.io is a general purpose, [declarative](), application development platform for the web. Instead of writing code in a programming language to define the behavior of your apps, most common patterns in ues.io can be accomplished through declarative configuration. We call these individual pieces of configuration **application metadata**. Each piece of application metadata describes a portion of the functionality of your application.
+Ues.io is a general purpose, [declarative](declarative-app-development), application development platform for the web. Instead of writing code in a programming language to define the behavior of your apps, most common patterns in ues.io can be accomplished through declarative configuration. We call these individual pieces of configuration **application metadata**. Each piece of application metadata describes a portion of the functionality of your application.
 
 At its core, ues.io is a high-level language of patterns for describing web applications. Just like in a spoken language where words and phrases can be combined in unique ways to communicate thoughts and ideas, ues.io's metadata types (or patterns) can be combined in unique ways to describe the complete functionality of an app.
 
@@ -22,7 +22,7 @@ Unlike some application platforms, ues.io does not compile your application conf
 
 ### 3. The studio
 
-The ues.io studio is where you build and administer your apps. This is your graphical user interface into the ues.io language and platform. One of the most important parts of the ues.io studio is the view builder. The [view]() builder is where you assemble [components]() together to build interfaces and connect to you data in [collections]() through [wires]().
+The ues.io studio is where you build and administer your apps. This is your graphical user interface into the ues.io language and platform. One of the most important parts of the ues.io studio is the view builder. The [view](views) builder is where you assemble [components](components) together to build interfaces and connect to you data in [collections](collections) through [wires](wires).
 
 ### 4. The command line interface
 
@@ -30,7 +30,7 @@ It is often useful to interact with your apps programmatically or through a comm
 
 ## Why we built ues.io
 
-From the start, the web was created with [declarative]() languages like HTML and CSS. However, over time the web began to transition from being primarily a platform for static, linked documents to a platform for dynamic applications. The primary driver of this change was the addition of Javascript. This allowed the web to deliver all kinds of dynamic and engaging content. More and more software applications were moved from desktop environments into browser-based, web environments.
+From the start, the web was created with [declarative](declarative-app-development) languages like HTML and CSS. However, over time the web began to transition from being primarily a platform for static, linked documents to a platform for dynamic applications. The primary driver of this change was the addition of Javascript. This allowed the web to deliver all kinds of dynamic and engaging content. More and more software applications were moved from desktop environments into browser-based, web environments.
 
 Although this transition had many benefits, it also made developing web applications much more difficult and complicated. To build and operate a traditional web application today requires a deep understanding of a wide range of backend and frontend tools and frameworks. Each time a developer goes to build a web app, they must answer a lot of questions:
 

@@ -1,4 +1,4 @@
-import { Dictionary } from "@reduxjs/toolkit"
+import { Dictionary, nanoid } from "@reduxjs/toolkit"
 import { Context } from "../../../context/context"
 import { PlainWire } from "../types"
 import { FieldValue, PlainWireRecord } from "../../wirerecord/types"
@@ -12,10 +12,15 @@ import set from "lodash/set"
 const LOOKUP = "LOOKUP"
 const VALUE = "VALUE"
 const PARAM = "PARAM"
+const SHORTID = "SHORTID"
 
 type WireDefaultBase = {
 	field: string
-	valueSource?: typeof VALUE | typeof LOOKUP | typeof PARAM
+	valueSource?: typeof VALUE | typeof LOOKUP | typeof PARAM | typeof SHORTID
+}
+
+type ShortIDDefault = WireDefaultBase & {
+	valueSource: typeof SHORTID
 }
 
 type LookupDefault = WireDefaultBase & {
@@ -33,7 +38,7 @@ type ParamDefault = WireDefaultBase & {
 	param: string
 }
 
-type WireDefault = ValueDefault | LookupDefault | ParamDefault
+type WireDefault = ValueDefault | LookupDefault | ParamDefault | ShortIDDefault
 
 const getDefaultValue = (
 	context: Context,
@@ -54,6 +59,10 @@ const getDefaultValue = (
 	// TODO: Default to VALUE if nothing provided?
 	if (item.valueSource === "VALUE") {
 		return context.merge(item.value)
+	}
+
+	if (item.valueSource === "SHORTID") {
+		return nanoid()
 	}
 
 	if (item.valueSource === "PARAM") {

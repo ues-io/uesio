@@ -6,14 +6,14 @@ import { MetadataKey } from "../../builder/types"
 
 export default (
 	context: Context,
-	wirename: string,
+	wireName: string,
 	order: { field: MetadataKey; desc: boolean }[]
 ) => {
 	const viewId = context.getViewId()
 	if (viewId)
 		dispatch(
 			setOrder({
-				entity: getFullWireId(viewId, wirename),
+				entity: getFullWireId(viewId, wireName),
 				order,
 			})
 		)

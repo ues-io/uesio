@@ -9,13 +9,16 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func GetSiteAdminSession(adminSite *meta.Site, currentSession *sess.Session) *sess.Session {
-	//This creates a copy of the session
+func GetSiteAdminSession(currentSession *sess.Session) *sess.Session {
+	// We don't need to get an admin session if we're in a workspace context
+	// We already are the admin user.
+	if currentSession.GetWorkspace() != nil {
+		return currentSession
+	}
+	// This creates a copy of the session
 	siteAdminSession := currentSession.RemoveWorkspaceContext()
 
-	if adminSite == nil {
-		adminSite = currentSession.GetSite().Clone()
-	}
+	adminSite := currentSession.GetSite().Clone()
 
 	upgradeToSiteAdmin(adminSite, siteAdminSession)
 

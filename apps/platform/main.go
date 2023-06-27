@@ -29,6 +29,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/fileadapt/s3"
 	"github.com/thecloudmasters/uesio/pkg/integ"
 	"github.com/thecloudmasters/uesio/pkg/integ/sendgrid"
+	"github.com/thecloudmasters/uesio/pkg/integ/stripe"
 	"github.com/thecloudmasters/uesio/pkg/integ/web"
 	"github.com/thecloudmasters/uesio/pkg/secretstore"
 	sse "github.com/thecloudmasters/uesio/pkg/secretstore/environment"
@@ -76,9 +77,9 @@ func init() {
 	bot.RegisterBotDialect("typescript", &tsdialect.TSDialect{})
 
 	// Integration Types
-	integ.RegisterConfigStore("web", &web.WebIntegration{})
-	integ.RegisterConfigStore("sendgrid", &sendgrid.SendGridIntegration{})
-
+	integ.RegisterIntegration("web", &web.WebIntegration{})
+	integ.RegisterIntegration("sendgrid", &sendgrid.SendGridIntegration{})
+	integ.RegisterIntegration("stripe", &stripe.StripeIntegration{})
 }
 
 func main() {

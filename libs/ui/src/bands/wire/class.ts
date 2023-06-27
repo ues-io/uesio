@@ -14,6 +14,7 @@ import {
 	toggleCondition,
 	setConditionValue,
 	getFullWireId,
+	reset,
 } from "."
 import saveWiresOp from "./operations/save"
 import loadWireOp from "./operations/load"
@@ -22,6 +23,7 @@ import { Context } from "../../context/context"
 import WireRecord from "../wirerecord/class"
 import { FieldValue, PlainWireRecord } from "../wirerecord/types"
 import { nanoid } from "@reduxjs/toolkit"
+import { createRecordsOp } from "./operations/createrecord"
 
 class Wire {
 	constructor(source?: PlainWire) {
@@ -97,6 +99,7 @@ class Wire {
 		prepend?: boolean,
 		recordId?: string
 	) => {
+		// TODO: This code should be converted to using createRecordOp
 		if (!recordId) recordId = nanoid()
 		dispatch(
 			createRecord({
@@ -108,6 +111,16 @@ class Wire {
 		)
 		return this.getRecord(recordId)
 	}
+
+	createRecords = ({
+		context,
+		records,
+		prepend,
+	}: {
+		context: Context
+		records: PlainWireRecord[]
+		prepend?: boolean
+	}) => createRecordsOp({ context, records, prepend, wireName: this.getId() })
 
 	markRecordForDeletion = (recordId: string) => {
 		dispatch(
@@ -130,6 +143,14 @@ class Wire {
 	cancel = () => {
 		dispatch(
 			cancel({
+				entity: this.getFullId(),
+			})
+		)
+	}
+
+	reset = () => {
+		dispatch(
+			reset({
 				entity: this.getFullId(),
 			})
 		)

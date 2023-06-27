@@ -16,7 +16,7 @@ type IntegrationType interface {
 }
 
 type IntegrationConnection interface {
-	RunAction(actionName string, requestOptions interface{}) error
+	RunAction(actionName string, requestOptions interface{}) (interface{}, error)
 }
 
 var integrationTypeMap = map[string]IntegrationType{}
@@ -29,7 +29,7 @@ func GetIntegrationType(integrationTypeName string) (IntegrationType, error) {
 	return integrationType, nil
 }
 
-func RegisterConfigStore(name string, integrationType IntegrationType) {
+func RegisterIntegration(name string, integrationType IntegrationType) {
 	integrationTypeMap[name] = integrationType
 }
 

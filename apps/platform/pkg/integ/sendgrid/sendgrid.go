@@ -40,14 +40,14 @@ type SendGridIntegrationConnection struct {
 	credentials *adapt.Credentials
 }
 
-func (sgic *SendGridIntegrationConnection) RunAction(actionName string, requestOptions interface{}) error {
+func (sgic *SendGridIntegrationConnection) RunAction(actionName string, requestOptions interface{}) (interface{}, error) {
 
 	switch actionName {
 	case "sendEmail":
-		return sgic.SendEmail(requestOptions)
+		return nil, sgic.SendEmail(requestOptions)
 	}
 
-	return errors.New("Invalid Action Name for SendGrid integration")
+	return nil, errors.New("Invalid Action Name for SendGrid integration")
 
 }
 
