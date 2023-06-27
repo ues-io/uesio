@@ -1,8 +1,9 @@
 package middleware
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/sess"
 	"net/http"
+
+	"github.com/thecloudmasters/uesio/pkg/sess"
 
 	"github.com/gorilla/mux"
 	"github.com/icza/session"
@@ -10,6 +11,8 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 )
+
+/* TEMPORARILY commenting this out until we can figure out why sessions are changing so much
 
 // Checks if the session returned with the user's original HTML route load
 // is different from the session being sent in the current request,
@@ -32,6 +35,7 @@ func userHasBeenLoggedOut(r *http.Request, s *sess.Session) bool {
 	}
 	return userSessionHasChangedSinceOriginalRouteLoad(r, s)
 }
+*/
 
 // Authenticate checks to see if the current user is logged in
 func Authenticate(next http.Handler) http.Handler {
@@ -60,9 +64,10 @@ func Authenticate(next http.Handler) http.Handler {
 			// If we got a different session than the one we started with,
 			// logout the old one
 			session.Remove(browserSession, w)
-		} else if userHasBeenLoggedOut(r, s) && auth.RedirectToLoginRoute(w, r, s) {
-			return
-		}
+		} 
+		// else if userHasBeenLoggedOut(r, s) && auth.RedirectToLoginRoute(w, r, s) {
+		// 	return
+		// }
 
 		next.ServeHTTP(w, r.WithContext(SetSession(r, s)))
 	})
