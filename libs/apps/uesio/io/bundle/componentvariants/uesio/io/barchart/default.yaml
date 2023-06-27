@@ -1,0 +1,8 @@
+name: default
+label: Default
+definition:
+  uesio.styleTokens:
+    root:
+      - min-w-[200px]
+    chart:
+public: true

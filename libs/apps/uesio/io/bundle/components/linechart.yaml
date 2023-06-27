@@ -8,6 +8,7 @@ entrypoint: components/linechart/linechart
 utilities:
   - uesio/io.chart
 defaultDefinition:
+  uesio.variant: uesio/io.default
   title: New Line Chart
   labels:
     source: DATA
