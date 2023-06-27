@@ -10,6 +10,7 @@ import {
 	CheckboxProperty,
 	SelectProperty,
 	DateProperty,
+	TimestampProperty,
 } from "../../../../properties/componentproperty"
 import * as operators from "../../../shared/operatorproperties"
 
@@ -19,8 +20,13 @@ function getConditionPropertiesPanelTitle(
 	return `${condition.type === "GROUP" ? "Group " : ""} Condition Properties`
 }
 
-const multiValueOperators = ["HAS_ANY", "HAS_ALL", "IN", "NOT_IN"]
-const blankNotBlankOperators = ["IS_BLANK", "IS_NOT_BLANK"]
+const multiValueOperators = [
+	operators.HASANY.value,
+	operators.HASALL.value,
+	operators.IN.value,
+	operators.NOTIN.value,
+]
+const blankNotBlankOperators = [operators.BLANK.value, operators.NOTBLANK.value]
 
 type BaseProperty = {
 	name: string
@@ -81,11 +87,10 @@ function getOperatorOptions(
 			}
 			case "PARAM": {
 				switch (fieldDisplayType) {
-					case "EMAIL":
-					case "LIST":
 					case "REFERENCE":
-					case "SELECT":
-					case "AUTONUMBER": {
+					case "USER":
+					case "FILE":
+					case "SELECT": {
 						return options.concat(
 							operators.EQNOTEQ,
 							operators.INNOTIN
@@ -101,6 +106,8 @@ function getOperatorOptions(
 							operators.INNOTIN
 						)
 					}
+					case "AUTONUMBER":
+					case "EMAIL":
 					case "TEXT":
 					case "LONGTEXT": {
 						return options.concat(operators.EQNOTEQ, [
@@ -108,9 +115,8 @@ function getOperatorOptions(
 							operators.CONTAINS,
 						])
 					}
-					case "REFERENCEGROUP":
 					case "MULTISELECT": {
-						return options.concat(operators.ANYHASALL)
+						return options.concat(operators.HASANYHASALL)
 					}
 					default:
 						return options.concat(operators.EQNOTEQ)
@@ -118,19 +124,16 @@ function getOperatorOptions(
 			}
 			case "VALUE": {
 				switch (fieldDisplayType) {
-					case "EMAIL":
-					case "LIST":
 					case "REFERENCE":
-					case "SELECT":
-					case "AUTONUMBER": {
+					case "USER":
+					case "FILE":
+					case "SELECT": {
 						return options.concat(
 							operators.EQNOTEQ,
 							operators.INNOTIN,
 							operators.BLANKNOTBLANK
 						)
 					}
-					case "FILE":
-					case "STRUCT":
 					case "CHECKBOX": {
 						return options.concat(
 							operators.EQNOTEQ,
@@ -145,26 +148,26 @@ function getOperatorOptions(
 							operators.GTLT,
 							operators.GTELTE,
 							operators.INNOTIN,
-							operators.BLANKNOTBLANK,
-							[operators.BETWEEN]
+							[operators.BETWEEN],
+							operators.BLANKNOTBLANK
 						)
 					}
+					case "AUTONUMBER":
+					case "EMAIL":
 					case "LONGTEXT":
 					case "TEXT": {
 						return options.concat(
 							operators.EQNOTEQ,
+							operators.INNOTIN,
 							[operators.STARTWITH, operators.CONTAINS],
 							operators.BLANKNOTBLANK
 						)
 					}
 					case "MULTISELECT": {
 						return options.concat(
-							operators.ANYHASALL,
+							operators.HASANYHASALL,
 							operators.BLANKNOTBLANK
 						)
-					}
-					case "REFERENCEGROUP": {
-						return options.concat(operators.ANYHASALL)
 					}
 					default:
 						return options.concat(operators.EQNOTEQ)
@@ -185,7 +188,8 @@ function getDynamicProperty(
 	| NumberProperty
 	| CheckboxProperty
 	| SelectProperty
-	| DateProperty {
+	| DateProperty
+	| TimestampProperty {
 	// TODO: Add additional property types here to support things like DATE
 
 	if (fieldDisplayType === "CHECKBOX") {
@@ -198,6 +202,10 @@ function getDynamicProperty(
 
 	if (fieldDisplayType === "DATE") {
 		return { ...baseProp, type: "DATE" } as DateProperty
+	}
+
+	if (fieldDisplayType === "TIMESTAMP") {
+		return { ...baseProp, type: "TIMESTAMP" } as TimestampProperty
 	}
 
 	if (fieldDisplayType === "SELECT") {
@@ -215,7 +223,7 @@ const getProperties = (
 	wireName: string | undefined,
 	parentPath: FullPath,
 	itemState: wire.PlainWireRecord,
-	viewParams: wire.ParamConditionState,
+	viewPath: FullPath,
 	context: context.Context
 ): ComponentProperty[] => {
 	const fieldMetadata =
@@ -229,6 +237,12 @@ const getProperties = (
 
 	const fieldDisplayType = fieldMetadata?.getType() || undefined
 	const valueSource = itemState.valueSource
+
+	const paramsPath =
+		valueSource === "PARAM" ? viewPath.addLocal("params") : null
+	const viewParams = paramsPath
+		? (get(context, paramsPath) as wire.ParamConditionState)
+		: {}
 
 	return [
 		{
@@ -631,7 +645,7 @@ const getProperties = (
 			type: "LIST",
 			label: "Params",
 			subtype: "SELECT",
-			subtypeOptions: Object.keys(viewParams || {}).map((param) => ({
+			subtypeOptions: Object.keys(viewParams).map((param) => ({
 				label: param,
 				value: param,
 			})),
@@ -655,7 +669,7 @@ const getProperties = (
 			type: "SELECT",
 			label: "Param",
 			options: collection.addBlankSelectOption(
-				Object.keys(viewParams || {}).map((param) => ({
+				Object.keys(viewParams).map((param) => ({
 					label: param,
 					value: param,
 				}))
@@ -753,10 +767,7 @@ const ConditionsProperties: definition.UC = (props) => {
 		conjunction: "AND",
 		conditions: [defaultConditionDef],
 	}
-
 	const viewPath = selectedPath.trim()
-	const paramsPath = viewPath.addLocal("params")
-	const viewParams = get(context, paramsPath) as wire.ParamConditionState
 
 	return (
 		<>
@@ -812,7 +823,7 @@ const ConditionsProperties: definition.UC = (props) => {
 						wireName,
 						conditionsPath,
 						itemState,
-						viewParams,
+						viewPath,
 						context
 					)
 				}
@@ -854,7 +865,7 @@ const ConditionsProperties: definition.UC = (props) => {
 												wireName,
 												conditionOnGroupPath,
 												itemState,
-												viewParams,
+												viewPath,
 												context
 											)
 										}
