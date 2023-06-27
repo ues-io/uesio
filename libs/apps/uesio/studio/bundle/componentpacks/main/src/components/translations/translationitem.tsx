@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { definition, component, api, wire } from "@uesio/ui"
+import { definition, component, api, styles, wire } from "@uesio/ui"
 
 interface Props extends definition.UtilityProps {
 	namespace: string
@@ -7,9 +7,15 @@ interface Props extends definition.UtilityProps {
 	setValue: (value: wire.PlainWireRecord) => void
 }
 
+const StyleDefaults = Object.freeze({
+	root: ["mt-10"],
+})
+
 const TranslationItem: FunctionComponent<Props> = (props) => {
 	const MapField = component.getUtility("uesio/io.mapfield")
+	const TitleBar = component.getUtility("uesio/io.titlebar")
 	const { context, namespace, value, setValue } = props
+	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
 	const [metadata] = api.builder.useMetadataList(context, "LABEL", namespace)
 
@@ -35,8 +41,8 @@ const TranslationItem: FunctionComponent<Props> = (props) => {
 		)
 
 	return (
-		<div>
-			<h4>{namespace}</h4>
+		<div className={classes.root}>
+			<TitleBar title={namespace} context={context} />
 			<MapField
 				value={namespaceValues}
 				noAdd
