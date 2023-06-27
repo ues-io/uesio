@@ -188,7 +188,7 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 		builder.addQueryPart(fmt.Sprintf("%s <= %s", fieldName, builder.addValue(condition.Value)))
 
 	case "IS_BLANK":
-		if fieldMetadata.Type == "CHECKBOX" || fieldMetadata.Type == "TIMESTAMP" {
+		if fieldMetadata.Type == "CHECKBOX" || fieldMetadata.Type == "TIMESTAMP" || fieldMetadata.Type == "USER" {
 			builder.addQueryPart(fmt.Sprintf("%s IS NULL", fieldName))
 		} else if isTextType {
 			builder.addQueryPart(fmt.Sprintf("((%s IS NULL) OR (%s = 'null') OR (%s = ''))", fieldName, fieldName, fieldName))
@@ -196,7 +196,7 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 			builder.addQueryPart(fmt.Sprintf("((%s IS NULL) OR (%s = 'null'))", fieldName, fieldName))
 		}
 	case "IS_NOT_BLANK":
-		if fieldMetadata.Type == "CHECKBOX" || fieldMetadata.Type == "TIMESTAMP" {
+		if fieldMetadata.Type == "CHECKBOX" || fieldMetadata.Type == "TIMESTAMP" || fieldMetadata.Type == "USER" {
 			builder.addQueryPart(fmt.Sprintf("%s IS NOT NULL", fieldName))
 		} else if isTextType {
 			builder.addQueryPart(fmt.Sprintf("((%s IS NOT NULL) AND (%s != 'null') AND (%s != ''))", fieldName, fieldName, fieldName))
