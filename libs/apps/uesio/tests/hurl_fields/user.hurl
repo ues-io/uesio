@@ -442,3 +442,53 @@ HTTP 200
 jsonpath "$.wires[1].data[*]['uesio/tests.user']['uesio/core.id']" != "{{ID011-UUID}}"
 jsonpath "$.wires[1].data[*]['uesio/tests.name']" != "ID-011"
 
+# Operator: IS_BLANK
+# entry 17
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.wire_condition",
+            "fields": [{"id": "uesio/tests.user"}],
+            "query":true,
+            "conditions": [
+                {
+                    "active": true,
+                    "field": "uesio/tests.user",
+                    "operator": "IS_BLANK"
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].data[*]['uesio/tests.user']" includes null
+jsonpath "$.wires[0].data[*]['uesio/tests.user']['uesio/core.id']" not exists
+
+
+# Operator: IS_NOT_BLANK
+# entry 18
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.wire_condition",
+            "fields": [{"id": "uesio/tests.user"}],
+            "query":true,
+            "conditions": [
+                {
+                    "active": true,
+                    "field": "uesio/tests.user",
+                    "operator": "IS_NOT_BLANK"
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].data[*]['uesio/tests.user']" not includes null
+jsonpath "$.wires[0].data[*]['uesio/tests.user']['uesio/core.id']" exists
