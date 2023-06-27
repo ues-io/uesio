@@ -64,7 +64,7 @@ func Authenticate(next http.Handler) http.Handler {
 			// If we got a different session than the one we started with,
 			// logout the old one
 			session.Remove(browserSession, w)
-		} 
+		}
 		// else if userHasBeenLoggedOut(r, s) && auth.RedirectToLoginRoute(w, r, s) {
 		// 	return
 		// }
