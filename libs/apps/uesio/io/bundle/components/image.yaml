@@ -43,5 +43,6 @@ sections:
       - alt
       - align
       - loading
+  - type: SIGNALS
   - type: STYLES
   - type: DISPLAY
