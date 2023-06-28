@@ -12,8 +12,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/logger"
 )
 
-/* TEMPORARILY commenting this out until we can figure out why sessions are changing so much
-
 // Checks if the session returned with the user's original HTML route load
 // is different from the session being sent in the current request,
 // by comparing the Uesio session id hash in the original HTML request
@@ -35,7 +33,6 @@ func userHasBeenLoggedOut(r *http.Request, s *sess.Session) bool {
 	}
 	return userSessionHasChangedSinceOriginalRouteLoad(r, s)
 }
-*/
 
 // Authenticate checks to see if the current user is logged in
 func Authenticate(next http.Handler) http.Handler {
@@ -56,18 +53,20 @@ func Authenticate(next http.Handler) http.Handler {
 			http.Error(w, "Failed to create session: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
-
+		// If the session is expired, and it's not for a public user
+		if s != nil && s.IsExpired() && !s.IsPublicProfile() {
+			removeSessionAndRedirectToLoginRoute(w, r, s)
+			return
+		}
 		// If we didn't have a session from the browser, add it now.
 		if browserSession == nil {
 			session.Add(*s.GetBrowserSession(), w)
 		} else if browserSession != nil && browserSession != *s.GetBrowserSession() {
-			// If we got a different session than the one we started with,
-			// logout the old one
+			// If we got a different session than the one we started with, logout the old one
 			session.Remove(browserSession, w)
+		} else if userHasBeenLoggedOut(r, s) && auth.RedirectToLoginRoute(w, r, s) {
+			return
 		}
-		// else if userHasBeenLoggedOut(r, s) && auth.RedirectToLoginRoute(w, r, s) {
-		// 	return
-		// }
 
 		next.ServeHTTP(w, r.WithContext(SetSession(r, s)))
 	})
@@ -79,10 +78,6 @@ func AuthenticateSiteAdmin(next http.Handler) http.Handler {
 		appName := vars["app"]
 		siteName := vars["site"]
 		s := GetSession(r)
-		if s.IsExpired() {
-			removeSessionAndRedirectToLoginRoute(w, r, s)
-			return
-		}
 		err := datasource.AddSiteAdminContextByKey(appName+":"+siteName, s, nil)
 		if err != nil {
 			removeSessionAndRedirectToLoginRoute(w, r, s)
@@ -98,10 +93,6 @@ func AuthenticateWorkspace(next http.Handler) http.Handler {
 		appName := vars["app"]
 		workspaceName := vars["workspace"]
 		s := GetSession(r)
-		if s.IsExpired() {
-			removeSessionAndRedirectToLoginRoute(w, r, s)
-			return
-		}
 		err := datasource.AddWorkspaceContextByKey(appName+":"+workspaceName, s, nil)
 		if err != nil {
 			removeSessionAndRedirectToLoginRoute(w, r, s)

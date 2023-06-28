@@ -17,6 +17,9 @@ func createBrowserSession(userid, sitename string) *session.Session {
 			"Site":   sitename,
 			"UserID": userid,
 		},
+		// TODO: Make Session timeout configurable by App/Site
+		// https://github.com/TheCloudMasters/uesio/issues/2643
+		Timeout: time.Hour * 12,
 	})
 	return &sess
 }
