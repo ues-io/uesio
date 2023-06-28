@@ -55,7 +55,7 @@ func Authenticate(next http.Handler) http.Handler {
 		}
 		// If the session is expired, and it's not for a public user
 		if s != nil && s.IsExpired() && !s.IsPublicProfile() {
-			removeSessionAndRedirectToLoginRoute(w, r, s)
+			removeSessionAndRedirectToLoginRoute(w, r, s, auth.Expired)
 			return
 		}
 		// If we didn't have a session from the browser, add it now.
@@ -64,7 +64,7 @@ func Authenticate(next http.Handler) http.Handler {
 		} else if browserSession != nil && browserSession != *s.GetBrowserSession() {
 			// If we got a different session than the one we started with, logout the old one
 			session.Remove(browserSession, w)
-		} else if userHasBeenLoggedOut(r, s) && auth.RedirectToLoginRoute(w, r, s) {
+		} else if userHasBeenLoggedOut(r, s) && auth.RedirectToLoginRoute(w, r, s, auth.LoggedOut) {
 			return
 		}
 
@@ -80,7 +80,7 @@ func AuthenticateSiteAdmin(next http.Handler) http.Handler {
 		s := GetSession(r)
 		err := datasource.AddSiteAdminContextByKey(appName+":"+siteName, s, nil)
 		if err != nil {
-			removeSessionAndRedirectToLoginRoute(w, r, s)
+			removeSessionAndRedirectToLoginRoute(w, r, s, auth.Expired)
 			return
 		}
 		next.ServeHTTP(w, r)
@@ -95,17 +95,17 @@ func AuthenticateWorkspace(next http.Handler) http.Handler {
 		s := GetSession(r)
 		err := datasource.AddWorkspaceContextByKey(appName+":"+workspaceName, s, nil)
 		if err != nil {
-			removeSessionAndRedirectToLoginRoute(w, r, s)
+			removeSessionAndRedirectToLoginRoute(w, r, s, auth.Expired)
 			return
 		}
 		next.ServeHTTP(w, r)
 	})
 }
 
-func removeSessionAndRedirectToLoginRoute(w http.ResponseWriter, r *http.Request, s *sess.Session) {
+func removeSessionAndRedirectToLoginRoute(w http.ResponseWriter, r *http.Request, s *sess.Session, reason auth.RedirectReason) {
 	// Remove the session and redirect to login page
 	session.Remove(*s.GetBrowserSession(), w)
-	auth.RedirectToLoginRoute(w, r.WithContext(SetSession(r, s)), s)
+	auth.RedirectToLoginRoute(w, r.WithContext(SetSession(r, s)), s, reason)
 	return
 }
 
