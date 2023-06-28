@@ -101,7 +101,7 @@ func processCSV(body io.ReadCloser, spec *meta.JobSpec, metadata *adapt.Metadata
 			loader = getBooleanLoader
 		case "NUMBER":
 			loader = getNumberLoader
-		case "REFERENCE":
+		case "REFERENCE", "USER":
 			loader = getReferenceLoader
 		case "DATE":
 			loader = getDateLoader

@@ -38,6 +38,9 @@
 		},
 		"uesio/tests.multiselect": {
 			"columnname": "multiselect"
+		},
+		"uesio/tests.user": {
+			"columnname": "user"
 		}
 	}
 }
