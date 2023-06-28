@@ -148,8 +148,9 @@ POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.user']['uesio/core.id']" == "{{ID011-UUID}}"
-jsonpath "$.wires[0].data[*]['uesio/tests.name']" == "ID-011"
+jsonpath "$.wires[0].data[*]['uesio/tests.user']['uesio/core.id']" includes "{{ID011-UUID}}"
+jsonpath "$.wires[0].data[*]['uesio/tests.name']" includes "ID-011"
+jsonpath "$.wires[0].data[*]['uesio/tests.name']" includes "ID-001"
 
 # Operator: EQ | valueSource: PARAM | ID011-UUID
 # entry 7
@@ -174,8 +175,9 @@ POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.user']['uesio/core.id']" == "{{ID011-UUID}}"
-jsonpath "$.wires[0].data[*]['uesio/tests.name']" == "ID-011"
+jsonpath "$.wires[0].data[*]['uesio/tests.user']['uesio/core.id']" includes "{{ID011-UUID}}"
+jsonpath "$.wires[0].data[*]['uesio/tests.name']" includes "ID-011"
+jsonpath "$.wires[0].data[*]['uesio/tests.name']" includes "ID-001"
 
 # Operator: NOT_EQ | valueSource: VALUE | ID011-UUID
 # entry 8
@@ -199,8 +201,10 @@ POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.user']['uesio/core.id']" == "{{ID012-UUID}}"
-jsonpath "$.wires[0].data[*]['uesio/tests.user']['uesio/core.id']" != "{{ID011-UUID}}"
+jsonpath "$.wires[0].data[*]['uesio/tests.name']" includes "ID-012"
+jsonpath "$.wires[0].data[*]['uesio/tests.name']" includes "ID-002"
+jsonpath "$.wires[0].data[*]['uesio/tests.user']['uesio/core.id']" includes "{{ID012-UUID}}"
+jsonpath "$.wires[0].data[*]['uesio/tests.user']['uesio/core.id']" not includes "{{ID011-UUID}}"
 
 # Operator: NOT_EQ | valueSource: VALUE | ID011-UUID
 # entry 9
@@ -225,8 +229,10 @@ POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.user']['uesio/core.id']" == "{{ID012-UUID}}"
-jsonpath "$.wires[0].data[*]['uesio/tests.user']['uesio/core.id']" != "{{ID011-UUID}}"
+jsonpath "$.wires[0].data[*]['uesio/tests.name']" includes "ID-012"
+jsonpath "$.wires[0].data[*]['uesio/tests.name']" includes "ID-002"
+jsonpath "$.wires[0].data[*]['uesio/tests.user']['uesio/core.id']" includes "{{ID012-UUID}}"
+jsonpath "$.wires[0].data[*]['uesio/tests.user']['uesio/core.id']" not includes "{{ID011-UUID}}"
 
 # Operator: IN | valueSource: VALUE | ID011-UUID & ID012-UUID
 # entry 10
@@ -255,6 +261,8 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data[*]['uesio/tests.user']['uesio/core.id']" includes "{{ID011-UUID}}"
 jsonpath "$.wires[0].data[*]['uesio/tests.user']['uesio/core.id']" includes "{{ID012-UUID}}"
+jsonpath "$.wires[0].data[*]['uesio/tests.name']" includes "ID-001"
+jsonpath "$.wires[0].data[*]['uesio/tests.name']" includes "ID-002"
 jsonpath "$.wires[0].data[*]['uesio/tests.name']" includes "ID-011"
 jsonpath "$.wires[0].data[*]['uesio/tests.name']" includes "ID-012"
 
@@ -289,6 +297,8 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data[*]['uesio/tests.user']['uesio/core.id']" includes "{{ID011-UUID}}"
 jsonpath "$.wires[0].data[*]['uesio/tests.user']['uesio/core.id']" includes "{{ID012-UUID}}"
+jsonpath "$.wires[0].data[*]['uesio/tests.name']" includes "ID-001"
+jsonpath "$.wires[0].data[*]['uesio/tests.name']" includes "ID-002"
 jsonpath "$.wires[0].data[*]['uesio/tests.name']" includes "ID-011"
 jsonpath "$.wires[0].data[*]['uesio/tests.name']" includes "ID-012"
 
@@ -330,8 +340,9 @@ POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[1].data[*]['uesio/tests.user']['uesio/core.id']" == "{{ID011-UUID}}"
-jsonpath "$.wires[1].data[*]['uesio/tests.name']" == "ID-011"
+jsonpath "$.wires[1].data[*]['uesio/tests.user']['uesio/core.id']" includes "{{ID011-UUID}}"
+jsonpath "$.wires[1].data[*]['uesio/tests.name']" includes "ID-001"
+jsonpath "$.wires[1].data[*]['uesio/tests.name']" includes "ID-011"
 
 # Operator: NOT_IN | valueSource: VALUE | ID011-UUID & ID012-UUID
 # entry 13
@@ -357,8 +368,9 @@ POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.user']['uesio/core.id']" == "{{ID012-UUID}}"
-jsonpath "$.wires[0].data[*]['uesio/tests.name']" == "ID-012"
+jsonpath "$.wires[0].data[*]['uesio/tests.user']['uesio/core.id']" includes "{{ID012-UUID}}"
+jsonpath "$.wires[0].data[*]['uesio/tests.name']" includes "ID-002"
+jsonpath "$.wires[0].data[*]['uesio/tests.name']" includes "ID-012"
 
 # Operator: NOT_IN | valueSource: PARAM | ID011-UUID & ID012-UUID
 # entry 14
@@ -387,8 +399,9 @@ POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.user']['uesio/core.id']" == "{{ID012-UUID}}"
-jsonpath "$.wires[0].data[*]['uesio/tests.name']" == "ID-012"
+jsonpath "$.wires[0].data[*]['uesio/tests.user']['uesio/core.id']" includes "{{ID012-UUID}}"
+jsonpath "$.wires[0].data[*]['uesio/tests.name']" includes "ID-002"
+jsonpath "$.wires[0].data[*]['uesio/tests.name']" includes "ID-012"
 
 # Operator: NOT_IN | valueSource: LOOKUP | ID011-UUID
 # entry 15
@@ -428,8 +441,11 @@ POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[1].data[*]['uesio/tests.user']['uesio/core.id']" != "{{ID011-UUID}}"
-jsonpath "$.wires[1].data[*]['uesio/tests.name']" != "ID-011"
+jsonpath "$.wires[1].data[*]['uesio/tests.user']['uesio/core.id']" not includes "{{ID011-UUID}}"
+jsonpath "$.wires[1].data[*]['uesio/tests.user']['uesio/core.id']" includes "{{ID012-UUID}}"
+jsonpath "$.wires[1].data[*]['uesio/tests.name']" not includes "ID-011"
+jsonpath "$.wires[1].data[*]['uesio/tests.name']" includes "ID-002"
+jsonpath "$.wires[1].data[*]['uesio/tests.name']" includes "ID-012"
 
 # Operator: IS_BLANK
 # entry 16
@@ -464,7 +480,7 @@ Accept: application/json
     "wires": [
         {
             "collection":"uesio/tests.wire_condition",
-            "fields": [{"id": "uesio/tests.user"}],
+            "fields": [{"id": "uesio/tests.user"},{"id":"uesio/tests.name"}],
             "query":true,
             "conditions": [
                 {
@@ -480,3 +496,7 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data[*]['uesio/tests.user']" not includes null
 jsonpath "$.wires[0].data[*]['uesio/tests.user']['uesio/core.id']" exists
+jsonpath "$.wires[0].data[*]['uesio/tests.name']" includes "ID-001"
+jsonpath "$.wires[0].data[*]['uesio/tests.name']" includes "ID-002"
+jsonpath "$.wires[0].data[*]['uesio/tests.name']" includes "ID-011"
+jsonpath "$.wires[0].data[*]['uesio/tests.name']" includes "ID-012"
