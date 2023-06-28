@@ -66,7 +66,16 @@ func getLoginRoute(session *sess.Session) (*meta.Route, error) {
 	return loginRoute, nil
 }
 
-func RedirectToLoginRoute(w http.ResponseWriter, r *http.Request, session *sess.Session) bool {
+type RedirectReason int
+
+const (
+	Expired = iota
+	LoggedOut
+	NoAccess
+	NotFound
+)
+
+func RedirectToLoginRoute(w http.ResponseWriter, r *http.Request, session *sess.Session, reason RedirectReason) bool {
 	loginRoute, err := getLoginRoute(session)
 	if err == nil {
 		requestedPath := r.URL.Path
@@ -95,6 +104,14 @@ func RedirectToLoginRoute(w http.ResponseWriter, r *http.Request, session *sess.
 
 			if requestedPath != "" && requestedPath != "/" {
 				redirectPath = redirectPath + "?r=" + requestedPath
+			}
+			if reason == Expired {
+				if strings.Contains(redirectPath, "?") {
+					redirectPath = redirectPath + "&"
+				} else {
+					redirectPath = redirectPath + "?"
+				}
+				redirectPath = redirectPath + "expired=true"
 			}
 			http.Redirect(w, r, redirectPath, redirectStatusCode)
 			return true

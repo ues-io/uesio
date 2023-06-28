@@ -1,9 +1,10 @@
 package controller
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/auth"
 	"net/http"
 	"strings"
+
+	"github.com/thecloudmasters/uesio/pkg/auth"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 
@@ -125,7 +126,7 @@ func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Sess
 	logger.Log("Error Getting Route: "+err.Error(), logger.INFO)
 	// If our profile is the public profile, redirect to the login route
 	if redirect && session.IsPublicProfile() {
-		if auth.RedirectToLoginRoute(w, r, session) {
+		if auth.RedirectToLoginRoute(w, r, session, auth.NotFound) {
 			return
 		}
 	}

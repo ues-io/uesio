@@ -25,6 +25,24 @@ definition:
                 - uesio/io.grid:
                     uesio.variant: uesio/core.loginarea
                     items:
+                      - uesio/io.box:
+                          uesio.variant: uesio/io.section
+                          uesio.display:
+                            - type: paramIsSet
+                              param: expired
+                          uesio.styleTokens:
+                            root:
+                              - rounded-lg
+                              - bg-blue-300
+                              - border-indigo-800
+                              - text-white
+                          components:
+                            - uesio/io.text:
+                                text: $Label{uesio/core.session_expiration_msg}
+                              uesio.styleTokens:
+                                root:
+                                  - p-5
+                                  - items-center
                       - uesio/io.image:
                           uesio.variant: uesio/core.fancy
                           file: uesio/core.logo
@@ -76,3 +94,7 @@ definition:
                                       signals:
                                         - signal: route/REDIRECT
                                           path: requestpassword
+  params:
+    expired:
+      type: CHECKBOX
+      required: false
