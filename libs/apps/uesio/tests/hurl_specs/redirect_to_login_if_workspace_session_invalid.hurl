@@ -23,7 +23,7 @@ Cookie: sessid={{session_id}}
 HTTP 302
 
 [Asserts]
-header "Location" == "/login?r=/workspace/uesio/tests/dev/routes/path/uesio/tests/dependencies_group"
+header "Location" == "/login?r=/workspace/uesio/tests/dev/routes/path/uesio/tests/dependencies_group&expired=true"
 
 # Access a workspace route with an invalid session, requesting JSON (e.g. a fetch request)
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
@@ -42,4 +42,4 @@ Cookie: sessid={{session_id}}
 HTTP 200
 
 [Asserts]
-header "Location" == "/login?r=https://{{host}}:{{port}}/workspace/uesio/tests/dev/views/uesio/tests/dependencies_group/edit"
+header "Location" == "/login?r=https://{{host}}:{{port}}/workspace/uesio/tests/dev/views/uesio/tests/dependencies_group/edit&expired=true"
