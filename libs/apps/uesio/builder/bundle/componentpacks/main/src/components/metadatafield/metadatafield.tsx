@@ -1,4 +1,4 @@
-import { definition, component, metadata } from "@uesio/ui"
+import { definition, component, metadata, api } from "@uesio/ui"
 
 type MetadataFieldDefinition = {
 	fieldId: string
@@ -42,6 +42,12 @@ const MetadataField: definition.UC<MetadataFieldDefinition> = (props) => {
 		: fieldMetadata.getUpdateable()
 
 	const mode = (canEdit && context.getFieldMode()) || "READ"
+
+	if (metadataType === "COLLECTION" && value) {
+		api.collection.useCollection(context, value, {
+			needAllFieldMetadata: true,
+		})
+	}
 
 	if (mode !== "EDIT") {
 		return <component.Component {...props} componentType="uesio/io.field" />
