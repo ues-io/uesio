@@ -156,40 +156,32 @@ func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Sess
 
 func ServeRoute(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	namespace := vars["namespace"]
 	path := vars["route"]
-
 	session := middleware.GetSession(r)
 	prefix := strings.TrimSuffix(r.URL.Path, path)
-
-	route, err := routing.GetRouteFromPath(r, namespace, path, prefix, session)
-	if err != nil {
-		HandleErrorRoute(w, r, session, path, err, true)
-		return
-	}
-
-	depsCache, err := routing.GetMetadataDeps(route, session)
-	if err != nil {
-		HandleErrorRoute(w, r, session, path, err, false)
-		return
-	}
-
-	ExecuteIndexTemplate(w, route, depsCache, false, session)
+	serveRouteInternal(w, r, session, vars["namespace"], path, prefix)
 }
 
 func ServeLocalRoute(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	path := vars["route"]
-
 	session := middleware.GetSession(r)
-	site := session.GetSite()
+	serveRouteInternal(w, r, session, session.GetSite().GetAppFullName(), path, "/")
+}
 
-	route, err := routing.GetRouteFromPath(r, site.GetAppFullName(), path, "/", session)
+func serveRouteInternal(w http.ResponseWriter, r *http.Request, session *sess.Session, namespace, path, prefix string) {
+	route, err := routing.GetRouteFromPath(r, namespace, path, prefix, session)
 	if err != nil {
 		HandleErrorRoute(w, r, session, path, err, true)
 		return
 	}
-
+	// Handle redirect routes
+	if route.Type == "redirect" {
+		w.Header().Set("Cache-Control", "no-cache")
+		http.Redirect(w, r, route.Redirect, http.StatusFound)
+		return
+	}
+	// Handle view routes
 	depsCache, err := routing.GetMetadataDeps(route, session)
 	if err != nil {
 		HandleErrorRoute(w, r, session, path, err, false)

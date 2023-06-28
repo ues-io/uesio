@@ -20,10 +20,12 @@ definition:
         uesio/core.id:
         uesio/studio.name:
         uesio/studio.path:
+        uesio/studio.redirect:
         uesio/studio.view:
         uesio/studio.theme:
         uesio/studio.title:
         uesio/studio.tags:
+        uesio/studio.type:
       conditions:
         - field: uesio/studio.workspace
           valueSource: LOOKUP
@@ -141,22 +143,49 @@ definition:
                                 items:
                                   - uesio/io.field:
                                       fieldId: uesio/studio.path
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.type
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.redirect
+                                      uesio.display:
+                                        - field: uesio/studio.type
+                                          value: redirect
                                   - uesio/builder.metadatafield:
                                       fieldId: uesio/studio.view
                                       metadataType: VIEW
                                       label: View
+                                      uesio.display:
+                                        - field: uesio/studio.type
+                                          value: redirect
+                                          operator: NOT_EQUALS
                                   - uesio/builder.metadatafield:
                                       fieldId: uesio/studio.theme
                                       metadataType: THEME
                                       label: Theme
+                                      uesio.display:
+                                        - field: uesio/studio.type
+                                          value: redirect
+                                          operator: NOT_EQUALS
                                   - uesio/io.field:
                                       fieldId: uesio/studio.title
+                                      uesio.display:
+                                        - field: uesio/studio.type
+                                          value: redirect
+                                          operator: NOT_EQUALS
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.main
                           title: Search Engine Optimization
                           subtitle: Route <meta> tags
+                          uesio.display:
+                            - field: uesio/studio.type
+                              value: redirect
+                              operator: NOT_EQUALS
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
+                          uesio.display:
+                            - field: uesio/studio.type
+                              value: redirect
+                              operator: NOT_EQUALS
                           components:
                             - uesio/io.field:
                                 label: " "
