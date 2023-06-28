@@ -50,8 +50,18 @@ definition:
                                 signals:
                                   - signal: "route/NAVIGATE"
                                     path: "home"
-                      - uesio/io.group:
-                          components:
+                            - uesio/io.button:
+                                uesio.variant: uesio/docs.borderless
+                                text: Community
+                                signals:
+                                  - signal: route/REDIRECT
+                                    path: https://community.ues.io
+                            - uesio/io.button:
+                                uesio.variant: uesio/docs.borderless
+                                text: Blog
+                                signals:
+                                  - signal: route/REDIRECT
+                                    path: "https://$Site{domain}/blog"
                             - uesio/io.button:
                                 uesio.variant: uesio/docs.borderless
                                 text: Early Access

@@ -59,6 +59,12 @@ definition:
                               path: https://docs.$Site{domain}
                       - uesio/io.button:
                           uesio.variant: uesio/web.borderless
+                          text: Community
+                          signals:
+                            - signal: route/REDIRECT
+                              path: https://community.ues.io
+                      - uesio/io.button:
+                          uesio.variant: uesio/web.borderless
                           text: Blog
                           signals:
                             - signal: route/NAVIGATE
@@ -93,6 +99,12 @@ definition:
                   signals:
                     - signal: route/REDIRECT
                       path: https://docs.$Site{domain}
+              - uesio/io.button:
+                  uesio.variant: uesio/web.borderless
+                  text: Community
+                  signals:
+                    - signal: route/REDIRECT
+                      path: https://community.ues.io
               - uesio/io.button:
                   uesio.variant: uesio/web.borderless
                   text: Blog
