@@ -1,0 +1,6 @@
+name: routetype
+options:
+  - label: "View"
+    value: ""
+  - label: "Redirect"
+    value: "redirect"

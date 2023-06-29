@@ -17,17 +17,21 @@ func runRouteBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, s
 			return err
 		}
 
-		err = depMap.AddOptional(change, "collection", "uesio/studio.collection")
-		if err != nil {
-			return err
-		}
+		routeType, _ := change.GetFieldAsString("uesio/studio.type")
+		if routeType != "redirect" {
+			err = depMap.AddOptional(change, "collection", "uesio/studio.collection")
+			if err != nil {
+				return err
+			}
 
-		err = depMap.AddRequired(change, "view", "uesio/studio.view")
-		if err != nil {
-			return err
-		}
+			err = depMap.AddRequired(change, "view", "uesio/studio.view")
+			if err != nil {
+				return err
+			}
 
-		return depMap.AddRequired(change, "theme", "uesio/studio.theme")
+			return depMap.AddRequired(change, "theme", "uesio/studio.theme")
+		}
+		return nil
 	})
 	if err != nil {
 		return err

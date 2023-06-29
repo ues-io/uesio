@@ -24,9 +24,11 @@ definition:
         uesio/studio.name:
         uesio/studio.workspace:
         uesio/studio.path:
+        uesio/studio.redirect:
         uesio/studio.view:
         uesio/studio.theme:
         uesio/studio.title:
+        uesio/studio.type:
         uesio/core.createdat:
         uesio/core.updatedat:
         uesio/core.createdby:
@@ -54,9 +56,11 @@ definition:
         uesio/studio.name:
         uesio/studio.workspace:
         uesio/studio.path:
+        uesio/studio.redirect:
         uesio/studio.view:
         uesio/studio.theme:
         uesio/studio.title:
+        uesio/studio.type:
       conditions:
         - field: uesio/studio.workspace
           valueSource: LOOKUP
@@ -70,6 +74,9 @@ definition:
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: uesio/core.id
+        - field: uesio/studio.type
+          valueSource: VALUE
+          value: ""
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -217,7 +224,22 @@ definition:
                           wire: routes
                           columns:
                             - field: uesio/studio.path
-                            - field: uesio/studio.view
+                            - field: uesio/studio.type
+                            - label: Content
+                              components:
+                                - uesio/io.field:
+                                    fieldId: uesio/studio.view
+                                    labelPosition: "none"
+                                    uesio.display:
+                                      - field: uesio/studio.type
+                                        value: "redirect"
+                                        operator: NOT_EQUALS
+                                - uesio/io.field:
+                                    fieldId: uesio/studio.redirect
+                                    labelPosition: "none"
+                                    uesio.display:
+                                      - field: uesio/studio.type
+                                        value: "redirect"
                             - field: uesio/core.updatedby
                               user:
                                 subtitle: $Time{uesio/core.updatedat}
@@ -273,17 +295,36 @@ definition:
                   fieldId: uesio/studio.name
               - uesio/io.field:
                   fieldId: uesio/studio.path
+              - uesio/io.field:
+                  fieldId: uesio/studio.type
+              - uesio/io.field:
+                  fieldId: uesio/studio.redirect
+                  uesio.display:
+                    - field: uesio/studio.type
+                      value: "redirect"
               - uesio/builder.metadatafield:
                   fieldId: uesio/studio.view
                   metadataType: VIEW
                   label: View
+                  uesio.display:
+                    - field: uesio/studio.type
+                      value: "redirect"
+                      operator: NOT_EQUALS
               - uesio/builder.metadatafield:
                   fieldId: uesio/studio.theme
                   metadataType: THEME
                   label: Theme
+                  uesio.display:
+                    - field: uesio/studio.type
+                      value: "redirect"
+                      operator: NOT_EQUALS
               - uesio/io.field:
                   fieldId: uesio/studio.title
                   label: Title
+                  uesio.display:
+                    - field: uesio/studio.type
+                      value: "redirect"
+                      operator: NOT_EQUALS
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
