@@ -20,7 +20,6 @@ const Accordion: definition.UC<AccordionDefinition> = (props) => {
 	const componentId = api.component.getComponentIdFromProps(props)
 	const classes = styles.useStyleTokens(StyleDefaults, props)
 	const [expanded] = useExpansion(componentId)
-	console.log("expanded: ", expanded)
 	return (
 		<IOAccordion
 			classes={classes}

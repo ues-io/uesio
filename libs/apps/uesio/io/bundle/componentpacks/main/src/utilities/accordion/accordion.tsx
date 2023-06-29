@@ -21,8 +21,6 @@ const Accordion: definition.UtilityComponent<AccordionProps> = (props) => {
 		componentId,
 	} = props
 	const [expanded, setExpanded] = useExpansion(componentId + title)
-	console.log("collapseicon: ", collapseicon)
-	console.log("expandedicon: ", expandedicon)
 	const [icon, setIcon] = useState(expandedicon)
 	const classes = styles.useUtilityStyleTokens(
 		{
@@ -34,8 +32,6 @@ const Accordion: definition.UtilityComponent<AccordionProps> = (props) => {
 		"uesio/io.accordion"
 	)
 	const handleClick = () => {
-		console.log("collapseicon: ", collapseicon)
-		console.log("expandedicon: ", expandedicon)
 		if (collapseicon && expandedicon) {
 			if (expanded === true) {
 				setIcon(collapseicon)
@@ -46,7 +42,6 @@ const Accordion: definition.UtilityComponent<AccordionProps> = (props) => {
 			}
 		}
 	}
-	console.log("utility expanded: ", expanded)
 	return (
 		<>
 			<div className={classes.header}>
