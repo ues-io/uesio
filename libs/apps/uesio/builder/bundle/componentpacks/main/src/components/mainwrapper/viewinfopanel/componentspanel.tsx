@@ -1,4 +1,4 @@
-import { FC, DragEvent, useState } from "react"
+import { FC, DragEvent, useState, useEffect } from "react"
 import {
 	definition,
 	component,
@@ -174,8 +174,8 @@ type CategoryBlockProps = {
 	isSelected: (itemtype: string, itemname: metadata.MetadataKey) => boolean
 	category: string
 } & definition.UtilityProps
-
 const CategoryBlock: FC<CategoryBlockProps> = (props) => {
+	const IconButton = component.getUtility("uesio/io.iconbutton")
 	const classes = styles.useUtilityStyleTokens(
 		{
 			categoryLabel: [
@@ -185,21 +185,49 @@ const CategoryBlock: FC<CategoryBlockProps> = (props) => {
 				"text-xs",
 				"font-light",
 				"text-slate-500",
+				"flex",
+				"justify-between",
 			],
 		},
 		props
 	)
 	const { context, components, category, variants, isSelected } = props
 	const comps = components
+	const [expand, setExpand] = useState(true)
+
+	useEffect(() => {
+		const storedExpand = localStorage.getItem(
+			`categoryExpandState_${props.category}`
+		)
+		if (storedExpand) {
+			setExpand(storedExpand === "true")
+		}
+	}, [])
+	useEffect(() => {
+		localStorage.setItem(
+			`categoryExpandState_${props.category}`,
+			expand.toString()
+		)
+	}, [expand])
+
 	if (!comps || !comps.length) return null
 	comps.sort((a, b) => {
 		if (!a.name) return 1
 		if (!b.name) return -1
 		return a.name.localeCompare(b.name)
 	})
-	return (
+	return expand ? (
 		<>
-			<div className={classes.categoryLabel}>{category}</div>
+			<div className={classes.categoryLabel}>
+				{category}
+				<IconButton
+					context={context}
+					variant="uesio/builder.Ic"
+					className="text-[15px]"
+					icon="close"
+					onClick={() => setExpand(false)}
+				/>
+			</div>
 			{comps.map((component) => {
 				const { namespace, name } = component
 				if (!namespace) throw new Error("Invalid Property Definition")
@@ -215,6 +243,17 @@ const CategoryBlock: FC<CategoryBlockProps> = (props) => {
 				)
 			})}
 		</>
+	) : (
+		<div className={classes.categoryLabel}>
+			{category}
+			<IconButton
+				context={context}
+				variant="uesio/builder.Ic"
+				className="text-[15px]"
+				icon="expand_more"
+				onClick={() => setExpand(true)}
+			/>
+		</div>
 	)
 }
 
