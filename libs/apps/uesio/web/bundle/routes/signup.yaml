@@ -1,4 +1,4 @@
 name: signup
 path: signup
 type: redirect
-redirect: https://studio.ues.io/signup
+redirect: https://studio.$Site{domain}/signup

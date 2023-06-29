@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/auth"
+	"github.com/thecloudmasters/uesio/pkg/merge"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 
@@ -178,7 +179,15 @@ func serveRouteInternal(w http.ResponseWriter, r *http.Request, session *sess.Se
 	// Handle redirect routes
 	if route.Type == "redirect" {
 		w.Header().Set("Cache-Control", "no-cache")
-		http.Redirect(w, r, route.Redirect, http.StatusFound)
+
+		mergedRouteRedirect, err := MergeRouteData(route.Redirect, &merge.ServerMergeData{
+			Session: session,
+		})
+		if err != nil {
+			HandleErrorRoute(w, r, session, path, err, true)
+		}
+
+		http.Redirect(w, r, mergedRouteRedirect, http.StatusFound)
 		return
 	}
 	// Handle view routes
