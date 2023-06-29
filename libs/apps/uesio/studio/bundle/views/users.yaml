@@ -116,6 +116,10 @@ definition:
                     uesio.variant: uesio/io.section
                     components:
                       - uesio/io.searchbox:
+                          uesio.context:
+                            siteadmin:
+                              name: $Param{sitename}
+                              app: $Param{app}
                           wire: users
                           focusOnRender: true
                           searchfields:

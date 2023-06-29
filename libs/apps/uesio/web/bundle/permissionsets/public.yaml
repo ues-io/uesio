@@ -4,7 +4,6 @@ views:
   uesio/web.blog: true
   uesio/web.blogentry: true
   uesio/web.earlyaccess: true
-  uesio/web.earlyaccessthanks: true
   uesio/web.footer: true
   uesio/web.home: true
   uesio/web.preview: true
@@ -28,7 +27,6 @@ routes:
   uesio/web.blog: true
   uesio/web.blogentry: true
   uesio/web.earlyaccess: true
-  uesio/web.earlyaccessthanks: true
   uesio/web.home: true
   uesio/web.preview: true
   uesio/web.privacy: true
