@@ -1,0 +1,40 @@
+name: accordion
+pack: main
+entrypoint: components/accordion/accordion
+title: Accordion
+description: Expand or collapse the content
+category: CONTENT
+discoverable: true
+icon: expand_more
+slots:
+  - name: components
+defaultDefinition:
+  title: Accordion
+  subtitle:
+  expandicon: expand_more
+  collapseicon: expand_less
+  uesio.variant: uesio/io.default
+properties:
+  - name: title
+    type: TEXT
+    label: Title
+  - name: subtitle
+    type: TEXT
+    label: Subtitle
+  - name: expandicon
+    type: ICON
+    label: Expand Icon
+  - name: collapseicon
+    type: ICON
+    label: Collapse Icon
+sections:
+  - type: HOME
+    properties:
+      - title
+      - subtitle
+      - expandicon
+      - collapseicon
+  - type: STYLES
+    properties:
+      - header
+  - type: DISPLAY

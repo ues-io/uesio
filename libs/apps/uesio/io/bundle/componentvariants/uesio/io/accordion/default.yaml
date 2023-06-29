@@ -1,0 +1,18 @@
+name: default
+label: Default
+definition:
+  uesio.styleTokens:
+    header:
+      - flex
+      - flex-wrap
+      - justify-between
+      - mx-2
+      - mt-4
+      - -mb-1
+      - text-xs
+      - font-light
+      - text-slate-500
+    title:
+      - flex
+      - flex-col
+public: true
