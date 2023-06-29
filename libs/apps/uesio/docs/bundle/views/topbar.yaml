@@ -62,12 +62,6 @@ definition:
                                 signals:
                                   - signal: route/REDIRECT
                                     path: "https://$Site{domain}/blog"
-                            - uesio/io.button:
-                                uesio.variant: uesio/docs.borderless
-                                text: Early Access
-                                signals:
-                                  - signal: "route/REDIRECT"
-                                    path: "https://$Site{domain}/earlyaccess"
                       - uesio/io.group:
                           components:
                             - uesio/io.button:
