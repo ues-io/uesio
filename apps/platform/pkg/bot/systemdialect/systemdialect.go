@@ -69,8 +69,6 @@ func (b *SystemDialect) AfterSave(bot *meta.Bot, request *adapt.SaveOp, connecti
 		botFunction = runDomainAfterSaveSiteBot
 	case "uesio/studio.collection":
 		botFunction = runCollectionAfterSaveBot
-	case "uesio/studio.field":
-		botFunction = runFieldAfterSaveBot
 	case "uesio/studio.workspace":
 		botFunction = runWorkspaceAfterSaveBot
 	case "uesio/studio.bundle":
