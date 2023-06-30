@@ -1,6 +1,7 @@
 package datasource
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"strings"
@@ -17,6 +18,15 @@ import (
 type SpecialReferences struct {
 	ReferenceMetadata *adapt.ReferenceMetadata
 	Fields            []string
+}
+
+type TestEvaluator struct {
+	fieldKeys map[string]bool
+}
+
+func (te *TestEvaluator) SelectGVal(ctx context.Context, k string) (interface{}, error) {
+	te.fieldKeys[k] = true
+	return nil, nil
 }
 
 var specialRefs = map[string]SpecialReferences{
@@ -236,7 +246,7 @@ func getMetadataForLoad(
 		return err
 	}
 
-	// Now loop over fields and do some additional processing for reference fields
+	// Now loop over fields and do some additional processing for reference & formula fields
 	for i, requestField := range op.Fields {
 		fieldMetadata, err := collectionMetadata.GetField(requestField.ID)
 		if err != nil {
@@ -271,6 +281,29 @@ func getMetadataForLoad(
 			}
 
 		}
+
+		if fieldMetadata.IsFormula && fieldMetadata.FormulaMetadata != nil {
+			testEval := &TestEvaluator{
+				fieldKeys: map[string]bool{},
+			}
+
+			adapt.UesioLanguage.Evaluate(fieldMetadata.FormulaMetadata.Expression, testEval)
+
+			for key := range testEval.fieldKeys {
+				err := collections.AddField(collectionKey, key, nil)
+				if err != nil {
+					return err
+				}
+				op.Fields = append(op.Fields, adapt.LoadRequestField{ID: key})
+			}
+		}
+
+	}
+
+	//Re-query metadata so we actually get the metadata for formula field parts
+	err = collections.Load(metadataResponse, session, nil)
+	if err != nil {
+		return err
 	}
 
 	return nil
