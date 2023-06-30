@@ -1,6 +1,6 @@
 import { definition, styles } from "@uesio/ui"
 import IconButton from "../iconbutton/iconbutton"
-import { useExpansion } from "../../shared/expansion"
+import { toggleExpansion, useExpansion } from "../../shared/expansion"
 import { useState } from "react"
 
 interface AccordionProps {
@@ -14,7 +14,7 @@ interface AccordionProps {
 const Accordion: definition.UtilityComponent<AccordionProps> = (props) => {
 	const { context, expandicon, collapseicon, title, subtitle, componentId } =
 		props
-	const [isExpanded, setIsExpanded] = useExpansion(
+	const [isExpanded] = useExpansion(
 		componentId ? componentId + title : (title as string) + subtitle
 	)
 	const [icon, setIcon] = useState(expandicon ? expandicon : "expand_more")
@@ -31,11 +31,12 @@ const Accordion: definition.UtilityComponent<AccordionProps> = (props) => {
 		"uesio/io.accordion"
 	)
 	const handleClick = () => {
-		isExpanded
-			? (setIcon(collapseicon ? collapseicon : "expand_less"),
-			  setIsExpanded(false))
-			: (setIcon(expandicon ? expandicon : "expand_more"),
-			  setIsExpanded(true))
+		// isExpanded
+		setIcon(collapseicon ? collapseicon : "expand_less"),
+			// 	  setIsExpanded(false))
+			// 	: (setIcon(expandicon ? expandicon : "expand_more"),
+			//	  setIsExpanded(true))
+			toggleExpansion
 	}
 	return (
 		<>
