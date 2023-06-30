@@ -37,9 +37,6 @@ const useExpansion = (
 		if (isExpanded === undefined) {
 			setExpanded(true)
 		}
-		// We do NOT want to reset the expansion state whenever isExpanded changes,
-		// so we don't want to add isExpanded or setExpanded to the deps array
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [id])
 
 	return [isExpanded, setExpanded]
