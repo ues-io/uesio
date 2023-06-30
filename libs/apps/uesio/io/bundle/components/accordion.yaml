@@ -35,8 +35,6 @@ sections:
       - expandicon
       - collapseicon
   - type: STYLES
-    properties:
-      - header
   - type: DISPLAY
 styleRegions:
   header:
