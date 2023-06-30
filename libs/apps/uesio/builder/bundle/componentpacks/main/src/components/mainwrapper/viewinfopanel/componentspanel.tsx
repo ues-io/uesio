@@ -176,19 +176,7 @@ type CategoryBlockProps = {
 } & definition.UtilityProps
 
 const CategoryBlock: FC<CategoryBlockProps> = (props) => {
-	const classes = styles.useUtilityStyleTokens(
-		{
-			categoryLabel: [
-				"mx-2",
-				"mt-4",
-				"-mb-1",
-				"text-xs",
-				"font-light",
-				"text-slate-500",
-			],
-		},
-		props
-	)
+	const Accordion = getUtility("uesio/io.accordion")
 	const { context, components, category, variants, isSelected } = props
 	const comps = components
 	if (!comps || !comps.length) return null
@@ -199,21 +187,30 @@ const CategoryBlock: FC<CategoryBlockProps> = (props) => {
 	})
 	return (
 		<>
-			<div className={classes.categoryLabel}>{category}</div>
-			{comps.map((component) => {
-				const { namespace, name } = component
-				if (!namespace) throw new Error("Invalid Property Definition")
-				const fullName = `${namespace}.${name}`
-				return (
-					<ComponentBlock
-						key={fullName}
-						variants={variants[fullName]}
-						componentDef={component}
-						context={context}
-						isSelected={isSelected}
-					/>
-				)
-			})}
+			<Accordion
+				key={"Accordion" + category}
+				context={context}
+				title={category}
+				collapseicon="expand_less"
+				expandicon="expand_more"
+				componentId={"ComponentsPanel.Accordion."}
+			>
+				{comps.map((component) => {
+					const { namespace, name } = component
+					if (!namespace)
+						throw new Error("Invalid Property Definition")
+					const fullName = `${namespace}.${name}`
+					return (
+						<ComponentBlock
+							key={fullName}
+							variants={variants[fullName]}
+							componentDef={component}
+							context={context}
+							isSelected={isSelected}
+						/>
+					)
+				})}
+			</Accordion>
 		</>
 	)
 }
