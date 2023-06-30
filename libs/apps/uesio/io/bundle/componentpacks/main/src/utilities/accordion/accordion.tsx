@@ -6,56 +6,54 @@ import { useState } from "react"
 interface AccordionProps {
 	title?: string
 	subtitle?: string
-	expandedicon?: string
+	expandicon?: string
 	collapseicon?: string
-	componentId: string
+	componentId?: string
 }
 
 const Accordion: definition.UtilityComponent<AccordionProps> = (props) => {
-	const {
-		context,
-		expandedicon,
-		collapseicon,
-		title,
-		subtitle,
-		componentId,
-	} = props
-	const [expanded, setExpanded] = useExpansion(componentId + title)
-	const [icon, setIcon] = useState(expandedicon)
+	const { context, expandicon, collapseicon, title, subtitle, componentId } =
+		props
+	const [isExpanded, setIsExpanded] = useExpansion(
+		componentId ? componentId + title : (title as string) + subtitle
+	)
+	const [icon, setIcon] = useState(expandicon ? expandicon : "expand_more")
 	const classes = styles.useUtilityStyleTokens(
 		{
-			root: [],
 			header: [],
+			inner: [],
 			title: [],
+			subtitle: [],
+			icon: [],
+			body: [],
 		},
 		props,
 		"uesio/io.accordion"
 	)
 	const handleClick = () => {
-		if (collapseicon && expandedicon) {
-			if (expanded === true) {
-				setIcon(collapseicon)
-				setExpanded(false)
-			} else {
-				setIcon(expandedicon)
-				setExpanded(true)
-			}
-		}
+		isExpanded
+			? (setIcon(collapseicon ? collapseicon : "expand_less"),
+			  setIsExpanded(false))
+			: (setIcon(expandicon ? expandicon : "expand_more"),
+			  setIsExpanded(true))
 	}
 	return (
 		<>
 			<div className={classes.header}>
-				<div className={classes.title}>
-					<div>{title}</div>
-					<div>{subtitle}</div>
+				<div className={classes.inner}>
+					<div className={classes.title}>{title}</div>
+					<div className={classes.subtitle}>{subtitle}</div>
 				</div>
 				<IconButton
+					className={classes.icon}
 					context={context}
 					icon={icon}
 					onClick={() => handleClick()}
 				/>
 			</div>
-			{expanded ? props.children : undefined}
+			<div className={classes.body}>
+				{isExpanded ? props.children : undefined}
+			</div>
 		</>
 	)
 }

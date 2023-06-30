@@ -12,7 +12,7 @@ definition:
       - text-xs
       - font-light
       - text-slate-500
-    title:
+    inner:
       - flex
       - flex-col
 public: true

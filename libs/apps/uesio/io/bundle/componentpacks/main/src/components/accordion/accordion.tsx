@@ -1,4 +1,4 @@
-import { component, styles, definition, api } from "@uesio/ui"
+import { component, styles, definition, wire } from "@uesio/ui"
 import { default as IOAccordion } from "../../utilities/accordion/accordion"
 import { useExpansion } from "../../shared/expansion"
 
@@ -7,30 +7,34 @@ type AccordionDefinition = {
 	subtitle?: string
 	expandicon?: string
 	collapseicon?: string
+	wire: wire.Wire
 }
 
 const StyleDefaults = Object.freeze({
 	header: [],
+	inner: [],
 	title: [],
+	subtitle: [],
+	icon: [],
+	body: [],
 })
 
 const Accordion: definition.UC<AccordionDefinition> = (props) => {
 	const { definition, context, path } = props
 	const { title, subtitle, expandicon, collapseicon } = definition
-	const componentId = api.component.getComponentIdFromProps(props)
 	const classes = styles.useStyleTokens(StyleDefaults, props)
-	const [expanded] = useExpansion(componentId)
+	const [isExpanded] = useExpansion(path)
 	return (
 		<IOAccordion
 			classes={classes}
 			context={props.context}
-			componentId={componentId}
+			componentId={path}
 			title={title}
 			subtitle={subtitle}
-			expandedicon={expandicon}
+			expandicon={expandicon}
 			collapseicon={collapseicon}
 		>
-			{expanded ? (
+			{isExpanded ? (
 				<component.Slot
 					definition={definition}
 					listName="components"

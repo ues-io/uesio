@@ -2,47 +2,47 @@ import { api, signal } from "@uesio/ui"
 import { useEffect } from "react"
 
 type ExpansionState = {
-	expanded: boolean
+	isExpanded?: boolean
 }
 
 const toggleExpansion: signal.ComponentSignalDescriptor<ExpansionState> = {
 	dispatcher: (state) => {
 		// eslint-disable-next-line no-unneeded-ternary
-		state.expanded === !state.expanded
+		state.isExpanded === !state.isExpanded
 	},
 }
 
 const setExpand: signal.ComponentSignalDescriptor<ExpansionState> = {
 	dispatcher: (state) => {
-		state.expanded = true
+		state.isExpanded = true
 	},
 }
 
 const setCollapse: signal.ComponentSignalDescriptor<ExpansionState> = {
 	dispatcher: (state) => {
-		state.expanded = false
+		state.isExpanded = false
 	},
 }
 
 const useExpansion = (
 	id: string
-): [boolean | undefined, (expanded: boolean) => void] => {
-	const [expanded, setExpanded] = api.component.useStateSlice<boolean>(
+): [boolean | undefined, (isExpanded: boolean) => void] => {
+	const [isExpanded, setExpanded] = api.component.useStateSlice<boolean>(
 		"expansion",
 		id,
-		false
+		true
 	)
 
 	useEffect(() => {
-		if (!expanded) {
+		if (isExpanded == undefined) {
 			setExpanded(true)
 		}
-		// We do NOT want to reset the expansion state whenever expanded changes,
-		// so we don't want to add expanded or setExpanded to the deps array
+		// We do NOT want to reset the expansion state whenever isExpanded changes,
+		// so we don't want to add isExpanded or setExpanded to the deps array
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
+	}, [id])
 
-	return [expanded, setExpanded]
+	return [isExpanded, setExpanded]
 }
 
 export { toggleExpansion, setExpand, setCollapse, useExpansion }

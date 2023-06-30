@@ -1,8 +1,8 @@
 name: accordion
-pack: main
-entrypoint: components/accordion/accordion
 title: Accordion
 description: Expand or collapse the content
+pack: main
+entrypoint: components/accordion/accordion
 category: CONTENT
 discoverable: true
 icon: expand_more
@@ -38,3 +38,10 @@ sections:
     properties:
       - header
   - type: DISPLAY
+styleRegions:
+  header:
+  inner:
+  title:
+  subtitle:
+  icon:
+  body:
