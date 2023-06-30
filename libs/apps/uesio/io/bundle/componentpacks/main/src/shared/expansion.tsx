@@ -34,7 +34,7 @@ const useExpansion = (
 	)
 
 	useEffect(() => {
-		if (isExpanded == undefined) {
+		if (isExpanded === undefined) {
 			setExpanded(true)
 		}
 		// We do NOT want to reset the expansion state whenever isExpanded changes,
