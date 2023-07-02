@@ -2,7 +2,6 @@ package meta
 
 import (
 	"errors"
-
 	"gopkg.in/yaml.v3"
 )
 
@@ -30,8 +29,10 @@ type Route struct {
 	BundleableBase `yaml:",inline"`
 	Path           string            `yaml:"path" json:"uesio/studio.path"`
 	ViewRef        string            `yaml:"view" json:"uesio/studio.view"`
+	Redirect       string            `yaml:"redirect" json:"uesio/studio.redirect"`
 	Params         map[string]string `yaml:"params,omitempty" json:"uesio/studio.params"`
 	ThemeRef       string            `yaml:"theme" json:"uesio/studio.theme"`
+	Type           string            `yaml:"type" json:"uesio/studio.type"`
 	Title          string            `yaml:"title" json:"uesio/studio.title"`
 	Tags           []Tag             `yaml:"tags,omitempty" json:"uesio/studio.tags"`
 }
@@ -76,17 +77,24 @@ func (r *Route) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
-	err = validateRequiredMetadataItem(node, "view")
-	if err != nil {
-		return err
-	}
-	err = setDefaultValue(node, "theme", "uesio/core.default")
-	if err != nil {
-		return err
-	}
-	err = validateRequiredMetadataItem(node, "theme")
-	if err != nil {
-		return err
+	routeType := GetNodeValueAsString(node, "type")
+	if routeType == "redirect" {
+		if redirectTo := GetNodeValueAsString(node, "redirect"); redirectTo == "" {
+			return errors.New("redirect property is required for routes of type 'redirect'")
+		}
+	} else {
+		err = validateRequiredMetadataItem(node, "view")
+		if err != nil {
+			return err
+		}
+		err = setDefaultValue(node, "theme", "uesio/core.default")
+		if err != nil {
+			return err
+		}
+		err = validateRequiredMetadataItem(node, "theme")
+		if err != nil {
+			return err
+		}
 	}
 	return node.Decode((*RouteWrapper)(r))
 }

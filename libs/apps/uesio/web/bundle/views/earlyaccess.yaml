@@ -2,33 +2,6 @@ name: earlyaccess
 definition:
   # Wires are how we pull in data
   wires:
-    newlead:
-      viewOnly: true
-      fields:
-        firstname:
-          label: First name
-          type: TEXT
-          required: true
-        lastname:
-          label: Last name
-          type: TEXT
-          required: true
-        email:
-          label: Email
-          type: TEXT
-          required: true
-        account:
-          label: Company
-          type: TEXT
-        title:
-          label: Title
-          type: TEXT
-        location:
-          label: Location (country, city, state)
-          type: TEXT
-          required: true
-      init:
-        create: true
   # Components are how we describe the layout of our view
   components:
     - uesio/core.view:
@@ -50,88 +23,20 @@ definition:
                     components:
                       - uesio/io.text:
                           uesio.variant: uesio/web.callout
-                          text: Register for early access
+                          text: Early Access
                       - uesio/io.text:
                           uesio.variant: uesio/web.calloutsub
-                          text: For an exclusive preview, join us for our beta release webinar on June 28 (10:00 PT, 13:00 ET, 19:00 CEST). Register now for free and receive early access to ues.io.
+                          text: Our early access program is accepting new participants.
                       - uesio/io.box:
+                          uesio.styleTokens:
+                            root:
+                              - my-20
                           components:
-                            - uesio/io.tile:
-                                uesio.variant: uesio/web.checkitem
-                                content:
-                                  - uesio/io.text:
-                                      text: No-code app builder extendable with code.
-                            - uesio/io.tile:
-                                uesio.variant: uesio/web.checkitem
-                                content:
-                                  - uesio/io.text:
-                                      text: Configure with markup or clicks simultaneously.
-                            - uesio/io.tile:
-                                uesio.variant: uesio/web.checkitem
-                                content:
-                                  - uesio/io.text:
-                                      text: Package configurations into reusuable bundles.
-                            - uesio/io.tile:
-                                uesio.variant: uesio/web.checkitem
-                                content:
-                                  - uesio/io.text:
-                                      text: Publish bundled applications to multiple sites.
-                            - uesio/io.tile:
-                                uesio.variant: uesio/web.checkitem
-                                content:
-                                  - uesio/io.text:
-                                      text: Usage-based pricing. Pay for usage, not users.
-                - uesio/io.griditem:
-                    components:
-                      - uesio/io.list:
-                          wire: newlead
-                          mode: EDIT
-                          components:
-                            - uesio/io.box:
-                                uesio.styleTokens:
-                                  root:
-                                    - shadow
-                                    - bg-white
-                                    - p-10
-                                    - rounded-lg
-                                components:
-                                  - uesio/io.field:
-                                      uesio.variant: uesio/web.field
-                                      fieldId: firstname
-                                  - uesio/io.field:
-                                      uesio.variant: uesio/web.field
-                                      fieldId: lastname
-                                  - uesio/io.field:
-                                      uesio.variant: uesio/web.field
-                                      fieldId: email
-                                  - uesio/io.field:
-                                      uesio.variant: uesio/web.field
-                                      fieldId: account
-                                  - uesio/io.field:
-                                      uesio.variant: uesio/web.field
-                                      fieldId: title
-                                  - uesio/io.field:
-                                      uesio.variant: uesio/web.field
-                                      fieldId: location
-                                  - uesio/io.group:
-                                      uesio.styleTokens:
-                                        root:
-                                          - mt-6
-                                      components:
-                                        - uesio/io.button:
-                                            uesio.variant: uesio/web.calltoaction
-                                            text: Register
-                                            signals:
-                                              - bot: uesio/web.addlead
-                                                signal: bot/CALL
-                                                params:
-                                                  uesio/crm.firstname: ${firstname}
-                                                  uesio/crm.lastname: ${lastname}
-                                                  uesio/crm.email: ${email}
-                                                  uesio/crm.account: ${account}
-                                                  uesio/crm.title: ${title}
-                                                  uesio/crm.location: ${location}
-                                              - signal: route/NAVIGATE
-                                                path: earlyaccessthanks
+                            - uesio/io.button:
+                                uesio.variant: uesio/web.calltoaction
+                                text: Sign up now
+                                signals:
+                                  - signal: route/REDIRECT
+                                    path: https://studio.$Site{domain}/signup
     - uesio/core.view:
         view: uesio/web.footer
