@@ -39,7 +39,11 @@ const ChartComponent: definition.UtilityComponent<ChartProps> = (props) => {
 		return null
 	}
 
-	const classes = styles.useStyleTokens(StyleDefaults, props)
+	const classes = styles.useUtilityStyleTokens(
+		StyleDefaults,
+		props,
+		`uesio/io.${type}chart`
+	)
 
 	// Get a list of all wires used
 	const wireNames = definition.series.map(({ wire }) => wire || "")
