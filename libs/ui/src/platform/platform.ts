@@ -127,18 +127,6 @@ export const getPrefix = (context: Context) => {
 const getSiteBundleVersion = (context: Context) => {
 	const site = context.getSite()
 	const staticAssetsPath = getStaticAssetsPath()
-	if (!site) {
-		console.log(
-			"getting site bundle version, NO SITE!! do we have workspace?",
-			context.getWorkspace()
-		)
-	}
-	if (site && !site.version) {
-		console.log(
-			"getting site bundle version, NO VERSION!! do we have workspace?",
-			context.getWorkspace()
-		)
-	}
 	if (site && site.version) {
 		// Special case --- if this is a Uesio-provided site, we don't (currently) ever update the bundle versions,
 		// but we DO update the static assets path for the whole Docker image, so use that. It will look like "/abcdefg"
