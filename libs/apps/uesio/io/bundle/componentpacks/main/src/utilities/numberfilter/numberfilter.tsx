@@ -18,7 +18,7 @@ const NumberFilter: FunctionComponent<NumberFilterProps> = (props) => {
 			fieldMetadata={fieldMetadata}
 			context={context}
 			variant={"uesio/io.filter"}
-			value={condition.value || ""}
+			value={condition.value}
 			setValue={(value: string) => {
 				api.signal.runMany(
 					[
@@ -28,7 +28,7 @@ const NumberFilter: FunctionComponent<NumberFilterProps> = (props) => {
 							condition: {
 								...condition,
 								value,
-								inactive: value === undefined,
+								inactive: value === null,
 							},
 						},
 						{

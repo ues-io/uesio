@@ -72,8 +72,8 @@ func PlatformLoad(group meta.CollectionableGroup, options *PlatformLoadOptions, 
 
 func doPlatformLoad(op *adapt.LoadOp, options *PlatformLoadOptions, session *sess.Session) error {
 	_, err := Load([]*adapt.LoadOp{op}, session, &LoadOptions{
-		Connections: GetConnectionMap(options.Connection),
-		Metadata:    GetConnectionMetadata(options.Connection),
+		Connection: options.Connection,
+		Metadata:   GetConnectionMetadata(options.Connection),
 	})
 	if err != nil {
 		return errors.New("Platform LoadFromSite Failed:" + err.Error())
