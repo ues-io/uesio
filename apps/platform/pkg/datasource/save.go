@@ -50,8 +50,8 @@ func (sr *SaveRequest) UnmarshalJSON(b []byte) error {
 }
 
 type SaveOptions struct {
-	Connections map[string]adapt.Connection
-	Metadata    *adapt.MetadataCache
+	Connection adapt.Connection
+	Metadata   *adapt.MetadataCache
 }
 
 func Save(requests []SaveRequest, session *sess.Session) error {
@@ -60,11 +60,9 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 
 func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *SaveOptions) error {
 	if options == nil {
-		options = &SaveOptions{
-			Connections: map[string]adapt.Connection{},
-		}
+		options = &SaveOptions{}
 	}
-	collated := map[string][]*adapt.SaveOp{}
+	allOps := []*adapt.SaveOp{}
 	metadataResponse := &adapt.MetadataCache{}
 	// Use existing metadata if it was passed in
 	if options.Metadata != nil {
@@ -106,56 +104,52 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 			return err
 		}
 
-		dsKey := collectionMetadata.DataSource
-		batch := collated[dsKey]
-		batch = append(batch, ops...)
-		collated[dsKey] = batch
+		allOps = append(allOps, ops...)
 	}
+
+	hasExistingConnection := options.Connection != nil
 
 	// Get all the user access tokens that we'll need for this request
 	// TODO:
 	// Finally check for record level permissions and ability to do the save.
 	err := GenerateUserAccessTokens(metadataResponse, &LoadOptions{
-		Metadata:    metadataResponse,
-		Connections: options.Connections,
+		Metadata:   metadataResponse,
+		Connection: options.Connection,
 	}, session)
 	if err != nil {
 		return err
 	}
 
 	// 3. Get metadata for each datasource and collection
-	for dsKey, batch := range collated {
 
-		connection, err := GetConnection(dsKey, metadataResponse, session, options.Connections)
+	connection, err := GetConnection(meta.PLATFORM_DATA_SOURCE, metadataResponse, session, options.Connection)
+	if err != nil {
+		return err
+	}
+
+	if !hasExistingConnection {
+		err := connection.BeginTransaction()
 		if err != nil {
 			return err
 		}
+	}
 
-		if !HasExistingConnection(dsKey, options.Connections) {
-			err := connection.BeginTransaction()
+	err = applyBatches(meta.PLATFORM_DATA_SOURCE, allOps, connection, session)
+	if err != nil {
+		if !hasExistingConnection {
+			err := connection.RollbackTransaction()
 			if err != nil {
 				return err
 			}
 		}
+		return err
+	}
 
-		err = applyBatches(dsKey, batch, connection, session)
+	if !hasExistingConnection {
+		err := connection.CommitTransaction()
 		if err != nil {
-			if !HasExistingConnection(dsKey, options.Connections) {
-				err := connection.RollbackTransaction()
-				if err != nil {
-					return err
-				}
-			}
 			return err
 		}
-
-		if !HasExistingConnection(dsKey, options.Connections) {
-			err := connection.CommitTransaction()
-			if err != nil {
-				return err
-			}
-		}
-
 	}
 
 	return nil

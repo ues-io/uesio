@@ -111,7 +111,7 @@ func GenerateUserAccessTokens(metadata *adapt.MetadataCache, loadOptions *LoadOp
 				return err
 			}
 
-			connection, err := GetConnection(loadCollectionMetadata.DataSource, metadata, session, loadOptions.Connections)
+			connection, err := GetConnection(loadCollectionMetadata.DataSource, metadata, session, loadOptions.Connection)
 			if err != nil {
 				return err
 			}

@@ -101,7 +101,7 @@ func (c *Collection) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
-	err = setDefaultValue(node, "dataSource", "uesio/core.platform")
+	err = setDefaultValue(node, "dataSource", PLATFORM_DATA_SOURCE)
 	if err != nil {
 		return err
 	}
@@ -115,7 +115,7 @@ func (c *Collection) UnmarshalYAML(node *yaml.Node) error {
 
 func (c *Collection) MarshalYAML() (interface{}, error) {
 
-	if c.DataSourceRef == "uesio/core.platform" {
+	if c.DataSourceRef == PLATFORM_DATA_SOURCE {
 		c.DataSourceRef = ""
 	}
 
