@@ -236,7 +236,7 @@ func getMetadataForLoad(
 		return err
 	}
 
-	// Now loop over fields and do some additional processing for reference fields
+	// Now loop over fields and do some additional processing for reference & formula fields
 	for i, requestField := range op.Fields {
 		fieldMetadata, err := collectionMetadata.GetField(requestField.ID)
 		if err != nil {
@@ -267,9 +267,17 @@ func getMetadataForLoad(
 						ID: adapt.ID_FIELD,
 					},
 				}
-
 			}
+		}
 
+		if fieldMetadata.IsFormula && fieldMetadata.FormulaMetadata != nil {
+			fieldDeps, err := adapt.GetFormulaFields(fieldMetadata.FormulaMetadata.Expression)
+			if err != nil {
+				return err
+			}
+			for key := range fieldDeps {
+				op.Fields = append(op.Fields, adapt.LoadRequestField{ID: key})
+			}
 		}
 	}
 
