@@ -142,3 +142,19 @@ func GetFormulaFunction(fields map[string]*FieldMetadata, collectionMetadata *Co
 		return nil
 	}
 }
+
+func GetFormulaFields(expression string) (map[string]bool, error) {
+	exec, err := TestLanguage.NewEvaluable(expression)
+	if err != nil {
+		return nil, err
+	}
+
+	value, err := exec(context.Background(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	fieldMap, _ := value.(map[string]bool)
+
+	return fieldMap, nil
+}

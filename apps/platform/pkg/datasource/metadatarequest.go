@@ -95,6 +95,11 @@ func GetSelectListKey(collectionName, fieldName, selectListName string) string {
 
 func ProcessFieldsMetadata(fields map[string]*adapt.FieldMetadata, collectionKey string, collection FieldsMap, metadataResponse *adapt.MetadataCache, additionalRequests *MetadataRequest, prefix string) error {
 
+	collectionMetadata, err := metadataResponse.GetCollection(collectionKey)
+	if err != nil {
+		return err
+	}
+
 	for fieldKey, fieldMetadata := range fields {
 
 		newKey := fieldKey
@@ -210,6 +215,26 @@ func ProcessFieldsMetadata(fields map[string]*adapt.FieldMetadata, collectionKey
 			err := ProcessFieldsMetadata(fieldMetadata.SubFields, collectionKey, collection, metadataResponse, additionalRequests, newKey)
 			if err != nil {
 				return err
+			}
+		}
+
+		if fieldMetadata.IsFormula && fieldMetadata.FormulaMetadata != nil {
+			fieldDeps, err := adapt.GetFormulaFields(fieldMetadata.FormulaMetadata.Expression)
+			if err != nil {
+				return err
+			}
+
+			for fieldKey := range fieldDeps {
+				// Optimization for if we already have the field metadata
+				_, err := collectionMetadata.GetField(fieldKey)
+				if err == nil {
+					continue
+				}
+
+				err = additionalRequests.AddField(collectionKey, fieldKey, nil)
+				if err != nil {
+					return err
+				}
 			}
 		}
 
