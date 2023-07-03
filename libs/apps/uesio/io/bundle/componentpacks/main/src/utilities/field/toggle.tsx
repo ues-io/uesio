@@ -1,4 +1,4 @@
-import { FC } from "react"
+import { FC, useEffect, useRef } from "react"
 import { definition, styles, context, wire } from "@uesio/ui"
 
 interface ToggleFieldProps extends definition.UtilityProps {
@@ -9,12 +9,18 @@ interface ToggleFieldProps extends definition.UtilityProps {
 
 const ToggleField: FC<ToggleFieldProps> = (props) => {
 	const { setValue, value, mode } = props
+	const checkRef = useRef<HTMLInputElement>(null)
 
+	useEffect(() => {
+		if (!checkRef.current) return
+		checkRef.current.indeterminate = value === undefined || value === null
+	}, [value])
 	const readonly = mode === "READ"
 	const checked = value === true
+	const isNull = value === null
 	const classes = styles.useUtilityStyleTokens(
 		{
-			root: ["w-full", "text-center"],
+			root: ["text-center"],
 			switch: [
 				"[&:has(:focus-visible)]:(outline(& 2 offset-2 blue-600))",
 				"relative",
@@ -40,8 +46,10 @@ const ToggleField: FC<ToggleFieldProps> = (props) => {
 				"duration-300",
 				"rounded-full",
 				checked && "translate-x-4",
+				isNull && "translate-x-2",
+				isNull && "bg-slate-400",
 			],
-			native: ["opacity-0", "w-0", "h-0"],
+			native: ["opacity-0", "w-0", "h-0", isNull && "line-through"],
 		},
 		props
 	)
@@ -50,6 +58,7 @@ const ToggleField: FC<ToggleFieldProps> = (props) => {
 		<div className={classes.root}>
 			<label className={classes.switch} title="toggle">
 				<input
+					ref={checkRef}
 					className={classes.native}
 					checked={checked}
 					type="checkbox"
