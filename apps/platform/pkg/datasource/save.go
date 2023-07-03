@@ -139,7 +139,9 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 		if !hasExistingConnection {
 			err := connection.RollbackTransaction()
 			if err != nil {
-				return err
+				// We actually don't care about this error.
+				// The error here usually means that the save never went through
+				// in the first place, so we can't roll it back.
 			}
 		}
 		return err
