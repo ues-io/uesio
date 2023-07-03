@@ -20,7 +20,11 @@ const CheckboxFilter: FunctionComponent<CheckboxFilterProps> = (props) => {
 			<ToggleField
 				context={context}
 				variant={"uesio/io.filter"}
-				value={condition.value != null ? condition.value : null}
+				value={
+					condition.value !== (null || undefined)
+						? condition.value
+						: null
+				}
 				setValue={(value: boolean) => {
 					api.signal.runMany(
 						[
@@ -29,7 +33,7 @@ const CheckboxFilter: FunctionComponent<CheckboxFilterProps> = (props) => {
 								wire: wireId,
 								condition: {
 									...condition,
-									value: value != null ? value : null,
+									value,
 									inactive: false,
 								},
 							},
@@ -42,7 +46,7 @@ const CheckboxFilter: FunctionComponent<CheckboxFilterProps> = (props) => {
 					)
 				}}
 			/>
-			{condition.value != null ? (
+			{condition.value !== (null || undefined) ? (
 				<IconButton
 					label="cancel"
 					icon="cancel"
@@ -72,7 +76,11 @@ const CheckboxFilter: FunctionComponent<CheckboxFilterProps> = (props) => {
 			<CheckboxField
 				context={context}
 				variant={"uesio/io.filter"}
-				value={condition.value != null ? condition.value : null}
+				value={
+					condition.value !== (null || undefined)
+						? condition.value
+						: null
+				}
 				setValue={(value: boolean) => {
 					api.signal.runMany(
 						[
@@ -81,7 +89,7 @@ const CheckboxFilter: FunctionComponent<CheckboxFilterProps> = (props) => {
 								wire: wireId,
 								condition: {
 									...condition,
-									value: value != null ? value : null,
+									value,
 									inactive: false,
 								},
 							},
@@ -94,7 +102,7 @@ const CheckboxFilter: FunctionComponent<CheckboxFilterProps> = (props) => {
 					)
 				}}
 			/>
-			{condition.value != null ? (
+			{condition.value !== (null || undefined) ? (
 				<IconButton
 					label="cancel"
 					icon="cancel"
