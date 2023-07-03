@@ -3,13 +3,20 @@ package adapt
 import (
 	"context"
 	"fmt"
+	"regexp"
+	"text/scanner"
 	"unicode"
 
 	"github.com/PaesslerAG/gval"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
-var UesioLanguage = gval.NewLanguage(
+var identFunc = func(r rune, pos int) bool {
+	return unicode.IsLetter(r) || r == '_' ||
+		(pos > 0 && (unicode.IsDigit(r) || r == '.' || r == '/'))
+}
+
+var baseLanguage = gval.NewLanguage(
 	gval.Full(),
 	gval.Function("STR_LEN", func(args ...interface{}) (interface{}, error) {
 		length := len(args[0].(string))
@@ -26,11 +33,34 @@ var UesioLanguage = gval.NewLanguage(
 		}
 		return valStr[0:1], nil
 	}),
+)
+
+var validMetaRegex, _ = regexp.Compile(`^\w+\/\w+\.\w+$`)
+
+var TestLanguage = gval.NewLanguage(
+	baseLanguage,
 	gval.Init(func(ctx context.Context, parser *gval.Parser) (gval.Evaluable, error) {
-		parser.SetIsIdentRuneFunc(func(r rune, pos int) bool {
-			return unicode.IsLetter(r) || r == '_' ||
-				(pos > 0 && (unicode.IsDigit(r) || r == '.' || r == '/'))
-		})
+		parser.SetIsIdentRuneFunc(identFunc)
+		tokens := map[string]bool{}
+
+		for {
+			switch parser.Scan() {
+			case scanner.EOF:
+				return parser.Const(tokens), nil
+			default:
+				token := parser.TokenText()
+				if validMetaRegex.MatchString(token) {
+					tokens[token] = true
+				}
+			}
+		}
+	}),
+)
+
+var UesioLanguage = gval.NewLanguage(
+	baseLanguage,
+	gval.Init(func(ctx context.Context, parser *gval.Parser) (gval.Evaluable, error) {
+		parser.SetIsIdentRuneFunc(identFunc)
 		return parser.ParseExpression(ctx)
 	}),
 )
