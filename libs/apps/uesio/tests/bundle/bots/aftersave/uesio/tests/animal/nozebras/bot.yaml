@@ -1,0 +1,4 @@
+name: nozebras
+collection: uesio/tests.animal
+type: AFTERSAVE
+dialect: TYPESCRIPT

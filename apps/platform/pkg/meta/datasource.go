@@ -6,6 +6,8 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+const PLATFORM_DATA_SOURCE = "uesio/core.platform"
+
 func NewDataSource(key string) (*DataSource, error) {
 	namespace, name, err := ParseKey(key)
 	if err != nil {

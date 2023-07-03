@@ -35,8 +35,8 @@ var specialRefs = map[string]SpecialReferences{
 }
 
 type LoadOptions struct {
-	Connections map[string]adapt.Connection
-	Metadata    *adapt.MetadataCache
+	Connection adapt.Connection
+	Metadata   *adapt.MetadataCache
 }
 
 func getSubFields(loadFields []adapt.LoadRequestField) *FieldsMap {
@@ -291,7 +291,7 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 	if options == nil {
 		options = &LoadOptions{}
 	}
-	collated := map[string][]*adapt.LoadOp{}
+	allOps := []*adapt.LoadOp{}
 	metadataResponse := &adapt.MetadataCache{}
 	// Use existing metadata if it was passed in
 	if options.Metadata != nil {
@@ -339,12 +339,6 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 			return nil, fmt.Errorf("metadata: %s: %v", op.CollectionName, err)
 		}
 
-		// Get the datasource from the object name
-		collectionMetadata, err := metadataResponse.GetCollection(op.CollectionName)
-		if err != nil {
-			return nil, err
-		}
-
 		//Set default order by: id - asc
 		if op.Order == nil {
 			op.Order = append(op.Order, adapt.LoadRequestOrder{
@@ -353,59 +347,56 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 			})
 		}
 
-		dsKey := collectionMetadata.DataSource
-		batch := collated[dsKey]
 		if op.Query {
-			batch = append(batch, op)
+			allOps = append(allOps, op)
 		}
-		collated[dsKey] = batch
+
 	}
 
 	err = GenerateUserAccessTokens(metadataResponse, &LoadOptions{
-		Metadata:    metadataResponse,
-		Connections: options.Connections,
+		Metadata:   metadataResponse,
+		Connection: options.Connection,
 	}, session)
 	if err != nil {
 		return nil, err
 	}
 
 	// 3. Get metadata for each datasource and collection
-	for dsKey, batch := range collated {
 
-		connection, err := GetConnection(dsKey, metadataResponse, session, options.Connections)
+	connection, err := GetConnection(meta.PLATFORM_DATA_SOURCE, metadataResponse, session, options.Connection)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, op := range allOps {
+
+		err := processConditions(op.Conditions, op.Params, metadataResponse, allOps, session)
 		if err != nil {
 			return nil, err
 		}
 
-		for _, op := range batch {
-
-			err := processConditions(op.Conditions, op.Params, metadataResponse, batch, session)
-			if err != nil {
-				return nil, err
-			}
-
-			collectionMetadata, err := metadataResponse.GetCollection(op.CollectionName)
-			if err != nil {
-				return nil, err
-			}
-
-			if collectionMetadata.Type == "DYNAMIC" {
-				err := runDynamicCollectionLoadBots(op, connection, session)
-				if err != nil {
-					return nil, err
-				}
-				continue
-			}
-
-			err = loadData(op, connection, session)
-			if err != nil {
-				return nil, err
-			}
-
-			usage.RegisterEvent("LOAD", "COLLECTION", collectionMetadata.GetFullName(), 0, session)
-			usage.RegisterEvent("LOAD", "DATASOURCE", dsKey, 0, session)
+		collectionMetadata, err := metadataResponse.GetCollection(op.CollectionName)
+		if err != nil {
+			return nil, err
 		}
+
+		if collectionMetadata.Type == "DYNAMIC" {
+			err := runDynamicCollectionLoadBots(op, connection, session)
+			if err != nil {
+				return nil, err
+			}
+			continue
+		}
+
+		err = loadData(op, connection, session)
+		if err != nil {
+			return nil, err
+		}
+
+		usage.RegisterEvent("LOAD", "COLLECTION", collectionMetadata.GetFullName(), 0, session)
+		usage.RegisterEvent("LOAD", "DATASOURCE", meta.PLATFORM_DATA_SOURCE, 0, session)
 	}
+
 	return metadataResponse, nil
 }
 
