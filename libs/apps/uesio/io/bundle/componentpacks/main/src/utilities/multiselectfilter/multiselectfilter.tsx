@@ -7,13 +7,12 @@ interface MultiSelectFilterProps extends definition.UtilityProps {
 	wire: wire.Wire
 	fieldMetadata: collection.Field
 	condition: wire.ValueConditionState
-	operator: string
 }
 
 const MultiSelectFilter: FunctionComponent<MultiSelectFilterProps> = (
 	props
 ) => {
-	const { wire, fieldMetadata, context, condition, operator } = props
+	const { wire, fieldMetadata, context, condition } = props
 	const wireId = wire.getId()
 	return (
 		<MultiSelectField
@@ -38,9 +37,8 @@ const MultiSelectFilter: FunctionComponent<MultiSelectFilterProps> = (
 									wire: wireId,
 									condition: {
 										...condition,
-										operator,
 										values,
-										active: !!values,
+										inactive: !values,
 									},
 								},
 						  ]
