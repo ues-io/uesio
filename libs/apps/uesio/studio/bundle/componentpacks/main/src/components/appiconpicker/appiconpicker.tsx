@@ -1,13 +1,9 @@
-import { FunctionComponent, useEffect } from "react"
+import { useEffect } from "react"
 import { definition, styles, component } from "@uesio/ui"
 
 type AppIconPickerDefinition = {
 	fieldId: string
 	colorFieldId: string
-}
-
-interface Props extends definition.BaseProps {
-	definition: AppIconPickerDefinition
 }
 
 const APP_ICONS = [
@@ -67,7 +63,7 @@ const StyleDefaults = Object.freeze({
 	icon: ["text-[14pt]"],
 })
 
-const AppIconPicker: FunctionComponent<Props> = (props) => {
+const AppIconPicker: definition.UC<AppIconPickerDefinition> = (props) => {
 	const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 	const Icon = component.getUtility("uesio/io.icon")
 	const {

@@ -19,7 +19,7 @@ export type ChartDefinition = {
 } & definition.BaseDefinition
 
 const StyleDefaults = Object.freeze({
-	root: ["min-w-0"],
+	root: [],
 	title: [],
 	chart: [],
 })
@@ -39,7 +39,11 @@ const ChartComponent: definition.UtilityComponent<ChartProps> = (props) => {
 		return null
 	}
 
-	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
+	const classes = styles.useUtilityStyleTokens(
+		StyleDefaults,
+		props,
+		`uesio/io.${type}chart`
+	)
 
 	// Get a list of all wires used
 	const wireNames = definition.series.map(({ wire }) => wire || "")

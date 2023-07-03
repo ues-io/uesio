@@ -1,13 +1,9 @@
-import { FunctionComponent, ChangeEvent } from "react"
+import { ChangeEvent } from "react"
 import { definition, styles, component, context as ctx } from "@uesio/ui"
 
 type BulkjobDefinition = {
 	id: string
 	label: string
-}
-
-interface Props extends definition.BaseProps {
-	definition: BulkjobDefinition
 }
 
 const handleChange = (
@@ -44,7 +40,7 @@ const StyleDefaults = Object.freeze({
 	input: ["hidden"],
 })
 
-const Bulkjob: FunctionComponent<Props> = (props) => {
+const Bulkjob: definition.UC<BulkjobDefinition> = (props) => {
 	const Button = component.getUtility("uesio/io.button")
 	const {
 		definition: { id, label },

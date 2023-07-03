@@ -1,12 +1,8 @@
-import { FunctionComponent, useEffect } from "react"
+import { useEffect } from "react"
 import { definition, styles, component } from "@uesio/ui"
 
 type ColorPickerDefinition = {
 	fieldId: string
-}
-
-interface Props extends definition.BaseProps {
-	definition: ColorPickerDefinition
 }
 
 const StyleDefaults = Object.freeze({
@@ -28,7 +24,7 @@ const StyleDefaults = Object.freeze({
 	selected: ["h-[17px]", "w-[17px]", "bg-white", "border-[5px]", "m-0"],
 })
 
-const ColorPicker: FunctionComponent<Props> = (props) => {
+const ColorPicker: definition.UC<ColorPickerDefinition> = (props) => {
 	const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 	const {
 		context,

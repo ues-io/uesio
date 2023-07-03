@@ -51,6 +51,9 @@ definition:
           valueSource: LOOKUP
           lookupWire: sites
           lookupField: uesio/core.id
+      order:
+        - field: uesio/studio.day
+          desc: false
     usage_load:
       collection: uesio/studio.usage
       fields:
@@ -67,11 +70,14 @@ definition:
         - field: uesio/studio.actiontype
           value: LOAD
         - field: uesio/studio.metadatatype
-          value: DATASOURCE
+          value: COLLECTION
         - field: uesio/studio.site
           valueSource: LOOKUP
           lookupWire: sites
           lookupField: uesio/core.id
+      order:
+        - field: uesio/studio.day
+          desc: false
     usage_save:
       collection: uesio/studio.usage
       fields:
@@ -88,11 +94,14 @@ definition:
         - field: uesio/studio.actiontype
           value: SAVE
         - field: uesio/studio.metadatatype
-          value: DATASOURCE
+          value: COLLECTION
         - field: uesio/studio.site
           valueSource: LOOKUP
           lookupWire: sites
           lookupField: uesio/core.id
+      order:
+        - field: uesio/studio.day
+          desc: false
     usage_download:
       collection: uesio/studio.usage
       fields:
@@ -112,6 +121,9 @@ definition:
           valueSource: LOOKUP
           lookupWire: sites
           lookupField: uesio/core.id
+      order:
+        - field: uesio/studio.day
+          desc: false
     usage_upload:
       collection: uesio/studio.usage
       fields:
@@ -131,6 +143,9 @@ definition:
           valueSource: LOOKUP
           lookupWire: sites
           lookupField: uesio/core.id
+      order:
+        - field: uesio/studio.day
+          desc: false
     usage_download_bytes:
       collection: uesio/studio.usage
       fields:
@@ -150,6 +165,9 @@ definition:
           valueSource: LOOKUP
           lookupWire: sites
           lookupField: uesio/core.id
+      order:
+        - field: uesio/studio.day
+          desc: false
     usage_upload_bytes:
       collection: uesio/studio.usage
       fields:
@@ -169,22 +187,9 @@ definition:
           valueSource: LOOKUP
           lookupWire: sites
           lookupField: uesio/core.id
-  # events:
-  #   onload:
-  #     - signal: "wire/LOAD"
-  #       uesio.context:
-  #         siteadmin:
-  #           name: $Param{sitename}
-  #           app: $Param{app}
-  #       wires:
-  #         - usage
-  #         - usage_load
-  #         - usage_save
-  #         - usage_download
-  #         - usage_upload
-  #         - usage_download_bytes
-  #         - usage_upload_bytes
-
+      order:
+        - field: uesio/studio.day
+          desc: false
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -216,68 +221,188 @@ definition:
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
-                      - uesio/io.box:
-                          components:
-                            - uesio/io.linechart:
-                                uesio.styleTokens:
-                                  chart:
-                                    - h-[300px]
-                                series:
-                                  - name: load
-                                    label: Load
-                                    valueField: uesio/studio.total
-                                    categoryField: uesio/studio.day
-                                    wire: usage_load
-                                  - name: save
-                                    label: Save
-                                    valueField: uesio/studio.total
-                                    categoryField: uesio/studio.day
+                      - uesio/io.tabs:
+                          uesio.variant: uesio/io.default
+                          tabs:
+                            - id: allUsage
+                              label: All Usage
+                              components:
+                                - uesio/io.box:
+                                    uesio.variant: uesio/io.section
+                                    components:
+                                      - uesio/io.box:
+                                          components:
+                                            - uesio/io.linechart:
+                                                uesio.styleTokens:
+                                                  chart:
+                                                    - h-[300px]
+                                                series:
+                                                  - name: load
+                                                    label: Load
+                                                    valueField: uesio/studio.total
+                                                    categoryField: uesio/studio.day
+                                                    wire: usage_load
+                                                  - name: save
+                                                    label: Save
+                                                    valueField: uesio/studio.total
+                                                    categoryField: uesio/studio.day
+                                                    wire: usage_save
+                                                  - name: upload
+                                                    label: Upload
+                                                    valueField: uesio/studio.total
+                                                    categoryField: uesio/studio.day
+                                                    wire: usage_upload
+                                                  - name: download
+                                                    label: Download
+                                                    valueField: uesio/studio.total
+                                                    categoryField: uesio/studio.day
+                                                    wire: usage_download
+                                                labels:
+                                                  source: DATA
+                                                  timeunit: MONTH
+                                            - uesio/io.barchart:
+                                                uesio.styleTokens:
+                                                  chart:
+                                                    - h-[300px]
+                                                series:
+                                                  - name: upload
+                                                    label: Upload Bytes
+                                                    valueField: uesio/studio.total
+                                                    categoryField: uesio/studio.day
+                                                    wire: usage_upload_bytes
+                                                  - name: download
+                                                    label: Download Bytes
+                                                    valueField: uesio/studio.total
+                                                    categoryField: uesio/studio.day
+                                                    wire: usage_download_bytes
+                                                labels:
+                                                  source: DATA
+                                                  timeunit: MONTH
+                                - uesio/io.group:
+                                    uesio.styleTokens:
+                                      root:
+                                        - pl-4
+                                    components:
+                                      - uesio/io.filter:
+                                          wire: usage
+                                          fieldId: uesio/studio.user
+                                          labelPosition: top
+                                          label: "User"
+                                          displayAs: ""
+                                      - uesio/io.filter:
+                                          wire: usage
+                                          fieldId: uesio/studio.day
+                                          labelPosition: top
+                                          label: "Day"
+                                          displayAs: ""
+                                      - uesio/io.filter:
+                                          wire: usage
+                                          fieldId: uesio/studio.actiontype
+                                          labelPosition: top
+                                          label: "Action Type"
+                                          displayAs: ""
+                                      - uesio/io.filter:
+                                          wire: usage
+                                          fieldId: uesio/studio.metadatatype
+                                          labelPosition: top
+                                          label: "Metadata Type"
+                                          displayAs: ""
+                                      - uesio/io.filter:
+                                          wire: usage
+                                          fieldId: uesio/studio.metadataname
+                                          labelPosition: top
+                                          label: "Metadata Name"
+                                          displayAs: ""
+                                - uesio/io.table:
+                                    uesio.id: usagetable
+                                    wire: usage
+                                    mode: READ
+                                    pagesize: 10
+                                    columns:
+                                      - field: uesio/studio.user
+                                      - field: uesio/studio.day
+                                      - field: uesio/studio.actiontype
+                                      - field: uesio/studio.metadatatype
+                                      - field: uesio/studio.metadataname
+                                      - field: uesio/studio.total
+                            - id: saves
+                              label: Save analysis
+                              components:
+                                - uesio/io.box:
+                                    uesio.variant: uesio/io.section
+                                    components:
+                                      - uesio/io.box:
+                                          components:
+                                            - uesio/io.grid:
+                                                uesio.styleTokens:
+                                                  root:
+                                                    - grid-cols-1
+                                                    - lg:grid-cols-2
+                                                    - gap-10
+                                                items:
+                                                  - uesio/io.griditem:
+                                                      components:
+                                                        - uesio/io.linechart:
+                                                            uesio.variant: uesio/io.default
+                                                            uesio.styleTokens:
+                                                              chart:
+                                                                - h-[300px]
+                                                            series:
+                                                              - name: user
+                                                                label: Saves by User
+                                                                valueField: uesio/studio.total
+                                                                categoryField: uesio/studio.user
+                                                                wire: usage_save
+                                                            labels:
+                                                              source: DATA
+                                                              timeunit: MONTH
+                                                  - uesio/io.griditem:
+                                                      components:
+                                                        - uesio/io.linechart:
+                                                            uesio.variant: uesio/io.default
+                                                            uesio.styleTokens:
+                                                              chart:
+                                                                - h-[300px]
+                                                            series:
+                                                              - name: collection
+                                                                label: Saves by Collection
+                                                                valueField: uesio/studio.total
+                                                                categoryField: uesio/studio.metadataname
+                                                                wire: usage_save
+                                                            labels:
+                                                              source: DATA
+                                                              timeunit: MONTH
+                                - uesio/io.group:
+                                    uesio.styleTokens:
+                                      root:
+                                        - pl-4
+                                    components:
+                                      - uesio/io.filter:
+                                          wire: usage_save
+                                          fieldId: uesio/studio.user
+                                          labelPosition: top
+                                          label: "User"
+                                          displayAs: ""
+                                      - uesio/io.filter:
+                                          wire: usage_save
+                                          fieldId: uesio/studio.day
+                                          labelPosition: top
+                                          label: "Day"
+                                          displayAs: ""
+                                      - uesio/io.filter:
+                                          wire: usage_save
+                                          fieldId: uesio/studio.metadataname
+                                          labelPosition: top
+                                          label: "Collection Name"
+                                          displayAs: ""
+                                - uesio/io.table:
+                                    uesio.id: saveUsageTable
                                     wire: usage_save
-                                  - name: upload
-                                    label: Upload
-                                    valueField: uesio/studio.total
-                                    categoryField: uesio/studio.day
-                                    wire: usage_upload
-                                  - name: download
-                                    label: Download
-                                    valueField: uesio/studio.total
-                                    categoryField: uesio/studio.day
-                                    wire: usage_download
-                                labels:
-                                  source: DATA
-                                  timeunit: MONTH
-                            - uesio/io.barchart:
-                                uesio.styleTokens:
-                                  chart:
-                                    - h-[300px]
-                                series:
-                                  - name: upload
-                                    label: Upload Bytes
-                                    valueField: uesio/studio.total
-                                    categoryField: uesio/studio.day
-                                    wire: usage_upload_bytes
-                                  - name: download
-                                    label: Download Bytes
-                                    valueField: uesio/studio.total
-                                    categoryField: uesio/studio.day
-                                    wire: usage_download_bytes
-                                labels:
-                                  source: DATA
-                                  timeunit: MONTH
-                - uesio/io.box:
-                    uesio.variant: uesio/io.section
-                    components:
-                      - uesio/io.table:
-                          uesio.id: usagetable
-                          wire: usage
-                          mode: READ
-                          pagesize: 10
-                          columns:
-                            - field: uesio/studio.app
-                            - field: uesio/studio.site
-                            - field: uesio/studio.user
-                            - field: uesio/studio.day
-                            - field: uesio/studio.actiontype
-                            - field: uesio/studio.metadatatype
-                            - field: uesio/studio.metadataname
-                            - field: uesio/studio.total
+                                    mode: READ
+                                    pagesize: 10
+                                    columns:
+                                      - field: uesio/studio.user
+                                      - field: uesio/studio.day
+                                      - field: uesio/studio.metadataname
+                                        label: "Collection Name"
+                                      - field: uesio/studio.total
