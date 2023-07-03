@@ -1,6 +1,7 @@
 package datasource
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"strings"
@@ -236,7 +237,7 @@ func getMetadataForLoad(
 		return err
 	}
 
-	// Now loop over fields and do some additional processing for reference fields
+	// Now loop over fields and do some additional processing for reference & formula fields
 	for i, requestField := range op.Fields {
 		fieldMetadata, err := collectionMetadata.GetField(requestField.ID)
 		if err != nil {
@@ -267,10 +268,40 @@ func getMetadataForLoad(
 						ID: adapt.ID_FIELD,
 					},
 				}
+			}
+		}
+		if fieldMetadata.IsFormula && fieldMetadata.FormulaMetadata != nil {
 
+			exec, err := adapt.TestLanguage.NewEvaluable(fieldMetadata.FormulaMetadata.Expression)
+			if err != nil {
+				return err
 			}
 
+			value, err := exec(context.Background(), nil)
+			if err != nil {
+				return err
+			}
+
+			fieldKeys, ok := value.(map[string]bool)
+			if !ok {
+				return fmt.Errorf("error parsing formula fields")
+			}
+
+			for key := range fieldKeys {
+				err := collections.AddField(collectionKey, key, nil)
+				if err != nil {
+					return err
+				}
+				op.Fields = append(op.Fields, adapt.LoadRequestField{ID: key})
+			}
 		}
+
+	}
+
+	//Re-query metadata so we actually get the metadata for formula field parts
+	err = collections.Load(metadataResponse, session, nil)
+	if err != nil {
+		return err
 	}
 
 	return nil
