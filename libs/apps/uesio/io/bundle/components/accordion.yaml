@@ -1,0 +1,48 @@
+name: accordion
+title: Accordion
+description: Expand or collapse the content
+pack: main
+entrypoint: components/accordion/accordion
+category: CONTENT
+discoverable: true
+icon: expand_more
+slots:
+  - name: components
+defaultDefinition:
+  title: Accordion
+  subtitle:
+  expandicon: expand_more
+  collapseicon: expand_less
+  expanded: true
+properties:
+  - name: title
+    type: TEXT
+    label: Title
+  - name: subtitle
+    type: TEXT
+    label: Subtitle
+  - name: expandicon
+    type: ICON
+    label: Expand Icon
+  - name: collapseicon
+    type: ICON
+    label: Collapse Icon
+  - name: expanded
+    type: CHECKBOX
+    label: Expanded by default
+sections:
+  - type: HOME
+    properties:
+      - title
+      - subtitle
+      - expandicon
+      - collapseicon
+  - type: STYLES
+  - type: DISPLAY
+styleRegions:
+  root:
+  content:
+  title:
+  subtitle:
+  actions:
+  components:
