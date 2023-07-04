@@ -23,7 +23,7 @@ const TextFilter: FunctionComponent<TextFilterProps> = (props) => {
 					condition: {
 						...condition,
 						value,
-						active: !(value === undefined || value === ""),
+						inactive: value === undefined || value === "",
 					},
 				},
 				{

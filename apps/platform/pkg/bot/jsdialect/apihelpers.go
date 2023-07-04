@@ -34,8 +34,8 @@ func botLoad(request BotLoadOp, session *sess.Session, connection adapt.Connecti
 	}
 
 	_, err := datasource.Load([]*adapt.LoadOp{op}, session, &datasource.LoadOptions{
-		Connections: datasource.GetConnectionMap(connection),
-		Metadata:    datasource.GetConnectionMetadata(connection),
+		Connection: connection,
+		Metadata:   datasource.GetConnectionMetadata(connection),
 	})
 	if err != nil {
 		return nil, err

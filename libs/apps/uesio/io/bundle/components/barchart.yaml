@@ -8,6 +8,7 @@ entrypoint: components/barchart/barchart
 utilities:
   - uesio/io.chart
 defaultDefinition:
+  uesio.variant: uesio/io.default
   title: New Bar Chart
   labels:
     source: DATA

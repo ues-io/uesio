@@ -1,5 +1,5 @@
 import { ThemeState } from "../definition/theme"
-import { BaseProps, UtilityProps } from "../definition/definition"
+import { UtilityProps } from "../definition/definition"
 
 import * as colors from "./colors"
 import {
@@ -35,9 +35,18 @@ const defaultTheme: ThemeState = {
 	},
 }
 
+export interface StyleDefinition {
+	"uesio.styleTokens"?: Record<string, string[]>
+}
+
+interface StyleProps {
+	context: Context
+	definition: StyleDefinition
+}
+
 function useStyleTokens<K extends string>(
 	defaults: Record<K, Class[]>,
-	props: BaseProps
+	props: StyleProps
 ) {
 	const { definition, context } = props
 	const inlineTokens = definition?.["uesio.styleTokens"] || {}
@@ -119,7 +128,7 @@ function useUtilityStyleTokens<K extends string>(
 	)
 }
 
-export type { ThemeState }
+export type { StyleProps, ThemeState }
 
 export {
 	defaultTheme,

@@ -1,0 +1,3 @@
+name: session_expiration_msg
+value: Your session has expired. Please login again.
+public: true
