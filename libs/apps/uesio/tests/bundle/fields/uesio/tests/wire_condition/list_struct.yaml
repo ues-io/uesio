@@ -1,0 +1,15 @@
+name: list_struct
+type: LIST
+label: list of type struct
+subtype: STRUCT
+subfields:
+  - name: name
+    label: Name
+    type: TEXT
+  - name: selectlist
+    label: Select list
+    type: SELECT
+    selectList: uesio/tests.selectlist
+  - name: required
+    label: Required
+    type: CHECKBOX

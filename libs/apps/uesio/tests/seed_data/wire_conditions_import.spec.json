@@ -41,6 +41,15 @@
 		},
 		"uesio/tests.user": {
 			"columnname": "user"
+		},
+		"uesio/tests.list_number": {
+			"columnname": "list_number"
+		},
+		"uesio/tests.list_text": {
+			"columnname": "list_text"
+		},
+		"uesio/tests.list_struct": {
+			"columnname": "list_struct"
 		}
 	}
 }

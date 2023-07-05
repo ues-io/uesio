@@ -1,0 +1,4 @@
+name: list_number
+type: LIST
+label: list of type number
+subtype: NUMBER

@@ -1,0 +1,4 @@
+name: list_text
+type: LIST
+label: list of type text
+subtype: TEXT
