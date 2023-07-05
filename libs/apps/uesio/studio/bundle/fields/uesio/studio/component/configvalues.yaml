@@ -2,5 +2,3 @@ name: configvalues
 type: LIST
 label: Config Values
 subtype: TEXT
-subfields:
-  - name: value
