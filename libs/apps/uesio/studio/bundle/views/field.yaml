@@ -265,7 +265,6 @@ definition:
                               type: fieldValue
                               operator: IN
                               values:
-                                - MAP
                                 - STRUCT
                                 - LIST
                           uesio.styleTokens:
@@ -282,7 +281,6 @@ definition:
                                     type: fieldValue
                                     operator: IN
                                     values:
-                                      - MAP
                                       - LIST
                             - uesio/io.field:
                                 label: " "
@@ -294,6 +292,9 @@ definition:
                                     values:
                                       - TEXT
                                       - NUMBER
+                                      - DATE
+                                      - LONGTEXT
+                                      - TIMESTAMP
   panels:
     deleteField:
       uesio.type: uesio/io.dialog
