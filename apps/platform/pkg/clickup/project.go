@@ -85,7 +85,7 @@ func ProjectLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess
 		Updateable: false,
 		Type:       "LIST",
 		Label:      "Lists",
-		SubType:    "MAP",
+		SubType:    "STRUCT",
 		SubFields: map[string]*adapt.FieldMetadata{
 			"id": {
 				Label: "ID",

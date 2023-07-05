@@ -12,7 +12,7 @@ subfields:
   - name: uesio/studio.type
     label: Type
     type: SELECT
-    selectList: uesio/studio.fieldtypes
+    selectList: uesio/studio.subfieldstype
   - name: uesio/studio.selectlist
     label: Select List
     type: TEXT

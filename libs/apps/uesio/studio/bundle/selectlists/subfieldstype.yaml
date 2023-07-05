@@ -1,7 +1,5 @@
-name: subtype
+name: subfieldstype
 options:
-  - label: "Struct"
-    value: "STRUCT"
   - label: "Text"
     value: "TEXT"
   - label: "Number"
