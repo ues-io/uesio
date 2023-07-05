@@ -127,6 +127,8 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 		isValueCondition(existingCondition) ? existingCondition.field : fieldId
 	)
 
+	if (!fieldMetadata) return null
+
 	let condition = existingCondition
 	if (!condition && fieldMetadata) {
 		condition = getDefaultCondition(

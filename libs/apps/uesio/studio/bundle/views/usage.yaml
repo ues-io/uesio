@@ -45,9 +45,20 @@ definition:
           id: day
           operator: IN
           value: THIS_MONTH
+      init:
+        query: false
       order:
         - field: uesio/studio.day
           desc: true
+  events:
+    onload:
+      - signal: context/SET
+        type: SITE_ADMIN
+        name: $Param{sitename}
+        app: $Param{app}
+      - signal: "wire/LOAD"
+        wires:
+          - usage
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
