@@ -8,6 +8,7 @@ type MetricGroupDefinition = {
 	title?: string
 	series: SeriesDefinition[]
 	signals?: signal.SignalDefinition[]
+	unit?: string
 }
 
 const MetricGroupComponent: definition.UC<MetricGroupDefinition> = (props) => {
@@ -26,7 +27,8 @@ const MetricGroupComponent: definition.UC<MetricGroupDefinition> = (props) => {
 	const [datasets, categories] = aggregate(
 		wires,
 		definition.labels,
-		definition.series
+		definition.series,
+		context
 	)
 
 	return (
@@ -44,7 +46,7 @@ const MetricGroupComponent: definition.UC<MetricGroupDefinition> = (props) => {
 						key={category}
 						value={value}
 						title={categories[category]}
-						unit="Hours"
+						unit={context.merge(definition.unit)}
 						context={context}
 						onClick={handler}
 					/>

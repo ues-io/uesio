@@ -1,0 +1,5 @@
+name: usage
+type: DYNAMIC
+label: Usage
+pluralLabel: Usage
+public: true

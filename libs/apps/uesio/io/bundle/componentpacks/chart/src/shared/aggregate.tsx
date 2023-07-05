@@ -1,4 +1,4 @@
-import { wire } from "@uesio/ui"
+import { wire, context } from "@uesio/ui"
 import { getCategoryFunc, getLabels, LabelsDefinition } from "./labels"
 
 type Buckets = Record<string, number>
@@ -24,7 +24,8 @@ export const CHART_COLORS = {
 const aggregate = (
 	wires: { [k: string]: wire.Wire | undefined },
 	labels: LabelsDefinition,
-	serieses: SeriesDefinition[]
+	serieses: SeriesDefinition[],
+	context: context.Context
 ) => {
 	const categories = getLabels(wires, labels, serieses)
 	const datasets = serieses.flatMap((series, index) => {
@@ -50,7 +51,7 @@ const aggregate = (
 		})
 		return [
 			{
-				label: series.label,
+				label: context.mergeString(series.label),
 				cubicInterpolationMode: "monotone" as const,
 				data: Object.values(buckets),
 				backgroundColor: Object.values(CHART_COLORS)[index],
