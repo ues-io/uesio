@@ -177,11 +177,20 @@ func checkWorkspaceID(currentWorkspace *string, change *adapt.ChangeItem) error 
 	return nil
 }
 
-func requireValue(change *adapt.ChangeItem, fieldName string) (string, error) {
-
+func requireStringValue(change *adapt.ChangeItem, fieldName string) (string, error) {
 	value, err := change.GetFieldAsString(fieldName)
 	if err != nil || value == "" {
 		return "", errors.New(fieldName + " is required")
+	}
+
+	return value, nil
+
+}
+
+func requireNumberValue(change *adapt.ChangeItem, fieldName string) (int64, error) {
+	value, err := change.GetFieldAsInt(fieldName)
+	if err != nil && value == 0 {
+		return 0, errors.New(fieldName + " is required")
 	}
 
 	return value, nil

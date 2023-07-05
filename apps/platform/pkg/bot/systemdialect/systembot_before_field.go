@@ -52,7 +52,7 @@ func runFieldBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, s
 
 		switch ftype {
 		case "FILE":
-			_, err := requireValue(change, "uesio/studio.file->uesio/studio.accept")
+			_, err := requireStringValue(change, "uesio/studio.file->uesio/studio.accept")
 			if err != nil {
 				return err
 			}
@@ -66,14 +66,19 @@ func runFieldBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, s
 			if err != nil {
 				return err
 			}
+		case "NUMBER":
+			_, err := requireNumberValue(change, "uesio/studio.number->uesio/studio.decimals")
+			if err != nil {
+				return err
+			}
 		case "FORMULA":
 
-			_, err := requireValue(change, "uesio/studio.formula->uesio/studio.expression")
+			_, err := requireStringValue(change, "uesio/studio.formula->uesio/studio.expression")
 			if err != nil {
 				return err
 			}
 
-			_, err = requireValue(change, "uesio/studio.formula->uesio/studio.returntype")
+			_, err = requireStringValue(change, "uesio/studio.formula->uesio/studio.returntype")
 			if err != nil {
 				return err
 			}

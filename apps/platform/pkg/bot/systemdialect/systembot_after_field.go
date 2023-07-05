@@ -111,7 +111,7 @@ func runFieldAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, se
 		switch ftype {
 		case "FORMULA":
 
-			expression, err := requireValue(change, "uesio/studio.formula->uesio/studio.expression")
+			expression, err := requireStringValue(change, "uesio/studio.formula->uesio/studio.expression")
 			if err != nil {
 				return err
 			}

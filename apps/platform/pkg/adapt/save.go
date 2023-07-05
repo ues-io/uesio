@@ -273,7 +273,7 @@ type SaveOptions struct {
 func GetValueInt(value interface{}) (int64, error) {
 	switch value.(type) {
 	case nil:
-		return 0, nil
+		return 0, fmt.Errorf("Could not get value as int: %T", value)
 	case int64:
 		return value.(int64), nil
 	case float64:

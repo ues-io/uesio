@@ -9,12 +9,12 @@ func runCollectionBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connecti
 
 	err := request.LoopChanges(func(change *adapt.ChangeItem) error {
 
-		_, err := requireValue(change, "uesio/studio.label")
+		_, err := requireStringValue(change, "uesio/studio.label")
 		if err != nil {
 			return err
 		}
 
-		_, err = requireValue(change, "uesio/studio.plurallabel")
+		_, err = requireStringValue(change, "uesio/studio.plurallabel")
 		if err != nil {
 			return err
 		}
