@@ -15,12 +15,12 @@ func runBotBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, ses
 			return err
 		}
 
-		btype, err := requireValue(change, "uesio/studio.type")
+		btype, err := requireStringValue(change, "uesio/studio.type")
 		if err != nil {
 			return err
 		}
 
-		_, err = requireValue(change, "uesio/studio.dialect")
+		_, err = requireStringValue(change, "uesio/studio.dialect")
 		if err != nil {
 			return err
 		}
