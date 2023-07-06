@@ -147,7 +147,18 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 					if condition.Operator == "NOT_IN" {
 						useOperator = "NOT IN"
 					}
-					builder.addQueryPart(fmt.Sprintf("%s %s (%s)", fieldName, useOperator, strings.Join(safeValues, ",")))
+					if fieldMetadata.Type == "LIST" {
+						useOperator = "@>"
+						for _, value := range safeValues {
+							if condition.Operator == "IN" {
+								builder.addQueryPart(fmt.Sprintf("%s %s %s", fieldName, useOperator, value))
+							} else {
+								builder.addQueryPart(fmt.Sprintf("NOT %s %s %s", fieldName, useOperator, value))
+							}
+						}
+					} else {
+						builder.addQueryPart(fmt.Sprintf("%s %s (%s)", fieldName, useOperator, strings.Join(safeValues, ",")))
+					}
 				}
 			} else {
 				return errors.New(condition.Operator + " requires a values array to be provided")
