@@ -33,7 +33,7 @@ const aggregate = (
 		if (!wire) return []
 		const bucketField = wire?.getCollection().getField(series.categoryField)
 		if (!bucketField) {
-			throw new Error("Invalid Category Field")
+			return []
 		}
 
 		const buckets: Buckets = Object.fromEntries(

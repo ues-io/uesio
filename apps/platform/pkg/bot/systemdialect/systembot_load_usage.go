@@ -16,7 +16,7 @@ func runUsageLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *ses
 		Collection:     op.Collection,
 		Conditions: append(op.Conditions, adapt.LoadRequestCondition{
 			Field:    "uesio/studio.site",
-			Value:    session.GetSite().ID,
+			Value:    session.GetContextSite().ID,
 			Operator: "EQ",
 		}),
 		Fields: []adapt.LoadRequestField{
