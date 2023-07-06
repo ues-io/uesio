@@ -148,13 +148,13 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 						useOperator = "NOT IN"
 					}
 					if fieldMetadata.Type == "LIST" {
+						prefix := ""
 						useOperator = "@>"
+						if condition.Operator == "NOT_IN" {
+							prefix = "NOT"
+						}
 						for _, value := range safeValues {
-							if condition.Operator == "IN" {
-								builder.addQueryPart(fmt.Sprintf("%s %s %s", fieldName, useOperator, value))
-							} else {
-								builder.addQueryPart(fmt.Sprintf("NOT %s %s %s", fieldName, useOperator, value))
-							}
+							builder.addQueryPart(fmt.Sprintf("%s %s %s %s", prefix, fieldName, useOperator, value))
 						}
 					} else {
 						builder.addQueryPart(fmt.Sprintf("%s %s (%s)", fieldName, useOperator, strings.Join(safeValues, ",")))
