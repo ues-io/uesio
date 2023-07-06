@@ -39,7 +39,7 @@ const handlers: Record<MergeType, MergeHandler> = {
 		} else {
 			const wirename = expressionParts[0]
 			const wire = context.getWire(wirename)
-			record = wire?.getFirstRecord()
+			record = context.getRecord(wirename) || wire?.getFirstRecord()
 			expression = expressionParts[1]
 		}
 		const value = record?.getFieldValue(expression)
