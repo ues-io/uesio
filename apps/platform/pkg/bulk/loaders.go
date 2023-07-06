@@ -193,13 +193,11 @@ func getListLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.F
 		rawVal := getValue(data, mapping, index)
 		value := []interface{}{}
 		// If there's no data, just use the empty slice
-		if rawVal == "" || rawVal == "[]" {
-			change[fieldMetadata.GetFullName()] = nil
-			return nil
-		}
-		err := json.Unmarshal([]byte(rawVal), &value)
-		if err != nil {
-			return fmt.Errorf("invalid LIST field value")
+		if rawVal != "" && rawVal != "[]" {
+			err := json.Unmarshal([]byte(rawVal), &value)
+			if err != nil {
+				return fmt.Errorf("invalid LIST field value")
+			}
 		}
 		change[fieldMetadata.GetFullName()] = value
 		return nil

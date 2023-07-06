@@ -143,20 +143,13 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 					fmt.Printf("Unsupported type for values array: %T\n", values)
 				}
 				if safeValues != nil {
-					useOperator := "IN"
-					if condition.Operator == "NOT_IN" {
-						useOperator = "NOT IN"
-					}
 					if fieldMetadata.Type == "LIST" {
-						prefix := ""
-						useOperator = "@>"
-						if condition.Operator == "NOT_IN" {
-							prefix = "NOT"
-						}
-						for _, value := range safeValues {
-							builder.addQueryPart(fmt.Sprintf("%s %s %s %s", prefix, fieldName, useOperator, value))
-						}
+						processListCondition(condition, fieldName, builder, safeValues)
 					} else {
+						useOperator := "IN"
+						if condition.Operator == "NOT_IN" {
+							useOperator = "NOT IN"
+						}
 						builder.addQueryPart(fmt.Sprintf("%s %s (%s)", fieldName, useOperator, strings.Join(safeValues, ",")))
 					}
 				}
@@ -204,7 +197,7 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 		} else if isTextType {
 			builder.addQueryPart(fmt.Sprintf("((%s IS NULL) OR (%s = 'null') OR (%s = ''))", fieldName, fieldName, fieldName))
 		} else {
-			builder.addQueryPart(fmt.Sprintf("((%s IS NULL) OR (%s = 'null'))", fieldName, fieldName))
+			builder.addQueryPart(fmt.Sprintf("((%s IS NULL) OR (%s = 'null') OR (%s = '[]'))", fieldName, fieldName, fieldName))
 		}
 	case "IS_NOT_BLANK":
 		if fieldMetadata.Type == "CHECKBOX" || fieldMetadata.Type == "TIMESTAMP" {
@@ -212,7 +205,7 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 		} else if isTextType {
 			builder.addQueryPart(fmt.Sprintf("((%s IS NOT NULL) AND (%s != 'null') AND (%s != ''))", fieldName, fieldName, fieldName))
 		} else {
-			builder.addQueryPart(fmt.Sprintf("((%s IS NOT NULL) AND (%s != 'null'))", fieldName, fieldName))
+			builder.addQueryPart(fmt.Sprintf("((%s IS NOT NULL) AND (%s != 'null') AND (%s != '[]'))", fieldName, fieldName, fieldName))
 		}
 	case "BETWEEN":
 		startOperator := ">"
