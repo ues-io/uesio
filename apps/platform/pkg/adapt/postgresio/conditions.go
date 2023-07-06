@@ -144,7 +144,7 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 				}
 				if safeValues != nil {
 					if fieldMetadata.Type == "LIST" {
-						processListCondition(condition, fieldName, builder, safeValues)
+						processListCondition(condition, fieldName, builder, safeValues, fieldMetadata)
 					} else {
 						useOperator := "IN"
 						if condition.Operator == "NOT_IN" {
