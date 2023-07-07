@@ -137,6 +137,8 @@ func (b *SystemDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adap
 	var botFunction LoadBotFunc
 
 	switch op.CollectionName {
+	case "uesio/core.usage":
+		botFunction = runUsageLoadBot
 	case "uesio/studio.allmetadata":
 		botFunction = runAllMetadataLoadBot
 	case "uesio/studio.recentmetadata":
