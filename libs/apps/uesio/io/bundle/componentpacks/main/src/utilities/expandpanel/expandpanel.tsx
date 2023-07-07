@@ -9,6 +9,7 @@ interface ExpandPanelProps extends definition.UtilityProps {
 }
 
 const StyleDefaults = Object.freeze({
+	root: [],
 	enter: ["opacity-0"],
 	enterActive: ["opacity-100", "transition-all"],
 	enterDone: ["opacity-100"],
@@ -55,7 +56,9 @@ const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 			onExited={unsetMaxHeight}
 			classNames={classes}
 		>
-			<div ref={nodeRef}>{children}</div>
+			<div className={classes.root} ref={nodeRef}>
+				{children}
+			</div>
 		</CSSTransition>
 	)
 }

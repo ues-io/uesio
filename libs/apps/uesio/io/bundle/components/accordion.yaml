@@ -9,7 +9,8 @@ icon: expand_more
 slots:
   - name: components
 defaultDefinition:
-  title: Accordion
+  uesio.variant: uesio/io.default
+  title: Title
   subtitle:
   expandicon: expand_more
   collapseicon: expand_less

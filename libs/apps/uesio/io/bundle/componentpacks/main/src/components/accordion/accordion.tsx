@@ -1,4 +1,7 @@
-import { component, styles, definition } from "@uesio/ui"
+import { component, styles, metadata, definition, api } from "@uesio/ui"
+import TitleBar from "../../utilities/titlebar/titlebar"
+import ExpandPanel from "../../utilities/expandpanel/expandpanel"
+import IconButton from "../../utilities/iconbutton/iconbutton"
 
 type AccordionDefinition = {
 	title?: string
@@ -9,43 +12,46 @@ type AccordionDefinition = {
 }
 
 const StyleDefaults = Object.freeze({
-	root: ["my-[5px]", "mx-[5px]"],
+	root: [],
 	content: [],
-	title: [],
-	subtitle: [],
-	actions: ["m-auto"],
-	components: [],
 })
 
 const Accordion: definition.UC<AccordionDefinition> = (props) => {
 	const { context, path, definition } = props
 	const { title, subtitle, expandicon, collapseicon, expanded } = definition
-	const IOAccordion = component.getUtility("uesio/io.accordion")
+	const componentId = api.component.getComponentIdFromProps(props)
 	const classes = styles.useStyleTokens(StyleDefaults, props)
+	const [expand, setExpanded] = api.component.useState<boolean>(
+		componentId,
+		expanded
+	)
+
+	const getIcon = () => (expand === true ? collapseicon : expandicon)
+	const toggleExpanded = () => setExpanded(!expand)
 
 	return (
-		<>
-			<IOAccordion
-				context={context}
+		<div className={classes.root}>
+			<TitleBar
 				title={title}
 				subtitle={subtitle}
-				expandicon={expandicon}
-				collapseicon={collapseicon}
-				expanded={expanded}
-				id={path}
-				classes={classes}
+				context={context}
+				onClick={toggleExpanded}
+				actions={<IconButton context={context} icon={getIcon()} />}
+			/>
+			<ExpandPanel
+				classes={{ root: classes.content }}
+				expanded={!!expand}
+				context={context}
 			>
-				<div className={classes.components}>
-					<component.Slot
-						definition={definition}
-						listName="components"
-						path={path}
-						context={context}
-						label="Accordion Components"
-					/>
-				</div>
-			</IOAccordion>
-		</>
+				<component.Slot
+					definition={definition}
+					listName="components"
+					path={path}
+					context={context}
+					label="Accordion Components"
+				/>
+			</ExpandPanel>
+		</div>
 	)
 }
 Accordion.displayName = "AccordionUtility"
