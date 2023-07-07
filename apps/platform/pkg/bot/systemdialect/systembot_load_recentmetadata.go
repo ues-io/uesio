@@ -159,6 +159,9 @@ func runRecentMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 		}
 
 		_, collectionName, err := meta.ParseKey(collectionValue)
+		if err != nil {
+			return err
+		}
 
 		err = item.SetField("uesio/core.dynamiccollection", meta.METADATA_NAME_MAP[strings.ToUpper(collectionName)])
 		if err != nil {
