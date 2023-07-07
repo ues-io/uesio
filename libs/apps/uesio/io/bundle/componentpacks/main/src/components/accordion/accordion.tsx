@@ -1,4 +1,4 @@
-import { component, styles, metadata, definition, api } from "@uesio/ui"
+import { component, styles, definition, api } from "@uesio/ui"
 import TitleBar from "../../utilities/titlebar/titlebar"
 import ExpandPanel from "../../utilities/expandpanel/expandpanel"
 import IconButton from "../../utilities/iconbutton/iconbutton"
