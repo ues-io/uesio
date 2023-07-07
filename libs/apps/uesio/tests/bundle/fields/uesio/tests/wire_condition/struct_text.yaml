@@ -1,0 +1,14 @@
+name: struct_text
+type: STRUCT
+label: struct of type text
+subtype: TEXT
+subfields:
+  - name: prename
+    label: Prename
+    type: TEXT
+  - name: middle_name
+    label: Middle Name
+    type: TEXT
+  - name: name
+    label: Name
+    type: TEXT

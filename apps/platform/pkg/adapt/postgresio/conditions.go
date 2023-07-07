@@ -143,11 +143,15 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 					fmt.Printf("Unsupported type for values array: %T\n", values)
 				}
 				if safeValues != nil {
-					useOperator := "IN"
-					if condition.Operator == "NOT_IN" {
-						useOperator = "NOT IN"
+					if fieldMetadata.Type == "STRUCT" {
+						return processStructCondition(condition, fieldName, builder, fieldMetadata, safeValues)
+					} else {
+						useOperator := "IN"
+						if condition.Operator == "NOT_IN" {
+							useOperator = "NOT IN"
+						}
+						builder.addQueryPart(fmt.Sprintf("%s %s (%s)", fieldName, useOperator, strings.Join(safeValues, ",")))
 					}
-					builder.addQueryPart(fmt.Sprintf("%s %s (%s)", fieldName, useOperator, strings.Join(safeValues, ",")))
 				}
 			} else {
 				return errors.New(condition.Operator + " requires a values array to be provided")
