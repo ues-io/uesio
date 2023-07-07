@@ -32,6 +32,8 @@ Accept: application/json
     ]
 }
 HTTP 400
+[Asserts]
+body contains "Load Failed: The Operator EQ is not supported for a list field. Supported operators are 'IN' and 'NOT_IN'."
 
 # Operator: EQ | valueSource: VALUE | value as list_text
 # entry 3
@@ -54,14 +56,9 @@ Accept: application/json
         }
     ]
 }
-HTTP 200
+HTTP 400
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.list_text']" includes "Hallo"
-jsonpath "$.wires[0].data[*]['uesio/tests.list_text']" includes "mundo"
-jsonpath "$.wires[0].data[*]['uesio/tests.list_text']" includes "hello"
-jsonpath "$.wires[0].data[*]['uesio/tests.list_text']" includes "world"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" == "ID-001"
-
+body contains "Load Failed: The Operator EQ is not supported for a list field. Supported operators are 'IN' and 'NOT_IN'."
 
 # Operator: NOT_EQ | valueSource: VALUE
 # entry 4
@@ -84,9 +81,9 @@ Accept: application/json
         }
     ]
 }
-HTTP 200
+HTTP 400
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-001"
+body contains "Load Failed: The Operator NOT_EQ is not supported for a list field. Supported operators are 'IN' and 'NOT_IN'."
 
 # Operator: IN | valueSource: VALUE
 # entry 5
@@ -312,10 +309,9 @@ Accept: application/json
         }
     ]
 }
-HTTP 200
+HTTP 400
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-001"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-002"
+body contains "Load Failed: The Operator IS_BLANK is not supported for a list field. Supported operators are 'IN' and 'NOT_IN'."
 
 # Operator: IS_NOT_BLANK | valueSource: VALUE
 # entry 12
@@ -336,7 +332,6 @@ Accept: application/json
         }
     ]
 }
-HTTP 200
+HTTP 400
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-001"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-002"
+body contains "Load Failed: The Operator IS_NOT_BLANK is not supported for a list field. Supported operators are 'IN' and 'NOT_IN'."

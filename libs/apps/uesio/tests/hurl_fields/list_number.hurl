@@ -32,6 +32,8 @@ Accept: application/json
     ]
 }
 HTTP 400
+[Asserts]
+body contains "Load Failed: Conditions for a list field with sup type NUMBER are not supported. Conditions are just supported for a list field with sub type 'TEXT'."
 
 # Operator: EQ | valueSource: VALUE | value as list_number
 # entry 3
@@ -48,18 +50,15 @@ Accept: application/json
                     "field": "uesio/tests.list_number",
                     "operator": "EQ",
                     "valueSource": "VALUE",
-                    "value": [663355888,552244789,789456123]
+                    "value": [663355888,789456123,552244789]
                 }
             ]
         }
     ]
 }
-HTTP 200
+HTTP 400
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.list_number']" includes 663355888
-jsonpath "$.wires[0].data[*]['uesio/tests.list_number']" includes 552244789
-jsonpath "$.wires[0].data[*]['uesio/tests.list_number']" includes 789456123
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" == "ID-001"
+body contains "Load Failed: Conditions for a list field with sup type NUMBER are not supported. Conditions are just supported for a list field with sub type 'TEXT'."
 
 # Operator: EQ | valueSource: VALUE | value as string
 # NOTE this test depends on postgresql string to array conversion
@@ -83,24 +82,9 @@ Accept: application/json
         }
     ]
 }
-HTTP 200
+HTTP 400
 [Asserts]
-jsonpath "$.wires[0].debugQueryString" == ```
-SELECT
-main.fields->'uesio/tests.list_number' AS "uesio/tests.list_number",
-main.id::text AS "uesio/core.id",
-main.uniquekey AS "uesio/core.uniquekey"
-FROM data as "main"
-WHERE
-main.collection = $1 AND
-main.tenant = $2 AND
-main.fields->'uesio/tests.list_number' = $3
-ORDER BY main.id::text asc
-LIMIT 501```
-jsonpath "$.wires[0].data[*]['uesio/tests.list_number']" includes 663355888
-jsonpath "$.wires[0].data[*]['uesio/tests.list_number']" includes 552244789
-jsonpath "$.wires[0].data[*]['uesio/tests.list_number']" includes 789456123
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" == "ID-001"
+body contains "Load Failed: Conditions for a list field with sup type NUMBER are not supported. Conditions are just supported for a list field with sub type 'TEXT'."
 
 # Operator: EQ | valueSource: PARAM
 # entry 5
@@ -126,12 +110,9 @@ Accept: application/json
         }
     ]
 }
-HTTP 200
+HTTP 400
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.list_number']" includes 663355888
-jsonpath "$.wires[0].data[*]['uesio/tests.list_number']" includes 552244789
-jsonpath "$.wires[0].data[*]['uesio/tests.list_number']" includes 789456123
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" == "ID-001"
+body contains "Load Failed: Conditions for a list field with sup type NUMBER are not supported. Conditions are just supported for a list field with sub type 'TEXT'."
 
 # Operator: NOT_EQ | valueSource: VALUE
 # entry 6
@@ -154,9 +135,9 @@ Accept: application/json
         }
     ]
 }
-HTTP 200
+HTTP 400
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-001"
+body contains "Load Failed: Conditions for a list field with sup type NUMBER are not supported. Conditions are just supported for a list field with sub type 'TEXT'."
 
 # Operator: NOT_EQ | valueSource: PARAM
 # entry 7
@@ -182,9 +163,9 @@ Accept: application/json
         }
     ]
 }
-HTTP 200
+HTTP 400
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-001"
+body contains "Load Failed: Conditions for a list field with sup type NUMBER are not supported. Conditions are just supported for a list field with sub type 'TEXT'."
 
 # Operator: IN | valueSource: VALUE
 # entry 8
@@ -210,9 +191,9 @@ Accept: application/json
         }
     ]
 }
-HTTP 200
+HTTP 400
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" == "ID-001"
+body contains "Load Failed: Conditions for a list field with sup type NUMBER are not supported. Conditions are just supported for a list field with sub type 'TEXT'."
 
 # Operator: IN | valueSource: LOOKUP
 # entry 9
@@ -251,9 +232,9 @@ Accept: application/json
         }
     ]
 }
-HTTP 200
+HTTP 400
 [Asserts]
-jsonpath "$.wires[1].data[*]['uesio/core.uniquekey']" == "ID-001"
+body contains "Load Failed: Conditions for a list field with sup type NUMBER are not supported. Conditions are just supported for a list field with sub type 'TEXT'."
 
 # Operator: IN | valueSource: PARAM
 # entry 10
@@ -283,9 +264,9 @@ Accept: application/json
         }
     ]
 }
-HTTP 200
+HTTP 400
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" == "ID-001"
+body contains "Load Failed: Conditions for a list field with sup type NUMBER are not supported. Conditions are just supported for a list field with sub type 'TEXT'."
 
 # Operator: NOT_IN | valueSource: VALUE
 # entry 11
@@ -311,9 +292,9 @@ Accept: application/json
         }
     ]
 }
-HTTP 200
+HTTP 400
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-001"
+body contains "Load Failed: Conditions for a list field with sup type NUMBER are not supported. Conditions are just supported for a list field with sub type 'TEXT'."
 
 # Operator: NOT_IN | valueSource: LOOKUP
 # entry 12
@@ -352,9 +333,9 @@ Accept: application/json
         }
     ]
 }
-HTTP 200
+HTTP 400
 [Asserts]
-jsonpath "$.wires[1].data[*]['uesio/core.uniquekey']" not includes "ID-001"
+body contains "Load Failed: Conditions for a list field with sup type NUMBER are not supported. Conditions are just supported for a list field with sub type 'TEXT'."
 
 # Operator: IN | valueSource: PARAM
 # entry 13
@@ -384,9 +365,9 @@ Accept: application/json
         }
     ]
 }
-HTTP 200
+HTTP 400
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-001"
+body contains "Load Failed: Conditions for a list field with sup type NUMBER are not supported. Conditions are just supported for a list field with sub type 'TEXT'."
 
 # Operator: IS_BLANK | valueSource: VALUE
 # entry 14
@@ -407,10 +388,9 @@ Accept: application/json
         }
     ]
 }
-HTTP 200
+HTTP 400
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-001"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-002"
+body contains "Load Failed: Conditions for a list field with sup type NUMBER are not supported. Conditions are just supported for a list field with sub type 'TEXT'."
 
 # Operator: IS_NOT_BLANK | valueSource: VALUE
 # entry 15
@@ -431,7 +411,6 @@ Accept: application/json
         }
     ]
 }
-HTTP 200
+HTTP 400
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-001"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-002"
+body contains "Load Failed: Conditions for a list field with sup type NUMBER are not supported. Conditions are just supported for a list field with sub type 'TEXT'."

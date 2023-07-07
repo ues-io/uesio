@@ -107,6 +107,33 @@ func processSearchCondition(condition adapt.LoadRequestCondition, collectionMeta
 	return nil
 }
 
+func ProcessConditionValues(condition adapt.LoadRequestCondition, builder *QueryBuilder) []string {
+	var safeValues []string
+
+	if reflect.TypeOf(condition.Values).Kind() == reflect.Slice {
+		switch values := condition.Values.(type) {
+		case []interface{}:
+			if numValues := len(values); numValues > 0 {
+				safeValues = make([]string, numValues)
+				for i, val := range values {
+					safeValues[i] = builder.addValue(val)
+				}
+			}
+		case []string:
+			if numValues := len(values); numValues > 0 {
+				safeValues = make([]string, numValues)
+				for i, val := range values {
+					safeValues[i] = builder.addValue(val)
+				}
+			}
+		default:
+			fmt.Printf("Unsupported type for values array: %T\n", values)
+		}
+	}
+
+	return safeValues
+}
+
 func processValueCondition(condition adapt.LoadRequestCondition, collectionMetadata *adapt.CollectionMetadata, metadata *adapt.MetadataCache, builder *QueryBuilder, tableAlias string, session *sess.Session) error {
 	fieldMetadata, err := collectionMetadata.GetField(condition.Field)
 	if err != nil {
@@ -115,133 +142,111 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 
 	fieldName := getFieldName(fieldMetadata, tableAlias)
 	isTextType := isTextAlike(fieldMetadata.Type)
-	switch condition.Operator {
-	case "IN", "NOT_IN":
-		//IF we got values use normal flow
-		if fieldMetadata.Type == "DATE" && condition.Values == nil {
-			return processDateRangeCondition(condition, fieldName, builder)
-		}
-		if condition.Values != nil {
-			if reflect.TypeOf(condition.Values).Kind() == reflect.Slice {
-				var safeValues []string
-				switch values := condition.Values.(type) {
-				case []interface{}:
-					if numValues := len(values); numValues > 0 {
-						safeValues = make([]string, numValues)
-						for i, val := range values {
-							safeValues[i] = builder.addValue(val)
-						}
-					}
-				case []string:
-					if numValues := len(values); numValues > 0 {
-						safeValues = make([]string, numValues)
-						for i, val := range values {
-							safeValues[i] = builder.addValue(val)
-						}
-					}
-				default:
-					fmt.Printf("Unsupported type for values array: %T\n", values)
-				}
+	if fieldMetadata.Type == "LIST" {
+		return processListCondition(condition, fieldName, builder, fieldMetadata)
+	} else {
+		switch condition.Operator {
+		case "IN", "NOT_IN":
+			if fieldMetadata.Type == "DATE" && condition.Values == nil {
+				return processDateRangeCondition(condition, fieldName, builder)
+			}
+			//IF we got values use normal flow
+			if condition.Values != nil {
+				safeValues := ProcessConditionValues(condition, builder)
 				if safeValues != nil {
-					if fieldMetadata.Type == "LIST" {
-						processListCondition(condition, fieldName, builder, safeValues, fieldMetadata)
-					} else {
-						useOperator := "IN"
-						if condition.Operator == "NOT_IN" {
-							useOperator = "NOT IN"
-						}
-						builder.addQueryPart(fmt.Sprintf("%s %s (%s)", fieldName, useOperator, strings.Join(safeValues, ",")))
+					useOperator := "IN"
+					if condition.Operator == "NOT_IN" {
+						useOperator = "NOT IN"
 					}
+					builder.addQueryPart(fmt.Sprintf("%s %s (%s)", fieldName, useOperator, strings.Join(safeValues, ",")))
 				}
 			} else {
-				return errors.New(condition.Operator + " requires a values array to be provided")
+				useOperator := "= ANY"
+				if condition.Operator == "NOT_IN" {
+					useOperator = "<> ANY"
+				}
+				builder.addQueryPart(fmt.Sprintf("%s %s (%s)", fieldName, useOperator, builder.addValue(condition.Value)))
 			}
-		} else {
-			useOperator := "= ANY"
-			if condition.Operator == "NOT_IN" {
-				useOperator = "<> ANY"
+
+		case "HAS_ANY":
+			if fieldMetadata.Type != "MULTISELECT" {
+				return errors.New("Operator HAS_ANY only works with fieldType MULTI_SELECT")
 			}
-			builder.addQueryPart(fmt.Sprintf("%s %s (%s)", fieldName, useOperator, builder.addValue(condition.Value)))
-		}
-
-	case "HAS_ANY":
-		if fieldMetadata.Type != "MULTISELECT" {
-			return errors.New("Operator HAS_ANY only works with fieldType MULTI_SELECT")
-		}
-		builder.addQueryPart(fmt.Sprintf("%s ?| %s", fieldName, builder.addValue(condition.Values)))
-
-	case "HAS_ALL":
-		if fieldMetadata.Type != "MULTISELECT" {
-			return errors.New("Operator HAS_ALL only works with fieldType MULTI_SELECT")
-		}
-		builder.addQueryPart(fmt.Sprintf("%s ?& %s", fieldName, builder.addValue(condition.Values)))
-
-	case "NOT_EQ":
-		builder.addQueryPart(fmt.Sprintf("%s is distinct from %s", fieldName, builder.addValue(condition.Value)))
-
-	case "GT":
-		builder.addQueryPart(fmt.Sprintf("%s > %s", fieldName, builder.addValue(condition.Value)))
-
-	case "LT":
-		builder.addQueryPart(fmt.Sprintf("%s < %s", fieldName, builder.addValue(condition.Value)))
-
-	case "GTE":
-		builder.addQueryPart(fmt.Sprintf("%s >= %s", fieldName, builder.addValue(condition.Value)))
-
-	case "LTE":
-		builder.addQueryPart(fmt.Sprintf("%s <= %s", fieldName, builder.addValue(condition.Value)))
-
-	case "IS_BLANK":
-		if fieldMetadata.Type == "CHECKBOX" || fieldMetadata.Type == "TIMESTAMP" {
-			builder.addQueryPart(fmt.Sprintf("%s IS NULL", fieldName))
-		} else if isTextType {
-			builder.addQueryPart(fmt.Sprintf("((%s IS NULL) OR (%s = 'null') OR (%s = ''))", fieldName, fieldName, fieldName))
-		} else {
-			builder.addQueryPart(fmt.Sprintf("((%s IS NULL) OR (%s = 'null') OR (%s = '[]'))", fieldName, fieldName, fieldName))
-		}
-	case "IS_NOT_BLANK":
-		if fieldMetadata.Type == "CHECKBOX" || fieldMetadata.Type == "TIMESTAMP" {
-			builder.addQueryPart(fmt.Sprintf("%s IS NOT NULL", fieldName))
-		} else if isTextType {
-			builder.addQueryPart(fmt.Sprintf("((%s IS NOT NULL) AND (%s != 'null') AND (%s != ''))", fieldName, fieldName, fieldName))
-		} else {
-			builder.addQueryPart(fmt.Sprintf("((%s IS NOT NULL) AND (%s != 'null') AND (%s != '[]'))", fieldName, fieldName, fieldName))
-		}
-	case "BETWEEN":
-		startOperator := ">"
-		endOperator := "<"
-
-		if condition.InclusiveStart {
-			startOperator = ">="
-		}
-
-		if condition.InclusiveEnd {
-			endOperator = "<="
-		}
-
-		builder.addQueryPart(fmt.Sprintf("%s %s %s", fieldName, startOperator, builder.addValue(condition.Start)))
-		builder.addQueryPart(fmt.Sprintf("%s %s %s", fieldName, endOperator, builder.addValue(condition.End)))
-
-	case "CONTAINS":
-		if !isTextType {
-			return fmt.Errorf("Operator CONTAINS is not supported for field type %s", fieldMetadata.Type)
-		}
-		builder.addQueryPart(fmt.Sprintf("%s ILIKE %s", fieldName, builder.addValue(fmt.Sprintf("%%%v%%", condition.Value))))
-
-	case "STARTS_WITH":
-		if !isTextType {
-			return fmt.Errorf("Operator STARTS_WITH is not supported for field type %s", fieldMetadata.Type)
-		}
-		builder.addQueryPart(fmt.Sprintf("%s ILIKE %s", fieldName, builder.addValue(fmt.Sprintf("%v%%", condition.Value))))
-
-	default:
-		if fieldMetadata.Type == "MULTISELECT" {
-			// Same as HAS_ANY
 			builder.addQueryPart(fmt.Sprintf("%s ?| %s", fieldName, builder.addValue(condition.Values)))
+
+		case "HAS_ALL":
+			if fieldMetadata.Type != "MULTISELECT" {
+				return errors.New("Operator HAS_ALL only works with fieldType MULTI_SELECT")
+			}
+			builder.addQueryPart(fmt.Sprintf("%s ?& %s", fieldName, builder.addValue(condition.Values)))
+
+		case "NOT_EQ":
+			builder.addQueryPart(fmt.Sprintf("%s is distinct from %s", fieldName, builder.addValue(condition.Value)))
+
+		case "GT":
+			builder.addQueryPart(fmt.Sprintf("%s > %s", fieldName, builder.addValue(condition.Value)))
+
+		case "LT":
+			builder.addQueryPart(fmt.Sprintf("%s < %s", fieldName, builder.addValue(condition.Value)))
+
+		case "GTE":
+			builder.addQueryPart(fmt.Sprintf("%s >= %s", fieldName, builder.addValue(condition.Value)))
+
+		case "LTE":
+			builder.addQueryPart(fmt.Sprintf("%s <= %s", fieldName, builder.addValue(condition.Value)))
+
+		case "IS_BLANK":
+			if fieldMetadata.Type == "CHECKBOX" || fieldMetadata.Type == "TIMESTAMP" {
+				builder.addQueryPart(fmt.Sprintf("%s IS NULL", fieldName))
+			} else if isTextType {
+				builder.addQueryPart(fmt.Sprintf("((%s IS NULL) OR (%s = 'null') OR (%s = ''))", fieldName, fieldName, fieldName))
+			} else {
+				builder.addQueryPart(fmt.Sprintf("((%s IS NULL) OR (%s = 'null') OR (%s = '[]'))", fieldName, fieldName, fieldName))
+			}
+		case "IS_NOT_BLANK":
+			if fieldMetadata.Type == "CHECKBOX" || fieldMetadata.Type == "TIMESTAMP" {
+				builder.addQueryPart(fmt.Sprintf("%s IS NOT NULL", fieldName))
+			} else if isTextType {
+				builder.addQueryPart(fmt.Sprintf("((%s IS NOT NULL) AND (%s != 'null') AND (%s != ''))", fieldName, fieldName, fieldName))
+			} else {
+				builder.addQueryPart(fmt.Sprintf("((%s IS NOT NULL) AND (%s != 'null') AND (%s != '[]'))", fieldName, fieldName, fieldName))
+			}
+		case "BETWEEN":
+			startOperator := ">"
+			endOperator := "<"
+
+			if condition.InclusiveStart {
+				startOperator = ">="
+			}
+
+			if condition.InclusiveEnd {
+				endOperator = "<="
+			}
+
+			builder.addQueryPart(fmt.Sprintf("%s %s %s", fieldName, startOperator, builder.addValue(condition.Start)))
+			builder.addQueryPart(fmt.Sprintf("%s %s %s", fieldName, endOperator, builder.addValue(condition.End)))
+
+		case "CONTAINS":
+			if !isTextType {
+				return fmt.Errorf("Operator CONTAINS is not supported for field type %s", fieldMetadata.Type)
+			}
+			builder.addQueryPart(fmt.Sprintf("%s ILIKE %s", fieldName, builder.addValue(fmt.Sprintf("%%%v%%", condition.Value))))
+
+		case "STARTS_WITH":
+			if !isTextType {
+				return fmt.Errorf("Operator STARTS_WITH is not supported for field type %s", fieldMetadata.Type)
+			}
+			builder.addQueryPart(fmt.Sprintf("%s ILIKE %s", fieldName, builder.addValue(fmt.Sprintf("%v%%", condition.Value))))
+
+		default:
+			if fieldMetadata.Type == "MULTISELECT" {
+				// Same as HAS_ANY
+				builder.addQueryPart(fmt.Sprintf("%s ?| %s", fieldName, builder.addValue(condition.Values)))
+			}
+			builder.addQueryPart(fmt.Sprintf("%s = %s", fieldName, builder.addValue(condition.Value)))
 		}
-		builder.addQueryPart(fmt.Sprintf("%s = %s", fieldName, builder.addValue(condition.Value)))
+		return nil
 	}
-	return nil
 }
 
 func processGroupCondition(condition adapt.LoadRequestCondition, collectionMetadata *adapt.CollectionMetadata, metadata *adapt.MetadataCache, builder *QueryBuilder, tableAlias string, session *sess.Session) error {
