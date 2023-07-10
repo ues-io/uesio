@@ -113,15 +113,14 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 		return err
 	}
 	fieldName := getFieldName(fieldMetadata, tableAlias)
-
 	fieldType := fieldMetadata.Type
-	subFieldMetadata, exists := fieldMetadata.SubFields[condition.SubField]
-	if !exists {
-		if fieldMetadata.Type == "STRUCT" {
+	isTextType := isTextAlike(fieldType)
+
+	if fieldMetadata.Type == "STRUCT" {
+		subFieldMetadata, exists := fieldMetadata.SubFields[condition.SubField]
+		if !exists {
 			return errors.New(fmt.Sprintf("SubField: '%s' doesn't exist on field: '%s'.", condition.SubField, fieldName))
 		}
-	}
-	if fieldMetadata.Type == "STRUCT" {
 		fieldType = subFieldMetadata.Type
 		switch fieldType {
 		case "CHECKBOX":
@@ -134,8 +133,6 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 			fieldName = fmt.Sprintf("%s->>'%s'", fieldName, subFieldMetadata.Name)
 		}
 	}
-
-	isTextType := isTextAlike(fieldType)
 
 	switch condition.Operator {
 	case "IN", "NOT_IN":
