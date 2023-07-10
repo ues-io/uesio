@@ -10,6 +10,35 @@ POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 }
 HTTP 200
 
+# Operator: EQ | valueSource: VALUE
+# entry 2
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.wire_condition",
+            "fields": [{"id": "uesio/tests.struct"},{"id": "uesio/core.uniquekey"}],
+            "query":true,
+            "conditions": [
+                {
+                    "field": "uesio/tests.struct",
+                    "operator": "BETWEEN",
+                    "valueSource": "VALUE",
+                    "subfield": "date",
+                    "start": "2023-07-12",
+                    "end": "2023-07-15",
+                    "inclusiveStart": true,
+                    "inclusiveEnd": false
+                }
+            ] 
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" == "ID-001"
+
 # Operator: IN | valueSource: VALUE
 # entry 2
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load

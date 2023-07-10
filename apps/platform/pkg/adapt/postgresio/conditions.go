@@ -112,13 +112,35 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 	if err != nil {
 		return err
 	}
-
 	fieldName := getFieldName(fieldMetadata, tableAlias)
-	isTextType := isTextAlike(fieldMetadata.Type)
+
+	fieldType := fieldMetadata.Type
+	subFieldMetadata, exists := fieldMetadata.SubFields[condition.SubField]
+	if !exists {
+		if fieldMetadata.Type == "STRUCT" {
+			return errors.New(fmt.Sprintf("SubField: '%s' doesn't exist on field: '%s'.", condition.SubField, fieldName))
+		}
+	}
+	if fieldMetadata.Type == "STRUCT" {
+		fieldType = subFieldMetadata.Type
+		switch fieldType {
+		case "CHECKBOX":
+			fieldName = fmt.Sprintf("(%s->>'%s')::boolean", fieldName, subFieldMetadata.Name)
+		case "TIMESTAMP":
+			fieldName = fmt.Sprintf("(%s->>'%s')::bigint", fieldName, subFieldMetadata.Name)
+		case "NUMBER", "MAP", "LIST", "MULTISELECT", "STRUCT":
+			fieldName = fmt.Sprintf("%s->'%s'", fieldName, subFieldMetadata.Name)
+		default:
+			fieldName = fmt.Sprintf("%s->>'%s'", fieldName, subFieldMetadata.Name)
+		}
+	}
+
+	isTextType := isTextAlike(fieldType)
+
 	switch condition.Operator {
 	case "IN", "NOT_IN":
 		//IF we got values use normal flow
-		if fieldMetadata.Type == "DATE" && condition.Values == nil {
+		if fieldType == "DATE" && condition.Values == nil {
 			return processDateRangeCondition(condition, fieldName, builder)
 		}
 		if condition.Values != nil {
@@ -143,15 +165,11 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 					fmt.Printf("Unsupported type for values array: %T\n", values)
 				}
 				if safeValues != nil {
-					if fieldMetadata.Type == "STRUCT" {
-						return processStructCondition(condition, fieldName, builder, fieldMetadata, safeValues)
-					} else {
-						useOperator := "IN"
-						if condition.Operator == "NOT_IN" {
-							useOperator = "NOT IN"
-						}
-						builder.addQueryPart(fmt.Sprintf("%s %s (%s)", fieldName, useOperator, strings.Join(safeValues, ",")))
+					useOperator := "IN"
+					if condition.Operator == "NOT_IN" {
+						useOperator = "NOT IN"
 					}
+					builder.addQueryPart(fmt.Sprintf("%s %s (%s)", fieldName, useOperator, strings.Join(safeValues, ",")))
 				}
 			} else {
 				return errors.New(condition.Operator + " requires a values array to be provided")
@@ -165,13 +183,13 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 		}
 
 	case "HAS_ANY":
-		if fieldMetadata.Type != "MULTISELECT" {
+		if fieldType != "MULTISELECT" {
 			return errors.New("Operator HAS_ANY only works with fieldType MULTI_SELECT")
 		}
 		builder.addQueryPart(fmt.Sprintf("%s ?| %s", fieldName, builder.addValue(condition.Values)))
 
 	case "HAS_ALL":
-		if fieldMetadata.Type != "MULTISELECT" {
+		if fieldType != "MULTISELECT" {
 			return errors.New("Operator HAS_ALL only works with fieldType MULTI_SELECT")
 		}
 		builder.addQueryPart(fmt.Sprintf("%s ?& %s", fieldName, builder.addValue(condition.Values)))
@@ -192,7 +210,7 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 		builder.addQueryPart(fmt.Sprintf("%s <= %s", fieldName, builder.addValue(condition.Value)))
 
 	case "IS_BLANK":
-		if fieldMetadata.Type == "CHECKBOX" || fieldMetadata.Type == "TIMESTAMP" {
+		if fieldType == "CHECKBOX" || fieldType == "TIMESTAMP" {
 			builder.addQueryPart(fmt.Sprintf("%s IS NULL", fieldName))
 		} else if isTextType {
 			builder.addQueryPart(fmt.Sprintf("((%s IS NULL) OR (%s = 'null') OR (%s = ''))", fieldName, fieldName, fieldName))
@@ -200,7 +218,7 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 			builder.addQueryPart(fmt.Sprintf("((%s IS NULL) OR (%s = 'null'))", fieldName, fieldName))
 		}
 	case "IS_NOT_BLANK":
-		if fieldMetadata.Type == "CHECKBOX" || fieldMetadata.Type == "TIMESTAMP" {
+		if fieldType == "CHECKBOX" || fieldType == "TIMESTAMP" {
 			builder.addQueryPart(fmt.Sprintf("%s IS NOT NULL", fieldName))
 		} else if isTextType {
 			builder.addQueryPart(fmt.Sprintf("((%s IS NOT NULL) AND (%s != 'null') AND (%s != ''))", fieldName, fieldName, fieldName))
@@ -224,18 +242,18 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 
 	case "CONTAINS":
 		if !isTextType {
-			return fmt.Errorf("Operator CONTAINS is not supported for field type %s", fieldMetadata.Type)
+			return fmt.Errorf("Operator CONTAINS is not supported for field type %s", fieldType)
 		}
 		builder.addQueryPart(fmt.Sprintf("%s ILIKE %s", fieldName, builder.addValue(fmt.Sprintf("%%%v%%", condition.Value))))
 
 	case "STARTS_WITH":
 		if !isTextType {
-			return fmt.Errorf("Operator STARTS_WITH is not supported for field type %s", fieldMetadata.Type)
+			return fmt.Errorf("Operator STARTS_WITH is not supported for field type %s", fieldType)
 		}
 		builder.addQueryPart(fmt.Sprintf("%s ILIKE %s", fieldName, builder.addValue(fmt.Sprintf("%v%%", condition.Value))))
 
 	default:
-		if fieldMetadata.Type == "MULTISELECT" {
+		if fieldType == "MULTISELECT" {
 			// Same as HAS_ANY
 			builder.addQueryPart(fmt.Sprintf("%s ?| %s", fieldName, builder.addValue(condition.Values)))
 		}
