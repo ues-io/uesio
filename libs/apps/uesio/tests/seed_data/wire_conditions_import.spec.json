@@ -42,8 +42,8 @@
 		"uesio/tests.user": {
 			"columnname": "user"
 		},
-		"uesio/tests.struct_text": {
-			"columnname": "struct_text"
+		"uesio/tests.struct": {
+			"columnname": "struct"
 		}
 	}
 }

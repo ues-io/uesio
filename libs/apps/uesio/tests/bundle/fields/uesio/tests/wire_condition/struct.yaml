@@ -1,0 +1,11 @@
+name: struct
+type: STRUCT
+label: struct
+subtype: STRUCT
+subfields:
+  - name: firstname
+    label: First Name
+    type: TEXT
+  - name: age
+    label: Age
+    type: NUMBER
