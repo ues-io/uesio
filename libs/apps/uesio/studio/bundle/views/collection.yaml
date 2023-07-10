@@ -14,48 +14,28 @@ definition:
       conditions:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
-    collections:
-      collection: uesio/studio.collection
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.label:
-        uesio/studio.plurallabel:
-        uesio/studio.namefield:
-        uesio/studio.workspace:
-        uesio/studio.datasource:
-        uesio/core.updatedat:
-        uesio/core.updatedby:
-        uesio/core.createdat:
-        uesio/core.createdby:
-      conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
-        - field: uesio/studio.name
-          value: $Param{collectionname}
-    fields:
-      collection: uesio/studio.field
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.type:
-        uesio/studio.label:
-        uesio/studio.collection:
-        uesio/studio.reference:
-        uesio/studio.selectlist:
-        uesio/studio.autopopulate:
-        uesio/studio.languagelabel:
-        uesio/studio.number:
-      conditions:
-        - field: uesio/studio.collection
-          value: $Param{app}.$Param{collectionname}
-          id: fullCollectionName
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
+    # fields:
+    #   collection: uesio/studio.field
+    #   fields:
+    #     uesio/core.id:
+    #     uesio/studio.name:
+    #     uesio/studio.type:
+    #     uesio/studio.label:
+    #     uesio/studio.collection:
+    #     uesio/studio.reference:
+    #     uesio/studio.selectlist:
+    #     uesio/studio.autopopulate:
+    #     uesio/studio.languagelabel:
+    #     uesio/studio.number:
+    #   conditions:
+    #     - field: uesio/studio.collection
+    #       valueSource: LOOKUP
+    #       lookupWire: collections
+    #       lookupField: uesio/core.uniquekey
+    #     - field: uesio/studio.workspace
+    #       valueSource: LOOKUP
+    #       lookupWire: workspaces
+    #       lookupField: uesio/core.id
     routeassignments:
       collection: uesio/studio.routeassignment
       fields:
@@ -113,6 +93,13 @@ definition:
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: uesio/core.id
+    collections:
+      collection: uesio/studio.allmetadata
+      conditions:
+        - field: uesio/studio.type
+          value: collections
+        - field: uesio/studio.item
+          value: $Param{namespace}.$Param{collectionname}
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -291,6 +278,7 @@ definition:
                                   wire: fields
                           columns:
                             - field: uesio/studio.name
+                            - field: uesio/studio.collection
                             - field: uesio/studio.type
                             - field: uesio/studio.label
                             - field: uesio/studio.languagelabel

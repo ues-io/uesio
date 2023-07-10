@@ -3,6 +3,7 @@ package systemdialect
 import (
 	"errors"
 	"fmt"
+	"reflect"
 
 	"github.com/teris-io/shortid"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -11,6 +12,24 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
+
+func extractConditions(conditions []adapt.LoadRequestCondition) (adapt.LoadRequestCondition, adapt.LoadRequestCondition, []adapt.LoadRequestCondition, error) {
+
+	// Verify that a type condition was provided
+	var typeCondition adapt.LoadRequestCondition
+	var itemCondition adapt.LoadRequestCondition
+	if conditions == nil || len(conditions) <= 0 {
+		return typeCondition, itemCondition, nil, errors.New("must provide at least one condition")
+	}
+	//item is optional it might not be provided
+	if len(conditions) > 1 && conditions[1].Field == "uesio/studio.item" {
+		typeCondition, itemCondition, remainingConditions := conditions[0], conditions[1], conditions[2:]
+		return typeCondition, itemCondition, remainingConditions, nil
+	}
+	typeCondition, remainingConditions := conditions[0], conditions[1:]
+	return typeCondition, itemCondition, remainingConditions, nil
+
+}
 
 func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
 
@@ -24,12 +43,7 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		return errors.New("no app parameter provided")
 	}
 
-	// Verify that a type condition was provided
-	if op.Conditions == nil || len(op.Conditions) <= 0 {
-		return errors.New("must provide at least one condition")
-	}
-
-	typeCondition, remainingConditions := op.Conditions[0], op.Conditions[1:]
+	typeCondition, itemCondition, remainingConditions, err := extractConditions(op.Conditions)
 
 	if typeCondition.Field != "uesio/studio.type" {
 		return errors.New("the first condition must be on the type field")
@@ -38,6 +52,34 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 	group, err := meta.GetBundleableGroupFromType(typeCondition.Value.(string))
 	if err != nil {
 		return errors.New("invalid metadata type provided for type condition")
+	}
+
+	IsLocal := false
+	QueryAll := true
+
+	//we got item condition and it's not nil
+	if !reflect.ValueOf(itemCondition).IsZero() && itemCondition.Field == "uesio/studio.item" {
+		// if itemCondition.Field != "uesio/studio.item" {
+		// 	return errors.New("the second condition if provided must be on the type item")
+		// }
+		item := itemCondition.Value.(string)
+		namespace, name, err := meta.ParseKey(item)
+		if err != nil {
+			return err
+		}
+
+		IsLocal = app == namespace
+		QueryAll = false
+
+		//From the Item we prepare a new condition to query the DB
+		//TO-DO some cool way to query by uniquekey??
+		if IsLocal {
+			remainingConditions = append(remainingConditions, adapt.LoadRequestCondition{
+				Field: "uesio/studio.name",
+				Value: name,
+			})
+		}
+
 	}
 
 	//This creates a copy of the session
@@ -71,7 +113,7 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		Collection:     op.Collection,
 		Conditions:     remainingConditions,
 		Fields:         datasource.GetLoadRequestFields(group.GetFields()),
-		Query:          true,
+		Query:          IsLocal || QueryAll,
 	}}, session, &datasource.LoadOptions{
 		Metadata: connection.GetMetadata(),
 	})
@@ -127,9 +169,35 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		installedNamespaces = append(installedNamespaces, app)
 	}
 
-	err = bundle.LoadAllFromNamespaces(installedNamespaces, group, nil, inContextSession, nil)
-	if err != nil {
-		return err
+	if QueryAll {
+		err = bundle.LoadAllFromNamespaces(installedNamespaces, group, nil, inContextSession, nil)
+		if err != nil {
+			return err
+		}
+	}
+
+	//one installed element
+	if !IsLocal && !QueryAll {
+
+		//NO IDEA HOW TO DO THIS "QUERY"
+
+		// err := bundle.LoadAllFromAny(group, meta.BundleConditions{
+		// 	"uesio/studio.name": "uesio/core.bulkjob",
+		// }, session, connection)
+		// if err != nil {
+		// 	return err
+		// }
+
+		// item := group.NewItem()
+		// item.SetField("uesio/studio.namespace", "uesio/core")
+		// item.SetField("uesio/core.uniquekey", "uesio/core.bulkjob")
+		// groupableItem := item.(meta.BundleableItem)
+
+		// err = bundle.Load(groupableItem, inContextSession, nil)
+		// if err != nil {
+		// 	return err
+		// }
+
 	}
 
 	// Get the metadata list
