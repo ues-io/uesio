@@ -122,16 +122,7 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 			return errors.New(fmt.Sprintf("SubField: '%s' doesn't exist on field: '%s'.", condition.SubField, fieldName))
 		}
 		fieldType = subFieldMetadata.Type
-		switch fieldType {
-		case "CHECKBOX":
-			fieldName = fmt.Sprintf("(%s->>'%s')::boolean", fieldName, subFieldMetadata.Name)
-		case "TIMESTAMP":
-			fieldName = fmt.Sprintf("(%s->>'%s')::bigint", fieldName, subFieldMetadata.Name)
-		case "NUMBER", "MAP", "LIST", "MULTISELECT", "STRUCT":
-			fieldName = fmt.Sprintf("%s->'%s'", fieldName, subFieldMetadata.Name)
-		default:
-			fieldName = fmt.Sprintf("%s->>'%s'", fieldName, subFieldMetadata.Name)
-		}
+		fieldName = getFieldNameString(fieldType, fieldName, subFieldMetadata.Name)
 	}
 
 	switch condition.Operator {
