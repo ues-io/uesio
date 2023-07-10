@@ -273,11 +273,6 @@ definition:
                             - uesio/io.titlebar:
                                 uesio.variant: uesio/io.main
                                 title: Latest Updates & News
-                                uesio.styleTokens:
-                                  root:
-                                    - border-b-4
-                                    - border-neutral-900
-                                    - pb-1
                             - uesio/io.list:
                                 wire: blogentries
                                 mode: READ
@@ -301,11 +296,6 @@ definition:
                             - uesio/io.titlebar:
                                 uesio.variant: uesio/io.main
                                 title: Recent Documentation
-                                uesio.styleTokens:
-                                  root:
-                                    - border-b-4
-                                    - border-neutral-900
-                                    - pb-1
                             - uesio/io.list:
                                 wire: recentdocs
                                 mode: READ

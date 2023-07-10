@@ -55,7 +55,7 @@ const ChartComponent: definition.UtilityComponent<ChartProps> = (props) => {
 		Object.values(wires).every((w) => !!w)
 
 	const [datasets, categories] = foundAllWires
-		? aggregate(wires, definition.labels, definition.series)
+		? aggregate(wires, definition.labels, definition.series, context)
 		: [[], {}]
 
 	const labels = Object.values(categories)

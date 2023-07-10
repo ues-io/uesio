@@ -1,0 +1,9 @@
+name: three_columns
+label: Three Column Responsive
+definition:
+  uesio.styleTokens:
+    root:
+      - grid-cols-1
+      - gap-x-2.5
+      - lg:grid-cols-3
+public: true

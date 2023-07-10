@@ -23,25 +23,6 @@ func GetFileType(details *fileadapt.FileDetails) string {
 	return "field:" + details.FieldID
 }
 
-func getUploadMetadataResponse(metadataResponse *adapt.MetadataCache, collectionID, fieldID string, session *sess.Session) error {
-	collections := datasource.MetadataRequest{}
-
-	if fieldID != "" {
-		err := collections.AddField(collectionID, fieldID, nil)
-		if err != nil {
-			return err
-		}
-	} else {
-		err := collections.AddCollection(collectionID)
-		if err != nil {
-			return err
-		}
-	}
-
-	return collections.Load(metadataResponse, session, nil)
-
-}
-
 type FileUploadOp struct {
 	Data    io.Reader
 	Details *fileadapt.FileDetails
@@ -142,7 +123,7 @@ func Upload(ops []FileUploadOp, connection adapt.Connection, session *sess.Sessi
 	tenantID := session.GetTenantID()
 
 	for index, ufm := range ufms {
-		err := getUploadMetadataResponse(metadataResponse, ufm.CollectionID, ufm.FieldID, session)
+		err := datasource.GetMetadataResponse(metadataResponse, ufm.CollectionID, ufm.FieldID, session)
 		if err != nil {
 			return nil, err
 		}

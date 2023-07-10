@@ -157,7 +157,7 @@ func (f *Field) UnmarshalYAML(node *yaml.Node) error {
 	if fieldType == "NUMBER" {
 		err := validateNumberField(node, f.GetKey())
 		if err != nil {
-			return err
+			f.NumberMetadata = &NumberMetadata{Decimals: 0}
 		}
 	}
 
