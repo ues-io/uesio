@@ -21,7 +21,7 @@ func NewBaseRouteAssignment(collectionKey, namespace, viewType string) *RouteAss
 
 type RouteAssignment struct {
 	BuiltIn        `yaml:",inline"`
-	BundleableBase `yaml:"-"`
+	BundleableBase `yaml:",inline"`
 	Type           string `yaml:"type" json:"uesio/studio.type"`
 	RouteRef       string `yaml:"route" json:"uesio/studio.route"`
 	Collection     string `yaml:"-" json:"uesio/studio.collection"`
