@@ -2,7 +2,7 @@ name: uesio/crm
 loginRoute: uesio/core.login
 homeRoute: uesio/crm.leads
 defaultTheme: uesio/core.default
-publicProfile: uesio/crm.staff
+publicProfile: uesio/crm.public
 favicon: uesio/core.logo
 dependencies:
   uesio/builder:

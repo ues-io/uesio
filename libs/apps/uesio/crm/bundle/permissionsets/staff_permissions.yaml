@@ -10,3 +10,4 @@ allowallroutes: true
 allowallfiles: true
 modifyallrecords: true
 viewallrecords: true
+public: true

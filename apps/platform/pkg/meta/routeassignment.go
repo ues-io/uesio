@@ -21,10 +21,11 @@ func NewBaseRouteAssignment(collectionKey, namespace, viewType string) *RouteAss
 
 type RouteAssignment struct {
 	BuiltIn        `yaml:",inline"`
-	BundleableBase `yaml:"-"`
-	Type           string `yaml:"type" json:"uesio/studio.type"`
-	RouteRef       string `yaml:"route" json:"uesio/studio.route"`
-	Collection     string `yaml:"-" json:"uesio/studio.collection"`
+	BundleableBase `yaml:"-"` //This is intentional, don't show the name
+	Type           string     `yaml:"type" json:"uesio/studio.type"`
+	RouteRef       string     `yaml:"route" json:"uesio/studio.route"`
+	Collection     string     `yaml:"-" json:"uesio/studio.collection"`
+	Public         bool       `yaml:"public,omitempty" json:"uesio/studio.public"`
 }
 
 type RouteAssignmentWrapper RouteAssignment
@@ -75,6 +76,10 @@ func (r *RouteAssignment) Loop(iter func(string, interface{}) error) error {
 		}
 	}
 	return nil
+}
+
+func (r *RouteAssignment) IsPublic() bool {
+	return r.Public
 }
 
 func (r *RouteAssignment) Len() int {

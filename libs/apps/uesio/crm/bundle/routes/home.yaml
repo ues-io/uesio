@@ -3,3 +3,4 @@ path: home
 view: uesio/crm.home
 theme: uesio/core.default
 title: ""
+public: true
