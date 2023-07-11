@@ -48,6 +48,7 @@ definition:
         uesio/studio.autopopulate:
         uesio/studio.languagelabel:
         uesio/studio.number:
+        uesio/studio.referencegroup:
       conditions:
         - field: uesio/studio.collection
           value: $Param{app}.$Param{collectionname}
@@ -81,6 +82,7 @@ definition:
         uesio/studio.languagelabel:
         uesio/studio.autonumber:
         uesio/studio.number:
+        uesio/studio.referencegroup:
       init:
         query: false
         create: true
@@ -514,6 +516,39 @@ definition:
                         metadataType: COLLECTION
                         label: Ref. Collection
                         uesio.id: new-field-collection
+              - uesio/io.box:
+                  uesio.display:
+                    - field: uesio/studio.type
+                      value: REFERENCEGROUP
+                  components:
+                    - uesio/builder.metadatafield:
+                        fieldId: uesio/studio.referencegroup->uesio/studio.collection
+                        metadataType: COLLECTION
+                        label: Ref. Collection
+                        uesio.id: new-field-ref-collection
+              - uesio/io.box:
+                  uesio.display:
+                    - field: uesio/studio.type
+                      value: REFERENCEGROUP
+                    - wire: newfield
+                      field: uesio/studio.referencegroup->uesio/studio.collection
+                      operator: NOT_EQUALS
+                      value: ""
+                  components:
+                    - uesio/builder.metadatafield:
+                        fieldId: uesio/studio.referencegroup->uesio/studio.field
+                        metadataType: FIELD
+                        grouping: ${uesio/studio.referencegroup->uesio/studio.collection}
+                        label: Ref. Field
+                        uesio.id: new-field-ref-field
+              - uesio/io.box:
+                  uesio.display:
+                    - field: uesio/studio.type
+                      value: REFERENCEGROUP
+                  components:
+                    - uesio/io.field:
+                        fieldId: uesio/studio.referencegroup->uesio/studio.ondelete
+                        uesio.id: new-field-ondelete
               - uesio/io.box:
                   uesio.display:
                     - field: uesio/studio.type

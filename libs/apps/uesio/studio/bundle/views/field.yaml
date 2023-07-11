@@ -263,8 +263,10 @@ definition:
                                       uesio.display:
                                         - field: uesio/studio.type
                                           value: REFERENCEGROUP
-                                        - field: uesio/studio.type
-                                          value: REFERENCEGROUP
+                                        - wire: fields
+                                          field: uesio/studio.referencegroup->uesio/studio.collection
+                                          operator: NOT_EQUALS
+                                          value: ""
                                       components:
                                         - uesio/builder.metadatafield:
                                             fieldId: uesio/studio.referencegroup->uesio/studio.field
