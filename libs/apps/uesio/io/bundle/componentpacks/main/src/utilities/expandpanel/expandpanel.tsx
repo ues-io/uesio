@@ -9,13 +9,13 @@ interface ExpandPanelProps extends definition.UtilityProps {
 }
 
 const StyleDefaults = Object.freeze({
-	root: ["transition-all"],
+	root: [],
 	enter: ["opacity-0"],
-	enteractive: ["opacity-1"],
-	enterdone: ["opacity-1"],
-	exit: ["opacity-1"],
-	exitactive: ["opacity-0"],
-	exitdone: ["opacity-0"],
+	enterActive: ["opacity-100", "transition-all"],
+	enterDone: ["opacity-100"],
+	exit: ["opacity-100"],
+	exitActive: ["opacity-0", "transition-all"],
+	exitDone: ["opacity-0"],
 })
 
 const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
@@ -27,53 +27,39 @@ const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 		const node = nodeRef.current
 		if (!node) return
 		node.style.maxHeight = node.scrollHeight + "px"
-		node.style.minHeight = node.scrollHeight + "px"
 	}
 
 	const unsetMaxHeight = () => {
 		const node = nodeRef.current
 		if (!node) return
-
 		node.style.maxHeight = ""
-		node.style.minHeight = ""
 	}
 
 	const zeroMaxHeight = () => {
 		const node = nodeRef.current
 		if (!node) return
-
 		node.style.maxHeight = "0"
-		node.style.minHeight = "0"
 	}
 
 	return (
-		<>
-			<CSSTransition
-				unmountOnExit={true}
-				nodeRef={nodeRef}
-				mountOnEnter={true}
-				in={expanded}
-				timeout={200}
-				onEnter={zeroMaxHeight}
-				onEntering={setMaxHeight}
-				onEntered={unsetMaxHeight}
-				onExit={setMaxHeight}
-				onExiting={zeroMaxHeight}
-				onExited={unsetMaxHeight}
-				classNames={{
-					enter: "enter",
-					enterActive: "enteractive",
-					enterDone: "enterdone",
-					exit: "exit",
-					exitActive: "exitactive",
-					exitDone: "exitdone",
-				}}
-			>
-				<div ref={nodeRef} className={classes.root}>
-					{children}
-				</div>
-			</CSSTransition>
-		</>
+		<CSSTransition
+			unmountOnExit={true}
+			mountOnEnter={true}
+			nodeRef={nodeRef}
+			in={expanded}
+			timeout={200}
+			onEnter={zeroMaxHeight}
+			onEntering={setMaxHeight}
+			onEntered={unsetMaxHeight}
+			onExit={setMaxHeight}
+			onExiting={zeroMaxHeight}
+			onExited={unsetMaxHeight}
+			classNames={classes}
+		>
+			<div className={classes.root} ref={nodeRef}>
+				{children}
+			</div>
+		</CSSTransition>
 	)
 }
 

@@ -143,7 +143,7 @@ func HandleOldValuesLookup(
 			// This should result in an error, unless we have explicitly indicated that
 			// we do not care if records are missing (which they may be if we are doing a cascade delete
 			// and some bot has already deleted them)
-			if op.Options.IgnoreMissingRecords {
+			if op.Options != nil && op.Options.IgnoreMissingRecords {
 				return nil
 			}
 			return errors.New("Could not find record to update or delete: " + ID)

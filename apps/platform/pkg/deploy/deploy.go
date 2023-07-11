@@ -70,7 +70,7 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 
 	dep := map[string]meta.BundleableGroup{}
 
-	by := meta.BundleDef{}
+	var by *meta.BundleDef
 
 	uploadOps := []filesource.FileUploadOp{}
 
@@ -88,11 +88,12 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 		metadataType := dirParts[0]
 
 		if partsLength == 1 && metadataType == "" && fileName == "bundle.yaml" {
+			by = &meta.BundleDef{}
 			readCloser, err := zipFile.Open()
 			if err != nil {
 				return err
 			}
-			err = bundlestore.DecodeYAML(&by, readCloser)
+			err = bundlestore.DecodeYAML(by, readCloser)
 			readCloser.Close()
 			if err != nil {
 				return err
@@ -181,71 +182,75 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 		}
 	}
 
-	deps := meta.BundleDependencyCollection{}
-	for key := range by.Dependencies {
-		dep := by.Dependencies[key]
-		major, minor, patch, err := meta.ParseVersionString(dep.Version)
-		if err != nil {
-			return err
-		}
-		deps = append(deps, &meta.BundleDependency{
-			Workspace: workspace,
-			App: &meta.App{
-				BuiltIn: meta.BuiltIn{
-					UniqueKey: key,
-				},
-			},
-			Bundle: &meta.Bundle{
-				BuiltIn: meta.BuiltIn{
-					UniqueKey: strings.Join([]string{key, major, minor, patch}, ":"),
-				},
-			},
-		})
-	}
-
-	// Upload workspace properties like homeRoute and loginRoute
-	workspaceItem := &meta.Workspace{
-		BuiltIn: meta.BuiltIn{
-			ID: workspace.ID,
-		},
-		App: &meta.App{
-			BuiltIn: meta.BuiltIn{
-				UniqueKey: namespace,
-			},
-		},
-		AppSettings: meta.AppSettings{
-			LoginRoute:    by.LoginRoute,
-			HomeRoute:     by.HomeRoute,
-			PublicProfile: by.PublicProfile,
-			DefaultTheme:  by.DefaultTheme,
-			Favicon:       by.Favicon,
-		},
-	}
-
-	// We set the valid fields here because it's an update and we don't want
-	// to overwrite the other fields
-	workspaceItem.SetItemMeta(&meta.ItemMeta{
-		ValidFields: map[string]bool{
-			adapt.ID_FIELD:               true,
-			"uesio/studio.loginroute":    true,
-			"uesio/studio.homeroute":     true,
-			"uesio/studio.publicprofile": true,
-			"uesio/studio.defaulttheme":  true,
-			"uesio/studio.favicon":       true,
-			"uesio/studio.app":           true,
-		},
-	})
+	saves := []datasource.PlatformSaveRequest{}
 
 	saveOptions := &adapt.SaveOptions{
 		Upsert: true,
 	}
 
-	saves := []datasource.PlatformSaveRequest{
-		*datasource.GetPlatformSaveOneRequest(workspaceItem, nil),
-		{
-			Collection: &deps,
-			Options:    saveOptions,
-		},
+	if by != nil {
+		deps := meta.BundleDependencyCollection{}
+		for key := range by.Dependencies {
+			dep := by.Dependencies[key]
+			major, minor, patch, err := meta.ParseVersionString(dep.Version)
+			if err != nil {
+				return err
+			}
+			deps = append(deps, &meta.BundleDependency{
+				Workspace: workspace,
+				App: &meta.App{
+					BuiltIn: meta.BuiltIn{
+						UniqueKey: key,
+					},
+				},
+				Bundle: &meta.Bundle{
+					BuiltIn: meta.BuiltIn{
+						UniqueKey: strings.Join([]string{key, major, minor, patch}, ":"),
+					},
+				},
+			})
+		}
+
+		// Upload workspace properties like homeRoute and loginRoute
+		workspaceItem := &meta.Workspace{
+			BuiltIn: meta.BuiltIn{
+				ID: workspace.ID,
+			},
+			App: &meta.App{
+				BuiltIn: meta.BuiltIn{
+					UniqueKey: namespace,
+				},
+			},
+			AppSettings: meta.AppSettings{
+				LoginRoute:    by.LoginRoute,
+				HomeRoute:     by.HomeRoute,
+				PublicProfile: by.PublicProfile,
+				DefaultTheme:  by.DefaultTheme,
+				Favicon:       by.Favicon,
+			},
+		}
+
+		// We set the valid fields here because it's an update and we don't want
+		// to overwrite the other fields
+		workspaceItem.SetItemMeta(&meta.ItemMeta{
+			ValidFields: map[string]bool{
+				adapt.ID_FIELD:               true,
+				"uesio/studio.loginroute":    true,
+				"uesio/studio.homeroute":     true,
+				"uesio/studio.publicprofile": true,
+				"uesio/studio.defaulttheme":  true,
+				"uesio/studio.favicon":       true,
+				"uesio/studio.app":           true,
+			},
+		})
+
+		saves = append(saves,
+			*datasource.GetPlatformSaveOneRequest(workspaceItem, nil),
+			datasource.PlatformSaveRequest{
+				Collection: &deps,
+				Options:    saveOptions,
+			},
+		)
 	}
 
 	for _, element := range ORDERED_ITEMS {
