@@ -3,3 +3,4 @@ path: opportunities
 view: uesio/crm.opportunities
 theme: uesio/core.default
 title: ""
+public: true

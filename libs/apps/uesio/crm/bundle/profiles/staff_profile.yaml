@@ -1,3 +1,4 @@
 name: staff_profile
 permissionSets:
   - uesio/crm.staff_permissions
+public: true
