@@ -24,13 +24,15 @@ func (ol *OpList) getCurrentIndex() int {
 	}
 	if ol.Counter == 0 {
 		ol.List = append(ol.List, &adapt.SaveOp{
-			WireName: ol.Request.Wire,
-			Inserts:  adapt.ChangeItems{},
-			Updates:  adapt.ChangeItems{},
-			Deletes:  adapt.ChangeItems{},
-			Options:  ol.Request.Options,
-			Errors:   &ol.Request.Errors,
-			Metadata: ol.Metadata,
+			WireName:   ol.Request.Wire,
+			Inserts:    adapt.ChangeItems{},
+			Updates:    adapt.ChangeItems{},
+			Deletes:    adapt.ChangeItems{},
+			Options:    ol.Request.Options,
+			Errors:     &ol.Request.Errors,
+			Metadata:   ol.Metadata,
+			Conditions: ol.Request.Conditions,
+			Params:     ol.Request.Params,
 		})
 	}
 	ol.Counter++

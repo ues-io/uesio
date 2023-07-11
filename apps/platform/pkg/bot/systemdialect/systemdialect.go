@@ -15,6 +15,8 @@ type CallBotFunc func(params map[string]interface{}, connection adapt.Connection
 
 type LoadBotFunc func(request *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error
 
+type SaveBotFunc func(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error
+
 type RouteBotFunc func(*meta.Route, *sess.Session) error
 
 type SystemDialect struct {
@@ -151,6 +153,23 @@ func (b *SystemDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adap
 		botFunction = clickup.ProjectLoadBot
 	case "tcm/timetracker.task":
 		botFunction = clickup.TaskLoadBot
+	}
+
+	if botFunction == nil {
+		return datasource.NewSystemBotNotFoundError()
+	}
+
+	return botFunction(op, connection, session)
+
+}
+
+func (b *SystemDialect) SaveBot(bot *meta.Bot, op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+	var botFunction SaveBotFunc
+
+	switch op.Metadata.GetFullName() {
+	case "uesio/studio.allmetadata":
+		botFunction = runAllMetadataSaveBot
+
 	}
 
 	if botFunction == nil {

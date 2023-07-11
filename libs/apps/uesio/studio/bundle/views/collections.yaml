@@ -96,9 +96,6 @@ definition:
                           focusOnRender: true
                       - uesio/io.table:
                           wire: allcollections
-                          recordDisplay:
-                            - field: uesio/studio.namespace
-                              value: $Param{app}
                           columns:
                             - label: Collection
                               components:
@@ -119,29 +116,7 @@ definition:
                               type: DEFAULT
                               signals:
                                 - signal: route/NAVIGATE
-                                  path: app/$Param{app}/workspace/$Param{workspacename}/collections/${uesio/studio.name}
-                          pagesize: 10
-                - uesio/io.box:
-                    uesio.variant: uesio/io.section
-                    components:
-                      - uesio/io.titlebar:
-                          uesio.variant: uesio/io.section
-                          title: Installed Collections
-                      - uesio/io.table:
-                          wire: allcollections
-                          recordDisplay:
-                            - field: uesio/studio.namespace
-                              operator: NOT_EQUALS
-                              value: $Param{app}
-                          columns:
-                            - label: Collection
-                              components:
-                                - uesio/studio.iconlabel:
-                                    uesio.variant: uesio/studio.namespacefield
-                                    text: ${uesio/studio.name}
-                                    icon: ${uesio/studio.appicon}
-                                    color: ${uesio/studio.appcolor}
-                            - field: uesio/studio.label
+                                  path: app/$Param{app}/workspace/$Param{workspacename}/collections/${uesio/studio.namespace}/${uesio/studio.name}
                           pagesize: 10
   panels:
     newCollection:

@@ -41,6 +41,10 @@ func (cvc *ComponentVariantCollection) GetItemFromPath(path, namespace string) B
 	return NewBaseComponentVariant(componentKey, namespace, name)
 }
 
+func (cvc *ComponentVariantCollection) GetItemFromKey(key string) (BundleableItem, error) {
+	return NewComponentVariant(key)
+}
+
 func (cvc *ComponentVariantCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	componentKey, hasComponent := conditions["uesio/studio.component"]
 	parts := strings.Split(path, string(os.PathSeparator))

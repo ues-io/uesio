@@ -47,6 +47,10 @@ func (ffc *FeatureFlagCollection) GetItemFromPath(path, namespace string) Bundle
 	return NewBaseFeatureFlag(namespace, StandardNameFromPath(path))
 }
 
+func (ffc *FeatureFlagCollection) GetItemFromKey(key string) (BundleableItem, error) {
+	return NewFeatureFlag(key)
+}
+
 func (ffc *FeatureFlagCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }

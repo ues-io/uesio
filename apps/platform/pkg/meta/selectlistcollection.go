@@ -35,6 +35,10 @@ func (slc *SelectListCollection) GetItemFromPath(path, namespace string) Bundlea
 	return NewBaseSelectList(namespace, StandardNameFromPath(path))
 }
 
+func (slc *SelectListCollection) GetItemFromKey(key string) (BundleableItem, error) {
+	return NewSelectList(key)
+}
+
 func (slc *SelectListCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }

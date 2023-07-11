@@ -15,47 +15,19 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     collections:
-      collection: uesio/studio.collection
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.label:
-        uesio/studio.plurallabel:
-        uesio/studio.namefield:
-        uesio/studio.workspace:
-        uesio/studio.datasource:
-        uesio/core.updatedat:
-        uesio/core.updatedby:
-        uesio/core.createdat:
-        uesio/core.createdby:
+      collection: uesio/studio.allmetadata
       conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
-        - field: uesio/studio.name
-          value: $Param{collectionname}
+        - field: uesio/studio.type
+          value: collections
+        - field: uesio/studio.item
+          value: $Param{namespace}.$Param{collectionname}
     fields:
-      collection: uesio/studio.field
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.type:
-        uesio/studio.label:
-        uesio/studio.collection:
-        uesio/studio.reference:
-        uesio/studio.selectlist:
-        uesio/studio.autopopulate:
-        uesio/studio.languagelabel:
-        uesio/studio.number:
+      collection: uesio/studio.allmetadata
       conditions:
-        - field: uesio/studio.collection
-          value: $Param{app}.$Param{collectionname}
-          id: fullCollectionName
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
+        - field: uesio/studio.type
+          value: fields
+        - field: uesio/studio.grouping
+          value: $Param{namespace}.$Param{collectionname}
     routeassignments:
       collection: uesio/studio.routeassignment
       fields:
