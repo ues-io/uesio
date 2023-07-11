@@ -190,15 +190,6 @@ definition:
                                   - uesio/io.box:
                                       uesio.display:
                                         - field: uesio/studio.type
-                                          value: SELECT
-                                      components:
-                                        - uesio/builder.metadatafield:
-                                            fieldId: uesio/studio.selectlist
-                                            metadataType: SELECTLIST
-                                            label: Select List
-                                  - uesio/io.box:
-                                      uesio.display:
-                                        - field: uesio/studio.type
                                           value: FILE
                                       components:
                                         - uesio/builder.metadatafield:
@@ -233,15 +224,6 @@ definition:
                                       components:
                                         - uesio/io.field:
                                             fieldId: uesio/studio.autonumber->uesio/studio.leadingzeros
-                                  - uesio/io.box:
-                                      uesio.display:
-                                        - field: uesio/studio.type
-                                          value: MULTISELECT
-                                      components:
-                                        - uesio/builder.metadatafield:
-                                            fieldId: uesio/studio.selectlist
-                                            metadataType: SELECTLIST
-                                            label: Select List
                                   - uesio/io.field:
                                       fieldId: uesio/studio.validate->uesio/studio.type
                                   - uesio/io.field:
@@ -249,6 +231,19 @@ definition:
                                         - field: uesio/studio.validate->uesio/studio.type
                                           value: REGEX
                                       fieldId: uesio/studio.validate->uesio/studio.regex
+                                  - uesio/io.box:
+                                      uesio.display:
+                                        - field: uesio/studio.type
+                                          type: fieldValue
+                                          operator: IN
+                                          values:
+                                            - MULTISELECT
+                                            - SELECT
+                                      components:
+                                        - uesio/builder.metadatafield:
+                                            fieldId: uesio/studio.selectlist
+                                            metadataType: SELECTLIST
+                                            label: Select List
                                   - uesio/io.box:
                                       uesio.display:
                                         - field: uesio/studio.type

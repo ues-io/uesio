@@ -536,7 +536,11 @@ definition:
               - uesio/io.box:
                   uesio.display:
                     - field: uesio/studio.type
-                      value: SELECT
+                      type: fieldValue
+                      operator: IN
+                      values:
+                        - MULTISELECT
+                        - SELECT
                   components:
                     - uesio/builder.metadatafield:
                         fieldId: uesio/studio.selectlist
@@ -562,16 +566,6 @@ definition:
                     - uesio/io.field:
                         fieldId: uesio/studio.number->uesio/studio.decimals
                         uesio.id: new-field-number-decimals
-              - uesio/io.box:
-                  uesio.display:
-                    - field: uesio/studio.type
-                      value: MULTISELECT
-                  components:
-                    - uesio/builder.metadatafield:
-                        fieldId: uesio/studio.selectlist
-                        metadataType: SELECTLIST
-                        label: Select List
-                        uesio.id: new-field-multi-selectlist
               - uesio/io.box:
                   uesio.display:
                     - field: uesio/studio.type
