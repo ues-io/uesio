@@ -1,8 +1,18 @@
 package meta
 
 import (
+	"errors"
+
 	"gopkg.in/yaml.v3"
 )
+
+func NewUtility(key string) (*Utility, error) {
+	namespace, name, err := ParseKey(key)
+	if err != nil {
+		return nil, errors.New("Bad Key for Component: " + key)
+	}
+	return NewBaseUtility(namespace, name), nil
+}
 
 func NewBaseUtility(namespace, name string) *Utility {
 	return &Utility{BundleableBase: NewBase(namespace, name)}

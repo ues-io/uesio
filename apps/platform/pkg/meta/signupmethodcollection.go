@@ -35,6 +35,10 @@ func (smc *SignupMethodCollection) GetItemFromPath(path, namespace string) Bundl
 	return NewBaseSignupMethod(namespace, StandardNameFromPath(path))
 }
 
+func (smc *SignupMethodCollection) GetItemFromKey(key string) (BundleableItem, error) {
+	return NewSignupMethod(key)
+}
+
 func (smc *SignupMethodCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }

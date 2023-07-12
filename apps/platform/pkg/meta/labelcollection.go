@@ -35,6 +35,10 @@ func (lc *LabelCollection) GetItemFromPath(path, namespace string) BundleableIte
 	return NewBaseLabel(namespace, StandardNameFromPath(path))
 }
 
+func (lc *LabelCollection) GetItemFromKey(key string) (BundleableItem, error) {
+	return NewLabel(key)
+}
+
 func (lc *LabelCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }

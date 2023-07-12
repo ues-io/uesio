@@ -35,6 +35,10 @@ func (dsc *DataSourceCollection) GetItemFromPath(path, namespace string) Bundlea
 	return NewBaseDataSource(namespace, StandardNameFromPath(path))
 }
 
+func (dsc *DataSourceCollection) GetItemFromKey(key string) (BundleableItem, error) {
+	return NewDataSource(key)
+}
+
 func (dsc *DataSourceCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }

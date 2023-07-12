@@ -63,6 +63,10 @@ func (tc *TranslationCollection) GetItemFromPath(path, namespace string) Bundlea
 
 }
 
+func (tc *TranslationCollection) GetItemFromKey(key string) (BundleableItem, error) {
+	return NewTranslation(key)
+}
+
 func (tc *TranslationCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	if conditions == nil {
 		return StandardPathFilter(path)

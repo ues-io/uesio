@@ -35,6 +35,10 @@ func (ic *IntegrationCollection) GetItemFromPath(path, namespace string) Bundlea
 	return NewBaseIntegration(namespace, StandardNameFromPath(path))
 }
 
+func (ic *IntegrationCollection) GetItemFromKey(key string) (BundleableItem, error) {
+	return NewIntegration(key)
+}
+
 func (ic *IntegrationCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }
