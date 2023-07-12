@@ -9,7 +9,7 @@ import (
 func NewUtility(key string) (*Utility, error) {
 	namespace, name, err := ParseKey(key)
 	if err != nil {
-		return nil, errors.New("Bad Key for Component: " + key)
+		return nil, errors.New("Bad Key for Utility: " + key)
 	}
 	return NewBaseUtility(namespace, name), nil
 }
