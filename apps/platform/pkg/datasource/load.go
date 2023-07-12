@@ -120,6 +120,10 @@ func processConditions(
 
 		if condition.ValueSource == "LOOKUP" && condition.LookupWire != "" && condition.LookupField != "" {
 
+			// If we weren't provided ops to lookup, just don't process Lookups
+			if ops == nil {
+				continue
+			}
 			// Look through the previous wires to find the one to look up on.
 			var lookupOp *adapt.LoadOp
 			for _, lop := range ops {

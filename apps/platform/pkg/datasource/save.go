@@ -82,18 +82,7 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 
 		collectionKey := request.Collection
 
-		// Keep a running tally of all requested collections
-		collections := MetadataRequest{
-			Options: &MetadataRequestOptions{
-				LoadAllFields: true,
-			},
-		}
-		err := collections.AddCollection(collectionKey)
-		if err != nil {
-			return err
-		}
-
-		err = collections.Load(metadataResponse, session, nil)
+		err := GetFullMetadataForCollection(metadataResponse, collectionKey, session)
 		if err != nil {
 			return err
 		}
@@ -140,7 +129,7 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 		}
 	}
 
-	err = applyBatches(meta.PLATFORM_DATA_SOURCE, allOps, connection, session)
+	err = SaveOp(allOps, connection, session)
 	if err != nil {
 		if !hasExistingConnection {
 			err := connection.RollbackTransaction()
@@ -169,8 +158,8 @@ func HandleErrorAndAddToSaveOp(op *adapt.SaveOp, err error) *adapt.SaveError {
 	return saveError
 }
 
-func applyBatches(dsKey string, batch []*adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
-
+func SaveOp(batch []*adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+	dsKey := meta.PLATFORM_DATA_SOURCE
 	for _, op := range batch {
 
 		err := processConditions(op.Conditions, op.Params, connection.GetMetadata(), nil, session)
