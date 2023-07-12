@@ -35,6 +35,10 @@ func (vc *ViewCollection) GetItemFromPath(path, namespace string) BundleableItem
 	return NewBaseView(namespace, StandardNameFromPath(path))
 }
 
+func (vc *ViewCollection) GetItemFromKey(key string) (BundleableItem, error) {
+	return NewView(key)
+}
+
 func (vc *ViewCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }

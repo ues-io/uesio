@@ -35,6 +35,10 @@ func (pc *ProfileCollection) GetItemFromPath(path, namespace string) BundleableI
 	return NewBaseProfile(namespace, StandardNameFromPath(path))
 }
 
+func (pc *ProfileCollection) GetItemFromKey(key string) (BundleableItem, error) {
+	return NewProfile(key)
+}
+
 func (pc *ProfileCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }

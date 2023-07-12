@@ -35,6 +35,10 @@ func (uc *UtilityCollection) GetItemFromPath(path, namespace string) BundleableI
 	return NewBaseUtility(namespace, StandardNameFromPath(path))
 }
 
+func (uc *UtilityCollection) GetItemFromKey(key string) (BundleableItem, error) {
+	return NewUtility(key)
+}
+
 func (uc *UtilityCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }

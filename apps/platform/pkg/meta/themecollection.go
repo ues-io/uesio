@@ -35,6 +35,10 @@ func (tc *ThemeCollection) GetItemFromPath(path, namespace string) BundleableIte
 	return NewBaseTheme(namespace, StandardNameFromPath(path))
 }
 
+func (tc *ThemeCollection) GetItemFromKey(key string) (BundleableItem, error) {
+	return NewTheme(key)
+}
+
 func (tc *ThemeCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }

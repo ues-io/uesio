@@ -35,6 +35,10 @@ func (asc *AuthSourceCollection) GetItemFromPath(path, namespace string) Bundlea
 	return NewBaseAuthSource(namespace, StandardNameFromPath(path))
 }
 
+func (asc *AuthSourceCollection) GetItemFromKey(key string) (BundleableItem, error) {
+	return NewAuthSource(key)
+}
+
 func (asc *AuthSourceCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }

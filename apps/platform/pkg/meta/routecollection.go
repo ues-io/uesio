@@ -35,6 +35,10 @@ func (rc *RouteCollection) GetItemFromPath(path, namespace string) BundleableIte
 	return NewBaseRoute(namespace, StandardNameFromPath(path))
 }
 
+func (rc *RouteCollection) GetItemFromKey(key string) (BundleableItem, error) {
+	return NewRoute(key)
+}
+
 func (rc *RouteCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }

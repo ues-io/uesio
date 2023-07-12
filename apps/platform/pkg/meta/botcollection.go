@@ -57,6 +57,10 @@ func (bc *BotCollection) GetItemFromPath(path, namespace string) BundleableItem 
 	return nil
 }
 
+func (bc *BotCollection) GetItemFromKey(key string) (BundleableItem, error) {
+	return NewBot(key)
+}
+
 func (bc *BotCollection) IsDefinitionPath(path string) bool {
 	parts := strings.Split(path, string(os.PathSeparator))
 	botType := parts[0]
