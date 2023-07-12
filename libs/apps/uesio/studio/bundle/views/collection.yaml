@@ -15,47 +15,19 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     collections:
-      collection: uesio/studio.collection
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.label:
-        uesio/studio.plurallabel:
-        uesio/studio.namefield:
-        uesio/studio.workspace:
-        uesio/studio.datasource:
-        uesio/core.updatedat:
-        uesio/core.updatedby:
-        uesio/core.createdat:
-        uesio/core.createdby:
+      collection: uesio/studio.allmetadata
       conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
-        - field: uesio/studio.name
-          value: $Param{collectionname}
+        - field: uesio/studio.type
+          value: collections
+        - field: uesio/studio.item
+          value: $Param{namespace}.$Param{collectionname}
     fields:
-      collection: uesio/studio.field
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.type:
-        uesio/studio.label:
-        uesio/studio.collection:
-        uesio/studio.reference:
-        uesio/studio.selectlist:
-        uesio/studio.autopopulate:
-        uesio/studio.languagelabel:
-        uesio/studio.number:
+      collection: uesio/studio.allmetadata
       conditions:
-        - field: uesio/studio.collection
-          value: $Param{app}.$Param{collectionname}
-          id: fullCollectionName
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
+        - field: uesio/studio.type
+          value: fields
+        - field: uesio/studio.grouping
+          value: $Param{namespace}.$Param{collectionname}
     routeassignments:
       collection: uesio/studio.routeassignment
       fields:
@@ -87,7 +59,7 @@ definition:
       defaults:
         - field: uesio/studio.collection
           valueSource: VALUE
-          value: $Param{app}.$Param{collectionname}
+          value: $Param{namespace}.$Param{collectionname}
         - field: uesio/studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
@@ -158,21 +130,21 @@ definition:
                                       text: Export Data
                                       signals:
                                         - signal: route/NAVIGATE
-                                          path: app/$Param{app}/workspace/$Param{workspacename}/export/$Param{app}/$Param{collectionname}
+                                          path: app/$Param{app}/workspace/$Param{workspacename}/export/$Param{namespace}/$Param{collectionname}
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       uesio.id: import-collection-data
                                       text: Import Data
                                       signals:
                                         - signal: route/NAVIGATE
-                                          path: app/$Param{app}/workspace/$Param{workspacename}/import/$Param{app}/$Param{collectionname}
+                                          path: app/$Param{app}/workspace/$Param{workspacename}/import/$Param{namespace}/$Param{collectionname}
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       uesio.id: manage-collection-data
                                       text: Manage Data
                                       signals:
                                         - signal: route/NAVIGATE
-                                          path: app/$Param{app}/workspace/$Param{workspacename}/data/$Param{app}/$Param{collectionname}
+                                          path: app/$Param{app}/workspace/$Param{workspacename}/data/$Param{namespace}/$Param{collectionname}
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       uesio.id: edit-collection
@@ -256,6 +228,7 @@ definition:
                                           wire: fields
                                       fieldWire: fields
                                       collectionWire: collections
+                                      collectionId: $Param{namespace}.$Param{collectionname}
                                       targetTableId: fields
                                       uesio.context:
                                         workspace:
@@ -291,6 +264,7 @@ definition:
                                   wire: fields
                           columns:
                             - field: uesio/studio.name
+                            - field: uesio/studio.namespace
                             - field: uesio/studio.type
                             - field: uesio/studio.label
                             - field: uesio/studio.languagelabel

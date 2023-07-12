@@ -1,12 +1,13 @@
 /// <reference types="cypress" />
 
 import { deleteApp, getUniqueAppName } from "../support/testdata"
-import { getWorkspaceBasePath } from "../support/paths"
+import { getAppNamespace, getWorkspaceBasePath } from "../support/paths"
 
 describe("Uesio Sanity Smoke Tests", () => {
 	// const username = Cypress.env("automation_username")
 
 	const appName = getUniqueAppName()
+	const namespace = getAppNamespace(appName)
 	const workspaceName = "test"
 	const workspaceBasePath = getWorkspaceBasePath(appName, workspaceName)
 
@@ -33,7 +34,7 @@ describe("Uesio Sanity Smoke Tests", () => {
 			// Verify we get taken to the collection detail
 			cy.url().should(
 				"contain",
-				`${workspaceBasePath}/collections/animal`
+				`${workspaceBasePath}/collections/${namespace}/animal`
 			)
 			cy.title().should("eq", "Collection: animal")
 			cy.getByIdFragment("table", "fields").scrollIntoView()
@@ -61,11 +62,18 @@ describe("Uesio Sanity Smoke Tests", () => {
 				.eq(1)
 				.find("input")
 				.first()
-				.should("have.value", "Check Box")
+				.should("have.value", namespace)
 			cy.get('table[id$="fields"]>tbody>tr')
 				.first()
 				.children("td")
 				.eq(2)
+				.find("input")
+				.first()
+				.should("have.value", "Check Box")
+			cy.get('table[id$="fields"]>tbody>tr')
+				.first()
+				.children("td")
+				.eq(3)
 				.find("input")
 				.first()
 				.should("have.value", "Is Extinct")
@@ -94,11 +102,18 @@ describe("Uesio Sanity Smoke Tests", () => {
 				.eq(1)
 				.find("input")
 				.first()
-				.should("have.value", "Number")
+				.should("have.value", namespace)
 			cy.get('table[id$="fields"]>tbody>tr')
 				.eq(1)
 				.children("td")
 				.eq(2)
+				.find("input")
+				.first()
+				.should("have.value", "Number")
+			cy.get('table[id$="fields"]>tbody>tr')
+				.eq(1)
+				.children("td")
+				.eq(3)
 				.find("input")
 				.first()
 				.should("have.value", "Estimated Population")

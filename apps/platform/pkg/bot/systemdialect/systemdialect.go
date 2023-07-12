@@ -165,6 +165,13 @@ func (b *SystemDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adap
 
 func (b *SystemDialect) SaveBot(bot *meta.Bot, op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 	var botFunction SaveBotFunc
+
+	switch op.Metadata.GetFullName() {
+	case "uesio/studio.allmetadata":
+		botFunction = runAllMetadataSaveBot
+
+	}
+
 	if botFunction == nil {
 		return datasource.NewSystemBotNotFoundError()
 	}
