@@ -1,0 +1,4 @@
+name: staff
+permissionSets:
+  - uesio/crm.staff
+public: true
