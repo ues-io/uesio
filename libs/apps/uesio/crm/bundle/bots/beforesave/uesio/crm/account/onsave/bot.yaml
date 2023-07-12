@@ -1,4 +1,0 @@
-name: onsave
-collection: uesio/crm.account
-type: BEFORESAVE
-dialect: JAVASCRIPT
