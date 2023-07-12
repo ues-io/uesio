@@ -167,10 +167,18 @@ func applyBatches(dsKey string, batch []*adapt.SaveOp, connection adapt.Connecti
 
 	for _, op := range batch {
 
+		if op.Metadata.Type == "DYNAMIC" {
+			err := runDynamicCollectionSaveBots(op, connection, session)
+			if err != nil {
+				return HandleErrorAndAddToSaveOp(op, err)
+			}
+			continue
+		}
+
 		permissions := session.GetContextPermissions()
 		collectionKey := op.Metadata.GetFullName()
 
-		err := adapt.FetchReferences(connection, op, session)
+		err = adapt.FetchReferences(connection, op, session)
 		if err != nil {
 			return HandleErrorAndAddToSaveOp(op, err)
 		}

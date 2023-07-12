@@ -151,6 +151,10 @@ func (b *TSDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adapt.Co
 	return nil
 }
 
+func (b *TSDialect) SaveBot(bot *meta.Bot, op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+	return nil
+}
+
 func (b *TSDialect) GetFilePath() string {
 	return "bot.ts"
 }

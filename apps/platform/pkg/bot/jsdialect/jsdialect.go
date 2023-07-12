@@ -170,6 +170,10 @@ func (b *JSDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adapt.Co
 	return nil
 }
 
+func (b *JSDialect) SaveBot(bot *meta.Bot, op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+	return nil
+}
+
 func (b *JSDialect) GetFilePath() string {
 	return "bot.js"
 }
