@@ -85,8 +85,9 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	profile, err := auth.LoadAndHydrateProfile(user.Profile, s)
 	if err != nil {
+		logger.LogError(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		//return nil, errors.New("Error Loading Profile: " + user.Profile + " : " + err.Error())
+		return
 	}
 
 	redirectRoute := site.GetAppBundle().HomeRoute
