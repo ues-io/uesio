@@ -1,9 +1,0 @@
-name: smallcallout
-label: Small Callout
-definition:
-  uesio.styleTokens:
-    root:
-      - text-3xl
-      - text-gray-700
-      - font-[Gosha]
-  element: div

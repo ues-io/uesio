@@ -169,34 +169,6 @@
 			"tags": [],
 			"implicitDependencies": ["cli","ui"]
 		},
-		"apps-uesio-docs": {
-			"root": "libs/apps/uesio/docs",
-			"sourceRoot": "libs/apps/uesio/studio/bundle",
-			"projectType": "library",
-			"schematics": {},
-			"architect": {
-				"build": {
-					"builder": "nx:run-commands",
-					"options": {
-						"commands": [
-							"uesio pack",
-							"npx tsc --noEmit --project ./tsconfig.lib.json"
-						],
-						"parallel": false,
-						"cwd": "libs/apps/uesio/docs"
-					}
-				},
-				"watch": {
-					"builder": "nx:run-commands",
-					"options": {
-						"command": "uesio pack -w",
-						"cwd": "libs/apps/uesio/docs"
-					}
-				}
-			},
-			"tags": [],
-			"implicitDependencies": ["cli","ui"]
-		},
 		"apps-uesio-io": {
 			"root": "libs/apps/uesio/io",
 			"sourceRoot": "libs/apps/uesio/studio/bundle",
