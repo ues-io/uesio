@@ -1,4 +1,5 @@
 name: staff
 permissionSets:
   - uesio/crm.staff
+redirectRoute: uesio/web.crmhome
 public: true

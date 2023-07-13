@@ -1,0 +1,4 @@
+name: crmhome
+path: crm/home
+type: redirect
+redirect: https://$Site{domain}/site/app/uesio/crm/home

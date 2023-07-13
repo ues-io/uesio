@@ -25,6 +25,7 @@ type Profile struct {
 	BundleableBase    `yaml:",inline"`
 	PermissionSetRefs []string        `yaml:"permissionSets" json:"uesio/studio.permissionsetsrefs"`
 	PermissionSets    []PermissionSet `yaml:"-" json:"-"`
+	RedirectRoute     string          `yaml:"redirectRoute,omitempty" json:"uesio/studio.redirectroute"`
 }
 
 type ProfileWrapper Profile
