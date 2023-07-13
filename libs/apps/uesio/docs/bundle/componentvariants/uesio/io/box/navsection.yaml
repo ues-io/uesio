@@ -1,6 +1,0 @@
-name: navsection
-label: Nav Section
-definition:
-  uesio.styleTokens:
-    root:
-      - mb-6
