@@ -77,45 +77,54 @@ const (
 
 func RedirectToLoginRoute(w http.ResponseWriter, r *http.Request, session *sess.Session, reason RedirectReason) bool {
 	loginRoute, err := getLoginRoute(session)
-	if err == nil {
-		requestedPath := r.URL.Path
-		redirectPath := "/" + loginRoute.Path
-		if redirectPath != requestedPath {
-
-			redirectStatusCode := http.StatusFound
-
-			isHTMLRequest := strings.Contains(r.Header.Get("Accept"), "text/html")
-			refererHeader := r.Header.Get("Referer")
-
-			if !isHTMLRequest {
-				// If this is a Fetch / XHR request, we want to send the user back to the Referer URL
-				// (i.e. the URL in the browser URL bar), NOT the URL being fetched in the XHR,
-				// after the user logs in.
-				if refererHeader != "" {
-					requestedPath = refererHeader
-				}
-				// We need to send a 200 status, not 302, to prevent fetch API
-				// from attempting to do its bad redirect behavior, which is not controllable.
-				// (Zach: I tried using "manual" and "error" for the fetch "redirect" properties,
-				// but none of them provided the ability to capture the location header from the server
-				// WITHOUT doing some unwanted browser behavior).
-				redirectStatusCode = http.StatusOK
-			}
-
-			if requestedPath != "" && requestedPath != "/" {
-				redirectPath = redirectPath + "?r=" + requestedPath
-			}
-			if reason == Expired {
-				if strings.Contains(redirectPath, "?") {
-					redirectPath = redirectPath + "&"
-				} else {
-					redirectPath = redirectPath + "?"
-				}
-				redirectPath = redirectPath + "expired=true"
-			}
-			http.Redirect(w, r, redirectPath, redirectStatusCode)
-			return true
-		}
+	if err != nil {
+		return false
 	}
-	return false
+
+	requestedPath := r.URL.Path
+	redirectPath := "/" + loginRoute.Path
+
+	if session.GetContextAppName() != loginRoute.Namespace {
+		redirectPath = "/site/app/" + loginRoute.Namespace + "/" + redirectPath
+	}
+
+	if redirectPath == requestedPath {
+		return false
+	}
+
+	redirectStatusCode := http.StatusFound
+
+	isHTMLRequest := strings.Contains(r.Header.Get("Accept"), "text/html")
+	refererHeader := r.Header.Get("Referer")
+
+	if !isHTMLRequest {
+		// If this is a Fetch / XHR request, we want to send the user back to the Referer URL
+		// (i.e. the URL in the browser URL bar), NOT the URL being fetched in the XHR,
+		// after the user logs in.
+		if refererHeader != "" {
+			requestedPath = refererHeader
+		}
+		// We need to send a 200 status, not 302, to prevent fetch API
+		// from attempting to do its bad redirect behavior, which is not controllable.
+		// (Zach: I tried using "manual" and "error" for the fetch "redirect" properties,
+		// but none of them provided the ability to capture the location header from the server
+		// WITHOUT doing some unwanted browser behavior).
+		redirectStatusCode = http.StatusOK
+	}
+
+	if requestedPath != "" && requestedPath != "/" {
+		redirectPath = redirectPath + "?r=" + requestedPath
+	}
+	if reason == Expired {
+		if strings.Contains(redirectPath, "?") {
+			redirectPath = redirectPath + "&"
+		} else {
+			redirectPath = redirectPath + "?"
+		}
+		redirectPath = redirectPath + "expired=true"
+	}
+
+	http.Redirect(w, r, redirectPath, redirectStatusCode)
+	return true
+
 }

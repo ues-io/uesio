@@ -23,9 +23,7 @@ func (rc *RouteCollection) GetFields() []string {
 }
 
 func (rc *RouteCollection) NewItem() Item {
-	return &Route{
-		ThemeRef: "uesio/core.default",
-	}
+	return NewBaseRoute("", "")
 }
 
 func (rc *RouteCollection) AddItem(item Item) error {
