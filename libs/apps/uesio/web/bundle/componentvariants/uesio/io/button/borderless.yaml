@@ -1,8 +1,0 @@
-name: borderless
-extends: uesio/web.calltoaction
-label: Borderless
-definition:
-  uesio.styleTokens:
-    root:
-      - border-transparent
-      - md:px-4
