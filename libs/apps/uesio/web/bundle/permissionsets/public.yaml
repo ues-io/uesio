@@ -32,6 +32,8 @@ routes:
   uesio/web.privacy: true
   uesio/web.signup: true
   uesio/web.terms: true
+  uesio/web.crmhome: true
+  uesio/web.crmlogin: true
 files:
   uesio/web.logo: true
   uesio/web.logowhite: true
