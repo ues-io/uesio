@@ -62,8 +62,9 @@ func getArticleLoad(op *adapt.LoadOp, connection adapt.Connection, session *sess
 
 func runRecentDocLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
 	site, err := auth.GetSiteFromHost("docs." + session.GetSite().Domain)
-	if err != nil {
-		return err
+	//Site found, then load
+	if err == nil {
+		return getArticleLoad(op, connection, sess.GetAnonSession(site), "uesio/studio.recentdoc")
 	}
-	return getArticleLoad(op, connection, sess.GetAnonSession(site), "uesio/studio.recentdoc")
+	return nil
 }

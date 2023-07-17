@@ -35,6 +35,10 @@ func (cc *ComponentCollection) GetItemFromPath(path, namespace string) Bundleabl
 	return NewBaseComponent(namespace, StandardNameFromPath(path))
 }
 
+func (cc *ComponentCollection) GetItemFromKey(key string) (BundleableItem, error) {
+	return NewComponent(key)
+}
+
 func (cc *ComponentCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }

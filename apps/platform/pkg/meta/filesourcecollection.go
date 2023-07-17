@@ -35,6 +35,10 @@ func (fsc *FileSourceCollection) GetItemFromPath(path, namespace string) Bundlea
 	return NewBaseFileSource(namespace, StandardNameFromPath(path))
 }
 
+func (fsc *FileSourceCollection) GetItemFromKey(key string) (BundleableItem, error) {
+	return NewFileSource(key)
+}
+
 func (fsc *FileSourceCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }

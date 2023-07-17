@@ -1,2 +1,3 @@
 type: list
 route: uesio/crm.accounts
+public: true

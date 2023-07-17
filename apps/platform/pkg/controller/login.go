@@ -83,6 +83,19 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	redirectResponse(w, r, site.GetAppBundle().HomeRoute, user, site)
+	profile, err := auth.LoadAndHydrateProfile(user.Profile, s)
+	if err != nil {
+		logger.LogError(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	redirectRoute := site.GetAppBundle().HomeRoute
+
+	if profile.HomeRoute != "" {
+		redirectRoute = profile.HomeRoute
+	}
+
+	redirectResponse(w, r, redirectRoute, user, site)
 
 }

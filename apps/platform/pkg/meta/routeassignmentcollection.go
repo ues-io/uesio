@@ -1,6 +1,7 @@
 package meta
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"strconv"
@@ -56,6 +57,18 @@ func (rc *RouteAssignmentCollection) GetItemFromPath(path, namespace string) Bun
 	collectionKey := fmt.Sprintf("%s/%s.%s", parts[0], parts[1], parts[2])
 	viewType := strings.TrimSuffix(parts[3], ".yaml")
 	return NewBaseRouteAssignment(collectionKey, namespace, viewType)
+}
+
+func (rc *RouteAssignmentCollection) GetItemFromKey(key string) (BundleableItem, error) {
+	keyArray := strings.Split(key, ":")
+	if (len(keyArray)) != 2 {
+		return nil, errors.New("Invalid Route Assignment Key")
+	}
+	namespace, viewType, err := ParseKey(keyArray[1])
+	if err != nil {
+		return nil, errors.New("Bad Key for RouteAssignment: " + key)
+	}
+	return NewRouteAssignment(keyArray[0], namespace, viewType)
 }
 
 func (rc *RouteAssignmentCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {

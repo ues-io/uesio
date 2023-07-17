@@ -6,6 +6,12 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+func NewTranslation(key string) (*Translation, error) {
+	return &Translation{
+		Language: key,
+	}, nil
+}
+
 func NewBaseTranslation(namespace, language string) *Translation {
 	return &Translation{
 		Language: language,

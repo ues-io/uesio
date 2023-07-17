@@ -9,7 +9,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func loadAndHydrateProfile(profileKey string, session *sess.Session) (*meta.Profile, error) {
+func LoadAndHydrateProfile(profileKey string, session *sess.Session) (*meta.Profile, error) {
 	profile, err := meta.NewProfile(profileKey)
 	if err != nil {
 		return nil, err
@@ -42,7 +42,7 @@ func getProfilePermSet(session *sess.Session) (*meta.PermissionSet, error) {
 	if profileKey == "" {
 		return nil, errors.New("No profile found in session")
 	}
-	profile, err := loadAndHydrateProfile(profileKey, session)
+	profile, err := LoadAndHydrateProfile(profileKey, session)
 	if err != nil {
 		return nil, errors.New("Error Loading Profile: " + profileKey + " : " + err.Error())
 	}

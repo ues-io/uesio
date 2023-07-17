@@ -256,6 +256,11 @@ definition:
                                       components:
                                         - uesio/io.field:
                                             fieldId: uesio/studio.formula->uesio/studio.expression
+                                  - uesio/io.box:
+                                      uesio.display:
+                                        - field: uesio/studio.type
+                                          value: FORMULA
+                                      components:
                                         - uesio/io.field:
                                             fieldId: uesio/studio.formula->uesio/studio.returntype
                       - uesio/io.box:

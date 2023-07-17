@@ -1,4 +1,5 @@
 name: event_type
+public: true
 options:
   - label: Meeting
     value: Meeting
