@@ -267,7 +267,7 @@ definition:
                             - text: $Label{uesio/io.edit}
                               signals:
                                 - signal: route/NAVIGATE
-                                  path: app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{app}/$Param{collectionname}/fields/${uesio/studio.name}
+                                  path: app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{namespace}/$Param{collectionname}/fields/${uesio/studio.name}
                               uesio.display:
                                 - type: recordIsNotNew
                             - text: $Label{uesio/io.delete}
