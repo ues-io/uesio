@@ -149,14 +149,10 @@ func HandleErrorAndAddToSaveOp(op *adapt.SaveOp, err error) *adapt.SaveError {
 
 func SaveOp(batch []*adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 	dsKey := meta.PLATFORM_DATA_SOURCE
-	metadataResponse := connection.GetMetadata()
 	// Get all the user access tokens that we'll need for this request
 	// TODO:
 	// Finally check for record level permissions and ability to do the save.
-	err := GenerateUserAccessTokens(metadataResponse, &LoadOptions{
-		Metadata:   metadataResponse,
-		Connection: connection,
-	}, session)
+	err := GenerateUserAccessTokens(connection, session)
 	if err != nil {
 		return err
 	}
