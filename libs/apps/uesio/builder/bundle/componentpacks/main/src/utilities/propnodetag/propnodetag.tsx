@@ -1,4 +1,4 @@
-import { FC, ReactNode, useState } from "react"
+import { ReactNode, useState } from "react"
 import { component, styles, definition } from "@uesio/ui"
 
 type Props = {
@@ -7,11 +7,16 @@ type Props = {
 	onDoubleClick?: (e: MouseEvent) => void
 	draggable?: string
 	popperChildren?: ReactNode
-} & definition.UtilityProps
+}
 
-const PropNodeTag: FC<Props> = (props) => {
+const StyleDefaults = Object.freeze({
+	draggable: ["cursor-grab"],
+})
+
+const PropNodeTag: definition.UtilityComponent<Props> = (props) => {
 	const Tile = component.getUtility("uesio/io.tile")
 	const Popper = component.getUtility("uesio/io.popper")
+	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 	const {
 		onClick,
 		onDoubleClick,
@@ -35,7 +40,10 @@ const PropNodeTag: FC<Props> = (props) => {
 			onClick={onClick}
 			onDoubleClick={onDoubleClick}
 			isSelected={selected}
-			className={styles.cx(selected && "selected")}
+			className={styles.cx(
+				selected && "selected",
+				draggable && classes.draggable
+			)}
 		>
 			{selected && popperChildren && (
 				<Popper
