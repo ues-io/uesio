@@ -85,6 +85,13 @@ func (mmd *MetadataMergeData) AddItem(dep Depable) {
 	}
 }
 
+func (mmd *MetadataMergeData) AddItems(deps ...Depable) *MetadataMergeData {
+	for _, dep := range deps {
+		mmd.AddItem(dep)
+	}
+	return mmd
+}
+
 func NewPreloadMetadata() *PreloadMetadata {
 	return &PreloadMetadata{
 		Component:        NewComponentsMergeData(),
