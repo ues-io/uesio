@@ -79,7 +79,8 @@ describe("Uesio Builder Tests", () => {
 	const workspaceBasePath = getWorkspaceBasePath(appName, workspaceName)
 
 	const viewName = "testview"
-	const fullViewName = `${username}/${appName}.${viewName}`
+	const namespace = `${username}/${appName}`
+	const fullViewName = `${namespace}.${viewName}`
 	const builderComponentId = `${fullViewName}($root):uesio/builder.mainwrapper`
 
 	const getBuilderState = (id: string) =>
@@ -114,7 +115,10 @@ describe("Uesio Builder Tests", () => {
 			cy.typeInInput("new-view-name", viewName)
 			cy.clickButton("save-new-view")
 			// Verify we get taken to the collection detail
-			cy.url().should("contain", `${workspaceBasePath}/views/${viewName}`)
+			cy.url().should(
+				"contain",
+				`${workspaceBasePath}/views/${namespace}/${viewName}`
+			)
 			cy.title().should("eq", `View: ${viewName}`)
 			// Go into the builder
 			cy.clickButton("build-view")

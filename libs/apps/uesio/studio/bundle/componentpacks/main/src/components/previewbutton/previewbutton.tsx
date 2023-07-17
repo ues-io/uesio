@@ -143,18 +143,17 @@ const PreviewButton: definition.UC<PreviewButtonDefinition> = (props) => {
 	const workspaceContext = context.getWorkspace()
 	if (!workspaceContext) throw new Error("No Workspace Context Provided")
 
-	const viewName = record.getFieldValue<string>("uesio/studio.name")
-
 	const appName = workspaceContext.app
 	const workspaceName = workspaceContext.name
+
+	const [viewNamespace, viewName] = component.path.parseKey(
+		context.mergeString(view)
+	)
 
 	const [open, setOpen] = useState<boolean>(false)
 	const [params, setParams] = useState<param.ParamDefinition[]>()
 
 	const togglePreview = async () => {
-		const [viewNamespace, viewName] = component.path.parseKey(
-			context.mergeString(view)
-		)
 		const result = await platform.platform.getViewParams(
 			context,
 			viewNamespace,
@@ -187,7 +186,7 @@ const PreviewButton: definition.UC<PreviewButtonDefinition> = (props) => {
 		api.signal.run(
 			{
 				signal: "route/REDIRECT",
-				path: `/workspace/${appName}/${workspaceName}/views/${appName}/${viewName}/${mode}${
+				path: `/workspace/${appName}/${workspaceName}/views/${viewNamespace}/${viewName}/${mode}${
 					urlParams ? `?${urlParams}` : ""
 				}`,
 			},
