@@ -35,11 +35,8 @@ definition:
       conditions:
         - field: uesio/studio.type
           value: fields
-        - field: uesio/studio.grouping
-          value: $Param{namespace}.$Param{collectionname}
-        # - field: uesio/studio.item
-        #   valueSource: PARAM
-        #   param: fieldname
+        - field: uesio/studio.item
+          value: $Param{namespace}.$Param{collectionname}:$Param{fieldNamespace}.$Param{fieldname}
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -75,10 +72,6 @@ definition:
                     uesio.id: fieldsList
                     wire: fields
                     mode: READ
-                    recordDisplay:
-                      - field: uesio/studio.name
-                        value: $Param{fieldname}
-                        operator: EQUALS
                     components:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.main
@@ -90,7 +83,7 @@ definition:
                                     param: app
                                     field: uesio/core.dynamiccollection
                                     operator: EQUALS
-                                    value: $Param{namespace}
+                                    value: $Param{fieldNamespace}
                                 components:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
