@@ -42,11 +42,8 @@
     {{$site := .Site -}}
     {{- if .PreloadMetadata -}}
         {{- if .PreloadMetadata.ComponentPack -}}
-            {{- range .PreloadMetadata.ComponentPack.GetItems -}}
-                {{- $packURL := getPackURL .GetKey $workspace $site -}}
-                {{- if $packURL -}}
-                <script src="{{$packURL}}" type="module"></script>
-                {{- end -}}
+            {{- range getComponentPackURLs .PreloadMetadata.ComponentPack $workspace $site -}}
+                <script src="{{.}}" type="module"></script>
             {{- end -}}
         {{- end -}}
     {{- end -}}
