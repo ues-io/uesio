@@ -104,17 +104,6 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 
 	hasExistingConnection := options.Connection != nil
 
-	// Get all the user access tokens that we'll need for this request
-	// TODO:
-	// Finally check for record level permissions and ability to do the save.
-	err := GenerateUserAccessTokens(metadataResponse, &LoadOptions{
-		Metadata:   metadataResponse,
-		Connection: options.Connection,
-	}, session)
-	if err != nil {
-		return err
-	}
-
 	// 3. Get metadata for each datasource and collection
 
 	connection, err := GetConnection(meta.PLATFORM_DATA_SOURCE, metadataResponse, session, options.Connection)
@@ -160,6 +149,18 @@ func HandleErrorAndAddToSaveOp(op *adapt.SaveOp, err error) *adapt.SaveError {
 
 func SaveOp(batch []*adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 	dsKey := meta.PLATFORM_DATA_SOURCE
+	metadataResponse := connection.GetMetadata()
+	// Get all the user access tokens that we'll need for this request
+	// TODO:
+	// Finally check for record level permissions and ability to do the save.
+	err := GenerateUserAccessTokens(metadataResponse, &LoadOptions{
+		Metadata:   metadataResponse,
+		Connection: connection,
+	}, session)
+	if err != nil {
+		return err
+	}
+
 	for _, op := range batch {
 
 		err := processConditions(op.Conditions, op.Params, connection.GetMetadata(), nil, session)
