@@ -113,8 +113,34 @@ definition:
                                                 user:
                                                   subtitle: $Time{uesio/core.updatedat}
                                             rowactions:
+                                              # namespace (we use $Param{app} because cannot make changes to installed metadata)
                                               - text: Details
-                                                type: DEFAULT
+                                                uesio.display:
+                                                  - type: fieldValue
+                                                    wire: recentmetadata
+                                                    field: uesio/core.dynamiccollection
+                                                    operator: IN
+                                                    values:
+                                                      - collections
+                                                signals:
+                                                  - signal: route/NAVIGATE
+                                                    path: app/$Param{app}/workspace/$Param{workspacename}/${uesio/core.dynamiccollection}/$Param{app}/${uesio/studio.name}
+                                              # NO namespace
+                                              - text: Details
+                                                uesio.display:
+                                                  - type: fieldValue
+                                                    wire: recentmetadata
+                                                    field: uesio/core.dynamiccollection
+                                                    operator: IN
+                                                    values:
+                                                      - views
+                                                      - profiles
+                                                      - permissionsets
+                                                      - routes
+                                                      - selectlists
+                                                      - files
+                                                      - labels
+                                                      - themes
                                                 signals:
                                                   - signal: route/NAVIGATE
                                                     path: app/$Param{app}/workspace/$Param{workspacename}/${uesio/core.dynamiccollection}/${uesio/studio.name}
