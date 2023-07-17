@@ -8,7 +8,9 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
-func GenerateUserAccessTokens(metadata *adapt.MetadataCache, loadOptions *LoadOptions, session *sess.Session) error {
+func GenerateUserAccessTokens(connection adapt.Connection, session *sess.Session) error {
+
+	metadata := connection.GetMetadata()
 
 	if !session.HasToken("uesio.owner") {
 		session.AddToken("uesio.owner", []string{session.GetUserID()})
@@ -101,17 +103,12 @@ func GenerateUserAccessTokens(metadata *adapt.MetadataCache, loadOptions *LoadOp
 				Query:          true,
 			}
 
-			err = getMetadataForLoad(loadOp, loadOptions.Metadata, []*adapt.LoadOp{loadOp}, session)
+			err = getMetadataForLoad(loadOp, metadata, []*adapt.LoadOp{loadOp}, session)
 			if err != nil {
 				return err
 			}
 
-			loadCollectionMetadata, err := loadOptions.Metadata.GetCollection(uat.Collection)
-			if err != nil {
-				return err
-			}
-
-			connection, err := GetConnection(loadCollectionMetadata.DataSource, metadata, session, loadOptions.Connection)
+			loadCollectionMetadata, err := metadata.GetCollection(uat.Collection)
 			if err != nil {
 				return err
 			}
