@@ -2,6 +2,7 @@ package auth
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -88,7 +89,10 @@ func RedirectToLoginRoute(w http.ResponseWriter, r *http.Request, session *sess.
 		redirectPath = "/site/app/" + loginRoute.Namespace + "/" + redirectPath
 	}
 
-	if redirectPath == requestedPath {
+	loginRouteSuffix := fmt.Sprintf("%s/%s", loginRoute.Namespace, loginRoute.Path)
+
+	// If we are going to the login route already, don't do any more redirections
+	if redirectPath == requestedPath || strings.HasSuffix(requestedPath, redirectPath) || strings.HasSuffix(requestedPath, loginRouteSuffix) {
 		return false
 	}
 
