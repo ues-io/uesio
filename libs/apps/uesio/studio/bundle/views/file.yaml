@@ -82,6 +82,7 @@ definition:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.main
                           title: File - ${uesio/studio.name}
+                          subtitle: $Param{namespace}
                           actions:
                             - uesio/io.group:
                                 components:
@@ -156,16 +157,16 @@ definition:
                             - uesio/io.list:
                                 id: Attachments
                                 wire: attachments
+                                uesio.display:
+                                  - type: paramValue
+                                    param: app
+                                    field: uesio/core.dynamiccollection
+                                    operator: EQUALS
+                                    value: $Param{namespace}
                                 components:
                                   - uesio/io.fileattachment:
                                       displayAs: PREVIEW
                                       mode: EDIT
-                                      uesio.display:
-                                        - type: paramValue
-                                          param: app
-                                          field: uesio/core.dynamiccollection
-                                          operator: EQUALS
-                                          value: $Param{namespace}
                                       onUploadSignals:
                                         - signal: wire/LOAD
                                           wires:
@@ -178,27 +179,15 @@ definition:
                                             - workspaces
                                             - files
                                             - attachments
-                                  - uesio/io.fileattachment:
-                                      displayAs: PREVIEW
-                                      mode: READ
-                                      uesio.display:
-                                        - type: paramValue
-                                          param: app
-                                          field: uesio/core.dynamiccollection
-                                          operator: NOT_EQUALS
-                                          value: $Param{namespace}
-                                      onUploadSignals:
-                                        - signal: wire/LOAD
-                                          wires:
-                                            - workspaces
-                                            - files
-                                            - attachments
-                                      onDeleteSignals:
-                                        - signal: wire/LOAD
-                                          wires:
-                                            - workspaces
-                                            - files
-                                            - attachments
+                            - uesio/io.image:
+                                loading: lazy
+                                file: "$Param{namespace}.${uesio/studio.name}"
+                                uesio.display:
+                                  - type: paramValue
+                                    param: app
+                                    field: uesio/core.dynamiccollection
+                                    operator: NOT_EQUALS
+                                    value: $Param{namespace}
   panels:
     deleteFile:
       uesio.type: uesio/io.dialog
