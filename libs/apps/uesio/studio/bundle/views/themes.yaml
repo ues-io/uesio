@@ -107,7 +107,7 @@ definition:
                                                 text: (Default)
                                                 icon: check_circle
                                                 color: green
-                                                tooltip: Theme selected to be used as default.
+                                                tooltip: This is the default Theme.
                                                 uesio.display:
                                                   - type: fieldValue
                                                     operator: EQUALS
