@@ -116,8 +116,8 @@ definition:
     newlabel:
       uesio.type: uesio/io.dialog
       title: Create a New Label
-      width: 400px
-      height: 500px
+      width: 500px
+      height: 600px
       components:
         - uesio/io.list:
             uesio.id: newlabellist
@@ -126,11 +126,21 @@ definition:
             components:
               - uesio/io.field:
                   fieldId: uesio/studio.name
+                  focusOnRender: true
               - uesio/io.field:
                   fieldId: uesio/studio.value
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
+            text: Save and New
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - newlabel
+              - signal: wire/RESET
+                wire: newlabel
+        - uesio/io.button:
+            uesio.variant: uesio/io.secondary
             text: $Label{uesio/io.save}
             signals:
               - signal: wire/SAVE
