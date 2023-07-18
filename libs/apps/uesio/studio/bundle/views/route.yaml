@@ -15,25 +15,12 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     routes:
-      collection: uesio/studio.route
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.path:
-        uesio/studio.redirect:
-        uesio/studio.view:
-        uesio/studio.theme:
-        uesio/studio.title:
-        uesio/studio.tags:
-        uesio/studio.type:
+      collection: uesio/studio.allmetadata
       conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
-        - field: uesio/studio.name
-          valueSource: PARAM
-          param: routename
+        - field: uesio/studio.type
+          value: routes
+        - field: uesio/studio.item
+          value: $Param{namespace}.$Param{routename}
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -82,13 +69,18 @@ definition:
                                           mode: READ
                                       signals:
                                         - signal: "route/REDIRECT"
-                                          path: "/workspace/$Param{app}/$Param{workspacename}/app/$Param{app}/${uesio/studio.path}"
+                                          path: "/workspace/$Param{app}/$Param{workspacename}/app/$Param{namespace}/${uesio/studio.path}"
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: $Label{uesio/io.edit}
                                       uesio.display:
                                         - type: fieldMode
                                           mode: READ
+                                        - type: paramValue
+                                          param: app
+                                          field: uesio/core.dynamiccollection
+                                          operator: EQUALS
+                                          value: $Param{namespace}
                                       signals:
                                         - signal: component/CALL
                                           component: uesio/io.list
@@ -131,6 +123,12 @@ definition:
                                       signals:
                                         - signal: panel/TOGGLE
                                           panel: deleteRoute
+                                      uesio.display:
+                                        - type: paramValue
+                                          param: app
+                                          field: uesio/core.dynamiccollection
+                                          operator: EQUALS
+                                          value: $Param{namespace}
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           components:
