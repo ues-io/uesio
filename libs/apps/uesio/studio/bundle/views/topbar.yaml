@@ -205,6 +205,7 @@ definition:
                                 - profiles
                                 - themes
                                 - labels
+                                - files
                           signals:
                             - signal: "route/NAVIGATE"
                               path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/$Param{itemType}/$Param{itemName}
@@ -232,6 +233,7 @@ definition:
                                 - profiles
                                 - themes
                                 - labels
+                                - files
                           uesio.variant: uesio/io.tag
                           content:
                             - uesio/io.text:
@@ -253,6 +255,7 @@ definition:
                                 - profiles
                                 - themes
                                 - labels
+                                - files
                           signals:
                             - signal: route/NAVIGATE
                               path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/$Param{itemType}/$Param{itemNameSpace}/$Param{itemName}
@@ -280,6 +283,7 @@ definition:
                                 - profiles
                                 - themes
                                 - labels
+                                - files
                           uesio.variant: uesio/io.tag
                           content:
                             - uesio/io.text:
