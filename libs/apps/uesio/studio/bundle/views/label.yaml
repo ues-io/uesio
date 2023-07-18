@@ -15,20 +15,12 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     labels:
-      collection: uesio/studio.label
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.value:
-        uesio/studio.workspace:
+      collection: uesio/studio.allmetadata
       conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
-        - field: uesio/studio.name
-          valueSource: PARAM
-          param: labelname
+        - field: uesio/studio.type
+          value: labels
+        - field: uesio/studio.item
+          value: $Param{namespace}.$Param{labelname}
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -74,6 +66,11 @@ definition:
                                       uesio.display:
                                         - type: fieldMode
                                           mode: READ
+                                        - type: paramValue
+                                          param: app
+                                          field: uesio/core.dynamiccollection
+                                          operator: EQUALS
+                                          value: $Param{namespace}
                                       signals:
                                         - signal: component/CALL
                                           component: uesio/io.list
@@ -115,6 +112,12 @@ definition:
                                       signals:
                                         - signal: panel/TOGGLE
                                           panel: deleteLabel
+                                      uesio.display:
+                                        - type: paramValue
+                                          param: app
+                                          field: uesio/core.dynamiccollection
+                                          operator: EQUALS
+                                          value: $Param{namespace}
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           components:

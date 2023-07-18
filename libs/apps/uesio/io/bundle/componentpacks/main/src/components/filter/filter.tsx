@@ -9,6 +9,7 @@ import CheckboxFilter from "../../utilities/checkboxfilter/checkboxfilter"
 import MultiSelectFilter from "../../utilities/multiselectfilter/multiselectfilter"
 import TextFilter from "../../utilities/textfilter/textfilter"
 import TimestampFilter from "../../utilities/timestampfilter/timestampfilter"
+import ReferenceFilter from "../../utilities/referencefilter/referencefilter"
 import GroupFilter, {
 	GroupFilterProps,
 } from "../../utilities/groupfilter/groupfilter"
@@ -64,6 +65,10 @@ const getFilterContent = (
 			if (displayAs === "WEEK") return <WeekFilter {...common} />
 			return <DateFilter {...common} />
 		}
+		case "USER":
+		case "REFERENCE": {
+			return <ReferenceFilter {...common} />
+		}
 		default:
 			return null
 	}
@@ -94,6 +99,14 @@ const getDefaultCondition = (
 			return {
 				id: path,
 				operator: operator || "HAS_ANY",
+				field: fieldMetadata.getId(),
+			}
+		}
+		case "USER":
+		case "REFERENCE": {
+			return {
+				id: path,
+				operator: "EQ",
 				field: fieldMetadata.getId(),
 			}
 		}
