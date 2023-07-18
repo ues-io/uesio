@@ -103,7 +103,7 @@ definition:
                                           text: (Public)
                                           icon: check_circle
                                           color: green
-                                          tooltip: Profile selected to be used as a public.
+                                          tooltip: Profile selected to be used as a public
                                           uesio.display:
                                             - type: fieldValue
                                               operator: EQUALS
