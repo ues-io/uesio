@@ -195,6 +195,15 @@ definition:
                               param: itemName
                             - type: paramIsSet
                               param: itemType
+                            # Remove after all improvements are merged
+                            - type: paramValue
+                              param: itemType
+                              operator: NOT_IN
+                              values:
+                                - collections
+                                - views
+                                - profiles
+                                - themes
                           signals:
                             - signal: "route/NAVIGATE"
                               path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/$Param{itemType}/$Param{itemName}
@@ -212,34 +221,61 @@ definition:
                               param: subItemName
                             - type: paramIsSet
                               param: subItemType
+                            # Remove after all improvements are merged
+                            - type: paramValue
+                              param: itemType
+                              operator: NOT_IN
+                              values:
+                                - collections
+                                - views
+                                - profiles
+                                - themes
                           uesio.variant: uesio/io.tag
                           content:
                             - uesio/io.text:
                                 text: $Param{subItemName}
-                      #Collections
+                      #Buttons for all views with updated URL's
                       - uesio/io.tile:
                           uesio.display:
                             - type: paramIsSet
-                              param: itemCollectionName
+                              param: itemName
                             - type: paramIsSet
                               param: itemType
+                            # Remove after all improvements are merged
+                            - type: paramValue
+                              param: itemType
+                              operator: IN
+                              values:
+                                - collections
+                                - views
+                                - profiles
+                                - themes
                           signals:
                             - signal: route/NAVIGATE
-                              path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/collections/$Param{itemNameSpace}/$Param{itemCollectionName}
+                              path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/$Param{itemType}/$Param{itemNameSpace}/$Param{itemName}
                           uesio.variant: uesio/io.tag
                           content:
                             - uesio/io.text:
-                                text: $Param{itemCollectionName}
+                                text: $Param{itemName}
                       - uesio/io.tile:
                           uesio.display:
                             - type: paramIsSet
-                              param: itemCollectionName
+                              param: itemName
                             - type: paramIsSet
                               param: itemType
                             - type: paramIsSet
                               param: subItemName
                             - type: paramIsSet
                               param: subItemType
+                            # Remove after all improvements are merged
+                            - type: paramValue
+                              param: itemType
+                              operator: IN
+                              values:
+                                - collections
+                                - views
+                                - profiles
+                                - themes
                           uesio.variant: uesio/io.tag
                           content:
                             - uesio/io.text:

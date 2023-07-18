@@ -52,7 +52,7 @@ definition:
                     params:
                       itemType: collections
                       itemIcon: list
-                      itemCollectionName: $Param{collectionname}
+                      itemName: $Param{collectionname}
                       itemNameSpace: $Param{namespace}
                       subItemType: collections
                       subItemName: $Param{fieldname}
