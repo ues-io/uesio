@@ -11,6 +11,7 @@ definition:
           fields:
             uesio/studio.color:
             uesio/studio.icon:
+        uesio/studio.defaulttheme:
       conditions:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
@@ -91,6 +92,38 @@ definition:
                                       signals:
                                         - signal: wire/CANCEL
                                           wire: themes
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.secondary
+                                      text: Use as default theme
+                                      uesio.display:
+                                        - field: uesio/studio.defaulttheme
+                                          wire: workspaces
+                                          value: $Param{namespace}.${uesio/studio.name}
+                                          operator: NOT_EQUALS
+                                      signals:
+                                        - signal: wire/UPDATE_RECORD
+                                          wire: workspaces
+                                          field: uesio/studio.defaulttheme
+                                          value: $Param{namespace}.${uesio/studio.name}
+                                        - signal: wire/SAVE
+                                          wires:
+                                            - workspaces
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.secondary
+                                      text: Stop using as default theme
+                                      uesio.display:
+                                        - field: uesio/studio.defaulttheme
+                                          wire: workspaces
+                                          value: $Param{namespace}.${uesio/studio.name}
+                                          operator: EQUALS
+                                      signals:
+                                        - signal: wire/UPDATE_RECORD
+                                          wire: workspaces
+                                          field: uesio/studio.defaulttheme
+                                          value: ""
+                                        - signal: wire/SAVE
+                                          wires:
+                                            - workspaces
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: $Label{uesio/io.delete}
