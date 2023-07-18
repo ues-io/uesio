@@ -101,6 +101,7 @@ definition:
                       itemType: collections
                       itemIcon: list
                       itemCollectionName: $Param{collectionname}
+                      itemNameSpace: $Param{namespace}
           - uesio/io.griditem:
               uesio.variant: uesio/studio.leftbar
               components:
@@ -146,6 +147,12 @@ definition:
                                         - signal: route/NAVIGATE
                                           path: app/$Param{app}/workspace/$Param{workspacename}/data/$Param{namespace}/$Param{collectionname}
                                   - uesio/io.button:
+                                      uesio.display:
+                                        - type: paramValue
+                                          param: app
+                                          field: uesio/core.dynamiccollection
+                                          operator: EQUALS
+                                          value: $Param{namespace}
                                       uesio.variant: uesio/io.secondary
                                       uesio.id: edit-collection
                                       text: $Label{uesio/io.edit}
@@ -153,6 +160,12 @@ definition:
                                         - signal: panel/TOGGLE
                                           panel: editCollection
                                   - uesio/io.button:
+                                      uesio.display:
+                                        - type: paramValue
+                                          param: app
+                                          field: uesio/core.dynamiccollection
+                                          operator: EQUALS
+                                          value: $Param{namespace}
                                       uesio.variant: uesio/io.secondary
                                       uesio.id: delete-collection
                                       text: $Label{uesio/io.delete}
@@ -255,13 +268,19 @@ definition:
                             - text: $Label{uesio/io.edit}
                               signals:
                                 - signal: route/NAVIGATE
-                                  path: app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{app}/$Param{collectionname}/fields/${uesio/studio.name}
+                                  path: app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{namespace}/$Param{collectionname}/fields/${uesio/studio.namespace}/${uesio/studio.name}
                               uesio.display:
                                 - type: recordIsNotNew
                             - text: $Label{uesio/io.delete}
                               signals:
                                 - signal: wire/MARK_FOR_DELETE
                                   wire: fields
+                              uesio.display:
+                                - type: paramValue
+                                  param: app
+                                  field: uesio/core.dynamiccollection
+                                  operator: EQUALS
+                                  value: ${uesio/studio.namespace}
                           columns:
                             - field: uesio/studio.name
                             - field: uesio/studio.namespace

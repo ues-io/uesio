@@ -100,6 +100,21 @@ func addVariantDep(deps *PreloadMetadata, key string, session *sess.Session) err
 
 }
 
+func addComponentPackToDeps(deps *PreloadMetadata, packNamespace, packName string, componentModstamp int64) {
+	pack := meta.NewBaseComponentPack(packNamespace, packName)
+	pack.UpdatedAt = componentModstamp
+	existingItem, exists := deps.ComponentPack.AddItemIfNotExists(pack)
+	// If the item already exists, reuse it, but we may need to increase its UpdatedAt metadata
+	if exists {
+		if existingPack, ok := existingItem.(*meta.ComponentPack); ok && existingPack.UpdatedAt < componentModstamp {
+			existingPack.UpdatedAt = componentModstamp
+		}
+	} else {
+		// Otherwise, just go ahead and add the pack anyway
+		deps.ComponentPack.AddItem(pack)
+	}
+}
+
 func getDepsForUtilityComponent(key string, deps *PreloadMetadata, session *sess.Session) error {
 
 	namespace, name, err := meta.ParseKey(key)
@@ -118,9 +133,8 @@ func getDepsForUtilityComponent(key string, deps *PreloadMetadata, session *sess
 		return nil
 	}
 
-	pack := meta.NewBaseComponentPack(namespace, utility.Pack)
+	addComponentPackToDeps(deps, namespace, utility.Pack, utility.UpdatedAt)
 
-	deps.ComponentPack.AddItem(pack)
 	return nil
 
 }
@@ -130,9 +144,8 @@ func getDepsForComponent(component *meta.Component, deps *PreloadMetadata, sessi
 	if component.Pack == "" {
 		return nil
 	}
-	pack := meta.NewBaseComponentPack(component.Namespace, component.Pack)
 
-	deps.ComponentPack.AddItem(pack)
+	addComponentPackToDeps(deps, component.Namespace, component.Pack, component.UpdatedAt)
 
 	// need an admin session for retrieving config values
 	// in order to prevent users from having to have read on the uesio/core.configvalue table

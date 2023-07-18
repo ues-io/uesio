@@ -15,20 +15,12 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     views:
-      collection: uesio/studio.view
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.definition:
-        uesio/studio.workspace:
+      collection: uesio/studio.allmetadata
       conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
-        - field: uesio/studio.name
-          valueSource: PARAM
-          param: viewname
+        - field: uesio/studio.type
+          value: views
+        - field: uesio/studio.item
+          value: $Param{namespace}.$Param{viewname}
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -69,7 +61,7 @@ definition:
                             - uesio/io.group:
                                 components:
                                   - uesio/studio.previewbutton:
-                                      view: $Param{app}.${uesio/studio.name}
+                                      view: $Param{namespace}.${uesio/studio.name}
                                       label: $Label{uesio/io.preview}
                                       uesio.id: preview-view
                                       uesio.display:
@@ -87,6 +79,11 @@ definition:
                                       uesio.display:
                                         - type: wireHasNoChanges
                                           wire: views
+                                        - type: paramValue
+                                          param: app
+                                          field: uesio/core.dynamiccollection
+                                          operator: EQUALS
+                                          value: $Param{namespace}
                                       hotkey: "meta+b"
                                       buildMode: true
                                       uesio.context:
@@ -100,6 +97,11 @@ definition:
                                       uesio.display:
                                         - type: wireHasChanges
                                           wire: views
+                                        - type: paramValue
+                                          param: app
+                                          field: uesio/core.dynamiccollection
+                                          operator: EQUALS
+                                          value: $Param{namespace}
                                       signals:
                                         - signal: wire/SAVE
                                           wire: views
@@ -110,6 +112,11 @@ definition:
                                       uesio.display:
                                         - type: wireHasChanges
                                           wire: views
+                                        - type: paramValue
+                                          param: app
+                                          field: uesio/core.dynamiccollection
+                                          operator: EQUALS
+                                          value: $Param{namespace}
                                       signals:
                                         - signal: wire/CANCEL
                                           wire: views
@@ -119,6 +126,12 @@ definition:
                                       signals:
                                         - signal: panel/TOGGLE
                                           panel: deleteView
+                                      uesio.display:
+                                        - type: paramValue
+                                          param: app
+                                          field: uesio/core.dynamiccollection
+                                          operator: EQUALS
+                                          value: $Param{namespace}
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           components:
@@ -131,6 +144,24 @@ definition:
                                 fieldId: uesio/studio.definition
                                 height: 350px
                                 language: yaml
+                                mode: READ
+                                uesio.display:
+                                  - type: paramValue
+                                    param: app
+                                    field: uesio/core.dynamiccollection
+                                    operator: NOT_EQUALS
+                                    value: $Param{namespace}
+                            - uesio/studio.codefield:
+                                fieldId: uesio/studio.definition
+                                height: 350px
+                                language: yaml
+                                uesio.display:
+                                  - type: paramValue
+                                    param: app
+                                    field: uesio/core.dynamiccollection
+                                    operator: EQUALS
+                                    value: $Param{namespace}
+
   panels:
     deleteView:
       uesio.type: uesio/io.dialog

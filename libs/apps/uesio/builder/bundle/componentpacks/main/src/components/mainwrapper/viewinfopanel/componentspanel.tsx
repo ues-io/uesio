@@ -58,13 +58,16 @@ type VariantsBlockProps = {
 	component: ComponentDef
 } & definition.UtilityProps
 
-const StyleDefaults = Object.freeze({
+const VariantsBlockStyleDefaults = Object.freeze({
 	root: ["m-2", "flex", "flex-wrap", "gap-2"],
 })
 
 const VariantsBlock: FC<VariantsBlockProps> = (props) => {
 	const { component: componentDef, context, variants, isSelected } = props
-	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
+	const classes = styles.useUtilityStyleTokens(
+		VariantsBlockStyleDefaults,
+		props
+	)
 
 	return (
 		<div className={classes.root}>
@@ -134,7 +137,6 @@ const ComponentBlock: FC<ComponentBlockProps> = (props) => {
 		(variant) => !!allNSInfo[variant.namespace]
 	)
 
-	// Loop over the variants for this component
 	return (
 		<PropNodeTag
 			context={context}
@@ -175,18 +177,20 @@ type CategoryBlockProps = {
 	category: string
 } & definition.UtilityProps
 
+const CategoryBlockStyleDefaults = Object.freeze({
+	categoryLabel: [
+		"mx-2",
+		"mt-4",
+		"-mb-1",
+		"text-xs",
+		"font-light",
+		"text-slate-500",
+	],
+})
+
 const CategoryBlock: FC<CategoryBlockProps> = (props) => {
 	const classes = styles.useUtilityStyleTokens(
-		{
-			categoryLabel: [
-				"mx-2",
-				"mt-4",
-				"-mb-1",
-				"text-xs",
-				"font-light",
-				"text-slate-500",
-			],
-		},
+		CategoryBlockStyleDefaults,
 		props
 	)
 	const { context, components, category, variants, isSelected } = props
@@ -243,6 +247,8 @@ const ComponentTag: FC<ComponentTagProps> = (props) => {
 	)
 }
 
+const CURSOR_GRABBING = "cursor-grabbing"
+
 const ComponentsPanel: definition.UC = (props) => {
 	const ScrollPanel = getUtility("uesio/io.scrollpanel")
 	const { context } = props
@@ -269,11 +275,17 @@ const ComponentsPanel: definition.UC = (props) => {
 			if (metadataType && metadataItem) {
 				setDragPath(context, new FullPath(metadataType, metadataItem))
 			}
+			target.classList.remove(CURSOR_GRABBING)
+			target.classList.add(CURSOR_GRABBING)
 		}
 	}
-	const onDragEnd = () => {
+	const onDragEnd = (e: DragEvent) => {
 		setDragPath(context)
 		setDropPath(context)
+		const target = e.target as HTMLDivElement
+		if (target?.classList?.length) {
+			target.classList.remove(CURSOR_GRABBING)
+		}
 	}
 
 	const categoryOrder = [

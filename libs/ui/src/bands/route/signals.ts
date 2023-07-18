@@ -36,7 +36,7 @@ const signals: Record<string, SignalDescriptor> = {
 			const [, viewName] = parseKey(route.view)
 			return redirect(
 				context,
-				`/app/${workspace.app}/workspace/${workspace.name}/views/${viewName}`
+				`/app/${workspace.app}/workspace/${workspace.name}/views/${workspace.app}/${viewName}`
 			)
 		},
 	},

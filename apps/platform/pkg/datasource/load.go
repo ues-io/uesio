@@ -365,17 +365,14 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 
 	}
 
-	err = GenerateUserAccessTokens(metadataResponse, &LoadOptions{
-		Metadata:   metadataResponse,
-		Connection: options.Connection,
-	}, session)
+	// 3. Get metadata for each datasource and collection
+
+	connection, err := GetConnection(meta.PLATFORM_DATA_SOURCE, metadataResponse, session, options.Connection)
 	if err != nil {
 		return nil, err
 	}
 
-	// 3. Get metadata for each datasource and collection
-
-	connection, err := GetConnection(meta.PLATFORM_DATA_SOURCE, metadataResponse, session, options.Connection)
+	err = GenerateUserAccessTokens(connection, session)
 	if err != nil {
 		return nil, err
 	}
