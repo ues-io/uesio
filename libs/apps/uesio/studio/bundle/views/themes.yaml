@@ -87,9 +87,6 @@ definition:
                       - uesio/io.table:
                           uesio.id: themesTable
                           wire: allthemes
-                          recordDisplay:
-                            - field: uesio/studio.namespace
-                              value: $Param{app}
                           columns:
                             - label: Theme
                               components:
@@ -120,6 +117,7 @@ definition:
                                               value: $Param{app}.${uesio/studio.name}
                                               wire: workspaces
                                               field: uesio/studio.defaulttheme
+                            - field: uesio/studio.namespace
                             - field: uesio/core.updatedby
                               user:
                                 subtitle: $Time{uesio/core.updatedat}
@@ -130,7 +128,7 @@ definition:
                             - text: Details
                               signals:
                                 - signal: route/NAVIGATE
-                                  path: app/$Param{app}/workspace/$Param{workspacename}/themes/${uesio/studio.name}
+                                  path: app/$Param{app}/workspace/$Param{workspacename}/themes/${uesio/studio.namespace}/${uesio/studio.name}
                             - text: Make Default
                               uesio.display:
                                 - field: uesio/studio.defaulttheme
@@ -169,7 +167,7 @@ definition:
                 wires:
                   - newtheme
               - signal: route/NAVIGATE
-                path: app/$Param{app}/workspace/$Param{workspacename}/themes/${uesio/studio.name}
+                path: app/$Param{app}/workspace/$Param{workspacename}/themes/${uesio/studio.app}/${uesio/studio.name}
         - uesio/io.button:
             uesio.variant: uesio/io.secondary
             text: $Label{uesio/io.cancel}
