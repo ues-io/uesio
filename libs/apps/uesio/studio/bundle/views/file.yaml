@@ -15,19 +15,12 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     files:
-      collection: uesio/studio.file
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.path:
+      collection: uesio/studio.allmetadata
       conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
-        - field: uesio/studio.name
-          valueSource: PARAM
-          param: filename
+        - field: uesio/studio.type
+          value: files
+        - field: uesio/studio.item
+          value: $Param{namespace}.$Param{filename}
     attachments:
       collection: uesio/core.userfile
       fields:
@@ -98,6 +91,11 @@ definition:
                                       uesio.display:
                                         - type: fieldMode
                                           mode: READ
+                                        - type: paramValue
+                                          param: app
+                                          field: uesio/core.dynamiccollection
+                                          operator: EQUALS
+                                          value: $Param{namespace}
                                       signals:
                                         - signal: component/CALL
                                           component: uesio/io.list
@@ -139,6 +137,12 @@ definition:
                                       signals:
                                         - signal: panel/TOGGLE
                                           panel: deleteFile
+                                      uesio.display:
+                                        - type: paramValue
+                                          param: app
+                                          field: uesio/core.dynamiccollection
+                                          operator: EQUALS
+                                          value: $Param{namespace}
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           components:
@@ -156,6 +160,33 @@ definition:
                                   - uesio/io.fileattachment:
                                       displayAs: PREVIEW
                                       mode: EDIT
+                                      uesio.display:
+                                        - type: paramValue
+                                          param: app
+                                          field: uesio/core.dynamiccollection
+                                          operator: EQUALS
+                                          value: $Param{namespace}
+                                      onUploadSignals:
+                                        - signal: wire/LOAD
+                                          wires:
+                                            - workspaces
+                                            - files
+                                            - attachments
+                                      onDeleteSignals:
+                                        - signal: wire/LOAD
+                                          wires:
+                                            - workspaces
+                                            - files
+                                            - attachments
+                                  - uesio/io.fileattachment:
+                                      displayAs: PREVIEW
+                                      mode: READ
+                                      uesio.display:
+                                        - type: paramValue
+                                          param: app
+                                          field: uesio/core.dynamiccollection
+                                          operator: NOT_EQUALS
+                                          value: $Param{namespace}
                                       onUploadSignals:
                                         - signal: wire/LOAD
                                           wires:
