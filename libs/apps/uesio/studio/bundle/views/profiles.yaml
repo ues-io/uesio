@@ -103,7 +103,7 @@ definition:
                                           text: (Public)
                                           icon: check_circle
                                           color: green
-                                          tooltip: Profile selected to be used as a public
+                                          tooltip: This Profile defines permissions for public site guest users.
                                           uesio.display:
                                             - type: fieldValue
                                               operator: EQUALS
