@@ -5,6 +5,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/thecloudmasters/cli/pkg/command"
 	"github.com/thecloudmasters/cli/pkg/command/site"
+	"github.com/thecloudmasters/cli/pkg/config/siteadmin"
 )
 
 func siteUpsert(cmd *cobra.Command, args []string) {
@@ -27,9 +28,15 @@ func siteUse(cmd *cobra.Command, args []string) {
 	siteName, _ := cmd.Flags().GetString("name")
 	newBundleVersion, _ := cmd.Flags().GetString("bundle")
 
+	// If site name is not provided, see if a siteadmin context has been set
 	if siteName == "" {
-		fmt.Println("site name is required")
-		return
+		configSiteName, err := siteadmin.GetSiteAdmin()
+		if err == nil && configSiteName != "" {
+			siteName = configSiteName
+		} else {
+			fmt.Println("site name is required")
+			return
+		}
 	}
 	if newBundleVersion == "" {
 		fmt.Println("bundle is required")
