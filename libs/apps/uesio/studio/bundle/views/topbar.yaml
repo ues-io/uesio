@@ -204,6 +204,7 @@ definition:
                                 - views
                                 - profiles
                                 - themes
+                                - labels
                           signals:
                             - signal: "route/NAVIGATE"
                               path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/$Param{itemType}/$Param{itemName}
@@ -230,6 +231,7 @@ definition:
                                 - views
                                 - profiles
                                 - themes
+                                - labels
                           uesio.variant: uesio/io.tag
                           content:
                             - uesio/io.text:
@@ -250,6 +252,7 @@ definition:
                                 - views
                                 - profiles
                                 - themes
+                                - labels
                           signals:
                             - signal: route/NAVIGATE
                               path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/$Param{itemType}/$Param{itemNameSpace}/$Param{itemName}
@@ -276,6 +279,7 @@ definition:
                                 - views
                                 - profiles
                                 - themes
+                                - labels
                           uesio.variant: uesio/io.tag
                           content:
                             - uesio/io.text:
