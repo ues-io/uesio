@@ -23,8 +23,8 @@ func siteUpsert(cmd *cobra.Command, args []string) {
 	}
 }
 
-func siteDeploy(cmd *cobra.Command, args []string) {
-	siteName, _ := cmd.Flags().GetString("site")
+func siteUse(cmd *cobra.Command, args []string) {
+	siteName, _ := cmd.Flags().GetString("name")
 	newBundleVersion, _ := cmd.Flags().GetString("bundle")
 
 	if siteName == "" {
@@ -36,12 +36,12 @@ func siteDeploy(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	err := site.SiteDeploy(siteName, newBundleVersion)
+	err := site.UseBundle(siteName, newBundleVersion)
 	if err != nil {
-		fmt.Println("Unable to deploy site: " + err.Error())
+		fmt.Println("Unable to update site to use the requested bundle: " + err.Error())
 		return
 	}
-	fmt.Printf("Successfully updated site %s to bundle version: %s\n", siteName, newBundleVersion)
+	fmt.Printf("Successfully updated site %s to use bundle: %s\n", siteName, newBundleVersion)
 }
 
 func init() {
@@ -54,14 +54,14 @@ func init() {
 
 	// Add sub-commands
 
-	siteDeployCommand := &cobra.Command{
-		Use:   "deploy",
-		Short: "Update a site's associated bundle version",
-		Long:  "Updates a site's bundle to a specified version",
-		Run:   siteDeploy,
+	siteUseCommand := &cobra.Command{
+		Use:   "use",
+		Short: "Use a different bundle for a site",
+		Long:  "Switches a site to use a different bundle",
+		Run:   siteUse,
 	}
-	siteDeployCommand.PersistentFlags().StringP("bundle", "b", "", "The bundle version")
-	siteDeployCommand.PersistentFlags().StringP("site", "s", "", "The site name")
+	siteUseCommand.PersistentFlags().StringP("bundle", "b", "", "The bundle to use")
+	siteUseCommand.PersistentFlags().StringP("name", "n", "", "The site name")
 
 	siteUpsertCmd := &cobra.Command{
 		Use:   "upsert",
@@ -73,7 +73,7 @@ func init() {
 	siteUpsertCmd.PersistentFlags().StringP("file", "f", "", "Filename of data to upsert")
 	siteUpsertCmd.PersistentFlags().StringP("collection", "c", "", "The collection to upsert")
 
-	siteCommand.AddCommand(siteDeployCommand, siteUpsertCmd)
+	siteCommand.AddCommand(siteUseCommand, siteUpsertCmd)
 	rootCmd.AddCommand(siteCommand)
 
 }

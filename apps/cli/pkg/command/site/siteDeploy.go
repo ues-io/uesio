@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func SiteDeploy(siteName, newBundleVersion string) error {
+func UseBundle(siteName, newBundleVersion string) error {
 	app, err := wire.GetApp()
 	if err != nil {
 		return err
