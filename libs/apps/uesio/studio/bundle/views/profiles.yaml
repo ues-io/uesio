@@ -91,32 +91,26 @@ definition:
                           columns:
                             - label: Profile Name
                               components:
-                                - uesio/io.box:
+                                - uesio/io.group:
                                     components:
                                       - uesio/studio.iconlabel:
                                           uesio.variant: uesio/studio.namespacefield
                                           text: ${uesio/studio.name}
                                           icon: ${uesio/studio.appicon}
                                           color: ${uesio/studio.appcolor}
+                                      - uesio/studio.iconlabel:
+                                          uesio.variant: uesio/studio.namespacefield
+                                          text: (Public)
+                                          icon: check_circle
+                                          color: green
+                                          tooltip: Profile selected to be used as a public.
+                                          uesio.display:
+                                            - type: fieldValue
+                                              operator: EQUALS
+                                              value: ${uesio/studio.namespace}.${uesio/studio.name}
+                                              wire: workspaces
+                                              field: uesio/studio.publicprofile
                             - field: uesio/studio.namespace
-                            - label: Selected As Public
-                              components:
-                                - uesio/io.text:
-                                    uesio.variant: uesio/io.icon
-                                    uesio.styleTokens:
-                                      root:
-                                        - text-green-700
-                                        - text-center
-                                        - block
-                                        - m-auto
-                                        - text-xl
-                                    text: check_circle
-                                    uesio.display:
-                                      - type: fieldValue
-                                        operator: EQUALS
-                                        value: ${uesio/studio.namespace}.${uesio/studio.name}
-                                        wire: workspaces
-                                        field: uesio/studio.publicprofile
                             - field: uesio/core.updatedby
                               user:
                                 subtitle: $Time{uesio/core.updatedat}
@@ -125,6 +119,7 @@ definition:
                                 subtitle: $Time{uesio/core.createdat}
                           rowactions:
                             - text: Details
+                              type: DEFAULT
                               signals:
                                 - signal: route/NAVIGATE
                                   path: app/$Param{app}/workspace/$Param{workspacename}/profiles/${uesio/studio.namespace}/${uesio/studio.name}
