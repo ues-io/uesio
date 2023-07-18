@@ -74,7 +74,8 @@ definition:
                           components:
                             - uesio/io.button:
                                 text: Create a new Profile
-                                uesio.variant: uesio/io.secondary
+                                uesio.variant: uesio/io.primary
+                                hotkey: "n"
                                 signals:
                                   - signal: panel/TOGGLE
                                     panel: newProfile
@@ -143,6 +144,7 @@ definition:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
             text: $Label{uesio/io.save}
+            hotkey: "meta+s"
             signals:
               - signal: wire/SAVE
                 wires:
