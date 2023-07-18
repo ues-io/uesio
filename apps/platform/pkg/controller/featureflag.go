@@ -38,8 +38,8 @@ func FeatureFlag(w http.ResponseWriter, r *http.Request) {
 }
 
 type FeatureFlagSetRequest struct {
-	Value bool   `json:"value"`
-	User  string `json:"user"`
+	Value interface{} `json:"value"`
+	User  string      `json:"user"`
 }
 
 func SetFeatureFlag(w http.ResponseWriter, r *http.Request) {

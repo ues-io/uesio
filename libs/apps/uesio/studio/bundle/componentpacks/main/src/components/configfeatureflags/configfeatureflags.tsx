@@ -1,6 +1,7 @@
 import { FunctionComponent } from "react"
-import { definition, api } from "@uesio/ui"
-import ConfigFeatureFlagsItem from "./configfeatureflagsitem"
+import { definition, api, platform } from "@uesio/ui"
+import ConfigFeatureFlagsCheckboxItem from "./configfeatureflagscheckboxitem"
+import ConfigFeatureFlagsNumberItem from "./configfeatureflagsnumberitem"
 
 type ConfigFeatureFlagsDefinition = {
 	user: string
@@ -9,32 +10,60 @@ interface Props extends definition.BaseProps {
 	definition: ConfigFeatureFlagsDefinition
 }
 
+const flagSort = (
+	a: platform.FeatureFlagResponse,
+	b: platform.FeatureFlagResponse
+) => a.name.localeCompare(b.name)
+
+const isCheckboxFlag = (
+	flag: platform.FeatureFlagResponse
+): flag is platform.CheckboxFeatureFlag => flag.type === "CHECKBOX"
+const isNumberFlag = (
+	flag: platform.FeatureFlagResponse
+): flag is platform.NumberFeatureFlag => flag.type === "NUMBER"
+
 const ConfigFeatureFlags: FunctionComponent<Props> = (props) => {
 	const { context, definition } = props
 	const user = definition?.user ? context.mergeString(definition?.user) : ""
 
-	const [values] = api.featureflag.useFeatureFlags(context, user)
-
-	if (!values) {
-		return null
-	}
-
-	const handleSet = async (key: string, value: boolean) => {
+	const handleSet = async (key: string, value: boolean | number) => {
 		await api.featureflag.set(context, key, value, user)
 	}
 
+	const [values] = api.featureflag.useFeatureFlags(context, user)
+
+	const checkboxFlags = values?.filter(isCheckboxFlag)
+	const numberFlags = values?.filter(isNumberFlag)
+	checkboxFlags?.sort(flagSort)
+	numberFlags?.sort(flagSort)
+
 	return (
 		<>
-			{values?.map((response, i) => {
+			{checkboxFlags?.map((response, i) => {
 				const key = `${response.namespace}.${response.name}`
-				const value = response.value
+				const value = response.value as boolean
 				return (
-					<ConfigFeatureFlagsItem
+					<ConfigFeatureFlagsCheckboxItem
 						key={`${key}.${i}`}
 						title={key}
 						value={value}
 						context={context}
 						handleSet={handleSet}
+					/>
+				)
+			})}
+			{numberFlags?.map((response, i) => {
+				const key = `${response.namespace}.${response.name}`
+				const value = response.value as number
+				return (
+					<ConfigFeatureFlagsNumberItem
+						key={`${key}.${i}`}
+						title={key}
+						value={value}
+						context={context}
+						handleSet={handleSet}
+						min={response.min}
+						max={response.max}
 					/>
 				)
 			})}

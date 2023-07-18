@@ -2,9 +2,9 @@ package meta
 
 type FeatureFlagAssignment struct {
 	BuiltIn `yaml:",inline"`
-	Flag    string `json:"uesio/core.flag"`
-	Value   bool   `json:"uesio/core.value"`
-	User    *User  `json:"uesio/core.user"`
+	Flag    string      `json:"uesio/core.flag"`
+	Value   interface{} `json:"uesio/core.value"`
+	User    *User       `json:"uesio/core.user"`
 }
 
 func (ffa *FeatureFlagAssignment) GetCollectionName() string {
