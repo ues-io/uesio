@@ -8,7 +8,7 @@ import {
 } from "@uesio/ui"
 
 import debounce from "lodash/debounce"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import CustomSelect from "../customselect/customselect"
 import ReadOnlyField from "./readonly"
 
@@ -26,9 +26,10 @@ interface ReferenceFieldProps {
 	fieldId: string
 	fieldMetadata: collection.Field
 	mode: context.FieldMode
-	record: wire.WireRecord
+	record?: wire.WireRecord
 	options?: ReferenceFieldOptions
 	placeholder?: string
+	setValue?: (value: wire.PlainFieldValue) => void
 }
 
 const isValueCondition = wire.isValueCondition
@@ -47,6 +48,7 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 		placeholder,
 		variant,
 		id,
+		setValue,
 	} = props
 
 	const referencedCollection = api.collection.useCollection(
@@ -57,6 +59,12 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 	const nameField = referencedCollection?.getNameField()?.getId()
 
 	const [items, setItems] = useState<wire.PlainWireRecord[]>([])
+	const [item, setItem] = useState<wire.PlainWireRecord | null>(
+		record?.getFieldValue<wire.PlainWireRecord>(fieldId) || null
+	)
+	useEffect(() => {
+		setItem(record?.getFieldValue<wire.PlainWireRecord>(fieldId) || null)
+	}, [record, fieldId])
 
 	if (!referencedCollection || !nameField) return null
 
@@ -83,8 +91,6 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 			item[collection.ID_FIELD]
 		)
 	}
-
-	const value = record.getFieldValue<wire.PlainWireRecord>(fieldId)
 
 	const onSearch = debounce(async (search: string) => {
 		if (!wire) return
@@ -135,7 +141,7 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 	if (mode === "READ") {
 		return (
 			<ReadOnlyField variant={variant} context={context}>
-				{value ? renderer(value) : ""}
+				{item ? renderer(item) : ""}
 			</ReadOnlyField>
 		)
 	} else {
@@ -146,15 +152,19 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 				itemRenderer={renderer}
 				variant={"uesio/io.customselectfield:uesio/io.default"}
 				context={context}
-				selectedItems={value ? [value] : []}
+				selectedItems={item ? [item] : []}
 				isSelected={() => false}
 				onSearch={onSearch}
 				placeholder={placeholder}
 				onSelect={(item: wire.PlainWireRecord) => {
-					record.update(fieldId, item, context)
+					record?.update(fieldId, item, context)
+					setItem(item)
+					setValue?.(item["uesio/core.id"] as string)
 				}}
 				onUnSelect={() => {
-					record.update(fieldId, null, context)
+					record?.update(fieldId, null, context)
+					setItem(null)
+					setValue?.(null)
 				}}
 				getItemKey={(item: wire.PlainWireRecord) =>
 					item[collection.ID_FIELD] as string

@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"gopkg.in/yaml.v3"
 
@@ -100,17 +101,24 @@ func addVariantDep(deps *PreloadMetadata, key string, session *sess.Session) err
 
 }
 
-func addComponentPackToDeps(deps *PreloadMetadata, packNamespace, packName string, componentModstamp int64) {
+func addComponentPackToDeps(deps *PreloadMetadata, packNamespace, packName string, session *sess.Session) {
 	pack := meta.NewBaseComponentPack(packNamespace, packName)
-	pack.UpdatedAt = componentModstamp
-	existingItem, exists := deps.ComponentPack.AddItemIfNotExists(pack)
-	// If the item already exists, reuse it, but we may need to increase its UpdatedAt metadata
-	if exists {
-		if existingPack, ok := existingItem.(*meta.ComponentPack); ok && existingPack.UpdatedAt < componentModstamp {
-			existingPack.UpdatedAt = componentModstamp
+	existingItem, alreadyRequested := deps.ComponentPack.AddItemIfNotExists(pack)
+	// If the pack has not been requested yet and/or we don't have its UpdatedAt field present,
+	// we need to load it so that we have that metadata available.
+	if alreadyRequested {
+		if existingPack, ok := existingItem.(*meta.ComponentPack); ok {
+			pack = existingPack
 		}
-	} else {
-		// Otherwise, just go ahead and add the pack anyway
+	}
+	if pack.UpdatedAt == 0 {
+		err := bundle.Load(pack, session, nil)
+		if err != nil || pack.UpdatedAt == 0 {
+			pack.UpdatedAt = time.Now().Unix()
+		}
+	}
+	// If the pack wasn't requested before, we need to go ahead and request it
+	if !alreadyRequested {
 		deps.ComponentPack.AddItem(pack)
 	}
 }
@@ -133,7 +141,7 @@ func getDepsForUtilityComponent(key string, deps *PreloadMetadata, session *sess
 		return nil
 	}
 
-	addComponentPackToDeps(deps, namespace, utility.Pack, utility.UpdatedAt)
+	addComponentPackToDeps(deps, namespace, utility.Pack, session)
 
 	return nil
 
@@ -145,7 +153,7 @@ func getDepsForComponent(component *meta.Component, deps *PreloadMetadata, sessi
 		return nil
 	}
 
-	addComponentPackToDeps(deps, component.Namespace, component.Pack, component.UpdatedAt)
+	addComponentPackToDeps(deps, component.Namespace, component.Pack, session)
 
 	// need an admin session for retrieving config values
 	// in order to prevent users from having to have read on the uesio/core.configvalue table
@@ -474,7 +482,7 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 	if workspace != nil {
 		builderComponentID := getBuilderComponentID(route.ViewRef)
 		deps.Component.AddItem(fmt.Sprintf("%s:buildmode", builderComponentID), false)
-		deps.ComponentPack.AddItem(meta.NewBaseComponentPack(DEFAULT_BUILDER_PACK_NAMESPACE, DEFAULT_BUILDER_PACK_NAME))
+		addComponentPackToDeps(deps, DEFAULT_BUILDER_PACK_NAMESPACE, DEFAULT_BUILDER_PACK_NAME, session)
 	}
 
 	return deps, nil

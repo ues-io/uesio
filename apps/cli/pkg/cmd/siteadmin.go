@@ -9,18 +9,19 @@ import (
 
 func init() {
 
-	workCommand := &cobra.Command{
+	siteAdminCommand := &cobra.Command{
 		Use:   "siteadmin",
-		Short: "uesio siteadmin",
-		Run:   siteadmin,
+		Short: "Set the name of the context site",
+		Long:  "Updates your local configuration to set name of the context site",
+		Run:   siteAdminCmd,
 	}
-	workCommand.Flags().StringVarP(&name, "name", "n", "", "Name of the site to be set")
+	siteAdminCommand.Flags().StringVarP(&name, "name", "n", "", "Name of the site to be set")
 
-	rootCmd.AddCommand(workCommand)
+	rootCmd.AddCommand(siteAdminCommand)
 
 }
 
-func siteadmin(cmd *cobra.Command, args []string) {
+func siteAdminCmd(cmd *cobra.Command, args []string) {
 	err := command.SiteAdmin(name)
 	if err != nil {
 		fmt.Println("Error: " + err.Error())
