@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 
@@ -33,11 +34,27 @@ func init() {
 	indexPath := filepath.Join(baseDir, "platform", "index.gohtml")
 	cssPath := filepath.Join(baseDir, "..", "..", "dist", "vendor", "fonts", "fonts.css")
 	indexTemplate = template.Must(template.New("index.gohtml").Funcs(template.FuncMap{
-		"getPackURL": getPackUrl,
+		"getComponentPackURLs": getComponentPackURLs,
 	}).ParseFiles(indexPath, cssPath))
 }
 
-func getPackUrl(key string, workspace *routing.WorkspaceMergeData, site *routing.SiteMergeData) string {
+func getComponentPackURLs(componentPackDeps *routing.MetadataMergeData, workspace *routing.WorkspaceMergeData, site *routing.SiteMergeData) []string {
+	allDeps := componentPackDeps.GetItems()
+	packUrls := make([]string, len(allDeps))
+	for i, packDep := range allDeps {
+		key := packDep.GetKey()
+		var packModstamp int64
+		if pack, ok := packDep.(*meta.ComponentPack); ok {
+			packModstamp = pack.UpdatedAt
+		} else {
+			packModstamp = time.Now().Unix()
+		}
+		packUrls[i] = getPackUrl(key, packModstamp, workspace, site)
+	}
+	return packUrls
+}
+
+func getPackUrl(key string, packModstamp int64, workspace *routing.WorkspaceMergeData, site *routing.SiteMergeData) string {
 	namespace, name, err := meta.ParseKey(key)
 	if err != nil {
 		return ""
@@ -50,7 +67,9 @@ func getPackUrl(key string, workspace *routing.WorkspaceMergeData, site *routing
 	filePath := "runtime.js"
 
 	if workspace != nil {
-		return fmt.Sprintf("/workspace/%s/%s/componentpacks/%s/%s/%s/%s", workspace.App, workspace.Name, user, namepart, name, filePath)
+		// If we are in a workspace context, use component pack modstamps to load in their resources,
+		// since we don't have a stable "site" version that we can safely use, as the bundle dependency list is not immutable.
+		return fmt.Sprintf("/workspace/%s/%s/componentpacks/%s/%s/%d/%s/%s", workspace.App, workspace.Name, user, namepart, packModstamp, name, filePath)
 	}
 
 	siteBundleVersion := "/" + site.Version

@@ -3,6 +3,7 @@ package systemdialect
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/teris-io/shortid"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -11,6 +12,41 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
+
+func extractConditions(conditions []adapt.LoadRequestCondition) (*adapt.LoadRequestCondition, *adapt.LoadRequestCondition, *adapt.LoadRequestCondition, *adapt.LoadRequestCondition, error) {
+
+	// Verify that a type condition was provided
+	var typeCondition *adapt.LoadRequestCondition
+	var itemCondition *adapt.LoadRequestCondition
+	var groupingCondition *adapt.LoadRequestCondition
+	var searchCondition *adapt.LoadRequestCondition
+
+	for i, condition := range conditions {
+		if condition.Field == "uesio/studio.type" {
+			typeCondition = &conditions[i]
+			continue
+		}
+		if condition.Field == "uesio/studio.item" {
+			itemCondition = &conditions[i]
+			continue
+		}
+		if condition.Field == "uesio/studio.grouping" {
+			groupingCondition = &conditions[i]
+			continue
+		}
+		if condition.Type == "SEARCH" {
+			searchCondition = &conditions[i]
+			continue
+		}
+	}
+	if typeCondition == nil {
+		return nil, nil, nil, nil, errors.New("No type condition provided")
+	}
+	if itemCondition != nil && groupingCondition != nil {
+		return nil, nil, nil, nil, errors.New("Can't have both an item and grouping condition")
+	}
+	return typeCondition, itemCondition, groupingCondition, searchCondition, nil
+}
 
 func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
 
@@ -29,13 +65,14 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		return errors.New("must provide at least one condition")
 	}
 
-	typeCondition, remainingConditions := op.Conditions[0], op.Conditions[1:]
-
-	if typeCondition.Field != "uesio/studio.type" {
-		return errors.New("the first condition must be on the type field")
+	typeCondition, itemCondition, groupingCondition, searchCondition, err := extractConditions(op.Conditions)
+	if err != nil {
+		return err
 	}
 
-	group, err := meta.GetBundleableGroupFromType(typeCondition.Value.(string))
+	metadataType := typeCondition.Value.(string)
+
+	group, err := meta.GetBundleableGroupFromType(metadataType)
 	if err != nil {
 		return errors.New("invalid metadata type provided for type condition")
 	}
@@ -59,19 +96,13 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		}
 	}
 
-	remainingConditions = append(remainingConditions, adapt.LoadRequestCondition{
-		Field: "uesio/studio.workspace",
-		Value: inContextSession.GetWorkspaceID(),
-	})
-
 	metadata, err := datasource.Load([]*adapt.LoadOp{{
 		CollectionName: group.GetName(),
 		WireName:       op.WireName,
 		View:           op.View,
 		Collection:     op.Collection,
-		Conditions:     remainingConditions,
 		Fields:         datasource.GetLoadRequestFields(group.GetFields()),
-		Query:          true,
+		Query:          false,
 	}}, session, &datasource.LoadOptions{
 		Metadata: connection.GetMetadata(),
 	})
@@ -89,8 +120,9 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		return err
 	}
 
-	meta.Copy(dynamicCollectionMetadata, originalCollectionMetadata)
-	dynamicCollectionMetadata.Name = "allmetadata"
+	for _, field := range originalCollectionMetadata.Fields {
+		dynamicCollectionMetadata.SetField(field)
+	}
 
 	dynamicCollectionMetadata.SetField(&adapt.FieldMetadata{
 		Name:       "namespace",
@@ -122,53 +154,63 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		Label:      "App Color",
 	})
 
-	installedNamespaces := inContextSession.GetContextInstalledNamespaces()
-	if workspace == "" {
-		installedNamespaces = append(installedNamespaces, app)
-	}
-
-	err = bundle.LoadAllFromNamespaces(installedNamespaces, group, nil, inContextSession, nil)
-	if err != nil {
-		return err
-	}
-
-	// Get the metadata list
 	namespaces := inContextSession.GetContextNamespaces()
-	appNames := []string{}
-	appNames = append(appNames, namespaces...)
 
-	appData, err := datasource.GetAppData(appNames)
-	if err != nil {
-		return err
-	}
-
-	err = op.Collection.Loop(func(item meta.Item, index string) error {
-		appInfo, ok := appData[app]
-		if !ok {
-			return errors.New("invalid namespace: could not get app data")
+	if itemCondition != nil {
+		itemKey := itemCondition.Value.(string)
+		item, err := group.GetItemFromKey(itemKey)
+		if err != nil {
+			return err
+		}
+		group.AddItem(item)
+		err = bundle.Load(item, inContextSession, connection)
+		if err != nil {
+			return err
+		}
+	} else {
+		var conditions meta.BundleConditions
+		if groupingCondition != nil {
+			grouping := groupingCondition.Value.(string)
+			conditions, err = meta.GetGroupingConditions(metadataType, grouping)
+			if err != nil {
+				return err
+			}
 		}
 
-		item.SetField("uesio/studio.namespace", app)
-		item.SetField("uesio/studio.appicon", appInfo.Icon)
-		item.SetField("uesio/studio.appcolor", appInfo.Color)
-		return nil
-	})
+		err = bundle.LoadAllFromNamespaces(namespaces, group, conditions, inContextSession, nil)
+		if err != nil {
+			return err
+		}
+	}
+
+	appData, err := datasource.GetAppData(namespaces)
 	if err != nil {
 		return err
 	}
 
 	return group.Loop(func(item meta.Item, index string) error {
-		opItem := op.Collection.NewItem()
-		op.Collection.AddItem(opItem)
-		fakeID, _ := shortid.Generate()
 
 		groupableItem := item.(meta.BundleableItem)
 		namespace := groupableItem.GetNamespace()
+		key := groupableItem.GetKey()
+
+		if searchCondition != nil {
+			searchValue := searchCondition.Value.(string)
+			if searchValue != "" {
+				if !strings.Contains(key, searchValue) {
+					return nil
+				}
+			}
+		}
+
+		opItem := op.Collection.NewItem()
+		op.Collection.AddItem(opItem)
 
 		appInfo, ok := appData[namespace]
 		if !ok {
 			return errors.New("invalid namespace: could not get app data")
 		}
+
 		opItem.SetField("uesio/studio.namespace", namespace)
 		opItem.SetField("uesio/studio.appicon", appInfo.Icon)
 		opItem.SetField("uesio/studio.appcolor", appInfo.Color)
@@ -182,8 +224,16 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 				return err
 			}
 		}
-		opItem.SetField("uesio/core.id", fakeID)
-		opItem.SetField("uesio/core.uniquekey", groupableItem.GetKey())
+		realID, err := item.GetField("uesio/core.id")
+		if err != nil {
+			return err
+		}
+		if realID == "" {
+			fakeID, _ := shortid.Generate()
+			opItem.SetField("uesio/core.id", fakeID)
+		}
+
+		opItem.SetField("uesio/core.uniquekey", key)
 		return nil
 	})
 

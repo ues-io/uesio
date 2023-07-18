@@ -4,5 +4,4 @@ label: Content Area
 definition:
   uesio.styleTokens:
     root:
-      - p-10
-      - bg-zinc-50
+      - p-5

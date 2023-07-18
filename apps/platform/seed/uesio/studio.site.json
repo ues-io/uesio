@@ -12,16 +12,6 @@
 	{
 		"uesio/studio.name": "prod",
 		"uesio/studio.bundle": {
-			"uesio/core.uniquekey": "uesio/docs:0:0:1"
-		},
-		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/docs"
-		},
-		"uesio/studio.title": "Uesio Docs"
-	},
-	{
-		"uesio/studio.name": "prod",
-		"uesio/studio.bundle": {
 			"uesio/core.uniquekey": "uesio/web:0:0:1"
 		},
 		"uesio/studio.app": {

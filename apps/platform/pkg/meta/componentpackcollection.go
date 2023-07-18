@@ -38,6 +38,10 @@ func (cpc *ComponentPackCollection) GetItemFromPath(path, namespace string) Bund
 	return NewBaseComponentPack(namespace, name)
 }
 
+func (cpc *ComponentPackCollection) GetItemFromKey(key string) (BundleableItem, error) {
+	return NewComponentPack(key)
+}
+
 func (cpc *ComponentPackCollection) IsDefinitionPath(path string) bool {
 	parts := strings.Split(path, string(os.PathSeparator))
 	return len(parts) == 2 && parts[1] == "pack.yaml"

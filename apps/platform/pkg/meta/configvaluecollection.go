@@ -35,6 +35,10 @@ func (cvc *ConfigValueCollection) GetItemFromPath(path, namespace string) Bundle
 	return NewBaseConfigValue(namespace, StandardNameFromPath(path))
 }
 
+func (cvc *ConfigValueCollection) GetItemFromKey(key string) (BundleableItem, error) {
+	return NewConfigValue(key)
+}
+
 func (cvc *ConfigValueCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }

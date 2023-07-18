@@ -30,7 +30,7 @@ func GetHomeRoute(session *sess.Session) (*meta.Route, error) {
 }
 
 func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *sess.Session) (*meta.Route, error) {
-	route := &meta.Route{}
+	route := meta.NewBaseRoute("", "")
 	var routes meta.RouteCollection
 
 	if path == "" {

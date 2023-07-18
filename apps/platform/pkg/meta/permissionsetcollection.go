@@ -35,6 +35,10 @@ func (pc *PermissionSetCollection) GetItemFromPath(path, namespace string) Bundl
 	return NewBasePermissionSet(namespace, StandardNameFromPath(path))
 }
 
+func (pc *PermissionSetCollection) GetItemFromKey(key string) (BundleableItem, error) {
+	return NewPermissionSet(key)
+}
+
 func (pc *PermissionSetCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }

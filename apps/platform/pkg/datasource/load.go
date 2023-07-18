@@ -120,6 +120,10 @@ func processConditions(
 
 		if condition.ValueSource == "LOOKUP" && condition.LookupWire != "" && condition.LookupField != "" {
 
+			// If we weren't provided ops to lookup, just don't process Lookups
+			if ops == nil {
+				continue
+			}
 			// Look through the previous wires to find the one to look up on.
 			var lookupOp *adapt.LoadOp
 			for _, lop := range ops {
@@ -361,17 +365,14 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 
 	}
 
-	err = GenerateUserAccessTokens(metadataResponse, &LoadOptions{
-		Metadata:   metadataResponse,
-		Connection: options.Connection,
-	}, session)
+	// 3. Get metadata for each datasource and collection
+
+	connection, err := GetConnection(meta.PLATFORM_DATA_SOURCE, metadataResponse, session, options.Connection)
 	if err != nil {
 		return nil, err
 	}
 
-	// 3. Get metadata for each datasource and collection
-
-	connection, err := GetConnection(meta.PLATFORM_DATA_SOURCE, metadataResponse, session, options.Connection)
+	err = GenerateUserAccessTokens(connection, session)
 	if err != nil {
 		return nil, err
 	}

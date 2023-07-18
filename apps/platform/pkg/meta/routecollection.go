@@ -23,7 +23,7 @@ func (rc *RouteCollection) GetFields() []string {
 }
 
 func (rc *RouteCollection) NewItem() Item {
-	return &Route{}
+	return NewBaseRoute("", "")
 }
 
 func (rc *RouteCollection) AddItem(item Item) error {
@@ -33,6 +33,10 @@ func (rc *RouteCollection) AddItem(item Item) error {
 
 func (rc *RouteCollection) GetItemFromPath(path, namespace string) BundleableItem {
 	return NewBaseRoute(namespace, StandardNameFromPath(path))
+}
+
+func (rc *RouteCollection) GetItemFromKey(key string) (BundleableItem, error) {
+	return NewRoute(key)
 }
 
 func (rc *RouteCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {

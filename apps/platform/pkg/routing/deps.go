@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"gopkg.in/yaml.v3"
 
@@ -100,6 +101,28 @@ func addVariantDep(deps *PreloadMetadata, key string, session *sess.Session) err
 
 }
 
+func addComponentPackToDeps(deps *PreloadMetadata, packNamespace, packName string, session *sess.Session) {
+	pack := meta.NewBaseComponentPack(packNamespace, packName)
+	existingItem, alreadyRequested := deps.ComponentPack.AddItemIfNotExists(pack)
+	// If the pack has not been requested yet and/or we don't have its UpdatedAt field present,
+	// we need to load it so that we have that metadata available.
+	if alreadyRequested {
+		if existingPack, ok := existingItem.(*meta.ComponentPack); ok {
+			pack = existingPack
+		}
+	}
+	if pack.UpdatedAt == 0 {
+		err := bundle.Load(pack, session, nil)
+		if err != nil || pack.UpdatedAt == 0 {
+			pack.UpdatedAt = time.Now().Unix()
+		}
+	}
+	// If the pack wasn't requested before, we need to go ahead and request it
+	if !alreadyRequested {
+		deps.ComponentPack.AddItem(pack)
+	}
+}
+
 func getDepsForUtilityComponent(key string, deps *PreloadMetadata, session *sess.Session) error {
 
 	namespace, name, err := meta.ParseKey(key)
@@ -118,9 +141,8 @@ func getDepsForUtilityComponent(key string, deps *PreloadMetadata, session *sess
 		return nil
 	}
 
-	pack := meta.NewBaseComponentPack(namespace, utility.Pack)
+	addComponentPackToDeps(deps, namespace, utility.Pack, session)
 
-	deps.ComponentPack.AddItem(pack)
 	return nil
 
 }
@@ -130,9 +152,8 @@ func getDepsForComponent(component *meta.Component, deps *PreloadMetadata, sessi
 	if component.Pack == "" {
 		return nil
 	}
-	pack := meta.NewBaseComponentPack(component.Namespace, component.Pack)
 
-	deps.ComponentPack.AddItem(pack)
+	addComponentPackToDeps(deps, component.Namespace, component.Pack, session)
 
 	// need an admin session for retrieving config values
 	// in order to prevent users from having to have read on the uesio/core.configvalue table
@@ -461,7 +482,7 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 	if workspace != nil {
 		builderComponentID := getBuilderComponentID(route.ViewRef)
 		deps.Component.AddItem(fmt.Sprintf("%s:buildmode", builderComponentID), false)
-		deps.ComponentPack.AddItem(meta.NewBaseComponentPack(DEFAULT_BUILDER_PACK_NAMESPACE, DEFAULT_BUILDER_PACK_NAME))
+		addComponentPackToDeps(deps, DEFAULT_BUILDER_PACK_NAMESPACE, DEFAULT_BUILDER_PACK_NAME, session)
 	}
 
 	return deps, nil
