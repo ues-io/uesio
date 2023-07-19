@@ -122,6 +122,7 @@ definition:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.main
                           title: Collection - ${uesio/studio.plurallabel}
+                          subtitle: $Param{namespace}
                           actions:
                             - uesio/io.group:
                                 components:

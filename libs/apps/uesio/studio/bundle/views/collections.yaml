@@ -102,6 +102,7 @@ definition:
                                 - uesio/studio.iconlabel:
                                     uesio.variant: uesio/studio.namespacefield
                                     text: ${uesio/studio.name}
+                                    subtitle: ${uesio/studio.namespace}
                                     icon: ${uesio/studio.appicon}
                                     color: ${uesio/studio.appcolor}
                             - field: uesio/studio.label
