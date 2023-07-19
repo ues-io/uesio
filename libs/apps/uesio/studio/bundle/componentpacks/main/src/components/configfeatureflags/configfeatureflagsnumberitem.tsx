@@ -33,6 +33,7 @@ const ConfigFeatureFlagsNumberItem: FunctionComponent<Props> = (props) => {
 					context={context}
 					value={state}
 					options={options}
+					applyChanges="onBlur"
 					setValue={(value: number) => {
 						setState(value)
 						handleSet(title, value)
