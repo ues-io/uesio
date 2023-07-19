@@ -9,32 +9,30 @@ import (
 
 func runUsageLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
 
-	metadata, err := datasource.Load([]*adapt.LoadOp{{
-		CollectionName: "uesio/studio.usage",
-		WireName:       op.WireName,
-		View:           op.View,
-		Collection:     op.Collection,
-		Conditions: append(op.Conditions, adapt.LoadRequestCondition{
-			Field:    "uesio/studio.site",
-			Value:    session.GetContextSite().ID,
-			Operator: "EQ",
-		}),
-		Fields: []adapt.LoadRequestField{
-			{ID: "uesio/studio.actiontype"},
-			{ID: "uesio/studio.app"},
-			{ID: "uesio/studio.day"},
-			{ID: "uesio/studio.metadataname"},
-			{ID: "uesio/studio.metadatatype"},
-			{ID: "uesio/studio.site"},
-			{ID: "uesio/studio.total"},
-			{ID: "uesio/studio.user"},
-		},
-		Params: op.Params,
-		Query:  true,
-	}}, sess.GetStudioAnonSession(), &datasource.LoadOptions{})
+	op.CollectionName = "uesio/studio.usage"
+	op.Conditions = append(op.Conditions, adapt.LoadRequestCondition{
+		Field:    "uesio/studio.site",
+		Value:    session.GetContextSite().ID,
+		Operator: "EQ",
+	})
+	op.Fields = []adapt.LoadRequestField{
+		{ID: "uesio/studio.actiontype"},
+		{ID: "uesio/studio.app"},
+		{ID: "uesio/studio.day"},
+		{ID: "uesio/studio.metadataname"},
+		{ID: "uesio/studio.metadatatype"},
+		{ID: "uesio/studio.site"},
+		{ID: "uesio/studio.total"},
+		{ID: "uesio/studio.user"},
+	}
+
+	metadata, err := datasource.Load([]*adapt.LoadOp{op}, sess.GetStudioAnonSession(), &datasource.LoadOptions{})
 	if err != nil {
 		return err
 	}
+
+	// Now change the collection name back
+	op.CollectionName = "uesio/core.usage"
 
 	originalCollectionMetadata, err := metadata.GetCollection("uesio/studio.usage")
 	if err != nil {
