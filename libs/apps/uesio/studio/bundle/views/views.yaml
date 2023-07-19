@@ -88,7 +88,7 @@ definition:
                                 generator: uesio/core.detailview
                             - uesio/io.button:
                                 text: Create a New View
-                                uesio.variant: uesio/io.secondary
+                                uesio.variant: uesio/io.primary
                                 hotkey: "n"
                                 uesio.id: new-view
                                 signals:

@@ -74,7 +74,7 @@ definition:
                           components:
                             - uesio/io.button:
                                 text: Create a New Theme
-                                uesio.variant: uesio/io.secondary
+                                uesio.variant: uesio/io.primary
                                 signals:
                                   - signal: panel/TOGGLE
                                     panel: newTheme
