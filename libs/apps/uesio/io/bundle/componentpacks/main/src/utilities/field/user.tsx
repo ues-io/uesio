@@ -17,7 +17,7 @@ interface UserFieldProps extends definition.UtilityProps {
 	record?: wire.WireRecord
 	options?: UserFieldOptions
 	refoptions?: ReferenceFieldOptions
-	setValue?: (value: wire.PlainFieldValue) => void
+	setValue?: (value: wire.PlainWireRecord | null) => void
 }
 
 const UserField: FunctionComponent<UserFieldProps> = (props) => {
