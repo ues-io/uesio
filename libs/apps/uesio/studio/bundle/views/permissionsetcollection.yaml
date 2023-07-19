@@ -44,8 +44,10 @@ definition:
                       itemType: permissionsets
                       itemIcon: rule
                       itemName: $Param{permissionsetname}
-                      subItemType: collections
-                      subItemName: $Param{collectionid}
+                      itemNameSpace: $Param{namespace}
+                      subItemType: collection
+                      subItemName: $Param{collectionname}
+                      subItemNameSpace: $Param{collectionNamespace}
           - uesio/io.griditem:
               uesio.variant: uesio/studio.leftbar
               components:
