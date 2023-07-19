@@ -10,7 +10,7 @@ import (
 )
 
 func CreateNewApp(user, name, color, icon string) (*App, error) {
-	response, err := Save("uesio/studio.app", []map[string]interface{}{
+	response, err := Insert("uesio/studio.app", []map[string]interface{}{
 		{
 			"uesio/studio.name": name,
 			"uesio/studio.user": map[string]interface{}{

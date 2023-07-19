@@ -16,19 +16,12 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     profiles:
-      collection: uesio/studio.profile
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.permissionsetsrefs:
+      collection: uesio/studio.allmetadata
       conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
-        - field: uesio/studio.name
-          valueSource: PARAM
-          param: profilename
+        - field: uesio/studio.type
+          value: profiles
+        - field: uesio/studio.item
+          value: $Param{namespace}.$Param{profilename}
     permissionsets:
       collection: uesio/studio.permissionset
       fields:
@@ -104,13 +97,13 @@ definition:
                                       uesio.display:
                                         - field: uesio/studio.publicprofile
                                           wire: workspaces
-                                          value: $Param{app}.${uesio/studio.name}
+                                          value: $Param{namespace}.${uesio/studio.name}
                                           operator: NOT_EQUALS
                                       signals:
                                         - signal: wire/UPDATE_RECORD
                                           wire: workspaces
                                           field: uesio/studio.publicprofile
-                                          value: $Param{app}.${uesio/studio.name}
+                                          value: $Param{namespace}.${uesio/studio.name}
                                         - signal: wire/SAVE
                                           wires:
                                             - workspaces
@@ -120,7 +113,7 @@ definition:
                                       uesio.display:
                                         - field: uesio/studio.publicprofile
                                           wire: workspaces
-                                          value: $Param{app}.${uesio/studio.name}
+                                          value: $Param{namespace}.${uesio/studio.name}
                                           operator: EQUALS
                                       signals:
                                         - signal: wire/UPDATE_RECORD
@@ -136,7 +129,7 @@ definition:
                                       uesio.display:
                                         - field: uesio/studio.publicprofile
                                           wire: workspaces
-                                          value: $Param{app}.${uesio/studio.name}
+                                          value: $Param{namespace}.${uesio/studio.name}
                                           operator: NOT_EQUALS
                                       signals:
                                         - signal: panel/TOGGLE
@@ -147,6 +140,12 @@ definition:
                             - uesio/io.box:
                                 components:
                                   - uesio/builder.multimetadatafield:
+                                      uesio.display:
+                                        - type: paramValue
+                                          param: app
+                                          field: uesio/core.dynamiccollection
+                                          operator: EQUALS
+                                          value: $Param{namespace}
                                       fieldId: uesio/studio.permissionsetsrefs
                                       metadataType: PERMISSIONSET
                                       label: Permission Sets assigned to this Profile
@@ -154,6 +153,21 @@ definition:
                                         workspace:
                                           name: $Param{workspacename}
                                           app: $Param{app}
+                                  - uesio/builder.multimetadatafield:
+                                      uesio.display:
+                                        - type: paramValue
+                                          param: app
+                                          field: uesio/core.dynamiccollection
+                                          operator: NOT_EQUALS
+                                          value: $Param{namespace}
+                                      fieldId: uesio/studio.permissionsetsrefs
+                                      metadataType: PERMISSIONSET
+                                      label: Permission Sets assigned to this Profile
+                                      uesio.context:
+                                        workspace:
+                                          name: $Param{workspacename}
+                                          app: $Param{app}
+                                        fieldMode: READ
   panels:
     deleteProfile:
       uesio.type: uesio/io.dialog

@@ -15,19 +15,12 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     files:
-      collection: uesio/studio.file
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.path:
+      collection: uesio/studio.allmetadata
       conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
-        - field: uesio/studio.name
-          valueSource: PARAM
-          param: filename
+        - field: uesio/studio.type
+          value: files
+        - field: uesio/studio.item
+          value: $Param{namespace}.$Param{filename}
     attachments:
       collection: uesio/core.userfile
       fields:
@@ -90,6 +83,7 @@ definition:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.main
                           title: File - ${uesio/studio.name}
+                          subtitle: $Param{namespace}
                           actions:
                             - uesio/io.group:
                                 components:
@@ -99,6 +93,11 @@ definition:
                                       uesio.display:
                                         - type: fieldMode
                                           mode: READ
+                                        - type: paramValue
+                                          param: app
+                                          field: uesio/core.dynamiccollection
+                                          operator: EQUALS
+                                          value: $Param{namespace}
                                       signals:
                                         - signal: component/CALL
                                           component: uesio/io.list
@@ -140,6 +139,12 @@ definition:
                                       signals:
                                         - signal: panel/TOGGLE
                                           panel: deleteFile
+                                      uesio.display:
+                                        - type: paramValue
+                                          param: app
+                                          field: uesio/core.dynamiccollection
+                                          operator: EQUALS
+                                          value: $Param{namespace}
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           components:
@@ -153,6 +158,12 @@ definition:
                             - uesio/io.list:
                                 id: Attachments
                                 wire: attachments
+                                uesio.display:
+                                  - type: paramValue
+                                    param: app
+                                    field: uesio/core.dynamiccollection
+                                    operator: EQUALS
+                                    value: $Param{namespace}
                                 components:
                                   - uesio/io.fileattachment:
                                       displayAs: PREVIEW
@@ -169,6 +180,15 @@ definition:
                                             - workspaces
                                             - files
                                             - attachments
+                            - uesio/io.image:
+                                loading: lazy
+                                file: "$Param{namespace}.${uesio/studio.name}"
+                                uesio.display:
+                                  - type: paramValue
+                                    param: app
+                                    field: uesio/core.dynamiccollection
+                                    operator: NOT_EQUALS
+                                    value: $Param{namespace}
   panels:
     deleteFile:
       uesio.type: uesio/io.dialog
