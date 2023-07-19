@@ -56,6 +56,7 @@ definition:
                       itemNameSpace: $Param{namespace}
                       subItemType: fields
                       subItemName: $Param{fieldname}
+                      subItemNameSpace: $Param{fieldNamespace}
           - uesio/io.griditem:
               uesio.variant: uesio/studio.leftbar
               components:

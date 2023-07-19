@@ -215,7 +215,7 @@ definition:
                               param: subItemType
                           signals:
                             - signal: route/NAVIGATE
-                              path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/$Param{itemType}/$Param{itemNameSpace}/$Param{itemName}/$Param{subItemType}/$Param{itemNameSpace}/$Param{subItemName}
+                              path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/$Param{itemType}/$Param{itemNameSpace}/$Param{itemName}/$Param{subItemType}/$Param{subItemNameSpace}/$Param{subItemName}
                           uesio.variant: uesio/io.tag
                           content:
                             - uesio/io.text:
