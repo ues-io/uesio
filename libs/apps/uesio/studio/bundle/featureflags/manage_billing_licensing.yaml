@@ -1,2 +1,4 @@
 name: manage_billing_licensing
 label: Manage Billing & Licensing
+type: CHECKBOX
+defaultValue: false
