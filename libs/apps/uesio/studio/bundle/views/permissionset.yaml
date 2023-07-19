@@ -15,75 +15,32 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     permissionsets:
-      collection: uesio/studio.permissionset
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.workspace:
-        uesio/studio.allowallfiles:
-        uesio/studio.allowallroutes:
-        uesio/studio.allowallviews:
-        uesio/studio.allowallcollections:
-        uesio/studio.filerefs:
-        uesio/studio.namedrefs:
-        uesio/studio.routerefs:
-        uesio/studio.viewrefs:
-        uesio/studio.collectionrefs:
-        uesio/studio.viewallrecords:
-        uesio/studio.modifyallrecords:
+      collection: uesio/studio.allmetadata
       conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
-        - field: uesio/studio.name
-          valueSource: PARAM
-          param: permissionsetname
+        - field: uesio/studio.type
+          value: permissionsets
+        - field: uesio/studio.item
+          value: $Param{namespace}.$Param{permissionsetname}
     routes:
-      collection: uesio/studio.route
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.path:
-        uesio/studio.view:
-        uesio/studio.theme:
+      collection: uesio/studio.allmetadata
       conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
+        - field: uesio/studio.type
+          value: routes
     collections:
-      collection: uesio/studio.collection
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
+      collection: uesio/studio.allmetadata
       conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
+        - field: uesio/studio.type
+          value: collections
     views:
-      collection: uesio/studio.view
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.definition:
-        uesio/studio.workspace:
+      collection: uesio/studio.allmetadata
       conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
+        - field: uesio/studio.type
+          value: views
     files:
-      collection: uesio/studio.file
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
+      collection: uesio/studio.allmetadata
       conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
+        - field: uesio/studio.type
+          value: files
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -146,6 +103,8 @@ definition:
                                       uesio.display:
                                         - type: fieldMode
                                           mode: EDIT
+                                        - type: wireHasChanges
+                                          wire: permissionsets
                                       signals:
                                         - signal: wire/SAVE
                                           wires:
@@ -273,7 +232,7 @@ definition:
                                       rowactions:
                                         - text: Details
                                           signals:
-                                            - path: app/$Param{app}/workspace/$Param{workspacename}/permissionsets/$Param{permissionsetname}/collection/${uesio/core.id}
+                                            - path: app/$Param{app}/workspace/$Param{workspacename}/permissionsets/$Param{namespace}/$Param{permissionsetname}/collection/${uesio/core.id}
                                               signal: route/NAVIGATE
                                       permissionFields:
                                         - name: read

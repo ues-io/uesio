@@ -15,46 +15,20 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     permissionsets:
-      collection: uesio/studio.permissionset
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.workspace:
-        uesio/studio.allowallfiles:
-        uesio/studio.allowallroutes:
-        uesio/studio.allowallviews:
-        uesio/studio.allowallcollections:
-        uesio/studio.filerefs:
-        uesio/studio.namedrefs:
-        uesio/studio.routerefs:
-        uesio/studio.viewrefs:
-        uesio/studio.collectionrefs:
-        uesio/studio.viewallrecords:
-        uesio/studio.modifyallrecords:
+      collection: uesio/studio.allmetadata
       conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
-        - field: uesio/studio.name
-          valueSource: PARAM
-          param: permissionsetname
+        - field: uesio/studio.type
+          value: permissionsets
+        - field: uesio/studio.item
+          value: $Param{namespace}.$Param{permissionsetname}
     fields:
-      collection: uesio/studio.field
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.collection:
+      collection: uesio/studio.allmetadata
       conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
+        - field: uesio/studio.type
+          value: fields
         - field: uesio/studio.collection
           valueSource: PARAM
           param: collectionid
-      order:
-        - field: uesio/studio.name
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
