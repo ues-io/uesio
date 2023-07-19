@@ -88,7 +88,7 @@ definition:
                                 generator: uesio/core.detailview
                             - uesio/io.button:
                                 text: Create a New View
-                                uesio.variant: uesio/io.secondary
+                                uesio.variant: uesio/io.primary
                                 hotkey: "n"
                                 uesio.id: new-view
                                 signals:
@@ -109,6 +109,7 @@ definition:
                                 - uesio/studio.iconlabel:
                                     uesio.variant: uesio/studio.namespacefield
                                     text: ${uesio/studio.name}
+                                    subtitle: ${uesio/studio.namespace}
                                     icon: ${uesio/studio.appicon}
                                     color: ${uesio/studio.appcolor}
                             - field: uesio/core.updatedby

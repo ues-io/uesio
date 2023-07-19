@@ -58,6 +58,7 @@ definition:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.main
                           title: Route - ${uesio/studio.path}
+                          subtitle: $Param{namespace}
                           actions:
                             - uesio/io.group:
                                 components:
