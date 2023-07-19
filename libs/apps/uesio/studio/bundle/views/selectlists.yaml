@@ -74,7 +74,7 @@ definition:
                             - uesio/io.button:
                                 text: Create a New Select List
                                 hotkey: "n"
-                                uesio.variant: uesio/io.secondary
+                                uesio.variant: uesio/io.primary
                                 signals:
                                   - signal: panel/TOGGLE
                                     panel: newSelectlist
