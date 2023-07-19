@@ -29,7 +29,7 @@ interface ReferenceFieldProps {
 	record?: wire.WireRecord
 	options?: ReferenceFieldOptions
 	placeholder?: string
-	setValue?: (value: wire.PlainFieldValue) => void
+	setValue?: (value: wire.PlainWireRecord | null) => void
 }
 
 const isValueCondition = wire.isValueCondition
@@ -158,13 +158,13 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 				placeholder={placeholder}
 				onSelect={(item: wire.PlainWireRecord) => {
 					record?.update(fieldId, item, context)
+					setValue?.(item)
 					setItem(item)
-					setValue?.(item["uesio/core.id"] as string)
 				}}
 				onUnSelect={() => {
 					record?.update(fieldId, null, context)
-					setItem(null)
 					setValue?.(null)
+					setItem(null)
 				}}
 				getItemKey={(item: wire.PlainWireRecord) =>
 					item[collection.ID_FIELD] as string

@@ -22,7 +22,7 @@ const ReferenceFilter: FunctionComponent<ReferenceFilterProps> = (props) => {
 			context={context}
 			variant={"uesio/io.filter"}
 			options={options}
-			setValue={(value: string) => {
+			setValue={(value: wire.PlainWireRecord) => {
 				api.signal.runMany(
 					[
 						{
@@ -30,7 +30,9 @@ const ReferenceFilter: FunctionComponent<ReferenceFilterProps> = (props) => {
 							wire: wireId,
 							condition: {
 								...condition,
-								value,
+								value: value
+									? value[collection.ID_FIELD]
+									: null,
 								inactive: value === null,
 							},
 						},
