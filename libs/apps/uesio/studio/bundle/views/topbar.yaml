@@ -189,55 +189,6 @@ definition:
                                 uesio.variant: uesio/io.icon
                                 color: "#AAA"
                                 text: $Param{itemIcon}
-                      - uesio/io.tile:
-                          uesio.display:
-                            - type: paramIsSet
-                              param: itemName
-                            - type: paramIsSet
-                              param: itemType
-                            # Remove after all improvements are merged
-                            - type: paramValue
-                              param: itemType
-                              operator: NOT_IN
-                              values:
-                                - collections
-                                - views
-                                - profiles
-                                - themes
-                                - labels
-                                - files
-                          signals:
-                            - signal: "route/NAVIGATE"
-                              path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/$Param{itemType}/$Param{itemName}
-                          uesio.variant: uesio/io.tag
-                          content:
-                            - uesio/io.text:
-                                text: $Param{itemName}
-                      - uesio/io.tile:
-                          uesio.display:
-                            - type: paramIsSet
-                              param: itemName
-                            - type: paramIsSet
-                              param: itemType
-                            - type: paramIsSet
-                              param: subItemName
-                            - type: paramIsSet
-                              param: subItemType
-                            # Remove after all improvements are merged
-                            - type: paramValue
-                              param: itemType
-                              operator: NOT_IN
-                              values:
-                                - collections
-                                - views
-                                - profiles
-                                - themes
-                                - labels
-                                - files
-                          uesio.variant: uesio/io.tag
-                          content:
-                            - uesio/io.text:
-                                text: $Param{subItemName}
                       #Buttons for all views with updated URL's
                       - uesio/io.tile:
                           uesio.display:
@@ -245,17 +196,6 @@ definition:
                               param: itemName
                             - type: paramIsSet
                               param: itemType
-                            # Remove after all improvements are merged
-                            - type: paramValue
-                              param: itemType
-                              operator: IN
-                              values:
-                                - collections
-                                - views
-                                - profiles
-                                - themes
-                                - labels
-                                - files
                           signals:
                             - signal: route/NAVIGATE
                               path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/$Param{itemType}/$Param{itemNameSpace}/$Param{itemName}
@@ -273,17 +213,6 @@ definition:
                               param: subItemName
                             - type: paramIsSet
                               param: subItemType
-                            # Remove after all improvements are merged
-                            - type: paramValue
-                              param: itemType
-                              operator: IN
-                              values:
-                                - collections
-                                - views
-                                - profiles
-                                - themes
-                                - labels
-                                - files
                           uesio.variant: uesio/io.tag
                           content:
                             - uesio/io.text:
