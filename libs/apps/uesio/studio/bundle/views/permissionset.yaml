@@ -77,6 +77,7 @@ definition:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.main
                           title: Permission Set - ${uesio/studio.name}
+                          subtitle: $Param{namespace}
                           actions:
                             - uesio/io.group:
                                 components:
@@ -86,6 +87,11 @@ definition:
                                       uesio.display:
                                         - type: fieldMode
                                           mode: READ
+                                        - type: paramValue
+                                          param: app
+                                          field: uesio/core.dynamiccollection
+                                          operator: EQUALS
+                                          value: $Param{namespace}
                                       signals:
                                         - signal: component/CALL
                                           component: uesio/io.list
@@ -144,6 +150,12 @@ definition:
                                       signals:
                                         - signal: panel/TOGGLE
                                           panel: deletePermissonset
+                                      uesio.display:
+                                        - type: paramValue
+                                          param: app
+                                          field: uesio/core.dynamiccollection
+                                          operator: EQUALS
+                                          value: $Param{namespace}
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           components:
@@ -232,7 +244,7 @@ definition:
                                       rowactions:
                                         - text: Details
                                           signals:
-                                            - path: app/$Param{app}/workspace/$Param{workspacename}/permissionsets/$Param{namespace}/$Param{permissionsetname}/collection/${uesio/core.id}
+                                            - path: app/$Param{app}/workspace/$Param{workspacename}/permissionsets/$Param{namespace}/$Param{permissionsetname}/collection/${uesio/studio.namespace}/${uesio/studio.name}
                                               signal: route/NAVIGATE
                                       permissionFields:
                                         - name: read
