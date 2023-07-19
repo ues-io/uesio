@@ -89,6 +89,10 @@ interface RemoveOrderSignal extends SignalDefinition {
 	fields: MetadataKey[]
 }
 
+interface DeleteSignal extends SignalDefinition {
+	wire: string
+}
+
 interface LoadWiresSignal extends SignalDefinition {
 	wires?: string[]
 }
@@ -109,16 +113,16 @@ interface SearchWireSignal extends SignalDefinition {
 // "Signal Handlers" for all of the signals in the band
 const signals: Record<string, SignalDescriptor> = {
 	[`${WIRE_BAND}/TOGGLE_DELETE_STATUS`]: {
-		dispatcher: (signal: SignalDefinition, context: Context) =>
-			toggleDeleteOp(context),
+		dispatcher: (signal: DeleteSignal, context: Context) =>
+			toggleDeleteOp(context, signal.wire),
 	},
 	[`${WIRE_BAND}/MARK_FOR_DELETE`]: {
-		dispatcher: (signal: SignalDefinition, context: Context) =>
-			markForDeleteOp(context),
+		dispatcher: (signal: DeleteSignal, context: Context) =>
+			markForDeleteOp(context, signal.wire),
 	},
 	[`${WIRE_BAND}/UNMARK_FOR_DELETE`]: {
-		dispatcher: (signal: SignalDefinition, context: Context) =>
-			unMarkForDeleteOp(context),
+		dispatcher: (signal: DeleteSignal, context: Context) =>
+			unMarkForDeleteOp(context, signal.wire),
 	},
 	[`${WIRE_BAND}/CREATE_RECORD`]: {
 		dispatcher: (signal: CreateRecordSignal, context: Context) => {

@@ -2,8 +2,8 @@ import { Context } from "../../../context/context"
 import { unmarkForDelete } from ".."
 import { dispatch } from "../../../store/store"
 
-export default (context: Context) => {
-	const record = context.getRecord()
+export default (context: Context, wireId: string) => {
+	const record = context.getRecord(wireId)
 
 	if (!record) return context
 
