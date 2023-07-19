@@ -139,6 +139,9 @@ definition:
                     uesio.variant: uesio/io.icon
                     color: "#21242D"
                     text: domain
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: "organization/${uesio/core.uniquekey}"
   panels:
     newApp:
       uesio.type: uesio/io.dialog
