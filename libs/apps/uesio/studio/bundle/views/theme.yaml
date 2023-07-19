@@ -38,6 +38,7 @@ definition:
                       itemType: themes
                       itemIcon: palette
                       itemName: $Param{themename}
+                      itemNameSpace: $Param{namespace}
           - uesio/io.griditem:
               uesio.variant: uesio/studio.leftbar
               components:

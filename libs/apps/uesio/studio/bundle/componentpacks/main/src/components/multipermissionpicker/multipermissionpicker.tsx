@@ -141,8 +141,6 @@ const MultiPermissionPicker: definition.UC<MultiPermissionPickerDefinition> = (
 		},
 	].concat(permissionFields)
 
-	console.log({ tableFields })
-
 	return (
 		<DynamicTable
 			id={dynamicTableId}

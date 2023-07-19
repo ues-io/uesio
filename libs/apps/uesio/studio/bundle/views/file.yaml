@@ -62,6 +62,7 @@ definition:
                       itemType: files
                       itemIcon: collections
                       itemName: $Param{filename}
+                      itemNameSpace: $Param{namespace}
           - uesio/io.griditem:
               uesio.variant: uesio/studio.leftbar
               components:

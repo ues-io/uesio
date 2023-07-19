@@ -189,6 +189,7 @@ definition:
                                 uesio.variant: uesio/io.icon
                                 color: "#AAA"
                                 text: $Param{itemIcon}
+                      #Buttons for all views with updated URL's
                       - uesio/io.tile:
                           uesio.display:
                             - type: paramIsSet
@@ -196,8 +197,8 @@ definition:
                             - type: paramIsSet
                               param: itemType
                           signals:
-                            - signal: "route/NAVIGATE"
-                              path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/$Param{itemType}/$Param{itemName}
+                            - signal: route/NAVIGATE
+                              path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/$Param{itemType}/$Param{itemNameSpace}/$Param{itemName}
                           uesio.variant: uesio/io.tag
                           content:
                             - uesio/io.text:
@@ -212,34 +213,9 @@ definition:
                               param: subItemName
                             - type: paramIsSet
                               param: subItemType
-                          uesio.variant: uesio/io.tag
-                          content:
-                            - uesio/io.text:
-                                text: $Param{subItemName}
-                      #Collections
-                      - uesio/io.tile:
-                          uesio.display:
-                            - type: paramIsSet
-                              param: itemCollectionName
-                            - type: paramIsSet
-                              param: itemType
                           signals:
                             - signal: route/NAVIGATE
-                              path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/collections/$Param{itemNameSpace}/$Param{itemCollectionName}
-                          uesio.variant: uesio/io.tag
-                          content:
-                            - uesio/io.text:
-                                text: $Param{itemCollectionName}
-                      - uesio/io.tile:
-                          uesio.display:
-                            - type: paramIsSet
-                              param: itemCollectionName
-                            - type: paramIsSet
-                              param: itemType
-                            - type: paramIsSet
-                              param: subItemName
-                            - type: paramIsSet
-                              param: subItemType
+                              path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/$Param{itemType}/$Param{itemNameSpace}/$Param{itemName}/$Param{subItemType}/$Param{subItemNameSpace}/$Param{subItemName}
                           uesio.variant: uesio/io.tag
                           content:
                             - uesio/io.text:
