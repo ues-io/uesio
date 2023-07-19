@@ -199,10 +199,8 @@ definition:
               - signal: wire/LOAD
                 wires:
                   - orgs
-              - signal: "panel/TOGGLE"
-                panel: "newOrg"
-              - signal: "wire/RESET"
-                wire: neworg
+              - signal: "route/NAVIGATE"
+                path: "organization/${uesio/core.username}"
         - uesio/io.button:
             uesio.variant: "uesio/io.secondary"
             text: $Label{uesio/io.cancel}
