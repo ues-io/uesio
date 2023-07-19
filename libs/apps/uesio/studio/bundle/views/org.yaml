@@ -102,6 +102,10 @@ definition:
                                       uesio.display:
                                         - type: wireHasNoRecords
                                           wire: orgapps
+                                        - field: uesio/core.owner->uesio/core.id
+                                          wire: org
+                                          operator: EQUALS
+                                          value: "$User{id}"
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           components:
@@ -117,6 +121,11 @@ definition:
                                             signals:
                                               - signal: panel/TOGGLE
                                                 panel: newOrgUser
+                                            uesio.display:
+                                              - field: uesio/core.owner->uesio/core.id
+                                                wire: org
+                                                operator: EQUALS
+                                                value: "$User{id}"
                             - uesio/io.table:
                                 uesio.id: orgusersTable
                                 pagesize: 5
@@ -134,6 +143,11 @@ definition:
                                       - signal: wire/SAVE
                                         wires:
                                           - orgusers
+                                    uesio.display:
+                                      - field: uesio/core.owner->uesio/core.id
+                                        wire: org
+                                        operator: EQUALS
+                                        value: "$User{id}"
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           components:
