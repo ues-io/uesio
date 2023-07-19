@@ -27,7 +27,11 @@ const ConfigFeatureFlags: FunctionComponent<Props> = (props) => {
 	const user = definition?.user ? context.mergeString(definition?.user) : ""
 
 	const handleSet = async (key: string, value: boolean | number) => {
-		await api.featureflag.set(context, key, value, user)
+		try {
+			await api.featureflag.set(context, key, value, user)
+		} catch (err) {
+			api.notification.addError(err as Error, context)
+		}
 	}
 
 	const [values] = api.featureflag.useFeatureFlags(context, user)

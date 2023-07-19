@@ -100,16 +100,30 @@ func SetValueFromKey(key string, value interface{}, userID string, session *sess
 	return SetValue(FeatureFlag, value, user, session)
 }
 
+type ValidationError struct {
+	msg string
+}
+
+func (ve *ValidationError) Error() string {
+	return ve.msg
+}
+
+func NewValidationError(msg string) *ValidationError {
+	return &ValidationError{
+		msg,
+	}
+}
+
 // ValidateValue checks that the provided value is valid for the FeatureFlag definition
-func ValidateValue(ff *meta.FeatureFlag, value interface{}) (bool, error) {
+func ValidateValue(ff *meta.FeatureFlag, value interface{}) (bool, *ValidationError) {
 	if value == nil {
-		return false, errors.New("no value provided")
+		return false, NewValidationError("no value provided")
 	}
 	if ff.Type == "NUMBER" {
 		// Make sure the value is coming as something numeric
 		floatVal, isFloat := value.(float64)
 		if !isFloat {
-			return false, errors.New("value must be a number")
+			return false, NewValidationError("value must be a number")
 		}
 		int64Val := int64(floatVal)
 		// If min/max not defined, they will have zero values, so we are done
@@ -118,16 +132,16 @@ func ValidateValue(ff *meta.FeatureFlag, value interface{}) (bool, error) {
 		}
 		// Check min/max, if defined
 		if int64Val < ff.Min {
-			return false, fmt.Errorf("value must be greater than %d", ff.Min)
+			return false, NewValidationError(fmt.Sprintf("value must be greater than %d", ff.Min))
 		}
 		if int64Val > ff.Max {
-			return false, fmt.Errorf("value must be less than %d", ff.Max)
+			return false, NewValidationError(fmt.Sprintf("value must be less than %d", ff.Max))
 		}
 		return true, nil
 	} else {
 		// Make sure the value can be converted to a boolean
 		if _, isBool := value.(bool); !isBool {
-			return false, errors.New("invalid value, must be either true or false")
+			return false, NewValidationError("invalid value, must be either true or false")
 		}
 		return true, nil
 	}

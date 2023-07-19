@@ -57,6 +57,11 @@ func SetFeatureFlag(w http.ResponseWriter, r *http.Request) {
 	}
 	err = featureflagstore.SetValueFromKey(namespace+"."+name, setRequest.Value, setRequest.User, session)
 	if err != nil {
+		// See if this is a flag validation error, and if so return a 400
+		if _, ok := err.(*featureflagstore.ValidationError); ok {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
 		logger.LogError(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
