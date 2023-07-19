@@ -1,4 +1,0 @@
-name: manage_organizations
-label: Manage Organizations
-type: CHECKBOX
-defaultValue: false
