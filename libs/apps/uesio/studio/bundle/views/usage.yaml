@@ -50,6 +50,7 @@ definition:
       order:
         - field: uesio/studio.day
           desc: true
+      loadAll: true
   events:
     onload:
       - signal: context/SET
