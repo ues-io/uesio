@@ -52,10 +52,11 @@ definition:
                     params:
                       itemType: collections
                       itemIcon: list
-                      itemCollectionName: $Param{collectionname}
+                      itemName: $Param{collectionname}
                       itemNameSpace: $Param{namespace}
-                      subItemType: collections
+                      subItemType: fields
                       subItemName: $Param{fieldname}
+                      subItemNameSpace: $Param{fieldNamespace}
           - uesio/io.griditem:
               uesio.variant: uesio/studio.leftbar
               components:
