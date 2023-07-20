@@ -82,7 +82,7 @@ definition:
                                           param: app
                                           field: uesio/core.dynamiccollection
                                           operator: EQUALS
-                                          value: $Param{collectionNamespace}
+                                          value: $Param{namespace}
                                       signals:
                                         - signal: component/CALL
                                           component: uesio/io.list
