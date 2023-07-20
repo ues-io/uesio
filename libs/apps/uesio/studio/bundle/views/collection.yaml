@@ -232,7 +232,7 @@ definition:
                                           wire: fields
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      uesio.id: save-fields
+                                      uesio.id: cancel-fields
                                       text: $Label{uesio/io.cancel}
                                       signals:
                                         - signal: wire/CANCEL
@@ -640,7 +640,7 @@ definition:
                   - fields
         - uesio/io.button:
             uesio.variant: uesio/io.secondary
-            uesio.id: save-new-field
+            uesio.id: save-field-and-close
             text: $Label{uesio/io.save}
             signals:
               - signal: wire/SAVE
