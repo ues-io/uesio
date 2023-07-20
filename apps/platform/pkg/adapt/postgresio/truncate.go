@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	TRUNCATE_DATA_QUERY = "DELETE FROM public.data WHERE tenant = $1"
+	TRUNCATE_DATA_QUERY   = "DELETE FROM public.data WHERE tenant = $1"
 	TRUNCATE_TOKENS_QUERY = "DELETE FROM public.tokens WHERE tenant = $1"
 )
 
