@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"os"
 	"path/filepath"
 	"time"
 
@@ -101,7 +100,7 @@ func (b *PlatformBundleStore) GetManyItems(items []meta.BundleableItem, version 
 
 func (b *PlatformBundleStore) GetAllItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session, connection adapt.Connection) error {
 	// TODO: Think about caching this, but remember conditions
-	basePath := filepath.Join(getBasePath(namespace, version), group.GetBundleFolderName()) + string(os.PathSeparator)
+	basePath := filepath.Join(getBasePath(namespace, version), group.GetBundleFolderName()) + "/"
 
 	conn, err := getPlatformFileConnection(session)
 	if err != nil {

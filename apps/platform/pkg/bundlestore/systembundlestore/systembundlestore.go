@@ -126,7 +126,7 @@ func (b *SystemBundleStore) GetManyItems(items []meta.BundleableItem, version st
 func (b *SystemBundleStore) GetAllItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session, connection adapt.Connection) error {
 
 	// TODO: Think about caching this, but remember conditions
-	basePath := filepath.Join(getBasePath(namespace, version), group.GetBundleFolderName()) + string(os.PathSeparator)
+	basePath := filepath.Join(getBasePath(namespace, version), group.GetBundleFolderName()) + "/"
 
 	conn := localfiles.Connection{}
 	paths, err := GetFilePaths(basePath, group, conditions, &conn)

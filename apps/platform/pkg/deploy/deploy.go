@@ -6,7 +6,6 @@ import (
 	"errors"
 	"io"
 	"io/ioutil"
-	"os"
 	"path/filepath"
 	"strings"
 
@@ -78,7 +77,7 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 	for _, zipFile := range zipReader.File {
 		// Don't forget to fix the windows filenames here
 		dir, fileName := filepath.Split(zipFile.Name)
-		dirParts := strings.Split(dir, string(os.PathSeparator))
+		dirParts := strings.Split(dir, "/")
 		partsLength := len(dirParts)
 
 		if fileName == "" || partsLength < 1 {
