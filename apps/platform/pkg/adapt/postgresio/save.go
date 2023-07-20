@@ -88,6 +88,8 @@ func (c *Connection) Save(request *adapt.SaveOp, session *sess.Session) error {
 		deleteIDs := make([]string, deleteCount)
 		for i, delete := range request.Deletes {
 			deleteIDs[i] = delete.IDValue
+			// Delete all tokens associated with deleted records
+			resetTokenIDs = append(resetTokenIDs, delete.IDValue)
 		}
 		batch.Queue(DELETE_QUERY, deleteIDs, collectionName, tenantID)
 	}
