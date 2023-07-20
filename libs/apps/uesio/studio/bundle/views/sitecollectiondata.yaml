@@ -113,7 +113,6 @@ definition:
                           components:
                             - uesio/studio.datamanager:
                                 collectionId: $Param{namespace}.$Param{collectionname}
-                                namespace: $Param{namespace}
                                 uesio.context:
                                   siteadmin:
                                     name: $Param{sitename}
