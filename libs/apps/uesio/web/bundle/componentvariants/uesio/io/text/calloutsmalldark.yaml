@@ -1,7 +1,0 @@
-name: calloutsmalldark
-extends: uesio/web.calloutsmall
-label: Callout Small Dark
-definition:
-  uesio.styleTokens:
-    root:
-      - text-slate-200

@@ -1,9 +1,0 @@
-name: blogteaser
-extends: uesio/io.default
-label: Blog Teaser
-definition:
-  uesio.styleTokens:
-    root:
-      - hover:bg-slate-100
-      - rounded-xl
-      - p-6
