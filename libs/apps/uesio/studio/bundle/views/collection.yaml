@@ -278,10 +278,10 @@ definition:
                                   wire: fields
                               uesio.display:
                                 - type: paramValue
-                                  param: app
+                                  param: namespace
                                   field: uesio/core.dynamiccollection
-                                  operator: EQUALS
-                                  value: ${uesio/studio.namespace}
+                                  operator: NOT_EQ
+                                  value: $Param{app}
                           columns:
                             - field: uesio/studio.name
                             - field: uesio/studio.namespace
