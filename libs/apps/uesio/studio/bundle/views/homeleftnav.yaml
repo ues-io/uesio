@@ -185,6 +185,7 @@ definition:
             wire: neworg
             components:
               - uesio/io.field:
+                  label: Organization Name
                   fieldId: uesio/core.username
       actions:
         - uesio/io.button:
