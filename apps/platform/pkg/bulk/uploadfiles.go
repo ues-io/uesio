@@ -7,7 +7,6 @@ import (
 	"errors"
 	"io"
 	"io/ioutil"
-	"os"
 
 	"github.com/dimchansky/utfbom"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
