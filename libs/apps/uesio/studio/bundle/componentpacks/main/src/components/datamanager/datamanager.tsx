@@ -3,7 +3,6 @@ import { definition, api, component, metadata } from "@uesio/ui"
 
 type DataManagerDefinition = {
 	collectionId: string
-	namespace: string
 	wireId: string
 	tableId: string
 }
@@ -48,7 +47,6 @@ const DataManager: FunctionComponent<Props> = (props) => {
 		context,
 		definition: {
 			collectionId,
-			namespace,
 			wireId = "collectionData",
 			tableId = "collectionDataTable",
 		},
@@ -59,7 +57,7 @@ const DataManager: FunctionComponent<Props> = (props) => {
 	const [fieldsMeta] = api.builder.useMetadataList(
 		context,
 		"FIELD",
-		context.mergeString(namespace),
+		"",
 		collection
 	)
 

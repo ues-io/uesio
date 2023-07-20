@@ -131,6 +131,5 @@ definition:
                                 components:
                                   - uesio/studio.datamanager:
                                       collectionId: $Param{namespace}.$Param{collectionname}
-                                      namespace: $Param{namespace}
                                       wireId: collectionData
                                       tableId: collectionDataTable
