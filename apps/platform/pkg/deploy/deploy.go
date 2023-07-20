@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -49,6 +50,11 @@ var ORDERED_ITEMS = [...]string{
 }
 
 func Deploy(body io.ReadCloser, session *sess.Session) error {
+	var pathSeparator = os.PathSeparator
+	if runtime.GOOS == "windows" {
+		pathSeparator = '/'
+
+	}
 
 	workspace := session.GetWorkspace()
 	if workspace == nil {
@@ -78,7 +84,7 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 	for _, zipFile := range zipReader.File {
 		// Don't forget to fix the windows filenames here
 		dir, fileName := filepath.Split(zipFile.Name)
-		dirParts := strings.Split(dir, string(os.PathSeparator))
+		dirParts := strings.Split(dir, string(pathSeparator))
 		partsLength := len(dirParts)
 
 		if fileName == "" || partsLength < 1 {
