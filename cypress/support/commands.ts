@@ -186,7 +186,7 @@ function createWorkspaceInApp(workspaceName: string, appName: string) {
 }
 
 function createApp(appName: string) {
-	cy.clickButton("uesio/studio.home($root):uesio/io.button:add-app")
+	cy.clickButton("uesio/io.button:add-app")
 	cy.typeInInput("new-app-name", appName)
 	cy.typeInInput("new-app-description", "E2E Test App")
 	cy.clickButton("save-new-app")
