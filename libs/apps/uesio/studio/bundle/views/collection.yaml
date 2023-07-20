@@ -222,12 +222,17 @@ definition:
                                         - signal: wire/SAVE
                                           wires:
                                             - fields
+                                        # Need to reload the wire after save in order to pull in namespace and other special fields
+                                        # that are magically added on the backend to the allmetadata collection
+                                        - signal: wire/LOAD
+                                          wires:
+                                            - fields
                                       uesio.display:
                                         - type: wireHasChanges
                                           wire: fields
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      uesio.id: save-fields
+                                      uesio.id: cancel-fields
                                       text: $Label{uesio/io.cancel}
                                       signals:
                                         - signal: wire/CANCEL
@@ -274,14 +279,20 @@ definition:
                                 - type: recordIsNotNew
                             - text: $Label{uesio/io.delete}
                               signals:
-                                - signal: wire/MARK_FOR_DELETE
+                                - signal: wire/TOGGLE_DELETE_STATUS
                                   wire: fields
                               uesio.display:
-                                - type: paramValue
-                                  param: namespace
-                                  field: uesio/core.dynamiccollection
-                                  operator: NOT_EQ
+                                - type: fieldValue
+                                  field: uesio/studio.namespace
+                                  operator: EQUALS
                                   value: $Param{app}
+                                - type: recordIsNotNew
+                            - text: $Label{uesio/io.delete}
+                              signals:
+                                - signal: wire/TOGGLE_DELETE_STATUS
+                                  wire: fields
+                              uesio.display:
+                                - type: recordIsNew
                           columns:
                             - label: Field
                               components:
@@ -291,8 +302,16 @@ definition:
                                     subtitle: ${uesio/studio.namespace}
                                     icon: ${uesio/studio.appicon}
                                     color: ${uesio/studio.appcolor}
-                            # - field: uesio/studio.name
-                            # - field: uesio/studio.namespace
+                                    uesio.display:
+                                      - type: recordIsNotNew
+                                # Show the editable name field for new records only
+                                # (e.g. those added by "Suggest Fields")
+                                # to allow for editing prior to save
+                                - uesio/io.field:
+                                    fieldId: uesio/studio.name
+                                    labelPosition: "none"
+                                    uesio.display:
+                                      - type: recordIsNew
                             - field: uesio/studio.type
                             - field: uesio/studio.label
                             - field: uesio/studio.languagelabel
@@ -621,7 +640,7 @@ definition:
                   - fields
         - uesio/io.button:
             uesio.variant: uesio/io.secondary
-            uesio.id: save-new-field
+            uesio.id: save-field-and-close
             text: $Label{uesio/io.save}
             signals:
               - signal: wire/SAVE

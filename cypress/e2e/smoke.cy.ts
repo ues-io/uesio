@@ -44,79 +44,56 @@ describe("Uesio Sanity Smoke Tests", () => {
 			cy.typeInInput("new-field-name", "is_extinct")
 			cy.typeInInput("new-field-label", "Is Extinct")
 			cy.changeSelectValue("new-field-type", "CHECKBOX")
-			cy.clickButton("save-new-field")
-			// verify the field was created
-			cy.get('table[id$="fields"]>tbody')
-				.children("tr")
-				.should("have.length", 1)
-			cy.get('table[id$="fields"]>tbody>tr')
-				.first()
-				.children("td")
-				.eq(0)
-				.find("input")
-				.first()
-				.should("have.value", "is_extinct")
-			cy.get('table[id$="fields"]>tbody>tr')
-				.first()
-				.children("td")
-				.eq(1)
-				.find("input")
-				.first()
-				.should("have.value", namespace)
-			cy.get('table[id$="fields"]>tbody>tr')
-				.first()
-				.children("td")
-				.eq(2)
-				.find("input")
-				.first()
-				.should("have.value", "Check Box")
-			cy.get('table[id$="fields"]>tbody>tr')
-				.first()
-				.children("td")
-				.eq(3)
-				.find("input")
-				.first()
-				.should("have.value", "Is Extinct")
+			cy.clickButton("save-field-and-add-another")
 			// Create a NUMBER field
-			// Click the new field button
-			cy.clickButton("new-field")
 			cy.typeInInput("new-field-name", "estimated_population")
 			cy.typeInInput("new-field-label", "Estimated Population")
 			cy.changeSelectValue("new-field-type", "NUMBER")
 			cy.typeInInput("new-field-number-decimals", "0")
-			cy.hotkey("{meta}+s")
-			// verify the field was created
+			cy.clickButton("save-field-and-close")
+			// verify the 2 fields were created
 			cy.get('table[id$="fields"]>tbody')
 				.children("tr")
 				.should("have.length", 2)
-			cy.get('table[id$="fields"]>tbody>tr')
+			cy.hasExpectedTableField(
+				"fields",
+				0,
+				"is_extinct",
+				namespace,
+				"Check Box",
+				"Is Extinct"
+			)
+			cy.hasExpectedTableField(
+				"fields",
+				1,
+				"estimated_population",
+				namespace,
+				"Number",
+				"Estimated Population"
+			)
+			// Mark a field for deletion
+			cy.get('table[id$="fields"]>tbody')
+				.children("tr")
 				.eq(1)
 				.children("td")
-				.eq(0)
-				.find("input")
-				.first()
-				.should("have.value", "estimated_population")
-			cy.get('table[id$="fields"]>tbody>tr')
+				.eq(4)
+				.find("button.rowaction")
 				.eq(1)
-				.children("td")
-				.eq(1)
-				.find("input")
-				.first()
-				.should("have.value", namespace)
-			cy.get('table[id$="fields"]>tbody>tr')
-				.eq(1)
-				.children("td")
-				.eq(2)
-				.find("input")
-				.first()
-				.should("have.value", "Number")
-			cy.get('table[id$="fields"]>tbody>tr')
-				.eq(1)
-				.children("td")
-				.eq(3)
-				.find("input")
-				.first()
-				.should("have.value", "Estimated Population")
+				.click()
+			// Save
+			cy.hotkey("{meta}s")
+			// Verify the correct field was deleted
+			cy.get('table[id$="fields"]>tbody')
+				.children("tr")
+				.should("have.length", 1)
+			cy.hasExpectedTableField(
+				"fields",
+				0,
+				"is_extinct",
+				namespace,
+				"Check Box",
+				"Is Extinct"
+			)
 		})
 	})
 
