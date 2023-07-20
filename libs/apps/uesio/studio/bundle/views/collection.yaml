@@ -283,8 +283,16 @@ definition:
                                   operator: EQUALS
                                   value: ${uesio/studio.namespace}
                           columns:
-                            - field: uesio/studio.name
-                            - field: uesio/studio.namespace
+                            - label: Field
+                              components:
+                                - uesio/studio.iconlabel:
+                                    uesio.variant: uesio/studio.namespacefield
+                                    text: ${uesio/studio.name}
+                                    subtitle: ${uesio/studio.namespace}
+                                    icon: ${uesio/studio.appicon}
+                                    color: ${uesio/studio.appcolor}
+                            # - field: uesio/studio.name
+                            # - field: uesio/studio.namespace
                             - field: uesio/studio.type
                             - field: uesio/studio.label
                             - field: uesio/studio.languagelabel
