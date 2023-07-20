@@ -1,0 +1,6 @@
+name: featureflagtypes
+options:
+  - label: "Switch"
+    value: "CHECKBOX"
+  - label: "Number"
+    value: "NUMBER"

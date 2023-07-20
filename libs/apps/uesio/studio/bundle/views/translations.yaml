@@ -78,7 +78,7 @@ definition:
                           components:
                             - uesio/io.button:
                                 text: Add New Language
-                                uesio.variant: uesio/io.secondary
+                                uesio.variant: uesio/io.primary
                                 signals:
                                   - signal: panel/TOGGLE
                                     panel: newtranslation

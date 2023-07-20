@@ -1,2 +1,4 @@
 name: manage_datasources
 label: Manage Data Sources
+type: CHECKBOX
+defaultValue: false

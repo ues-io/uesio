@@ -25,7 +25,10 @@ views:
   uesio/studio.files: true
   uesio/studio.installed: true
   uesio/studio.home: true
+  uesio/studio.homecontent: true
+  uesio/studio.homeleftnav: true
   uesio/studio.installedbundle: true
+  uesio/studio.org: true
   uesio/studio.packaging: true
   uesio/studio.permissionset: true
   uesio/studio.permissionsets: true
@@ -101,11 +104,11 @@ routes:
   uesio/studio.field: true
   uesio/studio.file: true
   uesio/studio.files: true
-  uesio/studio.installed: true
   uesio/studio.home: true
+  uesio/studio.installed: true
   uesio/studio.installedbundle: true
   uesio/studio.login: true
-  uesio/studio.signup: true
+  uesio/studio.org: true
   uesio/studio.packaging: true
   uesio/studio.permissionset: true
   uesio/studio.permissionsets: true
@@ -118,6 +121,7 @@ routes:
   uesio/studio.secrets: true
   uesio/studio.selectlist: true
   uesio/studio.selectlists: true
+  uesio/studio.signup: true
   uesio/studio.site: true
   uesio/studio.team: true
   uesio/studio.theme: true
@@ -197,6 +201,7 @@ collections:
   uesio/studio.utility: true
   uesio/studio.view: true
   uesio/studio.workspace: true
+  uesio/core.organizationuser: true
   uesio/core.usage: true
   uesio/core.userfile: true
   uesio/core.user: true

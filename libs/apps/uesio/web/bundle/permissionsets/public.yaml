@@ -1,0 +1,46 @@
+name: public
+named: {}
+views:
+  uesio/web.blog: true
+  uesio/web.blogentry: true
+  uesio/web.earlyaccess: true
+  uesio/web.footer: true
+  uesio/web.home: true
+  uesio/web.preview: true
+  uesio/web.privacy: true
+  uesio/web.terms: true
+  uesio/web.topbar: true
+collections:
+  uesio/cms.article:
+    read: true
+    create: false
+    edit: false
+    delete: false
+    fields: {}
+  uesio/core.userfile:
+    read: true
+    create: false
+    edit: false
+    delete: false
+    fields: {}
+routes:
+  uesio/web.blog: true
+  uesio/web.blogentry: true
+  uesio/web.earlyaccess: true
+  uesio/web.home: true
+  uesio/web.preview: true
+  uesio/web.privacy: true
+  uesio/web.signup: true
+  uesio/web.terms: true
+  uesio/web.crmhome: true
+  uesio/web.crmlogin: true
+files:
+  uesio/web.logo: true
+  uesio/web.logowhite: true
+  uesio/web.swissmade: true
+allowallcollections: false
+allowallviews: false
+allowallroutes: false
+allowallfiles: false
+modifyallrecords: false
+viewallrecords: false

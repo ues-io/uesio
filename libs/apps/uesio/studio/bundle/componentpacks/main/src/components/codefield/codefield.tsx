@@ -1,11 +1,12 @@
 import { FunctionComponent } from "react"
-import { definition, component } from "@uesio/ui"
+import { definition, component, context } from "@uesio/ui"
 
 type CodeFieldDefinition = {
 	fieldId: string
 	height: string
 	language?: CodeFieldLanguage
 	id?: string
+	mode?: context.FieldMode
 }
 
 type CodeFieldLanguage = "yaml" | "json" | "javascript" | "typescript"
@@ -32,6 +33,7 @@ const CodeField: FunctionComponent<Props> = (props) => {
 	const value = record.getFieldValue(fieldId)
 
 	const language = definition.language || "yaml"
+	const mode = definition.mode || "EDIT"
 
 	const changeHandler = (newValue: string) => {
 		const oldValue = context.getRecord()?.getFieldValue(fieldId) || ""
@@ -45,6 +47,7 @@ const CodeField: FunctionComponent<Props> = (props) => {
 				value={value || ""}
 				setValue={changeHandler}
 				language={language}
+				mode={mode}
 				context={props.context}
 			/>
 		</FieldWrapper>

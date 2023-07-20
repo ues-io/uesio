@@ -41,6 +41,7 @@ const NumberField: FunctionComponent<NumberFieldProps> = (props) => {
 		setValue,
 		type = "number",
 		focusOnRender = false,
+		applyChanges,
 	} = props
 
 	const value = props.value as number | string
@@ -48,7 +49,11 @@ const NumberField: FunctionComponent<NumberFieldProps> = (props) => {
 	const numberOptions = fieldMetadata?.getNumberMetadata()
 	const decimals = numberOptions?.decimals || 2
 
-	const controlledInputProps = useControlledInputNumber(value, setValue)
+	const controlledInputProps = useControlledInputNumber(
+		value,
+		setValue,
+		applyChanges
+	)
 
 	const classes = styles.useUtilityStyleTokens(
 		StyleDefaults,

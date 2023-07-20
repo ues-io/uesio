@@ -1,2 +1,4 @@
 name: manage_config_values
 label: Manage Config Values
+type: CHECKBOX
+defaultValue: false

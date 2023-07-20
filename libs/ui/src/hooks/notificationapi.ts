@@ -1,16 +1,22 @@
 import { Context } from "../context/context"
 import { run } from "../signals/signals"
 
-const addError = (text: string, context: Context, path?: string) =>
+const addError = (text: string | Error, context: Context, path?: string) => {
+	let msg = text
+	if (typeof text === "object" && text.message) {
+		msg = text.message
+	}
 	run(
 		{
 			signal: "notification/ADD",
 			severity: "error",
-			text,
+			text: msg,
 			path,
+			duration: 10,
 		},
 		context
 	)
+}
 
 const addNotification = (
 	text: string,

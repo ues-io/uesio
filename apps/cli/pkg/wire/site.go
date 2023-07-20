@@ -43,5 +43,31 @@ func GetAvailableSites(appID string) (adapt.Collection, error) {
 			},
 		},
 	)
+}
 
+func DoesSiteExist(appID, siteName string) (bool, error) {
+	sites, err := Load(
+		"uesio/studio.site",
+		&LoadOptions{
+			Fields: []adapt.LoadRequestField{
+				{
+					ID: "uesio/studio.name",
+				},
+			},
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field:    "uesio/studio.app",
+					RawValue: appID,
+				},
+				{
+					Field:    "uesio/studio.name",
+					RawValue: siteName,
+				},
+			},
+		},
+	)
+	if err != nil {
+		return false, err
+	}
+	return len(sites) == 1, nil
 }

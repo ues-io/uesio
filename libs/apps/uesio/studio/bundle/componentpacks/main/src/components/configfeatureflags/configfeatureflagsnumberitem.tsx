@@ -3,20 +3,25 @@ import { definition, component } from "@uesio/ui"
 
 interface Props extends definition.UtilityProps {
 	title: string
-	value: boolean
-	handleSet: (key: string, value: boolean) => Promise<void>
+	value: number
+	min?: number
+	max?: number
+	handleSet: (key: string, value: number) => Promise<void>
 }
 
-const ConfigFeatureFlagsItem: FunctionComponent<Props> = (props) => {
+const ConfigFeatureFlagsNumberItem: FunctionComponent<Props> = (props) => {
 	const TitleBar = component.getUtility("uesio/io.titlebar")
-	const ToggleField = component.getUtility("uesio/io.togglefield")
-	const { context, title, value, handleSet } = props
+	const NumberField = component.getUtility("uesio/io.numberfield")
+	const { context, title, value, handleSet, min, max } = props
 	const [state, setState] = useState(value)
+	const options = {
+		min,
+		max,
+	}
 
 	return (
 		<TitleBar
 			title={title}
-			subtitle={state ? "revealing" : "hiding"}
 			context={context}
 			styles={{
 				root: {
@@ -24,10 +29,12 @@ const ConfigFeatureFlagsItem: FunctionComponent<Props> = (props) => {
 				},
 			}}
 			actions={
-				<ToggleField
+				<NumberField
 					context={context}
 					value={state}
-					setValue={(value: boolean) => {
+					options={options}
+					applyChanges="onBlur"
+					setValue={(value: number) => {
 						setState(value)
 						handleSet(title, value)
 					}}
@@ -37,4 +44,4 @@ const ConfigFeatureFlagsItem: FunctionComponent<Props> = (props) => {
 	)
 }
 
-export default ConfigFeatureFlagsItem
+export default ConfigFeatureFlagsNumberItem

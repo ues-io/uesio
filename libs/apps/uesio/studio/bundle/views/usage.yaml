@@ -50,6 +50,7 @@ definition:
       order:
         - field: uesio/studio.day
           desc: true
+      loadAll: true
   events:
     onload:
       - signal: context/SET
@@ -114,10 +115,16 @@ definition:
                             source: DATA
                             timeunit: DAY
                             timeunitfill: MONTH
-                      - uesio/io.group:
+                      - uesio/io.box:
                           uesio.styleTokens:
                             root:
+                              - grid
                               - mb-10
+                              - grid-cols-1
+                              - sm:grid-cols-2
+                              - md:grid-cols-3
+                              - lg:grid-cols-5
+                              - gap-2
                           components:
                             - uesio/io.metricgroup:
                                 series:

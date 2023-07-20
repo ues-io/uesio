@@ -19,6 +19,10 @@ definition:
       fields:
         uesio/core.id:
         uesio/studio.name:
+        uesio/studio.type:
+        uesio/studio.defaultvalue:
+        uesio/studio.min:
+        uesio/studio.max:
         uesio/studio.workspace:
       conditions:
         - field: uesio/studio.workspace
@@ -28,6 +32,36 @@ definition:
         - field: uesio/studio.name
           valueSource: PARAM
           param: featureflagname
+      events:
+        - type: onChange
+          fields:
+            - uesio/studio.type
+          conditions:
+            - field: uesio/studio.type
+              value: CHECKBOX
+          signals:
+            # Clear out the value of min/max
+            - signal: wire/UPDATE_RECORD
+              field: uesio/studio.min
+              value: 0
+            - signal: wire/UPDATE_RECORD
+              field: uesio/studio.max
+              value: 0
+            # Set a checkbox-appropriate default value
+            - signal: wire/UPDATE_RECORD
+              field: uesio/studio.defaultvalue
+              value: "false"
+        - type: onChange
+          fields:
+            - uesio/studio.type
+          conditions:
+            - field: uesio/studio.type
+              value: NUMBER
+          signals:
+            # Set a number-appropriate default value
+            - signal: wire/UPDATE_RECORD
+              field: uesio/studio.defaultvalue
+              value: "0"
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -107,3 +141,17 @@ definition:
                                 items:
                                   - uesio/io.field:
                                       fieldId: uesio/studio.name
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.type
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.defaultvalue
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.min
+                                      uesio.display:
+                                        - field: uesio/studio.type
+                                          value: NUMBER
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.max
+                                      uesio.display:
+                                        - field: uesio/studio.type
+                                          value: NUMBER

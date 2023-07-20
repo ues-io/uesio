@@ -1,0 +1,7 @@
+name: linkedorgs
+type: REFERENCEGROUP
+label: Linked orgs
+referenceGroup:
+  collection: uesio/core.organizationuser
+  field: uesio/core.org
+  onDelete: CASCADE

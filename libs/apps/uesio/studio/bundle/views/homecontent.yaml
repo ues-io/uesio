@@ -1,0 +1,160 @@
+name: homecontent
+definition:
+  # Wires are how we pull in data
+  wires:
+    appsexist:
+      collection: uesio/studio.app
+      fields:
+        uesio/core.id:
+      batchsize: 1
+      requirewriteaccess: true
+    blogentries:
+      collection: uesio/studio.blogentry
+    recentdocs:
+      collection: uesio/studio.recentdoc
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/io.box:
+        uesio.styleTokens:
+          root:
+            - -mt-10
+            - -mx-10
+            - mb-0
+            - p-32
+            - bg-black
+            - bg-cover
+            - bg-[url($File{uesio/core.splash})]
+    - uesio/io.box:
+        uesio.styleTokens:
+          root:
+            - -mt-10
+            - -mx-10
+            - mb-10
+            - py-10
+            - px-24
+            - text-[#FFFFFFC0]
+            - bg-neutral-900
+        components:
+          - uesio/io.box:
+              uesio.styleTokens:
+                root:
+                  - font-[Gosha]
+                  - text-5xl
+                  - mb-2
+              components:
+                - uesio/io.text:
+                    text: "Get started with "
+                - uesio/io.text:
+                    color: white
+                    text: ues.io
+          - uesio/io.box:
+              uesio.styleTokens:
+                root:
+                  - font-light
+              components:
+                - uesio/io.text:
+                    uesio.styleTokens:
+                      root:
+                        - text-white
+                    text: "Build "
+                - uesio/io.text:
+                    text: "web applications declaratively. "
+                - uesio/io.text:
+                    uesio.styleTokens:
+                      root:
+                        - text-white
+                    text: "Reuse "
+                - uesio/io.text:
+                    text: "components from other apps. "
+                - uesio/io.text:
+                    uesio.styleTokens:
+                      root:
+                        - text-white
+                    text: "Iterate "
+                - uesio/io.text:
+                    text: "quickly."
+    - uesio/io.box:
+        uesio.variant: uesio/studio.calloutsection
+        uesio.styleTokens:
+          root:
+            - mb-4
+            - mx-14
+        uesio.display:
+          - type: wireHasNoRecords
+            wire: appsexist
+        components:
+          - uesio/io.text:
+              text: 👋 Welcome! 👋 We're glad you're here. 🤗
+              element: h1
+              uesio.styleTokens:
+                root:
+                  - text-3xl
+                  - mb-2
+          - uesio/io.group:
+              components:
+                - uesio/io.text:
+                    text: To create your first app, click the
+                    element: h2
+                - uesio/io.button:
+                    uesio.variant: uesio/studio.navcta
+                    icon: +
+                    uesio.styleTokens:
+                      root:
+                        - pb-2
+                - uesio/io.text:
+                    text: button in the top left.
+                    element: h2
+    - uesio/io.grid:
+        uesio.variant: uesio/io.two_columns
+        uesio.styleTokens:
+          root:
+            - gap-x-12
+            - px-14
+            - py-2
+        items:
+          - uesio/io.griditem:
+              components:
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.main
+                    title: Latest Updates & News
+                - uesio/io.list:
+                    wire: blogentries
+                    mode: READ
+                    components:
+                      - uesio/io.tile:
+                          uesio.variant: uesio/io.action
+                          content:
+                            - uesio/io.text:
+                                text: ${uesio/cms.name}
+                                element: div
+                            - uesio/io.text:
+                                text: ${uesio/cms.description}
+                                uesio.variant: uesio/io.smallcontent
+                                element: div
+                          signals:
+                            - signal: "route/REDIRECT"
+                              path: "https://$Site{domain}/blog/${uesio/cms.slug}"
+                              newtab: true
+          - uesio/io.griditem:
+              components:
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.main
+                    title: Recent Documentation
+                - uesio/io.list:
+                    wire: recentdocs
+                    mode: READ
+                    components:
+                      - uesio/io.tile:
+                          uesio.variant: uesio/io.action
+                          content:
+                            - uesio/io.text:
+                                text: ${uesio/cms.name}
+                                element: div
+                            - uesio/io.text:
+                                text: ${uesio/cms.description}
+                                uesio.variant: uesio/io.smallcontent
+                                element: div
+                          signals:
+                            - signal: "route/REDIRECT"
+                              path: "https://docs.$Site{domain}/${uesio/cms.slug}"
+                              newtab: true
