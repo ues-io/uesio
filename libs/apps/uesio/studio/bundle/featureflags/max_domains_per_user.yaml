@@ -4,3 +4,4 @@ type: NUMBER
 defaultValue: 5
 min: 0
 max: 1000
+validForOrgs: true

@@ -23,6 +23,7 @@ definition:
         uesio/studio.defaultvalue:
         uesio/studio.min:
         uesio/studio.max:
+        uesio/studio.validfororgs:
         uesio/studio.workspace:
       conditions:
         - field: uesio/studio.workspace
@@ -143,6 +144,8 @@ definition:
                                       fieldId: uesio/studio.name
                                   - uesio/io.field:
                                       fieldId: uesio/studio.type
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.validfororgs
                                   - uesio/io.field:
                                       fieldId: uesio/studio.defaultvalue
                                   - uesio/io.field:
