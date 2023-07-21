@@ -1,7 +1,0 @@
-name: calloutsmallsubdark
-extends: uesio/web.calloutsmallsub
-label: Callout Small Sub Dark
-definition:
-  uesio.styleTokens:
-    root:
-      - text-slate-300

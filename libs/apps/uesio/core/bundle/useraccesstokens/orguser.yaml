@@ -1,0 +1,13 @@
+name: orguser
+type: lookup
+# collection = a junction table which has a reference to the User collection,
+# which we will be using to grant access
+collection: uesio/core.organizationuser
+# token = the user id that we want to grant access TO, i.e. the org id
+token: "${uesio/core.org}"
+# conditions = define the user reference fields to use for merging in the running user id,
+# i.e. here we want to find organizationuser records where "uesio/core.user" = the running user's id
+conditions:
+  - field: uesio/core.user
+# public = enable other apps (besides core) to utilize this useraccesstoken
+public: true
