@@ -1,13 +1,10 @@
-import { FunctionComponent } from "react"
 import { definition, api, platform } from "@uesio/ui"
 import ConfigFeatureFlagsCheckboxItem from "./configfeatureflagscheckboxitem"
 import ConfigFeatureFlagsNumberItem from "./configfeatureflagsnumberitem"
 
-type ConfigFeatureFlagsDefinition = {
+type Props = {
 	user: string
-}
-interface Props extends definition.BaseProps {
-	definition: ConfigFeatureFlagsDefinition
+	type: "ORG" | "USER"
 }
 
 const flagSort = (
@@ -22,7 +19,7 @@ const isNumberFlag = (
 	flag: platform.FeatureFlagResponse
 ): flag is platform.NumberFeatureFlag => flag.type === "NUMBER"
 
-const ConfigFeatureFlags: FunctionComponent<Props> = (props) => {
+const ConfigFeatureFlags: definition.UC<Props> = (props) => {
 	const { context, definition } = props
 	const user = definition?.user ? context.mergeString(definition?.user) : ""
 
@@ -35,9 +32,13 @@ const ConfigFeatureFlags: FunctionComponent<Props> = (props) => {
 	}
 
 	const [values] = api.featureflag.useFeatureFlags(context, user)
-
-	const checkboxFlags = values?.filter(isCheckboxFlag)
-	const numberFlags = values?.filter(isNumberFlag)
+	// Do an initial pass to filter based on user type
+	const flags = values?.filter((flag: platform.FeatureFlagResponse) =>
+		definition?.type === "ORG" ? !!flag.validForOrgs : true
+	)
+	// Further filter based on the flag type
+	const checkboxFlags = flags?.filter(isCheckboxFlag)
+	const numberFlags = flags?.filter(isNumberFlag)
 	checkboxFlags?.sort(flagSort)
 	numberFlags?.sort(flagSort)
 

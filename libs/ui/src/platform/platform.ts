@@ -66,6 +66,7 @@ interface BaseFeatureFlag {
 	name: string
 	namespace: string
 	user: string
+	validForOrgs?: boolean
 }
 
 interface NumberFeatureFlag extends BaseFeatureFlag {
