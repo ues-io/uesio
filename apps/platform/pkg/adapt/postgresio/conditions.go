@@ -261,17 +261,17 @@ func processSubQueryCondition(condition adapt.LoadRequestCondition, collectionMe
 
 	fieldName := getFieldName(fieldMetadata, tableAlias)
 
-	subFieldMetadata, err := collectionMetadata.GetField(condition.SubField)
+	subCollectionMetadata, err := metadata.GetCollection(condition.SubCollection)
+	if err != nil {
+		return err
+	}
+
+	subFieldMetadata, err := subCollectionMetadata.GetField(condition.SubField)
 	if err != nil {
 		return err
 	}
 
 	subFieldName := getFieldName(subFieldMetadata, subTableAlias)
-
-	subCollectionMetadata, err := metadata.GetCollection(condition.SubCollection)
-	if err != nil {
-		return err
-	}
 
 	subConditionsBuilder := builder.getSubBuilder("")
 	err = processConditionListForTenant(condition.SubConditions, subCollectionMetadata, metadata, subConditionsBuilder, subTableAlias, session)

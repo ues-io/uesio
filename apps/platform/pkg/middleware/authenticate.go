@@ -80,8 +80,7 @@ func AuthenticateSiteAdmin(next http.Handler) http.Handler {
 		s := GetSession(r)
 		err := datasource.AddSiteAdminContextByKey(appName+":"+siteName, s, nil)
 		if err != nil {
-			logger.LogError(err)
-			http.Error(w, "failed getting siteadmin context: "+err.Error(), http.StatusInternalServerError)
+			removeSessionAndRedirectToLoginRoute(w, r, s, auth.Expired)
 			return
 		}
 		next.ServeHTTP(w, r)
@@ -96,8 +95,7 @@ func AuthenticateWorkspace(next http.Handler) http.Handler {
 		s := GetSession(r)
 		err := datasource.AddWorkspaceContextByKey(appName+":"+workspaceName, s, nil)
 		if err != nil {
-			logger.LogError(err)
-			http.Error(w, "failed getting workspace context: "+err.Error(), http.StatusInternalServerError)
+			removeSessionAndRedirectToLoginRoute(w, r, s, auth.Expired)
 			return
 		}
 		next.ServeHTTP(w, r)
