@@ -9,6 +9,10 @@ HTTP 200
 session_id: cookie "sessid"
 user_id: jsonpath "$.user.id"
 
+# Delete the test site if it already exists
+DELETE https://{{host}}:{{port}}/site/api/v1/collection/uesio/studio/site?uesio/studio.name=eq.testsite
+HTTP 204
+
 # Delete the tests app if it already exists, which should cascade delete the workspace and all of its data
 DELETE https://{{host}}:{{port}}/site/api/v1/collection/uesio/studio/app?uesio/studio.fullname=eq.uesio%2Ftests
 HTTP 204
@@ -79,3 +83,44 @@ POST https://{{host}}:{{port}}/site/wires/save
     ]
 }
 HTTP 200
+
+# Create a bundle, so that we can create a site
+POST https://studio.uesio-dev.com:3000/workspace/uesio/tests/dev/bots/call/uesio/studio/createbundle
+{
+    "type": "patch",
+    "description": "test bundle"
+}
+HTTP 200
+[Captures]
+major: jsonpath "$.params.major"
+minor: jsonpath "$.params.minor"
+patch: jsonpath "$.params.patch"
+[Asserts]
+jsonpath "$.success" == true
+jsonpath "$.error" == ""
+jsonpath "$.params.description" == "test bundle"
+
+# Create a site using that bundle
+POST https://{{host}}:{{port}}/site/wires/save
+{
+    "wires": [
+        {
+            "wire": "newsite",
+            "collection": "uesio/studio.site",
+            "changes": {
+                "1": {
+                    "uesio/studio.app": {
+                        "uesio/core.id": "{{app_id}}"
+                    },
+                    "uesio/studio.name": "testsite",
+                    "uesio/studio.bundle": {
+                        "uesio/core.uniquekey": "uesio/tests:{{major}}:{{minor}}:{{patch}}"
+                    }
+                }
+            }
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].changes['1']['uesio/core.uniquekey']" == "uesio/tests:testsite"
