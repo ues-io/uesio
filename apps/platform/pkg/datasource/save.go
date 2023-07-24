@@ -159,6 +159,8 @@ func SaveOp(batch []*adapt.SaveOp, connection adapt.Connection, session *sess.Se
 
 	for _, op := range batch {
 
+		// Condition processing is currently only needed for uesio/studio.allmetadata (see the system bot for that for more info)
+		// and conditions will only be sent by the client if that collection is being saved.
 		err := processConditions(op.Conditions, op.Params, connection.GetMetadata(), nil, session)
 		if err != nil {
 			return err

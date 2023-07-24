@@ -24,10 +24,7 @@ export default async (context: Context, wires?: string[]) => {
 
 	const requests = wiresToSave.flatMap((wire) => {
 		const wireId = getFullWireId(wire.view, wire.name)
-
-		const deletes = wire.deletes
-		const changes = wire.changes
-
+		const { changes, collection, conditions, deletes } = wire
 		const serverChanges: Record<string, PlainWireRecord> = {}
 		const serverDeletes: Record<string, PlainWireRecord> = {}
 		const clientChanges: Record<string, PlainWireRecord> = {}
@@ -65,11 +62,19 @@ export default async (context: Context, wires?: string[]) => {
 			? [
 					{
 						wire: wireId,
-						collection: wire.collection,
+						collection,
 						changes: serverChanges,
 						deletes: serverDeletes,
-						conditions: wire.conditions,
-						params: context.getParams(),
+						// These are only needed as a hack for saving "uesio/studio.allmetadata",
+						// so we are selectively adding these only if we are saving that metadata type, to minimize payload size.
+						// This is a lot of extra bloat (and server-side processing) that we are doing for all other wires
+						// when we don't need it. Ideally there would be a different way to accomplish this.
+						...(collection === "uesio/studio.allmetadata"
+							? {
+									conditions,
+									params: context.getParams(),
+							  }
+							: {}),
 					},
 			  ]
 			: []

@@ -55,6 +55,10 @@ func processConditions(
 	session *sess.Session,
 ) error {
 
+	if conditions == nil {
+		return nil
+	}
+
 	for i, condition := range conditions {
 
 		if condition.Type == "SUBQUERY" || condition.Type == "GROUP" {
