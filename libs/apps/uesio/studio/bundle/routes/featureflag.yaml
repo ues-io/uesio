@@ -1,5 +1,5 @@
 name: featureflag
-path: app/{app:\w*\/\w*}/workspace/{workspacename}/featureflags/{featureflagname}
+path: app/{app:\w*\/\w*}/workspace/{workspacename}/featureflags/{namespace:\w*\/\w*}/{featureflagname}
 view: uesio/studio.featureflag
 theme: uesio/studio.default
 title: "Feature Flag: $Param{featureflagname}"
