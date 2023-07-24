@@ -67,7 +67,7 @@ definition:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
                     title: Config Values
-                    subtitle: Something Clever
+                    subtitle: Named values that must be configured separately in each site / workspace
                     actions:
                       - uesio/io.group:
                           components:
@@ -134,8 +134,11 @@ definition:
                   - newconfigvalue
               - signal: wire/RESET
                 wire: newconfigvalue
+              - signal: wire/LOAD
+                wires:
+                  - configvalues
         - uesio/io.button:
-            uesio.variant: uesio/io.primary
+            uesio.variant: uesio/io.secondary
             text: $Label{uesio/io.save}
             signals:
               - signal: wire/SAVE
