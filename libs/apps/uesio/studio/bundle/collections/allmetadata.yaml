@@ -1,8 +1,0 @@
-name: allmetadata
-type: DYNAMIC
-uniqueKey:
-  - uesio/studio.namespace
-  - uesio/studio.name
-nameField: uesio/studio.name
-label: All Metadata
-pluralLabel: All Metadata

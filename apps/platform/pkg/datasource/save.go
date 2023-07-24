@@ -16,14 +16,12 @@ type SaveRequestBatch struct {
 }
 
 type SaveRequest struct {
-	Collection string                       `json:"collection"`
-	Wire       string                       `json:"wire"`
-	Changes    meta.Group                   `json:"changes"`
-	Deletes    meta.Group                   `json:"deletes"`
-	Errors     []adapt.SaveError            `json:"errors"`
-	Options    *adapt.SaveOptions           `json:"options"`
-	Conditions []adapt.LoadRequestCondition `json:"conditions"`
-	Params     map[string]string            `json:"params"`
+	Collection string             `json:"collection"`
+	Wire       string             `json:"wire"`
+	Changes    meta.Group         `json:"changes"`
+	Deletes    meta.Group         `json:"deletes"`
+	Errors     []adapt.SaveError  `json:"errors"`
+	Options    *adapt.SaveOptions `json:"options"`
 }
 
 type SaveRequestImpl struct {
@@ -50,8 +48,6 @@ func (sr *SaveRequest) UnmarshalJSON(b []byte) error {
 	sr.Deletes = data.Deletes
 	sr.Errors = data.Errors
 	sr.Options = data.Options
-	sr.Conditions = data.Conditions
-	sr.Params = data.Params
 	return nil
 }
 
@@ -158,11 +154,6 @@ func SaveOp(batch []*adapt.SaveOp, connection adapt.Connection, session *sess.Se
 	}
 
 	for _, op := range batch {
-
-		err := processConditions(op.Conditions, op.Params, connection.GetMetadata(), nil, session)
-		if err != nil {
-			return err
-		}
 
 		if op.Metadata.Type == "DYNAMIC" {
 			err := runDynamicCollectionSaveBots(op, connection, session)

@@ -15,10 +15,7 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     allviews:
-      collection: uesio/studio.allmetadata
-      conditions:
-        - field: uesio/studio.type
-          value: views
+      collection: uesio/studio.view
     newview:
       collection: uesio/studio.view
       fields:

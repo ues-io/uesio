@@ -13,19 +13,17 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func extractConditions(conditions []adapt.LoadRequestCondition) (*adapt.LoadRequestCondition, *adapt.LoadRequestCondition, *adapt.LoadRequestCondition, *adapt.LoadRequestCondition, error) {
+func extractConditions(conditions []adapt.LoadRequestCondition) (*adapt.LoadRequestCondition, *adapt.LoadRequestCondition, *adapt.LoadRequestCondition, error) {
 
-	// Verify that a type condition was provided
-	var typeCondition *adapt.LoadRequestCondition
+	if conditions == nil || len(conditions) == 0 {
+		return nil, nil, nil, nil
+	}
+
 	var itemCondition *adapt.LoadRequestCondition
 	var groupingCondition *adapt.LoadRequestCondition
 	var searchCondition *adapt.LoadRequestCondition
 
 	for i, condition := range conditions {
-		if condition.Field == "uesio/studio.type" {
-			typeCondition = &conditions[i]
-			continue
-		}
 		if condition.Field == "uesio/studio.item" {
 			itemCondition = &conditions[i]
 			continue
@@ -39,16 +37,45 @@ func extractConditions(conditions []adapt.LoadRequestCondition) (*adapt.LoadRequ
 			continue
 		}
 	}
-	if typeCondition == nil {
-		return nil, nil, nil, nil, errors.New("No type condition provided")
-	}
 	if itemCondition != nil && groupingCondition != nil {
-		return nil, nil, nil, nil, errors.New("Can't have both an item and grouping condition")
+		return nil, nil, nil, errors.New("Can't have both an item and grouping condition")
 	}
-	return typeCondition, itemCondition, groupingCondition, searchCondition, nil
+	return itemCondition, groupingCondition, searchCondition, nil
 }
 
-func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+// Returns the metadata type corresponding to a studio collection name,
+// e.g. "uesio/studio.field" --> "fields"
+// e.g. "uesio/studio.profile" --> "profiles"
+func getMetadataTypeFromStudioCollectionName(studioCollectionName string) string {
+	return strings.TrimSuffix(strings.TrimPrefix(studioCollectionName, "uesio/studio."), "s")
+}
+
+// ONLY run the special studio metadata load logic if we're dealing with a studio collection
+// AND ANY OF THE FOLLOWING are true:
+// - NO Conditions are specified
+// - NO Fields are specified
+// - One of the "special" conditions is encountered
+func needToRunStudioMetadataLoadLogic(collectionName string, op *adapt.LoadOp) bool {
+	if !strings.HasPrefix(collectionName, "uesio/studio.") && !meta.IsBundleableCollection(collectionName) {
+		return false
+	}
+	if op.Fields == nil || len(op.Fields) == 0 {
+		return true
+	}
+	haveConditions := op.Conditions != nil && len(op.Conditions) > 0
+	if !haveConditions {
+		return true
+	} else {
+		itemCondition, groupingCondition, searchCondition, err := extractConditions(op.Conditions)
+		if itemCondition != nil || groupingCondition != nil || searchCondition != nil && err == nil {
+			return true
+		}
+	}
+	// Otherwise - don't do anything special
+	return false
+}
+
+func runStudioMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
 
 	workspace := op.Params["workspacename"]
 	site := op.Params["sitename"]
@@ -60,17 +87,12 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		return errors.New("no app parameter provided")
 	}
 
-	// Verify that a type condition was provided
-	if op.Conditions == nil || len(op.Conditions) <= 0 {
-		return errors.New("must provide at least one condition")
-	}
-
-	typeCondition, itemCondition, groupingCondition, searchCondition, err := extractConditions(op.Conditions)
+	itemCondition, groupingCondition, searchCondition, err := extractConditions(op.Conditions)
 	if err != nil {
 		return err
 	}
 
-	metadataType := typeCondition.Value.(string)
+	metadataType := meta.GetTypeFromCollectionName(op.CollectionName)
 
 	group, err := meta.GetBundleableGroupFromType(metadataType)
 	if err != nil {
@@ -97,7 +119,7 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 	}
 
 	metadata, err := datasource.Load([]*adapt.LoadOp{{
-		CollectionName: group.GetName(),
+		CollectionName: op.CollectionName,
 		WireName:       op.WireName,
 		View:           op.View,
 		Collection:     op.Collection,
@@ -115,10 +137,9 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		return err
 	}
 
-	dynamicCollectionMetadata, err := metadata.GetCollection("uesio/studio.allmetadata")
-	if err != nil {
-		return err
-	}
+	// Build a custom collection metadata for the scope of this request,
+	// where we inject any custom metadata fields
+	dynamicCollectionMetadata := adapt.CollectionMetadata{}
 
 	for _, field := range originalCollectionMetadata.Fields {
 		dynamicCollectionMetadata.SetField(field)

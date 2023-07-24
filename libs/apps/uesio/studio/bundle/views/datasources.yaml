@@ -15,10 +15,7 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     datasources:
-      collection: uesio/studio.allmetadata
-      conditions:
-        - field: uesio/studio.type
-          value: datasources
+      collection: uesio/studio.datasource
     newdatasource:
       collection: uesio/studio.datasource
       fields:

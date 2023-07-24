@@ -15,32 +15,18 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     permissionsets:
-      collection: uesio/studio.allmetadata
+      collection: uesio/studio.permissionset
       conditions:
-        - field: uesio/studio.type
-          value: permissionsets
         - field: uesio/studio.item
           value: $Param{namespace}.$Param{permissionsetname}
     routes:
-      collection: uesio/studio.allmetadata
-      conditions:
-        - field: uesio/studio.type
-          value: routes
+      collection: uesio/studio.route
     collections:
-      collection: uesio/studio.allmetadata
-      conditions:
-        - field: uesio/studio.type
-          value: collections
+      collection: uesio/studio.collection
     views:
-      collection: uesio/studio.allmetadata
-      conditions:
-        - field: uesio/studio.type
-          value: views
+      collection: uesio/studio.view
     files:
-      collection: uesio/studio.allmetadata
-      conditions:
-        - field: uesio/studio.type
-          value: files
+      collection: uesio/studio.file
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:

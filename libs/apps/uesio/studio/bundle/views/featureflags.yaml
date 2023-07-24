@@ -15,10 +15,7 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     featureflags:
-      collection: uesio/studio.allmetadata
-      conditions:
-        - field: uesio/studio.type
-          value: featureflags
+      collection: uesio/studio.featureflag
     newfeatureflag:
       collection: uesio/studio.featureflag
       fields:

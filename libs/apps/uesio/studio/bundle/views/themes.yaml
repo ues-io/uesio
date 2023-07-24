@@ -16,10 +16,7 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     allthemes:
-      collection: uesio/studio.allmetadata
-      conditions:
-        - field: uesio/studio.type
-          value: themes
+      collection: uesio/studio.theme
     newtheme:
       collection: uesio/studio.theme
       fields:

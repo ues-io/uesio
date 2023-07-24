@@ -35,10 +35,7 @@ definition:
           lookupWire: apps
           lookupField: uesio/core.id
     allcollections:
-      collection: uesio/studio.allmetadata
-      conditions:
-        - field: uesio/studio.type
-          value: "collections"
+      collection: uesio/studio.collection
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:

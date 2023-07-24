@@ -141,8 +141,6 @@ func (b *SystemDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adap
 	switch op.CollectionName {
 	case "uesio/core.usage":
 		botFunction = runUsageLoadBot
-	case "uesio/studio.allmetadata":
-		botFunction = runAllMetadataLoadBot
 	case "uesio/studio.recentmetadata":
 		botFunction = runRecentMetadataLoadBot
 	case "uesio/studio.blogentry":
@@ -153,6 +151,10 @@ func (b *SystemDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adap
 		botFunction = clickup.ProjectLoadBot
 	case "tcm/timetracker.task":
 		botFunction = clickup.TaskLoadBot
+	}
+
+	if needToRunStudioMetadataLoadLogic(op.CollectionName, op) {
+		botFunction = runStudioMetadataLoadBot
 	}
 
 	if botFunction == nil {
@@ -166,11 +168,8 @@ func (b *SystemDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adap
 func (b *SystemDialect) SaveBot(bot *meta.Bot, op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 	var botFunction SaveBotFunc
 
-	switch op.Metadata.GetFullName() {
-	case "uesio/studio.allmetadata":
-		botFunction = runAllMetadataSaveBot
-
-	}
+	//switch op.Metadata.GetFullName() {
+	//}
 
 	if botFunction == nil {
 		return datasource.NewSystemBotNotFoundError()

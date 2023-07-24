@@ -18,10 +18,7 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     allroutes:
-      collection: uesio/studio.allmetadata
-      conditions:
-        - field: uesio/studio.type
-          value: routes
+      collection: uesio/studio.route
       order:
         - field: uesio/core.updatedat
           desc: true
