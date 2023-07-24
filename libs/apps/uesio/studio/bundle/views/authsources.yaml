@@ -112,7 +112,7 @@ definition:
   panels:
     newAuthSource:
       uesio.type: uesio/io.dialog
-      title: Create a New Data Source
+      title: Create a new Auth Source
       width: 500px
       height: 600px
       components:
@@ -143,8 +143,11 @@ definition:
                   - newauthsource
               - signal: wire/RESET
                 wire: newauthsource
+              - signal: wire/LOAD
+                wires:
+                  - authsources
         - uesio/io.button:
-            uesio.variant: uesio/io.primary
+            uesio.variant: uesio/io.secondary
             text: $Label{uesio/io.save}
             signals:
               - signal: wire/SAVE
