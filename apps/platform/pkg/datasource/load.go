@@ -191,6 +191,9 @@ func getMetadataForConditionLoad(
 			return err
 		}
 		err = collections.AddField(condition.SubCollection, condition.SubField, nil)
+		if err != nil {
+			return err
+		}
 		// Now, process sub-conditions recursively
 		if len(condition.SubConditions) > 0 {
 			for _, subCondition := range condition.SubConditions {
