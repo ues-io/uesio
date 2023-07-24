@@ -235,7 +235,7 @@ FROM data as "main"
 WHERE
 main.collection = $1 AND
 main.tenant = $2 AND
-main.fields->>'uesio/tests.species' IN ($3)
+main.fields->>'uesio/tests.species' = ANY ($3)
 ORDER BY main.id::text asc
 LIMIT 501```
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" count == 2
@@ -281,8 +281,8 @@ FROM data as "main"
 WHERE
 main.collection = $1 AND
 main.tenant = $2 AND
-main.fields->>'uesio/tests.genus' NOT IN ($3,$4) AND
-main.fields->>'uesio/tests.species' IN ($5,$6)
+main.fields->>'uesio/tests.genus' <> ALL ($3) AND
+main.fields->>'uesio/tests.species' = ANY ($4)
 ORDER BY main.id::text asc
 LIMIT 501```
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" == "Soitoux:Franklin"
