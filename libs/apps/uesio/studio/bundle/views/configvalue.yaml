@@ -15,19 +15,12 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     configvalues:
-      collection: uesio/studio.configvalue
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.workspace:
+      collection: uesio/studio.allmetadata
       conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
-        - field: uesio/studio.name
-          valueSource: PARAM
-          param: configvaluename
+        - field: uesio/studio.type
+          value: configvalues
+        - field: uesio/studio.item
+          value: $Param{namespace}.$Param{configvaluename}
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -44,6 +37,7 @@ definition:
                       itemType: configvalues
                       itemIcon: tune
                       itemName: $Param{configvaluename}
+                      itemNameSpace: $Param{namespace}
           - uesio/io.griditem:
               uesio.variant: uesio/studio.leftbar
               components:
@@ -70,6 +64,14 @@ definition:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: $Label{uesio/io.edit}
+                                      uesio.display:
+                                        - type: fieldMode
+                                          mode: READ
+                                        - type: paramValue
+                                          param: app
+                                          field: uesio/core.dynamiccollection
+                                          operator: EQUALS
+                                          value: $Param{namespace}
                                       signals:
                                         - signal: component/CALL
                                           component: uesio/io.list
@@ -77,28 +79,47 @@ definition:
                                           targettype: specific
                                           target: configvaluesList
                                   - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
+                                      uesio.variant: uesio/io.primary
                                       text: $Label{uesio/io.save}
+                                      uesio.display:
+                                        - type: wireHasChanges
+                                          wire: configvalues
                                       signals:
                                         - signal: wire/SAVE
                                           wires:
-                                            - "configvalues"
+                                            - configvalues
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: $Label{uesio/io.cancel}
+                                      uesio.display:
+                                        - type: fieldMode
+                                          mode: EDIT
                                       signals:
                                         - signal: wire/CANCEL
-                                          wire: "configvalues"
+                                          wire: configvalues
+                                        - signal: component/CALL
+                                          component: uesio/io.list
+                                          componentsignal: SET_READ_MODE
+                                          targettype: specific
+                                          target: configvaluesList
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: $Label{uesio/io.delete}
+                                      uesio.display:
+                                        - type: fieldMode
+                                          mode: READ
+                                        - type: paramValue
+                                          param: app
+                                          field: uesio/core.dynamiccollection
+                                          operator: EQUALS
+                                          value: $Param{namespace}
                                       signals:
                                         - signal: wire/MARK_FOR_DELETE
                                         - signal: wire/SAVE
                                           wires:
-                                            - "configvalues"
-                                        - signal: "route/NAVIGATE"
-                                          path: "app/$Param{app}/workspace/$Param{workspacename}/configvalues"
+                                            - configvalues
+                                        - signal: route/NAVIGATE
+                                          path: app/$Param{app}/workspace/$Param{workspacename}/configvalues
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           components:
@@ -107,3 +128,7 @@ definition:
                                 items:
                                   - uesio/io.field:
                                       fieldId: uesio/studio.name
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.managedby
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.store
