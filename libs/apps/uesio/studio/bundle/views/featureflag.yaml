@@ -122,6 +122,7 @@ definition:
                                       uesio.display:
                                         - type: wireHasChanges
                                           wire: featureflags
+                                      hotkey: "meta+s"
                                       signals:
                                         - signal: wire/SAVE
                                           wires:

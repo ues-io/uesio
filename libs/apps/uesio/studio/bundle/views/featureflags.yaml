@@ -117,9 +117,9 @@ definition:
                       - uesio/io.group:
                           components:
                             - uesio/io.button:
-                                text: Create a New Feature Flag
+                                text: Create a new Feature Flag
                                 uesio.variant: uesio/io.primary
-                                hotkeys: "n"
+                                hotkey: "n"
                                 signals:
                                   - signal: panel/TOGGLE
                                     panel: newfeatureflag
@@ -197,8 +197,11 @@ definition:
                   - newfeatureflag
               - signal: wire/RESET
                 wire: newfeatureflag
+              - signal: wire/LOAD
+                wires:
+                  - featureflags
         - uesio/io.button:
-            uesio.variant: uesio/io.primary
+            uesio.variant: uesio/io.secondary
             text: $Label{uesio/io.save}
             signals:
               - signal: wire/SAVE
