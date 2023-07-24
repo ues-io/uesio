@@ -70,12 +70,12 @@ definition:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
                     title: Data Sources
-                    subtitle: Invisible threads are the strongest ties!
+                    subtitle: Bring in your data from external systems
                     actions:
                       - uesio/io.group:
                           components:
                             - uesio/io.button:
-                                text: Create a New Data Source
+                                text: Create a new Data Source
                                 hotkey: "n"
                                 uesio.variant: uesio/io.primary
                                 signals:
@@ -113,7 +113,7 @@ definition:
   panels:
     newDatasource:
       uesio.type: uesio/io.dialog
-      title: Create a New Data Source
+      title: Create a new Data Source
       width: 500px
       height: 600px
       components:
@@ -144,8 +144,11 @@ definition:
                   - newdatasource
               - signal: wire/RESET
                 wire: newdatasource
+              - signal: wire/LOAD
+                wires:
+                  - datasources
         - uesio/io.button:
-            uesio.variant: uesio/io.primary
+            uesio.variant: uesio/io.secondary
             text: $Label{uesio/io.save}
             signals:
               - signal: wire/SAVE
