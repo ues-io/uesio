@@ -285,15 +285,19 @@ func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *
 		},
 	}
 	// Implement the old way to make sure it still works
-	for collectionKey, collection := range mr.Collections {
+	for collectionKey, fieldsMap := range mr.Collections {
 		metadata, err := LoadCollectionMetadata(collectionKey, metadataResponse, session, connection)
 		if err != nil {
 			return err
 		}
 
-		if metadata.Type == "DYNAMIC" {
+		if metadata.IsDynamic() {
 			addAllBuiltinFields(metadata)
-			continue
+			// Run collection metadata bots to populate custom metadata
+			err = runDynamicCollectionMetadataBots(metadata, fieldsMap, connection, session)
+			if err != nil {
+				return err
+			}
 		}
 
 		if mr.Options != nil && mr.Options.LoadAllFields {
@@ -304,10 +308,10 @@ func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *
 			}
 			metadata.HasAllFields = true
 		} else {
-			addBuiltinFields(metadata, collection)
+			addBuiltinFields(metadata, fieldsMap)
 			// Automagically add the id field and the name field whether they were requested or not.
 			fieldsToLoad := []string{adapt.ID_FIELD, metadata.NameField}
-			for fieldKey := range collection {
+			for fieldKey := range fieldsMap {
 				fieldsToLoad = append(fieldsToLoad, fieldKey)
 			}
 			if metadata.AccessField != "" {
@@ -332,7 +336,7 @@ func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *
 			}
 		}
 
-		err = ProcessFieldsMetadata(metadata.Fields, collectionKey, collection, metadataResponse, &additionalRequests, "")
+		err = ProcessFieldsMetadata(metadata.Fields, collectionKey, fieldsMap, metadataResponse, &additionalRequests, "")
 		if err != nil {
 			return err
 		}

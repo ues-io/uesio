@@ -2,6 +2,7 @@ package tsdialect
 
 import (
 	"fmt"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"io/ioutil"
 
 	esbuild "github.com/evanw/esbuild/pkg/api"
@@ -148,6 +149,10 @@ func (b *TSDialect) RouteBot(bot *meta.Bot, route *meta.Route, session *sess.Ses
 }
 
 func (b *TSDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+	return nil
+}
+
+func (b *TSDialect) CollectionMetadataBot(bot *meta.Bot, op *adapt.CollectionMetadata, connection adapt.Connection, session *sess.Session, requestedFields datasource.FieldsMap) error {
 	return nil
 }
 

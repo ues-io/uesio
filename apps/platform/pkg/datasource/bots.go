@@ -83,6 +83,17 @@ func runBeforeSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessi
 	return nil
 }
 
+func runDynamicCollectionMetadataBots(collectionMetadata *adapt.CollectionMetadata, requestedFields FieldsMap, connection adapt.Connection, session *sess.Session) error {
+	// Currently, all dynamic collections are routed to
+	// the system bot dialect.
+	dialect, err := bot.GetBotDialect("SYSTEM")
+	if err != nil {
+		return err
+	}
+	return dialect.CollectionMetadataBot(meta.NewCollectionMetadataBot(collectionMetadata.Namespace, collectionMetadata.Name), collectionMetadata, connection, session, nil)
+
+}
+
 func runDynamicCollectionLoadBots(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
 
 	// Currently, all dynamic collections are routed to

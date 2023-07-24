@@ -155,7 +155,7 @@ func SaveOp(batch []*adapt.SaveOp, connection adapt.Connection, session *sess.Se
 
 	for _, op := range batch {
 
-		if op.Metadata.Type == "DYNAMIC" {
+		if op.Metadata.IsDynamic() {
 			err := runDynamicCollectionSaveBots(op, connection, session)
 			if err != nil {
 				return HandleErrorAndAddToSaveOp(op, err)

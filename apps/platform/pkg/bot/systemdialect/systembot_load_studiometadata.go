@@ -43,36 +43,59 @@ func extractConditions(conditions []adapt.LoadRequestCondition) (*adapt.LoadRequ
 	return itemCondition, groupingCondition, searchCondition, nil
 }
 
-// Returns the metadata type corresponding to a studio collection name,
-// e.g. "uesio/studio.field" --> "fields"
-// e.g. "uesio/studio.profile" --> "profiles"
-func getMetadataTypeFromStudioCollectionName(studioCollectionName string) string {
-	return strings.TrimSuffix(strings.TrimPrefix(studioCollectionName, "uesio/studio."), "s")
-}
+func runStudioCollectionMetadataBot(collectionMetadata *adapt.CollectionMetadata, connection adapt.Connection, session *sess.Session) error {
 
-// ONLY run the special studio metadata load logic if we're dealing with a studio collection
-// AND ANY OF THE FOLLOWING are true:
-// - NO Conditions are specified
-// - NO Fields are specified
-// - One of the "special" conditions is encountered
-func needToRunStudioMetadataLoadLogic(collectionName string, op *adapt.LoadOp) bool {
-	if !strings.HasPrefix(collectionName, "uesio/studio.") && !meta.IsBundleableCollection(collectionName) {
-		return false
+	// Inject custom field metadata for bundleable types
+	if !meta.IsBundleableCollection(collectionMetadata.GetFullName()) {
+		return nil
 	}
-	if op.Fields == nil || len(op.Fields) == 0 {
-		return true
+
+	// Add the name field regardless of whether it was requested or not
+	// Automagically add the id field and the name field whether they were requested or not.
+	fieldsToLoad := []string{adapt.ID_FIELD, collectionMetadata.NameField}
+	for fieldKey := range collectionMetadata.Fields {
+		fieldsToLoad = append(fieldsToLoad, fieldKey)
 	}
-	haveConditions := op.Conditions != nil && len(op.Conditions) > 0
-	if !haveConditions {
-		return true
-	} else {
-		itemCondition, groupingCondition, searchCondition, err := extractConditions(op.Conditions)
-		if itemCondition != nil || groupingCondition != nil || searchCondition != nil && err == nil {
-			return true
-		}
+	if collectionMetadata.AccessField != "" {
+		fieldsToLoad = append(fieldsToLoad, collectionMetadata.AccessField)
 	}
-	// Otherwise - don't do anything special
-	return false
+	err := datasource.LoadFieldsMetadata(fieldsToLoad, collectionMetadata.GetFullName(), collectionMetadata, session, connection)
+	if err != nil {
+		return err
+	}
+
+	collectionMetadata.SetField(&adapt.FieldMetadata{
+		Name:       "namespace",
+		Namespace:  "uesio/studio",
+		Createable: false,
+		Accessible: true,
+		Updateable: false,
+		Type:       "TEXT",
+		Label:      "Namespace",
+	})
+
+	collectionMetadata.SetField(&adapt.FieldMetadata{
+		Name:       "appicon",
+		Namespace:  "uesio/studio",
+		Createable: false,
+		Accessible: true,
+		Updateable: false,
+		Type:       "TEXT",
+		Label:      "App Icon",
+	})
+
+	collectionMetadata.SetField(&adapt.FieldMetadata{
+		Name:       "appcolor",
+		Namespace:  "uesio/studio",
+		Createable: false,
+		Accessible: true,
+		Updateable: false,
+		Type:       "TEXT",
+		Label:      "App Color",
+	})
+
+	return nil
+
 }
 
 func runStudioMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
@@ -139,41 +162,10 @@ func runStudioMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 
 	// Build a custom collection metadata for the scope of this request,
 	// where we inject any custom metadata fields
-	dynamicCollectionMetadata := adapt.CollectionMetadata{}
-
-	for _, field := range originalCollectionMetadata.Fields {
-		dynamicCollectionMetadata.SetField(field)
+	err = runStudioCollectionMetadataBot(originalCollectionMetadata.Clone(), connection, session)
+	if err != nil {
+		return err
 	}
-
-	dynamicCollectionMetadata.SetField(&adapt.FieldMetadata{
-		Name:       "namespace",
-		Namespace:  "uesio/studio",
-		Createable: false,
-		Accessible: true,
-		Updateable: false,
-		Type:       "TEXT",
-		Label:      "Namespace",
-	})
-
-	dynamicCollectionMetadata.SetField(&adapt.FieldMetadata{
-		Name:       "appicon",
-		Namespace:  "uesio/studio",
-		Createable: false,
-		Accessible: true,
-		Updateable: false,
-		Type:       "TEXT",
-		Label:      "App Icon",
-	})
-
-	dynamicCollectionMetadata.SetField(&adapt.FieldMetadata{
-		Name:       "appcolor",
-		Namespace:  "uesio/studio",
-		Createable: false,
-		Accessible: true,
-		Updateable: false,
-		Type:       "TEXT",
-		Label:      "App Color",
-	})
 
 	namespaces := inContextSession.GetContextNamespaces()
 

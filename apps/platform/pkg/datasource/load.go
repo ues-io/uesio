@@ -417,12 +417,17 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 			return nil, err
 		}
 
-		if collectionMetadata.Type == "DYNAMIC" {
+		if collectionMetadata.IsDynamic() {
 			err := runDynamicCollectionLoadBots(op, connection, session)
 			if err != nil {
-				return nil, err
+				_, isNotFoundError := err.(*SystemBotNotFoundError)
+				// If we did not find (and run) a dynamic collection bot, then continue on attempting to load metadata
+				if !isNotFoundError {
+					return nil, err
+				}
+			} else {
+				continue
 			}
-			continue
 		}
 
 		err = loadData(op, connection, session)

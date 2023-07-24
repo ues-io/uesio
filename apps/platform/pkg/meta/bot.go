@@ -63,6 +63,10 @@ func NewLoadBot(namespace, name string) *Bot {
 	return NewBaseBot("LOAD", "", namespace, name)
 }
 
+func NewCollectionMetadataBot(namespace, name string) *Bot {
+	return NewBaseBot("COLLECTION_METADATA", "", namespace, name)
+}
+
 func NewSaveBot(namespace, name string) *Bot {
 	return NewBaseBot("SAVE", "", namespace, name)
 }

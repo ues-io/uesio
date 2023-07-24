@@ -15,6 +15,8 @@ type CallBotFunc func(params map[string]interface{}, connection adapt.Connection
 
 type LoadBotFunc func(request *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error
 
+type CollectionMetadataBotFunc func(collectionMetadata *adapt.CollectionMetadata, connection adapt.Connection, session *sess.Session) error
+
 type SaveBotFunc func(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error
 
 type RouteBotFunc func(*meta.Route, *sess.Session) error
@@ -153,7 +155,7 @@ func (b *SystemDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adap
 		botFunction = clickup.TaskLoadBot
 	}
 
-	if needToRunStudioMetadataLoadLogic(op.CollectionName, op) {
+	if meta.IsBundleableCollection(op.CollectionName) {
 		botFunction = runStudioMetadataLoadBot
 	}
 
@@ -162,6 +164,21 @@ func (b *SystemDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adap
 	}
 
 	return botFunction(op, connection, session)
+
+}
+
+func (b *SystemDialect) CollectionMetadataBot(bot *meta.Bot, op *adapt.CollectionMetadata, connection adapt.Connection, session *sess.Session, requestedFields datasource.FieldsMap) error {
+	var botFunction CollectionMetadataBotFunc
+
+	if meta.IsBundleableCollection(collectionMetadata.GetFullName()) {
+		botFunction = runStudioCollectionMetadataBot
+	}
+
+	if botFunction == nil {
+		return datasource.NewSystemBotNotFoundError()
+	}
+
+	return botFunction(collectionMetadata, connection, session)
 
 }
 

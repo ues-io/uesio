@@ -50,6 +50,10 @@ type CollectionMetadata struct {
 	PluralLabel           string                                 `json:"pluralLabel"`
 }
 
+func (cm *CollectionMetadata) IsDynamic() bool {
+	return cm.Type == "DYNAMIC" || meta.IsBundleableCollection(cm.GetFullName())
+}
+
 func (cm *CollectionMetadata) IsWriteProtected() bool {
 	return cm.Access == "protected" || cm.Access == "protected_write"
 }
@@ -126,6 +130,30 @@ func (cm *CollectionMetadata) Merge(other *CollectionMetadata) {
 	// Otherwise, we need to do a merge, injecting all fields from other which we don't have already,
 	// and doing a "deep" merge of any fields that we DO already have, to ensure we get subfields too
 	MergeFieldMaps(cm.Fields, other.Fields)
+}
+
+func (cm *CollectionMetadata) Clone() *CollectionMetadata {
+	return &CollectionMetadata{
+		Name:                  cm.Name,
+		Namespace:             cm.Namespace,
+		Type:                  cm.Type,
+		UniqueKey:             cm.UniqueKey,
+		NameField:             cm.NameField,
+		Createable:            cm.Createable,
+		Accessible:            cm.Accessible,
+		Updateable:            cm.Updateable,
+		Deleteable:            cm.Deleteable,
+		Fields:                cm.Fields,
+		DataSource:            cm.DataSource,
+		Access:                cm.Access,
+		AccessField:           cm.AccessField,
+		RecordChallengeTokens: cm.RecordChallengeTokens,
+		TableName:             cm.TableName,
+		Public:                cm.Public,
+		HasAllFields:          cm.HasAllFields,
+		Label:                 cm.Label,
+		PluralLabel:           cm.PluralLabel,
+	}
 }
 
 type SelectListMetadata struct {
