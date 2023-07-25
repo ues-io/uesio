@@ -225,6 +225,7 @@ definition:
                                           name: $Param{sitename}
                                           app: $Param{app}
                                       user: ${uesio/core.id}
+                                      type: USER
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           components:

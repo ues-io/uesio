@@ -164,6 +164,68 @@ func processConditions(
 	return nil
 }
 
+func getMetadataForConditionLoad(
+	condition *adapt.LoadRequestCondition,
+	collectionName string,
+	collections *MetadataRequest,
+	op *adapt.LoadOp,
+	ops []*adapt.LoadOp,
+) error {
+
+	// We don't need any extra field metadata for these conditions (yet)
+	if condition.Type == "SEARCH" || condition.Type == "GROUP" {
+		// We don't need any extra field metadata for search conditions yet
+		return nil
+	}
+
+	// Request metadata for the condition's main field
+	err := collections.AddField(collectionName, condition.Field, nil)
+	if err != nil {
+		return fmt.Errorf("condition field: %v", err)
+	}
+
+	if condition.Type == "SUBQUERY" {
+		// Request metadata for the sub-query condition's Collection and subfield
+		err = collections.AddCollection(condition.SubCollection)
+		if err != nil {
+			return err
+		}
+		err = collections.AddField(condition.SubCollection, condition.SubField, nil)
+		if err != nil {
+			return err
+		}
+		// Now, process sub-conditions recursively
+		if len(condition.SubConditions) > 0 {
+			for _, subCondition := range condition.SubConditions {
+				err = getMetadataForConditionLoad(&subCondition, condition.SubCollection, collections, op, ops)
+				if err != nil {
+					return err
+				}
+			}
+		}
+	}
+
+	if condition.ValueSource == "LOOKUP" && condition.LookupField != "" && condition.LookupWire != "" {
+
+		// Look through the previous wires to find the one to look up on.
+		var lookupCollectionKey string
+		for _, otherOp := range ops {
+			if otherOp.WireName == condition.LookupWire {
+				lookupCollectionKey = otherOp.CollectionName
+			}
+		}
+		lookupFields := strings.Split(condition.LookupField, "->")
+		lookupField, rest := lookupFields[0], lookupFields[1:]
+		subFields := getAdditionalLookupFields(rest)
+
+		innerErr := collections.AddField(lookupCollectionKey, lookupField, &subFields)
+		if innerErr != nil {
+			return fmt.Errorf("lookup field: %v", innerErr)
+		}
+	}
+	return nil
+}
+
 func getMetadataForLoad(
 	op *adapt.LoadOp,
 	metadataResponse *adapt.MetadataCache,
@@ -193,41 +255,10 @@ func getMetadataForLoad(
 	}
 
 	for _, condition := range op.Conditions {
-
-		if condition.Type == "SEARCH" {
-			// We don't need any extra field metadata for search conditions yet
-			continue
+		innerErr := getMetadataForConditionLoad(&condition, collectionKey, &collections, op, ops)
+		if innerErr != nil {
+			return innerErr
 		}
-
-		if condition.Type == "GROUP" {
-			// We don't need any extra field metadata for group conditions yet
-			continue
-		}
-
-		err := collections.AddField(collectionKey, condition.Field, nil)
-		if err != nil {
-			return fmt.Errorf("condition field: %v", err)
-		}
-
-		if condition.ValueSource == "LOOKUP" && condition.LookupField != "" && condition.LookupWire != "" {
-
-			// Look through the previous wires to find the one to look up on.
-			var lookupCollectionKey string
-			for _, op := range ops {
-				if op.WireName == condition.LookupWire {
-					lookupCollectionKey = op.CollectionName
-				}
-			}
-			lookupFields := strings.Split(condition.LookupField, "->")
-			lookupField, rest := lookupFields[0], lookupFields[1:]
-			subFields := getAdditionalLookupFields(rest)
-
-			err := collections.AddField(lookupCollectionKey, lookupField, &subFields)
-			if err != nil {
-				return fmt.Errorf("lookup field: %v", err)
-			}
-		}
-
 	}
 
 	err = collections.Load(metadataResponse, session, nil)

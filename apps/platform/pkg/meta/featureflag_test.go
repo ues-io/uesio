@@ -121,6 +121,33 @@ func TestFeatureFlag_MarshalJSONObject(t *testing.T) {
 			},
 			"{\"namespace\":\"uesio/studio\",\"name\":\"stuff\",\"user\":\"joe\",\"type\":\"NUMBER\",\"value\":2,\"min\":0,\"max\":10}",
 		},
+		{
+			"should include validForOrgs true",
+			&FeatureFlag{
+				BundleableBase: BundleableBase{
+					Namespace: "uesio/studio",
+					Name:      "stuff",
+				},
+				User:         "bob",
+				Type:         "CHECKBOX",
+				ValidForOrgs: true,
+				Value:        true,
+			},
+			"{\"namespace\":\"uesio/studio\",\"name\":\"stuff\",\"user\":\"bob\",\"type\":\"CHECKBOX\",\"validForOrgs\":true,\"value\":true}",
+		},
+		{
+			"should not include validForOrgs if false or not provided",
+			&FeatureFlag{
+				BundleableBase: BundleableBase{
+					Namespace: "uesio/studio",
+					Name:      "stuff",
+				},
+				User:  "bob",
+				Type:  "CHECKBOX",
+				Value: true,
+			},
+			"{\"namespace\":\"uesio/studio\",\"name\":\"stuff\",\"user\":\"bob\",\"type\":\"CHECKBOX\",\"value\":true}",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
