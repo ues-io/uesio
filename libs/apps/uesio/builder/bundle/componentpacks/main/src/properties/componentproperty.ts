@@ -65,6 +65,12 @@ type KeyProperty = {
 	type: "KEY"
 } & BaseProperty
 
+type CollectionFieldProperty = {
+	type: "COLLECTION_FIELD"
+	groupingPath?: string
+	groupingValue?: string
+} & BaseProperty
+
 type MetadataProperty = {
 	type: "METADATA"
 	metadataType: metadata.MetadataType
@@ -221,6 +227,7 @@ type ComponentProperty =
 	| ParamProperty
 	| SelectProperty
 	| ConditionProperty
+	| CollectionFieldProperty
 	| WireProperty
 	| WiresProperty
 	| FieldMetadataProperty
@@ -246,6 +253,7 @@ const getStyleVariantProperty = (componentType: string): ComponentProperty => ({
 
 export type {
 	BotProperty,
+	CollectionFieldProperty,
 	ComponentProperty,
 	ComponentPropertiesGetter,
 	FieldProperty,

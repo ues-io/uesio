@@ -66,7 +66,9 @@ const FieldPicker: definition.UtilityComponent<Props> = (props) => {
 		}
 	)
 
-	const fieldsDef = get(context, referencePath) as wire.WireFieldDefinitionMap
+	const fieldsDef = referencePath
+		? (get(context, referencePath) as wire.WireFieldDefinitionMap)
+		: null
 
 	if (!collectionFields || !collectionMetadata) return null
 
@@ -102,7 +104,7 @@ const FieldPicker: definition.UtilityComponent<Props> = (props) => {
 					<FieldSelectPropTag
 						setReferencePath={setReferencePath}
 						selected={selected}
-						path={referencePath.addLocal(fieldId)}
+						path={referencePath?.addLocal(fieldId)}
 						fieldMetadata={fieldMetadata}
 						key={fieldId}
 						context={context}

@@ -75,6 +75,19 @@ export const getFormFieldFromProperty = (
 					),
 				},
 			}
+		case "COLLECTION_FIELD":
+			return {
+				[`uesio/builder.collectionfield`]: {
+					...baseFieldDef,
+					fieldWrapperVariant: "uesio/builder.propfield",
+					grouping: getGrouping(
+						path,
+						context,
+						property.groupingPath,
+						property.groupingValue
+					),
+				},
+			}
 		case "NUMBER": {
 			return {
 				"uesio/io.field": {

@@ -257,17 +257,16 @@ const getItemPropertiesFunction =
 			},
 			{
 				name: "field",
-				type: "METADATA",
-				metadataType: "FIELD",
+				type: "COLLECTION_FIELD",
 				label: "Field",
 				groupingPath: `${"../".repeat(
 					parentPath.size() - 3
 				)}../collection`,
 				displayConditions: [
 					{
-						operator: "NOT_EQUALS",
+						operator: "NOT_IN",
 						field: "type",
-						value: "GROUP",
+						values: ["GROUP", "SUBQUERY"],
 						type: "fieldValue",
 					},
 				],
