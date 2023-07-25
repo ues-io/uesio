@@ -20,11 +20,15 @@ func NewBot(key string) (*Bot, error) {
 	var collectionKey, botKey string
 	switch botType {
 	case "LISTENER", "GENERATOR":
-		if (keyArraySize) != 2 {
-			return nil, errors.New("Invalid Bot Key")
-		}
 		collectionKey = ""
 		botKey = keyArray[1]
+		if (keyArraySize) > 3 {
+			return nil, errors.New("Invalid Bot Key")
+		}
+		if (keyArraySize) == 3 {
+			collectionKey = keyArray[1]
+			botKey = keyArray[2]
+		}
 	default:
 		if (keyArraySize) != 3 {
 			return nil, errors.New("Invalid Bot Key")
