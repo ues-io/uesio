@@ -3,7 +3,7 @@ module github.com/thecloudmasters/cli
 go 1.19
 
 require (
-	github.com/AlecAivazis/survey/v2 v2.3.6
+	github.com/AlecAivazis/survey/v2 v2.3.7
 	github.com/evanw/esbuild v0.14.50
 	github.com/spf13/cobra v1.5.0
 	github.com/teris-io/shortid v0.0.0-20220617161101-71ec9f2aa569
