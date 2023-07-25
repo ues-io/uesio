@@ -46,7 +46,7 @@
     "@nrwl/eslint-plugin-nx": "14.7.13",
     "@nrwl/jest": "14.7.13",
     "@nrwl/linter": "14.7.13",
-    "@orangeopensource/hurl": "^2.0.1",
+    "@orangeopensource/hurl": "^4.0.0",
     "@reduxjs/toolkit": "^1.8.5",
     "@tanem/react-nprogress": "^5.0.14",
     "@twind/core": "^1.1.3",
