@@ -116,27 +116,9 @@ func enforceMaxDomainsLimit(request *adapt.SaveOp, connection adapt.Connection, 
 	err = datasource.PlatformLoad(&domainsForUsers, &datasource.PlatformLoadOptions{
 		Conditions: []adapt.LoadRequestCondition{
 			{
-				Field:         "uesio/studio.site",
-				Operator:      "IN",
-				Type:          "SUBQUERY",
-				SubCollection: "uesio/studio.site",
-				SubField:      "uesio/core.id",
-				SubConditions: []adapt.LoadRequestCondition{
-					{
-						Field:         "uesio/studio.app",
-						Operator:      "IN",
-						Type:          "SUBQUERY",
-						SubCollection: "uesio/studio.app",
-						SubField:      "uesio/core.id",
-						SubConditions: []adapt.LoadRequestCondition{
-							{
-								Field:    "uesio/studio.user",
-								Operator: "IN",
-								Values:   goutils.MapKeys(uniqueUserIds),
-							},
-						},
-					},
-				},
+				Field:    "uesio/studio.site->uesio/studio.app->uesio/studio.user",
+				Operator: "IN",
+				Values:   goutils.MapKeys(uniqueUserIds),
 			},
 		},
 		Fields: []adapt.LoadRequestField{
