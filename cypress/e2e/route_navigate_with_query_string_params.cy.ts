@@ -24,27 +24,61 @@ describe("route/NAVIGATE to views with params", () => {
 
 	context("Navigate with/without a param", () => {
 		it("should preserve the param during route navigates", () => {
+			const assertions = () => {
+				cy.url().should("include", "?show=true")
+				cy.title().should(
+					"eq",
+					"View that has a single optional param. SHOW=true"
+				)
+				cy.getByIdFragment("div", "alwaysShown")
+					.should("have.length", 1)
+					.and("contain", "Always shown")
+				cy.getByIdFragment("div", "conditionallyShown")
+					.should("have.length", 1)
+					.and("contain", "Only shown if show is true")
+			}
+			// Visit the original route
 			visitRoute()
+			// Click the button to do a route/NAVIGATE with the param
 			cy.clickButtonIfExists("showParamButton")
-			cy.url().should("include", "?show=true")
-			cy.getByIdFragment("div", "alwaysShown")
-				.should("have.length", 1)
-				.and("contain", "Always shown")
-			cy.getByIdFragment("div", "conditionallyShown")
-				.should("have.length", 1)
-				.and("contain", "Only shown if show is true")
+			// Run our assertions
+			assertions()
+			// Reload the page and run our assertions again
+			cy.reload()
+			assertions()
+			// Use browser navigation to go back and forth, then run our assertions again
+			cy.go("back")
+			cy.go("forward")
+			assertions()
 		})
 		it("should not send the param", () => {
+			const assertions = () => {
+				cy.url().should("not.include", "?show")
+				cy.title().should(
+					"eq",
+					"View that has a single optional param. SHOW="
+				)
+				cy.getByIdFragment("div", "alwaysShown")
+					.should("have.length", 1)
+					.and("contain", "Always shown")
+				cy.getByIdFragment("div", "conditionallyShown").should(
+					"have.length",
+					0
+				)
+			}
+			// Visit the original route
 			visitRoute()
+			// Click the button to do a route/NAVIGATE WITHOUT the param
 			cy.clickButtonIfExists("noParamButton")
-			cy.url().should("not.include", "?show")
-			cy.getByIdFragment("div", "alwaysShown")
-				.should("have.length", 1)
-				.and("contain", "Always shown")
-			cy.getByIdFragment("div", "conditionallyShown").should(
-				"have.length",
-				0
-			)
+			// Run our assertions
+			assertions()
+			// Reload the page and run our assertions again
+			cy.reload()
+			assertions()
+			// Use browser navigation to go back and forth, then run our assertions again
+			cy.go("back")
+			cy.go("forward")
+			assertions()
 		})
 	})
 })
