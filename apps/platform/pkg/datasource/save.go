@@ -159,7 +159,9 @@ func SaveOp(batch []*adapt.SaveOp, connection adapt.Connection, session *sess.Se
 
 	for _, op := range batch {
 
-		err := processConditions(op.Conditions, op.Params, connection.GetMetadata(), nil, session)
+		collectionKey := op.Metadata.GetFullName()
+
+		err := processConditions(collectionKey, op.Conditions, op.Params, connection.GetMetadata(), nil, session)
 		if err != nil {
 			return err
 		}
@@ -173,7 +175,6 @@ func SaveOp(batch []*adapt.SaveOp, connection adapt.Connection, session *sess.Se
 		}
 
 		permissions := session.GetContextPermissions()
-		collectionKey := op.Metadata.GetFullName()
 
 		err = adapt.FetchReferences(connection, op, session)
 		if err != nil {
