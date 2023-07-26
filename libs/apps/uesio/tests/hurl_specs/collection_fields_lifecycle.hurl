@@ -62,12 +62,12 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/studio.fullname']" == "uesio/tests"
-jsonpath "$.wires[1].data[*]['uesio/studio.name']" == "dev"
+jsonpath "$.wires[0].data[*]['uesio/studio.fullname']" nth 0 == "uesio/tests"
+jsonpath "$.wires[1].data[*]['uesio/studio.name']" nth 0 == "dev"
 [Captures]
-app_id: jsonpath "$.wires[0].data[*]['uesio/core.id']"
-app_fullname: jsonpath "$.wires[0].data[*]['uesio/studio.fullname']"
-workspace_id: jsonpath "$.wires[1].data[*]['uesio/core.id']"
+app_id: jsonpath "$.wires[0].data[*]['uesio/core.id']" nth 0
+app_fullname: jsonpath "$.wires[0].data[*]['uesio/studio.fullname']" nth 0
+workspace_id: jsonpath "$.wires[1].data[*]['uesio/core.id']" nth 0
 
 # Create a collection
 POST https://{{host}}:{{port}}/site/wires/save
@@ -261,9 +261,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/studio.name']" == "rare_and_unusual_object"
-jsonpath "$.wires[0].data[*]['uesio/studio.label']" == "Rare and unusual object"
-jsonpath "$.wires[0].data[*]['uesio/studio.plurallabel']" == "Rare and unusual objects"
+jsonpath "$.wires[0].data[*]['uesio/studio.name']" nth 0 == "rare_and_unusual_object"
+jsonpath "$.wires[0].data[*]['uesio/studio.label']" nth 0 == "Rare and unusual object"
+jsonpath "$.wires[0].data[*]['uesio/studio.plurallabel']" nth 0 == "Rare and unusual objects"
 jsonpath "$.wires[1].data[*]['uesio/core.id']" count == 2
 jsonpath "$.wires[1].data[*]['uesio/studio.collection']" includes "{{app_fullname}}.rare_and_unusual_object"
 jsonpath "$.wires[1].data[*]['uesio/studio.name']" includes "estimated_value"
@@ -273,7 +273,7 @@ jsonpath "$.wires[2].data[*]['uesio/core.id']" count == 2
 jsonpath "$.wires[2].data[*]['uesio/studio.collection']" includes "{{app_fullname}}.rare_and_unusual_object"
 jsonpath "$.wires[2].data[*]['uesio/studio.type']" includes "list"
 [Captures]
-collection_id: jsonpath "$.wires[0].data[*]['uesio/core.id']"
+collection_id: jsonpath "$.wires[0].data[*]['uesio/core.id']" nth 0
 
 # Test the studio recentmetadata collection
 POST https://{{host}}:{{port}}/site/wires/load
@@ -386,6 +386,6 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]" not exists
-jsonpath "$.wires[1].data[*]" not exists
-jsonpath "$.wires[2].data[*]" not exists
+jsonpath "$.wires[0].data[*]" isEmpty
+jsonpath "$.wires[1].data[*]" isEmpty
+jsonpath "$.wires[2].data[*]" isEmpty

@@ -59,9 +59,8 @@ main.tenant = $2 AND
 main.uniquekey = ANY ($3)
 ORDER BY main.id::text asc
 LIMIT 501```
-jsonpath "$.wires[1].data[*]['uesio/tests.text']" isString
-jsonpath "$.wires[1].data[*]['uesio/tests.text']" == "text 1"
-jsonpath "$.wires[1].data[*]['uesio/core.uniquekey']" == "ID-001"
+jsonpath "$.wires[1].data[*]['uesio/tests.text']" nth 0 == "text 1"
+jsonpath "$.wires[1].data[*]['uesio/core.uniquekey']" nth 0 == "ID-001"
 
 
 # NOT_IN Operator with values
@@ -166,7 +165,7 @@ main.tenant = $2 AND
 main.uniquekey = ANY ($3)
 ORDER BY main.id::text asc
 LIMIT 501```
-jsonpath "$.wires[1].data[*]" not exists
+jsonpath "$.wires[1].data[*]" isEmpty
 
 
 # NOT_IN Operator without values
