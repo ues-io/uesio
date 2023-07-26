@@ -1,6 +1,7 @@
 import { api, component, signal, definition, context, wire } from "@uesio/ui"
 
 import { setEditMode, setReadMode, toggleMode } from "../../shared/mode"
+import { useEffect, useRef } from "react"
 
 type ListDefinition = {
 	id?: string
@@ -21,7 +22,19 @@ const List: definition.UC<ListDefinition> = (props) => {
 	const wire = api.wire.useWire(definition.wire, context)
 
 	const componentId = api.component.getComponentIdFromProps(props)
-	const [mode] = api.component.useMode(componentId, definition.mode)
+	const [mode, setMode] = api.component.useMode(
+		componentId,
+		definition.mode ? definition.mode : context.getFieldMode()
+	)
+	const initialRender = useRef(true)
+	useEffect(() => {
+		if (initialRender.current) {
+			initialRender.current = false
+			return
+		}
+
+		setMode(mode == "READ" ? "EDIT" : "READ")
+	}, [context.getFieldMode()])
 
 	const itemContexts = component.useContextFilter<wire.WireRecord>(
 		wire?.getData() || [],
