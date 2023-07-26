@@ -19,6 +19,7 @@ import {
 	respondVoid,
 } from "./async"
 import { memoizedGetJSON } from "./memoizedAsync"
+import { SiteState } from "../bands/site"
 
 // Allows us to load static vendor assets, such as Monaco modules, from custom paths
 // and for us to load Uesio-app-versioned files from the server
@@ -29,8 +30,16 @@ interface UesioWindow extends Window {
 	monacoEditorVersion: string
 }
 
-const getStaticAssetsPath = () =>
-	(window as unknown as UesioWindow).uesioStaticAssetsPath
+let staticAssetsPath: string | undefined
+
+export const getStaticAssetsPath = () => {
+	if (staticAssetsPath) return staticAssetsPath
+	return (window as unknown as UesioWindow).uesioStaticAssetsPath
+}
+
+export const setStaticAssetsPath = (path: string | undefined) => {
+	staticAssetsPath = path
+}
 
 const getStaticAssetsHost = () =>
 	(window as unknown as UesioWindow).uesioStaticAssetsHost
@@ -150,19 +159,19 @@ const systemBundles = [
 	"uesio/crm",
 ]
 
-const isSystemBundle = (namespace: string) => systemBundles.includes(namespace)
+export const isSystemBundle = (namespace: string) =>
+	systemBundles.includes(namespace)
 
 // Returns a version number to use for requesting a site static asset, such as a File or a Component Pack file, such as:
 // - "/v1.2.3" (for regularly-versioned site assets)
 // - "/abcd1234" (for system bundle resources in Prod environments)
 // - "/1234567890" (for system bundle resources in local development)
 // THIS LOGIC SHOULD CORRESPOND ROUGHLY TO THE SERVER-SIDE LOGIC (pkg/controller/mergedata.go#getPackUrl)
-const getSiteBundleAssetVersion = (
-	context: Context,
+export const getSiteBundleAssetVersion = (
+	site: SiteState | undefined,
 	namespace: string,
 	assetModstamp?: number
 ) => {
-	const site = context.getSite()
 	const staticAssetsPath = getStaticAssetsPath()
 
 	let siteBundleVersion = ""
@@ -320,7 +329,11 @@ const platform = {
 		name: string,
 		modstamp?: number
 	) => {
-		const version = getSiteBundleAssetVersion(context, namespace, modstamp)
+		const version = getSiteBundleAssetVersion(
+			context.getSite(),
+			namespace,
+			modstamp
+		)
 		const prefix = getPrefix(context)
 		return `${prefix}/files/${namespace}${version}/${name}`
 	},
@@ -381,7 +394,11 @@ const platform = {
 			// since we don't have a stable "site" version that we can safely use, as the bundle dependency list is not immutable.
 			return `/workspace/${workspace.app}/${workspace.name}/componentpacks/${namespace}/${modstamp}/${name}/${path}`
 		}
-		const version = getSiteBundleAssetVersion(context, namespace, modstamp)
+		const version = getSiteBundleAssetVersion(
+			context.getSite(),
+			namespace,
+			modstamp
+		)
 		return `/site/componentpacks/${namespace}${version}/${name}/${path}`
 	},
 	getMetadataList: async (
