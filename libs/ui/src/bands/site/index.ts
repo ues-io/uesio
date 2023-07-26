@@ -28,5 +28,5 @@ const siteSlice = createSlice({
 const useSite = () => useSelector((state: RootState) => state.site)
 
 export default siteSlice.reducer
-export type { SiteState }
+export type { SiteState, BundleDependencyDef, BundleDependencyDefMap }
 export { useSite }
