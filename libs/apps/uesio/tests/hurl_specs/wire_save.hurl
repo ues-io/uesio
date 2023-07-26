@@ -38,7 +38,7 @@ Accept: application/json
 }
 HTTP 200
 [Captures]
-idvalue: jsonpath "$.wires[0].data[*]['uesio/core.id']"
+idvalue: jsonpath "$.wires[0].data[*]['uesio/core.id']" nth 0
 
 # Test a simple update
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
@@ -96,9 +96,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.genus']" == "Genie"
-jsonpath "$.wires[0].data[*]['uesio/tests.species']" == "Frog"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" == "Genie:Frog"
+jsonpath "$.wires[0].data[*]['uesio/tests.genus']" nth 0 == "Genie"
+jsonpath "$.wires[0].data[*]['uesio/tests.species']" nth 0 == "Frog"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" nth 0 == "Genie:Frog"
 
 # Test a simple delete
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
@@ -146,7 +146,7 @@ jsonpath "$.wires[0].changes['temp1']['uesio/tests.genus']" == "Kupker"
 jsonpath "$.wires[0].changes['temp1']['uesio/core.id']" matches /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 jsonpath "$.wires[0].errors" == null
 [Captures]
-newid: jsonpath "$.wires[0].changes[*]['uesio/core.id']"
+newid: jsonpath "$.wires[0].changes[*]['uesio/core.id']" nth 0
 
 # Now see if the insert worked
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
@@ -178,6 +178,6 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.genus']" == "Kupker"
-jsonpath "$.wires[0].data[*]['uesio/tests.species']" == "Alain"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" == "Kupker:Alain"
+jsonpath "$.wires[0].data[*]['uesio/tests.genus']" nth 0 == "Kupker"
+jsonpath "$.wires[0].data[*]['uesio/tests.species']" nth 0 == "Alain"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" nth 0 == "Kupker:Alain"

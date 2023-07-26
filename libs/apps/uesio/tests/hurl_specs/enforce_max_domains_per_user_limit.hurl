@@ -79,7 +79,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]" not exists
+jsonpath "$.wires[0].data[*]" isEmpty
 
 # Bump up the limit
 POST https://{{host}}:{{port}}/siteadmin/uesio/studio/prod/featureflags/uesio/studio/max_domains_per_user
