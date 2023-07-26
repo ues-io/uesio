@@ -54,8 +54,17 @@ const navigate = async (
 ) => {
 	dispatch(setLoading())
 	const routeResponse = await platform.getRoute(context, request)
-	const params = request.path.replace(routeResponse?.path as string, "")
+	const params = getParamsFromRequest(request, context)
 	return handleNavigateResponse(context, routeResponse, noPushState, params)
+}
+
+const getParamsFromRequest = (
+	request: PathNavigateRequest,
+	context: Context
+) => {
+	return request.path.includes("?")
+		? "?" + context.mergeString(request.path.substring(0).split("?")[1])
+		: ""
 }
 
 const handleNavigateResponse = async (
