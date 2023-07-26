@@ -95,7 +95,7 @@ const FileAttachment: definition.UC<FileDefinition> = (props) => {
 	const common = {
 		path,
 		context,
-		mode,
+		mode: mode ? mode : context.getFieldMode(),
 		id,
 		userFile,
 		onUpload,
