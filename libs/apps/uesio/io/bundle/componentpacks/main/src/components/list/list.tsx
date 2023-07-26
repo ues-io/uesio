@@ -27,11 +27,13 @@ const List: definition.UC<ListDefinition> = (props) => {
 		definition.mode ? definition.mode : context.getFieldMode()
 	)
 	const initialRender = useRef(true)
+	const initialMode = useRef(definition.mode)
 	useEffect(() => {
 		if (initialRender.current) {
 			initialRender.current = false
 			return
 		}
+		if (initialMode) return
 
 		setMode(mode === "READ" ? "EDIT" : "READ")
 	}, [context.getFieldMode()])
