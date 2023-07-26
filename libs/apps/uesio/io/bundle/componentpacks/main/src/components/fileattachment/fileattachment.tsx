@@ -26,7 +26,7 @@ const FileAttachment: definition.UC<FileDefinition> = (props) => {
 	const {
 		accept,
 		displayAs,
-		mode,
+		mode = context.getFieldMode(),
 		onUploadSignals,
 		onDeleteSignals,
 		theme,
@@ -95,7 +95,7 @@ const FileAttachment: definition.UC<FileDefinition> = (props) => {
 	const common = {
 		path,
 		context,
-		mode: mode ? mode : context.getFieldMode(),
+		mode,
 		id,
 		userFile,
 		onUpload,
