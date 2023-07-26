@@ -140,18 +140,71 @@ export const getPrefix = (context: Context) => {
 	return "/site"
 }
 
-const getSiteBundleVersion = (context: Context) => {
+const systemBundles = [
+	"uesio/io",
+	"uesio/builder",
+	"uesio/studio",
+	"uesio/core",
+	// TODO: REMOVE CRM and CMS!!!
+	"uesio/cms",
+	"uesio/crm",
+]
+
+const isSystemBundle = (namespace: string) => systemBundles.includes(namespace)
+
+// Returns a version number to use for requesting a site static asset, such as a File or a Component Pack file, such as:
+// - "/v1.2.3" (for regularly-versioned site assets)
+// - "/abcd1234" (for system bundle resources in Prod environments)
+// - "/1234567890" (for system bundle resources in local development)
+// THIS LOGIC SHOULD CORRESPOND ROUGHLY TO THE SERVER-SIDE LOGIC (pkg/controller/mergedata.go#getPackUrl)
+const getSiteBundleAssetVersion = (
+	context: Context,
+	namespace: string,
+	assetModstamp?: number
+) => {
 	const site = context.getSite()
 	const staticAssetsPath = getStaticAssetsPath()
-	if (site && site.version) {
-		// Special case --- if this is a Uesio-provided site, we don't (currently) ever update the bundle versions,
-		// but we DO update the static assets path for the whole Docker image, so use that. It will look like "/abcdefg"
-		if (site.app.startsWith("uesio/") && staticAssetsPath) {
-			return staticAssetsPath
+
+	let siteBundleVersion = ""
+
+	// Handle requests for system bundles specially,
+	// since we don't update their bundle dependencies at all and just use dummy "v0.0.1" everywhere
+	if (isSystemBundle(namespace)) {
+		if (staticAssetsPath) {
+			// We DO update the static assets version for the whole Docker image, so use that if we have it
+			siteBundleVersion = staticAssetsPath // assets path SHOULD have a leading / already
+		} else if (assetModstamp) {
+			// If we don't have a Git sha, then we are in local development,
+			// in which case we want to use the asset modstamp to avoid stale file loads
+			siteBundleVersion = `/${assetModstamp}`
 		}
-		return `/${site.version}`
+	} else {
+		// NON-system bundles
+		if (namespace === site?.app) {
+			// If requested namespace is the app's name, use the site version
+			siteBundleVersion = `/${site.version}`
+		} else if (site?.dependencies) {
+			// For all other deps, use the site's declared bundle dependency version,
+			// which SHOULD be present (otherwise how are they using it...)
+			const match = site.dependencies[namespace]
+			if (match?.version) {
+				siteBundleVersion = `/${match.version}`
+			}
+		}
 	}
-	return ""
+
+	// If we still don't have a bundle version, for some bizarre reason...
+	if (!siteBundleVersion) {
+		if (assetModstamp) {
+			// Prefer modstamp
+			siteBundleVersion = `/${assetModstamp}`
+		} else if (site?.version) {
+			// Final fallback --- use site version
+			siteBundleVersion = `/${site?.version}`
+		}
+	}
+
+	return siteBundleVersion
 }
 
 const platform = {
@@ -261,10 +314,15 @@ const platform = {
 			context,
 			`${getPrefix(context)}/views/params/${namespace}/${name}`
 		),
-	getFileURL: (context: Context, namespace: string, name: string) => {
-		const siteBundleVersion = getSiteBundleVersion(context)
+	getFileURL: (
+		context: Context,
+		namespace: string,
+		name: string,
+		modstamp?: number
+	) => {
+		const version = getSiteBundleAssetVersion(context, namespace, modstamp)
 		const prefix = getPrefix(context)
-		return `${prefix}/files/${namespace}${siteBundleVersion}/${name}`
+		return `${prefix}/files/${namespace}${version}/${name}`
 	},
 	getUserFileURL: (
 		context: Context,
@@ -314,11 +372,17 @@ const platform = {
 		context: Context,
 		namespace: string,
 		name: string,
+		modstamp = new Date().getTime(),
 		path = "runtime.js"
 	) => {
-		const siteBundleVersion = getSiteBundleVersion(context)
-		const prefix = getPrefix(context)
-		return `${prefix}/componentpacks/${namespace}${siteBundleVersion}/${name}/${path}`
+		const workspace = context.getWorkspace()
+		if (workspace) {
+			// If we are in a workspace context, use component pack modstamps to load in their resources,
+			// since we don't have a stable "site" version that we can safely use, as the bundle dependency list is not immutable.
+			return `/workspace/${workspace.app}/${workspace.name}/componentpacks/${namespace}/${modstamp}/${name}/${path}`
+		}
+		const version = getSiteBundleAssetVersion(context, namespace, modstamp)
+		return `/site/componentpacks/${namespace}${version}/${name}/${path}`
 	},
 	getMetadataList: async (
 		context: Context,
