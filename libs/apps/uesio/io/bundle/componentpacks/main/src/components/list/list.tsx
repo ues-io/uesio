@@ -33,7 +33,7 @@ const List: definition.UC<ListDefinition> = (props) => {
 			return
 		}
 
-		setMode(mode == "READ" ? "EDIT" : "READ")
+		setMode(mode === "READ" ? "EDIT" : "READ")
 	}, [context.getFieldMode()])
 
 	const itemContexts = component.useContextFilter<wire.WireRecord>(
