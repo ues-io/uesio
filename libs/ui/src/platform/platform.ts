@@ -62,12 +62,28 @@ type SecretResponse = {
 	value: string
 }
 
-type FeatureFlagResponse = {
+interface BaseFeatureFlag {
 	name: string
 	namespace: string
-	value: boolean
 	user: string
+	validForOrgs?: boolean
 }
+
+interface NumberFeatureFlag extends BaseFeatureFlag {
+	type: "NUMBER"
+	value: number
+	defaultValue?: number
+	min?: number
+	max?: number
+}
+
+interface CheckboxFeatureFlag extends BaseFeatureFlag {
+	type: "CHECKBOX"
+	value: boolean
+	defaultValue?: boolean
+}
+
+type FeatureFlagResponse = NumberFeatureFlag | CheckboxFeatureFlag
 
 type JobResponse = {
 	id: string
@@ -383,7 +399,7 @@ const platform = {
 	setFeatureFlag: async (
 		context: Context,
 		key: string,
-		value: boolean,
+		value: boolean | number,
 		user?: string
 	): Promise<BotResponse> => {
 		const prefix = getPrefix(context)
@@ -573,6 +589,8 @@ export type {
 	BotParams,
 	ConfigValueResponse,
 	SecretResponse,
+	CheckboxFeatureFlag,
+	NumberFeatureFlag,
 	FeatureFlagResponse,
 	PathNavigateRequest,
 	AssignmentNavigateRequest,

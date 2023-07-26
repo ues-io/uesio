@@ -15,22 +15,12 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     selectlists:
-      collection: uesio/studio.selectlist
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.workspace:
-        uesio/studio.options:
-        uesio/studio.blank_option_label:
-        uesio/studio.blank_option_language_label:
+      collection: uesio/studio.allmetadata
       conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
-        - field: uesio/studio.name
-          valueSource: PARAM
-          param: selectlistname
+        - field: uesio/studio.type
+          value: selectlists
+        - field: uesio/studio.item
+          value: $Param{namespace}.$Param{selectlistname}
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -47,6 +37,7 @@ definition:
                       itemType: selectlists
                       itemIcon: playlist_add_check
                       itemName: $Param{selectlistname}
+                      itemNameSpace: $Param{namespace}
           - uesio/io.griditem:
               uesio.variant: uesio/studio.leftbar
               components:
@@ -67,6 +58,7 @@ definition:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.main
                           title: Select List - ${uesio/studio.name}
+                          subtitle: $Param{namespace}
                           actions:
                             - uesio/io.group:
                                 components:
@@ -76,6 +68,11 @@ definition:
                                       uesio.display:
                                         - type: fieldMode
                                           mode: READ
+                                        - type: paramValue
+                                          param: app
+                                          field: uesio/core.dynamiccollection
+                                          operator: EQUALS
+                                          value: $Param{namespace}
                                       signals:
                                         - signal: component/CALL
                                           component: uesio/io.list
@@ -114,6 +111,12 @@ definition:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: $Label{uesio/io.delete}
+                                      uesio.display:
+                                        - type: paramValue
+                                          param: app
+                                          field: uesio/core.dynamiccollection
+                                          operator: EQUALS
+                                          value: $Param{namespace}
                                       signals:
                                         - signal: panel/TOGGLE
                                           panel: deleteSelectlist

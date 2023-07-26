@@ -15,6 +15,7 @@ func getArticleLoad(op *adapt.LoadOp, connection adapt.Connection, session *sess
 		View:           op.View,
 		Collection:     op.Collection,
 		Conditions:     op.Conditions,
+		BatchSize:      op.BatchSize,
 		Fields: []adapt.LoadRequestField{
 			{
 				ID: "uesio/cms.name",
@@ -63,7 +64,8 @@ func getArticleLoad(op *adapt.LoadOp, connection adapt.Connection, session *sess
 func runRecentDocLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
 	site, err := auth.GetSiteFromHost("docs." + session.GetSite().Domain)
 	if err != nil {
-		return err
+		//Ignore the errors if the site is not found
+		return nil
 	}
 	return getArticleLoad(op, connection, sess.GetAnonSession(site), "uesio/studio.recentdoc")
 }

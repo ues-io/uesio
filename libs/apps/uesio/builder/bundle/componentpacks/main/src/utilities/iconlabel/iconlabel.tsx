@@ -5,6 +5,7 @@ interface T extends definition.UtilityProps {
 	icon: string
 	color: string
 	text: string
+	subtitle?: string
 	tooltip?: string
 	fill?: boolean
 }
@@ -12,7 +13,7 @@ interface T extends definition.UtilityProps {
 const IconLabel: FC<T> = (props) => {
 	const Text = component.getUtility("uesio/io.text")
 	const Tooltip = component.getUtility("uesio/io.tooltip")
-	const { icon, color, text, tooltip, context } = props
+	const { icon, color, text, subtitle, tooltip, context } = props
 
 	const fill = props.fill === undefined ? true : props.fill
 
@@ -23,6 +24,8 @@ const IconLabel: FC<T> = (props) => {
 				!icon && "hidden",
 				!fill && "[font-variation-settings:'FILL'_0]",
 			],
+			title: [],
+			subtitle: [],
 		},
 		props,
 		"uesio/builder.iconlabel"
@@ -47,7 +50,19 @@ const IconLabel: FC<T> = (props) => {
 			) : (
 				iconElement
 			)}
-			<Text text={text} context={context} />
+			<div>
+				<p className={classes.title}>{context.merge(text)}</p>
+				{/* Render whitespace if subtitle is empty string */}
+				{(subtitle || subtitle === "") && (
+					<p className={classes.subtitle}>
+						{subtitle === "" ? (
+							<>&nbsp;</>
+						) : (
+							context.merge(subtitle)
+						)}
+					</p>
+				)}
+			</div>
 		</div>
 	)
 }

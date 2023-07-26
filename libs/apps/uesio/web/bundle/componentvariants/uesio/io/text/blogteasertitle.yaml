@@ -1,8 +1,0 @@
-name: blogteasertitle
-label: Blog Teaser Title
-definition:
-  uesio.styleTokens:
-    root:
-      - text-2xl
-      - mb-2
-  element: div

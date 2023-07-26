@@ -19,36 +19,40 @@ definition:
                         - mx-4
                         - h-[30px]
                     file: uesio/core.logowhite
-                    signals:
-                      - signal: route/NAVIGATE
-                        path: "home"
                 - uesio/io.group:
                     components:
                       - uesio/io.button:
                           text: Dashboard
                           uesio.variant: uesio/crm.nav
+                          signals:
+                            - signal: route/NAVIGATE
+                              path: home
                       - uesio/io.button:
                           signals:
-                            - signal: "route/NAVIGATE"
+                            - signal: route/NAVIGATE_TO_ASSIGNMENT
                               collection: uesio/crm.lead
+                              viewtype: list
                           text: Leads
                           uesio.variant: uesio/crm.nav
                       - uesio/io.button:
                           signals:
-                            - collection: uesio/crm.contact
-                              signal: route/NAVIGATE
+                            - signal: route/NAVIGATE_TO_ASSIGNMENT
+                              collection: uesio/crm.contact
+                              viewtype: list
                           text: Contacts
                           uesio.variant: uesio/crm.nav
                       - uesio/io.button:
                           signals:
-                            - signal: "route/NAVIGATE"
+                            - signal: route/NAVIGATE_TO_ASSIGNMENT
                               collection: uesio/crm.account
+                              viewtype: list
                           text: Accounts
                           uesio.variant: uesio/crm.nav
                       - uesio/io.button:
                           signals:
-                            - signal: "route/NAVIGATE"
+                            - signal: route/NAVIGATE_TO_ASSIGNMENT
                               collection: uesio/crm.opportunity
+                              viewtype: list
                           text: Opportunities
                           uesio.variant: uesio/crm.nav
           - uesio/io.group:

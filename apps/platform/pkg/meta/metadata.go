@@ -70,6 +70,7 @@ type BundleableGroup interface {
 	GetBundleFolderName() string
 	FilterPath(string, BundleConditions, bool) bool
 	GetItemFromPath(string, string) BundleableItem
+	GetItemFromKey(string) (BundleableItem, error)
 }
 
 type AttachableGroup interface {

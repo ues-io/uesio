@@ -15,24 +15,12 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     collections:
-      collection: uesio/studio.collection
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.namefield:
-        uesio/studio.workspace:
-        uesio/studio.datasource:
-        uesio/core.updatedat:
-        uesio/core.updatedby:
-        uesio/core.createdat:
-        uesio/core.createdby:
+      collection: uesio/studio.allmetadata
       conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
-        - field: uesio/studio.name
-          value: $Param{collectionname}
+        - field: uesio/studio.type
+          value: collections
+        - field: uesio/studio.item
+          value: $Param{namespace}.$Param{collectionname}
     bulkjobs:
       collection: uesio/core.bulkjob
       fields:
@@ -44,7 +32,7 @@ definition:
           desc: true
       conditions:
         - field: uesio/core.collection
-          value: $Param{app}.$Param{collectionname}
+          value: $Param{namespace}.$Param{collectionname}
       init:
         query: false
   events:
@@ -72,7 +60,8 @@ definition:
                     params:
                       itemType: collections
                       itemIcon: list
-                      itemCollectionName: $Param{collectionname}
+                      itemName: $Param{collectionname}
+                      itemNameSpace: $Param{namespace}
           - uesio/io.griditem:
               uesio.variant: uesio/studio.leftbar
               components:
@@ -115,10 +104,10 @@ definition:
                                       uesio.variant: uesio/io.primary
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      text: "Collection Config"
+                                      text: Collection Config
                                       signals:
-                                        - signal: "route/NAVIGATE"
-                                          path: "app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{collectionname}"
+                                        - signal: route/NAVIGATE
+                                          path: app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{namespace}/$Param{collectionname}
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           components:

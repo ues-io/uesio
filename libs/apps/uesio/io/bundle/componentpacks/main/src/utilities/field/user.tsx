@@ -14,20 +14,28 @@ interface UserFieldProps extends definition.UtilityProps {
 	fieldMetadata: collection.Field
 	fieldId: string
 	mode: ctx.FieldMode
-	record: wire.WireRecord
+	record?: wire.WireRecord
 	options?: UserFieldOptions
 	refoptions?: ReferenceFieldOptions
+	setValue?: (value: wire.PlainWireRecord | null) => void
 }
 
 const UserField: FunctionComponent<UserFieldProps> = (props) => {
-	const { mode, record, fieldId, context, options, refoptions } = props
+	const { mode, record, fieldId, context, options, refoptions, setValue } =
+		props
 	const readonly = mode === "READ"
 
 	if (!readonly) {
-		return <ReferenceField {...props} options={refoptions} />
+		return (
+			<ReferenceField
+				{...props}
+				options={refoptions}
+				setValue={setValue}
+			/>
+		)
 	}
 
-	const user = record.getReferenceValue(fieldId)
+	const user = record?.getReferenceValue(fieldId)
 
 	if (!user) return null
 

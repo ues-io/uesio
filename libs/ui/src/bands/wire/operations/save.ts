@@ -68,6 +68,8 @@ export default async (context: Context, wires?: string[]) => {
 						collection: wire.collection,
 						changes: serverChanges,
 						deletes: serverDeletes,
+						conditions: wire.conditions,
+						params: context.getParams(),
 					},
 			  ]
 			: []

@@ -47,7 +47,7 @@ func GetAvailableWorkspaces(appID string) (adapt.Collection, error) {
 }
 
 func CreateNewWorkspace(appId, workspaceName string) (map[string]interface{}, error) {
-	response, err := Save("uesio/studio.workspace", []map[string]interface{}{
+	response, err := Insert("uesio/studio.workspace", []map[string]interface{}{
 		{
 			"uesio/studio.name": workspaceName,
 			"uesio/studio.app": map[string]interface{}{

@@ -15,21 +15,10 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     files:
-      collection: uesio/studio.file
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.workspace:
-          fields:
-            uesio/studio.app:
-              fields:
-                uesio/studio.color:
-                uesio/studio.icon:
+      collection: uesio/studio.allmetadata
       conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
+        - field: uesio/studio.type
+          value: files
     newfile:
       collection: uesio/studio.file
       fields:
@@ -97,23 +86,31 @@ definition:
                           focusOnRender: true
                           searchfields:
                             - uesio/studio.name
-                      - uesio/io.deck:
-                          uesio.id: filesDeck
+                      - uesio/io.table:
+                          uesio.id: filesTable
                           wire: files
-                          components:
-                            - uesio/io.tile:
-                                uesio.variant: uesio/io.item
-                                signals:
-                                  - signal: route/NAVIGATE
-                                    path: app/$Param{app}/workspace/$Param{workspacename}/files/${uesio/studio.name}
-                                content:
-                                  - uesio/io.text:
-                                      text: ${uesio/studio.name}
-                                avatar:
-                                  - uesio/io.text:
-                                      uesio.variant: uesio/io.icon
-                                      color: "#ccc"
-                                      text: collections
+                          columns:
+                            - label: File
+                              components:
+                                - uesio/studio.iconlabel:
+                                    uesio.variant: uesio/studio.namespacefield
+                                    text: ${uesio/studio.name}
+                                    subtitle: ${uesio/studio.namespace}
+                                    icon: ${uesio/studio.appicon}
+                                    color: ${uesio/studio.appcolor}
+                            - field: uesio/core.updatedby
+                              user:
+                                subtitle: $Time{uesio/core.updatedat}
+                            - field: uesio/core.createdby
+                              user:
+                                subtitle: $Time{uesio/core.createdat}
+                          rowactions:
+                            - text: Details
+                              type: DEFAULT
+                              signals:
+                                - signal: route/NAVIGATE
+                                  path: app/$Param{app}/workspace/$Param{workspacename}/files/${uesio/studio.namespace}/${uesio/studio.name}
+                          pagesize: 10
   panels:
     newFile:
       uesio.type: uesio/io.dialog
@@ -137,7 +134,7 @@ definition:
                 wires:
                   - newfile
               - signal: route/NAVIGATE
-                path: app/$Param{app}/workspace/$Param{workspacename}/files/${uesio/studio.name}
+                path: app/$Param{app}/workspace/$Param{workspacename}/files/$Param{app}/${uesio/studio.name}
         - uesio/io.button:
             uesio.variant: uesio/io.secondary
             text: $Label{uesio/io.cancel}

@@ -1,0 +1,9 @@
+name: organizationuser
+uniqueKey:
+  - uesio/core.user
+  - uesio/core.org
+public: true
+label: Organization User
+pluralLabel: Organization Users
+nameField: uesio/core.uniquekey
+access: "protected_write"

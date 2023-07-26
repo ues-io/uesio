@@ -22,8 +22,10 @@ definition:
                       - uesio/io.tile:
                           uesio.variant: uesio/io.item
                           signals:
-                            - signal: route/NAVIGATE
-                              path: account/${uesio/core.id}
+                            - signal: route/NAVIGATE_TO_ASSIGNMENT
+                              collection: uesio/crm.account
+                              viewtype: detail
+                              recordid: ${uesio/core.id}
                           content:
                             - uesio/io.text:
                                 text: ${uesio/crm.name}
@@ -45,8 +47,10 @@ definition:
                       - uesio/io.tile:
                           uesio.variant: uesio/io.item
                           signals:
-                            - signal: route/NAVIGATE
-                              path: lead/${uesio/core.id}
+                            - signal: route/NAVIGATE_TO_ASSIGNMENT
+                              collection: uesio/crm.lead
+                              viewtype: detail
+                              recordid: ${uesio/core.id}
                           content:
                             - uesio/io.text:
                                 text: ${uesio/crm.firstname} ${uesio/crm.lastname}
@@ -68,8 +72,10 @@ definition:
                       - uesio/io.tile:
                           uesio.variant: uesio/io.item
                           signals:
-                            - signal: route/NAVIGATE
-                              path: contact/${uesio/core.id}
+                            - signal: route/NAVIGATE_TO_ASSIGNMENT
+                              collection: uesio/crm.contact
+                              viewtype: detail
+                              recordid: ${uesio/core.id}
                           content:
                             - uesio/io.text:
                                 text: ${uesio/crm.firstname} ${uesio/crm.lastname}

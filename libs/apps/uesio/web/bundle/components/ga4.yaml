@@ -1,9 +1,0 @@
-name: ga4
-category: LAYOUT
-pack: main
-entrypoint: ga4
-configvalues:
-  - uesio/web.ga4_measurement_id
-title: Google Analytics 4
-discoverable: true
-description: Enables Google Analytics tracking for a view

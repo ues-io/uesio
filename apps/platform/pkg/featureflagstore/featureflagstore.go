@@ -2,6 +2,8 @@ package featureflagstore
 
 import (
 	"errors"
+	"fmt"
+	"strconv"
 
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -30,16 +32,31 @@ func GetFeatureFlags(session *sess.Session, user string) (*meta.FeatureFlagColle
 	}
 
 	// Make map of assignments
-	assignmentsMap := map[string]bool{}
+	assignmentsMap := map[string]interface{}{}
 	for _, assignment := range *assignments {
 		assignmentsMap[assignment.Flag] = assignment.Value
 	}
 
 	for i := range featureFlags {
 		ff := featureFlags[i]
-		value := assignmentsMap[ff.GetKey()]
-		ff.Value = value
 		ff.User = user
+		value := assignmentsMap[ff.GetKey()]
+		if value == nil {
+			continue
+		}
+		if ff.Type == "NUMBER" {
+			if intVal, conversionErr := strconv.Atoi(value.(string)); conversionErr == nil {
+				ff.Value = intVal
+			} else {
+				ff.Value = value
+			}
+		} else {
+			if boolVal, conversionErr := strconv.ParseBool(value.(string)); conversionErr == nil {
+				ff.Value = boolVal
+			} else {
+				ff.Value = value
+			}
+		}
 	}
 	return &featureFlags, nil
 }
@@ -65,7 +82,7 @@ func GetValues(user string, assignments *meta.FeatureFlagAssignmentCollection, s
 	return store.Get(user, assignments, session)
 }
 
-func SetValueFromKey(key string, value bool, userID string, session *sess.Session) error {
+func SetValueFromKey(key string, value interface{}, userID string, session *sess.Session) error {
 	FeatureFlag, err := meta.NewFeatureFlag(key)
 	if err != nil {
 		return err
@@ -83,9 +100,61 @@ func SetValueFromKey(key string, value bool, userID string, session *sess.Sessio
 	return SetValue(FeatureFlag, value, user, session)
 }
 
-func SetValue(cv *meta.FeatureFlag, value bool, user *meta.User, session *sess.Session) error {
+type ValidationError struct {
+	msg string
+}
+
+func (ve *ValidationError) Error() string {
+	return ve.msg
+}
+
+func NewValidationError(msg string) *ValidationError {
+	return &ValidationError{
+		msg,
+	}
+}
+
+// ValidateValue checks that the provided value is valid for the FeatureFlag definition
+func ValidateValue(ff *meta.FeatureFlag, value interface{}) (bool, *ValidationError) {
+	if value == nil {
+		return false, NewValidationError("no value provided")
+	}
+	if ff.Type == "NUMBER" {
+		// Make sure the value is coming as something numeric
+		floatVal, isFloat := value.(float64)
+		if !isFloat {
+			return false, NewValidationError("value must be a number")
+		}
+		int64Val := int64(floatVal)
+		// If min/max not defined, they will have zero values, so we are done
+		if ff.Min == 0 && ff.Max == 0 {
+			return true, nil
+		}
+		// Check min/max, if defined
+		if int64Val < ff.Min {
+			return false, NewValidationError(fmt.Sprintf("value must be greater than %d", ff.Min))
+		}
+		if int64Val > ff.Max {
+			return false, NewValidationError(fmt.Sprintf("value must be less than %d", ff.Max))
+		}
+		return true, nil
+	} else {
+		// Make sure the value can be converted to a boolean
+		if _, isBool := value.(bool); !isBool {
+			return false, NewValidationError("invalid value, must be either true or false")
+		}
+		return true, nil
+	}
+}
+
+func SetValue(cv *meta.FeatureFlag, value interface{}, user *meta.User, session *sess.Session) error {
 	store, err := GetFeatureFlagStore("platform")
 	if err != nil {
+		return err
+	}
+	// Valid the value against FeatureFlag metadata
+	isValid, err := ValidateValue(cv, value)
+	if !isValid {
 		return err
 	}
 	ffa := &meta.FeatureFlagAssignment{

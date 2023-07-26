@@ -1,7 +1,7 @@
 import { Context } from "../context/context"
 
 export const respondJSON = async (response: Response) => {
-	interceptPlatformRedirects(response)
+	if (interceptPlatformRedirects(response)) return
 	if (response.status !== 200) {
 		const errorText = await response.text()
 		throw new Error(
@@ -15,7 +15,7 @@ export const respondJSON = async (response: Response) => {
 }
 
 export const respondVoid = async (response: Response) => {
-	interceptPlatformRedirects(response)
+	if (interceptPlatformRedirects(response)) return
 	if (response.status !== 200) {
 		const errorText = await response.text()
 		throw new Error(errorText)
@@ -28,7 +28,9 @@ function interceptPlatformRedirects(response: Response) {
 	const locationHeader = response.headers.get("location")
 	if (locationHeader) {
 		window.location.href = locationHeader
+		return true
 	}
+	return false
 }
 
 function addOriginalSessionHashHeader(

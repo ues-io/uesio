@@ -48,6 +48,7 @@ func getSubFields(loadFields []adapt.LoadRequestField) *FieldsMap {
 }
 
 func processConditions(
+	collectionKey string,
 	conditions []adapt.LoadRequestCondition,
 	params map[string]string,
 	metadata *adapt.MetadataCache,
@@ -55,11 +56,28 @@ func processConditions(
 	session *sess.Session,
 ) error {
 
+	var err error
+
 	for i, condition := range conditions {
 
+		// Convert reference-crossing conditions to subquery conditions
+		if isReferenceCrossingField(condition.Field) {
+			conditionPointer := &condition
+			err = transformReferenceCrossingConditionToSubquery(collectionKey, conditionPointer, metadata)
+			if err != nil {
+				return err
+			}
+			// Mutate the original condition in the array, otherwise the changes will be lost
+			conditions[i] = *conditionPointer
+		}
+
 		if condition.Type == "SUBQUERY" || condition.Type == "GROUP" {
+			nestedCollection := collectionKey
+			if condition.Type == "SUBQUERY" {
+				nestedCollection = condition.SubCollection
+			}
 			if condition.SubConditions != nil {
-				err := processConditions(condition.SubConditions, params, metadata, ops, session)
+				err := processConditions(nestedCollection, condition.SubConditions, params, metadata, ops, session)
 				if err != nil {
 					return err
 				}
@@ -120,6 +138,10 @@ func processConditions(
 
 		if condition.ValueSource == "LOOKUP" && condition.LookupWire != "" && condition.LookupField != "" {
 
+			// If we weren't provided ops to lookup, just don't process Lookups
+			if ops == nil {
+				continue
+			}
 			// Look through the previous wires to find the one to look up on.
 			var lookupOp *adapt.LoadOp
 			for _, lop := range ops {
@@ -160,6 +182,184 @@ func processConditions(
 	return nil
 }
 
+// example:
+// uesio/tests.user->uesio/core.username = 'abel'
+func transformReferenceCrossingConditionToSubquery(collectionName string, condition *adapt.LoadRequestCondition, metadata *adapt.MetadataCache) error {
+	// Split the field name, and recursively process each part as an IN subquery condition
+	// until we get to the final field, which we'll then handle as a normal condition
+	parts := strings.Split(condition.Field, "->")
+	totalParts := len(parts)
+
+	originalOperator := condition.Operator
+	originalType := condition.Type
+	// Move over RawValue/RawValues AND Value/Values because those store the original properties
+	// received from the original request. Value/Values will be populated as part of processing the condition,
+	// but in code (e.g. Bot code) it's very likely someone will populate condition.Value/Values instead,
+	// so to prevent that mistake, move them all over.
+	originalValue := condition.Value
+	originalValues := condition.Values
+	originalRawValue := condition.RawValue
+	originalRawValues := condition.RawValues
+
+	var previousCondition *adapt.LoadRequestCondition
+	currentCondition := condition
+
+	currentCollectionMetadata, err := metadata.GetCollection(collectionName)
+	if err != nil {
+		return errors.New("unable to find metadata for collection " + collectionName)
+	}
+
+	for i, fieldPart := range parts {
+		if previousCondition != nil {
+			currentCondition = &previousCondition.SubConditions[0]
+		}
+		if i == totalParts-1 {
+			// We are on the last field, so we need to mutate the previous condition's SubConditions array
+			currentCondition.Field = fieldPart
+			currentCondition.Type = originalType
+			currentCondition.Operator = originalOperator
+			currentCondition.RawValue = originalRawValue
+			currentCondition.RawValues = originalRawValues
+			currentCondition.Value = originalValue
+			currentCondition.Values = originalValues
+		} else {
+			// Convert the current condition to a subquery condition,
+			// with a nested condition, and lookup the related collection metadata
+			referenceField, err := currentCollectionMetadata.GetField(fieldPart)
+			if err != nil {
+				return errors.New("unable to find field " + fieldPart + " in collection " + currentCollectionMetadata.GetFullName())
+			}
+			if !adapt.IsReference(referenceField.Type) || referenceField.ReferenceMetadata == nil {
+				return errors.New("field " + fieldPart + " in collection " + currentCollectionMetadata.GetFullName() + " is not a valid Reference field")
+			}
+			relatedCollectionName := referenceField.ReferenceMetadata.Collection
+			subCollectionMetadata, err := metadata.GetCollection(relatedCollectionName)
+			if err != nil {
+				return errors.New("unable to find metadata for collection " + relatedCollectionName)
+			}
+
+			newCondition := adapt.LoadRequestCondition{}
+
+			currentCondition.Type = "SUBQUERY"
+			currentCondition.Operator = "IN"
+			currentCondition.Field = fieldPart
+			currentCondition.SubCollection = relatedCollectionName
+			currentCondition.SubField = "uesio/core.id"
+			currentCollectionMetadata = subCollectionMetadata
+			currentCondition.SubConditions = []adapt.LoadRequestCondition{
+				newCondition,
+			}
+			previousCondition = currentCondition
+			currentCondition = &newCondition
+		}
+	}
+	return nil
+}
+
+func isReferenceCrossingField(field string) bool {
+	return strings.Contains(field, "->")
+}
+
+func requestMetadataForReferenceCrossingCondition(collectionName string, condition *adapt.LoadRequestCondition, collections *MetadataRequest) error {
+	parts := strings.Split(condition.Field, "->")
+	var currentField *adapt.LoadRequestField
+	var currentFieldsArray, previousFieldsArray *[]adapt.LoadRequestField
+	i := len(parts) - 1
+	for i >= 0 {
+		previousFieldsArray = currentFieldsArray
+		currentField = &adapt.LoadRequestField{
+			ID: parts[i],
+		}
+		// If we had a previous fields array,
+		// use it as subFields for this field
+		currentFieldsArray = &[]adapt.LoadRequestField{
+			*currentField,
+		}
+		if previousFieldsArray != nil {
+			currentField.Fields = *previousFieldsArray
+		}
+		i--
+	}
+	subFields := getSubFields(*previousFieldsArray)
+	err := collections.AddField(collectionName, currentField.ID, subFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func getMetadataForConditionLoad(
+	condition *adapt.LoadRequestCondition,
+	collectionName string,
+	collections *MetadataRequest,
+	op *adapt.LoadOp,
+	ops []*adapt.LoadOp,
+) error {
+
+	// We don't need any extra field metadata for these conditions (yet)
+	if condition.Type == "SEARCH" || condition.Type == "GROUP" {
+		// We don't need any extra field metadata for search conditions yet
+		return nil
+	}
+
+	var err error
+
+	if isReferenceCrossingField(condition.Field) {
+		// Recursively add all pieces of the field, as if we were requesting Subfields,
+		err = requestMetadataForReferenceCrossingCondition(collectionName, condition, collections)
+		if err != nil {
+			return fmt.Errorf("unable to request metadata for condition field: %s", condition.Field)
+		}
+	} else {
+		// Request metadata for the condition's main field
+		err = collections.AddField(collectionName, condition.Field, nil)
+		if err != nil {
+			return fmt.Errorf("condition field: %v", err)
+		}
+	}
+
+	if condition.Type == "SUBQUERY" {
+		// Request metadata for the sub-query condition's Collection and subfield
+		err = collections.AddCollection(condition.SubCollection)
+		if err != nil {
+			return err
+		}
+		err = collections.AddField(condition.SubCollection, condition.SubField, nil)
+		if err != nil {
+			return err
+		}
+		// Now, process sub-conditions recursively
+		if len(condition.SubConditions) > 0 {
+			for _, subCondition := range condition.SubConditions {
+				err = getMetadataForConditionLoad(&subCondition, condition.SubCollection, collections, op, ops)
+				if err != nil {
+					return err
+				}
+			}
+		}
+	}
+
+	if condition.ValueSource == "LOOKUP" && condition.LookupField != "" && condition.LookupWire != "" {
+
+		// Look through the previous wires to find the one to look up on.
+		var lookupCollectionKey string
+		for _, otherOp := range ops {
+			if otherOp.WireName == condition.LookupWire {
+				lookupCollectionKey = otherOp.CollectionName
+			}
+		}
+		lookupFields := strings.Split(condition.LookupField, "->")
+		lookupField, rest := lookupFields[0], lookupFields[1:]
+		subFields := getAdditionalLookupFields(rest)
+
+		innerErr := collections.AddField(lookupCollectionKey, lookupField, &subFields)
+		if innerErr != nil {
+			return fmt.Errorf("lookup field: %v", innerErr)
+		}
+	}
+	return nil
+}
+
 func getMetadataForLoad(
 	op *adapt.LoadOp,
 	metadataResponse *adapt.MetadataCache,
@@ -189,41 +389,10 @@ func getMetadataForLoad(
 	}
 
 	for _, condition := range op.Conditions {
-
-		if condition.Type == "SEARCH" {
-			// We don't need any extra field metadata for search conditions yet
-			continue
+		innerErr := getMetadataForConditionLoad(&condition, collectionKey, &collections, op, ops)
+		if innerErr != nil {
+			return innerErr
 		}
-
-		if condition.Type == "GROUP" {
-			// We don't need any extra field metadata for group conditions yet
-			continue
-		}
-
-		err := collections.AddField(collectionKey, condition.Field, nil)
-		if err != nil {
-			return fmt.Errorf("condition field: %v", err)
-		}
-
-		if condition.ValueSource == "LOOKUP" && condition.LookupField != "" && condition.LookupWire != "" {
-
-			// Look through the previous wires to find the one to look up on.
-			var lookupCollectionKey string
-			for _, op := range ops {
-				if op.WireName == condition.LookupWire {
-					lookupCollectionKey = op.CollectionName
-				}
-			}
-			lookupFields := strings.Split(condition.LookupField, "->")
-			lookupField, rest := lookupFields[0], lookupFields[1:]
-			subFields := getAdditionalLookupFields(rest)
-
-			err := collections.AddField(lookupCollectionKey, lookupField, &subFields)
-			if err != nil {
-				return fmt.Errorf("lookup field: %v", err)
-			}
-		}
-
 	}
 
 	err = collections.Load(metadataResponse, session, nil)
@@ -361,14 +530,6 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 
 	}
 
-	err = GenerateUserAccessTokens(metadataResponse, &LoadOptions{
-		Metadata:   metadataResponse,
-		Connection: options.Connection,
-	}, session)
-	if err != nil {
-		return nil, err
-	}
-
 	// 3. Get metadata for each datasource and collection
 
 	connection, err := GetConnection(meta.PLATFORM_DATA_SOURCE, metadataResponse, session, options.Connection)
@@ -376,9 +537,14 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 		return nil, err
 	}
 
+	err = GenerateUserAccessTokens(connection, session)
+	if err != nil {
+		return nil, err
+	}
+
 	for _, op := range allOps {
 
-		err := processConditions(op.Conditions, op.Params, metadataResponse, allOps, session)
+		err := processConditions(op.CollectionName, op.Conditions, op.Params, metadataResponse, allOps, session)
 		if err != nil {
 			return nil, err
 		}

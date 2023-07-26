@@ -29,7 +29,7 @@ func runRouteBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, s
 				return err
 			}
 
-			return depMap.AddRequired(change, "theme", "uesio/studio.theme")
+			return depMap.AddOptional(change, "theme", "uesio/studio.theme")
 		}
 		return nil
 	})

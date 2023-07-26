@@ -35,6 +35,10 @@ func (uatc *UserAccessTokenCollection) GetItemFromPath(path, namespace string) B
 	return NewBaseUserAccessToken(namespace, StandardNameFromPath(path))
 }
 
+func (uatc *UserAccessTokenCollection) GetItemFromKey(key string) (BundleableItem, error) {
+	return NewUserAccessToken(key)
+}
+
 func (uatc *UserAccessTokenCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }

@@ -2,6 +2,7 @@ package meta
 
 import (
 	"errors"
+
 	"gopkg.in/yaml.v3"
 )
 
@@ -14,7 +15,7 @@ func NewRoute(key string) (*Route, error) {
 }
 
 func NewBaseRoute(namespace, name string) *Route {
-	return &Route{BundleableBase: NewBase(namespace, name)}
+	return &Route{ThemeRef: "uesio/core.default", BundleableBase: NewBase(namespace, name)}
 }
 
 type Tag struct {
@@ -97,4 +98,13 @@ func (r *Route) UnmarshalYAML(node *yaml.Node) error {
 		}
 	}
 	return node.Decode((*RouteWrapper)(r))
+}
+
+func (r *Route) MarshalYAML() (interface{}, error) {
+
+	if r.ThemeRef == "uesio/core.default" {
+		r.ThemeRef = ""
+	}
+
+	return (*RouteWrapper)(r), nil
 }

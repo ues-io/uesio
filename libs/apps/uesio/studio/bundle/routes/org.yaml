@@ -1,0 +1,5 @@
+name: org
+path: organization/{orgname:\w*}
+view: uesio/studio.org
+theme: uesio/studio.default
+title: "Organization: $Param{orgname}"

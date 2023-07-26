@@ -116,6 +116,48 @@ function clickIfExists(selector: string) {
 	})
 }
 
+Cypress.Commands.add(
+	"hasExpectedTableField",
+	(
+		tableIdFragment: string,
+		rowNumber: number,
+		expectName: string,
+		expectNamespace: string,
+		expectType: string,
+		expectLabel: string
+	) => {
+		const tableRowSelector = `table[id$="${tableIdFragment}"]>tbody>tr`
+		cy.get(tableRowSelector)
+			.eq(rowNumber)
+			.children("td")
+			.eq(0)
+			.children("div")
+			.first()
+			.children("div")
+			.first()
+			.should(($div) => {
+				// should have found 1 element
+				expect($div).to.have.length(1)
+				expect($div.children("p").eq(0)).to.contain(expectName)
+				expect($div.children("p").eq(1)).to.contain(expectNamespace)
+			})
+		cy.get(tableRowSelector)
+			.eq(rowNumber)
+			.children("td")
+			.eq(1)
+			.find("input")
+			.first()
+			.should("have.value", expectType)
+		cy.get(tableRowSelector)
+			.eq(rowNumber)
+			.children("td")
+			.eq(2)
+			.find("input")
+			.first()
+			.should("have.value", expectLabel)
+	}
+)
+
 // Checks a component state
 Cypress.Commands.add("getComponentState", (componentId: string) => {
 	cy.window()
@@ -165,6 +207,14 @@ declare global {
 			clearInput(inputIdFragment: string): Chainable<void>
 			clickButton(idFragment: string): Chainable<void>
 			clickButtonIfExists(idFragment: string): Chainable<void>
+			hasExpectedTableField(
+				tableIdFragment: string,
+				rowNumber: number,
+				expectName: string,
+				expectNamespace: string,
+				expectType: string,
+				expectLabel: string
+			): Chainable<void>
 			getComponentState(componentId: string): Chainable<void>
 			getWireState(viewId: string, wireName: string): Chainable<void>
 			hotkey(hotkey: string): Chainable<void>
@@ -186,7 +236,7 @@ function createWorkspaceInApp(workspaceName: string, appName: string) {
 }
 
 function createApp(appName: string) {
-	cy.clickButton("uesio/studio.home($root):uesio/io.button:add-app")
+	cy.clickButton("uesio/io.button:add-app")
 	cy.typeInInput("new-app-name", appName)
 	cy.typeInInput("new-app-description", "E2E Test App")
 	cy.clickButton("save-new-app")
