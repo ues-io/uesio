@@ -1,0 +1,22 @@
+name: view_with_route_navigate_to_single_param
+definition:
+  wires: {}
+  components:
+    - uesio/io.button:
+        text: Go to route with show=true
+        icon: bolt
+        uesio.variant: uesio/io.secondary
+        uesio.id: showParamButton
+        signals:
+          - signal: route/NAVIGATE
+            namespace: uesio/tests
+            path: view_with_single_optional_param?show=true
+    - uesio/io.button:
+        text: Go to route WITHOUT show param
+        uesio.id: noParamButton
+        icon: bolt
+        uesio.variant: uesio/io.secondary
+        signals:
+          - signal: route/NAVIGATE
+            namespace: uesio/tests
+            path: view_with_single_optional_param

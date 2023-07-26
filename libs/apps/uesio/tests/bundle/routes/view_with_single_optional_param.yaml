@@ -1,0 +1,4 @@
+name: view_with_single_optional_param
+path: view_with_single_optional_param
+view: uesio/tests.view_with_single_optional_param
+title: View that has a single optional param
