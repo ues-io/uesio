@@ -35,7 +35,7 @@ const List: definition.UC<ListDefinition> = (props) => {
 		}
 		if (initialMode.current) return
 
-		setMode(mode === "READ" ? "EDIT" : "READ")
+		setMode(context.getFieldMode())
 	}, [context.getFieldMode()])
 
 	const itemContexts = component.useContextFilter<wire.WireRecord>(
