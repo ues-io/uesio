@@ -64,7 +64,7 @@ const handleNavigateResponse = async (
 	context: Context,
 	routeResponse: RouteState,
 	noPushState?: boolean,
-	params?: string
+	params = ""
 ) => {
 	if (!routeResponse) return context
 	const deps = routeResponse.dependencies
