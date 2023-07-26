@@ -33,7 +33,7 @@ const List: definition.UC<ListDefinition> = (props) => {
 			initialRender.current = false
 			return
 		}
-		if (initialMode) return
+		if (initialMode.current) return
 
 		setMode(mode === "READ" ? "EDIT" : "READ")
 	}, [context.getFieldMode()])
