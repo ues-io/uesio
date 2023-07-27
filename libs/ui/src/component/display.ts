@@ -127,8 +127,16 @@ type HasProfile = {
 	type: "hasProfile"
 	profile: string
 }
+type Conjunction = "AND" | "OR"
+
+type GroupCondition = {
+	type: "group"
+	conjunction: Conjunction
+	conditions: DisplayCondition[]
+}
 
 type DisplayCondition =
+	| GroupCondition
 	| HasProfile
 	| WireHasChanges
 	| WireHasNoChanges
@@ -183,11 +191,29 @@ function compare(a: unknown, b: unknown, op: DisplayOperator) {
 	}
 }
 
-function should(condition: DisplayCondition, context: Context) {
+function should(condition: DisplayCondition, context: Context): boolean {
 	if (condition.type === "collectionContext") {
 		const wire = context.getWire()
 		const collection = wire?.getCollection()
 		return collection?.getFullName() === condition.collection
+	}
+
+	if (condition.type === "group") {
+		let shouldArray: boolean[] = []
+		condition.conditions.forEach((innerCondition) =>
+			shouldArray.push(should(innerCondition, context))
+		)
+
+		if (condition.conjunction === "AND") {
+			// Check if all items in the array are true
+			return shouldArray.every((value) => value === true)
+		}
+		if (condition.conjunction === "OR") {
+			// Check if at least one item in the array is true
+			return shouldArray.some((value) => value === true)
+		}
+
+		return true
 	}
 
 	if (condition.type === "paramIsSet")
@@ -280,7 +306,8 @@ function should(condition: DisplayCondition, context: Context) {
 		const records = wire.getData()
 
 		// If there are no records, not_equal applies
-		if (!records.length) return condition.operator?.includes("NOT")
+		if (!records.length && condition.operator)
+			return condition.operator.includes("NOT")
 
 		// When we check for false condition, we want to check every record.
 		const arrayMethod = condition.operator?.includes("NOT")
