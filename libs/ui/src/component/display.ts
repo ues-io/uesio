@@ -199,21 +199,11 @@ function should(condition: DisplayCondition, context: Context): boolean {
 	}
 
 	if (condition.type === "group") {
-		const shouldArray: boolean[] = []
-		condition.conditions.forEach((innerCondition) =>
-			shouldArray.push(should(innerCondition, context))
+		return (
+			condition.conditions?.[
+				condition.conjunction === "OR" ? "some" : "every"
+			]((c) => should(c, context)) ?? true
 		)
-
-		if (condition.conjunction === "AND") {
-			// Check if all items in the array are true
-			return shouldArray.every((value) => value === true)
-		}
-		if (condition.conjunction === "OR") {
-			// Check if at least one item in the array is true
-			return shouldArray.some((value) => value === true)
-		}
-
-		return true
 	}
 
 	if (condition.type === "paramIsSet")
