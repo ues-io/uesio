@@ -316,6 +316,28 @@ func validateRequiredMetadataItem(node *yaml.Node, property string) error {
 	return nil
 }
 
+func pickRequiredMetadataItem(node *yaml.Node, property, namespace string) (string, error) {
+	value := GetNodeValueAsString(node, property)
+	if value == "" {
+		return "", fmt.Errorf("Required Metadata Property Missing: %s", property)
+	}
+
+	index, err := GetMapNodeIndex(node, property)
+	if err != nil {
+		return "", err
+	}
+
+	// delete key and value nodes
+	node.Content = append(node.Content[:index], node.Content[index+2:]...)
+
+	namespace, name, err := ParseKeyWithDefault(value, namespace)
+	if err != nil {
+		return "", nil
+	}
+
+	return fmt.Sprintf("%s.%s", namespace, name), nil
+}
+
 func GetNodeValueAsString(node *yaml.Node, key string) string {
 	keyNode, err := GetMapNode(node, key)
 	if err != nil {
@@ -409,6 +431,21 @@ func GetMapNode(node *yaml.Node, key string) (*yaml.Node, error) {
 	}
 
 	return nil, fmt.Errorf("Node not found of key: " + key)
+}
+
+func GetMapNodeIndex(node *yaml.Node, key string) (int, error) {
+	if node.Kind != yaml.MappingNode {
+		return 0, fmt.Errorf("Definition is not a mapping node.")
+	}
+
+	for i := range node.Content {
+		// Skip every other node to only get keys
+		if i%2 == 0 && node.Content[i].Value == key {
+			return i, nil
+		}
+	}
+
+	return 0, fmt.Errorf("Node not found of key: " + key)
 }
 
 func setDefaultValue(node *yaml.Node, key, value string) error {

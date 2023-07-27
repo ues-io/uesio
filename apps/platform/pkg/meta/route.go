@@ -84,18 +84,20 @@ func (r *Route) UnmarshalYAML(node *yaml.Node) error {
 			return errors.New("redirect property is required for routes of type 'redirect'")
 		}
 	} else {
-		err = validateRequiredMetadataItem(node, "view")
+		viewRef, err := pickRequiredMetadataItem(node, "view", r.Namespace)
 		if err != nil {
 			return err
 		}
+		r.ViewRef = viewRef
 		err = setDefaultValue(node, "theme", "uesio/core.default")
 		if err != nil {
 			return err
 		}
-		err = validateRequiredMetadataItem(node, "theme")
+		themeRef, err := pickRequiredMetadataItem(node, "theme", r.Namespace)
 		if err != nil {
 			return err
 		}
+		r.ThemeRef = themeRef
 	}
 	return node.Decode((*RouteWrapper)(r))
 }
@@ -104,6 +106,26 @@ func (r *Route) MarshalYAML() (interface{}, error) {
 
 	if r.ThemeRef == "uesio/core.default" {
 		r.ThemeRef = ""
+	}
+
+	if r.ThemeRef != "" {
+		namespace, name, err := ParseKey(r.ThemeRef)
+		if err != nil {
+			return nil, err
+		}
+		if namespace == r.Namespace {
+			r.ThemeRef = name
+		}
+	}
+
+	if r.ViewRef != "" {
+		namespace, name, err := ParseKey(r.ViewRef)
+		if err != nil {
+			return nil, err
+		}
+		if namespace == r.Namespace {
+			r.ViewRef = name
+		}
 	}
 
 	return (*RouteWrapper)(r), nil
