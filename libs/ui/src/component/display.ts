@@ -199,7 +199,7 @@ function should(condition: DisplayCondition, context: Context): boolean {
 	}
 
 	if (condition.type === "group") {
-		let shouldArray: boolean[] = []
+		const shouldArray: boolean[] = []
 		condition.conditions.forEach((innerCondition) =>
 			shouldArray.push(should(innerCondition, context))
 		)
