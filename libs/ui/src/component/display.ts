@@ -199,11 +199,10 @@ function should(condition: DisplayCondition, context: Context): boolean {
 	}
 
 	if (condition.type === "group") {
-		return (
-			condition.conditions?.[
-				condition.conjunction === "OR" ? "some" : "every"
-			]((c) => should(c, context)) ?? true
-		)
+		const { conjunction = "AND", conditions = [] } = condition
+		return conditions[
+			conjunction === "OR" && conditions?.length ? "some" : "every"
+		]((c) => should(c, context))
 	}
 
 	if (condition.type === "paramIsSet")
@@ -400,6 +399,7 @@ function shouldHaveClass(
 
 export {
 	useShould,
+	should,
 	shouldAll,
 	useShouldFilter,
 	useContextFilter,
