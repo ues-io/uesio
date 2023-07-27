@@ -1,5 +1,0 @@
-name: article_details
-path: article/{recordid}
-view: uesio/cms.article_details
-theme: uesio/core.default
-public: true
