@@ -124,22 +124,52 @@ func (c *Connection) Signup(payload map[string]interface{}, username string, ses
 
 	password, err := auth.GetPayloadValue(payload, "password")
 	if err != nil {
-		return nil, errors.New("Cognito login:" + err.Error())
-	}
-
-	email, err := auth.GetPayloadValue(payload, "email")
-	if err != nil {
-		return nil, errors.New("Cognito login:" + err.Error())
+		return nil, errors.New("Cognito login: " + err.Error())
 	}
 
 	subject, err := auth.GetRequiredPayloadValue(payload, "subject")
 	if err != nil {
-		return nil, errors.New("Cognito login:" + err.Error())
+		return nil, errors.New("Cognito login: " + err.Error())
 	}
 
 	message, err := auth.GetRequiredPayloadValue(payload, "message")
 	if err != nil {
-		return nil, errors.New("Cognito login:" + err.Error())
+		return nil, errors.New("Cognito login: " + err.Error())
+	}
+
+	firstname, err := auth.GetRequiredPayloadValue(payload, "firstname")
+	if err != nil {
+		return nil, errors.New("Cognito login: " + err.Error())
+	}
+
+	lastname, err := auth.GetRequiredPayloadValue(payload, "lastname")
+	if err != nil {
+		return nil, errors.New("Cognito login: " + err.Error())
+	}
+
+	email, err := auth.GetPayloadValue(payload, "email")
+	if err != nil {
+		return nil, errors.New("Cognito login: " + err.Error())
+	}
+
+	jobtitle, err := auth.GetPayloadValue(payload, "jobtitle")
+	if err != nil {
+		return nil, nil
+	}
+
+	company, err := auth.GetPayloadValue(payload, "company")
+	if err != nil {
+		return nil, nil
+	}
+
+	noemployees, err := auth.GetPayloadValue(payload, "company")
+	if err != nil {
+		return nil, nil
+	}
+
+	country, err := auth.GetPayloadValue(payload, "country")
+	if err != nil {
+		return nil, errors.New("Cognito login: " + err.Error())
 	}
 
 	signUpData := &cognito.SignUpInput{
@@ -148,8 +178,32 @@ func (c *Connection) Signup(payload map[string]interface{}, username string, ses
 		Password: &password,
 		UserAttributes: []types.AttributeType{
 			{
+				Name:  aws.String("firstname"),
+				Value: aws.String(firstname),
+			},
+			{
+				Name:  aws.String("lastname"),
+				Value: aws.String(lastname),
+			},
+			{
 				Name:  aws.String("email"),
 				Value: aws.String(email),
+			},
+			{
+				Name:  aws.String("jobtitle"),
+				Value: aws.String(jobtitle),
+			},
+			{
+				Name:  aws.String("company"),
+				Value: aws.String(company),
+			},
+			{
+				Name:  aws.String("noemployees"),
+				Value: aws.String(noemployees),
+			},
+			{
+				Name:  aws.String("country"),
+				Value: aws.String(country),
 			},
 		},
 		ClientMetadata: map[string]string{

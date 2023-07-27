@@ -1,0 +1,8 @@
+name: one_column
+label: One Column Responsive
+definition:
+  uesio.styleTokens:
+    root:
+      - grid-cols-1
+      - gap-x-2.5
+public: true

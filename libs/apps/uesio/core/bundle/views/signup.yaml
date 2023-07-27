@@ -13,14 +13,32 @@ definition:
                 signupMethod: uesio/core.platform
                 fieldId: uesio/viewonly.username
       fields:
-        uesio/viewonly.username:
-          label: Username
+        uesio/viewonly.firstname:
+          label: First Name*
           type: TEXT
-        uesio/viewonly.password:
-          label: Password
+        uesio/viewonly.lastname:
+          label: Last Name*
           type: TEXT
         uesio/viewonly.email:
-          label: Email
+          label: Email*
+          type: TEXT
+        uesio/viewonly.country:
+          label: Country*
+          type: TEXT
+        uesio/viewonly.company:
+          label: Company (Optional)
+          type: TEXT
+        uesio/viewonly.jobtitle:
+          label: Job Title (Optional)
+          type: TEXT
+        uesio/viewonly.noemployees:
+          label: No. Employees (Optional)
+          type: NUMBER
+        uesio/viewonly.username:
+          label: Username (lowercase a-z, 0-9, or _)*
+          type: TEXT
+        uesio/viewonly.password:
+          label: Password*
           type: TEXT
         uesio/viewonly.terms:
           type: CHECKBOX
@@ -55,16 +73,32 @@ definition:
                           components:
                             - uesio/io.box:
                                 components:
-                                  - uesio/io.field:
-                                      fieldId: uesio/viewonly.username
-                                      label: Username (lowercase a-z, 0-9, or _)
-                                      applyChanges: onBlur
-                                  - uesio/io.field:
-                                      fieldId: uesio/viewonly.email
-                                  - uesio/io.field:
-                                      fieldId: uesio/viewonly.password
-                                      label: Password
-                                      displayAs: PASSWORD
+                                  - uesio/io.grid:
+                                      uesio.variant: uesio/io.one_column
+                                      items:
+                                        - uesio/io.grid:
+                                            uesio.variant: uesio/io.two_columns
+                                            items:
+                                              - uesio/io.field:
+                                                  fieldId: uesio/viewonly.firstname
+                                              - uesio/io.field:
+                                                  fieldId: uesio/viewonly.lastname
+                                        - uesio/io.field:
+                                            fieldId: uesio/viewonly.email
+                                        - uesio/io.field:
+                                            fieldId: uesio/viewonly.jobtitle
+                                        - uesio/io.field:
+                                            fieldId: uesio/viewonly.company
+                                        - uesio/io.field:
+                                            fieldId: uesio/viewonly.noemployees
+                                        - uesio/io.field:
+                                            fieldId: uesio/viewonly.country
+                                        - uesio/io.field:
+                                            fieldId: uesio/viewonly.username
+                                            applyChanges: onBlur
+                                        - uesio/io.field:
+                                            fieldId: uesio/viewonly.password
+                                            displayAs: PASSWORD
                                   - uesio/io.box:
                                       uesio.styleTokens:
                                         root:
@@ -83,7 +117,7 @@ definition:
                                                 - inline
                                             components:
                                               - uesio/io.text:
-                                                  text: I agree to the terms and conditions of the
+                                                  text: "I agree to the terms and conditions of the "
                                                   uesio.variant: uesio/io.smallcontent
                                               - uesio/io.button:
                                                   text: Master Subscription Agreement.
@@ -95,7 +129,6 @@ definition:
                                                     - signal: route/REDIRECT
                                                       newtab: true
                                                       path: "https://ues.io/terms"
-
                             - uesio/io.button:
                                 uesio.display:
                                   - wire: userData
@@ -123,6 +156,12 @@ definition:
                                     signupMethod: uesio/core.platform
                                     requireds:
                                     payload:
+                                      firstname: ${uesio/viewonly.firstname}
+                                      lastname: ${uesio/viewonly.lastname}
+                                      email: ${uesio/viewonly.email}
+                                      country: ${uesio/viewonly.country}
+                                      company: ${uesio/viewonly.company}
+                                      jobtitle: ${uesio/viewonly.jobtitle}
+                                      noemployees: ${uesio/viewonly.noemployees}
                                       username: ${uesio/viewonly.username}
                                       password: ${uesio/viewonly.password}
-                                      email: ${uesio/viewonly.email}
