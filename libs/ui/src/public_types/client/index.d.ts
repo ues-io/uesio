@@ -431,7 +431,42 @@ export namespace api {
 		export { useConfigValue }
 	}
 
-	export default { signal, view }
+	export namespace wire {
+		/**
+		 * Returns a Wire object by wire name, if one exists at the time that it is called. Does not update if the Wire changes.
+		 * @param wireName the name of the wire to use
+		 * @param context Context object
+		 * @returns Wire object, or undefined if no Wire with that name exists
+		 */
+		export function getWire(
+			wireName: string | undefined,
+			context: Context
+		): Wire | undefined
+		/**
+		 * A hook to return a Wire object by wire name, which will update if any change is made to the Wire
+		 * @param wireName the name of the wire to use
+		 * @param context Context object
+		 * @returns Wire object
+		 */
+		export function useWire(
+			wireName: string | undefined,
+			context: Context
+		): Wire | undefined
+		/**
+		 * A hook to return multiple Wire objects by their names, which will update if any changes are made to the Wires
+		 * @param wireNames the names of the wires to use
+		 * @param context Context object
+		 * @returns array of Wire objects
+		 */
+		export function useWires(
+			wireNames: string[],
+			context: Context
+		): (Wire | undefined)[]
+
+		export { getWire, useWire, useWires }
+	}
+
+	export default { signal, view, wire }
 }
 
 export default {
