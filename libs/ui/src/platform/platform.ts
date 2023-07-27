@@ -154,8 +154,7 @@ const systemBundles = [
 	"uesio/builder",
 	"uesio/studio",
 	"uesio/core",
-	// TODO: REMOVE CRM and CMS!!!
-	"uesio/cms",
+	// TODO: REMOVE CRM!!!
 	"uesio/crm",
 ]
 
