@@ -1,0 +1,43 @@
+name: animalslist
+definition:
+  # Wires connect to data in collections
+  wires:
+    animals:
+      collection: uesio/tests.animal
+      fields:
+        # Should have access to these
+        uesio/tests.genus:
+        uesio/tests.species:
+        # Should NOT have access to these
+        uesio/tests.lookalike:
+        uesio/tests.total_population:
+        uesio/tests.ancestor:
+      batchsize: 2
+      conditions:
+        - field: uesio/tests.genus
+          operator: EQ
+          value: Mouton
+    noAccess:
+      collection: uesio/tests.wire_condition
+      fields:
+        uesio/tests.text:
+        uesio/tests.name:
+      batchsize: 3
+  # Components determine the layout and composition of your view
+  components:
+    - uesio/io.table:
+        wire: animals
+        columns:
+          # SHOULD be visible to Public user due to Field level security
+          - field: uesio/tests.genus
+          - field: uesio/tests.species
+          # Should NOT be visible to Public user due to Field Level Security
+          - field: uesio/tests.lookalike
+          - field: uesio/tests.ancestor
+          - field: uesio/tests.total_population
+    # Should NOT be accessible due to Object Level Security
+    - uesio/io.table:
+        wire: noAccess
+        columns:
+          - field: uesio/tests.text
+          - field: uesio/tests.name

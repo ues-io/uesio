@@ -124,3 +124,27 @@ POST https://{{host}}:{{port}}/site/wires/save
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].changes['1']['uesio/core.uniquekey']" == "uesio/tests:testsite"
+
+# Create a site domain, so that we can test accessing the site
+POST https://{{host}}:{{port}}/site/wires/save
+{
+    "wires": [
+        {
+            "wire": "newdomain",
+            "collection":"uesio/studio.sitedomain",
+            "changes": {
+                "1": {
+                    "uesio/studio.domain": "tests",
+                    "uesio/studio.type": "subdomain",
+                    "uesio/studio.site": {
+                        "uesio/core.uniquekey": "uesio/tests:testsite"
+                    }
+                }
+            }
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].changes['1']['uesio/core.uniquekey']" == "tests:subdomain"
+jsonpath "$.wires[0].errors" == null
