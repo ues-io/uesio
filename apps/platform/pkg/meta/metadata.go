@@ -321,7 +321,7 @@ func pickMetadataItem(node *yaml.Node, property, namespace, defaultValue string)
 
 	index, err := GetMapNodeIndex(node, property)
 	if err != nil {
-		return ""
+		return defaultValue
 	}
 
 	// delete key and value nodes
