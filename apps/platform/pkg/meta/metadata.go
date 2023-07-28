@@ -316,26 +316,59 @@ func validateRequiredMetadataItem(node *yaml.Node, property string) error {
 	return nil
 }
 
-func pickRequiredMetadataItem(node *yaml.Node, property, namespace string) (string, error) {
+func pickMetadataItem(node *yaml.Node, property, namespace, defaultValue string) string {
 	value := GetNodeValueAsString(node, property)
-	if value == "" {
-		return "", fmt.Errorf("Required Metadata Property Missing: %s", property)
-	}
 
 	index, err := GetMapNodeIndex(node, property)
 	if err != nil {
-		return "", err
+		return ""
 	}
 
 	// delete key and value nodes
 	node.Content = append(node.Content[:index], node.Content[index+2:]...)
 
-	namespace, name, err := ParseKeyWithDefault(value, namespace)
-	if err != nil {
-		return "", nil
+	if value == "" {
+		return defaultValue
 	}
 
-	return fmt.Sprintf("%s.%s", namespace, name), nil
+	return unLocalize(value, namespace)
+}
+
+func isLocalNamespace(ns, localNamespace string) bool {
+	return ns == localNamespace || ns == "this/app"
+}
+
+// Takes a possibly localized namespace and turns it into a fully qualified,
+// (3rd person) namespace. If the namespace is not local, it is a no-op.
+func unLocalize(itemkey, localNamespace string) string {
+	if itemkey == "" {
+		return ""
+	}
+	namespace, name, err := ParseKeyWithDefault(itemkey, localNamespace)
+	if err != nil {
+		return ""
+	}
+
+	if isLocalNamespace(namespace, localNamespace) {
+		return fmt.Sprintf("%s.%s", localNamespace, name)
+	}
+
+	return itemkey
+}
+
+// Takes a possibly fully qualified namespace and turns it into a localized version
+func localizeShort(itemkey, localNamespace string) string {
+	if itemkey == "" {
+		return ""
+	}
+	namespace, name, err := ParseKeyWithDefault(itemkey, localNamespace)
+	if err != nil {
+		return ""
+	}
+	if isLocalNamespace(namespace, localNamespace) {
+		return name
+	}
+	return itemkey
 }
 
 func GetNodeValueAsString(node *yaml.Node, key string) string {

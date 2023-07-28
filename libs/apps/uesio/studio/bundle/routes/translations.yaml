@@ -1,5 +1,5 @@
 name: translations
 path: app/{app:\w*\/\w*}/workspace/{workspacename}/translations
-view: uesio/studio.translations
-theme: uesio/studio.default
+view: translations
+theme: default
 title: Translations

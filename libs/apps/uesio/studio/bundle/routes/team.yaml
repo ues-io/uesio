@@ -1,5 +1,5 @@
 name: team
 path: app/{app:\w*\/\w*}/teams/{teamname}
-view: uesio/studio.team
-theme: uesio/studio.default
+view: team
+theme: default
 title: "Team: $Param{teamname}"

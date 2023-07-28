@@ -1,5 +1,5 @@
 name: packaging
 path: app/{app:\w*\/\w*}/workspace/{workspacename}/packaging
-view: uesio/studio.packaging
-theme: uesio/studio.default
+view: packaging
+theme: default
 title: Packaging

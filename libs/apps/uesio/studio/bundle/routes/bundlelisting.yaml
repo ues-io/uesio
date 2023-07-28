@@ -1,4 +1,4 @@
 name: bundlelisting
 path: app/{app:\w*\/\w*}/workspace/{workspacename}/bundlestore/{id:\w*\/\w*}
-view: uesio/studio.bundlelisting
-theme: uesio/studio.default
+view: bundlelisting
+theme: default

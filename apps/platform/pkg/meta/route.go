@@ -2,6 +2,7 @@ package meta
 
 import (
 	"errors"
+	"fmt"
 
 	"gopkg.in/yaml.v3"
 )
@@ -84,20 +85,14 @@ func (r *Route) UnmarshalYAML(node *yaml.Node) error {
 			return errors.New("redirect property is required for routes of type 'redirect'")
 		}
 	} else {
-		viewRef, err := pickRequiredMetadataItem(node, "view", r.Namespace)
-		if err != nil {
-			return err
+		r.ViewRef = pickMetadataItem(node, "view", r.Namespace, "")
+		if r.ViewRef == "" {
+			return fmt.Errorf("a view property is required on route %s", r.GetKey())
 		}
-		r.ViewRef = viewRef
-		err = setDefaultValue(node, "theme", "uesio/core.default")
-		if err != nil {
-			return err
+		r.ThemeRef = pickMetadataItem(node, "theme", r.Namespace, "uesio/core.default")
+		if r.ThemeRef == "" {
+			return fmt.Errorf("a theme property is required on route %s", r.GetKey())
 		}
-		themeRef, err := pickRequiredMetadataItem(node, "theme", r.Namespace)
-		if err != nil {
-			return err
-		}
-		r.ThemeRef = themeRef
 	}
 	return node.Decode((*RouteWrapper)(r))
 }
@@ -108,25 +103,8 @@ func (r *Route) MarshalYAML() (interface{}, error) {
 		r.ThemeRef = ""
 	}
 
-	if r.ThemeRef != "" {
-		namespace, name, err := ParseKey(r.ThemeRef)
-		if err != nil {
-			return nil, err
-		}
-		if namespace == r.Namespace {
-			r.ThemeRef = name
-		}
-	}
-
-	if r.ViewRef != "" {
-		namespace, name, err := ParseKey(r.ViewRef)
-		if err != nil {
-			return nil, err
-		}
-		if namespace == r.Namespace {
-			r.ViewRef = name
-		}
-	}
+	r.ThemeRef = localizeShort(r.ThemeRef, r.Namespace)
+	r.ViewRef = localizeShort(r.ViewRef, r.Namespace)
 
 	return (*RouteWrapper)(r), nil
 }
