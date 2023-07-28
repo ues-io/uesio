@@ -149,9 +149,9 @@ main.tenant = $2 AND
 main.uniquekey = $3
 ORDER BY main.id::text asc
 LIMIT 501```
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" == "MacAughtrie:Jerrine"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" nth 0 == "MacAughtrie:Jerrine"
 [Captures]
-idvalue: jsonpath "$.wires[0].data[*]['uesio/core.id']"
+idvalue: jsonpath "$.wires[0].data[*]['uesio/core.id']" nth 0
 
 # Test a wire load with a condition on the core id field
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
@@ -189,7 +189,7 @@ main.tenant = $2 AND
 main.id::text = $3
 ORDER BY main.id::text asc
 LIMIT 501```
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" == "MacAughtrie:Jerrine"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" nth 0 == "MacAughtrie:Jerrine"
 
 # Verify that wire properties from a view are processed correctly
 GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/simple_wire_load
@@ -285,4 +285,4 @@ main.fields->>'uesio/tests.genus' <> ALL ($3) AND
 main.fields->>'uesio/tests.species' = ANY ($4)
 ORDER BY main.id::text asc
 LIMIT 501```
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" == "Soitoux:Franklin"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" nth 0 == "Soitoux:Franklin"
