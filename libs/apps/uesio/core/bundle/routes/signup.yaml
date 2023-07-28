@@ -1,5 +1,5 @@
 name: signup
 path: signup
-view: uesio/core.signup
+view: signup
 public: true
 title: Uesio - Signup
