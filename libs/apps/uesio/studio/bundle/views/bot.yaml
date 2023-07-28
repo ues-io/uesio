@@ -21,7 +21,6 @@ definition:
           value: bots
         - field: uesio/studio.item
           value: $Param{bottype}:$Param{collection}:$Param{namespace}.$Param{botname}
-
     attachments:
       collection: uesio/core.userfile
       fields:
@@ -52,7 +51,8 @@ definition:
                       itemType: bots
                       itemIcon: smart_toy
                       itemName: $Param{botname}
-                      itemNameSpace: $Param{bottype}/$Param{collection}/$Param{namespace}
+                      itemNameSpace: $Param{bottype}/$Param{namespace}
+                      itemParam: "?collection=$Param{collection}"
           - uesio/io.griditem:
               uesio.variant: uesio/studio.leftbar
               components:
@@ -75,6 +75,12 @@ definition:
                           title: Bot - ${uesio/studio.name}
                           actions:
                             - uesio/io.group:
+                                uesio.display:
+                                  - type: paramValue
+                                    param: app
+                                    field: uesio/core.dynamiccollection
+                                    operator: EQUALS
+                                    value: $Param{namespace}
                                 components:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
@@ -82,33 +88,23 @@ definition:
                                       uesio.display:
                                         - type: fieldMode
                                           mode: READ
-                                        - type: paramValue
-                                          param: app
-                                          field: uesio/core.dynamiccollection
-                                          operator: EQUALS
-                                          value: $Param{namespace}
                                       signals:
                                         - signal: component/CALL
                                           component: uesio/io.list
                                           componentsignal: TOGGLE_MODE
-                                          targettype: specific
-                                          componentid: botsDeck
-                                        - signal: component/CALL
-                                          component: uesio/io.fileattachment
-                                          componentsignal: SET_READ_MODE
-                                          targettype: specific
-                                          componentid: botcontent
-                                        - signal: component/CALL
-                                          component: uesio/io.list
-                                          componentsignal: TOGGLE_MODE
-                                          targettype: specific
-                                          componentid: botParams
+                                          targettype: multiple
+                                          target: bot
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.primary
                                       text: $Label{uesio/io.save}
                                       uesio.display:
-                                        - type: wireHasChanges
-                                          wire: bots
+                                        - type: group
+                                          conjunction: OR
+                                          conditions:
+                                            - type: wireHasChanges
+                                              wire: bots
+                                            - type: wireHasChanges
+                                              wire: attachments
                                       signals:
                                         - signal: wire/SAVE
                                           wires:
@@ -121,49 +117,34 @@ definition:
                                         - signal: component/CALL
                                           component: uesio/io.list
                                           componentsignal: SET_READ_MODE
-                                          targettype: specific
-                                          target: botsDeck
+                                          targettype: multiple
+                                          target: bot
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: $Label{uesio/io.cancel}
                                       uesio.display:
                                         - type: fieldMode
                                           mode: EDIT
-                                        - type: paramValue
-                                          param: app
-                                          field: uesio/core.dynamiccollection
-                                          operator: EQUALS
-                                          value: $Param{namespace}
                                       signals:
                                         - signal: wire/CANCEL
                                           wires:
                                             - bots
                                         - signal: component/CALL
+                                          component: uesio/io.list
+                                          componentsignal: SET_READ_MODE
+                                          targettype: multiple
+                                          target: bot
+                                        - signal: component/CALL
                                           component: uesio/io.fileattachment
                                           componentsignal: CANCEL_FILE
                                           targettype: specific
                                           componentid: botcontent
-                                        - signal: component/CALL
-                                          component: uesio/io.list
-                                          componentsignal: SET_READ_MODE
-                                          targettype: specific
-                                          target: botsDeck
-                                        - signal: component/CALL
-                                          component: uesio/io.list
-                                          componentsignal: SET_READ_MODE
-                                          targettype: specific
-                                          target: botsDeck
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: $Label{uesio/io.delete}
                                       uesio.display:
                                         - type: fieldMode
                                           mode: READ
-                                        - type: paramValue
-                                          param: app
-                                          field: uesio/core.dynamiccollection
-                                          operator: EQUALS
-                                          value: $Param{namespace}
                                       signals:
                                         - signal: panel/TOGGLE
                                           panel: deleteBot
@@ -187,8 +168,8 @@ definition:
                                           name: $Param{workspacename}
                                           app: $Param{app}
                                       fieldId: uesio/studio.collection
-                                      metadataType: "COLLECTION"
-                                      label: "Collection"
+                                      metadataType: COLLECTION
+                                      label: Collection
                                   - uesio/io.field:
                                       fieldId: uesio/core.createdby
                                   - uesio/io.field:
@@ -198,13 +179,12 @@ definition:
                                   - uesio/io.field:
                                       fieldId: uesio/core.updatedat
                             - uesio/io.list:
-                                id: Attachments
+                                uesio.id: botAttachmentsList
                                 wire: attachments
                                 mode: READ
                                 components:
                                   - uesio/io.fileattachment:
                                       uesio.id: botcontent
-                                      mode: READ
                                       displayAs: TEXT
                                       typeDefinitionFileURIs:
                                         - $StaticFile{/ui/types/server/bots.d.ts}
@@ -241,9 +221,9 @@ definition:
               - signal: wire/MARK_FOR_DELETE
               - signal: wire/SAVE
                 wires:
-                  - "bots"
-              - signal: "route/NAVIGATE"
-                path: "app/$Param{app}/workspace/$Param{workspacename}/bots"
+                  - bots
+              - signal: route/NAVIGATE
+                path: app/$Param{app}/workspace/$Param{workspacename}/bots
         - uesio/io.button:
             text: $Label{uesio/io.cancel}
             uesio.variant: uesio/io.secondary
