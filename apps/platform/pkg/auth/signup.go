@@ -2,8 +2,9 @@ package auth
 
 import (
 	"errors"
-	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"regexp"
+
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/templating"
@@ -61,9 +62,15 @@ func Signup(signupMethodID string, payload map[string]interface{}, site *meta.Si
 		return nil, err
 	}
 
-	email, _ := GetPayloadValue(payload, "email")
+	firstName, _ := GetRequiredPayloadValue(payload, "firstname")
+	lastName, _ := GetRequiredPayloadValue(payload, "lastname")
+	email, _ := GetRequiredPayloadValue(payload, "email")
+	country, _ := GetRequiredPayloadValue(payload, "country")
+	company, _ := GetPayloadValue(payload, "company")
+	jobTitle, _ := GetPayloadValue(payload, "jobtitle")
+	noEmployees, _ := GetPayloadValue(payload, "noemployees")
 
-	userMeta, err := createUser(username, email, signupMethod)
+	userMeta, err := createUser(username, email, signupMethod, firstName, lastName, country, company, jobTitle, noEmployees)
 	if err != nil {
 		return nil, err
 	}

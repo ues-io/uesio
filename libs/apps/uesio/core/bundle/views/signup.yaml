@@ -156,12 +156,12 @@ definition:
                                     signupMethod: uesio/core.platform
                                     requireds:
                                     payload:
-                                      firstname: ${uesio/viewonly.firstname}
-                                      lastname: ${uesio/viewonly.lastname}
+                                      firstName: ${uesio/viewonly.firstname}
+                                      lastName: ${uesio/viewonly.lastname}
                                       email: ${uesio/viewonly.email}
                                       country: ${uesio/viewonly.country}
                                       company: ${uesio/viewonly.company}
-                                      jobtitle: ${uesio/viewonly.jobtitle}
-                                      noemployees: ${uesio/viewonly.noemployees}
+                                      jobTitle: ${uesio/viewonly.jobtitle}
+                                      noEmployees: ${uesio/viewonly.noemployees}
                                       username: ${uesio/viewonly.username}
                                       password: ${uesio/viewonly.password}

@@ -154,25 +154,40 @@ func getSiteFromDomain(domainType, domainValue string) (*meta.Site, error) {
 	return site, nil
 }
 
-func createUser(username string, email string, signupMethod *meta.SignupMethod) (*meta.User, error) {
+func createUser(username string, email string, signupMethod *meta.SignupMethod, firstName string, lastName string, country string, company string, jobTitle string, noEmployees string) (*meta.User, error) {
 
 	if signupMethod.Profile == "" {
 		return nil, fmt.Errorf("signup method %s is missing the profile property", signupMethod.GetKey())
 	}
-
-	firstName, lastName := getNamePartsFromUsername(username)
+	if firstName == "" {
+		return nil, fmt.Errorf("Missing the property First Name")
+	}
+	if email == "" {
+		return nil, fmt.Errorf("Missing the property Email")
+	}
+	if country == "" {
+		return nil, fmt.Errorf("Missing the property Country")
+	}
 
 	user := &meta.User{
 		Username:  username,
 		Profile:   signupMethod.Profile,
 		Type:      "PERSON",
 		Language:  "en",
+		Email:     email,
 		FirstName: capitalize(firstName),
 		LastName:  capitalize(lastName),
+		Country:   capitalize(country),
 	}
 
-	if email != "" {
-		user.Email = email
+	if jobTitle != "" {
+		user.JobTitle = capitalize(jobTitle)
+	}
+	if company != "" {
+		user.Company = capitalize(company)
+	}
+	if noEmployees != "" {
+		user.NoEmployees = noEmployees
 	}
 
 	return user, nil
@@ -182,18 +197,6 @@ func capitalize(str string) string {
 	runes := []rune(str)
 	runes[0] = unicode.ToUpper(runes[0])
 	return string(runes)
-}
-
-func getNamePartsFromUsername(username string) (first, last string) {
-	if len(username) >= 3 {
-		for _, sep := range []string{".", "_", "-"} {
-			if strings.Contains(username, sep) {
-				parts := strings.Split(username, sep)
-				return parts[0], parts[1]
-			}
-		}
-	}
-	return username, username
 }
 
 func getUser(field, value string, session *sess.Session, connection adapt.Connection) (*meta.User, error) {
@@ -208,6 +211,21 @@ func getUser(field, value string, session *sess.Session, connection adapt.Connec
 				},
 				{
 					ID: "uesio/core.lastname",
+				},
+				{
+					ID: "uesio/core.email",
+				},
+				{
+					ID: "uesio/core.jobtitle",
+				},
+				{
+					ID: "uesio/core.company",
+				},
+				{
+					ID: "uesio/core.noemployees",
+				},
+				{
+					ID: "uesio/core.country",
 				},
 				{
 					ID: "uesio/core.username",

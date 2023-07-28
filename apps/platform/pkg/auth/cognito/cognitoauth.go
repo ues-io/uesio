@@ -137,40 +137,30 @@ func (c *Connection) Signup(payload map[string]interface{}, username string, ses
 		return nil, errors.New("Cognito login: " + err.Error())
 	}
 
-	firstname, err := auth.GetRequiredPayloadValue(payload, "firstname")
+	firstName, err := auth.GetRequiredPayloadValue(payload, "firstName")
 	if err != nil {
 		return nil, errors.New("Cognito login: " + err.Error())
 	}
 
-	lastname, err := auth.GetRequiredPayloadValue(payload, "lastname")
+	lastName, err := auth.GetRequiredPayloadValue(payload, "lastName")
 	if err != nil {
 		return nil, errors.New("Cognito login: " + err.Error())
 	}
 
-	email, err := auth.GetPayloadValue(payload, "email")
+	email, err := auth.GetRequiredPayloadValue(payload, "email")
+	if err != nil {
+		return nil, errors.New("Cognito login: " + err.Error())
+	}
+	country, err := auth.GetRequiredPayloadValue(payload, "country")
 	if err != nil {
 		return nil, errors.New("Cognito login: " + err.Error())
 	}
 
-	jobtitle, err := auth.GetPayloadValue(payload, "jobtitle")
-	if err != nil {
-		return nil, nil
-	}
+	jobTitle, _ := auth.GetPayloadValue(payload, "jobTitle")
 
-	company, err := auth.GetPayloadValue(payload, "company")
-	if err != nil {
-		return nil, nil
-	}
+	company, _ := auth.GetPayloadValue(payload, "company")
 
-	noemployees, err := auth.GetPayloadValue(payload, "company")
-	if err != nil {
-		return nil, nil
-	}
-
-	country, err := auth.GetPayloadValue(payload, "country")
-	if err != nil {
-		return nil, errors.New("Cognito login: " + err.Error())
-	}
+	noEmployees, _ := auth.GetPayloadValue(payload, "noEmployees")
 
 	signUpData := &cognito.SignUpInput{
 		ClientId: aws.String(clientID),
@@ -178,28 +168,28 @@ func (c *Connection) Signup(payload map[string]interface{}, username string, ses
 		Password: &password,
 		UserAttributes: []types.AttributeType{
 			{
-				Name:  aws.String("firstname"),
-				Value: aws.String(firstname),
+				Name:  aws.String("firstName"),
+				Value: aws.String(firstName),
 			},
 			{
-				Name:  aws.String("lastname"),
-				Value: aws.String(lastname),
+				Name:  aws.String("lastName"),
+				Value: aws.String(lastName),
 			},
 			{
 				Name:  aws.String("email"),
 				Value: aws.String(email),
 			},
 			{
-				Name:  aws.String("jobtitle"),
-				Value: aws.String(jobtitle),
+				Name:  aws.String("jobTitle"),
+				Value: aws.String(jobTitle),
 			},
 			{
 				Name:  aws.String("company"),
 				Value: aws.String(company),
 			},
 			{
-				Name:  aws.String("noemployees"),
-				Value: aws.String(noemployees),
+				Name:  aws.String("noEmployees"),
+				Value: aws.String(noEmployees),
 			},
 			{
 				Name:  aws.String("country"),
