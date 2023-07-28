@@ -1,48 +1,6 @@
 {
 	"version": 1,
 	"projects": {
-		"apps-uesio-cms": {
-			"root": "libs/apps/uesio/cms",
-			"sourceRoot": "libs/apps/uesio/cms",
-			"projectType": "library",
-			"schematics": {},
-			"architect": {
-				"build": {
-					"builder": "nx:run-commands",
-					"options": {
-						"commands": [
-							"uesio pack",
-							"npx tsc --noEmit --project ./tsconfig.lib.json"
-						],
-						"parallel": false,
-						"cwd": "libs/apps/uesio/cms"
-					}
-				},
-				"watch": {
-					"builder": "nx:run-commands",
-					"options": {
-						"command": "uesio pack -w",
-						"cwd": "libs/apps/uesio/cms"
-					}
-				},
-				"deploy": {
-					"builder": "nx:run-commands",
-					"options": {
-						"command": "uesio deploy",
-						"cwd": "libs/apps/uesio/cms"
-					}
-				},
-				"test": {
-					"builder": "nx:run-commands",
-					"options": {
-						"command": "echo TODO: set up test for apps-uesio-cms.",
-						"cwd": "libs/apps/uesio/cms"
-					}
-				}
-			},
-			"tags": [],
-			"implicitDependencies": ["cli","ui"]
-		},
 		"apps-uesio-core": {
 			"root": "libs/apps/uesio/core",
 			"sourceRoot": "libs/apps/uesio/core/bundle",
