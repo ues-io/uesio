@@ -31,11 +31,11 @@ type Route struct {
 	BundleableBase `yaml:",inline"`
 	Path           string            `yaml:"path" json:"uesio/studio.path"`
 	ViewRef        string            `yaml:"view" json:"uesio/studio.view"`
-	Redirect       string            `yaml:"redirect" json:"uesio/studio.redirect"`
+	Redirect       string            `yaml:"redirect,omitempty" json:"uesio/studio.redirect"`
 	Params         map[string]string `yaml:"params,omitempty" json:"uesio/studio.params"`
 	ThemeRef       string            `yaml:"theme" json:"uesio/studio.theme"`
-	Type           string            `yaml:"type" json:"uesio/studio.type"`
-	Title          string            `yaml:"title" json:"uesio/studio.title"`
+	Type           string            `yaml:"type,omitempty" json:"uesio/studio.type"`
+	Title          string            `yaml:"title,omitempty" json:"uesio/studio.title"`
 	Tags           []Tag             `yaml:"tags,omitempty" json:"uesio/studio.tags"`
 }
 
@@ -85,26 +85,21 @@ func (r *Route) UnmarshalYAML(node *yaml.Node) error {
 			return errors.New("redirect property is required for routes of type 'redirect'")
 		}
 	} else {
-		r.ViewRef = pickMetadataItem(node, "view", r.Namespace, "")
-		if r.ViewRef == "" {
-			return fmt.Errorf("a view property is required on route %s", r.GetKey())
+
+		r.ViewRef, err = pickRequiredMetadataItem(node, "view", r.Namespace)
+		if err != nil {
+			return fmt.Errorf("invalid route %s: %s", r.GetKey(), err.Error())
 		}
 		r.ThemeRef = pickMetadataItem(node, "theme", r.Namespace, "uesio/core.default")
-		if r.ThemeRef == "" {
-			return fmt.Errorf("a theme property is required on route %s", r.GetKey())
-		}
+
 	}
 	return node.Decode((*RouteWrapper)(r))
 }
 
 func (r *Route) MarshalYAML() (interface{}, error) {
 
-	if r.ThemeRef == "uesio/core.default" {
-		r.ThemeRef = ""
-	}
-
-	r.ThemeRef = localizeShort(r.ThemeRef, r.Namespace)
-	r.ViewRef = localizeShort(r.ViewRef, r.Namespace)
+	r.ThemeRef = removeDefault(localize(r.ThemeRef, r.Namespace), "uesio/core.default")
+	r.ViewRef = localize(r.ViewRef, r.Namespace)
 
 	return (*RouteWrapper)(r), nil
 }
