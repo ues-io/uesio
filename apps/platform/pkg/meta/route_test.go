@@ -87,7 +87,7 @@ func TestRouteUnmarshal(t *testing.T) {
 		{
 			"unlocalize this/app",
 			"Make sure references with this/app are unlocalized",
-			route2,
+			route3,
 			&Route{
 				BundleableBase: BundleableBase{
 					Name:      "myroute",
@@ -107,7 +107,7 @@ func TestRouteUnmarshal(t *testing.T) {
 		{
 			"unlocalize fully qualified namespace",
 			"Make sure references with an actual namespace are unchanged",
-			route2,
+			route4,
 			&Route{
 				BundleableBase: BundleableBase{
 					Name:      "myroute",
