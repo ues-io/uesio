@@ -57,4 +57,17 @@ GET https://tests.{{domain}}:{{port}}/site/routes/path/uesio/tests/publicanimals
 Accept: application/json
 HTTP 200
 [Asserts]
-jsonpath "$.dependencies.data[*]" count == 1
+jsonpath "$.dependencies.wire.entities[*].data[*]['uesio/tests.species']" nth 0 == "Abrahan"
+jsonpath "$.dependencies.wire.entities[*].data[*]['uesio/tests.genus']" nth 0 == "Mouton"
+jsonpath "$.dependencies.wire.entities[*]['debugQueryString']" nth 0 == ```
+SELECT
+main.fields->>'uesio/tests.genus' AS "uesio/tests.genus",
+main.fields->>'uesio/tests.species' AS "uesio/tests.species",
+main.id::text AS "uesio/core.id",
+main.uniquekey AS "uesio/core.uniquekey"
+FROM data as "main"
+WHERE
+main.collection = $1 AND
+main.tenant = $2 AND
+main.fields->>'uesio/tests.genus' = $3
+LIMIT 3```
