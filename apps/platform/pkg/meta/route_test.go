@@ -1,37 +1,42 @@
 package meta
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/yaml.v3"
 )
 
-var route_local_view_local_theme = strings.TrimPrefix(`
+var route_local_view_local_theme = trimYamlString(`
 name: myroute
 path: mypath
 view: myview
 theme: mytheme
-`, "\n")
+`)
 
-var route_local_view_no_theme = strings.TrimPrefix(`
+var route_local_view_no_theme = trimYamlString(`
 name: myroute
 path: mypath
 view: myview
-`, "\n")
+`)
 
-var route_this_app_view_no_theme = strings.TrimPrefix(`
+var route_this_app_view_no_theme = trimYamlString(`
 name: myroute
 path: mypath
 view: this/app.myview
-`, "\n")
+`)
 
-var route_fq_view_no_theme = strings.TrimPrefix(`
+var route_fq_view_no_theme = trimYamlString(`
 name: myroute
 path: mypath
 view: my/namespace.myview
-`, "\n")
+`)
+
+var route_redirect = trimYamlString(`
+name: myroute
+type: redirect
+redirect: http://www.google.com
+`)
 
 func TestRouteUnmarshal(t *testing.T) {
 
@@ -109,6 +114,22 @@ func TestRouteUnmarshal(t *testing.T) {
 				ThemeRef: "uesio/core.default",
 			},
 		},
+		{
+			"redirect route",
+			"Make sure redirect route works",
+			route_redirect,
+			"myroute.yaml",
+			"my/namespace",
+			&Route{
+				BundleableBase: BundleableBase{
+					Name:      "myroute",
+					Namespace: "my/namespace",
+				},
+				ThemeRef: "uesio/core.default",
+				Redirect: "http://www.google.com",
+				Type:     "redirect",
+			},
+		},
 	}
 
 	for _, tc := range tests {
@@ -151,6 +172,21 @@ func TestRouteMarshal(t *testing.T) {
 			"myroute.yaml",
 			"my/namespace",
 		},
+		{
+			"redirect",
+			"routes of type redirect should marshal correctly",
+			&Route{
+				BundleableBase: BundleableBase{
+					Name:      "myroute",
+					Namespace: "my/namespace",
+				},
+				Type:     "redirect",
+				Redirect: "http://www.google.com",
+			},
+			route_redirect,
+			"myroute.yaml",
+			"my/namespace",
+		},
 	}
 
 	for _, tc := range tests {
@@ -179,18 +215,25 @@ func TestRouteRoundTrip(t *testing.T) {
 
 	var tests = []testCase{
 		{
-			"localize and default",
-			"view and theme should be localized and default removed",
+			"roundtrip with local references",
+			"",
 			"myroute.yaml",
 			"my/namespace",
 			route_local_view_local_theme,
 		},
 		{
-			"localize and default",
-			"view and theme should be localized and default removed",
+			"roundtrip with default",
+			"",
 			"myroute.yaml",
 			"my/namespace",
 			route_local_view_no_theme,
+		},
+		{
+			"roundtrip redirect",
+			"",
+			"myroute.yaml",
+			"my/namespace",
+			route_redirect,
 		},
 	}
 

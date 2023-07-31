@@ -3,6 +3,7 @@ package meta
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/francoispqt/gojay"
 	"gopkg.in/yaml.v3"
@@ -230,4 +231,8 @@ func getYamlNode(yamlContent string) yaml.Node {
 	yamlNode := &yaml.Node{}
 	yaml.Unmarshal([]byte(yamlContent), yamlNode)
 	return *yamlNode.Content[0]
+}
+
+func trimYamlString(yamlContent string) string {
+	return strings.TrimPrefix(yamlContent, "\n")
 }
