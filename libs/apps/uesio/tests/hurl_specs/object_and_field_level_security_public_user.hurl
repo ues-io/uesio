@@ -17,28 +17,14 @@ Accept: application/json
                 {"id":"uesio/tests.name"}
             ],
             "query": true
-        },
-        {
-            "collection":"uesio/tests.animal",
-            "name": "hasAccess",
-            "fields": [
-                {"id":"uesio/core.uniquekey"},
-                {"id":"uesio/tests.genus"},
-                {"id":"uesio/tests.species"}
-            ],
-            "batchsize": 1,
-            "query": true,
-            "conditions": [
-                { "field": "uesio/tests.genus", "operator": "EQ", "value": "Mouton" }
-            ]
         }
     ]
 }
 HTTP 400
 [Asserts]
-body contains "Load Failed: Profile uesio/studio.public does not have read access to the uesio/tests.wire_condition collection."
+body contains "Load Failed: Profile uesio/tests.public does not have read access to the uesio/tests.wire_condition collection."
 
-# Object level security -- we SHOULD be able to query wire_conditionanimal
+# Object level security -- we SHOULD be able to query the animal collection
 # because the public profile DOES have access to it
 POST https://tests.{{domain}}:{{port}}/site/wires/load
 Accept: application/json
@@ -63,4 +49,12 @@ Accept: application/json
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data[*]" count == 1
-jsonpath "$.wires[0].data['uesio/tests.species']" nth 0 == "Abrahan"
+jsonpath "$.wires[0].data[*]['uesio/tests.species']" nth 0 == "Abrahan"
+
+# Object security in routes - we SHOULD be able to query the animal collection via a route load
+# for a route with a wire on our requested collection
+GET https://tests.{{domain}}:{{port}}/site/routes/path/uesio/tests/publicanimalslist
+Accept: application/json
+HTTP 200
+[Asserts]
+jsonpath "$.dependencies.data[*]" count == 1

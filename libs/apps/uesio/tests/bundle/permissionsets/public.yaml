@@ -3,32 +3,33 @@ named: {}
 views:
   uesio/tests.animalslist: true
 collections:
-  uesio/tests.wire_condition:
-    read: false
-    create: false
-    update: false
-    delete: false
   uesio/tests.animal:
     read: true
     create: false
-    update: false
+    edit: false
     delete: false
     fields:
-      uesio/tests.genus:
-        read: true
+      uesio/tests.ancestor:
+        read: false
         edit: false
-      uesio/tests.species:
+      uesio/tests.genus:
         read: true
         edit: false
       uesio/tests.lookalike:
         read: false
         edit: false
+      uesio/tests.species:
+        read: true
+        edit: false
       uesio/tests.total_population:
         read: false
         edit: false
-      uesio/tests.ancestor:
-        read: false
-        edit: false
+  uesio/tests.wire_condition:
+    read: false
+    create: false
+    edit: false
+    delete: false
+    fields: {}
 routes:
   uesio/tests.publicanimalslist: true
 files: {}
