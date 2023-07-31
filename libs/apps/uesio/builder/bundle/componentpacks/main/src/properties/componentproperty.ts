@@ -150,7 +150,13 @@ type ComponentPropertiesGetter = (
 
 type DisplayTemplateGetter = (record: wire.PlainWireRecord) => string
 
+interface ListPropertyAction {
+	label: string
+	defaultDefinition?: definition.DefinitionMap
+}
+
 interface ListPropertyItemsDefinition {
+	actions?: ListPropertyAction[]
 	addLabel?: string
 	defaultDefinition?: definition.DefinitionMap
 	displayTemplate?: string | DisplayTemplateGetter

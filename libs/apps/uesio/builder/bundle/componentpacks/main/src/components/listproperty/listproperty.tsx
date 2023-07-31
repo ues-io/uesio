@@ -27,20 +27,21 @@ const ListProperty: definition.UC<Definition> = (props) => {
 
 	if (!viewDefId || !record) return null
 
+	const actionsDef = itemsDefinition?.actions
 	const listPropertyPath = path.addLocal(property.name)
 	const items = record.getFieldValue(property.name) as wire.PlainWireRecord[]
-	const actions = [
-		{
-			label: itemsDefinition?.addLabel || "Add",
-			action: () => {
-				add(
-					context,
-					listPropertyPath.addLocal(`${items?.length || 0}`),
-					itemsDefinition?.defaultDefinition || {}
-				)
-			},
-		},
-	]
+	// If actions are explicitly specified in the definition, use those,
+	// otherwise we would expect "addLabel" and "defaultDefinition" to define
+	// a single action.
+	const createAction = (label = "Add", defaultDefinition = {}) => ({
+		label,
+		action: () =>
+			add(
+				context,
+				listPropertyPath.addLocal(`${items?.length || 0}`),
+				defaultDefinition
+			),
+	})
 
 	return !itemsDefinition ? (
 		<FieldWrapper
@@ -88,7 +89,18 @@ const ListProperty: definition.UC<Definition> = (props) => {
 			itemPropertiesSections={itemsDefinition?.sections}
 			itemPropertiesPanelTitle={itemsDefinition?.title}
 			itemDisplayTemplate={itemsDefinition?.displayTemplate}
-			actions={actions}
+			actions={
+				actionsDef && actionsDef.length > 0
+					? actionsDef.map(({ defaultDefinition, label }) =>
+							createAction(label, defaultDefinition)
+					  )
+					: [
+							createAction(
+								itemsDefinition?.addLabel,
+								itemsDefinition?.defaultDefinition
+							),
+					  ]
+			}
 			path={listPropertyPath}
 			items={items}
 			context={context}
