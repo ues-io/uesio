@@ -48,12 +48,14 @@ const ListProperty: definition.UC<Definition> = (props) => {
 	const createAction = (actionDefinition: ListPropertyAction) => {
 		const { label = "Add", defaultDefinition = {} } = actionDefinition
 		let { action } = actionDefinition
-		action = ({ context }) => {
-			add(
-				context,
-				listPropertyPath.addLocal(`${items?.length || 0}`),
-				defaultDefinition
-			)
+		if (!action) {
+			action = ({ context }) => {
+				add(
+					context,
+					listPropertyPath.addLocal(`${items?.length || 0}`),
+					defaultDefinition
+				)
+			}
 		}
 		return {
 			label,

@@ -290,6 +290,10 @@ export const getDisplayConditionLabel = (
 				condition.value || "[No Value]"
 			}`
 			break
+		case "group":
+			return `${condition.type.toLocaleUpperCase()}: ${
+				condition.conjunction
+			}`
 	}
 	return `${condition.type}${details ? ": " + details : ""}`
 }
@@ -335,9 +339,7 @@ const getDisplayConditionChildren = (
 					conditionOnGroup: component.DisplayCondition,
 					secindex: number
 				) => {
-					const conditionOnGroupPath = path
-						.addLocal(index.toString())
-						.addLocal("conditions")
+					const conditionOnGroupPath = path.addLocal("conditions")
 					return (
 						<ListPropertyItem
 							key={index + "." + secindex}
@@ -398,6 +400,12 @@ export const getDisplaySectionProperties = (
 					action: addCondition({
 						type: "group",
 						conjunction: "OR",
+						conditions: [
+							{
+								type: "fieldValue",
+								operator: "EQUALS",
+							},
+						],
 					}),
 				},
 			],
