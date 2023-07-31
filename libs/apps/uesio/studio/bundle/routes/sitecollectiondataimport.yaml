@@ -1,4 +1,4 @@
 name: sitecollectiondataimport
 path: app/{app:\w*\/\w*}/site/{sitename}/import/{namespace:\w*\/\w*}/{collectionname}
-view: uesio/studio.sitecollectiondataimport
-theme: uesio/studio.default
+view: sitecollectiondataimport
+theme: default

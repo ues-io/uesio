@@ -1,5 +1,5 @@
 name: components
 path: app/{app:\w*\/\w*}/workspace/{workspacename}/components
-view: uesio/studio.components
-theme: uesio/studio.default
+view: components
+theme: default
 title: Components

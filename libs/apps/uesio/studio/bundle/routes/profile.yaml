@@ -1,5 +1,5 @@
 name: profile
 path: app/{app:\w*\/\w*}/workspace/{workspacename}/profiles/{namespace:\w*\/\w*}/{profilename}
-view: uesio/studio.profile
-theme: uesio/studio.default
+view: profile
+theme: default
 title: "Profile: $Param{profilename}"
