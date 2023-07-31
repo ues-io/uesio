@@ -1,6 +1,31 @@
 import { component } from "@uesio/ui"
 import { ComponentProperty } from "./componentproperty"
 
+export const getDisplayConditionProperties = (
+	condition: component.DisplayCondition
+) =>
+	condition.type === "group"
+		? GroupDisplayConditionProperties
+		: DisplayConditionProperties
+
+const GroupDisplayConditionProperties: ComponentProperty[] = [
+	{
+		name: "conjunction",
+		type: "SELECT",
+		label: "Display if...",
+		options: [
+			{
+				label: "ALL conditions are satsified",
+				value: "AND",
+			},
+			{
+				label: "ANY condition is satisfied",
+				value: "OR",
+			},
+		],
+	},
+]
+
 export const DisplayConditionProperties: ComponentProperty[] = [
 	{
 		name: "type",

@@ -28,8 +28,8 @@ import {
 } from "../api/propertysection"
 import { getComponentDef, setSelectedPath } from "../api/stateapi"
 import {
-	DisplayConditionProperties,
 	getDisplayConditionLabel,
+	getDisplayConditionProperties,
 } from "../properties/conditionproperties"
 import { getSignalProperties } from "../api/signalsapi"
 import { useState } from "react"
@@ -717,17 +717,31 @@ const getPropertiesAndContent = (props: Props, selectedTab: string) => {
 						name: selectedSectionId,
 						type: "LIST",
 						items: {
-							properties: DisplayConditionProperties,
+							properties: (record: wire.PlainWireRecord) =>
+								getDisplayConditionProperties(
+									record as component.DisplayCondition
+								),
 							displayTemplate: (record: wire.PlainWireRecord) =>
 								getDisplayConditionLabel(
 									record as component.DisplayCondition
 								),
-							addLabel: "New Condition",
+							actions: [
+								{
+									label: "New Condition",
+									defaultDefinition: {
+										type: "fieldValue",
+										operator: "EQUALS",
+									},
+								},
+								{
+									label: "New Group",
+									defaultDefinition: {
+										type: "group",
+										conjunction: "OR",
+									},
+								},
+							],
 							title: "Condition Properties",
-							defaultDefinition: {
-								type: "fieldValue",
-								operator: "EQUALS",
-							},
 						},
 					},
 				]
