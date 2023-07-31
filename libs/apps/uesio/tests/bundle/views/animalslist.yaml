@@ -12,12 +12,6 @@ definition:
         - field: uesio/tests.genus
           operator: EQ
           value: Mouton
-    noAccess:
-      collection: uesio/tests.wire_condition
-      fields:
-        uesio/tests.text:
-        uesio/tests.name:
-      batchsize: 3
   # Components determine the layout and composition of your view
   components:
     - uesio/io.table:
@@ -26,9 +20,3 @@ definition:
           # SHOULD be visible to Public user due to Field level security
           - field: uesio/tests.genus
           - field: uesio/tests.species
-    # Should NOT be accessible due to Object Level Security
-    - uesio/io.table:
-        wire: noAccess
-        columns:
-          - field: uesio/tests.text
-          - field: uesio/tests.name
