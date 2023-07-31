@@ -33,7 +33,7 @@ type Route struct {
 	ViewRef        string            `yaml:"view" json:"uesio/studio.view"`
 	Redirect       string            `yaml:"redirect,omitempty" json:"uesio/studio.redirect"`
 	Params         map[string]string `yaml:"params,omitempty" json:"uesio/studio.params"`
-	ThemeRef       string            `yaml:"theme" json:"uesio/studio.theme"`
+	ThemeRef       string            `yaml:"theme,omitempty" json:"uesio/studio.theme"`
 	Type           string            `yaml:"type,omitempty" json:"uesio/studio.type"`
 	Title          string            `yaml:"title,omitempty" json:"uesio/studio.title"`
 	Tags           []Tag             `yaml:"tags,omitempty" json:"uesio/studio.tags"`
