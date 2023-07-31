@@ -1,5 +1,7 @@
 import { component, context, definition, metadata, wire } from "@uesio/ui"
 import { PropertiesPanelSection } from "../api/propertysection"
+import { FullPath } from "../api/path"
+import { ReactElement } from "react"
 
 type FieldUpdate = {
 	field: string
@@ -150,9 +152,30 @@ type ComponentPropertiesGetter = (
 
 type DisplayTemplateGetter = (record: wire.PlainWireRecord) => string
 
+interface ListPropertyActionOptions {
+	context: context.Context
+	path: FullPath
+	items: definition.DefinitionMap[]
+}
+
+interface ListPropertyItemChildrenFunctionOptions {
+	context: context.Context
+	path: FullPath
+	item: wire.PlainWireRecord
+	index: number
+}
+
+type ListPropertyItemChildrenFunction = (
+	options: ListPropertyItemChildrenFunctionOptions
+) => ReactElement | null
+
+type ListPropertyActionFunction = (options: ListPropertyActionOptions) => void
+
 interface ListPropertyAction {
-	label: string
+	icon?: string
+	label?: string
 	defaultDefinition?: definition.DefinitionMap
+	action?: ListPropertyActionFunction
 }
 
 interface ListPropertyItemsDefinition {
@@ -163,6 +186,7 @@ interface ListPropertyItemsDefinition {
 	properties?: ComponentProperty[] | ComponentPropertiesGetter
 	sections?: PropertiesPanelSection[]
 	title?: string
+	children?: ListPropertyItemChildrenFunction
 }
 
 type ListProperty = {
@@ -223,10 +247,16 @@ const getStyleVariantProperty = (componentType: string): ComponentProperty => ({
 export type {
 	BotProperty,
 	ComponentProperty,
+	ComponentPropertiesGetter,
 	FieldProperty,
 	FieldMetadataProperty,
 	IconProperty,
 	ListProperty,
+	ListPropertyAction,
+	ListPropertyActionFunction,
+	ListPropertyActionOptions,
+	ListPropertyItemChildrenFunction,
+	ListPropertyItemChildrenFunctionOptions,
 	ListPropertyItemsDefinition,
 	MapProperty,
 	PropertyOnChange,

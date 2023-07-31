@@ -1,7 +1,10 @@
 import { definition, component, wire } from "@uesio/ui"
 import { add, set } from "../../api/defapi"
 import { FullPath } from "../../api/path"
-import { ListProperty as LP } from "../../properties/componentproperty"
+import {
+	ListProperty as LP,
+	ListPropertyAction,
+} from "../../properties/componentproperty"
 
 type Definition = {
 	property: LP
@@ -12,6 +15,16 @@ const ListProperty: definition.UC<Definition> = (props) => {
 	const { context, definition } = props
 	const { path, property } = definition
 	const itemsDefinition = property.items
+	const {
+		actions,
+		addLabel,
+		children,
+		defaultDefinition,
+		displayTemplate,
+		properties,
+		sections,
+		title,
+	} = itemsDefinition || {}
 
 	if (!component.shouldAll(property?.displayConditions, context)) return null
 
@@ -27,21 +40,32 @@ const ListProperty: definition.UC<Definition> = (props) => {
 
 	if (!viewDefId || !record) return null
 
-	const actionsDef = itemsDefinition?.actions
 	const listPropertyPath = path.addLocal(property.name)
 	const items = record.getFieldValue(property.name) as wire.PlainWireRecord[]
 	// If actions are explicitly specified in the definition, use those,
 	// otherwise we would expect "addLabel" and "defaultDefinition" to define
 	// a single action.
-	const createAction = (label = "Add", defaultDefinition = {}) => ({
-		label,
-		action: () =>
+	const createAction = (actionDefinition: ListPropertyAction) => {
+		const { label = "Add", defaultDefinition = {} } = actionDefinition
+		let { action } = actionDefinition
+		action = ({ context }) => {
 			add(
 				context,
 				listPropertyPath.addLocal(`${items?.length || 0}`),
 				defaultDefinition
-			),
-	})
+			)
+		}
+		return {
+			label,
+			action,
+		}
+	}
+	const actionsDef = actions || [
+		{
+			label: addLabel,
+			defaultDefinition,
+		},
+	]
 
 	return !itemsDefinition ? (
 		<FieldWrapper
@@ -85,22 +109,12 @@ const ListProperty: definition.UC<Definition> = (props) => {
 		</FieldWrapper>
 	) : (
 		<ListPropertyUtility
-			itemProperties={itemsDefinition?.properties}
-			itemPropertiesSections={itemsDefinition?.sections}
-			itemPropertiesPanelTitle={itemsDefinition?.title}
-			itemDisplayTemplate={itemsDefinition?.displayTemplate}
-			actions={
-				actionsDef && actionsDef.length > 0
-					? actionsDef.map(({ defaultDefinition, label }) =>
-							createAction(label, defaultDefinition)
-					  )
-					: [
-							createAction(
-								itemsDefinition?.addLabel,
-								itemsDefinition?.defaultDefinition
-							),
-					  ]
-			}
+			itemProperties={properties}
+			itemPropertiesSections={sections}
+			itemPropertiesPanelTitle={title}
+			itemDisplayTemplate={displayTemplate}
+			itemChildren={children}
+			actions={actionsDef?.map(createAction)}
 			path={listPropertyPath}
 			items={items}
 			context={context}

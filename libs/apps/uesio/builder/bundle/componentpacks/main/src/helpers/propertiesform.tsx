@@ -27,10 +27,7 @@ import {
 	PropertiesPanelSection,
 } from "../api/propertysection"
 import { getComponentDef, setSelectedPath } from "../api/stateapi"
-import {
-	getDisplayConditionLabel,
-	getDisplayConditionProperties,
-} from "../properties/conditionproperties"
+import { getDisplaySectionProperties } from "../properties/displayconditionproperties"
 import { getSignalProperties } from "../api/signalsapi"
 import { useState } from "react"
 
@@ -603,7 +600,7 @@ function getClosestWireInContext(context: context.Context, path: FullPath) {
 	let [lastItem, newPath] = path.pop()
 	while (lastItem && !wireId) {
 		// If the current item looks like a metadata name, try to fetch it as a component type
-		if (lastItem && lastItem.includes("/")) {
+		if (lastItem?.includes("/")) {
 			const componentDef = getComponentDef(context, lastItem)
 			if (componentDef?.slots?.length) {
 				let match
@@ -619,7 +616,7 @@ function getClosestWireInContext(context: context.Context, path: FullPath) {
 						}
 					}
 				}
-				if (match && match.wireProperty) {
+				if (match?.wireProperty) {
 					wireId = getDef(
 						context,
 						newPath.addLocal(lastItem).addLocal(match.wireProperty)
@@ -712,39 +709,7 @@ const getPropertiesAndContent = (props: Props, selectedTab: string) => {
 
 		switch (selectedSection?.type) {
 			case "DISPLAY": {
-				properties = [
-					{
-						name: selectedSectionId,
-						type: "LIST",
-						items: {
-							properties: (record: wire.PlainWireRecord) =>
-								getDisplayConditionProperties(
-									record as component.DisplayCondition
-								),
-							displayTemplate: (record: wire.PlainWireRecord) =>
-								getDisplayConditionLabel(
-									record as component.DisplayCondition
-								),
-							actions: [
-								{
-									label: "New Condition",
-									defaultDefinition: {
-										type: "fieldValue",
-										operator: "EQUALS",
-									},
-								},
-								{
-									label: "New Group",
-									defaultDefinition: {
-										type: "group",
-										conjunction: "OR",
-									},
-								},
-							],
-							title: "Condition Properties",
-						},
-					},
-				]
+				properties = getDisplaySectionProperties(selectedSectionId)
 				break
 			}
 			case "STYLES": {
