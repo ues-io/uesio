@@ -1,7 +1,6 @@
-import { FunctionComponent } from "react"
 import { definition, styles, collection, component, wire } from "@uesio/ui"
 
-interface Props extends definition.UtilityProps {
+interface Props {
 	csvOptions: wire.SelectOption[]
 	mapping: definition.ImportMapping | undefined
 	setMapping: (mapping: definition.ImportMapping) => void
@@ -9,7 +8,27 @@ interface Props extends definition.UtilityProps {
 	field: collection.Field
 }
 
-const ImportBodyItem: FunctionComponent<Props> = (props) => {
+const StyleDefaults = Object.freeze({
+	gridItem: ["grid", "grid-cols-3", "items-center", "rounded", "pt-2"],
+	itemNameWrapper: [
+		"flex",
+		"grow",
+		"items-center",
+		"gap-2",
+		"py-2",
+		"col-span-1",
+	],
+	itemOptionsWrapper: [
+		"flex",
+		"items-center",
+		"gap-2",
+		"bg-slate-100",
+		"border-2",
+		"col-span-2",
+	],
+})
+
+const ImportBodyItem: definition.UtilityComponent<Props> = (props) => {
 	const CheckboxField = component.getUtility("uesio/io.checkboxfield")
 	const TextField = component.getUtility("uesio/io.textfield")
 	const SelectField = component.getUtility("uesio/io.selectfield")
@@ -19,34 +38,7 @@ const ImportBodyItem: FunctionComponent<Props> = (props) => {
 	if (!field) return null
 	const uesioField = field.getId()
 
-	const classes = styles.useUtilityStyleTokens(
-		{
-			gridItem: [
-				"grid",
-				"grid-cols-3",
-				"items-center",
-				"rounded",
-				"pt-2",
-			],
-			itemNameWrapper: [
-				"flex",
-				"grow",
-				"items-center",
-				"gap-2",
-				"py-2",
-				"col-span-1",
-			],
-			itemOptionsWrapper: [
-				"flex",
-				"items-center",
-				"gap-2",
-				"bg-slate-100",
-				"border-2",
-				"col-span-2",
-			],
-		},
-		props
-	)
+	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
 	return (
 		<div

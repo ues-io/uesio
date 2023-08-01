@@ -1,4 +1,3 @@
-import { FunctionComponent } from "react"
 import {
 	wire,
 	collection,
@@ -13,7 +12,7 @@ import IconButton from "../iconbutton/iconbutton"
 import Field from "./field"
 import { ListFieldOptions } from "./listdeck"
 
-interface ListFieldUtilityProps extends definition.UtilityProps {
+interface ListFieldUtilityProps {
 	fieldId: string
 	mode: context.FieldMode
 	value: wire.FieldValue
@@ -33,7 +32,9 @@ const StyleDefaults = Object.freeze({
 	row: [],
 })
 
-const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
+const ListField: definition.UtilityComponent<ListFieldUtilityProps> = (
+	props
+) => {
 	const {
 		subFields,
 		subType,

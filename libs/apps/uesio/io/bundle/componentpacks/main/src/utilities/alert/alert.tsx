@@ -1,7 +1,8 @@
-import { FunctionComponent, useEffect } from "react"
+import { useEffect } from "react"
 import { definition, styles, notification, api } from "@uesio/ui"
 import Icon from "../icon/icon"
-interface AlertProps extends definition.UtilityProps {
+
+interface AlertProps {
 	text?: string
 	details?: string
 	severity?: notification.NotificationSeverity
@@ -29,7 +30,7 @@ const types = {
 	},
 }
 
-const Alert: FunctionComponent<AlertProps> = (props) => {
+const Alert: definition.UtilityComponent<AlertProps> = (props) => {
 	const { text, severity, context, details, id, duration } = props
 	let alertType = types[severity || "error"]
 	if (!alertType) {

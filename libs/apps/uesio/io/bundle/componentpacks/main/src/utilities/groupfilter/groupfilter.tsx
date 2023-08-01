@@ -1,14 +1,13 @@
-import { FunctionComponent } from "react"
 import { definition, api, wire } from "@uesio/ui"
 import ToggleField from "../field/toggle"
 
-export interface GroupFilterProps extends definition.UtilityProps {
+export interface GroupFilterProps {
 	path: string
 	wire: wire.Wire
 	condition: wire.ValueConditionState
 }
 
-const GroupFilter: FunctionComponent<GroupFilterProps> = (props) => {
+const GroupFilter: definition.UtilityComponent<GroupFilterProps> = (props) => {
 	const { wire, context, condition } = props
 	const wireId = wire.getId()
 

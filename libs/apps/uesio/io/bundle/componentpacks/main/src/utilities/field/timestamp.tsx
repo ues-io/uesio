@@ -1,8 +1,7 @@
-import { FunctionComponent } from "react"
 import { definition, styles, context, collection, wire } from "@uesio/ui"
 import TextField from "./text"
 
-interface TimestampFieldProps extends definition.UtilityProps {
+interface TimestampFieldProps {
 	setValue: (value: wire.FieldValue) => void
 	value: wire.FieldValue
 	width?: string
@@ -26,7 +25,9 @@ const StyleDefaults = Object.freeze({
 	readonly: [],
 })
 
-const TimestampField: FunctionComponent<TimestampFieldProps> = (props) => {
+const TimestampField: definition.UtilityComponent<TimestampFieldProps> = (
+	props
+) => {
 	const { focusOnRender, setValue, mode, id } = props
 
 	const timestamp = props.value as number

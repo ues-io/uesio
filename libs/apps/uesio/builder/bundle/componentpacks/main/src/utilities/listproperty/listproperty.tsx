@@ -23,7 +23,7 @@ type Props = {
 	itemChildren?: (item: wire.PlainWireRecord, index: number) => ReactNode
 	items: definition.DefinitionMap[]
 	actions: ListAction[]
-} & definition.UtilityProps
+}
 
 const ListProperty: definition.UtilityComponent<Props> = (props) => {
 	const {

@@ -1,13 +1,12 @@
-import { FC } from "react"
 import { definition, styles, context, wire } from "@uesio/ui"
 
-interface ToggleFieldProps extends definition.UtilityProps {
+interface ToggleFieldProps {
 	setValue: (value: boolean) => void
 	value: wire.FieldValue
 	mode?: context.FieldMode
 }
 
-const ToggleField: FC<ToggleFieldProps> = (props) => {
+const ToggleField: definition.UtilityComponent<ToggleFieldProps> = (props) => {
 	const { setValue, value, mode } = props
 
 	const readonly = mode === "READ"

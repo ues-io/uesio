@@ -1,4 +1,4 @@
-import { FC, DragEvent, useState } from "react"
+import { DragEvent, useState } from "react"
 import {
 	definition,
 	component,
@@ -56,13 +56,15 @@ type VariantsBlockProps = {
 	variants: component.ComponentVariant[]
 	isSelected: (itemtype: string, itemname: metadata.MetadataKey) => boolean
 	component: ComponentDef
-} & definition.UtilityProps
+}
 
 const VariantsBlockStyleDefaults = Object.freeze({
 	root: ["m-2", "flex", "flex-wrap", "gap-2"],
 })
 
-const VariantsBlock: FC<VariantsBlockProps> = (props) => {
+const VariantsBlock: definition.UtilityComponent<VariantsBlockProps> = (
+	props
+) => {
 	const { component: componentDef, context, variants, isSelected } = props
 	const classes = styles.useUtilityStyleTokens(
 		VariantsBlockStyleDefaults,
@@ -120,9 +122,11 @@ type ComponentBlockProps = {
 	componentDef: ComponentDef
 	variants: component.ComponentVariant[]
 	isSelected: (itemtype: string, itemname: metadata.MetadataKey) => boolean
-} & definition.UtilityProps
+}
 
-const ComponentBlock: FC<ComponentBlockProps> = (props) => {
+const ComponentBlock: definition.UtilityComponent<ComponentBlockProps> = (
+	props
+) => {
 	const IOExpandPanel = getUtility("uesio/io.expandpanel")
 	const { context, componentDef, variants, isSelected } = props
 	const { namespace, name } = componentDef
@@ -175,7 +179,7 @@ type CategoryBlockProps = {
 	variants: Record<string, component.ComponentVariant[]>
 	isSelected: (itemtype: string, itemname: metadata.MetadataKey) => boolean
 	category: string
-} & definition.UtilityProps
+}
 
 const CategoryBlockStyleDefaults = Object.freeze({
 	categoryLabel: [
@@ -188,7 +192,9 @@ const CategoryBlockStyleDefaults = Object.freeze({
 	],
 })
 
-const CategoryBlock: FC<CategoryBlockProps> = (props) => {
+const CategoryBlock: definition.UtilityComponent<CategoryBlockProps> = (
+	props
+) => {
 	const classes = styles.useUtilityStyleTokens(
 		CategoryBlockStyleDefaults,
 		props
@@ -224,9 +230,11 @@ const CategoryBlock: FC<CategoryBlockProps> = (props) => {
 
 type ComponentTagProps = {
 	component: ComponentDef
-} & definition.UtilityProps
+}
 
-const ComponentTag: FC<ComponentTagProps> = (props) => {
+const ComponentTag: definition.UtilityComponent<ComponentTagProps> = (
+	props
+) => {
 	const { context, component } = props
 
 	const nsInfo = getBuilderNamespace(
