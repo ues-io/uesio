@@ -76,7 +76,7 @@ definition:
                       - uesio/io.group:
                           components:
                             - uesio/io.button:
-                                text: Create a New Bot
+                                text: Create a new Bot
                                 uesio.variant: uesio/io.primary
                                 hotkey: "n"
                                 signals:
@@ -117,7 +117,6 @@ definition:
                               uesio.display:
                                 - type: paramValue
                                   param: app
-                                  field: uesio/core.dynamiccollection
                                   operator: EQUALS
                                   value: ${uesio/studio.namespace}
                               signals:
@@ -127,7 +126,7 @@ definition:
   panels:
     newBot:
       uesio.type: uesio/io.dialog
-      title: Create a New Bot
+      title: Create a new Bot
       width: 400px
       height: 500px
       components:

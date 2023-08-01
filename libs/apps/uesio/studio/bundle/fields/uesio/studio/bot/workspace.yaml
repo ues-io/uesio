@@ -3,3 +3,4 @@ type: REFERENCE
 label: Workspace
 reference:
   collection: uesio/studio.workspace
+createOnly: true

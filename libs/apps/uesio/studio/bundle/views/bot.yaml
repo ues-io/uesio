@@ -78,7 +78,6 @@ definition:
                                 uesio.display:
                                   - type: paramValue
                                     param: app
-                                    field: uesio/core.dynamiccollection
                                     operator: EQUALS
                                     value: $Param{namespace}
                                 components:
@@ -163,6 +162,7 @@ definition:
                                   - uesio/io.field:
                                       fieldId: uesio/studio.dialect
                                   - uesio/builder.metadatafield:
+                                      mode: READ
                                       uesio.context:
                                         workspace:
                                           name: $Param{workspacename}
