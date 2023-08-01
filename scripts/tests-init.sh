@@ -15,7 +15,7 @@ uesio sethost
 uesio login
 
 echo "Deleting and recreating the tests app and dev workspace..."
-hurl -k --no-output --variable host=studio.uesio-dev.com --variable port=3000 hurl_seeds/*.hurl
+hurl -k --no-output --variable host=studio.uesio-dev.com --variable port=3000 hurl_seeds/app_and_workspace.hurl
 
 # dev workspace
 echo "Configuring dev workspace..."
