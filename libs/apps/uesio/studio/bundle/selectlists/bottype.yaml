@@ -6,3 +6,6 @@ options:
     value: "AFTERSAVE"
   - label: "Before Save"
     value: "BEFORESAVE"
+  - label: "Generator"
+    value: "GENERATOR"
+    disabled: true

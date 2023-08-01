@@ -15,16 +15,10 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     bots:
-      collection: uesio/studio.bot
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.type:
+      collection: uesio/studio.allmetadata
       conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
+        - field: uesio/studio.type
+          value: bots
     newbot:
       collection: uesio/studio.bot
       fields:
@@ -43,10 +37,10 @@ definition:
           lookupField: uesio/core.id
         - field: uesio/studio.dialect
           valueSource: VALUE
-          value: "TYPESCRIPT"
+          value: TYPESCRIPT
         - field: uesio/studio.type
           valueSource: VALUE
-          value: "LISTENER"
+          value: LISTENER
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -82,7 +76,7 @@ definition:
                       - uesio/io.group:
                           components:
                             - uesio/io.button:
-                                text: Create a New Bot
+                                text: Create a new Bot
                                 uesio.variant: uesio/io.primary
                                 hotkey: "n"
                                 signals:
@@ -98,27 +92,41 @@ definition:
                           focusOnRender: true
                           searchFields:
                             - uesio/studio.name
-                      - uesio/io.deck:
-                          uesio.id: botsDeck
+                      - uesio/io.table:
+                          uesio.id: botsTable
                           wire: bots
-                          components:
-                            - uesio/io.tile:
-                                uesio.variant: uesio/io.item
-                                signals:
-                                  - signal: "route/NAVIGATE"
-                                    path: "app/$Param{app}/workspace/$Param{workspacename}/bots/${uesio/studio.name}"
-                                content:
-                                  - uesio/io.text:
-                                      text: ${uesio/studio.type} - ${uesio/studio.name}
-                                avatar:
-                                  - uesio/io.text:
-                                      uesio.variant: uesio/io.icon
-                                      color: "#ccc"
-                                      text: smart_toy
+                          columns:
+                            - label: Bot Name
+                              components:
+                                - uesio/studio.iconlabel:
+                                    uesio.variant: uesio/studio.namespacefield
+                                    text: ${uesio/studio.name}
+                                    subtitle: ${uesio/studio.namespace}
+                                    icon: ${uesio/studio.appicon}
+                                    color: ${uesio/studio.appcolor}
+                            - field: uesio/studio.type
+                            - field: uesio/core.updatedby
+                              user:
+                                subtitle: $Time{uesio/core.updatedat}
+                            - field: uesio/core.createdby
+                              user:
+                                subtitle: $Time{uesio/core.createdat}
+                          rowactions:
+                            - text: Details
+                              type: DEFAULT
+                              uesio.display:
+                                - type: paramValue
+                                  param: app
+                                  operator: EQUALS
+                                  value: ${uesio/studio.namespace}
+                              signals:
+                                - signal: route/NAVIGATE
+                                  path: app/$Param{app}/workspace/$Param{workspacename}/bots/${uesio/studio.type}/${uesio/studio.namespace}/${uesio/studio.name}?collection=${uesio/studio.collection}
+                          pagesize: 10
   panels:
     newBot:
       uesio.type: uesio/io.dialog
-      title: Create a New Bot
+      title: Create a new Bot
       width: 400px
       height: 500px
       components:
@@ -136,9 +144,9 @@ definition:
               - uesio/io.box:
                   uesio.display:
                     - field: uesio/studio.type
-                      value: "LISTENER"
-                      type: "fieldValue"
-                      operator: "NOT_EQUALS"
+                      value: LISTENER
+                      type: fieldValue
+                      operator: NOT_EQUALS
                   components:
                     - uesio/builder.metadatafield:
                         uesio.context:
@@ -146,22 +154,22 @@ definition:
                             name: $Param{workspacename}
                             app: $Param{app}
                         fieldId: uesio/studio.collection
-                        metadataType: "COLLECTION"
-                        label: "Collection"
+                        metadataType: COLLECTION
+                        label: Collection
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
             text: $Label{uesio/io.save}
-            hotkey: "meta+s"
+            hotkey: meta+s
             signals:
               - signal: wire/SAVE
                 wires:
-                  - "newbot"
-              - signal: "route/NAVIGATE"
-                path: "app/$Param{app}/workspace/$Param{workspacename}/bots/${uesio/studio.name}"
+                  - newbot
+              - signal: route/NAVIGATE
+                path: app/$Param{app}/workspace/$Param{workspacename}/bots/${uesio/studio.type}/$Param{app}/${uesio/studio.name}?collection=${uesio/studio.collection}
         - uesio/io.button:
-            uesio.variant: "uesio/io.secondary"
+            uesio.variant: uesio/io.secondary
             text: $Label{uesio/io.cancel}
             signals:
-              - signal: "panel/TOGGLE"
-                panel: "newBot"
+              - signal: panel/TOGGLE
+                panel: newBot
