@@ -23,7 +23,7 @@ var ServerMergeFuncs = map[string]interface{}{
 	"Param": func(m ServerMergeData, key string) (interface{}, error) {
 		val, ok := m.ParamValues[key]
 		if !ok {
-			return nil, errors.New("missing param " + key)
+			return "", nil
 		}
 		return val, nil
 	},

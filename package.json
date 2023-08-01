@@ -20,6 +20,7 @@
     "build-all": "nx run-many --target=build --all",
     "build-all-ignore-cache": "nx run-many --target=build --all --skip-nx-cache",
     "tests-e2e": "bash scripts/run-e2e-tests.sh",
+    "tests-init": "bash scripts/tests-init.sh",
     "tests-integration": "bash scripts/run-integration-tests.sh",
     "tests-all": "bash scripts/run-all-tests.sh",
     "format": "nx format:write",
