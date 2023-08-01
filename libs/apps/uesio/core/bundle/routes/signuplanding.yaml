@@ -1,5 +1,5 @@
 name: signuplanding
 path: signuplanding
-view: uesio/core.signuplanding
+view: signuplanding
 public: true
 title: Welcome to Uesio!

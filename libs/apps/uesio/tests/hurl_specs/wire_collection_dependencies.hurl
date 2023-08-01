@@ -1,5 +1,5 @@
 ######################################################
-# Tests loading of wire collection dependencies 
+# Tests loading of wire collection dependencies
 # both during wire loads and on route loads of views with sub-views
 ######################################################
 
@@ -52,11 +52,11 @@ jsonpath "$.wires[1].data[*]['uesio/core.uniquekey']" count == 3
 # unique key and id fields will be automatically added by Uesio, to the 3 unique fields requested across the two wires,
 # so we expect 5 unique fields
 jsonpath "$.collections['uesio/tests.animal'].fields[*].name" count == 5
-jsonpath "$.collections['uesio/tests.animal'].fields['uesio/core.createdat'].autopopulate" equals "CREATE"
-jsonpath "$.collections['uesio/tests.animal'].fields['uesio/tests.species'].updateable" equals false
-jsonpath "$.collections['uesio/tests.animal'].fields['uesio/tests.genus'].label" equals "Genus"
-jsonpath "$.collections['uesio/tests.animal'].fields['uesio/core.id'].label" equals "Id"
-jsonpath "$.collections['uesio/tests.animal'].fields['uesio/core.uniquekey'].label" equals "Unique Key"
+jsonpath "$.collections['uesio/tests.animal'].fields['uesio/core.createdat'].autopopulate" == "CREATE"
+jsonpath "$.collections['uesio/tests.animal'].fields['uesio/tests.species'].updateable" == false
+jsonpath "$.collections['uesio/tests.animal'].fields['uesio/tests.genus'].label" == "Genus"
+jsonpath "$.collections['uesio/tests.animal'].fields['uesio/core.id'].label" == "Id"
+jsonpath "$.collections['uesio/tests.animal'].fields['uesio/core.uniquekey'].label" == "Unique Key"
 
 # Verify that wire collection dependencies are merged into a union, even across sub-view wire loads
 GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/wire_collection_deps_multiple_views

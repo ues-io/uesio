@@ -1,5 +1,5 @@
 name: site
 path: app/{app:\w*\/\w*}/site/{sitename}
-view: uesio/studio.site
-theme: uesio/studio.default
+view: site
+theme: default
 title: "Site: $Param{sitename}"

@@ -34,6 +34,9 @@ func (cp *ComponentPack) GetBytes() ([]byte, error) {
 func (cp *ComponentPack) MarshalJSONObject(enc *gojay.Encoder) {
 	enc.AddStringKey("namespace", cp.Namespace)
 	enc.AddStringKey("name", cp.Name)
+	if cp.UpdatedAt > 0 {
+		enc.AddInt64Key("updatedAt", cp.UpdatedAt)
+	}
 }
 
 func (cp *ComponentPack) IsNil() bool {

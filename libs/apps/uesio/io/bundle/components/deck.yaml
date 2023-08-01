@@ -11,7 +11,7 @@ slots:
       - type: RECORD
         wireProperty: wire
       - type: FIELD_MODE
-        property: mode
+        modeProperty: mode
 defaultDefinition:
   mode: READ
 properties:

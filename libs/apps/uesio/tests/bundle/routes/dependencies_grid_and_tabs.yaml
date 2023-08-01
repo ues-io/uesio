@@ -1,4 +1,4 @@
 name: dependencies_grid_and_tabs
 path: dependencies_grid_and_tabs
-view: uesio/tests.dependencies_grid_and_tabs
+view: dependencies_grid_and_tabs
 title: Tests loading of component dependencies for a view with a grid and nested tabs

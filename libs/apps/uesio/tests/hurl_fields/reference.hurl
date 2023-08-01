@@ -38,7 +38,7 @@ Accept: application/json
 }
 HTTP 200
 [Captures]
-ID001-UUID: jsonpath "$.wires[0].data[*]['uesio/core.id']"
+ID001-UUID: jsonpath "$.wires[0].data[*]['uesio/core.id']" nth 0
 
 # WIRE LOAD to get uuid from uniquekey ID-002
 # entry 3
@@ -68,7 +68,7 @@ Accept: application/json
 }
 HTTP 200
 [Captures]
-ID002-UUID: jsonpath "$.wires[0].data[*]['uesio/core.id']"
+ID002-UUID: jsonpath "$.wires[0].data[*]['uesio/core.id']" nth 0
 
 
 # Operator: EQ | valueSource: VALUE | Bad Value
@@ -117,7 +117,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" == "ID-001"
+jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" nth 0 == "ID-001"
 
 # Operator: EQ | valueSource: VALUE | Reference to another record (ID-004 --> ID-005)
 # entry 6
@@ -142,7 +142,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" == "ID-005"
+jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" nth 0 == "ID-005"
 
 # Operator: EQ | valueSource: PARAM
 # entry 7
@@ -169,7 +169,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" == "ID-001"
+jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" nth 0 == "ID-001"
 
 # Operator: NOT_EQ | valueSource: VALUE
 # entry 8
@@ -291,7 +291,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[1].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" == "ID-001"
+jsonpath "$.wires[1].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" nth 0 == "ID-001"
 
 
 # Operator: IN | valueSource: PARAM

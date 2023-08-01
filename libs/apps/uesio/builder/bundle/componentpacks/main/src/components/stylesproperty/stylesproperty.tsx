@@ -76,6 +76,7 @@ const StylesProperty: definition.UC<Props> = (props) => {
 				context,
 				"uesio/builder",
 				"main",
+				undefined,
 				"tailwind-classes.json"
 			)
 			platform.platform

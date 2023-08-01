@@ -36,3 +36,4 @@ definition:
               components:
                 - uesio/core.view:
                     view: uesio/studio.homecontent
+                    uesio.id: homecontent

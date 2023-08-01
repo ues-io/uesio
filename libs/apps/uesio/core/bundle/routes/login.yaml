@@ -1,5 +1,5 @@
 name: login
 path: login
-view: uesio/core.login
+view: login
 public: true
 title: Uesio - Login

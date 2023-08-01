@@ -20,8 +20,12 @@ func getFieldNameWithAlias(fieldMetadata *adapt.FieldMetadata) string {
 	return fieldName + " AS \"" + fieldMetadata.GetFullName() + "\""
 }
 
+func castFieldToText(fieldAlias string) string {
+	return fmt.Sprintf("%s::text", fieldAlias)
+}
+
 func getIDFieldName(tableAlias string) string {
-	return fmt.Sprintf("%s::text", getAliasedName("id", tableAlias))
+	return castFieldToText(getAliasedName("id", tableAlias))
 }
 
 func getFieldName(fieldMetadata *adapt.FieldMetadata, tableAlias string) string {
@@ -33,13 +37,13 @@ func getFieldName(fieldMetadata *adapt.FieldMetadata, tableAlias string) string 
 	case adapt.UNIQUE_KEY_FIELD:
 		return getAliasedName("uniquekey", tableAlias)
 	case adapt.OWNER_FIELD:
-		return getAliasedName("owner", tableAlias)
+		return castFieldToText(getAliasedName("owner", tableAlias))
 	case adapt.CREATED_BY_FIELD:
-		return getAliasedName("createdby", tableAlias)
+		return castFieldToText(getAliasedName("createdby", tableAlias))
 	case adapt.CREATED_AT_FIELD:
 		return fmt.Sprintf("date_part('epoch',%s)", getAliasedName("createdat", tableAlias))
 	case adapt.UPDATED_BY_FIELD:
-		return getAliasedName("updatedby", tableAlias)
+		return castFieldToText(getAliasedName("updatedby", tableAlias))
 	case adapt.UPDATED_AT_FIELD:
 		return fmt.Sprintf("date_part('epoch',%s)", getAliasedName("updatedat", tableAlias))
 	case adapt.DYNAMIC_COLLECTION_FIELD:

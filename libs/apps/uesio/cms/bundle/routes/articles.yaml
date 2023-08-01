@@ -1,5 +1,0 @@
-name: articles
-path: articles
-view: uesio/cms.articles
-theme: uesio/core.default
-public: true

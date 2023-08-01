@@ -1,4 +1,4 @@
 name: wire_collection_deps_multiple_views
 path: wire_collection_deps_multiple_views
-view: uesio/tests.collection_deps_two
+view: collection_deps_two
 title: Tests merging wire collection fields dependencies across multiple wires and sub-views

@@ -28,7 +28,7 @@ uesio workspace truncate
 echo "dev workspace should be clear"
 
 #Navigate back
-cd ../../../..
+cd - >> /dev/null
 
 # Run specs
 hurl -k --variable host=studio.uesio-dev.com --variable port=3000 --test libs/apps/uesio/tests/hurl_specs_single_run/truncate_tenant_data_cli.hurl

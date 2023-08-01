@@ -10,8 +10,10 @@ definition:
       requirewriteaccess: true
     blogentries:
       collection: uesio/studio.blogentry
+      batchsize: 5
     recentdocs:
       collection: uesio/studio.recentdoc
+      batchsize: 5
   # Components are how we describe the layout of our view
   components:
     - uesio/io.box:

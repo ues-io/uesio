@@ -137,10 +137,6 @@ func (f *Field) UnmarshalYAML(node *yaml.Node) error {
 	if f.CollectionRef == "" {
 		return errors.New("Invalid Collection Value for Field: " + f.GetKey())
 	}
-	err = setMapNode(node, "collection", f.CollectionRef)
-	if err != nil {
-		return err
-	}
 
 	if fieldType == "REFERENCE" {
 		err := validateReferenceField(node, f.GetKey())
@@ -162,20 +158,18 @@ func (f *Field) UnmarshalYAML(node *yaml.Node) error {
 	}
 
 	if fieldType == "FILE" {
-		err := validateFileField(node, f.GetKey())
-		if err != nil {
-			return err
+		f.FileMetadata = &FileMetadata{
+			FileSource: "uesio/core.platform",
+		}
+		fileNode := pickNodeFromMap(node, "file")
+		if fileNode != nil {
+			err := fileNode.Decode(f.FileMetadata)
+			if err != nil {
+				return err
+			}
 		}
 	}
 	return node.Decode((*FieldWrapper)(f))
-}
-
-func validateFileField(node *yaml.Node, fieldKey string) error {
-	fileNode, err := getOrCreateMapNode(node, "file")
-	if err != nil {
-		return fmt.Errorf("Invalid File metadata provided for field: " + fieldKey + " : " + err.Error())
-	}
-	return setDefaultValue(fileNode, "filesource", "uesio/core.platform")
 }
 
 func validateNumberField(node *yaml.Node, fieldKey string) error {

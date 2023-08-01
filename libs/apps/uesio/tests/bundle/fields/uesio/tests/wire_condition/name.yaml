@@ -1,5 +1,5 @@
 name: name
 type: TEXT
 label: Name
-required: true
 createOnly: true
+required: true

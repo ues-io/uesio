@@ -1,5 +1,5 @@
 name: home
 path: home
-view: uesio/studio.home
-theme: uesio/studio.default
+view: home
+theme: default
 title: Uesio - Home

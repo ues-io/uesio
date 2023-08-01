@@ -1,10 +1,11 @@
-import { definition, component, wire } from "@uesio/ui"
+import { definition, component, context, wire } from "@uesio/ui"
 import { useState, useRef } from "react"
-import { get } from "../../../../api/defapi"
+import { get, remove, set } from "../../../../api/defapi"
 import { useSelectedPath } from "../../../../api/stateapi"
 import BuildActionsArea from "../../../../helpers/buildactionsarea"
 import FieldPropTag from "./fieldproptag"
 import FieldPicker from "./fieldpicker"
+import { FullPath } from "../../../../api/path"
 
 const FieldsProperties: definition.UC = (props) => {
 	const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
@@ -18,6 +19,10 @@ const FieldsProperties: definition.UC = (props) => {
 	const selectedPath = useSelectedPath(context)
 	const wirePath = selectedPath.trimToSize(2)
 	const fieldsPath = wirePath.addLocal("fields")
+	const onSelect = (ctx: context.Context, path: FullPath) =>
+		set(ctx, path, {})
+	const onUnselect = (ctx: context.Context, path: FullPath) =>
+		remove(ctx, path)
 
 	// TODO: Handle view only wires here too.
 	const wireDef = get(context, wirePath) as wire.RegularWireDefinition
@@ -39,6 +44,8 @@ const FieldsProperties: definition.UC = (props) => {
 						baseCollectionKey={wireDef.collection}
 						path={fieldsPath}
 						onClose={() => setShowPopper(false)}
+						onSelect={onSelect}
+						onUnselect={onUnselect}
 					/>
 				</Popper>
 			)}

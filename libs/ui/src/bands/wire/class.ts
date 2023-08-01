@@ -45,6 +45,9 @@ class Wire {
 			? Object.keys(this.source.data).map((id) => this.getRecord(id))
 			: []
 
+	getPlainData = () =>
+		this.source?.data ? Object.values(this.source.data) : []
+
 	getChanges = () =>
 		this.source?.changes
 			? Object.keys(this.source.changes).map((id) => this.getRecord(id))

@@ -1,4 +1,4 @@
-import { definition, api, wire } from "@uesio/ui"
+import { definition, api, wire, context } from "@uesio/ui"
 import { useState } from "react"
 import { get } from "../../../../api/defapi"
 import { FullPath } from "../../../../api/path"
@@ -10,6 +10,8 @@ type Props = {
 	baseCollectionKey: string
 	path: FullPath
 	onClose: () => void
+	onSelect?: (ctx: context.Context, path: FullPath) => void
+	onUnselect?: (ctx: context.Context, path: FullPath) => void
 }
 
 const getNextCollectionKey = (
@@ -40,7 +42,8 @@ const getNextCollectionKey = (
 }
 
 const FieldPicker: definition.UtilityComponent<Props> = (props) => {
-	const { context, baseCollectionKey, path, onClose } = props
+	const { context, baseCollectionKey, path, onClose, onSelect, onUnselect } =
+		props
 
 	const [referencePath, setReferencePath] = useState<FullPath>(path)
 	const [searchTerm, setSearchTerm] = useState("")
@@ -103,6 +106,8 @@ const FieldPicker: definition.UtilityComponent<Props> = (props) => {
 						fieldMetadata={fieldMetadata}
 						key={fieldId}
 						context={context}
+						onSelect={onSelect}
+						onUnselect={onUnselect}
 					/>
 				)
 			})}

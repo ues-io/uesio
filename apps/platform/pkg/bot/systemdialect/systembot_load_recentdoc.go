@@ -15,6 +15,7 @@ func getArticleLoad(op *adapt.LoadOp, connection adapt.Connection, session *sess
 		View:           op.View,
 		Collection:     op.Collection,
 		Conditions:     op.Conditions,
+		BatchSize:      op.BatchSize,
 		Fields: []adapt.LoadRequestField{
 			{
 				ID: "uesio/cms.name",

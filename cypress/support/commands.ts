@@ -55,9 +55,8 @@ Cypress.Commands.add("login", () => {
 // Gets an element of a given type whose id contains a given string
 Cypress.Commands.add(
 	"getByIdFragment",
-	(elementType: string, idFragment: string, timeout?: number) => {
+	(elementType: string, idFragment: string, timeout?: number) =>
 		cy.get(idContainsSelector(elementType, idFragment), { timeout })
-	}
 )
 
 Cypress.Commands.add(
@@ -198,7 +197,7 @@ declare global {
 				elementType: string,
 				id: string,
 				timeout?: number
-			): Chainable<void>
+			): Chainable
 			setReferenceField(
 				idFragment: string,
 				value: string

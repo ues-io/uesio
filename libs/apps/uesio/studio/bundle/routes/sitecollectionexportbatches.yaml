@@ -1,4 +1,4 @@
 name: sitecollectionexportbatches
 path: app/{app:\w*\/\w*}/site/{sitename}/export/{namespace:\w*\/\w*}/{collectionname}/{jobid}/batches
-view: uesio/studio.sitecollectionexportbatches
-theme: uesio/studio.default
+view: sitecollectionexportbatches
+theme: default

@@ -100,6 +100,7 @@ const FileText: FunctionComponent<FileTextProps> = (props) => {
 		<CodeField
 			context={context}
 			value={content}
+			mode={mode}
 			language={language}
 			setValue={changeHandler}
 			typeDefinitionFileURIs={typeDefinitionFileURIs}

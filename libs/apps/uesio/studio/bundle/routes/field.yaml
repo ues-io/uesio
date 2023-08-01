@@ -1,5 +1,5 @@
 name: field
 path: app/{app:\w*\/\w*}/workspace/{workspacename}/collections/{namespace:\w*\/\w*}/{collectionname}/fields/{fieldNamespace:\w*\/\w*}/{fieldname}
-view: uesio/studio.field
-theme: uesio/studio.default
+view: field
+theme: default
 field: "Field: $Record{fields:uesio/studio.label}"

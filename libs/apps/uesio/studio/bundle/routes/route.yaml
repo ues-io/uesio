@@ -1,5 +1,5 @@
 name: route
 path: app/{app:\w*\/\w*}/workspace/{workspacename}/routes/{namespace:\w*\/\w*}/{routename}
-view: uesio/studio.route
-theme: uesio/studio.default
+view: route
+theme: default
 title: "Route: $Param{routename}"

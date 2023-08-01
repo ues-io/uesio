@@ -18,6 +18,7 @@ class WireRecord {
 
 	getId = () => this.id
 	getWire = () => this.wire
+	getPlainData = () => this.source
 	getFieldValue = <T extends FieldValue>(
 		fieldName: string
 	): T | undefined => {

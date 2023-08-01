@@ -2,6 +2,7 @@ package controller
 
 import (
 	"fmt"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -72,15 +73,45 @@ func getPackUrl(key string, packModstamp int64, workspace *routing.WorkspaceMerg
 		return fmt.Sprintf("/workspace/%s/%s/componentpacks/%s/%s/%d/%s/%s", workspace.App, workspace.Name, user, namepart, packModstamp, name, filePath)
 	}
 
-	siteBundleVersion := "/" + site.Version
+	siteBundleVersion := ""
 
-	// Special case --- if this is a Uesio-provided site, we don't (currently) ever update the bundle versions,
-	// but we DO update the static assets version for the whole Docker image, so replace the version with that
-	if strings.HasPrefix(site.App, "uesio/") && file.GetAssetsPath() != "" {
-		siteBundleVersion = file.GetAssetsPath()
+	// Handle requests for system bundles specially,
+	// since we don't update their bundle dependencies at all and just use dummy "v0.0.1" everywhere
+	if bundlestore.IsSystemBundle(namespace) {
+		if file.GetAssetsPath() != "" {
+			// We DO update the static assets version for the whole Docker image, so use that if we have it
+			siteBundleVersion = file.GetAssetsPath() // assets path SHOULD have a leading / already
+		} else if packModstamp != 0 {
+			// If we don't have a Git sha, then we are in local development,
+			// in which case we want to use the system pack modstamp to avoid stale file loads
+			siteBundleVersion = fmt.Sprintf("/%d", packModstamp)
+		}
+	} else {
+		// NON-system bundles
+		if namespace == site.App {
+			// If requested namespace is the app's name, use the site version
+			siteBundleVersion = fmt.Sprintf("/%s", site.Version)
+		} else if site.Dependencies != nil {
+			// For all other deps, use the site's declared bundle dependency version,
+			// which SHOULD be present (otherwise how are they using it...)
+			if dep, found := site.Dependencies[namespace]; found && dep.Version != "" {
+				siteBundleVersion = "/" + dep.Version
+			}
+		}
 	}
 
-	return fmt.Sprintf("/site/componentpacks/%s/%s%s/%s/%s", user, namepart, siteBundleVersion, name, filePath)
+	// If we still don't have a bundle version, for some bizarre reason...
+	if siteBundleVersion == "" {
+		if packModstamp != 0 {
+			// Prefer modstamp
+			siteBundleVersion = fmt.Sprintf("/%d", packModstamp)
+		} else if site.Version != "" {
+			// Final fallback --- use site version
+			siteBundleVersion = fmt.Sprintf("/%s", site.Version)
+		}
+	}
+
+	return fmt.Sprintf("/site/componentpacks/%s%s/%s/%s", namespace, siteBundleVersion, name, filePath)
 
 }
 
@@ -200,13 +231,14 @@ func GetRoutingMergeData(route *meta.Route, workspace *meta.Workspace, metadata 
 
 func GetSiteMergeData(site *meta.Site) *routing.SiteMergeData {
 	return &routing.SiteMergeData{
-		Name:      site.Name,
-		App:       site.GetAppFullName(),
-		Subdomain: site.Subdomain,
-		Domain:    site.Domain,
-		Version:   site.Bundle.GetVersionString(),
-		Title:     site.Title,
-		EnableSEO: site.EnableSEO,
+		Name:         site.Name,
+		App:          site.GetAppFullName(),
+		Subdomain:    site.Subdomain,
+		Domain:       site.Domain,
+		Version:      site.Bundle.GetVersionString(),
+		Title:        site.Title,
+		EnableSEO:    site.EnableSEO,
+		Dependencies: site.GetAppBundle().Dependencies,
 	}
 }
 

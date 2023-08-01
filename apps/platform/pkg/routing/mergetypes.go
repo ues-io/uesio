@@ -43,13 +43,14 @@ type UserMergeData struct {
 }
 
 type SiteMergeData struct {
-	Name      string `json:"name"`
-	App       string `json:"app"`
-	Version   string `json:"version"`
-	Domain    string `json:"domain"`
-	Subdomain string `json:"subdomain"`
-	Title     string `json:"title"`
-	EnableSEO bool   `json:"-"`
+	Name         string                      `json:"name"`
+	App          string                      `json:"app"`
+	Version      string                      `json:"version"`
+	Domain       string                      `json:"domain"`
+	Subdomain    string                      `json:"subdomain"`
+	Title        string                      `json:"title"`
+	EnableSEO    bool                        `json:"-"`
+	Dependencies meta.BundleDefDependencyMap `json:"dependencies"`
 }
 
 type WorkspaceMergeData struct {

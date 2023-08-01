@@ -1,4 +1,4 @@
 name: userpayments
 path: mypayments
-view: uesio/studio.userpayments
-theme: uesio/studio.default
+view: userpayments
+theme: default

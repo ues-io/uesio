@@ -1,4 +1,4 @@
 name: sitecollectiondataexport
 path: app/{app:\w*\/\w*}/site/{sitename}/export/{namespace:\w*\/\w*}/{collectionname}
-view: uesio/studio.sitecollectiondataexport
-theme: uesio/studio.default
+view: sitecollectiondataexport
+theme: default

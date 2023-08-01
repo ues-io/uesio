@@ -1,5 +1,5 @@
 name: siteorgs
 path: app/{app:\w*\/\w*}/site/{sitename}/organizations
-view: uesio/studio.siteorgs
-theme: uesio/studio.default
+view: siteorgs
+theme: default
 title: Organizations

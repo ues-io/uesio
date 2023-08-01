@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"gopkg.in/yaml.v3"
 )
 
 var basicViewDef = strings.TrimPrefix(`
@@ -14,12 +13,6 @@ components: []
 # another cool comment
 wires: {}
 `, "\n")
-
-func getYamlNode(yamlContent string) yaml.Node {
-	yamlNode := &yaml.Node{}
-	yaml.Unmarshal([]byte(yamlContent), yamlNode)
-	return *yamlNode.Content[0]
-}
 
 func TestViewGetField(t *testing.T) {
 

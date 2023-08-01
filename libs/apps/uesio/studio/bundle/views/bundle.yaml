@@ -64,6 +64,16 @@ definition:
         - field: uesio/studio.patch
           valueSource: PARAM
           param: patch
+    appWorkspacesUsingThisBundle:
+      collection: uesio/studio.bundledependency
+      fields:
+        uesio/core.id:
+        uesio/core.uniquekey:
+      conditions:
+        - field: uesio/studio.bundle
+          valueSource: LOOKUP
+          lookupWire: bundles
+          lookupField: uesio/core.id
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -124,6 +134,27 @@ definition:
                                       fieldId: uesio/core.createdby
                                       user:
                                         subtitle: $Time{uesio/core.createdat}
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.titlebar:
+                          uesio.variant: uesio/io.section
+                          title: App Workspaces with a dependency on this bundle version
+                      - uesio/io.searchbox:
+                          wire: appWorkspacesUsingThisBundle
+                          placeholder: Search workspaces...
+                          searchFields:
+                            - uesio/core.uniquekey
+                      - uesio/io.table:
+                          uesio.id: appWorkspacesUsingThisBundleTable
+                          wire: appWorkspacesUsingThisBundle
+                          columns:
+                            - field: uesio/core.uniquekey
+                              label: "App Workspace"
+                            - field: uesio/core.createdby
+                              user:
+                                subtitle: uesio/core.createdat
+                          pagesize: 10
   panels:
     deleteBundle:
       uesio.type: uesio/io.dialog

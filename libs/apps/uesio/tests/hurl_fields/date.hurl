@@ -56,7 +56,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" == "2023-05-10"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" nth 0 == "2023-05-10"
 
 # Operator: EQ | valueSource: PARAM
 # entry 4
@@ -85,7 +85,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" == "2023-05-10"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" nth 0 == "2023-05-10"
 
 # Operator: NOT_EQ | valueSource: VALUE
 # entry 5
@@ -445,9 +445,8 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[1].data[*]['uesio/tests.date']" isString
-jsonpath "$.wires[1].data[*]['uesio/tests.date']" == "2023-05-10"
-jsonpath "$.wires[1].data[*]['uesio/core.uniquekey']" == "ID-001"
+jsonpath "$.wires[1].data[*]['uesio/tests.date']" nth 0 == "2023-05-10"
+jsonpath "$.wires[1].data[*]['uesio/core.uniquekey']" nth 0 == "ID-001"
 
 # Operator: IN | valueSource: PARAM
 # entry 17
@@ -542,7 +541,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[1].data[*]" not exists
+jsonpath "$.wires[1].data[*]" isEmpty
 
 # Operator: NOT_IN | valueSource: PARAM
 ## entry 20

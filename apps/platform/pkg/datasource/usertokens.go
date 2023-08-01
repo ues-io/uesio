@@ -55,12 +55,16 @@ func GenerateUserAccessTokens(connection adapt.Connection, session *sess.Session
 		}
 	}
 
+	// To ensure we have access to all of the collections involved in user access token calculation,
+	// get an admin session
+	adminSession := GetSiteAdminSession(session)
+
 	for key := range userAccessTokenNames {
 		uat, err := meta.NewUserAccessToken(key)
 		if err != nil {
 			return err
 		}
-		err = bundle.Load(uat, session, nil)
+		err = bundle.Load(uat, adminSession, nil)
 		if err != nil {
 			return err
 		}
@@ -103,7 +107,7 @@ func GenerateUserAccessTokens(connection adapt.Connection, session *sess.Session
 				Query:          true,
 			}
 
-			err = getMetadataForLoad(loadOp, metadata, []*adapt.LoadOp{loadOp}, session)
+			err = getMetadataForLoad(loadOp, metadata, []*adapt.LoadOp{loadOp}, adminSession)
 			if err != nil {
 				return err
 			}

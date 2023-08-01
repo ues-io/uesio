@@ -57,8 +57,8 @@ POST https://{{host}}:{{port}}/site/wires/load
 }
 HTTP 200
 [Captures]
-ID011-UUID: jsonpath "$.wires[0].data[*]['uesio/core.id']"
-ID012-UUID: jsonpath "$.wires[1].data[*]['uesio/core.id']"
+ID011-UUID: jsonpath "$.wires[0].data[*]['uesio/core.id']" nth 0
+ID012-UUID: jsonpath "$.wires[1].data[*]['uesio/core.id']" nth 0
 
 # create 2 new records with uesio/tests.name = "ID-011" / "ID-012" and user with uesio/core.id == ID011-UUID / ID012-UUID
 # entry 3
@@ -172,6 +172,14 @@ jsonpath "$.wires[0].data[*]['uesio/tests.name']" includes "ID-001"
 
 # Operator: NOT_EQ | valueSource: VALUE | ID011-UUID
 # entry 7
+#
+# NOTE: I had to add the IS_NOT_BLANK condition here because of a weird
+# bug in hurl 4.0.0. The jsonpath is not working correctly if the result
+# has some null values in it.
+# "$.wires[0].data[*]['uesio/tests.user']['uesio/core.id']" strangely returns
+# no data if I select some records without a user.
+# Hopefully this will get fixed in hurl and we'll be able to remove the condition
+
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 {
    "wires":[
@@ -184,6 +192,10 @@ POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
                "operator":"NOT_EQ",
                "valueSource":"VALUE",
                "value": "{{ID011-UUID}}"
+            },
+            {
+               "field":"uesio/tests.user",
+               "operator":"IS_NOT_BLANK"
             }
          ],
          "query":true
@@ -199,6 +211,14 @@ jsonpath "$.wires[0].data[*]['uesio/tests.user']['uesio/core.id']" not includes 
 
 # Operator: NOT_EQ | valueSource: VALUE | ID011-UUID
 # entry 8
+#
+# NOTE: I had to add the IS_NOT_BLANK condition here because of a weird
+# bug in hurl 4.0.0. The jsonpath is not working correctly if the result
+# has some null values in it.
+# "$.wires[0].data[*]['uesio/tests.user']['uesio/core.id']" strangely returns
+# no data if I select some records without a user.
+# Hopefully this will get fixed in hurl and we'll be able to remove the condition
+
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 {
    "wires":[
@@ -212,6 +232,10 @@ POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
                "operator":"NOT_EQ",
                "valueSource":"PARAM",
                "param": "ID-011"
+            },
+            {
+               "field":"uesio/tests.user",
+               "operator":"IS_NOT_BLANK"
             }
          ],
          "query":true

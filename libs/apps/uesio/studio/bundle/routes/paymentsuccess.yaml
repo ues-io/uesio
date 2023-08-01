@@ -1,4 +1,4 @@
 name: paymentsuccess
 path: paymentsuccess/{session_id}
-view: uesio/studio.paymentsuccess
-theme: uesio/studio.default
+view: paymentsuccess
+theme: default

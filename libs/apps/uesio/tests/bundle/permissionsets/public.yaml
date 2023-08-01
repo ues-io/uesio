@@ -1,0 +1,41 @@
+name: public
+named: {}
+views:
+  uesio/tests.animalslist: true
+collections:
+  uesio/tests.animal:
+    read: true
+    create: false
+    edit: false
+    delete: false
+    fields:
+      uesio/tests.ancestor:
+        read: false
+        edit: false
+      uesio/tests.genus:
+        read: true
+        edit: false
+      uesio/tests.lookalike:
+        read: false
+        edit: false
+      uesio/tests.species:
+        read: true
+        edit: false
+      uesio/tests.total_population:
+        read: false
+        edit: false
+  uesio/tests.wire_condition:
+    read: false
+    create: false
+    edit: false
+    delete: false
+    fields: {}
+routes:
+  uesio/tests.publicanimalslist: true
+files: {}
+allowallcollections: false
+allowallviews: false
+allowallroutes: false
+allowallfiles: false
+modifyallrecords: false
+viewallrecords: true

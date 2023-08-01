@@ -1,4 +1,5 @@
 name: uesio/tests
+publicProfile: uesio/tests.public
 dependencies:
   uesio/core:
     version: v0.0.1

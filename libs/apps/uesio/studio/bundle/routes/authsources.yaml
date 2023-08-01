@@ -1,5 +1,5 @@
 name: authsources
 path: app/{app:\w*\/\w*}/workspace/{workspacename}/authsources
-view: uesio/studio.authsources
-theme: uesio/studio.default
+view: authsources
+theme: default
 title: Auth Methods
