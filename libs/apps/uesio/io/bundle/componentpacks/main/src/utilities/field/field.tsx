@@ -1,4 +1,4 @@
-import { FunctionComponent, ReactElement } from "react"
+import { ReactElement } from "react"
 import { collection, definition, metadata, context, wire } from "@uesio/ui"
 
 import CheckboxField from "../../utilities/field/checkbox"
@@ -37,7 +37,7 @@ import {
 	MapFieldOptions,
 } from "../../components/field/field"
 
-interface FieldProps extends definition.UtilityProps {
+interface FieldProps {
 	setValue: FieldValueSetter
 	value: wire.FieldValue
 	mode: context.FieldMode
@@ -66,7 +66,7 @@ interface FieldProps extends definition.UtilityProps {
 	labelPosition?: LabelPosition
 }
 
-const Field: FunctionComponent<FieldProps> = (props) => {
+const Field: definition.UtilityComponent<FieldProps> = (props) => {
 	const {
 		applyChanges,
 		classes,

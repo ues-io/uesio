@@ -1,5 +1,5 @@
 name: themes
 path: app/{app:\w*\/\w*}/workspace/{workspacename}/themes
-view: uesio/studio.themes
-theme: uesio/studio.default
+view: themes
+theme: default
 title: Themes

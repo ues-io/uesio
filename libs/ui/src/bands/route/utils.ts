@@ -85,10 +85,22 @@ const dispatchRouteDeps = (deps: Dependencies | undefined) => {
 	if (collections) dispatch(initCollection(collections))
 }
 
-const getPackUrlsForDeps = (deps: Dependencies | undefined, context: Context) =>
-	deps?.componentpack?.ids.map((key) => {
+const getPackUrlsForDeps = (
+	deps: Dependencies | undefined,
+	context: Context
+) => {
+	if (!deps?.componentpack) return []
+	const { ids, entities } = deps.componentpack
+	return ids.map((key) => {
 		const [namespace, name] = parseKey(key as string)
-		return platform.getComponentPackURL(context, namespace, name)
-	}) || []
+		const entity = entities[key]
+		return platform.getComponentPackURL(
+			context,
+			namespace,
+			name,
+			entity?.updatedAt
+		)
+	})
+}
 
 export { dispatchRouteDeps, getPackUrlsForDeps, attachDefToWires }

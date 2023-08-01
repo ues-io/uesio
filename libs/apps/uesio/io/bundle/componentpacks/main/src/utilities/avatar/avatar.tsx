@@ -1,12 +1,11 @@
-import { FunctionComponent } from "react"
 import { definition, styles } from "@uesio/ui"
 
-interface AvatarProps extends definition.UtilityProps {
+interface AvatarProps {
 	image?: string
 	text?: string
 }
 
-const Avatar: FunctionComponent<AvatarProps> = (props) => {
+const Avatar: definition.UtilityComponent<AvatarProps> = (props) => {
 	const { image, context, text } = props
 	const mergedImage = context.merge(image)
 	const mergedText = context.merge(text)

@@ -20,10 +20,11 @@ slots:
     path: /columns/~{}
     providesContexts:
       - type: WIRE
-        property: wire
+        wireProperty: wire
       - type: RECORD
+        wireProperty: wire
       - type: FIELD_MODE
-        property: mode
+        modeProperty: mode
   - name: header
   - name: footer
 properties:

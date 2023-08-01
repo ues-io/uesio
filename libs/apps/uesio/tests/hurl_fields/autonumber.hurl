@@ -385,7 +385,6 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data['uesio/tests.autonumber']" not exists
 
-
 # Operator: IS_NOT_BLANK | valueSource: VALUE
 # entry 14
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load

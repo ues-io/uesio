@@ -1,8 +1,7 @@
-import { FunctionComponent } from "react"
 import { definition, api, collection, wire } from "@uesio/ui"
 import TextField from "../field/text"
 import debounce from "lodash/debounce"
-interface TextFilterProps extends definition.UtilityProps {
+interface TextFilterProps {
 	path: string
 	wire: wire.Wire
 	fieldMetadata: collection.Field
@@ -10,7 +9,7 @@ interface TextFilterProps extends definition.UtilityProps {
 	placeholder?: string
 }
 
-const TextFilter: FunctionComponent<TextFilterProps> = (props) => {
+const TextFilter: definition.UtilityComponent<TextFilterProps> = (props) => {
 	const { wire, context, condition, placeholder } = props
 	const wireId = wire.getId()
 

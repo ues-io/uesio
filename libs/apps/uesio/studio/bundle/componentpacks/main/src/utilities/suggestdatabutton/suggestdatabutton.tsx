@@ -9,7 +9,7 @@ type Props = {
 	handleResults: (results: unknown[]) => void
 	icon?: string
 	targetTableId?: string
-} & definition.UtilityProps
+}
 
 type AutocompleteResponse = {
 	choices?: string[]

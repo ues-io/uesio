@@ -10,7 +10,7 @@ Chart.register(...registerables)
 export type ChartProps = {
 	definition: ChartDefinition
 	type: "line" | "bar"
-} & definition.UtilityProps
+}
 
 export type ChartDefinition = {
 	labels: LabelsDefinition

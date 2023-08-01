@@ -638,4 +638,16 @@ export {
 
 export { Context }
 
-export type { ContextFrame, FieldMode, ContextOptions }
+export type {
+	ComponentContext,
+	ContextFrame,
+	ContextOptions,
+	ErrorContext,
+	FieldMode,
+	FieldModeContext,
+	RecordContext,
+	RecordDataContext,
+	RouteContext,
+	SignalOutputContext,
+	ViewContext,
+}

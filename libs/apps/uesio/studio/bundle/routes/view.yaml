@@ -1,5 +1,5 @@
 name: view
 path: app/{app:\w*\/\w*}/workspace/{workspacename}/views/{namespace:\w*\/\w*}/{viewname}
-view: uesio/studio.view
-theme: uesio/studio.default
+view: view
+theme: default
 title: "View: $Record{views:uesio/studio.name}"

@@ -1,6 +1,6 @@
 import { component, definition, context, collection, wire } from "@uesio/ui"
 
-interface SelectFieldProps extends definition.UtilityProps {
+interface SelectFieldProps {
 	setValue: (value: wire.PlainFieldValue[]) => void
 	value: wire.PlainFieldValue[]
 	width?: string
