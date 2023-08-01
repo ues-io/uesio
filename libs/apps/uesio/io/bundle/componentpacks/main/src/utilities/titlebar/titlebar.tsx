@@ -1,7 +1,7 @@
-import { FunctionComponent, ReactNode } from "react"
+import { ReactNode } from "react"
 import { definition, styles } from "@uesio/ui"
 
-interface TitleBarUtilityProps extends definition.UtilityProps {
+interface TitleBarUtilityProps {
 	title?: string
 	subtitle?: string
 	subtitlenode?: ReactNode
@@ -17,7 +17,7 @@ const StyleDefaults = Object.freeze({
 	actions: [],
 })
 
-const TitleBar: FunctionComponent<TitleBarUtilityProps> = (props) => {
+const TitleBar: definition.UtilityComponent<TitleBarUtilityProps> = (props) => {
 	const { context, title, subtitle, subtitlenode, actions, onClick } = props
 	const classes = styles.useUtilityStyleTokens(
 		StyleDefaults,

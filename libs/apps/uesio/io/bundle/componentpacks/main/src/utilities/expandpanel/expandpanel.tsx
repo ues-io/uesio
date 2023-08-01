@@ -1,10 +1,10 @@
-import { FunctionComponent, useRef } from "react"
+import { useRef } from "react"
 
 import { CSSTransition } from "react-transition-group"
 
 import { definition, styles } from "@uesio/ui"
 
-interface ExpandPanelProps extends definition.UtilityProps {
+interface ExpandPanelProps {
 	expanded: boolean
 }
 
@@ -18,7 +18,7 @@ const StyleDefaults = Object.freeze({
 	exitDone: ["opacity-0"],
 })
 
-const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
+const ExpandPanel: definition.UtilityComponent<ExpandPanelProps> = (props) => {
 	const { children, expanded } = props
 	const nodeRef = useRef<HTMLDivElement>(null)
 	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)

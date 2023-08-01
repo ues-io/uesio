@@ -1,7 +1,6 @@
-import { FC } from "react"
 import { definition, styles, component } from "@uesio/ui"
 
-interface T extends definition.UtilityProps {
+interface T {
 	icon: string
 	color: string
 	text: string
@@ -10,7 +9,7 @@ interface T extends definition.UtilityProps {
 	fill?: boolean
 }
 
-const IconLabel: FC<T> = (props) => {
+const IconLabel: definition.UtilityComponent<T> = (props) => {
 	const Text = component.getUtility("uesio/io.text")
 	const Tooltip = component.getUtility("uesio/io.tooltip")
 	const { icon, color, text, subtitle, tooltip, context } = props

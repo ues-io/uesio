@@ -1,4 +1,3 @@
-import { FC } from "react"
 import { definition, styles, context, wire } from "@uesio/ui"
 import { ApplyChanges } from "../../components/field/field"
 import { useControlledInput } from "../../shared/useControlledFieldValue"
@@ -7,7 +6,7 @@ export type LongTextFieldOptions = {
 	rows?: number
 }
 
-interface TextAreaFieldProps extends definition.UtilityProps {
+interface TextAreaFieldProps {
 	setValue: (value: wire.FieldValue) => void
 	value: wire.FieldValue
 	mode?: context.FieldMode
@@ -22,7 +21,9 @@ const StyleDefaults = Object.freeze({
 	readonly: [],
 })
 
-const TextAreaField: FC<TextAreaFieldProps> = (props) => {
+const TextAreaField: definition.UtilityComponent<TextAreaFieldProps> = (
+	props
+) => {
 	const {
 		id,
 		mode,
