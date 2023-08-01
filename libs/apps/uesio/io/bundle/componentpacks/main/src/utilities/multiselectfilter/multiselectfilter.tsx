@@ -1,15 +1,14 @@
-import { FunctionComponent } from "react"
 import { definition, api, wire, collection, signal } from "@uesio/ui"
 import MultiSelectField from "../field/multiselect"
 
-interface MultiSelectFilterProps extends definition.UtilityProps {
+interface MultiSelectFilterProps {
 	path: string
 	wire: wire.Wire
 	fieldMetadata: collection.Field
 	condition: wire.ValueConditionState
 }
 
-const MultiSelectFilter: FunctionComponent<MultiSelectFilterProps> = (
+const MultiSelectFilter: definition.UtilityComponent<MultiSelectFilterProps> = (
 	props
 ) => {
 	const { wire, fieldMetadata, context, condition } = props

@@ -1,10 +1,9 @@
-import { FunctionComponent } from "react"
 import { definition, styles } from "@uesio/ui"
 import SidePanelPlain from "../sidepanelplain/sidepanelplain"
 import Grid from "../grid/grid"
 import IconButton from "../iconbutton/iconbutton"
 
-interface SidePanelUtilityProps extends definition.UtilityProps {
+interface SidePanelUtilityProps {
 	onClose?: () => void
 }
 
@@ -15,7 +14,9 @@ const StyleDefaults = Object.freeze({
 	icon: ["text-2xl", "m-2", "p-1"],
 })
 
-const SidePanel: FunctionComponent<SidePanelUtilityProps> = (props) => {
+const SidePanel: definition.UtilityComponent<SidePanelUtilityProps> = (
+	props
+) => {
 	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 	const { context, onClose, children } = props
 	return (

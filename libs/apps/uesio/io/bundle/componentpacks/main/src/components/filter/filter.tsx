@@ -178,7 +178,9 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 			variant={definition.wrapperVariant}
 		>
 			{isGroup ? (
-				<GroupFilter {...(common as GroupFilterProps)} />
+				<GroupFilter
+					{...(common as GroupFilterProps & definition.UtilityProps)}
+				/>
 			) : (
 				getFilterContent(common as CommonProps, definition)
 			)}

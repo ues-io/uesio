@@ -1,9 +1,8 @@
-import { FunctionComponent } from "react"
 import { definition, api, component, styles } from "@uesio/ui"
 import { nanoid } from "@reduxjs/toolkit"
 import Papa, { ParseResult } from "papaparse"
 
-interface Props extends definition.UtilityProps {
+interface Props {
 	changeUploaded: (success: boolean, csvFields: string[], file: File) => void
 	type?: "button" | "area"
 }
@@ -33,7 +32,7 @@ const readCSV = async (file: File): Promise<string[][]> =>
 		})
 	})
 
-const ImportButton: FunctionComponent<Props> = (props) => {
+const ImportButton: definition.UtilityComponent<Props> = (props) => {
 	const Button = component.getUtility("uesio/io.button")
 	const Icon = component.getUtility("uesio/io.icon")
 	const UploadArea = component.getUtility("uesio/io.uploadarea")
