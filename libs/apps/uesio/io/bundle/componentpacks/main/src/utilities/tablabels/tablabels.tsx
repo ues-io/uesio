@@ -1,4 +1,3 @@
-import { FunctionComponent } from "react"
 import { definition, styles } from "@uesio/ui"
 import Button from "../button/button"
 import Icon from "../icon/icon"
@@ -9,7 +8,7 @@ interface Tab {
 	icon?: string
 }
 
-interface TabsUtilityProps extends definition.UtilityProps {
+interface TabsUtilityProps {
 	tabs: Tab[]
 	selectedTab: string
 	setSelectedTab: (selected: string) => void
@@ -21,7 +20,7 @@ const StyleDefaults = Object.freeze({
 	tabSelected: [],
 })
 
-const TabLabels: FunctionComponent<TabsUtilityProps> = (props) => {
+const TabLabels: definition.UtilityComponent<TabsUtilityProps> = (props) => {
 	const { tabs, selectedTab, setSelectedTab, context } = props
 	const classes = styles.useUtilityStyleTokens(
 		StyleDefaults,

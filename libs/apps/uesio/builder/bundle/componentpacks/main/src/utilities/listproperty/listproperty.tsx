@@ -20,7 +20,7 @@ type Props = {
 	itemChildren?: ListPropertyItemChildrenFunction
 	items: definition.DefinitionMap[]
 	actions: ListPropertyAction[]
-} & definition.UtilityProps
+}
 
 const ListProperty: definition.UtilityComponent<Props> = (props) => {
 	const {

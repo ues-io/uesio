@@ -14,7 +14,7 @@ import {
 	FloatingFocusManager,
 } from "@floating-ui/react"
 
-interface MenuButtonUtilityProps<T> extends definition.UtilityProps {
+interface MenuButtonUtilityProps<T> {
 	itemRenderer: (item: T) => ReactNode
 	onSelect: (item: T) => void
 	items: T[]

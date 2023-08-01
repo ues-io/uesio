@@ -1,8 +1,7 @@
-import { FunctionComponent } from "react"
 import { wire, collection, definition, context, metadata } from "@uesio/ui"
 import ListField from "../field/list"
 
-interface MapFieldUtilityProps extends definition.UtilityProps {
+interface MapFieldUtilityProps {
 	mode: context.FieldMode
 	value: wire.FieldValue
 	setValue: (value: wire.PlainWireRecord) => void
@@ -17,7 +16,7 @@ interface MapFieldUtilityProps extends definition.UtilityProps {
 	fieldId: string
 }
 
-const MapField: FunctionComponent<MapFieldUtilityProps> = (props) => {
+const MapField: definition.UtilityComponent<MapFieldUtilityProps> = (props) => {
 	const {
 		fieldId,
 		mode,

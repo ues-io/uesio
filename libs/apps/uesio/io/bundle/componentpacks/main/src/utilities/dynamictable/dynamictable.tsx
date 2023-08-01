@@ -7,7 +7,7 @@ type RowAction = {
 	signals: signal.SignalDefinition[]
 	type?: "DEFAULT"
 }
-interface DynamicTableProps extends definition.UtilityProps {
+interface DynamicTableProps {
 	path: string
 	fields: Record<string, wire.ViewOnlyField>
 	rowactions?: RowAction[]
