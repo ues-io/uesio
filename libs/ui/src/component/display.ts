@@ -319,18 +319,25 @@ const shouldAll = (
 }
 
 // Create a list of all of the wires that we're going to care about
-const getWiresForConditions = (
+export const getWiresForConditions = (
 	conditions: DisplayCondition[] | undefined,
-	context: Context
+	context: Context | undefined,
+	uniqueWires = new Set<string>()
 ) => {
 	if (!conditions) return []
-	const contextWire = context.getWireId()
-	return [
-		...(contextWire ? [contextWire] : []),
-		...conditions.flatMap((condition) =>
-			"wire" in condition && condition.wire ? [condition.wire] : []
-		),
-	]
+	const contextWire = context?.getWireId()
+	if (contextWire) uniqueWires.add(contextWire)
+	conditions.forEach((condition) => {
+		if ("wire" in condition && condition.wire) {
+			uniqueWires.add(condition.wire)
+		} else if (
+			condition.type === "group" &&
+			condition.conditions instanceof Array
+		) {
+			getWiresForConditions(condition.conditions, undefined, uniqueWires)
+		}
+	})
+	return Array.from(uniqueWires.values())
 }
 
 const useShouldFilter = <T extends BaseDefinition>(
