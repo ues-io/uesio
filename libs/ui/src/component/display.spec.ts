@@ -1,5 +1,5 @@
 import { Context, ViewContext } from "../context/context"
-import { DisplayCondition, should } from "./display"
+import { DisplayCondition, should, getWiresForConditions } from "./display"
 
 const viewName = "uesio/core.foo"
 const viewDef = `
@@ -286,6 +286,168 @@ describe("should", () => {
 					).toEqual(tc.expected)
 				})
 			})
+		})
+	})
+})
+
+type GetWireForConditionsTestCase = {
+	name: string
+	conditions: DisplayCondition[]
+	context?: Context
+	expected: string[]
+}
+
+const contextWithWireFrame = new Context().addWireFrame({
+	wire: "piña",
+	view: "arroz",
+})
+
+const getWiresForConditionsTests = [
+	{
+		name: "no conditions or context wire",
+		conditions: [],
+		expected: [],
+	},
+	{
+		name: "no conditions, but there is a context wire",
+		conditions: [],
+		context: contextWithWireFrame,
+		expected: ["piña"],
+	},
+	{
+		name: "condition with wire, and a context wire",
+		conditions: [
+			{
+				type: "wireHasChanges",
+				wire: "guanabana",
+			},
+		],
+		context: contextWithWireFrame,
+		expected: ["guanabana", "piña"],
+	},
+	{
+		name: "condition with wire, and a context wire that is the same",
+		conditions: [
+			{
+				type: "wireHasChanges",
+				wire: "piña",
+			},
+		],
+		context: contextWithWireFrame,
+		expected: ["piña"],
+	},
+	{
+		name: "multiple conditions with overlapping wires, and a context wire that is the same",
+		conditions: [
+			{
+				type: "wireHasChanges",
+				wire: "piña",
+			},
+			{
+				type: "wireHasNoChanges",
+				wire: "guanabana",
+			},
+			{
+				type: "fieldValue",
+				wire: "yaca",
+				field: "uesio/core.uniquekey",
+				operator: "EQUALS",
+				value: "something",
+			},
+		],
+		context: contextWithWireFrame,
+		expected: ["guanabana", "piña", "yaca"],
+	},
+	{
+		name: "group conditions",
+		conditions: [
+			{
+				type: "group",
+				conjunction: "OR",
+				conditions: [
+					{
+						type: "wireHasChanges",
+						wire: "banano",
+					},
+					{
+						type: "wireHasChanges",
+						wire: "papaya",
+					},
+					{
+						type: "group",
+						conjunction: "AND",
+						conditions: [
+							{
+								type: "wireHasChanges",
+								wire: "mora",
+							},
+							{
+								type: "wireHasChanges",
+								wire: "manzana",
+							},
+						],
+					},
+				],
+			},
+			{
+				type: "wireHasNoChanges",
+				wire: "guanabana",
+			},
+			{
+				type: "wireHasNoChanges",
+				wire: "guayaba",
+			},
+			{
+				type: "group",
+				conjunction: "AND",
+				conditions: [
+					{
+						type: "wireHasChanges",
+						wire: "cas",
+					},
+					{
+						type: "wireHasChanges",
+						wire: "mango",
+					},
+					{
+						type: "paramIsSet",
+						param: "frijol",
+					},
+				],
+			},
+			{
+				type: "fieldValue",
+				wire: "mango",
+				field: "uesio/core.uniquekey",
+				operator: "EQUALS",
+				value: "sabrosa",
+			},
+		],
+		context: contextWithWireFrame,
+		expected: [
+			"banano",
+			"cas",
+			"guanabana",
+			"guayaba",
+			"mango",
+			"manzana",
+			"mora",
+			"papaya",
+			"piña",
+		],
+	},
+] as GetWireForConditionsTestCase[]
+
+describe("getWiresForConditions", () => {
+	getWiresForConditionsTests.forEach((tc) => {
+		test(tc.name, () => {
+			const actual = getWiresForConditions(
+				tc.conditions,
+				tc.context || new Context()
+			)
+			actual.sort()
+			tc.expected.sort()
+			expect(actual).toEqual(tc.expected)
 		})
 	})
 })
