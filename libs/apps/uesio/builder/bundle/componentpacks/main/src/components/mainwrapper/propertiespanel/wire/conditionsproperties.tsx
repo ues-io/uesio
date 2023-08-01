@@ -212,9 +212,7 @@ const getWireConditionItemsChildrenFunction =
 		if (!groupConditions) return null
 		return groupConditions.map(
 			(conditionOnGroup: wire.WireConditionState, secindex: number) => {
-				const conditionOnGroupPath = path
-					.addLocal(index.toString())
-					.addLocal("conditions")
+				const conditionOnGroupPath = path.addLocal("conditions")
 
 				return (
 					<ListPropertyItem
@@ -670,7 +668,7 @@ const ConditionsProperties: definition.UC = (props) => {
 
 	const defaultConditionGroupDef = {
 		type: "GROUP",
-		conjunction: "AND",
+		conjunction: "OR",
 		conditions: [defaultConditionDef],
 	}
 
