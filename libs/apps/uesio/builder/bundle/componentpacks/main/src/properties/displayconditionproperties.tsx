@@ -1,5 +1,38 @@
-import { component } from "@uesio/ui"
-import { ComponentProperty } from "./componentproperty"
+import { component, definition, wire } from "@uesio/ui"
+import {
+	ComponentProperty,
+	ListPropertyActionOptions,
+	ListPropertyItemChildrenFunction,
+	ListPropertyItemChildrenFunctionOptions,
+} from "./componentproperty"
+import { add, get } from "../api/defapi"
+import { getSelectedPath } from "../api/stateapi"
+import ListPropertyItem from "../utilities/listpropertyitem/listpropertyitem"
+
+export const getDisplayConditionProperties = (
+	condition: component.DisplayCondition
+) =>
+	condition.type === "group"
+		? GroupDisplayConditionProperties
+		: DisplayConditionProperties
+
+const GroupDisplayConditionProperties: ComponentProperty[] = [
+	{
+		name: "conjunction",
+		type: "SELECT",
+		label: "Display if...",
+		options: [
+			{
+				label: "ALL conditions are satsified",
+				value: "AND",
+			},
+			{
+				label: "ANY condition is satisfied",
+				value: "OR",
+			},
+		],
+	},
+]
 
 export const DisplayConditionProperties: ComponentProperty[] = [
 	{
@@ -257,6 +290,127 @@ export const getDisplayConditionLabel = (
 				condition.value || "[No Value]"
 			}`
 			break
+		case "group":
+			return `${condition.type.toLocaleUpperCase()}: ${
+				condition.conjunction
+			}`
 	}
 	return `${condition.type}${details ? ": " + details : ""}`
 }
+
+const addCondition =
+	(defaultDefinition: definition.DefinitionMap) =>
+	({ context, path, items }: ListPropertyActionOptions) => {
+		const selectedPath = getSelectedPath(context)
+		let conditionsArray = items
+		let targetPath = path
+		// If the selected path is a Group, add the condition to the group
+		if (
+			(get(context, selectedPath) as component.DisplayCondition)?.type ===
+			"group"
+		) {
+			targetPath = selectedPath.addLocal("conditions")
+			conditionsArray = get(
+				context,
+				targetPath
+			) as component.DisplayCondition[]
+		}
+		add(
+			context,
+			targetPath.addLocal(`${conditionsArray?.length || 0}`),
+			defaultDefinition
+		)
+	}
+
+const getDisplayConditionChildren = (
+	options: ListPropertyItemChildrenFunctionOptions
+) => {
+	const { context, item, path, index } = options
+	const displayCondition = item as component.DisplayCondition
+	const isGroup = displayCondition.type === "group"
+	const groupConditions =
+		isGroup && displayCondition.conditions?.length > 0
+			? displayCondition.conditions
+			: []
+	return (
+		<>
+			{groupConditions.map(
+				(
+					conditionOnGroup: component.DisplayCondition,
+					secindex: number
+				) => {
+					const conditionOnGroupPath = path.addLocal("conditions")
+					return (
+						<ListPropertyItem
+							key={index + "." + secindex}
+							context={context.addRecordDataFrame(
+								conditionOnGroup as wire.PlainWireRecord,
+								secindex
+							)}
+							parentPath={conditionOnGroupPath}
+							displayTemplate={getDisplayConditionLabel(
+								conditionOnGroup
+							)}
+							itemProperties={(itemState: wire.PlainWireRecord) =>
+								getDisplayConditionProperties(
+									itemState as component.DisplayCondition
+								)
+							}
+							itemPropertiesPanelTitle="Condition Properties"
+							itemChildren={
+								getDisplayConditionChildren as ListPropertyItemChildrenFunction
+							}
+						/>
+					)
+				}
+			)}
+		</>
+	)
+}
+
+/**
+ * Define the properties that should be shown for a DISPLAY (Display Conditions) section
+ * requested for a Properties form
+ * @param selectedSectionId string
+ * @returns
+ */
+export const getDisplaySectionProperties = (
+	selectedSectionId: string
+): ComponentProperty[] => [
+	{
+		name: selectedSectionId,
+		type: "LIST",
+		items: {
+			properties: (record: wire.PlainWireRecord) =>
+				getDisplayConditionProperties(
+					record as component.DisplayCondition
+				),
+			displayTemplate: (record: wire.PlainWireRecord) =>
+				getDisplayConditionLabel(record as component.DisplayCondition),
+			actions: [
+				{
+					label: "New Condition",
+					action: addCondition({
+						type: "fieldValue",
+						operator: "EQUALS",
+					}),
+				},
+				{
+					label: "New Group",
+					action: addCondition({
+						type: "group",
+						conjunction: "OR",
+						conditions: [
+							{
+								type: "fieldValue",
+								operator: "EQUALS",
+							},
+						],
+					}),
+				},
+			],
+			title: "Condition Properties",
+			children: getDisplayConditionChildren,
+		},
+	},
+]

@@ -8,7 +8,7 @@ import { getHomeSection } from "../../../../api/propertysection"
 import {
 	DisplayConditionProperties,
 	getDisplayConditionLabel,
-} from "../../../../properties/conditionproperties"
+} from "../../../../properties/displayconditionproperties"
 
 const WireProperties: definition.UtilityComponent = (props) => {
 	const { context } = props
