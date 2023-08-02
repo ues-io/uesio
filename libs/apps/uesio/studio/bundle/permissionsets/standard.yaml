@@ -12,6 +12,7 @@ views:
   uesio/studio.collection: true
   uesio/studio.collectiondata: true
   uesio/studio.collections: true
+  uesio/studio.component: true
   uesio/studio.components: true
   uesio/studio.configvalue: true
   uesio/studio.configvalues: true
@@ -95,6 +96,7 @@ routes:
   uesio/studio.collection: true
   uesio/studio.collectiondata: true
   uesio/studio.collections: true
+  uesio/studio.component: true
   uesio/studio.components: true
   uesio/studio.configvalue: true
   uesio/studio.configvalues: true
