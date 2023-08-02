@@ -47,6 +47,8 @@ Accept: application/json
     ]
 }
 HTTP 200
+[Captures]
+animal_id: jsonpath "$.wires[0].data[*]['uesio/core.id']" nth 0
 [Asserts]
 jsonpath "$.wires[0].data[*]" count == 1
 jsonpath "$.wires[0].data[*]['uesio/tests.species']" nth 0 == "Abrahan"
@@ -71,3 +73,128 @@ main.collection = $1 AND
 main.tenant = $2 AND
 main.fields->>'uesio/tests.genus' = $3
 LIMIT 3```
+
+# Object level security -- SAVE -- EDIT
+# We should NOT be able to EDIT animal records
+# because the public profile does not have permission to edit them
+POST https://tests.{{domain}}:{{port}}/site/wires/save
+Content-Type: application/json
+{
+    "wires": [
+        {
+            "wire": "updateanimals",
+            "collection": "uesio/tests.animal",
+            "changes": {
+                "1": {
+                    "uesio/core.id": "{{animal_id}}",
+                    "uesio/tests.genus": "Mouton",
+                    "uesio/tests.species": "Abrahan",
+                    "uesio/tests.total_population": 1
+                }
+            },
+            "upsert": false
+        }
+    ]
+}
+HTTP 400
+[Asserts]
+body contains "Save Failed: Profile uesio/tests.public does not have edit access to the uesio/tests.animal collection."
+
+# Object level security -- SAVE -- DELETE
+# We should NOT be able to DELETE animal records
+# because the public profile does not have permission to delete them
+POST https://tests.{{domain}}:{{port}}/site/wires/save
+Content-Type: application/json
+{
+    "wires": [
+        {
+            "wire": "deleteanimals",
+            "collection": "uesio/tests.animal",
+            "deletes": {
+                "1": {
+                    "uesio/core.id": "{{animal_id}}"
+                }
+            }
+        }
+    ]
+}
+HTTP 400
+[Asserts]
+body contains "Save Failed: Profile uesio/tests.public does not have delete access to the uesio/tests.animal collection."
+
+# Object level security -- SAVE -- CREATE
+# We SHOULD be able to CREATE animal records
+# because the public profile DOES have permission to create them
+POST https://tests.{{domain}}:{{port}}/site/wires/save
+[Options]
+variable: genus="Choloepus {{unix_epoch_seconds}}"
+variable: species="Didactylus {{unix_epoch_seconds}}"
+{
+    "wires": [
+        {
+            "wire": "createanimals",
+            "collection": "uesio/tests.animal",
+            "changes": {
+                "1": {
+                    "uesio/tests.genus": "{{genus}}",
+                    "uesio/tests.species": "{{species}}"
+                }
+            },
+            "upsert": true
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" == null
+jsonpath "$.wires[0].changes[*]['uesio/core.id']" nth 0 != null
+jsonpath "$.wires[0].changes[*]['uesio/core.uniquekey']" nth 0 == "{{genus}}:{{species}}"
+
+# Object level security -- SAVE -- CREATE
+# We should NOT be able to CREATE wire_condition records
+# because the public profile does not have permission to create them
+POST https://tests.{{domain}}:{{port}}/site/wires/save
+Content-Type: application/json
+{
+    "wires": [
+        {
+            "wire": "create_wire_conditions",
+            "collection": "uesio/tests.wire_condition",
+            "changes": {
+                "1": {
+                    "uesio/tests.name": "some name"
+                }
+            },
+            "upsert": false
+        }
+    ]
+}
+HTTP 400
+[Asserts]
+body contains "Save Failed: Profile uesio/tests.public does not have create access to the uesio/tests.wire_condition collection."
+
+# FIELD level security -- SAVE -- CREATE
+# We should NOT be able to CREATE animal records
+# if we are populating fields which we do not have access to
+POST https://tests.{{domain}}:{{port}}/site/wires/save
+Content-Type: application/json
+{
+    "wires": [
+        {
+            "wire": "create_animals_with_forbidden_fields",
+            "collection": "uesio/tests.animal",
+            "changes": {
+                "1": {
+                    "uesio/tests.genus": "Not relevant",
+                    "uesio/tests.species": "Ignored",
+                    "uesio/tests.total_population": 100,
+                    "uesio/tests.status": "FORBIDDEN FIELD"
+                }
+            },
+            "upsert": false
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors[0].message" == "Profile uesio/tests.public does not have edit access to the uesio/tests.status field."

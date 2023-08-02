@@ -88,11 +88,6 @@ func Populate(op *adapt.SaveOp, connection adapt.Connection, session *sess.Sessi
 
 	populations := []validationFunc{}
 	for _, field := range op.Metadata.Fields {
-
-		if !session.GetContextPermissions().HasFieldEditPermission(collectionKey, field.GetFullName()) {
-			return fmt.Errorf("Profile %s does not have edit access to the %s field.", session.GetProfile(), field.GetFullName())
-		}
-
 		if field.AutoPopulate == "UPDATE" || field.AutoPopulate == "CREATE" {
 			if field.Type == "TIMESTAMP" {
 				timestamp := time.Now().Unix()
@@ -102,8 +97,7 @@ func Populate(op *adapt.SaveOp, connection adapt.Connection, session *sess.Sessi
 				user := session.GetUserInfo()
 				populations = append(populations, populateUser(field, user))
 			}
-		}
-		if field.Type == "AUTONUMBER" {
+		} else if field.Type == "AUTONUMBER" {
 			populations = append(populations, populateAutoNumbers(field))
 		}
 	}
@@ -120,6 +114,12 @@ func Populate(op *adapt.SaveOp, connection adapt.Connection, session *sess.Sessi
 				op.AddError(err)
 			}
 		}
-		return nil
+		// Enforce field-level security for save
+		return change.Loop(func(field string, value interface{}) error {
+			if !session.GetContextPermissions().HasFieldEditPermission(collectionKey, field) {
+				return fmt.Errorf("Profile %s does not have edit access to the %s field.", session.GetProfile(), field)
+			}
+			return nil
+		})
 	})
 }

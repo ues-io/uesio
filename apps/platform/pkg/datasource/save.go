@@ -75,6 +75,9 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 		metadataResponse = options.Metadata
 	}
 
+	// Get an admin session to use for fetching metadata only
+	adminSession := GetSiteAdminSession(session)
+
 	// Loop over the requests and batch per data source
 	for index := range requests {
 
@@ -82,7 +85,7 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 
 		collectionKey := request.Collection
 
-		err := GetFullMetadataForCollection(metadataResponse, collectionKey, session)
+		err := GetFullMetadataForCollection(metadataResponse, collectionKey, adminSession)
 		if err != nil {
 			return err
 		}
