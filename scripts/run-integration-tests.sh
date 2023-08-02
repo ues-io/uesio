@@ -5,6 +5,8 @@ set -e
 export UESIO_CLI_LOGIN_METHOD=uesio/core.mock
 export UESIO_CLI_USERNAME=uesio
 export UESIO_CLI_HOST="https://studio.uesio-dev.com:3000"
+# this enables {{unix_epoch_seconds}} variable to be used within tests to add some uniqueness to seed values
+export HURL_unix_epoch_seconds=$(date +%s)
 
 # Initialize and the sample app and seed test data
 bash "scripts/tests-init.sh"
