@@ -118,20 +118,23 @@ func (s *Session) GetTokens() []string {
 	return flatTokens
 }
 
-func (s *Session) SetSite(site *meta.Site) {
+func (s *Session) SetSite(site *meta.Site) *Session {
 	s.site = site
+	return s
 }
 
 func (s *Session) GetSite() *meta.Site {
 	return s.site
 }
 
-func (s *Session) SetUser(user *meta.User) {
+func (s *Session) SetUser(user *meta.User) *Session {
 	s.user = user
+	return s
 }
 
-func (s *Session) SetSiteAdmin(site *meta.Site) {
+func (s *Session) SetSiteAdmin(site *meta.Site) *Session {
 	s.siteadmin = site
+	return s
 }
 
 func (s *Session) GetSiteAdmin() *meta.Site {
@@ -142,8 +145,9 @@ func (s *Session) GetWorkspace() *meta.Workspace {
 	return s.workspace
 }
 
-func (s *Session) SetPermissions(permissions *meta.PermissionSet) {
+func (s *Session) SetPermissions(permissions *meta.PermissionSet) *Session {
 	s.permissions = permissions
+	return s
 }
 
 func (s *Session) GetPermissions() *meta.PermissionSet {
@@ -257,12 +261,14 @@ func (s *Session) RemoveWorkspaceContext() *Session {
 	return newSess
 }
 
-func (s *Session) AddWorkspaceContext(workspace *meta.Workspace) {
+func (s *Session) AddWorkspaceContext(workspace *meta.Workspace) *Session {
 	s.workspace = workspace
+	return s
 }
 
-func (s *Session) AddVersionContext(versionInfo *VersionInfo) {
+func (s *Session) AddVersionContext(versionInfo *VersionInfo) *Session {
 	s.version = versionInfo
+	return s
 }
 
 func (s *Session) GetContextNamespaces() []string {
