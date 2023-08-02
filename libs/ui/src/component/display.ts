@@ -192,6 +192,8 @@ function compare(a: unknown, b: unknown, op: DisplayOperator) {
 }
 
 function should(condition: DisplayCondition, context: Context): boolean {
+	if (!condition) return true
+
 	if (condition.type === "collectionContext") {
 		const wire = context.getWire()
 		const collection = wire?.getCollection()
