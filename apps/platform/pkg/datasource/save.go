@@ -118,7 +118,7 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 		}
 	}
 
-	err = SaveOp(allOps, connection, session)
+	err = SaveOps(allOps, connection, session)
 	if err != nil {
 		if !hasExistingConnection {
 			err := connection.RollbackTransaction()
@@ -147,8 +147,120 @@ func HandleErrorAndAddToSaveOp(op *adapt.SaveOp, err error) *adapt.SaveError {
 	return saveError
 }
 
-func SaveOp(batch []*adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func SaveOp(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 	dsKey := meta.PLATFORM_DATA_SOURCE
+	collectionKey := op.Metadata.GetFullName()
+
+	permissions := session.GetContextPermissions()
+
+	err := adapt.FetchReferences(connection, op, session)
+	if err != nil {
+		return HandleErrorAndAddToSaveOp(op, err)
+	}
+
+	err = adapt.HandleUpsertLookup(connection, op, session)
+	if err != nil {
+		return HandleErrorAndAddToSaveOp(op, err)
+	}
+
+	if len(op.Inserts) > 0 {
+		if !permissions.HasCreatePermission(collectionKey) {
+			return fmt.Errorf("Profile %s does not have create access to the %s collection.", session.GetProfile(), collectionKey)
+		}
+	}
+
+	if len(op.Updates) > 0 {
+		if !permissions.HasEditPermission(collectionKey) {
+			return fmt.Errorf("Profile %s does not have edit access to the %s collection.", session.GetProfile(), collectionKey)
+		}
+	}
+
+	if len(op.Deletes) > 0 {
+		if !permissions.HasDeletePermission(collectionKey) {
+			return fmt.Errorf("Profile %s does not have delete access to the %s collection.", session.GetProfile(), collectionKey)
+		}
+	}
+
+	err = adapt.HandleOldValuesLookup(connection, op, session)
+	if err != nil {
+		return HandleErrorAndAddToSaveOp(op, err)
+	}
+
+	err = Populate(op, connection, session)
+	if err != nil {
+		return HandleErrorAndAddToSaveOp(op, err)
+	}
+
+	// Check for population errors here
+	if op.HasErrors() {
+		return adapt.NewGenericSaveError(errors.New("Error with field population"))
+	}
+
+	err = runBeforeSaveBots(op, connection, session)
+	if err != nil {
+		return HandleErrorAndAddToSaveOp(op, err)
+	}
+
+	// Check for before save errors here
+	if op.HasErrors() {
+		return adapt.NewGenericSaveError(errors.New("Error with before save bots"))
+	}
+
+	// Fetch References again.
+	err = adapt.FetchReferences(connection, op, session)
+	if err != nil {
+		return HandleErrorAndAddToSaveOp(op, err)
+	}
+
+	// Set the unique keys for the last time
+	err = op.LoopChanges(func(change *adapt.ChangeItem) error {
+		return adapt.SetUniqueKey(change)
+	})
+	if err != nil {
+		return HandleErrorAndAddToSaveOp(op, err)
+	}
+
+	err = Validate(op, connection, session)
+	if err != nil {
+		return HandleErrorAndAddToSaveOp(op, err)
+	}
+
+	// Check for validate errors here
+	if op.HasErrors() {
+		return adapt.NewGenericSaveError(errors.New("Error with validation"))
+	}
+
+	err = GenerateRecordChallengeTokens(op, connection, session)
+	if err != nil {
+		return HandleErrorAndAddToSaveOp(op, err)
+	}
+
+	err = performCascadeDeletes(op, connection, session)
+	if err != nil {
+		return HandleErrorAndAddToSaveOp(op, err)
+	}
+
+	err = connection.Save(op, session)
+	if err != nil {
+		return HandleErrorAndAddToSaveOp(op, err)
+	}
+
+	err = runAfterSaveBots(op, connection, session)
+	if err != nil {
+		return HandleErrorAndAddToSaveOp(op, err)
+	}
+
+	// Check for after save errors here
+	if op.HasErrors() {
+		return adapt.NewGenericSaveError(errors.New("Error with after save bots"))
+	}
+	usage.RegisterEvent("SAVE", "COLLECTION", op.Metadata.GetFullName(), 0, session)
+	usage.RegisterEvent("SAVE", "DATASOURCE", dsKey, 0, session)
+	return nil
+}
+
+func SaveOps(batch []*adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+
 	// Get all the user access tokens that we'll need for this request
 	// TODO:
 	// Finally check for record level permissions and ability to do the save.
@@ -159,8 +271,6 @@ func SaveOp(batch []*adapt.SaveOp, connection adapt.Connection, session *sess.Se
 
 	for _, op := range batch {
 
-		collectionKey := op.Metadata.GetFullName()
-
 		if op.Metadata.IsDynamic() {
 			err := runDynamicCollectionSaveBots(op, connection, session)
 			if err != nil {
@@ -169,111 +279,8 @@ func SaveOp(batch []*adapt.SaveOp, connection adapt.Connection, session *sess.Se
 			continue
 		}
 
-		permissions := session.GetContextPermissions()
+		return SaveOp(op, connection, session)
 
-		err = adapt.FetchReferences(connection, op, session)
-		if err != nil {
-			return HandleErrorAndAddToSaveOp(op, err)
-		}
-
-		err = adapt.HandleUpsertLookup(connection, op, session)
-		if err != nil {
-			return HandleErrorAndAddToSaveOp(op, err)
-		}
-
-		if len(op.Inserts) > 0 {
-			if !permissions.HasCreatePermission(collectionKey) {
-				return fmt.Errorf("Profile %s does not have create access to the %s collection.", session.GetProfile(), collectionKey)
-			}
-		}
-
-		if len(op.Updates) > 0 {
-			if !permissions.HasEditPermission(collectionKey) {
-				return fmt.Errorf("Profile %s does not have edit access to the %s collection.", session.GetProfile(), collectionKey)
-			}
-		}
-
-		if len(op.Deletes) > 0 {
-			if !permissions.HasDeletePermission(collectionKey) {
-				return fmt.Errorf("Profile %s does not have delete access to the %s collection.", session.GetProfile(), collectionKey)
-			}
-		}
-
-		err = adapt.HandleOldValuesLookup(connection, op, session)
-		if err != nil {
-			return HandleErrorAndAddToSaveOp(op, err)
-		}
-
-		err = Populate(op, connection, session)
-		if err != nil {
-			return HandleErrorAndAddToSaveOp(op, err)
-		}
-
-		// Check for population errors here
-		if op.HasErrors() {
-			return adapt.NewGenericSaveError(errors.New("Error with field population"))
-		}
-
-		err = runBeforeSaveBots(op, connection, session)
-		if err != nil {
-			return HandleErrorAndAddToSaveOp(op, err)
-		}
-
-		// Check for before save errors here
-		if op.HasErrors() {
-			return adapt.NewGenericSaveError(errors.New("Error with before save bots"))
-		}
-
-		// Fetch References again.
-		err = adapt.FetchReferences(connection, op, session)
-		if err != nil {
-			return HandleErrorAndAddToSaveOp(op, err)
-		}
-
-		// Set the unique keys for the last time
-		err = op.LoopChanges(func(change *adapt.ChangeItem) error {
-			return adapt.SetUniqueKey(change)
-		})
-		if err != nil {
-			return HandleErrorAndAddToSaveOp(op, err)
-		}
-
-		err = Validate(op, connection, session)
-		if err != nil {
-			return HandleErrorAndAddToSaveOp(op, err)
-		}
-
-		// Check for validate errors here
-		if op.HasErrors() {
-			return adapt.NewGenericSaveError(errors.New("Error with validation"))
-		}
-
-		err = GenerateRecordChallengeTokens(op, connection, session)
-		if err != nil {
-			return HandleErrorAndAddToSaveOp(op, err)
-		}
-
-		err = performCascadeDeletes(op, connection, session)
-		if err != nil {
-			return HandleErrorAndAddToSaveOp(op, err)
-		}
-
-		err = connection.Save(op, session)
-		if err != nil {
-			return HandleErrorAndAddToSaveOp(op, err)
-		}
-
-		err = runAfterSaveBots(op, connection, session)
-		if err != nil {
-			return HandleErrorAndAddToSaveOp(op, err)
-		}
-
-		// Check for after save errors here
-		if op.HasErrors() {
-			return adapt.NewGenericSaveError(errors.New("Error with after save bots"))
-		}
-		usage.RegisterEvent("SAVE", "COLLECTION", op.Metadata.GetFullName(), 0, session)
-		usage.RegisterEvent("SAVE", "DATASOURCE", dsKey, 0, session)
 	}
 
 	return nil
