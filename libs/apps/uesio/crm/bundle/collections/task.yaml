@@ -1,5 +1,0 @@
-name: task
-public: true
-label: task
-pluralLabel: tasks
-nameField: uesio/crm.name

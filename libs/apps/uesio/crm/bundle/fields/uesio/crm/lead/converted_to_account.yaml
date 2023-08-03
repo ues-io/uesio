@@ -1,5 +1,0 @@
-name: converted_to_account
-type: REFERENCE
-label: Converted To Account
-reference:
-  collection: uesio/crm.account

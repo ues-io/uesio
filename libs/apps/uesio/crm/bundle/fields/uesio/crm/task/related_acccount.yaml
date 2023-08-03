@@ -1,5 +1,0 @@
-name: related_acccount
-type: REFERENCE
-label: Related Account
-reference:
-  collection: uesio/crm.account
