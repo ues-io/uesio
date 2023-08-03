@@ -234,6 +234,14 @@ var bundleableGroupMap = map[string]BundleableFactory{
 	(&UtilityCollection{}).GetBundleFolderName():          func() BundleableGroup { return &UtilityCollection{} },
 }
 
+var bundleableCollectionNames = map[string]string{}
+
+func init() {
+	for metadataType, factory := range bundleableGroupMap {
+		bundleableCollectionNames[factory().GetName()] = metadataType
+	}
+}
+
 func GetGroupingConditions(metadataType, grouping string) (BundleConditions, error) {
 	conditions := BundleConditions{}
 	if metadataType == "fields" {
@@ -263,6 +271,14 @@ func GetMetadataTypes() []string {
 		types = append(types, key)
 	}
 	return types
+}
+
+func IsBundleableCollection(studioCollectionName string) bool {
+	return bundleableCollectionNames[studioCollectionName] != ""
+}
+
+func GetTypeFromCollectionName(studioCollectionName string) string {
+	return bundleableCollectionNames[studioCollectionName]
 }
 
 func Copy(to, from interface{}) {

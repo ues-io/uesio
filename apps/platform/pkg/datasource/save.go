@@ -16,25 +16,23 @@ type SaveRequestBatch struct {
 }
 
 type SaveRequest struct {
-	Collection string                       `json:"collection"`
-	Wire       string                       `json:"wire"`
-	Changes    meta.Group                   `json:"changes"`
-	Deletes    meta.Group                   `json:"deletes"`
-	Errors     []adapt.SaveError            `json:"errors"`
-	Options    *adapt.SaveOptions           `json:"options"`
-	Conditions []adapt.LoadRequestCondition `json:"conditions"`
-	Params     map[string]string            `json:"params"`
+	Collection string             `json:"collection"`
+	Wire       string             `json:"wire"`
+	Changes    meta.Group         `json:"changes"`
+	Deletes    meta.Group         `json:"deletes"`
+	Errors     []adapt.SaveError  `json:"errors"`
+	Options    *adapt.SaveOptions `json:"options"`
+	Params     map[string]string  `json:"params"`
 }
 
 type SaveRequestImpl struct {
-	Collection string                       `json:"collection"`
-	Wire       string                       `json:"wire"`
-	Changes    *adapt.CollectionMap         `json:"changes"`
-	Deletes    *adapt.CollectionMap         `json:"deletes"`
-	Errors     []adapt.SaveError            `json:"errors"`
-	Options    *adapt.SaveOptions           `json:"options"`
-	Conditions []adapt.LoadRequestCondition `json:"conditions"`
-	Params     map[string]string            `json:"params"`
+	Collection string               `json:"collection"`
+	Wire       string               `json:"wire"`
+	Changes    *adapt.CollectionMap `json:"changes"`
+	Deletes    *adapt.CollectionMap `json:"deletes"`
+	Errors     []adapt.SaveError    `json:"errors"`
+	Options    *adapt.SaveOptions   `json:"options"`
+	Params     map[string]string    `json:"params"`
 }
 
 func (sr *SaveRequest) UnmarshalJSON(b []byte) error {
@@ -50,7 +48,6 @@ func (sr *SaveRequest) UnmarshalJSON(b []byte) error {
 	sr.Deletes = data.Deletes
 	sr.Errors = data.Errors
 	sr.Options = data.Options
-	sr.Conditions = data.Conditions
 	sr.Params = data.Params
 	return nil
 }
@@ -164,12 +161,7 @@ func SaveOp(batch []*adapt.SaveOp, connection adapt.Connection, session *sess.Se
 
 		collectionKey := op.Metadata.GetFullName()
 
-		err := processConditions(collectionKey, op.Conditions, op.Params, connection.GetMetadata(), nil, session)
-		if err != nil {
-			return err
-		}
-
-		if op.Metadata.Type == "DYNAMIC" {
+		if op.Metadata.IsDynamic() {
 			err := runDynamicCollectionSaveBots(op, connection, session)
 			if err != nil {
 				return HandleErrorAndAddToSaveOp(op, err)

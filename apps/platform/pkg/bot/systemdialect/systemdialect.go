@@ -155,6 +155,10 @@ func (b *SystemDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adap
 		botFunction = clickup.TaskLoadBot
 	}
 
+	if meta.IsBundleableCollection(op.CollectionName) {
+		botFunction = runStudioMetadataLoadBot
+	}
+
 	if botFunction == nil {
 		return datasource.NewSystemBotNotFoundError()
 	}

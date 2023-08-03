@@ -14,6 +14,14 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
+func getParamsFromWorkspaceContext(session *sess.Session) map[string]string {
+	workspace := session.GetWorkspace()
+	return map[string]string{
+		"app":           workspace.GetAppFullName(),
+		"workspacename": workspace.Name,
+	}
+}
+
 func processItems(items []meta.BundleableItem, session *sess.Session, connection adapt.Connection, looper func(meta.Item, []adapt.ReferenceLocator, string) error) error {
 	workspace := session.GetWorkspace()
 	if workspace == nil {
@@ -47,6 +55,7 @@ func processItems(items []meta.BundleableItem, session *sess.Session, connection
 		}, &datasource.PlatformLoadOptions{
 			LoadAll:    true,
 			Connection: connection,
+			Params:     getParamsFromWorkspaceContext(session),
 			Conditions: []adapt.LoadRequestCondition{
 				{
 					Field:    adapt.UNIQUE_KEY_FIELD,
@@ -101,6 +110,7 @@ func (b *WorkspaceBundleStore) GetItem(item meta.BundleableItem, version string,
 				Value: item.GetDBID(workspace.UniqueKey),
 			},
 		},
+		Params:     getParamsFromWorkspaceContext(session),
 		Connection: connection,
 	}, session.RemoveWorkspaceContext())
 }
@@ -135,12 +145,7 @@ func (b *WorkspaceBundleStore) GetAllItems(group meta.BundleableGroup, namespace
 	}
 
 	// Add the workspace id as a condition
-	loadConditions := []adapt.LoadRequestCondition{
-		{
-			Field: "uesio/studio.workspace",
-			Value: session.GetWorkspaceID(),
-		},
-	}
+	loadConditions := []adapt.LoadRequestCondition{}
 
 	for field, value := range conditions {
 		loadConditions = append(loadConditions, adapt.LoadRequestCondition{
@@ -154,6 +159,7 @@ func (b *WorkspaceBundleStore) GetAllItems(group meta.BundleableGroup, namespace
 		Namespace:  namespace,
 	}, &datasource.PlatformLoadOptions{
 		Conditions: loadConditions,
+		Params:     getParamsFromWorkspaceContext(session),
 		Connection: connection,
 		LoadAll:    true,
 	}, session.RemoveWorkspaceContext())
@@ -190,6 +196,7 @@ func (b *WorkspaceBundleStore) GetAttachmentPaths(item meta.AttachableItem, vers
 	err = datasource.PlatformLoad(
 		userFiles,
 		&datasource.PlatformLoadOptions{
+			Params: getParamsFromWorkspaceContext(session),
 			Conditions: []adapt.LoadRequestCondition{
 				{
 					Field: "uesio/core.recordid",
@@ -230,6 +237,7 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 		&bdc,
 		&datasource.PlatformLoadOptions{
 			Connection: connection,
+			Params:     getParamsFromWorkspaceContext(session),
 			Fields: []adapt.LoadRequestField{
 				{
 					ID: "uesio/studio.workspace",

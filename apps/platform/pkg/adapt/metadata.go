@@ -50,6 +50,10 @@ type CollectionMetadata struct {
 	PluralLabel           string                                 `json:"pluralLabel"`
 }
 
+func (cm *CollectionMetadata) IsDynamic() bool {
+	return cm.Type == "DYNAMIC" || meta.IsBundleableCollection(cm.GetFullName())
+}
+
 func (cm *CollectionMetadata) IsWriteProtected() bool {
 	return cm.Access == "protected" || cm.Access == "protected_write"
 }
