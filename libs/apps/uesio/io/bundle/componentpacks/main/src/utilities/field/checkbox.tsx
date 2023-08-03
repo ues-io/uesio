@@ -1,7 +1,7 @@
-import { FunctionComponent, useEffect, useRef } from "react"
+import { useEffect, useRef } from "react"
 import { definition, styles, context, wire } from "@uesio/ui"
 
-interface CheckboxFieldProps extends definition.UtilityProps {
+interface CheckboxFieldProps {
 	setValue: (value: boolean) => void
 	value: wire.FieldValue
 	mode?: context.FieldMode
@@ -13,7 +13,9 @@ const StyleDefaults = Object.freeze({
 	input: [],
 })
 
-const CheckboxField: FunctionComponent<CheckboxFieldProps> = (props) => {
+const CheckboxField: definition.UtilityComponent<CheckboxFieldProps> = (
+	props
+) => {
 	const { focusOnRender = false, id, setValue, value, mode } = props
 	const readonly = mode === "READ"
 

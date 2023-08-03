@@ -15,6 +15,11 @@ func GetSiteAdminSession(currentSession *sess.Session) *sess.Session {
 	if currentSession.GetWorkspace() != nil {
 		return currentSession
 	}
+	// If we are already in site admin context, we don't need to do anything either.
+	if currentSession.GetSiteAdmin() != nil {
+		return currentSession
+	}
+
 	// This creates a copy of the session
 	siteAdminSession := currentSession.RemoveWorkspaceContext()
 
@@ -66,7 +71,7 @@ func addSiteAdminContext(siteadmin *meta.Site, session *sess.Session, connection
 	siteadmin.Subdomain = site.Subdomain
 
 	if siteadmin.Bundle == nil {
-		return errors.New("No Bundle found for site to administer")
+		return errors.New("no Bundle found for site to administer")
 	}
 
 	upgradeToSiteAdmin(siteadmin, session)

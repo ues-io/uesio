@@ -1,0 +1,11 @@
+name: default
+label: Default
+definition:
+  uesio.styleTokens:
+    root:
+      - border
+      - border-slate-700
+      - p-4
+    content:
+      - mt-4
+public: true

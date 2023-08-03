@@ -2,6 +2,7 @@ package bot
 
 import (
 	"errors"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/retrieve"
@@ -33,6 +34,7 @@ type BotDialect interface {
 	CallGeneratorBot(bot *meta.Bot, create retrieve.WriterCreator, params map[string]interface{}, connection adapt.Connection, session *sess.Session) error
 	RouteBot(bot *meta.Bot, route *meta.Route, session *sess.Session) error
 	LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error
+	SaveBot(bot *meta.Bot, op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error
 	GetFilePath() string
 	GetDefaultFileBody(string) string
 }

@@ -1,9 +1,0 @@
-name: callout_right
-extends: uesio/web.callout
-label: Callout Right
-definition:
-  uesio.styleTokens:
-    root:
-      - justify-end
-      - py-28
-      - md:py-28

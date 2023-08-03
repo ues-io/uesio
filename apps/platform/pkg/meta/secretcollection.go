@@ -35,6 +35,10 @@ func (sc *SecretCollection) GetItemFromPath(path, namespace string) BundleableIt
 	return NewBaseSecret(namespace, StandardNameFromPath(path))
 }
 
+func (sc *SecretCollection) GetItemFromKey(key string) (BundleableItem, error) {
+	return NewSecret(key)
+}
+
 func (sc *SecretCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }

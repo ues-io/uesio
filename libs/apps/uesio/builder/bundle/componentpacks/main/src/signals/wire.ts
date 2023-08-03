@@ -55,17 +55,35 @@ const signals: SignalBandDefinition = {
 		[`${BAND}/TOGGLE_DELETE_STATUS`]: {
 			label: "Toggle delete status",
 			description: "Toggle the delete status of a wire",
-			properties: () => [],
+			properties: (): ComponentProperty[] => [
+				{
+					name: "wire",
+					type: "WIRE",
+					label: "Wire",
+				},
+			],
 		},
 		[`${BAND}/MARK_FOR_DELETE`]: {
 			label: "Mark For Delete",
 			description: "Mark for delete",
-			properties: () => [],
+			properties: (): ComponentProperty[] => [
+				{
+					name: "wire",
+					type: "WIRE",
+					label: "Wire",
+				},
+			],
 		},
 		[`${BAND}/UNMARK_FOR_DELETE`]: {
 			label: "Unmark For Delete",
 			description: "Unmark for delete",
-			properties: () => [],
+			properties: (): ComponentProperty[] => [
+				{
+					name: "wire",
+					type: "WIRE",
+					label: "Wire",
+				},
+			],
 		},
 		[`${BAND}/CREATE_RECORD`]: {
 			label: "Create Record",

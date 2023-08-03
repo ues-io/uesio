@@ -99,6 +99,22 @@ func runDynamicCollectionLoadBots(op *adapt.LoadOp, connection adapt.Connection,
 
 }
 
+func runDynamicCollectionSaveBots(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+
+	// Currently, all dynamic collections are routed to
+	// the system bot dialect.
+	dialect, err := bot.GetBotDialect("SYSTEM")
+	if err != nil {
+		return err
+	}
+	namespace, name, err := meta.ParseKey(op.Metadata.GetFullName())
+	if err != nil {
+		return err
+	}
+	return dialect.SaveBot(meta.NewSaveBot(namespace, name), op, connection, session)
+
+}
+
 func runAfterSaveBots(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 
 	collectionName := request.Metadata.GetFullName()

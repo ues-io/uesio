@@ -9,6 +9,7 @@ import CheckboxFilter from "../../utilities/checkboxfilter/checkboxfilter"
 import MultiSelectFilter from "../../utilities/multiselectfilter/multiselectfilter"
 import TextFilter from "../../utilities/textfilter/textfilter"
 import TimestampFilter from "../../utilities/timestampfilter/timestampfilter"
+import ReferenceFilter from "../../utilities/referencefilter/referencefilter"
 import GroupFilter, {
 	GroupFilterProps,
 } from "../../utilities/groupfilter/groupfilter"
@@ -64,6 +65,10 @@ const getFilterContent = (
 			if (displayAs === "WEEK") return <WeekFilter {...common} />
 			return <DateFilter {...common} />
 		}
+		case "USER":
+		case "REFERENCE": {
+			return <ReferenceFilter {...common} />
+		}
 		default:
 			return null
 	}
@@ -97,6 +102,14 @@ const getDefaultCondition = (
 				field: fieldMetadata.getId(),
 			}
 		}
+		case "USER":
+		case "REFERENCE": {
+			return {
+				id: path,
+				operator: "EQ",
+				field: fieldMetadata.getId(),
+			}
+		}
 		case "TEXT":
 		case "LONGTEXT":
 		case "EMAIL":
@@ -126,6 +139,8 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 	const fieldMetadata = collection.getField(
 		isValueCondition(existingCondition) ? existingCondition.field : fieldId
 	)
+
+	if (!fieldMetadata) return null
 
 	let condition = existingCondition
 	if (!condition && fieldMetadata) {
@@ -163,7 +178,9 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 			variant={definition.wrapperVariant}
 		>
 			{isGroup ? (
-				<GroupFilter {...(common as GroupFilterProps)} />
+				<GroupFilter
+					{...(common as GroupFilterProps & definition.UtilityProps)}
+				/>
 			) : (
 				getFilterContent(common as CommonProps, definition)
 			)}

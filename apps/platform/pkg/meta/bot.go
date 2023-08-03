@@ -5,9 +5,43 @@ import (
 	"fmt"
 	"path/filepath"
 	"strconv"
+	"strings"
 
 	"gopkg.in/yaml.v3"
 )
+
+func NewBot(key string) (*Bot, error) {
+	keyArray := strings.Split(key, ":")
+	keyArraySize := len(keyArray)
+	if (keyArraySize) < 1 {
+		return nil, errors.New("Invalid Bot Key")
+	}
+	botType := keyArray[0]
+	var collectionKey, botKey string
+	switch botType {
+	case "LISTENER", "GENERATOR":
+		collectionKey = ""
+		botKey = keyArray[1]
+		if (keyArraySize) > 3 {
+			return nil, errors.New("Invalid Bot Key")
+		}
+		if (keyArraySize) == 3 {
+			collectionKey = keyArray[1]
+			botKey = keyArray[2]
+		}
+	default:
+		if (keyArraySize) != 3 {
+			return nil, errors.New("Invalid Bot Key")
+		}
+		collectionKey = keyArray[1]
+		botKey = keyArray[2]
+	}
+	namespace, name, err := ParseKey(botKey)
+	if err != nil {
+		return nil, err
+	}
+	return NewBaseBot(botType, collectionKey, namespace, name), nil
+}
 
 func NewBeforeSaveBot(namespace, name, collection string) *Bot {
 	return NewBaseBot("BEFORESAVE", collection, namespace, name)
@@ -31,6 +65,10 @@ func NewRouteBot(namespace, name string) *Bot {
 
 func NewLoadBot(namespace, name string) *Bot {
 	return NewBaseBot("LOAD", "", namespace, name)
+}
+
+func NewSaveBot(namespace, name string) *Bot {
+	return NewBaseBot("SAVE", "", namespace, name)
 }
 
 func NewBaseBot(botType, collectionKey, namespace, name string) *Bot {

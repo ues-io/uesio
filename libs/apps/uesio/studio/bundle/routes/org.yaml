@@ -1,0 +1,5 @@
+name: org
+path: organization/{orgname:\w*}
+view: org
+theme: default
+title: "Organization: $Param{orgname}"

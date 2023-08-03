@@ -38,8 +38,7 @@ const handlers: Record<MergeType, MergeHandler> = {
 			record = context.getRecord()
 		} else {
 			const wirename = expressionParts[0]
-			const wire = context.getWire(wirename)
-			record = wire?.getFirstRecord()
+			record = context.getRecord(wirename)
 			expression = expressionParts[1]
 		}
 		const value = record?.getFieldValue(expression)
@@ -187,7 +186,8 @@ const handlers: Record<MergeType, MergeHandler> = {
 				site?.domain
 			}`
 		}
-		return site?.[expression as keyof SiteState] || ""
+		if (expression === "dependencies") return ""
+		return site?.[expression as keyof Omit<SiteState, "dependencies">] || ""
 	},
 	StaticFile: (expression) => getStaticAssetsPath() + "/static" + expression,
 	Label: (expression, context) => {

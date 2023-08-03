@@ -59,7 +59,7 @@ const PermissionPicker: FunctionComponent<Props> = (props) => {
 		<>
 			{data.map((record, i) => {
 				const itemName =
-					workspaceContext.app +
+					record.getFieldValue("uesio/studio.namespace") +
 					"." +
 					record.getFieldValue(nameNameField)
 				return (

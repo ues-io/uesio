@@ -1,0 +1,10 @@
+name: siteusage_route_load
+path: app/{app:\w*\/\w*}/site/{sitename}/usage/routes/load
+view: usage
+theme: default
+title: Site Route Load Usage
+params:
+  metadatatype: ROUTE
+  metadatatypelabel: Route
+  actiontype: LOAD
+  actiontypelabel: Loads

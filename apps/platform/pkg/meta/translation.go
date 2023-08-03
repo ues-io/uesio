@@ -6,6 +6,12 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+func NewTranslation(key string) (*Translation, error) {
+	return &Translation{
+		Language: key,
+	}, nil
+}
+
 func NewBaseTranslation(namespace, language string) *Translation {
 	return &Translation{
 		Language: language,
@@ -80,7 +86,7 @@ func (t *Translation) Len() int {
 }
 
 func (t *Translation) UnmarshalYAML(node *yaml.Node) error {
-	err := validateNodeLanguage(node, t.Language)
+	err := validateMetadataNameNode(node, t.Language, "language")
 	if err != nil {
 		return err
 	}

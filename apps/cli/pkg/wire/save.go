@@ -14,13 +14,30 @@ type SaveRequest struct {
 	Changes    map[string]map[string]interface{} `json:"changes"`
 	Wire       string                            `json:"wire"`
 	Errors     []adapt.SaveError                 `json:"errors"`
+	Options    SaveOptions                       `json:"options"`
 }
 
 type SaveReqBatch struct {
 	Wires []SaveRequest `json:"wires"`
 }
 
-func Save(collectionName string, changes []map[string]interface{}) ([]map[string]interface{}, error) {
+type SaveOptions struct {
+	Upsert bool
+}
+
+func Upsert(collectionName string, changes []map[string]interface{}) ([]map[string]interface{}, error) {
+	return Save(collectionName, changes, SaveOptions{
+		Upsert: true,
+	})
+}
+
+func Insert(collectionName string, changes []map[string]interface{}) ([]map[string]interface{}, error) {
+	return Save(collectionName, changes, SaveOptions{
+		Upsert: false,
+	})
+}
+
+func Save(collectionName string, changes []map[string]interface{}, saveOptions SaveOptions) ([]map[string]interface{}, error) {
 
 	changeMap := map[string]map[string]interface{}{}
 
@@ -35,6 +52,7 @@ func Save(collectionName string, changes []map[string]interface{}) ([]map[string
 				Collection: collectionName,
 				Changes:    changeMap,
 				Wire:       "cliwire",
+				Options:    saveOptions,
 			},
 		},
 	}
@@ -58,7 +76,14 @@ func Save(collectionName string, changes []map[string]interface{}) ([]map[string
 	singleResponse := saveResponse.Wires[0]
 
 	if len(singleResponse.Errors) > 0 {
-		return nil, errors.New("Error saving record")
+		errString := ""
+		for i, saveErr := range singleResponse.Errors {
+			if i != 0 {
+				errString = errString + ", "
+			}
+			errString = errString + saveErr.Error()
+		}
+		return nil, errors.New("Error saving record: " + errString)
 	}
 
 	results := []map[string]interface{}{}

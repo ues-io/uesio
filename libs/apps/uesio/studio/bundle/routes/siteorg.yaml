@@ -1,0 +1,5 @@
+name: siteorg
+path: app/{app:\w*\/\w*}/site/{sitename}/organizations/{orgname}
+view: siteorg
+theme: default
+title: "Organization: $Record{org:uesio/core.username}"

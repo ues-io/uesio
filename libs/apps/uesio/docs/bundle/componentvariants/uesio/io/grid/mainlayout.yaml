@@ -1,8 +1,0 @@
-name: mainlayout
-label: Main Layout
-definition:
-  uesio.styleTokens:
-    root:
-      - grid-cols-[1fr]
-      - justify-center
-      - bg-slate-50

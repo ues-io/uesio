@@ -241,7 +241,7 @@ const getDataLabels = (
 	if (!wire) throw new Error("Wire not found: " + series.wire)
 	const categoryField = wire?.getCollection().getField(series.categoryField)
 	if (!categoryField) {
-		throw new Error("Invalid Category Field")
+		return {}
 	}
 
 	const fieldType = categoryField.getType()
@@ -282,7 +282,7 @@ const getLabelsForSeries = (
 		case "DATA":
 			return getDataLabels(wires, labels, series)
 		default:
-			throw new Error("Invalid Label Source")
+			return {}
 	}
 }
 

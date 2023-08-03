@@ -1,0 +1,10 @@
+name: siteusage_collection_save
+path: app/{app:\w*\/\w*}/site/{sitename}/usage/collections/save
+view: usage
+theme: default
+title: Site Collection Save Usage
+params:
+  metadatatype: COLLECTION
+  metadatatypelabel: Collection
+  actiontype: SAVE
+  actiontypelabel: Saves

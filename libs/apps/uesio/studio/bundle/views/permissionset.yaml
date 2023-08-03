@@ -15,75 +15,32 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     permissionsets:
-      collection: uesio/studio.permissionset
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.workspace:
-        uesio/studio.allowallfiles:
-        uesio/studio.allowallroutes:
-        uesio/studio.allowallviews:
-        uesio/studio.allowallcollections:
-        uesio/studio.filerefs:
-        uesio/studio.namedrefs:
-        uesio/studio.routerefs:
-        uesio/studio.viewrefs:
-        uesio/studio.collectionrefs:
-        uesio/studio.viewallrecords:
-        uesio/studio.modifyallrecords:
+      collection: uesio/studio.allmetadata
       conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
-        - field: uesio/studio.name
-          valueSource: PARAM
-          param: permissionsetname
+        - field: uesio/studio.type
+          value: permissionsets
+        - field: uesio/studio.item
+          value: $Param{namespace}.$Param{permissionsetname}
     routes:
-      collection: uesio/studio.route
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.path:
-        uesio/studio.view:
-        uesio/studio.theme:
+      collection: uesio/studio.allmetadata
       conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
+        - field: uesio/studio.type
+          value: routes
     collections:
-      collection: uesio/studio.collection
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
+      collection: uesio/studio.allmetadata
       conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
+        - field: uesio/studio.type
+          value: collections
     views:
-      collection: uesio/studio.view
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.definition:
-        uesio/studio.workspace:
+      collection: uesio/studio.allmetadata
       conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
+        - field: uesio/studio.type
+          value: views
     files:
-      collection: uesio/studio.file
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
+      collection: uesio/studio.allmetadata
       conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
+        - field: uesio/studio.type
+          value: files
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -100,6 +57,7 @@ definition:
                       itemType: permissionsets
                       itemIcon: rule
                       itemName: $Param{permissionsetname}
+                      itemNameSpace: $Param{namespace}
           - uesio/io.griditem:
               uesio.variant: uesio/studio.leftbar
               components:
@@ -120,6 +78,7 @@ definition:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.main
                           title: Permission Set - ${uesio/studio.name}
+                          subtitle: $Param{namespace}
                           actions:
                             - uesio/io.group:
                                 components:
@@ -129,6 +88,11 @@ definition:
                                       uesio.display:
                                         - type: fieldMode
                                           mode: READ
+                                        - type: paramValue
+                                          param: app
+                                          field: uesio/core.dynamiccollection
+                                          operator: EQUALS
+                                          value: $Param{namespace}
                                       signals:
                                         - signal: component/CALL
                                           component: uesio/io.list
@@ -146,6 +110,8 @@ definition:
                                       uesio.display:
                                         - type: fieldMode
                                           mode: EDIT
+                                        - type: wireHasChanges
+                                          wire: permissionsets
                                       signals:
                                         - signal: wire/SAVE
                                           wires:
@@ -185,6 +151,12 @@ definition:
                                       signals:
                                         - signal: panel/TOGGLE
                                           panel: deletePermissonset
+                                      uesio.display:
+                                        - type: paramValue
+                                          param: app
+                                          field: uesio/core.dynamiccollection
+                                          operator: EQUALS
+                                          value: $Param{namespace}
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           components:
@@ -273,7 +245,7 @@ definition:
                                       rowactions:
                                         - text: Details
                                           signals:
-                                            - path: app/$Param{app}/workspace/$Param{workspacename}/permissionsets/$Param{permissionsetname}/collection/${uesio/core.id}
+                                            - path: app/$Param{app}/workspace/$Param{workspacename}/permissionsets/$Param{namespace}/$Param{permissionsetname}/collection/${uesio/studio.namespace}/${uesio/studio.name}
                                               signal: route/NAVIGATE
                                       permissionFields:
                                         - name: read

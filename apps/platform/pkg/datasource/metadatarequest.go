@@ -13,6 +13,39 @@ func ParseSelectListKey(key string) (string, string, string) {
 	return keyParts[0], keyParts[1], keyParts[2]
 }
 
+func GetFullMetadataForCollection(metadataResponse *adapt.MetadataCache, collectionID string, session *sess.Session) error {
+	collections := MetadataRequest{
+		Options: &MetadataRequestOptions{
+			LoadAllFields: true,
+		},
+	}
+	err := collections.AddCollection(collectionID)
+	if err != nil {
+		return err
+	}
+
+	return collections.Load(metadataResponse, session, nil)
+}
+
+func GetMetadataResponse(metadataResponse *adapt.MetadataCache, collectionID, fieldID string, session *sess.Session) error {
+	collections := MetadataRequest{}
+
+	if fieldID != "" {
+		err := collections.AddField(collectionID, fieldID, nil)
+		if err != nil {
+			return err
+		}
+	} else {
+		err := collections.AddCollection(collectionID)
+		if err != nil {
+			return err
+		}
+	}
+
+	return collections.Load(metadataResponse, session, nil)
+
+}
+
 // FieldsMap type a recursive type to store an arbitrary list of nested fields
 type FieldsMap map[string]FieldsMap
 

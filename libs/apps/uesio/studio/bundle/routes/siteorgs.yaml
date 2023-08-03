@@ -1,0 +1,5 @@
+name: siteorgs
+path: app/{app:\w*\/\w*}/site/{sitename}/organizations
+view: siteorgs
+theme: default
+title: Organizations

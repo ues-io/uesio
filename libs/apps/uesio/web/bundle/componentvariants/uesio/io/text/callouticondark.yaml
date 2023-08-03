@@ -1,8 +1,0 @@
-name: callouticondark
-extends: uesio/web.callouticon
-label: Callout Icon Dark
-definition:
-  uesio.styleTokens:
-    root:
-      - text-slate-500
-      - bg-slate-100

@@ -7,3 +7,4 @@ definition:
       - p-10
       - h-full
       - overflow-auto
+      - "[container-type:inline-size]"

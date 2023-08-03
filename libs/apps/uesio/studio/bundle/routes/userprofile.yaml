@@ -1,5 +1,5 @@
 name: userprofile
 path: myprofile
-view: uesio/studio.userprofile
-theme: uesio/studio.default
+view: userprofile
+theme: default
 title: My Profile

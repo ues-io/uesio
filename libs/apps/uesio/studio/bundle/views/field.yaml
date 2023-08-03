@@ -31,34 +31,12 @@ definition:
           valueSource: PARAM
           param: collectionname
     fields:
-      collection: uesio/studio.field
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.type:
-        uesio/studio.label:
-        uesio/studio.collection:
-        uesio/studio.reference:
-        uesio/studio.file:
-        uesio/studio.autopopulate:
-        uesio/studio.selectlist:
-        uesio/studio.validate:
-        uesio/studio.languagelabel:
-        uesio/studio.number:
-        uesio/studio.subfields:
-        uesio/studio.subtype:
-        uesio/studio.formula:
-        uesio/studio.autonumber:
+      collection: uesio/studio.allmetadata
       conditions:
-        - field: uesio/studio.collection
-          value: $Param{app}.$Param{collectionname}
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
-        - field: uesio/studio.name
-          valueSource: PARAM
-          param: fieldname
+        - field: uesio/studio.type
+          value: fields
+        - field: uesio/studio.item
+          value: $Param{namespace}.$Param{collectionname}:$Param{fieldNamespace}.$Param{fieldname}
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -74,9 +52,11 @@ definition:
                     params:
                       itemType: collections
                       itemIcon: list
-                      itemCollectionName: $Param{collectionname}
-                      subItemType: collections
+                      itemName: $Param{collectionname}
+                      itemNameSpace: $Param{namespace}
+                      subItemType: fields
                       subItemName: $Param{fieldname}
+                      subItemNameSpace: $Param{fieldNamespace}
           - uesio/io.griditem:
               uesio.variant: uesio/studio.leftbar
               components:
@@ -99,6 +79,12 @@ definition:
                           title: Field - ${uesio/studio.name}
                           actions:
                             - uesio/io.group:
+                                uesio.display:
+                                  - type: paramValue
+                                    param: app
+                                    field: uesio/core.dynamiccollection
+                                    operator: EQUALS
+                                    value: $Param{fieldNamespace}
                                 components:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
@@ -256,6 +242,11 @@ definition:
                                       components:
                                         - uesio/io.field:
                                             fieldId: uesio/studio.formula->uesio/studio.expression
+                                  - uesio/io.box:
+                                      uesio.display:
+                                        - field: uesio/studio.type
+                                          value: FORMULA
+                                      components:
                                         - uesio/io.field:
                                             fieldId: uesio/studio.formula->uesio/studio.returntype
                       - uesio/io.box:
@@ -320,7 +311,7 @@ definition:
                 wires:
                   - fields
               - signal: route/NAVIGATE
-                path: app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{collectionname}
+                path: app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{namespace}/$Param{collectionname}
         - uesio/io.button:
             text: $Label{uesio/io.cancel}
             uesio.variant: uesio/io.secondary

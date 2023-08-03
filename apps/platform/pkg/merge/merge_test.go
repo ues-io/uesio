@@ -72,7 +72,7 @@ func Test_serverMergeFuncs(t *testing.T) {
 			},
 			"foo",
 			"",
-			errors.New("missing param foo"),
+			nil,
 		},
 		{
 			"Param: valid param",

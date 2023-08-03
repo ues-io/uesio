@@ -1,4 +1,4 @@
-import { FC, DragEvent, useState } from "react"
+import { DragEvent, useState } from "react"
 import {
 	definition,
 	component,
@@ -56,15 +56,20 @@ type VariantsBlockProps = {
 	variants: component.ComponentVariant[]
 	isSelected: (itemtype: string, itemname: metadata.MetadataKey) => boolean
 	component: ComponentDef
-} & definition.UtilityProps
+}
 
-const StyleDefaults = Object.freeze({
+const VariantsBlockStyleDefaults = Object.freeze({
 	root: ["m-2", "flex", "flex-wrap", "gap-2"],
 })
 
-const VariantsBlock: FC<VariantsBlockProps> = (props) => {
+const VariantsBlock: definition.UtilityComponent<VariantsBlockProps> = (
+	props
+) => {
 	const { component: componentDef, context, variants, isSelected } = props
-	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
+	const classes = styles.useUtilityStyleTokens(
+		VariantsBlockStyleDefaults,
+		props
+	)
 
 	return (
 		<div className={classes.root}>
@@ -117,9 +122,11 @@ type ComponentBlockProps = {
 	componentDef: ComponentDef
 	variants: component.ComponentVariant[]
 	isSelected: (itemtype: string, itemname: metadata.MetadataKey) => boolean
-} & definition.UtilityProps
+}
 
-const ComponentBlock: FC<ComponentBlockProps> = (props) => {
+const ComponentBlock: definition.UtilityComponent<ComponentBlockProps> = (
+	props
+) => {
 	const IOExpandPanel = getUtility("uesio/io.expandpanel")
 	const { context, componentDef, variants, isSelected } = props
 	const { namespace, name } = componentDef
@@ -134,7 +141,6 @@ const ComponentBlock: FC<ComponentBlockProps> = (props) => {
 		(variant) => !!allNSInfo[variant.namespace]
 	)
 
-	// Loop over the variants for this component
 	return (
 		<PropNodeTag
 			context={context}
@@ -173,20 +179,24 @@ type CategoryBlockProps = {
 	variants: Record<string, component.ComponentVariant[]>
 	isSelected: (itemtype: string, itemname: metadata.MetadataKey) => boolean
 	category: string
-} & definition.UtilityProps
+}
 
-const CategoryBlock: FC<CategoryBlockProps> = (props) => {
+const CategoryBlockStyleDefaults = Object.freeze({
+	categoryLabel: [
+		"mx-2",
+		"mt-4",
+		"-mb-1",
+		"text-xs",
+		"font-light",
+		"text-slate-500",
+	],
+})
+
+const CategoryBlock: definition.UtilityComponent<CategoryBlockProps> = (
+	props
+) => {
 	const classes = styles.useUtilityStyleTokens(
-		{
-			categoryLabel: [
-				"mx-2",
-				"mt-4",
-				"-mb-1",
-				"text-xs",
-				"font-light",
-				"text-slate-500",
-			],
-		},
+		CategoryBlockStyleDefaults,
 		props
 	)
 	const { context, components, category, variants, isSelected } = props
@@ -220,9 +230,11 @@ const CategoryBlock: FC<CategoryBlockProps> = (props) => {
 
 type ComponentTagProps = {
 	component: ComponentDef
-} & definition.UtilityProps
+}
 
-const ComponentTag: FC<ComponentTagProps> = (props) => {
+const ComponentTag: definition.UtilityComponent<ComponentTagProps> = (
+	props
+) => {
 	const { context, component } = props
 
 	const nsInfo = getBuilderNamespace(
@@ -242,6 +254,8 @@ const ComponentTag: FC<ComponentTagProps> = (props) => {
 		</ItemTag>
 	)
 }
+
+const CURSOR_GRABBING = "cursor-grabbing"
 
 const ComponentsPanel: definition.UC = (props) => {
 	const ScrollPanel = getUtility("uesio/io.scrollpanel")
@@ -269,11 +283,17 @@ const ComponentsPanel: definition.UC = (props) => {
 			if (metadataType && metadataItem) {
 				setDragPath(context, new FullPath(metadataType, metadataItem))
 			}
+			target.classList.remove(CURSOR_GRABBING)
+			target.classList.add(CURSOR_GRABBING)
 		}
 	}
-	const onDragEnd = () => {
+	const onDragEnd = (e: DragEvent) => {
 		setDragPath(context)
 		setDropPath(context)
+		const target = e.target as HTMLDivElement
+		if (target?.classList?.length) {
+			target.classList.remove(CURSOR_GRABBING)
+		}
 	}
 
 	const categoryOrder = [

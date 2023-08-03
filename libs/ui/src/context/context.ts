@@ -319,17 +319,21 @@ class Context {
 				wireId ? frame.type === "RECORD" && frame.wire === wireId : true
 			)
 
-		if (undefined === recordFrame) {
-			return undefined
-		}
-		if (recordFrame.type === "RECORD_DATA") {
+		if (recordFrame?.type === "RECORD_DATA") {
 			return new WireRecord(recordFrame.recordData, "", new Wire())
 		}
 
 		const wire = this.getWire(wireId)
-		return wire && recordFrame.record
-			? wire.getRecord(recordFrame.record)
-			: undefined
+
+		if (!wire) return undefined
+
+		// If we've got a recordFrame with a record already, return the associated record
+		if (recordFrame?.record) {
+			return wire.getRecord(recordFrame.record)
+		}
+
+		// Otherwise, the best we can do is to get the first record in the wire
+		return wire.getFirstRecord()
 	}
 
 	getViewAndWireId = (
@@ -634,4 +638,16 @@ export {
 
 export { Context }
 
-export type { ContextFrame, FieldMode, ContextOptions }
+export type {
+	ComponentContext,
+	ContextFrame,
+	ContextOptions,
+	ErrorContext,
+	FieldMode,
+	FieldModeContext,
+	RecordContext,
+	RecordDataContext,
+	RouteContext,
+	SignalOutputContext,
+	ViewContext,
+}

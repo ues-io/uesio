@@ -20,6 +20,8 @@ const MultiPermissionPicker: definition.UC<MultiPermissionPickerDefinition> = (
 	props
 ) => {
 	const ID_FIELD = "uesio/core.id"
+	const NAME_FIELD = "uesio/studio.name"
+	const NAMESPACE_FIELD = "uesio/studio.namespace"
 	const {
 		context,
 		path,
@@ -61,7 +63,7 @@ const MultiPermissionPicker: definition.UC<MultiPermissionPickerDefinition> = (
 			string,
 			boolean
 		>
-
+		const [namespace, name] = component.path.parseKey(recordId)
 		const itemPerms = {} as Record<string, wire.PlainFieldValue>
 		// ensure all perm fields are set with a default
 		permissionFields.forEach(({ name, type }) => {
@@ -84,6 +86,8 @@ const MultiPermissionPicker: definition.UC<MultiPermissionPickerDefinition> = (
 			}
 		})
 		itemPerms[ID_FIELD] = recordId
+		itemPerms[NAME_FIELD] = name
+		itemPerms[NAMESPACE_FIELD] = namespace
 
 		return itemPerms
 	}
@@ -110,7 +114,9 @@ const MultiPermissionPicker: definition.UC<MultiPermissionPickerDefinition> = (
 
 	const getInitialValues = itemsData.reduce((acc, record) => {
 		const itemName =
-			workspaceContext.app + "." + record.getFieldValue(nameNameField)
+			record.getFieldValue("uesio/studio.namespace") +
+			"." +
+			record.getFieldValue(nameNameField)
 		return {
 			...acc,
 			[itemName]: getPermRecord(itemName),
@@ -122,6 +128,16 @@ const MultiPermissionPicker: definition.UC<MultiPermissionPickerDefinition> = (
 			name: ID_FIELD,
 			type: "TEXT",
 			label: collection.getLabel(),
+		},
+		{
+			name: NAME_FIELD,
+			type: "TEXT",
+			label: "Name",
+		},
+		{
+			name: NAMESPACE_FIELD,
+			type: "TEXT",
+			label: "Namespace",
 		},
 	].concat(permissionFields)
 
@@ -136,7 +152,12 @@ const MultiPermissionPicker: definition.UC<MultiPermissionPickerDefinition> = (
 				[field.name]: field,
 			}))}
 			columns={tableFields
-				.filter((field) => field.type !== "MAP")
+				.filter(
+					(field) =>
+						field.type !== "MAP" &&
+						field.name !== NAME_FIELD &&
+						field.name !== NAMESPACE_FIELD
+				)
 				.map((field) => ({
 					field: field.name,
 				}))}

@@ -2,6 +2,7 @@ import { component, definition, api, wire } from "@uesio/ui"
 
 type ComponentDefinition = {
 	collectionWire: string
+	collectionId: string
 	fieldWire: string
 	targetTableId?: string
 }
@@ -9,10 +10,6 @@ type ComponentDefinition = {
 type SuggestedField = {
 	label: string
 	type: string
-}
-
-type ValueConditionState = {
-	value: string
 }
 
 type NumberFieldMetadata = {
@@ -125,6 +122,7 @@ const SuggestedFields: definition.UC<ComponentDefinition> = (props) => {
 		context,
 		definition: {
 			collectionWire: collectionWireName,
+			collectionId: collectionId,
 			fieldWire: fieldWireName,
 			targetTableId,
 		},
@@ -144,10 +142,7 @@ const SuggestedFields: definition.UC<ComponentDefinition> = (props) => {
 	const pluralLabel = (targetCollection?.getFieldValue(
 		"uesio/studio.plurallabel"
 	) || "") as string
-	const targetCollectionName = context.mergeString(
-		(fieldWire?.getCondition("fullCollectionName") as ValueConditionState)
-			.value
-	)
+	const targetCollectionName = context.mergeString(collectionId)
 	return (
 		<SuggestDataButton
 			context={context}

@@ -55,8 +55,16 @@ const StyleDefaults = Object.freeze({
 const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
 	props
 ) => {
-	const { setValue, value, language, options, onMount, context, theme } =
-		props
+	const {
+		setValue,
+		value,
+		language,
+		options,
+		onMount,
+		context,
+		theme,
+		mode,
+	} = props
 	const [loading, setLoading] = useState(true)
 	const [loadingError, setLoadingError] = useState("")
 	const typeDefinitionFileURIs = preprocessTypeFileURIs(
@@ -152,6 +160,7 @@ const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
 				options={{
 					scrollBeyondLastLine: false,
 					automaticLayout: true,
+					readOnly: mode === "READ",
 					minimap: {
 						enabled: false,
 					},

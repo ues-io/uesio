@@ -16,21 +16,25 @@ type SaveRequestBatch struct {
 }
 
 type SaveRequest struct {
-	Collection string             `json:"collection"`
-	Wire       string             `json:"wire"`
-	Changes    meta.Group         `json:"changes"`
-	Deletes    meta.Group         `json:"deletes"`
-	Errors     []adapt.SaveError  `json:"errors"`
-	Options    *adapt.SaveOptions `json:"options"`
+	Collection string                       `json:"collection"`
+	Wire       string                       `json:"wire"`
+	Changes    meta.Group                   `json:"changes"`
+	Deletes    meta.Group                   `json:"deletes"`
+	Errors     []adapt.SaveError            `json:"errors"`
+	Options    *adapt.SaveOptions           `json:"options"`
+	Conditions []adapt.LoadRequestCondition `json:"conditions"`
+	Params     map[string]string            `json:"params"`
 }
 
 type SaveRequestImpl struct {
-	Collection string               `json:"collection"`
-	Wire       string               `json:"wire"`
-	Changes    *adapt.CollectionMap `json:"changes"`
-	Deletes    *adapt.CollectionMap `json:"deletes"`
-	Errors     []adapt.SaveError    `json:"errors"`
-	Options    *adapt.SaveOptions   `json:"options"`
+	Collection string                       `json:"collection"`
+	Wire       string                       `json:"wire"`
+	Changes    *adapt.CollectionMap         `json:"changes"`
+	Deletes    *adapt.CollectionMap         `json:"deletes"`
+	Errors     []adapt.SaveError            `json:"errors"`
+	Options    *adapt.SaveOptions           `json:"options"`
+	Conditions []adapt.LoadRequestCondition `json:"conditions"`
+	Params     map[string]string            `json:"params"`
 }
 
 func (sr *SaveRequest) UnmarshalJSON(b []byte) error {
@@ -46,6 +50,8 @@ func (sr *SaveRequest) UnmarshalJSON(b []byte) error {
 	sr.Deletes = data.Deletes
 	sr.Errors = data.Errors
 	sr.Options = data.Options
+	sr.Conditions = data.Conditions
+	sr.Params = data.Params
 	return nil
 }
 
@@ -69,6 +75,9 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 		metadataResponse = options.Metadata
 	}
 
+	// Get an admin session to use for fetching metadata only
+	adminSession := GetSiteAdminSession(session)
+
 	// Loop over the requests and batch per data source
 	for index := range requests {
 
@@ -76,18 +85,7 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 
 		collectionKey := request.Collection
 
-		// Keep a running tally of all requested collections
-		collections := MetadataRequest{
-			Options: &MetadataRequestOptions{
-				LoadAllFields: true,
-			},
-		}
-		err := collections.AddCollection(collectionKey)
-		if err != nil {
-			return err
-		}
-
-		err = collections.Load(metadataResponse, session, nil)
+		err := GetFullMetadataForCollection(metadataResponse, collectionKey, adminSession)
 		if err != nil {
 			return err
 		}
@@ -109,17 +107,6 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 
 	hasExistingConnection := options.Connection != nil
 
-	// Get all the user access tokens that we'll need for this request
-	// TODO:
-	// Finally check for record level permissions and ability to do the save.
-	err := GenerateUserAccessTokens(metadataResponse, &LoadOptions{
-		Metadata:   metadataResponse,
-		Connection: options.Connection,
-	}, session)
-	if err != nil {
-		return err
-	}
-
 	// 3. Get metadata for each datasource and collection
 
 	connection, err := GetConnection(meta.PLATFORM_DATA_SOURCE, metadataResponse, session, options.Connection)
@@ -134,7 +121,7 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 		}
 	}
 
-	err = applyBatches(meta.PLATFORM_DATA_SOURCE, allOps, connection, session)
+	err = SaveOp(allOps, connection, session)
 	if err != nil {
 		if !hasExistingConnection {
 			err := connection.RollbackTransaction()
@@ -163,14 +150,36 @@ func HandleErrorAndAddToSaveOp(op *adapt.SaveOp, err error) *adapt.SaveError {
 	return saveError
 }
 
-func applyBatches(dsKey string, batch []*adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func SaveOp(batch []*adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+	dsKey := meta.PLATFORM_DATA_SOURCE
+	// Get all the user access tokens that we'll need for this request
+	// TODO:
+	// Finally check for record level permissions and ability to do the save.
+	err := GenerateUserAccessTokens(connection, session)
+	if err != nil {
+		return err
+	}
 
 	for _, op := range batch {
 
-		permissions := session.GetContextPermissions()
 		collectionKey := op.Metadata.GetFullName()
 
-		err := adapt.FetchReferences(connection, op, session)
+		err := processConditions(collectionKey, op.Conditions, op.Params, connection.GetMetadata(), nil, session)
+		if err != nil {
+			return err
+		}
+
+		if op.Metadata.Type == "DYNAMIC" {
+			err := runDynamicCollectionSaveBots(op, connection, session)
+			if err != nil {
+				return HandleErrorAndAddToSaveOp(op, err)
+			}
+			continue
+		}
+
+		permissions := session.GetContextPermissions()
+
+		err = adapt.FetchReferences(connection, op, session)
 		if err != nil {
 			return HandleErrorAndAddToSaveOp(op, err)
 		}

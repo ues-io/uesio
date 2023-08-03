@@ -1,4 +1,3 @@
-import { FunctionComponent } from "react"
 import { definition, styles, context, collection, wire } from "@uesio/ui"
 import { ApplyChanges } from "../../components/field/field"
 import { useControlledInputNumber } from "../../shared/useControlledFieldValue"
@@ -10,7 +9,7 @@ export type NumberFieldOptions = {
 	min?: number
 }
 
-interface NumberFieldProps extends definition.UtilityProps {
+interface NumberFieldProps {
 	applyChanges?: ApplyChanges
 	setValue: (value: wire.FieldValue) => void
 	value: wire.FieldValue
@@ -29,7 +28,7 @@ const StyleDefaults = Object.freeze({
 	rangevalue: ["p-2"],
 })
 
-const NumberField: FunctionComponent<NumberFieldProps> = (props) => {
+const NumberField: definition.UtilityComponent<NumberFieldProps> = (props) => {
 	const {
 		mode,
 		placeholder,
@@ -41,6 +40,7 @@ const NumberField: FunctionComponent<NumberFieldProps> = (props) => {
 		setValue,
 		type = "number",
 		focusOnRender = false,
+		applyChanges,
 	} = props
 
 	const value = props.value as number | string
@@ -48,7 +48,11 @@ const NumberField: FunctionComponent<NumberFieldProps> = (props) => {
 	const numberOptions = fieldMetadata?.getNumberMetadata()
 	const decimals = numberOptions?.decimals || 2
 
-	const controlledInputProps = useControlledInputNumber(value, setValue)
+	const controlledInputProps = useControlledInputNumber(
+		value,
+		setValue,
+		applyChanges
+	)
 
 	const classes = styles.useUtilityStyleTokens(
 		StyleDefaults,
