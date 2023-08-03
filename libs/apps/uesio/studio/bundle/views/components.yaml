@@ -15,7 +15,7 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     components:
-      collection: uesio/studio.allmetadata
+      collection: uesio/studio.component
       conditions:
         - field: uesio/studio.type
           value: components
