@@ -64,7 +64,7 @@ const ReferenceFilter: definition.UtilityComponent<ReferenceFilterProps> = (
 			returnFields,
 			searchFields
 		),
-		searchFields: searchFields,
+		searchFields,
 		conditions: filterConditions,
 		order,
 	} as ReferenceFieldOptions

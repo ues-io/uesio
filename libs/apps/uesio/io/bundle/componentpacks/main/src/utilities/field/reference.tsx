@@ -82,7 +82,7 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 				/>
 			)
 		}
-		if (options?.template && options?.template != "") {
+		if (options?.template && options?.template !== "") {
 			return context
 				.addRecordDataFrame(item)
 				.mergeString(options.template)

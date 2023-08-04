@@ -14,7 +14,6 @@ import GroupFilter, {
 	GroupFilterProps,
 } from "../../utilities/groupfilter/groupfilter"
 import { LabelPosition } from "../field/field"
-import { OrderState } from "libs/ui/src/bands/wire/types"
 
 type FilterDefinition = {
 	fieldId: string
@@ -30,7 +29,7 @@ type FilterDefinition = {
 	filterConditions?: wire.WireConditionState[]
 	returnFields?: string[]
 	searchFields?: string[]
-	order?: OrderState[]
+	order?: wire.OrderState[]
 }
 
 type CommonProps = {
