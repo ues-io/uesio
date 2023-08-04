@@ -6,6 +6,7 @@ params:
     prompt: Component Pack Name
     type: METADATANAME
     default: main
+    required: true
   - name: name
     prompt: Component Name
     type: METADATANAME

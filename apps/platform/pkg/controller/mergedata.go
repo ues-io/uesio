@@ -2,12 +2,13 @@ package controller
 
 import (
 	"fmt"
-	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 
@@ -243,6 +244,12 @@ func GetSiteMergeData(site *meta.Site) *routing.SiteMergeData {
 }
 
 func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *routing.PreloadMetadata, buildMode bool, session *sess.Session) {
+
+	// #2783 Prevent 3rd party sites from iframing Uesio
+	// Add a content security policy header to prevent any other sites from iframing this site
+	// TODO: make this configurable by site (see issue #2782)
+	w.Header().Set("content-security-policy", "frame-ancestors 'none';")
+
 	w.Header().Set("content-type", "text/html")
 
 	site := session.GetSite()

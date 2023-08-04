@@ -11,6 +11,23 @@ definition:
 
 const shouldTestCases = [
 	{
+		type: "invalid condition",
+		tests: [
+			{
+				name: "no condition provided",
+				condition: undefined,
+				context: new Context(),
+				expected: true,
+			},
+			{
+				name: "not an object",
+				condition: "",
+				context: new Context(),
+				expected: true,
+			},
+		],
+	},
+	{
 		type: "paramIsSet",
 		tests: [
 			{
