@@ -18,6 +18,19 @@ properties:
     wireProperty: wire
     fieldProperty: fieldId
     metadataProperty: type
+    onChange:
+      - updates:
+          - field: displayTemplate
+          - field: returnFields
+          - field: searchFields
+          - field: order
+        conditions:
+          - type: fieldValue
+            field: fieldDisplayType
+            operator: NOT_IN
+            values:
+              - REFERENCE
+              - USER
   - name: wire
     label: Wire
     type: WIRE
@@ -36,6 +49,15 @@ properties:
     displayConditions:
       - type: hasNoValue
         value: ${conditionId}
+    onChange:
+      - updates:
+          - field: displayTemplate
+          - field: returnFields
+          - field: searchFields
+          - field: order
+        conditions:
+          - type: hasNoValue
+            field: fieldId
   - name: operator
     type: SELECT
     label: Condition Operator
@@ -107,6 +129,59 @@ properties:
           - TEXT
           - LONGTEXT
           - EMAIL
+  - name: displayTemplate
+    label: Display Template
+    type: TEXT
+    displayConditions:
+      - type: fieldValue
+        field: fieldDisplayType
+        operator: IN
+        values:
+          - USER
+          - REFERENCE
+  - name: returnFields
+    label: Return Fields
+    type: LIST
+    subtype: TEXT
+    displayConditions:
+      - type: fieldValue
+        field: fieldDisplayType
+        operator: IN
+        values:
+          - USER
+          - REFERENCE
+  - name: searchFields
+    label: Search Fields
+    type: LIST
+    subtype: TEXT
+    displayConditions:
+      - type: fieldValue
+        field: fieldDisplayType
+        operator: IN
+        values:
+          - USER
+          - REFERENCE
+  - name: order
+    type: LIST
+    subtype: STRUCT
+    items:
+      addLabel: Add Search Order
+      displayTemplate: "${field} - ${desc}"
+      title: Search Order
+      properties:
+        - name: field
+          type: TEXT
+          label: Order Field
+        - name: desc
+          type: CHECKBOX
+          label: Descending
+    displayConditions:
+      - type: fieldValue
+        field: fieldDisplayType
+        operator: IN
+        values:
+          - USER
+          - REFERENCE
 sections:
   - type: HOME
     properties:
@@ -119,5 +194,9 @@ sections:
       - label
       - labelPosition
       - placeholder
+      - displayTemplate
+      - returnFields
+      - searchFields
+      - order
   - type: STYLES
   - type: DISPLAY

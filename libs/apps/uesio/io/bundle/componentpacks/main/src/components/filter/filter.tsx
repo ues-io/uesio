@@ -14,6 +14,7 @@ import GroupFilter, {
 	GroupFilterProps,
 } from "../../utilities/groupfilter/groupfilter"
 import { LabelPosition } from "../field/field"
+import { OrderState } from "libs/ui/src/bands/wire/types"
 
 type FilterDefinition = {
 	fieldId: string
@@ -25,6 +26,11 @@ type FilterDefinition = {
 	conditionId?: string
 	placeholder?: string
 	operator: wire.ConditionOperators
+	displayTemplate?: string
+	filterConditions?: wire.WireConditionState[]
+	returnFields?: string[]
+	searchFields?: string[]
+	order?: OrderState[]
 }
 
 type CommonProps = {
@@ -42,7 +48,22 @@ const getFilterContent = (
 	common: CommonProps,
 	definition: FilterDefinition
 ) => {
-	const { displayAs, placeholder } = definition
+	const {
+		displayAs,
+		placeholder,
+		displayTemplate,
+		filterConditions,
+		returnFields,
+		searchFields,
+		order,
+	} = definition
+	const reference = {
+		displayTemplate,
+		filterConditions,
+		returnFields,
+		searchFields,
+		order,
+	}
 	const fieldMetadata = common.fieldMetadata
 	const type = fieldMetadata.getType()
 	switch (type) {
@@ -67,7 +88,7 @@ const getFilterContent = (
 		}
 		case "USER":
 		case "REFERENCE": {
-			return <ReferenceFilter {...common} />
+			return <ReferenceFilter {...common} {...reference} />
 		}
 		default:
 			return null
@@ -131,7 +152,6 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 	const { fieldId, conditionId, operator, displayAs } = definition
 	const wire = api.wire.useWire(definition.wire, context)
 	if (!wire) return null
-
 	const collection = wire.getCollection()
 	const existingCondition =
 		wire.getCondition(conditionId || path) || undefined

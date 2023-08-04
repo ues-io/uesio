@@ -5,6 +5,7 @@ import {
 	definition,
 	context,
 	component,
+	metadata,
 } from "@uesio/ui"
 
 import debounce from "lodash/debounce"
@@ -15,6 +16,7 @@ import ReadOnlyField from "./readonly"
 export type ReferenceFieldOptions = {
 	searchFields?: string[]
 	returnFields?: string[]
+	order?: wire.OrderState[]
 	components?: definition.DefinitionList
 	template?: string
 	requirewriteaccess?: boolean
@@ -80,10 +82,10 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 				/>
 			)
 		}
-		if (options?.template) {
+		if (options?.template && options?.template != "") {
 			return context
 				.addRecordDataFrame(item)
-				.mergeString(options?.template)
+				.mergeString(options.template)
 		}
 		return (
 			item[nameField] ||
@@ -96,6 +98,12 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 		if (!wire) return
 		const searchFields = options?.searchFields || [nameField]
 		const returnFields = options?.returnFields || [nameField]
+		const order = options?.order || [
+			{
+				field: nameField as metadata.MetadataKey,
+				desc: false,
+			},
+		]
 
 		// Loop over the conditions and merge their values
 		const conditions: wire.WireConditionState[] = (
@@ -132,6 +140,7 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 						},
 					],
 					requirewriteaccess: options?.requirewriteaccess,
+					order,
 				},
 			],
 		})
