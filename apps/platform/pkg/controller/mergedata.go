@@ -37,6 +37,7 @@ func init() {
 	cssPath := filepath.Join(baseDir, "..", "..", "dist", "vendor", "fonts", "fonts.css")
 	indexTemplate = template.Must(template.New("index.gohtml").Funcs(template.FuncMap{
 		"getComponentPackURLs": getComponentPackURLs,
+		"getFontURL":           file.GetFontURL,
 	}).ParseFiles(indexPath, cssPath))
 }
 
@@ -263,6 +264,7 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 	}
 
 	vendorScriptUrls := file.GetVendorScriptUrls()
+	preloadFontUrls := file.GetPreloadFontUrls()
 
 	mergeData := routing.MergeData{
 		Route:               routingMergeData,
@@ -281,6 +283,17 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 	// for _, script := range vendorScriptUrls {
 	// 	w.Header().Add("Link", fmt.Sprintf("<%s>; rel=preload; as=script", script))
 	// }
+
+	// Initiate early preloads of all static fonts
+	for _, fontUrl := range preloadFontUrls {
+		w.Header().Add("Link", fmt.Sprintf("<%s>; rel=preload; as=font; crossorigin=true", fontUrl))
+	}
+	// TODO: Initiate preloads of static files, using their MIME Type
+	//if preload.StaticFile != nil && preload.StaticFile.Len() > 0 {
+	//	for _, fileDep := range preload.StaticFile.GetItems() {
+	//		w.Header().Add("Link", fmt.Sprintf("<%s>; rel=preload; as=image", ))
+	//	}
+	//}
 
 	err = indexTemplate.Execute(w, mergeData)
 	if err != nil {
