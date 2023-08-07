@@ -141,8 +141,7 @@ func querySite(value, field string, connection adapt.Connection) (*meta.Site, er
 	err := PlatformLoadOne(
 		&s,
 		&PlatformLoadOptions{
-			Connection:         connection,
-			RequireWriteAccess: true,
+			Connection: connection,
 			Fields: []adapt.LoadRequestField{
 				{
 					ID: adapt.ID_FIELD,
