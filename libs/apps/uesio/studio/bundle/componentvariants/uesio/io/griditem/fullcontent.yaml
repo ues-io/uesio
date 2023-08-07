@@ -1,0 +1,9 @@
+name: fullcontent
+label: Full Content
+definition:
+  uesio.styleTokens:
+    root:
+      - bg-slate-50
+      - p-10
+      - h-full
+      - w-screen

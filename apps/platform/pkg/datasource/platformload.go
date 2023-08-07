@@ -11,12 +11,13 @@ import (
 )
 
 type PlatformLoadOptions struct {
-	Conditions []adapt.LoadRequestCondition
-	Fields     []adapt.LoadRequestField
-	Orders     []adapt.LoadRequestOrder
-	Connection adapt.Connection
-	BatchSize  int
-	LoadAll    bool
+	Conditions         []adapt.LoadRequestCondition
+	Fields             []adapt.LoadRequestField
+	Orders             []adapt.LoadRequestOrder
+	Connection         adapt.Connection
+	BatchSize          int
+	LoadAll            bool
+	RequireWriteAccess bool
 }
 
 func (plo *PlatformLoadOptions) GetConditionsDebug() string {
@@ -59,14 +60,15 @@ func PlatformLoad(group meta.CollectionableGroup, options *PlatformLoadOptions, 
 		fields = GetLoadRequestFields(group.GetFields())
 	}
 	return doPlatformLoad(&adapt.LoadOp{
-		WireName:       group.GetName() + "Wire",
-		CollectionName: group.GetName(),
-		Collection:     group,
-		Conditions:     options.Conditions,
-		Fields:         fields,
-		Order:          options.Orders,
-		Query:          true,
-		BatchSize:      options.BatchSize,
+		WireName:           group.GetName() + "Wire",
+		CollectionName:     group.GetName(),
+		Collection:         group,
+		Conditions:         options.Conditions,
+		Fields:             fields,
+		Order:              options.Orders,
+		Query:              true,
+		BatchSize:          options.BatchSize,
+		RequireWriteAccess: options.RequireWriteAccess,
 	}, options, session)
 }
 

@@ -3,6 +3,7 @@ definition:
   # Wires are how we pull in data
   wires:
     apps:
+      requirewriteaccess: true
       collection: uesio/studio.app
       fields:
         uesio/core.id:

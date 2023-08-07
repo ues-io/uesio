@@ -66,6 +66,32 @@ func addSiteAdminContext(siteadmin *meta.Site, session *sess.Session, connection
 	}) {
 		return errors.New("your profile does not allow you to administer sites")
 	}
+	// 3. we should have edit access to the app related with the site
+	var app meta.App
+	err := PlatformLoadOne(
+		&app,
+		&PlatformLoadOptions{
+			RequireWriteAccess: true,
+			Fields: []adapt.LoadRequestField{
+				{
+					ID: adapt.ID_FIELD,
+				},
+				{
+					ID: adapt.UNIQUE_KEY_FIELD,
+				},
+			},
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field: adapt.ID_FIELD,
+					Value: site.App.ID,
+				},
+			},
+		},
+		session,
+	)
+	if err != nil {
+		return errors.New("your profile does not allow you to administer the site: " + site.GetFullName())
+	}
 
 	siteadmin.Domain = site.Domain
 	siteadmin.Subdomain = site.Subdomain
@@ -115,7 +141,8 @@ func querySite(value, field string, connection adapt.Connection) (*meta.Site, er
 	err := PlatformLoadOne(
 		&s,
 		&PlatformLoadOptions{
-			Connection: connection,
+			Connection:         connection,
+			RequireWriteAccess: true,
 			Fields: []adapt.LoadRequestField{
 				{
 					ID: adapt.ID_FIELD,

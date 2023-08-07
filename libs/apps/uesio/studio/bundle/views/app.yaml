@@ -3,6 +3,7 @@ definition:
   # Wires are how we pull in data
   wires:
     apps:
+      requirewriteaccess: true
       collection: uesio/studio.app
       fields:
         uesio/core.id:
@@ -89,6 +90,9 @@ definition:
                       wire: apps
           - uesio/io.griditem:
               uesio.variant: uesio/studio.leftbar
+              uesio.display:
+                - type: wireHasRecords
+                  wire: apps
               components:
                 - uesio/core.view:
                     uesio.id: appnavview
@@ -99,6 +103,9 @@ definition:
                       app: $Param{app}
           - uesio/io.griditem:
               uesio.variant: uesio/studio.content
+              uesio.display:
+                - type: wireHasRecords
+                  wire: apps
               components:
                 - uesio/io.list:
                     wire: apps
@@ -129,6 +136,8 @@ definition:
                     uesio.display:
                       - type: wireHasNoRecords
                         wire: workspaces
+                      - type: wireHasRecords
+                        wire: apps
                     components:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.section
@@ -223,6 +232,45 @@ definition:
                                       uesio.variant: uesio/io.icon
                                       color: "#ccc"
                                       text: groups
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.fullcontent
+              uesio.display:
+                - type: wireHasNoRecords
+                  wire: apps
+              components:
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.grid:
+                          uesio.variant: uesio/io.center
+                          uesio.styleTokens:
+                            root:
+                              - text-center
+                              - text-slate-700
+                          items:
+                            - uesio/io.text:
+                                text: "⛔️"
+                                uesio.styleTokens:
+                                  root:
+                                    - text-8xl
+                                element: div
+                            - uesio/io.text:
+                                text: This app is not opening correctly
+                                uesio.styleTokens:
+                                  root:
+                                    - text-6xl
+                                element: div
+                            - uesio/io.text:
+                                text: It looks like you don't have access to this app. Ask its owner to share it with you!
+                                uesio.styleTokens:
+                                  root:
+                                    - text-xl
+                                element: div
+                            - uesio/io.button:
+                                text: HOME PAGE
+                                signals:
+                                  - signal: route/NAVIGATE
+                                    path: home
   panels:
     deleteApp:
       uesio.type: uesio/io.dialog
