@@ -3,6 +3,7 @@ package meta
 import (
 	"errors"
 	"fmt"
+	"github.com/francoispqt/gojay"
 	"path/filepath"
 
 	"gopkg.in/yaml.v3"
@@ -27,6 +28,22 @@ type File struct {
 }
 
 type FileWrapper File
+
+func (f *File) GetBytes() ([]byte, error) {
+	return gojay.MarshalJSONObject(f)
+}
+
+func (f *File) IsNil() bool {
+	return f == nil
+}
+
+func (f *File) MarshalJSONObject(enc *gojay.Encoder) {
+	enc.AddStringKey("namespace", f.Namespace)
+	enc.AddStringKey("name", f.Name)
+	if f.UpdatedAt > 0 {
+		enc.AddInt64Key("updatedAt", f.UpdatedAt)
+	}
+}
 
 func (f *File) GetCollectionName() string {
 	return FILE_COLLECTION_NAME
