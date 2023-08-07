@@ -76,6 +76,14 @@ func (op *SaveOp) LoopDeletes(changeFunc func(change *ChangeItem) error) error {
 	return nil
 }
 
+func (op *SaveOp) HasChanges() bool {
+	return len(op.Updates)+len(op.Inserts) > 0
+}
+
+func (op *SaveOp) HasDeletes() bool {
+	return len(op.Deletes) > 0
+}
+
 func (op *SaveOp) LoopChanges(changeFunc func(change *ChangeItem) error) error {
 	err := op.LoopInserts(changeFunc)
 	if err != nil {

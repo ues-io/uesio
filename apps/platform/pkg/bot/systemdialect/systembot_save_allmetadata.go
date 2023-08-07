@@ -8,14 +8,14 @@ import (
 
 func runStudioMetadataSaveBot(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 
-	inContextSession, err := getContextSessionFromParams(op.Params, connection, session)
+	workspaceID, err := GetWorkspaceIDFromParams(op.Params, connection, session)
 	if err != nil {
 		return err
 	}
 
 	err = op.LoopChanges(func(change *adapt.ChangeItem) error {
 		return change.SetField("uesio/studio.workspace", &adapt.Item{
-			adapt.ID_FIELD: inContextSession.GetWorkspaceID(),
+			adapt.ID_FIELD: workspaceID,
 		})
 	})
 	if err != nil {

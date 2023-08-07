@@ -108,7 +108,8 @@ func getCascadeDeletes(
 							Operator: "IN",
 						},
 					},
-					Query: true,
+					Query:  true,
+					Params: wire.Params,
 				}
 
 				err := connection.Load(op, session)
@@ -173,6 +174,7 @@ func performCascadeDeletes(op *adapt.SaveOp, connection adapt.Connection, sessio
 				Options: &adapt.SaveOptions{
 					IgnoreMissingRecords: true,
 				},
+				Params: op.Params,
 			})
 		}
 	}

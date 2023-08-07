@@ -83,6 +83,8 @@ func (b *SystemDialect) AfterSave(bot *meta.Bot, request *adapt.SaveOp, connecti
 		botFunction = runLicenseAfterSaveBot
 	case "uesio/studio.bot":
 		botFunction = runBotAfterSaveBot
+	case "uesio/studio.app":
+		botFunction = runAppAfterSaveBot
 	}
 
 	if botFunction == nil {

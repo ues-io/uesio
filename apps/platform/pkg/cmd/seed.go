@@ -75,6 +75,9 @@ func runSeeds(connection adapt.Connection) error {
 
 	// After migration, let's get a session with the system user since we have it now.
 	session, err := auth.GetStudioSystemSession(connection)
+	if err != nil {
+		return err
+	}
 	permissions := session.GetPermissions()
 	permissions.NamedRefs = map[string]bool{
 		"uesio/studio.workspace_admin": true,

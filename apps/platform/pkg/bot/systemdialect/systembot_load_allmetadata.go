@@ -31,7 +31,23 @@ func extractConditionByType(conditions []adapt.LoadRequestCondition, conditionTy
 	return nil
 }
 
+func GetWorkspaceIDFromParams(params map[string]string, connection adapt.Connection, session *sess.Session) (string, error) {
+	workspaceid := params["workspaceid"]
+	if workspaceid != "" {
+		return workspaceid, nil
+	}
+	inContextSession, err := getContextSessionFromParams(params, connection, session)
+	if err != nil {
+		return "", err
+	}
+	return inContextSession.GetWorkspaceID(), nil
+}
+
 func getContextSessionFromParams(params map[string]string, connection adapt.Connection, session *sess.Session) (*sess.Session, error) {
+
+	//This creates a copy of the session
+	inContextSession := session.RemoveWorkspaceContext()
+
 	workspace := params["workspacename"]
 	site := params["sitename"]
 	if workspace == "" && site == "" {
@@ -41,9 +57,6 @@ func getContextSessionFromParams(params map[string]string, connection adapt.Conn
 	if app == "" {
 		return nil, errors.New("no app parameter provided")
 	}
-
-	//This creates a copy of the session
-	inContextSession := session.RemoveWorkspaceContext()
 
 	if workspace != "" {
 		workspaceKey := fmt.Sprintf("%s:%s", app, workspace)
@@ -71,89 +84,23 @@ func runStudioMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 		return runAllMetadataLoadBot(op.CollectionName, op, connection, session)
 	}
 
+	workspaceID, err := GetWorkspaceIDFromParams(op.Params, connection, session)
+	if err != nil {
+		return err
+	}
+
 	itemCondition := extractConditionByField(op.Conditions, "uesio/studio.item")
 	groupingCondition := extractConditionByField(op.Conditions, "uesio/studio.grouping")
 	if itemCondition != nil || groupingCondition != nil {
 		return errors.New("item or grouping conditions are not allowed unless the allmetadata condition is set")
 	}
 
-	inContextSession, err := getContextSessionFromParams(op.Params, connection, session)
-	if err != nil {
-		return err
-	}
-
 	op.Conditions = append(op.Conditions, adapt.LoadRequestCondition{
 		Field: "uesio/studio.workspace",
-		Value: inContextSession.GetWorkspaceID(),
+		Value: workspaceID,
 	})
 
-	metadata := connection.GetMetadata()
-
-	collectionMetadata, err := metadata.GetCollection(op.CollectionName)
-	if err != nil {
-		return err
-	}
-
-	// Add all the fields
-	for _, field := range collectionMetadata.Fields {
-		op.Fields = append(op.Fields, adapt.LoadRequestField{
-			ID: field.GetFullName(),
-		})
-	}
-
-	collectionMetadata.SetField(&adapt.FieldMetadata{
-		Name:       "namespace",
-		Namespace:  "uesio/studio",
-		Createable: false,
-		Accessible: true,
-		Updateable: false,
-		Type:       "TEXT",
-		Label:      "Namespace",
-	})
-
-	collectionMetadata.SetField(&adapt.FieldMetadata{
-		Name:       "appicon",
-		Namespace:  "uesio/studio",
-		Createable: false,
-		Accessible: true,
-		Updateable: false,
-		Type:       "TEXT",
-		Label:      "App Icon",
-	})
-
-	collectionMetadata.SetField(&adapt.FieldMetadata{
-		Name:       "appcolor",
-		Namespace:  "uesio/studio",
-		Createable: false,
-		Accessible: true,
-		Updateable: false,
-		Type:       "TEXT",
-		Label:      "App Color",
-	})
-
-	err = datasource.LoadOp(op, connection, session)
-	if err != nil {
-		return err
-	}
-
-	namespace := inContextSession.GetWorkspace().GetAppFullName()
-
-	appData, err := datasource.GetAppData([]string{namespace})
-	if err != nil {
-		return err
-	}
-
-	appInfo, ok := appData[namespace]
-	if !ok {
-		return errors.New("invalid namespace: could not get app data")
-	}
-
-	return op.Collection.Loop(func(item meta.Item, index string) error {
-		item.SetField("uesio/studio.namespace", namespace)
-		item.SetField("uesio/studio.appicon", appInfo.Icon)
-		item.SetField("uesio/studio.appcolor", appInfo.Color)
-		return nil
-	})
+	return datasource.LoadOp(op, connection, session)
 
 }
 
@@ -189,6 +136,43 @@ func runAllMetadataLoadBot(collectionName string, op *adapt.LoadOp, connection a
 	if err != nil {
 		return err
 	}
+
+	metadata := connection.GetMetadata()
+
+	collectionMetadata, err := metadata.GetCollection(op.CollectionName)
+	if err != nil {
+		return err
+	}
+
+	collectionMetadata.SetField(&adapt.FieldMetadata{
+		Name:       "namespace",
+		Namespace:  "uesio/studio",
+		Createable: false,
+		Accessible: true,
+		Updateable: false,
+		Type:       "TEXT",
+		Label:      "Namespace",
+	})
+
+	collectionMetadata.SetField(&adapt.FieldMetadata{
+		Name:       "appicon",
+		Namespace:  "uesio/studio",
+		Createable: false,
+		Accessible: true,
+		Updateable: false,
+		Type:       "TEXT",
+		Label:      "App Icon",
+	})
+
+	collectionMetadata.SetField(&adapt.FieldMetadata{
+		Name:       "appcolor",
+		Namespace:  "uesio/studio",
+		Createable: false,
+		Accessible: true,
+		Updateable: false,
+		Type:       "TEXT",
+		Label:      "App Color",
+	})
 
 	namespaces := inContextSession.GetContextNamespaces()
 

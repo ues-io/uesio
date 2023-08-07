@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"errors"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -56,7 +55,7 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 	}
 
 	// Unfortunately, we have to read the whole thing into memory
-	bodybytes, err := ioutil.ReadAll(body)
+	bodybytes, err := io.ReadAll(body)
 	if err != nil {
 		return err
 	}
@@ -150,8 +149,6 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 			if err != nil {
 				return errors.New("Reading File: " + collectionItem.GetKey() + " : " + err.Error())
 			}
-
-			collectionItem.SetField("uesio/studio.workspace", workspace)
 
 			continue
 		}
@@ -258,6 +255,9 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 			saves = append(saves, datasource.PlatformSaveRequest{
 				Collection: dep[element],
 				Options:    saveOptions,
+				Params: map[string]string{
+					"workspaceid": workspace.ID,
+				},
 			})
 		}
 	}

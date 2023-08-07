@@ -43,6 +43,9 @@ POST https://{{host}}:{{port}}/site/wires/save
 HTTP 200
 [Captures]
 app_id: jsonpath "$.wires[0].changes['1']['uesio/core.id']"
+[Asserts]
+jsonpath "$.wires[0].errors" == null
+
 
 # Create dev workspace
 POST https://{{host}}:{{port}}/site/wires/save
@@ -63,6 +66,8 @@ POST https://{{host}}:{{port}}/site/wires/save
     ]
 }
 HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" == null
 
 # Create truncatetests workspace
 POST https://{{host}}:{{port}}/site/wires/save
@@ -83,3 +88,5 @@ POST https://{{host}}:{{port}}/site/wires/save
     ]
 }
 HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" == null

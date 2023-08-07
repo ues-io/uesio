@@ -17,8 +17,7 @@ import (
 func getParamsFromWorkspaceContext(session *sess.Session) map[string]string {
 	workspace := session.GetWorkspace()
 	return map[string]string{
-		"app":           workspace.GetAppFullName(),
-		"workspacename": workspace.Name,
+		"workspaceid": workspace.ID,
 	}
 }
 

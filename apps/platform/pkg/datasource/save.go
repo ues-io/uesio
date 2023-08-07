@@ -279,7 +279,10 @@ func SaveOps(batch []*adapt.SaveOp, connection adapt.Connection, session *sess.S
 			continue
 		}
 
-		return SaveOp(op, connection, session)
+		err = SaveOp(op, connection, session)
+		if err != nil {
+			return err
+		}
 
 	}
 

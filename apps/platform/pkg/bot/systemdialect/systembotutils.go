@@ -111,6 +111,14 @@ func getIDsFromUpdatesAndDeletes(request *adapt.SaveOp) []string {
 	return keys
 }
 
+func getIDsFromDeletes(request *adapt.SaveOp) []string {
+	keys := []string{}
+	for i := range request.Deletes {
+		keys = append(keys, request.Deletes[i].IDValue)
+	}
+	return keys
+}
+
 func getUniqueKeysFromUpdatesAndDeletes(request *adapt.SaveOp) []string {
 	keys := []string{}
 	for i := range request.Updates {
@@ -157,24 +165,6 @@ func checkValidItems(workspaceID string, items []meta.BundleableItem, session *s
 	}
 	return bundle.IsValid(items, wsSession, connection)
 
-}
-
-func checkWorkspaceID(currentWorkspace *string, change *adapt.ChangeItem) error {
-
-	workspaceID, err := change.GetFieldAsString("uesio/studio.workspace->uesio/core.id")
-	if err != nil {
-		return err
-	}
-
-	if *currentWorkspace == "" {
-		*currentWorkspace = workspaceID
-	}
-
-	if *currentWorkspace != workspaceID {
-		return errors.New("Can't change different WS or APPS")
-	}
-
-	return nil
 }
 
 func requireValue(change *adapt.ChangeItem, fieldName string) (string, error) {
