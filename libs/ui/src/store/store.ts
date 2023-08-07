@@ -6,6 +6,7 @@ import user from "../bands/user"
 import session from "../bands/session"
 import component from "../bands/component"
 import wire from "../bands/wire"
+import file from "../bands/file"
 import site, { SiteState } from "../bands/site"
 import panel from "../bands/panel"
 import viewdef from "../bands/viewdef"
@@ -27,6 +28,7 @@ import { FeatureFlagState } from "../definition/featureflag"
 import { PlainWire } from "../bands/wire/types"
 import { PlainCollection } from "../bands/collection/types"
 import { attachDefToWires } from "../bands/route/utils"
+import { FileState } from "../definition/file"
 
 type InitialState = {
 	route?: RouteState
@@ -41,6 +43,7 @@ type InitialState = {
 	featureflag?: EntityState<FeatureFlagState>
 	wire?: EntityState<PlainWire>
 	collection?: EntityState<PlainCollection>
+	file?: EntityState<FileState>
 }
 
 let store: ReturnType<typeof create>
@@ -56,6 +59,7 @@ const create = (initialState: InitialState) => {
 		reducer: {
 			collection,
 			component,
+			file,
 			route,
 			user,
 			session,
