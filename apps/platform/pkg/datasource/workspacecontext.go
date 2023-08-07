@@ -42,14 +42,14 @@ func addWorkspaceContext(workspace *meta.Workspace, session *sess.Session, conne
 			Conditions: []adapt.LoadRequestCondition{
 				{
 					Field: adapt.ID_FIELD,
-					Value: site.App.ID,
+					Value: workspace.App.ID,
 				},
 			},
 		},
 		session,
 	)
 	if err != nil {
-		return errors.New("your profile does not allow you to administer the site: " + site.GetFullName())
+		return errors.New("your profile does not allow you to administer the app: " + workspace.App.UniqueKey)
 	}
 
 	workspace.Permissions = &meta.PermissionSet{

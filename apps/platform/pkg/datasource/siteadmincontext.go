@@ -83,14 +83,14 @@ func addSiteAdminContext(siteadmin *meta.Site, session *sess.Session, connection
 			Conditions: []adapt.LoadRequestCondition{
 				{
 					Field: adapt.ID_FIELD,
-					Value: site.App.ID,
+					Value: siteadmin.App.ID,
 				},
 			},
 		},
 		session,
 	)
 	if err != nil {
-		return errors.New("your profile does not allow you to administer the site: " + site.GetFullName())
+		return errors.New("your profile does not allow you to administer the app: " + siteadmin.App.UniqueKey)
 	}
 
 	siteadmin.Domain = site.Domain
