@@ -17,7 +17,7 @@ properties:
     viewOnly: false
     wireProperty: wire
     fieldProperty: fieldId
-    metadataProperty: reference
+    metadataProperty: referenceCollection
     displayConditions:
       - type: fieldValue
         field: fieldDisplayType
@@ -25,6 +25,7 @@ properties:
         values:
           - REFERENCE
           - USER
+          - FILE
   - name: fieldDisplayType
     type: FIELD_METADATA
     display: false
@@ -34,10 +35,7 @@ properties:
     metadataProperty: type
     onChange:
       - updates:
-          - field: displayTemplate
-          - field: returnFields
-          - field: searchFields
-          - field: order
+          - field: reference
         conditions:
           - type: fieldValue
             field: fieldDisplayType
@@ -45,6 +43,7 @@ properties:
             values:
               - REFERENCE
               - USER
+              - FILE
   - name: wire
     label: Wire
     type: WIRE
@@ -65,10 +64,7 @@ properties:
         value: ${conditionId}
     onChange:
       - updates:
-          - field: displayTemplate
-          - field: returnFields
-          - field: searchFields
-          - field: order
+          - field: reference
         conditions:
           - type: hasNoValue
             field: fieldId
@@ -143,9 +139,9 @@ properties:
           - TEXT
           - LONGTEXT
           - EMAIL
-  - name: displayTemplate
-    label: Display Template
-    type: TEXT
+  - name: reference
+    type: STRUCT
+    label: " "
     displayConditions:
       - type: fieldValue
         field: fieldDisplayType
@@ -153,54 +149,37 @@ properties:
         values:
           - USER
           - REFERENCE
-  - name: returnFields
-    label: Return Fields
-    type: LIST
-    subtype: STRUCT
+          - FILE
     properties:
-      - name: returnField
-        type: FIELD
-
-    displayConditions:
-      - type: fieldValue
-        field: fieldDisplayType
-        operator: IN
-        values:
-          - USER
-          - REFERENCE
-  - name: searchFields
-    label: Search Fields
-    type: LIST
-    subtype: TEXT
-    displayConditions:
-      - type: fieldValue
-        field: fieldDisplayType
-        operator: IN
-        values:
-          - USER
-          - REFERENCE
-  - name: order
-    type: LIST
-    subtype: STRUCT
-    items:
-      addLabel: Add Search Order
-      displayTemplate: "${orderField} - ${desc}"
-      title: Search Order
-      properties:
-        - name: orderField
-          type: FIELD
-          label: Order Field
-          collection: <-referenceCollection
-        - name: desc
-          type: CHECKBOX
-          label: Descending
-    displayConditions:
-      - type: fieldValue
-        field: fieldDisplayType
-        operator: IN
-        values:
-          - USER
-          - REFERENCE
+        - name: displayTemplate
+           label: Display Template
+           type: TEXT
+         - name: returnFields
+            label: Return Fields
+            type: LIST
+            subtype: STRUCT
+            properties:
+               - name: returnField
+                  type: FIELD
+          - name: searchFields
+             label: Search Fields
+             type: LIST
+             subtype: TEXT
+          - name: order
+             type: LIST
+             subtype: STRUCT
+             items:
+                 addLabel: Add Search Order
+                 displayTemplate: "${orderField} - ${desc}"
+                 title: Search Order
+                 properties:
+                   - name: orderField
+                      type: FIELD
+                      label: Order Field
+                      collection: <-referenceCollection
+                   - name: desc
+                      type: CHECKBOX
+                      label: Descending
 sections:
   - type: HOME
     properties:
