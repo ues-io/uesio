@@ -21,10 +21,8 @@ type DepMap interface {
 }
 
 type ComponentMergeData struct {
-	ID            string      `json:"id"`
-	ComponentType string      `json:"componentType"`
-	View          string      `json:"view"`
-	State         interface{} `json:"state"`
+	ID    string      `json:"id"`
+	State interface{} `json:"state"`
 }
 
 func (c *ComponentMergeData) GetKey() string {
@@ -48,9 +46,7 @@ type MetadataMergeData struct {
 
 func (mmd *MetadataMergeData) AddItem(dep Depable) DepMap {
 	key := dep.GetKey()
-	if _, exists := mmd.deps[key]; !exists {
-		mmd.deps[key] = dep
-	}
+	mmd.deps[key] = dep
 	return mmd
 }
 

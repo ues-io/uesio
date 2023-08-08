@@ -481,7 +481,8 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 	if workspace != nil {
 		// In workspace mode, make sure we have the builder pack so that we can include the buildwrapper
 		builderComponentID := getBuilderComponentID(route.ViewRef)
-		deps.Component.AddItem(NewComponentMergeData(fmt.Sprintf("%s:buildmode", builderComponentID), false))
+		// If there is already an entry for build mode, don't override it, as it may be set to true
+		deps.Component.AddItemIfNotExists(NewComponentMergeData(fmt.Sprintf("%s:buildmode", builderComponentID), false))
 		addComponentPackToDeps(deps, DEFAULT_BUILDER_PACK_NAMESPACE, DEFAULT_BUILDER_PACK_NAME, session)
 		// Also load in the modstamps for all static files in the workspace
 		// so that we never have stale URLs in the view builder / preview
