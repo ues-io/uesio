@@ -6,7 +6,6 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bot"
-	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -44,13 +43,11 @@ func runBotAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, sess
 		}
 
 		newFileUpload := filesource.FileUploadOp{
-			Data: strings.NewReader(defaultText),
-			Details: &fileadapt.FileDetails{
-				ContentLength: int64(len(defaultText)),
-				Path:          dialectObject.GetFilePath(),
-				CollectionID:  "uesio/studio.bot",
-				RecordID:      change.IDValue,
-			},
+			Data:          strings.NewReader(defaultText),
+			ContentLength: int64(len(defaultText)),
+			Path:          dialectObject.GetFilePath(),
+			CollectionID:  "uesio/studio.bot",
+			RecordID:      change.IDValue,
 		}
 
 		fileUploadOps = append(fileUploadOps, &newFileUpload)

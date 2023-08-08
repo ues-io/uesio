@@ -13,7 +13,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -168,12 +167,10 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 			}
 
 			uploadOps = append(uploadOps, &filesource.FileUploadOp{
-				Data: f,
-				Details: &fileadapt.FileDetails{
-					Path:            strings.TrimPrefix(path, attachableItem.GetBasePath()+"/"),
-					CollectionID:    collection.GetName(),
-					RecordUniqueKey: collectionItem.GetDBID(workspace.UniqueKey),
-				},
+				Data:            f,
+				Path:            strings.TrimPrefix(path, attachableItem.GetBasePath()+"/"),
+				CollectionID:    collection.GetName(),
+				RecordUniqueKey: collectionItem.GetDBID(workspace.UniqueKey),
 			})
 			defer f.Close()
 		}

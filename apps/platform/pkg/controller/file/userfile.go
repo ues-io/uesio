@@ -10,7 +10,6 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/controller/bot"
-	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -25,7 +24,7 @@ func processUploadRequest(r *http.Request) (*meta.UserFileMetadata, error) {
 
 	session := middleware.GetSession(r)
 
-	details := &fileadapt.FileDetails{}
+	op := &filesource.FileUploadOp{}
 
 	//Attach file length to the details
 	contentLenHeader := r.Header.Get("Content-Length")
@@ -33,7 +32,7 @@ func processUploadRequest(r *http.Request) (*meta.UserFileMetadata, error) {
 	if err != nil {
 		return nil, errors.New("must attach header 'content-length' with file upload")
 	}
-	details.ContentLength = contentLen
+	op.ContentLength = contentLen
 
 	var result *meta.UserFileMetadata
 
@@ -42,13 +41,24 @@ func processUploadRequest(r *http.Request) (*meta.UserFileMetadata, error) {
 		if err_part == io.EOF {
 			break
 		}
+		if part.FormName() == "details" {
+			err := json.NewDecoder(part).Decode(op)
+			if err != nil {
+				return nil, err
+			}
+		}
 		if part.FormName() == "file" {
-			results, err := filesource.Upload([]*filesource.FileUploadOp{
-				{
-					Data:    part,
-					Details: details,
-				},
-			}, nil, session, details.Params)
+			if op.Path == "" {
+				return nil, errors.New("No name specified")
+			}
+			if op.CollectionID == "" {
+				return nil, errors.New("No collectionid specified")
+			}
+			if op.RecordID == "" {
+				return nil, errors.New("No recordid specified")
+			}
+			op.Data = part
+			results, err := filesource.Upload([]*filesource.FileUploadOp{op}, nil, session, op.Params)
 			if err != nil {
 				return nil, err
 			}
@@ -56,21 +66,6 @@ func processUploadRequest(r *http.Request) (*meta.UserFileMetadata, error) {
 				return nil, errors.New("Upload Failed: Invalid Response")
 			}
 			result = results[0]
-		}
-		if part.FormName() == "details" {
-			err := json.NewDecoder(part).Decode(details)
-			if err != nil {
-				return nil, err
-			}
-			if details.Path == "" {
-				return nil, errors.New("No name specified")
-			}
-			if details.CollectionID == "" {
-				return nil, errors.New("No collectionid specified")
-			}
-			if details.RecordID == "" {
-				return nil, errors.New("No recordid specified")
-			}
 		}
 	}
 	return result, nil

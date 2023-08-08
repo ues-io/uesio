@@ -16,17 +16,22 @@ import (
 
 const PLATFORM_FILE_SOURCE = "uesio/core.platform"
 
-func GetFileType(details *fileadapt.FileDetails) string {
-	if details.FieldID == "" {
+func GetFileType(op *FileUploadOp) string {
+	if op.FieldID == "" {
 		return "attachment"
 	}
-	return "field:" + details.FieldID
+	return "field:" + op.FieldID
 }
 
 type FileUploadOp struct {
-	Data     io.Reader
-	Details  *fileadapt.FileDetails
-	Metadata *meta.UserFileMetadata
+	Data            io.Reader
+	RecordUniqueKey string
+	ContentLength   int64
+	Path            string            `json:"name"`
+	CollectionID    string            `json:"collectionID"`
+	RecordID        string            `json:"recordID"`
+	FieldID         string            `json:"fieldID"`
+	Params          map[string]string `json:"params"`
 }
 
 func getUploadMetadata(metadataResponse *adapt.MetadataCache, collectionID, fieldID string) (*adapt.CollectionMetadata, *adapt.FieldMetadata, error) {
@@ -55,16 +60,16 @@ func Upload(ops []*FileUploadOp, connection adapt.Connection, session *sess.Sess
 	// First get create all the metadata
 	for _, op := range ops {
 
-		if op.Details.RecordID == "" {
-			if op.Details.RecordUniqueKey == "" {
+		if op.RecordID == "" {
+			if op.RecordUniqueKey == "" {
 				return nil, errors.New("You must provide either a RecordID, or a RecordUniqueKey for a file upload")
 			}
-			idMap, ok := idMaps[op.Details.CollectionID]
+			idMap, ok := idMaps[op.CollectionID]
 			if !ok {
 				idMap = adapt.LocatorMap{}
-				idMaps[op.Details.CollectionID] = idMap
+				idMaps[op.CollectionID] = idMap
 			}
-			err := idMap.AddID(op.Details.RecordUniqueKey, adapt.ReferenceLocator{
+			err := idMap.AddID(op.RecordUniqueKey, adapt.ReferenceLocator{
 				Item: op,
 			})
 			if err != nil {
@@ -98,7 +103,7 @@ func Upload(ops []*FileUploadOp, connection adapt.Connection, session *sess.Sess
 				if err != nil {
 					return err
 				}
-				op.Details.RecordID = idValue.(string)
+				op.RecordID = idValue.(string)
 			}
 			return nil
 		})
@@ -110,25 +115,22 @@ func Upload(ops []*FileUploadOp, connection adapt.Connection, session *sess.Sess
 	tenantID := session.GetTenantID()
 
 	for _, op := range ops {
-		err := datasource.GetMetadataResponse(metadataResponse, op.Details.CollectionID, op.Details.FieldID, session)
+		err := datasource.GetMetadataResponse(metadataResponse, op.CollectionID, op.FieldID, session)
 		if err != nil {
 			return nil, err
 		}
 
-		details := op.Details
-
 		ufm := &meta.UserFileMetadata{
-			CollectionID:  details.CollectionID,
-			MimeType:      mime.TypeByExtension(filepath.Ext(details.Path)),
-			FieldID:       details.FieldID,
-			Path:          details.Path,
-			Type:          GetFileType(details),
-			RecordID:      details.RecordID,
-			ContentLength: details.ContentLength,
+			CollectionID:  op.CollectionID,
+			MimeType:      mime.TypeByExtension(filepath.Ext(op.Path)),
+			FieldID:       op.FieldID,
+			Path:          op.Path,
+			Type:          GetFileType(op),
+			RecordID:      op.RecordID,
+			ContentLength: op.ContentLength,
 			FileSourceID:  PLATFORM_FILE_SOURCE,
 		}
 		ufms = append(ufms, ufm)
-		op.Metadata = ufm
 
 		conn, err := fileadapt.GetFileConnection(ufm.FileSourceID, session)
 		if err != nil {
@@ -154,9 +156,9 @@ func Upload(ops []*FileUploadOp, connection adapt.Connection, session *sess.Sess
 		return nil, err
 	}
 
-	for _, op := range ops {
+	for _, ufm := range ufms {
 
-		_, fieldMetadata, err := getUploadMetadata(metadataResponse, op.Metadata.CollectionID, op.Metadata.FieldID)
+		_, fieldMetadata, err := getUploadMetadata(metadataResponse, ufm.CollectionID, ufm.FieldID)
 		if err != nil {
 			return nil, err
 		}
@@ -168,14 +170,14 @@ func Upload(ops []*FileUploadOp, connection adapt.Connection, session *sess.Sess
 				return nil, errors.New("Can only attach files to FILE fields")
 			}
 			fieldUpdates = append(fieldUpdates, datasource.SaveRequest{
-				Collection: op.Metadata.CollectionID,
+				Collection: ufm.CollectionID,
 				Wire:       "filefieldupdate",
 				Changes: &adapt.Collection{
 					{
-						op.Metadata.FieldID: map[string]interface{}{
-							adapt.ID_FIELD: op.Metadata.ID,
+						ufm.FieldID: map[string]interface{}{
+							adapt.ID_FIELD: ufm.ID,
 						},
-						adapt.ID_FIELD: op.Metadata.RecordID,
+						adapt.ID_FIELD: ufm.RecordID,
 					},
 				},
 				Params: params,
