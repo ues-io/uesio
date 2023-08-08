@@ -1,5 +1,0 @@
-name: service
-public: true
-label: service
-pluralLabel: services
-nameField: uesio/crm.name

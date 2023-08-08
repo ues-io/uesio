@@ -1,6 +1,0 @@
-name: page_logo
-type: FILE
-label: page_logo
-file:
-  accept: IMAGE
-  filesource: uesio/core.platform

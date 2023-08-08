@@ -1,4 +1,0 @@
-name: title
-label: Title
-type: SELECT
-selectList: uesio/crm.salutation
