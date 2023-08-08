@@ -7,6 +7,7 @@ import {
 } from "../bands/route/types"
 import { selectors as viewSelectors } from "../bands/viewdef"
 import { selectors as labelSelectors } from "../bands/label"
+import { selectors as fileSelectors } from "../bands/file"
 import { selectors as componentVariantSelectors } from "../bands/componentvariant"
 import { selectors as themeSelectors } from "../bands/theme"
 import { selectByName } from "../bands/featureflag"
@@ -386,6 +387,9 @@ class Context {
 
 	getLabel = (labelKey: string) =>
 		labelSelectors.selectById(getCurrentState(), labelKey)?.value
+
+	getStaticFileModstamp = (fileKey: string) =>
+		fileSelectors.selectById(getCurrentState(), fileKey)?.updatedAt
 
 	getFeatureFlag = (name: string) => selectByName(getCurrentState(), name)
 
