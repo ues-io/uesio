@@ -21,10 +21,8 @@ type DepMap interface {
 }
 
 type ComponentMergeData struct {
-	ID            string      `json:"id"`
-	ComponentType string      `json:"componentType"`
-	View          string      `json:"view"`
-	State         interface{} `json:"state"`
+	ID    string      `json:"id"`
+	State interface{} `json:"state"`
 }
 
 func (c *ComponentMergeData) GetKey() string {
