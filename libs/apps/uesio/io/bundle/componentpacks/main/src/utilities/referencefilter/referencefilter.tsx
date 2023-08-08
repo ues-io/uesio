@@ -18,21 +18,16 @@ const getReturnFields = (
 	const extractedFields = displayTemplate
 		? displayTemplate.match(pattern)
 		: null
-	const uniqueFields = new Set<string>()
-	const allFields = [...(returnFields || []), ...(searchFields || [])]
-
-	if (extractedFields) {
-		for (const item of extractedFields) {
-			const dynamicValue = item.slice(2, -1)
-			allFields.push(dynamicValue)
-		}
-	}
-
-	for (const item of allFields) {
-		uniqueFields.add(item)
-	}
-
-	const fields: string[] = Array.from(uniqueFields)
+	const fields = Array.from(
+		new Set<string>(
+			returnFields.concat(
+				searchFields,
+				extractedFields
+					? extractedFields.map((f) => f.slice(2, -1))
+					: []
+			)
+		)
+	)
 
 	return fields.length ? fields : undefined
 }

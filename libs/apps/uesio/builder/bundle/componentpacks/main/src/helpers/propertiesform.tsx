@@ -47,9 +47,8 @@ const getWireFieldSelectOptions = (
 	collection?: string
 ) => {
 	let fields: Record<string, wire.ViewOnlyField> | wire.WireFieldDefinitionMap
-	let collectionFields = api.collection.getCollection(
-		collection ? collection : ""
-	)?.source.fields as unknown
+	const collectionFields = api.collection.getCollection(collection || "")
+		?.source.fields as unknown
 	wireDef && wireDef.fields
 		? (fields = wireDef.fields)
 		: (fields = collectionFields as
@@ -559,7 +558,9 @@ const parseProperties = (
 				wire.PlainWireRecord
 			>
 		} else if (type === "STRUCT") {
+			console.log("STRUCT")
 			setter = (value: wire.PlainFieldValue, field: string) => {
+				console.log("viewOnly: ", viewOnly)
 				if (viewOnly) return
 				let newValue: wire.PlainFieldValue | wire.PlainWireRecord =
 					undefined

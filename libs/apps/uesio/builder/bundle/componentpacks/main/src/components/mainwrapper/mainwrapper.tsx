@@ -37,7 +37,7 @@ const MainWrapper: definition.UC<component.ViewComponentDefinition> = (
 	const classes = styles.useStyleTokens(StyleDefaults, props)
 
 	hooks.useHotKeyCallback(
-		"meta+u",
+		"shift+u",
 		() => {
 			api.builder.getBuilderDeps(context).then(() => {
 				setBuildMode(!buildMode)
