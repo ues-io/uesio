@@ -47,9 +47,8 @@ const getWireFieldSelectOptions = (
 	collection?: string
 ) => {
 	let fields: Record<string, wire.ViewOnlyField> | wire.WireFieldDefinitionMap
-	let collectionFields = api.collection.getCollection(
-		collection ? collection : ""
-	)?.source.fields as unknown
+	const collectionFields = api.collection.getCollection(collection || "")
+		?.source.fields as unknown
 	wireDef && wireDef.fields
 		? (fields = wireDef.fields)
 		: (fields = collectionFields as
@@ -470,6 +469,7 @@ const parseProperties = (
 				// Populate the JSON representation with the new value first,
 				// e.g. foo = { "bar": "baz" } ==> { "bar": value }
 				set(wrapperValue, rest.join(LODASH_PATH_SEPARATOR), value)
+
 				// Invoke the def api to update YAML with the wrapper value object
 				setDef(context, path.addLocal(firstPart), wrapperValue)
 			} else {

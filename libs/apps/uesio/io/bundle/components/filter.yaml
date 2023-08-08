@@ -17,7 +17,7 @@ properties:
     viewOnly: true
     wireProperty: wire
     fieldProperty: fieldId
-    metadataProperty: referenceCollection
+    metadataProperty: reference
     displayConditions:
       - type: fieldValue
         field: fieldDisplayType
@@ -36,6 +36,7 @@ properties:
     onChange:
       - updates:
           - field: reference
+          - field: order
         conditions:
           - type: fieldValue
             field: fieldDisplayType
@@ -140,47 +141,51 @@ properties:
           - LONGTEXT
           - EMAIL
   - name: reference
-    type: STRUCT
     label: " "
+    type: STRUCT
     displayConditions:
       - type: fieldValue
         field: fieldDisplayType
         operator: IN
         values:
-          - USER
           - REFERENCE
+          - USER
           - FILE
     properties:
-      - name: displayTemplate
-        label: Display Template
+      - name: template
         type: TEXT
+        label: Display Template
+      - name: searchFields
+        type: FIELDS
+        collection: <-referenceCollection
+        label: Search Fields
       - name: returnFields
+        type: FIELDS
+        collection: <-referenceCollection
         label: Return Fields
-        type: LIST
-        subtype: STRUCT
-        properties:
-          - name: returnField
-            type: FIELD
-            label: Return Fields
-          - name: searchFields
-            label: Search Fields
-            type: LIST
-            subtype: TEXT
-          - name: order
-            type: LIST
-            subtype: STRUCT
-            items:
-              addLabel: Add Search Order
-              displayTemplate: "${orderField} - ${desc}"
-              title: Search Order
-              properties:
-                - name: orderField
-                  type: FIELD
-                  label: Order Field
-                  collection: <-referenceCollection
-                - name: desc
-                  type: CHECKBOX
-                  label: Descending
+  - name: order
+    type: LIST
+    subtype: STRUCT
+    displayConditions:
+      - type: fieldValue
+        field: fieldDisplayType
+        operator: IN
+        values:
+          - REFERENCE
+          - USER
+          - FILE
+    items:
+      addLabel: Add Search Order
+      displayTemplate: "${orderField} - ${desc}"
+      title: Search Order
+      properties:
+        - name: orderField
+          type: FIELD
+          label: Order Field
+          collection: <-referenceCollection
+        - name: desc
+          type: CHECKBOX
+          label: Descending
 sections:
   - type: HOME
     properties:
@@ -195,6 +200,6 @@ sections:
       - labelPosition
       - placeholder
       - reference
-      - reference->returnFields->returnField
+      - order
   - type: STYLES
   - type: DISPLAY

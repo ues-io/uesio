@@ -1,13 +1,12 @@
 import { definition, api, wire, collection } from "@uesio/ui"
 import ReferenceField, { ReferenceFieldOptions } from "../field/reference"
-import { ReferenceFilterOptions } from "../../components/filter/filter"
 
 interface ReferenceFilterProps {
 	path: string
 	wire: wire.Wire
 	fieldMetadata: collection.Field
 	condition: wire.ValueConditionState
-	options?: ReferenceFilterOptions
+	options?: ReferenceFieldOptions
 }
 const getReturnFields = (
 	displayTemplate: string | undefined,
@@ -18,21 +17,17 @@ const getReturnFields = (
 	const extractedFields = displayTemplate
 		? displayTemplate.match(pattern)
 		: null
-	const uniqueFields = new Set<string>()
-	const allFields = [...(returnFields || []), ...(searchFields || [])]
 
-	if (extractedFields) {
-		for (const item of extractedFields) {
-			const dynamicValue = item.slice(2, -1)
-			allFields.push(dynamicValue)
-		}
-	}
-
-	for (const item of allFields) {
-		uniqueFields.add(item)
-	}
-
-	const fields: string[] = Array.from(uniqueFields)
+	const fields = Array.from(
+		new Set<string>(
+			returnFields.concat(
+				searchFields,
+				extractedFields
+					? extractedFields.map((f) => f.slice(2, -1))
+					: []
+			)
+		)
+	)
 
 	return fields.length ? fields : undefined
 }
@@ -43,14 +38,14 @@ const ReferenceFilter: definition.UtilityComponent<ReferenceFilterProps> = (
 	const { wire, fieldMetadata, context, condition, path, options } = props
 	const wireId = wire.getId()
 	const referenceOptions = {
-		template: options?.displayTemplate,
+		template: options?.template,
 		returnFields: getReturnFields(
-			options?.displayTemplate,
+			options?.template,
 			options?.returnFields,
 			options?.searchFields
 		),
 		searchFields: options?.searchFields,
-		conditions: options?.filterConditions,
+		conditions: options?.conditions,
 		order: options?.order,
 	} as ReferenceFieldOptions
 	return (

@@ -28,10 +28,10 @@ type FilterDefinition = {
 	reference?: ReferenceFilterOptions
 }
 export type ReferenceFilterOptions = {
-	displayTemplate?: string
-	filterConditions?: wire.WireConditionState[]
-	returnFields?: []
-	searchFields?: []
+	template?: string
+	conditions?: wire.WireConditionState[]
+	returnFields?: Object
+	searchFields?: Object
 	order?: wire.OrderState[]
 }
 
@@ -51,6 +51,21 @@ const getFilterContent = (
 	definition: FilterDefinition
 ) => {
 	const { displayAs, placeholder, reference } = definition
+	const searchFields =
+		reference && reference.searchFields
+			? Object.keys(reference.searchFields)
+			: undefined
+	const returnFields =
+		reference && reference.returnFields
+			? Object.keys(reference.returnFields)
+			: undefined
+	const referenceOptions = {
+		template: reference?.template,
+		conditions: reference?.conditions,
+		searchFields,
+		returnFields,
+		order: reference?.order,
+	}
 	const fieldMetadata = common.fieldMetadata
 	const type = fieldMetadata.getType()
 	switch (type) {
@@ -75,7 +90,7 @@ const getFilterContent = (
 		}
 		case "USER":
 		case "REFERENCE": {
-			return <ReferenceFilter {...common} options={reference} />
+			return <ReferenceFilter {...common} options={referenceOptions} />
 		}
 		default:
 			return null
