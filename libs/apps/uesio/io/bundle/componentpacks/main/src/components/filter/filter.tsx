@@ -25,11 +25,15 @@ type FilterDefinition = {
 	conditionId?: string
 	placeholder?: string
 	operator: wire.ConditionOperators
-	displayTemplate?: string
+	reference?: ReferenceFilterOptions
+}
+type ReferenceFilterOptions = {
+        displayTemplate?: string
 	filterConditions?: wire.WireConditionState[]
 	returnFields?: string[]
 	searchFields?: string[]
 	order?: wire.OrderState[]
+}
 }
 
 type CommonProps = {
@@ -50,19 +54,8 @@ const getFilterContent = (
 	const {
 		displayAs,
 		placeholder,
-		displayTemplate,
-		filterConditions,
-		returnFields,
-		searchFields,
-		order,
+		reference,
 	} = definition
-	const reference = {
-		displayTemplate,
-		filterConditions,
-		returnFields,
-		searchFields,
-		order,
-	}
 	const fieldMetadata = common.fieldMetadata
 	const type = fieldMetadata.getType()
 	switch (type) {
@@ -87,7 +80,7 @@ const getFilterContent = (
 		}
 		case "USER":
 		case "REFERENCE": {
-			return <ReferenceFilter {...common} {...reference} />
+			return <ReferenceFilter {...common} options={reference} />
 		}
 		default:
 			return null

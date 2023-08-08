@@ -47,8 +47,8 @@ const getWireFieldSelectOptions = (
 	collection?: string
 ) => {
 	let fields: Record<string, wire.ViewOnlyField> | wire.WireFieldDefinitionMap
-	let collectionFields = api.collection.getCollection(
-		collection ? collection : ""
+	const collectionFields = api.collection.getCollection(
+		collection || ""
 	)?.source.fields as unknown
 	wireDef && wireDef.fields
 		? (fields = wireDef.fields)
