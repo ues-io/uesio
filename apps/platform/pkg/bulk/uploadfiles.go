@@ -41,7 +41,7 @@ func NewFileUploadBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Sess
 		return nil, err
 	}
 
-	uploadOps := []filesource.FileUploadOp{}
+	uploadOps := []*filesource.FileUploadOp{}
 	// Read all the files from zip archive
 
 	// First open upload.csv
@@ -108,7 +108,7 @@ func NewFileUploadBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Sess
 		if err != nil {
 			return nil, errors.New("No file found at path: " + path)
 		}
-		uploadOps = append(uploadOps, filesource.FileUploadOp{
+		uploadOps = append(uploadOps, &filesource.FileUploadOp{
 			Data: f,
 			Details: &fileadapt.FileDetails{
 				Path:            path,
@@ -126,7 +126,7 @@ func NewFileUploadBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Sess
 		return nil, err
 	}
 
-	_, err = filesource.Upload(uploadOps, connection, session)
+	_, err = filesource.Upload(uploadOps, connection, session, nil)
 	if err != nil {
 		return nil, err
 	}

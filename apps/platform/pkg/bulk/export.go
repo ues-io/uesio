@@ -59,12 +59,12 @@ func NewExportBatch(job meta.BulkJob, session *sess.Session) (*meta.BulkBatch, e
 
 	zipwriter.Close()
 
-	_, err = filesource.Upload([]filesource.FileUploadOp{
+	_, err = filesource.Upload([]*filesource.FileUploadOp{
 		{
 			Data:    buf,
 			Details: details,
 		},
-	}, nil, session)
+	}, nil, session, nil)
 	if err != nil {
 		return nil, err
 	}

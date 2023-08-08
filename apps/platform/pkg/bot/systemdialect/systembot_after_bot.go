@@ -2,17 +2,18 @@ package systemdialect
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bot"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/sess"
-	"strings"
 )
 
 func runBotAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 
-	fileUploadOps := []filesource.FileUploadOp{}
+	fileUploadOps := []*filesource.FileUploadOp{}
 
 	// Pre-create an Attachment file for the new Bot
 	var err = request.LoopInserts(func(change *adapt.ChangeItem) error {
@@ -52,7 +53,7 @@ func runBotAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, sess
 			},
 		}
 
-		fileUploadOps = append(fileUploadOps, newFileUpload)
+		fileUploadOps = append(fileUploadOps, &newFileUpload)
 
 		return nil
 	})
@@ -65,7 +66,7 @@ func runBotAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, sess
 		return nil
 	}
 
-	_, err = filesource.Upload(fileUploadOps, connection, session)
+	_, err = filesource.Upload(fileUploadOps, connection, session, request.Params)
 	if err != nil {
 		return err
 	}
