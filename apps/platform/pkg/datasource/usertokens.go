@@ -144,3 +144,110 @@ func GenerateUserAccessTokens(connection adapt.Connection, session *sess.Session
 
 	return nil
 }
+
+func GetAllUserAccessTokens(connection adapt.Connection, session *sess.Session) ([]string, error) {
+
+	metadata := connection.GetMetadata()
+	flatTokens := []string{}
+
+	if !session.HasToken("uesio.owner") {
+		flatTokens = append(flatTokens, "uesio.owner"+":"+session.GetUserID())
+	}
+	// A special user access token type for installed deps
+
+	for key := range session.GetContextAppBundle().Dependencies {
+		flatTokens = append(flatTokens, "uesio.installed"+":"+key)
+	}
+
+	// A special user access token type for named permissions
+	for key := range session.GetContextPermissions().NamedRefs {
+		flatTokens = append(flatTokens, "uesio.namedpermission"+":"+key)
+	}
+
+	var uatc meta.UserAccessTokenCollection
+	err := bundle.LoadAllFromAny(&uatc, nil, session, nil)
+	if err != nil {
+		return flatTokens, err
+	}
+
+	// To ensure we have access to all of the collections involved in user access token calculation,
+	// get an admin session
+	adminSession := GetSiteAdminSession(session)
+
+	for _, uat := range uatc {
+		if uat.Type == "lookup" {
+			fieldKeys := templating.ExtractKeys(uat.Token)
+			fields := []adapt.LoadRequestField{}
+			for _, fieldKey := range fieldKeys {
+				fields = append(fields, adapt.LoadRequestField{
+					ID: fieldKey,
+					// This is somewhat wierd, but it prevents reference
+					// fields in the token from being fully loaded.
+					// It shouldn't affect other fields
+					Fields: []adapt.LoadRequestField{
+						{
+							ID: adapt.ID_FIELD,
+						},
+					},
+				})
+			}
+
+			loadConditions := []adapt.LoadRequestCondition{}
+			for _, condition := range uat.Conditions {
+				fields = append(fields, adapt.LoadRequestField{
+					ID: condition.Field,
+				})
+				loadConditions = append(loadConditions, adapt.LoadRequestCondition{
+					Field:    condition.Field,
+					Value:    session.GetUserID(),
+					Operator: "=",
+				})
+			}
+
+			lookupResults := &adapt.Collection{}
+			var loadOp = &adapt.LoadOp{
+				CollectionName: uat.Collection,
+				WireName:       "foo",
+				Collection:     lookupResults,
+				Conditions:     loadConditions,
+				Fields:         fields,
+				Query:          true,
+			}
+
+			err = getMetadataForLoad(loadOp, metadata, []*adapt.LoadOp{loadOp}, adminSession)
+			if err != nil {
+				return flatTokens, err
+			}
+
+			loadCollectionMetadata, err := metadata.GetCollection(uat.Collection)
+			if err != nil {
+				return flatTokens, err
+			}
+
+			err = connection.Load(loadOp, session)
+			if err != nil {
+				return flatTokens, err
+			}
+
+			template, err := adapt.NewFieldChanges(uat.Token, loadCollectionMetadata)
+			if err != nil {
+				return flatTokens, err
+			}
+
+			err = lookupResults.Loop(func(record meta.Item, _ string) error {
+				tokenValue, err := templating.Execute(template, record)
+				if err != nil {
+					return err
+				}
+				flatTokens = append(flatTokens, uat.GetKey()+":"+tokenValue)
+				return nil
+			})
+			if err != nil {
+				return flatTokens, err
+			}
+
+		}
+	}
+
+	return flatTokens, nil
+}

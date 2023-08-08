@@ -1,0 +1,4 @@
+name: usertokens
+path: mytokens
+view: usertokens
+theme: default

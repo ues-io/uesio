@@ -145,6 +145,8 @@ func (b *SystemDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adap
 		botFunction = runAllMetadataLoadBot
 	case "uesio/studio.recentmetadata":
 		botFunction = runRecentMetadataLoadBot
+	case "uesio/studio.tokens":
+		botFunction = runTokensLoadBot
 	case "uesio/studio.blogentry":
 		botFunction = runBlogEntryLoadBot
 	case "uesio/studio.recentdoc":

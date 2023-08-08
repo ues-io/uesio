@@ -1,0 +1,5 @@
+name: tokens
+type: DYNAMIC
+nameField: uesio/studio.name
+label: Tokens
+pluralLabel: Tokens
