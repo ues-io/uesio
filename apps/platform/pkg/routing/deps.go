@@ -347,7 +347,7 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 
 	builderComponentID := getBuilderComponentID(viewNamespace + "." + viewName)
 
-	deps.Component.AddItem(fmt.Sprintf("%s:metadata:viewdef:%s", builderComponentID, view.GetKey()), viewBytes.String())
+	deps.Component.AddItem(NewComponentMergeData(fmt.Sprintf("%s:metadata:viewdef:%s", builderComponentID, view.GetKey()), viewBytes.String()))
 
 	var variants meta.ComponentVariantCollection
 	err = bundle.LoadAllFromAny(&variants, nil, session, nil)
@@ -383,7 +383,7 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 		componentDefs[component.GetKey()] = componentYamlBytes
 	}
 
-	deps.Component.AddItem(fmt.Sprintf("%s:componentdefs", builderComponentID), componentDefs)
+	deps.Component.AddItem(NewComponentMergeData(fmt.Sprintf("%s:componentdefs", builderComponentID), componentDefs))
 
 	for i := range variants {
 		deps.ComponentVariant.AddItem(variants[i])
@@ -422,8 +422,8 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 		return err
 	}
 
-	deps.Component.AddItem(fmt.Sprintf("%s:namespaces", builderComponentID), appData)
-	deps.Component.AddItem(fmt.Sprintf("%s:buildmode", builderComponentID), true)
+	deps.Component.AddItem(NewComponentMergeData(fmt.Sprintf("%s:namespaces", builderComponentID), appData))
+	deps.Component.AddItem(NewComponentMergeData(fmt.Sprintf("%s:buildmode", builderComponentID), true))
 
 	return nil
 }
@@ -454,11 +454,11 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 		return nil, errors.New("Failed to get translated labels: " + err.Error())
 	}
 
-	// need an admin session for retrieving feature falgs
+	// need an admin session for retrieving feature flags
 	// in order to prevent users from having to have read on the uesio/core.featureflagassignment table
 	adminSession := datasource.GetSiteAdminSession(session)
 
-	featureflags, err := featureflagstore.GetFeatureFlags(adminSession, session.GetUserID())
+	featureFlags, err := featureflagstore.GetFeatureFlags(adminSession, session.GetUserID())
 	if err != nil {
 		return nil, errors.New("Failed to get feature flags: " + err.Error())
 	}
@@ -472,20 +472,47 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 		deps.Label.AddItem(label)
 	}
 
-	for _, flag := range *featureflags {
+	for _, flag := range *featureFlags {
 		deps.FeatureFlag.AddItem(flag)
 	}
 
 	workspace := session.GetWorkspace()
 
-	// In workspace mode, make sure we have the builder pack so that we can include the buildwrapper
 	if workspace != nil {
+		// In workspace mode, make sure we have the builder pack so that we can include the buildwrapper
 		builderComponentID := getBuilderComponentID(route.ViewRef)
-		deps.Component.AddItem(fmt.Sprintf("%s:buildmode", builderComponentID), false)
+		deps.Component.AddItem(NewComponentMergeData(fmt.Sprintf("%s:buildmode", builderComponentID), false))
 		addComponentPackToDeps(deps, DEFAULT_BUILDER_PACK_NAMESPACE, DEFAULT_BUILDER_PACK_NAME, session)
+		// Also load in the modstamps for all static files in the workspace
+		// so that we never have stale URLs in the view builder / preview
+		err = addStaticFileModstampsForWorkspaceToDeps(deps, workspace, session)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return deps, nil
+}
+
+func addStaticFileModstampsForWorkspaceToDeps(deps *PreloadMetadata, workspace *meta.Workspace, session *sess.Session) error {
+	// Query for all static files in the workspace
+	var files meta.FileCollection
+	err := bundle.LoadAllFromNamespaces([]string{workspace.App.FullName}, &files, nil, session, nil)
+	if err != nil {
+		return errors.New("failed to load static files: " + err.Error())
+	}
+	err = files.Loop(func(item meta.Item, index string) error {
+		file, ok := item.(*meta.File)
+		if !ok {
+			return errors.New("item is not a valid File")
+		}
+		deps.StaticFile.AddItem(file)
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func addComponentVariantDep(depMap *ViewDepMap, variantName string, compName string) error {

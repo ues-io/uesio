@@ -236,7 +236,7 @@ func Test_getComponentPackURLs(t *testing.T) {
 	acmePack.UpdatedAt = 1234577777
 
 	type args struct {
-		componentPackDeps *routing.MetadataMergeData
+		componentPackDeps routing.DepMap
 		workspace         *routing.WorkspaceMergeData
 		site              *routing.SiteMergeData
 	}
