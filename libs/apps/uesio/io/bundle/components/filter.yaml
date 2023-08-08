@@ -14,7 +14,7 @@ properties:
   - name: referenceCollection
     type: FIELD_METADATA
     display: false
-    viewOnly: false
+    viewOnly: true
     wireProperty: wire
     fieldProperty: fieldId
     metadataProperty: referenceCollection
@@ -188,15 +188,11 @@ sections:
       - wire
       - conditionId
       - fieldId
-      - testField
       - operator
       - displayAs
       - label
       - labelPosition
       - placeholder
-      - displayTemplate
-      - returnFields
-      - searchFields
-      - order
+      - reference
   - type: STYLES
   - type: DISPLAY
