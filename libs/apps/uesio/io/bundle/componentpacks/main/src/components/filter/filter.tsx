@@ -27,13 +27,12 @@ type FilterDefinition = {
 	operator: wire.ConditionOperators
 	reference?: ReferenceFilterOptions
 }
-type ReferenceFilterOptions = {
-        displayTemplate?: string
+export type ReferenceFilterOptions = {
+	displayTemplate?: string
 	filterConditions?: wire.WireConditionState[]
-	returnFields?: string[]
-	searchFields?: string[]
+	returnFields?: []
+	searchFields?: []
 	order?: wire.OrderState[]
-}
 }
 
 type CommonProps = {
@@ -51,11 +50,7 @@ const getFilterContent = (
 	common: CommonProps,
 	definition: FilterDefinition
 ) => {
-	const {
-		displayAs,
-		placeholder,
-		reference,
-	} = definition
+	const { displayAs, placeholder, reference } = definition
 	const fieldMetadata = common.fieldMetadata
 	const type = fieldMetadata.getType()
 	switch (type) {

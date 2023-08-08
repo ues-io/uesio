@@ -1,30 +1,38 @@
 import { definition, api, wire, collection } from "@uesio/ui"
 import ReferenceField, { ReferenceFieldOptions } from "../field/reference"
+import { ReferenceFilterOptions } from "../../components/filter/filter"
 
 interface ReferenceFilterProps {
 	path: string
 	wire: wire.Wire
 	fieldMetadata: collection.Field
 	condition: wire.ValueConditionState
-	options?: ReferenceFieldOptions
-	displayTemplate?: string
-	filterConditions?: wire.WireConditionState[]
-	returnFields?: string[]
-	searchFields?: string[]
-	order?: wire.OrderState[]
+	options?: ReferenceFilterOptions
 }
 const getReturnFields = (
 	displayTemplate: string | undefined,
-	returnFields = []
-	searchFields = []
+	returnFields: string[] = [],
+	searchFields: string[] = []
 ) => {
 	const pattern = /\${(.*?)}/g
 	const extractedFields = displayTemplate
 		? displayTemplate.match(pattern)
 		: null
-	const fields = Array.from(new Set<string>(
-	   returnFields.concat(searchFields, extractedFields.map((f) => f.slice(2, -1))
-	))
+	const uniqueFields = new Set<string>()
+	const allFields = [...(returnFields || []), ...(searchFields || [])]
+
+	if (extractedFields) {
+		for (const item of extractedFields) {
+			const dynamicValue = item.slice(2, -1)
+			allFields.push(dynamicValue)
+		}
+	}
+
+	for (const item of allFields) {
+		uniqueFields.add(item)
+	}
+
+	const fields: string[] = Array.from(uniqueFields)
 
 	return fields.length ? fields : undefined
 }
@@ -32,29 +40,18 @@ const getReturnFields = (
 const ReferenceFilter: definition.UtilityComponent<ReferenceFilterProps> = (
 	props
 ) => {
-	const {
-		wire,
-		fieldMetadata,
-		context,
-		condition,
-		path,
-		displayTemplate,
-		filterConditions,
-		returnFields,
-		searchFields,
-		order,
-	} = props
+	const { wire, fieldMetadata, context, condition, path, options } = props
 	const wireId = wire.getId()
-	const options = {
-		template: displayTemplate,
+	const referenceOptions = {
+		template: options?.displayTemplate,
 		returnFields: getReturnFields(
-			displayTemplate,
-			returnFields,
-			searchFields
+			options?.displayTemplate,
+			options?.returnFields,
+			options?.searchFields
 		),
-		searchFields,
-		conditions: filterConditions,
-		order,
+		searchFields: options?.searchFields,
+		conditions: options?.filterConditions,
+		order: options?.order,
 	} as ReferenceFieldOptions
 	return (
 		<ReferenceField
@@ -64,7 +61,7 @@ const ReferenceFilter: definition.UtilityComponent<ReferenceFilterProps> = (
 			fieldMetadata={fieldMetadata}
 			context={context}
 			variant={"uesio/io.filter"}
-			options={options}
+			options={referenceOptions}
 			setValue={(value: wire.PlainWireRecord) => {
 				api.signal.runMany(
 					[
