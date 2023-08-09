@@ -1,4 +1,4 @@
 name: usertokens
-path: mytokens
+path: user/security/access-tokens
 view: usertokens
 theme: default
