@@ -64,7 +64,7 @@ const getFilterContent = (
 		conditions: reference?.conditions,
 		searchFields,
 		returnFields,
-		order: order,
+		order,
 	}
 	const fieldMetadata = common.fieldMetadata
 	const type = fieldMetadata.getType()
