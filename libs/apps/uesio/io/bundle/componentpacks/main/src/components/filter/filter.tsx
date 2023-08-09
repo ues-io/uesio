@@ -31,8 +31,8 @@ type FilterDefinition = {
 export type ReferenceFilterOptions = {
 	template?: string
 	conditions?: wire.WireConditionState[]
-	returnFields?: Object
-	searchFields?: Object
+	returnFields?: Record<string, unknown>
+	searchFields?: Record<string, unknown>
 }
 
 type CommonProps = {
