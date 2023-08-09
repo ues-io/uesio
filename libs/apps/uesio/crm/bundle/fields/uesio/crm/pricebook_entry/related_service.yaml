@@ -1,5 +1,0 @@
-name: related_service
-type: REFERENCE
-label: Related Service
-reference:
-  collection: uesio/crm.service

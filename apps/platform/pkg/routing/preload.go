@@ -2,31 +2,39 @@ package routing
 
 import (
 	"encoding/json"
+
 	"github.com/thecloudmasters/uesio/pkg/goutils"
 )
 
+type Depable interface {
+	GetKey() string
+	GetBytes() ([]byte, error)
+}
+
+type DepMap interface {
+	AddItem(item Depable) DepMap
+	AddItemIfNotExists(item Depable) (Depable, bool)
+	AddItems(deps ...Depable) DepMap
+	GetItems() []Depable
+	Len() int
+	MarshalJSON() ([]byte, error)
+}
+
 type ComponentMergeData struct {
-	ID            string      `json:"id"`
-	ComponentType string      `json:"componentType"`
-	View          string      `json:"view"`
-	State         interface{} `json:"state"`
+	ID    string      `json:"id"`
+	State interface{} `json:"state"`
 }
 
-func NewComponentsMergeData() *ComponentsMergeData {
-	return &ComponentsMergeData{
-		IDs:      []string{},
-		Entities: map[string]ComponentMergeData{},
-	}
+func (c *ComponentMergeData) GetKey() string {
+	return c.ID
 }
 
-type ComponentsMergeData struct {
-	IDs      []string                      `json:"ids"`
-	Entities map[string]ComponentMergeData `json:"entities"`
+func (c *ComponentMergeData) GetBytes() ([]byte, error) {
+	return json.Marshal(c)
 }
 
-func (cmd *ComponentsMergeData) AddItem(componentID string, state interface{}) {
-	cmd.IDs = append(cmd.IDs, componentID)
-	cmd.Entities[componentID] = ComponentMergeData{
+func NewComponentMergeData(componentID string, state interface{}) Depable {
+	return &ComponentMergeData{
 		ID:    componentID,
 		State: state,
 	}
@@ -34,6 +42,19 @@ func (cmd *ComponentsMergeData) AddItem(componentID string, state interface{}) {
 
 type MetadataMergeData struct {
 	deps map[string]Depable
+}
+
+func (mmd *MetadataMergeData) AddItem(dep Depable) DepMap {
+	key := dep.GetKey()
+	mmd.deps[key] = dep
+	return mmd
+}
+
+func (mmd *MetadataMergeData) AddItems(deps ...Depable) DepMap {
+	for _, dep := range deps {
+		mmd.AddItem(dep)
+	}
+	return mmd
 }
 
 func (mmd *MetadataMergeData) AddItemIfNotExists(dep Depable) (Depable, bool) {
@@ -47,6 +68,10 @@ func (mmd *MetadataMergeData) AddItemIfNotExists(dep Depable) (Depable, bool) {
 
 func (mmd *MetadataMergeData) GetItems() []Depable {
 	return goutils.MapValues(mmd.deps)
+}
+
+func (mmd *MetadataMergeData) Len() int {
+	return len(mmd.deps)
 }
 
 func (mmd *MetadataMergeData) MarshalJSON() ([]byte, error) {
@@ -72,29 +97,15 @@ func (mmd *MetadataMergeData) MarshalJSON() ([]byte, error) {
 
 }
 
-func NewItem() *MetadataMergeData {
+func NewItem() DepMap {
 	return &MetadataMergeData{
 		deps: map[string]Depable{},
 	}
 }
 
-func (mmd *MetadataMergeData) AddItem(dep Depable) {
-	key := dep.GetKey()
-	if _, exists := mmd.deps[key]; !exists {
-		mmd.deps[key] = dep
-	}
-}
-
-func (mmd *MetadataMergeData) AddItems(deps ...Depable) *MetadataMergeData {
-	for _, dep := range deps {
-		mmd.AddItem(dep)
-	}
-	return mmd
-}
-
 func NewPreloadMetadata() *PreloadMetadata {
 	return &PreloadMetadata{
-		Component:        NewComponentsMergeData(),
+		Component:        NewItem(),
 		Theme:            NewItem(),
 		ViewDef:          NewItem(),
 		ComponentPack:    NewItem(),
@@ -104,23 +115,20 @@ func NewPreloadMetadata() *PreloadMetadata {
 		FeatureFlag:      NewItem(),
 		Wire:             NewItem(),
 		Collection:       NewItem(),
+		StaticFile:       NewItem(),
 	}
 }
 
 type PreloadMetadata struct {
-	Theme            *MetadataMergeData   `json:"theme,omitempty"`
-	ViewDef          *MetadataMergeData   `json:"viewdef,omitempty"`
-	ComponentPack    *MetadataMergeData   `json:"componentpack,omitempty"`
-	ComponentVariant *MetadataMergeData   `json:"componentvariant,omitempty"`
-	ConfigValue      *MetadataMergeData   `json:"configvalue,omitempty"`
-	Label            *MetadataMergeData   `json:"label,omitempty"`
-	FeatureFlag      *MetadataMergeData   `json:"featureflag,omitempty"`
-	Wire             *MetadataMergeData   `json:"wire,omitempty"`
-	Collection       *MetadataMergeData   `json:"collection,omitempty"`
-	Component        *ComponentsMergeData `json:"component,omitempty"`
-}
-
-type Depable interface {
-	GetKey() string
-	GetBytes() ([]byte, error)
+	Theme            DepMap `json:"theme,omitempty"`
+	ViewDef          DepMap `json:"viewdef,omitempty"`
+	ComponentPack    DepMap `json:"componentpack,omitempty"`
+	ComponentVariant DepMap `json:"componentvariant,omitempty"`
+	ConfigValue      DepMap `json:"configvalue,omitempty"`
+	Label            DepMap `json:"label,omitempty"`
+	FeatureFlag      DepMap `json:"featureflag,omitempty"`
+	Wire             DepMap `json:"wire,omitempty"`
+	Collection       DepMap `json:"collection,omitempty"`
+	Component        DepMap `json:"component,omitempty"`
+	StaticFile       DepMap `json:"file,omitempty"`
 }

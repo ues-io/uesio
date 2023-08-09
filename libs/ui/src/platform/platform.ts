@@ -154,8 +154,6 @@ const systemBundles = [
 	"uesio/builder",
 	"uesio/studio",
 	"uesio/core",
-	// TODO: REMOVE CRM!!!
-	"uesio/crm",
 ]
 
 export const isSystemBundle = (namespace: string) =>
@@ -331,7 +329,7 @@ const platform = {
 		const version = getSiteBundleAssetVersion(
 			context.getSite(),
 			namespace,
-			modstamp
+			modstamp || context.getStaticFileModstamp(`${namespace}.${name}`)
 		)
 		const prefix = getPrefix(context)
 		return `${prefix}/files/${namespace}${version}/${name}`
