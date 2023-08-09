@@ -26,8 +26,8 @@ Accept: application/json
                             "value": "Jerrine"
                         },
                         {
-                            "field": "uesio/tests.species",
-                            "value": "Jerrie"
+                            "field": "uesio/core.owner->uesio/core.username",
+                            "value": "abel"
                         }
                     ]
                 }
@@ -37,6 +37,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
+jsonpath "$.wires[0].errors" not exists
 jsonpath "$.wires[0].debugQueryString" == ```
 SELECT
 main.id::text AS "uesio/core.id",
@@ -46,13 +47,16 @@ WHERE
 main.collection = $1 AND
 main.tenant = $2 AND
 (main.fields->>'uesio/tests.species' = $3 OR
-main.fields->>'uesio/tests.species' = $4)
+main.owner::text IN (SELECT subquery.id::text FROM data as "subquery" WHERE (subquery.collection = $4 AND
+subquery.tenant = $5 AND
+subquery.fields->>'uesio/core.username' = $6)))
 ORDER BY main.id::text asc
 LIMIT 501```
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" count == 3
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" count == 4
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "MacAughtrie:Jerrine"
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "McCreary:Jerrine"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "Pringour:Jerrie"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "Kupker:Alain"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "Burle:Alanah"
 
 # Test a wire load with a group condition (and)
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load

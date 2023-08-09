@@ -41,6 +41,6 @@ hurl -k --no-output --variable host=studio.uesio-dev.com --variable port=3000 hu
 
 echo "Seeding data into our test site..."
 uesio siteadmin -n=testsite
-uesio site upsert -f seed_data/animals.csv -s seed_data/animals_import.spec.json
+uesio site upsert -f seed_data/animals.csv -s seed_data/animals_import_site.spec.json
 
 cd - >> /dev/null

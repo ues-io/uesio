@@ -2,6 +2,7 @@
 	"jobtype": "IMPORT",
 	"collection": "uesio/tests.animal",
 	"filetype": "CSV",
+	"__comment__": "We can't import the owner field in our test site, because the users are not the same",
 	"mappings": {
 		"uesio/tests.genus": {
 			"columnname": "genus"
@@ -11,9 +12,6 @@
 		},
 		"uesio/tests.total_population": {
 			"columnname": "total_population"
-		},
-		"uesio/core.owner": {
-			"columnname": "owner"
 		}
 	}
 }
