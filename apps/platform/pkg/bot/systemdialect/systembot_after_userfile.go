@@ -88,6 +88,7 @@ func runUserFileAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection,
 				Collection: studioFileCollectionId,
 				Wire:       "StudioFiles",
 				Changes:    &studioFileUpdates,
+				Params:     request.Params,
 			},
 		}, session, datasource.GetConnectionSaveOptions(connection))
 	}

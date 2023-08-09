@@ -83,6 +83,8 @@ func (b *SystemDialect) AfterSave(bot *meta.Bot, request *adapt.SaveOp, connecti
 		botFunction = runLicenseAfterSaveBot
 	case "uesio/studio.bot":
 		botFunction = runBotAfterSaveBot
+	case "uesio/studio.app":
+		botFunction = runAppAfterSaveBot
 	}
 
 	if botFunction == nil {
@@ -141,8 +143,6 @@ func (b *SystemDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adap
 	switch op.CollectionName {
 	case "uesio/core.usage":
 		botFunction = runUsageLoadBot
-	case "uesio/studio.allmetadata":
-		botFunction = runAllMetadataLoadBot
 	case "uesio/studio.recentmetadata":
 		botFunction = runRecentMetadataLoadBot
 	case "uesio/studio.blogentry":
@@ -153,6 +153,10 @@ func (b *SystemDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adap
 		botFunction = clickup.ProjectLoadBot
 	case "tcm/timetracker.task":
 		botFunction = clickup.TaskLoadBot
+	}
+
+	if meta.IsBundleableCollection(op.CollectionName) {
+		botFunction = runStudioMetadataLoadBot
 	}
 
 	if botFunction == nil {
@@ -167,9 +171,11 @@ func (b *SystemDialect) SaveBot(bot *meta.Bot, op *adapt.SaveOp, connection adap
 	var botFunction SaveBotFunc
 
 	switch op.Metadata.GetFullName() {
-	case "uesio/studio.allmetadata":
-		botFunction = runAllMetadataSaveBot
 
+	}
+
+	if meta.IsBundleableCollection(op.Metadata.GetFullName()) {
+		botFunction = runStudioMetadataSaveBot
 	}
 
 	if botFunction == nil {

@@ -17,6 +17,7 @@ type PlatformLoadOptions struct {
 	Connection         adapt.Connection
 	BatchSize          int
 	LoadAll            bool
+	Params             map[string]string
 	RequireWriteAccess bool
 }
 
@@ -68,6 +69,7 @@ func PlatformLoad(group meta.CollectionableGroup, options *PlatformLoadOptions, 
 		Order:              options.Orders,
 		Query:              true,
 		BatchSize:          options.BatchSize,
+		Params:             options.Params,
 		RequireWriteAccess: options.RequireWriteAccess,
 	}, options, session)
 }

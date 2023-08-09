@@ -16,10 +16,10 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     allprofiles:
-      collection: uesio/studio.allmetadata
+      collection: uesio/studio.profile
       conditions:
-        - field: uesio/studio.type
-          value: profiles
+        - field: uesio/studio.allmetadata
+          value: true
     newprofile:
       collection: uesio/studio.profile
       fields:

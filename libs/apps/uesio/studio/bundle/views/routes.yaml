@@ -18,10 +18,10 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     allroutes:
-      collection: uesio/studio.allmetadata
+      collection: uesio/studio.route
       conditions:
-        - field: uesio/studio.type
-          value: routes
+        - field: uesio/studio.allmetadata
+          value: true
       order:
         - field: uesio/core.updatedat
           desc: true

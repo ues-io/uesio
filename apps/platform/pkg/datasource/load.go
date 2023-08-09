@@ -554,7 +554,10 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 			return nil, err
 		}
 
-		if collectionMetadata.Type == "DYNAMIC" {
+		usage.RegisterEvent("LOAD", "COLLECTION", collectionMetadata.GetFullName(), 0, session)
+		usage.RegisterEvent("LOAD", "DATASOURCE", meta.PLATFORM_DATA_SOURCE, 0, session)
+
+		if collectionMetadata.IsDynamic() {
 			err := runDynamicCollectionLoadBots(op, connection, session)
 			if err != nil {
 				return nil, err
@@ -562,19 +565,17 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 			continue
 		}
 
-		err = loadData(op, connection, session)
+		err = LoadOp(op, connection, session)
 		if err != nil {
 			return nil, err
 		}
 
-		usage.RegisterEvent("LOAD", "COLLECTION", collectionMetadata.GetFullName(), 0, session)
-		usage.RegisterEvent("LOAD", "DATASOURCE", meta.PLATFORM_DATA_SOURCE, 0, session)
 	}
 
 	return metadataResponse, nil
 }
 
-func loadData(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+func LoadOp(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
 
 	err := connection.Load(op, session)
 	if err != nil {
@@ -585,5 +586,5 @@ func loadData(op *adapt.LoadOp, connection adapt.Connection, session *sess.Sessi
 		return nil
 	}
 
-	return loadData(op, connection, session)
+	return LoadOp(op, connection, session)
 }
