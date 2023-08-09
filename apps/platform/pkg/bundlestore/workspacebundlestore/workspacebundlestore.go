@@ -14,8 +14,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func getParamsFromWorkspaceContext(session *sess.Session) map[string]string {
-	workspace := session.GetWorkspace()
+func getParamsFromWorkspace(workspace *meta.Workspace) map[string]string {
 	return map[string]string{
 		"workspaceid": workspace.ID,
 	}
@@ -54,7 +53,7 @@ func processItems(items []meta.BundleableItem, session *sess.Session, connection
 		}, &datasource.PlatformLoadOptions{
 			LoadAll:    true,
 			Connection: connection,
-			Params:     getParamsFromWorkspaceContext(session),
+			Params:     getParamsFromWorkspace(workspace),
 			Conditions: []adapt.LoadRequestCondition{
 				{
 					Field:    adapt.UNIQUE_KEY_FIELD,
@@ -109,7 +108,7 @@ func (b *WorkspaceBundleStore) GetItem(item meta.BundleableItem, version string,
 				Value: item.GetDBID(workspace.UniqueKey),
 			},
 		},
-		Params:     getParamsFromWorkspaceContext(session),
+		Params:     getParamsFromWorkspace(workspace),
 		Connection: connection,
 	}, session.RemoveWorkspaceContext())
 }
@@ -139,7 +138,8 @@ func (b *WorkspaceBundleStore) GetManyItems(items []meta.BundleableItem, version
 
 func (b *WorkspaceBundleStore) GetAllItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session, connection adapt.Connection) error {
 
-	if session.GetWorkspace() == nil {
+	workspace := session.GetWorkspace()
+	if workspace == nil {
 		return errors.New("Workspace bundle store, needs a workspace in context")
 	}
 
@@ -158,7 +158,7 @@ func (b *WorkspaceBundleStore) GetAllItems(group meta.BundleableGroup, namespace
 		Namespace:  namespace,
 	}, &datasource.PlatformLoadOptions{
 		Conditions: loadConditions,
-		Params:     getParamsFromWorkspaceContext(session),
+		Params:     getParamsFromWorkspace(workspace),
 		Connection: connection,
 		LoadAll:    true,
 	}, session.RemoveWorkspaceContext())
@@ -183,6 +183,10 @@ func (b *WorkspaceBundleStore) GetItemAttachment(item meta.AttachableItem, versi
 }
 
 func (b *WorkspaceBundleStore) GetAttachmentPaths(item meta.AttachableItem, version string, session *sess.Session) ([]string, error) {
+	workspace := session.GetWorkspace()
+	if workspace == nil {
+		return nil, errors.New("Workspace bundle store, needs a workspace in context")
+	}
 	err := b.GetItem(item, version, session, nil)
 	if err != nil {
 		return nil, err
@@ -195,7 +199,7 @@ func (b *WorkspaceBundleStore) GetAttachmentPaths(item meta.AttachableItem, vers
 	err = datasource.PlatformLoad(
 		userFiles,
 		&datasource.PlatformLoadOptions{
-			Params: getParamsFromWorkspaceContext(session),
+			Params: getParamsFromWorkspace(workspace),
 			Conditions: []adapt.LoadRequestCondition{
 				{
 					Field: "uesio/core.recordid",
@@ -236,7 +240,7 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 		&bdc,
 		&datasource.PlatformLoadOptions{
 			Connection: connection,
-			Params:     getParamsFromWorkspaceContext(session),
+			Params:     getParamsFromWorkspace(workspace),
 			Fields: []adapt.LoadRequestField{
 				{
 					ID: "uesio/studio.workspace",

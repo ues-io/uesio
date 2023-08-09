@@ -18,8 +18,8 @@ definition:
     profiles:
       collection: uesio/studio.profile
       conditions:
-        - field: uesio/studio.type
-          value: profiles
+        - field: uesio/studio.allmetadata
+          value: true
         - field: uesio/studio.item
           value: $Param{namespace}.$Param{profilename}
     permissionsets:

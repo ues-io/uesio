@@ -17,8 +17,8 @@ definition:
     components:
       collection: uesio/studio.component
       conditions:
-        - field: uesio/studio.type
-          value: components
+        - field: uesio/studio.allmetadata
+          value: true
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
