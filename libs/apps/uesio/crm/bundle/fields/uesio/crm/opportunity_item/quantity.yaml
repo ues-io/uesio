@@ -1,5 +1,0 @@
-name: quantity
-type: NUMBER
-label: Quantity
-number:
-  decimals: 0

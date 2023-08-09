@@ -1,6 +1,0 @@
-name: contact_details
-path: contact/{recordid}
-view: uesio/crm.contact_details
-theme: uesio/core.default
-title: ""
-public: true
