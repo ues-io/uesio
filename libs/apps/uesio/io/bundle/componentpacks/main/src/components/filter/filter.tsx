@@ -26,13 +26,13 @@ type FilterDefinition = {
 	placeholder?: string
 	operator: wire.ConditionOperators
 	reference?: ReferenceFilterOptions
+	order?: wire.OrderState[]
 }
 export type ReferenceFilterOptions = {
 	template?: string
 	conditions?: wire.WireConditionState[]
 	returnFields?: Object
 	searchFields?: Object
-	order?: wire.OrderState[]
 }
 
 type CommonProps = {
@@ -50,7 +50,7 @@ const getFilterContent = (
 	common: CommonProps,
 	definition: FilterDefinition
 ) => {
-	const { displayAs, placeholder, reference } = definition
+	const { displayAs, placeholder, reference, order } = definition
 	const searchFields =
 		reference && reference.searchFields
 			? Object.keys(reference.searchFields)
@@ -64,7 +64,7 @@ const getFilterContent = (
 		conditions: reference?.conditions,
 		searchFields,
 		returnFields,
-		order: reference?.order,
+		order: order,
 	}
 	const fieldMetadata = common.fieldMetadata
 	const type = fieldMetadata.getType()

@@ -247,6 +247,7 @@ const getWireFieldFromPropertyDef = (
 	const { name, type } = def
 	let wireId: string | undefined
 	let wireDefinition: wire.WireDefinition | undefined
+	let referenceCollection: string | undefined
 	let wireField
 	switch (type) {
 		case "SELECT":
@@ -281,7 +282,7 @@ const getWireFieldFromPropertyDef = (
 				wireId === undefined
 					? undefined
 					: getWireDefinition(context, wireId)
-			let referenceCollection: string | undefined = def.collection
+			referenceCollection = def.collection
 			if (def.collection?.includes("<-")) {
 				const parentWire = "dynamicwire:" + path.trim().combine()
 				const parentWireRecord = api.wire
@@ -526,7 +527,7 @@ const parseProperties = (
 				value =
 					property.metadataProperty === "reference"
 						? (getFieldMetadata(context, sourceWire, sourceField)
-								?.source["reference"]?.collection as string)
+								?.source.reference?.collection as string)
 						: (getFieldMetadata(context, sourceWire, sourceField)
 								?.source[property.metadataProperty] as string)
 				// Add a setter to the source field so that whenever it changes, we also update this property
