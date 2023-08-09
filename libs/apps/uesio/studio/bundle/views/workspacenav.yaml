@@ -171,7 +171,7 @@ definition:
               avatar:
                 - uesio/io.text:
                     uesio.variant: uesio/io.icon
-                    text: wire
+                    text: electrical_services
           - uesio/io.tile:
               uesio.variant: uesio/io.nav
               uesio.id: selectlists

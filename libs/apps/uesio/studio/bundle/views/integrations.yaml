@@ -78,6 +78,8 @@ definition:
                                 uesio.variant: uesio/io.primary
                                 hotkey: "n"
                                 signals:
+                                  - signal: wire/RESET
+                                    wire: newintegration
                                   - signal: panel/TOGGLE
                                     panel: newIntegration
                 - uesio/io.box:
@@ -147,5 +149,7 @@ definition:
             uesio.variant: uesio/io.secondary
             text: $Label{uesio/io.cancel}
             signals:
+              - signal: wire/CANCEL
+                wire: newintegration
               - signal: panel/TOGGLE
-                panel: newintegration
+                panel: newIntegration
