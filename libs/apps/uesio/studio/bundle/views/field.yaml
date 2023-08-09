@@ -31,10 +31,10 @@ definition:
           valueSource: PARAM
           param: collectionname
     fields:
-      collection: uesio/studio.allmetadata
+      collection: uesio/studio.field
       conditions:
-        - field: uesio/studio.type
-          value: fields
+        - field: uesio/studio.allmetadata
+          value: true
         - field: uesio/studio.item
           value: $Param{namespace}.$Param{collectionname}:$Param{fieldNamespace}.$Param{fieldname}
   # Components are how we describe the layout of our view

@@ -7,13 +7,13 @@ import (
 
 func runBotBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 	depMap := MetadataDependencyMap{}
-	var workspaceID string
 
-	err := request.LoopChanges(func(change *adapt.ChangeItem) error {
-		err := checkWorkspaceID(&workspaceID, change)
-		if err != nil {
-			return err
-		}
+	workspaceID, err := GetWorkspaceIDFromParams(request.Params, connection, session)
+	if err != nil {
+		return err
+	}
+
+	err = request.LoopChanges(func(change *adapt.ChangeItem) error {
 
 		btype, err := requireValue(change, "uesio/studio.type")
 		if err != nil {

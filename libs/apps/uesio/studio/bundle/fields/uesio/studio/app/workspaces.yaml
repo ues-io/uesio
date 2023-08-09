@@ -4,4 +4,3 @@ label: Workspaces
 referenceGroup:
   collection: uesio/studio.workspace
   field: uesio/studio.app
-  onDelete: CASCADE

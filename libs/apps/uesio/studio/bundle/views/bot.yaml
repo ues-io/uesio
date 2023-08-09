@@ -15,10 +15,10 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     bots:
-      collection: uesio/studio.allmetadata
+      collection: uesio/studio.bot
       conditions:
-        - field: uesio/studio.type
-          value: bots
+        - field: uesio/studio.allmetadata
+          value: true
         - field: uesio/studio.item
           value: $Param{bottype}:$Param{collection}:$Param{namespace}.$Param{botname}
     attachments:

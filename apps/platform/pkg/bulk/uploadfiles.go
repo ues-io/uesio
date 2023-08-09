@@ -11,7 +11,6 @@ import (
 
 	"github.com/dimchansky/utfbom"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -41,7 +40,7 @@ func NewFileUploadBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Sess
 		return nil, err
 	}
 
-	uploadOps := []filesource.FileUploadOp{}
+	uploadOps := []*filesource.FileUploadOp{}
 	// Read all the files from zip archive
 
 	// First open upload.csv
@@ -108,14 +107,12 @@ func NewFileUploadBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Sess
 		if err != nil {
 			return nil, errors.New("No file found at path: " + path)
 		}
-		uploadOps = append(uploadOps, filesource.FileUploadOp{
-			Data: f,
-			Details: &fileadapt.FileDetails{
-				Path:            path,
-				CollectionID:    spec.Collection,
-				RecordUniqueKey: recordid,
-				FieldID:         fieldid,
-			},
+		uploadOps = append(uploadOps, &filesource.FileUploadOp{
+			Data:            f,
+			Path:            path,
+			CollectionID:    spec.Collection,
+			RecordUniqueKey: recordid,
+			FieldID:         fieldid,
 		})
 		defer f.Close()
 
@@ -126,7 +123,7 @@ func NewFileUploadBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Sess
 		return nil, err
 	}
 
-	_, err = filesource.Upload(uploadOps, connection, session)
+	_, err = filesource.Upload(uploadOps, connection, session, nil)
 	if err != nil {
 		return nil, err
 	}
