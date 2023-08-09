@@ -97,13 +97,8 @@ definition:
                                       uesio.variant: uesio/io.primary
                                       text: $Label{uesio/io.save}
                                       uesio.display:
-                                        - type: group
-                                          conjunction: OR
-                                          conditions:
-                                            - type: wireHasChanges
-                                              wire: bots
-                                            - type: wireHasChanges
-                                              wire: attachments
+                                        - type: fieldMode
+                                          mode: EDIT
                                       signals:
                                         - signal: wire/SAVE
                                           wires:
