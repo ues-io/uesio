@@ -15,10 +15,10 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     datasources:
-      collection: uesio/studio.allmetadata
+      collection: uesio/studio.datasource
       conditions:
-        - field: uesio/studio.type
-          value: datasources
+        - field: uesio/studio.allmetadata
+          value: true
         - field: uesio/studio.item
           value: $Param{namespace}.$Param{datasourcename}
   # Components are how we describe the layout of our view

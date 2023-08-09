@@ -1,57 +1,87 @@
 package file
 
 import (
+	"encoding/json"
 	"errors"
+	"io"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/controller/bot"
-	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 )
 
-func UploadUserFile(w http.ResponseWriter, r *http.Request) {
+func processUploadRequest(r *http.Request) (*meta.UserFileMetadata, error) {
+	parts, err := r.MultipartReader()
+	if err != nil {
+		return nil, err
+	}
 
 	session := middleware.GetSession(r)
-	details, err := fileadapt.NewFileDetails(r.URL.Query())
-	if err != nil {
-		logger.LogError(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+
+	op := &filesource.FileUploadOp{}
+
 	//Attach file length to the details
 	contentLenHeader := r.Header.Get("Content-Length")
 	contentLen, err := strconv.ParseInt(contentLenHeader, 10, 64)
 	if err != nil {
-		err := errors.New("must attach header 'content-length' with file upload")
-		logger.LogError(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		return nil, errors.New("must attach header 'content-length' with file upload")
 	}
-	details.ContentLength = contentLen
+	op.ContentLength = contentLen
 
-	ufm, err := filesource.Upload([]filesource.FileUploadOp{
-		{
-			Data:    r.Body,
-			Details: details,
-		},
-	}, nil, session)
+	var result *meta.UserFileMetadata
+
+	for {
+		part, err_part := parts.NextPart()
+		if err_part == io.EOF {
+			break
+		}
+		if part.FormName() == "details" {
+			err := json.NewDecoder(part).Decode(op)
+			if err != nil {
+				return nil, err
+			}
+		}
+		if part.FormName() == "file" {
+			if op.Path == "" {
+				return nil, errors.New("No name specified")
+			}
+			if op.CollectionID == "" {
+				return nil, errors.New("No collectionid specified")
+			}
+			if op.RecordID == "" {
+				return nil, errors.New("No recordid specified")
+			}
+			op.Data = part
+			results, err := filesource.Upload([]*filesource.FileUploadOp{op}, nil, session, op.Params)
+			if err != nil {
+				return nil, err
+			}
+			if len(results) != 1 {
+				return nil, errors.New("Upload Failed: Invalid Response")
+			}
+			result = results[0]
+		}
+	}
+	return result, nil
+
+}
+
+func UploadUserFile(w http.ResponseWriter, r *http.Request) {
+
+	result, err := processUploadRequest(r)
 	if err != nil {
 		logger.LogError(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	if len(ufm) != 1 {
-		err = errors.New("Upload Failed: Invalid Response")
-		logger.LogError(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	RespondJSON(w, r, ufm[0])
+
+	RespondJSON(w, r, result)
 }
 
 func DeleteUserFile(w http.ResponseWriter, r *http.Request) {

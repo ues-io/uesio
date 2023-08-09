@@ -15,17 +15,17 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     permissionsets:
-      collection: uesio/studio.allmetadata
+      collection: uesio/studio.permissionset
       conditions:
-        - field: uesio/studio.type
-          value: permissionsets
+        - field: uesio/studio.allmetadata
+          value: true
         - field: uesio/studio.item
           value: $Param{namespace}.$Param{permissionsetname}
     fields:
-      collection: uesio/studio.allmetadata
+      collection: uesio/studio.field
       conditions:
-        - field: uesio/studio.type
-          value: fields
+        - field: uesio/studio.allmetadata
+          value: true
         - field: uesio/studio.grouping
           value: $Param{collectionNamespace}.$Param{collectionname}
   # Components are how we describe the layout of our view

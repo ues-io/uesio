@@ -171,7 +171,7 @@ func MergeRouteData(mergeableText string, mergeData *merge.ServerMergeData) (str
 	return templating.Execute(template, mergeData)
 }
 
-func GetRoutingMergeData(route *meta.Route, workspace *meta.Workspace, metadata *routing.PreloadMetadata, session *sess.Session) (*routing.RouteMergeData, error) {
+func GetRoutingMergeData(route *meta.Route, metadata *routing.PreloadMetadata, session *sess.Session) (*routing.RouteMergeData, error) {
 
 	// Prepare wire data for server merge data
 	wireData := map[string]meta.Group{}
@@ -222,7 +222,7 @@ func GetRoutingMergeData(route *meta.Route, workspace *meta.Workspace, metadata 
 		Params:       route.Params,
 		Namespace:    route.Namespace,
 		Path:         route.Path,
-		Workspace:    GetWorkspaceMergeData(workspace),
+		Workspace:    GetWorkspaceMergeData(session.GetWorkspace()),
 		Theme:        route.ThemeRef,
 		Dependencies: metadata,
 		Title:        mergedRouteTitle,
@@ -253,9 +253,8 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 	w.Header().Set("content-type", "text/html")
 
 	site := session.GetSite()
-	workspace := session.GetWorkspace()
 
-	routingMergeData, err := GetRoutingMergeData(route, workspace, preload, session)
+	routingMergeData, err := GetRoutingMergeData(route, preload, session)
 	if err != nil {
 		msg := "Error getting route merge data: " + err.Error()
 		http.Error(w, msg, http.StatusInternalServerError)

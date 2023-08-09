@@ -120,7 +120,7 @@ func getRouteAPIResult(route *meta.Route, session *sess.Session) (*routing.Route
 		return nil, err
 	}
 
-	return GetRoutingMergeData(route, session.GetWorkspace(), depsCache, session)
+	return GetRoutingMergeData(route, depsCache, session)
 }
 
 func getNotFoundRoute(path string) *meta.Route {

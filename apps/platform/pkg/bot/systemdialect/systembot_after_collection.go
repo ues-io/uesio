@@ -66,6 +66,7 @@ func runCollectionAfterSaveBot(request *adapt.SaveOp, connection adapt.Connectio
 			},
 		},
 		Connection: connection,
+		Params:     request.Params,
 	}, session)
 	if err != nil {
 		return err
@@ -86,6 +87,7 @@ func runCollectionAfterSaveBot(request *adapt.SaveOp, connection adapt.Connectio
 			},
 		},
 		Connection: connection,
+		Params:     request.Params,
 	}, session)
 	if err != nil {
 		return err
@@ -98,6 +100,7 @@ func runCollectionAfterSaveBot(request *adapt.SaveOp, connection adapt.Connectio
 			Collection: "uesio/studio.field",
 			Wire:       "RunCollectionAfterSaveBot",
 			Deletes:    &fc,
+			Params:     request.Params,
 		})
 	}
 
@@ -106,6 +109,7 @@ func runCollectionAfterSaveBot(request *adapt.SaveOp, connection adapt.Connectio
 			Collection: "uesio/studio.routeassignment",
 			Wire:       "RunCollectionAfterSaveBot",
 			Deletes:    &rac,
+			Params:     request.Params,
 		})
 	}
 

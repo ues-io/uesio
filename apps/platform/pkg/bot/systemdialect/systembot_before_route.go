@@ -9,13 +9,12 @@ func runRouteBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, s
 
 	depMap := MetadataDependencyMap{}
 
-	var workspaceID string
+	workspaceID, err := GetWorkspaceIDFromParams(request.Params, connection, session)
+	if err != nil {
+		return err
+	}
 
-	err := request.LoopChanges(func(change *adapt.ChangeItem) error {
-		err := checkWorkspaceID(&workspaceID, change)
-		if err != nil {
-			return err
-		}
+	err = request.LoopChanges(func(change *adapt.ChangeItem) error {
 
 		routeType, _ := change.GetFieldAsString("uesio/studio.type")
 		if routeType != "redirect" {

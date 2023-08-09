@@ -14,10 +14,10 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     integrations:
-      collection: uesio/studio.allmetadata
+      collection: uesio/studio.integration
       conditions:
-        - field: uesio/studio.type
-          value: integrations
+        - field: uesio/studio.allmetadata
+          value: true
         - field: uesio/studio.item
           value: $Param{namespace}.$Param{integrationname}
   # Components are how we describe the layout of our view

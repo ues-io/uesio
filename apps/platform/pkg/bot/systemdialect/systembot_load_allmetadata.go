@@ -13,96 +13,123 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func extractConditions(conditions []adapt.LoadRequestCondition) (*adapt.LoadRequestCondition, *adapt.LoadRequestCondition, *adapt.LoadRequestCondition, *adapt.LoadRequestCondition, error) {
-
-	// Verify that a type condition was provided
-	var typeCondition *adapt.LoadRequestCondition
-	var itemCondition *adapt.LoadRequestCondition
-	var groupingCondition *adapt.LoadRequestCondition
-	var searchCondition *adapt.LoadRequestCondition
-
+func extractConditionByField(conditions []adapt.LoadRequestCondition, field string) *adapt.LoadRequestCondition {
 	for i, condition := range conditions {
-		if condition.Field == "uesio/studio.type" {
-			typeCondition = &conditions[i]
-			continue
-		}
-		if condition.Field == "uesio/studio.item" {
-			itemCondition = &conditions[i]
-			continue
-		}
-		if condition.Field == "uesio/studio.grouping" {
-			groupingCondition = &conditions[i]
-			continue
-		}
-		if condition.Type == "SEARCH" {
-			searchCondition = &conditions[i]
-			continue
+		if condition.Field == field {
+			return &conditions[i]
 		}
 	}
-	if typeCondition == nil {
-		return nil, nil, nil, nil, errors.New("No type condition provided")
-	}
-	if itemCondition != nil && groupingCondition != nil {
-		return nil, nil, nil, nil, errors.New("Can't have both an item and grouping condition")
-	}
-	return typeCondition, itemCondition, groupingCondition, searchCondition, nil
+	return nil
 }
 
-func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+func extractConditionByType(conditions []adapt.LoadRequestCondition, conditionType string) *adapt.LoadRequestCondition {
+	for i, condition := range conditions {
+		if condition.Type == conditionType {
+			return &conditions[i]
+		}
+	}
+	return nil
+}
 
-	workspace := op.Params["workspacename"]
-	site := op.Params["sitename"]
+func GetWorkspaceIDFromParams(params map[string]string, connection adapt.Connection, session *sess.Session) (string, error) {
+	workspaceid := params["workspaceid"]
+	if workspaceid != "" {
+		return workspaceid, nil
+	}
+	inContextSession, err := getContextSessionFromParams(params, connection, session)
+	if err != nil {
+		return "", err
+	}
+	return inContextSession.GetWorkspaceID(), nil
+}
+
+func getContextSessionFromParams(params map[string]string, connection adapt.Connection, session *sess.Session) (*sess.Session, error) {
+
+	//This creates a copy of the session
+	inContextSession := session.RemoveWorkspaceContext()
+
+	workspace := params["workspacename"]
+	site := params["sitename"]
 	if workspace == "" && site == "" {
-		return errors.New("no workspace name or site name parameter provided")
+		return nil, errors.New("no workspace name or site name parameter provided")
 	}
-	app := op.Params["app"]
+	app := params["app"]
 	if app == "" {
-		return errors.New("no app parameter provided")
+		return nil, errors.New("no app parameter provided")
 	}
 
-	// Verify that a type condition was provided
-	if op.Conditions == nil || len(op.Conditions) <= 0 {
-		return errors.New("must provide at least one condition")
+	if workspace != "" {
+		workspaceKey := fmt.Sprintf("%s:%s", app, workspace)
+		err := datasource.AddWorkspaceContextByKey(workspaceKey, inContextSession, connection)
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	typeCondition, itemCondition, groupingCondition, searchCondition, err := extractConditions(op.Conditions)
+	if site != "" {
+		siteKey := fmt.Sprintf("%s:%s", app, site)
+		err := datasource.AddSiteAdminContextByKey(siteKey, inContextSession, connection)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return inContextSession, nil
+}
+
+func runStudioMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+
+	allMetadataCondition := extractConditionByField(op.Conditions, "uesio/studio.allmetadata")
+
+	if allMetadataCondition != nil && allMetadataCondition.Value == true {
+		return runAllMetadataLoadBot(op.CollectionName, op, connection, session)
+	}
+
+	workspaceID, err := GetWorkspaceIDFromParams(op.Params, connection, session)
 	if err != nil {
 		return err
 	}
 
-	metadataType := typeCondition.Value.(string)
+	itemCondition := extractConditionByField(op.Conditions, "uesio/studio.item")
+	groupingCondition := extractConditionByField(op.Conditions, "uesio/studio.grouping")
+	if itemCondition != nil || groupingCondition != nil {
+		return errors.New("item or grouping conditions are not allowed unless the allmetadata condition is set")
+	}
+
+	op.Conditions = append(op.Conditions, adapt.LoadRequestCondition{
+		Field: "uesio/studio.workspace",
+		Value: workspaceID,
+	})
+
+	return datasource.LoadOp(op, connection, session)
+
+}
+
+func runAllMetadataLoadBot(collectionName string, op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+
+	inContextSession, err := getContextSessionFromParams(op.Params, connection, session)
+	if err != nil {
+		return err
+	}
+
+	itemCondition := extractConditionByField(op.Conditions, "uesio/studio.item")
+	groupingCondition := extractConditionByField(op.Conditions, "uesio/studio.grouping")
+	searchCondition := extractConditionByType(op.Conditions, "SEARCH")
+
+	metadataType := meta.GetTypeFromCollectionName(collectionName)
 
 	group, err := meta.GetBundleableGroupFromType(metadataType)
 	if err != nil {
 		return errors.New("invalid metadata type provided for type condition")
 	}
 
-	//This creates a copy of the session
-	inContextSession := session.RemoveWorkspaceContext()
-
-	if workspace != "" {
-		workspaceKey := fmt.Sprintf("%s:%s", app, workspace)
-		err = datasource.AddWorkspaceContextByKey(workspaceKey, inContextSession, connection)
-		if err != nil {
-			return err
-		}
-	}
-
-	if site != "" {
-		siteKey := fmt.Sprintf("%s:%s", app, site)
-		err = datasource.AddSiteAdminContextByKey(siteKey, inContextSession, connection)
-		if err != nil {
-			return err
-		}
-	}
-
-	metadata, err := datasource.Load([]*adapt.LoadOp{{
+	_, err = datasource.Load([]*adapt.LoadOp{{
 		CollectionName: group.GetName(),
 		WireName:       op.WireName,
 		View:           op.View,
 		Collection:     op.Collection,
 		Fields:         datasource.GetLoadRequestFields(group.GetFields()),
 		Query:          false,
+		Params:         op.Params,
 	}}, session, &datasource.LoadOptions{
 		Metadata: connection.GetMetadata(),
 	})
@@ -110,21 +137,14 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		return err
 	}
 
-	originalCollectionMetadata, err := metadata.GetCollection(group.GetName())
+	metadata := connection.GetMetadata()
+
+	collectionMetadata, err := metadata.GetCollection(op.CollectionName)
 	if err != nil {
 		return err
 	}
 
-	dynamicCollectionMetadata, err := metadata.GetCollection("uesio/studio.allmetadata")
-	if err != nil {
-		return err
-	}
-
-	for _, field := range originalCollectionMetadata.Fields {
-		dynamicCollectionMetadata.SetField(field)
-	}
-
-	dynamicCollectionMetadata.SetField(&adapt.FieldMetadata{
+	collectionMetadata.SetField(&adapt.FieldMetadata{
 		Name:       "namespace",
 		Namespace:  "uesio/studio",
 		Createable: false,
@@ -134,7 +154,7 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		Label:      "Namespace",
 	})
 
-	dynamicCollectionMetadata.SetField(&adapt.FieldMetadata{
+	collectionMetadata.SetField(&adapt.FieldMetadata{
 		Name:       "appicon",
 		Namespace:  "uesio/studio",
 		Createable: false,
@@ -144,7 +164,7 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		Label:      "App Icon",
 	})
 
-	dynamicCollectionMetadata.SetField(&adapt.FieldMetadata{
+	collectionMetadata.SetField(&adapt.FieldMetadata{
 		Name:       "appcolor",
 		Namespace:  "uesio/studio",
 		Createable: false,
