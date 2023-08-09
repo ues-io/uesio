@@ -45,27 +45,22 @@ func addWorkspaceContext(workspace *meta.Workspace, session *sess.Session, conne
 }
 
 func AddWorkspaceContextByKey(workspaceKey string, session *sess.Session, connection adapt.Connection) error {
-	var workspace meta.Workspace
-	err := PlatformLoadOne(
-		&workspace,
-		&PlatformLoadOptions{
-			Connection: connection,
-			Conditions: []adapt.LoadRequestCondition{
-				{
-					Field: adapt.UNIQUE_KEY_FIELD,
-					Value: workspaceKey,
-				},
-			},
-		},
-		session.RemoveWorkspaceContext(),
-	)
+	workspace, err := queryWorkspace(workspaceKey, adapt.UNIQUE_KEY_FIELD, session, connection)
 	if err != nil {
 		return err
 	}
-	return addWorkspaceContext(&workspace, session, connection)
+	return addWorkspaceContext(workspace, session, connection)
 }
 
 func AddWorkspaceContextByID(workspaceID string, session *sess.Session, connection adapt.Connection) error {
+	workspace, err := queryWorkspace(workspaceID, adapt.ID_FIELD, session, connection)
+	if err != nil {
+		return err
+	}
+	return addWorkspaceContext(workspace, session, connection)
+}
+
+func queryWorkspace(value, field string, session *sess.Session, connection adapt.Connection) (*meta.Workspace, error) {
 	var workspace meta.Workspace
 	err := PlatformLoadOne(
 		&workspace,
@@ -73,15 +68,16 @@ func AddWorkspaceContextByID(workspaceID string, session *sess.Session, connecti
 			Connection: connection,
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field: adapt.ID_FIELD,
-					Value: workspaceID,
+					Field: field,
+					Value: value,
 				},
 			},
+			RequireWriteAccess: true,
 		},
 		session.RemoveWorkspaceContext(),
 	)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return addWorkspaceContext(&workspace, session, connection)
+	return &workspace, nil
 }
