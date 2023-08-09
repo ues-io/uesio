@@ -1,9 +1,0 @@
-name: cardimage
-public: true
-label: Card Image
-definition:
-  uesio.styleTokens:
-    root:
-      - h-full
-      - w-full
-      - rounded-none

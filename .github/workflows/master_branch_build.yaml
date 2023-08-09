@@ -13,6 +13,14 @@ on:
       AWS_REGION_DEV:
         required: true
 
+# Ensure that only the latest push to master is run,
+# and any previous builds on the branch are cancelled automatically
+# (to save money on Github Actions execution time, and ensure that
+# we don't have multiple deploys to Dev environment running at once)
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 # Request permissions to be able to access the Github OIDC JWT,
 # which is needed for AWS actions.
 permissions:

@@ -1,5 +1,0 @@
-name: related_opportunity
-type: REFERENCE
-label: Related Opportunity
-reference:
-  collection: uesio/crm.opportunity

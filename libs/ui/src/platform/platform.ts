@@ -156,8 +156,6 @@ const systemBundles = [
 	"uesio/builder",
 	"uesio/studio",
 	"uesio/core",
-	// TODO: REMOVE CRM!!!
-	"uesio/crm",
 ]
 
 export const isSystemBundle = (namespace: string) =>

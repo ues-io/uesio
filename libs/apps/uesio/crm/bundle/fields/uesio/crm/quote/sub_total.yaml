@@ -1,5 +1,0 @@
-name: sub_total
-type: NUMBER
-label: Sub Total
-number:
-  decimals: 0
