@@ -82,6 +82,7 @@ const Route: UtilityComponent = (props) => {
 				true
 			)
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [site])
 
 	// Quit rendering early if we don't have our route yet
