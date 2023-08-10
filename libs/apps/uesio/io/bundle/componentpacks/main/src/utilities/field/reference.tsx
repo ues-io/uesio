@@ -34,6 +34,30 @@ interface ReferenceFieldProps {
 	setValue?: (value: wire.PlainWireRecord | null) => void
 }
 
+const displayTemplateFieldPattern = /\${(.*?)}/g
+
+// Build an intersection of all fields to return by extracting fields from the display template
+// and combining with the search and return fields
+const getReturnFields = (
+	displayTemplate: string | undefined,
+	returnFields: string[] = [],
+	searchFields: string[] = []
+) => {
+	const extractedFields = displayTemplate
+		? displayTemplate.match(displayTemplateFieldPattern)
+		: null
+	return Array.from(
+		new Set<string>(
+			returnFields.concat(
+				searchFields,
+				extractedFields
+					? extractedFields.map((f) => f.slice(2, -1))
+					: []
+			)
+		)
+	)
+}
+
 const isValueCondition = wire.isValueCondition
 
 const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
@@ -128,7 +152,11 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 					view: context.getViewId() || "",
 					query: true,
 					collection: referencedCollection.getFullName(),
-					fields: returnFields.map((fieldName) => ({
+					fields: getReturnFields(
+						options?.template,
+						returnFields,
+						searchFields
+					).map((fieldName) => ({
 						id: fieldName,
 					})),
 					conditions: [

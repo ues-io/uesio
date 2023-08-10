@@ -13,7 +13,7 @@ import ReferenceFilter from "../../utilities/referencefilter/referencefilter"
 import GroupFilter, {
 	GroupFilterProps,
 } from "../../utilities/groupfilter/groupfilter"
-import { LabelPosition } from "../field/field"
+import { LabelPosition, ReferenceFieldOptions } from "../field/field"
 
 type FilterDefinition = {
 	fieldId: string
@@ -33,6 +33,7 @@ export type ReferenceFilterOptions = {
 	conditions?: wire.WireConditionState[]
 	returnFields?: Record<string, unknown>
 	searchFields?: Record<string, unknown>
+	order?: wire.OrderState[]
 }
 
 type CommonProps = {
@@ -46,11 +47,8 @@ type CommonProps = {
 const isValueCondition = wire.isValueCondition
 const isGroupCondition = wire.isGroupCondition
 
-const getFilterContent = (
-	common: CommonProps,
-	definition: FilterDefinition
-) => {
-	const { displayAs, placeholder, reference, order } = definition
+const getReferenceFilterOptions = (definition: FilterDefinition) => {
+	const { order, reference } = definition
 	const searchFields =
 		reference && reference.searchFields
 			? Object.keys(reference.searchFields)
@@ -59,13 +57,20 @@ const getFilterContent = (
 		reference && reference.returnFields
 			? Object.keys(reference.returnFields)
 			: undefined
-	const referenceOptions = {
+	return {
 		template: reference?.template,
 		conditions: reference?.conditions,
 		searchFields,
 		returnFields,
-		order,
-	}
+		order: reference?.order || order,
+	} as ReferenceFieldOptions
+}
+
+const getFilterContent = (
+	common: CommonProps,
+	definition: FilterDefinition
+) => {
+	const { displayAs, placeholder } = definition
 	const fieldMetadata = common.fieldMetadata
 	const type = fieldMetadata.getType()
 	switch (type) {
@@ -90,7 +95,12 @@ const getFilterContent = (
 		}
 		case "USER":
 		case "REFERENCE": {
-			return <ReferenceFilter {...common} options={referenceOptions} />
+			return (
+				<ReferenceFilter
+					{...common}
+					options={getReferenceFilterOptions(definition)}
+				/>
+			)
 		}
 		default:
 			return null
