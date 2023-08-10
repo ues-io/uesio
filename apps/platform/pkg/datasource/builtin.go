@@ -27,9 +27,9 @@ var UNIQUE_KEY_FIELD_METADATA = adapt.FieldMetadata{
 var OWNER_FIELD_METADATA = adapt.FieldMetadata{
 	Name:         "owner",
 	Namespace:    "uesio/core",
-	Createable:   true,
+	Createable:   false,
 	Accessible:   true,
-	Updateable:   true,
+	Updateable:   false,
 	Type:         "USER",
 	Label:        "Owner",
 	AutoPopulate: "CREATE",
