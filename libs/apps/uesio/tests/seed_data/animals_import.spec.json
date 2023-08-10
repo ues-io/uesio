@@ -11,6 +11,9 @@
 		},
 		"uesio/tests.total_population": {
 			"columnname": "total_population"
+		},
+		"uesio/tests.ancestor": {
+			"columnname": "ancestor"
 		}
 	}
 }

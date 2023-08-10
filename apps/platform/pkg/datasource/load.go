@@ -296,13 +296,31 @@ func getMetadataForConditionLoad(
 	ops []*adapt.LoadOp,
 ) error {
 
-	// We don't need any extra field metadata for these conditions (yet)
-	if condition.Type == "SEARCH" || condition.Type == "GROUP" {
-		// We don't need any extra field metadata for search conditions yet
+	var err error
+
+	if condition.Type == "GROUP" {
+		// Process sub-conditions recursively
+		if len(condition.SubConditions) > 0 {
+			for _, subCondition := range condition.SubConditions {
+				err = getMetadataForConditionLoad(&subCondition, collectionName, collections, op, ops)
+				if err != nil {
+					return err
+				}
+			}
+		}
+		return nil
+	} else if condition.Type == "SEARCH" {
+		// Load metadata for all search fields
+		if len(condition.SearchFields) > 0 {
+			for _, searchField := range condition.SearchFields {
+				err = collections.AddField(collectionName, searchField, nil)
+				if err != nil {
+					return fmt.Errorf("unable to request metadata for search field '%s' on collection '%s': %s", searchField, collectionName, err.Error())
+				}
+			}
+		}
 		return nil
 	}
-
-	var err error
 
 	if isReferenceCrossingField(condition.Field) {
 		// Recursively add all pieces of the field, as if we were requesting Subfields,
