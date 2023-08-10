@@ -45,7 +45,6 @@ const getWireRequest = (
 			fields,
 			name,
 			order,
-			params: context.getParams(),
 			query: forceQuery ? true : query,
 			requirewriteaccess,
 			view,
