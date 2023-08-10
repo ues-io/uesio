@@ -6,20 +6,20 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func getAccessMessage(ut datasource.UserAccessTokenValue) string {
+func getAccessMessage(ut datasource.UserAccessTokenValue, value string) string {
 
 	switch ut.UserAccessToken.Name {
 	case "uesio.owner":
-		return "Owner: " + ut.Value
+		return "Owner: " + value
 	case "uesio.installed":
-		return "Installed app: " + ut.Value
+		return "Installed app: " + value
 	case "uesio.namedpermission":
-		return "Named permission: " + ut.Value
+		return "Named permission: " + value
 	case "teammember":
-		return "App Team Member: " + ut.Value
+		return "App Team Member: " + value
 	}
 
-	return ut.UserAccessToken.Name + ":" + ut.Value
+	return ut.UserAccessToken.Name + ":" + value
 }
 
 func runTokensLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
@@ -51,9 +51,11 @@ func runTokensLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *se
 	})
 
 	for _, ut := range userTokens {
-		item := op.Collection.NewItem()
-		item.SetField("uesio/studio.token", getAccessMessage(ut))
-		op.Collection.AddItem(item)
+		for _, value := range ut.Value {
+			item := op.Collection.NewItem()
+			item.SetField("uesio/studio.token", getAccessMessage(ut, value))
+			op.Collection.AddItem(item)
+		}
 	}
 
 	return nil
