@@ -1,6 +1,5 @@
-name: featureflag
+name: integration
 definition:
-  # Wires are how we pull in data
   wires:
     workspaces:
       collection: uesio/studio.workspace
@@ -14,50 +13,13 @@ definition:
       conditions:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
-    featureflags:
-      collection: uesio/studio.featureflag
+    integrations:
+      collection: uesio/studio.integration
       conditions:
         - field: uesio/studio.allmetadata
           value: true
         - field: uesio/studio.item
-          value: $Param{namespace}.$Param{featureflagname}
-      events:
-        - type: onChange
-          fields:
-            - uesio/studio.type
-          conditions:
-            - field: uesio/studio.type
-              value: CHECKBOX
-          signals:
-            # Clear out the value of min/max
-            - signal: wire/UPDATE_RECORD
-              field: uesio/studio.min
-              value: null
-            - signal: wire/UPDATE_RECORD
-              field: uesio/studio.max
-              value: null
-            # Set a checkbox-appropriate default value
-            - signal: wire/UPDATE_RECORD
-              field: uesio/studio.defaultvalue
-              value: "false"
-        - type: onChange
-          fields:
-            - uesio/studio.type
-          conditions:
-            - field: uesio/studio.type
-              value: NUMBER
-          signals:
-            # Set a number-appropriate default value
-            - signal: wire/UPDATE_RECORD
-              field: uesio/studio.defaultvalue
-              value: "0"
-            # Set default value of min/max to 0
-            - signal: wire/UPDATE_RECORD
-              field: uesio/studio.min
-              value: 0
-            - signal: wire/UPDATE_RECORD
-              field: uesio/studio.max
-              value: 0
+          value: $Param{namespace}.$Param{integrationname}
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -71,9 +33,9 @@ definition:
                     uesio.context:
                       wire: workspaces
                     params:
-                      itemType: featureflags
-                      itemIcon: tune
-                      itemName: $Param{featureflagname}
+                      itemType: integrations
+                      itemIcon: electrical_services
+                      itemName: $Param{integrationname}
                       itemNameSpace: $Param{namespace}
           - uesio/io.griditem:
               uesio.variant: uesio/studio.leftbar
@@ -83,18 +45,18 @@ definition:
                       wire: workspaces
                     view: uesio/studio.workspacenav
                     params:
-                      selected: featureflags
+                      selected: integrations
           - uesio/io.griditem:
               uesio.variant: uesio/studio.content
               components:
                 - uesio/io.list:
-                    uesio.id: featureflagsList
-                    wire: featureflags
+                    uesio.id: integrationsList
+                    wire: integrations
                     mode: READ
                     components:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.main
-                          title: Feature Flag - ${uesio/studio.name}
+                          title: Integration - ${uesio/studio.name}
                           subtitle: $Param{namespace}
                           actions:
                             - uesio/io.group:
@@ -115,23 +77,22 @@ definition:
                                           component: uesio/io.list
                                           componentsignal: TOGGLE_MODE
                                           targettype: specific
-                                          componentid: featureflagsList
+                                          componentid: integrationsList
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.primary
                                       text: $Label{uesio/io.save}
                                       uesio.display:
                                         - type: wireHasChanges
-                                          wire: featureflags
-                                      hotkey: "meta+s"
+                                          wire: integrations
                                       signals:
                                         - signal: wire/SAVE
                                           wires:
-                                            - featureflags
+                                            - integrations
                                         - signal: component/CALL
                                           component: uesio/io.list
                                           componentsignal: SET_READ_MODE
                                           targettype: specific
-                                          componentid: featureflagsList
+                                          componentid: integrationsList
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: $Label{uesio/io.cancel}
@@ -140,12 +101,12 @@ definition:
                                           mode: EDIT
                                       signals:
                                         - signal: wire/CANCEL
-                                          wire: featureflags
+                                          wire: integrations
                                         - signal: component/CALL
                                           component: uesio/io.list
                                           componentsignal: SET_READ_MODE
                                           targettype: specific
-                                          target: featureflagsList
+                                          target: integrationsList
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: $Label{uesio/io.delete}
@@ -161,9 +122,9 @@ definition:
                                         - signal: wire/MARK_FOR_DELETE
                                         - signal: wire/SAVE
                                           wires:
-                                            - featureflags
+                                            - integrations
                                         - signal: route/NAVIGATE
-                                          path: app/$Param{app}/workspace/$Param{workspacename}/featureflags
+                                          path: app/$Param{app}/workspace/$Param{workspacename}/integrations
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           components:
@@ -174,17 +135,15 @@ definition:
                                       fieldId: uesio/studio.name
                                   - uesio/io.field:
                                       fieldId: uesio/studio.type
+                                  - uesio/builder.metadatafield:
+                                      uesio.context:
+                                        workspace:
+                                          name: $Param{workspacename}
+                                          app: $Param{app}
+                                      fieldId: uesio/studio.credentials
+                                      metadataType: CREDENTIALS
+                                      label: Credentials
                                   - uesio/io.field:
-                                      fieldId: uesio/studio.validfororgs
+                                      fieldId: uesio/studio.headers
                                   - uesio/io.field:
-                                      fieldId: uesio/studio.defaultvalue
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.min
-                                      uesio.display:
-                                        - field: uesio/studio.type
-                                          value: NUMBER
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.max
-                                      uesio.display:
-                                        - field: uesio/studio.type
-                                          value: NUMBER
+                                      fieldId: uesio/studio.baseurl

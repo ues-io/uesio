@@ -25,6 +25,8 @@ views:
   uesio/studio.file: true
   uesio/studio.files: true
   uesio/studio.installed: true
+  uesio/studio.integration: true
+  uesio/studio.integrations: true
   uesio/studio.home: true
   uesio/studio.homecontent: true
   uesio/studio.homeleftnav: true
@@ -112,6 +114,8 @@ routes:
   uesio/studio.home: true
   uesio/studio.installed: true
   uesio/studio.installedbundle: true
+  uesio/studio.integration: true
+  uesio/studio.integrations: true
   uesio/studio.login: true
   uesio/studio.org: true
   uesio/studio.packaging: true
@@ -170,7 +174,6 @@ routes:
   uesio/studio.usertokens: true
 files: {}
 collections:
-  uesio/studio.allmetadata: true
   uesio/studio.recentmetadata: true
   uesio/studio.tokens: true
   uesio/studio.blogentry: true

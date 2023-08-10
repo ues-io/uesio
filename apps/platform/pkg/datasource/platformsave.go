@@ -12,6 +12,7 @@ import (
 type PlatformSaveRequest struct {
 	Collection meta.CollectionableGroup
 	Options    *adapt.SaveOptions
+	Params     map[string]string
 }
 
 func PlatformDelete(request meta.CollectionableGroup, connection adapt.Connection, session *sess.Session) error {
@@ -35,6 +36,7 @@ func GetSaveRequestFromPlatformSave(psr PlatformSaveRequest) SaveRequest {
 		Wire:       "AnyKey",
 		Changes:    psr.Collection,
 		Options:    psr.Options,
+		Params:     psr.Params,
 	}
 }
 

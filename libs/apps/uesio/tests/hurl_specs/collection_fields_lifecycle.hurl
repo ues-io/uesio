@@ -82,11 +82,11 @@ Accept: application/json
                     "uesio/studio.datasource": "uesio/core.platform",
                     "uesio/studio.name":"rare_and_unusual_object",
                     "uesio/studio.label":"Rare and unusual object",
-                    "uesio/studio.plurallabel":"Rare and unusual objects",
-                    "uesio/studio.workspace": {
-                        "uesio/core.id": "{{workspace_id}}"
-                    }
+                    "uesio/studio.plurallabel":"Rare and unusual objects"
                 }
+            },
+            "params": {
+                "workspaceid": "{{workspace_id}}"
             },
             "wire":"mywire"
         }
@@ -109,21 +109,18 @@ Accept: application/json
                     "uesio/studio.collection":"{{app_fullname}}.rare_and_unusual_object",
                     "uesio/studio.name":"object_name",
                     "uesio/studio.label":"Object Name",
-                    "uesio/studio.type":"TEXT",
-                    "uesio/studio.workspace": {
-                        "uesio/core.id": "{{workspace_id}}"
-                    }
+                    "uesio/studio.type":"TEXT"
                 },
                 "temp2":{
                     "uesio/studio.collection":"{{app_fullname}}.rare_and_unusual_object",
                     "uesio/studio.name":"estimated_value",
                     "uesio/studio.label":"Estimated Value",
                     "uesio/studio.type":"NUMBER",
-                    "uesio/studio.number->uesio/studio.decimals":2,
-                    "uesio/studio.workspace": {
-                        "uesio/core.id": "{{workspace_id}}"
-                    }
+                    "uesio/studio.number->uesio/studio.decimals":2
                 }
+            },
+            "params": {
+                "workspaceid": "{{workspace_id}}"
             },
             "wire":"mywire"
         }
@@ -145,19 +142,16 @@ Accept: application/json
                 "temp1":{
                     "uesio/studio.collection":"{{app_fullname}}.rare_and_unusual_object",
                     "uesio/studio.route":"{{app_fullname}}.simple_wire_load",
-                    "uesio/studio.type":"list",
-                    "uesio/studio.workspace": {
-                        "uesio/core.id": "{{workspace_id}}"
-                    }
+                    "uesio/studio.type":"list"
                 },
                 "temp2":{
                     "uesio/studio.collection":"{{app_fullname}}.rare_and_unusual_object",
                     "uesio/studio.route":"{{app_fullname}}.dependencies_group",
-                    "uesio/studio.type":"detail",
-                    "uesio/studio.workspace": {
-                        "uesio/core.id": "{{workspace_id}}"
-                    }
+                    "uesio/studio.type":"detail"
                 }
+            },
+            "params": {
+                "workspaceid": "{{workspace_id}}"
             },
             "wire":"mywire"
         }
@@ -191,12 +185,11 @@ Accept: application/json
                 {
                     "field": "uesio/studio.name",
                     "value": "rare_and_unusual_object"
-                },
-                {
-                    "field": "uesio/studio.workspace",
-                    "value": "{{workspace_id}}"
                 }
-            ]
+            ],
+            "params": {
+                "workspaceid": "{{workspace_id}}"
+            }
         },
         {
             "collection":"uesio/studio.field",
@@ -227,7 +220,10 @@ Accept: application/json
                     "field": "uesio/studio.name",
                     "direction": "ASC"
                 }
-            ]
+            ],
+            "params": {
+                "workspaceid": "{{workspace_id}}"
+            }
         },
         {
             "collection":"uesio/studio.routeassignment",
@@ -255,7 +251,10 @@ Accept: application/json
                     "field": "uesio/studio.type",
                     "direction": "ASC"
                 }
-            ]
+            ],
+            "params": {
+                "workspaceid": "{{workspace_id}}"
+            }
         }
     ]
 }
@@ -305,11 +304,11 @@ Accept: application/json
             "collection":"uesio/studio.collection",
             "deletes":{
                 "{{collection_id}}": {
-                    "uesio/core.id": "{{collection_id}}",
-                    "uesio/studio.workspace": {
-                        "uesio/core.id": "{{workspace_id}}"
-                    }
+                    "uesio/core.id": "{{collection_id}}"
                 }
+            },
+            "params": {
+                "workspaceid": "{{workspace_id}}"
             },
             "changes":{},
             "wire":"mywire"
@@ -342,7 +341,10 @@ Accept: application/json
                     "field": "uesio/studio.workspace",
                     "value": "{{workspace_id}}"
                 }
-            ]
+            ],
+            "params": {
+                "workspaceid": "{{workspace_id}}"
+            }
         },
         {
             "collection":"uesio/studio.field",
@@ -361,7 +363,10 @@ Accept: application/json
                     "field": "uesio/studio.workspace",
                     "value": "{{workspace_id}}"
                 }
-            ]
+            ],
+            "params": {
+                "workspaceid": "{{workspace_id}}"
+            }
         },
         {
             "collection":"uesio/studio.routeassignment",
@@ -380,7 +385,10 @@ Accept: application/json
                     "field": "uesio/studio.workspace",
                     "value": "{{workspace_id}}"
                 }
-            ]
+            ],
+            "params": {
+                "workspaceid": "{{workspace_id}}"
+            }
         }
     ]
 }

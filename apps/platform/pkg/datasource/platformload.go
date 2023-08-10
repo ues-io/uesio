@@ -17,6 +17,7 @@ type PlatformLoadOptions struct {
 	Connection adapt.Connection
 	BatchSize  int
 	LoadAll    bool
+	Params     map[string]string
 }
 
 func (plo *PlatformLoadOptions) GetConditionsDebug() string {
@@ -67,6 +68,7 @@ func PlatformLoad(group meta.CollectionableGroup, options *PlatformLoadOptions, 
 		Order:          options.Orders,
 		Query:          true,
 		BatchSize:      options.BatchSize,
+		Params:         options.Params,
 	}, options, session)
 }
 

@@ -17,9 +17,11 @@ import {
 	postJSON,
 	respondJSON,
 	respondVoid,
+	postMultipartForm,
 } from "./async"
 import { memoizedGetJSON } from "./memoizedAsync"
 import { SiteState } from "../bands/site"
+import { UploadRequest } from "../load/uploadrequest"
 
 // Allows us to load static vendor assets, such as Monaco modules, from custom paths
 // and for us to load Uesio-app-versioned files from the server
@@ -349,24 +351,23 @@ const platform = {
 	},
 	uploadFile: async (
 		context: Context,
-		fileData: File,
-		collectionID: string,
-		recordID: string,
-		fieldID?: string
+		request: UploadRequest,
+		fileData: File
 	): Promise<PlainWireRecord> => {
 		const prefix = getPrefix(context)
 		const url = `${prefix}/userfiles/upload`
-		const params = new URLSearchParams()
-		params.append("name", fileData.name)
-		params.append("collectionid", collectionID)
-		params.append("recordid", recordID)
-		if (fieldID) params.append("fieldid", fieldID)
-
-		const response = await postBinary(
-			context,
-			url + "?" + params.toString(),
-			fileData
+		const formData = new FormData()
+		// HTML file input, chosen by user
+		formData.append(
+			"details",
+			JSON.stringify({
+				...request,
+				name: fileData.name,
+			})
 		)
+
+		formData.append("file", fileData)
+		const response = await postMultipartForm(context, url, formData)
 		return respondJSON(response)
 	},
 	deleteFile: async (

@@ -61,6 +61,13 @@ interface UpdatesApi {
 interface DeletesApi {
 	get: () => DeleteApi[]
 }
+
+type RunIntegrationAction = (
+	integration: string,
+	action: string,
+	options: unknown
+) => unknown
+
 interface BeforeSaveBotApi {
 	addError: (error: string) => void
 	load: (loadRequest: LoadRequest) => Record[]
@@ -70,22 +77,14 @@ interface BeforeSaveBotApi {
 }
 interface AfterSaveBotApi extends BeforeSaveBotApi {
 	save: (collectionName: string, records: Record[]) => void
-	runIntegrationAction: (
-		integration: string,
-		action: string,
-		options: unknown
-	) => void
+	runIntegrationAction: RunIntegrationAction
 	getConfigValue: (configValueKey: string) => string
 	asAdmin: AsAdminApi
 }
 interface AsAdminApi {
 	load: (loadRequest: LoadRequest) => Record[]
 	save: (collectionName: string, records: Record[]) => void
-	runIntegrationAction: (
-		integration: string,
-		action: string,
-		options: unknown
-	) => void
+	runIntegrationAction: RunIntegrationAction
 	getConfigValue: (configValueKey: string) => string
 }
 interface ListenerBotApi {
@@ -93,11 +92,7 @@ interface ListenerBotApi {
 	load: (loadRequest: LoadRequest) => Record[]
 	params: BotParamsApi
 	save: (collectionName: string, records: Record[]) => void
-	runIntegrationAction: (
-		integration: string,
-		action: string,
-		options: unknown
-	) => void
+	runIntegrationAction: RunIntegrationAction
 	getConfigValue: (configValueKey: string) => string
 	asAdmin: AsAdminApi
 }
