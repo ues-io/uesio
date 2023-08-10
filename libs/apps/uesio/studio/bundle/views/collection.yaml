@@ -103,31 +103,6 @@ definition:
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: uesio/core.id
-    newuseraccesstokens:
-      collection: uesio/studio.useraccesstoken
-      fields:
-        uesio/core.id:
-        uesio/studio.type:
-        uesio/studio.collection:
-        uesio/studio.conditions:
-        uesio/studio.name:
-        uesio/studio.workspace:
-        uesio/studio.token:
-        uesio/studio.public:
-      init:
-        query: false
-        create: true
-      defaults:
-        - field: uesio/studio.collection
-          valueSource: VALUE
-          value: $Param{app}.$Param{collectionname}
-        - field: uesio/studio.type
-          valueSource: VALUE
-          value: lookup
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -409,62 +384,27 @@ definition:
                           columns:
                             - field: uesio/studio.type
                             - field: uesio/studio.route
-                - uesio/io.box:
-                    uesio.variant: uesio/io.section
+                - uesio/io.list:
+                    uesio.id: collectionsDeckTokens
+                    wire: collections
+                    mode: EDIT
                     components:
-                      - uesio/io.titlebar:
+                      - uesio/io.box:
                           uesio.variant: uesio/io.section
-                          title: Record Access Tokens
-                          actions:
-                            - uesio/io.group:
-                                components:
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: Refresh Tokens
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.primary
-                                      text: $Label{uesio/io.save}
-                                      signals:
-                                        - signal: wire/SAVE
-                                          wires:
-                                            - useraccesstokens
-                                      uesio.display:
-                                        - type: wireHasChanges
-                                          wire: useraccesstokens
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: $Label{uesio/io.cancel}
-                                      signals:
-                                        - signal: wire/CANCEL
-                                          wire: useraccesstokens
-                                      uesio.display:
-                                        - type: wireHasChanges
-                                          wire: useraccesstokens
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.primary
-                                      text: New Token
-                                      signals:
-                                        - signal: wire/EMPTY
-                                          wire: newuseraccesstokens
-                                        - signal: wire/CREATE_RECORD
-                                          wire: newuseraccesstokens
-                                        - signal: panel/TOGGLE
-                                          panel: newUserAccessToken
-                                      uesio.display:
-                                        - type: wireHasNoChanges
-                                          wire: useraccesstokens
-                      - uesio/io.table:
-                          wire: useraccesstokens
-                          mode: READ
-                          rowactions:
-                            - text: $Label{uesio/io.delete}
-                              signals:
-                                - signal: wire/MARK_FOR_DELETE
-                          columns:
-                            - field: uesio/studio.name
-                            - field: uesio/studio.type
-                            - field: uesio/studio.conditions
-                            - field: uesio/studio.token
+                          components:
+                            - uesio/io.titlebar:
+                                uesio.variant: uesio/io.section
+                                title: Record Access Tokens
+                                actions:
+                                  - uesio/io.group:
+                                      components:
+                                        - uesio/io.button:
+                                            uesio.variant: uesio/io.secondary
+                                            text: Refresh Tokens
+                            - uesio/io.field:
+                                label: " "
+                                fieldId: uesio/studio.recordchallengetokens
+
   panels:
     deleteCollection:
       uesio.type: uesio/io.dialog
@@ -766,59 +706,3 @@ definition:
                 wire: newfield
               - signal: panel/TOGGLE
                 panel: newField
-    newUserAccessToken:
-      uesio.type: uesio/io.dialog
-      title: Create a new Record Access Token
-      width: 400px
-      height: 600px
-      components:
-        - uesio/io.list:
-            wire: newuseraccesstokens
-            mode: EDIT
-            uesio.context:
-              workspace:
-                name: $Param{workspacename}
-                app: $Param{app}
-            components:
-              - uesio/io.field:
-                  fieldId: uesio/studio.name
-              - uesio/io.field:
-                  fieldId: uesio/studio.type
-                  uesio.context:
-                    fieldMode: READ
-              - uesio/io.field:
-                  fieldId: uesio/studio.collection
-                  uesio.context:
-                    fieldMode: READ
-              - uesio/io.field:
-                  fieldId: uesio/studio.conditions
-              - uesio/io.field:
-                  fieldId: uesio/studio.token
-      actions:
-        - uesio/io.button:
-            uesio.variant: uesio/io.primary
-            text: $Label{uesio/io.save}
-            hotkey: "meta+s"
-            signals:
-              - signal: wire/SAVE
-                wires:
-                  - newuseraccesstokens
-              - signal: wire/LOAD
-                wires:
-                  - workspaces
-                  - useraccesstokens
-              - signal: wire/EMPTY
-                wire: newuseraccesstokens
-              - signal: panel/TOGGLE
-                panel: newUserAccessToken
-              - signal: notification/ADD
-                text: Token created!
-                severity: success
-        - uesio/io.button:
-            uesio.variant: uesio/io.secondary
-            text: $Label{uesio/io.cancel}
-            signals:
-              - signal: wire/EMPTY
-                wire: newuseraccesstokens
-              - signal: panel/TOGGLE
-                panel: newUserAccessToken
