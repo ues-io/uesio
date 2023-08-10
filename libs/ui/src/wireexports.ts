@@ -12,6 +12,7 @@ import {
 import Wire from "./bands/wire/class"
 import {
 	FieldMetadata,
+	FieldMetadataPropertyPath,
 	FieldType,
 	SelectOption,
 	SelectListMetadata,
@@ -39,6 +40,7 @@ import { PlainWire, OrderState } from "./bands/wire/types"
 export type {
 	ConditionOperators,
 	FieldMetadata,
+	FieldMetadataPropertyPath,
 	FieldType,
 	FieldValue,
 	LoadRequestField,

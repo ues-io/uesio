@@ -30,6 +30,7 @@ import { getComponentDef, setSelectedPath } from "../api/stateapi"
 import { getDisplaySectionProperties } from "../properties/displayconditionproperties"
 import { getSignalProperties } from "../api/signalsapi"
 import { useState } from "react"
+import { PropertyPath } from "lodash"
 
 type Props = {
 	properties?: ComponentProperty[]
@@ -524,23 +525,21 @@ const parseProperties = (
 			}
 			if (sourceField && sourceWire) {
 				// Get the initial value of the corresponding field metadata property
-				value =
-					property.metadataProperty === "reference"
-						? (getFieldMetadata(context, sourceWire, sourceField)
-								?.source.reference?.collection as string)
-						: (getFieldMetadata(context, sourceWire, sourceField)
-								?.source[property.metadataProperty] as string)
+				value = get(
+					getFieldMetadata(context, sourceWire, sourceField)?.source,
+					property.metadataProperty as PropertyPath
+				) as string
 				// Add a setter to the source field so that whenever it changes, we also update this property
 				const metadataSetter = (
 					newFieldId: string,
 					_fieldBeingUpdated: string,
 					record: wire.WireRecord
 				) => {
-					const newFieldMetadataProperty = getFieldMetadata(
-						context,
-						sourceWire,
-						newFieldId
-					)?.source[property.metadataProperty] as string
+					const newFieldMetadataProperty = get(
+						getFieldMetadata(context, sourceWire, newFieldId)
+							?.source,
+						property.metadataProperty as PropertyPath
+					) as string
 					if (newFieldMetadataProperty !== undefined) {
 						// Update in-memory representation for this field, since we are computing it here,
 						// we need to apply it to the record

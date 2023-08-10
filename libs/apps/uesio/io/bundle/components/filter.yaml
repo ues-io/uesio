@@ -17,7 +17,7 @@ properties:
     viewOnly: true
     wireProperty: wire
     fieldProperty: fieldId
-    metadataProperty: reference
+    metadataProperty: reference.collection
     displayConditions:
       - type: fieldValue
         field: fieldDisplayType
