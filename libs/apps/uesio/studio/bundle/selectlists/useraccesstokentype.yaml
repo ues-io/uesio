@@ -1,0 +1,4 @@
+name: useraccesstokentype
+options:
+  - label: Lookup
+    value: lookup
