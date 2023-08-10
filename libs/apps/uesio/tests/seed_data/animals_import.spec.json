@@ -12,8 +12,8 @@
 		"uesio/tests.total_population": {
 			"columnname": "total_population"
 		},
-		"uesio/core.owner": {
-			"columnname": "owner"
+		"uesio/tests.ancestor": {
+			"columnname": "ancestor"
 		}
 	}
 }
