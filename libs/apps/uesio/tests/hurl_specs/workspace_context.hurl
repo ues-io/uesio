@@ -4,6 +4,15 @@ POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
     "token": "{\"subject\":\"uesio\"}"
 }
 
+# Try to navigate to the workspace home route
+GET https://{{host}}:{{port}}/site/routes/path/uesio/studio/app/uesio/tests/workspace/dev
+Accept: application/json
+HTTP 200
+[Asserts]
+jsonpath "$.view" == "uesio/studio.workspace"
+jsonpath "$.params.app" == "uesio/tests"
+jsonpath "$.params.workspacename" == "dev"
+
 # Try get config values for the dev workspace
 GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/configvalues
 Accept: application/json
@@ -21,8 +30,15 @@ POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
     "token": "{\"subject\":\"ben\"}"
 }
 
-# Try get config values for the dev workspace
+# Try to navigate to the workspace home route
+GET https://{{host}}:{{port}}/site/routes/path/uesio/studio/app/uesio/tests/workspace/dev
+Accept: application/json
+HTTP 200
+[Asserts]
+jsonpath "$.view" == "uesio/core.error"
+jsonpath "$.params.error" == "could not get workspace context: workspace uesio/tests:dev does not exist or you don't have access to modify it."
 
+# Try get config values for the dev workspace
 GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/configvalues
 Accept: application/json
 HTTP 200
