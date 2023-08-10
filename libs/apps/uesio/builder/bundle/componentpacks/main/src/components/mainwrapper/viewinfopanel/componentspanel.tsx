@@ -96,7 +96,7 @@ const VariantsBlock: definition.UtilityComponent<VariantsBlockProps> = (
 							// from running as well
 							e.stopPropagation()
 							addComponentToCanvas(context, componentDef, {
-								"uesio.variant": variantKey,
+								"uesio.variant": `${variant.namespace}.${variant.name}`,
 							})
 						}}
 						selected={isSelected("componentvariant", variantKey)}
@@ -326,6 +326,7 @@ const ComponentsPanel: definition.UC = (props) => {
 		<ScrollPanel
 			header={
 				<SearchArea
+					id="builder-components-search"
 					searchTerm={searchTerm}
 					context={context}
 					setSearchTerm={setSearchTerm}
