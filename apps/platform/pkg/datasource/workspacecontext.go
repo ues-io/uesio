@@ -2,6 +2,7 @@ package datasource
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -47,7 +48,7 @@ func addWorkspaceContext(workspace *meta.Workspace, session *sess.Session, conne
 func AddWorkspaceContextByKey(workspaceKey string, session *sess.Session, connection adapt.Connection) error {
 	workspace, err := queryWorkspace(workspaceKey, adapt.UNIQUE_KEY_FIELD, session, connection)
 	if err != nil {
-		return err
+		return fmt.Errorf("could not get workspace context: workspace %s does not exist or you don't have access to modify it.", workspaceKey)
 	}
 	return addWorkspaceContext(workspace, session, connection)
 }
@@ -55,7 +56,7 @@ func AddWorkspaceContextByKey(workspaceKey string, session *sess.Session, connec
 func AddWorkspaceContextByID(workspaceID string, session *sess.Session, connection adapt.Connection) error {
 	workspace, err := queryWorkspace(workspaceID, adapt.ID_FIELD, session, connection)
 	if err != nil {
-		return err
+		return fmt.Errorf("could not get workspace context: workspace does not exist or you don't have access to modify it.")
 	}
 	return addWorkspaceContext(workspace, session, connection)
 }
