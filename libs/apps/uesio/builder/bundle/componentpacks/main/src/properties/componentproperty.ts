@@ -65,12 +65,6 @@ type KeyProperty = {
 	type: "KEY"
 } & BaseProperty
 
-type CollectionFieldProperty = {
-	type: "COLLECTION_FIELD"
-	groupingPath?: string
-	groupingValue?: string
-} & BaseProperty
-
 type MetadataProperty = {
 	type: "METADATA"
 	metadataType: metadata.MetadataType
@@ -110,11 +104,6 @@ type WiresProperty = {
 	type: "WIRES"
 } & BaseProperty
 
-type FieldPropertyBase = {
-	wireField?: string
-	wireName?: string
-} & BaseProperty
-
 type FieldMetadataProperty = {
 	type: "FIELD_METADATA"
 	fieldProperty: string
@@ -123,12 +112,32 @@ type FieldMetadataProperty = {
 	wireName?: string
 } & BaseProperty
 
+type FieldPropertyBase = {
+	wireField?: string
+	wireName?: string
+} & BaseProperty
+
+// FIELD / FIELDS are for selecting fields in a WIRE.
 type FieldProperty = {
 	type: "FIELD"
 } & FieldPropertyBase
 type FieldsProperty = {
 	type: "FIELDS"
 } & FieldPropertyBase
+
+type CollectionFieldPropertyBase = {
+	collectionName?: string
+	collectionField?: string
+	collectionPath?: string
+} & BaseProperty
+
+// COLLECTION_FIELD / COLLECTION_FIELDS are for selecting fields in a COLLECTION.
+type CollectionFieldProperty = {
+	type: "COLLECTION_FIELD"
+} & CollectionFieldPropertyBase
+type CollectionFieldsProperty = {
+	type: "COLLECTION_FIELDS"
+} & CollectionFieldPropertyBase
 
 type SelectProperty = {
 	type: "SELECT"
@@ -228,6 +237,7 @@ type ComponentProperty =
 	| SelectProperty
 	| ConditionProperty
 	| CollectionFieldProperty
+	| CollectionFieldsProperty
 	| WireProperty
 	| WiresProperty
 	| FieldMetadataProperty

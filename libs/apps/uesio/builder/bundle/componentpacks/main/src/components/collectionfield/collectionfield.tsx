@@ -4,10 +4,18 @@ import { useRef, useState } from "react"
 import { FullPath } from "../../api/path"
 
 type CollectionFieldDefinition = {
+	/**
+	 * The field on the properties wire which will contain the selected collection field
+	 */
 	fieldId: string
 	label: string
 	labelPosition?: string
-	grouping?: string
+	/**
+	 * The field on the properties wire which contains the collection to use for the field picker
+	 */
+	collectionField?: string
+	/** An explicit collection name to use for the field picker */
+	collectionName?: string
 	namespace?: string
 	fieldWrapperVariant?: metadata.MetadataKey
 }
@@ -20,12 +28,20 @@ const StyleDefaults = Object.freeze({
 const CollectionField: definition.UC<CollectionFieldDefinition> = (props) => {
 	const {
 		context,
-		definition: { fieldWrapperVariant, labelPosition, fieldId },
+		definition: {
+			fieldId,
+			fieldWrapperVariant,
+			labelPosition,
+			collectionName,
+			collectionField,
+		},
 	} = props
 
 	const classes = styles.useStyleTokens(StyleDefaults, props)
 
-	const collectionKey = context.mergeString(props.definition.grouping)
+	const collectionKey = collectionField
+		? context.getRecord()?.getFieldValue<string>(collectionField)
+		: context.mergeString(collectionName)
 	// const namespace = context.mergeString(props.definition.namespace)
 
 	const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
@@ -35,7 +51,9 @@ const CollectionField: definition.UC<CollectionFieldDefinition> = (props) => {
 	const anchorEl = useRef<HTMLDivElement>(null)
 	const [showPopper, setShowPopper] = useState(false)
 	const record = context.getRecord()
+	// The current collection name
 	const value = record?.getFieldValue<string>(fieldId)
+	// The type of field that we are populating with the collection name
 	const fieldMetadata = record?.getWire().getCollection().getField(fieldId)
 	const onSelect = (ctx: context.Context, path: FullPath) => {
 		const selectedField = component.path
@@ -62,7 +80,7 @@ const CollectionField: definition.UC<CollectionFieldDefinition> = (props) => {
 					<FieldPicker
 						context={context}
 						path={path}
-						baseCollectionKey={collectionKey}
+						baseCollectionKey={collectionKey || ""}
 						onClose={() => setShowPopper(false)}
 						onSelect={onSelect}
 					/>

@@ -80,11 +80,12 @@ export const getFormFieldFromProperty = (
 				[`uesio/builder.collectionfield`]: {
 					...baseFieldDef,
 					fieldWrapperVariant: "uesio/builder.propfield",
-					grouping: getGrouping(
+					collectionField: property.collectionField,
+					collectionName: getGrouping(
 						path,
 						context,
-						property.groupingPath,
-						property.groupingValue
+						property.collectionPath,
+						property.collectionName
 					),
 				},
 			}

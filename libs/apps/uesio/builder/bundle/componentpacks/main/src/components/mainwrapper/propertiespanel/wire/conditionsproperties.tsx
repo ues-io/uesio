@@ -259,7 +259,7 @@ const getItemPropertiesFunction =
 				name: "field",
 				type: "COLLECTION_FIELD",
 				label: "Field",
-				groupingPath: `${"../".repeat(
+				collectionPath: `${"../".repeat(
 					parentPath.size() - 3
 				)}../collection`,
 				displayConditions: [
