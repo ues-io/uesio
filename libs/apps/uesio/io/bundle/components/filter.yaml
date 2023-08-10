@@ -176,10 +176,12 @@ properties:
           - FILE
     items:
       addLabel: Add Search Order
-      displayTemplate: "${orderField} - ${desc}"
+      displayTemplate: "${field} - ${desc}"
       title: Search Order
+      defaultDefinition:
+        desc: false
       properties:
-        - name: orderField
+        - name: field
           type: FIELD
           label: Order Field
           collection: <-referenceCollection

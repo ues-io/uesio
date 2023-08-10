@@ -79,7 +79,7 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 
 	const referencedCollection = api.collection.useCollection(
 		context,
-		fieldMetadata.source.reference?.collection || ""
+		fieldMetadata.getReferenceMetadata()?.collection || ""
 	)
 
 	const nameField = referencedCollection?.getNameField()?.getId()

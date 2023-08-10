@@ -413,6 +413,19 @@ func getMetadataForLoad(
 		}
 	}
 
+	if len(op.Order) > 0 {
+		for _, orderField := range op.Order {
+
+			if !session.GetContextPermissions().HasFieldReadPermission(collectionKey, orderField.Field) {
+				return fmt.Errorf("Profile %s does not have read access to the %s field.", session.GetProfile(), orderField.Field)
+			}
+			err := collections.AddField(collectionKey, orderField.Field, nil)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
 	err = collections.Load(metadataResponse, session, nil)
 	if err != nil {
 		return err
