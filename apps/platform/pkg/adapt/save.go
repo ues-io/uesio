@@ -370,9 +370,9 @@ func GetReferenceKey(value interface{}) (string, error) {
 }
 
 // NewFieldChanges function returns a template that can merge field changes
-func NewFieldChanges(templateString string, collectionMetadata *CollectionMetadata) (*template.Template, error) {
+func NewFieldChanges(templateString string, collectionMetadata *CollectionMetadata, metadata *MetadataCache) (*template.Template, error) {
 	return templating.NewWithFunc(templateString, func(item meta.Item, key string) (interface{}, error) {
-		fieldMetadata, err := collectionMetadata.GetField(key)
+		fieldMetadata, err := collectionMetadata.GetFieldWithMetadata(key, metadata)
 		if err != nil {
 			return nil, err
 		}

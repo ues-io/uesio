@@ -73,7 +73,7 @@ type Session struct {
 	version        *VersionInfo
 	permissions    *meta.PermissionSet
 	user           *meta.User
-	tokens         map[string][]string
+	tokens         TokenMap
 	labels         map[string]string
 }
 
@@ -93,29 +93,22 @@ func (s *Session) GetLabels() map[string]string {
 	return s.labels
 }
 
-func (s *Session) AddToken(name string, value []string) {
+func (s *Session) GetFlatTokens() []string {
 	if s.tokens == nil {
-		s.tokens = map[string][]string{}
+		return []string{}
 	}
-	s.tokens[name] = value
+	return s.tokens.Flatten()
 }
 
-func (s *Session) HasToken(name string) bool {
+func (s *Session) GetTokenMap() TokenMap {
 	if s.tokens == nil {
-		return false
+		return TokenMap{}
 	}
-	_, ok := s.tokens[name]
-	return ok
+	return s.tokens
 }
 
-func (s *Session) GetTokens() []string {
-	flatTokens := []string{}
-	for name, values := range s.tokens {
-		for _, value := range values {
-			flatTokens = append(flatTokens, name+":"+value)
-		}
-	}
-	return flatTokens
+func (s *Session) SetTokenMap(tokenMap TokenMap) {
+	s.tokens = tokenMap
 }
 
 func (s *Session) SetSite(site *meta.Site) *Session {

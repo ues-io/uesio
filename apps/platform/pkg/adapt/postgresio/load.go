@@ -75,7 +75,7 @@ func getAliasedName(name, alias string) string {
 func (c *Connection) Load(op *adapt.LoadOp, session *sess.Session) error {
 
 	metadata := c.metadata
-	userTokens := session.GetTokens()
+	userTokens := session.GetFlatTokens()
 	db := c.GetClient()
 
 	collectionMetadata, err := metadata.GetCollection(op.CollectionName)
