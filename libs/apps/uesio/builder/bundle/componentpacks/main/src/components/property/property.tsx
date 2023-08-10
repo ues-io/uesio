@@ -77,7 +77,7 @@ export const getFormFieldFromProperty = (
 			}
 		case "COLLECTION_FIELD":
 			return {
-				[`uesio/builder.collectionfield`]: {
+				[`uesio/builder.collectionfieldpicker`]: {
 					...baseFieldDef,
 					fieldWrapperVariant: "uesio/builder.propfield",
 					collectionField: property.collectionField,

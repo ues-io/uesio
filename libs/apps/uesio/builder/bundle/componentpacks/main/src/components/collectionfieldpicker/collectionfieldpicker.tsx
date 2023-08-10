@@ -3,7 +3,7 @@ import FieldPicker from "../mainwrapper/propertiespanel/wire/fieldpicker"
 import { useRef, useState } from "react"
 import { FullPath } from "../../api/path"
 
-type CollectionFieldDefinition = {
+type ComponentDefinition = {
 	/**
 	 * The field on the properties wire which will contain the selected collection field
 	 */
@@ -36,7 +36,7 @@ const transformFieldPickerPath = (path: FullPath) =>
 		.filter((x) => x !== "fields")
 		.join("->")
 
-const CollectionField: definition.UC<CollectionFieldDefinition> = (props) => {
+const CollectionFieldPicker: definition.UC<ComponentDefinition> = (props) => {
 	const {
 		context,
 		definition: {
@@ -53,8 +53,6 @@ const CollectionField: definition.UC<CollectionFieldDefinition> = (props) => {
 	const collectionKey = collectionField
 		? context.getRecord()?.getFieldValue<string>(collectionField)
 		: context.mergeString(collectionName)
-	// const namespace = context.mergeString(props.definition.namespace)
-
 	const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 	const IconButton = component.getUtility("uesio/io.iconbutton")
 	const TextField = component.getUtility("uesio/io.textfield")
@@ -132,4 +130,4 @@ const CollectionField: definition.UC<CollectionFieldDefinition> = (props) => {
 	)
 }
 
-export default CollectionField
+export default CollectionFieldPicker
