@@ -2,6 +2,7 @@ package datasource
 
 import (
 	"fmt"
+	"github.com/thecloudmasters/uesio/pkg/constant"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -155,7 +156,7 @@ func ProcessFieldsMetadata(fields map[string]*adapt.FieldMetadata, collectionKey
 
 		newKey := fieldKey
 		if prefix != "" {
-			newKey = prefix + "->" + fieldKey
+			newKey = prefix + constant.RefSep + fieldKey
 		}
 
 		specialRef, ok := specialRefs[fieldMetadata.Type]

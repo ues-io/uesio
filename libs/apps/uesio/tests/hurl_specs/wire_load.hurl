@@ -286,3 +286,51 @@ main.fields->>'uesio/tests.species' = ANY ($4)
 ORDER BY main.id::text asc
 LIMIT 501```
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" nth 0 == "Soitoux:Franklin"
+
+# Wire load with ORDER fields not otherwise requested in Field / Condition metadata
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection": "uesio/tests.animal",
+            "query": true,
+            "conditions": [
+                {
+                    "field": "uesio/tests.species",
+                    "operator": "IN",
+                    "values": [
+                        "Franklin",
+                        "Benjamin"
+                    ]
+                }
+            ],
+            "order": [
+                {
+                    "field": "uesio/tests.total_population",
+                    "desc": true
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].debugQueryString" == ```
+SELECT
+main.id::text AS "uesio/core.id",
+main.uniquekey AS "uesio/core.uniquekey"
+FROM data as "main"
+WHERE
+main.collection = $1 AND
+main.tenant = $2 AND
+main.fields->>'uesio/tests.species' = ANY ($3)
+ORDER BY main.fields->'uesio/tests.total_population' desc
+LIMIT 501```
+# Lathe:Franklin has a higher total population so it should come first
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" nth 0 == "Lathe:Franklin"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" nth 1 == "Soitoux:Franklin"
+# Verify that order fields were added to the metadata
+jsonpath "$.collections['uesio/tests.animal'].fields['uesio/tests.total_population'].type" == "NUMBER"
+
+
