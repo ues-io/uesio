@@ -25,6 +25,17 @@ const StyleDefaults = Object.freeze({
 	button: ["p-1"],
 })
 
+/**
+ * Converts the Field Picker FullPath of a selected field to a field selector, e.g. "uesio/core.owner->uesio/core.firstname")
+ * @param path FullPath
+ * @returns string
+ */
+const transformFieldPickerPath = (path: FullPath) =>
+	component.path
+		.toPath(path.localPath)
+		.filter((x) => x !== "fields")
+		.join("->")
+
 const CollectionField: definition.UC<CollectionFieldDefinition> = (props) => {
 	const {
 		context,
@@ -56,12 +67,17 @@ const CollectionField: definition.UC<CollectionFieldDefinition> = (props) => {
 	// The type of field that we are populating with the collection name
 	const fieldMetadata = record?.getWire().getCollection().getField(fieldId)
 	const onSelect = (ctx: context.Context, path: FullPath) => {
-		const selectedField = component.path
-			.toPath(path.localPath)
-			.filter((x) => x !== "fields")
-			.join("->")
+		const selectedField = transformFieldPickerPath(path)
 		console.log("local path selected was: " + selectedField)
 		record?.update(fieldId, selectedField, ctx)
+	}
+	const isSelected = (
+		ctx: context.Context,
+		path: FullPath,
+		fieldId: string
+	) => {
+		const selectedField = transformFieldPickerPath(path.addLocal(fieldId))
+		return selectedField === value
 	}
 	const path = new FullPath(undefined, undefined, value)
 
@@ -83,6 +99,8 @@ const CollectionField: definition.UC<CollectionFieldDefinition> = (props) => {
 						baseCollectionKey={collectionKey || ""}
 						onClose={() => setShowPopper(false)}
 						onSelect={onSelect}
+						allowMultiselect={false}
+						isSelected={isSelected}
 					/>
 				</Popper>
 			)}

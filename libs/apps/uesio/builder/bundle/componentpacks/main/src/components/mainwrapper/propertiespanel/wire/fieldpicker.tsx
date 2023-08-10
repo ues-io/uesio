@@ -83,7 +83,7 @@ const FieldPicker: definition.UtilityComponent<Props> = (props) => {
 			path={referencePath}
 			title={`Select Field${
 				allowMultiselect ? "s" : ""
-			} from collection ${collectionMetadata.getId()}`}
+			} from ${collectionMetadata.getId()}`}
 			onUnselect={onClose}
 			searchTerm={searchTerm}
 			setSearchTerm={setSearchTerm}
@@ -114,7 +114,13 @@ const FieldPicker: definition.UtilityComponent<Props> = (props) => {
 						fieldMetadata={fieldMetadata}
 						key={fieldId}
 						context={context}
-						onSelect={onSelect}
+						onSelect={(ctx: context.Context, path: FullPath) => {
+							onSelect?.(ctx, path)
+							// For NON-multi-select field pickers, we want to go ahead and close the picker after selection
+							if (!allowMultiselect) {
+								onClose()
+							}
+						}}
 						onUnselect={onUnselect}
 					/>
 				)
