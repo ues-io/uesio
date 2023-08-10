@@ -67,9 +67,7 @@ const CollectionField: definition.UC<CollectionFieldDefinition> = (props) => {
 	// The type of field that we are populating with the collection name
 	const fieldMetadata = record?.getWire().getCollection().getField(fieldId)
 	const onSelect = (ctx: context.Context, path: FullPath) => {
-		const selectedField = transformFieldPickerPath(path)
-		console.log("local path selected was: " + selectedField)
-		record?.update(fieldId, selectedField, ctx)
+		record?.update(fieldId, transformFieldPickerPath(path), ctx)
 	}
 	const isSelected = (
 		ctx: context.Context,
@@ -77,9 +75,9 @@ const CollectionField: definition.UC<CollectionFieldDefinition> = (props) => {
 		fieldId: string
 	) => {
 		const selectedField = transformFieldPickerPath(path.addLocal(fieldId))
-		return selectedField === value
+		if (!value) return false
+		return selectedField === value || value.startsWith(selectedField)
 	}
-	const path = new FullPath(undefined, undefined, value)
 
 	return (
 		<>
@@ -95,7 +93,6 @@ const CollectionField: definition.UC<CollectionFieldDefinition> = (props) => {
 				>
 					<FieldPicker
 						context={context}
-						path={path}
 						baseCollectionKey={collectionKey || ""}
 						onClose={() => setShowPopper(false)}
 						onSelect={onSelect}

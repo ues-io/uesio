@@ -13,7 +13,6 @@ type Props = {
 		path: FullPath,
 		fieldId: string
 	) => boolean
-	path: FullPath
 	onClose: () => void
 	onSelect?: (ctx: context.Context, path: FullPath) => void
 	onUnselect?: (ctx: context.Context, path: FullPath) => void
@@ -83,7 +82,7 @@ const FieldPicker: definition.UtilityComponent<Props> = (props) => {
 			path={referencePath}
 			title={`Select Field${
 				allowMultiselect ? "s" : ""
-			} from ${collectionMetadata.getId()}`}
+			} (${collectionMetadata.getId()})`}
 			onUnselect={onClose}
 			searchTerm={searchTerm}
 			setSearchTerm={setSearchTerm}
