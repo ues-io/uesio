@@ -16,5 +16,6 @@ subfields:
     type: TEXT
     label: UserAccessToken
   - name: access
-    type: TEXT
+    type: SELECT
     label: Access
+    selectList: uesio/studio.recordaccesstokensaccesstypes

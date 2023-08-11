@@ -42,24 +42,6 @@ definition:
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: uesio/core.id
-    useraccesstokens:
-      collection: uesio/studio.useraccesstoken
-      fields:
-        uesio/core.id:
-        uesio/studio.type:
-        uesio/studio.collection:
-        uesio/studio.conditions:
-        uesio/studio.name:
-        uesio/studio.workspace:
-        uesio/studio.token:
-        uesio/studio.public:
-      conditions:
-        - field: uesio/studio.collection
-          value: $Param{app}.$Param{collectionname}
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
     newfield:
       collection: uesio/studio.field
       fields:
@@ -404,7 +386,6 @@ definition:
                             - uesio/io.field:
                                 label: " "
                                 fieldId: uesio/studio.recordchallengetokens
-
   panels:
     deleteCollection:
       uesio.type: uesio/io.dialog
