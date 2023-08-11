@@ -8,6 +8,7 @@ type SaveRequest = {
 	options?: {
 		upsert: boolean
 	}
+	params?: Record<string, string>
 }
 
 type SaveRequestBatch = {
