@@ -98,6 +98,57 @@ file:
     accept: IMAGE
 `)
 
+var field_referencegroup = trimYamlString(`
+name: myfield
+type: REFERENCEGROUP
+label: My Label
+referenceGroup:
+    collection: my/namespace.myothercollection
+    field: my/namespace.somefield
+    onDelete: CASCADE
+`)
+
+var field_referencegroup_local = trimYamlString(`
+name: myfield
+type: REFERENCEGROUP
+label: My Label
+referenceGroup:
+    collection: myothercollection
+    field: somefield
+    onDelete: CASCADE
+`)
+
+var field_referencegroup_missing_node = trimYamlString(`
+name: myfield
+type: REFERENCEGROUP
+label: My Label
+`)
+
+var field_referencegroup_empty_node = trimYamlString(`
+name: myfield
+type: REFERENCEGROUP
+label: My Label
+referenceGroup:
+`)
+
+var field_referencegroup_missing_collection = trimYamlString(`
+name: myfield
+type: REFERENCEGROUP
+label: My Label
+referenceGroup:
+    field: my/namespace.somefield
+    onDelete: CASCADE
+`)
+
+var field_referencegroup_missing_field = trimYamlString(`
+name: myfield
+type: REFERENCEGROUP
+label: My Label
+referenceGroup:
+    collection: my/namespace.myothercollection
+    onDelete: CASCADE
+`)
+
 func TestFieldUnmarshal(t *testing.T) {
 
 	type testCase struct {
@@ -314,6 +365,88 @@ func TestFieldUnmarshal(t *testing.T) {
 			},
 			nil,
 		},
+		{
+			"referencegroup",
+			"",
+			field_referencegroup,
+			"my/namespace/mycollection/myfield.yaml",
+			"my/namespace",
+			&Field{
+				BundleableBase: BundleableBase{
+					Name:      "myfield",
+					Namespace: "my/namespace",
+				},
+				CollectionRef: "my/namespace.mycollection",
+				Type:          "REFERENCEGROUP",
+				Label:         "My Label",
+				ReferenceGroupMetadata: &ReferenceGroupMetadata{
+					Collection: "my/namespace.myothercollection",
+					Field:      "my/namespace.somefield",
+					OnDelete:   "CASCADE",
+					Namespace:  "my/namespace",
+				},
+			},
+			nil,
+		},
+		{
+			"referencegroup local collection",
+			"",
+			field_referencegroup_local,
+			"my/namespace/mycollection/myfield.yaml",
+			"my/namespace",
+			&Field{
+				BundleableBase: BundleableBase{
+					Name:      "myfield",
+					Namespace: "my/namespace",
+				},
+				CollectionRef: "my/namespace.mycollection",
+				Type:          "REFERENCEGROUP",
+				Label:         "My Label",
+				ReferenceGroupMetadata: &ReferenceGroupMetadata{
+					Collection: "my/namespace.myothercollection",
+					Field:      "my/namespace.somefield",
+					OnDelete:   "CASCADE",
+					Namespace:  "my/namespace",
+				},
+			},
+			nil,
+		},
+		{
+			"referencegroup missing reference node",
+			"",
+			field_referencegroup_missing_node,
+			"my/namespace/mycollection/myfield.yaml",
+			"my/namespace",
+			nil,
+			errors.New("no reference group metadata property provided"),
+		},
+		{
+			"referencegroup missing empty node",
+			"",
+			field_referencegroup_empty_node,
+			"my/namespace/mycollection/myfield.yaml",
+			"my/namespace",
+			nil,
+			errors.New("reference group metadata property is empty"),
+		},
+		{
+			"referencegroup missing collection",
+			"",
+			field_referencegroup_missing_collection,
+			"my/namespace/mycollection/myfield.yaml",
+			"my/namespace",
+			nil,
+			errors.New("property collection is required"),
+		},
+		{
+			"referencegroup missing field",
+			"",
+			field_referencegroup_missing_field,
+			"my/namespace/mycollection/myfield.yaml",
+			"my/namespace",
+			nil,
+			errors.New("property field is required"),
+		},
 	}
 
 	for _, tc := range tests {
@@ -468,6 +601,27 @@ func TestFieldMarshal(t *testing.T) {
 			"my/namespace/mycollection/myfield.yaml",
 			"my/namespace",
 		},
+		{
+			"reference group field",
+			"",
+			&Field{
+				BundleableBase: BundleableBase{
+					Name:      "myfield",
+					Namespace: "my/namespace",
+				},
+				CollectionRef: "my/namespace.mycollection",
+				Type:          "REFERENCEGROUP",
+				Label:         "My Label",
+				ReferenceGroupMetadata: &ReferenceGroupMetadata{
+					Collection: "my/namespace.myothercollection",
+					Field:      "my/namespace.somefield",
+					OnDelete:   "CASCADE",
+				},
+			},
+			field_referencegroup_local,
+			"my/namespace/mycollection/myfield.yaml",
+			"my/namespace",
+		},
 	}
 
 	for _, tc := range tests {
@@ -543,6 +697,13 @@ func TestFieldRoundTrip(t *testing.T) {
 			"my/namespace/mycollection/myfield.yaml",
 			"my/namespace",
 			field_file_accept,
+		},
+		{
+			"roundtrip reference group field",
+			"",
+			"my/namespace/mycollection/myfield.yaml",
+			"my/namespace",
+			field_referencegroup_local,
 		},
 	}
 

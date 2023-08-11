@@ -157,8 +157,27 @@ func (f *Field) UnmarshalYAML(node *yaml.Node) error {
 		if err != nil {
 			return err
 		}
-
 	}
+
+	if fieldType == "REFERENCEGROUP" {
+		f.ReferenceGroupMetadata = &ReferenceGroupMetadata{
+			Namespace: f.Namespace,
+		}
+		referenceGroupNode := pickNodeFromMap(node, "referenceGroup")
+		if referenceGroupNode == nil {
+			return errors.New("no reference group metadata property provided")
+		}
+		// It's unfortunate that we have to do this check, but golang's YAML
+		// library doesn't call the custom unmarshaler if the node is a null scalar.
+		if nodeIsNull(referenceGroupNode) {
+			return errors.New("reference group metadata property is empty")
+		}
+		err := referenceGroupNode.Decode(f.ReferenceGroupMetadata)
+		if err != nil {
+			return err
+		}
+	}
+
 	if fieldType == "SELECT" {
 		f.SelectList, err = pickRequiredMetadataItem(node, "selectList", f.Namespace)
 		if err != nil {
@@ -190,6 +209,10 @@ func (f *Field) MarshalYAML() (interface{}, error) {
 
 	if f.FileMetadata != nil {
 		f.FileMetadata.Namespace = f.Namespace
+	}
+
+	if f.ReferenceGroupMetadata != nil {
+		f.ReferenceGroupMetadata.Namespace = f.Namespace
 	}
 
 	return (*FieldWrapper)(f), nil
