@@ -64,6 +64,13 @@ label: My Label
 selectList: my/namespace.myselectlist
 `)
 
+var field_select_local = trimYamlString(`
+name: myfield
+type: SELECT
+label: My Label
+selectList: myselectlist
+`)
+
 var field_select_missing_selectlist = trimYamlString(`
 name: myfield
 type: SELECT
@@ -261,6 +268,24 @@ func TestFieldUnmarshal(t *testing.T) {
 			"select",
 			"",
 			field_select,
+			"my/namespace/mycollection/myfield.yaml",
+			"my/namespace",
+			&Field{
+				BundleableBase: BundleableBase{
+					Name:      "myfield",
+					Namespace: "my/namespace",
+				},
+				CollectionRef: "my/namespace.mycollection",
+				Type:          "SELECT",
+				Label:         "My Label",
+				SelectList:    "my/namespace.myselectlist",
+			},
+			nil,
+		},
+		{
+			"select local",
+			"",
+			field_select_local,
 			"my/namespace/mycollection/myfield.yaml",
 			"my/namespace",
 			&Field{
@@ -525,7 +550,7 @@ func TestFieldMarshal(t *testing.T) {
 				Label:         "My Label",
 				SelectList:    "my/namespace.myselectlist",
 			},
-			field_select,
+			field_select_local,
 			"my/namespace/mycollection/myfield.yaml",
 			"my/namespace",
 		},
@@ -661,7 +686,7 @@ func TestFieldRoundTrip(t *testing.T) {
 			"",
 			"my/namespace/mycollection/myfield.yaml",
 			"my/namespace",
-			field_select,
+			field_select_local,
 		},
 		{
 			"roundtrip reference field",

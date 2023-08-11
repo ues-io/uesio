@@ -3,4 +3,4 @@ type: REFERENCE
 label: User
 required: true
 reference:
-  collection: uesio/core.user
+  collection: user

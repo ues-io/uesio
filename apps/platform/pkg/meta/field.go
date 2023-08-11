@@ -178,7 +178,7 @@ func (f *Field) UnmarshalYAML(node *yaml.Node) error {
 		}
 	}
 
-	if fieldType == "SELECT" {
+	if fieldType == "SELECT" || fieldType == "MULTISELECT" {
 		f.SelectList, err = pickRequiredMetadataItem(node, "selectList", f.Namespace)
 		if err != nil {
 			return fmt.Errorf("Invalid selectlist metadata provided for field: " + f.GetKey() + " : Missing select list name")
@@ -214,6 +214,8 @@ func (f *Field) MarshalYAML() (interface{}, error) {
 	if f.ReferenceGroupMetadata != nil {
 		f.ReferenceGroupMetadata.Namespace = f.Namespace
 	}
+
+	f.SelectList = localize(f.SelectList, f.Namespace)
 
 	return (*FieldWrapper)(f), nil
 }

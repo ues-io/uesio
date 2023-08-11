@@ -2,6 +2,6 @@ name: themes
 type: REFERENCEGROUP
 label: Themes
 referenceGroup:
-  collection: uesio/studio.theme
-  field: uesio/studio.workspace
+  collection: theme
+  field: workspace
   onDelete: CASCADE
