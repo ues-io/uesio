@@ -153,7 +153,7 @@ func TestRouteUnmarshal(t *testing.T) {
 		},
 		{
 			"route bad name",
-			"Fail if we're missing the redirect property",
+			"Fail if our name doesn't match our file name",
 			route_local_view_local_theme,
 			"myroute_badname.yaml",
 			"my/namespace",
