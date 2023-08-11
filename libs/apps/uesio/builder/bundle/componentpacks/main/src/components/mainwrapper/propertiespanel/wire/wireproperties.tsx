@@ -47,7 +47,7 @@ const WireProperties: definition.UtilityComponent = (props) => {
 			type: "LIST",
 			items: {
 				title: "Order By",
-				addLabel: "New Ordering",
+				addLabel: "New Order Field",
 				displayTemplate: (order: { desc: boolean; field: string }) => {
 					if (order.field) {
 						return `${order.field} | ${
@@ -60,10 +60,12 @@ const WireProperties: definition.UtilityComponent = (props) => {
 				properties: [
 					{
 						name: "field",
-						type: "METADATA",
-						metadataType: "FIELD",
+						type: "COLLECTION_FIELD",
 						label: "Field",
-						groupingPath: "../collection",
+						// Currently Wire order fields can only be one level, on the same collection,
+						// we don't support cross-collection ordering
+						allowReferenceTraversal: false,
+						collectionPath: "../collection",
 					},
 					{
 						name: "desc",

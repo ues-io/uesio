@@ -5,9 +5,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/constant"
-
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/constant"
 	"github.com/thecloudmasters/uesio/pkg/merge"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"

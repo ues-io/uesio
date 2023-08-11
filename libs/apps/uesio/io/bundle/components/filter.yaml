@@ -156,12 +156,12 @@ properties:
         type: TEXT
         label: Display Template
       - name: searchFields
-        type: FIELDS
-        collection: <-referenceCollection
+        type: COLLECTION_FIELDS
+        collectionName: "$Parent.Record{referenceCollection}"
         label: Search Fields
       - name: returnFields
-        type: FIELDS
-        collection: <-referenceCollection
+        type: COLLECTION_FIELDS
+        collectionName: "$Parent.Record{referenceCollection}"
         label: Return Fields
   - name: order
     type: LIST
@@ -175,16 +175,16 @@ properties:
           - USER
           - FILE
     items:
-      addLabel: Add Search Order
+      addLabel: Add Reference Search Order Field
       displayTemplate: "${field} - ${desc}"
-      title: Search Order
+      title: Reference Search Order Field
       defaultDefinition:
         desc: false
       properties:
         - name: field
-          type: FIELD
+          type: COLLECTION_FIELD
           label: Order Field
-          collection: <-referenceCollection
+          collectionName: "$Parent.Parent.Record{referenceCollection}"
         - name: desc
           type: CHECKBOX
           label: Descending

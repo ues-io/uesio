@@ -40,21 +40,11 @@ type Props = {
 	sections?: PropertiesPanelSection[]
 }
 
-const PATH_ARROW = "->"
+const FORWARD_PATH_ARROW = "->"
 const LODASH_PATH_SEPARATOR = "."
 
-const getWireFieldSelectOptions = (
-	wireDef?: wire.WireDefinition,
-	collection?: string
-) => {
-	let fields: Record<string, wire.ViewOnlyField> | wire.WireFieldDefinitionMap
-	const collectionFields = api.collection.getCollection(collection || "")
-		?.source.fields as unknown
-	wireDef && wireDef.fields
-		? (fields = wireDef.fields)
-		: (fields = collectionFields as
-				| Record<string, wire.ViewOnlyField>
-				| wire.WireFieldDefinitionMap)
+const getWireFieldSelectOptions = (wireDef?: wire.WireDefinition) => {
+	const fields = wireDef?.fields
 	if (!fields) return [] as wire.SelectOption[]
 	const getFields = (
 		key: string,
@@ -93,7 +83,10 @@ const getWireFieldSelectOptions = (
 		value: Record<string, wire.ViewOnlyField> | wire.WireFieldDefinitionMap
 	) =>
 		Object.entries(value)
-			.map(([key2, value2]) => [`${key}${PATH_ARROW}${key2}`, value2])
+			.map(([key2, value2]) => [
+				`${key}${FORWARD_PATH_ARROW}${key2}`,
+				value2,
+			])
 			.flatMap(([key, value]) => getFields(key, value))
 
 	return Object.entries(fields)
@@ -120,7 +113,7 @@ const getWireConditionSelectOptions = (wireDef: wire.WireDefinition) => {
 				if (subCondition?.id) {
 					conditions.push({
 						value: subCondition.id,
-						label: `${condition.id} ${PATH_ARROW} ${subCondition.id}`,
+						label: `${condition.id} ${FORWARD_PATH_ARROW} ${subCondition.id}`,
 					})
 				}
 			}
@@ -135,10 +128,10 @@ const getObjectProperty = (
 	object: wire.PlainWireRecord,
 	property: string
 ): wire.PlainFieldValue => {
-	if (property.includes(PATH_ARROW)) {
+	if (property.includes(FORWARD_PATH_ARROW)) {
 		return get(
 			object,
-			property.replace(PATH_ARROW, LODASH_PATH_SEPARATOR)
+			property.replace(FORWARD_PATH_ARROW, LODASH_PATH_SEPARATOR)
 		) as wire.PlainFieldValue
 	} else {
 		return object[property] as wire.PlainFieldValue
@@ -248,7 +241,6 @@ const getWireFieldFromPropertyDef = (
 	const { name, type } = def
 	let wireId: string | undefined
 	let wireDefinition: wire.WireDefinition | undefined
-	let referenceCollection: string | undefined
 	let wireField
 	switch (type) {
 		case "SELECT":
@@ -283,31 +275,13 @@ const getWireFieldFromPropertyDef = (
 				wireId === undefined
 					? undefined
 					: getWireDefinition(context, wireId)
-			referenceCollection = def.collection
-			if (def.collection?.includes("<-")) {
-				const parentWire = "dynamicwire:" + path.trim().combine()
-				const parentWireRecord = api.wire
-					.useDynamicWire(parentWire, null, context)
-					?.getData()[0]
-				const refCol = def.collection.replace("<-", "")
-				referenceCollection = parentWireRecord?.getFieldValue(refCol)
-			}
-
 			return getBaseWireFieldDef(
 				def,
 				`${type === "FIELDS" ? "MULTI" : ""}SELECT`,
 				{
 					selectlist: getSelectListMetadataFromOptions(
 						name,
-						getWireFieldSelectOptions(
-							wireDefinition,
-							def.collection && !def.collection?.includes("<-")
-								? (getObjectProperty(
-										currentValue,
-										def.collection
-								  ) as string)
-								: referenceCollection
-						),
+						getWireFieldSelectOptions(wireDefinition),
 						type === "FIELDS" ? undefined : ""
 					),
 				}
@@ -357,6 +331,10 @@ const getWireFieldFromPropertyDef = (
 						: [],
 					""
 				),
+			})
+		case "COLLECTION_FIELDS":
+			return getBaseWireFieldDef(def, "LIST", {
+				subtype: "TEXT",
 			})
 		default:
 			return getBaseWireFieldDef(def, "TEXT")
@@ -419,7 +397,7 @@ const getPropPathFromName = (
 	name: string,
 	path: FullPath
 ): [FullPath, string[], boolean] => {
-	const nameParts = name.split(PATH_ARROW)
+	const nameParts = name.split(FORWARD_PATH_ARROW)
 	const isNestedProperty = nameParts.length > 1
 	const propPath = nameParts.reduce(
 		(newPath, part) => newPath.addLocal(part),
@@ -577,7 +555,10 @@ const parseProperties = (
 					} as wire.PlainWireRecord
 					set(
 						newValue,
-						field.replace(PATH_ARROW, LODASH_PATH_SEPARATOR),
+						field.replace(
+							FORWARD_PATH_ARROW,
+							LODASH_PATH_SEPARATOR
+						),
 						value
 					)
 				}
@@ -615,7 +596,7 @@ const parseProperties = (
 		if (value !== undefined) {
 			set(
 				initialValue,
-				name.replace(PATH_ARROW, LODASH_PATH_SEPARATOR),
+				name.replace(FORWARD_PATH_ARROW, LODASH_PATH_SEPARATOR),
 				value
 			)
 		}
@@ -700,7 +681,7 @@ const getProperty = (
 	propertyId: string,
 	properties: ComponentProperty[]
 ): ComponentProperty | undefined => {
-	const nameParts = propertyId.split(PATH_ARROW)
+	const nameParts = propertyId.split(FORWARD_PATH_ARROW)
 	const isNestedProperty = nameParts.length > 1
 	const propertyMatch = findProperty(nameParts, properties)
 	if (propertyMatch && isNestedProperty) {
@@ -823,15 +804,15 @@ const onUpdate = (
 	// If there is no setter, and the field is nested, then walk up the tree
 	// to see if there is a setter registered for the parent field
 	if (!setter) {
-		const fieldParts = field.split(PATH_ARROW)
+		const fieldParts = field.split(FORWARD_PATH_ARROW)
 		if (fieldParts.length > 1) {
 			const popped = []
 			while (fieldParts.length) {
 				popped.push(fieldParts.pop())
-				const parentField = fieldParts.join(PATH_ARROW)
+				const parentField = fieldParts.join(FORWARD_PATH_ARROW)
 				setter = setters.get(parentField)
 				if (setter) {
-					setterField = popped.join(PATH_ARROW)
+					setterField = popped.join(FORWARD_PATH_ARROW)
 					break
 				}
 			}

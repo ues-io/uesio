@@ -15,10 +15,12 @@ type Props = {
 	fieldMetadata: collection.Field
 	path: FullPath
 	selected: boolean
+	allowReferenceTraversal?: boolean
 }
 const FieldSelectPropTag: definition.UtilityComponent<Props> = (props) => {
 	const Text = component.getUtility("uesio/io.text")
 	const {
+		allowReferenceTraversal = true,
 		fieldMetadata,
 		context,
 		onSelect,
@@ -30,7 +32,9 @@ const FieldSelectPropTag: definition.UtilityComponent<Props> = (props) => {
 	const fieldId = fieldMetadata.getId()
 
 	const referenceMetadata =
-		fieldMetadata.isReference() && fieldMetadata.getReferenceMetadata()
+		allowReferenceTraversal && fieldMetadata.isReference()
+			? fieldMetadata.getReferenceMetadata()
+			: undefined
 
 	const nsInfo = getBuilderNamespace(context, fieldId as metadata.MetadataKey)
 

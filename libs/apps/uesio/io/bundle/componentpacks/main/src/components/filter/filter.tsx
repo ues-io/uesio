@@ -31,8 +31,8 @@ type FilterDefinition = {
 export type ReferenceFilterOptions = {
 	template?: string
 	conditions?: wire.WireConditionState[]
-	returnFields?: Record<string, unknown>
-	searchFields?: Record<string, unknown>
+	returnFields?: string[] | undefined
+	searchFields?: string[] | undefined
 	order?: wire.OrderState[]
 }
 
@@ -48,18 +48,16 @@ const isValueCondition = wire.isValueCondition
 const isGroupCondition = wire.isGroupCondition
 
 const getReferenceFilterOptions = (definition: FilterDefinition) => {
-	const { order, reference } = definition
-	const searchFields =
-		reference && reference.searchFields
-			? Object.keys(reference.searchFields)
-			: undefined
-	const returnFields =
-		reference && reference.returnFields
-			? Object.keys(reference.returnFields)
-			: undefined
+	const { order, reference = {} } = definition
+	const {
+		conditions,
+		returnFields = [],
+		searchFields = [],
+		template,
+	} = reference
 	return {
-		template: reference?.template,
-		conditions: reference?.conditions,
+		template,
+		conditions,
 		searchFields,
 		returnFields,
 		order: reference?.order || order,

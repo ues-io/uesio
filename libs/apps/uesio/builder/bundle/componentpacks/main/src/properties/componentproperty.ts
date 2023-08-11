@@ -127,8 +127,8 @@ type FieldsProperty = {
 
 type CollectionFieldPropertyBase = {
 	collectionName?: string
-	collectionField?: string
 	collectionPath?: string
+	allowReferenceTraversal?: boolean
 } & BaseProperty
 
 // COLLECTION_FIELD / COLLECTION_FIELDS are for selecting fields in a COLLECTION.
