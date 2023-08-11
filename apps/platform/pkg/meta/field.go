@@ -168,13 +168,6 @@ func (f *Field) UnmarshalYAML(node *yaml.Node) error {
 
 	if fieldType == "NUMBER" {
 		f.NumberMetadata = &NumberMetadata{}
-		numberNode := pickNodeFromMap(node, "number")
-		if numberNode != nil {
-			err := numberNode.Decode(f.NumberMetadata)
-			if err != nil {
-				return err
-			}
-		}
 	}
 
 	if fieldType == "FILE" {
