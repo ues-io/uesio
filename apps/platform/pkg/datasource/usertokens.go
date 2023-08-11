@@ -5,10 +5,15 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/constant"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
+
+var OWNER_TOKEN = "uesio.owner"
+var INSTALLED_TOKEN = "uesio.installed"
+var NAMED_PERMISSION_TOKEN = "uesio.namedpermission"
 
 func getTokensForRequest(connection adapt.Connection, session *sess.Session, tokenMap sess.TokenMap) (meta.UserAccessTokenCollection, error) {
 	metadata := connection.GetMetadata()
@@ -42,7 +47,7 @@ func getTokensForRequest(connection adapt.Connection, session *sess.Session, tok
 
 	for key := range userAccessTokenNames {
 		// Skip loading of builtin user access tokens
-		if key == "uesio.owner" || key == "uesio.installed" || key == "uesio.namedpermission" {
+		if key == OWNER_TOKEN || key == INSTALLED_TOKEN || key == NAMED_PERMISSION_TOKEN {
 			continue
 		}
 		token, err := meta.NewUserAccessToken(key)
@@ -68,7 +73,7 @@ func getTokensForRequest(connection adapt.Connection, session *sess.Session, tok
 func getFieldsMap(fieldKeys []string) *FieldsMap {
 	fieldsMap := FieldsMap{}
 	for _, fieldKey := range fieldKeys {
-		fieldParts := strings.Split(fieldKey, "->")
+		fieldParts := strings.Split(fieldKey, constant.RefSep)
 		if len(fieldParts) == 1 {
 			// This is somewhat wierd, but it prevents reference
 			// fields in the token from being fully loaded.
@@ -77,21 +82,21 @@ func getFieldsMap(fieldKeys []string) *FieldsMap {
 				adapt.ID_FIELD: nil,
 			}
 		} else {
-			fieldsMap[fieldParts[0]] = *getFieldsMap([]string{strings.Join(fieldParts[1:], "->")})
+			fieldsMap[fieldParts[0]] = *getFieldsMap([]string{strings.Join(fieldParts[1:], constant.RefSep)})
 		}
 	}
 	return &fieldsMap
 }
 
 func HydrateTokenMap(tokenMap sess.TokenMap, tokenDefs meta.UserAccessTokenCollection, connection adapt.Connection, session *sess.Session, reason bool) error {
-	if !tokenMap.Has("uesio.owner") {
-		tokenMap.Add("uesio.owner", []sess.TokenValue{{
+	if !tokenMap.Has(OWNER_TOKEN) {
+		tokenMap.Add(OWNER_TOKEN, []sess.TokenValue{{
 			Value:  session.GetUserID(),
 			Reason: "Record Owner: " + session.GetUserUniqueKey()},
 		})
 	}
 
-	if !tokenMap.Has("uesio.installed") {
+	if !tokenMap.Has(INSTALLED_TOKEN) {
 		// A special user access token type for installed deps
 		depTokens := []sess.TokenValue{}
 		for key := range session.GetContextAppBundle().Dependencies {
@@ -100,10 +105,10 @@ func HydrateTokenMap(tokenMap sess.TokenMap, tokenDefs meta.UserAccessTokenColle
 				Reason: "App Installed: " + key,
 			})
 		}
-		tokenMap.Add("uesio.installed", depTokens)
+		tokenMap.Add(INSTALLED_TOKEN, depTokens)
 	}
 
-	if !tokenMap.Has("uesio.namedpermission") {
+	if !tokenMap.Has(NAMED_PERMISSION_TOKEN) {
 		// A special user access token type for named permissions
 		namedPermTokens := []sess.TokenValue{}
 		for key := range session.GetContextPermissions().NamedRefs {
@@ -112,7 +117,7 @@ func HydrateTokenMap(tokenMap sess.TokenMap, tokenDefs meta.UserAccessTokenColle
 				Reason: "Has Named Permission: " + key,
 			})
 		}
-		tokenMap.Add("uesio.namedpermission", namedPermTokens)
+		tokenMap.Add(NAMED_PERMISSION_TOKEN, namedPermTokens)
 	}
 
 	// To ensure we have access to all of the collections involved in user access token calculation,
