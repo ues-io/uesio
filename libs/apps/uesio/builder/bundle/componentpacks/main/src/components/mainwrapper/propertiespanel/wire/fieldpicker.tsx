@@ -6,8 +6,9 @@ import PropertiesWrapper from "../propertieswrapper"
 import FieldSelectPropTag from "./fieldselectproptag"
 
 type Props = {
-	baseCollectionKey: string
 	allowMultiselect?: boolean
+	allowReferenceTraversal?: boolean
+	baseCollectionKey: string
 	isSelected: (
 		ctx: context.Context,
 		path: FullPath,
@@ -34,20 +35,18 @@ const getNextCollectionKey = (
 	const referenceMetadata = fieldMetadata.getReferenceMetadata()
 	if (!referenceMetadata) return collectionKey
 
-	return getNextCollectionKey(
-		path.merge(nextPath),
-		referenceMetadata.collection
-	)
+	return getNextCollectionKey(nextPath, referenceMetadata.collection)
 }
 
 const FieldPicker: definition.UtilityComponent<Props> = (props) => {
 	const {
+		allowMultiselect = false,
+		allowReferenceTraversal = true,
 		context,
 		baseCollectionKey,
 		onClose,
 		onSelect,
 		onUnselect,
-		allowMultiselect,
 		isSelected,
 	} = props
 
@@ -107,6 +106,7 @@ const FieldPicker: definition.UtilityComponent<Props> = (props) => {
 				if (searchTerm && !fieldId.includes(searchTerm)) return null
 				return (
 					<FieldSelectPropTag
+						allowReferenceTraversal={allowReferenceTraversal}
 						setReferencePath={setReferencePath}
 						selected={selected}
 						path={referencePath?.addLocal(fieldId)}
