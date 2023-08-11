@@ -20,9 +20,18 @@ const FieldsProperties: definition.UC = (props) => {
 	const wirePath = selectedPath.trimToSize(2)
 	const fieldsPath = wirePath.addLocal("fields")
 	const onSelect = (ctx: context.Context, path: FullPath) =>
-		set(ctx, path, {})
+		set(ctx, fieldsPath.merge(path), {})
 	const onUnselect = (ctx: context.Context, path: FullPath) =>
-		remove(ctx, path)
+		remove(ctx, fieldsPath.merge(path))
+	const isSelected = (
+		ctx: context.Context,
+		path: FullPath,
+		fieldId: string
+	) => {
+		const joinedPath = fieldsPath.merge(path).addLocal(fieldId)
+		const wireField = get(ctx, joinedPath) as wire.WireFieldDefinitionMap
+		return wireField !== undefined
+	}
 
 	// TODO: Handle view only wires here too.
 	const wireDef = get(context, wirePath) as wire.RegularWireDefinition
@@ -42,10 +51,11 @@ const FieldsProperties: definition.UC = (props) => {
 					<FieldPicker
 						context={context}
 						baseCollectionKey={wireDef.collection}
-						path={fieldsPath}
 						onClose={() => setShowPopper(false)}
 						onSelect={onSelect}
 						onUnselect={onUnselect}
+						allowMultiselect={true}
+						isSelected={isSelected}
 					/>
 				</Popper>
 			)}

@@ -1,0 +1,8 @@
+name: collectionfield
+pack: main
+entrypoint: components/collectionfield/collectionfield
+utilities:
+  - uesio/io.textfield
+  - uesio/io.fieldwrapper
+  - uesio/io.popper
+  - uesio/io.grid
