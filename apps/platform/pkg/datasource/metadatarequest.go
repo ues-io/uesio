@@ -2,6 +2,7 @@ package datasource
 
 import (
 	"fmt"
+	"github.com/thecloudmasters/uesio/pkg/constant"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -48,6 +49,24 @@ func GetMetadataResponse(metadataResponse *adapt.MetadataCache, collectionID, fi
 
 // FieldsMap type a recursive type to store an arbitrary list of nested fields
 type FieldsMap map[string]FieldsMap
+
+func (fm *FieldsMap) getRequestFields() []adapt.LoadRequestField {
+	fields := []adapt.LoadRequestField{
+		{
+			ID: adapt.ID_FIELD,
+		},
+	}
+	if fm == nil {
+		return fields
+	}
+	for fieldKey, subFields := range *fm {
+		fields = append(fields, adapt.LoadRequestField{
+			ID:     fieldKey,
+			Fields: subFields.getRequestFields(),
+		})
+	}
+	return fields
+}
 
 func (fm *FieldsMap) merge(newFields *FieldsMap) {
 	if newFields == nil {
@@ -137,7 +156,7 @@ func ProcessFieldsMetadata(fields map[string]*adapt.FieldMetadata, collectionKey
 
 		newKey := fieldKey
 		if prefix != "" {
-			newKey = prefix + "->" + fieldKey
+			newKey = prefix + constant.RefSep + fieldKey
 		}
 
 		specialRef, ok := specialRefs[fieldMetadata.Type]

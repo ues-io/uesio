@@ -1,6 +1,5 @@
-import { definition, api, wire, context } from "@uesio/ui"
+import { definition, api, context } from "@uesio/ui"
 import { useState } from "react"
-import { get } from "../../../../api/defapi"
 import { FullPath } from "../../../../api/path"
 import ActionButton from "../../../../helpers/actionbutton"
 import PropertiesWrapper from "../propertieswrapper"
@@ -8,7 +7,12 @@ import FieldSelectPropTag from "./fieldselectproptag"
 
 type Props = {
 	baseCollectionKey: string
-	path: FullPath
+	allowMultiselect?: boolean
+	isSelected: (
+		ctx: context.Context,
+		path: FullPath,
+		fieldId: string
+	) => boolean
 	onClose: () => void
 	onSelect?: (ctx: context.Context, path: FullPath) => void
 	onUnselect?: (ctx: context.Context, path: FullPath) => void
@@ -18,13 +22,8 @@ const getNextCollectionKey = (
 	path: FullPath,
 	collectionKey: string
 ): string => {
-	if (path.size() < 4) return collectionKey
-	// Get the first field from the path
-	const basePath = path.trimToSize(3)
-	const [, pathWithoutWires] = path.shift()
-	const [, pathWithoutWireName] = pathWithoutWires.shift()
-	const [, pathWithoutFieldsNode] = pathWithoutWireName.shift()
-	const [currentField, pathWithoutFieldName] = pathWithoutFieldsNode.shift()
+	if (path.size() < 2) return collectionKey
+	const [currentField, pathWithoutFieldName] = path.shift()
 	const [, nextPath] = pathWithoutFieldName.shift()
 
 	if (!currentField) return collectionKey
@@ -36,15 +35,23 @@ const getNextCollectionKey = (
 	if (!referenceMetadata) return collectionKey
 
 	return getNextCollectionKey(
-		basePath.merge(nextPath),
+		path.merge(nextPath),
 		referenceMetadata.collection
 	)
 }
 
 const FieldPicker: definition.UtilityComponent<Props> = (props) => {
-	const { context, baseCollectionKey, path, onClose, onSelect, onUnselect } =
-		props
+	const {
+		context,
+		baseCollectionKey,
+		onClose,
+		onSelect,
+		onUnselect,
+		allowMultiselect,
+		isSelected,
+	} = props
 
+	const path = new FullPath()
 	const [referencePath, setReferencePath] = useState<FullPath>(path)
 	const [searchTerm, setSearchTerm] = useState("")
 
@@ -66,8 +73,6 @@ const FieldPicker: definition.UtilityComponent<Props> = (props) => {
 		}
 	)
 
-	const fieldsDef = get(context, referencePath) as wire.WireFieldDefinitionMap
-
 	if (!collectionFields || !collectionMetadata) return null
 
 	return (
@@ -75,7 +80,9 @@ const FieldPicker: definition.UtilityComponent<Props> = (props) => {
 			context={props.context}
 			className={props.className}
 			path={referencePath}
-			title={"Select Fields: " + collectionMetadata.getId()}
+			title={`Select Field${
+				allowMultiselect ? "s" : ""
+			} (${collectionMetadata.getId()})`}
 			onUnselect={onClose}
 			searchTerm={searchTerm}
 			setSearchTerm={setSearchTerm}
@@ -94,7 +101,7 @@ const FieldPicker: definition.UtilityComponent<Props> = (props) => {
 			}
 		>
 			{Object.keys(collectionFields).map((fieldId) => {
-				const selected = fieldsDef?.[fieldId] !== undefined
+				const selected = isSelected(context, referencePath, fieldId)
 				const fieldMetadata = collectionMetadata.getField(fieldId)
 				if (!fieldMetadata) return null
 				if (searchTerm && !fieldId.includes(searchTerm)) return null
@@ -102,11 +109,17 @@ const FieldPicker: definition.UtilityComponent<Props> = (props) => {
 					<FieldSelectPropTag
 						setReferencePath={setReferencePath}
 						selected={selected}
-						path={referencePath.addLocal(fieldId)}
+						path={referencePath?.addLocal(fieldId)}
 						fieldMetadata={fieldMetadata}
 						key={fieldId}
 						context={context}
-						onSelect={onSelect}
+						onSelect={(ctx: context.Context, path: FullPath) => {
+							onSelect?.(ctx, path)
+							// For NON-multi-select field pickers, we want to go ahead and close the picker after selection
+							if (!allowMultiselect) {
+								onClose()
+							}
+						}}
 						onUnselect={onUnselect}
 					/>
 				)

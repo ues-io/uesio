@@ -23,6 +23,18 @@ import { memoizedGetJSON } from "./memoizedAsync"
 import { SiteState } from "../bands/site"
 import { UploadRequest } from "../load/uploadrequest"
 
+interface HasParams {
+	params?: Record<string, string>
+}
+
+const injectParams = (
+	x: HasParams[],
+	paramsToInject?: Record<string, string>
+) => {
+	if (!x || !x.length || !paramsToInject) return
+	x.forEach((y) => (y.params = paramsToInject))
+}
+
 // Allows us to load static vendor assets, such as Monaco modules, from custom paths
 // and for us to load Uesio-app-versioned files from the server
 interface UesioWindow extends Window {
@@ -256,6 +268,7 @@ const platform = {
 		requestBody: LoadRequestBatch
 	): Promise<LoadResponseBatch> => {
 		const prefix = getPrefix(context)
+		injectParams(requestBody.wires, context.getParams())
 		const response = await postJSON(
 			context,
 			`${prefix}/wires/load`,
@@ -268,6 +281,7 @@ const platform = {
 		requestBody: SaveRequestBatch
 	): Promise<SaveResponseBatch> => {
 		const prefix = getPrefix(context)
+		injectParams(requestBody.wires, context.getParams())
 		const response = await postJSON(
 			context,
 			`${prefix}/wires/save`,

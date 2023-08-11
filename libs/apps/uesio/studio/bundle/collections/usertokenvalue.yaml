@@ -1,0 +1,5 @@
+name: usertokenvalue
+type: DYNAMIC
+nameField: uesio/studio.reason
+label: User Token Value
+pluralLabel: User Token Values

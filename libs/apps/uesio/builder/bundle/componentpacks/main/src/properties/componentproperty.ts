@@ -104,12 +104,6 @@ type WiresProperty = {
 	type: "WIRES"
 } & BaseProperty
 
-type FieldPropertyBase = {
-	wireField?: string
-	wireName?: string
-	collection?: string
-} & BaseProperty
-
 type FieldMetadataProperty = {
 	type: "FIELD_METADATA"
 	fieldProperty: string
@@ -118,7 +112,12 @@ type FieldMetadataProperty = {
 	wireName?: string
 } & BaseProperty
 
-// FIELD / FIELDS are for fields in a WIRE.
+type FieldPropertyBase = {
+	wireField?: string
+	wireName?: string
+} & BaseProperty
+
+// FIELD / FIELDS are for selecting fields in a WIRE.
 type FieldProperty = {
 	type: "FIELD"
 } & FieldPropertyBase
@@ -129,6 +128,7 @@ type FieldsProperty = {
 type CollectionFieldPropertyBase = {
 	collectionName?: string
 	collectionField?: string
+	collectionPath?: string
 } & BaseProperty
 
 // COLLECTION_FIELD / COLLECTION_FIELDS are for selecting fields in a COLLECTION.
@@ -236,6 +236,8 @@ type ComponentProperty =
 	| ParamProperty
 	| SelectProperty
 	| ConditionProperty
+	| CollectionFieldProperty
+	| CollectionFieldsProperty
 	| WireProperty
 	| WiresProperty
 	| FieldMetadataProperty
@@ -263,6 +265,7 @@ const getStyleVariantProperty = (componentType: string): ComponentProperty => ({
 
 export type {
 	BotProperty,
+	CollectionFieldProperty,
 	ComponentProperty,
 	ComponentPropertiesGetter,
 	FieldProperty,

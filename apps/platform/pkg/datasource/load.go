@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/thecloudmasters/uesio/pkg/constant"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/merge"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -187,7 +189,7 @@ func processConditions(
 func transformReferenceCrossingConditionToSubquery(collectionName string, condition *adapt.LoadRequestCondition, metadata *adapt.MetadataCache) error {
 	// Split the field name, and recursively process each part as an IN subquery condition
 	// until we get to the final field, which we'll then handle as a normal condition
-	parts := strings.Split(condition.Field, "->")
+	parts := strings.Split(condition.Field, constant.RefSep)
 	totalParts := len(parts)
 
 	originalOperator := condition.Operator
@@ -257,11 +259,11 @@ func transformReferenceCrossingConditionToSubquery(collectionName string, condit
 }
 
 func isReferenceCrossingField(field string) bool {
-	return strings.Contains(field, "->")
+	return strings.Contains(field, constant.RefSep)
 }
 
-func requestMetadataForReferenceCrossingCondition(collectionName string, condition *adapt.LoadRequestCondition, collections *MetadataRequest) error {
-	parts := strings.Split(condition.Field, "->")
+func requestMetadataForReferenceCrossingField(collectionName, fieldName string, collections *MetadataRequest) error {
+	parts := strings.Split(fieldName, constant.RefSep)
 	var currentField *adapt.LoadRequestField
 	var currentFieldsArray, previousFieldsArray *[]adapt.LoadRequestField
 	i := len(parts) - 1
@@ -324,7 +326,7 @@ func getMetadataForConditionLoad(
 
 	if isReferenceCrossingField(condition.Field) {
 		// Recursively add all pieces of the field, as if we were requesting Subfields,
-		err = requestMetadataForReferenceCrossingCondition(collectionName, condition, collections)
+		err = requestMetadataForReferenceCrossingField(collectionName, condition.Field, collections)
 		if err != nil {
 			return fmt.Errorf("unable to request metadata for condition field: %s", condition.Field)
 		}
@@ -366,7 +368,7 @@ func getMetadataForConditionLoad(
 				lookupCollectionKey = otherOp.CollectionName
 			}
 		}
-		lookupFields := strings.Split(condition.LookupField, "->")
+		lookupFields := strings.Split(condition.LookupField, constant.RefSep)
 		lookupField, rest := lookupFields[0], lookupFields[1:]
 		subFields := getAdditionalLookupFields(rest)
 
@@ -415,12 +417,7 @@ func getMetadataForLoad(
 
 	if len(op.Order) > 0 {
 		for _, orderField := range op.Order {
-
-			if !session.GetContextPermissions().HasFieldReadPermission(collectionKey, orderField.Field) {
-				return fmt.Errorf("Profile %s does not have read access to the %s field.", session.GetProfile(), orderField.Field)
-			}
-			err := collections.AddField(collectionKey, orderField.Field, nil)
-			if err != nil {
+			if err = getMetadataForOrderField(collectionKey, orderField.Field, &collections, session); err != nil {
 				return err
 			}
 		}
@@ -483,6 +480,28 @@ func getMetadataForLoad(
 
 	return nil
 
+}
+
+func getMetadataForOrderField(collectionKey string, fieldName string, collections *MetadataRequest, session *sess.Session) error {
+	isReferenceCrossing := isReferenceCrossingField(fieldName)
+
+	topLevelFieldName := fieldName
+
+	if isReferenceCrossing {
+		topLevelFieldName = strings.Split(fieldName, constant.RefSep)[0]
+	}
+
+	// Do an initial check on field read access.
+	if !session.GetContextPermissions().HasFieldReadPermission(collectionKey, topLevelFieldName) {
+		return fmt.Errorf("profile %s does not have read access to the %s field", session.GetProfile(), topLevelFieldName)
+	}
+
+	if isReferenceCrossing {
+		// Recursively request metadata for all components of the reference-crossing field name
+		return requestMetadataForReferenceCrossingField(collectionKey, fieldName, collections)
+	} else {
+		return collections.AddField(collectionKey, fieldName, nil)
+	}
 }
 
 func getAdditionalLookupFields(fields []string) FieldsMap {
