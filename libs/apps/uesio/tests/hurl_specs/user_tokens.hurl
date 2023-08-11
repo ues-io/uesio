@@ -25,3 +25,25 @@ jsonpath "$.wires[0].data[*]['uesio/studio.token']" includes "uesio/studio.works
 jsonpath "$.wires[0].data[*]['uesio/studio.token']" includes "uesio/io"
 jsonpath "$.wires[0].data[*]['uesio/studio.token']" includes "uesio/builder"
 jsonpath "$.wires[0].data[*]['uesio/studio.token']" includes "uesio/core"
+
+# Test a wire load with a search condition
+POST https://{{host}}:{{port}}/site/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/studio.usertokenvalue",
+            "query":true,
+            "conditions": [
+                {
+                    "type": "SEARCH",
+                    "value": "admin"
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].data[*]['uesio/studio.token']" includes "uesio/studio.workspace_admin"
+jsonpath "$.wires[0].data[*]['uesio/studio.token']" not includes "uesio/io"
