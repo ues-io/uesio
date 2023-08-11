@@ -54,6 +54,7 @@ views:
   uesio/studio.topbar: true
   uesio/studio.user: true
   uesio/studio.users: true
+  uesio/studio.usertokens: true
   uesio/studio.view: true
   uesio/studio.views: true
   uesio/studio.workspace: true
@@ -138,6 +139,7 @@ routes:
   uesio/studio.themes: true
   uesio/studio.user: true
   uesio/studio.users: true
+  uesio/studio.usertokens: true
   uesio/studio.view: true
   uesio/studio.views: true
   uesio/studio.workspaceconfig: true
@@ -214,6 +216,7 @@ collections:
   uesio/core.usage: true
   uesio/core.userfile: true
   uesio/core.user: true
+  uesio/studio.usertokenvalue: true
   uesio/core.loginmethod: true
   uesio/studio.usage: true
   uesio/core.featureflagassignment: true
