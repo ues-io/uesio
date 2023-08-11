@@ -17,9 +17,10 @@ import (
 )
 
 type RequestOptions struct {
-	URL          string      `json:"url"`
-	Cache        bool        `json:"cache"`
-	Body         interface{} `json:"body"`
+	URL          string            `json:"url"`
+	Cache        bool              `json:"cache"`
+	Headers      map[string]string `json:"headers"`
+	Body         interface{}       `json:"body"`
 	ResponseData interface{}
 }
 
@@ -87,13 +88,14 @@ func (wic *WebIntegrationConnection) Request(methodName string, requestOptions i
 
 	fullURL := SafeJoinStrings([]string{wic.integration.BaseURL, options.URL}, "/")
 
+	// TODO: Convert to using Redis cache, and support cache invalidation
 	if options.Cache {
 		cachedBody, gotCachedBody := localcache.GetCacheEntry(webRequestBody, fullURL)
 		cachedContentType, gotCachedContentType := localcache.GetCacheEntry(webRequestContentType, fullURL)
 		if gotCachedBody && gotCachedContentType {
 			// Attempt to parse the response body into a structured representation,
 			// if possible. If it fails, just return the raw response as a string
-			parsedBody, err := parseResponseBody(cachedContentType.(string), bytes.NewReader(cachedBody.([]byte)))
+			parsedBody, err := parseResponseBody(cachedContentType.(string), cachedBody.([]byte))
 			// If this fails, try the request again, otherwise use the body
 			if err != nil {
 				options.ResponseData = parsedBody
@@ -106,7 +108,21 @@ func (wic *WebIntegrationConnection) Request(methodName string, requestOptions i
 
 	var payloadReader io.Reader
 	if options.Body != nil {
-		payloadReader = bytes.NewReader(options.Body.([]byte))
+		if stringPayload, isString := options.Body.(string); isString {
+			payloadReader = strings.NewReader(stringPayload)
+		} else if bytesPayload, isByteArray := options.Body.([]byte); isByteArray {
+			payloadReader = bytes.NewReader(bytesPayload)
+		} else if mapPayload, isMap := options.Body.(map[string]interface{}); isMap {
+			// Marshall other payloads, e.g. map[string]interface{} (almost certainly coming from Uesio) to JSON
+			jsonBytes, err := json.Marshal(mapPayload)
+			if err != nil {
+				return nil, errors.New("unable to serialize payload into JSON")
+			}
+			payloadReader = bytes.NewReader(jsonBytes)
+		}
+		if payloadReader == nil {
+			return nil, errors.New("unexpected payload format for " + methodName + " request")
+		}
 	}
 
 	req, err := http.NewRequest(methodName, fullURL, payloadReader)
@@ -114,7 +130,19 @@ func (wic *WebIntegrationConnection) Request(methodName string, requestOptions i
 		return nil, err
 	}
 
-	for header, value := range wic.integration.Headers {
+	allHeaders := map[string]string{}
+
+	if len(wic.integration.Headers) > 0 {
+		for header, value := range wic.integration.Headers {
+			allHeaders[header] = value
+		}
+	}
+	if len(options.Headers) > 0 {
+		for header, value := range options.Headers {
+			allHeaders[header] = value
+		}
+	}
+	for header, value := range allHeaders {
 		template, err := templating.NewTemplateWithValidKeysOnly(value)
 		if err != nil {
 			return nil, err
@@ -160,7 +188,7 @@ func (wic *WebIntegrationConnection) Request(methodName string, requestOptions i
 
 	// Attempt to parse the response body into a structured representation,
 	// if possible. If it fails, just return the raw response as a string
-	parsedBody, err := parseResponseBody(contentType, bytes.NewReader(rawData))
+	parsedBody, err := parseResponseBody(contentType, rawData)
 	if err != nil {
 		return nil, err
 	}
@@ -168,28 +196,27 @@ func (wic *WebIntegrationConnection) Request(methodName string, requestOptions i
 	return options.ResponseData, nil
 }
 
-func parseResponseBody(contentType string, body io.Reader) (interface{}, error) {
+func parseResponseBody(contentType string, body []byte) (interface{}, error) {
 
 	// Only parse as JSON to a structured Go type if that's what the content type is.
 	if strings.Contains(contentType, "/json") {
-		// First try parsing as a JSON map
-		mapPtr := &map[string]interface{}{}
-		err := json.NewDecoder(body).Decode(mapPtr)
-		if err == nil {
-			return mapPtr, nil
-		}
-		// Next try parsing as a JSON array (of something)
-		slicePtr := &[]interface{}{}
-		err = json.NewDecoder(body).Decode(&slicePtr)
-		if err == nil {
-			return slicePtr, nil
+		// If it starts with a curly brace, treat it as JSON object
+		if string(body[0]) == "{" {
+			mapPtr := &map[string]interface{}{}
+			err := json.NewDecoder(bytes.NewReader(body)).Decode(mapPtr)
+			if err == nil {
+				return mapPtr, nil
+			}
+		} else {
+			// Otherwise, assume it's a JSON array
+			slicePtr := &[]interface{}{}
+			err := json.NewDecoder(bytes.NewReader(body)).Decode(&slicePtr)
+			if err == nil {
+				return slicePtr, nil
+			}
 		}
 	}
 	// Otherwise, just return the raw data as a string
-	rawData, err := io.ReadAll(body)
-	if err != nil {
-		return nil, errors.New("received unreadable response body")
-	}
-	return string(rawData), nil
+	return string(body), nil
 
 }
