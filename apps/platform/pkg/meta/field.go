@@ -175,13 +175,6 @@ func (f *Field) UnmarshalYAML(node *yaml.Node) error {
 			FileSource: "uesio/core.platform",
 			Namespace:  f.Namespace,
 		}
-		fileNode := pickNodeFromMap(node, "file")
-		if fileNode != nil {
-			err := fileNode.Decode(f.FileMetadata)
-			if err != nil {
-				return err
-			}
-		}
 	}
 
 	return node.Decode((*FieldWrapper)(f))
