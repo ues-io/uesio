@@ -2,6 +2,8 @@ import { api, component, context, definition, wire } from "@uesio/ui"
 import { get as getDef, set as setDef, changeKey } from "../api/defapi"
 import set from "lodash/set"
 import get from "lodash/get"
+import { useState } from "react"
+import type { PropertyPath } from "lodash"
 import {
 	getAvailableWireIds,
 	getFieldMetadata,
@@ -29,8 +31,6 @@ import {
 import { getComponentDef, setSelectedPath } from "../api/stateapi"
 import { getDisplaySectionProperties } from "../properties/displayconditionproperties"
 import { getSignalProperties } from "../api/signalsapi"
-import { useState } from "react"
-import { PropertyPath } from "lodash"
 
 type Props = {
 	properties?: ComponentProperty[]
