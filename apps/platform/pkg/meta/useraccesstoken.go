@@ -23,6 +23,7 @@ type UserAccessToken struct {
 	Collection     string            `yaml:"collection" json:"uesio/studio.collection"`
 	Conditions     []*TokenCondition `yaml:"conditions"  json:"uesio/studio.conditions"`
 	Token          string            `yaml:"token"  json:"uesio/studio.token"`
+	Reason         string            `yaml:"reason" json:"uesio/studio.reason"`
 }
 
 func (uat *UserAccessToken) GetCollectionName() string {

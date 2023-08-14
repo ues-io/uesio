@@ -104,25 +104,40 @@ type WiresProperty = {
 	type: "WIRES"
 } & BaseProperty
 
+type FieldMetadataProperty = {
+	type: "FIELD_METADATA"
+	fieldProperty: string
+	metadataProperty: wire.FieldMetadataPropertyPath
+	wireProperty?: string
+	wireName?: string
+} & BaseProperty
+
 type FieldPropertyBase = {
 	wireField?: string
 	wireName?: string
 } & BaseProperty
 
-type FieldMetadataProperty = {
-	type: "FIELD_METADATA"
-	fieldProperty: string
-	metadataProperty: "type" // TODO: Add more properties here, e.g. referenceType, etc.
-	wireProperty?: string
-	wireName?: string
-} & BaseProperty
-
+// FIELD / FIELDS are for selecting fields in a WIRE.
 type FieldProperty = {
 	type: "FIELD"
 } & FieldPropertyBase
 type FieldsProperty = {
 	type: "FIELDS"
 } & FieldPropertyBase
+
+type CollectionFieldPropertyBase = {
+	collectionName?: string
+	collectionPath?: string
+	allowReferenceTraversal?: boolean
+} & BaseProperty
+
+// COLLECTION_FIELD / COLLECTION_FIELDS are for selecting fields in a COLLECTION.
+type CollectionFieldProperty = {
+	type: "COLLECTION_FIELD"
+} & CollectionFieldPropertyBase
+type CollectionFieldsProperty = {
+	type: "COLLECTION_FIELDS"
+} & CollectionFieldPropertyBase
 
 type SelectProperty = {
 	type: "SELECT"
@@ -221,6 +236,8 @@ type ComponentProperty =
 	| ParamProperty
 	| SelectProperty
 	| ConditionProperty
+	| CollectionFieldProperty
+	| CollectionFieldsProperty
 	| WireProperty
 	| WiresProperty
 	| FieldMetadataProperty
@@ -235,6 +252,8 @@ type ComponentProperty =
 	| IconProperty
 	| StructProperty
 	| DateProperty
+	| CollectionFieldProperty
+	| CollectionFieldsProperty
 
 const getStyleVariantProperty = (componentType: string): ComponentProperty => ({
 	name: "uesio.variant",
@@ -246,6 +265,7 @@ const getStyleVariantProperty = (componentType: string): ComponentProperty => ({
 
 export type {
 	BotProperty,
+	CollectionFieldProperty,
 	ComponentProperty,
 	ComponentPropertiesGetter,
 	FieldProperty,

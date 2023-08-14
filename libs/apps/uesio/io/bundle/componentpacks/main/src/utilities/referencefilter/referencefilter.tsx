@@ -12,7 +12,7 @@ interface ReferenceFilterProps {
 const ReferenceFilter: definition.UtilityComponent<ReferenceFilterProps> = (
 	props
 ) => {
-	const { wire, fieldMetadata, context, condition, options, path } = props
+	const { context, condition, fieldMetadata, options, path, wire } = props
 	const wireId = wire.getId()
 	return (
 		<ReferenceField

@@ -3,8 +3,9 @@ package adapt
 import (
 	"encoding/json"
 	"errors"
-	"github.com/thecloudmasters/uesio/pkg/constant"
 	"strings"
+
+	"github.com/thecloudmasters/uesio/pkg/constant"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
@@ -77,6 +78,10 @@ func (cm *CollectionMetadata) GetKey() string {
 }
 
 func (cm *CollectionMetadata) GetField(key string) (*FieldMetadata, error) {
+	return cm.GetFieldWithMetadata(key, nil)
+}
+
+func (cm *CollectionMetadata) GetFieldWithMetadata(key string, metadata *MetadataCache) (*FieldMetadata, error) {
 
 	names := strings.Split(key, constant.RefSep)
 	if len(names) == 1 {
@@ -90,6 +95,18 @@ func (cm *CollectionMetadata) GetField(key string) (*FieldMetadata, error) {
 	fieldMetadata, err := cm.GetField(names[0])
 	if err != nil {
 		return nil, errors.New("No metadata provided for field: " + key + " in collection: " + cm.Name)
+	}
+
+	// Now determine the collection
+	if IsReference(fieldMetadata.Type) {
+		if metadata == nil {
+			return nil, errors.New("Getting metadata isn't supported for reference fields")
+		}
+		refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
+		if err != nil {
+			return nil, err
+		}
+		return refCollectionMetadata.GetFieldWithMetadata(strings.Join(names[1:], constant.RefSep), metadata)
 	}
 
 	return fieldMetadata.GetSubField(strings.Join(names[1:], constant.RefSep))
