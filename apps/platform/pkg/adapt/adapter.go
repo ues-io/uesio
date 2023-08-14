@@ -17,6 +17,7 @@ type Adapter interface {
 type Connection interface {
 	Load(*LoadOp, *sess.Session) error
 	Save(*SaveOp, *sess.Session) error
+	SetTokens(*SaveOp, *sess.Session) error
 	Migrate() error
 	TruncateTenantData(tenantID string) error
 	GetAutonumber(*CollectionMetadata, *sess.Session) (int, error)
