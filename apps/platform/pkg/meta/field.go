@@ -129,7 +129,9 @@ func (f *Field) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
-	fieldType := GetNodeValueAsString(node, "type")
+	fieldType := pickStringProperty(node, "type", "")
+	f.Type = fieldType
+
 	_, ok := GetFieldTypes()[fieldType]
 	if !ok {
 		return errors.New("Invalid Field Type for Field: " + f.GetKey() + " : " + fieldType)
@@ -139,70 +141,85 @@ func (f *Field) UnmarshalYAML(node *yaml.Node) error {
 	}
 
 	if fieldType == "REFERENCE" {
-		err := validateReferenceField(node, f.GetKey())
+		f.ReferenceMetadata = &ReferenceMetadata{
+			Namespace: f.Namespace,
+		}
+		referenceNode := pickNodeFromMap(node, "reference")
+		if referenceNode == nil {
+			return errors.New("no reference metadata property provided")
+		}
+		// It's unfortunate that we have to do this check, but golang's YAML
+		// library doesn't call the custom unmarshaler if the node is a null scalar.
+		if nodeIsNull(referenceNode) {
+			return errors.New("reference metadata property is empty")
+		}
+		err := referenceNode.Decode(f.ReferenceMetadata)
 		if err != nil {
 			return err
 		}
 	}
-	if fieldType == "SELECT" {
-		err := validateSelectListField(node, f.GetKey())
+
+	if fieldType == "REFERENCEGROUP" {
+		f.ReferenceGroupMetadata = &ReferenceGroupMetadata{
+			Namespace: f.Namespace,
+		}
+		referenceGroupNode := pickNodeFromMap(node, "referenceGroup")
+		if referenceGroupNode == nil {
+			return errors.New("no reference group metadata property provided")
+		}
+		// It's unfortunate that we have to do this check, but golang's YAML
+		// library doesn't call the custom unmarshaler if the node is a null scalar.
+		if nodeIsNull(referenceGroupNode) {
+			return errors.New("reference group metadata property is empty")
+		}
+		err := referenceGroupNode.Decode(f.ReferenceGroupMetadata)
 		if err != nil {
 			return err
 		}
 	}
+
+	if fieldType == "SELECT" || fieldType == "MULTISELECT" {
+		f.SelectList, err = pickRequiredMetadataItem(node, "selectList", f.Namespace)
+		if err != nil {
+			return fmt.Errorf("Invalid selectlist metadata provided for field: " + f.GetKey() + " : Missing select list name")
+		}
+	}
+
 	if fieldType == "NUMBER" {
-		err := validateNumberField(node, f.GetKey())
-		if err != nil {
-			f.NumberMetadata = &NumberMetadata{Decimals: 0}
-		}
+		f.NumberMetadata = &NumberMetadata{}
 	}
 
 	if fieldType == "FILE" {
 		f.FileMetadata = &FileMetadata{
 			FileSource: "uesio/core.platform",
-		}
-		fileNode := pickNodeFromMap(node, "file")
-		if fileNode != nil {
-			err := fileNode.Decode(f.FileMetadata)
-			if err != nil {
-				return err
-			}
+			Namespace:  f.Namespace,
 		}
 	}
+
 	return node.Decode((*FieldWrapper)(f))
 }
 
-func validateNumberField(node *yaml.Node, fieldKey string) error {
-	numberNode, err := GetMapNode(node, "number")
-	if err != nil {
-		return fmt.Errorf("Invalid Number metadata provided for field: " + fieldKey + " : " + err.Error())
+func (f *Field) MarshalYAML() (interface{}, error) {
+
+	// We have to pass our namespace down to our childen so they
+	// can propery localize their references to other metadata items
+	if f.ReferenceMetadata != nil {
+		f.ReferenceMetadata.Namespace = f.Namespace
 	}
-	decimals := GetNodeValueAsString(numberNode, "decimals")
-	if decimals == "" {
-		return fmt.Errorf("Invalid Number metadata provided for field: " + fieldKey + " : No decimals value provided")
+
+	if f.FileMetadata != nil {
+		f.FileMetadata.Namespace = f.Namespace
 	}
-	return nil
+
+	if f.ReferenceGroupMetadata != nil {
+		f.ReferenceGroupMetadata.Namespace = f.Namespace
+	}
+
+	f.SelectList = localize(f.SelectList, f.Namespace)
+
+	return (*FieldWrapper)(f), nil
 }
 
-func validateSelectListField(node *yaml.Node, fieldKey string) error {
-	selectListName := GetNodeValueAsString(node, "selectList")
-	if selectListName == "" {
-		return fmt.Errorf("Invalid selectlist metadata provided for field: " + fieldKey + " : Missing select list name")
-	}
-	return nil
-}
-
-func validateReferenceField(node *yaml.Node, fieldKey string) error {
-	referenceNode, err := GetMapNode(node, "reference")
-	if err != nil {
-		return fmt.Errorf("Invalid Reference metadata provided for field: " + fieldKey + " : " + err.Error())
-	}
-	referencedCollection := GetNodeValueAsString(referenceNode, "collection")
-	if referencedCollection == "" {
-		return fmt.Errorf("Invalid Reference metadata provided for field: " + fieldKey + " : No collection provided")
-	}
-	return nil
-}
 func (c *Field) IsPublic() bool {
 	return true
 }
