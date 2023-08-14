@@ -1,3 +1,4 @@
 name: access
-type: TEXT
+type: SELECT
+selectList: uesio/studio.collectionaccesstypes
 label: Access

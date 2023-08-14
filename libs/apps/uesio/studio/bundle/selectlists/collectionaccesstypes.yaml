@@ -1,0 +1,5 @@
+name: collectionaccesstypes
+options:
+  - label: Protected
+    value: protected
+blank_option_label: Unprotected

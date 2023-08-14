@@ -376,16 +376,40 @@ definition:
                           components:
                             - uesio/io.titlebar:
                                 uesio.variant: uesio/io.section
-                                title: Record Access Tokens
+                                title: Security
                                 actions:
                                   - uesio/io.group:
                                       components:
                                         - uesio/io.button:
                                             uesio.variant: uesio/io.secondary
                                             text: Refresh Tokens
-                            - uesio/io.field:
-                                label: " "
-                                fieldId: uesio/studio.recordchallengetokens
+                            - uesio/io.grid:
+                                uesio.variant: uesio/io.four_columns
+                                items:
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.access
+                            - uesio/io.box:
+                                uesio.display:
+                                  - type: fieldValue
+                                    operator: EQUALS
+                                    value: protected
+                                    field: uesio/studio.access
+                                components:
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.recordchallengetokens
+                                  - uesio/io.grid:
+                                      uesio.variant: uesio/io.four_columns
+                                      items:
+                                        - uesio/builder.metadatafield:
+                                            uesio.context:
+                                              workspace:
+                                                name: $Param{workspacename}
+                                                app: $Param{app}
+                                            fieldId: uesio/studio.accessfield
+                                            metadataType: FIELD
+                                            label: Access Field
+                                            grouping: $Param{app}.$Param{collectionname}
+                                            namespace: $Param{app}
   panels:
     deleteCollection:
       uesio.type: uesio/io.dialog
