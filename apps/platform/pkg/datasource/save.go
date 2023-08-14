@@ -288,7 +288,7 @@ func SaveOps(batch []*adapt.SaveOp, connection adapt.Connection, session *sess.S
 
 	for _, op := range batch {
 
-		err = connection.SetTokens(op, session)
+		err = connection.SetRecordAccessTokens(op, session)
 		if err != nil {
 			return err
 		}

@@ -11,7 +11,7 @@ import (
 const TOKEN_DELETE_QUERY = "DELETE FROM public.tokens WHERE recordid = ANY($1) and collection = $2 and tenant = $3"
 const TOKEN_INSERT_QUERY = "INSERT INTO public.tokens (recordid,token,collection,tenant,readonly) VALUES ($1,$2,$3,$4,$5)"
 
-func (c *Connection) SetTokens(request *adapt.SaveOp, session *sess.Session) error {
+func (c *Connection) SetRecordAccessTokens(request *adapt.SaveOp, session *sess.Session) error {
 
 	db := c.GetClient()
 
