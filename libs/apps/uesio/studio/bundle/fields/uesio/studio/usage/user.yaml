@@ -2,3 +2,5 @@ name: user
 type: TEXT
 label: "User"
 createOnly: true
+reference:
+  collection: user

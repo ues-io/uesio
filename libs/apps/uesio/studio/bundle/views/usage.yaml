@@ -37,19 +37,19 @@ definition:
     usage:
       collection: uesio/core.usage
       conditions:
-        - field: uesio/studio.metadatatype
+        - field: uesio/core.metadatatype
           value: $Param{metadatatype}
-        - field: uesio/studio.actiontype
+        - field: uesio/core.actiontype
           value: $Param{actiontype}
-        - field: uesio/studio.day
+        - field: uesio/core.day
           id: day
           operator: IN
           value: THIS_MONTH
       init:
         query: false
-      order:
-        - field: uesio/studio.day
-          desc: true
+      # order:
+      #   - field: uesio/core.day
+      #     desc: true
       loadAll: true
   events:
     onload:
@@ -91,8 +91,12 @@ definition:
                     subtitle: Use uesio usage, you youths.
                     actions:
                       - uesio/io.filter:
+                          uesio.context:
+                            siteadmin:
+                              name: $Param{sitename}
+                              app: $Param{app}
                           wire: usage
-                          fieldId: uesio/studio.day
+                          fieldId: uesio/core.day #TO-DO
                           conditionId: day
                           displayAs: MONTH
                           label: Select a Month
@@ -108,8 +112,8 @@ definition:
                           series:
                             - name: usage
                               label: $Param{metadatatypelabel} $Param{actiontypelabel}
-                              valueField: uesio/studio.total
-                              categoryField: uesio/studio.day
+                              valueField: uesio/core.total
+                              categoryField: uesio/core.day
                               wire: usage
                           labels:
                             source: DATA
@@ -130,7 +134,7 @@ definition:
                                 series:
                                   - name: totalbyuser
                                     label: Total By User
-                                    valueField: uesio/studio.total
+                                    valueField: uesio/core.total
                                     categoryField: uesio/core.user
                                     wire: usage
                                 labels:
@@ -143,11 +147,12 @@ definition:
                           pagesize: 10
                           columns:
                             - field: uesio/core.user
-                            - field: uesio/studio.day
-                            - field: uesio/studio.actiontype
-                            - field: uesio/studio.metadatatype
-                            - field: uesio/studio.metadataname
-                            - field: uesio/studio.total
+                            - field: uesio/core.day
+                            - field: uesio/core.actiontype
+                            - field: uesio/core.metadatatype
+                            - field: uesio/core.metadataname
+                            - field: uesio/core.total
+                            - field: uesio/core.site
 params:
   metadatatype:
     type: TEXT
