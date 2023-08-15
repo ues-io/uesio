@@ -25,6 +25,8 @@ uesio deploy
 echo "Successfully deployed tests app to Studio. Upserting seed data into dev workspace..."
 uesio upsert -f seed_data/animals.csv -s seed_data/animals_import.spec.json
 uesio upsert -f seed_data/wire_conditions.csv -s seed_data/wire_conditions_import.spec.json
+uesio site upsert -f seed_data/accounts.csv -s seed_data/accounts_import.spec.json
+uesio site upsert -f seed_data/contacts.csv -s seed_data/contacts_import.spec.json
 
 # truncatetests workspace
 echo "Changing to truncatetests workspace..."
@@ -34,7 +36,7 @@ uesio deploy
 echo "Upserting seed data into truncatetests workspace..."
 uesio upsert -f seed_data/wire_conditions.csv -s seed_data/wire_conditions_import.spec.json
 
-echo "Successfully upserted seed data into our workspace. Creating a test site, domain, and bundle..." 
+echo "Successfully upserted seed data into our workspace. Creating a test site, domain, and bundle..."
 
 # Now that we have deployed our site, we can create a bundle, site, and domain which uses its metadata
 hurl -k --no-output --variable host=studio.uesio-dev.com --variable port=3000 hurl_seeds/site_domain_bundle.hurl
@@ -42,5 +44,10 @@ hurl -k --no-output --variable host=studio.uesio-dev.com --variable port=3000 hu
 echo "Seeding data into our test site..."
 uesio siteadmin -n=testsite
 uesio site upsert -f seed_data/animals.csv -s seed_data/animals_import.spec.json
+uesio site upsert -f seed_data/users.csv -s seed_data/users_import.spec.json
+uesio site upsert -f seed_data/loginmethods.csv -s seed_data/loginmethods_import.spec.json
+uesio site upsert -f seed_data/accounts.csv -s seed_data/accounts_import.spec.json
+uesio site upsert -f seed_data/contacts.csv -s seed_data/contacts_import.spec.json
+uesio site upsert -f seed_data/accountteammembers.csv -s seed_data/accountteammembers_import.spec.json
 
 cd - >> /dev/null

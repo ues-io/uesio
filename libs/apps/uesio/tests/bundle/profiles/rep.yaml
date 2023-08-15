@@ -1,0 +1,4 @@
+name: rep
+permissionSets:
+  - uesio/tests.rep
+  - uesio/tests.public

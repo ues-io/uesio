@@ -1,5 +1,7 @@
 name: uesio/tests
 publicProfile: uesio/tests.public
+homeRoute: uesio/tests.eq_condition
+loginRoute: uesio/tests.eq_condition
 dependencies:
   uesio/core:
     version: v0.0.1
