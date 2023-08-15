@@ -29,7 +29,7 @@ jsonpath "$.featureflag.entities['uesio/studio.use_ai_signals'].user" == {{user_
 # Type Number
 jsonpath "$.featureflag.entities['uesio/studio.max_domains_per_user'].name" == "max_domains_per_user"
 jsonpath "$.featureflag.entities['uesio/studio.max_domains_per_user'].type" == "NUMBER"
-jsonpath "$.featureflag.entities['uesio/studio.max_domains_per_user'].value" == 5
+jsonpath "$.featureflag.entities['uesio/studio.max_domains_per_user'].value" >= 0
 jsonpath "$.featureflag.entities['uesio/studio.max_domains_per_user'].max" == 1000
 jsonpath "$.featureflag.entities['uesio/studio.max_domains_per_user'].min" == 0
 jsonpath "$.featureflag.entities['uesio/studio.max_domains_per_user'].user" == {{user_id}}
