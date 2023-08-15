@@ -2,6 +2,6 @@ name: routes
 type: REFERENCEGROUP
 label: Routes
 referenceGroup:
-  collection: uesio/studio.route
-  field: uesio/studio.workspace
+  collection: route
+  field: workspace
   onDelete: CASCADE

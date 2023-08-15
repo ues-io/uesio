@@ -3,4 +3,4 @@ type: REFERENCE
 label: App
 required: true
 reference:
-  collection: uesio/studio.app
+  collection: app

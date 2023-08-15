@@ -2,6 +2,6 @@ name: loginmethods
 type: REFERENCEGROUP
 label: login methods
 referenceGroup:
-  collection: uesio/core.loginmethod
-  field: uesio/core.user
+  collection: loginmethod
+  field: user
   onDelete: CASCADE
