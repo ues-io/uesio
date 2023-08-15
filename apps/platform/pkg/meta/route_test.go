@@ -1,6 +1,7 @@
 package meta
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -38,6 +39,11 @@ type: redirect
 redirect: http://www.google.com
 `)
 
+var route_redirect_error = trimYamlString(`
+name: myroute
+type: redirect
+`)
+
 func TestRouteUnmarshal(t *testing.T) {
 
 	type testCase struct {
@@ -47,6 +53,7 @@ func TestRouteUnmarshal(t *testing.T) {
 		path        string
 		namespace   string
 		expected    *Route
+		expectedErr error
 	}
 
 	var tests = []testCase{
@@ -65,6 +72,7 @@ func TestRouteUnmarshal(t *testing.T) {
 				ViewRef:  "my/namespace.myview",
 				ThemeRef: "my/namespace.mytheme",
 			},
+			nil,
 		},
 		{
 			"add default theme",
@@ -81,6 +89,7 @@ func TestRouteUnmarshal(t *testing.T) {
 				ViewRef:  "my/namespace.myview",
 				ThemeRef: "uesio/core.default",
 			},
+			nil,
 		},
 		{
 			"unlocalize this/app",
@@ -97,6 +106,7 @@ func TestRouteUnmarshal(t *testing.T) {
 				ViewRef:  "my/namespace.myview",
 				ThemeRef: "uesio/core.default",
 			},
+			nil,
 		},
 		{
 			"unlocalize fully qualified namespace",
@@ -113,6 +123,7 @@ func TestRouteUnmarshal(t *testing.T) {
 				ViewRef:  "my/namespace.myview",
 				ThemeRef: "uesio/core.default",
 			},
+			nil,
 		},
 		{
 			"redirect route",
@@ -129,6 +140,25 @@ func TestRouteUnmarshal(t *testing.T) {
 				Redirect: "http://www.google.com",
 				Type:     "redirect",
 			},
+			nil,
+		},
+		{
+			"redirect route error",
+			"Fail if we're missing the redirect property",
+			route_redirect_error,
+			"myroute.yaml",
+			"my/namespace",
+			nil,
+			errors.New("redirect property is required for routes of type 'redirect'"),
+		},
+		{
+			"route bad name",
+			"Fail if our name doesn't match our file name",
+			route_local_view_local_theme,
+			"myroute_badname.yaml",
+			"my/namespace",
+			nil,
+			errors.New("Metadata name does not match filename: myroute, myroute_badname"),
 		},
 	}
 
@@ -136,6 +166,10 @@ func TestRouteUnmarshal(t *testing.T) {
 		t.Run("it should "+tc.description, func(t *testing.T) {
 			initial := (&RouteCollection{}).GetItemFromPath(tc.path, tc.namespace)
 			err := yaml.Unmarshal([]byte(tc.yamlString), initial)
+			if tc.expectedErr != nil {
+				assert.Equal(t, tc.expectedErr, err)
+				return
+			}
 			if err != nil {
 				t.Errorf("Unexpected failure unmarshalling: %s", err.Error())
 			}
