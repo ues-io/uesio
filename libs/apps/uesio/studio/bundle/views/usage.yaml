@@ -47,9 +47,9 @@ definition:
           value: THIS_MONTH
       init:
         query: false
-      # order:
-      #   - field: uesio/core.day
-      #     desc: true
+      order:
+        - field: uesio/core.day
+          desc: true
       loadAll: true
   events:
     onload:
@@ -96,10 +96,24 @@ definition:
                               name: $Param{sitename}
                               app: $Param{app}
                           wire: usage
-                          fieldId: uesio/core.day #TO-DO
+                          fieldId: uesio/core.day
                           conditionId: day
                           displayAs: MONTH
                           label: Select a Month
+                      - uesio/io.filter:
+                          uesio.context:
+                            siteadmin:
+                              name: $Param{sitename}
+                              app: $Param{app}
+                          wire: usage
+                          fieldId: uesio/core.user
+                      - uesio/io.filter:
+                          uesio.context:
+                            siteadmin:
+                              name: $Param{sitename}
+                              app: $Param{app}
+                          wire: usage
+                          fieldId: uesio/core.metadataname
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
@@ -141,6 +155,10 @@ definition:
                                   source: DATA
                                 unit: $Param{actiontypelabel}
                       - uesio/io.table:
+                          uesio.context:
+                            siteadmin:
+                              name: $Param{sitename}
+                              app: $Param{app}
                           uesio.id: usagetable
                           wire: usage
                           mode: READ
@@ -153,6 +171,7 @@ definition:
                             - field: uesio/core.metadataname
                             - field: uesio/core.total
                             - field: uesio/core.site
+                            - field: uesio/core.app
 params:
   metadatatype:
     type: TEXT

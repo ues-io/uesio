@@ -1,6 +1,4 @@
 name: site
 label: Site
-type: REFERENCE
-reference:
-  collection: site
+type: TEXT
 required: true
