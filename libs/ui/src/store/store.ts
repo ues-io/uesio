@@ -19,7 +19,7 @@ import notification from "../bands/notification"
 import { RouteState } from "../bands/route/types"
 import { UserState } from "../bands/user/types"
 import { SessionState } from "../bands/session/types"
-import { PlainViewDef } from "../definition/viewdef"
+import { ViewMetadata } from "../definition/ViewMetadata"
 import { ThemeState } from "../definition/theme"
 import { ComponentVariant } from "../definition/componentvariant"
 import { LabelState } from "../definition/label"
@@ -36,7 +36,7 @@ type InitialState = {
 	session?: SessionState
 	site?: SiteState
 	theme?: EntityState<ThemeState>
-	viewdef?: EntityState<PlainViewDef>
+	viewdef?: EntityState<ViewMetadata>
 	componentvariant?: EntityState<ComponentVariant>
 	label?: EntityState<LabelState>
 	configvalue?: EntityState<ConfigValueState>

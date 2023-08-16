@@ -2,7 +2,7 @@ import { FieldMetadataMap } from "../field/types"
 
 export type PlainCollection = {
 	name: string
-	namespace: string
+	namespace: `${string}/${string}`
 	nameField: string
 	createable: boolean
 	accessible: boolean

@@ -9,7 +9,7 @@ import { setMany as setFeatureFlag } from "../featureflag"
 import { setMany as setComponent } from "../component"
 import { initAll as initWire } from "../wire"
 import { init as initCollection } from "../collection"
-import { PlainViewDef } from "../../definition/viewdef"
+import { ViewMetadata } from "../../definition/ViewMetadata"
 import { ComponentVariant } from "../../definition/componentvariant"
 import { ConfigValueState } from "../../definition/configvalue"
 import { LabelState } from "../../definition/label"
@@ -28,7 +28,7 @@ type Dep<T> = Record<string, T> | undefined
 
 const attachDefToWires = (
 	wires?: EntityState<PlainWire>,
-	viewdefs?: EntityState<PlainViewDef>,
+	viewdefs?: EntityState<ViewMetadata>,
 	collections?: EntityState<PlainCollection>
 ) => {
 	if (!wires || !viewdefs) return
@@ -54,7 +54,7 @@ const attachDefToWires = (
 const dispatchRouteDeps = (deps: Dependencies | undefined) => {
 	if (!deps) return
 
-	const viewdefs = deps.viewdef?.entities as Dep<PlainViewDef>
+	const viewdefs = deps.viewdef?.entities as Dep<ViewMetadata>
 	if (viewdefs) dispatch(setViewDef(viewdefs))
 
 	const configvalues = deps.configvalue?.entities as Dep<ConfigValueState>

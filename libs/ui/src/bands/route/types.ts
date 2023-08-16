@@ -5,7 +5,7 @@ import { ConfigValueState } from "../../definition/configvalue"
 import { FeatureFlagState } from "../../definition/featureflag"
 import { LabelState } from "../../definition/label"
 import { ThemeState } from "../../definition/theme"
-import { PlainViewDef } from "../../definition/viewdef"
+import { ViewMetadata } from "../../definition/ViewMetadata"
 import { MetadataKey } from "../builder/types"
 import { PlainCollection } from "../collection/types"
 import { ComponentState } from "../component/types"
@@ -24,7 +24,7 @@ type SiteAdminState = {
 
 type Dependencies = {
 	theme?: EntityState<ThemeState>
-	viewdef?: EntityState<PlainViewDef>
+	viewdef?: EntityState<ViewMetadata>
 	componentvariant?: EntityState<ComponentVariant>
 	component?: EntityState<ComponentState>
 	componentpack?: EntityState<ComponentPackState>

@@ -4,6 +4,8 @@
 		"jsx": "react-jsx",
 		"noImplicitAny": true,
 		"noImplicitThis": true,
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
 		"strictNullChecks": true,
 		"esModuleInterop": true,
 		"allowJs": false,
