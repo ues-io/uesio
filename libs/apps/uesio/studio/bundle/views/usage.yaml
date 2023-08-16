@@ -90,30 +90,39 @@ definition:
                     title: $Param{metadatatypelabel} $Param{actiontypelabel}
                     subtitle: Use uesio usage, you youths.
                     actions:
-                      - uesio/io.filter:
-                          uesio.context:
-                            siteadmin:
-                              name: $Param{sitename}
-                              app: $Param{app}
-                          wire: usage
-                          fieldId: uesio/core.day
-                          conditionId: day
-                          displayAs: MONTH
-                          label: Select a Month
-                      - uesio/io.filter:
-                          uesio.context:
-                            siteadmin:
-                              name: $Param{sitename}
-                              app: $Param{app}
-                          wire: usage
-                          fieldId: uesio/core.user
-                      - uesio/io.filter:
-                          uesio.context:
-                            siteadmin:
-                              name: $Param{sitename}
-                              app: $Param{app}
-                          wire: usage
-                          fieldId: uesio/core.metadataname
+                      - uesio/io.group:
+                          components:
+                            - uesio/io.filter:
+                                uesio.context:
+                                  siteadmin:
+                                    name: $Param{sitename}
+                                    app: $Param{app}
+                                wire: usage
+                                fieldId: uesio/core.day
+                                conditionId: day
+                                displayAs: MONTH
+                                label: Select a Month
+                            - uesio/io.filter:
+                                uesio.context:
+                                  siteadmin:
+                                    name: $Param{sitename}
+                                    app: $Param{app}
+                                wire: usage
+                                fieldId: uesio/core.user
+                            - uesio/io.filter:
+                                uesio.context:
+                                  siteadmin:
+                                    name: $Param{sitename}
+                                    app: $Param{app}
+                                wire: usage
+                                fieldId: uesio/core.metadataname
+                            - uesio/io.filter:
+                                uesio.context:
+                                  siteadmin:
+                                    name: $Param{sitename}
+                                    app: $Param{app}
+                                wire: usage
+                                fieldId: uesio/core.app
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:

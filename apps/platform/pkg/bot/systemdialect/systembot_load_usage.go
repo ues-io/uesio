@@ -117,17 +117,23 @@ func runUsageLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *ses
 			{ID: "uesio/studio.total"},
 			{ID: "uesio/studio.user"},
 		},
-		Order:     mapOrder(op.Order),
-		Query:     true,
-		BatchSize: adapt.MAX_LOAD_BATCH_SIZE,
-		LoadAll:   op.LoadAll,
-		Params:    op.Params,
+		Order:          mapOrder(op.Order),
+		Query:          true,
+		BatchSize:      op.BatchSize,
+		LoadAll:        op.LoadAll,
+		Params:         op.Params,
+		HasMoreBatches: op.HasMoreBatches,
+		BatchNumber:    op.BatchNumber,
 	}
 
 	_, err := datasource.Load([]*adapt.LoadOp{newOp}, sess.GetStudioAnonSession(), &datasource.LoadOptions{})
 	if err != nil {
 		return err
 	}
+
+	//make sure we pase this back to the original OP
+	op.BatchNumber = newOp.BatchNumber
+	op.HasMoreBatches = newOp.HasMoreBatches
 
 	//Request metadata for site,app,user since they aren't real references
 	metadataResponse := &adapt.MetadataCache{}
