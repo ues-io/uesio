@@ -72,18 +72,20 @@ func SafeJoinStrings(elems []string, delimiter string) string {
 
 func (wic *WebIntegrationConnection) Request(methodName string, requestOptions interface{}) (interface{}, error) {
 	var options RequestOptions
-	options, ok := requestOptions.(RequestOptions)
-	// TODO: From BOTs, requestOptions is a map[string]interface{}, so handle that common case somehow...
-	if !ok {
-		// Do the unmarshall/marshall roundtrip to get the options we want.
-		//TODO MUST BE a more efficient way, we don't want to marshall/unmarshall a payload!!!!
-		serialized, err := json.Marshal(requestOptions)
-		if err != nil {
-			return nil, errors.New("invalid options provided to web integration")
+	// Coming from TS/JS bots, RequestOptions will very likely be a map[string]interface{},
+	// whereas coming from system bots, it will be a RequestOptions struct
+	switch opts := requestOptions.(type) {
+	case map[string]interface{}:
+		options = RequestOptions{
+			Cache:   opts["cache"] == true,
+			Body:    opts["body"],
+			Headers: opts["headers"].(map[string]string),
+			URL:     opts["url"].(string),
 		}
-		if err = json.Unmarshal(serialized, &options); err != nil {
-			return nil, errors.New("invalid options provided to web integration")
-		}
+	case RequestOptions:
+		options = opts
+	default:
+		return nil, errors.New("invalid options provided to web integration")
 	}
 
 	fullURL := SafeJoinStrings([]string{wic.integration.BaseURL, options.URL}, "/")
