@@ -2,6 +2,7 @@ package systemdialect
 
 import (
 	"errors"
+	"strconv"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -9,6 +10,53 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
+
+type UsageItem adapt.Item
+
+func (i *UsageItem) SetField(fieldName string, value interface{}) error {
+	return (*adapt.Item)(i).SetField(strings.Replace(fieldName, "uesio/studio.", "uesio/core.", 1), value)
+}
+
+func (i *UsageItem) GetField(fieldName string) (interface{}, error) {
+	return (*adapt.Item)(i).GetField(strings.Replace(fieldName, "uesio/studio.", "uesio/core.", 1))
+}
+
+func (i *UsageItem) GetFieldAsString(fieldName string) (string, error) {
+	return (*adapt.Item)(i).GetFieldAsString(strings.Replace(fieldName, "uesio/studio.", "uesio/core.", 1))
+}
+
+func (i *UsageItem) Loop(iter func(string, interface{}) error) error {
+	return (*adapt.Item)(i).Loop(iter)
+}
+
+func (i *UsageItem) Len() int {
+	return (*adapt.Item)(i).Len()
+}
+
+type UsageMappingCollection []*UsageItem
+
+func (c *UsageMappingCollection) NewItem() meta.Item {
+	return &UsageItem{}
+}
+
+func (c *UsageMappingCollection) AddItem(item meta.Item) error {
+	*c = append(*c, item.(*UsageItem))
+	return nil
+}
+
+func (c *UsageMappingCollection) Loop(iter meta.GroupIterator) error {
+	for index := range *c {
+		err := iter((*c)[index], strconv.Itoa(index))
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (c *UsageMappingCollection) Len() int {
+	return len(*c)
+}
 
 // Fake Reference Fields for uesio/core.usage collection
 // The other fields are created as real metadata
@@ -22,32 +70,6 @@ var USER_FIELD_METADATA = adapt.FieldMetadata{
 	Label:      "User",
 	ReferenceMetadata: &adapt.ReferenceMetadata{
 		Collection: "uesio/core.user",
-	},
-}
-
-var APP_FIELD_METADATA = adapt.FieldMetadata{
-	Name:       "app",
-	Namespace:  "uesio/core",
-	Createable: false,
-	Accessible: true,
-	Updateable: false,
-	Type:       "REFERENCE",
-	Label:      "App",
-	ReferenceMetadata: &adapt.ReferenceMetadata{
-		Collection: "uesio/studio.app",
-	},
-}
-
-var SITE_FIELD_METADATA = adapt.FieldMetadata{
-	Name:       "site",
-	Namespace:  "uesio/core",
-	Createable: false,
-	Accessible: true,
-	Updateable: false,
-	Type:       "REFERENCE",
-	Label:      "Site",
-	ReferenceMetadata: &adapt.ReferenceMetadata{
-		Collection: "uesio/studio.site",
 	},
 }
 
@@ -70,25 +92,6 @@ func mapOrder(coreOrder []adapt.LoadRequestOrder) []adapt.LoadRequestOrder {
 	return studioOrder
 }
 
-func processRefrence(item meta.Item, fieldID string, refReq *adapt.ReferenceRequest, fieldMetadata adapt.FieldMetadata) error {
-	value, err := item.GetField(fieldID)
-	if err != nil {
-		return err
-	}
-
-	valueString, ok := value.(string)
-	if !ok {
-		return nil
-	}
-
-	refReq.AddID(valueString, adapt.ReferenceLocator{
-		Item:  item,
-		Field: &fieldMetadata,
-	})
-
-	return nil
-}
-
 func runUsageLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
 
 	siteAdmin := session.GetSiteAdmin()
@@ -97,11 +100,13 @@ func runUsageLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *ses
 		return errors.New("unable to retrieve usage, site admin context is missing")
 	}
 
+	usageData := &UsageMappingCollection{}
+
 	newOp := &adapt.LoadOp{
 		CollectionName: "uesio/studio.usage",
 		WireName:       "loadStudioUsage",
 		View:           op.View,
-		Collection:     &adapt.UsageMappingCollection{},
+		Collection:     usageData,
 		Conditions: append(mapConditions(op.Conditions), adapt.LoadRequestCondition{
 			Field:    "uesio/studio.site",
 			Value:    session.GetContextSite().ID,
@@ -144,13 +149,10 @@ func runUsageLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *ses
 	}
 
 	collectionsMetadataReq.AddCollection("uesio/core.user")
-	collectionsMetadataReq.AddCollection("uesio/studio.site")
-	collectionsMetadataReq.AddCollection("uesio/studio.app")
 	err = collectionsMetadataReq.Load(metadataResponse, sess.GetStudioAnonSession(), connection)
 	if err != nil {
 		return err
 	}
-	//END
 
 	//we have this one because the usage page has a wire referencing this collection shall we maybe add it to the collectionsMetadataReq
 	dynamicCollectionMetadata, err := connection.GetMetadata().GetCollection("uesio/core.usage")
@@ -158,20 +160,7 @@ func runUsageLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *ses
 		return err
 	}
 
-	//This or from the metadataResponse ??
-	// userCollectionMetadata, err := connection.GetMetadata().GetCollection("uesio/core.user")
-	// if err != nil {
-	// 	return err
-	// }
-
-	// siteCollectionMetadata, err := connection.GetMetadata().GetCollection("uesio/studio.site")
-	// if err != nil {
-	// 	return err
-	// }
-
 	dynamicCollectionMetadata.SetField(&USER_FIELD_METADATA)
-	dynamicCollectionMetadata.SetField(&APP_FIELD_METADATA)
-	dynamicCollectionMetadata.SetField(&SITE_FIELD_METADATA)
 
 	referencedCollections := adapt.ReferenceRegistry{}
 	userCollectionMetadata, err := metadataResponse.GetCollection("uesio/core.user")
@@ -179,60 +168,24 @@ func runUsageLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *ses
 		return err
 	}
 
-	siteCollectionMetadata, err := metadataResponse.GetCollection("uesio/studio.site")
-	if err != nil {
-		return err
-	}
-
-	appCollectionMetadata, err := metadataResponse.GetCollection("uesio/studio.app")
-	if err != nil {
-		return err
-	}
-
 	userRefReq := referencedCollections.Get("uesio/core.user")
 	userRefReq.Metadata = userCollectionMetadata
 
-	siteRefReq := referencedCollections.Get("uesio/studio.site")
-	siteRefReq.Metadata = siteCollectionMetadata
-
-	appRefReq := referencedCollections.Get("uesio/studio.app")
-	appRefReq.Metadata = appCollectionMetadata
-
-	err = newOp.Collection.Loop(func(item meta.Item, index string) error {
-
-		err := processRefrence(item, "uesio/core.user", userRefReq, USER_FIELD_METADATA)
-		if err != nil {
-			return err
-		}
-		err = processRefrence(item, "uesio/core.site", siteRefReq, SITE_FIELD_METADATA)
+	for _, item := range *usageData {
+		value, err := item.GetFieldAsString("uesio/core.user")
 		if err != nil {
 			return err
 		}
 
-		err = processRefrence(item, "uesio/core.app", appRefReq, APP_FIELD_METADATA)
+		userRefReq.AddID(value, adapt.ReferenceLocator{
+			Item:  item,
+			Field: &USER_FIELD_METADATA,
+		})
+
+		err = op.Collection.AddItem((*adapt.Item)(item))
 		if err != nil {
 			return err
 		}
-
-		err = op.Collection.AddItem(item)
-		if err != nil {
-			return err
-		}
-
-		return nil
-	})
-	if err != nil {
-		return err
-	}
-
-	//This is better here or just after requesting the metadata is this right to add the metadata to the connection?
-	connection.GetMetadata().AddCollection("uesio/studio.site", siteCollectionMetadata)
-	connection.GetMetadata().AddCollection("uesio/studio.app", appCollectionMetadata)
-
-	//get app and site references with the studio session
-	err = adapt.HandleReferences(connection, referencedCollections, sess.GetStudioAnonSession(), true)
-	if err != nil {
-		return err
 	}
 
 	//get user refernces with the current site session

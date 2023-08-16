@@ -109,13 +109,6 @@ definition:
                                     app: $Param{app}
                                 wire: usage
                                 fieldId: uesio/core.user
-                            - uesio/io.filter:
-                                uesio.context:
-                                  siteadmin:
-                                    name: $Param{sitename}
-                                    app: $Param{app}
-                                wire: usage
-                                fieldId: uesio/core.metadataname
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:

@@ -1,4 +1,6 @@
 name: app
-type: TEXT
+type: REFERENCE
 label: App
+reference:
+  collection: app
 required: true
