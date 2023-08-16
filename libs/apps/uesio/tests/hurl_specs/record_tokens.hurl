@@ -25,7 +25,6 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" nth 0 == "Evil Corp"
 
-
 # Log into a real site as chad
 POST https://tests.uesio-dev.com:{{port}}/site/auth/uesio/core/mock/login
 {
@@ -82,7 +81,6 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" nth 0 == "George:Willson"
 
-
 # Logout
 POST https://tests.uesio-dev.com:{{port}}/site/auth/logout
 HTTP 200
@@ -101,7 +99,7 @@ HTTP 200
 jsonpath "$.user.profile" == "uesio/tests.rep"
 jsonpath "$.user.username" == "vlad"
 
-# Vlad cannot see an account that he's on the team of
+# Vlad cannot see an account that he's not on the team of
 POST https://tests.uesio-dev.com:{{port}}/site/wires/load
 Accept: application/json
 {
@@ -122,7 +120,7 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data[*]" isEmpty
 
-# Vlad cannot see a contact from an account that he's on the team of
+# Vlad cannot see a contact from an account that he's not on the team of
 POST https://tests.uesio-dev.com:{{port}}/site/wires/load
 Accept: application/json
 {

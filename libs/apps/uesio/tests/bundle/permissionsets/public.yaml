@@ -56,4 +56,4 @@ allowallviews: false
 allowallroutes: false
 allowallfiles: false
 modifyallrecords: false
-viewallrecords: false
+viewallrecords: true

@@ -25,8 +25,8 @@ uesio deploy
 echo "Successfully deployed tests app to Studio. Upserting seed data into dev workspace..."
 uesio upsert -f seed_data/animals.csv -s seed_data/animals_import.spec.json
 uesio upsert -f seed_data/wire_conditions.csv -s seed_data/wire_conditions_import.spec.json
-uesio site upsert -f seed_data/accounts.csv -s seed_data/accounts_import.spec.json
-uesio site upsert -f seed_data/contacts.csv -s seed_data/contacts_import.spec.json
+uesio upsert -f seed_data/accounts.csv -s seed_data/accounts_import.spec.json
+uesio upsert -f seed_data/contacts.csv -s seed_data/contacts_import.spec.json
 
 # truncatetests workspace
 echo "Changing to truncatetests workspace..."
