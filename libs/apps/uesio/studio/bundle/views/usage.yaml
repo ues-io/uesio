@@ -116,13 +116,6 @@ definition:
                                     app: $Param{app}
                                 wire: usage
                                 fieldId: uesio/core.metadataname
-                            - uesio/io.filter:
-                                uesio.context:
-                                  siteadmin:
-                                    name: $Param{sitename}
-                                    app: $Param{app}
-                                wire: usage
-                                fieldId: uesio/core.app
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
@@ -179,8 +172,6 @@ definition:
                             - field: uesio/core.metadatatype
                             - field: uesio/core.metadataname
                             - field: uesio/core.total
-                            - field: uesio/core.site
-                            - field: uesio/core.app
 params:
   metadatatype:
     type: TEXT
