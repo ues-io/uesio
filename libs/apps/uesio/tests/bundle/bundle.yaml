@@ -3,9 +3,9 @@ publicProfile: uesio/tests.public
 homeRoute: uesio/tests.eq_condition
 loginRoute: uesio/tests.eq_condition
 dependencies:
+  uesio/builder:
+    version: v0.0.1
   uesio/core:
     version: v0.0.1
   uesio/io:
-    version: v0.0.1
-  uesio/builder:
     version: v0.0.1

@@ -1,4 +1,4 @@
-name: add_numbers
+name: call_web_integration
 type: LISTENER
 dialect: TYPESCRIPT
 params:
@@ -8,6 +8,3 @@ params:
   - name: b
     type: NUMBER
     required: true
-  - name: c
-    type: NUMBER
-    required: false

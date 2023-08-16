@@ -103,18 +103,7 @@ func (b *TSDialect) AfterSave(bot *meta.Bot, request *adapt.SaveOp, connection a
 }
 
 func (b *TSDialect) CallBot(bot *meta.Bot, params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
-	botAPI := &jsdialect.CallBotAPI{
-		Session: session,
-		Params: &jsdialect.ParamsAPI{
-			Params: params,
-		},
-		AsAdmin: jsdialect.AdminCallBotAPI{
-			Session:    session,
-			Connection: connection,
-		},
-		Connection: connection,
-		Results:    map[string]interface{}{},
-	}
+	botAPI := jsdialect.NewCallBotAPI(bot, session, connection, params)
 	err := b.hydrateBot(bot, session)
 	if err != nil {
 		return nil, err
