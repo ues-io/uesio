@@ -108,13 +108,14 @@ func (wic *WebIntegrationConnection) Request(methodName string, requestOptions i
 
 	var payloadReader io.Reader
 	if options.Body != nil {
-		if stringPayload, isString := options.Body.(string); isString {
-			payloadReader = strings.NewReader(stringPayload)
-		} else if bytesPayload, isByteArray := options.Body.([]byte); isByteArray {
-			payloadReader = bytes.NewReader(bytesPayload)
-		} else if mapPayload, isMap := options.Body.(map[string]interface{}); isMap {
+		switch payload := options.Body.(type) {
+		case string:
+			payloadReader = strings.NewReader(payload)
+		case []byte:
+			payloadReader = bytes.NewReader(payload)
+		case map[string]interface{}:
 			// Marshall other payloads, e.g. map[string]interface{} (almost certainly coming from Uesio) to JSON
-			jsonBytes, err := json.Marshal(mapPayload)
+			jsonBytes, err := json.Marshal(payload)
 			if err != nil {
 				return nil, errors.New("unable to serialize payload into JSON")
 			}
