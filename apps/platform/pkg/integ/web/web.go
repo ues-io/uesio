@@ -76,11 +76,24 @@ func (wic *WebIntegrationConnection) Request(methodName string, requestOptions i
 	// whereas coming from system bots, it will be a RequestOptions struct
 	switch opts := requestOptions.(type) {
 	case map[string]interface{}:
+		var reqUrl string
+		var reqHeaders map[string]string
+		if urlString, isString := opts["url"].(string); isString {
+			reqUrl = urlString
+		}
+		if rawHeaders, isMap := opts["headers"].(map[string]interface{}); isMap {
+			reqHeaders = map[string]string{}
+			for headerName, headerVal := range rawHeaders {
+				if stringHeader, isStringVal := headerVal.(string); isStringVal {
+					reqHeaders[headerName] = stringHeader
+				}
+			}
+		}
 		options = RequestOptions{
 			Cache:   opts["cache"] == true,
 			Body:    opts["body"],
-			Headers: opts["headers"].(map[string]string),
-			URL:     opts["url"].(string),
+			Headers: reqHeaders,
+			URL:     reqUrl,
 		}
 	case RequestOptions:
 		options = opts
