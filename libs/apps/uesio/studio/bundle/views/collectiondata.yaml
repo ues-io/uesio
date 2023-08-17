@@ -84,6 +84,9 @@ definition:
                                           bot: uesio/studio.resetrecordaccesstokens
                                           params:
                                             collection: $Param{namespace}.$Param{collectionname}
+                                        - signal: wire/LOAD
+                                          wires:
+                                            - collectionData
                                         - signal: notification/REMOVE
                                           id: newversion
                       - uesio/io.box:
