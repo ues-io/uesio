@@ -1,0 +1,6 @@
+name: accountteammember
+label: Account Team Member
+pluralLabel: Account Team Members
+uniqueKey:
+  - uesio/tests.account
+  - uesio/tests.user

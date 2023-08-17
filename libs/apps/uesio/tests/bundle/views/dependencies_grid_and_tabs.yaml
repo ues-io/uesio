@@ -50,5 +50,4 @@ definition:
         text: Primary variant
         icon: bug
         uesio.variant: uesio/io.primary
-
   panels:

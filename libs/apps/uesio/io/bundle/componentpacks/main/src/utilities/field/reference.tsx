@@ -121,7 +121,7 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 				/>
 			)
 		}
-		if (template !== "") {
+		if (template) {
 			return context.addRecordDataFrame(item).mergeString(template)
 		}
 		return (

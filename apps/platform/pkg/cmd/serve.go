@@ -91,6 +91,8 @@ func serve(cmd *cobra.Command, args []string) {
 	r.Handle(staticPrefix+"/{filename:.*}", file.Static(cwd, staticPrefix, cacheStaticAssets)).Methods(http.MethodGet)
 	r.HandleFunc("/health", controller.Health).Methods(http.MethodGet)
 
+	//r.HandleFunc("/api/weather", testapis.TestApi).Methods(http.MethodGet, http.MethodPost, http.MethodDelete)
+
 	// The workspace router
 	workspacePath := fmt.Sprintf("/workspace/%s/{workspace}", appParam)
 	wr := r.PathPrefix(workspacePath).Subrouter()

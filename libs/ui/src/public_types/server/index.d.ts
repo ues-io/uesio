@@ -43,6 +43,13 @@ interface LoadRequest {
 	conditions?: ConditionRequest[]
 	order?: LoadOrder[]
 }
+type Logger = (message: string, ...data: unknown[]) => void
+
+interface LogApi {
+	info: Logger
+	warn: Logger
+	error: Logger
+}
 interface DeleteApi {
 	getOld: (field: string) => FieldValue
 }
@@ -60,6 +67,15 @@ interface UpdatesApi {
 }
 interface DeletesApi {
 	get: () => DeleteApi[]
+}
+interface SessionApi {
+	getId: () => string
+}
+interface UserApi {
+	getId: () => string
+	getUsername: () => string
+	getEmail: () => string
+	getUniqueKey: () => string
 }
 
 type RunIntegrationAction = (
@@ -95,6 +111,9 @@ interface ListenerBotApi {
 	runIntegrationAction: RunIntegrationAction
 	getConfigValue: (configValueKey: string) => string
 	asAdmin: AsAdminApi
+	getSession: () => SessionApi
+	getUser: () => UserApi
+	log: LogApi
 }
 export type {
 	ListenerBotApi,

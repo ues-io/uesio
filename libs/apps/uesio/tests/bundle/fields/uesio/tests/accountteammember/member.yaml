@@ -1,0 +1,6 @@
+name: member
+type: REFERENCE
+label: Member
+reference:
+  collection: uesio/core.user
+required: true

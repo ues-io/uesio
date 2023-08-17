@@ -57,7 +57,7 @@ func getTokensForRequest(connection adapt.Connection, session *sess.Session, tok
 		tokens = append(tokens, token)
 	}
 
-	err := bundle.LoadMany(tokens, session, connection)
+	err := bundle.LoadMany(tokens, session, nil)
 	if err != nil {
 		return nil, err
 	}
