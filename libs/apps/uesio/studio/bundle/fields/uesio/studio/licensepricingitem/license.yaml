@@ -2,5 +2,5 @@ name: license
 type: REFERENCE
 label: Parent license
 reference:
-  collection: uesio/studio.license
+  collection: license
 required: true

@@ -2,6 +2,6 @@ name: componentpacks
 type: REFERENCEGROUP
 label: Component Packs
 referenceGroup:
-  collection: uesio/studio.componentpack
-  field: uesio/studio.workspace
+  collection: componentpack
+  field: workspace
   onDelete: CASCADE

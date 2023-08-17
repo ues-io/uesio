@@ -4,4 +4,4 @@ label: User
 required: true
 createOnly: true
 reference:
-  collection: uesio/core.user
+  collection: user

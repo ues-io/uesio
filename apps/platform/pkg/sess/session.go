@@ -345,13 +345,21 @@ func (s *Session) GetContextSite() *meta.Site {
 	return s.GetSite()
 }
 
-func (s *Session) GetSessionIdHash() string {
+func (s *Session) GetSessionId() string {
 	bs := (*s).GetBrowserSession()
 	if bs == nil {
 		return ""
 	}
+	return (*bs).ID()
+}
+
+func (s *Session) GetSessionIdHash() string {
+	sessionId := s.GetSessionId()
+	if sessionId == "" {
+		return ""
+	}
 	hasher := murmur3.New64()
-	_, err := hasher.Write([]byte((*bs).ID()))
+	_, err := hasher.Write([]byte(sessionId))
 	if err != nil {
 		return ""
 	}

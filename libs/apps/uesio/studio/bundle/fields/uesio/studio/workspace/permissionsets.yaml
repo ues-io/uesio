@@ -2,6 +2,6 @@ name: permissionsets
 type: REFERENCEGROUP
 label: Permission Sets
 referenceGroup:
-  collection: uesio/studio.permissionset
-  field: uesio/studio.workspace
+  collection: permissionset
+  field: workspace
   onDelete: CASCADE

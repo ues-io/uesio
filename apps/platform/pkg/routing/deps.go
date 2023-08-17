@@ -399,6 +399,19 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 		deps.Label.AddItem(label)
 	}
 
+	// need an admin session for retrieving feature flags
+	// in order to prevent users from having to have read on the uesio/core.featureflagassignment table
+	adminSession := sess.GetAnonSession(session.GetSite())
+
+	featureFlags, err := featureflagstore.GetFeatureFlags(adminSession, session.GetUserID())
+	if err != nil {
+		return errors.New("Failed to get feature flags: " + err.Error())
+	}
+
+	for _, flag := range *featureFlags {
+		deps.FeatureFlag.AddItem(flag)
+	}
+
 	// Load in the studio theme.
 	theme, err := meta.NewTheme("uesio/studio.default")
 	if err != nil {

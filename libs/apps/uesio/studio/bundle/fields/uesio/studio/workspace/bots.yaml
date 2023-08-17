@@ -2,6 +2,6 @@ name: bots
 type: REFERENCEGROUP
 label: Bots
 referenceGroup:
-  collection: uesio/studio.bot
-  field: uesio/studio.workspace
+  collection: bot
+  field: workspace
   onDelete: CASCADE

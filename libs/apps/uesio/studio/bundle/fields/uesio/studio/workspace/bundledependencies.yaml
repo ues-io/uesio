@@ -2,6 +2,6 @@ name: bundledependencies
 type: REFERENCEGROUP
 label: Bundle Dependencies
 referenceGroup:
-  collection: uesio/studio.bundledependency
-  field: uesio/studio.workspace
+  collection: bundledependency
+  field: workspace
   onDelete: CASCADE

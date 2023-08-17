@@ -9,10 +9,10 @@ collections:
     edit: false
     delete: false
     fields:
-      uesio/core.username:
+      uesio/core.uniquekey:
         read: true
         edit: false
-      uesio/core.uniquekey:
+      uesio/core.username:
         read: true
         edit: false
   uesio/tests.animal:
@@ -21,6 +21,9 @@ collections:
     edit: false
     delete: false
     fields:
+      uesio/core.owner:
+        read: true
+        edit: true
       uesio/tests.ancestor:
         read: false
         edit: false
@@ -39,9 +42,6 @@ collections:
       uesio/tests.total_population:
         read: true
         edit: true
-      uesio/core.owner:
-        read: true
-        edit: true # need edit in order to create a record
   uesio/tests.wire_condition:
     read: false
     create: false

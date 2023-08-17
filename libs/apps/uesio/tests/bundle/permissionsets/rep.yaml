@@ -1,0 +1,8 @@
+name: rep
+named: {}
+allowallcollections: true
+allowallviews: false
+allowallroutes: false
+allowallfiles: false
+modifyallrecords: false
+viewallrecords: false

@@ -1,4 +1,4 @@
 name: language
 type: SELECT
 label: Language
-selectList: uesio/core.language
+selectList: language
