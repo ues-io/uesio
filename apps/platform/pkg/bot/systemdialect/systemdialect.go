@@ -105,6 +105,8 @@ func (b *SystemDialect) CallBot(bot *meta.Bot, params map[string]interface{}, co
 		botFunction = runMakePaymentListenerBot
 	case "listener:uesio/studio.workspacetruncate":
 		botFunction = runWorkspaceTruncateListenerBot
+	case "listener:uesio/studio.setworkspaceuser":
+		botFunction = runSetWorkspaceUserBot
 	}
 
 	if botFunction == nil {

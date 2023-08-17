@@ -1,0 +1,6 @@
+name: workspace
+type: REFERENCE
+label: Workspace
+required: true
+reference:
+  collection: workspace
