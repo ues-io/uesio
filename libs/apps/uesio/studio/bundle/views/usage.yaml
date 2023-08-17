@@ -37,18 +37,18 @@ definition:
     usage:
       collection: uesio/core.usage
       conditions:
-        - field: uesio/studio.metadatatype
+        - field: uesio/core.metadatatype
           value: $Param{metadatatype}
-        - field: uesio/studio.actiontype
+        - field: uesio/core.actiontype
           value: $Param{actiontype}
-        - field: uesio/studio.day
+        - field: uesio/core.day
           id: day
           operator: IN
           value: THIS_MONTH
       init:
         query: false
       order:
-        - field: uesio/studio.day
+        - field: uesio/core.day
           desc: true
       loadAll: true
   events:
@@ -90,12 +90,25 @@ definition:
                     title: $Param{metadatatypelabel} $Param{actiontypelabel}
                     subtitle: Use uesio usage, you youths.
                     actions:
-                      - uesio/io.filter:
-                          wire: usage
-                          fieldId: uesio/studio.day
-                          conditionId: day
-                          displayAs: MONTH
-                          label: Select a Month
+                      - uesio/io.group:
+                          components:
+                            - uesio/io.filter:
+                                uesio.context:
+                                  siteadmin:
+                                    name: $Param{sitename}
+                                    app: $Param{app}
+                                wire: usage
+                                fieldId: uesio/core.day
+                                conditionId: day
+                                displayAs: MONTH
+                                label: Select a Month
+                            - uesio/io.filter:
+                                uesio.context:
+                                  siteadmin:
+                                    name: $Param{sitename}
+                                    app: $Param{app}
+                                wire: usage
+                                fieldId: uesio/core.user
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
@@ -108,8 +121,8 @@ definition:
                           series:
                             - name: usage
                               label: $Param{metadatatypelabel} $Param{actiontypelabel}
-                              valueField: uesio/studio.total
-                              categoryField: uesio/studio.day
+                              valueField: uesio/core.total
+                              categoryField: uesio/core.day
                               wire: usage
                           labels:
                             source: DATA
@@ -130,24 +143,28 @@ definition:
                                 series:
                                   - name: totalbyuser
                                     label: Total By User
-                                    valueField: uesio/studio.total
+                                    valueField: uesio/core.total
                                     categoryField: uesio/core.user
                                     wire: usage
                                 labels:
                                   source: DATA
                                 unit: $Param{actiontypelabel}
                       - uesio/io.table:
+                          uesio.context:
+                            siteadmin:
+                              name: $Param{sitename}
+                              app: $Param{app}
                           uesio.id: usagetable
                           wire: usage
                           mode: READ
                           pagesize: 10
                           columns:
                             - field: uesio/core.user
-                            - field: uesio/studio.day
-                            - field: uesio/studio.actiontype
-                            - field: uesio/studio.metadatatype
-                            - field: uesio/studio.metadataname
-                            - field: uesio/studio.total
+                            - field: uesio/core.day
+                            - field: uesio/core.actiontype
+                            - field: uesio/core.metadatatype
+                            - field: uesio/core.metadataname
+                            - field: uesio/core.total
 params:
   metadatatype:
     type: TEXT
