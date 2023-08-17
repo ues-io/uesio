@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	httpClient "github.com/thecloudmasters/uesio/pkg/http"
 	"github.com/thecloudmasters/uesio/pkg/integ"
 	"github.com/thecloudmasters/uesio/pkg/localcache"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -170,7 +171,7 @@ func (wic *WebIntegrationConnection) Request(methodName string, requestOptions i
 		req.Header.Set(header, mergedValue)
 	}
 
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := httpClient.Get().Do(req)
 	if err != nil {
 		return nil, err
 	}

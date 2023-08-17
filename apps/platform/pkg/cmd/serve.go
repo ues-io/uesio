@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/thecloudmasters/uesio/pkg/tls"
 	"net/http"
 	"os"
 
@@ -347,13 +348,12 @@ func serve(cmd *cobra.Command, args []string) {
 		Handler: r,
 	}
 
-	useSSL := os.Getenv("UESIO_USE_HTTPS")
 	var serveErr error
-	if useSSL == "true" {
-		logger.Log("Service Started over SSL on Port: "+port, logger.INFO)
-		serveErr = server.ListenAndServeTLS("ssl/certificate.crt", "ssl/private.key")
+	if tls.ServeAppWithTLS() {
+		logger.Log("Service started over TLS on port: "+port, logger.INFO)
+		serveErr = server.ListenAndServeTLS(tls.GetSelfSignedCertFilePath(), tls.GetSelfSignedPrivateKeyFile())
 	} else {
-		logger.Log("Service Started on Port: "+port, logger.INFO)
+		logger.Log("Service started on port: "+port, logger.INFO)
 		serveErr = server.ListenAndServe()
 	}
 	if serveErr != nil {
