@@ -83,3 +83,17 @@ Accept: application/json
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data[*]" isEmpty
+
+# Verify that I can still load routes and their dependencies
+GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/simple_wire_load
+HTTP 200
+[Asserts]
+jsonpath "$.dependencies.wire.entities['uesio/tests.simple_wire_load($root):animals'].name" == "animals"
+jsonpath "$.dependencies.wire.entities['uesio/tests.simple_wire_load($root):animals'].view" == "uesio/tests.simple_wire_load($root)"
+jsonpath "$.dependencies.wire.entities['uesio/tests.simple_wire_load($root):animals'].batchsize" == 10
+jsonpath "$.dependencies.wire.entities['uesio/tests.simple_wire_load($root):animals'].query" == true
+jsonpath "$.dependencies.wire.entities['uesio/tests.simple_wire_load($root):animals'].batchnumber" == 1
+jsonpath "$.dependencies.wire.entities['uesio/tests.simple_wire_load($root):animals'].more" == true
+jsonpath "$.dependencies.wire.entities['uesio/tests.simple_wire_load($root):animals'].preloaded" == true
+jsonpath "$.dependencies.wire.entities['uesio/tests.simple_wire_load($root):animals'].loadAll" == false
+jsonpath "$.dependencies.wire.entities['uesio/tests.simple_wire_load($root):animals'].data[*]['uesio/core.id']" count == 10

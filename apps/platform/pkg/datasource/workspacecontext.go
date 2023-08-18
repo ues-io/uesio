@@ -40,14 +40,7 @@ func getWorkspacePermissions(workspace *meta.Workspace, session *sess.Session, c
 		return err
 	}
 
-	workspace.Permissions = &meta.PermissionSet{
-		AllowAllViews:       true,
-		AllowAllRoutes:      true,
-		AllowAllFiles:       true,
-		AllowAllCollections: true,
-		ModifyAllRecords:    true,
-		ViewAllRecords:      true,
-	}
+	workspace.Permissions = GetAdminPermissionSet()
 
 	session.AddWorkspaceContext(workspace)
 
@@ -59,18 +52,15 @@ func getWorkspacePermissions(workspace *meta.Workspace, session *sess.Session, c
 	workspace.SetAppBundle(bundleDef)
 
 	if results.Len() > 0 {
-		profile, err := (*results)[0].GetField("uesio/studio.profile")
+		profileKey, err := (*results)[0].GetFieldAsString("uesio/studio.profile")
 		if err != nil {
 			return err
 		}
-		profileKey := profile.(string)
 		if profileKey != "" {
 			profile, err := LoadAndHydrateProfile(profileKey, session)
 			if err != nil {
 				return errors.New("Error Loading Profile: " + profileKey + " : " + err.Error())
 			}
-
-			fmt.Println("Setting permissinos to: " + profileKey)
 
 			workspace.Permissions = profile.FlattenPermissions()
 		}

@@ -2,5 +2,6 @@ name: workspace
 type: REFERENCE
 label: Workspace
 required: true
+createOnly: true
 reference:
   collection: workspace

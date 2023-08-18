@@ -9,30 +9,9 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func GetSiteAdminSession(currentSession *sess.Session) *sess.Session {
-	// We don't need to get an admin session if we're in a workspace context
-	// We already are the admin user.
-	if currentSession.GetWorkspace() != nil {
-		return currentSession
-	}
-	// If we are already in site admin context, we don't need to do anything either.
-	if currentSession.GetSiteAdmin() != nil {
-		return currentSession
-	}
-
-	// This creates a copy of the session
-	siteAdminSession := currentSession.RemoveWorkspaceContext()
-
-	adminSite := currentSession.GetSite().Clone()
-
-	upgradeToSiteAdmin(adminSite, siteAdminSession)
-
-	return siteAdminSession
-
-}
-
-func upgradeToSiteAdmin(adminSite *meta.Site, adminSession *sess.Session) {
-	adminSite.Permissions = &meta.PermissionSet{
+// Returns a permissionset that has the maximum permissions possible
+func GetAdminPermissionSet() *meta.PermissionSet {
+	return &meta.PermissionSet{
 		AllowAllViews:       true,
 		AllowAllRoutes:      true,
 		AllowAllFiles:       true,
@@ -40,6 +19,30 @@ func upgradeToSiteAdmin(adminSite *meta.Site, adminSession *sess.Session) {
 		ModifyAllRecords:    true,
 		ViewAllRecords:      true,
 	}
+}
+
+func GetSiteAdminSession(currentSession *sess.Session) *sess.Session {
+	// If we're in a workspace context, just upgrade the permissions
+	if currentSession.GetWorkspace() != nil {
+		workspaceSession := currentSession.Clone()
+		workspaceSession.GetWorkspace().Permissions = GetAdminPermissionSet()
+		return workspaceSession
+	}
+	// If we are already in site admin context, we don't need to do anything either.
+	if currentSession.GetSiteAdmin() != nil {
+		return currentSession
+	}
+
+	siteAdminSession := currentSession.Clone()
+
+	upgradeToSiteAdmin(siteAdminSession.GetSite(), siteAdminSession)
+
+	return siteAdminSession
+
+}
+
+func upgradeToSiteAdmin(adminSite *meta.Site, adminSession *sess.Session) {
+	adminSite.Permissions = GetAdminPermissionSet()
 
 	adminSession.SetSiteAdmin(adminSite)
 
