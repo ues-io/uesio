@@ -8,18 +8,18 @@ import {
 	WireDefinition,
 	WireFieldDefinitionMap,
 } from "../../../definition/wire"
-import { PlainWire } from "../types"
+import { CollectionFieldKey, PlainWire } from "../types"
 import { PlainCollection, PlainCollectionMap } from "../../collection/types"
 import { FieldMetadataMap, FieldMetadata } from "../../field/types"
 import { LoadRequestField } from "../../../load/loadrequest"
 
 const getFieldsRequest = (
-	fields?: WireFieldDefinitionMap | Record<string, ViewOnlyField>
+	fields?: WireFieldDefinitionMap | Record<CollectionFieldKey, ViewOnlyField>
 ): LoadRequestField[] | undefined => {
 	if (!fields) {
 		return undefined
 	}
-	return Object.keys(fields).map((fieldName) => {
+	return Object.keys(fields).map((fieldName: CollectionFieldKey) => {
 		const fieldData = fields[fieldName]
 		const subFields = getFieldsRequest(fieldData?.fields)
 		return {
@@ -113,6 +113,8 @@ const getViewOnlyMetadata = (
 		fields: fieldMetadata,
 		namespace: viewOnlyNamespace,
 		updateable: true,
+		label: wireDef.label || wireName,
+		pluralLabel: wireDef.pluralLabel || wireName,
 	} as PlainCollection
 }
 

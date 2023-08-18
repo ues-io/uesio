@@ -182,8 +182,9 @@ type ReferenceGroupMetadata struct {
 }
 
 type ValidationMetadata struct {
-	Type  string `json:"type"`
-	Regex string `json:"regex"`
+	Type      string `json:"type"`
+	Regex     string `json:"regex"`
+	SchemaUri string `json:"schemaUri"`
 }
 
 type FormulaMetadata struct {

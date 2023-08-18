@@ -84,7 +84,12 @@ const getWireFieldSelectOptions = (wireDef?: wire.WireDefinition) => {
 	) =>
 		Object.entries(value)
 			.map(([key2, value2]) => [`${key}${PATH_ARROW}${key2}`, value2])
-			.flatMap(([key, value]) => getFields(key, value))
+			.flatMap(([key, value]) =>
+				getFields(
+					key as string,
+					value as wire.ViewOnlyField | wire.WireFieldDefinition
+				)
+			)
 
 	return Object.entries(fields)
 		.flatMap(([key, value]) => getFields(key, value))

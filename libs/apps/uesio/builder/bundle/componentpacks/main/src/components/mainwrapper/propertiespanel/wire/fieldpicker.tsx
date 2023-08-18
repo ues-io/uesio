@@ -74,6 +74,20 @@ const FieldPicker: definition.UtilityComponent<Props> = (props) => {
 
 	if (!collectionFields || !collectionMetadata) return null
 
+	const localNamespace = context.getWorkspace()?.app
+
+	// Sort the collection fields such that the LOCAL fields are first, then all managed fields
+	const sortedFields = Object.values(collectionFields)
+	sortedFields.sort((a, b) => {
+		// First sort by local vs managed
+		const aIsLocal = a.namespace === localNamespace
+		const bIsLocal = b.namespace === localNamespace
+		if (aIsLocal && !bIsLocal) return -1
+		if (!aIsLocal && bIsLocal) return 1
+		// Then sort by name
+		return a.key.localeCompare(b.key)
+	})
+
 	return (
 		<PropertiesWrapper
 			context={props.context}
@@ -99,10 +113,11 @@ const FieldPicker: definition.UtilityComponent<Props> = (props) => {
 				)
 			}
 		>
-			{Object.keys(collectionFields).map((fieldId) => {
-				const selected = isSelected(context, referencePath, fieldId)
+			{sortedFields.map((metadataInfo) => {
+				const fieldId = metadataInfo.key
 				const fieldMetadata = collectionMetadata.getField(fieldId)
 				if (!fieldMetadata) return null
+				const selected = isSelected(context, referencePath, fieldId)
 				if (searchTerm && !fieldId.includes(searchTerm)) return null
 				return (
 					<FieldSelectPropTag
