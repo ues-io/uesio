@@ -141,7 +141,7 @@ properties:
           - LONGTEXT
           - EMAIL
   - name: reference
-    label: " "
+    label: Reference filter options
     type: STRUCT
     displayConditions:
       - type: fieldValue
