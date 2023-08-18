@@ -22,6 +22,18 @@ import {
 import { memoizedGetJSON } from "./memoizedAsync"
 import { SiteState } from "../bands/site"
 import { UploadRequest } from "../load/uploadrequest"
+import { nanoid } from "@reduxjs/toolkit"
+import { PlainWire } from "../wireexports"
+import { PlainCollectionMap } from "../bands/collection/types"
+
+type ServerWire = PlainWire & {
+	data: PlainWireRecord[]
+}
+
+type ServerWireLoadResponse = {
+	wires: ServerWire[]
+	collections: PlainCollectionMap
+}
 
 interface HasParams {
 	params?: Record<string, string>
@@ -274,7 +286,21 @@ const platform = {
 			`${prefix}/wires/load`,
 			requestBody
 		)
-		return respondJSON(response)
+		const loadResponse = (await respondJSON(
+			response
+		)) as ServerWireLoadResponse
+
+		const { collections, wires } = loadResponse
+
+		return {
+			collections,
+			wires: wires.map((wire) => ({
+				...wire,
+				data: Object.fromEntries(
+					(wire.data || []).map((r) => [nanoid(), r])
+				),
+			})),
+		}
 	},
 	saveData: async (
 		context: Context,
