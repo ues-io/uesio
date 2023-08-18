@@ -104,4 +104,4 @@ main.tenant = $2 AND
 main.fields->>'uesio/tests.genus' = $4)
 ORDER BY main.id::text asc
 LIMIT 501```
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" nth 0 == "McCreary:Jerrine"
+jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "McCreary:Jerrine"
