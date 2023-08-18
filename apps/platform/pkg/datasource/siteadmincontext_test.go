@@ -1,10 +1,11 @@
 package datasource
 
 import (
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
-	"testing"
 )
 
 func TestGetSiteAdminSession(t *testing.T) {
@@ -38,11 +39,18 @@ func TestGetSiteAdminSession(t *testing.T) {
 			"return current session if we are in workspace context",
 			sessWithWorkspaceContext,
 			func(t *testing.T, s *sess.Session) {
-				// New workspace should be identical to the original
-				assert.Equal(t, s, sessWithWorkspaceContext)
+				// A totally new session should have been created
+				assert.NotEqual(t, s, sessWithWorkspaceContext)
 				// Site should be unchanged
 				assert.Equal(t, s.GetSite(), originalSite)
-				// User should be unchanged
+
+				assert.True(t, s.GetWorkspace().Permissions.AllowAllViews)
+				assert.True(t, s.GetWorkspace().Permissions.AllowAllRoutes)
+				assert.True(t, s.GetWorkspace().Permissions.AllowAllFiles)
+				assert.True(t, s.GetWorkspace().Permissions.AllowAllCollections)
+				assert.True(t, s.GetWorkspace().Permissions.ModifyAllRecords)
+				assert.True(t, s.GetWorkspace().Permissions.ViewAllRecords)
+
 				assert.Equal(t, s.GetUserInfo(), originalUser)
 			},
 		},

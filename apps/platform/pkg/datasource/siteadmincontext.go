@@ -28,14 +28,16 @@ func GetSiteAdminSession(currentSession *sess.Session) *sess.Session {
 		workspaceSession.GetWorkspace().Permissions = GetAdminPermissionSet()
 		return workspaceSession
 	}
-	// If we are already in site admin context, we don't need to do anything either.
+	// If we are already in site admin context, we don't need to do anything.
 	if currentSession.GetSiteAdmin() != nil {
 		return currentSession
 	}
 
 	siteAdminSession := currentSession.Clone()
 
-	upgradeToSiteAdmin(siteAdminSession.GetSite(), siteAdminSession)
+	adminSite := currentSession.GetSite().Clone()
+
+	upgradeToSiteAdmin(adminSite, siteAdminSession)
 
 	return siteAdminSession
 
