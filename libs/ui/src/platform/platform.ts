@@ -22,13 +22,9 @@ import {
 import { memoizedGetJSON } from "./memoizedAsync"
 import { SiteState } from "../bands/site"
 import { UploadRequest } from "../load/uploadrequest"
-import { nanoid } from "@reduxjs/toolkit"
-import { PlainWire } from "../wireexports"
 import { PlainCollectionMap } from "../bands/collection/types"
-
-type ServerWire = PlainWire & {
-	data: PlainWireRecord[]
-}
+import { ServerWire } from "../bands/wire/types"
+import { transformServerWire } from "../bands/wire/transform"
 
 type ServerWireLoadResponse = {
 	wires: ServerWire[]
@@ -294,12 +290,7 @@ const platform = {
 
 		return {
 			collections,
-			wires: wires.map((wire) => ({
-				...wire,
-				data: Object.fromEntries(
-					(wire.data || []).map((r) => [nanoid(), r])
-				),
-			})),
+			wires: wires.map(transformServerWire),
 		}
 	},
 	saveData: async (
