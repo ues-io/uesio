@@ -9,6 +9,17 @@ type Workspace struct {
 	bundleDef   *BundleDef
 }
 
+func (w *Workspace) Clone() *Workspace {
+	return &Workspace{
+		BuiltIn:     w.BuiltIn,
+		Name:        w.Name,
+		AppSettings: w.AppSettings,
+		App:         w.App,
+		bundleDef:   w.bundleDef,
+		Permissions: nil, // Intentionally not cloning permissions
+	}
+}
+
 func (w *Workspace) GetAppFullName() string {
 	if w.App == nil {
 		return ""

@@ -24,10 +24,36 @@ jsonpath "$" count == 0
 POST https://{{host}}:{{port}}/site/auth/logout
 HTTP 200
 
-# Now test as a user that doesn't have access to the test app
+# Now log in as a user who is on the app team, but not the owner
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
     "token": "{\"subject\":\"ben\"}"
+}
+
+# Try to navigate to the workspace home route
+GET https://{{host}}:{{port}}/site/routes/path/uesio/studio/app/uesio/tests/workspace/dev
+Accept: application/json
+HTTP 200
+[Asserts]
+jsonpath "$.view" == "uesio/studio.workspace"
+jsonpath "$.params.app" == "uesio/tests"
+jsonpath "$.params.workspacename" == "dev"
+
+# Try get config values for the dev workspace
+GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/configvalues
+Accept: application/json
+HTTP 200
+[Asserts]
+jsonpath "$" count == 0
+
+# Logout
+POST https://{{host}}:{{port}}/site/auth/logout
+HTTP 200
+
+# Now test as a user that doesn't have access to the test app
+POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+{
+    "token": "{\"subject\":\"abel\"}"
 }
 
 # Try to navigate to the workspace home route

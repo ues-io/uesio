@@ -254,6 +254,20 @@ func (s *Session) RemoveWorkspaceContext() *Session {
 	return newSess
 }
 
+func (s *Session) Clone() *Session {
+	newSess := NewSession(s.browserSession, s.user, s.site)
+	newSess.tokens = s.tokens
+	newSess.permissions = s.permissions
+	if s.workspace != nil {
+		newSess.workspace = s.workspace.Clone()
+	}
+	if s.siteadmin != nil {
+		newSess.siteadmin = s.siteadmin.Clone()
+	}
+	newSess.site = s.site.Clone()
+	return newSess
+}
+
 func (s *Session) AddWorkspaceContext(workspace *meta.Workspace) *Session {
 	s.workspace = workspace
 	return s
