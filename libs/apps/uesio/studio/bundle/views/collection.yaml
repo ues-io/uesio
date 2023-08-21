@@ -377,12 +377,6 @@ definition:
                             - uesio/io.titlebar:
                                 uesio.variant: uesio/io.section
                                 title: Security
-                                actions:
-                                  - uesio/io.group:
-                                      components:
-                                        - uesio/io.button:
-                                            uesio.variant: uesio/io.secondary
-                                            text: Refresh Tokens
                             - uesio/io.grid:
                                 uesio.variant: uesio/io.four_columns
                                 items:
