@@ -10,6 +10,8 @@ class Field {
 	source: FieldMetadata
 
 	getId = () => this.source.namespace + "." + this.source.name
+	getName = () => this.source.name
+	getNamespace = () => this.source.namespace
 	getLabel = () => this.source.label
 	getReferenceMetadata = () => this.source.reference
 	getType = () => this.source.type
@@ -62,6 +64,7 @@ class Field {
 		this.source.type === "REFERENCE" ||
 		this.source.type === "USER" ||
 		this.source.type === "FILE"
+	isRequired = () => this.source.required === true
 	getSubFields = () => this.source.subfields
 }
 

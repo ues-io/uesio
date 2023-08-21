@@ -95,7 +95,7 @@ const FieldPropTag: definition.UtilityComponent<T> = (props) => {
 									fieldId={fieldId}
 									path={subFieldsPath.addLocal(fieldId)}
 									selectedPath={selectedPath}
-									fieldDef={fieldDef?.fields[fieldId]}
+									fieldDef={fieldDef?.fields?.[fieldId]}
 									context={context}
 									key={fieldId}
 								/>

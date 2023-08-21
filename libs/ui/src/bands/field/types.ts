@@ -1,4 +1,5 @@
 import { DisplayCondition } from "../../componentexports"
+import { CollectionFieldKey, CollectionKey } from "../wire/types"
 
 type FieldMetadataMap = {
 	[key: string]: FieldMetadata
@@ -53,12 +54,12 @@ type FileMetadata = {
 }
 
 type ReferenceMetadata = {
-	collection: string
+	collection: CollectionKey
 }
 
 type ReferenceGroupMetadata = {
-	collection: string
-	field: string
+	collection: CollectionKey
+	field: CollectionFieldKey
 }
 
 type FieldMetadata = {
@@ -76,6 +77,7 @@ type FieldMetadata = {
 	file?: FileMetadata
 	subtype?: FieldType
 	number?: NumberMetadata
+	required?: boolean
 }
 
 type prefix<T, P extends string> = {

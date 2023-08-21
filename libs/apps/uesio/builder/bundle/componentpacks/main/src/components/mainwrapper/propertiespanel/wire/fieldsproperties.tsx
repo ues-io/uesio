@@ -90,7 +90,7 @@ const FieldsProperties: definition.UC = (props) => {
 						key={fieldId}
 						path={fieldsPath.addLocal(fieldId)}
 						selectedPath={selectedPath}
-						fieldDef={wireDef.fields[fieldId]}
+						fieldDef={wireDef.fields?.[fieldId]}
 						context={context}
 					/>
 				))}

@@ -10,7 +10,9 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func populateAutoNumbers(field *adapt.FieldMetadata) validationFunc {
+type ChangeProcessor func(change *adapt.ChangeItem) *adapt.SaveError
+
+func populateAutoNumbers(field *adapt.FieldMetadata) ChangeProcessor {
 	return func(change *adapt.ChangeItem) *adapt.SaveError {
 		if !change.IsNew {
 			return nil
@@ -41,7 +43,7 @@ func populateAutoNumbers(field *adapt.FieldMetadata) validationFunc {
 	}
 }
 
-func populateTimestamps(field *adapt.FieldMetadata, timestamp int64) validationFunc {
+func populateTimestamps(field *adapt.FieldMetadata, timestamp int64) ChangeProcessor {
 	return func(change *adapt.ChangeItem) *adapt.SaveError {
 		// Only populate fields marked with CREATE on insert
 		// Always populate the fields marked with UPDATE
@@ -55,7 +57,7 @@ func populateTimestamps(field *adapt.FieldMetadata, timestamp int64) validationF
 	}
 }
 
-func populateUser(field *adapt.FieldMetadata, user *meta.User) validationFunc {
+func populateUser(field *adapt.FieldMetadata, user *meta.User) ChangeProcessor {
 	return func(change *adapt.ChangeItem) *adapt.SaveError {
 		// Only populate fields marked with CREATE on insert
 		// Always populate the fields marked with UPDATE
@@ -86,7 +88,7 @@ func Populate(op *adapt.SaveOp, connection adapt.Connection, session *sess.Sessi
 		return err
 	}
 
-	populations := []validationFunc{}
+	populations := []ChangeProcessor{}
 	for _, field := range op.Metadata.Fields {
 		if field.AutoPopulate == "UPDATE" || field.AutoPopulate == "CREATE" {
 			if field.Type == "TIMESTAMP" {

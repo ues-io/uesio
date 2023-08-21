@@ -46,6 +46,78 @@ app_id: jsonpath "$.wires[0].changes['1']['uesio/core.id']"
 [Asserts]
 jsonpath "$.wires[0].errors" == null
 
+# Create tests team
+POST https://{{host}}:{{port}}/site/wires/save
+{
+    "wires": [
+        {
+            "wire": "newworkspace",
+            "collection":"uesio/studio.team",
+            "changes": {
+                "1": {
+                    "uesio/studio.app": {
+                        "uesio/core.id": "{{app_id}}"
+                    },
+                    "uesio/studio.name": "admins"
+                }
+            }
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" == null
+[Captures]
+team_id: jsonpath "$.wires[0].changes['1']['uesio/core.id']"
+
+# Get ben's id
+POST https://{{host}}:{{port}}/site/wires/load
+{
+    "wires": [
+        {
+            "collection": "uesio/core.user",
+            "conditions": [
+                {
+                    "field":"uesio/core.uniquekey",
+                    "operator":"EQ",
+                    "valueSource":"VALUE",
+                    "value":"ben"
+                }
+            ],
+            "query": true
+        }
+    ]
+}
+HTTP 200
+[Captures]
+ben_id: jsonpath "$.wires[0].data[*]['uesio/core.id']" nth 0
+
+# Put ben on the team
+POST https://{{host}}:{{port}}/site/wires/save
+{
+    "wires": [
+        {
+            "wire": "newworkspace",
+            "collection":"uesio/studio.teammember",
+            "changes": {
+                "1": {
+                    "uesio/studio.app": {
+                        "uesio/core.id": "{{app_id}}"
+                    },
+                    "uesio/studio.team": {
+                        "uesio/core.id": "{{team_id}}"
+                    },
+                    "uesio/studio.member": {
+                        "uesio/core.id": "{{ben_id}}"
+                    }
+                }
+            }
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" == null
 
 # Create dev workspace
 POST https://{{host}}:{{port}}/site/wires/save

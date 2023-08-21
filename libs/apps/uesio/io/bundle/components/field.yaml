@@ -204,7 +204,7 @@ properties:
           - TEXT
   # Number-only properties
   - name: number
-    label: " "
+    label: Number field options
     type: STRUCT
     displayConditions:
       - type: fieldValue
@@ -213,16 +213,16 @@ properties:
     properties:
       - name: min
         type: NUMBER
-        label: Min
+        label: Min value
       - name: max
         type: NUMBER
-        label: Max
+        label: Max value
       - name: step
         type: NUMBER
         label: Step
   # Longtext field properties
   - name: longtext
-    label: " "
+    label: Long text field options
     type: STRUCT
     displayConditions:
       - type: fieldValue
@@ -237,7 +237,7 @@ properties:
         label: "# of Rows"
   # Reference properties
   - name: reference
-    label: " "
+    label: Reference field options
     type: STRUCT
     displayConditions:
       - type: fieldValue

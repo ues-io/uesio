@@ -28,8 +28,8 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
+jsonpath "$.wires[0].errors" count == 1
 jsonpath "$.wires[0].errors[0].message" == "No Zebras Allowed!"
-
 
 # Verify that no zebras were created
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
@@ -62,3 +62,4 @@ Accept: application/json
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data[*]" isEmpty
+jsonpath "$.wires[0].errors" not exists

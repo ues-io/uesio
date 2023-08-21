@@ -38,6 +38,10 @@ const ViewInfoPanel: definition.UtilityComponent = (props) => {
 			defaultDefinition: {
 				fields: null,
 				batchsize: 200,
+				init: {
+					query: true,
+					create: false,
+				},
 			},
 			defaultKey: "wire",
 			type: "MAP",

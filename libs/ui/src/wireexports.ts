@@ -35,9 +35,10 @@ import {
 import { SaveResponse, SaveResponseBatch, SaveError } from "./load/saveresponse"
 import { LoadResponseBatch } from "./load/loadresponse"
 import { LoadRequestField } from "./load/loadrequest"
-import { PlainWire, OrderState } from "./bands/wire/types"
+import { PlainWire, OrderState, CollectionKey } from "./bands/wire/types"
 
 export type {
+	CollectionKey,
 	ConditionOperators,
 	FieldMetadata,
 	FieldMetadataPropertyPath,

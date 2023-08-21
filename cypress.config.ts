@@ -17,11 +17,11 @@ export default defineConfig({
 			// implement node event listeners here
 		},
 		supportFile: "cypress/support/e2e.ts",
+		baseUrl: studio_base_url,
 	},
 	video: false,
 	env: {
 		in_ci,
-		studio_base_url,
 		automation_password,
 		automation_username,
 		use_mock_login,
