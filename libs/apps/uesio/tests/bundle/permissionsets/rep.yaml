@@ -1,8 +1,14 @@
 name: rep
 named: {}
-allowallcollections: true
+allowallcollections: false
 allowallviews: false
 allowallroutes: false
 allowallfiles: false
 modifyallrecords: false
 viewallrecords: false
+collections:
+  uesio/tests.account: true
+  uesio/tests.contact: true
+  uesio/tests.animal: true
+  uesio/core.user: true
+  uesio/core.userfile: true

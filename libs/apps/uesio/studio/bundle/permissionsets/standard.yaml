@@ -212,6 +212,7 @@ collections:
   uesio/studio.utility: true
   uesio/studio.view: true
   uesio/studio.workspace: true
+  uesio/studio.workspaceuser: true
   uesio/core.organizationuser: true
   uesio/core.usage: true
   uesio/core.userfile: true

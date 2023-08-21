@@ -1,5 +1,7 @@
 name: structproperty
 pack: main
 entrypoint: components/structproperty/structproperty
+variants:
+  - uesio/io.fieldwrapper:uesio/builder.structproperty
 utilities:
   - uesio/io.fieldwrapper

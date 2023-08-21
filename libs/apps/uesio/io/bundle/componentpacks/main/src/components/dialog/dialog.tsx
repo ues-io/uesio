@@ -8,6 +8,8 @@ type DialogDefinition = {
 	height?: string
 	id?: string
 	afterClose?: signal.SignalDefinition[]
+	actions?: definition.DefinitionList[]
+	components?: definition.DefinitionList[]
 }
 
 const Dialog: definition.UC<DialogDefinition> = (props) => {

@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/datasource/fieldvalidations"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/usage"
@@ -203,7 +203,7 @@ func SaveOp(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session
 
 	// Check for before save errors here
 	if op.HasErrors() {
-		return adapt.NewGenericSaveError(errors.New("Error with before save bots"))
+		return &(*op.Errors)[0]
 	}
 
 	// Fetch References again.
@@ -220,14 +220,14 @@ func SaveOp(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session
 		return HandleErrorAndAddToSaveOp(op, err)
 	}
 
-	err = Validate(op, connection, session)
+	err = fieldvalidations.Validate(op)
 	if err != nil {
 		return HandleErrorAndAddToSaveOp(op, err)
 	}
 
 	// Check for validate errors here
 	if op.HasErrors() {
-		return adapt.NewGenericSaveError(errors.New("Error with validation"))
+		return &(*op.Errors)[0]
 	}
 
 	err = GenerateRecordChallengeTokens(op, connection, session)
@@ -249,10 +249,9 @@ func SaveOp(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session
 	if err != nil {
 		return HandleErrorAndAddToSaveOp(op, err)
 	}
-
 	// Check for after save errors here
 	if op.HasErrors() {
-		return adapt.NewGenericSaveError(errors.New("Error with after save bots"))
+		return &(*op.Errors)[0]
 	}
 	usage.RegisterEvent("SAVE", "COLLECTION", op.Metadata.GetFullName(), 0, session)
 	usage.RegisterEvent("SAVE", "DATASOURCE", dsKey, 0, session)
@@ -272,9 +271,14 @@ func SaveOps(batch []*adapt.SaveOp, connection adapt.Connection, session *sess.S
 	for _, op := range batch {
 
 		if op.Metadata.IsDynamic() {
-			err := runDynamicCollectionSaveBots(op, connection, session)
-			if err != nil {
-				return HandleErrorAndAddToSaveOp(op, err)
+			err2 := runDynamicCollectionSaveBots(op, connection, session)
+			if err2 != nil {
+				// If this error is already in the save op, don't add it again
+				if _, isGenericSaveError := err2.(*adapt.SaveError); isGenericSaveError {
+					return err2
+				} else {
+					return HandleErrorAndAddToSaveOp(op, err2)
+				}
 			}
 			continue
 		}

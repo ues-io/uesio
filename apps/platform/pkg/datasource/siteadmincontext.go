@@ -9,19 +9,31 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func GetSiteAdminSession(currentSession *sess.Session) *sess.Session {
-	// We don't need to get an admin session if we're in a workspace context
-	// We already are the admin user.
-	if currentSession.GetWorkspace() != nil {
-		return currentSession
+// Returns a permissionset that has the maximum permissions possible
+func GetAdminPermissionSet() *meta.PermissionSet {
+	return &meta.PermissionSet{
+		AllowAllViews:       true,
+		AllowAllRoutes:      true,
+		AllowAllFiles:       true,
+		AllowAllCollections: true,
+		ModifyAllRecords:    true,
+		ViewAllRecords:      true,
 	}
-	// If we are already in site admin context, we don't need to do anything either.
+}
+
+func GetSiteAdminSession(currentSession *sess.Session) *sess.Session {
+	// If we're in a workspace context, just upgrade the permissions
+	if currentSession.GetWorkspace() != nil {
+		workspaceSession := currentSession.Clone()
+		workspaceSession.GetWorkspace().Permissions = GetAdminPermissionSet()
+		return workspaceSession
+	}
+	// If we are already in site admin context, we don't need to do anything.
 	if currentSession.GetSiteAdmin() != nil {
 		return currentSession
 	}
 
-	// This creates a copy of the session
-	siteAdminSession := currentSession.RemoveWorkspaceContext()
+	siteAdminSession := currentSession.Clone()
 
 	adminSite := currentSession.GetSite().Clone()
 
@@ -32,14 +44,7 @@ func GetSiteAdminSession(currentSession *sess.Session) *sess.Session {
 }
 
 func upgradeToSiteAdmin(adminSite *meta.Site, adminSession *sess.Session) {
-	adminSite.Permissions = &meta.PermissionSet{
-		AllowAllViews:       true,
-		AllowAllRoutes:      true,
-		AllowAllFiles:       true,
-		AllowAllCollections: true,
-		ModifyAllRecords:    true,
-		ViewAllRecords:      true,
-	}
+	adminSite.Permissions = GetAdminPermissionSet()
 
 	adminSession.SetSiteAdmin(adminSite)
 

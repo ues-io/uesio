@@ -6,6 +6,7 @@ import (
 	"net/url"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 
 	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/auth"
@@ -83,7 +84,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	profile, err := auth.LoadAndHydrateProfile(user.Profile, s)
+	profile, err := datasource.LoadAndHydrateProfile(user.Profile, s)
 	if err != nil {
 		logger.LogError(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

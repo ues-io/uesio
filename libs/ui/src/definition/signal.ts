@@ -1,8 +1,8 @@
-import { Context, ContextOptions } from "../context/context"
-import { Definition } from "./definition"
-import { PlainComponentState } from "../bands/component/types"
-import { Draft } from "@reduxjs/toolkit"
-import { Platform } from "../platform/platform"
+import type { Context, ContextOptions } from "../context/context"
+import type { Definition } from "./definition"
+import type { PlainComponentState } from "../bands/component/types"
+import type { Draft } from "@reduxjs/toolkit"
+import type { Platform } from "../platform/platform"
 
 type SignalDispatcher = (
 	signal: SignalDefinition,

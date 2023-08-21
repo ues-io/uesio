@@ -235,6 +235,11 @@ definition:
                                         - field: uesio/studio.validate->uesio/studio.type
                                           value: REGEX
                                       fieldId: uesio/studio.validate->uesio/studio.regex
+                                  - uesio/io.field:
+                                      uesio.display:
+                                        - field: uesio/studio.validate->uesio/studio.type
+                                          value: YAML
+                                      fieldId: uesio/studio.validate->uesio/studio.schema_uri
                                   - uesio/io.box:
                                       uesio.display:
                                         - field: uesio/studio.type

@@ -27,7 +27,7 @@ const StructProperty: definition.UC<Definition> = (props) => {
 			label={property.label || property.name}
 			labelPosition="left"
 			context={context}
-			variant="uesio/io.minimal"
+			variant="uesio/builder.structproperty"
 		>
 			{structProperties.map((subProperty, index) => {
 				const formField = getFormFieldFromProperty(

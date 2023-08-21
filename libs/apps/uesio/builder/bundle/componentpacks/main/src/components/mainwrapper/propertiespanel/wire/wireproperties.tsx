@@ -41,6 +41,23 @@ const WireProperties: definition.UtilityComponent = (props) => {
 			label: "Batch Size",
 			type: "NUMBER",
 		},
+		{
+			name: "init",
+			label: "On initial View load...",
+			type: "STRUCT",
+			properties: [
+				{
+					name: "query",
+					type: "CHECKBOX",
+					label: "Query for Wire data",
+				},
+				{
+					name: "create",
+					type: "CHECKBOX",
+					label: "Create default record if Wire has none",
+				},
+			],
+		},
 		// Order section properties
 		{
 			name: "order",
@@ -186,7 +203,7 @@ const WireProperties: definition.UtilityComponent = (props) => {
 			id="wireproperties"
 			properties={properties}
 			sections={[
-				getHomeSection(["wirename", "collection", "batchsize"]),
+				getHomeSection(["wirename", "collection", "batchsize", "init"]),
 				{
 					id: "fields",
 					label: "Fields",

@@ -180,8 +180,9 @@ func GetReferenceGroupMetadata(f *meta.Field) *adapt.ReferenceGroupMetadata {
 func GetValidationMetadata(f *meta.Field) *adapt.ValidationMetadata {
 	if f.ValidationMetadata != nil {
 		return &adapt.ValidationMetadata{
-			Type:  f.ValidationMetadata.Type,
-			Regex: f.ValidationMetadata.Regex,
+			Type:      f.ValidationMetadata.Type,
+			Regex:     f.ValidationMetadata.Regex,
+			SchemaUri: f.ValidationMetadata.SchemaUri,
 		}
 	}
 	return nil

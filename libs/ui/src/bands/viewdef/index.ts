@@ -1,11 +1,11 @@
 import { createSlice, createEntityAdapter } from "@reduxjs/toolkit"
 import { useSelector } from "react-redux"
 
-import { PlainViewDef } from "../../definition/viewdef"
+import { ViewMetadata } from "../../definition/ViewMetadata"
 
 import { RootState, getCurrentState } from "../../store/store"
 
-const adapter = createEntityAdapter<PlainViewDef>({
+const adapter = createEntityAdapter<ViewMetadata>({
 	selectId: (v) => `${v.namespace}.${v.name}`,
 })
 

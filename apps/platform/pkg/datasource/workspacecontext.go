@@ -10,6 +10,66 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
+func getWorkspacePermissions(workspace *meta.Workspace, session *sess.Session, connection adapt.Connection) error {
+	results := &adapt.Collection{}
+
+	// Lookup to see if this user wants to impersonate a profile.
+	_, err := Load([]*adapt.LoadOp{
+		{
+			CollectionName: "uesio/studio.workspaceuser",
+			Collection:     results,
+			Query:          true,
+			Fields: []adapt.LoadRequestField{
+				{
+					ID: "uesio/studio.profile",
+				},
+			},
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field: "uesio/studio.user",
+					Value: session.GetUserID(),
+				},
+				{
+					Field: "uesio/studio.workspace",
+					Value: workspace.ID,
+				},
+			},
+		},
+	}, session, nil)
+	if err != nil {
+		return err
+	}
+
+	workspace.Permissions = GetAdminPermissionSet()
+
+	session.AddWorkspaceContext(workspace)
+
+	bundleDef, err := bundle.GetAppBundle(session, connection)
+	if err != nil {
+		return err
+	}
+
+	workspace.SetAppBundle(bundleDef)
+
+	if results.Len() > 0 {
+		profileKey, err := (*results)[0].GetFieldAsString("uesio/studio.profile")
+		if err != nil {
+			return err
+		}
+		if profileKey != "" {
+			profile, err := LoadAndHydrateProfile(profileKey, session)
+			if err != nil {
+				return errors.New("Error Loading Profile: " + profileKey + " : " + err.Error())
+			}
+
+			workspace.Permissions = profile.FlattenPermissions()
+		}
+
+	}
+
+	return nil
+}
+
 func addWorkspaceContext(workspace *meta.Workspace, session *sess.Session, connection adapt.Connection) error {
 	site := session.GetSite()
 	perms := session.GetPermissions()
@@ -27,22 +87,7 @@ func addWorkspaceContext(workspace *meta.Workspace, session *sess.Session, conne
 		return errors.New("your profile does not allow you to work with workspaces")
 	}
 
-	workspace.Permissions = &meta.PermissionSet{
-		AllowAllViews:       true,
-		AllowAllRoutes:      true,
-		AllowAllFiles:       true,
-		AllowAllCollections: true,
-	}
-
-	session.AddWorkspaceContext(workspace)
-
-	bundleDef, err := bundle.GetAppBundle(session, connection)
-	if err != nil {
-		return err
-	}
-
-	workspace.SetAppBundle(bundleDef)
-	return nil
+	return getWorkspacePermissions(workspace, session, connection)
 }
 
 func AddWorkspaceContextByKey(workspaceKey string, session *sess.Session, connection adapt.Connection) error {
