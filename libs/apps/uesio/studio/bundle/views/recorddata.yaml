@@ -108,10 +108,3 @@ definition:
                                       wireId: recordData
                                       listId: recordDataList
                                       recordID: $Param{recordid}
-                      - uesio/io.box:
-                          uesio.variant: uesio/io.section
-                          components:
-                            - uesio/io.titlebar:
-                                uesio.variant: uesio/io.section
-                                title: Access tokens
-                                actions:
