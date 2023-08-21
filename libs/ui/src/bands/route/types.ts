@@ -9,7 +9,7 @@ import { ViewMetadata } from "../../definition/ViewMetadata"
 import { MetadataKey } from "../builder/types"
 import { PlainCollection } from "../collection/types"
 import { ComponentState } from "../component/types"
-import { PlainWire } from "../wire/types"
+import { ServerWire } from "../wire/types"
 
 type WorkspaceState = {
 	name: string
@@ -31,7 +31,7 @@ type Dependencies = {
 	configvalue?: EntityState<ConfigValueState>
 	featureflag?: EntityState<FeatureFlagState>
 	label?: EntityState<LabelState>
-	wire?: EntityState<PlainWire>
+	wire?: EntityState<ServerWire>
 	collection?: EntityState<PlainCollection>
 }
 

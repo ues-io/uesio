@@ -62,12 +62,12 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/studio.fullname']" nth 0 == "uesio/tests"
-jsonpath "$.wires[1].data[*]['uesio/studio.name']" nth 0 == "dev"
+jsonpath "$.wires[0].data[0]['uesio/studio.fullname']" == "uesio/tests"
+jsonpath "$.wires[1].data[0]['uesio/studio.name']" == "dev"
 [Captures]
-app_id: jsonpath "$.wires[0].data[*]['uesio/core.id']" nth 0
-app_fullname: jsonpath "$.wires[0].data[*]['uesio/studio.fullname']" nth 0
-workspace_id: jsonpath "$.wires[1].data[*]['uesio/core.id']" nth 0
+app_id: jsonpath "$.wires[0].data[0]['uesio/core.id']"
+app_fullname: jsonpath "$.wires[0].data[0]['uesio/studio.fullname']"
+workspace_id: jsonpath "$.wires[1].data[0]['uesio/core.id']"
 
 # Create a view with valid YAML
 POST https://{{host}}:{{port}}/site/wires/save

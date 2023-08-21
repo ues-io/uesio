@@ -488,8 +488,8 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[1].data[*]['uesio/tests.number']" nth 0 == 1
-jsonpath "$.wires[1].data[*]['uesio/core.uniquekey']" nth 0 == "ID-001"
+jsonpath "$.wires[1].data[0]['uesio/tests.number']" == 1
+jsonpath "$.wires[1].data[0]['uesio/core.uniquekey']" == "ID-001"
 
 # Operator: IN | valueSource: PARAM
 # entry 18

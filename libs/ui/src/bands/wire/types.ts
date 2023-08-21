@@ -42,4 +42,14 @@ type PlainWire = {
 	loadAll?: boolean
 }
 
-export type { CollectionKey, CollectionFieldKey, PlainWire, OrderState }
+type ServerWire = PlainWire & {
+	data: PlainWireRecord[]
+}
+
+export type {
+	CollectionKey,
+	CollectionFieldKey,
+	PlainWire,
+	OrderState,
+	ServerWire,
+}

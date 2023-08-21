@@ -22,6 +22,14 @@ import {
 import { memoizedGetJSON } from "./memoizedAsync"
 import { SiteState } from "../bands/site"
 import { UploadRequest } from "../load/uploadrequest"
+import { PlainCollectionMap } from "../bands/collection/types"
+import { ServerWire } from "../bands/wire/types"
+import { transformServerWire } from "../bands/wire/transform"
+
+type ServerWireLoadResponse = {
+	wires: ServerWire[]
+	collections: PlainCollectionMap
+}
 
 interface HasParams {
 	params?: Record<string, string>
@@ -274,7 +282,16 @@ const platform = {
 			`${prefix}/wires/load`,
 			requestBody
 		)
-		return respondJSON(response)
+		const loadResponse = (await respondJSON(
+			response
+		)) as ServerWireLoadResponse
+
+		const { collections, wires } = loadResponse
+
+		return {
+			collections,
+			wires: wires.map(transformServerWire),
+		}
 	},
 	saveData: async (
 		context: Context,

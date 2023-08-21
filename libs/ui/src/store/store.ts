@@ -25,7 +25,7 @@ import { ComponentVariant } from "../definition/componentvariant"
 import { LabelState } from "../definition/label"
 import { ConfigValueState } from "../definition/configvalue"
 import { FeatureFlagState } from "../definition/featureflag"
-import { PlainWire } from "../bands/wire/types"
+import { ServerWire } from "../bands/wire/types"
 import { PlainCollection } from "../bands/collection/types"
 import { attachDefToWires } from "../bands/route/utils"
 import { FileState } from "../definition/file"
@@ -41,7 +41,7 @@ type InitialState = {
 	label?: EntityState<LabelState>
 	configvalue?: EntityState<ConfigValueState>
 	featureflag?: EntityState<FeatureFlagState>
-	wire?: EntityState<PlainWire>
+	wire?: EntityState<ServerWire>
 	collection?: EntityState<PlainCollection>
 	file?: EntityState<FileState>
 }
