@@ -125,6 +125,15 @@ type FieldsProperty = {
 	type: "FIELDS"
 } & FieldPropertyBase
 
+// FIELD_VALUE needs a FIELD_METADATA property to exist for it to work
+type FieldValuePropertyBase = {
+	fieldMetadataProp?: string
+} & BaseProperty
+
+type FieldValueProperty = {
+	type: "FIELD_VALUE"
+} & FieldValuePropertyBase
+
 type CollectionFieldPropertyBase = {
 	collectionName?: string
 	collectionPath?: string
@@ -254,6 +263,7 @@ type ComponentProperty =
 	| DateProperty
 	| CollectionFieldProperty
 	| CollectionFieldsProperty
+	| FieldValueProperty
 
 const getStyleVariantProperty = (componentType: string): ComponentProperty => ({
 	name: "uesio.variant",
@@ -287,6 +297,7 @@ export type {
 	NumberProperty,
 	CheckboxProperty,
 	DateProperty,
+	FieldValueProperty,
 }
 
 export { getStyleVariantProperty }

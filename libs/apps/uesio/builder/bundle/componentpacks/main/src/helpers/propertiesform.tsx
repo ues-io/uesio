@@ -288,6 +288,24 @@ const getWireFieldFromPropertyDef = (
 					),
 				}
 			)
+		case "FIELD_VALUE":
+			console.log({ def, currentValue })
+
+			return getBaseWireFieldDef(
+				def,
+				getObjectProperty(
+					currentValue,
+					def.fieldMetadataProp || ""
+				) as wire.FieldType,
+				{
+					//TO-DO maybe we can force fieldDisplayType name in the FIELD_METADATA itself
+					//so it's easy to access it
+					selectlist: getObjectProperty(
+						currentValue,
+						"fieldDisplayType->selectlist"
+					),
+				}
+			)
 		case "MAP":
 		case "PARAMS":
 			return getBaseWireFieldDef(def, "MAP")
@@ -505,10 +523,14 @@ const parseProperties = (
 			}
 			if (sourceField && sourceWire) {
 				// Get the initial value of the corresponding field metadata property
-				value = get(
-					getFieldMetadata(context, sourceWire, sourceField)?.source,
-					property.metadataProperty as PropertyPath
-				) as string
+				// value = get(
+				// 	getFieldMetadata(context, sourceWire, sourceField)?.source,
+				// 	property.metadataProperty as PropertyPath
+				// ) as string
+
+				value = getFieldMetadata(context, sourceWire, sourceField)
+					?.source as wire.FieldValue
+
 				// Add a setter to the source field so that whenever it changes, we also update this property
 				const metadataSetter = (
 					newFieldId: string,
