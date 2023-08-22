@@ -1,11 +1,9 @@
 package adapt
 
 import (
-	"bytes"
 	"encoding/json"
 	"strconv"
 
-	"github.com/teris-io/shortid"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
@@ -32,31 +30,6 @@ func (c *Collection) UnmarshalJSON(data []byte) error {
 	}
 
 	return nil
-}
-
-func (c *Collection) MarshalJSON() ([]byte, error) {
-	var buf bytes.Buffer
-	buf.WriteByte('{')
-	for i, item := range *c {
-		if i > 0 {
-			buf.WriteByte(',')
-		}
-		tempid, err := shortid.Generate()
-		if err != nil {
-			return nil, err
-		}
-		buf.WriteByte('"')
-		buf.WriteString(tempid)
-		buf.WriteByte('"')
-		buf.WriteByte(':')
-		data, err := json.Marshal(item)
-		if err != nil {
-			return nil, err
-		}
-		buf.Write(data)
-	}
-	buf.WriteByte('}')
-	return buf.Bytes(), nil
 }
 
 func (c *Collection) NewItem() meta.Item {

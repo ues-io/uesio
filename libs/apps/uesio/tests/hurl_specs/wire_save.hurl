@@ -38,7 +38,7 @@ Accept: application/json
 }
 HTTP 200
 [Captures]
-idvalue: jsonpath "$.wires[0].data[*]['uesio/core.id']" nth 0
+idvalue: jsonpath "$.wires[0].data[0]['uesio/core.id']"
 
 # Test a simple update
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
@@ -96,9 +96,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.genus']" nth 0 == "Genie"
-jsonpath "$.wires[0].data[*]['uesio/tests.species']" nth 0 == "Frog"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" nth 0 == "Genie:Frog"
+jsonpath "$.wires[0].data[0]['uesio/tests.genus']" == "Genie"
+jsonpath "$.wires[0].data[0]['uesio/tests.species']" == "Frog"
+jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "Genie:Frog"
 
 # Test a simple delete
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
@@ -178,6 +178,6 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.genus']" nth 0 == "Kupker"
-jsonpath "$.wires[0].data[*]['uesio/tests.species']" nth 0 == "Alain"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" nth 0 == "Kupker:Alain"
+jsonpath "$.wires[0].data[0]['uesio/tests.genus']" == "Kupker"
+jsonpath "$.wires[0].data[0]['uesio/tests.species']" == "Alain"
+jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "Kupker:Alain"

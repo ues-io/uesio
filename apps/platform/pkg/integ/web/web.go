@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"github.com/thecloudmasters/uesio/pkg/goutils"
 	"io"
 	"net/http"
 	"strings"
@@ -63,14 +64,6 @@ func (wic *WebIntegrationConnection) RunAction(actionName string, requestOptions
 
 }
 
-func SafeJoinStrings(elems []string, delimiter string) string {
-	parts := make([]string, len(elems))
-	for i, elem := range elems {
-		parts[i] = strings.TrimSuffix(strings.TrimPrefix(elem, delimiter), delimiter)
-	}
-	return strings.Join(parts, delimiter)
-}
-
 func (wic *WebIntegrationConnection) Request(methodName string, requestOptions interface{}) (interface{}, error) {
 	var options RequestOptions
 	// Coming from TS/JS bots, RequestOptions will very likely be a map[string]interface{},
@@ -102,7 +95,7 @@ func (wic *WebIntegrationConnection) Request(methodName string, requestOptions i
 		return nil, errors.New("invalid options provided to web integration")
 	}
 
-	fullURL := SafeJoinStrings([]string{wic.integration.BaseURL, options.URL}, "/")
+	fullURL := goutils.SafeJoinStrings([]string{wic.integration.BaseURL, options.URL}, "/")
 
 	// TODO: Convert to using Redis cache, and support cache invalidation
 	if options.Cache {

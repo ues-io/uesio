@@ -2,4 +2,4 @@ name: ancestor
 type: REFERENCE
 label: Direct Ancestor
 reference:
-  collection: uesio/tests.animal
+  collection: animal

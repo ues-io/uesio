@@ -21,7 +21,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]" count >= 0
+jsonpath "$.wires[0].data" count >= 0
 
 # Test truncate API
 POST https://{{host}}:{{port}}/workspace/uesio/tests/truncatetests/data/truncate

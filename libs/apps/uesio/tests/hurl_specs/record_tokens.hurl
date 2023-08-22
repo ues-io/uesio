@@ -23,7 +23,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" nth 0 == "Evil Corp"
+jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "Evil Corp"
 
 # Log into a real site as chad
 POST https://tests.uesio-dev.com:{{port}}/site/auth/uesio/core/mock/login
@@ -58,7 +58,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" nth 0 == "Evil Corp"
+jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "Evil Corp"
 
 # Chad can see a contact from an account that he's on the team of
 POST https://tests.uesio-dev.com:{{port}}/site/wires/load
@@ -79,7 +79,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" nth 0 == "George:Willson"
+jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "George:Willson"
 
 # Logout
 POST https://tests.uesio-dev.com:{{port}}/site/auth/logout
