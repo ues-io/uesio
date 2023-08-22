@@ -96,7 +96,7 @@ func Populate(op *adapt.SaveOp, connection adapt.Connection, session *sess.Sessi
 				populations = append(populations, populateTimestamps(field, timestamp))
 			}
 			if field.Type == "USER" {
-				user := session.GetUserInfo()
+				user := session.GetContextUser()
 				populations = append(populations, populateUser(field, user))
 			}
 		} else if field.Type == "AUTONUMBER" {
@@ -119,7 +119,7 @@ func Populate(op *adapt.SaveOp, connection adapt.Connection, session *sess.Sessi
 		// Enforce field-level security for save
 		return change.Loop(func(field string, value interface{}) error {
 			if !session.GetContextPermissions().HasFieldEditPermission(collectionKey, field) {
-				return fmt.Errorf("Profile %s does not have edit access to the %s field.", session.GetProfile(), field)
+				return fmt.Errorf("Profile %s does not have edit access to the %s field.", session.GetContextProfile(), field)
 			}
 			return nil
 		})

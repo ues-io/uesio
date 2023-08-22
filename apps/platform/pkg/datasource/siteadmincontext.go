@@ -24,40 +24,38 @@ func GetAdminPermissionSet() *meta.PermissionSet {
 func GetSiteAdminSession(currentSession *sess.Session) *sess.Session {
 	// If we're in a workspace context, just upgrade the permissions
 	if currentSession.GetWorkspace() != nil {
-		workspaceSession := currentSession.Clone()
-		workspaceSession.GetWorkspace().Permissions = GetAdminPermissionSet()
-		return workspaceSession
+		workspaceSession := *currentSession
+		workspaceSession.AddWorkspaceContext(getWorkspaceWithAdminPermissions(currentSession.GetWorkspace(), currentSession.GetSiteUser()))
+		return &workspaceSession
 	}
 	// If we are already in site admin context, we don't need to do anything.
 	if currentSession.GetSiteAdmin() != nil {
 		return currentSession
 	}
 
-	siteAdminSession := currentSession.Clone()
+	siteAdminSession := *currentSession
 
-	adminSite := currentSession.GetSite().Clone()
+	adminSite := *currentSession.GetSite()
 
-	upgradeToSiteAdmin(adminSite, siteAdminSession)
+	upgradeToSiteAdmin(&adminSite, &siteAdminSession)
 
-	return siteAdminSession
+	return &siteAdminSession
 
 }
 
 func upgradeToSiteAdmin(adminSite *meta.Site, adminSession *sess.Session) {
-	adminSite.Permissions = GetAdminPermissionSet()
-
-	adminSession.SetSiteAdmin(adminSite)
-
-	adminSession.SetUser(&meta.User{
+	adminSite.User = &meta.User{
 		BuiltIn: meta.BuiltIn{
 			UniqueKey: "system",
 		},
-	})
+		Permissions: GetAdminPermissionSet(),
+	}
+	adminSession.SetSiteAdmin(adminSite)
 }
 
 func addSiteAdminContext(siteadmin *meta.Site, session *sess.Session, connection adapt.Connection) error {
 	site := session.GetSite()
-	perms := session.GetPermissions()
+	perms := session.GetSitePermissions()
 
 	// 1. Make sure we're in a site that can read/modify workspaces
 	if site.GetAppFullName() != "uesio/studio" {

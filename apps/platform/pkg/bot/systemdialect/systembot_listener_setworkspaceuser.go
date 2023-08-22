@@ -30,7 +30,7 @@ func runSetWorkspaceUserBot(params map[string]interface{}, connection adapt.Conn
 					},
 					"uesio/studio.profile": profileName,
 					"uesio/studio.user": map[string]interface{}{
-						"uesio/core.id": session.GetUserID(),
+						"uesio/core.id": session.GetSiteUser().ID,
 					},
 				},
 			},

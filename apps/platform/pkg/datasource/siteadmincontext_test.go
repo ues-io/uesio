@@ -21,11 +21,13 @@ func TestGetSiteAdminSession(t *testing.T) {
 		BuiltIn: meta.BuiltIn{
 			UniqueKey: "uesio/studio:prod",
 		},
+		User: originalUser,
 	}
 	otherSite := &meta.Site{
 		BuiltIn: meta.BuiltIn{
 			UniqueKey: "luigi/foo:prod",
 		},
+		User: originalUser,
 	}
 	sessWithWorkspaceContext := sess.NewSession(nil, originalUser, originalSite).AddWorkspaceContext(&ws)
 	sessWithSiteAdminContext := sess.NewSession(nil, originalUser, originalSite).SetSiteAdmin(otherSite)
@@ -44,14 +46,19 @@ func TestGetSiteAdminSession(t *testing.T) {
 				// Site should be unchanged
 				assert.Equal(t, s.GetSite(), originalSite)
 
-				assert.True(t, s.GetWorkspace().Permissions.AllowAllViews)
-				assert.True(t, s.GetWorkspace().Permissions.AllowAllRoutes)
-				assert.True(t, s.GetWorkspace().Permissions.AllowAllFiles)
-				assert.True(t, s.GetWorkspace().Permissions.AllowAllCollections)
-				assert.True(t, s.GetWorkspace().Permissions.ModifyAllRecords)
-				assert.True(t, s.GetWorkspace().Permissions.ViewAllRecords)
+				assert.True(t, s.GetWorkspace() != nil)
+				assert.True(t, s.GetSiteAdmin() == nil)
 
-				assert.Equal(t, s.GetUserInfo(), originalUser)
+				assert.True(t, s.GetContextPermissions().AllowAllViews)
+				assert.True(t, s.GetContextPermissions().AllowAllRoutes)
+				assert.True(t, s.GetContextPermissions().AllowAllFiles)
+				assert.True(t, s.GetContextPermissions().AllowAllCollections)
+				assert.True(t, s.GetContextPermissions().ModifyAllRecords)
+				assert.True(t, s.GetContextPermissions().ViewAllRecords)
+
+				assert.Equal(t, s.GetContextUser().FirstName, originalUser.FirstName)
+				assert.Equal(t, s.GetContextUser().LastName, originalUser.LastName)
+				assert.Equal(t, s.GetContextUser().Profile, "uesio/system.admin")
 			},
 		},
 		{
@@ -65,7 +72,7 @@ func TestGetSiteAdminSession(t *testing.T) {
 				// Site Admin should be unchanged
 				assert.Equal(t, s.GetSiteAdmin(), otherSite)
 				// User should be unchanged
-				assert.Equal(t, s.GetUserInfo(), originalUser)
+				assert.Equal(t, s.GetContextUser(), originalUser)
 			},
 		},
 		{
@@ -76,18 +83,22 @@ func TestGetSiteAdminSession(t *testing.T) {
 				assert.NotEqual(t, s, plainSession)
 				// Site should be unchanged
 				assert.Equal(t, s.GetSite(), originalSite)
+
+				assert.True(t, s.GetWorkspace() == nil)
+				assert.True(t, s.GetSiteAdmin() != nil)
+
 				// Site Admin should be set to a clone of the original site,
 				// with elevated permissions
 				assert.NotEqual(t, s.GetSiteAdmin(), originalSite)
-				assert.True(t, s.GetSiteAdmin().Permissions.AllowAllViews)
-				assert.True(t, s.GetSiteAdmin().Permissions.AllowAllRoutes)
-				assert.True(t, s.GetSiteAdmin().Permissions.AllowAllFiles)
-				assert.True(t, s.GetSiteAdmin().Permissions.AllowAllCollections)
-				assert.True(t, s.GetSiteAdmin().Permissions.ModifyAllRecords)
-				assert.True(t, s.GetSiteAdmin().Permissions.ViewAllRecords)
+				assert.True(t, s.GetContextPermissions().AllowAllViews)
+				assert.True(t, s.GetContextPermissions().AllowAllRoutes)
+				assert.True(t, s.GetContextPermissions().AllowAllFiles)
+				assert.True(t, s.GetContextPermissions().AllowAllCollections)
+				assert.True(t, s.GetContextPermissions().ModifyAllRecords)
+				assert.True(t, s.GetContextPermissions().ViewAllRecords)
 				// User should be a new object representation of the system user
-				assert.Equal(t, s.GetUserInfo().UniqueKey, "system")
-				assert.NotEqual(t, s.GetUserInfo(), originalUser)
+				assert.Equal(t, s.GetContextUser().UniqueKey, "system")
+				assert.NotEqual(t, s.GetContextUser(), originalUser)
 			},
 		},
 	}

@@ -4,20 +4,18 @@ import "github.com/thecloudmasters/uesio/pkg/meta"
 
 func GetAnonSession(site *meta.Site) *Session {
 
-	session := NewSession(nil, &meta.User{
+	return NewSession(nil, &meta.User{
 		Username:  "boot",
 		FirstName: "Boot",
 		LastName:  "User",
+		Permissions: &meta.PermissionSet{
+			AllowAllCollections: true,
+			ViewAllRecords:      true,
+			AllowAllRoutes:      true,
+			AllowAllViews:       true,
+		},
 	}, site)
 
-	session.SetPermissions(&meta.PermissionSet{
-		AllowAllCollections: true,
-		ViewAllRecords:      true,
-		AllowAllRoutes:      true,
-		AllowAllViews:       true,
-	})
-
-	return session
 }
 
 func GetStudioAnonSession() *Session {

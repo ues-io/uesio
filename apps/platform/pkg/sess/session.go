@@ -33,10 +33,10 @@ func GetSessionAttribute(browserSession *session.Session, key string) string {
 }
 
 func NewSession(browserSession *session.Session, user *meta.User, site *meta.Site) *Session {
+	site.User = user
 	return &Session{
 		browserSession: browserSession,
 		site:           site,
-		user:           user,
 	}
 }
 
@@ -71,8 +71,6 @@ type Session struct {
 	workspace      *meta.Workspace
 	siteadmin      *meta.Site
 	version        *VersionInfo
-	permissions    *meta.PermissionSet
-	user           *meta.User
 	tokens         TokenMap
 	labels         map[string]string
 }
@@ -120,11 +118,6 @@ func (s *Session) GetSite() *meta.Site {
 	return s.site
 }
 
-func (s *Session) SetUser(user *meta.User) *Session {
-	s.user = user
-	return s
-}
-
 func (s *Session) SetSiteAdmin(site *meta.Site) *Session {
 	s.siteadmin = site
 	return s
@@ -136,15 +129,6 @@ func (s *Session) GetSiteAdmin() *meta.Site {
 
 func (s *Session) GetWorkspace() *meta.Workspace {
 	return s.workspace
-}
-
-func (s *Session) SetPermissions(permissions *meta.PermissionSet) *Session {
-	s.permissions = permissions
-	return s
-}
-
-func (s *Session) GetPermissions() *meta.PermissionSet {
-	return s.permissions
 }
 
 func MakeSiteTenantID(ID string) string {
@@ -206,24 +190,8 @@ func (s *Session) IsExpired() bool {
 	return val.Accessed().Add(val.Timeout()).Before(time.Now())
 }
 
-func (s *Session) GetUserInfo() *meta.User {
-	return s.user
-}
-
-func (s *Session) GetUserID() string {
-	return s.user.ID
-}
-
-func (s *Session) GetUserUniqueKey() string {
-	return s.user.UniqueKey
-}
-
-func (s *Session) GetProfile() string {
-	return s.user.Profile
-}
-
 func (s *Session) IsPublicProfile() bool {
-	return s.GetProfile() == s.GetPublicProfile()
+	return s.GetContextProfile() == s.GetPublicProfile()
 }
 
 func (s *Session) GetPublicProfile() string {
@@ -248,24 +216,9 @@ func (s *Session) GetLoginRoute() string {
 }
 
 func (s *Session) RemoveWorkspaceContext() *Session {
-	newSess := NewSession(s.browserSession, s.user, s.site)
-	newSess.tokens = s.tokens
-	newSess.permissions = s.permissions
-	return newSess
-}
-
-func (s *Session) Clone() *Session {
-	newSess := NewSession(s.browserSession, s.user, s.site)
-	newSess.tokens = s.tokens
-	newSess.permissions = s.permissions
-	if s.workspace != nil {
-		newSess.workspace = s.workspace.Clone()
-	}
-	if s.siteadmin != nil {
-		newSess.siteadmin = s.siteadmin.Clone()
-	}
-	newSess.site = s.site.Clone()
-	return newSess
+	newSess := *s
+	newSess.workspace = nil
+	return &newSess
 }
 
 func (s *Session) AddWorkspaceContext(workspace *meta.Workspace) *Session {
@@ -342,14 +295,42 @@ func (s *Session) GetContextVersionName() string {
 	return s.site.Bundle.GetVersionString()
 }
 
-func (s *Session) GetContextPermissions() *meta.PermissionSet {
+func (s *Session) GetContextUser() *meta.User {
 	if s.workspace != nil {
-		return s.workspace.Permissions
+		return s.workspace.User
 	}
 	if s.siteadmin != nil {
-		return s.siteadmin.Permissions
+		return s.siteadmin.User
 	}
-	return s.permissions
+	return s.site.User
+}
+
+func (s *Session) GetSiteUser() *meta.User {
+	return s.site.User
+}
+
+func (s *Session) GetContextPermissions() *meta.PermissionSet {
+	user := s.GetContextUser()
+	if user != nil {
+		return user.Permissions
+	}
+	return nil
+}
+
+func (s *Session) GetSitePermissions() *meta.PermissionSet {
+	user := s.GetSiteUser()
+	if user != nil {
+		return user.Permissions
+	}
+	return nil
+}
+
+func (s *Session) GetContextProfile() string {
+	user := s.GetContextUser()
+	if user != nil {
+		return user.Profile
+	}
+	return ""
 }
 
 func (s *Session) GetContextSite() *meta.Site {

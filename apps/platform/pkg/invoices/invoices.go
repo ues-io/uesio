@@ -2,6 +2,9 @@ package invoices
 
 import (
 	"errors"
+	"strings"
+	"time"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -10,8 +13,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 	"github.com/thecloudmasters/uesio/pkg/translate"
-	"strings"
-	"time"
 )
 
 func InvoicingJob() error {
@@ -116,7 +117,7 @@ func CreateInvoice(app *meta.App, connection adapt.Connection, session *sess.Ses
 
 	//This creates a copy of the session
 	userSession := session.RemoveWorkspaceContext()
-	userSession.SetUser(app.Owner)
+	userSession.GetSite().User = app.Owner
 	labels, err := translate.GetTranslatedLabels(userSession)
 	if err != nil {
 		return err

@@ -1,6 +1,8 @@
 package auth
 
 import (
+	"errors"
+
 	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
@@ -15,12 +17,15 @@ func GetSessionFromRequest(browserSession session.Session, site *meta.Site) (*se
 		return nil, err
 	}
 
-	permSet, err := getProfilePermSet(session)
-	if err != nil {
-		return nil, err
+	profileKey := session.GetContextProfile()
+	if profileKey == "" {
+		return nil, errors.New("No profile found in session")
 	}
-
-	session.SetPermissions(permSet)
+	profile, err := datasource.LoadAndHydrateProfile(profileKey, session)
+	if err != nil {
+		return nil, errors.New("Error Loading Profile: " + profileKey + " : " + err.Error())
+	}
+	site.User.Permissions = profile.FlattenPermissions()
 
 	return session, nil
 }
@@ -57,9 +62,7 @@ func loadSession(browserSession session.Session, site *meta.Site) (*sess.Session
 		return nil, err
 	}
 
-	session := sess.NewSession(&browserSession, user, site)
-
-	return session, nil
+	return sess.NewSession(&browserSession, user, site), nil
 }
 
 func getUserFromSession(userid string, site *meta.Site) (*meta.User, error) {
