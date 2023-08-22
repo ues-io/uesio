@@ -34,6 +34,7 @@ collections:
     fields: {}
 routes: {}
 files: {}
+allowallbots: false
 allowallcollections: false
 allowallviews: false
 allowallroutes: false

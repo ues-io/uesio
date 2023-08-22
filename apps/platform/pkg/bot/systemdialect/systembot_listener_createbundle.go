@@ -15,17 +15,21 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.
 	appID := session.GetContextAppName()
 
 	if appID == "" {
-		return nil, errors.New("Error creating a new bundle, missing app")
+		return nil, errors.New("cannot create a bundle without an app in context")
 	}
 
 	if bundlestore.IsSystemBundle(appID) {
-		return nil, errors.New("Error creating a new bundle, the providede app is a system app")
+		return nil, errors.New("cannot create a bundle for a system app")
 	}
 
 	workspace := session.GetWorkspace()
 
 	if workspace == nil {
-		return nil, errors.New("Error creating a new bundle, missing workspace")
+		return nil, errors.New("cannot create a new bundle as a non-studio user")
+	}
+
+	if !session.GetPermissions().HasNamedPermission("uesio/studio.workspace_admin") {
+		return nil, errors.New("you must be a workspace admin to create bundles")
 	}
 
 	var app meta.App
