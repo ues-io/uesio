@@ -42,6 +42,9 @@ collections:
       uesio/tests.total_population:
         read: true
         edit: true
+      uesio/tests.autonumber:
+        read: true
+        edit: true
   uesio/tests.wire_condition:
     read: false
     create: false
