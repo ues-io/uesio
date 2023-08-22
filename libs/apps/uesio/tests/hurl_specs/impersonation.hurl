@@ -84,6 +84,22 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data[*]" isEmpty
 
+# Now that I'm impersonating with the rep profile, I don't have object
+# level access to the accountteammeber collection.
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.accountteammember",
+            "query":true
+        }
+    ]
+}
+HTTP 400
+[Asserts]
+body == "Load Failed: Profile uesio/tests.rep does not have read access to the uesio/tests.accountteammember collection.\n"
+
 # Verify that I can still load routes and their dependencies
 GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/simple_wire_load
 HTTP 200
