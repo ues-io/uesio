@@ -18,7 +18,7 @@ func RunWorkspaceTruncateListenerBot(params map[string]interface{}, connection a
 		return nil, meta.NewBotAccessError("cannot truncate Studio site data")
 	}
 
-	if !session.GetPermissions().HasNamedPermission("uesio/studio.workspace_admin") {
+	if !session.GetSitePermissions().HasNamedPermission("uesio/studio.workspace_admin") {
 		return nil, meta.NewBotAccessError("you must be a Studio workspace admin to truncate workspace data")
 	}
 

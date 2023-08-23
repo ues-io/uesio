@@ -11,7 +11,7 @@ import (
 )
 
 func getWorkspaceWithAdminPermissions(workspace *meta.Workspace, user *meta.User) *meta.Workspace {
-	return getWorkspaceWithPermissions(workspace, "uesio/system.admin", GetAdminPermissionSet(), user)
+	return getWorkspaceWithPermissions(workspace, "uesio/system.admin", meta.GetAdminPermissionSet(), user)
 }
 
 func getWorkspaceWithPermissions(workspace *meta.Workspace, profileName string, permissions *meta.PermissionSet, user *meta.User) *meta.Workspace {
