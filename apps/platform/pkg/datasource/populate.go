@@ -20,11 +20,15 @@ func populateAutoNumbers(field *adapt.FieldMetadata) ChangeProcessor {
 
 		autoNumberMeta := field.AutoNumberMetadata
 		if autoNumberMeta == nil {
-			return adapt.NewSaveError(change.RecordKey, field.GetFullName(), "Missing autonumber metadata")
+			autoNumberMeta = (*adapt.AutoNumberMetadata)(&meta.DefaultAutoNumberMetadata)
 		}
 		format := "%0" + strconv.Itoa(autoNumberMeta.LeadingZeros) + "d"
 		sufix := fmt.Sprintf(format, change.Autonumber)
+
 		an := autoNumberMeta.Prefix + "-" + sufix
+		if autoNumberMeta.Prefix == "" {
+			an = sufix
+		}
 
 		// See if we're trying to set this value for an insert.
 		// If so, don't set the autonumber and just keep its current

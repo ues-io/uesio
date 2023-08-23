@@ -9,18 +9,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// Returns a permissionset that has the maximum permissions possible
-func GetAdminPermissionSet() *meta.PermissionSet {
-	return &meta.PermissionSet{
-		AllowAllViews:       true,
-		AllowAllRoutes:      true,
-		AllowAllFiles:       true,
-		AllowAllCollections: true,
-		ModifyAllRecords:    true,
-		ViewAllRecords:      true,
-	}
-}
-
 func GetSiteAdminSession(currentSession *sess.Session) *sess.Session {
 	// If we're in a workspace context, just upgrade the permissions
 	if currentSession.GetWorkspace() != nil {
@@ -48,7 +36,7 @@ func upgradeToSiteAdmin(adminSite *meta.Site, adminSession *sess.Session) {
 		BuiltIn: meta.BuiltIn{
 			UniqueKey: "system",
 		},
-		Permissions: GetAdminPermissionSet(),
+		Permissions: meta.GetAdminPermissionSet(),
 	}
 	adminSession.SetSiteAdmin(adminSite)
 }

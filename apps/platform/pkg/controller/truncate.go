@@ -1,7 +1,8 @@
 package controller
 
 import (
-	"errors"
+	"github.com/thecloudmasters/uesio/pkg/bot/systemdialect"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -11,40 +12,25 @@ import (
 
 func Truncate(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
-	tenantID := session.GetTenantID()
-
-	if tenantID == "site:uesio/studio:prod" {
-		err := errors.New("cannot truncate Studio data")
-		logger.LogError(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
 	connection, err := datasource.GetPlatformConnection(nil, session, nil)
 	if err != nil {
 		logger.LogError(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	_, err = systemdialect.RunWorkspaceTruncateListenerBot(nil, connection, session)
 
-	err = connection.BeginTransaction()
-	if err != nil {
-		logger.LogError(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	if _, ok := err.(*meta.BotParamValidationError); ok {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-
-	err = connection.TruncateTenantData(tenantID)
-	if err != nil {
-		logger.LogError(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	if _, ok := err.(*meta.BotAccessError); ok {
+		http.Error(w, err.Error(), http.StatusForbidden)
 		return
 	}
-
-	err = connection.CommitTransaction()
 	if err != nil {
 		logger.LogError(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
 }
