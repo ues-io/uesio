@@ -4,5 +4,7 @@ uniqueKey:
   - uesio/studio.collection
   - uesio/studio.type
 nameField: uesio/core.uniquekey
+access: protected
+accessField: uesio/studio.workspace
 label: routeassignment
 pluralLabel: routeassignments

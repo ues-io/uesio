@@ -3,5 +3,7 @@ uniqueKey:
   - uesio/studio.team
   - uesio/studio.member
 nameField: uesio/studio.member
+access: protected
+accessField: uesio/studio.team
 label: team member
 pluralLabel: team members

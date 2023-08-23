@@ -9,23 +9,11 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// Returns a permissionset that has the maximum permissions possible
-func GetAdminPermissionSet() *meta.PermissionSet {
-	return &meta.PermissionSet{
-		AllowAllViews:       true,
-		AllowAllRoutes:      true,
-		AllowAllFiles:       true,
-		AllowAllCollections: true,
-		ModifyAllRecords:    true,
-		ViewAllRecords:      true,
-	}
-}
-
 func GetSiteAdminSession(currentSession *sess.Session) *sess.Session {
 	// If we're in a workspace context, just upgrade the permissions
 	if currentSession.GetWorkspace() != nil {
 		workspaceSession := currentSession.Clone()
-		workspaceSession.GetWorkspace().Permissions = GetAdminPermissionSet()
+		workspaceSession.GetWorkspace().Permissions = meta.GetAdminPermissionSet()
 		return workspaceSession
 	}
 	// If we are already in site admin context, we don't need to do anything.
@@ -44,7 +32,7 @@ func GetSiteAdminSession(currentSession *sess.Session) *sess.Session {
 }
 
 func upgradeToSiteAdmin(adminSite *meta.Site, adminSession *sess.Session) {
-	adminSite.Permissions = GetAdminPermissionSet()
+	adminSite.Permissions = meta.GetAdminPermissionSet()
 
 	adminSession.SetSiteAdmin(adminSite)
 
@@ -91,7 +79,7 @@ func addSiteAdminContext(siteadmin *meta.Site, session *sess.Session, connection
 }
 
 func AddSiteAdminContextByID(siteID string, session *sess.Session, connection adapt.Connection) error {
-	siteadmin, err := QuerySiteByID(siteID, connection)
+	siteadmin, err := QuerySiteByID(siteID, session, connection)
 	if err != nil {
 		return err
 	}
@@ -99,22 +87,22 @@ func AddSiteAdminContextByID(siteID string, session *sess.Session, connection ad
 }
 
 func AddSiteAdminContextByKey(siteKey string, session *sess.Session, connection adapt.Connection) error {
-	siteadmin, err := QuerySiteByKey(siteKey, connection)
+	siteadmin, err := QuerySiteByKey(siteKey, session, connection)
 	if err != nil {
 		return err
 	}
 	return addSiteAdminContext(siteadmin, session, connection)
 }
 
-func QuerySiteByID(siteid string, connection adapt.Connection) (*meta.Site, error) {
-	return querySite(siteid, adapt.ID_FIELD, connection)
+func QuerySiteByID(siteid string, session *sess.Session, connection adapt.Connection) (*meta.Site, error) {
+	return querySite(siteid, adapt.ID_FIELD, session, connection)
 }
 
-func QuerySiteByKey(sitekey string, connection adapt.Connection) (*meta.Site, error) {
-	return querySite(sitekey, adapt.UNIQUE_KEY_FIELD, connection)
+func QuerySiteByKey(sitekey string, session *sess.Session, connection adapt.Connection) (*meta.Site, error) {
+	return querySite(sitekey, adapt.UNIQUE_KEY_FIELD, session, connection)
 }
 
-func querySite(value, field string, connection adapt.Connection) (*meta.Site, error) {
+func querySite(value, field string, session *sess.Session, connection adapt.Connection) (*meta.Site, error) {
 
 	var s meta.Site
 	err := PlatformLoadOne(
@@ -180,8 +168,9 @@ func querySite(value, field string, connection adapt.Connection) (*meta.Site, er
 					Value: value,
 				},
 			},
+			RequireWriteAccess: true,
 		},
-		sess.GetStudioAnonSession(),
+		session,
 	)
 	if err != nil {
 		return nil, err

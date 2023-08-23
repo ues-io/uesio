@@ -40,7 +40,7 @@ func getWorkspacePermissions(workspace *meta.Workspace, session *sess.Session, c
 		return err
 	}
 
-	workspace.Permissions = GetAdminPermissionSet()
+	workspace.Permissions = meta.GetAdminPermissionSet()
 
 	session.AddWorkspaceContext(workspace)
 
