@@ -11,8 +11,6 @@ POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 # Test a simple insert for the default autonumber
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
 Accept: application/json
-[Options]
-very-verbose:true
 {
     "wires": [
         {

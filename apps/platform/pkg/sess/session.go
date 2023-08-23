@@ -413,9 +413,9 @@ func (s *Session) GetContextProfile() string {
 
 func (s *Session) GetContextSite() *meta.Site {
 	if s.siteadmin != nil {
-		return s.siteadmin.GetSite()
+		return s.GetSiteAdmin()
 	}
-	return s.site.GetSite()
+	return s.GetSite()
 }
 
 func (s *Session) GetSessionId() string {
