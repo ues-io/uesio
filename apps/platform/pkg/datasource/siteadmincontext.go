@@ -180,6 +180,7 @@ func querySite(value, field string, connection adapt.Connection) (*meta.Site, er
 					Value: value,
 				},
 			},
+			RequireWriteAccess: true,
 		},
 		sess.GetStudioAnonSession(),
 	)
