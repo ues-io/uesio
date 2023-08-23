@@ -252,6 +252,7 @@ const getWireFieldFromPropertyDef = (
 	let wireDefinition: wire.WireDefinition | undefined
 	let wireField
 	let fieldMetadata: collection.Field | undefined
+	let fieldMetadataType: wire.FieldType
 
 	switch (type) {
 		case "SELECT":
@@ -298,6 +299,7 @@ const getWireFieldFromPropertyDef = (
 				}
 			)
 		case "FIELD_VALUE":
+		case "FIELD_VALUES":
 			wireId =
 				def.wireProperty &&
 				(getObjectProperty(currentValue, def.wireProperty) as string)
@@ -310,13 +312,14 @@ const getWireFieldFromPropertyDef = (
 				wireId || "",
 				wireField || ""
 			)
-
+			fieldMetadataType = fieldMetadata?.getType() || "TEXT"
 			return getBaseWireFieldDef(
 				def,
-				fieldMetadata?.getType() || "TEXT",
+				type === "FIELD_VALUES" ? "LIST" : fieldMetadataType,
 				{
 					selectlist: fieldMetadata?.getSelectMetadata(),
-					subtype: fieldMetadata?.getSubType(),
+					subtype:
+						type === "FIELD_VALUES" ? fieldMetadataType : undefined,
 				}
 			)
 		case "MAP":

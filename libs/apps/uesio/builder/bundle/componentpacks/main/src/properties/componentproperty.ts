@@ -125,12 +125,18 @@ type FieldsProperty = {
 	type: "FIELDS"
 } & FieldPropertyBase
 
-// FIELD_VALUE
-type FieldValueProperty = {
+// FIELD_VALUE / FIELD_VALUES
+type FieldValuePropertyBase = {
 	wireProperty: string
 	fieldProperty: string
-	type: "FIELD_VALUE"
 } & BaseProperty
+
+type FieldValueProperty = {
+	type: "FIELD_VALUE"
+} & FieldValuePropertyBase
+type FieldValuesProperty = {
+	type: "FIELD_VALUES"
+} & FieldValuePropertyBase
 
 type CollectionFieldPropertyBase = {
 	collectionName?: string
@@ -262,6 +268,7 @@ type ComponentProperty =
 	| CollectionFieldProperty
 	| CollectionFieldsProperty
 	| FieldValueProperty
+	| FieldValuesProperty
 
 const getStyleVariantProperty = (componentType: string): ComponentProperty => ({
 	name: "uesio.variant",
