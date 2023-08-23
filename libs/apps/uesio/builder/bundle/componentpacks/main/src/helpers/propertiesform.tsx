@@ -536,14 +536,10 @@ const parseProperties = (
 			}
 			if (sourceField && sourceWire) {
 				// Get the initial value of the corresponding field metadata property
-				// value = get(
-				// 	getFieldMetadata(context, sourceWire, sourceField)?.source,
-				// 	property.metadataProperty as PropertyPath
-				// ) as string
-
-				value = getFieldMetadata(context, sourceWire, sourceField)
-					?.source as wire.FieldValue
-
+				value = get(
+					getFieldMetadata(context, sourceWire, sourceField)?.source,
+					property.metadataProperty as PropertyPath
+				) as string
 				// Add a setter to the source field so that whenever it changes, we also update this property
 				const metadataSetter = (
 					newFieldId: string,
