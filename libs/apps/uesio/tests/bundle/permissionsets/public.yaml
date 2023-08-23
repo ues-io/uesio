@@ -1,5 +1,7 @@
 name: public
 named: {}
+bots:
+  uesio/tests.add_numbers: true
 views:
   uesio/tests.animalslist: true
 collections:
@@ -51,6 +53,7 @@ collections:
 routes:
   uesio/tests.publicanimalslist: true
 files: {}
+allowallbots: false
 allowallcollections: false
 allowallviews: false
 allowallroutes: false

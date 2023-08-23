@@ -84,11 +84,7 @@ func GetSystemSession(site *meta.Site, connection adapt.Connection) (*sess.Sessi
 		return nil, err
 	}
 	session := sess.NewSession(nil, user, site)
-	session.SetPermissions(&meta.PermissionSet{
-		AllowAllCollections: true,
-		ViewAllRecords:      true,
-		ModifyAllRecords:    true,
-	})
+	session.SetPermissions(meta.GetAdminPermissionSet())
 	return session, nil
 }
 

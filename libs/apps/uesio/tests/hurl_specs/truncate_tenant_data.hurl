@@ -7,6 +7,9 @@ POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
     "token": "{\"subject\":\"uesio\"}"
 }
+HTTP 200
+[Captures]
+session_id: cookie "sessid"
 
 # Test a wire load
 POST https://{{host}}:{{port}}/workspace/uesio/tests/truncatetests/wires/load
