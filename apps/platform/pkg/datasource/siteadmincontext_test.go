@@ -30,8 +30,8 @@ func TestGetSiteAdminSession(t *testing.T) {
 	sessWithWorkspaceContext := sess.NewSession(nil, originalUser, originalSite).SetWorkspaceSession(sess.NewWorkspaceSession(
 		&ws,
 		originalUser,
-		"uesio/system.admin",
-		meta.GetAdminPermissionSet(),
+		"uesio/some.profile",
+		&meta.PermissionSet{},
 	))
 	sessWithSiteAdminContext := sess.NewSession(nil, originalUser, originalSite).SetSiteAdminSession(sess.NewSiteSession(otherSite, originalUser))
 	plainSession := sess.NewSession(nil, originalUser, originalSite)
@@ -41,7 +41,7 @@ func TestGetSiteAdminSession(t *testing.T) {
 		assertions func(t *testing.T, s *sess.Session)
 	}{
 		{
-			"return current session if we are in workspace context",
+			"return an upgraded session if we are in workspace context",
 			sessWithWorkspaceContext,
 			func(t *testing.T, s *sess.Session) {
 				// A totally new session should have been created
@@ -90,9 +90,8 @@ func TestGetSiteAdminSession(t *testing.T) {
 				assert.True(t, s.GetWorkspaceSession() == nil)
 				assert.True(t, s.GetSiteAdminSession() != nil)
 
-				// Site Admin should be set to a clone of the original site,
-				// with elevated permissions
-				assert.NotEqual(t, s.GetSiteAdminSession().GetSite(), originalSite)
+				// Site Admin Session site should not change
+				assert.Equal(t, s.GetSiteAdmin(), originalSite)
 				assert.True(t, s.GetContextPermissions().AllowAllViews)
 				assert.True(t, s.GetContextPermissions().AllowAllRoutes)
 				assert.True(t, s.GetContextPermissions().AllowAllFiles)
