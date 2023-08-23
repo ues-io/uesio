@@ -75,5 +75,5 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "Evil Corp"
+header "Location" == "/login?r=/siteadmin/uesio/tests/testsite/wires/load&expired=true"
 
