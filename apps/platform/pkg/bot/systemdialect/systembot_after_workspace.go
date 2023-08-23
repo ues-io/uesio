@@ -7,10 +7,10 @@ import (
 )
 
 func runWorkspaceAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
-
+	var err error
 	newDeps := adapt.Collection{}
 	// Install the uesio bundle when you create a new workspace
-	request.LoopInserts(func(change *adapt.ChangeItem) error {
+	err = request.LoopInserts(func(change *adapt.ChangeItem) error {
 		workspaceID, err := change.GetFieldAsString(adapt.ID_FIELD)
 		if err != nil {
 			return err
@@ -49,12 +49,48 @@ func runWorkspaceAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection
 		})
 		return nil
 	})
-	return datasource.SaveWithOptions([]datasource.SaveRequest{
-		{
-			Collection: "uesio/studio.bundledependency",
-			Wire:       "defaultapps",
-			Changes:    &newDeps,
-		},
-	}, session, datasource.GetConnectionSaveOptions(connection))
-
+	if err != nil {
+		return err
+	}
+	if len(newDeps) > 0 {
+		depsSaveErr := datasource.SaveWithOptions([]datasource.SaveRequest{
+			{
+				Collection: "uesio/studio.bundledependency",
+				Wire:       "defaultapps",
+				Changes:    &newDeps,
+				Options: &adapt.SaveOptions{
+					Upsert: true,
+				},
+			},
+		}, session, datasource.GetConnectionSaveOptions(connection))
+		if depsSaveErr != nil {
+			return depsSaveErr
+		}
+	}
+	// TODO: blocked by another issue
+	// If we are deleting workspaces, also truncate their data
+	//err = request.LoopDeletes(func(change *adapt.ChangeItem) error {
+	//	workspaceUniqueKey, innerErr := change.GetOldFieldAsString(adapt.UNIQUE_KEY_FIELD)
+	//	if innerErr != nil {
+	//		return innerErr
+	//	}
+	//	if workspaceUniqueKey == "" {
+	//		return errors.New("unable to get workspace unique key, cannot truncate data")
+	//	}
+	//	workspaceContextSession := session.AddWorkspaceContext(&meta.Workspace{
+	//		BuiltIn: meta.BuiltIn{
+	//			UniqueKey: workspaceUniqueKey,
+	//		},
+	//		Permissions: meta.GetAdminPermissionSet(),
+	//	})
+	//	_, truncateErr := RunWorkspaceTruncateListenerBot(nil, connection, workspaceContextSession)
+	//	if truncateErr != nil {
+	//		return truncateErr
+	//	}
+	//	return nil
+	//})
+	//if err != nil {
+	//	return err
+	//}
+	return nil
 }
