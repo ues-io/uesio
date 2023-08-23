@@ -29,6 +29,8 @@ jsonpath "$.wires[0].data" count >= 0
 # Test truncate API
 POST https://{{host}}:{{port}}/workspace/uesio/tests/truncatetests/data/truncate
 HTTP 200
+[Asserts]
+jsonpath "$.success" == true
 
 # Test a wire load with no conditions
 POST https://{{host}}:{{port}}/workspace/uesio/tests/truncatetests/wires/load

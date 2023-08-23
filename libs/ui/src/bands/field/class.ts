@@ -59,6 +59,7 @@ class Field {
 				return ""
 		}
 	}
+	getFileMetadata = () => this.source.file
 	getNumberMetadata = () => this.source.number
 	isReference = () =>
 		this.source.type === "REFERENCE" ||
@@ -66,6 +67,7 @@ class Field {
 		this.source.type === "FILE"
 	isRequired = () => this.source.required === true
 	getSubFields = () => this.source.subfields
+	getSubType = () => this.source.subtype
 }
 
 export default Field

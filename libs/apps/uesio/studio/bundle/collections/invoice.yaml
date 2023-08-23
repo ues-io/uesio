@@ -4,3 +4,5 @@ label: invoice
 pluralLabel: invoices
 uniqueKey:
   - uesio/studio.autoid
+access: protected
+accessField: uesio/studio.app

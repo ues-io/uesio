@@ -69,6 +69,7 @@ const getViewOnlyFieldMetadata = (
 	updateable: true,
 	namespace: viewOnlyNamespace,
 	type: fieldDef.type,
+	subtype: fieldDef.subtype,
 	label: fieldDef.label,
 	reference: fieldDef.reference,
 	selectlist: fieldDef.selectlist,

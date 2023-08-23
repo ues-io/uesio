@@ -75,6 +75,13 @@ const ListProperty: definition.UC<Definition> = (props) => {
 			defaultDefinition,
 		},
 	]
+	const subtype =
+		property.subtype ||
+		context
+			.getWire()
+			?.getCollection()
+			.getFieldMetadata(fieldId)
+			?.getSubType()
 
 	return !itemsDefinition ? (
 		<FieldWrapper
@@ -83,14 +90,14 @@ const ListProperty: definition.UC<Definition> = (props) => {
 			context={context}
 			variant={"uesio/builder.propfield"}
 		>
-			{property.subtype === "CHECKBOX" ||
-			property.subtype === "SELECT" ||
-			property.subtype === "MULTISELECT" ? (
+			{subtype === "CHECKBOX" ||
+			subtype === "SELECT" ||
+			subtype === "MULTISELECT" ? (
 				<MultiSelectField
 					fieldId={fieldId}
 					path={path}
 					value={items || []}
-					subType={property.subtype}
+					subType={subtype}
 					setValue={(value: wire.FieldValue) => {
 						set(context, listPropertyPath, value)
 					}}
@@ -105,7 +112,7 @@ const ListProperty: definition.UC<Definition> = (props) => {
 					fieldId={fieldId}
 					path={path}
 					value={items}
-					subType={property.subtype}
+					subType={subtype}
 					setValue={(value: wire.FieldValue) => {
 						set(context, listPropertyPath, value)
 					}}

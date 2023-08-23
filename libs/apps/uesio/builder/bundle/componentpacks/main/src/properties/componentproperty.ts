@@ -125,6 +125,19 @@ type FieldsProperty = {
 	type: "FIELDS"
 } & FieldPropertyBase
 
+// FIELD_VALUE / FIELD_VALUES
+type FieldValuePropertyBase = {
+	wireProperty: string
+	fieldProperty: string
+} & BaseProperty
+
+type FieldValueProperty = {
+	type: "FIELD_VALUE"
+} & FieldValuePropertyBase
+type FieldValuesProperty = {
+	type: "FIELD_VALUES"
+} & FieldValuePropertyBase
+
 type CollectionFieldPropertyBase = {
 	collectionName?: string
 	collectionPath?: string
@@ -254,6 +267,8 @@ type ComponentProperty =
 	| DateProperty
 	| CollectionFieldProperty
 	| CollectionFieldsProperty
+	| FieldValueProperty
+	| FieldValuesProperty
 
 const getStyleVariantProperty = (componentType: string): ComponentProperty => ({
 	name: "uesio.variant",
@@ -287,6 +302,7 @@ export type {
 	NumberProperty,
 	CheckboxProperty,
 	DateProperty,
+	FieldValueProperty,
 }
 
 export { getStyleVariantProperty }

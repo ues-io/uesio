@@ -1,4 +1,11 @@
-import { api, component, context, definition, wire } from "@uesio/ui"
+import {
+	api,
+	collection,
+	component,
+	context,
+	definition,
+	wire,
+} from "@uesio/ui"
 import { get as getDef, set as setDef, changeKey } from "../api/defapi"
 import set from "lodash/set"
 import get from "lodash/get"
@@ -244,6 +251,9 @@ const getWireFieldFromPropertyDef = (
 	let wireId: string | undefined
 	let wireDefinition: wire.WireDefinition | undefined
 	let wireField
+	let fieldMetadata: collection.Field | undefined
+	let fieldMetadataType: wire.FieldType
+
 	switch (type) {
 		case "SELECT":
 			return getBaseWireFieldDef(def, "SELECT", {
@@ -286,6 +296,30 @@ const getWireFieldFromPropertyDef = (
 						getWireFieldSelectOptions(wireDefinition),
 						type === "FIELDS" ? undefined : ""
 					),
+				}
+			)
+		case "FIELD_VALUE":
+		case "FIELD_VALUES":
+			wireId =
+				def.wireProperty &&
+				(getObjectProperty(currentValue, def.wireProperty) as string)
+			wireField =
+				def.fieldProperty &&
+				(getObjectProperty(currentValue, def.fieldProperty) as string)
+
+			fieldMetadata = getFieldMetadata(
+				context,
+				wireId || "",
+				wireField || ""
+			)
+			fieldMetadataType = fieldMetadata?.getType() || "TEXT"
+			return getBaseWireFieldDef(
+				def,
+				type === "FIELD_VALUES" ? "LIST" : fieldMetadataType,
+				{
+					selectlist: fieldMetadata?.getSelectMetadata(),
+					subtype:
+						type === "FIELD_VALUES" ? fieldMetadataType : undefined,
 				}
 			)
 		case "MAP":
