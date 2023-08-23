@@ -47,11 +47,11 @@ func querySiteFromDomain(domainType, domain string) (*meta.Site, error) {
 	if siteDomain == nil {
 		return nil, errors.New("no site domain record for that host")
 	}
-	return datasource.QuerySiteByID(siteDomain.Site.ID, nil)
+	return datasource.QuerySiteByID(siteDomain.Site.ID, sess.GetStudioAnonSession(), nil)
 }
 
 func GetSystemSessionByKey(siteKey string, connection adapt.Connection) (*sess.Session, error) {
-	site, err := datasource.QuerySiteByKey(siteKey, connection)
+	site, err := datasource.QuerySiteByKey(siteKey, sess.GetStudioAnonSession(), connection)
 	if err != nil {
 		return nil, err
 	}

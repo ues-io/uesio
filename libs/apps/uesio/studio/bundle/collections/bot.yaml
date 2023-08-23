@@ -5,5 +5,7 @@ uniqueKey:
   - uesio/studio.type
   - uesio/studio.name
 nameField: uesio/studio.name
+access: protected
+accessField: uesio/studio.workspace
 label: bot
 pluralLabel: bots
