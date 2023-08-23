@@ -13,7 +13,7 @@ HTTP 200
 session_id: cookie "sessid"
 user_id: jsonpath "$.user.id"
 
-# Log in as ben to set the limit
+# Log in as ben to set the limit, since ben has permission to administer the Studio site (uesio does not)
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
     "token": "{\"subject\":\"ben\"}"
@@ -93,7 +93,7 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data[*]" isEmpty
 
-# Log in as ben to set the limit
+# Log in as ben to set the limit, since ben has permission to administer the Studio site (uesio does not)
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
     "token": "{\"subject\":\"ben\"}"
