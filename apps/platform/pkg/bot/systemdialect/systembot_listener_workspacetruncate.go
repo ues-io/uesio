@@ -26,16 +26,19 @@ func RunWorkspaceTruncateListenerBot(params map[string]interface{}, connection a
 
 	var err error
 
+	handleTransactions := false
+
 	if connection == nil {
+		// If we have to create a connection, we also need to handle starting/stopping a transaction
+		handleTransactions = true
 		connection, err = datasource.GetPlatformConnection(nil, session, nil)
 		if err != nil {
 			return nil, errors.New("unable to obtain a connection to perform the requested operation")
 		}
-	}
-
-	err = connection.BeginTransaction()
-	if err != nil {
-		return nil, err
+		err = connection.BeginTransaction()
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	err = connection.TruncateTenantData(tenantID)
@@ -43,9 +46,11 @@ func RunWorkspaceTruncateListenerBot(params map[string]interface{}, connection a
 		return nil, err
 	}
 
-	err = connection.CommitTransaction()
-	if err != nil {
-		return nil, err
+	if handleTransactions {
+		err = connection.CommitTransaction()
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return nil, nil

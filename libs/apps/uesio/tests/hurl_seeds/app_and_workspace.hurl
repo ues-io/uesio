@@ -13,7 +13,15 @@ user_id: jsonpath "$.user.id"
 DELETE https://{{host}}:{{port}}/site/api/v1/collection/uesio/studio/site?uesio/studio.name=eq.testsite
 HTTP 204
 
-# Delete the tests app if it already exists, which should cascade delete the workspace and all of its data
+# Currently we have to manually truncate the DATA in each of our workspaces.
+# TODO: Automatically truncate workspace DATA as part of deleting the WORKSPACE itself.
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/data/truncate
+HTTP 200
+
+POST https://{{host}}:{{port}}/workspace/uesio/tests/truncatetests/data/truncate
+HTTP 200
+
+# Delete the tests app if it already exists, which should cascade delete the workspace and all of its metadata
 DELETE https://{{host}}:{{port}}/site/api/v1/collection/uesio/studio/app?uesio/studio.fullname=eq.uesio%2Ftests
 HTTP 204
 
