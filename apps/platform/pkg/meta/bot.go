@@ -243,6 +243,30 @@ func NewParamError(message string, param string) error {
 	return &BotParamValidationError{Param: param, Message: message}
 }
 
+type BotAccessError struct {
+	message string
+}
+
+func (e *BotAccessError) Error() string {
+	return e.message
+}
+
+func NewBotAccessError(message string) error {
+	return &BotAccessError{message}
+}
+
+type BotNotFoundError struct {
+	message string
+}
+
+func (e *BotNotFoundError) Error() string {
+	return e.message
+}
+
+func NewBotNotFoundError(message string) error {
+	return &BotNotFoundError{message}
+}
+
 // ValidateParams checks validates received a map of provided bot params
 // agaisnt any bot parameter metadata defined for the Bot
 func (b *Bot) ValidateParams(params map[string]interface{}) error {

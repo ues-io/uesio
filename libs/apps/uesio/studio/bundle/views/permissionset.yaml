@@ -36,6 +36,16 @@ definition:
       conditions:
         - field: uesio/studio.allmetadata
           value: true
+    bots:
+      collection: uesio/studio.bot
+      conditions:
+        - field: uesio/studio.allmetadata
+          value: true
+        - field: uesio/studio.type
+          operator: IN
+          values:
+            - GENERATOR
+            - LISTENER
     files:
       collection: uesio/studio.file
       conditions:
@@ -176,11 +186,35 @@ definition:
                                       fieldId: uesio/studio.allowallcollections
                                       displayAs: "TOGGLE"
                                   - uesio/io.field:
+                                      fieldId: uesio/studio.allowallbots
+                                      displayAs: "TOGGLE"
+                                      uesio.display:
+                                        - type: featureFlag
+                                          name: manage_bots
+                                  - uesio/io.field:
                                       fieldId: uesio/studio.viewallrecords
                                       displayAs: "TOGGLE"
                                   - uesio/io.field:
                                       fieldId: uesio/studio.modifyallrecords
                                       displayAs: "TOGGLE"
+                      - uesio/io.box:
+                          uesio.variant: uesio/io.section
+                          uesio.display:
+                            - type: featureFlag
+                              name: manage_bots
+                          components:
+                            - uesio/io.titlebar:
+                                title: Bots
+                                uesio.variant: uesio/io.section
+                            - uesio/io.box:
+                                components:
+                                  - uesio/studio.permissionpicker:
+                                      uesio.context:
+                                        workspace:
+                                          name: $Param{workspacename}
+                                          app: $Param{app}
+                                      fieldId: uesio/studio.botrefs
+                                      wireName: bots
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           components:
