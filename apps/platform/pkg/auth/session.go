@@ -25,7 +25,7 @@ func GetSessionFromRequest(browserSession session.Session, site *meta.Site) (*se
 	if err != nil {
 		return nil, errors.New("Error Loading Profile: " + profileKey + " : " + err.Error())
 	}
-	site.User.Permissions = profile.FlattenPermissions()
+	session.GetContextUser().Permissions = profile.FlattenPermissions()
 
 	return session, nil
 }

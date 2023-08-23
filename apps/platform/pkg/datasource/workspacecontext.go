@@ -10,20 +10,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func getWorkspaceWithAdminPermissions(workspace *meta.Workspace, user *meta.User) *meta.Workspace {
-	return getWorkspaceWithPermissions(workspace, "uesio/system.admin", meta.GetAdminPermissionSet(), user)
-}
-
-func getWorkspaceWithPermissions(workspace *meta.Workspace, profileName string, permissions *meta.PermissionSet, user *meta.User) *meta.Workspace {
-	// Shallow clone the workspace and user
-	newUser := *user
-	newWorkspace := *workspace
-	newUser.Profile = profileName
-	newUser.Permissions = permissions
-	newWorkspace.User = &newUser
-	return &newWorkspace
-}
-
 func addWorkspaceContext(workspace *meta.Workspace, session *sess.Session, connection adapt.Connection) error {
 	site := session.GetSite()
 	perms := session.GetSitePermissions()
@@ -70,14 +56,17 @@ func addWorkspaceContext(workspace *meta.Workspace, session *sess.Session, conne
 		return err
 	}
 
-	workspace = getWorkspaceWithAdminPermissions(workspace, session.GetSiteUser())
-	session.AddWorkspaceContext(workspace)
-
+	workspaceSession := sess.NewWorkspaceSession(
+		workspace,
+		session.GetSiteUser(),
+		"uesio/system.admin",
+		meta.GetAdminPermissionSet(),
+	)
+	session.SetWorkspaceSession(workspaceSession)
 	bundleDef, err := bundle.GetAppBundle(session, connection)
 	if err != nil {
 		return err
 	}
-
 	workspace.SetAppBundle(bundleDef)
 
 	if results.Len() > 0 {
@@ -91,8 +80,12 @@ func addWorkspaceContext(workspace *meta.Workspace, session *sess.Session, conne
 				return errors.New("Error Loading Profile: " + profileKey + " : " + err.Error())
 			}
 
-			workspace = getWorkspaceWithPermissions(workspace, profileKey, profile.FlattenPermissions(), session.GetSiteUser())
-			session.AddWorkspaceContext(workspace)
+			session.SetWorkspaceSession(sess.NewWorkspaceSession(
+				workspace,
+				session.GetSiteUser(),
+				profileKey,
+				profile.FlattenPermissions(),
+			))
 		}
 
 	}

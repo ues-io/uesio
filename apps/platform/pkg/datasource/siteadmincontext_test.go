@@ -21,16 +21,19 @@ func TestGetSiteAdminSession(t *testing.T) {
 		BuiltIn: meta.BuiltIn{
 			UniqueKey: "uesio/studio:prod",
 		},
-		User: originalUser,
 	}
 	otherSite := &meta.Site{
 		BuiltIn: meta.BuiltIn{
 			UniqueKey: "luigi/foo:prod",
 		},
-		User: originalUser,
 	}
-	sessWithWorkspaceContext := sess.NewSession(nil, originalUser, originalSite).AddWorkspaceContext(&ws)
-	sessWithSiteAdminContext := sess.NewSession(nil, originalUser, originalSite).SetSiteAdmin(otherSite)
+	sessWithWorkspaceContext := sess.NewSession(nil, originalUser, originalSite).SetWorkspaceSession(sess.NewWorkspaceSession(
+		&ws,
+		originalUser,
+		"uesio/system.admin",
+		meta.GetAdminPermissionSet(),
+	))
+	sessWithSiteAdminContext := sess.NewSession(nil, originalUser, originalSite).SetSiteAdminSession(sess.NewSiteSession(otherSite, originalUser))
 	plainSession := sess.NewSession(nil, originalUser, originalSite)
 	tests := []struct {
 		name       string
@@ -46,8 +49,8 @@ func TestGetSiteAdminSession(t *testing.T) {
 				// Site should be unchanged
 				assert.Equal(t, s.GetSite(), originalSite)
 
-				assert.True(t, s.GetWorkspace() != nil)
-				assert.True(t, s.GetSiteAdmin() == nil)
+				assert.True(t, s.GetWorkspaceSession() != nil)
+				assert.True(t, s.GetSiteAdminSession() == nil)
 
 				assert.True(t, s.GetContextPermissions().AllowAllViews)
 				assert.True(t, s.GetContextPermissions().AllowAllRoutes)
@@ -70,7 +73,7 @@ func TestGetSiteAdminSession(t *testing.T) {
 				// Site should be unchanged
 				assert.Equal(t, s.GetSite(), originalSite)
 				// Site Admin should be unchanged
-				assert.Equal(t, s.GetSiteAdmin(), otherSite)
+				assert.Equal(t, s.GetSiteAdminSession().GetSite(), otherSite)
 				// User should be unchanged
 				assert.Equal(t, s.GetContextUser(), originalUser)
 			},
@@ -84,12 +87,12 @@ func TestGetSiteAdminSession(t *testing.T) {
 				// Site should be unchanged
 				assert.Equal(t, s.GetSite(), originalSite)
 
-				assert.True(t, s.GetWorkspace() == nil)
-				assert.True(t, s.GetSiteAdmin() != nil)
+				assert.True(t, s.GetWorkspaceSession() == nil)
+				assert.True(t, s.GetSiteAdminSession() != nil)
 
 				// Site Admin should be set to a clone of the original site,
 				// with elevated permissions
-				assert.NotEqual(t, s.GetSiteAdmin(), originalSite)
+				assert.NotEqual(t, s.GetSiteAdminSession().GetSite(), originalSite)
 				assert.True(t, s.GetContextPermissions().AllowAllViews)
 				assert.True(t, s.GetContextPermissions().AllowAllRoutes)
 				assert.True(t, s.GetContextPermissions().AllowAllFiles)

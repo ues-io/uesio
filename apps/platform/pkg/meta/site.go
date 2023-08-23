@@ -10,7 +10,6 @@ type Site struct {
 	Subdomain string
 	Title     string `json:"uesio/studio.title"`
 	EnableSEO bool   `json:"uesio/studio.enable_seo"`
-	User      *User  `json:"-"`
 }
 
 func (s *Site) GetFullName() string {

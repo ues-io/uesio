@@ -33,10 +33,9 @@ func GetSessionAttribute(browserSession *session.Session, key string) string {
 }
 
 func NewSession(browserSession *session.Session, user *meta.User, site *meta.Site) *Session {
-	site.User = user
 	return &Session{
 		browserSession: browserSession,
-		site:           site,
+		site:           NewSiteSession(site, user),
 	}
 }
 
@@ -54,9 +53,9 @@ func New(user *meta.User, site *meta.Site) *Session {
 func Logout(w http.ResponseWriter, publicUser *meta.User, s *Session) *Session {
 	// Remove the logged-out session
 	session.Remove(*s.browserSession, w)
-	site := s.GetSite()
+	sitesession := s.GetSiteSession()
 	// Login as the public user
-	return Login(w, publicUser, site)
+	return Login(w, publicUser, sitesession.GetSite())
 }
 
 type VersionInfo struct {
@@ -65,11 +64,79 @@ type VersionInfo struct {
 	Version   string
 }
 
+type WorkspaceSession struct {
+	workspace *meta.Workspace
+	user      *meta.User
+}
+
+func NewWorkspaceSession(
+	workspace *meta.Workspace,
+	user *meta.User,
+	profileName string,
+	permissions *meta.PermissionSet,
+) *WorkspaceSession {
+	// Shallow clone the user and change the profile name
+	wsUser := *user
+	wsUser.Profile = profileName
+	wsUser.Permissions = permissions
+	return &WorkspaceSession{
+		workspace: workspace,
+		user:      &wsUser,
+	}
+}
+
+func (s *WorkspaceSession) GetWorkspace() *meta.Workspace {
+	return s.workspace
+}
+
+func (s *WorkspaceSession) GetID() string {
+	return s.workspace.ID
+}
+
+func (s *WorkspaceSession) GetUniqueKey() string {
+	return s.workspace.UniqueKey
+}
+
+func (s *WorkspaceSession) GetAppFullName() string {
+	return s.workspace.GetAppFullName()
+}
+
+type SiteSession struct {
+	site *meta.Site
+	user *meta.User
+}
+
+func NewSiteSession(
+	site *meta.Site,
+	user *meta.User,
+) *SiteSession {
+	return &SiteSession{
+		site: site,
+		user: user,
+	}
+}
+
+func (s *SiteSession) GetSite() *meta.Site {
+	return s.site
+}
+
+func (s *SiteSession) GetID() string {
+	return s.site.ID
+}
+
+func (s *SiteSession) GetUniqueKey() string {
+	return s.site.UniqueKey
+}
+
+func (s *SiteSession) GetAppFullName() string {
+	return s.site.GetAppFullName()
+}
+
 type Session struct {
 	browserSession *session.Session
-	site           *meta.Site
-	workspace      *meta.Workspace
-	siteadmin      *meta.Site
+	site           *SiteSession
+	workspace      *WorkspaceSession
+	siteadmin      *SiteSession
 	version        *VersionInfo
 	tokens         TokenMap
 	labels         map[string]string
@@ -109,26 +176,47 @@ func (s *Session) SetTokenMap(tokenMap TokenMap) {
 	s.tokens = tokenMap
 }
 
-func (s *Session) SetSite(site *meta.Site) *Session {
+func (s *Session) SetSiteSession(site *SiteSession) *Session {
 	s.site = site
 	return s
 }
 
-func (s *Session) GetSite() *meta.Site {
+func (s *Session) GetSiteSession() *SiteSession {
 	return s.site
 }
 
-func (s *Session) SetSiteAdmin(site *meta.Site) *Session {
+func (s *Session) SetSiteAdminSession(site *SiteSession) *Session {
 	s.siteadmin = site
 	return s
 }
 
-func (s *Session) GetSiteAdmin() *meta.Site {
+func (s *Session) GetSiteAdminSession() *SiteSession {
 	return s.siteadmin
 }
 
-func (s *Session) GetWorkspace() *meta.Workspace {
+func (s *Session) GetSiteAdmin() *meta.Site {
+	sa := s.GetSiteAdminSession()
+	if sa == nil {
+		return nil
+	}
+	return sa.GetSite()
+}
+
+func (s *Session) GetWorkspaceSession() *WorkspaceSession {
 	return s.workspace
+}
+
+func (s *Session) GetWorkspace() *meta.Workspace {
+	ws := s.GetWorkspaceSession()
+	if ws == nil {
+		return nil
+	}
+	return ws.GetWorkspace()
+}
+
+func (s *Session) SetWorkspaceSession(workspace *WorkspaceSession) *Session {
+	s.workspace = workspace
+	return s
 }
 
 func MakeSiteTenantID(ID string) string {
@@ -142,7 +230,7 @@ func MakeWorkspaceTenantID(ID string) string {
 func (s *Session) GetTenantIDForCollection(collectionKey string) string {
 	// If we're loading uesio/core.user from a workspace, always use the site
 	// tenant id, not the workspace tenant id. Since workspaces don't have users.
-	if collectionKey == "uesio/core.user" && s.GetWorkspace() != nil {
+	if collectionKey == "uesio/core.user" && s.GetWorkspaceSession() != nil {
 		return s.GetSiteTenantID()
 	}
 	return s.GetTenantID()
@@ -150,24 +238,24 @@ func (s *Session) GetTenantIDForCollection(collectionKey string) string {
 
 func (s *Session) GetTenantID() string {
 	if s.workspace != nil {
-		return MakeWorkspaceTenantID(s.workspace.UniqueKey)
+		return MakeWorkspaceTenantID(s.workspace.GetUniqueKey())
 	}
 	if s.siteadmin != nil {
-		return MakeSiteTenantID(s.siteadmin.UniqueKey)
+		return MakeSiteTenantID(s.siteadmin.GetUniqueKey())
 	}
-	return MakeSiteTenantID(s.site.UniqueKey)
+	return MakeSiteTenantID(s.site.GetUniqueKey())
 }
 
 func (s *Session) GetSiteTenantID() string {
 	if s.siteadmin != nil {
-		return MakeSiteTenantID(s.siteadmin.UniqueKey)
+		return MakeSiteTenantID(s.siteadmin.GetUniqueKey())
 	}
-	return MakeSiteTenantID(s.site.UniqueKey)
+	return MakeSiteTenantID(s.site.GetUniqueKey())
 }
 
 func (s *Session) GetWorkspaceID() string {
 	if s.workspace != nil {
-		return s.workspace.ID
+		return s.workspace.GetID()
 	}
 	return ""
 }
@@ -195,12 +283,7 @@ func (s *Session) IsPublicProfile() bool {
 }
 
 func (s *Session) GetPublicProfile() string {
-	appBundle := s.site.GetAppBundle()
-
-	if s.siteadmin != nil {
-		appBundle = s.siteadmin.GetAppBundle()
-	}
-
+	appBundle := s.GetContextAppBundle()
 	if appBundle == nil {
 		return ""
 	}
@@ -208,7 +291,7 @@ func (s *Session) GetPublicProfile() string {
 }
 
 func (s *Session) GetLoginRoute() string {
-	appBundle := s.site.GetAppBundle()
+	appBundle := s.GetContextAppBundle()
 	if appBundle == nil {
 		return ""
 	}
@@ -219,11 +302,6 @@ func (s *Session) RemoveWorkspaceContext() *Session {
 	newSess := *s
 	newSess.workspace = nil
 	return &newSess
-}
-
-func (s *Session) AddWorkspaceContext(workspace *meta.Workspace) *Session {
-	s.workspace = workspace
-	return s
 }
 
 func (s *Session) AddVersionContext(versionInfo *VersionInfo) *Session {
@@ -253,12 +331,12 @@ func (s *Session) GetContextInstalledNamespaces() []string {
 
 func (s *Session) GetContextAppBundle() *meta.BundleDef {
 	if s.workspace != nil {
-		return s.workspace.GetAppBundle()
+		return s.workspace.workspace.GetAppBundle()
 	}
 	if s.siteadmin != nil {
-		return s.siteadmin.GetAppBundle()
+		return s.siteadmin.site.GetAppBundle()
 	}
-	return s.site.GetAppBundle()
+	return s.site.site.GetAppBundle()
 }
 
 func (s *Session) GetDefaultTheme() string {
@@ -284,45 +362,45 @@ func (s *Session) GetContextAppName() string {
 
 func (s *Session) GetContextVersionName() string {
 	if s.workspace != nil {
-		return s.workspace.Name
+		return s.workspace.GetWorkspace().Name
 	}
 	if s.siteadmin != nil {
-		return s.siteadmin.Bundle.GetVersionString()
+		return s.siteadmin.GetSite().Bundle.GetVersionString()
 	}
 	if s.version != nil {
 		return s.version.Version
 	}
-	return s.site.Bundle.GetVersionString()
+	return s.site.GetSite().Bundle.GetVersionString()
 }
 
 func (s *Session) GetContextUser() *meta.User {
 	if s.workspace != nil {
-		return s.workspace.User
+		return s.workspace.user
 	}
 	if s.siteadmin != nil {
-		return s.siteadmin.User
+		return s.siteadmin.user
 	}
-	return s.site.User
+	return s.site.user
 }
 
 func (s *Session) GetSiteUser() *meta.User {
-	return s.site.User
+	return s.site.user
+}
+
+func (s *Session) GetSite() *meta.Site {
+	site := s.GetSiteSession()
+	if site == nil {
+		return nil
+	}
+	return site.GetSite()
 }
 
 func (s *Session) GetContextPermissions() *meta.PermissionSet {
-	user := s.GetContextUser()
-	if user != nil {
-		return user.Permissions
-	}
-	return nil
+	return s.GetContextUser().Permissions
 }
 
 func (s *Session) GetSitePermissions() *meta.PermissionSet {
-	user := s.GetSiteUser()
-	if user != nil {
-		return user.Permissions
-	}
-	return nil
+	return s.GetSiteUser().Permissions
 }
 
 func (s *Session) GetContextProfile() string {
@@ -335,9 +413,9 @@ func (s *Session) GetContextProfile() string {
 
 func (s *Session) GetContextSite() *meta.Site {
 	if s.siteadmin != nil {
-		return s.GetSiteAdmin()
+		return s.siteadmin.GetSite()
 	}
-	return s.GetSite()
+	return s.site.GetSite()
 }
 
 func (s *Session) GetSessionId() string {
