@@ -316,7 +316,7 @@ const getWireFieldFromPropertyDef = (
 				fieldMetadata?.getType() || "TEXT",
 				{
 					selectlist: fieldMetadata?.getSelectMetadata(),
-					subtype: fieldMetadata?.source.subtype,
+					subtype: fieldMetadata?.getSubType(),
 				}
 			)
 		case "MAP":

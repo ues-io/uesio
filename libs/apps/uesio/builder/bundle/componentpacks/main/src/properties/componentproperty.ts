@@ -126,14 +126,11 @@ type FieldsProperty = {
 } & FieldPropertyBase
 
 // FIELD_VALUE
-type FieldValuePropertyBase = {
-	wireProperty?: string
-	fieldProperty?: string
-} & BaseProperty
-
 type FieldValueProperty = {
+	wireProperty: string
+	fieldProperty: string
 	type: "FIELD_VALUE"
-} & FieldValuePropertyBase
+} & BaseProperty
 
 type CollectionFieldPropertyBase = {
 	collectionName?: string

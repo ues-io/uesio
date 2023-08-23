@@ -66,6 +66,7 @@ class Field {
 		this.source.type === "FILE"
 	isRequired = () => this.source.required === true
 	getSubFields = () => this.source.subfields
+	getSubType = () => this.source.subtype
 }
 
 export default Field
