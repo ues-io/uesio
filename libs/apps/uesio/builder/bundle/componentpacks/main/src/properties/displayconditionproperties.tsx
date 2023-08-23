@@ -139,13 +139,48 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 				value: "NOT_IN",
 			},
 		],
-
 		displayConditions: [
 			{
 				field: "type",
 				operator: "IN",
 				values: ["fieldValue", "paramValue"],
 				type: "fieldValue",
+			},
+		],
+		onChange: [
+			{
+				// If operator is NOW a multi-value operator, clear out "value"
+				conditions: [
+					{
+						type: "fieldValue",
+						field: "operator",
+						operator: "IN",
+						values: ["IN", "NOT_IN"],
+					},
+				],
+				updates: [
+					// Set "value" to undefined
+					{
+						field: "value",
+					},
+				],
+			},
+			{
+				// If operator is now a single-value operator, clear out "values"
+				conditions: [
+					{
+						type: "fieldValue",
+						field: "operator",
+						operator: "NOT_IN",
+						values: ["IN", "NOT_IN"],
+					},
+				],
+				updates: [
+					// Set "values" to undefined
+					{
+						field: "values",
+					},
+				],
 			},
 		],
 	},
@@ -164,7 +199,9 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 	},
 	{
 		name: "value",
-		type: "TEXT",
+		type: "FIELD_VALUE",
+		wireProperty: "wire",
+		fieldProperty: "field",
 		label: "Value",
 		displayConditions: [
 			{
@@ -183,9 +220,10 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 	},
 	{
 		name: "values",
-		type: "LIST",
+		type: "FIELD_VALUES",
 		label: "Values",
-		subtype: "TEXT",
+		wireProperty: "wire",
+		fieldProperty: "field",
 		displayConditions: [
 			{
 				field: "type",
