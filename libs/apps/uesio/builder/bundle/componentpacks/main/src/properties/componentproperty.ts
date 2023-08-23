@@ -125,9 +125,10 @@ type FieldsProperty = {
 	type: "FIELDS"
 } & FieldPropertyBase
 
-// FIELD_VALUE needs a FIELD_METADATA property to exist for it to work
+// FIELD_VALUE
 type FieldValuePropertyBase = {
-	fieldMetadataProp?: string
+	wireProperty?: string
+	fieldProperty?: string
 } & BaseProperty
 
 type FieldValueProperty = {

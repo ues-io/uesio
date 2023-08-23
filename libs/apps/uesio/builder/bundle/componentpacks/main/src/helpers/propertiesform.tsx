@@ -1,4 +1,11 @@
-import { api, component, context, definition, wire } from "@uesio/ui"
+import {
+	api,
+	collection,
+	component,
+	context,
+	definition,
+	wire,
+} from "@uesio/ui"
 import { get as getDef, set as setDef, changeKey } from "../api/defapi"
 import set from "lodash/set"
 import get from "lodash/get"
@@ -244,6 +251,8 @@ const getWireFieldFromPropertyDef = (
 	let wireId: string | undefined
 	let wireDefinition: wire.WireDefinition | undefined
 	let wireField
+	let fieldMetadata: collection.Field | undefined
+
 	switch (type) {
 		case "SELECT":
 			return getBaseWireFieldDef(def, "SELECT", {
@@ -289,21 +298,25 @@ const getWireFieldFromPropertyDef = (
 				}
 			)
 		case "FIELD_VALUE":
-			console.log({ def, currentValue })
+			wireId =
+				def.wireProperty &&
+				(getObjectProperty(currentValue, def.wireProperty) as string)
+			wireField =
+				def.fieldProperty &&
+				(getObjectProperty(currentValue, def.fieldProperty) as string)
+
+			fieldMetadata = getFieldMetadata(
+				context,
+				wireId || "",
+				wireField || ""
+			)
 
 			return getBaseWireFieldDef(
 				def,
-				getObjectProperty(
-					currentValue,
-					def.fieldMetadataProp || ""
-				) as wire.FieldType,
+				fieldMetadata?.getType() || "TEXT",
 				{
-					//TO-DO maybe we can force fieldDisplayType name in the FIELD_METADATA itself
-					//so it's easy to access it
-					selectlist: getObjectProperty(
-						currentValue,
-						"fieldDisplayType->selectlist"
-					),
+					selectlist: fieldMetadata?.getSelectMetadata(),
+					subtype: fieldMetadata?.source.subtype,
 				}
 			)
 		case "MAP":
