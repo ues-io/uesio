@@ -16,10 +16,10 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     themes:
-      collection: uesio/studio.allmetadata
+      collection: uesio/studio.theme
       conditions:
-        - field: uesio/studio.type
-          value: themes
+        - field: uesio/studio.allmetadata
+          value: true
         - field: uesio/studio.item
           value: $Param{namespace}.$Param{themename}
   # Components are how we describe the layout of our view

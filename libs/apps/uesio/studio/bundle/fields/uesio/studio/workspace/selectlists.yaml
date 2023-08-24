@@ -2,6 +2,6 @@ name: selectlists
 type: REFERENCEGROUP
 label: Select lists
 referenceGroup:
-  collection: uesio/studio.selectlist
-  field: uesio/studio.workspace
+  collection: selectlist
+  field: workspace
   onDelete: CASCADE

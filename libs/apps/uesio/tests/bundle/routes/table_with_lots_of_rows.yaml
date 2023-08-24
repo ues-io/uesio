@@ -1,4 +1,4 @@
 name: table_with_lots_of_rows
 path: table_with_lots_of_rows
-view: uesio/tests.table_with_lots_of_rows
+view: table_with_lots_of_rows
 title: Performance test of a table with 1000 rows displayed

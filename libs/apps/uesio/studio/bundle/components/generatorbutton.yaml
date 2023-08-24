@@ -6,9 +6,16 @@ utilities:
   - uesio/builder.multimetadatapicker
   - uesio/io.button
   - uesio/io.dialog
+  - uesio/io.field
+  - uesio/io.textfield
+  - uesio/io.dialogplain
+  - uesio/io.dynamicform
+  - uesio/io.group
+  - uesio/io.titlebar
 variants:
   - uesio/io.button:uesio/io.secondary
   - uesio/io.button:uesio/io.primary
   - uesio/io.customselectfield:uesio/io.default
   - uesio/io.menu:uesio/io.default
   - uesio/builder.iconlabel:uesio/builder.default
+  - uesio/io.titlebar:uesio/io.dialog

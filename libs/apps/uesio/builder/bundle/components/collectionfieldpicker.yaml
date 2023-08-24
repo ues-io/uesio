@@ -1,0 +1,8 @@
+name: collectionfieldpicker
+pack: main
+entrypoint: components/collectionfieldpicker/collectionfieldpicker
+utilities:
+  - uesio/io.textfield
+  - uesio/io.fieldwrapper
+  - uesio/io.popper
+  - uesio/io.grid

@@ -3,6 +3,7 @@ package adapt
 import (
 	"errors"
 	"fmt"
+	"github.com/thecloudmasters/uesio/pkg/constant"
 	"strings"
 )
 
@@ -15,7 +16,7 @@ func (i *Item) SetField(fieldName string, value interface{}) error {
 
 func (i *Item) GetField(fieldName string) (interface{}, error) {
 	// Split the field name into tokens
-	names := strings.Split(fieldName, "->")
+	names := strings.Split(fieldName, constant.RefSep)
 	if len(names) == 1 {
 		value, ok := (*i)[fieldName]
 		if !ok {

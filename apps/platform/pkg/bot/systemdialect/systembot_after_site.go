@@ -24,7 +24,9 @@ func runSiteAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, ses
 			return err
 		}
 
-		publicProfile := siteAdminSession.GetPublicProfile()
+		// NOTE: DO NOT USE siteAdminSession.GetPublicProfile(), as this will be on the wrong site!!
+		// We need to get the PublicProfile of the site whose admin context we are temporarily assuming
+		publicProfile := siteAdminSession.GetSiteAdmin().GetAppBundle().PublicProfile
 
 		if publicProfile == "" {
 			publicProfile = defaultSitePublicProfile

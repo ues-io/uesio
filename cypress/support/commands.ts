@@ -26,7 +26,7 @@
 
 import { getAppBasePath, getWorkspaceBasePath } from "./paths"
 
-const baseUrl = Cypress.env("studio_base_url")
+const baseUrl = Cypress.config().baseUrl
 const useMockLogin = Cypress.env("use_mock_login")
 const automationUsername = Cypress.env("automation_username")
 const automationPassword = Cypress.env("automation_password")
@@ -55,9 +55,8 @@ Cypress.Commands.add("login", () => {
 // Gets an element of a given type whose id contains a given string
 Cypress.Commands.add(
 	"getByIdFragment",
-	(elementType: string, idFragment: string, timeout?: number) => {
+	(elementType: string, idFragment: string, timeout?: number) =>
 		cy.get(idContainsSelector(elementType, idFragment), { timeout })
-	}
 )
 
 Cypress.Commands.add(
@@ -198,7 +197,7 @@ declare global {
 				elementType: string,
 				id: string,
 				timeout?: number
-			): Chainable<void>
+			): Chainable
 			setReferenceField(
 				idFragment: string,
 				value: string
@@ -232,7 +231,10 @@ function createWorkspaceInApp(workspaceName: string, appName: string) {
 	cy.clickButton("uesio/io.button:add-workspace")
 	cy.typeInInput("workspace-name", workspaceName)
 	cy.clickButton("uesio/io.button:save-workspace")
-	cy.url().should("contain", getWorkspaceBasePath(appName, workspaceName))
+	cy.url().should(
+		"eq",
+		Cypress.config().baseUrl + getWorkspaceBasePath(appName, workspaceName)
+	)
 }
 
 function createApp(appName: string) {
@@ -240,7 +242,7 @@ function createApp(appName: string) {
 	cy.typeInInput("new-app-name", appName)
 	cy.typeInInput("new-app-description", "E2E Test App")
 	cy.clickButton("save-new-app")
-	cy.url().should("contain", getAppBasePath(appName))
+	cy.url().should("eq", Cypress.config().baseUrl + getAppBasePath(appName))
 }
 
 const login = () => {

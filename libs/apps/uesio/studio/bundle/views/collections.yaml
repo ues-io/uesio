@@ -15,10 +15,10 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     allcollections:
-      collection: uesio/studio.allmetadata
+      collection: uesio/studio.collection
       conditions:
-        - field: uesio/studio.type
-          value: collections
+        - field: uesio/studio.allmetadata
+          value: true
     newcollection:
       collection: uesio/studio.collection
       fields:

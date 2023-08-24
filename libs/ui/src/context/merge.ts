@@ -186,7 +186,8 @@ const handlers: Record<MergeType, MergeHandler> = {
 				site?.domain
 			}`
 		}
-		return site?.[expression as keyof SiteState] || ""
+		if (expression === "dependencies") return ""
+		return site?.[expression as keyof Omit<SiteState, "dependencies">] || ""
 	},
 	StaticFile: (expression) => getStaticAssetsPath() + "/static" + expression,
 	Label: (expression, context) => {

@@ -20,8 +20,12 @@ func getFieldNameWithAlias(fieldMetadata *adapt.FieldMetadata) string {
 	return fieldName + " AS \"" + fieldMetadata.GetFullName() + "\""
 }
 
+func castFieldToText(fieldAlias string) string {
+	return fmt.Sprintf("%s::text", fieldAlias)
+}
+
 func getIDFieldName(tableAlias string) string {
-	return fmt.Sprintf("%s::text", getAliasedName("id", tableAlias))
+	return castFieldToText(getAliasedName("id", tableAlias))
 }
 
 func getFieldName(fieldMetadata *adapt.FieldMetadata, tableAlias string) string {
@@ -33,13 +37,13 @@ func getFieldName(fieldMetadata *adapt.FieldMetadata, tableAlias string) string 
 	case adapt.UNIQUE_KEY_FIELD:
 		return getAliasedName("uniquekey", tableAlias)
 	case adapt.OWNER_FIELD:
-		return getAliasedName("owner", tableAlias)
+		return castFieldToText(getAliasedName("owner", tableAlias))
 	case adapt.CREATED_BY_FIELD:
-		return getAliasedName("createdby", tableAlias)
+		return castFieldToText(getAliasedName("createdby", tableAlias))
 	case adapt.CREATED_AT_FIELD:
 		return fmt.Sprintf("date_part('epoch',%s)", getAliasedName("createdat", tableAlias))
 	case adapt.UPDATED_BY_FIELD:
-		return getAliasedName("updatedby", tableAlias)
+		return castFieldToText(getAliasedName("updatedby", tableAlias))
 	case adapt.UPDATED_AT_FIELD:
 		return fmt.Sprintf("date_part('epoch',%s)", getAliasedName("updatedat", tableAlias))
 	case adapt.DYNAMIC_COLLECTION_FIELD:
@@ -71,7 +75,7 @@ func getAliasedName(name, alias string) string {
 func (c *Connection) Load(op *adapt.LoadOp, session *sess.Session) error {
 
 	metadata := c.metadata
-	userTokens := session.GetTokens()
+	userTokens := session.GetFlatTokens()
 	db := c.GetClient()
 
 	collectionMetadata, err := metadata.GetCollection(op.CollectionName)
@@ -121,19 +125,15 @@ func (c *Connection) Load(op *adapt.LoadOp, session *sess.Session) error {
 				return err
 			}
 
-			tenantID := session.GetTenantIDForCollection(challengeMetadata.GetFullName())
-
-			refCollectionName := challengeMetadata.GetFullName()
-
 			newTable := currentTable + "sub"
 
 			accessFieldString := getFieldName(fieldMetadata, currentTable)
 			idFieldString := getIDFieldName(newTable)
 
-			newTableCollection := getAliasedName("collection", newTable)
-			newTableTenant := getAliasedName("tenant", newTable)
+			subBuilder := builder.getSubBuilder("")
+			addTenantConditions(challengeMetadata, metadata, subBuilder, newTable, session)
 
-			joins = append(joins, fmt.Sprintf("LEFT OUTER JOIN data as \"%s\" ON %s = %s AND %s = '%s' AND %s = '%s'\n", newTable, accessFieldString, idFieldString, newTableCollection, refCollectionName, newTableTenant, tenantID))
+			joins = append(joins, fmt.Sprintf("LEFT OUTER JOIN data as \"%s\" ON %s = %s AND %s\n", newTable, accessFieldString, idFieldString, subBuilder.String()))
 
 			accessFieldID = getAliasedName("id", newTable)
 

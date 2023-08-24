@@ -1,7 +1,7 @@
 name: siteusage_collection_load
 path: app/{app:\w*\/\w*}/site/{sitename}/usage/collections/load
-view: uesio/studio.usage
-theme: uesio/studio.default
+view: usage
+theme: default
 title: Site Collection Load Usage
 params:
   metadatatype: COLLECTION

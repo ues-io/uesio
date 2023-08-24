@@ -6,6 +6,7 @@ import user from "../bands/user"
 import session from "../bands/session"
 import component from "../bands/component"
 import wire from "../bands/wire"
+import file from "../bands/file"
 import site, { SiteState } from "../bands/site"
 import panel from "../bands/panel"
 import viewdef from "../bands/viewdef"
@@ -18,15 +19,16 @@ import notification from "../bands/notification"
 import { RouteState } from "../bands/route/types"
 import { UserState } from "../bands/user/types"
 import { SessionState } from "../bands/session/types"
-import { PlainViewDef } from "../definition/viewdef"
+import { ViewMetadata } from "../definition/ViewMetadata"
 import { ThemeState } from "../definition/theme"
 import { ComponentVariant } from "../definition/componentvariant"
 import { LabelState } from "../definition/label"
 import { ConfigValueState } from "../definition/configvalue"
 import { FeatureFlagState } from "../definition/featureflag"
-import { PlainWire } from "../bands/wire/types"
+import { ServerWire } from "../bands/wire/types"
 import { PlainCollection } from "../bands/collection/types"
 import { attachDefToWires } from "../bands/route/utils"
+import { FileState } from "../definition/file"
 
 type InitialState = {
 	route?: RouteState
@@ -34,13 +36,14 @@ type InitialState = {
 	session?: SessionState
 	site?: SiteState
 	theme?: EntityState<ThemeState>
-	viewdef?: EntityState<PlainViewDef>
+	viewdef?: EntityState<ViewMetadata>
 	componentvariant?: EntityState<ComponentVariant>
 	label?: EntityState<LabelState>
 	configvalue?: EntityState<ConfigValueState>
 	featureflag?: EntityState<FeatureFlagState>
-	wire?: EntityState<PlainWire>
+	wire?: EntityState<ServerWire>
 	collection?: EntityState<PlainCollection>
+	file?: EntityState<FileState>
 }
 
 let store: ReturnType<typeof create>
@@ -56,6 +59,7 @@ const create = (initialState: InitialState) => {
 		reducer: {
 			collection,
 			component,
+			file,
 			route,
 			user,
 			session,

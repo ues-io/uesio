@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"errors"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -14,7 +13,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -56,7 +54,7 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 	}
 
 	// Unfortunately, we have to read the whole thing into memory
-	bodybytes, err := ioutil.ReadAll(body)
+	bodybytes, err := io.ReadAll(body)
 	if err != nil {
 		return err
 	}
@@ -72,7 +70,7 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 
 	var by *meta.BundleDef
 
-	uploadOps := []filesource.FileUploadOp{}
+	uploadOps := []*filesource.FileUploadOp{}
 
 	// Read all the files from zip archive
 	for _, zipFile := range zipReader.File {
@@ -151,8 +149,6 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 				return errors.New("Reading File: " + collectionItem.GetKey() + " : " + err.Error())
 			}
 
-			collectionItem.SetField("uesio/studio.workspace", workspace)
-
 			continue
 		}
 
@@ -170,13 +166,11 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 				return err
 			}
 
-			uploadOps = append(uploadOps, filesource.FileUploadOp{
-				Data: f,
-				Details: &fileadapt.FileDetails{
-					Path:            strings.TrimPrefix(path, attachableItem.GetBasePath()+"/"),
-					CollectionID:    collection.GetName(),
-					RecordUniqueKey: collectionItem.GetDBID(workspace.UniqueKey),
-				},
+			uploadOps = append(uploadOps, &filesource.FileUploadOp{
+				Data:            f,
+				Path:            strings.TrimPrefix(path, attachableItem.GetBasePath()+"/"),
+				CollectionID:    collection.GetName(),
+				RecordUniqueKey: collectionItem.GetDBID(workspace.UniqueKey),
 			})
 			defer f.Close()
 		}
@@ -253,11 +247,16 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 		)
 	}
 
+	params := map[string]string{
+		"workspaceid": workspace.ID,
+	}
+
 	for _, element := range ORDERED_ITEMS {
 		if dep[element] != nil {
 			saves = append(saves, datasource.PlatformSaveRequest{
 				Collection: dep[element],
 				Options:    saveOptions,
+				Params:     params,
 			})
 		}
 	}
@@ -272,7 +271,7 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 		return err
 	}
 
-	err = applyDeploy(saves, uploadOps, connection, session)
+	err = applyDeploy(saves, uploadOps, connection, session, params)
 	if err != nil {
 		rollbackError := connection.RollbackTransaction()
 		if rollbackError != nil {
@@ -295,16 +294,17 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 
 func applyDeploy(
 	saves []datasource.PlatformSaveRequest,
-	fileops []filesource.FileUploadOp,
+	fileops []*filesource.FileUploadOp,
 	connection adapt.Connection,
 	session *sess.Session,
+	params map[string]string,
 ) error {
 	err := datasource.PlatformSaves(saves, connection, session.RemoveWorkspaceContext())
 	if err != nil {
 		return err
 	}
 
-	_, err = filesource.Upload(fileops, connection, session.RemoveWorkspaceContext())
+	_, err = filesource.Upload(fileops, connection, session.RemoveWorkspaceContext(), params)
 	if err != nil {
 		return err
 	}

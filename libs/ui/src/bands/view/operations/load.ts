@@ -5,7 +5,8 @@ import { runMany } from "../../../signals/signals"
 import { getCurrentState } from "../../../store/store"
 import { selectWire } from "../../wire"
 import { useEffect, useRef } from "react"
-import { ViewDefinition, ViewEventsDef } from "../../../definition/viewdef"
+import { ViewEventsDef } from "../../../definition/view"
+import { ViewDefinition } from "../../../definition/ViewDefinition"
 
 const runEvents = async (
 	events: ViewEventsDef | undefined,

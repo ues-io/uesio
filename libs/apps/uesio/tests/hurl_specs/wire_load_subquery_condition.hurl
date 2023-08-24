@@ -63,8 +63,8 @@ main.collection = $1 AND
 main.tenant = $2 AND
 main.fields->>'uesio/tests.user' IN (SELECT subquery.id::text FROM data as "subquery" WHERE (subquery.collection = $3 AND
 subquery.tenant = $4 AND
-subquery.fields->>'uesio/core.username' IN ($5))) AND
+subquery.fields->>'uesio/core.username' = ANY ($5))) AND
 main.fields->>'uesio/tests.text' is distinct from $6
 ORDER BY main.id::text asc
 LIMIT 501```
-jsonpath "$.wires[0].data[*]['uesio/tests.text']" == "text 2"
+jsonpath "$.wires[0].data[0]['uesio/tests.text']" == "text 2"

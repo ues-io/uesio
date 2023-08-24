@@ -1,5 +1,0 @@
-name: account
-type: REFERENCE
-label: Account
-reference:
-  collection: uesio/crm.account

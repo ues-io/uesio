@@ -1,10 +1,11 @@
-import { definition, component, wire } from "@uesio/ui"
+import { definition, component, context, wire } from "@uesio/ui"
 import { useState, useRef } from "react"
-import { get } from "../../../../api/defapi"
+import { get, remove, set } from "../../../../api/defapi"
 import { useSelectedPath } from "../../../../api/stateapi"
 import BuildActionsArea from "../../../../helpers/buildactionsarea"
 import FieldPropTag from "./fieldproptag"
 import FieldPicker from "./fieldpicker"
+import { FullPath } from "../../../../api/path"
 
 const FieldsProperties: definition.UC = (props) => {
 	const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
@@ -18,6 +19,19 @@ const FieldsProperties: definition.UC = (props) => {
 	const selectedPath = useSelectedPath(context)
 	const wirePath = selectedPath.trimToSize(2)
 	const fieldsPath = wirePath.addLocal("fields")
+	const onSelect = (ctx: context.Context, path: FullPath) =>
+		set(ctx, fieldsPath.merge(path), {})
+	const onUnselect = (ctx: context.Context, path: FullPath) =>
+		remove(ctx, fieldsPath.merge(path))
+	const isSelected = (
+		ctx: context.Context,
+		path: FullPath,
+		fieldId: string
+	) => {
+		const joinedPath = fieldsPath.merge(path).addLocal(fieldId)
+		const wireField = get(ctx, joinedPath) as wire.WireFieldDefinitionMap
+		return wireField !== undefined
+	}
 
 	// TODO: Handle view only wires here too.
 	const wireDef = get(context, wirePath) as wire.RegularWireDefinition
@@ -37,8 +51,11 @@ const FieldsProperties: definition.UC = (props) => {
 					<FieldPicker
 						context={context}
 						baseCollectionKey={wireDef.collection}
-						path={fieldsPath}
 						onClose={() => setShowPopper(false)}
+						onSelect={onSelect}
+						onUnselect={onUnselect}
+						allowMultiselect={true}
+						isSelected={isSelected}
 					/>
 				</Popper>
 			)}
@@ -73,7 +90,7 @@ const FieldsProperties: definition.UC = (props) => {
 						key={fieldId}
 						path={fieldsPath.addLocal(fieldId)}
 						selectedPath={selectedPath}
-						fieldDef={wireDef.fields[fieldId]}
+						fieldDef={wireDef.fields?.[fieldId]}
 						context={context}
 					/>
 				))}

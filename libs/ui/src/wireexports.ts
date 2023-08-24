@@ -12,6 +12,7 @@ import {
 import Wire from "./bands/wire/class"
 import {
 	FieldMetadata,
+	FieldMetadataPropertyPath,
 	FieldType,
 	SelectOption,
 	SelectListMetadata,
@@ -34,16 +35,19 @@ import {
 import { SaveResponse, SaveResponseBatch, SaveError } from "./load/saveresponse"
 import { LoadResponseBatch } from "./load/loadresponse"
 import { LoadRequestField } from "./load/loadrequest"
-import { PlainWire } from "./bands/wire/types"
+import { PlainWire, OrderState, CollectionKey } from "./bands/wire/types"
 
 export type {
+	CollectionKey,
 	ConditionOperators,
 	FieldMetadata,
+	FieldMetadataPropertyPath,
 	FieldType,
 	FieldValue,
 	LoadRequestField,
 	LoadResponseBatch,
 	LookupConditionState,
+	OrderState,
 	ParamConditionState,
 	PlainFieldValue,
 	PlainWire,

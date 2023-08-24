@@ -2,12 +2,13 @@ package systemdialect
 
 import (
 	"errors"
+	"strconv"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
-	"strconv"
 )
 
 func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
@@ -15,17 +16,21 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.
 	appID := session.GetContextAppName()
 
 	if appID == "" {
-		return nil, errors.New("Error creating a new bundle, missing app")
+		return nil, errors.New("cannot create a bundle without an app in context")
 	}
 
 	if bundlestore.IsSystemBundle(appID) {
-		return nil, errors.New("Error creating a new bundle, the providede app is a system app")
+		return nil, errors.New("cannot create a bundle for a system app")
 	}
 
 	workspace := session.GetWorkspace()
 
 	if workspace == nil {
-		return nil, errors.New("Error creating a new bundle, missing workspace")
+		return nil, errors.New("cannot create a new bundle as a non-studio user")
+	}
+
+	if !session.GetSitePermissions().HasNamedPermission("uesio/studio.workspace_admin") {
+		return nil, errors.New("you must be a workspace admin to create bundles")
 	}
 
 	var app meta.App

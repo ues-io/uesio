@@ -16,23 +16,11 @@ definition:
           value: $Param{app}:$Param{workspacename}
     featureflags:
       collection: uesio/studio.featureflag
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.type:
-        uesio/studio.defaultvalue:
-        uesio/studio.min:
-        uesio/studio.max:
-        uesio/studio.validfororgs:
-        uesio/studio.workspace:
       conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
-        - field: uesio/studio.name
-          valueSource: PARAM
-          param: featureflagname
+        - field: uesio/studio.allmetadata
+          value: true
+        - field: uesio/studio.item
+          value: $Param{namespace}.$Param{featureflagname}
       events:
         - type: onChange
           fields:
@@ -44,10 +32,10 @@ definition:
             # Clear out the value of min/max
             - signal: wire/UPDATE_RECORD
               field: uesio/studio.min
-              value: 0
+              value: null
             - signal: wire/UPDATE_RECORD
               field: uesio/studio.max
-              value: 0
+              value: null
             # Set a checkbox-appropriate default value
             - signal: wire/UPDATE_RECORD
               field: uesio/studio.defaultvalue
@@ -63,6 +51,13 @@ definition:
             - signal: wire/UPDATE_RECORD
               field: uesio/studio.defaultvalue
               value: "0"
+            # Set default value of min/max to 0
+            - signal: wire/UPDATE_RECORD
+              field: uesio/studio.min
+              value: 0
+            - signal: wire/UPDATE_RECORD
+              field: uesio/studio.max
+              value: 0
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -79,6 +74,7 @@ definition:
                       itemType: featureflags
                       itemIcon: tune
                       itemName: $Param{featureflagname}
+                      itemNameSpace: $Param{namespace}
           - uesio/io.griditem:
               uesio.variant: uesio/studio.leftbar
               components:
@@ -99,12 +95,21 @@ definition:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.main
                           title: Feature Flag - ${uesio/studio.name}
+                          subtitle: $Param{namespace}
                           actions:
                             - uesio/io.group:
                                 components:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: $Label{uesio/io.edit}
+                                      uesio.display:
+                                        - type: fieldMode
+                                          mode: READ
+                                        - type: paramValue
+                                          param: app
+                                          field: uesio/core.dynamiccollection
+                                          operator: EQUALS
+                                          value: $Param{namespace}
                                       signals:
                                         - signal: component/CALL
                                           component: uesio/io.list
@@ -112,28 +117,53 @@ definition:
                                           targettype: specific
                                           componentid: featureflagsList
                                   - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
+                                      uesio.variant: uesio/io.primary
                                       text: $Label{uesio/io.save}
+                                      uesio.display:
+                                        - type: wireHasChanges
+                                          wire: featureflags
+                                      hotkey: "meta+s"
                                       signals:
                                         - signal: wire/SAVE
                                           wires:
-                                            - "featureflags"
+                                            - featureflags
+                                        - signal: component/CALL
+                                          component: uesio/io.list
+                                          componentsignal: SET_READ_MODE
+                                          targettype: specific
+                                          componentid: featureflagsList
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: $Label{uesio/io.cancel}
+                                      uesio.display:
+                                        - type: fieldMode
+                                          mode: EDIT
                                       signals:
                                         - signal: wire/CANCEL
-                                          wire: "featureflags"
+                                          wire: featureflags
+                                        - signal: component/CALL
+                                          component: uesio/io.list
+                                          componentsignal: SET_READ_MODE
+                                          targettype: specific
+                                          target: featureflagsList
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: $Label{uesio/io.delete}
+                                      uesio.display:
+                                        - type: fieldMode
+                                          mode: READ
+                                        - type: paramValue
+                                          param: app
+                                          field: uesio/core.dynamiccollection
+                                          operator: EQUALS
+                                          value: $Param{namespace}
                                       signals:
                                         - signal: wire/MARK_FOR_DELETE
                                         - signal: wire/SAVE
                                           wires:
-                                            - "featureflags"
-                                        - signal: "route/NAVIGATE"
-                                          path: "app/$Param{app}/workspace/$Param{workspacename}/featureflags"
+                                            - featureflags
+                                        - signal: route/NAVIGATE
+                                          path: app/$Param{app}/workspace/$Param{workspacename}/featureflags
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           components:

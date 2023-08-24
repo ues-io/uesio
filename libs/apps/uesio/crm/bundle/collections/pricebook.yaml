@@ -1,5 +1,0 @@
-name: pricebook
-public: true
-label: pricebook
-pluralLabel: pricebooks
-nameField: uesio/crm.name

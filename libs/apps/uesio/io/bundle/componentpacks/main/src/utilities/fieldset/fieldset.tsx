@@ -1,7 +1,6 @@
-import { FC } from "react"
 import { definition, styles } from "@uesio/ui"
 
-interface Props extends definition.UtilityProps {
+interface Props {
 	fieldLabel: string
 	disabled: boolean
 }
@@ -11,7 +10,7 @@ const StyleDefaults = Object.freeze({
 	legend: ["hidden"],
 })
 
-const Fieldset: FC<Props> = (props) => {
+const Fieldset: definition.UtilityComponent<Props> = (props) => {
 	const { children, fieldLabel, disabled } = props
 
 	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)

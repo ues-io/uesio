@@ -1,5 +1,13 @@
 import { useRef, useState } from "react"
-import { api, param, definition, component, wire } from "@uesio/ui"
+import {
+	api,
+	param,
+	definition,
+	component,
+	hooks,
+	wire,
+	metadata,
+} from "@uesio/ui"
 import { FloatingPortal } from "@floating-ui/react"
 import {
 	getParamValues,
@@ -9,6 +17,8 @@ import {
 type GeneratorButtonDefinition = {
 	generator: string
 	label: string
+	buttonVariant?: metadata.MetadataKey
+	hotkey?: string
 }
 
 interface FormProps {
@@ -90,12 +100,17 @@ const GeneratorForm: definition.UtilityComponent<FormProps> = (props) => {
 	const onClick = async () => {
 		const result = wireRef.current?.getFirstRecord()
 		if (!result) return
-		await api.bot.callGenerator(
+		const botResp = await api.bot.callGenerator(
 			context,
 			genNamespace,
 			genName,
 			getParamValues(params, result)
 		)
+		if (!botResp.success) {
+			api.notification.addError(botResp.error, context.deleteWorkspace())
+			return
+		}
+
 		setOpen(false)
 		return api.signal.run(
 			{
@@ -140,20 +155,27 @@ const GeneratorButton: definition.UC<GeneratorButtonDefinition> = (props) => {
 	const Button = component.getUtility("uesio/io.button")
 
 	const { context, definition } = props
-	const { label, generator } = definition
+	const {
+		buttonVariant = "uesio/io.secondary",
+		hotkey,
+		label,
+		generator,
+	} = definition
 
 	const workspaceContext = context.getWorkspace()
 	if (!workspaceContext) throw new Error("No Workspace Context Provided")
 
 	const [open, setOpen] = useState<boolean>(false)
+	const onClick = () => setOpen(true)
+	hooks.useHotKeyCallback(hotkey, onClick, true, [open])
 
 	return (
 		<>
 			<Button
 				context={context}
-				variant="uesio/io.secondary"
+				variant={buttonVariant}
 				label={label}
-				onClick={() => setOpen(true)}
+				onClick={onClick}
 			/>
 			{open && (
 				<GeneratorForm

@@ -1,7 +1,6 @@
-import { FunctionComponent } from "react"
 import { definition, component, api, styles, wire } from "@uesio/ui"
 
-interface Props extends definition.UtilityProps {
+interface Props {
 	namespace: string
 	value: wire.PlainWireRecord
 	setValue: (value: wire.PlainWireRecord) => void
@@ -11,7 +10,7 @@ const StyleDefaults = Object.freeze({
 	root: ["mt-10"],
 })
 
-const TranslationItem: FunctionComponent<Props> = (props) => {
+const TranslationItem: definition.UtilityComponent<Props> = (props) => {
 	const MapField = component.getUtility("uesio/io.mapfield")
 	const TitleBar = component.getUtility("uesio/io.titlebar")
 	const { context, namespace, value, setValue } = props

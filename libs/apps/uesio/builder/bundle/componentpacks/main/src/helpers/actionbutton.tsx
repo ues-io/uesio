@@ -1,7 +1,7 @@
-import { SyntheticEvent, FunctionComponent } from "react"
+import { SyntheticEvent } from "react"
 import { definition, component } from "@uesio/ui"
 
-interface Props extends definition.UtilityProps {
+interface Props {
 	title: string
 	icon: string
 	onClick?: (event: SyntheticEvent) => void
@@ -9,7 +9,7 @@ interface Props extends definition.UtilityProps {
 	className?: string
 }
 
-const ActionButton: FunctionComponent<Props> = (props) => {
+const ActionButton: definition.UtilityComponent<Props> = (props) => {
 	const IconButton = component.getUtility("uesio/io.iconbutton")
 	const { title, onClick, icon, disabled, context, className, id } = props
 

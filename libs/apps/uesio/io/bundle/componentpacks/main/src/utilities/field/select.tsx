@@ -1,4 +1,3 @@
-import { FunctionComponent } from "react"
 import {
 	definition,
 	styles,
@@ -9,7 +8,7 @@ import {
 } from "@uesio/ui"
 import TextField from "./text"
 
-interface SelectFieldProps extends definition.UtilityProps {
+interface SelectFieldProps {
 	setValue: (value: wire.FieldValue) => void
 	value: wire.FieldValue
 	fieldMetadata: collection.Field
@@ -23,7 +22,7 @@ const StyleDefaults = Object.freeze({
 	input: [],
 })
 
-const SelectField: FunctionComponent<SelectFieldProps> = (props) => {
+const SelectField: definition.UtilityComponent<SelectFieldProps> = (props) => {
 	const { readonly, setValue, mode, options, id, context } = props
 	const value = (props.value as string) || ""
 

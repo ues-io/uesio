@@ -50,7 +50,8 @@ const Route: UtilityComponent = (props) => {
 
 	useEffect(() => {
 		window.onpopstate = (event: PopStateEvent) => {
-			const { path, workspace, namespace, title, tags } = event.state
+			const { workspace, namespace, title, tags } = event.state
+			let { path } = event.state
 
 			if (!path || !namespace) {
 				// In some cases, our path and namespace aren't available in the history state.
@@ -64,6 +65,12 @@ const Route: UtilityComponent = (props) => {
 				navigateContext = navigateContext.setWorkspace(workspace)
 			if (site) navigateContext = navigateContext.setSite(site)
 
+			// If there are params in the route, then we need to add them to our path,
+			// as long as our path doesn't already have a ? in it.
+			if (route?.params && path.indexOf("?") === -1) {
+				path = `${path}?${new URLSearchParams(route.params).toString()}`
+			}
+
 			navigate(
 				navigateContext,
 				{
@@ -75,6 +82,7 @@ const Route: UtilityComponent = (props) => {
 				true
 			)
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [site])
 
 	// Quit rendering early if we don't have our route yet
@@ -166,6 +174,7 @@ const Route: UtilityComponent = (props) => {
 					rowGap: "10px",
 					marginLeft: "2em",
 					width: "350px",
+					zIndex: "1",
 				}}
 			>
 				<NotificationArea context={props.context} />

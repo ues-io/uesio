@@ -6,6 +6,13 @@ on:
     tags-ignore:
       - "*"
 
+# Ensure that only the latest push to a given branch is run,
+# and any previous builds on the branch are cancelled automatically
+# (to save money on Github Actions execution time!)
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build_and_test:
     runs-on: ubuntu-latest

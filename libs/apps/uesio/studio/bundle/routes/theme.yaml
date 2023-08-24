@@ -1,5 +1,5 @@
 name: theme
 path: app/{app:\w*\/\w*}/workspace/{workspacename}/themes/{namespace:\w*\/\w*}/{themename}
-view: uesio/studio.theme
-theme: uesio/studio.default
+view: theme
+theme: default
 title: "Theme: $Param{themename}"

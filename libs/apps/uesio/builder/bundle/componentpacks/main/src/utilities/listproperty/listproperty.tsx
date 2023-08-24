@@ -1,17 +1,14 @@
 import { definition, wire, component } from "@uesio/ui"
-import { ReactNode } from "react"
 import { FullPath } from "../../api/path"
 import { PropertiesPanelSection } from "../../api/propertysection"
 import {
 	StringOrItemPropertyGetter,
 	PropertiesListOrGetter,
 } from "../listpropertyitem/listpropertyitem"
-
-interface ListAction {
-	label: string
-	icon?: string
-	action: () => void
-}
+import {
+	ListPropertyAction,
+	ListPropertyItemChildrenFunction,
+} from "../../properties/componentproperty"
 
 type Props = {
 	path: FullPath
@@ -20,10 +17,10 @@ type Props = {
 	itemPropertiesPanelTitle: StringOrItemPropertyGetter
 	itemProperties?: PropertiesListOrGetter
 	itemPropertiesSections?: PropertiesPanelSection[]
-	itemChildren?: (item: wire.PlainWireRecord, index: number) => ReactNode
+	itemChildren?: ListPropertyItemChildrenFunction
 	items: definition.DefinitionMap[]
-	actions: ListAction[]
-} & definition.UtilityProps
+	actions: ListPropertyAction[]
+}
 
 const ListProperty: definition.UtilityComponent<Props> = (props) => {
 	const {
@@ -66,7 +63,13 @@ const ListProperty: definition.UtilityComponent<Props> = (props) => {
 								/>
 							}
 							label={label}
-							onClick={action}
+							onClick={() => {
+								action?.({
+									context,
+									path,
+									items,
+								})
+							}}
 						/>
 					)
 				})}

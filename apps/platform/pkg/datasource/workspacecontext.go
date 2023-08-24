@@ -2,6 +2,7 @@ package datasource
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -11,7 +12,7 @@ import (
 
 func addWorkspaceContext(workspace *meta.Workspace, session *sess.Session, connection adapt.Connection) error {
 	site := session.GetSite()
-	perms := session.GetPermissions()
+	perms := session.GetSitePermissions()
 
 	// 1. Make sure we're in a site that can read/modify workspaces
 	if site.GetAppFullName() != "uesio/studio" {
@@ -26,46 +27,90 @@ func addWorkspaceContext(workspace *meta.Workspace, session *sess.Session, conne
 		return errors.New("your profile does not allow you to work with workspaces")
 	}
 
-	workspace.Permissions = &meta.PermissionSet{
-		AllowAllViews:       true,
-		AllowAllRoutes:      true,
-		AllowAllFiles:       true,
-		AllowAllCollections: true,
+	results := &adapt.Collection{}
+
+	// Lookup to see if this user wants to impersonate a profile.
+	_, err := Load([]*adapt.LoadOp{
+		{
+			CollectionName: "uesio/studio.workspaceuser",
+			Collection:     results,
+			Query:          true,
+			Fields: []adapt.LoadRequestField{
+				{
+					ID: "uesio/studio.profile",
+				},
+			},
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field: "uesio/studio.user",
+					Value: session.GetSiteUser().ID,
+				},
+				{
+					Field: "uesio/studio.workspace",
+					Value: workspace.ID,
+				},
+			},
+		},
+	}, session, nil)
+	if err != nil {
+		return err
 	}
 
-	session.AddWorkspaceContext(workspace)
-
+	workspaceSession := sess.NewWorkspaceSession(
+		workspace,
+		session.GetSiteUser(),
+		"uesio/system.admin",
+		meta.GetAdminPermissionSet(),
+	)
+	session.SetWorkspaceSession(workspaceSession)
 	bundleDef, err := bundle.GetAppBundle(session, connection)
 	if err != nil {
 		return err
 	}
-
 	workspace.SetAppBundle(bundleDef)
+
+	if results.Len() > 0 {
+		profileKey, err := (*results)[0].GetFieldAsString("uesio/studio.profile")
+		if err != nil {
+			return err
+		}
+		if profileKey != "" {
+			profile, err := LoadAndHydrateProfile(profileKey, session)
+			if err != nil {
+				return errors.New("Error Loading Profile: " + profileKey + " : " + err.Error())
+			}
+
+			session.SetWorkspaceSession(sess.NewWorkspaceSession(
+				workspace,
+				session.GetSiteUser(),
+				profileKey,
+				profile.FlattenPermissions(),
+			))
+		}
+
+	}
+
 	return nil
+
 }
 
 func AddWorkspaceContextByKey(workspaceKey string, session *sess.Session, connection adapt.Connection) error {
-	var workspace meta.Workspace
-	err := PlatformLoadOne(
-		&workspace,
-		&PlatformLoadOptions{
-			Connection: connection,
-			Conditions: []adapt.LoadRequestCondition{
-				{
-					Field: adapt.UNIQUE_KEY_FIELD,
-					Value: workspaceKey,
-				},
-			},
-		},
-		session.RemoveWorkspaceContext(),
-	)
+	workspace, err := queryWorkspace(workspaceKey, adapt.UNIQUE_KEY_FIELD, session, connection)
 	if err != nil {
-		return err
+		return fmt.Errorf("could not get workspace context: workspace %s does not exist or you don't have access to modify it.", workspaceKey)
 	}
-	return addWorkspaceContext(&workspace, session, connection)
+	return addWorkspaceContext(workspace, session, connection)
 }
 
 func AddWorkspaceContextByID(workspaceID string, session *sess.Session, connection adapt.Connection) error {
+	workspace, err := queryWorkspace(workspaceID, adapt.ID_FIELD, session, connection)
+	if err != nil {
+		return fmt.Errorf("could not get workspace context: workspace does not exist or you don't have access to modify it.")
+	}
+	return addWorkspaceContext(workspace, session, connection)
+}
+
+func queryWorkspace(value, field string, session *sess.Session, connection adapt.Connection) (*meta.Workspace, error) {
 	var workspace meta.Workspace
 	err := PlatformLoadOne(
 		&workspace,
@@ -73,15 +118,16 @@ func AddWorkspaceContextByID(workspaceID string, session *sess.Session, connecti
 			Connection: connection,
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field: adapt.ID_FIELD,
-					Value: workspaceID,
+					Field: field,
+					Value: value,
 				},
 			},
+			RequireWriteAccess: true,
 		},
 		session.RemoveWorkspaceContext(),
 	)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return addWorkspaceContext(&workspace, session, connection)
+	return &workspace, nil
 }
