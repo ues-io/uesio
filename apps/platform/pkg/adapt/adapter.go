@@ -18,6 +18,7 @@ type Connection interface {
 	Load(*LoadOp, *sess.Session) error
 	Save(*SaveOp, *sess.Session) error
 	SetRecordAccessTokens(*SaveOp, *sess.Session) error
+	GetRecordAccessTokens(string, *sess.Session) ([]string, error)
 	Migrate() error
 	TruncateTenantData(tenantID string) error
 	GetAutonumber(*CollectionMetadata, *sess.Session) (int, error)

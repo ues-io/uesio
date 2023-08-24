@@ -29,7 +29,7 @@ func ResetRecordTokens(collection string, session *sess.Session) error {
 		return err
 	}
 
-	err = resetTokenBatches(loadOp, connection, session)
+	err = resetTokenBatches(loadOp, connection, GetSiteAdminSession(session))
 	if err != nil {
 		rollbackError := connection.RollbackTransaction()
 		if rollbackError != nil {

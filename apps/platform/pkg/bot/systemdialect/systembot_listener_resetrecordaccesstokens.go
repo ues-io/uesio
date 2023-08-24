@@ -9,15 +9,27 @@ import (
 )
 
 func runResetRecordAccessTokensListenerBot(params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
-	collectionName, hasCollectionName := params["collection"]
-	if !hasCollectionName {
+	paramItems := (adapt.Item)(params)
+	collectionName, err := paramItems.GetFieldAsString("collection")
+	if err != nil {
 		return nil, errors.New("must provide a collection to reset record tokens")
 	}
-	collectionNameString, ok := collectionName.(string)
-	if !ok {
-		return nil, errors.New("collection name must be a string")
+	app, err := paramItems.GetFieldAsString("app")
+	if err != nil {
+		return nil, errors.New("must provide an app to reset record tokens")
 	}
-	err := datasource.ResetRecordTokens(collectionNameString, session)
+	siteName, _ := paramItems.GetFieldAsString("sitename")
+	workspaceName, _ := paramItems.GetFieldAsString("workspacename")
+
+	inContextSession, err := getContextSessionFromParams(map[string]string{
+		"app":           app,
+		"sitename":      siteName,
+		"workspacename": workspaceName,
+	}, connection, session)
+	if err != nil {
+		return nil, err
+	}
+	err = datasource.ResetRecordTokens(collectionName, inContextSession)
 	if err != nil {
 		return nil, err
 	}
