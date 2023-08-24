@@ -51,6 +51,12 @@ Accept: application/json
                     "field": "uesio/tests.species",
                     "value": "Jerrine"
                 }
+            ],
+            "order": [
+                {
+                     "field": "uesio/core.uniquekey",
+                     "desc": false
+                }
             ]
         }
     ]
@@ -66,12 +72,12 @@ WHERE
 main.collection = $1 AND
 main.tenant = $2 AND
 main.fields->>'uesio/tests.species' = $3
-ORDER BY main.id::text asc
+ORDER BY main.uniquekey asc
 LIMIT 501```
 jsonpath "$.wires[0].conditions[0].id" == "mycoolid"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" count == 2
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "MacAughtrie:Jerrine"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "McCreary:Jerrine"
+jsonpath "$.wires[0].data" count == 2
+jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "MacAughtrie:Jerrine"
+jsonpath "$.wires[0].data[1]['uesio/core.uniquekey']" == "McCreary:Jerrine"
 
 # Test a wire load with a param merge condition
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
