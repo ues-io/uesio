@@ -20,7 +20,7 @@ func runSetWorkspaceUserBot(params map[string]interface{}, connection adapt.Conn
 		return nil, errors.New("must provide a profile to set the workspace user")
 	}
 
-	if !session.GetPermissions().HasNamedPermission("uesio/studio.workspace_admin") {
+	if !session.GetSitePermissions().HasNamedPermission("uesio/studio.workspace_admin") {
 		return nil, errors.New("you must be a workspace admin to update workspace user settings")
 	}
 
@@ -34,7 +34,7 @@ func runSetWorkspaceUserBot(params map[string]interface{}, connection adapt.Conn
 					},
 					"uesio/studio.profile": profileName,
 					"uesio/studio.user": map[string]interface{}{
-						"uesio/core.id": session.GetUserID(),
+						"uesio/core.id": session.GetSiteUser().ID,
 					},
 				},
 			},

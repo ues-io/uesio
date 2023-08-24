@@ -81,5 +81,5 @@ func (cba *CallBotAPI) GetSession() *SessionAPI {
 }
 
 func (cba *CallBotAPI) GetUser() *UserAPI {
-	return NewUserAPI(cba.Session.GetUserInfo())
+	return NewUserAPI(cba.Session.GetContextUser())
 }

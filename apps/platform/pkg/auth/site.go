@@ -83,8 +83,10 @@ func GetSystemSession(site *meta.Site, connection adapt.Connection) (*sess.Sessi
 	if err != nil {
 		return nil, err
 	}
+
+	user.Permissions = meta.GetAdminPermissionSet()
 	session := sess.NewSession(nil, user, site)
-	session.SetPermissions(meta.GetAdminPermissionSet())
+
 	return session, nil
 }
 
