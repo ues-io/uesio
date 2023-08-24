@@ -7,7 +7,7 @@ interface MapFieldUtilityProps {
 	keys?: string[]
 	labelVariant?: metadata.MetadataKey
 	mode: context.FieldMode
-	noAdd?: boolean
+	// noAdd?: boolean
 	noDelete?: boolean
 	path: string
 	setValue: (value: wire.PlainWireRecord) => void
@@ -24,7 +24,7 @@ const MapField: definition.UtilityComponent<MapFieldUtilityProps> = (props) => {
 		keys,
 		labelVariant,
 		mode,
-		noAdd = false,
+		// noAdd = true,
 		noDelete = false,
 		path,
 		setValue,
@@ -50,7 +50,11 @@ const MapField: definition.UtilityComponent<MapFieldUtilityProps> = (props) => {
 			fieldId={fieldId}
 			path={path}
 			value={listValue}
-			noAdd={noAdd}
+			// Currently it's impossible to add new keys to a Map field.
+			// It's a very interesting problem because you have to add an empty key/value pair,
+			// but then allow that key to be changed, and ensure the key is unique.
+			// TODO: Make it possible to add new keys to a Map field!
+			noAdd={true}
 			noDelete={noDelete}
 			subType="STRUCT"
 			subFields={{
