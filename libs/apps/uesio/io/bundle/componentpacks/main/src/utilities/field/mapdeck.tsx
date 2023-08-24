@@ -1,8 +1,5 @@
 import { wire, definition, context, component } from "@uesio/ui"
-
-export type MapFieldOptions = {
-	components?: definition.DefinitionList
-}
+import { MapFieldOptions } from "../mapfield/MapFieldOptions"
 
 interface MapFieldDeckUtilityProps {
 	mode: context.FieldMode
