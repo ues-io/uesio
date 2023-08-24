@@ -174,6 +174,7 @@ const Route: UtilityComponent = (props) => {
 					rowGap: "10px",
 					marginLeft: "2em",
 					width: "350px",
+					zIndex: "1",
 				}}
 			>
 				<NotificationArea context={props.context} />
