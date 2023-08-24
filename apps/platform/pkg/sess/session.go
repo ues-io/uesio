@@ -35,7 +35,7 @@ func GetSessionAttribute(browserSession *session.Session, key string) string {
 func NewSession(browserSession *session.Session, user *meta.User, site *meta.Site) *Session {
 	return &Session{
 		browserSession: browserSession,
-		site:           NewSiteSession(site, user),
+		siteSession:    NewSiteSession(site, user),
 	}
 }
 
@@ -133,13 +133,13 @@ func (s *SiteSession) GetAppFullName() string {
 }
 
 type Session struct {
-	browserSession *session.Session
-	site           *SiteSession
-	workspace      *WorkspaceSession
-	siteadmin      *SiteSession
-	version        *VersionInfo
-	tokens         TokenMap
-	labels         map[string]string
+	browserSession   *session.Session
+	siteSession      *SiteSession
+	workspaceSession *WorkspaceSession
+	siteAdminSession *SiteSession
+	version          *VersionInfo
+	tokens           TokenMap
+	labels           map[string]string
 }
 
 func (s *Session) SetLabels(labels map[string]string) {
@@ -177,21 +177,21 @@ func (s *Session) SetTokenMap(tokenMap TokenMap) {
 }
 
 func (s *Session) SetSiteSession(site *SiteSession) *Session {
-	s.site = site
+	s.siteSession = site
 	return s
 }
 
 func (s *Session) GetSiteSession() *SiteSession {
-	return s.site
+	return s.siteSession
 }
 
 func (s *Session) SetSiteAdminSession(site *SiteSession) *Session {
-	s.siteadmin = site
+	s.siteAdminSession = site
 	return s
 }
 
 func (s *Session) GetSiteAdminSession() *SiteSession {
-	return s.siteadmin
+	return s.siteAdminSession
 }
 
 func (s *Session) GetSiteAdmin() *meta.Site {
@@ -203,7 +203,7 @@ func (s *Session) GetSiteAdmin() *meta.Site {
 }
 
 func (s *Session) GetWorkspaceSession() *WorkspaceSession {
-	return s.workspace
+	return s.workspaceSession
 }
 
 func (s *Session) GetWorkspace() *meta.Workspace {
@@ -215,7 +215,7 @@ func (s *Session) GetWorkspace() *meta.Workspace {
 }
 
 func (s *Session) SetWorkspaceSession(workspace *WorkspaceSession) *Session {
-	s.workspace = workspace
+	s.workspaceSession = workspace
 	return s
 }
 
@@ -237,25 +237,25 @@ func (s *Session) GetTenantIDForCollection(collectionKey string) string {
 }
 
 func (s *Session) GetTenantID() string {
-	if s.workspace != nil {
-		return MakeWorkspaceTenantID(s.workspace.GetUniqueKey())
+	if s.workspaceSession != nil {
+		return MakeWorkspaceTenantID(s.workspaceSession.GetUniqueKey())
 	}
-	if s.siteadmin != nil {
-		return MakeSiteTenantID(s.siteadmin.GetUniqueKey())
+	if s.siteAdminSession != nil {
+		return MakeSiteTenantID(s.siteAdminSession.GetUniqueKey())
 	}
-	return MakeSiteTenantID(s.site.GetUniqueKey())
+	return MakeSiteTenantID(s.siteSession.GetUniqueKey())
 }
 
 func (s *Session) GetSiteTenantID() string {
-	if s.siteadmin != nil {
-		return MakeSiteTenantID(s.siteadmin.GetUniqueKey())
+	if s.siteAdminSession != nil {
+		return MakeSiteTenantID(s.siteAdminSession.GetUniqueKey())
 	}
-	return MakeSiteTenantID(s.site.GetUniqueKey())
+	return MakeSiteTenantID(s.siteSession.GetUniqueKey())
 }
 
 func (s *Session) GetWorkspaceID() string {
-	if s.workspace != nil {
-		return s.workspace.GetID()
+	if s.workspaceSession != nil {
+		return s.workspaceSession.GetID()
 	}
 	return ""
 }
@@ -300,7 +300,7 @@ func (s *Session) GetLoginRoute() string {
 
 func (s *Session) RemoveWorkspaceContext() *Session {
 	newSess := *s
-	newSess.workspace = nil
+	newSess.workspaceSession = nil
 	return &newSess
 }
 
@@ -330,13 +330,13 @@ func (s *Session) GetContextInstalledNamespaces() []string {
 }
 
 func (s *Session) GetContextAppBundle() *meta.BundleDef {
-	if s.workspace != nil {
-		return s.workspace.workspace.GetAppBundle()
+	if s.workspaceSession != nil {
+		return s.workspaceSession.workspace.GetAppBundle()
 	}
-	if s.siteadmin != nil {
-		return s.siteadmin.site.GetAppBundle()
+	if s.siteAdminSession != nil {
+		return s.siteAdminSession.site.GetAppBundle()
 	}
-	return s.site.site.GetAppBundle()
+	return s.siteSession.site.GetAppBundle()
 }
 
 func (s *Session) GetDefaultTheme() string {
@@ -348,43 +348,43 @@ func (s *Session) GetDefaultTheme() string {
 }
 
 func (s *Session) GetContextAppName() string {
-	if s.workspace != nil {
-		return s.workspace.GetAppFullName()
+	if s.workspaceSession != nil {
+		return s.workspaceSession.GetAppFullName()
 	}
-	if s.siteadmin != nil {
-		return s.siteadmin.GetAppFullName()
+	if s.siteAdminSession != nil {
+		return s.siteAdminSession.GetAppFullName()
 	}
 	if s.version != nil {
 		return s.version.App
 	}
-	return s.site.GetAppFullName()
+	return s.siteSession.GetAppFullName()
 }
 
 func (s *Session) GetContextVersionName() string {
-	if s.workspace != nil {
-		return s.workspace.GetWorkspace().Name
+	if s.workspaceSession != nil {
+		return s.workspaceSession.GetWorkspace().Name
 	}
-	if s.siteadmin != nil {
-		return s.siteadmin.GetSite().Bundle.GetVersionString()
+	if s.siteAdminSession != nil {
+		return s.siteAdminSession.GetSite().Bundle.GetVersionString()
 	}
 	if s.version != nil {
 		return s.version.Version
 	}
-	return s.site.GetSite().Bundle.GetVersionString()
+	return s.siteSession.GetSite().Bundle.GetVersionString()
 }
 
 func (s *Session) GetContextUser() *meta.User {
-	if s.workspace != nil {
-		return s.workspace.user
+	if s.workspaceSession != nil {
+		return s.workspaceSession.user
 	}
-	if s.siteadmin != nil {
-		return s.siteadmin.user
+	if s.siteAdminSession != nil {
+		return s.siteAdminSession.user
 	}
-	return s.site.user
+	return s.siteSession.user
 }
 
 func (s *Session) GetSiteUser() *meta.User {
-	return s.site.user
+	return s.siteSession.user
 }
 
 func (s *Session) GetSite() *meta.Site {
@@ -412,7 +412,7 @@ func (s *Session) GetContextProfile() string {
 }
 
 func (s *Session) GetContextSite() *meta.Site {
-	if s.siteadmin != nil {
+	if s.siteAdminSession != nil {
 		return s.GetSiteAdmin()
 	}
 	return s.GetSite()
