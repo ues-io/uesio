@@ -10,7 +10,23 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func getWorkspacePermissions(workspace *meta.Workspace, session *sess.Session, connection adapt.Connection) error {
+func addWorkspaceContext(workspace *meta.Workspace, session *sess.Session, connection adapt.Connection) error {
+	site := session.GetSite()
+	perms := session.GetSitePermissions()
+
+	// 1. Make sure we're in a site that can read/modify workspaces
+	if site.GetAppFullName() != "uesio/studio" {
+		return errors.New("this site does not allow working with workspaces")
+	}
+	// 2. we should have a profile that allows modifying workspaces
+	if !perms.HasPermission(&meta.PermissionSet{
+		NamedRefs: map[string]bool{
+			"uesio/studio.workspace_admin": true,
+		},
+	}) {
+		return errors.New("your profile does not allow you to work with workspaces")
+	}
+
 	results := &adapt.Collection{}
 
 	// Lookup to see if this user wants to impersonate a profile.
@@ -27,7 +43,7 @@ func getWorkspacePermissions(workspace *meta.Workspace, session *sess.Session, c
 			Conditions: []adapt.LoadRequestCondition{
 				{
 					Field: "uesio/studio.user",
-					Value: session.GetUserID(),
+					Value: session.GetSiteUser().ID,
 				},
 				{
 					Field: "uesio/studio.workspace",
@@ -40,15 +56,17 @@ func getWorkspacePermissions(workspace *meta.Workspace, session *sess.Session, c
 		return err
 	}
 
-	workspace.Permissions = meta.GetAdminPermissionSet()
-
-	session.AddWorkspaceContext(workspace)
-
+	workspaceSession := sess.NewWorkspaceSession(
+		workspace,
+		session.GetSiteUser(),
+		"uesio/system.admin",
+		meta.GetAdminPermissionSet(),
+	)
+	session.SetWorkspaceSession(workspaceSession)
 	bundleDef, err := bundle.GetAppBundle(session, connection)
 	if err != nil {
 		return err
 	}
-
 	workspace.SetAppBundle(bundleDef)
 
 	if results.Len() > 0 {
@@ -62,32 +80,18 @@ func getWorkspacePermissions(workspace *meta.Workspace, session *sess.Session, c
 				return errors.New("Error Loading Profile: " + profileKey + " : " + err.Error())
 			}
 
-			workspace.Permissions = profile.FlattenPermissions()
+			session.SetWorkspaceSession(sess.NewWorkspaceSession(
+				workspace,
+				session.GetSiteUser(),
+				profileKey,
+				profile.FlattenPermissions(),
+			))
 		}
 
 	}
 
 	return nil
-}
 
-func addWorkspaceContext(workspace *meta.Workspace, session *sess.Session, connection adapt.Connection) error {
-	site := session.GetSite()
-	perms := session.GetPermissions()
-
-	// 1. Make sure we're in a site that can read/modify workspaces
-	if site.GetAppFullName() != "uesio/studio" {
-		return errors.New("this site does not allow working with workspaces")
-	}
-	// 2. we should have a profile that allows modifying workspaces
-	if !perms.HasPermission(&meta.PermissionSet{
-		NamedRefs: map[string]bool{
-			"uesio/studio.workspace_admin": true,
-		},
-	}) {
-		return errors.New("your profile does not allow you to work with workspaces")
-	}
-
-	return getWorkspacePermissions(workspace, session, connection)
 }
 
 func AddWorkspaceContextByKey(workspaceKey string, session *sess.Session, connection adapt.Connection) error {

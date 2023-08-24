@@ -24,7 +24,7 @@ func runMakePaymentListenerBot(params map[string]interface{}, connection adapt.C
 		return nil, errors.New("The amount is negative, you don't have to pay anything.")
 	}
 
-	userID := uesioSession.GetUserID()
+	userID := uesioSession.GetContextUser().ID
 	site := uesioSession.GetSite()
 
 	domain, err := datasource.QueryDomainFromSite(site.ID)

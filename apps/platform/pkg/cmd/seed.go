@@ -78,11 +78,10 @@ func runSeeds(connection adapt.Connection) error {
 	if err != nil {
 		return err
 	}
-	permissions := session.GetPermissions()
+	permissions := session.GetSitePermissions()
 	permissions.NamedRefs = map[string]bool{
 		"uesio/studio.workspace_admin": true,
 	}
-	session.SetPermissions(permissions)
 
 	if err != nil {
 		return err

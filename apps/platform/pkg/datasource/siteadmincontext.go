@@ -9,43 +9,43 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
+func getSiteAdminUser() *meta.User {
+	return &meta.User{
+		BuiltIn: meta.BuiltIn{
+			UniqueKey: "system",
+		},
+		Permissions: meta.GetAdminPermissionSet(),
+	}
+}
+
 func GetSiteAdminSession(currentSession *sess.Session) *sess.Session {
 	// If we're in a workspace context, just upgrade the permissions
-	if currentSession.GetWorkspace() != nil {
-		workspaceSession := currentSession.Clone()
-		workspaceSession.GetWorkspace().Permissions = meta.GetAdminPermissionSet()
-		return workspaceSession
+	if currentSession.GetWorkspaceSession() != nil {
+		newSession := *currentSession
+		newSession.SetWorkspaceSession(sess.NewWorkspaceSession(
+			currentSession.GetWorkspace(),
+			currentSession.GetSiteUser(),
+			"uesio/system.admin",
+			meta.GetAdminPermissionSet(),
+		))
+		return &newSession
 	}
 	// If we are already in site admin context, we don't need to do anything.
 	if currentSession.GetSiteAdmin() != nil {
 		return currentSession
 	}
 
-	siteAdminSession := currentSession.Clone()
-
-	adminSite := currentSession.GetSite().Clone()
-
-	upgradeToSiteAdmin(adminSite, siteAdminSession)
-
-	return siteAdminSession
-
-}
-
-func upgradeToSiteAdmin(adminSite *meta.Site, adminSession *sess.Session) {
-	adminSite.Permissions = meta.GetAdminPermissionSet()
-
-	adminSession.SetSiteAdmin(adminSite)
-
-	adminSession.SetUser(&meta.User{
-		BuiltIn: meta.BuiltIn{
-			UniqueKey: "system",
-		},
-	})
+	newSession := *currentSession
+	newSession.SetSiteAdminSession(sess.NewSiteSession(
+		currentSession.GetSite(),
+		getSiteAdminUser(),
+	))
+	return &newSession
 }
 
 func addSiteAdminContext(siteadmin *meta.Site, session *sess.Session, connection adapt.Connection) error {
 	site := session.GetSite()
-	perms := session.GetPermissions()
+	perms := session.GetSitePermissions()
 
 	// 1. Make sure we're in a site that can read/modify workspaces
 	if site.GetAppFullName() != "uesio/studio" {
@@ -67,14 +67,17 @@ func addSiteAdminContext(siteadmin *meta.Site, session *sess.Session, connection
 		return errors.New("no Bundle found for site to administer")
 	}
 
-	upgradeToSiteAdmin(siteadmin, session)
+	session.SetSiteAdminSession(sess.NewSiteSession(
+		siteadmin,
+		getSiteAdminUser(),
+	))
 
 	bundleDef, err := bundle.GetAppBundle(session, connection)
 	if err != nil {
 		return err
 	}
+	siteadmin.SetAppBundle(bundleDef)
 
-	session.GetSiteAdmin().SetAppBundle(bundleDef)
 	return nil
 }
 

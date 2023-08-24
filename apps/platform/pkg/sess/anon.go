@@ -6,15 +6,13 @@ import (
 
 func GetAnonSession(site *meta.Site) *Session {
 
-	session := NewSession(nil, &meta.User{
-		Username:  "boot",
-		FirstName: "Boot",
-		LastName:  "User",
+	return NewSession(nil, &meta.User{
+		Username:    "boot",
+		FirstName:   "Boot",
+		LastName:    "User",
+		Permissions: meta.GetAdminPermissionSet(),
 	}, site)
 
-	session.SetPermissions(meta.GetAdminPermissionSet())
-
-	return session
 }
 
 func GetStudioAnonSession() *Session {

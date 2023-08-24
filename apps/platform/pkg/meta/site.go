@@ -1,31 +1,15 @@
 package meta
 
 type Site struct {
-	BuiltIn     `yaml:",inline"`
-	Name        string     `json:"uesio/studio.name"`
-	Bundle      *Bundle    `json:"uesio/studio.bundle"`
-	App         *App       `json:"uesio/studio.app"`
-	bundleDef   *BundleDef `json:"-"`
-	Domain      string
-	Subdomain   string
-	Title       string         `json:"uesio/studio.title"`
-	EnableSEO   bool           `json:"uesio/studio.enable_seo"`
-	Permissions *PermissionSet `json:"-"`
-}
-
-func (s *Site) Clone() *Site {
-	return &Site{
-		BuiltIn:     s.BuiltIn,
-		Name:        s.Name,
-		Bundle:      s.Bundle,
-		App:         s.App,
-		bundleDef:   s.bundleDef,
-		Domain:      s.Domain,
-		Subdomain:   s.Subdomain,
-		Title:       s.Title,
-		EnableSEO:   s.EnableSEO,
-		Permissions: nil, // Intentionally not cloning permissions
-	}
+	BuiltIn   `yaml:",inline"`
+	Name      string     `json:"uesio/studio.name"`
+	Bundle    *Bundle    `json:"uesio/studio.bundle"`
+	App       *App       `json:"uesio/studio.app"`
+	bundleDef *BundleDef `json:"-"`
+	Domain    string
+	Subdomain string
+	Title     string `json:"uesio/studio.title"`
+	EnableSEO bool   `json:"uesio/studio.enable_seo"`
 }
 
 func (s *Site) GetFullName() string {

@@ -397,7 +397,7 @@ func getMetadataForLoad(
 	for _, requestField := range op.Fields {
 
 		if !session.GetContextPermissions().HasFieldReadPermission(collectionKey, requestField.ID) {
-			return fmt.Errorf("Profile %s does not have read access to the %s field.", session.GetProfile(), requestField.ID)
+			return fmt.Errorf("Profile %s does not have read access to the %s field.", session.GetContextProfile(), requestField.ID)
 		}
 
 		subFields := getSubFields(requestField.Fields)
@@ -492,7 +492,7 @@ func getMetadataForOrderField(collectionKey string, fieldName string, collection
 
 	// Do an initial check on field read access.
 	if !session.GetContextPermissions().HasFieldReadPermission(collectionKey, topLevelFieldName) {
-		return fmt.Errorf("profile %s does not have read access to the %s field", session.GetProfile(), topLevelFieldName)
+		return fmt.Errorf("profile %s does not have read access to the %s field", session.GetContextProfile(), topLevelFieldName)
 	}
 
 	if isReferenceCrossing {
@@ -533,7 +533,7 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 	// Loop over the ops and batch per data source
 	for _, op := range ops {
 		if !session.GetContextPermissions().HasCollectionReadPermission(op.CollectionName) {
-			return nil, fmt.Errorf("Profile %s does not have read access to the %s collection.", session.GetProfile(), op.CollectionName)
+			return nil, fmt.Errorf("Profile %s does not have read access to the %s collection.", session.GetContextProfile(), op.CollectionName)
 		}
 		// Verify that the id field is present
 		hasIDField := false

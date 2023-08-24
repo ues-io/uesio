@@ -403,7 +403,7 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 	// in order to prevent users from having to have read on the uesio/core.featureflagassignment table
 	adminSession := sess.GetAnonSession(session.GetSite())
 
-	featureFlags, err := featureflagstore.GetFeatureFlags(adminSession, session.GetUserID())
+	featureFlags, err := featureflagstore.GetFeatureFlags(adminSession, session.GetContextUser().ID)
 	if err != nil {
 		return errors.New("Failed to get feature flags: " + err.Error())
 	}
@@ -471,7 +471,7 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 	// in order to prevent users from having to have read on the uesio/core.featureflagassignment table
 	adminSession := datasource.GetSiteAdminSession(session)
 
-	featureFlags, err := featureflagstore.GetFeatureFlags(adminSession, session.GetUserID())
+	featureFlags, err := featureflagstore.GetFeatureFlags(adminSession, session.GetContextUser().ID)
 	if err != nil {
 		return nil, errors.New("Failed to get feature flags: " + err.Error())
 	}

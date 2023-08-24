@@ -124,7 +124,7 @@ func GetSessionMergeData(session *sess.Session) *routing.SessionMergeData {
 }
 
 func GetUserMergeData(session *sess.Session) *routing.UserMergeData {
-	userInfo := session.GetUserInfo()
+	userInfo := session.GetContextUser()
 	userPicture := userInfo.GetPicture()
 	userMergeData := &routing.UserMergeData{
 		ID:        userInfo.ID,
