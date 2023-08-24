@@ -2,5 +2,3 @@ name: uniquekey
 type: LIST
 label: Unique Key
 subtype: TEXT
-subfields:
-  - name: field
