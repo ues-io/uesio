@@ -296,6 +296,11 @@ func (b *Bot) ValidateParams(params map[string]interface{}) error {
 			if _, err := strconv.ParseBool(paramValue.(string)); err != nil {
 				return NewParamError("param value must either be 'true' or 'false'", param.Name)
 			}
+		case "METADATANAME":
+			ok := IsValidMetadataName(fmt.Sprintf("%v", paramValue))
+			if !ok {
+				return NewParamError("param failed metadata validation, no capital letters or special characters allowed", param.Name)
+			}
 		}
 	}
 	return nil

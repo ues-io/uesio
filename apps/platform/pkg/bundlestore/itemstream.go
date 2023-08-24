@@ -1,18 +1,22 @@
 package bundlestore
 
 import (
-	"fmt"
 	"io"
+
+	"golang.org/x/sync/errgroup"
 )
 
-func GetFileReader(writeFunc func(io.Writer) error) io.Reader {
+func GetFileReader(writeFunc func(io.Writer) error) (io.Reader, error) {
+	g := new(errgroup.Group)
 	r, w := io.Pipe()
-	go func() {
+	g.Go(func() error {
 		err := writeFunc(w)
 		if err != nil {
-			fmt.Println(err.Error())
+			w.Close()
+			return err
 		}
 		w.Close()
-	}()
-	return r
+		return nil
+	})
+	return r, g.Wait()
 }

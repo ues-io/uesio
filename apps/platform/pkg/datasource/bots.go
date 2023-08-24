@@ -2,6 +2,7 @@ package datasource
 
 import (
 	"fmt"
+
 	"github.com/thecloudmasters/uesio/pkg/bot"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -167,6 +168,11 @@ func CallGeneratorBot(create retrieve.WriterCreator, namespace, name string, par
 	err := bundle.Load(robot, session, connection)
 	if err != nil {
 		return meta.NewBotNotFoundError("generator not found: " + fmt.Sprintf("%s.%s", namespace, name))
+	}
+
+	err = robot.ValidateParams(params)
+	if err != nil {
+		return err
 	}
 
 	dialect, err := bot.GetBotDialect(robot.Dialect)

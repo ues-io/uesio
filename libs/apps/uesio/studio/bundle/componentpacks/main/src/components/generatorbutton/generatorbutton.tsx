@@ -100,12 +100,17 @@ const GeneratorForm: definition.UtilityComponent<FormProps> = (props) => {
 	const onClick = async () => {
 		const result = wireRef.current?.getFirstRecord()
 		if (!result) return
-		await api.bot.callGenerator(
+		const botResp = await api.bot.callGenerator(
 			context,
 			genNamespace,
 			genName,
 			getParamValues(params, result)
 		)
+		if (!botResp.success) {
+			api.notification.addError(botResp.error, context.deleteWorkspace())
+			return
+		}
+
 		setOpen(false)
 		return api.signal.run(
 			{

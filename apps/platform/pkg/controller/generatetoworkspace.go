@@ -3,6 +3,7 @@ package controller
 import (
 	"archive/zip"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 
@@ -35,7 +36,7 @@ func GenerateToWorkspace(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
 
-	retrieveData := bundlestore.GetFileReader(func(data io.Writer) error {
+	retrieveData, err := bundlestore.GetFileReader(func(data io.Writer) error {
 		zipwriter := zip.NewWriter(data)
 		err := datasource.CallGeneratorBot(retrieve.NewWriterCreator(zipwriter.Create), namespace, name, params, nil, session)
 		if err != nil {
@@ -43,6 +44,10 @@ func GenerateToWorkspace(w http.ResponseWriter, r *http.Request) {
 		}
 		return zipwriter.Close()
 	})
+
+	if err == nil {
+		fmt.Println("Successfully fetched all URLs.")
+	}
 
 	err = deploy.Deploy(io.NopCloser(retrieveData), session)
 	if err != nil {
