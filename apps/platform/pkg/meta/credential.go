@@ -19,8 +19,8 @@ func NewBaseCredential(namespace, name string) *Credential {
 }
 
 type CredentialEntry struct {
-	Type  string `yaml:"type" json:"uesio/studio.type"`
-	Value string `yaml:"value" json:"uesio/studio.value"`
+	Type  string `yaml:"type" json:"type"`
+	Value string `yaml:"value" json:"value"`
 }
 
 type Credential struct {
