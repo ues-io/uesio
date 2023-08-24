@@ -122,8 +122,10 @@ const signals: SignalBandDefinition = {
 				},
 				{
 					name: "value",
-					type: "TEXT",
+					type: "FIELD_VALUE",
 					label: "Value",
+					wireProperty: "wire",
+					fieldProperty: "field",
 				},
 			],
 		},

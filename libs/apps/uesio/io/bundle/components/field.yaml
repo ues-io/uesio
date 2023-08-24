@@ -77,6 +77,21 @@ properties:
             values:
               - TEXT
               - NUMBER
+  - name: referenceCollection
+    type: FIELD_METADATA
+    display: false
+    viewOnly: true
+    wireProperty: wire
+    fieldProperty: fieldId
+    metadataProperty: reference.collection
+    displayConditions:
+      - type: fieldValue
+        field: fieldDisplayType
+        operator: IN
+        values:
+          - REFERENCE
+          - USER
+          - FILE
   - name: label
     type: TEXT
     label: Label
@@ -184,13 +199,12 @@ properties:
           - CHECKBOX
           - LONGTEXT
           - MULTISELECT
-          - REFERENCE
+          - NUMBER
           - SELECT
           - TEXT
-          - NUMBER
   # Number-only properties
   - name: number
-    label: " "
+    label: Number field options
     type: STRUCT
     displayConditions:
       - type: fieldValue
@@ -199,16 +213,16 @@ properties:
     properties:
       - name: min
         type: NUMBER
-        label: Min
+        label: Min value
       - name: max
         type: NUMBER
-        label: Max
+        label: Max value
       - name: step
         type: NUMBER
         label: Step
   # Longtext field properties
   - name: longtext
-    label: " "
+    label: Long text field options
     type: STRUCT
     displayConditions:
       - type: fieldValue
@@ -223,24 +237,45 @@ properties:
         label: "# of Rows"
   # Reference properties
   - name: reference
-    label: " "
+    label: Reference field options
     type: STRUCT
     displayConditions:
       - type: fieldValue
         field: fieldDisplayType
-        value: REFERENCE
+        operator: IN
+        values:
+          - REFERENCE
+          - USER
+          - FILE
     properties:
       - name: template
         type: TEXT
         label: Display Template
       - name: searchFields
-        type: FIELDS
-        wireField: wire
+        type: COLLECTION_FIELDS
+        collectionName: "$Parent.Record{referenceCollection}"
         label: Search Fields
       - name: returnFields
-        type: FIELDS
-        wireField: wire
+        type: COLLECTION_FIELDS
+        collectionName: "$Parent.Record{referenceCollection}"
         label: Return Fields
+      - name: order
+        type: LIST
+        subtype: STRUCT
+        items:
+          addLabel: Add Reference Search Order Field
+          displayTemplate: "${field} - ${desc}"
+          title: Reference Search Order Field
+          defaultDefinition:
+            desc: false
+          properties:
+            - name: field
+              type: COLLECTION_FIELD
+              label: Order Field
+              collectionName: "$Parent.Parent.Parent.Record{referenceCollection}"
+            - name: desc
+              type: CHECKBOX
+              label: Descending
 sections:
   - type: HOME
     id: uesio.home
@@ -248,6 +283,7 @@ sections:
       - wire
       - fieldId
       - fieldDisplayType
+      - referenceCollection
       - label
       - labelPosition
       - placeholder

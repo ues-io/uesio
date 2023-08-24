@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/thecloudmasters/uesio/pkg/tls"
 	"net/http"
 	"os"
 
@@ -90,6 +91,8 @@ func serve(cmd *cobra.Command, args []string) {
 	r.Handle(vendorPrefix+"/{filename:.*}", file.ServeVendor(vendorPrefix, cacheStaticAssets)).Methods(http.MethodGet)
 	r.Handle(staticPrefix+"/{filename:.*}", file.Static(cwd, staticPrefix, cacheStaticAssets)).Methods(http.MethodGet)
 	r.HandleFunc("/health", controller.Health).Methods(http.MethodGet)
+
+	//r.HandleFunc("/api/weather", testapis.TestApi).Methods(http.MethodGet, http.MethodPost, http.MethodDelete)
 
 	// The workspace router
 	workspacePath := fmt.Sprintf("/workspace/%s/{workspace}", appParam)
@@ -345,13 +348,12 @@ func serve(cmd *cobra.Command, args []string) {
 		Handler: r,
 	}
 
-	useSSL := os.Getenv("UESIO_USE_HTTPS")
 	var serveErr error
-	if useSSL == "true" {
-		logger.Log("Service Started over SSL on Port: "+port, logger.INFO)
-		serveErr = server.ListenAndServeTLS("ssl/certificate.crt", "ssl/private.key")
+	if tls.ServeAppWithTLS() {
+		logger.Log("Service started over TLS on port: "+port, logger.INFO)
+		serveErr = server.ListenAndServeTLS(tls.GetSelfSignedCertFilePath(), tls.GetSelfSignedPrivateKeyFile())
 	} else {
-		logger.Log("Service Started on Port: "+port, logger.INFO)
+		logger.Log("Service started on port: "+port, logger.INFO)
 		serveErr = server.ListenAndServe()
 	}
 	if serveErr != nil {

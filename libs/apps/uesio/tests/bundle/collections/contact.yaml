@@ -1,0 +1,8 @@
+name: contact
+label: Contact
+pluralLabel: Contacts
+uniqueKey:
+  - uesio/tests.firstname
+  - uesio/tests.lastname
+access: protected
+accessField: uesio/tests.account

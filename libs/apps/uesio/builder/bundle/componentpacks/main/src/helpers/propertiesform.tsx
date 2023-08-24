@@ -1,7 +1,16 @@
-import { api, component, context, definition, wire } from "@uesio/ui"
+import {
+	api,
+	collection,
+	component,
+	context,
+	definition,
+	wire,
+} from "@uesio/ui"
 import { get as getDef, set as setDef, changeKey } from "../api/defapi"
 import set from "lodash/set"
 import get from "lodash/get"
+import { useState } from "react"
+import type { PropertyPath } from "lodash"
 import {
 	getAvailableWireIds,
 	getFieldMetadata,
@@ -29,7 +38,6 @@ import {
 import { getComponentDef, setSelectedPath } from "../api/stateapi"
 import { getDisplaySectionProperties } from "../properties/displayconditionproperties"
 import { getSignalProperties } from "../api/signalsapi"
-import { useState } from "react"
 
 type Props = {
 	properties?: ComponentProperty[]
@@ -42,9 +50,9 @@ type Props = {
 const PATH_ARROW = "->"
 const LODASH_PATH_SEPARATOR = "."
 
-const getWireFieldSelectOptions = (wireDef: wire.WireDefinition) => {
+const getWireFieldSelectOptions = (wireDef?: wire.WireDefinition) => {
 	if (!wireDef || !wireDef.fields) return [] as wire.SelectOption[]
-
+	const { fields, viewOnly } = wireDef
 	const getFields = (
 		key: string,
 		value: wire.ViewOnlyField | wire.WireFieldDefinition
@@ -59,7 +67,7 @@ const getWireFieldSelectOptions = (wireDef: wire.WireDefinition) => {
 		) {
 			return key
 		}
-		if (wireDef.viewOnly) {
+		if (viewOnly) {
 			const viewOnlyField = value as wire.ViewOnlyField
 			if (
 				viewOnlyField?.type !== "MAP" &&
@@ -83,9 +91,14 @@ const getWireFieldSelectOptions = (wireDef: wire.WireDefinition) => {
 	) =>
 		Object.entries(value)
 			.map(([key2, value2]) => [`${key}${PATH_ARROW}${key2}`, value2])
-			.flatMap(([key, value]) => getFields(key, value))
+			.flatMap(([key, value]) =>
+				getFields(
+					key as string,
+					value as wire.ViewOnlyField | wire.WireFieldDefinition
+				)
+			)
 
-	return Object.entries(wireDef.fields)
+	return Object.entries(fields)
 		.flatMap(([key, value]) => getFields(key, value))
 		.map((el) => ({ value: el, label: el } as wire.SelectOption))
 }
@@ -231,12 +244,16 @@ const getBaseWireFieldDef = (
 const getWireFieldFromPropertyDef = (
 	def: ComponentProperty,
 	context: context.Context,
-	currentValue: wire.PlainWireRecord
+	currentValue: wire.PlainWireRecord,
+	path: FullPath
 ): wire.ViewOnlyField => {
 	const { name, type } = def
 	let wireId: string | undefined
 	let wireDefinition: wire.WireDefinition | undefined
 	let wireField
+	let fieldMetadata: collection.Field | undefined
+	let fieldMetadataType: wire.FieldType
+
 	switch (type) {
 		case "SELECT":
 			return getBaseWireFieldDef(def, "SELECT", {
@@ -276,11 +293,33 @@ const getWireFieldFromPropertyDef = (
 				{
 					selectlist: getSelectListMetadataFromOptions(
 						name,
-						wireDefinition !== undefined
-							? getWireFieldSelectOptions(wireDefinition)
-							: [],
+						getWireFieldSelectOptions(wireDefinition),
 						type === "FIELDS" ? undefined : ""
 					),
+				}
+			)
+		case "FIELD_VALUE":
+		case "FIELD_VALUES":
+			wireId =
+				def.wireProperty &&
+				(getObjectProperty(currentValue, def.wireProperty) as string)
+			wireField =
+				def.fieldProperty &&
+				(getObjectProperty(currentValue, def.fieldProperty) as string)
+
+			fieldMetadata = getFieldMetadata(
+				context,
+				wireId || "",
+				wireField || ""
+			)
+			fieldMetadataType = fieldMetadata?.getType() || "TEXT"
+			return getBaseWireFieldDef(
+				def,
+				type === "FIELD_VALUES" ? "LIST" : fieldMetadataType,
+				{
+					selectlist: fieldMetadata?.getSelectMetadata(),
+					subtype:
+						type === "FIELD_VALUES" ? fieldMetadataType : undefined,
 				}
 			)
 		case "MAP":
@@ -294,7 +333,8 @@ const getWireFieldFromPropertyDef = (
 				def.properties,
 				context,
 				(currentValue || {}) as wire.PlainWireRecord,
-				wireField.fields
+				wireField.fields,
+				path
 			)
 			return wireField
 		case "LIST":
@@ -328,6 +368,10 @@ const getWireFieldFromPropertyDef = (
 					""
 				),
 			})
+		case "COLLECTION_FIELDS":
+			return getBaseWireFieldDef(def, "LIST", {
+				subtype: "TEXT",
+			})
 		default:
 			return getBaseWireFieldDef(def, "TEXT")
 	}
@@ -344,14 +388,16 @@ const getWireFieldsFromProperties = (
 	properties: ComponentProperty[] | undefined,
 	context: context.Context,
 	initialValue: wire.PlainWireRecord = {},
-	wireFields: Record<string, wire.ViewOnlyField> = {}
+	wireFields: Record<string, wire.ViewOnlyField> = {},
+	path: FullPath
 ) => {
 	if (!properties || !properties.length) return wireFields
 	properties.forEach((def) => {
 		wireFields[getPropertyId(def)] = getWireFieldFromPropertyDef(
 			def,
 			context,
-			initialValue
+			initialValue,
+			path
 		)
 	})
 	return wireFields
@@ -439,6 +485,7 @@ const parseProperties = (
 				// Populate the JSON representation with the new value first,
 				// e.g. foo = { "bar": "baz" } ==> { "bar": value }
 				set(wrapperValue, rest.join(LODASH_PATH_SEPARATOR), value)
+
 				// Invoke the def api to update YAML with the wrapper value object
 				setDef(context, path.addLocal(firstPart), wrapperValue)
 			} else {
@@ -492,19 +539,21 @@ const parseProperties = (
 			}
 			if (sourceField && sourceWire) {
 				// Get the initial value of the corresponding field metadata property
-				value = getFieldMetadata(context, sourceWire, sourceField)
-					?.source[property.metadataProperty] as string
+				value = get(
+					getFieldMetadata(context, sourceWire, sourceField)?.source,
+					property.metadataProperty as PropertyPath
+				) as string
 				// Add a setter to the source field so that whenever it changes, we also update this property
 				const metadataSetter = (
 					newFieldId: string,
 					_fieldBeingUpdated: string,
 					record: wire.WireRecord
 				) => {
-					const newFieldMetadataProperty = getFieldMetadata(
-						context,
-						sourceWire,
-						newFieldId
-					)?.source[property.metadataProperty] as string
+					const newFieldMetadataProperty = get(
+						getFieldMetadata(context, sourceWire, newFieldId)
+							?.source,
+						property.metadataProperty as PropertyPath
+					) as string
 					if (newFieldMetadataProperty !== undefined) {
 						// Update in-memory representation for this field, since we are computing it here,
 						// we need to apply it to the record
@@ -867,7 +916,9 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 				fields={getWireFieldsFromProperties(
 					properties,
 					context,
-					initialValue
+					initialValue,
+					{},
+					path
 				)}
 				content={
 					content || getFormFieldsFromProperties(properties, path)

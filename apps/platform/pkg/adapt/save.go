@@ -76,6 +76,14 @@ func (op *SaveOp) LoopDeletes(changeFunc func(change *ChangeItem) error) error {
 	return nil
 }
 
+func (op *SaveOp) HasChanges() bool {
+	return len(op.Updates)+len(op.Inserts) > 0
+}
+
+func (op *SaveOp) HasDeletes() bool {
+	return len(op.Deletes) > 0
+}
+
 func (op *SaveOp) LoopChanges(changeFunc func(change *ChangeItem) error) error {
 	err := op.LoopInserts(changeFunc)
 	if err != nil {
@@ -362,9 +370,9 @@ func GetReferenceKey(value interface{}) (string, error) {
 }
 
 // NewFieldChanges function returns a template that can merge field changes
-func NewFieldChanges(templateString string, collectionMetadata *CollectionMetadata) (*template.Template, error) {
+func NewFieldChanges(templateString string, collectionMetadata *CollectionMetadata, metadata *MetadataCache) (*template.Template, error) {
 	return templating.NewWithFunc(templateString, func(item meta.Item, key string) (interface{}, error) {
-		fieldMetadata, err := collectionMetadata.GetField(key)
+		fieldMetadata, err := collectionMetadata.GetFieldWithMetadata(key, metadata)
 		if err != nil {
 			return nil, err
 		}

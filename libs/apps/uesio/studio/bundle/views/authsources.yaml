@@ -15,10 +15,10 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     authsources:
-      collection: uesio/studio.allmetadata
+      collection: uesio/studio.authsource
       conditions:
-        - field: uesio/studio.type
-          value: authsources
+        - field: uesio/studio.allmetadata
+          value: true
     newauthsource:
       collection: uesio/studio.authsource
       fields:

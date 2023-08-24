@@ -75,7 +75,7 @@ func getAliasedName(name, alias string) string {
 func (c *Connection) Load(op *adapt.LoadOp, session *sess.Session) error {
 
 	metadata := c.metadata
-	userTokens := session.GetTokens()
+	userTokens := session.GetFlatTokens()
 	db := c.GetClient()
 
 	collectionMetadata, err := metadata.GetCollection(op.CollectionName)
@@ -125,19 +125,15 @@ func (c *Connection) Load(op *adapt.LoadOp, session *sess.Session) error {
 				return err
 			}
 
-			tenantID := session.GetTenantIDForCollection(challengeMetadata.GetFullName())
-
-			refCollectionName := challengeMetadata.GetFullName()
-
 			newTable := currentTable + "sub"
 
 			accessFieldString := getFieldName(fieldMetadata, currentTable)
 			idFieldString := getIDFieldName(newTable)
 
-			newTableCollection := getAliasedName("collection", newTable)
-			newTableTenant := getAliasedName("tenant", newTable)
+			subBuilder := builder.getSubBuilder("")
+			addTenantConditions(challengeMetadata, metadata, subBuilder, newTable, session)
 
-			joins = append(joins, fmt.Sprintf("LEFT OUTER JOIN data as \"%s\" ON %s = %s AND %s = '%s' AND %s = '%s'\n", newTable, accessFieldString, idFieldString, newTableCollection, refCollectionName, newTableTenant, tenantID))
+			joins = append(joins, fmt.Sprintf("LEFT OUTER JOIN data as \"%s\" ON %s = %s AND %s\n", newTable, accessFieldString, idFieldString, subBuilder.String()))
 
 			accessFieldID = getAliasedName("id", newTable)
 

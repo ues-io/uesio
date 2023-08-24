@@ -1,4 +1,5 @@
 import Field from "../field/class"
+import { CollectionKey } from "../wire/types"
 import { getCollection } from "./selectors"
 
 import { ID_FIELD, PlainCollection } from "./types"
@@ -26,7 +27,8 @@ class Collection {
 
 	getId = () => this.source.name
 	getNamespace = () => this.source.namespace
-	getFullName = () => this.getNamespace() + "." + this.getId()
+	getFullName = (): CollectionKey =>
+		`${this.getNamespace()}.${this.getId()}` as CollectionKey
 	getLabel = () => this.source.label
 	getPluralLabel = () => this.source.pluralLabel
 

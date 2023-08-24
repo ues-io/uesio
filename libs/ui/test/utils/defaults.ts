@@ -5,7 +5,7 @@ import { PlainCollection } from "../../src/bands/collection/types"
 const COLLECTION_NAME = "exoplanet"
 const COLLECTION_LABEL = "Exoplanet"
 const COLLECTION_LABEL_PLURAL = "Exoplanets"
-const NS = "ben/planets"
+const NS = "ben/planets" as `${string}/${string}`
 const wireId = "exoplanets"
 const viewId = "allplanets"
 

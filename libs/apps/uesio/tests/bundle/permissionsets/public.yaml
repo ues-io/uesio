@@ -1,5 +1,7 @@
 name: public
 named: {}
+bots:
+  uesio/tests.add_numbers: true
 views:
   uesio/tests.animalslist: true
 collections:
@@ -9,10 +11,10 @@ collections:
     edit: false
     delete: false
     fields:
-      uesio/core.username:
+      uesio/core.uniquekey:
         read: true
         edit: false
-      uesio/core.uniquekey:
+      uesio/core.username:
         read: true
         edit: false
   uesio/tests.animal:
@@ -21,6 +23,9 @@ collections:
     edit: false
     delete: false
     fields:
+      uesio/core.owner:
+        read: true
+        edit: true
       uesio/tests.ancestor:
         read: false
         edit: false
@@ -39,9 +44,9 @@ collections:
       uesio/tests.total_population:
         read: true
         edit: true
-      uesio/core.owner:
+      uesio/tests.autonumber:
         read: true
-        edit: true # need edit in order to create a record
+        edit: true
   uesio/tests.wire_condition:
     read: false
     create: false
@@ -51,6 +56,7 @@ collections:
 routes:
   uesio/tests.publicanimalslist: true
 files: {}
+allowallbots: false
 allowallcollections: false
 allowallviews: false
 allowallroutes: false

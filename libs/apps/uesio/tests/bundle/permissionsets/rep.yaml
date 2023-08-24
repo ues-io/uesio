@@ -1,0 +1,43 @@
+name: rep
+named: {}
+views: {}
+collections:
+  uesio/core.user:
+    read: true
+    create: false
+    edit: false
+    delete: false
+    fields: {}
+  uesio/core.userfile:
+    read: true
+    create: true
+    edit: true
+    delete: true
+    fields: {}
+  uesio/tests.account:
+    read: true
+    create: true
+    edit: true
+    delete: true
+    fields: {}
+  uesio/tests.animal:
+    read: true
+    create: true
+    edit: true
+    delete: true
+    fields: {}
+  uesio/tests.contact:
+    read: true
+    create: true
+    edit: true
+    delete: true
+    fields: {}
+routes: {}
+files: {}
+allowallbots: false
+allowallcollections: false
+allowallviews: false
+allowallroutes: false
+allowallfiles: false
+modifyallrecords: false
+viewallrecords: false

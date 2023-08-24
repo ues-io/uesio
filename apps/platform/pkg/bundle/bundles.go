@@ -23,8 +23,7 @@ func GetAppBundle(session *sess.Session, connection adapt.Connection) (*meta.Bun
 func GetSiteAppBundle(site *meta.Site) (*meta.BundleDef, error) {
 	// MockSession. Since we're always just going to the local bundles store
 	// we're good with just a fake session.
-	session := &sess.Session{}
-	session.SetSite(site)
+	session := sess.NewSession(nil, nil, site)
 	return getAppBundleInternal(site.GetAppFullName(), site.Bundle.GetVersionString(), session, nil)
 }
 

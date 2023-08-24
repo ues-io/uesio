@@ -169,6 +169,10 @@ func (yd *YAMLDefinition) IsNil() bool {
 	return yd == nil
 }
 
+func nodeIsNull(node *yaml.Node) bool {
+	return node.Kind == yaml.ScalarNode && node.ShortTag() == "!!null"
+}
+
 // Removes an entry from a map node and returns it.
 func pickNodeFromMap(node *yaml.Node, property string) *yaml.Node {
 	keyNode, index, err := GetMapNodeWithIndex(node, property)
@@ -212,8 +216,10 @@ func removeDefault(itemkey, defaultValue string) string {
 	return itemkey
 }
 
-func validateMetadataNameNode(node *yaml.Node, expectedName, nodeKey string) error {
-	name := GetNodeValueAsString(node, nodeKey)
+// This function removes the given property from a yaml node and verifies that it
+// matches the expected value. It also verifies that the value is a valid metadata name format.
+func validateMetadataNameNode(node *yaml.Node, expectedName, nameKey string) error {
+	name := pickStringProperty(node, nameKey, "")
 	if name != expectedName {
 		return fmt.Errorf("Metadata name does not match filename: %s, %s", name, expectedName)
 	}

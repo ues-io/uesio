@@ -48,10 +48,10 @@ Accept: application/json
 }
 HTTP 200
 [Captures]
-animal_id: jsonpath "$.wires[0].data[*]['uesio/core.id']" nth 0
+animal_id: jsonpath "$.wires[0].data[0]['uesio/core.id']"
 [Asserts]
-jsonpath "$.wires[0].data[*]" count == 1
-jsonpath "$.wires[0].data[*]['uesio/tests.species']" nth 0 == "Abrahan"
+jsonpath "$.wires[0].data" count == 1
+jsonpath "$.wires[0].data[0]['uesio/tests.species']" == "Abrahan"
 
 # Object security in routes - we SHOULD be able to query the animal collection via a route load
 # for a route with a wire on our requested collection
@@ -59,8 +59,8 @@ GET https://tests.{{domain}}:{{port}}/site/routes/path/uesio/tests/publicanimals
 Accept: application/json
 HTTP 200
 [Asserts]
-jsonpath "$.dependencies.wire.entities[*].data[*]['uesio/tests.species']" nth 0 == "Abrahan"
-jsonpath "$.dependencies.wire.entities[*].data[*]['uesio/tests.genus']" nth 0 == "Mouton"
+jsonpath "$.dependencies.wire.entities[*].data[0]['uesio/tests.species']" nth 0 == "Abrahan"
+jsonpath "$.dependencies.wire.entities[*].data[0]['uesio/tests.genus']" nth 0 == "Mouton"
 jsonpath "$.dependencies.wire.entities[*]['debugQueryString']" nth 0 == ```
 SELECT
 main.fields->>'uesio/tests.genus' AS "uesio/tests.genus",

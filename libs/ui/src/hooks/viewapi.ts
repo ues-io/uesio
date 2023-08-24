@@ -1,7 +1,7 @@
 import { useConfigValue as useCV } from "../bands/configvalue"
 import { getViewDef, upsertOne, useViewDef } from "../bands/viewdef"
 import { parseKey } from "../component/path"
-import { ViewDefinition } from "../definition/viewdef"
+import { ViewDefinition } from "../definition/ViewDefinition"
 import { dispatch } from "../store/store"
 
 const useConfigValue = (key: string) => useCV(key)?.value || ""

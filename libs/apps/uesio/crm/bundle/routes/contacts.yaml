@@ -1,6 +1,0 @@
-name: contacts
-path: contacts
-view: uesio/crm.contacts
-theme: uesio/core.default
-title: ""
-public: true

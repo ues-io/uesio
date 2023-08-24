@@ -41,13 +41,30 @@ const WireProperties: definition.UtilityComponent = (props) => {
 			label: "Batch Size",
 			type: "NUMBER",
 		},
+		{
+			name: "init",
+			label: "On initial View load...",
+			type: "STRUCT",
+			properties: [
+				{
+					name: "query",
+					type: "CHECKBOX",
+					label: "Query for Wire data",
+				},
+				{
+					name: "create",
+					type: "CHECKBOX",
+					label: "Create default record if Wire has none",
+				},
+			],
+		},
 		// Order section properties
 		{
 			name: "order",
 			type: "LIST",
 			items: {
 				title: "Order By",
-				addLabel: "New Ordering",
+				addLabel: "New Order Field",
 				displayTemplate: (order: { desc: boolean; field: string }) => {
 					if (order.field) {
 						return `${order.field} | ${
@@ -60,10 +77,12 @@ const WireProperties: definition.UtilityComponent = (props) => {
 				properties: [
 					{
 						name: "field",
-						type: "METADATA",
-						metadataType: "FIELD",
+						type: "COLLECTION_FIELD",
 						label: "Field",
-						groupingPath: "../collection",
+						// Currently Wire order fields can only be one level, on the same collection,
+						// we don't support cross-collection ordering
+						allowReferenceTraversal: false,
+						collectionPath: "../collection",
 					},
 					{
 						name: "desc",
@@ -184,7 +203,7 @@ const WireProperties: definition.UtilityComponent = (props) => {
 			id="wireproperties"
 			properties={properties}
 			sections={[
-				getHomeSection(["wirename", "collection", "batchsize"]),
+				getHomeSection(["wirename", "collection", "batchsize", "init"]),
 				{
 					id: "fields",
 					label: "Fields",

@@ -1,4 +1,0 @@
-name: status
-type: SELECT
-label: Status
-selectList: uesio/crm.task_status

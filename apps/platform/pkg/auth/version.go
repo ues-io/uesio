@@ -10,7 +10,7 @@ import (
 func AddVersionContext(app, namespace, version string, session *sess.Session) error {
 
 	site := session.GetSite()
-	perms := session.GetPermissions()
+	perms := session.GetSitePermissions()
 
 	// 1. Make sure we're in a site that can work with metadata
 	if site.GetAppFullName() != "uesio/studio" {

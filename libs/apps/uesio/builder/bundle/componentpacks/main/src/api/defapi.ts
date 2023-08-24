@@ -300,7 +300,10 @@ const useHasChanges = (context: ctx.Context) => {
 const save = async (context: ctx.Context) => {
 	const workspace = context.getWorkspace()
 
-	if (!workspace) throw new Error("No Workspace in context")
+	if (!workspace) {
+		api.notification.addError("No Workspace in context", context)
+		return
+	}
 	const originalEntities = getBuilderExternalStates(
 		context,
 		"original:metadata:"
@@ -326,19 +329,40 @@ const save = async (context: ctx.Context) => {
 		})
 	}
 
-	await platform.platform.saveData(ctx.newContext(), {
-		wires: [
-			{
-				wire: "saveview",
-				collection: "uesio/studio.view",
-				changes: viewChanges,
-				deletes: {},
-				options: {
-					upsert: true,
-				},
+	// We do NOT want to use the existing context, because that would put us in workspace context.
+	// Here, to save the view (workspace METADATA), we need to save in the Studio context,
+	// BUT we have to indicate which workspace and app we are saving for.
+	const result = await platform.platform.saveData(
+		// THis is a bit hacky, the only way to attach params is via a ViewFrame
+		ctx.newContext().addViewFrame({
+			view: "",
+			viewDef: "",
+			params: {
+				workspacename: workspace.name,
+				app: workspace.app,
 			},
-		],
-	})
+		}),
+		{
+			wires: [
+				{
+					wire: "saveview",
+					collection: "uesio/studio.view",
+					changes: viewChanges,
+					deletes: {},
+					options: {
+						upsert: true,
+					},
+				},
+			],
+		}
+	)
+	if (result?.wires?.length === 1 && result.wires[0].errors?.length) {
+		api.notification.addError(
+			"Error saving view: " + result.wires[0].errors[0].message,
+			context
+		)
+		return
+	}
 
 	if (originalEntities && originalEntities.length) {
 		originalEntities.forEach((entity) => {

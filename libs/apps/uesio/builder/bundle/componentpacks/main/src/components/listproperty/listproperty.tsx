@@ -7,6 +7,10 @@ import {
 } from "../../properties/componentproperty"
 
 type Definition = {
+	// A fully-qualified path to the property
+	// If this property is nested within a STRUCT, for instance, it will contain the full path,
+	// e.g. "reference->order"
+	fieldId?: string
 	property: LP
 	path: FullPath
 }
@@ -14,6 +18,7 @@ type Definition = {
 const ListProperty: definition.UC<Definition> = (props) => {
 	const { context, definition } = props
 	const { path, property } = definition
+	const fieldId = definition.fieldId || property.name
 	const itemsDefinition = property.items
 	const {
 		actions,
@@ -40,8 +45,10 @@ const ListProperty: definition.UC<Definition> = (props) => {
 
 	if (!viewDefId || !record) return null
 
-	const listPropertyPath = path.addLocal(property.name)
-	const items = record.getFieldValue(property.name) as wire.PlainWireRecord[]
+	const listPropertyPath = fieldId
+		.split("->")
+		.reduce((acc, cur) => acc.addLocal(cur), path)
+	const items = record.getFieldValue(fieldId) as wire.PlainWireRecord[]
 	// If actions are explicitly specified in the definition, use those,
 	// otherwise we would expect "addLabel" and "defaultDefinition" to define
 	// a single action.
@@ -68,6 +75,13 @@ const ListProperty: definition.UC<Definition> = (props) => {
 			defaultDefinition,
 		},
 	]
+	const subtype =
+		property.subtype ||
+		context
+			.getWire()
+			?.getCollection()
+			.getFieldMetadata(fieldId)
+			?.getSubType()
 
 	return !itemsDefinition ? (
 		<FieldWrapper
@@ -76,14 +90,14 @@ const ListProperty: definition.UC<Definition> = (props) => {
 			context={context}
 			variant={"uesio/builder.propfield"}
 		>
-			{property.subtype === "CHECKBOX" ||
-			property.subtype === "SELECT" ||
-			property.subtype === "MULTISELECT" ? (
+			{subtype === "CHECKBOX" ||
+			subtype === "SELECT" ||
+			subtype === "MULTISELECT" ? (
 				<MultiSelectField
-					fieldId={property.name}
+					fieldId={fieldId}
 					path={path}
 					value={items || []}
-					subType={property.subtype}
+					subType={subtype}
 					setValue={(value: wire.FieldValue) => {
 						set(context, listPropertyPath, value)
 					}}
@@ -95,10 +109,10 @@ const ListProperty: definition.UC<Definition> = (props) => {
 				/>
 			) : (
 				<ListField
-					fieldId={property.name}
+					fieldId={fieldId}
 					path={path}
 					value={items}
-					subType={property.subtype}
+					subType={subtype}
 					setValue={(value: wire.FieldValue) => {
 						set(context, listPropertyPath, value)
 					}}

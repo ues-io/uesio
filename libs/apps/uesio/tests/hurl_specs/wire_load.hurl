@@ -35,7 +35,7 @@ main.collection = $1 AND
 main.tenant = $2
 ORDER BY main.id::text asc
 LIMIT 3```
-jsonpath "$.wires[0].data[*]" count == 2
+jsonpath "$.wires[0].data" count == 2
 
 # Test a wire load with a simple condition
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
@@ -50,6 +50,12 @@ Accept: application/json
                     "id": "mycoolid",
                     "field": "uesio/tests.species",
                     "value": "Jerrine"
+                }
+            ],
+            "order": [
+                {
+                     "field": "uesio/core.uniquekey",
+                     "desc": false
                 }
             ]
         }
@@ -66,12 +72,12 @@ WHERE
 main.collection = $1 AND
 main.tenant = $2 AND
 main.fields->>'uesio/tests.species' = $3
-ORDER BY main.id::text asc
+ORDER BY main.uniquekey asc
 LIMIT 501```
 jsonpath "$.wires[0].conditions[0].id" == "mycoolid"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" count == 2
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "MacAughtrie:Jerrine"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "McCreary:Jerrine"
+jsonpath "$.wires[0].data" count == 2
+jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "MacAughtrie:Jerrine"
+jsonpath "$.wires[0].data[1]['uesio/core.uniquekey']" == "McCreary:Jerrine"
 
 # Test a wire load with a param merge condition
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
@@ -149,9 +155,9 @@ main.tenant = $2 AND
 main.uniquekey = $3
 ORDER BY main.id::text asc
 LIMIT 501```
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" nth 0 == "MacAughtrie:Jerrine"
+jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "MacAughtrie:Jerrine"
 [Captures]
-idvalue: jsonpath "$.wires[0].data[*]['uesio/core.id']" nth 0
+idvalue: jsonpath "$.wires[0].data[0]['uesio/core.id']"
 
 # Test a wire load with a condition on the core id field
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
@@ -189,7 +195,7 @@ main.tenant = $2 AND
 main.id::text = $3
 ORDER BY main.id::text asc
 LIMIT 501```
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" nth 0 == "MacAughtrie:Jerrine"
+jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "MacAughtrie:Jerrine"
 
 # Verify that wire properties from a view are processed correctly
 GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/simple_wire_load
@@ -221,6 +227,11 @@ Accept: application/json
                         "Jerrine"
                     ]
                 }
+            ],
+            "order": [
+                {
+                    "field": "uesio/tests.genus"
+                }
             ]
         }
     ]
@@ -236,11 +247,11 @@ WHERE
 main.collection = $1 AND
 main.tenant = $2 AND
 main.fields->>'uesio/tests.species' = ANY ($3)
-ORDER BY main.id::text asc
+ORDER BY main.fields->>'uesio/tests.genus' asc
 LIMIT 501```
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" count == 2
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "MacAughtrie:Jerrine"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "McCreary:Jerrine"
+jsonpath "$.wires[0].data" count == 2
+jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "MacAughtrie:Jerrine"
+jsonpath "$.wires[0].data[1]['uesio/core.uniquekey']" == "McCreary:Jerrine"
 
 # Wire load with NOT IN condition and values
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
@@ -285,4 +296,53 @@ main.fields->>'uesio/tests.genus' <> ALL ($3) AND
 main.fields->>'uesio/tests.species' = ANY ($4)
 ORDER BY main.id::text asc
 LIMIT 501```
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" nth 0 == "Soitoux:Franklin"
+jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "Soitoux:Franklin"
+
+# Wire load with ORDER fields not otherwise requested in Field / Condition metadata
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection": "uesio/tests.animal",
+            "query": true,
+            "conditions": [
+                {
+                    "field": "uesio/tests.species",
+                    "operator": "IN",
+                    "values": [
+                        "Franklin",
+                        "Benjamin"
+                    ]
+                }
+            ],
+            "order": [
+                {
+                    "field": "uesio/tests.total_population",
+                    "desc": true
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" not exists
+jsonpath "$.wires[0].debugQueryString" == ```
+SELECT
+main.id::text AS "uesio/core.id",
+main.uniquekey AS "uesio/core.uniquekey"
+FROM data as "main"
+WHERE
+main.collection = $1 AND
+main.tenant = $2 AND
+main.fields->>'uesio/tests.species' = ANY ($3)
+ORDER BY main.fields->'uesio/tests.total_population' desc
+LIMIT 501```
+# Lathe:Franklin has a higher total population so it should come first
+jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "Lathe:Franklin"
+jsonpath "$.wires[0].data[1]['uesio/core.uniquekey']" == "Soitoux:Franklin"
+# Verify that metadata for the order fields was loaded and is available in the wire
+jsonpath "$.collections['uesio/tests.animal'].fields['uesio/tests.total_population'].type" == "NUMBER"
+
+

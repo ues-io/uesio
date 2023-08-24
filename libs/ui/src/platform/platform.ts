@@ -17,9 +17,31 @@ import {
 	postJSON,
 	respondJSON,
 	respondVoid,
+	postMultipartForm,
 } from "./async"
 import { memoizedGetJSON } from "./memoizedAsync"
 import { SiteState } from "../bands/site"
+import { UploadRequest } from "../load/uploadrequest"
+import { PlainCollectionMap } from "../bands/collection/types"
+import { ServerWire } from "../bands/wire/types"
+import { transformServerWire } from "../bands/wire/transform"
+
+type ServerWireLoadResponse = {
+	wires: ServerWire[]
+	collections: PlainCollectionMap
+}
+
+interface HasParams {
+	params?: Record<string, string>
+}
+
+const injectParams = (
+	x: HasParams[],
+	paramsToInject?: Record<string, string>
+) => {
+	if (!x || !x.length || !paramsToInject) return
+	x.forEach((y) => (y.params = paramsToInject))
+}
 
 // Allows us to load static vendor assets, such as Monaco modules, from custom paths
 // and for us to load Uesio-app-versioned files from the server
@@ -154,8 +176,6 @@ const systemBundles = [
 	"uesio/builder",
 	"uesio/studio",
 	"uesio/core",
-	// TODO: REMOVE CRM!!!
-	"uesio/crm",
 ]
 
 export const isSystemBundle = (namespace: string) =>
@@ -256,18 +276,29 @@ const platform = {
 		requestBody: LoadRequestBatch
 	): Promise<LoadResponseBatch> => {
 		const prefix = getPrefix(context)
+		injectParams(requestBody.wires, context.getParams())
 		const response = await postJSON(
 			context,
 			`${prefix}/wires/load`,
 			requestBody
 		)
-		return respondJSON(response)
+		const loadResponse = (await respondJSON(
+			response
+		)) as ServerWireLoadResponse
+
+		const { collections, wires } = loadResponse
+
+		return {
+			collections,
+			wires: wires.map(transformServerWire),
+		}
 	},
 	saveData: async (
 		context: Context,
 		requestBody: SaveRequestBatch
 	): Promise<SaveResponseBatch> => {
 		const prefix = getPrefix(context)
+		injectParams(requestBody.wires, context.getParams())
 		const response = await postJSON(
 			context,
 			`${prefix}/wires/save`,
@@ -331,7 +362,7 @@ const platform = {
 		const version = getSiteBundleAssetVersion(
 			context.getSite(),
 			namespace,
-			modstamp
+			modstamp || context.getStaticFileModstamp(`${namespace}.${name}`)
 		)
 		const prefix = getPrefix(context)
 		return `${prefix}/files/${namespace}${version}/${name}`
@@ -351,24 +382,23 @@ const platform = {
 	},
 	uploadFile: async (
 		context: Context,
-		fileData: File,
-		collectionID: string,
-		recordID: string,
-		fieldID?: string
+		request: UploadRequest,
+		fileData: File
 	): Promise<PlainWireRecord> => {
 		const prefix = getPrefix(context)
 		const url = `${prefix}/userfiles/upload`
-		const params = new URLSearchParams()
-		params.append("name", fileData.name)
-		params.append("collectionid", collectionID)
-		params.append("recordid", recordID)
-		if (fieldID) params.append("fieldid", fieldID)
-
-		const response = await postBinary(
-			context,
-			url + "?" + params.toString(),
-			fileData
+		const formData = new FormData()
+		// HTML file input, chosen by user
+		formData.append(
+			"details",
+			JSON.stringify({
+				...request,
+				name: fileData.name,
+			})
 		)
+
+		formData.append("file", fileData)
+		const response = await postMultipartForm(context, url, formData)
 		return respondJSON(response)
 	},
 	deleteFile: async (

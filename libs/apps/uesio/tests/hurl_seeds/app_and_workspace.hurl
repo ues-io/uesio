@@ -13,9 +13,31 @@ user_id: jsonpath "$.user.id"
 DELETE https://{{host}}:{{port}}/site/api/v1/collection/uesio/studio/site?uesio/studio.name=eq.testsite
 HTTP 204
 
-# Delete the tests app if it already exists, which should cascade delete the workspace and all of its data
+# Delete the tests app if it already exists, which should cascade delete the workspace and all of its metadata
 DELETE https://{{host}}:{{port}}/site/api/v1/collection/uesio/studio/app?uesio/studio.fullname=eq.uesio%2Ftests
 HTTP 204
+
+# Verify that workspaces are cascade deleted
+POST https://{{host}}:{{port}}/site/wires/load
+{
+    "wires": [
+        {
+            "wire": "workspaces",
+            "collection": "uesio/studio.workspace",
+            "conditions": [
+                {
+                    "field": "uesio/studio.app->uesio/studio.fullname",
+                    "operator": "EQ",
+                    "value": "uesio/tests"
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" not exists
+jsonpath "$.wires[0].data" count == 0
 
 # Create the tests app
 POST https://{{host}}:{{port}}/site/wires/save
@@ -43,6 +65,81 @@ POST https://{{host}}:{{port}}/site/wires/save
 HTTP 200
 [Captures]
 app_id: jsonpath "$.wires[0].changes['1']['uesio/core.id']"
+[Asserts]
+jsonpath "$.wires[0].errors" == null
+
+# Create tests team
+POST https://{{host}}:{{port}}/site/wires/save
+{
+    "wires": [
+        {
+            "wire": "newteam",
+            "collection":"uesio/studio.team",
+            "changes": {
+                "1": {
+                    "uesio/studio.app": {
+                        "uesio/core.id": "{{app_id}}"
+                    },
+                    "uesio/studio.name": "admins"
+                }
+            }
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" == null
+[Captures]
+team_id: jsonpath "$.wires[0].changes['1']['uesio/core.id']"
+
+# Get ben's id
+POST https://{{host}}:{{port}}/site/wires/load
+{
+    "wires": [
+        {
+            "collection": "uesio/core.user",
+            "conditions": [
+                {
+                    "field":"uesio/core.uniquekey",
+                    "operator":"EQ",
+                    "valueSource":"VALUE",
+                    "value":"ben"
+                }
+            ],
+            "query": true
+        }
+    ]
+}
+HTTP 200
+[Captures]
+ben_id: jsonpath "$.wires[0].data[*]['uesio/core.id']" nth 0
+
+# Put ben on the team
+POST https://{{host}}:{{port}}/site/wires/save
+{
+    "wires": [
+        {
+            "wire": "newTeamMember",
+            "collection":"uesio/studio.teammember",
+            "changes": {
+                "1": {
+                    "uesio/studio.app": {
+                        "uesio/core.id": "{{app_id}}"
+                    },
+                    "uesio/studio.team": {
+                        "uesio/core.id": "{{team_id}}"
+                    },
+                    "uesio/studio.member": {
+                        "uesio/core.id": "{{ben_id}}"
+                    }
+                }
+            }
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" == null
 
 # Create dev workspace
 POST https://{{host}}:{{port}}/site/wires/save
@@ -63,6 +160,8 @@ POST https://{{host}}:{{port}}/site/wires/save
     ]
 }
 HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" == null
 
 # Create truncatetests workspace
 POST https://{{host}}:{{port}}/site/wires/save
@@ -82,4 +181,16 @@ POST https://{{host}}:{{port}}/site/wires/save
         }
     ]
 }
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" == null
+
+# To have a blank slate before running tests,
+# currently we have to manually truncate the DATA in each of our workspaces.
+# TODO: Automatically truncate workspace DATA as part of deleting the WORKSPACE itself,
+# then we can remove these lines
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/data/truncate
+HTTP 200
+
+POST https://{{host}}:{{port}}/workspace/uesio/tests/truncatetests/data/truncate
 HTTP 200

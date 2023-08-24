@@ -13,7 +13,7 @@ import ReferenceFilter from "../../utilities/referencefilter/referencefilter"
 import GroupFilter, {
 	GroupFilterProps,
 } from "../../utilities/groupfilter/groupfilter"
-import { LabelPosition } from "../field/field"
+import { LabelPosition, ReferenceFieldOptions } from "../field/field"
 
 type FilterDefinition = {
 	fieldId: string
@@ -25,6 +25,7 @@ type FilterDefinition = {
 	conditionId?: string
 	placeholder?: string
 	operator: wire.ConditionOperators
+	reference?: ReferenceFieldOptions
 }
 
 type CommonProps = {
@@ -67,7 +68,12 @@ const getFilterContent = (
 		}
 		case "USER":
 		case "REFERENCE": {
-			return <ReferenceFilter {...common} />
+			return (
+				<ReferenceFilter
+					{...common}
+					options={definition.reference as ReferenceFieldOptions}
+				/>
+			)
 		}
 		default:
 			return null
@@ -131,7 +137,6 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 	const { fieldId, conditionId, operator, displayAs } = definition
 	const wire = api.wire.useWire(definition.wire, context)
 	if (!wire) return null
-
 	const collection = wire.getCollection()
 	const existingCondition =
 		wire.getCondition(conditionId || path) || undefined

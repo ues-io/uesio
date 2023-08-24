@@ -62,9 +62,12 @@ const FileAttachment: definition.UC<FileDefinition> = (props) => {
 		if (!recordId || !collectionId) return
 		const uploadResult = await api.file.uploadFile(
 			context,
-			file,
-			collectionId,
-			recordId
+			{
+				collectionID: collectionId,
+				recordID: recordId,
+				params: context.getParams(),
+			},
+			file
 		)
 		if (onUploadSignals) {
 			await api.signal.getHandler(

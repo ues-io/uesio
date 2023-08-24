@@ -1,5 +1,0 @@
-name: tax_rate
-type: NUMBER
-label: Tax Rate
-number:
-  decimals: 0

@@ -56,7 +56,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.text']" nth 0 == "text 1"
+jsonpath "$.wires[0].data[0]['uesio/tests.text']" == "text 1"
 
 # Operator: EQ | valueSource: PARAM
 # entry 4
@@ -85,7 +85,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.text']" nth 0 == "text 1"
+jsonpath "$.wires[0].data[0]['uesio/tests.text']" == "text 1"
 
 # Operator: NOT_EQ | valueSource: VALUE
 # entry 5
@@ -309,8 +309,8 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[1].data[*]['uesio/tests.text']" nth 0 == "text 1"
-jsonpath "$.wires[1].data[*]['uesio/core.uniquekey']" nth 0 == "ID-001"
+jsonpath "$.wires[1].data[0]['uesio/tests.text']" == "text 1"
+jsonpath "$.wires[1].data[0]['uesio/core.uniquekey']" == "ID-001"
 
 
 # Operator: IN | valueSource: PARAM
