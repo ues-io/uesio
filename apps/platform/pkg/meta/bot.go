@@ -274,7 +274,7 @@ func (b *Bot) ValidateParams(params map[string]interface{}) error {
 	for _, param := range b.Params {
 		paramValue := params[param.Name]
 		// First check for requiredness
-		if paramValue == nil {
+		if paramValue == nil || paramValue == "" {
 			if param.Required {
 				return NewParamError("missing required param", param.Name)
 			} else {
@@ -295,6 +295,11 @@ func (b *Bot) ValidateParams(params map[string]interface{}) error {
 			// Cast to the corresponding type
 			if _, err := strconv.ParseBool(paramValue.(string)); err != nil {
 				return NewParamError("param value must either be 'true' or 'false'", param.Name)
+			}
+		case "METADATANAME":
+			ok := IsValidMetadataName(fmt.Sprintf("%v", paramValue))
+			if !ok {
+				return NewParamError("param failed metadata validation, no capital letters or special characters allowed", param.Name)
 			}
 		}
 	}
