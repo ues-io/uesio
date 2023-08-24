@@ -2,34 +2,34 @@ import { wire, collection, definition, context, metadata } from "@uesio/ui"
 import ListField from "../field/list"
 
 interface MapFieldUtilityProps {
-	mode: context.FieldMode
-	value: wire.FieldValue
-	setValue: (value: wire.PlainWireRecord) => void
+	fieldId: string
 	keyField: collection.FieldMetadata
-	valueField: collection.FieldMetadata
 	keys?: string[]
+	labelVariant?: metadata.MetadataKey
+	mode: context.FieldMode
 	noAdd?: boolean
 	noDelete?: boolean
-	subFieldVariant?: metadata.MetadataKey
-	labelVariant?: metadata.MetadataKey
 	path: string
-	fieldId: string
+	setValue: (value: wire.PlainWireRecord) => void
+	subFieldVariant?: metadata.MetadataKey
+	value: wire.FieldValue
+	valueField: collection.FieldMetadata
 }
 
 const MapField: definition.UtilityComponent<MapFieldUtilityProps> = (props) => {
 	const {
-		fieldId,
-		mode,
 		context,
-		keys,
-		setValue,
+		fieldId,
 		keyField,
-		valueField,
-		noAdd,
-		noDelete,
-		subFieldVariant,
+		keys,
 		labelVariant,
+		mode,
+		noAdd = false,
+		noDelete = false,
 		path,
+		setValue,
+		subFieldVariant,
+		valueField,
 	} = props
 
 	const value = (props.value as Record<string, wire.FieldValue>) || {}
