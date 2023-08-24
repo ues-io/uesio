@@ -148,6 +148,15 @@ definition:
                                   - uesio/io.field:
                                       fieldId: uesio/studio.type
                                   - uesio/io.field:
+                                      fieldId: uesio/studio.subtype
+                                      uesio.display:
+                                        - field: uesio/studio.type
+                                          type: fieldValue
+                                          operator: IN
+                                          values:
+                                            - LIST
+                                            - MAP
+                                  - uesio/io.field:
                                       fieldId: uesio/studio.label
                                   - uesio/builder.metadatafield:
                                       fieldId: uesio/studio.languagelabel
@@ -257,13 +266,17 @@ definition:
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           uesio.display:
-                            - field: uesio/studio.type
-                              type: fieldValue
-                              operator: IN
-                              values:
-                                - MAP
-                                - STRUCT
-                                - LIST
+                            - type: group
+                              conjunction: OR
+                              conditions:
+                                - field: uesio/studio.type
+                                  type: fieldValue
+                                  wire: fields
+                                  value: STRUCT
+                                - field: uesio/studio.subtype
+                                  wire: fields
+                                  type: fieldValue
+                                  value: STRUCT
                           uesio.styleTokens:
                             root:
                               - p-10
@@ -272,24 +285,8 @@ definition:
                                 uesio.variant: uesio/io.main
                                 title: Sub fields
                             - uesio/io.field:
-                                fieldId: uesio/studio.subtype
-                                uesio.display:
-                                  - field: uesio/studio.type
-                                    type: fieldValue
-                                    operator: IN
-                                    values:
-                                      - MAP
-                                      - LIST
-                            - uesio/io.field:
                                 label: " "
                                 fieldId: uesio/studio.subfields
-                                uesio.display:
-                                  - field: uesio/studio.subtype
-                                    type: fieldValue
-                                    operator: NOT_IN
-                                    values:
-                                      - TEXT
-                                      - NUMBER
   panels:
     deleteField:
       uesio.type: uesio/io.dialog
