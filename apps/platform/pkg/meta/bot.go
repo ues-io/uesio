@@ -274,7 +274,7 @@ func (b *Bot) ValidateParams(params map[string]interface{}) error {
 	for _, param := range b.Params {
 		paramValue := params[param.Name]
 		// First check for requiredness
-		if paramValue == nil {
+		if paramValue == nil || paramValue == "" {
 			if param.Required {
 				return NewParamError("missing required param", param.Name)
 			} else {
