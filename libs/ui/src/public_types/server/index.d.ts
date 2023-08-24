@@ -78,6 +78,22 @@ interface UserApi {
 	getUniqueKey: () => string
 }
 
+interface BotHttpRequest {
+	url: string
+	method: string
+	headers?: Record<string, string>
+	body?: string | Record<string, unknown>
+}
+interface BotHttpResponse {
+	code: number
+	status: string
+	headers: Record<string, string>
+	body: string | Record<string, unknown> | null
+}
+
+interface HttpApi {
+	request: (options: BotHttpRequest) => BotHttpResponse
+}
 type RunIntegrationAction = (
 	integration: string,
 	action: string,
@@ -114,6 +130,7 @@ interface ListenerBotApi {
 	getSession: () => SessionApi
 	getUser: () => UserApi
 	log: LogApi
+	http: HttpApi
 }
 export type {
 	ListenerBotApi,

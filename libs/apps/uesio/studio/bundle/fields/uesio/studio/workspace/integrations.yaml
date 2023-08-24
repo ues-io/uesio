@@ -1,0 +1,7 @@
+name: integrations
+type: REFERENCEGROUP
+label: Integrations
+referenceGroup:
+  collection: integration
+  field: workspace
+  onDelete: CASCADE

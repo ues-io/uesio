@@ -1,6 +1,23 @@
 name: standard
 named:
   uesio/studio.workspace_admin: true
+bots:
+  uesio/core.collection: true
+  uesio/core.component: true
+  uesio/core.componentpack: true
+  uesio/core.detailview: true
+  uesio/core.field: true
+  uesio/core.headerview: true
+  uesio/core.init: true
+  uesio/core.listview: true
+  uesio/core.queueview: true
+  uesio/core.route: true
+  uesio/core.theme: true
+  uesio/core.view: true
+  uesio/studio.createbundle: true
+  uesio/studio.makepayment: true
+  uesio/studio.workspacetruncate: true
+  uesio/studio.setworkspaceuser: true
 views:
   uesio/studio.bundlestore: true
   uesio/studio.app: true
@@ -87,6 +104,7 @@ views:
   uesio/studio.invoice: true
   uesio/studio.userpayments: true
   uesio/studio.paymentsuccess: true
+  uesio/studio.recorddata: true
 routes:
   uesio/studio.authsources: true
   uesio/studio.authsource: true
@@ -172,6 +190,7 @@ routes:
   uesio/studio.invoice: true
   uesio/studio.userpayments: true
   uesio/studio.paymentsuccess: true
+  uesio/studio.recorddata: true
 files: {}
 collections:
   uesio/studio.recentmetadata: true

@@ -13,18 +13,11 @@ import (
 )
 
 func getUserFromClaims(authSourceID string, claims *AuthenticationClaims, session *sess.Session) (*meta.User, error) {
-	// Bump our permissions a bit so we can make the next two queries
-	session.SetPermissions(&meta.PermissionSet{
-		CollectionRefs: map[string]meta.CollectionPermission{
-			"uesio/core.user":             {Read: true},
-			"uesio/core.organizationuser": {Read: true},
-			"uesio/core.userfile":         {Read: true},
-			"uesio/core.loginmethod":      {Read: true},
-		},
-	})
+
+	adminSession := sess.GetAnonSession(session.GetSite())
 
 	// 4. Check for Existing User
-	loginmethod, err := GetLoginMethod(claims, authSourceID, session)
+	loginmethod, err := GetLoginMethod(claims, authSourceID, adminSession)
 	if err != nil {
 		return nil, errors.New("Failed Getting Login Method Data: " + err.Error())
 	}
@@ -33,7 +26,7 @@ func getUserFromClaims(authSourceID string, claims *AuthenticationClaims, sessio
 		return nil, errors.New("no Login Method found that matches your claims")
 	}
 
-	user, err := GetUserByID(loginmethod.User.ID, session, nil)
+	user, err := GetUserByID(loginmethod.User.ID, adminSession, nil)
 	if err != nil {
 		return nil, errors.New("failed Getting user Data: " + err.Error())
 	}

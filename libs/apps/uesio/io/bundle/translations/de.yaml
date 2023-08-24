@@ -1,5 +1,6 @@
 language: de
 labels:
+  uesio/io.add: fügen
   uesio/io.cancel: stornieren
   uesio/io.copy: kopieren
   uesio/io.delete: löschen

@@ -28,7 +28,7 @@ var ServerMergeFuncs = map[string]interface{}{
 		return val, nil
 	},
 	"User": func(m ServerMergeData, key string) (interface{}, error) {
-		userInfo := m.Session.GetUserInfo()
+		userInfo := m.Session.GetContextUser()
 		if userInfo == nil {
 			return nil, nil
 		}

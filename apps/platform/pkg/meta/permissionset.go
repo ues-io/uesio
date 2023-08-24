@@ -80,6 +80,8 @@ type PermissionSet struct {
 	CollectionRefs      CollectionPermissionMap `yaml:"collections" json:"uesio/studio.collectionrefs"`
 	RouteRefs           map[string]bool         `yaml:"routes" json:"uesio/studio.routerefs"`
 	FileRefs            map[string]bool         `yaml:"files" json:"uesio/studio.filerefs"`
+	BotRefs             map[string]bool         `yaml:"bots" json:"uesio/studio.botrefs"`
+	AllowAllBots        bool                    `yaml:"allowallbots" json:"uesio/studio.allowallbots"`
 	AllowAllCollections bool                    `yaml:"allowallcollections" json:"uesio/studio.allowallcollections"`
 	AllowAllViews       bool                    `yaml:"allowallviews" json:"uesio/studio.allowallviews"`
 	AllowAllRoutes      bool                    `yaml:"allowallroutes" json:"uesio/studio.allowallroutes"`
@@ -133,6 +135,17 @@ func (ps *PermissionSet) HasPermission(check *PermissionSet) bool {
 			}
 		}
 	}
+
+	if !ps.AllowAllBots {
+		for key, value := range check.BotRefs {
+			if value {
+				if !ps.BotRefs[key] {
+					return false
+				}
+			}
+		}
+	}
+
 	if !ps.AllowAllViews {
 		for key, value := range check.ViewRefs {
 			if value {
@@ -235,12 +248,21 @@ func (ps *PermissionSet) HasDeletePermission(key string) bool {
 	}
 }
 
+func (ps *PermissionSet) HasNamedPermission(namedPermission string) bool {
+	if ps.NamedRefs == nil {
+		return false
+	}
+	return ps.NamedRefs[namedPermission] == true
+}
+
 func FlattenPermissions(permissionSets []PermissionSet) *PermissionSet {
+	botPerms := map[string]bool{}
 	namedPerms := map[string]bool{}
 	viewPerms := map[string]bool{}
 	routePerms := map[string]bool{}
 	filePerms := map[string]bool{}
 	collectionPerms := CollectionPermissionMap{}
+	allowAllBots := false
 	allowAllViews := false
 	allowAllRoutes := false
 	allowAllFiles := false
@@ -252,6 +274,11 @@ func FlattenPermissions(permissionSets []PermissionSet) *PermissionSet {
 		for key, value := range permissionSet.NamedRefs {
 			if value {
 				namedPerms[key] = true
+			}
+		}
+		for key, value := range permissionSet.BotRefs {
+			if value {
+				botPerms[key] = true
 			}
 		}
 		for key, value := range permissionSet.ViewRefs {
@@ -280,6 +307,9 @@ func FlattenPermissions(permissionSets []PermissionSet) *PermissionSet {
 				collectionPerms[key] = existingVal
 			}
 		}
+		if permissionSet.AllowAllBots {
+			allowAllBots = true
+		}
 		if permissionSet.AllowAllViews {
 			allowAllViews = true
 		}
@@ -303,14 +333,29 @@ func FlattenPermissions(permissionSets []PermissionSet) *PermissionSet {
 	return &PermissionSet{
 		NamedRefs:           namedPerms,
 		ViewRefs:            viewPerms,
+		BotRefs:             botPerms,
 		RouteRefs:           routePerms,
 		FileRefs:            filePerms,
 		CollectionRefs:      collectionPerms,
+		AllowAllBots:        allowAllBots,
 		AllowAllViews:       allowAllViews,
 		AllowAllRoutes:      allowAllRoutes,
 		AllowAllFiles:       allowAllFiles,
 		AllowAllCollections: allowAllCollections,
 		ModifyAllRecords:    modifyAllRecords,
 		ViewAllRecords:      viewAllRecords,
+	}
+}
+
+// Returns a permissionset that has the maximum permissions possible
+func GetAdminPermissionSet() *PermissionSet {
+	return &PermissionSet{
+		AllowAllBots:        true,
+		AllowAllViews:       true,
+		AllowAllRoutes:      true,
+		AllowAllFiles:       true,
+		AllowAllCollections: true,
+		ModifyAllRecords:    true,
+		ViewAllRecords:      true,
 	}
 }

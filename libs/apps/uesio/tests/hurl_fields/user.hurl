@@ -57,8 +57,8 @@ POST https://{{host}}:{{port}}/site/wires/load
 }
 HTTP 200
 [Captures]
-ID011-UUID: jsonpath "$.wires[0].data[*]['uesio/core.id']" nth 0
-ID012-UUID: jsonpath "$.wires[1].data[*]['uesio/core.id']" nth 0
+ID011-UUID: jsonpath "$.wires[0].data[0]['uesio/core.id']"
+ID012-UUID: jsonpath "$.wires[1].data[0]['uesio/core.id']"
 
 # create 2 new records with uesio/tests.name = "ID-011" / "ID-012" and user with uesio/core.id == ID011-UUID / ID012-UUID
 # entry 3

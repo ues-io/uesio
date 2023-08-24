@@ -20,11 +20,15 @@ func populateAutoNumbers(field *adapt.FieldMetadata) ChangeProcessor {
 
 		autoNumberMeta := field.AutoNumberMetadata
 		if autoNumberMeta == nil {
-			return adapt.NewSaveError(change.RecordKey, field.GetFullName(), "Missing autonumber metadata")
+			autoNumberMeta = (*adapt.AutoNumberMetadata)(&meta.DefaultAutoNumberMetadata)
 		}
 		format := "%0" + strconv.Itoa(autoNumberMeta.LeadingZeros) + "d"
 		sufix := fmt.Sprintf(format, change.Autonumber)
+
 		an := autoNumberMeta.Prefix + "-" + sufix
+		if autoNumberMeta.Prefix == "" {
+			an = sufix
+		}
 
 		// See if we're trying to set this value for an insert.
 		// If so, don't set the autonumber and just keep its current
@@ -96,7 +100,7 @@ func Populate(op *adapt.SaveOp, connection adapt.Connection, session *sess.Sessi
 				populations = append(populations, populateTimestamps(field, timestamp))
 			}
 			if field.Type == "USER" {
-				user := session.GetUserInfo()
+				user := session.GetContextUser()
 				populations = append(populations, populateUser(field, user))
 			}
 		} else if field.Type == "AUTONUMBER" {
@@ -119,7 +123,7 @@ func Populate(op *adapt.SaveOp, connection adapt.Connection, session *sess.Sessi
 		// Enforce field-level security for save
 		return change.Loop(func(field string, value interface{}) error {
 			if !session.GetContextPermissions().HasFieldEditPermission(collectionKey, field) {
-				return fmt.Errorf("Profile %s does not have edit access to the %s field.", session.GetProfile(), field)
+				return fmt.Errorf("Profile %s does not have edit access to the %s field.", session.GetContextProfile(), field)
 			}
 			return nil
 		})

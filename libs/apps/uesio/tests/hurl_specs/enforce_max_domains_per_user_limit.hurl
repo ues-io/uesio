@@ -13,6 +13,12 @@ HTTP 200
 session_id: cookie "sessid"
 user_id: jsonpath "$.user.id"
 
+# Log in as ben to set the limit, since ben has permission to administer the Studio site (uesio does not)
+POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+{
+    "token": "{\"subject\":\"ben\"}"
+}
+
 # Set a limit of 1 domain per user
 POST https://{{host}}:{{port}}/siteadmin/uesio/studio/prod/featureflags/uesio/studio/max_domains_per_user
 {
@@ -22,6 +28,12 @@ POST https://{{host}}:{{port}}/siteadmin/uesio/studio/prod/featureflags/uesio/st
 HTTP 200
 [Asserts]
 jsonpath "$.success" == true
+
+# Log back in as uesio
+POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+{
+    "token": "{\"subject\":\"uesio\"}"
+}
 
 # Delete the test site domain if it already exists. This should succeed even though our domain limit is very low.
 # This ensures that we are ONLY enforcing the limit on new domains, not existing ones.
@@ -81,6 +93,12 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data[*]" isEmpty
 
+# Log in as ben to set the limit, since ben has permission to administer the Studio site (uesio does not)
+POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+{
+    "token": "{\"subject\":\"ben\"}"
+}
+
 # Bump up the limit
 POST https://{{host}}:{{port}}/siteadmin/uesio/studio/prod/featureflags/uesio/studio/max_domains_per_user
 {
@@ -90,6 +108,12 @@ POST https://{{host}}:{{port}}/siteadmin/uesio/studio/prod/featureflags/uesio/st
 HTTP 200
 [Asserts]
 jsonpath "$.success" == true
+
+# Log back in as uesio
+POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+{
+    "token": "{\"subject\":\"uesio\"}"
+}
 
 # Create a new domain - should succeed now
 POST https://{{host}}:{{port}}/site/wires/save

@@ -143,7 +143,7 @@ func handleStandardChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, sess
 	}
 
 	if !hasToken && !userCanModifyAllRecords {
-		return errors.New("User does not have access to write to this field: " + change.UniqueKey)
+		return errors.New("User does not have access to write to this record: " + change.UniqueKey + " of collection: " + change.Metadata.GetFullName())
 	}
 
 	return nil
@@ -223,7 +223,7 @@ func handleAccessFieldChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, m
 	}
 
 	if !hasToken && !userCanModifyAllRecords {
-		return errors.New("User does not have parent access to write to this field: " + change.IDValue)
+		return errors.New("User does not have parent access to write to this record: " + change.UniqueKey + " of collection: " + change.Metadata.GetFullName())
 	}
 
 	return nil

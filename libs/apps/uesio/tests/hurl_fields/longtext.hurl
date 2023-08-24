@@ -68,7 +68,7 @@ main.tenant = $2 AND
 main.fields->>'uesio/tests.longtext' = $3
 ORDER BY main.id::text asc
 LIMIT 501```
-jsonpath "$.wires[0].data[*]['uesio/tests.longtext']" nth 0 == "test text1"
+jsonpath "$.wires[0].data[0]['uesio/tests.longtext']" == "test text1"
 
 # Operator: EQ | valueSource: PARAM
 # entry 4
@@ -97,7 +97,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.longtext']" nth 0 == "test text1"
+jsonpath "$.wires[0].data[0]['uesio/tests.longtext']" == "test text1"
 
 # Operator: NOT_EQ | valueSource: VALUE
 # entry 5
@@ -325,8 +325,8 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[1].data[*]['uesio/tests.longtext']" nth 0 == "test text1"
-jsonpath "$.wires[1].data[*]['uesio/core.uniquekey']" nth 0 == "ID-001"
+jsonpath "$.wires[1].data[0]['uesio/tests.longtext']" == "test text1"
+jsonpath "$.wires[1].data[0]['uesio/core.uniquekey']" == "ID-001"
 
 
 # Operator: IN | valueSource: PARAM

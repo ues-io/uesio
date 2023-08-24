@@ -3,8 +3,8 @@ label: Account
 pluralLabel: Account
 uniqueKey:
   - uesio/tests.name
-access: "protected"
+access: protected
 recordChallengeTokens:
-  - token: "${uesio/core.id}"
-    userAccessToken: "uesio/tests.accountmember"
+  - token: ${uesio/core.id}
+    userAccessToken: uesio/tests.accountmember
     access: readwrite
