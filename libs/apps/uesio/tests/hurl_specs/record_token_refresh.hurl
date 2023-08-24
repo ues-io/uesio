@@ -97,8 +97,6 @@ POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 }
 
 # Put ben on the account team
-# Remove record challenge tokens from the account object
-# Test a simple update
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
 Accept: application/json
 {
