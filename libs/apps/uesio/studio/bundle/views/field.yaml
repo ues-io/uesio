@@ -261,8 +261,9 @@ definition:
                               type: fieldValue
                               operator: IN
                               values:
-                                - STRUCT
                                 - LIST
+                                - MAP
+                                - STRUCT
                           uesio.styleTokens:
                             root:
                               - p-10
@@ -278,19 +279,15 @@ definition:
                                     operator: IN
                                     values:
                                       - LIST
+                                      - MAP
                             - uesio/io.field:
                                 label: " "
                                 fieldId: uesio/studio.subfields
                                 uesio.display:
                                   - field: uesio/studio.subtype
                                     type: fieldValue
-                                    operator: NOT_IN
-                                    values:
-                                      - TEXT
-                                      - NUMBER
-                                      - DATE
-                                      - LONGTEXT
-                                      - TIMESTAMP
+                                    operator: EQUALS
+                                    value: STRUCT
   panels:
     deleteField:
       uesio.type: uesio/io.dialog

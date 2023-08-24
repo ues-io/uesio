@@ -2,32 +2,34 @@ import { wire, collection, definition, context, metadata } from "@uesio/ui"
 import ListField from "../field/list"
 
 interface MapFieldUtilityProps {
-	mode: context.FieldMode
-	value: wire.FieldValue
-	setValue: (value: wire.PlainWireRecord) => void
-	keyField: collection.FieldMetadata
-	valueField: collection.FieldMetadata
-	keys?: string[]
-	noDelete?: boolean
-	subFieldVariant?: metadata.MetadataKey
-	labelVariant?: metadata.MetadataKey
-	path: string
 	fieldId: string
+	keyField: collection.FieldMetadata
+	keys?: string[]
+	labelVariant?: metadata.MetadataKey
+	mode: context.FieldMode
+	noAdd?: boolean
+	noDelete?: boolean
+	path: string
+	setValue: (value: wire.PlainWireRecord) => void
+	subFieldVariant?: metadata.MetadataKey
+	value: wire.FieldValue
+	valueField: collection.FieldMetadata
 }
 
 const MapField: definition.UtilityComponent<MapFieldUtilityProps> = (props) => {
 	const {
-		fieldId,
-		mode,
 		context,
-		keys,
-		setValue,
+		fieldId,
 		keyField,
-		valueField,
-		noDelete,
-		subFieldVariant,
+		keys,
 		labelVariant,
+		mode,
+		noAdd = false,
+		noDelete = false,
 		path,
+		setValue,
+		subFieldVariant,
+		valueField,
 	} = props
 
 	const value = (props.value as Record<string, wire.FieldValue>) || {}
@@ -48,7 +50,7 @@ const MapField: definition.UtilityComponent<MapFieldUtilityProps> = (props) => {
 			fieldId={fieldId}
 			path={path}
 			value={listValue}
-			noAdd={true}
+			noAdd={noAdd}
 			noDelete={noDelete}
 			subType="STRUCT"
 			subFields={{
