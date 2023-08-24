@@ -6,11 +6,8 @@ import (
 
 func ValidateRequiredField(field *adapt.FieldMetadata) ValidationFunc {
 	return func(change *adapt.ChangeItem) *adapt.SaveError {
-		valueIsUndefined := false
 		val, err := change.FieldChanges.GetField(field.GetFullName())
-		if err != nil {
-			valueIsUndefined = true
-		}
+		valueIsUndefined := err != nil
 		valueIsEmpty := val == "" || val == nil
 		isMissingInsert := change.IsNew && (valueIsUndefined || valueIsEmpty)
 		isMissingUpdate := !change.IsNew && !valueIsUndefined && valueIsEmpty
