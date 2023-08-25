@@ -1,0 +1,18 @@
+name: propfieldhighlight
+extends: uesio/io.default
+label: Property Field Highlight
+definition:
+  uesio.styleTokens:
+    root:
+      - m-2
+      - p-1
+      - border
+      - border-slate-200
+      - rounded
+      - border-[$Theme{color.primary}]
+      - bg-[$Theme{color.primary}]
+      - bg-opacity-5
+    label:
+      - text-xs
+      - p-0
+public: true

@@ -72,7 +72,11 @@ const ConstrainedInput: definition.UtilityComponent<ConstrainedInputProps> = (
 			label={label}
 			labelPosition={labelPosition}
 			context={context}
-			variant={fieldWrapperVariant}
+			variant={
+				inEditMode
+					? "uesio/builder.propfieldhighlight"
+					: fieldWrapperVariant
+			}
 		>
 			<div className={classes.root}>
 				<FieldComponent
