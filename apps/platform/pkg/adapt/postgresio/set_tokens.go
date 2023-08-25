@@ -13,38 +13,27 @@ const TOKEN_INSERT_QUERY = "INSERT INTO public.tokens (recordid,token,collection
 
 func (c *Connection) SetRecordAccessTokens(request *adapt.SaveOp, session *sess.Session) error {
 
-	db := c.GetClient()
-
 	tenantID := session.GetTenantID()
-
-	resetTokenIDs := make([]string, 0, len(request.Deletes)+len(request.Updates))
-
 	collectionName := request.Metadata.GetFullName()
-
 	batch := &pgx.Batch{}
 
-	// First loop over the updates and deletes to get the ids to delete
-	err := request.LoopUpdates(func(change *adapt.ChangeItem) error {
-		resetTokenIDs = append(resetTokenIDs, change.IDValue)
-		return nil
-	})
-	if err != nil {
-		return err
-	}
+	numDeletes := len(request.Deletes)
+	numUpdates := len(request.Updates)
+	resetTokenIDs := make([]string, numDeletes+numUpdates)
 
-	err = request.LoopDeletes(func(change *adapt.ChangeItem) error {
-		resetTokenIDs = append(resetTokenIDs, change.IDValue)
-		return nil
-	})
-	if err != nil {
-		return err
+	// First loop over the updates and deletes to get the ids to delete
+	for i, change := range request.Updates {
+		resetTokenIDs[i] = change.IDValue
+	}
+	for i, change := range request.Deletes {
+		resetTokenIDs[numUpdates+i] = change.IDValue
 	}
 
 	if len(resetTokenIDs) > 0 {
 		batch.Queue(TOKEN_DELETE_QUERY, resetTokenIDs, collectionName, tenantID)
 	}
 
-	err = request.LoopChanges(func(change *adapt.ChangeItem) error {
+	err := request.LoopChanges(func(change *adapt.ChangeItem) error {
 		if request.Metadata.IsWriteProtected() {
 			for _, token := range change.ReadWriteTokens {
 				batch.Queue(
@@ -73,7 +62,7 @@ func (c *Connection) SetRecordAccessTokens(request *adapt.SaveOp, session *sess.
 		return err
 	}
 
-	results := db.SendBatch(context.Background(), batch)
+	results := c.GetClient().SendBatch(context.Background(), batch)
 	execCount := batch.Len()
 	for i := 0; i < execCount; i++ {
 		_, err := results.Exec()
