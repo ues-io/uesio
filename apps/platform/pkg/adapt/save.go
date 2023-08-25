@@ -20,7 +20,6 @@ type SaveOp struct {
 	Errors      *[]SaveError
 	InsertCount int
 	Metadata    *CollectionMetadata
-	Conditions  []LoadRequestCondition
 	Params      map[string]string
 }
 
