@@ -64,47 +64,6 @@ definition:
                                 components:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      text: $Label{uesio/io.edit}
-                                      uesio.display:
-                                        - type: fieldMode
-                                          mode: READ
-                                        - type: paramValue
-                                          param: app
-                                          field: uesio/core.dynamiccollection
-                                          operator: EQUALS
-                                          value: $Param{namespace}
-                                      signals:
-                                        - signal: component/CALL
-                                          component: uesio/io.list
-                                          componentsignal: TOGGLE_MODE
-                                          targettype: specific
-                                          target: configvaluesList
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.primary
-                                      text: $Label{uesio/io.save}
-                                      uesio.display:
-                                        - type: wireHasChanges
-                                          wire: configvalues
-                                      signals:
-                                        - signal: wire/SAVE
-                                          wires:
-                                            - configvalues
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: $Label{uesio/io.cancel}
-                                      uesio.display:
-                                        - type: fieldMode
-                                          mode: EDIT
-                                      signals:
-                                        - signal: wire/CANCEL
-                                          wire: configvalues
-                                        - signal: component/CALL
-                                          component: uesio/io.list
-                                          componentsignal: SET_READ_MODE
-                                          targettype: specific
-                                          target: configvaluesList
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
                                       text: $Label{uesio/io.delete}
                                       uesio.display:
                                         - type: fieldMode
@@ -130,6 +89,10 @@ definition:
                                   - uesio/io.field:
                                       fieldId: uesio/studio.name
                                   - uesio/io.field:
-                                      fieldId: uesio/studio.managedby
+                                      fieldId: uesio/core.updatedby
+                                      user:
+                                        subtitle: $Time{uesio/core.updatedat}
                                   - uesio/io.field:
-                                      fieldId: uesio/studio.store
+                                      fieldId: uesio/core.createdby
+                                      user:
+                                        subtitle: $Time{uesio/core.createdat}
