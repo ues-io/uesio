@@ -29,6 +29,11 @@ definition:
         - field: uesio/studio.language
           valueSource: PARAM
           param: translationname
+    labels:
+      collection: uesio/studio.label
+      conditions:
+        - field: uesio/studio.allmetadata
+          value: true
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
