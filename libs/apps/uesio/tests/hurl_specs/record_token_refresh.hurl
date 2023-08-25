@@ -26,9 +26,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" nth 0 == "uesio/tests:dev"
+jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "uesio/tests:dev"
 [Captures]
-workspace_id: jsonpath "$.wires[0].data[*]['uesio/core.id']" nth 0
+workspace_id: jsonpath "$.wires[0].data[0]['uesio/core.id']"
 
 # Get the evil corp's id
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
@@ -49,9 +49,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" nth 0 == "Evil Corp"
+jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "Evil Corp"
 [Captures]
-account_id: jsonpath "$.wires[0].data[*]['uesio/core.id']" nth 0
+account_id: jsonpath "$.wires[0].data[0]['uesio/core.id']"
 
 
 # Log into the studio as ben
@@ -88,7 +88,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]" isEmpty
+jsonpath "$.wires[0].data" isEmpty
 
 # Log into the studio as uesio
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
@@ -147,7 +147,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" nth 0 == "Evil Corp"
+jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "Evil Corp"
 
 # Check the record challenge tokens associated with evil corp
 POST https://{{host}}:{{port}}/site/wires/load
@@ -172,7 +172,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]" count == 2
+jsonpath "$.wires[0].data" count == 2
 jsonpath "$.wires[0].data[0]['uesio/studio.recordid']" == "{{account_id}}"
 jsonpath "$.wires[0].data[1]['uesio/studio.recordid']" == "{{account_id}}"
 jsonpath "$.wires[0].data[*]['uesio/studio.token']" includes "uesio.owner:{{uesio_user_id}}"
@@ -253,7 +253,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]" isEmpty
+jsonpath "$.wires[0].data" isEmpty
 
 # Call the refresh tokens bot
 POST https://studio.uesio-dev.com:3000/site/bots/call/uesio/studio/resetrecordaccesstokens
@@ -288,7 +288,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]" count == 1
+jsonpath "$.wires[0].data" count == 1
 jsonpath "$.wires[0].data[0]['uesio/studio.recordid']" == "{{account_id}}"
 jsonpath "$.wires[0].data[0]['uesio/studio.token']" == "uesio.owner:{{uesio_user_id}}"
 
@@ -311,7 +311,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]" isEmpty
+jsonpath "$.wires[0].data" isEmpty
 
 # Now add the record challenge tokens back to the account object
 POST https://{{host}}:{{port}}/site/wires/save
@@ -362,7 +362,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]" isEmpty
+jsonpath "$.wires[0].data" isEmpty
 
 # Call the refresh tokens bot
 POST https://studio.uesio-dev.com:3000/site/bots/call/uesio/studio/resetrecordaccesstokens
@@ -396,7 +396,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]" count == 2
+jsonpath "$.wires[0].data" count == 2
 jsonpath "$.wires[0].data[0]['uesio/studio.recordid']" == "{{account_id}}"
 jsonpath "$.wires[0].data[1]['uesio/studio.recordid']" == "{{account_id}}"
 jsonpath "$.wires[0].data[*]['uesio/studio.token']" includes "uesio.owner:{{uesio_user_id}}"
@@ -421,4 +421,4 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" nth 0 == "Evil Corp"
+jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "Evil Corp"
