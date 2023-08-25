@@ -82,6 +82,12 @@ definition:
                                             collection: $Param{namespace}.$Param{collectionname}
                                             app: $Param{app}
                                             workspacename: $Param{workspacename}
+                                        - signal: notification/REMOVE
+                                          id: newversion
+                                        - signal: notification/ADD
+                                          text: Successfully regenerated this collection's access tokens
+                                          duration: 3
+                                          severity: success
                                         - signal: context/SET
                                           type: WORKSPACE
                                           name: $Param{workspacename}
@@ -89,8 +95,6 @@ definition:
                                         - signal: wire/LOAD
                                           wires:
                                             - collectionData
-                                        - signal: notification/REMOVE
-                                          id: newversion
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           uesio.context:
