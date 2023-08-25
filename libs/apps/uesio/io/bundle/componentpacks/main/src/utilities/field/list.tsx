@@ -27,6 +27,7 @@ interface ListFieldUtilityProps {
 	subFieldVariant?: metadata.MetadataKey
 	labelVariant?: metadata.MetadataKey
 	options?: ListFieldOptions
+	getDefaultValue?: () => wire.PlainWireRecord
 	path: string
 }
 
@@ -50,6 +51,11 @@ const ListField: definition.UtilityComponent<ListFieldUtilityProps> = (
 		labelVariant,
 		path,
 		fieldId,
+		getDefaultValue = (): wire.FieldValue => {
+			if (subType === "STRUCT") return {}
+			if (subType === "NUMBER") return 0
+			return ""
+		},
 	} = props
 
 	if (!subType) return null
@@ -145,12 +151,6 @@ const ListField: definition.UtilityComponent<ListFieldUtilityProps> = (
 
 	const removeIndividualValue = (index: number) => {
 		setValue(value.filter((_, i) => i !== index))
-	}
-
-	const getDefaultValue = (): wire.FieldValue => {
-		if (subType === "STRUCT") return {}
-		if (subType === "NUMBER") return 0
-		return ""
 	}
 
 	const fields = getFields()
