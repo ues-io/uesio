@@ -438,3 +438,14 @@ func (s *Session) GetSessionIdHash() string {
 	}
 	return fmt.Sprintf("%d", hasher.Sum64())
 }
+
+func (s *Session) HasVersionContext(namespace string, version string) bool {
+	if s.version == nil {
+		return false
+	}
+	return s.version.Namespace == namespace && s.version.Version == version
+}
+
+func (s *Session) RemoveVersionContext() {
+	s.version = nil
+}

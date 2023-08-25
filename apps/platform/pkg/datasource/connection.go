@@ -27,6 +27,21 @@ func GetConnection(dataSourceKey string, metadata *adapt.MetadataCache, session 
 		return nil, err
 	}
 
+	// Attach a version context so that we can load private credentials for this datasource
+	dsNamespace := datasource.GetNamespace()
+	appBundle := session.GetContextAppBundle()
+	depVersion := ""
+	if appBundle.Name == dsNamespace {
+		depVersion = session.GetContextVersionName()
+	} else if depBundle, hasDep := appBundle.Dependencies[dsNamespace]; hasDep {
+		depVersion = depBundle.Version
+	}
+	session.AddVersionContext(&sess.VersionInfo{
+		App:       session.GetContextAppName(),
+		Namespace: dsNamespace,
+		Version:   depVersion,
+	})
+
 	mergedType, err := configstore.Merge(datasource.Type, session)
 	if err != nil {
 		return nil, err
@@ -39,6 +54,8 @@ func GetConnection(dataSourceKey string, metadata *adapt.MetadataCache, session 
 	if err != nil {
 		return nil, err
 	}
+
+	session.RemoveVersionContext()
 
 	return adapter.GetConnection(credentials, metadata, dataSourceKey)
 }

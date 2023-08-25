@@ -52,11 +52,7 @@ func addSiteAdminContext(siteadmin *meta.Site, session *sess.Session, connection
 		return errors.New("this site does not allow administering other sites")
 	}
 	// 2. we should have a profile that allows modifying workspaces
-	if !perms.HasPermission(&meta.PermissionSet{
-		NamedRefs: map[string]bool{
-			"uesio/studio.workspace_admin": true,
-		},
-	}) {
+	if !perms.HasNamedPermission("uesio/studio.workspace_admin") {
 		return errors.New("your profile does not allow you to administer sites")
 	}
 

@@ -49,8 +49,7 @@ func (b *PlatformBundleStore) GetItem(item meta.BundleableItem, version string, 
 	app := session.GetContextAppName()
 	permSet := session.GetContextPermissions()
 
-	hasPermission := permSet.HasPermission(item.GetPermChecker())
-	if !hasPermission {
+	if !permSet.HasPermission(item.GetPermChecker()) {
 		message := fmt.Sprintf("No Permission to metadata item: %s : %s : %s : %s", item.GetCollectionName(), key, session.GetContextUser().UniqueKey, session.GetContextProfile())
 		return bundlestore.NewPermissionError(message)
 	}
