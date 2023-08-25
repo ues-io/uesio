@@ -313,6 +313,8 @@ definition:
             text: $Label{uesio/io.save}
             signals:
               - signal: wire/SAVE
+              - signal: panel/TOGGLE
+                panel: editApp
         - uesio/io.button:
             uesio.variant: uesio/io.secondary
             text: $Label{uesio/io.cancel}

@@ -13,7 +13,7 @@ import FieldUtility from "../../utilities/field/field"
 
 import { ListFieldOptions } from "../../utilities/field/listdeck"
 import { LongTextFieldOptions } from "../../utilities/field/textarea"
-import { MapFieldOptions } from "../../utilities/field/mapdeck"
+import { MapFieldOptions } from "../../utilities/mapfield/MapFieldOptions"
 import {
 	MarkdownComponentOptions,
 	MarkdownFieldOptions,
