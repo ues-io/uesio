@@ -71,7 +71,7 @@ func (b *SystemBundleStore) GetItem(item meta.BundleableItem, version string, se
 	cachedItem, ok := bundle.GetItemFromCache(namespace, version, fullCollectionName, key)
 
 	if ok {
-		if app != namespace && !cachedItem.IsPublic() && !session.HasVersionContext(namespace, version) {
+		if app != namespace && !cachedItem.IsPublic() {
 			message := fmt.Sprintf("Metadata item: %s is not public", key)
 			return bundlestore.NewPermissionError(message)
 		}
@@ -96,7 +96,7 @@ func (b *SystemBundleStore) GetItem(item meta.BundleableItem, version string, se
 	if err != nil {
 		return err
 	}
-	if app != namespace && !item.IsPublic() && !session.HasVersionContext(namespace, version) {
+	if app != namespace && !item.IsPublic() {
 		message := fmt.Sprintf("Metadata item: %s is not public", key)
 		return bundlestore.NewPermissionError(message)
 	}

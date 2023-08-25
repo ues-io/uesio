@@ -59,9 +59,12 @@ func Logout(w http.ResponseWriter, publicUser *meta.User, s *Session) *Session {
 }
 
 type VersionInfo struct {
-	App       string
+	// App is the top-level app name from which this resource is requested, e.g. zach/foo
+	App string
+	// Namespace is the namespace of the resource being accessed, e.g. uesio/crm
 	Namespace string
-	Version   string
+	// Version is the version number of the namespace being accessed, e.g. v1.2.3
+	Version string
 }
 
 type WorkspaceSession struct {
@@ -437,13 +440,6 @@ func (s *Session) GetSessionIdHash() string {
 		return ""
 	}
 	return fmt.Sprintf("%d", hasher.Sum64())
-}
-
-func (s *Session) HasVersionContext(namespace string, version string) bool {
-	if s.version == nil {
-		return false
-	}
-	return s.version.Namespace == namespace && s.version.Version == version
 }
 
 func (s *Session) RemoveVersionContext() {
