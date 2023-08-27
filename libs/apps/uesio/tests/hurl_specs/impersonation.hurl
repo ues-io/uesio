@@ -56,7 +56,7 @@ POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 }
 
 # Add an impersonation record to use the rep profile
-POST https://studio.uesio-dev.com:3000/site/bots/call/uesio/studio/setworkspaceuser
+POST https://{{host}}:{{port}}/site/bots/call/uesio/studio/setworkspaceuser
 {
     "workspaceid": "{{workspace_id}}",
     "profile": "uesio/tests.rep"
@@ -115,7 +115,7 @@ jsonpath "$.dependencies.wire.entities['uesio/tests.simple_wire_load($root):anim
 jsonpath "$.dependencies.wire.entities['uesio/tests.simple_wire_load($root):animals'].data[*]['uesio/core.id']" count == 10
 
 # Switch to impersonating the public profile
-POST https://studio.uesio-dev.com:3000/site/bots/call/uesio/studio/setworkspaceuser
+POST https://{{host}}:{{port}}/site/bots/call/uesio/studio/setworkspaceuser
 {
     "workspaceid": "{{workspace_id}}",
     "profile": "uesio/tests.public"

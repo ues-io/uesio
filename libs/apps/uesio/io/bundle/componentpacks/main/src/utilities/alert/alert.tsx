@@ -52,6 +52,7 @@ const Alert: definition.UtilityComponent<AlertProps> = (props) => {
 				"items-start",
 			],
 			title: ["font-medium", "text-xs"],
+			details: ["text-xs"],
 			closeIcon: ["text-slate-500"],
 			severityIcon: [
 				`bg-[${color}]`,
@@ -92,7 +93,7 @@ const Alert: definition.UtilityComponent<AlertProps> = (props) => {
 			/>
 			<div>
 				<p className={classes.title}>{mergedText}</p>
-				<p>{mergedDetails}</p>
+				<p className={classes.details}>{mergedDetails}</p>
 			</div>
 			<Icon
 				className={classes.closeIcon}

@@ -67,6 +67,34 @@ definition:
                                       signals:
                                         - signal: route/NAVIGATE
                                           path: app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{namespace}/$Param{collectionname}
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.secondary
+                                      text: Reset Record Access Tokens
+                                      signals:
+                                        - signal: notification/ADD
+                                          id: newversion
+                                          text: We are regenerating this collection's access tokens
+                                          details: it may take a while, please wait until this notification disappears.
+                                          severity: info
+                                        - signal: bot/CALL
+                                          bot: uesio/studio.resetrecordaccesstokens
+                                          params:
+                                            collection: $Param{namespace}.$Param{collectionname}
+                                            app: $Param{app}
+                                            workspacename: $Param{workspacename}
+                                        - signal: notification/REMOVE
+                                          id: newversion
+                                        - signal: notification/ADD
+                                          text: Successfully regenerated this collection's access tokens
+                                          duration: 3
+                                          severity: success
+                                        - signal: context/SET
+                                          type: WORKSPACE
+                                          name: $Param{workspacename}
+                                          app: $Param{app}
+                                        - signal: wire/LOAD
+                                          wires:
+                                            - collectionData
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           uesio.context:

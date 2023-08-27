@@ -37,6 +37,12 @@ definition:
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: uesio/core.id
+        - field: uesio/studio.managedby
+          valueSource: VALUE
+          value: site
+        - field: uesio/studio.store
+          valueSource: VALUE
+          value: platform
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -109,7 +115,7 @@ definition:
   panels:
     newConfigvalue:
       uesio.type: uesio/io.dialog
-      title: Create a New Config Value
+      title: Create a new Config Value
       width: 500px
       height: 600px
       components:
@@ -120,10 +126,6 @@ definition:
             components:
               - uesio/io.field:
                   fieldId: uesio/studio.name
-              - uesio/io.field:
-                  fieldId: uesio/studio.managedby
-              - uesio/io.field:
-                  fieldId: uesio/studio.store
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary

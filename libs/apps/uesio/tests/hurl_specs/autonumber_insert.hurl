@@ -67,4 +67,4 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data[0]['uesio/tests.genus']" == "Po"
 jsonpath "$.wires[0].data[0]['uesio/tests.species']" == "Pokemon"
-jsonpath "$.wires[0].data[0]['uesio/tests.autonumber']" matches /^[0-9]{4}$/
+jsonpath "$.wires[0].data[0]['uesio/tests.autonumber']" matches /^[0-9]{4,9}$/

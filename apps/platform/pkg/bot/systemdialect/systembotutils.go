@@ -176,7 +176,11 @@ func checkValidItems(workspaceID string, items []meta.BundleableItem, session *s
 func requireValue(change *adapt.ChangeItem, fieldName string) (string, error) {
 
 	value, err := change.GetFieldAsString(fieldName)
-	if err != nil || value == "" {
+	valueIsUndefined := err != nil
+	valueIsEmpty := value == ""
+	isMissingInsert := change.IsNew && (valueIsUndefined || valueIsEmpty)
+	isMissingUpdate := !change.IsNew && !valueIsUndefined && valueIsEmpty
+	if isMissingInsert || isMissingUpdate {
 		return "", errors.New(fieldName + " is required")
 	}
 
