@@ -105,55 +105,58 @@ definition:
                 - uesio/io.text:
                     text: button in the top left.
                     element: h2
-    - uesio/io.grid:
-        uesio.variant: uesio/io.two_columns
-        uesio.styleTokens:
-          root:
-            - gap-x-12
-        items:
-          - uesio/io.griditem:
-              components:
-                - uesio/io.titlebar:
-                    uesio.variant: uesio/io.main
-                    title: Latest Updates & News
-                - uesio/io.list:
-                    wire: blogentries
-                    mode: READ
+    - uesio/io.box:
+        uesio.variant: uesio/io.section
+        components:
+          - uesio/io.grid:
+              uesio.variant: uesio/io.two_columns
+              uesio.styleTokens:
+                root:
+                  - gap-x-12
+              items:
+                - uesio/io.griditem:
                     components:
-                      - uesio/io.tile:
-                          uesio.variant: uesio/io.action
-                          content:
-                            - uesio/io.text:
-                                text: ${uesio/cms.name}
-                                element: div
-                            - uesio/io.text:
-                                text: ${uesio/cms.description}
-                                uesio.variant: uesio/io.smallcontent
-                                element: div
-                          signals:
-                            - signal: "route/REDIRECT"
-                              path: "https://$Site{domain}/blog/${uesio/cms.slug}"
-                              newtab: true
-          - uesio/io.griditem:
-              components:
-                - uesio/io.titlebar:
-                    uesio.variant: uesio/io.main
-                    title: Recent Documentation
-                - uesio/io.list:
-                    wire: recentdocs
-                    mode: READ
+                      - uesio/io.titlebar:
+                          uesio.variant: uesio/io.main
+                          title: Latest Updates & News
+                      - uesio/io.list:
+                          wire: blogentries
+                          mode: READ
+                          components:
+                            - uesio/io.tile:
+                                uesio.variant: uesio/io.action
+                                content:
+                                  - uesio/io.text:
+                                      text: ${uesio/cms.name}
+                                      element: div
+                                  - uesio/io.text:
+                                      text: ${uesio/cms.description}
+                                      uesio.variant: uesio/io.smallcontent
+                                      element: div
+                                signals:
+                                  - signal: "route/REDIRECT"
+                                    path: "https://$Site{domain}/blog/${uesio/cms.slug}"
+                                    newtab: true
+                - uesio/io.griditem:
                     components:
-                      - uesio/io.tile:
-                          uesio.variant: uesio/io.action
-                          content:
-                            - uesio/io.text:
-                                text: ${uesio/cms.name}
-                                element: div
-                            - uesio/io.text:
-                                text: ${uesio/cms.description}
-                                uesio.variant: uesio/io.smallcontent
-                                element: div
-                          signals:
-                            - signal: "route/REDIRECT"
-                              path: "https://docs.$Site{domain}/${uesio/cms.slug}"
-                              newtab: true
+                      - uesio/io.titlebar:
+                          uesio.variant: uesio/io.main
+                          title: Recent Documentation
+                      - uesio/io.list:
+                          wire: recentdocs
+                          mode: READ
+                          components:
+                            - uesio/io.tile:
+                                uesio.variant: uesio/io.action
+                                content:
+                                  - uesio/io.text:
+                                      text: ${uesio/cms.name}
+                                      element: div
+                                  - uesio/io.text:
+                                      text: ${uesio/cms.description}
+                                      uesio.variant: uesio/io.smallcontent
+                                      element: div
+                                signals:
+                                  - signal: "route/REDIRECT"
+                                    path: "https://docs.$Site{domain}/${uesio/cms.slug}"
+                                    newtab: true
