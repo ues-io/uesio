@@ -28,6 +28,11 @@ definition:
           value: true
         - field: uesio/studio.grouping
           value: $Param{namespace}.$Param{collectionname}
+      order:
+        - field: uesio/studio.namespace
+          desc: false
+        - field: uesio/studio.name
+          desc: false
     routeassignments:
       collection: uesio/studio.routeassignment
       fields:
