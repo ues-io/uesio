@@ -4,10 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"github.com/thecloudmasters/uesio/pkg/goutils"
 	"io"
 	"net/http"
 	"strings"
+
+	"github.com/thecloudmasters/uesio/pkg/goutils"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	httpClient "github.com/thecloudmasters/uesio/pkg/http"
@@ -91,6 +92,8 @@ func (wic *WebIntegrationConnection) Request(methodName string, requestOptions i
 		}
 	case RequestOptions:
 		options = opts
+	case *RequestOptions:
+		options = *opts
 	default:
 		return nil, errors.New("invalid options provided to web integration")
 	}
@@ -104,12 +107,7 @@ func (wic *WebIntegrationConnection) Request(methodName string, requestOptions i
 		if gotCachedBody && gotCachedContentType {
 			// Attempt to parse the response body into a structured representation,
 			// if possible. If it fails, just return the raw response as a string
-			parsedBody, err := parseResponseBody(cachedContentType.(string), cachedBody.([]byte))
-			// If this fails, try the request again, otherwise use the body
-			if err != nil {
-				options.ResponseData = parsedBody
-				return options.ResponseData, nil
-			}
+			return ParseResponseBody(cachedContentType.(string), cachedBody.([]byte), options.ResponseData)
 		}
 	}
 
@@ -193,40 +191,37 @@ func (wic *WebIntegrationConnection) Request(methodName string, requestOptions i
 	if options.Cache {
 		localcache.SetCacheEntry(webRequestBody, fullURL, rawData)
 		localcache.SetCacheEntry(webRequestContentType, fullURL, contentType)
-		return nil, err
 	}
 
 	// Attempt to parse the response body into a structured representation,
 	// if possible. If it fails, just return the raw response as a string
-	parsedBody, err := parseResponseBody(contentType, rawData)
+	return ParseResponseBody(contentType, rawData, options.ResponseData)
+
+}
+
+func ParseResponseBody(contentType string, rawBody []byte, responseBody interface{}) (interface{}, error) {
+
+	if responseBody == nil {
+		// Only parse as JSON to a structured Go type if that's what the content type is.
+		if strings.Contains(contentType, "/json") {
+			// If it starts with a curly brace, treat it as JSON object
+			if string(rawBody[0]) == "{" {
+				responseBody = &map[string]interface{}{}
+			} else {
+				// Otherwise, assume it's a JSON array
+				responseBody = &[]interface{}{}
+			}
+		} else {
+			var stringVal *string
+			responseBody = stringVal
+		}
+
+	}
+	err := json.NewDecoder(bytes.NewReader(rawBody)).Decode(responseBody)
 	if err != nil {
 		return nil, err
 	}
-	options.ResponseData = parsedBody
-	return options.ResponseData, nil
-}
 
-func parseResponseBody(contentType string, body []byte) (interface{}, error) {
-
-	// Only parse as JSON to a structured Go type if that's what the content type is.
-	if strings.Contains(contentType, "/json") {
-		// If it starts with a curly brace, treat it as JSON object
-		if string(body[0]) == "{" {
-			mapPtr := &map[string]interface{}{}
-			err := json.NewDecoder(bytes.NewReader(body)).Decode(mapPtr)
-			if err == nil {
-				return mapPtr, nil
-			}
-		} else {
-			// Otherwise, assume it's a JSON array
-			slicePtr := &[]interface{}{}
-			err := json.NewDecoder(bytes.NewReader(body)).Decode(&slicePtr)
-			if err == nil {
-				return slicePtr, nil
-			}
-		}
-	}
-	// Otherwise, just return the raw data as a string
-	return string(body), nil
+	return responseBody, nil
 
 }
