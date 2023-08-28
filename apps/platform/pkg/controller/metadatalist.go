@@ -53,7 +53,11 @@ func getMetadataList(metadatatype, namespace, grouping string, session *sess.Ses
 	}
 
 	if (namespace == "uesio/core" || namespace == "") && metadatatype == "fields" {
-		datasource.AddAllBuiltinFields(collection)
+		collectionKey, ok := conditions["uesio/studio.collection"]
+		if ok {
+			// Only add built-in fields if we're grouping on a collection
+			datasource.AddAllBuiltinFields(collection, collectionKey)
+		}
 	}
 
 	err = collection.Loop(func(item meta.Item, _ string) error {

@@ -1,6 +1,7 @@
 package datasource
 
 import (
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
@@ -80,29 +81,37 @@ var UPDATEDAT_FIELD_DEF = meta.Field{
 }
 
 var BUILTIN_FIELDS_MAP = map[string]meta.Field{
-	"uesio/core.id":        ID_FIELD_DEF,
-	"uesio/core.uniquekey": UNIQUE_KEY_FIELD_DEF,
-	"uesio/core.owner":     OWNER_FIELD_DEF,
-	"uesio/core.createdby": CREATEDBY_FIELD_DEF,
-	"uesio/core.updatedby": UPDATEDBY_FIELD_DEF,
-	"uesio/core.createdat": CREATEDAT_FIELD_DEF,
-	"uesio/core.updatedat": UPDATEDAT_FIELD_DEF,
+	adapt.ID_FIELD:         ID_FIELD_DEF,
+	adapt.UNIQUE_KEY_FIELD: UNIQUE_KEY_FIELD_DEF,
+	adapt.OWNER_FIELD:      OWNER_FIELD_DEF,
+	adapt.CREATED_BY_FIELD: CREATEDBY_FIELD_DEF,
+	adapt.UPDATED_BY_FIELD: UPDATEDBY_FIELD_DEF,
+	adapt.CREATED_AT_FIELD: CREATEDAT_FIELD_DEF,
+	adapt.UPDATED_AT_FIELD: UPDATEDAT_FIELD_DEF,
 }
 
-func AddAllBuiltinFields(fields meta.BundleableGroup) {
-	fields.AddItem(&ID_FIELD_DEF)
-	fields.AddItem(&UNIQUE_KEY_FIELD_DEF)
-	fields.AddItem(&OWNER_FIELD_DEF)
-	fields.AddItem(&CREATEDBY_FIELD_DEF)
-	fields.AddItem(&UPDATEDBY_FIELD_DEF)
-	fields.AddItem(&CREATEDAT_FIELD_DEF)
-	fields.AddItem(&UPDATEDAT_FIELD_DEF)
+var BUILTIN_FIELD_KEYS = []string{
+	adapt.ID_FIELD,
+	adapt.UNIQUE_KEY_FIELD,
+	adapt.OWNER_FIELD,
+	adapt.CREATED_BY_FIELD,
+	adapt.UPDATED_BY_FIELD,
+	adapt.CREATED_AT_FIELD,
+	adapt.UPDATED_AT_FIELD,
 }
 
-func GetBuiltinField(key string) (meta.Field, bool) {
+func AddAllBuiltinFields(fields meta.BundleableGroup, collectionKey string) {
+	for _, key := range BUILTIN_FIELD_KEYS {
+		field, _ := GetBuiltinField(key, collectionKey)
+		fields.AddItem(&field)
+	}
+}
+
+func GetBuiltinField(key string, collectionKey string) (meta.Field, bool) {
 	field, ok := BUILTIN_FIELDS_MAP[key]
 	if !ok {
 		return field, false
 	}
+	field.CollectionRef = collectionKey
 	return field, true
 }

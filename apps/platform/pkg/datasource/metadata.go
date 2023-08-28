@@ -221,7 +221,7 @@ func LoadAllFieldsMetadata(collectionKey string, collectionMetadata *adapt.Colle
 		return err
 	}
 
-	AddAllBuiltinFields(&fields)
+	AddAllBuiltinFields(&fields, collectionKey)
 
 	for _, field := range fields {
 		collectionMetadata.SetField(GetFieldMetadata(field, session))
@@ -236,7 +236,7 @@ func LoadFieldsMetadata(keys []string, collectionKey string, collectionMetadata 
 		_, err := collectionMetadata.GetField(key)
 		if err != nil {
 			// Check if this field is built-in, if so, handle its metadata here
-			builtInField, isBuiltIn := GetBuiltinField(key)
+			builtInField, isBuiltIn := GetBuiltinField(key, collectionKey)
 			if isBuiltIn {
 				collectionMetadata.SetField(GetFieldMetadata(&builtInField, session))
 				continue
