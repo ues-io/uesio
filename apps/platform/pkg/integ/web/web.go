@@ -66,7 +66,7 @@ func (wic *WebIntegrationConnection) RunAction(actionName string, requestOptions
 }
 
 func (wic *WebIntegrationConnection) Request(methodName string, requestOptions interface{}) (interface{}, error) {
-	var options RequestOptions
+	var options *RequestOptions
 	// Coming from TS/JS bots, RequestOptions will very likely be a map[string]interface{},
 	// whereas coming from system bots, it will be a RequestOptions struct
 	switch opts := requestOptions.(type) {
@@ -84,14 +84,14 @@ func (wic *WebIntegrationConnection) Request(methodName string, requestOptions i
 				}
 			}
 		}
-		options = RequestOptions{
+		options = &RequestOptions{
 			Cache:   opts["cache"] == true,
 			Body:    opts["body"],
 			Headers: reqHeaders,
 			URL:     reqUrl,
 		}
 	case *RequestOptions:
-		options = *opts
+		options = opts
 	default:
 		return nil, errors.New("invalid options provided to web integration")
 	}
@@ -164,7 +164,9 @@ func (wic *WebIntegrationConnection) Request(methodName string, requestOptions i
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	if resp.Body != nil {
+		defer resp.Body.Close()
+	}
 
 	if resp.StatusCode != 200 {
 		responseData, err := io.ReadAll(resp.Body)
@@ -209,17 +211,15 @@ func ParseResponseBody(contentType string, rawBody []byte, responseBody interfac
 				// Otherwise, assume it's a JSON array
 				responseBody = &[]interface{}{}
 			}
+			err := json.NewDecoder(bytes.NewReader(rawBody)).Decode(responseBody)
+			if err != nil {
+				return nil, err
+			}
+			return responseBody, nil
 		} else {
-			var stringVal *string
-			responseBody = stringVal
+			responseBody = string(rawBody)
 		}
-
 	}
-	err := json.NewDecoder(bytes.NewReader(rawBody)).Decode(responseBody)
-	if err != nil {
-		return nil, err
-	}
-
 	return responseBody, nil
 
 }
