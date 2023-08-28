@@ -148,8 +148,7 @@
 				"test": {
 					"builder": "@nrwl/jest:jest",
 					"options": {
-						"jestConfig": "libs/apps/uesio/studio/jest.config.ts",
-						"passWithNoTests": true
+						"jestConfig": "libs/apps/uesio/studio/jest.config.ts"
 					},
 					"outputs": ["coverage/libs/apps/uesio/studio"]
 				}
