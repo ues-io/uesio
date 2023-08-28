@@ -27,16 +27,6 @@ var supportedCollections = []string{
 	"uesio/studio.theme",
 }
 
-var DYNAMIC_COLLECTION_FIELD = adapt.FieldMetadata{
-	Name:       "dynamiccollection",
-	Namespace:  "uesio/core",
-	Createable: false,
-	Accessible: true,
-	Updateable: false,
-	Type:       "TEXT",
-	Label:      "Dynamic Collection",
-}
-
 // intercepts the collection uesio/studio.recentmetadata & enhances the LoadOp
 // Add the required metadata to complete the operation
 func runRecentMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
@@ -146,7 +136,15 @@ func runRecentMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 		Type:       "TEXT",
 		Label:      "Workspace",
 	})
-	recentmetadataCollectionMetadata.SetField(&DYNAMIC_COLLECTION_FIELD)
+	recentmetadataCollectionMetadata.SetField(&adapt.FieldMetadata{
+		Name:       "dynamiccollection",
+		Namespace:  "uesio/core",
+		Createable: false,
+		Accessible: true,
+		Updateable: false,
+		Type:       "TEXT",
+		Label:      "Dynamic Collection",
+	})
 
 	// We need to query with the original session
 	err = connection.Load(newOp, session)
