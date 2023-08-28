@@ -1,8 +1,11 @@
 package systemdialect
 
 import (
+	"errors"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -67,30 +70,44 @@ func runWorkspaceAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection
 			return depsSaveErr
 		}
 	}
-	// TODO: blocked by another issue
+
 	// If we are deleting workspaces, also truncate their data
-	//err = request.LoopDeletes(func(change *adapt.ChangeItem) error {
-	//	workspaceUniqueKey, innerErr := change.GetOldFieldAsString(adapt.UNIQUE_KEY_FIELD)
-	//	if innerErr != nil {
-	//		return innerErr
-	//	}
-	//	if workspaceUniqueKey == "" {
-	//		return errors.New("unable to get workspace unique key, cannot truncate data")
-	//	}
-	//	workspaceContextSession := session.AddWorkspaceContext(&meta.Workspace{
-	//		BuiltIn: meta.BuiltIn{
-	//			UniqueKey: workspaceUniqueKey,
-	//		},
-	//		Permissions: meta.GetAdminPermissionSet(),
-	//	})
-	//	_, truncateErr := RunWorkspaceTruncateListenerBot(nil, connection, workspaceContextSession)
-	//	if truncateErr != nil {
-	//		return truncateErr
-	//	}
-	//	return nil
-	//})
-	//if err != nil {
-	//	return err
-	//}
+	err = request.LoopDeletes(func(change *adapt.ChangeItem) error {
+		workspaceUniqueKey, innerErr := change.GetOldFieldAsString(adapt.UNIQUE_KEY_FIELD)
+		if innerErr != nil {
+			return innerErr
+		}
+		if workspaceUniqueKey == "" {
+			return errors.New("unable to get workspace unique key, cannot truncate data")
+		}
+
+		workspace := &meta.Workspace{
+			BuiltIn: meta.BuiltIn{
+				UniqueKey: workspaceUniqueKey,
+			},
+		}
+		appBundleDef, innerErr := bundle.GetAppBundle(session, connection)
+		if err != nil {
+			return err
+		}
+		workspace.SetAppBundle(appBundleDef)
+		session.SetWorkspaceSession(sess.NewWorkspaceSession(
+			workspace,
+			session.GetSiteUser(),
+			"uesio/system.admin",
+			meta.GetAdminPermissionSet(),
+		))
+		if innerErr != nil {
+			return innerErr
+		}
+		_, truncateErr := RunWorkspaceTruncateListenerBot(nil, connection, session)
+		if truncateErr != nil {
+			return truncateErr
+		}
+		return nil
+	})
+	if err != nil {
+		return err
+	}
 	return nil
 }

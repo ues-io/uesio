@@ -185,12 +185,46 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].errors" == null
 
-# To have a blank slate before running tests,
-# currently we have to manually truncate the DATA in each of our workspaces.
-# TODO: Automatically truncate workspace DATA as part of deleting the WORKSPACE itself,
-# then we can remove these lines
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/data/truncate
+# Make sure there is no data in our workspaces yet
+# (verifying that workspace DATA is deleted whenever the workspace itself (METADATA) is deleted
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.wire_condition",
+            "query": true,
+            "batchsize": 2
+        },
+        {
+            "collection":"uesio/tests.animal",
+            "query": true,
+            "batchsize": 2
+        }
+    ]
+}
 HTTP 200
+[Asserts]
+jsonpath "$.wires[0].data" count == 0
+jsonpath "$.wires[1].data" count == 0
 
-POST https://{{host}}:{{port}}/workspace/uesio/tests/truncatetests/data/truncate
+POST https://{{host}}:{{port}}/workspace/uesio/tests/truncatetests/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.wire_condition",
+            "query": true,
+            "batchsize": 2
+        },
+        {
+            "collection":"uesio/tests.animal",
+            "query": true,
+            "batchsize": 2
+        }
+    ]
+}
 HTTP 200
+[Asserts]
+jsonpath "$.wires[0].data" count == 0
+jsonpath "$.wires[1].data" count == 0
