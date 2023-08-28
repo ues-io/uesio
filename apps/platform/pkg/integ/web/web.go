@@ -4,10 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"github.com/thecloudmasters/uesio/pkg/goutils"
 	"io"
 	"net/http"
 	"strings"
+
+	"github.com/thecloudmasters/uesio/pkg/goutils"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	httpClient "github.com/thecloudmasters/uesio/pkg/http"
@@ -65,7 +66,7 @@ func (wic *WebIntegrationConnection) RunAction(actionName string, requestOptions
 }
 
 func (wic *WebIntegrationConnection) Request(methodName string, requestOptions interface{}) (interface{}, error) {
-	var options RequestOptions
+	var options *RequestOptions
 	// Coming from TS/JS bots, RequestOptions will very likely be a map[string]interface{},
 	// whereas coming from system bots, it will be a RequestOptions struct
 	switch opts := requestOptions.(type) {
@@ -83,13 +84,13 @@ func (wic *WebIntegrationConnection) Request(methodName string, requestOptions i
 				}
 			}
 		}
-		options = RequestOptions{
+		options = &RequestOptions{
 			Cache:   opts["cache"] == true,
 			Body:    opts["body"],
 			Headers: reqHeaders,
 			URL:     reqUrl,
 		}
-	case RequestOptions:
+	case *RequestOptions:
 		options = opts
 	default:
 		return nil, errors.New("invalid options provided to web integration")
@@ -193,7 +194,6 @@ func (wic *WebIntegrationConnection) Request(methodName string, requestOptions i
 	if options.Cache {
 		localcache.SetCacheEntry(webRequestBody, fullURL, rawData)
 		localcache.SetCacheEntry(webRequestContentType, fullURL, contentType)
-		return nil, err
 	}
 
 	// Attempt to parse the response body into a structured representation,
