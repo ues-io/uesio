@@ -67,6 +67,21 @@ definition:
         - field: uesio/studio.type
           valueSource: VALUE
           value: TEXT
+      events:
+        - type: onChange
+          fields:
+            - uesio/studio.name
+          conditions:
+            - type: hasValue
+              value: "${uesio/studio.name}"
+            - type: hasNoValue
+              value: "${uesio/studio.label}"
+          signals:
+            - signal: wire/UPDATE_RECORD
+              wire: newfield
+              field: uesio/studio.label
+              valueSource: VALUE
+              value: "${uesio/studio.name}"
     newrouteassignment:
       collection: uesio/studio.routeassignment
       fields:
@@ -514,12 +529,13 @@ definition:
                   fieldId: uesio/studio.name
                   uesio.id: new-field-name
                   focusOnRender: true
-              - uesio/io.field:
-                  fieldId: uesio/studio.type
-                  uesio.id: new-field-type
+                  applyChanges: onBlur
               - uesio/io.field:
                   fieldId: uesio/studio.label
                   uesio.id: new-field-label
+              - uesio/io.field:
+                  fieldId: uesio/studio.type
+                  uesio.id: new-field-type
               - uesio/builder.metadatafield:
                   fieldId: uesio/studio.languagelabel
                   uesio.id: new-field-language-label
@@ -665,5 +681,9 @@ definition:
             signals:
               - signal: wire/EMPTY
                 wire: newfield
+              - signal: wire/LOAD
+                wires:
+                  - workspaces
+                  - fields
               - signal: panel/TOGGLE
                 panel: newField
