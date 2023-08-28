@@ -10,6 +10,7 @@ describe("Uesio Sanity Smoke Tests", () => {
 	const namespace = getAppNamespace(appName)
 	const workspaceName = "test"
 	const workspaceBasePath = getWorkspaceBasePath(appName, workspaceName)
+	const NUM_BUILT_IN_FIELDS = 7
 
 	before(() => {
 		cy.loginWithAppAndWorkspace(appName, workspaceName)
@@ -44,6 +45,10 @@ describe("Uesio Sanity Smoke Tests", () => {
 			)
 			cy.title().should("eq", "Collection: animal")
 			cy.getByIdFragment("table", "fields").scrollIntoView()
+			// Initially there should be just built-in fields
+			cy.get('table[id$="fields"]>tbody')
+				.children("tr")
+				.should("have.length", NUM_BUILT_IN_FIELDS)
 			// Create a CHECKBOX field
 			// Click the new field button
 			cy.clickButton("new-field")
@@ -72,27 +77,27 @@ describe("Uesio Sanity Smoke Tests", () => {
 			// verify the 2 fields were created
 			cy.get('table[id$="fields"]>tbody')
 				.children("tr")
-				.should("have.length", 2)
+				.should("have.length", NUM_BUILT_IN_FIELDS + 2)
 			cy.hasExpectedTableField(
 				"fields",
 				0,
-				"is_extinct",
-				namespace,
-				"Check Box",
-				"Is Extinct"
-			)
-			cy.hasExpectedTableField(
-				"fields",
-				1,
 				"estimated_population",
 				namespace,
 				"Number",
 				"Estimated Population"
 			)
+			cy.hasExpectedTableField(
+				"fields",
+				1,
+				"is_extinct",
+				namespace,
+				"Check Box",
+				"Is Extinct"
+			)
 			// Mark a field for deletion
 			cy.get('table[id$="fields"]>tbody')
 				.children("tr")
-				.eq(1)
+				.eq(0)
 				.children("td")
 				.eq(4)
 				.find("button.rowaction")
@@ -103,7 +108,7 @@ describe("Uesio Sanity Smoke Tests", () => {
 			// Verify the correct field was deleted
 			cy.get('table[id$="fields"]>tbody')
 				.children("tr")
-				.should("have.length", 1)
+				.should("have.length", NUM_BUILT_IN_FIELDS + 1)
 			cy.hasExpectedTableField(
 				"fields",
 				0,
