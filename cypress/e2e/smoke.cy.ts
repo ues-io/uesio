@@ -27,9 +27,15 @@ describe("Uesio Sanity Smoke Tests", () => {
 			// Click the new collection button
 			cy.clickButton("new-collection")
 			// Fill out the form to create a new collection
-			cy.typeInInput("new-collection-label", "Animal")
-			cy.typeInInput("new-collection-plural-label", "Animals")
-			cy.typeInInput("new-collection-name", "animal")
+			cy.typeInInput("new-collection-name", "animal").blur()
+			cy.getByIdFragment("input", "new-collection-label").should(
+				"have.value",
+				"animal"
+			)
+			cy.getByIdFragment("input", "new-collection-plural-label").should(
+				"have.value",
+				"animals"
+			)
 			cy.clickButton("save-new-collection")
 			// Verify we get taken to the collection detail
 			cy.url().should(
@@ -42,11 +48,23 @@ describe("Uesio Sanity Smoke Tests", () => {
 			// Click the new field button
 			cy.clickButton("new-field")
 			cy.typeInInput("new-field-name", "is_extinct")
+			cy.getByIdFragment("input", "new-field-name").blur()
+			cy.getByIdFragment("input", "new-field-label").should(
+				"have.value",
+				"is_extinct"
+			)
+			cy.getByIdFragment("input", "new-field-label").clear()
 			cy.typeInInput("new-field-label", "Is Extinct")
 			cy.changeSelectValue("new-field-type", "CHECKBOX")
 			cy.clickButton("save-field-and-add-another")
 			// Create a NUMBER field
 			cy.typeInInput("new-field-name", "estimated_population")
+			cy.getByIdFragment("input", "new-field-name").blur()
+			cy.getByIdFragment("input", "new-field-label").should(
+				"have.value",
+				"estimated_population"
+			)
+			cy.getByIdFragment("input", "new-field-label").clear()
 			cy.typeInInput("new-field-label", "Estimated Population")
 			cy.changeSelectValue("new-field-type", "NUMBER")
 			cy.typeInInput("new-field-number-decimals", "0")
