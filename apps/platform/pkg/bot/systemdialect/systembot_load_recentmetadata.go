@@ -147,9 +147,9 @@ func runRecentMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 		Label:      "Workspace",
 	})
 	recentmetadataCollectionMetadata.SetField(&DYNAMIC_COLLECTION_FIELD)
-	recentmetadataCollectionMetadata.SetField(&datasource.UPDATEDBY_FIELD_METADATA)
-	recentmetadataCollectionMetadata.SetField(&datasource.UPDATEDAT_FIELD_METADATA)
-	recentmetadataCollectionMetadata.SetField(&datasource.UNIQUE_KEY_FIELD_METADATA)
+	recentmetadataCollectionMetadata.SetField(datasource.GetFieldMetadata(&datasource.UPDATEDBY_FIELD_DEF, session))
+	recentmetadataCollectionMetadata.SetField(datasource.GetFieldMetadata(&datasource.UPDATEDAT_FIELD_DEF, session))
+	recentmetadataCollectionMetadata.SetField(datasource.GetFieldMetadata(&datasource.UNIQUE_KEY_FIELD_DEF, session))
 
 	// We need to query with the original session
 	err = connection.Load(newOp, session)
