@@ -196,6 +196,12 @@ main.id::text = $3
 ORDER BY main.id::text asc
 LIMIT 501```
 jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "MacAughtrie:Jerrine"
+jsonpath "$.collections[*]" count == 1
+jsonpath "$.collections['uesio/tests.animal'].fields[*]" count == 4
+jsonpath "$.collections['uesio/tests.animal'].fields['uesio/core.id']['name']" == "id"
+jsonpath "$.collections['uesio/tests.animal'].fields['uesio/core.uniquekey']['name']" == "uniquekey"
+jsonpath "$.collections['uesio/tests.animal'].fields['uesio/tests.genus']['name']" == "genus"
+jsonpath "$.collections['uesio/tests.animal'].fields['uesio/tests.species']['name']" == "species"
 
 # Verify that wire properties from a view are processed correctly
 GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/simple_wire_load

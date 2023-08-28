@@ -136,10 +136,15 @@ func runRecentMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 		Type:       "TEXT",
 		Label:      "Workspace",
 	})
-	recentmetadataCollectionMetadata.SetField(&datasource.DYNAMIC_COLLECTION_FIELD)
-	recentmetadataCollectionMetadata.SetField(&datasource.UPDATEDBY_FIELD_METADATA)
-	recentmetadataCollectionMetadata.SetField(&datasource.UPDATEDAT_FIELD_METADATA)
-	recentmetadataCollectionMetadata.SetField(&datasource.UNIQUE_KEY_FIELD_METADATA)
+	recentmetadataCollectionMetadata.SetField(&adapt.FieldMetadata{
+		Name:       "dynamiccollection",
+		Namespace:  "uesio/core",
+		Createable: false,
+		Accessible: true,
+		Updateable: false,
+		Type:       "TEXT",
+		Label:      "Dynamic Collection",
+	})
 
 	// We need to query with the original session
 	err = connection.Load(newOp, session)

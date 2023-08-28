@@ -122,21 +122,6 @@ func runAllMetadataLoadBot(collectionName string, op *adapt.LoadOp, connection a
 		return errors.New("invalid metadata type provided for type condition")
 	}
 
-	_, err = datasource.Load([]*adapt.LoadOp{{
-		CollectionName: group.GetName(),
-		WireName:       op.WireName,
-		View:           op.View,
-		Collection:     op.Collection,
-		Fields:         datasource.GetLoadRequestFields(group.GetFields()),
-		Query:          false,
-		Params:         op.Params,
-	}}, session, &datasource.LoadOptions{
-		Metadata: connection.GetMetadata(),
-	})
-	if err != nil {
-		return err
-	}
-
 	metadata := connection.GetMetadata()
 
 	collectionMetadata, err := metadata.GetCollection(op.CollectionName)
@@ -200,6 +185,15 @@ func runAllMetadataLoadBot(collectionName string, op *adapt.LoadOp, connection a
 		err = bundle.LoadAllFromNamespaces(namespaces, group, conditions, inContextSession, nil)
 		if err != nil {
 			return err
+		}
+
+		// Special handling for built-in fields
+		if collectionName == "uesio/studio.field" {
+			collection, ok := conditions["uesio/studio.collection"]
+			if ok {
+				// Only add built-in fields if we're grouping on a collection
+				datasource.AddAllBuiltinFields(group, collection)
+			}
 		}
 	}
 
