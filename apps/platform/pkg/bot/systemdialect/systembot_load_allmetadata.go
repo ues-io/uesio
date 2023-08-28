@@ -201,6 +201,11 @@ func runAllMetadataLoadBot(collectionName string, op *adapt.LoadOp, connection a
 		if err != nil {
 			return err
 		}
+
+		// Special handling for built-in fields
+		if collectionName == "uesio/studio.field" {
+			datasource.AddAllBuiltinFields(group)
+		}
 	}
 
 	appData, err := datasource.GetAppData(namespaces)

@@ -2,8 +2,9 @@ package datasource
 
 import (
 	"fmt"
-	"github.com/thecloudmasters/uesio/pkg/constant"
 	"strings"
+
+	"github.com/thecloudmasters/uesio/pkg/constant"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -311,14 +312,12 @@ func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *
 		}
 
 		if metadata.IsDynamic() || (mr.Options != nil && mr.Options.LoadAllFields) {
-			addAllBuiltinFields(metadata)
 			err = LoadAllFieldsMetadata(collectionKey, metadata, session, connection)
 			if err != nil {
 				return err
 			}
 			metadata.HasAllFields = true
 		} else {
-			addBuiltinFields(metadata, collection)
 			// Automagically add the id field and the name field whether they were requested or not.
 			fieldsToLoad := []string{adapt.ID_FIELD, metadata.NameField}
 			for fieldKey := range collection {
