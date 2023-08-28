@@ -162,7 +162,7 @@ func (b *WorkspaceBundleStore) GetAllItems(group meta.BundleableGroup, namespace
 		Connection: connection,
 		LoadAll:    true,
 		Orders: []adapt.LoadRequestOrder{{
-			Field: adapt.ID_FIELD,
+			Field: adapt.UNIQUE_KEY_FIELD,
 		}},
 	}, session.RemoveWorkspaceContext())
 
