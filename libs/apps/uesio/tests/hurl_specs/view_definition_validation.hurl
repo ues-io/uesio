@@ -120,3 +120,55 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].errors" count == 1
 jsonpath "$.wires[0].errors[0].message" == "Field 'Definition' failed YAML schema validation: [1] wires.users: collection is required [2] wires.users: Additional property collectio is not allowed [3] wires.users.batchsize: Invalid type. Expected: number, given: string"
+
+# Create a view with a valid ViewOnly wire
+POST https://{{host}}:{{port}}/site/wires/save
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/studio.view",
+            "deletes":{},
+            "changes":{
+                "temp1":{
+                    "uesio/studio.definition": "wires:\n  users:\n    viewOnly: true\n    fields:\n      foo:\n        type: NUMBER\n        label: Foo\n        number:\n          decimals: 2\ncomponents:\n",
+                    "uesio/studio.name":"viewonlywiretest"
+                }
+            },
+            "params": {
+                "workspaceid": "{{workspace_id}}"
+            },
+            "wire":"mywire"
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" == null
+
+# Create a view with an invalid ViewOnly wire
+POST https://{{host}}:{{port}}/site/wires/save
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/studio.view",
+            "deletes":{},
+            "changes":{
+                "temp1":{
+                    "uesio/studio.definition": "wires:\n  users:\n    viewOnly: true\n    fields:\n      foo:\n        type: BAR\n        required: no\n        number:\n          some: thing\ncomponents:\n",
+                    "uesio/studio.name":"viewonlywiretest"
+                }
+            },
+            "params": {
+                "workspaceid": "{{workspace_id}}"
+            },
+            "wire":"mywire"
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" count == 1
+jsonpath "$.wires[0].errors[0].message" == ```Field 'Definition' failed YAML schema validation: [1] wires.users.fields.foo: label is required [2] wires.users.fields.foo.required: Invalid type. Expected: boolean, given: string [3] wires.users.fields.foo.type: wires.users.fields.foo.type must be one of the following: "AUTONUMBER", "CHECKBOX", "DATE", "EMAIL", "FILE", "LIST", "LONGTEXT", "MAP", "MULTISELECT", "NUMBER", "REFERENCE", "REFERENCEGROUP", "SELECT", "STRUCT", "TEXT", "TIMESTAMP", "USER" [4] wires.users.fields.foo.number: decimals is required [5] wires.users.fields.foo.number: Additional property some is not allowed```
+
