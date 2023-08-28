@@ -46,6 +46,7 @@ type SignalDescriptor = {
 		context: context.Context
 	) => ComponentProperty[]
 	outputs?: SignalOutput[]
+	canError?: boolean
 }
 
 type ComponentSignalDescriptor = {
@@ -122,6 +123,30 @@ const stepIdProperty = {
 	type: "TEXT",
 } as ComponentProperty
 
+const onErrorProperty = {
+	name: "onerror",
+	label: "Error handling",
+	type: "STRUCT",
+	properties: [
+		{
+			name: "continue",
+			label: "Continue running other signals on error",
+			type: "CHECKBOX",
+		},
+		{
+			name: "notify",
+			label: "Display default notification on error",
+			type: "CHECKBOX",
+		},
+		// TODO: Add support for on-error signals property category
+		// {
+		// 	name: "signals",
+		// 	label: "On-Error Signals",
+		// 	type: "SIGNALS",
+		// },
+	],
+} as ComponentProperty
+
 const COMPONENT_SIGNAL_PREFIX = "COMPONENT/"
 
 const getSignalProperties = (
@@ -169,6 +194,7 @@ const getSignalProperties = (
 		...(descriptor && descriptor.properties
 			? descriptor.properties(signalDefinition, context)
 			: []),
+		...(descriptor && descriptor.canError ? [onErrorProperty] : []),
 	]
 }
 

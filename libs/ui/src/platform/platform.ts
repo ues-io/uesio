@@ -277,11 +277,16 @@ const platform = {
 	): Promise<LoadResponseBatch> => {
 		const prefix = getPrefix(context)
 		injectParams(requestBody.wires, context.getParams())
-		const response = await postJSON(
-			context,
-			`${prefix}/wires/load`,
-			requestBody
-		)
+		let response
+		try {
+			response = await postJSON(
+				context,
+				`${prefix}/wires/load`,
+				requestBody
+			)
+		} catch (err) {
+			return Promise.reject(err)
+		}
 		const loadResponse = (await respondJSON(
 			response
 		)) as ServerWireLoadResponse

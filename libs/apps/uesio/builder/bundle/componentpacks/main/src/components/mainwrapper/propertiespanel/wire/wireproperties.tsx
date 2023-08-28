@@ -127,6 +127,10 @@ const WireProperties: definition.UtilityComponent = (props) => {
 								label: "Wire loaded (successfully)",
 							},
 							{
+								value: "onLoadError",
+								label: "Wire loaded (with errors)",
+							},
+							{
 								value: "onSaveSuccess",
 								label: "Wire saved (successfully)",
 							},

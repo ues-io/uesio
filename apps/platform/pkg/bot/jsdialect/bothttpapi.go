@@ -4,13 +4,15 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	httpClient "github.com/thecloudmasters/uesio/pkg/http"
-	"github.com/thecloudmasters/uesio/pkg/logger"
-	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/sess"
 	"io"
 	"net/http"
 	"strings"
+
+	httpClient "github.com/thecloudmasters/uesio/pkg/http"
+	"github.com/thecloudmasters/uesio/pkg/integ/web"
+	"github.com/thecloudmasters/uesio/pkg/logger"
+	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 type BotHttpAPI struct {
@@ -113,7 +115,7 @@ func (api *BotHttpAPI) Request(req *BotHttpRequest) *BotHttpResponse {
 
 	// Attempt to parse the response body into a structured representation,
 	// if possible. If it fails, just return the raw response as a string
-	parsedBody, err := parseResponseBody(contentType, responseData)
+	parsedBody, err := web.ParseResponseBody(contentType, responseData, nil)
 	if err != nil {
 		return &BotHttpResponse{
 			Headers: getBotHeaders(httpResp.Header),
@@ -136,28 +138,4 @@ func getBotHeaders(header http.Header) map[string]string {
 		headers[k] = header.Get(k)
 	}
 	return headers
-}
-
-func parseResponseBody(contentType string, body []byte) (interface{}, error) {
-
-	// Only parse as JSON to a structured Go type if that's what the content type is.
-	if strings.Contains(contentType, "/json") {
-		// If it starts with a curly brace, treat it as JSON object
-		if string(body[0]) == "{" {
-			mapPtr := &map[string]interface{}{}
-			err := json.NewDecoder(bytes.NewReader(body)).Decode(mapPtr)
-			if err == nil {
-				return mapPtr, nil
-			}
-		} else {
-			// Otherwise, assume it's a JSON array
-			slicePtr := &[]interface{}{}
-			err := json.NewDecoder(bytes.NewReader(body)).Decode(&slicePtr)
-			if err == nil {
-				return slicePtr, nil
-			}
-		}
-	}
-	// Otherwise, just return the raw data as a string
-	return string(body), nil
 }
