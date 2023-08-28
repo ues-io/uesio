@@ -3,10 +3,10 @@ package systemdialect
 import (
 	"errors"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"strings"
 )
 
 func runWorkspaceAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
@@ -81,16 +81,20 @@ func runWorkspaceAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection
 			return errors.New("unable to get workspace unique key, cannot truncate data")
 		}
 
+		appFullName := strings.Split(workspaceUniqueKey, ":")[0]
+		appNameParts := strings.Split(appFullName, "/")
 		workspace := &meta.Workspace{
 			BuiltIn: meta.BuiltIn{
 				UniqueKey: workspaceUniqueKey,
 			},
+			App: &meta.App{
+				Name:     appNameParts[0],
+				FullName: appFullName,
+				BuiltIn: meta.BuiltIn{
+					UniqueKey: appFullName,
+				},
+			},
 		}
-		appBundleDef, innerErr := bundle.GetAppBundle(session, connection)
-		if err != nil {
-			return err
-		}
-		workspace.SetAppBundle(appBundleDef)
 		session.SetWorkspaceSession(sess.NewWorkspaceSession(
 			workspace,
 			session.GetSiteUser(),
@@ -104,6 +108,7 @@ func runWorkspaceAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection
 		if truncateErr != nil {
 			return truncateErr
 		}
+		session.SetWorkspaceSession(nil)
 		return nil
 	})
 	if err != nil {
