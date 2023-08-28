@@ -90,8 +90,6 @@ func (wic *WebIntegrationConnection) Request(methodName string, requestOptions i
 			Headers: reqHeaders,
 			URL:     reqUrl,
 		}
-	case RequestOptions:
-		options = opts
 	case *RequestOptions:
 		options = *opts
 	default:

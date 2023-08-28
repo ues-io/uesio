@@ -38,7 +38,7 @@ func Test_RunAction(t *testing.T) {
 		name                string
 		integration         *meta.Integration
 		method              string
-		requestOptions      RequestOptions
+		requestOptions      interface{}
 		response            string
 		responseContentType string
 		requestAsserts      func(t *testing.T, request *http.Request)
@@ -53,7 +53,7 @@ func Test_RunAction(t *testing.T) {
 				Headers: map[string]string{},
 			},
 			"get",
-			RequestOptions{
+			&RequestOptions{
 				URL: "/test",
 			},
 			`{"foo":"bar"}`,
@@ -79,7 +79,7 @@ func Test_RunAction(t *testing.T) {
 				Headers: map[string]string{},
 			},
 			"get",
-			RequestOptions{
+			&RequestOptions{
 				URL: "/array",
 			},
 			`[{"foo":"bar"},{"hello":"world"}]`,
@@ -111,7 +111,7 @@ func Test_RunAction(t *testing.T) {
 				},
 			},
 			"get",
-			RequestOptions{
+			&RequestOptions{
 				URL: "/xml",
 			},
 			`<books/>`,
@@ -139,7 +139,7 @@ func Test_RunAction(t *testing.T) {
 				},
 			},
 			"post",
-			RequestOptions{
+			&RequestOptions{
 				URL:  "/user/create",
 				Body: `{"first":"Luigi","last":"Vampa"}`,
 			},
@@ -170,7 +170,7 @@ func Test_RunAction(t *testing.T) {
 				},
 			},
 			"put",
-			RequestOptions{
+			&RequestOptions{
 				URL:  "/user/111",
 				Body: `{"first":"Mario","last":"Vampa"}`,
 			},
@@ -200,7 +200,7 @@ func Test_RunAction(t *testing.T) {
 				},
 			},
 			"patch",
-			RequestOptions{
+			&RequestOptions{
 				URL: "/user/111",
 				Body: map[string]interface{}{
 					"first": "Mario",
@@ -232,7 +232,7 @@ func Test_RunAction(t *testing.T) {
 				},
 			},
 			"delete",
-			RequestOptions{
+			&RequestOptions{
 				URL:  "/user/111",
 				Body: `{"__delete__":true}`,
 			},
@@ -259,7 +259,7 @@ func Test_RunAction(t *testing.T) {
 				Headers: map[string]string{},
 			},
 			"foooo",
-			RequestOptions{
+			&RequestOptions{
 				URL: "/users",
 			},
 			"",
