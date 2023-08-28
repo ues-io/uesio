@@ -10,6 +10,7 @@ import get from "lodash/get"
 import { SiteState } from "../bands/site"
 
 type MergeType =
+	| "Error"
 	| "Record"
 	| "Param"
 	| "User"
@@ -194,6 +195,11 @@ const handlers: Record<MergeType, MergeHandler> = {
 		const label = context.getLabel(expression)
 		if (!label) return expression
 		return label || "missing label value"
+	},
+	Error: (_, context) => {
+		const errors = context.getCurrentErrors()
+		if (!errors?.length) return ""
+		return errors[0]
 	},
 }
 

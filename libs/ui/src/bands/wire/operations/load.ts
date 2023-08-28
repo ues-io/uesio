@@ -1,5 +1,7 @@
 import { Context } from "../../../context/context"
 import { LoadRequest } from "../../../load/loadrequest"
+import { LoadResponseBatch } from "../../../load/loadresponse"
+import { platform } from "../../../platform/platform"
 import { PlainWire } from "../types"
 import {
 	getWiresFromDefinitonOrContext,
@@ -12,7 +14,7 @@ import { dispatch } from "../../../store/store"
 import { createRecordOp } from "./createrecord"
 import partition from "lodash/partition"
 import { batch } from "react-redux"
-import { platform } from "../../../platform/platform"
+import { addError } from "../../../../src/hooks/notificationapi"
 
 const getWireRequest = (
 	wires: PlainWire[],
@@ -84,11 +86,39 @@ export default async (
 		dispatch(setIsLoading(toLoadWithLookups))
 	}
 
-	const response = loadRequests.length
-		? await platform.loadData(context, {
-				wires: loadRequests,
-		  })
-		: { wires: [], collections: {} }
+	let response: LoadResponseBatch
+	try {
+		response = loadRequests.length
+			? await platform.loadData(context, {
+					wires: loadRequests,
+			  })
+			: { wires: [], collections: {} }
+	} catch (e) {
+		const errMessage =
+			((e as unknown as Error)?.message as string) ||
+			`Unable to load data: ${e}`
+		const errContext = context.addErrorFrame([errMessage])
+		// If we were unable to load the data, invoke error handlers for all wires.
+		// If there ARE no error handlers on any wires, invoke a default error handler
+		// which just displays a notification.
+		const wireWithOnLoadError = wires.find((wire) => {
+			if (Array.isArray(wire.events)) {
+				return wire.events.find((event) => event.type === "onLoadError")
+			} else {
+				return undefined
+			}
+		})
+		if (wireWithOnLoadError) {
+			wires.forEach((w) =>
+				errContext
+					.getWire(w.name)
+					?.handleEvent("onLoadError", errContext)
+			)
+		} else {
+			addError(errMessage, errContext)
+		}
+		return errContext
+	}
 
 	const loadedResults = response.wires.map((wire, index) => ({
 		...toLoadWithLookups[index],

@@ -47,7 +47,12 @@ const runMany = async (signals: SignalDefinition[], context: Context) => {
 			console.error(error)
 		}
 
-		// Any errors in this frame are the result of the signal run above, nothing else
+		// Any errors in this frame are the result of the signal run above,
+		// but it's possible that we have already handled the errors with a notification,
+		// so if the current signal being run IS a notification frame (which cannot throw errors),
+		// we can skip this check.
+		if (signal?.signal === "notification/ADD") continue
+
 		const currentErrors = context.getCurrentErrors() || []
 
 		if (currentErrors.length) {
