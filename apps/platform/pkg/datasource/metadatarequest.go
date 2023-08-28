@@ -319,7 +319,7 @@ func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *
 			metadata.HasAllFields = true
 		} else {
 			// Automagically add the id field and the name field whether they were requested or not.
-			fieldsToLoad := []string{adapt.ID_FIELD, metadata.NameField}
+			fieldsToLoad := []string{adapt.ID_FIELD, adapt.UNIQUE_KEY_FIELD, metadata.NameField}
 			for fieldKey := range collection {
 				fieldsToLoad = append(fieldsToLoad, fieldKey)
 			}
