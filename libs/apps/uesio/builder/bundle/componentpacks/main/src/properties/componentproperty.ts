@@ -224,6 +224,14 @@ type ListProperty = {
 	subtypeOptions?: wire.SelectOption[]
 } & BaseProperty
 
+/**
+ * Signals property is a convenience wrapper around LIST
+ * which will add in all necessary sub-properties to allowing editing a list of Signals
+ */
+type SignalsProperty = {
+	type: "SIGNALS"
+} & BaseProperty
+
 type ParamsProperty = {
 	type: "PARAMS"
 	viewProperty?: string
@@ -261,6 +269,7 @@ type ComponentProperty =
 	| MapProperty
 	| ParamsProperty
 	| ListProperty
+	| SignalsProperty
 	| TextAreaProperty
 	| IconProperty
 	| StructProperty

@@ -36,6 +36,7 @@ type OnChangeEvent = {
 
 // Todo: add all wire signal types
 type WireEventType =
+	| "onLoadError"
 	| "onLoadSuccess"
 	| "onSaveSuccess"
 	| "onSaveError"
