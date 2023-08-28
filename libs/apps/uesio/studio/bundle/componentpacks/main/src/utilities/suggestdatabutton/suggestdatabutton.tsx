@@ -88,26 +88,45 @@ const SuggestDataButton: definition.UtilityComponent<Props> = (props) => {
 					context
 				) as Promise<context.Context>
 
-				signalResult.then((resultContext) => {
-					setLoading(false)
-					const result =
-						resultContext.getSignalOutputs("autocomplete")
-					if (!result) return
-					handleAutocompleteData(context, result.data, handleResults)
-					if (targetTableId) {
-						// Turn the target table into edit mode
+				signalResult
+					.then((resultContext) => {
+						setLoading(false)
+						const result =
+							resultContext.getSignalOutputs("autocomplete")
+						if (!result) return
+						handleAutocompleteData(
+							context,
+							result.data,
+							handleResults
+						)
+						if (targetTableId) {
+							// Turn the target table into edit mode
+							api.signal.run(
+								{
+									signal: "component/CALL",
+									component: "uesio/io.table",
+									componentsignal: "SET_EDIT_MODE",
+									targettype: "specific",
+									componentid: targetTableId,
+								},
+								context
+							) as Promise<context.Context>
+						}
+					})
+					.catch((e) => {
+						setLoading(false)
 						api.signal.run(
 							{
-								signal: "component/CALL",
-								component: "uesio/io.table",
-								componentsignal: "SET_EDIT_MODE",
-								targettype: "specific",
-								componentid: targetTableId,
+								signal: "notification/ADD",
+								severity: "error",
+								message:
+									"Unable to suggest data, unexpected error: " +
+									e,
+								duration: 5,
 							},
 							context
 						) as Promise<context.Context>
-					}
-				})
+					})
 			}}
 		/>
 	)
