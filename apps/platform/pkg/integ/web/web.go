@@ -199,27 +199,37 @@ func (wic *WebIntegrationConnection) Request(methodName string, requestOptions i
 
 }
 
+// This function has two returns one if responseBody is not nil to be used by GO
+// and the other one if it is to be used by TS/JS the first returned argument
 func ParseResponseBody(contentType string, rawBody []byte, responseBody interface{}) (interface{}, error) {
 
-	if responseBody == nil {
-		// Only parse as JSON to a structured Go type if that's what the content type is.
-		if strings.Contains(contentType, "/json") {
-			// If it starts with a curly brace, treat it as JSON object
-			if string(rawBody[0]) == "{" {
-				responseBody = &map[string]interface{}{}
-			} else {
-				// Otherwise, assume it's a JSON array
-				responseBody = &[]interface{}{}
-			}
-			err := json.NewDecoder(bytes.NewReader(rawBody)).Decode(responseBody)
-			if err != nil {
-				return nil, err
-			}
-			return responseBody, nil
-		} else {
-			responseBody = string(rawBody)
+	//Go Object Send in we decode it
+	if responseBody != nil {
+		err := json.NewDecoder(bytes.NewReader(rawBody)).Decode(responseBody)
+		if err != nil {
+			return nil, err
 		}
+		//don't early return we want to process the JS as well
 	}
-	return responseBody, nil
+
+	//We don't know how is calling so we just do both
+	var responseBodyJS interface{}
+	if strings.Contains(contentType, "/json") {
+		// If it starts with a curly brace, treat it as JSON object
+		if string(rawBody[0]) == "{" {
+			responseBodyJS = &map[string]interface{}{}
+		} else {
+			// Otherwise, assume it's a JSON array
+			responseBodyJS = &[]interface{}{}
+		}
+		err := json.NewDecoder(bytes.NewReader(rawBody)).Decode(responseBodyJS)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		responseBodyJS = string(rawBody)
+	}
+
+	return responseBodyJS, nil
 
 }
