@@ -4,16 +4,13 @@ import (
 	"errors"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
-	"strings"
 )
 
 func runWorkspaceAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
-	var err error
 	newDeps := adapt.Collection{}
 	// Install the uesio bundle when you create a new workspace
-	err = request.LoopInserts(func(change *adapt.ChangeItem) error {
+	if err := request.LoopInserts(func(change *adapt.ChangeItem) error {
 		workspaceID, err := change.GetFieldAsString(adapt.ID_FIELD)
 		if err != nil {
 			return err
@@ -51,12 +48,12 @@ func runWorkspaceAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection
 			},
 		})
 		return nil
-	})
-	if err != nil {
+	}); err != nil {
 		return err
 	}
+
 	if len(newDeps) > 0 {
-		depsSaveErr := datasource.SaveWithOptions([]datasource.SaveRequest{
+		if err := datasource.SaveWithOptions([]datasource.SaveRequest{
 			{
 				Collection: "uesio/studio.bundledependency",
 				Wire:       "defaultapps",
@@ -65,54 +62,23 @@ func runWorkspaceAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection
 					Upsert: true,
 				},
 			},
-		}, session, datasource.GetConnectionSaveOptions(connection))
-		if depsSaveErr != nil {
-			return depsSaveErr
+		}, session, datasource.GetConnectionSaveOptions(connection)); err != nil {
+			return err
 		}
 	}
 
 	// If we are deleting workspaces, also truncate their data
-	err = request.LoopDeletes(func(change *adapt.ChangeItem) error {
-		workspaceUniqueKey, innerErr := change.GetOldFieldAsString(adapt.UNIQUE_KEY_FIELD)
-		if innerErr != nil {
-			return innerErr
+	return request.LoopDeletes(func(change *adapt.ChangeItem) error {
+		workspaceUniqueKey, err := change.GetOldFieldAsString(adapt.UNIQUE_KEY_FIELD)
+		if err != nil {
+			return err
 		}
 		if workspaceUniqueKey == "" {
 			return errors.New("unable to get workspace unique key, cannot truncate data")
 		}
-
-		appFullName := strings.Split(workspaceUniqueKey, ":")[0]
-		appNameParts := strings.Split(appFullName, "/")
-		workspace := &meta.Workspace{
-			BuiltIn: meta.BuiltIn{
-				UniqueKey: workspaceUniqueKey,
-			},
-			App: &meta.App{
-				Name:     appNameParts[0],
-				FullName: appFullName,
-				BuiltIn: meta.BuiltIn{
-					UniqueKey: appFullName,
-				},
-			},
+		if err = connection.TruncateTenantData(sess.MakeWorkspaceTenantID(workspaceUniqueKey)); err != nil {
+			return errors.New("unable to truncate workspace data: " + err.Error())
 		}
-		session.SetWorkspaceSession(sess.NewWorkspaceSession(
-			workspace,
-			session.GetSiteUser(),
-			"uesio/system.admin",
-			meta.GetAdminPermissionSet(),
-		))
-		if innerErr != nil {
-			return innerErr
-		}
-		_, truncateErr := RunWorkspaceTruncateListenerBot(nil, connection, session)
-		if truncateErr != nil {
-			return truncateErr
-		}
-		session.SetWorkspaceSession(nil)
 		return nil
 	})
-	if err != nil {
-		return err
-	}
-	return nil
 }
