@@ -291,6 +291,8 @@ HTTP 200
 jsonpath "$.wires[0].data" count == 1
 jsonpath "$.wires[0].data[0]['uesio/studio.recordid']" == "{{account_id}}"
 jsonpath "$.wires[0].data[0]['uesio/studio.token']" == "uesio.owner:{{uesio_user_id}}"
+jsonpath "$.wires[0].data[0]['uesio/studio.tokentype']" == "uesio.owner"
+jsonpath "$.wires[0].data[0]['uesio/studio.relatedrecordid']" == "{{uesio_user_id}}"
 
 # Now the tokens are gone and ben can't see the evil corp
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load

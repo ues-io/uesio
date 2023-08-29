@@ -118,10 +118,10 @@ definition:
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           components:
-                            - uesio/io.list:
-                                uesio.id: recordtokenvalueList
+                            - uesio/io.table:
+                                uesio.id: recordtokenvalueTable
                                 wire: recordtokenvalue
                                 mode: READ
-                                components:
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.token
+                                columns:
+                                  - field: uesio/studio.tokentype
+                                  - field: uesio/studio.relatedrecordid
