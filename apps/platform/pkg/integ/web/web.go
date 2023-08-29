@@ -203,33 +203,33 @@ func (wic *WebIntegrationConnection) Request(methodName string, requestOptions i
 // and the other one if it is to be used by TS/JS the first returned argument
 func ParseResponseBody(contentType string, rawBody []byte, responseBody interface{}) (interface{}, error) {
 
-	//Go Object Send in we decode it
+	// We have some hacky code to support ClickUp which passes in the responseBody as a struct,
+	// so that we can deserialize directly into ClickUp specific structs.
+	// In these scenarios, responseBody will be non-nil.
 	if responseBody != nil {
 		err := json.NewDecoder(bytes.NewReader(rawBody)).Decode(responseBody)
 		if err != nil {
 			return nil, err
 		}
-		//don't early return we want to process the JS as well
+		return responseBody, nil
 	}
 
-	//We don't know how is calling so we just do both
-	var responseBodyJS interface{}
 	if strings.Contains(contentType, "/json") {
 		// If it starts with a curly brace, treat it as JSON object
 		if string(rawBody[0]) == "{" {
-			responseBodyJS = &map[string]interface{}{}
+			responseBody = &map[string]interface{}{}
 		} else {
 			// Otherwise, assume it's a JSON array
-			responseBodyJS = &[]interface{}{}
+			responseBody = &[]interface{}{}
 		}
-		err := json.NewDecoder(bytes.NewReader(rawBody)).Decode(responseBodyJS)
+		err := json.NewDecoder(bytes.NewReader(rawBody)).Decode(responseBody)
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		responseBodyJS = string(rawBody)
+		responseBody = string(rawBody)
 	}
 
-	return responseBodyJS, nil
+	return responseBody, nil
 
 }
