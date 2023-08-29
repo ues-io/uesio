@@ -16,7 +16,7 @@ type WireDefinitionMap = {
 
 type ViewOnlyField = {
 	label: string
-	required?: boolean
+	required: boolean
 	type: FieldType
 	subtype?: FieldType // For STRUCT/LIST/MAP types
 	reference?: ReferenceMetadata

@@ -72,6 +72,8 @@ workspace_id: jsonpath "$.wires[1].data[0]['uesio/core.id']"
 # Create a view with valid YAML
 POST https://{{host}}:{{port}}/site/wires/save
 Accept: application/json
+[Options]
+variable: validyamlview="validyamlview_{{unix_epoch_seconds}}"
 {
     "wires": [
         {
@@ -80,7 +82,7 @@ Accept: application/json
             "changes": {
                 "temp1": {
                     "uesio/studio.definition": "wires:\n  users:\n    collection: uesio/core.user\n    fields:\n      uesio/core.id:\n      uesio/core.firstname:\n      uesio/core.lastname: {}\n    batchsize: 100\ncomponents:\n",
-                    "uesio/studio.name": "validyamlview"
+                    "uesio/studio.name": "{{validyamlview}}"
                 }
             },
             "params": {
@@ -124,6 +126,8 @@ jsonpath "$.wires[0].errors[0].message" == "Field 'Definition' failed YAML schem
 # Create a view with a valid ViewOnly wire
 POST https://{{host}}:{{port}}/site/wires/save
 Accept: application/json
+[Options]
+variable: viewonlywiretest="viewonlywiretest_{{unix_epoch_seconds}}"
 {
     "wires": [
         {
@@ -132,7 +136,7 @@ Accept: application/json
             "changes":{
                 "temp1":{
                     "uesio/studio.definition": "wires:\n  users:\n    viewOnly: true\n    fields:\n      foo:\n        type: NUMBER\n        label: Foo\n        number:\n          decimals: 2\ncomponents:\n",
-                    "uesio/studio.name":"viewonlywiretest"
+                    "uesio/studio.name":"{{viewonlywiretest}}"
                 }
             },
             "params": {
