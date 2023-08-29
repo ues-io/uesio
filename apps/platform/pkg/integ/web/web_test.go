@@ -42,13 +42,29 @@ func Test_RunAction(t *testing.T) {
 		server.Close()
 	})()
 
+	type Address struct {
+		Street1       string `json:"street1"`
+		Street2       string `json:"street2"`
+		City          string `json:"city"`
+		ZipPostalCode string `json:"zip"`
+		Country       string `json:"country"`
+		State         string `json:"state"`
+	}
+
+	type ResponseArgs struct {
+		responseData   interface{}
+		requestOptions interface{}
+	}
+
+	type ResponseAssertsFunc func(t *testing.T, responseArgs *ResponseArgs)
+
 	type args struct {
 		method              string
 		requestOptions      interface{}
 		response            string
 		responseContentType string
 		requestAsserts      func(t *testing.T, request *http.Request)
-		responseAsserts     func(t *testing.T, responseData interface{})
+		responseAsserts     ResponseAssertsFunc
 		wantErr             string
 		makeRequestNTimes   int
 	}
@@ -77,8 +93,8 @@ func Test_RunAction(t *testing.T) {
 					assert.Equal(t, "/test", request.URL.Path)
 					assert.EqualValues(t, uint32(1), countRequests[request.URL.String()])
 				},
-				responseAsserts: func(t *testing.T, responseData interface{}) {
-					if responseMap, ok := responseData.(*map[string]interface{}); ok {
+				responseAsserts: func(t *testing.T, responseArgs *ResponseArgs) {
+					if responseMap, ok := responseArgs.responseData.(*map[string]interface{}); ok {
 						assert.Equal(t, "bar", (*responseMap)["foo"])
 					} else {
 						assert.Fail(t, "response is not a map[string]interface{}")
@@ -104,8 +120,8 @@ func Test_RunAction(t *testing.T) {
 					assert.Equal(t, "GET", request.Method)
 					assert.Equal(t, "/array", request.URL.Path)
 				},
-				responseAsserts: func(t *testing.T, responseData interface{}) {
-					if responses, ok := responseData.(*[]interface{}); ok {
+				responseAsserts: func(t *testing.T, responseArgs *ResponseArgs) {
+					if responses, ok := responseArgs.responseData.(*[]interface{}); ok {
 						if response, isMap := (*responses)[1].(map[string]interface{}); isMap {
 							assert.Equal(t, "world", response["hello"])
 						}
@@ -136,8 +152,8 @@ func Test_RunAction(t *testing.T) {
 					assert.Equal(t, "/test/cached", request.URL.Path)
 					assert.EqualValues(t, uint32(1), countRequests[request.URL.String()])
 				},
-				responseAsserts: func(t *testing.T, responseData interface{}) {
-					if responseMap, ok := responseData.(*map[string]interface{}); ok {
+				responseAsserts: func(t *testing.T, responseArgs *ResponseArgs) {
+					if responseMap, ok := responseArgs.responseData.(*map[string]interface{}); ok {
 						assert.Equal(t, "bar", (*responseMap)["foo"])
 					} else {
 						assert.Fail(t, "response is not a map[string]interface{}")
@@ -168,9 +184,79 @@ func Test_RunAction(t *testing.T) {
 					assert.Equal(t, "text/xml", request.Header.Get("Accept"))
 					assert.Equal(t, "1234", request.Header.Get("Authorization"))
 				},
-				responseAsserts: func(t *testing.T, responseData interface{}) {
-					assert.Equal(t, `<books/>`, responseData)
+				responseAsserts: func(t *testing.T, responseArgs *ResponseArgs) {
+					assert.Equal(t, `<books/>`, responseArgs.responseData)
 				},
+			},
+		},
+		{
+			"GET: it should deserialize directly into a provided response struct",
+			&meta.Integration{
+				BaseURL: server.URL,
+				Type:    "uesio/core.web",
+				Headers: map[string]string{},
+			},
+			args{
+				method: "get",
+				requestOptions: &RequestOptions{
+					URL:          "/address",
+					ResponseData: &Address{},
+				},
+				response:            `{"street1":"123 Main St","street2":"Apt 1","zip":"37411","state":"TN","city":"Chattanooga","country":"US"}`,
+				responseContentType: "text/json",
+				requestAsserts: func(t *testing.T, request *http.Request) {
+					assert.Equal(t, "GET", request.Method)
+					assert.Equal(t, "/address", request.URL.Path)
+				},
+				responseAsserts: func(t *testing.T, responseArgs *ResponseArgs) {
+					if address, ok := responseArgs.responseData.(*Address); ok {
+						// First validate that the deserialized responseData is in the expected format
+						assert.Equal(t, "123 Main St", address.Street1)
+						assert.Equal(t, "Apt 1", address.Street2)
+						assert.Equal(t, "Chattanooga", address.City)
+						assert.Equal(t, "TN", address.State)
+						assert.Equal(t, "37411", address.ZipPostalCode)
+						assert.Equal(t, "US", address.Country)
+						// Next, make sure that this is the same struct that we provided in RequestOptions
+						if requestOpts, ok2 := responseArgs.requestOptions.(*RequestOptions); ok2 {
+							assert.Equal(t, address, requestOpts.ResponseData)
+						} else {
+							assert.Fail(t, "response body struct was not the same as the one we provided")
+						}
+					} else {
+						assert.Fail(t, "response body could not be deserialized into the expected Address struct")
+					}
+				},
+			},
+		},
+		{
+			"GET: it should return an error if the response body can't be deserialized into the provided response struct",
+			&meta.Integration{
+				BaseURL: server.URL,
+				Type:    "uesio/core.web",
+				Headers: map[string]string{},
+			},
+			args{
+				method: "get",
+				requestOptions: &RequestOptions{
+					URL:          "/not-an-address-struct",
+					ResponseData: &Address{},
+				},
+				response:            `["do I LOOK like an Address struct to YOU? DO I??????"]`,
+				responseContentType: "text/json",
+				requestAsserts: func(t *testing.T, request *http.Request) {
+					assert.Equal(t, "GET", request.Method)
+					assert.Equal(t, "/not-an-address-struct", request.URL.Path)
+				},
+				responseAsserts: func(t *testing.T, responseArgs *ResponseArgs) {
+					switch responseArgs.responseData.(type) {
+					case nil:
+						assert.Nil(t, responseArgs.responseData, "nil response should be returned")
+					case *Address:
+						assert.Fail(t, "we were not expecting the response body to be deserialized into an Address!")
+					}
+				},
+				wantErr: "json: cannot unmarshal array into Go value of type web.Address",
 			},
 		},
 		{
@@ -201,8 +287,8 @@ func Test_RunAction(t *testing.T) {
 					assert.Equal(t, nil, err)
 					assert.Equal(t, string(body), `{"first":"Luigi","last":"Vampa"}`)
 				},
-				responseAsserts: func(t *testing.T, responseData interface{}) {
-					assert.Equal(t, `ok`, responseData)
+				responseAsserts: func(t *testing.T, responseArgs *ResponseArgs) {
+					assert.Equal(t, `ok`, responseArgs.responseData)
 				},
 			},
 		},
@@ -232,8 +318,8 @@ func Test_RunAction(t *testing.T) {
 					assert.Equal(t, nil, err)
 					assert.Equal(t, string(body), `{"first":"Mario","last":"Vampa"}`)
 				},
-				responseAsserts: func(t *testing.T, responseData interface{}) {
-					assert.Equal(t, `ok`, responseData)
+				responseAsserts: func(t *testing.T, responseArgs *ResponseArgs) {
+					assert.Equal(t, `ok`, responseArgs.responseData)
 				},
 			},
 		},
@@ -265,8 +351,8 @@ func Test_RunAction(t *testing.T) {
 					assert.Equal(t, nil, err)
 					assert.Equal(t, string(body), `{"first":"Mario"}`)
 				},
-				responseAsserts: func(t *testing.T, responseData interface{}) {
-					assert.Equal(t, `ok`, responseData)
+				responseAsserts: func(t *testing.T, responseArgs *ResponseArgs) {
+					assert.Equal(t, `ok`, responseArgs.responseData)
 				},
 			},
 		},
@@ -296,8 +382,8 @@ func Test_RunAction(t *testing.T) {
 					assert.Equal(t, nil, err)
 					assert.Equal(t, string(body), `{"__delete__":true}`)
 				},
-				responseAsserts: func(t *testing.T, responseData interface{}) {
-					assert.Equal(t, `deleted`, responseData)
+				responseAsserts: func(t *testing.T, responseArgs *ResponseArgs) {
+					assert.Equal(t, `deleted`, responseArgs.responseData)
 				},
 			},
 		},
@@ -341,8 +427,12 @@ func Test_RunAction(t *testing.T) {
 			}
 			if tt.args.wantErr != "" {
 				assert.EqualError(t, err, tt.args.wantErr, "expected error for test case: "+tt.name)
-			} else if tt.args.responseAsserts != nil {
-				tt.args.responseAsserts(t, actualResponse)
+			}
+			if tt.args.responseAsserts != nil {
+				tt.args.responseAsserts(t, &ResponseArgs{
+					actualResponse,
+					tt.args.requestOptions,
+				})
 			}
 		})
 	}
