@@ -184,13 +184,3 @@ POST https://{{host}}:{{port}}/site/wires/save
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].errors" == null
-
-# To have a blank slate before running tests,
-# currently we have to manually truncate the DATA in each of our workspaces.
-# TODO: Automatically truncate workspace DATA as part of deleting the WORKSPACE itself,
-# then we can remove these lines
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/data/truncate
-HTTP 200
-
-POST https://{{host}}:{{port}}/workspace/uesio/tests/truncatetests/data/truncate
-HTTP 200

@@ -43,6 +43,7 @@ func runAppAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, sess
 			Params: map[string]string{
 				"workspaceid": workspace.ID,
 			},
+			Options: &adapt.SaveOptions{IgnoreMissingRecords: true},
 		})
 	}
 
