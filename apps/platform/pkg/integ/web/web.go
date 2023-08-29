@@ -36,6 +36,7 @@ type WebApiSchema struct {
 	Reference  string             `json:"ref"`
 	Type       string             `json:"type"`
 	Properties []*WebApiParameter `json:"properties"`
+	Items      *WebApiSchema      `json:"items"`
 }
 
 type WebApiPayload struct {

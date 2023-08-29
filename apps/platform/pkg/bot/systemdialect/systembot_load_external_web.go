@@ -60,7 +60,7 @@ func loadExternalWebDataSource(op *adapt.LoadOp, connection adapt.Connection, se
 		return errors.New("invalid format for custom metadata for data source: " + dataSource.Name + ": " + err.Error())
 	}
 
-	// Find the associated Operation Id
+	// Find the associated Operation
 	loadOperation := dsMetadata.GetOperationById(restMetadata.LoadOperation)
 
 	if loadOperation == nil {
@@ -68,6 +68,7 @@ func loadExternalWebDataSource(op *adapt.LoadOp, connection adapt.Connection, se
 	}
 
 	// Okay, we should be ready to go!
+	// Well, we need to call the raw Bot HTTP API because we can't get StatusCode / ContentType header here
 	response, err := wic.RunAction(strings.ToLower(loadOperation.Method), &web.RequestOptions{
 		URL:     loadOperation.Path,
 		Cache:   false,
@@ -80,6 +81,40 @@ func loadExternalWebDataSource(op *adapt.LoadOp, connection adapt.Connection, se
 	// Attach the response data to the collection
 	// TODO: Inspect the response schema for the operation and translate the response accordingly
 	if response != nil {
+		// Assuming this for now :)
+		statusCode := "200"
+		contentType := "application/json"
+		var responseSchema *web.WebApiSchema
+		if loadOperation.ResponseTypes != nil {
+			responseTypeDef := loadOperation.ResponseTypes[statusCode]
+			if responseTypeDef != nil {
+				responseSchema = responseTypeDef.ContentTypes[contentType]
+			}
+		}
+		// If we have a valid response schema, and it is a reference, resolve the reference
+		if responseSchema != nil && responseSchema.Reference != "" {
+			responseSchema = dsMetadata.GetSchemaById(responseSchema.Reference)
+		}
+		if responseSchema != nil {
+			// Handle OBJECT response types
+			if responseSchema.Type == "object" {
+				// parse the response as the object schema...
+			} else if responseSchema.Type == "array" && responseSchema.Items != nil {
+				// parse response as an array
+				var itemSchema *web.WebApiSchema
+				if responseSchema.Items.Reference != "" {
+					itemSchema = dsMetadata.GetSchemaById(responseSchema.Items.Reference)
+				}
+				// TODO: Handle strings...
+				if itemSchema != nil {
+					// Okay we can parse the response as an array of structured objects
+
+				}
+			}
+		}
+
+		// Okay, we have no ResponseSchema, in that case, we could do some generic parsing?
+		// Assume an Array or Object, and try to parse it manually??
 
 	}
 
