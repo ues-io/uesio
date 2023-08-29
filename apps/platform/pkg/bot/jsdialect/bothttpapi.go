@@ -69,6 +69,14 @@ func ServerError(err error) *BotHttpResponse {
 
 func (api *BotHttpAPI) Request(req *BotHttpRequest) *BotHttpResponse {
 
+	if req.URL == "" {
+		return BadRequest("no url provided")
+	}
+	useMethod := strings.ToUpper(req.Method)
+	if useMethod != http.MethodGet && useMethod != http.MethodPost && useMethod != http.MethodPut && useMethod != http.MethodDelete && useMethod != http.MethodPatch {
+		return BadRequest("invalid HTTP request method: " + req.Method)
+	}
+
 	var payloadReader io.Reader
 	if req.Body != nil {
 		switch payload := req.Body.(type) {
@@ -89,7 +97,7 @@ func (api *BotHttpAPI) Request(req *BotHttpRequest) *BotHttpResponse {
 		}
 	}
 
-	httpReq, err := http.NewRequest(req.Method, req.URL, payloadReader)
+	httpReq, err := http.NewRequest(useMethod, req.URL, payloadReader)
 	if err != nil {
 		return ServerError(err)
 	}
