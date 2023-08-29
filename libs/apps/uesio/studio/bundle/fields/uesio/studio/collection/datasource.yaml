@@ -1,5 +1,3 @@
 name: datasource
 type: TEXT
 label: Data Source
-required: true
-readOnly: true

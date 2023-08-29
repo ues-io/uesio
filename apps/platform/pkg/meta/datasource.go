@@ -27,6 +27,9 @@ type DataSource struct {
 	BundleableBase `yaml:",inline"`
 	Type           string `yaml:"type" json:"uesio/studio.type"`
 	Credentials    string `yaml:"credentials" json:"uesio/studio.credentials"`
+	CustomMetadata string `yaml:"customMetadata" json:"uesio/studio.custommetadata"`
+	LoadBot        string `yaml:"loadBot" json:"uesio/studio.loadbot"`
+	SaveBot        string `yaml:"saveBot" json:"uesio/studio.savebot"`
 }
 
 type DataSourceWrapper DataSource

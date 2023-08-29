@@ -1,0 +1,7 @@
+name: datasourcecollections
+type: REFERENCEGROUP
+label: Data Source Collections
+referenceGroup:
+  collection: datasourcecollection
+  field: workspace
+  onDelete: CASCADE

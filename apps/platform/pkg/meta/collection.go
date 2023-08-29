@@ -57,6 +57,7 @@ type Collection struct {
 	NameField             string                            `yaml:"nameField,omitempty" json:"uesio/studio.namefield"`
 	ReadOnly              bool                              `yaml:"readOnly,omitempty" json:"-"`
 	Access                string                            `yaml:"access,omitempty" json:"uesio/studio.access"`
+	CustomMetadata        string                            `yaml:"customMetadata,omitempty" json:"uesio/studio.custommetadata"`
 	AccessField           string                            `yaml:"accessField,omitempty" json:"uesio/studio.accessfield"`
 	RecordChallengeTokens []*RecordChallengeTokenDefinition `yaml:"recordChallengeTokens,omitempty" json:"uesio/studio.recordchallengetokens"`
 	TableName             string                            `yaml:"tablename,omitempty" json:"uesio/studio.tablename"`

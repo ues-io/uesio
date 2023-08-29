@@ -60,7 +60,6 @@ func GetIntegration(integrationID string, session *sess.Session) (IntegrationCon
 	if err != nil {
 		return nil, err
 	}
-
 	return integrationType.GetIntegrationConnection(integration, session, credentials)
 }
 

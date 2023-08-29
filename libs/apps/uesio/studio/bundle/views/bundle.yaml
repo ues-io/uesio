@@ -153,7 +153,7 @@ definition:
                               label: "App Workspace"
                             - field: uesio/core.createdby
                               user:
-                                subtitle: uesio/core.createdat
+                                subtitle: $Time{uesio/core.createdat}
                           pagesize: 10
   panels:
     deleteBundle:

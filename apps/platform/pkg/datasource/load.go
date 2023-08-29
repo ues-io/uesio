@@ -3,6 +3,7 @@ package datasource
 import (
 	"errors"
 	"fmt"
+	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -593,35 +594,73 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 
 	for _, op := range allOps {
 
-		err := processConditions(op.CollectionName, op.Conditions, op.Params, metadataResponse, allOps, session)
+		err = processConditions(op.CollectionName, op.Conditions, op.Params, metadataResponse, allOps, session)
 		if err != nil {
 			return nil, err
 		}
 
-		collectionMetadata, err := metadataResponse.GetCollection(op.CollectionName)
-		if err != nil {
-			return nil, err
+		collectionMetadata, err2 := metadataResponse.GetCollection(op.CollectionName)
+		if err2 != nil {
+			return nil, err2
 		}
+
+		// Attach the collection metadata to the LoadOp so that Load Bots can access it
+		op.AttachMetadataCache(metadataResponse)
+
+		dataSourceName := collectionMetadata.DataSource
+
+		var dataSource *meta.DataSource
 
 		usage.RegisterEvent("LOAD", "COLLECTION", collectionMetadata.GetFullName(), 0, session)
-		usage.RegisterEvent("LOAD", "DATASOURCE", meta.PLATFORM_DATA_SOURCE, 0, session)
+		usage.RegisterEvent("LOAD", "DATASOURCE", dataSourceName, 0, session)
 
 		if collectionMetadata.IsDynamic() {
-			err := runDynamicCollectionLoadBots(op, connection, session)
-			if err != nil {
-				return nil, err
+			err2 = runDynamicCollectionLoadBots(op, connection, session)
+			if err2 != nil {
+				return nil, err2
 			}
 			continue
 		}
 
-		err = LoadOp(op, connection, session)
-		if err != nil {
-			return nil, err
+		// Handle external data source loads
+		if dataSourceName != meta.PLATFORM_DATA_SOURCE {
+			dataSource, err2 = fetchDataSource(dataSourceName, op.CollectionName, session)
+			if err2 != nil {
+				return nil, err2
+			}
+			op.AttachDataSource(dataSource)
+			if err3 := runExternalDataSourceLoadBot(dataSource.LoadBot, op, connection, session); err3 != nil {
+				return nil, err3
+			}
+			continue
+		}
+
+		err2 = LoadOp(op, connection, session)
+		if err2 != nil {
+			return nil, err2
 		}
 
 	}
 
 	return metadataResponse, nil
+}
+
+func fetchDataSource(dataSourceName, collectionName string, session *sess.Session) (*meta.DataSource, error) {
+	namespace, name, err := meta.ParseKey(dataSourceName)
+	if err != nil {
+		return nil, fmt.Errorf("invalid data source name %s for collection %s", dataSourceName, collectionName)
+	}
+	dataSource := &meta.DataSource{
+		BundleableBase: meta.BundleableBase{
+			Name:      name,
+			Namespace: namespace,
+		},
+	}
+	err = bundle.Load(dataSource, session, nil)
+	if err != nil {
+		return nil, fmt.Errorf("could not find the requested data source %s for collection %s", dataSourceName, collectionName)
+	}
+	return dataSource, nil
 }
 
 func LoadOp(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {

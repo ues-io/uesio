@@ -161,6 +161,8 @@ func (b *SystemDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adap
 		botFunction = clickup.ProjectLoadBot
 	case "tcm/timetracker.task":
 		botFunction = clickup.TaskLoadBot
+	case "uesio/core.restapiload":
+		botFunction = loadExternalWebDataSource
 	}
 
 	if meta.IsBundleableCollection(op.CollectionName) {

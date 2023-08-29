@@ -1,0 +1,5 @@
+name: loadbot
+type: REFERENCE
+label: Load Bot
+reference:
+  collection: bot

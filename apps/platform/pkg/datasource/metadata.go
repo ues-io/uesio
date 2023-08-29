@@ -25,6 +25,7 @@ func GetCollectionMetadata(e *meta.Collection) *adapt.CollectionMetadata {
 		Deleteable:            !e.ReadOnly,
 		Fields:                fieldMetadata,
 		DataSource:            e.DataSourceRef,
+		CustomMetadata:        e.CustomMetadata,
 		Access:                e.Access,
 		AccessField:           e.AccessField,
 		RecordChallengeTokens: e.RecordChallengeTokens,

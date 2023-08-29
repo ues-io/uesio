@@ -1,4 +1,4 @@
 name: platform
-type: ${uesio/core.platform_datasource_type}
-credentials: ${uesio/core.platform_datasource_credentials}
+type: uesio/core.postgresio
+credentials: uesio/core.db
 public: true

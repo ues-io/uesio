@@ -26,6 +26,9 @@ type LoadOp struct {
 	Preloaded          bool                   `json:"preloaded"`
 	LoadAll            bool                   `json:"loadAll"`
 	DebugQueryString   string                 `json:"debugQueryString"`
+	// Internal only conveniences for LoadBots to be able to access metadata
+	metadata   *MetadataCache
+	dataSource *meta.DataSource
 }
 
 type LoadOpWrapper LoadOp
@@ -80,6 +83,31 @@ func (op *LoadOp) UnmarshalYAML(node *yaml.Node) error {
 	op.LoadAll = meta.GetNodeValueAsBool(node, "loadAll", false)
 	return nil
 
+}
+
+func (op *LoadOp) GetDataSource() (*meta.DataSource, error) {
+	if op.dataSource != nil {
+		return op.dataSource, nil
+	}
+	return nil, errors.New("data source not available on LoadOp")
+}
+
+func (op *LoadOp) GetCollectionMetadata() (*CollectionMetadata, error) {
+	if op.metadata != nil {
+		return op.metadata.GetCollection(op.CollectionName)
+	} else {
+		return nil, errors.New("no metadata available on LoadOp")
+	}
+}
+
+func (op *LoadOp) AttachMetadataCache(response *MetadataCache) *LoadOp {
+	op.metadata = response
+	return op
+}
+
+func (op *LoadOp) AttachDataSource(dataSource *meta.DataSource) *LoadOp {
+	op.dataSource = dataSource
+	return op
 }
 
 type LoadRequestBatch struct {

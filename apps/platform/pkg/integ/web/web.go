@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"github.com/thecloudmasters/uesio/pkg/creds"
 	"io"
 	"net/http"
 	"strings"
@@ -30,18 +32,107 @@ type RequestOptions struct {
 type WebIntegration struct {
 }
 
-func (wi *WebIntegration) GetIntegrationConnection(integration *meta.Integration, session *sess.Session, credentials *adapt.Credentials) (integ.IntegrationConnection, error) {
+type WebApiSchema struct {
+	Reference  string             `json:"ref"`
+	Type       string             `json:"type"`
+	Properties []*WebApiParameter `json:"properties"`
+}
+
+type WebApiPayload struct {
+	Description  string                   `json:"description"`
+	ContentTypes map[string]*WebApiSchema `json:"contentTypes"`
+}
+
+type SchemaProperty struct {
+	Type   string   `json:"type"`
+	Enum   []string `json:"enum"`
+	Format string   `json:"format"`
+}
+
+type WebApiParameter struct {
+	Name     string        `json:"name"`
+	Location string        `json:"in"`
+	Required bool          `json:"required"`
+	Schema   *WebApiSchema `json:"schema"`
+}
+
+type WebApiOperation struct {
+	Name    string            `json:"name"`
+	Method  string            `json:"method"`
+	Path    string            `json:"path"`
+	Headers map[string]string `json:"headers"`
+	// Map from response code (e.g. "200", "400") to struct defining schemas by content type
+	ResponseTypes map[string]*WebApiPayload `json:"responses"`
+	// Define the different potential payloads by content type
+	RequestBody *WebApiPayload     `json:"requestBody"`
+	Parameters  []*WebApiParameter `json:"parameters"`
+}
+
+type WebDataSourceCustomMetadata struct {
+	CommonRequestDetails *CommonRequestDetails       `json:"commonRequestDetails"`
+	Operations           map[string]*WebApiOperation `json:"operations"`
+	Schemas              map[string]*WebApiSchema    `json:"schemas"`
+}
+
+func (m *WebDataSourceCustomMetadata) GetOperationById(operationId string) *WebApiOperation {
+	if m.Operations == nil {
+		return nil
+	}
+	return m.Operations[operationId]
+}
+func (m *WebDataSourceCustomMetadata) GetSchemaById(schemaId string) *WebApiSchema {
+	if m.Schemas == nil {
+		return nil
+	}
+	return m.Schemas[schemaId]
+}
+
+func GetConnection(dataSource *meta.DataSource, session *sess.Session) (integ.IntegrationConnection, error) {
+
+	// Parse custom metadata into our struct
+	customMetadata := &WebDataSourceCustomMetadata{}
+
+	err := json.Unmarshal([]byte(dataSource.CustomMetadata), customMetadata)
+	if err != nil {
+		return nil, fmt.Errorf("invalid custom metadata for data source %s", dataSource.Name)
+	}
+
+	credentials, err := creds.GetCredentials(dataSource.Credentials, session)
+	if err != nil {
+		return nil, fmt.Errorf("unable to load credentials for data source %s", dataSource.Name)
+	}
+
 	return &WebIntegrationConnection{
-		session:     session,
-		integration: integration,
-		credentials: credentials,
+		session:              session,
+		commonRequestDetails: customMetadata.CommonRequestDetails,
+		credentials:          credentials,
 	}, nil
 }
 
+func (wi *WebIntegration) GetIntegrationConnection(integration *meta.Integration, session *sess.Session, credentials *adapt.Credentials) (integ.IntegrationConnection, error) {
+	return &WebIntegrationConnection{
+		session:              session,
+		commonRequestDetails: NewCommonRequestDetails(integration),
+		credentials:          credentials,
+	}, nil
+}
+
+type CommonRequestDetails struct {
+	BaseUrl string
+	Headers map[string]string
+}
+
+func NewCommonRequestDetails(integration *meta.Integration) *CommonRequestDetails {
+	return &CommonRequestDetails{
+		BaseUrl: integration.BaseURL,
+		Headers: integration.Headers,
+	}
+}
+
 type WebIntegrationConnection struct {
-	session     *sess.Session
-	integration *meta.Integration
-	credentials *adapt.Credentials
+	session              *sess.Session
+	commonRequestDetails *CommonRequestDetails
+	credentials          *adapt.Credentials
 }
 
 const (
@@ -96,7 +187,7 @@ func (wic *WebIntegrationConnection) Request(methodName string, requestOptions i
 		return nil, errors.New("invalid options provided to web integration")
 	}
 
-	fullURL := goutils.SafeJoinStrings([]string{wic.integration.BaseURL, options.URL}, "/")
+	fullURL := goutils.SafeJoinStrings([]string{wic.commonRequestDetails.BaseUrl, options.URL}, "/")
 
 	// TODO: Convert to using Redis cache, and support cache invalidation
 	if options.Cache {
@@ -138,8 +229,8 @@ func (wic *WebIntegrationConnection) Request(methodName string, requestOptions i
 
 	allHeaders := map[string]string{}
 
-	if len(wic.integration.Headers) > 0 {
-		for header, value := range wic.integration.Headers {
+	if len(wic.commonRequestDetails.Headers) > 0 {
+		for header, value := range wic.commonRequestDetails.Headers {
 			allHeaders[header] = value
 		}
 	}

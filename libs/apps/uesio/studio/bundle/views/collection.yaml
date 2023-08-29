@@ -243,14 +243,32 @@ definition:
                             - uesio/io.grid:
                                 uesio.variant: uesio/io.four_columns
                                 items:
+                                  - uesio/builder.metadatafield:
+                                      uesio.context:
+                                        workspace:
+                                          name: $Param{workspacename}
+                                          app: $Param{app}
+                                      fieldId: uesio/studio.datasource
+                                      metadataType: DATASOURCE
+                                      label: Data Source
                                   - uesio/io.field:
                                       fieldId: uesio/core.createdby
-                                  - uesio/io.field:
-                                      fieldId: uesio/core.createdat
+                                      user:
+                                        subtitle: $Time{uesio/core.createdat}
                                   - uesio/io.field:
                                       fieldId: uesio/core.updatedby
+                                      user:
+                                        subtitle: $Time{uesio/core.updatedat}
                                   - uesio/io.field:
                                       fieldId: uesio/core.updatedat
+                            - uesio/studio.codefield:
+                                fieldId: uesio/studio.custommetadata
+                                height: 350px
+                                language: json
+                                uesio.display:
+                                  - field: uesio/studio.datasource
+                                    operator: NOT_EQUALS
+                                    value: uesio/core.platform
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
