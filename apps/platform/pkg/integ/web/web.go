@@ -222,6 +222,10 @@ func ParseResponseBody(contentType string, rawBody []byte, responseBody interfac
 			// Otherwise, assume it's a JSON array
 			responseBodyJS = &[]interface{}{}
 		}
+		err := json.NewDecoder(bytes.NewReader(rawBody)).Decode(responseBodyJS)
+		if err != nil {
+			return nil, err
+		}
 	} else {
 		responseBodyJS = string(rawBody)
 	}
