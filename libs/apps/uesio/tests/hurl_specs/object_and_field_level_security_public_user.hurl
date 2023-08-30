@@ -277,7 +277,7 @@ body contains "Save Failed: Profile uesio/tests.public does not have delete acce
 
 # Object level security -- SAVE -- CREATE
 # We SHOULD NOT be able to CREATE tool records
-# because the public profile DOES have permission to create them
+# because the public profile DOES NOT have permission to create them
 POST https://tests.{{domain}}:{{port}}/site/wires/save
 [Options]
 variable: brand="brand {{unix_epoch_seconds}}"
