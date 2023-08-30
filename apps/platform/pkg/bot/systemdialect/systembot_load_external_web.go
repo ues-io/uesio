@@ -7,6 +7,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	httpClient "github.com/thecloudmasters/uesio/pkg/http"
 	"github.com/thecloudmasters/uesio/pkg/integ/web"
+	"github.com/thecloudmasters/uesio/pkg/openapi"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"io"
 	"net/http"
@@ -50,16 +51,10 @@ func loadExternalWebDataSource(op *adapt.LoadOp, connection adapt.Connection, se
 	if restMetadata.LoadOperation == "" {
 		return errors.New("no load operation defined for collection: " + collectionMetadata.Name)
 	}
+	spec, err := openapi.LoadModelFromDataSource(dataSource)
 
-	// Deserialize custom metadata off of the Data Source
-	dsCustomMeta := dataSource.CustomMetadata
-	if dsCustomMeta == "" {
-		return errors.New("no web metadata found for data source: " + dataSource.Name)
-	}
-	dsMetadata := &web.WebDataSourceCustomMetadata{}
-	err = json.Unmarshal([]byte(dsCustomMeta), dsMetadata)
-	if err != nil {
-		return errors.New("invalid format for custom metadata for data source: " + dataSource.Name + ": " + err.Error())
+	for _, p := range spec.Paths.PathItems {
+		p.Trace.
 	}
 
 	// Find the associated Operation
