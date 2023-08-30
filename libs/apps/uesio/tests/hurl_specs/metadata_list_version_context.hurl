@@ -77,3 +77,18 @@ jsonpath "$[*]" count == 7
 # Spot check a uesio/tests field
 jsonpath "$['uesio/tests.genus'].key" == "uesio/tests.genus"
 jsonpath "$['uesio/tests.genus'].namespace" == "uesio/tests"
+
+# Get a list of all secrets available from a version context
+GET https://{{host}}:{{port}}/version/uesio/tests/v0.0.1/metadata/types/secrets/list
+Accept: application/json
+HTTP 200
+[Asserts]
+jsonpath "$[*]" count == 0
+
+
+# Now go into the uesio/core version context and get the secrets
+GET https://{{host}}:{{port}}/version/uesio/core/v0.0.1/metadata/types/secrets/list
+Accept: application/json
+HTTP 200
+[Asserts]
+jsonpath "$[*]" count == 6
