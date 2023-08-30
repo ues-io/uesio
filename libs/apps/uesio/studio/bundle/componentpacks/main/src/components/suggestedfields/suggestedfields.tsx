@@ -117,6 +117,11 @@ const handleResults = (
 	})
 }
 
+const commonColumnsSQL = `id uuid primary key, uniquekey varchar unique, createdat timestamp with timezone, updatedat timestamp with time zone`
+
+const getPrompt = (pluralLabel: string) =>
+	`I have a PostgreSQL database table which stores ${pluralLabel}, which already has the following columns in it, provided in SQL: ${commonColumnsSQL}. Please suggest 10 relevant additional columns for this table (do NOT include the columns that the table already has!), output as a JSON array of JSON objects, with each JSON object having 2 properties: (1) type - the PostgreSQL column type (2) label - the name of the column. Please just return the JSON array.`
+
 const SuggestedFields: definition.UC<ComponentDefinition> = (props) => {
 	const {
 		context,
@@ -146,7 +151,7 @@ const SuggestedFields: definition.UC<ComponentDefinition> = (props) => {
 	return (
 		<SuggestDataButton
 			context={context}
-			prompt={`I am creating a new PostgreSQL database table to store ${pluralLabel}. Suggest 10 relevant columns for this new table, output as a JSON array of JSON objects, with each JSON object having 2 properties: (1) type - the PostgreSQL column type (2) label - the name of the column`}
+			prompt={getPrompt(pluralLabel)}
 			label={"Suggest Fields"}
 			loadingLabel={"Suggesting fields..."}
 			targetTableId={targetTableId}
