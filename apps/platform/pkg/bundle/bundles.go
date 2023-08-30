@@ -20,15 +20,7 @@ func ClearAppBundleCache(session *sess.Session) {
 }
 
 func GetSiteBundleDef(site *meta.Site, connection adapt.Connection) (*meta.BundleDef, error) {
-	bs, err := bundlestore.GetConnection(bundlestore.ConnectionOptions{
-		Namespace:  site.GetAppFullName(),
-		Version:    site.Bundle.GetVersionString(),
-		Connection: connection,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return bs.GetBundleDef()
+	return GetVersionBundleDef(site.GetAppFullName(), site.Bundle.GetVersionString(), connection)
 }
 
 func GetVersionBundleDef(namespace, version string, connection adapt.Connection) (*meta.BundleDef, error) {

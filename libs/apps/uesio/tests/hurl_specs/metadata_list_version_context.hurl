@@ -1,5 +1,5 @@
 ###################################################################
-# Tests creating a collection, fields, and collection cascade delete
+# Tests the metadata listing api for the version context
 ###################################################################
 
 # Test as a logged-in user so that we don't get redirected to the login page

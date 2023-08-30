@@ -46,10 +46,11 @@ var appParam = getNSParam("app")
 var nsParam = getNSParam("namespace")
 var nameParam = getMetadataItemParam("name")
 var itemParam = fmt.Sprintf("%s/%s", nsParam, nameParam)
+var versionParam = "{version:(?:v[0-9]+\\.[0-9]+\\.[0-9]+)|(?:[a-z0-9]{8,})}"
 
 // Version will either be a Uesio bundle version string, e.g. v1.2.3,
 // Or an 8-character short Git sha, e.g. abcd1234
-var versionedItemParam = fmt.Sprintf("%s/{version:(?:v[0-9]+\\.[0-9]+\\.[0-9]+)|(?:[a-z0-9]{8,})}/%s", nsParam, nameParam)
+var versionedItemParam = fmt.Sprintf("%s/%s/%s", nsParam, versionParam, nameParam)
 
 // Grouping values can either be full Uesio items (e.g. <user>/<app>.<name>) or simple values, e.g. "LISTENER",
 // so the regex here needs to support both
@@ -105,9 +106,18 @@ func serve(cmd *cobra.Command, args []string) {
 	)
 
 	// The version router
-	versionPath := fmt.Sprintf("/version/%s/{version}", appParam)
+	versionPath := fmt.Sprintf("/version/%s/%s", appParam, versionParam)
 	vr := r.PathPrefix(versionPath).Subrouter()
 	vr.Use(
+		middleware.Authenticate,
+		middleware.LogRequestHandler,
+		middleware.AuthenticateVersion,
+	)
+
+	// The version router (Backwards Compat)
+	versionCompatPath := fmt.Sprintf("/version/%s/%s/%s", appParam, nsParam, versionParam)
+	vr_compat := r.PathPrefix(versionCompatPath).Subrouter()
+	vr_compat.Use(
 		middleware.Authenticate,
 		middleware.LogRequestHandler,
 		middleware.AuthenticateVersion,
@@ -260,6 +270,9 @@ func serve(cmd *cobra.Command, args []string) {
 	sa.HandleFunc(nsItemListPath, controller.MetadataList).Methods(http.MethodGet)
 	vr.HandleFunc(nsItemListPath, controller.MetadataList).Methods(http.MethodGet)
 
+	// BACKWARDS Compat version routes for old CLI versions
+	vr_compat.HandleFunc(fmt.Sprintf("/metadata/types/{type}/list"), controller.MetadataList).Methods(http.MethodGet)
+
 	nsItemListPathWithGrouping := fmt.Sprintf("/metadata/types/{type}/namespace/%s/list/%s", nsParam, groupingParam)
 	wr.HandleFunc(nsItemListPathWithGrouping, controller.MetadataList).Methods(http.MethodGet)
 	sa.HandleFunc(nsItemListPathWithGrouping, controller.MetadataList).Methods(http.MethodGet)
@@ -306,6 +319,10 @@ func serve(cmd *cobra.Command, args []string) {
 	// Version context specific routes
 	vr.HandleFunc("/metadata/generate/"+itemParam, controller.Generate).Methods("POST")
 	vr.HandleFunc("/bots/params/{type}/"+itemParam, controller.GetBotParams).Methods("GET")
+
+	// BACKWARDS Compat version routes for old CLI versions
+	vr_compat.HandleFunc("/metadata/generate/{name}", controller.Generate).Methods("POST")
+	vr_compat.HandleFunc("/bots/params/{type}/{name}", controller.GetBotParams).Methods("GET")
 
 	// Auth Routes
 	sa.HandleFunc("/auth/"+itemParam+"/createlogin", controller.CreateLogin).Methods("POST")
