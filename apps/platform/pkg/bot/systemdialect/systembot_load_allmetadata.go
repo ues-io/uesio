@@ -193,7 +193,7 @@ func runAllMetadataLoadBot(collectionName string, op *adapt.LoadOp, connection a
 			// Only add built-in fields if we're grouping on a collection
 			collection, ok := conditions["uesio/studio.collection"]
 			// and if we don't have a condition to exclude built-in fields
-			if ok && (displayBuiltInFieldsCondition == nil || displayBuiltInFieldsCondition.Value != false)  {
+			if ok && (displayBuiltInFieldsCondition == nil || displayBuiltInFieldsCondition.Value != false) {
 				datasource.AddAllBuiltinFields(group, collection)
 			}
 		}
