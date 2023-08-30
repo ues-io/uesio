@@ -119,7 +119,7 @@ func GetSiteFromHost(host string) (*meta.Site, error) {
 	site.Domain = domain
 	site.Subdomain = subdomain
 
-	bundleDef, err := bundle.GetSiteAppBundle(site)
+	bundleDef, err := bundle.GetBundleDef(site.GetAppFullName(), site.Bundle.GetVersionString(), nil, nil)
 	if err != nil {
 		return nil, err
 	}

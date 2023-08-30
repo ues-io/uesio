@@ -1,4 +1,4 @@
-package auth
+package datasource
 
 import (
 	"errors"
@@ -25,11 +25,8 @@ func AddVersionContext(app, namespace, version string, session *sess.Session) er
 		return errors.New("your profile does not allow you to work with versions")
 	}
 
-	session.AddVersionContext(&sess.VersionInfo{
-		App:       app,
-		Namespace: namespace,
-		Version:   version,
-	})
+	session.SetVersionSession(sess.NewVersionSession(namespace, version, nil))
+
 	return nil
 
 }
