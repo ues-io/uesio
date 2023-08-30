@@ -3,6 +3,7 @@ package sess
 import (
 	"fmt"
 	"net/http"
+	"sort"
 	"time"
 
 	"github.com/twmb/murmur3"
@@ -58,12 +59,6 @@ func Logout(w http.ResponseWriter, publicUser *meta.User, s *Session) *Session {
 	return Login(w, publicUser, sitesession.GetSite())
 }
 
-type VersionInfo struct {
-	App       string
-	Namespace string
-	Version   string
-}
-
 type WorkspaceSession struct {
 	workspace *meta.Workspace
 	user      *meta.User
@@ -101,6 +96,10 @@ func (s *WorkspaceSession) GetAppFullName() string {
 	return s.workspace.GetAppFullName()
 }
 
+func (s *WorkspaceSession) GetVersion() string {
+	return s.workspace.Name
+}
+
 type SiteSession struct {
 	site *meta.Site
 	user *meta.User
@@ -132,12 +131,41 @@ func (s *SiteSession) GetAppFullName() string {
 	return s.site.GetAppFullName()
 }
 
+func (s *SiteSession) GetVersion() string {
+	return s.site.Bundle.GetVersionString()
+}
+
+type VersionSession struct {
+	app       string
+	version   string
+	user      *meta.User
+	bundleDef *meta.BundleDef
+}
+
+func NewVersionSession(
+	app string,
+	version string,
+	user *meta.User,
+	bundleDef *meta.BundleDef,
+) *VersionSession {
+	// Shallow clone the user and change the profile name
+	vUser := *user
+	vUser.Profile = "uesio/system.admin"
+	vUser.Permissions = meta.GetAdminPermissionSet()
+	return &VersionSession{
+		app:       app,
+		version:   version,
+		user:      &vUser,
+		bundleDef: bundleDef,
+	}
+}
+
 type Session struct {
 	browserSession   *session.Session
 	siteSession      *SiteSession
 	workspaceSession *WorkspaceSession
 	siteAdminSession *SiteSession
-	version          *VersionInfo
+	versionSession   *VersionSession
 	tokens           TokenMap
 	labels           map[string]string
 }
@@ -216,6 +244,11 @@ func (s *Session) GetWorkspace() *meta.Workspace {
 
 func (s *Session) SetWorkspaceSession(workspace *WorkspaceSession) *Session {
 	s.workspaceSession = workspace
+	return s
+}
+
+func (s *Session) SetVersionSession(version *VersionSession) *Session {
+	s.versionSession = version
 	return s
 }
 
@@ -304,19 +337,12 @@ func (s *Session) RemoveWorkspaceContext() *Session {
 	return &newSess
 }
 
-func (s *Session) AddVersionContext(versionInfo *VersionInfo) *Session {
-	s.version = versionInfo
-	return s
-}
-
 func (s *Session) GetContextNamespaces() []string {
 	bundleDef := s.GetContextAppBundle()
 	namespaces := []string{
 		bundleDef.Name,
 	}
-	for name := range bundleDef.Dependencies {
-		namespaces = append(namespaces, name)
-	}
+	namespaces = append(namespaces, s.GetContextInstalledNamespaces()...)
 	return namespaces
 }
 
@@ -326,10 +352,14 @@ func (s *Session) GetContextInstalledNamespaces() []string {
 	for name := range bundleDef.Dependencies {
 		namespaces = append(namespaces, name)
 	}
+	sort.Strings(namespaces)
 	return namespaces
 }
 
 func (s *Session) GetContextAppBundle() *meta.BundleDef {
+	if s.versionSession != nil {
+		return s.versionSession.bundleDef
+	}
 	if s.workspaceSession != nil {
 		return s.workspaceSession.workspace.GetAppBundle()
 	}
@@ -348,32 +378,35 @@ func (s *Session) GetDefaultTheme() string {
 }
 
 func (s *Session) GetContextAppName() string {
+	if s.versionSession != nil {
+		return s.versionSession.app
+	}
 	if s.workspaceSession != nil {
 		return s.workspaceSession.GetAppFullName()
 	}
 	if s.siteAdminSession != nil {
 		return s.siteAdminSession.GetAppFullName()
 	}
-	if s.version != nil {
-		return s.version.App
-	}
 	return s.siteSession.GetAppFullName()
 }
 
 func (s *Session) GetContextVersionName() string {
+	if s.versionSession != nil {
+		return s.versionSession.version
+	}
 	if s.workspaceSession != nil {
-		return s.workspaceSession.GetWorkspace().Name
+		return s.workspaceSession.GetVersion()
 	}
 	if s.siteAdminSession != nil {
-		return s.siteAdminSession.GetSite().Bundle.GetVersionString()
+		return s.siteAdminSession.GetVersion()
 	}
-	if s.version != nil {
-		return s.version.Version
-	}
-	return s.siteSession.GetSite().Bundle.GetVersionString()
+	return s.siteSession.GetVersion()
 }
 
 func (s *Session) GetContextUser() *meta.User {
+	if s.versionSession != nil {
+		return s.versionSession.user
+	}
 	if s.workspaceSession != nil {
 		return s.workspaceSession.user
 	}
