@@ -3,10 +3,13 @@ package systemdialect
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	httpClient "github.com/thecloudmasters/uesio/pkg/http"
 	"github.com/thecloudmasters/uesio/pkg/integ/web"
 	"github.com/thecloudmasters/uesio/pkg/sess"
-	"strings"
+	"io"
+	"net/http"
 )
 
 type RestCollectionMetadata struct {
@@ -24,7 +27,6 @@ func loadExternalWebDataSource(op *adapt.LoadOp, connection adapt.Connection, se
 		return err
 	}
 
-	wic, err := web.GetConnection(dataSource, session)
 	if err != nil {
 		return err
 	}
@@ -68,22 +70,44 @@ func loadExternalWebDataSource(op *adapt.LoadOp, connection adapt.Connection, se
 	}
 
 	// Okay, we should be ready to go!
-	// Well, we need to call the raw Bot HTTP API because we can't get StatusCode / ContentType header here
-	response, err := wic.RunAction(strings.ToLower(loadOperation.Method), &web.RequestOptions{
-		URL:     loadOperation.Path,
-		Cache:   false,
-		Headers: loadOperation.Headers,
-	})
+	httpReq, err := http.NewRequest(loadOperation.Method, loadOperation.Path, nil)
+	if err != nil {
+		return errors.New("unable to load construct HTTP request for load: " + err.Error())
+	}
+	if len(loadOperation.Headers) > 0 {
+		for header, value := range loadOperation.Headers {
+			httpReq.Header.Set(header, value)
+		}
+	}
+
+	httpResp, err := httpClient.Get().Do(httpReq)
+	if err != nil {
+		return errors.New("unable to load data from HTTP API: " + err.Error())
+	}
+	defer httpResp.Body.Close()
+
+	// Read the full body into a byte array, so we can cache / parse
+	responseData, responseError := io.ReadAll(httpResp.Body)
+	if responseError != nil {
+		return errors.New("unable to read HTTP response body: " + responseError.Error())
+	}
+
+	contentType := httpResp.Header.Get("Content-Type")
+	statusCode := fmt.Sprintf("%v", httpResp.StatusCode)
+
+	// Attempt to parse the response body into a structured representation,
+	// if possible. If it fails, just return the raw response as a string
+	//parsedBody, err := web.ParseResponseBody(contentType, responseData, nil)
+	//
+
 	if err != nil {
 		return err
 	}
 
 	// Attach the response data to the collection
 	// TODO: Inspect the response schema for the operation and translate the response accordingly
-	if response != nil {
+	if responseData != nil {
 		// Assuming this for now :)
-		statusCode := "200"
-		contentType := "application/json"
 		var responseSchema *web.WebApiSchema
 		if loadOperation.ResponseTypes != nil {
 			responseTypeDef := loadOperation.ResponseTypes[statusCode]
