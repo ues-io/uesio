@@ -28,7 +28,7 @@ func RouteAssignment(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 	route, err := routing.GetRouteFromAssignment(r, collectionNamespace, collectionName, viewtype, id, session)
 	if err != nil {
-		handleApiNotFoundRoute(w, r, route, session)
+		handleApiNotFoundRoute(w, r, "", session)
 		return
 	}
 
@@ -40,7 +40,7 @@ func RouteAssignment(w http.ResponseWriter, r *http.Request) {
 
 	routingMergeData, err := getRouteAPIResult(route, session)
 	if err != nil {
-		handleApiErrorRoute(w, r, route, session, err)
+		handleApiErrorRoute(w, r, route.Path, session, err)
 		return
 	}
 
@@ -65,7 +65,7 @@ func Route(w http.ResponseWriter, r *http.Request) {
 
 	route, err := routing.GetRouteFromPath(r, namespace, path, prefix, session)
 	if err != nil {
-		handleApiNotFoundRoute(w, r, route, session)
+		handleApiNotFoundRoute(w, r, path, session)
 		return
 	}
 
@@ -77,7 +77,7 @@ func Route(w http.ResponseWriter, r *http.Request) {
 
 	routingMergeData, err := getRouteAPIResult(route, session)
 	if err != nil {
-		handleApiErrorRoute(w, r, route, session, err)
+		handleApiErrorRoute(w, r, route.Path, session, err)
 		return
 	}
 
@@ -85,8 +85,8 @@ func Route(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func handleApiErrorRoute(w http.ResponseWriter, r *http.Request, route *meta.Route, session *sess.Session, err error) {
-	routingMergeData, err := getRouteAPIResult(getErrorRoute(route.Path, err.Error()), sess.GetAnonSession(session.GetSite()))
+func handleApiErrorRoute(w http.ResponseWriter, r *http.Request, path string, session *sess.Session, err error) {
+	routingMergeData, err := getRouteAPIResult(getErrorRoute(path, err.Error()), sess.GetAnonSession(session.GetSite()))
 	if err != nil {
 		logger.LogError(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -94,8 +94,8 @@ func handleApiErrorRoute(w http.ResponseWriter, r *http.Request, route *meta.Rou
 	file.RespondJSON(w, r, routingMergeData)
 }
 
-func handleApiNotFoundRoute(w http.ResponseWriter, r *http.Request, route *meta.Route, session *sess.Session) {
-	routingMergeData, err := getRouteAPIResult(getNotFoundRoute(route.Path), sess.GetAnonSession(session.GetSite()))
+func handleApiNotFoundRoute(w http.ResponseWriter, r *http.Request, path string, session *sess.Session) {
+	routingMergeData, err := getRouteAPIResult(getNotFoundRoute(path), sess.GetAnonSession(session.GetSite()))
 	if err != nil {
 		logger.LogError(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

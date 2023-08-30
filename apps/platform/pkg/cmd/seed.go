@@ -78,11 +78,10 @@ func runSeeds(connection adapt.Connection) error {
 	if err != nil {
 		return err
 	}
-	permissions := session.GetPermissions()
+	permissions := session.GetSitePermissions()
 	permissions.NamedRefs = map[string]bool{
 		"uesio/studio.workspace_admin": true,
 	}
-	session.SetPermissions(permissions)
 
 	if err != nil {
 		return err
@@ -118,6 +117,7 @@ func runSeeds(connection adapt.Connection) error {
 	var teams adapt.Collection
 	var teammembers adapt.Collection
 	var bundlelistings adapt.Collection
+	var organizationusers adapt.Collection
 
 	err = getSeedDataFile(&teams, "uesio/studio.team.json")
 	if err != nil {
@@ -127,8 +127,11 @@ func runSeeds(connection adapt.Connection) error {
 	if err != nil {
 		return err
 	}
-
 	err = getSeedDataFile(&teammembers, "uesio/studio.teammember.json")
+	if err != nil {
+		return err
+	}
+	err = getSeedDataFile(&organizationusers, "uesio/core.organizationuser.json")
 	if err != nil {
 		return err
 	}
@@ -144,6 +147,7 @@ func runSeeds(connection adapt.Connection) error {
 		getPlatformSeedSR(&workspaces),
 		getPlatformSeedSR(&sites),
 		getPlatformSeedSR(&sitedomains),
+		getSeedSR("uesio/core.organizationuser", &organizationusers),
 		getSeedSR("uesio/studio.team", &teams),
 		getSeedSR("uesio/studio.teammember", &teammembers),
 		getSeedSR("uesio/studio.bundlelisting", &bundlelistings),

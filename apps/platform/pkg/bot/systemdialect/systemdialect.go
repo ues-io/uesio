@@ -104,7 +104,9 @@ func (b *SystemDialect) CallBot(bot *meta.Bot, params map[string]interface{}, co
 	case "listener:uesio/studio.makepayment":
 		botFunction = runMakePaymentListenerBot
 	case "listener:uesio/studio.workspacetruncate":
-		botFunction = runWorkspaceTruncateListenerBot
+		botFunction = RunWorkspaceTruncateListenerBot
+	case "listener:uesio/studio.resetrecordaccesstokens":
+		botFunction = runResetRecordAccessTokensListenerBot
 	case "listener:uesio/studio.setworkspaceuser":
 		botFunction = runSetWorkspaceUserBot
 	}
@@ -153,6 +155,8 @@ func (b *SystemDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adap
 		botFunction = runRecentDocLoadBot
 	case "uesio/studio.usertokenvalue":
 		botFunction = runUserTokenValueLoadBot
+	case "uesio/studio.recordtokenvalue":
+		botFunction = runRecordTokenValueLoadBot
 	case "tcm/timetracker.project":
 		botFunction = clickup.ProjectLoadBot
 	case "tcm/timetracker.task":

@@ -10,6 +10,7 @@ describe("Uesio Sanity Smoke Tests", () => {
 	const namespace = getAppNamespace(appName)
 	const workspaceName = "test"
 	const workspaceBasePath = getWorkspaceBasePath(appName, workspaceName)
+	const NUM_BUILT_IN_FIELDS = 7
 
 	before(() => {
 		cy.loginWithAppAndWorkspace(appName, workspaceName)
@@ -27,9 +28,15 @@ describe("Uesio Sanity Smoke Tests", () => {
 			// Click the new collection button
 			cy.clickButton("new-collection")
 			// Fill out the form to create a new collection
-			cy.typeInInput("new-collection-label", "Animal")
-			cy.typeInInput("new-collection-plural-label", "Animals")
-			cy.typeInInput("new-collection-name", "animal")
+			cy.typeInInput("new-collection-name", "animal").blur()
+			cy.getByIdFragment("input", "new-collection-label").should(
+				"have.value",
+				"animal"
+			)
+			cy.getByIdFragment("input", "new-collection-plural-label").should(
+				"have.value",
+				"animals"
+			)
 			cy.clickButton("save-new-collection")
 			// Verify we get taken to the collection detail
 			cy.url().should(
@@ -38,15 +45,31 @@ describe("Uesio Sanity Smoke Tests", () => {
 			)
 			cy.title().should("eq", "Collection: animal")
 			cy.getByIdFragment("table", "fields").scrollIntoView()
+			// Initially there should be just built-in fields
+			cy.get('table[id$="fields"]>tbody')
+				.children("tr")
+				.should("have.length", NUM_BUILT_IN_FIELDS)
 			// Create a CHECKBOX field
 			// Click the new field button
 			cy.clickButton("new-field")
 			cy.typeInInput("new-field-name", "is_extinct")
+			cy.getByIdFragment("input", "new-field-name").blur()
+			cy.getByIdFragment("input", "new-field-label").should(
+				"have.value",
+				"is_extinct"
+			)
+			cy.getByIdFragment("input", "new-field-label").clear()
 			cy.typeInInput("new-field-label", "Is Extinct")
 			cy.changeSelectValue("new-field-type", "CHECKBOX")
 			cy.clickButton("save-field-and-add-another")
 			// Create a NUMBER field
 			cy.typeInInput("new-field-name", "estimated_population")
+			cy.getByIdFragment("input", "new-field-name").blur()
+			cy.getByIdFragment("input", "new-field-label").should(
+				"have.value",
+				"estimated_population"
+			)
+			cy.getByIdFragment("input", "new-field-label").clear()
 			cy.typeInInput("new-field-label", "Estimated Population")
 			cy.changeSelectValue("new-field-type", "NUMBER")
 			cy.typeInInput("new-field-number-decimals", "0")
@@ -54,27 +77,27 @@ describe("Uesio Sanity Smoke Tests", () => {
 			// verify the 2 fields were created
 			cy.get('table[id$="fields"]>tbody')
 				.children("tr")
-				.should("have.length", 2)
+				.should("have.length", NUM_BUILT_IN_FIELDS + 2)
 			cy.hasExpectedTableField(
 				"fields",
 				0,
-				"is_extinct",
-				namespace,
-				"Check Box",
-				"Is Extinct"
-			)
-			cy.hasExpectedTableField(
-				"fields",
-				1,
 				"estimated_population",
 				namespace,
 				"Number",
 				"Estimated Population"
 			)
+			cy.hasExpectedTableField(
+				"fields",
+				1,
+				"is_extinct",
+				namespace,
+				"Check Box",
+				"Is Extinct"
+			)
 			// Mark a field for deletion
 			cy.get('table[id$="fields"]>tbody')
 				.children("tr")
-				.eq(1)
+				.eq(0)
 				.children("td")
 				.eq(4)
 				.find("button.rowaction")
@@ -85,7 +108,7 @@ describe("Uesio Sanity Smoke Tests", () => {
 			// Verify the correct field was deleted
 			cy.get('table[id$="fields"]>tbody')
 				.children("tr")
-				.should("have.length", 1)
+				.should("have.length", NUM_BUILT_IN_FIELDS + 1)
 			cy.hasExpectedTableField(
 				"fields",
 				0,

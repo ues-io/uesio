@@ -17,6 +17,7 @@ const FieldsProperties: definition.UC = (props) => {
 	const [showPopper, setShowPopper] = useState(false)
 
 	const selectedPath = useSelectedPath(context)
+	if (selectedPath.size() < 2) return null
 	const wirePath = selectedPath.trimToSize(2)
 	const fieldsPath = wirePath.addLocal("fields")
 	const onSelect = (ctx: context.Context, path: FullPath) =>
@@ -35,6 +36,8 @@ const FieldsProperties: definition.UC = (props) => {
 
 	// TODO: Handle view only wires here too.
 	const wireDef = get(context, wirePath) as wire.RegularWireDefinition
+
+	if (!wireDef) return null
 
 	return (
 		<>

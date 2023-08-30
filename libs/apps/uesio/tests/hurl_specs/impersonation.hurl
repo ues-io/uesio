@@ -56,7 +56,7 @@ POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 }
 
 # Add an impersonation record to use the rep profile
-POST https://studio.uesio-dev.com:3000/site/bots/call/uesio/studio/setworkspaceuser
+POST https://{{host}}:{{port}}/site/bots/call/uesio/studio/setworkspaceuser
 {
     "workspaceid": "{{workspace_id}}",
     "profile": "uesio/tests.rep"
@@ -84,6 +84,22 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data[*]" isEmpty
 
+# Now that I'm impersonating with the rep profile, I don't have object
+# level access to the accountteammeber collection.
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.accountteammember",
+            "query":true
+        }
+    ]
+}
+HTTP 400
+[Asserts]
+body == "Load Failed: Profile uesio/tests.rep does not have read access to the uesio/tests.accountteammember collection.\n"
+
 # Verify that I can still load routes and their dependencies
 GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/simple_wire_load
 HTTP 200
@@ -97,3 +113,62 @@ jsonpath "$.dependencies.wire.entities['uesio/tests.simple_wire_load($root):anim
 jsonpath "$.dependencies.wire.entities['uesio/tests.simple_wire_load($root):animals'].preloaded" == true
 jsonpath "$.dependencies.wire.entities['uesio/tests.simple_wire_load($root):animals'].loadAll" == false
 jsonpath "$.dependencies.wire.entities['uesio/tests.simple_wire_load($root):animals'].data[*]['uesio/core.id']" count == 10
+
+# Switch to impersonating the public profile
+POST https://{{host}}:{{port}}/site/bots/call/uesio/studio/setworkspaceuser
+{
+    "workspaceid": "{{workspace_id}}",
+    "profile": "uesio/tests.public"
+}
+HTTP 200
+
+# Now that I'm impersonating with the public profile, I can't load accounts
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.account",
+            "query":true,
+            "conditions": [
+                {
+                    "field": "uesio/core.uniquekey",
+                    "value": "Evil Corp"
+                }
+            ]
+        }
+    ]
+}
+HTTP 400
+[Asserts]
+body == "Load Failed: Profile uesio/tests.public does not have read access to the uesio/tests.account collection.\n"
+
+# But I should be able to see animal records
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.animal",
+            "query":true,
+            "conditions": [
+                {
+                    "id": "mycoolid",
+                    "field": "uesio/tests.species",
+                    "value": "Jerrine"
+                }
+            ],
+            "order": [
+                {
+                    "field": "uesio/tests.species",
+                    "desc": false
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].data" count == 2
+jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "MacAughtrie:Jerrine"
+jsonpath "$.wires[0].data[1]['uesio/core.uniquekey']" == "McCreary:Jerrine"

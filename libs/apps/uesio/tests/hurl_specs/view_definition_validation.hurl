@@ -62,16 +62,18 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/studio.fullname']" nth 0 == "uesio/tests"
-jsonpath "$.wires[1].data[*]['uesio/studio.name']" nth 0 == "dev"
+jsonpath "$.wires[0].data[0]['uesio/studio.fullname']" == "uesio/tests"
+jsonpath "$.wires[1].data[0]['uesio/studio.name']" == "dev"
 [Captures]
-app_id: jsonpath "$.wires[0].data[*]['uesio/core.id']" nth 0
-app_fullname: jsonpath "$.wires[0].data[*]['uesio/studio.fullname']" nth 0
-workspace_id: jsonpath "$.wires[1].data[*]['uesio/core.id']" nth 0
+app_id: jsonpath "$.wires[0].data[0]['uesio/core.id']"
+app_fullname: jsonpath "$.wires[0].data[0]['uesio/studio.fullname']"
+workspace_id: jsonpath "$.wires[1].data[0]['uesio/core.id']"
 
 # Create a view with valid YAML
 POST https://{{host}}:{{port}}/site/wires/save
 Accept: application/json
+[Options]
+variable: validyamlview="validyamlview_{{unix_epoch_seconds}}"
 {
     "wires": [
         {
@@ -80,7 +82,7 @@ Accept: application/json
             "changes": {
                 "temp1": {
                     "uesio/studio.definition": "wires:\n  users:\n    collection: uesio/core.user\n    fields:\n      uesio/core.id:\n      uesio/core.firstname:\n      uesio/core.lastname: {}\n    batchsize: 100\ncomponents:\n",
-                    "uesio/studio.name": "validyamlview"
+                    "uesio/studio.name": "{{validyamlview}}"
                 }
             },
             "params": {
@@ -106,7 +108,7 @@ Accept: application/json
             "changes":{
                 "temp1":{
                     "uesio/studio.definition": "wires:\n  users:\n    collectio: uesio/core.user\n    fields:\n      uesio/core.id:\n      uesio/core.firstname:\n      uesio/core.lastname: {}\n    batchsize: this is not a valid number\ncomponents:\n",
-                    "uesio/studio.name":"invalidyamlview"
+                    "uesio/studio.name":"invalidyamlview_{{unix_epoch_seconds}}"
                 }
             },
             "params": {
@@ -119,4 +121,58 @@ Accept: application/json
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].errors" count == 1
-jsonpath "$.wires[0].errors[0].message" == "Field 'Definition' failed YAML schema validation: [1] wires.users: collection is required [2] wires.users: Additional property collectio is not allowed [3] wires.users.batchsize: Invalid type. Expected: number, given: string"
+jsonpath "$.wires[0].errors[0].message" == "Field 'Definition' failed YAML schema validation: [1] wires.users.batchsize: Invalid type. Expected: number, given: string [2] wires.users: Additional property collectio is not allowed [3] wires.users: collection is required"
+
+# Create a view with a valid ViewOnly wire
+POST https://{{host}}:{{port}}/site/wires/save
+Accept: application/json
+[Options]
+variable: viewonlywiretest="viewonlywiretest_{{unix_epoch_seconds}}"
+{
+    "wires": [
+        {
+            "collection":"uesio/studio.view",
+            "deletes":{},
+            "changes":{
+                "temp1":{
+                    "uesio/studio.definition": "wires:\n  users:\n    viewOnly: true\n    fields:\n      foo:\n        type: NUMBER\n        label: Foo\n        number:\n          decimals: 2\ncomponents:\n",
+                    "uesio/studio.name":"{{viewonlywiretest}}"
+                }
+            },
+            "params": {
+                "workspaceid": "{{workspace_id}}"
+            },
+            "wire":"mywire"
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" == null
+
+# Create a view with an invalid ViewOnly wire
+POST https://{{host}}:{{port}}/site/wires/save
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/studio.view",
+            "deletes":{},
+            "changes":{
+                "temp1":{
+                    "uesio/studio.definition": "wires:\n  users:\n    viewOnly: true\n    fields:\n      foo:\n        type: BAR\n        required: no\n        number:\n          some: thing\ncomponents:\n",
+                    "uesio/studio.name":"invalidviewonlywire_{{unix_epoch_seconds}}"
+                }
+            },
+            "params": {
+                "workspaceid": "{{workspace_id}}"
+            },
+            "wire":"mywire"
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" count == 1
+jsonpath "$.wires[0].errors[0].message" == ```Field 'Definition' failed YAML schema validation: [1] wires.users.fields.foo.number: Additional property some is not allowed [2] wires.users.fields.foo.number: decimals is required [3] wires.users.fields.foo.required: Invalid type. Expected: boolean, given: string [4] wires.users.fields.foo.type: wires.users.fields.foo.type must be one of the following: "AUTONUMBER", "CHECKBOX", "DATE", "EMAIL", "FILE", "LIST", "LONGTEXT", "MAP", "MULTISELECT", "NUMBER", "REFERENCE", "REFERENCEGROUP", "SELECT", "STRUCT", "TEXT", "TIMESTAMP", "USER" [5] wires.users.fields.foo: label is required```
+

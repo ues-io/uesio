@@ -89,10 +89,11 @@ func getFieldsMap(fieldKeys []string) *FieldsMap {
 }
 
 func HydrateTokenMap(tokenMap sess.TokenMap, tokenDefs meta.UserAccessTokenCollection, connection adapt.Connection, session *sess.Session, reason bool) error {
+	user := session.GetContextUser()
 	if !tokenMap.Has(OWNER_TOKEN) {
 		tokenMap.Add(OWNER_TOKEN, []sess.TokenValue{{
-			Value:  session.GetUserID(),
-			Reason: "Record Owner: " + session.GetUserUniqueKey()},
+			Value:  user.ID,
+			Reason: "Record Owner: " + user.UniqueKey},
 		})
 	}
 
@@ -141,7 +142,7 @@ func HydrateTokenMap(tokenMap sess.TokenMap, tokenDefs meta.UserAccessTokenColle
 
 				loadConditions = append(loadConditions, adapt.LoadRequestCondition{
 					Field:    condition.Field,
-					Value:    session.GetUserID(),
+					Value:    user.ID,
 					Operator: "=",
 				})
 			}

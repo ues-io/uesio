@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource/fieldvalidations"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -165,19 +166,19 @@ func SaveOp(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session
 
 	if len(op.Inserts) > 0 {
 		if !permissions.HasCreatePermission(collectionKey) {
-			return fmt.Errorf("Profile %s does not have create access to the %s collection.", session.GetProfile(), collectionKey)
+			return fmt.Errorf("Profile %s does not have create access to the %s collection.", session.GetContextProfile(), collectionKey)
 		}
 	}
 
 	if len(op.Updates) > 0 {
 		if !permissions.HasEditPermission(collectionKey) {
-			return fmt.Errorf("Profile %s does not have edit access to the %s collection.", session.GetProfile(), collectionKey)
+			return fmt.Errorf("Profile %s does not have edit access to the %s collection.", session.GetContextProfile(), collectionKey)
 		}
 	}
 
 	if len(op.Deletes) > 0 {
 		if !permissions.HasDeletePermission(collectionKey) {
-			return fmt.Errorf("Profile %s does not have delete access to the %s collection.", session.GetProfile(), collectionKey)
+			return fmt.Errorf("Profile %s does not have delete access to the %s collection.", session.GetContextProfile(), collectionKey)
 		}
 	}
 
@@ -284,6 +285,15 @@ func SaveOps(batch []*adapt.SaveOp, connection adapt.Connection, session *sess.S
 		}
 
 		err = SaveOp(op, connection, session)
+		if err != nil {
+			return err
+		}
+
+	}
+
+	for _, op := range batch {
+
+		err = connection.SetRecordAccessTokens(op, session)
 		if err != nil {
 			return err
 		}

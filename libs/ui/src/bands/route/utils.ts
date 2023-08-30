@@ -18,24 +18,24 @@ import { parseKey } from "../../component/path"
 import { ThemeState } from "../../definition/theme"
 import { FeatureFlagState } from "../../definition/featureflag"
 import { initExistingWire } from "../wire/operations/initialize"
-import { EntityState } from "@reduxjs/toolkit"
-import { PlainWire } from "../wire/types"
+import { EntityId, EntityState } from "@reduxjs/toolkit"
+import { PlainWire, ServerWire } from "../wire/types"
 import { dispatch } from "../../store/store"
 import { ComponentState } from "../component/types"
 import { PlainCollection, PlainCollectionMap } from "../collection/types"
+import { transformServerWire } from "../wire/transform"
 
 type Dep<T> = Record<string, T> | undefined
 
 const attachDefToWires = (
-	wires?: EntityState<PlainWire>,
+	wires?: EntityState<ServerWire | PlainWire>,
 	viewdefs?: EntityState<ViewMetadata>,
 	collections?: EntityState<PlainCollection>
 ) => {
-	if (!wires || !viewdefs) return
-	wires.ids.forEach((wirename) => {
+	if (!wires || !viewdefs) return wires
+	wires.ids.forEach((wirename: EntityId) => {
 		const wire = wires.entities[wirename]
 		if (!wire) return
-
 		const viewId = wire.view.split("(")[0]
 		const wireDef =
 			viewdefs.entities?.[viewId]?.definition.wires?.[wire.name]
@@ -44,7 +44,7 @@ const attachDefToWires = (
 				`Could not find wire def for wire: ${wire.view} : ${wire.name}`
 			)
 		wires.entities[wirename] = initExistingWire(
-			wire,
+			transformServerWire(wire as ServerWire),
 			wireDef,
 			(collections?.entities || {}) as PlainCollectionMap
 		)

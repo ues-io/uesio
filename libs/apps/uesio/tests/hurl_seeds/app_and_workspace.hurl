@@ -13,9 +13,31 @@ user_id: jsonpath "$.user.id"
 DELETE https://{{host}}:{{port}}/site/api/v1/collection/uesio/studio/site?uesio/studio.name=eq.testsite
 HTTP 204
 
-# Delete the tests app if it already exists, which should cascade delete the workspace and all of its data
+# Delete the tests app if it already exists, which should cascade delete the workspace and all of its metadata
 DELETE https://{{host}}:{{port}}/site/api/v1/collection/uesio/studio/app?uesio/studio.fullname=eq.uesio%2Ftests
 HTTP 204
+
+# Verify that workspaces are cascade deleted
+POST https://{{host}}:{{port}}/site/wires/load
+{
+    "wires": [
+        {
+            "wire": "workspaces",
+            "collection": "uesio/studio.workspace",
+            "conditions": [
+                {
+                    "field": "uesio/studio.app->uesio/studio.fullname",
+                    "operator": "EQ",
+                    "value": "uesio/tests"
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" not exists
+jsonpath "$.wires[0].data" count == 0
 
 # Create the tests app
 POST https://{{host}}:{{port}}/site/wires/save
@@ -51,7 +73,7 @@ POST https://{{host}}:{{port}}/site/wires/save
 {
     "wires": [
         {
-            "wire": "newworkspace",
+            "wire": "newteam",
             "collection":"uesio/studio.team",
             "changes": {
                 "1": {
@@ -97,7 +119,7 @@ POST https://{{host}}:{{port}}/site/wires/save
 {
     "wires": [
         {
-            "wire": "newworkspace",
+            "wire": "newTeamMember",
             "collection":"uesio/studio.teammember",
             "changes": {
                 "1": {

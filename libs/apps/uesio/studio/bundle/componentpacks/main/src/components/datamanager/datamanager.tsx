@@ -86,6 +86,19 @@ const DataManager: FunctionComponent<Props> = (props) => {
 							},
 						],
 					},
+					{
+						text: "Manage",
+						signals: [
+							{
+								signal: "context/CLEAR",
+								type: "WORKSPACE",
+							},
+							{
+								signal: "route/NAVIGATE",
+								path: "app/$Param{app}/workspace/$Param{workspacename}/data/$Param{namespace}/$Param{collectionname}/${uesio/core.id}",
+							},
+						],
+					},
 				],
 				columns: getColumns(fieldsMeta),
 			}}

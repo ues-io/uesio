@@ -59,6 +59,7 @@ const signals: SignalBandDefinition = {
 				}
 				return props
 			},
+			canError: true,
 			// TODO: Change bot responses to be a named map
 			// outputs: [{ name: "result", type: "MAP" }],
 		},

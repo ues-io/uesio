@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/spf13/cobra"
 	"github.com/thecloudmasters/cli/pkg/command/workspace"
@@ -75,6 +76,7 @@ func workspaceRetrieve(cmd *cobra.Command, args []string) {
 	err := workspace.Retrieve(targetDir)
 	if err != nil {
 		fmt.Println("Error: " + err.Error())
+		os.Exit(1)
 		return
 	}
 }
@@ -83,6 +85,7 @@ func workspaceDeploy(cmd *cobra.Command, args []string) {
 	err := workspace.Deploy(targetDir)
 	if err != nil {
 		fmt.Println("Error: " + err.Error())
+		os.Exit(1)
 		return
 	}
 }
@@ -91,6 +94,7 @@ func workspaceCreate(cmd *cobra.Command, args []string) {
 	err := workspace.Create(name)
 	if err != nil {
 		fmt.Println("Error: " + err.Error())
+		os.Exit(1)
 		return
 	}
 }
@@ -99,6 +103,7 @@ func workspaceTruncate(cmd *cobra.Command, args []string) {
 	err := workspace.Truncate()
 	if err != nil {
 		fmt.Println("Error: " + err.Error())
+		os.Exit(1)
 		return
 	}
 }

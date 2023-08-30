@@ -2,11 +2,13 @@ package fieldvalidations
 
 import (
 	"fmt"
+	"sort"
+	"strings"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/validation"
 	"github.com/xeipuuv/gojsonschema"
 	"gopkg.in/yaml.v3"
-	"strings"
 )
 
 const yamlValidationError = "Field '%s' failed YAML schema validation: %s"
@@ -41,11 +43,19 @@ func ValidateYamlField(field *adapt.FieldMetadata) ValidationFunc {
 			for _, resultError := range validationResult.Errors() {
 				formatted := formatResultError(resultError)
 				if formatted != "" {
-					errStrings = append(errStrings, fmt.Sprintf("[%d] %s", len(errStrings)+1, formatted))
+					errStrings = append(errStrings, formatted)
 				}
 			}
+
 			if errStrings == nil {
 				errStrings = []string{}
+			} else {
+				// Sort the strings so that their order is deterministic
+				sort.Strings(errStrings)
+				// Now add an index to each string to make it easier to read
+				for i, formatted := range errStrings {
+					errStrings[i] = fmt.Sprintf("[%d] %s", i+1, formatted)
+				}
 			}
 			return adapt.NewSaveError(change.RecordKey, field.GetFullName(), fmt.Sprintf(yamlValidationError, field.Label, strings.Join(errStrings, " ")))
 		} else {

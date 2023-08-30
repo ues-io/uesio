@@ -1,46 +1,103 @@
 import { FunctionComponent } from "react"
-import { definition, api, wire } from "@uesio/ui"
+import { definition, wire } from "@uesio/ui"
 
-import TranslationItem from "./translationitem"
+import TranslationItem, { TranslationRecord } from "./translationitem"
 
 type TranslationDefinition = {
-	fieldId: string
+	labelsWire: string
+	translationsWire: string
+	// The field on the translationsWire that contains the labels for the translation
+	labelsFieldId: string
 }
 
 interface Props extends definition.BaseProps {
 	definition: TranslationDefinition
 }
 
+const buildTranslationRecordsByNamespace = (
+	labels: wire.WireRecord[],
+	existingTranslations: wire.PlainWireRecord
+): Record<string, TranslationRecord[]> =>
+	labels.reduce(
+		(acc: Record<string, TranslationRecord[]>, label: wire.WireRecord) => {
+			const namespace = label.getFieldValue<string>(
+				"uesio/studio.namespace"
+			) as string
+			let labelsForNS = acc[namespace]
+			if (!labelsForNS) {
+				labelsForNS = acc[namespace] = []
+			}
+			// Build up a translation record
+			const key = label.getUniqueKey() as string
+			const translationRecord = {
+				key,
+				displayLabel: label.getFieldValue("uesio/studio.value"),
+				translation: existingTranslations[key],
+			} as TranslationRecord
+			// Add it to the list of translations for this namespace
+			labelsForNS.push(translationRecord)
+			return acc
+		},
+		{}
+	)
+
 const Translation: FunctionComponent<Props> = (props) => {
 	const { context, definition } = props
 
-	const { fieldId } = definition
-	const wire = context.getWire()
-	const record = context.getRecord()
+	const {
+		labelsFieldId,
+		labelsWire: labelsWireId,
+		translationsWire: translationsWireId,
+	} = definition
+	const translationsWire = context.getWire(translationsWireId)
+	const translationRecord = context.getRecord(translationsWireId)
+	const labelsWire = context.getWire(labelsWireId)
 
-	if (!wire || !fieldId || !record) {
+	if (
+		!translationsWire ||
+		!labelsWire ||
+		!translationRecord ||
+		!labelsFieldId
+	) {
 		return null
 	}
 
-	const originalValue =
-		record.getFieldValue<wire.PlainWireRecord>(fieldId) || {}
-	const [namespaces] = api.builder.useAvailableNamespaces(context, "LABEL")
-
-	if (!namespaces) return null
+	const existingTranslations =
+		translationRecord.getFieldValue<wire.PlainWireRecord>(labelsFieldId) ||
+		{}
+	const allLabels = (labelsWire?.getData() || []) as wire.WireRecord[]
+	const translationRecordsByNamespace = buildTranslationRecordsByNamespace(
+		allLabels,
+		existingTranslations
+	)
 
 	return (
 		<>
-			{namespaces.map((entry) => (
-				<TranslationItem
-					key={entry}
-					value={originalValue}
-					namespace={entry}
-					context={context}
-					setValue={(value: wire.PlainWireRecord): void => {
-						record.update(fieldId, value, context)
-					}}
-				/>
-			))}
+			{Object.entries(translationRecordsByNamespace).map(
+				([namespace, translationsForNamespace]) => (
+					<TranslationItem
+						key={namespace}
+						namespace={namespace}
+						context={context}
+						translations={translationsForNamespace}
+						setTranslations={(
+							newTranslations: TranslationRecord[]
+						): void => {
+							const newTranslationValues = {
+								...existingTranslations,
+							}
+							newTranslations.forEach(({ key, translation }) => {
+								newTranslationValues[key] = translation
+							})
+							translationRecord.update(
+								labelsFieldId,
+								newTranslationValues,
+								context
+							)
+						}}
+					/>
+				)
+			)}
 		</>
 	)
 }

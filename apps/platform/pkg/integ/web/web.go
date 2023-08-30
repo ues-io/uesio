@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/thecloudmasters/uesio/pkg/goutils"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	httpClient "github.com/thecloudmasters/uesio/pkg/http"
 	"github.com/thecloudmasters/uesio/pkg/integ"
@@ -63,16 +65,8 @@ func (wic *WebIntegrationConnection) RunAction(actionName string, requestOptions
 
 }
 
-func SafeJoinStrings(elems []string, delimiter string) string {
-	parts := make([]string, len(elems))
-	for i, elem := range elems {
-		parts[i] = strings.TrimSuffix(strings.TrimPrefix(elem, delimiter), delimiter)
-	}
-	return strings.Join(parts, delimiter)
-}
-
 func (wic *WebIntegrationConnection) Request(methodName string, requestOptions interface{}) (interface{}, error) {
-	var options RequestOptions
+	var options *RequestOptions
 	// Coming from TS/JS bots, RequestOptions will very likely be a map[string]interface{},
 	// whereas coming from system bots, it will be a RequestOptions struct
 	switch opts := requestOptions.(type) {
@@ -90,19 +84,19 @@ func (wic *WebIntegrationConnection) Request(methodName string, requestOptions i
 				}
 			}
 		}
-		options = RequestOptions{
+		options = &RequestOptions{
 			Cache:   opts["cache"] == true,
 			Body:    opts["body"],
 			Headers: reqHeaders,
 			URL:     reqUrl,
 		}
-	case RequestOptions:
+	case *RequestOptions:
 		options = opts
 	default:
 		return nil, errors.New("invalid options provided to web integration")
 	}
 
-	fullURL := SafeJoinStrings([]string{wic.integration.BaseURL, options.URL}, "/")
+	fullURL := goutils.SafeJoinStrings([]string{wic.integration.BaseURL, options.URL}, "/")
 
 	// TODO: Convert to using Redis cache, and support cache invalidation
 	if options.Cache {
@@ -111,12 +105,7 @@ func (wic *WebIntegrationConnection) Request(methodName string, requestOptions i
 		if gotCachedBody && gotCachedContentType {
 			// Attempt to parse the response body into a structured representation,
 			// if possible. If it fails, just return the raw response as a string
-			parsedBody, err := parseResponseBody(cachedContentType.(string), cachedBody.([]byte))
-			// If this fails, try the request again, otherwise use the body
-			if err != nil {
-				options.ResponseData = parsedBody
-				return options.ResponseData, nil
-			}
+			return ParseResponseBody(cachedContentType.(string), cachedBody.([]byte), options.ResponseData)
 		}
 	}
 
@@ -175,7 +164,9 @@ func (wic *WebIntegrationConnection) Request(methodName string, requestOptions i
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	if resp.Body != nil {
+		defer resp.Body.Close()
+	}
 
 	if resp.StatusCode != 200 {
 		responseData, err := io.ReadAll(resp.Body)
@@ -200,40 +191,45 @@ func (wic *WebIntegrationConnection) Request(methodName string, requestOptions i
 	if options.Cache {
 		localcache.SetCacheEntry(webRequestBody, fullURL, rawData)
 		localcache.SetCacheEntry(webRequestContentType, fullURL, contentType)
-		return nil, err
 	}
 
 	// Attempt to parse the response body into a structured representation,
 	// if possible. If it fails, just return the raw response as a string
-	parsedBody, err := parseResponseBody(contentType, rawData)
-	if err != nil {
-		return nil, err
-	}
-	options.ResponseData = parsedBody
-	return options.ResponseData, nil
+	return ParseResponseBody(contentType, rawData, options.ResponseData)
+
 }
 
-func parseResponseBody(contentType string, body []byte) (interface{}, error) {
+// This function has two returns one if responseBody is not nil to be used by GO
+// and the other one if it is to be used by TS/JS the first returned argument
+func ParseResponseBody(contentType string, rawBody []byte, responseBody interface{}) (interface{}, error) {
 
-	// Only parse as JSON to a structured Go type if that's what the content type is.
+	// We have some hacky code to support ClickUp which passes in the responseBody as a struct,
+	// so that we can deserialize directly into ClickUp specific structs.
+	// In these scenarios, responseBody will be non-nil.
+	if responseBody != nil {
+		err := json.NewDecoder(bytes.NewReader(rawBody)).Decode(responseBody)
+		if err != nil {
+			return nil, err
+		}
+		return responseBody, nil
+	}
+
 	if strings.Contains(contentType, "/json") {
 		// If it starts with a curly brace, treat it as JSON object
-		if string(body[0]) == "{" {
-			mapPtr := &map[string]interface{}{}
-			err := json.NewDecoder(bytes.NewReader(body)).Decode(mapPtr)
-			if err == nil {
-				return mapPtr, nil
-			}
+		if string(rawBody[0]) == "{" {
+			responseBody = &map[string]interface{}{}
 		} else {
 			// Otherwise, assume it's a JSON array
-			slicePtr := &[]interface{}{}
-			err := json.NewDecoder(bytes.NewReader(body)).Decode(&slicePtr)
-			if err == nil {
-				return slicePtr, nil
-			}
+			responseBody = &[]interface{}{}
 		}
+		err := json.NewDecoder(bytes.NewReader(rawBody)).Decode(responseBody)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		responseBody = string(rawBody)
 	}
-	// Otherwise, just return the raw data as a string
-	return string(body), nil
+
+	return responseBody, nil
 
 }

@@ -125,6 +125,19 @@ type FieldsProperty = {
 	type: "FIELDS"
 } & FieldPropertyBase
 
+// FIELD_VALUE / FIELD_VALUES
+type FieldValuePropertyBase = {
+	wireProperty: string
+	fieldProperty: string
+} & BaseProperty
+
+type FieldValueProperty = {
+	type: "FIELD_VALUE"
+} & FieldValuePropertyBase
+type FieldValuesProperty = {
+	type: "FIELD_VALUES"
+} & FieldValuePropertyBase
+
 type CollectionFieldPropertyBase = {
 	collectionName?: string
 	collectionPath?: string
@@ -211,6 +224,14 @@ type ListProperty = {
 	subtypeOptions?: wire.SelectOption[]
 } & BaseProperty
 
+/**
+ * Signals property is a convenience wrapper around LIST
+ * which will add in all necessary sub-properties to allowing editing a list of Signals
+ */
+type SignalsProperty = {
+	type: "SIGNALS"
+} & BaseProperty
+
 type ParamsProperty = {
 	type: "PARAMS"
 	viewProperty?: string
@@ -248,12 +269,15 @@ type ComponentProperty =
 	| MapProperty
 	| ParamsProperty
 	| ListProperty
+	| SignalsProperty
 	| TextAreaProperty
 	| IconProperty
 	| StructProperty
 	| DateProperty
 	| CollectionFieldProperty
 	| CollectionFieldsProperty
+	| FieldValueProperty
+	| FieldValuesProperty
 
 const getStyleVariantProperty = (componentType: string): ComponentProperty => ({
 	name: "uesio.variant",
@@ -287,6 +311,7 @@ export type {
 	NumberProperty,
 	CheckboxProperty,
 	DateProperty,
+	FieldValueProperty,
 }
 
 export { getStyleVariantProperty }

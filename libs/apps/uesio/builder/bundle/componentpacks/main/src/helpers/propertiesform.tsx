@@ -1,4 +1,11 @@
-import { api, component, context, definition, wire } from "@uesio/ui"
+import {
+	api,
+	collection,
+	component,
+	context,
+	definition,
+	wire,
+} from "@uesio/ui"
 import { get as getDef, set as setDef, changeKey } from "../api/defapi"
 import set from "lodash/set"
 import get from "lodash/get"
@@ -13,6 +20,7 @@ import { FullPath } from "../api/path"
 import {
 	ComponentProperty,
 	getStyleVariantProperty,
+	ListProperty,
 	PropertyOnChange,
 	SelectProperty,
 	StructProperty,
@@ -244,6 +252,9 @@ const getWireFieldFromPropertyDef = (
 	let wireId: string | undefined
 	let wireDefinition: wire.WireDefinition | undefined
 	let wireField
+	let fieldMetadata: collection.Field | undefined
+	let fieldMetadataType: wire.FieldType
+
 	switch (type) {
 		case "SELECT":
 			return getBaseWireFieldDef(def, "SELECT", {
@@ -286,6 +297,30 @@ const getWireFieldFromPropertyDef = (
 						getWireFieldSelectOptions(wireDefinition),
 						type === "FIELDS" ? undefined : ""
 					),
+				}
+			)
+		case "FIELD_VALUE":
+		case "FIELD_VALUES":
+			wireId =
+				def.wireProperty &&
+				(getObjectProperty(currentValue, def.wireProperty) as string)
+			wireField =
+				def.fieldProperty &&
+				(getObjectProperty(currentValue, def.fieldProperty) as string)
+
+			fieldMetadata = getFieldMetadata(
+				context,
+				wireId || "",
+				wireField || ""
+			)
+			fieldMetadataType = fieldMetadata?.getType() || "TEXT"
+			return getBaseWireFieldDef(
+				def,
+				type === "FIELD_VALUES" ? "LIST" : fieldMetadataType,
+				{
+					selectlist: fieldMetadata?.getSelectMetadata(),
+					subtype:
+						type === "FIELD_VALUES" ? fieldMetadataType : undefined,
 				}
 			)
 		case "MAP":
@@ -568,9 +603,27 @@ const parseProperties = (
 				string,
 				wire.PlainWireRecord
 			>
-		} else if (type === "LIST") {
+		} else if (type === "LIST" || type === "SIGNALS") {
 			setter = NoOp
 			value = getDef(context, propPath) as wire.PlainWireRecord[]
+			if (type === "SIGNALS") {
+				// Mutate the property into a LIST type
+				const listProperty = property as unknown as ListProperty
+				listProperty.items = {
+					properties: (
+						record: wire.PlainWireRecord,
+						context: context.Context
+					) => getSignalProperties(record, context),
+					displayTemplate: "${signal}",
+					addLabel: "New Signal",
+					title: "Signal Properties",
+					defaultDefinition: {
+						signal: "",
+					},
+				}
+				// TODO: Add an "onerror" property category as well
+				listProperty.type = "LIST"
+			}
 		} else if (type === "FIELDS" || type === "WIRES") {
 			// Values are stored as a list in the YAML,
 			// but we are rendering these using the Multiselect control,
@@ -751,19 +804,7 @@ const getPropertiesAndContent = (props: Props, selectedTab: string) => {
 				properties = [
 					{
 						name: selectedSectionId,
-						type: "LIST",
-						items: {
-							properties: (
-								record: wire.PlainWireRecord,
-								context: context.Context
-							) => getSignalProperties(record, context),
-							displayTemplate: "${signal}",
-							addLabel: "New Signal",
-							title: "Signal Properties",
-							defaultDefinition: {
-								signal: "",
-							},
-						},
+						type: "SIGNALS",
 					},
 				]
 				break

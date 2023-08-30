@@ -2,5 +2,6 @@ name: workspaceuser
 uniqueKey:
   - uesio/studio.workspace
   - uesio/studio.user
+access: protected
 label: workspace
 pluralLabel: workspaces
