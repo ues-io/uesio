@@ -113,7 +113,6 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.
 		Connection: connection,
 		Workspace:  workspace,
 	})
-
 	if err != nil {
 		return nil, err
 	}

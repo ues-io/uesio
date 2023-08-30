@@ -19,11 +19,23 @@ func ClearAppBundleCache(session *sess.Session) {
 	localcache.RemoveCacheEntry("bundle-yaml", appName+":"+appVersion)
 }
 
-func GetBundleDef(appName, appVersion string, workspace *meta.Workspace, connection adapt.Connection) (*meta.BundleDef, error) {
+func GetSiteBundleDef(site *meta.Site, connection adapt.Connection) (*meta.BundleDef, error) {
+	bs, err := bundlestore.GetConnection(bundlestore.ConnectionOptions{
+		Namespace:  site.GetAppFullName(),
+		Version:    site.Bundle.GetVersionString(),
+		Connection: connection,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return bs.GetBundleDef()
+}
+
+func GetWorkspaceBundleDef(workspace *meta.Workspace, connection adapt.Connection) (*meta.BundleDef, error) {
 
 	bs, err := bundlestore.GetConnection(bundlestore.ConnectionOptions{
-		Namespace:  appName,
-		Version:    appVersion,
+		Namespace:  workspace.GetAppFullName(),
+		Version:    workspace.Name,
 		Connection: connection,
 		Workspace:  workspace,
 	})
