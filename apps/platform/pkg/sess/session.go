@@ -3,6 +3,7 @@ package sess
 import (
 	"fmt"
 	"net/http"
+	"sort"
 	"time"
 
 	"github.com/twmb/murmur3"
@@ -135,19 +136,26 @@ func (s *SiteSession) GetVersion() string {
 }
 
 type VersionSession struct {
-	namespace string
+	app       string
 	version   string
+	user      *meta.User
 	bundleDef *meta.BundleDef
 }
 
 func NewVersionSession(
-	namespace string,
+	app string,
 	version string,
+	user *meta.User,
 	bundleDef *meta.BundleDef,
 ) *VersionSession {
+	// Shallow clone the user and change the profile name
+	vUser := *user
+	vUser.Profile = "uesio/system.admin"
+	vUser.Permissions = meta.GetAdminPermissionSet()
 	return &VersionSession{
-		namespace: namespace,
+		app:       app,
 		version:   version,
+		user:      &vUser,
 		bundleDef: bundleDef,
 	}
 }
@@ -334,9 +342,7 @@ func (s *Session) GetContextNamespaces() []string {
 	namespaces := []string{
 		bundleDef.Name,
 	}
-	for name := range bundleDef.Dependencies {
-		namespaces = append(namespaces, name)
-	}
+	namespaces = append(namespaces, s.GetContextInstalledNamespaces()...)
 	return namespaces
 }
 
@@ -346,10 +352,14 @@ func (s *Session) GetContextInstalledNamespaces() []string {
 	for name := range bundleDef.Dependencies {
 		namespaces = append(namespaces, name)
 	}
+	sort.Strings(namespaces)
 	return namespaces
 }
 
 func (s *Session) GetContextAppBundle() *meta.BundleDef {
+	if s.versionSession != nil {
+		return s.versionSession.bundleDef
+	}
 	if s.workspaceSession != nil {
 		return s.workspaceSession.workspace.GetAppBundle()
 	}
@@ -369,7 +379,7 @@ func (s *Session) GetDefaultTheme() string {
 
 func (s *Session) GetContextAppName() string {
 	if s.versionSession != nil {
-		return s.versionSession.namespace
+		return s.versionSession.app
 	}
 	if s.workspaceSession != nil {
 		return s.workspaceSession.GetAppFullName()
@@ -394,6 +404,9 @@ func (s *Session) GetContextVersionName() string {
 }
 
 func (s *Session) GetContextUser() *meta.User {
+	if s.versionSession != nil {
+		return s.versionSession.user
+	}
 	if s.workspaceSession != nil {
 		return s.workspaceSession.user
 	}

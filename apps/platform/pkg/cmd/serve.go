@@ -2,9 +2,10 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/thecloudmasters/uesio/pkg/tls"
 	"net/http"
 	"os"
+
+	"github.com/thecloudmasters/uesio/pkg/tls"
 
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
@@ -104,7 +105,7 @@ func serve(cmd *cobra.Command, args []string) {
 	)
 
 	// The version router
-	versionPath := fmt.Sprintf("/version/%s/%s/{version}", appParam, nsParam)
+	versionPath := fmt.Sprintf("/version/%s/{version}", appParam)
 	vr := r.PathPrefix(versionPath).Subrouter()
 	vr.Use(
 		middleware.Authenticate,
@@ -238,8 +239,10 @@ func serve(cmd *cobra.Command, args []string) {
 	namespaceListPath := "/metadata/namespaces"
 	wr.HandleFunc(namespaceListPath, controller.NamespaceList).Methods(http.MethodGet)
 	sa.HandleFunc(namespaceListPath, controller.NamespaceList).Methods(http.MethodGet)
+	vr.HandleFunc(namespaceListPath, controller.NamespaceList).Methods(http.MethodGet)
 	wr.HandleFunc(namespaceListPath+"/{type}", controller.NamespaceList).Methods(http.MethodGet)
 	sa.HandleFunc(namespaceListPath+"/{type}", controller.NamespaceList).Methods(http.MethodGet)
+	vr.HandleFunc(namespaceListPath+"/{type}", controller.NamespaceList).Methods(http.MethodGet)
 
 	// List All Namespace Items
 	itemListPath := "/metadata/types/{type}/list"
@@ -255,10 +258,12 @@ func serve(cmd *cobra.Command, args []string) {
 	nsItemListPath := fmt.Sprintf("/metadata/types/{type}/namespace/%s/list", nsParam)
 	wr.HandleFunc(nsItemListPath, controller.MetadataList).Methods(http.MethodGet)
 	sa.HandleFunc(nsItemListPath, controller.MetadataList).Methods(http.MethodGet)
+	vr.HandleFunc(nsItemListPath, controller.MetadataList).Methods(http.MethodGet)
 
 	nsItemListPathWithGrouping := fmt.Sprintf("/metadata/types/{type}/namespace/%s/list/%s", nsParam, groupingParam)
 	wr.HandleFunc(nsItemListPathWithGrouping, controller.MetadataList).Methods(http.MethodGet)
 	sa.HandleFunc(nsItemListPathWithGrouping, controller.MetadataList).Methods(http.MethodGet)
+	vr.HandleFunc(nsItemListPathWithGrouping, controller.MetadataList).Methods(http.MethodGet)
 
 	// Bulk Job Routes
 	bulkJobPath := "/bulk/job"
@@ -299,8 +304,8 @@ func serve(cmd *cobra.Command, args []string) {
 	sa.HandleFunc("/featureflags/"+itemParam, controller.SetFeatureFlag).Methods("POST")
 
 	// Version context specific routes
-	vr.HandleFunc("/metadata/generate/{name}", controller.Generate).Methods("POST")
-	vr.HandleFunc("/bots/params/{type}/{name}", controller.GetBotParams).Methods("GET")
+	vr.HandleFunc("/metadata/generate/"+itemParam, controller.Generate).Methods("POST")
+	vr.HandleFunc("/bots/params/{type}/"+itemParam, controller.GetBotParams).Methods("GET")
 
 	// Auth Routes
 	sa.HandleFunc("/auth/"+itemParam+"/createlogin", controller.CreateLogin).Methods("POST")

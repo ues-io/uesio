@@ -3,11 +3,12 @@ package datasource
 import (
 	"errors"
 
+	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func AddVersionContext(app, namespace, version string, session *sess.Session) error {
+func AddVersionContext(app, version string, session *sess.Session) error {
 
 	site := session.GetSite()
 	perms := session.GetSitePermissions()
@@ -25,7 +26,12 @@ func AddVersionContext(app, namespace, version string, session *sess.Session) er
 		return errors.New("your profile does not allow you to work with versions")
 	}
 
-	session.SetVersionSession(sess.NewVersionSession(namespace, version, nil))
+	bundleDef, err := bundle.GetVersionBundleDef(app, version, nil)
+	if err != nil {
+		return err
+	}
+
+	session.SetVersionSession(sess.NewVersionSession(app, version, session.GetSiteUser(), bundleDef))
 
 	return nil
 

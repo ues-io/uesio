@@ -31,6 +31,18 @@ func GetSiteBundleDef(site *meta.Site, connection adapt.Connection) (*meta.Bundl
 	return bs.GetBundleDef()
 }
 
+func GetVersionBundleDef(namespace, version string, connection adapt.Connection) (*meta.BundleDef, error) {
+	bs, err := bundlestore.GetConnection(bundlestore.ConnectionOptions{
+		Namespace:  namespace,
+		Version:    version,
+		Connection: connection,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return bs.GetBundleDef()
+}
+
 func GetWorkspaceBundleDef(workspace *meta.Workspace, connection adapt.Connection) (*meta.BundleDef, error) {
 
 	bs, err := bundlestore.GetConnection(bundlestore.ConnectionOptions{
