@@ -53,6 +53,9 @@ collections:
     edit: false
     delete: false
     fields: {}
+  uesio/tests.tool:
+    modifyall: false
+    viewall: true
 routes:
   uesio/tests.publicanimalslist: true
 files: {}

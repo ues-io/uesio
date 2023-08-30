@@ -198,3 +198,105 @@ Content-Type: application/json
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].errors[0].message" == "Profile uesio/tests.public does not have edit access to the uesio/tests.status field."
+
+# Object level security -- we SHOULD be able to query the tool collection
+# because the public profile DOES have VIEWALL access to it
+POST https://tests.{{domain}}:{{port}}/site/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.tool",
+            "name": "hasViewAllAccess",
+            "fields": [
+                {"id":"uesio/core.uniquekey"},
+                {"id":"uesio/tests.brand"},
+                {"id":"uesio/tests.category"}
+            ],
+            "batchsize": 1,
+            "query": true,
+            "conditions": [
+                { "field": "uesio/tests.brand", "operator": "EQ", "value": "Skil" }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Captures]
+tool_id: jsonpath "$.wires[0].data[0]['uesio/core.id']"
+[Asserts]
+jsonpath "$.wires[0].data" count == 1
+jsonpath "$.wires[0].data[0]['uesio/tests.category']" == "Power"
+
+# Object level security -- SAVE -- EDIT -- MODIFYALL
+# We should NOT be able to EDIT tool records
+# because the public profile does not have permission to edit them
+POST https://tests.{{domain}}:{{port}}/site/wires/save
+Content-Type: application/json
+{
+    "wires": [
+        {
+            "wire": "updatetool",
+            "collection": "uesio/tests.tool",
+            "changes": {
+                "1": {
+                    "uesio/core.id": "{{tool_id}}",
+                    "uesio/tests.brand": "Makita",
+                    "uesio/tests.category": "Power"
+                }
+            },
+            "upsert": false
+        }
+    ]
+}
+HTTP 400
+[Asserts]
+body contains "Save Failed: Profile uesio/tests.public does not have edit access to the uesio/tests.tool collection."
+
+# Object level security -- SAVE -- DELETE -- MODIFYALL
+# We should NOT be able to DELETE tool records
+# because the public profile does not have permission to delete them
+POST https://tests.{{domain}}:{{port}}/site/wires/save
+Content-Type: application/json
+{
+    "wires": [
+        {
+            "wire": "deletetools",
+            "collection": "uesio/tests.tool",
+            "deletes": {
+                "1": {
+                    "uesio/core.id": "{{tool_id}}"
+                }
+            }
+        }
+    ]
+}
+HTTP 400
+[Asserts]
+body contains "Save Failed: Profile uesio/tests.public does not have delete access to the uesio/tests.tool collection."
+
+# Object level security -- SAVE -- CREATE
+# We SHOULD NOT be able to CREATE tool records
+# because the public profile DOES have permission to create them
+POST https://tests.{{domain}}:{{port}}/site/wires/save
+[Options]
+variable: brand="brand {{unix_epoch_seconds}}"
+variable: category="category {{unix_epoch_seconds}}"
+{
+    "wires": [
+        {
+            "wire": "createtools",
+            "collection": "uesio/tests.tool",
+            "changes": {
+                "1": {
+                    "uesio/tests.brand": "{{brand}}",
+                    "uesio/tests.category": "{{category}}"
+                }
+            },
+            "upsert": true
+        }
+    ]
+}
+HTTP 400
+[Asserts]
+body contains "Save Failed: Profile uesio/tests.public does not have create access to the uesio/tests.tool collection."
