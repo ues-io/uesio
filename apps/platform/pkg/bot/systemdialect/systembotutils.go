@@ -162,10 +162,7 @@ func checkValidItems(workspaceID string, items []meta.BundleableItem, session *s
 		return nil
 	}
 
-	//This creates a copy of the session
-	wsSession := session.RemoveWorkspaceContext()
-
-	err := datasource.AddWorkspaceContextByID(workspaceID, wsSession, connection)
+	wsSession, err := datasource.AddWorkspaceContextByID(workspaceID, session, connection)
 	if err != nil {
 		return err
 	}

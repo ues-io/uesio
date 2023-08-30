@@ -10,7 +10,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
-	"github.com/thecloudmasters/uesio/pkg/licensing"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -302,12 +301,6 @@ func (b *WorkspaceBundleStoreConnection) GetBundleDef() (*meta.BundleDef, error)
 	by.LoginRoute = b.Workspace.LoginRoute
 	by.DefaultTheme = b.Workspace.DefaultTheme
 	by.Favicon = b.Workspace.Favicon
-
-	licenseMap, err := licensing.GetLicenses(b.Namespace, b.Connection)
-	if err != nil {
-		return nil, err
-	}
-	by.Licenses = licenseMap
 
 	return &by, nil
 }

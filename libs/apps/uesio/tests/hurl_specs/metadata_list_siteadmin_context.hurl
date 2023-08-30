@@ -78,3 +78,9 @@ jsonpath "$[*]" count == 7
 jsonpath "$['uesio/tests.genus'].key" == "uesio/tests.genus"
 jsonpath "$['uesio/tests.genus'].namespace" == "uesio/tests"
 
+# Get a list of all secrets available from a siteadmin context
+GET https://{{host}}:{{port}}/siteadmin/uesio/tests/testsite/metadata/types/secrets/list
+Accept: application/json
+HTTP 200
+[Asserts]
+jsonpath "$[*]" count == 0

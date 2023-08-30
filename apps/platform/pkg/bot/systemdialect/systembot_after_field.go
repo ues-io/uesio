@@ -85,9 +85,8 @@ func runFieldAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, se
 	}
 
 	if request.HasChanges() {
-		wsSession := session.RemoveWorkspaceContext()
 
-		err = datasource.AddWorkspaceContextByID(workspaceID, wsSession, connection)
+		wsSession, err := datasource.AddWorkspaceContextByID(workspaceID, session, connection)
 		if err != nil {
 			return err
 		}

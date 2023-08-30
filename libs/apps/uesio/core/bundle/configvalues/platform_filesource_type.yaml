@@ -1,4 +1,3 @@
 name: platform_filesource_type
 managedBy: app
 store: environment
-public: true

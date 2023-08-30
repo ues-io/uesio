@@ -56,3 +56,34 @@ jsonpath "$.wires[0].data[10]['uesio/core.uniquekey']" == "uesio/tests.animal:ue
 jsonpath "$.wires[0].data[11]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.updatedby"
 jsonpath "$.wires[0].data[12]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.createdat"
 jsonpath "$.wires[0].data[13]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.updatedat"
+
+# Get a list of all secrets available to our workspace (it should be zero)
+POST https://{{host}}:{{port}}/site/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/studio.secret",
+            "id": "collection",
+            "query":true,
+            "fields": [
+                {
+                    "id": "uesio/studio.name"
+                }
+            ],
+            "conditions": [
+                {
+                    "field": "uesio/studio.allmetadata",
+                    "value": true
+                }
+            ],
+            "params": {
+                "app": "uesio/tests",
+                "workspacename": "dev"
+            }
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].data" count == 0
