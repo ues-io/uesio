@@ -2,6 +2,7 @@ package systemdialect
 
 import (
 	"errors"
+	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -27,9 +28,13 @@ func runRecordTokenValueLoadBot(op *adapt.LoadOp, connection adapt.Connection, s
 
 	for _, token := range tokens {
 
+		tokenParts := strings.Split(token, ":")
+
 		item := op.Collection.NewItem()
 		item.SetField("uesio/studio.recordid", recordID)
 		item.SetField("uesio/studio.token", token)
+		item.SetField("uesio/studio.tokentype", tokenParts[0])
+		item.SetField("uesio/studio.relatedrecordid", tokenParts[1])
 		op.Collection.AddItem(item)
 
 	}

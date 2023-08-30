@@ -1,6 +1,7 @@
 package web
 
 import (
+	"encoding/json"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -49,6 +50,12 @@ func Test_RunAction(t *testing.T) {
 		ZipPostalCode string `json:"zip"`
 		Country       string `json:"country"`
 		State         string `json:"state"`
+	}
+
+	type User struct {
+		First         string   `json:"first"`
+		Last          string   `json:"last"`
+		FavoriteFoods []string `json:"favoriteFoods"`
 	}
 
 	type ResponseArgs struct {
@@ -388,6 +395,96 @@ func Test_RunAction(t *testing.T) {
 			},
 		},
 		{
+			"POST from BOT: it should send a payload to the API",
+			&meta.Integration{
+				BaseURL: server.URL,
+				Type:    "uesio/core.web",
+				Headers: map[string]string{
+					"Accept":        "text/plain",
+					"Content-Type":  "text/json",
+					"Authorization": "${apikey}",
+				},
+			},
+			args{
+				method: "post",
+				requestOptions: map[string]interface{}{
+					"url":   "/user/create",
+					"cache": false,
+					"body":  `{"first":"Luigi","last":"Vampa"}`,
+					"headers": map[string]interface{}{
+						"x-foo": "bar",
+					},
+				},
+				response:            `ok`,
+				responseContentType: "text/plain",
+				requestAsserts: func(t *testing.T, request *http.Request) {
+					assert.Equal(t, "POST", request.Method)
+					assert.Equal(t, "/user/create", request.URL.Path)
+					assert.Equal(t, "text/plain", request.Header.Get("Accept"))
+					assert.Equal(t, "1234", request.Header.Get("Authorization"))
+					assert.Equal(t, "bar", request.Header.Get("x-foo"))
+					body, err := io.ReadAll(request.Body)
+					assert.Equal(t, nil, err)
+					assert.Equal(t, string(body), `{"first":"Luigi","last":"Vampa"}`)
+				},
+				responseAsserts: func(t *testing.T, responseArgs *ResponseArgs) {
+					assert.Equal(t, `ok`, responseArgs.responseData)
+				},
+			},
+		},
+		{
+			"PUT from BOT: it should send a payload to the API",
+			&meta.Integration{
+				BaseURL: server.URL,
+				Type:    "uesio/core.web",
+				Headers: map[string]string{
+					"Accept":        "text/plain",
+					"Content-Type":  "text/json",
+					"Authorization": "${apikey}",
+				},
+			},
+			args{
+				method: "put",
+				requestOptions: map[string]interface{}{
+					"url":   "/user/create",
+					"cache": false,
+					"body": map[string]interface{}{
+						"favoriteFoods": []string{
+							"Mango",
+							"Pineapple",
+						},
+						"first": "Luigi",
+						"last":  "Vampa",
+					},
+					"headers": map[string]interface{}{
+						"x-hello": "world",
+					},
+				},
+				response:            `ok`,
+				responseContentType: "text/plain",
+				requestAsserts: func(t *testing.T, request *http.Request) {
+					assert.Equal(t, "PUT", request.Method)
+					assert.Equal(t, "/user/create", request.URL.Path)
+					assert.Equal(t, "text/plain", request.Header.Get("Accept"))
+					assert.Equal(t, "1234", request.Header.Get("Authorization"))
+					assert.Equal(t, "world", request.Header.Get("x-hello"))
+					body, err := io.ReadAll(request.Body)
+					assert.Equal(t, nil, err)
+					// Verify that we can deserialize our body into an expected format
+					user := &User{}
+					err = json.Unmarshal(body, user)
+					assert.Equal(t, nil, err)
+					assert.Equal(t, "Luigi", user.First)
+					assert.Equal(t, "Vampa", user.Last)
+					assert.Equal(t, "Mango", user.FavoriteFoods[0])
+					assert.Equal(t, "Pineapple", user.FavoriteFoods[1])
+				},
+				responseAsserts: func(t *testing.T, responseArgs *ResponseArgs) {
+					assert.Equal(t, `ok`, responseArgs.responseData)
+				},
+			},
+		},
+		{
 			"it should reject unknown action names",
 			&meta.Integration{
 				BaseURL: server.URL,
@@ -400,6 +497,21 @@ func Test_RunAction(t *testing.T) {
 					URL: "/users",
 				},
 				wantErr: "invalid action name for web integration",
+			},
+		},
+		{
+			"unexpected options struct passed",
+			&meta.Integration{
+				BaseURL: server.URL,
+				Type:    "uesio/core.web",
+				Headers: map[string]string{},
+			},
+			args{
+				method: "post",
+				requestOptions: RequestOptions{
+					URL: "/users",
+				},
+				wantErr: "invalid options provided to web integration",
 			},
 		},
 	}
