@@ -114,6 +114,7 @@ func runAllMetadataLoadBot(collectionName string, op *adapt.LoadOp, connection a
 	itemCondition := extractConditionByField(op.Conditions, "uesio/studio.item")
 	groupingCondition := extractConditionByField(op.Conditions, "uesio/studio.grouping")
 	searchCondition := extractConditionByType(op.Conditions, "SEARCH")
+	displayBuiltInFieldsCondition := extractConditionByField(op.Conditions, "uesio/studio.displaybuiltinfields")
 
 	metadataType := meta.GetTypeFromCollectionName(collectionName)
 
@@ -190,7 +191,8 @@ func runAllMetadataLoadBot(collectionName string, op *adapt.LoadOp, connection a
 		// Special handling for built-in fields
 		if collectionName == "uesio/studio.field" {
 			collection, ok := conditions["uesio/studio.collection"]
-			if ok {
+			// if inactive eq true exclude core namespace
+			if ok && !displayBuiltInFieldsCondition.Inactive {
 				// Only add built-in fields if we're grouping on a collection
 				datasource.AddAllBuiltinFields(group, collection)
 			}

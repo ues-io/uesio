@@ -28,6 +28,11 @@ definition:
           value: true
         - field: uesio/studio.grouping
           value: $Param{namespace}.$Param{collectionname}
+          # if inactive eq true exclude core namespace
+        - field: uesio/studio.displaybuiltinfields
+          value:
+          inactive: true
+          id: displayBuiltInFields
       order:
         - field: uesio/studio.namespace
           desc: false
@@ -244,6 +249,11 @@ definition:
                                             - fields
                                         # Need to reload the wire after save in order to pull in namespace and other special fields
                                         # that are magically added on the backend to the allmetadata collection
+                                        - signal: component/CALL
+                                          component: uesio/io.table
+                                          componentsignal: SET_READ_MODE
+                                          targettype: specific
+                                          componentid: fields
                                         - signal: wire/LOAD
                                           wires:
                                             - fields
@@ -260,6 +270,20 @@ definition:
                                       uesio.display:
                                         - type: wireHasChanges
                                           wire: fields
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.secondary
+                                      text: Built-in Fields
+                                      uesio.id: builtInfields
+                                      uesio.display:
+                                        - type: wireHasNoChanges
+                                          wire: fields
+                                      signals:
+                                        - signal: wire/TOGGLE_CONDITION
+                                          wire: fields
+                                          conditionId: displayBuiltInFields
+                                        - signal: wire/LOAD
+                                          wires:
+                                            - fields
                                   - uesio/studio.suggestedfields:
                                       uesio.id: suggestedfields
                                       uesio.display:
@@ -296,6 +320,10 @@ definition:
                                 - signal: route/NAVIGATE
                                   path: app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{namespace}/$Param{collectionname}/fields/${uesio/studio.namespace}/${uesio/studio.name}
                               uesio.display:
+                                - type: fieldValue
+                                  field: uesio/studio.namespace
+                                  operator: EQUALS
+                                  value: $Param{app}
                                 - type: recordIsNotNew
                             - text: $Label{uesio/io.delete}
                               signals:
