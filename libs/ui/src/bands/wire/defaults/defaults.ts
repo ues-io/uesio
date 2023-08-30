@@ -31,7 +31,7 @@ type LookupDefault = WireDefaultBase & {
 
 type ValueDefault = WireDefaultBase & {
 	valueSource: typeof VALUE
-	value: string
+	value: string | boolean | number
 }
 type ParamDefault = WireDefaultBase & {
 	valueSource: typeof PARAM
