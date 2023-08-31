@@ -32,6 +32,9 @@ collections:
     edit: true
     delete: true
     fields: {}
+  uesio/tests.tool:
+    modifyall: true
+    viewall: false
 routes: {}
 files: {}
 allowallbots: false

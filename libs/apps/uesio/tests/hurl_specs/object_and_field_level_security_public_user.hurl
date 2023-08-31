@@ -300,3 +300,154 @@ variable: category="category {{unix_epoch_seconds}}"
 HTTP 400
 [Asserts]
 body contains "Save Failed: Profile uesio/tests.public does not have create access to the uesio/tests.tool collection."
+
+
+# Log into the studio as uesio
+POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+{
+    "token": "{\"subject\":\"uesio\"}"
+}
+HTTP 200
+[Captures]
+uesio_user_id: jsonpath "$.user.id"
+
+# Get the workspace id
+POST https://{{host}}:{{port}}/site/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/studio.workspace",
+            "query":true,
+            "conditions": [
+                {
+                    "field": "uesio/core.uniquekey",
+                    "value": "uesio/tests:dev"
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "uesio/tests:dev"
+[Captures]
+workspace_id: jsonpath "$.wires[0].data[0]['uesio/core.id']"
+
+# Log into the studio as ben
+POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+{
+    "token": "{\"subject\":\"ben\"}"
+}
+HTTP 200
+
+# Add an impersonation record to use the rep profile
+POST https://{{host}}:{{port}}/site/bots/call/uesio/studio/setworkspaceuser
+{
+    "workspaceid": "{{workspace_id}}",
+    "profile": "uesio/tests.rep"
+}
+HTTP 200
+
+# Object level security -- we SHOULD be able to query the tool collection
+# because ben user impersoning with rep profile DOES have MODIFYALL access to it
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.tool",
+            "name": "hasModifyAllAccess",
+            "fields": [
+                {"id":"uesio/core.uniquekey"},
+                {"id":"uesio/tests.brand"},
+                {"id":"uesio/tests.category"}
+            ],
+            "batchsize": 1,
+            "query": true,
+            "conditions": [
+                { "field": "uesio/tests.brand", "operator": "EQ", "value": "Skil" }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Captures]
+tool_id: jsonpath "$.wires[0].data[0]['uesio/core.id']"
+[Asserts]
+jsonpath "$.wires[0].data" count == 1
+jsonpath "$.wires[0].data[0]['uesio/tests.category']" == "Power"
+
+# Object level security -- SAVE -- CREATE
+# We SHOULD be able to CREATE tool records
+# because ben user impersoning with rep profile have permission to create them
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
+Accept: application/json
+{
+    "wires": [
+        {
+            "wire": "createtools",
+            "collection": "uesio/tests.tool",
+            "changes": {
+                "1": {
+                    "uesio/tests.brand": "Microsoft",
+                    "uesio/tests.category": "Hand"
+                }
+            },
+            "upsert": true
+        }
+    ]
+}
+HTTP 200
+[Captures]
+new_tool_id: jsonpath "$.wires[0].data[0]['uesio/core.id']"
+[Asserts]
+jsonpath "$.wires[0].errors" == null
+jsonpath "$.wires[0].changes[*]['uesio/core.id']" nth 0 != null
+
+# Object level security -- SAVE -- EDIT -- MODIFYALL
+# We should be able to EDIT tool records
+# because ben user impersoning with rep profile have permission to edit them
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
+Content-Type: application/json
+{
+    "wires": [
+        {
+            "wire": "updatetool",
+            "collection": "uesio/tests.tool",
+            "changes": {
+                "1": {
+                    "uesio/core.id": "{{new_tool_id}}",
+                    "uesio/tests.brand": "Makitahhaaaa",
+                    "uesio/tests.category": "Power"
+                }
+            },
+            "upsert": false
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" == null
+
+# Object level security -- SAVE -- DELETE -- MODIFYALL
+# We should be able to DELETE tool records
+# because ben user impersoning with rep profile have permission to delete them
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
+Content-Type: application/json
+{
+    "wires": [
+        {
+            "wire": "deletetools",
+            "collection": "uesio/tests.tool",
+            "deletes": {
+                "1": {
+                    "uesio/core.id": "{{new_tool_id}}"
+                }
+            }
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" == null

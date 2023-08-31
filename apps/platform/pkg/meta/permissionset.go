@@ -196,7 +196,7 @@ func (ps *PermissionSet) HasCollectionReadPermission(key string) bool {
 	if collectionPermission, ok := ps.CollectionRefs[key]; !ok {
 		return false
 	} else {
-		return collectionPermission.ViewAll || collectionPermission.Read
+		return collectionPermission.ModifyAll || collectionPermission.ViewAll || collectionPermission.Read
 	}
 }
 
