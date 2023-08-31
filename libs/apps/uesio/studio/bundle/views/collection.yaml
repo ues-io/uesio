@@ -407,6 +407,18 @@ definition:
                           uesio.id: commonFields
                           wire: commonfields
                           mode: READ
+                          recordDisplay:
+                            - type: fieldValue
+                              field: uesio/core.uniquekey
+                              operator: IN
+                              values:
+                                - $Param{namespace}.$Param{collectionname}:uesio/core.id
+                                - $Param{namespace}.$Param{collectionname}:uesio/core.uniquekey
+                                - $Param{namespace}.$Param{collectionname}:uesio/core.owner
+                                - $Param{namespace}.$Param{collectionname}:uesio/core.createdby
+                                - $Param{namespace}.$Param{collectionname}:uesio/core.updatedby
+                                - $Param{namespace}.$Param{collectionname}:uesio/core.createdat
+                                - $Param{namespace}.$Param{collectionname}:uesio/core.updatedat
                           uesio.display:
                             - type: fieldValue
                               wire: viewOnly

@@ -270,7 +270,10 @@ function should(condition: DisplayCondition, context: Context): boolean {
 	const compareToValue =
 		typeof condition.value === "string"
 			? context.mergeString(condition.value as string)
-			: condition.value ?? (canHaveMultipleValues ? condition.values : "")
+			: condition.value ??
+			  (canHaveMultipleValues
+					? context.mergeArray(condition.values)
+					: "")
 
 	if (condition.type === "hasNoValue") return !compareToValue
 	if (condition.type === "hasValue") return !!compareToValue

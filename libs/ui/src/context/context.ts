@@ -609,6 +609,15 @@ class Context {
 	mergeStringMap = (map: Record<string, Mergeable> | undefined) =>
 		this.mergeMap(map) as Record<string, string>
 
+	mergeArray = (array: string[] | undefined) => {
+		const result: string[] = []
+		if (!array) return result
+		array.forEach((item, index) => {
+			result[index] = this.mergeString(item)
+		})
+		return result
+	}
+
 	getCurrentErrors = () =>
 		this.stack.length && isErrorContextFrame(this.stack[0])
 			? this.stack[0].errors
