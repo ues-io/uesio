@@ -59,15 +59,26 @@ html {
 }
 
 @font-face {
-	font-family: Gosha;
-	src: url("{{ .StaticAssetsHost }}/static/vendor/fonts/gosha-sans/v1/GoshaSans-Regular.otf") format("opentype");
-}
+    font-family: "Gosha";
+	font-weight: 400;
+	font-style: normal;
+    src: local("Gosha Sans Regular"), local("Gosha-Sans-Regular"),
+		url("{{ .StaticAssetsHost }}/static/vendor/fonts/gosha-sans/v2/GoshaSans-Regular.otf") format("opentype"),
+		url("{{ .StaticAssetsHost }}/static/vendor/fonts/gosha-sans/v2/GoshaSans-Regular.woff2") format("woff2"),
+		url("{{ .StaticAssetsHost }}/static/vendor/fonts/gosha-sans/v2/GoshaSans-Regular.woff") format("woff"),
+		url("{{ .StaticAssetsHost }}/static/vendor/fonts/gosha-sans/v2/GoshaSans-Regular.ttf") format("truetype");
+  }
 
 @font-face {
-	font-family: Gosha;
-	font-weight: bold;
-	src: url("{{ .StaticAssetsHost }}/static/vendor/fonts/gosha-sans/v1/GoshaSans-Bold.otf") format("opentype");
-}
+    font-family: "Gosha";
+	font-weight: 700;
+	font-style: normal;
+    src: local("Gosha Sans Bold"), local("Gosha-Sans-Bold"),
+		url("{{ .StaticAssetsHost }}/static/vendor/fonts/gosha-sans/v2/GoshaSans-Bold.otf") format("opentype"),
+		url("{{ .StaticAssetsHost }}/static/vendor/fonts/gosha-sans/v2/GoshaSans-Bold.woff2") format("woff2"),
+		url("{{ .StaticAssetsHost }}/static/vendor/fonts/gosha-sans/v2/GoshaSans-Bold.woff") format("woff"),
+		url("{{ .StaticAssetsHost }}/static/vendor/fonts/gosha-sans/v2/GoshaSans-Bold.ttf") format("truetype");
+  }
 
 /* Greenlink */
 @font-face {
