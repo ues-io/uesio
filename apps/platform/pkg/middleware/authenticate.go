@@ -115,7 +115,7 @@ func AuthenticateVersion(next http.Handler) http.Handler {
 		vars := mux.Vars(r)
 		version := vars["version"]
 		app := vars["app"]
-		versionSession, err := datasource.AddVersionContext(app, version, GetSession(r))
+		versionSession, err := datasource.AddVersionContext(app, version, GetSession(r), nil)
 		if err != nil {
 			logger.LogError(err)
 			http.Error(w, "Failed querying version: "+err.Error(), http.StatusInternalServerError)

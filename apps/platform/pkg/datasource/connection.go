@@ -29,7 +29,7 @@ func GetConnection(dataSourceKey string, metadata *adapt.MetadataCache, session 
 
 	// Enter into a version context to get these
 	// credentails as the datasource's namespace
-	versionSession, err := EnterVersionContext(datasource.Namespace, session)
+	versionSession, err := EnterVersionContext(datasource.Namespace, session, connection)
 	if err != nil {
 		return nil, err
 	}
