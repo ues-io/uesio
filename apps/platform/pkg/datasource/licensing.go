@@ -1,11 +1,10 @@
-package licensing
+package datasource
 
 import (
 	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/cache"
-	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -25,14 +24,23 @@ func getLicenseCache(namespace string) (map[string]*meta.License, bool) {
 }
 
 func GetLicenses(namespace string, connection adapt.Connection) (map[string]*meta.License, error) {
+	// Hardcode the license for uesio/core
+	// This prevents a cicular dependency when we try to get
+	// the credentials to load the license data.
+	if namespace == "uesio/core" {
+		return map[string]*meta.License{
+			"uesio/io": {
+				Active: true,
+			},
+		}, nil
+	}
 	licenseMap, ok := getLicenseCache(namespace)
 	if ok {
 		return licenseMap, nil
 	}
-	fmt.Println("Getting License for: " + namespace)
 	anonSession := sess.GetStudioAnonSession()
 	app := meta.App{}
-	err := datasource.PlatformLoadOne(&app, &datasource.PlatformLoadOptions{
+	err := PlatformLoadOne(&app, &PlatformLoadOptions{
 		Connection: connection,
 		Fields:     []adapt.LoadRequestField{},
 		Conditions: []adapt.LoadRequestCondition{
@@ -47,9 +55,9 @@ func GetLicenses(namespace string, connection adapt.Connection) (map[string]*met
 		return nil, err
 	}
 	licenses := meta.LicenseCollection{}
-	err = datasource.PlatformLoad(
+	err = PlatformLoad(
 		&licenses,
-		&datasource.PlatformLoadOptions{
+		&PlatformLoadOptions{
 			Connection: connection,
 			Fields: []adapt.LoadRequestField{
 				{

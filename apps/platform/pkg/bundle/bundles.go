@@ -49,7 +49,7 @@ func GetWorkspaceBundleDef(workspace *meta.Workspace, connection adapt.Connectio
 	return bs.GetBundleDef()
 }
 
-func getVersion(namespace string, session *sess.Session) (string, error) {
+func GetVersion(namespace string, session *sess.Session) (string, error) {
 
 	appName := session.GetContextAppName()
 	appVersion := session.GetContextVersionName()
@@ -92,7 +92,7 @@ func getVersion(namespace string, session *sess.Session) (string, error) {
 }
 
 func GetBundleStoreConnection(namespace string, session *sess.Session, connection adapt.Connection) (bundlestore.BundleStoreConnection, error) {
-	version, err := getVersion(namespace, session)
+	version, err := GetVersion(namespace, session)
 	if err != nil {
 		return nil, err
 	}

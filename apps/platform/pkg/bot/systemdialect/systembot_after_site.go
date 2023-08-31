@@ -16,10 +16,7 @@ func runSiteAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, ses
 
 		siteID := change.IDValue
 
-		//This creates a copy of the session
-		siteAdminSession := session.RemoveWorkspaceContext()
-
-		err := datasource.AddSiteAdminContextByID(siteID, siteAdminSession, connection)
+		siteAdminSession, err := datasource.AddSiteAdminContextByID(siteID, session, connection)
 		if err != nil {
 			return err
 		}
@@ -86,10 +83,7 @@ func runSiteAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, ses
 			return nil
 		}
 
-		//This creates a copy of the session
-		siteAdminSession := session.RemoveWorkspaceContext()
-
-		err = datasource.AddSiteAdminContextByID(siteID, siteAdminSession, connection)
+		siteAdminSession, err := datasource.AddSiteAdminContextByID(siteID, session, connection)
 		if err != nil {
 			return err
 		}

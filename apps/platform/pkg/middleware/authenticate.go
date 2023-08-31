@@ -78,12 +78,13 @@ func AuthenticateSiteAdmin(next http.Handler) http.Handler {
 		appName := vars["app"]
 		siteName := vars["site"]
 		s := GetSession(r)
-		err := datasource.AddSiteAdminContextByKey(appName+":"+siteName, s, nil)
+		siteAdminSession, err := datasource.AddSiteAdminContextByKey(appName+":"+siteName, s, nil)
 		if err != nil {
 			removeSessionAndRedirectToLoginRoute(w, r, s, auth.Expired)
 			return
 		}
-		next.ServeHTTP(w, r)
+
+		next.ServeHTTP(w, r.WithContext(SetSession(r, siteAdminSession)))
 	})
 }
 
@@ -93,12 +94,12 @@ func AuthenticateWorkspace(next http.Handler) http.Handler {
 		appName := vars["app"]
 		workspaceName := vars["workspace"]
 		s := GetSession(r)
-		err := datasource.AddWorkspaceContextByKey(appName+":"+workspaceName, s, nil)
+		workspaceSession, err := datasource.AddWorkspaceContextByKey(appName+":"+workspaceName, s, nil)
 		if err != nil {
 			removeSessionAndRedirectToLoginRoute(w, r, s, auth.Expired)
 			return
 		}
-		next.ServeHTTP(w, r)
+		next.ServeHTTP(w, r.WithContext(SetSession(r, workspaceSession)))
 	})
 }
 
@@ -114,12 +115,12 @@ func AuthenticateVersion(next http.Handler) http.Handler {
 		vars := mux.Vars(r)
 		version := vars["version"]
 		app := vars["app"]
-		err := datasource.AddVersionContext(app, version, GetSession(r))
+		versionSession, err := datasource.AddVersionContext(app, version, GetSession(r))
 		if err != nil {
 			logger.LogError(err)
 			http.Error(w, "Failed querying version: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
-		next.ServeHTTP(w, r)
+		next.ServeHTTP(w, r.WithContext(SetSession(r, versionSession)))
 	})
 }

@@ -33,7 +33,7 @@ type Connection interface {
 var adapterMap = map[string]Adapter{}
 
 // GetAdapter gets an adapter of a certain type
-func GetAdapter(adapterType string, session *sess.Session) (Adapter, error) {
+func GetAdapter(adapterType string) (Adapter, error) {
 
 	adapter, ok := adapterMap[adapterType]
 	if !ok {

@@ -45,9 +45,6 @@ func GetWorkspaceIDFromParams(params map[string]string, connection adapt.Connect
 
 func getContextSessionFromParams(params map[string]string, connection adapt.Connection, session *sess.Session) (*sess.Session, error) {
 
-	//This creates a copy of the session
-	inContextSession := session.RemoveWorkspaceContext()
-
 	workspace := params["workspacename"]
 	site := params["sitename"]
 	if workspace == "" && site == "" {
@@ -60,20 +57,12 @@ func getContextSessionFromParams(params map[string]string, connection adapt.Conn
 
 	if workspace != "" {
 		workspaceKey := fmt.Sprintf("%s:%s", app, workspace)
-		err := datasource.AddWorkspaceContextByKey(workspaceKey, inContextSession, connection)
-		if err != nil {
-			return nil, err
-		}
+		return datasource.AddWorkspaceContextByKey(workspaceKey, session, connection)
 	}
 
-	if site != "" {
-		siteKey := fmt.Sprintf("%s:%s", app, site)
-		err := datasource.AddSiteAdminContextByKey(siteKey, inContextSession, connection)
-		if err != nil {
-			return nil, err
-		}
-	}
-	return inContextSession, nil
+	siteKey := fmt.Sprintf("%s:%s", app, site)
+	return datasource.AddSiteAdminContextByKey(siteKey, session, connection)
+
 }
 
 func runStudioMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
