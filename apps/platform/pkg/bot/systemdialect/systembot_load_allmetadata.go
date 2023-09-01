@@ -103,7 +103,7 @@ func runAllMetadataLoadBot(collectionName string, op *adapt.LoadOp, connection a
 	itemCondition := extractConditionByField(op.Conditions, "uesio/studio.item")
 	groupingCondition := extractConditionByField(op.Conditions, "uesio/studio.grouping")
 	searchCondition := extractConditionByType(op.Conditions, "SEARCH")
-	displayBuiltInFieldsCondition := extractConditionByField(op.Conditions, "uesio/studio.displaybuiltinfields")
+	isCommonFieldCondition := extractConditionByField(op.Conditions, "uesio/studio.iscommonfield")
 
 	metadataType := meta.GetTypeFromCollectionName(collectionName)
 
@@ -172,20 +172,26 @@ func runAllMetadataLoadBot(collectionName string, op *adapt.LoadOp, connection a
 			}
 		}
 
-		err = bundle.LoadAllFromNamespaces(namespaces, group, conditions, inContextSession, nil)
-		if err != nil {
-			return err
-		}
+		onlyLoadCommonFields := false
 
-		// Special handling for built-in fields
+		// Special handling if we are asked to load common fields
 		if collectionName == "uesio/studio.field" {
 			// Only add built-in fields if we're grouping on a collection
 			collection, ok := conditions["uesio/studio.collection"]
 			// and if we don't have a condition to exclude built-in fields
-			if ok && (displayBuiltInFieldsCondition == nil || displayBuiltInFieldsCondition.Value != false) {
+			if ok && (isCommonFieldCondition != nil && isCommonFieldCondition.Value == true) {
+				onlyLoadCommonFields = true
 				datasource.AddAllBuiltinFields(group, collection)
 			}
 		}
+
+		if !onlyLoadCommonFields {
+			err = bundle.LoadAllFromNamespaces(namespaces, group, conditions, inContextSession, nil)
+			if err != nil {
+				return err
+			}
+		}
+
 	}
 
 	appData, err := datasource.GetAppData(namespaces)
