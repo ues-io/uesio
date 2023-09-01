@@ -1,0 +1,4 @@
+name: type
+type: TEXT
+label: Type
+required: true

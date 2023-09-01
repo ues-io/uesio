@@ -294,6 +294,12 @@ definition:
                                         - name: delete
                                           label: Delete
                                           type: CHECKBOX
+                                        - name: modifyall
+                                          label: Modify all
+                                          type: CHECKBOX
+                                        - name: viewall
+                                          label: View all
+                                          type: CHECKBOX
                                         - name: fields
                                           label: Fields
                                           type: MAP
