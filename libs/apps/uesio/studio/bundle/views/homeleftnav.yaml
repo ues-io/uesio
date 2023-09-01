@@ -89,6 +89,16 @@ definition:
                   wire: newApp
                 - signal: panel/TOGGLE
                   panel: newApp
+    - uesio/io.searchbox:
+        uesio.styleTokens:
+          root:
+            - -mt-4
+            - ml-4
+        wire: apps
+        focusOnRender: true
+        searchFields:
+          - uesio/studio.name
+          - uesio/studio.description
     - uesio/io.list:
         uesio.id: appslist
         wire: apps
