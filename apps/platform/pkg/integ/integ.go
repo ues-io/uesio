@@ -51,7 +51,7 @@ func GetIntegration(integrationID string, session *sess.Session) (IntegrationCon
 
 	// Enter into a version context to get these
 	// credentails as the datasource's namespace
-	versionSession, err := datasource.EnterVersionContext(integration.Namespace, session)
+	versionSession, err := datasource.EnterVersionContext(integration.Namespace, session, nil)
 	if err != nil {
 		return nil, err
 	}
