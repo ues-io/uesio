@@ -2,6 +2,7 @@ package jsdialect
 
 import (
 	"bytes"
+	"errors"
 	"io"
 	"io/ioutil"
 	"regexp"
@@ -119,6 +120,29 @@ func (gba *GeneratorBotAPI) GenerateYamlFile(filename string, params map[string]
 		return err
 	}
 	return gba.AddFile(filename, strings.NewReader(merged))
+}
+
+func (gba *GeneratorBotAPI) CheckIfFileExists(filename string, metadataType string) error {
+
+	appName := gba.Session.GetContextAppName()
+	group, err := meta.GetBundleableGroupFromType(metadataType)
+	if err != nil {
+		return errors.New("invalid metadata type provided for type condition")
+	}
+
+	itemKey := appName + "." + filename
+	item, err := group.GetItemFromKey(itemKey)
+	if err != nil {
+		return err
+	}
+
+	err = bundle.Load(item, gba.Session, gba.Connection)
+	if err == nil {
+		//item found throw error
+		return errors.New(group.GetName() + " name already exsits")
+	}
+
+	return nil
 }
 
 func (gba *GeneratorBotAPI) RepeatString(repeaterInput interface{}, templateString string) (string, error) {

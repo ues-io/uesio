@@ -4,6 +4,10 @@ function view(bot) {
 		bot.params.get("definition") ||
 		bot.getTemplate("templates/blankdefinition.yaml")
 
+	if (bot.checkIfFileExists(name, "views")) {
+		log("ERROR")
+	}
+
 	bot.generateYamlFile(
 		"views/" + name + ".yaml",
 		{
