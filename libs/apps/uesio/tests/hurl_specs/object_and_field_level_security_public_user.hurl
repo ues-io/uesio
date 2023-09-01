@@ -349,6 +349,35 @@ POST https://{{host}}:{{port}}/site/bots/call/uesio/studio/setworkspaceuser
 }
 HTTP 200
 
+# Object level security -- SAVE -- CREATE
+# We SHOULD be able to CREATE tool records
+# because ben user impersoning with rep profile have permission to create them
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
+Accept: application/json
+[Options]
+variable: brand="brand_{{unix_epoch_seconds}}"
+variable: category="category_{{unix_epoch_seconds}}"
+{
+    "wires": [
+        {
+            "wire": "createtools",
+            "collection": "uesio/tests.tool",
+            "changes": {
+                "1": {
+                    "uesio/tests.brand":"{{brand}}",
+                    "uesio/tests.category":"{{category}}",
+                    "uesio/tests.type":"Drill"
+                }
+            },
+            "upsert": true
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" == null
+jsonpath "$.wires[0].changes[*]['uesio/core.id']" nth 0 != null
+
 # Object level security -- we SHOULD be able to query the tool collection
 # because ben user impersoning with rep profile DOES have MODIFYALL access to it
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
@@ -361,40 +390,15 @@ Accept: application/json
             "fields": [
                 {"id":"uesio/core.uniquekey"},
                 {"id":"uesio/tests.brand"},
-                {"id":"uesio/tests.category"}
+                {"id":"uesio/tests.category"},
+                {"id":"uesio/tests.type"}
             ],
             "batchsize": 1,
             "query": true,
             "conditions": [
-                { "field": "uesio/tests.brand", "operator": "EQ", "value": "Skil" }
+                { "field": "uesio/tests.brand", "operator": "EQ", "value": "{{brand}}" },
+                { "field": "uesio/tests.category", "operator": "EQ", "value": "{{category}}" }
             ]
-        }
-    ]
-}
-HTTP 200
-[Captures]
-tool_id: jsonpath "$.wires[0].data[0]['uesio/core.id']"
-[Asserts]
-jsonpath "$.wires[0].data" count == 1
-jsonpath "$.wires[0].data[0]['uesio/tests.category']" == "Power"
-
-# Object level security -- SAVE -- CREATE
-# We SHOULD be able to CREATE tool records
-# because ben user impersoning with rep profile have permission to create them
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
-Accept: application/json
-{
-    "wires": [
-        {
-            "wire": "createtools",
-            "collection": "uesio/tests.tool",
-            "changes": {
-                "1": {
-                    "uesio/tests.brand": "Microsoft",
-                    "uesio/tests.category": "Hand"
-                }
-            },
-            "upsert": true
         }
     ]
 }
@@ -402,8 +406,10 @@ HTTP 200
 [Captures]
 new_tool_id: jsonpath "$.wires[0].data[0]['uesio/core.id']"
 [Asserts]
-jsonpath "$.wires[0].errors" == null
-jsonpath "$.wires[0].changes[*]['uesio/core.id']" nth 0 != null
+jsonpath "$.wires[0].data" count == 1
+jsonpath "$.wires[0].data[0]['uesio/tests.category']" == "{{category}}"
+jsonpath "$.wires[0].data[0]['uesio/tests.brand']" == "{{brand}}"
+jsonpath "$.wires[0].data[0]['uesio/tests.type']" == "Drill"
 
 # Object level security -- SAVE -- EDIT -- MODIFYALL
 # We should be able to EDIT tool records
