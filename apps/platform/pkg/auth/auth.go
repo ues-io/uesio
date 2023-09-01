@@ -63,7 +63,7 @@ func GetAuthConnection(authSourceID string, session *sess.Session) (AuthConnecti
 
 	// Enter into a version context to get these
 	// credentails as the datasource's namespace
-	versionSession, err := datasource.EnterVersionContext(authSource.Namespace, session)
+	versionSession, err := datasource.EnterVersionContext(authSource.Namespace, session, nil)
 	if err != nil {
 		return nil, err
 	}

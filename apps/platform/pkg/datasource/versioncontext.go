@@ -3,19 +3,20 @@ package datasource
 import (
 	"errors"
 
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func addVersionContext(app, version string, session *sess.Session) error {
+func addVersionContext(app, version string, session *sess.Session, connection adapt.Connection) error {
 
-	bundleDef, err := bundle.GetVersionBundleDef(app, version, nil)
+	bundleDef, err := bundle.GetVersionBundleDef(app, version, connection)
 	if err != nil {
 		return err
 	}
 
-	licenseMap, err := GetLicenses(app, nil)
+	licenseMap, err := GetLicenses(app, connection)
 	if err != nil {
 		return err
 	}
@@ -27,7 +28,7 @@ func addVersionContext(app, version string, session *sess.Session) error {
 
 }
 
-func AddVersionContext(app, version string, session *sess.Session) (*sess.Session, error) {
+func AddVersionContext(app, version string, session *sess.Session, connection adapt.Connection) (*sess.Session, error) {
 	site := session.GetSite()
 	perms := session.GetSitePermissions()
 
@@ -44,10 +45,10 @@ func AddVersionContext(app, version string, session *sess.Session) (*sess.Sessio
 		return nil, errors.New("your profile does not allow you to work with versions")
 	}
 	sessClone := session.RemoveWorkspaceContext()
-	return sessClone, addVersionContext(app, version, sessClone)
+	return sessClone, addVersionContext(app, version, sessClone, connection)
 }
 
-func EnterVersionContext(app string, session *sess.Session) (*sess.Session, error) {
+func EnterVersionContext(app string, session *sess.Session, connection adapt.Connection) (*sess.Session, error) {
 	// We don't need to enter into a version context for our own app
 	if app == session.GetContextAppName() {
 		return session, nil
@@ -58,5 +59,5 @@ func EnterVersionContext(app string, session *sess.Session) (*sess.Session, erro
 		return nil, err
 	}
 	sessClone := session.RemoveWorkspaceContext()
-	return sessClone, addVersionContext(app, version, sessClone)
+	return sessClone, addVersionContext(app, version, sessClone, connection)
 }

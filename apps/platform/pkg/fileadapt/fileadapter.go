@@ -56,7 +56,7 @@ func GetFileConnection(fileSourceID string, session *sess.Session) (FileConnecti
 
 	// Enter into a version context to get these
 	// credentails as the datasource's namespace
-	versionSession, err := datasource.EnterVersionContext(fs.Namespace, session)
+	versionSession, err := datasource.EnterVersionContext(fs.Namespace, session, nil)
 	if err != nil {
 		return nil, err
 	}

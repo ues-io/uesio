@@ -77,7 +77,7 @@ func addSiteAdminContext(siteadmin *meta.Site, session *sess.Session, connection
 		return err
 	}
 
-	licenseMap, err := GetLicenses(siteadmin.GetAppFullName(), nil)
+	licenseMap, err := GetLicenses(siteadmin.GetAppFullName(), connection)
 	if err != nil {
 		return err
 	}
