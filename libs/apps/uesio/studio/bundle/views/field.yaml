@@ -175,6 +175,9 @@ definition:
                                             fieldId: uesio/studio.reference->uesio/studio.collection
                                             metadataType: COLLECTION
                                             label: Ref. Collection
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.required
+                                      displayAs: TOGGLE
                                   - uesio/io.box:
                                       uesio.display:
                                         - field: uesio/studio.type
