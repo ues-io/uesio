@@ -28,8 +28,6 @@ definition:
           value: true
         - field: uesio/studio.grouping
           value: $Param{namespace}.$Param{collectionname}
-        - field: uesio/studio.displaybuiltinfields
-          value: false
       order:
         - field: uesio/studio.namespace
           desc: false
@@ -42,7 +40,7 @@ definition:
           value: true
         - field: uesio/studio.grouping
           value: $Param{namespace}.$Param{collectionname}
-        - field: uesio/studio.displaybuiltinfields
+        - field: uesio/studio.iscommonfield
           value: true
       order:
         - field: uesio/studio.name
