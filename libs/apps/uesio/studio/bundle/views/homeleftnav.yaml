@@ -62,33 +62,60 @@ definition:
           valueSource: VALUE
           value: uesio/studio.standard
   components:
-    - uesio/io.titlebar:
-        uesio.variant: uesio/io.nav
-        title: My Apps
-        actions:
-          - uesio/io.button:
-              icon: add
-              uesio.id: add-app
-              uesio.variant: uesio/studio.navctawithpointer
-              uesio.display:
-                - type: wireHasNoRecords
-                  wire: apps
-              signals:
-                - signal: wire/RESET
-                  wire: newApp
-                - signal: panel/TOGGLE
-                  panel: newApp
-          - uesio/io.button:
-              icon: add
-              uesio.id: add-app-2
-              uesio.display:
-                - type: wireHasRecords
-                  wire: apps
-              signals:
-                - signal: wire/RESET
-                  wire: newApp
-                - signal: panel/TOGGLE
-                  panel: newApp
+    - uesio/io.grid:
+        uesio.styleTokens:
+          root:
+            - grid-cols-6
+        items:
+          - uesio/io.griditem:
+              uesio.styleTokens:
+                root:
+                  - min-w-max
+                  - col-span-2
+              components:
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.nav
+                    title: My Apps
+          - uesio/io.griditem:
+              uesio.styleTokens:
+                root:
+                  - col-span-3
+              components:
+                - uesio/io.searchbox:
+                    wire: apps
+                    focusOnRender: true
+                    searchFields:
+                      - uesio/studio.name
+                      - uesio/studio.description
+          - uesio/io.griditem:
+              uesio.styleTokens:
+                root:
+                  - mt-4
+                  - mx-4
+              components:
+                - uesio/io.button:
+                    icon: add
+                    uesio.id: add-app
+                    uesio.variant: uesio/studio.navctawithpointer
+                    uesio.display:
+                      - type: wireHasNoRecords
+                        wire: apps
+                    signals:
+                      - signal: wire/RESET
+                        wire: newApp
+                      - signal: panel/TOGGLE
+                        panel: newApp
+                - uesio/io.button:
+                    icon: add
+                    uesio.id: add-app-2
+                    uesio.display:
+                      - type: wireHasRecords
+                        wire: apps
+                    signals:
+                      - signal: wire/RESET
+                        wire: newApp
+                      - signal: panel/TOGGLE
+                        panel: newApp
     - uesio/io.list:
         uesio.id: appslist
         wire: apps

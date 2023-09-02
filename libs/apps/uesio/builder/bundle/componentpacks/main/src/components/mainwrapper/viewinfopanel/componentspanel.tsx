@@ -96,7 +96,7 @@ const VariantsBlock: definition.UtilityComponent<VariantsBlockProps> = (
 							// from running as well
 							e.stopPropagation()
 							addComponentToCanvas(context, componentDef, {
-								"uesio.variant": `${variant.namespace}.${variant.name}`,
+								[component.STYLE_VARIANT]: `${variant.namespace}.${variant.name}`,
 							})
 						}}
 						selected={isSelected("componentvariant", variantKey)}

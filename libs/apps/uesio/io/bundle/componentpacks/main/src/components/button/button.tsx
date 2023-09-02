@@ -49,7 +49,7 @@ const Button: definition.UC<ButtonDefinition> = (props) => {
 	return (
 		<IOButton
 			id={api.component.getComponentIdFromProps(props)}
-			variant={definition["uesio.variant"]}
+			variant={definition[component.STYLE_VARIANT]}
 			classes={classes}
 			disabled={isPending}
 			label={definition.text}

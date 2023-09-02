@@ -1,4 +1,11 @@
-import { api, collection, wire, definition, metadata } from "@uesio/ui"
+import {
+	api,
+	collection,
+	component,
+	wire,
+	definition,
+	metadata,
+} from "@uesio/ui"
 import FieldWrapper from "../../utilities/fieldwrapper/fieldwrapper"
 import MonthFilter from "../../utilities/monthfilter/monthfilter"
 import SelectFilter from "../../utilities/selectfilter/selectfilter"
@@ -172,7 +179,8 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 		wire,
 		condition,
 		variant:
-			definition["uesio.variant"] || "uesio/io.field:uesio/io.default",
+			definition[component.STYLE_VARIANT] ||
+			"uesio/io.field:uesio/io.default",
 	}
 
 	return (

@@ -1,6 +1,15 @@
 import { FunctionComponent } from "react"
-import { definition, api, wire, component, metadata } from "@uesio/ui"
+import {
+	api,
+	collection,
+	component,
+	definition,
+	metadata,
+	wire,
+} from "@uesio/ui"
 import omit from "lodash/omit"
+const { STYLE_VARIANT } = component
+const { ID_FIELD, UNIQUE_KEY_FIELD } = collection
 
 type DataManagerDefinition = {
 	recordID: string
@@ -26,7 +35,7 @@ const getWireDefinition = (
 		),
 		conditions: [
 			{
-				field: "uesio/core.id",
+				field: ID_FIELD,
 				value: recordID,
 				valueSource: "VALUE",
 			},
@@ -35,14 +44,25 @@ const getWireDefinition = (
 }
 
 const UESIO_BUILTIN = [
-	"uesio/core.id",
-	"uesio/core.uniquekey",
+	ID_FIELD,
+	UNIQUE_KEY_FIELD,
 	"uesio/core.owner",
 	"uesio/core.createdat",
 	"uesio/core.createdby",
 	"uesio/core.updatedat",
 	"uesio/core.updatedby",
 ]
+
+const getGridFromFields = (fieldIds: string[]) => ({
+	"uesio/io.grid": {
+		items: fieldIds.map((fieldId) => ({
+			"uesio/io.field": {
+				fieldId,
+			},
+		})),
+		[STYLE_VARIANT]: "uesio/io.four_columns",
+	},
+})
 
 const getComponents = (
 	fieldsMeta: Record<string, metadata.MetadataInfo>
@@ -57,26 +77,8 @@ const getComponents = (
 	)
 
 	return [
-		{
-			"uesio/io.grid": {
-				items: fields.map((field) => ({
-					"uesio/io.field": {
-						fieldId: field.key,
-					},
-				})),
-				"uesio.variant": "uesio/io.four_columns",
-			},
-		},
-		{
-			"uesio/io.grid": {
-				items: UESIO_BUILTIN.map((field) => ({
-					"uesio/io.field": {
-						fieldId: field,
-					},
-				})),
-				"uesio.variant": "uesio/io.four_columns",
-			},
-		},
+		getGridFromFields(fields.map((field) => field.key)),
+		getGridFromFields(UESIO_BUILTIN),
 	]
 }
 
