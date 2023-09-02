@@ -90,10 +90,7 @@ definition:
                 - signal: panel/TOGGLE
                   panel: newApp
     - uesio/io.searchbox:
-        uesio.styleTokens:
-          root:
-            - -mt-4
-            - ml-4
+        uesio.variant: uesio/studio.navsearch
         wire: apps
         focusOnRender: true
         searchFields:

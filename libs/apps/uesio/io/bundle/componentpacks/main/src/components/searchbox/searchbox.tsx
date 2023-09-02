@@ -1,11 +1,4 @@
-import {
-	api,
-	component,
-	context,
-	definition,
-	metadata,
-	styles,
-} from "@uesio/ui"
+import { api, context, definition, metadata, styles } from "@uesio/ui"
 import debounce from "lodash/debounce"
 import TextField from "../../utilities/field/text"
 import FieldWrapper from "../../utilities/fieldwrapper/fieldwrapper"
@@ -21,7 +14,6 @@ type SearchBoxDefinition = {
 
 const StyleDefaults = Object.freeze({
 	root: [],
-	input: [],
 })
 
 const search = (
@@ -85,7 +77,6 @@ const SearchBox: definition.UC<SearchBoxDefinition> = (props) => {
 				id={api.component.getComponentIdFromProps(props)}
 				context={context}
 				type="search"
-				className={classes.input}
 				variant={fieldVariant}
 				placeholder={placeholder}
 				setValue={(value: string) => {
