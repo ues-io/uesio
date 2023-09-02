@@ -22,7 +22,7 @@ const IconLabel: definition.UC<IconLabelDefinition> = (props) => {
 	const classes = styles.useStyleTokens(StyleDefaults, props)
 	return (
 		<IconLabelUtility
-			variant={definition["uesio.variant"]}
+			variant={definition[component.STYLE_VARIANT]}
 			classes={classes}
 			icon={icon}
 			color={color}

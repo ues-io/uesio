@@ -280,7 +280,7 @@ type ComponentProperty =
 	| FieldValuesProperty
 
 const getStyleVariantProperty = (componentType: string): ComponentProperty => ({
-	name: "uesio.variant",
+	name: component.STYLE_VARIANT,
 	type: "METADATA",
 	metadataType: "COMPONENTVARIANT",
 	label: "Variant",

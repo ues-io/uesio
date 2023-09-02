@@ -1,5 +1,6 @@
 import {
 	api,
+	component,
 	wire,
 	definition,
 	metadata,
@@ -149,7 +150,7 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		setValue: (value: wire.FieldValue) =>
 			record.update(fieldId, value, context),
 		record,
-		variant: definition["uesio.variant"],
+		variant: definition[component.STYLE_VARIANT],
 		placeholder,
 		displayAs,
 		subFieldVariant,

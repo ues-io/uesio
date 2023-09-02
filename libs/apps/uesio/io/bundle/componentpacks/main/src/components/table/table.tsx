@@ -310,7 +310,7 @@ const Table: definition.UC<TableDefinition> = (props) => {
 		<>
 			<IOTable
 				id={api.component.getComponentIdFromProps(props)}
-				variant={definition["uesio.variant"]}
+				variant={definition[component.STYLE_VARIANT]}
 				rows={paginated}
 				columns={columnsToDisplay}
 				context={context}
