@@ -43,6 +43,7 @@ definition:
         uesio/core.id:
         uesio/studio.name:
         uesio/studio.app:
+        uesio/studio.parentbundle:
       init:
         create: true
       defaults:
@@ -190,6 +191,13 @@ definition:
               - uesio/io.field:
                   fieldId: uesio/studio.name
                   uesio.id: workspace-name
+              - uesio/io.field:
+                  fieldId: uesio/studio.parentbundle
+                  uesio.id: workspace-parent-bundle
+                  reference:
+                    conditions:
+                      - field: uesio/studio.app
+                        value: ${uesio/studio.app->uesio/core.id}
       actions:
         - uesio/io.button:
             uesio.variant: "uesio/io.primary"

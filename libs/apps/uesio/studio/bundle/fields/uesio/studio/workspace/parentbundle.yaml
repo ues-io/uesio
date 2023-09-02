@@ -1,0 +1,5 @@
+name: parentbundle
+type: REFERENCE
+label: Parent Bundle
+reference:
+  collection: bundle
