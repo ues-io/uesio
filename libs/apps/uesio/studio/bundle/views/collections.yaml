@@ -15,10 +15,10 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     allcollections:
-      collection: uesio/studio.allmetadata
+      collection: uesio/studio.collection
       conditions:
-        - field: uesio/studio.type
-          value: collections
+        - field: uesio/studio.allmetadata
+          value: true
     newcollection:
       collection: uesio/studio.collection
       fields:
@@ -46,6 +46,28 @@ definition:
         - field: uesio/studio.datasource
           valueSource: VALUE
           value: uesio/core.platform
+      events:
+        - type: onChange
+          fields:
+            - uesio/studio.name
+          conditions:
+            - type: hasValue
+              value: "${uesio/studio.name}"
+            - type: hasNoValue
+              value: "${uesio/studio.label}"
+            - type: hasNoValue
+              value: "${uesio/studio.plurallabel}"
+          signals:
+            - signal: wire/UPDATE_RECORD
+              wire: newcollection
+              field: uesio/studio.label
+              valueSource: VALUE
+              value: "${uesio/studio.name}"
+            - signal: wire/UPDATE_RECORD
+              wire: newcollection
+              field: uesio/studio.plurallabel
+              valueSource: VALUE
+              value: "${uesio/studio.name}s"
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -134,6 +156,8 @@ definition:
               - uesio/io.field:
                   fieldId: uesio/studio.name
                   uesio.id: new-collection-name
+                  applyChanges: onBlur
+                  focusOnRender: true
               - uesio/io.field:
                   fieldId: uesio/studio.label
                   uesio.id: new-collection-label

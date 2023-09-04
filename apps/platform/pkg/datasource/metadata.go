@@ -180,8 +180,9 @@ func GetReferenceGroupMetadata(f *meta.Field) *adapt.ReferenceGroupMetadata {
 func GetValidationMetadata(f *meta.Field) *adapt.ValidationMetadata {
 	if f.ValidationMetadata != nil {
 		return &adapt.ValidationMetadata{
-			Type:  f.ValidationMetadata.Type,
-			Regex: f.ValidationMetadata.Regex,
+			Type:      f.ValidationMetadata.Type,
+			Regex:     f.ValidationMetadata.Regex,
+			SchemaUri: f.ValidationMetadata.SchemaUri,
 		}
 	}
 	return nil
@@ -220,6 +221,8 @@ func LoadAllFieldsMetadata(collectionKey string, collectionMetadata *adapt.Colle
 		return err
 	}
 
+	AddAllBuiltinFields(&fields, collectionKey)
+
 	for _, field := range fields {
 		collectionMetadata.SetField(GetFieldMetadata(field, session))
 	}
@@ -232,6 +235,12 @@ func LoadFieldsMetadata(keys []string, collectionKey string, collectionMetadata 
 	for _, key := range keys {
 		_, err := collectionMetadata.GetField(key)
 		if err != nil {
+			// Check if this field is built-in, if so, handle its metadata here
+			builtInField, isBuiltIn := GetBuiltinField(key, collectionKey)
+			if isBuiltIn {
+				collectionMetadata.SetField(GetFieldMetadata(&builtInField, session))
+				continue
+			}
 			field, err := meta.NewField(collectionKey, key)
 			if err != nil {
 				return err

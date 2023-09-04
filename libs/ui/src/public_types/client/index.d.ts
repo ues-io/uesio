@@ -402,6 +402,14 @@ type Field = {
 	 */
 	getId: () => string
 	/**
+	 * Returns just the field's name, e.g. "firstname"
+	 */
+	getName: () => string
+	/**
+	 * Returns the namespace of the field's app, e.g. "uesio/core"
+	 */
+	getNamespace: () => string
+	/**
 	 * Get the label defined for the field, e.g. "First Name"
 	 */
 	getLabel: () => string
@@ -442,6 +450,10 @@ type Field = {
 	 * Returns true if this is a "Reference" type field, or one of the special Reference-extending types
 	 */
 	isReference: () => boolean
+	/**
+	 * Returns true if this is a required field
+	 */
+	isRequired: () => boolean
 }
 
 type Collection = {

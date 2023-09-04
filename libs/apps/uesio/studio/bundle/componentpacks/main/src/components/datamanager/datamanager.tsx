@@ -1,8 +1,8 @@
 import { FunctionComponent } from "react"
-import { definition, api, component, metadata } from "@uesio/ui"
+import { definition, api, component, metadata, wire } from "@uesio/ui"
 
 type DataManagerDefinition = {
-	collectionId: string
+	collectionId: wire.CollectionKey
 	wireId: string
 	tableId: string
 }
@@ -12,7 +12,7 @@ interface Props extends definition.BaseProps {
 }
 
 const getWireDefinition = (
-	collection: string,
+	collection: wire.CollectionKey,
 	fields: Record<string, unknown> | undefined
 ) => {
 	if (!fields || !collection) return null
@@ -52,7 +52,7 @@ const DataManager: FunctionComponent<Props> = (props) => {
 		},
 	} = props
 
-	const collection = context.mergeString(collectionId)
+	const collection = context.mergeString(collectionId) as wire.CollectionKey
 
 	const [fieldsMeta] = api.builder.useMetadataList(
 		context,
@@ -83,6 +83,19 @@ const DataManager: FunctionComponent<Props> = (props) => {
 						signals: [
 							{
 								signal: "wire/TOGGLE_DELETE_STATUS",
+							},
+						],
+					},
+					{
+						text: "Manage",
+						signals: [
+							{
+								signal: "context/CLEAR",
+								type: "WORKSPACE",
+							},
+							{
+								signal: "route/NAVIGATE",
+								path: "app/$Param{app}/workspace/$Param{workspacename}/data/$Param{namespace}/$Param{collectionname}/${uesio/core.id}",
 							},
 						],
 					},

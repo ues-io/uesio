@@ -58,7 +58,7 @@ func ProjectLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess
 		return err
 	}
 
-	_, err = webIntegration.RunAction("get", &web.GetActionOptions{
+	_, err = webIntegration.RunAction("get", &web.RequestOptions{
 		URL:          url,
 		Cache:        true,
 		ResponseData: data,
@@ -85,7 +85,7 @@ func ProjectLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess
 		Updateable: false,
 		Type:       "LIST",
 		Label:      "Lists",
-		SubType:    "MAP",
+		SubType:    "STRUCT",
 		SubFields: map[string]*adapt.FieldMetadata{
 			"id": {
 				Label: "ID",

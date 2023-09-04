@@ -1,5 +1,0 @@
-name: quantity_in_stock
-type: NUMBER
-label: Quantity in Stock
-number:
-  decimals: 0

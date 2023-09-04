@@ -2,12 +2,13 @@ package controller
 
 import (
 	"fmt"
-	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 
@@ -39,7 +40,7 @@ func init() {
 	}).ParseFiles(indexPath, cssPath))
 }
 
-func getComponentPackURLs(componentPackDeps *routing.MetadataMergeData, workspace *routing.WorkspaceMergeData, site *routing.SiteMergeData) []string {
+func getComponentPackURLs(componentPackDeps routing.DepMap, workspace *routing.WorkspaceMergeData, site *routing.SiteMergeData) []string {
 	allDeps := componentPackDeps.GetItems()
 	packUrls := make([]string, len(allDeps))
 	for i, packDep := range allDeps {
@@ -123,7 +124,7 @@ func GetSessionMergeData(session *sess.Session) *routing.SessionMergeData {
 }
 
 func GetUserMergeData(session *sess.Session) *routing.UserMergeData {
-	userInfo := session.GetUserInfo()
+	userInfo := session.GetContextUser()
 	userPicture := userInfo.GetPicture()
 	userMergeData := &routing.UserMergeData{
 		ID:        userInfo.ID,
@@ -170,7 +171,7 @@ func MergeRouteData(mergeableText string, mergeData *merge.ServerMergeData) (str
 	return templating.Execute(template, mergeData)
 }
 
-func GetRoutingMergeData(route *meta.Route, workspace *meta.Workspace, metadata *routing.PreloadMetadata, session *sess.Session) (*routing.RouteMergeData, error) {
+func GetRoutingMergeData(route *meta.Route, metadata *routing.PreloadMetadata, session *sess.Session) (*routing.RouteMergeData, error) {
 
 	// Prepare wire data for server merge data
 	wireData := map[string]meta.Group{}
@@ -221,7 +222,7 @@ func GetRoutingMergeData(route *meta.Route, workspace *meta.Workspace, metadata 
 		Params:       route.Params,
 		Namespace:    route.Namespace,
 		Path:         route.Path,
-		Workspace:    GetWorkspaceMergeData(workspace),
+		Workspace:    GetWorkspaceMergeData(session.GetWorkspace()),
 		Theme:        route.ThemeRef,
 		Dependencies: metadata,
 		Title:        mergedRouteTitle,
@@ -243,12 +244,17 @@ func GetSiteMergeData(site *meta.Site) *routing.SiteMergeData {
 }
 
 func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *routing.PreloadMetadata, buildMode bool, session *sess.Session) {
+
+	// #2783 Prevent 3rd party sites from iframing Uesio
+	// Add a content security policy header to prevent any other sites from iframing this site
+	// TODO: make this configurable by site (see issue #2782)
+	w.Header().Set("content-security-policy", "frame-ancestors 'none';")
+
 	w.Header().Set("content-type", "text/html")
 
 	site := session.GetSite()
-	workspace := session.GetWorkspace()
 
-	routingMergeData, err := GetRoutingMergeData(route, workspace, preload, session)
+	routingMergeData, err := GetRoutingMergeData(route, preload, session)
 	if err != nil {
 		msg := "Error getting route merge data: " + err.Error()
 		http.Error(w, msg, http.StatusInternalServerError)

@@ -5,6 +5,8 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/thecloudmasters/uesio/pkg/constant"
+
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
@@ -50,6 +52,10 @@ type CollectionMetadata struct {
 	PluralLabel           string                                 `json:"pluralLabel"`
 }
 
+func (cm *CollectionMetadata) IsDynamic() bool {
+	return cm.Type == "DYNAMIC" || meta.IsBundleableCollection(cm.GetFullName())
+}
+
 func (cm *CollectionMetadata) IsWriteProtected() bool {
 	return cm.Access == "protected" || cm.Access == "protected_write"
 }
@@ -72,8 +78,12 @@ func (cm *CollectionMetadata) GetKey() string {
 }
 
 func (cm *CollectionMetadata) GetField(key string) (*FieldMetadata, error) {
+	return cm.GetFieldWithMetadata(key, nil)
+}
 
-	names := strings.Split(key, "->")
+func (cm *CollectionMetadata) GetFieldWithMetadata(key string, metadata *MetadataCache) (*FieldMetadata, error) {
+
+	names := strings.Split(key, constant.RefSep)
 	if len(names) == 1 {
 		fieldMetadata, ok := cm.Fields[key]
 		if !ok {
@@ -87,7 +97,19 @@ func (cm *CollectionMetadata) GetField(key string) (*FieldMetadata, error) {
 		return nil, errors.New("No metadata provided for field: " + key + " in collection: " + cm.Name)
 	}
 
-	return fieldMetadata.GetSubField(strings.Join(names[1:], "->"))
+	// Now determine the collection
+	if IsReference(fieldMetadata.Type) {
+		if metadata == nil {
+			return nil, errors.New("Getting metadata isn't supported for reference fields")
+		}
+		refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
+		if err != nil {
+			return nil, err
+		}
+		return refCollectionMetadata.GetFieldWithMetadata(strings.Join(names[1:], constant.RefSep), metadata)
+	}
+
+	return fieldMetadata.GetSubField(strings.Join(names[1:], constant.RefSep))
 
 }
 
@@ -160,8 +182,9 @@ type ReferenceGroupMetadata struct {
 }
 
 type ValidationMetadata struct {
-	Type  string `json:"type"`
-	Regex string `json:"regex"`
+	Type      string `json:"type"`
+	Regex     string `json:"regex"`
+	SchemaUri string `json:"schemaUri"`
 }
 
 type FormulaMetadata struct {
@@ -231,7 +254,7 @@ func (fm *FieldMetadata) GetFullName() string {
 }
 
 func (fm *FieldMetadata) GetSubField(key string) (*FieldMetadata, error) {
-	names := strings.Split(key, "->")
+	names := strings.Split(key, constant.RefSep)
 	if len(names) == 1 {
 		fieldMetadata, ok := fm.SubFields[key]
 		if !ok {
@@ -245,6 +268,6 @@ func (fm *FieldMetadata) GetSubField(key string) (*FieldMetadata, error) {
 		return nil, errors.New("No metadata provided for sub-field: " + key + " in collection: " + fm.Name)
 	}
 
-	return fieldMetadata.GetSubField(strings.Join(names[1:], "->"))
+	return fieldMetadata.GetSubField(strings.Join(names[1:], constant.RefSep))
 
 }

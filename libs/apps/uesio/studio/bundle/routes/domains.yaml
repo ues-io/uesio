@@ -1,5 +1,5 @@
 name: domains
 path: app/{app:\w*\/\w*}/site/{sitename}/domains
-view: uesio/studio.domains
-theme: uesio/studio.default
+view: domains
+theme: default
 title: Domains

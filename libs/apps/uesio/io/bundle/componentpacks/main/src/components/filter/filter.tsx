@@ -1,4 +1,11 @@
-import { api, collection, wire, definition, metadata } from "@uesio/ui"
+import {
+	api,
+	collection,
+	component,
+	wire,
+	definition,
+	metadata,
+} from "@uesio/ui"
 import FieldWrapper from "../../utilities/fieldwrapper/fieldwrapper"
 import MonthFilter from "../../utilities/monthfilter/monthfilter"
 import SelectFilter from "../../utilities/selectfilter/selectfilter"
@@ -13,7 +20,7 @@ import ReferenceFilter from "../../utilities/referencefilter/referencefilter"
 import GroupFilter, {
 	GroupFilterProps,
 } from "../../utilities/groupfilter/groupfilter"
-import { LabelPosition } from "../field/field"
+import { LabelPosition, ReferenceFieldOptions } from "../field/field"
 
 type FilterDefinition = {
 	fieldId: string
@@ -25,6 +32,7 @@ type FilterDefinition = {
 	conditionId?: string
 	placeholder?: string
 	operator: wire.ConditionOperators
+	reference?: ReferenceFieldOptions
 }
 
 type CommonProps = {
@@ -67,7 +75,12 @@ const getFilterContent = (
 		}
 		case "USER":
 		case "REFERENCE": {
-			return <ReferenceFilter {...common} />
+			return (
+				<ReferenceFilter
+					{...common}
+					options={definition.reference as ReferenceFieldOptions}
+				/>
+			)
 		}
 		default:
 			return null
@@ -131,7 +144,6 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 	const { fieldId, conditionId, operator, displayAs } = definition
 	const wire = api.wire.useWire(definition.wire, context)
 	if (!wire) return null
-
 	const collection = wire.getCollection()
 	const existingCondition =
 		wire.getCondition(conditionId || path) || undefined
@@ -167,7 +179,8 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 		wire,
 		condition,
 		variant:
-			definition["uesio.variant"] || "uesio/io.field:uesio/io.default",
+			definition[component.STYLE_VARIANT] ||
+			"uesio/io.field:uesio/io.default",
 	}
 
 	return (
@@ -178,7 +191,9 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 			variant={definition.wrapperVariant}
 		>
 			{isGroup ? (
-				<GroupFilter {...(common as GroupFilterProps)} />
+				<GroupFilter
+					{...(common as GroupFilterProps & definition.UtilityProps)}
+				/>
 			) : (
 				getFilterContent(common as CommonProps, definition)
 			)}

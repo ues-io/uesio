@@ -18,6 +18,7 @@ import { mergeDefinitionMaps } from "./merge"
 import { MetadataKey } from "../bands/builder/types"
 import { useShould } from "./display"
 import { DISPLAY_CONDITIONS } from "../componentexports"
+import { component } from ".."
 
 const getVariantKey = (variant: ComponentVariant): MetadataKey =>
 	`${variant.namespace}.${variant.name}` as MetadataKey
@@ -57,7 +58,7 @@ function mergeContextVariants(
 	context: Context
 ): DefinitionMap | undefined {
 	if (!definition) return definition
-	const variantName = definition["uesio.variant"] as MetadataKey
+	const variantName = definition[component.STYLE_VARIANT] as MetadataKey
 	const [namespace] = parseKey(componentType)
 
 	if (!definition) return definition

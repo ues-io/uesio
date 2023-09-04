@@ -61,11 +61,19 @@ func GetAuthConnection(authSourceID string, session *sess.Session) (AuthConnecti
 		return nil, err
 	}
 
-	authType, err := getAuthType(authSource.Type, session)
+	// Enter into a version context to get these
+	// credentails as the datasource's namespace
+	versionSession, err := datasource.EnterVersionContext(authSource.Namespace, session, nil)
 	if err != nil {
 		return nil, err
 	}
-	credentials, err := creds.GetCredentials(authSource.Credentials, session)
+
+	authType, err := getAuthType(authSource.Type, versionSession)
+	if err != nil {
+		return nil, err
+	}
+
+	credentials, err := creds.GetCredentials(authSource.Credentials, versionSession)
 	if err != nil {
 		return nil, err
 	}
@@ -119,10 +127,16 @@ func GetSiteFromHost(host string) (*meta.Site, error) {
 	site.Domain = domain
 	site.Subdomain = subdomain
 
-	bundleDef, err := bundle.GetSiteAppBundle(site)
+	bundleDef, err := bundle.GetSiteBundleDef(site, nil)
 	if err != nil {
 		return nil, err
 	}
+
+	licenseMap, err := datasource.GetLicenses(site.GetAppFullName(), nil)
+	if err != nil {
+		return nil, err
+	}
+	bundleDef.Licenses = licenseMap
 
 	site.SetAppBundle(bundleDef)
 

@@ -54,13 +54,17 @@ const navigate = async (
 ) => {
 	dispatch(setLoading())
 	const routeResponse = await platform.getRoute(context, request)
-	return handleNavigateResponse(context, routeResponse, noPushState)
+	const params = request.path.includes("?")
+		? "?" + context.mergeString(request.path.split("?")[1])
+		: ""
+	return handleNavigateResponse(context, routeResponse, noPushState, params)
 }
 
 const handleNavigateResponse = async (
 	context: Context,
 	routeResponse: RouteState,
-	noPushState?: boolean
+	noPushState?: boolean,
+	params = ""
 ) => {
 	if (!routeResponse) return context
 	const deps = routeResponse.dependencies
@@ -78,7 +82,7 @@ const handleNavigateResponse = async (
 				workspace,
 			},
 			"",
-			prefix + routeResponse.path
+			prefix + routeResponse.path + params
 		)
 	}
 

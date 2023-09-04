@@ -27,15 +27,23 @@ func GetConnection(dataSourceKey string, metadata *adapt.MetadataCache, session 
 		return nil, err
 	}
 
-	mergedType, err := configstore.Merge(datasource.Type, session)
+	// Enter into a version context to get these
+	// credentails as the datasource's namespace
+	versionSession, err := EnterVersionContext(datasource.Namespace, session, connection)
 	if err != nil {
 		return nil, err
 	}
-	adapter, err := adapt.GetAdapter(mergedType, session)
+
+	mergedType, err := configstore.Merge(datasource.Type, versionSession)
 	if err != nil {
 		return nil, err
 	}
-	credentials, err := creds.GetCredentials(datasource.Credentials, session)
+	adapter, err := adapt.GetAdapter(mergedType)
+	if err != nil {
+		return nil, err
+	}
+
+	credentials, err := creds.GetCredentials(datasource.Credentials, versionSession)
 	if err != nil {
 		return nil, err
 	}

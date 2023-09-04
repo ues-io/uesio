@@ -152,6 +152,27 @@ definition:
                     uesio.variant: uesio/io.icon
                     text: dynamic_feed
           - uesio/io.tile:
+              uesio.display:
+                - type: featureFlag
+                  name: manage_integrations
+              uesio.variant: uesio/io.nav
+              uesio.id: integrations
+              uesio.classes:
+                selected:
+                  - type: paramValue
+                    param: selected
+                    value: integrations
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/integrations
+              content:
+                - uesio/io.text:
+                    text: Integrations
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: electrical_services
+          - uesio/io.tile:
               uesio.variant: uesio/io.nav
               uesio.id: selectlists
               uesio.classes:
@@ -328,27 +349,6 @@ definition:
           - uesio/io.tile:
               uesio.display:
                 - type: featureFlag
-                  name: manage_credentials
-              uesio.variant: uesio/io.nav
-              uesio.id: credentials
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: credentials
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/credentials
-              content:
-                - uesio/io.text:
-                    text: Credentials
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: vpn_key
-          - uesio/io.tile:
-              uesio.display:
-                - type: featureFlag
                   name: manage_secrets
               uesio.variant: uesio/io.nav
               uesio.id: secrets
@@ -367,6 +367,27 @@ definition:
                 - uesio/io.text:
                     uesio.variant: uesio/io.icon
                     text: lock
+          - uesio/io.tile:
+              uesio.display:
+                - type: featureFlag
+                  name: manage_credentials
+              uesio.variant: uesio/io.nav
+              uesio.id: credentials
+              uesio.classes:
+                selected:
+                  - type: paramValue
+                    param: selected
+                    value: credentials
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/credentials
+              content:
+                - uesio/io.text:
+                    text: Credentials
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: vpn_key
           - uesio/io.tile:
               uesio.display:
                 - type: featureFlag

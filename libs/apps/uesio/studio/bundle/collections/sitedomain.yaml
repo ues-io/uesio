@@ -3,5 +3,7 @@ uniqueKey:
   - uesio/studio.domain
   - uesio/studio.type
 nameField: uesio/studio.domain
+access: protected
+accessField: uesio/studio.site
 label: site domain
 pluralLabel: site domains

@@ -14,10 +14,10 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     authsources:
-      collection: uesio/studio.allmetadata
+      collection: uesio/studio.authsource
       conditions:
-        - field: uesio/studio.type
-          value: authsources
+        - field: uesio/studio.allmetadata
+          value: true
         - field: uesio/studio.item
           value: $Param{namespace}.$Param{authsourcename}
   # Components are how we describe the layout of our view
@@ -56,7 +56,7 @@ definition:
                     components:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.main
-                          title: Data Source - ${uesio/studio.name}
+                          title: Auth Source - ${uesio/studio.name}
                           subtitle: $Param{namespace}
                           actions:
                             - uesio/io.group:

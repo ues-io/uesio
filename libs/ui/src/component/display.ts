@@ -192,6 +192,8 @@ function compare(a: unknown, b: unknown, op: DisplayOperator) {
 }
 
 function should(condition: DisplayCondition, context: Context): boolean {
+	if (!condition) return true
+
 	if (condition.type === "collectionContext") {
 		const wire = context.getWire()
 		const collection = wire?.getCollection()
@@ -268,7 +270,7 @@ function should(condition: DisplayCondition, context: Context): boolean {
 	const compareToValue =
 		typeof condition.value === "string"
 			? context.mergeString(condition.value as string)
-			: condition.value || (canHaveMultipleValues ? condition.values : "")
+			: condition.value ?? (canHaveMultipleValues ? condition.values : "")
 
 	if (condition.type === "hasNoValue") return !compareToValue
 	if (condition.type === "hasValue") return !!compareToValue
@@ -284,7 +286,7 @@ function should(condition: DisplayCondition, context: Context): boolean {
 		const comparator = (r: WireRecord) =>
 			compare(
 				compareToValue,
-				condition.field ? r.getFieldValue(condition.field) || "" : "",
+				condition.field ? r.getFieldValue(condition.field) ?? "" : "",
 				condition.operator
 			)
 		if (record) return comparator(record)
@@ -318,19 +320,33 @@ const shouldAll = (
 	return conditions.every((condition) => should(condition, context))
 }
 
+const extractWireIdsFromConditions = (
+	conditions: DisplayCondition[],
+	uniqueWires: Set<string>
+) => {
+	conditions.forEach((condition) => {
+		if ("wire" in condition && condition.wire) {
+			uniqueWires.add(condition.wire)
+		} else if (
+			condition.type === "group" &&
+			condition.conditions instanceof Array
+		) {
+			extractWireIdsFromConditions(condition.conditions, uniqueWires)
+		}
+	})
+}
+
 // Create a list of all of the wires that we're going to care about
-const getWiresForConditions = (
+export const getWiresForConditions = (
 	conditions: DisplayCondition[] | undefined,
-	context: Context
+	context: Context | undefined,
+	uniqueWires = new Set<string>()
 ) => {
 	if (!conditions) return []
-	const contextWire = context.getWireId()
-	return [
-		...(contextWire ? [contextWire] : []),
-		...conditions.flatMap((condition) =>
-			"wire" in condition && condition.wire ? [condition.wire] : []
-		),
-	]
+	const contextWire = context?.getWireId()
+	if (contextWire) uniqueWires.add(contextWire)
+	extractWireIdsFromConditions(conditions, uniqueWires)
+	return Array.from(uniqueWires.values())
 }
 
 const useShouldFilter = <T extends BaseDefinition>(

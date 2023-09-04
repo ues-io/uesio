@@ -1,0 +1,4 @@
+name: lastname
+type: TEXT
+label: Last Name
+required: true

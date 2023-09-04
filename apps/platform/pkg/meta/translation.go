@@ -86,7 +86,7 @@ func (t *Translation) Len() int {
 }
 
 func (t *Translation) UnmarshalYAML(node *yaml.Node) error {
-	err := validateNodeLanguage(node, t.Language)
+	err := validateMetadataNameNode(node, t.Language, "language")
 	if err != nil {
 		return err
 	}

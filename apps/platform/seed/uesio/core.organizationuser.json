@@ -1,0 +1,10 @@
+[
+	{
+		"uesio/core.user": {
+			"uesio/core.uniquekey": "ben"
+		},
+		"uesio/core.org": {
+			"uesio/core.uniquekey": "uesio"
+		}
+	}
+]

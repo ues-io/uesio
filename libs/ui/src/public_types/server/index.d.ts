@@ -43,6 +43,13 @@ interface LoadRequest {
 	conditions?: ConditionRequest[]
 	order?: LoadOrder[]
 }
+type Logger = (message: string, ...data: unknown[]) => void
+
+interface LogApi {
+	info: Logger
+	warn: Logger
+	error: Logger
+}
 interface DeleteApi {
 	getOld: (field: string) => FieldValue
 }
@@ -61,6 +68,38 @@ interface UpdatesApi {
 interface DeletesApi {
 	get: () => DeleteApi[]
 }
+interface SessionApi {
+	getId: () => string
+}
+interface UserApi {
+	getId: () => string
+	getUsername: () => string
+	getEmail: () => string
+	getUniqueKey: () => string
+}
+
+interface BotHttpRequest {
+	url: string
+	method: string
+	headers?: Record<string, string>
+	body?: string | Record<string, unknown>
+}
+interface BotHttpResponse {
+	code: number
+	status: string
+	headers: Record<string, string>
+	body: string | Record<string, unknown> | null
+}
+
+interface HttpApi {
+	request: (options: BotHttpRequest) => BotHttpResponse
+}
+type RunIntegrationAction = (
+	integration: string,
+	action: string,
+	options: unknown
+) => unknown
+
 interface BeforeSaveBotApi {
 	addError: (error: string) => void
 	load: (loadRequest: LoadRequest) => Record[]
@@ -70,22 +109,14 @@ interface BeforeSaveBotApi {
 }
 interface AfterSaveBotApi extends BeforeSaveBotApi {
 	save: (collectionName: string, records: Record[]) => void
-	runIntegrationAction: (
-		integration: string,
-		action: string,
-		options: unknown
-	) => void
+	runIntegrationAction: RunIntegrationAction
 	getConfigValue: (configValueKey: string) => string
 	asAdmin: AsAdminApi
 }
 interface AsAdminApi {
 	load: (loadRequest: LoadRequest) => Record[]
 	save: (collectionName: string, records: Record[]) => void
-	runIntegrationAction: (
-		integration: string,
-		action: string,
-		options: unknown
-	) => void
+	runIntegrationAction: RunIntegrationAction
 	getConfigValue: (configValueKey: string) => string
 }
 interface ListenerBotApi {
@@ -93,13 +124,13 @@ interface ListenerBotApi {
 	load: (loadRequest: LoadRequest) => Record[]
 	params: BotParamsApi
 	save: (collectionName: string, records: Record[]) => void
-	runIntegrationAction: (
-		integration: string,
-		action: string,
-		options: unknown
-	) => void
+	runIntegrationAction: RunIntegrationAction
 	getConfigValue: (configValueKey: string) => string
 	asAdmin: AsAdminApi
+	getSession: () => SessionApi
+	getUser: () => UserApi
+	log: LogApi
+	http: HttpApi
 }
 export type {
 	ListenerBotApi,

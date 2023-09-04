@@ -43,48 +43,6 @@
 			"tags": [],
 			"implicitDependencies": ["cli","ui"]
 		},
-		"apps-uesio-crm": {
-			"root": "libs/apps/uesio/crm",
-			"sourceRoot": "libs/apps/uesio/crm",
-			"projectType": "library",
-			"schematics": {},
-			"architect": {
-				"build": {
-					"builder": "nx:run-commands",
-					"options": {
-						"commands": [
-							"uesio pack",
-							"npx tsc --noEmit --project ./tsconfig.lib.json"
-						],
-						"parallel": false,
-						"cwd": "libs/apps/uesio/crm"
-					}
-				},
-				"watch": {
-					"builder": "nx:run-commands",
-					"options": {
-						"command": "uesio pack -w",
-						"cwd": "libs/apps/uesio/crm"
-					}
-				},
-				"deploy": {
-					"builder": "nx:run-commands",
-					"options": {
-						"command": "uesio deploy",
-						"cwd": "libs/apps/uesio/crm"
-					}
-				},
-				"test": {
-					"builder": "nx:run-commands",
-					"options": {
-						"command": "echo TODO: set up test for apps-uesio-crm.",
-						"cwd": "libs/apps/uesio/crm"
-					}
-				}
-			},
-			"tags": [],
-			"implicitDependencies": ["cli","ui"]
-		},
 		"apps-uesio-io": {
 			"root": "libs/apps/uesio/io",
 			"sourceRoot": "libs/apps/uesio/studio/bundle",
@@ -190,8 +148,7 @@
 				"test": {
 					"builder": "@nrwl/jest:jest",
 					"options": {
-						"jestConfig": "libs/apps/uesio/studio/jest.config.ts",
-						"passWithNoTests": true
+						"jestConfig": "libs/apps/uesio/studio/jest.config.ts"
 					},
 					"outputs": ["coverage/libs/apps/uesio/studio"]
 				}

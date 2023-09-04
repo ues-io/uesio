@@ -13,9 +13,31 @@ user_id: jsonpath "$.user.id"
 DELETE https://{{host}}:{{port}}/site/api/v1/collection/uesio/studio/site?uesio/studio.name=eq.testsite
 HTTP 204
 
-# Delete the tests app if it already exists, which should cascade delete the workspace and all of its data
+# Delete the tests app if it already exists, which should cascade delete the workspace and all of its metadata
 DELETE https://{{host}}:{{port}}/site/api/v1/collection/uesio/studio/app?uesio/studio.fullname=eq.uesio%2Ftests
 HTTP 204
+
+# Verify that workspaces are cascade deleted
+POST https://{{host}}:{{port}}/site/wires/load
+{
+    "wires": [
+        {
+            "wire": "workspaces",
+            "collection": "uesio/studio.workspace",
+            "conditions": [
+                {
+                    "field": "uesio/studio.app->uesio/studio.fullname",
+                    "operator": "EQ",
+                    "value": "uesio/tests"
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" not exists
+jsonpath "$.wires[0].data" count == 0
 
 # Create the tests app
 POST https://{{host}}:{{port}}/site/wires/save
@@ -43,6 +65,81 @@ POST https://{{host}}:{{port}}/site/wires/save
 HTTP 200
 [Captures]
 app_id: jsonpath "$.wires[0].changes['1']['uesio/core.id']"
+[Asserts]
+jsonpath "$.wires[0].errors" == null
+
+# Create tests team
+POST https://{{host}}:{{port}}/site/wires/save
+{
+    "wires": [
+        {
+            "wire": "newteam",
+            "collection":"uesio/studio.team",
+            "changes": {
+                "1": {
+                    "uesio/studio.app": {
+                        "uesio/core.id": "{{app_id}}"
+                    },
+                    "uesio/studio.name": "admins"
+                }
+            }
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" == null
+[Captures]
+team_id: jsonpath "$.wires[0].changes['1']['uesio/core.id']"
+
+# Get ben's id
+POST https://{{host}}:{{port}}/site/wires/load
+{
+    "wires": [
+        {
+            "collection": "uesio/core.user",
+            "conditions": [
+                {
+                    "field":"uesio/core.uniquekey",
+                    "operator":"EQ",
+                    "valueSource":"VALUE",
+                    "value":"ben"
+                }
+            ],
+            "query": true
+        }
+    ]
+}
+HTTP 200
+[Captures]
+ben_id: jsonpath "$.wires[0].data[*]['uesio/core.id']" nth 0
+
+# Put ben on the team
+POST https://{{host}}:{{port}}/site/wires/save
+{
+    "wires": [
+        {
+            "wire": "newTeamMember",
+            "collection":"uesio/studio.teammember",
+            "changes": {
+                "1": {
+                    "uesio/studio.app": {
+                        "uesio/core.id": "{{app_id}}"
+                    },
+                    "uesio/studio.team": {
+                        "uesio/core.id": "{{team_id}}"
+                    },
+                    "uesio/studio.member": {
+                        "uesio/core.id": "{{ben_id}}"
+                    }
+                }
+            }
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" == null
 
 # Create dev workspace
 POST https://{{host}}:{{port}}/site/wires/save
@@ -63,6 +160,8 @@ POST https://{{host}}:{{port}}/site/wires/save
     ]
 }
 HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" == null
 
 # Create truncatetests workspace
 POST https://{{host}}:{{port}}/site/wires/save
@@ -83,44 +182,5 @@ POST https://{{host}}:{{port}}/site/wires/save
     ]
 }
 HTTP 200
-
-# Create a bundle, so that we can create a site
-POST https://studio.uesio-dev.com:3000/workspace/uesio/tests/dev/bots/call/uesio/studio/createbundle
-{
-    "type": "patch",
-    "description": "test bundle"
-}
-HTTP 200
-[Captures]
-major: jsonpath "$.params.major"
-minor: jsonpath "$.params.minor"
-patch: jsonpath "$.params.patch"
 [Asserts]
-jsonpath "$.success" == true
-jsonpath "$.error" == ""
-jsonpath "$.params.description" == "test bundle"
-
-# Create a site using that bundle
-POST https://{{host}}:{{port}}/site/wires/save
-{
-    "wires": [
-        {
-            "wire": "newsite",
-            "collection": "uesio/studio.site",
-            "changes": {
-                "1": {
-                    "uesio/studio.app": {
-                        "uesio/core.id": "{{app_id}}"
-                    },
-                    "uesio/studio.name": "testsite",
-                    "uesio/studio.bundle": {
-                        "uesio/core.uniquekey": "uesio/tests:{{major}}:{{minor}}:{{patch}}"
-                    }
-                }
-            }
-        }
-    ]
-}
-HTTP 200
-[Asserts]
-jsonpath "$.wires[0].changes['1']['uesio/core.uniquekey']" == "uesio/tests:testsite"
+jsonpath "$.wires[0].errors" == null

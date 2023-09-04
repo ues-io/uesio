@@ -1,7 +1,7 @@
-import { FunctionComponent, DragEvent } from "react"
+import { DragEvent } from "react"
 import { definition, styles } from "@uesio/ui"
 
-interface UploadAreaProps extends definition.UtilityProps {
+interface UploadAreaProps {
 	accept?: string
 	onUpload: (files: FileList | null) => void
 	onDelete?: () => void
@@ -14,7 +14,7 @@ const StyleDefaults = Object.freeze({
 	fileinput: ["hidden"],
 })
 
-const UploadArea: FunctionComponent<UploadAreaProps> = (props) => {
+const UploadArea: definition.UtilityComponent<UploadAreaProps> = (props) => {
 	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
 	const {

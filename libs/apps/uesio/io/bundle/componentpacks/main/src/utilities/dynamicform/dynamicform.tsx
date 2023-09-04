@@ -3,7 +3,7 @@ import { MutableRefObject } from "react"
 import List from "../../components/list/list"
 import { useDeepCompareEffect } from "react-use"
 
-interface FormProps extends definition.UtilityProps {
+interface FormProps {
 	path: string
 	fields: Record<string, wire.ViewOnlyField>
 	content?: definition.DefinitionList

@@ -71,7 +71,7 @@ func getMetadataList(metadataType, app, version, sessid, grouping string) ([]str
 		if grouping != "" {
 			groupingURL = "/" + grouping
 		}
-		url := fmt.Sprintf("version/%s/%s/%s/metadata/types/%s/list%s", app, depNamespace, dep.Version, metadataType, groupingURL)
+		url := fmt.Sprintf("version/%s/%s/metadata/types/%s/namespace/%s/list%s", app, dep.Version, metadataType, depNamespace, groupingURL)
 
 		metadataList := map[string]datasource.MetadataResponse{}
 		err = call.GetJSON(url, sessid, &metadataList)

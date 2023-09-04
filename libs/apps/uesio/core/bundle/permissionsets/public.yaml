@@ -1,6 +1,6 @@
 name: public
 public: true
-named:
+named: {}
 views:
   uesio/core.login: true
   uesio/core.notfound: true

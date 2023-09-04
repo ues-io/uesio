@@ -1,6 +1,6 @@
 import { definition, styles } from "@uesio/ui"
 
-interface IconUtilityProps extends definition.UtilityProps {
+interface IconUtilityProps {
 	icon?: string
 	fill?: boolean
 	weight?: number

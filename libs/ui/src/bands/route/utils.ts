@@ -9,7 +9,7 @@ import { setMany as setFeatureFlag } from "../featureflag"
 import { setMany as setComponent } from "../component"
 import { initAll as initWire } from "../wire"
 import { init as initCollection } from "../collection"
-import { PlainViewDef } from "../../definition/viewdef"
+import { ViewMetadata } from "../../definition/ViewMetadata"
 import { ComponentVariant } from "../../definition/componentvariant"
 import { ConfigValueState } from "../../definition/configvalue"
 import { LabelState } from "../../definition/label"
@@ -18,24 +18,24 @@ import { parseKey } from "../../component/path"
 import { ThemeState } from "../../definition/theme"
 import { FeatureFlagState } from "../../definition/featureflag"
 import { initExistingWire } from "../wire/operations/initialize"
-import { EntityState } from "@reduxjs/toolkit"
-import { PlainWire } from "../wire/types"
+import { EntityId, EntityState } from "@reduxjs/toolkit"
+import { PlainWire, ServerWire } from "../wire/types"
 import { dispatch } from "../../store/store"
 import { ComponentState } from "../component/types"
 import { PlainCollection, PlainCollectionMap } from "../collection/types"
+import { transformServerWire } from "../wire/transform"
 
 type Dep<T> = Record<string, T> | undefined
 
 const attachDefToWires = (
-	wires?: EntityState<PlainWire>,
-	viewdefs?: EntityState<PlainViewDef>,
+	wires?: EntityState<ServerWire | PlainWire>,
+	viewdefs?: EntityState<ViewMetadata>,
 	collections?: EntityState<PlainCollection>
 ) => {
-	if (!wires || !viewdefs) return
-	wires.ids.forEach((wirename) => {
+	if (!wires || !viewdefs) return wires
+	wires.ids.forEach((wirename: EntityId) => {
 		const wire = wires.entities[wirename]
 		if (!wire) return
-
 		const viewId = wire.view.split("(")[0]
 		const wireDef =
 			viewdefs.entities?.[viewId]?.definition.wires?.[wire.name]
@@ -44,7 +44,7 @@ const attachDefToWires = (
 				`Could not find wire def for wire: ${wire.view} : ${wire.name}`
 			)
 		wires.entities[wirename] = initExistingWire(
-			wire,
+			transformServerWire(wire as ServerWire),
 			wireDef,
 			(collections?.entities || {}) as PlainCollectionMap
 		)
@@ -54,7 +54,7 @@ const attachDefToWires = (
 const dispatchRouteDeps = (deps: Dependencies | undefined) => {
 	if (!deps) return
 
-	const viewdefs = deps.viewdef?.entities as Dep<PlainViewDef>
+	const viewdefs = deps.viewdef?.entities as Dep<ViewMetadata>
 	if (viewdefs) dispatch(setViewDef(viewdefs))
 
 	const configvalues = deps.configvalue?.entities as Dep<ConfigValueState>

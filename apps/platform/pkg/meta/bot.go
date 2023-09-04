@@ -20,11 +20,15 @@ func NewBot(key string) (*Bot, error) {
 	var collectionKey, botKey string
 	switch botType {
 	case "LISTENER", "GENERATOR":
-		if (keyArraySize) != 2 {
-			return nil, errors.New("Invalid Bot Key")
-		}
 		collectionKey = ""
 		botKey = keyArray[1]
+		if (keyArraySize) > 3 {
+			return nil, errors.New("Invalid Bot Key")
+		}
+		if (keyArraySize) == 3 {
+			collectionKey = keyArray[1]
+			botKey = keyArray[2]
+		}
 	default:
 		if (keyArraySize) != 3 {
 			return nil, errors.New("Invalid Bot Key")
@@ -239,6 +243,30 @@ func NewParamError(message string, param string) error {
 	return &BotParamValidationError{Param: param, Message: message}
 }
 
+type BotAccessError struct {
+	message string
+}
+
+func (e *BotAccessError) Error() string {
+	return e.message
+}
+
+func NewBotAccessError(message string) error {
+	return &BotAccessError{message}
+}
+
+type BotNotFoundError struct {
+	message string
+}
+
+func (e *BotNotFoundError) Error() string {
+	return e.message
+}
+
+func NewBotNotFoundError(message string) error {
+	return &BotNotFoundError{message}
+}
+
 // ValidateParams checks validates received a map of provided bot params
 // agaisnt any bot parameter metadata defined for the Bot
 func (b *Bot) ValidateParams(params map[string]interface{}) error {
@@ -246,7 +274,7 @@ func (b *Bot) ValidateParams(params map[string]interface{}) error {
 	for _, param := range b.Params {
 		paramValue := params[param.Name]
 		// First check for requiredness
-		if paramValue == nil {
+		if paramValue == nil || paramValue == "" {
 			if param.Required {
 				return NewParamError("missing required param", param.Name)
 			} else {
@@ -267,6 +295,11 @@ func (b *Bot) ValidateParams(params map[string]interface{}) error {
 			// Cast to the corresponding type
 			if _, err := strconv.ParseBool(paramValue.(string)); err != nil {
 				return NewParamError("param value must either be 'true' or 'false'", param.Name)
+			}
+		case "METADATANAME":
+			ok := IsValidMetadataName(fmt.Sprintf("%v", paramValue))
+			if !ok {
+				return NewParamError("param failed metadata validation, no capital letters or special characters allowed", param.Name)
 			}
 		}
 	}

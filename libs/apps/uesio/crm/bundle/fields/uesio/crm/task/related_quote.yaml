@@ -1,5 +1,0 @@
-name: related_quote
-type: REFERENCE
-label: Related Quote
-reference:
-  collection: uesio/crm.quote

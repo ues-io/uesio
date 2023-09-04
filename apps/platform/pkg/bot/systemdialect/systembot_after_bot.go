@@ -2,17 +2,17 @@ package systemdialect
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bot"
-	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/sess"
-	"strings"
 )
 
 func runBotAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 
-	fileUploadOps := []filesource.FileUploadOp{}
+	fileUploadOps := []*filesource.FileUploadOp{}
 
 	// Pre-create an Attachment file for the new Bot
 	var err = request.LoopInserts(func(change *adapt.ChangeItem) error {
@@ -43,16 +43,14 @@ func runBotAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, sess
 		}
 
 		newFileUpload := filesource.FileUploadOp{
-			Data: strings.NewReader(defaultText),
-			Details: &fileadapt.FileDetails{
-				ContentLength: int64(len(defaultText)),
-				Path:          dialectObject.GetFilePath(),
-				CollectionID:  "uesio/studio.bot",
-				RecordID:      change.IDValue,
-			},
+			Data:          strings.NewReader(defaultText),
+			ContentLength: int64(len(defaultText)),
+			Path:          dialectObject.GetFilePath(),
+			CollectionID:  "uesio/studio.bot",
+			RecordID:      change.IDValue,
 		}
 
-		fileUploadOps = append(fileUploadOps, newFileUpload)
+		fileUploadOps = append(fileUploadOps, &newFileUpload)
 
 		return nil
 	})
@@ -65,7 +63,7 @@ func runBotAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, sess
 		return nil
 	}
 
-	_, err = filesource.Upload(fileUploadOps, connection, session)
+	_, err = filesource.Upload(fileUploadOps, connection, session, request.Params)
 	if err != nil {
 		return err
 	}

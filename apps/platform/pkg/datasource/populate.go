@@ -10,7 +10,9 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func populateAutoNumbers(field *adapt.FieldMetadata) validationFunc {
+type ChangeProcessor func(change *adapt.ChangeItem) *adapt.SaveError
+
+func populateAutoNumbers(field *adapt.FieldMetadata) ChangeProcessor {
 	return func(change *adapt.ChangeItem) *adapt.SaveError {
 		if !change.IsNew {
 			return nil
@@ -18,11 +20,15 @@ func populateAutoNumbers(field *adapt.FieldMetadata) validationFunc {
 
 		autoNumberMeta := field.AutoNumberMetadata
 		if autoNumberMeta == nil {
-			return adapt.NewSaveError(change.RecordKey, field.GetFullName(), "Missing autonumber metadata")
+			autoNumberMeta = (*adapt.AutoNumberMetadata)(&meta.DefaultAutoNumberMetadata)
 		}
 		format := "%0" + strconv.Itoa(autoNumberMeta.LeadingZeros) + "d"
 		sufix := fmt.Sprintf(format, change.Autonumber)
+
 		an := autoNumberMeta.Prefix + "-" + sufix
+		if autoNumberMeta.Prefix == "" {
+			an = sufix
+		}
 
 		// See if we're trying to set this value for an insert.
 		// If so, don't set the autonumber and just keep its current
@@ -41,7 +47,7 @@ func populateAutoNumbers(field *adapt.FieldMetadata) validationFunc {
 	}
 }
 
-func populateTimestamps(field *adapt.FieldMetadata, timestamp int64) validationFunc {
+func populateTimestamps(field *adapt.FieldMetadata, timestamp int64) ChangeProcessor {
 	return func(change *adapt.ChangeItem) *adapt.SaveError {
 		// Only populate fields marked with CREATE on insert
 		// Always populate the fields marked with UPDATE
@@ -55,7 +61,7 @@ func populateTimestamps(field *adapt.FieldMetadata, timestamp int64) validationF
 	}
 }
 
-func populateUser(field *adapt.FieldMetadata, user *meta.User) validationFunc {
+func populateUser(field *adapt.FieldMetadata, user *meta.User) ChangeProcessor {
 	return func(change *adapt.ChangeItem) *adapt.SaveError {
 		// Only populate fields marked with CREATE on insert
 		// Always populate the fields marked with UPDATE
@@ -86,24 +92,18 @@ func Populate(op *adapt.SaveOp, connection adapt.Connection, session *sess.Sessi
 		return err
 	}
 
-	populations := []validationFunc{}
+	populations := []ChangeProcessor{}
 	for _, field := range op.Metadata.Fields {
-
-		if !session.GetContextPermissions().HasFieldEditPermission(collectionKey, field.GetFullName()) {
-			return fmt.Errorf("Profile %s does not have edit access to the %s field.", session.GetProfile(), field.GetFullName())
-		}
-
 		if field.AutoPopulate == "UPDATE" || field.AutoPopulate == "CREATE" {
 			if field.Type == "TIMESTAMP" {
 				timestamp := time.Now().Unix()
 				populations = append(populations, populateTimestamps(field, timestamp))
 			}
 			if field.Type == "USER" {
-				user := session.GetUserInfo()
+				user := session.GetContextUser()
 				populations = append(populations, populateUser(field, user))
 			}
-		}
-		if field.Type == "AUTONUMBER" {
+		} else if field.Type == "AUTONUMBER" {
 			populations = append(populations, populateAutoNumbers(field))
 		}
 	}
@@ -120,6 +120,12 @@ func Populate(op *adapt.SaveOp, connection adapt.Connection, session *sess.Sessi
 				op.AddError(err)
 			}
 		}
-		return nil
+		// Enforce field-level security for save
+		return change.Loop(func(field string, value interface{}) error {
+			if !session.GetContextPermissions().HasFieldEditPermission(collectionKey, field) {
+				return fmt.Errorf("Profile %s does not have edit access to the %s field.", session.GetContextProfile(), field)
+			}
+			return nil
+		})
 	})
 }

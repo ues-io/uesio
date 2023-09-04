@@ -11,6 +11,21 @@ variants:
 category: INTERACTION
 discoverable: true
 properties:
+  - name: referenceCollection
+    type: FIELD_METADATA
+    display: false
+    viewOnly: true
+    wireProperty: wire
+    fieldProperty: fieldId
+    metadataProperty: reference.collection
+    displayConditions:
+      - type: fieldValue
+        field: fieldDisplayType
+        operator: IN
+        values:
+          - REFERENCE
+          - USER
+          - FILE
   - name: fieldDisplayType
     type: FIELD_METADATA
     display: false
@@ -18,6 +33,18 @@ properties:
     wireProperty: wire
     fieldProperty: fieldId
     metadataProperty: type
+    onChange:
+      - updates:
+          - field: reference
+          - field: order
+        conditions:
+          - type: fieldValue
+            field: fieldDisplayType
+            operator: NOT_IN
+            values:
+              - REFERENCE
+              - USER
+              - FILE
   - name: wire
     label: Wire
     type: WIRE
@@ -36,6 +63,12 @@ properties:
     displayConditions:
       - type: hasNoValue
         value: ${conditionId}
+    onChange:
+      - updates:
+          - field: reference
+        conditions:
+          - type: hasNoValue
+            field: fieldId
   - name: operator
     type: SELECT
     label: Condition Operator
@@ -107,9 +140,50 @@ properties:
           - TEXT
           - LONGTEXT
           - EMAIL
+  - name: reference
+    label: Reference filter options
+    type: STRUCT
+    displayConditions:
+      - type: fieldValue
+        field: fieldDisplayType
+        operator: IN
+        values:
+          - REFERENCE
+          - USER
+          - FILE
+    properties:
+      - name: template
+        type: TEXT
+        label: Display Template
+      - name: searchFields
+        type: COLLECTION_FIELDS
+        collectionName: "$Parent.Record{referenceCollection}"
+        label: Search Fields
+      - name: returnFields
+        type: COLLECTION_FIELDS
+        collectionName: "$Parent.Record{referenceCollection}"
+        label: Return Fields
+      - name: order
+        type: LIST
+        subtype: STRUCT
+        items:
+          addLabel: Add Reference Search Order Field
+          displayTemplate: "${field} - ${desc}"
+          title: Reference Search Order Field
+          defaultDefinition:
+            desc: false
+          properties:
+            - name: field
+              type: COLLECTION_FIELD
+              label: Order Field
+              collectionName: "$Parent.Parent.Parent.Record{referenceCollection}"
+            - name: desc
+              type: CHECKBOX
+              label: Descending
 sections:
   - type: HOME
     properties:
+      - referenceCollection
       - fieldDisplayType
       - wire
       - conditionId
@@ -119,5 +193,6 @@ sections:
       - label
       - labelPosition
       - placeholder
+      - reference
   - type: STYLES
   - type: DISPLAY

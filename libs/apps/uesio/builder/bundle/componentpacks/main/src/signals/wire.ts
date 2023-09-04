@@ -122,8 +122,10 @@ const signals: SignalBandDefinition = {
 				},
 				{
 					name: "value",
-					type: "TEXT",
+					type: "FIELD_VALUE",
 					label: "Value",
+					wireProperty: "wire",
+					fieldProperty: "field",
 				},
 			],
 		},
@@ -304,6 +306,7 @@ const signals: SignalBandDefinition = {
 					label: "Wires",
 				},
 			],
+			canError: true,
 		},
 		[`${BAND}/LOAD_NEXT_BATCH`]: {
 			label: "Load Next Batch",
@@ -315,6 +318,7 @@ const signals: SignalBandDefinition = {
 					label: "Wires",
 				},
 			],
+			canError: true,
 		},
 		[`${BAND}/LOAD_ALL`]: {
 			label: "Load All",
@@ -326,6 +330,7 @@ const signals: SignalBandDefinition = {
 					label: "Wires",
 				},
 			],
+			canError: true,
 		},
 		[`${BAND}/SAVE`]: {
 			label: "Save Wire(s)",
@@ -337,6 +342,7 @@ const signals: SignalBandDefinition = {
 					label: "Wires",
 				},
 			],
+			canError: true,
 		},
 	} as Record<string, SignalDescriptor>,
 }

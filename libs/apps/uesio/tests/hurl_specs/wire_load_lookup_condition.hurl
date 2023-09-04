@@ -59,9 +59,8 @@ main.tenant = $2 AND
 main.uniquekey = ANY ($3)
 ORDER BY main.id::text asc
 LIMIT 501```
-jsonpath "$.wires[1].data[*]['uesio/tests.text']" nth 0 == "text 1"
-jsonpath "$.wires[1].data[*]['uesio/core.uniquekey']" nth 0 == "ID-001"
-
+jsonpath "$.wires[1].data[0]['uesio/tests.text']" == "text 1"
+jsonpath "$.wires[1].data[0]['uesio/core.uniquekey']" == "ID-001"
 
 # NOT_IN Operator with values
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
@@ -165,8 +164,7 @@ main.tenant = $2 AND
 main.uniquekey = ANY ($3)
 ORDER BY main.id::text asc
 LIMIT 501```
-jsonpath "$.wires[1].data[*]" isEmpty
-
+jsonpath "$.wires[1].data" isEmpty
 
 # NOT_IN Operator without values
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load

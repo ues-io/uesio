@@ -15,32 +15,42 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     permissionsets:
-      collection: uesio/studio.allmetadata
+      collection: uesio/studio.permissionset
       conditions:
-        - field: uesio/studio.type
-          value: permissionsets
+        - field: uesio/studio.allmetadata
+          value: true
         - field: uesio/studio.item
           value: $Param{namespace}.$Param{permissionsetname}
     routes:
-      collection: uesio/studio.allmetadata
+      collection: uesio/studio.route
       conditions:
-        - field: uesio/studio.type
-          value: routes
+        - field: uesio/studio.allmetadata
+          value: true
     collections:
-      collection: uesio/studio.allmetadata
+      collection: uesio/studio.collection
       conditions:
-        - field: uesio/studio.type
-          value: collections
+        - field: uesio/studio.allmetadata
+          value: true
     views:
-      collection: uesio/studio.allmetadata
+      collection: uesio/studio.view
       conditions:
+        - field: uesio/studio.allmetadata
+          value: true
+    bots:
+      collection: uesio/studio.bot
+      conditions:
+        - field: uesio/studio.allmetadata
+          value: true
         - field: uesio/studio.type
-          value: views
+          operator: IN
+          values:
+            - GENERATOR
+            - LISTENER
     files:
-      collection: uesio/studio.allmetadata
+      collection: uesio/studio.file
       conditions:
-        - field: uesio/studio.type
-          value: files
+        - field: uesio/studio.allmetadata
+          value: true
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -176,11 +186,35 @@ definition:
                                       fieldId: uesio/studio.allowallcollections
                                       displayAs: "TOGGLE"
                                   - uesio/io.field:
+                                      fieldId: uesio/studio.allowallbots
+                                      displayAs: "TOGGLE"
+                                      uesio.display:
+                                        - type: featureFlag
+                                          name: manage_bots
+                                  - uesio/io.field:
                                       fieldId: uesio/studio.viewallrecords
                                       displayAs: "TOGGLE"
                                   - uesio/io.field:
                                       fieldId: uesio/studio.modifyallrecords
                                       displayAs: "TOGGLE"
+                      - uesio/io.box:
+                          uesio.variant: uesio/io.section
+                          uesio.display:
+                            - type: featureFlag
+                              name: manage_bots
+                          components:
+                            - uesio/io.titlebar:
+                                title: Bots
+                                uesio.variant: uesio/io.section
+                            - uesio/io.box:
+                                components:
+                                  - uesio/studio.permissionpicker:
+                                      uesio.context:
+                                        workspace:
+                                          name: $Param{workspacename}
+                                          app: $Param{app}
+                                      fieldId: uesio/studio.botrefs
+                                      wireName: bots
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           components:
@@ -259,6 +293,12 @@ definition:
                                           type: CHECKBOX
                                         - name: delete
                                           label: Delete
+                                          type: CHECKBOX
+                                        - name: modifyall
+                                          label: Modify all
+                                          type: CHECKBOX
+                                        - name: viewall
+                                          label: View all
                                           type: CHECKBOX
                                         - name: fields
                                           label: Fields

@@ -149,7 +149,7 @@ func AppInit() error {
 		fmt.Println("Created new app: " + appFullName)
 	}
 
-	generateURL := "version/uesio/core/uesio/core/v0.0.1/metadata/generate/init"
+	generateURL := "version/uesio/core/v0.0.1/metadata/generate/uesio/core/init"
 
 	payloadBytes := &bytes.Buffer{}
 

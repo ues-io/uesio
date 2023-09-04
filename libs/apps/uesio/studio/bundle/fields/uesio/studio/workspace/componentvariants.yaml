@@ -2,6 +2,6 @@ name: componentvariants
 type: REFERENCEGROUP
 label: Component Variants
 referenceGroup:
-  collection: uesio/studio.componentvariant
-  field: uesio/studio.workspace
+  collection: componentvariant
+  field: workspace
   onDelete: CASCADE
