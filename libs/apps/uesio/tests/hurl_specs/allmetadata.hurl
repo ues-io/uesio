@@ -30,6 +30,10 @@ Accept: application/json
                 {
                     "field": "uesio/studio.grouping",
                     "value": "uesio/tests.animal"
+                },
+                {
+                    "field": "uesio/studio.iscommonfield",
+                    "value": false
                 }
             ],
             "params": {
@@ -42,20 +46,20 @@ Accept: application/json
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data" count == 14
-jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.ancestor"
-jsonpath "$.wires[0].data[1]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.autonumber"
-jsonpath "$.wires[0].data[2]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.genus"
-jsonpath "$.wires[0].data[3]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.lookalike"
-jsonpath "$.wires[0].data[4]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.species"
-jsonpath "$.wires[0].data[5]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.status"
-jsonpath "$.wires[0].data[6]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.total_population"
-jsonpath "$.wires[0].data[7]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.id"
-jsonpath "$.wires[0].data[8]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.uniquekey"
-jsonpath "$.wires[0].data[9]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.owner"
-jsonpath "$.wires[0].data[10]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.createdby"
-jsonpath "$.wires[0].data[11]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.updatedby"
-jsonpath "$.wires[0].data[12]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.createdat"
-jsonpath "$.wires[0].data[13]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.updatedat"
+jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.id"
+jsonpath "$.wires[0].data[1]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.uniquekey"
+jsonpath "$.wires[0].data[2]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.owner"
+jsonpath "$.wires[0].data[3]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.createdby"
+jsonpath "$.wires[0].data[4]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.updatedby"
+jsonpath "$.wires[0].data[5]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.createdat"
+jsonpath "$.wires[0].data[6]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.updatedat"
+jsonpath "$.wires[0].data[7]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.ancestor"
+jsonpath "$.wires[0].data[8]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.autonumber"
+jsonpath "$.wires[0].data[9]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.genus"
+jsonpath "$.wires[0].data[10]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.lookalike"
+jsonpath "$.wires[0].data[11]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.species"
+jsonpath "$.wires[0].data[12]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.status"
+jsonpath "$.wires[0].data[13]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.total_population"
 
 # Get a list of all secrets available to our workspace (it should be zero)
 POST https://{{host}}:{{port}}/site/wires/load
