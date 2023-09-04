@@ -9,45 +9,43 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func GetSiteAdminSession(currentSession *sess.Session) *sess.Session {
-	// We don't need to get an admin session if we're in a workspace context
-	// We already are the admin user.
-	if currentSession.GetWorkspace() != nil {
-		return currentSession
-	}
-	// This creates a copy of the session
-	siteAdminSession := currentSession.RemoveWorkspaceContext()
-
-	adminSite := currentSession.GetSite().Clone()
-
-	upgradeToSiteAdmin(adminSite, siteAdminSession)
-
-	return siteAdminSession
-
-}
-
-func upgradeToSiteAdmin(adminSite *meta.Site, adminSession *sess.Session) {
-	adminSite.Permissions = &meta.PermissionSet{
-		AllowAllViews:       true,
-		AllowAllRoutes:      true,
-		AllowAllFiles:       true,
-		AllowAllCollections: true,
-		ModifyAllRecords:    true,
-		ViewAllRecords:      true,
-	}
-
-	adminSession.SetSiteAdmin(adminSite)
-
-	adminSession.SetUser(&meta.User{
+func getSiteAdminUser() *meta.User {
+	return &meta.User{
 		BuiltIn: meta.BuiltIn{
 			UniqueKey: "system",
 		},
-	})
+		Permissions: meta.GetAdminPermissionSet(),
+	}
+}
+
+func GetSiteAdminSession(currentSession *sess.Session) *sess.Session {
+	// If we're in a workspace context, just upgrade the permissions
+	if currentSession.GetWorkspaceSession() != nil {
+		newSession := *currentSession
+		newSession.SetWorkspaceSession(sess.NewWorkspaceSession(
+			currentSession.GetWorkspace(),
+			currentSession.GetSiteUser(),
+			"uesio/system.admin",
+			meta.GetAdminPermissionSet(),
+		))
+		return &newSession
+	}
+	// If we are already in site admin context, we don't need to do anything.
+	if currentSession.GetSiteAdmin() != nil {
+		return currentSession
+	}
+
+	newSession := *currentSession
+	newSession.SetSiteAdminSession(sess.NewSiteSession(
+		currentSession.GetSite(),
+		getSiteAdminUser(),
+	))
+	return &newSession
 }
 
 func addSiteAdminContext(siteadmin *meta.Site, session *sess.Session, connection adapt.Connection) error {
 	site := session.GetSite()
-	perms := session.GetPermissions()
+	perms := session.GetSitePermissions()
 
 	// 1. Make sure we're in a site that can read/modify workspaces
 	if site.GetAppFullName() != "uesio/studio" {
@@ -66,45 +64,57 @@ func addSiteAdminContext(siteadmin *meta.Site, session *sess.Session, connection
 	siteadmin.Subdomain = site.Subdomain
 
 	if siteadmin.Bundle == nil {
-		return errors.New("No Bundle found for site to administer")
+		return errors.New("no Bundle found for site to administer")
 	}
 
-	upgradeToSiteAdmin(siteadmin, session)
+	session.SetSiteAdminSession(sess.NewSiteSession(
+		siteadmin,
+		getSiteAdminUser(),
+	))
 
-	bundleDef, err := bundle.GetAppBundle(session, connection)
+	bundleDef, err := bundle.GetSiteBundleDef(siteadmin, connection)
 	if err != nil {
 		return err
 	}
 
-	session.GetSiteAdmin().SetAppBundle(bundleDef)
+	licenseMap, err := GetLicenses(siteadmin.GetAppFullName(), connection)
+	if err != nil {
+		return err
+	}
+	bundleDef.Licenses = licenseMap
+
+	siteadmin.SetAppBundle(bundleDef)
+
 	return nil
 }
 
-func AddSiteAdminContextByID(siteID string, session *sess.Session, connection adapt.Connection) error {
-	siteadmin, err := QuerySiteByID(siteID, connection)
+func AddSiteAdminContextByID(siteID string, session *sess.Session, connection adapt.Connection) (*sess.Session, error) {
+	sessClone := session.RemoveWorkspaceContext()
+	siteadmin, err := QuerySiteByID(siteID, sessClone, connection)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return addSiteAdminContext(siteadmin, session, connection)
+	return sessClone, addSiteAdminContext(siteadmin, sessClone, connection)
 }
 
-func AddSiteAdminContextByKey(siteKey string, session *sess.Session, connection adapt.Connection) error {
-	siteadmin, err := QuerySiteByKey(siteKey, connection)
+func AddSiteAdminContextByKey(siteKey string, session *sess.Session, connection adapt.Connection) (*sess.Session, error) {
+	sessClone := session.RemoveWorkspaceContext()
+	siteadmin, err := QuerySiteByKey(siteKey, sessClone, connection)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return addSiteAdminContext(siteadmin, session, connection)
+	return sessClone, addSiteAdminContext(siteadmin, sessClone, connection)
 }
 
-func QuerySiteByID(siteid string, connection adapt.Connection) (*meta.Site, error) {
-	return querySite(siteid, adapt.ID_FIELD, connection)
+func QuerySiteByID(siteid string, session *sess.Session, connection adapt.Connection) (*meta.Site, error) {
+	return querySite(siteid, adapt.ID_FIELD, session, connection)
 }
 
-func QuerySiteByKey(sitekey string, connection adapt.Connection) (*meta.Site, error) {
-	return querySite(sitekey, adapt.UNIQUE_KEY_FIELD, connection)
+func QuerySiteByKey(sitekey string, session *sess.Session, connection adapt.Connection) (*meta.Site, error) {
+	return querySite(sitekey, adapt.UNIQUE_KEY_FIELD, session, connection)
 }
 
-func querySite(value, field string, connection adapt.Connection) (*meta.Site, error) {
+func querySite(value, field string, session *sess.Session, connection adapt.Connection) (*meta.Site, error) {
 
 	var s meta.Site
 	err := PlatformLoadOne(
@@ -170,8 +180,9 @@ func querySite(value, field string, connection adapt.Connection) (*meta.Site, er
 					Value: value,
 				},
 			},
+			RequireWriteAccess: true,
 		},
-		sess.GetStudioAnonSession(),
+		session,
 	)
 	if err != nil {
 		return nil, err

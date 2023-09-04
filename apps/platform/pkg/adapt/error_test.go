@@ -9,17 +9,22 @@ import (
 
 func TestNewGenericSaveError(t *testing.T) {
 	tests := []struct {
-		name           string
-		input          error
-		wantErrMessage string
+		name  string
+		input error
+		want  *SaveError
 	}{
 		{
 			"handle PG duplicate index errors on the Uesio data table",
 			&pgconn.PgError{
 				Code:    "23505",
 				Message: "duplicate key value violates unique constraint \"unique_idx\"",
+				Detail:  "Key (tenant, collection, uniquekey)=(site:uesio/studio:prod, uesio/studio.bundledependency, uesio/tests:dev:uesio/builder) already exists.",
 			},
-			"Unable to create duplicate record",
+			&SaveError{
+				RecordID: "uesio/tests:dev:uesio/builder",
+				FieldID:  UNIQUE_KEY_FIELD,
+				Message:  "Unable to create duplicate uesio/studio.bundledependency record: uesio/tests:dev:uesio/builder",
+			},
 		},
 		{
 			"ignore other PG errors (for now - TODO handle more cases)",
@@ -27,18 +32,29 @@ func TestNewGenericSaveError(t *testing.T) {
 				Code:    "111111111",
 				Message: "some other ghastly thing",
 			},
-			": some other ghastly thing (SQLSTATE 111111111)",
+			&SaveError{
+				RecordID: "",
+				FieldID:  "",
+				Message:  ": some other ghastly thing (SQLSTATE 111111111)",
+			},
 		},
 		{
 			"wrap all errors by default",
 			errors.New("explosion!"),
-			"explosion!",
+			&SaveError{
+				RecordID: "",
+				FieldID:  "",
+				Message:  "explosion!",
+			},
 		},
 	}
 	for _, tt := range tests {
-		t.Run("it should "+tt.name, func(t *testing.T) {
+		testName := "it should " + tt.name
+		t.Run(testName, func(t *testing.T) {
 			actual := NewGenericSaveError(tt.input)
-			assert.Equalf(t, tt.wantErrMessage, actual.Error(), "NewGenericSaveError(%v)", tt.input)
+			if !assert.ObjectsAreEqual(tt.want, actual) {
+				assert.Fail(t, testName)
+			}
 		})
 	}
 }

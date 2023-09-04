@@ -2,8 +2,9 @@ package usage
 
 import (
 	"fmt"
-	"github.com/thecloudmasters/uesio/pkg/usage/usage_common"
 	"time"
+
+	"github.com/thecloudmasters/uesio/pkg/usage/usage_common"
 
 	"github.com/thecloudmasters/uesio/pkg/cache"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -36,7 +37,7 @@ func registerInternal(key string, size int64) error {
 
 func RegisterEvent(actiontype, metadatatype, metadataname string, size int64, session *sess.Session) error {
 
-	user := session.GetUserInfo()
+	user := session.GetSiteUser()
 
 	if user.Username == "boot" || user.Username == "system" {
 		return nil

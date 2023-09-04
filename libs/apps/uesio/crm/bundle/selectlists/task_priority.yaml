@@ -1,9 +1,0 @@
-name: task_priority
-public: true
-options:
-  - label: high
-    value: HIGH
-  - label: medium
-    value: MEDIUM
-  - label: low
-    value: LOW

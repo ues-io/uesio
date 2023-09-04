@@ -29,6 +29,11 @@ definition:
         - field: uesio/studio.language
           valueSource: PARAM
           param: translationname
+    labels:
+      collection: uesio/studio.label
+      conditions:
+        - field: uesio/studio.allmetadata
+          value: true
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -71,6 +76,7 @@ definition:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.primary
                                       text: $Label{uesio/io.save}
+                                      hotkey: "meta+s"
                                       uesio.display:
                                         - type: wireHasChanges
                                           wire: translations
@@ -105,11 +111,9 @@ definition:
                             - uesio/io.grid:
                                 items:
                                   - uesio/studio.translations:
-                                      fieldId: uesio/studio.labels
-                                      uesio.context:
-                                        workspace:
-                                          name: $Param{workspacename}
-                                          app: $Param{app}
+                                      labelsWire: labels
+                                      translationsWire: translations
+                                      labelsFieldId: uesio/studio.labels
   panels:
     deleteTranslation:
       uesio.type: uesio/io.dialog

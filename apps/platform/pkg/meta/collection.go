@@ -57,7 +57,7 @@ type Collection struct {
 	NameField             string                            `yaml:"nameField,omitempty" json:"uesio/studio.namefield"`
 	ReadOnly              bool                              `yaml:"readOnly,omitempty" json:"-"`
 	Access                string                            `yaml:"access,omitempty" json:"uesio/studio.access"`
-	AccessField           string                            `yaml:"accessField,omitempty" json:"-"`
+	AccessField           string                            `yaml:"accessField,omitempty" json:"uesio/studio.accessfield"`
 	RecordChallengeTokens []*RecordChallengeTokenDefinition `yaml:"recordChallengeTokens,omitempty" json:"uesio/studio.recordchallengetokens"`
 	TableName             string                            `yaml:"tablename,omitempty" json:"uesio/studio.tablename"`
 }
@@ -101,27 +101,13 @@ func (c *Collection) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
-	err = setDefaultValue(node, "dataSource", "uesio/core.platform")
-	if err != nil {
-		return err
-	}
-	err = setDefaultValue(node, "nameField", "uesio/core.id")
-	if err != nil {
-		return err
-	}
-
+	c.DataSourceRef = pickMetadataItem(node, "dataSource", c.Namespace, PLATFORM_DATA_SOURCE)
+	c.NameField = pickStringProperty(node, "nameField", "uesio/core.id")
 	return node.Decode((*CollectionWrapper)(c))
 }
 
 func (c *Collection) MarshalYAML() (interface{}, error) {
-
-	if c.DataSourceRef == "uesio/core.platform" {
-		c.DataSourceRef = ""
-	}
-
-	if c.NameField == "uesio/core.id" {
-		c.NameField = ""
-	}
-
+	c.DataSourceRef = removeDefault(localize(c.DataSourceRef, c.Namespace), PLATFORM_DATA_SOURCE)
+	c.NameField = removeDefault(c.NameField, "uesio/core.id")
 	return (*CollectionWrapper)(c), nil
 }

@@ -6,11 +6,41 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 )
 
 type Adapter struct {
+}
+
+type Tracer struct{}
+
+func (t *Tracer) TraceQueryStart(ctx context.Context, conn *pgx.Conn, data pgx.TraceQueryStartData) context.Context {
+	//fmt.Println("-- MAKING SQL QUERY --")
+	//fmt.Println(data.SQL)
+	//fmt.Println(data.Args)
+	return ctx
+}
+
+func (t *Tracer) TraceQueryEnd(ctx context.Context, conn *pgx.Conn, data pgx.TraceQueryEndData) {
+	//fmt.Println("-- DONE MAKING SQL QUERY --")
+}
+
+func (t *Tracer) TraceBatchStart(ctx context.Context, conn *pgx.Conn, data pgx.TraceBatchStartData) context.Context {
+	return ctx
+}
+
+func (t *Tracer) TraceBatchQuery(ctx context.Context, conn *pgx.Conn, data pgx.TraceBatchQueryData) {
+	//fmt.Println("-- MAKING BATCHED SQL QUERY --")
+	//fmt.Println(data.SQL)
+	//fmt.Println(data.Args)
+	//fmt.Println(data.Err)
+
+}
+func (t *Tracer) TraceBatchEnd(ctx context.Context, conn *pgx.Conn, data pgx.TraceBatchEndData) {
+	//fmt.Println("-- DONE MAKING BATCHED SQL QUERY --")
+
 }
 
 // We're creating two different connection pool pools.
@@ -80,7 +110,12 @@ func getConnection(credentials *adapt.Credentials, hash string) (*pgxpool.Pool, 
 
 	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s "+"password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 
-	db, err := pgxpool.New(context.Background(), psqlInfo)
+	config, err := pgxpool.ParseConfig(psqlInfo)
+	if err != nil {
+		return nil, err
+	}
+	config.ConnConfig.Tracer = &Tracer{}
+	db, err := pgxpool.NewWithConfig(context.Background(), config)
 	if err != nil {
 		return nil, err
 	}

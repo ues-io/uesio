@@ -1,7 +1,7 @@
 import { Context } from "../context/context"
 
 export const respondJSON = async (response: Response) => {
-	interceptPlatformRedirects(response)
+	if (interceptPlatformRedirects(response)) return
 	if (response.status !== 200) {
 		const errorText = await response.text()
 		throw new Error(
@@ -15,7 +15,7 @@ export const respondJSON = async (response: Response) => {
 }
 
 export const respondVoid = async (response: Response) => {
-	interceptPlatformRedirects(response)
+	if (interceptPlatformRedirects(response)) return
 	if (response.status !== 200) {
 		const errorText = await response.text()
 		throw new Error(errorText)
@@ -28,7 +28,9 @@ function interceptPlatformRedirects(response: Response) {
 	const locationHeader = response.headers.get("location")
 	if (locationHeader) {
 		window.location.href = locationHeader
+		return true
 	}
+	return false
 }
 
 function addOriginalSessionHashHeader(
@@ -73,12 +75,24 @@ export const postJSON = (
 export const postBinary = (
 	context: Context,
 	url: string,
-	body: string | Blob | File
+	body: string | Blob | File | FormData
 ) =>
 	fetch(url, {
 		method: "POST",
 		headers: addOriginalSessionHashHeader(context, {
 			"Content-Type": "application/octet-stream",
 		}),
+		body,
+	})
+
+export const postMultipartForm = (
+	context: Context,
+	url: string,
+	body: string | Blob | File | FormData
+) =>
+	fetch(url, {
+		method: "POST",
+		// Do not set the content-type header. The browser does this for us.
+		headers: addOriginalSessionHashHeader(context),
 		body,
 	})

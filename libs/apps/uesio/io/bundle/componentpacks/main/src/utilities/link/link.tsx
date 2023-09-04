@@ -1,14 +1,14 @@
-import { FunctionComponent, MouseEvent } from "react"
+import { MouseEvent } from "react"
 import { definition, styles } from "@uesio/ui"
 
-interface LinkProps extends definition.UtilityProps {
+interface LinkProps {
 	onClick?: () => void
 	text?: string
 }
 
 const StyleDefaults = Object.freeze({ root: [] })
 
-const Link: FunctionComponent<LinkProps> = (props) => {
+const Link: definition.UtilityComponent<LinkProps> = (props) => {
 	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 	const { onClick, text } = props
 	return (

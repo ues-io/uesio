@@ -1,4 +1,5 @@
-import { MetadataType } from "../bands/builder/types"
+import type { MetadataKey, MetadataType } from "../bands/builder/types"
+import { CollectionKey } from "../bands/wire/types"
 
 export type ParamCondition = {
 	param: string
@@ -7,8 +8,9 @@ export type ParamCondition = {
 }
 
 type ParamBase = {
+	// name will only be populated for Bot Params
 	name: string
-	type:
+	type?:
 		| "RECORD"
 		| "TEXT"
 		| "METADATA"
@@ -17,29 +19,28 @@ type ParamBase = {
 		| "NUMBER"
 		| "CHECKBOX"
 	required?: boolean
-	default?: string
 	prompt?: string
 	conditions?: ParamCondition[]
 }
 
 type RecordParam = ParamBase & {
 	type: "RECORD"
-	collection: string
+	collection: CollectionKey
 }
 
 type TextParam = ParamBase & {
-	type: "TEXT"
-	defaultValue: string
+	type: "TEXT" | "" | undefined | null
+	default?: string
 }
 
 type NumberParam = ParamBase & {
 	type: "NUMBER"
-	defaultValue: number
+	default?: number
 }
 
 type CheckboxParam = ParamBase & {
 	type: "CHECKBOX"
-	defaultValue: boolean
+	default?: boolean
 }
 
 type MetadataParam = ParamBase & {
@@ -58,6 +59,9 @@ type MetadataNameParam = ParamBase & {
 	type: "METADATANAME"
 }
 
+/**
+ * Defines a Bot parameter
+ */
 export type ParamDefinition =
 	| RecordParam
 	| TextParam
@@ -66,3 +70,20 @@ export type ParamDefinition =
 	| MetadataParam
 	| MetadataMultiParam
 	| MetadataNameParam
+
+type ViewParamBase = {
+	required?: boolean
+	default?: string
+}
+type ViewRecordParam = {
+	type: "RECORD"
+	collection: MetadataKey
+} & ViewParamBase
+type ViewTextParam = {
+	type: "TEXT" | "" | undefined | null
+} & ViewParamBase
+
+/**
+ * Defines a parameter that a view expects to be provided.
+ */
+export type ViewParamDefinition = ViewRecordParam | ViewTextParam

@@ -16,10 +16,10 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     allthemes:
-      collection: uesio/studio.allmetadata
+      collection: uesio/studio.theme
       conditions:
-        - field: uesio/studio.type
-          value: themes
+        - field: uesio/studio.allmetadata
+          value: true
     newtheme:
       collection: uesio/studio.theme
       fields:
@@ -74,7 +74,7 @@ definition:
                           components:
                             - uesio/io.button:
                                 text: Create a New Theme
-                                uesio.variant: uesio/io.secondary
+                                uesio.variant: uesio/io.primary
                                 signals:
                                   - signal: panel/TOGGLE
                                     panel: newTheme
@@ -87,9 +87,6 @@ definition:
                       - uesio/io.table:
                           uesio.id: themesTable
                           wire: allthemes
-                          recordDisplay:
-                            - field: uesio/studio.namespace
-                              value: $Param{app}
                           columns:
                             - label: Theme
                               components:
@@ -98,28 +95,26 @@ definition:
                                       root:
                                         - flex
                                     components:
-                                      - uesio/studio.iconlabel:
-                                          uesio.variant: uesio/studio.namespacefield
-                                          text: ${uesio/studio.name} (Default)
-                                          icon: ${uesio/studio.appicon}
-                                          color: ${uesio/studio.appcolor}
-                                          uesio.display:
-                                            - type: fieldValue
-                                              operator: EQUALS
-                                              value: $Param{app}.${uesio/studio.name}
-                                              wire: workspaces
-                                              field: uesio/studio.defaulttheme
-                                      - uesio/studio.iconlabel:
-                                          uesio.variant: uesio/studio.namespacefield
-                                          text: ${uesio/studio.name}
-                                          icon: ${uesio/studio.appicon}
-                                          color: ${uesio/studio.appcolor}
-                                          uesio.display:
-                                            - type: fieldValue
-                                              operator: NOT_EQUALS
-                                              value: $Param{app}.${uesio/studio.name}
-                                              wire: workspaces
-                                              field: uesio/studio.defaulttheme
+                                      - uesio/io.group:
+                                          components:
+                                            - uesio/studio.iconlabel:
+                                                uesio.variant: uesio/studio.namespacefield
+                                                text: ${uesio/studio.name}
+                                                subtitle: ${uesio/studio.namespace}
+                                                icon: ${uesio/studio.appicon}
+                                                color: ${uesio/studio.appcolor}
+                                            - uesio/studio.iconlabel:
+                                                uesio.variant: uesio/studio.namespacefield
+                                                text: (Default)
+                                                icon: check_circle
+                                                color: green
+                                                tooltip: This is the default Theme.
+                                                uesio.display:
+                                                  - type: fieldValue
+                                                    operator: EQUALS
+                                                    value: ${uesio/studio.namespace}.${uesio/studio.name}
+                                                    wire: workspaces
+                                                    field: uesio/studio.defaulttheme
                             - field: uesio/core.updatedby
                               user:
                                 subtitle: $Time{uesio/core.updatedat}
@@ -128,23 +123,10 @@ definition:
                                 subtitle: $Time{uesio/core.createdat}
                           rowactions:
                             - text: Details
+                              type: DEFAULT
                               signals:
                                 - signal: route/NAVIGATE
-                                  path: app/$Param{app}/workspace/$Param{workspacename}/themes/${uesio/studio.name}
-                            - text: Make Default
-                              uesio.display:
-                                - field: uesio/studio.defaulttheme
-                                  wire: workspaces
-                                  value: $Param{app}.${uesio/studio.name}
-                                  operator: NOT_EQUALS
-                              signals:
-                                - signal: wire/UPDATE_RECORD
-                                  wire: workspaces
-                                  field: uesio/studio.defaulttheme
-                                  value: $Param{app}.${uesio/studio.name}
-                                - signal: wire/SAVE
-                                  wires:
-                                    - workspaces
+                                  path: app/$Param{app}/workspace/$Param{workspacename}/themes/${uesio/studio.namespace}/${uesio/studio.name}
                           pagesize: 10
   panels:
     newTheme:
@@ -169,7 +151,7 @@ definition:
                 wires:
                   - newtheme
               - signal: route/NAVIGATE
-                path: app/$Param{app}/workspace/$Param{workspacename}/themes/${uesio/studio.name}
+                path: app/$Param{app}/workspace/$Param{workspacename}/themes/$Param{app}/${uesio/studio.name}
         - uesio/io.button:
             uesio.variant: uesio/io.secondary
             text: $Label{uesio/io.cancel}

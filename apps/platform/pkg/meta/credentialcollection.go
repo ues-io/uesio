@@ -35,6 +35,10 @@ func (cc *CredentialCollection) GetItemFromPath(path, namespace string) Bundleab
 	return NewBaseCredential(namespace, StandardNameFromPath(path))
 }
 
+func (cc *CredentialCollection) GetItemFromKey(key string) (BundleableItem, error) {
+	return NewCredential(key)
+}
+
 func (cc *CredentialCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }

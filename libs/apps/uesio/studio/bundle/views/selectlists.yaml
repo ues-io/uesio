@@ -16,15 +16,9 @@ definition:
           value: $Param{app}:$Param{workspacename}
     selectlists:
       collection: uesio/studio.selectlist
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/core.updatedat:
       conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
+        - field: uesio/studio.allmetadata
+          value: true
     newselectlist:
       collection: uesio/studio.selectlist
       fields:
@@ -80,7 +74,7 @@ definition:
                             - uesio/io.button:
                                 text: Create a New Select List
                                 hotkey: "n"
-                                uesio.variant: uesio/io.secondary
+                                uesio.variant: uesio/io.primary
                                 signals:
                                   - signal: panel/TOGGLE
                                     panel: newSelectlist
@@ -92,29 +86,37 @@ definition:
                           focusOnRender: true
                           searchfields:
                             - uesio/studio.name
-                      - uesio/io.deck:
-                          uesio.id: selectlistsDeck
+                      - uesio/io.table:
+                          uesio.id: selectListsTable
                           wire: selectlists
-                          components:
-                            - uesio/io.tile:
-                                uesio.variant: uesio/io.item
-                                signals:
-                                  - signal: route/NAVIGATE
-                                    path: app/$Param{app}/workspace/$Param{workspacename}/selectlists/${uesio/studio.name}
-                                content:
-                                  - uesio/io.text:
-                                      text: ${uesio/studio.name}
-                                avatar:
-                                  - uesio/io.text:
-                                      uesio.variant: uesio/io.icon
-                                      color: "#ccc"
-                                      text: playlist_add_check
+                          columns:
+                            - label: Select List
+                              components:
+                                - uesio/studio.iconlabel:
+                                    uesio.variant: uesio/studio.namespacefield
+                                    text: ${uesio/studio.name}
+                                    subtitle: ${uesio/studio.namespace}
+                                    icon: ${uesio/studio.appicon}
+                                    color: ${uesio/studio.appcolor}
+                            - field: uesio/core.updatedby
+                              user:
+                                subtitle: $Time{uesio/core.updatedat}
+                            - field: uesio/core.createdby
+                              user:
+                                subtitle: $Time{uesio/core.createdat}
+                          rowactions:
+                            - text: Details
+                              type: DEFAULT
+                              signals:
+                                - signal: route/NAVIGATE
+                                  path: app/$Param{app}/workspace/$Param{workspacename}/selectlists/${uesio/studio.namespace}/${uesio/studio.name}
+                          pagesize: 10
   panels:
     newSelectlist:
       uesio.type: uesio/io.dialog
       title: Create a New Select List
-      width: 400px
-      height: 500px
+      width: 500px
+      height: 600px
       components:
         - uesio/io.list:
             uesio.id: newselectlistlist
@@ -123,7 +125,30 @@ definition:
             components:
               - uesio/io.field:
                   fieldId: uesio/studio.name
+              - uesio/io.field:
+                  fieldId: uesio/studio.options
+              - uesio/io.grid:
+                  uesio.variant: uesio/io.two_columns
+                  items:
+                    - uesio/io.field:
+                        fieldId: uesio/studio.blank_option_label
+                    - uesio/builder.metadatafield:
+                        uesio.context:
+                          workspace:
+                            name: $Param{workspacename}
+                            app: $Param{app}
+                        fieldId: uesio/studio.blank_option_language_label
+                        metadataType: LABEL
       actions:
+        - uesio/io.button:
+            uesio.variant: uesio/io.primary
+            text: Save and New
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - newselectlist
+              - signal: wire/RESET
+                wire: newselectlist
         - uesio/io.button:
             uesio.variant: uesio/io.primary
             text: $Label{uesio/io.save}
@@ -132,7 +157,7 @@ definition:
                 wires:
                   - newselectlist
               - signal: route/NAVIGATE
-                path: app/$Param{app}/workspace/$Param{workspacename}/selectlists/${uesio/studio.name}
+                path: app/$Param{app}/workspace/$Param{workspacename}/selectlists/$Param{app}/${uesio/studio.name}
         - uesio/io.button:
             uesio.variant: uesio/io.secondary
             text: $Label{uesio/io.cancel}

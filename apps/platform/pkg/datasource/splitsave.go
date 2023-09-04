@@ -31,6 +31,7 @@ func (ol *OpList) getCurrentIndex() int {
 			Options:  ol.Request.Options,
 			Errors:   &ol.Request.Errors,
 			Metadata: ol.Metadata,
+			Params:   ol.Request.Params,
 		})
 	}
 	ol.Counter++

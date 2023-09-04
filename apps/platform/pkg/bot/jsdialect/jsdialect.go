@@ -122,18 +122,7 @@ func (b *JSDialect) AfterSave(bot *meta.Bot, request *adapt.SaveOp, connection a
 }
 
 func (b *JSDialect) CallBot(bot *meta.Bot, params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
-	botAPI := &CallBotAPI{
-		Session: session,
-		Params: &ParamsAPI{
-			Params: params,
-		},
-		AsAdmin: AdminCallBotAPI{
-			Session:    session,
-			Connection: connection,
-		},
-		Connection: connection,
-		Results:    map[string]interface{}{},
-	}
+	botAPI := NewCallBotAPI(bot, session, connection, params)
 	err := b.hydrateBot(bot, session)
 	if err != nil {
 		return nil, err
@@ -167,6 +156,10 @@ func (b *JSDialect) RouteBot(bot *meta.Bot, route *meta.Route, session *sess.Ses
 }
 
 func (b *JSDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+	return nil
+}
+
+func (b *JSDialect) SaveBot(bot *meta.Bot, op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 	return nil
 }
 

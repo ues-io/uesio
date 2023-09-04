@@ -1,0 +1,8 @@
+name: accountmember
+type: lookup
+collection: uesio/tests.accountteammember
+conditions:
+  - field: uesio/tests.member
+    value: null
+token: ${uesio/tests.account}
+reason: Team Member of ${uesio/tests.account->uesio/core.uniquekey}

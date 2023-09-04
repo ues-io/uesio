@@ -6,6 +6,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/merge"
+	"github.com/thecloudmasters/uesio/pkg/usage"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 
@@ -25,28 +26,21 @@ func RouteAssignment(w http.ResponseWriter, r *http.Request) {
 	viewtype := vars["viewtype"]
 
 	session := middleware.GetSession(r)
-	workspace := session.GetWorkspace()
 	route, err := routing.GetRouteFromAssignment(r, collectionNamespace, collectionName, viewtype, id, session)
 	if err != nil {
-		logger.LogError(err)
-		file.RespondJSON(w, r, &routing.RouteMergeData{
-			View:  "uesio/core.notfound",
-			Theme: "uesio/core.default",
-			Title: "Not Found",
-		})
+		handleApiNotFoundRoute(w, r, "", session)
 		return
 	}
 
-	depsCache, err := routing.GetMetadataDeps(route, session)
-	if err != nil {
-		logger.LogError(err)
+	// Handle redirect routes
+	if route.Type == "redirect" {
+		handleRedirectAPIRoute(w, r, route, session)
 		return
 	}
 
-	routingMergeData, err := GetRoutingMergeData(route, workspace, depsCache, session)
-	// TODO: Display Internal Server Error page???
+	routingMergeData, err := getRouteAPIResult(route, session)
 	if err != nil {
-		logger.LogError(err)
+		handleApiErrorRoute(w, r, route.Path, session, err)
 		return
 	}
 
@@ -71,30 +65,71 @@ func Route(w http.ResponseWriter, r *http.Request) {
 
 	route, err := routing.GetRouteFromPath(r, namespace, path, prefix, session)
 	if err != nil {
-		logger.LogError(err)
-		file.RespondJSON(w, r, &routing.RouteMergeData{
-			View:  "uesio/core.notfound",
-			Theme: "uesio/core.default",
-		})
+		handleApiNotFoundRoute(w, r, path, session)
 		return
 	}
 
-	depsCache, err := routing.GetMetadataDeps(route, session)
-	if err != nil {
-		logger.LogError(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	// Handle redirect routes
+	if route.Type == "redirect" {
+		handleRedirectAPIRoute(w, r, route, session)
 		return
 	}
 
-	routingMergeData, err := GetRoutingMergeData(route, workspace, depsCache, session)
-	// TODO: Display Internal Server Error page???
+	routingMergeData, err := getRouteAPIResult(route, session)
 	if err != nil {
-		logger.LogError(err)
+		handleApiErrorRoute(w, r, route.Path, session, err)
 		return
 	}
 
 	file.RespondJSON(w, r, routingMergeData)
 
+}
+
+func handleApiErrorRoute(w http.ResponseWriter, r *http.Request, path string, session *sess.Session, err error) {
+	routingMergeData, err := getRouteAPIResult(getErrorRoute(path, err.Error()), sess.GetAnonSession(session.GetSite()))
+	if err != nil {
+		logger.LogError(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	file.RespondJSON(w, r, routingMergeData)
+}
+
+func handleApiNotFoundRoute(w http.ResponseWriter, r *http.Request, path string, session *sess.Session) {
+	routingMergeData, err := getRouteAPIResult(getNotFoundRoute(path), sess.GetAnonSession(session.GetSite()))
+	if err != nil {
+		logger.LogError(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	file.RespondJSON(w, r, routingMergeData)
+}
+
+func handleRedirectAPIRoute(w http.ResponseWriter, r *http.Request, route *meta.Route, session *sess.Session) {
+	w.Header().Set("Cache-Control", "no-cache")
+
+	mergedRouteRedirect, err := MergeRouteData(route.Redirect, &merge.ServerMergeData{
+		Session: session,
+	})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// We need to send a 200 status, not 302, to prevent fetch API
+	// from attempting to do its bad redirect behavior, which is not controllable.
+	// (Ben: I also tried using "manual" and "error" for the fetch "redirect" properties,
+	// but none of them provided the ability to capture the location header from the server
+	// WITHOUT doing some unwanted browser behavior).
+	http.Redirect(w, r, mergedRouteRedirect, http.StatusOK)
+}
+
+func getRouteAPIResult(route *meta.Route, session *sess.Session) (*routing.RouteMergeData, error) {
+
+	depsCache, err := routing.GetMetadataDeps(route, session)
+	if err != nil {
+		return nil, err
+	}
+
+	return GetRoutingMergeData(route, depsCache, session)
 }
 
 func getNotFoundRoute(path string) *meta.Route {
@@ -176,6 +211,8 @@ func serveRouteInternal(w http.ResponseWriter, r *http.Request, session *sess.Se
 		HandleErrorRoute(w, r, session, path, err, true)
 		return
 	}
+
+	usage.RegisterEvent("LOAD", "ROUTE", route.GetKey(), 0, session)
 	// Handle redirect routes
 	if route.Type == "redirect" {
 		w.Header().Set("Cache-Control", "no-cache")

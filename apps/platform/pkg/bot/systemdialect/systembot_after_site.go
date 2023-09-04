@@ -16,15 +16,14 @@ func runSiteAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, ses
 
 		siteID := change.IDValue
 
-		//This creates a copy of the session
-		siteAdminSession := session.RemoveWorkspaceContext()
-
-		err := datasource.AddSiteAdminContextByID(siteID, siteAdminSession, connection)
+		siteAdminSession, err := datasource.AddSiteAdminContextByID(siteID, session, connection)
 		if err != nil {
 			return err
 		}
 
-		publicProfile := siteAdminSession.GetPublicProfile()
+		// NOTE: DO NOT USE siteAdminSession.GetPublicProfile(), as this will be on the wrong site!!
+		// We need to get the PublicProfile of the site whose admin context we are temporarily assuming
+		publicProfile := siteAdminSession.GetSiteAdmin().GetAppBundle().PublicProfile
 
 		if publicProfile == "" {
 			publicProfile = defaultSitePublicProfile
@@ -84,10 +83,7 @@ func runSiteAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, ses
 			return nil
 		}
 
-		//This creates a copy of the session
-		siteAdminSession := session.RemoveWorkspaceContext()
-
-		err = datasource.AddSiteAdminContextByID(siteID, siteAdminSession, connection)
+		siteAdminSession, err := datasource.AddSiteAdminContextByID(siteID, session, connection)
 		if err != nil {
 			return err
 		}

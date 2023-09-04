@@ -16,23 +16,11 @@ definition:
           value: $Param{app}:$Param{workspacename}
     collections:
       collection: uesio/studio.collection
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.namefield:
-        uesio/studio.workspace:
-        uesio/studio.datasource:
-        uesio/core.updatedat:
-        uesio/core.updatedby:
-        uesio/core.createdat:
-        uesio/core.createdby:
       conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
-        - field: uesio/studio.name
-          value: $Param{collectionname}
+        - field: uesio/studio.allmetadata
+          value: true
+        - field: uesio/studio.item
+          value: $Param{namespace}.$Param{collectionname}
     bulkbatches:
       collection: uesio/core.bulkbatch
       fields:
@@ -71,7 +59,8 @@ definition:
                     params:
                       itemType: collections
                       itemIcon: list
-                      itemCollectionName: $Param{collectionname}
+                      itemName: $Param{collectionname}
+                      itemNameSpace: $Param{namespace}
           - uesio/io.griditem:
               uesio.variant: uesio/studio.leftbar
               components:
@@ -97,10 +86,10 @@ definition:
                                 components:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      text: "Collection Config"
+                                      text: Collection Config
                                       signals:
-                                        - signal: "route/NAVIGATE"
-                                          path: "app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{collectionname}"
+                                        - signal: route/NAVIGATE
+                                          path: app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{namespace}/$Param{collectionname}
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           components:

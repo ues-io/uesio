@@ -15,6 +15,8 @@ type CallBotFunc func(params map[string]interface{}, connection adapt.Connection
 
 type LoadBotFunc func(request *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error
 
+type SaveBotFunc func(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error
+
 type RouteBotFunc func(*meta.Route, *sess.Session) error
 
 type SystemDialect struct {
@@ -81,6 +83,8 @@ func (b *SystemDialect) AfterSave(bot *meta.Bot, request *adapt.SaveOp, connecti
 		botFunction = runLicenseAfterSaveBot
 	case "uesio/studio.bot":
 		botFunction = runBotAfterSaveBot
+	case "uesio/studio.app":
+		botFunction = runAppAfterSaveBot
 	}
 
 	if botFunction == nil {
@@ -100,7 +104,11 @@ func (b *SystemDialect) CallBot(bot *meta.Bot, params map[string]interface{}, co
 	case "listener:uesio/studio.makepayment":
 		botFunction = runMakePaymentListenerBot
 	case "listener:uesio/studio.workspacetruncate":
-		botFunction = runWorkspaceTruncateListenerBot
+		botFunction = RunWorkspaceTruncateListenerBot
+	case "listener:uesio/studio.resetrecordaccesstokens":
+		botFunction = runResetRecordAccessTokensListenerBot
+	case "listener:uesio/studio.setworkspaceuser":
+		botFunction = runSetWorkspaceUserBot
 	}
 
 	if botFunction == nil {
@@ -137,18 +145,45 @@ func (b *SystemDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adap
 	var botFunction LoadBotFunc
 
 	switch op.CollectionName {
-	case "uesio/studio.allmetadata":
-		botFunction = runAllMetadataLoadBot
+	case "uesio/core.usage":
+		botFunction = runUsageLoadBot
 	case "uesio/studio.recentmetadata":
 		botFunction = runRecentMetadataLoadBot
 	case "uesio/studio.blogentry":
 		botFunction = runBlogEntryLoadBot
 	case "uesio/studio.recentdoc":
 		botFunction = runRecentDocLoadBot
+	case "uesio/studio.usertokenvalue":
+		botFunction = runUserTokenValueLoadBot
+	case "uesio/studio.recordtokenvalue":
+		botFunction = runRecordTokenValueLoadBot
 	case "tcm/timetracker.project":
 		botFunction = clickup.ProjectLoadBot
 	case "tcm/timetracker.task":
 		botFunction = clickup.TaskLoadBot
+	}
+
+	if meta.IsBundleableCollection(op.CollectionName) {
+		botFunction = runStudioMetadataLoadBot
+	}
+
+	if botFunction == nil {
+		return datasource.NewSystemBotNotFoundError()
+	}
+
+	return botFunction(op, connection, session)
+
+}
+
+func (b *SystemDialect) SaveBot(bot *meta.Bot, op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+	var botFunction SaveBotFunc
+
+	switch op.Metadata.GetFullName() {
+
+	}
+
+	if meta.IsBundleableCollection(op.Metadata.GetFullName()) {
+		botFunction = runStudioMetadataSaveBot
 	}
 
 	if botFunction == nil {

@@ -1,4 +1,4 @@
-import { FunctionComponent, ReactElement } from "react"
+import { ReactElement } from "react"
 import { collection, definition, metadata, context, wire } from "@uesio/ui"
 
 import CheckboxField from "../../utilities/field/checkbox"
@@ -37,7 +37,7 @@ import {
 	MapFieldOptions,
 } from "../../components/field/field"
 
-interface FieldProps extends definition.UtilityProps {
+interface FieldProps {
 	setValue: FieldValueSetter
 	value: wire.FieldValue
 	mode: context.FieldMode
@@ -66,7 +66,7 @@ interface FieldProps extends definition.UtilityProps {
 	labelPosition?: LabelPosition
 }
 
-const Field: FunctionComponent<FieldProps> = (props) => {
+const Field: definition.UtilityComponent<FieldProps> = (props) => {
 	const {
 		applyChanges,
 		classes,
@@ -260,22 +260,24 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 						{...complexFieldOptions}
 						keyField={{
 							name: "key",
-							label: "Label",
+							label: map?.keyFieldLabel || "Key",
 							type: "TEXT",
 							namespace: "",
 							accessible: true,
-							createable: false,
-							updateable: false,
+							createable: true,
+							updateable: true,
 						}}
 						valueField={{
 							name: "value",
-							label: "Value",
-							type: fieldMetadata.source
-								.subtype as collection.FieldType,
+							label: map?.valueFieldLabel || "Value",
+							type: fieldMetadata.getSubType() as collection.FieldType,
+							selectlist: fieldMetadata.getSelectMetadata(),
+							number: fieldMetadata.getNumberMetadata(),
+							subfields: fieldMetadata.getSubFields(),
 							namespace: "",
 							accessible: true,
-							createable: false,
-							updateable: false,
+							createable: true,
+							updateable: true,
 						}}
 					/>
 				)

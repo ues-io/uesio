@@ -12,8 +12,8 @@ subfields:
   - name: uesio/studio.type
     label: Type
     type: SELECT
-    selectList: uesio/studio.fieldtypes
+    selectList: uesio/studio.subfieldtypes
   - name: uesio/studio.selectlist
     label: Select List
     type: TEXT
-  # TODO: Add more struct fields here for all of the other types, e.g. NUMBER/REFERENCE, etc.
+  # TODO: Add more struct fields here for all of the other supported types, e.g. NUMBER/REFERENCE, etc.

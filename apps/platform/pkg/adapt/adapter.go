@@ -17,6 +17,8 @@ type Adapter interface {
 type Connection interface {
 	Load(*LoadOp, *sess.Session) error
 	Save(*SaveOp, *sess.Session) error
+	SetRecordAccessTokens(*SaveOp, *sess.Session) error
+	GetRecordAccessTokens(string, *sess.Session) ([]string, error)
 	Migrate() error
 	TruncateTenantData(tenantID string) error
 	GetAutonumber(*CollectionMetadata, *sess.Session) (int, error)
@@ -31,7 +33,7 @@ type Connection interface {
 var adapterMap = map[string]Adapter{}
 
 // GetAdapter gets an adapter of a certain type
-func GetAdapter(adapterType string, session *sess.Session) (Adapter, error) {
+func GetAdapter(adapterType string) (Adapter, error) {
 
 	adapter, ok := adapterMap[adapterType]
 	if !ok {

@@ -1,4 +1,11 @@
-import { api, collection, wire, definition, metadata } from "@uesio/ui"
+import {
+	api,
+	collection,
+	component,
+	wire,
+	definition,
+	metadata,
+} from "@uesio/ui"
 import FieldWrapper from "../../utilities/fieldwrapper/fieldwrapper"
 import MonthFilter from "../../utilities/monthfilter/monthfilter"
 import SelectFilter from "../../utilities/selectfilter/selectfilter"
@@ -9,10 +16,11 @@ import CheckboxFilter from "../../utilities/checkboxfilter/checkboxfilter"
 import MultiSelectFilter from "../../utilities/multiselectfilter/multiselectfilter"
 import TextFilter from "../../utilities/textfilter/textfilter"
 import TimestampFilter from "../../utilities/timestampfilter/timestampfilter"
+import ReferenceFilter from "../../utilities/referencefilter/referencefilter"
 import GroupFilter, {
 	GroupFilterProps,
 } from "../../utilities/groupfilter/groupfilter"
-import { LabelPosition } from "../field/field"
+import { LabelPosition, ReferenceFieldOptions } from "../field/field"
 
 type FilterDefinition = {
 	fieldId: string
@@ -24,6 +32,7 @@ type FilterDefinition = {
 	conditionId?: string
 	placeholder?: string
 	operator: wire.ConditionOperators
+	reference?: ReferenceFieldOptions
 }
 
 type CommonProps = {
@@ -64,6 +73,15 @@ const getFilterContent = (
 			if (displayAs === "WEEK") return <WeekFilter {...common} />
 			return <DateFilter {...common} />
 		}
+		case "USER":
+		case "REFERENCE": {
+			return (
+				<ReferenceFilter
+					{...common}
+					options={definition.reference as ReferenceFieldOptions}
+				/>
+			)
+		}
 		default:
 			return null
 	}
@@ -97,6 +115,14 @@ const getDefaultCondition = (
 				field: fieldMetadata.getId(),
 			}
 		}
+		case "USER":
+		case "REFERENCE": {
+			return {
+				id: path,
+				operator: "EQ",
+				field: fieldMetadata.getId(),
+			}
+		}
 		case "TEXT":
 		case "LONGTEXT":
 		case "EMAIL":
@@ -118,7 +144,6 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 	const { fieldId, conditionId, operator, displayAs } = definition
 	const wire = api.wire.useWire(definition.wire, context)
 	if (!wire) return null
-
 	const collection = wire.getCollection()
 	const existingCondition =
 		wire.getCondition(conditionId || path) || undefined
@@ -126,6 +151,8 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 	const fieldMetadata = collection.getField(
 		isValueCondition(existingCondition) ? existingCondition.field : fieldId
 	)
+
+	if (!fieldMetadata) return null
 
 	let condition = existingCondition
 	if (!condition && fieldMetadata) {
@@ -152,7 +179,8 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 		wire,
 		condition,
 		variant:
-			definition["uesio.variant"] || "uesio/io.field:uesio/io.default",
+			definition[component.STYLE_VARIANT] ||
+			"uesio/io.field:uesio/io.default",
 	}
 
 	return (
@@ -163,7 +191,9 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 			variant={definition.wrapperVariant}
 		>
 			{isGroup ? (
-				<GroupFilter {...(common as GroupFilterProps)} />
+				<GroupFilter
+					{...(common as GroupFilterProps & definition.UtilityProps)}
+				/>
 			) : (
 				getFilterContent(common as CommonProps, definition)
 			)}

@@ -16,46 +16,35 @@ definition:
           value: $Param{app}:$Param{workspacename}
     collections:
       collection: uesio/studio.collection
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.label:
-        uesio/studio.plurallabel:
-        uesio/studio.namefield:
-        uesio/studio.workspace:
-        uesio/studio.datasource:
-        uesio/core.updatedat:
-        uesio/core.updatedby:
-        uesio/core.createdat:
-        uesio/core.createdby:
       conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
-        - field: uesio/studio.name
-          value: $Param{collectionname}
+        - field: uesio/studio.allmetadata
+          value: true
+        - field: uesio/studio.item
+          value: $Param{namespace}.$Param{collectionname}
     fields:
       collection: uesio/studio.field
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.type:
-        uesio/studio.label:
-        uesio/studio.collection:
-        uesio/studio.reference:
-        uesio/studio.selectlist:
-        uesio/studio.autopopulate:
-        uesio/studio.languagelabel:
-        uesio/studio.number:
       conditions:
-        - field: uesio/studio.collection
-          value: $Param{app}.$Param{collectionname}
-          id: fullCollectionName
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
+        - field: uesio/studio.allmetadata
+          value: true
+        - field: uesio/studio.grouping
+          value: $Param{namespace}.$Param{collectionname}
+      order:
+        - field: uesio/studio.namespace
+          desc: false
+        - field: uesio/studio.name
+          desc: false
+    commonfields:
+      collection: uesio/studio.field
+      conditions:
+        - field: uesio/studio.allmetadata
+          value: true
+        - field: uesio/studio.grouping
+          value: $Param{namespace}.$Param{collectionname}
+        - field: uesio/studio.iscommonfield
+          value: true
+      order:
+        - field: uesio/studio.name
+          desc: false
     routeassignments:
       collection: uesio/studio.routeassignment
       fields:
@@ -87,7 +76,7 @@ definition:
       defaults:
         - field: uesio/studio.collection
           valueSource: VALUE
-          value: $Param{app}.$Param{collectionname}
+          value: $Param{namespace}.$Param{collectionname}
         - field: uesio/studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
@@ -95,6 +84,21 @@ definition:
         - field: uesio/studio.type
           valueSource: VALUE
           value: TEXT
+      events:
+        - type: onChange
+          fields:
+            - uesio/studio.name
+          conditions:
+            - type: hasValue
+              value: "${uesio/studio.name}"
+            - type: hasNoValue
+              value: "${uesio/studio.label}"
+          signals:
+            - signal: wire/UPDATE_RECORD
+              wire: newfield
+              field: uesio/studio.label
+              valueSource: VALUE
+              value: "${uesio/studio.name}"
     newrouteassignment:
       collection: uesio/studio.routeassignment
       fields:
@@ -113,6 +117,20 @@ definition:
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: uesio/core.id
+    viewOnly:
+      viewOnly: true
+      fields:
+        showCommonFieldsTable:
+          label: Show Common Fields Table
+          type: CHECKBOX
+          required: true
+      init:
+        query: false
+        create: true
+      defaults:
+        - field: showCommonFieldsTable
+          valueSource: VALUE
+          value: true
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -128,7 +146,8 @@ definition:
                     params:
                       itemType: collections
                       itemIcon: list
-                      itemCollectionName: $Param{collectionname}
+                      itemName: $Param{collectionname}
+                      itemNameSpace: $Param{namespace}
           - uesio/io.griditem:
               uesio.variant: uesio/studio.leftbar
               components:
@@ -149,6 +168,7 @@ definition:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.main
                           title: Collection - ${uesio/studio.plurallabel}
+                          subtitle: $Param{namespace}
                           actions:
                             - uesio/io.group:
                                 components:
@@ -158,22 +178,28 @@ definition:
                                       text: Export Data
                                       signals:
                                         - signal: route/NAVIGATE
-                                          path: app/$Param{app}/workspace/$Param{workspacename}/export/$Param{app}/$Param{collectionname}
+                                          path: app/$Param{app}/workspace/$Param{workspacename}/export/$Param{namespace}/$Param{collectionname}
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       uesio.id: import-collection-data
                                       text: Import Data
                                       signals:
                                         - signal: route/NAVIGATE
-                                          path: app/$Param{app}/workspace/$Param{workspacename}/import/$Param{app}/$Param{collectionname}
+                                          path: app/$Param{app}/workspace/$Param{workspacename}/import/$Param{namespace}/$Param{collectionname}
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       uesio.id: manage-collection-data
                                       text: Manage Data
                                       signals:
                                         - signal: route/NAVIGATE
-                                          path: app/$Param{app}/workspace/$Param{workspacename}/data/$Param{app}/$Param{collectionname}
+                                          path: app/$Param{app}/workspace/$Param{workspacename}/data/$Param{namespace}/$Param{collectionname}
                                   - uesio/io.button:
+                                      uesio.display:
+                                        - type: paramValue
+                                          param: app
+                                          field: uesio/core.dynamiccollection
+                                          operator: EQUALS
+                                          value: $Param{namespace}
                                       uesio.variant: uesio/io.secondary
                                       uesio.id: edit-collection
                                       text: $Label{uesio/io.edit}
@@ -181,6 +207,12 @@ definition:
                                         - signal: panel/TOGGLE
                                           panel: editCollection
                                   - uesio/io.button:
+                                      uesio.display:
+                                        - type: paramValue
+                                          param: app
+                                          field: uesio/core.dynamiccollection
+                                          operator: EQUALS
+                                          value: $Param{namespace}
                                       uesio.variant: uesio/io.secondary
                                       uesio.id: delete-collection
                                       text: $Label{uesio/io.delete}
@@ -236,12 +268,22 @@ definition:
                                         - signal: wire/SAVE
                                           wires:
                                             - fields
+                                        # Need to reload the wire after save in order to pull in namespace and other special fields
+                                        # that are magically added on the backend to the allmetadata collection
+                                        - signal: component/CALL
+                                          component: uesio/io.table
+                                          componentsignal: SET_READ_MODE
+                                          targettype: specific
+                                          componentid: fields
+                                        - signal: wire/LOAD
+                                          wires:
+                                            - fields
                                       uesio.display:
                                         - type: wireHasChanges
                                           wire: fields
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      uesio.id: save-fields
+                                      uesio.id: cancel-fields
                                       text: $Label{uesio/io.cancel}
                                       signals:
                                         - signal: wire/CANCEL
@@ -256,6 +298,7 @@ definition:
                                           wire: fields
                                       fieldWire: fields
                                       collectionWire: collections
+                                      collectionId: $Param{namespace}.$Param{collectionname}
                                       targetTableId: fields
                                       uesio.context:
                                         workspace:
@@ -282,15 +325,100 @@ definition:
                             - text: $Label{uesio/io.edit}
                               signals:
                                 - signal: route/NAVIGATE
-                                  path: app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{app}/$Param{collectionname}/fields/${uesio/studio.name}
+                                  path: app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{namespace}/$Param{collectionname}/fields/${uesio/studio.namespace}/${uesio/studio.name}
                               uesio.display:
                                 - type: recordIsNotNew
                             - text: $Label{uesio/io.delete}
                               signals:
-                                - signal: wire/MARK_FOR_DELETE
+                                - signal: wire/TOGGLE_DELETE_STATUS
                                   wire: fields
+                              uesio.display:
+                                - type: fieldValue
+                                  field: uesio/studio.namespace
+                                  operator: EQUALS
+                                  value: $Param{app}
+                                - type: recordIsNotNew
+                            - text: $Label{uesio/io.delete}
+                              signals:
+                                - signal: wire/TOGGLE_DELETE_STATUS
+                                  wire: fields
+                              uesio.display:
+                                - type: recordIsNew
                           columns:
-                            - field: uesio/studio.name
+                            - label: Field
+                              components:
+                                - uesio/studio.iconlabel:
+                                    uesio.variant: uesio/studio.namespacefield
+                                    text: ${uesio/studio.name}
+                                    subtitle: ${uesio/studio.namespace}
+                                    icon: ${uesio/studio.appicon}
+                                    color: ${uesio/studio.appcolor}
+                                    uesio.display:
+                                      - type: recordIsNotNew
+                                # Show the editable name field for new records only
+                                # (e.g. those added by "Suggest Fields")
+                                # to allow for editing prior to save
+                                - uesio/io.field:
+                                    fieldId: uesio/studio.name
+                                    labelPosition: "none"
+                                    uesio.display:
+                                      - type: recordIsNew
+                            - field: uesio/studio.type
+                            - field: uesio/studio.label
+                            - field: uesio/studio.languagelabel
+                      - uesio/io.titlebar:
+                          uesio.variant: uesio/io.section
+                          uesio.styleTokens:
+                            root:
+                              - mt-2
+                          title: Common Fields
+                          actions:
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: Hide Common Fields
+                                uesio.id: hideCommonFields
+                                uesio.display:
+                                  - type: fieldValue
+                                    wire: viewOnly
+                                    field: showCommonFieldsTable
+                                    value: true
+                                signals:
+                                  - signal: wire/UPDATE_RECORD
+                                    wire: viewOnly
+                                    field: showCommonFieldsTable
+                                    value: false
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: Show Common Fields
+                                uesio.id: showCommonFields
+                                uesio.display:
+                                  - type: fieldValue
+                                    wire: viewOnly
+                                    field: showCommonFieldsTable
+                                    value: false
+                                signals:
+                                  - signal: wire/UPDATE_RECORD
+                                    wire: viewOnly
+                                    field: showCommonFieldsTable
+                                    value: true
+                      - uesio/io.table:
+                          uesio.id: commonFields
+                          wire: commonfields
+                          mode: READ
+                          uesio.display:
+                            - type: fieldValue
+                              wire: viewOnly
+                              field: showCommonFieldsTable
+                              value: true
+                          columns:
+                            - label: Field Name
+                              components:
+                                - uesio/studio.iconlabel:
+                                    uesio.variant: uesio/studio.namespacefield
+                                    text: ${uesio/studio.name}
+                                    subtitle: ${uesio/studio.namespace}
+                                    icon: ${uesio/studio.appicon}
+                                    color: ${uesio/studio.appcolor}
                             - field: uesio/studio.type
                             - field: uesio/studio.label
                             - field: uesio/studio.languagelabel
@@ -493,12 +621,13 @@ definition:
                   fieldId: uesio/studio.name
                   uesio.id: new-field-name
                   focusOnRender: true
-              - uesio/io.field:
-                  fieldId: uesio/studio.type
-                  uesio.id: new-field-type
+                  applyChanges: onBlur
               - uesio/io.field:
                   fieldId: uesio/studio.label
                   uesio.id: new-field-label
+              - uesio/io.field:
+                  fieldId: uesio/studio.type
+                  uesio.id: new-field-type
               - uesio/builder.metadatafield:
                   fieldId: uesio/studio.languagelabel
                   uesio.id: new-field-language-label
@@ -619,7 +748,7 @@ definition:
                   - fields
         - uesio/io.button:
             uesio.variant: uesio/io.secondary
-            uesio.id: save-new-field
+            uesio.id: save-field-and-close
             text: $Label{uesio/io.save}
             signals:
               - signal: wire/SAVE
@@ -644,5 +773,9 @@ definition:
             signals:
               - signal: wire/EMPTY
                 wire: newfield
+              - signal: wire/LOAD
+                wires:
+                  - workspaces
+                  - fields
               - signal: panel/TOGGLE
                 panel: newField

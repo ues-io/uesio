@@ -32,7 +32,7 @@ func Delete(userFileID string, session *sess.Session) error {
 	fieldID := userFile.FieldID
 
 	metadataResponse := &adapt.MetadataCache{}
-	err = getUploadMetadataResponse(metadataResponse, collectionID, fieldID, session)
+	err = datasource.GetMetadataResponse(metadataResponse, collectionID, fieldID, session)
 	if err != nil {
 		return err
 	}

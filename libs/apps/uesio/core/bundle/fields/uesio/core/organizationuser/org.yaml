@@ -1,0 +1,7 @@
+name: org
+type: REFERENCE
+label: Organization
+required: true
+createOnly: true
+reference:
+  collection: user

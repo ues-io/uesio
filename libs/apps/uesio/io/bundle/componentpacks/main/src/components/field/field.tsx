@@ -1,5 +1,6 @@
 import {
 	api,
+	component,
 	wire,
 	definition,
 	metadata,
@@ -13,7 +14,7 @@ import FieldUtility from "../../utilities/field/field"
 
 import { ListFieldOptions } from "../../utilities/field/listdeck"
 import { LongTextFieldOptions } from "../../utilities/field/textarea"
-import { MapFieldOptions } from "../../utilities/field/mapdeck"
+import { MapFieldOptions } from "../../utilities/mapfield/MapFieldOptions"
 import {
 	MarkdownComponentOptions,
 	MarkdownFieldOptions,
@@ -149,7 +150,7 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		setValue: (value: wire.FieldValue) =>
 			record.update(fieldId, value, context),
 		record,
-		variant: definition["uesio.variant"],
+		variant: definition[component.STYLE_VARIANT],
 		placeholder,
 		displayAs,
 		subFieldVariant,

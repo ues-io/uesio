@@ -6,6 +6,10 @@ import { PlainWireRecord } from "../wirerecord/types"
 import { WireConditionState } from "./conditions/conditions"
 import { WireDefault } from "./defaults/defaults"
 
+// Define these types specifically so that we can overwrite them with app-specific types
+type CollectionKey = MetadataKey | string
+type CollectionFieldKey = MetadataKey | string
+
 type OrderState = {
 	field: MetadataKey
 	desc: boolean
@@ -15,7 +19,7 @@ type PlainWire = {
 	batchid: string
 	batchnumber: number
 	changes: Record<string, PlainWireRecord>
-	collection: string
+	collection: CollectionKey
 	conditions?: WireConditionState[]
 	order?: OrderState[]
 	data: Record<string, PlainWireRecord>
@@ -38,4 +42,14 @@ type PlainWire = {
 	loadAll?: boolean
 }
 
-export type { PlainWire, OrderState }
+type ServerWire = PlainWire & {
+	data: PlainWireRecord[]
+}
+
+export type {
+	CollectionKey,
+	CollectionFieldKey,
+	PlainWire,
+	OrderState,
+	ServerWire,
+}

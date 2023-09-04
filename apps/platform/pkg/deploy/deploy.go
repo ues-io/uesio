@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"errors"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -14,7 +13,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -56,7 +54,7 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 	}
 
 	// Unfortunately, we have to read the whole thing into memory
-	bodybytes, err := ioutil.ReadAll(body)
+	bodybytes, err := io.ReadAll(body)
 	if err != nil {
 		return err
 	}
@@ -70,9 +68,9 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 
 	dep := map[string]meta.BundleableGroup{}
 
-	by := meta.BundleDef{}
+	var by *meta.BundleDef
 
-	uploadOps := []filesource.FileUploadOp{}
+	uploadOps := []*filesource.FileUploadOp{}
 
 	// Read all the files from zip archive
 	for _, zipFile := range zipReader.File {
@@ -88,11 +86,12 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 		metadataType := dirParts[0]
 
 		if partsLength == 1 && metadataType == "" && fileName == "bundle.yaml" {
+			by = &meta.BundleDef{}
 			readCloser, err := zipFile.Open()
 			if err != nil {
 				return err
 			}
-			err = bundlestore.DecodeYAML(&by, readCloser)
+			err = bundlestore.DecodeYAML(by, readCloser)
 			readCloser.Close()
 			if err != nil {
 				return err
@@ -150,8 +149,6 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 				return errors.New("Reading File: " + collectionItem.GetKey() + " : " + err.Error())
 			}
 
-			collectionItem.SetField("uesio/studio.workspace", workspace)
-
 			continue
 		}
 
@@ -169,83 +166,89 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 				return err
 			}
 
-			uploadOps = append(uploadOps, filesource.FileUploadOp{
-				Data: f,
-				Details: &fileadapt.FileDetails{
-					Path:            strings.TrimPrefix(path, attachableItem.GetBasePath()+"/"),
-					CollectionID:    collection.GetName(),
-					RecordUniqueKey: collectionItem.GetDBID(workspace.UniqueKey),
-				},
+			uploadOps = append(uploadOps, &filesource.FileUploadOp{
+				Data:            f,
+				Path:            strings.TrimPrefix(path, attachableItem.GetBasePath()+"/"),
+				CollectionID:    collection.GetName(),
+				RecordUniqueKey: collectionItem.GetDBID(workspace.UniqueKey),
 			})
 			defer f.Close()
 		}
 	}
 
-	deps := meta.BundleDependencyCollection{}
-	for key := range by.Dependencies {
-		dep := by.Dependencies[key]
-		major, minor, patch, err := meta.ParseVersionString(dep.Version)
-		if err != nil {
-			return err
-		}
-		deps = append(deps, &meta.BundleDependency{
-			Workspace: workspace,
-			App: &meta.App{
-				BuiltIn: meta.BuiltIn{
-					UniqueKey: key,
-				},
-			},
-			Bundle: &meta.Bundle{
-				BuiltIn: meta.BuiltIn{
-					UniqueKey: strings.Join([]string{key, major, minor, patch}, ":"),
-				},
-			},
-		})
-	}
-
-	// Upload workspace properties like homeRoute and loginRoute
-	workspaceItem := &meta.Workspace{
-		BuiltIn: meta.BuiltIn{
-			ID: workspace.ID,
-		},
-		App: &meta.App{
-			BuiltIn: meta.BuiltIn{
-				UniqueKey: namespace,
-			},
-		},
-		AppSettings: meta.AppSettings{
-			LoginRoute:    by.LoginRoute,
-			HomeRoute:     by.HomeRoute,
-			PublicProfile: by.PublicProfile,
-			DefaultTheme:  by.DefaultTheme,
-			Favicon:       by.Favicon,
-		},
-	}
-
-	// We set the valid fields here because it's an update and we don't want
-	// to overwrite the other fields
-	workspaceItem.SetItemMeta(&meta.ItemMeta{
-		ValidFields: map[string]bool{
-			adapt.ID_FIELD:               true,
-			"uesio/studio.loginroute":    true,
-			"uesio/studio.homeroute":     true,
-			"uesio/studio.publicprofile": true,
-			"uesio/studio.defaulttheme":  true,
-			"uesio/studio.favicon":       true,
-			"uesio/studio.app":           true,
-		},
-	})
+	saves := []datasource.PlatformSaveRequest{}
 
 	saveOptions := &adapt.SaveOptions{
 		Upsert: true,
 	}
 
-	saves := []datasource.PlatformSaveRequest{
-		*datasource.GetPlatformSaveOneRequest(workspaceItem, nil),
-		{
-			Collection: &deps,
-			Options:    saveOptions,
-		},
+	if by != nil {
+		deps := meta.BundleDependencyCollection{}
+		for key := range by.Dependencies {
+			dep := by.Dependencies[key]
+			major, minor, patch, err := meta.ParseVersionString(dep.Version)
+			if err != nil {
+				return err
+			}
+			deps = append(deps, &meta.BundleDependency{
+				Workspace: workspace,
+				App: &meta.App{
+					BuiltIn: meta.BuiltIn{
+						UniqueKey: key,
+					},
+				},
+				Bundle: &meta.Bundle{
+					BuiltIn: meta.BuiltIn{
+						UniqueKey: strings.Join([]string{key, major, minor, patch}, ":"),
+					},
+				},
+			})
+		}
+
+		// Upload workspace properties like homeRoute and loginRoute
+		workspaceItem := &meta.Workspace{
+			BuiltIn: meta.BuiltIn{
+				ID: workspace.ID,
+			},
+			App: &meta.App{
+				BuiltIn: meta.BuiltIn{
+					UniqueKey: namespace,
+				},
+			},
+			AppSettings: meta.AppSettings{
+				LoginRoute:    by.LoginRoute,
+				HomeRoute:     by.HomeRoute,
+				PublicProfile: by.PublicProfile,
+				DefaultTheme:  by.DefaultTheme,
+				Favicon:       by.Favicon,
+			},
+		}
+
+		// We set the valid fields here because it's an update and we don't want
+		// to overwrite the other fields
+		workspaceItem.SetItemMeta(&meta.ItemMeta{
+			ValidFields: map[string]bool{
+				adapt.ID_FIELD:               true,
+				"uesio/studio.loginroute":    true,
+				"uesio/studio.homeroute":     true,
+				"uesio/studio.publicprofile": true,
+				"uesio/studio.defaulttheme":  true,
+				"uesio/studio.favicon":       true,
+				"uesio/studio.app":           true,
+			},
+		})
+
+		saves = append(saves,
+			*datasource.GetPlatformSaveOneRequest(workspaceItem, nil),
+			datasource.PlatformSaveRequest{
+				Collection: &deps,
+				Options:    saveOptions,
+			},
+		)
+	}
+
+	params := map[string]string{
+		"workspaceid": workspace.ID,
 	}
 
 	for _, element := range ORDERED_ITEMS {
@@ -253,6 +256,7 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 			saves = append(saves, datasource.PlatformSaveRequest{
 				Collection: dep[element],
 				Options:    saveOptions,
+				Params:     params,
 			})
 		}
 	}
@@ -267,7 +271,7 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 		return err
 	}
 
-	err = applyDeploy(saves, uploadOps, connection, session)
+	err = applyDeploy(saves, uploadOps, connection, session, params)
 	if err != nil {
 		rollbackError := connection.RollbackTransaction()
 		if rollbackError != nil {
@@ -290,16 +294,17 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 
 func applyDeploy(
 	saves []datasource.PlatformSaveRequest,
-	fileops []filesource.FileUploadOp,
+	fileops []*filesource.FileUploadOp,
 	connection adapt.Connection,
 	session *sess.Session,
+	params map[string]string,
 ) error {
 	err := datasource.PlatformSaves(saves, connection, session.RemoveWorkspaceContext())
 	if err != nil {
 		return err
 	}
 
-	_, err = filesource.Upload(fileops, connection, session.RemoveWorkspaceContext())
+	_, err = filesource.Upload(fileops, connection, session.RemoveWorkspaceContext(), params)
 	if err != nil {
 		return err
 	}

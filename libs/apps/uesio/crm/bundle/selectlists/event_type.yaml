@@ -1,9 +1,0 @@
-name: event_type
-options:
-  - label: Meeting
-    value: Meeting
-  - label: Exhibition
-    value: Exhibition
-  - label: Online
-    value: Online
-blank_option_label: None Selected

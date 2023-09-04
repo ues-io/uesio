@@ -1,0 +1,5 @@
+name: min
+type: NUMBER
+label: Min value
+number:
+  decimals: 0

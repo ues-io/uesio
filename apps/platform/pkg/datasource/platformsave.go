@@ -12,6 +12,7 @@ import (
 type PlatformSaveRequest struct {
 	Collection meta.CollectionableGroup
 	Options    *adapt.SaveOptions
+	Params     map[string]string
 }
 
 func PlatformDelete(request meta.CollectionableGroup, connection adapt.Connection, session *sess.Session) error {
@@ -35,6 +36,7 @@ func GetSaveRequestFromPlatformSave(psr PlatformSaveRequest) SaveRequest {
 		Wire:       "AnyKey",
 		Changes:    psr.Collection,
 		Options:    psr.Options,
+		Params:     psr.Params,
 	}
 }
 
@@ -64,15 +66,6 @@ func HandleSaveRequestErrors(requests []SaveRequest, err error) error {
 	return nil
 }
 
-func GetConnectionMap(connection adapt.Connection) map[string]adapt.Connection {
-	if connection == nil {
-		return nil
-	}
-	return map[string]adapt.Connection{
-		connection.GetDataSource(): connection,
-	}
-}
-
 func GetConnectionMetadata(connection adapt.Connection) *adapt.MetadataCache {
 	if connection == nil {
 		return nil
@@ -85,8 +78,8 @@ func GetConnectionSaveOptions(connection adapt.Connection) *SaveOptions {
 		return nil
 	}
 	return &SaveOptions{
-		Connections: GetConnectionMap(connection),
-		Metadata:    connection.GetMetadata(),
+		Connection: connection,
+		Metadata:   connection.GetMetadata(),
 	}
 }
 
@@ -114,9 +107,9 @@ func GetPlatformSaveOneRequest(item meta.CollectionableItem, options *adapt.Save
 	}
 }
 
-func GetPlatformConnection(metadata *adapt.MetadataCache, session *sess.Session, connections map[string]adapt.Connection) (adapt.Connection, error) {
+func GetPlatformConnection(metadata *adapt.MetadataCache, session *sess.Session, connection adapt.Connection) (adapt.Connection, error) {
 	if metadata == nil {
 		metadata = &adapt.MetadataCache{}
 	}
-	return GetConnection("uesio/core.platform", metadata, session, connections)
+	return GetConnection(meta.PLATFORM_DATA_SOURCE, metadata, session, connection)
 }

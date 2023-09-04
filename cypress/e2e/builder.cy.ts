@@ -79,14 +79,23 @@ describe("Uesio Builder Tests", () => {
 	const workspaceBasePath = getWorkspaceBasePath(appName, workspaceName)
 
 	const viewName = "testview"
-	const fullViewName = `${username}/${appName}.${viewName}`
+	const namespace = `${username}/${appName}`
+	const fullViewName = `${namespace}.${viewName}`
 	const builderComponentId = `${fullViewName}($root):uesio/builder.mainwrapper`
 
 	const getBuilderState = (id: string) =>
 		cy.getComponentState(`${builderComponentId}:${id}`)
 
-	const getComponentBankElement = (id: string) =>
-		cy.get(`[data-type="component:${id}"]`)
+	const getComponentBankElement = (
+		type: string,
+		id: string,
+		variantId?: string
+	) => {
+		const dataType = `${type}:${id}${
+			type === "componentvariant" && variantId ? `:${variantId}` : ""
+		}`
+		return cy.get(`[data-type="${CSS.escape(dataType)}"]`)
+	}
 
 	const getCanvasElement = (slotpath: string, index: number) =>
 		cy
@@ -114,7 +123,10 @@ describe("Uesio Builder Tests", () => {
 			cy.typeInInput("new-view-name", viewName)
 			cy.clickButton("save-new-view")
 			// Verify we get taken to the collection detail
-			cy.url().should("contain", `${workspaceBasePath}/views/${viewName}`)
+			cy.url().should(
+				"contain",
+				`${workspaceBasePath}/views/${namespace}/${viewName}`
+			)
 			cy.title().should("eq", `View: ${viewName}`)
 			// Go into the builder
 			cy.clickButton("build-view")
@@ -130,8 +142,29 @@ describe("Uesio Builder Tests", () => {
 				"eq",
 				initialPageDef
 			)
+
+			// Search for button component
+			cy.get("#builder-components-search").type("button")
+
 			// Add a button
-			getComponentBankElement("uesio/io.button").dblclick()
+			getComponentBankElement("component", "uesio/io.button").dblclick()
+			getBuilderState(`metadata:viewdef:${fullViewName}`).should(
+				"eq",
+				addButtonPageDef
+			)
+			// Cancel the page - to verify cancel behavior
+			cy.clickButton("cancel-builder-changes")
+			getBuilderState(`metadata:viewdef:${fullViewName}`).should(
+				"eq",
+				initialPageDef
+			)
+			// Add the button (again), but double click on the default variant to test that
+			// you can add double-click to add variants
+			getComponentBankElement(
+				"componentvariant",
+				"uesio/io.button",
+				"uesio/io.default"
+			).dblclick()
 			getBuilderState(`metadata:viewdef:${fullViewName}`).should(
 				"eq",
 				addButtonPageDef
@@ -185,11 +218,18 @@ describe("Uesio Builder Tests", () => {
 				"eq",
 				setButtonPageDef
 			)
-			// Cancel the page
-			cy.clickButton("cancel-builder-changes")
+			// Save the page
+			cy.clickButton("save-builder-changes")
 			getBuilderState(`metadata:viewdef:${fullViewName}`).should(
 				"eq",
-				initialPageDef
+				setButtonPageDef
+			)
+			// Refresh the page to verify that our view saved
+			cy.reload()
+			// Verify that the state is still the same
+			getBuilderState(`metadata:viewdef:${fullViewName}`).should(
+				"eq",
+				setButtonPageDef
 			)
 		})
 	})

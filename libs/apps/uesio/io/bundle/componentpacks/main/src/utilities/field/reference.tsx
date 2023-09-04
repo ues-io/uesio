@@ -5,16 +5,18 @@ import {
 	definition,
 	context,
 	component,
+	metadata,
 } from "@uesio/ui"
 
 import debounce from "lodash/debounce"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import CustomSelect from "../customselect/customselect"
 import ReadOnlyField from "./readonly"
 
 export type ReferenceFieldOptions = {
 	searchFields?: string[]
 	returnFields?: string[]
+	order?: wire.OrderState[]
 	components?: definition.DefinitionList
 	template?: string
 	requirewriteaccess?: boolean
@@ -26,9 +28,34 @@ interface ReferenceFieldProps {
 	fieldId: string
 	fieldMetadata: collection.Field
 	mode: context.FieldMode
-	record: wire.WireRecord
+	record?: wire.WireRecord
 	options?: ReferenceFieldOptions
 	placeholder?: string
+	setValue?: (value: wire.PlainWireRecord | null) => void
+}
+
+const displayTemplateFieldPattern = /\${(.*?)}/g
+
+// Build an intersection of all fields to return by extracting fields from the display template
+// and combining with the search and return fields
+const getReturnFields = (
+	displayTemplate: string | undefined,
+	returnFields: string[] = [],
+	searchFields: string[] = []
+) => {
+	const extractedFields = displayTemplate
+		? displayTemplate.match(displayTemplateFieldPattern)
+		: null
+	return Array.from(
+		new Set<string>(
+			returnFields.concat(
+				searchFields,
+				extractedFields
+					? extractedFields.map((f) => f.slice(2, -1))
+					: []
+			)
+		)
+	)
 }
 
 const isValueCondition = wire.isValueCondition
@@ -42,26 +69,48 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 		mode,
 		record,
 		context,
-		options,
+		options = {},
 		path,
 		placeholder,
 		variant,
 		id,
+		setValue,
 	} = props
 
 	const referencedCollection = api.collection.useCollection(
 		context,
-		fieldMetadata.source.reference?.collection || ""
+		fieldMetadata.getReferenceMetadata()?.collection || ""
 	)
 
 	const nameField = referencedCollection?.getNameField()?.getId()
 
 	const [items, setItems] = useState<wire.PlainWireRecord[]>([])
+	const [item, setItem] = useState<wire.PlainWireRecord | null>(
+		record?.getFieldValue<wire.PlainWireRecord>(fieldId) || null
+	)
+	useEffect(() => {
+		setItem(record?.getFieldValue<wire.PlainWireRecord>(fieldId) || null)
+	}, [record, fieldId])
 
 	if (!referencedCollection || !nameField) return null
 
+	const {
+		components,
+		conditions,
+		order = [
+			{
+				field: nameField as metadata.MetadataKey,
+				desc: false,
+			},
+		],
+		requirewriteaccess = false,
+		returnFields = [nameField],
+		searchFields = [nameField],
+		template,
+	} = options
+
 	const renderer = (item: wire.PlainWireRecord) => {
-		if (options?.components) {
+		if (components) {
 			const recordid = item[collection.ID_FIELD]
 			return (
 				<component.Slot
@@ -72,10 +121,8 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 				/>
 			)
 		}
-		if (options?.template) {
-			return context
-				.addRecordDataFrame(item)
-				.mergeString(options?.template)
+		if (template) {
+			return context.addRecordDataFrame(item).mergeString(template)
 		}
 		return (
 			item[nameField] ||
@@ -84,16 +131,11 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 		)
 	}
 
-	const value = record.getFieldValue<wire.PlainWireRecord>(fieldId)
-
 	const onSearch = debounce(async (search: string) => {
 		if (!wire) return
-		const searchFields = options?.searchFields || [nameField]
-		const returnFields = options?.returnFields || [nameField]
-
 		// Loop over the conditions and merge their values
-		const conditions: wire.WireConditionState[] = (
-			options?.conditions || []
+		const extraConditions: wire.WireConditionState[] = (
+			conditions || []
 		).map((condition) => {
 			if (!isValueCondition(condition)) return condition
 
@@ -114,18 +156,23 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 					view: context.getViewId() || "",
 					query: true,
 					collection: referencedCollection.getFullName(),
-					fields: returnFields.map((fieldName) => ({
+					fields: getReturnFields(
+						template,
+						returnFields,
+						searchFields
+					).map((fieldName) => ({
 						id: fieldName,
 					})),
 					conditions: [
-						...conditions,
+						...extraConditions,
 						{
 							type: "SEARCH",
 							value: search,
 							fields: searchFields,
 						},
 					],
-					requirewriteaccess: options?.requirewriteaccess,
+					requirewriteaccess,
+					order,
 				},
 			],
 		})
@@ -135,7 +182,7 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 	if (mode === "READ") {
 		return (
 			<ReadOnlyField variant={variant} context={context}>
-				{value ? renderer(value) : ""}
+				{item ? renderer(item) : ""}
 			</ReadOnlyField>
 		)
 	} else {
@@ -146,15 +193,19 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 				itemRenderer={renderer}
 				variant={"uesio/io.customselectfield:uesio/io.default"}
 				context={context}
-				selectedItems={value ? [value] : []}
+				selectedItems={item ? [item] : []}
 				isSelected={() => false}
 				onSearch={onSearch}
 				placeholder={placeholder}
 				onSelect={(item: wire.PlainWireRecord) => {
-					record.update(fieldId, item, context)
+					record?.update(fieldId, item, context)
+					setValue?.(item)
+					setItem(item)
 				}}
 				onUnSelect={() => {
-					record.update(fieldId, null, context)
+					record?.update(fieldId, null, context)
+					setValue?.(null)
+					setItem(null)
 				}}
 				getItemKey={(item: wire.PlainWireRecord) =>
 					item[collection.ID_FIELD] as string

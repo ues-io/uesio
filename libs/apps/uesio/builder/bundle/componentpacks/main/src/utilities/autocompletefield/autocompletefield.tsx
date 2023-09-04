@@ -14,7 +14,7 @@ import {
 	FloatingFocusManager,
 } from "@floating-ui/react"
 
-interface AutocompleteFieldUtilityProps<T> extends definition.UtilityProps {
+interface AutocompleteFieldUtilityProps<T> {
 	itemRenderer: (item: T) => ReactNode
 	onSelect: (item: T) => void
 	getItemKey: (item: T) => string

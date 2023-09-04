@@ -35,7 +35,7 @@ const Tile: definition.UC<TileDefinition> = (props) => {
 		<IOTile
 			id={api.component.getComponentIdFromProps(props)}
 			classes={classes}
-			variant={definition["uesio.variant"]}
+			variant={definition[component.STYLE_VARIANT]}
 			context={context}
 			onClick={handler}
 			isSelected={isSelected}

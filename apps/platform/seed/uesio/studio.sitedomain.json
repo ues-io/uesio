@@ -1,65 +1,9 @@
 [
 	{
 		"uesio/studio.site": {
-			"uesio/core.uniquekey": "uesio/web:prod"
-		},
-		"uesio/studio.type": "domain",
-		"uesio/studio.domain": "localhost"
-	},
-	{
-		"uesio/studio.site": {
-			"uesio/core.uniquekey": "uesio/web:prod"
-		},
-		"uesio/studio.type": "domain",
-		"uesio/studio.domain": "uesio-dev.com"
-	},
-	{
-		"uesio/studio.site": {
-			"uesio/core.uniquekey": "uesio/web:prod"
-		},
-		"uesio/studio.type": "domain",
-		"uesio/studio.domain": "ues-dev.io"
-	},
-	{
-		"uesio/studio.site": {
-			"uesio/core.uniquekey": "uesio/web:prod"
-		},
-		"uesio/studio.type": "domain",
-		"uesio/studio.domain": "ues-uat.io"
-	},
-	{
-		"uesio/studio.site": {
-			"uesio/core.uniquekey": "uesio/web:prod"
-		},
-		"uesio/studio.type": "domain",
-		"uesio/studio.domain": "uesio.com"
-	},
-	{
-		"uesio/studio.site": {
-			"uesio/core.uniquekey": "uesio/web:prod"
-		},
-		"uesio/studio.type": "domain",
-		"uesio/studio.domain": "ues.io"
-	},
-	{
-		"uesio/studio.site": {
-			"uesio/core.uniquekey": "uesio/web:prod"
-		},
-		"uesio/studio.type": "subdomain",
-		"uesio/studio.domain": "www"
-	},
-	{
-		"uesio/studio.site": {
 			"uesio/core.uniquekey": "uesio/studio:prod"
 		},
 		"uesio/studio.type": "subdomain",
 		"uesio/studio.domain": "studio"
-	},
-	{
-		"uesio/studio.site": {
-			"uesio/core.uniquekey": "uesio/docs:prod"
-		},
-		"uesio/studio.type": "subdomain",
-		"uesio/studio.domain": "docs"
 	}
 ]

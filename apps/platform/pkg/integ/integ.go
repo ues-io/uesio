@@ -7,6 +7,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/creds"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -47,7 +48,15 @@ func GetIntegration(integrationID string, session *sess.Session) (IntegrationCon
 	if err != nil {
 		return nil, err
 	}
-	credentials, err := creds.GetCredentials(integration.Credentials, session)
+
+	// Enter into a version context to get these
+	// credentails as the datasource's namespace
+	versionSession, err := datasource.EnterVersionContext(integration.Namespace, session, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	credentials, err := creds.GetCredentials(integration.Credentials, versionSession)
 	if err != nil {
 		return nil, err
 	}

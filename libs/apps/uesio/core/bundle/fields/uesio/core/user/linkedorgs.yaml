@@ -1,0 +1,7 @@
+name: linkedorgs
+type: REFERENCEGROUP
+label: Linked orgs
+referenceGroup:
+  collection: organizationuser
+  field: org
+  onDelete: CASCADE

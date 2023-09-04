@@ -2,6 +2,7 @@ import { component, definition, api, wire } from "@uesio/ui"
 
 type ComponentDefinition = {
 	collectionWire: string
+	collectionId: string
 	fieldWire: string
 	targetTableId?: string
 }
@@ -9,10 +10,6 @@ type ComponentDefinition = {
 type SuggestedField = {
 	label: string
 	type: string
-}
-
-type ValueConditionState = {
-	value: string
 }
 
 type NumberFieldMetadata = {
@@ -120,11 +117,17 @@ const handleResults = (
 	})
 }
 
+const commonColumnsSQL = `id uuid primary key, uniquekey varchar unique, createdat timestamp with timezone, updatedat timestamp with time zone`
+
+const getPrompt = (pluralLabel: string) =>
+	`I have a PostgreSQL database table which stores ${pluralLabel}, which already has the following columns in it, provided in SQL: ${commonColumnsSQL}. Please suggest 10 relevant additional columns for this table (do NOT include the columns that the table already has!), output as a JSON array of JSON objects, with each JSON object having 2 properties: (1) type - the PostgreSQL column type (2) label - the name of the column. Please just return the JSON array.`
+
 const SuggestedFields: definition.UC<ComponentDefinition> = (props) => {
 	const {
 		context,
 		definition: {
 			collectionWire: collectionWireName,
+			collectionId: collectionId,
 			fieldWire: fieldWireName,
 			targetTableId,
 		},
@@ -144,14 +147,11 @@ const SuggestedFields: definition.UC<ComponentDefinition> = (props) => {
 	const pluralLabel = (targetCollection?.getFieldValue(
 		"uesio/studio.plurallabel"
 	) || "") as string
-	const targetCollectionName = context.mergeString(
-		(fieldWire?.getCondition("fullCollectionName") as ValueConditionState)
-			.value
-	)
+	const targetCollectionName = context.mergeString(collectionId)
 	return (
 		<SuggestDataButton
 			context={context}
-			prompt={`I am creating a new PostgreSQL database table to store ${pluralLabel}. Suggest 10 relevant columns for this new table, output as a JSON array of JSON objects, with each JSON object having 2 properties: (1) type - the PostgreSQL column type (2) label - the name of the column`}
+			prompt={getPrompt(pluralLabel)}
 			label={"Suggest Fields"}
 			loadingLabel={"Suggesting fields..."}
 			targetTableId={targetTableId}

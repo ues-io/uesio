@@ -7,6 +7,7 @@ import {
 } from "../bands/route/types"
 import { selectors as viewSelectors } from "../bands/viewdef"
 import { selectors as labelSelectors } from "../bands/label"
+import { selectors as fileSelectors } from "../bands/file"
 import { selectors as componentVariantSelectors } from "../bands/componentvariant"
 import { selectors as themeSelectors } from "../bands/theme"
 import { selectByName } from "../bands/featureflag"
@@ -319,17 +320,21 @@ class Context {
 				wireId ? frame.type === "RECORD" && frame.wire === wireId : true
 			)
 
-		if (undefined === recordFrame) {
-			return undefined
-		}
-		if (recordFrame.type === "RECORD_DATA") {
+		if (recordFrame?.type === "RECORD_DATA") {
 			return new WireRecord(recordFrame.recordData, "", new Wire())
 		}
 
 		const wire = this.getWire(wireId)
-		return wire && recordFrame.record
-			? wire.getRecord(recordFrame.record)
-			: undefined
+
+		if (!wire) return undefined
+
+		// If we've got a recordFrame with a record already, return the associated record
+		if (recordFrame?.record) {
+			return wire.getRecord(recordFrame.record)
+		}
+
+		// Otherwise, the best we can do is to get the first record in the wire
+		return wire.getFirstRecord()
 	}
 
 	getViewAndWireId = (
@@ -382,6 +387,9 @@ class Context {
 
 	getLabel = (labelKey: string) =>
 		labelSelectors.selectById(getCurrentState(), labelKey)?.value
+
+	getStaticFileModstamp = (fileKey: string) =>
+		fileSelectors.selectById(getCurrentState(), fileKey)?.updatedAt
 
 	getFeatureFlag = (name: string) => selectByName(getCurrentState(), name)
 
@@ -634,4 +642,16 @@ export {
 
 export { Context }
 
-export type { ContextFrame, FieldMode, ContextOptions }
+export type {
+	ComponentContext,
+	ContextFrame,
+	ContextOptions,
+	ErrorContext,
+	FieldMode,
+	FieldModeContext,
+	RecordContext,
+	RecordDataContext,
+	RouteContext,
+	SignalOutputContext,
+	ViewContext,
+}

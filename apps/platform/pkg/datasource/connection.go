@@ -9,24 +9,14 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func HasExistingConnection(dataSourceKey string, connections map[string]adapt.Connection) bool {
-	if connections != nil {
-		_, ok := connections[dataSourceKey]
-		return ok
-	}
-	return false
-}
-
-func GetConnection(dataSourceKey string, metadata *adapt.MetadataCache, session *sess.Session, connections map[string]adapt.Connection) (adapt.Connection, error) {
+func GetConnection(dataSourceKey string, metadata *adapt.MetadataCache, session *sess.Session, connection adapt.Connection) (adapt.Connection, error) {
 
 	// If we were provided a default connection for this datasource,
 	// use that instead
-	if connections != nil {
-		connection, ok := connections[dataSourceKey]
-		if ok {
-			return connection, nil
-		}
+	if connection != nil {
+		return connection, nil
 	}
+
 	datasource, err := meta.NewDataSource(dataSourceKey)
 	if err != nil {
 		return nil, err
@@ -37,29 +27,26 @@ func GetConnection(dataSourceKey string, metadata *adapt.MetadataCache, session 
 		return nil, err
 	}
 
-	adapterType := datasource.Type
-	mergedType, err := configstore.Merge(adapterType, session)
-	if err != nil {
-		return nil, err
-	}
-	adapter, err := adapt.GetAdapter(mergedType, session)
-	if err != nil {
-		return nil, err
-	}
-	credentials, err := creds.GetCredentials(datasource.Credentials, session)
+	// Enter into a version context to get these
+	// credentails as the datasource's namespace
+	versionSession, err := EnterVersionContext(datasource.Namespace, session, connection)
 	if err != nil {
 		return nil, err
 	}
 
-	connection, err := adapter.GetConnection(credentials, metadata, dataSourceKey)
-
+	mergedType, err := configstore.Merge(datasource.Type, versionSession)
+	if err != nil {
+		return nil, err
+	}
+	adapter, err := adapt.GetAdapter(mergedType)
 	if err != nil {
 		return nil, err
 	}
 
-	if connections != nil && connection != nil {
-		connections[dataSourceKey] = connection
+	credentials, err := creds.GetCredentials(datasource.Credentials, versionSession)
+	if err != nil {
+		return nil, err
 	}
 
-	return connection, nil
+	return adapter.GetConnection(credentials, metadata, dataSourceKey)
 }

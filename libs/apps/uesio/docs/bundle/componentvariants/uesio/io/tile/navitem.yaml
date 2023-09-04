@@ -1,8 +1,0 @@
-name: navitem
-label: Nav Item
-definition:
-  uesio.styleTokens:
-    root:
-      - text-slate-800
-      - py-2
-      - text-sm

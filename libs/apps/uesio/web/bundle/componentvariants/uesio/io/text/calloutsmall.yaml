@@ -1,9 +1,0 @@
-name: calloutsmall
-extends: uesio/web.callout
-label: Callout Small
-definition:
-  uesio.styleTokens:
-    root:
-      - text-2xl
-      - md:text-2xl
-  element: div

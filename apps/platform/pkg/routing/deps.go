@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"gopkg.in/yaml.v3"
 
@@ -100,6 +101,28 @@ func addVariantDep(deps *PreloadMetadata, key string, session *sess.Session) err
 
 }
 
+func addComponentPackToDeps(deps *PreloadMetadata, packNamespace, packName string, session *sess.Session) {
+	pack := meta.NewBaseComponentPack(packNamespace, packName)
+	existingItem, alreadyRequested := deps.ComponentPack.AddItemIfNotExists(pack)
+	// If the pack has not been requested yet and/or we don't have its UpdatedAt field present,
+	// we need to load it so that we have that metadata available.
+	if alreadyRequested {
+		if existingPack, ok := existingItem.(*meta.ComponentPack); ok {
+			pack = existingPack
+		}
+	}
+	if pack.UpdatedAt == 0 {
+		err := bundle.Load(pack, session, nil)
+		if err != nil || pack.UpdatedAt == 0 {
+			pack.UpdatedAt = time.Now().Unix()
+		}
+	}
+	// If the pack wasn't requested before, we need to go ahead and request it
+	if !alreadyRequested {
+		deps.ComponentPack.AddItem(pack)
+	}
+}
+
 func getDepsForUtilityComponent(key string, deps *PreloadMetadata, session *sess.Session) error {
 
 	namespace, name, err := meta.ParseKey(key)
@@ -118,9 +141,8 @@ func getDepsForUtilityComponent(key string, deps *PreloadMetadata, session *sess
 		return nil
 	}
 
-	pack := meta.NewBaseComponentPack(namespace, utility.Pack)
+	addComponentPackToDeps(deps, namespace, utility.Pack, session)
 
-	deps.ComponentPack.AddItem(pack)
 	return nil
 
 }
@@ -130,9 +152,8 @@ func getDepsForComponent(component *meta.Component, deps *PreloadMetadata, sessi
 	if component.Pack == "" {
 		return nil
 	}
-	pack := meta.NewBaseComponentPack(component.Namespace, component.Pack)
 
-	deps.ComponentPack.AddItem(pack)
+	addComponentPackToDeps(deps, component.Namespace, component.Pack, session)
 
 	// need an admin session for retrieving config values
 	// in order to prevent users from having to have read on the uesio/core.configvalue table
@@ -326,7 +347,7 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 
 	builderComponentID := getBuilderComponentID(viewNamespace + "." + viewName)
 
-	deps.Component.AddItem(fmt.Sprintf("%s:metadata:viewdef:%s", builderComponentID, view.GetKey()), viewBytes.String())
+	deps.Component.AddItem(NewComponentMergeData(fmt.Sprintf("%s:metadata:viewdef:%s", builderComponentID, view.GetKey()), viewBytes.String()))
 
 	var variants meta.ComponentVariantCollection
 	err = bundle.LoadAllFromAny(&variants, nil, session, nil)
@@ -362,7 +383,7 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 		componentDefs[component.GetKey()] = componentYamlBytes
 	}
 
-	deps.Component.AddItem(fmt.Sprintf("%s:componentdefs", builderComponentID), componentDefs)
+	deps.Component.AddItem(NewComponentMergeData(fmt.Sprintf("%s:componentdefs", builderComponentID), componentDefs))
 
 	for i := range variants {
 		deps.ComponentVariant.AddItem(variants[i])
@@ -376,6 +397,19 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 		}
 		label.Value = value
 		deps.Label.AddItem(label)
+	}
+
+	// need an admin session for retrieving feature flags
+	// in order to prevent users from having to have read on the uesio/core.featureflagassignment table
+	adminSession := sess.GetAnonSession(session.GetSite())
+
+	featureFlags, err := featureflagstore.GetFeatureFlags(adminSession, session.GetContextUser().ID)
+	if err != nil {
+		return errors.New("Failed to get feature flags: " + err.Error())
+	}
+
+	for _, flag := range *featureFlags {
+		deps.FeatureFlag.AddItem(flag)
 	}
 
 	// Load in the studio theme.
@@ -401,8 +435,8 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 		return err
 	}
 
-	deps.Component.AddItem(fmt.Sprintf("%s:namespaces", builderComponentID), appData)
-	deps.Component.AddItem(fmt.Sprintf("%s:buildmode", builderComponentID), true)
+	deps.Component.AddItem(NewComponentMergeData(fmt.Sprintf("%s:namespaces", builderComponentID), appData))
+	deps.Component.AddItem(NewComponentMergeData(fmt.Sprintf("%s:buildmode", builderComponentID), true))
 
 	return nil
 }
@@ -433,11 +467,11 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 		return nil, errors.New("Failed to get translated labels: " + err.Error())
 	}
 
-	// need an admin session for retrieving feature falgs
+	// need an admin session for retrieving feature flags
 	// in order to prevent users from having to have read on the uesio/core.featureflagassignment table
 	adminSession := datasource.GetSiteAdminSession(session)
 
-	featureflags, err := featureflagstore.GetFeatureFlags(adminSession, session.GetUserID())
+	featureFlags, err := featureflagstore.GetFeatureFlags(adminSession, session.GetContextUser().ID)
 	if err != nil {
 		return nil, errors.New("Failed to get feature flags: " + err.Error())
 	}
@@ -451,20 +485,48 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 		deps.Label.AddItem(label)
 	}
 
-	for _, flag := range *featureflags {
+	for _, flag := range *featureFlags {
 		deps.FeatureFlag.AddItem(flag)
 	}
 
 	workspace := session.GetWorkspace()
 
-	// In workspace mode, make sure we have the builder pack so that we can include the buildwrapper
 	if workspace != nil {
+		// In workspace mode, make sure we have the builder pack so that we can include the buildwrapper
 		builderComponentID := getBuilderComponentID(route.ViewRef)
-		deps.Component.AddItem(fmt.Sprintf("%s:buildmode", builderComponentID), false)
-		deps.ComponentPack.AddItem(meta.NewBaseComponentPack(DEFAULT_BUILDER_PACK_NAMESPACE, DEFAULT_BUILDER_PACK_NAME))
+		// If there is already an entry for build mode, don't override it, as it may be set to true
+		deps.Component.AddItemIfNotExists(NewComponentMergeData(fmt.Sprintf("%s:buildmode", builderComponentID), false))
+		addComponentPackToDeps(deps, DEFAULT_BUILDER_PACK_NAMESPACE, DEFAULT_BUILDER_PACK_NAME, session)
+		// Also load in the modstamps for all static files in the workspace
+		// so that we never have stale URLs in the view builder / preview
+		err = addStaticFileModstampsForWorkspaceToDeps(deps, workspace, session)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return deps, nil
+}
+
+func addStaticFileModstampsForWorkspaceToDeps(deps *PreloadMetadata, workspace *meta.Workspace, session *sess.Session) error {
+	// Query for all static files in the workspace
+	var files meta.FileCollection
+	err := bundle.LoadAllFromNamespaces([]string{workspace.App.FullName}, &files, nil, session, nil)
+	if err != nil {
+		return errors.New("failed to load static files: " + err.Error())
+	}
+	err = files.Loop(func(item meta.Item, index string) error {
+		file, ok := item.(*meta.File)
+		if !ok {
+			return errors.New("item is not a valid File")
+		}
+		deps.StaticFile.AddItem(file)
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func addComponentVariantDep(depMap *ViewDepMap, variantName string, compName string) error {

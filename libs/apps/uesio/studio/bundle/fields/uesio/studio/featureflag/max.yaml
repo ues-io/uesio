@@ -1,0 +1,5 @@
+name: max
+type: NUMBER
+label: Max value
+number:
+  decimals: 0

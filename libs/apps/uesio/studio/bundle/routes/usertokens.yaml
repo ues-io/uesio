@@ -1,0 +1,5 @@
+name: usertokens
+path: user/security/access-tokens
+view: usertokens
+theme: default
+title: "Security: User access tokens"

@@ -32,33 +32,11 @@ definition:
           param: collectionname
     fields:
       collection: uesio/studio.field
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.type:
-        uesio/studio.label:
-        uesio/studio.collection:
-        uesio/studio.reference:
-        uesio/studio.file:
-        uesio/studio.autopopulate:
-        uesio/studio.selectlist:
-        uesio/studio.validate:
-        uesio/studio.languagelabel:
-        uesio/studio.number:
-        uesio/studio.subfields:
-        uesio/studio.subtype:
-        uesio/studio.formula:
-        uesio/studio.autonumber:
       conditions:
-        - field: uesio/studio.collection
-          value: $Param{app}.$Param{collectionname}
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
-        - field: uesio/studio.name
-          valueSource: PARAM
-          param: fieldname
+        - field: uesio/studio.allmetadata
+          value: true
+        - field: uesio/studio.item
+          value: $Param{namespace}.$Param{collectionname}:$Param{fieldNamespace}.$Param{fieldname}
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -74,9 +52,11 @@ definition:
                     params:
                       itemType: collections
                       itemIcon: list
-                      itemCollectionName: $Param{collectionname}
-                      subItemType: collections
+                      itemName: $Param{collectionname}
+                      itemNameSpace: $Param{namespace}
+                      subItemType: fields
                       subItemName: $Param{fieldname}
+                      subItemNameSpace: $Param{fieldNamespace}
           - uesio/io.griditem:
               uesio.variant: uesio/studio.leftbar
               components:
@@ -99,6 +79,12 @@ definition:
                           title: Field - ${uesio/studio.name}
                           actions:
                             - uesio/io.group:
+                                uesio.display:
+                                  - type: paramValue
+                                    param: app
+                                    field: uesio/core.dynamiccollection
+                                    operator: EQUALS
+                                    value: $Param{fieldNamespace}
                                 components:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
@@ -162,6 +148,15 @@ definition:
                                   - uesio/io.field:
                                       fieldId: uesio/studio.type
                                   - uesio/io.field:
+                                      fieldId: uesio/studio.subtype
+                                      uesio.display:
+                                        - field: uesio/studio.type
+                                          type: fieldValue
+                                          operator: IN
+                                          values:
+                                            - LIST
+                                            - MAP
+                                  - uesio/io.field:
                                       fieldId: uesio/studio.label
                                   - uesio/builder.metadatafield:
                                       fieldId: uesio/studio.languagelabel
@@ -180,6 +175,9 @@ definition:
                                             fieldId: uesio/studio.reference->uesio/studio.collection
                                             metadataType: COLLECTION
                                             label: Ref. Collection
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.required
+                                      displayAs: TOGGLE
                                   - uesio/io.box:
                                       uesio.display:
                                         - field: uesio/studio.type
@@ -249,6 +247,11 @@ definition:
                                         - field: uesio/studio.validate->uesio/studio.type
                                           value: REGEX
                                       fieldId: uesio/studio.validate->uesio/studio.regex
+                                  - uesio/io.field:
+                                      uesio.display:
+                                        - field: uesio/studio.validate->uesio/studio.type
+                                          value: YAML
+                                      fieldId: uesio/studio.validate->uesio/studio.schema_uri
                                   - uesio/io.box:
                                       uesio.display:
                                         - field: uesio/studio.type
@@ -256,18 +259,27 @@ definition:
                                       components:
                                         - uesio/io.field:
                                             fieldId: uesio/studio.formula->uesio/studio.expression
+                                  - uesio/io.box:
+                                      uesio.display:
+                                        - field: uesio/studio.type
+                                          value: FORMULA
+                                      components:
                                         - uesio/io.field:
                                             fieldId: uesio/studio.formula->uesio/studio.returntype
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           uesio.display:
-                            - field: uesio/studio.type
-                              type: fieldValue
-                              operator: IN
-                              values:
-                                - MAP
-                                - STRUCT
-                                - LIST
+                            - type: group
+                              conjunction: OR
+                              conditions:
+                                - field: uesio/studio.type
+                                  type: fieldValue
+                                  wire: fields
+                                  value: STRUCT
+                                - field: uesio/studio.subtype
+                                  wire: fields
+                                  type: fieldValue
+                                  value: STRUCT
                           uesio.styleTokens:
                             root:
                               - p-10
@@ -276,24 +288,8 @@ definition:
                                 uesio.variant: uesio/io.main
                                 title: Sub fields
                             - uesio/io.field:
-                                fieldId: uesio/studio.subtype
-                                uesio.display:
-                                  - field: uesio/studio.type
-                                    type: fieldValue
-                                    operator: IN
-                                    values:
-                                      - MAP
-                                      - LIST
-                            - uesio/io.field:
                                 label: " "
                                 fieldId: uesio/studio.subfields
-                                uesio.display:
-                                  - field: uesio/studio.subtype
-                                    type: fieldValue
-                                    operator: NOT_IN
-                                    values:
-                                      - TEXT
-                                      - NUMBER
   panels:
     deleteField:
       uesio.type: uesio/io.dialog
@@ -319,7 +315,7 @@ definition:
                 wires:
                   - fields
               - signal: route/NAVIGATE
-                path: app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{collectionname}
+                path: app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{namespace}/$Param{collectionname}
         - uesio/io.button:
             text: $Label{uesio/io.cancel}
             uesio.variant: uesio/io.secondary

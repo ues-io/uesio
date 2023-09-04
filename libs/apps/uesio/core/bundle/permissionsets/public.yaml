@@ -1,6 +1,6 @@
 name: public
 public: true
-named:
+named: {}
 views:
   uesio/core.login: true
   uesio/core.notfound: true
@@ -28,3 +28,4 @@ collections:
   uesio/core.bulkbatch: true
   uesio/core.featureflagassignment: true
   uesio/core.user: true
+  uesio/core.organizationuser: true

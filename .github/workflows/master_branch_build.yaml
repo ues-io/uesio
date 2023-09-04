@@ -8,6 +8,24 @@ on:
         required: true
       AWS_ACCOUNT_ID_DEV:
         required: true
+      AWS_ECR_ROLE_DEV:
+        required: true
+      AWS_REGION_DEV:
+        required: true
+
+# Ensure that only the latest push to master is run,
+# and any previous builds on the branch are cancelled automatically
+# (to save money on Github Actions execution time, and ensure that
+# we don't have multiple deploys to Dev environment running at once)
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Request permissions to be able to access the Github OIDC JWT,
+# which is needed for AWS actions.
+permissions:
+  id-token: write # This is required for requesting a JWT
+  contents: read # This is required for actions/checkout
 
 jobs:
   build:
@@ -32,8 +50,8 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
+          role-to-assume: ${{ secrets.AWS_ECR_ROLE_DEV }}
+          role-session-name: ecrpush
           aws-region: ${{ secrets.AWS_REGION_DEV }}
       - name: Login to Amazon ECR
         id: login-ecr
@@ -85,14 +103,13 @@ jobs:
           name: image-artifacts
           path: |
             artifacts
-      - name: Add studio subdomain to /etc/hosts
-        run: |
-          sudo echo "127.0.0.1 studio.uesio-dev.com" | sudo tee -a /etc/hosts
+      - name: Add subdomains to /etc/hosts
+        run: bash ./scripts/seed-etc-hosts.sh
       - name: Run E2E and API Integration tests against app in Docker
         run: |
           # install hurl for debian. Using the NPM package has SSL issues with node-keytar... really frustrating
-          curl -LO https://github.com/Orange-OpenSource/hurl/releases/download/2.0.1/hurl_2.0.1_amd64.deb
-          sudo apt update && sudo apt install ./hurl_2.0.1_amd64.deb
+          curl -LO https://github.com/Orange-OpenSource/hurl/releases/download/4.0.0/hurl_4.0.0_amd64.deb
+          sudo apt update && sudo apt install ./hurl_4.0.0_amd64.deb
 
           # Run E2E and Integration tests
           npm run tests-all

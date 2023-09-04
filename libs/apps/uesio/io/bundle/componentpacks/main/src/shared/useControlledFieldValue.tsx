@@ -36,9 +36,16 @@ const useControlledInput = <T extends HTMLInputElement | HTMLTextAreaElement>(
 
 const useControlledInputNumber = <T extends HTMLInputElement>(
 	value: string | number,
-	setValue: FieldValueSetter | undefined
+	setValue: FieldValueSetter | undefined,
+	applyChanges: ApplyChanges | undefined
 ) => {
 	const [controlledValue, setControlledValue] = useState(value)
+	const applyOnBlur = applyChanges === "onBlur"
+	const invokeSetValue = (valueAsNumber: number) => {
+		if (!setValue) return
+		const isNumeric = !isNaN(valueAsNumber)
+		isNumeric ? setValue?.(valueAsNumber) : setValue?.(null)
+	}
 
 	useEffect(() => {
 		setControlledValue(value)
@@ -50,11 +57,21 @@ const useControlledInputNumber = <T extends HTMLInputElement>(
 				? ""
 				: controlledValue,
 		onChange: (e: ChangeEvent<T>) => {
-			const valueAsNumber = e.target.valueAsNumber
-			const valueAsString = e.target.value
-			setControlledValue(valueAsString)
-			const isNumeric = !isNaN(valueAsNumber)
-			isNumeric ? setValue?.(valueAsNumber) : setValue?.(null)
+			setControlledValue(e.target.value)
+			!applyOnBlur && invokeSetValue(e.target.valueAsNumber)
+		},
+		onBlur: (e: ChangeEvent<T>) =>
+			applyOnBlur &&
+			value !== e.target.value &&
+			invokeSetValue(e.target.valueAsNumber),
+		onKeyPress: (e: KeyboardEvent<T>) => {
+			if (
+				applyOnBlur &&
+				e.key === "Enter" &&
+				value !== e.currentTarget.value
+			) {
+				invokeSetValue(e.currentTarget.valueAsNumber)
+			}
 		},
 	}
 }

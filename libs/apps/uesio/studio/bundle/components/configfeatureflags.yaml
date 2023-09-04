@@ -5,6 +5,7 @@ utilities:
   - uesio/io.titlebar
   - uesio/io.button
   - uesio/io.togglefield
+  - uesio/io.numberfield
   - uesio/io.dialog
 variants:
   - uesio/io.button:uesio/io.secondary

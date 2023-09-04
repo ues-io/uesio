@@ -1,5 +1,5 @@
 name: collectiondata
 path: app/{app:\w*\/\w*}/workspace/{workspacename}/data/{namespace:\w*\/\w*}/{collectionname}
-view: uesio/studio.collectiondata
-theme: uesio/studio.default
+view: collectiondata
+theme: default
 title: "Collection Data: $Param{collectionname}"

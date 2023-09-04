@@ -1,0 +1,7 @@
+name: user
+type: REFERENCE
+label: User
+required: true
+createOnly: true
+reference:
+  collection: user

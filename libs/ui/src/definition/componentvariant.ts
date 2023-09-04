@@ -1,5 +1,5 @@
-import { MetadataKey } from "../bands/builder/types"
-import { DefinitionMap } from "./definition"
+import type { MetadataKey } from "../bands/builder/types"
+import type { DefinitionMap } from "./definition"
 
 export type ComponentVariant = {
 	name: string

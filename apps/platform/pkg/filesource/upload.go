@@ -16,35 +16,22 @@ import (
 
 const PLATFORM_FILE_SOURCE = "uesio/core.platform"
 
-func GetFileType(details *fileadapt.FileDetails) string {
-	if details.FieldID == "" {
+func GetFileType(op *FileUploadOp) string {
+	if op.FieldID == "" {
 		return "attachment"
 	}
-	return "field:" + details.FieldID
-}
-
-func getUploadMetadataResponse(metadataResponse *adapt.MetadataCache, collectionID, fieldID string, session *sess.Session) error {
-	collections := datasource.MetadataRequest{}
-
-	if fieldID != "" {
-		err := collections.AddField(collectionID, fieldID, nil)
-		if err != nil {
-			return err
-		}
-	} else {
-		err := collections.AddCollection(collectionID)
-		if err != nil {
-			return err
-		}
-	}
-
-	return collections.Load(metadataResponse, session, nil)
-
+	return "field:" + op.FieldID
 }
 
 type FileUploadOp struct {
-	Data    io.Reader
-	Details *fileadapt.FileDetails
+	Data            io.Reader
+	RecordUniqueKey string
+	ContentLength   int64
+	Path            string            `json:"name"`
+	CollectionID    string            `json:"collectionID"`
+	RecordID        string            `json:"recordID"`
+	FieldID         string            `json:"fieldID"`
+	Params          map[string]string `json:"params"`
 }
 
 func getUploadMetadata(metadataResponse *adapt.MetadataCache, collectionID, fieldID string) (*adapt.CollectionMetadata, *adapt.FieldMetadata, error) {
@@ -64,7 +51,7 @@ func getUploadMetadata(metadataResponse *adapt.MetadataCache, collectionID, fiel
 	return collectionMetadata, fieldMetadata, nil
 }
 
-func Upload(ops []FileUploadOp, connection adapt.Connection, session *sess.Session) ([]*meta.UserFileMetadata, error) {
+func Upload(ops []*FileUploadOp, connection adapt.Connection, session *sess.Session, params map[string]string) ([]*meta.UserFileMetadata, error) {
 
 	ufms := meta.UserFileMetadataCollection{}
 	idMaps := map[string]adapt.LocatorMap{}
@@ -72,37 +59,23 @@ func Upload(ops []FileUploadOp, connection adapt.Connection, session *sess.Sessi
 	metadataResponse := &adapt.MetadataCache{}
 	// First get create all the metadata
 	for _, op := range ops {
-		details := op.Details
 
-		ufm := meta.UserFileMetadata{
-			CollectionID:  details.CollectionID,
-			MimeType:      mime.TypeByExtension(filepath.Ext(details.Path)),
-			FieldID:       details.FieldID,
-			Path:          details.Path,
-			Type:          GetFileType(details),
-			RecordID:      details.RecordID,
-			ContentLength: details.ContentLength,
-			FileSourceID:  PLATFORM_FILE_SOURCE,
-		}
-
-		if details.RecordID == "" {
-			if details.RecordUniqueKey == "" {
+		if op.RecordID == "" {
+			if op.RecordUniqueKey == "" {
 				return nil, errors.New("You must provide either a RecordID, or a RecordUniqueKey for a file upload")
 			}
-			idMap, ok := idMaps[details.CollectionID]
+			idMap, ok := idMaps[op.CollectionID]
 			if !ok {
 				idMap = adapt.LocatorMap{}
-				idMaps[details.CollectionID] = idMap
+				idMaps[op.CollectionID] = idMap
 			}
-			err := idMap.AddID(details.RecordUniqueKey, adapt.ReferenceLocator{
-				Item: &ufm,
+			err := idMap.AddID(op.RecordUniqueKey, adapt.ReferenceLocator{
+				Item: op,
 			})
 			if err != nil {
 				return nil, err
 			}
 		}
-
-		ufms = append(ufms, &ufm)
 
 	}
 
@@ -125,12 +98,12 @@ func Upload(ops []FileUploadOp, connection adapt.Connection, session *sess.Sessi
 			//One collection with more than 1 fields of type File
 			for i := range matchIndexes {
 				match := matchIndexes[i].Item
-				ufm := match.(*meta.UserFileMetadata)
+				op := match.(*FileUploadOp)
 				idValue, err := item.GetField(adapt.ID_FIELD)
 				if err != nil {
 					return err
 				}
-				ufm.RecordID = idValue.(string)
+				op.RecordID = idValue.(string)
 			}
 			return nil
 		})
@@ -141,19 +114,29 @@ func Upload(ops []FileUploadOp, connection adapt.Connection, session *sess.Sessi
 
 	tenantID := session.GetTenantID()
 
-	for index, ufm := range ufms {
-		err := getUploadMetadataResponse(metadataResponse, ufm.CollectionID, ufm.FieldID, session)
+	for _, op := range ops {
+		err := datasource.GetMetadataResponse(metadataResponse, op.CollectionID, op.FieldID, session)
 		if err != nil {
 			return nil, err
 		}
 
-		fullPath := ufm.GetFullPath(tenantID)
+		ufm := &meta.UserFileMetadata{
+			CollectionID:  op.CollectionID,
+			MimeType:      mime.TypeByExtension(filepath.Ext(op.Path)),
+			FieldID:       op.FieldID,
+			Path:          op.Path,
+			Type:          GetFileType(op),
+			RecordID:      op.RecordID,
+			ContentLength: op.ContentLength,
+			FileSourceID:  PLATFORM_FILE_SOURCE,
+		}
+		ufms = append(ufms, ufm)
 
 		conn, err := fileadapt.GetFileConnection(ufm.FileSourceID, session)
 		if err != nil {
 			return nil, err
 		}
-		err = conn.Upload(ops[index].Data, fullPath)
+		err = conn.Upload(op.Data, ufm.GetFullPath(tenantID))
 		if err != nil {
 			return nil, err
 		}
@@ -167,6 +150,7 @@ func Upload(ops []FileUploadOp, connection adapt.Connection, session *sess.Sessi
 		Options: &adapt.SaveOptions{
 			Upsert: true,
 		},
+		Params: params,
 	}, connection, session)
 	if err != nil {
 		return nil, err
@@ -196,6 +180,7 @@ func Upload(ops []FileUploadOp, connection adapt.Connection, session *sess.Sessi
 						adapt.ID_FIELD: ufm.RecordID,
 					},
 				},
+				Params: params,
 				Options: &adapt.SaveOptions{
 					Upsert: true,
 				},

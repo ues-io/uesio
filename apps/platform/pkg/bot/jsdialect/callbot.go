@@ -4,6 +4,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -28,12 +29,31 @@ func (acba *AdminCallBotAPI) Load(request BotLoadOp) (*adapt.Collection, error) 
 	return botLoad(request, datasource.GetSiteAdminSession(acba.Session), acba.Connection)
 }
 
+func NewCallBotAPI(bot *meta.Bot, session *sess.Session, connection adapt.Connection, params map[string]interface{}) *CallBotAPI {
+	return &CallBotAPI{
+		Session: session,
+		Params: &ParamsAPI{
+			Params: params,
+		},
+		AsAdmin: AdminCallBotAPI{
+			Session:    session,
+			Connection: connection,
+		},
+		Connection: connection,
+		Results:    map[string]interface{}{},
+		LogApi:     NewBotLogAPI(bot),
+		Http:       NewBotHttpAPI(bot, session),
+	}
+}
+
 type CallBotAPI struct {
 	Session    *sess.Session
 	Params     *ParamsAPI `bot:"params"`
 	Connection adapt.Connection
 	Results    map[string]interface{}
 	AsAdmin    AdminCallBotAPI `bot:"asAdmin"`
+	LogApi     *BotLogAPI      `bot:"log"`
+	Http       *BotHttpAPI     `bot:"http"`
 }
 
 func (cba *CallBotAPI) AddResult(key string, value interface{}) {
@@ -54,4 +74,12 @@ func (bs *CallBotAPI) RunIntegrationAction(integrationID string, action string, 
 
 func (bs *CallBotAPI) GetConfigValue(configValueKey string) (string, error) {
 	return configstore.GetValueFromKey(configValueKey, bs.Session)
+}
+
+func (cba *CallBotAPI) GetSession() *SessionAPI {
+	return NewSessionAPI(cba.Session)
+}
+
+func (cba *CallBotAPI) GetUser() *UserAPI {
+	return NewUserAPI(cba.Session.GetContextUser())
 }

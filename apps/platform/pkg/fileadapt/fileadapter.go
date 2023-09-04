@@ -9,6 +9,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/creds"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -53,16 +54,24 @@ func GetFileConnection(fileSourceID string, session *sess.Session) (FileConnecti
 		return nil, err
 	}
 
-	fileAdapter, err := GetFileAdapter(fs.Type, session)
-	if err != nil {
-		return nil, err
-	}
-	credentials, err := creds.GetCredentials(fs.Credentials, session)
+	// Enter into a version context to get these
+	// credentails as the datasource's namespace
+	versionSession, err := datasource.EnterVersionContext(fs.Namespace, session, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	mergedBucket, err := configstore.Merge(fs.Bucket, session)
+	fileAdapter, err := GetFileAdapter(fs.Type, versionSession)
+	if err != nil {
+		return nil, err
+	}
+
+	credentials, err := creds.GetCredentials(fs.Credentials, versionSession)
+	if err != nil {
+		return nil, err
+	}
+
+	mergedBucket, err := configstore.Merge(fs.Bucket, versionSession)
 	if err != nil {
 		return nil, err
 	}

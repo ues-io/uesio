@@ -1,8 +1,11 @@
 name: uesio/tests
+loginRoute: uesio/tests.eq_condition
+homeRoute: uesio/tests.eq_condition
+publicProfile: uesio/tests.public
 dependencies:
+  uesio/builder:
+    version: v0.0.1
   uesio/core:
     version: v0.0.1
   uesio/io:
-    version: v0.0.1
-  uesio/builder:
     version: v0.0.1

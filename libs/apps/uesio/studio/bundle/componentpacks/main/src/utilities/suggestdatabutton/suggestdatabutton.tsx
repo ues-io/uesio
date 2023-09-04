@@ -9,31 +9,42 @@ type Props = {
 	handleResults: (results: unknown[]) => void
 	icon?: string
 	targetTableId?: string
-} & definition.UtilityProps
+}
 
-type AutocompleteResponse = {
+export type AutocompleteResponse = {
 	choices?: string[]
 	errors?: string[]
 }
 
-const handleAutocompleteData = (
-	context: context.Context,
+const OPENAI_JSON_PREAMBLE = "```json\n"
+
+export const preparse = (data: string) => {
+	if (!data) return data
+	// OpenAI has started returnin "json```" blocks, so try to extract those
+	if (data.includes(OPENAI_JSON_PREAMBLE)) {
+		return data.substring(
+			data.indexOf(OPENAI_JSON_PREAMBLE) + OPENAI_JSON_PREAMBLE.length,
+			data.lastIndexOf("```")
+		)
+	} else if (data.includes("[")) {
+		return data.substring(data.indexOf("["), data.lastIndexOf("]") + 1)
+	} else {
+		return data
+	}
+}
+
+export const handleAutocompleteData = (
 	response: AutocompleteResponse,
 	handleResults: (results: unknown[]) => void
 ) => {
 	if (response.errors) {
-		return
+		throw new Error(response.errors[0])
 	}
 	if (response.choices?.length) {
 		const data = response.choices[0] as string
-		try {
-			const dataArray: unknown[] = parse(data)
-			if (dataArray?.length) {
-				handleResults(dataArray)
-			}
-		} catch (e) {
-			console.error(e)
-			// eslint-disable-next-line no-empty
+		const dataArray: unknown[] = parse(preparse(data))
+		if (dataArray?.length) {
+			handleResults(dataArray)
 		}
 	}
 }
@@ -88,26 +99,50 @@ const SuggestDataButton: definition.UtilityComponent<Props> = (props) => {
 					context
 				) as Promise<context.Context>
 
-				signalResult.then((resultContext) => {
-					setLoading(false)
-					const result =
-						resultContext.getSignalOutputs("autocomplete")
-					if (!result) return
-					handleAutocompleteData(context, result.data, handleResults)
-					if (targetTableId) {
-						// Turn the target table into edit mode
-						api.signal.run(
-							{
-								signal: "component/CALL",
-								component: "uesio/io.table",
-								componentsignal: "SET_EDIT_MODE",
-								targettype: "specific",
-								componentid: targetTableId,
-							},
+				signalResult
+					.then((resultContext) => {
+						setLoading(false)
+						const result =
+							resultContext.getSignalOutputs("autocomplete")
+						if (!result) {
+							api.notification.addError(
+								"Unable to suggest data, please try again!",
+								context
+							)
+							return
+						}
+						try {
+							handleAutocompleteData(result.data, handleResults)
+						} catch (e) {
+							api.notification.addError(
+								"Unable to suggest data, unexpected error: " +
+									e,
+								context
+							)
+							return
+						}
+
+						if (targetTableId) {
+							// Turn the target table into edit mode
+							api.signal.run(
+								{
+									signal: "component/CALL",
+									component: "uesio/io.table",
+									componentsignal: "SET_EDIT_MODE",
+									targettype: "specific",
+									componentid: targetTableId,
+								},
+								context
+							) as Promise<context.Context>
+						}
+					})
+					.catch((e) => {
+						setLoading(false)
+						api.notification.addError(
+							"Unable to suggest data, unexpected error: " + e,
 							context
-						) as Promise<context.Context>
-					}
-				})
+						)
+					})
 			}}
 		/>
 	)

@@ -19,6 +19,8 @@ import ErrorBoundary from "./components/errorboundary"
 import ErrorMessage from "./components/errormessage"
 const COMPONENT_ID = "uesio.id"
 const DISPLAY_CONDITIONS = "uesio.display"
+const STYLE_VARIANT = "uesio.variant"
+const STYLE_TOKENS = "uesio.styleTokens"
 
 export type {
 	SlotUtilityProps,
@@ -32,6 +34,8 @@ export type {
 export {
 	DISPLAY_CONDITIONS,
 	COMPONENT_ID,
+	STYLE_VARIANT,
+	STYLE_TOKENS,
 	Slot,
 	ErrorMessage,
 	ErrorBoundary,

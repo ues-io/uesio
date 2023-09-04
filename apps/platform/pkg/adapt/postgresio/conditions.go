@@ -3,7 +3,7 @@ package postgresio
 import (
 	"errors"
 	"fmt"
-	"reflect"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -83,7 +83,10 @@ func processSearchCondition(condition adapt.LoadRequestCondition, collectionMeta
 	if searchToken == "" {
 		return nil
 	}
-	searchFields := map[string]bool{
+	searchFieldsArray := []string{
+		nameFieldDB,
+	}
+	uniqueSearchFields := map[string]bool{
 		nameFieldDB: true,
 	}
 	for _, field := range condition.SearchFields {
@@ -91,14 +94,21 @@ func processSearchCondition(condition adapt.LoadRequestCondition, collectionMeta
 		if err != nil {
 			return err
 		}
-		searchFields[getFieldName(fieldMetadata, tableAlias)] = true
+		dbFieldName := getFieldName(fieldMetadata, tableAlias)
+		if _, exists := uniqueSearchFields[dbFieldName]; !exists {
+			uniqueSearchFields[dbFieldName] = true
+			searchFieldsArray = append(searchFieldsArray, dbFieldName)
+		}
 	}
 	// Split the search token on spaces to tokenize the search
 	tokens := strings.Fields(searchToken)
+	// Order the search fields to ensure consistent iteration order
+	sort.Strings(searchFieldsArray)
+
 	for _, token := range tokens {
 		paramNumber := builder.addValue(fmt.Sprintf("%%%v%%", token))
 		subbuilder := builder.getSubBuilder("OR")
-		for field := range searchFields {
+		for _, field := range searchFieldsArray {
 			fieldCast := "(" + field + ")::text"
 			subbuilder.addQueryPart(fmt.Sprintf("%s ILIKE %s", fieldCast, paramNumber))
 		}
@@ -117,48 +127,18 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 	isTextType := isTextAlike(fieldMetadata.Type)
 	switch condition.Operator {
 	case "IN", "NOT_IN":
-		//IF we got values use normal flow
 		if fieldMetadata.Type == "DATE" && condition.Values == nil {
 			return processDateRangeCondition(condition, fieldName, builder)
 		}
-		if condition.Values != nil {
-			if reflect.TypeOf(condition.Values).Kind() == reflect.Slice {
-				var safeValues []string
-				switch values := condition.Values.(type) {
-				case []interface{}:
-					if numValues := len(values); numValues > 0 {
-						safeValues = make([]string, numValues)
-						for i, val := range values {
-							safeValues[i] = builder.addValue(val)
-						}
-					}
-				case []string:
-					if numValues := len(values); numValues > 0 {
-						safeValues = make([]string, numValues)
-						for i, val := range values {
-							safeValues[i] = builder.addValue(val)
-						}
-					}
-				default:
-					fmt.Printf("Unsupported type for values array: %T\n", values)
-				}
-				if safeValues != nil {
-					useOperator := "IN"
-					if condition.Operator == "NOT_IN" {
-						useOperator = "NOT IN"
-					}
-					builder.addQueryPart(fmt.Sprintf("%s %s (%s)", fieldName, useOperator, strings.Join(safeValues, ",")))
-				}
-			} else {
-				return errors.New(condition.Operator + " requires a values array to be provided")
-			}
-		} else {
-			useOperator := "= ANY"
-			if condition.Operator == "NOT_IN" {
-				useOperator = "<> ANY"
-			}
-			builder.addQueryPart(fmt.Sprintf("%s %s (%s)", fieldName, useOperator, builder.addValue(condition.Value)))
+		useOperator := "= ANY"
+		if condition.Operator == "NOT_IN" {
+			useOperator = "<> ALL"
 		}
+		useValue := condition.Value
+		if condition.Values != nil {
+			useValue = condition.Values
+		}
+		builder.addQueryPart(fmt.Sprintf("%s %s (%s)", fieldName, useOperator, builder.addValue(useValue)))
 
 	case "HAS_ANY":
 		if fieldMetadata.Type != "MULTISELECT" {
@@ -261,17 +241,17 @@ func processSubQueryCondition(condition adapt.LoadRequestCondition, collectionMe
 
 	fieldName := getFieldName(fieldMetadata, tableAlias)
 
-	subFieldMetadata, err := collectionMetadata.GetField(condition.SubField)
+	subCollectionMetadata, err := metadata.GetCollection(condition.SubCollection)
+	if err != nil {
+		return err
+	}
+
+	subFieldMetadata, err := subCollectionMetadata.GetField(condition.SubField)
 	if err != nil {
 		return err
 	}
 
 	subFieldName := getFieldName(subFieldMetadata, subTableAlias)
-
-	subCollectionMetadata, err := metadata.GetCollection(condition.SubCollection)
-	if err != nil {
-		return err
-	}
 
 	subConditionsBuilder := builder.getSubBuilder("")
 	err = processConditionListForTenant(condition.SubConditions, subCollectionMetadata, metadata, subConditionsBuilder, subTableAlias, session)
@@ -286,7 +266,7 @@ func processSubQueryCondition(condition adapt.LoadRequestCondition, collectionMe
 	return nil
 }
 
-func processConditionListForTenant(conditions []adapt.LoadRequestCondition, collectionMetadata *adapt.CollectionMetadata, metadata *adapt.MetadataCache, builder *QueryBuilder, tableAlias string, session *sess.Session) error {
+func addTenantConditions(collectionMetadata *adapt.CollectionMetadata, metadata *adapt.MetadataCache, builder *QueryBuilder, tableAlias string, session *sess.Session) {
 	tenantID := session.GetTenantIDForCollection(collectionMetadata.GetFullName())
 
 	collectionName := collectionMetadata.GetFullName()
@@ -297,6 +277,10 @@ func processConditionListForTenant(conditions []adapt.LoadRequestCondition, coll
 	}
 
 	builder.addQueryPart(fmt.Sprintf("%s = %s", getAliasedName("tenant", tableAlias), builder.addValue(tenantID)))
+}
+
+func processConditionListForTenant(conditions []adapt.LoadRequestCondition, collectionMetadata *adapt.CollectionMetadata, metadata *adapt.MetadataCache, builder *QueryBuilder, tableAlias string, session *sess.Session) error {
+	addTenantConditions(collectionMetadata, metadata, builder, tableAlias, session)
 	return processConditionList(conditions, collectionMetadata, metadata, builder, tableAlias, session)
 }
 

@@ -55,17 +55,35 @@ const signals: SignalBandDefinition = {
 		[`${BAND}/TOGGLE_DELETE_STATUS`]: {
 			label: "Toggle delete status",
 			description: "Toggle the delete status of a wire",
-			properties: () => [],
+			properties: (): ComponentProperty[] => [
+				{
+					name: "wire",
+					type: "WIRE",
+					label: "Wire",
+				},
+			],
 		},
 		[`${BAND}/MARK_FOR_DELETE`]: {
 			label: "Mark For Delete",
 			description: "Mark for delete",
-			properties: () => [],
+			properties: (): ComponentProperty[] => [
+				{
+					name: "wire",
+					type: "WIRE",
+					label: "Wire",
+				},
+			],
 		},
 		[`${BAND}/UNMARK_FOR_DELETE`]: {
 			label: "Unmark For Delete",
 			description: "Unmark for delete",
-			properties: () => [],
+			properties: (): ComponentProperty[] => [
+				{
+					name: "wire",
+					type: "WIRE",
+					label: "Wire",
+				},
+			],
 		},
 		[`${BAND}/CREATE_RECORD`]: {
 			label: "Create Record",
@@ -104,8 +122,10 @@ const signals: SignalBandDefinition = {
 				},
 				{
 					name: "value",
-					type: "TEXT",
+					type: "FIELD_VALUE",
 					label: "Value",
+					wireProperty: "wire",
+					fieldProperty: "field",
 				},
 			],
 		},
@@ -286,6 +306,7 @@ const signals: SignalBandDefinition = {
 					label: "Wires",
 				},
 			],
+			canError: true,
 		},
 		[`${BAND}/LOAD_NEXT_BATCH`]: {
 			label: "Load Next Batch",
@@ -297,6 +318,7 @@ const signals: SignalBandDefinition = {
 					label: "Wires",
 				},
 			],
+			canError: true,
 		},
 		[`${BAND}/LOAD_ALL`]: {
 			label: "Load All",
@@ -308,6 +330,7 @@ const signals: SignalBandDefinition = {
 					label: "Wires",
 				},
 			],
+			canError: true,
 		},
 		[`${BAND}/SAVE`]: {
 			label: "Save Wire(s)",
@@ -319,6 +342,7 @@ const signals: SignalBandDefinition = {
 					label: "Wires",
 				},
 			],
+			canError: true,
 		},
 	} as Record<string, SignalDescriptor>,
 }

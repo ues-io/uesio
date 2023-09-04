@@ -72,13 +72,14 @@ definition:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
                     title: Translations
-                    subtitle: Something Clever
+                    subtitle: The Rosetta Stone of your app
                     actions:
                       - uesio/io.group:
                           components:
                             - uesio/io.button:
-                                text: Add New Language
-                                uesio.variant: uesio/io.secondary
+                                text: Add Translations for new Language
+                                uesio.variant: uesio/io.primary
+                                hotkey: n
                                 signals:
                                   - signal: panel/TOGGLE
                                     panel: newtranslation

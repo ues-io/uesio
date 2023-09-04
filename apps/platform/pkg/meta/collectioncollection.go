@@ -26,6 +26,10 @@ func (cc *CollectionCollection) GetItemFromPath(path, namespace string) Bundleab
 	return NewBaseCollection(namespace, StandardNameFromPath(path))
 }
 
+func (cc *CollectionCollection) GetItemFromKey(key string) (BundleableItem, error) {
+	return NewCollection(key)
+}
+
 func (cc *CollectionCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }

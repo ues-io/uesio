@@ -1,6 +1,5 @@
 import { usePanels } from "../bands/panel/selectors"
 import { Component } from "../component/component"
-import { PanelDefinitionMap } from "../definition/panel"
 import { UtilityComponent } from "../definition/definition"
 import { useViewDef } from "../bands/viewdef"
 
@@ -10,7 +9,8 @@ type Props = {
 
 const Panel: UtilityComponent<Props> = ({ panelId, context }) => {
 	const viewDef = useViewDef(context.getViewDefId())
-	const panels: PanelDefinitionMap | undefined = viewDef?.panels
+	if (!viewDef) return null
+	const panels = viewDef?.panels
 	if (!panels) return null
 	const panelDef = panels[panelId]
 	if (!panelDef) return null

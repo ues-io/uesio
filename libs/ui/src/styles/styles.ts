@@ -1,5 +1,5 @@
 import { ThemeState } from "../definition/theme"
-import { BaseProps, UtilityProps } from "../definition/definition"
+import { UtilityProps } from "../definition/definition"
 
 import * as colors from "./colors"
 import {
@@ -10,14 +10,13 @@ import { MetadataKey } from "../metadataexports"
 import { extendTailwindMerge } from "tailwind-merge"
 import { Context } from "../context/context"
 import { tw, cx, Class } from "@twind/core"
+import { STYLE_TOKENS } from "../componentexports"
 
 const twMerge = extendTailwindMerge({
 	classGroups: {
 		"font-size": ["xxs"],
 	},
 })
-
-const TOKENS_PROPERTY = "uesio.styleTokens"
 
 const defaultTheme: ThemeState = {
 	name: "default",
@@ -35,12 +34,21 @@ const defaultTheme: ThemeState = {
 	},
 }
 
+export interface StyleDefinition {
+	"uesio.styleTokens"?: Record<string, string[]>
+}
+
+interface StyleProps {
+	context: Context
+	definition: StyleDefinition
+}
+
 function useStyleTokens<K extends string>(
 	defaults: Record<K, Class[]>,
-	props: BaseProps
+	props: StyleProps
 ) {
 	const { definition, context } = props
-	const inlineTokens = definition?.["uesio.styleTokens"] || {}
+	const inlineTokens = definition?.[STYLE_TOKENS] || {}
 	return Object.entries(defaults).reduce(
 		(classNames, entry: [K, Class[]]) => {
 			const [className, defaultClasses] = entry
@@ -82,7 +90,7 @@ function getVariantTokens(
 ) {
 	const variantDefinition = getVariantDefinition(props, componentType)
 	if (!variantDefinition) return {}
-	return variantDefinition?.[TOKENS_PROPERTY] as Record<string, string[]>
+	return variantDefinition?.[STYLE_TOKENS] as Record<string, string[]>
 }
 
 function process(context: Context | undefined, ...classes: Class[]) {
@@ -119,7 +127,7 @@ function useUtilityStyleTokens<K extends string>(
 	)
 }
 
-export type { ThemeState }
+export type { StyleProps, ThemeState }
 
 export {
 	defaultTheme,

@@ -17,35 +17,11 @@ definition:
       conditions:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
-    routes:
-      collection: uesio/studio.route
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.workspace:
-        uesio/studio.path:
-        uesio/studio.redirect:
-        uesio/studio.view:
-        uesio/studio.theme:
-        uesio/studio.title:
-        uesio/studio.type:
-        uesio/core.createdat:
-        uesio/core.updatedat:
-        uesio/core.createdby:
-        uesio/core.updatedby:
-      conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
-      order:
-        - field: uesio/core.updatedat
-          desc: true
     allroutes:
-      collection: uesio/studio.allmetadata
+      collection: uesio/studio.route
       conditions:
-        - field: uesio/studio.type
-          value: routes
+        - field: uesio/studio.allmetadata
+          value: true
       order:
         - field: uesio/core.updatedat
           desc: true
@@ -214,15 +190,23 @@ definition:
                     uesio.variant: uesio/io.section
                     components:
                       - uesio/io.searchbox:
-                          wire: routes
+                          wire: allroutes
                           focusOnRender: true
                           searchfields:
                             - uesio/studio.name
                             - uesio/studio.path
                       - uesio/io.table:
                           uesio.id: routesTable
-                          wire: routes
+                          wire: allroutes
                           columns:
+                            - label: Route
+                              components:
+                                - uesio/studio.iconlabel:
+                                    uesio.variant: uesio/studio.namespacefield
+                                    text: ${uesio/studio.name}
+                                    subtitle: ${uesio/studio.namespace}
+                                    icon: ${uesio/studio.appicon}
+                                    color: ${uesio/studio.appcolor}
                             - field: uesio/studio.path
                             - field: uesio/studio.type
                             - label: Content
@@ -248,32 +232,10 @@ definition:
                                 subtitle: $Time{uesio/core.createdat}
                           rowactions:
                             - text: Details
+                              type: DEFAULT
                               signals:
                                 - signal: route/NAVIGATE
-                                  path: app/$Param{app}/workspace/$Param{workspacename}/routes/${uesio/studio.name}
-                          pagesize: 10
-                - uesio/io.box:
-                    uesio.variant: uesio/io.section
-                    components:
-                      - uesio/io.titlebar:
-                          uesio.variant: uesio/io.main
-                          title: Installed Routes
-                      - uesio/io.table:
-                          uesio.id: installedRoutes
-                          wire: allroutes
-                          recordDisplay:
-                            - field: uesio/studio.namespace
-                              value: $Param{app}
-                              operator: NOT_EQUALS
-                          columns:
-                            - field: uesio/studio.path
-                            - label: View
-                              components:
-                                - uesio/studio.iconlabel:
-                                    uesio.variant: uesio/studio.namespacefield
-                                    text: ${uesio/studio.view}
-                                    icon: ${uesio/studio.appicon}
-                                    color: ${uesio/studio.appcolor}
+                                  path: app/$Param{app}/workspace/$Param{workspacename}/routes/${uesio/studio.namespace}/${uesio/studio.name}
                           pagesize: 10
   panels:
     newRoute:
@@ -334,7 +296,7 @@ definition:
                 wires:
                   - newroute
               - signal: route/NAVIGATE
-                path: app/$Param{app}/workspace/$Param{workspacename}/routes/${uesio/studio.name}
+                path: app/$Param{app}/workspace/$Param{workspacename}/routes/$Param{app}/${uesio/studio.name}
         - uesio/io.button:
             uesio.variant: uesio/io.secondary
             text: $Label{uesio/io.cancel}

@@ -1,4 +1,4 @@
 name: redirect_test
-path: redirect_test
 type: redirect
+path: redirect_test
 redirect: https://www.ues.io

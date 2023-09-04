@@ -1,0 +1,11 @@
+name: structproperty
+label: Struct property
+public: true
+definition:
+  uesio.styleTokens:
+    root:
+      - ml-2
+      - p-0
+    label:
+      - text-sm
+      - p-0
