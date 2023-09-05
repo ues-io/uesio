@@ -68,6 +68,7 @@ class Field {
 	isRequired = () => this.source.required === true
 	getSubFields = () => this.source.subfields
 	getSubType = () => this.source.subtype
+	getValidFor = () => this.source.validFor
 }
 
 export default Field

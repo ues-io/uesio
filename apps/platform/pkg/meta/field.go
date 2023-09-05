@@ -59,6 +59,7 @@ type Field struct {
 	SubType                string                  `yaml:"subtype,omitempty" json:"uesio/studio.subtype"`
 	LanguageLabel          string                  `yaml:"languageLabel,omitempty" json:"uesio/studio.languagelabel"`
 	ColumnName             string                  `yaml:"columnname,omitempty" json:"uesio/studio.columnname"`
+	ValidFor               string                  `yaml:"validFor,omitempty" json:"uesio/studio.validfor"`
 }
 
 type FieldWrapper Field

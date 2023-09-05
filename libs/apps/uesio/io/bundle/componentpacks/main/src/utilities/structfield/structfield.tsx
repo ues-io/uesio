@@ -1,4 +1,11 @@
-import { wire, collection, definition, context, metadata } from "@uesio/ui"
+import {
+	wire,
+	collection,
+	definition,
+	context,
+	metadata,
+	component,
+} from "@uesio/ui"
 import Field from "../field/field"
 import FieldWrapper from "../fieldwrapper/fieldwrapper"
 import { LabelPosition } from "../../components/field/field"
@@ -53,7 +60,11 @@ const StructField: definition.UtilityComponent<StructFieldUtilityProps> = (
 	return (
 		<div>
 			{Object.entries(subFields)
-				.filter(([subFieldId]) => !!subFieldId)
+				.filter(
+					([subFieldId, subField]) =>
+						!!subFieldId &&
+						component.shouldAll(subField.validFor, context)
+				)
 				.map(([subfieldId, subfield]) => {
 					const subfieldValue = getValue(value, subfieldId)
 					return (

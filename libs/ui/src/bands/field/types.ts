@@ -78,6 +78,7 @@ type FieldMetadata = {
 	subtype?: FieldType
 	number?: NumberMetadata
 	required?: boolean
+	validFor?: DisplayCondition[]
 }
 
 type prefix<T, P extends string> = {

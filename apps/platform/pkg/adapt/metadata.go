@@ -214,6 +214,7 @@ type FieldMetadata struct {
 	AutoPopulate           string                    `json:"autopopulate,omitempty"`
 	SubFields              map[string]*FieldMetadata `json:"subfields,omitempty"`
 	SubType                string                    `json:"subtype,omitempty"`
+	ValidFor               string                    `json:"validfor,omitempty"`
 	ColumnName             string                    `json:"-"`
 	IsFormula              bool                      `json:"-"`
 }
