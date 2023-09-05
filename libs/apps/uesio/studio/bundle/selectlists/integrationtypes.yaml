@@ -3,5 +3,7 @@ name: integrationtypes
 options:
   - label: "Send Grid (Send email)"
     value: "sendgrid"
-  - label: "Web (REST APIs)"
-    value: "web"
+  - label: "Web (REST API)"
+    value: "uesio/core.restapi"
+  - label: "Custom"
+    value: "uesio/core.custom"

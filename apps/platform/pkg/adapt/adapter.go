@@ -11,6 +11,9 @@ const MAX_SAVE_BATCH_SIZE = 500
 const MAX_ITER_REF_GROUP = 10
 
 type Adapter interface {
+	// GetCredentials returns the unique key of the credentials metadata record to use for this adapter
+	GetCredentials() string
+	// GetConnection returns a connection to use for this adapter
 	GetConnection(*Credentials, *MetadataCache, string) (Connection, error)
 }
 

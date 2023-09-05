@@ -1,8 +1,0 @@
-name: datasourcetypes
-options:
-  - label: "Uesio DB"
-    value: "uesio.postgresio"
-  - label: "REST API"
-    value: "uesio/core.restapi"
-  - label: "Custom"
-    value: "uesio/core.custom"

@@ -135,6 +135,19 @@ definition:
                                       fieldId: uesio/studio.name
                                   - uesio/io.field:
                                       fieldId: uesio/studio.type
+                                  - uesio/io.field:
+                                      fieldId: uesio/core.created_by
+                                      user:
+                                        subtitle: $Time{uesio/core.created_at}
+                                  - uesio/io.field:
+                                      fieldId: uesio/core.updated_by
+                                      user:
+                                        subtitle: $Time{uesio/core.updated_at}
+                            - uesio/io.grid:
+                                uesio.variant: uesio/io.four_columns
+                                items:
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.baseurl
                                   - uesio/builder.metadatafield:
                                       uesio.context:
                                         workspace:
@@ -143,7 +156,43 @@ definition:
                                       fieldId: uesio/studio.credentials
                                       metadataType: CREDENTIALS
                                       label: Credentials
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.headers
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.baseurl
+                                  - uesio/builder.metadatafield:
+                                      uesio.display:
+                                        - field: uesio/studio.type
+                                          value: uesio/core.custom
+                                      uesio.context:
+                                        workspace:
+                                          name: $Param{workspacename}
+                                          app: $Param{app}
+                                      fieldId: uesio/studio.loadbot
+                                      metadataType: BOT
+                                      grouping: LOAD
+                                      label: Load Bot
+                                  - uesio/builder.metadatafield:
+                                      uesio.display:
+                                        - field: uesio/studio.type
+                                          value: uesio/core.custom
+                                      uesio.context:
+                                        workspace:
+                                          name: $Param{workspacename}
+                                          app: $Param{app}
+                                      fieldId: uesio/studio.savebot
+                                      metadataType: BOT
+                                      grouping: SAVE
+                                      label: Save Bot
+                                  # - uesio/builder.metadatafield:
+                                  #     uesio.display:
+                                  #       - field: uesio/studio.type
+                                  #         value: uesio/core.custom
+                                  #     uesio.context:
+                                  #       workspace:
+                                  #         name: $Param{workspacename}
+                                  #         app: $Param{app}
+                                  #     fieldId: uesio/studio.runactionbot
+                                  #     metadataType: BOT
+                                  #     grouping: RUN
+                                  #     label: Run Action Bot
+                            - uesio/studio.codefield:
+                                fieldId: uesio/studio.custommetadata
+                                height: 350px
+                                language: json

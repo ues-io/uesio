@@ -12,6 +12,11 @@ import (
 )
 
 type Adapter struct {
+	Credentials string
+}
+
+func (a *Adapter) GetCredentials() string {
+	return a.Credentials
 }
 
 type Tracer struct{}

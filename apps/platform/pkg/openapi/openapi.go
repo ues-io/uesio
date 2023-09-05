@@ -13,13 +13,13 @@ import (
 )
 
 // Read in an OpenAPI 3 Specification, into a Document.
-func LoadModelFromDataSource(ds *meta.DataSource) (*v3.Document, error) {
+func LoadModelFromIntegration(integration *meta.Integration) (*v3.Document, error) {
 
 	// Custom Metadata should contain an OpenAPI spec
 	// TODO: v2 vs v3...
-	customMetaString := ds.CustomMetadata
+	customMetaString := integration.CustomMetadata
 	if customMetaString == "" {
-		return nil, errors.New("no web metadata found for data source: " + ds.Name)
+		return nil, errors.New("no web metadata found for integration: " + integration.Name)
 	}
 
 	// TODO: Have an LRU cache to cache the models in memory using the DS modstamp/hash of spec
@@ -191,7 +191,7 @@ func ResolveSchemaProxy(schemaProxy *base.SchemaProxy, spec *v3.Document) *base.
 	return match.Schema()
 }
 
-func ParseResponseBodyUsingBestGuess(collection meta.Group, data []byte, contentType string, ds *meta.DataSource) error {
+func ParseResponseBodyUsingBestGuess(collection meta.Group, data []byte, contentType string, integration *meta.Integration) error {
 	var responseBody interface{}
 	if strings.Contains(contentType, "/json") {
 		// If it starts with a curly brace, treat it as JSON object

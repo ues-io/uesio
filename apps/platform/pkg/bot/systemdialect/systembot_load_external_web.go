@@ -24,25 +24,25 @@ type RestCollectionMetadata struct {
 	DeleteOperation string `json:"deleteOperationId"`
 }
 
-func loadExternalWebDataSource(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+func loadExternalWebIntegration(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
 
-	// The op should have data source metadata attached already
-	dataSource, err := op.GetDataSource()
+	// The op should have integration metadata attached already
+	integration, err := op.GetIntegration()
 	if err != nil {
 		return err
 	}
 
 	var creds *meta.Credential
 
-	// Get the credentials off of the data source
-	if dataSource.Credentials != "" {
-		credsNS, credsName, credsErr := meta.ParseKey(dataSource.Credentials)
+	// Get the credentials off of the integration
+	if integration.Credentials != "" {
+		credsNS, credsName, credsErr := meta.ParseKey(integration.Credentials)
 		if credsErr != nil {
-			return errors.New("Invalid credentials specified for data source: " + dataSource.Credentials)
+			return errors.New("Invalid credentials specified for integration: " + integration.Credentials)
 		}
 		creds = meta.NewBaseCredential(credsNS, credsName)
 		if loadErr := bundle.Load(creds, session, connection); loadErr != nil {
-			return errors.New("requested data source credentials not found: " + dataSource.Credentials)
+			return errors.New("requested integration credentials not found: " + integration.Credentials)
 		}
 	}
 
@@ -69,7 +69,7 @@ func loadExternalWebDataSource(op *adapt.LoadOp, connection adapt.Connection, se
 	if restMetadata.LoadOperation == "" {
 		return errors.New("no load operation defined for collection: " + collectionMetadata.Name)
 	}
-	spec, err := openapi.LoadModelFromDataSource(dataSource)
+	spec, err := openapi.LoadModelFromIntegration(integration)
 
 	// Find the requested Operation
 	var loadOperation *v3.Operation
@@ -183,7 +183,7 @@ func loadExternalWebDataSource(op *adapt.LoadOp, connection adapt.Connection, se
 
 		// Fallback to manually trying to parse the response body using JSON introspection
 		if err != nil {
-			err = openapi.ParseResponseBodyUsingBestGuess(op.Collection, responseData, contentType, dataSource)
+			err = openapi.ParseResponseBodyUsingBestGuess(op.Collection, responseData, contentType, integration)
 		}
 		if err != nil {
 			return errors.New("unable to parse response body: " + err.Error())
@@ -194,5 +194,3 @@ func loadExternalWebDataSource(op *adapt.LoadOp, connection adapt.Connection, se
 
 	return nil
 }
-
-

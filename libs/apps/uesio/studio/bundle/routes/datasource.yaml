@@ -1,4 +1,0 @@
-name: datasource
-path: app/{app:\w*\/\w*}/workspace/{workspacename}/datasources/{namespace:\w*\/\w*}/{datasourcename}
-view: datasource
-theme: default

@@ -42,7 +42,9 @@ func init() {
 	mime.AddExtensionType(".md", "text/markdown")
 
 	// Data Adapters
-	adapt.RegisterAdapter("uesio.postgresio", &postgresio.Adapter{})
+	adapt.RegisterAdapter("uesio.postgresio", &postgresio.Adapter{
+		Credentials: "uesio/core.db",
+	})
 
 	// Authentication Types
 	val, _ := os.LookupEnv("UESIO_MOCK_AUTH")

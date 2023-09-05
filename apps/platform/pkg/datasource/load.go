@@ -607,12 +607,12 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 		// Attach the collection metadata to the LoadOp so that Load Bots can access it
 		op.AttachMetadataCache(metadataResponse)
 
-		dataSourceName := collectionMetadata.DataSource
+		integrationName := collectionMetadata.Integration
 
-		var dataSource *meta.DataSource
+		var integration *meta.Integration
 
 		usage.RegisterEvent("LOAD", "COLLECTION", collectionMetadata.GetFullName(), 0, session)
-		usage.RegisterEvent("LOAD", "DATASOURCE", dataSourceName, 0, session)
+		usage.RegisterEvent("LOAD", "DATASOURCE", integrationName, 0, session)
 
 		if collectionMetadata.IsDynamic() {
 			err2 = runDynamicCollectionLoadBots(op, connection, session)
@@ -622,14 +622,14 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 			continue
 		}
 
-		// Handle external data source loads
-		if dataSourceName != meta.PLATFORM_DATA_SOURCE {
-			dataSource, err2 = fetchDataSource(dataSourceName, op.CollectionName, session)
+		// Handle external data integration loads
+		if integrationName != "" {
+			integration, err2 = fetchIntegration(integrationName, op.CollectionName, session)
 			if err2 != nil {
 				return nil, err2
 			}
-			op.AttachDataSource(dataSource)
-			if err3 := runExternalDataSourceLoadBot(dataSource.LoadBot, op, connection, session); err3 != nil {
+			op.AttachIntegration(integration)
+			if err3 := runExternalDataSourceLoadBot(integration.LoadBot, op, connection, session); err3 != nil {
 				return nil, err3
 			}
 			continue
@@ -645,22 +645,22 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 	return metadataResponse, nil
 }
 
-func fetchDataSource(dataSourceName, collectionName string, session *sess.Session) (*meta.DataSource, error) {
-	namespace, name, err := meta.ParseKey(dataSourceName)
+func fetchIntegration(integrationName, collectionName string, session *sess.Session) (*meta.Integration, error) {
+	namespace, name, err := meta.ParseKey(integrationName)
 	if err != nil {
-		return nil, fmt.Errorf("invalid data source name %s for collection %s", dataSourceName, collectionName)
+		return nil, fmt.Errorf("invalid data source name %s for collection %s", integrationName, collectionName)
 	}
-	dataSource := &meta.DataSource{
+	integration := &meta.Integration{
 		BundleableBase: meta.BundleableBase{
 			Name:      name,
 			Namespace: namespace,
 		},
 	}
-	err = bundle.Load(dataSource, session, nil)
+	err = bundle.Load(integration, session, nil)
 	if err != nil {
-		return nil, fmt.Errorf("could not find the requested data source %s for collection %s", dataSourceName, collectionName)
+		return nil, fmt.Errorf("could not find the requested data source %s for collection %s", integrationName, collectionName)
 	}
-	return dataSource, nil
+	return integration, nil
 }
 
 func LoadOp(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {

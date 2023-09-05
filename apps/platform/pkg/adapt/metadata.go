@@ -41,7 +41,7 @@ type CollectionMetadata struct {
 	Updateable            bool                                   `json:"updateable"`
 	Deleteable            bool                                   `json:"deleteable"`
 	Fields                map[string]*FieldMetadata              `json:"fields"`
-	DataSource            string                                 `json:"-"`
+	Integration           string                                 `json:"-"`
 	CustomMetadata        string                                 `json:"-"`
 	Access                string                                 `json:"-"`
 	AccessField           string                                 `json:"-"`

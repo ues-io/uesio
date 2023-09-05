@@ -27,8 +27,8 @@ type LoadOp struct {
 	LoadAll            bool                   `json:"loadAll"`
 	DebugQueryString   string                 `json:"debugQueryString"`
 	// Internal only conveniences for LoadBots to be able to access metadata
-	metadata   *MetadataCache
-	dataSource *meta.DataSource
+	metadata    *MetadataCache
+	integration *meta.Integration
 }
 
 type LoadOpWrapper LoadOp
@@ -85,11 +85,11 @@ func (op *LoadOp) UnmarshalYAML(node *yaml.Node) error {
 
 }
 
-func (op *LoadOp) GetDataSource() (*meta.DataSource, error) {
-	if op.dataSource != nil {
-		return op.dataSource, nil
+func (op *LoadOp) GetIntegration() (*meta.Integration, error) {
+	if op.integration != nil {
+		return op.integration, nil
 	}
-	return nil, errors.New("data source not available on LoadOp")
+	return nil, errors.New("integration not available on LoadOp")
 }
 
 func (op *LoadOp) GetCollectionMetadata() (*CollectionMetadata, error) {
@@ -105,8 +105,8 @@ func (op *LoadOp) AttachMetadataCache(response *MetadataCache) *LoadOp {
 	return op
 }
 
-func (op *LoadOp) AttachDataSource(dataSource *meta.DataSource) *LoadOp {
-	op.dataSource = dataSource
+func (op *LoadOp) AttachIntegration(integration *meta.Integration) *LoadOp {
+	op.integration = integration
 	return op
 }
 
@@ -196,7 +196,7 @@ func GetFieldsMap(fields []LoadRequestField, collectionMetadata *CollectionMetad
 			refReq := referencedCollections.Get(referencedCollection)
 			refReq.Metadata = referencedCollectionMetadata
 
-			if referencedCollectionMetadata.DataSource != collectionMetadata.DataSource {
+			if referencedCollectionMetadata.Integration != collectionMetadata.Integration {
 				continue
 			}
 			refReq.AddFields(field.Fields)
@@ -209,7 +209,7 @@ func GetFieldsMap(fields []LoadRequestField, collectionMetadata *CollectionMetad
 				continue
 			}
 			refReq := referencedGroupCollections.Add(referencedCollection, fieldMetadata, referencedCollectionMetadata)
-			if referencedCollectionMetadata.DataSource != collectionMetadata.DataSource {
+			if referencedCollectionMetadata.Integration != collectionMetadata.Integration {
 				continue
 			}
 			refReq.AddFields(field.Fields)

@@ -88,19 +88,19 @@ func (m *WebDataSourceCustomMetadata) GetSchemaById(schemaId string) *WebApiSche
 	return m.Schemas[schemaId]
 }
 
-func GetConnection(dataSource *meta.DataSource, session *sess.Session) (integ.IntegrationConnection, error) {
+func GetConnection(integration *meta.Integration, session *sess.Session) (integ.IntegrationConnection, error) {
 
 	// Parse custom metadata into our struct
 	customMetadata := &WebDataSourceCustomMetadata{}
 
-	err := json.Unmarshal([]byte(dataSource.CustomMetadata), customMetadata)
+	err := json.Unmarshal([]byte(integration.CustomMetadata), customMetadata)
 	if err != nil {
-		return nil, fmt.Errorf("invalid custom metadata for data source %s", dataSource.Name)
+		return nil, fmt.Errorf("invalid custom metadata for integration %s", integration.Name)
 	}
 
-	credentials, err := creds.GetCredentials(dataSource.Credentials, session)
+	credentials, err := creds.GetCredentials(integration.Credentials, session)
 	if err != nil {
-		return nil, fmt.Errorf("unable to load credentials for data source %s", dataSource.Name)
+		return nil, fmt.Errorf("unable to load credentials for integration %s", integration.Name)
 	}
 
 	return &WebIntegrationConnection{
