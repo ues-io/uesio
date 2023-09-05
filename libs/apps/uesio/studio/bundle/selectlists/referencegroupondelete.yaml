@@ -1,0 +1,4 @@
+name: referencegroupondelete
+options:
+  - label: CASCADE
+    value: CASCADE

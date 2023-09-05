@@ -255,6 +255,36 @@ definition:
                                   - uesio/io.box:
                                       uesio.display:
                                         - field: uesio/studio.type
+                                          value: REFERENCEGROUP
+                                      components:
+                                        - uesio/builder.metadatafield:
+                                            fieldId: uesio/studio.referencegroup->uesio/studio.collection
+                                            metadataType: COLLECTION
+                                            label: Ref. Collection
+                                  - uesio/io.box:
+                                      uesio.display:
+                                        - field: uesio/studio.type
+                                          value: REFERENCEGROUP
+                                        - wire: fields
+                                          field: uesio/studio.referencegroup->uesio/studio.collection
+                                          operator: NOT_EQUALS
+                                          value: ""
+                                      components:
+                                        - uesio/builder.metadatafield:
+                                            fieldId: uesio/studio.referencegroup->uesio/studio.field
+                                            metadataType: FIELD
+                                            grouping: ${uesio/studio.referencegroup->uesio/studio.collection}
+                                            label: Ref. Field
+                                  - uesio/io.box:
+                                      uesio.display:
+                                        - field: uesio/studio.type
+                                          value: REFERENCEGROUP
+                                      components:
+                                        - uesio/io.field:
+                                            fieldId: uesio/studio.referencegroup->uesio/studio.ondelete
+                                  - uesio/io.box:
+                                      uesio.display:
+                                        - field: uesio/studio.type
                                           value: FORMULA
                                       components:
                                         - uesio/io.field:
