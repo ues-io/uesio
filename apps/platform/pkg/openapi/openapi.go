@@ -213,21 +213,33 @@ func ParseResponseBodyUsingBestGuess(collection meta.Group, data []byte, content
 		}
 	}
 
-	switch _ := responseBody.(type) {
+	switch val := responseBody.(type) {
 	case map[string]interface{}:
 		// We only have one Item. Assume that all values correspond to the data source field metadata
-		//for fieldName, fieldValue := range val {
-		//
-		//}
-		return nil
+		return processResponseBodyRow(collection, val)
 	case []map[string]interface{}:
 		// We have multiple Items. Assume that all values correspond to the data source field metadata
-		//for _, rawItem := range val {
-		//	for fieldName, fieldValue := range rawItem {
-		//
-		//	}
-		//}
+		for _, row := range val {
+			if err := processResponseBodyRow(collection, row); err != nil {
+				return err
+			}
+		}
 		return nil
+	}
+	return nil
+}
+
+func processResponseBodyRow(collection meta.Group, row map[string]interface{}) error {
+	// We only have one Item. Assume that all values correspond to the data source field metadata
+	item := collection.NewItem()
+
+	for fieldName, fieldValue := range row {
+		if err := item.SetField(fieldName, fieldValue); err != nil {
+			return errors.New("unable to set value of field " + fieldName + ": " + err.Error())
+		}
+	}
+	if err := collection.AddItem(item); err != nil {
+		return errors.New("unable to add new item to collection: " + err.Error())
 	}
 	return nil
 }
