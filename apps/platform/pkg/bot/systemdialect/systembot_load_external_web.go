@@ -6,7 +6,9 @@ import (
 	"fmt"
 	v3 "github.com/pb33f/libopenapi/datamodel/high/v3"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/bundle"
 	httpClient "github.com/thecloudmasters/uesio/pkg/http"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/openapi"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"io"
@@ -28,6 +30,20 @@ func loadExternalWebDataSource(op *adapt.LoadOp, connection adapt.Connection, se
 	dataSource, err := op.GetDataSource()
 	if err != nil {
 		return err
+	}
+
+	var creds *meta.Credential
+
+	// Get the credentials off of the data source
+	if dataSource.Credentials != "" {
+		credsNS, credsName, credsErr := meta.ParseKey(dataSource.Credentials)
+		if credsErr != nil {
+			return errors.New("Invalid credentials specified for data source: " + dataSource.Credentials)
+		}
+		creds = meta.NewBaseCredential(credsNS, credsName)
+		if loadErr := bundle.Load(creds, session, connection); loadErr != nil {
+			return errors.New("requested data source credentials not found: " + dataSource.Credentials)
+		}
 	}
 
 	if err != nil {
@@ -91,6 +107,7 @@ func loadExternalWebDataSource(op *adapt.LoadOp, connection adapt.Connection, se
 	headerParams := map[string]string{}
 
 	// TODO: Add the base url from... the "servers" list???
+	// NO --- from the integration. Use Integration instead of Data Source...
 	queryString := url.Values{}
 
 	if len(loadOperation.Parameters) > 0 {
@@ -117,6 +134,11 @@ func loadExternalWebDataSource(op *adapt.LoadOp, connection adapt.Connection, se
 				// TODO: Build up a cookie header
 			}
 		}
+	}
+
+	// Process credentials
+	if creds != nil {
+
 	}
 
 	// Okay, we should be ready to go!
@@ -172,3 +194,5 @@ func loadExternalWebDataSource(op *adapt.LoadOp, connection adapt.Connection, se
 
 	return nil
 }
+
+
