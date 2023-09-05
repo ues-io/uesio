@@ -106,6 +106,8 @@ views:
   uesio/studio.userpayments: true
   uesio/studio.paymentsuccess: true
   uesio/studio.recorddata: true
+  uesio/studio.sitemanagebundles: true
+  uesio/studio.sitemanageappbundles: true
 routes:
   uesio/studio.authsources: true
   uesio/studio.authsource: true
@@ -192,6 +194,8 @@ routes:
   uesio/studio.userpayments: true
   uesio/studio.paymentsuccess: true
   uesio/studio.recorddata: true
+  uesio/studio.sitemanagebundles: true
+  uesio/studio.sitemanageappbundles: true
 files: {}
 collections:
   uesio/studio.recentmetadata: true
@@ -250,5 +254,6 @@ collections:
   uesio/studio.invoice: true
   uesio/studio.invoicelineitem: true
   uesio/studio.payment: true
+  uesio/studio.bundlelistinghistory: true
 modifyallrecords: false
 viewallrecords: false
