@@ -1,0 +1,8 @@
+name: paramlocations
+options:
+  - label: "Header"
+    value: "header"
+  - label: "Path Parameter"
+    value: "path"
+  - label: "Query-string Parameter"
+    value: "query"
