@@ -12,6 +12,7 @@ import { CollectionFieldKey, PlainWire } from "../types"
 import { PlainCollection, PlainCollectionMap } from "../../collection/types"
 import { FieldMetadataMap, FieldMetadata } from "../../field/types"
 import { LoadRequestField } from "../../../load/loadrequest"
+import { parseKey } from "../../../component/path"
 
 const getFieldsRequest = (
 	fields?: WireFieldDefinitionMap | Record<CollectionFieldKey, ViewOnlyField>
@@ -62,29 +63,68 @@ const viewOnlyNamespace = "uesio/viewonly"
 const getViewOnlyFieldMetadata = (
 	field: string,
 	fieldDef: ViewOnlyField
-): FieldMetadata => ({
-	accessible: true,
-	createable: true,
-	name: field,
-	updateable: true,
-	namespace: viewOnlyNamespace,
-	type: fieldDef.type,
-	subtype: fieldDef.subtype,
-	label: fieldDef.label,
-	reference: fieldDef.reference,
-	selectlist: fieldDef.selectlist,
-	number: fieldDef.number,
-	subfields: fieldDef.fields
-		? Object.fromEntries(
-				Object.entries(fieldDef.fields).map(
-					([subfieldId, subfieldDef]) => [
-						subfieldId,
-						getViewOnlyFieldMetadata(subfieldId, subfieldDef),
-					]
-				)
-		  )
-		: undefined,
-})
+): FieldMetadata => {
+	const [, name] = parseKey(field)
+	return {
+		accessible: true,
+		createable: true,
+		name,
+		updateable: true,
+		namespace: viewOnlyNamespace,
+		type: fieldDef.type,
+		subtype: fieldDef.subtype,
+		label: fieldDef.label,
+		reference: fieldDef.reference,
+		selectlist: fieldDef.selectlist,
+		number: fieldDef.number,
+		subfields: fieldDef.fields
+			? Object.fromEntries(
+					Object.entries(fieldDef.fields).map(
+						([subfieldId, subfieldDef]) => [
+							subfieldId,
+							getViewOnlyFieldMetadata(subfieldId, subfieldDef),
+						]
+					)
+			  )
+			: undefined,
+	}
+}
+
+const getViewOnlyFieldsMetadata = (
+	wireDef: WireDefinition
+): FieldMetadataMap => {
+	const fieldMetadata: FieldMetadataMap = {}
+	const fields = wireDef.fields
+	if (!fields) return fieldMetadata
+	Object.keys(fields).forEach((field) => {
+		const [namespace] = parseKey(field)
+		const fieldDef = fields[field] as ViewOnlyField
+		if (namespace === viewOnlyNamespace) {
+			fieldMetadata[field] = getViewOnlyFieldMetadata(field, fieldDef)
+		}
+	})
+	return fieldMetadata
+}
+
+const addViewOnlyFields = (
+	wireDef: RegularWireDefinition,
+	collections: PlainCollectionMap
+) => {
+	const collectionMetadata = collections[wireDef.collection]
+	if (collectionMetadata) {
+		collectionMetadata.fields = {
+			...collectionMetadata.fields,
+			...getViewOnlyFieldsMetadata(wireDef),
+		}
+	} else {
+		const [namespace, name] = parseKey(wireDef.collection)
+		collections[wireDef.collection] = {
+			name,
+			namespace,
+			fields: getViewOnlyFieldsMetadata(wireDef),
+		} as PlainCollection
+	}
+}
 
 const getViewOnlyMetadata = (
 	wireName: string,
@@ -132,6 +172,9 @@ const initExistingWire = (
 			...getViewOnlyWireDefInfo(wireDef, collection),
 		} as PlainWire
 	}
+
+	addViewOnlyFields(wireDef, collections)
+
 	return {
 		...existingWire,
 		changes: {},
@@ -170,6 +213,8 @@ const initWire = (
 			...getViewOnlyWireDefInfo(wireDef, collection),
 		} as PlainWire
 	}
+
+	addViewOnlyFields(wireDef, collections)
 
 	return {
 		...getNewPlainWireBase(viewId, wireName),

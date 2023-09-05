@@ -1,5 +1,5 @@
-name: parentbundle
+name: sourcebundle
 type: REFERENCE
-label: Parent Bundle
+label: Source Bundle
 reference:
   collection: bundle

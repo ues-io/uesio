@@ -14,14 +14,26 @@ func unmarshalFields(node *yaml.Node) ([]LoadRequestField, error) {
 	if err != nil {
 		return nil, err
 	}
-	fields := make([]LoadRequestField, len(fieldPairs))
-	for i, fieldPair := range fieldPairs {
-		fields[i].ID = fieldPair.Key
+	fields := []LoadRequestField{}
+	for _, fieldPair := range fieldPairs {
+
+		namespace, _, err := meta.ParseKey(fieldPair.Key)
+		if err != nil {
+			return nil, err
+		}
+
+		if namespace == "uesio/viewonly" {
+			continue
+		}
+
 		subFields, err := unmarshalFields(fieldPair.Node)
 		if err != nil {
 			return nil, err
 		}
-		fields[i].Fields = subFields
+		fields = append(fields, LoadRequestField{
+			ID:     fieldPair.Key,
+			Fields: subFields,
+		})
 	}
 	return fields, nil
 }

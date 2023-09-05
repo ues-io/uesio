@@ -99,7 +99,7 @@ type RegularWireDefinition = WireDefinitionBase & {
 type WireDefinition = ViewOnlyWireDefinition | RegularWireDefinition
 
 type WireFieldDefinitionMap = {
-	[key: CollectionFieldKey]: WireFieldDefinition
+	[key: CollectionFieldKey]: WireFieldDefinition | ViewOnlyField
 }
 
 type WireFieldDefinition = RegularField | undefined | null

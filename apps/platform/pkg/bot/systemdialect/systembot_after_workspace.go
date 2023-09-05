@@ -107,11 +107,11 @@ func runWorkspaceAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection
 
 	if err := request.LoopInserts(func(change *adapt.ChangeItem) error {
 		workspaceID := change.IDValue
-		parentBundleID, _ := change.GetReferenceKey("uesio/studio.parentbundle")
-		if parentBundleID == "" {
+		sourceBundleID, _ := change.GetReferenceKey("uesio/studio.sourcebundle")
+		if sourceBundleID == "" {
 			return deployEmptyWorkspace(workspaceID, connection, session)
 		}
-		return deployWorkspaceFromBundle(workspaceID, parentBundleID, connection, session)
+		return deployWorkspaceFromBundle(workspaceID, sourceBundleID, connection, session)
 	}); err != nil {
 		return err
 	}

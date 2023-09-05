@@ -43,7 +43,10 @@ definition:
         uesio/core.id:
         uesio/studio.name:
         uesio/studio.app:
-        uesio/studio.parentbundle:
+        uesio/studio.sourcebundle:
+        uesio/viewonly.clonefrombundle:
+          label: Clone from a bundle
+          type: CHECKBOX
       init:
         create: true
       defaults:
@@ -192,7 +195,17 @@ definition:
                   fieldId: uesio/studio.name
                   uesio.id: workspace-name
               - uesio/io.field:
-                  fieldId: uesio/studio.parentbundle
+                  fieldId: uesio/viewonly.clonefrombundle
+                  displayAs: RADIO
+                  labelPosition: none
+                  checkbox:
+                    checkedLabel: "Clone from an existing bundle"
+                    uncheckedLabel: "Create an empty workspace"
+              - uesio/io.field:
+                  uesio.display:
+                    - field: uesio/viewonly.clonefrombundle
+                      value: true
+                  fieldId: uesio/studio.sourcebundle
                   uesio.id: workspace-parent-bundle
                   reference:
                     conditions:
