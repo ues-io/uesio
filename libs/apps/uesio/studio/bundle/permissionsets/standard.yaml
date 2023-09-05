@@ -206,7 +206,6 @@ collections:
   uesio/studio.componentvariant: true
   uesio/studio.configvalue: true
   uesio/studio.credential: true
-  uesio/studio.datasource: true
   uesio/studio.featureflag: true
   uesio/studio.field: true
   uesio/studio.file: true

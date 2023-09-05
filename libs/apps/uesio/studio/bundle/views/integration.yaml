@@ -195,4 +195,7 @@ definition:
                             - uesio/studio.codefield:
                                 fieldId: uesio/studio.custommetadata
                                 height: 350px
-                                language: json
+                                language: yaml
+                                uesio.display:
+                                  - field: uesio/studio.type
+                                    value: uesio/core.restapi

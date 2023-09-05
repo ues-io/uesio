@@ -27,8 +27,8 @@ definition:
         uesio/studio.label:
         uesio/studio.plurallabel:
         uesio/studio.workspace:
-        uesio/studio.datasource:
-        uesio/studio.namefield:
+        uesio/studio.type:
+        uesio/studio.integration:
         uesio/core.createdat:
       conditions:
         - field: uesio/studio.workspace
@@ -43,9 +43,9 @@ definition:
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: uesio/core.id
-        - field: uesio/studio.datasource
+        - field: uesio/studio.type
           valueSource: VALUE
-          value: uesio/core.platform
+          value: ""
       events:
         - type: onChange
           fields:
@@ -164,6 +164,21 @@ definition:
               - uesio/io.field:
                   fieldId: uesio/studio.plurallabel
                   uesio.id: new-collection-plural-label
+              - uesio/io.field:
+                  fieldId: uesio/studio.type
+                  label: Data Source Type
+                  uesio.id: new-collection-type
+              - uesio/builder.metadatafield:
+                  uesio.context:
+                    workspace:
+                      name: $Param{workspacename}
+                      app: $Param{app}
+                  fieldId: uesio/studio.integration
+                  metadataType: INTEGRATION
+                  label: Data Source Integration
+                  uesio.display:
+                    - field: uesio/studio.type
+                      value: EXTERNAL
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary

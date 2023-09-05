@@ -240,17 +240,24 @@ definition:
                                       fieldId: uesio/studio.namefield
                                       metadataType: FIELD
                                       label: Name Field
+
                             - uesio/io.grid:
                                 uesio.variant: uesio/io.four_columns
                                 items:
+                                  - uesio/io.field:
+                                      label: Data Source Type
+                                      fieldId: uesio/studio.type
                                   - uesio/builder.metadatafield:
                                       uesio.context:
                                         workspace:
                                           name: $Param{workspacename}
                                           app: $Param{app}
-                                      fieldId: uesio/studio.datasource
-                                      metadataType: DATASOURCE
-                                      label: Data Source
+                                      fieldId: uesio/studio.integration
+                                      metadataType: INTEGRATION
+                                      label: Data Source Integration
+                                      uesio.display:
+                                        - field: uesio/studio.type
+                                          value: EXTERNAL
                                   - uesio/io.field:
                                       fieldId: uesio/core.createdby
                                       user:
@@ -264,11 +271,10 @@ definition:
                             - uesio/studio.codefield:
                                 fieldId: uesio/studio.custommetadata
                                 height: 350px
-                                language: json
+                                language: yaml
                                 uesio.display:
-                                  - field: uesio/studio.datasource
-                                    operator: NOT_EQUALS
-                                    value: uesio/core.platform
+                                  - type: hasValue
+                                    value: ${uesio/studio.integration}
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
