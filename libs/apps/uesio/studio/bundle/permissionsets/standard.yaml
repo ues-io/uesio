@@ -23,6 +23,7 @@ views:
   uesio/studio.bundlestore: true
   uesio/studio.app: true
   uesio/studio.appedit: true
+  uesio/studio.appsettings: true
   uesio/studio.bot: true
   uesio/studio.bots: true
   uesio/studio.bundle: true
@@ -107,6 +108,7 @@ views:
   uesio/studio.paymentsuccess: true
   uesio/studio.recorddata: true
 routes:
+  uesio/studio.appsettings: true
   uesio/studio.authsources: true
   uesio/studio.authsource: true
   uesio/studio.bundlestore: true
