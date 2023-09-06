@@ -23,6 +23,7 @@ type ViewOnlyField = {
 	selectlist?: SelectListMetadata
 	number?: NumberMetadata
 	fields?: Record<string, ViewOnlyField>
+	viewOnly?: boolean
 }
 
 type RegularField = {

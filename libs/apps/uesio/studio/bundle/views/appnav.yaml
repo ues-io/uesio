@@ -44,7 +44,8 @@ definition:
         uesio/studio.name:
         uesio/studio.app:
         uesio/studio.sourcebundle:
-        uesio/viewonly.clonefrombundle:
+        clonefrombundle:
+          viewOnly: true
           label: Clone from a bundle
           type: CHECKBOX
       init:
@@ -195,7 +196,7 @@ definition:
                   fieldId: uesio/studio.name
                   uesio.id: workspace-name
               - uesio/io.field:
-                  fieldId: uesio/viewonly.clonefrombundle
+                  fieldId: clonefrombundle
                   displayAs: RADIO
                   labelPosition: none
                   checkbox:
@@ -203,7 +204,7 @@ definition:
                     uncheckedLabel: "Create an empty workspace"
               - uesio/io.field:
                   uesio.display:
-                    - field: uesio/viewonly.clonefrombundle
+                    - field: clonefrombundle
                       value: true
                   fieldId: uesio/studio.sourcebundle
                   uesio.id: workspace-parent-bundle

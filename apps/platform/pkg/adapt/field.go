@@ -17,12 +17,8 @@ func unmarshalFields(node *yaml.Node) ([]LoadRequestField, error) {
 	fields := []LoadRequestField{}
 	for _, fieldPair := range fieldPairs {
 
-		namespace, _, err := meta.ParseKey(fieldPair.Key)
-		if err != nil {
-			return nil, err
-		}
-
-		if namespace == "uesio/viewonly" {
+		isViewOnly := meta.GetNodeValueAsBool(fieldPair.Node, "viewOnly", false)
+		if isViewOnly {
 			continue
 		}
 

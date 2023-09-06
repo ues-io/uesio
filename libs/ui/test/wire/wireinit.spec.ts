@@ -56,9 +56,10 @@ test("regular wire with view-only field", () => {
 		[wireId]: {
 			collection: collectionId,
 			fields: {
-				"uesio/viewonly.myfield": {
+				myfield: {
 					type: "TEXT",
 					label: "My Field",
+					viewOnly: true,
 				},
 			},
 		},
@@ -70,7 +71,7 @@ test("regular wire with view-only field", () => {
 	if (!myCollection) throw new Error("Collection not created")
 
 	expect(myCollection.fields).toEqual({
-		"uesio/viewonly.myfield": {
+		myfield: {
 			name: "myfield",
 			namespace: "uesio/viewonly",
 			type: "TEXT",

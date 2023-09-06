@@ -63,32 +63,29 @@ const viewOnlyNamespace = "uesio/viewonly"
 const getViewOnlyFieldMetadata = (
 	field: string,
 	fieldDef: ViewOnlyField
-): FieldMetadata => {
-	const [, name] = parseKey(field)
-	return {
-		accessible: true,
-		createable: true,
-		name,
-		updateable: true,
-		namespace: viewOnlyNamespace,
-		type: fieldDef.type,
-		subtype: fieldDef.subtype,
-		label: fieldDef.label,
-		reference: fieldDef.reference,
-		selectlist: fieldDef.selectlist,
-		number: fieldDef.number,
-		subfields: fieldDef.fields
-			? Object.fromEntries(
-					Object.entries(fieldDef.fields).map(
-						([subfieldId, subfieldDef]) => [
-							subfieldId,
-							getViewOnlyFieldMetadata(subfieldId, subfieldDef),
-						]
-					)
-			  )
-			: undefined,
-	}
-}
+): FieldMetadata => ({
+	accessible: true,
+	createable: true,
+	name: field,
+	updateable: true,
+	namespace: viewOnlyNamespace,
+	type: fieldDef.type,
+	subtype: fieldDef.subtype,
+	label: fieldDef.label,
+	reference: fieldDef.reference,
+	selectlist: fieldDef.selectlist,
+	number: fieldDef.number,
+	subfields: fieldDef.fields
+		? Object.fromEntries(
+				Object.entries(fieldDef.fields).map(
+					([subfieldId, subfieldDef]) => [
+						subfieldId,
+						getViewOnlyFieldMetadata(subfieldId, subfieldDef),
+					]
+				)
+		  )
+		: undefined,
+})
 
 const getViewOnlyFieldsMetadata = (
 	wireDef: WireDefinition
@@ -97,9 +94,8 @@ const getViewOnlyFieldsMetadata = (
 	const fields = wireDef.fields
 	if (!fields) return fieldMetadata
 	Object.keys(fields).forEach((field) => {
-		const [namespace] = parseKey(field)
 		const fieldDef = fields[field] as ViewOnlyField
-		if (namespace === viewOnlyNamespace) {
+		if (fieldDef?.viewOnly) {
 			fieldMetadata[field] = getViewOnlyFieldMetadata(field, fieldDef)
 		}
 	})
