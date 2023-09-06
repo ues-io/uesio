@@ -135,7 +135,7 @@ definition:
                     components:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.main
-                          title: Manage App Bundels
+                          title: Manage App Bundles
                           subtitle: $Param{appBundle}
                           actions:
                             - uesio/io.group:
