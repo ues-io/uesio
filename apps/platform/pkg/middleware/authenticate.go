@@ -3,7 +3,6 @@ package middleware
 import (
 	"net/http"
 
-	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 
 	"github.com/gorilla/mux"
@@ -48,28 +47,15 @@ func Authenticate(next http.Handler) http.Handler {
 
 		// Do we have a session id?
 		browserSession := session.Get(r)
-		var user *meta.User
+
+		user, err := auth.GetUserFromBrowserSession(browserSession, site)
+		if err != nil {
+			http.Error(w, "Failed to get user from site:"+err.Error(), http.StatusInternalServerError)
+			return
+		}
 
 		if browserSession == nil {
-			user, err = auth.GetPublicUser(site, nil)
-			if err != nil {
-				http.Error(w, "Failed to get public user from site:"+err.Error(), http.StatusInternalServerError)
-				return
-			}
 			browserSession = sess.CreateBrowserSession(w, user, site)
-		} else {
-			browserSessionSite := sess.GetSessionAttribute(browserSession, "Site")
-			browserSessionUser := sess.GetSessionAttribute(browserSession, "UserID")
-			// Check to make sure our session site matches the site from our domain.
-			if browserSessionSite != site.GetFullName() {
-				http.Error(w, "Sites mismatch: "+browserSessionUser, http.StatusInternalServerError)
-				return
-			}
-			user, err = auth.GetCachedUserByID(browserSessionUser, site)
-			if err != nil {
-				http.Error(w, "Failed to get user "+browserSessionUser+" from site:"+err.Error(), http.StatusInternalServerError)
-				return
-			}
 		}
 
 		s, err := auth.GetSessionFromUser(browserSession.ID(), user, site)
