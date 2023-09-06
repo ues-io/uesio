@@ -12,6 +12,11 @@ definition:
         uesio/studio.user:
         uesio/studio.public:
         uesio/studio.icon:
+        uesio/core.updatedby:
+        uesio/core.updatedat:
+        uesio/core.createdby:
+        uesio/core.createdat:
+        uesio/core.owner:
       conditions:
         - field: uesio/core.uniquekey
           valueSource: PARAM
