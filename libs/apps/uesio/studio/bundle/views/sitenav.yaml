@@ -50,8 +50,8 @@ definition:
                     text: corporate_fare
           - uesio/io.tile:
               uesio.variant: uesio/io.nav
-              # For now, we only want to allow the Studio to have Organization-type Users,
-              # but in the future we could open this up
+              # Should only be visible to those administering a Studio PROD site
+              # (which should require write access) on that site
               uesio.display:
                 - field: "uesio/studio.app->uesio/core.uniquekey"
                   value: "uesio/studio"
