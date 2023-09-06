@@ -10,7 +10,7 @@ import (
 
 func GetTranslatedLabels(session *sess.Session) (map[string]string, error) {
 
-	if session.HasLabels() {
+	if session.GetWorkspace() == nil && session.HasLabels() {
 		return session.GetLabels(), nil
 	}
 	userLanguage := session.GetContextUser().Language
