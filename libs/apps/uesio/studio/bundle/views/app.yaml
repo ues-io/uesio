@@ -214,7 +214,7 @@ definition:
                           subtitle: Pack it up. Pack it in. Let me begin.
                       - uesio/io.searchbox:
                           wire: bundles
-                          searchfields:
+                          searchFields:
                             - uesio/studio.version
                             - uesio/studio.description
                       - uesio/io.table:
