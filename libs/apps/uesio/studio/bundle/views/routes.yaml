@@ -192,7 +192,7 @@ definition:
                       - uesio/io.searchbox:
                           wire: allroutes
                           focusOnRender: true
-                          searchfields:
+                          searchFields:
                             - uesio/studio.name
                             - uesio/studio.path
                       - uesio/io.table:

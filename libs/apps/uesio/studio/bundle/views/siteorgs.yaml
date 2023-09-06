@@ -96,7 +96,7 @@ definition:
                               app: $Param{app}
                           wire: users
                           focusOnRender: true
-                          searchfields:
+                          searchFields:
                             - uesio/studio.username
                       - uesio/io.table:
                           uesio.id: orgsTable

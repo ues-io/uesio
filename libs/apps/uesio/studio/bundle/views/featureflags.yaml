@@ -129,7 +129,7 @@ definition:
                       - uesio/io.searchbox:
                           wire: featureflags
                           focusOnRender: true
-                          searchfields:
+                          searchFields:
                             - uesio/studio.name
                       - uesio/io.table:
                           uesio.id: featureflagsTable
