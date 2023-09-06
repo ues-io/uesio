@@ -15,10 +15,10 @@ type WireDefinitionMap = {
 }
 
 type ViewOnlyField = {
-	label: string
-	required?: boolean
 	type: FieldType
 	subtype?: FieldType // For STRUCT/LIST/MAP types
+	label?: string
+	required?: boolean
 	reference?: ReferenceMetadata
 	selectlist?: SelectListMetadata
 	number?: NumberMetadata
