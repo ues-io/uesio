@@ -177,6 +177,12 @@ definition:
                                       uesio.variant: uesio/io.secondary
                                       uesio.id: export-collection-data
                                       text: Export Data
+                                      uesio.display:
+                                        - type: uesio/studio.type
+                                          operator: NOT_EQUALS
+                                          values:
+                                            - EXTERNAL
+                                            - DYNAMIC
                                       signals:
                                         - signal: route/NAVIGATE
                                           path: app/$Param{app}/workspace/$Param{workspacename}/export/$Param{namespace}/$Param{collectionname}
@@ -184,12 +190,24 @@ definition:
                                       uesio.variant: uesio/io.secondary
                                       uesio.id: import-collection-data
                                       text: Import Data
+                                      uesio.display:
+                                        - type: uesio/studio.type
+                                          operator: NOT_EQUALS
+                                          values:
+                                            - EXTERNAL
+                                            - DYNAMIC
                                       signals:
                                         - signal: route/NAVIGATE
                                           path: app/$Param{app}/workspace/$Param{workspacename}/import/$Param{namespace}/$Param{collectionname}
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       uesio.id: manage-collection-data
+                                      uesio.display:
+                                        - type: uesio/studio.type
+                                          operator: NOT_EQUALS
+                                          values:
+                                            - EXTERNAL
+                                            - DYNAMIC
                                       text: Manage Data
                                       signals:
                                         - signal: route/NAVIGATE
@@ -321,6 +339,12 @@ definition:
                                       uesio.display:
                                         - type: wireHasNoRecords
                                           wire: fields
+                                        - type: fieldValue
+                                          field: uesio/studio.type
+                                          operator: NOT_IN
+                                          values:
+                                            - DYNAMIC
+                                            - EXTERNAL
                                       fieldWire: fields
                                       collectionWire: collections
                                       collectionId: $Param{namespace}.$Param{collectionname}
@@ -397,6 +421,12 @@ definition:
                             root:
                               - mt-2
                           title: Common Fields
+                          uesio.display:
+                            - type: fieldValue
+                              wire: collection
+                              field: uesio/studio.type
+                              operator: NOT_EQUALS
+                              value: EXTERNAL
                           actions:
                             - uesio/io.button:
                                 uesio.variant: uesio/io.secondary
@@ -435,6 +465,11 @@ definition:
                               wire: viewOnly
                               field: showCommonFieldsTable
                               value: true
+                            - type: fieldValue
+                              wire: collection
+                              field: uesio/studio.type
+                              operator: NOT_EQUALS
+                              value: EXTERNAL
                           columns:
                             - label: Field Name
                               components:
@@ -558,10 +593,20 @@ definition:
                   label: Name Field
                   grouping: $Param{app}.$Param{collectionname}
                   namespace: $Param{app}
+              - uesio/io.field:
+                  label: Data Source Type
+                  fieldId: uesio/studio.type
               - uesio/builder.metadatafield:
-                  fieldId: uesio/studio.datasource
-                  metadataType: DATASOURCE
-                  label: Data Source
+                  uesio.context:
+                    workspace:
+                      name: $Param{workspacename}
+                      app: $Param{app}
+                  fieldId: uesio/studio.integration
+                  metadataType: INTEGRATION
+                  label: Data Source Integration
+                  uesio.display:
+                    - field: uesio/studio.type
+                      value: EXTERNAL
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary

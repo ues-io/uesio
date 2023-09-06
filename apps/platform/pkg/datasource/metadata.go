@@ -77,7 +77,6 @@ func GetFieldMetadata(f *meta.Field, session *sess.Session) *adapt.FieldMetadata
 		SubFields:              GetSubFieldMetadata(f),
 		SubType:                f.SubType,
 		ColumnName:             f.ColumnName,
-		ValidFor:               f.ValidFor,
 	}
 }
 

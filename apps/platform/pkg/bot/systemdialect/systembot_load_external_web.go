@@ -18,11 +18,11 @@ import (
 )
 
 type RestCollectionMetadata struct {
-	LoadOperation    string `json:"loadOperationId"`
-	LoadResponsePath string `json:"loadResponsePath"`
-	InsertOperation  string `json:"insertOperationId"`
-	CreateOperation  string `json:"createOperationId"`
-	DeleteOperation  string `json:"deleteOperationId"`
+	LoadOperation    string `json:"loadOperationId" yaml:"loadOperationId"`
+	LoadResponsePath string `json:"loadResponsePath" yaml:"loadResponsePath"`
+	InsertOperation  string `json:"insertOperationId" yaml:"insertOperationId"`
+	CreateOperation  string `json:"createOperationId" yaml:"createOperationId"`
+	DeleteOperation  string `json:"deleteOperationId" yaml:"deleteOperationId"`
 }
 
 func loadExternalWebIntegration(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
