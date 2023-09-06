@@ -69,6 +69,19 @@ definition:
           lookupField: uesio/core.id
       init:
         query: false
+      events:
+        - type: onChange
+          fields:
+            - uesio/studio.status
+          conditions:
+            - type: hasValue
+              value: "${uesio/studio.status}"
+          signals:
+            - signal: wire/UPDATE_RECORD
+              wire: newbundlelistinghistory
+              field: uesio/studio.actiontype
+              valueSource: VALUE
+              value: "${uesio/studio.status}"
     bundlelistinghistory:
       collection: uesio/studio.bundlelistinghistory
       fields:
@@ -95,6 +108,18 @@ definition:
           desc: true
       init:
         query: false
+    newbundlelistinghistory:
+      collection: uesio/studio.bundlelistinghistory
+      fields:
+        uesio/studio.comment:
+      init:
+        query: false
+        create: true
+      defaults:
+        - field: uesio/studio.app
+          valueSource: LOOKUP
+          lookupWire: appBundle
+          lookupField: uesio/core.id
   events:
     onload:
       - signal: context/SET
@@ -143,21 +168,59 @@ definition:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: Start Review
+                                      signals:
+                                        - signal: wire/UPDATE_RECORD
+                                          wire: bundlelisting
+                                          field: uesio/studio.status
+                                          valueSource: VALUE
+                                          value: IN_REVIEW
+                                        - signal: panel/TOGGLE
+                                          panel: feedbackPanel
                                       uesio.display:
                                         - field: uesio/studio.status
                                           value: SUBMITTED
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: Approve
+                                      signals:
+                                        - signal: wire/UPDATE_RECORD
+                                          wire: bundlelisting
+                                          field: uesio/studio.status
+                                          valueSource: VALUE
+                                          value: APPROVED
+                                        - signal: panel/TOGGLE
+                                          panel: feedbackPanel
                                       uesio.display:
                                         - field: uesio/studio.status
                                           value: IN_REVIEW
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: Reject
+                                      signals:
+                                        - signal: wire/UPDATE_RECORD
+                                          wire: bundlelisting
+                                          field: uesio/studio.status
+                                          valueSource: VALUE
+                                          value: REJECTED
+                                        - signal: panel/TOGGLE
+                                          panel: feedbackPanel
                                       uesio.display:
                                         - field: uesio/studio.status
                                           value: IN_REVIEW
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.destructive
+                                      text: Unpublish
+                                      signals:
+                                        - signal: wire/UPDATE_RECORD
+                                          wire: bundlelisting
+                                          field: uesio/studio.status
+                                          valueSource: VALUE
+                                          value: REJECTED
+                                        - signal: panel/TOGGLE
+                                          panel: feedbackPanel
+                                      uesio.display:
+                                        - field: uesio/studio.status
+                                          value: PUBLISHED
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           components:
@@ -218,3 +281,49 @@ definition:
                             - field: uesio/core.updatedby
                               user:
                                 subtitle: $Time{uesio/core.updatedat}
+  panels:
+    feedbackPanel:
+      uesio.type: uesio/io.dialog
+      title: Add a Comment
+      width: 400px
+      height: 500px
+      components:
+        - uesio/io.list:
+            uesio.id: newcommentlist
+            wire: newbundlelistinghistory
+            mode: EDIT
+            components:
+              - uesio/io.field:
+                  fieldId: uesio/studio.comment
+      actions:
+        - uesio/io.button:
+            uesio.variant: uesio/io.primary
+            text: $Label{uesio/io.save}
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - newbundlelistinghistory
+                  - bundlelisting
+              - signal: wire/RESET
+                wire: newbundlelistinghistory
+              - signal: wire/LOAD
+                wires:
+                  - bundlelistinghistory
+                  - bundlelisting
+              - signal: panel/TOGGLE
+                panel: feedbackPanel
+        - uesio/io.button:
+            uesio.variant: "uesio/io.secondary"
+            text: $Label{uesio/io.cancel}
+            signals:
+              - signal: wire/RESET
+                wire: newbundlelistinghistory
+              - signal: wire/CANCEL
+                wire: bundlelisting
+              - signal: panel/TOGGLE
+                panel: feedbackPanel
+      afterClose:
+        - signal: wire/RESET
+          wire: newbundlelistinghistory
+        - signal: wire/CANCEL
+          wire: bundlelisting

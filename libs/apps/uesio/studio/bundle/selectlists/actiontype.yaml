@@ -1,27 +1,12 @@
 name: actiontype
 options:
-  - label: New bundle was created
-    value: BUNDLE_CREATE
-  - label: Bundle status changed to open
-    value: BUNDLE_OPEN
-  - label: Bundle status changed to submitted
-    value: BUNDLE_SUBMITTED
-  - label: Bundle status changed to in review
-    value: BUNDLE_IN_REVIEW
-  - label: Bundle status changed to rejected
-    value: BUNDLE_REJECTED
-  - label: Bundle status changed to approved
-    value: BUNDLE_APPROVED
-  - label: Bundle status changed to published
-    value: BUNDLE_PUBLISHED
-  #APP RELATED
   - label: App status changed to submitted
-    value: APP_SUBMITTED
+    value: SUBMITTED
   - label: App status changed to in review
-    value: APP_IN_REVIEW
+    value: IN_REVIEW
   - label: App status changed to rejected
-    value: APP_REJECTED
+    value: REJECTED
   - label: App status changed to approved
-    value: APP_APPROVED
+    value: APPROVED
   - label: App status changed to published
-    value: APP_PUBLISHED
+    value: PUBLISHED
