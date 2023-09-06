@@ -10,6 +10,9 @@ definition:
         components:
           - uesio/io.grid:
               uesio.variant: uesio/io.two_columns
+              uesio.styleTokens:
+                root:
+                  - grid-cols-2
               items:
                 - uesio/io.field:
                     fieldId: uesio/studio.user
@@ -21,15 +24,27 @@ definition:
                     uesio.id: new-app-name
               uesio.display:
                 - type: recordIsNew
-          - uesio/io.field:
-              fieldId: uesio/studio.description
-              uesio.id: new-app-description
-          - uesio/io.field:
-              fieldId: uesio/studio.public
-              display:
-                - type: recordIsNotNew
-          - uesio/studio.colorpicker:
-              fieldId: uesio/studio.color
-          - uesio/studio.appiconpicker:
-              fieldId: uesio/studio.icon
-              colorFieldId: uesio/studio.color
+          - uesio/io.grid:
+              uesio.variant: uesio/io.two_columns
+              uesio.styleTokens:
+                root:
+                  - gap-10
+              items:
+                - uesio/io.field:
+                    fieldId: uesio/studio.description
+                    uesio.id: new-app-description
+                - uesio/io.field:
+                    fieldId: uesio/studio.public
+                    display:
+                      - type: recordIsNotNew
+          - uesio/io.grid:
+              uesio.variant: uesio/io.two_columns
+              uesio.styleTokens:
+                root:
+                  - gap-10
+              items:
+                - uesio/studio.colorpicker:
+                    fieldId: uesio/studio.color
+                - uesio/studio.appiconpicker:
+                    fieldId: uesio/studio.icon
+                    colorFieldId: uesio/studio.color

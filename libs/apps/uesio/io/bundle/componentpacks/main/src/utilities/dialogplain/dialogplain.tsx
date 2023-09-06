@@ -50,6 +50,7 @@ const DialogPlain: definition.UtilityComponent<DialogPlainUtilityProps> = (
 				"col-start-2",
 				"pointer-events-auto",
 				"bg-white",
+				"[container-type:inline-size]",
 			],
 			spacer: ["row-start-3", "col-start-2", "col-end-3"],
 		},
