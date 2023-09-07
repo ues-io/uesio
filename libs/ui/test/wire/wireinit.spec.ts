@@ -1,14 +1,14 @@
 import { create } from "../../src/store/store"
 import initializeWiresOp from "../../src/bands/wire/operations/initialize"
+import loadWiresOp from "../../src/bands/wire/operations/load"
 import { newContext } from "../../src/context/context"
-import { selectWire } from "../../src/bands/wire"
 import { getCollection } from "../utils/defaults"
 
 // This is a somewhat trivial test to make sure UI only wires are
 // initialized correctly. It mostly tests our ability to create a
 // new store and dispatch actions against it
 test("wire init", () => {
-	const store = create({})
+	create({})
 	const viewId = "myview"
 	const wireId = "mywire"
 	const context = newContext().addViewFrame({ view: viewId, viewDef: viewId })
@@ -18,11 +18,11 @@ test("wire init", () => {
 			fields: {},
 		},
 	})
-	const myWire = selectWire(store.getState(), viewId, wireId)
+	const myWire = context.getWire(wireId)
 	if (!myWire) throw new Error("Wire not created")
 
-	expect(myWire.view).toStrictEqual(viewId)
-	expect(myWire.name).toStrictEqual(wireId)
+	expect(myWire.getViewId()).toStrictEqual(viewId)
+	expect(myWire.getFullId()).toStrictEqual(viewId + ":" + wireId)
 })
 
 test("regular wire with view-only field", () => {
@@ -70,4 +70,45 @@ test("regular wire with view-only field", () => {
 	expect(existingField.getName()).toStrictEqual("name")
 	expect(existingField.getNamespace()).toStrictEqual("ben/planets")
 	expect(existingField.getLabel()).toStrictEqual("Name")
+})
+
+test("wire view-only field with default", () => {
+	create({})
+	const viewId = "myview"
+	const wireId = "mywire"
+	const context = newContext().addViewFrame({ view: viewId, viewDef: viewId })
+	initializeWiresOp(context, {
+		[wireId]: {
+			viewOnly: true,
+			fields: {
+				myfield: {
+					type: "TEXT",
+					label: "My Field",
+					viewOnly: true,
+				},
+			},
+			defaults: [
+				{
+					field: "myfield",
+					valueSource: "VALUE",
+					value: "My Awesome Value",
+				},
+			],
+			init: {
+				create: true,
+			},
+		},
+	})
+	loadWiresOp(context, [wireId])
+	const myWire = context.getWire(wireId)
+	if (!myWire) throw new Error("Wire not created")
+
+	expect(myWire.getViewId()).toStrictEqual(viewId)
+	expect(myWire.getFullId()).toStrictEqual(viewId + ":" + wireId)
+	expect(myWire.getData().length).toStrictEqual(1)
+
+	const myRecord = myWire.getFirstRecord()
+	if (!myRecord) throw new Error("Wire record not created")
+
+	expect(myRecord.getFieldValue("myfield")).toStrictEqual("My Awesome Value")
 })

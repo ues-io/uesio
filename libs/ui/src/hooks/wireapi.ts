@@ -23,9 +23,7 @@ const useWire = (wireId: string | undefined, context: Context) => {
 	const [view, wire] = context.getViewAndWireId(wireId)
 	const plainWire = uWire(view, wire)
 	const collectionName = plainWire?.collection
-	const plainCollection = useCollection(collectionName)
-	if (!plainCollection) return undefined
-	return new Wire(plainWire).attachCollection(plainCollection)
+	return new Wire(plainWire).attachCollection(useCollection(collectionName))
 }
 
 const remove = (wireId: string, context: Context) => {
@@ -87,11 +85,11 @@ const useWires = (
 			if (!plainWire || !plainWire.collection)
 				return [plainWire?.name, undefined]
 
-			const plainCollection = collections[plainWire.collection]
-			if (!plainCollection) return [plainWire?.name, undefined]
 			return [
 				plainWire?.name,
-				new Wire(plainWire).attachCollection(plainCollection),
+				new Wire(plainWire).attachCollection(
+					collections[plainWire.collection]
+				),
 			]
 		})
 	)
