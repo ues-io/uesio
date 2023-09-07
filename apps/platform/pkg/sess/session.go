@@ -56,6 +56,7 @@ func Logout(w http.ResponseWriter, r *http.Request, publicUser *meta.User, s *Se
 type WorkspaceSession struct {
 	workspace *meta.Workspace
 	user      *meta.User
+	labels    map[string]string
 }
 
 func NewWorkspaceSession(
@@ -95,8 +96,9 @@ func (s *WorkspaceSession) GetVersion() string {
 }
 
 type SiteSession struct {
-	site *meta.Site
-	user *meta.User
+	site   *meta.Site
+	user   *meta.User
+	labels map[string]string
 }
 
 func NewSiteSession(
@@ -161,23 +163,46 @@ type Session struct {
 	siteAdminSession *SiteSession
 	versionSession   *VersionSession
 	tokens           TokenMap
-	labels           map[string]string
 }
 
 func (s *Session) SetLabels(labels map[string]string) {
-	s.labels = labels
+	if s.workspaceSession != nil {
+		s.workspaceSession.labels = labels
+	}
+	if s.siteAdminSession != nil {
+		s.siteAdminSession.labels = labels
+	}
+	s.siteSession.labels = labels
 }
 
 func (s *Session) HasLabels() bool {
-	return s.labels != nil
+	if s.workspaceSession != nil {
+		return s.workspaceSession.labels != nil
+	}
+	if s.siteAdminSession != nil {
+		return s.siteAdminSession.labels != nil
+	}
+	return s.siteSession.labels != nil
 }
 
 func (s *Session) GetLabel(labelKey string) string {
-	return s.labels[labelKey]
+	if s.workspaceSession != nil {
+		return s.workspaceSession.labels[labelKey]
+	}
+	if s.siteAdminSession != nil {
+		return s.siteAdminSession.labels[labelKey]
+	}
+	return s.siteSession.labels[labelKey]
 }
 
 func (s *Session) GetLabels() map[string]string {
-	return s.labels
+	if s.workspaceSession != nil {
+		return s.workspaceSession.labels
+	}
+	if s.siteAdminSession != nil {
+		return s.siteAdminSession.labels
+	}
+	return s.siteSession.labels
 }
 
 func (s *Session) GetFlatTokens() []string {
