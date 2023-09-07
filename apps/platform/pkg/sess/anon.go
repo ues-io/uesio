@@ -6,7 +6,7 @@ import (
 
 func GetAnonSession(site *meta.Site) *Session {
 
-	return NewSession(nil, &meta.User{
+	return New("", &meta.User{
 		Username:    "boot",
 		FirstName:   "Boot",
 		LastName:    "User",
