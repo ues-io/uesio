@@ -1,8 +1,12 @@
 package pack
 
 import (
+	"errors"
 	"fmt"
+	"github.com/francoispqt/gojay"
+	"github.com/thecloudmasters/uesio/pkg/goutils"
 	"os"
+	"regexp"
 	"strings"
 
 	"github.com/thecloudmasters/cli/pkg/localbundlestore"
@@ -63,7 +67,7 @@ func CreateEntryFiles() (map[string]string, error) {
 		*packData.Components = append(*packData.Components, component)
 	}
 
-	// Coalate utilities by pack
+	// Collate utilities by pack
 	for _, utility := range *utilities {
 		pack := utility.Pack
 		if pack == "" {
@@ -92,14 +96,36 @@ func CreateEntryFiles() (map[string]string, error) {
 
 		baseURL := fmt.Sprintf("bundle/componentpacks/%s/", packName)
 		distURL := fmt.Sprintf("%sdist", baseURL)
+		declarativeComponentsDir := fmt.Sprintf("%s/components", distURL)
 		srcURL := fmt.Sprintf("%s/src/", baseURL)
+
+		// Create the dist dir, if needed
+		if err = os.Mkdir(distURL, 0777); err != nil && !os.IsExist(err) {
+			return nil, err
+		}
+
+		if err = os.Mkdir(declarativeComponentsDir, 0777); err != nil && !os.IsExist(err) {
+			return nil, err
+		}
+
 		// Loop over the components
 		for _, comp := range *packData.Components {
-			hasDefinition := fileExists(fmt.Sprintf("%s/%s.tsx", srcURL, comp.EntryPoint))
-			if hasDefinition {
+			// Register declarative components
+			if comp.Type == meta.DeclarativeComponent {
+				// Generate a dist file which implements the declarative component
+				runtimeFileName := fmt.Sprintf("%s/%s.tsx", declarativeComponentsDir, comp.Name)
+				runtimeFileBody, innerErr := getDeclarativeComponentRuntimeFile(comp)
+				if innerErr != nil {
+					return nil, innerErr
+				}
+				if err = os.WriteFile(runtimeFileName, []byte(runtimeFileBody), 0777); err != nil && !os.IsExist(err) {
+					return nil, err
+				}
+				runtimeImports = append(runtimeImports, fmt.Sprintf("import %[1]s from \"./components/%[1]s.tsx\";", comp.Name))
+			} else if comp.EntryPoint != "" && fileExists(fmt.Sprintf("%s/%s.tsx", srcURL, comp.EntryPoint)) {
 				runtimeImports = append(runtimeImports, fmt.Sprintf("import %s from \"../src/%s\";", comp.Name, comp.EntryPoint))
-				runtimeRegistrations = append(runtimeRegistrations, fmt.Sprintf("component.registry.register(\"%[2]s.%[1]s\",%[1]s);", comp.Name, namespace))
 			}
+			runtimeRegistrations = append(runtimeRegistrations, fmt.Sprintf("component.registry.register(\"%[2]s.%[1]s\",%[1]s);", comp.Name, namespace))
 		}
 
 		for _, util := range *packData.Utilities {
@@ -115,11 +141,6 @@ func CreateEntryFiles() (map[string]string, error) {
 			runtimeEntry = strings.Join(append(runtimeImports, runtimeRegistrations...), "\n")
 		}
 
-		// Create the dist dir, if needed
-		err = os.Mkdir(distURL, 0777)
-		if err != nil && !os.IsExist(err) {
-			return nil, err
-		}
 		runtimeFileName := fmt.Sprintf("%[1]s/runtime.ts", distURL)
 
 		err := os.WriteFile(runtimeFileName, []byte(runtimeEntry), 0777)
@@ -133,4 +154,33 @@ func CreateEntryFiles() (map[string]string, error) {
 
 	return entryPointsMap, nil
 
+}
+
+var re = regexp.MustCompile("(\"\\$Prop{)(\\w*?)(}\")")
+
+func getDeclarativeComponentRuntimeFile(comp *meta.Component) (string, error) {
+	definitionBytes, err := gojay.Marshal(meta.NewComponentDefinitionWrapper(comp))
+	if err != nil {
+		return "", errors.New("could not serialize declarative component Definition to JSON: " + comp.Name)
+	}
+	defString := re.ReplaceAllString(string(definitionBytes), "definition.$2")
+
+	return fmt.Sprintf(`
+import { component, definition } from "@uesio/ui"
+
+const %[1]s: definition.UC<Record<string, unknown>> = (props) => {
+	const { context, definition, path } = props
+	return (
+		<component.Slot
+			definition={%[2]s}
+			listName="content"
+			path={path}
+			context={context}
+		/>
+	)
+}
+
+export default %[1]s
+
+`, goutils.Capitalize(comp.Name), defString), nil
 }

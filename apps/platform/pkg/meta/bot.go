@@ -99,6 +99,7 @@ type BotParam struct {
 	Grouping     string              `yaml:"grouping,omitempty" json:"grouping"`
 	Required     bool                `yaml:"required" json:"required"`
 	Default      string              `yaml:"default,omitempty" json:"default"`
+	SelectList   string              `yaml:"selectList,omitempty" json:"selectList"`
 	Choices      []string            `yaml:"choices,omitempty" json:"choices"`
 	Conditions   []BotParamCondition `yaml:"conditions,omitempty" json:"conditions"`
 }
@@ -111,6 +112,7 @@ type BotParamResponse struct {
 	Grouping     string                      `json:"grouping"`
 	Default      string                      `json:"default"`
 	Required     bool                        `json:"required"`
+	SelectList   string                      `json:"selectList"`
 	Choices      []string                    `json:"choices"`
 	Conditions   []BotParamConditionResponse `json:"conditions"`
 	Collection   string                      `json:"collection"`
@@ -268,7 +270,7 @@ func NewBotNotFoundError(message string) error {
 }
 
 // ValidateParams checks validates received a map of provided bot params
-// agaisnt any bot parameter metadata defined for the Bot
+// against any bot parameter metadata defined for the Bot
 func (b *Bot) ValidateParams(params map[string]interface{}) error {
 
 	for _, param := range b.Params {

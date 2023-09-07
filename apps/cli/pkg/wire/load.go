@@ -12,6 +12,7 @@ type LoadOptions struct {
 	Conditions         []adapt.LoadRequestCondition `json:"conditions,omitempty"`
 	Fields             []adapt.LoadRequestField     `json:"fields,omitempty"`
 	Orders             []adapt.LoadRequestOrder     `json:"order,omitempty"`
+	Params             map[string]string            `json:"params,omitempty"`
 	RequireWriteAccess bool                         `json:"requirewriteaccess"`
 }
 
