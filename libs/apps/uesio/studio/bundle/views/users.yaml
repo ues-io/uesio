@@ -122,10 +122,10 @@ definition:
                               app: $Param{app}
                           wire: users
                           focusOnRender: true
-                          searchfields:
-                            - uesio/studio.firstname
-                            - uesio/studio.lastname
-                            - uesio/studio.username
+                          searchFields:
+                            - uesio/core.firstname
+                            - uesio/core.lastname
+                            - uesio/core.username
                       - uesio/io.deck:
                           uesio.id: userslist
                           wire: users
