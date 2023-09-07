@@ -12,9 +12,9 @@ import (
 func runUserAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 
 	if len(request.Deletes) > 0 {
-	   if err := preventSystemGuestUserDeletion(request); err != nil {
-		return err
-	   }
+		if err := preventSystemGuestUserDeletion(request); err != nil {
+			return err
+		}
 	}
 	return clearUserCache(request, connection, session)
 }
