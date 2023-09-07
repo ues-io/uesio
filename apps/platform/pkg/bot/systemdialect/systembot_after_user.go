@@ -28,7 +28,7 @@ func clearUserCache(request *adapt.SaveOp, connection adapt.Connection, session 
 func preventSystemGuestUserDeletion(request *adapt.SaveOp) error {
 	for _, uniquekey := range getUniqueKeysFromDeletes(request) {
 		if uniquekey == "system" || uniquekey == "guest" {
-			return errors.New(fmt.Sprintf("user %s can't be delete", uniquekey))
+			return errors.New(fmt.Sprintf("user %s can't be deleted", uniquekey))
 		}
 	}
 	return nil
