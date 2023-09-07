@@ -79,20 +79,21 @@ views:
   uesio/studio.workspace: true
   uesio/studio.workspaceconfig: true
   uesio/studio.workspacenav: true
-  uesio/studio.sitecollections: true
   uesio/studio.sitecollectiondata: true
-  uesio/studio.collectionimport: true
   uesio/studio.sitecollectiondataimport: true
   uesio/studio.sitecollectiondataexport: true
+  uesio/studio.sitecollectionexportbatches: true
+  uesio/studio.sitecollectionrecorddata: true
+  uesio/studio.sitecollections: true
   uesio/studio.featureflags: true
   uesio/studio.featureflag: true
   uesio/studio.labels: true
   uesio/studio.label: true
   uesio/studio.translations: true
   uesio/studio.translation: true
+  uesio/studio.collectionimport: true
   uesio/studio.collectionexport: true
   uesio/studio.collectionexportbatches: true
-  uesio/studio.sitecollectionexportbatches: true
   uesio/studio.authsources: true
   uesio/studio.authsource: true
   uesio/studio.usage: true
@@ -119,6 +120,9 @@ routes:
   uesio/studio.bundle: true
   uesio/studio.collection: true
   uesio/studio.collectiondata: true
+  uesio/studio.collectionexport: true
+  uesio/studio.collectionexportbatches: true
+  uesio/studio.collectionimport: true
   uesio/studio.collections: true
   uesio/studio.component: true
   uesio/studio.components: true
@@ -165,20 +169,18 @@ routes:
   uesio/studio.views: true
   uesio/studio.workspaceconfig: true
   uesio/studio.workspace: true
-  uesio/studio.sitecollections: true
-  uesio/studio.sitecollectiondata: true
-  uesio/studio.collectionimport: true
-  uesio/studio.sitecollectiondataimport: true
-  uesio/studio.sitecollectiondataexport: true
   uesio/studio.featureflags: true
   uesio/studio.featureflag: true
   uesio/studio.labels: true
   uesio/studio.label: true
   uesio/studio.translations: true
   uesio/studio.translation: true
-  uesio/studio.collectionexport: true
-  uesio/studio.collectionexportbatches: true
+  uesio/studio.sitecollectiondata: true
+  uesio/studio.sitecollectiondataexport: true
+  uesio/studio.sitecollectiondataimport: true
   uesio/studio.sitecollectionexportbatches: true
+  uesio/studio.sitecollectionrecorddata: true
+  uesio/studio.sitecollections: true
   uesio/studio.siteusage_route_load: true
   uesio/studio.siteusage_collection_load: true
   uesio/studio.siteusage_collection_save: true

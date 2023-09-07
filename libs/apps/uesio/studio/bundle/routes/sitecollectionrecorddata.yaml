@@ -1,0 +1,5 @@
+name: sitecollectionrecorddata
+path: app/{app:\w*\/\w*}/site/{sitename}/data/{namespace:\w*\/\w*}/{collectionname}/{recordid}
+view: sitecollectionrecorddata
+theme: default
+title: "Record Data: $Param{recordid}"
