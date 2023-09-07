@@ -7,12 +7,7 @@ definition:
     - uesio/io.list:
         components:
           - uesio/io.box:
-              uesio.styleTokens:
-                root:
-                  - pb-3
-                  - bg-slate-100
-                  - m-2
-                  - rounded-lg
+              uesio.variant: uesio/studio.navarea
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.nav

@@ -23,7 +23,7 @@ func getAuthSourceID(vars map[string]string) string {
 	return authSourceNamespace + "." + authSourceName
 }
 
-func redirectResponse(w http.ResponseWriter, r *http.Request, redirectKey string, user *meta.User, site *meta.Site) {
+func loginRedirectResponse(w http.ResponseWriter, r *http.Request, redirectKey string, user *meta.User, site *meta.Site) {
 
 	// If we had an old session, remove it.
 	w.Header().Del("set-cookie")
@@ -97,6 +97,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		redirectRoute = profile.HomeRoute
 	}
 
-	redirectResponse(w, r, redirectRoute, user, site)
+	loginRedirectResponse(w, r, redirectRoute, user, site)
 
 }

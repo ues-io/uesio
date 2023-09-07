@@ -84,7 +84,7 @@ definition:
                     components:
                       - uesio/io.searchbox:
                           wire: allprofiles
-                          searchfields:
+                          searchFields:
                             - uesio/studio.name
                       - uesio/io.table:
                           uesio.id: profilesTable
