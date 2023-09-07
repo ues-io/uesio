@@ -1,10 +1,12 @@
 import { component, api, metadata, definition } from "@uesio/ui"
 import TabLabels from "../../utilities/tablabels/tablabels"
 
-type TabDefinition = {
+export type TabDefinition = {
 	id: string
 	label: string
+	icon?: string
 	components: definition.DefinitionList
+	"uesio.display"?: component.DisplayCondition[]
 }
 
 type TabsDefinition = {

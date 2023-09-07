@@ -8,4 +8,4 @@ subfields:
   - name: uesio/studio.accept
     label: Accept
     type: SELECT
-    selectList: uesio/studio.accepttypes
+    selectList: uesio/core.accepttypes
