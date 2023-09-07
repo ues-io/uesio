@@ -70,7 +70,7 @@ func GetSystemSession(site *meta.Site, connection adapt.Connection) (*sess.Sessi
 	}
 
 	user.Permissions = meta.GetAdminPermissionSet()
-	session := sess.NewSession(nil, user, site)
+	session := sess.New("", user, site)
 
 	return session, nil
 }
