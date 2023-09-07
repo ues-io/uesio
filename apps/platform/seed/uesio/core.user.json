@@ -25,7 +25,8 @@
 		"uesio/core.firstname": "Wessel",
 		"uesio/core.lastname": "van der Plas",
 		"uesio/core.profile": "uesio/studio.standard",
-		"uesio/core.type": "PERSON"
+		"uesio/core.type": "PERSON",
+		"uesio/core.language": "es"
 	},
 	{
 		"uesio/core.username": "baxter",
