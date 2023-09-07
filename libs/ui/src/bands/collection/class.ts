@@ -70,6 +70,29 @@ class Collection {
 
 	getIdField = () => this.getField(ID_FIELD)
 	getNameField = () => this.getField(this.source.nameField)
+	getUniqueKeyFields = () =>
+		this.source.uniqueKey && this.source.uniqueKey.length > 0
+			? this.source.uniqueKey
+					.map((f) => this.getField(f))
+					.filter((fieldId) => !!fieldId)
+			: [this.getIdField()]
+	/**
+	 * Returns an array of the fully-qualified ids of all top-level fields on the collection.
+	 */
+	getFieldIds = () => Object.keys(this.source.fields)
+	/**
+	 * Returns an array of Field objects corresponding to all top-level Fields
+	 */
+	getFields = () => Object.values(this.source.fields).map((v) => new Field(v))
+	/**
+	 * Returns an array of Field objects which are of a searchable field type
+	 */
+	getSearchableFields = () =>
+		Object.values(this.source.fields)
+			.filter((f) => searchableFieldTypes.includes(f.type))
+			.map((v) => new Field(v))
 }
+
+const searchableFieldTypes = ["TEXT", "LONGTEXT", "SELECT"]
 
 export default Collection
