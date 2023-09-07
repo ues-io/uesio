@@ -83,7 +83,7 @@ type RemoveConditionPayload = {
 } & EntityPayload
 
 type WireLoadAction = PayloadAction<
-	[PlainWire[], Record<string, PlainCollection>]
+	[PlainWire[], Record<string, PlainCollection> | undefined]
 >
 
 type SetIsLoadingAction = PayloadAction<PlainWire[]>

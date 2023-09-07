@@ -187,7 +187,17 @@ class Wire {
 	}
 
 	attachCollection = (collection: PlainCollection) => {
-		this.collection = new Collection(collection)
+		if (this.isViewOnly()) {
+			this.collection = new Collection(this.source.viewOnlyMetadata)
+			return this
+		}
+		this.collection = new Collection({
+			...collection,
+			fields: {
+				...collection.fields,
+				...this.source.viewOnlyMetadata?.fields,
+			},
+		})
 		return this
 	}
 

@@ -16,7 +16,6 @@ import { WireDefinition } from "../definition/wire"
 import { useEffect } from "react"
 import { useDeepCompareEffect } from "react-use"
 import { dispatch } from "../store/store"
-import { PlainCollectionMap } from "../bands/collection/types"
 
 // Wraps our store's useWire result (POJO) in a nice Wire class
 // with convenience methods to make the api easier to consume for end users.
@@ -58,13 +57,8 @@ const useDynamicWire = (
 	// but we don't need to update as much state, so this logic is split out
 	useDeepCompareEffect(() => {
 		if (!wire || !wireDef) return
-		const collections: PlainCollectionMap = {}
-		const initializedWires = initExistingWire(
-			wire.source,
-			wireDef,
-			collections
-		)
-		dispatch(init([[initializedWires], collections]))
+		const initializedWires = initExistingWire(wire.source, wireDef)
+		dispatch(init([[initializedWires], undefined]))
 	}, [!!wire, wireDef])
 	return wire
 }
