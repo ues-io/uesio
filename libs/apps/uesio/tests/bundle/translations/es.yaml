@@ -1,0 +1,4 @@
+language: es
+labels:
+  uesio/tests.helloworld: hola mundo
+  uesio/io.delete: cancelar
