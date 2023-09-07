@@ -48,7 +48,9 @@ func Login(w http.ResponseWriter, user *meta.User, site *meta.Site) *Session {
 func Logout(w http.ResponseWriter, r *http.Request, publicUser *meta.User, s *Session) *Session {
 	// Remove the logged-out session
 	browserSession := session.Get(r)
-	session.Remove(browserSession, w)
+	if browserSession != nil {
+		session.Remove(browserSession, w)
+	}
 	// Login as the public user
 	return Login(w, publicUser, s.GetSiteSession().GetSite())
 }
