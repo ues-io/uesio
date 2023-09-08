@@ -3,20 +3,19 @@ package auth
 import (
 	"errors"
 	"fmt"
-	"os"
-	"strings"
-	"unicode"
-
 	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/creds"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/goutils"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
+	"os"
+	"strings"
 )
 
 func init() {
@@ -181,8 +180,8 @@ func createUser(username string, email string, signupMethod *meta.SignupMethod) 
 		Profile:   signupMethod.Profile,
 		Type:      "PERSON",
 		Language:  "en",
-		FirstName: capitalize(firstName),
-		LastName:  capitalize(lastName),
+		FirstName: goutils.Capitalize(firstName),
+		LastName:  goutils.Capitalize(lastName),
 	}
 
 	if email != "" {
@@ -190,12 +189,6 @@ func createUser(username string, email string, signupMethod *meta.SignupMethod) 
 	}
 
 	return user, nil
-}
-
-func capitalize(str string) string {
-	runes := []rune(str)
-	runes[0] = unicode.ToUpper(runes[0])
-	return string(runes)
 }
 
 func getNamePartsFromUsername(username string) (first, last string) {
