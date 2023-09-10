@@ -23,9 +23,10 @@ test("wire init", () => {
 
 	expect(myWire.getViewId()).toStrictEqual(viewId)
 	expect(myWire.getFullId()).toStrictEqual(viewId + ":" + wireId)
+	expect(myWire.getFields().length).toStrictEqual(0)
 })
 
-test("regular wire with view-only field", () => {
+test("regular wire with view-only field and collection field", () => {
 	const viewId = "myview"
 	const wireId = "mywire"
 	const collectionId = "uesio/tests.mycollection"
@@ -49,6 +50,7 @@ test("regular wire with view-only field", () => {
 					label: "My Field",
 					viewOnly: true,
 				},
+				"ben/planets.name": {},
 			},
 		},
 	})
@@ -70,6 +72,7 @@ test("regular wire with view-only field", () => {
 	expect(existingField.getName()).toStrictEqual("name")
 	expect(existingField.getNamespace()).toStrictEqual("ben/planets")
 	expect(existingField.getLabel()).toStrictEqual("Name")
+	expect(myWire.getFields().length).toStrictEqual(2)
 })
 
 test("wire view-only field with default", () => {
@@ -106,6 +109,7 @@ test("wire view-only field with default", () => {
 	expect(myWire.getViewId()).toStrictEqual(viewId)
 	expect(myWire.getFullId()).toStrictEqual(viewId + ":" + wireId)
 	expect(myWire.getData().length).toStrictEqual(1)
+	expect(myWire.getFields().length).toStrictEqual(1)
 
 	const myRecord = myWire.getFirstRecord()
 	if (!myRecord) throw new Error("Wire record not created")

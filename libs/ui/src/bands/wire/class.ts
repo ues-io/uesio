@@ -87,7 +87,7 @@ class Wire {
 
 	hasMore = () => this.source.more
 
-	getFields = () => this.source?.fields || {}
+	getFields = () => this.source?.fields || []
 
 	setRecord = (recordId: string, record: FieldValue, path: string[]) => {
 		dispatch(
