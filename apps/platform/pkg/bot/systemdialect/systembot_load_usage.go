@@ -58,21 +58,6 @@ func (c *UsageMappingCollection) Len() int {
 	return len(*c)
 }
 
-// Fake Reference Fields for uesio/core.usage collection
-// The other fields are created as real metadata
-var USER_FIELD_METADATA = adapt.FieldMetadata{
-	Name:       "user",
-	Namespace:  "uesio/core",
-	Createable: false,
-	Accessible: true,
-	Updateable: false,
-	Type:       "REFERENCE",
-	Label:      "User",
-	ReferenceMetadata: &adapt.ReferenceMetadata{
-		Collection: "uesio/core.user",
-	},
-}
-
 // Gets the conditions from the wire and translates them from core to studio
 func mapConditions(coreConditions []adapt.LoadRequestCondition) []adapt.LoadRequestCondition {
 	var studioConditions []adapt.LoadRequestCondition
@@ -140,27 +125,17 @@ func runUsageLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *ses
 	op.BatchNumber = newOp.BatchNumber
 	op.HasMoreBatches = newOp.HasMoreBatches
 
-	//Request metadata for site,app,user since they aren't real references
-	metadataResponse := &adapt.MetadataCache{}
-	collectionsMetadataReq := datasource.MetadataRequest{
-		Options: &datasource.MetadataRequestOptions{
-			LoadAllFields: true,
-		},
-	}
+	metadataResponse := connection.GetMetadata()
 
-	collectionsMetadataReq.AddCollection("uesio/core.user")
-	err = collectionsMetadataReq.Load(metadataResponse, sess.GetStudioAnonSession(), connection)
+	collectionMetadata, err := metadataResponse.GetCollection("uesio/core.usage")
 	if err != nil {
 		return err
 	}
 
-	//we have this one because the usage page has a wire referencing this collection shall we maybe add it to the collectionsMetadataReq
-	dynamicCollectionMetadata, err := connection.GetMetadata().GetCollection("uesio/core.usage")
+	userFieldMetadata, err := collectionMetadata.GetField("uesio/core.user")
 	if err != nil {
 		return err
 	}
-
-	dynamicCollectionMetadata.SetField(&USER_FIELD_METADATA)
 
 	referencedCollections := adapt.ReferenceRegistry{}
 	userCollectionMetadata, err := metadataResponse.GetCollection("uesio/core.user")
@@ -179,7 +154,7 @@ func runUsageLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *ses
 
 		userRefReq.AddID(value, adapt.ReferenceLocator{
 			Item:  item,
-			Field: &USER_FIELD_METADATA,
+			Field: userFieldMetadata,
 		})
 
 		err = op.Collection.AddItem((*adapt.Item)(item))
