@@ -1,15 +1,10 @@
-import { definition, styles } from "@uesio/ui"
+import { component, definition, styles } from "@uesio/ui"
 import Button from "../button/button"
 import Icon from "../icon/icon"
-
-interface Tab {
-	label: string
-	id: string
-	icon?: string
-}
+import { TabDefinition } from "../../components/tabs/tabs"
 
 interface TabsUtilityProps {
-	tabs: Tab[]
+	tabs: TabDefinition[]
 	selectedTab: string
 	setSelectedTab: (selected: string) => void
 }
@@ -30,26 +25,28 @@ const TabLabels: definition.UtilityComponent<TabsUtilityProps> = (props) => {
 
 	return (
 		<div className={classes.root}>
-			{tabs?.map((tab) => (
-				<Button
-					context={context}
-					onClick={() => {
-						setSelectedTab(tab.id)
-					}}
-					key={tab.id}
-					classes={{
-						root: classes.tab,
-						selected: classes.tabSelected,
-					}}
-					isSelected={tab.id === selectedTab}
-					label={tab.label}
-					icon={
-						tab.icon ? (
-							<Icon context={context} icon={tab.icon} />
-						) : undefined
-					}
-				/>
-			))}
+			{component
+				.useShouldFilter<TabDefinition>(tabs, context)
+				.map((tab) => (
+					<Button
+						context={context}
+						onClick={() => {
+							setSelectedTab(tab.id)
+						}}
+						key={tab.id}
+						classes={{
+							root: classes.tab,
+							selected: classes.tabSelected,
+						}}
+						isSelected={tab.id === selectedTab}
+						label={tab.label}
+						icon={
+							tab.icon ? (
+								<Icon context={context} icon={tab.icon} />
+							) : undefined
+						}
+					/>
+				))}
 		</div>
 	)
 }

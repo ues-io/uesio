@@ -366,9 +366,7 @@ const useShouldFilter = <T extends BaseDefinition>(
 		context
 	)
 
-	return items?.filter((item, index) =>
-		shouldAll(conditionsList[index], context)
-	)
+	return items?.filter((item) => shouldAll(item[DISPLAY_CONDITIONS], context))
 }
 
 const useContextFilter = <T>(
