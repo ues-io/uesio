@@ -51,3 +51,11 @@ HTTP 200
 # Verify that the chart pack is loaded, to verify parsing of table column component dependencies
 jsonpath "$.dependencies.componentpack.entities['uesio/io.main'].name" == "main"
 jsonpath "$.dependencies.componentpack.entities['uesio/io.chart'].name" == "chart"
+
+# Fetch component pack dependencies - via workspace router - for a View with a declarative component,
+# to verify that dependent component packs are loaded
+GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/declarative_components
+HTTP 200
+[Asserts]
+# Verify that the io pack is loaded
+jsonpath "$.dependencies.componentpack.entities['uesio/io.main'].name" == "main"

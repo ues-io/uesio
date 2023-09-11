@@ -1,12 +1,17 @@
 package controller
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"time"
+
+	"github.com/francoispqt/gojay"
+	"github.com/thecloudmasters/uesio/pkg/goutils"
 
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 
@@ -36,7 +41,8 @@ func init() {
 	indexPath := filepath.Join(baseDir, "platform", "index.gohtml")
 	cssPath := filepath.Join(baseDir, "..", "..", "dist", "vendor", "fonts", "fonts.css")
 	indexTemplate = template.Must(template.New("index.gohtml").Funcs(template.FuncMap{
-		"getComponentPackURLs": getComponentPackURLs,
+		"getComponentPackURLs":                 getComponentPackURLs,
+		"getDeclarativeComponentRegistrations": getDeclarativeComponentRegistrations,
 	}).ParseFiles(indexPath, cssPath))
 }
 
@@ -113,6 +119,52 @@ func getPackUrl(key string, packModstamp int64, workspace *routing.WorkspaceMerg
 	}
 
 	return fmt.Sprintf("/site/componentpacks/%s%s/%s/%s", namespace, siteBundleVersion, name, filePath)
+
+}
+
+func getDeclarativeComponentRegistrations(componentDeps routing.DepMap, viewId string) []string {
+
+	allComponentDeps := componentDeps.GetItems()
+	var allRegistrations []string
+	for _, dep := range allComponentDeps {
+		key := dep.GetKey()
+		if componentDep, ok := dep.(*meta.Component); ok && componentDep.Type == meta.DeclarativeComponent && len(componentDep.Definition.Content) > 0 {
+			registration, err := getDeclarativeComponentRegistration(key, componentDep)
+			if err == nil {
+				allRegistrations = append(allRegistrations, registration)
+			}
+		}
+	}
+	if len(allRegistrations) == 0 {
+		return []string{}
+	}
+	// Remove all component dependencies, we do not need them
+	componentDeps.RemoveAll()
+	return allRegistrations
+}
+
+var re = regexp.MustCompile("(\"\\$Prop{)(\\w*?)(}\")")
+
+func getDeclarativeComponentRegistration(key string, component *meta.Component) (string, error) {
+	definitionBytes, err := gojay.Marshal(meta.NewComponentDefinitionWrapper(component))
+	if err != nil {
+		return "", errors.New("could not serialize declarative component Definition to JSON: " + component.Name)
+	}
+	defString := re.ReplaceAllString(string(definitionBytes), "definition.$2")
+	return fmt.Sprintf(`
+((component) => {
+	const %[1]s = (props) => {
+		const { path, context, definition } = props
+		return component.getUtility("uesio/core.slot")({
+			path,
+			context,
+			definition: %[3]s,
+			listName: "content",
+		})
+	}
+	component.registry.register("%[2]s",%[1]s)
+})(uesio.component)
+`, goutils.Capitalize(component.Name), key, defString), nil
 
 }
 

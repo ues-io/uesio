@@ -1,0 +1,29 @@
+name: declarative_magic
+category: LAYOUT
+pack: main
+type: DECLARATIVE
+definition:
+  - uesio/io.text:
+      text: $Prop{title}
+  - uesio/io.text:
+      text: $Prop{subtitle}
+title: Magic
+discoverable: true
+description: A component that wraps other components
+properties:
+  - type: TEXT
+    name: title
+    label: Title
+  - type: TEXT
+    name: subtitle
+    label: Subtitle
+defaultDefinition:
+  title: This is a title
+  subtitle: This is a subtitle
+sections:
+  - type: HOME
+    properties:
+      - title
+      - subtitle
+  - type: STYLES
+  - type: DISPLAY

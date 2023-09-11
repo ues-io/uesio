@@ -1,0 +1,9 @@
+name: declarative_components
+definition:
+  # Wires connect to data in collections
+  wires:
+  # Components determine the layout and composition of your view
+  components:
+    - uesio/tests.declarative_magic:
+        title: Such declarative
+        subtitle: Much magic
