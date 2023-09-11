@@ -6,8 +6,9 @@ import { initEntity } from "../utils"
 
 const mergeCollection = (
 	state: EntityState<PlainCollection>,
-	collections: PlainCollectionMap
+	collections: PlainCollectionMap | undefined
 ) => {
+	if (!collections) return
 	const collectionsToAdd: PlainCollectionMap = {}
 	for (const [key, collection] of Object.entries(collections)) {
 		collectionsToAdd[key] = {

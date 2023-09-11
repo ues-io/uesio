@@ -1,5 +1,4 @@
 import { getCurrentState } from "../store/store"
-import Collection from "../bands/collection/class"
 import {
 	RouteState,
 	SiteAdminState,
@@ -446,10 +445,7 @@ class Context {
 		const plainWire = this.getPlainWire(wireid)
 		if (!plainWire) return undefined
 		const wire = new Wire(plainWire)
-		const plainCollection = getCollection(plainWire.collection)
-		if (!plainCollection) return undefined
-		const collection = new Collection(plainCollection)
-		wire.attachCollection(collection.source)
+		wire.attachCollection(getCollection(plainWire.collection))
 		return wire
 	}
 

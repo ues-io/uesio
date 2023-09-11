@@ -181,6 +181,22 @@ func (ci *ChangeItem) GetFieldAsString(fieldID string) (string, error) {
 	return GetValueString(value)
 }
 
+func (ci *ChangeItem) GetReferenceKey(fieldID string) (string, error) {
+	value, err := ci.GetField(fieldID)
+	if err != nil {
+		return "", err
+	}
+	return GetReferenceKey(value)
+}
+
+func (ci *ChangeItem) GetOldReferenceKey(fieldID string) (string, error) {
+	value, err := ci.GetOldField(fieldID)
+	if err != nil {
+		return "", err
+	}
+	return GetReferenceKey(value)
+}
+
 func (ci *ChangeItem) GetOldFieldAsString(fieldID string) (string, error) {
 	value, err := ci.GetOldField(fieldID)
 	if err != nil {
@@ -241,37 +257,21 @@ func (ci *ChangeItem) GetOwnerID() (string, error) {
 		return ci.GetProposedOwnerID()
 	}
 
-	ownerVal, err := ci.GetOldField(OWNER_FIELD)
-	if err != nil {
-		return "", err
-	}
-	return GetReferenceKey(ownerVal)
+	return ci.GetOldReferenceKey(OWNER_FIELD)
 
 }
 
 // This get the owner id that may be changing
 func (ci *ChangeItem) GetProposedOwnerID() (string, error) {
-	ownerVal, err := ci.GetField(OWNER_FIELD)
-	if err != nil {
-		return "", err
-	}
-	return GetReferenceKey(ownerVal)
+	return ci.GetReferenceKey(OWNER_FIELD)
 }
 
 func (ci *ChangeItem) GetCreatedByID() (string, error) {
-	ownerVal, err := ci.GetField(CREATED_BY_FIELD)
-	if err != nil {
-		return "", err
-	}
-	return GetReferenceKey(ownerVal)
+	return ci.GetReferenceKey(CREATED_BY_FIELD)
 }
 
 func (ci *ChangeItem) GetUpdatedByID() (string, error) {
-	ownerVal, err := ci.GetField(UPDATED_BY_FIELD)
-	if err != nil {
-		return "", err
-	}
-	return GetReferenceKey(ownerVal)
+	return ci.GetReferenceKey(UPDATED_BY_FIELD)
 }
 
 type SaveOptions struct {

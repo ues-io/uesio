@@ -154,7 +154,7 @@ func RetrieveBundle(targetDirectory string, create WriterCreator, bs bundlestore
 	}
 
 	// Add bundle.yaml
-	by := session.GetWorkspace().GetAppBundle()
+	by := session.GetContextAppBundle()
 
 	f, err := create(filepath.Join(targetDirectory, "bundle.yaml"))
 	if err != nil {

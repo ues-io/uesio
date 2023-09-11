@@ -22,15 +22,13 @@ import { EntityId, EntityState } from "@reduxjs/toolkit"
 import { PlainWire, ServerWire } from "../wire/types"
 import { dispatch } from "../../store/store"
 import { ComponentState } from "../component/types"
-import { PlainCollection, PlainCollectionMap } from "../collection/types"
 import { transformServerWire } from "../wire/transform"
 
 type Dep<T> = Record<string, T> | undefined
 
 const attachDefToWires = (
 	wires?: EntityState<ServerWire | PlainWire>,
-	viewdefs?: EntityState<ViewMetadata>,
-	collections?: EntityState<PlainCollection>
+	viewdefs?: EntityState<ViewMetadata>
 ) => {
 	if (!wires || !viewdefs) return wires
 	wires.ids.forEach((wirename: EntityId) => {
@@ -45,8 +43,7 @@ const attachDefToWires = (
 			)
 		wires.entities[wirename] = initExistingWire(
 			transformServerWire(wire as ServerWire),
-			wireDef,
-			(collections?.entities || {}) as PlainCollectionMap
+			wireDef
 		)
 	})
 }
@@ -77,7 +74,7 @@ const dispatchRouteDeps = (deps: Dependencies | undefined) => {
 
 	const wires = deps.wire
 	if (wires && viewdefs) {
-		attachDefToWires(wires, deps.viewdef, deps.collection)
+		attachDefToWires(wires, deps.viewdef)
 		dispatch(initWire(wires))
 	}
 

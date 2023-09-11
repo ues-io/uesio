@@ -1,29 +1,22 @@
-import { RootState, dispatch, getCurrentState } from "../../../store/store"
+import { dispatch } from "../../../store/store"
 import { Context } from "../../../context/context"
 import { nanoid } from "@reduxjs/toolkit"
-import { createRecord, getFullWireId } from ".."
+import { createRecord } from ".."
 import { getDefaultRecord } from "../defaults/defaults"
 import { PlainWireRecord } from "../../wirerecord/types"
 import { batch } from "react-redux"
-import { PlainWire } from "../types"
+import Wire from "../class"
 
 const mergeDefaultRecord = ({
 	context,
-	state,
 	wire,
 	record,
 }: {
 	context: Context
-	state: RootState
-	wire: PlainWire
+	wire: Wire
 	record?: PlainWireRecord
 }) => ({
-	...getDefaultRecord(
-		context,
-		state.wire.entities,
-		state.collection.entities,
-		wire
-	),
+	...getDefaultRecord(context, wire),
 	...(record || {}),
 })
 
@@ -40,26 +33,21 @@ const createRecordOp = ({
 	prepend,
 	record,
 }: CreateRecordOpOptions) => {
-	const viewId = context.getViewId()
-	if (!viewId) return context
-
-	const recordId = nanoid()
-	const state = getCurrentState()
-	const wireId = getFullWireId(viewId, wireName)
-	const wire = state.wire.entities[wireId]
+	const wire = context.getWire(wireName)
 	if (!wire) return context
+	const recordId = nanoid()
 	dispatch(
 		createRecord({
 			recordId,
-			record: mergeDefaultRecord({ context, state, wire, record }),
-			entity: wireId,
+			record: mergeDefaultRecord({ context, wire, record }),
+			entity: wire.getFullId(),
 			prepend: !!prepend,
 		})
 	)
 	return context.addRecordFrame({
 		record: recordId,
 		wire: wireName,
-		view: viewId,
+		view: context.getViewId(),
 	})
 }
 
@@ -76,27 +64,19 @@ const createRecordsOp = ({
 	wireName,
 	prepend,
 }: CreateRecordsOpOptions) => {
-	const viewId = context.getViewId()
-	if (!viewId) return context
-
-	const state = getCurrentState()
-	const wireId = getFullWireId(viewId, wireName)
-	const wire = state.wire.entities[wireId]
+	const wire = context.getWire(wireName)
 	if (!wire) return context
-
 	batch(() => {
 		records.forEach((record) => {
-			const recordId = nanoid()
 			dispatch(
 				createRecord({
-					recordId,
+					recordId: nanoid(),
 					record: mergeDefaultRecord({
 						context,
-						state,
 						wire,
 						record,
 					}),
-					entity: wireId,
+					entity: wire.getFullId(),
 					prepend: !!prepend,
 				})
 			)

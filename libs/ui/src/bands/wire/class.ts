@@ -71,6 +71,7 @@ class Wire {
 	getRecord = (id: string) => new WireRecord(this.source.data[id], id, this)
 
 	getFirstRecord = () => {
+		if (!this.source.data) return undefined
 		const recordId = Object.keys(this.source.data)[0]
 		return this.getRecord(recordId)
 	}
@@ -79,12 +80,14 @@ class Wire {
 
 	getConditions = () => this.source.conditions || []
 
+	getDefaults = () => this.source.defaults || []
+
 	getCondition = (id: string) =>
 		this.getConditions().find((c) => c.id === id) || null
 
 	hasMore = () => this.source.more
 
-	getFields = () => this.source?.fields || {}
+	getFields = () => this.source?.fields || []
 
 	setRecord = (recordId: string, record: FieldValue, path: string[]) => {
 		dispatch(
@@ -186,8 +189,18 @@ class Wire {
 		)
 	}
 
-	attachCollection = (collection: PlainCollection) => {
-		this.collection = new Collection(collection)
+	attachCollection = (collection: PlainCollection | undefined) => {
+		if (this.isViewOnly() || !collection) {
+			this.collection = new Collection(this.source.viewOnlyMetadata)
+			return this
+		}
+		this.collection = new Collection({
+			...collection,
+			fields: {
+				...collection.fields,
+				...this.source.viewOnlyMetadata?.fields,
+			},
+		})
 		return this
 	}
 
