@@ -206,8 +206,8 @@ func NewComponentDefinitionWrapper(component *Component) *ComponentDefinitionWra
 	}
 }
 
-func (c *ComponentDefinitionWrapper) MarshalJSONObject(enc *gojay.Encoder) {
-	enc.AddArrayKey("content", (*YAMLDefinition)(&c.Definition))
+func (c *ComponentDefinitionWrapper) Marshall() ([]byte, error) {
+	return gojay.Marshal((*YAMLDefinition)(&c.Definition))
 }
 
 func (c *ComponentDefinitionWrapper) IsNil() bool {

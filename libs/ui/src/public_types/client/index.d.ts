@@ -233,14 +233,6 @@ export namespace component {
 			componentType: FC<UtilityProps>
 		): void
 	}
-	interface SlotUtilityProps extends UtilityProps {
-		listName: string
-		path: string
-		definition?: DefinitionMap
-		direction?: "VERTICAL" | "HORIZONTAL"
-		label?: string
-	}
-	export type Slot = FC<SlotUtilityProps>
 }
 
 //

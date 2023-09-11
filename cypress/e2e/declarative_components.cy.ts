@@ -1,6 +1,5 @@
 /// <reference types="cypress" />
 
-import { getViewID } from "cypress/support/views"
 import { getWorkspaceRoutePreviewPath } from "../support/paths"
 
 describe("Declarative Components", () => {

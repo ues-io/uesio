@@ -3,13 +3,18 @@ import {
 	UtilityProps,
 	UC,
 	UtilityComponent,
+	BaseDefinition,
 } from "../definition/definition"
 import {
 	injectDynamicContext,
 	Context,
 	ContextOptions,
 } from "../context/context"
-import { getRuntimeLoader, getUtilityLoader } from "./registry"
+import {
+	getRuntimeLoader,
+	getUtilityLoader,
+	registerUtilityComponent,
+} from "./registry"
 import NotFound from "../components/notfound"
 import { parseKey } from "./path"
 import { ComponentVariant } from "../definition/componentvariant"
@@ -17,8 +22,9 @@ import ErrorBoundary from "../components/errorboundary"
 import { mergeDefinitionMaps } from "./merge"
 import { MetadataKey } from "../bands/builder/types"
 import { useShould } from "./display"
-import { DISPLAY_CONDITIONS } from "../componentexports"
+import { DISPLAY_CONDITIONS, Slot } from "../componentexports"
 import { component } from ".."
+import { getComponentIdFromProps } from "../hooks/componentapi"
 
 const getVariantKey = (variant: ComponentVariant): MetadataKey =>
 	`${variant.namespace}.${variant.name}` as MetadataKey
@@ -96,6 +102,36 @@ const Component: UC<DefinitionMap> = (props) => {
 }
 
 Component.displayName = "Component"
+
+type DeclarativeProps = {
+	path: string
+	context: Context
+	definition: BaseDefinition
+}
+
+const DeclarativeComponent: UtilityComponent<DeclarativeProps> = (props) => {
+	const { context, definition, path } = props
+	if (!useShould(definition?.[DISPLAY_CONDITIONS], context)) return null
+	return (
+		<ErrorBoundary {...props}>
+			<div id={getComponentIdFromProps(props)}>
+				<Slot
+					definition={definition}
+					listName="components"
+					path={path}
+					context={context}
+				/>
+			</div>
+		</ErrorBoundary>
+	)
+}
+
+DeclarativeComponent.displayName = "DeclarativeComponent"
+
+registerUtilityComponent(
+	"uesio/core.declarativecomponent",
+	DeclarativeComponent
+)
 
 const parseVariantName = (
 	fullName: MetadataKey | undefined,

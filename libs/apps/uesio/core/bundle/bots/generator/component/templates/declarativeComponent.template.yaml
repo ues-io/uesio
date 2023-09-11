@@ -9,14 +9,21 @@ properties:
   - type: TEXT
     name: text
     label: Text
+  - type: COMPONENT_ID
+    name: uesio.id
+    label: Component Id
 defaultDefinition:
   text: Hello world
 sections:
   - type: HOME
     properties:
       - text
+      - uesio.id
   - type: STYLES
   - type: DISPLAY
 definition:
-  - uesio/io.text:
-      text: $Prop{text}
+  components:
+    - uesio/io.text:
+        text: $Prop{text}
+slots:
+  - name: components

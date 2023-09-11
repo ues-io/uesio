@@ -10,7 +10,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/francoispqt/gojay"
 	"github.com/thecloudmasters/uesio/pkg/goutils"
 
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
@@ -133,37 +132,38 @@ func getDeclarativeComponentRegistrations(componentDeps routing.DepMap, viewId s
 			if err == nil {
 				allRegistrations = append(allRegistrations, registration)
 			}
+			// Remove this dep, we no longer need it, and we don't want to bloat Redux
+			// with stuff we don't need
+			componentDeps.Remove(key)
 		}
 	}
 	if len(allRegistrations) == 0 {
 		return []string{}
 	}
-	// Remove all component dependencies, we do not need them
-	componentDeps.RemoveAll()
 	return allRegistrations
 }
 
 var re = regexp.MustCompile("(\"\\$Prop{)(\\w*?)(}\")")
 
 func getDeclarativeComponentRegistration(key string, component *meta.Component) (string, error) {
-	definitionBytes, err := gojay.Marshal(meta.NewComponentDefinitionWrapper(component))
+	definitionBytes, err := meta.NewComponentDefinitionWrapper(component).Marshall()
 	if err != nil {
 		return "", errors.New("could not serialize declarative component Definition to JSON: " + component.Name)
 	}
 	defString := re.ReplaceAllString(string(definitionBytes), "definition.$2")
 	return fmt.Sprintf(`
 ((component) => {
+	const DC = component.getUtility("uesio/core.declarativecomponent")
 	const %[1]s = (props) => {
 		const { path, context, definition } = props
-		return component.getUtility("uesio/core.slot")({
+		return DC({
 			path,
 			context,
 			definition: %[3]s,
-			listName: "content",
 		})
 	}
 	component.registry.register("%[2]s",%[1]s)
-})(uesio.component)
+})(uesio.component);
 `, goutils.Capitalize(component.Name), key, defString), nil
 
 }
