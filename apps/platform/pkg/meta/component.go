@@ -193,31 +193,13 @@ func (c *Component) IsPublic() bool {
 }
 
 func (c *Component) GetType() string {
-	if c.Type != "" {
-		return c.Type
-	}
-	return ReactComponent
+	return GetType(c.Type)
 }
 
 // RuntimeComponentMetadata allows us to send a trimmed-down runtime component metadata payload
-// containing only those properties needed at runtime into the componenttype Redux slice.
+// containing only those properties needed at runtime into the componentType Redux slice.
 // In Build mode, the full Component metadata will be sent, to facilitate full Builder functionality.
-type RuntimeComponentMetadata struct {
-	Definition     yaml.Node `yaml:"definition,omitempty"`
-	Type           string    `yaml:"type,omitempty"`
-	BundleableBase `yaml:",inline"`
-}
-
-func NewRuntimeComponentMetadata(component *Component) *RuntimeComponentMetadata {
-	return &RuntimeComponentMetadata{
-		Definition: component.Definition,
-		BundleableBase: BundleableBase{
-			Name:      component.Name,
-			Namespace: component.Namespace,
-		},
-		Type: component.GetType(),
-	}
-}
+type RuntimeComponentMetadata Component
 
 func (cdw *RuntimeComponentMetadata) GetBytes() ([]byte, error) {
 	return gojay.MarshalJSONObject(cdw)
@@ -233,5 +215,16 @@ func (cdw *RuntimeComponentMetadata) MarshalJSONObject(enc *gojay.Encoder) {
 	if cdw.Definition.Content != nil {
 		enc.AddObjectKey("definition", (*YAMLDefinition)(&cdw.Definition))
 	}
-	enc.AddStringKey("type", cdw.Type)
+	enc.AddStringKey("type", cdw.GetType())
+}
+
+func (cdw *RuntimeComponentMetadata) GetType() string {
+	return GetType(cdw.Type)
+}
+
+func GetType(componentType string) string {
+	if componentType != "" {
+		return componentType
+	}
+	return ReactComponent
 }

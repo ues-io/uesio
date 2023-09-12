@@ -1,0 +1,16 @@
+name: declarative_components_2
+definition:
+  # Wires connect to data in collections
+  wires:
+  # Components determine the layout and composition of your view
+  components:
+    - uesio/tests.declarative2:
+        text1: I am on the left
+        text2: I am on the right
+    - uesio/io.button:
+        uesio.variant: uesio/io.primary
+        text: Go to View 1
+        uesio.id: btn-go-to-view1
+        signals:
+          - signal: route/NAVIGATE
+            path: declarative1

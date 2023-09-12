@@ -120,8 +120,7 @@ const handleNavigateResponse = async (
 	if (newPacks && newPacks.length) {
 		await loadScripts(newPacks)
 	}
-
-	// We don't need to store the dependencies in redux
+	// We don't need to store the dependencies in redux with the route itself
 	delete routeResponse.dependencies
 
 	batch(() => {
