@@ -13,6 +13,7 @@ import viewdef from "../bands/viewdef"
 import label from "../bands/label"
 import theme from "../bands/theme"
 import componentvariant from "../bands/componentvariant"
+import componenttype from "../bands/componenttype"
 import configvalue from "../bands/configvalue"
 import featureflag from "../bands/featureflag"
 import notification from "../bands/notification"
@@ -22,6 +23,7 @@ import { SessionState } from "../bands/session/types"
 import { ViewMetadata } from "../definition/ViewMetadata"
 import { ThemeState } from "../definition/theme"
 import { ComponentVariant } from "../definition/componentvariant"
+import { Component } from "../definition/component"
 import { LabelState } from "../definition/label"
 import { ConfigValueState } from "../definition/configvalue"
 import { FeatureFlagState } from "../definition/featureflag"
@@ -38,6 +40,7 @@ type InitialState = {
 	theme?: EntityState<ThemeState>
 	viewdef?: EntityState<ViewMetadata>
 	componentvariant?: EntityState<ComponentVariant>
+	componenttype?: EntityState<Component>
 	label?: EntityState<LabelState>
 	configvalue?: EntityState<ConfigValueState>
 	featureflag?: EntityState<FeatureFlagState>
@@ -66,6 +69,7 @@ const create = (initialState: InitialState) => {
 			viewdef,
 			label,
 			componentvariant,
+			componenttype,
 			configvalue,
 			featureflag,
 			site,

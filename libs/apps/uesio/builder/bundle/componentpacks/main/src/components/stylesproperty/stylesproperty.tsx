@@ -42,8 +42,7 @@ const StylesProperty: definition.UC<Props> = (props) => {
 		string,
 		string[]
 	>
-	const styleRegions = getComponentDef(context, componentType)
-		?.styleRegions || {
+	const styleRegions = getComponentDef(componentType)?.styleRegions || {
 		root: {},
 	}
 

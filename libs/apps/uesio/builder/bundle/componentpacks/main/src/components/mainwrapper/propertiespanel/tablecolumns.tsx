@@ -113,7 +113,7 @@ const TableColumns: definition.UC = (props) => {
 	// in order to build a FIELD property that only shows fields from that wire
 	const [, tablePath] = columnsPath.pop()
 	const wireName = get(context, tablePath.addLocal("wire")) as string
-	const fieldComponentDef = getComponentDef(context, "uesio/io.field")
+	const fieldComponentDef = getComponentDef("uesio/io.field")
 
 	const getComponentType = (def: definition.DefinitionMap): string =>
 		Object.keys(def)[0] as string
