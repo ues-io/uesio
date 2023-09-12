@@ -1,11 +1,11 @@
-name: bundlelistingvisual
-label: Bundle Listing Visual
+name: bundlelistingvisualref
+label: Bundle Listing Visual Ref
 definition:
   uesio.styleTokens:
     root:
       - bg-slate-50
       - flex
-      - bg-[${uesio/studio.color}]
+      - bg-[${uesio/studio.app->uesio/studio.color}]
       - pt-[50%]
       - items-center
       - justify-center
@@ -18,4 +18,4 @@ definition:
             - inset-0
             - absolute
             - text-6xl
-        icon: ${uesio/studio.icon}
+        icon: ${uesio/studio.app->uesio/studio.icon}

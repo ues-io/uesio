@@ -93,7 +93,7 @@ definition:
                               signal: route/NAVIGATE
                           content:
                             - uesio/io.box:
-                                uesio.variant: uesio/studio.bundlelistingvisual
+                                uesio.variant: uesio/studio.bundlelistingvisualref
                             - uesio/io.box:
                                 uesio.styleTokens:
                                   root:

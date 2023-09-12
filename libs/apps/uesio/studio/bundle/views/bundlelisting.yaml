@@ -201,7 +201,7 @@ definition:
                                                           - signal: wire/MARK_FOR_DELETE
                                                           - signal: wire/SAVE
                                   - uesio/io.box:
-                                      uesio.variant: uesio/studio.bundlelistingvisual
+                                      uesio.variant: uesio/studio.bundlelistingvisualref
                       - uesio/io.text:
                           text: versions
                           element: h3
