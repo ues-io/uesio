@@ -194,6 +194,7 @@ describe("Uesio Builder Tests", () => {
 				force: true,
 			})
 			// Change the text property again
+			cy.getInput("property:text").should("have.value", "First")
 			cy.clearInput("property:text")
 			cy.typeInInput("property:text", "Second")
 			getBuilderState(`metadata:viewdef:${fullViewName}`).should(

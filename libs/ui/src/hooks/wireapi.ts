@@ -22,8 +22,9 @@ import { dispatch } from "../store/store"
 const useWire = (wireId: string | undefined, context: Context) => {
 	const [view, wire] = context.getViewAndWireId(wireId)
 	const plainWire = uWire(view, wire)
-	const collectionName = plainWire?.collection
-	return new Wire(plainWire).attachCollection(useCollection(collectionName))
+	const collection = useCollection(plainWire?.collection)
+	if (!plainWire) return undefined
+	return new Wire(plainWire).attachCollection(collection)
 }
 
 const remove = (wireId: string, context: Context) => {
