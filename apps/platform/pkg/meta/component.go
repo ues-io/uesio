@@ -9,6 +9,11 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+const (
+	ReactComponent       = "REACT"
+	DeclarativeComponent = "DECLARATIVE"
+)
+
 func NewComponent(key string) (*Component, error) {
 	namespace, name, err := ParseKey(key)
 	if err != nil {
@@ -27,10 +32,13 @@ type Component struct {
 	Category       string    `yaml:"category,omitempty" json:"uesio/studio.category"`
 	Pack           string    `yaml:"pack,omitempty" json:"uesio/studio.pack"`
 	EntryPoint     string    `yaml:"entrypoint,omitempty" json:"uesio/studio.entrypoint"`
+	Type           string    `yaml:"type,omitempty" json:"uesio/studio.type"`
 	ConfigValues   []string  `yaml:"configvalues,omitempty" json:"uesio/studio.configvalues"`
 	Variants       []string  `yaml:"variants,omitempty" json:"uesio/studio.variants"`
 	Utilities      []string  `yaml:"utilities,omitempty" json:"uesio/studio.utilities"`
 	Slots          yaml.Node `yaml:"slots,omitempty" json:"uesio/studio.slots"`
+	// Definition defines the Component body, for Declarative components
+	Definition yaml.Node `yaml:"definition,omitempty" json:"uesio/studio.definition"`
 
 	// Builder Properties
 	Title             string    `yaml:"title,omitempty" json:"uesio/studio.title"`
@@ -111,10 +119,15 @@ func (c *Component) GetBytes() ([]byte, error) {
 }
 
 func (c *Component) MarshalJSONObject(enc *gojay.Encoder) {
+	componentType := c.Type
+	if componentType == "" {
+		componentType = ReactComponent
+	}
 	enc.AddStringKey("namespace", c.Namespace)
 	enc.AddStringKey("name", c.Name)
 	enc.AddStringKey("title", c.Title)
 	enc.AddStringKey("description", c.Description)
+	enc.AddStringKey("type", componentType)
 	enc.AddStringKey("category", c.Category)
 	enc.AddBoolKey("discoverable", c.Discoverable)
 	if c.Icon != "" {
@@ -137,6 +150,9 @@ func (c *Component) MarshalJSONObject(enc *gojay.Encoder) {
 	}
 	if c.StyleRegions.Content != nil {
 		enc.AddObjectKey("styleRegions", (*YAMLDefinition)(&c.StyleRegions))
+	}
+	if c.Definition.Content != nil {
+		enc.AddArrayKey("definition", (*YAMLDefinition)(&c.Definition))
 	}
 }
 

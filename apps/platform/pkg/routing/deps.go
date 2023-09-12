@@ -686,6 +686,12 @@ func (vdm *ViewDepMap) AddComponent(key string, session *sess.Session) (*meta.Co
 		return nil, err
 	}
 	vdm.Components[key] = component
+	// If this is a declarative component, we need to process dependencies of the component's definition
+	if component.Type == meta.DeclarativeComponent {
+		if err = getComponentAreaDeps(&component.Definition, vdm, session); err != nil {
+			return nil, err
+		}
+	}
 	return component, nil
 }
 
