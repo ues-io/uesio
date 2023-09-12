@@ -58,25 +58,6 @@ func (c *UsageMappingCollection) Len() int {
 	return len(*c)
 }
 
-// Gets the conditions from the wire and translates them from core to studio
-func mapConditions(coreConditions []adapt.LoadRequestCondition) []adapt.LoadRequestCondition {
-	var studioConditions []adapt.LoadRequestCondition
-	for _, elem := range coreConditions {
-		elem.Field = strings.Replace(elem.Field, "uesio/core.", "uesio/studio.", 1)
-		studioConditions = append(studioConditions, elem)
-	}
-	return studioConditions
-}
-
-func mapOrder(coreOrder []adapt.LoadRequestOrder) []adapt.LoadRequestOrder {
-	var studioOrder []adapt.LoadRequestOrder
-	for _, elem := range coreOrder {
-		elem.Field = strings.Replace(elem.Field, "uesio/core.", "uesio/studio.", 1)
-		studioOrder = append(studioOrder, elem)
-	}
-	return studioOrder
-}
-
 func runUsageLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
 
 	siteAdmin := session.GetSiteAdmin()
@@ -92,22 +73,22 @@ func runUsageLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *ses
 		WireName:       "loadStudioUsage",
 		View:           op.View,
 		Collection:     usageData,
-		Conditions: append(mapConditions(op.Conditions), adapt.LoadRequestCondition{
-			Field:    "uesio/studio.site",
+		Conditions: append(op.Conditions, adapt.LoadRequestCondition{
+			Field:    "site",
 			Value:    session.GetContextSite().ID,
 			Operator: "EQ",
 		}),
 		Fields: []adapt.LoadRequestField{
-			{ID: "uesio/studio.actiontype"},
-			{ID: "uesio/studio.app"},
-			{ID: "uesio/studio.day"},
-			{ID: "uesio/studio.metadataname"},
-			{ID: "uesio/studio.metadatatype"},
-			{ID: "uesio/studio.site"},
-			{ID: "uesio/studio.total"},
-			{ID: "uesio/studio.user"},
+			{ID: "actiontype"},
+			{ID: "app"},
+			{ID: "day"},
+			{ID: "metadataname"},
+			{ID: "metadatatype"},
+			{ID: "site"},
+			{ID: "total"},
+			{ID: "user"},
 		},
-		Order:          mapOrder(op.Order),
+		Order:          op.Order,
 		Query:          true,
 		BatchSize:      op.BatchSize,
 		LoadAll:        op.LoadAll,
@@ -157,13 +138,11 @@ func runUsageLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *ses
 			Field: userFieldMetadata,
 		})
 
-		err = op.Collection.AddItem((*adapt.Item)(item))
-		if err != nil {
-			return err
-		}
 	}
 
-	//get user refernces with the current site session
+	op.Collection = usageData
+
+	//get user references with the current site session
 	return adapt.HandleReferences(connection, referencedCollections, session, true)
 
 }

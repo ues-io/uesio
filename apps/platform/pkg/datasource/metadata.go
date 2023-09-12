@@ -241,7 +241,7 @@ func LoadFieldsMetadata(keys []string, collectionKey string, collectionMetadata 
 				collectionMetadata.SetField(GetFieldMetadata(&builtInField, session))
 				continue
 			}
-			field, err := meta.NewField(collectionKey, key)
+			field, err := meta.NewField(collectionKey, meta.UnLocalize(key, collectionMetadata.Namespace))
 			if err != nil {
 				return err
 			}

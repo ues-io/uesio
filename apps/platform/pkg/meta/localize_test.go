@@ -42,7 +42,7 @@ func TestLocalize(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run("it should "+tc.description, func(t *testing.T) {
-			assert.Equal(t, tc.expected, localize(tc.itemkey, tc.namespace))
+			assert.Equal(t, tc.expected, Localize(tc.itemkey, tc.namespace))
 		})
 	}
 
@@ -91,7 +91,7 @@ func TestUnLocalize(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run("it should "+tc.description, func(t *testing.T) {
-			assert.Equal(t, tc.expected, unLocalize(tc.itemkey, tc.namespace))
+			assert.Equal(t, tc.expected, UnLocalize(tc.itemkey, tc.namespace))
 		})
 	}
 
