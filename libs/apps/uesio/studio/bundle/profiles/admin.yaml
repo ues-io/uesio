@@ -1,0 +1,5 @@
+name: admin
+permissionSets:
+  - uesio/studio.admin
+  - uesio/studio.standard
+  - uesio/core.public
