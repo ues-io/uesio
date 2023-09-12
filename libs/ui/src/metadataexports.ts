@@ -1,4 +1,18 @@
-import { METADATA, MetadataType, MetadataKey } from "./bands/builder/types"
+import {
+	Bundleable,
+	BundleableBase,
+	MetadataKey,
+	MetadataType,
+} from "./metadata/types"
 import { MetadataInfo, NamespaceInfo } from "./platform/platform"
 
-export type { METADATA, MetadataType, MetadataKey, MetadataInfo, NamespaceInfo }
+export type {
+	Bundleable,
+	BundleableBase,
+	MetadataType,
+	MetadataKey,
+	MetadataInfo,
+	NamespaceInfo,
+}
+
+export { getKey, METADATA } from "./metadata/metadata"

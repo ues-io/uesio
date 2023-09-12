@@ -1,4 +1,4 @@
-import type { MetadataKey, MetadataType } from "../bands/builder/types"
+import type { MetadataKey, MetadataType } from "../metadata/types"
 import { CollectionKey } from "../bands/wire/types"
 
 export type ParamCondition = {

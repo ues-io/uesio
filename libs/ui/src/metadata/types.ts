@@ -20,16 +20,36 @@ const METADATA = {
 	FILE: "files",
 	LABEL: "labels",
 }
-
 type MetadataType = keyof typeof METADATA
-type MetadataKey = `${string}/${string}.${string}`
+
+type Namespace = `${string}/${string}` | ""
+// MetadataKey can either be fully qualified (with namespace) or local (just a string)
+type MetadataKey = `${Namespace}.${string}` | string
+
+type BundleableBase = {
+	namespace: Namespace
+	name: string
+}
+
+interface Bundleable {
+	namespace: Namespace
+	name: string
+}
 
 type MetadataListResponse = {
 	metadataType: MetadataType
-	namespace: string
+	namespace: Namespace
 	grouping?: string
 	metadata: Record<string, boolean>
 }
 
-export type { MetadataListResponse, MetadataType, MetadataKey }
+export type {
+	Bundleable,
+	BundleableBase,
+	MetadataKey,
+	MetadataType,
+	MetadataListResponse,
+	Namespace,
+}
+
 export { METADATA }

@@ -27,7 +27,7 @@ import saveWiresOp from "./operations/save"
 import { SignalDefinition, SignalDescriptor } from "../../definition/signal"
 
 import { WireConditionState } from "./conditions/conditions"
-import { MetadataKey } from "../builder/types"
+import { MetadataKey } from "../../metadata/types"
 
 // The key for the entire band
 const WIRE_BAND = "wire"

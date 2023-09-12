@@ -15,13 +15,11 @@ import { parseKey } from "./path"
 import { ComponentVariant } from "../definition/componentvariant"
 import ErrorBoundary from "../components/errorboundary"
 import { mergeDefinitionMaps } from "./merge"
-import { MetadataKey } from "../bands/builder/types"
+import { MetadataKey } from "../metadata/types"
 import { useShould } from "./display"
 import { DISPLAY_CONDITIONS } from "../componentexports"
 import { component } from ".."
-
-const getVariantKey = (variant: ComponentVariant): MetadataKey =>
-	`${variant.namespace}.${variant.name}` as MetadataKey
+import { getKey } from "../metadata/metadata"
 
 // A cache of full variant definitions, where all variant extensions have been resolved
 // NOTE: This cache will be persisted across all route navigations, and has no upper bound.
@@ -36,7 +34,7 @@ function getDefinitionFromVariant(
 	if (!variant.extends) return variant.definition
 
 	// To avoid expensive variant extension resolution, check cache first
-	const variantKey = `${variant.component}:${getVariantKey(variant)}`
+	const variantKey = `${variant.component}:${getKey(variant)}`
 	const cachedDef = expandedVariantDefinitionCache[variantKey]
 	if (cachedDef) return cachedDef
 	return (expandedVariantDefinitionCache[variantKey] = mergeDefinitionMaps(

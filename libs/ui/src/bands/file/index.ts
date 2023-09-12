@@ -2,9 +2,10 @@ import { createSlice, createEntityAdapter } from "@reduxjs/toolkit"
 import { useSelector } from "react-redux"
 import { FileState } from "../../definition/file"
 import { RootState } from "../../store/store"
+import { getKey } from "../../metadataexports"
 
 const adapter = createEntityAdapter<FileState>({
-	selectId: (file) => `${file.namespace}.${file.name}`,
+	selectId: getKey,
 })
 
 const selectors = adapter.getSelectors((state: RootState) => state.file)
