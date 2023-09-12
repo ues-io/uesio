@@ -64,7 +64,7 @@ const DynamicForm: definition.UtilityComponent<FormProps> = (props) => {
 			const { wireId, recordId, field, value } = e.detail
 			if (wireId !== wire?.getFullId()) return
 			const record = wire?.getFirstRecord()
-			if (recordId !== record?.getId()) return
+			if (!record || recordId !== record?.getId()) return
 			onUpdate?.(field, value, record)
 		},
 		[wire]

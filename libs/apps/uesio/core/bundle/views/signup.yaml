@@ -6,28 +6,29 @@ definition:
       viewOnly: true
       events:
         onChange:
-          - field: uesio/viewonly.username
+          - field: username
             signals:
               - signal: user/CHECK_AVAILABILITY
-                username: ${uesio/viewonly.username}
+                username: ${username}
                 signupMethod: uesio/core.platform
-                fieldId: uesio/viewonly.username
+                fieldId: username
       fields:
-        uesio/viewonly.username:
+        username:
           label: Username
           type: TEXT
-        uesio/viewonly.password:
+        password:
           label: Password
           type: TEXT
-        uesio/viewonly.email:
+        email:
           label: Email
           type: TEXT
-        uesio/viewonly.terms:
+        terms:
           type: CHECKBOX
+          label: Terms
       init:
         create: true
       defaults:
-        - field: uesio/viewonly.terms
+        - field: terms
           valueSource: VALUE
           value: false
 
@@ -56,13 +57,13 @@ definition:
                             - uesio/io.box:
                                 components:
                                   - uesio/io.field:
-                                      fieldId: uesio/viewonly.username
+                                      fieldId: username
                                       label: Username (lowercase a-z, 0-9, or _)
                                       applyChanges: onBlur
                                   - uesio/io.field:
-                                      fieldId: uesio/viewonly.email
+                                      fieldId: email
                                   - uesio/io.field:
-                                      fieldId: uesio/viewonly.password
+                                      fieldId: password
                                       label: Password
                                       displayAs: PASSWORD
                                   - uesio/io.box:
@@ -76,7 +77,8 @@ definition:
                                           - text-sm
                                       components:
                                         - uesio/io.field:
-                                            fieldId: uesio/viewonly.terms
+                                            fieldId: terms
+                                            label: " "
                                         - uesio/io.box:
                                             uesio.styleTokens:
                                               root:
@@ -99,7 +101,7 @@ definition:
                             - uesio/io.button:
                                 uesio.display:
                                   - wire: userData
-                                    field: uesio/viewonly.terms
+                                    field: terms
                                     value: false
                                 uesio.variant: uesio/io.secondary
                                 uesio.styleTokens:
@@ -109,12 +111,12 @@ definition:
                                 signals:
                                   - signal: notification/ADD
                                     id: terms
-                                    text: You have to agree to the ues.io Master Subscription Agreement.
+                                    text: You must agree to the ues.io Master Subscription Agreement.
                                     severity: error
                             - uesio/io.button:
                                 uesio.display:
                                   - wire: userData
-                                    field: uesio/viewonly.terms
+                                    field: terms
                                     value: true
                                 uesio.variant: uesio/io.primary
                                 text: Create Account
@@ -123,6 +125,6 @@ definition:
                                     signupMethod: uesio/core.platform
                                     requireds:
                                     payload:
-                                      username: ${uesio/viewonly.username}
-                                      password: ${uesio/viewonly.password}
-                                      email: ${uesio/viewonly.email}
+                                      username: ${username}
+                                      password: ${password}
+                                      email: ${email}

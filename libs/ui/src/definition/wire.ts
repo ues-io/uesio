@@ -23,6 +23,7 @@ type ViewOnlyField = {
 	selectlist?: SelectListMetadata
 	number?: NumberMetadata
 	fields?: Record<string, ViewOnlyField>
+	viewOnly?: boolean
 }
 
 type RegularField = {
@@ -99,7 +100,7 @@ type RegularWireDefinition = WireDefinitionBase & {
 type WireDefinition = ViewOnlyWireDefinition | RegularWireDefinition
 
 type WireFieldDefinitionMap = {
-	[key: CollectionFieldKey]: WireFieldDefinition
+	[key: CollectionFieldKey]: WireFieldDefinition | ViewOnlyField
 }
 
 type WireFieldDefinition = RegularField | undefined | null

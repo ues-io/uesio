@@ -78,15 +78,11 @@ func loadInAccessFieldData(op *adapt.SaveOp, connection adapt.Connection, sessio
 	refReq.AddFields(fields)
 
 	err = op.LoopChanges(func(change *adapt.ChangeItem) error {
-		fk, err := change.GetField(op.Metadata.AccessField)
+		fk, err := change.GetReferenceKey(op.Metadata.AccessField)
 		if err != nil {
 			return err
 		}
-		fkField, err := adapt.GetReferenceKey(fk)
-		if err != nil {
-			return err
-		}
-		return refReq.AddID(fkField, adapt.ReferenceLocator{
+		return refReq.AddID(fk, adapt.ReferenceLocator{
 			Item:  change,
 			Field: fieldMetadata,
 		})

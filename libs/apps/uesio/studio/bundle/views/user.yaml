@@ -186,6 +186,13 @@ definition:
                                               - uesio/io.button:
                                                   uesio.variant: uesio/io.secondary
                                                   text: $Label{uesio/io.delete}
+                                                  uesio.display:
+                                                    - field: uesio/core.uniquekey
+                                                      operator: NOT_IN
+                                                      type: fieldValue
+                                                      values:
+                                                        - guest
+                                                        - system
                                                   signals:
                                                     - signal: panel/TOGGLE
                                                       panel: deleteUser

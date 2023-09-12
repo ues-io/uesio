@@ -12,56 +12,53 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
-func createBrowserSession(userid, sitename string) *session.Session {
+func CreateBrowserSession(w http.ResponseWriter, user *meta.User, site *meta.Site) session.Session {
 	sess := session.NewSessionOptions(&session.SessOptions{
 		CAttrs: map[string]interface{}{
-			"Site":   sitename,
-			"UserID": userid,
+			"Site":   site.GetFullName(),
+			"UserID": user.ID,
 		},
 		// TODO: Make Session timeout configurable by App/Site
 		// https://github.com/TheCloudMasters/uesio/issues/2643
 		Timeout: time.Hour * 12,
 	})
-	return &sess
+	session.Add(sess, w)
+	return sess
 }
 
-func GetSessionAttribute(browserSession *session.Session, key string) string {
-	value, ok := (*browserSession).CAttr(key).(string)
+func GetSessionAttribute(browserSession session.Session, key string) string {
+	value, ok := browserSession.CAttr(key).(string)
 	if !ok {
 		return ""
 	}
 	return value
 }
 
-func NewSession(browserSession *session.Session, user *meta.User, site *meta.Site) *Session {
+func New(ID string, user *meta.User, site *meta.Site) *Session {
 	return &Session{
-		browserSession: browserSession,
-		siteSession:    NewSiteSession(site, user),
+		ID:          ID,
+		siteSession: NewSiteSession(site, user),
 	}
 }
 
 func Login(w http.ResponseWriter, user *meta.User, site *meta.Site) *Session {
-	s := New(user, site)
-	session.Add(*s.browserSession, w)
-	return s
+	return New(CreateBrowserSession(w, user, site).ID(), user, site)
 }
 
-func New(user *meta.User, site *meta.Site) *Session {
-	browserSession := createBrowserSession(user.ID, site.GetFullName())
-	return NewSession(browserSession, user, site)
-}
-
-func Logout(w http.ResponseWriter, publicUser *meta.User, s *Session) *Session {
+func Logout(w http.ResponseWriter, r *http.Request, publicUser *meta.User, s *Session) *Session {
 	// Remove the logged-out session
-	session.Remove(*s.browserSession, w)
-	sitesession := s.GetSiteSession()
+	browserSession := session.Get(r)
+	if browserSession != nil {
+		session.Remove(browserSession, w)
+	}
 	// Login as the public user
-	return Login(w, publicUser, sitesession.GetSite())
+	return Login(w, publicUser, s.GetSiteSession().GetSite())
 }
 
 type WorkspaceSession struct {
 	workspace *meta.Workspace
 	user      *meta.User
+	labels    map[string]string
 }
 
 func NewWorkspaceSession(
@@ -101,8 +98,9 @@ func (s *WorkspaceSession) GetVersion() string {
 }
 
 type SiteSession struct {
-	site *meta.Site
-	user *meta.User
+	site   *meta.Site
+	user   *meta.User
+	labels map[string]string
 }
 
 func NewSiteSession(
@@ -161,29 +159,52 @@ func NewVersionSession(
 }
 
 type Session struct {
-	browserSession   *session.Session
+	ID               string
 	siteSession      *SiteSession
 	workspaceSession *WorkspaceSession
 	siteAdminSession *SiteSession
 	versionSession   *VersionSession
 	tokens           TokenMap
-	labels           map[string]string
 }
 
 func (s *Session) SetLabels(labels map[string]string) {
-	s.labels = labels
+	if s.workspaceSession != nil {
+		s.workspaceSession.labels = labels
+	}
+	if s.siteAdminSession != nil {
+		s.siteAdminSession.labels = labels
+	}
+	s.siteSession.labels = labels
 }
 
 func (s *Session) HasLabels() bool {
-	return s.labels != nil
+	if s.workspaceSession != nil {
+		return s.workspaceSession.labels != nil
+	}
+	if s.siteAdminSession != nil {
+		return s.siteAdminSession.labels != nil
+	}
+	return s.siteSession.labels != nil
 }
 
 func (s *Session) GetLabel(labelKey string) string {
-	return s.labels[labelKey]
+	if s.workspaceSession != nil {
+		return s.workspaceSession.labels[labelKey]
+	}
+	if s.siteAdminSession != nil {
+		return s.siteAdminSession.labels[labelKey]
+	}
+	return s.siteSession.labels[labelKey]
 }
 
 func (s *Session) GetLabels() map[string]string {
-	return s.labels
+	if s.workspaceSession != nil {
+		return s.workspaceSession.labels
+	}
+	if s.siteAdminSession != nil {
+		return s.siteAdminSession.labels
+	}
+	return s.siteSession.labels
 }
 
 func (s *Session) GetFlatTokens() []string {
@@ -293,22 +314,13 @@ func (s *Session) GetWorkspaceID() string {
 	return ""
 }
 
-func (s *Session) getBrowserSessionAttribute(key string) string {
-	return GetSessionAttribute(s.browserSession, key)
-}
-
-func (s *Session) GetBrowserSession() *session.Session {
-	return s.browserSession
-}
-
 // IsExpired returns true if the browser session's last access time, plus the timeout duration,
 // is prior to the current timestamp.
-func (s *Session) IsExpired() bool {
-	if s.browserSession == nil {
+func IsExpired(browserSession session.Session) bool {
+	if browserSession == nil {
 		return true
 	}
-	val := *s.browserSession
-	return val.Accessed().Add(val.Timeout()).Before(time.Now())
+	return browserSession.Accessed().Add(browserSession.Timeout()).Before(time.Now())
 }
 
 func (s *Session) IsPublicProfile() bool {
@@ -452,11 +464,7 @@ func (s *Session) GetContextSite() *meta.Site {
 }
 
 func (s *Session) GetSessionId() string {
-	bs := (*s).GetBrowserSession()
-	if bs == nil {
-		return ""
-	}
-	return (*bs).ID()
+	return s.ID
 }
 
 func (s *Session) GetSessionIdHash() string {

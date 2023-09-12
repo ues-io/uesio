@@ -84,7 +84,7 @@ definition:
                       - uesio/io.searchbox:
                           wire: files
                           focusOnRender: true
-                          searchfields:
+                          searchFields:
                             - uesio/studio.name
                       - uesio/io.table:
                           uesio.id: filesTable

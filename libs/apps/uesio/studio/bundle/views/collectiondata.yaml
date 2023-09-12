@@ -121,34 +121,23 @@ definition:
                                                   - collectionData
                                         - uesio/io.button:
                                             uesio.variant: uesio/io.secondary
-                                            text: $Label{uesio/io.cancel}
                                             uesio.display:
                                               - type: wireHasChanges
                                                 wire: collectionData
+                                            text: $Label{uesio/io.cancel}
                                             signals:
                                               - signal: wire/CANCEL
                                                 wire: collectionData
                                         - uesio/io.button:
                                             uesio.variant: uesio/io.primary
-                                            text: "Create"
+                                            text: $Label{uesio/io.create}
+                                            hotkey: n
                                             uesio.display:
                                               - type: wireHasNoChanges
                                                 wire: collectionData
                                             signals:
-                                              - signal: wire/CREATE_RECORD
-                                                wire: collectionData
-                                                prepend: true
-                                            hotkey: "n"
-                                        - uesio/io.button:
-                                            uesio.variant: uesio/io.secondary
-                                            text: "Create"
-                                            uesio.display:
-                                              - type: wireHasChanges
-                                                wire: collectionData
-                                            signals:
-                                              - signal: wire/CREATE_RECORD
-                                                wire: collectionData
-                                                prepend: true
+                                              - signal: panel/TOGGLE
+                                                panel: createRecordDialog
                                         - uesio/studio.suggestedwiredatabutton:
                                             wire: collectionData
                                             targetTableId: collectionDataTable
@@ -161,3 +150,63 @@ definition:
                                       collectionId: $Param{namespace}.$Param{collectionname}
                                       wireId: collectionData
                                       tableId: collectionDataTable
+  panels:
+    createRecordDialog:
+      uesio.type: uesio/io.dialog
+      title: "Create new $Record{collections:uesio/studio.label}"
+      width: 550px
+      height: 700px
+      components:
+        - uesio/studio.recorddatamanager:
+            uesio.context:
+              workspace:
+                name: $Param{workspacename}
+                app: $Param{app}
+            collectionId: $Param{namespace}.$Param{collectionname}
+            wireId: recordData
+            listId: recordDataList
+      actions:
+        - uesio/io.button:
+            uesio.variant: uesio/io.primary
+            text: Save and create another
+            uesio.context:
+              workspace:
+                name: $Param{workspacename}
+                app: $Param{app}
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - recordData
+              - signal: wire/RESET
+                wire: recordData
+              - signal: wire/LOAD
+                wires:
+                  - collectionData
+        - uesio/io.button:
+        - uesio/io.button:
+            uesio.variant: uesio/io.secondary
+            text: $Label{uesio/io.save}
+            uesio.context:
+              workspace:
+                name: $Param{workspacename}
+                app: $Param{app}
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - recordData
+              - signal: panel/TOGGLE
+                panel: createRecordDialog
+              - signal: wire/LOAD
+                wires:
+                  - collectionData
+        - uesio/io.button:
+            uesio.variant: uesio/io.secondary
+            text: $Label{uesio/io.cancel}
+            afterClose:
+              - signal: wire/CANCEL
+                wire: recordData
+            signals:
+              - signal: wire/CANCEL
+                wire: recordData
+              - signal: panel/TOGGLE
+                panel: createRecordDialog
