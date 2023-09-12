@@ -18,7 +18,7 @@ import {
 	hasViewContext,
 	isRecordContextFrame,
 } from "../context/context"
-import { MetadataKey } from "../bands/builder/types"
+import { MetadataKey } from "../metadata/types"
 import { COMPONENT_ID } from "../componentexports"
 
 const getComponentId = (

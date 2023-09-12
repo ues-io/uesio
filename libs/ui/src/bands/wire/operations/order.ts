@@ -1,7 +1,7 @@
 import { Context } from "../../../context/context"
 import { addOrder, setOrder, removeOrder, getFullWireId } from ".."
 import { dispatch } from "../../../store/store"
-import { MetadataKey } from "../../builder/types"
+import { MetadataKey } from "../../../metadata/types"
 
 export const add = (
 	context: Context,

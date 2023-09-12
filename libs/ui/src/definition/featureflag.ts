@@ -1,6 +1,6 @@
+import { BundleableBase } from "../metadata/types"
+
 export type FeatureFlagState = {
-	name: string
-	namespace: string
 	value: string
 	type: "CHECKBOX" | "NUMBER"
-}
+} & BundleableBase

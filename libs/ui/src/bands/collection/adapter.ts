@@ -1,9 +1,10 @@
 import { createEntityAdapter } from "@reduxjs/toolkit"
 import { RootState } from "../../store/store"
 import { PlainCollection } from "./types"
+import { getKey } from "../../metadata/metadata"
 
 const collectionAdapter = createEntityAdapter<PlainCollection>({
-	selectId: (collection) => `${collection.namespace}.${collection.name}`,
+	selectId: getKey,
 })
 
 const selectors = collectionAdapter.getSelectors(

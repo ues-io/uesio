@@ -5,7 +5,7 @@ import {
 	UtilityProps,
 } from "../definition/definition"
 import { Component } from "../component/component"
-import { MetadataKey } from "../bands/builder/types"
+import { MetadataKey } from "../metadata/types"
 import { getUtilityLoader } from "../component/registry"
 
 interface SlotUtilityProps extends UtilityProps {

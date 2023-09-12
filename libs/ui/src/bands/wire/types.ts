@@ -1,7 +1,7 @@
 import { WireEvents } from "../../definition/wire"
 import { LoadRequestField } from "../../load/loadrequest"
 import { SaveError } from "../../load/saveresponse"
-import { MetadataKey } from "../builder/types"
+import { MetadataKey } from "../../metadata/types"
 import { PlainCollection } from "../collection/types"
 import { PlainWireRecord } from "../wirerecord/types"
 import { WireConditionState } from "./conditions/conditions"

@@ -1,7 +1,7 @@
 import { FC } from "react"
 import { UC, UtilityProps } from "../definition/definition"
 import { ComponentSignalDescriptor } from "../definition/signal"
-import { MetadataKey } from "../bands/builder/types"
+import { MetadataKey } from "../metadata/types"
 
 type Registry<T> = Record<string, T>
 const registry: Registry<UC> = {}

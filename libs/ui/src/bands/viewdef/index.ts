@@ -4,9 +4,10 @@ import { useSelector } from "react-redux"
 import { ViewMetadata } from "../../definition/ViewMetadata"
 
 import { RootState, getCurrentState } from "../../store/store"
+import { getKey } from "../../metadata/metadata"
 
 const adapter = createEntityAdapter<ViewMetadata>({
-	selectId: (v) => `${v.namespace}.${v.name}`,
+	selectId: getKey,
 })
 
 const selectors = adapter.getSelectors((state: RootState) => state.viewdef)
