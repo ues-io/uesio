@@ -140,6 +140,98 @@ definition:
                                       fieldId: uesio/core.createdby
                                       user:
                                         subtitle: $Time{uesio/core.createdat}
+                            - uesio/io.grid:
+                                uesio.variant: uesio/io.four_columns
+                                items:
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.category
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.title
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.description
+                                  - uesio/io.field:
+                                      label: Available in View Builder
+                                      fieldId: uesio/studio.discoverable
+                            - uesio/io.tabs:
+                                tabs:
+                                  - id: properties
+                                    label: Properties
+                                    components:
+                                      - uesio/io.titlebar:
+                                          title: Component Properties
+                                      - uesio/studio.codefield:
+                                          fieldId: uesio/studio.properties
+                                          height: 100px
+                                          language: yaml
+                                          mode: READ
+                                          uesio.display:
+                                            - type: paramValue
+                                              param: app
+                                              field: uesio/core.dynamiccollection
+                                              operator: NOT_EQUALS
+                                              value: $Param{namespace}
+                                      - uesio/studio.codefield:
+                                          fieldId: uesio/studio.properties
+                                          height: 100px
+                                          language: yaml
+                                          uesio.display:
+                                            - type: paramValue
+                                              param: app
+                                              field: uesio/core.dynamiccollection
+                                              operator: EQUALS
+                                              value: $Param{namespace}
+                                  - id: sections
+                                    label: Sections
+                                    components:
+                                      - uesio/io.titlebar:
+                                          title: View Builder Properties Panel Sections
+                                      - uesio/studio.codefield:
+                                          fieldId: uesio/studio.sections
+                                          height: 100px
+                                          language: yaml
+                                          mode: READ
+                                          uesio.display:
+                                            - type: paramValue
+                                              param: app
+                                              field: uesio/core.dynamiccollection
+                                              operator: NOT_EQUALS
+                                              value: $Param{namespace}
+                                      - uesio/studio.codefield:
+                                          fieldId: uesio/studio.sections
+                                          height: 150px
+                                          language: yaml
+                                          uesio.display:
+                                            - type: paramValue
+                                              param: app
+                                              field: uesio/core.dynamiccollection
+                                              operator: EQUALS
+                                              value: $Param{namespace}
+                                  - id: defaultDefinition
+                                    label: Default Component YAML
+                                    components:
+                                      - uesio/io.titlebar:
+                                          title: View Builder New Component Default YAML
+                                      - uesio/studio.codefield:
+                                          fieldId: uesio/studio.defaultdefinition
+                                          height: 150px
+                                          language: yaml
+                                          mode: READ
+                                          uesio.display:
+                                            - type: paramValue
+                                              param: app
+                                              field: uesio/core.dynamiccollection
+                                              operator: NOT_EQUALS
+                                              value: $Param{namespace}
+                                      - uesio/studio.codefield:
+                                          fieldId: uesio/studio.defaultdefinition
+                                          height: 150px
+                                          language: yaml
+                                          uesio.display:
+                                            - type: paramValue
+                                              param: app
+                                              field: uesio/core.dynamiccollection
+                                              operator: EQUALS
+                                              value: $Param{namespace}
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           components:

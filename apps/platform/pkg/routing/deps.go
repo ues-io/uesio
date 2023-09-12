@@ -328,6 +328,15 @@ func processView(key string, viewInstanceID string, deps *PreloadMetadata, param
 
 }
 
+func InBuildMode(fullViewId string, deps DepMap) bool {
+	if deps == nil {
+		return false
+	}
+	builderComponentID := getBuilderComponentID(fullViewId)
+	buildModeKey := GetBuildModeKey(builderComponentID)
+	return deps.Has(buildModeKey)
+}
+
 func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadata, session *sess.Session) error {
 
 	view, err := loadViewDef(viewNamespace+"."+viewName, session)
@@ -436,9 +445,13 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 	}
 
 	deps.Component.AddItem(NewComponentMergeData(fmt.Sprintf("%s:namespaces", builderComponentID), appData))
-	deps.Component.AddItem(NewComponentMergeData(fmt.Sprintf("%s:buildmode", builderComponentID), true))
+	deps.Component.AddItem(NewComponentMergeData(GetBuildModeKey(builderComponentID), true))
 
 	return nil
+}
+
+func GetBuildModeKey(builderComponentID string) string {
+	return fmt.Sprintf("%s:buildmode", builderComponentID)
 }
 
 func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata, error) {
@@ -495,7 +508,7 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 		// In workspace mode, make sure we have the builder pack so that we can include the buildwrapper
 		builderComponentID := getBuilderComponentID(route.ViewRef)
 		// If there is already an entry for build mode, don't override it, as it may be set to true
-		deps.Component.AddItemIfNotExists(NewComponentMergeData(fmt.Sprintf("%s:buildmode", builderComponentID), false))
+		deps.Component.AddItemIfNotExists(NewComponentMergeData(GetBuildModeKey(builderComponentID), false))
 		addComponentPackToDeps(deps, DEFAULT_BUILDER_PACK_NAMESPACE, DEFAULT_BUILDER_PACK_NAME, session)
 		// Also load in the modstamps for all static files in the workspace
 		// so that we never have stale URLs in the view builder / preview
@@ -570,8 +583,7 @@ func getComponentAreaDeps(node *yaml.Node, depMap *ViewDepMap, session *sess.Ses
 						}
 					}
 				} else {
-					err := getComponentAreaDeps(prop, depMap, session)
-					if err != nil {
+					if err = getComponentAreaDeps(prop, depMap, session); err != nil {
 						return err
 					}
 				}
@@ -664,6 +676,7 @@ func (vdm *ViewDepMap) AddComponent(key string, session *sess.Session) (*meta.Co
 	if ok {
 		return component, nil
 	}
+	// Load the Component meta info from bundle store
 	component, err := meta.NewComponent(key)
 	if err != nil {
 		return nil, err

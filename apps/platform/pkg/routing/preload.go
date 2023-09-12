@@ -16,8 +16,12 @@ type DepMap interface {
 	AddItemIfNotExists(item Depable) (Depable, bool)
 	AddItems(deps ...Depable) DepMap
 	GetItems() []Depable
+	Get(key string) (Depable, bool)
+	Has(key string) bool
 	Len() int
 	MarshalJSON() ([]byte, error)
+	Remove(key string) DepMap
+	RemoveAll() DepMap
 }
 
 type ComponentMergeData struct {
@@ -64,6 +68,26 @@ func (mmd *MetadataMergeData) AddItemIfNotExists(dep Depable) (Depable, bool) {
 	}
 	mmd.deps[key] = dep
 	return nil, false
+}
+
+func (mmd *MetadataMergeData) Has(key string) bool {
+	_, exists := mmd.deps[key]
+	return exists
+}
+
+func (mmd *MetadataMergeData) Get(key string) (Depable, bool) {
+	item, exists := mmd.deps[key]
+	return item, exists
+}
+
+func (mmd *MetadataMergeData) Remove(key string) DepMap {
+	delete(mmd.deps, key)
+	return mmd
+}
+
+func (mmd *MetadataMergeData) RemoveAll() DepMap {
+	mmd.deps = map[string]Depable{}
+	return mmd
 }
 
 func (mmd *MetadataMergeData) GetItems() []Depable {

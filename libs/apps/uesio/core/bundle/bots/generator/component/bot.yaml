@@ -10,4 +10,5 @@ params:
   - name: name
     prompt: Component Name
     type: METADATANAME
+    required: true
 public: true
