@@ -133,6 +133,8 @@ definition:
                                   - uesio/io.field:
                                       fieldId: uesio/studio.name
                                   - uesio/io.field:
+                                      fieldId: uesio/studio.type
+                                  - uesio/io.field:
                                       fieldId: uesio/core.updatedby
                                       user:
                                         subtitle: $Time{uesio/core.updatedat}
@@ -225,6 +227,35 @@ definition:
                                       - uesio/studio.codefield:
                                           fieldId: uesio/studio.defaultdefinition
                                           height: 150px
+                                          language: yaml
+                                          uesio.display:
+                                            - type: paramValue
+                                              param: app
+                                              field: uesio/core.dynamiccollection
+                                              operator: EQUALS
+                                              value: $Param{namespace}
+                                  - id: declarativeDefinition
+                                    label: Declarative Component Definition
+                                    uesio.display:
+                                      - field: uesio/studio.type
+                                        value: DECLARATIVE
+                                    components:
+                                      - uesio/io.titlebar:
+                                          title: Declarative Component Definition
+                                      - uesio/studio.codefield:
+                                          fieldId: uesio/studio.definition
+                                          height: 100px
+                                          language: yaml
+                                          mode: READ
+                                          uesio.display:
+                                            - type: paramValue
+                                              param: app
+                                              field: uesio/core.dynamiccollection
+                                              operator: NOT_EQUALS
+                                              value: $Param{namespace}
+                                      - uesio/studio.codefield:
+                                          fieldId: uesio/studio.definition
+                                          height: 100px
                                           language: yaml
                                           uesio.display:
                                             - type: paramValue
