@@ -58,8 +58,6 @@ function mergeContextVariants(
 	if (!definition) return definition
 	const variantName = definition[component.STYLE_VARIANT] as MetadataKey
 	const [namespace] = parseKey(componentType)
-
-	if (!definition) return definition
 	const variant = context.getComponentVariant(
 		componentType,
 		variantName || (`${namespace}.default` as MetadataKey)

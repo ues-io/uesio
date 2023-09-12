@@ -265,7 +265,7 @@ const ComponentsPanel: definition.UC = (props) => {
 	const [searchTerm, setSearchTerm] = useState("")
 	const searchTermLC = searchTerm?.toLowerCase()
 	const components = pickBy(
-		getComponentDefs(context),
+		getComponentDefs(),
 		(component) =>
 			component.discoverable &&
 			(component.name?.toLowerCase().includes(searchTermLC) ||

@@ -669,7 +669,7 @@ function getClosestWireInContext(context: context.Context, path: FullPath) {
 	while (lastItem && !wireId) {
 		// If the current item looks like a metadata name, try to fetch it as a component type
 		if (lastItem?.includes("/")) {
-			const componentDef = getComponentDef(context, lastItem)
+			const componentDef = getComponentDef(lastItem)
 			if (componentDef?.slots?.length) {
 				let match
 				outerLoop: for (const slot of componentDef.slots) {

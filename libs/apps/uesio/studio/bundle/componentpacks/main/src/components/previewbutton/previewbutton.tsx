@@ -68,6 +68,18 @@ const getWireFieldFromParamDef = (
 				required: !!def.required,
 				type: "LIST" as const,
 			}
+		// TODO: SELECT properties won't work until we load Select Lists
+		// when initializing View Only wires/View Only Fields.
+		// Currently any View Only SELECT field is expected to have its options defined
+		// inline on the field definition, so we can't reference the options.
+		// case "SELECT":
+		// 	return {
+		// 		label: def.prompt || def.name,
+		// 		required: !!def.required,
+		// 		type: "SELECT" as const,
+
+		// 		selectlist: def.selectList,
+		// 	}
 		default:
 			return {
 				label: def.prompt || def.name,

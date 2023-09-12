@@ -15,6 +15,7 @@ import {
 	DisplayOperator,
 } from "./component/display"
 import { ComponentVariant } from "./definition/componentvariant"
+import { Component as ComponentDef } from "./definition/component"
 import ErrorBoundary from "./components/errorboundary"
 import ErrorMessage from "./components/errormessage"
 const COMPONENT_ID = "uesio.id"
@@ -23,6 +24,7 @@ const STYLE_VARIANT = "uesio.variant"
 const STYLE_TOKENS = "uesio.styleTokens"
 
 export type {
+	ComponentDef,
 	SlotUtilityProps,
 	ComponentVariant,
 	ItemContext,

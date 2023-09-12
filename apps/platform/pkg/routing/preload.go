@@ -16,8 +16,12 @@ type DepMap interface {
 	AddItemIfNotExists(item Depable) (Depable, bool)
 	AddItems(deps ...Depable) DepMap
 	GetItems() []Depable
+	Get(key string) (Depable, bool)
+	Has(key string) bool
 	Len() int
 	MarshalJSON() ([]byte, error)
+	Remove(key string) DepMap
+	RemoveAll() DepMap
 }
 
 type ComponentMergeData struct {
@@ -66,6 +70,26 @@ func (mmd *MetadataMergeData) AddItemIfNotExists(dep Depable) (Depable, bool) {
 	return nil, false
 }
 
+func (mmd *MetadataMergeData) Has(key string) bool {
+	_, exists := mmd.deps[key]
+	return exists
+}
+
+func (mmd *MetadataMergeData) Get(key string) (Depable, bool) {
+	item, exists := mmd.deps[key]
+	return item, exists
+}
+
+func (mmd *MetadataMergeData) Remove(key string) DepMap {
+	delete(mmd.deps, key)
+	return mmd
+}
+
+func (mmd *MetadataMergeData) RemoveAll() DepMap {
+	mmd.deps = map[string]Depable{}
+	return mmd
+}
+
 func (mmd *MetadataMergeData) GetItems() []Depable {
 	return goutils.MapValues(mmd.deps)
 }
@@ -109,6 +133,7 @@ func NewPreloadMetadata() *PreloadMetadata {
 		Theme:            NewItem(),
 		ViewDef:          NewItem(),
 		ComponentPack:    NewItem(),
+		ComponentType:    NewItem(),
 		ComponentVariant: NewItem(),
 		ConfigValue:      NewItem(),
 		Label:            NewItem(),
@@ -124,6 +149,7 @@ type PreloadMetadata struct {
 	ViewDef          DepMap `json:"viewdef,omitempty"`
 	ComponentPack    DepMap `json:"componentpack,omitempty"`
 	ComponentVariant DepMap `json:"componentvariant,omitempty"`
+	ComponentType    DepMap `json:"componenttype,omitempty"`
 	ConfigValue      DepMap `json:"configvalue,omitempty"`
 	Label            DepMap `json:"label,omitempty"`
 	FeatureFlag      DepMap `json:"featureflag,omitempty"`
