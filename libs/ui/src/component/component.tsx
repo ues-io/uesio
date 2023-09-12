@@ -3,6 +3,7 @@ import {
 	UtilityProps,
 	UC,
 	UtilityComponent,
+	BaseDefinition,
 } from "../definition/definition"
 import {
 	injectDynamicContext,
@@ -17,9 +18,12 @@ import ErrorBoundary from "../components/errorboundary"
 import { mergeDefinitionMaps } from "./merge"
 import { MetadataKey } from "../metadata/types"
 import { useShould } from "./display"
-import { DISPLAY_CONDITIONS } from "../componentexports"
+import { DISPLAY_CONDITIONS, Slot } from "../componentexports"
 import { component } from ".."
 import { getKey } from "../metadata/metadata"
+import { getComponentIdFromProps } from "../hooks/componentapi"
+import { getComponentType } from "../bands/componenttype/selectors"
+import { Declarative, DeclarativeComponent } from "../definition/component"
 
 // A cache of full variant definitions, where all variant extensions have been resolved
 // NOTE: This cache will be persisted across all route navigations, and has no upper bound.
@@ -66,25 +70,71 @@ function mergeContextVariants(
 	return mergeDefinitionMaps(variantDefinition, definition, undefined)
 }
 
+type DeclarativeProps = {
+	definition: BaseDefinition
+}
+
+const DeclarativeComponent: UC<DeclarativeProps> = (props) => {
+	const { componentType, context, definition, path } = props
+	if (!componentType) return null
+	const componentTypeDef = getComponentType(
+		componentType
+	) as DeclarativeComponent
+	if (!componentTypeDef) return null
+	const slotDef =
+		(context
+			.addPropsFrame(definition)
+			// definition may not be Record<string, string>, but we just need to be able to merge it,
+			// so we need to cast it.
+			.mergeDeep(
+				componentTypeDef.definition as Record<string, string>
+			) as DefinitionMap) || {}
+	return (
+		<div id={getComponentIdFromProps(props)}>
+			<Slot
+				definition={slotDef}
+				listName="components"
+				path={path}
+				context={context}
+			/>
+		</div>
+	)
+}
+
+DeclarativeComponent.displayName = "DeclarativeComponent"
+
 const Component: UC<DefinitionMap> = (props) => {
 	const { componentType, context, definition } = props
-	if (!useShould(definition?.[DISPLAY_CONDITIONS], context)) return null
+	if (!useShould(definition?.[DISPLAY_CONDITIONS], context)) {
+		return null
+	}
 	if (!componentType) return <NotFound {...props} />
-	const Loader = getRuntimeLoader(componentType) || NotFound
 
-	const mergedDefinition = mergeContextVariants(
-		definition,
-		componentType,
-		context
-	)
+	let Loader = getRuntimeLoader(componentType) as UC | undefined
+
+	if (!Loader) {
+		// Check if this is a declarative component, and if so use the declarative loader
+		const componentTypeDef = getComponentType(componentType)
+		if (componentTypeDef?.type === Declarative) {
+			Loader = DeclarativeComponent
+		}
+	}
+
+	if (!Loader) {
+		return <NotFound {...props} />
+	}
+
+	const mergedDefinition =
+		mergeContextVariants(definition, componentType, context) || {}
+
 	return (
 		<ErrorBoundary {...props}>
 			<Loader
 				{...props}
-				definition={mergedDefinition || {}}
+				definition={mergedDefinition}
 				context={injectDynamicContext(
 					context,
-					mergedDefinition?.["uesio.context"] as ContextOptions
+					definition?.["uesio.context"] as ContextOptions
 				)}
 			/>
 		</ErrorBoundary>

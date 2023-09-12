@@ -6,7 +6,10 @@ import {
 } from "../definition/definition"
 import { Component } from "../component/component"
 import { MetadataKey } from "../metadata/types"
-import { getUtilityLoader } from "../component/registry"
+import {
+	getUtilityLoader,
+	registerUtilityComponent,
+} from "../component/registry"
 
 interface SlotUtilityProps extends UtilityProps {
 	listName: string
@@ -55,6 +58,8 @@ const Slot: FunctionComponent<SlotUtilityProps> = (props) => {
 }
 
 Slot.displayName = "Slot"
+
+registerUtilityComponent("uesio/core.slot", Slot)
 
 export type { SlotUtilityProps }
 export { getSlotProps }

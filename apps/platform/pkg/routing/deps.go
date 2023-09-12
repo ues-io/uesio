@@ -159,7 +159,7 @@ func getDepsForComponent(component *meta.Component, deps *PreloadMetadata, sessi
 	// In the future we may want to send down portions of the defs for React components as well,
 	// but right now we don't need to do that.
 	if component.Type == meta.DeclarativeComponent {
-		deps.ComponentType.AddItemIfNotExists(meta.NewRuntimeComponentMetadata(component))
+		deps.ComponentType.AddItemIfNotExists((*meta.RuntimeComponentMetadata)(component))
 	}
 
 	// need an admin session for retrieving config values

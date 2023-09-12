@@ -31,12 +31,14 @@ const ERROR = "ERROR",
 	ROUTE = "ROUTE",
 	FIELD_MODE = "FIELD_MODE",
 	WIRE = "WIRE",
+	PROPS = "PROPS",
 	RECORD_DATA = "RECORD_DATA",
 	SIGNAL_OUTPUT = "SIGNAL_OUTPUT"
 
 type FieldMode = "READ" | "EDIT"
 
 type Mergeable = string | number | boolean | undefined
+type DeepMergeable = Mergeable | Record<string, Mergeable> | Mergeable[]
 
 interface ErrorContext {
 	errors: string[]
@@ -98,8 +100,16 @@ interface ComponentContext {
 	data: Record<string, unknown>
 }
 
+interface PropsContext {
+	data: Record<string, unknown>
+}
+
 interface ComponentContextFrame extends ComponentContext {
 	type: typeof COMPONENT
+}
+
+interface PropsContextFrame extends PropsContext {
+	type: typeof PROPS
 }
 
 interface ThemeContextFrame extends ThemeContext {
@@ -159,6 +169,7 @@ type ContextFrame =
 	| ErrorContextFrame
 	| FieldModeContextFrame
 	| SignalOutputContextFrame
+	| PropsContextFrame
 
 // Type Guards for fully-resolved Context FRAMES (with "type" property appended)
 const isErrorContextFrame = (frame: ContextFrame): frame is ErrorContextFrame =>
@@ -196,6 +207,8 @@ const isViewContextFrame = (frame: ContextFrame): frame is ViewContextFrame =>
 	frame.type === VIEW
 const isRouteContextFrame = (frame: ContextFrame): frame is RouteContextFrame =>
 	frame.type === ROUTE
+const isPropsContextFrame = (frame: ContextFrame): frame is PropsContextFrame =>
+	frame.type === PROPS
 const hasWireContext = (
 	frame: ContextFrame
 ): frame is RecordContextFrame | WireContextFrame =>
@@ -358,6 +371,8 @@ class Context {
 	getParams = () => this.stack.find(isViewContextFrame)?.params
 
 	getParam = (param: string) => this.getParams()?.[param]
+
+	getProp = (prop: string) => this.stack.find(isPropsContextFrame)?.data[prop]
 
 	getParentComponentDef = (path: string) =>
 		get(this.getViewDef(), getAncestorPath(path, 3))
@@ -542,6 +557,12 @@ class Context {
 			data,
 		})
 
+	addPropsFrame = (data: Record<string, unknown>) =>
+		this.#addFrame({
+			type: PROPS,
+			data,
+		})
+
 	// addErrorFrame provides a single-argument method, vs an argument method, since this is the common usage
 	addErrorFrame = (errors: string[]) =>
 		this.#addFrame({
@@ -590,15 +611,31 @@ class Context {
 		return result
 	}
 
+	mergeDeep = (value: DeepMergeable) => {
+		if (!value) return value
+		if (Array.isArray(value)) {
+			return this.mergeList(value)
+		}
+		if (typeof value === "object" && value !== null) {
+			return this.mergeMap(value)
+		}
+		return this.merge(value)
+	}
+
+	mergeList = (list: DeepMergeable[] | undefined): unknown[] | undefined => {
+		if (!list) return undefined
+		return list.map((item) => this.mergeDeep(item))
+	}
+
 	mergeMap = (
 		map: Record<string, Mergeable> | undefined
 	): Record<string, Mergeable> =>
 		map
 			? Object.fromEntries(
-					Object.entries(map).map((entries) => [
-						entries[0],
-						this.merge(entries[1]),
-					])
+					Object.entries(map).map((entry) => {
+						const [key, value] = entry
+						return [key, this.mergeDeep(value) as Mergeable]
+					})
 			  )
 			: {}
 

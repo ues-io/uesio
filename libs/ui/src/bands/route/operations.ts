@@ -10,6 +10,9 @@ import { loadScripts } from "../../hooks/usescripts"
 import { dispatchRouteDeps, getPackUrlsForDeps } from "./utils"
 import { dispatch } from "../../store/store"
 import { RouteState } from "./types"
+import { setMany as setComponentTypes } from "../componenttype"
+import { Component } from "../componenttype/types"
+import { EntityId } from "@reduxjs/toolkit"
 
 const redirect = (context: Context, path: string, newTab?: boolean) => {
 	const mergedPath = context.mergeString(path)
@@ -121,11 +124,20 @@ const handleNavigateResponse = async (
 		await loadScripts(newPacks)
 	}
 
-	// We don't need to store the dependencies in redux
+	const componentTypeDeps = routeResponse.dependencies?.componenttype
+
+	// We don't need to store the dependencies in redux with the route itself
 	delete routeResponse.dependencies
 
 	batch(() => {
 		dispatchRouteDeps(deps)
+		if (componentTypeDeps !== undefined) {
+			dispatch(
+				setComponentTypes(
+					componentTypeDeps.entities as Record<EntityId, Component>
+				)
+			)
+		}
 		dispatch(setRoute(routeResponse))
 	})
 
