@@ -12,8 +12,8 @@ import {
 } from "../api/stateapi"
 import { ComponentProperty } from "../properties/componentproperty"
 
-const getComponentTypesWithSignals = (context: context.Context) => {
-	const defs = Object.entries(getComponentDefs(context) || {}).filter(
+const getComponentTypesWithSignals = () => {
+	const defs = Object.entries(getComponentDefs() || {}).filter(
 		([, def]) => def.signals !== undefined
 	)
 	defs.sort(([, a], [, b]) => a.title.localeCompare(b.title))
@@ -24,7 +24,7 @@ const getComponentSignalOptions = (
 	componentType: string
 ): wire.SelectOption[] => {
 	if (componentType) {
-		const componentDef = getComponentDef(context, componentType)
+		const componentDef = getComponentDef(componentType)
 		if (componentDef?.signals) {
 			const entries = Object.entries(componentDef.signals)
 			entries.sort(([aName, a], [bName, b]) =>
@@ -92,7 +92,7 @@ const signals: SignalBandDefinition = {
 						type: "SELECT",
 						name: "component",
 						label: "Component Type",
-						options: getComponentTypesWithSignals(context).map(
+						options: getComponentTypesWithSignals().map(
 							([type, def]) => ({
 								value: type,
 								label: def.title,
@@ -161,7 +161,7 @@ const signals: SignalBandDefinition = {
 				// Append signal-specific properties, if there are any
 				const signalProperties = (
 					signal.component && signal.componentsignal
-						? getComponentDef(context, signal.component)?.signals?.[
+						? getComponentDef(signal.component)?.signals?.[
 								signal.componentsignal
 						  ]?.properties
 						: []

@@ -133,6 +133,7 @@ func NewPreloadMetadata() *PreloadMetadata {
 		Theme:            NewItem(),
 		ViewDef:          NewItem(),
 		ComponentPack:    NewItem(),
+		ComponentType:    NewItem(),
 		ComponentVariant: NewItem(),
 		ConfigValue:      NewItem(),
 		Label:            NewItem(),
@@ -148,6 +149,7 @@ type PreloadMetadata struct {
 	ViewDef          DepMap `json:"viewdef,omitempty"`
 	ComponentPack    DepMap `json:"componentpack,omitempty"`
 	ComponentVariant DepMap `json:"componentvariant,omitempty"`
+	ComponentType    DepMap `json:"componenttype,omitempty"`
 	ConfigValue      DepMap `json:"configvalue,omitempty"`
 	Label            DepMap `json:"label,omitempty"`
 	FeatureFlag      DepMap `json:"featureflag,omitempty"`

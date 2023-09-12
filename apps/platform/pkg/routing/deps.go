@@ -2,7 +2,6 @@ package routing
 
 import (
 	"bytes"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
@@ -154,6 +153,14 @@ func getDepsForComponent(component *meta.Component, deps *PreloadMetadata, sessi
 	}
 
 	addComponentPackToDeps(deps, component.Namespace, component.Pack, session)
+
+	// Add all Declarative Components to the Component Type dependency map
+	// so that we can send down their definitions into the View HTML.
+	// In the future we may want to send down portions of the defs for React components as well,
+	// but right now we don't need to do that.
+	if component.Type == meta.DeclarativeComponent {
+		deps.ComponentType.AddItemIfNotExists(meta.NewRuntimeComponentMetadata(component))
+	}
 
 	// need an admin session for retrieving config values
 	// in order to prevent users from having to have read on the uesio/core.configvalue table
@@ -375,24 +382,12 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 		return errors.New("Failed to get translated labels: " + err.Error())
 	}
 
-	componentDefs := map[string]json.RawMessage{}
-
 	for _, component := range components {
-
-		err := getDepsForComponent(component, deps, session)
-		if err != nil {
+		if err = getDepsForComponent(component, deps, session); err != nil {
 			return err
 		}
-
-		componentYamlBytes, err := component.GetBytes()
-		if err != nil {
-			return err
-		}
-
-		componentDefs[component.GetKey()] = componentYamlBytes
+		deps.ComponentType.AddItem(component)
 	}
-
-	deps.Component.AddItem(NewComponentMergeData(fmt.Sprintf("%s:componentdefs", builderComponentID), componentDefs))
 
 	for i := range variants {
 		deps.ComponentVariant.AddItem(variants[i])

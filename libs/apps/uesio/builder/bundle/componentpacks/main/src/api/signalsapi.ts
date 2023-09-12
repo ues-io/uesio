@@ -167,10 +167,7 @@ const getSignalProperties = (
 			.split("/")
 		if (cmpSignalParts.length === 3) {
 			const cmpSignalName = cmpSignalParts.pop() as string
-			const componentDef = getComponentDef(
-				context,
-				cmpSignalParts.join("/")
-			)
+			const componentDef = getComponentDef(cmpSignalParts.join("/"))
 			if (
 				componentDef &&
 				componentDef.signals &&

@@ -119,15 +119,11 @@ func (c *Component) GetBytes() ([]byte, error) {
 }
 
 func (c *Component) MarshalJSONObject(enc *gojay.Encoder) {
-	componentType := c.Type
-	if componentType == "" {
-		componentType = ReactComponent
-	}
 	enc.AddStringKey("namespace", c.Namespace)
 	enc.AddStringKey("name", c.Name)
 	enc.AddStringKey("title", c.Title)
 	enc.AddStringKey("description", c.Description)
-	enc.AddStringKey("type", componentType)
+	enc.AddStringKey("type", c.GetType())
 	enc.AddStringKey("category", c.Category)
 	enc.AddBoolKey("discoverable", c.Discoverable)
 	if c.Icon != "" {
@@ -152,7 +148,7 @@ func (c *Component) MarshalJSONObject(enc *gojay.Encoder) {
 		enc.AddObjectKey("styleRegions", (*YAMLDefinition)(&c.StyleRegions))
 	}
 	if c.Definition.Content != nil {
-		enc.AddArrayKey("definition", (*YAMLDefinition)(&c.Definition))
+		enc.AddObjectKey("definition", (*YAMLDefinition)(&c.Definition))
 	}
 }
 
@@ -194,4 +190,48 @@ func (c *Component) UnmarshalYAML(node *yaml.Node) error {
 
 func (c *Component) IsPublic() bool {
 	return true
+}
+
+func (c *Component) GetType() string {
+	if c.Type != "" {
+		return c.Type
+	}
+	return ReactComponent
+}
+
+// RuntimeComponentMetadata allows us to send a trimmed-down runtime component metadata payload
+// containing only those properties needed at runtime into the componenttype Redux slice.
+// In Build mode, the full Component metadata will be sent, to facilitate full Builder functionality.
+type RuntimeComponentMetadata struct {
+	Definition     yaml.Node `yaml:"definition,omitempty"`
+	Type           string    `yaml:"type,omitempty"`
+	BundleableBase `yaml:",inline"`
+}
+
+func NewRuntimeComponentMetadata(component *Component) *RuntimeComponentMetadata {
+	return &RuntimeComponentMetadata{
+		Definition: component.Definition,
+		BundleableBase: BundleableBase{
+			Name:      component.Name,
+			Namespace: component.Namespace,
+		},
+		Type: component.GetType(),
+	}
+}
+
+func (cdw *RuntimeComponentMetadata) GetBytes() ([]byte, error) {
+	return gojay.MarshalJSONObject(cdw)
+}
+
+func (cdw *RuntimeComponentMetadata) IsNil() bool {
+	return cdw == nil
+}
+
+func (cdw *RuntimeComponentMetadata) MarshalJSONObject(enc *gojay.Encoder) {
+	enc.AddStringKey("namespace", cdw.Namespace)
+	enc.AddStringKey("name", cdw.Name)
+	if cdw.Definition.Content != nil {
+		enc.AddObjectKey("definition", (*YAMLDefinition)(&cdw.Definition))
+	}
+	enc.AddStringKey("type", cdw.Type)
 }
