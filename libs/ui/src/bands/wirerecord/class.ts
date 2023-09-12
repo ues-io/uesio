@@ -4,6 +4,7 @@ import { ID_FIELD, UNIQUE_KEY_FIELD } from "../collection/types"
 import Wire from "../wire/class"
 import { FieldValue, PlainWireRecord } from "./types"
 import updateRecordOp from "../wire/operations/updaterecord"
+import { unlocalize } from "../../component/path"
 
 class WireRecord {
 	constructor(source: PlainWireRecord, id: string, wire: Wire) {
@@ -19,13 +20,17 @@ class WireRecord {
 	getId = () => this.id
 	getWire = () => this.wire
 	getPlainData = () => this.source
+	getCollection = () => this.wire?.getCollection()
 	getFieldValue = <T extends FieldValue>(
 		fieldName: string
 	): T | undefined => {
-		const fieldNameParts = fieldName?.split("->")
+		const ns = this.getCollection()?.getNamespace()
+		const parts = fieldName?.split("->")
 		return get(
 			this.source,
-			fieldNameParts.length === 1 ? fieldName : fieldNameParts
+			parts.length === 1
+				? unlocalize(fieldName, ns)
+				: parts.map((part) => unlocalize(part, ns))
 		)
 	}
 	getDateValue = (fieldName: string) => {

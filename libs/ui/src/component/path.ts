@@ -14,6 +14,7 @@ const isLocalNamespace = (ns: string, localNamespace: string) =>
 
 const localize = (key: string, defaultNamespace: string) => {
 	if (!key) return ""
+	if (!defaultNamespace) return key
 	const [first, second] = parseKey(key)
 	if (!second) return first
 	if (isLocalNamespace(first, defaultNamespace)) return second
@@ -22,6 +23,7 @@ const localize = (key: string, defaultNamespace: string) => {
 
 const unlocalize = (key: string, defaultNamespace: string) => {
 	if (!key) return ""
+	if (!defaultNamespace) return key
 	const [first, second] = parseKey(key)
 	if (!second) return defaultNamespace + "." + first
 	if (isLocalNamespace(first, defaultNamespace))

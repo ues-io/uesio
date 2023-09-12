@@ -89,30 +89,34 @@ const getFilterContent = (
 
 const getDefaultCondition = (
 	path: string,
+	collectionMetadata: collection.Collection,
 	fieldMetadata: collection.Field,
 	operator: wire.ConditionOperators,
 	displayAs: string
 ) => {
 	const type = fieldMetadata.getType()
+	const fieldName = fieldMetadata.getUnqualifiedId(
+		collectionMetadata.getNamespace()
+	)
 	switch (type) {
 		case "DATE": {
 			return !displayAs
 				? {
 						id: path,
 						operator: "EQ",
-						field: fieldMetadata.getId(),
+						field: fieldName,
 				  }
 				: {
 						id: path,
 						operator: "IN",
-						field: fieldMetadata.getId(),
+						field: fieldName,
 				  }
 		}
 		case "MULTISELECT": {
 			return {
 				id: path,
 				operator: operator || "HAS_ANY",
-				field: fieldMetadata.getId(),
+				field: fieldName,
 			}
 		}
 		case "USER":
@@ -120,7 +124,7 @@ const getDefaultCondition = (
 			return {
 				id: path,
 				operator: "EQ",
-				field: fieldMetadata.getId(),
+				field: fieldName,
 			}
 		}
 		case "TEXT":
@@ -129,12 +133,12 @@ const getDefaultCondition = (
 			return {
 				id: path,
 				operator: "CONTAINS",
-				field: fieldMetadata.getId(),
+				field: fieldName,
 			}
 		default:
 			return {
 				id: path,
-				field: fieldMetadata.getId(),
+				field: fieldName,
 			}
 	}
 }
@@ -158,6 +162,7 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 	if (!condition && fieldMetadata) {
 		condition = getDefaultCondition(
 			path,
+			collection,
 			fieldMetadata,
 			operator,
 			displayAs || ""

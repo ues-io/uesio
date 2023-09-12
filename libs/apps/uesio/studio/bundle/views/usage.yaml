@@ -143,8 +143,8 @@ definition:
                                 series:
                                   - name: totalbyuser
                                     label: Total By User
-                                    valueField: uesio/core.total
-                                    categoryField: uesio/core.user
+                                    valueField: total
+                                    categoryField: user
                                     wire: usage
                                 labels:
                                   source: DATA
@@ -159,12 +159,12 @@ definition:
                           mode: READ
                           pagesize: 10
                           columns:
-                            - field: uesio/core.user
-                            - field: uesio/core.day
-                            - field: uesio/core.actiontype
-                            - field: uesio/core.metadatatype
-                            - field: uesio/core.metadataname
-                            - field: uesio/core.total
+                            - field: user
+                            - field: day
+                            - field: actiontype
+                            - field: metadatatype
+                            - field: metadataname
+                            - field: total
 params:
   metadatatype:
     type: TEXT
