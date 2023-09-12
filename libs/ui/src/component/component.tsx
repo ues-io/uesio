@@ -134,7 +134,7 @@ const Component: UC<DefinitionMap> = (props) => {
 				definition={mergedDefinition}
 				context={injectDynamicContext(
 					context,
-					definition?.["uesio.context"] as ContextOptions
+					mergedDefinition?.["uesio.context"] as ContextOptions
 				)}
 			/>
 		</ErrorBoundary>
