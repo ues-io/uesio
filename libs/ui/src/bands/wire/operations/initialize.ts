@@ -86,7 +86,7 @@ const getViewOnlyFieldMetadata = (
 })
 
 const getViewOnlyFieldsMetadata = (
-	wireDef: WireDefinition
+	wireDef: RegularWireDefinition
 ): FieldMetadataMap => {
 	const fieldMetadata: FieldMetadataMap = {}
 	const fields = wireDef.fields
@@ -102,8 +102,10 @@ const getViewOnlyFieldsMetadata = (
 
 const addViewOnlyFields = (wireDef: RegularWireDefinition) =>
 	({
-		fields: getViewOnlyFieldsMetadata(wireDef),
-	} as PlainCollection)
+		viewOnlyMetadata: {
+			fields: getViewOnlyFieldsMetadata(wireDef),
+		},
+	} as Partial<PlainWire>)
 
 const getViewOnlyMetadata = (
 	wireName: string,
@@ -153,7 +155,7 @@ const initExistingWire = (
 				original: { ...existingWire.data },
 				deletes: {},
 				...getWireDefInfo(wireDef),
-				viewOnlyMetadata: addViewOnlyFields(wireDef),
+				...addViewOnlyFields(wireDef),
 		  }
 
 const getNewPlainWireBase = (viewId: string, wireName: string) => ({
@@ -180,7 +182,7 @@ const initWire = (
 		: {
 				...getNewPlainWireBase(viewId, wireName),
 				...getWireDefInfo(wireDef),
-				viewOnlyMetadata: addViewOnlyFields(wireDef),
+				...addViewOnlyFields(wireDef),
 		  }
 
 export { initExistingWire }

@@ -67,7 +67,7 @@ test("regular wire with view-only field and collection field", () => {
 	if (!existingField) throw new Error("existing field not created")
 
 	expect(viewOnlyField.getName()).toStrictEqual("myfield")
-	expect(viewOnlyField.getNamespace()).toStrictEqual("uesio/viewonly")
+	expect(viewOnlyField.getNamespace()).toStrictEqual("")
 	expect(viewOnlyField.getLabel()).toStrictEqual("My Field")
 	expect(existingField.getName()).toStrictEqual("name")
 	expect(existingField.getNamespace()).toStrictEqual("ben/planets")

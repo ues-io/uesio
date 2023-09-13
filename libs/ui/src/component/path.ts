@@ -9,28 +9,6 @@ const parseKey = (fullName: MetadataKey): [Namespace, string] => {
 	return [namespace as Namespace, name]
 }
 
-const isLocalNamespace = (ns: string, localNamespace: string) =>
-	ns === localNamespace || ns === "this/app"
-
-const getLocalizedKey = (key: string, defaultNamespace: string) => {
-	if (!key) return ""
-	if (!defaultNamespace) return key
-	const [first, second] = parseKey(key)
-	if (!second) return first
-	if (isLocalNamespace(first, defaultNamespace)) return second
-	return key
-}
-
-const getFullyQualifiedKey = (key: string, defaultNamespace: string) => {
-	if (!key) return ""
-	if (!defaultNamespace) return key
-	const [first, second] = parseKey(key)
-	if (!second) return defaultNamespace + "." + first
-	if (isLocalNamespace(first, defaultNamespace))
-		return defaultNamespace + "." + second
-	return key
-}
-
 // io.button:io.nav ==> [io, button, io, nav]
 const parseVariantKey = (
 	fullName: string
@@ -103,8 +81,6 @@ const getIndexFromPath = (path: string) => {
 }
 
 export {
-	getLocalizedKey,
-	getFullyQualifiedKey,
 	parseKey,
 	parseVariantKey,
 	parseFieldKey,
