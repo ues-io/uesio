@@ -1,4 +1,4 @@
-import { unlocalize } from "../../component/path"
+import { getFullyQualifiedKey } from "../../component/path"
 import Field from "../field/class"
 import { CollectionKey } from "../wire/types"
 import { getCollection } from "./selectors"
@@ -36,7 +36,9 @@ class Collection {
 	// Accepts a single field
 	getFieldMetadata = (fieldName: string) => {
 		const fieldMetadata =
-			this.source.fields[unlocalize(fieldName, this.getNamespace())]
+			this.source.fields[
+				getFullyQualifiedKey(fieldName, this.getNamespace())
+			]
 		if (!fieldMetadata) return undefined
 		return new Field(fieldMetadata)
 	}

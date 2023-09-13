@@ -107,7 +107,7 @@ func (c *Collection) UnmarshalYAML(node *yaml.Node) error {
 }
 
 func (c *Collection) MarshalYAML() (interface{}, error) {
-	c.DataSourceRef = removeDefault(Localize(c.DataSourceRef, c.Namespace), PLATFORM_DATA_SOURCE)
+	c.DataSourceRef = removeDefault(GetLocalizedKey(c.DataSourceRef, c.Namespace), PLATFORM_DATA_SOURCE)
 	c.NameField = removeDefault(c.NameField, "uesio/core.id")
 	return (*CollectionWrapper)(c), nil
 }

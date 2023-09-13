@@ -2,7 +2,6 @@ import { FieldMetadata, SelectOption } from "./types"
 import { Context } from "../../context/context"
 import { addBlankSelectOption } from "./utils"
 import { getKey } from "../../metadata/metadata"
-import { localize } from "../../component/path"
 
 class Field {
 	constructor(source: FieldMetadata) {
@@ -12,7 +11,6 @@ class Field {
 	source: FieldMetadata
 
 	getId = () => getKey(this.source)
-	getUnqualifiedId = (namespace: string) => localize(this.getId(), namespace)
 	getName = () => this.source.name
 	getNamespace = () => this.source.namespace
 	getLabel = () => this.source.label

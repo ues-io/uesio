@@ -12,7 +12,7 @@ const parseKey = (fullName: MetadataKey): [Namespace, string] => {
 const isLocalNamespace = (ns: string, localNamespace: string) =>
 	ns === localNamespace || ns === "this/app"
 
-const localize = (key: string, defaultNamespace: string) => {
+const getLocalizedKey = (key: string, defaultNamespace: string) => {
 	if (!key) return ""
 	if (!defaultNamespace) return key
 	const [first, second] = parseKey(key)
@@ -21,7 +21,7 @@ const localize = (key: string, defaultNamespace: string) => {
 	return key
 }
 
-const unlocalize = (key: string, defaultNamespace: string) => {
+const getFullyQualifiedKey = (key: string, defaultNamespace: string) => {
 	if (!key) return ""
 	if (!defaultNamespace) return key
 	const [first, second] = parseKey(key)
@@ -103,8 +103,8 @@ const getIndexFromPath = (path: string) => {
 }
 
 export {
-	localize,
-	unlocalize,
+	getLocalizedKey,
+	getFullyQualifiedKey,
 	parseKey,
 	parseVariantKey,
 	parseFieldKey,

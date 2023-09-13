@@ -201,7 +201,7 @@ func (f *Field) MarshalYAML() (interface{}, error) {
 		f.ReferenceGroupMetadata.Namespace = f.Namespace
 	}
 
-	f.SelectList = Localize(f.SelectList, f.Namespace)
+	f.SelectList = GetLocalizedKey(f.SelectList, f.Namespace)
 
 	return (*FieldWrapper)(f), nil
 }

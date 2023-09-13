@@ -4,7 +4,7 @@ import { ID_FIELD, UNIQUE_KEY_FIELD } from "../collection/types"
 import Wire from "../wire/class"
 import { FieldValue, PlainWireRecord } from "./types"
 import updateRecordOp from "../wire/operations/updaterecord"
-import { unlocalize } from "../../component/path"
+import { getFullyQualifiedKey } from "../../component/path"
 
 class WireRecord {
 	constructor(source: PlainWireRecord, id: string, wire: Wire) {
@@ -29,8 +29,8 @@ class WireRecord {
 		return get(
 			this.source,
 			parts.length === 1
-				? unlocalize(fieldName, ns)
-				: parts.map((part) => unlocalize(part, ns))
+				? getFullyQualifiedKey(fieldName, ns)
+				: parts.map((part) => getFullyQualifiedKey(part, ns))
 		)
 	}
 	getDateValue = (fieldName: string) => {

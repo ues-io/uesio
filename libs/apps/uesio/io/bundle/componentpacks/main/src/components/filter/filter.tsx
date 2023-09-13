@@ -89,15 +89,12 @@ const getFilterContent = (
 
 const getDefaultCondition = (
 	path: string,
-	collectionMetadata: collection.Collection,
 	fieldMetadata: collection.Field,
 	operator: wire.ConditionOperators,
 	displayAs: string
 ) => {
 	const type = fieldMetadata.getType()
-	const fieldName = fieldMetadata.getUnqualifiedId(
-		collectionMetadata.getNamespace()
-	)
+	const fieldName = fieldMetadata.getId()
 	switch (type) {
 		case "DATE": {
 			return !displayAs
@@ -162,7 +159,6 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 	if (!condition && fieldMetadata) {
 		condition = getDefaultCondition(
 			path,
-			collection,
 			fieldMetadata,
 			operator,
 			displayAs || ""
