@@ -7,4 +7,3 @@ routes:
   uesio/studio.sitemanageappbundles: true
 collections:
   uesio/studio.bundlelisting: true
-  uesio/studio.bundlelistinghistory: true

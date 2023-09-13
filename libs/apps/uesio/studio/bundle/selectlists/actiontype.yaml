@@ -1,5 +1,7 @@
 name: actiontype
 options:
+  - label: User agree to terms and conditions
+    value: OPEN
   - label: App status changed to submitted
     value: SUBMITTED
   - label: App status changed to in review

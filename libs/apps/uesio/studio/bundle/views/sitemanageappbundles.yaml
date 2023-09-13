@@ -57,6 +57,7 @@ definition:
             uesio/studio.icon:
             uesio/studio.fullname:
         uesio/studio.status:
+        uesio/studio.approved:
         uesio/core.owner:
         uesio/core.createdat:
         uesio/core.createdby:
@@ -188,6 +189,11 @@ definition:
                                           field: uesio/studio.status
                                           valueSource: VALUE
                                           value: APPROVED
+                                        - signal: wire/UPDATE_RECORD
+                                          wire: bundlelisting
+                                          field: uesio/studio.approved
+                                          valueSource: VALUE
+                                          value: true
                                         - signal: panel/TOGGLE
                                           panel: feedbackPanel
                                       uesio.display:
@@ -233,6 +239,8 @@ definition:
                                             fieldId: uesio/studio.description
                                         - uesio/io.field:
                                             fieldId: uesio/studio.status
+                                        - uesio/io.field:
+                                            fieldId: uesio/studio.approved
                                   - uesio/io.box:
                                       components:
                                         - uesio/io.tile:

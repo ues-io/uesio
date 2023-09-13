@@ -34,6 +34,7 @@ definition:
             uesio/studio.icon:
             uesio/studio.fullname:
         uesio/studio.status:
+        uesio/studio.approved:
         uesio/core.owner:
         uesio/core.createdat:
         uesio/core.createdby:
@@ -81,6 +82,39 @@ definition:
       order:
         - field: uesio/core.createdat
           desc: true
+    newbundlelisting:
+      collection: uesio/studio.bundlelisting
+      fields:
+        uesio/studio.description:
+        uesio/studio.app:
+        uesio/studio.status:
+      init:
+        query: false
+        create: true
+      defaults:
+        - field: uesio/studio.app
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio/core.id
+        - field: uesio/studio.description
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio/studio.description
+        - field: uesio/studio.status
+          valueSource: VALUE
+          value: OPEN
+    newbundlelistinghistory:
+      collection: uesio/studio.bundlelistinghistory
+      fields:
+        uesio/studio.comment:
+      init:
+        query: false
+        create: true
+      defaults:
+        - field: uesio/studio.app
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio/core.id
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -137,6 +171,9 @@ definition:
                                         - uesio/io.button:
                                             uesio.variant: uesio/io.primary
                                             text: Start
+                                            signals:
+                                              - signal: panel/TOGGLE
+                                                panel: newBundleListing
                                   - uesio/io.box:
                                       components:
                                         - uesio/io.tile:
@@ -182,61 +219,33 @@ definition:
                             - uesio/io.group:
                                 components:
                                   - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: Start Review
+                                      uesio.variant: uesio/io.primary
+                                      text: Send for Review
                                       signals:
                                         - signal: wire/UPDATE_RECORD
                                           wire: bundlelisting
                                           field: uesio/studio.status
                                           valueSource: VALUE
-                                          value: IN_REVIEW
-                                        - signal: panel/TOGGLE
-                                          panel: feedbackPanel
-                                      uesio.display:
-                                        - field: uesio/studio.status
                                           value: SUBMITTED
+                                        - signal: panel/TOGGLE
+                                          panel: feedbackPanel
+                                      uesio.display:
+                                        - field: uesio/studio.status
+                                          value: OPEN
                                   - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: Approve
+                                      uesio.variant: uesio/io.primary
+                                      text: Publish
                                       signals:
                                         - signal: wire/UPDATE_RECORD
                                           wire: bundlelisting
                                           field: uesio/studio.status
                                           valueSource: VALUE
-                                          value: APPROVED
-                                        - signal: panel/TOGGLE
-                                          panel: feedbackPanel
-                                      uesio.display:
-                                        - field: uesio/studio.status
-                                          value: IN_REVIEW
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: Reject
-                                      signals:
-                                        - signal: wire/UPDATE_RECORD
-                                          wire: bundlelisting
-                                          field: uesio/studio.status
-                                          valueSource: VALUE
-                                          value: REJECTED
-                                        - signal: panel/TOGGLE
-                                          panel: feedbackPanel
-                                      uesio.display:
-                                        - field: uesio/studio.status
-                                          value: IN_REVIEW
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.destructive
-                                      text: Unpublish
-                                      signals:
-                                        - signal: wire/UPDATE_RECORD
-                                          wire: bundlelisting
-                                          field: uesio/studio.status
-                                          valueSource: VALUE
-                                          value: REJECTED
-                                        - signal: panel/TOGGLE
-                                          panel: feedbackPanel
-                                      uesio.display:
-                                        - field: uesio/studio.status
                                           value: PUBLISHED
+                                        - signal: panel/TOGGLE
+                                          panel: feedbackPanel
+                                      uesio.display:
+                                        - field: uesio/studio.status
+                                          value: APPROVED
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           components:
@@ -249,6 +258,8 @@ definition:
                                             fieldId: uesio/studio.description
                                         - uesio/io.field:
                                             fieldId: uesio/studio.status
+                                        - uesio/io.field:
+                                            fieldId: uesio/studio.approved
                                   - uesio/io.box:
                                       components:
                                         - uesio/io.tile:
@@ -300,7 +311,6 @@ definition:
                             - field: uesio/core.updatedby
                               user:
                                 subtitle: $Time{uesio/core.updatedat}
-
   panels:
     feedbackPanel:
       uesio.type: uesio/io.dialog
@@ -347,3 +357,38 @@ definition:
           wire: newbundlelistinghistory
         - signal: wire/CANCEL
           wire: bundlelisting
+    newBundleListing:
+      uesio.type: uesio/io.dialog
+      title: Terms and Conditions
+      width: 400px
+      height: 500px
+      components:
+        - uesio/io.list:
+            uesio.id: newBundleListinglist
+            wire: newbundlelisting
+            mode: EDIT
+            components:
+              - uesio/io.text:
+                  uesio.variant: uesio/io.smallcontent
+                  text: In order to distribute software on Uesio platform, you will need to adhere to the applicable terms in the following agreements and guidelines. Be certain to read the relevant terms carefully as you design and develop your software.
+      actions:
+        - uesio/io.button:
+            uesio.variant: uesio/io.primary
+            text: Agree
+            signals:
+              - signal: wire/UPDATE_RECORD
+                wire: newbundlelistinghistory
+                field: uesio/studio.actiontype
+                valueSource: VALUE
+                value: OPEN
+              - signal: wire/SAVE
+                wires:
+                  - newbundlelisting
+                  - newbundlelistinghistory
+              - signal: route/RELOAD
+        - uesio/io.button:
+            uesio.variant: uesio/io.secondary
+            text: $Label{uesio/io.cancel}
+            signals:
+              - signal: panel/TOGGLE
+                panel: newBundleListing
