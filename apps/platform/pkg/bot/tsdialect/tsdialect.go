@@ -23,6 +23,7 @@ type TSDialect struct {
 
 const DefaultListenerBotBody = `import { ListenerBotApi } from "@uesio/bots"
 
+// @ts-ignore
 function %s(bot: ListenerBotApi) {
     const a = bot.params.get("a") as number
     const b = bot.params.get("b") as number
@@ -31,6 +32,7 @@ function %s(bot: ListenerBotApi) {
 
 const DefaultBeforeSaveBotBody = `import { BeforeSaveBotApi } from "@uesio/bots"
 
+// @ts-ignore
 function %s(bot: BeforeSaveBotApi) {
 	bot.inserts.get().forEach(function (change) {
 		const recordId = change.get("uesio/core.id");
@@ -42,6 +44,7 @@ function %s(bot: BeforeSaveBotApi) {
 
 const DefaultAfterSaveBotBody = `import { AfterSaveBotApi } from "@uesio/bots"
 
+// @ts-ignore
 function %s(bot: AfterSaveBotApi) {
 	bot.inserts.get().forEach(function (change) {
 		const recordId = change.get("uesio/core.id");
@@ -51,7 +54,8 @@ function %s(bot: AfterSaveBotApi) {
 	});
 }`
 
-const DefaultBotBody = `function %s(bot) {
+const DefaultBotBody = `// @ts-ignore
+function %s(bot) {
 }`
 
 // TODO: cache the transformed code, or generate it server-side as part of save of bot.ts

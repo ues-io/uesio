@@ -6,6 +6,7 @@ type CallBotResponse = {
 	success: boolean
 }
 
+// @ts-ignore
 function call_http_api(bot: ListenerBotApi) {
 	const a = (bot.params.get("a") as number) || 0
 	const b = (bot.params.get("b") as number) || 0

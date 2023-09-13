@@ -1,5 +1,8 @@
+type BotParamValue = string | boolean | number | object | undefined
+
 interface BotParamsApi {
-	get: (paramName: string) => string | boolean | number | object | undefined
+	get: (paramName: string) => BotParamValue
+	getAll: () => Record<string, BotParamValue>
 }
 interface FieldRequest {
 	id: string

@@ -84,8 +84,7 @@ definition:
                 value: bar
               - type: wireHasChanges
                 wire: animals
-
-params:
-  foo:
-    required: false
-    type: TEXT
+  params:
+    foo:
+      required: false
+      type: TEXT
