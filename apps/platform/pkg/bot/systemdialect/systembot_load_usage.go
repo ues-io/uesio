@@ -2,61 +2,11 @@ package systemdialect
 
 import (
 	"errors"
-	"strconv"
-	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
-
-type UsageItem adapt.Item
-
-func (i *UsageItem) SetField(fieldName string, value interface{}) error {
-	return (*adapt.Item)(i).SetField(strings.Replace(fieldName, "uesio/studio.", "uesio/core.", 1), value)
-}
-
-func (i *UsageItem) GetField(fieldName string) (interface{}, error) {
-	return (*adapt.Item)(i).GetField(strings.Replace(fieldName, "uesio/studio.", "uesio/core.", 1))
-}
-
-func (i *UsageItem) GetFieldAsString(fieldName string) (string, error) {
-	return (*adapt.Item)(i).GetFieldAsString(strings.Replace(fieldName, "uesio/studio.", "uesio/core.", 1))
-}
-
-func (i *UsageItem) Loop(iter func(string, interface{}) error) error {
-	return (*adapt.Item)(i).Loop(iter)
-}
-
-func (i *UsageItem) Len() int {
-	return (*adapt.Item)(i).Len()
-}
-
-type UsageMappingCollection []*UsageItem
-
-func (c *UsageMappingCollection) NewItem() meta.Item {
-	return &UsageItem{}
-}
-
-func (c *UsageMappingCollection) AddItem(item meta.Item) error {
-	*c = append(*c, item.(*UsageItem))
-	return nil
-}
-
-func (c *UsageMappingCollection) Loop(iter meta.GroupIterator) error {
-	for index := range *c {
-		err := iter((*c)[index], strconv.Itoa(index))
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func (c *UsageMappingCollection) Len() int {
-	return len(*c)
-}
 
 func runUsageLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
 
@@ -66,14 +16,14 @@ func runUsageLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *ses
 		return errors.New("unable to retrieve usage, site admin context is missing")
 	}
 
-	usageData := &UsageMappingCollection{}
+	usageData := &NamespaceSwapCollection{}
 
 	newOp := &adapt.LoadOp{
 		CollectionName: "uesio/studio.usage",
 		WireName:       "loadStudioUsage",
 		View:           op.View,
 		Collection:     usageData,
-		Conditions: append(op.Conditions, adapt.LoadRequestCondition{
+		Conditions: append(mapConditions(op.Conditions), adapt.LoadRequestCondition{
 			Field:    "site",
 			Value:    session.GetContextSite().ID,
 			Operator: "EQ",
@@ -88,7 +38,7 @@ func runUsageLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *ses
 			{ID: "total"},
 			{ID: "user"},
 		},
-		Order:          op.Order,
+		Order:          mapOrder(op.Order),
 		Query:          true,
 		BatchSize:      op.BatchSize,
 		LoadAll:        op.LoadAll,

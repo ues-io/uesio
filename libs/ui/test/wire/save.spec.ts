@@ -1,12 +1,11 @@
 import testWireSignal, { WireSignalTest } from "./utils"
 import * as platformModule from "../../src/platform/platform"
-import { testEnv } from "../utils/defaults"
 import { SaveRequestBatch } from "../../src/load/saverequest"
 import { Context } from "../../src/context/context"
 import { PlainWireRecord } from "../../src/bands/wirerecord/types"
 
-const { viewId, wireId, collectionId, ns } = testEnv
-
+const wireId = "mywire"
+const collectionId = "ben/planets.exoplanet"
 const sampleUUID = "some-nice-uuid"
 
 const simpleSuccessfulSaveMock = (
@@ -44,10 +43,9 @@ const simpleSuccessfulSaveMock = (
 const tests: WireSignalTest[] = [
 	{
 		name: "Save after create record with defaults",
-		view: viewId,
 		wireId,
 		wireDef: {
-			collection: `${ns}.${collectionId}`,
+			collection: collectionId,
 			fields: { "ben/planets.name": null },
 			defaults: [
 				{
@@ -95,10 +93,9 @@ const tests: WireSignalTest[] = [
 	},
 	{
 		name: "Save after create and update record",
-		view: viewId,
 		wireId,
 		wireDef: {
-			collection: `${ns}.${collectionId}`,
+			collection: collectionId,
 			fields: { "ben/planets.name": null },
 		},
 		signals: [
@@ -145,10 +142,9 @@ const tests: WireSignalTest[] = [
 	},
 	{
 		name: "Save Delete of New Item",
-		view: viewId,
 		wireId,
 		wireDef: {
-			collection: `${ns}.${collectionId}`,
+			collection: collectionId,
 			fields: { "ben/planets.name": null },
 		},
 		signals: [
@@ -178,10 +174,9 @@ const tests: WireSignalTest[] = [
 	},
 	{
 		name: "Server Delete",
-		view: viewId,
 		wireId,
 		wireDef: {
-			collection: `${ns}.${collectionId}`,
+			collection: collectionId,
 			fields: { "ben/planets.name": null },
 		},
 		signals: [
@@ -223,10 +218,9 @@ const tests: WireSignalTest[] = [
 	},
 	{
 		name: "Hybrid Client Server Delete",
-		view: viewId,
 		wireId,
 		wireDef: {
-			collection: `${ns}.${collectionId}`,
+			collection: collectionId,
 			fields: { "ben/planets.name": null },
 		},
 		signals: [
