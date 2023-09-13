@@ -1,5 +1,6 @@
 import { parseKey } from "../../component/path"
 import Field from "../field/class"
+import { FieldMetadataMap } from "../field/types"
 import { CollectionKey } from "../wire/types"
 import { getCollection } from "./selectors"
 
