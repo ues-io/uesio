@@ -10,12 +10,12 @@ interface BaseComponent extends Bundleable {
 	type: ComponentType
 }
 
-interface DeclarativeComponent extends BaseComponent {
+export interface DeclarativeComponent extends BaseComponent {
 	type: typeof Declarative
 	definition: DefinitionMap
 }
 
-interface ReactComponent extends BaseComponent {
+export interface ReactComponent extends BaseComponent {
 	type: ReactType
 }
 
