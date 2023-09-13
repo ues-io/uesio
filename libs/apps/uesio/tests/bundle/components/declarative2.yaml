@@ -2,6 +2,8 @@ name: declarative2
 category: LAYOUT
 pack: main
 type: DECLARATIVE
+slots:
+  - name: components
 definition:
   components:
     - uesio/io.group:
@@ -32,5 +34,5 @@ sections:
       - text1
       - text2
   - type: DISPLAY
-slots:
-  - name: components
+signals: null
+styleRegions: null
