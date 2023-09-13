@@ -31,6 +31,9 @@ const StyleDefaults = Object.freeze({
 	slotTag: ["transition-all"],
 })
 
+const capitalizeFirst = (str: string) =>
+	str.charAt(0).toUpperCase() + str.slice(1)
+
 const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 	const { definition, listName, path, direction, label, context } = props
 
@@ -58,7 +61,10 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 		parentElem.setAttribute("data-accepts", accepts.join(","))
 		parentElem.setAttribute("data-direction", direction || "")
 		parentElem.setAttribute("data-path", listPath)
-		parentElem.setAttribute("data-title", label || `${listName} slot`)
+		parentElem.setAttribute(
+			"data-title",
+			label || `${capitalizeFirst(listName)} Components`
+		)
 		parentElem.classList.add(...StyleDefaults.slotTag)
 	}, [listPath, listName, label, direction])
 

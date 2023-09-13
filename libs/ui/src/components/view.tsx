@@ -1,4 +1,4 @@
-import Slot from "./slot"
+import Slot from "../utilities/slot"
 import { useViewDef } from "../bands/viewdef"
 import { makeViewId } from "../bands/view"
 import { component as componentApi } from "../api/api"
@@ -8,7 +8,7 @@ import {
 	SignalDefinition,
 } from "../definition/signal"
 import { UC } from "../definition/definition"
-import PanelArea from "../components/panelarea"
+import PanelArea from "../utilities/panelarea"
 import { COMPONENT_ID } from "../componentexports"
 
 interface SetParamSignal extends SignalDefinition {
