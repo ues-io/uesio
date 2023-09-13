@@ -30,7 +30,7 @@ const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 	const path = useSelectedComponentPath(context)
 
 	const [componentType] = path.pop()
-	const componentDef = getComponentDef(context, componentType)
+	const componentDef = getComponentDef(componentType)
 
 	if (!componentDef) return null
 

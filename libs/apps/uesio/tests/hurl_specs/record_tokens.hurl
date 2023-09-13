@@ -26,21 +26,21 @@ HTTP 200
 jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "Evil Corp"
 
 # Log into a real site as chad
-POST https://tests.uesio-dev.com:{{port}}/site/auth/uesio/core/mock/login
+POST https://tests.{{domain}}:{{port}}/site/auth/uesio/core/mock/login
 {
     "token": "{\"subject\":\"chad\"}"
 }
 HTTP 200
 
 # Verify that we're logged in correctly
-GET https://tests.uesio-dev.com:{{port}}/site/auth/check
+GET https://tests.{{domain}}:{{port}}/site/auth/check
 HTTP 200
 [Asserts]
 jsonpath "$.user.profile" == "uesio/tests.rep"
 jsonpath "$.user.username" == "chad"
 
 # Chad can see an account that he's on the team of
-POST https://tests.uesio-dev.com:{{port}}/site/wires/load
+POST https://tests.{{domain}}:{{port}}/site/wires/load
 Accept: application/json
 {
     "wires": [
@@ -61,7 +61,7 @@ HTTP 200
 jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "Evil Corp"
 
 # Chad can see a contact from an account that he's on the team of
-POST https://tests.uesio-dev.com:{{port}}/site/wires/load
+POST https://tests.{{domain}}:{{port}}/site/wires/load
 Accept: application/json
 {
     "wires": [
@@ -82,25 +82,25 @@ HTTP 200
 jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "George:Willson"
 
 # Logout
-POST https://tests.uesio-dev.com:{{port}}/site/auth/logout
+POST https://tests.{{domain}}:{{port}}/site/auth/logout
 HTTP 200
 
 # Log in as vlad
-POST https://tests.uesio-dev.com:{{port}}/site/auth/uesio/core/mock/login
+POST https://tests.{{domain}}:{{port}}/site/auth/uesio/core/mock/login
 {
     "token": "{\"subject\":\"vlad\"}"
 }
 HTTP 200
 
 # Verify that we're logged in correctly
-GET https://tests.uesio-dev.com:{{port}}/site/auth/check
+GET https://tests.{{domain}}:{{port}}/site/auth/check
 HTTP 200
 [Asserts]
 jsonpath "$.user.profile" == "uesio/tests.rep"
 jsonpath "$.user.username" == "vlad"
 
 # Vlad cannot see an account that he's not on the team of
-POST https://tests.uesio-dev.com:{{port}}/site/wires/load
+POST https://tests.{{domain}}:{{port}}/site/wires/load
 Accept: application/json
 {
     "wires": [
@@ -121,7 +121,7 @@ HTTP 200
 jsonpath "$.wires[0].data[*]" isEmpty
 
 # Vlad cannot see a contact from an account that he's not on the team of
-POST https://tests.uesio-dev.com:{{port}}/site/wires/load
+POST https://tests.{{domain}}:{{port}}/site/wires/load
 Accept: application/json
 {
     "wires": [

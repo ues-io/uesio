@@ -1,3 +1,5 @@
+import { BundleableBase } from "../metadata/types"
+
 interface Palette {
 	primary: string
 	secondary: string
@@ -10,12 +12,10 @@ interface Palette {
 }
 
 type ThemeState = {
-	name: string
-	namespace: string
 	definition: {
 		spacing: number
 		palette: Palette
 	}
-}
+} & BundleableBase
 
 export type { Palette, ThemeState }

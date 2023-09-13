@@ -1,4 +1,4 @@
-import type { MetadataKey, MetadataType } from "../bands/builder/types"
+import type { MetadataKey, MetadataType } from "../metadata/types"
 import { CollectionKey } from "../bands/wire/types"
 
 export type ParamCondition = {
@@ -17,6 +17,7 @@ type ParamBase = {
 		| "METADATAMULTI"
 		| "METADATANAME"
 		| "NUMBER"
+		| "SELECT"
 		| "CHECKBOX"
 	required?: boolean
 	prompt?: string
@@ -43,6 +44,12 @@ type CheckboxParam = ParamBase & {
 	default?: boolean
 }
 
+type SelectParam = ParamBase & {
+	type: "SELECT"
+	default?: string
+	selectList: string
+}
+
 type MetadataParam = ParamBase & {
 	type: "METADATA"
 	metadataType: MetadataType
@@ -65,6 +72,7 @@ type MetadataNameParam = ParamBase & {
 export type ParamDefinition =
 	| RecordParam
 	| TextParam
+	| SelectParam
 	| CheckboxParam
 	| NumberParam
 	| MetadataParam

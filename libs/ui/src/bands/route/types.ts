@@ -6,10 +6,11 @@ import { FeatureFlagState } from "../../definition/featureflag"
 import { LabelState } from "../../definition/label"
 import { ThemeState } from "../../definition/theme"
 import { ViewMetadata } from "../../definition/ViewMetadata"
-import { MetadataKey } from "../builder/types"
+import { MetadataKey } from "../../metadata/types"
 import { PlainCollection } from "../collection/types"
 import { ComponentState } from "../component/types"
 import { ServerWire } from "../wire/types"
+import { Component } from "../componenttype/types"
 
 type WorkspaceState = {
 	name: string
@@ -27,6 +28,7 @@ type Dependencies = {
 	viewdef?: EntityState<ViewMetadata>
 	componentvariant?: EntityState<ComponentVariant>
 	component?: EntityState<ComponentState>
+	componenttype?: EntityState<Component>
 	componentpack?: EntityState<ComponentPackState>
 	configvalue?: EntityState<ConfigValueState>
 	featureflag?: EntityState<FeatureFlagState>

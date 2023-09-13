@@ -10,4 +10,11 @@ params:
   - name: name
     prompt: Component Name
     type: METADATANAME
+    required: true
+  - name: type
+    prompt: Component Type
+    type: SELECT
+    selectList: uesio/core.componenttypes
+    default: "REACT"
+    required: true
 public: true

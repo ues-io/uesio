@@ -1,4 +1,5 @@
 import { DisplayCondition } from "../../componentexports"
+import { BundleableBase } from "../../metadataexports"
 import { CollectionFieldKey, CollectionKey } from "../wire/types"
 
 type FieldMetadataMap = {
@@ -63,8 +64,6 @@ type ReferenceGroupMetadata = {
 }
 
 type FieldMetadata = {
-	name: string
-	namespace: string
 	createable: boolean
 	accessible: boolean
 	updateable: boolean
@@ -78,7 +77,7 @@ type FieldMetadata = {
 	subtype?: FieldType
 	number?: NumberMetadata
 	required?: boolean
-}
+} & BundleableBase
 
 type prefix<T, P extends string> = {
 	[K in keyof T as K extends string ? `${P}${K}` : never]: T[K]

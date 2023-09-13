@@ -19,7 +19,7 @@ import get from "lodash/get"
 import { RootState } from "../../store/store"
 import { Context, getWire } from "../../context/context"
 import { useSelector } from "react-redux"
-import { MetadataKey } from "../builder/types"
+import { MetadataKey } from "../../metadata/types"
 import { isValueCondition } from "./conditions/conditions"
 
 type DeletePayload = {

@@ -1,11 +1,12 @@
 import toPath from "lodash/toPath"
+import { MetadataKey, Namespace } from "../metadata/types"
 
-const parseKey = (fullName: string): [string, string] => {
+const parseKey = (fullName: MetadataKey): [Namespace, string] => {
 	if (!fullName) {
 		return ["", ""]
 	}
 	const [namespace, name] = fullName.split(".")
-	return [namespace, name]
+	return [namespace as Namespace, name]
 }
 
 // io.button:io.nav ==> [io, button, io, nav]

@@ -52,7 +52,7 @@ const ViewInfoPanel: definition.UtilityComponent = (props) => {
 			defaultDefinition: {
 				"uesio.type": defaultPanelComponentType,
 				components: [],
-				...getComponentDef(context, defaultPanelComponentType)
+				...getComponentDef(defaultPanelComponentType)
 					?.defaultDefinition,
 			},
 			defaultKey: "panel",

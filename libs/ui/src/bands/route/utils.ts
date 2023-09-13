@@ -7,9 +7,11 @@ import { upsertMany as setViewDef } from "../viewdef"
 import { setMany as setTheme } from "../theme"
 import { setMany as setFeatureFlag } from "../featureflag"
 import { setMany as setComponent } from "../component"
+import { setMany as setComponentTypes } from "../componenttype"
 import { initAll as initWire } from "../wire"
 import { init as initCollection } from "../collection"
 import { ViewMetadata } from "../../definition/ViewMetadata"
+import { Component } from "../../definition/component"
 import { ComponentVariant } from "../../definition/componentvariant"
 import { ConfigValueState } from "../../definition/configvalue"
 import { LabelState } from "../../definition/label"
@@ -71,6 +73,9 @@ const dispatchRouteDeps = (deps: Dependencies | undefined) => {
 
 	const components = deps.component?.entities as Dep<ComponentState>
 	if (components) dispatch(setComponent(components))
+
+	const componentTypes = deps.componenttype?.entities as Dep<Component>
+	if (componentTypes) dispatch(setComponentTypes(componentTypes))
 
 	const wires = deps.wire
 	if (wires && viewdefs) {

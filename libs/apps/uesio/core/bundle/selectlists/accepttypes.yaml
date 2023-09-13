@@ -10,3 +10,4 @@ options:
     value: "IMAGE"
   - label: "Video"
     value: "VIDEO"
+public: true

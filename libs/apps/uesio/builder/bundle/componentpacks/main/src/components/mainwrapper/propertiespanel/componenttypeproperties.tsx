@@ -12,7 +12,7 @@ const ComponentTypeProperties: definition.UtilityComponent = (props) => {
 
 	const selectedPath = useSelectedPath(context)
 
-	const componentDef = getComponentDef(context, selectedPath.itemName)
+	const componentDef = getComponentDef(selectedPath.itemName)
 	if (!componentDef) return null
 
 	return (

@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from "react"
-import type { MetadataKey } from "../bands/builder/types"
+import type { MetadataKey } from "../metadata/types"
 import type { DisplayCondition } from "../component/display"
 import type { Context } from "../context/context"
 import type { ComponentSignalDescriptor } from "./signal"
