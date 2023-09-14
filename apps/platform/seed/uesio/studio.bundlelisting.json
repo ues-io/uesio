@@ -2,6 +2,7 @@
 	{
 		"uesio/studio.description": "Uesio base functionality",
 		"uesio/studio.status": "PUBLISHED",
+		"uesio/studio.approved": true,
 		"uesio/studio.app": {
 			"uesio/core.uniquekey": "uesio/core"
 		}
@@ -9,6 +10,7 @@
 	{
 		"uesio/studio.description": "Uesio view builder",
 		"uesio/studio.status": "PUBLISHED",
+		"uesio/studio.approved": true,
 		"uesio/studio.app": {
 			"uesio/core.uniquekey": "uesio/builder"
 		}
@@ -16,6 +18,7 @@
 	{
 		"uesio/studio.description": "Base uesio components",
 		"uesio/studio.status": "PUBLISHED",
+		"uesio/studio.approved": true,
 		"uesio/studio.app": {
 			"uesio/core.uniquekey": "uesio/io"
 		}
@@ -23,6 +26,7 @@
 	{
 		"uesio/studio.description": "Uesio content management system",
 		"uesio/studio.status": "PUBLISHED",
+		"uesio/studio.approved": true,
 		"uesio/studio.app": {
 			"uesio/core.uniquekey": "uesio/cms"
 		}
