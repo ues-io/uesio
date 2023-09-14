@@ -1,18 +1,31 @@
-import { AfterSaveBotApi } from "@uesio/bots"
+import { AfterSaveBotApi, ChangeApi, FieldValue } from "@uesio/bots"
 // @ts-ignore
 function afterbundlelisting(bot: AfterSaveBotApi) {
+	const historyChanges: Record<string, FieldValue>[] = []
+
+	const getHistoryItem = (change: ChangeApi) => {
+		const historyItem: Record<string, FieldValue> = {}
+		const status = change.get("uesio/studio.status")
+		const app = change.get("uesio/studio.app")
+		historyItem["uesio/studio.actiontype"] = status
+		historyItem["uesio/studio.app"] = app
+		return historyItem
+	}
+
 	bot.inserts.get().forEach((change) => {
 		const status = change.get("uesio/studio.status") as string
-		if (status !== "OPEN") {
-			bot.addError("On creation the status must be open")
+		if (status === "") {
+			change.set("uesio/studio.status", "OPEN")
 		}
+		historyChanges.push(getHistoryItem(change))
 	})
+
 	bot.updates.get().forEach((change) => {
 		const NewStatus = change.get("uesio/studio.status") as string
 		const OldStatus = change.getOld("uesio/studio.status") as string
 
-		//allowed transitions
 		if (OldStatus === "OPEN" && NewStatus === "SUBMITTED") {
+			historyChanges.push(getHistoryItem(change))
 			return
 		}
 
@@ -28,14 +41,20 @@ function afterbundlelisting(bot: AfterSaveBotApi) {
 		}
 
 		if (OldStatus === "APPROVED" && NewStatus === "PUBLISHED") {
+			historyChanges.push(getHistoryItem(change))
 			return
 		}
 
-		//in case we want to remove it from the store
 		if (OldStatus === "PUBLISHED" && NewStatus === "OPEN") {
 			return
 		}
 
-		bot.addError(`Cannot change bundle listing status from ${OldStatus} to ${NewStatus}`)
+		bot.addError(
+			`Cannot change bundle listing status from ${OldStatus} to ${NewStatus}`
+		)
 	})
+
+	if (historyChanges.length) {
+		bot.save("uesio/studio.bundlelistinghistory", historyChanges as any)
+	}
 }

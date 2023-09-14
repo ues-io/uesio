@@ -6,4 +6,10 @@ routes:
   uesio/studio.sitemanagebundles: true
   uesio/studio.sitemanageappbundles: true
 collections:
-  uesio/studio.bundlelisting: true
+  uesio/studio.bundlelisting:
+    read: true
+    create: true
+    edit: true
+    delete: false
+    modifyall: true
+    viewall: true
