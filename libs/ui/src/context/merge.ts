@@ -8,9 +8,11 @@ import { getStaticAssetsPath } from "../hooks/platformapi"
 import { UserState } from "../bands/user/types"
 import get from "lodash/get"
 import { SiteState } from "../bands/site"
+import { RouteState } from "../bands/route/types"
 
 type MergeType =
 	| "Error"
+	| "Route"
 	| "Record"
 	| "Param"
 	| "Prop"
@@ -132,6 +134,11 @@ const handlers: Record<MergeType, MergeHandler> = {
 		const value = context.getRecord()?.getDateValue(expression)
 		if (!value) return ""
 		return value.toLocaleDateString(undefined, { timeZone: "UTC" })
+	},
+	Route: (expression, context) => {
+		if (expression !== "path" && expression !== "title") return ""
+		const routePath = context.getRoute()?.[expression]
+		return routePath || ""
 	},
 	RecordMeta: (expression, context) => {
 		const record = context.getRecord()
