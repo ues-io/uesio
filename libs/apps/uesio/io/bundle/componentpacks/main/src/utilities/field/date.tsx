@@ -23,7 +23,7 @@ const DateField: definition.UtilityComponent<DateFieldProps> = (props) => {
 
 	const readonly = props.readonly || mode === "READ"
 
-	if (mode === "READ") {
+	if (readonly) {
 		return (
 			<TextField
 				{...props}
