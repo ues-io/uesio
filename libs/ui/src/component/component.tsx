@@ -11,19 +11,20 @@ import {
 	ContextOptions,
 } from "../context/context"
 import { getRuntimeLoader, getUtilityLoader } from "./registry"
-import NotFound from "../components/notfound"
+import NotFound from "../utilities/notfound"
 import { parseKey } from "./path"
 import { ComponentVariant } from "../definition/componentvariant"
-import ErrorBoundary from "../components/errorboundary"
+import ErrorBoundary from "../utilities/errorboundary"
 import { mergeDefinitionMaps } from "./merge"
 import { MetadataKey } from "../metadata/types"
 import { useShould } from "./display"
-import { DISPLAY_CONDITIONS, Slot } from "../componentexports"
 import { component } from ".."
 import { getKey } from "../metadata/metadata"
 import { getComponentIdFromProps } from "../hooks/componentapi"
 import { getComponentType } from "../bands/componenttype/selectors"
 import { Declarative, DeclarativeComponent } from "../definition/component"
+import { DISPLAY_CONDITIONS } from "../componentexports"
+import Slot from "../utilities/slot"
 
 // A cache of full variant definitions, where all variant extensions have been resolved
 // NOTE: This cache will be persisted across all route navigations, and has no upper bound.
@@ -74,6 +75,14 @@ type DeclarativeProps = {
 	definition: BaseDefinition
 }
 
+type DeclarativeComponentSlotContext = {
+	componentType: MetadataKey
+	path: string
+	slotDefinitions: Record<string, DefinitionMap>
+}
+
+const DECLARATIVE_COMPONENT = "uesio/core.declarativecomponent"
+
 const DeclarativeComponent: UC<DeclarativeProps> = (props) => {
 	const { componentType, context, definition, path } = props
 	if (!componentType) return null
@@ -81,7 +90,11 @@ const DeclarativeComponent: UC<DeclarativeProps> = (props) => {
 		componentType
 	) as DeclarativeComponent
 	if (!componentTypeDef) return null
-	const slotDef =
+	const { slots } = componentTypeDef
+	// Merge YAML-defined properties into the Declarative Component definition
+	// by adding a props frame, to resolve all "$Prop{propName}" merges.
+	// These properties will NOT be accessible to child components.
+	const actualDefinition =
 		(context
 			.addPropsFrame(definition)
 			// definition may not be Record<string, string>, but we just need to be able to merge it,
@@ -89,13 +102,31 @@ const DeclarativeComponent: UC<DeclarativeProps> = (props) => {
 			.mergeDeep(
 				componentTypeDef.definition as Record<string, string>
 			) as DefinitionMap) || {}
+	// Add a Props frame containing any Slots, so that any Slot components
+	// which are children of this component can access the slot definitions.
+	const actualContext =
+		slots && slots.length
+			? context.addComponentFrame(DECLARATIVE_COMPONENT, {
+					componentType,
+					// TODO: Support non-top-level slots using the path property
+					slotDefinitions: slots.reduce(
+						(acc, slot) => ({
+							...acc,
+							[slot.name]: (definition as DefinitionMap)[
+								slot.name
+							],
+						}),
+						{}
+					),
+					path,
+			  } as DeclarativeComponentSlotContext)
+			: context
 	return (
 		<div id={getComponentIdFromProps(props)}>
 			<Slot
-				definition={slotDef}
-				listName="components"
+				context={actualContext}
 				path={path}
-				context={context}
+				definition={actualDefinition}
 			/>
 		</div>
 	)
@@ -168,4 +199,12 @@ const getUtility = <T extends UtilityProps = UtilityPropsPlus>(
 	key: MetadataKey
 ) => getUtilityLoader(key) as UtilityComponent<T>
 
-export { Component, getDefinitionFromVariant, getUtility, parseVariantName }
+export {
+	DECLARATIVE_COMPONENT,
+	Component,
+	getDefinitionFromVariant,
+	getUtility,
+	parseVariantName,
+}
+
+export type { DeclarativeComponentSlotContext }

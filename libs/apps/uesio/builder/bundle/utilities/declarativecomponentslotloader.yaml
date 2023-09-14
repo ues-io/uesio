@@ -1,0 +1,3 @@
+name: declarativecomponentslotloader
+pack: main
+entrypoint: utilities/declarativecomponentslotloader/declarativecomponentslotloader

@@ -13,17 +13,25 @@ describe("Declarative Components", () => {
 		cy.login()
 	})
 
-	const runTests = () => {
+	const declarative1Tests = () => {
 		cy.get("div#root").should("contain", "Such declarative")
 		cy.get("div#root").should("contain", "Much magic")
-		cy.clickButtonIfExists("btn-go-to-view2")
-		cy.url().should("contain", "declarative2")
+	}
+	const declarative2Tests = () => {
 		cy.get("div#root").should("contain", "I am on the left")
 		cy.get("div#root").should("contain", "I am on the right")
+		cy.get("div#root").should("contain", "This is the header")
+		cy.get("div#root").should("contain", "And this is the footer")
+	}
+
+	const runTests = () => {
+		declarative1Tests()
+		cy.clickButtonIfExists("btn-go-to-view2")
+		cy.url().should("contain", "declarative2")
+		declarative2Tests()
 		cy.clickButtonIfExists("btn-go-to-view1")
 		cy.url().should("contain", "declarative1")
-		cy.get("div#root").should("contain", "Such declarative")
-		cy.get("div#root").should("contain", "Much magic")
+		declarative1Tests()
 	}
 
 	context("Test loading of declarative Components in a View", () => {

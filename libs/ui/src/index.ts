@@ -1,4 +1,5 @@
-import View from "./components/view"
+import View, { ViewComponentId } from "./components/view"
+import Slot, { SlotComponentId } from "./components/slot"
 
 // For use in exports as the uesio api
 import * as collection from "./collectionexports"
@@ -18,8 +19,9 @@ import * as notification from "./notificationexports"
 import * as param from "./paramexports"
 import { register } from "./component/registry"
 
-// Register with the component registry so that it's not an explicit dependency
-register("uesio/core.view", View)
+// Register with the component registry so that these are not explicit dependencies
+register(ViewComponentId, View)
+register(SlotComponentId, Slot)
 
 export {
 	api,
