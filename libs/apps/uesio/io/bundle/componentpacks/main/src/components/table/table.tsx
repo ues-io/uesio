@@ -60,7 +60,7 @@ type ColumnDefinition = {
 	user?: UserFieldOptions
 	number?: NumberFieldOptions
 	longtext?: LongTextFieldOptions
-	readonly?: Boolean
+	readonly?: boolean
 	components: definition.DefinitionList
 } & definition.BaseDefinition
 
