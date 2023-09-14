@@ -136,8 +136,7 @@ const handlers: Record<MergeType, MergeHandler> = {
 	},
 	Route: (expression, context) => {
 		if (expression !== "path" && expression !== "title") return ""
-		const routePath = context.getRoute()?.[expression]
-		return routePath || ""
+		return context.getRoute()?.[expression] || ""
 	},
 	RecordMeta: (expression, context) => {
 		const record = context.getRecord()
