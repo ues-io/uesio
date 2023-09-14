@@ -16,14 +16,14 @@ func runUsageLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *ses
 		return errors.New("unable to retrieve usage, site admin context is missing")
 	}
 
-	usageData := &NamespaceSwapCollection{}
+	usageData := NewNamespaceSwapCollection("uesio/studio", "uesio/core")
 
 	newOp := &adapt.LoadOp{
 		CollectionName: "uesio/studio.usage",
 		WireName:       "loadStudioUsage",
 		View:           op.View,
 		Collection:     usageData,
-		Conditions: append(mapConditions(op.Conditions), adapt.LoadRequestCondition{
+		Conditions: append(usageData.MapConditions(op.Conditions), adapt.LoadRequestCondition{
 			Field:    "site",
 			Value:    session.GetContextSite().ID,
 			Operator: "EQ",
@@ -38,7 +38,7 @@ func runUsageLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *ses
 			{ID: "total"},
 			{ID: "user"},
 		},
-		Order:          mapOrder(op.Order),
+		Order:          usageData.MapOrder(op.Order),
 		Query:          true,
 		BatchSize:      op.BatchSize,
 		LoadAll:        op.LoadAll,
@@ -77,7 +77,7 @@ func runUsageLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *ses
 	userRefReq := referencedCollections.Get("uesio/core.user")
 	userRefReq.Metadata = userCollectionMetadata
 
-	for _, item := range *usageData {
+	for _, item := range usageData.collection {
 		value, err := item.GetFieldAsString("uesio/core.user")
 		if err != nil {
 			return err

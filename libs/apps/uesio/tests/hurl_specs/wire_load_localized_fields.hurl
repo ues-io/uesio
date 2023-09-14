@@ -32,7 +32,7 @@ Accept: application/json
             ],
             "order": [
                 {
-                     "field": "uesio/core.uniquekey",
+                     "field": "genus",
                      "desc": false
                 }
             ]

@@ -185,6 +185,13 @@ test("wire with default reference field and struct field", () => {
 		"uesio/core.id": sampleUUID,
 	})
 
+	expect(myRecord.getFieldValue("galaxy->uesio/core.id")).toStrictEqual(
+		sampleUUID
+	)
+	expect(
+		myRecord.getFieldValue("ben/planets.galaxy->uesio/core.id")
+	).toStrictEqual(sampleUUID)
+
 	expect(myRecord.getFieldValue("location->x")).toStrictEqual("30 parsecs")
 	expect(myRecord.getFieldValue("ben/planets.location->x")).toStrictEqual(
 		"30 parsecs"

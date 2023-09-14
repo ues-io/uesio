@@ -26,7 +26,7 @@ const tests: WireSignalTest[] = [
 				.mockImplementation(() =>
 					Promise.resolve({
 						collections: {
-							collectionId: getExoplanetCollection(),
+							[collectionId]: getExoplanetCollection(),
 						},
 						wires: [
 							{
