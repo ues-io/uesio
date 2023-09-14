@@ -8,7 +8,6 @@ import { getStaticAssetsPath } from "../hooks/platformapi"
 import { UserState } from "../bands/user/types"
 import get from "lodash/get"
 import { SiteState } from "../bands/site"
-import { RouteState } from "../bands/route/types"
 
 type MergeType =
 	| "Error"
