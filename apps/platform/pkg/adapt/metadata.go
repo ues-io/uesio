@@ -85,14 +85,14 @@ func (cm *CollectionMetadata) GetFieldWithMetadata(key string, metadata *Metadat
 
 	names := strings.Split(key, constant.RefSep)
 	if len(names) == 1 {
-		fieldMetadata, ok := cm.Fields[key]
+		fieldMetadata, ok := cm.Fields[meta.GetFullyQualifiedKey(key, cm.Namespace)]
 		if !ok {
 			return nil, errors.New("No metadata provided for field: " + key + " in collection: " + cm.Name)
 		}
 		return fieldMetadata, nil
 	}
 
-	fieldMetadata, err := cm.GetField(names[0])
+	fieldMetadata, err := cm.GetField(meta.GetFullyQualifiedKey(names[0], cm.Namespace))
 	if err != nil {
 		return nil, errors.New("No metadata provided for field: " + key + " in collection: " + cm.Name)
 	}

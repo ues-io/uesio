@@ -1,14 +1,13 @@
 import testWireSignal, { WireSignalTest } from "./utils"
 
-import { testEnv } from "../utils/defaults"
-const { viewId, wireId, collectionId, ns } = testEnv
+const wireId = "mywire"
+const collectionId = "ben/planets.exoplanet"
 
 const tests: WireSignalTest[] = [
 	{
-		view: viewId,
 		name: "Unmark for delete - no wire specified",
 		wireId,
-		wireDef: { collection: `${ns}.${collectionId}`, fields: {} },
+		wireDef: { collection: collectionId, fields: {} },
 		signals: [
 			{
 				signal: "wire/CREATE_RECORD",
@@ -26,10 +25,9 @@ const tests: WireSignalTest[] = [
 		},
 	},
 	{
-		view: viewId,
 		name: "Unmark for delete - wire specified explicitly",
 		wireId,
-		wireDef: { collection: `${ns}.${collectionId}`, fields: {} },
+		wireDef: { collection: collectionId, fields: {} },
 		signals: [
 			{
 				signal: "wire/CREATE_RECORD",

@@ -1,7 +1,7 @@
 import { newContext, Context } from "../../src/context/context"
 import { selectWire } from "../../src/bands/wire"
 import { create } from "../../src/store/store"
-import { getCollection, testEnv } from "../utils/defaults"
+import { getCollectionSlice } from "../utils/defaults"
 import { dispatchRouteDeps } from "../../src/bands/route/utils"
 import { SignalDefinition } from "../../src/signalexports"
 import * as api from "../../src/api/api"
@@ -12,7 +12,7 @@ export type WireSignalTest = {
 	name: string
 	wireId: string
 	wireDef: WireDefinition
-	view: string
+	view?: string
 	signals?: SignalDefinition[]
 	run: () => (wire: PlainWire, context: Context) => void
 }
@@ -21,7 +21,7 @@ export const testWireSignal = async ({
 	signals,
 	wireId,
 	wireDef,
-	view,
+	view = "myview",
 	run,
 }: WireSignalTest) => {
 	const store = create({})
@@ -31,12 +31,7 @@ export const testWireSignal = async ({
 	const test = run()
 
 	dispatchRouteDeps({
-		collection: {
-			ids: [`ben/planets.${testEnv.collectionId}`],
-			entities: {
-				[`ben/planets.${testEnv.collectionId}`]: getCollection(),
-			},
-		},
+		collection: getCollectionSlice(),
 	})
 
 	api.wire.initWires(context, {
