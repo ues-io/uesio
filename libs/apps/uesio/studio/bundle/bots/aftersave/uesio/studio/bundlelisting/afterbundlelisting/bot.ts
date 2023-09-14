@@ -36,6 +36,6 @@ function afterbundlelisting(bot: AfterSaveBotApi) {
 			return
 		}
 
-		bot.addError("Invalid Transition")
+		bot.addError(`Cannot change bundle listing status from ${OldStatus} to ${NewStatus}`)
 	})
 }
