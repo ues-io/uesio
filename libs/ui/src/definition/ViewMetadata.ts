@@ -1,8 +1,8 @@
-import type { BundleableBase } from "../metadata/types"
 import type { ViewDefinition } from "./ViewDefinition"
 
-export type ViewMetadata = BundleableBase & {
+export type ViewMetadata = {
+	name: string
+	namespace?: string
 	definition: ViewDefinition
 	public?: boolean
-	namespace?: string
 }
