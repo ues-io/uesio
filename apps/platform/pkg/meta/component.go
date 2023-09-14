@@ -212,10 +212,13 @@ func (cdw *RuntimeComponentMetadata) IsNil() bool {
 func (cdw *RuntimeComponentMetadata) MarshalJSONObject(enc *gojay.Encoder) {
 	enc.AddStringKey("namespace", cdw.Namespace)
 	enc.AddStringKey("name", cdw.Name)
+	enc.AddStringKey("type", cdw.GetType())
 	if cdw.Definition.Content != nil {
 		enc.AddObjectKey("definition", (*YAMLDefinition)(&cdw.Definition))
 	}
-	enc.AddStringKey("type", cdw.GetType())
+	if cdw.Slots.Content != nil {
+		enc.AddArrayKey("slots", (*YAMLDefinition)(&cdw.Slots))
+	}
 }
 
 func (cdw *RuntimeComponentMetadata) GetType() string {

@@ -8,6 +8,11 @@ export type ComponentType = typeof Declarative | ReactType
 
 interface BaseComponent extends Bundleable {
 	type: ComponentType
+	slots?: SlotDef[]
+}
+
+type SlotDef = {
+	name: string
 }
 
 export interface DeclarativeComponent extends BaseComponent {
