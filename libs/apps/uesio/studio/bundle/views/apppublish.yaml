@@ -151,33 +151,12 @@ definition:
                                                 panel: termsAndConditions
                                   - uesio/io.box:
                                       components:
-                                        - uesio/io.tile:
-                                            uesio.styleTokens:
-                                              root:
-                                                - rounded-lg
-                                                - overflow-hidden
-                                                - bg-white
-                                                - shadow-lg
-                                                - max-h-80
-                                                - max-w-md
-                                            content:
-                                              - uesio/io.box:
-                                                  uesio.variant: uesio/studio.bundlelistingvisual
-                                              - uesio/io.box:
-                                                  uesio.styleTokens:
-                                                    root:
-                                                      - p-8
-                                                  components:
-                                                    - uesio/io.text:
-                                                        text: ${uesio/studio.fullname}
-                                                        element: span
-                                                        uesio.styleTokens:
-                                                          root:
-                                                            - align-middle
-                                                    - uesio/io.text:
-                                                        uesio.variant: uesio/io.aside
-                                                        text: ${uesio/studio.description}
-                                                        element: p
+                                        - uesio/studio.bundlelistingvisual:
+                                            color: ${uesio/studio.color}
+                                            icon: ${uesio/studio.icon}
+                                            title: ${uesio/studio.fullname}
+                                            subtitle: ${uesio/studio.description}
+                                            verified: false
                 - uesio/io.list:
                     uesio.display:
                       - type: wireHasRecords
@@ -227,33 +206,12 @@ definition:
                                             fieldId: uesio/studio.approved
                                   - uesio/io.box:
                                       components:
-                                        - uesio/io.tile:
-                                            uesio.styleTokens:
-                                              root:
-                                                - rounded-lg
-                                                - overflow-hidden
-                                                - bg-white
-                                                - shadow-lg
-                                                - max-h-80
-                                                - max-w-md
-                                            content:
-                                              - uesio/io.box:
-                                                  uesio.variant: uesio/studio.bundlelistingvisualref
-                                              - uesio/io.box:
-                                                  uesio.styleTokens:
-                                                    root:
-                                                      - p-8
-                                                  components:
-                                                    - uesio/io.text:
-                                                        text: ${uesio/studio.app->uesio/studio.fullname}
-                                                        element: span
-                                                        uesio.styleTokens:
-                                                          root:
-                                                            - align-middle
-                                                    - uesio/io.text:
-                                                        uesio.variant: uesio/io.aside
-                                                        text: ${uesio/studio.description}
-                                                        element: p
+                                        - uesio/studio.bundlelistingvisual:
+                                            color: ${uesio/studio.app->uesio/studio.color}
+                                            icon: ${uesio/studio.app->uesio/studio.icon}
+                                            title: ${uesio/studio.app->uesio/studio.fullname}
+                                            subtitle: ${uesio/studio.description}
+                                            verified: false
                 - uesio/io.box:
                     uesio.display:
                       - type: wireHasRecords

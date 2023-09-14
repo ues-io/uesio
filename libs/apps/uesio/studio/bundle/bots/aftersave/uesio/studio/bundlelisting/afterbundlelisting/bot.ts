@@ -45,7 +45,7 @@ function afterbundlelisting(bot: AfterSaveBotApi) {
 			return
 		}
 
-		if (OldStatus === "PUBLISHED" && NewStatus === "OPEN") {
+		if (OldStatus === "PUBLISHED" && NewStatus === "REJECTED") {
 			return
 		}
 

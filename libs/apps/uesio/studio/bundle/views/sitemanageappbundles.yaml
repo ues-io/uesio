@@ -222,6 +222,11 @@ definition:
                                           field: uesio/studio.status
                                           valueSource: VALUE
                                           value: REJECTED
+                                        - signal: wire/UPDATE_RECORD
+                                          wire: bundlelisting
+                                          field: uesio/studio.approved
+                                          valueSource: VALUE
+                                          value: false
                                         - signal: panel/TOGGLE
                                           panel: feedbackPanel
                                       uesio.display:
@@ -243,33 +248,12 @@ definition:
                                             fieldId: uesio/studio.approved
                                   - uesio/io.box:
                                       components:
-                                        - uesio/io.tile:
-                                            uesio.styleTokens:
-                                              root:
-                                                - rounded-lg
-                                                - overflow-hidden
-                                                - bg-white
-                                                - shadow-lg
-                                                - max-h-80
-                                                - max-w-md
-                                            content:
-                                              - uesio/io.box:
-                                                  uesio.variant: uesio/studio.bundlelistingvisualref
-                                              - uesio/io.box:
-                                                  uesio.styleTokens:
-                                                    root:
-                                                      - p-8
-                                                  components:
-                                                    - uesio/io.text:
-                                                        text: ${uesio/studio.app->uesio/studio.fullname}
-                                                        element: span
-                                                        uesio.styleTokens:
-                                                          root:
-                                                            - align-middle
-                                                    - uesio/io.text:
-                                                        uesio.variant: uesio/io.aside
-                                                        text: ${uesio/studio.description}
-                                                        element: p
+                                        - uesio/studio.bundlelistingvisual:
+                                            color: ${uesio/studio.app->uesio/studio.color}
+                                            icon: ${uesio/studio.app->uesio/studio.icon}
+                                            title: ${uesio/studio.app->uesio/studio.fullname}
+                                            subtitle: ${uesio/studio.description}
+                                            verified: false
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
