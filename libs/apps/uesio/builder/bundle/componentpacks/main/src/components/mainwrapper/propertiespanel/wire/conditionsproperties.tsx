@@ -426,6 +426,43 @@ const getItemPropertiesFunction =
 						],
 					},
 				],
+				onChange: [
+					// Clear out value if operator IS NOW a multi-value operator
+					{
+						updates: [
+							{
+								field: "value",
+							},
+							{
+								field: "values",
+							},
+							{
+								field: "param",
+							},
+							{
+								field: "params",
+							},
+							{
+								field: "lookupWire",
+							},
+							{
+								field: "lookupField",
+							},
+							{
+								field: "start",
+							},
+							{
+								field: "end",
+							},
+							{
+								field: "inclusiveStart",
+							},
+							{
+								field: "inclusiveEnd",
+							},
+						],
+					},
+				],
 			},
 			{
 				name: "start",
