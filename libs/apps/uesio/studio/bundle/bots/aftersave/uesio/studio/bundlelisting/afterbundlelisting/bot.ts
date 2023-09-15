@@ -24,6 +24,11 @@ function afterbundlelisting(bot: AfterSaveBotApi) {
 		const NewStatus = change.get("uesio/studio.status") as string
 		const OldStatus = change.getOld("uesio/studio.status")
 
+		// If the status is not changing, we're good
+		if (NewStatus === OldStatus) {
+			return
+		}
+
 		if (!OldStatus) {
 			// If there's not an old status, allow the new status to be set without recording any history.
 			// Most likely this is an old listing, or we are running seeds.
