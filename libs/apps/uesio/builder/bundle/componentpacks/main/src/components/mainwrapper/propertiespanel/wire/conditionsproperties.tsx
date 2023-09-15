@@ -427,7 +427,6 @@ const getItemPropertiesFunction =
 					},
 				],
 				onChange: [
-					// Clear out value if operator IS NOW a multi-value operator
 					{
 						updates: [
 							{
