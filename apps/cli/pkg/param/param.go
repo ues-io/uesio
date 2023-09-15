@@ -135,21 +135,11 @@ func AskMany(params *meta.BotParamsResponse, app, version, sessid string) (map[s
 
 func Ask(param meta.BotParamResponse, app, version, sessid string, answers map[string]interface{}) error {
 
-	if param.Conditions != nil {
-		for _, condition := range param.Conditions {
-			value := answers[condition.Param]
-			if condition.Type == "hasValue" || condition.Type == "hasNoValue" {
-				hasValue := value != nil && value != ""
-				if condition.Type == "hasValue" && !hasValue {
-					return nil
-				} else if condition.Type == "hasNoValue" && hasValue {
-					return nil
-				}
-			} else if value != condition.Value {
-				return nil
-			}
-		}
+	// Ignore params which are not relevant due to conditions
+	if !meta.IsParamRelevant(param, answers) {
+		return nil
 	}
+
 	switch param.Type {
 	case "TEXT", "":
 		var answer string

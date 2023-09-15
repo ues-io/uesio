@@ -1,5 +1,5 @@
 import { Bundleable } from "../metadata/types"
-import type { DefinitionMap } from "./definition"
+import type { DefinitionList } from "./definition"
 
 export const Declarative = "DECLARATIVE"
 export const React = "REACT"
@@ -17,7 +17,7 @@ type SlotDef = {
 
 export interface DeclarativeComponent extends BaseComponent {
 	type: typeof Declarative
-	definition: DefinitionMap
+	definition: DefinitionList
 }
 
 export interface ReactComponent extends BaseComponent {

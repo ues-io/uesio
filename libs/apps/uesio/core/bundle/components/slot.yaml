@@ -1,0 +1,14 @@
+name: slot
+title: Slot
+description: A named region where components can be added.
+category: LAYOUT
+discoverable: false
+properties:
+  - name: name
+    type: TEXT
+    label: Slot Name
+sections:
+  - type: HOME
+    properties:
+      - name
+  - type: DISPLAY
