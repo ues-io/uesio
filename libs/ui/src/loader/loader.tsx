@@ -1,7 +1,7 @@
 import { StrictMode } from "react"
 import ReactDOM from "react-dom"
 import { Provider } from "react-redux"
-import Route from "../components/route"
+import Route from "../utilities/route"
 import { Context } from "../context/context"
 import { create, InitialState } from "../store/store"
 

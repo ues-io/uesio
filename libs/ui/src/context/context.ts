@@ -289,7 +289,7 @@ class Context {
 		ctx.workspace = this.workspace
 		ctx.siteadmin = this.siteadmin
 		ctx.site = this.site
-		ctx.slot = this.slot
+		ctx.slotLoader = this.slotLoader
 		return ctx
 	}
 
@@ -297,7 +297,7 @@ class Context {
 	site?: SiteState
 	workspace?: WorkspaceState
 	siteadmin?: SiteAdminState
-	slot?: MetadataKey
+	slotLoader?: MetadataKey
 
 	getRecordId = () => this.getRecord()?.getId()
 
@@ -383,7 +383,7 @@ class Context {
 
 	getThemeId = () => this.stack.find(isThemeContextFrame)?.theme
 
-	getCustomSlot = () => this.slot
+	getCustomSlotLoader = () => this.slotLoader
 
 	getComponentVariant = (
 		componentType: MetadataKey,
@@ -433,9 +433,9 @@ class Context {
 		return newContext
 	}
 
-	deleteCustomSlot = () => {
+	deleteCustomSlotLoader = () => {
 		const newContext = this.clone()
-		delete newContext.slot
+		delete newContext.slotLoader
 		return newContext
 	}
 
@@ -535,9 +535,9 @@ class Context {
 		return newContext
 	}
 
-	setCustomSlot = (slot: MetadataKey) => {
+	setCustomSlotLoader = (slot: MetadataKey) => {
 		const newContext = this.clone()
-		newContext.slot = slot
+		newContext.slotLoader = slot
 		return newContext
 	}
 

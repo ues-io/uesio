@@ -4,6 +4,7 @@ import { ID_FIELD, UNIQUE_KEY_FIELD } from "../collection/types"
 import Wire from "../wire/class"
 import { FieldValue, PlainWireRecord } from "./types"
 import updateRecordOp from "../wire/operations/updaterecord"
+import { getFieldParts } from "../collection/class"
 
 class WireRecord {
 	constructor(source: PlainWireRecord, id: string, wire: Wire) {
@@ -19,15 +20,11 @@ class WireRecord {
 	getId = () => this.id
 	getWire = () => this.wire
 	getPlainData = () => this.source
-	getFieldValue = <T extends FieldValue>(
-		fieldName: string
-	): T | undefined => {
-		const fieldNameParts = fieldName?.split("->")
-		return get(
-			this.source,
-			fieldNameParts.length === 1 ? fieldName : fieldNameParts
-		)
-	}
+	getCollection = () => this.wire?.getCollection()
+	getFieldValue = <T extends FieldValue>(fieldName: string): T | undefined =>
+		get(this.source, this.getFieldParts(fieldName))
+	getFieldParts = (fieldName: string) =>
+		getFieldParts(fieldName, this.getCollection()) || []
 	getDateValue = (fieldName: string) => {
 		const value = this.getFieldValue(fieldName)
 		if (!value) return undefined
@@ -54,15 +51,11 @@ class WireRecord {
 		return errors?.[this.id + ":" + fieldId]
 	}
 
-	update = (fieldId: string, value: FieldValue, context: Context) => {
-		const fieldNameParts = fieldId?.split("->")
-		updateRecordOp(context, fieldNameParts, value, this)
-	}
+	update = (fieldId: string, value: FieldValue, context: Context) =>
+		updateRecordOp(context, this.getFieldParts(fieldId), value, this)
 
-	set = (fieldId: string, value: FieldValue) => {
-		const fieldNameParts = fieldId?.split("->")
-		return this.wire.setRecord(this.id, value, fieldNameParts)
-	}
+	set = (fieldId: string, value: FieldValue) =>
+		this.wire.setRecord(this.id, value, this.getFieldParts(fieldId))
 
 	setAll = (value: PlainWireRecord) => this.wire.setRecord(this.id, value, [])
 }

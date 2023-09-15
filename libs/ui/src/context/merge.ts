@@ -11,6 +11,7 @@ import { SiteState } from "../bands/site"
 
 type MergeType =
 	| "Error"
+	| "Route"
 	| "Record"
 	| "Param"
 	| "Prop"
@@ -132,6 +133,10 @@ const handlers: Record<MergeType, MergeHandler> = {
 		const value = context.getRecord()?.getDateValue(expression)
 		if (!value) return ""
 		return value.toLocaleDateString(undefined, { timeZone: "UTC" })
+	},
+	Route: (expression, context) => {
+		if (expression !== "path" && expression !== "title") return ""
+		return context.getRoute()?.[expression] || ""
 	},
 	RecordMeta: (expression, context) => {
 		const record = context.getRecord()

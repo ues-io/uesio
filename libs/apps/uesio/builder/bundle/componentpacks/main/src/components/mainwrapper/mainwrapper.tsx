@@ -8,6 +8,7 @@ import ViewInfoPanel from "./viewinfopanel/viewinfopanel"
 import MainHeader from "./mainheader"
 import RightToolbar from "./righttoolbar"
 import IndexPanel from "./indexpanel"
+import { SlotBuilderComponentId } from "../../utilities/slotbuilder/slotbuilder"
 
 const StyleDefaults = Object.freeze({
 	root: [
@@ -32,7 +33,7 @@ const MainWrapper: definition.UC<component.ViewComponentDefinition> = (
 	const [buildMode, setBuildMode] = useBuildMode(context)
 
 	const builderContext = context.addThemeFrame("uesio/studio.default")
-	const canvasContext = context.setCustomSlot("uesio/builder.slotbuilder")
+	const canvasContext = context.setCustomSlotLoader(SlotBuilderComponentId)
 
 	const classes = styles.useStyleTokens(StyleDefaults, props)
 

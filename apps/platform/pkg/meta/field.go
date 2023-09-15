@@ -23,20 +23,6 @@ func NewBaseField(collectionKey, namespace, name string) *Field {
 	}
 }
 
-func NewFields(keys map[string]bool, collectionKey string) ([]BundleableItem, error) {
-	items := []BundleableItem{}
-
-	for key := range keys {
-		newField, err := NewField(collectionKey, key)
-		if err != nil {
-			return nil, err
-		}
-		items = append(items, newField)
-	}
-
-	return items, nil
-}
-
 type Field struct {
 	BuiltIn                `yaml:",inline"`
 	BundleableBase         `yaml:",inline"`
@@ -215,7 +201,7 @@ func (f *Field) MarshalYAML() (interface{}, error) {
 		f.ReferenceGroupMetadata.Namespace = f.Namespace
 	}
 
-	f.SelectList = localize(f.SelectList, f.Namespace)
+	f.SelectList = GetLocalizedKey(f.SelectList, f.Namespace)
 
 	return (*FieldWrapper)(f), nil
 }

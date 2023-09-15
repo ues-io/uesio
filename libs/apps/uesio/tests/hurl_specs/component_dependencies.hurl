@@ -74,5 +74,6 @@ jsonpath "$.dependencies.componentpack.entities['uesio/io.main'].name" == "main"
 jsonpath "$.dependencies.componenttype.entities['uesio/tests.declarative2'].name" == "declarative2"
 jsonpath "$.dependencies.componenttype.entities['uesio/tests.declarative2'].type" == "DECLARATIVE"
 jsonpath "$.dependencies.componenttype.entities['uesio/tests.declarative2'].definition" exists
-jsonpath "$.dependencies.componenttype.entities['uesio/tests.declarative2'].definition.components" count == 1
+jsonpath "$.dependencies.componenttype.entities['uesio/tests.declarative2'].definition.components" count == 3
+jsonpath "$.dependencies.componenttype.entities['uesio/tests.declarative2'].slots" count == 3
 jsonpath "$.dependencies.componenttype.entities['uesio/tests.declarative2'].title" not exists # no builder metadata should be loaded

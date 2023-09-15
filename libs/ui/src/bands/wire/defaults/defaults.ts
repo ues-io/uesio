@@ -2,8 +2,6 @@ import { nanoid } from "@reduxjs/toolkit"
 import { Context } from "../../../context/context"
 import { FieldValue, PlainWireRecord } from "../../wirerecord/types"
 import { ID_FIELD } from "../../collection/types"
-import toPath from "lodash/toPath"
-import get from "lodash/get"
 import set from "lodash/set"
 import Wire from "../class"
 
@@ -46,8 +44,7 @@ const getDefaultValue = (context: Context, item: WireDefault): FieldValue => {
 		const firstRecord = lookupWire.getFirstRecord()
 		if (!firstRecord || !item.lookupField) return
 
-		const path = toPath(item.lookupField.split("->"))
-		return get(firstRecord.getPlainData(), path)
+		return firstRecord.getFieldValue(item.lookupField)
 	}
 	// TODO: Default to VALUE if nothing provided?
 	if (item.valueSource === "VALUE") {
@@ -73,7 +70,7 @@ const getDefaultRecord = (context: Context, wire: Wire): PlainWireRecord => {
 		if (!field)
 			throw new Error("No metadata for field in default: " + fieldName)
 
-		const fieldNameParts = fieldName?.split("->")
+		const fieldNameParts = collection.getFieldParts(fieldName)
 
 		if (field.isReference()) fieldNameParts.push(ID_FIELD)
 		if (field.isReference() && !value) return

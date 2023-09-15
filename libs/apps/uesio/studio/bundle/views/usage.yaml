@@ -37,18 +37,18 @@ definition:
     usage:
       collection: uesio/core.usage
       conditions:
-        - field: uesio/core.metadatatype
+        - field: metadatatype
           value: $Param{metadatatype}
-        - field: uesio/core.actiontype
+        - field: actiontype
           value: $Param{actiontype}
-        - field: uesio/core.day
+        - field: day
           id: day
           operator: IN
           value: THIS_MONTH
       init:
         query: false
       order:
-        - field: uesio/core.day
+        - field: day
           desc: true
       loadAll: true
   events:
@@ -98,7 +98,7 @@ definition:
                                     name: $Param{sitename}
                                     app: $Param{app}
                                 wire: usage
-                                fieldId: uesio/core.day
+                                fieldId: day
                                 conditionId: day
                                 displayAs: MONTH
                                 label: Select a Month
@@ -108,7 +108,7 @@ definition:
                                     name: $Param{sitename}
                                     app: $Param{app}
                                 wire: usage
-                                fieldId: uesio/core.user
+                                fieldId: user
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
@@ -143,8 +143,8 @@ definition:
                                 series:
                                   - name: totalbyuser
                                     label: Total By User
-                                    valueField: uesio/core.total
-                                    categoryField: uesio/core.user
+                                    valueField: total
+                                    categoryField: user
                                     wire: usage
                                 labels:
                                   source: DATA
@@ -159,12 +159,12 @@ definition:
                           mode: READ
                           pagesize: 10
                           columns:
-                            - field: uesio/core.user
-                            - field: uesio/core.day
-                            - field: uesio/core.actiontype
-                            - field: uesio/core.metadatatype
-                            - field: uesio/core.metadataname
-                            - field: uesio/core.total
+                            - field: user
+                            - field: day
+                            - field: actiontype
+                            - field: metadatatype
+                            - field: metadataname
+                            - field: total
 params:
   metadatatype:
     type: TEXT

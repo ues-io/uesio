@@ -198,7 +198,7 @@ func pickStringProperty(node *yaml.Node, property, defaultValue string) string {
 }
 
 func pickMetadataItem(node *yaml.Node, property, namespace, defaultValue string) string {
-	return unLocalize(pickStringProperty(node, property, defaultValue), namespace)
+	return GetFullyQualifiedKey(pickStringProperty(node, property, defaultValue), namespace)
 }
 
 func pickRequiredMetadataItem(node *yaml.Node, property, namespace string) (string, error) {

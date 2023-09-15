@@ -53,12 +53,10 @@ const getViewOnlyWireDefInfo = (
 	wireDef: ViewOnlyWireDefinition
 ) => ({
 	...getBaseWireDefInfo(wireDef),
-	collection: `${viewOnlyNamespace}.${wireName}`,
+	collection: "",
 	viewOnly: true,
 	viewOnlyMetadata: getViewOnlyMetadata(wireName, wireDef),
 })
-
-const viewOnlyNamespace = "uesio/viewonly"
 
 const getViewOnlyFieldMetadata = (
 	field: string,
@@ -68,7 +66,7 @@ const getViewOnlyFieldMetadata = (
 	createable: true,
 	name: field,
 	updateable: true,
-	namespace: viewOnlyNamespace,
+	namespace: "",
 	type: fieldDef.type,
 	subtype: fieldDef.subtype,
 	label: fieldDef.label || field,
@@ -88,7 +86,7 @@ const getViewOnlyFieldMetadata = (
 })
 
 const getViewOnlyFieldsMetadata = (
-	wireDef: WireDefinition
+	wireDef: RegularWireDefinition
 ): FieldMetadataMap => {
 	const fieldMetadata: FieldMetadataMap = {}
 	const fields = wireDef.fields
@@ -104,8 +102,10 @@ const getViewOnlyFieldsMetadata = (
 
 const addViewOnlyFields = (wireDef: RegularWireDefinition) =>
 	({
-		fields: getViewOnlyFieldsMetadata(wireDef),
-	} as PlainCollection)
+		viewOnlyMetadata: {
+			fields: getViewOnlyFieldsMetadata(wireDef),
+		},
+	} as Partial<PlainWire>)
 
 const getViewOnlyMetadata = (
 	wireName: string,
@@ -133,7 +133,7 @@ const getViewOnlyMetadata = (
 		createable: true,
 		deleteable: true,
 		fields: fieldMetadata,
-		namespace: viewOnlyNamespace,
+		namespace: "",
 		updateable: true,
 		label: wireDef.label || wireName,
 		pluralLabel: wireDef.pluralLabel || wireName,
@@ -155,7 +155,7 @@ const initExistingWire = (
 				original: { ...existingWire.data },
 				deletes: {},
 				...getWireDefInfo(wireDef),
-				viewOnlyMetadata: addViewOnlyFields(wireDef),
+				...addViewOnlyFields(wireDef),
 		  }
 
 const getNewPlainWireBase = (viewId: string, wireName: string) => ({
@@ -182,7 +182,7 @@ const initWire = (
 		: {
 				...getNewPlainWireBase(viewId, wireName),
 				...getWireDefInfo(wireDef),
-				viewOnlyMetadata: addViewOnlyFields(wireDef),
+				...addViewOnlyFields(wireDef),
 		  }
 
 export { initExistingWire }
