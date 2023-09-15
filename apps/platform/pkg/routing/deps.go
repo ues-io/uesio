@@ -148,11 +148,9 @@ func getDepsForUtilityComponent(key string, deps *PreloadMetadata, session *sess
 
 func getDepsForComponent(component *meta.Component, deps *PreloadMetadata, session *sess.Session) error {
 
-	if component.Pack == "" {
-		return nil
+	if component.Pack != "" {
+		addComponentPackToDeps(deps, component.Namespace, component.Pack, session)
 	}
-
-	addComponentPackToDeps(deps, component.Namespace, component.Pack, session)
 
 	// Add all Declarative Components to the Component Type dependency map
 	// so that we can send down their definitions into the View HTML.
