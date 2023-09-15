@@ -269,6 +269,5 @@ collections:
   uesio/studio.invoice: true
   uesio/studio.invoicelineitem: true
   uesio/studio.payment: true
-  uesio/studio.bundlelistinghistory: true
 modifyallrecords: false
 viewallrecords: false
