@@ -113,9 +113,11 @@ definition:
       collection: uesio/studio.bundlelistinghistory
       fields:
         uesio/studio.comment:
+        uesio/studio.actiontype:
+        uesio/studio.app:
       init:
         query: false
-        create: true
+        create: false
       defaults:
         - field: uesio/studio.app
           valueSource: LOOKUP
@@ -131,6 +133,9 @@ definition:
         wires:
           - bundlelisting
           - bundlelistinghistory
+      #create the record under site admin to have access to all apps
+      - signal: wire/CREATE_RECORD
+        wire: newbundlelistinghistory
   components:
     - uesio/io.grid:
         uesio.variant: uesio/studio.mainlayout
@@ -292,11 +297,17 @@ definition:
             uesio.variant: uesio/io.primary
             text: $Label{uesio/io.save}
             signals:
+              - signal: context/SET
+                type: SITE_ADMIN
+                name: $Param{sitename}
+                app: $Param{app}
               - signal: wire/SAVE
                 wires:
                   - newbundlelistinghistory
                   - bundlelisting
               - signal: wire/RESET
+                wire: newbundlelistinghistory
+              - signal: wire/CREATE_RECORD
                 wire: newbundlelistinghistory
               - signal: wire/LOAD
                 wires:
@@ -308,14 +319,26 @@ definition:
             uesio.variant: "uesio/io.secondary"
             text: $Label{uesio/io.cancel}
             signals:
+              - signal: context/SET
+                type: SITE_ADMIN
+                name: $Param{sitename}
+                app: $Param{app}
               - signal: wire/RESET
+                wire: newbundlelistinghistory
+              - signal: wire/CREATE_RECORD
                 wire: newbundlelistinghistory
               - signal: wire/CANCEL
                 wire: bundlelisting
               - signal: panel/TOGGLE
                 panel: feedbackPanel
       afterClose:
+        - signal: context/SET
+          type: SITE_ADMIN
+          name: $Param{sitename}
+          app: $Param{app}
         - signal: wire/RESET
+          wire: newbundlelistinghistory
+        - signal: wire/CREATE_RECORD
           wire: newbundlelistinghistory
         - signal: wire/CANCEL
           wire: bundlelisting
