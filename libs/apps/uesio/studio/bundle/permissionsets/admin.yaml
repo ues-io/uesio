@@ -13,3 +13,10 @@ collections:
     delete: false
     modifyall: true
     viewall: true
+  uesio/studio.bundlelistinghistory:
+    read: true
+    create: true
+    edit: true
+    delete: false
+    viewall: true
+    modifyall: true
