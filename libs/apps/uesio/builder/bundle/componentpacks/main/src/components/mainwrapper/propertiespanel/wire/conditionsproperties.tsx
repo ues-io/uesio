@@ -426,6 +426,42 @@ const getItemPropertiesFunction =
 						],
 					},
 				],
+				onChange: [
+					{
+						updates: [
+							{
+								field: "value",
+							},
+							{
+								field: "values",
+							},
+							{
+								field: "param",
+							},
+							{
+								field: "params",
+							},
+							{
+								field: "lookupWire",
+							},
+							{
+								field: "lookupField",
+							},
+							{
+								field: "start",
+							},
+							{
+								field: "end",
+							},
+							{
+								field: "inclusiveStart",
+							},
+							{
+								field: "inclusiveEnd",
+							},
+						],
+					},
+				],
 			},
 			{
 				name: "start",
