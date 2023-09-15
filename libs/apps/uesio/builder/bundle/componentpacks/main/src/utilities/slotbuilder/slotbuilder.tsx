@@ -1,9 +1,15 @@
 import { definition, component, styles } from "@uesio/ui"
 import { FunctionComponent, useEffect, useRef } from "react"
 import { FullPath } from "../../api/path"
-import { getBuildMode, useBuilderState, useDropPath } from "../../api/stateapi"
+import {
+	getBuildMode,
+	getComponentDef,
+	useBuilderState,
+	useDropPath,
+} from "../../api/stateapi"
 import BuildWrapper from "../buildwrapper/buildwrapper"
 import PlaceHolder from "../placeholder/placeholder"
+import { DeclarativeComponentSlotLoaderId } from "../declarativecomponentslotloader/declarativecomponentslotloader"
 
 const accepts = ["component", "viewdef", "componentvariant"]
 
@@ -31,8 +37,22 @@ const StyleDefaults = Object.freeze({
 	slotTag: ["transition-all"],
 })
 
+const capitalizeFirst = (str: string) =>
+	str.charAt(0).toUpperCase() + str.slice(1)
+
+export const SlotBuilderComponentId = "uesio/builder.slotbuilder"
+
 const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
-	const { definition, listName, path, direction, label, context } = props
+	const {
+		context,
+		definition,
+		listName = component.DefaultSlotName,
+		path,
+		direction = component.DefaultSlotDirection,
+		label = listName === component.DefaultSlotName
+			? "Components Slot"
+			: `${capitalizeFirst(listName)} Components`,
+	} = props
 
 	const buildMode = getBuildMode(context)
 
@@ -42,7 +62,6 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 	const listPath = path ? `${path}["${listName}"]` : `["${listName}"]`
 	const size = listDef.length
 	const viewDefId = context.getViewDefId()
-
 	styles.useUtilityStyleTokens(StyleDefaults, props)
 
 	const dropPath = useDropPath(context)
@@ -56,18 +75,16 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 		const parentElem = ref?.current?.parentElement
 		if (!parentElem) return
 		parentElem.setAttribute("data-accepts", accepts.join(","))
-		parentElem.setAttribute("data-direction", direction || "")
+		parentElem.setAttribute("data-direction", direction)
 		parentElem.setAttribute("data-path", listPath)
-		parentElem.setAttribute("data-title", label || `${listName} slot`)
+		parentElem.setAttribute("data-title", label)
 		parentElem.classList.add(...StyleDefaults.slotTag)
 	}, [listPath, listName, label, direction])
 
 	useEffect(() => {
-		const parentElem = ref?.current?.parentElement
-		if (!parentElem) return
-		showSlotTags
-			? parentElem.classList.add(...StyleDefaults.slotTagOn)
-			: parentElem.classList.remove(...StyleDefaults.slotTagOn)
+		ref?.current?.parentElement?.classList[showSlotTags ? "add" : "remove"](
+			...StyleDefaults.slotTagOn
+		)
 	}, [showSlotTags])
 
 	if (!buildMode) {
@@ -95,11 +112,26 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 					direction={direction}
 				/>
 			)}
-			{component.getSlotProps(props).map((props, index) => (
-				<BuildWrapper key={index} {...props}>
-					<component.Component {...props} />
-				</BuildWrapper>
-			))}
+			{component.getSlotProps(props).map((props, index) => {
+				let childrenContext = context
+				// When rendering a Declarative Component, use a custom slot laoder for the children
+				if (
+					getComponentDef(props.componentType)?.type ===
+					component.Declarative
+				) {
+					childrenContext = context.setCustomSlotLoader(
+						DeclarativeComponentSlotLoaderId
+					)
+				}
+				return (
+					<BuildWrapper key={index} {...props}>
+						<component.Component
+							{...props}
+							context={childrenContext}
+						/>
+					</BuildWrapper>
+				)
+			})}
 		</>
 	)
 }

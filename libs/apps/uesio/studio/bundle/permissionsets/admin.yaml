@@ -1,0 +1,22 @@
+name: admin
+views:
+  uesio/studio.sitemanagebundles: true
+  uesio/studio.sitemanageappbundles: true
+routes:
+  uesio/studio.sitemanagebundles: true
+  uesio/studio.sitemanageappbundles: true
+collections:
+  uesio/studio.bundlelisting:
+    read: true
+    create: true
+    edit: true
+    delete: false
+    modifyall: true
+    viewall: true
+  uesio/studio.bundlelistinghistory:
+    read: true
+    create: true
+    edit: true
+    delete: false
+    viewall: true
+    modifyall: true

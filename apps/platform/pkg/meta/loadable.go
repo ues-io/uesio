@@ -9,12 +9,8 @@ type Group interface {
 	AddItem(Item) error
 }
 
-type Gettable interface {
-	GetField(string) (interface{}, error)
-}
-
 type Item interface {
-	Gettable
+	GetField(string) (interface{}, error)
 	SetField(string, interface{}) error
 	Loop(iter func(string, interface{}) error) error
 	Len() int

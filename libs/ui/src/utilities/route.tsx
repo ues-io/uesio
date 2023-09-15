@@ -1,7 +1,7 @@
 import { useEffect } from "react"
 import { useRoute } from "../bands/route/selectors"
 import Progress from "./progress"
-import { ViewArea } from "./view"
+import { ViewArea } from "../components/view"
 import { useSite } from "../bands/site"
 import { Context } from "../context/context"
 import { navigate, redirect } from "../bands/route/operations"

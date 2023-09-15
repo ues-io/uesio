@@ -39,6 +39,7 @@ definition:
         uesio/studio.description:
         uesio/studio.app:
           fields:
+            uesio/studio.fullname:
             uesio/studio.color:
             uesio/studio.icon:
       conditions:
@@ -200,8 +201,12 @@ definition:
                                                         signals:
                                                           - signal: wire/MARK_FOR_DELETE
                                                           - signal: wire/SAVE
-                                  - uesio/io.box:
-                                      uesio.variant: uesio/studio.bundlelistingvisual
+                                  - uesio/studio.bundlelistingvisual:
+                                      color: ${uesio/studio.app->uesio/studio.color}
+                                      icon: ${uesio/studio.app->uesio/studio.icon}
+                                      title: ${uesio/studio.app->uesio/studio.fullname}
+                                      subtitle: ${uesio/studio.description}
+                                      verified: false
                       - uesio/io.text:
                           text: versions
                           element: h3

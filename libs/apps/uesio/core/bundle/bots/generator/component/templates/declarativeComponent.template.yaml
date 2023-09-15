@@ -1,29 +1,36 @@
 name: ${name}
 category: DATA
-pack: ${pack}
 title: ${componentName}
 type: DECLARATIVE
 discoverable: true
-description: A sample component that outputs text
+description: A sample component that outputs text with a header
 properties:
   - type: TEXT
     name: text
     label: Text
-  - type: COMPONENT_ID
-    name: uesio.id
-    label: Component Id
+  - type: TEXT
+    name: color
+    label: Color
 defaultDefinition:
   text: Hello world
+  color: green
 sections:
   - type: HOME
     properties:
       - text
-      - uesio.id
-  - type: STYLES
+      - color
   - type: DISPLAY
 definition:
-  components:
-    - uesio/io.text:
-        text: $Prop{text}
+  - uesio/core.slot:
+      name: header
+  - uesio/io.box:
+      uesio.styleTokens:
+        root:
+          - m-4
+          - p-4
+          - text-$Prop{color}-500
+      components:
+        - uesio/io.text:
+            text: $Prop{text}
 slots:
-  - name: components
+  - name: header

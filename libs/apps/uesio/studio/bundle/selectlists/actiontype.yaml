@@ -1,0 +1,14 @@
+name: actiontype
+options:
+  - label: User agreed to terms and conditions
+    value: OPEN
+  - label: App status changed to submitted
+    value: SUBMITTED
+  - label: App status changed to in review
+    value: IN_REVIEW
+  - label: App status changed to rejected
+    value: REJECTED
+  - label: App status changed to approved
+    value: APPROVED
+  - label: App status changed to published
+    value: PUBLISHED

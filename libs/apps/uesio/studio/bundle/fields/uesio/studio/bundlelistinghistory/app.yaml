@@ -1,0 +1,5 @@
+name: app
+type: REFERENCE
+label: App
+reference:
+  collection: app

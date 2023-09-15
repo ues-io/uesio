@@ -41,7 +41,7 @@
   },
   "files": [],
   "devDependencies": {
-    "@floating-ui/react": "^0.23.1",
+    "@floating-ui/react": "^0.25.4",
     "@monaco-editor/react": "^4.5.1",
     "@nrwl/cli": "14.7.13",
     "@nrwl/eslint-plugin-nx": "14.7.13",

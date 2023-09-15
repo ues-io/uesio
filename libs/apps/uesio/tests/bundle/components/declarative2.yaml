@@ -1,30 +1,34 @@
 name: declarative2
 category: LAYOUT
-pack: main
 type: DECLARATIVE
 slots:
-  - name: components
+  - name: header
+  - name: footer
 definition:
-  components:
-    - uesio/io.group:
-        uesio.styleTokens:
-          root:
-            - gap-4
-        components:
-          - uesio/io.text:
-              text: $Prop{text1}
-          - uesio/io.text:
-              text: $Prop{text2}
+  - uesio/core.slot:
+      name: header
+  - uesio/io.grid:
+      uesio.styleTokens:
+        root:
+          - grid-cols-2
+          - gap-4
+      items:
+        - uesio/io.text:
+            text: $Prop{text1}
+        - uesio/io.text:
+            text: $Prop{text2}
+  - uesio/core.slot:
+      name: footer
 title: Declarative 2
 discoverable: true
-description: Two little text boxes sitting in a tree
+description: Two little text boxes sitting in a grid
 properties:
   - type: TEXT
     name: text1
-    label: Title
+    label: Text 1
   - type: TEXT
     name: text2
-    label: Title
+    label: Text 2
 defaultDefinition:
   text1: I'm on the left
   text2: I'm on the right

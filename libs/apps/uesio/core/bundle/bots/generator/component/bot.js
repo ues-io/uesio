@@ -10,7 +10,6 @@ function collection(bot) {
 			{
 				componentName,
 				name,
-				pack,
 			},
 			"templates/declarativeComponent.template.yaml"
 		)
