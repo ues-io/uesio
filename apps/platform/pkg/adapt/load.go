@@ -168,7 +168,7 @@ func GetFieldsMap(fields []LoadRequestField, collectionMetadata *CollectionMetad
 			refReq := referencedCollections.Get(referencedCollection)
 			refReq.Metadata = referencedCollectionMetadata
 
-			if referencedCollectionMetadata.DataSource != collectionMetadata.DataSource {
+			if referencedCollectionMetadata.Integration != collectionMetadata.Integration {
 				continue
 			}
 			refReq.AddFields(field.Fields)
@@ -181,7 +181,7 @@ func GetFieldsMap(fields []LoadRequestField, collectionMetadata *CollectionMetad
 				continue
 			}
 			refReq := referencedGroupCollections.Add(referencedCollection, fieldMetadata, referencedCollectionMetadata)
-			if referencedCollectionMetadata.DataSource != collectionMetadata.DataSource {
+			if referencedCollectionMetadata.Integration != collectionMetadata.Integration {
 				continue
 			}
 			refReq.AddFields(field.Fields)

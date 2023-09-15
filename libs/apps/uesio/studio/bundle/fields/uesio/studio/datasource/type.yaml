@@ -1,5 +1,0 @@
-name: type
-type: SELECT
-selectList: datasourcetypes
-label: Type
-required: true

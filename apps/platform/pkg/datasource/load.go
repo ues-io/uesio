@@ -525,8 +525,7 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 	}
 
 	// We do this so that we're sure that the labels are attached to the session
-	_, err := translate.GetTranslatedLabels(session)
-	if err != nil {
+	if _, err := translate.GetTranslatedLabels(session); err != nil {
 		return nil, err
 	}
 
@@ -560,8 +559,7 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 			})
 		}
 
-		err := getMetadataForLoad(op, metadataResponse, ops, session)
-		if err != nil {
+		if err := getMetadataForLoad(op, metadataResponse, ops, session); err != nil {
 			return nil, fmt.Errorf("metadata: %s: %v", op.CollectionName, err)
 		}
 
@@ -586,36 +584,34 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 		return nil, err
 	}
 
-	err = GenerateUserAccessTokens(connection, session)
-	if err != nil {
+	if err = GenerateUserAccessTokens(connection, session); err != nil {
 		return nil, err
 	}
 
 	for _, op := range allOps {
 
-		err := processConditions(op.CollectionName, op.Conditions, op.Params, metadataResponse, allOps, session)
-		if err != nil {
+		if err = processConditions(op.CollectionName, op.Conditions, op.Params, metadataResponse, allOps, session); err != nil {
 			return nil, err
 		}
 
-		collectionMetadata, err := metadataResponse.GetCollection(op.CollectionName)
-		if err != nil {
-			return nil, err
+		collectionMetadata, err2 := metadataResponse.GetCollection(op.CollectionName)
+		if err2 != nil {
+			return nil, err2
 		}
+
+		integrationName := collectionMetadata.GetIntegrationName()
 
 		usage.RegisterEvent("LOAD", "COLLECTION", collectionMetadata.GetFullName(), 0, session)
-		usage.RegisterEvent("LOAD", "DATASOURCE", meta.PLATFORM_DATA_SOURCE, 0, session)
+		usage.RegisterEvent("LOAD", "DATASOURCE", integrationName, 0, session)
 
 		if collectionMetadata.IsDynamic() {
-			err := runDynamicCollectionLoadBots(op, connection, session)
-			if err != nil {
+			if err = runDynamicCollectionLoadBots(op, connection, session); err != nil {
 				return nil, err
 			}
 			continue
 		}
 
-		err = LoadOp(op, connection, session)
-		if err != nil {
+		if err = LoadOp(op, connection, session); err != nil {
 			return nil, err
 		}
 
@@ -626,8 +622,7 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 
 func LoadOp(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
 
-	err := connection.Load(op, session)
-	if err != nil {
+	if err := connection.Load(op, session); err != nil {
 		return err
 	}
 

@@ -1,0 +1,10 @@
+name: collectiontypes
+options:
+  - label: "Uesio DB"
+    value: ""
+  - label: "External Integration"
+    value: "EXTERNAL"
+  - label: "Dynamic"
+    value: "DYNAMIC"
+    disabled: true
+public: true
