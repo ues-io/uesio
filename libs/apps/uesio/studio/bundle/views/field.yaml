@@ -21,7 +21,8 @@ definition:
         uesio/studio.name:
         uesio/studio.namefield:
         uesio/studio.workspace:
-        uesio/studio.datasource:
+        uesio/studio.type:
+        uesio/studio.integration:
       conditions:
         - field: uesio/studio.workspace
           valueSource: LOOKUP

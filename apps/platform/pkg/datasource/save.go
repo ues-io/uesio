@@ -149,8 +149,9 @@ func HandleErrorAndAddToSaveOp(op *adapt.SaveOp, err error) *adapt.SaveError {
 }
 
 func SaveOp(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
-	dsKey := meta.PLATFORM_DATA_SOURCE
+
 	collectionKey := op.Metadata.GetFullName()
+	integrationName := op.Metadata.GetIntegrationName()
 
 	permissions := session.GetContextPermissions()
 
@@ -255,7 +256,7 @@ func SaveOp(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session
 		return &(*op.Errors)[0]
 	}
 	usage.RegisterEvent("SAVE", "COLLECTION", op.Metadata.GetFullName(), 0, session)
-	usage.RegisterEvent("SAVE", "DATASOURCE", dsKey, 0, session)
+	usage.RegisterEvent("SAVE", "DATASOURCE", integrationName, 0, session)
 	return nil
 }
 

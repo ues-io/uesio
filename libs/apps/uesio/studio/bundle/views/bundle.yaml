@@ -69,6 +69,10 @@ definition:
       fields:
         uesio/core.id:
         uesio/core.uniquekey:
+        uesio/core.updatedat:
+        uesio/core.updatedby:
+        uesio/core.createdat:
+        uesio/core.createdby:
       conditions:
         - field: uesio/studio.bundle
           valueSource: LOOKUP
@@ -145,7 +149,10 @@ definition:
                         label: "App Workspace"
                       - field: uesio/core.createdby
                         user:
-                          subtitle: uesio/core.createdat
+                          subtitle: $Time{uesio/core.createdat}
+                      - field: uesio/core.updatedby
+                        user:
+                          subtitle: $Time{uesio/core.updatedat}
                     pagesize: 10
   panels:
     deleteBundle:

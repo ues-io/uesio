@@ -52,7 +52,7 @@ type Collection struct {
 	Type                  string                            `yaml:"type,omitempty" json:"uesio/studio.type"`
 	Label                 string                            `yaml:"label" json:"uesio/studio.label"`
 	PluralLabel           string                            `yaml:"pluralLabel" json:"uesio/studio.plurallabel"`
-	DataSourceRef         string                            `yaml:"dataSource,omitempty" json:"uesio/studio.datasource"`
+	IntegrationRef        string                            `yaml:"integration,omitempty" json:"uesio/studio.integration"`
 	UniqueKeyFields       []string                          `yaml:"uniqueKey,omitempty" json:"uesio/studio.uniquekey"`
 	NameField             string                            `yaml:"nameField,omitempty" json:"uesio/studio.namefield"`
 	ReadOnly              bool                              `yaml:"readOnly,omitempty" json:"-"`
@@ -101,13 +101,13 @@ func (c *Collection) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
-	c.DataSourceRef = pickMetadataItem(node, "dataSource", c.Namespace, PLATFORM_DATA_SOURCE)
+	c.IntegrationRef = pickMetadataItem(node, "integration", c.Namespace, "")
 	c.NameField = pickStringProperty(node, "nameField", "uesio/core.id")
 	return node.Decode((*CollectionWrapper)(c))
 }
 
 func (c *Collection) MarshalYAML() (interface{}, error) {
-	c.DataSourceRef = removeDefault(GetLocalizedKey(c.DataSourceRef, c.Namespace), PLATFORM_DATA_SOURCE)
+	c.IntegrationRef = removeDefault(GetLocalizedKey(c.IntegrationRef, c.Namespace), PLATFORM_DATA_SOURCE)
 	c.NameField = removeDefault(c.NameField, "uesio/core.id")
 	return (*CollectionWrapper)(c), nil
 }

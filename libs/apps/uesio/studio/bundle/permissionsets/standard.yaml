@@ -37,8 +37,6 @@ views:
   uesio/studio.configvalues: true
   uesio/studio.credential: true
   uesio/studio.credentials: true
-  uesio/studio.datasource: true
-  uesio/studio.datasources: true
   uesio/studio.domains: true
   uesio/studio.field: true
   uesio/studio.file: true
@@ -131,8 +129,6 @@ routes:
   uesio/studio.configvalues: true
   uesio/studio.credential: true
   uesio/studio.credentials: true
-  uesio/studio.datasource: true
-  uesio/studio.datasources: true
   uesio/studio.domains: true
   uesio/studio.field: true
   uesio/studio.file: true
@@ -229,7 +225,6 @@ collections:
   uesio/studio.componentvariant: true
   uesio/studio.configvalue: true
   uesio/studio.credential: true
-  uesio/studio.datasource: true
   uesio/studio.featureflag: true
   uesio/studio.field: true
   uesio/studio.file: true
