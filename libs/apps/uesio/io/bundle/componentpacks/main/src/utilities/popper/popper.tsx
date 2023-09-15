@@ -11,6 +11,7 @@ import {
 	FloatingPortal,
 	arrow,
 	FloatingArrow,
+	MiddlewareState,
 } from "@floating-ui/react"
 
 interface TooltipProps {
@@ -56,7 +57,7 @@ const Popper: definition.UtilityComponent<TooltipProps> = (props) => {
 			...(props.matchHeight
 				? [
 						size({
-							apply({ rects, elements }) {
+							apply({ rects, elements }: MiddlewareState) {
 								Object.assign(elements.floating.style, {
 									height: `${rects.reference.height}px`,
 								})
