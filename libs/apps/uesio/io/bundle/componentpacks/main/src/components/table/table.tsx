@@ -60,6 +60,7 @@ type ColumnDefinition = {
 	user?: UserFieldOptions
 	number?: NumberFieldOptions
 	longtext?: LongTextFieldOptions
+	readonly?: boolean
 	components: definition.DefinitionList
 } & definition.BaseDefinition
 
@@ -245,6 +246,7 @@ const Table: definition.UC<TableDefinition> = (props) => {
 					longtext: column.longtext,
 					labelPosition: "none",
 					wrapperVariant: "uesio/io.table",
+					readonly: column.readonly,
 					displayAs: column.displayAs,
 				}}
 				{...sharedProps}

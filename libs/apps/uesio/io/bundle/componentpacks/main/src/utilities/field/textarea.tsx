@@ -14,6 +14,7 @@ interface TextAreaFieldProps {
 	options?: LongTextFieldOptions
 	applyChanges?: ApplyChanges
 	focusOnRender?: boolean
+	readonly?: boolean
 }
 
 const StyleDefaults = Object.freeze({
@@ -34,7 +35,7 @@ const TextAreaField: definition.UtilityComponent<TextAreaFieldProps> = (
 		focusOnRender = false,
 	} = props
 	const value = props.value as string
-	const readonly = mode === "READ"
+	const readonly = props.readonly || mode === "READ"
 
 	const controlledInputProps = useControlledInput(
 		value,
