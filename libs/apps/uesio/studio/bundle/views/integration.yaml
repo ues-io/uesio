@@ -154,3 +154,15 @@ definition:
                                 - type: fieldValue
                                   field: uesio/studio.type
                                   value: web
+                            - uesio/builder.metadatafield:
+                                uesio.display:
+                                  - field: uesio/studio.type
+                                    value: uesio/core.custom
+                                uesio.context:
+                                  workspace:
+                                    name: $Param{workspacename}
+                                    app: $Param{app}
+                                fieldId: uesio/studio.loadbot
+                                metadataType: BOT
+                                grouping: LOAD
+                                label: Load Bot

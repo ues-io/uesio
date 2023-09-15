@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/dop251/goja"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -24,6 +25,21 @@ const DefaultListenerBotBody = `function %s(bot) {
     const a = bot.params.get("a")
     const b = bot.params.get("b")
     bot.addResult("answer", a + b)
+}`
+
+const DefaultLoadBotBody = `function %s(bot) {
+	const collectionName = bot.loadRequest.GetCollectionName()
+	const results = [
+		{
+			"first_name": "Luigi",
+			"last_name": "Vampa"
+		},
+		{
+			"first_name": "Myasia",
+			"last_name": "Harvey"
+		},
+	]
+	bot.setData(results)
 }`
 
 const DefaultBeforeSaveBotBody = `function %s(bot) {
@@ -144,9 +160,8 @@ func (b *JSDialect) CallGeneratorBot(bot *meta.Bot, create retrieve.WriterCreato
 		Bot:        bot,
 		Connection: connection,
 	}
-	err := b.hydrateBot(bot, session)
-	if err != nil {
-		return nil
+	if err := b.hydrateBot(bot, session); err != nil {
+		return err
 	}
 	return RunBot(bot.Name, bot.FileContents, botAPI, nil)
 }
@@ -156,7 +171,15 @@ func (b *JSDialect) RouteBot(bot *meta.Bot, route *meta.Route, session *sess.Ses
 }
 
 func (b *JSDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
-	return nil
+	integrationConnection, err := op.GetIntegration()
+	if err != nil {
+		return err
+	}
+	botAPI := NewLoadBotAPI(bot, session, connection, op, integrationConnection)
+	if err := b.hydrateBot(bot, session); err != nil {
+		return err
+	}
+	return RunBot(bot.Name, bot.FileContents, botAPI, nil)
 }
 
 func (b *JSDialect) SaveBot(bot *meta.Bot, op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
@@ -175,6 +198,8 @@ func (b *JSDialect) GetDefaultFileBody(botType string) string {
 		return DefaultBeforeSaveBotBody
 	case "AFTERSAVE":
 		return DefaultAfterSaveBotBody
+	case "LOAD":
+		return DefaultLoadBotBody
 	default:
 		return DefaultBotBody
 	}

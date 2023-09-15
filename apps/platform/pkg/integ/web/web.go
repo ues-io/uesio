@@ -44,6 +44,14 @@ type WebIntegrationConnection struct {
 	credentials *adapt.Credentials
 }
 
+func (wic *WebIntegrationConnection) GetCredentials() *adapt.Credentials {
+	return wic.credentials
+}
+
+func (wic *WebIntegrationConnection) GetIntegration() *meta.Integration {
+	return wic.integration
+}
+
 const (
 	webRequestBody        = "web-request-body"
 	webRequestContentType = "web-request-content-type"

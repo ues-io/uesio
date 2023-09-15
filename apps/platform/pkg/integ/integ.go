@@ -3,6 +3,7 @@ package integ
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -18,6 +19,8 @@ type IntegrationType interface {
 
 type IntegrationConnection interface {
 	RunAction(actionName string, requestOptions interface{}) (interface{}, error)
+	GetCredentials() *adapt.Credentials
+	GetIntegration() *meta.Integration
 }
 
 var integrationTypeMap = map[string]IntegrationType{}
@@ -41,24 +44,26 @@ func GetIntegration(integrationID string, session *sess.Session) (IntegrationCon
 	}
 	err = bundle.Load(integration, session, nil)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("could not find Integration with name: %s", integrationID)
 	}
 
 	integrationType, err := GetIntegrationType(integration.Type)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("invalid Integration type %s for Integration %s", integration.Type, integrationID)
 	}
 
-	// Enter into a version context to get these
-	// credentails as the datasource's namespace
+	// Enter into a version context to load credentials in the integration's namespace
 	versionSession, err := datasource.EnterVersionContext(integration.Namespace, session, nil)
 	if err != nil {
 		return nil, err
 	}
-
-	credentials, err := creds.GetCredentials(integration.Credentials, versionSession)
-	if err != nil {
-		return nil, err
+	// Credentials are optional, depending on the Integration, there may not be any
+	var credentials *adapt.Credentials
+	if integration.Credentials != "" {
+		credentials, err = creds.GetCredentials(integration.Credentials, versionSession)
+		if err != nil {
+			return nil, fmt.Errorf("could not find Credentials with name %s for Integration %s", integration.Credentials, integrationID)
+		}
 	}
 	return integrationType.GetIntegrationConnection(integration, session, credentials)
 }

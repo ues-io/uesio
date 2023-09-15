@@ -40,6 +40,14 @@ type SendGridIntegrationConnection struct {
 	credentials *adapt.Credentials
 }
 
+func (sgic *SendGridIntegrationConnection) GetCredentials() *adapt.Credentials {
+	return sgic.credentials
+}
+
+func (sgic *SendGridIntegrationConnection) GetIntegration() *meta.Integration {
+	return sgic.integration
+}
+
 func (sgic *SendGridIntegrationConnection) RunAction(actionName string, requestOptions interface{}) (interface{}, error) {
 
 	switch actionName {

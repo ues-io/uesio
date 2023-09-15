@@ -39,6 +39,14 @@ type StripeIntegrationConnection struct {
 	credentials *adapt.Credentials
 }
 
+func (sic *StripeIntegrationConnection) GetCredentials() *adapt.Credentials {
+	return sic.credentials
+}
+
+func (sic *StripeIntegrationConnection) GetIntegration() *meta.Integration {
+	return sic.integration
+}
+
 func (sic *StripeIntegrationConnection) RunAction(actionName string, requestOptions interface{}) (interface{}, error) {
 
 	switch actionName {

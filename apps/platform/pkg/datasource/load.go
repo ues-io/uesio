@@ -5,6 +5,10 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/teris-io/shortid"
+
+	"github.com/thecloudmasters/uesio/pkg/integ"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/constant"
 	"github.com/thecloudmasters/uesio/pkg/merge"
@@ -601,12 +605,46 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 
 		integrationName := collectionMetadata.GetIntegrationName()
 
+		// Attach the collection metadata to the LoadOp so that Load Bots can access it
+		op.AttachMetadataCache(metadataResponse)
+
+		var integration *meta.Integration
+
 		usage.RegisterEvent("LOAD", "COLLECTION", collectionMetadata.GetFullName(), 0, session)
 		usage.RegisterEvent("LOAD", "DATASOURCE", integrationName, 0, session)
 
 		if collectionMetadata.IsDynamic() {
 			if err = runDynamicCollectionLoadBots(op, connection, session); err != nil {
 				return nil, err
+			}
+			continue
+		}
+
+		// Handle external data integration loads
+		if integrationName != "" && integrationName != meta.PLATFORM_DATA_SOURCE {
+			integrationConnection, err := integ.GetIntegration(integrationName, session)
+			if err != nil {
+				return nil, err
+			}
+			if err != nil {
+				return nil, err
+			}
+			op.AttachIntegration(integrationConnection)
+			if err = runExternalDataSourceLoadBot(integration.LoadBot, op, connection, session); err != nil {
+				return nil, err
+			}
+			// Make sure that all the returned records have ids. If not, generated fake ids.
+			if op.Collection != nil && op.Collection.Len() > 0 {
+				if err = op.Collection.Loop(func(item meta.Item, index string) error {
+					if val, err := item.GetField(adapt.ID_FIELD); err == nil || val == nil || val == "" {
+						if shortId, err := shortid.Generate(); err != nil {
+							item.SetField(adapt.ID_FIELD, shortId)
+						}
+					}
+					return nil
+				}); err != nil {
+					return nil, err
+				}
 			}
 			continue
 		}
