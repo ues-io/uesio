@@ -7,39 +7,38 @@ slots:
   - name: leftbar
   - name: content
 definition:
-  components:
-    - uesio/io.grid:
-        uesio.styleTokens:
-          root:
-            - grid-cols-[300px_1fr]
-            - grid-rows-[60px_1fr]
-            - h-screen
-        items:
-          - uesio/io.griditem:
-              uesio.styleTokens:
-                root:
-                  - col-start-1
-                  - col-end-3
-              components:
-                - uesio/core.slot:
-                    name: topbar
-          - uesio/io.griditem:
-              uesio.styleTokens:
-                root:
-                  - bg-white
-                  - h-full
-                  - overflow-auto
-              components:
-                - uesio/core.slot:
-                    name: leftbar
-          - uesio/io.griditem:
-              uesio.styleTokens:
-                root:
-                  - bg-slate-50
-                  - p-10
-                  - h-full
-                  - overflow-auto
-                  - "[container-type:inline-size]"
-              components:
-                - uesio/core.slot:
-                    name: content
+  - uesio/io.grid:
+      uesio.styleTokens:
+        root:
+          - grid-cols-[300px_1fr]
+          - grid-rows-[60px_1fr]
+          - h-screen
+      items:
+        - uesio/io.griditem:
+            uesio.styleTokens:
+              root:
+                - col-start-1
+                - col-end-3
+            components:
+              - uesio/core.slot:
+                  name: topbar
+        - uesio/io.griditem:
+            uesio.styleTokens:
+              root:
+                - bg-white
+                - h-full
+                - overflow-auto
+            components:
+              - uesio/core.slot:
+                  name: leftbar
+        - uesio/io.griditem:
+            uesio.styleTokens:
+              root:
+                - bg-slate-50
+                - p-10
+                - h-full
+                - overflow-auto
+                - "[container-type:inline-size]"
+            components:
+              - uesio/core.slot:
+                  name: content
