@@ -30,130 +30,122 @@ definition:
           value: $Param{collectionNamespace}.$Param{collectionname}
   # Components are how we describe the layout of our view
   components:
-    - uesio/io.grid:
-        uesio.variant: uesio/studio.mainlayout
-        items:
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.topbar
+    - uesio/studio.mainlayout:
+        topbar:
+          - uesio/core.view:
+              view: uesio/studio.topbar
+              uesio.context:
+                wire: workspaces
+              params:
+                itemType: permissionsets
+                itemIcon: rule
+                itemName: $Param{permissionsetname}
+                itemNameSpace: $Param{namespace}
+                subItemType: collection
+                subItemName: $Param{collectionname}
+                subItemNameSpace: $Param{collectionNamespace}
+        leftbar:
+          - uesio/core.view:
+              uesio.context:
+                wire: workspaces
+              view: uesio/studio.workspacenav
+              params:
+                selected: permissionsets
+        content:
+          - uesio/io.list:
+              uesio.id: permissionsetsList
+              wire: permissionsets
+              mode: READ
               components:
-                - uesio/core.view:
-                    view: uesio/studio.topbar
-                    uesio.context:
-                      wire: workspaces
-                    params:
-                      itemType: permissionsets
-                      itemIcon: rule
-                      itemName: $Param{permissionsetname}
-                      itemNameSpace: $Param{namespace}
-                      subItemType: collection
-                      subItemName: $Param{collectionname}
-                      subItemNameSpace: $Param{collectionNamespace}
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.leftbar
-              components:
-                - uesio/core.view:
-                    uesio.context:
-                      wire: workspaces
-                    view: uesio/studio.workspacenav
-                    params:
-                      selected: permissionsets
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.content
-              components:
-                - uesio/io.list:
-                    uesio.id: permissionsetsList
-                    wire: permissionsets
-                    mode: READ
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.main
+                    title: Permission Set - ${uesio/studio.name}
+                    subtitle: $Param{namespace}
+                    actions:
+                      - uesio/io.group:
+                          components:
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: $Label{uesio/io.edit}
+                                uesio.display:
+                                  - type: fieldMode
+                                    mode: READ
+                                  - type: paramValue
+                                    param: app
+                                    field: uesio/core.dynamiccollection
+                                    operator: EQUALS
+                                    value: $Param{namespace}
+                                signals:
+                                  - signal: component/CALL
+                                    component: uesio/io.list
+                                    componentsignal: TOGGLE_MODE
+                                    targettype: specific
+                                    componentid: permissionsetsList
+                                  - signal: component/CALL
+                                    component: uesio/io.table
+                                    componentsignal: TOGGLE_MODE
+                                    targettype: specific
+                                    componentid: fieldPerms-table
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.primary
+                                text: $Label{uesio/io.save}
+                                uesio.display:
+                                  - type: wireHasChanges
+                                    wire: permissionsets
+                                signals:
+                                  - signal: wire/SAVE
+                                    wires:
+                                      - permissionsets
+                                  - signal: component/CALL
+                                    component: uesio/io.list
+                                    componentsignal: TOGGLE_MODE
+                                    targettype: specific
+                                    componentid: permissionsetsList
+                                  - signal: component/CALL
+                                    component: uesio/io.table
+                                    componentsignal: TOGGLE_MODE
+                                    targettype: specific
+                                    componentid: fieldPerms-table
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: $Label{uesio/io.cancel}
+                                uesio.display:
+                                  - type: fieldMode
+                                    mode: EDIT
+                                signals:
+                                  - signal: wire/CANCEL
+                                    wire: permissionsets
+                                  - signal: component/CALL
+                                    component: uesio/io.list
+                                    componentsignal: TOGGLE_MODE
+                                    targettype: specific
+                                    componentid: permissionsetsList
+                                  - signal: component/CALL
+                                    component: uesio/io.table
+                                    componentsignal: TOGGLE_MODE
+                                    targettype: specific
+                                    componentid: fieldPerms-table
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
                     components:
                       - uesio/io.titlebar:
-                          uesio.variant: uesio/io.main
-                          title: Permission Set - ${uesio/studio.name}
-                          subtitle: $Param{namespace}
-                          actions:
-                            - uesio/io.group:
-                                components:
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: $Label{uesio/io.edit}
-                                      uesio.display:
-                                        - type: fieldMode
-                                          mode: READ
-                                        - type: paramValue
-                                          param: app
-                                          field: uesio/core.dynamiccollection
-                                          operator: EQUALS
-                                          value: $Param{namespace}
-                                      signals:
-                                        - signal: component/CALL
-                                          component: uesio/io.list
-                                          componentsignal: TOGGLE_MODE
-                                          targettype: specific
-                                          componentid: permissionsetsList
-                                        - signal: component/CALL
-                                          component: uesio/io.table
-                                          componentsignal: TOGGLE_MODE
-                                          targettype: specific
-                                          componentid: fieldPerms-table
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.primary
-                                      text: $Label{uesio/io.save}
-                                      uesio.display:
-                                        - type: wireHasChanges
-                                          wire: permissionsets
-                                      signals:
-                                        - signal: wire/SAVE
-                                          wires:
-                                            - permissionsets
-                                        - signal: component/CALL
-                                          component: uesio/io.list
-                                          componentsignal: TOGGLE_MODE
-                                          targettype: specific
-                                          componentid: permissionsetsList
-                                        - signal: component/CALL
-                                          component: uesio/io.table
-                                          componentsignal: TOGGLE_MODE
-                                          targettype: specific
-                                          componentid: fieldPerms-table
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: $Label{uesio/io.cancel}
-                                      uesio.display:
-                                        - type: fieldMode
-                                          mode: EDIT
-                                      signals:
-                                        - signal: wire/CANCEL
-                                          wire: permissionsets
-                                        - signal: component/CALL
-                                          component: uesio/io.list
-                                          componentsignal: TOGGLE_MODE
-                                          targettype: specific
-                                          componentid: permissionsetsList
-                                        - signal: component/CALL
-                                          component: uesio/io.table
-                                          componentsignal: TOGGLE_MODE
-                                          targettype: specific
-                                          componentid: fieldPerms-table
-                      - uesio/io.box:
+                          title: Fields
+                          subtitle: $Param{collectionNamespace}.$Param{collectionname}
                           uesio.variant: uesio/io.section
+                      - uesio/io.box:
                           components:
-                            - uesio/io.titlebar:
-                                title: Fields
-                                subtitle: $Param{collectionNamespace}.$Param{collectionname}
-                                uesio.variant: uesio/io.section
-                            - uesio/io.box:
-                                components:
-                                  - uesio/studio.multipermissionpicker:
-                                      uesio.id: fieldPerms
-                                      uesio.context:
-                                        workspace:
-                                          name: $Param{workspacename}
-                                          app: $Param{app}
-                                      fieldId: uesio/studio.collectionrefs->$Param{collectionid}->fields
-                                      wireName: fields
-                                      permissionFields:
-                                        - name: read
-                                          label: Read
-                                          type: CHECKBOX
-                                        - name: edit
-                                          label: Edit
-                                          type: CHECKBOX
+                            - uesio/studio.multipermissionpicker:
+                                uesio.id: fieldPerms
+                                uesio.context:
+                                  workspace:
+                                    name: $Param{workspacename}
+                                    app: $Param{app}
+                                fieldId: uesio/studio.collectionrefs->$Param{collectionid}->fields
+                                wireName: fields
+                                permissionFields:
+                                  - name: read
+                                    label: Read
+                                    type: CHECKBOX
+                                  - name: edit
+                                    label: Edit
+                                    type: CHECKBOX

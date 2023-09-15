@@ -17,10 +17,8 @@ definition:
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
-        # uesio.variant: uesio/studio.mainlayout
         items:
           - uesio/io.griditem:
-              # uesio.variant: uesio/studio.topbar
               components:
                 - uesio/io.tabs:
                     # INTENTIONALLY do NOT specify a variant for tabs, to test our server-side parsing of defaultDefinition

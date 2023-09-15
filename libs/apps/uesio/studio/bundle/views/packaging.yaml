@@ -88,53 +88,45 @@ definition:
           lookupField: uesio/studio.patch
   # Components are how we describe the layout of our view
   components:
-    - uesio/io.grid:
-        uesio.variant: uesio/studio.mainlayout
-        items:
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.topbar
-              components:
-                - uesio/core.view:
-                    view: uesio/studio.topbar
-                    uesio.context:
-                      wire: workspaces
-                    params:
-                      itemType: packaging
-                      itemIcon: package
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.leftbar
-              components:
-                - uesio/core.view:
-                    uesio.context:
-                      wire: workspaces
-                    view: uesio/studio.workspacenav
-                    params:
-                      selected: packaging
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.content
-              components:
-                - uesio/io.titlebar:
-                    uesio.variant: uesio/io.main
-                    title: Packaging
-                    actions:
-                      - uesio/io.group:
-                          components:
-                            - uesio/io.button:
-                                text: Package new version
-                                hotkey: "n"
-                                uesio.variant: uesio/io.primary
-                                uesio.id: package-new-version
-                                signals:
-                                  - signal: wire/RESET
-                                    wire: newbundle
-                                  - signal: panel/TOGGLE
-                                    panel: newBundle
-                            - uesio/io.button:
-                                uesio.variant: uesio/io.secondary
-                                text: View Bundles
-                                signals:
-                                  - signal: route/NAVIGATE
-                                    path: app/$Param{app}
+    - uesio/studio.mainlayout:
+        topbar:
+          - uesio/core.view:
+              view: uesio/studio.topbar
+              uesio.context:
+                wire: workspaces
+              params:
+                itemType: packaging
+                itemIcon: package
+        leftbar:
+          - uesio/core.view:
+              uesio.context:
+                wire: workspaces
+              view: uesio/studio.workspacenav
+              params:
+                selected: packaging
+        content:
+          - uesio/io.titlebar:
+              uesio.variant: uesio/io.main
+              title: Packaging
+              actions:
+                - uesio/io.group:
+                    components:
+                      - uesio/io.button:
+                          text: Package new version
+                          hotkey: "n"
+                          uesio.variant: uesio/io.primary
+                          uesio.id: package-new-version
+                          signals:
+                            - signal: wire/RESET
+                              wire: newbundle
+                            - signal: panel/TOGGLE
+                              panel: newBundle
+                      - uesio/io.button:
+                          uesio.variant: uesio/io.secondary
+                          text: View Bundles
+                          signals:
+                            - signal: route/NAVIGATE
+                              path: app/$Param{app}
   panels:
     newBundle:
       uesio.type: uesio/io.dialog

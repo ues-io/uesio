@@ -4,36 +4,28 @@ definition:
   wires:
   # Components are how we describe the layout of our view
   components:
-    - uesio/io.grid:
-        uesio.variant: uesio/studio.mainlayout
-        items:
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.topbar
+    - uesio/studio.mainlayout:
+        topbar:
+          - uesio/core.view:
+              view: uesio/studio.topbar
+        leftbar:
+          - uesio/core.view:
+              view: uesio/studio.homeleftnav
+              uesio.id: orglist
+              wire: orgs
               components:
-                - uesio/core.view:
-                    view: uesio/studio.topbar
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.leftbar
-              components:
-                - uesio/core.view:
-                    view: uesio/studio.homeleftnav
-                    uesio.id: orglist
-                    wire: orgs
-                    components:
-                      - uesio/io.tile:
-                          uesio.variant: uesio/io.nav
-                          content:
-                            - uesio/io.text:
-                                text: ${uesio/core.uniquekey}
-                                element: div
-                          avatar:
-                            - uesio/io.text:
-                                uesio.variant: uesio/io.icon
-                                color: "#21242D"
-                                text: domain
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.content
-              components:
-                - uesio/core.view:
-                    view: uesio/studio.homecontent
-                    uesio.id: homecontent
+                - uesio/io.tile:
+                    uesio.variant: uesio/io.nav
+                    content:
+                      - uesio/io.text:
+                          text: ${uesio/core.uniquekey}
+                          element: div
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          color: "#21242D"
+                          text: domain
+        content:
+          - uesio/core.view:
+              view: uesio/studio.homecontent
+              uesio.id: homecontent

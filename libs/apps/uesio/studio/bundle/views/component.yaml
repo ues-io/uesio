@@ -30,324 +30,316 @@ definition:
           value: $Param{namespace}.$Param{componentname}
   # Components are how we describe the layout of our view
   components:
-    - uesio/io.grid:
-        uesio.variant: uesio/studio.mainlayout
-        items:
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.topbar
+    - uesio/studio.mainlayout:
+        topbar:
+          - uesio/core.view:
+              view: uesio/studio.topbar
+              uesio.context:
+                wire: workspaces
+              params:
+                itemType: components
+                itemIcon: widgets
+                itemName: $Param{componentname}
+                itemNameSpace: $Param{namespace}
+        leftbar:
+          - uesio/core.view:
+              uesio.context:
+                wire: workspaces
+              view: uesio/studio.workspacenav
+              params:
+                selected: components
+        content:
+          - uesio/io.list:
+              uesio.id: componentsList
+              wire: components
+              mode: READ
               components:
-                - uesio/core.view:
-                    view: uesio/studio.topbar
-                    uesio.context:
-                      wire: workspaces
-                    params:
-                      itemType: components
-                      itemIcon: widgets
-                      itemName: $Param{componentname}
-                      itemNameSpace: $Param{namespace}
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.leftbar
-              components:
-                - uesio/core.view:
-                    uesio.context:
-                      wire: workspaces
-                    view: uesio/studio.workspacenav
-                    params:
-                      selected: components
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.content
-              components:
-                - uesio/io.list:
-                    uesio.id: componentsList
-                    wire: components
-                    mode: READ
-                    components:
-                      - uesio/io.titlebar:
-                          uesio.variant: uesio/io.main
-                          title: Component - ${uesio/studio.name}
-                          subtitle: ${uesio/studio.namespace}
-                          actions:
-                            - uesio/io.group:
-                                uesio.display:
-                                  - type: fieldValue
-                                    field: uesio/studio.namespace
-                                    operator: EQUALS
-                                    value: $Param{app}
-                                components:
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: $Label{uesio/io.edit}
-                                      uesio.display:
-                                        - type: wireHasNoChanges
-                                          wire: components
-                                      signals:
-                                        - signal: component/CALL
-                                          component: uesio/io.list
-                                          componentsignal: TOGGLE_MODE
-                                          targettype: specific
-                                          componentid: componentsList
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.primary
-                                      text: $Label{uesio/io.save}
-                                      hotkey: "meta+s"
-                                      uesio.display:
-                                        - type: wireHasChanges
-                                          wire: components
-                                      signals:
-                                        - signal: wire/SAVE
-                                          wires:
-                                            - components
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: $Label{uesio/io.cancel}
-                                      uesio.display:
-                                        - type: wireHasChanges
-                                          wire: components
-                                      signals:
-                                        - signal: wire/CANCEL
-                                          wire: components
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: $Label{uesio/io.delete}
-                                      uesio.display:
-                                        - type: wireHasNoChanges
-                                          wire: components
-                                      signals:
-                                        - signal: wire/MARK_FOR_DELETE
-                                        - signal: wire/SAVE
-                                          wires:
-                                            - components
-                                        - signal: route/NAVIGATE
-                                          path: "app/$Param{app}/workspace/$Param{workspacename}/components"
-                      - uesio/io.box:
-                          uesio.variant: uesio/io.section
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.main
+                    title: Component - ${uesio/studio.name}
+                    subtitle: ${uesio/studio.namespace}
+                    actions:
+                      - uesio/io.group:
                           uesio.display:
                             - type: fieldValue
                               field: uesio/studio.namespace
                               operator: EQUALS
                               value: $Param{app}
                           components:
-                            - uesio/io.grid:
-                                uesio.variant: uesio/io.four_columns
-                                items:
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.name
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.type
-                                  - uesio/io.field:
-                                      fieldId: uesio/core.updatedby
-                                      user:
-                                        subtitle: $Time{uesio/core.updatedat}
-                                  - uesio/io.field:
-                                      fieldId: uesio/core.createdby
-                                      user:
-                                        subtitle: $Time{uesio/core.createdat}
-                            - uesio/io.grid:
-                                uesio.variant: uesio/io.four_columns
-                                items:
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.category
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.title
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.description
-                                  - uesio/io.field:
-                                      label: Available in View Builder
-                                      fieldId: uesio/studio.discoverable
-                            - uesio/io.tabs:
-                                tabs:
-                                  - id: properties
-                                    label: Properties
-                                    components:
-                                      - uesio/io.titlebar:
-                                          title: Component Properties
-                                      - uesio/studio.codefield:
-                                          fieldId: uesio/studio.properties
-                                          height: 100px
-                                          language: yaml
-                                          mode: READ
-                                          uesio.display:
-                                            - type: paramValue
-                                              param: app
-                                              field: uesio/core.dynamiccollection
-                                              operator: NOT_EQUALS
-                                              value: $Param{namespace}
-                                      - uesio/studio.codefield:
-                                          fieldId: uesio/studio.properties
-                                          height: 100px
-                                          language: yaml
-                                          uesio.display:
-                                            - type: paramValue
-                                              param: app
-                                              field: uesio/core.dynamiccollection
-                                              operator: EQUALS
-                                              value: $Param{namespace}
-                                  - id: sections
-                                    label: Sections
-                                    components:
-                                      - uesio/io.titlebar:
-                                          title: View Builder Properties Panel Sections
-                                      - uesio/studio.codefield:
-                                          fieldId: uesio/studio.sections
-                                          height: 100px
-                                          language: yaml
-                                          mode: READ
-                                          uesio.display:
-                                            - type: paramValue
-                                              param: app
-                                              field: uesio/core.dynamiccollection
-                                              operator: NOT_EQUALS
-                                              value: $Param{namespace}
-                                      - uesio/studio.codefield:
-                                          fieldId: uesio/studio.sections
-                                          height: 150px
-                                          language: yaml
-                                          uesio.display:
-                                            - type: paramValue
-                                              param: app
-                                              field: uesio/core.dynamiccollection
-                                              operator: EQUALS
-                                              value: $Param{namespace}
-                                  - id: defaultDefinition
-                                    label: Default Component YAML
-                                    components:
-                                      - uesio/io.titlebar:
-                                          title: View Builder New Component Default YAML
-                                      - uesio/studio.codefield:
-                                          fieldId: uesio/studio.defaultdefinition
-                                          height: 150px
-                                          language: yaml
-                                          mode: READ
-                                          uesio.display:
-                                            - type: paramValue
-                                              param: app
-                                              field: uesio/core.dynamiccollection
-                                              operator: NOT_EQUALS
-                                              value: $Param{namespace}
-                                      - uesio/studio.codefield:
-                                          fieldId: uesio/studio.defaultdefinition
-                                          height: 150px
-                                          language: yaml
-                                          uesio.display:
-                                            - type: paramValue
-                                              param: app
-                                              field: uesio/core.dynamiccollection
-                                              operator: EQUALS
-                                              value: $Param{namespace}
-                                  - id: declarativeDefinition
-                                    label: Declarative Component Definition
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: $Label{uesio/io.edit}
+                                uesio.display:
+                                  - type: wireHasNoChanges
+                                    wire: components
+                                signals:
+                                  - signal: component/CALL
+                                    component: uesio/io.list
+                                    componentsignal: TOGGLE_MODE
+                                    targettype: specific
+                                    componentid: componentsList
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.primary
+                                text: $Label{uesio/io.save}
+                                hotkey: "meta+s"
+                                uesio.display:
+                                  - type: wireHasChanges
+                                    wire: components
+                                signals:
+                                  - signal: wire/SAVE
+                                    wires:
+                                      - components
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: $Label{uesio/io.cancel}
+                                uesio.display:
+                                  - type: wireHasChanges
+                                    wire: components
+                                signals:
+                                  - signal: wire/CANCEL
+                                    wire: components
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: $Label{uesio/io.delete}
+                                uesio.display:
+                                  - type: wireHasNoChanges
+                                    wire: components
+                                signals:
+                                  - signal: wire/MARK_FOR_DELETE
+                                  - signal: wire/SAVE
+                                    wires:
+                                      - components
+                                  - signal: route/NAVIGATE
+                                    path: "app/$Param{app}/workspace/$Param{workspacename}/components"
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    uesio.display:
+                      - type: fieldValue
+                        field: uesio/studio.namespace
+                        operator: EQUALS
+                        value: $Param{app}
+                    components:
+                      - uesio/io.grid:
+                          uesio.variant: uesio/io.four_columns
+                          items:
+                            - uesio/io.field:
+                                fieldId: uesio/studio.name
+                            - uesio/io.field:
+                                fieldId: uesio/studio.type
+                            - uesio/io.field:
+                                fieldId: uesio/core.updatedby
+                                user:
+                                  subtitle: $Time{uesio/core.updatedat}
+                            - uesio/io.field:
+                                fieldId: uesio/core.createdby
+                                user:
+                                  subtitle: $Time{uesio/core.createdat}
+                      - uesio/io.grid:
+                          uesio.variant: uesio/io.four_columns
+                          items:
+                            - uesio/io.field:
+                                fieldId: uesio/studio.category
+                            - uesio/io.field:
+                                fieldId: uesio/studio.title
+                            - uesio/io.field:
+                                fieldId: uesio/studio.description
+                            - uesio/io.field:
+                                label: Available in View Builder
+                                fieldId: uesio/studio.discoverable
+                      - uesio/io.tabs:
+                          tabs:
+                            - id: properties
+                              label: Properties
+                              components:
+                                - uesio/io.titlebar:
+                                    title: Component Properties
+                                - uesio/studio.codefield:
+                                    fieldId: uesio/studio.properties
+                                    height: 100px
+                                    language: yaml
+                                    mode: READ
                                     uesio.display:
-                                      - field: uesio/studio.type
-                                        value: DECLARATIVE
-                                    components:
-                                      - uesio/io.titlebar:
-                                          title: Declarative Component Definition
-                                      - uesio/studio.codefield:
-                                          fieldId: uesio/studio.definition
-                                          height: 100px
-                                          language: yaml
-                                          mode: READ
-                                          uesio.display:
-                                            - type: paramValue
-                                              param: app
-                                              field: uesio/core.dynamiccollection
-                                              operator: NOT_EQUALS
-                                              value: $Param{namespace}
-                                      - uesio/studio.codefield:
-                                          fieldId: uesio/studio.definition
-                                          height: 100px
-                                          language: yaml
-                                          uesio.display:
-                                            - type: paramValue
-                                              param: app
-                                              field: uesio/core.dynamiccollection
-                                              operator: EQUALS
-                                              value: $Param{namespace}
-                      - uesio/io.box:
+                                      - type: paramValue
+                                        param: app
+                                        field: uesio/core.dynamiccollection
+                                        operator: NOT_EQUALS
+                                        value: $Param{namespace}
+                                - uesio/studio.codefield:
+                                    fieldId: uesio/studio.properties
+                                    height: 100px
+                                    language: yaml
+                                    uesio.display:
+                                      - type: paramValue
+                                        param: app
+                                        field: uesio/core.dynamiccollection
+                                        operator: EQUALS
+                                        value: $Param{namespace}
+                            - id: sections
+                              label: Sections
+                              components:
+                                - uesio/io.titlebar:
+                                    title: View Builder Properties Panel Sections
+                                - uesio/studio.codefield:
+                                    fieldId: uesio/studio.sections
+                                    height: 100px
+                                    language: yaml
+                                    mode: READ
+                                    uesio.display:
+                                      - type: paramValue
+                                        param: app
+                                        field: uesio/core.dynamiccollection
+                                        operator: NOT_EQUALS
+                                        value: $Param{namespace}
+                                - uesio/studio.codefield:
+                                    fieldId: uesio/studio.sections
+                                    height: 150px
+                                    language: yaml
+                                    uesio.display:
+                                      - type: paramValue
+                                        param: app
+                                        field: uesio/core.dynamiccollection
+                                        operator: EQUALS
+                                        value: $Param{namespace}
+                            - id: defaultDefinition
+                              label: Default Component YAML
+                              components:
+                                - uesio/io.titlebar:
+                                    title: View Builder New Component Default YAML
+                                - uesio/studio.codefield:
+                                    fieldId: uesio/studio.defaultdefinition
+                                    height: 150px
+                                    language: yaml
+                                    mode: READ
+                                    uesio.display:
+                                      - type: paramValue
+                                        param: app
+                                        field: uesio/core.dynamiccollection
+                                        operator: NOT_EQUALS
+                                        value: $Param{namespace}
+                                - uesio/studio.codefield:
+                                    fieldId: uesio/studio.defaultdefinition
+                                    height: 150px
+                                    language: yaml
+                                    uesio.display:
+                                      - type: paramValue
+                                        param: app
+                                        field: uesio/core.dynamiccollection
+                                        operator: EQUALS
+                                        value: $Param{namespace}
+                            - id: declarativeDefinition
+                              label: Declarative Component Definition
+                              uesio.display:
+                                - field: uesio/studio.type
+                                  value: DECLARATIVE
+                              components:
+                                - uesio/io.titlebar:
+                                    title: Declarative Component Definition
+                                - uesio/studio.codefield:
+                                    fieldId: uesio/studio.definition
+                                    height: 100px
+                                    language: yaml
+                                    mode: READ
+                                    uesio.display:
+                                      - type: paramValue
+                                        param: app
+                                        field: uesio/core.dynamiccollection
+                                        operator: NOT_EQUALS
+                                        value: $Param{namespace}
+                                - uesio/studio.codefield:
+                                    fieldId: uesio/studio.definition
+                                    height: 100px
+                                    language: yaml
+                                    uesio.display:
+                                      - type: paramValue
+                                        param: app
+                                        field: uesio/core.dynamiccollection
+                                        operator: EQUALS
+                                        value: $Param{namespace}
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.titlebar:
                           uesio.variant: uesio/io.section
-                          components:
-                            - uesio/io.titlebar:
-                                uesio.variant: uesio/io.section
-                                title: Variants
-                                actions:
-                                  - uesio/io.group:
-                                      components:
-                                        - uesio/io.button:
-                                            uesio.variant: uesio/io.primary
-                                            uesio.id: save-variants
-                                            text: $Label{uesio/io.save}
-                                            hotkey: "meta+s"
-                                            signals:
-                                              - signal: wire/SAVE
-                                                wires:
-                                                  - variants
-                                              # Need to reload the wire after save in order to pull in namespace and other special fields
-                                              # that are magically added on the backend to the allmetadata collection
-                                              - signal: wire/LOAD
-                                                wires:
-                                                  - variants
-                                            uesio.display:
-                                              - type: wireHasChanges
-                                                wire: variants
-                                        - uesio/io.button:
-                                            uesio.variant: uesio/io.secondary
-                                            uesio.id: cancel-variants
-                                            text: $Label{uesio/io.cancel}
-                                            signals:
-                                              - signal: wire/CANCEL
-                                                wire: variants
-                                            uesio.display:
-                                              - type: wireHasChanges
-                                                wire: variants
-                                        # - uesio/io.button:
-                                        #     uesio.variant: uesio/io.primary
-                                        #     uesio.id: new-variant
-                                        #     text: New Variant
-                                        #     hotkey: "n"
-                                        #     signals:
-                                        #       - signal: wire/RESET
-                                        #         wire: newvariant
-                                        #       - signal: panel/TOGGLE
-                                        #         panel: newvariant
-                                        #     uesio.display:
-                                        #       - type: wireHasNoChanges
-                                        #         wire: variants
-                            - uesio/io.searchbox:
-                                wire: variants
-                            - uesio/io.table:
-                                uesio.id: variants
-                                wire: variants
-                                mode: READ
-                                rowactions:
-                                  - type: DEFAULT
-                                    signals:
-                                      - signal: route/NAVIGATE
-                                        path: app/$Param{app}/workspace/$Param{workspacename}/variants/$Param{namespace}/$Param{componentname}/variants/${uesio/studio.namespace}/${uesio/studio.name}
+                          title: Variants
+                          actions:
+                            - uesio/io.group:
+                                components:
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.primary
+                                      uesio.id: save-variants
+                                      text: $Label{uesio/io.save}
+                                      hotkey: "meta+s"
+                                      signals:
+                                        - signal: wire/SAVE
+                                          wires:
+                                            - variants
+                                        # Need to reload the wire after save in order to pull in namespace and other special fields
+                                        # that are magically added on the backend to the allmetadata collection
+                                        - signal: wire/LOAD
+                                          wires:
+                                            - variants
+                                      uesio.display:
+                                        - type: wireHasChanges
+                                          wire: variants
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.secondary
+                                      uesio.id: cancel-variants
+                                      text: $Label{uesio/io.cancel}
+                                      signals:
+                                        - signal: wire/CANCEL
+                                          wire: variants
+                                      uesio.display:
+                                        - type: wireHasChanges
+                                          wire: variants
+                                  # - uesio/io.button:
+                                  #     uesio.variant: uesio/io.primary
+                                  #     uesio.id: new-variant
+                                  #     text: New Variant
+                                  #     hotkey: "n"
+                                  #     signals:
+                                  #       - signal: wire/RESET
+                                  #         wire: newvariant
+                                  #       - signal: panel/TOGGLE
+                                  #         panel: newvariant
+                                  #     uesio.display:
+                                  #       - type: wireHasNoChanges
+                                  #         wire: variants
+                      - uesio/io.searchbox:
+                          wire: variants
+                      - uesio/io.table:
+                          uesio.id: variants
+                          wire: variants
+                          mode: READ
+                          rowactions:
+                            - type: DEFAULT
+                              signals:
+                                - signal: route/NAVIGATE
+                                  path: app/$Param{app}/workspace/$Param{workspacename}/variants/$Param{namespace}/$Param{componentname}/variants/${uesio/studio.namespace}/${uesio/studio.name}
+                              uesio.display:
+                                - type: recordIsNotNew
+                            - text: $Label{uesio/io.delete}
+                              signals:
+                                - signal: wire/TOGGLE_DELETE_STATUS
+                                  wire: variants
+                              uesio.display:
+                                - type: fieldValue
+                                  field: uesio/studio.namespace
+                                  operator: EQUALS
+                                  value: $Param{app}
+                          columns:
+                            - label: Variant
+                              components:
+                                - uesio/studio.iconlabel:
+                                    uesio.variant: uesio/studio.namespacefield
+                                    text: ${uesio/studio.name}
+                                    subtitle: ${uesio/studio.namespace}
+                                    icon: ${uesio/studio.appicon}
+                                    color: ${uesio/studio.appcolor}
                                     uesio.display:
                                       - type: recordIsNotNew
-                                  - text: $Label{uesio/io.delete}
-                                    signals:
-                                      - signal: wire/TOGGLE_DELETE_STATUS
-                                        wire: variants
-                                    uesio.display:
-                                      - type: fieldValue
-                                        field: uesio/studio.namespace
-                                        operator: EQUALS
-                                        value: $Param{app}
-                                columns:
-                                  - label: Variant
-                                    components:
-                                      - uesio/studio.iconlabel:
-                                          uesio.variant: uesio/studio.namespacefield
-                                          text: ${uesio/studio.name}
-                                          subtitle: ${uesio/studio.namespace}
-                                          icon: ${uesio/studio.appicon}
-                                          color: ${uesio/studio.appcolor}
-                                          uesio.display:
-                                            - type: recordIsNotNew
-                                  - field: uesio/core.updatedby
-                                    user:
-                                      subtitle: $Time{uesio/core.updatedat}
-                                  - field: uesio/core.createdby
-                                    user:
-                                      subtitle: $Time{uesio/core.createdat}
+                            - field: uesio/core.updatedby
+                              user:
+                                subtitle: $Time{uesio/core.updatedat}
+                            - field: uesio/core.createdby
+                              user:
+                                subtitle: $Time{uesio/core.createdat}

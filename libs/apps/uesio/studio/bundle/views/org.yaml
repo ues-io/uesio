@@ -67,101 +67,93 @@ definition:
         query: false
         create: true
   components:
-    - uesio/io.grid:
-        uesio.variant: uesio/studio.mainlayout
-        items:
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.topbar
+    - uesio/studio.mainlayout:
+        topbar:
+          - uesio/core.view:
+              view: uesio/studio.topbar
+        leftbar:
+          - uesio/core.view:
+              view: uesio/studio.homeleftnav
+        content:
+          - uesio/io.list:
+              wire: org
+              uesio.id: orgDetail
               components:
-                - uesio/core.view:
-                    view: uesio/studio.topbar
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.leftbar
-              components:
-                - uesio/core.view:
-                    view: uesio/studio.homeleftnav
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.content
-              components:
-                - uesio/io.list:
-                    wire: org
-                    uesio.id: orgDetail
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.main
+                    title: "Organization: ${uesio/core.username}"
+                    actions:
+                      - uesio/io.group:
+                          components:
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.destructive
+                                text: Delete
+                                signals:
+                                  - signal: panel/TOGGLE
+                                    panel: deleteOrg
+                                uesio.display:
+                                  - type: wireHasNoRecords
+                                    wire: orgapps
+                                  - field: uesio/core.owner->uesio/core.id
+                                    wire: org
+                                    operator: EQUALS
+                                    value: "$User{id}"
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
                     components:
                       - uesio/io.titlebar:
-                          uesio.variant: uesio/io.main
-                          title: "Organization: ${uesio/core.username}"
+                          uesio.variant: uesio/io.section
+                          title: Linked Users
                           actions:
                             - uesio/io.group:
                                 components:
                                   - uesio/io.button:
-                                      uesio.variant: uesio/io.destructive
-                                      text: Delete
+                                      uesio.variant: uesio/io.primary
+                                      text: Link a user to this organization
                                       signals:
                                         - signal: panel/TOGGLE
-                                          panel: deleteOrg
+                                          panel: newOrgUser
                                       uesio.display:
-                                        - type: wireHasNoRecords
-                                          wire: orgapps
                                         - field: uesio/core.owner->uesio/core.id
                                           wire: org
                                           operator: EQUALS
                                           value: "$User{id}"
-                      - uesio/io.box:
+                      - uesio/io.table:
+                          uesio.id: orgusersTable
+                          pagesize: 5
+                          wire: orgusers
+                          mode: READ
+                          columns:
+                            - field: uesio/core.user
+                              reference:
+                                template: "${uesio/core.username} (${uesio/core.firstname} ${uesio/core.lastname})"
+                          rowactions:
+                            - text: Remove
+                              signals:
+                                - signal: wire/MARK_FOR_DELETE
+                                  wire: orgusers
+                                - signal: wire/SAVE
+                                  wires:
+                                    - orgusers
+                              uesio.display:
+                                - field: uesio/core.owner->uesio/core.id
+                                  wire: org
+                                  operator: EQUALS
+                                  value: "$User{id}"
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.titlebar:
                           uesio.variant: uesio/io.section
-                          components:
-                            - uesio/io.titlebar:
-                                uesio.variant: uesio/io.section
-                                title: Linked Users
-                                actions:
-                                  - uesio/io.group:
-                                      components:
-                                        - uesio/io.button:
-                                            uesio.variant: uesio/io.primary
-                                            text: Link a user to this organization
-                                            signals:
-                                              - signal: panel/TOGGLE
-                                                panel: newOrgUser
-                                            uesio.display:
-                                              - field: uesio/core.owner->uesio/core.id
-                                                wire: org
-                                                operator: EQUALS
-                                                value: "$User{id}"
-                            - uesio/io.table:
-                                uesio.id: orgusersTable
-                                pagesize: 5
-                                wire: orgusers
-                                mode: READ
-                                columns:
-                                  - field: uesio/core.user
-                                    reference:
-                                      template: "${uesio/core.username} (${uesio/core.firstname} ${uesio/core.lastname})"
-                                rowactions:
-                                  - text: Remove
-                                    signals:
-                                      - signal: wire/MARK_FOR_DELETE
-                                        wire: orgusers
-                                      - signal: wire/SAVE
-                                        wires:
-                                          - orgusers
-                                    uesio.display:
-                                      - field: uesio/core.owner->uesio/core.id
-                                        wire: org
-                                        operator: EQUALS
-                                        value: "$User{id}"
-                      - uesio/io.box:
-                          uesio.variant: uesio/io.section
-                          components:
-                            - uesio/io.titlebar:
-                                uesio.variant: uesio/io.section
-                                title: Owned Apps
-                            - uesio/io.table:
-                                uesio.id: apptable
-                                pagesize: 5
-                                wire: orgapps
-                                columns:
-                                  - field: uesio/studio.name
-                                    reference:
-                                      template: "${uesio/studio.name}"
+                          title: Owned Apps
+                      - uesio/io.table:
+                          uesio.id: apptable
+                          pagesize: 5
+                          wire: orgapps
+                          columns:
+                            - field: uesio/studio.name
+                              reference:
+                                template: "${uesio/studio.name}"
   panels:
     deleteOrg:
       uesio.type: uesio/io.dialog

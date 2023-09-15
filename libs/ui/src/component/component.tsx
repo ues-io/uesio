@@ -20,7 +20,6 @@ import { MetadataKey } from "../metadata/types"
 import { useShould } from "./display"
 import { component } from ".."
 import { getKey } from "../metadata/metadata"
-import { getComponentIdFromProps } from "../hooks/componentapi"
 import { getComponentType } from "../bands/componenttype/selectors"
 import { Declarative, DeclarativeComponent } from "../definition/component"
 import { DISPLAY_CONDITIONS } from "../componentexports"
@@ -122,13 +121,11 @@ const DeclarativeComponent: UC<DeclarativeProps> = (props) => {
 			  } as DeclarativeComponentSlotContext)
 			: context
 	return (
-		<div id={getComponentIdFromProps(props)}>
-			<Slot
-				context={actualContext}
-				path={path}
-				definition={actualDefinition}
-			/>
-		</div>
+		<Slot
+			context={actualContext}
+			path={path}
+			definition={actualDefinition}
+		/>
 	)
 }
 

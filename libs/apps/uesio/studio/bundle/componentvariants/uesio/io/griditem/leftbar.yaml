@@ -1,8 +1,0 @@
-name: leftbar
-label: Left Bar
-definition:
-  uesio.styleTokens:
-    root:
-      - bg-white
-      - h-full
-      - overflow-auto

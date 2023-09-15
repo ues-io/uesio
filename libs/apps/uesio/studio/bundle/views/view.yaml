@@ -23,146 +23,138 @@ definition:
           value: $Param{namespace}.$Param{viewname}
   # Components are how we describe the layout of our view
   components:
-    - uesio/io.grid:
-        uesio.variant: uesio/studio.mainlayout
-        items:
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.topbar
+    - uesio/studio.mainlayout:
+        topbar:
+          - uesio/core.view:
+              view: uesio/studio.topbar
+              uesio.context:
+                wire: workspaces
+              params:
+                itemType: views
+                itemIcon: view_quilt
+                itemName: $Param{viewname}
+                itemNameSpace: $Param{namespace}
+        leftbar:
+          - uesio/core.view:
+              uesio.context:
+                wire: workspaces
+              view: uesio/studio.workspacenav
+              params:
+                selected: views
+        content:
+          - uesio/io.list:
+              uesio.id: viewsDeck
+              wire: views
+              mode: READ
               components:
-                - uesio/core.view:
-                    view: uesio/studio.topbar
-                    uesio.context:
-                      wire: workspaces
-                    params:
-                      itemType: views
-                      itemIcon: view_quilt
-                      itemName: $Param{viewname}
-                      itemNameSpace: $Param{namespace}
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.leftbar
-              components:
-                - uesio/core.view:
-                    uesio.context:
-                      wire: workspaces
-                    view: uesio/studio.workspacenav
-                    params:
-                      selected: views
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.content
-              components:
-                - uesio/io.list:
-                    uesio.id: viewsDeck
-                    wire: views
-                    mode: READ
-                    components:
-                      - uesio/io.titlebar:
-                          uesio.variant: uesio/io.main
-                          title: View - ${uesio/studio.name}
-                          subtitle: $Param{namespace}
-                          actions:
-                            - uesio/io.group:
-                                components:
-                                  - uesio/studio.previewbutton:
-                                      view: $Param{namespace}.${uesio/studio.name}
-                                      label: $Label{uesio/io.preview}
-                                      uesio.id: preview-view
-                                      uesio.display:
-                                        - type: wireHasNoChanges
-                                          wire: views
-                                      hotkey: "meta+p"
-                                      uesio.context:
-                                        workspace:
-                                          name: $Param{workspacename}
-                                          app: $Param{app}
-                                  - uesio/studio.previewbutton:
-                                      view: $Param{app}.${uesio/studio.name}
-                                      label: $Label{uesio/io.build}
-                                      uesio.id: build-view
-                                      uesio.display:
-                                        - type: wireHasNoChanges
-                                          wire: views
-                                        - type: paramValue
-                                          param: app
-                                          field: uesio/core.dynamiccollection
-                                          operator: EQUALS
-                                          value: $Param{namespace}
-                                      hotkey: "meta+b"
-                                      buildMode: true
-                                      uesio.context:
-                                        workspace:
-                                          name: $Param{workspacename}
-                                          app: $Param{app}
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.primary
-                                      text: $Label{uesio/io.save}
-                                      hotkey: "meta+s"
-                                      uesio.display:
-                                        - type: wireHasChanges
-                                          wire: views
-                                        - type: paramValue
-                                          param: app
-                                          field: uesio/core.dynamiccollection
-                                          operator: EQUALS
-                                          value: $Param{namespace}
-                                      signals:
-                                        - signal: wire/SAVE
-                                          wire: views
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: $Label{uesio/io.cancel}
-                                      hotkey: "meta+shift+."
-                                      uesio.display:
-                                        - type: wireHasChanges
-                                          wire: views
-                                        - type: paramValue
-                                          param: app
-                                          field: uesio/core.dynamiccollection
-                                          operator: EQUALS
-                                          value: $Param{namespace}
-                                      signals:
-                                        - signal: wire/CANCEL
-                                          wire: views
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: $Label{uesio/io.delete}
-                                      signals:
-                                        - signal: panel/TOGGLE
-                                          panel: deleteView
-                                      uesio.display:
-                                        - type: paramValue
-                                          param: app
-                                          field: uesio/core.dynamiccollection
-                                          operator: EQUALS
-                                          value: $Param{namespace}
-                      - uesio/io.box:
-                          uesio.variant: uesio/io.section
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.main
+                    title: View - ${uesio/studio.name}
+                    subtitle: $Param{namespace}
+                    actions:
+                      - uesio/io.group:
                           components:
-                            - uesio/io.grid:
-                                uesio.variant: uesio/io.four_columns
-                                items:
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.name
-                            - uesio/studio.codefield:
-                                fieldId: uesio/studio.definition
-                                height: 350px
-                                language: yaml
-                                mode: READ
+                            - uesio/studio.previewbutton:
+                                view: $Param{namespace}.${uesio/studio.name}
+                                label: $Label{uesio/io.preview}
+                                uesio.id: preview-view
                                 uesio.display:
+                                  - type: wireHasNoChanges
+                                    wire: views
+                                hotkey: "meta+p"
+                                uesio.context:
+                                  workspace:
+                                    name: $Param{workspacename}
+                                    app: $Param{app}
+                            - uesio/studio.previewbutton:
+                                view: $Param{app}.${uesio/studio.name}
+                                label: $Label{uesio/io.build}
+                                uesio.id: build-view
+                                uesio.display:
+                                  - type: wireHasNoChanges
+                                    wire: views
                                   - type: paramValue
                                     param: app
                                     field: uesio/core.dynamiccollection
-                                    operator: NOT_EQUALS
+                                    operator: EQUALS
                                     value: $Param{namespace}
-                            - uesio/studio.codefield:
-                                fieldId: uesio/studio.definition
-                                height: 350px
-                                language: yaml
+                                hotkey: "meta+b"
+                                buildMode: true
+                                uesio.context:
+                                  workspace:
+                                    name: $Param{workspacename}
+                                    app: $Param{app}
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.primary
+                                text: $Label{uesio/io.save}
+                                hotkey: "meta+s"
+                                uesio.display:
+                                  - type: wireHasChanges
+                                    wire: views
+                                  - type: paramValue
+                                    param: app
+                                    field: uesio/core.dynamiccollection
+                                    operator: EQUALS
+                                    value: $Param{namespace}
+                                signals:
+                                  - signal: wire/SAVE
+                                    wire: views
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: $Label{uesio/io.cancel}
+                                hotkey: "meta+shift+."
+                                uesio.display:
+                                  - type: wireHasChanges
+                                    wire: views
+                                  - type: paramValue
+                                    param: app
+                                    field: uesio/core.dynamiccollection
+                                    operator: EQUALS
+                                    value: $Param{namespace}
+                                signals:
+                                  - signal: wire/CANCEL
+                                    wire: views
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: $Label{uesio/io.delete}
+                                signals:
+                                  - signal: panel/TOGGLE
+                                    panel: deleteView
                                 uesio.display:
                                   - type: paramValue
                                     param: app
                                     field: uesio/core.dynamiccollection
                                     operator: EQUALS
                                     value: $Param{namespace}
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.grid:
+                          uesio.variant: uesio/io.four_columns
+                          items:
+                            - uesio/io.field:
+                                fieldId: uesio/studio.name
+                      - uesio/studio.codefield:
+                          fieldId: uesio/studio.definition
+                          height: 350px
+                          language: yaml
+                          mode: READ
+                          uesio.display:
+                            - type: paramValue
+                              param: app
+                              field: uesio/core.dynamiccollection
+                              operator: NOT_EQUALS
+                              value: $Param{namespace}
+                      - uesio/studio.codefield:
+                          fieldId: uesio/studio.definition
+                          height: 350px
+                          language: yaml
+                          uesio.display:
+                            - type: paramValue
+                              param: app
+                              field: uesio/core.dynamiccollection
+                              operator: EQUALS
+                              value: $Param{namespace}
 
   panels:
     deleteView:
