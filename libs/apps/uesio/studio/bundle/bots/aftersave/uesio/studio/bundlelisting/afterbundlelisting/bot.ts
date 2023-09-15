@@ -22,7 +22,13 @@ function afterbundlelisting(bot: AfterSaveBotApi) {
 
 	bot.updates.get().forEach((change) => {
 		const NewStatus = change.get("uesio/studio.status") as string
-		const OldStatus = change.getOld("uesio/studio.status") as string
+		const OldStatus = change.getOld("uesio/studio.status")
+
+		if (!OldStatus) {
+			// If there's not an old status, allow the new status to be set without recording any history.
+			// Most likely this is an old listing, or we are running seeds.
+			return
+		}
 
 		if (OldStatus === "OPEN" && NewStatus === "SUBMITTED") {
 			historyChanges.push(getHistoryItem(change))
