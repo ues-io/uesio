@@ -116,6 +116,23 @@ definition:
                 - uesio/io.text:
                     uesio.variant: uesio/io.icon
                     text: settings
+          - uesio/io.tile:
+              uesio.variant: uesio/io.nav
+              uesio.classes:
+                selected:
+                  - type: paramValue
+                    param: selected
+                    value: publish
+              signals:
+                - signal: route/NAVIGATE
+                  path: app/${apps:uesio/core.uniquekey}/publish
+              content:
+                - uesio/io.text:
+                    text: Publish
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: outbox
     - uesio/io.titlebar:
         uesio.variant: uesio/io.nav
         title: Workspaces
