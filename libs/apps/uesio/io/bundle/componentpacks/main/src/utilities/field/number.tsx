@@ -19,6 +19,7 @@ interface NumberFieldProps {
 	placeholder?: string
 	type?: "number" | "range"
 	focusOnRender?: boolean
+	readonly?: boolean
 }
 
 const StyleDefaults = Object.freeze({
@@ -44,7 +45,7 @@ const NumberField: definition.UtilityComponent<NumberFieldProps> = (props) => {
 	} = props
 
 	const value = props.value as number | string
-	const readonly = mode === "READ"
+	const readonly = mode === "READ" || props.readonly
 	const numberOptions = fieldMetadata?.getNumberMetadata()
 	const decimals = numberOptions?.decimals || 2
 
@@ -60,7 +61,7 @@ const NumberField: definition.UtilityComponent<NumberFieldProps> = (props) => {
 		"uesio/io.field"
 	)
 
-	if (mode === "READ") {
+	if (readonly) {
 		return (
 			<ReadOnlyField variant={variant} context={context}>
 				{typeof value === "number" ? value.toFixed(decimals) : value}
