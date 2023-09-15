@@ -2,67 +2,65 @@ name: bundlelistingvisual
 category: LAYOUT
 pack: main
 type: DECLARATIVE
-slots:
-  - name: components
+slots: null
 definition:
-  components:
-    - uesio/io.box:
-        uesio.styleTokens:
-          root:
-            - rounded-lg
-            - overflow-hidden
-            - bg-white
-            - shadow-lg
-            - max-h-80
-            - max-w-md
-        components:
-          - uesio/io.box:
-              uesio.styleTokens:
-                root:
-                  - bg-slate-50
-                  - flex
-                  - bg-[$Prop{color}]
-                  - pt-[50%]
-                  - items-center
-                  - justify-center
-                  - text-white
-                  - relative
-              components:
-                - uesio/io.text:
-                    uesio.styleTokens:
-                      root:
-                        - items-center
-                        - justify-center
-                        - inset-4
-                        - absolute
-                        - text-6xl
-                    uesio.variant: uesio/io.icon
-                    text: $Prop{icon}
-          - uesio/io.box:
-              uesio.styleTokens:
-                root:
-                  - p-8
-              components:
-                - uesio/io.text:
-                    text: $Prop{title}
-                    element: span
-                    uesio.styleTokens:
-                      root:
-                        - align-middle
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    color: rgb(29,173,113)
-                    uesio.styleTokens:
-                      root:
-                        - p-1
-                    uesio.display:
-                      - type: hasValue
-                        value: $Prop{verified}
-                    text: "verified"
-                - uesio/io.text:
-                    uesio.variant: uesio/io.aside
-                    text: $Prop{subtitle}
-                    element: p
+  - uesio/io.box:
+      uesio.styleTokens:
+        root:
+          - rounded-lg
+          - overflow-hidden
+          - bg-white
+          - shadow-lg
+          - max-h-80
+          - max-w-md
+      components:
+        - uesio/io.box:
+            uesio.styleTokens:
+              root:
+                - bg-slate-50
+                - flex
+                - bg-[$Prop{color}]
+                - pt-[50%]
+                - items-center
+                - justify-center
+                - text-white
+                - relative
+            components:
+              - uesio/io.text:
+                  uesio.styleTokens:
+                    root:
+                      - items-center
+                      - justify-center
+                      - inset-4
+                      - absolute
+                      - text-6xl
+                  uesio.variant: uesio/io.icon
+                  text: $Prop{icon}
+        - uesio/io.box:
+            uesio.styleTokens:
+              root:
+                - p-8
+            components:
+              - uesio/io.text:
+                  text: $Prop{title}
+                  element: span
+                  uesio.styleTokens:
+                    root:
+                      - align-middle
+              - uesio/io.text:
+                  uesio.variant: uesio/io.icon
+                  color: rgb(29,173,113)
+                  uesio.styleTokens:
+                    root:
+                      - p-1
+                  uesio.display:
+                    - type: hasValue
+                      value: $Prop{verified}
+                  text: "verified"
+              - uesio/io.text:
+                  uesio.variant: uesio/io.aside
+                  text: $Prop{subtitle}
+                  element: p
 title: Bundle Listing Visual
 discoverable: true
 description: A component that wraps other components
@@ -101,6 +99,3 @@ sections:
   - type: DISPLAY
 signals: null
 styleRegions: null
-variants:
-  - uesio/io.text:uesio/io.aside
-  - uesio/io.text:uesio/io.icon
