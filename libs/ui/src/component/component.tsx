@@ -23,7 +23,7 @@ import { getKey } from "../metadata/metadata"
 import { getComponentType } from "../bands/componenttype/selectors"
 import { Declarative, DeclarativeComponent } from "../definition/component"
 import { DISPLAY_CONDITIONS } from "../componentexports"
-import Slot from "../utilities/slot"
+import Slot, { DefaultSlotName } from "../utilities/slot"
 
 // A cache of full variant definitions, where all variant extensions have been resolved
 // NOTE: This cache will be persisted across all route navigations, and has no upper bound.
@@ -94,13 +94,13 @@ const DeclarativeComponent: UC<DeclarativeProps> = (props) => {
 	// by adding a props frame, to resolve all "$Prop{propName}" merges.
 	// These properties will NOT be accessible to child components.
 	const actualDefinition =
-		(context
+		context
 			.addPropsFrame(definition)
 			// definition may not be Record<string, string>, but we just need to be able to merge it,
 			// so we need to cast it.
-			.mergeDeep(
-				componentTypeDef.definition as Record<string, string>
-			) as DefinitionMap) || {}
+			.mergeList(
+				componentTypeDef.definition as Record<string, string>[]
+			) || []
 	// Add a Props frame containing any Slots, so that any Slot components
 	// which are children of this component can access the slot definitions.
 	const actualContext =
@@ -124,7 +124,8 @@ const DeclarativeComponent: UC<DeclarativeProps> = (props) => {
 		<Slot
 			context={actualContext}
 			path={path}
-			definition={actualDefinition}
+			listName={DefaultSlotName}
+			definition={{ [DefaultSlotName]: actualDefinition }}
 		/>
 	)
 }

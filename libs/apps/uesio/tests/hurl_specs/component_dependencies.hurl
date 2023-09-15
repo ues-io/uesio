@@ -63,7 +63,7 @@ jsonpath "$.dependencies.componentpack.entities['uesio/io.main'].name" == "main"
 jsonpath "$.dependencies.componenttype.entities['uesio/tests.declarative1'].name" == "declarative1"
 jsonpath "$.dependencies.componenttype.entities['uesio/tests.declarative1'].type" == "DECLARATIVE"
 jsonpath "$.dependencies.componenttype.entities['uesio/tests.declarative1'].definition" exists
-jsonpath "$.dependencies.componenttype.entities['uesio/tests.declarative1'].definition.components" count == 2
+jsonpath "$.dependencies.componenttype.entities['uesio/tests.declarative1'].definition" count == 2
 jsonpath "$.dependencies.componenttype.entities['uesio/tests.declarative1'].title" not exists # no builder metadata should be loaded
 
 GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/declarative2
@@ -74,6 +74,6 @@ jsonpath "$.dependencies.componentpack.entities['uesio/io.main'].name" == "main"
 jsonpath "$.dependencies.componenttype.entities['uesio/tests.declarative2'].name" == "declarative2"
 jsonpath "$.dependencies.componenttype.entities['uesio/tests.declarative2'].type" == "DECLARATIVE"
 jsonpath "$.dependencies.componenttype.entities['uesio/tests.declarative2'].definition" exists
-jsonpath "$.dependencies.componenttype.entities['uesio/tests.declarative2'].definition.components" count == 3
-jsonpath "$.dependencies.componenttype.entities['uesio/tests.declarative2'].slots" count == 3
+jsonpath "$.dependencies.componenttype.entities['uesio/tests.declarative2'].definition" count == 3
+jsonpath "$.dependencies.componenttype.entities['uesio/tests.declarative2'].slots" count == 2
 jsonpath "$.dependencies.componenttype.entities['uesio/tests.declarative2'].title" not exists # no builder metadata should be loaded

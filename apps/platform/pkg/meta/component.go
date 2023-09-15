@@ -148,7 +148,7 @@ func (c *Component) MarshalJSONObject(enc *gojay.Encoder) {
 		enc.AddObjectKey("styleRegions", (*YAMLDefinition)(&c.StyleRegions))
 	}
 	if c.Definition.Content != nil {
-		enc.AddObjectKey("definition", (*YAMLDefinition)(&c.Definition))
+		enc.AddArrayKey("definition", (*YAMLDefinition)(&c.Definition))
 	}
 }
 
@@ -214,7 +214,7 @@ func (cdw *RuntimeComponentMetadata) MarshalJSONObject(enc *gojay.Encoder) {
 	enc.AddStringKey("name", cdw.Name)
 	enc.AddStringKey("type", cdw.GetType())
 	if cdw.Definition.Content != nil {
-		enc.AddObjectKey("definition", (*YAMLDefinition)(&cdw.Definition))
+		enc.AddArrayKey("definition", (*YAMLDefinition)(&cdw.Definition))
 	}
 	if cdw.Slots.Content != nil {
 		enc.AddArrayKey("slots", (*YAMLDefinition)(&cdw.Slots))

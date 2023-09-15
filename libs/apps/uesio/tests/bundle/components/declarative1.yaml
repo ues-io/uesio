@@ -1,15 +1,12 @@
 name: declarative1
 category: LAYOUT
-pack: main
 type: DECLARATIVE
-slots:
-  - name: components
+slots: null
 definition:
-  components:
-    - uesio/io.text:
-        text: $Prop{title}
-    - uesio/io.text:
-        text: $Prop{subtitle}
+  - uesio/io.text:
+      text: $Prop{title}
+  - uesio/io.text:
+      text: $Prop{subtitle}
 title: Declarative Magic
 discoverable: true
 description: A component that wraps other components
@@ -20,9 +17,6 @@ properties:
   - type: TEXT
     name: subtitle
     label: Subtitle
-  - type: COMPONENT_ID
-    name: uesio.id
-    label: Component Id
 defaultDefinition:
   title: This is a title
   subtitle: This is a subtitle
@@ -31,8 +25,6 @@ sections:
     properties:
       - title
       - subtitle
-      - uesio.id
-  - type: STYLES
   - type: DISPLAY
 signals: null
 styleRegions: null

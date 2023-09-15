@@ -1,27 +1,24 @@
 name: declarative2
 category: LAYOUT
-pack: main
 type: DECLARATIVE
 slots:
-  - name: components
   - name: header
   - name: footer
 definition:
-  components:
-    - uesio/core.slot:
-        name: header
-    - uesio/io.grid:
-        uesio.styleTokens:
-          root:
-            - grid-cols-2
-            - gap-4
-        items:
-          - uesio/io.text:
-              text: $Prop{text1}
-          - uesio/io.text:
-              text: $Prop{text2}
-    - uesio/core.slot:
-        name: footer
+  - uesio/core.slot:
+      name: header
+  - uesio/io.grid:
+      uesio.styleTokens:
+        root:
+          - grid-cols-2
+          - gap-4
+      items:
+        - uesio/io.text:
+            text: $Prop{text1}
+        - uesio/io.text:
+            text: $Prop{text2}
+  - uesio/core.slot:
+      name: footer
 title: Declarative 2
 discoverable: true
 description: Two little text boxes sitting in a grid
