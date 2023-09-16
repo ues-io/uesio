@@ -7,7 +7,6 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	"github.com/thecloudmasters/uesio/pkg/integ"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
@@ -30,7 +29,7 @@ type LoadOp struct {
 	DebugQueryString   string                 `json:"debugQueryString"`
 	// Internal only conveniences for LoadBots to be able to access prefetched metadata
 	metadata    *MetadataCache
-	integration integ.IntegrationConnection
+	integration IntegrationConnection
 }
 
 type LoadOpWrapper LoadOp
@@ -87,7 +86,7 @@ func (op *LoadOp) UnmarshalYAML(node *yaml.Node) error {
 
 }
 
-func (op *LoadOp) GetIntegration() (integ.IntegrationConnection, error) {
+func (op *LoadOp) GetIntegration() (IntegrationConnection, error) {
 	if op.integration != nil {
 		return op.integration, nil
 	}
@@ -107,7 +106,7 @@ func (op *LoadOp) AttachMetadataCache(response *MetadataCache) *LoadOp {
 	return op
 }
 
-func (op *LoadOp) AttachIntegration(integration integ.IntegrationConnection) *LoadOp {
+func (op *LoadOp) AttachIntegration(integration IntegrationConnection) *LoadOp {
 	op.integration = integration
 	return op
 }

@@ -6,8 +6,9 @@ import (
 
 	"github.com/sendgrid/sendgrid-go"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/integ"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -26,7 +27,7 @@ type SendEmailOptions struct {
 type SendGridIntegration struct {
 }
 
-func (sgi *SendGridIntegration) GetIntegrationConnection(integration *meta.Integration, session *sess.Session, credentials *adapt.Credentials) (integ.IntegrationConnection, error) {
+func (sgi *SendGridIntegration) GetIntegrationConnection(integration *meta.Integration, session *sess.Session, credentials *adapt.Credentials) (adapt.IntegrationConnection, error) {
 	return &SendGridIntegrationConnection{
 		session:     session,
 		integration: integration,
@@ -62,7 +63,7 @@ func (sgic *SendGridIntegrationConnection) RunAction(actionName string, requestO
 func (sgic *SendGridIntegrationConnection) SendEmail(requestOptions interface{}) error {
 
 	options := &SendEmailOptions{}
-	err := integ.HydrateOptions(requestOptions, options)
+	err := datasource.HydrateOptions(requestOptions, options)
 	if err != nil {
 		return err
 	}

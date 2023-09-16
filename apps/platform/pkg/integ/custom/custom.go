@@ -2,8 +2,8 @@ package custom
 
 import (
 	"errors"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/integ"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -11,7 +11,7 @@ import (
 type CustomIntegration struct {
 }
 
-func (ci *CustomIntegration) GetIntegrationConnection(integration *meta.Integration, session *sess.Session, credentials *adapt.Credentials) (integ.IntegrationConnection, error) {
+func (ci *CustomIntegration) GetIntegrationConnection(integration *meta.Integration, session *sess.Session, credentials *adapt.Credentials) (adapt.IntegrationConnection, error) {
 	return &CustomIntegrationConnection{
 		session:     session,
 		integration: integration,

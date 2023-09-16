@@ -7,8 +7,6 @@ import (
 
 	"github.com/teris-io/shortid"
 
-	"github.com/thecloudmasters/uesio/pkg/integ"
-
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/constant"
 	"github.com/thecloudmasters/uesio/pkg/merge"
@@ -622,7 +620,7 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 
 		// Handle external data integration loads
 		if integrationName != "" && integrationName != meta.PLATFORM_DATA_SOURCE {
-			integrationConnection, err := integ.GetIntegration(integrationName, session)
+			integrationConnection, err := GetIntegration(integrationName, session)
 			if err != nil {
 				return nil, err
 			}

@@ -3,12 +3,11 @@ package jsdialect
 import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
-	"github.com/thecloudmasters/uesio/pkg/integ"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func NewLoadBotAPI(bot *meta.Bot, session *sess.Session, connection adapt.Connection, loadOp *adapt.LoadOp, integrationConnection integ.IntegrationConnection) *LoadBotAPI {
+func NewLoadBotAPI(bot *meta.Bot, session *sess.Session, connection adapt.Connection, loadOp *adapt.LoadOp, integrationConnection adapt.IntegrationConnection) *LoadBotAPI {
 	return &LoadBotAPI{
 		Session:               session,
 		LoadOp:                loadOp,
@@ -31,7 +30,7 @@ type LoadBotAPI struct {
 	Connection            adapt.Connection
 	LogApi                *BotLogAPI  `bot:"log"`
 	Http                  *BotHttpAPI `bot:"http"`
-	IntegrationConnection integ.IntegrationConnection
+	IntegrationConnection adapt.IntegrationConnection
 }
 
 func (bs *LoadBotAPI) GetCredentials() map[string]interface{} {

@@ -1,43 +1,17 @@
-package integ
+package datasource
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/creds"
-	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-type IntegrationType interface {
-	GetIntegrationConnection(*meta.Integration, *sess.Session, *adapt.Credentials) (IntegrationConnection, error)
-}
-
-type IntegrationConnection interface {
-	RunAction(actionName string, requestOptions interface{}) (interface{}, error)
-	GetCredentials() *adapt.Credentials
-	GetIntegration() *meta.Integration
-}
-
-var integrationTypeMap = map[string]IntegrationType{}
-
-func GetIntegrationType(integrationTypeName string) (IntegrationType, error) {
-	integrationType, ok := integrationTypeMap[integrationTypeName]
-	if !ok {
-		return nil, errors.New("Invalid integration type name: " + integrationTypeName)
-	}
-	return integrationType, nil
-}
-
-func RegisterIntegration(name string, integrationType IntegrationType) {
-	integrationTypeMap[name] = integrationType
-}
-
-func GetIntegration(integrationID string, session *sess.Session) (IntegrationConnection, error) {
+func GetIntegration(integrationID string, session *sess.Session) (adapt.IntegrationConnection, error) {
 	integration, err := meta.NewIntegration(integrationID)
 	if err != nil {
 		return nil, err
@@ -47,13 +21,13 @@ func GetIntegration(integrationID string, session *sess.Session) (IntegrationCon
 		return nil, fmt.Errorf("could not find Integration with name: %s", integrationID)
 	}
 
-	integrationType, err := GetIntegrationType(integration.Type)
+	integrationType, err := adapt.GetIntegrationType(integration.Type)
 	if err != nil {
 		return nil, fmt.Errorf("invalid Integration type %s for Integration %s", integration.Type, integrationID)
 	}
 
 	// Enter into a version context to load credentials in the integration's namespace
-	versionSession, err := datasource.EnterVersionContext(integration.Namespace, session, nil)
+	versionSession, err := EnterVersionContext(integration.Namespace, session, nil)
 	if err != nil {
 		return nil, err
 	}
