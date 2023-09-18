@@ -40,19 +40,17 @@ func (bc *BotCollection) GetItemFromPath(path, namespace string) BundleableItem 
 	partLength := len(parts)
 	botType := parts[0]
 
-	if botType == "listener" || botType == "generator" || botType == "load" || botType == "save" {
-		if partLength != 3 {
-			return nil
-		}
-		return NewBaseBot(strings.ToUpper(botType), "", namespace, parts[1])
-	}
-
-	if botType == "beforesave" || botType == "aftersave" {
+	if isBotTypeWithCollection(botType) {
 		if partLength != 6 {
 			return nil
 		}
 		collectionKey := fmt.Sprintf("%s/%s.%s", parts[1], parts[2], parts[3])
 		return NewBaseBot(strings.ToUpper(botType), collectionKey, namespace, parts[4])
+	} else {
+		if partLength != 3 {
+			return nil
+		}
+		return NewBaseBot(strings.ToUpper(botType), "", namespace, parts[1])
 	}
 	return nil
 }
@@ -61,14 +59,17 @@ func (bc *BotCollection) GetItemFromKey(key string) (BundleableItem, error) {
 	return NewBot(key)
 }
 
+func isBotTypeWithCollection(botType string) bool {
+	return botType == "beforesave" || botType == "aftersave"
+}
+
 func (bc *BotCollection) IsDefinitionPath(path string) bool {
 	parts := strings.Split(path, string(os.PathSeparator))
 	botType := parts[0]
-	if botType == "listener" || botType == "generator" {
-		return parts[2] == "bot.yaml"
-	}
-	if botType == "beforesave" || botType == "aftersave" {
+	if isBotTypeWithCollection(botType) {
 		return parts[5] == "bot.yaml"
+	} else {
+		return parts[2] == "bot.yaml"
 	}
 	return false
 }
@@ -90,14 +91,7 @@ func (bc *BotCollection) FilterPath(path string, conditions BundleConditions, de
 		return false
 	}
 
-	if botType == "listener" || botType == "generator" {
-		if partLength != 3 {
-			return false
-		}
-		isDefinition := parts[2] == "bot.yaml"
-		return partLength == 3 && (isDefinition || !definitionOnly)
-	}
-	if botType == "beforesave" || botType == "aftersave" {
+	if isBotTypeWithCollection(botType) {
 		if partLength != 6 {
 			return false
 		}
@@ -116,8 +110,13 @@ func (bc *BotCollection) FilterPath(path string, conditions BundleConditions, de
 			}
 		}
 		return isDefinition || !definitionOnly
+	} else {
+		if partLength != 3 {
+			return false
+		}
+		isDefinition := parts[2] == "bot.yaml"
+		return partLength == 3 && (isDefinition || !definitionOnly)
 	}
-	return false
 }
 
 func (bc *BotCollection) Loop(iter GroupIterator) error {
