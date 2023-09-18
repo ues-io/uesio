@@ -164,6 +164,45 @@ const shouldTestCases = [
 				expected: true,
 			},
 			{
+				name: "{}, (field: foo, values: [bar,baz], operator: NOT_IN)",
+				context: new Context().addRecordDataFrame(
+					{} as PlainWireRecord
+				),
+				condition: {
+					type: "fieldValue",
+					field: "foo",
+					operator: "NOT_IN",
+					values: ["bar", "baz"],
+				},
+				expected: true,
+			},
+			{
+				name: "{foo: }, (field: foo, values: [bar], operator: NOT_IN)",
+				context: new Context().addRecordDataFrame({
+					foo: "",
+				} as PlainWireRecord),
+				condition: {
+					type: "fieldValue",
+					field: "foo",
+					operator: "NOT_IN",
+					values: ["bar"],
+				},
+				expected: true,
+			},
+			{
+				name: "{foo: }, (field: foo, values: [bar,baz], operator: NOT_IN)",
+				context: new Context().addRecordDataFrame({
+					foo: "",
+				} as PlainWireRecord),
+				condition: {
+					type: "fieldValue",
+					field: "foo",
+					operator: "NOT_IN",
+					values: ["bar", "baz"],
+				},
+				expected: true,
+			},
+			{
 				name: "{foo: bar}, (field: foo, values: [bar,baz], operator: NOT_IN)",
 				context: new Context().addRecordDataFrame({
 					foo: "bar",

@@ -174,11 +174,10 @@ definition:
                                     path: app/$Param{app}/workspace/$Param{workspacename}/export/$Param{namespace}/$Param{collectionname}
                                 uesio.display:
                                   - type: fieldValue
-                                    wire: collection
+                                    wire: collections
                                     field: uesio/studio.type
-                                    operator: NOT_IN
-                                    values:
-                                      - EXTERNAL
+                                    operator: NOT_EQUALS
+                                    value: EXTERNAL
                             - uesio/io.button:
                                 uesio.variant: uesio/io.secondary
                                 uesio.id: import-collection-data
@@ -188,11 +187,10 @@ definition:
                                     path: app/$Param{app}/workspace/$Param{workspacename}/import/$Param{namespace}/$Param{collectionname}
                                 uesio.display:
                                   - type: fieldValue
-                                    wire: collection
+                                    wire: collections
                                     field: uesio/studio.type
-                                    operator: NOT_IN
-                                    values:
-                                      - EXTERNAL
+                                    operator: NOT_EQUALS
+                                    value: EXTERNAL
                             - uesio/io.button:
                                 uesio.variant: uesio/io.secondary
                                 uesio.id: manage-collection-data
@@ -202,11 +200,10 @@ definition:
                                     path: app/$Param{app}/workspace/$Param{workspacename}/data/$Param{namespace}/$Param{collectionname}
                                 uesio.display:
                                   - type: fieldValue
-                                    wire: collection
+                                    wire: collections
                                     field: uesio/studio.type
-                                    operator: NOT_IN
-                                    values:
-                                      - EXTERNAL
+                                    operator: NOT_EQUALS
+                                    value: EXTERNAL
                             - uesio/io.button:
                                 uesio.display:
                                   - type: paramValue
@@ -318,7 +315,7 @@ definition:
                                   - type: wireHasNoRecords
                                     wire: fields
                                   - type: fieldValue
-                                    wire: collection
+                                    wire: collections
                                     field: uesio/studio.type
                                     operator: NOT_IN
                                     values:
@@ -401,7 +398,7 @@ definition:
                         - mt-2
                     uesio.display:
                       - type: fieldValue
-                        wire: collection
+                        wire: collections
                         field: uesio/studio.type
                         operator: NOT_EQUALS
                         value: EXTERNAL
@@ -445,7 +442,7 @@ definition:
                         field: showCommonFieldsTable
                         value: true
                       - type: fieldValue
-                        wire: collection
+                        wire: collections
                         field: uesio/studio.type
                         operator: NOT_EQUALS
                         value: EXTERNAL
