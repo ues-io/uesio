@@ -1,4 +1,0 @@
-name: datasourcetypes
-options:
-  - label: "PostgreSQL"
-    value: "uesio.postgresql"

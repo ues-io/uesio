@@ -1,8 +1,9 @@
+// TODO: We need to load this from the server rather than hard-coding it here too!
 const METADATA = {
 	COLLECTION: "collections",
 	FIELD: "fields",
 	VIEW: "views",
-	DATASOURCE: "datasources",
+	INTEGRATION: "integrations",
 	AUTHSOURCE: "authsources",
 	FILESOURCE: "filesources",
 	SIGNUPMETHOD: "signupmethods",

@@ -172,6 +172,13 @@ definition:
                                 signals:
                                   - signal: route/NAVIGATE
                                     path: app/$Param{app}/workspace/$Param{workspacename}/export/$Param{namespace}/$Param{collectionname}
+                                uesio.display:
+                                  - type: fieldValue
+                                    wire: collection
+                                    field: uesio/studio.type
+                                    operator: NOT_IN
+                                    values:
+                                      - EXTERNAL
                             - uesio/io.button:
                                 uesio.variant: uesio/io.secondary
                                 uesio.id: import-collection-data
@@ -179,6 +186,13 @@ definition:
                                 signals:
                                   - signal: route/NAVIGATE
                                     path: app/$Param{app}/workspace/$Param{workspacename}/import/$Param{namespace}/$Param{collectionname}
+                                uesio.display:
+                                  - type: fieldValue
+                                    wire: collection
+                                    field: uesio/studio.type
+                                    operator: NOT_IN
+                                    values:
+                                      - EXTERNAL
                             - uesio/io.button:
                                 uesio.variant: uesio/io.secondary
                                 uesio.id: manage-collection-data
@@ -186,6 +200,13 @@ definition:
                                 signals:
                                   - signal: route/NAVIGATE
                                     path: app/$Param{app}/workspace/$Param{workspacename}/data/$Param{namespace}/$Param{collectionname}
+                                uesio.display:
+                                  - type: fieldValue
+                                    wire: collection
+                                    field: uesio/studio.type
+                                    operator: NOT_IN
+                                    values:
+                                      - EXTERNAL
                             - uesio/io.button:
                                 uesio.display:
                                   - type: paramValue
@@ -236,13 +257,20 @@ definition:
                           uesio.variant: uesio/io.four_columns
                           items:
                             - uesio/io.field:
-                                fieldId: uesio/core.createdby
+                                fieldId: uesio/studio.type
                             - uesio/io.field:
-                                fieldId: uesio/core.createdat
+                                fieldId: uesio/studio.integration
+                                uesio.display:
+                                  - field: uesio/studio.type
+                                    value: EXTERNAL
+                            - uesio/io.field:
+                                fieldId: uesio/core.createdby
+                                user:
+                                  subtitle: $Time{uesio/core.createdat}
                             - uesio/io.field:
                                 fieldId: uesio/core.updatedby
-                            - uesio/io.field:
-                                fieldId: uesio/core.updatedat
+                                user:
+                                  subtitle: $Time{uesio/core.updatedat}
           - uesio/io.box:
               uesio.variant: uesio/io.section
               components:
@@ -289,6 +317,13 @@ definition:
                                 uesio.display:
                                   - type: wireHasNoRecords
                                     wire: fields
+                                  - type: fieldValue
+                                    wire: collection
+                                    field: uesio/studio.type
+                                    operator: NOT_IN
+                                    values:
+                                      - EXTERNAL
+                                      - DYNAMIC
                                 fieldWire: fields
                                 collectionWire: collections
                                 collectionId: $Param{namespace}.$Param{collectionname}
@@ -364,6 +399,12 @@ definition:
                     uesio.styleTokens:
                       root:
                         - mt-2
+                    uesio.display:
+                      - type: fieldValue
+                        wire: collection
+                        field: uesio/studio.type
+                        operator: NOT_EQUALS
+                        value: EXTERNAL
                     title: Common Fields
                     actions:
                       - uesio/io.button:
@@ -403,6 +444,11 @@ definition:
                         wire: viewOnly
                         field: showCommonFieldsTable
                         value: true
+                      - type: fieldValue
+                        wire: collection
+                        field: uesio/studio.type
+                        operator: NOT_EQUALS
+                        value: EXTERNAL
                     columns:
                       - label: Field Name
                         components:
@@ -526,10 +572,19 @@ definition:
                   label: Name Field
                   grouping: $Param{app}.$Param{collectionname}
                   namespace: $Param{app}
+              - uesio/io.field:
+                  label: Data Source Type
+                  fieldId: uesio/studio.type
               - uesio/builder.metadatafield:
-                  fieldId: uesio/studio.datasource
-                  metadataType: DATASOURCE
-                  label: Data Source
+                  uesio.context:
+                    workspace:
+                      name: $Param{workspacename}
+                      app: $Param{app}
+                  fieldId: uesio/studio.integration
+                  metadataType: INTEGRATION
+                  uesio.display:
+                    - field: uesio/studio.type
+                      value: EXTERNAL
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary

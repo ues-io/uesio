@@ -128,27 +128,6 @@ definition:
           - uesio/io.tile:
               uesio.display:
                 - type: featureFlag
-                  name: manage_datasources
-              uesio.variant: uesio/io.nav
-              uesio.id: datasources
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: datasources
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/datasources
-              content:
-                - uesio/io.text:
-                    text: Data Sources
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: dynamic_feed
-          - uesio/io.tile:
-              uesio.display:
-                - type: featureFlag
                   name: manage_integrations
               uesio.variant: uesio/io.nav
               uesio.id: integrations
