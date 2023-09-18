@@ -2,12 +2,13 @@ package controller
 
 import (
 	"fmt"
+	"sort"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/routing"
-	"sort"
-	"testing"
 )
 
 func TestGetPackUrl_Workspace(t *testing.T) {
@@ -236,7 +237,7 @@ func Test_getComponentPackURLs(t *testing.T) {
 	acmePack.UpdatedAt = 1234577777
 
 	type args struct {
-		componentPackDeps routing.DepMap
+		componentPackDeps *routing.MetadataMergeData
 		workspace         *routing.WorkspaceMergeData
 		site              *routing.SiteMergeData
 	}

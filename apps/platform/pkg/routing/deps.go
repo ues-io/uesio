@@ -333,7 +333,7 @@ func processView(key string, viewInstanceID string, deps *PreloadMetadata, param
 
 }
 
-func InBuildMode(fullViewId string, deps DepMap) bool {
+func InBuildMode(fullViewId string, deps *MetadataMergeData) bool {
 	if deps == nil {
 		return false
 	}

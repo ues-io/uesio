@@ -18,7 +18,7 @@ const metadataSlice = createSlice({
 	},
 })
 
-export { selectors }
+export { selectors, adapter }
 
 export const { set, setMany } = metadataSlice.actions
 export default metadataSlice.reducer

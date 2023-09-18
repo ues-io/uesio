@@ -1,4 +1,3 @@
-import { EntityState } from "@reduxjs/toolkit"
 import { ComponentPackState } from "../../definition/componentpack"
 import { ComponentVariant } from "../../definition/componentvariant"
 import { ConfigValueState } from "../../definition/configvalue"
@@ -24,17 +23,17 @@ type SiteAdminState = {
 }
 
 type Dependencies = {
-	theme?: EntityState<ThemeState>
-	viewdef?: EntityState<ViewMetadata>
-	componentvariant?: EntityState<ComponentVariant>
-	component?: EntityState<ComponentState>
-	componenttype?: EntityState<Component>
-	componentpack?: EntityState<ComponentPackState>
-	configvalue?: EntityState<ConfigValueState>
-	featureflag?: EntityState<FeatureFlagState>
-	label?: EntityState<LabelState>
-	wire?: EntityState<ServerWire>
-	collection?: EntityState<PlainCollection>
+	theme?: ThemeState[]
+	viewdef?: ViewMetadata[]
+	componentvariant?: ComponentVariant[]
+	component?: ComponentState[]
+	componenttype?: Component[]
+	componentpack?: ComponentPackState[]
+	configvalue?: ConfigValueState[]
+	featureflag?: FeatureFlagState[]
+	label?: LabelState[]
+	wire?: ServerWire[]
+	collection?: PlainCollection[]
 }
 
 type RouteTag = {
