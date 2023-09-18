@@ -39,4 +39,4 @@ jsonpath "$.dependencies.label[?(@.name=='add')].namespace" nth 0 == "uesio/io"
 GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/publicanimalslist
 HTTP 200
 [Asserts]
-jsonpath "$.dependencies.label[0].value" == "hola mundo"
+jsonpath "$.dependencies.label[?(@.name=='helloworld')].value" nth 0 == "hola mundo"

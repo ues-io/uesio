@@ -2,6 +2,9 @@ package routing
 
 import (
 	"encoding/json"
+	"sort"
+
+	"github.com/thecloudmasters/uesio/pkg/goutils"
 )
 
 type Depable interface {
@@ -29,20 +32,10 @@ func NewComponentMergeData(componentID string, state interface{}) Depable {
 	}
 }
 
-type MetadataMergeData struct {
-	ids  map[string]int
-	deps []Depable
-}
+type MetadataMergeData map[string]Depable
 
 func (mmd *MetadataMergeData) AddItem(dep Depable) *MetadataMergeData {
-	key := dep.GetKey()
-	index, ok := mmd.ids[key]
-	if !ok {
-		mmd.ids[key] = len(mmd.deps)
-		mmd.deps = append(mmd.deps, dep)
-	} else {
-		mmd.deps[index] = dep
-	}
+	(*mmd)[dep.GetKey()] = dep
 	return mmd
 }
 
@@ -63,31 +56,35 @@ func (mmd *MetadataMergeData) AddItemIfNotExists(dep Depable) (Depable, bool) {
 }
 
 func (mmd *MetadataMergeData) Has(key string) bool {
-	_, exists := mmd.ids[key]
+	_, exists := (*mmd)[key]
 	return exists
 }
 
 func (mmd *MetadataMergeData) Get(key string) (Depable, bool) {
-	if index, exists := mmd.ids[key]; exists {
-		return mmd.deps[index], true
-	}
-	return nil, false
+	dep, exists := (*mmd)[key]
+	return dep, exists
 }
 
 func (mmd *MetadataMergeData) GetItems() []Depable {
-	return mmd.deps
+	keys := goutils.MapKeys(*mmd)
+	sort.Strings(keys)
+	depsArray := make([]Depable, len(keys))
+	for i, key := range keys {
+		depsArray[i] = (*mmd)[key]
+	}
+
+	return depsArray
 }
 
 func (mmd *MetadataMergeData) Len() int {
-	return len(mmd.deps)
+	return len(*mmd)
 }
 
 func (mmd *MetadataMergeData) MarshalJSON() ([]byte, error) {
 
 	data := make([]json.RawMessage, 0)
 
-	for _, dep := range mmd.deps {
-
+	for _, dep := range mmd.GetItems() {
 		rawData, err := dep.GetBytes()
 		if err == nil {
 			data = append(data, rawData)
@@ -99,10 +96,7 @@ func (mmd *MetadataMergeData) MarshalJSON() ([]byte, error) {
 }
 
 func NewItem() *MetadataMergeData {
-	return &MetadataMergeData{
-		ids:  map[string]int{},
-		deps: []Depable{},
-	}
+	return &MetadataMergeData{}
 }
 
 func NewPreloadMetadata() *PreloadMetadata {
