@@ -40,7 +40,7 @@ func (bc *BotCollection) GetItemFromPath(path, namespace string) BundleableItem 
 	partLength := len(parts)
 	botType := parts[0]
 
-	if botType == "listener" || botType == "generator" {
+	if botType == "listener" || botType == "generator" || botType == "load" || botType == "save" {
 		if partLength != 3 {
 			return nil
 		}

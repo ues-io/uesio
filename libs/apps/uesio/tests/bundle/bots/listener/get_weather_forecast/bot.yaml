@@ -1,0 +1,4 @@
+name: get_weather_forecast
+type: LISTENER
+dialect: TYPESCRIPT
+params: null

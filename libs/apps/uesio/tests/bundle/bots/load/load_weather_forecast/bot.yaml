@@ -1,3 +1,3 @@
-name: weather_forecast
+name: load_weather_forecast
 type: LOAD
 dialect: TYPESCRIPT

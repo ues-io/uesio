@@ -19,7 +19,7 @@ func NewBot(key string) (*Bot, error) {
 	botType := keyArray[0]
 	var collectionKey, botKey string
 	switch botType {
-	case "LISTENER", "GENERATOR":
+	case "LISTENER", "GENERATOR", "LOAD", "SAVE":
 		collectionKey = ""
 		botKey = keyArray[1]
 		if (keyArraySize) > 3 {
