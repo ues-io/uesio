@@ -1,0 +1,3 @@
+name: weather_forecast
+type: LOAD
+dialect: TYPESCRIPT
