@@ -171,6 +171,18 @@ definition:
                   uesio.display:
                     - field: uesio/studio.type
                       value: EXTERNAL
+              - uesio/builder.metadatafield:
+                  uesio.context:
+                    workspace:
+                      name: $Param{workspacename}
+                      app: $Param{app}
+                  fieldId: uesio/studio.loadbot
+                  metadataType: BOT
+                  grouping: LOAD
+                  label: Collection Load Bot
+                  uesio.display:
+                    - field: uesio/studio.type
+                      value: EXTERNAL
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary

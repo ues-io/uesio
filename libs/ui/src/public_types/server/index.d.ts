@@ -99,6 +99,11 @@ interface BotHttpResponse {
 interface HttpApi {
 	request: (options: BotHttpRequest) => BotHttpResponse
 }
+
+interface IntegrationMetadata {
+	getBaseURL(): string | undefined
+}
+
 type RunIntegrationAction = (
 	integration: string,
 	action: string,
@@ -137,8 +142,21 @@ interface ListenerBotApi {
 	log: LogApi
 	http: HttpApi
 }
+interface LoadBotApi {
+	addError: (error: string) => void
+	setData: (data: Record<string, unknown>[]) => void
+	loadRequest: LoadRequest
+	getIntegration: () => IntegrationMetadata
+	getCredentials: () => Record<string, string | undefined>
+	getConfigValue: (configValueKey: string) => string
+	getSession: () => SessionApi
+	getUser: () => UserApi
+	log: LogApi
+	http: HttpApi
+}
 export type {
 	ListenerBotApi,
+	LoadBotApi,
 	BeforeSaveBotApi,
 	AfterSaveBotApi,
 	BotParamsApi,

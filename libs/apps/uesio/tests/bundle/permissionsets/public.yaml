@@ -74,6 +74,7 @@ routes:
 files: {}
 bots:
   uesio/tests.add_numbers: true
+  uesio/tests.get_weather_forecast: true
 allowallbots: false
 allowallcollections: false
 allowallviews: false

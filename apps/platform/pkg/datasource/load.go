@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/teris-io/shortid"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/constant"
 	"github.com/thecloudmasters/uesio/pkg/merge"
@@ -599,14 +601,60 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 			return nil, err2
 		}
 
+		collectionKey := collectionMetadata.GetFullName()
+
 		integrationName := collectionMetadata.GetIntegrationName()
 
-		usage.RegisterEvent("LOAD", "COLLECTION", collectionMetadata.GetFullName(), 0, session)
+		// Attach the collection metadata to the LoadOp so that Load Bots can access it
+		op.AttachMetadataCache(metadataResponse)
+
+		usage.RegisterEvent("LOAD", "COLLECTION", collectionKey, 0, session)
 		usage.RegisterEvent("LOAD", "DATASOURCE", integrationName, 0, session)
 
 		if collectionMetadata.IsDynamic() {
 			if err = runDynamicCollectionLoadBots(op, connection, session); err != nil {
 				return nil, err
+			}
+			continue
+		}
+
+		// Handle external data integration loads
+		if integrationName != "" && integrationName != meta.PLATFORM_DATA_SOURCE {
+			integrationConnection, err := GetIntegration(integrationName, session)
+			if err != nil {
+				return nil, err
+			}
+			if err != nil {
+				return nil, err
+			}
+			op.AttachIntegration(integrationConnection)
+			integration := integrationConnection.GetIntegration()
+			// If there's a collection-specific load bot defined, use that,
+			// otherwise default to the integration's defined load bot.
+			// If there's neither, then there's nothing to do.
+			botKey := collectionMetadata.LoadBot
+			if botKey == "" && integration != nil {
+				botKey = integration.LoadBot
+			}
+			if botKey == "" {
+				return nil, fmt.Errorf("no load bot defined on collection %s or on integration %s", collectionKey, integration.GetKey())
+			}
+
+			if err = runExternalDataSourceLoadBot(botKey, op, connection, session); err != nil {
+				return nil, err
+			}
+			// Make sure that all the returned records have ids. If not, generated fake ids.
+			if op.Collection != nil && op.Collection.Len() > 0 {
+				if err = op.Collection.Loop(func(item meta.Item, index string) error {
+					if val, err := item.GetField(adapt.ID_FIELD); err == nil || val == nil || val == "" {
+						if shortId, err := shortid.Generate(); err != nil {
+							item.SetField(adapt.ID_FIELD, shortId)
+						}
+					}
+					return nil
+				}); err != nil {
+					return nil, err
+				}
 			}
 			continue
 		}

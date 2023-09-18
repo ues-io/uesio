@@ -12,7 +12,6 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	httpClient "github.com/thecloudmasters/uesio/pkg/http"
-	"github.com/thecloudmasters/uesio/pkg/integ"
 	"github.com/thecloudmasters/uesio/pkg/localcache"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -30,7 +29,7 @@ type RequestOptions struct {
 type WebIntegration struct {
 }
 
-func (wi *WebIntegration) GetIntegrationConnection(integration *meta.Integration, session *sess.Session, credentials *adapt.Credentials) (integ.IntegrationConnection, error) {
+func (wi *WebIntegration) GetIntegrationConnection(integration *meta.Integration, session *sess.Session, credentials *adapt.Credentials) (adapt.IntegrationConnection, error) {
 	return &WebIntegrationConnection{
 		session:     session,
 		integration: integration,
@@ -42,6 +41,14 @@ type WebIntegrationConnection struct {
 	session     *sess.Session
 	integration *meta.Integration
 	credentials *adapt.Credentials
+}
+
+func (wic *WebIntegrationConnection) GetCredentials() *adapt.Credentials {
+	return wic.credentials
+}
+
+func (wic *WebIntegrationConnection) GetIntegration() *meta.Integration {
+	return wic.integration
 }
 
 const (
@@ -109,7 +116,13 @@ func (wic *WebIntegrationConnection) Request(methodName string, requestOptions i
 		}
 	}
 
-	credsInterfaceMap := wic.credentials.GetInterfaceMap()
+	creds := wic.GetCredentials()
+	var credsInterfaceMap map[string]interface{}
+	if creds != nil {
+		credsInterfaceMap = creds.GetInterfaceMap()
+	} else {
+		credsInterfaceMap = map[string]interface{}{}
+	}
 
 	var payloadReader io.Reader
 	if options.Body != nil {
