@@ -127,6 +127,19 @@ definition:
                                 fieldId: uesio/studio.name
                             - uesio/io.field:
                                 fieldId: uesio/studio.type
+                            - uesio/io.field:
+                                fieldId: uesio/core.updatedby
+                                user:
+                                  subtitle: $Time{uesio/core.updatedat}
+                            - uesio/io.field:
+                                fieldId: uesio/core.createdby
+                                user:
+                                  subtitle: $Time{uesio/core.createdat}
+                      - uesio/io.grid:
+                          uesio.variant: uesio/io.four_columns
+                          items:
+                            - uesio/io.field:
+                                fieldId: uesio/studio.baseurl
                             - uesio/builder.metadatafield:
                                 uesio.context:
                                   workspace:
@@ -136,6 +149,8 @@ definition:
                                 metadataType: CREDENTIALS
                                 label: Credentials
                             - uesio/io.field:
-                                fieldId: uesio/studio.headers
-                            - uesio/io.field:
-                                fieldId: uesio/studio.baseurl
+                              fieldId: uesio/studio.headers
+                              uesio.display:
+                                - type: fieldValue
+                                  field: uesio/studio.type
+                                  value: web

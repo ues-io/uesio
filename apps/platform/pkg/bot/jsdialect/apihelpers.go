@@ -23,6 +23,7 @@ func botLoad(request BotLoadOp, session *sess.Session, connection adapt.Connecti
 	collection := &adapt.Collection{}
 
 	op := &adapt.LoadOp{
+		BatchSize:      request.BatchSize,
 		CollectionName: request.Collection,
 		Collection:     collection,
 		WireName:       "botload",
