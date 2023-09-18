@@ -116,7 +116,13 @@ func (wic *WebIntegrationConnection) Request(methodName string, requestOptions i
 		}
 	}
 
-	credsInterfaceMap := wic.credentials.GetInterfaceMap()
+	creds := wic.GetCredentials()
+	var credsInterfaceMap map[string]interface{}
+	if creds != nil {
+		credsInterfaceMap = creds.GetInterfaceMap()
+	} else {
+		credsInterfaceMap = map[string]interface{}{}
+	}
 
 	var payloadReader io.Reader
 	if options.Body != nil {

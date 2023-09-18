@@ -2,4 +2,4 @@ name: weather_forecast
 label: Weather Forecast
 pluralLabel: Weather Forecasts
 integration: uesio/tests.studio_apis
-loadbot: uesio/tests.load_weather_forecast
+loadBot: uesio/tests.load_weather_forecast

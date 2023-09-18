@@ -60,7 +60,7 @@ type Collection struct {
 	RecordChallengeTokens []*RecordChallengeTokenDefinition `yaml:"recordChallengeTokens,omitempty" json:"uesio/studio.recordchallengetokens"`
 	TableName             string                            `yaml:"tablename,omitempty" json:"uesio/studio.tablename"`
 	IntegrationRef        string                            `yaml:"integration,omitempty" json:"uesio/studio.integration"`
-	LoadBot               string                            `yaml:"loadbot,omitempty" json:"uesio/studio.loadbot"`
+	LoadBot               string                            `yaml:"loadBot,omitempty" json:"uesio/studio.loadbot"`
 }
 
 type CollectionWrapper Collection

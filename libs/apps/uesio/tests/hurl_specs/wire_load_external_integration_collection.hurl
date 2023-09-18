@@ -22,7 +22,12 @@ Accept: application/json
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data" count == 1
-jsonpath "$.wires[0].data.current.day" exists
-jsonpath "$.wires[0].data.current.low" exists
-jsonpath "$.wires[0].data.current.avg" exists
-jsonpath "$.wires[0].data.current.high" exists
+jsonpath "$.wires[0].data[0]['uesio/tests.current'].day" exists
+jsonpath "$.wires[0].data[0]['uesio/tests.current'].avg" >= 25
+jsonpath "$.wires[0].data[0]['uesio/tests.current'].avg" <= 35
+jsonpath "$.wires[0].data[0]['uesio/tests.current'].low" >= 20
+jsonpath "$.wires[0].data[0]['uesio/tests.current'].high" <= 40
+jsonpath "$.wires[0].data[0]['uesio/tests.forecast']" count == 7
+jsonpath "$.wires[0].data[0]['uesio/tests.forecast'][*].day" exists
+jsonpath "$.wires[0].data[0]['uesio/tests.forecast'][*].avg" exists
+
