@@ -130,7 +130,7 @@ const create = (initialState: InitialState) => {
 			),
 			file: fileAdapter.setAll(
 				fileAdapter.getInitialState(),
-				initialState.viewdef || []
+				initialState.file || []
 			),
 		},
 	})
