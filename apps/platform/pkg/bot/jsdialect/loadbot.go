@@ -31,6 +31,7 @@ type LoadBotAPI struct {
 	LogApi                *BotLogAPI  `bot:"log"`
 	Http                  *BotHttpAPI `bot:"http"`
 	IntegrationConnection adapt.IntegrationConnection
+	loadErrors            []string
 }
 
 func (bs *LoadBotAPI) GetCredentials() map[string]interface{} {
@@ -59,14 +60,29 @@ func (cba *LoadBotAPI) GetUser() *UserAPI {
 	return NewUserAPI(cba.Session.GetContextUser())
 }
 
-// TODO: Is there a better or more performant way to do this???
-func (cba *LoadBotAPI) SetData(data []map[string]interface{}) (bs *LoadBotAPI) {
-	bs.LoadOp.Collection = &adapt.Collection{}
-	for _, rawItem := range data {
-		item := bs.LoadOp.Collection.NewItem()
-		for k, v := range rawItem {
-			item.SetField(k, v)
-		}
+func (cba *LoadBotAPI) AddError(error string) {
+	cba.loadErrors = append(cba.loadErrors, error)
+}
+
+func (cba *LoadBotAPI) addItem(item interface{}) {
+	switch typedItem := item.(type) {
+	case map[string]interface{}:
+		typedVal := (adapt.Item)(typedItem)
+		cba.LoadOp.Collection.AddItem(&typedVal)
 	}
-	return bs
+}
+
+func (cba *LoadBotAPI) SetData(data interface{}) {
+	// We should get back either a list of interfaces, or a single interface,
+	// so then we just need to add these into the LoadOp's Collection,
+	// which should already exist
+	switch typedValue := data.(type) {
+	case []interface{}:
+		for _, rawItem := range typedValue {
+			cba.addItem(rawItem)
+		}
+		return
+	case interface{}:
+		cba.addItem(typedValue)
+	}
 }

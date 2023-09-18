@@ -1,8 +1,10 @@
 package jsdialect
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
+	"strings"
 	"time"
 
 	"github.com/dop251/goja"
@@ -176,10 +178,16 @@ func (b *JSDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adapt.Co
 		return err
 	}
 	botAPI := NewLoadBotAPI(bot, session, connection, op, integrationConnection)
-	if err := b.hydrateBot(bot, session); err != nil {
+	if err = b.hydrateBot(bot, session); err != nil {
 		return err
 	}
-	return RunBot(bot.Name, bot.FileContents, botAPI, nil)
+	if err = RunBot(bot.Name, bot.FileContents, botAPI, nil); err != nil {
+		return err
+	}
+	if len(botAPI.loadErrors) > 0 {
+		return errors.New(strings.Join(botAPI.loadErrors, "\n"))
+	}
+	return nil
 }
 
 func (b *JSDialect) SaveBot(bot *meta.Bot, op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
