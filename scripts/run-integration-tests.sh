@@ -23,6 +23,6 @@ hurl -k --variable host=studio.uesio-dev.com --variable domain=uesio-dev.com --v
 # FYI if you want to view the output of the request made by a specific hurl spec,
 # you can comment out the assertions of the last hurl request made in a hurl file, and then run the spec
 # without the "--test" flag, like this
-# hurl --very-verbose -k --variable host=studio.uesio-dev.com --variable domain=uesio-dev.com --variable port=3000 hurl_specs/autonumber_insert.hurl
+# hurl --very-verbose -k --variable host=studio.uesio-dev.com --variable domain=uesio-dev.com --variable port=3000 hurl_specs/wire_collection_dependencies.hurl
 
 cd - >> /dev/null
