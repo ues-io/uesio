@@ -1,5 +1,5 @@
 ######################################################
-# Tests object and field level security enforcement 
+# Tests object and field level security enforcement
 # on wire loads, for a public user
 ######################################################
 
@@ -59,9 +59,9 @@ GET https://tests.{{domain}}:{{port}}/site/routes/path/uesio/tests/publicanimals
 Accept: application/json
 HTTP 200
 [Asserts]
-jsonpath "$.dependencies.wire.entities[*].data[0]['uesio/tests.species']" nth 0 == "Abrahan"
-jsonpath "$.dependencies.wire.entities[*].data[0]['uesio/tests.genus']" nth 0 == "Mouton"
-jsonpath "$.dependencies.wire.entities[*]['debugQueryString']" nth 0 == ```
+jsonpath "$.dependencies.wire[*].data[0]['uesio/tests.species']" nth 0 == "Abrahan"
+jsonpath "$.dependencies.wire[*].data[0]['uesio/tests.genus']" nth 0 == "Mouton"
+jsonpath "$.dependencies.wire[*]['debugQueryString']" nth 0 == ```
 SELECT
 main.fields->>'uesio/tests.genus' AS "uesio/tests.genus",
 main.fields->>'uesio/tests.species' AS "uesio/tests.species",

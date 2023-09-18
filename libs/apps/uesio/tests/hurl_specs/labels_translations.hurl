@@ -9,10 +9,10 @@ GET https://{{host}}:{{port}}/site/routes/path/uesio/studio/app/uesio/tests/work
 Accept: application/json
 HTTP 200
 [Asserts]
-jsonpath "$.dependencies.label.entities['uesio/io.save'].value" == "Save"
-jsonpath "$.dependencies.label.entities['uesio/io.save'].namespace" == "uesio/io"
-jsonpath "$.dependencies.label.entities['uesio/core.session_expiration_msg'].value" == "Your session has expired. Please login again."
-jsonpath "$.dependencies.label.entities['uesio/core.session_expiration_msg'].namespace" == "uesio/core"
+jsonpath "$.dependencies.label[?(@.name=='save')].value" nth 0 == "Save"
+jsonpath "$.dependencies.label[?(@.name=='save')].namespace" nth 0 == "uesio/io"
+jsonpath "$.dependencies.label[?(@.name=='session_expiration_msg')].value" nth 0 == "Your session has expired. Please login again."
+jsonpath "$.dependencies.label[?(@.name=='session_expiration_msg')].namespace" nth 0 == "uesio/core"
 
 # Login as Wessel, he is part of the admin team and he speaks Spanish BTW.
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
@@ -29,14 +29,14 @@ GET https://{{host}}:{{port}}/site/routes/path/uesio/studio/app/uesio/tests/work
 Accept: application/json
 HTTP 200
 [Asserts]
-jsonpath "$.dependencies.label.entities['uesio/io.save'].value" == "Guardar"
-jsonpath "$.dependencies.label.entities['uesio/io.save'].namespace" == "uesio/io"
-jsonpath "$.dependencies.label.entities['uesio/io.add'].value" == "Añadir"
-jsonpath "$.dependencies.label.entities['uesio/io.add'].namespace" == "uesio/io"
+jsonpath "$.dependencies.label[?(@.name=='save')].value" nth 0 == "Guardar"
+jsonpath "$.dependencies.label[?(@.name=='save')].namespace" nth 0 == "uesio/io"
+jsonpath "$.dependencies.label[?(@.name=='add')].value" nth 0 == "Añadir"
+jsonpath "$.dependencies.label[?(@.name=='add')].namespace" nth 0 == "uesio/io"
 
 
 #Make sure labels work in a workspace and they are translated
 GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/publicanimalslist
 HTTP 200
 [Asserts]
-jsonpath "$.dependencies.label.entities['uesio/tests.helloworld'].value" == "hola mundo"
+jsonpath "$.dependencies.label[0].value" == "hola mundo"

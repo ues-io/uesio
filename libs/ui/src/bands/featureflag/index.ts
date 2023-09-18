@@ -27,7 +27,7 @@ const useFeatureFlag = (key: string) =>
 
 const useFeatureFlagKeys = () => useSelector(selectors.selectIds) as string[]
 
-export { useFeatureFlag, useFeatureFlagKeys, selectByName, selectors }
+export { useFeatureFlag, useFeatureFlagKeys, selectByName, selectors, adapter }
 
 export const { set, setMany } = metadataSlice.actions
 export default metadataSlice.reducer

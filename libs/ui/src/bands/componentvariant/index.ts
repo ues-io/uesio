@@ -28,7 +28,13 @@ const useComponentVariant = (key: string) =>
 
 const useComponentVariants = () => useSelector(selectors.selectAll)
 
-export { useComponentVariant, useComponentVariants, selectors, selectId }
+export {
+	useComponentVariant,
+	useComponentVariants,
+	selectors,
+	selectId,
+	adapter,
+}
 
 export const { set, setMany } = metadataSlice.actions
 export default metadataSlice.reducer

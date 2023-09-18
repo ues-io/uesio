@@ -7,7 +7,7 @@ import {
 import { SaveError, SaveResponseBatch } from "../../load/saveresponse"
 import { WireConditionState } from "../../wireexports"
 import { ID_FIELD, PlainCollection } from "../collection/types"
-import { createEntityReducer, EntityPayload, initEntity } from "../utils"
+import { createEntityReducer, EntityPayload } from "../utils"
 import {
 	FieldValue,
 	PlainFieldValue,
@@ -88,11 +88,11 @@ type WireLoadAction = PayloadAction<
 
 type SetIsLoadingAction = PayloadAction<PlainWire[]>
 
-const wireAdapter = createEntityAdapter<PlainWire>({
+const adapter = createEntityAdapter<PlainWire>({
 	selectId: (wire) => getFullWireId(wire.view, wire.name),
 })
 
-const selectors = wireAdapter.getSelectors((state: RootState) => state.wire)
+const selectors = adapter.getSelectors((state: RootState) => state.wire)
 
 const getWires = (
 	wires: string[] | string | undefined,
@@ -167,11 +167,11 @@ const addErrorState = (
 
 const wireSlice = createSlice({
 	name: "wire",
-	initialState: wireAdapter.getInitialState(),
+	initialState: adapter.getInitialState(),
 	reducers: {
-		initAll: initEntity<PlainWire>,
-		upsertMany: wireAdapter.upsertMany,
-		removeOne: wireAdapter.removeOne,
+		initAll: adapter.setAll,
+		upsertMany: adapter.upsertMany,
+		removeOne: adapter.removeOne,
 		addError: createEntityReducer<AddErrorPayload, PlainWire>(
 			(state, { recordId, fieldId, message }) => {
 				state.errors = addErrorState(
@@ -238,7 +238,7 @@ const wireSlice = createSlice({
 			state.errors = {}
 		}),
 		init: (state: EntityState<PlainWire>, action: WireLoadAction) =>
-			wireAdapter.upsertMany(state, action.payload[0]),
+			adapter.upsertMany(state, action.payload[0]),
 		empty: createEntityReducer<EntityPayload, PlainWire>((state) => {
 			state.data = {}
 			state.changes = {}
@@ -387,10 +387,10 @@ const wireSlice = createSlice({
 			})
 		},
 		load: (state, { payload: [wires] }: WireLoadAction) => {
-			wireAdapter.upsertMany(state, wires)
+			adapter.upsertMany(state, wires)
 		},
 		setIsLoading: (state, { payload: wires }: SetIsLoadingAction) => {
-			wireAdapter.upsertMany(
+			adapter.upsertMany(
 				state,
 				wires.map(
 					(wire) =>
@@ -465,6 +465,7 @@ const getWireParts = (fullWireId: string): [string, string] => {
 }
 
 export {
+	adapter,
 	useWire,
 	useWires,
 	selectWire,

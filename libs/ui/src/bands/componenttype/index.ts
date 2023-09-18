@@ -28,7 +28,7 @@ const useComponentType = (key: string) =>
 
 const useComponentTypes = () => useSelector(selectors.selectAll)
 
-export { useComponentType, useComponentTypes, selectors, selectId }
+export { useComponentType, useComponentTypes, selectors, selectId, adapter }
 
 export const { set, setMany } = metadataSlice.actions
 export default metadataSlice.reducer

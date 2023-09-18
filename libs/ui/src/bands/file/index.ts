@@ -24,7 +24,7 @@ const useFile = (key: string) =>
 
 const useFileKeys = () => useSelector(selectors.selectIds) as string[]
 
-export { useFile, useFileKeys, selectors }
+export { useFile, useFileKeys, selectors, adapter }
 
 export const { set, setMany } = metadataSlice.actions
 export default metadataSlice.reducer
