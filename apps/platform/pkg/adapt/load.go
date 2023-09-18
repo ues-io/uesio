@@ -5,26 +5,27 @@ import (
 	"errors"
 	"sort"
 
-	"github.com/thecloudmasters/uesio/pkg/meta"
 	"gopkg.in/yaml.v3"
+
+	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
 type LoadOp struct {
-	CollectionName     string                 `json:"collection"`
+	CollectionName     string                 `json:"collection" bot:"collection"`
 	WireName           string                 `json:"name"`
 	View               string                 `json:"view"`
 	Collection         meta.Group             `json:"data"`
-	Conditions         []LoadRequestCondition `json:"conditions"`
-	Fields             []LoadRequestField     `json:"fields"`
+	Conditions         []LoadRequestCondition `json:"conditions" bot:"conditions"`
+	Fields             []LoadRequestField     `json:"fields" bot:"fields"`
 	Query              bool                   `json:"query"`
-	Order              []LoadRequestOrder     `json:"order"`
-	BatchSize          int                    `json:"batchsize"`
-	BatchNumber        int                    `json:"batchnumber"`
+	Order              []LoadRequestOrder     `json:"order" bot:"order"`
+	BatchSize          int                    `json:"batchsize" bot:"batchsize"`
+	BatchNumber        int                    `json:"batchnumber" bot:"batchnumber"`
 	HasMoreBatches     bool                   `json:"more"`
 	RequireWriteAccess bool                   `json:"requirewriteaccess"`
 	Params             map[string]string      `json:"params"`
 	Preloaded          bool                   `json:"preloaded"`
-	LoadAll            bool                   `json:"loadAll"`
+	LoadAll            bool                   `json:"loadAll" bot:"loadAll"`
 	DebugQueryString   string                 `json:"debugQueryString"`
 }
 
