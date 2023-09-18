@@ -25,6 +25,7 @@ interface ConditionRequest {
 	field: string
 	operator: ConditionOperator
 	value?: FieldValue
+	values?: FieldValue[]
 	type?: ConditionType
 	conjunction?: Conjunction
 	fields?: string[]
@@ -36,11 +37,12 @@ interface LoadOrder {
 	field: string
 	desc: boolean
 }
-interface Record {
+interface WireRecord {
 	GetField: (field: string) => FieldValue | undefined
 	SetField: (field: string, value: FieldValue) => void
 }
 interface LoadRequest {
+	batchsize?: number
 	collection: string
 	fields?: FieldRequest[]
 	conditions?: ConditionRequest[]
@@ -105,28 +107,28 @@ type RunIntegrationAction = (
 
 interface BeforeSaveBotApi {
 	addError: (error: string) => void
-	load: (loadRequest: LoadRequest) => Record[]
+	load: (loadRequest: LoadRequest) => WireRecord[]
 	deletes: DeletesApi
 	inserts: InsertsApi
 	updates: UpdatesApi
 }
 interface AfterSaveBotApi extends BeforeSaveBotApi {
-	save: (collectionName: string, records: Record[]) => void
+	save: (collectionName: string, records: WireRecord[]) => void
 	runIntegrationAction: RunIntegrationAction
 	getConfigValue: (configValueKey: string) => string
 	asAdmin: AsAdminApi
 }
 interface AsAdminApi {
-	load: (loadRequest: LoadRequest) => Record[]
-	save: (collectionName: string, records: Record[]) => void
+	load: (loadRequest: LoadRequest) => WireRecord[]
+	save: (collectionName: string, records: WireRecord[]) => void
 	runIntegrationAction: RunIntegrationAction
 	getConfigValue: (configValueKey: string) => string
 }
 interface ListenerBotApi {
 	addResult: (key: string, value: FieldValue | undefined) => void
-	load: (loadRequest: LoadRequest) => Record[]
+	load: (loadRequest: LoadRequest) => WireRecord[]
 	params: BotParamsApi
-	save: (collectionName: string, records: Record[]) => void
+	save: (collectionName: string, records: WireRecord[]) => void
 	runIntegrationAction: RunIntegrationAction
 	getConfigValue: (configValueKey: string) => string
 	asAdmin: AsAdminApi
@@ -148,5 +150,5 @@ export type {
 	FieldValue,
 	LoadOrder,
 	LoadRequest,
-	Record,
+	WireRecord,
 }

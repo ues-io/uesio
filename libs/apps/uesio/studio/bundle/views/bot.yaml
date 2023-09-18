@@ -141,8 +141,6 @@ definition:
                           uesio.variant: uesio/io.four_columns
                           items:
                             - uesio/io.field:
-                                fieldId: uesio/studio.item
-                            - uesio/io.field:
                                 fieldId: uesio/studio.name
                             - uesio/io.field:
                                 fieldId: uesio/studio.type
@@ -157,14 +155,25 @@ definition:
                                 fieldId: uesio/studio.collection
                                 metadataType: COLLECTION
                                 label: Collection
+                                uesio.display:
+                                  - field: uesio/studio.type
+                                    operator: IN
+                                    values:
+                                      - BEFORESAVE
+                                      - AFTERSAVE
+                      - uesio/io.grid:
+                          uesio.variant: uesio/io.four_columns
+                          items:
+                            - uesio/io.field:
+                                fieldId: uesio/core.owner
                             - uesio/io.field:
                                 fieldId: uesio/core.createdby
-                            - uesio/io.field:
-                                fieldId: uesio/core.createdat
+                                user:
+                                  subtitle: $Time{uesio/core.createdat}
                             - uesio/io.field:
                                 fieldId: uesio/core.updatedby
-                            - uesio/io.field:
-                                fieldId: uesio/core.updatedat
+                                user:
+                                  subtitle: $Time{uesio/core.updatedat}
                       - uesio/io.list:
                           uesio.id: botAttachmentsList
                           wire: attachments
@@ -173,10 +182,16 @@ definition:
                             - uesio/io.fileattachment:
                                 uesio.id: botcontent
                                 displayAs: TEXT
+                                language: $Record{bots:uesio/studio.dialect}
                                 typeDefinitionFileURIs:
                                   - $StaticFile{/ui/types/server/bots.d.ts}
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
+                          uesio.display:
+                            - field: uesio/studio.type
+                              operator: IN
+                              values:
+                                - LISTENER
                           components:
                             - uesio/io.list:
                                 uesio.id: botParams

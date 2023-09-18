@@ -21,6 +21,8 @@ interface FileTextProps {
 	theme?: string
 	// Markdown options
 	markdownOptions?: MarkdownFieldOptions
+	// The language to use for syntax highlighting
+	language?: string
 }
 
 const stringToFile = (value: string, fileName: string, mimeType: string) => {
@@ -40,6 +42,7 @@ const FileText: definition.UtilityComponent<FileTextProps> = (props) => {
 		markdownOptions,
 		mode,
 		displayAs,
+		language = displayAs === "MARKDOWN" ? "markdown" : undefined,
 		id,
 		typeDefinitionFileURIs,
 		theme,
@@ -79,8 +82,6 @@ const FileText: definition.UtilityComponent<FileTextProps> = (props) => {
 		},
 		[original]
 	)
-
-	const language = displayAs === "MARKDOWN" ? "markdown" : undefined
 
 	if (displayAs === "MARKDOWN" && mode !== "EDIT") {
 		return (
