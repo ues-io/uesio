@@ -256,10 +256,7 @@ definition:
                             - uesio/io.field:
                                 fieldId: uesio/studio.type
                             - uesio/io.field:
-                                fieldId: uesio/studio.integration
-                                uesio.display:
-                                  - field: uesio/studio.type
-                                    value: EXTERNAL
+                                fieldId: uesio/core.owner
                             - uesio/io.field:
                                 fieldId: uesio/core.createdby
                                 user:
@@ -268,6 +265,16 @@ definition:
                                 fieldId: uesio/core.updatedby
                                 user:
                                   subtitle: $Time{uesio/core.updatedat}
+                      - uesio/io.grid:
+                          uesio.variant: uesio/io.four_columns
+                          uesio.display:
+                            - field: uesio/studio.type
+                              value: EXTERNAL
+                          items:
+                            - uesio/io.field:
+                                fieldId: uesio/studio.integration
+                            - uesio/io.field:
+                                fieldId: uesio/studio.loadbot
           - uesio/io.box:
               uesio.variant: uesio/io.section
               components:
@@ -579,6 +586,18 @@ definition:
                       app: $Param{app}
                   fieldId: uesio/studio.integration
                   metadataType: INTEGRATION
+                  uesio.display:
+                    - field: uesio/studio.type
+                      value: EXTERNAL
+              - uesio/builder.metadatafield:
+                  uesio.context:
+                    workspace:
+                      name: $Param{workspacename}
+                      app: $Param{app}
+                  fieldId: uesio/studio.loadbot
+                  metadataType: BOT
+                  grouping: LOAD
+                  label: Collection Load Bot
                   uesio.display:
                     - field: uesio/studio.type
                       value: EXTERNAL

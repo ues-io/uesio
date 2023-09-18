@@ -601,14 +601,14 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 			return nil, err2
 		}
 
+		collectionKey := collectionMetadata.GetFullName()
+
 		integrationName := collectionMetadata.GetIntegrationName()
 
 		// Attach the collection metadata to the LoadOp so that Load Bots can access it
 		op.AttachMetadataCache(metadataResponse)
 
-		var integration *meta.Integration
-
-		usage.RegisterEvent("LOAD", "COLLECTION", collectionMetadata.GetFullName(), 0, session)
+		usage.RegisterEvent("LOAD", "COLLECTION", collectionKey, 0, session)
 		usage.RegisterEvent("LOAD", "DATASOURCE", integrationName, 0, session)
 
 		if collectionMetadata.IsDynamic() {
@@ -628,7 +628,19 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 				return nil, err
 			}
 			op.AttachIntegration(integrationConnection)
-			if err = runExternalDataSourceLoadBot(integration.LoadBot, op, connection, session); err != nil {
+			integration := integrationConnection.GetIntegration()
+			// If there's a collection-specific load bot defined, use that,
+			// otherwise default to the integration's defined load bot.
+			// If there's neither, then there's nothing to do.
+			botKey := collectionMetadata.LoadBot
+			if botKey == "" && integration != nil {
+				botKey = integration.LoadBot
+			}
+			if botKey == "" {
+				return nil, fmt.Errorf("no load bot defined on collection %s or on integration %s", collectionKey, integration.GetKey())
+			}
+
+			if err = runExternalDataSourceLoadBot(botKey, op, connection, session); err != nil {
 				return nil, err
 			}
 			// Make sure that all the returned records have ids. If not, generated fake ids.
