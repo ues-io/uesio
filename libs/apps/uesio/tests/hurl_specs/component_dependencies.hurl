@@ -25,8 +25,8 @@ jsonpath "$.dependencies.componentpack[1].name" == "chart"
 jsonpath "$.dependencies.viewdef[0].definition.wires.animals.collection" == "uesio/tests.animal"
 jsonpath "$.dependencies.componentvariant[?(@.component=='uesio/io.tabs')].component" nth 0 == "uesio/io.tabs"
 # test loading of component variant dependencies
-jsonpath "$.dependencies.componentvariant[?(@.component=='uesio/io.tablabels')].component" == "uesio/io.tablabels"
-jsonpath "$.dependencies.componentvariant[?(@.component=='uesio/io.scrollpanel')].component" == "uesio/io.scrollpanel"
+jsonpath "$.dependencies.componentvariant[?(@.component=='uesio/io.tablabels')].component" nth 0 == "uesio/io.tablabels"
+jsonpath "$.dependencies.componentvariant[?(@.component=='uesio/io.scrollpanel')].component" nth 0 == "uesio/io.scrollpanel"
 # test defaulting of variant for tabs component when not set in YAML
 jsonpath "$.dependencies.viewdef[0].definition.components[0]['uesio/io.grid'].items[0]['uesio/io.griditem'].components[0]['uesio/io.tabs']['uesio.variant']" == "uesio/io.default"
 # verify that the default variant is loaded for button without a variant
