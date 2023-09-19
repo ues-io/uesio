@@ -80,7 +80,6 @@ definition:
                               text: ${uesio/studio.bundle->uesio/studio.app->uesio/core.uniquekey}
                               icon: ${uesio/studio.bundle->uesio/studio.app->uesio/studio.icon}
                               color: ${uesio/studio.bundle->uesio/studio.app->uesio/studio.color}
-
                       - field: uesio/studio.bundle->uesio/studio.version
                     rowactions:
                       - text: Details
