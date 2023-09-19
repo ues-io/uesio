@@ -45,10 +45,8 @@ function load_weather_forecast(bot: LoadBotApi) {
 
 	const { current, forecast } = botResult.params as TempResult
 
-	bot.setData([
-		{
-			"uesio/tests.current": current,
-			"uesio/tests.forecast": forecast,
-		},
-	])
+	bot.addRecord({
+		"uesio/tests.current": current,
+		"uesio/tests.forecast": forecast,
+	})
 }

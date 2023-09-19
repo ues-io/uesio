@@ -36,7 +36,7 @@ const DefaultLoadBotBody = `import { LoadBotApi } from "@uesio/bots
 // @ts-ignore
 function %s(bot: LoadBotApi) {
 	const { collection, conditions, fields, order } = bot.loadRequest
-	const results = [
+	[
 		{
 			"first_name": "Luigi",
 			"last_name": "Vampa"
@@ -45,8 +45,7 @@ function %s(bot: LoadBotApi) {
 			"first_name": "Myasia",
 			"last_name": "Harvey"
 		},
-	]
-	bot.setData(results)
+	].forEach((record) => bot.addRecord(record))
 }`
 
 const DefaultBeforeSaveBotBody = `import { BeforeSaveBotApi } from "@uesio/bots"

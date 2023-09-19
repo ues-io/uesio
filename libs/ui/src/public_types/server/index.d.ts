@@ -144,7 +144,7 @@ interface ListenerBotApi {
 }
 interface LoadBotApi {
 	addError: (error: string) => void
-	setData: (data: Record<string, unknown>[]) => void
+	addRecord: (record: Record<string, unknown>) => void
 	loadRequest: LoadRequest
 	getIntegration: () => IntegrationMetadata
 	getCredentials: () => Record<string, string | undefined>
