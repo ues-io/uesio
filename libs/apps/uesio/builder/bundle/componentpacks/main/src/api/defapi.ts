@@ -217,26 +217,16 @@ const clone = (context: ctx.Context, path: FullPath) => {
 	const parentNode = getNodeAtPath(parentPath, yamlDoc.contents)
 	if (!yaml.isSeq(parentNode)) return
 	const items = parentNode.items
-	const itemToClone = items[index] as Node
-	//
-	if (!yaml.isMap(itemToClone)) {
-		return
+	//Remove uesio.id
+	const itemToClone = items[index]
+	if (!yaml.isCollection(itemToClone)) return
+	const itemToCloneComponentType = itemToClone.items[0]
+	if (!yaml.isPair(itemToCloneComponentType)) return
+	const itemToCloneCopy = itemToClone.clone()
+	if (itemToCloneCopy.hasIn([itemToCloneComponentType.key, "uesio.id"])) {
+		itemToCloneCopy.deleteIn([itemToCloneComponentType.key, "uesio.id"])
 	}
-
-	console.log("GET GOT a NODE")
-	const jsonItem = itemToClone.toJSON()
-	const itemToCloneComponentType = Object.keys(jsonItem)[0]
-	console.log(itemToCloneComponentType)
-	const itemToCloneProps = jsonItem[itemToCloneComponentType]
-	console.log({ itemToCloneProps })
-	const uesioID = itemToCloneProps["uesio.id"]
-	const newKey = (uesioID || "") + (Math.floor(Math.random() * 60) + 1)
-	console.log({ newKey })
-	const test = itemToClone.clone()
-	test.setIn(["uesio.id"], newKey)
-	items.splice(index, 0, test)
-	//
-
+	items.splice(index, 0, itemToCloneCopy)
 	setMetadataValue(context, path, yamlDoc)
 }
 
