@@ -129,12 +129,12 @@ func (c *NamespaceSwapCollection) TransferFieldMetadata(fromCollectionName strin
 	}
 
 	for _, field := range fromCollectionMetadata.Fields {
-		clonedField := field
+		clonedField := *field
 		clonedField.Namespace = c.to
 		// Check to see if the field already exists
 		_, err := toCollectionMetadata.GetField(clonedField.GetFullName())
 		if err != nil {
-			toCollectionMetadata.SetField(clonedField)
+			toCollectionMetadata.SetField(&clonedField)
 		}
 	}
 
