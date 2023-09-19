@@ -682,6 +682,7 @@ export type {
 	ErrorContext,
 	FieldMode,
 	FieldModeContext,
+	Mergeable,
 	RecordContext,
 	RecordDataContext,
 	RouteContext,

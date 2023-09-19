@@ -52,7 +52,6 @@ func (bc *BotCollection) GetItemFromPath(path, namespace string) BundleableItem 
 		}
 		return NewBaseBot(strings.ToUpper(botType), "", namespace, parts[1])
 	}
-	return nil
 }
 
 func (bc *BotCollection) GetItemFromKey(key string) (BundleableItem, error) {
@@ -71,7 +70,6 @@ func (bc *BotCollection) IsDefinitionPath(path string) bool {
 	} else {
 		return parts[2] == "bot.yaml"
 	}
-	return false
 }
 
 func (bc *BotCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {

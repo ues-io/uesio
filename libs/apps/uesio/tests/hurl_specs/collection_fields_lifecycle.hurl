@@ -167,7 +167,7 @@ Accept: application/json
     "wires": [
         {
             "collection":"uesio/studio.collection",
-            "id": "collection",
+            "name": "collection",
             "query":true,
             "fields": [
                 {
@@ -192,7 +192,7 @@ Accept: application/json
         },
         {
             "collection":"uesio/studio.field",
-            "id": "fields",
+            "name": "fields",
             "query":true,
             "fields": [
                 {
@@ -226,7 +226,7 @@ Accept: application/json
         },
         {
             "collection":"uesio/studio.routeassignment",
-            "id": "fields",
+            "name": "fields",
             "query":true,
             "fields": [
                 {
@@ -280,7 +280,7 @@ Accept: application/json
     "wires": [
         {
             "collection": "uesio/studio.recentmetadata",
-            "id": "recentmetadata",
+            "name": "recentmetadata",
             "query": true,
             "params": {
                 "app": "uesio/tests",
