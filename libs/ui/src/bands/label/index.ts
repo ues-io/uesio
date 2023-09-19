@@ -24,7 +24,7 @@ const useLabel = (key: string) =>
 
 const useLabelKeys = () => useSelector(selectors.selectIds) as string[]
 
-export { useLabel, useLabelKeys, selectors }
+export { useLabel, useLabelKeys, selectors, adapter }
 
 export const { set, setMany } = metadataSlice.actions
 export default metadataSlice.reducer

@@ -135,10 +135,12 @@ definition:
                   fieldId: uesio/studio.dialect
               - uesio/io.box:
                   uesio.display:
-                    - field: uesio/studio.type
-                      value: LISTENER
-                      type: fieldValue
-                      operator: NOT_EQUALS
+                    - type: fieldValue
+                      field: uesio/studio.type
+                      operator: IN
+                      values:
+                        - AFTERSAVE
+                        - BEFORESAVE
                   components:
                     - uesio/builder.metadatafield:
                         uesio.context:

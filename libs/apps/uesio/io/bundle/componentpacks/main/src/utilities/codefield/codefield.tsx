@@ -58,7 +58,7 @@ const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
 	const {
 		setValue,
 		value,
-		language,
+		language = "typescript",
 		options,
 		onMount,
 		context,
@@ -134,10 +134,9 @@ const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
 	}
 
 	const monacoApi = useMonaco()
-	const languageModel = language || "typescript"
 
 	if (loading || !monacoApi) {
-		return <div>Loading language models for {languageModel}...</div>
+		return <div>Loading language models for {language}...</div>
 	}
 
 	if (!loading && loadingError) {
@@ -167,7 +166,7 @@ const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
 					...options,
 				}}
 				theme={theme}
-				language={languageModel}
+				language={language}
 				onChange={setValue}
 				beforeMount={handleEditorWillMount}
 				onMount={handleEditorDidMount}

@@ -31,7 +31,7 @@ const useViewDef = (key: string | undefined) =>
 const getViewDef = (key: string) =>
 	selectors.selectById(getCurrentState(), key)?.definition
 
-export { useViewDef, selectors, getViewDef }
+export { useViewDef, selectors, getViewDef, adapter }
 
 export const { upsertOne, upsertMany } = metadataSlice.actions
 export default metadataSlice.reducer
