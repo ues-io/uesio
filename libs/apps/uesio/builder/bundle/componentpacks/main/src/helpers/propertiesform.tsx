@@ -648,7 +648,7 @@ const parseProperties = (
 		if (value !== undefined) {
 			set(
 				initialValue,
-				name.replace(PATH_ARROW, LODASH_PATH_SEPARATOR),
+				[name.replace(PATH_ARROW, LODASH_PATH_SEPARATOR)],
 				value
 			)
 		}
