@@ -43,6 +43,19 @@ const DefaultLoadBotBody = `function %s(bot) {
 	].forEach((record) => bot.addRecord(record))
 }`
 
+const DefaultSaveBotBody = `function %s(bot) {
+	const collectionName = bot.getCollectionName()
+	bot.deletes.get().forEach((deleteApi) => {
+		bot.log.info("got a record to delete, with id: " + deleteApi.getId())
+	})
+	bot.inserts.get().forEach((insertApi) => {
+		bot.log.info("got a record to insert, with id: " + insertApi.getId())
+	})
+	bot.updates.get().forEach((updateApi) => {
+		bot.log.info("got a record to update, with id: " + updateApi.getId())
+	})
+}`
+
 const DefaultBeforeSaveBotBody = `function %s(bot) {
 	bot.inserts.get().forEach(function (change) {
 		const recordId = change.get("uesio/core.id");
@@ -207,6 +220,8 @@ func (b *JSDialect) GetDefaultFileBody(botType string) string {
 		return DefaultAfterSaveBotBody
 	case "LOAD":
 		return DefaultLoadBotBody
+	case "SAVE":
+		return DefaultSaveBotBody
 	default:
 		return DefaultBotBody
 	}

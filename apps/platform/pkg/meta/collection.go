@@ -61,6 +61,7 @@ type Collection struct {
 	TableName             string                            `yaml:"tablename,omitempty" json:"uesio/studio.tablename"`
 	IntegrationRef        string                            `yaml:"integration,omitempty" json:"uesio/studio.integration"`
 	LoadBot               string                            `yaml:"loadBot,omitempty" json:"uesio/studio.loadbot"`
+	SaveBot               string                            `yaml:"saveBot,omitempty" json:"uesio/studio.savebot"`
 }
 
 type CollectionWrapper Collection

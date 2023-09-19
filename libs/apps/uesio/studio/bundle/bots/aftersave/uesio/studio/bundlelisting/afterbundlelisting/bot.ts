@@ -1,9 +1,9 @@
-import { AfterSaveBotApi, ChangeApi, FieldValue } from "@uesio/bots"
+import { AfterSaveBotApi, InsertApi, FieldValue } from "@uesio/bots"
 // @ts-ignore
 function afterbundlelisting(bot: AfterSaveBotApi) {
 	const historyChanges: Record<string, FieldValue>[] = []
 
-	const getHistoryItem = (change: ChangeApi) => {
+	const getHistoryItem = (change: InsertApi) => {
 		const historyItem: Record<string, FieldValue> = {}
 		const status = change.get("uesio/studio.status")
 		const app = change.get("uesio/studio.app")

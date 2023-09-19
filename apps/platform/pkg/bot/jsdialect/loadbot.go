@@ -11,62 +11,56 @@ import (
 
 func NewLoadBotAPI(bot *meta.Bot, session *sess.Session, connection adapt.Connection, loadOp *adapt.LoadOp, integrationConnection adapt.IntegrationConnection) *LoadBotAPI {
 	return &LoadBotAPI{
-		Session:               session,
+		session:               session,
 		LoadOp:                loadOp,
-		Connection:            connection,
+		connection:            connection,
 		LogApi:                NewBotLogAPI(bot),
 		Http:                  NewBotHttpAPI(bot, session),
 		IntegrationConnection: integrationConnection,
 	}
 }
 
-type IntegrationMetadata meta.Integration
-
-func (im *IntegrationMetadata) GetBaseURL() string {
-	return im.BaseURL
-}
-
 type LoadBotAPI struct {
-	Session               *sess.Session
+	session               *sess.Session
 	LoadOp                *adapt.LoadOp `bot:"loadRequest"`
-	Connection            adapt.Connection
+	connection            adapt.Connection
 	LogApi                *BotLogAPI  `bot:"log"`
 	Http                  *BotHttpAPI `bot:"http"`
 	IntegrationConnection adapt.IntegrationConnection
 	loadErrors            []string
 }
 
-func (bs *LoadBotAPI) GetCredentials() map[string]interface{} {
-	if bs.IntegrationConnection == nil || bs.IntegrationConnection.GetCredentials() == nil {
+func (lb *LoadBotAPI) GetCredentials() map[string]interface{} {
+	if lb.IntegrationConnection == nil || lb.IntegrationConnection.GetCredentials() == nil {
 		return map[string]interface{}{}
 	}
-	return bs.IntegrationConnection.GetCredentials().GetInterfaceMap()
+	return lb.IntegrationConnection.GetCredentials().GetInterfaceMap()
 }
 
-func (bs *LoadBotAPI) GetIntegration() *IntegrationMetadata {
-	if bs.IntegrationConnection == nil || bs.IntegrationConnection.GetIntegration() == nil {
+func (lb *LoadBotAPI) GetIntegration() *IntegrationMetadata {
+	if lb.IntegrationConnection == nil || lb.IntegrationConnection.GetIntegration() == nil {
 		return nil
 	}
-	return (*IntegrationMetadata)(bs.IntegrationConnection.GetIntegration())
+	return (*IntegrationMetadata)(lb.IntegrationConnection.GetIntegration())
 }
 
-func (bs *LoadBotAPI) GetConfigValue(configValueKey string) (string, error) {
-	return configstore.GetValueFromKey(configValueKey, bs.Session)
+func (lb *LoadBotAPI) GetConfigValue(configValueKey string) (string, error) {
+	return configstore.GetValueFromKey(configValueKey, lb.session)
 }
 
-func (cba *LoadBotAPI) GetSession() *SessionAPI {
-	return NewSessionAPI(cba.Session)
+func (lb *LoadBotAPI) GetSession() *SessionAPI {
+	return NewSessionAPI(lb.session)
 }
 
-func (cba *LoadBotAPI) GetUser() *UserAPI {
-	return NewUserAPI(cba.Session.GetContextUser())
+func (lb *LoadBotAPI) GetUser() *UserAPI {
+	return NewUserAPI(lb.session.GetContextUser())
 }
 
-func (cba *LoadBotAPI) AddError(error string) {
-	cba.loadErrors = append(cba.loadErrors, error)
+func (lb *LoadBotAPI) AddError(error string) {
+	lb.loadErrors = append(lb.loadErrors, error)
 }
 
-func (cba *LoadBotAPI) AddRecord(record interface{}) {
+func (lb *LoadBotAPI) AddRecord(record interface{}) {
 	switch typedRecord := record.(type) {
 	case map[string]interface{}:
 		item := (adapt.Item)(typedRecord)
@@ -76,6 +70,6 @@ func (cba *LoadBotAPI) AddRecord(record interface{}) {
 				item.SetField(adapt.ID_FIELD, shortId)
 			}
 		}
-		cba.LoadOp.Collection.AddItem(&item)
+		lb.LoadOp.Collection.AddItem(&item)
 	}
 }
