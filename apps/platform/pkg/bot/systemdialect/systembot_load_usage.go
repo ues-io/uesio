@@ -16,27 +16,7 @@ func runUsageLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *ses
 		return errors.New("unable to retrieve usage, site admin context is missing")
 	}
 
-	usageData := NewNamespaceSwapCollection("uesio/core", "uesio/studio")
-
-	collectionsMetadataReq := datasource.MetadataRequest{
-		Options: &datasource.MetadataRequestOptions{
-			LoadAllFields: true,
-		},
-	}
-
-	collectionsMetadataReq.AddCollection("uesio/studio.usage")
-
-	metadataResponse := connection.GetMetadata()
-
-	err := collectionsMetadataReq.Load(metadataResponse, sess.GetStudioAnonSession(), connection)
-	if err != nil {
-		return err
-	}
-
-	err = usageData.TransferFieldMetadata("uesio/core.usage", metadataResponse, metadataResponse)
-	if err != nil {
-		return err
-	}
+	usageData := NewNamespaceSwapCollection("uesio/studio", "uesio/core")
 
 	newOp := &adapt.LoadOp{
 		CollectionName: "uesio/studio.usage",
@@ -67,9 +47,7 @@ func runUsageLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *ses
 		BatchNumber:    op.BatchNumber,
 	}
 
-	_, err = datasource.Load([]*adapt.LoadOp{newOp}, sess.GetStudioAnonSession(), &datasource.LoadOptions{
-		Metadata: metadataResponse,
-	})
+	studioMetadata, err := datasource.Load([]*adapt.LoadOp{newOp}, sess.GetStudioAnonSession(), &datasource.LoadOptions{})
 	if err != nil {
 		return err
 	}
@@ -77,6 +55,13 @@ func runUsageLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *ses
 	//make sure we pase this back to the original OP
 	op.BatchNumber = newOp.BatchNumber
 	op.HasMoreBatches = newOp.HasMoreBatches
+
+	metadataResponse := connection.GetMetadata()
+
+	err = usageData.TransferFieldMetadata("uesio/studio.usage", studioMetadata, metadataResponse)
+	if err != nil {
+		return err
+	}
 
 	referencedCollections := adapt.ReferenceRegistry{}
 	userCollectionMetadata, err := metadataResponse.GetCollection("uesio/core.user")

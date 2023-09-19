@@ -20,7 +20,7 @@ func (i *NamespaceSwapItem) MarshalJSON() ([]byte, error) {
 		if err != nil {
 			return err
 		}
-		result[i.collection.SwapNSBack(fieldName)] = fieldBytes
+		result[i.collection.SwapNS(fieldName)] = fieldBytes
 		return nil
 	})
 	if err != nil {
@@ -97,15 +97,11 @@ func (c *NamespaceSwapCollection) SwapNS(value string) string {
 	return meta.GetFullyQualifiedKey(meta.GetLocalizedKey(value, c.from), c.to)
 }
 
-func (c *NamespaceSwapCollection) SwapNSBack(value string) string {
-	return meta.GetFullyQualifiedKey(meta.GetLocalizedKey(value, c.to), c.from)
-}
-
 // Gets the conditions from the wire and translates them from core to studio
 func (c *NamespaceSwapCollection) MapConditions(coreConditions []adapt.LoadRequestCondition) []adapt.LoadRequestCondition {
 	var studioConditions []adapt.LoadRequestCondition
 	for _, elem := range coreConditions {
-		elem.Field = meta.GetLocalizedKey(elem.Field, c.from)
+		elem.Field = meta.GetLocalizedKey(elem.Field, c.to)
 		studioConditions = append(studioConditions, elem)
 	}
 	return studioConditions
@@ -114,7 +110,7 @@ func (c *NamespaceSwapCollection) MapConditions(coreConditions []adapt.LoadReque
 func (c *NamespaceSwapCollection) MapOrder(coreOrder []adapt.LoadRequestOrder) []adapt.LoadRequestOrder {
 	var studioOrder []adapt.LoadRequestOrder
 	for _, elem := range coreOrder {
-		elem.Field = meta.GetLocalizedKey(elem.Field, c.from)
+		elem.Field = meta.GetLocalizedKey(elem.Field, c.to)
 		studioOrder = append(studioOrder, elem)
 	}
 	return studioOrder
@@ -133,13 +129,12 @@ func (c *NamespaceSwapCollection) TransferFieldMetadata(fromCollectionName strin
 	}
 
 	for _, field := range fromCollectionMetadata.Fields {
-
-		clonedField := *field
+		clonedField := field
 		clonedField.Namespace = c.to
 		// Check to see if the field already exists
 		_, err := toCollectionMetadata.GetField(clonedField.GetFullName())
 		if err != nil {
-			toCollectionMetadata.SetField(&clonedField)
+			toCollectionMetadata.SetField(clonedField)
 		}
 	}
 
