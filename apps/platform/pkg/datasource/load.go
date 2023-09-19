@@ -358,7 +358,14 @@ func getMetadataForConditionLoad(
 		}
 	}
 
-	if condition.ValueSource == "LOOKUP" && condition.LookupField != "" && condition.LookupWire != "" {
+	if condition.ValueSource == "LOOKUP" {
+
+		if condition.LookupWire == "" {
+			return fmt.Errorf("invalid condition with valueSource 'LOOKUP': lookupWire is required")
+		}
+		if condition.LookupField == "" {
+			return fmt.Errorf("invalid condition with valueSource 'LOOKUP': lookupField is required")
+		}
 
 		// Look through the previous wires to find the one to look up on.
 		var lookupCollectionKey string
@@ -367,13 +374,18 @@ func getMetadataForConditionLoad(
 				lookupCollectionKey = otherOp.CollectionName
 			}
 		}
+
+		if lookupCollectionKey == "" {
+			return fmt.Errorf("LOOKUP condition requested field %s from a wire named %s, but no Wire with this name was found in this load request", condition.LookupField, condition.LookupWire)
+		}
+
 		lookupFields := strings.Split(condition.LookupField, constant.RefSep)
 		lookupField, rest := lookupFields[0], lookupFields[1:]
 		subFields := getAdditionalLookupFields(rest)
 
 		innerErr := collections.AddField(lookupCollectionKey, lookupField, &subFields)
 		if innerErr != nil {
-			return fmt.Errorf("lookup field: %v", innerErr)
+			return fmt.Errorf("cannot lookup field: %v", innerErr)
 		}
 	}
 	return nil

@@ -3,7 +3,7 @@ package jsdialect
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"strings"
 	"time"
 
@@ -72,7 +72,7 @@ func (b *JSDialect) hydrateBot(bot *meta.Bot, session *sess.Session) error {
 	if err != nil {
 		return err
 	}
-	content, err := ioutil.ReadAll(stream)
+	content, err := io.ReadAll(stream)
 	if err != nil {
 		return err
 	}

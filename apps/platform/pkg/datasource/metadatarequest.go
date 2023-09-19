@@ -112,8 +112,11 @@ func (mr *MetadataRequest) AddCollection(collectionName string) error {
 }
 
 func (mr *MetadataRequest) AddField(collectionName, fieldName string, subFields *FieldsMap) error {
-	if collectionName == "" || fieldName == "" {
-		return fmt.Errorf("adding field: %s, %s", collectionName, fieldName)
+	if collectionName == "" {
+		return fmt.Errorf("cannot request metadata without a valid collection name (field = %s)", fieldName)
+	}
+	if fieldName == "" {
+		return fmt.Errorf("cannot request metadata without a valid field name (collection = %s)", collectionName)
 	}
 	err := mr.AddCollection(collectionName)
 	if err != nil {
