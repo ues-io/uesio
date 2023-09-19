@@ -31,7 +31,7 @@ const DefaultListenerBotBody = `function %s(bot) {
 
 const DefaultLoadBotBody = `function %s(bot) {
 	const collectionName = bot.loadRequest.GetCollectionName()
-	const results = [
+	[
 		{
 			"first_name": "Luigi",
 			"last_name": "Vampa"
@@ -40,8 +40,7 @@ const DefaultLoadBotBody = `function %s(bot) {
 			"first_name": "Myasia",
 			"last_name": "Harvey"
 		},
-	]
-	bot.setData(results)
+	].forEach((record) => bot.addRecord(record))
 }`
 
 const DefaultBeforeSaveBotBody = `function %s(bot) {

@@ -1,6 +1,8 @@
 package jsdialect
 
 import (
+	"github.com/teris-io/shortid"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -64,25 +66,16 @@ func (cba *LoadBotAPI) AddError(error string) {
 	cba.loadErrors = append(cba.loadErrors, error)
 }
 
-func (cba *LoadBotAPI) addItem(item interface{}) {
-	switch typedItem := item.(type) {
+func (cba *LoadBotAPI) AddRecord(record interface{}) {
+	switch typedRecord := record.(type) {
 	case map[string]interface{}:
-		typedVal := (adapt.Item)(typedItem)
-		cba.LoadOp.Collection.AddItem(&typedVal)
-	}
-}
-
-func (cba *LoadBotAPI) SetData(data interface{}) {
-	// We should get back either a list of interfaces, or a single interface,
-	// so then we just need to add these into the LoadOp's Collection,
-	// which should already exist
-	switch typedValue := data.(type) {
-	case []interface{}:
-		for _, rawItem := range typedValue {
-			cba.addItem(rawItem)
+		item := (adapt.Item)(typedRecord)
+		// Make sure that the Item has a valid for its Id field. If not, generate a fake id.
+		if val, err := item.GetField(adapt.ID_FIELD); err == nil || val == nil || val == "" {
+			if shortId, shortIdErr := shortid.Generate(); shortIdErr != nil {
+				item.SetField(adapt.ID_FIELD, shortId)
+			}
 		}
-		return
-	case interface{}:
-		cba.addItem(typedValue)
+		cba.LoadOp.Collection.AddItem(&item)
 	}
 }

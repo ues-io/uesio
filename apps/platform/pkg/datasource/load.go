@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/teris-io/shortid"
-
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/constant"
 	"github.com/thecloudmasters/uesio/pkg/merge"
@@ -642,19 +640,6 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 
 			if err = runExternalDataSourceLoadBot(botKey, op, connection, session); err != nil {
 				return nil, err
-			}
-			// Make sure that all the returned records have ids. If not, generated fake ids.
-			if op.Collection != nil && op.Collection.Len() > 0 {
-				if err = op.Collection.Loop(func(item meta.Item, index string) error {
-					if val, err := item.GetField(adapt.ID_FIELD); err == nil || val == nil || val == "" {
-						if shortId, err := shortid.Generate(); err != nil {
-							item.SetField(adapt.ID_FIELD, shortId)
-						}
-					}
-					return nil
-				}); err != nil {
-					return nil, err
-				}
 			}
 			continue
 		}
