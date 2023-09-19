@@ -2,13 +2,19 @@ package truncate
 
 import (
 	"errors"
-	"github.com/thecloudmasters/uesio/pkg/adapt"
+
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func TruncateWorkspaceData(session *sess.Session, connection adapt.Connection) error {
+func TruncateWorkspaceData(session *sess.Session) error {
 	tenantID := session.GetTenantID()
+
+	connection, err := datasource.GetPlatformConnection(nil, session.RemoveWorkspaceContext(), nil)
+	if err != nil {
+		return err
+	}
 
 	if tenantID == "" {
 		return meta.NewParamError("required parameter not provided in session", "tenant id")
@@ -21,7 +27,7 @@ func TruncateWorkspaceData(session *sess.Session, connection adapt.Connection) e
 	if !session.GetSitePermissions().HasNamedPermission("uesio/studio.workspace_admin") {
 		return meta.NewBotAccessError("you must be a Studio workspace admin to truncate workspace data")
 	}
-	err := connection.BeginTransaction()
+	err = connection.BeginTransaction()
 	if err != nil {
 		return errors.New("unable to truncate workspace data: could not create a transaction")
 	}
