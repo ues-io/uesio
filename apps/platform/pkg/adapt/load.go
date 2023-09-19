@@ -27,6 +27,9 @@ type LoadOp struct {
 	Preloaded          bool                   `json:"preloaded"`
 	LoadAll            bool                   `json:"loadAll" bot:"loadAll"`
 	DebugQueryString   string                 `json:"debugQueryString"`
+	// Internal only conveniences for LoadBots to be able to access prefetched metadata
+	metadata    *MetadataCache
+	integration IntegrationConnection
 }
 
 type LoadOpWrapper LoadOp
@@ -81,6 +84,31 @@ func (op *LoadOp) UnmarshalYAML(node *yaml.Node) error {
 	op.LoadAll = meta.GetNodeValueAsBool(node, "loadAll", false)
 	return nil
 
+}
+
+func (op *LoadOp) GetIntegration() (IntegrationConnection, error) {
+	if op.integration != nil {
+		return op.integration, nil
+	}
+	return nil, errors.New("integration not available on LoadOp")
+}
+
+func (op *LoadOp) GetCollectionMetadata() (*CollectionMetadata, error) {
+	if op.metadata != nil {
+		return op.metadata.GetCollection(op.CollectionName)
+	} else {
+		return nil, errors.New("no metadata available on LoadOp")
+	}
+}
+
+func (op *LoadOp) AttachMetadataCache(response *MetadataCache) *LoadOp {
+	op.metadata = response
+	return op
+}
+
+func (op *LoadOp) AttachIntegration(integration IntegrationConnection) *LoadOp {
+	op.integration = integration
+	return op
 }
 
 type LoadRequestBatch struct {

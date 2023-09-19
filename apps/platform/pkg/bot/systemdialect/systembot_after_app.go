@@ -14,7 +14,7 @@ func runAppAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, sess
 	err := datasource.PlatformLoad(&wc, &datasource.PlatformLoadOptions{
 		Fields: []adapt.LoadRequestField{
 			{
-				ID: "uesio/core.id",
+				ID: adapt.ID_FIELD,
 			},
 			{
 				ID: "uesio/studio.name",

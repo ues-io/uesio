@@ -1,5 +1,5 @@
 import { dispatch } from "../../../store/store"
-import { Context } from "../../../context/context"
+import { Context, Mergeable } from "../../../context/context"
 import { addCondition, getFullWireId } from ".."
 import { WireConditionState } from "../conditions/conditions"
 
@@ -13,7 +13,9 @@ export default (
 		dispatch(
 			addCondition({
 				entity: getFullWireId(viewId, wireName),
-				condition,
+				condition: (condition
+					? context.mergeMap(condition as Record<string, Mergeable>)
+					: undefined) as WireConditionState,
 			})
 		)
 	return context

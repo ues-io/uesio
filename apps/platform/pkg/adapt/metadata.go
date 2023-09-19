@@ -41,7 +41,6 @@ type CollectionMetadata struct {
 	Updateable            bool                                   `json:"updateable"`
 	Deleteable            bool                                   `json:"deleteable"`
 	Fields                map[string]*FieldMetadata              `json:"fields"`
-	Integration           string                                 `json:"-"`
 	Access                string                                 `json:"-"`
 	AccessField           string                                 `json:"-"`
 	RecordChallengeTokens []*meta.RecordChallengeTokenDefinition `json:"-"`
@@ -50,6 +49,8 @@ type CollectionMetadata struct {
 	HasAllFields          bool                                   `json:"hasAllFields"`
 	Label                 string                                 `json:"label"`
 	PluralLabel           string                                 `json:"pluralLabel"`
+	Integration           string                                 `json:"-"`
+	LoadBot               string                                 `json:"-"`
 }
 
 func (cm *CollectionMetadata) GetIntegrationName() string {

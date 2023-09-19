@@ -4,8 +4,9 @@ import (
 	"fmt"
 
 	"github.com/teris-io/shortid"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/integ"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/integ/web"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -53,7 +54,7 @@ func ProjectLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess
 
 	data := &ProjectResponse{}
 
-	webIntegration, err := integ.GetIntegration("tcm/timetracker.clickup", session)
+	webIntegration, err := datasource.GetIntegration("tcm/timetracker.clickup", session)
 	if err != nil {
 		return err
 	}

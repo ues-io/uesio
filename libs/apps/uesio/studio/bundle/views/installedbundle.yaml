@@ -26,9 +26,12 @@ definition:
               fields:
                 uesio/studio.color:
                 uesio/studio.icon:
+                uesio/core.uniquekey:
             uesio/studio.major:
             uesio/studio.minor:
             uesio/studio.patch:
+            uesio/studio.version:
+            uesio/studio.description:
       conditions:
         - field: uesio/core.uniquekey
           value: $Param{bundledep}
@@ -39,6 +42,12 @@ definition:
         uesio/studio.major:
         uesio/studio.minor:
         uesio/studio.patch:
+        uesio/studio.version:
+        uesio/studio.description:
+        uesio/core.createdat:
+      order:
+        - field: uesio/core.createdat
+          desc: true
       conditions:
         - field: uesio/studio.app
           valueSource: LOOKUP
@@ -71,7 +80,7 @@ definition:
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
-                    title: Bundle - ${uesio/studio.bundle->uesio/studio.app->uesio/core.uniquekey} v${["uesio/studio.bundle"]["uesio/studio.major"]}.${["uesio/studio.bundle"]["uesio/studio.minor"]}.${["uesio/studio.bundle"]["uesio/studio.patch"]}
+                    title: "Bundle - ${uesio/studio.bundle->uesio/studio.app->uesio/core.uniquekey}: v${uesio/studio.bundle->uesio/studio.version}"
                     actions:
                       - uesio/io.group:
                           components:
@@ -91,12 +100,10 @@ definition:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.section
                     title: Versions
-                - uesio/io.deck:
-                    uesio.id: versionslist
+                - uesio/io.table:
+                    uesio.id: versionsTable
                     wire: versions
-                    components:
-                      - uesio/io.tile:
-                          uesio.variant: uesio/io.item
-                          content:
-                            - uesio/io.text:
-                                text: "v${uesio/studio.major}.${uesio/studio.minor}.${uesio/studio.patch}"
+                    columns:
+                      - field: uesio/studio.version
+                      - field: uesio/studio.description
+                      - field: uesio/core.createdat

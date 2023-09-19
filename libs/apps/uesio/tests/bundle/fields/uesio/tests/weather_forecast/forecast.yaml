@@ -1,0 +1,23 @@
+name: forecast
+type: LIST
+label: Forecast Weather
+subtype: STRUCT
+subfields:
+  - name: day
+    label: Day
+    type: DATE
+  - name: low
+    label: Low Temperature
+    type: NUMBER
+    number:
+      decimals: 2
+  - name: high
+    label: High Temperature
+    type: NUMBER
+    number:
+      decimals: 2
+  - name: avg
+    label: Avg Temperature
+    type: NUMBER
+    number:
+      decimals: 2

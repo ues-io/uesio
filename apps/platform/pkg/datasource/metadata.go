@@ -24,7 +24,6 @@ func GetCollectionMetadata(e *meta.Collection) *adapt.CollectionMetadata {
 		Updateable:            !e.ReadOnly,
 		Deleteable:            !e.ReadOnly,
 		Fields:                fieldMetadata,
-		Integration:           e.IntegrationRef,
 		Access:                e.Access,
 		AccessField:           e.AccessField,
 		RecordChallengeTokens: e.RecordChallengeTokens,
@@ -32,6 +31,8 @@ func GetCollectionMetadata(e *meta.Collection) *adapt.CollectionMetadata {
 		Public:                e.Public,
 		Label:                 e.Label,
 		PluralLabel:           e.PluralLabel,
+		Integration:           e.IntegrationRef,
+		LoadBot:               e.LoadBot,
 	}
 }
 

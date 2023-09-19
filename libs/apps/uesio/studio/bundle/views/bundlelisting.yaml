@@ -39,6 +39,7 @@ definition:
         uesio/studio.description:
         uesio/studio.app:
           fields:
+            uesio/core.uniquekey:
             uesio/studio.fullname:
             uesio/studio.color:
             uesio/studio.icon:
@@ -120,6 +121,30 @@ definition:
           lookupWire: app
           lookupField: uesio/core.id
 
+    # The current app's dependency
+    # Used for the install button
+    dependencyAlreadyInstalled:
+      collection: uesio/studio.bundledependency
+      fields:
+        uesio/core.id:
+        uesio/studio.workspace:
+        uesio/studio.app:
+          fields:
+            uesio/core.uniquekey:
+        uesio/studio.bundle:
+          fields:
+            uesio/studio.app:
+            uesio/studio.major:
+            uesio/studio.minor:
+            uesio/studio.patch:
+      conditions:
+        - field: uesio/studio.app->uesio/core.uniquekey
+          value: $Param{id}
+        - field: uesio/studio.workspace
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio/core.id
+
   components:
     - uesio/studio.mainlayout:
         topbar:
@@ -164,9 +189,11 @@ definition:
                                         # Install Button
                                         - uesio/io.button:
                                             uesio.display:
-                                              - field: uesio/studio.app->uesio/core.uniquekey
-                                                wire: dependencies
-                                                value: $Param{id}
+                                              - type: wireHasNoRecords
+                                                wire: dependencyAlreadyInstalled
+                                              - field: uesio/core.uniquekey
+                                                wire: listing
+                                                value: $Param{app}
                                                 operator: NOT_EQUALS
                                             uesio.variant: uesio/io.primary
                                             text: Install ${uesio/core.uniquekey}
@@ -178,6 +205,7 @@ definition:
                                                 wires:
                                                   - workspaces
                                                   - dependencies
+                                                  - dependencyAlreadyInstalled
 
                                         # Uninstall Button
                                         - uesio/io.list:
@@ -192,6 +220,11 @@ definition:
                                                   signals:
                                                     - signal: wire/MARK_FOR_DELETE
                                                     - signal: wire/SAVE
+                                                    - signal: wire/LOAD
+                                                      wires:
+                                                        - workspaces
+                                                        - dependencies
+                                                        - dependencyAlreadyInstalled
                             - uesio/studio.bundlelistingvisual:
                                 color: ${uesio/studio.app->uesio/studio.color}
                                 icon: ${uesio/studio.app->uesio/studio.icon}
