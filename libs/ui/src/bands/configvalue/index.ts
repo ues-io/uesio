@@ -24,7 +24,7 @@ const useConfigValue = (key: string) =>
 
 const useConfigValueKeys = () => useSelector(selectors.selectIds) as string[]
 
-export { useConfigValue, useConfigValueKeys, selectors }
+export { useConfigValue, useConfigValueKeys, selectors, adapter }
 
 export const { set, setMany } = metadataSlice.actions
 export default metadataSlice.reducer

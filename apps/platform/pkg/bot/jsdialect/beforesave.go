@@ -15,6 +15,7 @@ type BeforeSaveAPI struct {
 }
 
 type BotLoadOp struct {
+	BatchSize  int                          `bot:"batchsize"`
 	Collection string                       `bot:"collection"`
 	Fields     []adapt.LoadRequestField     `bot:"fields"`
 	Conditions []adapt.LoadRequestCondition `bot:"conditions"`

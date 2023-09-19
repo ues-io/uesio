@@ -5,3 +5,5 @@ options:
     value: "sendgrid"
   - label: "Web (REST APIs)"
     value: "web"
+  - label: "Custom"
+    value: "uesio/core.custom"

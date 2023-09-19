@@ -3,7 +3,6 @@ package jsdialect
 import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/integ"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -23,6 +22,7 @@ func botLoad(request BotLoadOp, session *sess.Session, connection adapt.Connecti
 	collection := &adapt.Collection{}
 
 	op := &adapt.LoadOp{
+		BatchSize:      request.BatchSize,
 		CollectionName: request.Collection,
 		Collection:     collection,
 		WireName:       "botload",
@@ -46,7 +46,7 @@ func botLoad(request BotLoadOp, session *sess.Session, connection adapt.Connecti
 
 func runIntegrationAction(integrationID string, action string, options interface{}, session *sess.Session) (interface{}, error) {
 
-	integration, err := integ.GetIntegration(integrationID, session)
+	integration, err := datasource.GetIntegration(integrationID, session)
 	if err != nil {
 		return nil, err
 	}

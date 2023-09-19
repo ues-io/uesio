@@ -98,10 +98,7 @@ export const getGalaxyCollection = (): PlainCollection => ({
 	pluralLabel: "Galaxies",
 })
 
-export const getCollectionSlice = () => ({
-	ids: ["ben/planets.exoplanet", "ben/planets.galaxy"],
-	entities: {
-		["ben/planets.exoplanet"]: getExoplanetCollection(),
-		["ben/planets.galaxy"]: getGalaxyCollection(),
-	},
-})
+export const getCollectionSlice = () => [
+	getExoplanetCollection(),
+	getGalaxyCollection(),
+]
