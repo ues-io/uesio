@@ -23,6 +23,7 @@ import { NumberFieldOptions } from "../../utilities/field/number"
 import { ReferenceFieldOptions } from "../../utilities/field/reference"
 import { ReferenceGroupFieldOptions } from "../../utilities/field/referencegroup"
 import { UserFieldOptions } from "../../utilities/field/user"
+import { CheckboxFieldOptions } from "../../utilities/field/checkbox"
 
 type FieldDefinition = {
 	// Wire will default to the context wire, but can optionally be overridden
@@ -33,6 +34,7 @@ type FieldDefinition = {
 	displayAs?: string
 	focusOnRender?: boolean
 	reference?: ReferenceFieldOptions | ReferenceGroupFieldOptions
+	checkbox?: CheckboxFieldOptions
 	list?: ListFieldOptions
 	map?: MapFieldOptions
 	markdown?: MarkdownComponentOptions
@@ -96,6 +98,7 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		displayAs,
 		focusOnRender,
 		reference,
+		checkbox,
 		list,
 		map,
 		user,
@@ -174,6 +177,7 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 
 	const typeSpecific = {
 		reference,
+		checkbox,
 		list,
 		map,
 		markdown,

@@ -39,6 +39,7 @@ definition:
         uesio/studio.description:
         uesio/studio.app:
           fields:
+            uesio/studio.fullname:
             uesio/studio.color:
             uesio/studio.icon:
       conditions:
@@ -120,107 +121,102 @@ definition:
           lookupField: uesio/core.id
 
   components:
-    - uesio/io.grid:
-        uesio.variant: uesio/studio.mainlayout
-        items:
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.topbar
+    - uesio/studio.mainlayout:
+        topbar:
+          - uesio/core.view:
+              view: uesio/studio.topbar
+              uesio.context:
+                wire: workspaces
+        leftbar:
+          - uesio/core.view:
+              uesio.context:
+                wire: workspaces
+              view: uesio/studio.workspacenav
+        content:
+          - uesio/io.titlebar:
+              uesio.variant: uesio/io.main
+              title: Add a Bundle
+          - uesio/io.box:
+              uesio.variant: uesio/io.section
               components:
-                - uesio/core.view:
-                    view: uesio/studio.topbar
-                    uesio.context:
-                      wire: workspaces
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.leftbar
-              components:
-                - uesio/core.view:
-                    uesio.context:
-                      wire: workspaces
-                    view: uesio/studio.workspacenav
-
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.content
-              components:
-                - uesio/io.titlebar:
-                    uesio.variant: uesio/io.main
-                    title: Add a Bundle
-                - uesio/io.box:
-                    uesio.variant: uesio/io.section
+                - uesio/io.list:
+                    wire: listing
+                    mode: READ
+                    uesio.id: listingList
                     components:
-                      - uesio/io.list:
-                          wire: listing
-                          mode: READ
-                          uesio.id: listingList
-                          components:
-                            - uesio/io.grid:
-                                uesio.styleTokens:
-                                  root:
-                                    - gap-4
-                                    - grid-cols-1
-                                    - md:grid-cols-2
-                                items:
-                                  - uesio/io.box:
+                      - uesio/io.grid:
+                          uesio.styleTokens:
+                            root:
+                              - gap-4
+                              - grid-cols-1
+                              - md:grid-cols-2
+                          items:
+                            - uesio/io.box:
+                                components:
+                                  - uesio/io.text:
+                                      element: h2
+                                      text: ${uesio/core.uniquekey}
+                                  - uesio/io.text:
+                                      element: p
+                                      text: ${uesio/studio.description}
+                                  - uesio/io.group:
                                       components:
-                                        - uesio/io.text:
-                                            element: h2
-                                            text: ${uesio/core.uniquekey}
-                                        - uesio/io.text:
-                                            element: p
-                                            text: ${uesio/studio.description}
-                                        - uesio/io.group:
+                                        # Install Button
+                                        - uesio/io.button:
+                                            uesio.display:
+                                              - field: uesio/studio.app->uesio/core.uniquekey
+                                                wire: dependencies
+                                                value: $Param{id}
+                                                operator: NOT_EQUALS
+                                            uesio.variant: uesio/io.primary
+                                            text: Install ${uesio/core.uniquekey}
+                                            signals:
+                                              - signal: wire/CREATE_RECORD
+                                                wire: dependencies
+                                              - signal: wire/SAVE
+                                              - signal: wire/LOAD
+                                                wires:
+                                                  - workspaces
+                                                  - dependencies
+
+                                        # Uninstall Button
+                                        - uesio/io.list:
+                                            wire: dependencies
                                             components:
-                                              # Install Button
                                               - uesio/io.button:
+                                                  uesio.variant: uesio/io.secondary
+                                                  text: uninstall
                                                   uesio.display:
                                                     - field: uesio/studio.app->uesio/core.uniquekey
-                                                      wire: dependencies
                                                       value: $Param{id}
-                                                      operator: NOT_EQUALS
-                                                  uesio.variant: uesio/io.primary
-                                                  text: Install ${uesio/core.uniquekey}
                                                   signals:
-                                                    - signal: wire/CREATE_RECORD
-                                                      wire: dependencies
+                                                    - signal: wire/MARK_FOR_DELETE
                                                     - signal: wire/SAVE
-                                                    - signal: wire/LOAD
-                                                      wires:
-                                                        - workspaces
-                                                        - dependencies
-
-                                              # Uninstall Button
-                                              - uesio/io.list:
-                                                  wire: dependencies
-                                                  components:
-                                                    - uesio/io.button:
-                                                        uesio.variant: uesio/io.secondary
-                                                        text: uninstall
-                                                        uesio.display:
-                                                          - field: uesio/studio.app->uesio/core.uniquekey
-                                                            value: $Param{id}
-                                                        signals:
-                                                          - signal: wire/MARK_FOR_DELETE
-                                                          - signal: wire/SAVE
-                                  - uesio/io.box:
-                                      uesio.variant: uesio/studio.bundlelistingvisual
-                      - uesio/io.text:
-                          text: versions
-                          element: h3
-                      - uesio/io.group:
+                            - uesio/studio.bundlelistingvisual:
+                                color: ${uesio/studio.app->uesio/studio.color}
+                                icon: ${uesio/studio.app->uesio/studio.icon}
+                                title: ${uesio/studio.app->uesio/studio.fullname}
+                                subtitle: ${uesio/studio.description}
+                                verified: false
+                - uesio/io.text:
+                    text: versions
+                    element: h3
+                - uesio/io.group:
+                    components:
+                      - uesio/io.list:
+                          wire: versions
+                          mode: READ
+                          uesio.id: versionsList
                           components:
-                            - uesio/io.list:
-                                wire: versions
-                                mode: READ
-                                uesio.id: versionsList
+                            - uesio/io.box:
                                 components:
-                                  - uesio/io.box:
-                                      components:
-                                        - uesio/io.text:
-                                            text: ${uesio/studio.version}
-                                            element: p
-                                        - uesio/io.text:
-                                            text: installed
-                                            element: p
-                                            uesio.display:
-                                              - wire: dependencies
-                                                field: uesio/studio.bundle->uesio/core.id
-                                                value: ${uesio/core.id}
+                                  - uesio/io.text:
+                                      text: ${uesio/studio.version}
+                                      element: p
+                                  - uesio/io.text:
+                                      text: installed
+                                      element: p
+                                      uesio.display:
+                                        - wire: dependencies
+                                          field: uesio/studio.bundle->uesio/core.id
+                                          value: ${uesio/core.id}

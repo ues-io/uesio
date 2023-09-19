@@ -1,15 +1,13 @@
 import testWireSignal, { WireSignalTest } from "./utils"
-import { testEnv } from "../utils/defaults"
 
-const { viewId, wireId, collectionId, ns } = testEnv
+const wireId = "mywire"
+const collectionId = "ben/planets.exoplanet"
 
 const tests: WireSignalTest[] = [
 	{
 		name: "Set and remove a condition",
 		wireId,
-		view: viewId,
-
-		wireDef: { collection: `${ns}.${collectionId}`, fields: {} },
+		wireDef: { collection: collectionId, fields: {} },
 		signals: [
 			{
 				signal: "wire/SET_CONDITION",

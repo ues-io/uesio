@@ -1,0 +1,13 @@
+name: accepttypes
+options:
+  - label: "Any"
+    value: "ANY"
+  - label: "Audio"
+    value: "AUDIO"
+  - label: "Document"
+    value: "DOCUMENT"
+  - label: "Image"
+    value: "IMAGE"
+  - label: "Video"
+    value: "VIDEO"
+public: true

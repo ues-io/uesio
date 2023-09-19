@@ -14,7 +14,7 @@ func isLocalNamespace(ns, localNamespace string) bool {
 
 // Takes a possibly localized namespace and turns it into a fully qualified,
 // (3rd person) namespace. If the namespace is not local, it is a no-op.
-func unLocalize(itemkey, localNamespace string) string {
+func GetFullyQualifiedKey(itemkey, localNamespace string) string {
 	if itemkey == "" {
 		return ""
 	}
@@ -31,7 +31,7 @@ func unLocalize(itemkey, localNamespace string) string {
 }
 
 // Takes a possibly fully qualified namespace and turns it into a localized version
-func localize(itemkey, localNamespace string) string {
+func GetLocalizedKey(itemkey, localNamespace string) string {
 	if itemkey == "" {
 		return ""
 	}

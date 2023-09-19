@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/thecloudmasters/uesio/pkg/bot"
+	"github.com/thecloudmasters/uesio/pkg/integ/custom"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/adapt/postgresio"
@@ -27,7 +28,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt/localfiles"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt/s3"
-	"github.com/thecloudmasters/uesio/pkg/integ"
 	"github.com/thecloudmasters/uesio/pkg/integ/sendgrid"
 	"github.com/thecloudmasters/uesio/pkg/integ/stripe"
 	"github.com/thecloudmasters/uesio/pkg/integ/web"
@@ -42,7 +42,9 @@ func init() {
 	mime.AddExtensionType(".md", "text/markdown")
 
 	// Data Adapters
-	adapt.RegisterAdapter("uesio.postgresio", &postgresio.Adapter{})
+	adapt.RegisterAdapter("uesio.postgresio", &postgresio.Adapter{
+		Credentials: "uesio/core.db",
+	})
 
 	// Authentication Types
 	val, _ := os.LookupEnv("UESIO_MOCK_AUTH")
@@ -77,9 +79,10 @@ func init() {
 	bot.RegisterBotDialect("typescript", &tsdialect.TSDialect{})
 
 	// Integration Types
-	integ.RegisterIntegration("web", &web.WebIntegration{})
-	integ.RegisterIntegration("sendgrid", &sendgrid.SendGridIntegration{})
-	integ.RegisterIntegration("stripe", &stripe.StripeIntegration{})
+	adapt.RegisterIntegration("web", &web.WebIntegration{})
+	adapt.RegisterIntegration("sendgrid", &sendgrid.SendGridIntegration{})
+	adapt.RegisterIntegration("stripe", &stripe.StripeIntegration{})
+	adapt.RegisterIntegration("uesio/core.custom", &custom.CustomIntegration{})
 }
 
 func main() {

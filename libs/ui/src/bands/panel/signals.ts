@@ -16,7 +16,7 @@ const runPanelAfterCloseSignals = (panelId: string, context: Context) => {
 	const afterCloseSignals =
 		context.getViewDef()?.panels?.[panelId]?.afterClose
 	// Don't run after-close signals in the builder (signified by presence of a custom slot)
-	if (afterCloseSignals?.length && !context.getCustomSlot()) {
+	if (afterCloseSignals?.length && !context.getCustomSlotLoader()) {
 		return runMany(afterCloseSignals, context)
 	}
 	return context

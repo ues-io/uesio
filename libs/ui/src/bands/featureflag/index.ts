@@ -2,9 +2,10 @@ import { createSlice, createEntityAdapter } from "@reduxjs/toolkit"
 import { useSelector } from "react-redux"
 import { FeatureFlagState } from "../../definition/featureflag"
 import { RootState } from "../../store/store"
+import { getKey } from "../../metadata/metadata"
 
 const adapter = createEntityAdapter<FeatureFlagState>({
-	selectId: (cv) => `${cv.namespace}.${cv.name}`,
+	selectId: getKey,
 })
 
 const selectors = adapter.getSelectors((state: RootState) => state.featureflag)
@@ -26,7 +27,7 @@ const useFeatureFlag = (key: string) =>
 
 const useFeatureFlagKeys = () => useSelector(selectors.selectIds) as string[]
 
-export { useFeatureFlag, useFeatureFlagKeys, selectByName, selectors }
+export { useFeatureFlag, useFeatureFlagKeys, selectByName, selectors, adapter }
 
 export const { set, setMany } = metadataSlice.actions
 export default metadataSlice.reducer

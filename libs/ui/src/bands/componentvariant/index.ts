@@ -2,9 +2,10 @@ import { createSlice, createEntityAdapter } from "@reduxjs/toolkit"
 import { useSelector } from "react-redux"
 import { ComponentVariant } from "../../definition/componentvariant"
 import { RootState } from "../../store/store"
+import { getKey } from "../../metadata/metadata"
 
 const adapter = createEntityAdapter<ComponentVariant>({
-	selectId: (cv) => `${cv.component}:${cv.namespace}.${cv.name}`,
+	selectId: (cv) => `${cv.component}:${getKey(cv)}`,
 })
 
 const selectors = adapter.getSelectors(
@@ -27,7 +28,13 @@ const useComponentVariant = (key: string) =>
 
 const useComponentVariants = () => useSelector(selectors.selectAll)
 
-export { useComponentVariant, useComponentVariants, selectors, selectId }
+export {
+	useComponentVariant,
+	useComponentVariants,
+	selectors,
+	selectId,
+	adapter,
+}
 
 export const { set, setMany } = metadataSlice.actions
 export default metadataSlice.reducer

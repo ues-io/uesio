@@ -26,7 +26,7 @@ func runBotBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, ses
 		}
 
 		switch btype {
-		case "LISTENER":
+		case "LISTENER", "LOAD", "SAVE":
 
 		case "AFTERSAVE", "BEFORESAVE":
 			depMap.AddRequired(change, "collection", "uesio/studio.collection")

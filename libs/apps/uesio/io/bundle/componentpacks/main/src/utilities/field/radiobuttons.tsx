@@ -4,7 +4,6 @@ import Fieldset from "../fieldset/fieldset"
 interface SelectFieldProps {
 	setValue: (value: wire.FieldValue) => void
 	value?: wire.FieldValue
-	width?: string
 	fieldMetadata: collection.Field
 	fieldId: string
 	mode?: context.FieldMode

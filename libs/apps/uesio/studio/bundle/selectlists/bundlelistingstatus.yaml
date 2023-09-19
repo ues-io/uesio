@@ -1,0 +1,14 @@
+name: bundlelistingstatus
+options:
+  - label: Open
+    value: OPEN
+  - label: Submitted
+    value: SUBMITTED
+  - label: In Review
+    value: IN_REVIEW
+  - label: Rejected
+    value: REJECTED
+  - label: Approved
+    value: APPROVED
+  - label: Published
+    value: PUBLISHED

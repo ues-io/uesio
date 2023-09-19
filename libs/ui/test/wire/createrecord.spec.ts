@@ -1,15 +1,13 @@
 import testWireSignal, { WireSignalTest } from "./utils"
-import { testEnv } from "../utils/defaults"
 
-const { viewId, wireId, collectionId, ns } = testEnv
+const wireId = "mywire"
+const collectionId = "ben/planets.exoplanet"
 
 const tests: WireSignalTest[] = [
 	{
 		name: "adding 1 record",
 		wireId,
-		view: viewId,
-
-		wireDef: { collection: `${ns}.${collectionId}`, fields: {} },
+		wireDef: { collection: collectionId, fields: {} },
 		signals: [
 			{
 				signal: "wire/CREATE_RECORD",
@@ -20,9 +18,8 @@ const tests: WireSignalTest[] = [
 	},
 	{
 		name: "adding 2 records",
-		view: viewId,
 		wireId,
-		wireDef: { collection: `${ns}.${collectionId}`, fields: {} },
+		wireDef: { collection: collectionId, fields: {} },
 		signals: [
 			{
 				signal: "wire/CREATE_RECORD",
@@ -39,10 +36,8 @@ const tests: WireSignalTest[] = [
 	},
 	{
 		name: "appending 1 record",
-		view: viewId,
-
 		wireId,
-		wireDef: { collection: `${ns}.${collectionId}`, fields: {} },
+		wireDef: { collection: collectionId, fields: {} },
 		signals: [
 			{
 				signal: "wire/CREATE_RECORD",
@@ -71,10 +66,8 @@ const tests: WireSignalTest[] = [
 	},
 	{
 		name: "prepending 1 record",
-		view: viewId,
-
 		wireId,
-		wireDef: { collection: `${ns}.${collectionId}`, fields: {} },
+		wireDef: { collection: collectionId, fields: {} },
 		signals: [
 			{
 				signal: "wire/CREATE_RECORD",

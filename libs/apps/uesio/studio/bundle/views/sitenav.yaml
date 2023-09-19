@@ -50,6 +50,28 @@ definition:
                     text: corporate_fare
           - uesio/io.tile:
               uesio.variant: uesio/io.nav
+              # Should only be visible to those administering a Studio PROD site
+              # (which should require write access) on that site
+              uesio.display:
+                - field: "uesio/studio.app->uesio/core.uniquekey"
+                  value: "uesio/studio"
+              uesio.classes:
+                selected:
+                  - type: paramValue
+                    param: selected
+                    value: managebundles
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: app/${uesio/studio.app->uesio/core.uniquekey}/site/${uesio/studio.name}/managebundles
+              content:
+                - uesio/io.text:
+                    text: Manage Bundles
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: outbox
+          - uesio/io.tile:
+              uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
                   - type: paramValue

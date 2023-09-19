@@ -1,6 +1,11 @@
 import { useEffect, useRef } from "react"
 import { definition, styles, context, wire } from "@uesio/ui"
 
+export type CheckboxFieldOptions = {
+	checkedLabel?: string
+	uncheckedLabel?: string
+}
+
 interface CheckboxFieldProps {
 	setValue: (value: boolean) => void
 	value: wire.FieldValue

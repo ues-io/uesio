@@ -1,8 +1,7 @@
 import { dispatch } from "../../../store/store"
 import { Context } from "../../../context/context"
 import { setOrder, getFullWireId } from ".."
-
-import { MetadataKey } from "../../builder/types"
+import { MetadataKey } from "../../../metadata/types"
 
 export default (
 	context: Context,

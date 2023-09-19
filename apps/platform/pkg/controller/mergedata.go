@@ -40,7 +40,7 @@ func init() {
 	}).ParseFiles(indexPath, cssPath))
 }
 
-func getComponentPackURLs(componentPackDeps routing.DepMap, workspace *routing.WorkspaceMergeData, site *routing.SiteMergeData) []string {
+func getComponentPackURLs(componentPackDeps *routing.MetadataMergeData, workspace *routing.WorkspaceMergeData, site *routing.SiteMergeData) []string {
 	allDeps := componentPackDeps.GetItems()
 	packUrls := make([]string, len(allDeps))
 	for i, packDep := range allDeps {

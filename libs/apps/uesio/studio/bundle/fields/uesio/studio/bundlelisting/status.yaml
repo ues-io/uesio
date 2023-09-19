@@ -1,0 +1,4 @@
+name: status
+type: SELECT
+label: Status
+selectList: bundlelistingstatus

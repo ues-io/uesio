@@ -33,7 +33,7 @@ const Button: definition.UC<ButtonDefinition> = (props) => {
 	// If we have a custom slot context, don't run signals.
 	// TODO: Move this out of runtime, and add a way TO run the signals via a Keyboard Shortcut
 	// or via a property on the button Definition.
-	const slotWrapper = context.getCustomSlot()
+	const slotWrapper = context.getCustomSlotLoader()
 	if (slotWrapper) {
 		signals = []
 	}

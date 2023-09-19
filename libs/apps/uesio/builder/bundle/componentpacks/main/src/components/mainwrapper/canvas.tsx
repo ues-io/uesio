@@ -27,7 +27,7 @@ const addComponentToCanvas = (
 	drop: FullPath,
 	extraDef?: definition.Definition
 ) => {
-	const componentDef = getComponentDef(context, drag.itemName)
+	const componentDef = getComponentDef(drag.itemName)
 	if (!componentDef) return
 	batch(() => {
 		add(context, drop, {

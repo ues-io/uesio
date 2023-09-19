@@ -17,6 +17,7 @@ POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/bots/call/uesio/tests/a
 HTTP 200
 [Asserts]
 jsonpath "$.params.answer" == 3
+jsonpath "$.params.dynamicAnswer" == 3
 jsonpath "$.success" == true
 
 # Invoke with all three parameters
@@ -29,6 +30,7 @@ POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/bots/call/uesio/tests/a
 HTTP 200
 [Asserts]
 jsonpath "$.params.answer" == 6
+jsonpath "$.params.dynamicAnswer" == 6
 jsonpath "$.success" == true
 
 # Invoke with missing required parameters
@@ -66,6 +68,7 @@ POST https://tests.{{domain}}:{{port}}/site/bots/call/uesio/tests/add_numbers
 HTTP 200
 [Asserts]
 jsonpath "$.params.answer" == 3
+jsonpath "$.params.dynamicAnswer" == 3
 jsonpath "$.success" == true
 
 # Test invoking a bot as a site guest user - should fail because access is NOT granted

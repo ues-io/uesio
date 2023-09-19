@@ -1,13 +1,9 @@
-import { Dictionary, nanoid } from "@reduxjs/toolkit"
+import { nanoid } from "@reduxjs/toolkit"
 import { Context } from "../../../context/context"
-import { PlainWire } from "../types"
 import { FieldValue, PlainWireRecord } from "../../wirerecord/types"
-import { ID_FIELD, PlainCollection } from "../../collection/types"
-import { getFullWireId } from ".."
-import toPath from "lodash/toPath"
-import get from "lodash/get"
-import Collection from "../../collection/class"
+import { ID_FIELD } from "../../collection/types"
 import set from "lodash/set"
+import Wire from "../class"
 
 const LOOKUP = "LOOKUP"
 const VALUE = "VALUE"
@@ -40,21 +36,15 @@ type ParamDefault = WireDefaultBase & {
 
 type WireDefault = ValueDefault | LookupDefault | ParamDefault | ShortIDDefault
 
-const getDefaultValue = (
-	context: Context,
-	wires: Dictionary<PlainWire>,
-	viewId: string,
-	item: WireDefault
-): FieldValue => {
+const getDefaultValue = (context: Context, item: WireDefault): FieldValue => {
 	if (item.valueSource === "LOOKUP") {
-		const lookupWire = wires[getFullWireId(viewId, item.lookupWire)]
+		const lookupWire = context.getWire(item.lookupWire)
 		if (!lookupWire) return
 
-		const firstRecord = Object.values(lookupWire.data)[0]
+		const firstRecord = lookupWire.getFirstRecord()
 		if (!firstRecord || !item.lookupField) return
 
-		const path = toPath(item.lookupField.split("->"))
-		return get(firstRecord, path)
+		return firstRecord.getFieldValue(item.lookupField)
 	}
 	// TODO: Default to VALUE if nothing provided?
 	if (item.valueSource === "VALUE") {
@@ -70,31 +60,17 @@ const getDefaultValue = (
 	}
 }
 
-const getDefaultRecord = (
-	context: Context,
-	wires: Dictionary<PlainWire>,
-	collections: Dictionary<PlainCollection>,
-	wire: PlainWire
-): PlainWireRecord => {
-	const plainCollection = collections[wire.collection]
-	if (!plainCollection)
-		throw new Error(
-			"No metadata for collection in default: " + wire.collection
-		)
-
-	const collection = new Collection(plainCollection)
-
+const getDefaultRecord = (context: Context, wire: Wire): PlainWireRecord => {
+	const collection = wire.getCollection()
 	const defaultRecord: PlainWireRecord = {}
-	const viewId = context.getViewId()
-	if (!viewId) throw new Error("No view id found for defaults")
-	wire?.defaults?.forEach((defaultItem) => {
-		const value = getDefaultValue(context, wires, viewId, defaultItem)
+	wire.getDefaults().forEach((defaultItem) => {
+		const value = getDefaultValue(context, defaultItem)
 		const fieldName = defaultItem.field
 		const field = collection.getField(fieldName)
 		if (!field)
 			throw new Error("No metadata for field in default: " + fieldName)
 
-		const fieldNameParts = fieldName?.split("->")
+		const fieldNameParts = collection.getFieldParts(fieldName)
 
 		if (field.isReference()) fieldNameParts.push(ID_FIELD)
 		if (field.isReference() && !value) return

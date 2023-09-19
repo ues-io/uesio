@@ -1,11 +1,11 @@
 import testWireSignal, { WireSignalTest } from "./utils"
 import { ValueConditionState } from "../../src/wireexports"
-import { testEnv } from "../utils/defaults"
-const { viewId, wireId, collectionId } = testEnv
+
+const wireId = "mywire"
+const collectionId = "ben/planets.exoplanet"
 
 const tests: WireSignalTest[] = [
 	{
-		view: viewId,
 		name: "Changing the value of a condition to a string",
 		wireId,
 		wireDef: {
@@ -35,8 +35,6 @@ const tests: WireSignalTest[] = [
 		},
 	},
 	{
-		view: viewId,
-
 		name: "Changing the value of a condition to a number",
 		wireId,
 		wireDef: {
@@ -66,8 +64,6 @@ const tests: WireSignalTest[] = [
 		},
 	},
 	{
-		view: viewId,
-
 		name: "Changing the value of a condition to undefined",
 		wireId,
 		wireDef: {
@@ -97,8 +93,6 @@ const tests: WireSignalTest[] = [
 		},
 	},
 	{
-		view: viewId,
-
 		name: "Changing the value of an unexisting condition",
 		wireId,
 		wireDef: {
@@ -133,8 +127,6 @@ const tests: WireSignalTest[] = [
 		},
 	},
 	{
-		view: viewId,
-
 		name: "Changing the value of a condition without a value key",
 		wireId,
 		wireDef: {

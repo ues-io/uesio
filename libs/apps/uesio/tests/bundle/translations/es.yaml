@@ -1,4 +1,4 @@
-language: es
 labels:
-  uesio/tests.helloworld: hola mundo
   uesio/io.delete: cancelar
+  uesio/tests.helloworld: hola mundo
+language: es

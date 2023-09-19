@@ -7,7 +7,7 @@ import type {
 } from "../bands/field/types"
 import type { SignalDefinition } from "./signal"
 import type { WireConditionState } from "../bands/wire/conditions/conditions"
-import type { MetadataKey } from "../bands/builder/types"
+import type { MetadataKey } from "../metadata/types"
 import type { DisplayCondition } from "../componentexports"
 import { CollectionFieldKey, CollectionKey } from "../bands/wire/types"
 type WireDefinitionMap = {
@@ -23,6 +23,7 @@ type ViewOnlyField = {
 	selectlist?: SelectListMetadata
 	number?: NumberMetadata
 	fields?: Record<string, ViewOnlyField>
+	viewOnly?: boolean
 }
 
 type RegularField = {
@@ -99,7 +100,7 @@ type RegularWireDefinition = WireDefinitionBase & {
 type WireDefinition = ViewOnlyWireDefinition | RegularWireDefinition
 
 type WireFieldDefinitionMap = {
-	[key: CollectionFieldKey]: WireFieldDefinition
+	[key: CollectionFieldKey]: WireFieldDefinition | ViewOnlyField
 }
 
 type WireFieldDefinition = RegularField | undefined | null

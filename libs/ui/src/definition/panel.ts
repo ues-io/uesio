@@ -1,4 +1,4 @@
-import type { MetadataKey } from "../bands/builder/types"
+import type { MetadataKey } from "../metadata/types"
 import type { DefinitionList } from "./definition"
 import type { SignalDefinition } from "./signal"
 

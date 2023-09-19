@@ -60,6 +60,7 @@ type ColumnDefinition = {
 	user?: UserFieldOptions
 	number?: NumberFieldOptions
 	longtext?: LongTextFieldOptions
+	readonly?: boolean
 	components: definition.DefinitionList
 } & definition.BaseDefinition
 
@@ -170,7 +171,7 @@ const Table: definition.UC<TableDefinition> = (props) => {
 							.map((action, i) => {
 								const handler = api.signal.getHandler(
 									// Don't run row action signals in View Builder
-									context.getCustomSlot()
+									context.getCustomSlotLoader()
 										? []
 										: action.signals,
 									recordContext.context
@@ -245,6 +246,7 @@ const Table: definition.UC<TableDefinition> = (props) => {
 					longtext: column.longtext,
 					labelPosition: "none",
 					wrapperVariant: "uesio/io.table",
+					readonly: column.readonly,
 					displayAs: column.displayAs,
 				}}
 				{...sharedProps}

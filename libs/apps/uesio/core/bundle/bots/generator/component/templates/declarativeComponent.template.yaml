@@ -1,0 +1,36 @@
+name: ${name}
+category: DATA
+title: ${componentName}
+type: DECLARATIVE
+discoverable: true
+description: A sample component that outputs text with a header
+properties:
+  - type: TEXT
+    name: text
+    label: Text
+  - type: TEXT
+    name: color
+    label: Color
+defaultDefinition:
+  text: Hello world
+  color: green
+sections:
+  - type: HOME
+    properties:
+      - text
+      - color
+  - type: DISPLAY
+definition:
+  - uesio/core.slot:
+      name: header
+  - uesio/io.box:
+      uesio.styleTokens:
+        root:
+          - m-4
+          - p-4
+          - text-$Prop{color}-500
+      components:
+        - uesio/io.text:
+            text: $Prop{text}
+slots:
+  - name: header

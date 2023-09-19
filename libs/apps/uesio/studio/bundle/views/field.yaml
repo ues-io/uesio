@@ -21,7 +21,8 @@ definition:
         uesio/studio.name:
         uesio/studio.namefield:
         uesio/studio.workspace:
-        uesio/studio.datasource:
+        uesio/studio.type:
+        uesio/studio.integration:
       conditions:
         - field: uesio/studio.workspace
           valueSource: LOOKUP
@@ -39,287 +40,279 @@ definition:
           value: $Param{namespace}.$Param{collectionname}:$Param{fieldNamespace}.$Param{fieldname}
   # Components are how we describe the layout of our view
   components:
-    - uesio/io.grid:
-        uesio.variant: uesio/studio.mainlayout
-        items:
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.topbar
+    - uesio/studio.mainlayout:
+        topbar:
+          - uesio/core.view:
+              view: uesio/studio.topbar
+              uesio.context:
+                wire: workspaces
+              params:
+                itemType: collections
+                itemIcon: list
+                itemName: $Param{collectionname}
+                itemNameSpace: $Param{namespace}
+                subItemType: fields
+                subItemName: $Param{fieldname}
+                subItemNameSpace: $Param{fieldNamespace}
+        leftbar:
+          - uesio/core.view:
+              uesio.context:
+                wire: workspaces
+              view: uesio/studio.workspacenav
+              params:
+                selected: collections
+        content:
+          - uesio/io.list:
+              uesio.id: fieldsList
+              wire: fields
+              mode: READ
               components:
-                - uesio/core.view:
-                    view: uesio/studio.topbar
-                    uesio.context:
-                      wire: workspaces
-                    params:
-                      itemType: collections
-                      itemIcon: list
-                      itemName: $Param{collectionname}
-                      itemNameSpace: $Param{namespace}
-                      subItemType: fields
-                      subItemName: $Param{fieldname}
-                      subItemNameSpace: $Param{fieldNamespace}
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.leftbar
-              components:
-                - uesio/core.view:
-                    uesio.context:
-                      wire: workspaces
-                    view: uesio/studio.workspacenav
-                    params:
-                      selected: collections
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.content
-              components:
-                - uesio/io.list:
-                    uesio.id: fieldsList
-                    wire: fields
-                    mode: READ
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.main
+                    title: Field - ${uesio/studio.name}
+                    actions:
+                      - uesio/io.group:
+                          uesio.display:
+                            - type: paramValue
+                              param: app
+                              field: uesio/core.dynamiccollection
+                              operator: EQUALS
+                              value: $Param{fieldNamespace}
+                          components:
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: $Label{uesio/io.edit}
+                                uesio.display:
+                                  - type: fieldMode
+                                    mode: READ
+                                signals:
+                                  - signal: component/CALL
+                                    component: uesio/io.list
+                                    componentsignal: TOGGLE_MODE
+                                    targettype: specific
+                                    componentid: fieldsList
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.primary
+                                text: $Label{uesio/io.save}
+                                uesio.display:
+                                  - type: wireHasChanges
+                                    wire: fields
+                                signals:
+                                  - signal: wire/SAVE
+                                    wires:
+                                      - fields
+                                  - signal: component/CALL
+                                    component: uesio/io.list
+                                    componentsignal: TOGGLE_MODE
+                                    targettype: specific
+                                    componentid: fieldsList
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: $Label{uesio/io.cancel}
+                                uesio.display:
+                                  - type: fieldMode
+                                    mode: EDIT
+                                signals:
+                                  - signal: wire/CANCEL
+                                    wire: fields
+                                  - signal: component/CALL
+                                    component: uesio/io.list
+                                    componentsignal: TOGGLE_MODE
+                                    targettype: specific
+                                    componentid: fieldsList
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: $Label{uesio/io.delete}
+                                signals:
+                                  - signal: panel/TOGGLE
+                                    panel: deleteField
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.grid:
+                          uesio.variant: uesio/io.four_columns
+                          uesio.context:
+                            workspace:
+                              name: $Param{workspacename}
+                              app: $Param{app}
+                          items:
+                            - uesio/io.field:
+                                fieldId: uesio/studio.name
+                            - uesio/io.field:
+                                fieldId: uesio/studio.type
+                            - uesio/io.field:
+                                fieldId: uesio/studio.subtype
+                                uesio.display:
+                                  - field: uesio/studio.type
+                                    type: fieldValue
+                                    operator: IN
+                                    values:
+                                      - LIST
+                                      - MAP
+                            - uesio/io.field:
+                                fieldId: uesio/studio.label
+                            - uesio/builder.metadatafield:
+                                fieldId: uesio/studio.languagelabel
+                                metadataType: LABEL
+                                label: Language Label
+                            - uesio/builder.metadatafield:
+                                fieldId: uesio/studio.collection
+                                metadataType: COLLECTION
+                                label: Collection
+                            - uesio/io.box:
+                                uesio.display:
+                                  - field: uesio/studio.type
+                                    value: REFERENCE
+                                components:
+                                  - uesio/builder.metadatafield:
+                                      fieldId: uesio/studio.reference->uesio/studio.collection
+                                      metadataType: COLLECTION
+                                      label: Ref. Collection
+                            - uesio/io.field:
+                                fieldId: uesio/studio.required
+                                displayAs: TOGGLE
+                            - uesio/io.box:
+                                uesio.display:
+                                  - field: uesio/studio.type
+                                    value: TIMESTAMP
+                                components:
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.autopopulate
+                            - uesio/io.box:
+                                uesio.display:
+                                  - field: uesio/studio.type
+                                    value: SELECT
+                                components:
+                                  - uesio/builder.metadatafield:
+                                      fieldId: uesio/studio.selectlist
+                                      metadataType: SELECTLIST
+                                      label: Select List
+                            - uesio/io.box:
+                                uesio.display:
+                                  - field: uesio/studio.type
+                                    value: FILE
+                                components:
+                                  - uesio/builder.metadatafield:
+                                      fieldId: uesio/studio.file->uesio/studio.filesource
+                                      metadataType: FILESOURCE
+                                      label: File Source
+                            - uesio/io.box:
+                                uesio.display:
+                                  - field: uesio/studio.type
+                                    value: FILE
+                                components:
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.file->uesio/studio.accept
+                            - uesio/io.box:
+                                uesio.display:
+                                  - field: uesio/studio.type
+                                    value: NUMBER
+                                components:
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.number->uesio/studio.decimals
+                            - uesio/io.box:
+                                uesio.display:
+                                  - field: uesio/studio.type
+                                    value: AUTONUMBER
+                                components:
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.autonumber->uesio/studio.prefix
+                            - uesio/io.box:
+                                uesio.display:
+                                  - field: uesio/studio.type
+                                    value: AUTONUMBER
+                                components:
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.autonumber->uesio/studio.leadingzeros
+                            - uesio/io.box:
+                                uesio.display:
+                                  - field: uesio/studio.type
+                                    value: MULTISELECT
+                                components:
+                                  - uesio/builder.metadatafield:
+                                      fieldId: uesio/studio.selectlist
+                                      metadataType: SELECTLIST
+                                      label: Select List
+                            - uesio/io.field:
+                                fieldId: uesio/studio.validate->uesio/studio.type
+                            - uesio/io.field:
+                                uesio.display:
+                                  - field: uesio/studio.validate->uesio/studio.type
+                                    value: REGEX
+                                fieldId: uesio/studio.validate->uesio/studio.regex
+                            - uesio/io.field:
+                                uesio.display:
+                                  - field: uesio/studio.validate->uesio/studio.type
+                                    value: YAML
+                                fieldId: uesio/studio.validate->uesio/studio.schema_uri
+                            - uesio/io.box:
+                                uesio.display:
+                                  - field: uesio/studio.type
+                                    value: REFERENCEGROUP
+                                components:
+                                  - uesio/builder.metadatafield:
+                                      fieldId: uesio/studio.referencegroup->uesio/studio.collection
+                                      metadataType: COLLECTION
+                                      label: Ref. Collection
+                            - uesio/io.box:
+                                uesio.display:
+                                  - field: uesio/studio.type
+                                    value: REFERENCEGROUP
+                                  - wire: fields
+                                    field: uesio/studio.referencegroup->uesio/studio.collection
+                                    operator: NOT_EQUALS
+                                    value: ""
+                                components:
+                                  - uesio/builder.metadatafield:
+                                      fieldId: uesio/studio.referencegroup->uesio/studio.field
+                                      metadataType: FIELD
+                                      grouping: ${uesio/studio.referencegroup->uesio/studio.collection}
+                                      label: Ref. Field
+                            - uesio/io.box:
+                                uesio.display:
+                                  - field: uesio/studio.type
+                                    value: REFERENCEGROUP
+                                components:
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.referencegroup->uesio/studio.ondelete
+                            - uesio/io.box:
+                                uesio.display:
+                                  - field: uesio/studio.type
+                                    value: FORMULA
+                                components:
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.formula->uesio/studio.expression
+                            - uesio/io.box:
+                                uesio.display:
+                                  - field: uesio/studio.type
+                                    value: FORMULA
+                                components:
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.formula->uesio/studio.returntype
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    uesio.display:
+                      - type: group
+                        conjunction: OR
+                        conditions:
+                          - field: uesio/studio.type
+                            type: fieldValue
+                            wire: fields
+                            value: STRUCT
+                          - field: uesio/studio.subtype
+                            wire: fields
+                            type: fieldValue
+                            value: STRUCT
+                    uesio.styleTokens:
+                      root:
+                        - p-10
                     components:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.main
-                          title: Field - ${uesio/studio.name}
-                          actions:
-                            - uesio/io.group:
-                                uesio.display:
-                                  - type: paramValue
-                                    param: app
-                                    field: uesio/core.dynamiccollection
-                                    operator: EQUALS
-                                    value: $Param{fieldNamespace}
-                                components:
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: $Label{uesio/io.edit}
-                                      uesio.display:
-                                        - type: fieldMode
-                                          mode: READ
-                                      signals:
-                                        - signal: component/CALL
-                                          component: uesio/io.list
-                                          componentsignal: TOGGLE_MODE
-                                          targettype: specific
-                                          componentid: fieldsList
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.primary
-                                      text: $Label{uesio/io.save}
-                                      uesio.display:
-                                        - type: wireHasChanges
-                                          wire: fields
-                                      signals:
-                                        - signal: wire/SAVE
-                                          wires:
-                                            - fields
-                                        - signal: component/CALL
-                                          component: uesio/io.list
-                                          componentsignal: TOGGLE_MODE
-                                          targettype: specific
-                                          componentid: fieldsList
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: $Label{uesio/io.cancel}
-                                      uesio.display:
-                                        - type: fieldMode
-                                          mode: EDIT
-                                      signals:
-                                        - signal: wire/CANCEL
-                                          wire: fields
-                                        - signal: component/CALL
-                                          component: uesio/io.list
-                                          componentsignal: TOGGLE_MODE
-                                          targettype: specific
-                                          componentid: fieldsList
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: $Label{uesio/io.delete}
-                                      signals:
-                                        - signal: panel/TOGGLE
-                                          panel: deleteField
-                      - uesio/io.box:
-                          uesio.variant: uesio/io.section
-                          components:
-                            - uesio/io.grid:
-                                uesio.variant: uesio/io.four_columns
-                                uesio.context:
-                                  workspace:
-                                    name: $Param{workspacename}
-                                    app: $Param{app}
-                                items:
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.name
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.type
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.subtype
-                                      uesio.display:
-                                        - field: uesio/studio.type
-                                          type: fieldValue
-                                          operator: IN
-                                          values:
-                                            - LIST
-                                            - MAP
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.label
-                                  - uesio/builder.metadatafield:
-                                      fieldId: uesio/studio.languagelabel
-                                      metadataType: LABEL
-                                      label: Language Label
-                                  - uesio/builder.metadatafield:
-                                      fieldId: uesio/studio.collection
-                                      metadataType: COLLECTION
-                                      label: Collection
-                                  - uesio/io.box:
-                                      uesio.display:
-                                        - field: uesio/studio.type
-                                          value: REFERENCE
-                                      components:
-                                        - uesio/builder.metadatafield:
-                                            fieldId: uesio/studio.reference->uesio/studio.collection
-                                            metadataType: COLLECTION
-                                            label: Ref. Collection
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.required
-                                      displayAs: TOGGLE
-                                  - uesio/io.box:
-                                      uesio.display:
-                                        - field: uesio/studio.type
-                                          value: TIMESTAMP
-                                      components:
-                                        - uesio/io.field:
-                                            fieldId: uesio/studio.autopopulate
-                                  - uesio/io.box:
-                                      uesio.display:
-                                        - field: uesio/studio.type
-                                          value: SELECT
-                                      components:
-                                        - uesio/builder.metadatafield:
-                                            fieldId: uesio/studio.selectlist
-                                            metadataType: SELECTLIST
-                                            label: Select List
-                                  - uesio/io.box:
-                                      uesio.display:
-                                        - field: uesio/studio.type
-                                          value: FILE
-                                      components:
-                                        - uesio/builder.metadatafield:
-                                            fieldId: uesio/studio.file->uesio/studio.filesource
-                                            metadataType: FILESOURCE
-                                            label: File Source
-                                  - uesio/io.box:
-                                      uesio.display:
-                                        - field: uesio/studio.type
-                                          value: FILE
-                                      components:
-                                        - uesio/io.field:
-                                            fieldId: uesio/studio.file->uesio/studio.accept
-                                  - uesio/io.box:
-                                      uesio.display:
-                                        - field: uesio/studio.type
-                                          value: NUMBER
-                                      components:
-                                        - uesio/io.field:
-                                            fieldId: uesio/studio.number->uesio/studio.decimals
-                                  - uesio/io.box:
-                                      uesio.display:
-                                        - field: uesio/studio.type
-                                          value: AUTONUMBER
-                                      components:
-                                        - uesio/io.field:
-                                            fieldId: uesio/studio.autonumber->uesio/studio.prefix
-                                  - uesio/io.box:
-                                      uesio.display:
-                                        - field: uesio/studio.type
-                                          value: AUTONUMBER
-                                      components:
-                                        - uesio/io.field:
-                                            fieldId: uesio/studio.autonumber->uesio/studio.leadingzeros
-                                  - uesio/io.box:
-                                      uesio.display:
-                                        - field: uesio/studio.type
-                                          value: MULTISELECT
-                                      components:
-                                        - uesio/builder.metadatafield:
-                                            fieldId: uesio/studio.selectlist
-                                            metadataType: SELECTLIST
-                                            label: Select List
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.validate->uesio/studio.type
-                                  - uesio/io.field:
-                                      uesio.display:
-                                        - field: uesio/studio.validate->uesio/studio.type
-                                          value: REGEX
-                                      fieldId: uesio/studio.validate->uesio/studio.regex
-                                  - uesio/io.field:
-                                      uesio.display:
-                                        - field: uesio/studio.validate->uesio/studio.type
-                                          value: YAML
-                                      fieldId: uesio/studio.validate->uesio/studio.schema_uri
-                                  - uesio/io.box:
-                                      uesio.display:
-                                        - field: uesio/studio.type
-                                          value: REFERENCEGROUP
-                                      components:
-                                        - uesio/builder.metadatafield:
-                                            fieldId: uesio/studio.referencegroup->uesio/studio.collection
-                                            metadataType: COLLECTION
-                                            label: Ref. Collection
-                                  - uesio/io.box:
-                                      uesio.display:
-                                        - field: uesio/studio.type
-                                          value: REFERENCEGROUP
-                                        - wire: fields
-                                          field: uesio/studio.referencegroup->uesio/studio.collection
-                                          operator: NOT_EQUALS
-                                          value: ""
-                                      components:
-                                        - uesio/builder.metadatafield:
-                                            fieldId: uesio/studio.referencegroup->uesio/studio.field
-                                            metadataType: FIELD
-                                            grouping: ${uesio/studio.referencegroup->uesio/studio.collection}
-                                            label: Ref. Field
-                                  - uesio/io.box:
-                                      uesio.display:
-                                        - field: uesio/studio.type
-                                          value: REFERENCEGROUP
-                                      components:
-                                        - uesio/io.field:
-                                            fieldId: uesio/studio.referencegroup->uesio/studio.ondelete
-                                  - uesio/io.box:
-                                      uesio.display:
-                                        - field: uesio/studio.type
-                                          value: FORMULA
-                                      components:
-                                        - uesio/io.field:
-                                            fieldId: uesio/studio.formula->uesio/studio.expression
-                                  - uesio/io.box:
-                                      uesio.display:
-                                        - field: uesio/studio.type
-                                          value: FORMULA
-                                      components:
-                                        - uesio/io.field:
-                                            fieldId: uesio/studio.formula->uesio/studio.returntype
-                      - uesio/io.box:
-                          uesio.variant: uesio/io.section
-                          uesio.display:
-                            - type: group
-                              conjunction: OR
-                              conditions:
-                                - field: uesio/studio.type
-                                  type: fieldValue
-                                  wire: fields
-                                  value: STRUCT
-                                - field: uesio/studio.subtype
-                                  wire: fields
-                                  type: fieldValue
-                                  value: STRUCT
-                          uesio.styleTokens:
-                            root:
-                              - p-10
-                          components:
-                            - uesio/io.titlebar:
-                                uesio.variant: uesio/io.main
-                                title: Sub fields
-                            - uesio/io.field:
-                                label: " "
-                                fieldId: uesio/studio.subfields
+                          title: Sub fields
+                      - uesio/io.field:
+                          label: " "
+                          fieldId: uesio/studio.subfields
   panels:
     deleteField:
       uesio.type: uesio/io.dialog

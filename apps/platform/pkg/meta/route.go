@@ -98,8 +98,8 @@ func (r *Route) UnmarshalYAML(node *yaml.Node) error {
 
 func (r *Route) MarshalYAML() (interface{}, error) {
 
-	r.ThemeRef = removeDefault(localize(r.ThemeRef, r.Namespace), "uesio/core.default")
-	r.ViewRef = localize(r.ViewRef, r.Namespace)
+	r.ThemeRef = removeDefault(GetLocalizedKey(r.ThemeRef, r.Namespace), "uesio/core.default")
+	r.ViewRef = GetLocalizedKey(r.ViewRef, r.Namespace)
 
 	return (*RouteWrapper)(r), nil
 }

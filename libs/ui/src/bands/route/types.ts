@@ -1,4 +1,3 @@
-import { EntityState } from "@reduxjs/toolkit"
 import { ComponentPackState } from "../../definition/componentpack"
 import { ComponentVariant } from "../../definition/componentvariant"
 import { ConfigValueState } from "../../definition/configvalue"
@@ -6,10 +5,11 @@ import { FeatureFlagState } from "../../definition/featureflag"
 import { LabelState } from "../../definition/label"
 import { ThemeState } from "../../definition/theme"
 import { ViewMetadata } from "../../definition/ViewMetadata"
-import { MetadataKey } from "../builder/types"
+import { MetadataKey } from "../../metadata/types"
 import { PlainCollection } from "../collection/types"
 import { ComponentState } from "../component/types"
 import { ServerWire } from "../wire/types"
+import { Component } from "../componenttype/types"
 
 type WorkspaceState = {
 	name: string
@@ -23,16 +23,17 @@ type SiteAdminState = {
 }
 
 type Dependencies = {
-	theme?: EntityState<ThemeState>
-	viewdef?: EntityState<ViewMetadata>
-	componentvariant?: EntityState<ComponentVariant>
-	component?: EntityState<ComponentState>
-	componentpack?: EntityState<ComponentPackState>
-	configvalue?: EntityState<ConfigValueState>
-	featureflag?: EntityState<FeatureFlagState>
-	label?: EntityState<LabelState>
-	wire?: EntityState<ServerWire>
-	collection?: EntityState<PlainCollection>
+	theme?: ThemeState[]
+	viewdef?: ViewMetadata[]
+	componentvariant?: ComponentVariant[]
+	component?: ComponentState[]
+	componenttype?: Component[]
+	componentpack?: ComponentPackState[]
+	configvalue?: ConfigValueState[]
+	featureflag?: FeatureFlagState[]
+	label?: LabelState[]
+	wire?: ServerWire[]
+	collection?: PlainCollection[]
 }
 
 type RouteTag = {

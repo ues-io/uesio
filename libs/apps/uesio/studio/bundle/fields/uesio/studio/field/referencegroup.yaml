@@ -11,4 +11,4 @@ subfields:
   - name: uesio/studio.ondelete
     label: On Delete
     type: SELECT
-    selectList: uesio/studio.referencegroupondelete
+    selectList: uesio/core.referencegroupondelete

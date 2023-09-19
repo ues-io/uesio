@@ -104,15 +104,15 @@ body == "Load Failed: Profile uesio/tests.rep does not have read access to the u
 GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/simple_wire_load
 HTTP 200
 [Asserts]
-jsonpath "$.dependencies.wire.entities['uesio/tests.simple_wire_load($root):animals'].name" == "animals"
-jsonpath "$.dependencies.wire.entities['uesio/tests.simple_wire_load($root):animals'].view" == "uesio/tests.simple_wire_load($root)"
-jsonpath "$.dependencies.wire.entities['uesio/tests.simple_wire_load($root):animals'].batchsize" == 10
-jsonpath "$.dependencies.wire.entities['uesio/tests.simple_wire_load($root):animals'].query" == true
-jsonpath "$.dependencies.wire.entities['uesio/tests.simple_wire_load($root):animals'].batchnumber" == 1
-jsonpath "$.dependencies.wire.entities['uesio/tests.simple_wire_load($root):animals'].more" == true
-jsonpath "$.dependencies.wire.entities['uesio/tests.simple_wire_load($root):animals'].preloaded" == true
-jsonpath "$.dependencies.wire.entities['uesio/tests.simple_wire_load($root):animals'].loadAll" == false
-jsonpath "$.dependencies.wire.entities['uesio/tests.simple_wire_load($root):animals'].data[*]['uesio/core.id']" count == 10
+jsonpath "$.dependencies.wire[0].name" == "animals"
+jsonpath "$.dependencies.wire[0].view" == "uesio/tests.simple_wire_load($root)"
+jsonpath "$.dependencies.wire[0].batchsize" == 10
+jsonpath "$.dependencies.wire[0].query" == true
+jsonpath "$.dependencies.wire[0].batchnumber" == 1
+jsonpath "$.dependencies.wire[0].more" == true
+jsonpath "$.dependencies.wire[0].preloaded" == true
+jsonpath "$.dependencies.wire[0].loadAll" == false
+jsonpath "$.dependencies.wire[0].data[*]['uesio/core.id']" count == 10
 
 # Switch to impersonating the public profile
 POST https://{{host}}:{{port}}/site/bots/call/uesio/studio/setworkspaceuser

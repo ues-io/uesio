@@ -1,4 +1,4 @@
-import Slot from "./slot"
+import Slot, { DefaultSlotName } from "../utilities/slot"
 import { useViewDef } from "../bands/viewdef"
 import { makeViewId } from "../bands/view"
 import { component as componentApi } from "../api/api"
@@ -8,7 +8,7 @@ import {
 	SignalDefinition,
 } from "../definition/signal"
 import { UC } from "../definition/definition"
-import PanelArea from "../components/panelarea"
+import PanelArea from "../utilities/panelarea"
 import { COMPONENT_ID } from "../componentexports"
 
 interface SetParamSignal extends SignalDefinition {
@@ -61,6 +61,8 @@ const ViewArea: UC<ViewComponentDefinition> = ({
 	</>
 )
 
+const ViewComponentId = "uesio/core.view"
+
 const View: UC<ViewComponentDefinition> = (props) => {
 	const { path, context, definition } = props
 	const { params, view: viewDefId } = definition
@@ -73,7 +75,7 @@ const View: UC<ViewComponentDefinition> = (props) => {
 
 	const viewDef = useViewDef(viewDefId)
 	const [paramState] = componentApi.useState<Record<string, string>>(
-		componentApi.getComponentId(uesioId, "uesio/core.view", path, context),
+		componentApi.getComponentId(uesioId, ViewComponentId, path, context),
 		context.mergeStringMap(params)
 	)
 
@@ -96,7 +98,7 @@ const View: UC<ViewComponentDefinition> = (props) => {
 	return (
 		<Slot
 			definition={viewDef}
-			listName="components"
+			listName={DefaultSlotName}
 			path=""
 			context={viewContext}
 			label="View Components"
@@ -107,7 +109,7 @@ const View: UC<ViewComponentDefinition> = (props) => {
 View.signals = signals
 View.displayName = "View"
 
-export { ViewArea }
+export { ViewArea, ViewComponentId }
 export type { ViewComponentDefinition }
 
 export default View

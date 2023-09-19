@@ -74,7 +74,7 @@ const getComponentInfoFromPath = (path: FullPath, context: context.Context) => {
 	}
 	const [componentType, parentPath] = path.pop()
 	const [componentIndex, grandParentPath] = parentPath.popIndex()
-	const componentDef = getComponentDef(context, componentType)
+	const componentDef = getComponentDef(componentType)
 	return [componentIndex, parentPath, grandParentPath, componentDef] as const
 }
 

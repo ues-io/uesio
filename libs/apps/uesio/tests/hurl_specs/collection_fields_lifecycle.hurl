@@ -79,7 +79,6 @@ Accept: application/json
             "deletes":{},
             "changes":{
                 "temp1":{
-                    "uesio/studio.datasource": "uesio/core.platform",
                     "uesio/studio.name":"rare_and_unusual_object",
                     "uesio/studio.label":"Rare and unusual object",
                     "uesio/studio.plurallabel":"Rare and unusual objects"

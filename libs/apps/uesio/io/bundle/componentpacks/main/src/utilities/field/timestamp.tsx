@@ -7,6 +7,7 @@ interface TimestampFieldProps {
 	width?: string
 	fieldMetadata: collection.Field
 	mode?: context.FieldMode
+	readonly?: boolean
 	focusOnRender?: boolean
 }
 
@@ -31,10 +32,10 @@ const TimestampField: definition.UtilityComponent<TimestampFieldProps> = (
 	const { focusOnRender, setValue, mode, id } = props
 
 	const timestamp = props.value as number
-	const readonly = mode === "READ"
+	const readonly = props.readonly || mode === "READ"
 	const date = new Date(timestamp * 1000)
 
-	if (mode === "READ" && timestamp) {
+	if (readonly && timestamp) {
 		const value = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
 		return <TextField {...props} value={value} mode="READ" />
 	}

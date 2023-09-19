@@ -11,8 +11,10 @@ import { SiteState } from "../bands/site"
 
 type MergeType =
 	| "Error"
+	| "Route"
 	| "Record"
 	| "Param"
+	| "Prop"
 	| "User"
 	| "Time"
 	| "Date"
@@ -29,6 +31,11 @@ type MergeType =
 	| "ComponentOutput"
 
 type MergeHandler = (expression: string, context: Context) => string
+
+export const InvalidSignalOutputMergeMsg =
+	"Invalid SignalOutput merge - a stepId and propertyPath must be provided, e.g. $SignalOutput{stepId:propertyPath}"
+export const InvalidComponentOutputMsg =
+	"Invalid ComponentOutput merge - a componentType and property must be provided, e.g. $ComponentOutput{[componentType][propertyPath]}"
 
 const handlers: Record<MergeType, MergeHandler> = {
 	Record: (fullExpression, context) => {
@@ -66,42 +73,36 @@ const handlers: Record<MergeType, MergeHandler> = {
 	Param: (expression, context) => context.getParam(expression) || "",
 	SignalOutput: (expression, context) => {
 		// Expression MUST have 2+ parts, e.g. $SignalOutput{[stepId][propertyPath]}
-		const parts = expression.split("][")
-		if (parts.length !== 2) {
-			throw "Invalid SignalOutput merge - a stepId and propertyPath must be provided, e.g. $SignalOutput{[stepId][propertyPath]}"
+		let parts
+		try {
+			parts = parseTwoPartExpression(expression)
+		} catch (e) {
+			throw InvalidSignalOutputMergeMsg
 		}
-		const [label, propertyPath] = parts
-		const trimmedLabel = label.substring(1)
-		const signalOutputFrame = context.getSignalOutputs(trimmedLabel)
+		const [stepId, propertyPath] = parts
+		const signalOutputFrame = context.getSignalOutputs(stepId)
 		if (!signalOutputFrame) {
-			throw (
-				"Could not find signal output associated with label: " +
-				trimmedLabel
-			)
+			throw `Could not find signal output for step: ${stepId}`
 		}
-		return get(
-			signalOutputFrame.data,
-			propertyPath.substring(0, propertyPath.length - 1)
-		)
+		return get(signalOutputFrame.data, propertyPath)
 	},
 	ComponentOutput: (expression, context) => {
 		// Expression MUST have 2+ parts, e.g. $ComponentOutput{[componentType][property]}
-		const parts = expression.split("][")
-		if (parts.length !== 2) {
-			throw "Invalid ComponentOutput merge - a componentType and property must be provided, e.g. $ComponentOutput{[componentType][propertyPath]}"
+		let parts
+		try {
+			parts = parseTwoPartExpression(expression)
+		} catch (e) {
+			throw InvalidComponentOutputMsg
 		}
 		const [componentType, propertyPath] = parts
-		const frame = context.getComponentData(componentType.substring(1))
+		const frame = context.getComponentData(componentType)
 		if (!frame) {
 			throw (
 				"Could not find component output data for component: " +
 				componentType
 			)
 		}
-		return get(
-			frame.data,
-			propertyPath.substring(0, propertyPath.length - 1)
-		) as string
+		return get(frame.data, propertyPath) as string
 	},
 	User: (expression, context) => {
 		const user = context.getUser()
@@ -132,6 +133,10 @@ const handlers: Record<MergeType, MergeHandler> = {
 		const value = context.getRecord()?.getDateValue(expression)
 		if (!value) return ""
 		return value.toLocaleDateString(undefined, { timeZone: "UTC" })
+	},
+	Route: (expression, context) => {
+		if (expression !== "path" && expression !== "title") return ""
+		return context.getRoute()?.[expression] || ""
 	},
 	RecordMeta: (expression, context) => {
 		const record = context.getRecord()
@@ -201,7 +206,55 @@ const handlers: Record<MergeType, MergeHandler> = {
 		if (!errors?.length) return ""
 		return errors[0]
 	},
+	Prop: (expression, context) =>
+		// Technically the result doesn't have to be a string,
+		// but until we improve merge typing to allow for non-string values,
+		// we'll pretend the prop will always be a string
+		(context.getProp(expression) as string) || "",
 }
 
-export { handlers }
+/**
+ * Parses an expression which is expected to have 2 parts, delimited with one of the following syntaxes:
+ *  a. [part1][part2]
+ *  b. part1:part2
+ *
+ * We support both because:
+ * (a) is more safe, allowing you to have ":" in one of the parts, but is more verbose
+ * (b) is more concise, but more fragile.
+ *
+ * @returns [part1, part2]
+ * @throws InvalidExpressionError
+ */
+
+const InvalidExpressionError = "Invalid Expression"
+const bracketedDelimiter = "]["
+const colonDelimiter = ":"
+
+const parseTwoPartExpression = (expression: string) => {
+	let parts
+	let part1, part2
+	if (expression.includes(bracketedDelimiter)) {
+		parts = expression.split(bracketedDelimiter)
+		if (parts.length !== 2) {
+			throw InvalidExpressionError
+		}
+		;[part1, part2] = parts
+		if (part1[0] !== "[" || part2[part2.length - 1] !== "]") {
+			throw InvalidExpressionError
+		}
+		try {
+			parts = [part1.substring(1), part2.substring(0, part2.length - 1)]
+		} catch (e) {
+			throw InvalidExpressionError
+		}
+	} else if (expression.includes(colonDelimiter)) {
+		parts = expression.split(colonDelimiter)
+	}
+	if (!parts || parts.length !== 2) {
+		throw InvalidExpressionError
+	}
+	return parts
+}
+
+export { handlers, parseTwoPartExpression }
 export type { MergeType }

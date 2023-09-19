@@ -4,11 +4,6 @@ type EntityPayload = {
 	entity: string
 }
 
-const initEntity = <T>(
-	state: EntityState<T>,
-	action: PayloadAction<EntityState<T>>
-): EntityState<T> => action.payload
-
 const createEntityReducer =
 	<T extends EntityPayload, S>(reducer: (state: S, payload: T) => void) =>
 	({ entities }: EntityState<S>, { payload }: PayloadAction<T>) => {
@@ -24,4 +19,4 @@ const getErrorString = (error: unknown) => {
 }
 
 export type { EntityPayload }
-export { createEntityReducer, getErrorString, initEntity }
+export { createEntityReducer, getErrorString }

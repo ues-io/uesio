@@ -1,5 +1,0 @@
-name: datasources
-path: app/{app:\w*\/\w*}/workspace/{workspacename}/datasources
-view: datasources
-theme: default
-title: Data Sources

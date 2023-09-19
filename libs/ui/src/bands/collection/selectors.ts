@@ -1,7 +1,8 @@
 import { useSelector } from "react-redux"
 import { getCurrentState, RootState } from "../../store/store"
-import { selectors } from "./adapter"
+
 import { PlainCollection } from "./types"
+import { selectors } from "."
 
 const useCollection = (collectionId: string | undefined) =>
 	useSelector((state: RootState) =>

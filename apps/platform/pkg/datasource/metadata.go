@@ -24,7 +24,6 @@ func GetCollectionMetadata(e *meta.Collection) *adapt.CollectionMetadata {
 		Updateable:            !e.ReadOnly,
 		Deleteable:            !e.ReadOnly,
 		Fields:                fieldMetadata,
-		DataSource:            e.DataSourceRef,
 		Access:                e.Access,
 		AccessField:           e.AccessField,
 		RecordChallengeTokens: e.RecordChallengeTokens,
@@ -32,6 +31,8 @@ func GetCollectionMetadata(e *meta.Collection) *adapt.CollectionMetadata {
 		Public:                e.Public,
 		Label:                 e.Label,
 		PluralLabel:           e.PluralLabel,
+		Integration:           e.IntegrationRef,
+		LoadBot:               e.LoadBot,
 	}
 }
 
@@ -241,7 +242,7 @@ func LoadFieldsMetadata(keys []string, collectionKey string, collectionMetadata 
 				collectionMetadata.SetField(GetFieldMetadata(&builtInField, session))
 				continue
 			}
-			field, err := meta.NewField(collectionKey, key)
+			field, err := meta.NewField(collectionKey, meta.GetFullyQualifiedKey(key, collectionMetadata.Namespace))
 			if err != nil {
 				return err
 			}

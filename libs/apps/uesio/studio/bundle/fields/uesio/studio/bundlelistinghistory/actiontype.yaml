@@ -1,0 +1,4 @@
+name: actiontype
+type: SELECT
+label: Action type
+selectList: actiontype

@@ -47,6 +47,29 @@ var ORDERED_ITEMS = [...]string{
 }
 
 func Deploy(body io.ReadCloser, session *sess.Session) error {
+	connection, err := datasource.GetPlatformConnection(nil, session.RemoveWorkspaceContext(), nil)
+	if err != nil {
+		return err
+	}
+
+	err = connection.BeginTransaction()
+	if err != nil {
+		return err
+	}
+
+	err = DeployWithConnection(body, session, connection)
+	if err != nil {
+		rollbackError := connection.RollbackTransaction()
+		if rollbackError != nil {
+			return rollbackError
+		}
+		return err
+	}
+
+	return connection.CommitTransaction()
+}
+
+func DeployWithConnection(body io.ReadCloser, session *sess.Session, connection adapt.Connection) error {
 
 	workspace := session.GetWorkspace()
 	if workspace == nil {
@@ -261,26 +284,12 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 		}
 	}
 
-	connection, err := datasource.GetPlatformConnection(nil, session.RemoveWorkspaceContext(), nil)
+	err = datasource.PlatformSaves(saves, connection, session.RemoveWorkspaceContext())
 	if err != nil {
 		return err
 	}
 
-	err = connection.BeginTransaction()
-	if err != nil {
-		return err
-	}
-
-	err = applyDeploy(saves, uploadOps, connection, session, params)
-	if err != nil {
-		rollbackError := connection.RollbackTransaction()
-		if rollbackError != nil {
-			return rollbackError
-		}
-		return err
-	}
-
-	err = connection.CommitTransaction()
+	_, err = filesource.Upload(uploadOps, connection, session.RemoveWorkspaceContext(), params)
 	if err != nil {
 		return err
 	}
@@ -290,26 +299,6 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 
 	return nil
 
-}
-
-func applyDeploy(
-	saves []datasource.PlatformSaveRequest,
-	fileops []*filesource.FileUploadOp,
-	connection adapt.Connection,
-	session *sess.Session,
-	params map[string]string,
-) error {
-	err := datasource.PlatformSaves(saves, connection, session.RemoveWorkspaceContext())
-	if err != nil {
-		return err
-	}
-
-	_, err = filesource.Upload(fileops, connection, session.RemoveWorkspaceContext(), params)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func readZipFile(zf *zip.File, item meta.BundleableItem) error {

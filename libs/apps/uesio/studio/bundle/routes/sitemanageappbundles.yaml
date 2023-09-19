@@ -1,0 +1,5 @@
+name: sitemanageappbundles
+path: app/{app:\w*\/\w*}/site/{sitename}/managebundles/{appBundle:\w*\/\w*}
+view: sitemanageappbundles
+theme: default
+title: Manage App Bundles

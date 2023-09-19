@@ -9,6 +9,10 @@ import {
 } from "../bands/component/selectors"
 import { selectId, useComponentVariants } from "../bands/componentvariant"
 import { removeOne, set as setComponent } from "../bands/component"
+import {
+	getAllComponentTypes,
+	getComponentType,
+} from "../bands/componenttype/selectors"
 import { BaseProps, Definition } from "../definition/definition"
 import { useEffect } from "react"
 import { ComponentVariant } from "../definition/componentvariant"
@@ -18,7 +22,7 @@ import {
 	hasViewContext,
 	isRecordContextFrame,
 } from "../context/context"
-import { MetadataKey } from "../bands/builder/types"
+import { MetadataKey } from "../metadata/types"
 import { COMPONENT_ID } from "../componentexports"
 
 const getComponentId = (
@@ -159,6 +163,8 @@ const useMode = (id: string, initialMode: FieldMode | undefined) =>
 export {
 	getComponentId,
 	getComponentIdFromProps,
+	getAllComponentTypes,
+	getComponentType,
 	makeComponentId,
 	useMode,
 	useState,

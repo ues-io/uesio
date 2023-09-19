@@ -3,7 +3,6 @@ import { LoadResponseBatch } from "../load/loadresponse"
 import { SaveRequestBatch } from "../load/saverequest"
 import { SaveResponseBatch } from "../load/saveresponse"
 import { Context } from "../context/context"
-import { MetadataType, METADATA } from "../bands/builder/types"
 import { Dependencies, RouteState, RouteTag } from "../bands/route/types"
 import { Spec } from "../definition/definition"
 import { parseKey } from "../component/path"
@@ -25,6 +24,12 @@ import { UploadRequest } from "../load/uploadrequest"
 import { PlainCollectionMap } from "../bands/collection/types"
 import { ServerWire } from "../bands/wire/types"
 import { transformServerWire } from "../bands/wire/transform"
+import {
+	Bundleable,
+	BundleableBase,
+	METADATA,
+	MetadataType,
+} from "../metadata/types"
 
 type ServerWireLoadResponse = {
 	wires: ServerWire[]
@@ -80,22 +85,16 @@ type BotResponse = {
 }
 
 type ConfigValueResponse = {
-	name: string
-	namespace: string
 	value: string
 	managedby: string
-}
+} & BundleableBase
 
 type SecretResponse = {
-	name: string
-	namespace: string
 	managedby: string
 	value: string
-}
+} & BundleableBase
 
-interface BaseFeatureFlag {
-	name: string
-	namespace: string
+interface BaseFeatureFlag extends Bundleable {
 	user: string
 	validForOrgs?: boolean
 }

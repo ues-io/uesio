@@ -1,0 +1,6 @@
+name: user
+type: REFERENCE
+label: User
+createOnly: true
+reference:
+  collection: uesio/core.user

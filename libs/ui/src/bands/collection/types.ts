@@ -1,8 +1,7 @@
+import { BundleableBase } from "../../metadataexports"
 import { FieldMetadataMap } from "../field/types"
 
 export type PlainCollection = {
-	name: string
-	namespace: `${string}/${string}`
 	nameField: string
 	createable: boolean
 	accessible: boolean
@@ -13,7 +12,7 @@ export type PlainCollection = {
 	label: string
 	pluralLabel: string
 	uniqueKey?: string[]
-}
+} & BundleableBase
 
 export type PlainCollectionMap = {
 	[key: string]: PlainCollection

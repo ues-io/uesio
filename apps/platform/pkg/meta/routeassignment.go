@@ -96,6 +96,6 @@ func (r *RouteAssignment) UnmarshalYAML(node *yaml.Node) error {
 }
 
 func (r *RouteAssignment) MarshalYAML() (interface{}, error) {
-	r.RouteRef = localize(r.RouteRef, r.Namespace)
+	r.RouteRef = GetLocalizedKey(r.RouteRef, r.Namespace)
 	return (*RouteAssignmentWrapper)(r), nil
 }

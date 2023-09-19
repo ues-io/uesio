@@ -115,8 +115,9 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 			>
 				{children}
 			</div>
-			<FloatingPortal>
-				{isOpen && (
+
+			{isOpen && (
+				<FloatingPortal>
 					<FloatingFocusManager
 						context={floating.context}
 						modal={false}
@@ -196,8 +197,8 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 							</div>
 						</div>
 					</FloatingFocusManager>
-				)}
-			</FloatingPortal>
+				</FloatingPortal>
+			)}
 		</>
 	)
 }
