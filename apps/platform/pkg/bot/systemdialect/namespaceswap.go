@@ -10,27 +10,35 @@ import (
 
 type NamespaceSwapItem struct {
 	collection *NamespaceSwapCollection
-	item       adapt.Item
+	item       *adapt.Item
 }
 
 func (i *NamespaceSwapItem) MarshalJSON() ([]byte, error) {
-	return json.Marshal(i.item)
-}
-
-func swapNS(value, from, to string) string {
-	return meta.GetFullyQualifiedKey(meta.GetLocalizedKey(value, from), to)
+	result := map[string]json.RawMessage{}
+	err := i.Loop(func(fieldName string, value interface{}) error {
+		fieldBytes, err := json.Marshal(value)
+		if err != nil {
+			return err
+		}
+		result[i.collection.SwapNS(fieldName)] = fieldBytes
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(result)
 }
 
 func (i *NamespaceSwapItem) SetField(fieldName string, value interface{}) error {
-	return i.item.SetField(swapNS(fieldName, i.collection.from, i.collection.to), value)
+	return i.item.SetField(fieldName, value)
 }
 
 func (i *NamespaceSwapItem) GetField(fieldName string) (interface{}, error) {
-	return i.item.GetField(swapNS(fieldName, i.collection.from, i.collection.to))
+	return i.item.GetField(fieldName)
 }
 
 func (i *NamespaceSwapItem) GetFieldAsString(fieldName string) (string, error) {
-	return i.item.GetFieldAsString(swapNS(fieldName, i.collection.from, i.collection.to))
+	return i.item.GetFieldAsString(fieldName)
 }
 
 func (i *NamespaceSwapItem) Loop(iter func(string, interface{}) error) error {
@@ -62,7 +70,7 @@ func (c *NamespaceSwapCollection) MarshalJSON() ([]byte, error) {
 func (c *NamespaceSwapCollection) NewItem() meta.Item {
 	return &NamespaceSwapItem{
 		collection: c,
-		item:       adapt.Item{},
+		item:       &adapt.Item{},
 	}
 }
 
@@ -85,6 +93,10 @@ func (c *NamespaceSwapCollection) Len() int {
 	return len(c.collection)
 }
 
+func (c *NamespaceSwapCollection) SwapNS(value string) string {
+	return meta.GetFullyQualifiedKey(meta.GetLocalizedKey(value, c.from), c.to)
+}
+
 // Gets the conditions from the wire and translates them from core to studio
 func (c *NamespaceSwapCollection) MapConditions(coreConditions []adapt.LoadRequestCondition) []adapt.LoadRequestCondition {
 	var studioConditions []adapt.LoadRequestCondition
@@ -102,4 +114,29 @@ func (c *NamespaceSwapCollection) MapOrder(coreOrder []adapt.LoadRequestOrder) [
 		studioOrder = append(studioOrder, elem)
 	}
 	return studioOrder
+}
+
+func (c *NamespaceSwapCollection) TransferFieldMetadata(fromCollectionName string, from, to *adapt.MetadataCache) error {
+
+	fromCollectionMetadata, err := from.GetCollection(fromCollectionName)
+	if err != nil {
+		return err
+	}
+
+	toCollectionMetadata, err := to.GetCollection(c.SwapNS(fromCollectionName))
+	if err != nil {
+		return err
+	}
+
+	for _, field := range fromCollectionMetadata.Fields {
+		clonedField := *field
+		clonedField.Namespace = c.to
+		// Check to see if the field already exists
+		_, err := toCollectionMetadata.GetField(clonedField.GetFullName())
+		if err != nil {
+			toCollectionMetadata.SetField(&clonedField)
+		}
+	}
+
+	return nil
 }
