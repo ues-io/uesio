@@ -52,7 +52,6 @@ type Collection struct {
 	Type                  string                            `yaml:"type,omitempty" json:"uesio/studio.type"`
 	Label                 string                            `yaml:"label" json:"uesio/studio.label"`
 	PluralLabel           string                            `yaml:"pluralLabel" json:"uesio/studio.plurallabel"`
-	IntegrationRef        string                            `yaml:"integration,omitempty" json:"uesio/studio.integration"`
 	UniqueKeyFields       []string                          `yaml:"uniqueKey,omitempty" json:"uesio/studio.uniquekey"`
 	NameField             string                            `yaml:"nameField,omitempty" json:"uesio/studio.namefield"`
 	ReadOnly              bool                              `yaml:"readOnly,omitempty" json:"-"`
@@ -60,6 +59,8 @@ type Collection struct {
 	AccessField           string                            `yaml:"accessField,omitempty" json:"uesio/studio.accessfield"`
 	RecordChallengeTokens []*RecordChallengeTokenDefinition `yaml:"recordChallengeTokens,omitempty" json:"uesio/studio.recordchallengetokens"`
 	TableName             string                            `yaml:"tablename,omitempty" json:"uesio/studio.tablename"`
+	IntegrationRef        string                            `yaml:"integration,omitempty" json:"uesio/studio.integration"`
+	LoadBot               string                            `yaml:"loadBot,omitempty" json:"uesio/studio.loadbot"`
 }
 
 type CollectionWrapper Collection

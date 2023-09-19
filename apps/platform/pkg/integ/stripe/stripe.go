@@ -5,8 +5,9 @@ import (
 
 	"github.com/stripe/stripe-go/v74"
 	"github.com/stripe/stripe-go/v74/checkout/session"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/integ"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -25,7 +26,7 @@ type CheckoutOptions struct {
 type StripeIntegration struct {
 }
 
-func (si *StripeIntegration) GetIntegrationConnection(integration *meta.Integration, session *sess.Session, credentials *adapt.Credentials) (integ.IntegrationConnection, error) {
+func (si *StripeIntegration) GetIntegrationConnection(integration *meta.Integration, session *sess.Session, credentials *adapt.Credentials) (adapt.IntegrationConnection, error) {
 	return &StripeIntegrationConnection{
 		session:     session,
 		integration: integration,
@@ -37,6 +38,14 @@ type StripeIntegrationConnection struct {
 	session     *sess.Session
 	integration *meta.Integration
 	credentials *adapt.Credentials
+}
+
+func (sic *StripeIntegrationConnection) GetCredentials() *adapt.Credentials {
+	return sic.credentials
+}
+
+func (sic *StripeIntegrationConnection) GetIntegration() *meta.Integration {
+	return sic.integration
 }
 
 func (sic *StripeIntegrationConnection) RunAction(actionName string, requestOptions interface{}) (interface{}, error) {
@@ -53,7 +62,7 @@ func (sic *StripeIntegrationConnection) RunAction(actionName string, requestOpti
 func (sic *StripeIntegrationConnection) Checkout(requestOptions interface{}) (interface{}, error) {
 
 	options := &CheckoutOptions{}
-	err := integ.HydrateOptions(requestOptions, options)
+	err := datasource.HydrateOptions(requestOptions, options)
 	if err != nil {
 		return nil, err
 	}

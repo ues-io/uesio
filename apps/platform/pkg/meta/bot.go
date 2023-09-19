@@ -19,7 +19,7 @@ func NewBot(key string) (*Bot, error) {
 	botType := keyArray[0]
 	var collectionKey, botKey string
 	switch botType {
-	case "LISTENER", "GENERATOR":
+	case "LISTENER", "GENERATOR", "LOAD", "SAVE":
 		collectionKey = ""
 		botKey = keyArray[1]
 		if (keyArraySize) > 3 {
@@ -251,7 +251,7 @@ func (b *Bot) GetDBID(workspace string) string {
 
 func (b *Bot) GetKey() string {
 	botType := GetBotTypes()[b.Type]
-	if b.Type == "LISTENER" || b.Type == "GENERATOR" {
+	if b.Type == "LISTENER" || b.Type == "GENERATOR" || b.Type == "LOAD" || b.Type == "SAVE" {
 		return fmt.Sprintf("%s:%s.%s", botType, b.Namespace, b.Name)
 	}
 	return fmt.Sprintf("%s:%s:%s.%s", botType, b.CollectionRef, b.Namespace, b.Name)
@@ -259,7 +259,7 @@ func (b *Bot) GetKey() string {
 
 func (b *Bot) GetBasePath() string {
 	botType := GetBotTypes()[b.Type]
-	if b.Type == "LISTENER" || b.Type == "GENERATOR" {
+	if b.Type == "LISTENER" || b.Type == "GENERATOR" || b.Type == "LOAD" || b.Type == "SAVE" {
 		return filepath.Join(botType, b.Name)
 	}
 	collectionNamespace, collectionName, _ := ParseKey(b.CollectionRef)

@@ -2,6 +2,10 @@ name: bottype
 options:
   - label: "Listener"
     value: "LISTENER"
+  - label: "Data Source - Load"
+    value: "LOAD"
+  - label: "Data Source - Save"
+    value: "SAVE"
   - label: "After Save"
     value: "AFTERSAVE"
   - label: "Before Save"
