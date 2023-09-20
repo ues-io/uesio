@@ -30,7 +30,7 @@ func botLoad(request BotLoadOp, session *sess.Session, connection adapt.Connecti
 		Conditions:     request.Conditions,
 		Order:          request.Order,
 		Query:          true,
-		LoadAll:        true,
+		LoadAll:        request.LoadAll,
 	}
 
 	_, err := datasource.Load([]*adapt.LoadOp{op}, session, &datasource.LoadOptions{

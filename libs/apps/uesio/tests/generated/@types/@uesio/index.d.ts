@@ -48,6 +48,7 @@ interface LoadRequest {
 	fields?: FieldRequest[]
 	conditions?: ConditionRequest[]
 	order?: LoadOrder[]
+	loadAll?: boolean
 }
 type Logger = (message: string, ...data: unknown[]) => void
 

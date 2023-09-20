@@ -49,17 +49,24 @@ func PlatformSaves(psrs []PlatformSaveRequest, connection adapt.Connection, sess
 }
 
 func HandleSaveRequestErrors(requests []SaveRequest, err error) error {
+	uniqueErrorStrings := map[string]bool{}
 	errorStrings := []string{}
 	if err != nil {
-		errorStrings = append(errorStrings, err.Error())
+		errString := err.Error()
+		uniqueErrorStrings[errString] = true
+		errorStrings = append(errorStrings, errString)
 	}
 	for _, request := range requests {
 		for _, saveError := range request.Errors {
-			errorStrings = append(errorStrings, saveError.Error())
+			errString := saveError.Error()
+			if _, hasValue := uniqueErrorStrings[errString]; !hasValue {
+				uniqueErrorStrings[errString] = true
+				errorStrings = append(errorStrings, errString)
+			}
 		}
 	}
 
-	if len(errorStrings) > 0 {
+	if len(uniqueErrorStrings) > 0 {
 		return errors.New(strings.Join(errorStrings, " : "))
 	}
 

@@ -46,7 +46,13 @@ var ORDERED_ITEMS = [...]string{
 	"integrations",
 }
 
+type DeployOptions struct {
+	Upsert     bool
+	Connection adapt.Connection
+}
+
 func Deploy(body io.ReadCloser, session *sess.Session) error {
+
 	connection, err := datasource.GetPlatformConnection(nil, session.RemoveWorkspaceContext(), nil)
 	if err != nil {
 		return err
@@ -57,7 +63,10 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 		return err
 	}
 
-	err = DeployWithConnection(body, session, connection)
+	err = DeployWithOptions(body, session, &DeployOptions{
+		Connection: connection,
+		Upsert:     true,
+	})
 	if err != nil {
 		rollbackError := connection.RollbackTransaction()
 		if rollbackError != nil {
@@ -69,7 +78,11 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 	return connection.CommitTransaction()
 }
 
-func DeployWithConnection(body io.ReadCloser, session *sess.Session, connection adapt.Connection) error {
+func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *DeployOptions) error {
+
+	if options == nil {
+		options = &DeployOptions{Upsert: true, Connection: nil}
+	}
 
 	workspace := session.GetWorkspace()
 	if workspace == nil {
@@ -202,7 +215,7 @@ func DeployWithConnection(body io.ReadCloser, session *sess.Session, connection 
 	saves := []datasource.PlatformSaveRequest{}
 
 	saveOptions := &adapt.SaveOptions{
-		Upsert: true,
+		Upsert: options.Upsert,
 	}
 
 	if by != nil {
@@ -284,12 +297,12 @@ func DeployWithConnection(body io.ReadCloser, session *sess.Session, connection 
 		}
 	}
 
-	err = datasource.PlatformSaves(saves, connection, session.RemoveWorkspaceContext())
+	err = datasource.PlatformSaves(saves, options.Connection, session.RemoveWorkspaceContext())
 	if err != nil {
 		return err
 	}
 
-	_, err = filesource.Upload(uploadOps, connection, session.RemoveWorkspaceContext(), params)
+	_, err = filesource.Upload(uploadOps, options.Connection, session.RemoveWorkspaceContext(), params)
 	if err != nil {
 		return err
 	}

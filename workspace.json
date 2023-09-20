@@ -109,6 +109,13 @@
 					"options": {
 						"lintFilePatterns": ["libs/apps/uesio/builder/**/*.ts*"]
 					}
+				},
+				"test": {
+					"builder": "@nrwl/jest:jest",
+					"options": {
+						"jestConfig": "libs/apps/uesio/builder/jest.config.ts"
+					},
+					"outputs": ["coverage/libs/apps/uesio/builder"]
 				}
 			},
 			"tags": [],

@@ -268,7 +268,7 @@ func canCallBot(namespace, name string, perms *meta.PermissionSet) (bool, error)
 		return true, nil
 	}
 	botKey := fmt.Sprintf("%s.%s", namespace, name)
-	if perms.BotRefs[botKey] == true {
+	if perms.BotRefs[botKey] {
 		return true, nil
 	}
 	return false, meta.NewBotAccessError(fmt.Sprintf(BotAccessErrorMessage, botKey))
