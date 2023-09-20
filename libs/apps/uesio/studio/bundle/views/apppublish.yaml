@@ -153,6 +153,23 @@ definition:
                                 uesio.display:
                                   - type: wireHasRecords
                                     wire: bundles
+                                  - field: uesio/studio.public
+                                    operator: NOT_EQUALS
+                                    value: true
+                                    wire: apps
+                                components:
+                                  - uesio/io.titlebar:
+                                      uesio.variant: uesio/io.main
+                                      title: It seems that your application is not public yet, try creating make it public and then return to this page.
+                                      subtitle: take a look in your app settings.
+                            - uesio/io.box:
+                                uesio.display:
+                                  - type: wireHasRecords
+                                    wire: bundles
+                                  - field: uesio/studio.public
+                                    operator: EQUALS
+                                    value: true
+                                    wire: apps
                                 components:
                                   - uesio/io.titlebar:
                                       uesio.variant: uesio/io.main
