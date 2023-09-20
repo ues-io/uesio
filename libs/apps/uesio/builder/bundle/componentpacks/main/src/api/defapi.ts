@@ -206,7 +206,11 @@ const move = (context: ctx.Context, fromPath: FullPath, toPath: FullPath) => {
 	setSelectedPath(context, toPath)
 }
 
-const clone = (context: ctx.Context, path: FullPath) => {
+const clone = (
+	context: ctx.Context,
+	path: FullPath,
+	purgeProperties?: string[]
+) => {
 	const current = getMetadataValue(context, path)
 	if (!current) return
 
@@ -217,14 +221,29 @@ const clone = (context: ctx.Context, path: FullPath) => {
 	const parentNode = getNodeAtPath(parentPath, yamlDoc.contents)
 	if (!yaml.isSeq(parentNode)) return
 	const items = parentNode.items
-	//Remove uesio.id
+	//Purge properties
 	const itemToClone = items[index]
 	if (!yaml.isCollection(itemToClone)) return
 	const itemToCloneComponentType = itemToClone.items[0]
 	if (!yaml.isPair(itemToCloneComponentType)) return
 	const itemToCloneCopy = itemToClone.clone()
-	if (itemToCloneCopy.hasIn([itemToCloneComponentType.key, "uesio.id"])) {
-		itemToCloneCopy.deleteIn([itemToCloneComponentType.key, "uesio.id"])
+
+	if (purgeProperties && purgeProperties.length) {
+		purgeProperties.forEach((property) => {
+			//Clone of a component
+			if (
+				itemToCloneCopy.hasIn([itemToCloneComponentType.key, property])
+			) {
+				itemToCloneCopy.deleteIn([
+					itemToCloneComponentType.key,
+					property,
+				])
+			}
+			//Clone of a condition
+			if (itemToCloneCopy.has(property)) {
+				itemToCloneCopy.delete(property)
+			}
+		})
 	}
 	items.splice(index, 0, itemToCloneCopy)
 	setMetadataValue(context, path, yamlDoc)
