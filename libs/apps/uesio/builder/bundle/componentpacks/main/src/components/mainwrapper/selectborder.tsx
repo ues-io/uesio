@@ -284,7 +284,7 @@ const SelectBorder: definition.UtilityComponent<Props> = (props) => {
 					<CloneAction
 						context={context}
 						path={selectedParentPath}
-						purgeProperties={["uesio.id"]}
+						purgeProperties={[component.COMPONENT_ID]}
 					/>
 				</div>
 			</div>
