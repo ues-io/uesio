@@ -127,11 +127,14 @@ function useUtilityStyleTokens<K extends string>(
 	)
 }
 
+const mergeClasses = twMerge
+
 export type { StyleProps, ThemeState }
 
 export {
 	defaultTheme,
 	cx,
+	mergeClasses,
 	process,
 	useUtilityStyleTokens,
 	useStyleTokens,
