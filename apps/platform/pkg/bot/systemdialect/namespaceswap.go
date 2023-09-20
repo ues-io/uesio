@@ -49,17 +49,18 @@ func (i *NamespaceSwapItem) Len() int {
 	return i.item.Len()
 }
 
-func NewNamespaceSwapCollection(from, to string) *NamespaceSwapCollection {
+func NewNamespaceSwapCollection(original, modified string) *NamespaceSwapCollection {
+
 	return &NamespaceSwapCollection{
-		from:       from,
-		to:         to,
+		original:   original,
+		modified:   modified,
 		collection: []*NamespaceSwapItem{},
 	}
 }
 
 type NamespaceSwapCollection struct {
-	from       string
-	to         string
+	original   string
+	modified   string
 	collection []*NamespaceSwapItem
 }
 
@@ -94,11 +95,11 @@ func (c *NamespaceSwapCollection) Len() int {
 }
 
 func (c *NamespaceSwapCollection) SwapNS(value string) string {
-	return meta.SwapKeyNamespace(value, c.from, c.to)
+	return meta.SwapKeyNamespace(value, c.original, c.modified)
 }
 
 func (c *NamespaceSwapCollection) SwapNSBack(value string) string {
-	return meta.SwapKeyNamespace(value, c.to, c.from)
+	return meta.SwapKeyNamespace(value, c.modified, c.original)
 }
 
 // Gets the conditions from the wire and translates them from core to studio
@@ -134,7 +135,7 @@ func (c *NamespaceSwapCollection) TransferFieldMetadata(fromCollectionName strin
 
 	for _, field := range fromCollectionMetadata.Fields {
 		clonedField := *field
-		clonedField.Namespace = c.from
+		clonedField.Namespace = c.original
 		// Check to see if the field already exists
 		_, err := toCollectionMetadata.GetField(clonedField.GetFullName())
 		if err != nil {
