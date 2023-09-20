@@ -230,20 +230,15 @@ const clone = (
 
 	purgeProperties?.forEach((property) => {
 		// Handle clones of Components
-		if (
-			itemToCloneCopy.hasIn([itemToCloneComponentType.key, property])
-		) {
-			itemToCloneCopy.deleteIn([
-				itemToCloneComponentType.key,
-				property,
-			])
+		if (itemToCloneCopy.hasIn([itemToCloneComponentType.key, property])) {
+			itemToCloneCopy.deleteIn([itemToCloneComponentType.key, property])
 		}
 		// Handle clones of more normal objects in an array
 		if (itemToCloneCopy.has(property)) {
 			itemToCloneCopy.delete(property)
 		}
 	})
-	}
+
 	items.splice(index, 0, itemToCloneCopy)
 	setMetadataValue(context, path, yamlDoc)
 }
