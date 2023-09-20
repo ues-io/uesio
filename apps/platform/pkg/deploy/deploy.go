@@ -65,6 +65,7 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 
 	err = DeployWithOptions(body, session, &DeployOptions{
 		Connection: connection,
+		Upsert:     true,
 	})
 	if err != nil {
 		rollbackError := connection.RollbackTransaction()
