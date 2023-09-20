@@ -206,7 +206,11 @@ const move = (context: ctx.Context, fromPath: FullPath, toPath: FullPath) => {
 	setSelectedPath(context, toPath)
 }
 
-const clone = (context: ctx.Context, path: FullPath) => {
+const clone = (
+	context: ctx.Context,
+	path: FullPath,
+	purgeProperties?: string[]
+) => {
 	const current = getMetadataValue(context, path)
 	if (!current) return
 
@@ -217,8 +221,25 @@ const clone = (context: ctx.Context, path: FullPath) => {
 	const parentNode = getNodeAtPath(parentPath, yamlDoc.contents)
 	if (!yaml.isSeq(parentNode)) return
 	const items = parentNode.items
-	items.splice(index, 0, items[index])
+	//Purge properties
+	const itemToClone = items[index]
+	if (!yaml.isCollection(itemToClone)) return
+	const itemToCloneComponentType = itemToClone.items[0]
+	if (!yaml.isPair(itemToCloneComponentType)) return
+	const itemToCloneCopy = itemToClone.clone()
 
+	purgeProperties?.forEach((property) => {
+		// Handle clones of Components
+		if (itemToCloneCopy.hasIn([itemToCloneComponentType.key, property])) {
+			itemToCloneCopy.deleteIn([itemToCloneComponentType.key, property])
+		}
+		// Handle clones of more normal objects in an array
+		if (itemToCloneCopy.has(property)) {
+			itemToCloneCopy.delete(property)
+		}
+	})
+
+	items.splice(index, 0, itemToCloneCopy)
 	setMetadataValue(context, path, yamlDoc)
 }
 
