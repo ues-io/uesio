@@ -201,6 +201,7 @@ collections:
   uesio/studio.recentdoc: true
   uesio/studio.authsource: true
   uesio/studio.signupmethod: true
+  uesio/core.signupmethod: true
   uesio/studio.app: true
   uesio/studio.bot: true
   uesio/studio.bundledependency: true

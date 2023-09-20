@@ -273,8 +273,13 @@ func GetMetadataTypes() []string {
 	return types
 }
 
-func IsBundleableCollection(studioCollectionName string) bool {
-	return bundleableCollectionNames[studioCollectionName] != ""
+func IsBundleableCollection(collectionName string) bool {
+	return bundleableCollectionNames[collectionName] != ""
+}
+
+func IsCoreBundleableCollection(collectionName string) bool {
+	swapped := SwapKeyNamespace(collectionName, "uesio/core", "uesio/studio")
+	return bundleableCollectionNames[swapped] != ""
 }
 
 func GetTypeFromCollectionName(studioCollectionName string) string {

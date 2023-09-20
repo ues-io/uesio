@@ -165,6 +165,8 @@ func (b *SystemDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adap
 
 	if meta.IsBundleableCollection(op.CollectionName) {
 		botFunction = runStudioMetadataLoadBot
+	} else if meta.IsCoreBundleableCollection(op.CollectionName) {
+		botFunction = runCoreMetadataLoadBot
 	}
 
 	if botFunction == nil {
