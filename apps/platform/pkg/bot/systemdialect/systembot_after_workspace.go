@@ -56,7 +56,8 @@ func deployWorkspaceFromBundle(workspaceID, bundleID string, connection adapt.Co
 	}
 
 	return deploy.DeployWithOptions(io.NopCloser(buf), workspaceSession, &deploy.DeployOptions{
-		Connection: connection})
+		Connection: connection,
+	})
 
 }
 
