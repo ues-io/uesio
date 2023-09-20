@@ -55,7 +55,10 @@ func deployWorkspaceFromBundle(workspaceID, bundleID string, connection adapt.Co
 		return err
 	}
 
-	return deploy.DeployWithConnection(io.NopCloser(buf), workspaceSession, connection)
+	return deploy.DeployWithOptions(io.NopCloser(buf), workspaceSession, &deploy.DeployOptions{
+		Connection: connection,
+		Upsert:     true,
+	})
 
 }
 
@@ -100,7 +103,7 @@ func deployEmptyWorkspace(workspaceID string, connection adapt.Connection, sessi
 		return err
 	}
 
-	return deploy.DeployWithConnection(io.NopCloser(buf), workspaceSession, connection)
+	return deploy.DeployWithOptions(io.NopCloser(buf), workspaceSession, &deploy.DeployOptions{Connection: connection, Upsert: true})
 }
 
 func runWorkspaceAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
