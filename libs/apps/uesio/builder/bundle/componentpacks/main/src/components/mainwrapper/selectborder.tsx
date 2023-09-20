@@ -281,7 +281,11 @@ const SelectBorder: definition.UtilityComponent<Props> = (props) => {
 				<div className={classes.actionarea}>
 					<DeleteAction context={context} path={selectedParentPath} />
 					<MoveActions context={context} path={selectedParentPath} />
-					<CloneAction context={context} path={selectedParentPath} />
+					<CloneAction
+						context={context}
+						path={selectedParentPath}
+						purgeProperties={[component.COMPONENT_ID]}
+					/>
 				</div>
 			</div>
 		</Popper>
