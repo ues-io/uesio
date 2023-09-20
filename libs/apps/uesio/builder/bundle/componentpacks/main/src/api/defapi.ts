@@ -228,22 +228,21 @@ const clone = (
 	if (!yaml.isPair(itemToCloneComponentType)) return
 	const itemToCloneCopy = itemToClone.clone()
 
-	if (purgeProperties && purgeProperties.length) {
-		purgeProperties.forEach((property) => {
-			//Clone of a component
-			if (
-				itemToCloneCopy.hasIn([itemToCloneComponentType.key, property])
-			) {
-				itemToCloneCopy.deleteIn([
-					itemToCloneComponentType.key,
-					property,
-				])
-			}
-			//Clone of a condition
-			if (itemToCloneCopy.has(property)) {
-				itemToCloneCopy.delete(property)
-			}
-		})
+	purgeProperties?.forEach((property) => {
+		// Handle clones of Components
+		if (
+			itemToCloneCopy.hasIn([itemToCloneComponentType.key, property])
+		) {
+			itemToCloneCopy.deleteIn([
+				itemToCloneComponentType.key,
+				property,
+			])
+		}
+		// Handle clones of more normal objects in an array
+		if (itemToCloneCopy.has(property)) {
+			itemToCloneCopy.delete(property)
+		}
+	})
 	}
 	items.splice(index, 0, itemToCloneCopy)
 	setMetadataValue(context, path, yamlDoc)
