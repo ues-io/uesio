@@ -1,0 +1,12 @@
+name: viewonlywiretest_1695149159
+definition:
+  wires:
+    users:
+      viewOnly: true
+      fields:
+        foo:
+          type: NUMBER
+          label: Foo
+          number:
+            decimals: 2
+  components:
