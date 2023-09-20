@@ -20,7 +20,7 @@ func (i *NamespaceSwapItem) MarshalJSON() ([]byte, error) {
 		if err != nil {
 			return err
 		}
-		result[i.collection.SwapNS(fieldName)] = fieldBytes
+		result[i.collection.SwapNSBack(fieldName)] = fieldBytes
 		return nil
 	})
 	if err != nil {
@@ -94,14 +94,18 @@ func (c *NamespaceSwapCollection) Len() int {
 }
 
 func (c *NamespaceSwapCollection) SwapNS(value string) string {
-	return meta.GetFullyQualifiedKey(meta.GetLocalizedKey(value, c.from), c.to)
+	return meta.SwapKeyNamespace(value, c.from, c.to)
+}
+
+func (c *NamespaceSwapCollection) SwapNSBack(value string) string {
+	return meta.SwapKeyNamespace(value, c.to, c.from)
 }
 
 // Gets the conditions from the wire and translates them from core to studio
 func (c *NamespaceSwapCollection) MapConditions(coreConditions []adapt.LoadRequestCondition) []adapt.LoadRequestCondition {
 	var studioConditions []adapt.LoadRequestCondition
 	for _, elem := range coreConditions {
-		elem.Field = meta.GetLocalizedKey(elem.Field, c.to)
+		elem.Field = c.SwapNS(elem.Field)
 		studioConditions = append(studioConditions, elem)
 	}
 	return studioConditions
@@ -110,7 +114,7 @@ func (c *NamespaceSwapCollection) MapConditions(coreConditions []adapt.LoadReque
 func (c *NamespaceSwapCollection) MapOrder(coreOrder []adapt.LoadRequestOrder) []adapt.LoadRequestOrder {
 	var studioOrder []adapt.LoadRequestOrder
 	for _, elem := range coreOrder {
-		elem.Field = meta.GetLocalizedKey(elem.Field, c.to)
+		elem.Field = c.SwapNS(elem.Field)
 		studioOrder = append(studioOrder, elem)
 	}
 	return studioOrder
@@ -123,14 +127,14 @@ func (c *NamespaceSwapCollection) TransferFieldMetadata(fromCollectionName strin
 		return err
 	}
 
-	toCollectionMetadata, err := to.GetCollection(c.SwapNS(fromCollectionName))
+	toCollectionMetadata, err := to.GetCollection(c.SwapNSBack(fromCollectionName))
 	if err != nil {
 		return err
 	}
 
 	for _, field := range fromCollectionMetadata.Fields {
 		clonedField := *field
-		clonedField.Namespace = c.to
+		clonedField.Namespace = c.from
 		// Check to see if the field already exists
 		_, err := toCollectionMetadata.GetField(clonedField.GetFullName())
 		if err != nil {

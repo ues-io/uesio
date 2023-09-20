@@ -391,7 +391,7 @@ func getMetadataForConditionLoad(
 	return nil
 }
 
-func getMetadataForLoad(
+func GetMetadataForLoad(
 	op *adapt.LoadOp,
 	metadataResponse *adapt.MetadataCache,
 	ops []*adapt.LoadOp,
@@ -571,7 +571,7 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 			})
 		}
 
-		if err := getMetadataForLoad(op, metadataResponse, ops, session); err != nil {
+		if err := GetMetadataForLoad(op, metadataResponse, ops, session); err != nil {
 			return nil, fmt.Errorf("metadata: %s: %v", op.CollectionName, err)
 		}
 

@@ -66,12 +66,44 @@ func getContextSessionFromParams(params map[string]string, connection adapt.Conn
 
 }
 
+func runCoreMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+
+	usageData := NewNamespaceSwapCollection("uesio/core", "uesio/studio")
+
+	studioCollectionName := meta.SwapKeyNamespace(op.CollectionName, "uesio/core", "uesio/studio")
+
+	newOp := &adapt.LoadOp{
+		CollectionName: studioCollectionName,
+		Collection:     usageData,
+		Conditions:     usageData.MapConditions(op.Conditions),
+	}
+
+	err := datasource.GetMetadataForLoad(newOp, connection.GetMetadata(), nil, session)
+	if err != nil {
+		return err
+	}
+
+	err = runAllMetadataLoadBot(newOp, connection, session)
+	if err != nil {
+		return err
+	}
+
+	op.Collection = usageData
+
+	return nil
+
+}
+
 func runStudioMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
 
 	allMetadataCondition := extractConditionByField(op.Conditions, "uesio/studio.allmetadata")
 
 	if allMetadataCondition != nil && allMetadataCondition.Value == true {
-		return runAllMetadataLoadBot(op.CollectionName, op, connection, session)
+		inContextSession, err := getContextSessionFromParams(op.Params, connection, session)
+		if err != nil {
+			return err
+		}
+		return runAllMetadataLoadBot(op, connection, inContextSession)
 	}
 
 	workspaceID, err := GetWorkspaceIDFromParams(op.Params, connection, session)
@@ -94,19 +126,14 @@ func runStudioMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 
 }
 
-func runAllMetadataLoadBot(collectionName string, op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
-
-	inContextSession, err := getContextSessionFromParams(op.Params, connection, session)
-	if err != nil {
-		return err
-	}
+func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
 
 	itemCondition := extractConditionByField(op.Conditions, "uesio/studio.item")
 	groupingCondition := extractConditionByField(op.Conditions, "uesio/studio.grouping")
 	searchCondition := extractConditionByType(op.Conditions, "SEARCH")
 	isCommonFieldCondition := extractConditionByField(op.Conditions, "uesio/studio.iscommonfield")
 
-	metadataType := meta.GetTypeFromCollectionName(collectionName)
+	metadataType := meta.GetTypeFromCollectionName(op.CollectionName)
 
 	group, err := meta.GetBundleableGroupFromType(metadataType)
 	if err != nil {
@@ -150,7 +177,7 @@ func runAllMetadataLoadBot(collectionName string, op *adapt.LoadOp, connection a
 		Label:      "App Color",
 	})
 
-	namespaces := inContextSession.GetContextNamespaces()
+	namespaces := session.GetContextNamespaces()
 
 	if itemCondition != nil {
 		itemKey := getConditionValue(itemCondition)
@@ -163,7 +190,7 @@ func runAllMetadataLoadBot(collectionName string, op *adapt.LoadOp, connection a
 			return err
 		}
 		group.AddItem(item)
-		err = bundle.Load(item, inContextSession, connection)
+		err = bundle.Load(item, session, connection)
 		if err != nil {
 			return err
 		}
@@ -184,7 +211,7 @@ func runAllMetadataLoadBot(collectionName string, op *adapt.LoadOp, connection a
 		onlyLoadCommonFields := false
 
 		// Special handling if we are asked to load common fields
-		if collectionName == "uesio/studio.field" {
+		if op.CollectionName == "uesio/studio.field" {
 			// Only add built-in fields if we're grouping on a collection
 			collection, ok := conditions["uesio/studio.collection"]
 			// and if we don't have a condition to exclude built-in fields
@@ -195,7 +222,7 @@ func runAllMetadataLoadBot(collectionName string, op *adapt.LoadOp, connection a
 		}
 
 		if !onlyLoadCommonFields {
-			err = bundle.LoadAllFromNamespaces(namespaces, group, conditions, inContextSession, nil)
+			err = bundle.LoadAllFromNamespaces(namespaces, group, conditions, session, nil)
 			if err != nil {
 				return err
 			}

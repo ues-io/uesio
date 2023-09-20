@@ -44,3 +44,7 @@ func GetLocalizedKey(itemkey, localNamespace string) string {
 	}
 	return itemkey
 }
+
+func SwapKeyNamespace(key, from, to string) string {
+	return GetFullyQualifiedKey(GetLocalizedKey(key, from), to)
+}

@@ -1,0 +1,5 @@
+name: signupmethod
+type: DYNAMIC
+label: Signup Method
+pluralLabel: Signup Method
+public: true

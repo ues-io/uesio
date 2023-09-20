@@ -16,7 +16,7 @@ func runUsageLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *ses
 		return errors.New("unable to retrieve usage, site admin context is missing")
 	}
 
-	usageData := NewNamespaceSwapCollection("uesio/studio", "uesio/core")
+	usageData := NewNamespaceSwapCollection("uesio/core", "uesio/studio")
 
 	newOp := &adapt.LoadOp{
 		CollectionName: "uesio/studio.usage",
