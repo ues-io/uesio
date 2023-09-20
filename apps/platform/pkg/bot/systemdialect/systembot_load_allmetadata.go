@@ -68,27 +68,37 @@ func getContextSessionFromParams(params map[string]string, connection adapt.Conn
 
 func runCoreMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
 
-	usageData := NewNamespaceSwapCollection("uesio/core", "uesio/studio")
+	newCollection := NewNamespaceSwapCollection("uesio/core", "uesio/studio")
 
 	studioCollectionName := meta.SwapKeyNamespace(op.CollectionName, "uesio/core", "uesio/studio")
 
 	newOp := &adapt.LoadOp{
 		CollectionName: studioCollectionName,
-		Collection:     usageData,
-		Conditions:     usageData.MapConditions(op.Conditions),
+		Collection:     newCollection,
+		Conditions:     newCollection.MapConditions(op.Conditions),
 	}
 
-	err := datasource.GetMetadataForLoad(newOp, connection.GetMetadata(), nil, session)
+	studioConnection, err := datasource.GetPlatformConnection(nil, session, nil)
 	if err != nil {
 		return err
 	}
 
-	err = runAllMetadataLoadBot(newOp, connection, session)
+	err = datasource.GetMetadataForLoad(newOp, studioConnection.GetMetadata(), nil, sess.GetStudioAnonSession())
 	if err != nil {
 		return err
 	}
 
-	op.Collection = usageData
+	err = runAllMetadataLoadBot(newOp, studioConnection, session)
+	if err != nil {
+		return err
+	}
+
+	err = newCollection.TransferFieldMetadata(studioCollectionName, studioConnection.GetMetadata(), connection.GetMetadata())
+	if err != nil {
+		return err
+	}
+
+	op.Collection = newCollection
 
 	return nil
 
