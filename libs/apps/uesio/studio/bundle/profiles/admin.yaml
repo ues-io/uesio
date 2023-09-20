@@ -2,4 +2,5 @@ name: admin
 permissionSets:
   - uesio/studio.admin
   - uesio/studio.standard
+  - uesio/studio.public
   - uesio/core.public
