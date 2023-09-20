@@ -95,6 +95,11 @@ sections:
     properties:
       - rowactions
   - type: STYLES
+  # Record Display Conditions - to determine what wire records are displayed in the Table
+  - type: DISPLAY
+    id: recordDisplay
+    label: Records
+  # Component Display Conditions - to determine whether or not to display the Table itself
   - type: DISPLAY
 signals:
   TOGGLE_MODE:

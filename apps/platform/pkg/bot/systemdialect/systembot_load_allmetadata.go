@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/teris-io/shortid"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -152,7 +153,11 @@ func runAllMetadataLoadBot(collectionName string, op *adapt.LoadOp, connection a
 	namespaces := inContextSession.GetContextNamespaces()
 
 	if itemCondition != nil {
-		itemKey := itemCondition.Value.(string)
+		itemKey := getConditionValue(itemCondition)
+		// If we have no value, then we can't perform the query
+		if itemKey == "" {
+			return nil
+		}
 		item, err := group.GetItemFromKey(itemKey)
 		if err != nil {
 			return err
@@ -165,7 +170,11 @@ func runAllMetadataLoadBot(collectionName string, op *adapt.LoadOp, connection a
 	} else {
 		var conditions meta.BundleConditions
 		if groupingCondition != nil {
-			grouping := groupingCondition.Value.(string)
+			grouping := getConditionValue(groupingCondition)
+			// If we have no value, we can't perform the query
+			if grouping == "" {
+				return nil
+			}
 			conditions, err = meta.GetGroupingConditions(metadataType, grouping)
 			if err != nil {
 				return err
@@ -235,17 +244,37 @@ func runAllMetadataLoadBot(collectionName string, op *adapt.LoadOp, connection a
 				return err
 			}
 		}
-		realID, err := item.GetField("uesio/core.id")
+		realID, err := item.GetField(adapt.ID_FIELD)
 		if err != nil {
 			return err
 		}
 		if realID == "" {
 			fakeID, _ := shortid.Generate()
-			opItem.SetField("uesio/core.id", fakeID)
+			opItem.SetField(adapt.ID_FIELD, fakeID)
 		}
 
-		opItem.SetField("uesio/core.uniquekey", key)
+		opItem.SetField(adapt.UNIQUE_KEY_FIELD, key)
 		return nil
 	})
 
+}
+
+func getStringValue(val interface{}) string {
+	if stringValue, isString := val.(string); isString {
+		return stringValue
+	}
+	return ""
+}
+
+func getConditionValue(condition *adapt.LoadRequestCondition) string {
+	var conditionValue string
+	if condition.Value != nil {
+		conditionValue = getStringValue(condition.Value)
+	} else if condition.Values != nil {
+		allValues := condition.Values.([]interface{})
+		if len(allValues) > 0 {
+			conditionValue = getStringValue(allValues[0])
+		}
+	}
+	return conditionValue
 }
