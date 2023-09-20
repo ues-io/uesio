@@ -48,7 +48,7 @@ func GenerateToWorkspace(w http.ResponseWriter, r *http.Request) {
 	}
 	zipwriter.Close()
 
-	err = deploy.Deploy(io.NopCloser(buf), session)
+	err = deploy.Deploy(io.NopCloser(buf), &deploy.DeployOptions{Upsert: false}, session)
 	if err != nil {
 		file.RespondJSON(w, r, &bot.BotResponse{
 			Success: false,

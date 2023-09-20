@@ -46,7 +46,16 @@ var ORDERED_ITEMS = [...]string{
 	"integrations",
 }
 
-func Deploy(body io.ReadCloser, session *sess.Session) error {
+type DeployOptions struct {
+	Upsert bool `json:"upsert"`
+}
+
+func Deploy(body io.ReadCloser, options *DeployOptions, session *sess.Session) error {
+
+	if options == nil {
+		options = &DeployOptions{Upsert: true}
+	}
+
 	connection, err := datasource.GetPlatformConnection(nil, session.RemoveWorkspaceContext(), nil)
 	if err != nil {
 		return err
@@ -57,7 +66,7 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 		return err
 	}
 
-	err = DeployWithConnection(body, session, connection)
+	err = DeployWithConnection(body, options, session, connection)
 	if err != nil {
 		rollbackError := connection.RollbackTransaction()
 		if rollbackError != nil {
@@ -69,7 +78,11 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 	return connection.CommitTransaction()
 }
 
-func DeployWithConnection(body io.ReadCloser, session *sess.Session, connection adapt.Connection) error {
+func DeployWithConnection(body io.ReadCloser, options *DeployOptions, session *sess.Session, connection adapt.Connection) error {
+
+	if options == nil {
+		options = &DeployOptions{Upsert: true}
+	}
 
 	workspace := session.GetWorkspace()
 	if workspace == nil {
@@ -202,7 +215,7 @@ func DeployWithConnection(body io.ReadCloser, session *sess.Session, connection 
 	saves := []datasource.PlatformSaveRequest{}
 
 	saveOptions := &adapt.SaveOptions{
-		Upsert: true,
+		Upsert: options.Upsert,
 	}
 
 	if by != nil {
