@@ -16,7 +16,6 @@ Accept: application/json
 {
     "wires": [
         {
-            "id": "one",
             "collection":"uesio/tests.animal",
             "fields": [
                 {
@@ -30,7 +29,6 @@ Accept: application/json
             "batchsize":2
         },
         {
-            "id": "two",
             "collection":"uesio/tests.animal",
             "fields": [
                 {

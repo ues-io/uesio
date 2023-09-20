@@ -21,6 +21,23 @@ definition:
           value: true
         - field: uesio/studio.item
           value: $Param{namespace}.$Param{collectionname}
+      events:
+        - type: onSaveSuccess
+          signals:
+            - signal: wire/LOAD
+              wires:
+                - workspaces
+                - collections
+                - integration
+    integration:
+      collection: uesio/studio.integration
+      conditions:
+        - field: uesio/studio.allmetadata
+          value: true
+        - field: uesio/studio.item
+          valueSource: LOOKUP
+          lookupWire: collections
+          lookupField: uesio/studio.integration
     fields:
       collection: uesio/studio.field
       conditions:
@@ -271,10 +288,37 @@ definition:
                             - field: uesio/studio.type
                               value: EXTERNAL
                           items:
-                            - uesio/io.field:
+                            - uesio/builder.metadatafield:
+                                uesio.context:
+                                  workspace:
+                                    name: $Param{workspacename}
+                                    app: $Param{app}
                                 fieldId: uesio/studio.integration
-                            - uesio/io.field:
+                                metadataType: INTEGRATION
+                                uesio.display:
+                                  - type: fieldValue
+                                    wire: collections
+                                    field: uesio/studio.type
+                                    operator: EQUALS
+                                    value: EXTERNAL
+                            - uesio/builder.metadatafield:
+                                uesio.context:
+                                  workspace:
+                                    name: $Param{workspacename}
+                                    app: $Param{app}
                                 fieldId: uesio/studio.loadbot
+                                metadataType: BOT
+                                grouping: LOAD
+                                label: Collection Load Bot
+                                uesio.display:
+                                  - type: hasValue
+                                    value: ${uesio/studio.integration}
+                                  - type: wireHasRecords
+                                    wire: integration
+                                  - type: fieldValue
+                                    wire: integration
+                                    field: uesio/studio.type
+                                    value: uesio/core.custom
           - uesio/io.box:
               uesio.variant: uesio/io.section
               components:
@@ -577,7 +621,6 @@ definition:
                   grouping: $Param{app}.$Param{collectionname}
                   namespace: $Param{app}
               - uesio/io.field:
-                  label: Data Source Type
                   fieldId: uesio/studio.type
               - uesio/builder.metadatafield:
                   uesio.context:
@@ -587,8 +630,17 @@ definition:
                   fieldId: uesio/studio.integration
                   metadataType: INTEGRATION
                   uesio.display:
-                    - field: uesio/studio.type
+                    - type: fieldValue
+                      wire: collections
+                      field: uesio/studio.type
+                      operator: EQUALS
                       value: EXTERNAL
+                    - type: wireHasRecords
+                      wire: integration
+                    - type: fieldValue
+                      wire: integration
+                      field: uesio/studio.type
+                      value: uesio/core.custom
               - uesio/builder.metadatafield:
                   uesio.context:
                     workspace:
@@ -599,8 +651,17 @@ definition:
                   grouping: LOAD
                   label: Collection Load Bot
                   uesio.display:
-                    - field: uesio/studio.type
+                    - type: fieldValue
+                      field: uesio/studio.type
                       value: EXTERNAL
+                    - type: hasValue
+                      value: ${uesio/studio.integration}
+                    - type: wireHasRecords
+                      wire: integration
+                    - type: fieldValue
+                      wire: integration
+                      field: uesio/studio.type
+                      value: uesio/core.custom
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary

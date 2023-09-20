@@ -110,7 +110,7 @@ const getSectionLabel = (s: PropertiesPanelSection): string => {
 		case STYLES_TYPE:
 			return STYLES_LABEL
 		case "DISPLAY":
-			return DISPLAY_SECTION.label
+			return s.label || DISPLAY_SECTION.label
 		case "SIGNALS":
 			return s.label === undefined ? "Signals" : s.label
 		default:

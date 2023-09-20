@@ -47,7 +47,7 @@ func runUsageLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *ses
 		BatchNumber:    op.BatchNumber,
 	}
 
-	_, err := datasource.Load([]*adapt.LoadOp{newOp}, sess.GetStudioAnonSession(), &datasource.LoadOptions{})
+	studioMetadata, err := datasource.Load([]*adapt.LoadOp{newOp}, sess.GetStudioAnonSession(), &datasource.LoadOptions{})
 	if err != nil {
 		return err
 	}
@@ -58,12 +58,7 @@ func runUsageLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *ses
 
 	metadataResponse := connection.GetMetadata()
 
-	collectionMetadata, err := metadataResponse.GetCollection("uesio/core.usage")
-	if err != nil {
-		return err
-	}
-
-	userFieldMetadata, err := collectionMetadata.GetField("uesio/core.user")
+	err = usageData.TransferFieldMetadata("uesio/studio.usage", studioMetadata, metadataResponse)
 	if err != nil {
 		return err
 	}
@@ -78,14 +73,16 @@ func runUsageLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *ses
 	userRefReq.Metadata = userCollectionMetadata
 
 	for _, item := range usageData.collection {
-		value, err := item.GetFieldAsString("uesio/core.user")
+		value, err := item.GetFieldAsString("uesio/studio.user")
 		if err != nil {
 			return err
 		}
-
 		userRefReq.AddID(value, adapt.ReferenceLocator{
-			Item:  item,
-			Field: userFieldMetadata,
+			Item: item,
+			Field: &adapt.FieldMetadata{
+				Namespace: "uesio/studio",
+				Name:      "user",
+			},
 		})
 
 	}

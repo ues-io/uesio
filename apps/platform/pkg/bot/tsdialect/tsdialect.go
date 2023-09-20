@@ -2,7 +2,7 @@ package tsdialect
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 
 	esbuild "github.com/evanw/esbuild/pkg/api"
 	"github.com/pkg/errors"
@@ -82,7 +82,7 @@ func (b *TSDialect) hydrateBot(bot *meta.Bot, session *sess.Session) error {
 	if err != nil {
 		return err
 	}
-	content, err := ioutil.ReadAll(stream)
+	content, err := io.ReadAll(stream)
 	if err != nil {
 		return err
 	}

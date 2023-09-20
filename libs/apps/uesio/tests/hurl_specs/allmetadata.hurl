@@ -15,7 +15,7 @@ Accept: application/json
     "wires": [
         {
             "collection":"uesio/studio.field",
-            "id": "collection",
+            "name": "collection",
             "query":true,
             "fields": [
                 {
@@ -57,7 +57,7 @@ Accept: application/json
     "wires": [
         {
             "collection":"uesio/studio.field",
-            "id": "collection",
+            "name": "collection",
             "query":true,
             "fields": [
                 {
@@ -103,7 +103,7 @@ Accept: application/json
     "wires": [
         {
             "collection":"uesio/studio.secret",
-            "id": "collection",
+            "name": "collection",
             "query":true,
             "fields": [
                 {
@@ -126,3 +126,82 @@ Accept: application/json
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data" count == 0
+
+# Test conditions on uesio/studio.item/grouping that have a ValueSource of LOOKUP from a previous wire 
+POST https://{{host}}:{{port}}/site/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection": "uesio/studio.collection",
+            "name": "collection",
+            "query": true,
+            "fields": [
+                {
+                    "id": "uesio/core.uniquekey"
+                }
+            ],
+            "conditions": [
+                {
+                    "field": "uesio/studio.allmetadata",
+                    "value": true
+                },
+                {
+                    "field": "uesio/studio.item",
+                    "value": "uesio/tests.animal"
+                }
+            ],
+            "params": {
+                "app": "uesio/tests",
+                "workspacename": "dev"
+            }
+        },
+        {
+            "collection": "uesio/studio.field",
+            "name": "fields",
+            "query": true,
+            "fields": [
+                {
+                    "id": "uesio/studio.name"
+                },
+                {
+                    "id": "uesio/core.uniquekey"
+                }
+            ],
+            "conditions": [
+                {
+                    "field": "uesio/studio.allmetadata",
+                    "value": true
+                },
+                {
+                    "field": "uesio/studio.grouping",
+                    "valueSource": "LOOKUP",
+                    "lookupWire": "collection",
+                    "lookupField": "uesio/core.uniquekey"
+                }
+            ],
+            "params": {
+                "app": "uesio/tests",
+                "workspacename": "dev"
+            },
+            "order": [
+                {
+                    "field": "uesio/studio.name",
+                    "desc": false
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].data" count == 1
+jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "uesio/tests.animal"
+jsonpath "$.wires[1].data" count == 7
+jsonpath "$.wires[1].data[0]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.ancestor"
+jsonpath "$.wires[1].data[1]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.autonumber"
+jsonpath "$.wires[1].data[2]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.genus"
+jsonpath "$.wires[1].data[3]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.lookalike"
+jsonpath "$.wires[1].data[4]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.species"
+jsonpath "$.wires[1].data[5]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.status"
+jsonpath "$.wires[1].data[6]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.total_population"
