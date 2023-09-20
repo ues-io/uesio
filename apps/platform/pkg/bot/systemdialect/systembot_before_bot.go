@@ -1,10 +1,7 @@
 package systemdialect
 
 import (
-	"strings"
-
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -27,12 +24,15 @@ func runBotBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, ses
 			return err
 		}
 
-		if meta.IsBotTypeWithCollection(strings.ToLower(botType)) {
-			if err = depMap.AddRequired(change, "collection", "uesio/studio.collection"); err != nil {
-				return err
+		switch botType {
+		case "LISTENER", "LOAD", "SAVE":
+
+		case "AFTERSAVE", "BEFORESAVE":
+			depMap.AddRequired(change, "collection", "uesio/studio.collection")
+			if err != nil {
+				return nil
 			}
 		}
-
 		return nil
 	})
 	if err != nil {
