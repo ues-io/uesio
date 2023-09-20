@@ -138,7 +138,6 @@ routes:
   uesio/studio.installedbundle: true
   uesio/studio.integration: true
   uesio/studio.integrations: true
-  uesio/studio.login: true
   uesio/studio.org: true
   uesio/studio.packaging: true
   uesio/studio.permissionset: true
@@ -152,7 +151,6 @@ routes:
   uesio/studio.secrets: true
   uesio/studio.selectlist: true
   uesio/studio.selectlists: true
-  uesio/studio.signup: true
   uesio/studio.site: true
   uesio/studio.siteorg: true
   uesio/studio.siteorgs: true
@@ -182,9 +180,6 @@ routes:
   uesio/studio.siteusage_collection_load: true
   uesio/studio.siteusage_collection_save: true
   uesio/studio.userprofile: true
-  uesio/studio.changepassword: true
-  uesio/studio.signupconfirm: true
-  uesio/studio.requestpassword: true
   uesio/studio.licensesused: true
   uesio/studio.licensesprovided: true
   uesio/studio.licensespricing: true
