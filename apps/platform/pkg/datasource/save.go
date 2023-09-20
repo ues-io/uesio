@@ -17,12 +17,12 @@ type SaveRequestBatch struct {
 }
 
 type SaveRequest struct {
-	Collection string             `json:"collection" bot:"collection"`
-	Wire       string             `json:"wire" bot:"wire"`
+	Collection string             `json:"collection"`
+	Wire       string             `json:"wire"`
 	Changes    meta.Group         `json:"changes"`
 	Deletes    meta.Group         `json:"deletes"`
 	Errors     []adapt.SaveError  `json:"errors"`
-	Options    *adapt.SaveOptions `json:"options" bot:"options"`
+	Options    *adapt.SaveOptions `json:"options"`
 	Params     map[string]string  `json:"params"`
 }
 

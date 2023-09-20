@@ -20,7 +20,6 @@ HTTP 200
 jsonpath "$.error" == ""
 jsonpath "$.success" == true
 
-
 # Invoke with all required parameters this will fail because we already have a view with the name test_list_view_generator
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/metadata/generate/uesio/core/listview
 {

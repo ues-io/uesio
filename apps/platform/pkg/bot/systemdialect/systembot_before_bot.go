@@ -30,7 +30,7 @@ func runBotBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, ses
 		case "AFTERSAVE", "BEFORESAVE":
 			depMap.AddRequired(change, "collection", "uesio/studio.collection")
 			if err != nil {
-				return nil
+				return err
 			}
 		}
 		return nil
