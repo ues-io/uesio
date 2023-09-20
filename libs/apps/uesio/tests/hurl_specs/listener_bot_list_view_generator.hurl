@@ -30,5 +30,5 @@ POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/metadata/generate/uesio
 }
 HTTP 200
 [Asserts]
-jsonpath "$.error" == "Unable to create duplicate uesio/studio.view record: uesio/tests:dev:test_list_view_generator : Unable to create duplicate uesio/studio.view record: uesio/tests:dev:test_list_view_generator"
+jsonpath "$.error" == "Unable to create duplicate uesio/studio.view record: uesio/tests:dev:test_list_view_generator"
 jsonpath "$.success" == false
