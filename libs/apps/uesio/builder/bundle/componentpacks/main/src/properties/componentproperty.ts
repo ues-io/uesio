@@ -30,6 +30,7 @@ type BaseProperty = {
 	displayConditions?: component.DisplayCondition[]
 	// Updates to perform when this property's value is changed.
 	onChange?: PropertyOnChange[]
+	unique?: boolean
 }
 type TextProperty = {
 	type: "TEXT"

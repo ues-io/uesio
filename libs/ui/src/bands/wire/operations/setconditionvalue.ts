@@ -14,7 +14,7 @@ export default (
 			setConditionValue({
 				entity: getFullWireId(viewId, wireName),
 				id: conditionId,
-				value,
+				value: context.merge(value),
 			})
 		)
 	return context

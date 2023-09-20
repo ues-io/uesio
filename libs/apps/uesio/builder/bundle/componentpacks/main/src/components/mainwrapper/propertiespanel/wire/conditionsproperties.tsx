@@ -254,6 +254,7 @@ const getItemPropertiesFunction =
 				name: "id",
 				type: "TEXT",
 				label: "Condition Id",
+				unique: true,
 			},
 			{
 				name: "field",
