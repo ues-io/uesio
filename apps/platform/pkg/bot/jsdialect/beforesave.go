@@ -14,15 +14,6 @@ type BeforeSaveAPI struct {
 	connection adapt.Connection
 }
 
-type BotLoadOp struct {
-	BatchSize  int                          `bot:"batchsize"`
-	Collection string                       `bot:"collection"`
-	Fields     []adapt.LoadRequestField     `bot:"fields"`
-	Conditions []adapt.LoadRequestCondition `bot:"conditions"`
-	Order      []adapt.LoadRequestOrder     `bot:"order"`
-	LoadAll    bool                         `bot:"loadAll"`
-}
-
 func NewBeforeSaveAPI(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) *BeforeSaveAPI {
 	return &BeforeSaveAPI{
 		Inserts: &InsertsAPI{
