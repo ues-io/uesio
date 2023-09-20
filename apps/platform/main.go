@@ -11,6 +11,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt/postgresio"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/auth/cognito"
+	googleauth "github.com/thecloudmasters/uesio/pkg/auth/google"
 	"github.com/thecloudmasters/uesio/pkg/auth/mock"
 	"github.com/thecloudmasters/uesio/pkg/bot/jsdialect"
 	"github.com/thecloudmasters/uesio/pkg/bot/systemdialect"
@@ -52,6 +53,7 @@ func init() {
 		auth.RegisterAuthType("mock", &mock.Auth{})
 	}
 	auth.RegisterAuthType("cognito", &cognito.Auth{})
+	auth.RegisterAuthType("google", &googleauth.Auth{})
 
 	// File Adapters
 	fileadapt.RegisterFileAdapter("uesio.s3", &s3.FileAdapter{})

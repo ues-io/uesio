@@ -1,0 +1,4 @@
+name: google
+type: google
+credentials: uesio/core.googlelogin
+public: true

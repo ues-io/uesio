@@ -52,6 +52,7 @@ definition:
                       - uesio/core.loginmock:
                           text: Sign in with Mock
                           align: center
+                      - uesio/core.logingoogle:
                       - uesio/io.list:
                           uesio.id: credslist
                           wire: credentials
