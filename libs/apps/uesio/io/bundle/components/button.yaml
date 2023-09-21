@@ -21,12 +21,14 @@ properties:
   - name: iconPlacement
     type: SELECT
     label: Icon Placement
-    blankOptionLabel: ""
     options:
       - value: start
         label: Before Label
       - value: end
         label: After Label
+    displayConditions:
+      - type: hasValue
+        value: ${icon}
   - name: hotkey
     type: TEXT
     placeholder: meta+s
@@ -39,6 +41,7 @@ sections:
     properties:
       - text
       - icon
+      - iconPlacement
       - hotkey
       - uesio.id
   - type: SIGNALS
