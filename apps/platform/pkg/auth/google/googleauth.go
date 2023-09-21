@@ -27,11 +27,11 @@ func (c *Connection) Login(payload map[string]interface{}, session *sess.Session
 
 	token, err := auth.GetPayloadValue(payload, "credential")
 	if err != nil {
-		return nil, errors.New("Google login:" + err.Error())
+		return nil, auth.NewAuthRequestError("google login: " + err.Error())
 	}
 	clientID, err := auth.GetPayloadValue(payload, "client_id")
 	if err != nil {
-		return nil, errors.New("Google login:" + err.Error())
+		return nil, auth.NewAuthRequestError("google login: " + err.Error())
 	}
 
 	// Verify that the client id sent in the payload matches the client id
@@ -41,8 +41,12 @@ func (c *Connection) Login(payload map[string]interface{}, session *sess.Session
 		return nil, err
 	}
 
+	if trustedClientID == "" {
+		return nil, auth.NewAuthRequestError("google login: no client id associated with auth source")
+	}
+
 	if trustedClientID != clientID {
-		return nil, errors.New("Invalid Client ID")
+		return nil, auth.NewAuthRequestError("google login: invalid client id")
 	}
 
 	validated, err := idtoken.Validate(context.Background(), token, clientID)

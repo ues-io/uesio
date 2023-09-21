@@ -12,7 +12,25 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
+type AuthRequestError struct {
+	message string
+}
+
+func NewAuthRequestError(message string) *AuthRequestError {
+	return &AuthRequestError{
+		message: message,
+	}
+}
+
+func (e *AuthRequestError) Error() string {
+	return e.message
+}
+
 func getUserFromClaims(authSourceID string, claims *AuthenticationClaims, session *sess.Session) (*meta.User, error) {
+
+	if session.GetWorkspace() != nil {
+		return nil, NewAuthRequestError("Login isn't currently supported for workspaces")
+	}
 
 	adminSession := sess.GetAnonSession(session.GetSite())
 

@@ -185,6 +185,13 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].errors" == null
 
+# Set the google auth source config client id value for the workspace
+POST https://{{host}}:{{port}}/siteadmin/uesio/tests/testsite/configvalues/uesio/core/google_auth_client_id
+{
+    "value": "A client id"
+}
+HTTP 200
+
 # Create truncatetests workspace
 POST https://{{host}}:{{port}}/site/wires/save
 {

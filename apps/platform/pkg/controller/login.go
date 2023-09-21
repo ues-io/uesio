@@ -79,8 +79,16 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	user, err := auth.Login(getAuthSourceID(mux.Vars(r)), loginRequest, s)
 	if err != nil {
-		logger.LogError(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		var responseCode int
+		switch err.(type) {
+		case *auth.AuthRequestError:
+			responseCode = http.StatusBadRequest
+		default:
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			logger.LogError(err)
+			return
+		}
+		http.Error(w, err.Error(), responseCode)
 		return
 	}
 
