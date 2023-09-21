@@ -3,11 +3,14 @@ import { definition, styles } from "@uesio/ui"
 import Tooltip from "../tooltip/tooltip"
 import { Placement } from "@floating-ui/react"
 
+export type ButtonIconPlacement = "start" | "end"
+
 interface ButtonUtilityProps {
 	onClick?: (e: MouseEvent) => void
 	label?: string
 	isSelected?: boolean
 	icon?: ReactNode
+	iconPlacement?: ButtonIconPlacement
 	disabled?: boolean
 	tooltip?: string
 	tooltipPlacement?: Placement
@@ -33,6 +36,7 @@ const Button: definition.UtilityComponent<ButtonUtilityProps> = (props) => {
 		disabled,
 		isSelected,
 		icon,
+		iconPlacement = "start",
 		id,
 		tooltip,
 		context,
@@ -42,7 +46,6 @@ const Button: definition.UtilityComponent<ButtonUtilityProps> = (props) => {
 	} = props
 
 	const Tag = link ? "a" : "button"
-
 	const button = (
 		<Tag
 			id={id}
@@ -56,8 +59,9 @@ const Button: definition.UtilityComponent<ButtonUtilityProps> = (props) => {
 				isSelected && classes.selected
 			)}
 		>
-			{icon}
+			{iconPlacement === "start" && icon}
 			{label && <span>{context.merge(label)}</span>}
+			{iconPlacement === "end" && icon}
 		</Tag>
 	)
 
