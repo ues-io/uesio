@@ -48,6 +48,22 @@ function %s(bot: LoadBotApi) {
 	].forEach((record) => bot.addRecord(record))
 }`
 
+const DefaultSaveBotBody = `import { SaveBotApi } from "@uesio/bots
+
+// @ts-ignore
+function %s(bot: SaveBotApi) {
+	const collectionName = bot.getCollectionName()
+	bot.deletes.get().forEach((deleteApi) => {
+		bot.log.info("got a record to delete, with id: " + deleteApi.getId())
+	})
+	bot.inserts.get().forEach((insertApi) => {
+		bot.log.info("got a record to insert, with id: " + insertApi.getId())
+	})
+	bot.updates.get().forEach((updateApi) => {
+		bot.log.info("got a record to update, with id: " + updateApi.getId())
+	})
+}`
+
 const DefaultBeforeSaveBotBody = `import { BeforeSaveBotApi } from "@uesio/bots"
 
 // @ts-ignore
@@ -171,7 +187,15 @@ func (b *TSDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adapt.Co
 }
 
 func (b *TSDialect) SaveBot(bot *meta.Bot, op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
-	return nil
+	integrationConnection, err := op.GetIntegration()
+	if err != nil {
+		return err
+	}
+	botAPI := jsdialect.NewSaveBotAPI(bot, session, connection, op, integrationConnection)
+	if err := b.hydrateBot(bot, session); err != nil {
+		return err
+	}
+	return RunBot(bot.Name, bot.FileContents, botAPI, nil)
 }
 
 func (b *TSDialect) GetFilePath() string {
@@ -188,6 +212,8 @@ func (b *TSDialect) GetDefaultFileBody(botType string) string {
 		return DefaultAfterSaveBotBody
 	case "LOAD":
 		return DefaultLoadBotBody
+	case "SAVE":
+		return DefaultSaveBotBody
 	default:
 		return DefaultBotBody
 	}

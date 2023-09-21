@@ -630,39 +630,44 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 
 		// Handle external data integration loads
 		if integrationName != "" && integrationName != meta.PLATFORM_DATA_SOURCE {
-			integrationConnection, err := GetIntegration(integrationName, session)
-			if err != nil {
-				return nil, err
-			}
-			if err != nil {
-				return nil, err
-			}
-			op.AttachIntegration(integrationConnection)
-			integration := integrationConnection.GetIntegration()
-			// If there's a collection-specific load bot defined, use that,
-			// otherwise default to the integration's defined load bot.
-			// If there's neither, then there's nothing to do.
-			botKey := collectionMetadata.LoadBot
-			if botKey == "" && integration != nil {
-				botKey = integration.LoadBot
-			}
-			if botKey == "" {
-				return nil, fmt.Errorf("no load bot defined on collection %s or on integration %s", collectionKey, integration.GetKey())
-			}
-
-			if err = runExternalDataSourceLoadBot(botKey, op, connection, session); err != nil {
-				return nil, err
-			}
-			continue
+			err = performExternalIntegrationLoad(integrationName, op, connection, session)
+		} else {
+			err = LoadOp(op, connection, session)
 		}
-
-		if err = LoadOp(op, connection, session); err != nil {
+		if err != nil {
 			return nil, err
 		}
-
 	}
 
 	return metadataResponse, nil
+}
+
+func performExternalIntegrationLoad(integrationName string, op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+	integrationConnection, err := GetIntegration(integrationName, session)
+	if err != nil {
+		return err
+	}
+	collectionMetadata, err := op.GetCollectionMetadata()
+	if err != nil {
+		return err
+	}
+	op.AttachIntegration(integrationConnection)
+	integration := integrationConnection.GetIntegration()
+	// If there's a collection-specific load bot defined, use that,
+	// otherwise default to the integration's defined load bot.
+	// If there's neither, then there's nothing to do.
+	botKey := collectionMetadata.LoadBot
+	if botKey == "" && integration != nil {
+		botKey = integration.LoadBot
+	}
+	if botKey == "" {
+		return fmt.Errorf("no load bot defined on collection %s or on integration %s", collectionMetadata.GetKey(), integration.GetKey())
+	}
+
+	if err = runExternalDataSourceLoadBot(botKey, op, connection, session); err != nil {
+		return err
+	}
+	return nil
 }
 
 func LoadOp(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {

@@ -9,6 +9,10 @@ type ChangeAPI struct {
 	errors []string
 }
 
+func (c *ChangeAPI) GetId() string {
+	return c.change.IDValue
+}
+
 func (c *ChangeAPI) Get(fieldName string) interface{} {
 	val, err := c.change.FieldChanges.GetField(fieldName)
 	if err != nil {

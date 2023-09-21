@@ -18,7 +18,7 @@ func NewBot(key string) (*Bot, error) {
 	}
 	botType := keyArray[0]
 	var collectionKey, botKey string
-	if isBotTypeWithCollection(botType) {
+	if IsBotTypeWithCollection(botType) {
 		if (keyArraySize) != 3 {
 			return nil, errors.New("Invalid Bot Key")
 		}
@@ -205,6 +205,7 @@ func GetBotTypes() map[string]string {
 		"GENERATOR":  "generator",
 		"LOAD":       "load",
 		"ROUTE":      "route",
+		"SAVE":       "save",
 	}
 }
 
@@ -214,15 +215,6 @@ func GetBotDialects() map[string]string {
 		"SYSTEM":     "system",
 		"TYPESCRIPT": "typescript",
 	}
-}
-
-func getBotTypeTypeKeyPart(typeKey string) (string, error) {
-	for botType, key := range GetBotTypes() {
-		if key == typeKey {
-			return botType, nil
-		}
-	}
-	return "", errors.New("Bad Type Key for Bot: " + typeKey)
 }
 
 func (b *Bot) GetBotFilePath() string {
@@ -251,7 +243,7 @@ func (b *Bot) GetDBID(workspace string) string {
 
 func (b *Bot) GetKey() string {
 	botType := GetBotTypes()[b.Type]
-	if isBotTypeWithCollection(botType) {
+	if IsBotTypeWithCollection(botType) {
 		return fmt.Sprintf("%s:%s:%s.%s", botType, b.CollectionRef, b.Namespace, b.Name)
 	} else {
 		return fmt.Sprintf("%s:%s.%s", botType, b.Namespace, b.Name)
@@ -260,7 +252,7 @@ func (b *Bot) GetKey() string {
 
 func (b *Bot) GetBasePath() string {
 	botType := GetBotTypes()[b.Type]
-	if !isBotTypeWithCollection(botType) {
+	if !IsBotTypeWithCollection(botType) {
 		return filepath.Join(botType, b.Name)
 	}
 	collectionNamespace, collectionName, _ := ParseKey(b.CollectionRef)

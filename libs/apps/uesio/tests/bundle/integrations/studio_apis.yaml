@@ -3,4 +3,5 @@ type: web
 credentials: ""
 baseUrl: https://studio.uesio-dev.com:3000
 loadBot: ""
+saveBot: ""
 headers: {}

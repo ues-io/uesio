@@ -33,6 +33,7 @@ func GetCollectionMetadata(e *meta.Collection) *adapt.CollectionMetadata {
 		PluralLabel:           e.PluralLabel,
 		Integration:           e.IntegrationRef,
 		LoadBot:               e.LoadBot,
+		SaveBot:               e.SaveBot,
 	}
 }
 

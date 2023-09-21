@@ -319,6 +319,25 @@ definition:
                                     wire: integration
                                     field: uesio/studio.type
                                     value: uesio/core.custom
+                            - uesio/builder.metadatafield:
+                                uesio.context:
+                                  workspace:
+                                    name: $Param{workspacename}
+                                    app: $Param{app}
+                                fieldId: uesio/studio.savebot
+                                metadataType: BOT
+                                grouping: SAVE
+                                label: Collection Save Bot
+                                uesio.display:
+                                  - type: hasValue
+                                    value: ${uesio/studio.integration}
+                                  - type: wireHasRecords
+                                    wire: integration
+                                  - type: fieldValue
+                                    wire: integration
+                                    field: uesio/studio.type
+                                    value: uesio/core.custom
+
           - uesio/io.box:
               uesio.variant: uesio/io.section
               components:
@@ -650,6 +669,27 @@ definition:
                   metadataType: BOT
                   grouping: LOAD
                   label: Collection Load Bot
+                  uesio.display:
+                    - type: fieldValue
+                      field: uesio/studio.type
+                      value: EXTERNAL
+                    - type: hasValue
+                      value: ${uesio/studio.integration}
+                    - type: wireHasRecords
+                      wire: integration
+                    - type: fieldValue
+                      wire: integration
+                      field: uesio/studio.type
+                      value: uesio/core.custom
+              - uesio/builder.metadatafield:
+                  uesio.context:
+                    workspace:
+                      name: $Param{workspacename}
+                      app: $Param{app}
+                  fieldId: uesio/studio.savebot
+                  metadataType: BOT
+                  grouping: SAVE
+                  label: Collection Save Bot
                   uesio.display:
                     - type: fieldValue
                       field: uesio/studio.type
