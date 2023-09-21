@@ -58,6 +58,6 @@ func EnterVersionContext(app string, session *sess.Session, connection adapt.Con
 	if err != nil {
 		return nil, err
 	}
-	sessClone := session.RemoveWorkspaceContext()
+	sessClone := session.Clone()
 	return sessClone, addVersionContext(app, version, sessClone, connection)
 }

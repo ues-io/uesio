@@ -344,8 +344,13 @@ func (s *Session) GetLoginRoute() string {
 }
 
 func (s *Session) RemoveWorkspaceContext() *Session {
-	newSess := *s
+	newSess := s.Clone()
 	newSess.workspaceSession = nil
+	return newSess
+}
+
+func (s *Session) Clone() *Session {
+	newSess := *s
 	return &newSess
 }
 
