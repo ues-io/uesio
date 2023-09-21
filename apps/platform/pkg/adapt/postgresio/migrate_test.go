@@ -2,8 +2,9 @@ package postgresio
 
 import (
 	"errors"
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"testing"
+
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 )
 
 func TestGetConnectionString(t *testing.T) {
@@ -45,7 +46,7 @@ func TestGetConnectionString(t *testing.T) {
 				"host": "localhost",
 			},
 			"",
-			errors.New("no user provided in credentials"),
+			errors.New("no user entry provided in credentials"),
 		},
 		{
 			"require password",
@@ -54,7 +55,7 @@ func TestGetConnectionString(t *testing.T) {
 				"user": "foo",
 			},
 			"",
-			errors.New("no password provided in credentials"),
+			errors.New("no password entry provided in credentials"),
 		},
 		{
 			"require database",
@@ -64,7 +65,7 @@ func TestGetConnectionString(t *testing.T) {
 				"password": "bar",
 			},
 			"",
-			errors.New("no database name provided in credentials"),
+			errors.New("no database entry provided in credentials"),
 		},
 		{
 			"escape URL-unsafe characters in password",

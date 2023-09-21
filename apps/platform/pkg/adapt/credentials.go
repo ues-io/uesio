@@ -2,6 +2,7 @@ package adapt
 
 import (
 	"crypto/md5"
+	"fmt"
 	"sort"
 	"strings"
 )
@@ -29,4 +30,20 @@ func (c *Credentials) GetInterfaceMap() map[string]interface{} {
 		i++
 	}
 	return result
+}
+
+func (c *Credentials) GetRequiredEntry(key string) (string, error) {
+	entry, ok := (*c)[key]
+	if !ok {
+		return "", fmt.Errorf("no %v entry provided in credentials", key)
+	}
+	return entry, nil
+}
+
+func (c *Credentials) GetEntry(key, defaultValue string) string {
+	entry, ok := (*c)[key]
+	if !ok {
+		return defaultValue
+	}
+	return entry
 }
