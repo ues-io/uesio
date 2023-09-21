@@ -17,6 +17,7 @@ definition:
       - uppercase
       - tracking-wider
       - p-4
+      - pl-5
     subtitle:
       - text-xs
       - text-slate-600
