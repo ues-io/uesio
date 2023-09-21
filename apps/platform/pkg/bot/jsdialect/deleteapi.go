@@ -6,9 +6,17 @@ import (
 
 type DeleteAPI struct {
 	delete *adapt.ChangeItem
+	errors []string
+}
+
+func (d *DeleteAPI) GetId() string {
+	return d.delete.IDValue
 }
 
 func (d *DeleteAPI) GetOld(fieldName string) interface{} {
+	if fieldName == adapt.ID_FIELD {
+		return d.GetId()
+	}
 	if d.delete.OldValues == nil {
 		return nil
 	}
@@ -17,4 +25,8 @@ func (d *DeleteAPI) GetOld(fieldName string) interface{} {
 		return nil
 	}
 	return val
+}
+
+func (d *DeleteAPI) AddError(message string) {
+	d.errors = append(d.errors, message)
 }

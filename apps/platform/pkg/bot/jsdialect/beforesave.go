@@ -16,15 +16,9 @@ type BeforeSaveAPI struct {
 
 func NewBeforeSaveAPI(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) *BeforeSaveAPI {
 	return &BeforeSaveAPI{
-		Inserts: &InsertsAPI{
-			op: op,
-		},
-		Updates: &UpdatesAPI{
-			op: op,
-		},
-		Deletes: &DeletesAPI{
-			op: op,
-		},
+		Inserts:    &InsertsAPI{op},
+		Updates:    &UpdatesAPI{op},
+		Deletes:    &DeletesAPI{op},
 		session:    session,
 		op:         op,
 		connection: connection,

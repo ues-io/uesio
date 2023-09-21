@@ -40,7 +40,7 @@ func (bc *BotCollection) GetItemFromPath(path, namespace string) BundleableItem 
 	partLength := len(parts)
 	botType := parts[0]
 
-	if isBotTypeWithCollection(botType) {
+	if IsBotTypeWithCollection(botType) {
 		if partLength != 6 {
 			return nil
 		}
@@ -58,14 +58,14 @@ func (bc *BotCollection) GetItemFromKey(key string) (BundleableItem, error) {
 	return NewBot(key)
 }
 
-func isBotTypeWithCollection(botType string) bool {
+func IsBotTypeWithCollection(botType string) bool {
 	return botType == "beforesave" || botType == "aftersave"
 }
 
 func (bc *BotCollection) IsDefinitionPath(path string) bool {
 	parts := strings.Split(path, string(os.PathSeparator))
 	botType := parts[0]
-	if isBotTypeWithCollection(botType) {
+	if IsBotTypeWithCollection(botType) {
 		return parts[5] == "bot.yaml"
 	} else {
 		return parts[2] == "bot.yaml"
@@ -89,7 +89,7 @@ func (bc *BotCollection) FilterPath(path string, conditions BundleConditions, de
 		return false
 	}
 
-	if isBotTypeWithCollection(botType) {
+	if IsBotTypeWithCollection(botType) {
 		if partLength != 6 {
 			return false
 		}

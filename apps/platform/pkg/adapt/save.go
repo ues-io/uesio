@@ -7,6 +7,7 @@ import (
 	"text/template"
 
 	"github.com/francoispqt/gojay"
+
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
@@ -21,6 +22,19 @@ type SaveOp struct {
 	InsertCount int
 	Metadata    *CollectionMetadata
 	Params      map[string]string
+
+	integrationConnection IntegrationConnection
+}
+
+func (op *SaveOp) GetIntegration() (IntegrationConnection, error) {
+	if op.integrationConnection != nil {
+		return op.integrationConnection, nil
+	}
+	return nil, errors.New("integration not available on SaveOp")
+}
+
+func (op *SaveOp) AttachIntegration(ic IntegrationConnection) {
+	op.integrationConnection = ic
 }
 
 func (op *SaveOp) AddError(saveError *SaveError) {
@@ -280,26 +294,21 @@ type SaveOptions struct {
 }
 
 func GetValueInt(value interface{}) (int64, error) {
-	switch value.(type) {
+	switch typedVal := value.(type) {
 	case nil:
 		return 0, nil
 	case int64:
-		return value.(int64), nil
+		return typedVal, nil
 	case float64:
-		valueFloat, ok := value.(float64)
-		if !ok {
-			return 0, fmt.Errorf("Could not get value as int, invalid cast type: %T", value)
-		}
-		return int64(valueFloat), nil
+		return int64(typedVal), nil
 	}
-
-	return 0, fmt.Errorf("Could not get value as int: %T", value)
+	return 0, fmt.Errorf("could not get value as int: %T", value)
 }
 
 func GetValueString(value interface{}) (string, error) {
 	valueString, ok := value.(string)
 	if !ok {
-		return "", fmt.Errorf("Could not get value as string: %T", value)
+		return "", fmt.Errorf("could not get value as string: %T", value)
 	}
 	return valueString, nil
 }
@@ -324,7 +333,7 @@ func GetLoadable(value interface{}) (meta.Item, error) {
 		return loadableValueItem, nil
 	}
 
-	return nil, fmt.Errorf("Invalid Loadable type: %T", value)
+	return nil, fmt.Errorf("invalid Loadable type: %T", value)
 }
 
 func GetFieldValue(value interface{}, key string) (interface{}, error) {

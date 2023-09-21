@@ -15,17 +15,16 @@ func runBotBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, ses
 
 	err = request.LoopChanges(func(change *adapt.ChangeItem) error {
 
-		btype, err := requireValue(change, "uesio/studio.type")
+		botType, err := requireValue(change, "uesio/studio.type")
 		if err != nil {
 			return err
 		}
 
-		_, err = requireValue(change, "uesio/studio.dialect")
-		if err != nil {
+		if _, err = requireValue(change, "uesio/studio.dialect"); err != nil {
 			return err
 		}
 
-		switch btype {
+		switch botType {
 		case "LISTENER", "LOAD", "SAVE":
 
 		case "AFTERSAVE", "BEFORESAVE":
@@ -34,7 +33,6 @@ func runBotBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, ses
 				return err
 			}
 		}
-
 		return nil
 	})
 	if err != nil {

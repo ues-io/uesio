@@ -166,3 +166,15 @@ definition:
                                 metadataType: BOT
                                 grouping: LOAD
                                 label: Load Bot
+                            - uesio/builder.metadatafield:
+                                uesio.display:
+                                  - field: uesio/studio.type
+                                    value: uesio/core.custom
+                                uesio.context:
+                                  workspace:
+                                    name: $Param{workspacename}
+                                    app: $Param{app}
+                                fieldId: uesio/studio.savebot
+                                metadataType: BOT
+                                grouping: SAVE
+                                label: Save Bot

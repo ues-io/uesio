@@ -1,7 +1,6 @@
 name: forecast
 type: LIST
 label: Forecast Weather
-subtype: STRUCT
 subfields:
   - name: day
     label: Day
@@ -21,3 +20,4 @@ subfields:
     type: NUMBER
     number:
       decimals: 2
+subtype: STRUCT

@@ -51,6 +51,7 @@ type CollectionMetadata struct {
 	PluralLabel           string                                 `json:"pluralLabel"`
 	Integration           string                                 `json:"-"`
 	LoadBot               string                                 `json:"-"`
+	SaveBot               string                                 `json:"-"`
 }
 
 func (cm *CollectionMetadata) GetIntegrationName() string {
@@ -81,7 +82,7 @@ func (cm *CollectionMetadata) GetBytes() ([]byte, error) {
 	return bytes, nil
 }
 
-// We need this to satisfy the Depable interface
+// GetKey satisfies the Depable interface
 func (cm *CollectionMetadata) GetKey() string {
 	return cm.GetFullName()
 }
