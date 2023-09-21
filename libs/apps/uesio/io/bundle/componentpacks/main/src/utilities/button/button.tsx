@@ -3,12 +3,14 @@ import { definition, styles } from "@uesio/ui"
 import Tooltip from "../tooltip/tooltip"
 import { Placement } from "@floating-ui/react"
 
+export type ButtonIconPlacement = "start" | "end"
+
 interface ButtonUtilityProps {
 	onClick?: (e: MouseEvent) => void
 	label?: string
 	isSelected?: boolean
 	icon?: ReactNode
-	iconPlacement?: "start" | "end"
+	iconPlacement?: ButtonIconPlacement
 	disabled?: boolean
 	tooltip?: string
 	tooltipPlacement?: Placement

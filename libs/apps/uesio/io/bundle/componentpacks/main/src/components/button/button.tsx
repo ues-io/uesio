@@ -1,12 +1,15 @@
 import { api, styles, component, signal, definition } from "@uesio/ui"
 import { useState } from "react"
-import { default as IOButton } from "../../utilities/button/button"
+import {
+	ButtonIconPlacement,
+	default as IOButton,
+} from "../../utilities/button/button"
 import Icon from "../../utilities/icon/icon"
 
 type ButtonDefinition = {
 	text?: string
 	icon?: string
-	iconPlacement?: "start" | "end"
+	iconPlacement?: ButtonIconPlacement
 	signals?: signal.SignalDefinition[]
 	hotkey?: string
 }

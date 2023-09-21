@@ -10,6 +10,7 @@ defaultDefinition:
   text: New Button
   icon: bolt
   uesio.variant: uesio/io.default
+  iconPlacement: start
 properties:
   - name: text
     type: TEXT
@@ -19,13 +20,13 @@ properties:
     label: Icon
   - name: iconPlacement
     type: SELECT
-    label: Icon icon_placement
+    label: Icon Placement
     blankOptionLabel: ""
     options:
       - value: start
-        label: start
+        label: Before Label
       - value: end
-        label: end
+        label: After Label
   - name: hotkey
     type: TEXT
     placeholder: meta+s
