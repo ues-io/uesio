@@ -59,6 +59,9 @@ definition:
                               payload:
                                 credential: $ComponentOutput{[uesio/core.logingoogle][credential]}
                                 client_id: $ComponentOutput{[uesio/core.logingoogle][client_id]}
+                              onerror:
+                                signals:
+                                  - signal: notification/ADD_ERRORS
                       - uesio/io.list:
                           uesio.id: credslist
                           wire: credentials
