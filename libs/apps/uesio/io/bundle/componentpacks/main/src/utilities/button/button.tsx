@@ -8,6 +8,7 @@ interface ButtonUtilityProps {
 	label?: string
 	isSelected?: boolean
 	icon?: ReactNode
+	iconPlacement?: "start" | "end"
 	disabled?: boolean
 	tooltip?: string
 	tooltipPlacement?: Placement
@@ -33,6 +34,7 @@ const Button: definition.UtilityComponent<ButtonUtilityProps> = (props) => {
 		disabled,
 		isSelected,
 		icon,
+		iconPlacement = "start",
 		id,
 		tooltip,
 		context,
@@ -42,7 +44,6 @@ const Button: definition.UtilityComponent<ButtonUtilityProps> = (props) => {
 	} = props
 
 	const Tag = link ? "a" : "button"
-
 	const button = (
 		<Tag
 			id={id}
@@ -56,8 +57,9 @@ const Button: definition.UtilityComponent<ButtonUtilityProps> = (props) => {
 				isSelected && classes.selected
 			)}
 		>
-			{icon}
+			{iconPlacement === "start" && icon}
 			{label && <span>{context.merge(label)}</span>}
+			{iconPlacement === "end" && icon}
 		</Tag>
 	)
 

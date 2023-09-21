@@ -17,6 +17,15 @@ properties:
   - name: icon
     type: ICON
     label: Icon
+  - name: iconPlacement
+    type: SELECT
+    label: Icon icon_placement
+    blankOptionLabel: ""
+    options:
+      - value: start
+        label: start
+      - value: end
+        label: end
   - name: hotkey
     type: TEXT
     placeholder: meta+s

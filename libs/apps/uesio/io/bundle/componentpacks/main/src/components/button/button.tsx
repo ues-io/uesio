@@ -6,6 +6,7 @@ import Icon from "../../utilities/icon/icon"
 type ButtonDefinition = {
 	text?: string
 	icon?: string
+	iconPlacement?: "start" | "end"
 	signals?: signal.SignalDefinition[]
 	hotkey?: string
 }
@@ -52,6 +53,7 @@ const Button: definition.UC<ButtonDefinition> = (props) => {
 			variant={definition[component.STYLE_VARIANT]}
 			classes={classes}
 			disabled={isPending}
+			iconPlacement={definition.iconPlacement}
 			label={definition.text}
 			link={link}
 			onClick={handler}
