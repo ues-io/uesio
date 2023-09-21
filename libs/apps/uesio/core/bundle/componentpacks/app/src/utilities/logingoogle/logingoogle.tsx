@@ -6,15 +6,15 @@ declare global {
 		googleAuthCallback: (response: unknown) => void
 	}
 }
+const GOOGLE_LOGIN_SCRIPT_SRC = "https://accounts.google.com/gsi/client"
+const GOOGLE_CLIENT_ID_CONFIG_KEY = "uesio/core.google_auth_client_id"
+const StyleDefaults = Object.freeze({
+	root: ["grid", "justify-center"],
+})
 
 const LoginGoogle: definition.UtilityComponent = (props) => {
 	const { context } = props
-	const classes = styles.useUtilityStyleTokens(
-		{
-			root: ["grid", "justify-center"],
-		},
-		props
-	)
+	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
 	window.googleAuthCallback = (response: object) => {
 		api.signal.run(
@@ -29,7 +29,7 @@ const LoginGoogle: definition.UtilityComponent = (props) => {
 
 	useEffect(() => {
 		const script = document.createElement("script")
-		script.src = "https://accounts.google.com/gsi/client"
+		script.src = GOOGLE_LOGIN_SCRIPT_SRC
 		script.async = true
 		document.body.appendChild(script)
 		return () => {
@@ -37,7 +37,7 @@ const LoginGoogle: definition.UtilityComponent = (props) => {
 		}
 	}, [])
 
-	const clientId = api.view.useConfigValue("uesio/core.google_auth_client_id")
+	const clientId = api.view.useConfigValue(GOOGLE_CLIENT_ID_CONFIG_KEY)
 
 	if (!clientId) {
 		return null
