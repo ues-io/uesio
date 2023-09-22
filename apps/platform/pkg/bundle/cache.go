@@ -3,6 +3,7 @@ package bundle
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/cache"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -13,10 +14,18 @@ var doCache bool
 var fileListCache cache.Cache[[]string]
 var bundleEntryCache cache.Cache[meta.BundleableItem]
 
+// Bundle entries should be very long-lived, so we will allow them to live in memory for a relatively long time,
+// and only expire them infrequently because the cost of doing a filesystem read is quite high.
+// TODO: Consider pre-loading common bundles into the cache on init, to prevent initial requests from being slow.
+const (
+	defaultExpiry  = time.Duration(12 * time.Hour)
+	defaultCleanup = time.Duration(2 * time.Hour)
+)
+
 func init() {
 	doCache = os.Getenv("UESIO_CACHE_SITE_BUNDLES") == "true"
-	fileListCache = cache.NewMemoryCache[[]string]()
-	bundleEntryCache = cache.NewMemoryCache[meta.BundleableItem]()
+	fileListCache = cache.NewMemoryCache[[]string](defaultExpiry, defaultCleanup)
+	bundleEntryCache = cache.NewMemoryCache[meta.BundleableItem](defaultExpiry, defaultCleanup)
 }
 
 func GetFileListFromCache(basePath string, conditions meta.BundleConditions) ([]string, bool) {

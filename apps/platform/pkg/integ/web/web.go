@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/cache"
@@ -20,9 +21,16 @@ import (
 var responseCache cache.Cache[[]byte]
 var contentTypeCache cache.Cache[string]
 
+const (
+	defaultExpiry  = time.Duration(20 * time.Minute)
+	defaultCleanup = time.Duration(5 * time.Minute)
+)
+
 func init() {
-	responseCache = cache.NewMemoryCache[[]byte]()
-	contentTypeCache = cache.NewMemoryCache[string]()
+	// Store previous responses in memory for no more than 20 minutes by default,
+	// and reap expired entries every 5 minutes
+	responseCache = cache.NewMemoryCache[[]byte](defaultExpiry, defaultCleanup)
+	contentTypeCache = cache.NewMemoryCache[string](defaultExpiry, defaultCleanup)
 }
 
 type RequestOptions struct {

@@ -4,6 +4,8 @@ import (
 	"errors"
 	"time"
 
+	// Using go-cache package to get thread-safety, sharding, expiration, and cleanup,
+	// while still retaining effectively the simplicity of a map[string]interface{}
 	gocache "github.com/patrickmn/go-cache"
 )
 
