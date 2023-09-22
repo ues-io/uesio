@@ -53,6 +53,15 @@ definition:
                           text: Sign in with Mock
                           align: center
                       - uesio/core.logingoogle:
+                          onLoginSignals:
+                            - signal: "user/LOGIN"
+                              authSource: uesio/core.google
+                              payload:
+                                credential: $ComponentOutput{[uesio/core.logingoogle][credential]}
+                                client_id: $ComponentOutput{[uesio/core.logingoogle][client_id]}
+                              onerror:
+                                signals:
+                                  - signal: notification/ADD_ERRORS
                       - uesio/io.list:
                           uesio.id: credslist
                           wire: credentials
