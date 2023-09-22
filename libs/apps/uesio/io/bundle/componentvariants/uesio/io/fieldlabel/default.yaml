@@ -5,7 +5,6 @@ definition:
     root:
       - text-left
       - text-sm
-      - pb-1
       - text-slate-600
       - font-light
 public: true

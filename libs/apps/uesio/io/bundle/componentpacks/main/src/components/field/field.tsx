@@ -87,6 +87,7 @@ const fileTextSignals: Record<string, signal.ComponentSignalDescriptor> = {
 const StyleDefaults = Object.freeze({
 	input: [],
 	readonly: [],
+	wrapper: [],
 })
 
 const Field: definition.UC<FieldDefinition> = (props) => {
@@ -189,6 +190,7 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 	return (
 		<FieldWrapper
 			label={label}
+			classes={{ root: classes.wrapper }}
 			labelPosition={labelPosition}
 			context={context}
 			variant={wrapperVariant}
