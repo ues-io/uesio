@@ -12,19 +12,18 @@ const StyleDefaults = Object.freeze({
 	root: ["grid", "justify-center"],
 })
 
-const LoginGoogle: definition.UtilityComponent = (props) => {
-	const { context } = props
+interface GoogleLoginUtilityProps {
+	onLogin?: (response: unknown) => void
+}
+
+const LoginGoogleUtility: definition.UtilityComponent<
+	GoogleLoginUtilityProps
+> = (props) => {
+	const { onLogin } = props
 	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
-	window.googleAuthCallback = (response: object) => {
-		api.signal.run(
-			{
-				signal: "user/LOGIN",
-				authSource: "uesio/core.google",
-				payload: response,
-			},
-			context
-		)
+	window.googleAuthCallback = (response: unknown) => {
+		onLogin?.(response)
 	}
 
 	useEffect(() => {
@@ -63,4 +62,4 @@ const LoginGoogle: definition.UtilityComponent = (props) => {
 	)
 }
 
-export default LoginGoogle
+export default LoginGoogleUtility

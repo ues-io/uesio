@@ -41,7 +41,7 @@ func getUserFromClaims(authSourceID string, claims *AuthenticationClaims, sessio
 	}
 
 	if loginmethod == nil {
-		return nil, errors.New("no Login Method found that matches your claims")
+		return nil, NewAuthRequestError("No account found with this login method")
 	}
 
 	user, err := GetUserByID(loginmethod.User.ID, adminSession, nil)

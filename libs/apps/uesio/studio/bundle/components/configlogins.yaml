@@ -1,8 +1,0 @@
-name: configlogins
-pack: main
-entrypoint: components/configlogins/configlogins
-utilities:
-  - uesio/io.titlebar
-  - uesio/io.button
-variants:
-  - uesio/io.button:uesio/io.nav
