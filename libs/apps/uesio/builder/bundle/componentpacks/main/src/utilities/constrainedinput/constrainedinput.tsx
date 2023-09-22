@@ -85,7 +85,7 @@ const ConstrainedInput: definition.UtilityComponent<ConstrainedInputProps> = (
 				/>
 				<IconButton
 					onClick={onClickButton}
-					icon={inEditMode ? "save" : "edit"}
+					icon={inEditMode ? "done" : "edit"}
 					context={context}
 					label={
 						inEditMode ? "Apply change" : "Click to change value"
