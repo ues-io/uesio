@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
 	"net/http"
 	"strings"
@@ -22,16 +21,8 @@ var responseCache cache.Cache[[]byte]
 var contentTypeCache cache.Cache[string]
 
 func init() {
-	responseCache = cache.NewRedisCache[[]byte]("webRequestBody")
-	contentTypeCache = cache.NewRedisCache[string]("webRequestContentType")
-}
-
-func webRequestBody(url string) string {
-	return fmt.Sprintf("webRequestBody:%s", url)
-}
-
-func webRequestContentType(url string) string {
-	return fmt.Sprintf("webRequestContentType:%s", url)
+	responseCache = cache.NewMemoryCache[[]byte]()
+	contentTypeCache = cache.NewMemoryCache[string]()
 }
 
 type RequestOptions struct {

@@ -121,11 +121,11 @@ func runLicenseAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, 
 		return err
 	}
 
-	keysToBust := make([]string, len(apps), len(apps))
+	appUniqueKeys := make([]string, len(apps), len(apps))
 	for i, app := range apps {
-		keysToBust[i] = app.UniqueKey
+		appUniqueKeys[i] = app.UniqueKey
 	}
-	if err = datasource.InvalidateLicenseCaches(keysToBust); err != nil {
+	if err = datasource.InvalidateLicenseCaches(appUniqueKeys); err != nil {
 		return err
 	}
 

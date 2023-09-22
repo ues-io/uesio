@@ -16,77 +16,13 @@ var redisPool *redis.Pool
 
 // 1 day
 var redisTTLSeconds = 60 * 60 * 24
-
 var existingNamespaces map[string]bool
-
-func init() {
-	redisHost := os.Getenv("REDIS_HOST")
-	redisPort := os.Getenv("REDIS_PORT")
-	redisTTLSecondsValue := os.Getenv("REDIS_TTL")
-
-	if redisTTLSecondsValue != "" {
-		if intVal, err := strconv.Atoi(redisTTLSecondsValue); err != nil {
-			redisTTLSeconds = intVal
-		}
-	}
-
-	redisAddr := fmt.Sprintf("%s:%s", redisHost, redisPort)
-
-	const maxConnections = 10
-	redisPool = &redis.Pool{
-		MaxIdle: maxConnections,
-		Dial:    func() (redis.Conn, error) { return redis.Dial("tcp", redisAddr) },
-	}
-
-	existingNamespaces = map[string]bool{}
-}
-
-func getDefaultRedisExpiration() time.Duration {
-	return time.Duration(redisTTLSeconds) * time.Second
-}
-
-func GetRedisConn() redis.Conn {
-	return redisPool.Get()
-}
-
-func deleteKeys(keys []string) error {
-	if len(keys) == 0 {
-		return nil
-	}
-	conn := GetRedisConn()
-	defer conn.Close()
-	_, err := conn.Do("DEL", redis.Args{}.AddFlat(keys)...)
-	if err != nil {
-		return fmt.Errorf("Error deleting cache keys from bot: " + err.Error())
-	}
-	return nil
-}
-
-func setString(key string, data string, ttlSeconds int64) error {
-	conn := GetRedisConn()
-	defer conn.Close()
-	_, err := conn.Do("SET", key, data, "EX", ttlSeconds)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func getString(key string) (string, error) {
-	conn := GetRedisConn()
-	defer conn.Close()
-	return redis.String(conn.Do("GET", key))
-}
 
 const nsFmt = "%s:%s"
 
-func namespaced(namespace, key string) string {
-	if namespace == "" {
-		return key
-	}
-	return fmt.Sprintf(nsFmt, namespace, key)
-}
-
+// RedisCache provides a type-safe Cache implementation
+// where cached data is stored in Redis with a namespaced key prefix,
+// with an optional key expiration (defaults to 1 day)
 type RedisCache[T any] struct {
 	options *CacheOptions[T]
 }
@@ -147,13 +83,83 @@ func (r RedisCache[T]) WithInitializer(initializer func() T) RedisCache[T] {
 }
 
 func NewRedisCache[T any](namespace string) *RedisCache[T] {
-	if existingNamespaces[namespace] {
-		logger.LogError(fmt.Errorf("cannot create Redis cache: a cache for this namespace already exists"))
+	_, exists := existingNamespaces[namespace]
+	if exists {
+		logger.LogError(fmt.Errorf("cannot create a cache for namespace %s, one already exists", namespace))
 		return nil
 	}
+	existingNamespaces[namespace] = true
 	return &RedisCache[T]{
 		&CacheOptions[T]{
 			Namespace: namespace,
 		},
 	}
+}
+
+// TODO: Switch to using go-redis instead of Redigo to get a cleaner, type-safe API
+// where we don't have to do manual connection management
+func init() {
+	redisHost := os.Getenv("REDIS_HOST")
+	redisPort := os.Getenv("REDIS_PORT")
+	redisTTLSecondsValue := os.Getenv("REDIS_TTL")
+
+	if redisTTLSecondsValue != "" {
+		if intVal, err := strconv.Atoi(redisTTLSecondsValue); err != nil {
+			redisTTLSeconds = intVal
+		}
+	}
+
+	redisAddr := fmt.Sprintf("%s:%s", redisHost, redisPort)
+
+	const maxConnections = 10
+	redisPool = &redis.Pool{
+		MaxIdle: maxConnections,
+		Dial:    func() (redis.Conn, error) { return redis.Dial("tcp", redisAddr) },
+	}
+
+	existingNamespaces = map[string]bool{}
+}
+
+func getDefaultRedisExpiration() time.Duration {
+	return time.Duration(redisTTLSeconds) * time.Second
+}
+
+func GetRedisConn() redis.Conn {
+	return redisPool.Get()
+}
+
+func deleteKeys(keys []string) error {
+	if len(keys) == 0 {
+		return nil
+	}
+	conn := GetRedisConn()
+	defer conn.Close()
+	_, err := conn.Do("DEL", redis.Args{}.AddFlat(keys)...)
+	if err != nil {
+		return fmt.Errorf("Error deleting cache keys from bot: " + err.Error())
+	}
+	return nil
+}
+
+func setString(key string, data string, ttlSeconds int64) error {
+	conn := GetRedisConn()
+	defer conn.Close()
+	_, err := conn.Do("SET", key, data, "EX", ttlSeconds)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func getString(key string) (string, error) {
+	conn := GetRedisConn()
+	defer conn.Close()
+	return redis.String(conn.Do("GET", key))
+}
+
+func namespaced(namespace, key string) string {
+	if namespace == "" {
+		return key
+	}
+	return fmt.Sprintf(nsFmt, namespace, key)
 }
