@@ -99,3 +99,47 @@ func GetHostKey(domainType, domainValue string) string {
 func GetLicenseKey(namespace string) string {
 	return fmt.Sprintf("license:%s", namespace)
 }
+
+const nsFmt = "%s:%s"
+
+func namespaced(namespace, key string) string {
+	return fmt.Sprintf(nsFmt, namespace, key)
+}
+
+type RedisCache[T any] struct {
+	namespace string
+}
+
+func (r RedisCache[T]) Get(key string) (T, error) {
+	var result T
+	dataString, err := GetString(namespaced(r.namespace, key))
+	if err != nil {
+		return result, err
+	}
+	if err = json.Unmarshal([]byte(dataString), result); err != nil {
+		return result, err
+	}
+	return result, nil
+}
+
+func (r RedisCache[T]) Set(key string, value T) error {
+	bytes, err := json.Marshal(value)
+	if err != nil {
+		return err
+	}
+	return SetString(namespaced(r.namespace, key), string(bytes))
+}
+
+func (r RedisCache[T]) Del(keys ...string) error {
+	namespacedKeys := make([]string, len(keys), len(keys))
+	for i, k := range keys {
+		namespacedKeys[i] = namespaced(r.namespace, k)
+	}
+	return DeleteKeys(namespacedKeys)
+}
+
+func NewRedisCache[T any](namespace string) Cache[T] {
+	return RedisCache[T]{
+		namespace,
+	}
+}
