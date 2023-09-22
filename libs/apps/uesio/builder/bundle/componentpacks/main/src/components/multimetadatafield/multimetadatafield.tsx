@@ -78,7 +78,7 @@ const MultiMetadataField: definition.UC<MultiMetadataFieldDefinition> = (
 			context={context}
 			grouping={grouping}
 			defaultNamespace={namespace}
-			variant={props.definition["uesio.variant"]}
+			variant={props.definition[component.STYLE_VARIANT]}
 		/>
 	)
 }

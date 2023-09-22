@@ -1,0 +1,4 @@
+name: afterbundlelisting
+collection: uesio/studio.bundlelisting
+type: AFTERSAVE
+dialect: TYPESCRIPT

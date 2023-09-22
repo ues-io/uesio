@@ -254,6 +254,7 @@ const getItemPropertiesFunction =
 				name: "id",
 				type: "TEXT",
 				label: "Condition Id",
+				unique: true,
 			},
 			{
 				name: "field",
@@ -423,6 +424,42 @@ const getItemPropertiesFunction =
 							"HAS_ALL",
 							"CONTAINS",
 							"STARTS_WITH",
+						],
+					},
+				],
+				onChange: [
+					{
+						updates: [
+							{
+								field: "value",
+							},
+							{
+								field: "values",
+							},
+							{
+								field: "param",
+							},
+							{
+								field: "params",
+							},
+							{
+								field: "lookupWire",
+							},
+							{
+								field: "lookupField",
+							},
+							{
+								field: "start",
+							},
+							{
+								field: "end",
+							},
+							{
+								field: "inclusiveStart",
+							},
+							{
+								field: "inclusiveEnd",
+							},
 						],
 					},
 				],

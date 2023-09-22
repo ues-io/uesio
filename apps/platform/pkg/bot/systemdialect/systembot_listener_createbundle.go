@@ -2,12 +2,14 @@ package systemdialect
 
 import (
 	"errors"
+	"io"
 	"strconv"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/retrieve"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -100,7 +102,39 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.
 		return nil, err
 	}
 
-	wsbs, err := bundlestore.GetBundleStoreByType("workspace")
+	err = datasource.PlatformSaveOne(bundle, nil, nil, session.RemoveWorkspaceContext())
+	if err != nil {
+		return nil, err
+	}
+
+	source, err := bundlestore.GetConnection(bundlestore.ConnectionOptions{
+		Namespace:  appID,
+		Version:    workspace.Name,
+		Connection: connection,
+		Workspace:  workspace,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	dest, err := bundlestore.GetConnection(bundlestore.ConnectionOptions{
+		Namespace: appID,
+		Version:   bundle.GetVersionString(),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	creator := func(path string) (io.WriteCloser, error) {
+		r, w := io.Pipe()
+		go func() {
+			dest.StoreItem(path, r)
+			w.Close()
+		}()
+		return w, nil
+	}
+
+	err = retrieve.RetrieveBundle("", creator, source, session)
 	if err != nil {
 		return nil, err
 	}
@@ -110,7 +144,7 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.
 		"minor":       minor,
 		"patch":       patch,
 		"description": description,
-	}, datasource.CreateBundle(appID, workspace.Name, bundle, wsbs, session)
+	}, nil
 
 }
 

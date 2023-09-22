@@ -270,7 +270,7 @@ function should(condition: DisplayCondition, context: Context): boolean {
 	const compareToValue =
 		typeof condition.value === "string"
 			? context.mergeString(condition.value as string)
-			: condition.value || (canHaveMultipleValues ? condition.values : "")
+			: condition.value ?? (canHaveMultipleValues ? condition.values : "")
 
 	if (condition.type === "hasNoValue") return !compareToValue
 	if (condition.type === "hasValue") return !!compareToValue
@@ -286,7 +286,7 @@ function should(condition: DisplayCondition, context: Context): boolean {
 		const comparator = (r: WireRecord) =>
 			compare(
 				compareToValue,
-				condition.field ? r.getFieldValue(condition.field) || "" : "",
+				condition.field ? r.getFieldValue(condition.field) ?? "" : "",
 				condition.operator
 			)
 		if (record) return comparator(record)
@@ -366,9 +366,7 @@ const useShouldFilter = <T extends BaseDefinition>(
 		context
 	)
 
-	return items?.filter((item, index) =>
-		shouldAll(conditionsList[index], context)
-	)
+	return items?.filter((item) => shouldAll(item[DISPLAY_CONDITIONS], context))
 }
 
 const useContextFilter = <T>(

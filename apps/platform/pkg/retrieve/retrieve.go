@@ -50,7 +50,7 @@ func Retrieve(writer io.Writer, session *sess.Session) error {
 		return errors.New("no Workspace provided for retrieve")
 	}
 	namespace := workspace.GetAppFullName()
-	version, bs, err := bundle.GetBundleStoreWithVersion(namespace, session)
+	bs, err := bundle.GetBundleStoreConnection(namespace, session, nil)
 	if err != nil {
 		return err
 	}
@@ -58,7 +58,7 @@ func Retrieve(writer io.Writer, session *sess.Session) error {
 	zipwriter := zip.NewWriter(writer)
 	create := NewWriterCreator(zipwriter.Create)
 	// Retrieve bundle contents
-	err = RetrieveBundle(bundleDirectory, create, namespace, version, bs, session)
+	err = RetrieveBundle(bundleDirectory, create, bs, session)
 	if err != nil {
 		return err
 	}
@@ -91,14 +91,14 @@ func retrieveGeneratedFiles(targetDirectory string, create WriterCreator) error 
 }
 
 // RetrieveBundle retrieves the content of a specific bundle version into the designated targetDirectory
-func RetrieveBundle(targetDirectory string, create WriterCreator, namespace, version string, bs bundlestore.BundleStore, session *sess.Session) error {
+func RetrieveBundle(targetDirectory string, create WriterCreator, bs bundlestore.BundleStoreConnection, session *sess.Session) error {
 
 	for _, metadataType := range meta.GetMetadataTypes() {
 		group, err := meta.GetBundleableGroupFromType(metadataType)
 		if err != nil {
 			return err
 		}
-		err = bs.GetAllItems(group, namespace, version, nil, session, nil)
+		err = bs.GetAllItems(group, nil)
 		if err != nil {
 			return errors.New("failed to retrieve items of type: " + metadataType + ": " + err.Error())
 		}
@@ -123,12 +123,12 @@ func RetrieveBundle(targetDirectory string, create WriterCreator, namespace, ver
 			attachableItem, isAttachable := item.(meta.AttachableItem)
 
 			if isAttachable {
-				paths, err := bs.GetAttachmentPaths(attachableItem, version, session)
+				paths, err := bs.GetAttachmentPaths(attachableItem)
 				if err != nil {
 					return err
 				}
 				for _, path := range paths {
-					_, attachment, err := bs.GetItemAttachment(attachableItem, version, path, session)
+					_, attachment, err := bs.GetItemAttachment(attachableItem, path)
 					if err != nil {
 						return err
 					}
@@ -154,7 +154,7 @@ func RetrieveBundle(targetDirectory string, create WriterCreator, namespace, ver
 	}
 
 	// Add bundle.yaml
-	by := session.GetWorkspace().GetAppBundle()
+	by := session.GetContextAppBundle()
 
 	f, err := create(filepath.Join(targetDirectory, "bundle.yaml"))
 	if err != nil {

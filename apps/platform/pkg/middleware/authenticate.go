@@ -48,23 +48,28 @@ func Authenticate(next http.Handler) http.Handler {
 		// Do we have a session id?
 		browserSession := session.Get(r)
 
-		s, err := auth.GetSessionFromRequest(browserSession, site)
+		user, err := auth.GetUserFromBrowserSession(browserSession, site)
+		if err != nil {
+			http.Error(w, "Failed to get user from site:"+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		if browserSession == nil {
+			browserSession = sess.CreateBrowserSession(w, user, site)
+		}
+
+		s, err := auth.GetSessionFromUser(browserSession.ID(), user, site)
 		if err != nil {
 			http.Error(w, "Failed to create session: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 		// If the session is expired, and it's not for a public user
-		if s != nil && s.IsExpired() && !s.IsPublicProfile() {
-			removeSessionAndRedirectToLoginRoute(w, r, s, auth.Expired)
+		if s != nil && sess.IsExpired(browserSession) && !s.IsPublicProfile() {
+			session.Remove(browserSession, w)
+			auth.RedirectToLoginRoute(w, r.WithContext(SetSession(r, s)), s, auth.Expired)
 			return
 		}
-		// If we didn't have a session from the browser, add it now.
-		if browserSession == nil {
-			session.Add(*s.GetBrowserSession(), w)
-		} else if browserSession != nil && browserSession != *s.GetBrowserSession() {
-			// If we got a different session than the one we started with, logout the old one
-			session.Remove(browserSession, w)
-		} else if userHasBeenLoggedOut(r, s) && auth.RedirectToLoginRoute(w, r, s, auth.LoggedOut) {
+		if userHasBeenLoggedOut(r, s) && auth.RedirectToLoginRoute(w, r, s, auth.LoggedOut) {
 			return
 		}
 
@@ -78,12 +83,13 @@ func AuthenticateSiteAdmin(next http.Handler) http.Handler {
 		appName := vars["app"]
 		siteName := vars["site"]
 		s := GetSession(r)
-		err := datasource.AddSiteAdminContextByKey(appName+":"+siteName, s, nil)
+		siteAdminSession, err := datasource.AddSiteAdminContextByKey(appName+":"+siteName, s, nil)
 		if err != nil {
-			removeSessionAndRedirectToLoginRoute(w, r, s, auth.Expired)
+			auth.RedirectToLoginRoute(w, r.WithContext(SetSession(r, s)), s, auth.Expired)
 			return
 		}
-		next.ServeHTTP(w, r)
+
+		next.ServeHTTP(w, r.WithContext(SetSession(r, siteAdminSession)))
 	})
 }
 
@@ -93,34 +99,26 @@ func AuthenticateWorkspace(next http.Handler) http.Handler {
 		appName := vars["app"]
 		workspaceName := vars["workspace"]
 		s := GetSession(r)
-		err := datasource.AddWorkspaceContextByKey(appName+":"+workspaceName, s, nil)
+		workspaceSession, err := datasource.AddWorkspaceContextByKey(appName+":"+workspaceName, s, nil)
 		if err != nil {
-			removeSessionAndRedirectToLoginRoute(w, r, s, auth.Expired)
+			auth.RedirectToLoginRoute(w, r.WithContext(SetSession(r, s)), s, auth.Expired)
 			return
 		}
-		next.ServeHTTP(w, r)
+		next.ServeHTTP(w, r.WithContext(SetSession(r, workspaceSession)))
 	})
-}
-
-func removeSessionAndRedirectToLoginRoute(w http.ResponseWriter, r *http.Request, s *sess.Session, reason auth.RedirectReason) {
-	// Remove the session and redirect to login page
-	session.Remove(*s.GetBrowserSession(), w)
-	auth.RedirectToLoginRoute(w, r.WithContext(SetSession(r, s)), s, reason)
-	return
 }
 
 func AuthenticateVersion(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
-		namespace := vars["namespace"]
 		version := vars["version"]
 		app := vars["app"]
-		err := auth.AddVersionContext(app, namespace, version, GetSession(r))
+		versionSession, err := datasource.AddVersionContext(app, version, GetSession(r), nil)
 		if err != nil {
 			logger.LogError(err)
 			http.Error(w, "Failed querying version: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
-		next.ServeHTTP(w, r)
+		next.ServeHTTP(w, r.WithContext(SetSession(r, versionSession)))
 	})
 }

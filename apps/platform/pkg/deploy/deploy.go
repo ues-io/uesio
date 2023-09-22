@@ -46,7 +46,43 @@ var ORDERED_ITEMS = [...]string{
 	"integrations",
 }
 
+type DeployOptions struct {
+	Upsert     bool
+	Connection adapt.Connection
+}
+
 func Deploy(body io.ReadCloser, session *sess.Session) error {
+
+	connection, err := datasource.GetPlatformConnection(nil, session.RemoveWorkspaceContext(), nil)
+	if err != nil {
+		return err
+	}
+
+	err = connection.BeginTransaction()
+	if err != nil {
+		return err
+	}
+
+	err = DeployWithOptions(body, session, &DeployOptions{
+		Connection: connection,
+		Upsert:     true,
+	})
+	if err != nil {
+		rollbackError := connection.RollbackTransaction()
+		if rollbackError != nil {
+			return rollbackError
+		}
+		return err
+	}
+
+	return connection.CommitTransaction()
+}
+
+func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *DeployOptions) error {
+
+	if options == nil {
+		options = &DeployOptions{Upsert: true, Connection: nil}
+	}
 
 	workspace := session.GetWorkspace()
 	if workspace == nil {
@@ -179,7 +215,7 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 	saves := []datasource.PlatformSaveRequest{}
 
 	saveOptions := &adapt.SaveOptions{
-		Upsert: true,
+		Upsert: options.Upsert,
 	}
 
 	if by != nil {
@@ -261,26 +297,12 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 		}
 	}
 
-	connection, err := datasource.GetPlatformConnection(nil, session.RemoveWorkspaceContext(), nil)
+	err = datasource.PlatformSaves(saves, options.Connection, session.RemoveWorkspaceContext())
 	if err != nil {
 		return err
 	}
 
-	err = connection.BeginTransaction()
-	if err != nil {
-		return err
-	}
-
-	err = applyDeploy(saves, uploadOps, connection, session, params)
-	if err != nil {
-		rollbackError := connection.RollbackTransaction()
-		if rollbackError != nil {
-			return rollbackError
-		}
-		return err
-	}
-
-	err = connection.CommitTransaction()
+	_, err = filesource.Upload(uploadOps, options.Connection, session.RemoveWorkspaceContext(), params)
 	if err != nil {
 		return err
 	}
@@ -290,26 +312,6 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 
 	return nil
 
-}
-
-func applyDeploy(
-	saves []datasource.PlatformSaveRequest,
-	fileops []*filesource.FileUploadOp,
-	connection adapt.Connection,
-	session *sess.Session,
-	params map[string]string,
-) error {
-	err := datasource.PlatformSaves(saves, connection, session.RemoveWorkspaceContext())
-	if err != nil {
-		return err
-	}
-
-	_, err = filesource.Upload(fileops, connection, session.RemoveWorkspaceContext(), params)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func readZipFile(zf *zip.File, item meta.BundleableItem) error {

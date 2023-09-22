@@ -26,7 +26,7 @@ func (r *ReferenceGroupMetadata) UnmarshalYAML(node *yaml.Node) error {
 }
 
 func (r *ReferenceGroupMetadata) MarshalYAML() (interface{}, error) {
-	r.Collection = removeDefault(localize(r.Collection, r.Namespace), "uesio/core.platform")
-	r.Field = removeDefault(localize(r.Field, r.Namespace), "uesio/core.platform")
+	r.Collection = removeDefault(GetLocalizedKey(r.Collection, r.Namespace), "uesio/core.platform")
+	r.Field = removeDefault(GetLocalizedKey(r.Field, r.Namespace), "uesio/core.platform")
 	return (*ReferenceGroupMetadataWrapper)(r), nil
 }

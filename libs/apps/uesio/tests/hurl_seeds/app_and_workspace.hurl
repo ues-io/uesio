@@ -92,7 +92,7 @@ jsonpath "$.wires[0].errors" == null
 [Captures]
 team_id: jsonpath "$.wires[0].changes['1']['uesio/core.id']"
 
-# Get ben's id
+# Get ben's and Wessel id
 POST https://{{host}}:{{port}}/site/wires/load
 {
     "wires": [
@@ -101,20 +101,31 @@ POST https://{{host}}:{{port}}/site/wires/load
             "conditions": [
                 {
                     "field":"uesio/core.uniquekey",
-                    "operator":"EQ",
+                    "operator":"IN",
                     "valueSource":"VALUE",
-                    "value":"ben"
+                    "values":[
+                        "ben",
+                        "wessel"
+                    ]
                 }
             ],
-            "query": true
+            "query": true,
+            "order":[
+                {
+                    "field":"uesio/core.uniquekey",
+                    "desc":false
+                }
+            ]
         }
     ]
 }
 HTTP 200
 [Captures]
-ben_id: jsonpath "$.wires[0].data[*]['uesio/core.id']" nth 0
+ben_id: jsonpath "$.wires[0].data[0]['uesio/core.id']"
+wessel_id: jsonpath "$.wires[0].data[1]['uesio/core.id']"
 
-# Put ben on the team
+
+# Put ben & wessel on the team
 POST https://{{host}}:{{port}}/site/wires/save
 {
     "wires": [
@@ -131,6 +142,17 @@ POST https://{{host}}:{{port}}/site/wires/save
                     },
                     "uesio/studio.member": {
                         "uesio/core.id": "{{ben_id}}"
+                    }
+                },
+                "2": {
+                    "uesio/studio.app": {
+                        "uesio/core.id": "{{app_id}}"
+                    },
+                    "uesio/studio.team": {
+                        "uesio/core.id": "{{team_id}}"
+                    },
+                    "uesio/studio.member": {
+                        "uesio/core.id": "{{wessel_id}}"
                     }
                 }
             }
@@ -162,6 +184,13 @@ POST https://{{host}}:{{port}}/site/wires/save
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].errors" == null
+
+# Set the google auth source config client id value for the workspace
+POST https://{{host}}:{{port}}/siteadmin/uesio/tests/testsite/configvalues/uesio/core/google_auth_client_id
+{
+    "value": "A client id"
+}
+HTTP 200
 
 # Create truncatetests workspace
 POST https://{{host}}:{{port}}/site/wires/save

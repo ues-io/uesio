@@ -23,7 +23,7 @@ func getAuthSourceID(vars map[string]string) string {
 	return authSourceNamespace + "." + authSourceName
 }
 
-func redirectResponse(w http.ResponseWriter, r *http.Request, redirectKey string, user *meta.User, site *meta.Site) {
+func loginRedirectResponse(w http.ResponseWriter, r *http.Request, redirectKey string, user *meta.User, site *meta.Site) {
 
 	// If we had an old session, remove it.
 	w.Header().Del("set-cookie")
@@ -79,8 +79,16 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	user, err := auth.Login(getAuthSourceID(mux.Vars(r)), loginRequest, s)
 	if err != nil {
-		logger.LogError(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		var responseCode int
+		switch err.(type) {
+		case *auth.AuthRequestError:
+			responseCode = http.StatusBadRequest
+		default:
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			logger.LogError(err)
+			return
+		}
+		http.Error(w, err.Error(), responseCode)
 		return
 	}
 
@@ -97,6 +105,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		redirectRoute = profile.HomeRoute
 	}
 
-	redirectResponse(w, r, redirectRoute, user, site)
+	loginRedirectResponse(w, r, redirectRoute, user, site)
 
 }

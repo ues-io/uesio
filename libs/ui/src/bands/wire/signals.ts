@@ -3,7 +3,6 @@ import toggleDeleteOp from "./operations/toggledelete"
 import markForDeleteOp from "./operations/markfordelete"
 import unMarkForDeleteOp from "./operations/unmarkfordelete"
 import { createRecordOp } from "./operations/createrecord"
-import updateRecordOp from "./operations/updaterecord"
 import cancelWireOp from "./operations/cancel"
 import emptyWireOp from "./operations/empty"
 import resetWireOp from "./operations/reset"
@@ -27,7 +26,7 @@ import saveWiresOp from "./operations/save"
 import { SignalDefinition, SignalDescriptor } from "../../definition/signal"
 
 import { WireConditionState } from "./conditions/conditions"
-import { MetadataKey } from "../builder/types"
+import { MetadataKey } from "../../metadata/types"
 
 // The key for the entire band
 const WIRE_BAND = "wire"
@@ -155,11 +154,10 @@ const signals: Record<string, SignalDescriptor> = {
 				}
 			}
 			if (!record) return context
-			return updateRecordOp(
-				context,
-				signal.field.split("->"),
+			return record.update(
+				signal.field,
 				context.merge(signal.value),
-				record
+				context
 			)
 		},
 	},

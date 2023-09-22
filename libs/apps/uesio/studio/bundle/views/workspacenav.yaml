@@ -7,12 +7,7 @@ definition:
     - uesio/io.list:
         components:
           - uesio/io.box:
-              uesio.styleTokens:
-                root:
-                  - pb-3
-                  - bg-slate-100
-                  - m-2
-                  - rounded-lg
+              uesio.variant: uesio/studio.navarea
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.nav
@@ -130,27 +125,6 @@ definition:
                 - uesio/io.text:
                     uesio.variant: uesio/io.icon
                     text: list
-          - uesio/io.tile:
-              uesio.display:
-                - type: featureFlag
-                  name: manage_datasources
-              uesio.variant: uesio/io.nav
-              uesio.id: datasources
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: datasources
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/datasources
-              content:
-                - uesio/io.text:
-                    text: Data Sources
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: dynamic_feed
           - uesio/io.tile:
               uesio.display:
                 - type: featureFlag

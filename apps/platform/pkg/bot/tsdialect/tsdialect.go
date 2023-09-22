@@ -2,10 +2,11 @@ package tsdialect
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 
 	esbuild "github.com/evanw/esbuild/pkg/api"
 	"github.com/pkg/errors"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bot/jsdialect"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -23,14 +24,49 @@ type TSDialect struct {
 
 const DefaultListenerBotBody = `import { ListenerBotApi } from "@uesio/bots"
 
+// @ts-ignore
 function %s(bot: ListenerBotApi) {
     const a = bot.params.get("a") as number
     const b = bot.params.get("b") as number
     bot.addResult("answer", a + b)
 }`
 
+const DefaultLoadBotBody = `import { LoadBotApi } from "@uesio/bots
+
+// @ts-ignore
+function %s(bot: LoadBotApi) {
+	const { collection, conditions, fields, order } = bot.loadRequest
+	[
+		{
+			"first_name": "Luigi",
+			"last_name": "Vampa"
+		},
+		{
+			"first_name": "Myasia",
+			"last_name": "Harvey"
+		},
+	].forEach((record) => bot.addRecord(record))
+}`
+
+const DefaultSaveBotBody = `import { SaveBotApi } from "@uesio/bots
+
+// @ts-ignore
+function %s(bot: SaveBotApi) {
+	const collectionName = bot.getCollectionName()
+	bot.deletes.get().forEach((deleteApi) => {
+		bot.log.info("got a record to delete, with id: " + deleteApi.getId())
+	})
+	bot.inserts.get().forEach((insertApi) => {
+		bot.log.info("got a record to insert, with id: " + insertApi.getId())
+	})
+	bot.updates.get().forEach((updateApi) => {
+		bot.log.info("got a record to update, with id: " + updateApi.getId())
+	})
+}`
+
 const DefaultBeforeSaveBotBody = `import { BeforeSaveBotApi } from "@uesio/bots"
 
+// @ts-ignore
 function %s(bot: BeforeSaveBotApi) {
 	bot.inserts.get().forEach(function (change) {
 		const recordId = change.get("uesio/core.id");
@@ -42,6 +78,7 @@ function %s(bot: BeforeSaveBotApi) {
 
 const DefaultAfterSaveBotBody = `import { AfterSaveBotApi } from "@uesio/bots"
 
+// @ts-ignore
 function %s(bot: AfterSaveBotApi) {
 	bot.inserts.get().forEach(function (change) {
 		const recordId = change.get("uesio/core.id");
@@ -51,7 +88,8 @@ function %s(bot: AfterSaveBotApi) {
 	});
 }`
 
-const DefaultBotBody = `function %s(bot) {
+const DefaultBotBody = `// @ts-ignore
+function %s(bot) {
 }`
 
 // TODO: cache the transformed code, or generate it server-side as part of save of bot.ts
@@ -60,7 +98,7 @@ func (b *TSDialect) hydrateBot(bot *meta.Bot, session *sess.Session) error {
 	if err != nil {
 		return err
 	}
-	content, err := ioutil.ReadAll(stream)
+	content, err := io.ReadAll(stream)
 	if err != nil {
 		return err
 	}
@@ -137,11 +175,27 @@ func (b *TSDialect) RouteBot(bot *meta.Bot, route *meta.Route, session *sess.Ses
 }
 
 func (b *TSDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
-	return nil
+	integrationConnection, err := op.GetIntegration()
+	if err != nil {
+		return err
+	}
+	botAPI := jsdialect.NewLoadBotAPI(bot, session, connection, op, integrationConnection)
+	if err := b.hydrateBot(bot, session); err != nil {
+		return err
+	}
+	return RunBot(bot.Name, bot.FileContents, botAPI, nil)
 }
 
 func (b *TSDialect) SaveBot(bot *meta.Bot, op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
-	return nil
+	integrationConnection, err := op.GetIntegration()
+	if err != nil {
+		return err
+	}
+	botAPI := jsdialect.NewSaveBotAPI(bot, session, connection, op, integrationConnection)
+	if err := b.hydrateBot(bot, session); err != nil {
+		return err
+	}
+	return RunBot(bot.Name, bot.FileContents, botAPI, nil)
 }
 
 func (b *TSDialect) GetFilePath() string {
@@ -156,6 +210,10 @@ func (b *TSDialect) GetDefaultFileBody(botType string) string {
 		return DefaultBeforeSaveBotBody
 	case "AFTERSAVE":
 		return DefaultAfterSaveBotBody
+	case "LOAD":
+		return DefaultLoadBotBody
+	case "SAVE":
+		return DefaultSaveBotBody
 	default:
 		return DefaultBotBody
 	}

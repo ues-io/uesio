@@ -1,0 +1,5 @@
+name: appsettings
+path: app/{app:\w*\/\w*}/settings
+view: appsettings
+theme: default
+title: App Settings

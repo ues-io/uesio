@@ -37,18 +37,18 @@ definition:
     usage:
       collection: uesio/core.usage
       conditions:
-        - field: uesio/core.metadatatype
+        - field: metadatatype
           value: $Param{metadatatype}
-        - field: uesio/core.actiontype
+        - field: actiontype
           value: $Param{actiontype}
-        - field: uesio/core.day
+        - field: day
           id: day
           operator: IN
           value: THIS_MONTH
       init:
         query: false
       order:
-        - field: uesio/core.day
+        - field: day
           desc: true
       loadAll: true
   events:
@@ -62,109 +62,101 @@ definition:
           - usage
   # Components are how we describe the layout of our view
   components:
-    - uesio/io.grid:
-        uesio.variant: uesio/studio.mainlayout
-        items:
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.topbar
-              components:
-                - uesio/core.view:
-                    view: uesio/studio.topbar
-                    uesio.context:
-                      wire: sites
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.leftbar
-              components:
-                - uesio/core.view:
-                    view: uesio/studio.sitenav
-                    uesio.context:
-                      wire: sites
-                    params:
-                      selectedusagemetadatatype: $Param{metadatatype}
-                      selectedusageactiontype: $Param{actiontype}
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.content
-              components:
-                - uesio/io.titlebar:
-                    uesio.variant: uesio/io.main
-                    title: $Param{metadatatypelabel} $Param{actiontypelabel}
-                    subtitle: Use uesio usage, you youths.
-                    actions:
-                      - uesio/io.group:
-                          components:
-                            - uesio/io.filter:
-                                uesio.context:
-                                  siteadmin:
-                                    name: $Param{sitename}
-                                    app: $Param{app}
-                                wire: usage
-                                fieldId: uesio/core.day
-                                conditionId: day
-                                displayAs: MONTH
-                                label: Select a Month
-                            - uesio/io.filter:
-                                uesio.context:
-                                  siteadmin:
-                                    name: $Param{sitename}
-                                    app: $Param{app}
-                                wire: usage
-                                fieldId: uesio/core.user
-                - uesio/io.box:
-                    uesio.variant: uesio/io.section
+    - uesio/studio.mainlayout:
+        topbar:
+          - uesio/core.view:
+              view: uesio/studio.topbar
+              uesio.context:
+                wire: sites
+        leftbar:
+          - uesio/core.view:
+              view: uesio/studio.sitenav
+              uesio.context:
+                wire: sites
+              params:
+                selectedusagemetadatatype: $Param{metadatatype}
+                selectedusageactiontype: $Param{actiontype}
+        content:
+          - uesio/io.titlebar:
+              uesio.variant: uesio/io.main
+              title: $Param{metadatatypelabel} $Param{actiontypelabel}
+              subtitle: Use uesio usage, you youths.
+              actions:
+                - uesio/io.group:
                     components:
-                      - uesio/io.linechart:
-                          uesio.styleTokens:
-                            root:
-                              - mb-10
-                            chart:
-                              - h-80
-                          series:
-                            - name: usage
-                              label: $Param{metadatatypelabel} $Param{actiontypelabel}
-                              valueField: uesio/core.total
-                              categoryField: uesio/core.day
-                              wire: usage
-                          labels:
-                            source: DATA
-                            timeunit: DAY
-                            timeunitfill: MONTH
-                      - uesio/io.box:
-                          uesio.styleTokens:
-                            root:
-                              - grid
-                              - mb-10
-                              - grid-cols-1
-                              - sm:grid-cols-2
-                              - md:grid-cols-3
-                              - lg:grid-cols-5
-                              - gap-2
-                          components:
-                            - uesio/io.metricgroup:
-                                series:
-                                  - name: totalbyuser
-                                    label: Total By User
-                                    valueField: uesio/core.total
-                                    categoryField: uesio/core.user
-                                    wire: usage
-                                labels:
-                                  source: DATA
-                                unit: $Param{actiontypelabel}
-                      - uesio/io.table:
+                      - uesio/io.filter:
                           uesio.context:
                             siteadmin:
                               name: $Param{sitename}
                               app: $Param{app}
-                          uesio.id: usagetable
                           wire: usage
-                          mode: READ
-                          pagesize: 10
-                          columns:
-                            - field: uesio/core.user
-                            - field: uesio/core.day
-                            - field: uesio/core.actiontype
-                            - field: uesio/core.metadatatype
-                            - field: uesio/core.metadataname
-                            - field: uesio/core.total
+                          fieldId: day
+                          conditionId: day
+                          displayAs: MONTH
+                          label: Select a Month
+                      - uesio/io.filter:
+                          uesio.context:
+                            siteadmin:
+                              name: $Param{sitename}
+                              app: $Param{app}
+                          wire: usage
+                          fieldId: user
+          - uesio/io.box:
+              uesio.variant: uesio/io.section
+              components:
+                - uesio/io.linechart:
+                    uesio.styleTokens:
+                      root:
+                        - mb-10
+                      chart:
+                        - h-80
+                    series:
+                      - name: usage
+                        label: $Param{metadatatypelabel} $Param{actiontypelabel}
+                        valueField: uesio/core.total
+                        categoryField: uesio/core.day
+                        wire: usage
+                    labels:
+                      source: DATA
+                      timeunit: DAY
+                      timeunitfill: MONTH
+                - uesio/io.box:
+                    uesio.styleTokens:
+                      root:
+                        - grid
+                        - mb-10
+                        - grid-cols-1
+                        - sm:grid-cols-2
+                        - md:grid-cols-3
+                        - lg:grid-cols-5
+                        - gap-2
+                    components:
+                      - uesio/io.metricgroup:
+                          series:
+                            - name: totalbyuser
+                              label: Total By User
+                              valueField: total
+                              categoryField: user
+                              wire: usage
+                          labels:
+                            source: DATA
+                          unit: $Param{actiontypelabel}
+                - uesio/io.table:
+                    uesio.context:
+                      siteadmin:
+                        name: $Param{sitename}
+                        app: $Param{app}
+                    uesio.id: usagetable
+                    wire: usage
+                    mode: READ
+                    pagesize: 10
+                    columns:
+                      - field: user
+                      - field: day
+                      - field: actiontype
+                      - field: metadatatype
+                      - field: metadataname
+                      - field: total
 params:
   metadatatype:
     type: TEXT

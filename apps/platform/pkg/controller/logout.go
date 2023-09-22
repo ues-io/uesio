@@ -23,7 +23,7 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	session = sess.Logout(w, publicUser, session)
+	session = sess.Logout(w, r, publicUser, session)
 
 	loginRoute := site.GetAppBundle().LoginRoute
 	if loginRoute == "" {

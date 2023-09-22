@@ -20,7 +20,7 @@ const StyleDefaults = Object.freeze({
 const IndexComponent: definition.UC = (props) => {
 	const { componentType, context, path, definition } = props
 	const { [component.COMPONENT_ID]: componentId } = definition
-	const componentDef = getComponentDef(context, componentType)
+	const componentDef = getComponentDef(componentType)
 	const classes = styles.useStyleTokens(StyleDefaults, props)
 
 	const selectedPath = useSelectedComponentPath(context)

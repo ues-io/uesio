@@ -1,8 +1,13 @@
 package param
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/thecloudmasters/cli/pkg/config"
+	"github.com/thecloudmasters/cli/pkg/config/ws"
+	"github.com/thecloudmasters/cli/pkg/wire"
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"regexp"
 	"strings"
 
@@ -71,7 +76,7 @@ func getMetadataList(metadataType, app, version, sessid, grouping string) ([]str
 		if grouping != "" {
 			groupingURL = "/" + grouping
 		}
-		url := fmt.Sprintf("version/%s/%s/%s/metadata/types/%s/list%s", app, depNamespace, dep.Version, metadataType, groupingURL)
+		url := fmt.Sprintf("version/%s/%s/metadata/types/%s/namespace/%s/list%s", app, dep.Version, metadataType, depNamespace, groupingURL)
 
 		metadataList := map[string]datasource.MetadataResponse{}
 		err = call.GetJSON(url, sessid, &metadataList)
@@ -130,21 +135,11 @@ func AskMany(params *meta.BotParamsResponse, app, version, sessid string) (map[s
 
 func Ask(param meta.BotParamResponse, app, version, sessid string, answers map[string]interface{}) error {
 
-	if param.Conditions != nil {
-		for _, condition := range param.Conditions {
-			value := answers[condition.Param]
-			if condition.Type == "hasValue" || condition.Type == "hasNoValue" {
-				hasValue := value != nil && value != ""
-				if condition.Type == "hasValue" && !hasValue {
-					return nil
-				} else if condition.Type == "hasNoValue" && hasValue {
-					return nil
-				}
-			} else if value != condition.Value {
-				return nil
-			}
-		}
+	// Ignore params which are not relevant due to conditions
+	if !meta.IsParamRelevant(param, answers) {
+		return nil
 	}
+
 	switch param.Type {
 	case "TEXT", "":
 		var answer string
@@ -241,6 +236,41 @@ func Ask(param meta.BotParamResponse, app, version, sessid string, answers map[s
 			return err
 		}
 		answers[param.Name] = answer
+	case "SELECT":
+		var answer string
+		selectListMetadata, err := getSelectListMetadata(param.SelectList)
+		optionsMap := map[string]string{}
+		var optionLabels []string
+		var defaultValueLabel string
+		for _, opt := range selectListMetadata.Options {
+			label := opt.Label
+			if label == "" {
+				label = opt.Value
+			}
+			optionsMap[label] = opt.Value
+			optionLabels = append(optionLabels, label)
+			// Check for this being the default value, and if so,
+			// save the LABEL
+			if param.Default == opt.Value {
+				defaultValueLabel = label
+			}
+		}
+		if err != nil {
+			return err
+		}
+		surveySpec := &survey.Select{
+			Message: param.Prompt,
+			Options: optionLabels,
+		}
+		if defaultValueLabel != "" {
+			surveySpec.Default = defaultValueLabel
+		}
+		err = survey.AskOne(surveySpec, &answer)
+		if err != nil {
+			return err
+		}
+		// Lookup the corresponding value from the label
+		answers[param.Name] = optionsMap[answer]
 	case "LIST":
 		var answer string
 		err := survey.AskOne(&survey.Select{
@@ -257,4 +287,64 @@ func Ask(param meta.BotParamResponse, app, version, sessid string, answers map[s
 
 	return nil
 
+}
+
+func getSelectListMetadata(selectList string) (*adapt.SelectListMetadata, error) {
+	workspaceName, err := ws.GetWorkspace()
+	if err != nil {
+		return nil, errors.New("no workspace has been set. Use `uesio work -n <workspace>` to set a workspace")
+	}
+	appName, err := config.GetApp()
+	if err != nil {
+		return nil, errors.New("no Uesio app name could be determined. Are you in a Uesio app directory?")
+	}
+	result, err := wire.LoadOne(
+		"uesio/studio.selectlist",
+		&wire.LoadOptions{
+			Fields: []adapt.LoadRequestField{
+				{
+					ID: "uesio/studio.name",
+				},
+				{
+					ID: "uesio/studio.options",
+				},
+			},
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field:    "uesio/studio.allmetadata",
+					RawValue: true,
+				},
+				{
+					Field:    "uesio/studio.item",
+					RawValue: selectList,
+				},
+			},
+			Params: map[string]string{
+				"workspacename": workspaceName,
+				"app":           appName,
+			},
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	options, err := result.GetField("uesio/studio.options")
+	if err != nil {
+		return nil, err
+	}
+
+	selectListOptions := &[]meta.SelectListOption{}
+	rawOpts, err := json.Marshal(options)
+	if err != nil {
+		return nil, err
+	}
+	err = json.Unmarshal(rawOpts, selectListOptions)
+	if err != nil {
+		return nil, err
+	}
+	return &adapt.SelectListMetadata{
+		Name:    selectList,
+		Options: *selectListOptions,
+	}, nil
 }

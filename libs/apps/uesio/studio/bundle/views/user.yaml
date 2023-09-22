@@ -98,200 +98,199 @@ definition:
       - signal: wire/RESET
         wire: newloginmethod
   components:
-    - uesio/io.grid:
-        uesio.variant: uesio/studio.mainlayout
-        items:
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.topbar
+    - uesio/studio.mainlayout:
+        topbar:
+          - uesio/core.view:
+              view: uesio/studio.topbar
+              uesio.context:
+                wire: sites
+        leftbar:
+          - uesio/core.view:
+              view: uesio/studio.sitenav
+              uesio.context:
+                wire: sites
+              params:
+                selected: users
+        content:
+          - uesio/io.list:
+              uesio.id: userList
+              wire: users
+              mode: READ
               components:
-                - uesio/core.view:
-                    view: uesio/studio.topbar
-                    uesio.context:
-                      wire: sites
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.leftbar
-              components:
-                - uesio/core.view:
-                    view: uesio/studio.sitenav
-                    uesio.context:
-                      wire: sites
-                    params:
-                      selected: users
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.content
-              components:
-                - uesio/io.list:
-                    uesio.id: userList
-                    wire: users
-                    mode: READ
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.main
+                    title: User - ${uesio/core.firstname} ${uesio/core.lastname}
+                    actions:
+                      - uesio/io.group:
+                          components:
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: $Label{uesio/io.edit}
+                                signals:
+                                  - signal: component/CALL
+                                    component: uesio/io.list
+                                    componentsignal: TOGGLE_MODE
+                                    targettype: specific
+                                    componentid: userList
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: $Label{uesio/io.save}
+                                signals:
+                                  - signal: wire/SAVE
+                                    uesio.context:
+                                      siteadmin:
+                                        name: $Param{sitename}
+                                        app: $Param{app}
+                                    wires:
+                                      - "users"
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: $Label{uesio/io.cancel}
+                                signals:
+                                  - signal: wire/CANCEL
+                                    wire: "users"
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    uesio.styleTokens:
+                      root:
+                        - p-10
+                    components:
+                      - uesio/io.grid:
+                          uesio.styleTokens:
+                            root:
+                              - grid-cols-1
+                              - md:grid-cols-2
+                              - lg:grid-cols-[1fr_3fr]
+                              - gap-x-10
+                          items:
+                            - uesio/io.griditem:
+                                components:
+                                  - uesio/io.field:
+                                      fieldId: uesio/core.picture
+                                      displayAs: IMAGE
+                            - uesio/io.griditem:
+                                components:
+                                  - uesio/io.box:
+                                      uesio.styleTokens:
+                                        root:
+                                          - text-right
+                                      components:
+                                        - uesio/io.button:
+                                            uesio.variant: uesio/io.secondary
+                                            text: $Label{uesio/io.delete}
+                                            uesio.display:
+                                              - field: uesio/core.uniquekey
+                                                operator: NOT_IN
+                                                type: fieldValue
+                                                values:
+                                                  - guest
+                                                  - system
+                                            signals:
+                                              - signal: panel/TOGGLE
+                                                panel: deleteUser
+                                  - uesio/io.field:
+                                      fieldId: uesio/core.firstname
+                                  - uesio/io.field:
+                                      fieldId: uesio/core.lastname
+                                  - uesio/io.field:
+                                      fieldId: uesio/core.initials
+                                  - uesio/io.field:
+                                      fieldId: uesio/core.username
+                                  - uesio/io.field:
+                                      fieldId: uesio/core.email
+                                  - uesio/builder.metadatafield:
+                                      uesio.context:
+                                        siteadmin:
+                                          name: $Param{sitename}
+                                          app: $Param{app}
+                                      fieldId: uesio/core.profile
+                                      metadataType: "PROFILE"
+                                      label: "Profile"
+                                  - uesio/io.field:
+                                      fieldId: uesio/core.language
+                                  - uesio/io.field:
+                                      fieldId: uesio/core.owner
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
                     components:
                       - uesio/io.titlebar:
-                          uesio.variant: uesio/io.main
-                          title: User - ${uesio/core.firstname} ${uesio/core.lastname}
+                          uesio.variant: uesio/io.section
+                          title: Feature Flags
+                      - uesio/io.box:
+                          components:
+                            - uesio/studio.configfeatureflags:
+                                uesio.context:
+                                  siteadmin:
+                                    name: $Param{sitename}
+                                    app: $Param{app}
+                                user: ${uesio/core.id}
+                                type: USER
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.titlebar:
+                          uesio.variant: uesio/io.section
+                          title: Signup Methods
+                      - uesio/io.box:
+                          components:
+                            - uesio/studio.configlogins:
+                                uesio.context:
+                                  siteadmin:
+                                    name: $Param{sitename}
+                                    app: $Param{app}
+                                user: $Param{userid}
+                                email: ${uesio/core.email}
+                                requery: loginmethods
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.titlebar:
+                          uesio.variant: uesio/io.section
+                          title: Login Methods
                           actions:
                             - uesio/io.group:
                                 components:
                                   - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: $Label{uesio/io.edit}
                                       signals:
-                                        - signal: component/CALL
-                                          component: uesio/io.list
-                                          componentsignal: TOGGLE_MODE
-                                          targettype: specific
-                                          componentid: userList
-                                  - uesio/io.button:
+                                        - signal: panel/TOGGLE
+                                          panel: newLoginMethod
+                                      text: Add Method
                                       uesio.variant: uesio/io.secondary
-                                      text: $Label{uesio/io.save}
-                                      signals:
-                                        - signal: wire/SAVE
-                                          uesio.context:
-                                            siteadmin:
-                                              name: $Param{sitename}
-                                              app: $Param{app}
-                                          wires:
-                                            - "users"
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: $Label{uesio/io.cancel}
-                                      signals:
-                                        - signal: wire/CANCEL
-                                          wire: "users"
-                      - uesio/io.box:
-                          uesio.variant: uesio/io.section
-                          uesio.styleTokens:
-                            root:
-                              - p-10
+                      - uesio/io.deck:
+                          uesio.id: loginmethodlist
+                          wire: loginmethods
                           components:
-                            - uesio/io.grid:
-                                uesio.styleTokens:
-                                  root:
-                                    - grid-cols-1
-                                    - md:grid-cols-2
-                                    - lg:grid-cols-[1fr_3fr]
-                                    - gap-x-10
-                                items:
-                                  - uesio/io.griditem:
-                                      components:
-                                        - uesio/io.field:
-                                            fieldId: uesio/core.picture
-                                            displayAs: IMAGE
-                                  - uesio/io.griditem:
-                                      components:
+                            - uesio/io.tile:
+                                uesio.variant: uesio/io.item
+                                content:
+                                  - uesio/io.grid:
+                                      uesio.styleTokens:
+                                        root:
+                                          - grid-cols-[1fr_auto]
+                                          - items-center
+                                      items:
                                         - uesio/io.box:
-                                            uesio.styleTokens:
-                                              root:
-                                                - text-right
+                                            components:
+                                              - uesio/io.text:
+                                                  text: ${uesio/core.auth_source}
+                                                  element: div
+                                              - uesio/io.text:
+                                                  text: ${uesio/core.federation_id}
+                                                  element: div
+                                        - uesio/io.box:
                                             components:
                                               - uesio/io.button:
-                                                  uesio.variant: uesio/io.secondary
-                                                  text: $Label{uesio/io.delete}
+                                                  uesio.context:
+                                                    siteadmin:
+                                                      name: $Param{sitename}
+                                                      app: $Param{app}
                                                   signals:
-                                                    - signal: panel/TOGGLE
-                                                      panel: deleteUser
-                                        - uesio/io.field:
-                                            fieldId: uesio/core.firstname
-                                        - uesio/io.field:
-                                            fieldId: uesio/core.lastname
-                                        - uesio/io.field:
-                                            fieldId: uesio/core.initials
-                                        - uesio/io.field:
-                                            fieldId: uesio/core.username
-                                        - uesio/io.field:
-                                            fieldId: uesio/core.email
-                                        - uesio/builder.metadatafield:
-                                            uesio.context:
-                                              siteadmin:
-                                                name: $Param{sitename}
-                                                app: $Param{app}
-                                            fieldId: uesio/core.profile
-                                            metadataType: "PROFILE"
-                                            label: "Profile"
-                                        - uesio/io.field:
-                                            fieldId: uesio/core.language
-                                        - uesio/io.field:
-                                            fieldId: uesio/core.owner
-                      - uesio/io.box:
-                          uesio.variant: uesio/io.section
-                          components:
-                            - uesio/io.titlebar:
-                                uesio.variant: uesio/io.section
-                                title: Feature Flags
-                            - uesio/io.box:
-                                components:
-                                  - uesio/studio.configfeatureflags:
-                                      uesio.context:
-                                        siteadmin:
-                                          name: $Param{sitename}
-                                          app: $Param{app}
-                                      user: ${uesio/core.id}
-                                      type: USER
-                      - uesio/io.box:
-                          uesio.variant: uesio/io.section
-                          components:
-                            - uesio/io.titlebar:
-                                uesio.variant: uesio/io.section
-                                title: Signup Methods
-                            - uesio/io.box:
-                                components:
-                                  - uesio/studio.configlogins:
-                                      uesio.context:
-                                        siteadmin:
-                                          name: $Param{sitename}
-                                          app: $Param{app}
-                                      user: $Param{userid}
-                                      email: ${uesio/core.email}
-                                      requery: loginmethods
-                      - uesio/io.box:
-                          uesio.variant: uesio/io.section
-                          components:
-                            - uesio/io.titlebar:
-                                uesio.variant: uesio/io.section
-                                title: Login Methods
-                                actions:
-                                  - uesio/io.group:
-                                      components:
-                                        - uesio/io.button:
-                                            signals:
-                                              - signal: panel/TOGGLE
-                                                panel: newLoginMethod
-                                            text: Add Method
-                                            uesio.variant: uesio/io.secondary
-                            - uesio/io.deck:
-                                uesio.id: loginmethodlist
-                                wire: loginmethods
-                                components:
-                                  - uesio/io.tile:
-                                      uesio.variant: uesio/io.item
-                                      content:
-                                        - uesio/io.grid:
-                                            uesio.styleTokens:
-                                              root:
-                                                - grid-cols-[1fr_auto]
-                                                - items-center
-                                            items:
-                                              - uesio/io.box:
-                                                  components:
-                                                    - uesio/io.text:
-                                                        text: ${uesio/core.auth_source}
-                                                        element: div
-                                                    - uesio/io.text:
-                                                        text: ${uesio/core.federation_id}
-                                                        element: div
-                                              - uesio/io.box:
-                                                  components:
-                                                    - uesio/io.button:
-                                                        uesio.context:
-                                                          siteadmin:
-                                                            name: $Param{sitename}
-                                                            app: $Param{app}
-                                                        signals:
-                                                          - signal: wire/MARK_FOR_DELETE
-                                                          - signal: wire/SAVE
-                                                            wires:
-                                                              - loginmethods
-                                                        icon: delete
-                                                        uesio.variant: uesio/io.nav
+                                                    - signal: wire/MARK_FOR_DELETE
+                                                    - signal: wire/SAVE
+                                                      wires:
+                                                        - loginmethods
+                                                  icon: delete
+                                                  uesio.variant: uesio/io.nav
   panels:
     deleteUser:
       uesio.type: uesio/io.dialog

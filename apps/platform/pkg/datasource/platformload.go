@@ -111,3 +111,19 @@ func PlatformLoadOne(item meta.CollectionableItem, options *PlatformLoadOptions,
 
 	return nil
 }
+
+func PlatformLoadByID(item meta.CollectionableItem, id string, session *sess.Session, connection adapt.Connection) error {
+	return PlatformLoadOne(
+		item,
+		&PlatformLoadOptions{
+			Connection: connection,
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field: adapt.ID_FIELD,
+					Value: id,
+				},
+			},
+		},
+		session,
+	)
+}

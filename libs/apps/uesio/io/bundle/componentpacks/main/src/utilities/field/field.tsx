@@ -1,7 +1,9 @@
 import { ReactElement } from "react"
 import { collection, definition, metadata, context, wire } from "@uesio/ui"
 
-import CheckboxField from "../../utilities/field/checkbox"
+import CheckboxField, {
+	CheckboxFieldOptions,
+} from "../../utilities/field/checkbox"
 import DateField from "../../utilities/field/date"
 import MarkDownField, {
 	MarkdownFieldOptions,
@@ -59,6 +61,7 @@ interface FieldProps {
 	markdown?: MarkdownFieldOptions
 	number?: NumberFieldOptions
 	longtext?: LongTextFieldOptions
+	checkbox?: CheckboxFieldOptions
 	user?: UserFieldOptions
 	// Special variants for map/list/struct
 	subFieldVariant?: metadata.MetadataKey
@@ -69,6 +72,7 @@ interface FieldProps {
 const Field: definition.UtilityComponent<FieldProps> = (props) => {
 	const {
 		applyChanges,
+		checkbox,
 		classes,
 		context,
 		displayAs,
@@ -209,12 +213,34 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 				)
 			break
 		case "CHECKBOX":
-			content =
-				displayAs === "TOGGLE" ? (
-					<ToggleField {...common} />
-				) : (
-					<CheckboxField {...common} />
-				)
+			switch (displayAs) {
+				case "TOGGLE":
+					content = <ToggleField {...common} />
+					break
+				case "RADIO":
+					content = (
+						<RadioButtons
+							{...common}
+							options={[
+								{
+									value: "OFF",
+									label: checkbox?.uncheckedLabel || "Off",
+								},
+								{
+									value: "ON",
+									label: checkbox?.checkedLabel || "On",
+								},
+							]}
+							value={value ? "ON" : "OFF"}
+							setValue={(value) => {
+								common.setValue(value === "ON")
+							}}
+						/>
+					)
+					break
+				default:
+					content = <CheckboxField {...common} />
+			}
 			break
 		case "REFERENCE":
 			content = <ReferenceField {...common} options={reference} />

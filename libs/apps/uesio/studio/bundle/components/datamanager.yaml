@@ -3,6 +3,9 @@ pack: main
 entrypoint: components/datamanager/datamanager
 variants:
   - uesio/io.table:uesio/io.default
+  - uesio/io.field:uesio/io.search
+  - uesio/io.field:uesio/io.default
+  - uesio/io.fieldlabel:uesio/io.default
   - uesio/io.fieldwrapper:uesio/io.table
   - uesio/io.customselectfield:uesio/io.default
   - uesio/io.menu:uesio/io.default

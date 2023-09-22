@@ -1,86 +1,115 @@
-import { FunctionComponent } from "react"
-import { definition, api, wire, component, metadata } from "@uesio/ui"
-import omit from "lodash/omit"
+import { api, collection, component, definition, wire } from "@uesio/ui"
+const { STYLE_VARIANT } = component
+const {
+	ID_FIELD,
+	UNIQUE_KEY_FIELD,
+	CREATED_AT_FIELD,
+	CREATED_BY_FIELD,
+	OWNER_FIELD,
+	UPDATED_AT_FIELD,
+	UPDATED_BY_FIELD,
+} = collection
 
 type DataManagerDefinition = {
-	recordID: string
 	collectionId: wire.CollectionKey
 	wireId: string
 	listId: string
-}
-
-interface Props extends definition.BaseProps {
-	definition: DataManagerDefinition
+	// If recordID is not provided, a new record will be created in the wire
+	recordID?: string
 }
 
 const getWireDefinition = (
-	recordID: string,
 	collection: wire.CollectionKey,
-	fields: Record<string, unknown> | undefined
+	collectionFields: collection.Field[],
+	recordID: string | undefined
 ) => {
-	if (!fields || !collection || !recordID) return null
+	if (!collectionFields || !collectionFields.length) return null
+	const createMode = !recordID
 	return {
 		collection,
 		fields: Object.fromEntries(
-			Object.entries(fields).map(([fieldId]) => [fieldId, null])
+			collectionFields.map((f) => [f.getId(), {}])
 		),
-		conditions: [
-			{
-				field: "uesio/core.id",
-				value: recordID,
-				valueSource: "VALUE",
-			},
-		],
+		conditions: createMode
+			? undefined
+			: [
+					{
+						field: ID_FIELD,
+						value: recordID,
+						valueSource: "VALUE",
+					},
+			  ],
+		init: {
+			query: !createMode,
+			create: createMode,
+		},
 	} as wire.WireDefinition
 }
 
-const UESIO_BUILTIN = [
-	"uesio/core.id",
-	"uesio/core.uniquekey",
-	"uesio/core.owner",
-	"uesio/core.createdat",
-	"uesio/core.createdby",
-	"uesio/core.updatedat",
-	"uesio/core.updatedby",
+const COMMON_FIELDS = [
+	ID_FIELD,
+	UNIQUE_KEY_FIELD,
+	OWNER_FIELD,
+	CREATED_AT_FIELD,
+	CREATED_BY_FIELD,
+	UPDATED_AT_FIELD,
+	UPDATED_BY_FIELD,
+]
+
+const getGridFromFieldDefs = (fieldDefs: Record<string, unknown>[]) => ({
+	"uesio/io.grid": {
+		items: fieldDefs.map((fieldDef) => ({
+			"uesio/io.field": fieldDef,
+		})),
+		[STYLE_VARIANT]: "uesio/io.four_columns",
+	},
+})
+
+const fieldDef = (fieldId: string) => ({
+	fieldId,
+})
+
+const getGridFromFieldIds = (fieldIds: string[]) =>
+	getGridFromFieldDefs(fieldIds.map(fieldDef))
+
+const commonFieldDefs = [
+	fieldDef(ID_FIELD),
+	fieldDef(OWNER_FIELD),
+	{
+		fieldId: CREATED_BY_FIELD,
+		user: {
+			subtitle: `$Time{${CREATED_AT_FIELD}}`,
+		},
+	},
+	{
+		fieldId: UPDATED_BY_FIELD,
+		user: {
+			subtitle: `$Time{${UPDATED_AT_FIELD}}`,
+		},
+	},
 ]
 
 const getComponents = (
-	fieldsMeta: Record<string, metadata.MetadataInfo>
+	collectionFields: collection.Field[],
+	recordID: string | undefined
 ): definition.DefinitionList => {
-	const rest = omit(fieldsMeta, ...UESIO_BUILTIN)
-	const fields = Object.values(rest) as metadata.MetadataInfo[]
-
-	fields.sort((a, b) =>
-		a.key
-			.replace(a.namespace, "")
-			.localeCompare(b.key.replace(b.namespace, ""))
+	const createMode = !recordID
+	// Ignore the common fields for the top grid, we will add those in a special grid below
+	const useFields = collectionFields.filter(
+		(f) => !COMMON_FIELDS.includes(f.getId())
 	)
-
-	return [
-		{
-			"uesio/io.grid": {
-				items: fields.map((field) => ({
-					"uesio/io.field": {
-						fieldId: field.key,
-					},
-				})),
-				"uesio.variant": "uesio/io.four_columns",
-			},
-		},
-		{
-			"uesio/io.grid": {
-				items: UESIO_BUILTIN.map((field) => ({
-					"uesio/io.field": {
-						fieldId: field,
-					},
-				})),
-				"uesio.variant": "uesio/io.four_columns",
-			},
-		},
-	]
+	const fields = useFields.sort((a, b) =>
+		a.getName().localeCompare(b.getName())
+	)
+	const grids = [getGridFromFieldIds(fields.map((field) => field.getId()))]
+	// Add in common fields
+	if (!createMode) {
+		grids.push(getGridFromFieldDefs(commonFieldDefs))
+	}
+	return grids
 }
 
-const RecordDataManager: FunctionComponent<Props> = (props) => {
+const RecordDataManager: definition.UC<DataManagerDefinition> = (props) => {
 	const {
 		context,
 		definition: {
@@ -91,20 +120,34 @@ const RecordDataManager: FunctionComponent<Props> = (props) => {
 		},
 	} = props
 
-	const collection = context.mergeString(collectionId) as wire.CollectionKey
+	const collectionKey = context.mergeString(
+		collectionId
+	) as wire.CollectionKey
 
-	const [fieldsMeta] = api.builder.useMetadataList(
+	const collectionMetadata = api.collection.useCollection(
 		context,
-		"FIELD",
-		"",
-		collection
+		collectionKey,
+		{
+			needAllFieldMetadata: true,
+		}
 	)
 
-	const wireDef = getWireDefinition(recordID, collection, fieldsMeta)
+	const collectionFields =
+		collectionMetadata
+			?.getFields()
+			.filter((f) =>
+				recordID
+					? f.getUpdateable() || f.getAccessible()
+					: f.getCreateable()
+			) || []
+
+	const wireDef = getWireDefinition(collectionKey, collectionFields, recordID)
 
 	const dataWire = api.wire.useDynamicWire(wireId, wireDef, context)
 
-	if (!dataWire || !fieldsMeta) return null
+	if (!dataWire || !collectionMetadata) return null
+
+	const components = getComponents(collectionFields, recordID)
 
 	return (
 		<component.Component
@@ -113,7 +156,7 @@ const RecordDataManager: FunctionComponent<Props> = (props) => {
 				id: listId,
 				wire: wireId,
 				mode: "EDIT",
-				components: getComponents(fieldsMeta),
+				components,
 			}}
 			path={props.path}
 			context={context}

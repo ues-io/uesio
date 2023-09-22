@@ -1,5 +1,5 @@
+import { BundleableBase } from "../metadata/types"
+
 export type FileState = {
-	name: string
-	namespace: string
 	updatedAt?: number
-}
+} & BundleableBase

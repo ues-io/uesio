@@ -1,4 +1,4 @@
-import { api, metadata, definition, context } from "@uesio/ui"
+import { api, context, definition, metadata, styles } from "@uesio/ui"
 import debounce from "lodash/debounce"
 import TextField from "../../utilities/field/text"
 import FieldWrapper from "../../utilities/fieldwrapper/fieldwrapper"
@@ -9,7 +9,12 @@ type SearchBoxDefinition = {
 	searchFields: metadata.MetadataKey[]
 	focusOnRender?: boolean
 	placeholder?: string
+	fieldVariant?: metadata.MetadataKey
 }
+
+const StyleDefaults = Object.freeze({
+	root: [],
+})
 
 const search = (
 	searchValue: string,
@@ -35,10 +40,13 @@ const SearchBox: definition.UC<SearchBoxDefinition> = (props) => {
 			searchFields,
 			wire,
 			focusOnRender = false,
+			fieldVariant = "uesio/io.search",
 		},
 		context,
 	} = props
 	const [text, setText] = useState("")
+
+	const classes = styles.useStyleTokens(StyleDefaults, props)
 
 	const debouncedSearch = useMemo(
 		() =>
@@ -60,12 +68,16 @@ const SearchBox: definition.UC<SearchBoxDefinition> = (props) => {
 	)
 
 	return (
-		<FieldWrapper labelPosition="none" context={context}>
+		<FieldWrapper
+			labelPosition="none"
+			context={context}
+			className={classes.root}
+		>
 			<TextField
 				id={api.component.getComponentIdFromProps(props)}
 				context={context}
 				type="search"
-				variant="uesio/io.search"
+				variant={fieldVariant}
 				placeholder={placeholder}
 				setValue={(value: string) => {
 					setText(value)

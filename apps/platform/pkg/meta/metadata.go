@@ -93,7 +93,9 @@ type BundleableItem interface {
 	IsPublic() bool
 }
 
-func ParseKey(key string) (string, string, error) {
+// ParseKey splits a uesio metadata key into its namespace and name,
+// e.g. "uesio/io.table" would parse into (namespace="uesio/io", name="table")
+func ParseKey(key string) (namespace string, name string, err error) {
 	keyArray := strings.Split(key, ".")
 	if len(keyArray) != 2 {
 		return "", "", errors.New("Invalid Key: " + key)
@@ -185,7 +187,6 @@ var METADATA_NAME_MAP = map[string]string{
 	"COLLECTION":       "collections",
 	"FIELD":            "fields",
 	"VIEW":             "views",
-	"DATASOURCE":       "datasources",
 	"AUTHSOURCE":       "authsources",
 	"SIGNUPMETHOD":     "signupmethods",
 	"SECRET":           "secrets",
@@ -209,7 +210,6 @@ var bundleableGroupMap = map[string]BundleableFactory{
 	(&ProfileCollection{}).GetBundleFolderName():          func() BundleableGroup { return &ProfileCollection{} },
 	(&PermissionSetCollection{}).GetBundleFolderName():    func() BundleableGroup { return &PermissionSetCollection{} },
 	(&ConfigValueCollection{}).GetBundleFolderName():      func() BundleableGroup { return &ConfigValueCollection{} },
-	(&DataSourceCollection{}).GetBundleFolderName():       func() BundleableGroup { return &DataSourceCollection{} },
 	(&FileSourceCollection{}).GetBundleFolderName():       func() BundleableGroup { return &FileSourceCollection{} },
 	(&FileCollection{}).GetBundleFolderName():             func() BundleableGroup { return &FileCollection{} },
 	(&FieldCollection{}).GetBundleFolderName():            func() BundleableGroup { return &FieldCollection{} },
@@ -273,8 +273,13 @@ func GetMetadataTypes() []string {
 	return types
 }
 
-func IsBundleableCollection(studioCollectionName string) bool {
-	return bundleableCollectionNames[studioCollectionName] != ""
+func IsBundleableCollection(collectionName string) bool {
+	return bundleableCollectionNames[collectionName] != ""
+}
+
+func IsCoreBundleableCollection(collectionName string) bool {
+	swapped := SwapKeyNamespace(collectionName, "uesio/core", "uesio/studio")
+	return bundleableCollectionNames[swapped] != ""
 }
 
 func GetTypeFromCollectionName(studioCollectionName string) string {

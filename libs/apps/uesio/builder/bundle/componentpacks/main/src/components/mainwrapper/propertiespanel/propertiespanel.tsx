@@ -20,10 +20,7 @@ const shouldDisplayPanelProperties = (
 	const panelNodePath = selectedPath.trimToSize(2)
 	const [panelNode] = selectedPath.trimToSize(3).pop()
 	const componentType = panelNodePath.addLocal(panelComponentTypeProp)
-	const componentDef = getComponentDef(
-		context,
-		get(context, componentType) as string
-	)
+	const componentDef = getComponentDef(get(context, componentType) as string)
 	const slotNames = componentDef?.slots?.map((slot) => slot.name)
 
 	if (pathSize !== 2 && panelNode && slotNames?.includes(panelNode)) {

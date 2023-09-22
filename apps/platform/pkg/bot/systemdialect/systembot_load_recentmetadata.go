@@ -45,9 +45,7 @@ func runRecentMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 
 	// We need to obtain the workspace id in order to have a condition on the uesio/studio.workspace field,
 	// which contains the UUID of the workspace associated with studio data.
-	inContextSession := session.RemoveWorkspaceContext()
-
-	err := datasource.AddWorkspaceContextByKey(workspaceKey, inContextSession, connection)
+	inContextSession, err := datasource.AddWorkspaceContextByKey(workspaceKey, session, connection)
 	if err != nil {
 		return err
 	}

@@ -21,10 +21,13 @@ func NewBaseIntegration(namespace, name string) *Integration {
 type Integration struct {
 	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
-	Type           string            `yaml:"type" json:"uesio/studio.type"`
-	Credentials    string            `yaml:"credentials" json:"uesio/studio.credentials"`
-	Headers        map[string]string `yaml:"headers" json:"uesio/studio.headers"`
-	BaseURL        string            `yaml:"baseUrl" json:"uesio/studio.baseurl"`
+	Type           string `yaml:"type" json:"uesio/studio.type"`
+	Credentials    string `yaml:"credentials" json:"uesio/studio.credentials"`
+	BaseURL        string `yaml:"baseUrl" json:"uesio/studio.baseurl"`
+	LoadBot        string `yaml:"loadBot" json:"uesio/studio.loadbot"`
+	SaveBot        string `yaml:"saveBot" json:"uesio/studio.savebot"`
+	// TODO Remove headers
+	Headers map[string]string `yaml:"headers" json:"uesio/studio.headers"`
 }
 
 type IntegrationWrapper Integration

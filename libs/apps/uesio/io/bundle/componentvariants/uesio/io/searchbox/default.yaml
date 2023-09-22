@@ -1,0 +1,5 @@
+name: default
+label: Default
+definition:
+  fieldVariant: uesio/io.search
+public: true

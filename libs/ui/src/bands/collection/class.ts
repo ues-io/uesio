@@ -1,22 +1,103 @@
+import { parseKey } from "../../component/path"
 import Field from "../field/class"
+import { FieldMetadataMap } from "../field/types"
 import { CollectionKey } from "../wire/types"
 import { getCollection } from "./selectors"
 
 import { ID_FIELD, PlainCollection } from "./types"
 
-function getSubFieldMetadata(
-	fieldNameParts: string[],
-	subfield: Field
-): Field | undefined {
-	const subFieldName = fieldNameParts.shift()
-	if (!subFieldName) return undefined
-	const found = subfield?.getSubFields()?.[subFieldName]
-	if (!found) return undefined
-	if (fieldNameParts.length === 0) {
-		return new Field(found)
-	}
-	return getSubFieldMetadata(fieldNameParts, new Field(found))
+const isLocalNamespace = (ns: string, localNamespace: string) =>
+	ns === localNamespace || ns === "this/app"
+
+const getFullyQualifiedKey = (key: string, defaultNamespace: string) => {
+	if (!key) return ""
+	if (!defaultNamespace) return key
+	const [first, second] = parseKey(key)
+	if (!second) return defaultNamespace + "." + first
+	if (isLocalNamespace(first, defaultNamespace))
+		return defaultNamespace + "." + second
+	return key
 }
+
+const getBaseField = (
+	fields: FieldMetadataMap | undefined,
+	fieldPath: string[],
+	defaultNamespace: string
+) => {
+	// First, look for the fully qualified field
+	const fullyQualified = getFullyQualifiedKey(fieldPath[0], defaultNamespace)
+	const fieldMetadata = fields?.[fullyQualified]
+	if (fieldMetadata) return new Field(fieldMetadata)
+	// For ui-only fields on regular server wires,
+	// we have to fallback to the non-qualified key
+	const viewOnlyFieldMetadata = fields?.[fieldPath[0]]
+	if (viewOnlyFieldMetadata) return new Field(viewOnlyFieldMetadata)
+	// Sometimes we want a field that has no metadata
+	// For example: the recordData context
+	return new Field({
+		createable: false,
+		accessible: true,
+		updateable: false,
+		type: "TEXT",
+		label: "",
+		name: fieldPath[0],
+		namespace: "",
+	})
+}
+
+const getFieldFromPathArray = (
+	fields: FieldMetadataMap | undefined,
+	fieldPath: string[] | undefined,
+	defaultNamespace: string
+): Field | undefined =>
+	getFieldsFromPathArray([], fields, fieldPath, defaultNamespace).pop()
+
+const getFieldsFromPathArray = (
+	returnFields: Field[],
+	availableFields: FieldMetadataMap | undefined,
+	fieldPath: string[] | undefined,
+	defaultNamespace: string
+): Field[] => {
+	if (!fieldPath) return returnFields
+	const baseMetadata = getBaseField(
+		availableFields,
+		fieldPath,
+		defaultNamespace
+	)
+	if (fieldPath.length > 1) {
+		// Non-mutating equivalent of .shift()
+		const [, ...restOfPath] = fieldPath
+		if (baseMetadata.isReference()) {
+			const referenceMetadata = baseMetadata.getReferenceMetadata()
+			const collection = getCollection(referenceMetadata?.collection)
+
+			return getFieldsFromPathArray(
+				returnFields.concat(baseMetadata),
+				collection?.fields,
+				restOfPath,
+				collection?.namespace || ""
+			)
+		}
+		return getFieldsFromPathArray(
+			returnFields.concat(baseMetadata),
+			baseMetadata.getSubFields(),
+			restOfPath,
+			""
+		)
+	}
+	return returnFields.concat(baseMetadata)
+}
+
+const getFieldParts = (fieldName: string | null, collection: Collection) =>
+	getFieldsFromPathArray(
+		[],
+		collection?.source.fields || {},
+		fieldName?.split("->"),
+		collection?.getNamespace() || ""
+	).map((field) => {
+		const ns = field.getNamespace()
+		return ns ? field.getId() : field.getName()
+	})
 
 class Collection {
 	constructor(source?: PlainCollection) {
@@ -32,44 +113,43 @@ class Collection {
 	getLabel = () => this.source.label
 	getPluralLabel = () => this.source.pluralLabel
 
-	// Accepts a single field
-	getFieldMetadata = (fieldName: string) => {
-		const fieldMetadata = this.source.fields[fieldName]
-		if (!fieldMetadata) return undefined
-		return new Field(fieldMetadata)
-	}
-
-	getBaseField = (fieldPath: string[] | undefined) => {
-		if (!fieldPath || fieldPath.length === 0) return undefined
-		return this.getFieldMetadata(fieldPath[0])
-	}
-
-	getFieldFromPathArray = (
-		fieldPath: string[] | undefined
-	): Field | undefined => {
-		const baseMetadata = this.getBaseField(fieldPath)
-		if (!fieldPath || !baseMetadata) return undefined
-		if (fieldPath.length > 1) {
-			// Non-mutating equivalent of .shift()
-			const [, ...restOfPath] = fieldPath
-			if (baseMetadata.isReference()) {
-				const referenceMetadata = baseMetadata.getReferenceMetadata()
-				const collection = new Collection(
-					getCollection(referenceMetadata?.collection)
-				)
-				return collection.getFieldFromPathArray(restOfPath)
-			}
-			if (!baseMetadata.getSubFields()) return undefined
-			return getSubFieldMetadata(restOfPath, baseMetadata)
-		}
-		return baseMetadata
-	}
+	// Just an alias of getField now
+	getFieldMetadata = (fieldName: string) => this.getField(fieldName)
 
 	getField = (fieldName: string | null): Field | undefined =>
-		this.getFieldFromPathArray(fieldName?.split("->"))
-
+		getFieldFromPathArray(
+			this.source.fields,
+			fieldName?.split("->"),
+			this.getNamespace()
+		)
+	getFieldParts = (fieldName: string | null) => getFieldParts(fieldName, this)
 	getIdField = () => this.getField(ID_FIELD)
 	getNameField = () => this.getField(this.source.nameField)
+	getUniqueKeyFields = () =>
+		this.source.uniqueKey && this.source.uniqueKey.length > 0
+			? this.source.uniqueKey
+					.map((f) => this.getField(f))
+					.filter((fieldId) => !!fieldId)
+			: [this.getIdField()]
+	/**
+	 * Returns an array of the fully-qualified ids of all top-level fields on the collection.
+	 */
+	getFieldIds = () => Object.keys(this.source.fields)
+	/**
+	 * Returns an array of Field objects corresponding to all top-level Fields
+	 */
+	getFields = () => Object.values(this.source.fields).map((v) => new Field(v))
+	/**
+	 * Returns an array of Field objects which are of a searchable field type
+	 */
+	getSearchableFields = () =>
+		Object.values(this.source.fields)
+			.filter((f) => searchableFieldTypes.includes(f.type))
+			.map((v) => new Field(v))
 }
+
+const searchableFieldTypes = ["TEXT", "LONGTEXT", "SELECT"]
+
+export { getFieldParts }
 
 export default Collection

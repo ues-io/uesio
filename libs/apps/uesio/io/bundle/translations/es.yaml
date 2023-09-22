@@ -3,6 +3,7 @@ labels:
   uesio/io.add: Añadir
   uesio/io.cancel: Cancelar
   uesio/io.copy: Duplicar
+  uesio/io.create: Crear
   uesio/io.delete: Borrar
   uesio/io.edit: Editar
   uesio/io.no_data_available: Datos no disponibles

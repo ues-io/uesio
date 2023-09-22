@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/teris-io/shortid"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -45,9 +46,6 @@ func GetWorkspaceIDFromParams(params map[string]string, connection adapt.Connect
 
 func getContextSessionFromParams(params map[string]string, connection adapt.Connection, session *sess.Session) (*sess.Session, error) {
 
-	//This creates a copy of the session
-	inContextSession := session.RemoveWorkspaceContext()
-
 	workspace := params["workspacename"]
 	site := params["sitename"]
 	if workspace == "" && site == "" {
@@ -60,20 +58,50 @@ func getContextSessionFromParams(params map[string]string, connection adapt.Conn
 
 	if workspace != "" {
 		workspaceKey := fmt.Sprintf("%s:%s", app, workspace)
-		err := datasource.AddWorkspaceContextByKey(workspaceKey, inContextSession, connection)
-		if err != nil {
-			return nil, err
-		}
+		return datasource.AddWorkspaceContextByKey(workspaceKey, session, connection)
 	}
 
-	if site != "" {
-		siteKey := fmt.Sprintf("%s:%s", app, site)
-		err := datasource.AddSiteAdminContextByKey(siteKey, inContextSession, connection)
-		if err != nil {
-			return nil, err
-		}
+	siteKey := fmt.Sprintf("%s:%s", app, site)
+	return datasource.AddSiteAdminContextByKey(siteKey, session, connection)
+
+}
+
+func runCoreMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+
+	newCollection := NewNamespaceSwapCollection("uesio/core", "uesio/studio")
+
+	studioCollectionName := meta.SwapKeyNamespace(op.CollectionName, "uesio/core", "uesio/studio")
+
+	newOp := &adapt.LoadOp{
+		CollectionName: studioCollectionName,
+		Collection:     newCollection,
+		Conditions:     newCollection.MapConditions(op.Conditions),
 	}
-	return inContextSession, nil
+
+	studioConnection, err := datasource.GetPlatformConnection(nil, session, nil)
+	if err != nil {
+		return err
+	}
+
+	err = datasource.GetMetadataForLoad(newOp, studioConnection.GetMetadata(), nil, sess.GetStudioAnonSession())
+	if err != nil {
+		return err
+	}
+
+	err = runAllMetadataLoadBot(newOp, studioConnection, session)
+	if err != nil {
+		return err
+	}
+
+	err = newCollection.TransferFieldMetadata(studioCollectionName, studioConnection.GetMetadata(), connection.GetMetadata())
+	if err != nil {
+		return err
+	}
+
+	op.Collection = newCollection
+
+	return nil
+
 }
 
 func runStudioMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
@@ -81,7 +109,11 @@ func runStudioMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 	allMetadataCondition := extractConditionByField(op.Conditions, "uesio/studio.allmetadata")
 
 	if allMetadataCondition != nil && allMetadataCondition.Value == true {
-		return runAllMetadataLoadBot(op.CollectionName, op, connection, session)
+		inContextSession, err := getContextSessionFromParams(op.Params, connection, session)
+		if err != nil {
+			return err
+		}
+		return runAllMetadataLoadBot(op, connection, inContextSession)
 	}
 
 	workspaceID, err := GetWorkspaceIDFromParams(op.Params, connection, session)
@@ -104,18 +136,14 @@ func runStudioMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 
 }
 
-func runAllMetadataLoadBot(collectionName string, op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
-
-	inContextSession, err := getContextSessionFromParams(op.Params, connection, session)
-	if err != nil {
-		return err
-	}
+func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
 
 	itemCondition := extractConditionByField(op.Conditions, "uesio/studio.item")
 	groupingCondition := extractConditionByField(op.Conditions, "uesio/studio.grouping")
 	searchCondition := extractConditionByType(op.Conditions, "SEARCH")
+	isCommonFieldCondition := extractConditionByField(op.Conditions, "uesio/studio.iscommonfield")
 
-	metadataType := meta.GetTypeFromCollectionName(collectionName)
+	metadataType := meta.GetTypeFromCollectionName(op.CollectionName)
 
 	group, err := meta.GetBundleableGroupFromType(metadataType)
 	if err != nil {
@@ -159,42 +187,57 @@ func runAllMetadataLoadBot(collectionName string, op *adapt.LoadOp, connection a
 		Label:      "App Color",
 	})
 
-	namespaces := inContextSession.GetContextNamespaces()
+	namespaces := session.GetContextNamespaces()
 
 	if itemCondition != nil {
-		itemKey := itemCondition.Value.(string)
+		itemKey := getConditionValue(itemCondition)
+		// If we have no value, then we can't perform the query
+		if itemKey == "" {
+			return nil
+		}
 		item, err := group.GetItemFromKey(itemKey)
 		if err != nil {
 			return err
 		}
 		group.AddItem(item)
-		err = bundle.Load(item, inContextSession, connection)
+		err = bundle.Load(item, session, connection)
 		if err != nil {
 			return err
 		}
 	} else {
 		var conditions meta.BundleConditions
 		if groupingCondition != nil {
-			grouping := groupingCondition.Value.(string)
+			grouping := getConditionValue(groupingCondition)
+			// If we have no value, we can't perform the query
+			if grouping == "" {
+				return nil
+			}
 			conditions, err = meta.GetGroupingConditions(metadataType, grouping)
 			if err != nil {
 				return err
 			}
 		}
 
-		err = bundle.LoadAllFromNamespaces(namespaces, group, conditions, inContextSession, nil)
-		if err != nil {
-			return err
-		}
+		onlyLoadCommonFields := false
 
-		// Special handling for built-in fields
-		if collectionName == "uesio/studio.field" {
+		// Special handling if we are asked to load common fields
+		if op.CollectionName == "uesio/studio.field" {
+			// Only add built-in fields if we're grouping on a collection
 			collection, ok := conditions["uesio/studio.collection"]
-			if ok {
-				// Only add built-in fields if we're grouping on a collection
+			// and if we don't have a condition to exclude built-in fields
+			if ok && (isCommonFieldCondition != nil && isCommonFieldCondition.Value == true) {
+				onlyLoadCommonFields = true
 				datasource.AddAllBuiltinFields(group, collection)
 			}
 		}
+
+		if !onlyLoadCommonFields {
+			err = bundle.LoadAllFromNamespaces(namespaces, group, conditions, session, nil)
+			if err != nil {
+				return err
+			}
+		}
+
 	}
 
 	appData, err := datasource.GetAppData(namespaces)
@@ -238,17 +281,37 @@ func runAllMetadataLoadBot(collectionName string, op *adapt.LoadOp, connection a
 				return err
 			}
 		}
-		realID, err := item.GetField("uesio/core.id")
+		realID, err := item.GetField(adapt.ID_FIELD)
 		if err != nil {
 			return err
 		}
 		if realID == "" {
 			fakeID, _ := shortid.Generate()
-			opItem.SetField("uesio/core.id", fakeID)
+			opItem.SetField(adapt.ID_FIELD, fakeID)
 		}
 
-		opItem.SetField("uesio/core.uniquekey", key)
+		opItem.SetField(adapt.UNIQUE_KEY_FIELD, key)
 		return nil
 	})
 
+}
+
+func getStringValue(val interface{}) string {
+	if stringValue, isString := val.(string); isString {
+		return stringValue
+	}
+	return ""
+}
+
+func getConditionValue(condition *adapt.LoadRequestCondition) string {
+	var conditionValue string
+	if condition.Value != nil {
+		conditionValue = getStringValue(condition.Value)
+	} else if condition.Values != nil {
+		allValues := condition.Values.([]interface{})
+		if len(allValues) > 0 {
+			conditionValue = getStringValue(allValues[0])
+		}
+	}
+	return conditionValue
 }

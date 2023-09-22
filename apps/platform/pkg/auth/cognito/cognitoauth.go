@@ -3,6 +3,8 @@ package cognito
 import (
 	"context"
 	"errors"
+	"github.com/aws/aws-sdk-go-v2/aws/transport/http"
+	"github.com/aws/smithy-go"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	cognito "github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
@@ -160,12 +162,22 @@ func (c *Connection) Signup(payload map[string]interface{}, username string, ses
 
 	signUpOutput, err := client.SignUp(context.Background(), signUpData)
 	if err != nil {
-		return nil, err
+		return nil, handleCognitoSignupError(err)
 	}
 
 	return &auth.AuthenticationClaims{
 		Subject: *signUpOutput.UserSub,
 	}, nil
+}
+
+// Make Cognito error messages more readable by returning the more specific error message
+func handleCognitoSignupError(err error) error {
+	if opErr, isOpError := err.(*smithy.OperationError); isOpError {
+		if respErr, isRespErr := opErr.Err.(*http.ResponseError); isRespErr {
+			return respErr.Err
+		}
+	}
+	return err
 }
 
 func (c *Connection) ForgotPassword(payload map[string]interface{}, session *sess.Session) error {

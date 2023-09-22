@@ -1,5 +1,8 @@
+type BotParamValue = string | boolean | number | object | undefined
+
 interface BotParamsApi {
-	get: (paramName: string) => string | boolean | number | object | undefined
+	get: (paramName: string) => BotParamValue
+	getAll: () => Record<string, BotParamValue>
 }
 interface FieldRequest {
 	id: string
@@ -22,6 +25,7 @@ interface ConditionRequest {
 	field: string
 	operator: ConditionOperator
 	value?: FieldValue
+	values?: FieldValue[]
 	type?: ConditionType
 	conjunction?: Conjunction
 	fields?: string[]
@@ -33,15 +37,17 @@ interface LoadOrder {
 	field: string
 	desc: boolean
 }
-interface Record {
+interface WireRecord {
 	GetField: (field: string) => FieldValue | undefined
 	SetField: (field: string, value: FieldValue) => void
 }
 interface LoadRequest {
+	batchsize?: number
 	collection: string
 	fields?: FieldRequest[]
 	conditions?: ConditionRequest[]
 	order?: LoadOrder[]
+	loadAll?: boolean
 }
 type Logger = (message: string, ...data: unknown[]) => void
 
@@ -50,17 +56,24 @@ interface LogApi {
 	warn: Logger
 	error: Logger
 }
-interface DeleteApi {
+
+interface BaseChangeApi {
+	addError: (error: string) => void
+	getId: () => string
+}
+
+interface InsertApi extends BaseChangeApi {
+	get: (field: string) => FieldValue
+	set: (field: string, value: FieldValue) => void
+}
+interface ChangeApi extends InsertApi {
 	getOld: (field: string) => FieldValue
 }
-interface ChangeApi {
-	get: (field: string) => FieldValue
+interface DeleteApi extends BaseChangeApi {
 	getOld: (field: string) => FieldValue
-	set: (field: string, value: FieldValue) => void
-	addError: (error: string) => void
 }
 interface InsertsApi {
-	get: () => ChangeApi[]
+	get: () => InsertApi[]
 }
 interface UpdatesApi {
 	get: () => ChangeApi[]
@@ -94,6 +107,15 @@ interface BotHttpResponse {
 interface HttpApi {
 	request: (options: BotHttpRequest) => BotHttpResponse
 }
+
+interface SaveOptionsApi {
+	upsert: boolean
+}
+
+interface IntegrationMetadata {
+	getBaseURL(): string | undefined
+}
+
 type RunIntegrationAction = (
 	integration: string,
 	action: string,
@@ -102,28 +124,28 @@ type RunIntegrationAction = (
 
 interface BeforeSaveBotApi {
 	addError: (error: string) => void
-	load: (loadRequest: LoadRequest) => Record[]
+	load: (loadRequest: LoadRequest) => WireRecord[]
 	deletes: DeletesApi
 	inserts: InsertsApi
 	updates: UpdatesApi
 }
 interface AfterSaveBotApi extends BeforeSaveBotApi {
-	save: (collectionName: string, records: Record[]) => void
+	save: (collectionName: string, records: WireRecord[]) => void
 	runIntegrationAction: RunIntegrationAction
 	getConfigValue: (configValueKey: string) => string
 	asAdmin: AsAdminApi
 }
 interface AsAdminApi {
-	load: (loadRequest: LoadRequest) => Record[]
-	save: (collectionName: string, records: Record[]) => void
+	load: (loadRequest: LoadRequest) => WireRecord[]
+	save: (collectionName: string, records: WireRecord[]) => void
 	runIntegrationAction: RunIntegrationAction
 	getConfigValue: (configValueKey: string) => string
 }
 interface ListenerBotApi {
 	addResult: (key: string, value: FieldValue | undefined) => void
-	load: (loadRequest: LoadRequest) => Record[]
+	load: (loadRequest: LoadRequest) => WireRecord[]
 	params: BotParamsApi
-	save: (collectionName: string, records: Record[]) => void
+	save: (collectionName: string, records: WireRecord[]) => void
 	runIntegrationAction: RunIntegrationAction
 	getConfigValue: (configValueKey: string) => string
 	asAdmin: AsAdminApi
@@ -132,8 +154,37 @@ interface ListenerBotApi {
 	log: LogApi
 	http: HttpApi
 }
+interface LoadBotApi {
+	addError: (error: string) => void
+	addRecord: (record: Record<string, unknown>) => void
+	loadRequest: LoadRequest
+	getIntegration: () => IntegrationMetadata
+	getCredentials: () => Record<string, string | undefined>
+	getConfigValue: (configValueKey: string) => string
+	getSession: () => SessionApi
+	getUser: () => UserApi
+	log: LogApi
+	http: HttpApi
+}
+interface SaveBotApi {
+	addError: (message: string, fieldId: string, recordId: string) => void
+	deletes: DeletesApi
+	inserts: InsertsApi
+	updates: UpdatesApi
+	getCollectionName: () => string
+	getIntegration: () => IntegrationMetadata
+	getCredentials: () => Record<string, string | undefined>
+	getConfigValue: (configValueKey: string) => string
+	getSession: () => SessionApi
+	getUser: () => UserApi
+	log: LogApi
+	http: HttpApi
+	saveOptions: SaveOptionsApi
+}
 export type {
 	ListenerBotApi,
+	LoadBotApi,
+	SaveBotApi,
 	BeforeSaveBotApi,
 	AfterSaveBotApi,
 	BotParamsApi,
@@ -141,9 +192,11 @@ export type {
 	ConditionRequest,
 	ConditionType,
 	ChangeApi,
+	DeleteApi,
+	InsertApi,
 	FieldRequest,
 	FieldValue,
 	LoadOrder,
 	LoadRequest,
-	Record,
+	WireRecord,
 }

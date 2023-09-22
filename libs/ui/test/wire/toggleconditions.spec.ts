@@ -1,11 +1,10 @@
 import testWireSignal, { WireSignalTest } from "./utils"
 
-import { testEnv } from "../utils/defaults"
-const { viewId, wireId, collectionId } = testEnv
+const wireId = "mywire"
+const collectionId = "ben/planets.exoplanet"
 
 const tests: WireSignalTest[] = [
 	{
-		view: viewId,
 		name: "toggling from undefined",
 		wireId,
 		wireDef: {
@@ -40,8 +39,6 @@ const tests: WireSignalTest[] = [
 			}),
 	},
 	{
-		view: viewId,
-
 		name: "toggling from false",
 		wireId,
 		wireDef: {
@@ -78,8 +75,6 @@ const tests: WireSignalTest[] = [
 			}),
 	},
 	{
-		view: viewId,
-
 		name: "toggling from true",
 		wireId,
 		wireDef: {
@@ -115,7 +110,6 @@ const tests: WireSignalTest[] = [
 			}),
 	},
 	{
-		view: viewId,
 		name: "toggling unexisting",
 		wireId,
 		wireDef: {

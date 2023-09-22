@@ -1,4 +1,4 @@
-import { definition, api, platform } from "@uesio/ui"
+import { definition, api, platform, metadata } from "@uesio/ui"
 import ConfigFeatureFlagsCheckboxItem from "./configfeatureflagscheckboxitem"
 import ConfigFeatureFlagsNumberItem from "./configfeatureflagsnumberitem"
 
@@ -45,7 +45,7 @@ const ConfigFeatureFlags: definition.UC<Props> = (props) => {
 	return (
 		<>
 			{checkboxFlags?.map((response, i) => {
-				const key = `${response.namespace}.${response.name}`
+				const key = metadata.getKey(response)
 				const value = response.value as boolean
 				return (
 					<ConfigFeatureFlagsCheckboxItem
@@ -58,7 +58,7 @@ const ConfigFeatureFlags: definition.UC<Props> = (props) => {
 				)
 			})}
 			{numberFlags?.map((response, i) => {
-				const key = `${response.namespace}.${response.name}`
+				const key = metadata.getKey(response)
 				const value = response.value as number
 				return (
 					<ConfigFeatureFlagsNumberItem

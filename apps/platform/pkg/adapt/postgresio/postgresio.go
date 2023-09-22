@@ -2,7 +2,6 @@ package postgresio
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"sync"
 
@@ -12,6 +11,11 @@ import (
 )
 
 type Adapter struct {
+	Credentials string
+}
+
+func (a *Adapter) GetCredentials() string {
+	return a.Credentials
 }
 
 type Tracer struct{}
@@ -83,29 +87,26 @@ func checkPoolCache(cache map[string]*pgxpool.Pool, credentials *adapt.Credentia
 }
 
 func getConnection(credentials *adapt.Credentials, hash string) (*pgxpool.Pool, error) {
-	host, ok := (*credentials)["host"]
-	if !ok {
-		return nil, errors.New("No host provided in credentials")
+	host, err := credentials.GetRequiredEntry("host")
+	if err != nil {
+		return nil, err
 	}
 
-	port, ok := (*credentials)["port"]
-	if !ok {
-		port = "5432"
+	port := credentials.GetEntry("port", "5432")
+
+	user, err := credentials.GetRequiredEntry("user")
+	if err != nil {
+		return nil, err
 	}
 
-	user, ok := (*credentials)["user"]
-	if !ok {
-		return nil, errors.New("No user provided in credentials")
+	password, err := credentials.GetRequiredEntry("password")
+	if err != nil {
+		return nil, err
 	}
 
-	password, ok := (*credentials)["password"]
-	if !ok {
-		return nil, errors.New("No password provided in credentials")
-	}
-
-	dbname, ok := (*credentials)["database"]
-	if !ok {
-		return nil, errors.New("No database provided in credentials")
+	dbname, err := credentials.GetRequiredEntry("database")
+	if err != nil {
+		return nil, err
 	}
 
 	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s "+"password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)

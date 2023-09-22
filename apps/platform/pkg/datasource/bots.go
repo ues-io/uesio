@@ -1,6 +1,7 @@
 package datasource
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/bot"
@@ -117,6 +118,78 @@ func runDynamicCollectionSaveBots(op *adapt.SaveOp, connection adapt.Connection,
 
 }
 
+func runExternalDataSourceLoadBot(botName string, op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+
+	namespace, name, err := meta.ParseKey(botName)
+	if err != nil {
+		return err
+	}
+
+	loadBot := &meta.Bot{
+		BundleableBase: meta.BundleableBase{
+			Name:      name,
+			Namespace: namespace,
+		},
+		Type: "LOAD",
+	}
+
+	err = bundle.Load(loadBot, session, nil)
+	// See if there is a SYSTEM bot instead
+	if err != nil {
+		systemDialect, err2 := bot.GetBotDialect("SYSTEM")
+		if err2 != nil {
+			return err2
+		}
+		// Try running a Load bot using the System dialect.
+		err = systemDialect.LoadBot(loadBot, op, connection, session)
+		if err != nil {
+			_, isNotFoundError := err.(*SystemBotNotFoundError)
+			if isNotFoundError {
+				return errors.New("could not find requested LOAD bot: " + botName)
+			}
+			return err
+		}
+		return nil
+	}
+	// We found a custom LOAD bot, so check to see if it has a valid dialect.
+	dialect, err := bot.GetBotDialect(loadBot.Dialect)
+	if err != nil {
+		return err
+	}
+
+	// Finally - run the load bot!
+	return dialect.LoadBot(loadBot, op, connection, session)
+
+}
+
+func runExternalDataSourceSaveBot(botName string, op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+
+	namespace, name, err := meta.ParseKey(botName)
+	if err != nil {
+		return err
+	}
+
+	saveBot := &meta.Bot{
+		BundleableBase: meta.BundleableBase{
+			Name:      name,
+			Namespace: namespace,
+		},
+		Type: "SAVE",
+	}
+
+	err = bundle.Load(saveBot, session, nil)
+	if err != nil {
+		return errors.New("could not find requested SAVE bot: " + botName)
+	}
+	dialect, err := bot.GetBotDialect(saveBot.Dialect)
+	if err != nil {
+		return err
+	}
+
+	return dialect.SaveBot(saveBot, op, connection, session)
+
+}
+
 func runAfterSaveBots(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 
 	collectionName := request.Metadata.GetFullName()
@@ -195,7 +268,7 @@ func canCallBot(namespace, name string, perms *meta.PermissionSet) (bool, error)
 		return true, nil
 	}
 	botKey := fmt.Sprintf("%s.%s", namespace, name)
-	if perms.BotRefs[botKey] == true {
+	if perms.BotRefs[botKey] {
 		return true, nil
 	}
 	return false, meta.NewBotAccessError(fmt.Sprintf(BotAccessErrorMessage, botKey))

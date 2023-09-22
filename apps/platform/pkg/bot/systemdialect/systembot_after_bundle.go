@@ -63,11 +63,14 @@ func parseUniqueKey(UniqueKey string) (appName, appVersion string) {
 func clearFilesForBundles(ids []string, session *sess.Session) error {
 	for _, id := range ids {
 		appName, appVersion := parseUniqueKey(id)
-		dest, err := bundlestore.GetBundleStore(appName, session.RemoveWorkspaceContext())
+		dest, err := bundlestore.GetConnection(bundlestore.ConnectionOptions{
+			Namespace: appName,
+			Version:   appVersion,
+		})
 		if err != nil {
 			return err
 		}
-		err = dest.DeleteBundle(appName, appVersion, session)
+		err = dest.DeleteBundle()
 		if err != nil {
 			return err
 		}

@@ -63,10 +63,15 @@ func addWorkspaceContext(workspace *meta.Workspace, session *sess.Session, conne
 		meta.GetAdminPermissionSet(),
 	)
 	session.SetWorkspaceSession(workspaceSession)
-	bundleDef, err := bundle.GetAppBundle(session, connection)
+	bundleDef, err := bundle.GetWorkspaceBundleDef(workspace, connection)
 	if err != nil {
 		return err
 	}
+	licenseMap, err := GetLicenses(workspace.GetAppFullName(), connection)
+	if err != nil {
+		return err
+	}
+	bundleDef.Licenses = licenseMap
 	workspace.SetAppBundle(bundleDef)
 
 	if results.Len() > 0 {
@@ -94,20 +99,22 @@ func addWorkspaceContext(workspace *meta.Workspace, session *sess.Session, conne
 
 }
 
-func AddWorkspaceContextByKey(workspaceKey string, session *sess.Session, connection adapt.Connection) error {
-	workspace, err := queryWorkspace(workspaceKey, adapt.UNIQUE_KEY_FIELD, session, connection)
+func AddWorkspaceContextByKey(workspaceKey string, session *sess.Session, connection adapt.Connection) (*sess.Session, error) {
+	sessClone := session.RemoveWorkspaceContext()
+	workspace, err := queryWorkspace(workspaceKey, adapt.UNIQUE_KEY_FIELD, sessClone, connection)
 	if err != nil {
-		return fmt.Errorf("could not get workspace context: workspace %s does not exist or you don't have access to modify it.", workspaceKey)
+		return nil, fmt.Errorf("could not get workspace context: workspace %s does not exist or you don't have access to modify it.", workspaceKey)
 	}
-	return addWorkspaceContext(workspace, session, connection)
+	return sessClone, addWorkspaceContext(workspace, sessClone, connection)
 }
 
-func AddWorkspaceContextByID(workspaceID string, session *sess.Session, connection adapt.Connection) error {
-	workspace, err := queryWorkspace(workspaceID, adapt.ID_FIELD, session, connection)
+func AddWorkspaceContextByID(workspaceID string, session *sess.Session, connection adapt.Connection) (*sess.Session, error) {
+	sessClone := session.RemoveWorkspaceContext()
+	workspace, err := queryWorkspace(workspaceID, adapt.ID_FIELD, sessClone, connection)
 	if err != nil {
-		return fmt.Errorf("could not get workspace context: workspace does not exist or you don't have access to modify it.")
+		return nil, fmt.Errorf("could not get workspace context: workspace does not exist or you don't have access to modify it.")
 	}
-	return addWorkspaceContext(workspace, session, connection)
+	return sessClone, addWorkspaceContext(workspace, sessClone, connection)
 }
 
 func queryWorkspace(value, field string, session *sess.Session, connection adapt.Connection) (*meta.Workspace, error) {

@@ -72,29 +72,38 @@ func addSiteAdminContext(siteadmin *meta.Site, session *sess.Session, connection
 		getSiteAdminUser(),
 	))
 
-	bundleDef, err := bundle.GetAppBundle(session, connection)
+	bundleDef, err := bundle.GetSiteBundleDef(siteadmin, connection)
 	if err != nil {
 		return err
 	}
+
+	licenseMap, err := GetLicenses(siteadmin.GetAppFullName(), connection)
+	if err != nil {
+		return err
+	}
+	bundleDef.Licenses = licenseMap
+
 	siteadmin.SetAppBundle(bundleDef)
 
 	return nil
 }
 
-func AddSiteAdminContextByID(siteID string, session *sess.Session, connection adapt.Connection) error {
-	siteadmin, err := QuerySiteByID(siteID, session, connection)
+func AddSiteAdminContextByID(siteID string, session *sess.Session, connection adapt.Connection) (*sess.Session, error) {
+	sessClone := session.RemoveWorkspaceContext()
+	siteadmin, err := QuerySiteByID(siteID, sessClone, connection)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return addSiteAdminContext(siteadmin, session, connection)
+	return sessClone, addSiteAdminContext(siteadmin, sessClone, connection)
 }
 
-func AddSiteAdminContextByKey(siteKey string, session *sess.Session, connection adapt.Connection) error {
-	siteadmin, err := QuerySiteByKey(siteKey, session, connection)
+func AddSiteAdminContextByKey(siteKey string, session *sess.Session, connection adapt.Connection) (*sess.Session, error) {
+	sessClone := session.RemoveWorkspaceContext()
+	siteadmin, err := QuerySiteByKey(siteKey, sessClone, connection)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return addSiteAdminContext(siteadmin, session, connection)
+	return sessClone, addSiteAdminContext(siteadmin, sessClone, connection)
 }
 
 func QuerySiteByID(siteid string, session *sess.Session, connection adapt.Connection) (*meta.Site, error) {

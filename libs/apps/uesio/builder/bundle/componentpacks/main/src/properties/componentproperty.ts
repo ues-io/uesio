@@ -30,6 +30,7 @@ type BaseProperty = {
 	displayConditions?: component.DisplayCondition[]
 	// Updates to perform when this property's value is changed.
 	onChange?: PropertyOnChange[]
+	unique?: boolean
 }
 type TextProperty = {
 	type: "TEXT"
@@ -280,7 +281,7 @@ type ComponentProperty =
 	| FieldValuesProperty
 
 const getStyleVariantProperty = (componentType: string): ComponentProperty => ({
-	name: "uesio.variant",
+	name: component.STYLE_VARIANT,
 	type: "METADATA",
 	metadataType: "COMPONENTVARIANT",
 	label: "Variant",

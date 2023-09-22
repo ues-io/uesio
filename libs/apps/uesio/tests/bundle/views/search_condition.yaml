@@ -25,7 +25,7 @@ definition:
           - uesio/io.searchbox:
               uesio.id: table-search
               wire: conditions
-              searchfields:
+              searchFields:
                 - uesio/tests.name
           - uesio/io.table:
               columns:

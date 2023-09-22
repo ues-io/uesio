@@ -1,70 +1,122 @@
 package systemdialect
 
 import (
+	"archive/zip"
+	"bytes"
 	"errors"
+	"io"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/deploy"
+	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/retrieve"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"gopkg.in/yaml.v3"
 )
 
-func runWorkspaceAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
-	newDeps := adapt.Collection{}
-	// Install the uesio bundle when you create a new workspace
-	if err := request.LoopInserts(func(change *adapt.ChangeItem) error {
-		workspaceID, err := change.GetFieldAsString(adapt.ID_FIELD)
-		if err != nil {
-			return err
-		}
-
-		newDeps = append(newDeps, &adapt.Item{
-			"uesio/studio.app": map[string]interface{}{
-				"uesio/core.uniquekey": "uesio/builder",
-			},
-			"uesio/studio.bundle": map[string]interface{}{
-				"uesio/core.uniquekey": "uesio/builder:0:0:1",
-			},
-			"uesio/studio.workspace": map[string]interface{}{
-				"uesio/core.id": workspaceID,
-			},
-		}, &adapt.Item{
-			"uesio/studio.app": map[string]interface{}{
-				"uesio/core.uniquekey": "uesio/core",
-			},
-			"uesio/studio.bundle": map[string]interface{}{
-				"uesio/core.uniquekey": "uesio/core:0:0:1",
-			},
-			"uesio/studio.workspace": map[string]interface{}{
-				"uesio/core.id": workspaceID,
-			},
-		}, &adapt.Item{
-			"uesio/studio.app": map[string]interface{}{
-				"uesio/core.uniquekey": "uesio/io",
-			},
-			"uesio/studio.bundle": map[string]interface{}{
-				"uesio/core.uniquekey": "uesio/io:0:0:1",
-			},
-			"uesio/studio.workspace": map[string]interface{}{
-				"uesio/core.id": workspaceID,
-			},
-		})
-		return nil
-	}); err != nil {
+func deployWorkspaceFromBundle(workspaceID, bundleID string, connection adapt.Connection, session *sess.Session) error {
+	// Enter into a workspace context
+	workspaceSession, err := datasource.AddWorkspaceContextByID(workspaceID, session, connection)
+	if err != nil {
 		return err
 	}
 
-	if len(newDeps) > 0 {
-		if err := datasource.SaveWithOptions([]datasource.SaveRequest{
-			{
-				Collection: "uesio/studio.bundledependency",
-				Wire:       "defaultapps",
-				Changes:    &newDeps,
-				Options: &adapt.SaveOptions{
-					Upsert: true,
-				},
+	bundle := &meta.Bundle{}
+	err = datasource.PlatformLoadByID(bundle, bundleID, session, connection)
+	if err != nil {
+		return err
+	}
+
+	bs, err := bundlestore.GetConnection(bundlestore.ConnectionOptions{
+		Namespace:    workspaceSession.GetContextAppName(),
+		Version:      bundle.GetVersionString(),
+		Connection:   connection,
+		Permissions:  meta.GetAdminPermissionSet(),
+		AllowPrivate: true,
+	})
+	if err != nil {
+		return err
+	}
+	// Retrieve the bundle zip
+	// Create a new zip archive.
+	buf := new(bytes.Buffer)
+	zipwriter := zip.NewWriter(buf)
+	create := retrieve.NewWriterCreator(zipwriter.Create)
+	// Retrieve bundle contents
+	err = retrieve.RetrieveBundle("", create, bs, session)
+	if err != nil {
+		return err
+	}
+
+	err = zipwriter.Close()
+	if err != nil {
+		return err
+	}
+
+	return deploy.DeployWithOptions(io.NopCloser(buf), workspaceSession, &deploy.DeployOptions{
+		Connection: connection,
+		Upsert:     true,
+	})
+
+}
+
+func deployEmptyWorkspace(workspaceID string, connection adapt.Connection, session *sess.Session) error {
+	buf := new(bytes.Buffer)
+
+	zipwriter := zip.NewWriter(buf)
+
+	f, err := zipwriter.Create("bundle.yaml")
+	if err != nil {
+		return err
+	}
+
+	defaultDef := &meta.BundleDef{
+		Dependencies: map[string]meta.BundleDefDep{
+			"uesio/builder": {
+				Version: "v0.0.1",
 			},
-		}, session, datasource.GetConnectionSaveOptions(connection)); err != nil {
-			return err
+			"uesio/core": {
+				Version: "v0.0.1",
+			},
+			"uesio/io": {
+				Version: "v0.0.1",
+			},
+		},
+	}
+
+	err = yaml.NewEncoder(f).Encode(defaultDef)
+	if err != nil {
+		return err
+	}
+
+	// Make sure to check the error on Close.
+	err = zipwriter.Close()
+	if err != nil {
+		return err
+	}
+
+	// Enter into a workspace context
+	workspaceSession, err := datasource.AddWorkspaceContextByID(workspaceID, session, connection)
+	if err != nil {
+		return err
+	}
+
+	return deploy.DeployWithOptions(io.NopCloser(buf), workspaceSession, &deploy.DeployOptions{Connection: connection, Upsert: true})
+}
+
+func runWorkspaceAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+
+	if err := request.LoopInserts(func(change *adapt.ChangeItem) error {
+		workspaceID := change.IDValue
+		sourceBundleID, _ := change.GetReferenceKey("uesio/studio.sourcebundle")
+		if sourceBundleID == "" {
+			return deployEmptyWorkspace(workspaceID, connection, session)
 		}
+		return deployWorkspaceFromBundle(workspaceID, sourceBundleID, connection, session)
+	}); err != nil {
+		return err
 	}
 
 	// If we are deleting workspaces, also truncate their data

@@ -6,6 +6,7 @@ params:
     prompt: Collection
     type: METADATA
     metadataType: COLLECTION
+    required: true
   - name: fields
     prompt: Fields
     type: METADATAMULTI
@@ -14,6 +15,7 @@ params:
     conditions:
       - param: collection
         type: hasValue
+    required: true
   - name: name
     prompt: View Name (optional)
     type: METADATANAME

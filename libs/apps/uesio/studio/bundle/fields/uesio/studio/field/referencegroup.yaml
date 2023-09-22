@@ -10,4 +10,5 @@ subfields:
     type: TEXT
   - name: uesio/studio.ondelete
     label: On Delete
-    type: TEXT
+    type: SELECT
+    selectList: uesio/core.referencegroupondelete

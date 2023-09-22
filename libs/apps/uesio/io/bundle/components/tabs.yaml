@@ -13,11 +13,11 @@ slots:
 defaultDefinition:
   uesio.variant: uesio/io.default
   tabs:
-    - id: tab1
-      label: One
+    - id: alpha
+      label: Alpha
       components: []
-    - id: tab2
-      label: Two
+    - id: beta
+      label: Beta
       components: []
 properties:
   - name: tabs
@@ -28,6 +28,7 @@ properties:
       title: Tab Properties
       defaultDefinition:
         label: New Tab
+        id: "tab$Parent.Record{tabs.length}"
         components: []
       properties:
         - name: id
@@ -36,11 +37,16 @@ properties:
         - name: label
           type: TEXT
           label: Tab Label
+        - name: icon
+          type: ICON
+          label: Tab Icon
       sections:
         - type: HOME
           properties:
             - id
             - label
+            - icon
+        - type: DISPLAY
         # TODO: improve Tab component to have these features,
         # then uncomment these sections :)
         # - type: SIGNALS

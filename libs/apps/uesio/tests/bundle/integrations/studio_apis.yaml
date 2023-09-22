@@ -1,5 +1,7 @@
 name: studio_apis
 type: web
 credentials: ""
-headers: {}
 baseUrl: https://studio.uesio-dev.com:3000
+loadBot: ""
+saveBot: ""
+headers: {}

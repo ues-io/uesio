@@ -1,0 +1,5 @@
+name: apppublish
+path: app/{app:\w*\/\w*}/publish
+view: apppublish
+theme: default
+title: Publish App

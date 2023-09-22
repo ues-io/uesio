@@ -16,7 +16,6 @@ Accept: application/json
 {
     "wires": [
         {
-            "id": "one",
             "collection":"uesio/tests.animal",
             "fields": [
                 {
@@ -30,7 +29,6 @@ Accept: application/json
             "batchsize":2
         },
         {
-            "id": "two",
             "collection":"uesio/tests.animal",
             "fields": [
                 {
@@ -64,14 +62,14 @@ HTTP 200
 [Asserts]
 # unique key and id fields will be automatically added by Uesio, to the unique fields requested across the two wires,
 # so we expect 9 unique fields
-jsonpath "$.dependencies.collection.entities['uesio/tests.animal'].fields[*].name" count == 9
-jsonpath "$.dependencies.collection.entities['uesio/tests.animal'].fields['uesio/tests.genus'].label" == "Genus"
-jsonpath "$.dependencies.collection.entities['uesio/tests.animal'].fields['uesio/tests.species'].label" == "Species"
-jsonpath "$.dependencies.collection.entities['uesio/tests.animal'].fields['uesio/tests.total_population'].label" == "Total Population"
-jsonpath "$.dependencies.collection.entities['uesio/tests.animal'].fields['uesio/tests.lookalike'].type" == "REFERENCE"
-jsonpath "$.dependencies.collection.entities['uesio/tests.animal'].fields['uesio/tests.ancestor'].type" == "REFERENCE"
-jsonpath "$.dependencies.collection.entities['uesio/tests.animal'].fields['uesio/core.updatedat'].namespace" == "uesio/core"
-jsonpath "$.dependencies.collection.entities['uesio/tests.animal'].fields['uesio/core.createdat'].namespace" == "uesio/core"
-jsonpath "$.dependencies.collection.entities['uesio/tests.animal'].fields['uesio/core.id'].label" == "Id"
-jsonpath "$.dependencies.collection.entities['uesio/tests.animal'].fields['uesio/core.uniquekey'].label" == "Unique Key"
+jsonpath "$.dependencies.collection[0].fields[*].name" count == 9
+jsonpath "$.dependencies.collection[0].fields['uesio/tests.genus'].label" == "Genus"
+jsonpath "$.dependencies.collection[0].fields['uesio/tests.species'].label" == "Species"
+jsonpath "$.dependencies.collection[0].fields['uesio/tests.total_population'].label" == "Total Population"
+jsonpath "$.dependencies.collection[0].fields['uesio/tests.lookalike'].type" == "REFERENCE"
+jsonpath "$.dependencies.collection[0].fields['uesio/tests.ancestor'].type" == "REFERENCE"
+jsonpath "$.dependencies.collection[0].fields['uesio/core.updatedat'].namespace" == "uesio/core"
+jsonpath "$.dependencies.collection[0].fields['uesio/core.createdat'].namespace" == "uesio/core"
+jsonpath "$.dependencies.collection[0].fields['uesio/core.id'].label" == "Id"
+jsonpath "$.dependencies.collection[0].fields['uesio/core.uniquekey'].label" == "Unique Key"
 

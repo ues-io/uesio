@@ -23,6 +23,7 @@ views:
   uesio/studio.bundlestore: true
   uesio/studio.app: true
   uesio/studio.appedit: true
+  uesio/studio.appsettings: true
   uesio/studio.bot: true
   uesio/studio.bots: true
   uesio/studio.bundle: true
@@ -36,8 +37,6 @@ views:
   uesio/studio.configvalues: true
   uesio/studio.credential: true
   uesio/studio.credentials: true
-  uesio/studio.datasource: true
-  uesio/studio.datasources: true
   uesio/studio.domains: true
   uesio/studio.field: true
   uesio/studio.file: true
@@ -78,20 +77,21 @@ views:
   uesio/studio.workspace: true
   uesio/studio.workspaceconfig: true
   uesio/studio.workspacenav: true
-  uesio/studio.sitecollections: true
   uesio/studio.sitecollectiondata: true
-  uesio/studio.collectionimport: true
   uesio/studio.sitecollectiondataimport: true
   uesio/studio.sitecollectiondataexport: true
+  uesio/studio.sitecollectionexportbatches: true
+  uesio/studio.sitecollectionrecorddata: true
+  uesio/studio.sitecollections: true
   uesio/studio.featureflags: true
   uesio/studio.featureflag: true
   uesio/studio.labels: true
   uesio/studio.label: true
   uesio/studio.translations: true
   uesio/studio.translation: true
+  uesio/studio.collectionimport: true
   uesio/studio.collectionexport: true
   uesio/studio.collectionexportbatches: true
-  uesio/studio.sitecollectionexportbatches: true
   uesio/studio.authsources: true
   uesio/studio.authsource: true
   uesio/studio.usage: true
@@ -106,7 +106,9 @@ views:
   uesio/studio.userpayments: true
   uesio/studio.paymentsuccess: true
   uesio/studio.recorddata: true
+  uesio/studio.apppublish: true
 routes:
+  uesio/studio.appsettings: true
   uesio/studio.authsources: true
   uesio/studio.authsource: true
   uesio/studio.bundlestore: true
@@ -117,6 +119,9 @@ routes:
   uesio/studio.bundle: true
   uesio/studio.collection: true
   uesio/studio.collectiondata: true
+  uesio/studio.collectionexport: true
+  uesio/studio.collectionexportbatches: true
+  uesio/studio.collectionimport: true
   uesio/studio.collections: true
   uesio/studio.component: true
   uesio/studio.components: true
@@ -124,8 +129,6 @@ routes:
   uesio/studio.configvalues: true
   uesio/studio.credential: true
   uesio/studio.credentials: true
-  uesio/studio.datasource: true
-  uesio/studio.datasources: true
   uesio/studio.domains: true
   uesio/studio.field: true
   uesio/studio.file: true
@@ -135,7 +138,6 @@ routes:
   uesio/studio.installedbundle: true
   uesio/studio.integration: true
   uesio/studio.integrations: true
-  uesio/studio.login: true
   uesio/studio.org: true
   uesio/studio.packaging: true
   uesio/studio.permissionset: true
@@ -149,7 +151,6 @@ routes:
   uesio/studio.secrets: true
   uesio/studio.selectlist: true
   uesio/studio.selectlists: true
-  uesio/studio.signup: true
   uesio/studio.site: true
   uesio/studio.siteorg: true
   uesio/studio.siteorgs: true
@@ -163,27 +164,22 @@ routes:
   uesio/studio.views: true
   uesio/studio.workspaceconfig: true
   uesio/studio.workspace: true
-  uesio/studio.sitecollections: true
-  uesio/studio.sitecollectiondata: true
-  uesio/studio.collectionimport: true
-  uesio/studio.sitecollectiondataimport: true
-  uesio/studio.sitecollectiondataexport: true
   uesio/studio.featureflags: true
   uesio/studio.featureflag: true
   uesio/studio.labels: true
   uesio/studio.label: true
   uesio/studio.translations: true
   uesio/studio.translation: true
-  uesio/studio.collectionexport: true
-  uesio/studio.collectionexportbatches: true
+  uesio/studio.sitecollectiondata: true
+  uesio/studio.sitecollectiondataexport: true
+  uesio/studio.sitecollectiondataimport: true
   uesio/studio.sitecollectionexportbatches: true
+  uesio/studio.sitecollectionrecorddata: true
+  uesio/studio.sitecollections: true
   uesio/studio.siteusage_route_load: true
   uesio/studio.siteusage_collection_load: true
   uesio/studio.siteusage_collection_save: true
   uesio/studio.userprofile: true
-  uesio/studio.changepassword: true
-  uesio/studio.signupconfirm: true
-  uesio/studio.requestpassword: true
   uesio/studio.licensesused: true
   uesio/studio.licensesprovided: true
   uesio/studio.licensespricing: true
@@ -192,6 +188,7 @@ routes:
   uesio/studio.userpayments: true
   uesio/studio.paymentsuccess: true
   uesio/studio.recorddata: true
+  uesio/studio.apppublish: true
 files: {}
 collections:
   uesio/studio.recentmetadata: true
@@ -199,18 +196,31 @@ collections:
   uesio/studio.recentdoc: true
   uesio/studio.authsource: true
   uesio/studio.signupmethod: true
+  uesio/core.signupmethod: true
   uesio/studio.app: true
   uesio/studio.bot: true
   uesio/studio.bundledependency: true
   uesio/studio.bundle: true
-  uesio/studio.bundlelisting: true
+  uesio/studio.bundlelisting:
+    read: true
+    create: true
+    edit: true
+    delete: false
+    fields:
+      uesio/studio.approved:
+        read: true
+        edit: false
+  uesio/studio.bundlelistinghistory:
+    read: true
+    create: true
+    edit: true
+    delete: false
   uesio/studio.collection: true
   uesio/studio.component: true
   uesio/studio.componentpack: true
   uesio/studio.componentvariant: true
   uesio/studio.configvalue: true
   uesio/studio.credential: true
-  uesio/studio.datasource: true
   uesio/studio.featureflag: true
   uesio/studio.field: true
   uesio/studio.file: true

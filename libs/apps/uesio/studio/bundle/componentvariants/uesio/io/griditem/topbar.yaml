@@ -1,7 +1,0 @@
-name: topbar
-label: Top Bar
-definition:
-  uesio.styleTokens:
-    root:
-      - col-start-1
-      - col-end-3

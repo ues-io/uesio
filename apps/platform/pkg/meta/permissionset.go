@@ -23,6 +23,8 @@ type CollectionPermission struct {
 	Create     bool               `yaml:"create" json:"create"`
 	Edit       bool               `yaml:"edit" json:"edit"`
 	Delete     bool               `yaml:"delete" json:"delete"`
+	ModifyAll  bool               `yaml:"modifyall" json:"modifyall"`
+	ViewAll    bool               `yaml:"viewall" json:"viewall"`
 	FieldsRefs FieldPermissionMap `yaml:"fields" json:"fields"`
 }
 
@@ -194,7 +196,7 @@ func (ps *PermissionSet) HasCollectionReadPermission(key string) bool {
 	if collectionPermission, ok := ps.CollectionRefs[key]; !ok {
 		return false
 	} else {
-		return collectionPermission.Read
+		return collectionPermission.ModifyAll || collectionPermission.ViewAll || collectionPermission.Read
 	}
 }
 
@@ -222,7 +224,7 @@ func (ps *PermissionSet) HasCreatePermission(key string) bool {
 	if collectionPermission, ok := ps.CollectionRefs[key]; !ok {
 		return false
 	} else {
-		return collectionPermission.Create
+		return collectionPermission.ModifyAll || collectionPermission.Create
 	}
 }
 
@@ -233,7 +235,7 @@ func (ps *PermissionSet) HasEditPermission(key string) bool {
 	if collectionPermission, ok := ps.CollectionRefs[key]; !ok {
 		return false
 	} else {
-		return collectionPermission.Edit
+		return collectionPermission.ModifyAll || collectionPermission.Edit
 	}
 }
 
@@ -244,7 +246,7 @@ func (ps *PermissionSet) HasDeletePermission(key string) bool {
 	if collectionPermission, ok := ps.CollectionRefs[key]; !ok {
 		return false
 	} else {
-		return collectionPermission.Delete
+		return collectionPermission.ModifyAll || collectionPermission.Delete
 	}
 }
 
@@ -300,6 +302,8 @@ func FlattenPermissions(permissionSets []PermissionSet) *PermissionSet {
 			if existingVal, ok := collectionPerms[key]; !ok {
 				collectionPerms[key] = value
 			} else {
+				existingVal.ModifyAll = existingVal.ModifyAll || value.ModifyAll
+				existingVal.ViewAll = existingVal.ViewAll || value.ViewAll
 				existingVal.Create = existingVal.Create || value.Create
 				existingVal.Delete = existingVal.Delete || value.Delete
 				existingVal.Edit = existingVal.Edit || value.Edit

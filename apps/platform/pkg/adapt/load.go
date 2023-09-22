@@ -5,27 +5,31 @@ import (
 	"errors"
 	"sort"
 
-	"github.com/thecloudmasters/uesio/pkg/meta"
 	"gopkg.in/yaml.v3"
+
+	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
 type LoadOp struct {
-	CollectionName     string                 `json:"collection"`
+	CollectionName     string                 `json:"collection" bot:"collection"`
 	WireName           string                 `json:"name"`
 	View               string                 `json:"view"`
 	Collection         meta.Group             `json:"data"`
-	Conditions         []LoadRequestCondition `json:"conditions"`
-	Fields             []LoadRequestField     `json:"fields"`
+	Conditions         []LoadRequestCondition `json:"conditions" bot:"conditions"`
+	Fields             []LoadRequestField     `json:"fields" bot:"fields"`
 	Query              bool                   `json:"query"`
-	Order              []LoadRequestOrder     `json:"order"`
-	BatchSize          int                    `json:"batchsize"`
-	BatchNumber        int                    `json:"batchnumber"`
+	Order              []LoadRequestOrder     `json:"order" bot:"order"`
+	BatchSize          int                    `json:"batchsize" bot:"batchsize"`
+	BatchNumber        int                    `json:"batchnumber" bot:"batchnumber"`
 	HasMoreBatches     bool                   `json:"more"`
 	RequireWriteAccess bool                   `json:"requirewriteaccess"`
 	Params             map[string]string      `json:"params"`
 	Preloaded          bool                   `json:"preloaded"`
-	LoadAll            bool                   `json:"loadAll"`
+	LoadAll            bool                   `json:"loadAll" bot:"loadAll"`
 	DebugQueryString   string                 `json:"debugQueryString"`
+	// Internal only conveniences for LoadBots to be able to access prefetched metadata
+	metadata    *MetadataCache
+	integration IntegrationConnection
 }
 
 type LoadOpWrapper LoadOp
@@ -80,6 +84,31 @@ func (op *LoadOp) UnmarshalYAML(node *yaml.Node) error {
 	op.LoadAll = meta.GetNodeValueAsBool(node, "loadAll", false)
 	return nil
 
+}
+
+func (op *LoadOp) GetIntegration() (IntegrationConnection, error) {
+	if op.integration != nil {
+		return op.integration, nil
+	}
+	return nil, errors.New("integration not available on LoadOp")
+}
+
+func (op *LoadOp) GetCollectionMetadata() (*CollectionMetadata, error) {
+	if op.metadata != nil {
+		return op.metadata.GetCollection(op.CollectionName)
+	} else {
+		return nil, errors.New("no metadata available on LoadOp")
+	}
+}
+
+func (op *LoadOp) AttachMetadataCache(response *MetadataCache) *LoadOp {
+	op.metadata = response
+	return op
+}
+
+func (op *LoadOp) AttachIntegration(integration IntegrationConnection) *LoadOp {
+	op.integration = integration
+	return op
 }
 
 type LoadRequestBatch struct {
@@ -168,7 +197,7 @@ func GetFieldsMap(fields []LoadRequestField, collectionMetadata *CollectionMetad
 			refReq := referencedCollections.Get(referencedCollection)
 			refReq.Metadata = referencedCollectionMetadata
 
-			if referencedCollectionMetadata.DataSource != collectionMetadata.DataSource {
+			if referencedCollectionMetadata.Integration != collectionMetadata.Integration {
 				continue
 			}
 			refReq.AddFields(field.Fields)
@@ -181,7 +210,7 @@ func GetFieldsMap(fields []LoadRequestField, collectionMetadata *CollectionMetad
 				continue
 			}
 			refReq := referencedGroupCollections.Add(referencedCollection, fieldMetadata, referencedCollectionMetadata)
-			if referencedCollectionMetadata.DataSource != collectionMetadata.DataSource {
+			if referencedCollectionMetadata.Integration != collectionMetadata.Integration {
 				continue
 			}
 			refReq.AddFields(field.Fields)

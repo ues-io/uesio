@@ -1,5 +1,5 @@
 import { FunctionComponent, DragEvent, MouseEvent } from "react"
-import { definition, styles, api, context as ctx } from "@uesio/ui"
+import { definition, styles, api, context as ctx, component } from "@uesio/ui"
 import {
 	getComponentDef,
 	setDropPath,
@@ -27,7 +27,7 @@ const addComponentToCanvas = (
 	drop: FullPath,
 	extraDef?: definition.Definition
 ) => {
-	const componentDef = getComponentDef(context, drag.itemName)
+	const componentDef = getComponentDef(drag.itemName)
 	if (!componentDef) return
 	batch(() => {
 		add(context, drop, {
@@ -55,7 +55,7 @@ const handleDrop = (
 				drop,
 				drag.itemType === "componentvariant"
 					? {
-							"uesio.variant": drag.localPath,
+							[component.STYLE_VARIANT]: drag.localPath,
 					  }
 					: {}
 			)

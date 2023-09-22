@@ -27,7 +27,7 @@ const Tile: definition.UC<TileDefinition> = (props) => {
 	const [link, handler] = api.signal.useLinkHandler(
 		// Don't run tile actions in View Builder
 		// TODO: Find way to avoid this builder-specific check
-		context.getCustomSlot() ? [] : definition.signals,
+		context.getCustomSlotLoader() ? [] : definition.signals,
 		context
 	)
 
@@ -35,7 +35,7 @@ const Tile: definition.UC<TileDefinition> = (props) => {
 		<IOTile
 			id={api.component.getComponentIdFromProps(props)}
 			classes={classes}
-			variant={definition["uesio.variant"]}
+			variant={definition[component.STYLE_VARIANT]}
 			context={context}
 			onClick={handler}
 			isSelected={isSelected}

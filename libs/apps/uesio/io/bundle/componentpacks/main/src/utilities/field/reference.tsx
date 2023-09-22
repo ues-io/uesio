@@ -28,6 +28,7 @@ interface ReferenceFieldProps {
 	fieldId: string
 	fieldMetadata: collection.Field
 	mode: context.FieldMode
+	readonly?: boolean
 	record?: wire.WireRecord
 	options?: ReferenceFieldOptions
 	placeholder?: string
@@ -67,6 +68,7 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 		fieldId,
 		fieldMetadata,
 		mode,
+		readonly,
 		record,
 		context,
 		options = {},
@@ -178,8 +180,8 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 		})
 		setItems(Object.values(result.wires[0].data) || [])
 	}, 200)
-
-	if (mode === "READ") {
+	const isReadMode = readonly || mode === "READ"
+	if (isReadMode) {
 		return (
 			<ReadOnlyField variant={variant} context={context}>
 				{item ? renderer(item) : ""}

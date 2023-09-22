@@ -358,7 +358,14 @@ func getMetadataForConditionLoad(
 		}
 	}
 
-	if condition.ValueSource == "LOOKUP" && condition.LookupField != "" && condition.LookupWire != "" {
+	if condition.ValueSource == "LOOKUP" {
+
+		if condition.LookupWire == "" {
+			return fmt.Errorf("invalid condition with valueSource 'LOOKUP': lookupWire is required")
+		}
+		if condition.LookupField == "" {
+			return fmt.Errorf("invalid condition with valueSource 'LOOKUP': lookupField is required")
+		}
 
 		// Look through the previous wires to find the one to look up on.
 		var lookupCollectionKey string
@@ -367,19 +374,24 @@ func getMetadataForConditionLoad(
 				lookupCollectionKey = otherOp.CollectionName
 			}
 		}
+
+		if lookupCollectionKey == "" {
+			return fmt.Errorf("LOOKUP condition requested field %s from a wire named %s, but no Wire with this name was found in this load request", condition.LookupField, condition.LookupWire)
+		}
+
 		lookupFields := strings.Split(condition.LookupField, constant.RefSep)
 		lookupField, rest := lookupFields[0], lookupFields[1:]
 		subFields := getAdditionalLookupFields(rest)
 
 		innerErr := collections.AddField(lookupCollectionKey, lookupField, &subFields)
 		if innerErr != nil {
-			return fmt.Errorf("lookup field: %v", innerErr)
+			return fmt.Errorf("cannot lookup field: %v", innerErr)
 		}
 	}
 	return nil
 }
 
-func getMetadataForLoad(
+func GetMetadataForLoad(
 	op *adapt.LoadOp,
 	metadataResponse *adapt.MetadataCache,
 	ops []*adapt.LoadOp,
@@ -525,8 +537,7 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 	}
 
 	// We do this so that we're sure that the labels are attached to the session
-	_, err := translate.GetTranslatedLabels(session)
-	if err != nil {
+	if _, err := translate.GetTranslatedLabels(session); err != nil {
 		return nil, err
 	}
 
@@ -560,8 +571,7 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 			})
 		}
 
-		err := getMetadataForLoad(op, metadataResponse, ops, session)
-		if err != nil {
+		if err := GetMetadataForLoad(op, metadataResponse, ops, session); err != nil {
 			return nil, fmt.Errorf("metadata: %s: %v", op.CollectionName, err)
 		}
 
@@ -586,48 +596,83 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 		return nil, err
 	}
 
-	err = GenerateUserAccessTokens(connection, session)
-	if err != nil {
+	if err = GenerateUserAccessTokens(connection, session); err != nil {
 		return nil, err
 	}
 
 	for _, op := range allOps {
 
-		err := processConditions(op.CollectionName, op.Conditions, op.Params, metadataResponse, allOps, session)
-		if err != nil {
+		if err = processConditions(op.CollectionName, op.Conditions, op.Params, metadataResponse, allOps, session); err != nil {
 			return nil, err
 		}
 
-		collectionMetadata, err := metadataResponse.GetCollection(op.CollectionName)
-		if err != nil {
-			return nil, err
+		collectionMetadata, err2 := metadataResponse.GetCollection(op.CollectionName)
+		if err2 != nil {
+			return nil, err2
 		}
 
-		usage.RegisterEvent("LOAD", "COLLECTION", collectionMetadata.GetFullName(), 0, session)
-		usage.RegisterEvent("LOAD", "DATASOURCE", meta.PLATFORM_DATA_SOURCE, 0, session)
+		collectionKey := collectionMetadata.GetFullName()
+
+		integrationName := collectionMetadata.GetIntegrationName()
+
+		// Attach the collection metadata to the LoadOp so that Load Bots can access it
+		op.AttachMetadataCache(metadataResponse)
+
+		usage.RegisterEvent("LOAD", "COLLECTION", collectionKey, 0, session)
+		usage.RegisterEvent("LOAD", "DATASOURCE", integrationName, 0, session)
 
 		if collectionMetadata.IsDynamic() {
-			err := runDynamicCollectionLoadBots(op, connection, session)
-			if err != nil {
+			if err = runDynamicCollectionLoadBots(op, connection, session); err != nil {
 				return nil, err
 			}
 			continue
 		}
 
-		err = LoadOp(op, connection, session)
+		// Handle external data integration loads
+		if integrationName != "" && integrationName != meta.PLATFORM_DATA_SOURCE {
+			err = performExternalIntegrationLoad(integrationName, op, connection, session)
+		} else {
+			err = LoadOp(op, connection, session)
+		}
 		if err != nil {
 			return nil, err
 		}
-
 	}
 
 	return metadataResponse, nil
 }
 
+func performExternalIntegrationLoad(integrationName string, op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+	integrationConnection, err := GetIntegration(integrationName, session)
+	if err != nil {
+		return err
+	}
+	collectionMetadata, err := op.GetCollectionMetadata()
+	if err != nil {
+		return err
+	}
+	op.AttachIntegration(integrationConnection)
+	integration := integrationConnection.GetIntegration()
+	// If there's a collection-specific load bot defined, use that,
+	// otherwise default to the integration's defined load bot.
+	// If there's neither, then there's nothing to do.
+	botKey := collectionMetadata.LoadBot
+	if botKey == "" && integration != nil {
+		botKey = integration.LoadBot
+	}
+	if botKey == "" {
+		return fmt.Errorf("no load bot defined on collection %s or on integration %s", collectionMetadata.GetKey(), integration.GetKey())
+	}
+
+	if err = runExternalDataSourceLoadBot(botKey, op, connection, session); err != nil {
+		return err
+	}
+	return nil
+}
+
 func LoadOp(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
 
-	err := connection.Load(op, session)
-	if err != nil {
+	if err := connection.Load(op, session); err != nil {
 		return err
 	}
 

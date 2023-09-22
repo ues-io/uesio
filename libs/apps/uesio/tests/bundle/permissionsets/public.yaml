@@ -1,15 +1,17 @@
 name: public
 named: {}
-bots:
-  uesio/tests.add_numbers: true
 views:
   uesio/tests.animalslist: true
+  uesio/tests.declarative_components: true
+  uesio/tests.declarative_components_2: true
 collections:
   uesio/core.user:
     read: true
     create: false
     edit: false
     delete: false
+    modifyall: false
+    viewall: false
     fields:
       uesio/core.uniquekey:
         read: true
@@ -22,6 +24,8 @@ collections:
     create: true
     edit: false
     delete: false
+    modifyall: false
+    viewall: false
     fields:
       uesio/core.owner:
         read: true
@@ -29,6 +33,9 @@ collections:
       uesio/tests.ancestor:
         read: false
         edit: false
+      uesio/tests.autonumber:
+        read: true
+        edit: true
       uesio/tests.genus:
         read: true
         edit: true
@@ -44,18 +51,30 @@ collections:
       uesio/tests.total_population:
         read: true
         edit: true
-      uesio/tests.autonumber:
-        read: true
-        edit: true
+  uesio/tests.tool:
+    read: false
+    create: false
+    edit: false
+    delete: false
+    modifyall: false
+    viewall: true
+    fields: {}
   uesio/tests.wire_condition:
     read: false
     create: false
     edit: false
     delete: false
+    modifyall: false
+    viewall: false
     fields: {}
 routes:
+  uesio/tests.declarative1: true
+  uesio/tests.declarative2: true
   uesio/tests.publicanimalslist: true
 files: {}
+bots:
+  uesio/tests.add_numbers: true
+  uesio/tests.get_weather_forecast: true
 allowallbots: false
 allowallcollections: false
 allowallviews: false

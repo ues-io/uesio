@@ -2,18 +2,18 @@ import testWireSignal, {
 	WireSignalTest,
 	defaultPlainWireProperties,
 } from "./utils"
-import { getCollection, testEnv } from "../utils/defaults"
+import { getExoplanetCollection } from "../utils/defaults"
 import * as api from "../../src/api/api"
 import * as platformModule from "../../src/platform/platform"
 
-const { viewId, wireId, collectionId, ns } = testEnv
+const wireId = "mywire"
+const collectionId = "ben/planets.exoplanet"
 
 const tests: WireSignalTest[] = [
 	{
 		name: "Load",
-		view: viewId,
 		wireId,
-		wireDef: { collection: `${ns}.${collectionId}`, fields: {} },
+		wireDef: { collection: collectionId, fields: {} },
 		signals: [
 			{
 				signal: "wire/LOAD",
@@ -26,13 +26,13 @@ const tests: WireSignalTest[] = [
 				.mockImplementation(() =>
 					Promise.resolve({
 						collections: {
-							"ben/planets.exoplanet": getCollection(),
+							[collectionId]: getExoplanetCollection(),
 						},
 						wires: [
 							{
 								...defaultPlainWireProperties,
-								view: viewId,
-								collection: `${ns}.${collectionId}`,
+								view: "myview",
+								collection: collectionId,
 								name: wireId,
 								data: {
 									record1: {
@@ -46,7 +46,6 @@ const tests: WireSignalTest[] = [
 						],
 					})
 				)
-			console.log(`${ns}.${collectionId}`)
 			return (wire) => {
 				expect(spy).toBeCalledTimes(1)
 				spy.mockRestore()
@@ -59,10 +58,9 @@ const tests: WireSignalTest[] = [
 	},
 	{
 		name: "Check if the error is thrown when the lookup wires are missing from the load",
-		view: viewId,
 		wireId,
 		wireDef: {
-			collection: `${ns}.${collectionId}`,
+			collection: collectionId,
 			fields: {},
 			conditions: [
 				{

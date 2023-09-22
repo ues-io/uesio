@@ -60,7 +60,9 @@ const ListProperty: definition.UC<Definition> = (props) => {
 				add(
 					context,
 					listPropertyPath.addLocal(`${items?.length || 0}`),
-					defaultDefinition
+					context.mergeStringMap(
+						defaultDefinition as unknown as Record<string, string>
+					)
 				)
 			}
 		}

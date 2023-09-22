@@ -1,0 +1,6 @@
+name: logingoogle
+pack: app
+entrypoint: components/logingoogle/logingoogle
+configvalues:
+  - uesio/core.google_auth_client_id
+public: true

@@ -7,33 +7,52 @@ collections:
     create: false
     edit: false
     delete: false
+    modifyall: false
+    viewall: false
     fields: {}
   uesio/core.userfile:
     read: true
     create: true
     edit: true
     delete: true
+    modifyall: false
+    viewall: false
     fields: {}
   uesio/tests.account:
     read: true
     create: true
     edit: true
     delete: true
+    modifyall: false
+    viewall: false
     fields: {}
   uesio/tests.animal:
     read: true
     create: true
     edit: true
     delete: true
+    modifyall: false
+    viewall: false
     fields: {}
   uesio/tests.contact:
     read: true
     create: true
     edit: true
     delete: true
+    modifyall: false
+    viewall: false
+    fields: {}
+  uesio/tests.tool:
+    read: false
+    create: false
+    edit: false
+    delete: false
+    modifyall: true
+    viewall: false
     fields: {}
 routes: {}
 files: {}
+bots: {}
 allowallbots: false
 allowallcollections: false
 allowallviews: false

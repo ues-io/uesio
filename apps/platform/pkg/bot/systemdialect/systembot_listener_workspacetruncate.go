@@ -7,5 +7,5 @@ import (
 )
 
 func RunWorkspaceTruncateListenerBot(_ map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
-	return nil, truncate.TruncateWorkspaceData(session, connection)
+	return nil, truncate.TruncateWorkspaceData(session)
 }

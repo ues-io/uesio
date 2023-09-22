@@ -137,8 +137,9 @@ const AutocompleteField: definition.UtilityComponent<
 					}}
 				/>
 			</div>
-			<FloatingPortal>
-				{isOpen && (
+
+			{isOpen && (
+				<FloatingPortal>
 					<FloatingFocusManager
 						context={floating.context}
 						modal={false}
@@ -199,8 +200,8 @@ const AutocompleteField: definition.UtilityComponent<
 							</div>
 						</div>
 					</FloatingFocusManager>
-				)}
-			</FloatingPortal>
+				</FloatingPortal>
+			)}
 		</>
 	)
 }

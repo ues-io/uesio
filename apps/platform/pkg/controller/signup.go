@@ -2,6 +2,9 @@ package controller
 
 import (
 	"encoding/json"
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/routing"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"net/http"
 
@@ -27,23 +30,27 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 
 	signupMethod, err := auth.Signup(getSignupMethodID(mux.Vars(r)), payload, site)
 	if err != nil {
-		msg := "Signup failed: " + err.Error()
-		logger.Log(msg, logger.ERROR)
-		http.Error(w, msg, http.StatusInternalServerError)
+		signupInternalServerError(w, err)
 		return
 	}
 
-	publicUser, err := auth.GetPublicUser(site, nil)
+	redirectRouteNamespace, redirectRouteName, err := meta.ParseKey(signupMethod.LandingRoute)
 	if err != nil {
-		msg := "Signup failed: " + err.Error()
-		logger.Log(msg, logger.ERROR)
-		http.Error(w, msg, http.StatusInternalServerError)
+		signupInternalServerError(w, err)
 		return
 	}
 
-	//Use the Guest user since the user might not be confirmed yet
-	redirectResponse(w, r, signupMethod.LandingRoute, publicUser, site)
+	file.RespondJSON(w, r, &routing.LoginResponse{
+		RedirectRouteNamespace: redirectRouteNamespace,
+		RedirectRouteName:      redirectRouteName,
+	})
 
+}
+
+func signupInternalServerError(w http.ResponseWriter, err error) {
+	msg := "Signup failed: " + err.Error()
+	logger.Log(msg, logger.ERROR)
+	http.Error(w, msg, http.StatusInternalServerError)
 }
 
 // ConfirmSignUpV2 directly confirms the user, logs them in, and redirects them to the Home route, without any manual intervention

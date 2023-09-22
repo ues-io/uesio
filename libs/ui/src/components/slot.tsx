@@ -1,61 +1,56 @@
-import { FunctionComponent } from "react"
 import {
-	DefinitionList,
-	DefinitionMap,
-	UtilityProps,
-} from "../definition/definition"
-import { Component } from "../component/component"
-import { MetadataKey } from "../bands/builder/types"
-import { getUtilityLoader } from "../component/registry"
+	DECLARATIVE_COMPONENT,
+	DeclarativeComponentSlotContext,
+} from "../component/component"
+import { DefinitionMap, UC } from "../definition/definition"
 
-interface SlotUtilityProps extends UtilityProps {
-	listName: string
-	path: string
+import SlotUtility, {
+	DefaultSlotDirection,
+	DefaultSlotName,
+	SlotDirection,
+} from "../utilities/slot"
+
+const SlotComponentId = "uesio/core.slot"
+
+const capitalizeFirst = (str: string) =>
+	str.charAt(0).toUpperCase() + str.slice(1)
+
+type SlotDefinition = {
+	name?: string
 	definition?: DefinitionMap
-	direction?: "VERTICAL" | "HORIZONTAL"
+	direction?: SlotDirection
 	label?: string
 }
 
-const getSlotProps = (props: SlotUtilityProps) => {
-	const { path, context, listName } = props
-	const definition = props.definition as DefinitionMap
-	if (!definition) return []
-
-	const listDef = (definition?.[listName] || []) as DefinitionList
-	const listPath = path ? `${path}["${listName}"]` : `["${listName}"]`
-
-	return listDef.flatMap((itemDef, index) => {
-		if (!itemDef) return []
-		const componentType = Object.keys(itemDef)[0]
-		const unWrappedDef = itemDef[componentType]
-		return {
-			definition: unWrappedDef as DefinitionMap,
-			componentType: componentType as MetadataKey,
-			path: `${listPath}["${index}"]["${componentType}"]`,
-			context,
-		}
-	})
-}
-
-const Slot: FunctionComponent<SlotUtilityProps> = (props) => {
-	const slotWrapper = props.context.getCustomSlot()
-	if (slotWrapper) {
-		const Loader = getUtilityLoader(slotWrapper)
-		if (!Loader) throw "Could not load component: " + slotWrapper
-		return <Loader {...props} />
-	}
-
+const Slot: UC<SlotDefinition> = (props) => {
+	const { context } = props
+	const {
+		direction = DefaultSlotDirection,
+		name = DefaultSlotName,
+		label = name === DefaultSlotName
+			? "Components Slot"
+			: `${capitalizeFirst(name)} Components`,
+	} = props.definition
+	// There must be context component data corresponding to a declarative component definition
+	// for us to use as the definition for our slot to render from
+	const declarativeComponentSlotContext = context.getComponentData(
+		DECLARATIVE_COMPONENT
+	)?.data as DeclarativeComponentSlotContext
+	if (!declarativeComponentSlotContext) return null
 	return (
-		<>
-			{getSlotProps(props).map((props, index) => (
-				<Component key={index} {...props} />
-			))}
-		</>
+		<SlotUtility
+			direction={direction}
+			definition={declarativeComponentSlotContext.slotDefinitions}
+			listName={name}
+			path={declarativeComponentSlotContext.path}
+			context={context}
+			label={label}
+		/>
 	)
 }
 
 Slot.displayName = "Slot"
 
-export type { SlotUtilityProps }
-export { getSlotProps }
+export { SlotComponentId }
+
 export default Slot

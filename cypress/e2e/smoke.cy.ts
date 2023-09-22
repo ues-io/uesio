@@ -10,7 +10,7 @@ describe("Uesio Sanity Smoke Tests", () => {
 	const namespace = getAppNamespace(appName)
 	const workspaceName = "test"
 	const workspaceBasePath = getWorkspaceBasePath(appName, workspaceName)
-	const NUM_BUILT_IN_FIELDS = 7
+	const NUM_COMMON_FIELDS = 7
 
 	before(() => {
 		cy.loginWithAppAndWorkspace(appName, workspaceName)
@@ -45,10 +45,10 @@ describe("Uesio Sanity Smoke Tests", () => {
 			)
 			cy.title().should("eq", "Collection: animal")
 			cy.getByIdFragment("table", "fields").scrollIntoView()
-			// Initially there should be just built-in fields
+			// Initially there should be no fields
 			cy.get('table[id$="fields"]>tbody')
 				.children("tr")
-				.should("have.length", NUM_BUILT_IN_FIELDS)
+				.should("have.length", 0)
 			// Create a CHECKBOX field
 			// Click the new field button
 			cy.clickButton("new-field")
@@ -77,7 +77,7 @@ describe("Uesio Sanity Smoke Tests", () => {
 			// verify the 2 fields were created
 			cy.get('table[id$="fields"]>tbody')
 				.children("tr")
-				.should("have.length", NUM_BUILT_IN_FIELDS + 2)
+				.should("have.length", 2)
 			cy.hasExpectedTableField(
 				"fields",
 				0,
@@ -108,7 +108,7 @@ describe("Uesio Sanity Smoke Tests", () => {
 			// Verify the correct field was deleted
 			cy.get('table[id$="fields"]>tbody')
 				.children("tr")
-				.should("have.length", NUM_BUILT_IN_FIELDS + 1)
+				.should("have.length", 1)
 			cy.hasExpectedTableField(
 				"fields",
 				0,
@@ -117,6 +117,12 @@ describe("Uesio Sanity Smoke Tests", () => {
 				"Check Box",
 				"Is Extinct"
 			)
+			// Verify that the common fields table has the expected number of fields
+			cy.getByIdFragment("table", "commonFields").scrollIntoView()
+			// Initially there should be no fields
+			cy.get('table[id$="commonFields"]>tbody')
+				.children("tr")
+				.should("have.length", NUM_COMMON_FIELDS)
 		})
 	})
 

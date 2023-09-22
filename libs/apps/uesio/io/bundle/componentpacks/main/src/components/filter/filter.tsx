@@ -1,4 +1,11 @@
-import { api, collection, wire, definition, metadata } from "@uesio/ui"
+import {
+	api,
+	collection,
+	component,
+	wire,
+	definition,
+	metadata,
+} from "@uesio/ui"
 import FieldWrapper from "../../utilities/fieldwrapper/fieldwrapper"
 import MonthFilter from "../../utilities/monthfilter/monthfilter"
 import SelectFilter from "../../utilities/selectfilter/selectfilter"
@@ -87,25 +94,26 @@ const getDefaultCondition = (
 	displayAs: string
 ) => {
 	const type = fieldMetadata.getType()
+	const fieldName = fieldMetadata.getId()
 	switch (type) {
 		case "DATE": {
 			return !displayAs
 				? {
 						id: path,
 						operator: "EQ",
-						field: fieldMetadata.getId(),
+						field: fieldName,
 				  }
 				: {
 						id: path,
 						operator: "IN",
-						field: fieldMetadata.getId(),
+						field: fieldName,
 				  }
 		}
 		case "MULTISELECT": {
 			return {
 				id: path,
 				operator: operator || "HAS_ANY",
-				field: fieldMetadata.getId(),
+				field: fieldName,
 			}
 		}
 		case "USER":
@@ -113,7 +121,7 @@ const getDefaultCondition = (
 			return {
 				id: path,
 				operator: "EQ",
-				field: fieldMetadata.getId(),
+				field: fieldName,
 			}
 		}
 		case "TEXT":
@@ -122,12 +130,12 @@ const getDefaultCondition = (
 			return {
 				id: path,
 				operator: "CONTAINS",
-				field: fieldMetadata.getId(),
+				field: fieldName,
 			}
 		default:
 			return {
 				id: path,
-				field: fieldMetadata.getId(),
+				field: fieldName,
 			}
 	}
 }
@@ -172,7 +180,8 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 		wire,
 		condition,
 		variant:
-			definition["uesio.variant"] || "uesio/io.field:uesio/io.default",
+			definition[component.STYLE_VARIANT] ||
+			"uesio/io.field:uesio/io.default",
 	}
 
 	return (

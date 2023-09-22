@@ -1,13 +1,17 @@
 package datasource
 
 import (
+	"errors"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/bundle"
-	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/creds"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
+
+var dataSourceTypesByName = map[string]string{
+	meta.PLATFORM_DATA_SOURCE: "uesio.postgresio",
+}
 
 func GetConnection(dataSourceKey string, metadata *adapt.MetadataCache, session *sess.Session, connection adapt.Connection) (adapt.Connection, error) {
 
@@ -17,25 +21,29 @@ func GetConnection(dataSourceKey string, metadata *adapt.MetadataCache, session 
 		return connection, nil
 	}
 
-	datasource, err := meta.NewDataSource(dataSourceKey)
+	namespace, _, err := meta.ParseKey(dataSourceKey)
 	if err != nil {
 		return nil, err
 	}
 
-	err = bundle.Load(datasource, session, nil)
+	// Enter into a version context to get these
+	// credentials as the datasource's namespace
+	versionSession, err := EnterVersionContext(namespace, session, connection)
 	if err != nil {
 		return nil, err
 	}
 
-	mergedType, err := configstore.Merge(datasource.Type, session)
+	mergedType, hasType := dataSourceTypesByName[dataSourceKey]
+	if !hasType {
+		return nil, errors.New("unknown datasource type: " + dataSourceKey)
+	}
+
+	adapter, err := adapt.GetAdapter(mergedType)
 	if err != nil {
 		return nil, err
 	}
-	adapter, err := adapt.GetAdapter(mergedType, session)
-	if err != nil {
-		return nil, err
-	}
-	credentials, err := creds.GetCredentials(datasource.Credentials, session)
+
+	credentials, err := creds.GetCredentials(adapter.GetCredentials(), versionSession)
 	if err != nil {
 		return nil, err
 	}

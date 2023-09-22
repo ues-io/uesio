@@ -13,7 +13,7 @@ const ScrollPanel: definition.UC<Props> = (props) => {
 	return (
 		<ScrollPanelUtility
 			id={api.component.getComponentIdFromProps(props)}
-			variant={definition["uesio.variant"]}
+			variant={definition[component.STYLE_VARIANT]}
 			context={context}
 			header={
 				<component.Slot

@@ -1,8 +1,9 @@
 package sess
 
 import (
-	"github.com/icza/session"
 	"testing"
+
+	"github.com/icza/session"
 )
 
 func TestSession_GetSessionIdHash(t *testing.T) {
@@ -20,16 +21,9 @@ func TestSession_GetSessionIdHash(t *testing.T) {
 			false,
 		},
 		{
-			"nil browser session",
-			Session{
-				browserSession: nil,
-			},
-			false,
-		},
-		{
 			"happy path - browser session with id",
 			Session{
-				browserSession: &happyBrowserSession,
+				ID: happyBrowserSession.ID(),
 			},
 			true,
 		},

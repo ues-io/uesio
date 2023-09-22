@@ -45,8 +45,8 @@ params:
         value: AUTONUMBER
   - name: accept
     prompt: Accept
-    type: LIST
-    choices: ["IMAGE", "AUDIO", "VIDEO", "DOCUMENT", "ANY"]
+    type: SELECT
+    selectList: uesio/core.accepttypes
     conditions:
       - param: type
         value: FILE
@@ -67,8 +67,8 @@ params:
         value: REFERENCEGROUP
   - name: referencegroup_ondelete
     prompt: On Delete
-    type: LIST
-    choices: ["CASCADE"]
+    type: SELECT
+    selectList: uesio/core.referencegroupondelete
     conditions:
       - param: type
         value: REFERENCEGROUP

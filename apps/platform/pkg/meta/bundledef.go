@@ -1,8 +1,7 @@
 package meta
 
 type BundleDefDep struct {
-	Version      string                 `yaml:"version,omitempty" json:"version"`
-	Dependencies BundleDefDependencyMap `yaml:"dependencies,omitempty" json:"dependencies"`
+	Version string `yaml:"version,omitempty" json:"version"`
 }
 
 type AppSettings struct {

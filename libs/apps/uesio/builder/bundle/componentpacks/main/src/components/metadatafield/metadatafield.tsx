@@ -64,7 +64,7 @@ const MetadataField: definition.UC<MetadataFieldDefinition> = (props) => {
 			{...(namespace && {
 				defaultNamespace: namespace,
 			})}
-			variant={props.definition["uesio.variant"]}
+			variant={props.definition[component.STYLE_VARIANT]}
 		/>
 	)
 }

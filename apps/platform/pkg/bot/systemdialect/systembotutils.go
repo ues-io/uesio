@@ -136,6 +136,16 @@ func getUniqueKeysFromUpdatesAndDeletes(request *adapt.SaveOp) []string {
 	return keys
 }
 
+func getUniqueKeysFromDeletes(request *adapt.SaveOp) []string {
+	keys := make([]string, len(request.Deletes))
+	index := 0
+	for i := range request.Deletes {
+		keys[index] = request.Deletes[i].UniqueKey
+		index++
+	}
+	return keys
+}
+
 func clearHostForDomains(ids []string) error {
 	keys := make([]string, len(ids))
 	for i, id := range ids {
@@ -162,10 +172,7 @@ func checkValidItems(workspaceID string, items []meta.BundleableItem, session *s
 		return nil
 	}
 
-	//This creates a copy of the session
-	wsSession := session.RemoveWorkspaceContext()
-
-	err := datasource.AddWorkspaceContextByID(workspaceID, wsSession, connection)
+	wsSession, err := datasource.AddWorkspaceContextByID(workspaceID, session, connection)
 	if err != nil {
 		return err
 	}

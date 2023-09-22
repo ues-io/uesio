@@ -1,11 +1,14 @@
 package jsdialect
 
 import (
+	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
+	"strings"
 	"time"
 
 	"github.com/dop251/goja"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -24,6 +27,33 @@ const DefaultListenerBotBody = `function %s(bot) {
     const a = bot.params.get("a")
     const b = bot.params.get("b")
     bot.addResult("answer", a + b)
+}`
+
+const DefaultLoadBotBody = `function %s(bot) {
+	const collectionName = bot.loadRequest.GetCollectionName()
+	[
+		{
+			"first_name": "Luigi",
+			"last_name": "Vampa"
+		},
+		{
+			"first_name": "Myasia",
+			"last_name": "Harvey"
+		},
+	].forEach((record) => bot.addRecord(record))
+}`
+
+const DefaultSaveBotBody = `function %s(bot) {
+	const collectionName = bot.getCollectionName()
+	bot.deletes.get().forEach((deleteApi) => {
+		bot.log.info("got a record to delete, with id: " + deleteApi.getId())
+	})
+	bot.inserts.get().forEach((insertApi) => {
+		bot.log.info("got a record to insert, with id: " + insertApi.getId())
+	})
+	bot.updates.get().forEach((updateApi) => {
+		bot.log.info("got a record to update, with id: " + updateApi.getId())
+	})
 }`
 
 const DefaultBeforeSaveBotBody = `function %s(bot) {
@@ -55,7 +85,7 @@ func (b *JSDialect) hydrateBot(bot *meta.Bot, session *sess.Session) error {
 	if err != nil {
 		return err
 	}
-	content, err := ioutil.ReadAll(stream)
+	content, err := io.ReadAll(stream)
 	if err != nil {
 		return err
 	}
@@ -144,9 +174,8 @@ func (b *JSDialect) CallGeneratorBot(bot *meta.Bot, create retrieve.WriterCreato
 		Bot:        bot,
 		Connection: connection,
 	}
-	err := b.hydrateBot(bot, session)
-	if err != nil {
-		return nil
+	if err := b.hydrateBot(bot, session); err != nil {
+		return err
 	}
 	return RunBot(bot.Name, bot.FileContents, botAPI, nil)
 }
@@ -156,6 +185,20 @@ func (b *JSDialect) RouteBot(bot *meta.Bot, route *meta.Route, session *sess.Ses
 }
 
 func (b *JSDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+	integrationConnection, err := op.GetIntegration()
+	if err != nil {
+		return err
+	}
+	botAPI := NewLoadBotAPI(bot, session, connection, op, integrationConnection)
+	if err = b.hydrateBot(bot, session); err != nil {
+		return err
+	}
+	if err = RunBot(bot.Name, bot.FileContents, botAPI, nil); err != nil {
+		return err
+	}
+	if len(botAPI.loadErrors) > 0 {
+		return errors.New(strings.Join(botAPI.loadErrors, "\n"))
+	}
 	return nil
 }
 
@@ -175,6 +218,10 @@ func (b *JSDialect) GetDefaultFileBody(botType string) string {
 		return DefaultBeforeSaveBotBody
 	case "AFTERSAVE":
 		return DefaultAfterSaveBotBody
+	case "LOAD":
+		return DefaultLoadBotBody
+	case "SAVE":
+		return DefaultSaveBotBody
 	default:
 		return DefaultBotBody
 	}

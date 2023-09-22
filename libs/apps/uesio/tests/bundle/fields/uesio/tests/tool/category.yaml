@@ -1,0 +1,4 @@
+name: category
+type: TEXT
+label: Category
+required: true

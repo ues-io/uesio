@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestLocalize(t *testing.T) {
+func TestGetLocalizedKey(t *testing.T) {
 
 	type testCase struct {
 		name        string
@@ -42,13 +42,13 @@ func TestLocalize(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run("it should "+tc.description, func(t *testing.T) {
-			assert.Equal(t, tc.expected, localize(tc.itemkey, tc.namespace))
+			assert.Equal(t, tc.expected, GetLocalizedKey(tc.itemkey, tc.namespace))
 		})
 	}
 
 }
 
-func TestUnLocalize(t *testing.T) {
+func TestGetFullyQualifiedKey(t *testing.T) {
 
 	type testCase struct {
 		name        string
@@ -91,7 +91,7 @@ func TestUnLocalize(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run("it should "+tc.description, func(t *testing.T) {
-			assert.Equal(t, tc.expected, unLocalize(tc.itemkey, tc.namespace))
+			assert.Equal(t, tc.expected, GetFullyQualifiedKey(tc.itemkey, tc.namespace))
 		})
 	}
 

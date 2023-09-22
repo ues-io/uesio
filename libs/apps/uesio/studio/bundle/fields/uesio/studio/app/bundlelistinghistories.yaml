@@ -1,0 +1,7 @@
+name: bundlelistinghistories
+type: REFERENCEGROUP
+label: Bundle Listing Histories
+referenceGroup:
+  collection: bundlelistinghistory
+  field: app
+  onDelete: CASCADE

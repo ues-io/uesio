@@ -2,7 +2,7 @@ import { Context } from "../context/context"
 import { RootState, getCurrentState } from "../store/store"
 import * as api from "../api/api"
 
-import { MetadataType } from "../bands/builder/types"
+import { MetadataType } from "../metadata/types"
 import { Definition } from "../definition/definition"
 import { batch, useSelector } from "react-redux"
 

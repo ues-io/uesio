@@ -8,6 +8,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"strings"
 
 	"github.com/thecloudmasters/cli/pkg/config/host"
 )
@@ -36,6 +37,11 @@ func Request(method, url string, body io.Reader, sessid string) (*http.Response,
 		}
 		resp.Body.Close()
 		return nil, errors.New(string(data))
+	}
+	// Check for a Location header, indicating we need to redirect.
+	// This likely represents an error, such as the user being logged out
+	if locationHeader := resp.Header.Get("Location"); strings.Contains(locationHeader, "/login") {
+		return nil, errors.New("Unable to access the requested resource. Please run `uesio status` to verify that you are logged in as a user with access to this app.")
 	}
 	return resp, nil
 }

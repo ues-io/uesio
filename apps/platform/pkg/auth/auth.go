@@ -3,20 +3,19 @@ package auth
 import (
 	"errors"
 	"fmt"
-	"os"
-	"strings"
-	"unicode"
-
 	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/creds"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/goutils"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
+	"os"
+	"strings"
 )
 
 func init() {
@@ -61,11 +60,19 @@ func GetAuthConnection(authSourceID string, session *sess.Session) (AuthConnecti
 		return nil, err
 	}
 
-	authType, err := getAuthType(authSource.Type, session)
+	// Enter into a version context to get these
+	// credentails as the datasource's namespace
+	versionSession, err := datasource.EnterVersionContext(authSource.Namespace, session, nil)
 	if err != nil {
 		return nil, err
 	}
-	credentials, err := creds.GetCredentials(authSource.Credentials, session)
+
+	authType, err := getAuthType(authSource.Type, versionSession)
+	if err != nil {
+		return nil, err
+	}
+
+	credentials, err := creds.GetCredentials(authSource.Credentials, versionSession)
 	if err != nil {
 		return nil, err
 	}
@@ -119,10 +126,16 @@ func GetSiteFromHost(host string) (*meta.Site, error) {
 	site.Domain = domain
 	site.Subdomain = subdomain
 
-	bundleDef, err := bundle.GetSiteAppBundle(site)
+	bundleDef, err := bundle.GetSiteBundleDef(site, nil)
 	if err != nil {
 		return nil, err
 	}
+
+	licenseMap, err := datasource.GetLicenses(site.GetAppFullName(), nil)
+	if err != nil {
+		return nil, err
+	}
+	bundleDef.Licenses = licenseMap
 
 	site.SetAppBundle(bundleDef)
 
@@ -167,8 +180,8 @@ func createUser(username string, email string, signupMethod *meta.SignupMethod) 
 		Profile:   signupMethod.Profile,
 		Type:      "PERSON",
 		Language:  "en",
-		FirstName: capitalize(firstName),
-		LastName:  capitalize(lastName),
+		FirstName: goutils.Capitalize(firstName),
+		LastName:  goutils.Capitalize(lastName),
 	}
 
 	if email != "" {
@@ -176,12 +189,6 @@ func createUser(username string, email string, signupMethod *meta.SignupMethod) 
 	}
 
 	return user, nil
-}
-
-func capitalize(str string) string {
-	runes := []rune(str)
-	runes[0] = unicode.ToUpper(runes[0])
-	return string(runes)
 }
 
 func getNamePartsFromUsername(username string) (first, last string) {

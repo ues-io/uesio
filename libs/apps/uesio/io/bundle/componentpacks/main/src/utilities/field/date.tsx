@@ -6,6 +6,7 @@ type DateFieldProps = {
 	setValue: (value: wire.FieldValue) => void
 	value: wire.FieldValue
 	mode?: context.FieldMode
+	readonly?: boolean
 	focusOnRender?: boolean
 }
 
@@ -20,9 +21,9 @@ const DateField: definition.UtilityComponent<DateFieldProps> = (props) => {
 	const value = props.value as string
 	const controlledInputProps = useControlledInput(value, setValue, "")
 
-	const readonly = mode === "READ"
+	const readonly = props.readonly || mode === "READ"
 
-	if (mode === "READ") {
+	if (readonly) {
 		return (
 			<TextField
 				{...props}

@@ -10,14 +10,13 @@ import { MetadataKey } from "../metadataexports"
 import { extendTailwindMerge } from "tailwind-merge"
 import { Context } from "../context/context"
 import { tw, cx, Class } from "@twind/core"
+import { STYLE_TOKENS } from "../componentexports"
 
 const twMerge = extendTailwindMerge({
 	classGroups: {
 		"font-size": ["xxs"],
 	},
 })
-
-const TOKENS_PROPERTY = "uesio.styleTokens"
 
 const defaultTheme: ThemeState = {
 	name: "default",
@@ -49,7 +48,7 @@ function useStyleTokens<K extends string>(
 	props: StyleProps
 ) {
 	const { definition, context } = props
-	const inlineTokens = definition?.["uesio.styleTokens"] || {}
+	const inlineTokens = definition?.[STYLE_TOKENS] || {}
 	return Object.entries(defaults).reduce(
 		(classNames, entry: [K, Class[]]) => {
 			const [className, defaultClasses] = entry
@@ -91,7 +90,7 @@ function getVariantTokens(
 ) {
 	const variantDefinition = getVariantDefinition(props, componentType)
 	if (!variantDefinition) return {}
-	return variantDefinition?.[TOKENS_PROPERTY] as Record<string, string[]>
+	return variantDefinition?.[STYLE_TOKENS] as Record<string, string[]>
 }
 
 function process(context: Context | undefined, ...classes: Class[]) {
@@ -128,11 +127,14 @@ function useUtilityStyleTokens<K extends string>(
 	)
 }
 
+const mergeClasses = twMerge
+
 export type { StyleProps, ThemeState }
 
 export {
 	defaultTheme,
 	cx,
+	mergeClasses,
 	process,
 	useUtilityStyleTokens,
 	useStyleTokens,

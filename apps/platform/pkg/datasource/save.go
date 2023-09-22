@@ -148,9 +148,16 @@ func HandleErrorAndAddToSaveOp(op *adapt.SaveOp, err error) *adapt.SaveError {
 	return saveError
 }
 
+func isExternalIntegrationCollection(op *adapt.SaveOp) bool {
+	integrationName := op.Metadata.GetIntegrationName()
+	return integrationName != "" && integrationName != meta.PLATFORM_DATA_SOURCE
+}
+
 func SaveOp(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
-	dsKey := meta.PLATFORM_DATA_SOURCE
+
 	collectionKey := op.Metadata.GetFullName()
+	integrationName := op.Metadata.GetIntegrationName()
+	isExternalIntegrationSave := isExternalIntegrationCollection(op)
 
 	permissions := session.GetContextPermissions()
 
@@ -159,32 +166,30 @@ func SaveOp(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session
 		return HandleErrorAndAddToSaveOp(op, err)
 	}
 
-	err = adapt.HandleUpsertLookup(connection, op, session)
-	if err != nil {
-		return HandleErrorAndAddToSaveOp(op, err)
-	}
-
-	if len(op.Inserts) > 0 {
-		if !permissions.HasCreatePermission(collectionKey) {
-			return fmt.Errorf("Profile %s does not have create access to the %s collection.", session.GetContextProfile(), collectionKey)
+	if !isExternalIntegrationSave {
+		err = adapt.HandleUpsertLookup(connection, op, session)
+		if err != nil {
+			return HandleErrorAndAddToSaveOp(op, err)
 		}
 	}
 
-	if len(op.Updates) > 0 {
-		if !permissions.HasEditPermission(collectionKey) {
-			return fmt.Errorf("Profile %s does not have edit access to the %s collection.", session.GetContextProfile(), collectionKey)
-		}
+	if len(op.Inserts) > 0 && !permissions.HasCreatePermission(collectionKey) {
+		return fmt.Errorf("Profile %s does not have create access to the %s collection.", session.GetContextProfile(), collectionKey)
 	}
 
-	if len(op.Deletes) > 0 {
-		if !permissions.HasDeletePermission(collectionKey) {
-			return fmt.Errorf("Profile %s does not have delete access to the %s collection.", session.GetContextProfile(), collectionKey)
-		}
+	if len(op.Updates) > 0 && !permissions.HasEditPermission(collectionKey) {
+		return fmt.Errorf("Profile %s does not have edit access to the %s collection.", session.GetContextProfile(), collectionKey)
 	}
 
-	err = adapt.HandleOldValuesLookup(connection, op, session)
-	if err != nil {
-		return HandleErrorAndAddToSaveOp(op, err)
+	if len(op.Deletes) > 0 && !permissions.HasDeletePermission(collectionKey) {
+		return fmt.Errorf("Profile %s does not have delete access to the %s collection.", session.GetContextProfile(), collectionKey)
+	}
+
+	if !isExternalIntegrationSave {
+		err = adapt.HandleOldValuesLookup(connection, op, session)
+		if err != nil {
+			return HandleErrorAndAddToSaveOp(op, err)
+		}
 	}
 
 	err = Populate(op, connection, session)
@@ -231,9 +236,14 @@ func SaveOp(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session
 		return &(*op.Errors)[0]
 	}
 
-	err = GenerateRecordChallengeTokens(op, connection, session)
-	if err != nil {
-		return HandleErrorAndAddToSaveOp(op, err)
+	usage.RegisterEvent("SAVE", "COLLECTION", collectionKey, 0, session)
+	usage.RegisterEvent("SAVE", "DATASOURCE", integrationName, 0, session)
+
+	if !isExternalIntegrationSave {
+		err = GenerateRecordChallengeTokens(op, connection, session)
+		if err != nil {
+			return HandleErrorAndAddToSaveOp(op, err)
+		}
 	}
 
 	err = performCascadeDeletes(op, connection, session)
@@ -241,7 +251,13 @@ func SaveOp(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session
 		return HandleErrorAndAddToSaveOp(op, err)
 	}
 
-	err = connection.Save(op, session)
+	// Handle external data integration saves
+	if isExternalIntegrationSave {
+		err = performExternalIntegrationSave(integrationName, op, connection, session)
+	} else {
+		// handle Uesio DB saves
+		err = connection.Save(op, session)
+	}
 	if err != nil {
 		return HandleErrorAndAddToSaveOp(op, err)
 	}
@@ -254,8 +270,31 @@ func SaveOp(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session
 	if op.HasErrors() {
 		return &(*op.Errors)[0]
 	}
-	usage.RegisterEvent("SAVE", "COLLECTION", op.Metadata.GetFullName(), 0, session)
-	usage.RegisterEvent("SAVE", "DATASOURCE", dsKey, 0, session)
+
+	return nil
+}
+
+func performExternalIntegrationSave(integrationName string, op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+	integrationConnection, err := GetIntegration(integrationName, session)
+	if err != nil {
+		return err
+	}
+	op.AttachIntegration(integrationConnection)
+	integration := integrationConnection.GetIntegration()
+	// If there's a collection-specific save bot defined, use that,
+	// otherwise default to the integration's defined save bot.
+	// If there's neither, then there's nothing to do.
+	botKey := op.Metadata.SaveBot
+	if botKey == "" && integration != nil {
+		botKey = integration.SaveBot
+	}
+	if botKey == "" {
+		return fmt.Errorf("no save bot defined on collection %s or on integration %s", op.Metadata.GetKey(), integration.GetKey())
+	}
+
+	if err = runExternalDataSourceSaveBot(botKey, op, connection, session); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -292,12 +331,11 @@ func SaveOps(batch []*adapt.SaveOp, connection adapt.Connection, session *sess.S
 	}
 
 	for _, op := range batch {
-
-		err = connection.SetRecordAccessTokens(op, session)
-		if err != nil {
-			return err
+		if !isExternalIntegrationCollection(op) {
+			if err = connection.SetRecordAccessTokens(op, session); err != nil {
+				return err
+			}
 		}
-
 	}
 
 	return nil

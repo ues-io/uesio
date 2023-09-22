@@ -1,4 +1,5 @@
 import { Context, ViewContext } from "../context/context"
+import { PlainWireRecord } from "../wireexports"
 import { DisplayCondition, should, getWiresForConditions } from "./display"
 
 const viewName = "uesio/core.foo"
@@ -74,6 +75,315 @@ const shouldTestCases = [
 				} as ViewContext),
 				condition: { type: "paramIsNotSet", param: "foo" },
 				expected: true,
+			},
+		],
+	},
+	{
+		type: "fieldValue",
+		tests: [
+			// STRING
+			{
+				name: "{foo: bar}, (field: foo, value: bar)",
+				context: new Context().addRecordDataFrame({
+					foo: "bar",
+				} as PlainWireRecord),
+				condition: { type: "fieldValue", field: "foo", value: "bar" },
+				expected: true,
+			},
+			{
+				name: "{foo: oof}, (field: foo, value: bar)",
+				context: new Context().addRecordDataFrame({
+					foo: "oof",
+				} as PlainWireRecord),
+				condition: { type: "fieldValue", field: "foo", value: "bar" },
+				expected: false,
+			},
+			{
+				name: "{foo: oof}, (field: foo, value: bar, operator: NOT_EQUALS)",
+				context: new Context().addRecordDataFrame({
+					foo: "oof",
+				} as PlainWireRecord),
+				condition: {
+					type: "fieldValue",
+					field: "foo",
+					value: "bar",
+					operator: "NOT_EQUALS",
+				},
+				expected: true,
+			},
+			{
+				name: "{foo: bar}, (field: foo, value: oof, operator: NOT_EQUALS)",
+				context: new Context().addRecordDataFrame({
+					foo: "bar",
+				} as PlainWireRecord),
+				condition: {
+					type: "fieldValue",
+					field: "foo",
+					value: "oof",
+					operator: "NOT_EQUALS",
+				},
+				expected: true,
+			},
+			{
+				name: "{foo: bar}, (field: foo, values: [bar,baz], operator: IN)",
+				context: new Context().addRecordDataFrame({
+					foo: "bar",
+				} as PlainWireRecord),
+				condition: {
+					type: "fieldValue",
+					field: "foo",
+					operator: "IN",
+					values: ["bar", "baz"],
+				},
+				expected: true,
+			},
+			{
+				name: "{foo: oof}, (field: foo, values: [bar,baz], operator: IN)",
+				context: new Context().addRecordDataFrame({
+					foo: "oof",
+				} as PlainWireRecord),
+				condition: {
+					type: "fieldValue",
+					field: "foo",
+					operator: "IN",
+					values: ["bar", "baz"],
+				},
+				expected: false,
+			},
+			{
+				name: "{foo: oof}, (field: foo, values: [bar,baz], operator: NOT_IN)",
+				context: new Context().addRecordDataFrame({
+					foo: "oof",
+				} as PlainWireRecord),
+				condition: {
+					type: "fieldValue",
+					field: "foo",
+					operator: "NOT_IN",
+					values: ["bar", "baz"],
+				},
+				expected: true,
+			},
+			{
+				name: "{}, (field: foo, values: [bar,baz], operator: NOT_IN)",
+				context: new Context().addRecordDataFrame(
+					{} as PlainWireRecord
+				),
+				condition: {
+					type: "fieldValue",
+					field: "foo",
+					operator: "NOT_IN",
+					values: ["bar", "baz"],
+				},
+				expected: true,
+			},
+			{
+				name: "{foo: }, (field: foo, values: [bar], operator: NOT_IN)",
+				context: new Context().addRecordDataFrame({
+					foo: "",
+				} as PlainWireRecord),
+				condition: {
+					type: "fieldValue",
+					field: "foo",
+					operator: "NOT_IN",
+					values: ["bar"],
+				},
+				expected: true,
+			},
+			{
+				name: "{foo: }, (field: foo, values: [bar,baz], operator: NOT_IN)",
+				context: new Context().addRecordDataFrame({
+					foo: "",
+				} as PlainWireRecord),
+				condition: {
+					type: "fieldValue",
+					field: "foo",
+					operator: "NOT_IN",
+					values: ["bar", "baz"],
+				},
+				expected: true,
+			},
+			{
+				name: "{foo: bar}, (field: foo, values: [bar,baz], operator: NOT_IN)",
+				context: new Context().addRecordDataFrame({
+					foo: "bar",
+				} as PlainWireRecord),
+				condition: {
+					type: "fieldValue",
+					field: "foo",
+					operator: "NOT_IN",
+					values: ["bar", "baz"],
+				},
+				expected: false,
+			},
+			// BOOLEAN
+			{
+				name: "{awake: true}, (field: awake, value: true)",
+				context: new Context().addRecordDataFrame({
+					awake: true,
+				} as PlainWireRecord),
+				condition: { type: "fieldValue", field: "awake", value: true },
+				expected: true,
+			},
+			{
+				name: "{awake: false}, (field: awake, value: true)",
+				context: new Context().addRecordDataFrame({
+					awake: false,
+				} as PlainWireRecord),
+				condition: { type: "fieldValue", field: "awake", value: true },
+				expected: false,
+			},
+			{
+				name: "{awake: false}, (field: awake, value: false)",
+				context: new Context().addRecordDataFrame({
+					awake: false,
+				} as PlainWireRecord),
+				condition: { type: "fieldValue", field: "awake", value: false },
+				expected: true,
+			},
+			{
+				name: "{awake: true}, (field: awake, value: false)",
+				context: new Context().addRecordDataFrame({
+					awake: true,
+				} as PlainWireRecord),
+				condition: { type: "fieldValue", field: "awake", value: false },
+				expected: false,
+			},
+			{
+				name: "{awake: true}, (field: awake, value: true, operator: NOT_EQUALS)",
+				context: new Context().addRecordDataFrame({
+					awake: true,
+				} as PlainWireRecord),
+				condition: {
+					type: "fieldValue",
+					field: "awake",
+					value: true,
+					operator: "NOT_EQUALS",
+				},
+				expected: false,
+			},
+			{
+				name: "{awake: false}, (field: awake, value: true, operator: NOT_EQUALS)",
+				context: new Context().addRecordDataFrame({
+					awake: false,
+				} as PlainWireRecord),
+				condition: {
+					type: "fieldValue",
+					field: "awake",
+					value: true,
+					operator: "NOT_EQUALS",
+				},
+				expected: true,
+			},
+			{
+				name: "{awake: false}, (field: awake, value: false, operator: NOT_EQUALS)",
+				context: new Context().addRecordDataFrame({
+					awake: false,
+				} as PlainWireRecord),
+				condition: {
+					type: "fieldValue",
+					field: "awake",
+					value: false,
+					operator: "NOT_EQUALS",
+				},
+				expected: false,
+			},
+			{
+				name: "{awake: true}, (field: awake, value: false, operator: NOT_EQUALS)",
+				context: new Context().addRecordDataFrame({
+					awake: true,
+				} as PlainWireRecord),
+				condition: {
+					type: "fieldValue",
+					field: "awake",
+					value: false,
+					operator: "NOT_EQUALS",
+				},
+				expected: true,
+			},
+			// NUMBER
+			{
+				name: "{age: 1}, (field: age, value: 1)",
+				context: new Context().addRecordDataFrame({
+					age: 1,
+				} as PlainWireRecord),
+				condition: { type: "fieldValue", field: "age", value: 1 },
+				expected: true,
+			},
+			{
+				name: "{age: 1}, (field: age, value: 0)",
+				context: new Context().addRecordDataFrame({
+					age: 1,
+				} as PlainWireRecord),
+				condition: { type: "fieldValue", field: "age", value: 0 },
+				expected: false,
+			},
+			{
+				name: "{age: 0}, (field: age, value: 1)",
+				context: new Context().addRecordDataFrame({
+					age: 0,
+				} as PlainWireRecord),
+				condition: { type: "fieldValue", field: "age", value: 1 },
+				expected: false,
+			},
+			{
+				name: "{age: 0}, (field: age, value: 0)",
+				context: new Context().addRecordDataFrame({
+					age: 0,
+				} as PlainWireRecord),
+				condition: { type: "fieldValue", field: "age", value: 0 },
+				expected: true,
+			},
+			{
+				name: "{age: 1}, (field: age, value: 0, operator: NOT_EQUALS)",
+				context: new Context().addRecordDataFrame({
+					age: 1,
+				} as PlainWireRecord),
+				condition: {
+					type: "fieldValue",
+					field: "age",
+					value: 0,
+					operator: "NOT_EQUALS",
+				},
+				expected: true,
+			},
+			{
+				name: "{age: 1}, (field: age, value: 1, operator: NOT_EQUALS)",
+				context: new Context().addRecordDataFrame({
+					age: 1,
+				} as PlainWireRecord),
+				condition: {
+					type: "fieldValue",
+					field: "age",
+					value: 1,
+					operator: "NOT_EQUALS",
+				},
+				expected: false,
+			},
+			{
+				name: "{age: 0}, (field: age, value: 1, operator: NOT_EQUALS)",
+				context: new Context().addRecordDataFrame({
+					age: 0,
+				} as PlainWireRecord),
+				condition: {
+					type: "fieldValue",
+					field: "age",
+					value: 1,
+					operator: "NOT_EQUALS",
+				},
+				expected: true,
+			},
+			{
+				name: "{age: 0}, (field: age, value: 0, operator: NOT_EQUALS)",
+				context: new Context().addRecordDataFrame({
+					age: 0,
+				} as PlainWireRecord),
+				condition: {
+					type: "fieldValue",
+					field: "age",
+					value: 0,
+					operator: "NOT_EQUALS",
+				},
+				expected: false,
 			},
 		],
 	},

@@ -1,0 +1,4 @@
+name: google_auth_client_id
+managedBy: site
+store: platform
+public: true

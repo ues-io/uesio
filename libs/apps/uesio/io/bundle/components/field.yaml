@@ -45,6 +45,7 @@ properties:
       - updates:
           - field: displayAs
           - field: placeholder
+          - field: readonly
       # If the display type is now a type for which display-type specific properties are not relevant,
       # clear out these old properties
       - updates:
@@ -116,6 +117,9 @@ properties:
           - TEXT
           - LONGTEXT
           - REFERENCE
+  - name: readonly
+    type: CHECKBOX
+    label: Read Only
   - name: applyChanges
     type: SELECT
     label: "Apply field changes"
@@ -131,6 +135,10 @@ properties:
         values:
           - TEXT
           - NUMBER
+      - type: fieldValue
+        field: readonly
+        operator: NOT_EQUALS
+        value: true
   - name: displayAs
     type: SELECT
     label: Display as
@@ -255,13 +263,28 @@ properties:
         type: COLLECTION_FIELDS
         collectionName: "$Parent.Record{referenceCollection}"
         label: Search Fields
+        displayConditions:
+          - type: fieldValue
+            field: readonly
+            operator: NOT_EQUALS
+            value: true
       - name: returnFields
         type: COLLECTION_FIELDS
         collectionName: "$Parent.Record{referenceCollection}"
         label: Return Fields
+        displayConditions:
+          - type: fieldValue
+            field: readonly
+            operator: NOT_EQUALS
+            value: true
       - name: order
         type: LIST
         subtype: STRUCT
+        displayConditions:
+          - type: fieldValue
+            field: readonly
+            operator: NOT_EQUALS
+            value: true
         items:
           addLabel: Add Reference Search Order Field
           displayTemplate: "${field} - ${desc}"
@@ -287,6 +310,7 @@ sections:
       - label
       - labelPosition
       - placeholder
+      - readonly
       - displayAs
       - applyChanges
       # Display type specific properties

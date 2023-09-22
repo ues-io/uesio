@@ -1,4 +1,4 @@
-import { api, styles, context, definition } from "@uesio/ui"
+import { api, styles, context, definition, component } from "@uesio/ui"
 import MarkDownField from "../../utilities/markdownfield/markdownfield"
 
 type MarkDownDefinition = {
@@ -32,7 +32,7 @@ const MarkDown: definition.UC<MarkDownDefinition> = (props) => {
 	return (
 		<MarkDownField
 			classes={classes}
-			variant={definition["uesio.variant"]}
+			variant={definition[component.STYLE_VARIANT]}
 			context={context}
 			value={context.merge(
 				definition.file
