@@ -1,0 +1,10 @@
+name: default
+label: Default
+extends: uesio/io.field:uesio/io.default
+definition:
+  uesio.styleTokens:
+    root:
+      - p-[11px]
+      - leading-none
+    checkbox:
+public: true

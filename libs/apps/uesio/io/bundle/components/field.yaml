@@ -17,6 +17,7 @@ variants:
   - uesio/io.listfield:uesio/io.default
   - uesio/io.selectfield:uesio/io.default
   - uesio/io.customselectfield:uesio/io.default
+  - uesio/io.checkboxfield:uesio/io.default
   - uesio/io.codefield:uesio/io.default
   - uesio/io.markdownfield:uesio/io.default
   - uesio/io.menu:uesio/io.default

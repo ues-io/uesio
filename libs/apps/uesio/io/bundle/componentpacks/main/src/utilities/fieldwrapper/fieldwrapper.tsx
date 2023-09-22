@@ -14,6 +14,7 @@ const StyleDefaults = Object.freeze({
 	root: [],
 	labelTop: [],
 	labelLeft: [],
+	labelRight: [],
 	label: [],
 	errorwrapper: [],
 	erroricon: [],
@@ -35,7 +36,8 @@ const FieldWrapper = forwardRef<HTMLDivElement, FieldWrapperUtilityProps>(
 					classes.root,
 					(labelPosition === "top" || !labelPosition) &&
 						classes.labelTop,
-					labelPosition === "left" && classes.labelLeft
+					labelPosition === "left" && classes.labelLeft,
+					labelPosition === "right" && classes.labelRight
 				)}
 			>
 				{labelPosition !== "none" && (
