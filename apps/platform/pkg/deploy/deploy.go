@@ -9,15 +9,15 @@ import (
 	"path/filepath"
 	"strings"
 
+	"gopkg.in/yaml.v3"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
-	"gopkg.in/yaml.v3"
 )
 
 var ORDERED_ITEMS = [...]string{
@@ -306,9 +306,6 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 	if err != nil {
 		return err
 	}
-
-	// Clear out the bundle definition cache
-	bundle.ClearAppBundleCache(session)
 
 	return nil
 

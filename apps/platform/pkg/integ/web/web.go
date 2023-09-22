@@ -4,19 +4,35 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/goutils"
-
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/cache"
+	"github.com/thecloudmasters/uesio/pkg/goutils"
 	httpClient "github.com/thecloudmasters/uesio/pkg/http"
-	"github.com/thecloudmasters/uesio/pkg/localcache"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
+
+var responseCache cache.Cache[[]byte]
+var contentTypeCache cache.Cache[string]
+
+func init() {
+	responseCache = cache.NewRedisCache[[]byte]("webRequestBody")
+	contentTypeCache = cache.NewRedisCache[string]("webRequestContentType")
+}
+
+func webRequestBody(url string) string {
+	return fmt.Sprintf("webRequestBody:%s", url)
+}
+
+func webRequestContentType(url string) string {
+	return fmt.Sprintf("webRequestContentType:%s", url)
+}
 
 type RequestOptions struct {
 	URL          string            `json:"url"`
@@ -50,11 +66,6 @@ func (wic *WebIntegrationConnection) GetCredentials() *adapt.Credentials {
 func (wic *WebIntegrationConnection) GetIntegration() *meta.Integration {
 	return wic.integration
 }
-
-const (
-	webRequestBody        = "web-request-body"
-	webRequestContentType = "web-request-content-type"
-)
 
 func (wic *WebIntegrationConnection) RunAction(actionName string, requestOptions interface{}) (interface{}, error) {
 
@@ -105,14 +116,14 @@ func (wic *WebIntegrationConnection) Request(methodName string, requestOptions i
 
 	fullURL := goutils.SafeJoinStrings([]string{wic.integration.BaseURL, options.URL}, "/")
 
-	// TODO: Convert to using Redis cache, and support cache invalidation
+	// TODO: Support cache invalidation
 	if options.Cache {
-		cachedBody, gotCachedBody := localcache.GetCacheEntry(webRequestBody, fullURL)
-		cachedContentType, gotCachedContentType := localcache.GetCacheEntry(webRequestContentType, fullURL)
-		if gotCachedBody && gotCachedContentType {
+		cachedBody, _ := responseCache.Get(fullURL)
+		cachedContentType, _ := contentTypeCache.Get(fullURL)
+		if cachedBody != nil && cachedContentType != "" {
 			// Attempt to parse the response body into a structured representation,
 			// if possible. If it fails, just return the raw response as a string
-			return ParseResponseBody(cachedContentType.(string), cachedBody.([]byte), options.ResponseData)
+			return ParseResponseBody(cachedContentType, cachedBody, options.ResponseData)
 		}
 	}
 
@@ -202,8 +213,8 @@ func (wic *WebIntegrationConnection) Request(methodName string, requestOptions i
 	contentType := resp.Header.Get("Content-Type")
 
 	if options.Cache {
-		localcache.SetCacheEntry(webRequestBody, fullURL, rawData)
-		localcache.SetCacheEntry(webRequestContentType, fullURL, contentType)
+		responseCache.Set(fullURL, rawData)
+		contentTypeCache.Set(fullURL, contentType)
 	}
 
 	// Attempt to parse the response body into a structured representation,

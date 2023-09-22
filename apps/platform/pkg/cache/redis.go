@@ -34,11 +34,7 @@ func GetRedisConn() redis.Conn {
 	return redisPool.Get()
 }
 
-func GetRedisTTL() string {
-	return redisTTL
-}
-
-func DeleteKeys(keys []string) error {
+func deleteKeys(keys []string) error {
 	if len(keys) == 0 {
 		return nil
 	}
@@ -51,15 +47,7 @@ func DeleteKeys(keys []string) error {
 	return nil
 }
 
-func Set(key string, data interface{}) error {
-	bytes, err := json.Marshal(data)
-	if err != nil {
-		return err
-	}
-	return SetString(key, string(bytes))
-}
-
-func SetString(key string, data string) error {
+func setString(key string, data string) error {
 	conn := GetRedisConn()
 	defer conn.Close()
 	_, err := conn.Do("SET", key, data, "EX", redisTTL)
@@ -69,35 +57,10 @@ func SetString(key string, data string) error {
 	return nil
 }
 
-func GetString(key string) (string, error) {
+func getString(key string) (string, error) {
 	conn := GetRedisConn()
 	defer conn.Close()
 	return redis.String(conn.Do("GET", key))
-}
-
-func Get(key string, data interface{}) error {
-	//start := time.Now()
-	dataString, err := GetString(key)
-	if err != nil {
-		return err
-	}
-	//fmt.Printf("REDIS GET %v %v\n", key, time.Since(start))
-	return json.Unmarshal([]byte(dataString), data)
-}
-
-// We made a change to user data cached in Redis in 1/2023 which required modifying the key
-// so that the previous cache data would be ignored, hence the use of "v2" here.
-// Once this change is deployed, we can absolutely remove the ":v2" from the key
-func GetUserKey(userid, siteid string) string {
-	return fmt.Sprintf("user:v2:%s:%s", userid, siteid)
-}
-
-func GetHostKey(domainType, domainValue string) string {
-	return fmt.Sprintf("host:%s:%s", domainType, domainValue)
-}
-
-func GetLicenseKey(namespace string) string {
-	return fmt.Sprintf("license:%s", namespace)
 }
 
 const nsFmt = "%s:%s"
@@ -112,7 +75,7 @@ type RedisCache[T any] struct {
 
 func (r RedisCache[T]) Get(key string) (T, error) {
 	var result T
-	dataString, err := GetString(namespaced(r.namespace, key))
+	dataString, err := getString(namespaced(r.namespace, key))
 	if err != nil {
 		return result, err
 	}
@@ -127,7 +90,7 @@ func (r RedisCache[T]) Set(key string, value T) error {
 	if err != nil {
 		return err
 	}
-	return SetString(namespaced(r.namespace, key), string(bytes))
+	return setString(namespaced(r.namespace, key), string(bytes))
 }
 
 func (r RedisCache[T]) Del(keys ...string) error {
@@ -135,7 +98,7 @@ func (r RedisCache[T]) Del(keys ...string) error {
 	for i, k := range keys {
 		namespacedKeys[i] = namespaced(r.namespace, k)
 	}
-	return DeleteKeys(namespacedKeys)
+	return deleteKeys(namespacedKeys)
 }
 
 func NewRedisCache[T any](namespace string) Cache[T] {

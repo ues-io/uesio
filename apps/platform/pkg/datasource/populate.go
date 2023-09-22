@@ -23,23 +23,21 @@ func populateAutoNumbers(field *adapt.FieldMetadata) ChangeProcessor {
 			autoNumberMeta = (*adapt.AutoNumberMetadata)(&meta.DefaultAutoNumberMetadata)
 		}
 		format := "%0" + strconv.Itoa(autoNumberMeta.LeadingZeros) + "d"
-		sufix := fmt.Sprintf(format, change.Autonumber)
+		suffix := fmt.Sprintf(format, change.Autonumber)
 
-		an := autoNumberMeta.Prefix + "-" + sufix
+		an := autoNumberMeta.Prefix + "-" + suffix
 		if autoNumberMeta.Prefix == "" {
-			an = sufix
+			an = suffix
 		}
 
 		// See if we're trying to set this value for an insert.
-		// If so, don't set the autonumber and just keep its current
-		// value.
+		// If so, don't set the autonumber and just keep its current value.
 		current, err := change.GetFieldAsString(field.GetFullName())
 		if err == nil && current != "" {
 			return nil
 		}
 
-		err = change.FieldChanges.SetField(field.GetFullName(), an)
-		if err != nil {
+		if err = change.FieldChanges.SetField(field.GetFullName(), an); err != nil {
 			return adapt.NewSaveError(change.RecordKey, field.GetFullName(), err.Error())
 		}
 
@@ -52,8 +50,7 @@ func populateTimestamps(field *adapt.FieldMetadata, timestamp int64) ChangeProce
 		// Only populate fields marked with CREATE on insert
 		// Always populate the fields marked with UPDATE
 		if ((field.AutoPopulate == "CREATE") && change.IsNew) || field.AutoPopulate == "UPDATE" {
-			err := change.FieldChanges.SetField(field.GetFullName(), timestamp)
-			if err != nil {
+			if err := change.FieldChanges.SetField(field.GetFullName(), timestamp); err != nil {
 				return adapt.NewSaveError(change.RecordKey, field.GetFullName(), err.Error())
 			}
 		}
@@ -115,9 +112,8 @@ func Populate(op *adapt.SaveOp, connection adapt.Connection, session *sess.Sessi
 			insertIndex++
 		}
 		for _, population := range populations {
-			err := population(change)
-			if err != nil {
-				op.AddError(err)
+			if saveErr := population(change); saveErr != nil {
+				op.AddError(saveErr)
 			}
 		}
 		// Enforce field-level security for save

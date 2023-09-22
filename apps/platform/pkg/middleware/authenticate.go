@@ -7,6 +7,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/icza/session"
+
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
@@ -41,7 +42,7 @@ func Authenticate(next http.Handler) http.Handler {
 		// Get the site we're currently using from our host
 		site, err := auth.GetSiteFromHost(r.Host)
 		if err != nil {
-			http.Error(w, "Failed to get site from domain:"+err.Error(), http.StatusInternalServerError)
+			http.Error(w, "Failed to get site from domain: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -50,7 +51,7 @@ func Authenticate(next http.Handler) http.Handler {
 
 		user, err := auth.GetUserFromBrowserSession(browserSession, site)
 		if err != nil {
-			http.Error(w, "Failed to get user from site:"+err.Error(), http.StatusInternalServerError)
+			http.Error(w, "Failed to get user from site: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 

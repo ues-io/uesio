@@ -5,19 +5,32 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/cache"
+	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
+var licenseCache cache.Cache[map[string]*meta.License]
+
+func init() {
+	licenseCache = cache.NewRedisCache[map[string]*meta.License]("license")
+}
+
+func InvalidateLicenseCaches(namespaces []string) error {
+	return licenseCache.Del(namespaces...)
+}
+
 func setLicenseCache(namespace string, licenses map[string]*meta.License) error {
-	return cache.Set(cache.GetLicenseKey(namespace), &licenses)
+	return licenseCache.Set(namespace, licenses)
 }
 
 func getLicenseCache(namespace string) (map[string]*meta.License, bool) {
-	licenses := map[string]*meta.License{}
-	err := cache.Get(cache.GetLicenseKey(namespace), &licenses)
+	licenses, err := licenseCache.Get(namespace)
 	if err != nil {
-		fmt.Println("Err: " + err.Error())
+		logger.LogError(fmt.Errorf("unable to retrieve licenses from cache: %s", err.Error()))
+		return nil, false
+	}
+	if licenses == nil {
 		return nil, false
 	}
 	return licenses, true
@@ -25,7 +38,7 @@ func getLicenseCache(namespace string) (map[string]*meta.License, bool) {
 
 func GetLicenses(namespace string, connection adapt.Connection) (map[string]*meta.License, error) {
 	// Hardcode the license for uesio/core
-	// This prevents a cicular dependency when we try to get
+	// This prevents a circular dependency when we try to get
 	// the credentials to load the license data.
 	if namespace == "uesio/core" {
 		return map[string]*meta.License{
