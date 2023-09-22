@@ -2,43 +2,39 @@ package cache
 
 import (
 	"errors"
-	"sync"
+	"time"
+
+	gocache "github.com/patrickmn/go-cache"
 )
 
 type MemoryCache[T any] struct {
-	cache map[string]T
-	lock  sync.RWMutex
+	c *gocache.Cache
 }
 
-func NewMemoryCache[T any]() Cache[T] {
+func NewMemoryCache[T any](expirationTime, purgeTime time.Duration) Cache[T] {
+	c := gocache.New(expirationTime, purgeTime)
 	return &MemoryCache[T]{
-		map[string]T{},
-		sync.RWMutex{},
+		c,
 	}
 }
 
-func (c *MemoryCache[T]) Get(key string) (T, error) {
-	c.lock.RLock()
-	defer c.lock.RUnlock()
-	result, hasVal := c.cache[key]
+func (mc *MemoryCache[T]) Get(key string) (T, error) {
+	var result T
+	val, hasVal := mc.c.Get(key)
 	if hasVal {
-		return result, nil
+		return val.(T), nil
 	}
 	return result, errors.New("key " + key + " not found")
 }
 
-func (c *MemoryCache[T]) Set(key string, value T) error {
-	c.lock.Lock()
-	defer c.lock.Unlock()
-	c.cache[key] = value
+func (mc *MemoryCache[T]) Set(key string, value T) error {
+	mc.c.Set(key, value, 0) // 0 duration = use default expiration
 	return nil
 }
 
-func (c *MemoryCache[T]) Del(key ...string) error {
-	c.lock.Lock()
-	defer c.lock.Unlock()
+func (mc *MemoryCache[T]) Del(key ...string) error {
 	for _, k := range key {
-		delete(c.cache, k)
+		mc.c.Delete(k)
 	}
 	return nil
 }
