@@ -13,7 +13,7 @@ const ToggleField: definition.UtilityComponent<ToggleFieldProps> = (props) => {
 	const checked = value === true
 	const classes = styles.useUtilityStyleTokens(
 		{
-			root: ["w-full", "text-center"],
+			root: [],
 			switch: [
 				"[&:has(:focus-visible)]:(outline(& 2 offset-2 blue-600))",
 				"relative",

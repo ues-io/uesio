@@ -9,6 +9,13 @@ definition:
       - grid
       - grid-cols-[40%_60%]
       - items-center
+    labelRight:
+      - grid
+      - justify-start
+      - grid-flow-col-dense
+      - items-end
+      - gap-2
+      - "[&>div:first-child]:order-last"
     errorwrapper:
       - flex
       - items-center

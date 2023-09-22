@@ -53,7 +53,7 @@ type FieldValueSetter = (value: wire.FieldValue) => void
 
 type ApplyChanges = "onBlur" | ""
 
-type LabelPosition = "none" | "top" | "left"
+type LabelPosition = "none" | "top" | "left" | "right"
 
 type UserFileMetadata = {
 	[collection.ID_FIELD]: string
