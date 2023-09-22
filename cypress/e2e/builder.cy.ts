@@ -17,6 +17,7 @@ components:
       text: New Button
       icon: bolt
       uesio.variant: uesio/io.default
+      iconPlacement: start
 `
 
 const setButtonPageDef = `# Wires connect to data in collections
@@ -27,6 +28,7 @@ components:
       text: First
       icon: bolt
       uesio.variant: uesio/io.default
+      iconPlacement: start
 `
 
 const cloneButtonPageDef = `# Wires connect to data in collections
@@ -37,10 +39,12 @@ components:
       text: First
       icon: bolt
       uesio.variant: uesio/io.default
+      iconPlacement: start
   - uesio/io.button:
       text: First
       icon: bolt
       uesio.variant: uesio/io.default
+      iconPlacement: start
 `
 
 const setButtonPageDef2 = `# Wires connect to data in collections
@@ -51,10 +55,12 @@ components:
       text: First
       icon: bolt
       uesio.variant: uesio/io.default
+      iconPlacement: start
   - uesio/io.button:
       text: Second
       icon: bolt
       uesio.variant: uesio/io.default
+      iconPlacement: start
 `
 
 const moveBackwardPageDef = `# Wires connect to data in collections
@@ -65,10 +71,12 @@ components:
       text: Second
       icon: bolt
       uesio.variant: uesio/io.default
+      iconPlacement: start
   - uesio/io.button:
       text: First
       icon: bolt
       uesio.variant: uesio/io.default
+      iconPlacement: start
 `
 
 describe("Uesio Builder Tests", () => {
