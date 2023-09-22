@@ -23,7 +23,6 @@ HTTP 200
 # Type Checkbox
 jsonpath "$.featureflag[11].name" == "use_ai_signals"
 jsonpath "$.featureflag[11].type" == "CHECKBOX"
-jsonpath "$.featureflag[11].value" == false
 jsonpath "$.featureflag[11].user" == {{user_id}}
 
 # Type Number

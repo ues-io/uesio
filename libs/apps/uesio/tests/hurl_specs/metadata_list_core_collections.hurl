@@ -14,18 +14,28 @@ Accept: application/json
 {
     "wires": [
         {
-            "collection":"uesio/core.signupmethod",
-            "query":true
+            "collection": "uesio/core.signupmethod",
+            "query": true,
+            "order": [
+                {
+                    "field": "uesio/core.name",
+                    "desc": false
+                }
+            ]
         }
     ]
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data" count == 1
-jsonpath "$.wires[0].data[0]['uesio/core.name']" == "platform"
-jsonpath "$.wires[0].data[0]['uesio/core.namespace']" == "uesio/core"
-jsonpath "$.wires[0].data[0]['uesio/core.authsource']" == "uesio/core.platform"
-jsonpath "$.wires[0].data[0]['uesio/core.appicon']" == "hub"
+jsonpath "$.wires[0].data" count == 2
+jsonpath "$.wires[0].data[0]['uesio/core.name']" == "google"
+jsonpath "$.wires[0].data[0]['uesio/core.namespace']" == "uesio/studio"
+jsonpath "$.wires[0].data[0]['uesio/core.authsource']" == "uesio/core.google"
+jsonpath "$.wires[0].data[0]['uesio/core.appicon']" == "design_services"
+jsonpath "$.wires[0].data[1]['uesio/core.name']" == "platform"
+jsonpath "$.wires[0].data[1]['uesio/core.namespace']" == "uesio/studio"
+jsonpath "$.wires[0].data[1]['uesio/core.authsource']" == "uesio/core.platform"
+jsonpath "$.wires[0].data[1]['uesio/core.appicon']" == "design_services"
 jsonpath "$.collections['uesio/core.signupmethod'].name" == "signupmethod"
 jsonpath "$.collections['uesio/core.signupmethod'].fields['uesio/core.name'].name" == "name"
 jsonpath "$.collections['uesio/core.signupmethod'].fields['uesio/core.name'].namespace" == "uesio/core"
