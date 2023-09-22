@@ -1,33 +1,31 @@
 package datasource
 
 import (
-	"fmt"
-
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/cache"
-	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-var licenseCache cache.Cache[map[string]*meta.License]
+type LicenseMap map[string]*meta.License
+
+var licenseCache cache.Cache[LicenseMap]
 
 func init() {
-	licenseCache = cache.NewRedisCache[map[string]*meta.License]("license")
+	licenseCache = cache.NewRedisCache[LicenseMap]("license")
 }
 
 func InvalidateLicenseCaches(namespaces []string) error {
 	return licenseCache.Del(namespaces...)
 }
 
-func setLicenseCache(namespace string, licenses map[string]*meta.License) error {
+func setLicenseCache(namespace string, licenses LicenseMap) error {
 	return licenseCache.Set(namespace, licenses)
 }
 
-func getLicenseCache(namespace string) (map[string]*meta.License, bool) {
+func getLicenseCache(namespace string) (LicenseMap, bool) {
 	licenses, err := licenseCache.Get(namespace)
 	if err != nil {
-		logger.LogError(fmt.Errorf("unable to retrieve licenses from cache: %s", err.Error()))
 		return nil, false
 	}
 	if licenses == nil {
@@ -36,12 +34,12 @@ func getLicenseCache(namespace string) (map[string]*meta.License, bool) {
 	return licenses, true
 }
 
-func GetLicenses(namespace string, connection adapt.Connection) (map[string]*meta.License, error) {
+func GetLicenses(namespace string, connection adapt.Connection) (LicenseMap, error) {
 	// Hardcode the license for uesio/core
 	// This prevents a circular dependency when we try to get
 	// the credentials to load the license data.
 	if namespace == "uesio/core" {
-		return map[string]*meta.License{
+		return LicenseMap{
 			"uesio/io": {
 				Active: true,
 			},
@@ -97,7 +95,7 @@ func GetLicenses(namespace string, connection adapt.Connection) (map[string]*met
 		return nil, err
 	}
 
-	licenseMap = map[string]*meta.License{}
+	licenseMap = LicenseMap{}
 
 	for _, license := range licenses {
 		licenseMap[license.App.UniqueKey] = license
