@@ -84,7 +84,7 @@ func Populate(op *adapt.SaveOp, connection adapt.Connection, session *sess.Sessi
 
 	collectionKey := op.Metadata.GetFullName()
 
-	autonumberStart, err := getAutonumber(op.InsertCount, connection, op.Metadata, session)
+	autonumberStart, err := getAutonumber(connection, op.Metadata, session)
 	if err != nil {
 		return err
 	}
@@ -105,11 +105,10 @@ func Populate(op *adapt.SaveOp, connection adapt.Connection, session *sess.Sessi
 		}
 	}
 
-	insertIndex := 0
 	return op.LoopChanges(func(change *adapt.ChangeItem) error {
 		if change.IsNew {
-			change.Autonumber = autonumberStart + insertIndex
-			insertIndex++
+			autonumberStart++
+			change.Autonumber = autonumberStart
 		}
 		for _, population := range populations {
 			if saveErr := population(change); saveErr != nil {
