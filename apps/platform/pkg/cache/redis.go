@@ -5,20 +5,108 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/gomodule/redigo/redis"
+
+	"github.com/thecloudmasters/uesio/pkg/logger"
 )
 
 var redisPool *redis.Pool
-var redisTTL = strconv.Itoa(60 * 60 * 24)
 
+// 1 day
+var redisTTLSeconds = 60 * 60 * 24
+var existingNamespaces map[string]bool
+
+const nsFmt = "%s:%s"
+
+// RedisCache provides a type-safe Cache implementation
+// where cached data is stored in Redis with a namespaced key prefix,
+// with an optional key expiration (defaults to 1 day)
+type RedisCache[T any] struct {
+	options *CacheOptions[T]
+}
+
+func (r RedisCache[T]) Get(key string) (T, error) {
+	var result T
+	if r.options.Initializer != nil {
+		result = r.options.Initializer()
+	}
+	dataString, err := getString(namespaced(r.getNamespace(), key))
+	if err != nil {
+		return result, err
+	}
+	if err = json.Unmarshal([]byte(dataString), &result); err != nil {
+		return result, err
+	}
+	return result, nil
+}
+
+func (r RedisCache[T]) getNamespace() string {
+	if r.options == nil {
+		return ""
+	}
+	return r.options.Namespace
+}
+
+func (r RedisCache[T]) getExpiration() time.Duration {
+	if r.options == nil || r.options.Expiration == 0 {
+		return getDefaultRedisExpiration()
+	}
+	return r.options.Expiration
+}
+
+func (r RedisCache[T]) Set(key string, value T) error {
+	bytes, err := json.Marshal(value)
+	if err != nil {
+		return err
+	}
+	return setString(namespaced(r.getNamespace(), key), string(bytes), int64(r.getExpiration().Seconds()))
+}
+
+func (r RedisCache[T]) Del(keys ...string) error {
+	namespacedKeys := make([]string, len(keys), len(keys))
+	for i, k := range keys {
+		namespacedKeys[i] = namespaced(r.getNamespace(), k)
+	}
+	return deleteKeys(namespacedKeys)
+}
+
+func (r RedisCache[T]) WithExpiration(expiration time.Duration) RedisCache[T] {
+	r.options.Expiration = expiration
+	return r
+}
+
+func (r RedisCache[T]) WithInitializer(initializer func() T) RedisCache[T] {
+	r.options.Initializer = initializer
+	return r
+}
+
+func NewRedisCache[T any](namespace string) *RedisCache[T] {
+	_, exists := existingNamespaces[namespace]
+	if exists {
+		logger.LogError(fmt.Errorf("cannot create a cache for namespace %s, one already exists", namespace))
+		return nil
+	}
+	existingNamespaces[namespace] = true
+	return &RedisCache[T]{
+		&CacheOptions[T]{
+			Namespace: namespace,
+		},
+	}
+}
+
+// TODO: Switch to using go-redis instead of Redigo to get a cleaner, type-safe API
+// where we don't have to do manual connection management
 func init() {
 	redisHost := os.Getenv("REDIS_HOST")
 	redisPort := os.Getenv("REDIS_PORT")
-	redisTTLValue := os.Getenv("REDIS_TTL")
+	redisTTLSecondsValue := os.Getenv("REDIS_TTL")
 
-	if redisTTLValue != "" {
-		redisTTL = redisTTLValue
+	if redisTTLSecondsValue != "" {
+		if intVal, err := strconv.Atoi(redisTTLSecondsValue); err != nil {
+			redisTTLSeconds = intVal
+		}
 	}
 
 	redisAddr := fmt.Sprintf("%s:%s", redisHost, redisPort)
@@ -28,17 +116,19 @@ func init() {
 		MaxIdle: maxConnections,
 		Dial:    func() (redis.Conn, error) { return redis.Dial("tcp", redisAddr) },
 	}
+
+	existingNamespaces = map[string]bool{}
+}
+
+func getDefaultRedisExpiration() time.Duration {
+	return time.Duration(redisTTLSeconds) * time.Second
 }
 
 func GetRedisConn() redis.Conn {
 	return redisPool.Get()
 }
 
-func GetRedisTTL() string {
-	return redisTTL
-}
-
-func DeleteKeys(keys []string) error {
+func deleteKeys(keys []string) error {
 	if len(keys) == 0 {
 		return nil
 	}
@@ -51,51 +141,25 @@ func DeleteKeys(keys []string) error {
 	return nil
 }
 
-func Set(key string, data interface{}) error {
-	bytes, err := json.Marshal(data)
-	if err != nil {
-		return err
-	}
-	return SetString(key, string(bytes))
-}
-
-func SetString(key string, data string) error {
+func setString(key string, data string, ttlSeconds int64) error {
 	conn := GetRedisConn()
 	defer conn.Close()
-	_, err := conn.Do("SET", key, data, "EX", redisTTL)
+	_, err := conn.Do("SET", key, data, "EX", ttlSeconds)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func GetString(key string) (string, error) {
+func getString(key string) (string, error) {
 	conn := GetRedisConn()
 	defer conn.Close()
 	return redis.String(conn.Do("GET", key))
 }
 
-func Get(key string, data interface{}) error {
-	//start := time.Now()
-	dataString, err := GetString(key)
-	if err != nil {
-		return err
+func namespaced(namespace, key string) string {
+	if namespace == "" {
+		return key
 	}
-	//fmt.Printf("REDIS GET %v %v\n", key, time.Since(start))
-	return json.Unmarshal([]byte(dataString), data)
-}
-
-// We made a change to user data cached in Redis in 1/2023 which required modifying the key
-// so that the previous cache data would be ignored, hence the use of "v2" here.
-// Once this change is deployed, we can absolutely remove the ":v2" from the key
-func GetUserKey(userid, siteid string) string {
-	return fmt.Sprintf("user:v2:%s:%s", userid, siteid)
-}
-
-func GetHostKey(domainType, domainValue string) string {
-	return fmt.Sprintf("host:%s:%s", domainType, domainValue)
-}
-
-func GetLicenseKey(namespace string) string {
-	return fmt.Sprintf("license:%s", namespace)
+	return fmt.Sprintf(nsFmt, namespace, key)
 }

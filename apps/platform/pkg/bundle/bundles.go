@@ -8,16 +8,9 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
-	"github.com/thecloudmasters/uesio/pkg/localcache"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
-
-func ClearAppBundleCache(session *sess.Session) {
-	appName := session.GetContextAppName()
-	appVersion := session.GetContextVersionName()
-	localcache.RemoveCacheEntry("bundle-yaml", appName+":"+appVersion)
-}
 
 func GetSiteBundleDef(site *meta.Site, connection adapt.Connection) (*meta.BundleDef, error) {
 	return GetVersionBundleDef(site.GetAppFullName(), site.Bundle.GetVersionString(), connection)

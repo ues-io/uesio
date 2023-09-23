@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/goutils"
 	"github.com/thecloudmasters/uesio/pkg/limits"
@@ -21,7 +22,7 @@ func runDomainAfterSaveSiteBot(request *adapt.SaveOp, connection adapt.Connectio
 }
 
 func clearHostCacheForDomain(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
-	return clearHostForDomains(getUniqueKeysFromUpdatesAndDeletes(request))
+	return auth.ClearHostCacheForDomains(getUniqueKeysFromUpdatesAndDeletes(request))
 }
 
 func enforceMaxDomainsLimit(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
