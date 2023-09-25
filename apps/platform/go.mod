@@ -10,7 +10,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/credentials v1.13.37
 	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.11.83
 	github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider v1.26.1
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.38.5
+	github.com/aws/aws-sdk-go-v2/service/s3 v1.39.0
 	github.com/bigkevmcd/go-cachewrapper v0.0.0-20200727210054-e5d8068f6a7e
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/dimchansky/utfbom v1.1.1
@@ -25,6 +25,7 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/icza/session v1.2.0
 	github.com/jackc/pgx/v5 v5.4.3
+	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/pkg/errors v0.9.1
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/sashabaranov/go-openai v1.15.3
@@ -54,7 +55,6 @@ require (
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/lib/pq v1.10.9 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
-	github.com/patrickmn/go-cache v2.1.0+incompatible // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/sendgrid/rest v2.6.9+incompatible // indirect
 	github.com/xeipuuv/gojsonpointer v0.0.0-20180127040702-4e3ac2762d5f // indirect
