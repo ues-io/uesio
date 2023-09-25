@@ -14,12 +14,13 @@ const StyleDefaults = Object.freeze({
 
 interface GoogleLoginUtilityProps {
 	onLogin?: (response: unknown) => void
+	minWidth?: number
 }
 
 const LoginGoogleUtility: definition.UtilityComponent<
 	GoogleLoginUtilityProps
 > = (props) => {
-	const { onLogin } = props
+	const { onLogin, minWidth } = props
 	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
 	window.googleAuthCallback = (response: unknown) => {
@@ -53,6 +54,7 @@ const LoginGoogleUtility: definition.UtilityComponent<
 			<div
 				className="g_id_signin"
 				data-type="standard"
+				data-width={minWidth}
 				data-size="large"
 				data-theme="outline"
 				data-shape="rectangular"

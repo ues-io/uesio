@@ -3,6 +3,7 @@ public: true
 named: {}
 views:
   uesio/core.login: true
+  uesio/core.loginarea: true
   uesio/core.notfound: true
   uesio/core.signup: true
   uesio/core.changepassword: true

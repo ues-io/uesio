@@ -3,6 +3,7 @@ import LoginGoogleUtility from "../../utilities/logingoogle/logingoogle"
 
 type ButtonDefinition = {
 	onLoginSignals?: signal.SignalDefinition[]
+	minWidth?: number
 }
 
 type GoogleLoginResponse = {
@@ -14,17 +15,24 @@ const LoginGoogle: definition.UC<ButtonDefinition> = ({
 	context,
 	definition,
 }) => {
+	const { onLoginSignals, minWidth } = definition
 	const handler = (loginresponse: GoogleLoginResponse) => {
-		if (!definition.onLoginSignals) return
+		if (!onLoginSignals) return
 		api.signal.runMany(
-			definition.onLoginSignals,
+			onLoginSignals,
 			context.addComponentFrame("uesio/core.logingoogle", {
 				credential: loginresponse.credential,
 				client_id: loginresponse.client_id,
 			})
 		)
 	}
-	return <LoginGoogleUtility context={context} onLogin={handler} />
+	return (
+		<LoginGoogleUtility
+			context={context}
+			onLogin={handler}
+			minWidth={minWidth}
+		/>
+	)
 }
 
 export default LoginGoogle
