@@ -1,20 +1,6 @@
 name: login
 public: true
 definition:
-  # Wires are how we pull in data
-  wires:
-    credentials:
-      viewOnly: true
-      fields:
-        uesio/viewonly.username:
-          label: Username
-          type: TEXT
-        uesio/viewonly.password:
-          label: Password
-          type: TEXT
-      init:
-        create: true
-  # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
         uesio.variant: uesio/io.splash
@@ -25,85 +11,16 @@ definition:
                 - uesio/io.grid:
                     uesio.variant: uesio/core.loginarea
                     items:
-                      - uesio/io.box:
-                          uesio.variant: uesio/io.section
-                          uesio.display:
-                            - type: paramIsSet
-                              param: expired
-                          uesio.styleTokens:
-                            root:
-                              - rounded-lg
-                              - bg-blue-300
-                              - border-indigo-800
-                              - text-white
-                          components:
-                            - uesio/io.text:
-                                text: $Label{uesio/core.session_expiration_msg}
-                              uesio.styleTokens:
-                                root:
-                                  - p-5
-                                  - items-center
                       - uesio/io.image:
                           uesio.variant: uesio/core.fancy
                           file: uesio/core.logo
                           signals:
                             - signal: "route/REDIRECT"
                               path: "https://$Site{domain}"
-                      - uesio/core.loginmock:
-                          text: Sign in with Mock
-                          align: center
-                      - uesio/core.logingoogle:
-                          onLoginSignals:
-                            - signal: "user/LOGIN"
-                              authSource: uesio/core.google
-                              payload:
-                                credential: $ComponentOutput{[uesio/core.logingoogle][credential]}
-                                client_id: $ComponentOutput{[uesio/core.logingoogle][client_id]}
-                              onerror:
-                                signals:
-                                  - signal: notification/ADD_ERRORS
-                      - uesio/io.list:
-                          uesio.id: credslist
-                          wire: credentials
-                          mode: EDIT
-                          components:
-                            - uesio/io.box:
-                                components:
-                                  - uesio/io.field:
-                                      fieldId: uesio/viewonly.username
-                                      uesio.id: username
-                                  - uesio/io.field:
-                                      fieldId: uesio/viewonly.password
-                                      uesio.id: password
-                                      displayAs: PASSWORD
-                            - uesio/io.grid:
-                                uesio.styleTokens:
-                                  root:
-                                    - gap-4
-                                items:
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.primary
-                                      uesio.id: sign-in
-                                      text: Sign In
-                                      signals:
-                                        - signal: user/LOGIN
-                                          onerror:
-                                            signals:
-                                              - signal: notification/ADD_ERRORS
-                                          authSource: uesio/core.platform
-                                          payload:
-                                            username: ${uesio/viewonly.username}
-                                            password: ${uesio/viewonly.password}
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.nav
-                                      text: Forgot your password?
-                                      uesio.styleTokens:
-                                        root:
-                                          - normal-case
-                                          - font-light
-                                      signals:
-                                        - signal: route/REDIRECT
-                                          path: requestpassword
+                      - uesio/core.view:
+                          view: uesio/core.loginarea
+                          params:
+                            expired: $Param{expired}
   params:
     expired:
       type: CHECKBOX

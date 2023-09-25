@@ -386,8 +386,8 @@ definition:
           - uesio/io.tile:
               uesio.display:
                 - type: featureFlag
-                  name: manage_auth_methods
-              uesio.id: auth-methods
+                  name: manage_auth_sources
+              uesio.id: auth-sources
               uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
@@ -399,7 +399,7 @@ definition:
                   path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/authsources
               content:
                 - uesio/io.text:
-                    text: Auth Methods
+                    text: Auth Sources
               avatar:
                 - uesio/io.text:
                     uesio.variant: uesio/io.icon
