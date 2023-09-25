@@ -226,6 +226,7 @@ collections:
   uesio/studio.file: true
   uesio/studio.filesource: true
   uesio/studio.integration: true
+  uesio/studio.integrationaction: true
   uesio/studio.label: true
   uesio/studio.permissionset: true
   uesio/studio.profile: true
