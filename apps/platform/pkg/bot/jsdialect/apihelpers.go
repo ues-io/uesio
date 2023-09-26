@@ -22,15 +22,16 @@ func botLoad(request BotLoadOp, session *sess.Session, connection adapt.Connecti
 	collection := &adapt.Collection{}
 
 	op := &adapt.LoadOp{
-		BatchSize:      request.BatchSize,
-		CollectionName: request.Collection,
-		Collection:     collection,
-		WireName:       "botload",
-		Fields:         request.Fields,
-		Conditions:     request.Conditions,
-		Order:          request.Order,
-		Query:          true,
-		LoadAll:        request.LoadAll,
+		BatchSize:       request.BatchSize,
+		CollectionName:  request.Collection,
+		Collection:      collection,
+		WireName:        "botload",
+		Fields:          request.Fields,
+		Conditions:      request.Conditions,
+		Order:           request.Order,
+		Query:           true,
+		LoadAll:         request.LoadAll,
+		ServerInitiated: true,
 	}
 
 	_, err := datasource.Load([]*adapt.LoadOp{op}, session, &datasource.LoadOptions{

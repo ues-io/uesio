@@ -27,7 +27,8 @@ func QueryDomainFromSite(siteID string) (*meta.SiteDomain, error) {
 					Value: siteID,
 				},
 			},
-			BatchSize: 1,
+			BatchSize:       1,
+			ServerInitiated: true,
 		},
 		sess.GetStudioAnonSession(),
 	)

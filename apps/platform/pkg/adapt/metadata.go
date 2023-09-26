@@ -11,15 +11,82 @@ import (
 )
 
 type MetadataCache struct {
-	Collections map[string]*CollectionMetadata
-	SelectLists map[string]*SelectListMetadata
+	Collections map[string]*MetadataCacheEntry[*CollectionMetadata]
+	SelectLists map[string]*MetadataCacheEntry[*SelectListMetadata]
 }
 
-func (mc *MetadataCache) AddCollection(key string, metadata *CollectionMetadata) {
-	if mc.Collections == nil {
-		mc.Collections = map[string]*CollectionMetadata{}
+type MetadataCacheEntry[T any] struct {
+	value T
+	// this data needs to be sent to the client when we serialize dependencies
+	// (as opposed to just being needed for server-only processing)
+	isClientDep bool
+}
+
+func NewMetadataCacheEntry[T any](value T, isClientDependency bool) *MetadataCacheEntry[T] {
+	return &MetadataCacheEntry[T]{
+		value:       value,
+		isClientDep: isClientDependency,
 	}
-	mc.Collections[key] = metadata
+}
+
+func (mce *MetadataCacheEntry[T]) GetValue() T {
+	return mce.value
+}
+
+func (mce *MetadataCacheEntry[T]) IsClientDependency() bool {
+	return mce.isClientDep
+}
+
+func (mce *MetadataCacheEntry[T]) SetIsClientDependency(isClientDependency bool) {
+	mce.isClientDep = isClientDependency
+}
+
+// GetCollectionsMap returns a map of all Collection metadata requested at any point
+// in the lifecycle of this Metadata cache, whether the collection was needed for the client or not.
+func (mc *MetadataCache) GetCollectionsMap() map[string]*CollectionMetadata {
+	collectionsMap := map[string]*CollectionMetadata{}
+	for collectionName, cacheEntry := range mc.Collections {
+		collectionsMap[collectionName] = cacheEntry.GetValue()
+	}
+	return collectionsMap
+}
+
+// GetCollectionsMapForClient returns a list of Collection metadata that needs to be sent to the client
+func (mc *MetadataCache) GetCollectionsMapForClient() map[string]*CollectionMetadata {
+	collectionsMap := map[string]*CollectionMetadata{}
+	for collectionName, cacheEntry := range mc.Collections {
+		if cacheEntry.IsClientDependency() {
+			collectionsMap[collectionName] = cacheEntry.GetValue()
+		}
+	}
+	return collectionsMap
+}
+
+// AddCollection adds an entry to the cache which needs to be sent to the client
+func (mc *MetadataCache) AddCollection(key string, metadata *CollectionMetadata) {
+	mc.addCollectionDep(key, metadata, true)
+}
+
+// AddTransientCollectionDep adds an entry to the cache which is only needed for server-side processing,
+// and does not need to be sent to the client
+func (mc *MetadataCache) AddTransientCollectionDep(key string, metadata *CollectionMetadata) {
+	mc.addCollectionDep(key, metadata, false)
+}
+
+func (mc *MetadataCache) addCollectionDep(key string, metadata *CollectionMetadata, isClientDep bool) {
+	if mc.Collections == nil {
+		mc.Collections = map[string]*MetadataCacheEntry[*CollectionMetadata]{}
+	}
+	dep, depExists := mc.Collections[key]
+	if depExists {
+		dep.value.Merge(metadata)
+		// Upgrade existing dependencies from transient to client if needed
+		if !dep.isClientDep && isClientDep {
+			dep.isClientDep = true
+		}
+	} else {
+		mc.Collections[key] = NewMetadataCacheEntry[*CollectionMetadata](metadata, isClientDep)
+	}
 }
 
 func (mc *MetadataCache) GetCollection(key string) (*CollectionMetadata, error) {
@@ -27,7 +94,23 @@ func (mc *MetadataCache) GetCollection(key string) (*CollectionMetadata, error) 
 	if !ok {
 		return nil, errors.New("No metadata provided for collection: " + key)
 	}
-	return collectionMetadata, nil
+	return collectionMetadata.GetValue(), nil
+}
+
+func (mc *MetadataCache) GetSelectList(key string) (*SelectListMetadata, error) {
+	selectListMetadata, ok := mc.SelectLists[key]
+	if !ok {
+		return nil, errors.New("No metadata provided for select list: " + key)
+	}
+	return selectListMetadata.GetValue(), nil
+}
+
+func (mc *MetadataCache) GetCollectionEntry(key string) (*MetadataCacheEntry[*CollectionMetadata], error) {
+	cacheEntry, ok := mc.Collections[key]
+	if !ok {
+		return nil, errors.New("No metadata provided for collection: " + key)
+	}
+	return cacheEntry, nil
 }
 
 type CollectionMetadata struct {

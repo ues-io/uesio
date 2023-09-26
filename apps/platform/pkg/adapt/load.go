@@ -27,6 +27,8 @@ type LoadOp struct {
 	Preloaded          bool                   `json:"preloaded"`
 	LoadAll            bool                   `json:"loadAll" bot:"loadAll"`
 	DebugQueryString   string                 `json:"debugQueryString"`
+	// Server-only flag to indicate that this is a server-initiated load, as opposed to client initiated
+	ServerInitiated bool `json:"-"`
 	// Internal only conveniences for LoadBots to be able to access prefetched metadata
 	metadata    *MetadataCache
 	integration IntegrationConnection

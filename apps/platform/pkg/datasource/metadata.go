@@ -190,11 +190,14 @@ func GetValidationMetadata(f *meta.Field) *adapt.ValidationMetadata {
 	return nil
 }
 
-func LoadCollectionMetadata(key string, metadataCache *adapt.MetadataCache, session *sess.Session, connection adapt.Connection) (*adapt.CollectionMetadata, error) {
+func loadCollectionMetadata(key string, isClientDependency bool, metadataCache *adapt.MetadataCache, session *sess.Session, connection adapt.Connection) (*adapt.CollectionMetadata, error) {
 	// Check to see if the collection is already in our metadata cache
-	collectionMetadata, err := metadataCache.GetCollection(key)
+	collectionCacheEntry, err := metadataCache.GetCollectionEntry(key)
 	if err == nil {
-		return collectionMetadata, nil
+		if isClientDependency && !collectionCacheEntry.IsClientDependency() {
+			collectionCacheEntry.SetIsClientDependency(isClientDependency)
+		}
+		return collectionCacheEntry.GetValue(), nil
 	}
 
 	collection, err := meta.NewCollection(key)
@@ -207,8 +210,12 @@ func LoadCollectionMetadata(key string, metadataCache *adapt.MetadataCache, sess
 		return nil, err
 	}
 
-	collectionMetadata = GetCollectionMetadata(collection)
-	metadataCache.AddCollection(key, collectionMetadata)
+	collectionMetadata := GetCollectionMetadata(collection)
+	if isClientDependency {
+		metadataCache.AddCollection(key, collectionMetadata)
+	} else {
+		metadataCache.AddTransientCollectionDep(key, collectionMetadata)
+	}
 
 	return collectionMetadata, nil
 }
@@ -233,7 +240,7 @@ func LoadAllFieldsMetadata(collectionKey string, collectionMetadata *adapt.Colle
 
 func LoadFieldsMetadata(keys []string, collectionKey string, collectionMetadata *adapt.CollectionMetadata, session *sess.Session, connection adapt.Connection) error {
 
-	fields := []meta.BundleableItem{}
+	var fields []meta.BundleableItem
 	for _, key := range keys {
 		_, err := collectionMetadata.GetField(key)
 		if err != nil {
@@ -268,9 +275,9 @@ func LoadSelectListMetadata(key string, metadataCache *adapt.MetadataCache, sess
 
 	collectionKey, fieldKey, selectListKey := ParseSelectListKey(key)
 
-	selectListMetadata, ok := metadataCache.SelectLists[selectListKey]
+	selectListMetadata, err := metadataCache.GetSelectList(selectListKey)
 
-	if !ok {
+	if err != nil {
 
 		selectList, err := meta.NewSelectList(selectListKey)
 		if err != nil {

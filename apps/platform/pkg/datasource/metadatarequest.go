@@ -88,7 +88,7 @@ type MetadataRequestOptions struct {
 }
 
 type MetadataRequest struct {
-	Collections FieldsMap
+	Collections map[string]*adapt.MetadataCacheEntry[FieldsMap]
 	SelectLists map[string]bool
 	Options     *MetadataRequestOptions
 }
@@ -97,40 +97,64 @@ func (mr *MetadataRequest) HasRequests() bool {
 	return len(mr.Collections) > 0 || len(mr.SelectLists) > 0
 }
 
-func (mr *MetadataRequest) AddCollection(collectionName string) error {
+func (mr *MetadataRequest) addCollectionDependency(collectionName string, isClientDependency bool) error {
 	if collectionName == "" {
 		return fmt.Errorf("tried to add blank collection")
 	}
 	if mr.Collections == nil {
-		mr.Collections = map[string]FieldsMap{}
+		mr.Collections = map[string]*adapt.MetadataCacheEntry[FieldsMap]{}
 	}
-	_, ok := mr.Collections[collectionName]
+	currentEntry, ok := mr.Collections[collectionName]
 	if !ok {
-		mr.Collections[collectionName] = FieldsMap{}
+		mr.Collections[collectionName] = adapt.NewMetadataCacheEntry[FieldsMap](FieldsMap{}, isClientDependency)
+	} else if isClientDependency && !currentEntry.IsClientDependency() {
+		currentEntry.SetIsClientDependency(true)
 	}
 	return nil
 }
 
+// AddCollection requests that metadata be loaded for a Collection where the metadata is needed for the client
+// (as opposed to just being needed server-side)
+func (mr *MetadataRequest) AddCollection(collectionName string) error {
+	return mr.addCollectionDependency(collectionName, true)
+}
+
+// AddTransientCollectionDependency requests that metadata be loaded for a Collection where the metadata
+// is only needed for server-side processing, and does NOT need to be sent to the client
+func (mr *MetadataRequest) AddTransientCollectionDependency(collectionName string) error {
+	return mr.addCollectionDependency(collectionName, false)
+}
+
 func (mr *MetadataRequest) AddField(collectionName, fieldName string, subFields *FieldsMap) error {
-	if collectionName == "" {
-		return fmt.Errorf("cannot request metadata without a valid collection name (field = %s)", fieldName)
-	}
 	if fieldName == "" {
 		return fmt.Errorf("cannot request metadata without a valid field name (collection = %s)", collectionName)
 	}
-	err := mr.AddCollection(collectionName)
-	if err != nil {
-		return err
+	if collectionName == "" {
+		return fmt.Errorf("cannot request metadata without a valid collection name (field = %s)", fieldName)
 	}
-	if mr.Collections[collectionName] == nil {
-		mr.Collections[collectionName] = FieldsMap{}
+	// Only add the collection if we already have it - otherwise use what we've got.
+	// We don't want to inadvertently promote a transient dependency to a client-side dependency.
+	collectionEntry, hasEntry := mr.Collections[collectionName]
+	if !hasEntry {
+		if err := mr.AddCollection(collectionName); err != nil {
+			return err
+		}
+		collectionEntry = mr.Collections[collectionName]
 	}
-	existingFields := mr.Collections[collectionName][fieldName]
-	if existingFields == nil {
-		existingFields = FieldsMap{}
+	var collectionFields FieldsMap
+	if hasEntry {
+		collectionFields = collectionEntry.GetValue()
 	}
-	existingFields.merge(subFields)
-	mr.Collections[collectionName][fieldName] = existingFields
+	if collectionFields == nil {
+		collectionFields = FieldsMap{}
+		mr.Collections[collectionName] = adapt.NewMetadataCacheEntry(collectionFields, true)
+	}
+	fieldMeta, hasField := collectionFields[fieldName]
+	if !hasField {
+		fieldMeta = FieldsMap{}
+		collectionFields[fieldName] = fieldMeta
+	}
+	fieldMeta.merge(subFields)
 	return nil
 }
 
@@ -228,7 +252,7 @@ func ProcessFieldsMetadata(fields map[string]*adapt.FieldMetadata, collectionKey
 			// Only add to additional requests if we don't already have that metadata
 			refCollection, err := metadataResponse.GetCollection(referenceGroupMetadata.Collection)
 			if err != nil {
-				err := additionalRequests.AddCollection(referenceGroupMetadata.Collection)
+				err := additionalRequests.AddTransientCollectionDependency(referenceGroupMetadata.Collection)
 				if err != nil {
 					return err
 				}
@@ -308,29 +332,31 @@ func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *
 		},
 	}
 	// Implement the old way to make sure it still works
-	for collectionKey, collection := range mr.Collections {
-		metadata, err := LoadCollectionMetadata(collectionKey, metadataResponse, session, connection)
+	for collectionKey, cacheEntry := range mr.Collections {
+
+		isClientDependency := cacheEntry.IsClientDependency()
+		collectionMetadata := cacheEntry.GetValue()
+
+		metadata, err := loadCollectionMetadata(collectionKey, isClientDependency, metadataResponse, session, connection)
 		if err != nil {
 			return err
 		}
 
 		if metadata.IsDynamic() || (mr.Options != nil && mr.Options.LoadAllFields) {
-			err = LoadAllFieldsMetadata(collectionKey, metadata, session, connection)
-			if err != nil {
+			if err = LoadAllFieldsMetadata(collectionKey, metadata, session, connection); err != nil {
 				return err
 			}
 			metadata.HasAllFields = true
 		} else {
 			// Automagically add the id field and the name field whether they were requested or not.
 			fieldsToLoad := []string{adapt.ID_FIELD, adapt.UNIQUE_KEY_FIELD, metadata.NameField}
-			for fieldKey := range collection {
+			for fieldKey := range collectionMetadata {
 				fieldsToLoad = append(fieldsToLoad, fieldKey)
 			}
 			if metadata.AccessField != "" {
 				fieldsToLoad = append(fieldsToLoad, metadata.AccessField)
 			}
-			err = LoadFieldsMetadata(fieldsToLoad, collectionKey, metadata, session, connection)
-			if err != nil {
+			if err = LoadFieldsMetadata(fieldsToLoad, collectionKey, metadata, session, connection); err != nil {
 				return err
 			}
 		}
@@ -342,22 +368,19 @@ func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *
 			}
 			// Get all Fields from the AccessFields collection
 			additionalRequests.Options.LoadAllFields = true
-			err = additionalRequests.AddCollection(accessFieldMetadata.ReferenceMetadata.Collection)
-			if err != nil {
+			if err = additionalRequests.AddTransientCollectionDependency(accessFieldMetadata.ReferenceMetadata.Collection); err != nil {
 				return err
 			}
 		}
 
-		err = ProcessFieldsMetadata(metadata.Fields, collectionKey, collection, metadataResponse, &additionalRequests, "")
-		if err != nil {
+		if err = ProcessFieldsMetadata(metadata.Fields, collectionKey, collectionMetadata, metadataResponse, &additionalRequests, ""); err != nil {
 			return err
 		}
 
 	}
 
 	for selectListKey := range mr.SelectLists {
-		err := LoadSelectListMetadata(selectListKey, metadataResponse, session, connection)
-		if err != nil {
+		if err := LoadSelectListMetadata(selectListKey, metadataResponse, session, connection); err != nil {
 			return err
 		}
 	}

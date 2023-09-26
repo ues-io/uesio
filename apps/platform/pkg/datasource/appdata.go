@@ -37,6 +37,7 @@ func GetAppData(namespaces []string) (map[string]NamespaceInfo, error) {
 				ID: "uesio/studio.icon",
 			},
 		},
+		ServerInitiated: true,
 	}, sess.GetStudioAnonSession())
 	if err != nil {
 		return nil, err

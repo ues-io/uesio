@@ -17,6 +17,7 @@ func ResetRecordTokens(collection string, session *sess.Session) error {
 				ID: adapt.ID_FIELD,
 			},
 		},
+		ServerInitiated: true,
 	}
 
 	connection, err := GetPlatformConnection(nil, session.RemoveWorkspaceContext(), nil)

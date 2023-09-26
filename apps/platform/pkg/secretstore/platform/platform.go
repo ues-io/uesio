@@ -26,6 +26,7 @@ func (ss *SecretStore) Get(key string, session *sess.Session) (string, error) {
 					ID: "uesio/core.value",
 				},
 			},
+			ServerInitiated: true,
 		},
 		session,
 	)

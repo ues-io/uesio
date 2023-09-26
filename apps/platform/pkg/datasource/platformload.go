@@ -19,10 +19,11 @@ type PlatformLoadOptions struct {
 	LoadAll            bool
 	Params             map[string]string
 	RequireWriteAccess bool
+	ServerInitiated    bool
 }
 
 func (plo *PlatformLoadOptions) GetConditionsDebug() string {
-	conditionStrings := []string{}
+	var conditionStrings []string
 	for _, c := range plo.Conditions {
 		conditionStrings = append(conditionStrings, fmt.Sprintf("%s :: %s", c.Field, c.Value))
 	}
@@ -42,7 +43,7 @@ func NewRecordNotFoundError(message string) *RecordNotFoundError {
 }
 
 func GetLoadRequestFields(fieldStrings []string) []adapt.LoadRequestField {
-	fields := []adapt.LoadRequestField{}
+	var fields []adapt.LoadRequestField
 	for _, field := range fieldStrings {
 		fields = append(fields, adapt.LoadRequestField{
 			ID: field,
@@ -54,7 +55,9 @@ func GetLoadRequestFields(fieldStrings []string) []adapt.LoadRequestField {
 func PlatformLoad(group meta.CollectionableGroup, options *PlatformLoadOptions, session *sess.Session) error {
 
 	if options == nil {
-		options = &PlatformLoadOptions{}
+		options = &PlatformLoadOptions{
+			ServerInitiated: true,
+		}
 	}
 	fields := options.Fields
 	if fields == nil {
@@ -71,6 +74,7 @@ func PlatformLoad(group meta.CollectionableGroup, options *PlatformLoadOptions, 
 		BatchSize:          options.BatchSize,
 		Params:             options.Params,
 		RequireWriteAccess: options.RequireWriteAccess,
+		ServerInitiated:    options.ServerInitiated,
 	}, options, session)
 }
 

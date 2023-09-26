@@ -28,6 +28,7 @@ func (ffs *FeatureFlagStore) Get(user string, assignments *meta.FeatureFlagAssig
 					Operator: "=",
 				},
 			},
+			ServerInitiated: true,
 		},
 		session,
 	)

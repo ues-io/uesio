@@ -34,6 +34,6 @@ func Load(w http.ResponseWriter, r *http.Request) {
 	}
 	file.RespondJSON(w, r, &adapt.LoadResponseBatch{
 		Wires:       batch.Wires,
-		Collections: metadata.Collections,
+		Collections: metadata.GetCollectionsMapForClient(),
 	})
 }

@@ -181,6 +181,7 @@ func querySite(value, field string, session *sess.Session, connection adapt.Conn
 				},
 			},
 			RequireWriteAccess: true,
+			ServerInitiated:    true,
 		},
 		session,
 	)

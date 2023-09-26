@@ -1,10 +1,12 @@
 package controller
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"net/http"
 
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
+
 	"github.com/gorilla/mux"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
@@ -33,7 +35,7 @@ func GetCollectionMetadata(w http.ResponseWriter, r *http.Request) {
 	}
 
 	file.RespondJSON(w, r, &adapt.LoadResponseBatch{
-		Collections: metadataResponse.Collections,
+		Collections: metadataResponse.GetCollectionsMapForClient(),
 	})
 
 }

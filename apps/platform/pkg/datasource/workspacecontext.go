@@ -50,6 +50,7 @@ func addWorkspaceContext(workspace *meta.Workspace, session *sess.Session, conne
 					Value: workspace.ID,
 				},
 			},
+			ServerInitiated: true,
 		},
 	}, session, nil)
 	if err != nil {
@@ -130,6 +131,7 @@ func queryWorkspace(value, field string, session *sess.Session, connection adapt
 				},
 			},
 			RequireWriteAccess: true,
+			ServerInitiated:    true,
 		},
 		session.RemoveWorkspaceContext(),
 	)

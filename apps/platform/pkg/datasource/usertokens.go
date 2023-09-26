@@ -21,10 +21,8 @@ func getTokensForRequest(connection adapt.Connection, session *sess.Session, tok
 	tokens := []meta.BundleableItem{}
 
 	userAccessTokenNames := map[string]bool{}
-	for _, collectionMetadata := range metadata.Collections {
-
+	for _, collectionMetadata := range metadata.GetCollectionsMap() {
 		challengeMetadata := collectionMetadata
-
 		for challengeMetadata.AccessField != "" {
 			fieldMetadata, err := challengeMetadata.GetField(challengeMetadata.AccessField)
 			if err != nil {
@@ -35,7 +33,6 @@ func getTokensForRequest(connection adapt.Connection, session *sess.Session, tok
 				return nil, err
 			}
 		}
-
 		for _, challengeToken := range challengeMetadata.RecordChallengeTokens {
 			if challengeToken.UserAccessToken != "" {
 				if !tokenMap.Has(challengeToken.UserAccessToken) {
@@ -149,12 +146,13 @@ func HydrateTokenMap(tokenMap sess.TokenMap, tokenDefs meta.UserAccessTokenColle
 
 			lookupResults := &adapt.Collection{}
 			var loadOp = &adapt.LoadOp{
-				CollectionName: token.Collection,
-				WireName:       "foo",
-				Collection:     lookupResults,
-				Conditions:     loadConditions,
-				Fields:         fieldsMap.getRequestFields(),
-				Query:          true,
+				CollectionName:  token.Collection,
+				WireName:        "foo",
+				Collection:      lookupResults,
+				Conditions:      loadConditions,
+				Fields:          fieldsMap.getRequestFields(),
+				Query:           true,
+				ServerInitiated: true,
 			}
 
 			err := GetMetadataForLoad(loadOp, metadata, []*adapt.LoadOp{loadOp}, adminSession)

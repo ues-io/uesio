@@ -59,12 +59,13 @@ func exportCollection(create retrieve.WriterCreator, spec *meta.JobSpec, session
 	}
 
 	_, err = datasource.Load([]*adapt.LoadOp{{
-		WireName:       "uesio_data_export",
-		CollectionName: spec.Collection,
-		Collection:     collection,
-		Fields:         fields,
-		Query:          true,
-		LoadAll:        true,
+		WireName:        "uesio_data_export",
+		CollectionName:  spec.Collection,
+		Collection:      collection,
+		Fields:          fields,
+		Query:           true,
+		LoadAll:         true,
+		ServerInitiated: true,
 	}}, session, nil)
 	if err != nil {
 		return err

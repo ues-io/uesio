@@ -3,7 +3,11 @@ package auth
 import (
 	"errors"
 	"fmt"
+	"os"
+	"strings"
+
 	"github.com/icza/session"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
@@ -14,8 +18,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
-	"os"
-	"strings"
 )
 
 func init() {
@@ -304,6 +306,7 @@ func GetLoginMethod(claims *AuthenticationClaims, authSourceID string, session *
 					Value: claims.Subject,
 				},
 			},
+			ServerInitiated: true,
 		},
 		session,
 	)

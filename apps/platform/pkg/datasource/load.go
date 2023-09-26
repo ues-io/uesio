@@ -339,7 +339,7 @@ func getMetadataForConditionLoad(
 
 	if condition.Type == "SUBQUERY" {
 		// Request metadata for the sub-query condition's Collection and subfield
-		err = collections.AddCollection(condition.SubCollection)
+		err = collections.AddTransientCollectionDependency(condition.SubCollection)
 		if err != nil {
 			return err
 		}
@@ -401,7 +401,14 @@ func GetMetadataForLoad(
 
 	// Keep a running tally of all requested collections
 	collections := MetadataRequest{}
-	err := collections.AddCollection(collectionKey)
+	var err error
+
+	if op.ServerInitiated {
+		err = collections.AddTransientCollectionDependency(collectionKey)
+	} else {
+		err = collections.AddCollection(collectionKey)
+	}
+
 	if err != nil {
 		return err
 	}

@@ -49,6 +49,10 @@ jsonpath "$.wires[0].data[3]['uesio/core.uniquekey']" == "uesio/tests.animal:ues
 jsonpath "$.wires[0].data[4]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.species"
 jsonpath "$.wires[0].data[5]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.status"
 jsonpath "$.wires[0].data[6]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.total_population"
+jsonpath "$.collections[*]['name']" count < 10 # We should not be fetching a ton of studio collections
+jsonpath "$.collections['uesio/studio.field']['name']" == "field"
+jsonpath "$.collections['uesio/studio.field']['namespace']" == "uesio/studio"
+# jsonpath "$.collections['uesio/studio.field']['fields'][*]['name']" count == 3
 
 # Get a list of common fields available to our workspace for the animal collection
 POST https://{{host}}:{{port}}/site/wires/load

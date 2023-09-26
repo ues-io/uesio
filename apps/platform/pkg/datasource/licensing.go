@@ -61,6 +61,7 @@ func GetLicenses(namespace string, connection adapt.Connection) (LicenseMap, err
 				Operator: "=",
 			},
 		},
+		ServerInitiated: true,
 	}, anonSession)
 	if err != nil {
 		return nil, err
@@ -88,6 +89,7 @@ func GetLicenses(namespace string, connection adapt.Connection) (LicenseMap, err
 					Operator: "=",
 				},
 			},
+			ServerInitiated: true,
 		},
 		anonSession,
 	)

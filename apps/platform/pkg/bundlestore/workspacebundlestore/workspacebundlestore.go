@@ -50,9 +50,10 @@ func processItems(items []meta.BundleableItem, workspace *meta.Workspace, connec
 			Collection: group,
 			Namespace:  namespace,
 		}, &datasource.PlatformLoadOptions{
-			LoadAll:    true,
-			Connection: connection,
-			Params:     getParamsFromWorkspace(workspace),
+			LoadAll:         true,
+			Connection:      connection,
+			Params:          getParamsFromWorkspace(workspace),
+			ServerInitiated: true,
 			Conditions: []adapt.LoadRequestCondition{
 				{
 					Field:    adapt.UNIQUE_KEY_FIELD,
@@ -114,8 +115,9 @@ func (b *WorkspaceBundleStoreConnection) GetItem(item meta.BundleableItem) error
 				Value: item.GetDBID(b.Workspace.UniqueKey),
 			},
 		},
-		Params:     getParamsFromWorkspace(b.Workspace),
-		Connection: b.Connection,
+		Params:          getParamsFromWorkspace(b.Workspace),
+		Connection:      b.Connection,
+		ServerInitiated: true,
 	}, sess.GetStudioAnonSession())
 }
 
@@ -158,10 +160,11 @@ func (b *WorkspaceBundleStoreConnection) GetAllItems(group meta.BundleableGroup,
 		Collection: group,
 		Namespace:  b.Namespace,
 	}, &datasource.PlatformLoadOptions{
-		Conditions: loadConditions,
-		Params:     getParamsFromWorkspace(b.Workspace),
-		Connection: b.Connection,
-		LoadAll:    true,
+		Conditions:      loadConditions,
+		Params:          getParamsFromWorkspace(b.Workspace),
+		Connection:      b.Connection,
+		LoadAll:         true,
+		ServerInitiated: true,
 		Orders: []adapt.LoadRequestOrder{{
 			Field: adapt.UNIQUE_KEY_FIELD,
 		}},
@@ -207,6 +210,7 @@ func (b *WorkspaceBundleStoreConnection) GetAttachmentPaths(item meta.Attachable
 					Value: recordID,
 				},
 			},
+			ServerInitiated: true,
 		},
 		sess.GetStudioAnonSession(),
 	)
@@ -236,8 +240,9 @@ func (b *WorkspaceBundleStoreConnection) GetBundleDef() (*meta.BundleDef, error)
 	err := datasource.PlatformLoad(
 		&bdc,
 		&datasource.PlatformLoadOptions{
-			Connection: b.Connection,
-			Params:     getParamsFromWorkspace(b.Workspace),
+			Connection:      b.Connection,
+			Params:          getParamsFromWorkspace(b.Workspace),
+			ServerInitiated: true,
 			Fields: []adapt.LoadRequestField{
 				{
 					ID: "uesio/studio.workspace",

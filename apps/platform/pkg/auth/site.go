@@ -29,6 +29,7 @@ func getDomain(domainType, domain string) (*meta.SiteDomain, error) {
 					Value: domainType,
 				},
 			},
+			ServerInitiated: true,
 		},
 		sess.GetStudioAnonSession(),
 	)

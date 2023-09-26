@@ -16,7 +16,7 @@ var bundleEntryCache cache.Cache[meta.BundleableItem]
 
 // Bundle entries should be very long-lived, so we will allow them to live in memory for a relatively long time,
 // and only expire them infrequently because the cost of doing a filesystem read is quite high.
-// TODO: Consider pre-loading common bundles into the cache on init, to prevent initial requests from being slow.
+// TODO: Consider preloading common bundles into the cache on init, to prevent initial requests from being slow.
 const (
 	defaultExpiry  = time.Duration(12 * time.Hour)
 	defaultCleanup = time.Duration(2 * time.Hour)

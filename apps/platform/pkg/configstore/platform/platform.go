@@ -15,6 +15,7 @@ func (cs *ConfigStore) Get(key string, session *sess.Session) (string, error) {
 	err := datasource.PlatformLoadOne(
 		&cv,
 		&datasource.PlatformLoadOptions{
+			ServerInitiated: true,
 			Conditions: []adapt.LoadRequestCondition{
 				{
 					Field: adapt.UNIQUE_KEY_FIELD,

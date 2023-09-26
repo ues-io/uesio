@@ -285,7 +285,7 @@ func processView(key string, viewInstanceID string, deps *PreloadMetadata, param
 	}
 
 	if viewInstanceID != "" {
-		ops := []*adapt.LoadOp{}
+		var ops []*adapt.LoadOp
 
 		for _, pair := range depMap.Wires {
 
@@ -313,7 +313,12 @@ func processView(key string, viewInstanceID string, deps *PreloadMetadata, param
 			return err
 		}
 
-		for _, collection := range metadata.Collections {
+		for _, collectionCache := range metadata.Collections {
+			// Ignore collections we only needed for transient server-side processing
+			if !collectionCache.IsClientDependency() {
+				continue
+			}
+			collection := collectionCache.GetValue()
 			// If this collection is already in the metadata, we need to merge the new and existing
 			// to create a union of all metadata requested by any wires
 			if existingItem, alreadyExists := deps.Collection.AddItemIfNotExists(collection); alreadyExists {

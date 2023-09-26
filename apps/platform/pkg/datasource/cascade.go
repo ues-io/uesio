@@ -21,7 +21,7 @@ func getCascadeDeletes(
 
 	metadata := connection.GetMetadata()
 
-	for _, collectionMetadata := range metadata.Collections {
+	for _, collectionMetadata := range metadata.GetCollectionsMap() {
 		collectionKey := collectionMetadata.GetFullName()
 		for _, field := range collectionMetadata.Fields {
 			if field.Type == "FILE" {
@@ -108,8 +108,9 @@ func getCascadeDeletes(
 							Operator: "IN",
 						},
 					},
-					Query:  true,
-					Params: wire.Params,
+					Query:           true,
+					Params:          wire.Params,
+					ServerInitiated: true,
 				}
 
 				err := connection.Load(op, session)
