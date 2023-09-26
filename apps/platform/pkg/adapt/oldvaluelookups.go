@@ -22,7 +22,8 @@ func GetUniqueKeyPart(change *ChangeItem, fieldName string) (string, error) {
 	if ok {
 		return strconv.Itoa(intValue), nil
 	}
-	//TO-DO this is an alternataive solution
+	//TO-DO this is an alternataive solution, remove if no needed.
+	//It' also a level higher.
 	//This fixes the issue but means that we can not use float64 values in our uniquekeys
 	//Since the value will be rounded
 	// float64Value, ok := value.(float64)
