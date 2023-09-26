@@ -22,7 +22,10 @@ func GetUniqueKeyPart(change *ChangeItem, fieldName string) (string, error) {
 	if ok {
 		return strconv.Itoa(intValue), nil
 	}
-
+	float64Value, ok := value.(float64)
+	if ok {
+		return strconv.Itoa(int(float64Value)), nil
+	}
 	return GetFieldValueString(value, UNIQUE_KEY_FIELD)
 }
 
