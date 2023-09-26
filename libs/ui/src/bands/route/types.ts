@@ -10,6 +10,7 @@ import { PlainCollection } from "../collection/types"
 import { ComponentState } from "../component/types"
 import { ServerWire } from "../wire/types"
 import { Component } from "../componenttype/types"
+import { FileState } from "../../definition/file"
 
 type WorkspaceState = {
 	name: string
@@ -34,6 +35,7 @@ type Dependencies = {
 	label?: LabelState[]
 	wire?: ServerWire[]
 	collection?: PlainCollection[]
+	file?: FileState[]
 }
 
 type RouteTag = {

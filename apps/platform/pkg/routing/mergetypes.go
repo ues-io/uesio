@@ -75,7 +75,7 @@ type MergeData struct {
 	StaticAssetsPath    string   `json:"-"`
 	StaticAssetsHost    string   `json:"-"`
 	VendorScriptUrls    []string `json:"-"`
-	*PreloadMetadata
+	*PreloadMetadata    `json:"-"`
 }
 
 // String function controls how MergeData is marshalled
