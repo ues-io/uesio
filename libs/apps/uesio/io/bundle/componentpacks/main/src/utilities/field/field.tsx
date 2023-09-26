@@ -271,8 +271,8 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 						{...common}
 						{...complexFieldOptions}
 						options={list}
-						subFields={fieldMetadata.source.subfields}
-						subType={fieldMetadata.source.subtype}
+						subFields={fieldMetadata.getSubFields()}
+						subType={fieldMetadata.getSubType()}
 					/>
 				)
 			break
