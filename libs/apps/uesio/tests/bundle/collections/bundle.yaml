@@ -1,0 +1,8 @@
+name: bundle
+uniqueKey:
+  - uesio/tests.major
+  - uesio/tests.minor
+  - uesio/tests.patch
+nameField: uesio/core.uniquekey
+label: bundle
+pluralLabel: bundles

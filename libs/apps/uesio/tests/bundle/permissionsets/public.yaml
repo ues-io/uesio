@@ -67,6 +67,7 @@ collections:
     modifyall: false
     viewall: false
     fields: {}
+  uesio/tests.bundle: true
 routes:
   uesio/tests.declarative1: true
   uesio/tests.declarative2: true

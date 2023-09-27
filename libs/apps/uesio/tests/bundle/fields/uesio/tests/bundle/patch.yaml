@@ -1,0 +1,5 @@
+name: patch
+type: NUMBER
+label: "Patch version"
+number:
+  decimals: 0

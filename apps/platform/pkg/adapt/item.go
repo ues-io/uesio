@@ -3,8 +3,9 @@ package adapt
 import (
 	"errors"
 	"fmt"
-	"github.com/thecloudmasters/uesio/pkg/constant"
 	"strings"
+
+	"github.com/thecloudmasters/uesio/pkg/constant"
 )
 
 type Item map[string]interface{}

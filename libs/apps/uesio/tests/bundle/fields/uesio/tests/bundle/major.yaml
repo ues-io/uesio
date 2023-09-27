@@ -1,0 +1,5 @@
+name: major
+type: NUMBER
+label: "Major version"
+number:
+  decimals: 0
