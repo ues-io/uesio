@@ -26,31 +26,11 @@ type SaveRequest struct {
 	Params     map[string]string  `json:"params"`
 }
 
-type SaveRequestImpl struct {
-	Collection string               `json:"collection"`
-	Wire       string               `json:"wire"`
-	Changes    *adapt.CollectionMap `json:"changes"`
-	Deletes    *adapt.CollectionMap `json:"deletes"`
-	Errors     []adapt.SaveError    `json:"errors"`
-	Options    *adapt.SaveOptions   `json:"options"`
-	Params     map[string]string    `json:"params"`
-}
-
 func (sr *SaveRequest) UnmarshalJSON(b []byte) error {
-
-	data := SaveRequestImpl{}
-	err := json.Unmarshal(b, &data)
-	if err != nil {
-		return err
-	}
-	sr.Collection = data.Collection
-	sr.Wire = data.Wire
-	sr.Changes = data.Changes
-	sr.Deletes = data.Deletes
-	sr.Errors = data.Errors
-	sr.Options = data.Options
-	sr.Params = data.Params
-	return nil
+	type alias SaveRequest
+	sr.Changes = &adapt.CollectionMap{}
+	sr.Deletes = &adapt.CollectionMap{}
+	return json.Unmarshal(b, (*alias)(sr))
 }
 
 type SaveOptions struct {
