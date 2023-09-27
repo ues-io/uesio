@@ -62,6 +62,14 @@ type InitialState = {
 let store: ReturnType<typeof create>
 
 const create = (initialState: InitialState) => {
+	const routeDeps = initialState.route?.dependencies
+	if (routeDeps) {
+		delete initialState.route?.dependencies
+		initialState = {
+			...routeDeps,
+			...initialState,
+		}
+	}
 	const newStore = configureStore({
 		reducer: {
 			collection,
