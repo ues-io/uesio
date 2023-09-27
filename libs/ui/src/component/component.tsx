@@ -4,11 +4,13 @@ import {
 	UC,
 	UtilityComponent,
 	BaseDefinition,
+	DefinitionList,
 } from "../definition/definition"
 import {
 	injectDynamicContext,
 	Context,
 	ContextOptions,
+	Mergeable,
 } from "../context/context"
 import { getRuntimeLoader, getUtilityLoader } from "./registry"
 import NotFound from "../utilities/notfound"
@@ -82,6 +84,28 @@ type DeclarativeComponentSlotContext = {
 
 const DECLARATIVE_COMPONENT = "uesio/core.declarativecomponent"
 
+/**
+ * Constructs a DefinitionList to use for rendering a Declarative Component
+ * by merging the provided properties, and then injecting them into the component type's definition's
+ * "$Prop{propName}" placeholders.
+ */
+const resolveDeclarativeComponentDefinition = (
+	context: Context,
+	definition: BaseDefinition,
+	componentTypeDefinition: DefinitionList
+): DefinitionList =>
+	(context
+		.addPropsFrame(
+			context.mergeDeep(
+				definition as unknown as Record<string, Mergeable>
+			) as Record<string, unknown>
+		)
+		// definition may not be Record<string, string>, but we just need to be able to merge it,
+		// so we need to cast it.
+		.mergeList(
+			componentTypeDefinition as Record<string, string>[]
+		) as DefinitionList) || []
+
 const DeclarativeComponent: UC<DeclarativeProps> = (props) => {
 	const { componentType, context, definition, path } = props
 	if (!componentType) return null
@@ -93,14 +117,11 @@ const DeclarativeComponent: UC<DeclarativeProps> = (props) => {
 	// Merge YAML-defined properties into the Declarative Component definition
 	// by adding a props frame, to resolve all "$Prop{propName}" merges.
 	// These properties will NOT be accessible to child components.
-	const actualDefinition =
-		context
-			.addPropsFrame(definition)
-			// definition may not be Record<string, string>, but we just need to be able to merge it,
-			// so we need to cast it.
-			.mergeList(
-				componentTypeDef.definition as Record<string, string>[]
-			) || []
+	const actualDefinition = resolveDeclarativeComponentDefinition(
+		context,
+		definition,
+		componentTypeDef.definition
+	)
 	// Add a Props frame containing any Slots, so that any Slot components
 	// which are children of this component can access the slot definitions.
 	const actualContext =
@@ -203,6 +224,7 @@ export {
 	getDefinitionFromVariant,
 	getUtility,
 	parseVariantName,
+	resolveDeclarativeComponentDefinition,
 }
 
 export type { DeclarativeComponentSlotContext }
