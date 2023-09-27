@@ -18,7 +18,7 @@ Accept: application/json
             "deletes":{},
             "changes":{
                 "temp1":{
-                    "uesio/tests.major": 0,
+                    "uesio/tests.major": 0.000005,
                     "uesio/tests.minor": 0,
                     "uesio/tests.patch": 1
                 }
@@ -29,7 +29,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].changes['temp1']['uesio/tests.major']" == 0
+jsonpath "$.wires[0].changes['temp1']['uesio/tests.major']" == 0.000005
 jsonpath "$.wires[0].changes['temp1']['uesio/tests.minor']" == 0
 jsonpath "$.wires[0].changes['temp1']['uesio/tests.patch']" == 1
 jsonpath "$.wires[0].errors" == null
@@ -69,7 +69,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[0]['uesio/tests.major']" == 0
+jsonpath "$.wires[0].data[0]['uesio/tests.major']" == 0.000005
 jsonpath "$.wires[0].data[0]['uesio/tests.minor']" == 0
 jsonpath "$.wires[0].data[0]['uesio/tests.patch']" == 1
 jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "0:0:1"
