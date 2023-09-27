@@ -74,7 +74,7 @@ func ScanMap(src interface{}) (interface{}, error) {
 	return mapdata, nil
 }
 
-func ScanFloat(src interface{}) (interface{}, error) {
+func ScanNumber(src interface{}) (interface{}, error) {
 	var numberdata *JSONNumber
 	err := ScanJSON(&numberdata, src)
 	if err != nil {
@@ -86,20 +86,6 @@ func ScanFloat(src interface{}) (interface{}, error) {
 		return nil, nil
 	}
 	return float64(*numberdata), nil
-}
-
-func ScanInt(src interface{}) (interface{}, error) {
-	var numberdata *JSONNumber
-	err := ScanJSON(&numberdata, src)
-	if err != nil {
-		// If we get an error parsing the json, just continue with the load
-		// We'll set the value to nil
-		return nil, nil
-	}
-	if numberdata == nil {
-		return nil, nil
-	}
-	return int(*numberdata), nil
 }
 
 func ScanReference(src interface{}) (interface{}, error) {
@@ -149,11 +135,7 @@ func getScanner(item *meta.Item, fieldMetadata *adapt.FieldMetadata, referencedC
 	case "MAP", "MULTISELECT", "STRUCT":
 		return NewDataScanner(ScanMap, item, fieldMetadata)
 	case "NUMBER":
-		numberMetadata := fieldMetadata.NumberMetadata
-		if numberMetadata.Decimals == 0 {
-			return NewDataScanner(ScanInt, item, fieldMetadata)
-		}
-		return NewDataScanner(ScanFloat, item, fieldMetadata)
+		return NewDataScanner(ScanNumber, item, fieldMetadata)
 	default:
 		return NewDataScanner(ScanDefault, item, fieldMetadata)
 	}
