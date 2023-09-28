@@ -38,10 +38,11 @@ Accept: application/json
                     "id": "uesio/tests.species"
                 }
             ],
-            "query":true,
-            "batchsize":3
+            "query": true,
+            "batchsize": 3
         }
-    ]
+    ],
+    "includeMetadata": true
 }
 HTTP 200
 [Asserts]

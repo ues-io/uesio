@@ -36,6 +36,7 @@ main.tenant = $2
 ORDER BY main.id::text asc
 LIMIT 3```
 jsonpath "$.wires[0].data" count == 2
+jsonpath "$.collections" not exists
 
 # Test a wire load with a simple condition
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
@@ -78,6 +79,7 @@ jsonpath "$.wires[0].conditions[0].id" == "mycoolid"
 jsonpath "$.wires[0].data" count == 2
 jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "MacAughtrie:Jerrine"
 jsonpath "$.wires[0].data[1]['uesio/core.uniquekey']" == "McCreary:Jerrine"
+jsonpath "$.wires[0].order" not exists # Order should not be sent back to us
 
 # Test a wire load with a param merge condition
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
@@ -118,6 +120,7 @@ jsonpath "$.wires[0].conditions[0].value" == "$Param{myparam}"
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" count == 2
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "MacAughtrie:Jerrine"
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "McCreary:Jerrine"
+jsonpath "$.wires[0].params" not exists # params should not be sent back to us
 
 # Test a wire load with a condition on the unique key field
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
@@ -156,6 +159,7 @@ main.uniquekey = $3
 ORDER BY main.id::text asc
 LIMIT 501```
 jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "MacAughtrie:Jerrine"
+jsonpath "$.wires[0].fields" not exists # Fields should not be sent back to us
 [Captures]
 idvalue: jsonpath "$.wires[0].data[0]['uesio/core.id']"
 
@@ -179,7 +183,8 @@ Accept: application/json
                 }
             ]
         }
-    ]
+    ],
+    "includeMetadata": true
 }
 HTTP 200
 [Asserts]
@@ -330,7 +335,8 @@ Accept: application/json
                 }
             ]
         }
-    ]
+    ],
+    "includeMetadata": true
 }
 HTTP 200
 [Asserts]
@@ -351,5 +357,3 @@ jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "Lathe:Franklin"
 jsonpath "$.wires[0].data[1]['uesio/core.uniquekey']" == "Soitoux:Franklin"
 # Verify that metadata for the order fields was loaded and is available in the wire
 jsonpath "$.collections['uesio/tests.animal'].fields['uesio/tests.total_population'].type" == "NUMBER"
-
-

@@ -23,7 +23,8 @@ Accept: application/json
                 }
             ]
         }
-    ]
+    ],
+    "includeMetadata": true
 }
 HTTP 200
 [Asserts]
