@@ -23,7 +23,11 @@ import { useShould } from "./display"
 import { component } from ".."
 import { getKey } from "../metadata/metadata"
 import { getComponentType } from "../bands/componenttype/selectors"
-import { Declarative, DeclarativeComponent } from "../definition/component"
+import {
+	Declarative,
+	DeclarativeComponent as DeclarativeComponentDef,
+	SlotDef,
+} from "../definition/component"
 import { DISPLAY_CONDITIONS } from "../componentexports"
 import Slot, { DefaultSlotName } from "../utilities/slot"
 
@@ -84,6 +88,22 @@ type DeclarativeComponentSlotContext = {
 
 const DECLARATIVE_COMPONENT = "uesio/core.declarativecomponent"
 
+// Remove all Slot properties from a Declarative Component definition,
+// using Slot definitions from Component metadata.
+const stripSlotsFromDefinition = (
+	definition: BaseDefinition,
+	slots?: SlotDef[]
+) => {
+	if (!slots || !slots.length) return definition
+	const props = {
+		...definition,
+	} as Record<string, unknown>
+	slots.forEach((slot) => {
+		delete props[slot.name]
+	})
+	return props as BaseDefinition
+}
+
 /**
  * Constructs a DefinitionList to use for rendering a Declarative Component
  * by merging the provided properties, and then injecting them into the component type's definition's
@@ -92,18 +112,21 @@ const DECLARATIVE_COMPONENT = "uesio/core.declarativecomponent"
 const resolveDeclarativeComponentDefinition = (
 	context: Context,
 	definition: BaseDefinition,
-	componentTypeDefinition: DefinitionList
+	componentTypeDef: DeclarativeComponentDef
 ): DefinitionList =>
 	(context
 		.addPropsFrame(
 			context.mergeDeep(
-				definition as unknown as Record<string, Mergeable>
+				stripSlotsFromDefinition(
+					definition,
+					componentTypeDef.slots
+				) as unknown as Record<string, Mergeable>
 			) as Record<string, unknown>
 		)
 		// definition may not be Record<string, string>, but we just need to be able to merge it,
 		// so we need to cast it.
 		.mergeList(
-			componentTypeDefinition as Record<string, string>[]
+			componentTypeDef.definition as Record<string, string>[]
 		) as DefinitionList) || []
 
 const DeclarativeComponent: UC<DeclarativeProps> = (props) => {
@@ -111,7 +134,7 @@ const DeclarativeComponent: UC<DeclarativeProps> = (props) => {
 	if (!componentType) return null
 	const componentTypeDef = getComponentType(
 		componentType
-	) as DeclarativeComponent
+	) as DeclarativeComponentDef
 	if (!componentTypeDef) return null
 	const { slots } = componentTypeDef
 	// Merge YAML-defined properties into the Declarative Component definition
@@ -120,7 +143,7 @@ const DeclarativeComponent: UC<DeclarativeProps> = (props) => {
 	const actualDefinition = resolveDeclarativeComponentDefinition(
 		context,
 		definition,
-		componentTypeDef.definition
+		componentTypeDef
 	)
 	// Add a Props frame containing any Slots, so that any Slot components
 	// which are children of this component can access the slot definitions.

@@ -22,6 +22,11 @@ describe("Declarative Components", () => {
 		cy.get("div#root").should("contain", "I am on the right")
 		cy.get("div#root").should("contain", "This is the header")
 		cy.get("div#root").should("contain", "And this is the footer")
+		cy.clickButtonIfExists("btn-update-fields")
+		cy.get("div#root").should("contain", "I am on the izquierda")
+		cy.get("div#root").should("contain", "I am on the derecha")
+		cy.get("div#root").should("contain", "This is the cabeza")
+		cy.get("div#root").should("contain", "And this is the pie")
 	}
 
 	const runTests = () => {
