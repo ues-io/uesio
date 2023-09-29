@@ -164,6 +164,7 @@ jsonpath "$.wires[0].errors" == null
 POST https://{{host}}:{{port}}/site/wires/load
 Accept: application/json
 {
+    "includeMetadata": true,
     "wires": [
         {
             "collection":"uesio/studio.collection",

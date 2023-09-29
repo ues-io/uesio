@@ -72,6 +72,14 @@ export default async (
 		(wire) => !wire.collection
 	)
 
+	const haveWiresNeedingMetadata = wires?.some(
+		(wire) =>
+			!wire.viewOnly &&
+			!wire.preloaded &&
+			wire.collection &&
+			!wire.hasLoadedMetadata
+	)
+
 	const toLoadWithLookups = addLookupWires(validToLoad, context)
 
 	const loadRequests = getWireRequest(
@@ -91,6 +99,7 @@ export default async (
 		response = loadRequests.length
 			? await platform.loadData(context, {
 					wires: loadRequests,
+					includeMetadata: haveWiresNeedingMetadata,
 			  })
 			: { wires: [], collections: {} }
 	} catch (e) {
@@ -120,24 +129,35 @@ export default async (
 		return errContext
 	}
 
-	const loadedResults = response.wires.map((wire, index) => ({
-		...toLoadWithLookups[index],
-		...wire,
-		original: { ...wire.data },
-		isLoading: false,
-	}))
+	const loadedResults = response.wires.map(
+		(wire, index) =>
+			({
+				...toLoadWithLookups[index],
+				...wire,
+				original: { ...wire.data },
+				isLoading: false,
+				hasLoadedMetadata: true,
+			} as PlainWire)
+	)
 
-	const invalidWiresResults = invalidWires.map((wire) => ({
-		...wire,
-		error: addErrorState(wire.errors, "Invalid Wire Definition"),
-		isLoading: false,
-	}))
+	const invalidWiresResults = invalidWires.map(
+		(wire) =>
+			({
+				...wire,
+				error: addErrorState(wire.errors, "Invalid Wire Definition"),
+				isLoading: false,
+			} as PlainWire)
+	)
 
-	const preloadedResults = preloaded.map((wire) => ({
-		...wire,
-		preloaded: false,
-		isLoading: false,
-	}))
+	const preloadedResults = preloaded.map(
+		(wire) =>
+			({
+				...wire,
+				preloaded: false,
+				isLoading: false,
+				hasLoadedMetadata: true,
+			} as PlainWire)
+	)
 
 	const allResults = loadedResults.concat(
 		preloadedResults,

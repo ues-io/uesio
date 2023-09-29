@@ -1,5 +1,8 @@
 import { LoadRequestBatch } from "../load/loadrequest"
-import { LoadResponseBatch } from "../load/loadresponse"
+import {
+	CollectionMetadataResponseBatch,
+	LoadResponseBatch,
+} from "../load/loadresponse"
 import { SaveRequestBatch } from "../load/saverequest"
 import { SaveResponseBatch } from "../load/saveresponse"
 import { Context } from "../context/context"
@@ -452,8 +455,8 @@ const platform = {
 	getCollectionMetadata: async (
 		context: Context,
 		collectionName: string
-	): Promise<LoadResponseBatch> =>
-		memoizedGetJSON<LoadResponseBatch>(
+	): Promise<CollectionMetadataResponseBatch> =>
+		memoizedGetJSON<CollectionMetadataResponseBatch>(
 			context,
 			`${getPrefix(context)}/collections/meta/${collectionName}`
 		),
