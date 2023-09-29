@@ -5,6 +5,7 @@ import testWireSignal, {
 import { getExoplanetCollection } from "../utils/defaults"
 import * as api from "../../src/api/api"
 import * as platformModule from "../../src/platform/platform"
+import { PlainWire } from "../../src/bands/wire/types"
 
 const wireId = "mywire"
 const collectionId = "ben/planets.exoplanet"
@@ -133,15 +134,18 @@ const tests: WireSignalTest[] = [
 								view: "myview",
 								collection: collectionId,
 								name: wireId,
-								data: {
-									record1: {
-										"ben/planets.name": "kepler",
-									},
-									record2: {
-										"ben/planets.name": "foobar",
-									},
-								},
-							},
+								data: requestBody.wires[0].query
+									? {
+											record1: {
+												"ben/planets.name": "kepler",
+											},
+											record2: {
+												"ben/planets.name": "foobar",
+											},
+									  }
+									: {},
+								query: !!requestBody.wires[0].query,
+							} as PlainWire,
 						],
 					})
 				)
