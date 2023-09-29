@@ -207,6 +207,22 @@ func (ps *PermissionSet) HasPermission(check *PermissionSet) bool {
 	return true
 }
 
+// CanCallBot returns true if the user either:
+// (A) Has permission to call any Listener/Generator Bot
+// (B) Has permission to call the particular Listener/Generator bot requested
+func (ps *PermissionSet) CanCallBot(botKey string) bool {
+	if ps.AllowAllBots {
+		return true
+	}
+	if ps.BotRefs == nil {
+		return false
+	}
+	if ps.BotRefs[botKey] {
+		return true
+	}
+	return false
+}
+
 func (ps *PermissionSet) CanRunIntegrationAction(integrationName, actionName string) bool {
 	if ps.AllowAllIntegrationActions {
 		return true
