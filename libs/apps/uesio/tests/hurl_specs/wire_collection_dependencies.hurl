@@ -9,7 +9,6 @@ POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
     "token": "{\"subject\":\"uesio\"}"
 }
 
-
 # Test that wire collection field dependencies are accumulated into a union of all fields
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json

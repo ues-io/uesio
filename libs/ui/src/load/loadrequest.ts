@@ -27,6 +27,7 @@ type LoadRequestField = {
 
 type LoadRequestBatch = {
 	wires: LoadRequest[]
+	includeMetadata?: boolean
 }
 
 export type { LoadRequest, LoadRequestField, LoadRequestBatch }

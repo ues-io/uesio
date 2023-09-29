@@ -42,6 +42,7 @@ type PlainWire = {
 	fields: LoadRequestField[]
 	isLoading?: boolean
 	loadAll?: boolean
+	hasLoadedMetadata?: boolean
 }
 
 type ServerWire = PlainWire & {
