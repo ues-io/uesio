@@ -134,7 +134,7 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.
 		return w, nil
 	}
 
-	err = retrieve.RetrieveBundle("", creator, source, session)
+	err = retrieve.RetrieveBundle("", creator, source)
 	if err != nil {
 		return nil, err
 	}
