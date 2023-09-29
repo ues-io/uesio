@@ -29,6 +29,30 @@ const DefaultListenerBotBody = `function %s(bot) {
     bot.addResult("answer", a + b)
 }`
 
+const DefaultRunIntegrationActionBotBody = `
+function %s(bot) {
+    const itemNumbers = bot.params.get("itemNumbers")
+    const amount = bot.params.get("amount")
+
+	// Call API to create order
+	const result = bot.http.request({
+		method: "POST",
+		url: bot.getIntegration().getBaseUrl() + "/api/v1/orders"
+		body: {
+			lineItems: itemNumbers,
+			amount: amount,
+		},
+	})
+	if (result.code !== 200) {
+		bot.addError("could not place order: " + result.status)
+		return
+	}
+	const orderDetails = result.body
+	const { orderNumber } = orderDetails
+
+    bot.addResult("orderNumber", orderNumber)
+}`
+
 const DefaultLoadBotBody = `function %s(bot) {
 	const collectionName = bot.loadRequest.GetCollectionName()
 	[
@@ -203,7 +227,31 @@ func (b *JSDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adapt.Co
 }
 
 func (b *JSDialect) SaveBot(bot *meta.Bot, op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
-	return nil
+	integrationConnection, err := op.GetIntegration()
+	if err != nil {
+		return err
+	}
+	botAPI := NewSaveBotAPI(bot, session, connection, op, integrationConnection)
+	if err := b.hydrateBot(bot, session); err != nil {
+		return err
+	}
+	return RunBot(bot.Name, bot.FileContents, botAPI, nil)
+}
+
+func (b *JSDialect) RunIntegrationActionBot(bot *meta.Bot, action *meta.IntegrationAction, integration adapt.IntegrationConnection, params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
+	botAPI := NewRunIntegrationActionBotAPI(bot, action, integration, params, session, connection)
+	err := b.hydrateBot(bot, session)
+	if err != nil {
+		return nil, err
+	}
+	err = RunBot(bot.Name, bot.FileContents, botAPI, nil)
+	if err != nil {
+		return nil, err
+	}
+	if len(botAPI.Errors) > 0 {
+		err = errors.New(strings.Join(botAPI.Errors, ", "))
+	}
+	return botAPI.Results, err
 }
 
 func (b *JSDialect) GetFilePath() string {
@@ -222,6 +270,8 @@ func (b *JSDialect) GetDefaultFileBody(botType string) string {
 		return DefaultLoadBotBody
 	case "SAVE":
 		return DefaultSaveBotBody
+	case "RUNACTION":
+		return DefaultRunIntegrationActionBotBody
 	default:
 		return DefaultBotBody
 	}

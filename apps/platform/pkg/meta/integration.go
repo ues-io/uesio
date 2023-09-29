@@ -26,6 +26,7 @@ type Integration struct {
 	BaseURL        string `yaml:"baseUrl" json:"uesio/studio.baseurl"`
 	LoadBot        string `yaml:"loadBot" json:"uesio/studio.loadbot"`
 	SaveBot        string `yaml:"saveBot" json:"uesio/studio.savebot"`
+	RunActionBot   string `yaml:"runActionBot" json:"uesio/studio.runactionbot"`
 	// TODO Remove headers
 	Headers map[string]string `yaml:"headers" json:"uesio/studio.headers"`
 }

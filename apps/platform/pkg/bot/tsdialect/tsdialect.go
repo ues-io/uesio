@@ -3,6 +3,7 @@ package tsdialect
 import (
 	"fmt"
 	"io"
+	"strings"
 
 	esbuild "github.com/evanw/esbuild/pkg/api"
 	"github.com/pkg/errors"
@@ -29,6 +30,36 @@ function %s(bot: ListenerBotApi) {
     const a = bot.params.get("a") as number
     const b = bot.params.get("b") as number
     bot.addResult("answer", a + b)
+}`
+
+const DefaultRunIntegrationActionBotBody = `import { RunActionBotApi } from "@uesio/bots"
+
+type OrderDetails = {
+	orderNumber: string
+}
+
+// @ts-ignore
+function %s(bot: RunActionBotApi) {
+    const itemNumbers = bot.params.get("itemNumbers") as []string
+    const amount = bot.params.get("amount") as number
+
+	// Call API to create order
+	const result = bot.http.request({
+		method: "POST",
+		url: bot.getIntegration().getBaseUrl() + "/api/v1/orders"
+		body: {
+			lineItems: itemNumbers,
+			amount: amount,
+		},
+	})
+	if (result.code !== 200) {
+		bot.addError("could not place order: " + result.status)
+		return
+	}
+	const orderDetails = result.body as OrderDetails
+	const { orderNumber } = orderDetails
+
+    bot.addResult("orderNumber", orderNumber)
 }`
 
 const DefaultLoadBotBody = `import { LoadBotApi } from "@uesio/bots
@@ -198,6 +229,22 @@ func (b *TSDialect) SaveBot(bot *meta.Bot, op *adapt.SaveOp, connection adapt.Co
 	return RunBot(bot.Name, bot.FileContents, botAPI, nil)
 }
 
+func (b *TSDialect) RunIntegrationActionBot(bot *meta.Bot, action *meta.IntegrationAction, integration adapt.IntegrationConnection, params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
+	botAPI := jsdialect.NewRunIntegrationActionBotAPI(bot, action, integration, params, session, connection)
+	err := b.hydrateBot(bot, session)
+	if err != nil {
+		return nil, err
+	}
+	err = RunBot(bot.Name, bot.FileContents, botAPI, nil)
+	if err != nil {
+		return nil, err
+	}
+	if len(botAPI.Errors) > 0 {
+		err = errors.New(strings.Join(botAPI.Errors, ", "))
+	}
+	return botAPI.Results, err
+}
+
 func (b *TSDialect) GetFilePath() string {
 	return "bot.ts"
 }
@@ -214,6 +261,8 @@ func (b *TSDialect) GetDefaultFileBody(botType string) string {
 		return DefaultLoadBotBody
 	case "SAVE":
 		return DefaultSaveBotBody
+	case "RUNACTION":
+		return DefaultRunIntegrationActionBotBody
 	default:
 		return DefaultBotBody
 	}

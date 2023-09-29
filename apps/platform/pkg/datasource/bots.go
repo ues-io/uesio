@@ -316,3 +316,47 @@ func CallListenerBot(namespace, name string, params map[string]interface{}, conn
 	return dialect.CallBot(robot, params, connection, session)
 
 }
+
+func RunIntegrationActionBot(namespace, name string, params map[string]interface{}, action *meta.IntegrationAction, integration adapt.IntegrationConnection, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
+
+	// TODO: Implement Permission Sets for integration actions
+	//if ok, err := canCallBot(namespace, name, session.GetContextPermissions()); !ok {
+	//	return nil, err
+	//}
+
+	// First try to run a system bot
+	systemListenerBot := meta.NewListenerBot(namespace, name)
+	systemListenerBot.Dialect = "SYSTEM"
+
+	systemDialect, err := bot.GetBotDialect(systemListenerBot.Dialect)
+	if err != nil {
+		return nil, err
+	}
+
+	systemBotResults, err := systemDialect.RunIntegrationActionBot(systemListenerBot, action, integration, params, connection, session)
+	_, isNotFoundError := err.(*SystemBotNotFoundError)
+	if !isNotFoundError {
+		// If we found a system bot, we can go ahead and just return the results of
+		// that bot, no need to look for another bot to run.
+		return systemBotResults, err
+	}
+
+	robot := meta.NewRunActionBot(namespace, name)
+	err = bundle.Load(robot, session, connection)
+	if err != nil {
+		return nil, meta.NewBotNotFoundError("integration run action bot not found: " + fmt.Sprintf("%s.%s", namespace, name))
+	}
+
+	err = robot.ValidateParams(params)
+	if err != nil {
+		return nil, err
+	}
+
+	dialect, err := bot.GetBotDialect(robot.Dialect)
+	if err != nil {
+		return nil, err
+	}
+
+	return dialect.RunIntegrationActionBot(robot, action, integration, params, connection, session)
+
+}

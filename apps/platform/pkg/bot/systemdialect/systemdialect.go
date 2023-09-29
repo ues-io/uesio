@@ -121,6 +121,10 @@ func (b *SystemDialect) CallBot(bot *meta.Bot, params map[string]interface{}, co
 
 }
 
+func (b *SystemDialect) RunIntegrationActionBot(bot *meta.Bot, action *meta.IntegrationAction, integration adapt.IntegrationConnection, params map[string]interface{}, connection adapt.Connection, session *sess.Session) error {
+	return nil
+}
+
 func (b *SystemDialect) CallGeneratorBot(bot *meta.Bot, create retrieve.WriterCreator, params map[string]interface{}, connection adapt.Connection, session *sess.Session) error {
 	return nil
 }

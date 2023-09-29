@@ -71,6 +71,10 @@ func NewSaveBot(namespace, name string) *Bot {
 	return NewBaseBot("SAVE", "", namespace, name)
 }
 
+func NewRunActionBot(namespace, name string) *Bot {
+	return NewBaseBot("RUNACTION", "", namespace, name)
+}
+
 func NewBaseBot(botType, collectionKey, namespace, name string) *Bot {
 	return &Bot{
 		CollectionRef:  collectionKey,
@@ -206,6 +210,7 @@ func GetBotTypes() map[string]string {
 		"LOAD":       "load",
 		"ROUTE":      "route",
 		"SAVE":       "save",
+		"RUNACTION":  "runaction",
 	}
 }
 

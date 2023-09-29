@@ -154,6 +154,22 @@ interface ListenerBotApi {
 	log: LogApi
 	http: HttpApi
 }
+interface RunActionBotApi {
+	addError: (error: string) => void
+	addResult: (key: string, value: FieldValue | undefined) => void
+	getActionName: () => string
+	getCredentials: () => Record<string, string | undefined>
+	getConfigValue: (configValueKey: string) => string
+	getIntegration: () => IntegrationMetadata
+	getSession: () => SessionApi
+	getUser: () => UserApi
+	http: HttpApi
+	load: (loadRequest: LoadRequest) => WireRecord[]
+	log: LogApi
+	params: BotParamsApi
+	save: (collectionName: string, records: WireRecord[]) => void
+}
+
 interface LoadBotApi {
 	addError: (error: string) => void
 	addRecord: (record: Record<string, unknown>) => void
@@ -182,21 +198,21 @@ interface SaveBotApi {
 	saveOptions: SaveOptionsApi
 }
 export type {
-	ListenerBotApi,
-	LoadBotApi,
-	SaveBotApi,
-	BeforeSaveBotApi,
 	AfterSaveBotApi,
+	BeforeSaveBotApi,
 	BotParamsApi,
+	ChangeApi,
 	ConditionOperator,
 	ConditionRequest,
 	ConditionType,
-	ChangeApi,
 	DeleteApi,
-	InsertApi,
 	FieldRequest,
 	FieldValue,
+	InsertApi,
+	ListenerBotApi,
+	LoadBotApi,
 	LoadOrder,
 	LoadRequest,
+	SaveBotApi,
 	WireRecord,
 }
