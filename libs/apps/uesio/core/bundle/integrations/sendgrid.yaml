@@ -1,0 +1,6 @@
+name: sendgrid
+public: true
+type: sendgrid
+credentials: uesio/core.sendgrid
+headers: {}
+baseUrl: ""
