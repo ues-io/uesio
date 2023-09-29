@@ -301,34 +301,60 @@ definition:
                                             - name: fields
                                               label: Fields
                                               type: MAP
-                - uesio/io.box:
-                    uesio.variant: uesio/io.section
-                    components:
-                      - uesio/io.titlebar:
-                          title: Integration Actions
-                          uesio.variant: uesio/io.section
-                      - uesio/io.box:
-                          components:
-                            - uesio/studio.multipermissionpicker:
-                                uesio.id: integrationActions
-                                uesio.context:
-                                  workspace:
-                                    name: $Param{workspacename}
-                                    app: $Param{app}
-                                fieldId: uesio/studio.integrationactionrefs
-                                wireName: integrations
-                                rowactions:
-                                  - text: Details
-                                    signals:
-                                      - path: app/$Param{app}/workspace/$Param{workspacename}/permissionsets/$Param{namespace}/$Param{permissionsetname}/integration/${uesio/studio.namespace}/${uesio/studio.name}
-                                        signal: route/NAVIGATE
-                                permissionFields:
-                                  - name: allowAll
-                                    label: Allow All
-                                    type: CHECKBOX
-                                  - name: actions
-                                    label: Action Access
-                                    type: MAP
+                      - id: integrationactions
+                        label: Integration Actions
+                        uesio.display:
+                          - type: featureFlag
+                            name: manage_integrations
+                        components:
+                          - uesio/io.box:
+                              uesio.variant: uesio/io.section
+                              components:
+                                - uesio/io.box:
+                                    components:
+                                      - uesio/io.field:
+                                          fieldId: uesio/studio.allowallintegrationactions
+                                          displayAs: "TOGGLE"
+                                      - uesio/io.searchbox:
+                                          wire: integrations
+                                          uesio.display:
+                                            - type: fieldValue
+                                              field: uesio/studio.allowallintegrationactions
+                                              operator: NOT_EQUALS
+                                              value: true
+                                          searchFields:
+                                            - uesio/studio.name
+                                            - uesio/studio.namespace
+                                      - uesio/studio.multipermissionpicker:
+                                          uesio.id: permsTable-integrationactions
+                                          uesio.display:
+                                            - type: fieldValue
+                                              field: uesio/studio.allowallintegrationactions
+                                              operator: NOT_EQUALS
+                                              value: true
+                                          uesio.context:
+                                            workspace:
+                                              name: $Param{workspacename}
+                                              app: $Param{app}
+                                          fieldId: uesio/studio.integrationactionrefs
+                                          wireName: integrations
+                                          rowactions:
+                                            - text: Grant access to individual Actions
+                                              signals:
+                                                - path: app/$Param{app}/workspace/$Param{workspacename}/permissionsets/$Param{namespace}/$Param{permissionsetname}/integration/${uesio/studio.namespace}/${uesio/studio.name}
+                                                  signal: route/NAVIGATE
+                                              uesio.display:
+                                                - type: fieldValue
+                                                  field: allowAll
+                                                  operator: NOT_EQUALS
+                                                  value: true
+                                          permissionFields:
+                                            - name: allowAll
+                                              label: Allow all Actions provided by this Integration
+                                              type: CHECKBOX
+                                            - name: actions
+                                              label: Action Access
+                                              type: MAP
   panels:
     deletePermissonset:
       uesio.type: uesio/io.dialog
