@@ -3,6 +3,9 @@ package auth
 import (
 	"errors"
 	"fmt"
+	"os"
+	"strings"
+
 	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -14,8 +17,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
-	"os"
-	"strings"
 )
 
 func init() {
@@ -274,7 +275,7 @@ func getAuthSource(key string, session *sess.Session) (*meta.AuthSource, error) 
 	return authSource, nil
 }
 
-func getSignupMethod(key string, session *sess.Session) (*meta.SignupMethod, error) {
+func GetSignupMethod(key string, session *sess.Session) (*meta.SignupMethod, error) {
 	signupMethod, err := meta.NewSignupMethod(key)
 	if err != nil {
 		return nil, err
@@ -319,12 +320,12 @@ func GetLoginMethod(claims *AuthenticationClaims, authSourceID string, session *
 	return &loginmethod, nil
 }
 
-func CreateLoginMethod(user *meta.User, signupMethod *meta.SignupMethod, claims *AuthenticationClaims, session *sess.Session) error {
+func CreateLoginMethod(user *meta.User, signupMethod *meta.SignupMethod, claims *AuthenticationClaims, connection adapt.Connection, session *sess.Session) error {
 	return datasource.PlatformSaveOne(&meta.LoginMethod{
 		FederationID: claims.Subject,
 		User:         user,
 		AuthSource:   signupMethod.AuthSource,
-	}, nil, nil, session)
+	}, nil, connection, session)
 }
 
 func GetPayloadValue(payload map[string]interface{}, key string) (string, error) {

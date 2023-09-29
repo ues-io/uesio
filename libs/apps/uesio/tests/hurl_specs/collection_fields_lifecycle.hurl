@@ -164,6 +164,7 @@ jsonpath "$.wires[0].errors" == null
 POST https://{{host}}:{{port}}/site/wires/load
 Accept: application/json
 {
+    "includeMetadata": true,
     "wires": [
         {
             "collection":"uesio/studio.collection",
@@ -270,6 +271,12 @@ jsonpath "$.wires[1].data[*]['uesio/studio.type']" includes "NUMBER"
 jsonpath "$.wires[2].data" count == 2
 jsonpath "$.wires[2].data[*]['uesio/studio.collection']" includes "{{app_fullname}}.rare_and_unusual_object"
 jsonpath "$.wires[2].data[*]['uesio/studio.type']" includes "list"
+jsonpath "$.wires[2].data[*]['uesio/studio.type']" includes "list"
+# TODO This should really be 3 but we are loading too many collections server-side
+jsonpath "$.collections[*].name" count <= 10 
+jsonpath "$.collections['uesio/studio.collection'].name" == "collection"
+jsonpath "$.collections['uesio/studio.routeassignment'].name" == "routeassignment"
+jsonpath "$.collections['uesio/studio.field'].name" == "field"
 [Captures]
 collection_id: jsonpath "$.wires[0].data[0]['uesio/core.id']"
 

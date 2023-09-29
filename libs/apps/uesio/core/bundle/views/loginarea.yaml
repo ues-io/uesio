@@ -75,6 +75,9 @@ definition:
                             - signal: route/REDIRECT
                               path: requestpassword
                 - uesio/io.button:
+                    uesio.styleTokens:
+                      root:
+                        - mt-2
                     uesio.variant: uesio/io.primary
                     uesio.id: sign-in
                     text: Sign In

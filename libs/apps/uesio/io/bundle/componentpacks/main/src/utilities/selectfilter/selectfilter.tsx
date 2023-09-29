@@ -18,7 +18,6 @@ const SelectFilter: definition.UtilityComponent<SelectFilterProps> = (
 
 	return (
 		<SelectField
-			fieldMetadata={fieldMetadata}
 			context={context}
 			options={addBlankSelectOption(
 				fieldMetadata.getSelectMetadata()?.options || [],

@@ -2,8 +2,11 @@ package auth
 
 import (
 	"errors"
-	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"regexp"
+
+	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/templating"
@@ -25,17 +28,35 @@ func matchesRegex(usarname string, regex string) bool {
 	return validMetaRegex.MatchString(usarname)
 }
 
-func Signup(signupMethodID string, payload map[string]interface{}, site *meta.Site) (*meta.SignupMethod, error) {
-
-	session, err := GetSystemSession(site, nil)
+func Signup(signupMethod *meta.SignupMethod, payload map[string]interface{}, session *sess.Session) (*meta.User, error) {
+	connection, err := datasource.GetPlatformConnection(nil, session, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	signupMethod, err := getSignupMethod(signupMethodID, session)
+	err = connection.BeginTransaction()
 	if err != nil {
 		return nil, err
 	}
+
+	user, err := signupWithConnection(signupMethod, payload, connection, session)
+	if err != nil {
+		rollbackError := connection.RollbackTransaction()
+		if rollbackError != nil {
+			return nil, rollbackError
+		}
+		return nil, err
+	}
+
+	err = connection.CommitTransaction()
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func signupWithConnection(signupMethod *meta.SignupMethod, payload map[string]interface{}, connection adapt.Connection, session *sess.Session) (*meta.User, error) {
 
 	authconn, err := GetAuthConnection(signupMethod.AuthSource, session)
 	if err != nil {
@@ -51,7 +72,7 @@ func Signup(signupMethodID string, payload map[string]interface{}, site *meta.Si
 		return nil, errors.New("username does not match required pattern: " + signupMethod.UsernameFormatExplanation)
 	}
 
-	err = boostPayloadWithTemplate(username, payload, site, &signupMethod.Signup)
+	err = boostPayloadWithTemplate(username, payload, session.GetSite(), &signupMethod.Signup)
 	if err != nil {
 		return nil, err
 	}
@@ -68,22 +89,22 @@ func Signup(signupMethodID string, payload map[string]interface{}, site *meta.Si
 		return nil, err
 	}
 
-	err = datasource.PlatformSaveOne(userMeta, nil, nil, session)
+	err = datasource.PlatformSaveOne(userMeta, nil, connection, session)
 	if err != nil {
 		return nil, err
 	}
 
-	user, err := GetUserByKey(username, session, nil)
+	user, err := GetUserByKey(username, session, connection)
 	if err != nil {
 		return nil, err
 	}
 
-	err = CreateLoginMethod(user, signupMethod, claims, session)
+	err = CreateLoginMethod(user, signupMethod, claims, connection, session)
 	if err != nil {
 		return nil, err
 	}
 
-	return signupMethod, nil
+	return user, nil
 }
 
 func ConfirmSignUp(signupMethodID string, payload map[string]interface{}, site *meta.Site) error {
@@ -93,7 +114,7 @@ func ConfirmSignUp(signupMethodID string, payload map[string]interface{}, site *
 		return err
 	}
 
-	signupMethod, err := getSignupMethod(signupMethodID, session)
+	signupMethod, err := GetSignupMethod(signupMethodID, session)
 	if err != nil {
 		return err
 	}

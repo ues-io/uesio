@@ -3,7 +3,11 @@ import { PlainWire } from "../bands/wire/types"
 
 type LoadResponseBatch = {
 	wires: PlainWire[]
+	collections?: PlainCollectionMap
+}
+
+type CollectionMetadataResponseBatch = {
 	collections: PlainCollectionMap
 }
 
-export type { LoadResponseBatch }
+export type { CollectionMetadataResponseBatch, LoadResponseBatch }
