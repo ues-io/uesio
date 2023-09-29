@@ -3,6 +3,7 @@ package auth
 import (
 	"errors"
 	"regexp"
+	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 
@@ -52,6 +53,15 @@ func Signup(signupMethodID string, payload map[string]interface{}, site *meta.Si
 		return nil, errors.New("username does not match required pattern: " + signupMethod.UsernameFormatExplanation)
 	}
 
+	user, err := CheckAvailability(signupMethodID, username, site)
+	if user == nil && err != nil && !strings.HasPrefix(err.Error(), "Couldn't find item from platform load") {
+		return nil, err
+	}
+
+	if user != nil && err == nil {
+		return nil, errors.New("Username not available, try something more creative")
+	}
+
 	err = boostPayloadWithTemplate(username, payload, site, &signupMethod.Signup)
 	if err != nil {
 		return nil, err
@@ -74,14 +84,12 @@ func Signup(signupMethodID string, payload map[string]interface{}, site *meta.Si
 		return nil, err
 	}
 
-	user, err := GetUserByKey(username, session, nil)
+	user, err = GetUserByKey(username, session, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	//move this inside the
-	//TO-DO we should move this in a step later since the email is not confirmed yet
-	err = CreateLoginMethod(user, signupMethod, claims, session)
+	err = CreateLoginMethod(user, signupMethod.AuthSource, claims, session)
 	if err != nil {
 		return nil, err
 	}

@@ -2,10 +2,13 @@ package uesioauth
 
 import (
 	"errors"
+	"fmt"
+	"math/rand"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -35,9 +38,14 @@ func (c *Connection) Login(payload map[string]interface{}, session *sess.Session
 		return nil, errors.New("Cognito login:" + err.Error())
 	}
 
-	loginmethod, err := auth.CheckLoginMethod("", username, site)
+	//TO-DO way to get the authSoruceId from the connection?
+	loginmethod, err := auth.CheckLoginMethod("uesio/core.platform", username, site)
 	if err != nil {
 		return nil, errors.New("Failed Getting Login Method Data: " + err.Error())
+	}
+
+	if !loginmethod.Verified {
+		return nil, errors.New("Please verify your email")
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(loginmethod.Hash), []byte(plainPassword))
@@ -52,15 +60,6 @@ func (c *Connection) Login(payload map[string]interface{}, session *sess.Session
 }
 
 func (c *Connection) Signup(payload map[string]interface{}, username string, session *sess.Session) (*auth.AuthenticationClaims, error) {
-	site := session.GetSite()
-	user, err := auth.CheckAvailability("uesio/studio.platform", username, site)
-	if user == nil && err != nil && !strings.HasPrefix(err.Error(), "Couldn't find item from platform load") {
-		return nil, err
-	}
-
-	if user != nil && err == nil {
-		return nil, errors.New("Username not available, try something more creative")
-	}
 
 	email, err := auth.GetPayloadValue(payload, "email")
 	if err != nil {
@@ -78,7 +77,7 @@ func (c *Connection) Signup(payload map[string]interface{}, username string, ses
 		return nil, errors.New("Uesio Signup:" + err.Error())
 	}
 	//email part
-	// integration, err := datasource.GetIntegration("uesio/crm.sendgrid", session)
+	// integration, err := datasource.GetIntegration("uesio/core.sendgrid", session)
 	// if err != nil {
 	// 	return nil, err
 	// }
@@ -103,11 +102,11 @@ func (c *Connection) Signup(payload map[string]interface{}, username string, ses
 	//send an email with a code --> verification code and is pending
 	//what shall we use as subject --> abel the username? like mock?
 
-	//maybe get rid of this
 	return &auth.AuthenticationClaims{
-		Subject: username,
-		Hash:    string(hash),
-		//TO-DO user confirmed?
+		Subject:  username,
+		Hash:     string(hash),
+		Verified: false,
+		Code:     strings.Trim(fmt.Sprint(rand.Perm(6)), "[]"),
 	}, nil
 }
 func (c *Connection) ForgotPassword(payload map[string]interface{}, session *sess.Session) error {
@@ -120,5 +119,33 @@ func (c *Connection) CreateLogin(payload map[string]interface{}, username string
 	return nil, errors.New("Mock login: unfortunately you cannot create a login")
 }
 func (c *Connection) ConfirmSignUp(payload map[string]interface{}, session *sess.Session) error {
-	return errors.New("Mock login: unfortunately you cannot change the password")
+	site := session.GetSite()
+
+	username, err := auth.GetPayloadValue(payload, "username")
+	if err != nil {
+		return errors.New("Cognito Confirm Forgot Password:" + err.Error())
+	}
+
+	verificationCode, err := auth.GetPayloadValue(payload, "verificationcode")
+	if err != nil {
+		return errors.New("Cognito Confirm Forgot Password:" + err.Error())
+	}
+
+	//TO-DO way to get the authSoruceId from the connection?
+	loginmethod, err := auth.CheckLoginMethod("uesio/core.platform", username, site)
+	if err != nil {
+		return errors.New("Failed Getting Login Method Data: " + err.Error())
+	}
+
+	if loginmethod.Code != verificationCode {
+		return errors.New("The codes do not match")
+	}
+
+	loginmethod.Verified = true
+	err = datasource.PlatformSaveOne(loginmethod, nil, nil, session)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

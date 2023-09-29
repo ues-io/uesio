@@ -6,6 +6,8 @@ type LoginMethod struct {
 	AuthSource   string `json:"uesio/core.auth_source"`
 	Hash         string `json:"uesio/core.hash"`
 	User         *User  `json:"uesio/core.user"`
+	Code         string `json:"uesio/core.code"`
+	Verified     bool   `json:"uesio/core.verified"`
 }
 
 func (lm *LoginMethod) GetCollectionName() string {

@@ -104,7 +104,9 @@ type AuthenticationClaims struct {
 	FirstName string `json:"firstname"`
 	LastName  string `json:"lastname"`
 	Email     string `json:"email"`
-	Hash      string `json:"hash"`
+	Hash      string
+	Code      string
+	Verified  bool
 }
 
 func parseHost(host string) (domainType, domainValue, domain, subdomain string) {
@@ -262,10 +264,6 @@ func GetUserByID(id string, session *sess.Session, connection adapt.Connection) 
 	return getUser(adapt.ID_FIELD, id, session, connection)
 }
 
-func GetUserByEmail(email string, session *sess.Session, connection adapt.Connection) (*meta.User, error) {
-	return getUser("uesio/core.email", email, session, connection)
-}
-
 func getAuthSource(key string, session *sess.Session) (*meta.AuthSource, error) {
 	authSource, err := meta.NewAuthSource(key)
 	if err != nil {
@@ -325,13 +323,14 @@ func GetLoginMethod(claims *AuthenticationClaims, authSourceID string, session *
 	return &loginmethod, nil
 }
 
-func CreateLoginMethod(user *meta.User, signupMethod *meta.SignupMethod, claims *AuthenticationClaims, session *sess.Session) error {
+func CreateLoginMethod(user *meta.User, authSourceID string, claims *AuthenticationClaims, session *sess.Session) error {
 	return datasource.PlatformSaveOne(&meta.LoginMethod{
 		FederationID: claims.Subject,
 		User:         user,
-		AuthSource:   signupMethod.AuthSource,
+		AuthSource:   authSourceID,
 		Hash:         claims.Hash,
-		//TO-DO user verified??
+		Code:         claims.Code,
+		Verified:     claims.Verified,
 	}, nil, nil, session)
 }
 

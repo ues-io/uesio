@@ -3,6 +3,7 @@ package cognito
 import (
 	"context"
 	"errors"
+
 	"github.com/aws/aws-sdk-go-v2/aws/transport/http"
 	"github.com/aws/smithy-go"
 
@@ -427,7 +428,8 @@ func (c *Connection) CreateLogin(payload map[string]interface{}, username string
 	}
 
 	return &auth.AuthenticationClaims{
-		Subject: sub,
+		Subject:  sub,
+		Verified: true,
 	}, nil
 }
 
