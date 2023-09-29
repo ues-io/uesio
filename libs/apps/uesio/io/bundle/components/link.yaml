@@ -1,0 +1,25 @@
+name: link
+title: Link
+icon: text_fields
+description: Display link
+category: CONTENT
+pack: main
+entrypoint: components/link/link
+discoverable: true
+defaultDefinition:
+  text: Text Goes Here
+  link: https://ues.io
+properties:
+  - name: text
+    label: Text
+    type: TEXT
+  - name: link
+    type: TEXT
+    label: Link
+sections:
+  - type: HOME
+    properties:
+      - text
+      - link
+  - type: STYLES
+  - type: DISPLAY

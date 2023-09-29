@@ -45,11 +45,6 @@ const signals: SignalBandDefinition = {
 			description: "Logout",
 			properties: () => [],
 		},
-		[`${BAND}/CHECK_AVAILABILITY`]: {
-			label: "Check availability",
-			description: "Check username availability",
-			properties: () => [],
-		},
 		[`${BAND}/FORGOT_PASSWORD`]: {
 			label: "Forgot Password",
 			description: "Forgot Password",

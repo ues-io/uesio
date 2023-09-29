@@ -1,6 +1,7 @@
 name: public
 named:
 views:
+  uesio/studio.signup: true
 routes:
   uesio/studio.login: true
   uesio/studio.signup: true
@@ -8,3 +9,5 @@ routes:
   uesio/studio.changepassword: true
   uesio/studio.requestpassword: true
 files:
+bots:
+  uesio/studio.checkavailability: true

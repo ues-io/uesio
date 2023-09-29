@@ -1,0 +1,283 @@
+name: signup
+public: true
+definition:
+  wires:
+    userData:
+      viewOnly: true
+      fields:
+        username:
+          label: Username
+          type: TEXT
+        password:
+          label: Password
+          type: TEXT
+        email:
+          label: Email
+          type: TEXT
+        step:
+          label: Step
+          type: TEXT
+        terms:
+          type: CHECKBOX
+          label: Terms
+      init:
+        create: true
+      defaults:
+        - field: terms
+          valueSource: VALUE
+          value: false
+        - field: step
+          valueSource: VALUE
+          value: "username"
+
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/io.grid:
+        uesio.variant: uesio/io.splash
+        items:
+          - uesio/io.grid:
+              uesio.variant: uesio/io.center
+              items:
+                - uesio/io.grid:
+                    uesio.variant: uesio/core.loginarea
+                    items:
+                      - uesio/io.image:
+                          uesio.variant: uesio/core.fancy
+                          file: uesio/core.logo
+                          signals:
+                            - signal: "route/REDIRECT"
+                              path: "https://$Site{domain}"
+                      - uesio/io.list:
+                          uesio.id: credslist
+                          wire: userData
+                          mode: EDIT
+                          components:
+                            - uesio/io.grid:
+                                uesio.display:
+                                  - field: step
+                                    value: username
+                                items:
+                                  - uesio/io.text:
+                                      text: Welcome to the ues.io studio!
+                                      element: div
+                                      uesio.styleTokens:
+                                        root:
+                                          - font-light
+                                  - uesio/io.field:
+                                      fieldId: username
+                                      label: Pick a username
+                                  - uesio/io.text:
+                                      text: "Your username must contain only lowercase characters a-z, the underscore character, or the numerals 0-9."
+                                      element: div
+                                      uesio.styleTokens:
+                                        root:
+                                          - font-light
+                                          - p-3
+                                          - mb-3
+                                          - bg-slate-100
+                                          - text-slate-600
+                                          - leading-1
+                                          - text-xs
+                                          - rounded
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.primary
+                                      text: Check Availability
+                                      signals:
+                                        - signal: bot/CALL
+                                          bot: uesio/studio.checkavailability
+                                          params:
+                                            username: ${username}
+                                          onerror:
+                                            signals:
+                                              - signal: notification/ADD_ERRORS
+                                        - signal: wire/UPDATE_RECORD
+                                          field: step
+                                          valueSource: VALUE
+                                          value: method
+                            - uesio/io.grid:
+                                uesio.display:
+                                  - field: step
+                                    value: method
+                                uesio.styleTokens:
+                                  root:
+                                    - gap-4
+                                items:
+                                  - uesio/io.box:
+                                      components:
+                                        - uesio/io.text:
+                                            text: ${username}
+                                            uesio.styleTokens:
+                                              root:
+                                                - font-bold
+                                                - text-blue-800
+                                        - uesio/io.text:
+                                            text: " is available."
+                                            uesio.styleTokens:
+                                              root:
+                                                - font-light
+                                  - uesio/io.grid:
+                                      uesio.styleTokens:
+                                        root:
+                                          - gap-4
+                                          - border-t-1
+                                          - border-b-1
+                                          - border-slate-200
+                                          - mb-7
+                                          - mt-2
+                                          - py-4
+                                      items:
+                                        - uesio/io.text:
+                                            text: 'Apps you create will include your username. If you created an app called "tacos" its name would look like this.'
+                                            element: div
+                                            uesio.styleTokens:
+                                              root:
+                                                - font-light
+                                                - text-slate-700
+                                                - leading-1
+                                                - text-sm
+                                        - uesio/io.grid:
+                                            uesio.styleTokens:
+                                              root:
+                                                - justify-center
+                                            items:
+                                              - uesio/io.text:
+                                                  text: "${username}/tacos"
+                                                  element: div
+                                                  uesio.styleTokens:
+                                                    root:
+                                                      - bg-blue-100
+                                                      - border-1
+                                                      - border-blue-200
+                                                      - px-3
+                                                      - py-1
+                                                      - rounded-full
+                                                      - text-blue-800
+                                                      - text-sm
+                                                      - font-bold
+                                  - uesio/io.box:
+                                      components:
+                                        - uesio/core.logingoogle:
+                                            minWidth: 240
+                                            text: continue_with
+                                            onLoginSignals:
+                                              - signal: "user/SIGNUP"
+                                                signupMethod: uesio/studio.google
+                                                requireds:
+                                                payload:
+                                                  username: ${username}
+                                                  credential: $ComponentOutput{[uesio/core.logingoogle][credential]}
+                                                  client_id: $ComponentOutput{[uesio/core.logingoogle][client_id]}
+                                                onerror:
+                                                  signals:
+                                                    - signal: notification/ADD_ERRORS
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.secondary
+                                      text: Sign up with email
+                                      signals:
+                                        - signal: wire/UPDATE_RECORD
+                                          field: step
+                                          valueSource: VALUE
+                                          value: email
+                                  - uesio/io.button:
+                                      text: Pick a different username
+                                      uesio.variant: uesio/io.nav
+                                      uesio.styleTokens:
+                                        root:
+                                          - normal-case
+                                          - font-light
+                                          - border-1
+                                          - border-slate-200
+                                          - rounded
+                                      signals:
+                                        - signal: wire/UPDATE_RECORD
+                                          field: step
+                                          valueSource: VALUE
+                                          value: username
+                            - uesio/io.grid:
+                                uesio.display:
+                                  - field: step
+                                    value: email
+                                uesio.styleTokens:
+                                  root:
+                                    - gap-4
+                                items:
+                                  - uesio/io.box:
+                                      components:
+                                        - uesio/io.field:
+                                            fieldId: email
+                                            text:
+                                              autoComplete: "off"
+                                        - uesio/io.field:
+                                            fieldId: password
+                                            label: Password
+                                            displayAs: PASSWORD
+                                            text:
+                                              autoComplete: "new-password"
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.secondary
+                                      text: Sign up
+                                      signals:
+                                        - signal: user/SIGNUP
+                                          signupMethod: uesio/studio.platform
+                                          requireds:
+                                          payload:
+                                            username: ${username}
+                                            password: ${password}
+                                            email: ${email}
+                                  - uesio/io.button:
+                                      text: Authenticate a different way
+                                      uesio.variant: uesio/io.nav
+                                      uesio.styleTokens:
+                                        root:
+                                          - normal-case
+                                          - font-light
+                                          - border-1
+                                          - border-slate-200
+                                          - rounded
+                                      signals:
+                                        - signal: wire/UPDATE_RECORD
+                                          field: step
+                                          valueSource: VALUE
+                                          value: method
+                            - uesio/io.grid:
+                                uesio.display:
+                                  - type: fieldValue
+                                    field: step
+                                    operator: IN
+                                    values:
+                                      - email
+                                      - method
+                                items:
+                                  - uesio/io.box:
+                                      uesio.styleTokens:
+                                        root:
+                                          - border-t-1
+                                          - border-slate-200
+                                          - font-light
+                                          - pt-3
+                                          - mb-4
+                                          - mt-2
+                                          - text-slate-500
+                                          - leading-1
+                                          - text-xs
+                                      components:
+                                        - uesio/io.text:
+                                            text: "By creating an account, you agree to the "
+                                        - uesio/io.link:
+                                            text: "terms of service"
+                                            link: "https://ues.io/terms"
+                                            newTab: true
+                                            uesio.styleTokens:
+                                              root:
+                                                - text-blue-600
+                                        - uesio/io.text:
+                                            text: ". For more information about ues.io's privacy practices, see the ues.io "
+                                        - uesio/io.link:
+                                            text: "privacy statement"
+                                            link: "https://ues.io/privacy"
+                                            newTab: true
+                                            uesio.styleTokens:
+                                              root:
+                                                - text-blue-600
+                                        - uesio/io.text:
+                                            text: "."
