@@ -209,6 +209,19 @@ definition:
                                 metadataType: BOT
                                 grouping: SAVE
                                 label: Save Bot
+                            - uesio/builder.metadatafield:
+                                uesio.display:
+                                  - field: uesio/studio.type
+                                    value: uesio/core.custom
+                                uesio.context:
+                                  workspace:
+                                    name: $Param{workspacename}
+                                    app: $Param{app}
+                                fieldId: uesio/studio.runactionbot
+                                metadataType: BOT
+                                grouping: RUNACTION
+                                label: Run Action Bot
+
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     uesio.display:
@@ -282,7 +295,7 @@ definition:
                   uesio.id: new-action-bot
                   metadataType: BOT
                   grouping: LISTENER
-                  label: Action Bot
+                  label: Run Action Bot
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
