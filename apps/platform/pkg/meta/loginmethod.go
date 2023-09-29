@@ -4,6 +4,7 @@ type LoginMethod struct {
 	BuiltIn      `yaml:",inline"`
 	FederationID string `json:"uesio/core.federation_id"`
 	AuthSource   string `json:"uesio/core.auth_source"`
+	Hash         string `json:"uesio/core.hash"`
 	User         *User  `json:"uesio/core.user"`
 }
 

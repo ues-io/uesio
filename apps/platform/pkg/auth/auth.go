@@ -3,6 +3,9 @@ package auth
 import (
 	"errors"
 	"fmt"
+	"os"
+	"strings"
+
 	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -14,8 +17,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
-	"os"
-	"strings"
 )
 
 func init() {
@@ -103,6 +104,7 @@ type AuthenticationClaims struct {
 	FirstName string `json:"firstname"`
 	LastName  string `json:"lastname"`
 	Email     string `json:"email"`
+	Hash      string `json:"hash"`
 }
 
 func parseHost(host string) (domainType, domainValue, domain, subdomain string) {
@@ -260,6 +262,10 @@ func GetUserByID(id string, session *sess.Session, connection adapt.Connection) 
 	return getUser(adapt.ID_FIELD, id, session, connection)
 }
 
+func GetUserByEmail(email string, session *sess.Session, connection adapt.Connection) (*meta.User, error) {
+	return getUser("uesio/core.email", email, session, connection)
+}
+
 func getAuthSource(key string, session *sess.Session) (*meta.AuthSource, error) {
 	authSource, err := meta.NewAuthSource(key)
 	if err != nil {
@@ -324,6 +330,8 @@ func CreateLoginMethod(user *meta.User, signupMethod *meta.SignupMethod, claims 
 		FederationID: claims.Subject,
 		User:         user,
 		AuthSource:   signupMethod.AuthSource,
+		Hash:         claims.Hash,
+		//TO-DO user verified??
 	}, nil, nil, session)
 }
 

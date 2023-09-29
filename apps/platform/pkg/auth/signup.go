@@ -2,8 +2,9 @@ package auth
 
 import (
 	"errors"
-	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"regexp"
+
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/templating"
@@ -78,6 +79,8 @@ func Signup(signupMethodID string, payload map[string]interface{}, site *meta.Si
 		return nil, err
 	}
 
+	//move this inside the
+	//TO-DO we should move this in a step later since the email is not confirmed yet
 	err = CreateLoginMethod(user, signupMethod, claims, session)
 	if err != nil {
 		return nil, err

@@ -10,7 +10,7 @@ definition:
             signals:
               - signal: user/CHECK_AVAILABILITY
                 username: ${username}
-                signupMethod: uesio/core.platform
+                signupMethod: uesio/studio.platform ##TO-DO rollback this changes
                 fieldId: username
       fields:
         username:
@@ -122,7 +122,7 @@ definition:
                                 text: Create Account
                                 signals:
                                   - signal: user/SIGNUP
-                                    signupMethod: uesio/core.platform
+                                    signupMethod: uesio/studio.platform ##TO-DO rollback this changes
                                     requireds:
                                     payload:
                                       username: ${username}

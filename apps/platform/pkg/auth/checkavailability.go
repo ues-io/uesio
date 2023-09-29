@@ -1,7 +1,9 @@
 package auth
 
 import (
+	"errors"
 	"fmt"
+
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
@@ -28,4 +30,18 @@ func CheckAvailability(signupMethodID string, testUsername string, site *meta.Si
 	}
 
 	return GetUserByKey(username, session, nil)
+}
+
+func CheckLoginMethod(authSourceID string, testUsername string, site *meta.Site) (*meta.LoginMethod, error) {
+	session, err := GetSystemSession(site, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	loginmethod, err := GetLoginMethod(&AuthenticationClaims{Subject: testUsername}, authSourceID, session)
+	if err != nil {
+		return nil, errors.New("Failed Getting Login Method Data: " + err.Error())
+	}
+
+	return loginmethod, nil
 }
