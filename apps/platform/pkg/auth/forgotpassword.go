@@ -12,7 +12,7 @@ func ForgotPassword(signupMethodID string, payload map[string]interface{}, site 
 		return err
 	}
 
-	signupMethod, err := getSignupMethod(signupMethodID, session)
+	signupMethod, err := GetSignupMethod(signupMethodID, session)
 	if err != nil {
 		return err
 	}
@@ -42,7 +42,7 @@ func ConfirmForgotPassword(signupMethodID string, payload map[string]interface{}
 		return err
 	}
 
-	signupMethod, err := getSignupMethod(signupMethodID, session)
+	signupMethod, err := GetSignupMethod(signupMethodID, session)
 	if err != nil {
 		return err
 	}

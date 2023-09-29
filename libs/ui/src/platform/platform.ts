@@ -544,31 +544,6 @@ const platform = {
 		)
 		return respondJSON(response)
 	},
-	signUpConfirm: async (
-		context: Context,
-		signupMethod: string,
-		requestBody: Record<string, string>
-	): Promise<void> => {
-		const [namespace, name] = parseKey(signupMethod)
-		const response = await postJSON(
-			context,
-			`/site/auth/${namespace}/${name}/signup/confirm`,
-			requestBody
-		)
-		return respondVoid(response)
-	},
-	checkAvailability: async (
-		context: Context,
-		signupMethod: string,
-		username: string
-	): Promise<void> => {
-		const [namespace, name] = parseKey(signupMethod)
-		const response = await post(
-			context,
-			`/site/auth/${namespace}/${name}/checkavailability/${username}`
-		)
-		return respondVoid(response)
-	},
 	login: async (
 		context: Context,
 		authSource: string,

@@ -109,6 +109,8 @@ func (b *SystemDialect) CallBot(bot *meta.Bot, params map[string]interface{}, co
 		botFunction = runResetRecordAccessTokensListenerBot
 	case "listener:uesio/studio.setworkspaceuser":
 		botFunction = runSetWorkspaceUserBot
+	case "listener:uesio/studio.checkavailability":
+		botFunction = runCheckAvailabilityBot
 	}
 
 	if botFunction == nil {
