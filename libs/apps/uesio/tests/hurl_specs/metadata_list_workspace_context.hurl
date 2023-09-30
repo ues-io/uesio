@@ -83,4 +83,7 @@ GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/metadata/types/secrets/l
 Accept: application/json
 HTTP 200
 [Asserts]
-jsonpath "$[*]" count == 0
+jsonpath "$[*]" count == 1
+jsonpath "$['uesio/core.sendgridkey'].key" == "uesio/core.sendgridkey"
+jsonpath "$['uesio/core.sendgridkey'].namespace" == "uesio/core"
+jsonpath "$['uesio/core.sendgridkey'].icon" == "hub"
