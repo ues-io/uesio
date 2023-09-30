@@ -1,0 +1,62 @@
+name: permissionmapeditor
+pack: main
+type: DECLARATIVE
+properties:
+  - name: metadataRecordsWireName
+    type: TEXT
+    label: The name of the wire containing records of this type of metadata
+    required: true
+  - name: recordPermsMapField
+    type: TEXT
+    label: The Studio field that allows you to toggle access to individual records of this metadata
+    required: true
+  - name: allowAllField
+    type: TEXT
+    label: The Studio field that allows you to toggle access to all of this type of metadata
+    required: true
+  - name: accessFieldLabel
+    type: TEXT
+    label: Label to display for the column that allows you to toggle access to individual records of this metadata
+sections:
+  - type: HOME
+    properties:
+      - metadataRecordsWireName
+      - recordPermsMapField
+      - allowAllField
+      - accessFieldLabel
+  - type: DISPLAY
+definition:
+  - uesio/io.box:
+      uesio.variant: uesio/io.section
+      components:
+        - uesio/io.box:
+            components:
+              - uesio/io.field:
+                  fieldId: $Prop{allowAllField}
+                  displayAs: "TOGGLE"
+              - uesio/io.searchbox:
+                  wire: $Prop{metadataRecordsWireName}
+                  uesio.display:
+                    - type: fieldValue
+                      field: $Prop{allowAllField}
+                      operator: NOT_EQUALS
+                      value: true
+                  searchFields:
+                    - uesio/studio.name
+                    - uesio/studio.namespace
+              - uesio/studio.multipermissionpicker:
+                  uesio.id: permsTable-$Prop{metadataRecordsWireName}
+                  uesio.display:
+                    - type: fieldValue
+                      field: $Prop{allowAllField}
+                      operator: NOT_EQUALS
+                      value: true
+                  uesio.context:
+                    workspace:
+                      name: $Param{workspacename}
+                      app: $Param{app}
+                  fieldId: $Prop{recordPermsMapField}
+                  wireName: $Prop{metadataRecordsWireName}
+                  permissionFields:
+                    - type: CHECKBOX
+                      label: $Prop{accessFieldLabel}

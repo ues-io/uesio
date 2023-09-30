@@ -24,6 +24,8 @@ type ViewOnlyField = {
 	number?: NumberMetadata
 	fields?: Record<string, ViewOnlyField>
 	viewOnly?: boolean
+	createable?: boolean
+	updateable?: boolean
 }
 
 type RegularField = {

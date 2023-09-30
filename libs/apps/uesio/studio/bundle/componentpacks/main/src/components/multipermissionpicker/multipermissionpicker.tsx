@@ -16,6 +16,8 @@ type RowAction = {
 	type?: "DEFAULT"
 }
 
+const DefaultFieldName = "__boolean__"
+
 const MultiPermissionPicker: definition.UC<MultiPermissionPickerDefinition> = (
 	props
 ) => {
@@ -66,7 +68,7 @@ const MultiPermissionPicker: definition.UC<MultiPermissionPickerDefinition> = (
 		const [namespace, name] = component.path.parseKey(recordId)
 		const itemPerms = {} as Record<string, wire.PlainFieldValue>
 		// ensure all perm fields are set with a default
-		permissionFields.forEach(({ name, type }) => {
+		permissionFields.forEach(({ name = DefaultFieldName, type }) => {
 			if (type === "CHECKBOX") {
 				// backwards compatibility --- perms may be a single boolean, so apply this boolean value to all fields
 				const defaultValue =
@@ -92,10 +94,9 @@ const MultiPermissionPicker: definition.UC<MultiPermissionPickerDefinition> = (
 		return itemPerms
 	}
 
-	const permsDataValue = getDataValue()
-
-	// The list of records that may have permissions attached
 	const itemsData = wire.getData()
+
+	const permsDataValue = getDataValue()
 
 	if (!permsDataValue) return null
 
@@ -104,15 +105,25 @@ const MultiPermissionPicker: definition.UC<MultiPermissionPickerDefinition> = (
 		value: boolean,
 		recordId: string
 	) => {
-		const recordPerms = getPermRecord(recordId)
-		recordPerms[field] = value
+		let recordPerms
+		if (field === DefaultFieldName) {
+			recordPerms = value
+		} else {
+			recordPerms = getPermRecord(recordId)
+			recordPerms[field] = value
+			recordPerms = omit(recordPerms, [
+				ID_FIELD,
+				NAME_FIELD,
+				NAMESPACE_FIELD,
+			])
+		}
 		updateDataValue({
 			...getDataValue(),
-			[recordId]: omit(recordPerms, ID_FIELD),
+			[recordId]: recordPerms,
 		} as wire.PlainWireRecord)
 	}
 
-	const getInitialValues = itemsData.reduce((acc, record) => {
+	const initialValues = itemsData.reduce((acc, record) => {
 		const itemName =
 			record.getFieldValue("uesio/studio.namespace") +
 			"." +
@@ -128,6 +139,8 @@ const MultiPermissionPicker: definition.UC<MultiPermissionPickerDefinition> = (
 			name: ID_FIELD,
 			type: "TEXT",
 			label: collection.getLabel(),
+			createable: false,
+			updateable: false,
 		},
 		{
 			name: NAME_FIELD,
@@ -139,7 +152,16 @@ const MultiPermissionPicker: definition.UC<MultiPermissionPickerDefinition> = (
 			type: "TEXT",
 			label: "Namespace",
 		},
-	].concat(permissionFields)
+	].concat(
+		permissionFields.map((field) => ({
+			...field,
+			name: field.name || DefaultFieldName,
+			label: field.label || `Allow access to ${collection.getLabel()}`,
+			accessible: true,
+			createable: true,
+			updateable: true,
+		}))
+	)
 
 	return (
 		<DynamicTable
@@ -147,10 +169,13 @@ const MultiPermissionPicker: definition.UC<MultiPermissionPickerDefinition> = (
 			context={context.deleteWorkspace()}
 			path={path}
 			mode={mode}
-			fields={tableFields.reduce((acc, field) => ({
-				...acc,
-				[field.name]: field,
-			}))}
+			fields={tableFields.reduce(
+				(acc, field) => ({
+					...acc,
+					[field.name]: field,
+				}),
+				{}
+			)}
 			columns={tableFields
 				.filter(
 					(field) =>
@@ -161,7 +186,7 @@ const MultiPermissionPicker: definition.UC<MultiPermissionPickerDefinition> = (
 				.map((field) => ({
 					field: field.name,
 				}))}
-			initialValues={getInitialValues}
+			initialValues={initialValues}
 			onUpdate={handlePermUpdate}
 			rowactions={rowactions}
 		/>
