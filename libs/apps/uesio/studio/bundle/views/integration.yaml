@@ -294,7 +294,7 @@ definition:
                   fieldId: uesio/studio.bot
                   uesio.id: new-action-bot
                   metadataType: BOT
-                  grouping: LISTENER
+                  grouping: RUNACTION
                   label: Run Action Bot
       actions:
         - uesio/io.button:

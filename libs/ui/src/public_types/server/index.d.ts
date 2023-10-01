@@ -213,6 +213,7 @@ export type {
 	LoadBotApi,
 	LoadOrder,
 	LoadRequest,
+	RunActionBotApi,
 	SaveBotApi,
 	WireRecord,
 }
