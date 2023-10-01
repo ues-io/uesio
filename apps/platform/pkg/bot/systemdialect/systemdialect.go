@@ -85,6 +85,8 @@ func (b *SystemDialect) AfterSave(bot *meta.Bot, request *adapt.SaveOp, connecti
 		botFunction = runBotAfterSaveBot
 	case "uesio/studio.app":
 		botFunction = runAppAfterSaveBot
+	case "uesio/studio.integration":
+		botFunction = runIntegrationAfterSaveBot
 	}
 
 	if botFunction == nil {
