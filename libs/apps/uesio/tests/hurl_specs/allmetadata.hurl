@@ -96,7 +96,7 @@ jsonpath "$.wires[0].data[4]['uesio/core.uniquekey']" == "uesio/tests.animal:ues
 jsonpath "$.wires[0].data[5]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.createdat"
 jsonpath "$.wires[0].data[6]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.updatedat"
 
-# Get a list of all secrets available to our workspace (it should be zero)
+# Get a list of all secrets available to our workspace
 POST https://{{host}}:{{port}}/site/wires/load
 Accept: application/json
 {
@@ -125,7 +125,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data" count == 0
+jsonpath "$.wires[0].data" count == 1
+jsonpath "$.wires[0].data[0]['uesio/studio.name']" == "sendgridkey"
+jsonpath "$.wires[0].data[0]['uesio/studio.namespace']" == "uesio/core"
 
 # Test conditions on uesio/studio.item/grouping that have a ValueSource of LOOKUP from a previous wire 
 POST https://{{host}}:{{port}}/site/wires/load
