@@ -33,11 +33,17 @@ const DefaultRunIntegrationActionBotBody = `
 function %s(bot) {
     const itemNumbers = bot.params.get("itemNumbers")
     const amount = bot.params.get("amount")
+	const actionName = bot.getActionName()
+
+	if (actionName !== "createOrder") {
+		bot.addError("unsupported action name: " + actionName)
+		return
+	}
 
 	// Call API to create order
 	const result = bot.http.request({
 		method: "POST",
-		url: bot.getIntegration().getBaseUrl() + "/api/v1/orders"
+		url: bot.getIntegration().getBaseURL() + "/api/v1/orders",
 		body: {
 			lineItems: itemNumbers,
 			amount: amount,

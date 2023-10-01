@@ -112,7 +112,7 @@ interface SaveOptionsApi {
 	upsert: boolean
 }
 
-interface IntegrationMetadata {
+interface IntegrationApi {
 	getBaseURL(): string | undefined
 }
 
@@ -160,7 +160,7 @@ interface RunActionBotApi {
 	getActionName: () => string
 	getCredentials: () => Record<string, string | undefined>
 	getConfigValue: (configValueKey: string) => string
-	getIntegration: () => IntegrationMetadata
+	getIntegration: () => IntegrationApi
 	getSession: () => SessionApi
 	getUser: () => UserApi
 	http: HttpApi
@@ -174,7 +174,7 @@ interface LoadBotApi {
 	addError: (error: string) => void
 	addRecord: (record: Record<string, unknown>) => void
 	loadRequest: LoadRequest
-	getIntegration: () => IntegrationMetadata
+	getIntegration: () => IntegrationApi
 	getCredentials: () => Record<string, string | undefined>
 	getConfigValue: (configValueKey: string) => string
 	getSession: () => SessionApi
@@ -188,7 +188,7 @@ interface SaveBotApi {
 	inserts: InsertsApi
 	updates: UpdatesApi
 	getCollectionName: () => string
-	getIntegration: () => IntegrationMetadata
+	getIntegration: () => IntegrationApi
 	getCredentials: () => Record<string, string | undefined>
 	getConfigValue: (configValueKey: string) => string
 	getSession: () => SessionApi

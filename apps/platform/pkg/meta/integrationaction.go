@@ -11,7 +11,7 @@ import (
 func NewIntegrationAction(integrationName, actionName string) (*IntegrationAction, error) {
 	namespace, name, err := ParseKey(actionName)
 	if err != nil {
-		return nil, errors.New("Bad Key for IntegrationAction: " + integrationName + ": " + actionName)
+		return nil, errors.New("bad key for Integration Action: " + actionName)
 	}
 	return NewBaseIntegrationAction(integrationName, namespace, name), nil
 }
@@ -26,8 +26,8 @@ func NewBaseIntegrationAction(integrationName, namespace, name string) *Integrat
 type IntegrationAction struct {
 	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
-	IntegrationRef string `yaml:"-" json:"uesio/studio.integration"`
-	BotRef         string `yaml:"-" json:"uesio/studio.bot"`
+	IntegrationRef string `yaml:"integration" json:"uesio/studio.integration"`
+	BotRef         string `yaml:"bot" json:"uesio/studio.bot"`
 }
 
 type IntegrationActionWrapper IntegrationAction

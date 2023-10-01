@@ -40,13 +40,19 @@ type OrderDetails = {
 
 // @ts-ignore
 function %s(bot: RunActionBotApi) {
-    const itemNumbers = bot.params.get("itemNumbers") as []string
+    const itemNumbers = bot.params.get("itemNumbers") as string[]
     const amount = bot.params.get("amount") as number
+	const actionName = bot.getActionName()
+
+	if (actionName !== "createOrder") {
+		bot.addError("unsupported action name: " + actionName)
+		return
+	}
 
 	// Call API to create order
 	const result = bot.http.request({
 		method: "POST",
-		url: bot.getIntegration().getBaseUrl() + "/api/v1/orders"
+		url: bot.getIntegration().getBaseURL() + "/api/v1/orders",
 		body: {
 			lineItems: itemNumbers,
 			amount: amount,
