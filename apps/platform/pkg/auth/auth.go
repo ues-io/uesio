@@ -240,6 +240,9 @@ func getUser(field, value string, session *sess.Session, connection adapt.Connec
 				{
 					ID: "uesio/core.language",
 				},
+				{
+					ID: "uesio/core.email",
+				},
 			},
 			Conditions: []adapt.LoadRequestCondition{
 				{
