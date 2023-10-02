@@ -7,7 +7,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -74,17 +73,6 @@ func signupWithConnection(signupMethod *meta.SignupMethod, payload map[string]in
 		return nil, errors.New("username does not match required pattern: " + signupMethod.UsernameFormatExplanation)
 	}
 
-	//TO-DO maybe this is not needed anymore let's see
-	// user, err := CheckAvailability(signupMethodID, username, site)
-	// if user == nil && err != nil && !strings.HasPrefix(err.Error(), "Couldn't find item from platform load") {
-	// 	return nil, err
-	// }
-
-	// if user != nil && err == nil {
-	// 	return nil, errors.New("Username not available, try something more creative")
-	// }
-
-	//err = boostPayloadWithTemplate(username, payload, site, &signupMethod.Signup)
 	err = boostPayloadWithTemplate(username, payload, session.GetSite(), &signupMethod.Signup)
 	if err != nil {
 		return nil, err
@@ -107,7 +95,7 @@ func signupWithConnection(signupMethod *meta.SignupMethod, payload map[string]in
 		return nil, err
 	}
 
-	user, err = GetUserByKey(username, session, connection)
+	user, err := GetUserByKey(username, session, connection)
 	if err != nil {
 		return nil, err
 	}

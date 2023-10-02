@@ -9,6 +9,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/integ/sendgrid"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -27,7 +28,6 @@ type Connection struct {
 }
 
 func (c *Connection) Login(payload map[string]interface{}, session *sess.Session) (*auth.AuthenticationClaims, error) {
-	site := session.GetSite()
 
 	username, err := auth.GetPayloadValue(payload, "username")
 	if err != nil {
@@ -38,10 +38,15 @@ func (c *Connection) Login(payload map[string]interface{}, session *sess.Session
 		return nil, errors.New("Cognito login:" + err.Error())
 	}
 
-	//TO-DO way to get the authSoruceId from the connection?
-	loginmethod, err := auth.CheckLoginMethod("uesio/core.platform", username, site)
+	adminSession := sess.GetAnonSession(session.GetSite())
+
+	loginmethod, err := auth.GetLoginMethod(&auth.AuthenticationClaims{Subject: username}, "uesio/core.platform", adminSession)
 	if err != nil {
 		return nil, errors.New("Failed Getting Login Method Data: " + err.Error())
+	}
+
+	if loginmethod == nil {
+		return nil, errors.New("No account found with this login method")
 	}
 
 	if !loginmethod.Verified {
@@ -65,7 +70,6 @@ func (c *Connection) Signup(payload map[string]interface{}, username string, ses
 	if err != nil {
 		return nil, errors.New("Uesio Signup:" + err.Error())
 	}
-	println(email)
 
 	password, err := auth.GetPayloadValue(payload, "password")
 	if err != nil {
@@ -77,24 +81,24 @@ func (c *Connection) Signup(payload map[string]interface{}, username string, ses
 		return nil, errors.New("Uesio Signup:" + err.Error())
 	}
 	//email part
-	// integration, err := datasource.GetIntegration("uesio/core.sendgrid", session)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// subject, err := auth.GetRequiredPayloadValue(payload, "subject")
-	// if err != nil {
-	// 	return nil, errors.New("Uesio Signup:" + err.Error())
-	// }
-	// message, err := auth.GetRequiredPayloadValue(payload, "message")
-	// if err != nil {
-	// 	return nil, errors.New("Uesio Signup:" + err.Error())
-	// }
-	// options := sendgrid.SendEmailOptions{To: []string{email}, From: "info@ues.io", Subject: subject, PlainBody: message}
-	// test, err := integration.RunAction("sendEmail", options)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// println(test)
+	integration, err := datasource.GetIntegration("uesio/core.sendgrid", session)
+	if err != nil {
+		return nil, err
+	}
+	subject, err := auth.GetRequiredPayloadValue(payload, "subject")
+	if err != nil {
+		return nil, errors.New("Uesio Signup:" + err.Error())
+	}
+	message, err := auth.GetRequiredPayloadValue(payload, "message")
+	if err != nil {
+		return nil, errors.New("Uesio Signup:" + err.Error())
+	}
+	options := sendgrid.SendEmailOptions{To: []string{email}, From: "info@ues.io", Subject: subject, PlainBody: message}
+	test, err := integration.RunAction("sendEmail", options)
+	if err != nil {
+		return nil, err
+	}
+	println(test)
 
 	//TO-DO
 	//CREATE the user in pending state
@@ -119,7 +123,6 @@ func (c *Connection) CreateLogin(payload map[string]interface{}, username string
 	return nil, errors.New("Mock login: unfortunately you cannot create a login")
 }
 func (c *Connection) ConfirmSignUp(payload map[string]interface{}, session *sess.Session) error {
-	site := session.GetSite()
 
 	username, err := auth.GetPayloadValue(payload, "username")
 	if err != nil {
@@ -131,10 +134,15 @@ func (c *Connection) ConfirmSignUp(payload map[string]interface{}, session *sess
 		return errors.New("Cognito Confirm Forgot Password:" + err.Error())
 	}
 
-	//TO-DO way to get the authSoruceId from the connection?
-	loginmethod, err := auth.CheckLoginMethod("uesio/core.platform", username, site)
+	adminSession := sess.GetAnonSession(session.GetSite())
+
+	loginmethod, err := auth.GetLoginMethod(&auth.AuthenticationClaims{Subject: username}, "uesio/core.platform", adminSession)
 	if err != nil {
 		return errors.New("Failed Getting Login Method Data: " + err.Error())
+	}
+
+	if loginmethod == nil {
+		return errors.New("No account found with this login method")
 	}
 
 	if loginmethod.Code != verificationCode {
@@ -142,6 +150,7 @@ func (c *Connection) ConfirmSignUp(payload map[string]interface{}, session *sess
 	}
 
 	loginmethod.Verified = true
+	//TO-DO maybe the adminsession?
 	err = datasource.PlatformSaveOne(loginmethod, nil, nil, session)
 	if err != nil {
 		return err
