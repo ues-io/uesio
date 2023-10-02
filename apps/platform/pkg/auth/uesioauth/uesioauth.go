@@ -28,6 +28,10 @@ type Connection struct {
 	credentials *adapt.Credentials
 }
 
+func generateCode() string {
+	return strings.Replace(strings.Trim(fmt.Sprint(rand.Perm(6)), "[]"), " ", "", -1)
+}
+
 func (c *Connection) Login(payload map[string]interface{}, session *sess.Session) (*auth.AuthenticationClaims, error) {
 
 	username, err := auth.GetPayloadValue(payload, "username")
@@ -97,7 +101,7 @@ func (c *Connection) Signup(payload map[string]interface{}, username string, ses
 		return nil, errors.New("Uesio singup:" + err.Error())
 	}
 
-	code := strings.Replace(strings.Trim(fmt.Sprint(rand.Perm(6)), "[]"), " ", "", -1)
+	code := generateCode()
 	plainBody := strings.Replace(message, "{####}", code, 1)
 	fromEmail, err := configstore.GetValueFromKey("uesio/studio.from_email", session)
 	if err != nil {
@@ -149,7 +153,7 @@ func (c *Connection) ForgotPassword(payload map[string]interface{}, session *ses
 		return errors.New("Uesio forgot password:" + err.Error())
 	}
 
-	code := strings.Replace(strings.Trim(fmt.Sprint(rand.Perm(6)), "[]"), " ", "", -1)
+	code := generateCode()
 	plainBody := strings.Replace(message, "{####}", code, 1)
 
 	adminSession := sess.GetAnonSession(session.GetSite())
@@ -239,7 +243,7 @@ func (c *Connection) CreateLogin(payload map[string]interface{}, username string
 		return nil, errors.New("Uesio create login:" + err.Error())
 	}
 
-	code := strings.Replace(strings.Trim(fmt.Sprint(rand.Perm(6)), "[]"), " ", "", -1)
+	code := generateCode()
 	plainBody := strings.Replace(message, "{####}", code, 1)
 	fromEmail, err := configstore.GetValueFromKey("uesio/studio.from_email", session)
 	if err != nil {
