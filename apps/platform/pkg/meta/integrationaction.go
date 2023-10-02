@@ -11,7 +11,13 @@ import (
 func NewIntegrationAction(integrationName, actionName string) (*IntegrationAction, error) {
 	namespace, name, err := ParseKey(actionName)
 	if err != nil {
-		return nil, errors.New("bad key for Integration Action: " + actionName)
+		// Action Name probably is local, so use the integration's namespace
+		integrationNamespace, _, err := ParseKey(integrationName)
+		if err != nil {
+			return nil, errors.New("bad key for Integration Action: " + actionName)
+		}
+		namespace = integrationNamespace
+		name = actionName
 	}
 	return NewBaseIntegrationAction(integrationName, namespace, name), nil
 }

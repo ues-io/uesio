@@ -27,19 +27,6 @@ definition:
           value: true
         - field: uesio/studio.grouping
           value: $Param{namespace}.$Param{integrationname}
-    newIntegrationAction:
-      collection: uesio/studio.integrationaction
-      init:
-        query: false
-        create: false
-      defaults:
-        - valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
-          field: uesio/studio.workspace
-        - valueSource: VALUE
-          field: uesio/studio.integration
-          value: $Param{namespace}.$Param{integrationname}
   # Components are how we describe the layout of our view
   components:
     - uesio/studio.mainlayout:
@@ -174,6 +161,9 @@ definition:
                                 - type: fieldValue
                                   field: uesio/studio.type
                                   value: web
+                      - uesio/io.grid:
+                          uesio.variant: uesio/io.four_columns
+                          items:
                             - uesio/builder.metadatafield:
                                 uesio.display:
                                   - field: uesio/studio.type
@@ -185,7 +175,7 @@ definition:
                                 fieldId: uesio/studio.loadbot
                                 metadataType: BOT
                                 grouping: LOAD
-                                label: Load Bot
+                                label: Default Collection Load Bot
                             - uesio/builder.metadatafield:
                                 uesio.display:
                                   - field: uesio/studio.type
@@ -197,7 +187,7 @@ definition:
                                 fieldId: uesio/studio.savebot
                                 metadataType: BOT
                                 grouping: SAVE
-                                label: Save Bot
+                                label: Default Collection Save Bot
                             - uesio/builder.metadatafield:
                                 uesio.display:
                                   - field: uesio/studio.type
@@ -209,8 +199,7 @@ definition:
                                 fieldId: uesio/studio.runactionbot
                                 metadataType: BOT
                                 grouping: RUNACTION
-                                label: Run Action Bot
-
+                                label: Default Run Action Bot
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     uesio.display:
@@ -235,12 +224,18 @@ definition:
                                           operator: EQUALS
                                           value: $Param{namespace}
                                       signals:
-                                        - signal: wire/EMPTY
-                                          wire: newIntegrationAction
                                         - signal: wire/CREATE_RECORD
-                                          wire: newIntegrationAction
+                                          wire: integrationActions
+                                        - signal: wire/UPDATE_RECORD
+                                          wire: integrationActions
+                                          field: uesio/studio.workspace
+                                          value: $Record{workspaces:uesio/core.id}
+                                        - signal: wire/UPDATE_RECORD
+                                          wire: integrationActions
+                                          field: uesio/studio.integration
+                                          value: $Param{namespace}.$Param{integrationname}
                                         - signal: panel/TOGGLE
-                                          panel: newIntegrationAction
+                                          panel: editIntegrationAction
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.primary
                                       text: $Label{uesio/io.save}
@@ -265,6 +260,14 @@ definition:
                           wire: integrationActions
                           mode: READ
                           rowactions:
+                            - text: $Label{uesio/io.edit}
+                              signals:
+                                - signal: panel/TOGGLE
+                                  panel: editIntegrationAction
+                              uesio.display:
+                                - type: fieldValue
+                                  field: uesio/studio.namespace
+                                  value: $Param{app}
                             - text: $Label{uesio/io.delete}
                               signals:
                                 - signal: wire/TOGGLE_DELETE_STATUS
@@ -275,17 +278,35 @@ definition:
                                   value: $Param{app}
                           columns:
                             - field: uesio/studio.name
-                            - field: uesio/studio.bot
+                            - label: Bot to run
+                              components:
+                                - uesio/io.field:
+                                    wrapperVariant: uesio/io.table
+                                    labelPosition: none
+                                    uesio.display:
+                                      - type: hasNoValue
+                                        value: ${uesio/studio.bot}
+                                    wire: integrations
+                                    fieldId: uesio/studio.runactionbot
+                                - uesio/io.field:
+                                    wrapperVariant: uesio/io.table
+                                    labelPosition: none
+                                    fieldId: uesio/studio.bot
+                                    uesio.display:
+                                      - type: hasValue
+                                        value: ${uesio/studio.bot}
   panels:
-    newIntegrationAction:
+    editIntegrationAction:
       uesio.type: uesio/io.dialog
-      title: Create new Integration Action
+      title: Edit Integration Action
       width: 440px
       height: 500px
+      afterClose:
+        - signal: wire/CANCEL
+          wire: integrationActions
       components:
-        - uesio/io.list:
-            uesio.id: newIntegrationActionList
-            wire: newIntegrationAction
+        - uesio/io.item:
+            wire: integrationActions
             mode: EDIT
             uesio.context:
               workspace:
@@ -294,15 +315,15 @@ definition:
             components:
               - uesio/io.field:
                   fieldId: uesio/studio.name
-                  uesio.id: new-action-name
+                  uesio.id: action-name
                   focusOnRender: true
                   applyChanges: onBlur
               - uesio/builder.metadatafield:
                   fieldId: uesio/studio.bot
-                  uesio.id: new-action-bot
+                  uesio.id: action-bot
                   metadataType: BOT
                   grouping: RUNACTION
-                  label: Run Action Bot
+                  label: Run Action Bot (optional, defaults to Integration's Run Action Bot)
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
@@ -312,26 +333,20 @@ definition:
             signals:
               - signal: wire/SAVE
                 wires:
-                  - newIntegrationAction
-              - signal: notification/ADD
-                text: "New integration action successfully created: $Record{newIntegrationAction:uesio/studio.name}"
-                severity: success
-                duration: "3"
+                  - integrationActions
               - signal: wire/LOAD
                 wires:
                   - workspaces
                   - integrations
                   - integrationActions
-              - signal: wire/RESET
-                wire: newIntegrationAction
               - signal: panel/TOGGLE
-                panel: newIntegrationAction
+                panel: editIntegrationAction
         - uesio/io.button:
             uesio.variant: uesio/io.secondary
-            uesio.id: cancel-new-action
+            uesio.id: cancel-action
             text: $Label{uesio/io.cancel}
             signals:
-              - signal: wire/EMPTY
-                wire: newIntegrationAction
+              - signal: wire/CANCEL
+                wire: integrationActions
               - signal: panel/TOGGLE
-                panel: newIntegrationAction
+                panel: editIntegrationAction
