@@ -28,9 +28,12 @@ const Item: definition.UC<ItemDefinition> = (props) => {
 		context = context.addFieldModeFrame(mode)
 	}
 
+	if (!wire) return null
+
 	// If there is not a record context frame for this wire, check to see if there is one,
 	// because we cannot render the item without at least one wire record.
-	if (wire && !context.getRecordFrame(wire.getId())) {
+	// If we don't have a record context frame, explicitly add one using the first wire record.
+	if (!context.getRecordFrame(wire.getId())) {
 		const record = wire.getFirstRecord()
 		if (!record) {
 			return null
