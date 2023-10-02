@@ -13,11 +13,6 @@ interface SignupSignal extends SignalDefinition {
 	signupMethod: string
 	payload: Record<string, string>
 }
-interface UsernameTestSignal extends SignalDefinition {
-	username: string
-	signupMethod: string
-	fieldId: string
-}
 interface ForgotPasswordSignal extends SignalDefinition {
 	signupMethod: string
 	payload: Record<string, string>
@@ -44,15 +39,6 @@ const signals: Record<string, SignalDescriptor> = {
 	[`${USER_BAND}/LOGOUT`]: {
 		dispatcher: (signal: SignalDefinition, context: Context) =>
 			operations.logout(context),
-	},
-	[`${USER_BAND}/CHECK_AVAILABILITY`]: {
-		dispatcher: (signal: UsernameTestSignal, context: Context) =>
-			operations.checkAvailability(
-				context,
-				signal.username,
-				signal.signupMethod,
-				signal.fieldId
-			),
 	},
 	[`${USER_BAND}/FORGOT_PASSWORD`]: {
 		dispatcher: (signal: ForgotPasswordSignal, context: Context) =>

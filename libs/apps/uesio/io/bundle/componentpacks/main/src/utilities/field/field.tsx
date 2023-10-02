@@ -19,7 +19,7 @@ import SelectField from "../../utilities/field/select"
 import TextAreaField, {
 	LongTextFieldOptions,
 } from "../../utilities/field/textarea"
-import TextField from "../../utilities/field/text"
+import TextField, { TextFieldOptions } from "../../utilities/field/text"
 import TimestampField from "../../utilities/field/timestamp"
 import ToggleField from "../../utilities/field/toggle"
 import UserField, { UserFieldOptions } from "../../utilities/field/user"
@@ -63,6 +63,7 @@ interface FieldProps {
 	longtext?: LongTextFieldOptions
 	checkbox?: CheckboxFieldOptions
 	user?: UserFieldOptions
+	text?: TextFieldOptions
 	// Special variants for map/list/struct
 	subFieldVariant?: metadata.MetadataKey
 	labelVariant?: metadata.MetadataKey
@@ -94,6 +95,7 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 		reference,
 		setValue,
 		subFieldVariant,
+		text,
 		user,
 		value,
 		variant,
@@ -155,9 +157,9 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 		case "TEXT":
 			content =
 				displayAs === "PASSWORD" ? (
-					<TextField {...common} type="password" />
+					<TextField {...common} options={text} type="password" />
 				) : (
-					<TextField {...common} />
+					<TextField {...common} options={text} />
 				)
 			break
 		case "AUTONUMBER":

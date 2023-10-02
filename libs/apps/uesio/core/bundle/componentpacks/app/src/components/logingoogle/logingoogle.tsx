@@ -3,6 +3,7 @@ import LoginGoogleUtility from "../../utilities/logingoogle/logingoogle"
 
 type ButtonDefinition = {
 	onLoginSignals?: signal.SignalDefinition[]
+	text?: string
 	minWidth?: number
 }
 
@@ -15,7 +16,7 @@ const LoginGoogle: definition.UC<ButtonDefinition> = ({
 	context,
 	definition,
 }) => {
-	const { onLoginSignals, minWidth } = definition
+	const { onLoginSignals, minWidth, text } = definition
 	const handler = (loginresponse: GoogleLoginResponse) => {
 		if (!onLoginSignals) return
 		api.signal.runMany(
@@ -31,6 +32,7 @@ const LoginGoogle: definition.UC<ButtonDefinition> = ({
 			context={context}
 			onLogin={handler}
 			minWidth={minWidth}
+			text={text}
 		/>
 	)
 }

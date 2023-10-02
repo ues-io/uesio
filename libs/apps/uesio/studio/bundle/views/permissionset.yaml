@@ -41,11 +41,8 @@ definition:
       conditions:
         - field: uesio/studio.allmetadata
           value: true
-        - field: uesio/studio.type
-          operator: IN
-          values:
-            - GENERATOR
-            - LISTENER
+        - field: uesio/studio.grouping
+          value: LISTENER
     files:
       collection: uesio/studio.file
       conditions:
@@ -104,8 +101,8 @@ definition:
                                   - signal: component/CALL
                                     component: uesio/io.table
                                     componentsignal: TOGGLE_MODE
-                                    targettype: specific
-                                    componentid: collectionPerms-table
+                                    targettype: multiple
+                                    componentid: permsTable
                             - uesio/io.button:
                                 uesio.variant: uesio/io.primary
                                 text: $Label{uesio/io.save}
@@ -126,8 +123,15 @@ definition:
                                   - signal: component/CALL
                                     component: uesio/io.table
                                     componentsignal: TOGGLE_MODE
-                                    targettype: specific
-                                    componentid: collectionPerms-table
+                                    targettype: multiple
+                                    componentid: permsTable
+                                  - signal: wire/LOAD
+                                    wires:
+                                      - bots
+                                      - files
+                                      - routes
+                                      - views
+                                      - collections
                             - uesio/io.button:
                                 uesio.variant: uesio/io.secondary
                                 text: $Label{uesio/io.cancel}
@@ -145,8 +149,15 @@ definition:
                                   - signal: component/CALL
                                     component: uesio/io.table
                                     componentsignal: TOGGLE_MODE
-                                    targettype: specific
-                                    componentid: collectionPerms-table
+                                    targettype: multiple
+                                    componentid: permsTable
+                                  - signal: wire/LOAD
+                                    wires:
+                                      - bots
+                                      - files
+                                      - routes
+                                      - views
+                                      - collections
                             - uesio/io.button:
                                 uesio.variant: uesio/io.secondary
                                 text: $Label{uesio/io.delete}
@@ -159,142 +170,132 @@ definition:
                                     field: uesio/core.dynamiccollection
                                     operator: EQUALS
                                     value: $Param{namespace}
-                - uesio/io.box:
-                    uesio.variant: uesio/io.section
-                    components:
-                      - uesio/io.grid:
-                          uesio.variant: uesio/io.four_columns
-                          items:
-                            - uesio/io.field:
-                                fieldId: uesio/studio.allowallfiles
-                                displayAs: "TOGGLE"
-                            - uesio/io.field:
-                                fieldId: uesio/studio.allowallroutes
-                                displayAs: "TOGGLE"
-                            - uesio/io.field:
-                                fieldId: uesio/studio.allowallviews
-                                displayAs: "TOGGLE"
-                            - uesio/io.field:
-                                fieldId: uesio/studio.allowallcollections
-                                displayAs: "TOGGLE"
-                            - uesio/io.field:
-                                fieldId: uesio/studio.allowallbots
-                                displayAs: "TOGGLE"
-                                uesio.display:
-                                  - type: featureFlag
-                                    name: manage_bots
-                            - uesio/io.field:
-                                fieldId: uesio/studio.viewallrecords
-                                displayAs: "TOGGLE"
-                            - uesio/io.field:
-                                fieldId: uesio/studio.modifyallrecords
-                                displayAs: "TOGGLE"
-                - uesio/io.box:
-                    uesio.variant: uesio/io.section
-                    uesio.display:
-                      - type: featureFlag
-                        name: manage_bots
-                    components:
-                      - uesio/io.titlebar:
-                          title: Bots
-                          uesio.variant: uesio/io.section
-                      - uesio/io.box:
-                          components:
-                            - uesio/studio.permissionpicker:
-                                uesio.context:
-                                  workspace:
-                                    name: $Param{workspacename}
-                                    app: $Param{app}
-                                fieldId: uesio/studio.botrefs
-                                wireName: bots
-                - uesio/io.box:
-                    uesio.variant: uesio/io.section
-                    components:
-                      - uesio/io.titlebar:
-                          title: Files
-                          uesio.variant: uesio/io.section
-                      - uesio/io.box:
-                          components:
-                            - uesio/studio.permissionpicker:
-                                uesio.context:
-                                  workspace:
-                                    name: $Param{workspacename}
-                                    app: $Param{app}
-                                fieldId: uesio/studio.filerefs
-                                wireName: files
-                - uesio/io.box:
-                    uesio.variant: uesio/io.section
-                    components:
-                      - uesio/io.titlebar:
-                          title: Routes
-                          uesio.variant: uesio/io.section
-                      - uesio/io.box:
-                          components:
-                            - uesio/studio.permissionpicker:
-                                uesio.context:
-                                  workspace:
-                                    name: $Param{workspacename}
-                                    app: $Param{app}
-                                fieldId: uesio/studio.routerefs
-                                wireName: routes
-                - uesio/io.box:
-                    uesio.variant: uesio/io.section
-                    components:
-                      - uesio/io.titlebar:
-                          title: Views
-                          uesio.variant: uesio/io.section
-                      - uesio/io.box:
-                          components:
-                            - uesio/studio.permissionpicker:
-                                uesio.context:
-                                  workspace:
-                                    name: $Param{workspacename}
-                                    app: $Param{app}
-                                fieldId: uesio/studio.viewrefs
-                                wireName: views
-                - uesio/io.box:
-                    uesio.variant: uesio/io.section
-                    components:
-                      - uesio/io.titlebar:
-                          title: Collections
-                          uesio.variant: uesio/io.section
-                      - uesio/io.box:
-                          components:
-                            - uesio/studio.multipermissionpicker:
-                                uesio.id: collectionPerms
-                                uesio.context:
-                                  workspace:
-                                    name: $Param{workspacename}
-                                    app: $Param{app}
-                                fieldId: uesio/studio.collectionrefs
-                                wireName: collections
-                                rowactions:
-                                  - text: Details
-                                    signals:
-                                      - path: app/$Param{app}/workspace/$Param{workspacename}/permissionsets/$Param{namespace}/$Param{permissionsetname}/collection/${uesio/studio.namespace}/${uesio/studio.name}
-                                        signal: route/NAVIGATE
-                                permissionFields:
-                                  - name: read
-                                    label: Read
-                                    type: CHECKBOX
-                                  - name: create
-                                    label: Create
-                                    type: CHECKBOX
-                                  - name: edit
-                                    label: Edit
-                                    type: CHECKBOX
-                                  - name: delete
-                                    label: Delete
-                                    type: CHECKBOX
-                                  - name: modifyall
-                                    label: Modify all
-                                    type: CHECKBOX
-                                  - name: viewall
-                                    label: View all
-                                    type: CHECKBOX
-                                  - name: fields
-                                    label: Fields
-                                    type: MAP
+                - uesio/io.tabs:
+                    tabs:
+                      - id: bots
+                        label: Listener Bots
+                        uesio.display:
+                          - type: featureFlag
+                            name: manage_bots
+                        components:
+                          - uesio/studio.permissionmapeditor:
+                              metadataRecordsWireName: bots
+                              allowAllField: uesio/studio.allowallbots
+                              recordPermsMapField: uesio/studio.botrefs
+                      - id: files
+                        label: Files
+                        components:
+                          - uesio/studio.permissionmapeditor:
+                              metadataRecordsWireName: files
+                              allowAllField: uesio/studio.allowallfiles
+                              recordPermsMapField: uesio/studio.filerefs
+                      - id: routes
+                        label: Routes
+                        components:
+                          - uesio/studio.permissionmapeditor:
+                              metadataRecordsWireName: routes
+                              allowAllField: uesio/studio.allowallroutes
+                              recordPermsMapField: uesio/studio.routerefs
+                      - id: views
+                        label: Views
+                        components:
+                          - uesio/studio.permissionmapeditor:
+                              metadataRecordsWireName: views
+                              allowAllField: uesio/studio.allowallviews
+                              recordPermsMapField: uesio/studio.viewrefs
+                      - id: collections
+                        label: Collections
+                        components:
+                          - uesio/io.box:
+                              uesio.variant: uesio/io.section
+                              components:
+                                - uesio/io.box:
+                                    components:
+                                      - uesio/io.grid:
+                                          uesio.variant: uesio/io.four_columns
+                                          items:
+                                            - uesio/io.field:
+                                                fieldId: uesio/studio.allowallcollections
+                                                displayAs: "TOGGLE"
+                                            - uesio/io.field:
+                                                fieldId: uesio/studio.viewallrecords
+                                                displayAs: "TOGGLE"
+                                            - uesio/io.field:
+                                                fieldId: uesio/studio.modifyallrecords
+                                                displayAs: "TOGGLE"
+                                      - uesio/io.searchbox:
+                                          wire: collections
+                                          uesio.display:
+                                            - type: group
+                                              conjunction: OR
+                                              conditions:
+                                                - type: fieldValue
+                                                  wire: permissionsets
+                                                  field: uesio/studio.allowallcollections
+                                                  operator: NOT_EQUALS
+                                                  value: true
+                                                - type: fieldValue
+                                                  field: uesio/studio.modifyallrecords
+                                                  operator: NOT_EQUALS
+                                                  value: true
+                                                - type: fieldValue
+                                                  field: uesio/studio.viewallrecords
+                                                  operator: NOT_EQUALS
+                                                  value: true
+                                          searchFields:
+                                            - uesio/studio.name
+                                            - uesio/studio.namespace
+                                      - uesio/studio.multipermissionpicker:
+                                          uesio.id: permsTable-collections
+                                          uesio.context:
+                                            workspace:
+                                              name: $Param{workspacename}
+                                              app: $Param{app}
+                                          uesio.display:
+                                            - type: group
+                                              conjunction: OR
+                                              conditions:
+                                                - type: fieldValue
+                                                  field: uesio/studio.allowallcollections
+                                                  operator: NOT_EQUALS
+                                                  value: true
+                                                - type: fieldValue
+                                                  field: uesio/studio.modifyallrecords
+                                                  operator: NOT_EQUALS
+                                                  value: true
+                                                - type: fieldValue
+                                                  field: uesio/studio.viewallrecords
+                                                  operator: NOT_EQUALS
+                                                  value: true
+                                          fieldId: uesio/studio.collectionrefs
+                                          wireName: collections
+                                          rowactions:
+                                            - text: Field Permissions
+                                              signals:
+                                                - path: app/$Param{app}/workspace/$Param{workspacename}/permissionsets/$Param{namespace}/$Param{permissionsetname}/collection/${uesio/studio.namespace}/${uesio/studio.name}
+                                                  signal: route/NAVIGATE
+                                          permissionFields:
+                                            - name: read
+                                              label: Read
+                                              type: CHECKBOX
+                                            - name: create
+                                              label: Create
+                                              type: CHECKBOX
+                                            - name: edit
+                                              label: Edit
+                                              type: CHECKBOX
+                                            - name: delete
+                                              label: Delete
+                                              type: CHECKBOX
+                                            - name: modifyall
+                                              label: Modify all
+                                              type: CHECKBOX
+                                            - name: viewall
+                                              label: View all
+                                              type: CHECKBOX
+                                            - name: fields
+                                              label: Fields
+                                              type: MAP
   panels:
     deletePermissonset:
       uesio.type: uesio/io.dialog

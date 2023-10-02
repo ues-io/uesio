@@ -24,6 +24,7 @@ import { ReferenceFieldOptions } from "../../utilities/field/reference"
 import { ReferenceGroupFieldOptions } from "../../utilities/field/referencegroup"
 import { UserFieldOptions } from "../../utilities/field/user"
 import { CheckboxFieldOptions } from "../../utilities/field/checkbox"
+import { TextFieldOptions } from "../../utilities/field/text"
 
 type FieldDefinition = {
 	// Wire will default to the context wire, but can optionally be overridden
@@ -43,6 +44,7 @@ type FieldDefinition = {
 	longtext?: LongTextFieldOptions
 	placeholder?: string
 	readonly?: boolean
+	text?: TextFieldOptions
 	wrapperVariant: metadata.MetadataKey
 	subFieldVariant?: metadata.MetadataKey
 	labelVariant?: metadata.MetadataKey
@@ -107,6 +109,7 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		longtext,
 		markdown: markdownComponentOptions,
 		readonly,
+		text,
 		wrapperVariant,
 		// Special variants used for Map/List/Struct fields
 		subFieldVariant,
@@ -185,6 +188,7 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		user,
 		number,
 		longtext,
+		text,
 	}
 
 	return (

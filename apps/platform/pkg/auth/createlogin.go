@@ -16,7 +16,7 @@ func CreateLogin(signupMethodID string, payload map[string]interface{}, siteAdmi
 		return nil, err
 	}
 
-	signupMethod, err := getSignupMethod(signupMethodID, session)
+	signupMethod, err := GetSignupMethod(signupMethodID, session)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +50,7 @@ func CreateLogin(signupMethodID string, payload map[string]interface{}, siteAdmi
 		return nil, err
 	}
 
-	err = CreateLoginMethod(user, signupMethod.AuthSource, claims, session)
+	err = CreateLoginMethod(user, signupMethod.AuthSource, claims, nil, session)
 	if err != nil {
 		return nil, err
 	}

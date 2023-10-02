@@ -4,6 +4,6 @@ definition:
   uesio.styleTokens:
     root:
       - justify-center
-      - content-start
+      - content-center
       - gap-4
 public: true

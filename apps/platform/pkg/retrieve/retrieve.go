@@ -58,7 +58,7 @@ func Retrieve(writer io.Writer, session *sess.Session) error {
 	zipwriter := zip.NewWriter(writer)
 	create := NewWriterCreator(zipwriter.Create)
 	// Retrieve bundle contents
-	err = RetrieveBundle(bundleDirectory, create, bs, session)
+	err = RetrieveBundle(bundleDirectory, create, bs)
 	if err != nil {
 		return err
 	}
@@ -91,7 +91,7 @@ func retrieveGeneratedFiles(targetDirectory string, create WriterCreator) error 
 }
 
 // RetrieveBundle retrieves the content of a specific bundle version into the designated targetDirectory
-func RetrieveBundle(targetDirectory string, create WriterCreator, bs bundlestore.BundleStoreConnection, session *sess.Session) error {
+func RetrieveBundle(targetDirectory string, create WriterCreator, bs bundlestore.BundleStoreConnection) error {
 
 	for _, metadataType := range meta.GetMetadataTypes() {
 		group, err := meta.GetBundleableGroupFromType(metadataType)
@@ -154,7 +154,10 @@ func RetrieveBundle(targetDirectory string, create WriterCreator, bs bundlestore
 	}
 
 	// Add bundle.yaml
-	by := session.GetContextAppBundle()
+	bundleDef, err := bs.GetBundleDef()
+	if err != nil {
+		return err
+	}
 
 	f, err := create(filepath.Join(targetDirectory, "bundle.yaml"))
 	if err != nil {
@@ -164,7 +167,7 @@ func RetrieveBundle(targetDirectory string, create WriterCreator, bs bundlestore
 
 	encoder := yaml.NewEncoder(f)
 	encoder.SetIndent(2)
-	err = encoder.Encode(by)
+	err = encoder.Encode(bundleDef)
 	if err != nil {
 		return errors.New("failed to encode bundle.yaml file into YAML: " + err.Error())
 	}
