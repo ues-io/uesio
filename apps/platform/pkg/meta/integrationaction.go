@@ -26,8 +26,9 @@ func NewBaseIntegrationAction(integrationName, namespace, name string) *Integrat
 type IntegrationAction struct {
 	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
-	IntegrationRef string `yaml:"integration" json:"uesio/studio.integration"`
-	BotRef         string `yaml:"bot" json:"uesio/studio.bot"`
+	// Integration will be extracted from the filesystem path
+	IntegrationRef string `yaml:"-" json:"uesio/studio.integration"`
+	BotRef         string `yaml:"bot,omitempty" json:"uesio/studio.bot"`
 }
 
 type IntegrationActionWrapper IntegrationAction
@@ -54,12 +55,12 @@ func (ia *IntegrationAction) GetPath() string {
 	return filepath.Join(nsUser, appName, integrationName, ia.Name) + ".yaml"
 }
 
-func (ia *IntegrationAction) SetField(actionName string, value interface{}) error {
-	return StandardFieldSet(ia, actionName, value)
+func (ia *IntegrationAction) SetField(fieldName string, value interface{}) error {
+	return StandardFieldSet(ia, fieldName, value)
 }
 
-func (ia *IntegrationAction) GetField(actionName string) (interface{}, error) {
-	return StandardFieldGet(ia, actionName)
+func (ia *IntegrationAction) GetField(fieldName string) (interface{}, error) {
+	return StandardFieldGet(ia, fieldName)
 }
 
 func (ia *IntegrationAction) Loop(iter func(string, interface{}) error) error {
@@ -71,14 +72,15 @@ func (ia *IntegrationAction) Len() int {
 }
 
 func (ia *IntegrationAction) UnmarshalYAML(node *yaml.Node) error {
-	err := validateNodeName(node, ia.Name)
-	if err != nil {
+	if err := validateNodeName(node, ia.Name); err != nil {
 		return err
 	}
+	ia.BotRef = pickMetadataItem(node, "bot", ia.Namespace, "")
 	return node.Decode((*IntegrationActionWrapper)(ia))
 }
 
 func (ia *IntegrationAction) MarshalYAML() (interface{}, error) {
+	ia.BotRef = removeDefault(GetLocalizedKey(ia.BotRef, ia.Namespace), "")
 	return (*IntegrationActionWrapper)(ia), nil
 }
 
