@@ -580,7 +580,7 @@ class Context {
 	#addFrame = (frame: ContextFrame) => this.clone([frame].concat(this.stack))
 
 	merge = (template: Mergeable) => {
-		if (typeof template !== "string") {
+		if (typeof template !== "string" || !template.length) {
 			return template
 		}
 
@@ -663,6 +663,11 @@ class Context {
 			(f) =>
 				isComponentContextFrame(f) && f.componentType === componentType
 		) as ComponentContextFrame
+
+	getRecordFrame = (wireId: string) =>
+		this.stack.find(
+			(f) => isRecordContextFrame(f) && f.wire === wireId
+		) as RecordContextFrame
 }
 
 export {
