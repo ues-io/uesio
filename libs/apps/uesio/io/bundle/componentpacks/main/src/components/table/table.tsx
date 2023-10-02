@@ -314,7 +314,10 @@ const Table: definition.UC<TableDefinition> = (props) => {
 				id={api.component.getComponentIdFromProps(props)}
 				variant={definition[component.STYLE_VARIANT]}
 				rows={paginated}
-				columns={columnsToDisplay}
+				columns={columnsToDisplay?.map((column) => ({
+					...column,
+					label: context.mergeString(column.label),
+				}))}
 				context={context}
 				classes={classes}
 				rowNumberFunc={
