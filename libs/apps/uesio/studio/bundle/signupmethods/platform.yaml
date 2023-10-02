@@ -13,24 +13,34 @@ adminCreate:
     Your username is: ${username}.
 
     You can set your password and log in using the link below:
+
     ${link}
   redirect: "site/app/uesio/core/changepassword"
 signup:
   emailSubject: "Welcome to ${siteTitle}!"
   emailBody: |
     Hi ${username},
+
     Thank you for registering for an account with ${siteTitle}!
+
     To complete your account set up, please confirm using the link below:
+
     ${link}
+
     Cheers!
+
     The team at ${siteTitle}
   redirect: "auth/uesio/studio/platform/signup/v2/confirm"
 forgotPassword:
   emailSubject: "Password change requested in ${app} (${siteName})"
   emailBody: |
     Hi ${username},
+
     There was a request to change your password!
+
     If you did not make this request then please ignore this email.
+
     Otherwise, please click this link to change your password: ${link}
+
   redirect: "site/app/uesio/core/changepassword"
 public: true
