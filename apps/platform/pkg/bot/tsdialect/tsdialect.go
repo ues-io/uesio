@@ -25,8 +25,7 @@ type TSDialect struct {
 
 const DefaultListenerBotBody = `import { ListenerBotApi } from "@uesio/bots"
 
-// @ts-ignore
-function %s(bot: ListenerBotApi) {
+export default function %s(bot: ListenerBotApi) {
     const a = bot.params.get("a") as number
     const b = bot.params.get("b") as number
     bot.addResult("answer", a + b)
@@ -38,8 +37,7 @@ type OrderDetails = {
 	orderNumber: string
 }
 
-// @ts-ignore
-function %s(bot: RunActionBotApi) {
+export default function %s(bot: RunActionBotApi) {
     const itemNumbers = bot.params.get("itemNumbers") as string[]
     const amount = bot.params.get("amount") as number
 	const actionName = bot.getActionName()
@@ -70,8 +68,7 @@ function %s(bot: RunActionBotApi) {
 
 const DefaultLoadBotBody = `import { LoadBotApi } from "@uesio/bots
 
-// @ts-ignore
-function %s(bot: LoadBotApi) {
+export default function %s(bot: LoadBotApi) {
 	const { collection, conditions, fields, order } = bot.loadRequest
 	[
 		{
@@ -87,8 +84,7 @@ function %s(bot: LoadBotApi) {
 
 const DefaultSaveBotBody = `import { SaveBotApi } from "@uesio/bots
 
-// @ts-ignore
-function %s(bot: SaveBotApi) {
+export default function %s(bot: SaveBotApi) {
 	const collectionName = bot.getCollectionName()
 	bot.deletes.get().forEach((deleteApi) => {
 		bot.log.info("got a record to delete, with id: " + deleteApi.getId())
@@ -103,8 +99,7 @@ function %s(bot: SaveBotApi) {
 
 const DefaultBeforeSaveBotBody = `import { BeforeSaveBotApi } from "@uesio/bots"
 
-// @ts-ignore
-function %s(bot: BeforeSaveBotApi) {
+export default function %s(bot: BeforeSaveBotApi) {
 	bot.inserts.get().forEach(function (change) {
 		const recordId = change.get("uesio/core.id");
 	});
@@ -115,8 +110,7 @@ function %s(bot: BeforeSaveBotApi) {
 
 const DefaultAfterSaveBotBody = `import { AfterSaveBotApi } from "@uesio/bots"
 
-// @ts-ignore
-function %s(bot: AfterSaveBotApi) {
+export default function %s(bot: AfterSaveBotApi) {
 	bot.inserts.get().forEach(function (change) {
 		const recordId = change.get("uesio/core.id");
 	});
@@ -125,8 +119,8 @@ function %s(bot: AfterSaveBotApi) {
 	});
 }`
 
-const DefaultBotBody = `// @ts-ignore
-function %s(bot) {
+const DefaultBotBody = `export default function %s(bot) {
+
 }`
 
 // TODO: cache the transformed code, or generate it server-side as part of save of bot.ts

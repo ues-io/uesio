@@ -23,14 +23,13 @@ func Logger(message string) {
 type JSDialect struct {
 }
 
-const DefaultListenerBotBody = `function %s(bot) {
+const DefaultListenerBotBody = `export default function %s(bot) {
     const a = bot.params.get("a")
     const b = bot.params.get("b")
     bot.addResult("answer", a + b)
 }`
 
-const DefaultRunIntegrationActionBotBody = `
-function %s(bot) {
+const DefaultRunIntegrationActionBotBody = `export default function %s(bot) {
     const itemNumbers = bot.params.get("itemNumbers")
     const amount = bot.params.get("amount")
 	const actionName = bot.getActionName()
@@ -59,7 +58,7 @@ function %s(bot) {
     bot.addResult("orderNumber", orderNumber)
 }`
 
-const DefaultLoadBotBody = `function %s(bot) {
+const DefaultLoadBotBody = `export default function %s(bot) {
 	const collectionName = bot.loadRequest.GetCollectionName()
 	[
 		{
@@ -73,7 +72,7 @@ const DefaultLoadBotBody = `function %s(bot) {
 	].forEach((record) => bot.addRecord(record))
 }`
 
-const DefaultSaveBotBody = `function %s(bot) {
+const DefaultSaveBotBody = `export default function %s(bot) {
 	const collectionName = bot.getCollectionName()
 	bot.deletes.get().forEach((deleteApi) => {
 		bot.log.info("got a record to delete, with id: " + deleteApi.getId())
@@ -86,7 +85,7 @@ const DefaultSaveBotBody = `function %s(bot) {
 	})
 }`
 
-const DefaultBeforeSaveBotBody = `function %s(bot) {
+const DefaultBeforeSaveBotBody = `export default function %s(bot) {
 	bot.inserts.get().forEach(function (change) {
 		const recordId = change.get("uesio/core.id");
 	});
@@ -95,7 +94,7 @@ const DefaultBeforeSaveBotBody = `function %s(bot) {
 	});
 }`
 
-const DefaultAfterSaveBotBody = `function %s(bot) {
+const DefaultAfterSaveBotBody = `export default function %s(bot) {
 	bot.inserts.get().forEach(function (change) {
 		const recordId = change.get("uesio/core.id");
 	});
@@ -104,7 +103,7 @@ const DefaultAfterSaveBotBody = `function %s(bot) {
 	});
 }`
 
-const DefaultBotBody = `function %s(bot) {
+const DefaultBotBody = `export default function %s(bot) {
 
 }`
 
@@ -138,13 +137,17 @@ func RunBot(botName string, contents string, api interface{}, errorFunc func(str
 		return //Interrupt native Go functions
 	})
 
-	runner, err := vm.RunString("(" + contents + ")")
+	runner, err := vm.RunString(strings.ReplaceAll(contents, "export default function", "function"))
 	if err != nil {
 		return err
 	}
 	change, ok := goja.AssertFunction(runner)
 	if !ok {
-		return err
+		// If the bot is not a function, check for a function with the same name as the bot
+		change, ok = goja.AssertFunction(vm.Get(botName))
+		if !ok {
+			return errors.New("invalid bot code. A bot must export a function with the same name as the bot")
+		}
 	}
 
 	_, err = change(goja.Undefined(), vm.ToValue(api))
