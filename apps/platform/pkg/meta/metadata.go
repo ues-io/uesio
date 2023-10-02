@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/thecloudmasters/uesio/pkg/goutils"
 	"github.com/thecloudmasters/uesio/pkg/reflecttool"
 )
 
@@ -255,6 +256,11 @@ func GetGroupingConditions(metadataType, grouping string) (BundleConditions, err
 		conditions["uesio/studio.type"] = grouping
 	} else if metadataType == "componentvariants" {
 		conditions["uesio/studio.component"] = grouping
+	} else if metadataType == "integrationactions" {
+		if grouping == "" {
+			return nil, errors.New("metadata type integration action requires grouping value")
+		}
+		conditions["uesio/studio.integration"] = grouping
 	}
 	return conditions, nil
 }
@@ -268,11 +274,7 @@ func GetBundleableGroupFromType(metadataType string) (BundleableGroup, error) {
 }
 
 func GetMetadataTypes() []string {
-	types := []string{}
-	for key := range bundleableGroupMap {
-		types = append(types, key)
-	}
-	return types
+	return goutils.MapKeys(bundleableGroupMap)
 }
 
 func IsBundleableCollection(collectionName string) bool {

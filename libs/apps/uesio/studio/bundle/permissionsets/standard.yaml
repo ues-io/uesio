@@ -53,6 +53,7 @@ views:
   uesio/studio.permissionset: true
   uesio/studio.permissionsets: true
   uesio/studio.permissionsetcollection: true
+  uesio/studio.permissionsetintegration: true
   uesio/studio.profile: true
   uesio/studio.profiles: true
   uesio/studio.route: true
@@ -143,6 +144,7 @@ routes:
   uesio/studio.permissionset: true
   uesio/studio.permissionsets: true
   uesio/studio.permissionsetcollection: true
+  uesio/studio.permissionsetintegration: true
   uesio/studio.profile: true
   uesio/studio.profiles: true
   uesio/studio.route: true

@@ -1,4 +1,4 @@
-name: permissionsetcollection
+name: permissionsetintegration
 definition:
   # Wires are how we pull in data
   wires:
@@ -21,13 +21,13 @@ definition:
           value: true
         - field: uesio/studio.item
           value: $Param{namespace}.$Param{permissionsetname}
-    fields:
-      collection: uesio/studio.field
+    integrationActions:
+      collection: uesio/studio.integrationaction
       conditions:
         - field: uesio/studio.allmetadata
           value: true
         - field: uesio/studio.grouping
-          value: $Param{collectionNamespace}.$Param{collectionname}
+          value: $Param{integrationNamespace}.$Param{integrationName}
   # Components are how we describe the layout of our view
   components:
     - uesio/studio.mainlayout:
@@ -41,9 +41,9 @@ definition:
                 itemIcon: rule
                 itemName: $Param{permissionsetname}
                 itemNameSpace: $Param{namespace}
-                subItemType: collection
-                subItemName: $Param{collectionname}
-                subItemNameSpace: $Param{collectionNamespace}
+                subItemType: integration
+                subItemName: $Param{integrationName}
+                subItemNameSpace: $Param{integrationNamespace}
         leftbar:
           - uesio/core.view:
               uesio.context:
@@ -85,7 +85,7 @@ definition:
                                     component: uesio/io.table
                                     componentsignal: TOGGLE_MODE
                                     targettype: specific
-                                    componentid: fieldPerms-table
+                                    componentid: integrationActionPerms-table
                             - uesio/io.button:
                                 uesio.variant: uesio/io.primary
                                 text: $Label{uesio/io.save}
@@ -105,7 +105,7 @@ definition:
                                     component: uesio/io.table
                                     componentsignal: TOGGLE_MODE
                                     targettype: specific
-                                    componentid: fieldPerms-table
+                                    componentid: integrationActionPerms-table
                             - uesio/io.button:
                                 uesio.variant: uesio/io.secondary
                                 text: $Label{uesio/io.cancel}
@@ -124,28 +124,24 @@ definition:
                                     component: uesio/io.table
                                     componentsignal: TOGGLE_MODE
                                     targettype: specific
-                                    componentid: fieldPerms-table
+                                    componentid: integrationActionPerms-table
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
                       - uesio/io.titlebar:
-                          title: Fields
-                          subtitle: $Param{collectionNamespace}.$Param{collectionname}
+                          title: Integration Actions
+                          subtitle: $Param{integrationNamespace}.$Param{integrationName}
                           uesio.variant: uesio/io.section
                       - uesio/io.box:
                           components:
                             - uesio/studio.multipermissionpicker:
-                                uesio.id: fieldPerms
+                                uesio.id: integrationActionPerms
                                 uesio.context:
                                   workspace:
                                     name: $Param{workspacename}
                                     app: $Param{app}
-                                fieldId: uesio/studio.collectionrefs->$Param{collectionNamespace}.$Param{collectionname}->fields
-                                wireName: fields
+                                fieldId: uesio/studio.integrationactionrefs->$Param{integrationNamespace}.$Param{integrationName}->actions
+                                wireName: integrationActions
                                 permissionFields:
-                                  - name: read
-                                    label: Read
-                                    type: CHECKBOX
-                                  - name: edit
-                                    label: Edit
+                                  - label: Allow access to this Action
                                     type: CHECKBOX

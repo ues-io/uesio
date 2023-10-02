@@ -37,10 +37,9 @@ definition:
           lookupWire: workspaces
           lookupField: uesio/core.id
           field: uesio/studio.workspace
-        - valueSource: LOOKUP
-          lookupWire: integrations
-          lookupField: uesio/core.id
+        - valueSource: VALUE
           field: uesio/studio.integration
+          value: $Param{namespace}.$Param{integrationname}
   # Components are how we describe the layout of our view
   components:
     - uesio/studio.mainlayout:
@@ -95,13 +94,8 @@ definition:
                                 uesio.variant: uesio/io.primary
                                 text: $Label{uesio/io.save}
                                 uesio.display:
-                                  - type: group
-                                    conjunction: OR
-                                    conditions:
-                                      - type: wireHasChanges
-                                        wire: integrations
-                                      - type: wireHasChanges
-                                        wire: integrationActions
+                                  - type: wireHasChanges
+                                    wire: integrations
                                 signals:
                                   - signal: wire/SAVE
                                     wires:
@@ -115,13 +109,8 @@ definition:
                                 uesio.variant: uesio/io.secondary
                                 text: $Label{uesio/io.cancel}
                                 uesio.display:
-                                  - type: group
-                                    conjunction: OR
-                                    conditions:
-                                      - type: wireHasChanges
-                                        wire: integrations
-                                      - type: wireHasChanges
-                                        wire: integrationActions
+                                  - type: fieldMode
+                                    mode: EDIT
                                 signals:
                                   - signal: wire/CANCEL
                                     wire: integrations
@@ -252,6 +241,25 @@ definition:
                                           wire: newIntegrationAction
                                         - signal: panel/TOGGLE
                                           panel: newIntegrationAction
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.primary
+                                      text: $Label{uesio/io.save}
+                                      uesio.display:
+                                        - type: wireHasChanges
+                                          wire: integrationActions
+                                      signals:
+                                        - signal: wire/SAVE
+                                          wires:
+                                            - integrationActions
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.secondary
+                                      text: $Label{uesio/io.cancel}
+                                      uesio.display:
+                                        - type: wireHasChanges
+                                          wire: integrationActions
+                                      signals:
+                                        - signal: wire/CANCEL
+                                          wire: integrationActions
                       - uesio/io.table:
                           uesio.id: integrationActionsTable
                           wire: integrationActions
@@ -264,7 +272,6 @@ definition:
                               uesio.display:
                                 - type: fieldValue
                                   field: uesio/studio.namespace
-                                  operator: NOT_EQUALS
                                   value: $Param{app}
                           columns:
                             - field: uesio/studio.name
