@@ -145,7 +145,7 @@ func (b *WorkspaceBundleStoreConnection) GetManyItems(items []meta.BundleableIte
 func (b *WorkspaceBundleStoreConnection) GetAllItems(group meta.BundleableGroup, conditions meta.BundleConditions) error {
 
 	// Add the workspace id as a condition
-	loadConditions := make([]adapt.LoadRequestCondition, len(conditions), len(conditions))
+	loadConditions := make([]adapt.LoadRequestCondition, len(conditions))
 	i := 0
 	for field, value := range conditions {
 		loadConditions[i] = adapt.LoadRequestCondition{

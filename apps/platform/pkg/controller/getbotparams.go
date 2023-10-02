@@ -13,7 +13,7 @@ import (
 )
 
 func getParamConditionsResponse(conditions []meta.BotParamCondition) []meta.BotParamConditionResponse {
-	response := []meta.BotParamConditionResponse{}
+	var response []meta.BotParamConditionResponse
 
 	for _, condition := range conditions {
 		response = append(response, meta.BotParamConditionResponse(condition))
