@@ -72,7 +72,12 @@ func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]
 	if err != nil {
 		return err
 	}
-	user, err := auth.CreateUser(signupMethod, username, c.connection, c.session)
+	user, err := auth.CreateUser(signupMethod, &meta.User{
+		Username:  username,
+		FirstName: validated.Claims["given_name"].(string),
+		LastName:  validated.Claims["family_name"].(string),
+		Email:     validated.Claims["email"].(string),
+	}, c.connection, c.session)
 	if err != nil {
 		return err
 	}

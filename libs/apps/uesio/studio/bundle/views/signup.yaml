@@ -14,6 +14,12 @@ definition:
         email:
           label: Email
           type: TEXT
+        firstname:
+          label: First Name
+          type: TEXT
+        lastname:
+          label: Last Name
+          type: TEXT
         step:
           label: Step
           type: TEXT
@@ -204,6 +210,14 @@ definition:
                                   - uesio/io.box:
                                       components:
                                         - uesio/io.field:
+                                            fieldId: firstname
+                                            text:
+                                              autoComplete: "off"
+                                        - uesio/io.field:
+                                            fieldId: lastname
+                                            text:
+                                              autoComplete: "off"
+                                        - uesio/io.field:
                                             fieldId: email
                                             text:
                                               autoComplete: "off"
@@ -223,6 +237,8 @@ definition:
                                           payload:
                                             username: ${username}
                                             password: ${password}
+                                            firstname: ${firstname}
+                                            lastname: ${lastname}
                                             email: ${email}
                                   - uesio/io.button:
                                       text: Authenticate a different way

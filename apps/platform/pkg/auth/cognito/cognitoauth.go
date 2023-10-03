@@ -127,12 +127,22 @@ func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]
 		return errors.New("User already exists")
 	}
 
-	password, err := auth.GetPayloadValue(payload, "password")
+	password, err := auth.GetRequiredPayloadValue(payload, "password")
 	if err != nil {
 		return errors.New("Cognito login:" + err.Error())
 	}
 
-	email, err := auth.GetPayloadValue(payload, "email")
+	email, err := auth.GetRequiredPayloadValue(payload, "email")
+	if err != nil {
+		return errors.New("Cognito login:" + err.Error())
+	}
+
+	firstname, err := auth.GetRequiredPayloadValue(payload, "firstname")
+	if err != nil {
+		return errors.New("Cognito login:" + err.Error())
+	}
+
+	lastname, err := auth.GetRequiredPayloadValue(payload, "lastname")
 	if err != nil {
 		return errors.New("Cognito login:" + err.Error())
 	}
@@ -168,7 +178,12 @@ func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]
 		return handleCognitoSignupError(err)
 	}
 
-	user, err := auth.CreateUser(signupMethod, username, c.connection, c.session)
+	user, err := auth.CreateUser(signupMethod, &meta.User{
+		Username:  username,
+		FirstName: firstname,
+		LastName:  lastname,
+		Email:     email,
+	}, c.connection, c.session)
 	if err != nil {
 		return err
 	}

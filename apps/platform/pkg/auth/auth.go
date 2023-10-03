@@ -160,13 +160,13 @@ func getSiteFromDomain(domainType, domainValue string) (*meta.Site, error) {
 	return site, nil
 }
 
-func CreateUser(signupMethod *meta.SignupMethod, username string, connection adapt.Connection, session *sess.Session) (*meta.User, error) {
-	user := &meta.User{
-		Username: username,
-		Profile:  signupMethod.Profile,
-		Type:     "PERSON",
-		Language: "en",
+func CreateUser(signupMethod *meta.SignupMethod, user *meta.User, connection adapt.Connection, session *sess.Session) (*meta.User, error) {
+	user.Type = "PERSON"
+	user.Profile = signupMethod.Profile
+	if user.Language == "" {
+		user.Language = "en"
 	}
+
 	err := datasource.PlatformSaveOne(user, nil, connection, session)
 	if err != nil {
 		return nil, err
