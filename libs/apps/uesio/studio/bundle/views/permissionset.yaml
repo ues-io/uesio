@@ -48,6 +48,11 @@ definition:
       conditions:
         - field: uesio/studio.allmetadata
           value: true
+    integrations:
+      collection: uesio/studio.integration
+      conditions:
+        - field: uesio/studio.allmetadata
+          value: true
   # Components are how we describe the layout of our view
   components:
     - uesio/studio.mainlayout:
@@ -295,6 +300,60 @@ definition:
                                               type: CHECKBOX
                                             - name: fields
                                               label: Fields
+                                              type: MAP
+                      - id: integrationactions
+                        label: Integration Actions
+                        uesio.display:
+                          - type: featureFlag
+                            name: manage_integrations
+                        components:
+                          - uesio/io.box:
+                              uesio.variant: uesio/io.section
+                              components:
+                                - uesio/io.box:
+                                    components:
+                                      - uesio/io.field:
+                                          fieldId: uesio/studio.allowallintegrationactions
+                                          displayAs: "TOGGLE"
+                                      - uesio/io.searchbox:
+                                          wire: integrations
+                                          uesio.display:
+                                            - type: fieldValue
+                                              field: uesio/studio.allowallintegrationactions
+                                              operator: NOT_EQUALS
+                                              value: true
+                                          searchFields:
+                                            - uesio/studio.name
+                                            - uesio/studio.namespace
+                                      - uesio/studio.multipermissionpicker:
+                                          uesio.id: permsTable-integrationactions
+                                          uesio.display:
+                                            - type: fieldValue
+                                              field: uesio/studio.allowallintegrationactions
+                                              operator: NOT_EQUALS
+                                              value: true
+                                          uesio.context:
+                                            workspace:
+                                              name: $Param{workspacename}
+                                              app: $Param{app}
+                                          fieldId: uesio/studio.integrationactionrefs
+                                          wireName: integrations
+                                          rowactions:
+                                            - text: Grant access to individual Actions
+                                              signals:
+                                                - path: app/$Param{app}/workspace/$Param{workspacename}/permissionsets/$Param{namespace}/$Param{permissionsetname}/integration/${uesio/studio.namespace}/${uesio/studio.name}
+                                                  signal: route/NAVIGATE
+                                              uesio.display:
+                                                - type: fieldValue
+                                                  field: allowAll
+                                                  operator: NOT_EQUALS
+                                                  value: true
+                                          permissionFields:
+                                            - name: allowAll
+                                              label: Allow all Actions provided by this Integration
+                                              type: CHECKBOX
+                                            - name: actions
+                                              label: Action Access
                                               type: MAP
   panels:
     deletePermissonset:

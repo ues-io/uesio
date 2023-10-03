@@ -20,6 +20,8 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
+// TODO: Eliminate the need to keep this manual list.
+// Evaluate the dependencies of each item and deploy in dependency order.
 var ORDERED_ITEMS = [...]string{
 	"collections",
 	"selectlists",
@@ -44,6 +46,7 @@ var ORDERED_ITEMS = [...]string{
 	"configvalues",
 	"credentials",
 	"integrations",
+	"integrationactions",
 }
 
 type DeployOptions struct {

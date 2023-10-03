@@ -71,6 +71,10 @@ func NewSaveBot(namespace, name string) *Bot {
 	return NewBaseBot("SAVE", "", namespace, name)
 }
 
+func NewRunActionBot(namespace, name string) *Bot {
+	return NewBaseBot("RUNACTION", "", namespace, name)
+}
+
 func NewBaseBot(botType, collectionKey, namespace, name string) *Bot {
 	return &Bot{
 		CollectionRef:  collectionKey,
@@ -206,6 +210,7 @@ func GetBotTypes() map[string]string {
 		"LOAD":       "load",
 		"ROUTE":      "route",
 		"SAVE":       "save",
+		"RUNACTION":  "runaction",
 	}
 }
 
@@ -299,6 +304,18 @@ func (e *BotParamValidationError) Error() string {
 
 func NewParamError(message string, param string) error {
 	return &BotParamValidationError{Param: param, Message: message}
+}
+
+type BotExecutionError struct {
+	Message string
+}
+
+func (e *BotExecutionError) Error() string {
+	return e.Message
+}
+
+func NewBotExecutionError(message string) error {
+	return &BotExecutionError{Message: message}
 }
 
 type BotAccessError struct {

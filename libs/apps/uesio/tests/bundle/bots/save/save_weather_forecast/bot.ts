@@ -14,6 +14,7 @@ type WeatherInfo = {
 
 type BotResult = {
 	success: boolean
+	error?: string
 	params?: Record<string, unknown>
 }
 
@@ -39,7 +40,11 @@ function save_weather_forecast(bot: SaveBotApi) {
 	const botResult = result.body as BotResult
 
 	if (botResult.success === false) {
-		bot.addError("Failed to get weather forecast", "", "")
+		bot.addError(
+			"Failed to get weather forecast: " + botResult.error,
+			"",
+			""
+		)
 		return
 	}
 

@@ -18,8 +18,9 @@ GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/configvalues
 Accept: application/json
 HTTP 200
 [Asserts]
-jsonpath "$" count == 1
-jsonpath "$[0].name" == "google_auth_client_id"
+jsonpath "$" count == 2
+jsonpath "$[*].name" includes "google_auth_client_id"
+jsonpath "$[*].name" includes "studio_apis_url"
 
 # Logout
 POST https://{{host}}:{{port}}/site/auth/logout
@@ -45,8 +46,9 @@ GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/configvalues
 Accept: application/json
 HTTP 200
 [Asserts]
-jsonpath "$" count == 1
-jsonpath "$[0].name" == "google_auth_client_id"
+jsonpath "$" count == 2
+jsonpath "$[*].name" includes "google_auth_client_id"
+jsonpath "$[*].name" includes "studio_apis_url"
 
 # Logout
 POST https://{{host}}:{{port}}/site/auth/logout
