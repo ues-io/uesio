@@ -58,7 +58,7 @@ func Login(authSourceID string, payload map[string]interface{}, session *sess.Se
 		return nil, err
 	}
 
-	claims, err := conn.Login(payload, session)
+	claims, err := conn.Login(authSourceID, payload, session)
 	if err != nil {
 		return nil, err
 	}

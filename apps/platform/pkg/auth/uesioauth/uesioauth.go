@@ -8,9 +8,9 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
-	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/integ/sendgrid"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -32,7 +32,7 @@ func generateCode() string {
 	return strings.Replace(strings.Trim(fmt.Sprint(rand.Perm(6)), "[]"), " ", "", -1)
 }
 
-func (c *Connection) Login(payload map[string]interface{}, session *sess.Session) (*auth.AuthenticationClaims, error) {
+func (c *Connection) Login(authSourceID string, payload map[string]interface{}, session *sess.Session) (*auth.AuthenticationClaims, error) {
 
 	username, err := auth.GetPayloadValue(payload, "username")
 	if err != nil {
@@ -45,7 +45,7 @@ func (c *Connection) Login(payload map[string]interface{}, session *sess.Session
 
 	adminSession := sess.GetAnonSession(session.GetSite())
 
-	loginmethod, err := auth.GetLoginMethod(&auth.AuthenticationClaims{Subject: username}, "uesio/core.platform", adminSession)
+	loginmethod, err := auth.GetLoginMethod(&auth.AuthenticationClaims{Subject: username}, authSourceID, adminSession)
 	if err != nil {
 		return nil, errors.New("Failed Getting Login Method Data: " + err.Error())
 	}
@@ -69,7 +69,7 @@ func (c *Connection) Login(payload map[string]interface{}, session *sess.Session
 
 }
 
-func (c *Connection) Signup(payload map[string]interface{}, username string, session *sess.Session) (*auth.AuthenticationClaims, error) {
+func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]interface{}, username string, session *sess.Session) (*auth.AuthenticationClaims, error) {
 
 	email, err := auth.GetPayloadValue(payload, "email")
 	if err != nil {
@@ -86,7 +86,8 @@ func (c *Connection) Signup(payload map[string]interface{}, username string, ses
 		return nil, errors.New("Uesio singup:" + err.Error())
 	}
 
-	integration, err := datasource.GetIntegration("uesio/core.sendgrid", session)
+	//Studio session is required to use the right integration
+	integration, err := datasource.GetIntegration("uesio/core.sendgrid", sess.GetStudioAnonSession())
 	if err != nil {
 		return nil, errors.New("Uesio singup:" + err.Error())
 	}
@@ -103,12 +104,8 @@ func (c *Connection) Signup(payload map[string]interface{}, username string, ses
 
 	code := generateCode()
 	plainBody := strings.Replace(message, "{####}", code, 1)
-	fromEmail, err := configstore.GetValueFromKey("uesio/studio.from_email", session)
-	if err != nil {
-		return nil, errors.New("Uesio singup:" + err.Error())
-	}
 
-	options := sendgrid.SendEmailOptions{To: []string{email}, From: fromEmail, Subject: subject, PlainBody: plainBody}
+	options := sendgrid.SendEmailOptions{To: []string{email}, From: signupMethod.FromEmail, Subject: subject, PlainBody: plainBody}
 	_, err = integration.RunAction("sendEmail", options)
 	if err != nil {
 		return nil, errors.New("Uesio singup:" + err.Error())
@@ -121,7 +118,7 @@ func (c *Connection) Signup(payload map[string]interface{}, username string, ses
 		Code:     code,
 	}, nil
 }
-func (c *Connection) ForgotPassword(payload map[string]interface{}, session *sess.Session) error {
+func (c *Connection) ForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}, session *sess.Session) error {
 
 	username, err := auth.GetPayloadValue(payload, "username")
 	if err != nil {
@@ -133,7 +130,8 @@ func (c *Connection) ForgotPassword(payload map[string]interface{}, session *ses
 		return errors.New("Uesio forgot password:" + err.Error())
 	}
 
-	integration, err := datasource.GetIntegration("uesio/core.sendgrid", session)
+	//Studio session is required to use the right integration
+	integration, err := datasource.GetIntegration("uesio/core.sendgrid", sess.GetStudioAnonSession())
 	if err != nil {
 		return errors.New("Uesio forgot password:" + err.Error())
 	}
@@ -148,16 +146,11 @@ func (c *Connection) ForgotPassword(payload map[string]interface{}, session *ses
 		return errors.New("Uesio forgot password:" + err.Error())
 	}
 
-	fromEmail, err := configstore.GetValueFromKey("uesio/studio.from_email", session)
-	if err != nil {
-		return errors.New("Uesio forgot password:" + err.Error())
-	}
-
 	code := generateCode()
 	plainBody := strings.Replace(message, "{####}", code, 1)
 
 	adminSession := sess.GetAnonSession(session.GetSite())
-	loginmethod, err := auth.GetLoginMethod(&auth.AuthenticationClaims{Subject: username}, "uesio/core.platform", adminSession)
+	loginmethod, err := auth.GetLoginMethod(&auth.AuthenticationClaims{Subject: username}, signupMethod.AuthSource, adminSession)
 	if err != nil {
 		return errors.New("Failed Getting Login Method Data: " + err.Error())
 	}
@@ -168,7 +161,7 @@ func (c *Connection) ForgotPassword(payload map[string]interface{}, session *ses
 		return err
 	}
 
-	options := sendgrid.SendEmailOptions{To: []string{user.Email}, From: fromEmail, Subject: subject, PlainBody: plainBody}
+	options := sendgrid.SendEmailOptions{To: []string{user.Email}, From: signupMethod.FromEmail, Subject: subject, PlainBody: plainBody}
 	_, err = integration.RunAction("sendEmail", options)
 	if err != nil {
 		return errors.New("Uesio forgot password:" + err.Error())
@@ -176,7 +169,7 @@ func (c *Connection) ForgotPassword(payload map[string]interface{}, session *ses
 
 	return nil
 }
-func (c *Connection) ConfirmForgotPassword(payload map[string]interface{}, session *sess.Session) error {
+func (c *Connection) ConfirmForgotPassword(authSourceID string, payload map[string]interface{}, session *sess.Session) error {
 	username, err := auth.GetPayloadValue(payload, "username")
 	if err != nil {
 		return errors.New("Uesio confirm forgot password:" + err.Error())
@@ -194,7 +187,7 @@ func (c *Connection) ConfirmForgotPassword(payload map[string]interface{}, sessi
 
 	adminSession := sess.GetAnonSession(session.GetSite())
 
-	loginmethod, err := auth.GetLoginMethod(&auth.AuthenticationClaims{Subject: username}, "uesio/core.platform", adminSession)
+	loginmethod, err := auth.GetLoginMethod(&auth.AuthenticationClaims{Subject: username}, authSourceID, adminSession)
 	if err != nil {
 		return errors.New("Failed Getting Login Method Data: " + err.Error())
 	}
@@ -213,6 +206,7 @@ func (c *Connection) ConfirmForgotPassword(payload map[string]interface{}, sessi
 	}
 
 	loginmethod.Hash = string(hash)
+	loginmethod.Verified = true
 	err = datasource.PlatformSaveOne(loginmethod, nil, nil, session)
 	if err != nil {
 		return err
@@ -221,14 +215,15 @@ func (c *Connection) ConfirmForgotPassword(payload map[string]interface{}, sessi
 	return nil
 
 }
-func (c *Connection) CreateLogin(payload map[string]interface{}, username string, session *sess.Session) (*auth.AuthenticationClaims, error) {
+func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[string]interface{}, username string, session *sess.Session) (*auth.AuthenticationClaims, error) {
 
 	email, err := auth.GetPayloadValue(payload, "email")
 	if err != nil {
 		return nil, errors.New("Uesio create login:" + err.Error())
 	}
 
-	integration, err := datasource.GetIntegration("uesio/core.sendgrid", session)
+	//Studio session is required to use the right integration
+	integration, err := datasource.GetIntegration("uesio/core.sendgrid", sess.GetStudioAnonSession())
 	if err != nil {
 		return nil, errors.New("Uesio create login:" + err.Error())
 	}
@@ -245,25 +240,20 @@ func (c *Connection) CreateLogin(payload map[string]interface{}, username string
 
 	code := generateCode()
 	plainBody := strings.Replace(message, "{####}", code, 1)
-	fromEmail, err := configstore.GetValueFromKey("uesio/studio.from_email", session)
-	if err != nil {
-		return nil, errors.New("Uesio create login:" + err.Error())
-	}
 
-	options := sendgrid.SendEmailOptions{To: []string{email}, From: fromEmail, Subject: subject, PlainBody: plainBody}
+	options := sendgrid.SendEmailOptions{To: []string{email}, From: signupMethod.FromEmail, Subject: subject, PlainBody: plainBody}
 	_, err = integration.RunAction("sendEmail", options)
 	if err != nil {
 		return nil, errors.New("Uesio create login:" + err.Error())
 	}
 
 	return &auth.AuthenticationClaims{
-		Subject:  username,
-		Verified: true,
-		Code:     code,
+		Subject: username,
+		Code:    code,
 	}, nil
 
 }
-func (c *Connection) ConfirmSignUp(payload map[string]interface{}, session *sess.Session) error {
+func (c *Connection) ConfirmSignUp(authSourceID string, payload map[string]interface{}, session *sess.Session) error {
 
 	username, err := auth.GetPayloadValue(payload, "username")
 	if err != nil {
@@ -277,7 +267,7 @@ func (c *Connection) ConfirmSignUp(payload map[string]interface{}, session *sess
 
 	adminSession := sess.GetAnonSession(session.GetSite())
 
-	loginmethod, err := auth.GetLoginMethod(&auth.AuthenticationClaims{Subject: username}, "uesio/core.platform", adminSession)
+	loginmethod, err := auth.GetLoginMethod(&auth.AuthenticationClaims{Subject: username}, authSourceID, adminSession)
 	if err != nil {
 		return errors.New("Failed Getting Login Method Data: " + err.Error())
 	}

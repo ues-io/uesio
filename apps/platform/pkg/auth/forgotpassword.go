@@ -32,7 +32,7 @@ func ForgotPassword(signupMethodID string, payload map[string]interface{}, site 
 		return err
 	}
 
-	return authconn.ForgotPassword(payload, session)
+	return authconn.ForgotPassword(signupMethod, payload, session)
 }
 
 func ConfirmForgotPassword(signupMethodID string, payload map[string]interface{}, site *meta.Site) error {
@@ -51,5 +51,5 @@ func ConfirmForgotPassword(signupMethodID string, payload map[string]interface{}
 	if err != nil {
 		return err
 	}
-	return authconn.ConfirmForgotPassword(payload, session)
+	return authconn.ConfirmForgotPassword(signupMethod.AuthSource, payload, session)
 }

@@ -78,7 +78,7 @@ func signupWithConnection(signupMethod *meta.SignupMethod, payload map[string]in
 		return nil, err
 	}
 
-	claims, err := authconn.Signup(payload, username, session)
+	claims, err := authconn.Signup(signupMethod, payload, username, session)
 	if err != nil {
 		return nil, err
 	}
@@ -125,5 +125,5 @@ func ConfirmSignUp(signupMethodID string, payload map[string]interface{}, site *
 		return err
 	}
 
-	return authconn.ConfirmSignUp(payload, session)
+	return authconn.ConfirmSignUp(signupMethod.AuthSource, payload, session)
 }

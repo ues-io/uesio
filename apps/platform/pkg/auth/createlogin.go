@@ -40,7 +40,7 @@ func CreateLogin(signupMethodID string, payload map[string]interface{}, siteAdmi
 		return nil, err
 	}
 
-	claims, err := authconn.CreateLogin(payload, username, session)
+	claims, err := authconn.CreateLogin(signupMethod, payload, username, session)
 	if err != nil {
 		return nil, err
 	}

@@ -6,6 +6,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"google.golang.org/api/idtoken"
 )
@@ -23,7 +24,7 @@ type Connection struct {
 	credentials *adapt.Credentials
 }
 
-func (c *Connection) Login(payload map[string]interface{}, session *sess.Session) (*auth.AuthenticationClaims, error) {
+func (c *Connection) Login(authSourceID string, payload map[string]interface{}, session *sess.Session) (*auth.AuthenticationClaims, error) {
 
 	token, err := auth.GetPayloadValue(payload, "credential")
 	if err != nil {
@@ -58,18 +59,18 @@ func (c *Connection) Login(payload map[string]interface{}, session *sess.Session
 	}, nil
 }
 
-func (c *Connection) Signup(payload map[string]interface{}, username string, session *sess.Session) (*auth.AuthenticationClaims, error) {
-	return c.Login(payload, session)
+func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]interface{}, username string, session *sess.Session) (*auth.AuthenticationClaims, error) {
+	return c.Login(signupMethod.AuthSource, payload, session)
 }
-func (c *Connection) ForgotPassword(payload map[string]interface{}, session *sess.Session) error {
+func (c *Connection) ForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}, session *sess.Session) error {
 	return errors.New("Google login: unfortunately you cannot change the password")
 }
-func (c *Connection) ConfirmForgotPassword(payload map[string]interface{}, session *sess.Session) error {
+func (c *Connection) ConfirmForgotPassword(authSourceID string, payload map[string]interface{}, session *sess.Session) error {
 	return errors.New("Google login: unfortunately you cannot change the password")
 }
-func (c *Connection) CreateLogin(payload map[string]interface{}, username string, session *sess.Session) (*auth.AuthenticationClaims, error) {
-	return c.Login(payload, session)
+func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[string]interface{}, username string, session *sess.Session) (*auth.AuthenticationClaims, error) {
+	return c.Login(signupMethod.AuthSource, payload, session)
 }
-func (c *Connection) ConfirmSignUp(payload map[string]interface{}, session *sess.Session) error {
+func (c *Connection) ConfirmSignUp(authSourceID string, payload map[string]interface{}, session *sess.Session) error {
 	return errors.New("Google login: unfortunately you cannot change the password")
 }

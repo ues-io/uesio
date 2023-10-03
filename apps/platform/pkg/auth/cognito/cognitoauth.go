@@ -14,6 +14,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/creds"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -38,7 +39,7 @@ func getFullyQualifiedUsername(site string, username string) string {
 	return site + ":" + username
 }
 
-func (c *Connection) Login(payload map[string]interface{}, session *sess.Session) (*auth.AuthenticationClaims, error) {
+func (c *Connection) Login(authSourceID string, payload map[string]interface{}, session *sess.Session) (*auth.AuthenticationClaims, error) {
 
 	username, err := auth.GetPayloadValue(payload, "username")
 	if err != nil {
@@ -93,7 +94,7 @@ func (c *Connection) Login(payload map[string]interface{}, session *sess.Session
 
 }
 
-func (c *Connection) Signup(payload map[string]interface{}, username string, session *sess.Session) (*auth.AuthenticationClaims, error) {
+func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]interface{}, username string, session *sess.Session) (*auth.AuthenticationClaims, error) {
 
 	site := session.GetSiteTenantID()
 	fqUsername := getFullyQualifiedUsername(site, username)
@@ -181,7 +182,7 @@ func handleCognitoSignupError(err error) error {
 	return err
 }
 
-func (c *Connection) ForgotPassword(payload map[string]interface{}, session *sess.Session) error {
+func (c *Connection) ForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}, session *sess.Session) error {
 
 	username, err := auth.GetPayloadValue(payload, "username")
 	if err != nil {
@@ -231,7 +232,7 @@ func (c *Connection) ForgotPassword(payload map[string]interface{}, session *ses
 
 }
 
-func (c *Connection) ConfirmForgotPassword(payload map[string]interface{}, session *sess.Session) error {
+func (c *Connection) ConfirmForgotPassword(authSourceID string, payload map[string]interface{}, session *sess.Session) error {
 
 	username, err := auth.GetPayloadValue(payload, "username")
 	if err != nil {
@@ -279,7 +280,7 @@ func (c *Connection) ConfirmForgotPassword(payload map[string]interface{}, sessi
 
 }
 
-func (c *Connection) ConfirmSignUp(payload map[string]interface{}, session *sess.Session) error {
+func (c *Connection) ConfirmSignUp(authSourceID string, payload map[string]interface{}, session *sess.Session) error {
 
 	username, err := auth.GetPayloadValue(payload, "username")
 	if err != nil {
@@ -321,7 +322,7 @@ func (c *Connection) ConfirmSignUp(payload map[string]interface{}, session *sess
 
 }
 
-func (c *Connection) CreateLogin(payload map[string]interface{}, username string, session *sess.Session) (*auth.AuthenticationClaims, error) {
+func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[string]interface{}, username string, session *sess.Session) (*auth.AuthenticationClaims, error) {
 
 	site := session.GetSiteTenantID()
 	fqUsername := getFullyQualifiedUsername(site, username)
