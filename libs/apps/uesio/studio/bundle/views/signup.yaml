@@ -212,15 +212,15 @@ definition:
                                         - uesio/io.field:
                                             fieldId: firstname
                                             text:
-                                              autoComplete: "off"
+                                              autoComplete: "given-name"
                                         - uesio/io.field:
                                             fieldId: lastname
                                             text:
-                                              autoComplete: "off"
+                                              autoComplete: "family-name"
                                         - uesio/io.field:
                                             fieldId: email
                                             text:
-                                              autoComplete: "off"
+                                              autoComplete: "email"
                                         - uesio/io.field:
                                             fieldId: password
                                             label: Password

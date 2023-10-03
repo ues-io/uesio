@@ -50,6 +50,8 @@ definition:
                 - uesio/io.field:
                     fieldId: uesio/viewonly.username
                     uesio.id: username
+                    text:
+                      autoComplete: "username"
                 - uesio/io.box:
                     uesio.styleTokens:
                       root:
@@ -59,6 +61,8 @@ definition:
                           fieldId: uesio/viewonly.password
                           uesio.id: password
                           displayAs: PASSWORD
+                          text:
+                            autoComplete: "current-password"
                       - uesio/io.button:
                           text: Forgot password?
                           uesio.styleTokens:
