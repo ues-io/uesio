@@ -2,15 +2,17 @@ package worker
 
 import (
 	"fmt"
-	"github.com/robfig/cron/v3"
-	"github.com/thecloudmasters/uesio/pkg/invoices"
-	"github.com/thecloudmasters/uesio/pkg/logger"
-	"github.com/thecloudmasters/uesio/pkg/usage/usage_worker"
 	"os"
 	"os/signal"
 	"strconv"
 	"syscall"
 	"time"
+
+	"github.com/robfig/cron/v3"
+
+	"github.com/thecloudmasters/uesio/pkg/invoices"
+	"github.com/thecloudmasters/uesio/pkg/logger"
+	"github.com/thecloudmasters/uesio/pkg/usage/usage_worker"
 )
 
 var jobs []Job
@@ -41,7 +43,7 @@ func ScheduleJobs() {
 
 	s := cron.New(cron.WithLocation(time.UTC))
 
-	var jobEntries = make([]cron.EntryID, len(jobs), len(jobs))
+	var jobEntries = make([]cron.EntryID, len(jobs))
 
 	// Load all jobs
 	for i, job := range jobs {
