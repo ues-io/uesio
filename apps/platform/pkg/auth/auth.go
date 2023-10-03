@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -332,7 +333,7 @@ func CreateLoginMethod(user *meta.User, authSourceID string, claims *Authenticat
 		User:         user,
 		AuthSource:   authSourceID,
 		Hash:         claims.Hash,
-		Code:         claims.Code,
+		Code:         &meta.LoginMethodCode{Value: claims.Code, CreatedAt: time.Now().UnixNano()},
 		Verified:     claims.Verified,
 	}, nil, connection, session)
 }

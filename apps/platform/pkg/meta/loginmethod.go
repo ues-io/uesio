@@ -1,13 +1,27 @@
 package meta
 
+import "time"
+
 type LoginMethod struct {
 	BuiltIn      `yaml:",inline"`
-	FederationID string `json:"uesio/core.federation_id"`
-	AuthSource   string `json:"uesio/core.auth_source"`
-	Hash         string `json:"uesio/core.hash"`
-	User         *User  `json:"uesio/core.user"`
-	Code         string `json:"uesio/core.code"`
-	Verified     bool   `json:"uesio/core.verified"`
+	FederationID string           `json:"uesio/core.federation_id"`
+	AuthSource   string           `json:"uesio/core.auth_source"`
+	Hash         string           `json:"uesio/core.hash"`
+	User         *User            `json:"uesio/core.user"`
+	Code         *LoginMethodCode `json:"uesio/core.code"`
+	Verified     bool             `json:"uesio/core.verified"`
+}
+
+type LoginMethodCode struct {
+	Value     string `json:"uesio/core.value"`
+	CreatedAt int64  `json:"uesio/core.createdat"`
+}
+
+func (lmc *LoginMethodCode) IsExpired() bool {
+	createdat := time.Unix(0, lmc.CreatedAt)
+	difference := time.Now().Sub(createdat)
+	//code expires in 24 hours
+	return difference.Hours() > 24
 }
 
 func (lm *LoginMethod) GetCollectionName() string {

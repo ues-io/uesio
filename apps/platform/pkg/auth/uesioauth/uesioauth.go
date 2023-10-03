@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
@@ -178,7 +179,7 @@ func (c *Connection) ForgotPassword(signupMethod *meta.SignupMethod, payload map
 		return errors.New("Failed Getting Login Method Data: " + err.Error())
 	}
 
-	loginmethod.Code = code
+	loginmethod.Code = &meta.LoginMethodCode{Value: code, CreatedAt: time.Now().UnixNano()}
 	err = datasource.PlatformSaveOne(loginmethod, nil, nil, session)
 	if err != nil {
 		return err
@@ -224,7 +225,11 @@ func (c *Connection) ConfirmForgotPassword(authSourceID string, payload map[stri
 		return errors.New("No account found with this login method")
 	}
 
-	if loginmethod.Code != verificationCode {
+	if loginmethod.Code.IsExpired() {
+		return errors.New("The code Expired, please request a new one")
+	}
+
+	if loginmethod.Code.Value != verificationCode {
 		return errors.New("The codes do not match")
 	}
 
@@ -308,7 +313,11 @@ func (c *Connection) ConfirmSignUp(authSourceID string, payload map[string]inter
 		return errors.New("This account is already verified")
 	}
 
-	if loginmethod.Code != verificationCode {
+	if loginmethod.Code.IsExpired() {
+		return errors.New("The code Expired, please request a new one")
+	}
+
+	if loginmethod.Code.Value != verificationCode {
 		return errors.New("The codes do not match")
 	}
 

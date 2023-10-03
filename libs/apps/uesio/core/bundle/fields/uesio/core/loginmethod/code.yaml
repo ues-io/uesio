@@ -1,3 +1,10 @@
 name: code
-type: TEXT
+type: STRUCT
 label: Code
+subfields:
+  - name: uesio/core.value
+    label: Value
+    type: TEXT
+  - name: uesio/core.createdat
+    label: Created At
+    type: TIMESTAMP
