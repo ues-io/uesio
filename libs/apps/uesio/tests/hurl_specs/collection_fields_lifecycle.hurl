@@ -5,7 +5,7 @@
 # Test as a logged-in user so that we don't get redirected to the login page
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"uesio\"}"
+    "token": "uesio"
 }
 
 # Get the dev workspace id so we can test saving collections/fields
@@ -273,7 +273,7 @@ jsonpath "$.wires[2].data[*]['uesio/studio.collection']" includes "{{app_fullnam
 jsonpath "$.wires[2].data[*]['uesio/studio.type']" includes "list"
 jsonpath "$.wires[2].data[*]['uesio/studio.type']" includes "list"
 # TODO This should really be 3 but we are loading too many collections server-side
-jsonpath "$.collections[*].name" count <= 10 
+jsonpath "$.collections[*].name" count <= 10
 jsonpath "$.collections['uesio/studio.collection'].name" == "collection"
 jsonpath "$.collections['uesio/studio.routeassignment'].name" == "routeassignment"
 jsonpath "$.collections['uesio/studio.field'].name" == "field"
