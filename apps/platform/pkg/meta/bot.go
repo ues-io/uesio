@@ -144,7 +144,7 @@ func (b BotParam) GetName() string {
 }
 
 func (b BotParam) GetConditions() []IBotParamCondition {
-	conditions := make([]IBotParamCondition, len(b.Conditions), len(b.Conditions))
+	conditions := make([]IBotParamCondition, len(b.Conditions))
 	if len(b.Conditions) > 0 {
 		for i, c := range b.Conditions {
 			conditions[i] = c
@@ -172,7 +172,7 @@ func (b BotParamResponse) GetName() string {
 }
 
 func (b BotParamResponse) GetConditions() []IBotParamCondition {
-	conditions := make([]IBotParamCondition, len(b.Conditions), len(b.Conditions))
+	conditions := make([]IBotParamCondition, len(b.Conditions))
 	if len(b.Conditions) > 0 {
 		for i, c := range b.Conditions {
 			conditions[i] = c
