@@ -58,7 +58,7 @@ func Signup(signupMethod *meta.SignupMethod, payload map[string]interface{}, ses
 
 func signupWithConnection(signupMethod *meta.SignupMethod, payload map[string]interface{}, connection adapt.Connection, session *sess.Session) (*meta.User, error) {
 
-	authconn, err := GetAuthConnection(signupMethod.AuthSource, session)
+	authconn, err := GetAuthConnection(signupMethod.AuthSource, connection, session)
 	if err != nil {
 		return nil, err
 	}
@@ -77,34 +77,12 @@ func signupWithConnection(signupMethod *meta.SignupMethod, payload map[string]in
 		return nil, err
 	}
 
-	claims, err := authconn.Signup(payload, username, session)
+	err = authconn.Signup(signupMethod, payload, username)
 	if err != nil {
 		return nil, err
 	}
 
-	email, _ := GetPayloadValue(payload, "email")
-
-	userMeta, err := createUser(username, email, signupMethod)
-	if err != nil {
-		return nil, err
-	}
-
-	err = datasource.PlatformSaveOne(userMeta, nil, connection, session)
-	if err != nil {
-		return nil, err
-	}
-
-	user, err := GetUserByKey(username, session, connection)
-	if err != nil {
-		return nil, err
-	}
-
-	err = CreateLoginMethod(user, signupMethod, claims, connection, session)
-	if err != nil {
-		return nil, err
-	}
-
-	return user, nil
+	return GetUserByKey(username, session, connection)
 }
 
 func ConfirmSignUp(signupMethodID string, payload map[string]interface{}, site *meta.Site) error {
@@ -119,10 +97,10 @@ func ConfirmSignUp(signupMethodID string, payload map[string]interface{}, site *
 		return err
 	}
 
-	authconn, err := GetAuthConnection(signupMethod.AuthSource, session)
+	authconn, err := GetAuthConnection(signupMethod.AuthSource, nil, session)
 	if err != nil {
 		return err
 	}
 
-	return authconn.ConfirmSignUp(payload, session)
+	return authconn.ConfirmSignUp(signupMethod, payload)
 }

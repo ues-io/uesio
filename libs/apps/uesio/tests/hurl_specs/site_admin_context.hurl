@@ -1,7 +1,7 @@
 # Test as a logged-in user so that we don't get redirected to the login page
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"uesio\"}"
+    "token": "uesio"
 }
 
 # Try to administer the tests site as the owner of the app
@@ -27,7 +27,7 @@ jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "Evil Corp"
 
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"ben\"}"
+    "token": "ben"
 }
 
 # Try to administer the tests site as a team member of the app
@@ -53,7 +53,7 @@ jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "Evil Corp"
 
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"abel\"}"
+    "token": "abel"
 }
 
 # Try (and fail) to administer the tests site as an outsider (sorry abel)
