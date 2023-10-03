@@ -6,7 +6,7 @@ usernameRegex: "^[a-z0-9_]+$"
 usernameFormatExplanation: "lowercase a-z, 0-9, and underscore only"
 # TO-DO this works for now but we want this signup method to be full core.
 landingRoute: uesio/studio.signuplanding
-fromEmail: plusplusben@gmail.com
+fromEmail: info@ues.io
 adminCreate:
   emailSubject: "User created in ${app} (${siteName})"
   emailBody: |
