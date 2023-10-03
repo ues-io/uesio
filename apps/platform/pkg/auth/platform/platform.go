@@ -33,6 +33,14 @@ func generateCode() string {
 	return strings.Replace(strings.Trim(fmt.Sprint(rand.Perm(6)), "[]"), " ", "", -1)
 }
 
+func getExpireTimestamp() int64 {
+	return time.Now().Add(time.Hour * 24).UnixNano()
+}
+
+func isExpired(timestamp int64) bool {
+	return time.Unix(0, timestamp).Sub(time.Now()) < 0
+}
+
 type PasswordTest struct {
 	test         string
 	ErrorMessage string
@@ -205,7 +213,7 @@ func (c *Connection) ForgotPassword(signupMethod *meta.SignupMethod, payload map
 	}
 
 	loginmethod.VerificationCode = code
-	loginmethod.VerificationExpires = time.Now().Add(time.Hour * 24).UnixNano()
+	loginmethod.VerificationExpires = getExpireTimestamp()
 	err = datasource.PlatformSaveOne(loginmethod, nil, c.connection, c.session)
 	if err != nil {
 		return err
@@ -250,7 +258,7 @@ func (c *Connection) ConfirmForgotPassword(signupMethod *meta.SignupMethod, payl
 		return errors.New("No account found with this login method")
 	}
 
-	if time.Unix(0, loginmethod.VerificationExpires).Sub(time.Now()) < 0 {
+	if isExpired(loginmethod.VerificationExpires) {
 		return errors.New("The code Expired, please request a new one")
 	}
 
@@ -306,7 +314,7 @@ func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[st
 		User:                user,
 		AuthSource:          signupMethod.AuthSource,
 		VerificationCode:    code,
-		VerificationExpires: time.Now().Add(time.Hour * 24).UnixNano(),
+		VerificationExpires: getExpireTimestamp(),
 	}, c.connection, c.session)
 
 }
@@ -334,7 +342,7 @@ func (c *Connection) ConfirmSignUp(signupMethod *meta.SignupMethod, payload map[
 		return errors.New("This account is already verified")
 	}
 
-	if time.Unix(0, loginmethod.VerificationExpires).Sub(time.Now()) < 0 {
+	if isExpired(loginmethod.VerificationExpires) {
 		return errors.New("The code Expired, please request a new one")
 	}
 
