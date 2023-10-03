@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
+	"regexp"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -30,6 +31,23 @@ type Connection struct {
 
 func generateCode() string {
 	return strings.Replace(strings.Trim(fmt.Sprint(rand.Perm(6)), "[]"), " ", "", -1)
+}
+
+type PasswordTest struct {
+	test         string
+	ErrorMessage string
+}
+
+var tests = []PasswordTest{{".{8,}", "password must have at least 8 characters"}, {"[a-z]", "password must have at least 1 lower case character"}, {"[A-Z]", "password must have at least 1 upper case character"}, {"[0-9]", "password must have at least 1 number"}, {"[^\\d\\w]", "password must have at least 1 special character"}}
+
+func passwordPolicyValidation(password string) error {
+	for _, test := range tests {
+		t, _ := regexp.MatchString(test.test, password)
+		if !t {
+			return errors.New(test.ErrorMessage)
+		}
+	}
+	return nil
 }
 
 func (c *Connection) Login(authSourceID string, payload map[string]interface{}, session *sess.Session) (*auth.AuthenticationClaims, error) {
@@ -77,6 +95,11 @@ func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]
 	}
 
 	password, err := auth.GetPayloadValue(payload, "password")
+	if err != nil {
+		return nil, errors.New("Uesio singup:" + err.Error())
+	}
+
+	err = passwordPolicyValidation(password)
 	if err != nil {
 		return nil, errors.New("Uesio singup:" + err.Error())
 	}
@@ -181,6 +204,11 @@ func (c *Connection) ConfirmForgotPassword(authSourceID string, payload map[stri
 	}
 
 	newPassword, err := auth.GetPayloadValue(payload, "newpassword")
+	if err != nil {
+		return errors.New("Uesio confirm forgot password:" + err.Error())
+	}
+
+	err = passwordPolicyValidation(newPassword)
 	if err != nil {
 		return errors.New("Uesio confirm forgot password:" + err.Error())
 	}
