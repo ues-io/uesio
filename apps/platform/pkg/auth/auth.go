@@ -290,12 +290,8 @@ func GetLoginMethod(federationID string, authSourceID string, session *sess.Sess
 	return &loginmethod, nil
 }
 
-func CreateLoginMethod(user *meta.User, signupMethod *meta.SignupMethod, federationID string, connection adapt.Connection, session *sess.Session) error {
-	return datasource.PlatformSaveOne(&meta.LoginMethod{
-		FederationID: federationID,
-		User:         user,
-		AuthSource:   signupMethod.AuthSource,
-	}, nil, connection, session)
+func CreateLoginMethod(loginMethod *meta.LoginMethod, connection adapt.Connection, session *sess.Session) error {
+	return datasource.PlatformSaveOne(loginMethod, nil, connection, session)
 }
 
 func GetPayloadValue(payload map[string]interface{}, key string) (string, error) {
