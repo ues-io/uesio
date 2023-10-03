@@ -137,7 +137,7 @@ func RunBot(botName string, contents string, api interface{}, errorFunc func(str
 		return //Interrupt native Go functions
 	})
 
-	runner, err := vm.RunString(strings.ReplaceAll(contents, "export default function", "function"))
+	runner, err := vm.RunString(strings.ReplaceAll("("+contents+")", "export default function", "function"))
 	if err != nil {
 		return err
 	}

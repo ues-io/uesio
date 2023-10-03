@@ -3,6 +3,7 @@ package jsdialect
 import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -61,7 +62,7 @@ func (b *RunIntegrationActionBotAPI) GetCredentials() map[string]interface{} {
 }
 
 func (b *RunIntegrationActionBotAPI) GetConfigValue(configValueKey string) (string, error) {
-	return configstore.GetValueFromKey(configValueKey, b.session)
+	return configstore.GetValueFromKey(configValueKey, datasource.GetSiteAdminSession(b.session))
 }
 
 func (b *RunIntegrationActionBotAPI) GetIntegration() *IntegrationMetadata {

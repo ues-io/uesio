@@ -314,7 +314,7 @@ func RunIntegrationActionBot(namespace, name string, params map[string]interface
 
 	botKey := fmt.Sprintf("%s.%s", namespace, name)
 	integrationKey := integration.GetIntegration().GetKey()
-	actionKey := action.GetKey()
+	actionKey := fmt.Sprintf("%s.%s", action.Namespace, action.Name)
 
 	if !session.GetContextPermissions().CanRunIntegrationAction(integrationKey, actionKey) {
 		return nil, meta.NewBotAccessError(fmt.Sprintf("you do not have permission to run action %s for integration %s", actionKey, integrationKey))

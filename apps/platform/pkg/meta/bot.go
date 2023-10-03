@@ -306,6 +306,18 @@ func NewParamError(message string, param string) error {
 	return &BotParamValidationError{Param: param, Message: message}
 }
 
+type BotExecutionError struct {
+	Message string
+}
+
+func (e *BotExecutionError) Error() string {
+	return e.Message
+}
+
+func NewBotExecutionError(message string) error {
+	return &BotExecutionError{Message: message}
+}
+
 type BotAccessError struct {
 	message string
 }

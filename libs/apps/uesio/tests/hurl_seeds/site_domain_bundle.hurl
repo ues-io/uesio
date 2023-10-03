@@ -89,3 +89,17 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].changes['1']['uesio/core.uniquekey']" == "tests:subdomain"
 jsonpath "$.wires[0].errors" == null
+
+# Set the studio APIs config value for the workspace
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/configvalues/uesio/tests/studio_apis_url
+{
+    "value": "https://{{host}}:{{port}}/workspace/uesio/tests/dev"
+}
+HTTP 200
+
+# Set the studio APIs config value for the site
+POST https://{{host}}:{{port}}/siteadmin/uesio/tests/testsite/configvalues/uesio/tests/studio_apis_url
+{
+    "value": "https://tests.{{domain}}:{{port}}/site"
+}
+HTTP 200

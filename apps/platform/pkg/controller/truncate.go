@@ -17,7 +17,7 @@ func Truncate(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		var responseCode int
 		switch err.(type) {
-		case *meta.BotParamValidationError:
+		case *meta.BotParamValidationError, *meta.BotExecutionError:
 			responseCode = http.StatusBadRequest
 		case *meta.BotAccessError:
 			responseCode = http.StatusForbidden

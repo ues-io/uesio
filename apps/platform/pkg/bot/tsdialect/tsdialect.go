@@ -240,7 +240,7 @@ func (b *TSDialect) RunIntegrationActionBot(bot *meta.Bot, action *meta.Integrat
 		return nil, err
 	}
 	if len(botAPI.Errors) > 0 {
-		err = errors.New(strings.Join(botAPI.Errors, ", "))
+		err = &meta.BotExecutionError{Message: strings.Join(botAPI.Errors, ", ")}
 	}
 	return botAPI.Results, err
 }
