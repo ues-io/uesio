@@ -1,7 +1,7 @@
 # Test as a logged-in user so that we don't get redirected to the login page
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"uesio\"}"
+    "token": "uesio"
 }
 
 # Try to navigate to the workspace home route
@@ -29,7 +29,7 @@ HTTP 200
 # Now log in as a user who is on the app team, but not the owner
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"ben\"}"
+    "token": "ben"
 }
 
 # Try to navigate to the workspace home route
@@ -57,7 +57,7 @@ HTTP 200
 # Now test as a user that doesn't have access to the test app
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"abel\"}"
+    "token": "abel"
 }
 
 # Try to navigate to the workspace home route

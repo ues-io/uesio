@@ -6,25 +6,31 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"google.golang.org/api/idtoken"
 )
 
 type Auth struct{}
 
-func (a *Auth) GetAuthConnection(credentials *adapt.Credentials) (auth.AuthConnection, error) {
+func (a *Auth) GetAuthConnection(credentials *adapt.Credentials, authSource *meta.AuthSource, connection adapt.Connection, session *sess.Session) (auth.AuthConnection, error) {
 
 	return &Connection{
 		credentials: credentials,
+		authSource:  authSource,
+		connection:  connection,
+		session:     session,
 	}, nil
 }
 
 type Connection struct {
 	credentials *adapt.Credentials
+	authSource  *meta.AuthSource
+	connection  adapt.Connection
+	session     *sess.Session
 }
 
-func (c *Connection) Login(payload map[string]interface{}, session *sess.Session) (*auth.AuthenticationClaims, error) {
-
+func (c *Connection) Validate(payload map[string]interface{}) (*idtoken.Payload, error) {
 	token, err := auth.GetPayloadValue(payload, "credential")
 	if err != nil {
 		return nil, auth.NewAuthRequestError("google login: " + err.Error())
@@ -49,27 +55,47 @@ func (c *Connection) Login(payload map[string]interface{}, session *sess.Session
 		return nil, auth.NewAuthRequestError("google login: invalid client id")
 	}
 
-	validated, err := idtoken.Validate(context.Background(), token, clientID)
+	return idtoken.Validate(context.Background(), token, clientID)
+
+}
+
+func (c *Connection) Login(payload map[string]interface{}) (*meta.User, error) {
+	validated, err := c.Validate(payload)
 	if err != nil {
 		return nil, err
 	}
-	return &auth.AuthenticationClaims{
-		Subject: validated.Subject,
-	}, nil
+	return auth.GetUserFromFederationID(c.authSource.GetKey(), validated.Subject, c.session)
 }
 
-func (c *Connection) Signup(payload map[string]interface{}, username string, session *sess.Session) (*auth.AuthenticationClaims, error) {
-	return c.Login(payload, session)
+func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]interface{}, username string) error {
+	validated, err := c.Validate(payload)
+	if err != nil {
+		return err
+	}
+	user, err := auth.CreateUser(signupMethod, &meta.User{
+		Username:  username,
+		FirstName: validated.Claims["given_name"].(string),
+		LastName:  validated.Claims["family_name"].(string),
+		Email:     validated.Claims["email"].(string),
+	}, c.connection, c.session)
+	if err != nil {
+		return err
+	}
+	return auth.CreateLoginMethod(user, signupMethod, validated.Subject, c.connection, c.session)
 }
-func (c *Connection) ForgotPassword(payload map[string]interface{}, session *sess.Session) error {
+func (c *Connection) ForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {
 	return errors.New("Google login: unfortunately you cannot change the password")
 }
-func (c *Connection) ConfirmForgotPassword(payload map[string]interface{}, session *sess.Session) error {
+func (c *Connection) ConfirmForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {
 	return errors.New("Google login: unfortunately you cannot change the password")
 }
-func (c *Connection) CreateLogin(payload map[string]interface{}, username string, session *sess.Session) (*auth.AuthenticationClaims, error) {
-	return c.Login(payload, session)
+func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[string]interface{}, user *meta.User) error {
+	validated, err := c.Validate(payload)
+	if err != nil {
+		return err
+	}
+	return auth.CreateLoginMethod(user, signupMethod, validated.Subject, c.connection, c.session)
 }
-func (c *Connection) ConfirmSignUp(payload map[string]interface{}, session *sess.Session) error {
+func (c *Connection) ConfirmSignUp(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {
 	return errors.New("Google login: unfortunately you cannot change the password")
 }

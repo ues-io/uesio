@@ -1,7 +1,7 @@
 # Log into the studio as uesio
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"uesio\"}"
+    "token": "uesio"
 }
 HTTP 200
 
@@ -109,7 +109,7 @@ body == "google login: invalid client id\n"
 # Verify that if you try to log in with a workspace context you get an error
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"uesio\"}"
+    "token": "uesio"
 }
 HTTP 400
 [Asserts]

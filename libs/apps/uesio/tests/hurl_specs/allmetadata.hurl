@@ -5,7 +5,7 @@
 # Test as a logged-in user so that we don't get redirected to the login page
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"uesio\"}"
+    "token": "uesio"
 }
 
 # Get a list of all fields available to our workspace for the animal collection
@@ -129,7 +129,7 @@ jsonpath "$.wires[0].data" count == 1
 jsonpath "$.wires[0].data[0]['uesio/studio.name']" == "sendgridkey"
 jsonpath "$.wires[0].data[0]['uesio/studio.namespace']" == "uesio/core"
 
-# Test conditions on uesio/studio.item/grouping that have a ValueSource of LOOKUP from a previous wire 
+# Test conditions on uesio/studio.item/grouping that have a ValueSource of LOOKUP from a previous wire
 POST https://{{host}}:{{port}}/site/wires/load
 Accept: application/json
 {

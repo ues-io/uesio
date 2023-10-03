@@ -1,53 +1,52 @@
 package mock
 
 import (
-	"encoding/json"
 	"errors"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 type Auth struct{}
 
-func (a *Auth) GetAuthConnection(credentials *adapt.Credentials) (auth.AuthConnection, error) {
+func (a *Auth) GetAuthConnection(credentials *adapt.Credentials, authSource *meta.AuthSource, connection adapt.Connection, session *sess.Session) (auth.AuthConnection, error) {
 
 	return &Connection{
 		credentials: credentials,
+		authSource:  authSource,
+		connection:  connection,
+		session:     session,
 	}, nil
 }
 
 type Connection struct {
 	credentials *adapt.Credentials
+	authSource  *meta.AuthSource
+	connection  adapt.Connection
+	session     *sess.Session
 }
 
-func (c *Connection) Login(payload map[string]interface{}, session *sess.Session) (*auth.AuthenticationClaims, error) {
-
-	token, err := auth.GetPayloadValue(payload, "token")
+func (c *Connection) Login(payload map[string]interface{}) (*meta.User, error) {
+	federationID, err := auth.GetPayloadValue(payload, "token")
 	if err != nil {
 		return nil, errors.New("Mock login:" + err.Error())
 	}
-	claim := auth.AuthenticationClaims{}
-	err = json.Unmarshal([]byte(token), &claim)
-	if err != nil {
-		return nil, err
-	}
-	return &claim, nil
+	return auth.GetUserFromFederationID(c.authSource.GetKey(), federationID, c.session)
 }
-
-func (c *Connection) Signup(payload map[string]interface{}, username string, session *sess.Session) (*auth.AuthenticationClaims, error) {
-	return nil, nil
+func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]interface{}, username string) error {
+	return errors.New("Mock login: unfortunately you cannot sign up for mock login")
 }
-func (c *Connection) ForgotPassword(payload map[string]interface{}, session *sess.Session) error {
+func (c *Connection) ForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {
 	return errors.New("Mock login: unfortunately you cannot change the password")
 }
-func (c *Connection) ConfirmForgotPassword(payload map[string]interface{}, session *sess.Session) error {
+func (c *Connection) ConfirmForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {
 	return errors.New("Mock login: unfortunately you cannot change the password")
 }
-func (c *Connection) CreateLogin(payload map[string]interface{}, username string, session *sess.Session) (*auth.AuthenticationClaims, error) {
-	return nil, errors.New("Mock login: unfortunately you cannot create a login")
+func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[string]interface{}, user *meta.User) error {
+	return errors.New("Mock login: unfortunately you cannot create a login")
 }
-func (c *Connection) ConfirmSignUp(payload map[string]interface{}, session *sess.Session) error {
+func (c *Connection) ConfirmSignUp(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {
 	return errors.New("Mock login: unfortunately you cannot change the password")
 }

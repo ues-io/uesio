@@ -3,6 +3,7 @@ package cognito
 import (
 	"context"
 	"errors"
+
 	"github.com/aws/aws-sdk-go-v2/aws/transport/http"
 	"github.com/aws/smithy-go"
 
@@ -13,31 +14,34 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/creds"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 type Auth struct{}
 
-func (a *Auth) GetAuthConnection(credentials *adapt.Credentials) (auth.AuthConnection, error) {
+func (a *Auth) GetAuthConnection(credentials *adapt.Credentials, authSource *meta.AuthSource, connection adapt.Connection, session *sess.Session) (auth.AuthConnection, error) {
 
 	return &Connection{
 		credentials: credentials,
+		authSource:  authSource,
+		connection:  connection,
+		session:     session,
 	}, nil
 }
 
 type Connection struct {
 	credentials *adapt.Credentials
-}
-
-func (c *Connection) Verify(token string, session *sess.Session) error {
-	return nil
+	authSource  *meta.AuthSource
+	connection  adapt.Connection
+	session     *sess.Session
 }
 
 func getFullyQualifiedUsername(site string, username string) string {
 	return site + ":" + username
 }
 
-func (c *Connection) Login(payload map[string]interface{}, session *sess.Session) (*auth.AuthenticationClaims, error) {
+func (c *Connection) Login(payload map[string]interface{}) (*meta.User, error) {
 
 	username, err := auth.GetPayloadValue(payload, "username")
 	if err != nil {
@@ -60,7 +64,7 @@ func (c *Connection) Login(payload map[string]interface{}, session *sess.Session
 		return nil, err
 	}
 
-	site := session.GetSiteTenantID()
+	site := c.session.GetSiteTenantID()
 	fqUsername := getFullyQualifiedUsername(site, username)
 
 	authTry := &cognito.AdminInitiateAuthInput{
@@ -86,30 +90,29 @@ func (c *Connection) Login(payload map[string]interface{}, session *sess.Session
 		return nil, err
 	}
 	claims := tokenObj.Claims.(jwt.MapClaims)
-	return &auth.AuthenticationClaims{
-		Subject: claims["sub"].(string),
-	}, nil
+
+	return auth.GetUserFromFederationID(c.authSource.GetKey(), claims["sub"].(string), c.session)
 
 }
 
-func (c *Connection) Signup(payload map[string]interface{}, username string, session *sess.Session) (*auth.AuthenticationClaims, error) {
+func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]interface{}, username string) error {
 
-	site := session.GetSiteTenantID()
+	site := c.session.GetSiteTenantID()
 	fqUsername := getFullyQualifiedUsername(site, username)
 
 	clientID, ok := (*c.credentials)["clientid"]
 	if !ok {
-		return nil, errors.New("no client id provided in credentials")
+		return errors.New("no client id provided in credentials")
 	}
 
 	poolID, ok := (*c.credentials)["poolid"]
 	if !ok {
-		return nil, errors.New("no user pool provided in credentials")
+		return errors.New("no user pool provided in credentials")
 	}
 
 	cfg, err := creds.GetAWSConfig(context.Background(), c.credentials)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	client := cognito.NewFromConfig(cfg)
@@ -121,27 +124,37 @@ func (c *Connection) Signup(payload map[string]interface{}, username string, ses
 
 	adminGetUserOutput, _ := client.AdminGetUser(context.Background(), awsUserExists)
 	if adminGetUserOutput != nil && adminGetUserOutput.Username != nil {
-		return nil, errors.New("User already exists")
+		return errors.New("User already exists")
 	}
 
-	password, err := auth.GetPayloadValue(payload, "password")
+	password, err := auth.GetRequiredPayloadValue(payload, "password")
 	if err != nil {
-		return nil, errors.New("Cognito login:" + err.Error())
+		return errors.New("Cognito login:" + err.Error())
 	}
 
-	email, err := auth.GetPayloadValue(payload, "email")
+	email, err := auth.GetRequiredPayloadValue(payload, "email")
 	if err != nil {
-		return nil, errors.New("Cognito login:" + err.Error())
+		return errors.New("Cognito login:" + err.Error())
+	}
+
+	firstname, err := auth.GetRequiredPayloadValue(payload, "firstname")
+	if err != nil {
+		return errors.New("Cognito login:" + err.Error())
+	}
+
+	lastname, err := auth.GetRequiredPayloadValue(payload, "lastname")
+	if err != nil {
+		return errors.New("Cognito login:" + err.Error())
 	}
 
 	subject, err := auth.GetRequiredPayloadValue(payload, "subject")
 	if err != nil {
-		return nil, errors.New("Cognito login:" + err.Error())
+		return errors.New("Cognito login:" + err.Error())
 	}
 
 	message, err := auth.GetRequiredPayloadValue(payload, "message")
 	if err != nil {
-		return nil, errors.New("Cognito login:" + err.Error())
+		return errors.New("Cognito login:" + err.Error())
 	}
 
 	signUpData := &cognito.SignUpInput{
@@ -162,12 +175,21 @@ func (c *Connection) Signup(payload map[string]interface{}, username string, ses
 
 	signUpOutput, err := client.SignUp(context.Background(), signUpData)
 	if err != nil {
-		return nil, handleCognitoSignupError(err)
+		return handleCognitoSignupError(err)
 	}
 
-	return &auth.AuthenticationClaims{
-		Subject: *signUpOutput.UserSub,
-	}, nil
+	user, err := auth.CreateUser(signupMethod, &meta.User{
+		Username:  username,
+		FirstName: firstname,
+		LastName:  lastname,
+		Email:     email,
+	}, c.connection, c.session)
+	if err != nil {
+		return err
+	}
+
+	return auth.CreateLoginMethod(user, signupMethod, *signUpOutput.UserSub, c.connection, c.session)
+
 }
 
 // Make Cognito error messages more readable by returning the more specific error message
@@ -180,7 +202,7 @@ func handleCognitoSignupError(err error) error {
 	return err
 }
 
-func (c *Connection) ForgotPassword(payload map[string]interface{}, session *sess.Session) error {
+func (c *Connection) ForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {
 
 	username, err := auth.GetPayloadValue(payload, "username")
 	if err != nil {
@@ -197,7 +219,7 @@ func (c *Connection) ForgotPassword(payload map[string]interface{}, session *ses
 		return err
 	}
 
-	site := session.GetSiteTenantID()
+	site := c.session.GetSiteTenantID()
 	fqUsername := getFullyQualifiedUsername(site, username)
 
 	subject, err := auth.GetRequiredPayloadValue(payload, "subject")
@@ -230,7 +252,7 @@ func (c *Connection) ForgotPassword(payload map[string]interface{}, session *ses
 
 }
 
-func (c *Connection) ConfirmForgotPassword(payload map[string]interface{}, session *sess.Session) error {
+func (c *Connection) ConfirmForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {
 
 	username, err := auth.GetPayloadValue(payload, "username")
 	if err != nil {
@@ -257,7 +279,7 @@ func (c *Connection) ConfirmForgotPassword(payload map[string]interface{}, sessi
 		return err
 	}
 
-	site := session.GetSiteTenantID()
+	site := c.session.GetSiteTenantID()
 	fqUsername := getFullyQualifiedUsername(site, username)
 
 	authTry := &cognito.ConfirmForgotPasswordInput{
@@ -278,7 +300,7 @@ func (c *Connection) ConfirmForgotPassword(payload map[string]interface{}, sessi
 
 }
 
-func (c *Connection) ConfirmSignUp(payload map[string]interface{}, session *sess.Session) error {
+func (c *Connection) ConfirmSignUp(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {
 
 	username, err := auth.GetPayloadValue(payload, "username")
 	if err != nil {
@@ -300,7 +322,7 @@ func (c *Connection) ConfirmSignUp(payload map[string]interface{}, session *sess
 		return err
 	}
 
-	site := session.GetSiteTenantID()
+	site := c.session.GetSiteTenantID()
 	fqUsername := getFullyQualifiedUsername(site, username)
 
 	authTry := &cognito.ConfirmSignUpInput{
@@ -320,19 +342,19 @@ func (c *Connection) ConfirmSignUp(payload map[string]interface{}, session *sess
 
 }
 
-func (c *Connection) CreateLogin(payload map[string]interface{}, username string, session *sess.Session) (*auth.AuthenticationClaims, error) {
+func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[string]interface{}, user *meta.User) error {
 
-	site := session.GetSiteTenantID()
-	fqUsername := getFullyQualifiedUsername(site, username)
+	site := c.session.GetSiteTenantID()
+	fqUsername := getFullyQualifiedUsername(site, user.Username)
 
 	poolID, ok := (*c.credentials)["poolid"]
 	if !ok {
-		return nil, errors.New("no user pool provided in credentials")
+		return errors.New("no user pool provided in credentials")
 	}
 
 	cfg, err := creds.GetAWSConfig(context.Background(), c.credentials)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	client := cognito.NewFromConfig(cfg)
@@ -344,12 +366,12 @@ func (c *Connection) CreateLogin(payload map[string]interface{}, username string
 
 	adminGetUserOutput, _ := client.AdminGetUser(context.Background(), awsUserExists)
 	if adminGetUserOutput != nil && adminGetUserOutput.Username != nil {
-		return nil, errors.New("User already exists")
+		return errors.New("User already exists")
 	}
 
 	email, err := auth.GetRequiredPayloadValue(payload, "email")
 	if err != nil {
-		return nil, errors.New("Cognito login:" + err.Error())
+		return errors.New("Cognito login:" + err.Error())
 	}
 
 	signUpData := &cognito.AdminCreateUserInput{
@@ -367,7 +389,7 @@ func (c *Connection) CreateLogin(payload map[string]interface{}, username string
 
 	signUpOutput, err := client.AdminCreateUser(context.Background(), signUpData)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	attributes := signUpOutput.User.Attributes
@@ -383,7 +405,7 @@ func (c *Connection) CreateLogin(payload map[string]interface{}, username string
 
 	_, err = client.AdminSetUserPassword(context.Background(), AdminSetUserPasswordData)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	//Trust user email
@@ -398,17 +420,17 @@ func (c *Connection) CreateLogin(payload map[string]interface{}, username string
 
 	_, err = client.AdminUpdateUserAttributes(context.Background(), trustEmailData)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	subject, err := auth.GetRequiredPayloadValue(payload, "subject")
 	if err != nil {
-		return nil, errors.New("Cognito login:" + err.Error())
+		return errors.New("Cognito login:" + err.Error())
 	}
 
 	message, err := auth.GetRequiredPayloadValue(payload, "message")
 	if err != nil {
-		return nil, errors.New("Cognito login:" + err.Error())
+		return errors.New("Cognito login:" + err.Error())
 	}
 
 	//resetPassword
@@ -423,12 +445,11 @@ func (c *Connection) CreateLogin(payload map[string]interface{}, username string
 
 	_, err = client.AdminResetUserPassword(context.Background(), resetPasswordData)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return &auth.AuthenticationClaims{
-		Subject: sub,
-	}, nil
+	return auth.CreateLoginMethod(user, signupMethod, sub, c.connection, c.session)
+
 }
 
 func findAttribute(name string, attributes []types.AttributeType) (result string) {

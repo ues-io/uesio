@@ -46,7 +46,7 @@ var mockHandler = &LoginMethodHandler{
 			}
 		}
 		return map[string]string{
-			"token": "{\"subject\":\"" + username + "\"}",
+			"token": username,
 		}, nil
 	},
 }
