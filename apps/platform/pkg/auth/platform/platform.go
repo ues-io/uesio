@@ -149,7 +149,7 @@ func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]
 	code := generateCode()
 	plainBody := strings.Replace(message, "{####}", code, 1)
 
-	options := sendgrid.SendEmailOptions{To: []string{email}, From: signupMethod.FromEmail, Subject: subject, PlainBody: plainBody}
+	options := sendgrid.SendEmailOptions{To: []string{email}, From: signupMethod.FromEmail, Subject: subject, PlainBody: plainBody, ContentType: signupMethod.Signup.EmailContentType}
 	_, err = integration.RunAction("sendEmail", options)
 	if err != nil {
 		return fmt.Errorf("Error sending signup Email: %w", err)
@@ -219,7 +219,7 @@ func (c *Connection) ForgotPassword(signupMethod *meta.SignupMethod, payload map
 		return err
 	}
 
-	options := sendgrid.SendEmailOptions{To: []string{user.Email}, From: signupMethod.FromEmail, Subject: subject, PlainBody: plainBody}
+	options := sendgrid.SendEmailOptions{To: []string{user.Email}, From: signupMethod.FromEmail, Subject: subject, PlainBody: plainBody, ContentType: signupMethod.ForgotPassword.EmailContentType}
 	_, err = integration.RunAction("sendEmail", options)
 	if err != nil {
 		return errors.New("Uesio forgot password:" + err.Error())
@@ -303,7 +303,7 @@ func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[st
 	code := generateCode()
 	plainBody := strings.Replace(message, "{####}", code, 1)
 
-	options := sendgrid.SendEmailOptions{To: []string{email}, From: signupMethod.FromEmail, Subject: subject, PlainBody: plainBody}
+	options := sendgrid.SendEmailOptions{To: []string{email}, From: signupMethod.FromEmail, Subject: subject, PlainBody: plainBody, ContentType: signupMethod.AdminCreate.EmailContentType}
 	_, err = integration.RunAction("sendEmail", options)
 	if err != nil {
 		return err
