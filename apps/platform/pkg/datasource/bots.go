@@ -260,15 +260,8 @@ func CallGeneratorBot(create retrieve.WriterCreator, namespace, name string, par
 const BotAccessErrorMessage = "you do not have permission to call bot: %s"
 
 func canCallBot(namespace, name string, perms *meta.PermissionSet) (bool, error) {
-	if perms.AllowAllBots {
-		return true, nil
-	}
-	if perms.BotRefs == nil {
-		// For backwards compatibility, if there are no BotRefs, return true
-		return true, nil
-	}
 	botKey := fmt.Sprintf("%s.%s", namespace, name)
-	if perms.BotRefs[botKey] {
+	if perms.CanCallBot(botKey) {
 		return true, nil
 	}
 	return false, meta.NewBotAccessError(fmt.Sprintf(BotAccessErrorMessage, botKey))
@@ -314,5 +307,52 @@ func CallListenerBot(namespace, name string, params map[string]interface{}, conn
 	}
 
 	return dialect.CallBot(robot, params, connection, session)
+
+}
+
+func RunIntegrationActionBot(namespace, name string, params map[string]interface{}, action *meta.IntegrationAction, integration adapt.IntegrationConnection, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
+
+	botKey := fmt.Sprintf("%s.%s", namespace, name)
+	integrationKey := integration.GetIntegration().GetKey()
+	actionKey := fmt.Sprintf("%s.%s", action.Namespace, action.Name)
+
+	if !session.GetContextPermissions().CanRunIntegrationAction(integrationKey, actionKey) {
+		return nil, meta.NewBotAccessError(fmt.Sprintf("you do not have permission to run action %s for integration %s", actionKey, integrationKey))
+	}
+
+	// First try to run a system bot
+	systemListenerBot := meta.NewListenerBot(namespace, name)
+	systemListenerBot.Dialect = "SYSTEM"
+
+	systemDialect, err := bot.GetBotDialect(systemListenerBot.Dialect)
+	if err != nil {
+		return nil, err
+	}
+
+	systemBotResults, err := systemDialect.RunIntegrationActionBot(systemListenerBot, action, integration, params, connection, session)
+	_, isNotFoundError := err.(*SystemBotNotFoundError)
+	if !isNotFoundError {
+		// If we found a system bot, we can go ahead and just return the results of
+		// that bot, no need to look for another bot to run.
+		return systemBotResults, err
+	}
+
+	robot := meta.NewRunActionBot(namespace, name)
+	err = bundle.Load(robot, session, connection)
+	if err != nil {
+		return nil, meta.NewBotNotFoundError("integration run action bot not found: " + botKey)
+	}
+
+	err = robot.ValidateParams(params)
+	if err != nil {
+		return nil, err
+	}
+
+	dialect, err := bot.GetBotDialect(robot.Dialect)
+	if err != nil {
+		return nil, err
+	}
+
+	return dialect.RunIntegrationActionBot(robot, action, integration, params, connection, session)
 
 }

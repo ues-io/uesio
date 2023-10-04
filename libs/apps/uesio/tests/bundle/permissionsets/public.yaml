@@ -74,11 +74,18 @@ routes:
 files: {}
 bots:
   uesio/tests.add_numbers: true
+  uesio/tests.call_custom_run_action: true
+  uesio/tests.call_forbidden_run_action: true
   uesio/tests.get_weather_forecast: true
+integrationActions:
+  uesio/tests.weather_api:
+    actions:
+      uesio/tests.get_forecast: true
 allowallbots: false
 allowallcollections: false
 allowallviews: false
 allowallroutes: false
 allowallfiles: false
+allowallintegrationactions: false
 modifyallrecords: false
 viewallrecords: true

@@ -85,6 +85,8 @@ func (b *SystemDialect) AfterSave(bot *meta.Bot, request *adapt.SaveOp, connecti
 		botFunction = runBotAfterSaveBot
 	case "uesio/studio.app":
 		botFunction = runAppAfterSaveBot
+	case "uesio/studio.integration":
+		botFunction = runIntegrationAfterSaveBot
 	}
 
 	if botFunction == nil {
@@ -119,6 +121,10 @@ func (b *SystemDialect) CallBot(bot *meta.Bot, params map[string]interface{}, co
 
 	return botFunction(params, connection, session)
 
+}
+
+func (b *SystemDialect) RunIntegrationActionBot(bot *meta.Bot, action *meta.IntegrationAction, integration adapt.IntegrationConnection, params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
+	return nil, datasource.NewSystemBotNotFoundError()
 }
 
 func (b *SystemDialect) CallGeneratorBot(bot *meta.Bot, create retrieve.WriterCreator, params map[string]interface{}, connection adapt.Connection, session *sess.Session) error {

@@ -1,0 +1,3 @@
+name: weather_api
+type: uesio/core.custom
+baseUrl: https://studio.uesio-dev.com:3000
