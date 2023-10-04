@@ -37,6 +37,13 @@ type ParamIsSetCondition = {
 	param: string
 }
 
+type MergeCondition = {
+	type: "mergeCondition"
+	operator: DisplayOperator
+	source: string
+	value: string
+}
+
 type ParamIsNotSetCondition = {
 	type: "paramIsNotSet"
 	param: string
@@ -157,6 +164,7 @@ type DisplayCondition =
 	| WireHasRecords
 	| WireHasLoadedAllRecords
 	| WireHasMoreRecordsToLoad
+	| MergeCondition
 
 type ItemContext<T> = {
 	item: T
@@ -278,6 +286,12 @@ function should(condition: DisplayCondition, context: Context): boolean {
 		return compare(
 			compareToValue,
 			context.getParam(condition.param),
+			condition.operator
+		)
+	if (condition.type === "mergeCondition")
+		return compare(
+			compareToValue,
+			context.mergeString(condition.source),
 			condition.operator
 		)
 
