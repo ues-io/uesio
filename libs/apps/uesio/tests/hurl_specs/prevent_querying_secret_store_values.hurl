@@ -17,7 +17,7 @@ HTTP 200
 [Asserts]
 jsonpath "$.success" == true
 
-# Test a direct wire load
+# Test a direct wire load on the collection --- should not be accessible because it is not public
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -40,6 +40,6 @@ Accept: application/json
         }
     ]
 }
-HTTP 200
+HTTP 400
 [Asserts]
-jsonpath "$.wires[0].data[0]['uesio/core.value']" == "this-is-my-key"
+body == "Load Failed: metadata: uesio/core.secretstorevalue: Metadata item: uesio/core.secretstorevalue is not public\n"
