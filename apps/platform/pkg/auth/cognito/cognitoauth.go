@@ -188,7 +188,11 @@ func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]
 		return err
 	}
 
-	return auth.CreateLoginMethod(user, signupMethod, *signUpOutput.UserSub, c.connection, c.session)
+	return auth.CreateLoginMethod(&meta.LoginMethod{
+		FederationID: *signUpOutput.UserSub,
+		User:         user,
+		AuthSource:   signupMethod.AuthSource,
+	}, c.connection, c.session)
 
 }
 
@@ -448,7 +452,11 @@ func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[st
 		return err
 	}
 
-	return auth.CreateLoginMethod(user, signupMethod, sub, c.connection, c.session)
+	return auth.CreateLoginMethod(&meta.LoginMethod{
+		FederationID: sub,
+		User:         user,
+		AuthSource:   signupMethod.AuthSource,
+	}, c.connection, c.session)
 
 }
 

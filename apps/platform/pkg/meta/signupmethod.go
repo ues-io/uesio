@@ -34,6 +34,7 @@ type SignupMethod struct {
 	AutoLogin                 bool                 `yaml:"autoLogin" json:"uesio/studio.autologin"`
 	UsernameRegex             string               `yaml:"usernameRegex" json:"uesio/studio.usernameregex"`
 	UsernameFormatExplanation string               `yaml:"usernameFormatExplanation" json:"uesio/studio.usernameformatexplanation"`
+	FromEmail                 string               `yaml:"fromEmail" json:"uesio/studio.fromemail"`
 	AdminCreate               EmailTemplateOptions `yaml:"adminCreate" json:"uesio/studio.admincreate"`
 	Signup                    EmailTemplateOptions `yaml:"signup" json:"uesio/studio.signup"`
 	ForgotPassword            EmailTemplateOptions `yaml:"forgotPassword" json:"uesio/studio.forgotpassword"`
