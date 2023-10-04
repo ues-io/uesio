@@ -81,7 +81,11 @@ func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]
 	if err != nil {
 		return err
 	}
-	return auth.CreateLoginMethod(user, signupMethod, validated.Subject, c.connection, c.session)
+	return auth.CreateLoginMethod(&meta.LoginMethod{
+		FederationID: validated.Subject,
+		User:         user,
+		AuthSource:   signupMethod.AuthSource,
+	}, c.connection, c.session)
 }
 func (c *Connection) ForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {
 	return errors.New("Google login: unfortunately you cannot change the password")
@@ -94,7 +98,11 @@ func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[st
 	if err != nil {
 		return err
 	}
-	return auth.CreateLoginMethod(user, signupMethod, validated.Subject, c.connection, c.session)
+	return auth.CreateLoginMethod(&meta.LoginMethod{
+		FederationID: validated.Subject,
+		User:         user,
+		AuthSource:   signupMethod.AuthSource,
+	}, c.connection, c.session)
 }
 func (c *Connection) ConfirmSignUp(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {
 	return errors.New("Google login: unfortunately you cannot change the password")
