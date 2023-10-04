@@ -19,9 +19,10 @@ func NewBaseSignupMethod(namespace, name string) *SignupMethod {
 }
 
 type EmailTemplateOptions struct {
-	EmailSubject string `yaml:"emailSubject" json:"uesio/studio.emailsubject"`
-	EmailBody    string `yaml:"emailBody" json:"uesio/studio.emailbody"`
-	Redirect     string `yaml:"redirect" json:"uesio/studio.redirect"`
+	EmailSubject     string `yaml:"emailSubject" json:"uesio/studio.emailsubject"`
+	EmailBody        string `yaml:"emailBody" json:"uesio/studio.emailbody"`
+	EmailContentType string `yaml:"emailContentType" json:"uesio/studio.emailcontenttype"`
+	Redirect         string `yaml:"redirect" json:"uesio/studio.redirect"`
 }
 type SignupMethod struct {
 	BuiltIn                   `yaml:",inline"`
