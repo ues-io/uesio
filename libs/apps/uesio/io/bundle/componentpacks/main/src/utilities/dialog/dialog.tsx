@@ -45,9 +45,11 @@ const Dialog: definition.UtilityComponent<DialogUtilityProps> = (props) => {
 					}
 				/>
 				<div className={classes.content}>{children}</div>
-				<Group className={classes.footer} context={context}>
-					{actions}
-				</Group>
+				{actions && (
+					<Group className={classes.footer} context={context}>
+						{actions}
+					</Group>
+				)}
 			</Grid>
 		</DialogPlain>
 	)
