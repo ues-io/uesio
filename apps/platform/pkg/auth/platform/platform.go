@@ -43,7 +43,7 @@ func isExpired(timestamp int64) bool {
 
 type PasswordTest struct {
 	test         string
-	ErrorMessage string
+	errorMessage string
 }
 
 var tests = []PasswordTest{{".{8,}", "password must have at least 8 characters"}, {"[a-z]", "password must have at least 1 lower case character"}, {"[A-Z]", "password must have at least 1 upper case character"}, {"[0-9]", "password must have at least 1 number"}, {"[^\\d\\w]", "password must have at least 1 special character"}}
@@ -52,7 +52,7 @@ func passwordPolicyValidation(password string) error {
 	for _, test := range tests {
 		t, _ := regexp.MatchString(test.test, password)
 		if !t {
-			return errors.New(test.ErrorMessage)
+			return errors.New(test.errorMessage)
 		}
 	}
 	return nil
