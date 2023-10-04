@@ -8,7 +8,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
-	"github.com/thecloudmasters/uesio/pkg/creds"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -66,7 +65,7 @@ func GetFileConnection(fileSourceID string, session *sess.Session) (FileConnecti
 		return nil, err
 	}
 
-	credentials, err := creds.GetCredentials(fs.Credentials, versionSession)
+	credentials, err := datasource.GetCredentials(fs.Credentials, versionSession)
 	if err != nil {
 		return nil, err
 	}

@@ -7,9 +7,9 @@ import (
 
 	"github.com/stripe/stripe-go/v74"
 	"github.com/stripe/stripe-go/v74/checkout/session"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/secretstore"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -37,7 +37,7 @@ func runMakePaymentListenerBot(params map[string]interface{}, connection adapt.C
 	successURL := fmt.Sprintf("%s/paymentsuccess/{CHECKOUT_SESSION_ID}", host)
 
 	anonSession := sess.GetStudioAnonSession()
-	stripeKey, err := secretstore.GetSecretFromKey("uesio/studio.stripe_key", anonSession)
+	stripeKey, err := datasource.GetSecretFromKey("uesio/studio.stripe_key", anonSession)
 	if err != nil {
 		return nil, err
 	}
