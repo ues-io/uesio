@@ -139,6 +139,10 @@ func (b *SystemDialect) RouteBot(bot *meta.Bot, route *meta.Route, session *sess
 	switch routeKey {
 	case "uesio/studio.paymentsuccess":
 		botFunction = runPaymentSuccessRouteBot
+	case "uesio/core.login":
+		botFunction = runLoginRouteBot
+	case "uesio/core.signup":
+		botFunction = runSignupRouteBot
 	}
 
 	if botFunction == nil {

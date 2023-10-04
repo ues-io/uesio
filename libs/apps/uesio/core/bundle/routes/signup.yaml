@@ -1,0 +1,5 @@
+name: signup
+path: signup
+view: signup
+public: true
+title: Uesio - Signup

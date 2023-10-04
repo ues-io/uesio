@@ -41,7 +41,7 @@ signup:
         The team at ${siteTitle}
     </body>
     </html>
-  redirect: "auth/uesio/studio/platform/signup/v2/confirm"
+  redirect: "site/auth/uesio/studio/platform/signup/confirm"
 forgotPassword:
   emailSubject: "Password change requested in ${app} (${siteName})"
   emailContentType: text/html

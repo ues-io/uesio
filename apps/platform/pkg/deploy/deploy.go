@@ -256,6 +256,7 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 			},
 			AppSettings: meta.AppSettings{
 				LoginRoute:    by.LoginRoute,
+				SignupRoute:   by.SignupRoute,
 				HomeRoute:     by.HomeRoute,
 				PublicProfile: by.PublicProfile,
 				DefaultTheme:  by.DefaultTheme,
@@ -269,6 +270,7 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 			ValidFields: map[string]bool{
 				adapt.ID_FIELD:               true,
 				"uesio/studio.loginroute":    true,
+				"uesio/studio.signuproute":   true,
 				"uesio/studio.homeroute":     true,
 				"uesio/studio.publicprofile": true,
 				"uesio/studio.defaulttheme":  true,
