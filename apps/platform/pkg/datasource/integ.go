@@ -6,7 +6,6 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
-	"github.com/thecloudmasters/uesio/pkg/creds"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -34,7 +33,7 @@ func GetIntegration(integrationID string, session *sess.Session) (adapt.Integrat
 	// Credentials are optional, depending on the Integration, there may not be any
 	var credentials *adapt.Credentials
 	if integration.Credentials != "" {
-		credentials, err = creds.GetCredentials(integration.Credentials, versionSession)
+		credentials, err = GetCredentials(integration.Credentials, versionSession)
 		if err != nil {
 			return nil, fmt.Errorf("could not find Credentials with name %s for Integration %s", integration.Credentials, integrationID)
 		}

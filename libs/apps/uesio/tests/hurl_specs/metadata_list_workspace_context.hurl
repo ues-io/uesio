@@ -24,16 +24,17 @@ GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/metadata/types/collectio
 Accept: application/json
 HTTP 200
 [Asserts]
-# There are currently 10 public uesio/core collections and 6 uesio/test collections
+# There are currently 10 public uesio/core collections and 7 uesio/test collections
 # we want to bring this number down at some point by making most of the uesio/core
 # collections private.
-jsonpath "$[*]" count == 18
+jsonpath "$[*]" count == 17
 # Spot check a uesio/tests collection
 jsonpath "$['uesio/tests.animal'].key" == "uesio/tests.animal"
 jsonpath "$['uesio/tests.animal'].namespace" == "uesio/tests"
 # Spot check a uesio/core collection
 jsonpath "$['uesio/core.user'].key" == "uesio/core.user"
 jsonpath "$['uesio/core.user'].namespace" == "uesio/core"
+jsonpath "$['uesio/core.secretstorevalue']" not exists
 
 # Get a list of collections in the uesio/test namespace available from a workspace context
 GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/metadata/types/collections/namespace/uesio/tests/list
@@ -50,7 +51,7 @@ GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/metadata/types/collectio
 Accept: application/json
 HTTP 200
 [Asserts]
-jsonpath "$[*]" count == 11
+jsonpath "$[*]" count == 10
 # Spot check a uesio/core collection
 jsonpath "$['uesio/core.user'].key" == "uesio/core.user"
 jsonpath "$['uesio/core.user'].namespace" == "uesio/core"

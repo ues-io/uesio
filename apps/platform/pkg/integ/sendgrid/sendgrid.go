@@ -70,7 +70,7 @@ func (sgic *SendGridIntegrationConnection) SendEmail(requestOptions interface{})
 	}
 
 	apikey, ok := (*sgic.credentials)["apikey"]
-	if !ok {
+	if !ok || apikey == "" {
 		return errors.New("No API Key provided")
 	}
 
