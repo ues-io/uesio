@@ -11,35 +11,34 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func mutateRoute(route *meta.Route) {
-	route.ViewRef = "uesio/studio.userpayments"
-	route.Namespace = "uesio/studio"
-	route.Path = "mypayments"
-	route.ThemeRef = "uesio/studio.default"
-	route.Params = nil
-	route.Name = "userpayments"
-}
+func runPaymentSuccessRouteBot(route *meta.Route, uesioSession *sess.Session) (*meta.Route, error) {
 
-func runPaymentSuccessRouteBot(route *meta.Route, uesioSession *sess.Session) error {
+	paymentRoute := &meta.Route{
+		BundleableBase: meta.BundleableBase{
+			Namespace: "uesio/studio",
+			Name:      "userpayments",
+		},
+		ViewRef: "uesio/studio.userpayments",
 
+		Path:     "mypayments",
+		ThemeRef: "uesio/studio.default",
+		Params:   nil,
+	}
 	anonSession := sess.GetStudioAnonSession()
 	stripeKey, err := secretstore.GetSecretFromKey("uesio/studio.stripe_key", anonSession)
 	if err != nil {
-		mutateRoute(route)
-		return nil
+		return paymentRoute, nil
 	}
 	stripe.Key = stripeKey
 	checkoutSessionID := route.Params["session_id"]
 
 	checkoutSession, err := session.Get(checkoutSessionID, nil)
 	if err != nil {
-		mutateRoute(route)
-		return nil
+		return paymentRoute, nil
 	}
 
 	if checkoutSession.PaymentStatus != "paid" {
-		mutateRoute(route)
-		return nil
+		return paymentRoute, nil
 	}
 
 	payment := &meta.Payment{
@@ -55,9 +54,8 @@ func runPaymentSuccessRouteBot(route *meta.Route, uesioSession *sess.Session) er
 
 	err = datasource.PlatformSaveOne(payment, nil, nil, uesioSession)
 	if err != nil {
-		mutateRoute(route)
-		return nil
+		return paymentRoute, nil
 	}
 
-	return nil
+	return route, nil
 }
