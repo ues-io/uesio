@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/creds"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -43,7 +42,7 @@ func GetConnection(dataSourceKey string, metadata *adapt.MetadataCache, session 
 		return nil, err
 	}
 
-	credentials, err := creds.GetCredentials(adapter.GetCredentials(), versionSession)
+	credentials, err := GetCredentials(adapter.GetCredentials(), versionSession)
 	if err != nil {
 		return nil, err
 	}

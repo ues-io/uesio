@@ -5,9 +5,9 @@ import (
 
 	"github.com/stripe/stripe-go/v74"
 	"github.com/stripe/stripe-go/v74/checkout/session"
+
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/secretstore"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -25,7 +25,7 @@ func runPaymentSuccessRouteBot(route *meta.Route, uesioSession *sess.Session) (*
 		Params:   nil,
 	}
 	anonSession := sess.GetStudioAnonSession()
-	stripeKey, err := secretstore.GetSecretFromKey("uesio/studio.stripe_key", anonSession)
+	stripeKey, err := datasource.GetSecretFromKey("uesio/studio.stripe_key", anonSession)
 	if err != nil {
 		return paymentRoute, nil
 	}

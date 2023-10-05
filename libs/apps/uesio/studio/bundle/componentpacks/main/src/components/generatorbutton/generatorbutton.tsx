@@ -29,7 +29,7 @@ interface FormProps {
 const getDisplayConditionsFromBotParamConditions = (
 	conditions: param.ParamCondition[] = []
 ) => {
-	if (!conditions.length) return conditions
+	if (!conditions || !conditions.length) return conditions
 	return conditions.map(({ type, param, value }) => {
 		if (type === "hasValue" || type === "hasNoValue") {
 			return {
