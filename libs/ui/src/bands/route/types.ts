@@ -56,7 +56,7 @@ type RouteState = {
 	isLoading?: boolean
 	dependencies?: Dependencies
 	tags: RouteTag[]
-} | null
+}
 
 export type {
 	RouteState,

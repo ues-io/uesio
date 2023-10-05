@@ -44,6 +44,7 @@ const navigateToAssignment = async (
 ) => {
 	dispatch(setLoading())
 	const routeResponse = await platform.getRouteAssignment(context, request)
+	pushRouteState(context, routeResponse)
 	return handleNavigateResponse(context, routeResponse)
 }
 
@@ -54,37 +55,43 @@ const navigate = async (
 ) => {
 	dispatch(setLoading())
 	const routeResponse = await platform.getRoute(context, request)
-	const params = request.path.includes("?")
-		? "?" + context.mergeString(request.path.split("?")[1])
-		: ""
-	return handleNavigateResponse(context, routeResponse, noPushState, params)
+
+	if (!noPushState) {
+		const params = request.path.includes("?")
+			? "?" + context.mergeString(request.path.split("?")[1])
+			: ""
+		const prefix = getRouteUrlPrefix(context, routeResponse.namespace)
+		pushRouteState(
+			context,
+			routeResponse,
+			prefix + routeResponse.path + params
+		)
+	}
+
+	return handleNavigateResponse(context, routeResponse)
+}
+
+const pushRouteState = (context: Context, route: RouteState, url?: string) => {
+	if (!route) return
+	window.history.pushState(
+		{
+			namespace: route.namespace,
+			path: route.path,
+			title: route.title,
+			tags: route.tags,
+			workspace: context.getWorkspace(),
+		},
+		"",
+		url
+	)
 }
 
 const handleNavigateResponse = async (
 	context: Context,
-	routeResponse: RouteState,
-	noPushState?: boolean,
-	params = ""
+	routeResponse: RouteState | undefined
 ) => {
 	if (!routeResponse) return context
 	const deps = routeResponse.dependencies
-
-	const workspace = context.getWorkspace()
-
-	if (!noPushState) {
-		const prefix = getRouteUrlPrefix(context, routeResponse.namespace)
-		window.history.pushState(
-			{
-				namespace: routeResponse.namespace,
-				path: routeResponse.path,
-				title: routeResponse.title,
-				tags: routeResponse.tags,
-				workspace,
-			},
-			"",
-			prefix + routeResponse.path + params
-		)
-	}
 
 	// Route title and tags should be pre-merged by the server, so we just need to go synchronize them
 	document.title = routeResponse.title || "Uesio"
@@ -124,8 +131,8 @@ const handleNavigateResponse = async (
 	delete routeResponse.dependencies
 
 	batch(() => {
-		dispatchRouteDeps(deps)
 		dispatch(setRoute(routeResponse))
+		dispatchRouteDeps(deps)
 	})
 
 	// Always scroll to top of view after doing a route navigate
@@ -134,4 +141,10 @@ const handleNavigateResponse = async (
 	return context
 }
 
-export { getRouteUrlPrefix, redirect, navigate, navigateToAssignment }
+export {
+	getRouteUrlPrefix,
+	redirect,
+	navigate,
+	navigateToAssignment,
+	handleNavigateResponse,
+}
