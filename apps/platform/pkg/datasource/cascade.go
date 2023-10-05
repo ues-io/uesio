@@ -160,7 +160,7 @@ func getCascadeDeletes(
 			}
 			collectionItems := make(adapt.Collection, numIds)
 			i := 0
-			for id, _ := range idsMap {
+			for id := range idsMap {
 				collectionItems[i] = &adapt.Item{
 					adapt.ID_FIELD: id,
 				}
