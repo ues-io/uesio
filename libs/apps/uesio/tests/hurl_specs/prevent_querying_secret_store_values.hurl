@@ -43,3 +43,22 @@ Accept: application/json
 HTTP 400
 [Asserts]
 body == "Load Failed: metadata: uesio/core.secretstorevalue: Metadata item: uesio/core.secretstorevalue is not public\n"
+
+# Invoke a bot that runs an integration action that fetches a secret which we SHOULD have access to
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/bots/call/uesio/tests/secret_access_tester
+{
+    "integrationName": "uesio/tests.secret_access_allowed",
+    "actionName": "get_secret"
+}
+HTTP 200
+[Asserts]
+jsonpath "$.success" == true
+jsonpath "$.params.secretValue" == "this-is-my-key"
+
+# Invoke a bot that runs an integration action that fetches a secret which we SHOULD NOT have access to
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/bots/call/uesio/tests/secret_access_tester
+{
+    "integrationName": "uesio/tests.secret_access_forbidden",
+    "actionName": "get_secret"
+}
+HTTP 500 # TODO This really should be a 403 error... need to improve Bot error handling!!!
