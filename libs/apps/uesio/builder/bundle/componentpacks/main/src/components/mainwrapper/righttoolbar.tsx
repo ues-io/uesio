@@ -62,50 +62,51 @@ const RightToolbar: definition.UtilityComponent = (props) => {
 
 	return (
 		<div className={classes.root}>
-			{buildMode && (
-				<div className={classes.panel}>
-					<Button
-						context={context}
-						label=""
-						icon={
-							<Icon
-								context={context}
-								fill={false}
-								icon="account_tree"
-							/>
-						}
-						variant="uesio/builder.minoricontoolbar"
-						onClick={toggleIndex}
-						tooltip="Toggle Index Panel ⌘I"
-						tooltipPlacement="left"
-					/>
-					<Button
-						context={context}
-						label=""
-						icon={<Icon context={context} icon="code" />}
-						variant="uesio/builder.minoricontoolbar"
-						onClick={toggleCode}
-						tooltip="Toggle Code Panel ⌘Y"
-						tooltipPlacement="left"
-					/>
-				</div>
-			)}
+			<div className={classes.panel}>
+				<Button
+					context={context}
+					label=""
+					icon={
+						<Icon
+							context={context}
+							fill={false}
+							icon="account_tree"
+						/>
+					}
+					variant="uesio/builder.minoricontoolbar"
+					onClick={toggleIndex}
+					tooltip="Toggle Index Panel ⌘I"
+					tooltipPlacement="left"
+					disabled={!buildMode}
+				/>
+				<Button
+					context={context}
+					label=""
+					icon={<Icon context={context} icon="code" />}
+					variant="uesio/builder.minoricontoolbar"
+					onClick={toggleCode}
+					tooltip="Toggle Code Panel ⌘Y"
+					tooltipPlacement="left"
+					disabled={!buildMode}
+				/>
+			</div>
+
 			<div className={classes.panel}>
 				<DeviceSizer context={context} />
 			</div>
-			{buildMode && (
-				<div className={classes.panel}>
-					<Button
-						context={context}
-						label=""
-						icon={<Icon context={context} icon="expand" />}
-						variant="uesio/builder.minoricontoolbar"
-						onClick={toggleSlotTags}
-						tooltip="Expand Slots ⌘E"
-						tooltipPlacement="left"
-					/>
-				</div>
-			)}
+
+			<div className={classes.panel}>
+				<Button
+					context={context}
+					label=""
+					icon={<Icon context={context} icon="expand" />}
+					variant="uesio/builder.minoricontoolbar"
+					onClick={toggleSlotTags}
+					tooltip="Expand Slots ⌘E"
+					tooltipPlacement="left"
+					disabled={!buildMode}
+				/>
+			</div>
 		</div>
 	)
 }
