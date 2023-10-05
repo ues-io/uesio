@@ -127,6 +127,23 @@ func (b *SystemBundleStoreConnection) GetManyItems(items []meta.BundleableItem) 
 	return nil
 }
 
+func (b *SystemBundleStoreConnection) doesItemMeetBundleConditions(item meta.BundleableItem, conditions meta.BundleConditions) bool {
+	if len(conditions) == 0 {
+		return true
+	}
+	for field, conditionDef := range conditions {
+		fieldValue, err := item.GetField(field)
+		// If any condition fails, bail early
+		if err != nil {
+			return false
+		}
+		if fieldValue != conditionDef {
+			return false
+		}
+	}
+	return true
+}
+
 func (b *SystemBundleStoreConnection) GetAllItems(group meta.BundleableGroup, conditions meta.BundleConditions) error {
 
 	// TODO: Think about caching this, but remember conditions
@@ -146,6 +163,13 @@ func (b *SystemBundleStoreConnection) GetAllItems(group meta.BundleableGroup, co
 		}
 
 		err = b.GetItem(retrievedItem)
+
+		// Check to see if the item meets bundle conditions
+		// which are not associated with the Item's filesystem path
+		if !b.doesItemMeetBundleConditions(retrievedItem, conditions) {
+			continue
+		}
+
 		if err != nil {
 			if _, ok := err.(*bundlestore.PermissionError); ok {
 				continue
