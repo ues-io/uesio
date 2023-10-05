@@ -56,6 +56,7 @@ type RouteState = {
 	isLoading?: boolean
 	dependencies?: Dependencies
 	tags: RouteTag[]
+	batchid?: string
 }
 
 export type {

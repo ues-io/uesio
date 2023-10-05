@@ -10,6 +10,7 @@ import { loadScripts } from "../../hooks/usescripts"
 import { dispatchRouteDeps, getPackUrlsForDeps } from "./utils"
 import { dispatch } from "../../store/store"
 import { RouteState } from "./types"
+import { nanoid } from "@reduxjs/toolkit"
 
 const redirect = (context: Context, path: string, newTab?: boolean) => {
 	const mergedPath = context.mergeString(path)
@@ -92,6 +93,8 @@ const handleNavigateResponse = async (
 ) => {
 	if (!routeResponse) return context
 	const deps = routeResponse.dependencies
+
+	routeResponse.batchid = nanoid()
 
 	// Route title and tags should be pre-merged by the server, so we just need to go synchronize them
 	document.title = routeResponse.title || "Uesio"
