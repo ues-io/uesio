@@ -1,6 +1,7 @@
 import { api, definition, component, styles } from "@uesio/ui"
 import SaveCancelArea from "./savecancelarea"
 import HeaderCrumbs from "./headercrumbs"
+import { useBuildMode } from "../../api/stateapi"
 
 const StyleDefaults = Object.freeze({
 	root: [
@@ -23,8 +24,11 @@ const MainHeader: definition.UtilityComponent = (props) => {
 	const Group = component.getUtility("uesio/io.group")
 	const IOImage = component.getUtility("uesio/io.image")
 	const Avatar = component.getUtility("uesio/io.avatar")
+	const Button = component.getUtility("uesio/io.button")
+	const Icon = component.getUtility("uesio/io.icon")
 
 	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
+	const [buildMode, setBuildMode] = useBuildMode(context)
 	const [homeLogoLink, homeLogoOnClick] = api.signal.useLinkHandler(
 		[
 			{
@@ -51,6 +55,26 @@ const MainHeader: definition.UtilityComponent = (props) => {
 				<HeaderCrumbs context={context} />
 			</Group>
 			<Group context={context} className="gap-3">
+				<Button
+					context={context}
+					label={buildMode ? "Preview" : "Edit"}
+					icon={
+						<Icon
+							context={context}
+							weight={300}
+							fill={false}
+							icon={buildMode ? "visibility" : "edit_square"}
+						/>
+					}
+					variant="uesio/builder.panelactionbutton"
+					onClick={() => {
+						api.builder.getBuilderDeps(context).then(() => {
+							setBuildMode(!buildMode)
+						})
+					}}
+					tooltip={"meta + p"}
+					tooltipPlacement="left"
+				/>
 				<SaveCancelArea id={id} context={context} />
 				<Avatar
 					className={classes.avatar}

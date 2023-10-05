@@ -55,18 +55,6 @@ const MainWrapper: definition.UC<component.ViewComponentDefinition> = (
 	const [showCode] = useBuilderState<boolean>(props.context, "codepanel")
 	const [showIndex] = useBuilderState<boolean>(props.context, "indexpanel")
 
-	if (!buildMode) {
-		return (
-			<>
-				<component.ViewArea
-					context={context}
-					definition={definition}
-					path={path}
-				/>
-			</>
-		)
-	}
-
 	const indexPanelIndex = 3
 	const codePanelIndex = indexPanelIndex + (showIndex ? 1 : 0)
 	const rightPanelIndex = codePanelIndex + (showCode ? 1 : 0)
@@ -79,12 +67,17 @@ const MainWrapper: definition.UC<component.ViewComponentDefinition> = (
 		>
 			<Grid className={classes.root} context={context}>
 				<Grid context={context} className={classes.configarea}>
-					<PropertiesPanel context={builderContext} />
-					<ViewInfoPanel context={builderContext} />
+					{buildMode && (
+						<>
+							<PropertiesPanel context={builderContext} />
+							<ViewInfoPanel context={builderContext} />
+						</>
+					)}
 				</Grid>
+
 				<Canvas context={canvasContext}>
 					<component.ViewArea
-						context={canvasContext}
+						context={!buildMode ? context : canvasContext}
 						definition={definition}
 						path={path}
 					/>
