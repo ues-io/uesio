@@ -201,8 +201,8 @@ func (b *TSDialect) CallGeneratorBot(bot *meta.Bot, create retrieve.WriterCreato
 	return RunBot(bot.Name, bot.FileContents, botAPI, nil)
 }
 
-func (b *TSDialect) RouteBot(bot *meta.Bot, route *meta.Route, session *sess.Session) error {
-	return nil
+func (b *TSDialect) RouteBot(bot *meta.Bot, route *meta.Route, session *sess.Session) (*meta.Route, error) {
+	return route, nil
 }
 
 func (b *TSDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {

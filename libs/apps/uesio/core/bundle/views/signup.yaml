@@ -1,0 +1,17 @@
+name: signup
+public: true
+definition:
+  components:
+    - uesio/core.splash:
+        content:
+          - uesio/io.image:
+              uesio.variant: uesio/core.fancy
+              file: uesio/core.logo
+              signals:
+                - signal: "route/REDIRECT"
+                  path: "https://$Site{domain}"
+          - uesio/io.text:
+              text: This site has not been configured for self-signup.
+              uesio.styleTokens:
+                root:
+                  - font-light

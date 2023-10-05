@@ -75,8 +75,8 @@ func signupInternalServerError(w http.ResponseWriter, err error) {
 	http.Error(w, msg, http.StatusInternalServerError)
 }
 
-// ConfirmSignUpV2 directly confirms the user, logs them in, and redirects them to the Home route, without any manual intervention
-func ConfirmSignUpV2(w http.ResponseWriter, r *http.Request) {
+// ConfirmSignUp directly confirms the user, logs them in, and redirects them to the Home route, without any manual intervention
+func ConfirmSignUp(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
 	site := session.GetSite()

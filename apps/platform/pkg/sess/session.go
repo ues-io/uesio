@@ -343,6 +343,14 @@ func (s *Session) GetLoginRoute() string {
 	return appBundle.LoginRoute
 }
 
+func (s *Session) GetSignupRoute() string {
+	appBundle := s.GetContextAppBundle()
+	if appBundle == nil {
+		return ""
+	}
+	return appBundle.SignupRoute
+}
+
 func (s *Session) RemoveWorkspaceContext() *Session {
 	newSess := s.Clone()
 	newSess.workspaceSession = nil

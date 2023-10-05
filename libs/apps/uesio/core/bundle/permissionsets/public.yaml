@@ -21,7 +21,6 @@ files:
   uesio/core.logowhite: true
   uesio/core.logosmall: true
   uesio/core.splash: true
-  uesio/core.whitesplash: true
 collections:
   uesio/core.bulkjob: true
   uesio/core.bulkbatch: true
