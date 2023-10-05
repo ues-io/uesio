@@ -301,6 +301,7 @@ func (b *WorkspaceBundleStoreConnection) GetBundleDef() (*meta.BundleDef, error)
 	by.PublicProfile = b.Workspace.PublicProfile
 	by.HomeRoute = b.Workspace.HomeRoute
 	by.LoginRoute = b.Workspace.LoginRoute
+	by.SignupRoute = b.Workspace.SignupRoute
 	by.DefaultTheme = b.Workspace.DefaultTheme
 	by.Favicon = b.Workspace.Favicon
 
