@@ -3,19 +3,19 @@ package auth
 import (
 	"errors"
 	"fmt"
+	"os"
+	"strings"
+
 	"github.com/icza/session"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
-	"github.com/thecloudmasters/uesio/pkg/creds"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/goutils"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
-	"os"
-	"strings"
 )
 
 func init() {
@@ -42,19 +42,19 @@ func init() {
 }
 
 type AuthenticationType interface {
-	GetAuthConnection(*adapt.Credentials) (AuthConnection, error)
+	GetAuthConnection(*adapt.Credentials, *meta.AuthSource, adapt.Connection, *sess.Session) (AuthConnection, error)
 }
 
 type AuthConnection interface {
-	Login(map[string]interface{}, *sess.Session) (*AuthenticationClaims, error)
-	Signup(map[string]interface{}, string, *sess.Session) (*AuthenticationClaims, error)
-	ConfirmSignUp(map[string]interface{}, *sess.Session) error
-	ForgotPassword(map[string]interface{}, *sess.Session) error
-	ConfirmForgotPassword(map[string]interface{}, *sess.Session) error
-	CreateLogin(map[string]interface{}, string, *sess.Session) (*AuthenticationClaims, error)
+	Login(map[string]interface{}) (*meta.User, error)
+	Signup(*meta.SignupMethod, map[string]interface{}, string) error
+	ConfirmSignUp(*meta.SignupMethod, map[string]interface{}) error
+	ForgotPassword(*meta.SignupMethod, map[string]interface{}) error
+	ConfirmForgotPassword(*meta.SignupMethod, map[string]interface{}) error
+	CreateLogin(*meta.SignupMethod, map[string]interface{}, *meta.User) error
 }
 
-func GetAuthConnection(authSourceID string, session *sess.Session) (AuthConnection, error) {
+func GetAuthConnection(authSourceID string, connection adapt.Connection, session *sess.Session) (AuthConnection, error) {
 	authSource, err := getAuthSource(authSourceID, session)
 	if err != nil {
 		return nil, err
@@ -72,12 +72,12 @@ func GetAuthConnection(authSourceID string, session *sess.Session) (AuthConnecti
 		return nil, err
 	}
 
-	credentials, err := creds.GetCredentials(authSource.Credentials, versionSession)
+	credentials, err := datasource.GetCredentials(authSource.Credentials, versionSession)
 	if err != nil {
 		return nil, err
 	}
 
-	return authType.GetAuthConnection(credentials)
+	return authType.GetAuthConnection(credentials, authSource, connection, session)
 }
 
 var authTypeMap = map[string]AuthenticationType{}
@@ -96,13 +96,6 @@ func getAuthType(authTypeName string, session *sess.Session) (AuthenticationType
 
 func RegisterAuthType(name string, authType AuthenticationType) {
 	authTypeMap[name] = authType
-}
-
-type AuthenticationClaims struct {
-	Subject   string `json:"subject"`
-	FirstName string `json:"firstname"`
-	LastName  string `json:"lastname"`
-	Email     string `json:"email"`
 }
 
 func parseHost(host string) (domainType, domainValue, domain, subdomain string) {
@@ -167,40 +160,18 @@ func getSiteFromDomain(domainType, domainValue string) (*meta.Site, error) {
 	return site, nil
 }
 
-func createUser(username string, email string, signupMethod *meta.SignupMethod) (*meta.User, error) {
-
-	if signupMethod.Profile == "" {
-		return nil, fmt.Errorf("signup method %s is missing the profile property", signupMethod.GetKey())
+func CreateUser(signupMethod *meta.SignupMethod, user *meta.User, connection adapt.Connection, session *sess.Session) (*meta.User, error) {
+	user.Type = "PERSON"
+	user.Profile = signupMethod.Profile
+	if user.Language == "" {
+		user.Language = "en"
 	}
 
-	firstName, lastName := getNamePartsFromUsername(username)
-
-	user := &meta.User{
-		Username:  username,
-		Profile:   signupMethod.Profile,
-		Type:      "PERSON",
-		Language:  "en",
-		FirstName: goutils.Capitalize(firstName),
-		LastName:  goutils.Capitalize(lastName),
+	err := datasource.PlatformSaveOne(user, nil, connection, session)
+	if err != nil {
+		return nil, err
 	}
-
-	if email != "" {
-		user.Email = email
-	}
-
 	return user, nil
-}
-
-func getNamePartsFromUsername(username string) (first, last string) {
-	if len(username) >= 3 {
-		for _, sep := range []string{".", "_", "-"} {
-			if strings.Contains(username, sep) {
-				parts := strings.Split(username, sep)
-				return parts[0], parts[1]
-			}
-		}
-	}
-	return username, username
 }
 
 func getUser(field, value string, session *sess.Session, connection adapt.Connection) (*meta.User, error) {
@@ -274,7 +245,7 @@ func getAuthSource(key string, session *sess.Session) (*meta.AuthSource, error) 
 	return authSource, nil
 }
 
-func getSignupMethod(key string, session *sess.Session) (*meta.SignupMethod, error) {
+func GetSignupMethod(key string, session *sess.Session) (*meta.SignupMethod, error) {
 	signupMethod, err := meta.NewSignupMethod(key)
 	if err != nil {
 		return nil, err
@@ -288,7 +259,7 @@ func getSignupMethod(key string, session *sess.Session) (*meta.SignupMethod, err
 	return signupMethod, nil
 }
 
-func GetLoginMethod(claims *AuthenticationClaims, authSourceID string, session *sess.Session) (*meta.LoginMethod, error) {
+func GetLoginMethod(federationID string, authSourceID string, session *sess.Session) (*meta.LoginMethod, error) {
 
 	var loginmethod meta.LoginMethod
 	err := datasource.PlatformLoadOne(
@@ -301,7 +272,7 @@ func GetLoginMethod(claims *AuthenticationClaims, authSourceID string, session *
 				},
 				{
 					Field: "uesio/core.federation_id",
-					Value: claims.Subject,
+					Value: federationID,
 				},
 			},
 		},
@@ -310,7 +281,7 @@ func GetLoginMethod(claims *AuthenticationClaims, authSourceID string, session *
 	if err != nil {
 		if _, ok := err.(*datasource.RecordNotFoundError); ok {
 			// User not found. No error though.
-			logger.Log("Could not find login method for claims: "+claims.Subject+":"+authSourceID, logger.INFO)
+			logger.Log("Could not find login method for federationID: "+federationID+":"+authSourceID, logger.INFO)
 			return nil, nil
 		}
 		return nil, err
@@ -319,12 +290,8 @@ func GetLoginMethod(claims *AuthenticationClaims, authSourceID string, session *
 	return &loginmethod, nil
 }
 
-func CreateLoginMethod(user *meta.User, signupMethod *meta.SignupMethod, claims *AuthenticationClaims, session *sess.Session) error {
-	return datasource.PlatformSaveOne(&meta.LoginMethod{
-		FederationID: claims.Subject,
-		User:         user,
-		AuthSource:   signupMethod.AuthSource,
-	}, nil, nil, session)
+func CreateLoginMethod(loginMethod *meta.LoginMethod, connection adapt.Connection, session *sess.Session) error {
+	return datasource.PlatformSaveOne(loginMethod, nil, connection, session)
 }
 
 func GetPayloadValue(payload map[string]interface{}, key string) (string, error) {

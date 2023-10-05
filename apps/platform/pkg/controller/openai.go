@@ -9,11 +9,11 @@ import (
 	"os"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/cache"
-
 	openai "github.com/sashabaranov/go-openai"
-	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/twmb/murmur3"
+
+	"github.com/thecloudmasters/uesio/pkg/cache"
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
 )
 
 var client *openai.Client
@@ -61,11 +61,15 @@ var sampleCollectionFieldsSuggestedResult = `[
   }
 ]`
 
+var responsesCache cache.Cache[*AutocompleteResponse]
+
 func init() {
 	token := os.Getenv("OPENAI_API_KEY")
 	if token != "" {
 		client = openai.NewClient(token)
 	}
+
+	responsesCache = cache.NewRedisCache[*AutocompleteResponse]("openai-request")
 }
 
 type AutocompleteRequest struct {
@@ -86,7 +90,7 @@ func (r *AutocompleteRequest) hashCode() uint64 {
 }
 
 func (r *AutocompleteRequest) GetRedisKey() string {
-	return fmt.Sprintf("openai-request:%d", r.hashCode())
+	return fmt.Sprintf("%d", r.hashCode())
 }
 
 type AutocompleteResponse struct {
@@ -95,16 +99,15 @@ type AutocompleteResponse struct {
 }
 
 func getCachedResponse(req *AutocompleteRequest) (*AutocompleteResponse, error) {
-	var response AutocompleteResponse
-	err := cache.Get(req.GetRedisKey(), &response)
-	if err != nil {
+	response, err := responsesCache.Get(req.GetRedisKey())
+	if err != nil || response == nil {
 		return nil, err
 	}
-	return &response, nil
+	return response, nil
 }
 
 func cacheResponse(req *AutocompleteRequest, response *AutocompleteResponse) error {
-	return cache.Set(req.GetRedisKey(), response)
+	return responsesCache.Set(req.GetRedisKey(), response)
 }
 
 func AutocompleteHandler(w http.ResponseWriter, r *http.Request) {

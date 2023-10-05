@@ -9,22 +9,23 @@ declare global {
 const GOOGLE_LOGIN_SCRIPT_SRC = "https://accounts.google.com/gsi/client"
 const GOOGLE_CLIENT_ID_CONFIG_KEY = "uesio/core.google_auth_client_id"
 const StyleDefaults = Object.freeze({
-	root: ["grid", "justify-center"],
+	root: ["grid", "justify-center", "overflow-hidden", "h-11"],
 })
 
-const LoginGoogle: definition.UtilityComponent = (props) => {
-	const { context } = props
+interface GoogleLoginUtilityProps {
+	onLogin?: (response: unknown) => void
+	text?: string
+	minWidth?: number
+}
+
+const LoginGoogleUtility: definition.UtilityComponent<
+	GoogleLoginUtilityProps
+> = (props) => {
+	const { onLogin, minWidth, text } = props
 	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
-	window.googleAuthCallback = (response: object) => {
-		api.signal.run(
-			{
-				signal: "user/LOGIN",
-				authSource: "uesio/core.google",
-				payload: response,
-			},
-			context
-		)
+	window.googleAuthCallback = (response: unknown) => {
+		onLogin?.(response)
 	}
 
 	useEffect(() => {
@@ -54,6 +55,8 @@ const LoginGoogle: definition.UtilityComponent = (props) => {
 			<div
 				className="g_id_signin"
 				data-type="standard"
+				data-text={text}
+				data-width={minWidth}
 				data-size="large"
 				data-theme="outline"
 				data-shape="rectangular"
@@ -63,4 +66,4 @@ const LoginGoogle: definition.UtilityComponent = (props) => {
 	)
 }
 
-export default LoginGoogle
+export default LoginGoogleUtility

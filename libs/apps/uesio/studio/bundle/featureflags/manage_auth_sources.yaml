@@ -1,0 +1,4 @@
+name: manage_auth_sources
+label: Manage Auth Sources
+type: CHECKBOX
+defaultValue: false

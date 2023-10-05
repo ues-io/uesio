@@ -1,4 +1,0 @@
-name: manage_auth_methods
-label: Manage Auth Methods
-type: CHECKBOX
-defaultValue: false

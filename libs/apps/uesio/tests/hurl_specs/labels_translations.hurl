@@ -1,7 +1,7 @@
 # Test as a logged-in user so that we don't get redirected to the login page
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"uesio\"}"
+    "token": "uesio"
 }
 
 # Try to navigate to the workspace home route and make sure that the labels from core and io are there
@@ -17,7 +17,7 @@ jsonpath "$.dependencies.label[?(@.name=='session_expiration_msg')].namespace" n
 # Login as Wessel, he is part of the admin team and he speaks Spanish BTW.
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"wessel\"}"
+    "token": "wessel"
 }
 HTTP 200
 [Asserts]

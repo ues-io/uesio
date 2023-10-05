@@ -4,54 +4,48 @@ import (
 	"fmt"
 
 	"github.com/icza/session"
+
 	"github.com/thecloudmasters/uesio/pkg/cache"
+	"github.com/thecloudmasters/uesio/pkg/logger"
 )
 
-type RedisSessionStore struct{}
-
-func getSessionKey(id string) string {
-	return "session:" + id
+type RedisSessionStore struct {
+	cacheManager cache.Cache[session.Session]
 }
 
 func NewRedisSessionStore() session.Store {
-	s := &RedisSessionStore{}
-	return s
+	return &RedisSessionStore{
+		cache.NewRedisCache[session.Session]("session").WithInitializer(session.NewSession),
+	}
 }
 
 // Get is to implement Store.Get().
-// If the session is not already in the in-memory store
-// it will attempt to fetch it from the filesystem.
 func (s *RedisSessionStore) Get(id string) session.Session {
-	newSess := session.NewSession()
-	err := cache.Get(getSessionKey(id), &newSess)
-	if err != nil {
-		fmt.Println(err)
+	result, err := s.cacheManager.Get(id)
+	if err != nil || result == nil {
 		return nil
 	}
-	return newSess
+	return result
 }
 
 // Add is to implement Store.Add().
 // Will add a session to the memory store and to the filesystem
 // for when the server is restarted
 func (s *RedisSessionStore) Add(sess session.Session) {
-	err := cache.Set(getSessionKey(sess.ID()), sess)
-	if err != nil {
-		fmt.Println("Error Adding session: " + err.Error())
+	if err := s.cacheManager.Set(sess.ID(), sess); err != nil {
+		logger.LogError(fmt.Errorf("error adding session to redis: %s", err.Error()))
 	}
 }
 
 // Remove is to implement Store.Remove().
 // Will remove it from both the memory store and the FS
 func (s *RedisSessionStore) Remove(sess session.Session) {
-	fmt.Println("Removing Redis Session: " + sess.ID())
-	err := cache.DeleteKeys([]string{getSessionKey(sess.ID())})
-	if err != nil {
-		fmt.Println("Error Deleting session: " + err.Error())
+	if err := s.cacheManager.Del(sess.ID()); err != nil {
+		logger.LogError(fmt.Errorf("error removing Redis session: %s", err.Error()))
 	}
 }
 
 // Close is to implement Store.Close().
 func (s *RedisSessionStore) Close() {
-	fmt.Println("Closing Redis Session")
+	logger.Info("closing Redis session store")
 }

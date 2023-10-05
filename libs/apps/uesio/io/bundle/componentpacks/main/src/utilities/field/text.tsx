@@ -5,6 +5,10 @@ import { useControlledInput } from "../../shared/useControlledFieldValue"
 
 import Icon from "../icon/icon"
 
+export type TextFieldOptions = {
+	autoComplete?: string
+}
+
 interface TextFieldProps {
 	applyChanges?: ApplyChanges
 	focusOnRender?: boolean
@@ -12,6 +16,7 @@ interface TextFieldProps {
 	mode?: context.FieldMode
 	placeholder?: string
 	readonly?: boolean
+	options?: TextFieldOptions
 	setValue?: FieldValueSetter
 	type?: "search" | "password" | "text" | "email" | "tel" | "url"
 	value?: wire.FieldValue
@@ -42,6 +47,7 @@ const TextField: definition.UtilityComponent<TextFieldProps> = (props) => {
 		id,
 		list,
 		mode,
+		options,
 		placeholder,
 		readonly,
 		setValue,
@@ -77,6 +83,7 @@ const TextField: definition.UtilityComponent<TextFieldProps> = (props) => {
 					isReadMode && classes.readonly,
 					isPassword && classes.password
 				)}
+				autoComplete={options?.autoComplete}
 				disabled={isReadMode}
 				autoFocus={focusOnRender}
 				{...controlledInputProps}

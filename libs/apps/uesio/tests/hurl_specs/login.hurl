@@ -1,7 +1,7 @@
 # Log into the studio as uesio
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"uesio\"}"
+    "token": "uesio"
 }
 HTTP 200
 
@@ -16,7 +16,7 @@ HTTP 200
 GET https://{{host}}:{{port}}/siteadmin/uesio/tests/testsite/configvalues
 HTTP 200
 [Asserts]
-jsonpath "$[0].value" == ""
+jsonpath "$[1].value" == ""
 
 # Log in to google with the wrong client id
 POST https://tests.{{domain}}:{{port}}/site/auth/uesio/core/google/login
@@ -39,7 +39,7 @@ HTTP 200
 GET https://{{host}}:{{port}}/siteadmin/uesio/tests/testsite/configvalues
 HTTP 200
 [Asserts]
-jsonpath "$[0].value" == "A Totally Valid Token"
+jsonpath "$[1].value" == "A Totally Valid Token"
 
 # Log in to google with missing credentials
 POST https://tests.{{domain}}:{{port}}/site/auth/uesio/core/google/login
@@ -71,7 +71,7 @@ HTTP 200
 GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/configvalues
 HTTP 200
 [Asserts]
-jsonpath "$[0].value" == ""
+jsonpath "$[1].value" == ""
 
 # Log in to google in the workspace context (it should not have a client id set
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/auth/uesio/core/google/login
@@ -94,7 +94,7 @@ HTTP 200
 GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/configvalues
 HTTP 200
 [Asserts]
-jsonpath "$[0].value" == "A Valid Token for Workspace"
+jsonpath "$[1].value" == "A Valid Token for Workspace"
 
 # Log in to google with the wrong client id
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/auth/uesio/core/google/login
@@ -109,7 +109,7 @@ body == "google login: invalid client id\n"
 # Verify that if you try to log in with a workspace context you get an error
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"uesio\"}"
+    "token": "uesio"
 }
 HTTP 400
 [Asserts]

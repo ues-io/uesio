@@ -3,6 +3,7 @@ public: true
 named: {}
 views:
   uesio/core.login: true
+  uesio/core.loginarea: true
   uesio/core.notfound: true
   uesio/core.signup: true
   uesio/core.changepassword: true
@@ -20,7 +21,6 @@ files:
   uesio/core.logowhite: true
   uesio/core.logosmall: true
   uesio/core.splash: true
-  uesio/core.whitesplash: true
 collections:
   uesio/core.bulkjob: true
   uesio/core.bulkbatch: true

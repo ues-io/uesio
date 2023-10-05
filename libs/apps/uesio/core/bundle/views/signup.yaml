@@ -1,130 +1,17 @@
 name: signup
 public: true
 definition:
-  wires:
-    userData:
-      viewOnly: true
-      events:
-        onChange:
-          - field: username
-            signals:
-              - signal: user/CHECK_AVAILABILITY
-                username: ${username}
-                signupMethod: uesio/core.platform
-                fieldId: username
-      fields:
-        username:
-          label: Username
-          type: TEXT
-        password:
-          label: Password
-          type: TEXT
-        email:
-          label: Email
-          type: TEXT
-        terms:
-          type: CHECKBOX
-          label: Terms
-      init:
-        create: true
-      defaults:
-        - field: terms
-          valueSource: VALUE
-          value: false
-
-  # Components are how we describe the layout of our view
   components:
-    - uesio/io.grid:
-        uesio.variant: uesio/io.splash
-        items:
-          - uesio/io.grid:
-              uesio.variant: uesio/io.center
-              items:
-                - uesio/io.grid:
-                    uesio.variant: uesio/core.loginarea
-                    items:
-                      - uesio/io.image:
-                          uesio.variant: uesio/core.fancy
-                          file: uesio/core.logo
-                          signals:
-                            - signal: "route/REDIRECT"
-                              path: "https://$Site{domain}"
-                      - uesio/io.list:
-                          uesio.id: credslist
-                          wire: userData
-                          mode: EDIT
-                          components:
-                            - uesio/io.box:
-                                components:
-                                  - uesio/io.field:
-                                      fieldId: username
-                                      label: Username (lowercase a-z, 0-9, or _)
-                                      applyChanges: onBlur
-                                  - uesio/io.field:
-                                      fieldId: email
-                                  - uesio/io.field:
-                                      fieldId: password
-                                      label: Password
-                                      displayAs: PASSWORD
-                                  - uesio/io.box:
-                                      uesio.styleTokens:
-                                        root:
-                                          - flex
-                                          - flex-[1_10]
-                                          - items-center
-                                          - my-2
-                                          - space-x-2
-                                          - text-sm
-                                      components:
-                                        - uesio/io.field:
-                                            fieldId: terms
-                                            label: " "
-                                        - uesio/io.box:
-                                            uesio.styleTokens:
-                                              root:
-                                                - inline
-                                            components:
-                                              - uesio/io.text:
-                                                  text: I agree to the terms and conditions of the
-                                                  uesio.variant: uesio/io.smallcontent
-                                              - uesio/io.button:
-                                                  text: Master Subscription Agreement.
-                                                  uesio.styleTokens:
-                                                    root:
-                                                      - text-blue-700
-                                                      - font-light
-                                                  signals:
-                                                    - signal: route/REDIRECT
-                                                      newtab: true
-                                                      path: "https://ues.io/terms"
-
-                            - uesio/io.button:
-                                uesio.display:
-                                  - wire: userData
-                                    field: terms
-                                    value: false
-                                uesio.variant: uesio/io.secondary
-                                uesio.styleTokens:
-                                  root:
-                                    - disabled
-                                text: Create Account
-                                signals:
-                                  - signal: notification/ADD
-                                    id: terms
-                                    text: You must agree to the ues.io Master Subscription Agreement.
-                                    severity: error
-                            - uesio/io.button:
-                                uesio.display:
-                                  - wire: userData
-                                    field: terms
-                                    value: true
-                                uesio.variant: uesio/io.primary
-                                text: Create Account
-                                signals:
-                                  - signal: user/SIGNUP
-                                    signupMethod: uesio/core.platform
-                                    requireds:
-                                    payload:
-                                      username: ${username}
-                                      password: ${password}
-                                      email: ${email}
+    - uesio/core.splash:
+        content:
+          - uesio/io.image:
+              uesio.variant: uesio/core.fancy
+              file: uesio/core.logo
+              signals:
+                - signal: "route/REDIRECT"
+                  path: "https://$Site{domain}"
+          - uesio/io.text:
+              text: This site has not been configured for self-signup.
+              uesio.styleTokens:
+                root:
+                  - font-light

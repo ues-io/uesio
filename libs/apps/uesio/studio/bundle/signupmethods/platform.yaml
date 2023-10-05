@@ -1,0 +1,62 @@
+name: platform
+authsource: uesio/core.platform
+profile: uesio/studio.standard
+usernameTemplate: ${username}
+usernameRegex: "^[a-z0-9_]+$"
+usernameFormatExplanation: "lowercase a-z, 0-9, and underscore only"
+# TO-DO this works for now but we want this signup method to be full core.
+landingRoute: uesio/studio.signuplanding
+fromEmail: info@ues.io
+adminCreate:
+  emailSubject: "User created in ${app} (${siteName})"
+  emailContentType: text/html
+  emailBody: |
+    <!DOCTYPE html>
+    <html>
+    <body>
+        A user account has been created for you in ${app} (${siteName}).<br/>
+        Your username is: ${username}.<br/>
+        <br/>
+        You can set your password and log in using the link below:<br/>
+        ${link}
+    </body>
+    </html>
+  redirect: "site/app/uesio/core/changepassword"
+signup:
+  emailSubject: "Welcome to ${siteTitle}!"
+  emailContentType: text/html
+  emailBody: |
+    <!DOCTYPE html>
+    <html>
+    <body>
+        Hi ${username},<br/>
+        <br/>
+        Thank you for registering for an account with ${siteTitle}!<br/>
+        <br/>
+        To complete your account set up, please confirm using the link below:<br/>
+        ${link}<br/>
+        <br/>
+        Cheers!<br/>
+        <br/>
+        The team at ${siteTitle}
+    </body>
+    </html>
+  redirect: "site/auth/uesio/studio/platform/signup/confirm"
+forgotPassword:
+  emailSubject: "Password change requested in ${app} (${siteName})"
+  emailContentType: text/html
+  emailBody: |
+    <!DOCTYPE html>
+    <html>
+    <body>
+        Hi ${username},<br/>
+        <br/>
+        There was a request to change your password!<br/>
+        <br/>
+        If you did not make this request then please ignore this email.<br/>
+        <br/>
+        Otherwise, please click this link to change your password: ${link}
+    </body>
+    </html>
+  redirect: "site/app/uesio/core/changepassword"
+public: true

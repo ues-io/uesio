@@ -2,6 +2,7 @@ package systemdialect
 
 import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -151,5 +152,5 @@ func clearHostCacheForSite(request *adapt.SaveOp, connection adapt.Connection, s
 		return err
 	}
 
-	return clearHostForDomains(domainIds)
+	return auth.ClearHostCacheForDomains(domainIds)
 }

@@ -1,17 +1,9 @@
-import {
-	definition,
-	styles,
-	context,
-	collection,
-	wire,
-	component,
-} from "@uesio/ui"
+import { definition, styles, context, wire, component } from "@uesio/ui"
 import TextField from "./text"
 
 interface SelectFieldProps {
 	setValue: (value: wire.FieldValue) => void
 	value: wire.FieldValue
-	fieldMetadata: collection.Field
 	mode?: context.FieldMode
 	options: wire.SelectOption[] | null
 	readonly?: boolean
@@ -29,7 +21,15 @@ const SelectField: definition.UtilityComponent<SelectFieldProps> = (props) => {
 	if (mode === "READ") {
 		const optionMatch = options?.find((option) => option.value === value)
 		const valueLabel = optionMatch?.label || ""
-		return <TextField {...props} value={valueLabel} />
+		return (
+			<TextField
+				setValue={setValue}
+				value={valueLabel}
+				mode={mode}
+				readonly={readonly}
+				context={context}
+			/>
+		)
 	}
 
 	const classes = styles.useUtilityStyleTokens(

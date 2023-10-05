@@ -2,7 +2,6 @@ package systemdialect
 
 import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/cache"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/goutils"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -122,13 +121,11 @@ func runLicenseAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, 
 		return err
 	}
 
-	keysToBust := []string{}
-	for _, app := range apps {
-		keysToBust = append(keysToBust, cache.GetLicenseKey(app.UniqueKey))
+	appUniqueKeys := make([]string, len(apps), len(apps))
+	for i, app := range apps {
+		appUniqueKeys[i] = app.UniqueKey
 	}
-
-	err = cache.DeleteKeys(keysToBust)
-	if err != nil {
+	if err = datasource.InvalidateLicenseCaches(appUniqueKeys); err != nil {
 		return err
 	}
 

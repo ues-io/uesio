@@ -305,7 +305,7 @@ body contains "Save Failed: Profile uesio/tests.public does not have create acce
 # Log into the studio as uesio
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"uesio\"}"
+    "token": "uesio"
 }
 HTTP 200
 [Captures]
@@ -337,7 +337,7 @@ workspace_id: jsonpath "$.wires[0].data[0]['uesio/core.id']"
 # Log into the studio as ben
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"ben\"}"
+    "token": "ben"
 }
 HTTP 200
 

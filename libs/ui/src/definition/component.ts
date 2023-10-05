@@ -11,7 +11,7 @@ interface BaseComponent extends Bundleable {
 	slots?: SlotDef[]
 }
 
-type SlotDef = {
+export type SlotDef = {
 	name: string
 }
 

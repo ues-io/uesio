@@ -14,8 +14,8 @@ interface CheckboxFieldProps {
 }
 
 const StyleDefaults = Object.freeze({
-	root: ["leading-none"],
-	input: [],
+	root: [],
+	checkbox: [],
 })
 
 const CheckboxField: definition.UtilityComponent<CheckboxFieldProps> = (
@@ -25,7 +25,11 @@ const CheckboxField: definition.UtilityComponent<CheckboxFieldProps> = (
 	const readonly = mode === "READ"
 
 	const checked = value === true
-	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
+	const classes = styles.useUtilityStyleTokens(
+		StyleDefaults,
+		props,
+		"uesio/io.checkboxfield"
+	)
 
 	const checkRef = useRef<HTMLInputElement>(null)
 
@@ -39,7 +43,7 @@ const CheckboxField: definition.UtilityComponent<CheckboxFieldProps> = (
 			<input
 				ref={checkRef}
 				id={id}
-				className={classes.input}
+				className={classes.checkbox}
 				checked={checked}
 				type="checkbox"
 				disabled={readonly}

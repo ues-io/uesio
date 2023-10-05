@@ -110,7 +110,7 @@ const handlers: Record<MergeType, MergeHandler> = {
 		if (expression === "initials") {
 			return user.firstname
 				? user.firstname.charAt(0) + user.lastname.charAt(0)
-				: user.id.charAt(0)
+				: user.username.charAt(0)
 		}
 		if (expression === "picture") {
 			if (!user.picture) return ""

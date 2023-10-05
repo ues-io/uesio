@@ -1,9 +1,0 @@
-name: loginarea
-label: Login Area
-public: true
-definition:
-  uesio.styleTokens:
-    root:
-      - w-[220px]
-      - gap-10
-      - m-8

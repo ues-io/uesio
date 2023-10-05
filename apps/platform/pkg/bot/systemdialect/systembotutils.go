@@ -2,11 +2,9 @@ package systemdialect
 
 import (
 	"errors"
-	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
-	"github.com/thecloudmasters/uesio/pkg/cache"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -144,27 +142,6 @@ func getUniqueKeysFromDeletes(request *adapt.SaveOp) []string {
 		index++
 	}
 	return keys
-}
-
-func clearHostForDomains(ids []string) error {
-	keys := make([]string, len(ids))
-	for i, id := range ids {
-		key, err := getHostKeyFromDomainId(id)
-		if err != nil {
-			return err
-		}
-		keys[i] = key
-	}
-
-	return cache.DeleteKeys(keys)
-}
-
-func getHostKeyFromDomainId(id string) (string, error) {
-	idParts := strings.Split(id, ":")
-	if len(idParts) != 2 {
-		return "", errors.New("Bad Domain ID: " + id)
-	}
-	return cache.GetHostKey(idParts[1], idParts[0]), nil
 }
 
 func checkValidItems(workspaceID string, items []meta.BundleableItem, session *sess.Session, connection adapt.Connection) error {

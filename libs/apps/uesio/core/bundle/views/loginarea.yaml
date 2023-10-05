@@ -1,0 +1,111 @@
+name: loginarea
+public: true
+definition:
+  # Wires are how we pull in data
+  wires:
+    credentials:
+      viewOnly: true
+      fields:
+        username:
+          label: Username
+          type: TEXT
+        password:
+          label: Password
+          type: TEXT
+      init:
+        create: true
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/io.box:
+        uesio.display:
+          - type: paramIsSet
+            param: expired
+        uesio.styleTokens:
+          root:
+            - rounded-lg
+            - bg-indigo-100
+            - border-1
+            - border-indigo-600
+            - text-indigo-600
+            - font-light
+            - p-5
+            - text-sm
+        components:
+          - uesio/io.text:
+              text: $Label{uesio/core.session_expiration_msg}
+            uesio.styleTokens:
+              root:
+                - p-5
+                - items-center
+    - uesio/core.loginmock:
+        text: Sign in with Mock
+        align: center
+    - uesio/io.list:
+        uesio.id: credslist
+        wire: credentials
+        mode: EDIT
+        components:
+          - uesio/io.grid:
+              items:
+                - uesio/io.field:
+                    fieldId: username
+                    uesio.id: username
+                    text:
+                      autoComplete: "username"
+                - uesio/io.box:
+                    uesio.styleTokens:
+                      root:
+                        - relative
+                    components:
+                      - uesio/io.field:
+                          fieldId: password
+                          uesio.id: password
+                          displayAs: PASSWORD
+                          text:
+                            autoComplete: "current-password"
+                      - uesio/io.button:
+                          text: Forgot password?
+                          uesio.styleTokens:
+                            root:
+                              - normal-case
+                              - font-light
+                              - text-slate-400
+                              - absolute
+                              - top-3
+                              - right-0
+                              - text-[9pt]
+                              - hover:text-primary
+                          signals:
+                            - signal: route/REDIRECT
+                              path: requestpassword
+                - uesio/io.button:
+                    uesio.styleTokens:
+                      root:
+                        - mt-2
+                    uesio.variant: uesio/io.primary
+                    uesio.id: sign-in
+                    text: Sign In
+                    signals:
+                      - signal: user/LOGIN
+                        onerror:
+                          signals:
+                            - signal: notification/ADD_ERRORS
+                        authSource: uesio/core.platform
+                        payload:
+                          username: ${username}
+                          password: ${password}
+    - uesio/core.logingoogle:
+        minWidth: 240
+        onLoginSignals:
+          - signal: "user/LOGIN"
+            authSource: uesio/core.google
+            payload:
+              credential: $ComponentOutput{[uesio/core.logingoogle][credential]}
+              client_id: $ComponentOutput{[uesio/core.logingoogle][client_id]}
+            onerror:
+              signals:
+                - signal: notification/ADD_ERRORS
+  params:
+    expired:
+      type: CHECKBOX
+      required: false

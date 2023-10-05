@@ -74,7 +74,7 @@ interface DeleteApi extends BaseChangeApi {
 	getOld: (field: string) => FieldValue
 }
 interface InsertsApi {
-	get: () => ChangeApi[]
+	get: () => InsertApi[]
 }
 interface UpdatesApi {
 	get: () => ChangeApi[]
@@ -113,7 +113,7 @@ interface SaveOptionsApi {
 	upsert: boolean
 }
 
-interface IntegrationMetadata {
+interface IntegrationApi {
 	getBaseURL(): string | undefined
 }
 
@@ -155,11 +155,27 @@ interface ListenerBotApi {
 	log: LogApi
 	http: HttpApi
 }
+interface RunActionBotApi {
+	addError: (error: string) => void
+	addResult: (key: string, value: FieldValue | undefined) => void
+	getActionName: () => string
+	getCredentials: () => Record<string, string | undefined>
+	getConfigValue: (configValueKey: string) => string
+	getIntegration: () => IntegrationApi
+	getSession: () => SessionApi
+	getUser: () => UserApi
+	http: HttpApi
+	load: (loadRequest: LoadRequest) => WireRecord[]
+	log: LogApi
+	params: BotParamsApi
+	save: (collectionName: string, records: WireRecord[]) => void
+}
+
 interface LoadBotApi {
 	addError: (error: string) => void
 	addRecord: (record: Record<string, unknown>) => void
 	loadRequest: LoadRequest
-	getIntegration: () => IntegrationMetadata
+	getIntegration: () => IntegrationApi
 	getCredentials: () => Record<string, string | undefined>
 	getConfigValue: (configValueKey: string) => string
 	getSession: () => SessionApi
@@ -173,7 +189,7 @@ interface SaveBotApi {
 	inserts: InsertsApi
 	updates: UpdatesApi
 	getCollectionName: () => string
-	getIntegration: () => IntegrationMetadata
+	getIntegration: () => IntegrationApi
 	getCredentials: () => Record<string, string | undefined>
 	getConfigValue: (configValueKey: string) => string
 	getSession: () => SessionApi
@@ -183,20 +199,23 @@ interface SaveBotApi {
 	saveOptions: SaveOptionsApi
 }
 export type {
-	ListenerBotApi,
-	LoadBotApi,
-	SaveBotApi,
-	BeforeSaveBotApi,
 	AfterSaveBotApi,
+	BeforeSaveBotApi,
 	BotParamsApi,
+	ChangeApi,
 	ConditionOperator,
 	ConditionRequest,
 	ConditionType,
-	ChangeApi,
+	DeleteApi,
 	FieldRequest,
 	FieldValue,
+	InsertApi,
+	ListenerBotApi,
+	LoadBotApi,
 	LoadOrder,
 	LoadRequest,
+	RunActionBotApi,
+	SaveBotApi,
 	WireRecord,
 }
 }

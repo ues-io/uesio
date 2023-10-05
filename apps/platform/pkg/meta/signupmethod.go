@@ -19,9 +19,10 @@ func NewBaseSignupMethod(namespace, name string) *SignupMethod {
 }
 
 type EmailTemplateOptions struct {
-	EmailSubject string `yaml:"emailSubject" json:"uesio/studio.emailsubject"`
-	EmailBody    string `yaml:"emailBody" json:"uesio/studio.emailbody"`
-	Redirect     string `yaml:"redirect" json:"uesio/studio.redirect"`
+	EmailSubject     string `yaml:"emailSubject" json:"uesio/studio.emailsubject"`
+	EmailBody        string `yaml:"emailBody" json:"uesio/studio.emailbody"`
+	EmailContentType string `yaml:"emailContentType" json:"uesio/studio.emailcontenttype"`
+	Redirect         string `yaml:"redirect" json:"uesio/studio.redirect"`
 }
 type SignupMethod struct {
 	BuiltIn                   `yaml:",inline"`
@@ -30,8 +31,10 @@ type SignupMethod struct {
 	Profile                   string               `yaml:"profile" json:"uesio/studio.profile"`
 	UsernameTemplate          string               `yaml:"usernameTemplate" json:"uesio/studio.usernametemplate"`
 	LandingRoute              string               `yaml:"landingRoute" json:"uesio/studio.landingroute"`
+	AutoLogin                 bool                 `yaml:"autoLogin" json:"uesio/studio.autologin"`
 	UsernameRegex             string               `yaml:"usernameRegex" json:"uesio/studio.usernameregex"`
 	UsernameFormatExplanation string               `yaml:"usernameFormatExplanation" json:"uesio/studio.usernameformatexplanation"`
+	FromEmail                 string               `yaml:"fromEmail" json:"uesio/studio.fromemail"`
 	AdminCreate               EmailTemplateOptions `yaml:"adminCreate" json:"uesio/studio.admincreate"`
 	Signup                    EmailTemplateOptions `yaml:"signup" json:"uesio/studio.signup"`
 	ForgotPassword            EmailTemplateOptions `yaml:"forgotPassword" json:"uesio/studio.forgotpassword"`

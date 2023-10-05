@@ -1,7 +1,7 @@
 # Log into the studio as uesio
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"uesio\"}"
+    "token": "uesio"
 }
 HTTP 200
 [Captures]
@@ -57,7 +57,7 @@ account_id: jsonpath "$.wires[0].data[0]['uesio/core.id']"
 # Log into the studio as ben
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"ben\"}"
+    "token": "ben"
 }
 HTTP 200
 
@@ -93,7 +93,7 @@ jsonpath "$.wires[0].data" isEmpty
 # Log into the studio as uesio
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"uesio\"}"
+    "token": "uesio"
 }
 
 # Put ben on the account team
@@ -125,7 +125,7 @@ jsonpath "$.wires[0].errors" == null
 # Log into the studio as ben
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"ben\"}"
+    "token": "ben"
 }
 
 # Now that ben is on the account team, he can see the evil corp.

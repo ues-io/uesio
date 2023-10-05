@@ -2,11 +2,12 @@ package controller
 
 import (
 	"encoding/json"
+	"net/http"
+
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/routing"
 	"github.com/thecloudmasters/uesio/pkg/sess"
-	"net/http"
 
 	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/auth"
@@ -28,9 +29,30 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	signupMethod, err := auth.Signup(getSignupMethodID(mux.Vars(r)), payload, site)
+	systemSession, err := auth.GetSystemSession(site, nil)
+	if err != nil {
+		msg := "Signup failed: " + err.Error()
+		logger.Log(msg, logger.ERROR)
+		http.Error(w, msg, http.StatusInternalServerError)
+		return
+	}
+
+	signupMethod, err := auth.GetSignupMethod(getSignupMethodID(mux.Vars(r)), session)
+	if err != nil {
+		msg := "Signup failed: " + err.Error()
+		logger.Log(msg, logger.ERROR)
+		http.Error(w, msg, http.StatusInternalServerError)
+		return
+	}
+
+	user, err := auth.Signup(signupMethod, payload, systemSession)
 	if err != nil {
 		signupInternalServerError(w, err)
+		return
+	}
+
+	if signupMethod.AutoLogin {
+		loginRedirectResponse(w, r, user, systemSession)
 		return
 	}
 
@@ -53,8 +75,8 @@ func signupInternalServerError(w http.ResponseWriter, err error) {
 	http.Error(w, msg, http.StatusInternalServerError)
 }
 
-// ConfirmSignUpV2 directly confirms the user, logs them in, and redirects them to the Home route, without any manual intervention
-func ConfirmSignUpV2(w http.ResponseWriter, r *http.Request) {
+// ConfirmSignUp directly confirms the user, logs them in, and redirects them to the Home route, without any manual intervention
+func ConfirmSignUp(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
 	site := session.GetSite()

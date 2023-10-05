@@ -9,17 +9,19 @@ import (
 	"path/filepath"
 	"strings"
 
+	"gopkg.in/yaml.v3"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
-	"gopkg.in/yaml.v3"
 )
 
+// TODO: Eliminate the need to keep this manual list.
+// Evaluate the dependencies of each item and deploy in dependency order.
 var ORDERED_ITEMS = [...]string{
 	"collections",
 	"selectlists",
@@ -44,6 +46,7 @@ var ORDERED_ITEMS = [...]string{
 	"configvalues",
 	"credentials",
 	"integrations",
+	"integrationactions",
 }
 
 type DeployOptions struct {
@@ -253,6 +256,7 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 			},
 			AppSettings: meta.AppSettings{
 				LoginRoute:    by.LoginRoute,
+				SignupRoute:   by.SignupRoute,
 				HomeRoute:     by.HomeRoute,
 				PublicProfile: by.PublicProfile,
 				DefaultTheme:  by.DefaultTheme,
@@ -266,6 +270,7 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 			ValidFields: map[string]bool{
 				adapt.ID_FIELD:               true,
 				"uesio/studio.loginroute":    true,
+				"uesio/studio.signuproute":   true,
 				"uesio/studio.homeroute":     true,
 				"uesio/studio.publicprofile": true,
 				"uesio/studio.defaulttheme":  true,
@@ -306,9 +311,6 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 	if err != nil {
 		return err
 	}
-
-	// Clear out the bundle definition cache
-	bundle.ClearAppBundleCache(session)
 
 	return nil
 

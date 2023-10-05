@@ -1,6 +1,6 @@
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"uesio\"}"
+    "token": "uesio"
 }
 
 # Extract the sessionid from set-cookie header
@@ -186,7 +186,7 @@ HTTP 200
 jsonpath "$.wires[0].errors" == null
 
 # Set the google auth source config client id value for the workspace
-POST https://{{host}}:{{port}}/siteadmin/uesio/tests/testsite/configvalues/uesio/core/google_auth_client_id
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/configvalues/uesio/core/google_auth_client_id
 {
     "value": "A client id"
 }

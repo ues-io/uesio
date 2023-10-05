@@ -30,9 +30,7 @@ const LoginMock: definition.UC = (props) => {
 								signal: "user/LOGIN",
 								authSource: "uesio/core.mock",
 								payload: {
-									token: JSON.stringify({
-										subject: user,
-									}),
+									token: user,
 								},
 							},
 							context

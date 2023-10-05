@@ -56,6 +56,10 @@ definition:
           value: PERSON
       init:
         query: false
+    signupmethods:
+      collection: uesio/core.signupmethod
+      init:
+        query: false
     loginmethods:
       collection: uesio/core.loginmethod
       fields:
@@ -95,6 +99,7 @@ definition:
         wires:
           - users
           - loginmethods
+          - signupmethods
       - signal: wire/RESET
         wire: newloginmethod
   components:
@@ -232,15 +237,82 @@ definition:
                           uesio.variant: uesio/io.section
                           title: Signup Methods
                       - uesio/io.box:
+                          uesio.context:
+                            siteadmin:
+                              name: $Param{sitename}
+                              app: $Param{app}
                           components:
-                            - uesio/studio.configlogins:
-                                uesio.context:
-                                  siteadmin:
-                                    name: $Param{sitename}
-                                    app: $Param{app}
-                                user: $Param{userid}
-                                email: ${uesio/core.email}
-                                requery: loginmethods
+                            - uesio/io.deck:
+                                uesio.id: signupmethodlist
+                                wire: signupmethods
+                                uesio.styleTokens:
+                                  root:
+                                    - gap-10
+                                components:
+                                  - uesio/io.titlebar:
+                                      title: ${name}
+                                      subtitle: ${authsource}
+                                      actions:
+                                        - uesio/io.group:
+                                            uesio.display:
+                                              - field: authsource
+                                                value: uesio/core.platform
+                                            components:
+                                              - uesio/io.button:
+                                                  uesio.variant: uesio/io.secondary
+                                                  text: Create Login Method
+                                                  signals:
+                                                    - signal: user/CREATE_LOGIN
+                                                      signupMethod: ${uesio/core.uniquekey}
+                                                      payload:
+                                                        username: $Param{userid}
+                                                        email: ${users:uesio/core.email}
+                                                      onerror:
+                                                        continue: false
+                                                        notify: true
+                                                        signals:
+                                                          signal: notification/ADD_ERRORS
+                                                    - signal: wire/LOAD
+                                                      wires:
+                                                        - loginmethods
+                                                    - signal: notification/ADD
+                                                      text: "An email has been sent to the user!"
+                                                      details: New password can be inserted
+                                                      severity: success
+                                              - uesio/io.button:
+                                                  uesio.variant: uesio/io.secondary
+                                                  text: Reset Password
+                                                  signals:
+                                                    - signal: user/FORGOT_PASSWORD
+                                                      signupMethod: ${uesio/core.uniquekey}
+                                                      payload:
+                                                        username: $Param{userid}
+                                                      onerror:
+                                                        continue: false
+                                                        notify: true
+                                                        signals:
+                                                          signal: notification/ADD_ERRORS
+                                                    - signal: notification/ADD
+                                                      text: "An email has been sent to the user!"
+                                                      details: Now the password can be changed
+                                                      severity: success
+                                        - uesio/io.group:
+                                            uesio.display:
+                                              - field: authsource
+                                                value: uesio/core.google
+                                            components:
+                                              - uesio/core.logingoogle:
+                                                  onLoginSignals:
+                                                    - signal: "user/CREATE_LOGIN"
+                                                      signupMethod: ${uesio/core.uniquekey}
+                                                      payload:
+                                                        username: $Param{userid}
+                                                        email: ${users:uesio/core.email}
+                                                        credential: $ComponentOutput{[uesio/core.logingoogle][credential]}
+                                                        client_id: $ComponentOutput{[uesio/core.logingoogle][client_id]}
+                                                    - signal: wire/LOAD
+                                                      wires:
+                                                        - loginmethods
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
