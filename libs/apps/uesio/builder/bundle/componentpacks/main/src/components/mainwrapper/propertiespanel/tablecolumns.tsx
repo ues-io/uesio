@@ -1,5 +1,5 @@
-import { component, definition } from "@uesio/ui"
-import { add, get } from "../../../api/defapi"
+import { component, context, definition, wire } from "@uesio/ui"
+import { add, get, remove, set } from "../../../api/defapi"
 import {
 	getComponentDef,
 	setSelectedPath,
@@ -13,6 +13,9 @@ import {
 
 import PropNodeTag from "../../../utilities/propnodetag/propnodetag"
 import ItemTag from "../../../utilities/itemtag/itemtag"
+import { useRef, useState } from "react"
+import FieldPicker from "./wire/fieldpicker"
+import { FullPath } from "../../../api/path"
 
 type ColumnDefinition = {
 	field: string
@@ -88,6 +91,9 @@ const TableColumns: definition.UC = (props) => {
 	const ListPropertyUtility = component.getUtility(
 		"uesio/builder.listproperty"
 	)
+	const Popper = component.getUtility("uesio/io.popper")
+	const anchorEl = useRef<HTMLDivElement>(null)
+	const [showPopper, setShowPopper] = useState(false)
 
 	let selectedPath = useSelectedPath(context)
 	let localPath
@@ -114,6 +120,20 @@ const TableColumns: definition.UC = (props) => {
 	const [, tablePath] = columnsPath.pop()
 	const wireName = get(context, tablePath.addLocal("wire")) as string
 	const fieldComponentDef = getComponentDef("uesio/io.field")
+
+	const onSelect = (ctx: context.Context, path: FullPath) =>
+		set(ctx, tablePath.merge(path), {})
+	const onUnselect = (ctx: context.Context, path: FullPath) =>
+		remove(ctx, tablePath.merge(path))
+	const isSelected = (
+		ctx: context.Context,
+		path: FullPath,
+		fieldId: string
+	) => {
+		const joinedPath = tablePath.merge(path).addLocal(fieldId)
+		const wireField = get(ctx, joinedPath) as wire.WireFieldDefinitionMap
+		return wireField !== undefined
+	}
 
 	const getComponentType = (def: definition.DefinitionMap): string =>
 		Object.keys(def)[0] as string
@@ -180,27 +200,56 @@ const TableColumns: definition.UC = (props) => {
 	const columns = get(context, columnsPath) as definition.DefinitionMap[]
 
 	return (
-		<ListPropertyUtility
-			context={context}
-			path={columnsPath}
-			actions={[
-				{
-					label: "Add Column",
-					action: () => {
-						add(
-							context,
-							columnsPath.addLocal(`${columns?.length || 0}`),
-							{}
-						)
+		<>
+			{showPopper && anchorEl && (
+				<Popper
+					referenceEl={anchorEl.current}
+					context={context}
+					placement="right-start"
+					autoPlacement={["right-start"]}
+					offset={6}
+					useFirstRelativeParent
+					matchHeight
+				>
+					<FieldPicker
+						context={context}
+						baseCollectionKey={"uesio/crm.account"} //wireDef.collection}
+						onClose={() => setShowPopper(false)}
+						onSelect={onSelect}
+						onUnselect={onUnselect}
+						allowMultiselect={true}
+						isSelected={isSelected}
+					/>
+				</Popper>
+			)}
+			<ListPropertyUtility
+				context={context}
+				path={columnsPath}
+				actions={[
+					{
+						label: "Add Column",
+						action: () => {
+							add(
+								context,
+								columnsPath.addLocal(`${columns?.length || 0}`),
+								{}
+							)
+						},
 					},
-				},
-			]}
-			items={columns}
-			itemProperties={getColumnProperties}
-			itemDisplayTemplate={getColumnTitle}
-			itemPropertiesPanelTitle="Column Properties"
-			itemChildren={getItemChildren}
-		/>
+					{
+						label: "Add Columns",
+						action: () => {
+							setShowPopper(true)
+						},
+					},
+				]}
+				items={columns}
+				itemProperties={getColumnProperties}
+				itemDisplayTemplate={getColumnTitle}
+				itemPropertiesPanelTitle="Column Properties"
+				itemChildren={getItemChildren}
+			/>
+		</>
 	)
 }
 
