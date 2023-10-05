@@ -11,18 +11,14 @@ func GetSecretFromKey(key string, session *sess.Session) (string, error) {
 	if key == "" {
 		return "", nil
 	}
-
 	secret, err := meta.NewSecret(key)
 	if err != nil {
 		return "", err
 	}
-	// Enter into a version context to fetch the secret from core namespace
-	versionSession, err := EnterVersionContext("uesio/core", session, nil)
-	err = bundle.Load(secret, versionSession, nil)
-	if err != nil {
+	if err = bundle.Load(secret, session, nil); err != nil {
 		return "", err
 	}
-	return secretstore.GetSecret(secret, versionSession)
+	return secretstore.GetSecret(secret, session)
 
 }
 
@@ -31,11 +27,8 @@ func SetSecretFromKey(key, value string, session *sess.Session) error {
 	if err != nil {
 		return err
 	}
-	// Enter into a version context to fetch the secret from core namespace
-	versionSession, err := EnterVersionContext("uesio/core", session, nil)
-	err = bundle.Load(secret, versionSession, nil)
-	if err != nil {
+	if err = bundle.Load(secret, session, nil); err != nil {
 		return err
 	}
-	return secretstore.SetSecret(secret, value, versionSession)
+	return secretstore.SetSecret(secret, value, session)
 }
