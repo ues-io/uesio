@@ -1,6 +1,6 @@
 name: item
 title: Item
-icon: line
+icon: check_box_outline_blank
 description: Render child components in the context of a specific wire record.
 category: DATA
 pack: main

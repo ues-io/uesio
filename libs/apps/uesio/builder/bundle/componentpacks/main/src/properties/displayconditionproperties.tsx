@@ -261,6 +261,19 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 		],
 	},
 	{
+		name: "sourceValue",
+		type: "TEXT",
+		label: "Source Value",
+		displayConditions: [
+			{
+				field: "type",
+				operator: "IN",
+				values: ["mergeValue"],
+				type: "fieldValue",
+			},
+		],
+	},
+	{
 		name: "operator",
 		type: "SELECT",
 		label: "Operator",
@@ -340,19 +353,6 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 				field: "type",
 				operator: "IN",
 				values: ["paramValue", "paramIsSet"],
-				type: "fieldValue",
-			},
-		],
-	},
-	{
-		name: "sourceValue",
-		type: "TEXT",
-		label: "Source Value",
-		displayConditions: [
-			{
-				field: "type",
-				operator: "IN",
-				values: ["mergeValue"],
 				type: "fieldValue",
 			},
 		],
