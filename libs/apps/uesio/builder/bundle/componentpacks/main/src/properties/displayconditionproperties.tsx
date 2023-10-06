@@ -38,7 +38,7 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 	{
 		name: "type",
 		type: "SELECT",
-		label: "Value Source",
+		label: "Condition Type",
 		options: [
 			{
 				label: "Select an option",
@@ -57,23 +57,23 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 				value: "paramValue",
 			},
 			{
-				label: "Result of merge is empty",
-				value: "hasNoValue",
-			},
-			{
-				label: "Result of merge is not empty",
-				value: "hasValue",
-			},
-			{
-				label: "Result of merge equals value",
+				label: "Merge value comparison",
 				value: "mergeValue",
 			},
 			{
-				label: "Collection Context",
+				label: "Merge value is empty",
+				value: "hasNoValue",
+			},
+			{
+				label: "Merge value is not empty",
+				value: "hasValue",
+			},
+			{
+				label: "Collection context",
 				value: "collectionContext",
 			},
 			{
-				label: "Feature Flag",
+				label: "Feature Flag value",
 				value: "featureFlag",
 			},
 			{
