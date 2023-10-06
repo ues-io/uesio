@@ -3,7 +3,7 @@
 import { getViewID } from "cypress/support/views"
 import { getWorkspaceRoutePreviewPath } from "../support/paths"
 
-describe("EQ Condition", () => {
+describe("View Only Wires", () => {
 	// Use the tests app and dev workspace, which will exist if Integration Tests have been run
 	const appName = "tests"
 	const workspaceName = "dev"
@@ -15,7 +15,7 @@ describe("EQ Condition", () => {
 
 	const viewName = "view_only_wire"
 
-	context("Tests the View Only Wire", () => {
+	context("Route Navigation", () => {
 		it("The wire record should not disappear", () => {
 			cy.visitRoute(
 				getWorkspaceRoutePreviewPath(
