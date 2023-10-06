@@ -22,6 +22,7 @@ type Integration struct {
 	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
 	Type           string `yaml:"type" json:"uesio/studio.type"`
+	Authentication string `yaml:"authentication,omitempty" json:"uesio/studio.authentication"`
 	Credentials    string `yaml:"credentials,omitempty" json:"uesio/studio.credentials"`
 	BaseURL        string `yaml:"baseUrl,omitempty" json:"uesio/studio.baseurl"`
 	LoadBot        string `yaml:"loadBot,omitempty" json:"uesio/studio.loadbot"`

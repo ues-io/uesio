@@ -1,0 +1,4 @@
+name: authentication
+type: SELECT
+selectList: uesio/core.integrationauthtypes
+label: Authentication
