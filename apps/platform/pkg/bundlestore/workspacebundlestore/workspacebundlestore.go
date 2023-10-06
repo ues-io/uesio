@@ -105,9 +105,7 @@ type WorkspaceBundleStoreConnection struct {
 
 func (b *WorkspaceBundleStoreConnection) GetItem(item meta.BundleableItem) error {
 
-	item.SetNamespace(b.Namespace)
-
-	return datasource.PlatformLoadOne(item, &datasource.PlatformLoadOptions{
+	err := datasource.PlatformLoadOne(item, &datasource.PlatformLoadOptions{
 		Conditions: []adapt.LoadRequestCondition{
 			{
 				Field: adapt.UNIQUE_KEY_FIELD,
@@ -117,6 +115,14 @@ func (b *WorkspaceBundleStoreConnection) GetItem(item meta.BundleableItem) error
 		Params:     getParamsFromWorkspace(b.Workspace),
 		Connection: b.Connection,
 	}, sess.GetStudioAnonSession())
+
+	if err != nil {
+		return err
+	}
+
+	item.SetNamespace(b.Namespace)
+
+	return nil
 }
 
 func (b *WorkspaceBundleStoreConnection) HasAny(group meta.BundleableGroup, conditions meta.BundleConditions) (bool, error) {

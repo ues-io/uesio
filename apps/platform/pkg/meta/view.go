@@ -1,16 +1,48 @@
 package meta
 
 import (
+	"encoding/json"
 	"errors"
 
 	"github.com/francoispqt/gojay"
 	"gopkg.in/yaml.v3"
 )
 
+type YAMLDef yaml.Node
+
+func (yd *YAMLDef) UnmarshalJSON(data []byte) error {
+	var yamlString string
+	err := json.Unmarshal(data, &yamlString)
+	if err != nil {
+		return err
+	}
+	return yaml.Unmarshal([]byte(yamlString), (*yaml.Node)(yd))
+}
+
+func (yd *YAMLDef) MarshalJSON() ([]byte, error) {
+	out, err := yaml.Marshal((*yaml.Node)(yd))
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(string(out))
+}
+
+func (yd *YAMLDef) UnmarshalYAML(node *yaml.Node) error {
+	return node.Decode((*yaml.Node)(yd))
+}
+
+func (yd *YAMLDef) MarshalYAML() (interface{}, error) {
+	return (*yaml.Node)(yd).Content[0], nil
+}
+
+func (yd *YAMLDef) Decode(v interface{}) error {
+	return (*yaml.Node)(yd).Decode(v)
+}
+
 type View struct {
 	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
-	Definition     yaml.Node `yaml:"definition" json:"uesio/studio.definition"`
+	Definition     *YAMLDef `yaml:"definition" json:"uesio/studio.definition"`
 }
 
 type ViewWrapper View
@@ -20,7 +52,7 @@ func (v *View) GetBytes() ([]byte, error) {
 }
 
 func (v *View) MarshalJSONObject(enc *gojay.Encoder) {
-	enc.AddObjectKey("definition", (*YAMLDefinition)(&v.Definition))
+	enc.AddObjectKey("definition", (*YAMLDefinition)(v.Definition))
 	enc.AddStringKey("namespace", v.Namespace)
 	enc.AddStringKey("name", v.Name)
 }

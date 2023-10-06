@@ -36,7 +36,7 @@ func (ff *FeatureFlag) MarshalJSONObject(enc *gojay.Encoder) {
 	if ff.Type == "NUMBER" {
 		useIntValue := int64(0)
 		intDefaultValue, hasDefault := ff.DefaultValue.(int)
-		if intValue, hasValue := ff.Value.(int); hasValue {
+		if intValue, hasValue := ff.Value.(float64); hasValue {
 			useIntValue = int64(intValue)
 		} else if hasDefault {
 			useIntValue = int64(intDefaultValue)

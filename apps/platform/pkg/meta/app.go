@@ -30,3 +30,8 @@ func (a *App) Loop(iter func(string, interface{}) error) error {
 func (a *App) Len() int {
 	return StandardItemLen(a)
 }
+
+func (a *App) UnmarshalJSON(data []byte) error {
+	type alias App
+	return refScanner((*alias)(a), data)
+}

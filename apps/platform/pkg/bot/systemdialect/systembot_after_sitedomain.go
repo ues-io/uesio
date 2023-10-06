@@ -169,6 +169,9 @@ func enforceMaxDomainsLimit(request *adapt.SaveOp, connection adapt.Connection, 
 		}
 		return nil
 	})
+	if err != nil {
+		return err
+	}
 	// Now compare the limits to the existing domains and the delta
 	for userId := range uniqueUserIds {
 		// Lookup the limit

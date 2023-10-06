@@ -1,5 +1,7 @@
 package meta
 
+import "encoding/json"
+
 type Site struct {
 	BuiltIn   `yaml:",inline"`
 	Name      string     `json:"uesio/studio.name"`
@@ -49,4 +51,16 @@ func (s *Site) Loop(iter func(string, interface{}) error) error {
 
 func (s *Site) Len() int {
 	return StandardItemLen(s)
+}
+
+func (s *Site) UnmarshalJSON(data []byte) error {
+	type alias Site
+	return refScanner((*alias)(s), data)
+}
+
+func refScanner(obj interface{}, data []byte) error {
+	if data[0] == '"' {
+		return json.Unmarshal(append([]byte("{\"uesio/core.id\":"), append(data, []byte("}")...)...), obj)
+	}
+	return json.Unmarshal(data, obj)
 }

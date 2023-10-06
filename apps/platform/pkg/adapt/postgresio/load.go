@@ -9,15 +9,14 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 var DEBUG_SQL = os.Getenv("UESIO_DEBUG_SQL") == "true"
 
 func getFieldNameWithAlias(fieldMetadata *adapt.FieldMetadata) string {
-	fieldName := getFieldName(fieldMetadata, "main")
-	return fieldName + " AS \"" + fieldMetadata.GetFullName() + "\""
+	fieldName := getJSONBFieldName(fieldMetadata, "main")
+	return fmt.Sprintf("'%s',%s", fieldMetadata.GetFullName(), fieldName)
 }
 
 func castFieldToText(fieldAlias string) string {
@@ -26,6 +25,32 @@ func castFieldToText(fieldAlias string) string {
 
 func getIDFieldName(tableAlias string) string {
 	return castFieldToText(getAliasedName("id", tableAlias))
+}
+
+func getJSONBFieldName(fieldMetadata *adapt.FieldMetadata, tableAlias string) string {
+	fieldName := fieldMetadata.GetFullName()
+
+	switch fieldName {
+	case adapt.ID_FIELD:
+		return getAliasedName("id", tableAlias)
+	case adapt.UNIQUE_KEY_FIELD:
+		return getAliasedName("uniquekey", tableAlias)
+	case adapt.OWNER_FIELD:
+		return getAliasedName("owner", tableAlias)
+	case adapt.CREATED_BY_FIELD:
+		return getAliasedName("createdby", tableAlias)
+	case adapt.CREATED_AT_FIELD:
+		return fmt.Sprintf("date_part('epoch',%s)", getAliasedName("createdat", tableAlias))
+	case adapt.UPDATED_BY_FIELD:
+		return getAliasedName("updatedby", tableAlias)
+	case adapt.UPDATED_AT_FIELD:
+		return fmt.Sprintf("date_part('epoch',%s)", getAliasedName("updatedat", tableAlias))
+	case adapt.DYNAMIC_COLLECTION_FIELD:
+		return getAliasedName("collection", tableAlias)
+	}
+
+	return fmt.Sprintf("%s->'%s'", getAliasedName("fields", tableAlias), fieldName)
+
 }
 
 func getFieldName(fieldMetadata *adapt.FieldMetadata, tableAlias string) string {
@@ -149,7 +174,9 @@ func (c *Connection) Load(op *adapt.LoadOp, session *sess.Session) error {
 	}
 
 	loadQuery := "SELECT\n" +
+		"jsonb_build_object(\n" +
 		strings.Join(fieldIDs, ",\n") +
+		"\n)" +
 		"\nFROM data as \"main\"\n" +
 		strings.Join(joins, "") +
 		"WHERE\n" +
@@ -197,10 +224,6 @@ func (c *Connection) Load(op *adapt.LoadOp, session *sess.Session) error {
 	}
 	defer rows.Close()
 
-	var item meta.Item
-
-	scanners := getScanners(&item, rows, fieldMap, &referencedCollections)
-
 	op.HasMoreBatches = false
 	formulaPopulations := adapt.GetFormulaFunction(formulaFields, collectionMetadata)
 	index := 0
@@ -210,11 +233,28 @@ func (c *Connection) Load(op *adapt.LoadOp, session *sess.Session) error {
 			break
 		}
 
-		item = op.Collection.NewItem()
+		item := op.Collection.NewItem()
 
-		err := rows.Scan(scanners...)
+		err := rows.Scan(item)
 		if err != nil {
 			return err
+		}
+
+		for _, refCol := range referencedCollections {
+			for _, fieldMetadata := range refCol.RefFields {
+				refObj, err := item.GetField(fieldMetadata.GetFullName())
+				if err != nil {
+					return err
+				}
+				refKey, err := adapt.GetReferenceKey(refObj)
+				if err != nil {
+					return err
+				}
+				refCol.AddID(refKey, adapt.ReferenceLocator{
+					Item:  item,
+					Field: fieldMetadata,
+				})
+			}
 		}
 
 		err = formulaPopulations(item)

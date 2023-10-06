@@ -10,12 +10,11 @@ type WorkspaceLoadCollection struct {
 }
 
 func (c *WorkspaceLoadCollection) NewItem() meta.Item {
-	item := c.Collection.NewItem().(meta.BundleableItem)
-	item.SetNamespace(c.Namespace)
-	return item
+	return c.Collection.NewItem()
 }
 
 func (c *WorkspaceLoadCollection) AddItem(item meta.Item) error {
+	item.(meta.BundleableItem).SetNamespace(c.Namespace)
 	return c.Collection.AddItem(item)
 }
 

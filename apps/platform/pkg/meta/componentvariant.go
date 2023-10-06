@@ -32,11 +32,11 @@ func NewBaseComponentVariant(component, namespace, name string) *ComponentVarian
 type ComponentVariant struct {
 	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
-	Component      string    `yaml:"-" json:"uesio/studio.component"`
-	Extends        string    `yaml:"extends,omitempty" json:"uesio/studio.extends"`
-	Label          string    `yaml:"label" json:"uesio/studio.label"`
-	Definition     yaml.Node `yaml:"definition" json:"uesio/studio.definition"`
-	Variants       []string  `yaml:"variants,omitempty" json:"uesio/studio.variants"`
+	Component      string   `yaml:"-" json:"uesio/studio.component"`
+	Extends        string   `yaml:"extends,omitempty" json:"uesio/studio.extends"`
+	Label          string   `yaml:"label" json:"uesio/studio.label"`
+	Definition     *YAMLDef `yaml:"definition" json:"uesio/studio.definition"`
+	Variants       []string `yaml:"variants,omitempty" json:"uesio/studio.variants"`
 }
 
 type ComponentVariantWrapper ComponentVariant
@@ -46,7 +46,7 @@ func (c *ComponentVariant) GetBytes() ([]byte, error) {
 }
 
 func (c *ComponentVariant) MarshalJSONObject(enc *gojay.Encoder) {
-	enc.AddObjectKey("definition", (*YAMLDefinition)(&c.Definition))
+	enc.AddObjectKey("definition", (*YAMLDefinition)(c.Definition))
 	enc.AddStringKey("extends", c.Extends)
 	enc.AddStringKey("component", c.Component)
 	enc.AddStringKey("namespace", c.Namespace)

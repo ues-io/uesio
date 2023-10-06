@@ -681,7 +681,7 @@ func (vdm *ViewDepMap) AddComponent(key string, session *sess.Session) (*meta.Co
 	vdm.Components[key] = component
 	// If this is a declarative component, we need to process dependencies of the component's definition
 	if component.Type == meta.DeclarativeComponent {
-		if err = getComponentAreaDeps(&component.Definition, vdm, session); err != nil {
+		if err = getComponentAreaDeps((*yaml.Node)(component.Definition), vdm, session); err != nil {
 			return nil, err
 		}
 	}
@@ -699,16 +699,18 @@ func NewViewDefMap() *ViewDepMap {
 
 func GetViewDependencies(v *meta.View, session *sess.Session) (*ViewDepMap, error) {
 
-	components, err := meta.GetMapNode(&v.Definition, "components")
+	components, err := meta.GetMapNode((*yaml.Node)(v.Definition), "components")
 	if err != nil {
+		fmt.Println("Here")
+		fmt.Println(err)
 		return nil, err
 	}
-	panels, err := meta.GetMapNode(&v.Definition, "panels")
+	panels, err := meta.GetMapNode((*yaml.Node)(v.Definition), "panels")
 	if err != nil {
 		panels = nil
 	}
 
-	wires, err := meta.GetMapNode(&v.Definition, "wires")
+	wires, err := meta.GetMapNode((*yaml.Node)(v.Definition), "wires")
 	if err != nil {
 		wires = nil
 	}

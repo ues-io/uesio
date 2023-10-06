@@ -42,3 +42,8 @@ func (w *Workspace) Loop(iter func(string, interface{}) error) error {
 func (w *Workspace) Len() int {
 	return StandardItemLen(w)
 }
+
+func (w *Workspace) UnmarshalJSON(data []byte) error {
+	type alias Workspace
+	return refScanner((*alias)(w), data)
+}

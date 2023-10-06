@@ -57,6 +57,9 @@ type NodePair struct {
 }
 
 func GetMapNodes(node *yaml.Node) ([]NodePair, error) {
+	if node.Kind == yaml.DocumentNode {
+		node = node.Content[0]
+	}
 	if node.Kind != yaml.MappingNode {
 		return nil, fmt.Errorf("Definition is not a mapping node.")
 	}
@@ -84,6 +87,9 @@ func GetMapNode(node *yaml.Node, key string) (*yaml.Node, error) {
 }
 
 func GetMapNodeWithIndex(node *yaml.Node, key string) (*yaml.Node, int, error) {
+	if node.Kind == yaml.DocumentNode {
+		node = node.Content[0]
+	}
 	if node.Kind != yaml.MappingNode {
 		return nil, 0, fmt.Errorf("Definition is not a mapping node.")
 	}
@@ -101,6 +107,9 @@ func GetMapNodeWithIndex(node *yaml.Node, key string) (*yaml.Node, int, error) {
 type YAMLDefinition yaml.Node
 
 func (yd *YAMLDefinition) MarshalJSONArray(enc *gojay.Encoder) {
+	if yd.Kind == yaml.DocumentNode {
+		yd = (*YAMLDefinition)(yd.Content[0])
+	}
 	for i := range yd.Content {
 		item := YAMLDefinition(*yd.Content[i])
 		if item.Kind == yaml.ScalarNode {
@@ -126,7 +135,9 @@ func (yd *YAMLDefinition) MarshalJSONArray(enc *gojay.Encoder) {
 }
 
 func (yd *YAMLDefinition) MarshalJSONObject(enc *gojay.Encoder) {
-
+	if yd.Kind == yaml.DocumentNode {
+		yd = (*YAMLDefinition)(yd.Content[0])
+	}
 	if yd.Kind == yaml.ScalarNode {
 		enc.AddString(yd.Value)
 	}
