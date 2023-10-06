@@ -1,6 +1,5 @@
 import { definition, component, styles, hooks, api } from "@uesio/ui"
 import DeviceSizer from "./devicesizer"
-import { useBuildMode } from "../../api/stateapi"
 
 const StyleDefaults = Object.freeze({
 	root: ["w-9", "grid", "gap-4", "auto-rows-min"],
@@ -13,7 +12,6 @@ const RightToolbar: definition.UtilityComponent = (props) => {
 	const Icon = component.getUtility("uesio/io.icon")
 
 	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
-	const [buildMode] = useBuildMode(context)
 
 	const toggleCode = api.signal.getHandler(
 		[
@@ -77,7 +75,6 @@ const RightToolbar: definition.UtilityComponent = (props) => {
 					onClick={toggleIndex}
 					tooltip="Toggle Index Panel ⌘I"
 					tooltipPlacement="left"
-					disabled={!buildMode}
 				/>
 				<Button
 					context={context}
@@ -87,14 +84,11 @@ const RightToolbar: definition.UtilityComponent = (props) => {
 					onClick={toggleCode}
 					tooltip="Toggle Code Panel ⌘Y"
 					tooltipPlacement="left"
-					disabled={!buildMode}
 				/>
 			</div>
-
 			<div className={classes.panel}>
 				<DeviceSizer context={context} />
 			</div>
-
 			<div className={classes.panel}>
 				<Button
 					context={context}
@@ -104,7 +98,6 @@ const RightToolbar: definition.UtilityComponent = (props) => {
 					onClick={toggleSlotTags}
 					tooltip="Expand Slots ⌘E"
 					tooltipPlacement="left"
-					disabled={!buildMode}
 				/>
 			</div>
 		</div>

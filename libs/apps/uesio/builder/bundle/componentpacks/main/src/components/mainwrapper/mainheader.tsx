@@ -57,13 +57,13 @@ const MainHeader: definition.UtilityComponent = (props) => {
 			<Group context={context} className="gap-3">
 				<Button
 					context={context}
-					label={buildMode ? "Preview" : "Edit"}
+					label={"meta + u"}
 					icon={
 						<Icon
 							context={context}
 							weight={300}
 							fill={false}
-							icon={buildMode ? "visibility" : "edit_square"}
+							icon={"visibility"}
 						/>
 					}
 					variant="uesio/builder.panelactionbutton"
@@ -72,7 +72,9 @@ const MainHeader: definition.UtilityComponent = (props) => {
 							setBuildMode(!buildMode)
 						})
 					}}
-					tooltip={"meta + p"}
+					tooltip={
+						"use meta + u to switch between preview and edit mode"
+					}
 					tooltipPlacement="left"
 				/>
 				<SaveCancelArea id={id} context={context} />
