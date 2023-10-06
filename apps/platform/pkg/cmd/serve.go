@@ -332,7 +332,7 @@ func serve(cmd *cobra.Command, args []string) {
 	sa.HandleFunc("/auth/"+itemParam+"/forgotpassword", controller.ForgotPassword).Methods("POST")
 	sr.HandleFunc("/auth/"+itemParam+"/forgotpassword", controller.ForgotPassword).Methods("POST")
 	sr.HandleFunc("/auth/"+itemParam+"/forgotpassword/confirm", controller.ConfirmForgotPassword).Methods("POST")
-	lr.HandleFunc(fmt.Sprintf("/auth/%s/signup/v2/confirm", itemParam), controller.ConfirmSignUpV2).Methods("GET")
+	sr.HandleFunc("/auth/"+itemParam+"/signup/confirm", controller.ConfirmSignUp).Methods("GET")
 
 	sr.HandleFunc("/auth/logout", controller.Logout).Methods("POST")
 	sr.HandleFunc("/auth/check", controller.AuthCheck).Methods("GET")

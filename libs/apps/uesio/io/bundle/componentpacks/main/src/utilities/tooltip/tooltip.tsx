@@ -64,7 +64,6 @@ const Tooltip: definition.UtilityComponent<TooltipUtilityProps> = (props) => {
 					children,
 					getReferenceProps({
 						ref: refs.setReference,
-						...props,
 						...children.props,
 					})
 				)}

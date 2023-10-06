@@ -9,10 +9,10 @@ import (
 )
 
 func GetCredentials(key string, session *sess.Session) (*adapt.Credentials, error) {
-	credmap := adapt.Credentials{}
+	credentialsMap := adapt.Credentials{}
 
 	if key == "" {
-		return &credmap, nil
+		return &credentialsMap, nil
 	}
 
 	mergedKey, err := configstore.Merge(key, session)
@@ -30,7 +30,7 @@ func GetCredentials(key string, session *sess.Session) (*adapt.Credentials, erro
 		return nil, err
 	}
 
-	for key, entry := range credential.Entries {
+	for entryName, entry := range credential.Entries {
 		var value string
 		if entry.Type == "secret" {
 			value, err = GetSecretFromKey(entry.Value, session)
@@ -48,8 +48,8 @@ func GetCredentials(key string, session *sess.Session) (*adapt.Credentials, erro
 				return nil, err
 			}
 		}
-		credmap[key] = value
+		credentialsMap[entryName] = value
 	}
 
-	return &credmap, nil
+	return &credentialsMap, nil
 }

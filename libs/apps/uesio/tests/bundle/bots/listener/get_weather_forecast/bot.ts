@@ -1,7 +1,6 @@
 import { ListenerBotApi } from "@uesio/bots"
 
-// @ts-ignore
-function get_weather_forecast(bot: ListenerBotApi) {
+export default function get_weather_forecast(bot: ListenerBotApi) {
 	const now = new Date()
 
 	type WeatherInfo = {

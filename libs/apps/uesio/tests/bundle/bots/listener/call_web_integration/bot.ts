@@ -6,8 +6,7 @@ type CallBotResponse = {
 	success: boolean
 }
 
-// @ts-ignore
-function call_web_integration(bot: ListenerBotApi) {
+export default function call_web_integration(bot: ListenerBotApi) {
 	const a = (bot.params.get("a") as number) || 0
 	const b = (bot.params.get("b") as number) || 0
 	bot.log.info("inputs: a=" + a + ", b=" + b)

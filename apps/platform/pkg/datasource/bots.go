@@ -34,7 +34,7 @@ func RunRouteBots(route *meta.Route, session *sess.Session) (*meta.Route, error)
 	if err != nil {
 		return nil, err
 	}
-	err = dialect.RouteBot(meta.NewRouteBot(route.Namespace, route.Name), route, session)
+	modifiedRoute, err := dialect.RouteBot(meta.NewRouteBot(route.Namespace, route.Name), route, session)
 	if err != nil {
 		_, isNotFoundError := err.(*SystemBotNotFoundError)
 		if isNotFoundError {
@@ -43,7 +43,7 @@ func RunRouteBots(route *meta.Route, session *sess.Session) (*meta.Route, error)
 		return nil, err
 	}
 
-	return route, nil
+	return modifiedRoute, nil
 }
 
 func runBeforeSaveBots(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {

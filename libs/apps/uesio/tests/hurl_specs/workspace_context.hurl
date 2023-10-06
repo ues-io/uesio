@@ -18,9 +18,12 @@ GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/configvalues
 Accept: application/json
 HTTP 200
 [Asserts]
-jsonpath "$" count == 2
+jsonpath "$" count == 5
 jsonpath "$[*].name" includes "google_auth_client_id"
 jsonpath "$[*].name" includes "studio_apis_url"
+jsonpath "$[*].name" includes "test_oauth_token_url"
+jsonpath "$[*].name" includes "test_oauth_authorize_url"
+jsonpath "$[*].name" includes "test_oauth_scopes"
 
 # Logout
 POST https://{{host}}:{{port}}/site/auth/logout
@@ -46,9 +49,12 @@ GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/configvalues
 Accept: application/json
 HTTP 200
 [Asserts]
-jsonpath "$" count == 2
+jsonpath "$" count == 5
 jsonpath "$[*].name" includes "google_auth_client_id"
 jsonpath "$[*].name" includes "studio_apis_url"
+jsonpath "$[*].name" includes "test_oauth_authorize_url"
+jsonpath "$[*].name" includes "test_oauth_token_url"
+jsonpath "$[*].name" includes "test_oauth_scopes"
 
 # Logout
 POST https://{{host}}:{{port}}/site/auth/logout
