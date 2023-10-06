@@ -277,7 +277,7 @@ function should(condition: DisplayCondition, context: Context): boolean {
 
 	const compareToValue =
 		typeof condition.value === "string"
-			? context.mergeString(condition.value as string)
+			? context.merge(condition.value as string)
 			: condition.value ?? (canHaveMultipleValues ? condition.values : "")
 
 	if (condition.type === "hasNoValue") return !compareToValue
@@ -291,7 +291,7 @@ function should(condition: DisplayCondition, context: Context): boolean {
 	if (condition.type === "mergeValue")
 		return compare(
 			compareToValue,
-			context.mergeString(condition.source),
+			context.merge(condition.sourceValue),
 			condition.operator
 		)
 
