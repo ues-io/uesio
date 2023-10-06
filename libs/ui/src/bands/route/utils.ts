@@ -18,7 +18,6 @@ import { dispatch } from "../../store/store"
 import { transformServerWire } from "../wire/transform"
 import { getKey } from "../../metadata/metadata"
 import { Bundleable } from "../../metadata/types"
-import { ActionCreatorWithPayload } from "@reduxjs/toolkit"
 
 const attachDefToWires = (wires?: ServerWire[], viewdefs?: ViewMetadata[]) => {
 	if (!wires || !viewdefs) return wires
@@ -35,27 +34,20 @@ const attachDefToWires = (wires?: ServerWire[], viewdefs?: ViewMetadata[]) => {
 	})
 }
 
-const routeDepSetters = {
-	collection: initCollection,
-	component: setComponent,
-	componenttype: setComponentTypes,
-	componentvariant: setComponentVariant,
-	configvalue: setConfigValue,
-	featureflag: setFeatureFlag,
-	label: setLabel,
-	theme: setTheme,
-	viewdef: setViewDef,
-} as Record<keyof Dependencies, ActionCreatorWithPayload<unknown>>
-
 const dispatchRouteDeps = (deps: Dependencies | undefined) => {
 	if (!deps) return
 	const { viewdef, wire } = deps
-	Object.entries(routeDepSetters).forEach(([prop, setter]) => {
-		const depState = deps[prop as keyof Dependencies]
-		if (depState) {
-			dispatch(setter(depState))
-		}
-	})
+	if (deps.collection) dispatch(initCollection(deps.collection))
+	if (deps.component) dispatch(setComponent(deps.component))
+	if (deps.componenttype) dispatch(setComponentTypes(deps.componenttype))
+	if (deps.componentvariant)
+		dispatch(setComponentVariant(deps.componentvariant))
+	if (deps.configvalue) dispatch(setConfigValue(deps.configvalue))
+	if (deps.featureflag) dispatch(setFeatureFlag(deps.featureflag))
+	if (deps.label) dispatch(setLabel(deps.label))
+	if (deps.theme) dispatch(setTheme(deps.theme))
+	if (deps.viewdef) dispatch(setViewDef(deps.viewdef))
+
 	// Special case - need both wire and viewdef to init wire state
 	if (wire && viewdef) {
 		dispatch(initWire(attachDefToWires(wire, viewdef) || []))

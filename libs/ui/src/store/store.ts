@@ -20,17 +20,6 @@ import notification from "../bands/notification"
 import { RouteState } from "../bands/route/types"
 import { UserState } from "../bands/user/types"
 import { SessionState } from "../bands/session/types"
-import { ViewMetadata } from "../definition/ViewMetadata"
-import { ThemeState } from "../definition/theme"
-import { ComponentVariant } from "../definition/componentvariant"
-import { Component } from "../definition/component"
-import { LabelState } from "../definition/label"
-import { ConfigValueState } from "../definition/configvalue"
-import { FeatureFlagState } from "../definition/featureflag"
-import { ServerWire } from "../bands/wire/types"
-import { PlainCollection } from "../bands/collection/types"
-import { FileState } from "../definition/file"
-import { ComponentState } from "../bands/component/types"
 import { newContext } from "../context/context"
 import { handleNavigateResponse } from "../bands/route/operations"
 
@@ -39,17 +28,6 @@ type InitialState = {
 	user?: UserState
 	session?: SessionState
 	site?: SiteState
-	theme?: ThemeState[]
-	viewdef?: ViewMetadata[]
-	componentvariant?: ComponentVariant[]
-	componenttype?: Component[]
-	label?: LabelState[]
-	configvalue?: ConfigValueState[]
-	featureflag?: FeatureFlagState[]
-	wire?: ServerWire[]
-	collection?: PlainCollection[]
-	file?: FileState[]
-	component?: ComponentState[]
 }
 
 let store: ReturnType<typeof create>
