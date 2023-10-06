@@ -11,3 +11,7 @@ subfields:
   - name: uesio/studio.redirect
     label: Redirect
     type: TEXT
+  - name: uesio/studio.emailcontenttype
+    label: Email Content Type
+    type: SELECT
+    selectList: uesio/studio.emailcontenttype

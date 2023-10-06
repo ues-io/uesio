@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/teris-io/shortid"
+	"golang.org/x/exp/slices"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -104,9 +105,16 @@ func runCoreMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessi
 
 }
 
+const (
+	itemField          = "uesio/studio.item"
+	groupingField      = "uesio/studio.grouping"
+	allMetadataField   = "uesio/studio.allmetadata"
+	isCommonFieldField = "uesio/studio.iscommonfield"
+)
+
 func runStudioMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
 
-	allMetadataCondition := extractConditionByField(op.Conditions, "uesio/studio.allmetadata")
+	allMetadataCondition := extractConditionByField(op.Conditions, allMetadataField)
 
 	if allMetadataCondition != nil && allMetadataCondition.Value == true {
 		inContextSession, err := getContextSessionFromParams(op.Params, connection, session)
@@ -121,8 +129,8 @@ func runStudioMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 		return err
 	}
 
-	itemCondition := extractConditionByField(op.Conditions, "uesio/studio.item")
-	groupingCondition := extractConditionByField(op.Conditions, "uesio/studio.grouping")
+	itemCondition := extractConditionByField(op.Conditions, itemField)
+	groupingCondition := extractConditionByField(op.Conditions, groupingField)
 	if itemCondition != nil || groupingCondition != nil {
 		return errors.New("item or grouping conditions are not allowed unless the allmetadata condition is set")
 	}
@@ -138,10 +146,10 @@ func runStudioMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 
 func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
 
-	itemCondition := extractConditionByField(op.Conditions, "uesio/studio.item")
-	groupingCondition := extractConditionByField(op.Conditions, "uesio/studio.grouping")
+	itemCondition := extractConditionByField(op.Conditions, itemField)
+	groupingCondition := extractConditionByField(op.Conditions, groupingField)
 	searchCondition := extractConditionByType(op.Conditions, "SEARCH")
-	isCommonFieldCondition := extractConditionByField(op.Conditions, "uesio/studio.iscommonfield")
+	isCommonFieldCondition := extractConditionByField(op.Conditions, isCommonFieldField)
 
 	metadataType := meta.GetTypeFromCollectionName(op.CollectionName)
 
@@ -205,16 +213,28 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 			return err
 		}
 	} else {
-		var conditions meta.BundleConditions
-		if groupingCondition != nil {
-			grouping := getConditionValue(groupingCondition)
-			// If we have no value, we can't perform the query
-			if grouping == "" {
-				return nil
+		conditions := meta.BundleConditions{}
+		for _, condition := range op.Conditions {
+			// Ignore the allmetadata condition
+			if condition.Field == allMetadataField {
+				continue
 			}
-			conditions, err = meta.GetGroupingConditions(metadataType, grouping)
-			if err != nil {
-				return err
+			// Special handling for the grouping condition
+			if condition.Field == groupingField {
+				grouping := getConditionValue(groupingCondition)
+				// If we have no value, we can't perform the query
+				if grouping == "" {
+					return nil
+				}
+				groupingConditions, err := meta.GetGroupingConditions(metadataType, grouping)
+				if err != nil {
+					return err
+				}
+				for k, v := range groupingConditions {
+					conditions[k] = v
+				}
+			} else {
+				conditions[condition.Field] = getConditionValue(&condition)
 			}
 		}
 
@@ -245,7 +265,9 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		return err
 	}
 
-	return group.Loop(func(item meta.Item, index string) error {
+	var itemsSlice []meta.Item
+
+	err = group.Loop(func(item meta.Item, index string) error {
 
 		groupableItem := item.(meta.BundleableItem)
 		namespace := groupableItem.GetNamespace()
@@ -261,7 +283,7 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		}
 
 		opItem := op.Collection.NewItem()
-		op.Collection.AddItem(opItem)
+		itemsSlice = append(itemsSlice, opItem)
 
 		appInfo, ok := appData[namespace]
 		if !ok {
@@ -271,6 +293,9 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		opItem.SetField("uesio/studio.namespace", namespace)
 		opItem.SetField("uesio/studio.appicon", appInfo.Icon)
 		opItem.SetField("uesio/studio.appcolor", appInfo.Color)
+		// TODO: Only iterate over the Load request fields, if provided.
+		// This will likely break a lot of Studio Views
+		// but we need to stop sending so much unused stuff to the client.
 		for _, fieldName := range group.GetFields() {
 			value, err := item.GetField(fieldName)
 			if err != nil {
@@ -293,7 +318,19 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		opItem.SetField(adapt.UNIQUE_KEY_FIELD, key)
 		return nil
 	})
+	if err != nil {
+		return err
+	}
 
+	// Sort the items
+	sortItems(itemsSlice, op.Order)
+
+	// Now that the items are ordered, add them to the collection in order
+	for _, item := range itemsSlice {
+		op.Collection.AddItem(item)
+	}
+
+	return nil
 }
 
 func getStringValue(val interface{}) string {
@@ -314,4 +351,80 @@ func getConditionValue(condition *adapt.LoadRequestCondition) string {
 		}
 	}
 	return conditionValue
+}
+
+func sortItems(items []meta.Item, orderings []adapt.LoadRequestOrder) {
+	// Order the collection results, by unique key ASC by default
+	orderSpec := orderings
+	if len(orderSpec) < 1 {
+		orderSpec = []adapt.LoadRequestOrder{
+			{
+				Field: adapt.ID_FIELD,
+				Desc:  false,
+			},
+		}
+	}
+	slices.SortStableFunc(items, func(a, b meta.Item) bool {
+		for _, order := range orderSpec {
+			result := compareItemsByField(a, b, order.Field)
+			// If we couldn't compare the items / they were equal,
+			// then move on to the next field
+			if result == 0 {
+				continue
+			} else if result < 1 {
+				return !order.Desc
+			} else {
+				return order.Desc
+			}
+		}
+		return false
+	})
+}
+
+// Returns false only if item a is less than b by comparing on the provided field
+func compareItemsByField(a, b meta.Item, field string) int {
+	aVal, err := a.GetField(field)
+	if err != nil {
+		return 0
+	}
+	bVal, err := b.GetField(field)
+	if err != nil {
+		return 0
+	}
+	// Assumption: values will be the same type
+	// Return false if a's value is less than b's value
+	switch typedAVal := aVal.(type) {
+	case string:
+		typedBVal := bVal.(string)
+		return strings.Compare(typedAVal, typedBVal)
+	case int64:
+		typedBVal := bVal.(int64)
+		if typedAVal < typedBVal {
+			return -1
+		} else if typedAVal == typedBVal {
+			return 0
+		} else {
+			return 1
+		}
+	case float64:
+		typedBVal := bVal.(float64)
+		if typedAVal < typedBVal {
+			return -1
+		} else if typedAVal == typedBVal {
+			return 0
+		} else {
+			return 1
+		}
+	case bool:
+		// need to have some ordering so treat false as less than true
+		typedBVal := bVal.(bool)
+		if typedAVal == false && typedBVal == true {
+			return -1
+		} else if typedAVal == typedBVal {
+			return 0
+		} else {
+			return 1
+		}
+	}
+	return 0
 }

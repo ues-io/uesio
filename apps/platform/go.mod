@@ -8,9 +8,9 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.21.0
 	github.com/aws/aws-sdk-go-v2/config v1.18.42
 	github.com/aws/aws-sdk-go-v2/credentials v1.13.40
-	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.11.83
-	github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider v1.26.1
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.39.0
+	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.11.87
+	github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider v1.27.0
+	github.com/aws/aws-sdk-go-v2/service/s3 v1.40.0
 	github.com/bigkevmcd/go-cachewrapper v0.0.0-20200727210054-e5d8068f6a7e
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/dimchansky/utfbom v1.1.1
@@ -35,6 +35,7 @@ require (
 	github.com/twmb/murmur3 v1.1.8
 	github.com/xeipuuv/gojsonschema v1.2.0
 	github.com/zachelrath/yaml-jsonpointer v0.2.0
+	golang.org/x/exp v0.0.0-20230315142452-642cacee5cc0
 	golang.org/x/text v0.13.0
 	google.golang.org/api v0.142.0
 	gopkg.in/yaml.v3 v3.0.1

@@ -34,7 +34,7 @@ func CallListenerBot(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		var statusCode int
 		switch err.(type) {
-		case *meta.BotParamValidationError:
+		case *meta.BotParamValidationError, *meta.BotExecutionError:
 			statusCode = http.StatusBadRequest
 		case *meta.BotAccessError:
 			statusCode = http.StatusForbidden

@@ -1,0 +1,10 @@
+name: call_custom_run_action
+type: LISTENER
+dialect: TYPESCRIPT
+params:
+  - name: latitude
+    type: NUMBER
+    required: true
+  - name: longitude
+    type: NUMBER
+    required: true

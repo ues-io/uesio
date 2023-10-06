@@ -20,6 +20,8 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
+// TODO: Eliminate the need to keep this manual list.
+// Evaluate the dependencies of each item and deploy in dependency order.
 var ORDERED_ITEMS = [...]string{
 	"collections",
 	"selectlists",
@@ -44,6 +46,7 @@ var ORDERED_ITEMS = [...]string{
 	"configvalues",
 	"credentials",
 	"integrations",
+	"integrationactions",
 }
 
 type DeployOptions struct {
@@ -253,6 +256,7 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 			},
 			AppSettings: meta.AppSettings{
 				LoginRoute:    by.LoginRoute,
+				SignupRoute:   by.SignupRoute,
 				HomeRoute:     by.HomeRoute,
 				PublicProfile: by.PublicProfile,
 				DefaultTheme:  by.DefaultTheme,
@@ -266,6 +270,7 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 			ValidFields: map[string]bool{
 				adapt.ID_FIELD:               true,
 				"uesio/studio.loginroute":    true,
+				"uesio/studio.signuproute":   true,
 				"uesio/studio.homeroute":     true,
 				"uesio/studio.publicprofile": true,
 				"uesio/studio.defaulttheme":  true,

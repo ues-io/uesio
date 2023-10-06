@@ -1,0 +1,12 @@
+name: integrationactionrefs
+type: MAP
+label: Integration Action Permissions
+subtype: STRUCT
+subfields:
+  - name: allowAll
+    label: Allow All
+    type: CHECKBOX
+  - name: actions
+    label: Action Access
+    type: MAP
+    subtype: CHECKBOX

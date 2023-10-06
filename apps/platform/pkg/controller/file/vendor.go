@@ -82,7 +82,7 @@ func init() {
 		return orderedScriptLoads[i].order < orderedScriptLoads[j].order
 	})
 
-	vendorScriptUrls = make([]string, len(orderedScriptLoads), len(orderedScriptLoads))
+	vendorScriptUrls = make([]string, len(orderedScriptLoads))
 
 	// Now output an actual array of script urls
 	for i, scriptLoad := range orderedScriptLoads {

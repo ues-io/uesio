@@ -4,7 +4,7 @@
 
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"uesio\"}"
+    "token": "uesio"
 }
 
 # Extract the sessionid from set-cookie header
@@ -16,7 +16,7 @@ user_id: jsonpath "$.user.id"
 # Log in as ben to set the limit, since ben has permission to administer the Studio site (uesio does not)
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"ben\"}"
+    "token": "ben"
 }
 
 # Set a limit of 1 domain per user
@@ -32,7 +32,7 @@ jsonpath "$.success" == true
 # Log back in as uesio
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"uesio\"}"
+    "token": "uesio"
 }
 
 # Delete the test site domain if it already exists. This should succeed even though our domain limit is very low.
@@ -96,7 +96,7 @@ jsonpath "$.wires[0].data[*]" isEmpty
 # Log in as ben to set the limit, since ben has permission to administer the Studio site (uesio does not)
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"ben\"}"
+    "token": "ben"
 }
 
 # Bump up the limit
@@ -112,7 +112,7 @@ jsonpath "$.success" == true
 # Log back in as uesio
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"uesio\"}"
+    "token": "uesio"
 }
 
 # Create a new domain - should succeed now

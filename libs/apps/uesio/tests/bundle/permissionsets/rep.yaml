@@ -53,10 +53,12 @@ collections:
 routes: {}
 files: {}
 bots: {}
+integrationActions: {}
 allowallbots: false
 allowallcollections: false
 allowallviews: false
 allowallroutes: false
 allowallfiles: false
+allowallintegrationactions: false
 modifyallrecords: false
 viewallrecords: false

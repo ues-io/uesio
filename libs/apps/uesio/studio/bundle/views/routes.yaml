@@ -13,6 +13,7 @@ definition:
             uesio/studio.icon:
         uesio/studio.homeroute:
         uesio/studio.loginroute:
+        uesio/studio.signuproute:
         uesio/studio.favicon:
       conditions:
         - field: uesio/core.uniquekey
@@ -169,15 +170,15 @@ definition:
                                   - uesio/builder.metadatafield:
                                       fieldId: uesio/studio.homeroute
                                       metadataType: "ROUTE"
-                                      label: "Home Route"
                                   - uesio/builder.metadatafield:
                                       fieldId: uesio/studio.loginroute
                                       metadataType: "ROUTE"
-                                      label: "Login Route"
+                                  - uesio/builder.metadatafield:
+                                      fieldId: uesio/studio.signuproute
+                                      metadataType: "ROUTE"
                                   - uesio/builder.metadatafield:
                                       fieldId: uesio/studio.favicon
                                       metadataType: "FILE"
-                                      label: "Favicon"
           - uesio/io.box:
               uesio.variant: uesio/io.section
               components:

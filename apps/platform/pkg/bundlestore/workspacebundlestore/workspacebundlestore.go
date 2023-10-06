@@ -145,13 +145,15 @@ func (b *WorkspaceBundleStoreConnection) GetManyItems(items []meta.BundleableIte
 func (b *WorkspaceBundleStoreConnection) GetAllItems(group meta.BundleableGroup, conditions meta.BundleConditions) error {
 
 	// Add the workspace id as a condition
-	loadConditions := []adapt.LoadRequestCondition{}
+	loadConditions := make([]adapt.LoadRequestCondition, len(conditions))
 
+	i := 0
 	for field, value := range conditions {
-		loadConditions = append(loadConditions, adapt.LoadRequestCondition{
+		loadConditions[i] = adapt.LoadRequestCondition{
 			Field: field,
 			Value: value,
-		})
+		}
+		i++
 	}
 
 	return datasource.PlatformLoad(&WorkspaceLoadCollection{
@@ -299,6 +301,7 @@ func (b *WorkspaceBundleStoreConnection) GetBundleDef() (*meta.BundleDef, error)
 	by.PublicProfile = b.Workspace.PublicProfile
 	by.HomeRoute = b.Workspace.HomeRoute
 	by.LoginRoute = b.Workspace.LoginRoute
+	by.SignupRoute = b.Workspace.SignupRoute
 	by.DefaultTheme = b.Workspace.DefaultTheme
 	by.Favicon = b.Workspace.Favicon
 

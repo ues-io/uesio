@@ -17,7 +17,7 @@ type LoadBotFunc func(request *adapt.LoadOp, connection adapt.Connection, sessio
 
 type SaveBotFunc func(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error
 
-type RouteBotFunc func(*meta.Route, *sess.Session) error
+type RouteBotFunc func(*meta.Route, *sess.Session) (*meta.Route, error)
 
 type SystemDialect struct {
 }
@@ -85,6 +85,8 @@ func (b *SystemDialect) AfterSave(bot *meta.Bot, request *adapt.SaveOp, connecti
 		botFunction = runBotAfterSaveBot
 	case "uesio/studio.app":
 		botFunction = runAppAfterSaveBot
+	case "uesio/studio.integration":
+		botFunction = runIntegrationAfterSaveBot
 	}
 
 	if botFunction == nil {
@@ -121,11 +123,15 @@ func (b *SystemDialect) CallBot(bot *meta.Bot, params map[string]interface{}, co
 
 }
 
+func (b *SystemDialect) RunIntegrationActionBot(bot *meta.Bot, action *meta.IntegrationAction, integration adapt.IntegrationConnection, params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
+	return nil, datasource.NewSystemBotNotFoundError()
+}
+
 func (b *SystemDialect) CallGeneratorBot(bot *meta.Bot, create retrieve.WriterCreator, params map[string]interface{}, connection adapt.Connection, session *sess.Session) error {
 	return nil
 }
 
-func (b *SystemDialect) RouteBot(bot *meta.Bot, route *meta.Route, session *sess.Session) error {
+func (b *SystemDialect) RouteBot(bot *meta.Bot, route *meta.Route, session *sess.Session) (*meta.Route, error) {
 	var botFunction RouteBotFunc
 
 	routeKey := route.GetKey()
@@ -133,10 +139,14 @@ func (b *SystemDialect) RouteBot(bot *meta.Bot, route *meta.Route, session *sess
 	switch routeKey {
 	case "uesio/studio.paymentsuccess":
 		botFunction = runPaymentSuccessRouteBot
+	case "uesio/core.login":
+		botFunction = runLoginRouteBot
+	case "uesio/core.signup":
+		botFunction = runSignupRouteBot
 	}
 
 	if botFunction == nil {
-		return datasource.NewSystemBotNotFoundError()
+		return nil, datasource.NewSystemBotNotFoundError()
 	}
 
 	return botFunction(route, session)

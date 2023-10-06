@@ -12,10 +12,10 @@ const StyleDefaults = Object.freeze({ root: [] })
 
 const Link: definition.UtilityComponent<LinkProps> = (props) => {
 	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
-	const { onClick, text, link, newTab } = props
+	const { onClick, text, link, newTab, context } = props
 	return (
 		<a
-			href={link}
+			href={context.mergeString(link)}
 			onClick={(e: MouseEvent) => {
 				if (link) return
 				e.preventDefault()

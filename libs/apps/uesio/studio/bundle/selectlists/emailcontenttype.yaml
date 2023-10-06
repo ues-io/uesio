@@ -1,0 +1,6 @@
+name: emailcontenttype
+options:
+  - label: HTML
+    value: text/html
+  - label: TEXT
+    value: text/plain

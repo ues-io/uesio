@@ -1,11 +1,11 @@
-###################################################################
-# Tests creating a collection, fields, and collection cascade delete
-###################################################################
+###########################################################################
+# Tests wire loads on bundleable collections with the allmetadata condition
+###########################################################################
 
 # Test as a logged-in user so that we don't get redirected to the login page
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"uesio\"}"
+    "token": "uesio"
 }
 
 # Get a list of all fields available to our workspace for the animal collection
@@ -14,9 +14,9 @@ Accept: application/json
 {
     "wires": [
         {
-            "collection":"uesio/studio.field",
+            "collection": "uesio/studio.field",
             "name": "collection",
-            "query":true,
+            "query": true,
             "fields": [
                 {
                     "id": "uesio/studio.name"
@@ -35,7 +35,13 @@ Accept: application/json
             "params": {
                 "app": "uesio/tests",
                 "workspacename": "dev"
-            }
+            },
+            "order": [
+                {
+                    "field": "uesio/core.uniquekey",
+                    "desc": false
+                }
+            ]
         }
     ]
 }
@@ -81,20 +87,27 @@ Accept: application/json
             "params": {
                 "app": "uesio/tests",
                 "workspacename": "dev"
-            }
+            },
+            "order": [
+                {
+                    "field": "uesio/core.uniquekey",
+                    "desc": false
+                }
+            ]
         }
     ]
 }
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data" count == 7
-jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.id"
-jsonpath "$.wires[0].data[1]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.uniquekey"
-jsonpath "$.wires[0].data[2]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.owner"
-jsonpath "$.wires[0].data[3]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.createdby"
-jsonpath "$.wires[0].data[4]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.updatedby"
-jsonpath "$.wires[0].data[5]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.createdat"
-jsonpath "$.wires[0].data[6]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.updatedat"
+jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.createdat"
+jsonpath "$.wires[0].data[1]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.createdby"
+jsonpath "$.wires[0].data[2]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.id"
+jsonpath "$.wires[0].data[3]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.owner"
+jsonpath "$.wires[0].data[4]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.uniquekey"
+jsonpath "$.wires[0].data[5]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.updatedat"
+jsonpath "$.wires[0].data[6]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.updatedby"
+
 
 # Get a list of all secrets available to our workspace
 POST https://{{host}}:{{port}}/site/wires/load
@@ -102,7 +115,7 @@ Accept: application/json
 {
     "wires": [
         {
-            "collection":"uesio/studio.secret",
+            "collection": "uesio/studio.secret",
             "name": "collection",
             "query":true,
             "fields": [
@@ -119,17 +132,25 @@ Accept: application/json
             "params": {
                 "app": "uesio/tests",
                 "workspacename": "dev"
-            }
+            },
+            "order": [
+                {
+                    "field": "uesio/studio.name",
+                    "desc": false
+                }
+            ]
         }
     ]
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data" count == 1
+jsonpath "$.wires[0].data" count == 3
 jsonpath "$.wires[0].data[0]['uesio/studio.name']" == "sendgridkey"
 jsonpath "$.wires[0].data[0]['uesio/studio.namespace']" == "uesio/core"
+jsonpath "$.wires[0].data[1]['uesio/core.uniquekey']" == "uesio/tests.test_oauth_client_id"
+jsonpath "$.wires[0].data[2]['uesio/core.uniquekey']" == "uesio/tests.test_oauth_client_secret"
 
-# Test conditions on uesio/studio.item/grouping that have a ValueSource of LOOKUP from a previous wire 
+# Test conditions on uesio/studio.item/grouping that have a ValueSource of LOOKUP from a previous wire
 POST https://{{host}}:{{port}}/site/wires/load
 Accept: application/json
 {
@@ -207,3 +228,102 @@ jsonpath "$.wires[1].data[3]['uesio/core.uniquekey']" == "uesio/tests.animal:ues
 jsonpath "$.wires[1].data[4]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.species"
 jsonpath "$.wires[1].data[5]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.status"
 jsonpath "$.wires[1].data[6]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.total_population"
+
+# Test conditions on Credential by type, to verify that we can do per-item Bundleable Item filtering
+POST https://{{host}}:{{port}}/site/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection": "uesio/studio.credential",
+            "name": "credentials",
+            "query": true,
+            "fields": [
+                {
+                    "id": "uesio/studio.name"
+                },
+                {
+                    "id": "uesio/studio.type"
+                },
+                {
+                    "id": "uesio/core.uniquekey"
+                }
+            ],
+            "conditions": [
+                {
+                    "field": "uesio/studio.allmetadata",
+                    "value": true
+                },
+                {
+                    "field": "uesio/studio.type",
+                    "valueSource": "VALUE",
+                    "value": "API_KEY"
+                }
+            ],
+            "params": {
+                "app": "uesio/tests",
+                "workspacename": "dev"
+            },
+            "order": [
+                {
+                    "field": "uesio/studio.name",
+                    "desc": false
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].data" count == 3
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "uesio/core.sendgrid"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "uesio/tests.secret_access_allowed"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "uesio/tests.secret_access_forbidden"
+
+POST https://{{host}}:{{port}}/site/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection": "uesio/studio.credential",
+            "name": "credentials",
+            "query": true,
+            "fields": [
+                {
+                    "id": "uesio/studio.name"
+                },
+                {
+                    "id": "uesio/studio.type"
+                },
+                {
+                    "id": "uesio/core.uniquekey"
+                }
+            ],
+            "conditions": [
+                {
+                    "field": "uesio/studio.allmetadata",
+                    "value": true
+                },
+                {
+                    "field": "uesio/studio.type",
+                    "valueSource": "VALUE",
+                    "value": "OAUTH2_CREDENTIALS"
+                }
+            ],
+            "params": {
+                "app": "uesio/tests",
+                "workspacename": "dev"
+            },
+            "order": [
+                {
+                    "field": "uesio/studio.name",
+                    "desc": false
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].data" count == 1
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "uesio/tests.test_oauth_credentials"
