@@ -2,25 +2,38 @@ name: login
 public: true
 definition:
   components:
-    - uesio/io.grid:
-        uesio.variant: uesio/io.splash
-        items:
-          - uesio/io.grid:
-              uesio.variant: uesio/io.center
-              items:
-                - uesio/io.grid:
-                    uesio.variant: uesio/core.loginarea
-                    items:
-                      - uesio/io.image:
-                          uesio.variant: uesio/core.fancy
-                          file: uesio/core.logo
-                          signals:
-                            - signal: "route/REDIRECT"
-                              path: "https://$Site{domain}"
-                      - uesio/core.view:
-                          view: uesio/core.loginarea
-                          params:
-                            expired: $Param{expired}
+    - uesio/core.splash:
+        content:
+          - uesio/io.image:
+              uesio.variant: uesio/core.fancy
+              file: uesio/core.logo
+              signals:
+                - signal: "route/REDIRECT"
+                  path: "https://$Site{domain}"
+          - uesio/core.view:
+              view: uesio/core.loginarea
+              params:
+                expired: $Param{expired}
+          - uesio/io.box:
+              uesio.styleTokens:
+                root:
+                  - text-center
+                  - leading-none
+              components:
+                - uesio/io.text:
+                    text: "New to ues.io? "
+                    uesio.styleTokens:
+                      root:
+                        - text-xs
+                        - font-light
+                - uesio/io.link:
+                    text: "Create an account"
+                    link: "$Site{url}/site/app/uesio/core/signup"
+                    uesio.styleTokens:
+                      root:
+                        - text-blue-600
+                        - text-xs
+                        - font-light
   params:
     expired:
       type: CHECKBOX
