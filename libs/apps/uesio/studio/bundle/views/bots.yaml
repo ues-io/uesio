@@ -90,8 +90,8 @@ definition:
                     columns:
                       - label: Bot Name
                         components:
-                          - uesio/studio.iconlabel:
-                              uesio.variant: uesio/studio.namespacefield
+                          - uesio/io.iconlabel:
+                              uesio.variant: uesio/io.namespacefield
                               text: ${uesio/studio.name}
                               subtitle: ${uesio/studio.namespace}
                               icon: ${uesio/studio.appicon}
@@ -122,10 +122,14 @@ definition:
       width: 400px
       height: 500px
       components:
-        - uesio/io.list:
-            uesio.id: newbotlist
+        - uesio/io.item:
+            uesio.id: newbotItem
             wire: newbot
             mode: EDIT
+            uesio.context:
+              workspace:
+                name: $Param{workspacename}
+                app: $Param{app}
             components:
               - uesio/io.field:
                   fieldId: uesio/studio.name
@@ -133,7 +137,8 @@ definition:
                   fieldId: uesio/studio.type
               - uesio/io.field:
                   fieldId: uesio/studio.dialect
-              - uesio/io.box:
+              - uesio/io.field:
+                  fieldId: uesio/studio.collection
                   uesio.display:
                     - type: fieldValue
                       field: uesio/studio.type
@@ -141,15 +146,6 @@ definition:
                       values:
                         - AFTERSAVE
                         - BEFORESAVE
-                  components:
-                    - uesio/builder.metadatafield:
-                        uesio.context:
-                          workspace:
-                            name: $Param{workspacename}
-                            app: $Param{app}
-                        fieldId: uesio/studio.collection
-                        metadataType: COLLECTION
-                        label: Collection
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary

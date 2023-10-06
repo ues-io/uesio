@@ -2,6 +2,6 @@ name: iconlabel
 pack: main
 entrypoint: components/iconlabel/iconlabel
 variants:
-  - uesio/builder.iconlabel:uesio/builder.default
+  - uesio/io.iconlabel:uesio/io.default
 utilities:
-  - uesio/builder.iconlabel
+  - uesio/io.iconlabel

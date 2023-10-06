@@ -1,3 +1,5 @@
 name: selectlist
-type: TEXT
+type: METADATA
 label: Select List
+metadata:
+  type: SELECTLIST

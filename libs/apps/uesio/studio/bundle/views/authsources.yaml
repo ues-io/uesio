@@ -81,8 +81,8 @@ definition:
                     columns:
                       - label: Auth Method Name
                         components:
-                          - uesio/studio.iconlabel:
-                              uesio.variant: uesio/studio.namespacefield
+                          - uesio/io.iconlabel:
+                              uesio.variant: uesio/io.namespacefield
                               text: ${uesio/studio.name}
                               subtitle: ${uesio/studio.namespace}
                               icon: ${uesio/studio.appicon}
@@ -112,19 +112,17 @@ definition:
             uesio.id: newauthsource
             wire: newauthsource
             mode: EDIT
+            uesio.context:
+              workspace:
+                name: $Param{workspacename}
+                app: $Param{app}
             components:
               - uesio/io.field:
                   fieldId: uesio/studio.name
               - uesio/io.field:
                   fieldId: uesio/studio.type
-              - uesio/builder.metadatafield:
-                  uesio.context:
-                    workspace:
-                      name: $Param{workspacename}
-                      app: $Param{app}
+              - uesio/io.field:
                   fieldId: uesio/studio.credentials
-                  metadataType: CREDENTIALS
-                  label: Credentials
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary

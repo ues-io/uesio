@@ -40,6 +40,7 @@ type Field struct {
 	ValidationMetadata     *ValidationMetadata     `yaml:"validate,omitempty" json:"uesio/studio.validate"`
 	AutoNumberMetadata     *AutoNumberMetadata     `yaml:"autonumber,omitempty" json:"uesio/studio.autonumber"`
 	FormulaMetadata        *FormulaMetadata        `yaml:"formula,omitempty" json:"uesio/studio.formula"`
+	MetadataFieldMetadata  *MetadataFieldMetadata  `yaml:"metadata,omitempty" json:"uesio/studio.metadata"`
 	AutoPopulate           string                  `yaml:"autopopulate,omitempty" json:"uesio/studio.autopopulate"`
 	SubFields              []SubField              `yaml:"subfields,omitempty" json:"uesio/studio.subfields"`
 	SubType                string                  `yaml:"subtype,omitempty" json:"uesio/studio.subtype"`
@@ -51,24 +52,25 @@ type FieldWrapper Field
 
 func GetFieldTypes() map[string]bool {
 	return map[string]bool{
-		"TEXT":           true,
-		"NUMBER":         true,
-		"LONGTEXT":       true,
-		"CHECKBOX":       true,
-		"MULTISELECT":    true,
-		"SELECT":         true,
-		"REFERENCE":      true,
-		"FILE":           true,
-		"USER":           true,
-		"LIST":           true,
-		"DATE":           true,
-		"MAP":            true,
-		"TIMESTAMP":      true,
-		"EMAIL":          true,
 		"AUTONUMBER":     true,
-		"REFERENCEGROUP": true,
+		"CHECKBOX":       true,
+		"DATE":           true,
+		"EMAIL":          true,
+		"FILE":           true,
 		"FORMULA":        true,
+		"LIST":           true,
+		"LONGTEXT":       true,
+		"MAP":            true,
+		"METADATA":       true,
+		"MULTISELECT":    true,
+		"NUMBER":         true,
+		"REFERENCE":      true,
+		"REFERENCEGROUP": true,
+		"SELECT":         true,
 		"STRUCT":         true,
+		"TEXT":           true,
+		"TIMESTAMP":      true,
+		"USER":           true,
 	}
 }
 
@@ -173,6 +175,10 @@ func (f *Field) UnmarshalYAML(node *yaml.Node) error {
 
 	if fieldType == "NUMBER" {
 		f.NumberMetadata = &NumberMetadata{}
+	}
+
+	if fieldType == "METADATA" {
+		f.MetadataFieldMetadata = &MetadataFieldMetadata{}
 	}
 
 	if fieldType == "FILE" {

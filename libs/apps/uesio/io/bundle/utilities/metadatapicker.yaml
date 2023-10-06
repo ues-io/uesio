@@ -1,0 +1,3 @@
+name: metadatapicker
+pack: main
+entrypoint: utilities/metadatapicker/metadatapicker

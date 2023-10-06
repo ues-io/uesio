@@ -174,6 +174,10 @@ definition:
                                       fieldId: uesio/core.picture
                                       displayAs: IMAGE
                             - uesio/io.griditem:
+                                uesio.context:
+                                  siteadmin:
+                                    name: $Param{sitename}
+                                    app: $Param{app}
                                 components:
                                   - uesio/io.box:
                                       uesio.styleTokens:
@@ -203,14 +207,8 @@ definition:
                                       fieldId: uesio/core.username
                                   - uesio/io.field:
                                       fieldId: uesio/core.email
-                                  - uesio/builder.metadatafield:
-                                      uesio.context:
-                                        siteadmin:
-                                          name: $Param{sitename}
-                                          app: $Param{app}
+                                  - uesio/io.field:
                                       fieldId: uesio/core.profile
-                                      metadataType: "PROFILE"
-                                      label: "Profile"
                                   - uesio/io.field:
                                       fieldId: uesio/core.language
                                   - uesio/io.field:
@@ -405,15 +403,13 @@ definition:
             uesio.id: newloginmethodlist
             wire: newloginmethod
             mode: EDIT
+            uesio.context:
+              siteadmin:
+                name: $Param{sitename}
+                app: $Param{app}
             components:
-              - uesio/builder.metadatafield:
-                  uesio.context:
-                    siteadmin:
-                      name: $Param{sitename}
-                      app: $Param{app}
+              - uesio/io.field:
                   fieldId: uesio/core.auth_source
-                  metadataType: "AUTHSOURCE"
-                  label: "Auth Source"
               - uesio/io.field:
                   fieldId: uesio/core.federation_id
       actions:

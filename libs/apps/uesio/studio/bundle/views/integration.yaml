@@ -52,6 +52,10 @@ definition:
               uesio.id: integrationsList
               wire: integrations
               mode: READ
+              uesio.context:
+                workspace:
+                  name: $Param{workspacename}
+                  app: $Param{app}
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
@@ -147,14 +151,8 @@ definition:
                           items:
                             - uesio/io.field:
                                 fieldId: uesio/studio.baseurl
-                            - uesio/builder.metadatafield:
-                                uesio.context:
-                                  workspace:
-                                    name: $Param{workspacename}
-                                    app: $Param{app}
+                            - uesio/io.field:
                                 fieldId: uesio/studio.credentials
-                                metadataType: CREDENTIALS
-                                label: Credentials
                             - uesio/io.field:
                               fieldId: uesio/studio.headers
                               uesio.display:
@@ -164,41 +162,24 @@ definition:
                       - uesio/io.grid:
                           uesio.variant: uesio/io.four_columns
                           items:
-                            - uesio/builder.metadatafield:
+                            - uesio/io.field:
                                 uesio.display:
                                   - field: uesio/studio.type
                                     value: uesio/core.custom
-                                uesio.context:
-                                  workspace:
-                                    name: $Param{workspacename}
-                                    app: $Param{app}
+
                                 fieldId: uesio/studio.loadbot
-                                metadataType: BOT
-                                grouping: LOAD
                                 label: Default Collection Load Bot
-                            - uesio/builder.metadatafield:
+                            - uesio/io.field:
                                 uesio.display:
                                   - field: uesio/studio.type
                                     value: uesio/core.custom
-                                uesio.context:
-                                  workspace:
-                                    name: $Param{workspacename}
-                                    app: $Param{app}
                                 fieldId: uesio/studio.savebot
-                                metadataType: BOT
-                                grouping: SAVE
                                 label: Default Collection Save Bot
-                            - uesio/builder.metadatafield:
+                            - uesio/io.field:
                                 uesio.display:
                                   - field: uesio/studio.type
                                     value: uesio/core.custom
-                                uesio.context:
-                                  workspace:
-                                    name: $Param{workspacename}
-                                    app: $Param{app}
                                 fieldId: uesio/studio.runactionbot
-                                metadataType: BOT
-                                grouping: RUNACTION
                                 label: Default Run Action Bot
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
@@ -318,11 +299,9 @@ definition:
                   uesio.id: action-name
                   focusOnRender: true
                   applyChanges: onBlur
-              - uesio/builder.metadatafield:
+              - uesio/io.field:
                   fieldId: uesio/studio.bot
                   uesio.id: action-bot
-                  metadataType: BOT
-                  grouping: RUNACTION
                   label: Run Action Bot (optional, defaults to Integration's Run Action Bot)
       actions:
         - uesio/io.button:

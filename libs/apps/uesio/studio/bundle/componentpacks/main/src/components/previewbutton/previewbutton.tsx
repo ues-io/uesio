@@ -62,6 +62,16 @@ const getWireFieldFromParamDef = (
 					collection: def.collection,
 				},
 			}
+		case "METADATA":
+			return {
+				label: def.prompt || def.name,
+				required: !!def.required,
+				type: "METADATA" as const,
+				metadata: {
+					type: def.metadataType,
+					grouping: def.grouping,
+				},
+			}
 		case "METADATAMULTI":
 			return {
 				label: def.prompt || def.name,

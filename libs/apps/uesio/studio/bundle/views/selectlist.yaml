@@ -121,16 +121,15 @@ definition:
                           fieldId: uesio/studio.options
                       - uesio/io.grid:
                           uesio.variant: uesio/io.two_columns
+                          uesio.context:
+                            workspace:
+                              name: $Param{workspacename}
+                              app: $Param{app}
                           items:
                             - uesio/io.field:
                                 fieldId: uesio/studio.blank_option_label
-                            - uesio/builder.metadatafield:
-                                uesio.context:
-                                  workspace:
-                                    name: $Param{workspacename}
-                                    app: $Param{app}
+                            - uesio/io.field:
                                 fieldId: uesio/studio.blank_option_language_label
-                                metadataType: LABEL
 
   panels:
     deleteSelectlist:

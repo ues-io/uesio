@@ -1,3 +1,5 @@
 name: namefield
-type: TEXT
+type: METADATA
 label: Name Field
+metadata:
+  type: FIELD

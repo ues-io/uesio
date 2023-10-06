@@ -1,11 +1,11 @@
-import { definition, metadata, api } from "@uesio/ui"
+import { component, definition, metadata, api } from "@uesio/ui"
 import { getBuilderNamespace } from "../../api/stateapi"
-import IconLabel from "../../utilities/iconlabel/iconlabel"
-import NamespaceLabel from "../../utilities/namespacelabel/namespacelabel"
 import ItemTag from "../../utilities/itemtag/itemtag"
 
 const WireTag: definition.UC = (props) => {
 	const { context } = props
+	const NamespaceLabel = component.getUtility("uesio/io.namespacelabel")
+	const IconLabel = component.getUtility("uesio/io.iconlabel")
 	const record = context.getRecord()
 	const wireId = record?.getFieldValue("key") as string
 	const wire = api.wire.useWire(wireId, context)

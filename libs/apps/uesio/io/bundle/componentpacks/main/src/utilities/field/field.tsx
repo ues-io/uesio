@@ -1,37 +1,32 @@
 import { ReactElement } from "react"
 import { collection, definition, metadata, context, wire } from "@uesio/ui"
 
-import CheckboxField, {
-	CheckboxFieldOptions,
-} from "../../utilities/field/checkbox"
-import DateField from "../../utilities/field/date"
+import CheckboxField, { CheckboxFieldOptions } from "./checkbox"
+import DateField from "./date"
 import MarkDownField, {
 	MarkdownFieldOptions,
 } from "../../utilities/markdownfield/markdownfield"
-import MultiCheckField from "../../utilities/field/multicheck"
-import MultiSelectField from "../../utilities/field/multiselect"
-import NumberField, { NumberFieldOptions } from "../../utilities/field/number"
-import RadioButtons from "../../utilities/field/radiobuttons"
-import ReferenceField, {
-	ReferenceFieldOptions,
-} from "../../utilities/field/reference"
-import SelectField from "../../utilities/field/select"
-import TextAreaField, {
-	LongTextFieldOptions,
-} from "../../utilities/field/textarea"
-import TextField, { TextFieldOptions } from "../../utilities/field/text"
-import TimestampField from "../../utilities/field/timestamp"
-import ToggleField from "../../utilities/field/toggle"
-import UserField, { UserFieldOptions } from "../../utilities/field/user"
-import ListFieldDeck, { ListFieldOptions } from "../../utilities/field/listdeck"
-import ListField from "../../utilities/field/list"
+import MultiCheckField from "./multicheck"
+import MultiSelectField from "./multiselect"
+import NumberField, { NumberFieldOptions } from "./number"
+import RadioButtons from "./radiobuttons"
+import ReferenceField, { ReferenceFieldOptions } from "./reference"
+import SelectField from "./select"
+import TextAreaField, { LongTextFieldOptions } from "./textarea"
+import TextField, { TextFieldOptions } from "./text"
+import TimestampField from "./timestamp"
+import ToggleField from "./toggle"
+import UserField, { UserFieldOptions } from "./user"
+import ListFieldDeck, { ListFieldOptions } from "./listdeck"
+import ListField from "./list"
 import ReferenceGroupField, {
 	ReferenceGroupFieldOptions,
-} from "../../utilities/field/referencegroup"
-import FileField from "../../utilities/field/file"
+} from "./referencegroup"
+import FileField from "./file"
+import MetadataField from "./metadata"
 import MapField from "../../utilities/mapfield/mapfield"
 import StructField from "../../utilities/structfield/structfield"
-import MapFieldDeck from "../../utilities/field/mapdeck"
+import MapFieldDeck from "./mapdeck"
 import {
 	ApplyChanges,
 	FieldValueSetter,
@@ -243,6 +238,9 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 				default:
 					content = <CheckboxField {...common} />
 			}
+			break
+		case "METADATA":
+			content = <MetadataField {...common} />
 			break
 		case "REFERENCE":
 			content = <ReferenceField {...common} options={reference} />

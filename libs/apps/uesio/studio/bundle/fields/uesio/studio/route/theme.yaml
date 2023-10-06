@@ -1,3 +1,5 @@
 name: theme
-type: TEXT
+type: METADATA
 label: Theme
+metadata:
+  type: THEME

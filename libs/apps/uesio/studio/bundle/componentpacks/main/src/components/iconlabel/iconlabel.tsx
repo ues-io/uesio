@@ -15,7 +15,7 @@ const StyleDefaults = Object.freeze({
 })
 
 const IconLabel: definition.UC<IconLabelDefinition> = (props) => {
-	const IconLabelUtility = component.getUtility("uesio/builder.iconlabel")
+	const IconLabelUtility = component.getUtility("uesio/io.iconlabel")
 	const { context, definition } = props
 	const { icon, color, text, subtitle, tooltip } = definition
 
