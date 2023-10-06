@@ -1,4 +1,4 @@
-import { component, context, definition, wire } from "@uesio/ui"
+import { component, context, definition } from "@uesio/ui"
 import { add, get, remove, set } from "../../../api/defapi"
 import {
 	getComponentDef,
@@ -121,19 +121,30 @@ const TableColumns: definition.UC = (props) => {
 	const wireName = get(context, tablePath.addLocal("wire")) as string
 	const fieldComponentDef = getComponentDef("uesio/io.field")
 
-	const onSelect = (ctx: context.Context, path: FullPath) =>
-		set(ctx, tablePath.merge(path), {})
-	const onUnselect = (ctx: context.Context, path: FullPath) =>
-		remove(ctx, tablePath.merge(path))
+	//From a new table this is a { } instead of a []
+	const columns = get(context, columnsPath) as definition.DefinitionMap[]
+	console.log({ columns })
+
+	const onSelect = (ctx: context.Context, path: FullPath) => {
+		const [fieldId] = path.pop()
+		set(
+			ctx,
+			columnsPath.addLocal(`${columns?.length || 0}`).addLocal("field"),
+			fieldId
+		)
+	}
+
+	const onUnselect = (ctx: context.Context, path: FullPath) => {
+		const [field] = path.pop()
+		const index = columns.findIndex((e) => e.field === field)
+		remove(ctx, columnsPath.addLocal(index.toString()))
+	}
+
 	const isSelected = (
 		ctx: context.Context,
 		path: FullPath,
 		fieldId: string
-	) => {
-		const joinedPath = tablePath.merge(path).addLocal(fieldId)
-		const wireField = get(ctx, joinedPath) as wire.WireFieldDefinitionMap
-		return wireField !== undefined
-	}
+	) => columns && columns.some((e) => e.field === fieldId)
 
 	const getComponentType = (def: definition.DefinitionMap): string =>
 		Object.keys(def)[0] as string
@@ -197,10 +208,8 @@ const TableColumns: definition.UC = (props) => {
 		})
 	}
 
-	const columns = get(context, columnsPath) as definition.DefinitionMap[]
-
 	return (
-		<>
+		<div ref={anchorEl}>
 			{showPopper && anchorEl && (
 				<Popper
 					referenceEl={anchorEl.current}
@@ -249,7 +258,7 @@ const TableColumns: definition.UC = (props) => {
 				itemPropertiesPanelTitle="Column Properties"
 				itemChildren={getItemChildren}
 			/>
-		</>
+		</div>
 	)
 }
 
