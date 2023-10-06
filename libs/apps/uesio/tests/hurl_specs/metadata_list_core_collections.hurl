@@ -18,7 +18,7 @@ Accept: application/json
             "query": true,
             "order": [
                 {
-                    "field": "uesio/core.name",
+                    "field": "uesio/core.uniquekey",
                     "desc": false
                 }
             ]
