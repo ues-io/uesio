@@ -1,5 +1,6 @@
 import { definition, component, styles, hooks, api } from "@uesio/ui"
 import DeviceSizer from "./devicesizer"
+import { metaKey } from "./mainheader"
 
 const StyleDefaults = Object.freeze({
 	root: ["w-9", "grid", "gap-4", "auto-rows-min"],
@@ -73,7 +74,7 @@ const RightToolbar: definition.UtilityComponent = (props) => {
 					}
 					variant="uesio/builder.minoricontoolbar"
 					onClick={toggleIndex}
-					tooltip="Toggle Index Panel ⌘I"
+					tooltip={`Toggle Index Panel (${metaKey} + I)`}
 					tooltipPlacement="left"
 				/>
 				<Button
@@ -82,7 +83,7 @@ const RightToolbar: definition.UtilityComponent = (props) => {
 					icon={<Icon context={context} icon="code" />}
 					variant="uesio/builder.minoricontoolbar"
 					onClick={toggleCode}
-					tooltip="Toggle Code Panel ⌘Y"
+					tooltip={`Toggle Code Panel (${metaKey} + Y)`}
 					tooltipPlacement="left"
 				/>
 			</div>
@@ -96,7 +97,7 @@ const RightToolbar: definition.UtilityComponent = (props) => {
 					icon={<Icon context={context} icon="expand" />}
 					variant="uesio/builder.minoricontoolbar"
 					onClick={toggleSlotTags}
-					tooltip="Expand Slots ⌘E"
+					tooltip={`Expand Slots (${metaKey} + E)`}
 					tooltipPlacement="left"
 				/>
 			</div>

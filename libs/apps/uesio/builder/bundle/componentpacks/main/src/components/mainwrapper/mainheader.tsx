@@ -18,6 +18,14 @@ const StyleDefaults = Object.freeze({
 	avatar: ["h-7", "w-7"],
 })
 
+// Yes, navigator.platform is deprecated, but according to MDN in 2023
+// it's still the least bad way to detect what meta key means
+// https://developer.mozilla.org/en-US/docs/Web/API/Navigator/platform#examples
+export const metaKey =
+	navigator.platform.indexOf("Mac") === 0 || navigator.platform === "iPhone"
+		? "⌘" // Command
+		: "^" // Ctrl
+
 const MainHeader: definition.UtilityComponent = (props) => {
 	const { context, id } = props
 	const Grid = component.getUtility("uesio/io.grid")
@@ -57,7 +65,7 @@ const MainHeader: definition.UtilityComponent = (props) => {
 			<Group context={context} className="gap-3">
 				<Button
 					context={context}
-					label={"meta + u"}
+					label={"Preview"}
 					icon={
 						<Icon
 							context={context}
@@ -72,9 +80,7 @@ const MainHeader: definition.UtilityComponent = (props) => {
 							setBuildMode(!buildMode)
 						})
 					}}
-					tooltip={
-						"use meta + u to switch between preview and edit mode"
-					}
+					tooltip={`Toggle Preview / Build mode (${metaKey} + U)`}
 					tooltipPlacement="left"
 				/>
 				<SaveCancelArea id={id} context={context} />
