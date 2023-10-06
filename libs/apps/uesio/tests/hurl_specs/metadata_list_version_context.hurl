@@ -85,10 +85,14 @@ GET https://{{host}}:{{port}}/version/uesio/tests/v0.0.1/metadata/types/secrets/
 Accept: application/json
 HTTP 200
 [Asserts]
-jsonpath "$[*]" count == 1
+jsonpath "$[*]" count == 3
 jsonpath "$['uesio/core.sendgridkey'].key" == "uesio/core.sendgridkey"
 jsonpath "$['uesio/core.sendgridkey'].namespace" == "uesio/core"
 jsonpath "$['uesio/core.sendgridkey'].icon" == "hub"
+jsonpath "$['uesio/tests.test_oauth_client_id'].key" == "uesio/tests.test_oauth_client_id"
+jsonpath "$['uesio/tests.test_oauth_client_id'].namespace" == "uesio/tests"
+jsonpath "$['uesio/tests.test_oauth_client_secret'].key" == "uesio/tests.test_oauth_client_secret"
+jsonpath "$['uesio/tests.test_oauth_client_secret'].namespace" == "uesio/tests"
 
 # Now go into the uesio/core version context and get the secrets
 GET https://{{host}}:{{port}}/version/uesio/core/v0.0.1/metadata/types/secrets/list
