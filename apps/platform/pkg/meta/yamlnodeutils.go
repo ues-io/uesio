@@ -244,10 +244,10 @@ func validateNodeName(node *yaml.Node, expectedName string) error {
 	return validateMetadataNameNode(node, expectedName, "name")
 }
 
-func getYamlNode(yamlContent string) yaml.Node {
-	yamlNode := &yaml.Node{}
+func getYamlNode(yamlContent string) *YAMLDef {
+	yamlNode := &YAMLDef{}
 	yaml.Unmarshal([]byte(yamlContent), yamlNode)
-	return *yamlNode.Content[0]
+	return yamlNode
 }
 
 func trimYamlString(yamlContent string) string {

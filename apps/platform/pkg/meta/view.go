@@ -32,7 +32,10 @@ func (yd *YAMLDef) UnmarshalYAML(node *yaml.Node) error {
 }
 
 func (yd *YAMLDef) MarshalYAML() (interface{}, error) {
-	return (*yaml.Node)(yd).Content[0], nil
+	if yd.Kind == yaml.DocumentNode {
+		return (*yaml.Node)(yd).Content[0], nil
+	}
+	return (*yaml.Node)(yd), nil
 }
 
 func (yd *YAMLDef) Decode(v interface{}) error {
