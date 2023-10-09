@@ -94,6 +94,26 @@ describe("Uesio Sanity Smoke Tests", () => {
 				"Check Box",
 				"Is Extinct"
 			)
+			// Search the table to find one field
+			cy.get("input[type=search]").type("ext")
+			// verify that only one result is returned
+			cy.get('table[id$="fields"]>tbody')
+				.children("tr")
+				.should("have.length", 1)
+			cy.hasExpectedTableField(
+				"fields",
+				0,
+				"is_extinct",
+				namespace,
+				"Check Box",
+				"Is Extinct"
+			)
+			// Clear the search to verify that both results come back
+			cy.get("input[type=search]").clear()
+			cy.get('table[id$="fields"]>tbody')
+				.children("tr")
+				.should("have.length", 2)
+
 			// Mark a field for deletion
 			cy.get('table[id$="fields"]>tbody')
 				.children("tr")
