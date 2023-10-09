@@ -349,6 +349,7 @@ type FieldType =
 	| "LONGTEXT"
 	| "MAP"
 	| "METADATA"
+	| "MULTIMETADATA"
 	| "MULTISELECT"
 	| "NUMBER"
 	| "REFERENCE"

@@ -4,6 +4,7 @@ import {
 	NumberMetadata,
 	FieldMetadataMap,
 	FieldMetadata,
+	MetadataFieldMetadata,
 } from "./bands/field/types"
 import Collection from "./bands/collection/class"
 import Field from "./bands/field/class"
@@ -23,6 +24,7 @@ export type {
 	PlainCollection,
 	FieldType,
 	SelectOption,
+	MetadataFieldMetadata,
 	NumberMetadata,
 	FieldMetadataMap,
 	FieldMetadata,

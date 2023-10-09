@@ -131,5 +131,5 @@ definition:
                                 fieldId: uesio/studio.name
                             - uesio/io.field:
                                 fieldId: uesio/studio.type
-                            - uesio/io.metadatafield:
+                            - uesio/io.field:
                                 fieldId: uesio/studio.credentials

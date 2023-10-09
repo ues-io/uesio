@@ -148,8 +148,12 @@ definition:
                     uesio.variant: uesio/io.section
                     components:
                       - uesio/io.box:
+                          uesio.context:
+                            workspace:
+                              name: $Param{workspacename}
+                              app: $Param{app}
                           components:
-                            - uesio/builder.multimetadatafield:
+                            - uesio/io.field:
                                 uesio.display:
                                   - type: paramValue
                                     param: app
@@ -157,13 +161,8 @@ definition:
                                     operator: EQUALS
                                     value: $Param{namespace}
                                 fieldId: uesio/studio.permissionsetsrefs
-                                metadataType: PERMISSIONSET
                                 label: Permission Sets assigned to this Profile
-                                uesio.context:
-                                  workspace:
-                                    name: $Param{workspacename}
-                                    app: $Param{app}
-                            - uesio/builder.multimetadatafield:
+                            - uesio/io.field:
                                 uesio.display:
                                   - type: paramValue
                                     param: app
@@ -171,12 +170,8 @@ definition:
                                     operator: NOT_EQUALS
                                     value: $Param{namespace}
                                 fieldId: uesio/studio.permissionsetsrefs
-                                metadataType: PERMISSIONSET
                                 label: Permission Sets assigned to this Profile
                                 uesio.context:
-                                  workspace:
-                                    name: $Param{workspacename}
-                                    app: $Param{app}
                                   fieldMode: READ
                 - uesio/io.box:
                     uesio.variant: uesio/io.section

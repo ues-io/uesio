@@ -23,7 +23,7 @@ import ReferenceGroupField, {
 	ReferenceGroupFieldOptions,
 } from "./referencegroup"
 import FileField from "./file"
-import MetadataField from "./metadata"
+import MetadataField, { MetadataFieldOptions } from "./metadata"
 import MapField from "../../utilities/mapfield/mapfield"
 import StructField from "../../utilities/structfield/structfield"
 import MapFieldDeck from "./mapdeck"
@@ -54,6 +54,7 @@ interface FieldProps {
 	list?: ListFieldOptions
 	map?: MapFieldOptions
 	markdown?: MarkdownFieldOptions
+	metadata?: MetadataFieldOptions
 	number?: NumberFieldOptions
 	longtext?: LongTextFieldOptions
 	checkbox?: CheckboxFieldOptions
@@ -132,6 +133,7 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 		subFieldVariant,
 		labelVariant,
 	}
+	const subType = fieldMetadata.getSubType() as collection.FieldType
 
 	let selectOptions: wire.SelectOption[]
 	let multiSelectProps
@@ -240,7 +242,8 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 			}
 			break
 		case "METADATA":
-			content = <MetadataField {...common} />
+		case "MULTIMETADATA":
+			content = <MetadataField {...common} options={props.metadata} />
 			break
 		case "REFERENCE":
 			content = <ReferenceField {...common} options={reference} />
@@ -272,7 +275,7 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 						{...complexFieldOptions}
 						options={list}
 						subFields={fieldMetadata.getSubFields()}
-						subType={fieldMetadata.getSubType()}
+						subType={subType}
 					/>
 				)
 			break
@@ -296,7 +299,7 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 						valueField={{
 							name: "value",
 							label: map?.valueFieldLabel || "Value",
-							type: fieldMetadata.getSubType() as collection.FieldType,
+							type: subType,
 							selectlist: fieldMetadata.getSelectMetadata(),
 							number: fieldMetadata.getNumberMetadata(),
 							subfields: fieldMetadata.getSubFields(),

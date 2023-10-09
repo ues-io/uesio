@@ -21,6 +21,8 @@ options:
   # Hidden for now until we make more Metadata types available
   # - label: "Metadata"
   #   value: "METADATA"
+  # - label: "Multi Metadata"
+  #   value: "MULTIMETADATA"
   - label: "Multi Select"
     value: "MULTISELECT"
   - label: "Number"

@@ -2,11 +2,11 @@ name: generatorbutton
 pack: main
 entrypoint: components/generatorbutton/generatorbutton
 utilities:
-  # - uesio/io.metadatafield
-  - uesio/builder.multimetadatapicker
   - uesio/io.button
   - uesio/io.dialog
   - uesio/io.field
+  - uesio/io.grid
+  - uesio/io.metadatafield
   - uesio/io.textfield
   - uesio/io.dialogplain
   - uesio/io.dynamicform

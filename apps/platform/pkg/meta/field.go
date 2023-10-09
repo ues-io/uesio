@@ -62,6 +62,7 @@ func GetFieldTypes() map[string]bool {
 		"LONGTEXT":       true,
 		"MAP":            true,
 		"METADATA":       true,
+		"MULTIMETADATA":  true,
 		"MULTISELECT":    true,
 		"NUMBER":         true,
 		"REFERENCE":      true,
@@ -177,7 +178,7 @@ func (f *Field) UnmarshalYAML(node *yaml.Node) error {
 		f.NumberMetadata = &NumberMetadata{}
 	}
 
-	if fieldType == "METADATA" {
+	if fieldType == "METADATA" || fieldType == "MULTIMETADATA" {
 		f.MetadataFieldMetadata = &MetadataFieldMetadata{}
 	}
 

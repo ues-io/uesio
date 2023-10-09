@@ -122,10 +122,11 @@ func GetSelectListMetadata(f *meta.Field) *adapt.SelectListMetadata {
 }
 
 func GetMetadataFieldMetadata(f *meta.Field) *adapt.MetadataFieldMetadata {
-	if f.Type == "METADATA" && f.MetadataFieldMetadata != nil {
+	if f.Type == "METADATA" || f.Type == "MULTIMETADATA" && f.MetadataFieldMetadata != nil {
 		return &adapt.MetadataFieldMetadata{
-			Type:     f.MetadataFieldMetadata.Type,
-			Grouping: f.MetadataFieldMetadata.Grouping,
+			Type:      f.MetadataFieldMetadata.Type,
+			Grouping:  f.MetadataFieldMetadata.Grouping,
+			Namespace: f.MetadataFieldMetadata.Namespace,
 		}
 	}
 	return nil

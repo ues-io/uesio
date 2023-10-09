@@ -30,7 +30,7 @@ const getValueForParam = (
 					`${fieldKey}->${collection.ID_FIELD}`
 				) || ""
 			)
-		case "METADATAMULTI": {
+		case "MULTIMETADATA": {
 			const values = record.getFieldValue<string[]>(fieldKey) || []
 			return values.join(",")
 		}
@@ -63,20 +63,15 @@ const getWireFieldFromParamDef = (
 				},
 			}
 		case "METADATA":
+		case "MULTIMETADATA":
 			return {
 				label: def.prompt || def.name,
 				required: !!def.required,
-				type: "METADATA" as const,
+				type: def.type,
 				metadata: {
 					type: def.metadataType,
 					grouping: def.grouping,
 				},
-			}
-		case "METADATAMULTI":
-			return {
-				label: def.prompt || def.name,
-				required: !!def.required,
-				type: "LIST" as const,
 			}
 		// TODO: SELECT properties won't work until we load Select Lists
 		// when initializing View Only wires/View Only Fields.

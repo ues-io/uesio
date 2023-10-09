@@ -177,8 +177,9 @@ type NumberMetadata struct {
 }
 
 type MetadataFieldMetadata struct {
-	Type     string `json:"type"`
-	Grouping string `json:"grouping"`
+	Type      string `json:"type"`
+	Grouping  string `json:"grouping"`
+	Namespace string `json:"namespace"`
 }
 
 type AutoNumberMetadata struct {

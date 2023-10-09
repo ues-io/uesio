@@ -2,8 +2,8 @@ name: user
 uniqueKey:
   - uesio/core.username
 public: true
-label: user
-pluralLabel: users
+label: User
+pluralLabel: Users
 nameField: uesio/core.username
 access: "protected_write"
 recordChallengeTokens:

@@ -16,6 +16,7 @@ type FieldType =
 	| "LONGTEXT"
 	| "MAP"
 	| "METADATA"
+	| "MULTIMETADATA"
 	| "MULTISELECT"
 	| "NUMBER"
 	| "REFERENCE"
@@ -67,6 +68,7 @@ type ReferenceGroupMetadata = {
 type MetadataFieldMetadata = {
 	type: MetadataType
 	grouping?: string
+	namespace?: string
 }
 
 type FieldMetadata = {
