@@ -4,11 +4,22 @@ import loadWiresOp from "../../src/bands/wire/operations/load"
 import { newContext } from "../../src/context/context"
 import { getCollectionSlice } from "../utils/defaults"
 import { createRecordOp } from "../../src/bands/wire/operations/createrecord"
+import { Dependencies, RouteState } from "../../src/bands/route/types"
 
 const viewId = "myview"
 const wireId = "mywire"
 const collectionId = "ben/planets.exoplanet"
 const sampleUUID = "some-nice-uuid"
+
+const getRoute = (dependencies?: Dependencies): RouteState => ({
+	view: viewId,
+	namespace: "ben/planets",
+	path: "",
+	theme: "",
+	title: "",
+	tags: [],
+	dependencies,
+})
 
 // This is a somewhat trivial test to make sure UI only wires are
 // initialized correctly. It mostly tests our ability to create a
@@ -35,7 +46,9 @@ test("regular wire with view-only field and collection field", () => {
 	const wireId = "mywire"
 
 	create({
-		collection: getCollectionSlice(),
+		route: getRoute({
+			collection: getCollectionSlice(),
+		}),
 	})
 
 	const context = newContext().addViewFrame({ view: viewId, viewDef: viewId })
@@ -116,7 +129,9 @@ test("wire view-only field with default", () => {
 
 test("wire with default reference field and struct field", () => {
 	create({
-		collection: getCollectionSlice(),
+		route: getRoute({
+			collection: getCollectionSlice(),
+		}),
 	})
 
 	const context = newContext().addViewFrame({ view: viewId, viewDef: viewId })

@@ -77,6 +77,7 @@ func runCoreMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessi
 		CollectionName: studioCollectionName,
 		Collection:     newCollection,
 		Conditions:     newCollection.MapConditions(op.Conditions),
+		Order:          newCollection.MapOrder(op.Order),
 	}
 
 	studioConnection, err := datasource.GetPlatformConnection(nil, session, nil)
