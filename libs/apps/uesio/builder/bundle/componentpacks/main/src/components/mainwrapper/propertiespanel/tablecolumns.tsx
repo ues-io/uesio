@@ -16,6 +16,7 @@ import ItemTag from "../../../utilities/itemtag/itemtag"
 import { useRef, useState } from "react"
 import FieldPicker from "./wire/fieldpicker"
 import { FullPath } from "../../../api/path"
+import { getWirePath, getWireProperty } from "../../../api/wireapi"
 
 type ColumnDefinition = {
 	field: string
@@ -130,21 +131,18 @@ const TableColumns: definition.UC = (props) => {
 	// in order to build a FIELD property that only shows fields from that wire
 	const [, tablePath] = columnsPath.pop()
 	const wireName = get(context, tablePath.addLocal("wire")) as string
-	const wirePath = new FullPath(
-		"viewdef",
-		context.getViewDefId(),
-		`["wires"]["${wireName}"]`
-	)
-	const wireCollection = get(
+	const wireCollection = getWireProperty(
 		context,
-		wirePath.addLocal("collection")
+		wireName,
+		"collection"
 	) as string
+	const wireFieldsPath = getWirePath(context, wireName).addLocal("fields")
 	const fieldComponentDef = getComponentDef("uesio/io.field")
 	const columns = get(context, columnsPath) as definition.DefinitionMap[]
 
 	const addFieldToWire = (ctx: context.Context, path: FullPath) => {
 		//ADD to the wire as well to keep it in sync
-		set(ctx, wirePath.addLocal("fields").merge(path), null)
+		set(ctx, wireFieldsPath.merge(path), null)
 	}
 
 	const onSelect = (ctx: context.Context, path: FullPath) => {
