@@ -18,15 +18,10 @@ import FieldPicker from "./wire/fieldpicker"
 import { FullPath } from "../../../api/path"
 import { getWirePath, getWireProperty } from "../../../api/wireapi"
 
-type ColumnDefinition = {
-	field: string
-	label: string
-	// reference?: ReferenceFieldOptions
-	// user?: UserFieldOptions
-	// number?: NumberFieldOptions
-	// longtext?: LongTextFieldOptions
-	// label: string
-	components: definition.DefinitionList
+export type ColumnDefinition = {
+	field?: string
+	label?: string
+	components?: definition.DefinitionList
 	type?: "" | "custom"
 } & definition.BaseDefinition
 
@@ -76,7 +71,7 @@ const widthProperty = {
 const TABLE_TYPE = "uesio/io.table"
 
 const isCustomColumn = (column: ColumnDefinition) =>
-	column?.components?.length > 0 || column?.type === "custom"
+	(column?.components?.length || 0) > 0 || column?.type === "custom"
 
 const getColumnTitle = (column: ColumnDefinition) => {
 	if (isCustomColumn(column)) {
@@ -85,6 +80,9 @@ const getColumnTitle = (column: ColumnDefinition) => {
 		return `Field: ${column?.field || '["Not set"]'}`
 	}
 }
+
+const getComponentType = (def: definition.DefinitionMap): string =>
+	Object.keys(def)[0] as string
 
 /**
  * Converts the Field Picker FullPath of a selected field to a field selector, e.g. "uesio/core.owner->uesio/core.firstname")
@@ -96,6 +94,26 @@ const transformFieldPickerPath = (path: FullPath) =>
 		.toPath(path.localPath)
 		.filter((x) => x !== "fields")
 		.join("->")
+
+export const isSelected = (
+	columns: ColumnDefinition[],
+	fieldPickerPath: FullPath,
+	fieldId: string
+) => {
+	if (!columns || !columns.length) return false
+	const qualifiedFieldId = transformFieldPickerPath(
+		fieldPickerPath.addLocal(fieldId)
+	)
+	return columns.some((e) => {
+		const columnField = e.field as string
+		if (!columnField) return false
+		//  direct match
+		if (columnField === qualifiedFieldId) return true
+		// check if the column field starts with the qualified picker path,
+		// as long as we have a qualified path to check for (which will not be true top-level)
+		return qualifiedFieldId && columnField.startsWith(qualifiedFieldId)
+	})
+}
 
 const TableColumns: definition.UC = (props) => {
 	const { context } = props
@@ -138,7 +156,7 @@ const TableColumns: definition.UC = (props) => {
 	) as string
 	const wireFieldsPath = getWirePath(context, wireName).addLocal("fields")
 	const fieldComponentDef = getComponentDef("uesio/io.field")
-	const columns = get(context, columnsPath) as definition.DefinitionMap[]
+	const columns = get(context, columnsPath) as ColumnDefinition[]
 
 	const onSelect = (ctx: context.Context, path: FullPath) => {
 		const numColumns = columns?.length || 0
@@ -155,19 +173,10 @@ const TableColumns: definition.UC = (props) => {
 	}
 
 	const onUnselect = (ctx: context.Context, path: FullPath) => {
-		const [field] = path.pop()
-		const index = columns.findIndex((e) => e.field === field)
-		remove(ctx, columnsPath.addLocal(index.toString()))
+		const qualifiedFieldId = transformFieldPickerPath(path)
+		const index = columns.findIndex((e) => e.field === qualifiedFieldId)
+		if (index > -1) remove(ctx, columnsPath.addLocal(index.toString()))
 	}
-
-	const isSelected = (
-		ctx: context.Context,
-		path: FullPath,
-		fieldId: string
-	) => columns && columns.some((e) => e.field === fieldId)
-
-	const getComponentType = (def: definition.DefinitionMap): string =>
-		Object.keys(def)[0] as string
 
 	const getColumnProperties = (column: ColumnDefinition) => {
 		// If the column has components, then the individual components can be edited through their child components,
@@ -247,7 +256,11 @@ const TableColumns: definition.UC = (props) => {
 						onSelect={onSelect}
 						onUnselect={onUnselect}
 						allowMultiselect={true}
-						isSelected={isSelected}
+						isSelected={(
+							ctx: context.Context,
+							path: FullPath,
+							fieldId: string
+						) => isSelected(columns, path, fieldId)}
 					/>
 				</Popper>
 			)}
