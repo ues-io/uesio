@@ -7,8 +7,10 @@ subfields:
     type: TEXT
     label: Label
   - name: languageLabel
-    type: TEXT
+    type: METADATA
     label: Language Label
+    metadata:
+      type: LABEL
   - name: value
     type: TEXT
     label: Value

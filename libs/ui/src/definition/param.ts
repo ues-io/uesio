@@ -14,8 +14,8 @@ type ParamBase = {
 		| "RECORD"
 		| "TEXT"
 		| "METADATA"
-		| "METADATAMULTI"
 		| "METADATANAME"
+		| "MULTIMETADATA"
 		| "NUMBER"
 		| "SELECT"
 		| "CHECKBOX"
@@ -50,16 +50,17 @@ type SelectParam = ParamBase & {
 	selectList: string
 }
 
-type MetadataParam = ParamBase & {
-	type: "METADATA"
+type MetadataParamBase = ParamBase & {
 	metadataType: MetadataType
 	grouping?: string
 }
 
-type MetadataMultiParam = ParamBase & {
-	type: "METADATAMULTI"
-	metadataType: MetadataType
-	grouping?: string
+type MetadataParam = MetadataParamBase & {
+	type: "METADATA"
+}
+
+type MultiMetadataParam = MetadataParamBase & {
+	type: "MULTIMETADATA"
 }
 
 type MetadataNameParam = ParamBase & {
@@ -75,9 +76,9 @@ export type ParamDefinition =
 	| SelectParam
 	| CheckboxParam
 	| NumberParam
-	| MetadataParam
-	| MetadataMultiParam
 	| MetadataNameParam
+	| MetadataParam
+	| MultiMetadataParam
 
 type ViewParamBase = {
 	required?: boolean

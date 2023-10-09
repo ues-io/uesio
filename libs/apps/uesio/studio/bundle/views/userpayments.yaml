@@ -141,7 +141,7 @@ definition:
                       - field: uesio/studio.autoid
                       - label: APP
                         components:
-                          - uesio/studio.iconlabel:
+                          - uesio/io.iconlabel:
                               text: ${uesio/studio.app->uesio/studio.fullname}
                               icon: ${uesio/studio.app->uesio/studio.icon}
                               color: ${uesio/studio.app->uesio/studio.color}

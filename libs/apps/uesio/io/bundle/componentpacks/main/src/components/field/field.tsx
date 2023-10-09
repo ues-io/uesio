@@ -25,6 +25,7 @@ import { ReferenceGroupFieldOptions } from "../../utilities/field/referencegroup
 import { UserFieldOptions } from "../../utilities/field/user"
 import { CheckboxFieldOptions } from "../../utilities/field/checkbox"
 import { TextFieldOptions } from "../../utilities/field/text"
+import { MetadataFieldOptions } from "../../utilities/field/metadata"
 
 type FieldDefinition = {
 	// Wire will default to the context wire, but can optionally be overridden
@@ -39,6 +40,7 @@ type FieldDefinition = {
 	list?: ListFieldOptions
 	map?: MapFieldOptions
 	markdown?: MarkdownComponentOptions
+	metadata?: MetadataFieldOptions
 	user?: UserFieldOptions
 	number?: NumberFieldOptions
 	longtext?: LongTextFieldOptions
@@ -65,7 +67,7 @@ type UserFileMetadata = {
 	["uesio/core.recordid"]: string
 	["uesio/core.collectionid"]: string
 	["uesio/core.fieldid"]?: string
-	["uesio/core.updatedat"]: string
+	[collection.UPDATED_AT_FIELD]: string
 }
 
 const UPLOAD_FILE_EVENT = "component:uesio/io.field:upload"
@@ -185,6 +187,7 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		list,
 		map,
 		markdown,
+		metadata: definition.metadata,
 		user,
 		number,
 		longtext,

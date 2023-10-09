@@ -4,5 +4,5 @@ uniqueKey:
   - uesio/core.user
 nameField: uesio/core.uniquekey
 public: true
-label: feature flag assignment
-pluralLabel: feature flag assignments
+label: Feature Flag Assignment
+pluralLabel: Feature Flag Assignments

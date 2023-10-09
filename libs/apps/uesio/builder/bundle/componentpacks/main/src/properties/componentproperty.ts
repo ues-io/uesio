@@ -74,7 +74,7 @@ type MetadataProperty = {
 } & BaseProperty
 
 type MultiMetadataProperty = {
-	type: "MULTI_METADATA"
+	type: "MULTIMETADATA"
 	metadataType: metadata.MetadataType
 	groupingPath?: string
 	groupingValue?: string

@@ -1,4 +1,6 @@
 name: collection
-type: TEXT
+type: METADATA
 label: Collection
 createOnly: true
+metadata:
+  type: COLLECTION

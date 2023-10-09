@@ -45,36 +45,14 @@ const getDisplayConditionsFromBotParamConditions = (
 	}) as component.DisplayCondition[]
 }
 
-const getLayoutFieldFromParamDef = (def: param.ParamDefinition) => {
-	const fieldCommon = {
+const getLayoutFieldFromParamDef = (def: param.ParamDefinition) => ({
+	"uesio/io.field": {
 		fieldId: def.name,
 		"uesio.display": getDisplayConditionsFromBotParamConditions(
 			def.conditions
 		),
-	}
-	switch (def.type) {
-		case "METADATA":
-			return {
-				"uesio/builder.metadatafield": {
-					metadataType: def.metadataType,
-					grouping: def.grouping,
-					...fieldCommon,
-				},
-			}
-		case "METADATAMULTI":
-			return {
-				"uesio/builder.multimetadatafield": {
-					metadataType: def.metadataType,
-					grouping: def.grouping,
-					...fieldCommon,
-				},
-			}
-		default:
-			return {
-				"uesio/io.field": fieldCommon,
-			}
-	}
-}
+	},
+})
 
 const GeneratorForm: definition.UtilityComponent<FormProps> = (props) => {
 	const { context, generator, setOpen } = props
