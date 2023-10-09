@@ -85,6 +85,17 @@ const getColumnTitle = (column: ColumnDefinition) => {
 	}
 }
 
+/**
+ * Converts the Field Picker FullPath of a selected field to a field selector, e.g. "uesio/core.owner->uesio/core.firstname")
+ * @param path FullPath
+ * @returns string
+ */
+const transformFieldPickerPath = (path: FullPath) =>
+	component.path
+		.toPath(path.localPath)
+		.filter((x) => x !== "fields")
+		.join("->")
+
 const TableColumns: definition.UC = (props) => {
 	const { context } = props
 
@@ -131,26 +142,28 @@ const TableColumns: definition.UC = (props) => {
 	const fieldComponentDef = getComponentDef("uesio/io.field")
 	const columns = get(context, columnsPath) as definition.DefinitionMap[]
 
-	const addFieldToWire = (ctx: context.Context, fieldId: string) => {
+	const addFieldToWire = (ctx: context.Context, path: FullPath) => {
 		//ADD to the wire as well to keep it in sync
-		//TO-DO reference fields explode
-		set(ctx, wirePath.addLocal("fields").addLocal(fieldId), null)
+		set(ctx, wirePath.addLocal("fields").merge(path), null)
 	}
 
 	const onSelect = (ctx: context.Context, path: FullPath) => {
-		const [fieldId] = path.pop()
 		if (!columns?.length || columns?.length === 0) {
 			add(context, columnsPath.addLocal(`0`), {})
-			set(ctx, columnsPath.addLocal(`0`).addLocal("field"), fieldId)
-			fieldId && addFieldToWire(ctx, fieldId)
+			set(
+				ctx,
+				columnsPath.addLocal(`0`).addLocal("field"),
+				transformFieldPickerPath(path)
+			)
+			addFieldToWire(ctx, path)
 			return
 		}
 		set(
 			ctx,
 			columnsPath.addLocal(`${columns.length}`).addLocal("field"),
-			fieldId
+			transformFieldPickerPath(path)
 		)
-		fieldId && addFieldToWire(ctx, fieldId)
+		addFieldToWire(ctx, path)
 	}
 
 	const onUnselect = (ctx: context.Context, path: FullPath) => {
