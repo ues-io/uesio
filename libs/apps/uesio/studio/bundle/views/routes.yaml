@@ -167,18 +167,14 @@ definition:
                                     name: $Param{workspacename}
                                     app: $Param{app}
                                 components:
-                                  - uesio/builder.metadatafield:
+                                  - uesio/io.field:
                                       fieldId: uesio/studio.homeroute
-                                      metadataType: "ROUTE"
-                                  - uesio/builder.metadatafield:
+                                  - uesio/io.field:
                                       fieldId: uesio/studio.loginroute
-                                      metadataType: "ROUTE"
-                                  - uesio/builder.metadatafield:
+                                  - uesio/io.field:
                                       fieldId: uesio/studio.signuproute
-                                      metadataType: "ROUTE"
-                                  - uesio/builder.metadatafield:
+                                  - uesio/io.field:
                                       fieldId: uesio/studio.favicon
-                                      metadataType: "FILE"
           - uesio/io.box:
               uesio.variant: uesio/io.section
               components:
@@ -194,8 +190,8 @@ definition:
                     columns:
                       - label: Route
                         components:
-                          - uesio/studio.iconlabel:
-                              uesio.variant: uesio/studio.namespacefield
+                          - uesio/io.iconlabel:
+                              uesio.variant: uesio/io.namespacefield
                               text: ${uesio/studio.name}
                               subtitle: ${uesio/studio.namespace}
                               icon: ${uesio/studio.appicon}
@@ -257,18 +253,14 @@ definition:
                   uesio.display:
                     - field: uesio/studio.type
                       value: "redirect"
-              - uesio/builder.metadatafield:
+              - uesio/io.field:
                   fieldId: uesio/studio.view
-                  metadataType: VIEW
-                  label: View
                   uesio.display:
                     - field: uesio/studio.type
                       value: "redirect"
                       operator: NOT_EQUALS
-              - uesio/builder.metadatafield:
+              - uesio/io.field:
                   fieldId: uesio/studio.theme
-                  metadataType: THEME
-                  label: Theme
                   uesio.display:
                     - field: uesio/studio.type
                       value: "redirect"

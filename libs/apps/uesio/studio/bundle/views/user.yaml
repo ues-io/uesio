@@ -203,14 +203,12 @@ definition:
                                       fieldId: uesio/core.username
                                   - uesio/io.field:
                                       fieldId: uesio/core.email
-                                  - uesio/builder.metadatafield:
+                                  - uesio/io.field:
+                                      fieldId: uesio/core.profile
                                       uesio.context:
                                         siteadmin:
                                           name: $Param{sitename}
                                           app: $Param{app}
-                                      fieldId: uesio/core.profile
-                                      metadataType: "PROFILE"
-                                      label: "Profile"
                                   - uesio/io.field:
                                       fieldId: uesio/core.language
                                   - uesio/io.field:
@@ -406,14 +404,12 @@ definition:
             wire: newloginmethod
             mode: EDIT
             components:
-              - uesio/builder.metadatafield:
+              - uesio/io.field:
+                  fieldId: uesio/core.auth_source
                   uesio.context:
                     siteadmin:
                       name: $Param{sitename}
                       app: $Param{app}
-                  fieldId: uesio/core.auth_source
-                  metadataType: "AUTHSOURCE"
-                  label: "Auth Source"
               - uesio/io.field:
                   fieldId: uesio/core.federation_id
       actions:

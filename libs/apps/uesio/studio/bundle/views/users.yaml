@@ -159,14 +159,12 @@ definition:
                   fieldId: uesio/core.lastname
               - uesio/io.field:
                   fieldId: uesio/core.email
-              - uesio/builder.metadatafield:
+              - uesio/io.field:
+                  fieldId: uesio/core.profile
                   uesio.context:
                     siteadmin:
                       name: $Param{sitename}
                       app: $Param{app}
-                  fieldId: uesio/core.profile
-                  metadataType: "PROFILE"
-                  label: "Profile"
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary

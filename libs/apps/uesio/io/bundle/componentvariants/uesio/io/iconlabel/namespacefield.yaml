@@ -1,6 +1,6 @@
 name: namespacefield
 label: Namespace Field
-extends: uesio/builder.iconlabel:uesio/builder.default
+extends: uesio/io.iconlabel:uesio/io.default
 definition:
   uesio.styleTokens:
     root:

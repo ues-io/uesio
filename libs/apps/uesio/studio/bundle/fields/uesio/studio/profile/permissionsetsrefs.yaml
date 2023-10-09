@@ -1,4 +1,5 @@
 name: permissionsetsrefs
-type: LIST
+type: MULTIMETADATA
 label: Permission sets refs
-subtype: TEXT
+metadata:
+  type: PROFILE

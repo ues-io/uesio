@@ -115,16 +115,16 @@ definition:
                     columns:
                       - label: LICENSED APP
                         components:
-                          - uesio/studio.iconlabel:
-                              uesio.variant: uesio/studio.namespacefield
+                          - uesio/io.iconlabel:
+                              uesio.variant: uesio/io.namespacefield
                               text: ${uesio/studio.applicensed->uesio/studio.fullname}
                               icon: ${uesio/studio.applicensed->uesio/studio.icon}
                               color: ${uesio/studio.applicensed->uesio/studio.color}
                       - field: uesio/studio.monthlyprice
                       - label: status
                         components:
-                          - uesio/studio.iconlabel:
-                              uesio.variant: uesio/studio.namespacefield
+                          - uesio/io.iconlabel:
+                              uesio.variant: uesio/io.namespacefield
                               text: Active
                               icon: verified
                               color: rgb(29,173,113)
@@ -132,8 +132,8 @@ definition:
                                 - field: uesio/studio.active
                                   value: true
                                   operator: EQUALS
-                          - uesio/studio.iconlabel:
-                              uesio.variant: uesio/studio.namespacefield
+                          - uesio/io.iconlabel:
+                              uesio.variant: uesio/io.namespacefield
                               text: Inactive
                               icon: cancel
                               color: rgb(255,0,0)

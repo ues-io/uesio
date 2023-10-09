@@ -4,10 +4,15 @@ label: Reference Group Metadata
 subfields:
   - name: uesio/studio.collection
     label: Collection
-    type: TEXT
+    type: METADATA
+    metadata:
+      type: COLLECTION
   - name: uesio/studio.field
-    label: Collection
-    type: TEXT
+    label: Field
+    type: METADATA
+    metadata:
+      type: FIELD
+      grouping: ${uesio/studio.collection}
   - name: uesio/studio.ondelete
     label: On Delete
     type: SELECT
