@@ -95,7 +95,7 @@ describe("Uesio Sanity Smoke Tests", () => {
 				"Is Extinct"
 			)
 			// Search the table to find one field
-			cy.get("input[type=search]").type("ext")
+			cy.get("input[type=search]").scrollIntoView().type("ext")
 			// verify that only one result is returned
 			cy.get('table[id$="fields"]>tbody')
 				.children("tr")
@@ -109,7 +109,7 @@ describe("Uesio Sanity Smoke Tests", () => {
 				"Is Extinct"
 			)
 			// Clear the search to verify that both results come back
-			cy.get("input[type=search]").clear()
+			cy.get("input[type=search]").scrollIntoView().clear()
 			cy.get('table[id$="fields"]>tbody')
 				.children("tr")
 				.should("have.length", 2)

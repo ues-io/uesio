@@ -397,6 +397,11 @@ definition:
                                 uesio.display:
                                   - type: wireHasNoChanges
                                     wire: fields
+                - uesio/io.searchbox:
+                    wire: fields
+                    searchFields:
+                      - uesio/studio.name
+                      - uesio/studio.label
                 - uesio/io.table:
                     uesio.id: fields
                     wire: fields
