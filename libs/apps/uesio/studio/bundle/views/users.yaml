@@ -150,10 +150,6 @@ definition:
             uesio.id: newuserlist
             wire: newuser
             mode: EDIT
-            uesio.context:
-              siteadmin:
-                name: $Param{sitename}
-                app: $Param{app}
             components:
               - uesio/io.field:
                   fieldId: uesio/core.username
@@ -165,6 +161,10 @@ definition:
                   fieldId: uesio/core.email
               - uesio/io.field:
                   fieldId: uesio/core.profile
+                  uesio.context:
+                    siteadmin:
+                      name: $Param{sitename}
+                      app: $Param{app}
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
