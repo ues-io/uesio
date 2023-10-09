@@ -62,19 +62,16 @@ const getViewOnlyFieldMetadata = (
 	field: string,
 	fieldDef: ViewOnlyField
 ): FieldMetadata => ({
+	...fieldDef,
 	accessible: true,
 	createable:
 		typeof fieldDef.createable === "boolean" ? fieldDef.createable : true,
-	name: field,
+
 	updateable:
 		typeof fieldDef.updateable === "boolean" ? fieldDef.updateable : true,
+	name: field,
 	namespace: "",
-	type: fieldDef.type,
-	subtype: fieldDef.subtype,
 	label: fieldDef.label || field,
-	reference: fieldDef.reference,
-	selectlist: fieldDef.selectlist,
-	number: fieldDef.number,
 	subfields: fieldDef.fields
 		? Object.fromEntries(
 				Object.entries(fieldDef.fields).map(
