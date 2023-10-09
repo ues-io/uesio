@@ -10,7 +10,7 @@ const getAvailableWires = (context: context.Context) => {
 		context,
 		new FullPath("viewdef", context.getViewDefId(), '["wires"]')
 	) as wire.WireDefinitionMap
-	return result
+	return result || {}
 }
 
 const getWireDefinition = (context: context.Context, wireId: string) =>
