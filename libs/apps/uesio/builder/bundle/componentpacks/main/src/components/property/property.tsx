@@ -63,6 +63,7 @@ export const getFormFieldFromProperty = (
 			return {
 				"uesio/io.field": {
 					...baseFieldDef,
+					wrapperVariant: "uesio/builder.propfield",
 					metadata: {
 						grouping: getGrouping(
 							path,
@@ -71,7 +72,6 @@ export const getFormFieldFromProperty = (
 							property.groupingValue
 						),
 					},
-					fieldWrapperVariant: "uesio/builder.propfield",
 				},
 			}
 		case "COLLECTION_FIELD":
