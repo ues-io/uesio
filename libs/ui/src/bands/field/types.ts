@@ -1,5 +1,5 @@
 import { DisplayCondition } from "../../componentexports"
-import { BundleableBase } from "../../metadataexports"
+import { BundleableBase, MetadataType } from "../../metadataexports"
 import { CollectionFieldKey, CollectionKey } from "../wire/types"
 
 type FieldMetadataMap = {
@@ -15,6 +15,8 @@ type FieldType =
 	| "LIST"
 	| "LONGTEXT"
 	| "MAP"
+	| "METADATA"
+	| "MULTIMETADATA"
 	| "MULTISELECT"
 	| "NUMBER"
 	| "REFERENCE"
@@ -63,6 +65,12 @@ type ReferenceGroupMetadata = {
 	field: CollectionFieldKey
 }
 
+type MetadataFieldMetadata = {
+	type: MetadataType
+	grouping?: string
+	namespace?: string
+}
+
 type FieldMetadata = {
 	createable: boolean
 	accessible: boolean
@@ -72,6 +80,7 @@ type FieldMetadata = {
 	selectlist?: SelectListMetadata
 	reference?: ReferenceMetadata
 	referencegroup?: ReferenceGroupMetadata
+	metadata?: MetadataFieldMetadata
 	subfields?: FieldMetadataMap
 	file?: FileMetadata
 	subtype?: FieldType
@@ -106,6 +115,7 @@ export type {
 	SelectOption,
 	SelectListMetadata,
 	FieldType,
+	MetadataFieldMetadata,
 	NumberMetadata,
 	ReferenceMetadata,
 }

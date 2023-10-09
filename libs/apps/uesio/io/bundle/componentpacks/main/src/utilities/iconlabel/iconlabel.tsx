@@ -27,7 +27,7 @@ const IconLabel: definition.UtilityComponent<T> = (props) => {
 			subtitle: [],
 		},
 		props,
-		"uesio/builder.iconlabel"
+		"uesio/io.iconlabel"
 	)
 	const iconElement = (
 		<Text

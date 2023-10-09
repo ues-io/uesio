@@ -59,26 +59,25 @@ export const getFormFieldFromProperty = (
 	}
 	switch (type) {
 		case "METADATA":
-		case "MULTI_METADATA":
+		case "MULTIMETADATA":
 			return {
-				[`uesio/builder.${
-					type === "METADATA" ? "" : "multi"
-				}metadatafield`]: {
+				"uesio/io.field": {
 					...baseFieldDef,
-					metadataType: property.metadataType,
+					metadata: {
+						grouping: getGrouping(
+							path,
+							context,
+							property.groupingPath,
+							property.groupingValue
+						),
+					},
 					fieldWrapperVariant: "uesio/builder.propfield",
-					grouping: getGrouping(
-						path,
-						context,
-						property.groupingPath,
-						property.groupingValue
-					),
 				},
 			}
 		case "COLLECTION_FIELD":
 		case "COLLECTION_FIELDS":
 			return {
-				[`uesio/builder.collectionfieldpicker`]: {
+				"uesio/builder.collectionfieldpicker": {
 					...baseFieldDef,
 					fieldWrapperVariant: "uesio/builder.propfield",
 					collectionName: getGrouping(

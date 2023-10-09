@@ -6,7 +6,6 @@ import MoveActions from "../../../../actions/moveactions"
 import { FullPath } from "../../../../api/path"
 import { getBuilderNamespace, setSelectedPath } from "../../../../api/stateapi"
 import BuildActionsArea from "../../../../helpers/buildactionsarea"
-import NamespaceLabel from "../../../../utilities/namespacelabel/namespacelabel"
 import PropNodeTag from "../../../../utilities/propnodetag/propnodetag"
 import ItemTag from "../../../../utilities/itemtag/itemtag"
 
@@ -20,6 +19,7 @@ interface T {
 const FieldPropTag: definition.UtilityComponent<T> = (props) => {
 	const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
 	const Text = component.getUtility("uesio/io.text")
+	const NamespaceLabel = component.getUtility("uesio/io.namespacelabel")
 	const { fieldId, fieldDef, collectionKey, context, path, selectedPath } =
 		props
 

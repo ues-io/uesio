@@ -20,7 +20,6 @@ import {
 	setSelectedPath,
 	useSelectedPath,
 } from "../../../api/stateapi"
-import NamespaceLabel from "../../../utilities/namespacelabel/namespacelabel"
 import PropNodeTag from "../../../utilities/propnodetag/propnodetag"
 import { FullPath } from "../../../api/path"
 import SearchArea from "../../../helpers/searcharea"
@@ -70,6 +69,7 @@ const VariantsBlock: definition.UtilityComponent<VariantsBlockProps> = (
 		VariantsBlockStyleDefaults,
 		props
 	)
+	const NamespaceLabel = getUtility("uesio/io.namespacelabel")
 
 	return (
 		<div className={classes.root}>
@@ -237,6 +237,7 @@ const ComponentTag: definition.UtilityComponent<ComponentTagProps> = (
 	props
 ) => {
 	const { context, component } = props
+	const NamespaceLabel = getUtility("uesio/io.namespacelabel")
 
 	const nsInfo = getBuilderNamespace(
 		context,
