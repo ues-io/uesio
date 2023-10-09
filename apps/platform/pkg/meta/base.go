@@ -1,6 +1,9 @@
 package meta
 
-import "fmt"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 func NewBase(namespace, name string) BundleableBase {
 	return BundleableBase{
@@ -42,4 +45,11 @@ func (bb *BundleableBase) GetKey() string {
 
 func (bb *BundleableBase) GetPath() string {
 	return bb.Name + ".yaml"
+}
+
+func refScanner(obj interface{}, data []byte) error {
+	if data[0] == '"' {
+		return json.Unmarshal(append([]byte("{\"uesio/core.id\":"), append(data, []byte("}")...)...), obj)
+	}
+	return json.Unmarshal(data, obj)
 }
