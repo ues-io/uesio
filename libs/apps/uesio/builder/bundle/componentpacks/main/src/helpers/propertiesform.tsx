@@ -373,6 +373,15 @@ const getWireFieldFromPropertyDef = (
 			return getBaseWireFieldDef(def, "LIST", {
 				subtype: "TEXT",
 			})
+		case "METADATA":
+		case "MULTIMETADATA":
+			return getBaseWireFieldDef(def, type, {
+				metadata: {
+					type: def.metadataType,
+					// grouping will be merged in at render time
+					// into the uesio/io.field layout component property
+				},
+			})
 		default:
 			return getBaseWireFieldDef(def, "TEXT")
 	}

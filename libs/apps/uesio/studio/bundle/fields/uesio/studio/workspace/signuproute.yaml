@@ -1,3 +1,5 @@
 name: signuproute
-type: TEXT
+type: METADATA
 label: Signup Route
+metadata:
+  type: ROUTE

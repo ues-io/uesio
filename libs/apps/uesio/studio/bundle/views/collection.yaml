@@ -174,6 +174,11 @@ definition:
               uesio.id: collectionsDeck
               wire: collections
               mode: READ
+              # TODO: We only need this context for the METADATA fields
+              uesio.context:
+                workspace:
+                  name: $Param{workspacename}
+                  app: $Param{app}
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
@@ -259,14 +264,11 @@ definition:
                                 fieldId: uesio/studio.label
                             - uesio/io.field:
                                 fieldId: uesio/studio.plurallabel
-                            - uesio/builder.metadatafield:
-                                uesio.context:
-                                  workspace:
-                                    name: $Param{workspacename}
-                                    app: $Param{app}
+                            - uesio/io.field:
                                 fieldId: uesio/studio.namefield
-                                metadataType: FIELD
-                                label: Name Field
+                                metadata:
+                                  grouping: $Param{app}.$Param{collectionname}
+                                  namespace: $Param{app}
                       - uesio/io.grid:
                           uesio.variant: uesio/io.four_columns
                           items:
@@ -288,27 +290,16 @@ definition:
                             - field: uesio/studio.type
                               value: EXTERNAL
                           items:
-                            - uesio/builder.metadatafield:
-                                uesio.context:
-                                  workspace:
-                                    name: $Param{workspacename}
-                                    app: $Param{app}
+                            - uesio/io.field:
                                 fieldId: uesio/studio.integration
-                                metadataType: INTEGRATION
                                 uesio.display:
                                   - type: fieldValue
                                     wire: collections
                                     field: uesio/studio.type
                                     operator: EQUALS
                                     value: EXTERNAL
-                            - uesio/builder.metadatafield:
-                                uesio.context:
-                                  workspace:
-                                    name: $Param{workspacename}
-                                    app: $Param{app}
+                            - uesio/io.field:
                                 fieldId: uesio/studio.loadbot
-                                metadataType: BOT
-                                grouping: LOAD
                                 label: Collection Load Bot
                                 uesio.display:
                                   - type: hasValue
@@ -319,14 +310,8 @@ definition:
                                     wire: integration
                                     field: uesio/studio.type
                                     value: uesio/core.custom
-                            - uesio/builder.metadatafield:
-                                uesio.context:
-                                  workspace:
-                                    name: $Param{workspacename}
-                                    app: $Param{app}
+                            - uesio/io.field:
                                 fieldId: uesio/studio.savebot
-                                metadataType: BOT
-                                grouping: SAVE
                                 label: Collection Save Bot
                                 uesio.display:
                                   - type: hasValue
@@ -412,6 +397,11 @@ definition:
                                 uesio.display:
                                   - type: wireHasNoChanges
                                     wire: fields
+                - uesio/io.searchbox:
+                    wire: fields
+                    searchFields:
+                      - uesio/studio.name
+                      - uesio/studio.label
                 - uesio/io.table:
                     uesio.id: fields
                     wire: fields
@@ -442,8 +432,8 @@ definition:
                     columns:
                       - label: Field
                         components:
-                          - uesio/studio.iconlabel:
-                              uesio.variant: uesio/studio.namespacefield
+                          - uesio/io.iconlabel:
+                              uesio.variant: uesio/io.namespacefield
                               text: ${uesio/studio.name}
                               subtitle: ${uesio/studio.namespace}
                               icon: ${uesio/studio.appicon}
@@ -519,15 +509,14 @@ definition:
                     columns:
                       - label: Field Name
                         components:
-                          - uesio/studio.iconlabel:
-                              uesio.variant: uesio/studio.namespacefield
+                          - uesio/io.iconlabel:
+                              uesio.variant: uesio/io.namespacefield
                               text: ${uesio/studio.name}
                               subtitle: ${uesio/studio.namespace}
                               icon: ${uesio/studio.appicon}
                               color: ${uesio/studio.appcolor}
                       - field: uesio/studio.type
                       - field: uesio/studio.label
-                      - field: uesio/studio.languagelabel
           - uesio/io.box:
               uesio.variant: uesio/io.section
               components:
@@ -618,8 +607,8 @@ definition:
       width: 400px
       height: 560px
       components:
-        - uesio/io.list:
-            uesio.id: editCollectionList
+        - uesio/io.item:
+            uesio.id: editCollection
             wire: collections
             mode: EDIT
             uesio.context:
@@ -633,21 +622,15 @@ definition:
                   fieldId: uesio/studio.label
               - uesio/io.field:
                   fieldId: uesio/studio.plurallabel
-              - uesio/builder.metadatafield:
+              - uesio/io.field:
                   fieldId: uesio/studio.namefield
-                  metadataType: FIELD
-                  label: Name Field
-                  grouping: $Param{app}.$Param{collectionname}
-                  namespace: $Param{app}
+                  metadata:
+                    grouping: $Param{app}.$Param{collectionname}
+                    namespace: $Param{app}
               - uesio/io.field:
                   fieldId: uesio/studio.type
-              - uesio/builder.metadatafield:
-                  uesio.context:
-                    workspace:
-                      name: $Param{workspacename}
-                      app: $Param{app}
+              - uesio/io.field:
                   fieldId: uesio/studio.integration
-                  metadataType: INTEGRATION
                   uesio.display:
                     - type: fieldValue
                       wire: collections
@@ -660,14 +643,8 @@ definition:
                       wire: integration
                       field: uesio/studio.type
                       value: uesio/core.custom
-              - uesio/builder.metadatafield:
-                  uesio.context:
-                    workspace:
-                      name: $Param{workspacename}
-                      app: $Param{app}
+              - uesio/io.field:
                   fieldId: uesio/studio.loadbot
-                  metadataType: BOT
-                  grouping: LOAD
                   label: Collection Load Bot
                   uesio.display:
                     - type: fieldValue
@@ -681,14 +658,8 @@ definition:
                       wire: integration
                       field: uesio/studio.type
                       value: uesio/core.custom
-              - uesio/builder.metadatafield:
-                  uesio.context:
-                    workspace:
-                      name: $Param{workspacename}
-                      app: $Param{app}
+              - uesio/io.field:
                   fieldId: uesio/studio.savebot
-                  metadataType: BOT
-                  grouping: SAVE
                   label: Collection Save Bot
                   uesio.display:
                     - type: fieldValue
@@ -729,16 +700,15 @@ definition:
         - uesio/io.list:
             wire: newrouteassignment
             mode: EDIT
-            uesio.context:
-              workspace:
-                name: $Param{workspacename}
-                app: $Param{app}
             components:
               - uesio/io.field:
                   fieldId: uesio/studio.type
-              - uesio/builder.metadatafield:
+              - uesio/io.field:
                   fieldId: uesio/studio.route
-                  metadataType: ROUTE
+                  uesio.context:
+                    workspace:
+                      name: $Param{workspacename}
+                      app: $Param{app}
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
@@ -793,19 +763,16 @@ definition:
               - uesio/io.field:
                   fieldId: uesio/studio.type
                   uesio.id: new-field-type
-              - uesio/builder.metadatafield:
+              - uesio/io.field:
                   fieldId: uesio/studio.languagelabel
                   uesio.id: new-field-language-label
-                  metadataType: LABEL
-                  label: Language Label
               - uesio/io.box:
                   uesio.display:
                     - field: uesio/studio.type
                       value: REFERENCE
                   components:
-                    - uesio/builder.metadatafield:
+                    - uesio/io.field:
                         fieldId: uesio/studio.reference->uesio/studio.collection
-                        metadataType: COLLECTION
                         label: Ref. Collection
                         uesio.id: new-field-collection
               - uesio/io.box:
@@ -813,9 +780,8 @@ definition:
                     - field: uesio/studio.type
                       value: REFERENCEGROUP
                   components:
-                    - uesio/builder.metadatafield:
+                    - uesio/io.field:
                         fieldId: uesio/studio.referencegroup->uesio/studio.collection
-                        metadataType: COLLECTION
                         label: Ref. Collection
                         uesio.id: new-field-ref-collection
               - uesio/io.box:
@@ -827,10 +793,8 @@ definition:
                       operator: NOT_EQUALS
                       value: ""
                   components:
-                    - uesio/builder.metadatafield:
+                    - uesio/io.field:
                         fieldId: uesio/studio.referencegroup->uesio/studio.field
-                        metadataType: FIELD
-                        grouping: ${uesio/studio.referencegroup->uesio/studio.collection}
                         label: Ref. Field
                         uesio.id: new-field-ref-field
               - uesio/io.box:
@@ -865,11 +829,9 @@ definition:
                     - field: uesio/studio.type
                       value: SELECT
                   components:
-                    - uesio/builder.metadatafield:
+                    - uesio/io.field:
                         fieldId: uesio/studio.selectlist
                         uesio.id: new-field-selectlist
-                        metadataType: SELECTLIST
-                        label: Select List
               - uesio/io.box:
                   uesio.display:
                     - field: uesio/studio.type
@@ -894,9 +856,8 @@ definition:
                     - field: uesio/studio.type
                       value: MULTISELECT
                   components:
-                    - uesio/builder.metadatafield:
+                    - uesio/io.field:
                         fieldId: uesio/studio.selectlist
-                        metadataType: SELECTLIST
                         label: Select List
                         uesio.id: new-field-multi-selectlist
               - uesio/io.box:
@@ -904,10 +865,8 @@ definition:
                     - field: uesio/studio.type
                       value: FILE
                   components:
-                    - uesio/builder.metadatafield:
+                    - uesio/io.field:
                         fieldId: uesio/studio.file->uesio/studio.filesource
-                        metadataType: FILESOURCE
-                        label: File Source
                         uesio.id: new-field-file-source
                     - uesio/io.field:
                         fieldId: uesio/studio.file->uesio/studio.accept

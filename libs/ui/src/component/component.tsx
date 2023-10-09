@@ -28,7 +28,7 @@ import {
 	DeclarativeComponent as DeclarativeComponentDef,
 	SlotDef,
 } from "../definition/component"
-import { DISPLAY_CONDITIONS } from "../componentexports"
+import { COMPONENT_CONTEXT, DISPLAY_CONDITIONS } from "../componentexports"
 import Slot, { DefaultSlotName } from "../utilities/slot"
 
 // A cache of full variant definitions, where all variant extensions have been resolved
@@ -207,7 +207,7 @@ const Component: UC<DefinitionMap> = (props) => {
 				definition={mergedDefinition}
 				context={injectDynamicContext(
 					context,
-					mergedDefinition?.["uesio.context"] as ContextOptions
+					mergedDefinition?.[COMPONENT_CONTEXT] as ContextOptions
 				)}
 			/>
 		</ErrorBoundary>

@@ -1,3 +1,5 @@
 name: auth_source
-type: TEXT
+type: METADATA
 label: Auth Source
+metadata:
+  type: AUTHSOURCE

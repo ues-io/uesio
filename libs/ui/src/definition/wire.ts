@@ -1,6 +1,7 @@
 import type { WireDefault } from "../bands/wire/defaults/defaults"
 import type {
 	FieldType,
+	MetadataFieldMetadata,
 	NumberMetadata,
 	ReferenceMetadata,
 	SelectListMetadata,
@@ -22,6 +23,7 @@ type ViewOnlyField = {
 	reference?: ReferenceMetadata
 	selectlist?: SelectListMetadata
 	number?: NumberMetadata
+	metadata?: MetadataFieldMetadata
 	fields?: Record<string, ViewOnlyField>
 	viewOnly?: boolean
 	createable?: boolean

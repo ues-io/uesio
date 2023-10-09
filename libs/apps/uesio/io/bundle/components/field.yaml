@@ -9,19 +9,20 @@ discoverable: true
 category: DATA
 icon: select_check_box
 variants:
+  - uesio/io.avatar:uesio/io.default
+  - uesio/io.checkboxfield:uesio/io.default
+  - uesio/io.codefield:uesio/io.default
+  - uesio/io.customselectfield:uesio/io.default
   - uesio/io.field:uesio/io.default
   - uesio/io.fieldlabel:uesio/io.default
   - uesio/io.fieldwrapper:uesio/io.default
-  - uesio/io.tile:uesio/io.default
-  - uesio/io.titlebar:uesio/io.infotag
+  - uesio/io.iconlabel:uesio/io.default
   - uesio/io.listfield:uesio/io.default
-  - uesio/io.selectfield:uesio/io.default
-  - uesio/io.customselectfield:uesio/io.default
-  - uesio/io.checkboxfield:uesio/io.default
-  - uesio/io.codefield:uesio/io.default
   - uesio/io.markdownfield:uesio/io.default
   - uesio/io.menu:uesio/io.default
-  - uesio/io.avatar:uesio/io.default
+  - uesio/io.selectfield:uesio/io.default
+  - uesio/io.tile:uesio/io.default
+  - uesio/io.titlebar:uesio/io.infotag
 slots:
   - name: components
     path: /list

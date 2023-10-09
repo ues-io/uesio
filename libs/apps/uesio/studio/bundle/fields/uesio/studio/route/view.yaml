@@ -1,3 +1,5 @@
 name: view
-type: TEXT
+type: METADATA
 label: View
+metadata:
+  type: VIEW

@@ -34,11 +34,13 @@ const StructProperty: definition.UC<Definition> = (props) => {
 					subProperty,
 					context,
 					definition.path
-				) as Record<string, definition.DefinitionMap>
+				) as definition.DefinitionMap
 				const componentType = Object.keys(
 					formField
 				)[0] as metadata.MetadataKey
-				const subFieldDefinition = formField[componentType]
+				const subFieldDefinition = formField[
+					componentType
+				] as definition.DefinitionMap
 				return (
 					<component.Component
 						key={index}

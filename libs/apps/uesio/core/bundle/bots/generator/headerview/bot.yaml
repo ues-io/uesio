@@ -19,6 +19,6 @@ params:
     default: rgb(32,29,29)
   - name: collections
     prompt: Collections
-    type: METADATAMULTI
+    type: MULTIMETADATA
     metadataType: COLLECTION
 public: true

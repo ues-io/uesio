@@ -1,3 +1,5 @@
 name: homeroute
-type: TEXT
+type: METADATA
 label: Home Route
+metadata:
+  type: ROUTE

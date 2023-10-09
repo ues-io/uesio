@@ -73,6 +73,7 @@ func GetFieldMetadata(f *meta.Field, session *sess.Session) *adapt.FieldMetadata
 		AutoNumberMetadata:     GetAutoNumberMetadata(f),
 		FormulaMetadata:        GetFormulaMetadata(f),
 		SelectListMetadata:     GetSelectListMetadata(f),
+		MetadataFieldMetadata:  GetMetadataFieldMetadata(f),
 		Required:               f.Required,
 		AutoPopulate:           f.AutoPopulate,
 		SubFields:              GetSubFieldMetadata(f),
@@ -106,6 +107,10 @@ func GetSubFieldMetadata(f *meta.Field) map[string]*adapt.FieldMetadata {
 				Type:       subField.Type,
 				SelectList: subField.SelectList,
 			}),
+			MetadataFieldMetadata: GetMetadataFieldMetadata(&meta.Field{
+				Type:                  subField.Type,
+				MetadataFieldMetadata: subField.Metadata,
+			}),
 		}
 	}
 	return fieldMetadata
@@ -115,6 +120,17 @@ func GetSelectListMetadata(f *meta.Field) *adapt.SelectListMetadata {
 	if f.Type == "SELECT" || f.Type == "MULTISELECT" {
 		return &adapt.SelectListMetadata{
 			Name: f.SelectList,
+		}
+	}
+	return nil
+}
+
+func GetMetadataFieldMetadata(f *meta.Field) *adapt.MetadataFieldMetadata {
+	if f.Type == "METADATA" || f.Type == "MULTIMETADATA" && f.MetadataFieldMetadata != nil {
+		return &adapt.MetadataFieldMetadata{
+			Type:      f.MetadataFieldMetadata.Type,
+			Grouping:  f.MetadataFieldMetadata.Grouping,
+			Namespace: f.MetadataFieldMetadata.Namespace,
 		}
 	}
 	return nil

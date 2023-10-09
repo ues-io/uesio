@@ -1,3 +1,5 @@
 name: languagelabel
-type: TEXT
+type: METADATA
 label: Language label
+metadata:
+  type: LABEL

@@ -216,8 +216,8 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 	} else {
 		conditions := meta.BundleConditions{}
 		for _, condition := range op.Conditions {
-			// Ignore the allmetadata condition
-			if condition.Field == allMetadataField {
+			// Ignore the special conditions
+			if condition.Field == allMetadataField || condition.Type == "SEARCH" || condition.Field == isCommonFieldField {
 				continue
 			}
 			// Special handling for the grouping condition
