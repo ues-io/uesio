@@ -119,10 +119,6 @@ definition:
                                     path: app/$Param{app}/workspace/$Param{workspacename}/authsources
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
-                    uesio.context:
-                      workspace:
-                        name: $Param{workspacename}
-                        app: $Param{app}
                     components:
                       - uesio/io.grid:
                           uesio.variant: uesio/io.four_columns
@@ -133,3 +129,7 @@ definition:
                                 fieldId: uesio/studio.type
                             - uesio/io.field:
                                 fieldId: uesio/studio.credentials
+                                uesio.context:
+                                  workspace:
+                                    name: $Param{workspacename}
+                                    app: $Param{app}

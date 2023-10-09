@@ -126,10 +126,6 @@ definition:
             uesio.id: newbotItem
             wire: newbot
             mode: EDIT
-            uesio.context:
-              workspace:
-                name: $Param{workspacename}
-                app: $Param{app}
             components:
               - uesio/io.field:
                   fieldId: uesio/studio.name
@@ -139,6 +135,10 @@ definition:
                   fieldId: uesio/studio.dialect
               - uesio/io.field:
                   fieldId: uesio/studio.collection
+                  uesio.context:
+                    workspace:
+                      name: $Param{workspacename}
+                      app: $Param{app}
                   uesio.display:
                     - type: fieldValue
                       field: uesio/studio.type

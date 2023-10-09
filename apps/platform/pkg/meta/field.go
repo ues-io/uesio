@@ -194,8 +194,8 @@ func (f *Field) UnmarshalYAML(node *yaml.Node) error {
 
 func (f *Field) MarshalYAML() (interface{}, error) {
 
-	// We have to pass our namespace down to our childen so they
-	// can propery localize their references to other metadata items
+	// We have to pass our namespace down to our children so that they
+	// can properly localize their references to other metadata items
 	if f.ReferenceMetadata != nil {
 		f.ReferenceMetadata.Namespace = f.Namespace
 	}

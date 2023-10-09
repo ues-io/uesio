@@ -136,10 +136,6 @@ definition:
                                     panel: deleteBot
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
-                    uesio.context:
-                      workspace:
-                        name: $Param{workspacename}
-                        app: $Param{app}
                     components:
                       - uesio/io.grid:
                           uesio.variant: uesio/io.four_columns
@@ -153,6 +149,10 @@ definition:
                             - uesio/io.field:
                                 mode: READ
                                 fieldId: uesio/studio.collection
+                                uesio.context:
+                                  workspace:
+                                    name: $Param{workspacename}
+                                    app: $Param{app}
                                 uesio.display:
                                   - field: uesio/studio.type
                                     operator: IN

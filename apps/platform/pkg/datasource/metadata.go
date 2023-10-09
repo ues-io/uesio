@@ -107,6 +107,10 @@ func GetSubFieldMetadata(f *meta.Field) map[string]*adapt.FieldMetadata {
 				Type:       subField.Type,
 				SelectList: subField.SelectList,
 			}),
+			MetadataFieldMetadata: GetMetadataFieldMetadata(&meta.Field{
+				Type:                  subField.Type,
+				MetadataFieldMetadata: subField.Metadata,
+			}),
 		}
 	}
 	return fieldMetadata

@@ -30,6 +30,7 @@ import {
 	ApplyChanges,
 } from "../field/field"
 import FieldWrapper from "../../utilities/fieldwrapper/fieldwrapper"
+import { MetadataFieldOptions } from "../../utilities/field/metadata"
 
 type TableDefinition = {
 	wire: string
@@ -60,8 +61,10 @@ type ColumnDefinition = {
 	user?: UserFieldOptions
 	number?: NumberFieldOptions
 	longtext?: LongTextFieldOptions
+	metadata?: MetadataFieldOptions
 	readonly?: boolean
 	components: definition.DefinitionList
+	[component.COMPONENT_CONTEXT]?: definition.DefinitionMap
 } & definition.BaseDefinition
 
 type RecordContext = component.ItemContext<wire.WireRecord>
@@ -238,16 +241,10 @@ const Table: definition.UC<TableDefinition> = (props) => {
 			<component.Component
 				componentType="uesio/io.field"
 				definition={{
-					applyChanges: column.applyChanges,
+					...column,
 					fieldId: column.field,
-					user: column.user,
-					reference: column.reference,
-					number: column.number,
-					longtext: column.longtext,
 					labelPosition: "none",
 					wrapperVariant: "uesio/io.table",
-					readonly: column.readonly,
-					displayAs: column.displayAs,
 				}}
 				{...sharedProps}
 			/>

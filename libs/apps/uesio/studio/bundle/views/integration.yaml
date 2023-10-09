@@ -52,10 +52,6 @@ definition:
               uesio.id: integrationsList
               wire: integrations
               mode: READ
-              uesio.context:
-                workspace:
-                  name: $Param{workspacename}
-                  app: $Param{app}
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
@@ -153,6 +149,10 @@ definition:
                                 fieldId: uesio/studio.baseurl
                             - uesio/io.field:
                                 fieldId: uesio/studio.credentials
+                                uesio.context:
+                                  workspace:
+                                    name: $Param{workspacename}
+                                    app: $Param{app}
                             - uesio/io.field:
                               fieldId: uesio/studio.headers
                               uesio.display:
@@ -161,12 +161,15 @@ definition:
                                   value: web
                       - uesio/io.grid:
                           uesio.variant: uesio/io.four_columns
+                          uesio.context:
+                            workspace:
+                              name: $Param{workspacename}
+                              app: $Param{app}
                           items:
                             - uesio/io.field:
                                 uesio.display:
                                   - field: uesio/studio.type
                                     value: uesio/core.custom
-
                                 fieldId: uesio/studio.loadbot
                                 label: Default Collection Load Bot
                             - uesio/io.field:
@@ -289,10 +292,6 @@ definition:
         - uesio/io.item:
             wire: integrationActions
             mode: EDIT
-            uesio.context:
-              workspace:
-                name: $Param{workspacename}
-                app: $Param{app}
             components:
               - uesio/io.field:
                   fieldId: uesio/studio.name
@@ -303,6 +302,10 @@ definition:
                   fieldId: uesio/studio.bot
                   uesio.id: action-bot
                   label: Run Action Bot (optional, defaults to Integration's Run Action Bot)
+                  uesio.context:
+                    workspace:
+                      name: $Param{workspacename}
+                      app: $Param{app}
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary

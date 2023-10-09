@@ -110,14 +110,10 @@ definition:
       width: 500px
       height: 600px
       components:
-        - uesio/io.list:
+        - uesio/io.item:
             uesio.id: newintegration
             wire: newintegration
             mode: EDIT
-            uesio.context:
-              workspace:
-                name: $Param{workspacename}
-                app: $Param{app}
             components:
               - uesio/io.field:
                   fieldId: uesio/studio.name
@@ -125,6 +121,10 @@ definition:
                   fieldId: uesio/studio.type
               - uesio/io.field:
                   fieldId: uesio/studio.credentials
+                  uesio.context:
+                    workspace:
+                      name: $Param{workspacename}
+                      app: $Param{app}
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary

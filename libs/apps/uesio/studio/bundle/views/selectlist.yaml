@@ -114,6 +114,10 @@ definition:
                                     panel: deleteSelectlist
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
+                    uesio.context:
+                      workspace:
+                        name: $Param{workspacename}
+                        app: $Param{app}
                     components:
                       - uesio/io.field:
                           fieldId: uesio/studio.name
@@ -121,10 +125,6 @@ definition:
                           fieldId: uesio/studio.options
                       - uesio/io.grid:
                           uesio.variant: uesio/io.two_columns
-                          uesio.context:
-                            workspace:
-                              name: $Param{workspacename}
-                              app: $Param{app}
                           items:
                             - uesio/io.field:
                                 fieldId: uesio/studio.blank_option_label

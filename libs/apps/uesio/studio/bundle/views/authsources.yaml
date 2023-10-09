@@ -88,6 +88,11 @@ definition:
                               icon: ${uesio/studio.appicon}
                               color: ${uesio/studio.appcolor}
                       - field: uesio/studio.type
+                      - field: uesio/studio.credentials
+                        uesio.context:
+                          workspace:
+                            name: $Param{workspacename}
+                            app: $Param{app}
                       - field: uesio/core.updatedby
                         user:
                           subtitle: $Time{uesio/core.updatedat}
@@ -104,7 +109,7 @@ definition:
   panels:
     newAuthSource:
       uesio.type: uesio/io.dialog
-      title: Create a new Auth Source
+      title: Create a new Auth Method
       width: 500px
       height: 600px
       components:
@@ -112,10 +117,6 @@ definition:
             uesio.id: newauthsource
             wire: newauthsource
             mode: EDIT
-            uesio.context:
-              workspace:
-                name: $Param{workspacename}
-                app: $Param{app}
             components:
               - uesio/io.field:
                   fieldId: uesio/studio.name
@@ -123,6 +124,10 @@ definition:
                   fieldId: uesio/studio.type
               - uesio/io.field:
                   fieldId: uesio/studio.credentials
+                  uesio.context:
+                    workspace:
+                      name: $Param{workspacename}
+                      app: $Param{app}
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary

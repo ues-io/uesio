@@ -55,6 +55,10 @@ const MetadataField: definition.UtilityComponent<MetadataFieldProps> = (
 		variant,
 	} = props
 
+	if (readonly || mode === "READ") {
+		return <TextField context={context} value={value} mode="READ" />
+	}
+
 	// TODO: rather than useMetadataList, just do a wire load on the bundleable collection
 	// this requires us to add basically any bundleable metadata collection to core
 	if (!context.getWorkspace() && !context.getSiteAdmin()) {
@@ -123,10 +127,6 @@ const MetadataField: definition.UtilityComponent<MetadataFieldProps> = (
 		} else {
 			setValue("")
 		}
-	}
-
-	if (readonly || mode === "READ") {
-		return <TextField context={context} value={value} mode="READ" />
 	}
 
 	return (
