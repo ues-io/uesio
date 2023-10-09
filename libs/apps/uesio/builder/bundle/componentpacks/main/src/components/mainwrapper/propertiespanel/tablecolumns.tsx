@@ -140,28 +140,18 @@ const TableColumns: definition.UC = (props) => {
 	const fieldComponentDef = getComponentDef("uesio/io.field")
 	const columns = get(context, columnsPath) as definition.DefinitionMap[]
 
-	const addFieldToWire = (ctx: context.Context, path: FullPath) => {
-		//ADD to the wire as well to keep it in sync
-		set(ctx, wireFieldsPath.merge(path), null)
-	}
-
 	const onSelect = (ctx: context.Context, path: FullPath) => {
-		if (!columns?.length || columns?.length === 0) {
-			add(context, columnsPath.addLocal(`0`), {})
-			set(
-				ctx,
-				columnsPath.addLocal(`0`).addLocal("field"),
-				transformFieldPickerPath(path)
-			)
-			addFieldToWire(ctx, path)
-			return
+		const numColumns = columns?.length || 0
+		if (numColumns === 0) {
+			add(context, columnsPath.addLocal("0"), {})
 		}
 		set(
 			ctx,
-			columnsPath.addLocal(`${columns.length}`).addLocal("field"),
+			columnsPath.addLocal(`${numColumns}`).addLocal("field"),
 			transformFieldPickerPath(path)
 		)
-		addFieldToWire(ctx, path)
+		// ADD the selected field to the wire as well to keep it in sync
+		set(ctx, wireFieldsPath.merge(path), null)
 	}
 
 	const onUnselect = (ctx: context.Context, path: FullPath) => {
