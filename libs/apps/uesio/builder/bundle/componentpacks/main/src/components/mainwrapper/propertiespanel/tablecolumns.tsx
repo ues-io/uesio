@@ -119,19 +119,34 @@ const TableColumns: definition.UC = (props) => {
 	// in order to build a FIELD property that only shows fields from that wire
 	const [, tablePath] = columnsPath.pop()
 	const wireName = get(context, tablePath.addLocal("wire")) as string
+	const wirePath = new FullPath(
+		"viewdef",
+		context.getViewDefId(),
+		`["wires"]["${wireName}"]`
+	)
+	const wireCollection = get(
+		context,
+		wirePath.addLocal("collection")
+	) as string
 	const fieldComponentDef = getComponentDef("uesio/io.field")
-
-	//From a new table this is a { } instead of a []
 	const columns = get(context, columnsPath) as definition.DefinitionMap[]
-	console.log({ columns })
 
 	const onSelect = (ctx: context.Context, path: FullPath) => {
 		const [fieldId] = path.pop()
+		if (!columns?.length || columns?.length === 0) {
+			add(context, columnsPath.addLocal(`0`), {})
+			set(ctx, columnsPath.addLocal(`0`).addLocal("field"), fieldId)
+			//ADD to the wire as well to keep it in sync
+			set(ctx, wirePath.addLocal("fields").addLocal(fieldId || ""), {})
+			return
+		}
 		set(
 			ctx,
-			columnsPath.addLocal(`${columns?.length || 0}`).addLocal("field"),
+			columnsPath.addLocal(`${columns.length}`).addLocal("field"),
 			fieldId
 		)
+		//ADD to the wire as well to keep it in sync
+		set(ctx, wirePath.addLocal("fields").addLocal(fieldId || ""), {})
 	}
 
 	const onUnselect = (ctx: context.Context, path: FullPath) => {
@@ -222,7 +237,7 @@ const TableColumns: definition.UC = (props) => {
 				>
 					<FieldPicker
 						context={context}
-						baseCollectionKey={"uesio/crm.account"} //wireDef.collection}
+						baseCollectionKey={wireCollection}
 						onClose={() => setShowPopper(false)}
 						onSelect={onSelect}
 						onUnselect={onUnselect}
@@ -246,7 +261,7 @@ const TableColumns: definition.UC = (props) => {
 						},
 					},
 					{
-						label: "Add Columns",
+						label: "Add Fields",
 						action: () => {
 							setShowPopper(true)
 						},
