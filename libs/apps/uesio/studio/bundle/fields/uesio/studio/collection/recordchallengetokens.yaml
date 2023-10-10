@@ -3,10 +3,6 @@ type: LIST
 label: Record Challenge Tokens
 subtype: STRUCT
 subfields:
-  - name: type
-    type: SELECT
-    label: Type
-    selectList: uesio/studio.useraccesstokentype
   - name: token
     type: TEXT
     label: Token
