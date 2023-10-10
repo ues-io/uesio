@@ -63,12 +63,12 @@ definition:
           - uesio/studio.sitenavusagetile:
               title: File Downloads
               icon: download_for_offline
-              usageMetadataType: FILE
+              usageMetadataType: FILESOURCE
               usageActionType: DOWNLOAD
               path: files/download
           - uesio/studio.sitenavusagetile:
               title: File Download Bytes
               icon: download_done
-              usageMetadataType: FILE
+              usageMetadataType: FILESOURCE
               usageActionType: DOWNLOAD_BYTES
               path: files/download/bytes

@@ -4,7 +4,7 @@ view: usage
 theme: default
 title: Site File Download Volume
 params:
-  metadatatype: FILE
+  metadatatype: FILESOURCE
   metadatatypelabel: File
   actiontype: DOWNLOAD_BYTES
   actiontypelabel: Download Volume (bytes)

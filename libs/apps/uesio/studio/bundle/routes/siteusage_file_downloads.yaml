@@ -4,7 +4,7 @@ view: usage
 theme: default
 title: Site File Download Usage
 params:
-  metadatatype: FILE
+  metadatatype: FILESOURCE
   metadatatypelabel: File
   actiontype: DOWNLOAD
   actiontypelabel: Downloads
