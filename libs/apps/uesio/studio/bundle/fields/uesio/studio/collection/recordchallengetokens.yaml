@@ -9,6 +9,11 @@ subfields:
   - name: userAccessToken
     type: TEXT
     label: UserAccessToken
+  # - name: userAccessToken
+  #   type: METADATA
+  #   label: UserAccessToken
+  #   metadata:
+  #     type: USERACCESSTOKEN
   - name: access
     type: SELECT
     label: Access
