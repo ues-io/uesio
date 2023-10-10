@@ -7,9 +7,9 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
-	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/file"
 )
 
 func GetSiteBundleDef(site *meta.Site, connection adapt.Connection) (*meta.BundleDef, error) {
@@ -157,7 +157,7 @@ func Load(item meta.BundleableItem, session *sess.Session, connection adapt.Conn
 	return bs.GetItem(item)
 }
 
-func GetItemAttachment(item meta.AttachableItem, path string, session *sess.Session) (fileadapt.FileMeta, io.ReadSeeker, error) {
+func GetItemAttachment(item meta.AttachableItem, path string, session *sess.Session) (file.Metadata, io.ReadSeeker, error) {
 	bs, err := GetBundleStoreConnection(item.GetNamespace(), session, nil)
 	if err != nil {
 		return nil, nil, err

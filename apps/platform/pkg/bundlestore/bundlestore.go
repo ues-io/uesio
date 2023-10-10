@@ -7,8 +7,8 @@ import (
 	"gopkg.in/yaml.v3"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/types/file"
 )
 
 var bundleStoreMap = map[string]BundleStore{}
@@ -67,7 +67,7 @@ type BundleStoreConnection interface {
 	GetManyItems(items []meta.BundleableItem) error
 	GetAllItems(group meta.BundleableGroup, conditions meta.BundleConditions) error
 	HasAny(group meta.BundleableGroup, conditions meta.BundleConditions) (bool, error)
-	GetItemAttachment(item meta.AttachableItem, path string) (fileadapt.FileMeta, io.ReadSeeker, error)
+	GetItemAttachment(item meta.AttachableItem, path string) (file.Metadata, io.ReadSeeker, error)
 	GetAttachmentPaths(item meta.AttachableItem) ([]string, error)
 	StoreItem(path string, reader io.Reader) error
 	GetBundleDef() (*meta.BundleDef, error)

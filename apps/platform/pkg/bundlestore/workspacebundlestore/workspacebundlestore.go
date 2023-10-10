@@ -9,11 +9,28 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/file"
 )
+
+type wsFileMeta struct {
+	userFileMeta *meta.UserFileMetadata
+}
+
+func newWorkspaceFileMeta(info *meta.UserFileMetadata) file.Metadata {
+	return &wsFileMeta{info}
+}
+
+func (fm *wsFileMeta) ContentLength() int64 {
+	return fm.userFileMeta.ContentLength
+}
+
+func (fm *wsFileMeta) LastModified() *time.Time {
+	t := time.Unix(fm.userFileMeta.UpdatedAt, 0)
+	return &t
+}
 
 func getParamsFromWorkspace(workspace *meta.Workspace) map[string]string {
 	return map[string]string{
@@ -172,21 +189,20 @@ func (b *WorkspaceBundleStoreConnection) GetAllItems(group meta.BundleableGroup,
 
 }
 
-func (b *WorkspaceBundleStoreConnection) GetItemAttachment(item meta.AttachableItem, path string) (fileadapt.FileMeta, io.ReadSeeker, error) {
-	modTime := time.Time{}
+func (b *WorkspaceBundleStoreConnection) GetItemAttachment(item meta.AttachableItem, path string) (file.Metadata, io.ReadSeeker, error) {
 	err := b.GetItem(item)
 	if err != nil {
-		return modTime, nil, err
+		return nil, nil, err
 	}
 	recordID, err := item.GetField(adapt.ID_FIELD)
 	if err != nil {
-		return modTime, nil, err
+		return nil, nil, err
 	}
-	stream, _, err := filesource.DownloadAttachment(recordID.(string), path, sess.GetStudioAnonSession())
+	stream, userFileMetadata, err := filesource.DownloadAttachment(recordID.(string), path, sess.GetStudioAnonSession())
 	if err != nil {
-		return modTime, nil, err
+		return nil, nil, err
 	}
-	return modTime, stream, nil
+	return newWorkspaceFileMeta(userFileMetadata), stream, nil
 }
 
 func (b *WorkspaceBundleStoreConnection) GetAttachmentPaths(item meta.AttachableItem) ([]string, error) {
@@ -216,7 +232,7 @@ func (b *WorkspaceBundleStoreConnection) GetAttachmentPaths(item meta.Attachable
 	if err != nil {
 		return nil, err
 	}
-	paths := []string{}
+	var paths []string
 	for _, ufm := range *userFiles {
 		paths = append(paths, ufm.Path)
 	}

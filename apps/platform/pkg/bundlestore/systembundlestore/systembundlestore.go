@@ -6,13 +6,12 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
-	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt/localfiles"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	filetypes "github.com/thecloudmasters/uesio/pkg/types/file"
 )
 
 type SystemBundleStore struct{}
@@ -37,7 +36,7 @@ func getFile(namespace string, version string, objectname string, filename strin
 	return os.Open(filePath)
 }
 
-func GetFilePaths(basePath string, group meta.BundleableGroup, conditions meta.BundleConditions, conn fileadapt.FileConnection) ([]string, error) {
+func GetFilePaths(basePath string, group meta.BundleableGroup, conditions meta.BundleConditions, conn filetypes.Connection) ([]string, error) {
 
 	cachedKeys, ok := bundle.GetFileListFromCache(basePath, conditions)
 	if ok {
@@ -182,16 +181,16 @@ func (b *SystemBundleStoreConnection) GetAllItems(group meta.BundleableGroup, co
 	return nil
 }
 
-func (b *SystemBundleStoreConnection) GetItemAttachment(item meta.AttachableItem, path string) (fileadapt.FileMeta, io.ReadSeeker, error) {
-	file, err := getFile(item.GetNamespace(), b.Version, item.GetBundleFolderName(), filepath.Join(item.GetBasePath(), path))
+func (b *SystemBundleStoreConnection) GetItemAttachment(item meta.AttachableItem, path string) (filetypes.Metadata, io.ReadSeeker, error) {
+	osFile, err := getFile(item.GetNamespace(), b.Version, item.GetBundleFolderName(), filepath.Join(item.GetBasePath(), path))
 	if err != nil {
-		return time.Time{}, nil, err
+		return nil, nil, err
 	}
-	fileInfo, err := file.Stat()
+	fileInfo, err := osFile.Stat()
 	if err != nil {
-		return time.Time{}, nil, err
+		return nil, nil, err
 	}
-	return fileInfo.ModTime(), file, nil
+	return filetypes.NewLocalFileMeta(fileInfo), osFile, nil
 }
 
 func (b *SystemBundleStoreConnection) GetAttachmentPaths(item meta.AttachableItem) ([]string, error) {
