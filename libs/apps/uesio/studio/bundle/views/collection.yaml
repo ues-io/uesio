@@ -591,21 +591,20 @@ definition:
                               value: protected
                               field: uesio/studio.access
                           components:
-                            - uesio/io.field:
-                                fieldId: uesio/studio.recordchallengetokens
                             - uesio/io.grid:
                                 uesio.variant: uesio/io.four_columns
                                 items:
-                                  - uesio/builder.metadatafield:
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.accessfield
+                                      metadata:
+                                        grouping: $Param{app}.$Param{collectionname}
+                                        namespace: $Param{app}
                                       uesio.context:
                                         workspace:
                                           name: $Param{workspacename}
                                           app: $Param{app}
-                                      fieldId: uesio/studio.accessfield
-                                      metadataType: FIELD
-                                      label: Access Field
-                                      grouping: $Param{app}.$Param{collectionname}
-                                      namespace: $Param{app}
+                            - uesio/io.field:
+                                fieldId: uesio/studio.recordchallengetokens
   panels:
     deleteCollection:
       uesio.type: uesio/io.dialog

@@ -1,3 +1,6 @@
 name: accessfield
-type: TEXT
+type: METADATA
 label: Access Field
+metadata:
+  type: FIELD
+  grouping: ${uesio/studio.collection}
