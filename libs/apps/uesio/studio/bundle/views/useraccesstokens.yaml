@@ -26,6 +26,7 @@ definition:
         uesio/studio.name:
         uesio/studio.workspace:
         uesio/studio.type:
+        uesio/studio.conditions:
       conditions:
         - field: uesio/studio.workspace
           valueSource: LOOKUP
@@ -39,6 +40,13 @@ definition:
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: uesio/core.id
+        - field: uesio/studio.type
+          valueSource: VALUE
+          value: lookup
+        - field: uesio/studio.conditions
+          valueSource: VALUE
+          value:
+            - field: ""
   # Components are how we describe the layout of our view
   components:
     - uesio/studio.mainlayout:
@@ -132,6 +140,12 @@ definition:
                   fieldId: uesio/studio.token
               - uesio/io.field:
                   fieldId: uesio/studio.conditions
+                  uesio.display:
+                    - type: hasValue
+                      value: ${uesio/studio.collection}
+                  label: " "
+                  list:
+                    noAdd: true
                   uesio.context:
                     workspace:
                       name: $Param{workspacename}

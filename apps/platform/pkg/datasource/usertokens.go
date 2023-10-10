@@ -134,7 +134,7 @@ func HydrateTokenMap(tokenMap sess.TokenMap, tokenDefs meta.UserAccessTokenColle
 				fieldsMap.merge(getFieldsMap(templating.ExtractKeys(token.Reason)))
 			}
 
-			loadConditions := []adapt.LoadRequestCondition{}
+			var loadConditions []adapt.LoadRequestCondition
 			for _, condition := range token.Conditions {
 				fieldsMap.merge(&FieldsMap{
 					condition.Field: nil,

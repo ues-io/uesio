@@ -139,6 +139,12 @@ definition:
                           items:
                             - uesio/io.field:
                                 fieldId: uesio/studio.conditions
+                                label: " "
+                                uesio.display:
+                                  - type: hasValue
+                                    value: ${uesio/studio.collection}
+                                list:
+                                  noAdd: true
                                 uesio.context:
                                   workspace:
                                     name: $Param{workspacename}
