@@ -132,31 +132,18 @@ func LoadAll(group meta.BundleableGroup, namespace string, conditions meta.Bundl
 }
 
 func LoadMany(items []meta.BundleableItem, session *sess.Session, connection adapt.Connection) error {
-	// Coalate items into same namespace
-	coalated := map[string][]meta.BundleableItem{}
-	for _, item := range items {
-		namespace := item.GetNamespace()
-		_, ok := coalated[namespace]
-		if !ok {
-			coalated[namespace] = []meta.BundleableItem{}
-		}
-		coalated[namespace] = append(coalated[namespace], item)
-	}
-	for namespace, items := range coalated {
+	for namespace, nsItems := range groupItemsByNamespace(items) {
 		bs, err := GetBundleStoreConnection(namespace, session, connection)
 		if err != nil {
 			fmt.Println("Failed load many")
-			for _, item := range items {
+			for _, item := range nsItems {
 				fmt.Println(item.GetKey())
 			}
 			return err
 		}
-
-		err = bs.GetManyItems(items)
-		if err != nil {
+		if err = bs.GetManyItems(items); err != nil {
 			return err
 		}
-
 	}
 	return nil
 }
@@ -179,28 +166,28 @@ func GetItemAttachment(item meta.AttachableItem, path string, session *sess.Sess
 }
 
 func IsValid(items []meta.BundleableItem, session *sess.Session, connection adapt.Connection) error {
-
-	// Coalate items into same namespace
-	coalated := map[string][]meta.BundleableItem{}
-	for _, item := range items {
-		namespace := item.GetNamespace()
-		_, ok := coalated[namespace]
-		if !ok {
-			coalated[namespace] = []meta.BundleableItem{}
-		}
-		coalated[namespace] = append(coalated[namespace], item)
-	}
-	for namespace, items := range coalated {
+	for namespace, nsItems := range groupItemsByNamespace(items) {
 		bs, err := GetBundleStoreConnection(namespace, session, connection)
 		if err != nil {
 			return err
 		}
-
-		err = bs.HasAllItems(items)
-		if err != nil {
+		if err = bs.HasAllItems(nsItems); err != nil {
 			return err
 		}
-
 	}
 	return nil
+}
+
+// groups a slice of BundleableItem by namespace
+func groupItemsByNamespace(items []meta.BundleableItem) map[string][]meta.BundleableItem {
+	collated := map[string][]meta.BundleableItem{}
+	for _, item := range items {
+		namespace := item.GetNamespace()
+		_, ok := collated[namespace]
+		if !ok {
+			collated[namespace] = []meta.BundleableItem{}
+		}
+		collated[namespace] = append(collated[namespace], item)
+	}
+	return collated
 }
