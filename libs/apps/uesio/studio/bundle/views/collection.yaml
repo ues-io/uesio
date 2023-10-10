@@ -605,6 +605,10 @@ definition:
                                           app: $Param{app}
                             - uesio/io.field:
                                 fieldId: uesio/studio.recordchallengetokens
+                                uesio.context:
+                                  workspace:
+                                    name: $Param{workspacename}
+                                    app: $Param{app}
   panels:
     deleteCollection:
       uesio.type: uesio/io.dialog

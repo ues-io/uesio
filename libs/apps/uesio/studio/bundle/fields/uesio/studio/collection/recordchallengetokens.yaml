@@ -7,13 +7,10 @@ subfields:
     type: TEXT
     label: Token
   - name: userAccessToken
-    type: TEXT
+    type: METADATA
     label: UserAccessToken
-  # - name: userAccessToken
-  #   type: METADATA
-  #   label: UserAccessToken
-  #   metadata:
-  #     type: USERACCESSTOKEN
+    metadata:
+      type: USERACCESSTOKEN
   - name: access
     type: SELECT
     label: Access

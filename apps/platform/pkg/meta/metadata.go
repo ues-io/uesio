@@ -205,6 +205,7 @@ var METADATA_NAME_MAP = map[string]string{
 	"LABEL":             "labels",
 	"INTEGRATION":       "integrations",
 	"INTEGRATIONACTION": "integrationactions",
+	"USERACCESSTOKEN":   "useraccesstokens",
 }
 
 var bundleableGroupMap = map[string]BundleableFactory{
@@ -235,6 +236,7 @@ var bundleableGroupMap = map[string]BundleableFactory{
 	(&IntegrationActionCollection{}).GetBundleFolderName(): func() BundleableGroup { return &IntegrationActionCollection{} },
 	(&ComponentCollection{}).GetBundleFolderName():         func() BundleableGroup { return &ComponentCollection{} },
 	(&UtilityCollection{}).GetBundleFolderName():           func() BundleableGroup { return &UtilityCollection{} },
+	(&UserAccessTokenCollection{}).GetBundleFolderName():   func() BundleableGroup { return &UserAccessTokenCollection{} },
 }
 
 var bundleableCollectionNames = map[string]string{}

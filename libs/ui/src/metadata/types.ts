@@ -20,6 +20,7 @@ const METADATA = {
 	COMPONENT: "components",
 	FILE: "files",
 	LABEL: "labels",
+	USERACCESSTOKEN: "useraccesstokens",
 }
 type MetadataType = keyof typeof METADATA
 
