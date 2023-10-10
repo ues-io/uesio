@@ -182,7 +182,7 @@ func (b *SystemBundleStoreConnection) GetAllItems(group meta.BundleableGroup, co
 	return nil
 }
 
-func (b *SystemBundleStoreConnection) GetItemAttachment(item meta.AttachableItem, path string) (time.Time, io.ReadSeeker, error) {
+func (b *SystemBundleStoreConnection) GetItemAttachment(item meta.AttachableItem, path string) (fileadapt.FileMeta, io.ReadSeeker, error) {
 	file, err := getFile(item.GetNamespace(), b.Version, item.GetBundleFolderName(), filepath.Join(item.GetBasePath(), path))
 	if err != nil {
 		return time.Time{}, nil, err

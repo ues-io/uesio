@@ -84,7 +84,7 @@ func (c *Connection) Upload(fileData io.Reader, path string) error {
 	return nil
 }
 
-func (c *Connection) Download(path string) (time.Time, io.ReadSeeker, error) {
+func (c *Connection) Download(path string) (fileadapt.FileMeta, io.ReadSeeker, error) {
 	fullPath := filepath.Join(c.bucket, path)
 	outFile, err := os.Open(fullPath)
 	if err != nil {

@@ -137,7 +137,7 @@ func (b *PlatformBundleStoreConnection) GetAllItems(group meta.BundleableGroup, 
 
 }
 
-func (b *PlatformBundleStoreConnection) GetItemAttachment(item meta.AttachableItem, path string) (time.Time, io.ReadSeeker, error) {
+func (b *PlatformBundleStoreConnection) GetItemAttachment(item meta.AttachableItem, path string) (fileadapt.FileMeta, io.ReadSeeker, error) {
 	return getStream(item.GetNamespace(), b.Version, item.GetBundleFolderName(), filepath.Join(item.GetBasePath(), path))
 }
 

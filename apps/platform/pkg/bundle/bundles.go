@@ -4,10 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
+	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -157,10 +157,10 @@ func Load(item meta.BundleableItem, session *sess.Session, connection adapt.Conn
 	return bs.GetItem(item)
 }
 
-func GetItemAttachment(item meta.AttachableItem, path string, session *sess.Session) (time.Time, io.ReadSeeker, error) {
+func GetItemAttachment(item meta.AttachableItem, path string, session *sess.Session) (fileadapt.FileMeta, io.ReadSeeker, error) {
 	bs, err := GetBundleStoreConnection(item.GetNamespace(), session, nil)
 	if err != nil {
-		return time.Time{}, nil, err
+		return nil, nil, err
 	}
 	return bs.GetItemAttachment(item, path)
 }
