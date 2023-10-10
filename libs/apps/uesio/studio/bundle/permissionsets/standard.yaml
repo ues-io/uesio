@@ -108,6 +108,8 @@ views:
   uesio/studio.paymentsuccess: true
   uesio/studio.recorddata: true
   uesio/studio.apppublish: true
+  uesio/studio.useraccesstokens: true
+  uesio/studio.useraccesstoken: true
 routes:
   uesio/studio.appsettings: true
   uesio/studio.authsources: true
@@ -191,6 +193,8 @@ routes:
   uesio/studio.paymentsuccess: true
   uesio/studio.recorddata: true
   uesio/studio.apppublish: true
+  uesio/studio.useraccesstokens: true
+  uesio/studio.useraccesstoken: true
 files: {}
 collections:
   uesio/studio.recentmetadata: true

@@ -4,8 +4,12 @@ label: Conditions
 subtype: STRUCT
 subfields:
   - name: field
-    type: TEXT
+    type: METADATA
     label: Field
+    metadata:
+      type: FIELD
+      grouping: ${uesio/studio.collection}
+  #TO-DO check if value is really needed
   - name: value
     type: TEXT
     label: Value
