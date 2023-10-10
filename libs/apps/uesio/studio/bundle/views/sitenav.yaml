@@ -60,3 +60,15 @@ definition:
               usageMetadataType: COLLECTION
               usageActionType: SAVE
               path: collections/save
+          - uesio/studio.sitenavusagetile:
+              title: File Downloads
+              icon: download_for_offline
+              usageMetadataType: FILE
+              usageActionType: DOWNLOAD
+              path: files/download
+          - uesio/studio.sitenavusagetile:
+              title: File Download Bytes
+              icon: download_done
+              usageMetadataType: FILE
+              usageActionType: DOWNLOAD_BYTES
+              path: files/download/bytes

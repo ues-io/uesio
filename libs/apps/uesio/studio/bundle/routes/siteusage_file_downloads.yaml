@@ -1,0 +1,10 @@
+name: siteusage_file_downloads
+path: app/{app:\w*\/\w*}/site/{sitename}/usage/files/download
+view: usage
+theme: default
+title: Site File Download Usage
+params:
+  metadatatype: FILE
+  metadatatypelabel: File
+  actiontype: DOWNLOAD
+  actiontypelabel: Downloads

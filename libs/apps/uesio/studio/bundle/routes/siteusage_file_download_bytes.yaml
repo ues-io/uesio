@@ -1,0 +1,10 @@
+name: siteusage_file_download_bytes
+path: app/{app:\w*\/\w*}/site/{sitename}/usage/files/download/bytes
+view: usage
+theme: default
+title: Site File Download Volume
+params:
+  metadatatype: FILE
+  metadatatypelabel: File
+  actiontype: DOWNLOAD_BYTES
+  actiontypelabel: Download Volume (bytes)

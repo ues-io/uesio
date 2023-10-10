@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
@@ -73,7 +74,15 @@ func (b *PlatformBundleStoreConnection) GetItem(item meta.BundleableItem) error 
 		return err
 	}
 
-	item.SetModified(*(fileMetadata.LastModified()))
+	modTime := fileMetadata.LastModified()
+	var modTimeInst time.Time
+	if modTime == nil {
+		modTimeInst = time.Now()
+	} else {
+		modTimeInst = *modTime
+	}
+
+	item.SetModified(modTimeInst)
 	err = bundlestore.DecodeYAML(item, stream)
 	if err != nil {
 		return err
