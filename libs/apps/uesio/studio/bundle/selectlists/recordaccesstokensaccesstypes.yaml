@@ -2,5 +2,5 @@ name: recordaccesstokensaccesstypes
 options:
   - label: Read
     value: read
-  - label: Read Write
+  - label: Read & Write
     value: readwrite

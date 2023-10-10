@@ -34,7 +34,6 @@ func NewCollections(keys map[string]bool) ([]BundleableItem, error) {
 
 type RecordChallengeTokenDefinition struct {
 	Type            string            `yaml:"type,omitempty" json:"type"`
-	Collection      string            `yaml:"collection,omitempty" json:"collection"`
 	Token           string            `yaml:"token" json:"token"`
 	UserAccessToken string            `yaml:"userAccessToken" json:"userAccessToken"`
 	Access          string            `yaml:"access" json:"access"`

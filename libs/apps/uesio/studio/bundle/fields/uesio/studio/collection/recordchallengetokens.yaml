@@ -4,11 +4,9 @@ label: Record Challenge Tokens
 subtype: STRUCT
 subfields:
   - name: type
-    type: TEXT
+    type: SELECT
     label: Type
-  - name: collection
-    type: TEXT
-    label: Collection
+    selectList: uesio/studio.useraccesstokentype
   - name: token
     type: TEXT
     label: Token
@@ -19,3 +17,13 @@ subfields:
     type: SELECT
     label: Access
     selectList: uesio/studio.recordaccesstokensaccesstypes
+  # - name: conditions
+  #   type: STRUCT
+  #   label: Conditions
+  #   subfields:
+  #     - name: field
+  #       label: Field
+  #       type: TEXT
+  #     - name: value
+  #       label: Value
+  #       type: TEXT
