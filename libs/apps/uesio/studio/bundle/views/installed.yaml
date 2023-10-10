@@ -75,8 +75,8 @@ definition:
                     columns:
                       - label: Bundle Name
                         components:
-                          - uesio/studio.iconlabel:
-                              uesio.variant: uesio/studio.namespacefield
+                          - uesio/io.iconlabel:
+                              uesio.variant: uesio/io.namespacefield
                               text: ${uesio/studio.bundle->uesio/studio.app->uesio/core.uniquekey}
                               icon: ${uesio/studio.bundle->uesio/studio.app->uesio/studio.icon}
                               color: ${uesio/studio.bundle->uesio/studio.app->uesio/studio.color}

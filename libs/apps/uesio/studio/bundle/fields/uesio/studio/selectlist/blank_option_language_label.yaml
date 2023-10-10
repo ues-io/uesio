@@ -1,3 +1,5 @@
 name: blank_option_language_label
-type: TEXT
+type: METADATA
 label: Blank Option Language Label
+metadata:
+  type: LABEL

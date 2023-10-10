@@ -44,7 +44,6 @@ func ViewPreview(buildMode bool) http.HandlerFunc {
 		route := &meta.Route{
 			ViewRef:  view.GetKey(),
 			Params:   params,
-			Path:     strings.TrimPrefix(r.URL.Path, "/"),
 			ThemeRef: session.GetDefaultTheme(),
 		}
 

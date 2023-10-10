@@ -584,20 +584,36 @@ class Context {
 			return template
 		}
 
-		return template.replace(
+		const expressionResults = [] as Mergeable[]
+		const mergedString = template.replace(
 			/\$([.\w]*){(.*?)}/g,
 			(x, mergeType, expression) => {
 				const mergeSplit = mergeType.split(ANCESTOR_INDICATOR)
 				const mergeTypeName = mergeSplit.pop() as MergeType
 
-				return handlers[mergeTypeName || "Record"](
+				const expressionResult = handlers[mergeTypeName || "Record"](
 					expression,
 					mergeSplit.length
 						? this.removeRecordFrame(mergeSplit.length)
 						: this
 				)
+				expressionResults.push(expressionResult)
+
+				// Don't merge "undefined" into a string --- put empty string instead
+				if (expressionResult === undefined) {
+					return ""
+				}
+				return expressionResult
 			}
 		)
+		// If we only have one expression result, and it is not a string, then return it as its value
+		if (
+			expressionResults.length === 1 &&
+			typeof expressionResults[0] !== "string"
+		) {
+			return expressionResults[0]
+		}
+		return mergedString
 	}
 
 	mergeString = (template: Mergeable) => {

@@ -78,6 +78,10 @@ const signalOutputContextHappyPath = new Context().addSignalOutputFrame(
 	"myStep",
 	{
 		foo: "bar",
+		two: 2,
+		zero: 0,
+		true: true,
+		false: false,
 	}
 )
 
@@ -105,6 +109,30 @@ const signalOutputMergeTestCases = [
 		context: signalOutputContextHappyPath,
 		input: "$SignalOutput{[someOtherStep][foo]}",
 		expectError: `Could not find signal output for step: someOtherStep`,
+	},
+	{
+		name: "happy path - boolean true",
+		context: signalOutputContextHappyPath,
+		input: "$SignalOutput{myStep:true}",
+		expected: true,
+	},
+	{
+		name: "happy path - boolean false",
+		context: signalOutputContextHappyPath,
+		input: "$SignalOutput{myStep:false}",
+		expected: false,
+	},
+	{
+		name: "happy path - number",
+		context: signalOutputContextHappyPath,
+		input: "$SignalOutput{myStep:two}",
+		expected: 2,
+	},
+	{
+		name: "happy path - falsey number",
+		context: signalOutputContextHappyPath,
+		input: "$SignalOutput{myStep:zero}",
+		expected: 0,
 	},
 ] as MergeWithContextTestCase[]
 

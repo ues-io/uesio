@@ -1,4 +1,4 @@
-import { collection, context, definition, wire } from "@uesio/ui"
+import { collection, component, context, definition, wire } from "@uesio/ui"
 import collectionSignals from "../signals/collection"
 import componentSignals from "../signals/component"
 import aiSignals from "../signals/ai"
@@ -62,7 +62,7 @@ type ComponentSignalDescriptor = {
 type SignalDefinition = {
 	signal: string
 	[key: string]: definition.Definition
-	"uesio.context"?: context.ContextOptions
+	[component.COMPONENT_CONTEXT]?: context.ContextOptions
 	stepId?: string
 	onerror?: {
 		continue: boolean

@@ -107,8 +107,8 @@ definition:
                     columns:
                       - label: App
                         components:
-                          - uesio/studio.iconlabel:
-                              uesio.variant: uesio/studio.namespacefield
+                          - uesio/io.iconlabel:
+                              uesio.variant: uesio/io.namespacefield
                               text: ${uesio/studio.app->uesio/studio.fullname}
                               icon: ${uesio/studio.app->uesio/studio.icon}
                               color: ${uesio/studio.app->uesio/studio.color}

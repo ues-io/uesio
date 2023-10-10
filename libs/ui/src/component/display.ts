@@ -37,6 +37,13 @@ type ParamIsSetCondition = {
 	param: string
 }
 
+type MergeValue = {
+	type: "mergeValue"
+	operator: DisplayOperator
+	sourceValue: string
+	value: string
+}
+
 type ParamIsNotSetCondition = {
 	type: "paramIsNotSet"
 	param: string
@@ -157,6 +164,7 @@ type DisplayCondition =
 	| WireHasRecords
 	| WireHasLoadedAllRecords
 	| WireHasMoreRecordsToLoad
+	| MergeValue
 
 type ItemContext<T> = {
 	item: T
@@ -269,7 +277,7 @@ function should(condition: DisplayCondition, context: Context): boolean {
 
 	const compareToValue =
 		typeof condition.value === "string"
-			? context.mergeString(condition.value as string)
+			? context.merge(condition.value as string)
 			: condition.value ?? (canHaveMultipleValues ? condition.values : "")
 
 	if (condition.type === "hasNoValue") return !compareToValue
@@ -278,6 +286,12 @@ function should(condition: DisplayCondition, context: Context): boolean {
 		return compare(
 			compareToValue,
 			context.getParam(condition.param),
+			condition.operator
+		)
+	if (condition.type === "mergeValue")
+		return compare(
+			compareToValue,
+			context.merge(condition.sourceValue),
 			condition.operator
 		)
 

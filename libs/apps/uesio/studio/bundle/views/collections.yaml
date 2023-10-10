@@ -113,8 +113,8 @@ definition:
                     columns:
                       - label: Collection
                         components:
-                          - uesio/studio.iconlabel:
-                              uesio.variant: uesio/studio.namespacefield
+                          - uesio/io.iconlabel:
+                              uesio.variant: uesio/io.namespacefield
                               text: ${uesio/studio.name}
                               subtitle: ${uesio/studio.namespace}
                               icon: ${uesio/studio.appicon}
@@ -144,6 +144,10 @@ definition:
             uesio.id: newcollectionlist
             wire: newcollection
             mode: EDIT
+            uesio.context:
+              workspace:
+                name: $Param{workspacename}
+                app: $Param{app}
             components:
               - uesio/io.field:
                   fieldId: uesio/studio.name
@@ -160,26 +164,19 @@ definition:
                   fieldId: uesio/studio.type
                   label: Data Source Type
                   uesio.id: new-collection-type
-              - uesio/builder.metadatafield:
-                  uesio.context:
-                    workspace:
-                      name: $Param{workspacename}
-                      app: $Param{app}
+              - uesio/io.field:
                   fieldId: uesio/studio.integration
-                  metadataType: INTEGRATION
                   label: Data Source Integration
                   uesio.display:
                     - field: uesio/studio.type
                       value: EXTERNAL
-              - uesio/builder.metadatafield:
-                  uesio.context:
-                    workspace:
-                      name: $Param{workspacename}
-                      app: $Param{app}
+              - uesio/io.field:
                   fieldId: uesio/studio.loadbot
-                  metadataType: BOT
-                  grouping: LOAD
-                  label: Collection Load Bot
+                  uesio.display:
+                    - field: uesio/studio.type
+                      value: EXTERNAL
+              - uesio/io.field:
+                  fieldId: uesio/studio.savebot
                   uesio.display:
                     - field: uesio/studio.type
                       value: EXTERNAL

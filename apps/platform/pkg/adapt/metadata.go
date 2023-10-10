@@ -176,6 +176,12 @@ type NumberMetadata struct {
 	Decimals int `json:"decimals"`
 }
 
+type MetadataFieldMetadata struct {
+	Type      string `json:"type"`
+	Grouping  string `json:"grouping"`
+	Namespace string `json:"namespace"`
+}
+
 type AutoNumberMetadata struct {
 	Prefix       string `json:"prefix"`
 	LeadingZeros int    `json:"leadingZeros"`
@@ -219,6 +225,7 @@ type FieldMetadata struct {
 	FileMetadata           *FileMetadata             `json:"file,omitempty"`
 	ValidationMetadata     *ValidationMetadata       `json:"validate,omitempty"`
 	AutoNumberMetadata     *AutoNumberMetadata       `json:"autonumber,omitempty"`
+	MetadataFieldMetadata  *MetadataFieldMetadata    `json:"metadata,omitempty"`
 	FormulaMetadata        *FormulaMetadata          `json:"-"`
 	AutoPopulate           string                    `json:"autopopulate,omitempty"`
 	SubFields              map[string]*FieldMetadata `json:"subfields,omitempty"`

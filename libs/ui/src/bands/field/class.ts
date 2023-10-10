@@ -61,6 +61,7 @@ class Field {
 		}
 	}
 	getFileMetadata = () => this.source.file
+	getMetadataFieldMetadata = () => this.source.metadata
 	getNumberMetadata = () => this.source.number
 	isReference = () =>
 		this.source.type === "REFERENCE" ||

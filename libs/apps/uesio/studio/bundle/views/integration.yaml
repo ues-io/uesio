@@ -147,14 +147,12 @@ definition:
                           items:
                             - uesio/io.field:
                                 fieldId: uesio/studio.baseurl
-                            - uesio/builder.metadatafield:
+                            - uesio/io.field:
+                                fieldId: uesio/studio.credentials
                                 uesio.context:
                                   workspace:
                                     name: $Param{workspacename}
                                     app: $Param{app}
-                                fieldId: uesio/studio.credentials
-                                metadataType: CREDENTIALS
-                                label: Credentials
                             - uesio/io.field:
                               fieldId: uesio/studio.headers
                               uesio.display:
@@ -163,42 +161,28 @@ definition:
                                   value: web
                       - uesio/io.grid:
                           uesio.variant: uesio/io.four_columns
+                          uesio.context:
+                            workspace:
+                              name: $Param{workspacename}
+                              app: $Param{app}
                           items:
-                            - uesio/builder.metadatafield:
+                            - uesio/io.field:
                                 uesio.display:
                                   - field: uesio/studio.type
                                     value: uesio/core.custom
-                                uesio.context:
-                                  workspace:
-                                    name: $Param{workspacename}
-                                    app: $Param{app}
                                 fieldId: uesio/studio.loadbot
-                                metadataType: BOT
-                                grouping: LOAD
                                 label: Default Collection Load Bot
-                            - uesio/builder.metadatafield:
+                            - uesio/io.field:
                                 uesio.display:
                                   - field: uesio/studio.type
                                     value: uesio/core.custom
-                                uesio.context:
-                                  workspace:
-                                    name: $Param{workspacename}
-                                    app: $Param{app}
                                 fieldId: uesio/studio.savebot
-                                metadataType: BOT
-                                grouping: SAVE
                                 label: Default Collection Save Bot
-                            - uesio/builder.metadatafield:
+                            - uesio/io.field:
                                 uesio.display:
                                   - field: uesio/studio.type
                                     value: uesio/core.custom
-                                uesio.context:
-                                  workspace:
-                                    name: $Param{workspacename}
-                                    app: $Param{app}
                                 fieldId: uesio/studio.runactionbot
-                                metadataType: BOT
-                                grouping: RUNACTION
                                 label: Default Run Action Bot
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
@@ -308,22 +292,20 @@ definition:
         - uesio/io.item:
             wire: integrationActions
             mode: EDIT
-            uesio.context:
-              workspace:
-                name: $Param{workspacename}
-                app: $Param{app}
             components:
               - uesio/io.field:
                   fieldId: uesio/studio.name
                   uesio.id: action-name
                   focusOnRender: true
                   applyChanges: onBlur
-              - uesio/builder.metadatafield:
+              - uesio/io.field:
                   fieldId: uesio/studio.bot
                   uesio.id: action-bot
-                  metadataType: BOT
-                  grouping: RUNACTION
                   label: Run Action Bot (optional, defaults to Integration's Run Action Bot)
+                  uesio.context:
+                    workspace:
+                      name: $Param{workspacename}
+                      app: $Param{app}
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary

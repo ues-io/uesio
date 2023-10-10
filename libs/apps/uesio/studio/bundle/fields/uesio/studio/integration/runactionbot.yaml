@@ -1,3 +1,6 @@
 name: runactionbot
-type: TEXT
+type: METADATA
 label: Run Action Bot
+metadata:
+  type: BOT
+  grouping: RUNACTION

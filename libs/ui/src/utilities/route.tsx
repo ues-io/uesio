@@ -49,9 +49,11 @@ const Route: UtilityComponent = (props) => {
 				workspace,
 			},
 			"",
-			getRouteUrlPrefix(routeContext, namespace) +
-				route.path +
-				window.location.search
+			route.path
+				? getRouteUrlPrefix(routeContext, namespace) +
+						route.path +
+						window.location.search
+				: undefined
 		)
 		// We only want this hook to fire once (when this route component was first mounted)
 		// If it fires when the route changes, then we're just overwriting the changes we made

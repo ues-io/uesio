@@ -39,7 +39,6 @@ const useLoadWires = (
 	const route = context.getRoute()
 	if (!route) throw new Error("No Route in Context for View Load")
 
-	const params = context.getParams()
 	const { wires, events } = viewDef
 
 	// Keeps track of the value of wires from the previous render
@@ -77,7 +76,7 @@ const useLoadWires = (
 		// TODO: There is probably a better way to check than JSON.stringify() on params.
 		// consider useDeepCompareEffect(), or memoization
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [route.path, viewDefId, JSON.stringify(params)])
+	}, [route.batchid, viewDefId])
 
 	useEffect(() => {
 		;(async () => {
