@@ -2,7 +2,6 @@ package localfiles
 
 import (
 	"errors"
-	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -87,8 +86,7 @@ func (c *Connection) Download(path string) (file.Metadata, io.ReadSeeker, error)
 	fullPath := filepath.Join(c.bucket, path)
 	outFile, err := os.Open(fullPath)
 	if err != nil {
-		fmt.Println("Error Reading File: " + err.Error())
-		return nil, strings.NewReader(""), nil
+		return nil, strings.NewReader(""), errors.New("unable to read file at path: " + path)
 	}
 	fileInfo, err := outFile.Stat()
 	if err != nil {

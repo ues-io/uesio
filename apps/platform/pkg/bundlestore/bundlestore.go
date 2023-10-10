@@ -49,6 +49,18 @@ func NewPermissionError(message string) *PermissionError {
 	}
 }
 
+type NotFoundError struct {
+	message string
+}
+
+func (e *NotFoundError) Error() string { return e.message }
+
+func NewNotFoundError(message string) *NotFoundError {
+	return &NotFoundError{
+		message: message,
+	}
+}
+
 type ConnectionOptions struct {
 	Namespace    string
 	Version      string
@@ -108,4 +120,21 @@ func GetConnection(options ConnectionOptions) (BundleStoreConnection, error) {
 
 func DecodeYAML(v interface{}, reader io.Reader) error {
 	return yaml.NewDecoder(reader).Decode(v)
+}
+
+func DoesItemMeetBundleConditions(item meta.BundleableItem, conditions meta.BundleConditions) bool {
+	if len(conditions) == 0 {
+		return true
+	}
+	for field, conditionDef := range conditions {
+		fieldValue, err := item.GetField(field)
+		// If any condition fails, bail early
+		if err != nil {
+			return false
+		}
+		if fieldValue != conditionDef {
+			return false
+		}
+	}
+	return true
 }
