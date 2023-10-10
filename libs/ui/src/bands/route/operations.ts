@@ -45,7 +45,8 @@ const navigateToAssignment = async (
 ) => {
 	dispatch(setLoading())
 	const routeResponse = await platform.getRouteAssignment(context, request)
-	pushRouteState(context, routeResponse)
+	const prefix = getRouteUrlPrefix(context, routeResponse.namespace)
+	pushRouteState(context, routeResponse, prefix + routeResponse.path)
 	return handleNavigateResponse(context, routeResponse)
 }
 
