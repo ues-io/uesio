@@ -141,7 +141,7 @@ func LoadMany(items []meta.BundleableItem, session *sess.Session, connection ada
 			}
 			return err
 		}
-		if err = bs.GetManyItems(items); err != nil {
+		if err = bs.GetManyItems(nsItems); err != nil {
 			return err
 		}
 	}
