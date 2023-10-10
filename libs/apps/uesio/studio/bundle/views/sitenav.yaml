@@ -9,161 +9,54 @@ definition:
           - uesio/io.titlebar:
               uesio.variant: uesio/io.nav
               title: Site Admin
-          - uesio/io.tile:
-              uesio.variant: uesio/io.nav
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: users
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/site/${uesio/studio.name}/users
-              content:
-                - uesio/io.text:
-                    text: Users
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: person
-          - uesio/io.tile:
-              uesio.variant: uesio/io.nav
+          - uesio/studio.sitenavtile:
+              title: Users
+              icon: person
+              id: users
+          - uesio/studio.sitenavtile:
+              title: Organizations
+              icon: corporate_fare
+              id: organizations
               # For now, we only want to allow the Studio to have Organization-type Users,
               # but in the future we could open this up
               uesio.display:
                 - field: "uesio/studio.app->uesio/core.uniquekey"
                   value: "uesio/studio"
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: orgs
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/site/${uesio/studio.name}/organizations
-              content:
-                - uesio/io.text:
-                    text: Organizations
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: corporate_fare
-          - uesio/io.tile:
-              uesio.variant: uesio/io.nav
+          - uesio/studio.sitenavtile:
+              title: Manage Bundles
+              icon: outbox
+              id: managebundles
               # Should only be visible to those administering a Studio PROD site
               # (which should require write access) on that site
               uesio.display:
                 - field: "uesio/studio.app->uesio/core.uniquekey"
                   value: "uesio/studio"
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: managebundles
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/site/${uesio/studio.name}/managebundles
-              content:
-                - uesio/io.text:
-                    text: Manage Bundles
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: outbox
-          - uesio/io.tile:
-              uesio.variant: uesio/io.nav
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: domains
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/site/${uesio/studio.name}/domains
-              content:
-                - uesio/io.text:
-                    text: Domains
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: verified_user
-          - uesio/io.tile:
-              uesio.variant: uesio/io.nav
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: sitecollections
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/site/${uesio/studio.name}/collections
-              content:
-                - uesio/io.text:
-                    text: Collections
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: list
+          - uesio/studio.sitenavtile:
+              title: Domains
+              icon: verified_user
+              id: domains
+          - uesio/studio.sitenavtile:
+              title: Collections
+              icon: list
+              id: collections
           - uesio/io.titlebar:
               uesio.variant: uesio/io.nav
               title: Usage
-          - uesio/io.tile:
-              uesio.variant: uesio/io.nav
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selectedusagemetadatatype
-                    value: ROUTE
-                  - type: paramValue
-                    param: selectedusageactiontype
-                    value: LOAD
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/site/${uesio/studio.name}/usage/routes/load
-              content:
-                - uesio/io.text:
-                    text: Route Loads
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: map
-          - uesio/io.tile:
-              uesio.variant: uesio/io.nav
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selectedusagemetadatatype
-                    value: COLLECTION
-                  - type: paramValue
-                    param: selectedusageactiontype
-                    value: LOAD
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/site/${uesio/studio.name}/usage/collections/load
-              content:
-                - uesio/io.text:
-                    text: Collection Loads
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: input
-          - uesio/io.tile:
-              uesio.variant: uesio/io.nav
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selectedusagemetadatatype
-                    value: COLLECTION
-                  - type: paramValue
-                    param: selectedusageactiontype
-                    value: SAVE
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/site/${uesio/studio.name}/usage/collections/save
-              content:
-                - uesio/io.text:
-                    text: Collection Saves
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: save
+          - uesio/studio.sitenavusagetile:
+              title: Route Loads
+              icon: map
+              usageMetadataType: ROUTE
+              usageActionType: LOAD
+              path: routes/load
+          - uesio/studio.sitenavusagetile:
+              title: Collection Loads
+              icon: input
+              usageMetadataType: COLLECTION
+              usageActionType: LOAD
+              path: collections/load
+          - uesio/studio.sitenavusagetile:
+              title: Collection Saves
+              icon: save
+              usageMetadataType: COLLECTION
+              usageActionType: SAVE
+              path: collections/save

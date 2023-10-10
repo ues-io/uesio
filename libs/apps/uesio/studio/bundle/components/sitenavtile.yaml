@@ -1,0 +1,33 @@
+name: sitenavtile
+category: LAYOUT
+pack: main
+type: DECLARATIVE
+slots: null
+description: An item in the Site Admin navigation
+properties:
+  - type: TEXT
+    name: title
+    label: Title text
+  - type: ICON
+    name: icon
+  - type: TEXT
+    name: id
+    label: Id for the tile (should be unique within other Site Nav Tiles)
+definition:
+  - uesio/io.tile:
+      uesio.variant: uesio/io.nav
+      uesio.classes:
+        selected:
+          - type: paramValue
+            param: selected
+            value: $Prop{id}
+      signals:
+        - signal: "route/NAVIGATE"
+          path: app/${uesio/studio.app->uesio/core.uniquekey}/site/${uesio/studio.name}/$Prop{id}
+      content:
+        - uesio/io.text:
+            text: $Prop{title}
+      avatar:
+        - uesio/io.text:
+            uesio.variant: uesio/io.icon
+            text: $Prop{icon}
