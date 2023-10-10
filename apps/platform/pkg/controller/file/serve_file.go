@@ -67,6 +67,10 @@ func ServeFileContent(file *meta.File, version string, w http.ResponseWriter, r 
 		http.Error(w, "Failed File Download", http.StatusInternalServerError)
 		return
 	}
+
+	//usage.RegisterEvent("DOWNLOAD", "FILESOURCE", filesource.PLATFORM_FILE_SOURCE, 0, session)
+	//usage.RegisterEvent("DOWNLOAD_BYTES", "FILESOURCE", filesource.PLATFORM_FILE_SOURCE, contentLength, session)
+
 	respondFile(w, r, &FileRequest{
 		Path:         file.Path,
 		LastModified: time.Unix(file.UpdatedAt, 0),
