@@ -99,14 +99,11 @@ const ListProperty: definition.UC<Definition> = (props) => {
 					fieldId={fieldId}
 					path={path}
 					value={items || []}
-					subType={subtype}
 					setValue={(value: wire.FieldValue) => {
 						set(context, listPropertyPath, value)
 					}}
 					mode={"EDIT"}
 					context={context}
-					labelVariant={"uesio/builder.propfield"}
-					subFieldVariant={"uesio/builder.propfield"}
 					options={property?.subtypeOptions}
 				/>
 			) : (
@@ -114,14 +111,16 @@ const ListProperty: definition.UC<Definition> = (props) => {
 					fieldId={fieldId}
 					path={path}
 					value={items}
-					subType={subtype}
 					setValue={(value: wire.FieldValue) => {
 						set(context, listPropertyPath, value)
 					}}
+					options={{
+						labelVariant: "uesio/builder.propfield",
+						subFieldVariant: "uesio/builder.propfield",
+						subType: subtype,
+					}}
 					mode={"EDIT"}
 					context={context}
-					labelVariant={"uesio/builder.propfield"}
-					subFieldVariant={"uesio/builder.propfield"}
 				/>
 			)}
 		</FieldWrapper>
