@@ -88,7 +88,7 @@ func AppClone(targetDir string) error {
 
 	payloadBytes := &bytes.Buffer{}
 
-	err = json.NewEncoder(payloadBytes).Encode(&map[string]string{"name": app.FullName})
+	err = json.NewEncoder(payloadBytes).Encode(&map[string]string{"name": app.Name})
 	if err != nil {
 		return err
 	}
