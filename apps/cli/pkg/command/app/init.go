@@ -97,6 +97,17 @@ func getAnswers(sessid, existingAppName string) (string, string, string, string,
 	return username, appname, color, icon, nil
 }
 
+func GetAppName(appFullName string) string {
+	appName := ""
+	if appFullName != "" {
+		parts := strings.Split("/", appFullName)
+		if len(parts) == 2 {
+			appName = parts[1]
+		}
+	}
+	return appName
+}
+
 func AppInit() error {
 
 	_, err := auth.Login()
@@ -111,6 +122,7 @@ func AppInit() error {
 
 	// See if there is already an app bundle.yaml in local filesystem
 	appFullName, _ := config.GetApp()
+	appName := GetAppName(appFullName)
 
 	// Now, check to see if the app exists on Uesio server
 	var appObject *wire.App
@@ -124,17 +136,9 @@ func AppInit() error {
 	// If we do NOT have an app on the server, then we need to create an app
 	if appObject == nil {
 
-		existingAppName := ""
-
-		if appFullName != "" {
-			parts := strings.Split("/", appFullName)
-			if len(parts) == 2 {
-				existingAppName = parts[1]
-			}
-		}
 		// Create an app
 		fmt.Println("Let's create a new app.")
-		username, appname, color, icon, err := getAnswers(sessid, existingAppName)
+		username, appname, color, icon, err := getAnswers(sessid, appName)
 		if err != nil {
 			return err
 		}
@@ -145,6 +149,7 @@ func AppInit() error {
 		}
 
 		appFullName = appObject.FullName
+		appName = appObject.Name
 
 		fmt.Println("Created new app: " + appFullName)
 	}
@@ -153,7 +158,7 @@ func AppInit() error {
 
 	payloadBytes := &bytes.Buffer{}
 
-	err = json.NewEncoder(payloadBytes).Encode(&map[string]string{"name": appFullName})
+	err = json.NewEncoder(payloadBytes).Encode(&map[string]string{"name": appName})
 	if err != nil {
 		return err
 	}
