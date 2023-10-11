@@ -136,6 +136,7 @@ definition:
                             - uesio/io.field:
                                 fieldId: uesio/studio.token
                       - uesio/io.grid:
+                          uesio.variant: uesio/io.four_columns
                           items:
                             - uesio/io.field:
                                 fieldId: uesio/studio.conditions
@@ -145,6 +146,7 @@ definition:
                                     value: ${uesio/studio.collection}
                                 list:
                                   noAdd: true
+                                  noDelete: true
                                 uesio.context:
                                   workspace:
                                     name: $Param{workspacename}

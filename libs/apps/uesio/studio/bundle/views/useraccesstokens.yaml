@@ -117,7 +117,7 @@ definition:
       uesio.type: uesio/io.dialog
       title: Create a new User Access Token
       width: 500px
-      height: 600px
+      height: 700px
       components:
         - uesio/io.list:
             uesio.id: newuseraccesstoken
@@ -146,6 +146,7 @@ definition:
                   label: " "
                   list:
                     noAdd: true
+                    noDelete: true
                   uesio.context:
                     workspace:
                       name: $Param{workspacename}
