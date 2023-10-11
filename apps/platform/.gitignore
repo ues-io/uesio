@@ -31,7 +31,7 @@ firestore-debug.log
 firebase.json
 firebase-debug.log
 .firebaserc
-__debug_bin
+__debug_bin*
 uesiofiles-dev/
 uesiobundlestore-dev/
 
