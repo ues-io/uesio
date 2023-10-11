@@ -130,32 +130,32 @@ func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]
 
 	password, err := auth.GetRequiredPayloadValue(payload, "password")
 	if err != nil {
-		return auth.NewAuthRequestError("Signup failed, " + err.Error())
+		return auth.NewAuthRequestError("Signup failed - " + err.Error())
 	}
 
 	email, err := auth.GetRequiredPayloadValue(payload, "email")
 	if err != nil {
-		return auth.NewAuthRequestError("Signup failed, " + err.Error())
+		return auth.NewAuthRequestError("Signup failed - " + err.Error())
 	}
 
 	firstname, err := auth.GetRequiredPayloadValue(payload, "firstname")
 	if err != nil {
-		return auth.NewAuthRequestError("Signup failed, " + err.Error())
+		return auth.NewAuthRequestError("Signup failed - " + err.Error())
 	}
 
 	lastname, err := auth.GetRequiredPayloadValue(payload, "lastname")
 	if err != nil {
-		return auth.NewAuthRequestError("Signup failed, " + err.Error())
+		return auth.NewAuthRequestError("Signup failed - " + err.Error())
 	}
 
 	subject, err := auth.GetRequiredPayloadValue(payload, "subject")
 	if err != nil {
-		return auth.NewAuthRequestError("Signup failed, " + err.Error())
+		return auth.NewAuthRequestError("Signup failed - " + err.Error())
 	}
 
 	message, err := auth.GetRequiredPayloadValue(payload, "message")
 	if err != nil {
-		return auth.NewAuthRequestError("Signup failed, " + err.Error())
+		return auth.NewAuthRequestError("Signup failed - " + err.Error())
 	}
 
 	signUpData := &cognito.SignUpInput{

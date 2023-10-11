@@ -46,7 +46,7 @@ POST https://tests.{{domain}}:{{port}}/site/auth/uesio/core/google/login
 {}
 HTTP 400
 [Asserts]
-body == "google login: Key: credential not present in payload\n"
+body == "google login: key 'credential' not present in payload\n"
 
 # Log in to google with the wrong client id
 POST https://tests.{{domain}}:{{port}}/site/auth/uesio/core/google/login
