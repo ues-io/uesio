@@ -182,7 +182,7 @@ func HydrateTokenMap(tokenMap sess.TokenMap, tokenDefs meta.UserAccessTokenColle
 				return err
 			}
 
-			tokenStrings := []sess.TokenValue{}
+			var tokenStrings []sess.TokenValue
 			err = lookupResults.Loop(func(record meta.Item, _ string) error {
 				tokenValue, err := templating.Execute(template, record)
 				if err != nil {
