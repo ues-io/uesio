@@ -26,6 +26,20 @@ func (e *AuthRequestError) Error() string {
 	return e.message
 }
 
+type NotAuthorizedError struct {
+	message string
+}
+
+func NewNotAuthorizedError(message string) *NotAuthorizedError {
+	return &NotAuthorizedError{
+		message: message,
+	}
+}
+
+func (e *NotAuthorizedError) Error() string {
+	return e.message
+}
+
 func GetUserFromFederationID(authSourceID string, federationID string, session *sess.Session) (*meta.User, error) {
 
 	if session.GetWorkspace() != nil {

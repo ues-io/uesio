@@ -11,6 +11,7 @@ import (
 	cognito "github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider/types"
 	"github.com/dgrijalva/jwt-go"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/creds"
@@ -43,13 +44,13 @@ func getFullyQualifiedUsername(site string, username string) string {
 
 func (c *Connection) Login(payload map[string]interface{}) (*meta.User, error) {
 
-	username, err := auth.GetPayloadValue(payload, "username")
+	username, err := auth.GetRequiredPayloadValue(payload, "username")
 	if err != nil {
-		return nil, errors.New("Cognito login:" + err.Error())
+		return nil, auth.NewAuthRequestError("You must enter a username")
 	}
-	password, err := auth.GetPayloadValue(payload, "password")
+	password, err := auth.GetRequiredPayloadValue(payload, "password")
 	if err != nil {
-		return nil, errors.New("Cognito login:" + err.Error())
+		return nil, auth.NewAuthRequestError("You must enter a password")
 	}
 	clientID, ok := (*c.credentials)["clientid"]
 	if !ok {
@@ -81,7 +82,7 @@ func (c *Connection) Login(payload map[string]interface{}) (*meta.User, error) {
 
 	result, err := client.AdminInitiateAuth(context.Background(), authTry)
 	if err != nil {
-		return nil, err
+		return nil, handleCognitoError(err)
 	}
 
 	parser := jwt.Parser{}
@@ -129,32 +130,32 @@ func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]
 
 	password, err := auth.GetRequiredPayloadValue(payload, "password")
 	if err != nil {
-		return errors.New("Cognito login:" + err.Error())
+		return auth.NewAuthRequestError("Signup failed, " + err.Error())
 	}
 
 	email, err := auth.GetRequiredPayloadValue(payload, "email")
 	if err != nil {
-		return errors.New("Cognito login:" + err.Error())
+		return auth.NewAuthRequestError("Signup failed, " + err.Error())
 	}
 
 	firstname, err := auth.GetRequiredPayloadValue(payload, "firstname")
 	if err != nil {
-		return errors.New("Cognito login:" + err.Error())
+		return auth.NewAuthRequestError("Signup failed, " + err.Error())
 	}
 
 	lastname, err := auth.GetRequiredPayloadValue(payload, "lastname")
 	if err != nil {
-		return errors.New("Cognito login:" + err.Error())
+		return auth.NewAuthRequestError("Signup failed, " + err.Error())
 	}
 
 	subject, err := auth.GetRequiredPayloadValue(payload, "subject")
 	if err != nil {
-		return errors.New("Cognito login:" + err.Error())
+		return auth.NewAuthRequestError("Signup failed, " + err.Error())
 	}
 
 	message, err := auth.GetRequiredPayloadValue(payload, "message")
 	if err != nil {
-		return errors.New("Cognito login:" + err.Error())
+		return auth.NewAuthRequestError("Signup failed, " + err.Error())
 	}
 
 	signUpData := &cognito.SignUpInput{
@@ -175,7 +176,7 @@ func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]
 
 	signUpOutput, err := client.SignUp(context.Background(), signUpData)
 	if err != nil {
-		return handleCognitoSignupError(err)
+		return handleCognitoError(err)
 	}
 
 	user, err := auth.CreateUser(signupMethod, &meta.User{
@@ -194,16 +195,6 @@ func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]
 		AuthSource:   signupMethod.AuthSource,
 	}, c.connection, c.session)
 
-}
-
-// Make Cognito error messages more readable by returning the more specific error message
-func handleCognitoSignupError(err error) error {
-	if opErr, isOpError := err.(*smithy.OperationError); isOpError {
-		if respErr, isRespErr := opErr.Err.(*http.ResponseError); isRespErr {
-			return respErr.Err
-		}
-	}
-	return err
 }
 
 func (c *Connection) ForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {
@@ -228,12 +219,12 @@ func (c *Connection) ForgotPassword(signupMethod *meta.SignupMethod, payload map
 
 	subject, err := auth.GetRequiredPayloadValue(payload, "subject")
 	if err != nil {
-		return errors.New("Cognito login:" + err.Error())
+		return errors.New("Cognito login failed: " + err.Error())
 	}
 
 	message, err := auth.GetRequiredPayloadValue(payload, "message")
 	if err != nil {
-		return errors.New("Cognito login:" + err.Error())
+		return errors.New("Cognito login failed: " + err.Error())
 	}
 
 	authTry := &cognito.ForgotPasswordInput{
@@ -375,7 +366,7 @@ func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[st
 
 	email, err := auth.GetRequiredPayloadValue(payload, "email")
 	if err != nil {
-		return errors.New("Cognito login:" + err.Error())
+		return errors.New("Cognito login failed: " + err.Error())
 	}
 
 	signUpData := &cognito.AdminCreateUserInput{
@@ -429,12 +420,12 @@ func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[st
 
 	subject, err := auth.GetRequiredPayloadValue(payload, "subject")
 	if err != nil {
-		return errors.New("Cognito login:" + err.Error())
+		return errors.New("Cognito login failed: " + err.Error())
 	}
 
 	message, err := auth.GetRequiredPayloadValue(payload, "message")
 	if err != nil {
-		return errors.New("Cognito login:" + err.Error())
+		return errors.New("Cognito login failed: " + err.Error())
 	}
 
 	//resetPassword
@@ -469,4 +460,21 @@ func findAttribute(name string, attributes []types.AttributeType) (result string
 		}
 	}
 	return result
+}
+
+// Make Cognito error messages more readable by returning the more specific error message
+func handleCognitoError(err error) error {
+	if opErr, isOpError := err.(*smithy.OperationError); isOpError {
+		if respErr, isRespErr := opErr.Err.(*http.ResponseError); isRespErr {
+			switch cognitoErr := respErr.Err.(type) {
+			case *types.NotAuthorizedException:
+				return auth.NewNotAuthorizedError(cognitoErr.ErrorMessage())
+			case *types.InvalidPasswordException:
+				return auth.NewAuthRequestError(cognitoErr.ErrorMessage())
+			default:
+				return auth.NewAuthRequestError(cognitoErr.Error())
+			}
+		}
+	}
+	return err
 }

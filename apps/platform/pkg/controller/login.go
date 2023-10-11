@@ -9,6 +9,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 
 	"github.com/gorilla/mux"
+
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -96,6 +97,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		switch err.(type) {
 		case *auth.AuthRequestError:
 			responseCode = http.StatusBadRequest
+		case *auth.NotAuthorizedError:
+			responseCode = http.StatusUnauthorized
 		default:
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 			logger.LogError(err)

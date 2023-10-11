@@ -298,12 +298,12 @@ func GetPayloadValue(payload map[string]interface{}, key string) (string, error)
 
 	value, ok := payload[key]
 	if !ok {
-		return "", errors.New("Key: " + key + " not present in payload")
+		return "", errors.New("key '" + key + "' not present in payload")
 	}
 
 	stringValue, ok := value.(string)
 	if !ok {
-		return "", errors.New("The value for" + key + " is not string")
+		return "", errors.New("The value for " + key + " is not a string")
 	}
 
 	return stringValue, nil
@@ -316,7 +316,7 @@ func GetRequiredPayloadValue(payload map[string]interface{}, key string) (string
 		return "", err
 	}
 	if value == "" {
-		return "", errors.New("Missing required payload value: " + key)
+		return "", errors.New("missing required value: " + key)
 	}
 	return value, nil
 }
