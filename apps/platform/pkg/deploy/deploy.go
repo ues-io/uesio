@@ -5,22 +5,22 @@ import (
 	"bytes"
 	"errors"
 	"io"
-	"io/ioutil"
 	"path/filepath"
 	"strings"
 
+	"gopkg.in/yaml.v3"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
-	"gopkg.in/yaml.v3"
 )
 
+// TODO: Eliminate the need to keep this manual list.
+// Evaluate the dependencies of each item and deploy in dependency order.
 var ORDERED_ITEMS = [...]string{
 	"collections",
 	"selectlists",
@@ -45,9 +45,46 @@ var ORDERED_ITEMS = [...]string{
 	"configvalues",
 	"credentials",
 	"integrations",
+	"integrationactions",
+}
+
+type DeployOptions struct {
+	Upsert     bool
+	Connection adapt.Connection
 }
 
 func Deploy(body io.ReadCloser, session *sess.Session) error {
+
+	connection, err := datasource.GetPlatformConnection(nil, session.RemoveWorkspaceContext(), nil)
+	if err != nil {
+		return err
+	}
+
+	err = connection.BeginTransaction()
+	if err != nil {
+		return err
+	}
+
+	err = DeployWithOptions(body, session, &DeployOptions{
+		Connection: connection,
+		Upsert:     true,
+	})
+	if err != nil {
+		rollbackError := connection.RollbackTransaction()
+		if rollbackError != nil {
+			return rollbackError
+		}
+		return err
+	}
+
+	return connection.CommitTransaction()
+}
+
+func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *DeployOptions) error {
+
+	if options == nil {
+		options = &DeployOptions{Upsert: true, Connection: nil}
+	}
 
 	workspace := session.GetWorkspace()
 	if workspace == nil {
@@ -55,7 +92,7 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 	}
 
 	// Unfortunately, we have to read the whole thing into memory
-	bodybytes, err := ioutil.ReadAll(body)
+	bodybytes, err := io.ReadAll(body)
 	if err != nil {
 		return err
 	}
@@ -71,7 +108,7 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 
 	var by *meta.BundleDef
 
-	uploadOps := []filesource.FileUploadOp{}
+	uploadOps := []*filesource.FileUploadOp{}
 
 	// Read all the files from zip archive
 	for _, zipFile := range zipReader.File {
@@ -150,8 +187,6 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 				return errors.New("Reading File: " + collectionItem.GetKey() + " : " + err.Error())
 			}
 
-			collectionItem.SetField("uesio/studio.workspace", workspace)
-
 			continue
 		}
 
@@ -169,13 +204,11 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 				return err
 			}
 
-			uploadOps = append(uploadOps, filesource.FileUploadOp{
-				Data: f,
-				Details: &fileadapt.FileDetails{
-					Path:            strings.TrimPrefix(path, attachableItem.GetBasePath()+"/"),
-					CollectionID:    collection.GetName(),
-					RecordUniqueKey: collectionItem.GetDBID(workspace.UniqueKey),
-				},
+			uploadOps = append(uploadOps, &filesource.FileUploadOp{
+				Data:            f,
+				Path:            strings.TrimPrefix(path, attachableItem.GetBasePath()+"/"),
+				CollectionID:    collection.GetName(),
+				RecordUniqueKey: collectionItem.GetDBID(workspace.UniqueKey),
 			})
 			defer f.Close()
 		}
@@ -184,7 +217,7 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 	saves := []datasource.PlatformSaveRequest{}
 
 	saveOptions := &adapt.SaveOptions{
-		Upsert: true,
+		Upsert: options.Upsert,
 	}
 
 	if by != nil {
@@ -222,6 +255,7 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 			},
 			AppSettings: meta.AppSettings{
 				LoginRoute:    by.LoginRoute,
+				SignupRoute:   by.SignupRoute,
 				HomeRoute:     by.HomeRoute,
 				PublicProfile: by.PublicProfile,
 				DefaultTheme:  by.DefaultTheme,
@@ -235,6 +269,7 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 			ValidFields: map[string]bool{
 				adapt.ID_FIELD:               true,
 				"uesio/studio.loginroute":    true,
+				"uesio/studio.signuproute":   true,
 				"uesio/studio.homeroute":     true,
 				"uesio/studio.publicprofile": true,
 				"uesio/studio.defaulttheme":  true,
@@ -252,63 +287,32 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 		)
 	}
 
+	params := map[string]string{
+		"workspaceid": workspace.ID,
+	}
+
 	for _, element := range ORDERED_ITEMS {
 		if dep[element] != nil {
 			saves = append(saves, datasource.PlatformSaveRequest{
 				Collection: dep[element],
 				Options:    saveOptions,
+				Params:     params,
 			})
 		}
 	}
 
-	connection, err := datasource.GetPlatformConnection(nil, session.RemoveWorkspaceContext(), nil)
+	err = datasource.PlatformSaves(saves, options.Connection, session.RemoveWorkspaceContext())
 	if err != nil {
 		return err
 	}
 
-	err = connection.BeginTransaction()
-	if err != nil {
-		return err
-	}
-
-	err = applyDeploy(saves, uploadOps, connection, session)
-	if err != nil {
-		rollbackError := connection.RollbackTransaction()
-		if rollbackError != nil {
-			return rollbackError
-		}
-		return err
-	}
-
-	err = connection.CommitTransaction()
-	if err != nil {
-		return err
-	}
-
-	// Clear out the bundle definition cache
-	bundle.ClearAppBundleCache(session)
-
-	return nil
-
-}
-
-func applyDeploy(
-	saves []datasource.PlatformSaveRequest,
-	fileops []filesource.FileUploadOp,
-	connection adapt.Connection,
-	session *sess.Session,
-) error {
-	err := datasource.PlatformSaves(saves, connection, session.RemoveWorkspaceContext())
-	if err != nil {
-		return err
-	}
-
-	_, err = filesource.Upload(fileops, connection, session.RemoveWorkspaceContext())
+	_, err = filesource.Upload(uploadOps, options.Connection, session.RemoveWorkspaceContext(), params)
 	if err != nil {
 		return err
 	}
 
 	return nil
+
 }
 
 func readZipFile(zf *zip.File, item meta.BundleableItem) error {

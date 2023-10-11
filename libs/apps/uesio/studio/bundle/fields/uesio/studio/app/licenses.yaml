@@ -1,0 +1,7 @@
+name: licenses
+type: REFERENCEGROUP
+label: Licenses
+referenceGroup:
+  collection: license
+  field: applicensed
+  onDelete: CASCADE

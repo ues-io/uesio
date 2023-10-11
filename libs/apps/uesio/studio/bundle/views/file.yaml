@@ -15,10 +15,10 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     files:
-      collection: uesio/studio.allmetadata
+      collection: uesio/studio.file
       conditions:
-        - field: uesio/studio.type
-          value: files
+        - field: uesio/studio.allmetadata
+          value: true
         - field: uesio/studio.item
           value: $Param{namespace}.$Param{filename}
     attachments:
@@ -48,147 +48,139 @@ definition:
           value: uesio/studio.file
   # Components are how we describe the layout of our view
   components:
-    - uesio/io.grid:
-        uesio.variant: uesio/studio.mainlayout
-        items:
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.topbar
+    - uesio/studio.mainlayout:
+        topbar:
+          - uesio/core.view:
+              view: uesio/studio.topbar
+              uesio.context:
+                wire: workspaces
+              params:
+                itemType: files
+                itemIcon: collections
+                itemName: $Param{filename}
+                itemNameSpace: $Param{namespace}
+        leftbar:
+          - uesio/core.view:
+              uesio.context:
+                wire: workspaces
+              view: uesio/studio.workspacenav
+              params:
+                selected: files
+        content:
+          - uesio/io.list:
+              uesio.id: filesList
+              wire: files
+              mode: READ
               components:
-                - uesio/core.view:
-                    view: uesio/studio.topbar
-                    uesio.context:
-                      wire: workspaces
-                    params:
-                      itemType: files
-                      itemIcon: collections
-                      itemName: $Param{filename}
-                      itemNameSpace: $Param{namespace}
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.leftbar
-              components:
-                - uesio/core.view:
-                    uesio.context:
-                      wire: workspaces
-                    view: uesio/studio.workspacenav
-                    params:
-                      selected: files
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.content
-              components:
-                - uesio/io.list:
-                    uesio.id: filesList
-                    wire: files
-                    mode: READ
-                    components:
-                      - uesio/io.titlebar:
-                          uesio.variant: uesio/io.main
-                          title: File - ${uesio/studio.name}
-                          subtitle: $Param{namespace}
-                          actions:
-                            - uesio/io.group:
-                                components:
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: $Label{uesio/io.edit}
-                                      uesio.display:
-                                        - type: fieldMode
-                                          mode: READ
-                                        - type: paramValue
-                                          param: app
-                                          field: uesio/core.dynamiccollection
-                                          operator: EQUALS
-                                          value: $Param{namespace}
-                                      signals:
-                                        - signal: component/CALL
-                                          component: uesio/io.list
-                                          componentsignal: TOGGLE_MODE
-                                          targettype: specific
-                                          componentid: filesList
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.primary
-                                      text: $Label{uesio/io.save}
-                                      uesio.display:
-                                        - type: wireHasChanges
-                                          wire: files
-                                      signals:
-                                        - signal: wire/SAVE
-                                          wires:
-                                            - files
-                                        - signal: component/CALL
-                                          component: uesio/io.list
-                                          componentsignal: TOGGLE_MODE
-                                          targettype: specific
-                                          componentid: filesList
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: $Label{uesio/io.cancel}
-                                      uesio.display:
-                                        - type: fieldMode
-                                          mode: EDIT
-                                      signals:
-                                        - signal: wire/CANCEL
-                                          wire: files
-                                        - signal: component/CALL
-                                          component: uesio/io.list
-                                          componentsignal: TOGGLE_MODE
-                                          targettype: specific
-                                          componentid: filesList
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: $Label{uesio/io.delete}
-                                      signals:
-                                        - signal: panel/TOGGLE
-                                          panel: deleteFile
-                                      uesio.display:
-                                        - type: paramValue
-                                          param: app
-                                          field: uesio/core.dynamiccollection
-                                          operator: EQUALS
-                                          value: $Param{namespace}
-                      - uesio/io.box:
-                          uesio.variant: uesio/io.section
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.main
+                    title: File - ${uesio/studio.name}
+                    subtitle: $Param{namespace}
+                    actions:
+                      - uesio/io.group:
                           components:
-                            - uesio/io.grid:
-                                uesio.variant: uesio/io.four_columns
-                                items:
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.name
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.path
-                            - uesio/io.list:
-                                id: Attachments
-                                wire: attachments
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: $Label{uesio/io.edit}
+                                uesio.display:
+                                  - type: fieldMode
+                                    mode: READ
+                                  - type: paramValue
+                                    param: app
+                                    field: uesio/core.dynamiccollection
+                                    operator: EQUALS
+                                    value: $Param{namespace}
+                                signals:
+                                  - signal: component/CALL
+                                    component: uesio/io.list
+                                    componentsignal: TOGGLE_MODE
+                                    targettype: specific
+                                    componentid: filesList
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.primary
+                                text: $Label{uesio/io.save}
+                                uesio.display:
+                                  - type: wireHasChanges
+                                    wire: files
+                                signals:
+                                  - signal: wire/SAVE
+                                    wires:
+                                      - files
+                                  - signal: component/CALL
+                                    component: uesio/io.list
+                                    componentsignal: TOGGLE_MODE
+                                    targettype: specific
+                                    componentid: filesList
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: $Label{uesio/io.cancel}
+                                uesio.display:
+                                  - type: fieldMode
+                                    mode: EDIT
+                                signals:
+                                  - signal: wire/CANCEL
+                                    wire: files
+                                  - signal: component/CALL
+                                    component: uesio/io.list
+                                    componentsignal: TOGGLE_MODE
+                                    targettype: specific
+                                    componentid: filesList
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: $Label{uesio/io.delete}
+                                signals:
+                                  - signal: panel/TOGGLE
+                                    panel: deleteFile
                                 uesio.display:
                                   - type: paramValue
                                     param: app
                                     field: uesio/core.dynamiccollection
                                     operator: EQUALS
                                     value: $Param{namespace}
-                                components:
-                                  - uesio/io.fileattachment:
-                                      displayAs: PREVIEW
-                                      mode: EDIT
-                                      onUploadSignals:
-                                        - signal: wire/LOAD
-                                          wires:
-                                            - workspaces
-                                            - files
-                                            - attachments
-                                      onDeleteSignals:
-                                        - signal: wire/LOAD
-                                          wires:
-                                            - workspaces
-                                            - files
-                                            - attachments
-                            - uesio/io.image:
-                                loading: lazy
-                                file: "$Param{namespace}.${uesio/studio.name}"
-                                uesio.display:
-                                  - type: paramValue
-                                    param: app
-                                    field: uesio/core.dynamiccollection
-                                    operator: NOT_EQUALS
-                                    value: $Param{namespace}
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.grid:
+                          uesio.variant: uesio/io.four_columns
+                          items:
+                            - uesio/io.field:
+                                fieldId: uesio/studio.name
+                            - uesio/io.field:
+                                fieldId: uesio/studio.path
+                      - uesio/io.list:
+                          id: Attachments
+                          wire: attachments
+                          uesio.display:
+                            - type: paramValue
+                              param: app
+                              field: uesio/core.dynamiccollection
+                              operator: EQUALS
+                              value: $Param{namespace}
+                          components:
+                            - uesio/io.fileattachment:
+                                displayAs: PREVIEW
+                                mode: EDIT
+                                onUploadSignals:
+                                  - signal: wire/LOAD
+                                    wires:
+                                      - workspaces
+                                      - files
+                                      - attachments
+                                onDeleteSignals:
+                                  - signal: wire/LOAD
+                                    wires:
+                                      - workspaces
+                                      - files
+                                      - attachments
+                      - uesio/io.image:
+                          loading: lazy
+                          file: "$Param{namespace}.${uesio/studio.name}"
+                          uesio.display:
+                            - type: paramValue
+                              param: app
+                              field: uesio/core.dynamiccollection
+                              operator: NOT_EQUALS
+                              value: $Param{namespace}
   panels:
     deleteFile:
       uesio.type: uesio/io.dialog

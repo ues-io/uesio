@@ -1,14 +1,12 @@
 import { definition, styles } from "@uesio/ui"
 
-import { FC } from "react"
-
-interface T extends definition.UtilityProps {
+interface T {
 	isHovering: boolean
 	label?: string
 	message?: string
 	direction?: "HORIZONTAL" | "VERTICAL"
 }
-const PlaceHolder: FC<T> = (props) => {
+const PlaceHolder: definition.UtilityComponent<T> = (props) => {
 	const { isHovering, label } = props
 
 	const classes = styles.useUtilityStyleTokens(

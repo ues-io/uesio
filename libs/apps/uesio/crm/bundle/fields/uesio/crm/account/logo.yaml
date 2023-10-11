@@ -1,6 +1,0 @@
-name: logo
-type: FILE
-label: Logo
-file:
-  accept: IMAGE
-  filesource: uesio/core.platform

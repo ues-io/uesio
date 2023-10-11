@@ -1,6 +1,0 @@
-name: background_image
-type: FILE
-label: Background Image
-file:
-  accept: IMAGE
-  filesource: uesio/core.platform

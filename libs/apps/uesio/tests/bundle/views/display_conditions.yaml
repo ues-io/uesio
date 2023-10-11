@@ -1,0 +1,90 @@
+name: display_conditions
+definition:
+  wires:
+    animals:
+      collection: uesio/tests.animal
+      fields:
+        uesio/tests.genus:
+        uesio/tests.species:
+      order:
+        - field: uesio/tests.genus
+        - field: uesio/tests.species
+      batchsize: 2
+  # Components determine the layout and composition of your view
+  components:
+    - uesio/io.button:
+        signals:
+          - signal: wire/CREATE_RECORD
+            wire: animals
+        text: Create
+        uesio.id: btn-create
+        uesio.variant: uesio/io.primary
+        uesio.display:
+          - type: wireHasNoChanges
+            wire: animals
+    - uesio/io.button:
+        signals:
+          - signal: wire/SAVE
+            wires:
+              - animals
+        text: Save
+        uesio.id: btn-save
+        uesio.display:
+          - type: wireHasChanges
+            wire: animals
+        uesio.variant: uesio/io.primary
+    - uesio/io.button:
+        signals:
+          - signal: wire/CANCEL
+            wire: animals
+        text: Cancel
+        uesio.id: btn-cancel
+        uesio.display:
+          - type: wireHasChanges
+            wire: animals
+        uesio.variant: uesio/io.secondary
+    - uesio/io.text:
+        text: paramIsSet
+        uesio.id: text-paramIsSet
+        uesio.display:
+          - type: paramIsSet
+            param: foo
+    - uesio/io.text:
+        text: paramIsNotSet
+        uesio.id: text-paramIsNotSet
+        uesio.display:
+          - type: paramIsNotSet
+            param: foo
+    - uesio/io.text:
+        text: paramValueNotEquals
+        uesio.id: text-paramValue-notEquals
+        uesio.display:
+          - type: paramValue
+            param: foo
+            operator: NOT_EQUALS
+            value: bar
+    - uesio/io.text:
+        text: paramValueEquals
+        uesio.id: text-paramValue-equals
+        uesio.display:
+          - type: paramValue
+            param: foo
+            operator: EQUALS
+            value: bar
+    - uesio/io.text:
+        text: paramValueEqualsOrWireHasChanges
+        uesio.id: text-paramValueEqualsOrWireHasChanges
+        uesio.display:
+          - type: group
+            conjunction: OR
+            conditions:
+              - type: paramValue
+                param: foo
+                operator: EQUALS
+                value: bar
+              - type: wireHasChanges
+                wire: animals
+  params:
+    foo:
+      required: false
+      type: TEXT

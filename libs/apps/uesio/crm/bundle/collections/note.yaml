@@ -1,5 +1,0 @@
-name: note
-public: true
-label: note
-pluralLabel: notes
-nameField: uesio/crm.name

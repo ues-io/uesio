@@ -1,5 +1,0 @@
-name: line_items
-type: NUMBER
-label: Line Items
-number:
-  decimals: 0

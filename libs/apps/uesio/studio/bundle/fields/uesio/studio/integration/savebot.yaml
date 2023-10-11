@@ -1,0 +1,6 @@
+name: savebot
+type: METADATA
+label: Save Bot
+metadata:
+  type: BOT
+  grouping: SAVE

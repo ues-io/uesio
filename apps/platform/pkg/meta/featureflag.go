@@ -15,6 +15,7 @@ type FeatureFlag struct {
 	Min            int64       `yaml:"min" json:"uesio/studio.min"`
 	Max            int64       `yaml:"max" json:"uesio/studio.max"`
 	Type           string      `yaml:"type" json:"uesio/studio.type"`
+	ValidForOrgs   bool        `yaml:"validForOrgs" json:"uesio/studio.validfororgs"`
 	User           string
 }
 
@@ -29,6 +30,9 @@ func (ff *FeatureFlag) MarshalJSONObject(enc *gojay.Encoder) {
 	enc.AddStringKey("name", ff.Name)
 	enc.AddStringKey("user", ff.User)
 	enc.AddStringKey("type", ff.Type)
+	if ff.ValidForOrgs {
+		enc.AddBoolKey("validForOrgs", true)
+	}
 	if ff.Type == "NUMBER" {
 		useIntValue := int64(0)
 		intDefaultValue, hasDefault := ff.DefaultValue.(int)

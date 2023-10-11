@@ -1,5 +1,0 @@
-name: opportunity_item
-public: true
-label: opportunity item
-pluralLabel: opportunity items
-nameField: uesio/crm.name

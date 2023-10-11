@@ -1,7 +1,0 @@
-name: contact
-public: true
-label: contact
-pluralLabel: contacts
-uniqueKey:
-  - uesio/crm.externalid
-nameField: uesio/crm.lastname

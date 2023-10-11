@@ -19,13 +19,14 @@ func NewBaseCredential(namespace, name string) *Credential {
 }
 
 type CredentialEntry struct {
-	Type  string `yaml:"type" json:"uesio/studio.type"`
-	Value string `yaml:"value" json:"uesio/studio.value"`
+	Type  string `yaml:"type" json:"type"`
+	Value string `yaml:"value" json:"value"`
 }
 
 type Credential struct {
 	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
+	Type           string                     `yaml:"type" json:"uesio/studio.type"`
 	Entries        map[string]CredentialEntry `yaml:"entries" json:"uesio/studio.entries"`
 }
 

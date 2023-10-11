@@ -1,0 +1,7 @@
+name: useraccesstokens
+type: REFERENCEGROUP
+label: User Access Tokens
+referenceGroup:
+  collection: useraccesstoken
+  field: workspace
+  onDelete: CASCADE

@@ -2,6 +2,6 @@ name: authsources
 type: REFERENCEGROUP
 label: Authsources
 referenceGroup:
-  collection: uesio/studio.authsource
-  field: uesio/studio.workspace
+  collection: authsource
+  field: workspace
   onDelete: CASCADE

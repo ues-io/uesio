@@ -1,4 +1,3 @@
-import { FunctionComponent } from "react"
 import { definition, context, api } from "@uesio/ui"
 import {
 	CANCEL_FILE_EVENT,
@@ -10,7 +9,7 @@ import MarkDownField, {
 	MarkdownFieldOptions,
 } from "../markdownfield/markdownfield"
 
-interface FileTextProps extends definition.UtilityProps {
+interface FileTextProps {
 	path: string
 	mode?: context.FieldMode
 	userFile?: UserFileMetadata
@@ -22,6 +21,8 @@ interface FileTextProps extends definition.UtilityProps {
 	theme?: string
 	// Markdown options
 	markdownOptions?: MarkdownFieldOptions
+	// The language to use for syntax highlighting
+	language?: string
 }
 
 const stringToFile = (value: string, fileName: string, mimeType: string) => {
@@ -33,7 +34,7 @@ const stringToFile = (value: string, fileName: string, mimeType: string) => {
 	})
 }
 
-const FileText: FunctionComponent<FileTextProps> = (props) => {
+const FileText: definition.UtilityComponent<FileTextProps> = (props) => {
 	const {
 		context,
 		userFile,
@@ -41,6 +42,7 @@ const FileText: FunctionComponent<FileTextProps> = (props) => {
 		markdownOptions,
 		mode,
 		displayAs,
+		language = displayAs === "MARKDOWN" ? "markdown" : undefined,
 		id,
 		typeDefinitionFileURIs,
 		theme,
@@ -81,8 +83,6 @@ const FileText: FunctionComponent<FileTextProps> = (props) => {
 		[original]
 	)
 
-	const language = displayAs === "MARKDOWN" ? "markdown" : undefined
-
 	if (displayAs === "MARKDOWN" && mode !== "EDIT") {
 		return (
 			<MarkDownField
@@ -100,6 +100,7 @@ const FileText: FunctionComponent<FileTextProps> = (props) => {
 		<CodeField
 			context={context}
 			value={content}
+			mode={mode}
 			language={language}
 			setValue={changeHandler}
 			typeDefinitionFileURIs={typeDefinitionFileURIs}

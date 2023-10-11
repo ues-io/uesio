@@ -35,51 +35,43 @@ definition:
           lookupWire: apps
           lookupField: uesio/core.id
     allcollections:
-      collection: uesio/studio.allmetadata
+      collection: uesio/studio.collection
       conditions:
-        - field: uesio/studio.type
-          value: "collections"
+        - field: uesio/studio.allmetadata
+          value: true
   # Components are how we describe the layout of our view
   components:
-    - uesio/io.grid:
-        uesio.variant: uesio/studio.mainlayout
-        items:
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.topbar
+    - uesio/studio.mainlayout:
+        topbar:
+          - uesio/core.view:
+              view: uesio/studio.topbar
+              uesio.context:
+                wire: sites
+        leftbar:
+          - uesio/core.view:
+              view: uesio/studio.sitenav
+              uesio.context:
+                wire: sites
+              params:
+                selected: sitecollections
+        content:
+          - uesio/io.titlebar:
+              uesio.variant: uesio/io.main
+              title: Collections
+              subtitle: Manage data in the collections that are available in this site.
+          - uesio/io.box:
+              uesio.variant: uesio/io.section
               components:
-                - uesio/core.view:
-                    view: uesio/studio.topbar
-                    uesio.context:
-                      wire: sites
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.leftbar
-              components:
-                - uesio/core.view:
-                    view: uesio/studio.sitenav
-                    uesio.context:
-                      wire: sites
-                    params:
-                      selected: sitecollections
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.content
-              components:
-                - uesio/io.titlebar:
-                    uesio.variant: uesio/io.main
-                    title: Collections
-                    subtitle: Manage data in the collections that are available in this site.
                 - uesio/io.box:
-                    uesio.variant: uesio/io.section
                     components:
-                      - uesio/io.box:
-                          components:
-                            - uesio/io.table:
-                                wire: allcollections
-                                columns:
-                                  - field: uesio/studio.name
-                                  - field: uesio/studio.namespace
-                                rowactions:
-                                  - text: Details
-                                    signals:
-                                      - signal: route/NAVIGATE
-                                        path: "app/$Param{app}/site/$Param{sitename}/data/${uesio/studio.namespace}/${uesio/studio.name}"
-                                pagesize: 10
+                      - uesio/io.table:
+                          wire: allcollections
+                          columns:
+                            - field: uesio/studio.name
+                            - field: uesio/studio.namespace
+                          rowactions:
+                            - text: Details
+                              signals:
+                                - signal: route/NAVIGATE
+                                  path: "app/$Param{app}/site/$Param{sitename}/data/${uesio/studio.namespace}/${uesio/studio.name}"
+                          pagesize: 10

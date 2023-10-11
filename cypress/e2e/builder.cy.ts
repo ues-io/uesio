@@ -17,6 +17,7 @@ components:
       text: New Button
       icon: bolt
       uesio.variant: uesio/io.default
+      iconPlacement: start
 `
 
 const setButtonPageDef = `# Wires connect to data in collections
@@ -27,6 +28,7 @@ components:
       text: First
       icon: bolt
       uesio.variant: uesio/io.default
+      iconPlacement: start
 `
 
 const cloneButtonPageDef = `# Wires connect to data in collections
@@ -37,10 +39,12 @@ components:
       text: First
       icon: bolt
       uesio.variant: uesio/io.default
+      iconPlacement: start
   - uesio/io.button:
       text: First
       icon: bolt
       uesio.variant: uesio/io.default
+      iconPlacement: start
 `
 
 const setButtonPageDef2 = `# Wires connect to data in collections
@@ -51,10 +55,12 @@ components:
       text: First
       icon: bolt
       uesio.variant: uesio/io.default
+      iconPlacement: start
   - uesio/io.button:
       text: Second
       icon: bolt
       uesio.variant: uesio/io.default
+      iconPlacement: start
 `
 
 const moveBackwardPageDef = `# Wires connect to data in collections
@@ -65,10 +71,12 @@ components:
       text: Second
       icon: bolt
       uesio.variant: uesio/io.default
+      iconPlacement: start
   - uesio/io.button:
       text: First
       icon: bolt
       uesio.variant: uesio/io.default
+      iconPlacement: start
 `
 
 describe("Uesio Builder Tests", () => {
@@ -86,8 +94,16 @@ describe("Uesio Builder Tests", () => {
 	const getBuilderState = (id: string) =>
 		cy.getComponentState(`${builderComponentId}:${id}`)
 
-	const getComponentBankElement = (id: string) =>
-		cy.get(`[data-type="component:${id}"]`)
+	const getComponentBankElement = (
+		type: string,
+		id: string,
+		variantId?: string
+	) => {
+		const dataType = `${type}:${id}${
+			type === "componentvariant" && variantId ? `:${variantId}` : ""
+		}`
+		return cy.get(`[data-type="${CSS.escape(dataType)}"]`)
+	}
 
 	const getCanvasElement = (slotpath: string, index: number) =>
 		cy
@@ -134,8 +150,29 @@ describe("Uesio Builder Tests", () => {
 				"eq",
 				initialPageDef
 			)
+
+			// Search for button component
+			cy.get("#builder-components-search").type("button")
+
 			// Add a button
-			getComponentBankElement("uesio/io.button").dblclick()
+			getComponentBankElement("component", "uesio/io.button").dblclick()
+			getBuilderState(`metadata:viewdef:${fullViewName}`).should(
+				"eq",
+				addButtonPageDef
+			)
+			// Cancel the page - to verify cancel behavior
+			cy.clickButton("cancel-builder-changes")
+			getBuilderState(`metadata:viewdef:${fullViewName}`).should(
+				"eq",
+				initialPageDef
+			)
+			// Add the button (again), but double click on the default variant to test that
+			// you can add double-click to add variants
+			getComponentBankElement(
+				"componentvariant",
+				"uesio/io.button",
+				"uesio/io.default"
+			).dblclick()
 			getBuilderState(`metadata:viewdef:${fullViewName}`).should(
 				"eq",
 				addButtonPageDef
@@ -165,6 +202,7 @@ describe("Uesio Builder Tests", () => {
 				force: true,
 			})
 			// Change the text property again
+			cy.getInput("property:text").should("have.value", "First")
 			cy.clearInput("property:text")
 			cy.typeInInput("property:text", "Second")
 			getBuilderState(`metadata:viewdef:${fullViewName}`).should(
@@ -189,11 +227,18 @@ describe("Uesio Builder Tests", () => {
 				"eq",
 				setButtonPageDef
 			)
-			// Cancel the page
-			cy.clickButton("cancel-builder-changes")
+			// Save the page
+			cy.clickButton("save-builder-changes")
 			getBuilderState(`metadata:viewdef:${fullViewName}`).should(
 				"eq",
-				initialPageDef
+				setButtonPageDef
+			)
+			// Refresh the page to verify that our view saved
+			cy.reload()
+			// Verify that the state is still the same
+			getBuilderState(`metadata:viewdef:${fullViewName}`).should(
+				"eq",
+				setButtonPageDef
 			)
 		})
 	})

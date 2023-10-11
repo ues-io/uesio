@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/constant"
 	"github.com/thecloudmasters/uesio/pkg/merge"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -48,6 +49,7 @@ func getSubFields(loadFields []adapt.LoadRequestField) *FieldsMap {
 }
 
 func processConditions(
+	collectionKey string,
 	conditions []adapt.LoadRequestCondition,
 	params map[string]string,
 	metadata *adapt.MetadataCache,
@@ -55,11 +57,28 @@ func processConditions(
 	session *sess.Session,
 ) error {
 
+	var err error
+
 	for i, condition := range conditions {
 
+		// Convert reference-crossing conditions to subquery conditions
+		if isReferenceCrossingField(condition.Field) {
+			conditionPointer := &condition
+			err = transformReferenceCrossingConditionToSubquery(collectionKey, conditionPointer, metadata)
+			if err != nil {
+				return err
+			}
+			// Mutate the original condition in the array, otherwise the changes will be lost
+			conditions[i] = *conditionPointer
+		}
+
 		if condition.Type == "SUBQUERY" || condition.Type == "GROUP" {
+			nestedCollection := collectionKey
+			if condition.Type == "SUBQUERY" {
+				nestedCollection = condition.SubCollection
+			}
 			if condition.SubConditions != nil {
-				err := processConditions(condition.SubConditions, params, metadata, ops, session)
+				err := processConditions(nestedCollection, condition.SubConditions, params, metadata, ops, session)
 				if err != nil {
 					return err
 				}
@@ -164,7 +183,215 @@ func processConditions(
 	return nil
 }
 
-func getMetadataForLoad(
+// example:
+// uesio/tests.user->uesio/core.username = 'abel'
+func transformReferenceCrossingConditionToSubquery(collectionName string, condition *adapt.LoadRequestCondition, metadata *adapt.MetadataCache) error {
+	// Split the field name, and recursively process each part as an IN subquery condition
+	// until we get to the final field, which we'll then handle as a normal condition
+	parts := strings.Split(condition.Field, constant.RefSep)
+	totalParts := len(parts)
+
+	originalOperator := condition.Operator
+	originalType := condition.Type
+	// Move over RawValue/RawValues AND Value/Values because those store the original properties
+	// received from the original request. Value/Values will be populated as part of processing the condition,
+	// but in code (e.g. Bot code) it's very likely someone will populate condition.Value/Values instead,
+	// so to prevent that mistake, move them all over.
+	originalValue := condition.Value
+	originalValues := condition.Values
+	originalRawValue := condition.RawValue
+	originalRawValues := condition.RawValues
+
+	var previousCondition *adapt.LoadRequestCondition
+	currentCondition := condition
+
+	currentCollectionMetadata, err := metadata.GetCollection(collectionName)
+	if err != nil {
+		return errors.New("unable to find metadata for collection " + collectionName)
+	}
+
+	for i, fieldPart := range parts {
+		if previousCondition != nil {
+			currentCondition = &previousCondition.SubConditions[0]
+		}
+		if i == totalParts-1 {
+			// We are on the last field, so we need to mutate the previous condition's SubConditions array
+			currentCondition.Field = fieldPart
+			currentCondition.Type = originalType
+			currentCondition.Operator = originalOperator
+			currentCondition.RawValue = originalRawValue
+			currentCondition.RawValues = originalRawValues
+			currentCondition.Value = originalValue
+			currentCondition.Values = originalValues
+		} else {
+			// Convert the current condition to a subquery condition,
+			// with a nested condition, and lookup the related collection metadata
+			referenceField, err := currentCollectionMetadata.GetField(fieldPart)
+			if err != nil {
+				return errors.New("unable to find field " + fieldPart + " in collection " + currentCollectionMetadata.GetFullName())
+			}
+			if !adapt.IsReference(referenceField.Type) || referenceField.ReferenceMetadata == nil {
+				return errors.New("field " + fieldPart + " in collection " + currentCollectionMetadata.GetFullName() + " is not a valid Reference field")
+			}
+			relatedCollectionName := referenceField.ReferenceMetadata.Collection
+			subCollectionMetadata, err := metadata.GetCollection(relatedCollectionName)
+			if err != nil {
+				return errors.New("unable to find metadata for collection " + relatedCollectionName)
+			}
+
+			newCondition := adapt.LoadRequestCondition{}
+
+			currentCondition.Type = "SUBQUERY"
+			currentCondition.Operator = "IN"
+			currentCondition.Field = fieldPart
+			currentCondition.SubCollection = relatedCollectionName
+			currentCondition.SubField = "uesio/core.id"
+			currentCollectionMetadata = subCollectionMetadata
+			currentCondition.SubConditions = []adapt.LoadRequestCondition{
+				newCondition,
+			}
+			previousCondition = currentCondition
+			currentCondition = &newCondition
+		}
+	}
+	return nil
+}
+
+func isReferenceCrossingField(field string) bool {
+	return strings.Contains(field, constant.RefSep)
+}
+
+func requestMetadataForReferenceCrossingField(collectionName, fieldName string, collections *MetadataRequest) error {
+	parts := strings.Split(fieldName, constant.RefSep)
+	var currentField *adapt.LoadRequestField
+	var currentFieldsArray, previousFieldsArray *[]adapt.LoadRequestField
+	i := len(parts) - 1
+	for i >= 0 {
+		previousFieldsArray = currentFieldsArray
+		currentField = &adapt.LoadRequestField{
+			ID: parts[i],
+		}
+		// If we had a previous fields array,
+		// use it as subFields for this field
+		currentFieldsArray = &[]adapt.LoadRequestField{
+			*currentField,
+		}
+		if previousFieldsArray != nil {
+			currentField.Fields = *previousFieldsArray
+		}
+		i--
+	}
+	subFields := getSubFields(*previousFieldsArray)
+	err := collections.AddField(collectionName, currentField.ID, subFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func getMetadataForConditionLoad(
+	condition *adapt.LoadRequestCondition,
+	collectionName string,
+	collections *MetadataRequest,
+	op *adapt.LoadOp,
+	ops []*adapt.LoadOp,
+) error {
+
+	var err error
+
+	if condition.Type == "GROUP" {
+		// Process sub-conditions recursively
+		if len(condition.SubConditions) > 0 {
+			for _, subCondition := range condition.SubConditions {
+				err = getMetadataForConditionLoad(&subCondition, collectionName, collections, op, ops)
+				if err != nil {
+					return err
+				}
+			}
+		}
+		return nil
+	} else if condition.Type == "SEARCH" {
+		// Load metadata for all search fields
+		if len(condition.SearchFields) > 0 {
+			for _, searchField := range condition.SearchFields {
+				err = collections.AddField(collectionName, searchField, nil)
+				if err != nil {
+					return fmt.Errorf("unable to request metadata for search field '%s' on collection '%s': %s", searchField, collectionName, err.Error())
+				}
+			}
+		}
+		return nil
+	}
+
+	if isReferenceCrossingField(condition.Field) {
+		// Recursively add all pieces of the field, as if we were requesting Subfields,
+		err = requestMetadataForReferenceCrossingField(collectionName, condition.Field, collections)
+		if err != nil {
+			return fmt.Errorf("unable to request metadata for condition field: %s", condition.Field)
+		}
+	} else {
+		// Request metadata for the condition's main field
+		err = collections.AddField(collectionName, condition.Field, nil)
+		if err != nil {
+			return fmt.Errorf("condition field: %v", err)
+		}
+	}
+
+	if condition.Type == "SUBQUERY" {
+		// Request metadata for the sub-query condition's Collection and subfield
+		err = collections.AddCollection(condition.SubCollection)
+		if err != nil {
+			return err
+		}
+		err = collections.AddField(condition.SubCollection, condition.SubField, nil)
+		if err != nil {
+			return err
+		}
+		// Now, process sub-conditions recursively
+		if len(condition.SubConditions) > 0 {
+			for _, subCondition := range condition.SubConditions {
+				err = getMetadataForConditionLoad(&subCondition, condition.SubCollection, collections, op, ops)
+				if err != nil {
+					return err
+				}
+			}
+		}
+	}
+
+	if condition.ValueSource == "LOOKUP" {
+
+		if condition.LookupWire == "" {
+			return fmt.Errorf("invalid condition with valueSource 'LOOKUP': lookupWire is required")
+		}
+		if condition.LookupField == "" {
+			return fmt.Errorf("invalid condition with valueSource 'LOOKUP': lookupField is required")
+		}
+
+		// Look through the previous wires to find the one to look up on.
+		var lookupCollectionKey string
+		for _, otherOp := range ops {
+			if otherOp.WireName == condition.LookupWire {
+				lookupCollectionKey = otherOp.CollectionName
+			}
+		}
+
+		if lookupCollectionKey == "" {
+			return fmt.Errorf("LOOKUP condition requested field %s from a wire named %s, but no Wire with this name was found in this load request", condition.LookupField, condition.LookupWire)
+		}
+
+		lookupFields := strings.Split(condition.LookupField, constant.RefSep)
+		lookupField, rest := lookupFields[0], lookupFields[1:]
+		subFields := getAdditionalLookupFields(rest)
+
+		innerErr := collections.AddField(lookupCollectionKey, lookupField, &subFields)
+		if innerErr != nil {
+			return fmt.Errorf("cannot lookup field: %v", innerErr)
+		}
+	}
+	return nil
+}
+
+func GetMetadataForLoad(
 	op *adapt.LoadOp,
 	metadataResponse *adapt.MetadataCache,
 	ops []*adapt.LoadOp,
@@ -182,7 +409,7 @@ func getMetadataForLoad(
 	for _, requestField := range op.Fields {
 
 		if !session.GetContextPermissions().HasFieldReadPermission(collectionKey, requestField.ID) {
-			return fmt.Errorf("Profile %s does not have read access to the %s field.", session.GetProfile(), requestField.ID)
+			return fmt.Errorf("Profile %s does not have read access to the %s field.", session.GetContextProfile(), requestField.ID)
 		}
 
 		subFields := getSubFields(requestField.Fields)
@@ -193,41 +420,18 @@ func getMetadataForLoad(
 	}
 
 	for _, condition := range op.Conditions {
-
-		if condition.Type == "SEARCH" {
-			// We don't need any extra field metadata for search conditions yet
-			continue
+		innerErr := getMetadataForConditionLoad(&condition, collectionKey, &collections, op, ops)
+		if innerErr != nil {
+			return innerErr
 		}
+	}
 
-		if condition.Type == "GROUP" {
-			// We don't need any extra field metadata for group conditions yet
-			continue
-		}
-
-		err := collections.AddField(collectionKey, condition.Field, nil)
-		if err != nil {
-			return fmt.Errorf("condition field: %v", err)
-		}
-
-		if condition.ValueSource == "LOOKUP" && condition.LookupField != "" && condition.LookupWire != "" {
-
-			// Look through the previous wires to find the one to look up on.
-			var lookupCollectionKey string
-			for _, op := range ops {
-				if op.WireName == condition.LookupWire {
-					lookupCollectionKey = op.CollectionName
-				}
-			}
-			lookupFields := strings.Split(condition.LookupField, "->")
-			lookupField, rest := lookupFields[0], lookupFields[1:]
-			subFields := getAdditionalLookupFields(rest)
-
-			err := collections.AddField(lookupCollectionKey, lookupField, &subFields)
-			if err != nil {
-				return fmt.Errorf("lookup field: %v", err)
+	if len(op.Order) > 0 {
+		for _, orderField := range op.Order {
+			if err = getMetadataForOrderField(collectionKey, orderField.Field, &collections, session); err != nil {
+				return err
 			}
 		}
-
 	}
 
 	err = collections.Load(metadataResponse, session, nil)
@@ -289,6 +493,28 @@ func getMetadataForLoad(
 
 }
 
+func getMetadataForOrderField(collectionKey string, fieldName string, collections *MetadataRequest, session *sess.Session) error {
+	isReferenceCrossing := isReferenceCrossingField(fieldName)
+
+	topLevelFieldName := fieldName
+
+	if isReferenceCrossing {
+		topLevelFieldName = strings.Split(fieldName, constant.RefSep)[0]
+	}
+
+	// Do an initial check on field read access.
+	if !session.GetContextPermissions().HasFieldReadPermission(collectionKey, topLevelFieldName) {
+		return fmt.Errorf("profile %s does not have read access to the %s field", session.GetContextProfile(), topLevelFieldName)
+	}
+
+	if isReferenceCrossing {
+		// Recursively request metadata for all components of the reference-crossing field name
+		return requestMetadataForReferenceCrossingField(collectionKey, fieldName, collections)
+	} else {
+		return collections.AddField(collectionKey, fieldName, nil)
+	}
+}
+
 func getAdditionalLookupFields(fields []string) FieldsMap {
 	if len(fields) == 0 {
 		return FieldsMap{}
@@ -311,15 +537,14 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 	}
 
 	// We do this so that we're sure that the labels are attached to the session
-	_, err := translate.GetTranslatedLabels(session)
-	if err != nil {
+	if _, err := translate.GetTranslatedLabels(session); err != nil {
 		return nil, err
 	}
 
 	// Loop over the ops and batch per data source
 	for _, op := range ops {
 		if !session.GetContextPermissions().HasCollectionReadPermission(op.CollectionName) {
-			return nil, fmt.Errorf("Profile %s does not have read access to the %s collection.", session.GetProfile(), op.CollectionName)
+			return nil, fmt.Errorf("Profile %s does not have read access to the %s collection.", session.GetContextProfile(), op.CollectionName)
 		}
 		// Verify that the id field is present
 		hasIDField := false
@@ -346,8 +571,7 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 			})
 		}
 
-		err := getMetadataForLoad(op, metadataResponse, ops, session)
-		if err != nil {
+		if err := GetMetadataForLoad(op, metadataResponse, ops, session); err != nil {
 			return nil, fmt.Errorf("metadata: %s: %v", op.CollectionName, err)
 		}
 
@@ -372,47 +596,83 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 		return nil, err
 	}
 
-	err = GenerateUserAccessTokens(connection, session)
-	if err != nil {
+	if err = GenerateUserAccessTokens(connection, session); err != nil {
 		return nil, err
 	}
 
 	for _, op := range allOps {
 
-		err := processConditions(op.Conditions, op.Params, metadataResponse, allOps, session)
-		if err != nil {
+		if err = processConditions(op.CollectionName, op.Conditions, op.Params, metadataResponse, allOps, session); err != nil {
 			return nil, err
 		}
 
-		collectionMetadata, err := metadataResponse.GetCollection(op.CollectionName)
-		if err != nil {
-			return nil, err
+		collectionMetadata, err2 := metadataResponse.GetCollection(op.CollectionName)
+		if err2 != nil {
+			return nil, err2
 		}
 
-		if collectionMetadata.Type == "DYNAMIC" {
-			err := runDynamicCollectionLoadBots(op, connection, session)
-			if err != nil {
+		collectionKey := collectionMetadata.GetFullName()
+
+		integrationName := collectionMetadata.GetIntegrationName()
+
+		// Attach the collection metadata to the LoadOp so that Load Bots can access it
+		op.AttachMetadataCache(metadataResponse)
+
+		usage.RegisterEvent("LOAD", "COLLECTION", collectionKey, 0, session)
+		usage.RegisterEvent("LOAD", "DATASOURCE", integrationName, 0, session)
+
+		if collectionMetadata.IsDynamic() {
+			if err = runDynamicCollectionLoadBots(op, connection, session); err != nil {
 				return nil, err
 			}
 			continue
 		}
 
-		err = loadData(op, connection, session)
+		// Handle external data integration loads
+		if integrationName != "" && integrationName != meta.PLATFORM_DATA_SOURCE {
+			err = performExternalIntegrationLoad(integrationName, op, connection, session)
+		} else {
+			err = LoadOp(op, connection, session)
+		}
 		if err != nil {
 			return nil, err
 		}
-
-		usage.RegisterEvent("LOAD", "COLLECTION", collectionMetadata.GetFullName(), 0, session)
-		usage.RegisterEvent("LOAD", "DATASOURCE", meta.PLATFORM_DATA_SOURCE, 0, session)
 	}
 
 	return metadataResponse, nil
 }
 
-func loadData(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
-
-	err := connection.Load(op, session)
+func performExternalIntegrationLoad(integrationName string, op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+	integrationConnection, err := GetIntegration(integrationName, session)
 	if err != nil {
+		return err
+	}
+	collectionMetadata, err := op.GetCollectionMetadata()
+	if err != nil {
+		return err
+	}
+	op.AttachIntegration(integrationConnection)
+	integration := integrationConnection.GetIntegration()
+	// If there's a collection-specific load bot defined, use that,
+	// otherwise default to the integration's defined load bot.
+	// If there's neither, then there's nothing to do.
+	botKey := collectionMetadata.LoadBot
+	if botKey == "" && integration != nil {
+		botKey = integration.LoadBot
+	}
+	if botKey == "" {
+		return fmt.Errorf("no load bot defined on collection %s or on integration %s", collectionMetadata.GetKey(), integration.GetKey())
+	}
+
+	if err = runExternalDataSourceLoadBot(botKey, op, connection, session); err != nil {
+		return err
+	}
+	return nil
+}
+
+func LoadOp(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+
+	if err := connection.Load(op, session); err != nil {
 		return err
 	}
 
@@ -420,5 +680,5 @@ func loadData(op *adapt.LoadOp, connection adapt.Connection, session *sess.Sessi
 		return nil
 	}
 
-	return loadData(op, connection, session)
+	return LoadOp(op, connection, session)
 }

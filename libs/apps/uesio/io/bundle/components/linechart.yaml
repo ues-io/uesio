@@ -53,10 +53,10 @@ properties:
           wireField: wire
   - name: labels
     type: STRUCT
-    label: " "
+    label: Labels
     properties:
       - name: source
-        label: Labels Source
+        label: Source
         type: SELECT
         blankOptionLabel: ""
         options:
@@ -68,7 +68,7 @@ properties:
           #   label: Value
       # WIRE label fields
       - name: wire
-        label: Labels Source Wire
+        label: Source Wire
         type: WIRE
         displayConditions:
           - type: fieldValue
@@ -105,7 +105,7 @@ properties:
       #       value: VALUE
       # DATA label fields
       - name: timeunit
-        label: Labels Time Unit
+        label: Time Unit
         type: SELECT
         blankOptionLabel: ""
         options:

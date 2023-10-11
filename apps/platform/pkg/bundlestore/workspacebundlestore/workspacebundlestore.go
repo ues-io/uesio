@@ -7,15 +7,20 @@ import (
 	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
-	"github.com/thecloudmasters/uesio/pkg/licensing"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func processItems(items []meta.BundleableItem, session *sess.Session, connection adapt.Connection, looper func(meta.Item, []adapt.ReferenceLocator, string) error) error {
-	workspace := session.GetWorkspace()
+func getParamsFromWorkspace(workspace *meta.Workspace) map[string]string {
+	return map[string]string{
+		"workspaceid": workspace.ID,
+	}
+}
+
+func processItems(items []meta.BundleableItem, workspace *meta.Workspace, connection adapt.Connection, looper func(meta.Item, []adapt.ReferenceLocator, string) error) error {
 	if workspace == nil {
 		return errors.New("Workspace bundle store, needs a workspace in context")
 	}
@@ -47,13 +52,14 @@ func processItems(items []meta.BundleableItem, session *sess.Session, connection
 		}, &datasource.PlatformLoadOptions{
 			LoadAll:    true,
 			Connection: connection,
+			Params:     getParamsFromWorkspace(workspace),
 			Conditions: []adapt.LoadRequestCondition{
 				{
 					Field:    adapt.UNIQUE_KEY_FIELD,
 					Value:    locatorMap.GetIDs(),
 					Operator: "IN",
 				},
-			}}, session.RemoveWorkspaceContext())
+			}}, sess.GetStudioAnonSession())
 		if err != nil {
 			return err
 		}
@@ -82,39 +88,47 @@ func processItems(items []meta.BundleableItem, session *sess.Session, connection
 	return nil
 }
 
-type WorkspaceBundleStore struct {
+type WorkspaceBundleStore struct{}
+
+func (b *WorkspaceBundleStore) GetConnection(options bundlestore.ConnectionOptions) (bundlestore.BundleStoreConnection, error) {
+	if options.Workspace == nil {
+		return nil, errors.New("Workspace bundle store, needs a workspace in context")
+	}
+	return &WorkspaceBundleStoreConnection{
+		ConnectionOptions: options,
+	}, nil
 }
 
-func (b *WorkspaceBundleStore) GetItem(item meta.BundleableItem, version string, session *sess.Session, connection adapt.Connection) error {
+type WorkspaceBundleStoreConnection struct {
+	bundlestore.ConnectionOptions
+}
 
-	workspace := session.GetWorkspace()
-	if workspace == nil {
-		return errors.New("Workspace bundle store, needs a workspace in context")
-	}
+func (b *WorkspaceBundleStoreConnection) GetItem(item meta.BundleableItem) error {
 
-	item.SetNamespace(workspace.GetAppFullName())
+	item.SetNamespace(b.Namespace)
 
 	return datasource.PlatformLoadOne(item, &datasource.PlatformLoadOptions{
 		Conditions: []adapt.LoadRequestCondition{
 			{
 				Field: adapt.UNIQUE_KEY_FIELD,
-				Value: item.GetDBID(workspace.UniqueKey),
+				Value: item.GetDBID(b.Workspace.UniqueKey),
 			},
 		},
-		Connection: connection,
-	}, session.RemoveWorkspaceContext())
+		Params:     getParamsFromWorkspace(b.Workspace),
+		Connection: b.Connection,
+	}, sess.GetStudioAnonSession())
 }
 
-func (b *WorkspaceBundleStore) HasAny(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session, connection adapt.Connection) (bool, error) {
-	err := b.GetAllItems(group, namespace, version, conditions, session, connection)
+func (b *WorkspaceBundleStoreConnection) HasAny(group meta.BundleableGroup, conditions meta.BundleConditions) (bool, error) {
+	err := b.GetAllItems(group, conditions)
 	if err != nil {
 		return false, err
 	}
 	return group.Len() > 0, nil
 }
 
-func (b *WorkspaceBundleStore) GetManyItems(items []meta.BundleableItem, version string, session *sess.Session, connection adapt.Connection) error {
-	return processItems(items, session, connection, func(item meta.Item, locators []adapt.ReferenceLocator, id string) error {
+func (b *WorkspaceBundleStoreConnection) GetManyItems(items []meta.BundleableItem) error {
+	return processItems(items, b.Workspace, b.Connection, func(item meta.Item, locators []adapt.ReferenceLocator, id string) error {
 		if locators == nil {
 			return errors.New("Found an item we weren't expecting")
 		}
@@ -128,41 +142,38 @@ func (b *WorkspaceBundleStore) GetManyItems(items []meta.BundleableItem, version
 	})
 }
 
-func (b *WorkspaceBundleStore) GetAllItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session, connection adapt.Connection) error {
-
-	if session.GetWorkspace() == nil {
-		return errors.New("Workspace bundle store, needs a workspace in context")
-	}
+func (b *WorkspaceBundleStoreConnection) GetAllItems(group meta.BundleableGroup, conditions meta.BundleConditions) error {
 
 	// Add the workspace id as a condition
-	loadConditions := []adapt.LoadRequestCondition{
-		{
-			Field: "uesio/studio.workspace",
-			Value: session.GetWorkspaceID(),
-		},
-	}
+	loadConditions := make([]adapt.LoadRequestCondition, len(conditions))
 
+	i := 0
 	for field, value := range conditions {
-		loadConditions = append(loadConditions, adapt.LoadRequestCondition{
+		loadConditions[i] = adapt.LoadRequestCondition{
 			Field: field,
 			Value: value,
-		})
+		}
+		i++
 	}
 
 	return datasource.PlatformLoad(&WorkspaceLoadCollection{
 		Collection: group,
-		Namespace:  namespace,
+		Namespace:  b.Namespace,
 	}, &datasource.PlatformLoadOptions{
 		Conditions: loadConditions,
-		Connection: connection,
+		Params:     getParamsFromWorkspace(b.Workspace),
+		Connection: b.Connection,
 		LoadAll:    true,
-	}, session.RemoveWorkspaceContext())
+		Orders: []adapt.LoadRequestOrder{{
+			Field: adapt.UNIQUE_KEY_FIELD,
+		}},
+	}, sess.GetStudioAnonSession())
 
 }
 
-func (b *WorkspaceBundleStore) GetItemAttachment(item meta.AttachableItem, version string, path string, session *sess.Session) (time.Time, io.ReadSeeker, error) {
+func (b *WorkspaceBundleStoreConnection) GetItemAttachment(item meta.AttachableItem, path string) (time.Time, io.ReadSeeker, error) {
 	modTime := time.Time{}
-	err := b.GetItem(item, version, session, nil)
+	err := b.GetItem(item)
 	if err != nil {
 		return modTime, nil, err
 	}
@@ -170,15 +181,16 @@ func (b *WorkspaceBundleStore) GetItemAttachment(item meta.AttachableItem, versi
 	if err != nil {
 		return modTime, nil, err
 	}
-	stream, _, err := filesource.DownloadAttachment(recordID.(string), path, session.RemoveWorkspaceContext())
+	stream, _, err := filesource.DownloadAttachment(recordID.(string), path, sess.GetStudioAnonSession())
 	if err != nil {
 		return modTime, nil, err
 	}
 	return modTime, stream, nil
 }
 
-func (b *WorkspaceBundleStore) GetAttachmentPaths(item meta.AttachableItem, version string, session *sess.Session) ([]string, error) {
-	err := b.GetItem(item, version, session, nil)
+func (b *WorkspaceBundleStoreConnection) GetAttachmentPaths(item meta.AttachableItem) ([]string, error) {
+
+	err := b.GetItem(item)
 	if err != nil {
 		return nil, err
 	}
@@ -190,6 +202,7 @@ func (b *WorkspaceBundleStore) GetAttachmentPaths(item meta.AttachableItem, vers
 	err = datasource.PlatformLoad(
 		userFiles,
 		&datasource.PlatformLoadOptions{
+			Params: getParamsFromWorkspace(b.Workspace),
 			Conditions: []adapt.LoadRequestCondition{
 				{
 					Field: "uesio/core.recordid",
@@ -197,7 +210,7 @@ func (b *WorkspaceBundleStore) GetAttachmentPaths(item meta.AttachableItem, vers
 				},
 			},
 		},
-		session.RemoveWorkspaceContext(),
+		sess.GetStudioAnonSession(),
 	)
 	if err != nil {
 		return nil, err
@@ -209,27 +222,24 @@ func (b *WorkspaceBundleStore) GetAttachmentPaths(item meta.AttachableItem, vers
 	return paths, nil
 }
 
-func (b *WorkspaceBundleStore) StoreItem(namespace, version, path string, reader io.Reader, session *sess.Session) error {
+func (b *WorkspaceBundleStoreConnection) StoreItem(path string, reader io.Reader) error {
 	return errors.New("Tried to store items in the workspace bundle store")
 }
 
-func (b *WorkspaceBundleStore) DeleteBundle(namespace, version string, session *sess.Session) error {
+func (b *WorkspaceBundleStoreConnection) DeleteBundle() error {
 	return errors.New("Tried to delete bundle in the workspace bundle store")
 }
 
-func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *sess.Session, connection adapt.Connection) (*meta.BundleDef, error) {
-	workspace := session.GetWorkspace()
-	if workspace == nil {
-		return nil, errors.New("Workspace bundle store, needs a workspace in context")
-	}
+func (b *WorkspaceBundleStoreConnection) GetBundleDef() (*meta.BundleDef, error) {
 
 	var by meta.BundleDef
-	by.Name = namespace
+	by.Name = b.Namespace
 	bdc := meta.BundleDependencyCollection{}
 	err := datasource.PlatformLoad(
 		&bdc,
 		&datasource.PlatformLoadOptions{
-			Connection: connection,
+			Connection: b.Connection,
+			Params:     getParamsFromWorkspace(b.Workspace),
 			Fields: []adapt.LoadRequestField{
 				{
 					ID: "uesio/studio.workspace",
@@ -263,12 +273,12 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 			Conditions: []adapt.LoadRequestCondition{
 				{
 					Field:    "uesio/studio.workspace",
-					Value:    workspace.ID,
+					Value:    b.Workspace.ID,
 					Operator: "=",
 				},
 			},
 		},
-		session.RemoveWorkspaceContext(),
+		sess.GetStudioAnonSession(),
 	)
 	if err != nil {
 		return nil, err
@@ -288,24 +298,19 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 		}
 	}
 
-	by.PublicProfile = workspace.PublicProfile
-	by.HomeRoute = workspace.HomeRoute
-	by.LoginRoute = workspace.LoginRoute
-	by.DefaultTheme = workspace.DefaultTheme
-	by.Favicon = workspace.Favicon
-
-	licenseMap, err := licensing.GetLicenses(namespace, connection)
-	if err != nil {
-		return nil, err
-	}
-	by.Licenses = licenseMap
+	by.PublicProfile = b.Workspace.PublicProfile
+	by.HomeRoute = b.Workspace.HomeRoute
+	by.LoginRoute = b.Workspace.LoginRoute
+	by.SignupRoute = b.Workspace.SignupRoute
+	by.DefaultTheme = b.Workspace.DefaultTheme
+	by.Favicon = b.Workspace.Favicon
 
 	return &by, nil
 }
 
-func (b *WorkspaceBundleStore) HasAllItems(items []meta.BundleableItem, version string, session *sess.Session, connection adapt.Connection) error {
+func (b *WorkspaceBundleStoreConnection) HasAllItems(items []meta.BundleableItem) error {
 
-	return processItems(items, session, connection, func(item meta.Item, locators []adapt.ReferenceLocator, id string) error {
+	return processItems(items, b.Workspace, b.Connection, func(item meta.Item, locators []adapt.ReferenceLocator, id string) error {
 		if locators == nil {
 			return errors.New("Found an item we weren't expecting")
 		}

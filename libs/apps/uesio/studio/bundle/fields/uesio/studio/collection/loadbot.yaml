@@ -1,0 +1,6 @@
+name: loadbot
+type: METADATA
+label: Load Bot
+metadata:
+  type: BOT
+  grouping: LOAD

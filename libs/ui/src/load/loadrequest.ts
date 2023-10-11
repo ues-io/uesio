@@ -1,10 +1,14 @@
 import { WireConditionState } from "../bands/wire/conditions/conditions"
-import { OrderState } from "../bands/wire/types"
+import {
+	CollectionFieldKey,
+	CollectionKey,
+	OrderState,
+} from "../bands/wire/types"
 
 type LoadRequest = {
 	batchid: string
 	batchnumber: number
-	collection: string
+	collection: CollectionKey
 	conditions?: WireConditionState[]
 	order?: OrderState[]
 	name: string
@@ -17,12 +21,13 @@ type LoadRequest = {
 }
 
 type LoadRequestField = {
-	id: string
+	id: CollectionFieldKey
 	fields?: LoadRequestField[]
 }
 
 type LoadRequestBatch = {
 	wires: LoadRequest[]
+	includeMetadata?: boolean
 }
 
 export type { LoadRequest, LoadRequestField, LoadRequestBatch }

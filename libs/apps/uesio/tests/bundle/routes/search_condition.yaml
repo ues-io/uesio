@@ -1,4 +1,4 @@
 name: search_condition
 path: search_condition
-view: uesio/tests.search_condition
+view: search_condition
 title: View Used for testing conditions

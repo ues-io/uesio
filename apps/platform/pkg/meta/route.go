@@ -2,6 +2,7 @@ package meta
 
 import (
 	"errors"
+	"fmt"
 
 	"gopkg.in/yaml.v3"
 )
@@ -28,13 +29,13 @@ type Tag struct {
 type Route struct {
 	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
-	Path           string            `yaml:"path" json:"uesio/studio.path"`
-	ViewRef        string            `yaml:"view" json:"uesio/studio.view"`
-	Redirect       string            `yaml:"redirect" json:"uesio/studio.redirect"`
+	Type           string            `yaml:"type,omitempty" json:"uesio/studio.type"`
+	Path           string            `yaml:"path,omitempty" json:"uesio/studio.path"`
+	ViewRef        string            `yaml:"view,omitempty" json:"uesio/studio.view"`
+	Redirect       string            `yaml:"redirect,omitempty" json:"uesio/studio.redirect"`
 	Params         map[string]string `yaml:"params,omitempty" json:"uesio/studio.params"`
-	ThemeRef       string            `yaml:"theme" json:"uesio/studio.theme"`
-	Type           string            `yaml:"type" json:"uesio/studio.type"`
-	Title          string            `yaml:"title" json:"uesio/studio.title"`
+	ThemeRef       string            `yaml:"theme,omitempty" json:"uesio/studio.theme"`
+	Title          string            `yaml:"title,omitempty" json:"uesio/studio.title"`
 	Tags           []Tag             `yaml:"tags,omitempty" json:"uesio/studio.tags"`
 }
 
@@ -84,27 +85,21 @@ func (r *Route) UnmarshalYAML(node *yaml.Node) error {
 			return errors.New("redirect property is required for routes of type 'redirect'")
 		}
 	} else {
-		err = validateRequiredMetadataItem(node, "view")
+
+		r.ViewRef, err = pickRequiredMetadataItem(node, "view", r.Namespace)
 		if err != nil {
-			return err
+			return fmt.Errorf("invalid route %s: %s", r.GetKey(), err.Error())
 		}
-		err = setDefaultValue(node, "theme", "uesio/core.default")
-		if err != nil {
-			return err
-		}
-		err = validateRequiredMetadataItem(node, "theme")
-		if err != nil {
-			return err
-		}
+		r.ThemeRef = pickMetadataItem(node, "theme", r.Namespace, "uesio/core.default")
+
 	}
 	return node.Decode((*RouteWrapper)(r))
 }
 
 func (r *Route) MarshalYAML() (interface{}, error) {
 
-	if r.ThemeRef == "uesio/core.default" {
-		r.ThemeRef = ""
-	}
+	r.ThemeRef = removeDefault(GetLocalizedKey(r.ThemeRef, r.Namespace), "uesio/core.default")
+	r.ViewRef = GetLocalizedKey(r.ViewRef, r.Namespace)
 
 	return (*RouteWrapper)(r), nil
 }

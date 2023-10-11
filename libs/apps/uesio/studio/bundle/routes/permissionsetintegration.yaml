@@ -1,0 +1,5 @@
+name: permissionsetintegration
+path: app/{app:\w*\/\w*}/workspace/{workspacename}/permissionsets/{namespace:\w*\/\w*}/{permissionsetname}/integration/{integrationNamespace:\w*\/\w*}/{integrationName}
+view: permissionsetintegration
+theme: default
+title: "Perm Set: $Param{permissionsetname}"

@@ -1,5 +1,5 @@
 name: label
 path: app/{app:\w*\/\w*}/workspace/{workspacename}/labels/{namespace:\w*\/\w*}/{labelname}
-view: uesio/studio.label
-theme: uesio/studio.default
+view: label
+theme: default
 title: "Label: $Param{labelname}"

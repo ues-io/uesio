@@ -7,6 +7,8 @@ import { get, useDefinition } from "./defapi"
 import pointer from "json-pointer"
 const { COMPONENT_ID } = component
 const {
+	getAllComponentTypes,
+	getComponentType,
 	getExternalState,
 	getExternalStates,
 	removeState,
@@ -47,9 +49,9 @@ type StyleRegion = {
 	widgets?: string[]
 }
 
+// Builder-only component definition properties.
+// These additional properties will only be populated in build mode.
 type ComponentDef = {
-	name: string
-	namespace: string
 	title: string
 	description: string
 	category: string
@@ -61,7 +63,7 @@ type ComponentDef = {
 	defaultDefinition?: definition.DefinitionMap
 	signals?: Record<string, SignalDescriptor>
 	styleRegions?: Record<string, StyleRegion>
-}
+} & component.ComponentDef
 
 const getBuilderComponentId = (context: ctx.Context, id: string) =>
 	api.component.makeComponentId(
@@ -212,14 +214,12 @@ const useDragPath = (context: ctx.Context) =>
 const setDragPath = (context: ctx.Context, path?: FullPath) => {
 	setBuilderState<string>(context, "drag", combinePath(path))
 }
+const getComponentDefs = () => getAllComponentTypes() as ComponentDef[]
 
-const getComponentDefs = (context: ctx.Context) =>
-	getBuilderState<Record<string, ComponentDef>>(context, "componentdefs")
-
-const getComponentDef = (
-	context: ctx.Context,
-	componentType: string | undefined
-) => (componentType ? getComponentDefs(context)?.[componentType] : undefined)
+const getComponentDef = (componentType: string | undefined) =>
+	componentType
+		? (getComponentType(componentType) as ComponentDef)
+		: undefined
 
 type ViewDef = {
 	components: ComponentEntry[]
@@ -338,7 +338,7 @@ const walkComponentsArray = (
 		const keepWalking = visit(componentType, props)
 		if (!keepWalking) return false
 		// Next, check if this component type has slots, in which case we need to traverse the slots
-		const componentDef = getComponentDef(context, componentType)
+		const componentDef = getComponentDef(componentType)
 		if (!componentDef?.slots?.length) continue
 		// Okay we have slots, so we need to traverse and recurse
 		for (const slot of componentDef.slots) {

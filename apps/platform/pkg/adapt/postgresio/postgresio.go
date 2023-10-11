@@ -2,15 +2,49 @@ package postgresio
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"sync"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 )
 
 type Adapter struct {
+	Credentials string
+}
+
+func (a *Adapter) GetCredentials() string {
+	return a.Credentials
+}
+
+type Tracer struct{}
+
+func (t *Tracer) TraceQueryStart(ctx context.Context, conn *pgx.Conn, data pgx.TraceQueryStartData) context.Context {
+	//fmt.Println("-- MAKING SQL QUERY --")
+	//fmt.Println(data.SQL)
+	//fmt.Println(data.Args)
+	return ctx
+}
+
+func (t *Tracer) TraceQueryEnd(ctx context.Context, conn *pgx.Conn, data pgx.TraceQueryEndData) {
+	//fmt.Println("-- DONE MAKING SQL QUERY --")
+}
+
+func (t *Tracer) TraceBatchStart(ctx context.Context, conn *pgx.Conn, data pgx.TraceBatchStartData) context.Context {
+	return ctx
+}
+
+func (t *Tracer) TraceBatchQuery(ctx context.Context, conn *pgx.Conn, data pgx.TraceBatchQueryData) {
+	//fmt.Println("-- MAKING BATCHED SQL QUERY --")
+	//fmt.Println(data.SQL)
+	//fmt.Println(data.Args)
+	//fmt.Println(data.Err)
+
+}
+func (t *Tracer) TraceBatchEnd(ctx context.Context, conn *pgx.Conn, data pgx.TraceBatchEndData) {
+	//fmt.Println("-- DONE MAKING BATCHED SQL QUERY --")
+
 }
 
 // We're creating two different connection pool pools.
@@ -53,34 +87,36 @@ func checkPoolCache(cache map[string]*pgxpool.Pool, credentials *adapt.Credentia
 }
 
 func getConnection(credentials *adapt.Credentials, hash string) (*pgxpool.Pool, error) {
-	host, ok := (*credentials)["host"]
-	if !ok {
-		return nil, errors.New("No host provided in credentials")
+	host, err := credentials.GetRequiredEntry("host")
+	if err != nil {
+		return nil, err
 	}
 
-	port, ok := (*credentials)["port"]
-	if !ok {
-		port = "5432"
+	port := credentials.GetEntry("port", "5432")
+
+	user, err := credentials.GetRequiredEntry("user")
+	if err != nil {
+		return nil, err
 	}
 
-	user, ok := (*credentials)["user"]
-	if !ok {
-		return nil, errors.New("No user provided in credentials")
+	password, err := credentials.GetRequiredEntry("password")
+	if err != nil {
+		return nil, err
 	}
 
-	password, ok := (*credentials)["password"]
-	if !ok {
-		return nil, errors.New("No password provided in credentials")
-	}
-
-	dbname, ok := (*credentials)["database"]
-	if !ok {
-		return nil, errors.New("No database provided in credentials")
+	dbname, err := credentials.GetRequiredEntry("database")
+	if err != nil {
+		return nil, err
 	}
 
 	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s "+"password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 
-	db, err := pgxpool.New(context.Background(), psqlInfo)
+	config, err := pgxpool.ParseConfig(psqlInfo)
+	if err != nil {
+		return nil, err
+	}
+	config.ConnConfig.Tracer = &Tracer{}
+	db, err := pgxpool.NewWithConfig(context.Background(), config)
 	if err != nil {
 		return nil, err
 	}

@@ -1,6 +1,9 @@
 package datasource
 
 import (
+	"errors"
+	"fmt"
+
 	"github.com/thecloudmasters/uesio/pkg/bot"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -31,7 +34,7 @@ func RunRouteBots(route *meta.Route, session *sess.Session) (*meta.Route, error)
 	if err != nil {
 		return nil, err
 	}
-	err = dialect.RouteBot(meta.NewRouteBot(route.Namespace, route.Name), route, session)
+	modifiedRoute, err := dialect.RouteBot(meta.NewRouteBot(route.Namespace, route.Name), route, session)
 	if err != nil {
 		_, isNotFoundError := err.(*SystemBotNotFoundError)
 		if isNotFoundError {
@@ -40,7 +43,7 @@ func RunRouteBots(route *meta.Route, session *sess.Session) (*meta.Route, error)
 		return nil, err
 	}
 
-	return route, nil
+	return modifiedRoute, nil
 }
 
 func runBeforeSaveBots(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
@@ -115,6 +118,78 @@ func runDynamicCollectionSaveBots(op *adapt.SaveOp, connection adapt.Connection,
 
 }
 
+func runExternalDataSourceLoadBot(botName string, op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+
+	namespace, name, err := meta.ParseKey(botName)
+	if err != nil {
+		return err
+	}
+
+	loadBot := &meta.Bot{
+		BundleableBase: meta.BundleableBase{
+			Name:      name,
+			Namespace: namespace,
+		},
+		Type: "LOAD",
+	}
+
+	err = bundle.Load(loadBot, session, nil)
+	// See if there is a SYSTEM bot instead
+	if err != nil {
+		systemDialect, err2 := bot.GetBotDialect("SYSTEM")
+		if err2 != nil {
+			return err2
+		}
+		// Try running a Load bot using the System dialect.
+		err = systemDialect.LoadBot(loadBot, op, connection, session)
+		if err != nil {
+			_, isNotFoundError := err.(*SystemBotNotFoundError)
+			if isNotFoundError {
+				return errors.New("could not find requested LOAD bot: " + botName)
+			}
+			return err
+		}
+		return nil
+	}
+	// We found a custom LOAD bot, so check to see if it has a valid dialect.
+	dialect, err := bot.GetBotDialect(loadBot.Dialect)
+	if err != nil {
+		return err
+	}
+
+	// Finally - run the load bot!
+	return dialect.LoadBot(loadBot, op, connection, session)
+
+}
+
+func runExternalDataSourceSaveBot(botName string, op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+
+	namespace, name, err := meta.ParseKey(botName)
+	if err != nil {
+		return err
+	}
+
+	saveBot := &meta.Bot{
+		BundleableBase: meta.BundleableBase{
+			Name:      name,
+			Namespace: namespace,
+		},
+		Type: "SAVE",
+	}
+
+	err = bundle.Load(saveBot, session, nil)
+	if err != nil {
+		return errors.New("could not find requested SAVE bot: " + botName)
+	}
+	dialect, err := bot.GetBotDialect(saveBot.Dialect)
+	if err != nil {
+		return err
+	}
+
+	return dialect.SaveBot(saveBot, op, connection, session)
+
+}
+
 func runAfterSaveBots(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 
 	collectionName := request.Metadata.GetFullName()
@@ -156,9 +231,19 @@ func runAfterSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessio
 }
 
 func CallGeneratorBot(create retrieve.WriterCreator, namespace, name string, params map[string]interface{}, connection adapt.Connection, session *sess.Session) error {
+
+	if ok, err := canCallBot(namespace, name, session.GetContextPermissions()); !ok {
+		return err
+	}
+
 	robot := meta.NewGeneratorBot(namespace, name)
 
 	err := bundle.Load(robot, session, connection)
+	if err != nil {
+		return meta.NewBotNotFoundError("generator not found: " + fmt.Sprintf("%s.%s", namespace, name))
+	}
+
+	err = robot.ValidateParams(params)
 	if err != nil {
 		return err
 	}
@@ -172,29 +257,43 @@ func CallGeneratorBot(create retrieve.WriterCreator, namespace, name string, par
 
 }
 
+const BotAccessErrorMessage = "you do not have permission to call bot: %s"
+
+func canCallBot(namespace, name string, perms *meta.PermissionSet) (bool, error) {
+	botKey := fmt.Sprintf("%s.%s", namespace, name)
+	if perms.CanCallBot(botKey) {
+		return true, nil
+	}
+	return false, meta.NewBotAccessError(fmt.Sprintf(BotAccessErrorMessage, botKey))
+}
+
 func CallListenerBot(namespace, name string, params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
 
-	// First try to run a system bot
-	sysrobot := meta.NewListenerBot(namespace, name)
-	sysrobot.Dialect = "SYSTEM"
+	if ok, err := canCallBot(namespace, name, session.GetContextPermissions()); !ok {
+		return nil, err
+	}
 
-	sysdialect, err := bot.GetBotDialect(sysrobot.Dialect)
+	// First try to run a system bot
+	systemListenerBot := meta.NewListenerBot(namespace, name)
+	systemListenerBot.Dialect = "SYSTEM"
+
+	systemDialect, err := bot.GetBotDialect(systemListenerBot.Dialect)
 	if err != nil {
 		return nil, err
 	}
 
-	sysresults, err := sysdialect.CallBot(sysrobot, params, connection, session)
+	systemBotResults, err := systemDialect.CallBot(systemListenerBot, params, connection, session)
 	_, isNotFoundError := err.(*SystemBotNotFoundError)
 	if !isNotFoundError {
 		// If we found a system bot, we can go ahead and just return the results of
 		// that bot, no need to look for another bot to run.
-		return sysresults, err
+		return systemBotResults, err
 	}
 
 	robot := meta.NewListenerBot(namespace, name)
 	err = bundle.Load(robot, session, connection)
 	if err != nil {
-		return nil, err
+		return nil, meta.NewBotNotFoundError("listener bot not found: " + fmt.Sprintf("%s.%s", namespace, name))
 	}
 
 	err = robot.ValidateParams(params)
@@ -208,5 +307,52 @@ func CallListenerBot(namespace, name string, params map[string]interface{}, conn
 	}
 
 	return dialect.CallBot(robot, params, connection, session)
+
+}
+
+func RunIntegrationActionBot(namespace, name string, params map[string]interface{}, action *meta.IntegrationAction, integration adapt.IntegrationConnection, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
+
+	botKey := fmt.Sprintf("%s.%s", namespace, name)
+	integrationKey := integration.GetIntegration().GetKey()
+	actionKey := fmt.Sprintf("%s.%s", action.Namespace, action.Name)
+
+	if !session.GetContextPermissions().CanRunIntegrationAction(integrationKey, actionKey) {
+		return nil, meta.NewBotAccessError(fmt.Sprintf("you do not have permission to run action %s for integration %s", actionKey, integrationKey))
+	}
+
+	// First try to run a system bot
+	systemListenerBot := meta.NewListenerBot(namespace, name)
+	systemListenerBot.Dialect = "SYSTEM"
+
+	systemDialect, err := bot.GetBotDialect(systemListenerBot.Dialect)
+	if err != nil {
+		return nil, err
+	}
+
+	systemBotResults, err := systemDialect.RunIntegrationActionBot(systemListenerBot, action, integration, params, connection, session)
+	_, isNotFoundError := err.(*SystemBotNotFoundError)
+	if !isNotFoundError {
+		// If we found a system bot, we can go ahead and just return the results of
+		// that bot, no need to look for another bot to run.
+		return systemBotResults, err
+	}
+
+	robot := meta.NewRunActionBot(namespace, name)
+	err = bundle.Load(robot, session, connection)
+	if err != nil {
+		return nil, meta.NewBotNotFoundError("integration run action bot not found: " + botKey)
+	}
+
+	err = robot.ValidateParams(params)
+	if err != nil {
+		return nil, err
+	}
+
+	dialect, err := bot.GetBotDialect(robot.Dialect)
+	if err != nil {
+		return nil, err
+	}
+
+	return dialect.RunIntegrationActionBot(robot, action, integration, params, connection, session)
 
 }

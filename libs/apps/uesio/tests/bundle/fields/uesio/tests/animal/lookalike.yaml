@@ -2,4 +2,4 @@ name: lookalike
 type: REFERENCE
 label: Common look-alike animal
 reference:
-  collection: uesio/tests.animal
+  collection: animal

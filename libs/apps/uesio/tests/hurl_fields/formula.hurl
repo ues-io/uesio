@@ -6,7 +6,7 @@
 # entry 1
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"uesio\"}"
+    "token": "uesio"
 }
 HTTP 200
 
@@ -36,8 +36,8 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" == "ID-001"
-jsonpath "$.wires[0].data[*]['uesio/tests.formula_checkbox_gt_number']" == false
+jsonpath "$.wires[0].data[0]['uesio/tests.autonumber']" == "ID-001"
+jsonpath "$.wires[0].data[0]['uesio/tests.formula_checkbox_gt_number']" == false
 
 # Formula field returntype checkbox formula greater than number
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
@@ -65,8 +65,8 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" == "ID-006"
-jsonpath "$.wires[0].data[*]['uesio/tests.formula_checkbox_gt_number']" == true
+jsonpath "$.wires[0].data[0]['uesio/tests.autonumber']" == "ID-006"
+jsonpath "$.wires[0].data[0]['uesio/tests.formula_checkbox_gt_number']" == true
 
 # Formula field returntype checkbox formula greater than number (without field dependencies provided)
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
@@ -93,5 +93,5 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" == "ID-006"
-jsonpath "$.wires[0].data[*]['uesio/tests.formula_checkbox_gt_number']" == true
+jsonpath "$.wires[0].data[0]['uesio/tests.autonumber']" == "ID-006"
+jsonpath "$.wires[0].data[0]['uesio/tests.formula_checkbox_gt_number']" == true

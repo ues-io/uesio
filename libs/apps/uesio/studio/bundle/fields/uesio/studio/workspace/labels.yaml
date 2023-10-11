@@ -2,6 +2,6 @@ name: labels
 type: REFERENCEGROUP
 label: Labels
 referenceGroup:
-  collection: uesio/studio.label
-  field: uesio/studio.workspace
+  collection: label
+  field: workspace
   onDelete: CASCADE

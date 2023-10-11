@@ -1,4 +1,4 @@
 name: dependencies_table_columns
 path: dependencies_table_columns
-view: uesio/tests.dependencies_table_columns
+view: dependencies_table_columns
 title: Tests loading of table column component dependencies

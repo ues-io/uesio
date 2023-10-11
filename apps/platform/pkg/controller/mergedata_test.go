@@ -1,12 +1,14 @@
 package controller
 
 import (
+	"fmt"
+	"sort"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/routing"
-	"sort"
-	"testing"
 )
 
 func TestGetPackUrl_Workspace(t *testing.T) {
@@ -89,42 +91,119 @@ func TestGetPackUrl_Site(t *testing.T) {
 		expect           string
 	}
 
-	UNUSED := int64(0)
+	PackUpdatedAt := int64(123456789)
+	UesioAppGitSha := "/abcd1234"
 
 	var tests = []testCase{
 		{
-			"return a versioned site component pack url",
-			"uesio/io.main",
+			"[custom app] use Site dependencies to get the requested pack URL",
+			"ben/mosaic.main",
 			&routing.SiteMergeData{
-				Name:      "prod",
-				App:       "uesio/studio",
-				Version:   "v0.0.1",
-				Domain:    "uesio-dev.com:3000",
-				Subdomain: "studio",
+				App:     "zach/foo",
+				Version: "v0.0.2",
+				Dependencies: map[string]meta.BundleDefDep{
+					"uesio/io": {
+						Version: "v0.0.1",
+					},
+					"ben/mosaic": {
+						Version: "v1.2.1",
+					},
+				},
 			},
-			"",
-			"/site/componentpacks/uesio/io/v0.0.1/main/runtime.js",
+			UesioAppGitSha,
+			"/site/componentpacks/ben/mosaic/v1.2.1/main/runtime.js",
 		},
 		{
-			"substitute Uesio static assets path, if provided, for uesio prefix pack loads",
+			"[custom app] use pack's modstamp if no Site dependencies are found",
+			"ben/mosaic.main",
+			&routing.SiteMergeData{
+				App:     "zach/foo",
+				Version: "v0.0.2",
+			},
+			UesioAppGitSha,
+			fmt.Sprintf("/site/componentpacks/ben/mosaic/%d/main/runtime.js", PackUpdatedAt),
+		},
+		{
+			"[custom app] use site version if the pack is in the app",
+			"zach/foo.main",
+			&routing.SiteMergeData{
+				App:     "zach/foo",
+				Version: "v0.2.4",
+			},
+			UesioAppGitSha,
+			"/site/componentpacks/zach/foo/v0.2.4/main/runtime.js",
+		},
+		{
+			"[custom app] substitute Uesio static assets path, if provided, for system bundle pack loads only",
 			"uesio/io.main",
 			&routing.SiteMergeData{
-				Name:      "prod",
-				App:       "uesio/studio",
-				Version:   "v0.0.1",
-				Domain:    "uesio-dev.com:3000",
-				Subdomain: "studio",
+				App:     "zach/foo",
+				Version: "v0.2.4",
 			},
-			"/some-git-sha",
-			"/site/componentpacks/uesio/io/some-git-sha/main/runtime.js",
+			UesioAppGitSha,
+			fmt.Sprintf("/site/componentpacks/uesio/io%s/main/runtime.js", UesioAppGitSha),
+		},
+		{
+			"[custom app] use the correct dependency for non-system-bundle Uesio pack loads",
+			"uesio/extras.main",
+			&routing.SiteMergeData{
+				App:     "uesio/www",
+				Version: "v0.0.8",
+				Dependencies: map[string]meta.BundleDefDep{
+					"uesio/io": {
+						Version: "v0.0.1",
+					},
+					"uesio/extras": {
+						Version: "v1.2.1",
+					},
+				},
+			},
+			UesioAppGitSha,
+			"/site/componentpacks/uesio/extras/v1.2.1/main/runtime.js",
+		},
+		{
+			"[system app] use the Uesio App git sha if the request is for a system namespace bundle",
+			"uesio/io.main",
+			&routing.SiteMergeData{
+				App:     "uesio/studio",
+				Version: "v0.0.1",
+				Dependencies: map[string]meta.BundleDefDep{
+					"uesio/io": {
+						Version: "v0.0.1",
+					},
+					"uesio/core": {
+						Version: "v0.0.1",
+					},
+				},
+			},
+			UesioAppGitSha,
+			fmt.Sprintf("/site/componentpacks/uesio/io%s/main/runtime.js", UesioAppGitSha),
+		},
+		{
+			"[system app] prefer the pack modstamp if the request is for a system namespace bundle but we have no Gitsha (local dev)",
+			"uesio/io.main",
+			&routing.SiteMergeData{
+				App:     "uesio/studio",
+				Version: "v0.0.1",
+				Dependencies: map[string]meta.BundleDefDep{
+					"uesio/io": {
+						Version: "v0.0.1",
+					},
+					"uesio/core": {
+						Version: "v0.0.1",
+					},
+				},
+			},
+			"",
+			fmt.Sprintf("/site/componentpacks/uesio/io/%d/main/runtime.js", PackUpdatedAt),
 		},
 	}
 
 	for _, tc := range tests {
-		t.Run("it should "+tc.description, func(t *testing.T) {
+		t.Run(tc.description, func(t *testing.T) {
 			file.SetAssetsPath(tc.staticAssetsPath)
-			actual := getPackUrl(tc.key, UNUSED, nil, tc.site)
-			assert.Equal(t, actual, tc.expect)
+			actual := getPackUrl(tc.key, PackUpdatedAt, nil, tc.site)
+			assert.Equal(t, tc.expect, actual)
 		})
 	}
 

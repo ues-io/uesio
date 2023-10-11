@@ -1,0 +1,5 @@
+name: recordtokenvalue
+type: DYNAMIC
+nameField: uesio/studio.token
+label: Record Token Value
+pluralLabel: Record Token Values

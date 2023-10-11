@@ -75,12 +75,24 @@ export const postJSON = (
 export const postBinary = (
 	context: Context,
 	url: string,
-	body: string | Blob | File
+	body: string | Blob | File | FormData
 ) =>
 	fetch(url, {
 		method: "POST",
 		headers: addOriginalSessionHashHeader(context, {
 			"Content-Type": "application/octet-stream",
 		}),
+		body,
+	})
+
+export const postMultipartForm = (
+	context: Context,
+	url: string,
+	body: string | Blob | File | FormData
+) =>
+	fetch(url, {
+		method: "POST",
+		// Do not set the content-type header. The browser does this for us.
+		headers: addOriginalSessionHashHeader(context),
 		body,
 	})

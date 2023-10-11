@@ -8,6 +8,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/thecloudmasters/uesio/pkg/bundlestore"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 
 	// Using text/template here instead of html/template
@@ -72,15 +74,45 @@ func getPackUrl(key string, packModstamp int64, workspace *routing.WorkspaceMerg
 		return fmt.Sprintf("/workspace/%s/%s/componentpacks/%s/%s/%d/%s/%s", workspace.App, workspace.Name, user, namepart, packModstamp, name, filePath)
 	}
 
-	siteBundleVersion := "/" + site.Version
+	siteBundleVersion := ""
 
-	// Special case --- if this is a Uesio-provided site, we don't (currently) ever update the bundle versions,
-	// but we DO update the static assets version for the whole Docker image, so replace the version with that
-	if strings.HasPrefix(site.App, "uesio/") && file.GetAssetsPath() != "" {
-		siteBundleVersion = file.GetAssetsPath()
+	// Handle requests for system bundles specially,
+	// since we don't update their bundle dependencies at all and just use dummy "v0.0.1" everywhere
+	if bundlestore.IsSystemBundle(namespace) {
+		if file.GetAssetsPath() != "" {
+			// We DO update the static assets version for the whole Docker image, so use that if we have it
+			siteBundleVersion = file.GetAssetsPath() // assets path SHOULD have a leading / already
+		} else if packModstamp != 0 {
+			// If we don't have a Git sha, then we are in local development,
+			// in which case we want to use the system pack modstamp to avoid stale file loads
+			siteBundleVersion = fmt.Sprintf("/%d", packModstamp)
+		}
+	} else {
+		// NON-system bundles
+		if namespace == site.App {
+			// If requested namespace is the app's name, use the site version
+			siteBundleVersion = fmt.Sprintf("/%s", site.Version)
+		} else if site.Dependencies != nil {
+			// For all other deps, use the site's declared bundle dependency version,
+			// which SHOULD be present (otherwise how are they using it...)
+			if dep, found := site.Dependencies[namespace]; found && dep.Version != "" {
+				siteBundleVersion = "/" + dep.Version
+			}
+		}
 	}
 
-	return fmt.Sprintf("/site/componentpacks/%s/%s%s/%s/%s", user, namepart, siteBundleVersion, name, filePath)
+	// If we still don't have a bundle version, for some bizarre reason...
+	if siteBundleVersion == "" {
+		if packModstamp != 0 {
+			// Prefer modstamp
+			siteBundleVersion = fmt.Sprintf("/%d", packModstamp)
+		} else if site.Version != "" {
+			// Final fallback --- use site version
+			siteBundleVersion = fmt.Sprintf("/%s", site.Version)
+		}
+	}
+
+	return fmt.Sprintf("/site/componentpacks/%s%s/%s/%s", namespace, siteBundleVersion, name, filePath)
 
 }
 
@@ -92,7 +124,7 @@ func GetSessionMergeData(session *sess.Session) *routing.SessionMergeData {
 }
 
 func GetUserMergeData(session *sess.Session) *routing.UserMergeData {
-	userInfo := session.GetUserInfo()
+	userInfo := session.GetContextUser()
 	userPicture := userInfo.GetPicture()
 	userMergeData := &routing.UserMergeData{
 		ID:        userInfo.ID,
@@ -139,7 +171,7 @@ func MergeRouteData(mergeableText string, mergeData *merge.ServerMergeData) (str
 	return templating.Execute(template, mergeData)
 }
 
-func GetRoutingMergeData(route *meta.Route, workspace *meta.Workspace, metadata *routing.PreloadMetadata, session *sess.Session) (*routing.RouteMergeData, error) {
+func GetRoutingMergeData(route *meta.Route, metadata *routing.PreloadMetadata, session *sess.Session) (*routing.RouteMergeData, error) {
 
 	// Prepare wire data for server merge data
 	wireData := map[string]meta.Group{}
@@ -190,7 +222,7 @@ func GetRoutingMergeData(route *meta.Route, workspace *meta.Workspace, metadata 
 		Params:       route.Params,
 		Namespace:    route.Namespace,
 		Path:         route.Path,
-		Workspace:    GetWorkspaceMergeData(workspace),
+		Workspace:    GetWorkspaceMergeData(session.GetWorkspace()),
 		Theme:        route.ThemeRef,
 		Dependencies: metadata,
 		Title:        mergedRouteTitle,
@@ -200,23 +232,29 @@ func GetRoutingMergeData(route *meta.Route, workspace *meta.Workspace, metadata 
 
 func GetSiteMergeData(site *meta.Site) *routing.SiteMergeData {
 	return &routing.SiteMergeData{
-		Name:      site.Name,
-		App:       site.GetAppFullName(),
-		Subdomain: site.Subdomain,
-		Domain:    site.Domain,
-		Version:   site.Bundle.GetVersionString(),
-		Title:     site.Title,
-		EnableSEO: site.EnableSEO,
+		Name:         site.Name,
+		App:          site.GetAppFullName(),
+		Subdomain:    site.Subdomain,
+		Domain:       site.Domain,
+		Version:      site.Bundle.GetVersionString(),
+		Title:        site.Title,
+		EnableSEO:    site.EnableSEO,
+		Dependencies: site.GetAppBundle().Dependencies,
 	}
 }
 
 func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *routing.PreloadMetadata, buildMode bool, session *sess.Session) {
+
+	// #2783 Prevent 3rd party sites from iframing Uesio
+	// Add a content security policy header to prevent any other sites from iframing this site
+	// TODO: make this configurable by site (see issue #2782)
+	w.Header().Set("content-security-policy", "frame-ancestors 'none';")
+
 	w.Header().Set("content-type", "text/html")
 
 	site := session.GetSite()
-	workspace := session.GetWorkspace()
 
-	routingMergeData, err := GetRoutingMergeData(route, workspace, preload, session)
+	routingMergeData, err := GetRoutingMergeData(route, preload, session)
 	if err != nil {
 		msg := "Error getting route merge data: " + err.Error()
 		http.Error(w, msg, http.StatusInternalServerError)

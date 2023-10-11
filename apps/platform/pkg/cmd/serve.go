@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/thecloudmasters/uesio/pkg/tls"
+
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
 	"github.com/thecloudmasters/uesio/pkg/controller"
@@ -44,10 +46,11 @@ var appParam = getNSParam("app")
 var nsParam = getNSParam("namespace")
 var nameParam = getMetadataItemParam("name")
 var itemParam = fmt.Sprintf("%s/%s", nsParam, nameParam)
+var versionParam = "{version:(?:v[0-9]+\\.[0-9]+\\.[0-9]+)|(?:[a-z0-9]{8,})}"
 
 // Version will either be a Uesio bundle version string, e.g. v1.2.3,
 // Or an 8-character short Git sha, e.g. abcd1234
-var versionedItemParam = fmt.Sprintf("%s/{version:(?:v[0-9]+\\.[0-9]+\\.[0-9]+)|(?:[a-z0-9]{8,})}/%s", nsParam, nameParam)
+var versionedItemParam = fmt.Sprintf("%s/%s/%s", nsParam, versionParam, nameParam)
 
 // Grouping values can either be full Uesio items (e.g. <user>/<app>.<name>) or simple values, e.g. "LISTENER",
 // so the regex here needs to support both
@@ -91,6 +94,8 @@ func serve(cmd *cobra.Command, args []string) {
 	r.Handle(staticPrefix+"/{filename:.*}", file.Static(cwd, staticPrefix, cacheStaticAssets)).Methods(http.MethodGet)
 	r.HandleFunc("/health", controller.Health).Methods(http.MethodGet)
 
+	//r.HandleFunc("/api/weather", testapis.TestApi).Methods(http.MethodGet, http.MethodPost, http.MethodDelete)
+
 	// The workspace router
 	workspacePath := fmt.Sprintf("/workspace/%s/{workspace}", appParam)
 	wr := r.PathPrefix(workspacePath).Subrouter()
@@ -101,9 +106,18 @@ func serve(cmd *cobra.Command, args []string) {
 	)
 
 	// The version router
-	versionPath := fmt.Sprintf("/version/%s/%s/{version}", appParam, nsParam)
+	versionPath := fmt.Sprintf("/version/%s/%s", appParam, versionParam)
 	vr := r.PathPrefix(versionPath).Subrouter()
 	vr.Use(
+		middleware.Authenticate,
+		middleware.LogRequestHandler,
+		middleware.AuthenticateVersion,
+	)
+
+	// The version router (Backwards Compat)
+	versionCompatPath := fmt.Sprintf("/version/%s/%s/%s", appParam, nsParam, versionParam)
+	vr_compat := r.PathPrefix(versionCompatPath).Subrouter()
+	vr_compat.Use(
 		middleware.Authenticate,
 		middleware.LogRequestHandler,
 		middleware.AuthenticateVersion,
@@ -235,8 +249,10 @@ func serve(cmd *cobra.Command, args []string) {
 	namespaceListPath := "/metadata/namespaces"
 	wr.HandleFunc(namespaceListPath, controller.NamespaceList).Methods(http.MethodGet)
 	sa.HandleFunc(namespaceListPath, controller.NamespaceList).Methods(http.MethodGet)
+	vr.HandleFunc(namespaceListPath, controller.NamespaceList).Methods(http.MethodGet)
 	wr.HandleFunc(namespaceListPath+"/{type}", controller.NamespaceList).Methods(http.MethodGet)
 	sa.HandleFunc(namespaceListPath+"/{type}", controller.NamespaceList).Methods(http.MethodGet)
+	vr.HandleFunc(namespaceListPath+"/{type}", controller.NamespaceList).Methods(http.MethodGet)
 
 	// List All Namespace Items
 	itemListPath := "/metadata/types/{type}/list"
@@ -252,10 +268,15 @@ func serve(cmd *cobra.Command, args []string) {
 	nsItemListPath := fmt.Sprintf("/metadata/types/{type}/namespace/%s/list", nsParam)
 	wr.HandleFunc(nsItemListPath, controller.MetadataList).Methods(http.MethodGet)
 	sa.HandleFunc(nsItemListPath, controller.MetadataList).Methods(http.MethodGet)
+	vr.HandleFunc(nsItemListPath, controller.MetadataList).Methods(http.MethodGet)
+
+	// BACKWARDS Compat version routes for old CLI versions
+	vr_compat.HandleFunc(fmt.Sprintf("/metadata/types/{type}/list"), controller.MetadataList).Methods(http.MethodGet)
 
 	nsItemListPathWithGrouping := fmt.Sprintf("/metadata/types/{type}/namespace/%s/list/%s", nsParam, groupingParam)
 	wr.HandleFunc(nsItemListPathWithGrouping, controller.MetadataList).Methods(http.MethodGet)
 	sa.HandleFunc(nsItemListPathWithGrouping, controller.MetadataList).Methods(http.MethodGet)
+	vr.HandleFunc(nsItemListPathWithGrouping, controller.MetadataList).Methods(http.MethodGet)
 
 	// Bulk Job Routes
 	bulkJobPath := "/bulk/job"
@@ -296,18 +317,22 @@ func serve(cmd *cobra.Command, args []string) {
 	sa.HandleFunc("/featureflags/"+itemParam, controller.SetFeatureFlag).Methods("POST")
 
 	// Version context specific routes
-	vr.HandleFunc("/metadata/generate/{name}", controller.Generate).Methods("POST")
-	vr.HandleFunc("/bots/params/{type}/{name}", controller.GetBotParams).Methods("GET")
+	vr.HandleFunc("/metadata/generate/"+itemParam, controller.Generate).Methods("POST")
+	vr.HandleFunc("/bots/params/{type}/"+itemParam, controller.GetBotParams).Methods("GET")
+
+	// BACKWARDS Compat version routes for old CLI versions
+	vr_compat.HandleFunc("/metadata/generate/{name}", controller.Generate).Methods("POST")
+	vr_compat.HandleFunc("/bots/params/{type}/{name}", controller.GetBotParams).Methods("GET")
 
 	// Auth Routes
 	sa.HandleFunc("/auth/"+itemParam+"/createlogin", controller.CreateLogin).Methods("POST")
 	sr.HandleFunc("/auth/"+itemParam+"/login", controller.Login).Methods("POST")
+	wr.HandleFunc("/auth/"+itemParam+"/login", controller.Login).Methods("POST")
 	sr.HandleFunc("/auth/"+itemParam+"/signup", controller.Signup).Methods("POST")
 	sa.HandleFunc("/auth/"+itemParam+"/forgotpassword", controller.ForgotPassword).Methods("POST")
 	sr.HandleFunc("/auth/"+itemParam+"/forgotpassword", controller.ForgotPassword).Methods("POST")
 	sr.HandleFunc("/auth/"+itemParam+"/forgotpassword/confirm", controller.ConfirmForgotPassword).Methods("POST")
-	sr.HandleFunc("/auth/"+itemParam+"/checkavailability/{username}", controller.CheckAvailability).Methods("POST")
-	lr.HandleFunc(fmt.Sprintf("/auth/%s/signup/v2/confirm", itemParam), controller.ConfirmSignUpV2).Methods("GET")
+	sr.HandleFunc("/auth/"+itemParam+"/signup/confirm", controller.ConfirmSignUp).Methods("GET")
 
 	sr.HandleFunc("/auth/logout", controller.Logout).Methods("POST")
 	sr.HandleFunc("/auth/check", controller.AuthCheck).Methods("GET")
@@ -345,13 +370,12 @@ func serve(cmd *cobra.Command, args []string) {
 		Handler: r,
 	}
 
-	useSSL := os.Getenv("UESIO_USE_HTTPS")
 	var serveErr error
-	if useSSL == "true" {
-		logger.Log("Service Started over SSL on Port: "+port, logger.INFO)
-		serveErr = server.ListenAndServeTLS("ssl/certificate.crt", "ssl/private.key")
+	if tls.ServeAppWithTLS() {
+		logger.Log("Service started over TLS on port: "+port, logger.INFO)
+		serveErr = server.ListenAndServeTLS(tls.GetSelfSignedCertFilePath(), tls.GetSelfSignedPrivateKeyFile())
 	} else {
-		logger.Log("Service Started on Port: "+port, logger.INFO)
+		logger.Log("Service started on port: "+port, logger.INFO)
 		serveErr = server.ListenAndServe()
 	}
 	if serveErr != nil {

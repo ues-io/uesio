@@ -4,8 +4,10 @@ label: File Metadata
 subfields:
   - name: uesio/studio.filesource
     label: File Source
-    type: TEXT
+    type: METADATA
+    metadata:
+      type: FILESOURCE
   - name: uesio/studio.accept
     label: Accept
     type: SELECT
-    selectList: uesio/studio.accepttypes
+    selectList: uesio/core.accepttypes

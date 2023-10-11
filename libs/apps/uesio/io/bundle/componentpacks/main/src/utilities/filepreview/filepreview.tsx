@@ -1,4 +1,3 @@
-import { FC } from "react"
 import { definition, context } from "@uesio/ui"
 import File from "../file/file"
 import FileText from "../filetext/filetext"
@@ -6,7 +5,7 @@ import FileImage from "../fileimage/fileimage"
 import FileVideo from "../filevideo/filevideo"
 import { UserFileMetadata } from "../../components/field/field"
 
-interface FilePreviewProps extends definition.UtilityProps {
+interface FilePreviewProps {
 	path: string
 	id?: string
 	mode?: context.FieldMode
@@ -16,7 +15,7 @@ interface FilePreviewProps extends definition.UtilityProps {
 	accept?: string
 }
 
-const FilePreview: FC<FilePreviewProps> = (props) => {
+const FilePreview: definition.UtilityComponent<FilePreviewProps> = (props) => {
 	const { userFile } = props
 	const mimeType = userFile?.["uesio/core.mimetype"]
 	if (!mimeType) return <File {...props} />

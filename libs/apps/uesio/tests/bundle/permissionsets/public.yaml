@@ -1,0 +1,91 @@
+name: public
+named: {}
+views:
+  uesio/tests.animalslist: true
+  uesio/tests.declarative_components: true
+  uesio/tests.declarative_components_2: true
+collections:
+  uesio/core.user:
+    read: true
+    create: false
+    edit: false
+    delete: false
+    modifyall: false
+    viewall: false
+    fields:
+      uesio/core.uniquekey:
+        read: true
+        edit: false
+      uesio/core.username:
+        read: true
+        edit: false
+  uesio/tests.animal:
+    read: true
+    create: true
+    edit: false
+    delete: false
+    modifyall: false
+    viewall: false
+    fields:
+      uesio/core.owner:
+        read: true
+        edit: true
+      uesio/tests.ancestor:
+        read: false
+        edit: false
+      uesio/tests.autonumber:
+        read: true
+        edit: true
+      uesio/tests.genus:
+        read: true
+        edit: true
+      uesio/tests.lookalike:
+        read: false
+        edit: false
+      uesio/tests.species:
+        read: true
+        edit: true
+      uesio/tests.status:
+        read: true
+        edit: false
+      uesio/tests.total_population:
+        read: true
+        edit: true
+  uesio/tests.tool:
+    read: false
+    create: false
+    edit: false
+    delete: false
+    modifyall: false
+    viewall: true
+    fields: {}
+  uesio/tests.wire_condition:
+    read: false
+    create: false
+    edit: false
+    delete: false
+    modifyall: false
+    viewall: false
+    fields: {}
+routes:
+  uesio/tests.declarative1: true
+  uesio/tests.declarative2: true
+  uesio/tests.publicanimalslist: true
+files: {}
+bots:
+  uesio/tests.add_numbers: true
+  uesio/tests.call_custom_run_action: true
+  uesio/tests.call_forbidden_run_action: true
+  uesio/tests.get_weather_forecast: true
+integrationActions:
+  uesio/tests.weather_api:
+    actions:
+      uesio/tests.get_forecast: true
+allowallbots: false
+allowallcollections: false
+allowallviews: false
+allowallroutes: false
+allowallfiles: false
+allowallintegrationactions: false
+modifyallrecords: false
+viewallrecords: true

@@ -2,11 +2,22 @@ name: component
 dialect: "JAVASCRIPT"
 type: "GENERATOR"
 params:
+  - name: type
+    prompt: Component Type
+    type: SELECT
+    selectList: uesio/core.componenttypes
+    default: "REACT"
+    required: true
   - name: pack
     prompt: Component Pack Name
     type: METADATANAME
     default: main
+    required: true
+    conditions:
+      - field: type
+        value: "REACT"
   - name: name
     prompt: Component Name
     type: METADATANAME
+    required: true
 public: true

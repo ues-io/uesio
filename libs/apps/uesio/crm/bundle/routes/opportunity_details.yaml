@@ -1,6 +1,0 @@
-name: opportunity_details
-path: opportunity/{recordid}
-view: uesio/crm.opportunity_details
-theme: uesio/core.default
-title: ""
-public: true

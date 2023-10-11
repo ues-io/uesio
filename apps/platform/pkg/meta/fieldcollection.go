@@ -36,6 +36,10 @@ func (fc *FieldCollection) AddItem(item Item) error {
 
 func (fc *FieldCollection) GetItemFromPath(path, namespace string) BundleableItem {
 	parts := strings.Split(path, "/")
+	partLength := len(parts)
+	if partLength != 4 {
+		return nil
+	}
 	collectionKey := fmt.Sprintf("%s/%s.%s", parts[0], parts[1], parts[2])
 	name := strings.TrimSuffix(parts[3], ".yaml")
 	return NewBaseField(collectionKey, namespace, name)

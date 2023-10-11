@@ -1,4 +1,4 @@
-const baseUrl = Cypress.env("studio_base_url")
+const baseUrl = Cypress.config().baseUrl
 const username = Cypress.env("automation_username")
 
 export const getBaseUrl = () => `${baseUrl}`

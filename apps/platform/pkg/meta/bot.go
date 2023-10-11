@@ -18,20 +18,24 @@ func NewBot(key string) (*Bot, error) {
 	}
 	botType := keyArray[0]
 	var collectionKey, botKey string
-	switch botType {
-	case "LISTENER", "GENERATOR":
-		if (keyArraySize) != 2 {
-			return nil, errors.New("Invalid Bot Key")
-		}
-		collectionKey = ""
-		botKey = keyArray[1]
-	default:
+	if IsBotTypeWithCollection(botType) {
 		if (keyArraySize) != 3 {
 			return nil, errors.New("Invalid Bot Key")
 		}
 		collectionKey = keyArray[1]
 		botKey = keyArray[2]
+	} else {
+		collectionKey = ""
+		botKey = keyArray[1]
+		if (keyArraySize) > 3 {
+			return nil, errors.New("Invalid Bot Key")
+		}
+		if (keyArraySize) == 3 {
+			collectionKey = keyArray[1]
+			botKey = keyArray[2]
+		}
 	}
+
 	namespace, name, err := ParseKey(botKey)
 	if err != nil {
 		return nil, err
@@ -67,6 +71,10 @@ func NewSaveBot(namespace, name string) *Bot {
 	return NewBaseBot("SAVE", "", namespace, name)
 }
 
+func NewRunActionBot(namespace, name string) *Bot {
+	return NewBaseBot("RUNACTION", "", namespace, name)
+}
+
 func NewBaseBot(botType, collectionKey, namespace, name string) *Bot {
 	return &Bot{
 		CollectionRef:  collectionKey,
@@ -75,16 +83,51 @@ func NewBaseBot(botType, collectionKey, namespace, name string) *Bot {
 	}
 }
 
+type IBotParamCondition interface {
+	GetParam() string
+	GetValue() interface{}
+	GetType() string
+}
+
+type IBotParam interface {
+	GetName() string
+	GetConditions() []IBotParamCondition
+}
+
 type BotParamCondition struct {
 	Param string      `yaml:"param" json:"param"`
 	Value interface{} `yaml:"value" json:"value"`
 	Type  string      `yaml:"type,omitempty" json:"type"`
 }
 
+func (b BotParamCondition) GetParam() string {
+	return b.Param
+}
+
+func (b BotParamCondition) GetValue() interface{} {
+	return b.Value
+}
+
+func (b BotParamCondition) GetType() string {
+	return b.Type
+}
+
 type BotParamConditionResponse struct {
 	Param string      `json:"param"`
 	Value interface{} `json:"value"`
 	Type  string      `json:"type"`
+}
+
+func (b BotParamConditionResponse) GetParam() string {
+	return b.Param
+}
+
+func (b BotParamConditionResponse) GetValue() interface{} {
+	return b.Value
+}
+
+func (b BotParamConditionResponse) GetType() string {
+	return b.Type
 }
 
 type BotParam struct {
@@ -95,8 +138,23 @@ type BotParam struct {
 	Grouping     string              `yaml:"grouping,omitempty" json:"grouping"`
 	Required     bool                `yaml:"required" json:"required"`
 	Default      string              `yaml:"default,omitempty" json:"default"`
+	SelectList   string              `yaml:"selectList,omitempty" json:"selectList"`
 	Choices      []string            `yaml:"choices,omitempty" json:"choices"`
 	Conditions   []BotParamCondition `yaml:"conditions,omitempty" json:"conditions"`
+}
+
+func (b BotParam) GetName() string {
+	return b.Name
+}
+
+func (b BotParam) GetConditions() []IBotParamCondition {
+	conditions := make([]IBotParamCondition, len(b.Conditions))
+	if len(b.Conditions) > 0 {
+		for i, c := range b.Conditions {
+			conditions[i] = c
+		}
+	}
+	return conditions
 }
 
 type BotParamResponse struct {
@@ -107,9 +165,24 @@ type BotParamResponse struct {
 	Grouping     string                      `json:"grouping"`
 	Default      string                      `json:"default"`
 	Required     bool                        `json:"required"`
+	SelectList   string                      `json:"selectList"`
 	Choices      []string                    `json:"choices"`
 	Conditions   []BotParamConditionResponse `json:"conditions"`
 	Collection   string                      `json:"collection"`
+}
+
+func (b BotParamResponse) GetName() string {
+	return b.Name
+}
+
+func (b BotParamResponse) GetConditions() []IBotParamCondition {
+	conditions := make([]IBotParamCondition, len(b.Conditions))
+	if len(b.Conditions) > 0 {
+		for i, c := range b.Conditions {
+			conditions[i] = c
+		}
+	}
+	return conditions
 }
 
 type BotParams []BotParam
@@ -136,6 +209,8 @@ func GetBotTypes() map[string]string {
 		"GENERATOR":  "generator",
 		"LOAD":       "load",
 		"ROUTE":      "route",
+		"SAVE":       "save",
+		"RUNACTION":  "runaction",
 	}
 }
 
@@ -145,15 +220,6 @@ func GetBotDialects() map[string]string {
 		"SYSTEM":     "system",
 		"TYPESCRIPT": "typescript",
 	}
-}
-
-func getBotTypeTypeKeyPart(typeKey string) (string, error) {
-	for botType, key := range GetBotTypes() {
-		if key == typeKey {
-			return botType, nil
-		}
-	}
-	return "", errors.New("Bad Type Key for Bot: " + typeKey)
 }
 
 func (b *Bot) GetBotFilePath() string {
@@ -182,15 +248,16 @@ func (b *Bot) GetDBID(workspace string) string {
 
 func (b *Bot) GetKey() string {
 	botType := GetBotTypes()[b.Type]
-	if b.Type == "LISTENER" || b.Type == "GENERATOR" {
+	if IsBotTypeWithCollection(botType) {
+		return fmt.Sprintf("%s:%s:%s.%s", botType, b.CollectionRef, b.Namespace, b.Name)
+	} else {
 		return fmt.Sprintf("%s:%s.%s", botType, b.Namespace, b.Name)
 	}
-	return fmt.Sprintf("%s:%s:%s.%s", botType, b.CollectionRef, b.Namespace, b.Name)
 }
 
 func (b *Bot) GetBasePath() string {
 	botType := GetBotTypes()[b.Type]
-	if b.Type == "LISTENER" || b.Type == "GENERATOR" {
+	if !IsBotTypeWithCollection(botType) {
 		return filepath.Join(botType, b.Name)
 	}
 	collectionNamespace, collectionName, _ := ParseKey(b.CollectionRef)
@@ -239,14 +306,76 @@ func NewParamError(message string, param string) error {
 	return &BotParamValidationError{Param: param, Message: message}
 }
 
+type BotExecutionError struct {
+	Message string
+}
+
+func (e *BotExecutionError) Error() string {
+	return e.Message
+}
+
+func NewBotExecutionError(message string) error {
+	return &BotExecutionError{Message: message}
+}
+
+type BotAccessError struct {
+	message string
+}
+
+func (e *BotAccessError) Error() string {
+	return e.message
+}
+
+func NewBotAccessError(message string) error {
+	return &BotAccessError{message}
+}
+
+type BotNotFoundError struct {
+	message string
+}
+
+func (e *BotNotFoundError) Error() string {
+	return e.message
+}
+
+func NewBotNotFoundError(message string) error {
+	return &BotNotFoundError{message}
+}
+
+func IsParamRelevant(param IBotParam, paramValues map[string]interface{}) bool {
+	conditions := param.GetConditions()
+	if len(conditions) < 1 {
+		return true
+	}
+	for _, condition := range conditions {
+		value := paramValues[condition.GetParam()]
+		conditionType := condition.GetType()
+		if conditionType == "hasValue" || conditionType == "hasNoValue" {
+			hasValue := value != nil && value != ""
+			if conditionType == "hasValue" && !hasValue {
+				return false
+			} else if conditionType == "hasNoValue" && hasValue {
+				return false
+			}
+		} else if value != condition.GetValue() {
+			return false
+		}
+	}
+	return true
+}
+
 // ValidateParams checks validates received a map of provided bot params
-// agaisnt any bot parameter metadata defined for the Bot
+// against any bot parameter metadata defined for the Bot
 func (b *Bot) ValidateParams(params map[string]interface{}) error {
 
 	for _, param := range b.Params {
+		// Ignore validations on Params which are not relevant due to conditions
+		if !IsParamRelevant(param, params) {
+			continue
+		}
 		paramValue := params[param.Name]
 		// First check for requiredness
-		if paramValue == nil {
+		if paramValue == nil || paramValue == "" {
 			if param.Required {
 				return NewParamError("missing required param", param.Name)
 			} else {
@@ -267,6 +396,11 @@ func (b *Bot) ValidateParams(params map[string]interface{}) error {
 			// Cast to the corresponding type
 			if _, err := strconv.ParseBool(paramValue.(string)); err != nil {
 				return NewParamError("param value must either be 'true' or 'false'", param.Name)
+			}
+		case "METADATANAME":
+			ok := IsValidMetadataName(fmt.Sprintf("%v", paramValue))
+			if !ok {
+				return NewParamError("param failed metadata validation, no capital letters or special characters allowed", param.Name)
 			}
 		}
 	}

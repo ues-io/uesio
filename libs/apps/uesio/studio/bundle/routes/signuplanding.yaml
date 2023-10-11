@@ -1,5 +1,5 @@
 name: signuplanding
 path: signuplanding
 view: uesio/core.signuplanding
-theme: uesio/studio.default
+theme: default
 title: Welcome to Uesio!

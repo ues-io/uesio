@@ -2,6 +2,6 @@ name: bundles
 type: REFERENCEGROUP
 label: Bundles
 referenceGroup:
-  collection: uesio/studio.bundle
-  field: uesio/studio.app
+  collection: bundle
+  field: app
   onDelete: CASCADE

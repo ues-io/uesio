@@ -1,23 +1,23 @@
-import { FunctionComponent } from "react"
 import { definition, api, wire, collection } from "@uesio/ui"
 import SelectField from "../field/select"
 
 const addBlankSelectOption = collection.addBlankSelectOption
 
-interface SelectFilterProps extends definition.UtilityProps {
+interface SelectFilterProps {
 	path: string
 	wire: wire.Wire
 	fieldMetadata: collection.Field
 	condition: wire.ValueConditionState
 }
 
-const SelectFilter: FunctionComponent<SelectFilterProps> = (props) => {
+const SelectFilter: definition.UtilityComponent<SelectFilterProps> = (
+	props
+) => {
 	const { wire, fieldMetadata, context, condition } = props
 	const wireId = wire.getId()
 
 	return (
 		<SelectField
-			fieldMetadata={fieldMetadata}
 			context={context}
 			options={addBlankSelectOption(
 				fieldMetadata.getSelectMetadata()?.options || [],

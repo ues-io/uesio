@@ -1,4 +1,4 @@
-import { FunctionComponent, useLayoutEffect, useRef } from "react"
+import { useLayoutEffect, useRef } from "react"
 import { definition, styles } from "@uesio/ui"
 import {
 	useFloating,
@@ -11,9 +11,10 @@ import {
 	FloatingPortal,
 	arrow,
 	FloatingArrow,
+	MiddlewareState,
 } from "@floating-ui/react"
 
-interface TooltipProps extends definition.UtilityProps {
+interface TooltipProps {
 	placement?: Placement
 	referenceEl: HTMLDivElement | null
 	onOutsideClick?: () => void
@@ -40,7 +41,7 @@ const StyleDefaults = Object.freeze({
 	arrow: [],
 })
 
-const Popper: FunctionComponent<TooltipProps> = (props) => {
+const Popper: definition.UtilityComponent<TooltipProps> = (props) => {
 	const autoPlacements = props.autoPlacement || defaultPlacement
 
 	const arrowRef = useRef(null)
@@ -56,7 +57,7 @@ const Popper: FunctionComponent<TooltipProps> = (props) => {
 			...(props.matchHeight
 				? [
 						size({
-							apply({ rects, elements }) {
+							apply({ rects, elements }: MiddlewareState) {
 								Object.assign(elements.floating.style, {
 									height: `${rects.reference.height}px`,
 								})

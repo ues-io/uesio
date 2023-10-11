@@ -1,4 +1,4 @@
 name: licensesused
 path: app/{app:\w*\/\w*}/licensesused
-view: uesio/studio.licensesused
-theme: uesio/studio.default
+view: licensesused
+theme: default

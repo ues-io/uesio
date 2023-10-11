@@ -6,6 +6,8 @@ import (
 	"strings"
 
 	"github.com/teris-io/shortid"
+	"golang.org/x/exp/slices"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -13,118 +15,158 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func extractConditions(conditions []adapt.LoadRequestCondition) (*adapt.LoadRequestCondition, *adapt.LoadRequestCondition, *adapt.LoadRequestCondition, *adapt.LoadRequestCondition, error) {
-
-	// Verify that a type condition was provided
-	var typeCondition *adapt.LoadRequestCondition
-	var itemCondition *adapt.LoadRequestCondition
-	var groupingCondition *adapt.LoadRequestCondition
-	var searchCondition *adapt.LoadRequestCondition
-
+func extractConditionByField(conditions []adapt.LoadRequestCondition, field string) *adapt.LoadRequestCondition {
 	for i, condition := range conditions {
-		if condition.Field == "uesio/studio.type" {
-			typeCondition = &conditions[i]
-			continue
-		}
-		if condition.Field == "uesio/studio.item" {
-			itemCondition = &conditions[i]
-			continue
-		}
-		if condition.Field == "uesio/studio.grouping" {
-			groupingCondition = &conditions[i]
-			continue
-		}
-		if condition.Type == "SEARCH" {
-			searchCondition = &conditions[i]
-			continue
+		if condition.Field == field {
+			return &conditions[i]
 		}
 	}
-	if typeCondition == nil {
-		return nil, nil, nil, nil, errors.New("No type condition provided")
-	}
-	if itemCondition != nil && groupingCondition != nil {
-		return nil, nil, nil, nil, errors.New("Can't have both an item and grouping condition")
-	}
-	return typeCondition, itemCondition, groupingCondition, searchCondition, nil
+	return nil
 }
 
-func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+func extractConditionByType(conditions []adapt.LoadRequestCondition, conditionType string) *adapt.LoadRequestCondition {
+	for i, condition := range conditions {
+		if condition.Type == conditionType {
+			return &conditions[i]
+		}
+	}
+	return nil
+}
 
-	workspace := op.Params["workspacename"]
-	site := op.Params["sitename"]
+func GetWorkspaceIDFromParams(params map[string]string, connection adapt.Connection, session *sess.Session) (string, error) {
+	workspaceid := params["workspaceid"]
+	if workspaceid != "" {
+		return workspaceid, nil
+	}
+	inContextSession, err := getContextSessionFromParams(params, connection, session)
+	if err != nil {
+		return "", err
+	}
+	return inContextSession.GetWorkspaceID(), nil
+}
+
+func getContextSessionFromParams(params map[string]string, connection adapt.Connection, session *sess.Session) (*sess.Session, error) {
+
+	workspace := params["workspacename"]
+	site := params["sitename"]
 	if workspace == "" && site == "" {
-		return errors.New("no workspace name or site name parameter provided")
+		return nil, errors.New("no workspace name or site name parameter provided")
 	}
-	app := op.Params["app"]
+	app := params["app"]
 	if app == "" {
-		return errors.New("no app parameter provided")
+		return nil, errors.New("no app parameter provided")
 	}
 
-	// Verify that a type condition was provided
-	if op.Conditions == nil || len(op.Conditions) <= 0 {
-		return errors.New("must provide at least one condition")
+	if workspace != "" {
+		workspaceKey := fmt.Sprintf("%s:%s", app, workspace)
+		return datasource.AddWorkspaceContextByKey(workspaceKey, session, connection)
 	}
 
-	typeCondition, itemCondition, groupingCondition, searchCondition, err := extractConditions(op.Conditions)
+	siteKey := fmt.Sprintf("%s:%s", app, site)
+	return datasource.AddSiteAdminContextByKey(siteKey, session, connection)
+
+}
+
+func runCoreMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+
+	newCollection := NewNamespaceSwapCollection("uesio/core", "uesio/studio")
+
+	studioCollectionName := meta.SwapKeyNamespace(op.CollectionName, "uesio/core", "uesio/studio")
+
+	newOp := &adapt.LoadOp{
+		CollectionName: studioCollectionName,
+		Collection:     newCollection,
+		Conditions:     newCollection.MapConditions(op.Conditions),
+		Order:          newCollection.MapOrder(op.Order),
+	}
+
+	studioConnection, err := datasource.GetPlatformConnection(nil, session, nil)
 	if err != nil {
 		return err
 	}
 
-	metadataType := typeCondition.Value.(string)
+	err = datasource.GetMetadataForLoad(newOp, studioConnection.GetMetadata(), nil, sess.GetStudioAnonSession())
+	if err != nil {
+		return err
+	}
+
+	err = runAllMetadataLoadBot(newOp, studioConnection, session)
+	if err != nil {
+		return err
+	}
+
+	err = newCollection.TransferFieldMetadata(studioCollectionName, studioConnection.GetMetadata(), connection.GetMetadata())
+	if err != nil {
+		return err
+	}
+
+	op.Collection = newCollection
+
+	return nil
+
+}
+
+const (
+	itemField          = "uesio/studio.item"
+	groupingField      = "uesio/studio.grouping"
+	allMetadataField   = "uesio/studio.allmetadata"
+	isCommonFieldField = "uesio/studio.iscommonfield"
+)
+
+func runStudioMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+
+	allMetadataCondition := extractConditionByField(op.Conditions, allMetadataField)
+
+	if allMetadataCondition != nil && allMetadataCondition.Value == true {
+		inContextSession, err := getContextSessionFromParams(op.Params, connection, session)
+		if err != nil {
+			return err
+		}
+		return runAllMetadataLoadBot(op, connection, inContextSession)
+	}
+
+	workspaceID, err := GetWorkspaceIDFromParams(op.Params, connection, session)
+	if err != nil {
+		return err
+	}
+
+	itemCondition := extractConditionByField(op.Conditions, itemField)
+	groupingCondition := extractConditionByField(op.Conditions, groupingField)
+	if itemCondition != nil || groupingCondition != nil {
+		return errors.New("item or grouping conditions are not allowed unless the allmetadata condition is set")
+	}
+
+	op.Conditions = append(op.Conditions, adapt.LoadRequestCondition{
+		Field: "uesio/studio.workspace",
+		Value: workspaceID,
+	})
+
+	return datasource.LoadOp(op, connection, session)
+
+}
+
+func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+
+	itemCondition := extractConditionByField(op.Conditions, itemField)
+	groupingCondition := extractConditionByField(op.Conditions, groupingField)
+	searchCondition := extractConditionByType(op.Conditions, "SEARCH")
+	isCommonFieldCondition := extractConditionByField(op.Conditions, isCommonFieldField)
+
+	metadataType := meta.GetTypeFromCollectionName(op.CollectionName)
 
 	group, err := meta.GetBundleableGroupFromType(metadataType)
 	if err != nil {
 		return errors.New("invalid metadata type provided for type condition")
 	}
 
-	//This creates a copy of the session
-	inContextSession := session.RemoveWorkspaceContext()
+	metadata := connection.GetMetadata()
 
-	if workspace != "" {
-		workspaceKey := fmt.Sprintf("%s:%s", app, workspace)
-		err = datasource.AddWorkspaceContextByKey(workspaceKey, inContextSession, connection)
-		if err != nil {
-			return err
-		}
-	}
-
-	if site != "" {
-		siteKey := fmt.Sprintf("%s:%s", app, site)
-		err = datasource.AddSiteAdminContextByKey(siteKey, inContextSession, connection)
-		if err != nil {
-			return err
-		}
-	}
-
-	metadata, err := datasource.Load([]*adapt.LoadOp{{
-		CollectionName: group.GetName(),
-		WireName:       op.WireName,
-		View:           op.View,
-		Collection:     op.Collection,
-		Fields:         datasource.GetLoadRequestFields(group.GetFields()),
-		Query:          false,
-	}}, session, &datasource.LoadOptions{
-		Metadata: connection.GetMetadata(),
-	})
+	collectionMetadata, err := metadata.GetCollection(op.CollectionName)
 	if err != nil {
 		return err
 	}
 
-	originalCollectionMetadata, err := metadata.GetCollection(group.GetName())
-	if err != nil {
-		return err
-	}
-
-	dynamicCollectionMetadata, err := metadata.GetCollection("uesio/studio.allmetadata")
-	if err != nil {
-		return err
-	}
-
-	for _, field := range originalCollectionMetadata.Fields {
-		dynamicCollectionMetadata.SetField(field)
-	}
-
-	dynamicCollectionMetadata.SetField(&adapt.FieldMetadata{
+	collectionMetadata.SetField(&adapt.FieldMetadata{
 		Name:       "namespace",
 		Namespace:  "uesio/studio",
 		Createable: false,
@@ -134,7 +176,7 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		Label:      "Namespace",
 	})
 
-	dynamicCollectionMetadata.SetField(&adapt.FieldMetadata{
+	collectionMetadata.SetField(&adapt.FieldMetadata{
 		Name:       "appicon",
 		Namespace:  "uesio/studio",
 		Createable: false,
@@ -144,7 +186,7 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		Label:      "App Icon",
 	})
 
-	dynamicCollectionMetadata.SetField(&adapt.FieldMetadata{
+	collectionMetadata.SetField(&adapt.FieldMetadata{
 		Name:       "appcolor",
 		Namespace:  "uesio/studio",
 		Createable: false,
@@ -154,33 +196,69 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		Label:      "App Color",
 	})
 
-	namespaces := inContextSession.GetContextNamespaces()
+	namespaces := session.GetContextNamespaces()
 
 	if itemCondition != nil {
-		itemKey := itemCondition.Value.(string)
+		itemKey := getConditionValue(itemCondition)
+		// If we have no value, then we can't perform the query
+		if itemKey == "" {
+			return nil
+		}
 		item, err := group.GetItemFromKey(itemKey)
 		if err != nil {
 			return err
 		}
 		group.AddItem(item)
-		err = bundle.Load(item, inContextSession, connection)
+		err = bundle.Load(item, session, connection)
 		if err != nil {
 			return err
 		}
 	} else {
-		var conditions meta.BundleConditions
-		if groupingCondition != nil {
-			grouping := groupingCondition.Value.(string)
-			conditions, err = meta.GetGroupingConditions(metadataType, grouping)
+		conditions := meta.BundleConditions{}
+		for _, condition := range op.Conditions {
+			// Ignore the special conditions
+			if condition.Field == allMetadataField || condition.Type == "SEARCH" || condition.Field == isCommonFieldField {
+				continue
+			}
+			// Special handling for the grouping condition
+			if condition.Field == groupingField {
+				grouping := getConditionValue(groupingCondition)
+				// If we have no value, we can't perform the query
+				if grouping == "" {
+					return nil
+				}
+				groupingConditions, err := meta.GetGroupingConditions(metadataType, grouping)
+				if err != nil {
+					return err
+				}
+				for k, v := range groupingConditions {
+					conditions[k] = v
+				}
+			} else {
+				conditions[condition.Field] = getConditionValue(&condition)
+			}
+		}
+
+		onlyLoadCommonFields := false
+
+		// Special handling if we are asked to load common fields
+		if op.CollectionName == "uesio/studio.field" {
+			// Only add built-in fields if we're grouping on a collection
+			collection, ok := conditions["uesio/studio.collection"]
+			// and if we don't have a condition to exclude built-in fields
+			if ok && (isCommonFieldCondition != nil && isCommonFieldCondition.Value == true) {
+				onlyLoadCommonFields = true
+				datasource.AddAllBuiltinFields(group, collection)
+			}
+		}
+
+		if !onlyLoadCommonFields {
+			err = bundle.LoadAllFromNamespaces(namespaces, group, conditions, session, nil)
 			if err != nil {
 				return err
 			}
 		}
 
-		err = bundle.LoadAllFromNamespaces(namespaces, group, conditions, inContextSession, nil)
-		if err != nil {
-			return err
-		}
 	}
 
 	appData, err := datasource.GetAppData(namespaces)
@@ -188,7 +266,9 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		return err
 	}
 
-	return group.Loop(func(item meta.Item, index string) error {
+	var itemsSlice []meta.Item
+
+	err = group.Loop(func(item meta.Item, index string) error {
 
 		groupableItem := item.(meta.BundleableItem)
 		namespace := groupableItem.GetNamespace()
@@ -204,7 +284,7 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		}
 
 		opItem := op.Collection.NewItem()
-		op.Collection.AddItem(opItem)
+		itemsSlice = append(itemsSlice, opItem)
 
 		appInfo, ok := appData[namespace]
 		if !ok {
@@ -214,6 +294,9 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		opItem.SetField("uesio/studio.namespace", namespace)
 		opItem.SetField("uesio/studio.appicon", appInfo.Icon)
 		opItem.SetField("uesio/studio.appcolor", appInfo.Color)
+		// TODO: Only iterate over the Load request fields, if provided.
+		// This will likely break a lot of Studio Views
+		// but we need to stop sending so much unused stuff to the client.
 		for _, fieldName := range group.GetFields() {
 			value, err := item.GetField(fieldName)
 			if err != nil {
@@ -224,17 +307,125 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 				return err
 			}
 		}
-		realID, err := item.GetField("uesio/core.id")
+		realID, err := item.GetField(adapt.ID_FIELD)
 		if err != nil {
 			return err
 		}
 		if realID == "" {
 			fakeID, _ := shortid.Generate()
-			opItem.SetField("uesio/core.id", fakeID)
+			opItem.SetField(adapt.ID_FIELD, fakeID)
 		}
 
-		opItem.SetField("uesio/core.uniquekey", key)
+		opItem.SetField(adapt.UNIQUE_KEY_FIELD, key)
 		return nil
 	})
+	if err != nil {
+		return err
+	}
 
+	// Sort the items
+	sortItems(itemsSlice, op.Order)
+
+	// Now that the items are ordered, add them to the collection in order
+	for _, item := range itemsSlice {
+		op.Collection.AddItem(item)
+	}
+
+	return nil
+}
+
+func getStringValue(val interface{}) string {
+	if stringValue, isString := val.(string); isString {
+		return stringValue
+	}
+	return ""
+}
+
+func getConditionValue(condition *adapt.LoadRequestCondition) string {
+	var conditionValue string
+	if condition.Value != nil {
+		conditionValue = getStringValue(condition.Value)
+	} else if condition.Values != nil {
+		allValues := condition.Values.([]interface{})
+		if len(allValues) > 0 {
+			conditionValue = getStringValue(allValues[0])
+		}
+	}
+	return conditionValue
+}
+
+func sortItems(items []meta.Item, orderings []adapt.LoadRequestOrder) {
+	// Order the collection results, by unique key ASC by default
+	orderSpec := orderings
+	if len(orderSpec) < 1 {
+		orderSpec = []adapt.LoadRequestOrder{
+			{
+				Field: adapt.ID_FIELD,
+				Desc:  false,
+			},
+		}
+	}
+	slices.SortStableFunc(items, func(a, b meta.Item) bool {
+		for _, order := range orderSpec {
+			result := compareItemsByField(a, b, order.Field)
+			// If we couldn't compare the items / they were equal,
+			// then move on to the next field
+			if result == 0 {
+				continue
+			} else if result < 1 {
+				return !order.Desc
+			} else {
+				return order.Desc
+			}
+		}
+		return false
+	})
+}
+
+// Returns false only if item a is less than b by comparing on the provided field
+func compareItemsByField(a, b meta.Item, field string) int {
+	aVal, err := a.GetField(field)
+	if err != nil {
+		return 0
+	}
+	bVal, err := b.GetField(field)
+	if err != nil {
+		return 0
+	}
+	// Assumption: values will be the same type
+	// Return false if a's value is less than b's value
+	switch typedAVal := aVal.(type) {
+	case string:
+		typedBVal := bVal.(string)
+		return strings.Compare(typedAVal, typedBVal)
+	case int64:
+		typedBVal := bVal.(int64)
+		if typedAVal < typedBVal {
+			return -1
+		} else if typedAVal == typedBVal {
+			return 0
+		} else {
+			return 1
+		}
+	case float64:
+		typedBVal := bVal.(float64)
+		if typedAVal < typedBVal {
+			return -1
+		} else if typedAVal == typedBVal {
+			return 0
+		} else {
+			return 1
+		}
+	case bool:
+		// need to have some ordering so treat false as less than true
+		typedBVal := bVal.(bool)
+		if typedAVal == false && typedBVal == true {
+			return -1
+		} else if typedAVal == typedBVal {
+			return 0
+		} else {
+			return 1
+		}
+	}
+	return 0
 }

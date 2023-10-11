@@ -1,16 +1,17 @@
-import { FunctionComponent } from "react"
 import { definition, api, wire } from "@uesio/ui"
 import CheckboxField from "../field/checkbox"
 import ToggleField from "../field/toggle"
 
-interface CheckboxFilterProps extends definition.UtilityProps {
+interface CheckboxFilterProps {
 	path: string
 	wire: wire.Wire
 	condition: wire.ValueConditionState
 	displayAs?: string
 }
 
-const CheckboxFilter: FunctionComponent<CheckboxFilterProps> = (props) => {
+const CheckboxFilter: definition.UtilityComponent<CheckboxFilterProps> = (
+	props
+) => {
 	const { wire, context, displayAs, condition } = props
 	const wireId = wire.getId()
 

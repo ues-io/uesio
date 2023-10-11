@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -47,21 +46,7 @@ func querySiteFromDomain(domainType, domain string) (*meta.Site, error) {
 	if siteDomain == nil {
 		return nil, errors.New("no site domain record for that host")
 	}
-	return datasource.QuerySiteByID(siteDomain.Site.ID, nil)
-}
-
-func GetSystemSessionByKey(siteKey string, connection adapt.Connection) (*sess.Session, error) {
-	site, err := datasource.QuerySiteByKey(siteKey, connection)
-	if err != nil {
-		return nil, err
-	}
-	bundleDef, err := bundle.GetSiteAppBundle(site)
-	if err != nil {
-		return nil, err
-	}
-
-	site.SetAppBundle(bundleDef)
-	return GetSystemSession(site, connection)
+	return datasource.QuerySiteByID(siteDomain.Site.ID, sess.GetStudioAnonSession(), nil)
 }
 
 func GetPublicUser(site *meta.Site, connection adapt.Connection) (*meta.User, error) {
@@ -83,12 +68,10 @@ func GetSystemSession(site *meta.Site, connection adapt.Connection) (*sess.Sessi
 	if err != nil {
 		return nil, err
 	}
-	session := sess.NewSession(nil, user, site)
-	session.SetPermissions(&meta.PermissionSet{
-		AllowAllCollections: true,
-		ViewAllRecords:      true,
-		ModifyAllRecords:    true,
-	})
+
+	user.Permissions = meta.GetAdminPermissionSet()
+	session := sess.New("", user, site)
+
 	return session, nil
 }
 

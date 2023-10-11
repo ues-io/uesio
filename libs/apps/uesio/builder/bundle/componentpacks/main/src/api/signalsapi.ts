@@ -1,4 +1,4 @@
-import { collection, context, definition, wire } from "@uesio/ui"
+import { collection, component, context, definition, wire } from "@uesio/ui"
 import collectionSignals from "../signals/collection"
 import componentSignals from "../signals/component"
 import aiSignals from "../signals/ai"
@@ -46,6 +46,7 @@ type SignalDescriptor = {
 		context: context.Context
 	) => ComponentProperty[]
 	outputs?: SignalOutput[]
+	canError?: boolean
 }
 
 type ComponentSignalDescriptor = {
@@ -61,7 +62,7 @@ type ComponentSignalDescriptor = {
 type SignalDefinition = {
 	signal: string
 	[key: string]: definition.Definition
-	"uesio.context"?: context.ContextOptions
+	[component.COMPONENT_CONTEXT]?: context.ContextOptions
 	stepId?: string
 	onerror?: {
 		continue: boolean
@@ -122,6 +123,30 @@ const stepIdProperty = {
 	type: "TEXT",
 } as ComponentProperty
 
+const onErrorProperty = {
+	name: "onerror",
+	label: "Error handling",
+	type: "STRUCT",
+	properties: [
+		{
+			name: "continue",
+			label: "Continue running other signals on error",
+			type: "CHECKBOX",
+		},
+		{
+			name: "notify",
+			label: "Display default notification on error",
+			type: "CHECKBOX",
+		},
+		// TODO: Add support for on-error signals property category
+		// {
+		// 	name: "signals",
+		// 	label: "On-Error Signals",
+		// 	type: "SIGNALS",
+		// },
+	],
+} as ComponentProperty
+
 const COMPONENT_SIGNAL_PREFIX = "COMPONENT/"
 
 const getSignalProperties = (
@@ -142,10 +167,7 @@ const getSignalProperties = (
 			.split("/")
 		if (cmpSignalParts.length === 3) {
 			const cmpSignalName = cmpSignalParts.pop() as string
-			const componentDef = getComponentDef(
-				context,
-				cmpSignalParts.join("/")
-			)
+			const componentDef = getComponentDef(cmpSignalParts.join("/"))
 			if (
 				componentDef &&
 				componentDef.signals &&
@@ -169,6 +191,7 @@ const getSignalProperties = (
 		...(descriptor && descriptor.properties
 			? descriptor.properties(signalDefinition, context)
 			: []),
+		...(descriptor && descriptor.canError ? [onErrorProperty] : []),
 	]
 }
 

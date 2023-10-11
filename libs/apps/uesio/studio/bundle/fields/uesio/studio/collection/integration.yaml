@@ -1,0 +1,5 @@
+name: integration
+type: METADATA
+label: Data Source Integration
+metadata:
+  type: INTEGRATION

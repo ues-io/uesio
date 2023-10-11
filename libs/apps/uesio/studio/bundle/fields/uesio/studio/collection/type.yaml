@@ -1,3 +1,4 @@
 name: type
-type: TEXT
-label: Type
+type: SELECT
+label: Collection Type
+selectList: uesio/core.collectiontypes

@@ -1,5 +1,5 @@
 name: files
 path: app/{app:\w*\/\w*}/workspace/{workspacename}/files
-view: uesio/studio.files
-theme: uesio/studio.default
+view: files
+theme: default
 title: Files

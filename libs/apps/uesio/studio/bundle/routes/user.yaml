@@ -1,5 +1,5 @@
 name: user
 path: app/{app:\w*\/\w*}/site/{sitename}/users/{userid}
-view: uesio/studio.user
-theme: uesio/studio.default
+view: user
+theme: default
 title: "User: $Record{users:uesio/core.username}"

@@ -1,5 +1,0 @@
-name: product
-public: true
-label: product
-pluralLabel: products
-nameField: uesio/crm.name

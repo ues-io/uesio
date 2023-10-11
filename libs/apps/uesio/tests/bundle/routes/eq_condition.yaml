@@ -1,4 +1,4 @@
 name: eq_condition
 path: eq_condition
-view: uesio/tests.eq_condition
+view: eq_condition
 title: View Used for testing EQ condition

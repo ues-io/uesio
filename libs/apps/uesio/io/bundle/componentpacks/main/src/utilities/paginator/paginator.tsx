@@ -1,9 +1,8 @@
-import { FunctionComponent } from "react"
 import { definition, styles } from "@uesio/ui"
 import Group from "../group/group"
 import IconButton from "../iconbutton/iconbutton"
 
-interface PaginatorUtilityProps extends definition.UtilityProps {
+interface PaginatorUtilityProps {
 	currentPage: number
 	maxPages: number
 	setPage: (page: number) => void
@@ -25,7 +24,9 @@ const StyleDefaults = Object.freeze({
 	currentpage: ["text-white", "cursor-default", "bg-primary"],
 })
 
-const Paginator: FunctionComponent<PaginatorUtilityProps> = (props) => {
+const Paginator: definition.UtilityComponent<PaginatorUtilityProps> = (
+	props
+) => {
 	const { currentPage, maxPages, setPage, loadMore, context } = props
 	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 

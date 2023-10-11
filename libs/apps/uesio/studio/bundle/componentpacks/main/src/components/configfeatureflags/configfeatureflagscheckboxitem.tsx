@@ -1,13 +1,15 @@
-import { FunctionComponent, useState } from "react"
+import { useState } from "react"
 import { definition, component } from "@uesio/ui"
 
-interface Props extends definition.UtilityProps {
+interface Props {
 	title: string
 	value: boolean
 	handleSet: (key: string, value: boolean) => Promise<void>
 }
 
-const ConfigFeatureFlagsCheckboxItem: FunctionComponent<Props> = (props) => {
+const ConfigFeatureFlagsCheckboxItem: definition.UtilityComponent<Props> = (
+	props
+) => {
 	const TitleBar = component.getUtility("uesio/io.titlebar")
 	const ToggleField = component.getUtility("uesio/io.togglefield")
 	const { context, title, value, handleSet } = props

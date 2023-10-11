@@ -1,6 +1,5 @@
 name: permissionsetsrefs
-type: LIST
+type: MULTIMETADATA
 label: Permission sets refs
-subtype: TEXT
-subfields:
-  - name: permissionset
+metadata:
+  type: PERMISSIONSET

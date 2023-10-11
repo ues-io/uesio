@@ -4,5 +4,7 @@ uniqueKey:
   - uesio/studio.component
   - uesio/studio.name
 nameField: uesio/studio.name
+access: protected
+accessField: uesio/studio.workspace
 label: component variant
 pluralLabel: component variants

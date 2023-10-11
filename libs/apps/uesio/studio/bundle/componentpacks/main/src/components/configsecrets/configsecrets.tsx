@@ -1,5 +1,5 @@
 import { FunctionComponent, useState } from "react"
-import { definition, api, component } from "@uesio/ui"
+import { definition, api, component, metadata } from "@uesio/ui"
 import { FloatingPortal } from "@floating-ui/react"
 
 const ConfigSecrets: FunctionComponent<definition.BaseProps> = (props) => {
@@ -49,7 +49,7 @@ const ConfigSecrets: FunctionComponent<definition.BaseProps> = (props) => {
 	return (
 		<>
 			{values?.map((response) => {
-				const key = `${response.namespace}.${response.name}`
+				const key = metadata.getKey(response)
 				const value = isSecret ? "*********" : response.value
 				return (
 					<TitleBar

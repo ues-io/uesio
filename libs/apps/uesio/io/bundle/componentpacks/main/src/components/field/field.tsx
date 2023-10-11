@@ -1,5 +1,6 @@
 import {
 	api,
+	component,
 	wire,
 	definition,
 	metadata,
@@ -13,7 +14,7 @@ import FieldUtility from "../../utilities/field/field"
 
 import { ListFieldOptions } from "../../utilities/field/listdeck"
 import { LongTextFieldOptions } from "../../utilities/field/textarea"
-import { MapFieldOptions } from "../../utilities/field/mapdeck"
+import { MapFieldOptions } from "../../utilities/mapfield/MapFieldOptions"
 import {
 	MarkdownComponentOptions,
 	MarkdownFieldOptions,
@@ -22,6 +23,9 @@ import { NumberFieldOptions } from "../../utilities/field/number"
 import { ReferenceFieldOptions } from "../../utilities/field/reference"
 import { ReferenceGroupFieldOptions } from "../../utilities/field/referencegroup"
 import { UserFieldOptions } from "../../utilities/field/user"
+import { CheckboxFieldOptions } from "../../utilities/field/checkbox"
+import { TextFieldOptions } from "../../utilities/field/text"
+import { MetadataFieldOptions } from "../../utilities/field/metadata"
 
 type FieldDefinition = {
 	// Wire will default to the context wire, but can optionally be overridden
@@ -32,14 +36,17 @@ type FieldDefinition = {
 	displayAs?: string
 	focusOnRender?: boolean
 	reference?: ReferenceFieldOptions | ReferenceGroupFieldOptions
+	checkbox?: CheckboxFieldOptions
 	list?: ListFieldOptions
 	map?: MapFieldOptions
 	markdown?: MarkdownComponentOptions
+	metadata?: MetadataFieldOptions
 	user?: UserFieldOptions
 	number?: NumberFieldOptions
 	longtext?: LongTextFieldOptions
 	placeholder?: string
 	readonly?: boolean
+	text?: TextFieldOptions
 	wrapperVariant: metadata.MetadataKey
 	subFieldVariant?: metadata.MetadataKey
 	labelVariant?: metadata.MetadataKey
@@ -50,7 +57,7 @@ type FieldValueSetter = (value: wire.FieldValue) => void
 
 type ApplyChanges = "onBlur" | ""
 
-type LabelPosition = "none" | "top" | "left"
+type LabelPosition = "none" | "top" | "left" | "right"
 
 type UserFileMetadata = {
 	[collection.ID_FIELD]: string
@@ -60,7 +67,7 @@ type UserFileMetadata = {
 	["uesio/core.recordid"]: string
 	["uesio/core.collectionid"]: string
 	["uesio/core.fieldid"]?: string
-	["uesio/core.updatedat"]: string
+	[collection.UPDATED_AT_FIELD]: string
 }
 
 const UPLOAD_FILE_EVENT = "component:uesio/io.field:upload"
@@ -84,6 +91,7 @@ const fileTextSignals: Record<string, signal.ComponentSignalDescriptor> = {
 const StyleDefaults = Object.freeze({
 	input: [],
 	readonly: [],
+	wrapper: [],
 })
 
 const Field: definition.UC<FieldDefinition> = (props) => {
@@ -95,6 +103,7 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		displayAs,
 		focusOnRender,
 		reference,
+		checkbox,
 		list,
 		map,
 		user,
@@ -102,6 +111,7 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		longtext,
 		markdown: markdownComponentOptions,
 		readonly,
+		text,
 		wrapperVariant,
 		// Special variants used for Map/List/Struct fields
 		subFieldVariant,
@@ -149,7 +159,7 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		setValue: (value: wire.FieldValue) =>
 			record.update(fieldId, value, context),
 		record,
-		variant: definition["uesio.variant"],
+		variant: definition[component.STYLE_VARIANT],
 		placeholder,
 		displayAs,
 		subFieldVariant,
@@ -173,17 +183,21 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 
 	const typeSpecific = {
 		reference,
+		checkbox,
 		list,
 		map,
 		markdown,
+		metadata: definition.metadata,
 		user,
 		number,
 		longtext,
+		text,
 	}
 
 	return (
 		<FieldWrapper
 			label={label}
+			classes={{ root: classes.wrapper }}
 			labelPosition={labelPosition}
 			context={context}
 			variant={wrapperVariant}

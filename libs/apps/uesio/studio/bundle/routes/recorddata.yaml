@@ -1,0 +1,5 @@
+name: recorddata
+path: app/{app:\w*\/\w*}/workspace/{workspacename}/data/{namespace:\w*\/\w*}/{collectionname}/{recordid}
+view: recorddata
+theme: default
+title: "Record Data: $Param{recordid}"

@@ -1,4 +1,0 @@
-name: event_type
-type: SELECT
-label: Type
-selectList: uesio/crm.event_type

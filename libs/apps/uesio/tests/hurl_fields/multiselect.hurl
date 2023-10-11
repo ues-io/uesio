@@ -6,7 +6,7 @@
 # entry 1
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"uesio\"}"
+    "token": "uesio"
 }
 HTTP 200
 
@@ -127,7 +127,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" == "ID-003"
+jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "ID-003"
 
 # Operator: HAS_ALL | valueSource: VALUE | Bad Value | as number
 # entry 6
@@ -186,7 +186,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" == "ID-003"
+jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "ID-003"
 
 # Operator: IS_BLANK | valueSource: VALUE
 # entry 8

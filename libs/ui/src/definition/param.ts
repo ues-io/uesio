@@ -1,4 +1,5 @@
-import { MetadataType } from "../bands/builder/types"
+import type { MetadataKey, MetadataType } from "../metadata/types"
+import { CollectionKey } from "../bands/wire/types"
 
 export type ParamCondition = {
 	param: string
@@ -7,62 +8,91 @@ export type ParamCondition = {
 }
 
 type ParamBase = {
+	// name will only be populated for Bot Params
 	name: string
-	type:
+	type?:
 		| "RECORD"
 		| "TEXT"
 		| "METADATA"
-		| "METADATAMULTI"
 		| "METADATANAME"
+		| "MULTIMETADATA"
 		| "NUMBER"
+		| "SELECT"
 		| "CHECKBOX"
 	required?: boolean
-	default?: string
 	prompt?: string
 	conditions?: ParamCondition[]
 }
 
 type RecordParam = ParamBase & {
 	type: "RECORD"
-	collection: string
+	collection: CollectionKey
 }
 
 type TextParam = ParamBase & {
-	type: "TEXT"
-	defaultValue: string
+	type: "TEXT" | "" | undefined | null
+	default?: string
 }
 
 type NumberParam = ParamBase & {
 	type: "NUMBER"
-	defaultValue: number
+	default?: number
 }
 
 type CheckboxParam = ParamBase & {
 	type: "CHECKBOX"
-	defaultValue: boolean
+	default?: boolean
 }
 
-type MetadataParam = ParamBase & {
+type SelectParam = ParamBase & {
+	type: "SELECT"
+	default?: string
+	selectList: string
+}
+
+type MetadataParamBase = ParamBase & {
+	metadataType: MetadataType
+	grouping?: string
+}
+
+type MetadataParam = MetadataParamBase & {
 	type: "METADATA"
-	metadataType: MetadataType
-	grouping?: string
 }
 
-type MetadataMultiParam = ParamBase & {
-	type: "METADATAMULTI"
-	metadataType: MetadataType
-	grouping?: string
+type MultiMetadataParam = MetadataParamBase & {
+	type: "MULTIMETADATA"
 }
 
 type MetadataNameParam = ParamBase & {
 	type: "METADATANAME"
 }
 
+/**
+ * Defines a Bot parameter
+ */
 export type ParamDefinition =
 	| RecordParam
 	| TextParam
+	| SelectParam
 	| CheckboxParam
 	| NumberParam
-	| MetadataParam
-	| MetadataMultiParam
 	| MetadataNameParam
+	| MetadataParam
+	| MultiMetadataParam
+
+type ViewParamBase = {
+	required?: boolean
+	default?: string
+}
+type ViewRecordParam = {
+	type: "RECORD"
+	collection: MetadataKey
+} & ViewParamBase
+type ViewTextParam = {
+	type: "TEXT" | "" | undefined | null
+} & ViewParamBase
+
+/**
+ * Defines a parameter that a view expects to be provided.
+ */
+export type ViewParamDefinition = ViewRecordParam | ViewTextParam

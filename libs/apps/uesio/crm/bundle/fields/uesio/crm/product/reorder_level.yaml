@@ -1,5 +1,0 @@
-name: reorder_level
-type: NUMBER
-label: Reorder Level
-number:
-  decimals: 0

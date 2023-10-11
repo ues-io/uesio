@@ -1,5 +1,5 @@
 name: signup
 path: signup
-view: uesio/core.signup
-theme: uesio/studio.default
+view: uesio/studio.signup
+theme: default
 title: Uesio - Signup

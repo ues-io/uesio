@@ -1,5 +1,5 @@
 name: collection
 path: app/{app:\w*\/\w*}/workspace/{workspacename}/collections/{namespace:\w*\/\w*}/{collectionname}
-view: uesio/studio.collection
-theme: uesio/studio.default
+view: collection
+theme: default
 title: "Collection: $Record{collections:uesio/studio.name}"

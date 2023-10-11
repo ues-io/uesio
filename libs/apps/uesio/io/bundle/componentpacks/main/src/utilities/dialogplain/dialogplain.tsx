@@ -1,4 +1,3 @@
-import { FunctionComponent } from "react"
 import { definition, styles } from "@uesio/ui"
 import {
 	FloatingFocusManager,
@@ -10,14 +9,16 @@ import {
 
 const minPagePadding = "40px"
 
-interface DialogPlainUtilityProps extends definition.UtilityProps {
+interface DialogPlainUtilityProps {
 	onClose?: () => void
 	width?: string
 	height?: string
 	initialFocus?: number
 }
 
-const DialogPlain: FunctionComponent<DialogPlainUtilityProps> = (props) => {
+const DialogPlain: definition.UtilityComponent<DialogPlainUtilityProps> = (
+	props
+) => {
 	const gridCols = `grid-cols-[minmax(${minPagePadding},1fr)_minmax(auto,${
 		props.width || "auto"
 	})_minmax(${minPagePadding},1fr)]`
@@ -49,6 +50,7 @@ const DialogPlain: FunctionComponent<DialogPlainUtilityProps> = (props) => {
 				"col-start-2",
 				"pointer-events-auto",
 				"bg-white",
+				"[container-type:inline-size]",
 			],
 			spacer: ["row-start-3", "col-start-2", "col-end-3"],
 		},

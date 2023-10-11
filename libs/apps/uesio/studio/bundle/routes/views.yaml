@@ -1,5 +1,5 @@
 name: views
 path: app/{app:\w*\/\w*}/workspace/{workspacename}/views
-view: uesio/studio.views
-theme: uesio/studio.default
+view: views
+theme: default
 title: Views

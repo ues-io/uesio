@@ -70,7 +70,8 @@ const IconProp: definition.UC<Definition> = (props) => {
 						className={classes.iconpreview}
 						icon={icon || "add"}
 						context={context}
-						onClick={() => {
+						onClick={(e: MouseEvent) => {
+							e.stopPropagation()
 							setSelectedPath(context, iconPropPath)
 						}}
 					/>

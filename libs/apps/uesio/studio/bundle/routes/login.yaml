@@ -1,5 +1,5 @@
 name: login
 path: login
 view: uesio/core.login
-theme: uesio/studio.default
+theme: default
 title: Uesio - Login

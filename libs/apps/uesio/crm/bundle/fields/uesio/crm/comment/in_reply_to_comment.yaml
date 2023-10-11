@@ -1,5 +1,0 @@
-name: in_reply_to_comment
-type: REFERENCE
-label: In Reply to Comment
-reference:
-  collection: uesio/crm.comment

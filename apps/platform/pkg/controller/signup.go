@@ -2,8 +2,12 @@ package controller
 
 import (
 	"encoding/json"
-	"github.com/thecloudmasters/uesio/pkg/sess"
 	"net/http"
+
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/routing"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 
 	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/auth"
@@ -25,7 +29,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	signupMethod, err := auth.Signup(getSignupMethodID(mux.Vars(r)), payload, site)
+	systemSession, err := auth.GetSystemSession(site, nil)
 	if err != nil {
 		msg := "Signup failed: " + err.Error()
 		logger.Log(msg, logger.ERROR)
@@ -33,7 +37,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	publicUser, err := auth.GetPublicUser(site, nil)
+	signupMethod, err := auth.GetSignupMethod(getSignupMethodID(mux.Vars(r)), session)
 	if err != nil {
 		msg := "Signup failed: " + err.Error()
 		logger.Log(msg, logger.ERROR)
@@ -41,13 +45,38 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//Use the Guest user since the user might not be confirmed yet
-	redirectResponse(w, r, signupMethod.LandingRoute, publicUser, site)
+	user, err := auth.Signup(signupMethod, payload, systemSession)
+	if err != nil {
+		signupInternalServerError(w, err)
+		return
+	}
+
+	if signupMethod.AutoLogin {
+		loginRedirectResponse(w, r, user, systemSession)
+		return
+	}
+
+	redirectRouteNamespace, redirectRouteName, err := meta.ParseKey(signupMethod.LandingRoute)
+	if err != nil {
+		signupInternalServerError(w, err)
+		return
+	}
+
+	file.RespondJSON(w, r, &routing.LoginResponse{
+		RedirectRouteNamespace: redirectRouteNamespace,
+		RedirectRouteName:      redirectRouteName,
+	})
 
 }
 
-// ConfirmSignUpV2 directly confirms the user, logs them in, and redirects them to the Home route, without any manual intervention
-func ConfirmSignUpV2(w http.ResponseWriter, r *http.Request) {
+func signupInternalServerError(w http.ResponseWriter, err error) {
+	msg := "Signup failed: " + err.Error()
+	logger.Log(msg, logger.ERROR)
+	http.Error(w, msg, http.StatusInternalServerError)
+}
+
+// ConfirmSignUp directly confirms the user, logs them in, and redirects them to the Home route, without any manual intervention
+func ConfirmSignUp(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
 	site := session.GetSite()

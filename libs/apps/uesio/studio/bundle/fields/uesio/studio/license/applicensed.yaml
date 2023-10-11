@@ -2,4 +2,4 @@ name: applicensed
 type: REFERENCE
 label: Licensed app
 reference:
-  collection: uesio/studio.app
+  collection: app

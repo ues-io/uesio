@@ -1,16 +1,17 @@
 package meta
 
 type User struct {
-	BuiltIn   `yaml:",inline"`
-	FirstName string            `json:"uesio/core.firstname"`
-	LastName  string            `json:"uesio/core.lastname"`
-	Profile   string            `json:"uesio/core.profile"`
-	Username  string            `json:"uesio/core.username"`
-	Initials  string            `json:"uesio/core.initials"`
-	Email     string            `json:"uesio/core.email"`
-	Type      string            `json:"uesio/core.type"`
-	Picture   *UserFileMetadata `json:"uesio/core.picture"`
-	Language  string            `json:"uesio/core.language"`
+	BuiltIn     `yaml:",inline"`
+	FirstName   string            `json:"uesio/core.firstname"`
+	LastName    string            `json:"uesio/core.lastname"`
+	Profile     string            `json:"uesio/core.profile"`
+	Username    string            `json:"uesio/core.username"`
+	Initials    string            `json:"uesio/core.initials"`
+	Email       string            `json:"uesio/core.email"`
+	Type        string            `json:"uesio/core.type"`
+	Picture     *UserFileMetadata `json:"uesio/core.picture"`
+	Language    string            `json:"uesio/core.language"`
+	Permissions *PermissionSet    `json:"-"`
 }
 
 func (u *User) GetPicture() *UserFileMetadata {

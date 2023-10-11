@@ -1,6 +1,0 @@
-name: account_details
-path: account/{recordid}
-view: uesio/crm.account_details
-theme: uesio/core.default
-title: ""
-public: true

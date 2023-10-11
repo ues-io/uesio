@@ -1,4 +1,4 @@
 name: licensespricingvalues
 path: app/{app:\w*\/\w*}/licensespricing/applicensed/{applicensed:\w*\/\w*}
-view: uesio/studio.licensespricingvalues
-theme: uesio/studio.default
+view: licensespricingvalues
+theme: default

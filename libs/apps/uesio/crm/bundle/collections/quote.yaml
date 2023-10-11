@@ -1,5 +1,0 @@
-name: quote
-public: true
-label: quote
-pluralLabel: quotes
-nameField: uesio/crm.name

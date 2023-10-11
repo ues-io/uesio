@@ -1,5 +1,5 @@
 name: appdetail
 path: app/{app:\w*\/\w*}
-view: uesio/studio.app
-theme: uesio/studio.default
+view: app
+theme: default
 title: App Home

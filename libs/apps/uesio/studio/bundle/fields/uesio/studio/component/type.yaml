@@ -1,0 +1,4 @@
+name: type
+type: SELECT
+label: Type
+selectList: uesio/core.componenttypes

@@ -45,7 +45,7 @@ func (te *TestEvaluator) SelectGVal(ctx context.Context, k string) (interface{},
 func runFieldAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 
 	depMap := MetadataDependencyMap{}
-	var workspaceID string
+
 	metadataResponse := &adapt.MetadataCache{}
 	collections := datasource.MetadataRequest{
 		Options: &datasource.MetadataRequestOptions{
@@ -53,13 +53,13 @@ func runFieldAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, se
 		},
 	}
 
-	//Pre-Loop for formula fields
-	err := request.LoopChanges(func(change *adapt.ChangeItem) error {
+	workspaceID, err := GetWorkspaceIDFromParams(request.Params, connection, session)
+	if err != nil {
+		return err
+	}
 
-		err := checkWorkspaceID(&workspaceID, change)
-		if err != nil {
-			return err
-		}
+	//Pre-Loop for formula fields
+	err = request.LoopChanges(func(change *adapt.ChangeItem) error {
 
 		ftype, err := change.GetFieldAsString("uesio/studio.type")
 		if err != nil {
@@ -84,9 +84,9 @@ func runFieldAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, se
 		return err
 	}
 
-	wsSession := session.RemoveWorkspaceContext()
-	if workspaceID != "" {
-		err = datasource.AddWorkspaceContextByID(workspaceID, wsSession, connection)
+	if request.HasChanges() {
+
+		wsSession, err := datasource.AddWorkspaceContextByID(workspaceID, session, connection)
 		if err != nil {
 			return err
 		}
@@ -98,10 +98,6 @@ func runFieldAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, se
 	}
 
 	err = request.LoopChanges(func(change *adapt.ChangeItem) error {
-		err := checkWorkspaceID(&workspaceID, change)
-		if err != nil {
-			return err
-		}
 
 		ftype, err := change.GetFieldAsString("uesio/studio.type")
 		if err != nil {

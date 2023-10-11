@@ -1,5 +1,0 @@
-name: related_product
-type: REFERENCE
-label: Related Product
-reference:
-  collection: uesio/crm.product

@@ -1,4 +1,4 @@
-import { FunctionComponent, ReactNode } from "react"
+import { ReactNode } from "react"
 import { definition, styles } from "@uesio/ui"
 import CheckboxField from "../field/checkbox"
 
@@ -6,8 +6,7 @@ interface TableColumn {
 	width?: string
 }
 
-interface TableUtilityProps<R, C extends TableColumn>
-	extends definition.UtilityProps {
+interface TableUtilityProps<R, C extends TableColumn> {
 	rows: R[]
 	columns: C[]
 	isDeletedFunc?: (row: R) => boolean
@@ -23,9 +22,9 @@ interface TableUtilityProps<R, C extends TableColumn>
 	rowActionsFunc?: (row: R) => ReactNode
 }
 
-const Table: FunctionComponent<TableUtilityProps<unknown, TableColumn>> = (
-	props
-) => {
+const Table: definition.UtilityComponent<
+	TableUtilityProps<unknown, TableColumn>
+> = (props) => {
 	const {
 		id,
 		columns,

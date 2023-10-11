@@ -1,7 +1,6 @@
 package postgresio
 
 import (
-	"errors"
 	"fmt"
 	"net/url"
 
@@ -15,33 +14,29 @@ func getMigrationsDirectory() string {
 	return "file://./migrations"
 }
 func getConnectionString(credentials *adapt.Credentials) (string, error) {
-	host, ok := (*credentials)["host"]
-	if !ok {
-		return "", errors.New("no host provided in credentials")
+	host, err := credentials.GetRequiredEntry("host")
+	if err != nil {
+		return "", err
 	}
 
-	port, ok := (*credentials)["port"]
-	if !ok {
-		port = "5432"
+	port := credentials.GetEntry("port", "5432")
+
+	user, err := credentials.GetRequiredEntry("user")
+	if err != nil {
+		return "", err
 	}
 
-	user, ok := (*credentials)["user"]
-	if !ok {
-		return "", errors.New("no user provided in credentials")
+	password, err := credentials.GetRequiredEntry("password")
+	if err != nil {
+		return "", err
 	}
 
-	password, ok := (*credentials)["password"]
-	if !ok {
-		return "", errors.New("no password provided in credentials")
+	dbname, err := credentials.GetRequiredEntry("database")
+	if err != nil {
+		return "", err
 	}
 	// escape invalid url characters in the password
 	password = url.PathEscape(password)
-
-	dbname, ok := (*credentials)["database"]
-
-	if !ok {
-		return "", errors.New("no database name provided in credentials")
-	}
 
 	return fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", user, password, host, port, dbname), nil
 }

@@ -16,10 +16,10 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     profiles:
-      collection: uesio/studio.allmetadata
+      collection: uesio/studio.profile
       conditions:
-        - field: uesio/studio.type
-          value: profiles
+        - field: uesio/studio.allmetadata
+          value: true
         - field: uesio/studio.item
           value: $Param{namespace}.$Param{profilename}
     permissionsets:
@@ -33,143 +33,186 @@ definition:
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: uesio/core.id
+    impersonation:
+      collection: uesio/studio.workspaceuser
+      fields:
+        uesio/core.id:
+        uesio/studio.user:
+        uesio/studio.profile:
+        uesio/studio.workspace:
+      conditions:
+        - field: uesio/studio.workspace
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio/core.id
+        - field: uesio/studio.user
+          value: $User{id}
+        - field: uesio/studio.profile
+          value: $Param{namespace}.$Param{profilename}
   # Components are how we describe the layout of our view
   components:
-    - uesio/io.grid:
-        uesio.variant: uesio/studio.mainlayout
-        items:
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.topbar
+    - uesio/studio.mainlayout:
+        topbar:
+          - uesio/core.view:
+              view: uesio/studio.topbar
+              uesio.context:
+                wire: workspaces
+              params:
+                itemType: profiles
+                itemIcon: group
+                itemName: $Param{profilename}
+                itemNameSpace: $Param{namespace}
+        leftbar:
+          - uesio/core.view:
+              uesio.context:
+                wire: workspaces
+              view: uesio/studio.workspacenav
+              params:
+                selected: profiles
+        content:
+          - uesio/io.list:
+              uesio.id: profilesList
+              wire: profiles
+              mode: EDIT
               components:
-                - uesio/core.view:
-                    view: uesio/studio.topbar
-                    uesio.context:
-                      wire: workspaces
-                    params:
-                      itemType: profiles
-                      itemIcon: group
-                      itemName: $Param{profilename}
-                      itemNameSpace: $Param{namespace}
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.leftbar
-              components:
-                - uesio/core.view:
-                    uesio.context:
-                      wire: workspaces
-                    view: uesio/studio.workspacenav
-                    params:
-                      selected: profiles
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.content
-              components:
-                - uesio/io.list:
-                    uesio.id: profilesList
-                    wire: profiles
-                    mode: EDIT
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.main
+                    title: Profile - ${uesio/studio.name}
+                    subtitle: $Param{namespace}
+                    actions:
+                      - uesio/io.group:
+                          components:
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.primary
+                                text: $Label{uesio/io.save}
+                                uesio.display:
+                                  - type: wireHasChanges
+                                    wire: profiles
+                                signals:
+                                  - signal: wire/SAVE
+                                    wires:
+                                      - profiles
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: $Label{uesio/io.cancel}
+                                uesio.display:
+                                  - type: wireHasChanges
+                                    wire: profiles
+                                signals:
+                                  - signal: wire/CANCEL
+                                    wire: profiles
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: Use as public profile
+                                uesio.display:
+                                  - field: uesio/studio.publicprofile
+                                    wire: workspaces
+                                    value: $Param{namespace}.${uesio/studio.name}
+                                    operator: NOT_EQUALS
+                                signals:
+                                  - signal: wire/UPDATE_RECORD
+                                    wire: workspaces
+                                    field: uesio/studio.publicprofile
+                                    value: $Param{namespace}.${uesio/studio.name}
+                                  - signal: wire/SAVE
+                                    wires:
+                                      - workspaces
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: Stop using as public profile
+                                uesio.display:
+                                  - field: uesio/studio.publicprofile
+                                    wire: workspaces
+                                    value: $Param{namespace}.${uesio/studio.name}
+                                    operator: EQUALS
+                                signals:
+                                  - signal: wire/UPDATE_RECORD
+                                    wire: workspaces
+                                    field: uesio/studio.publicprofile
+                                    value: ""
+                                  - signal: wire/SAVE
+                                    wires:
+                                      - workspaces
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: $Label{uesio/io.delete}
+                                uesio.display:
+                                  - field: uesio/studio.publicprofile
+                                    wire: workspaces
+                                    value: $Param{namespace}.${uesio/studio.name}
+                                    operator: NOT_EQUALS
+                                signals:
+                                  - signal: panel/TOGGLE
+                                    panel: deleteProfile
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.box:
+                          uesio.context:
+                            workspace:
+                              name: $Param{workspacename}
+                              app: $Param{app}
+                          components:
+                            - uesio/io.field:
+                                uesio.display:
+                                  - type: paramValue
+                                    param: app
+                                    field: uesio/core.dynamiccollection
+                                    operator: EQUALS
+                                    value: $Param{namespace}
+                                fieldId: uesio/studio.permissionsetsrefs
+                                label: Permission Sets assigned to this Profile
+                            - uesio/io.field:
+                                uesio.display:
+                                  - type: paramValue
+                                    param: app
+                                    field: uesio/core.dynamiccollection
+                                    operator: NOT_EQUALS
+                                    value: $Param{namespace}
+                                fieldId: uesio/studio.permissionsetsrefs
+                                label: Permission Sets assigned to this Profile
+                                uesio.context:
+                                  fieldMode: READ
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
                     components:
                       - uesio/io.titlebar:
-                          uesio.variant: uesio/io.main
-                          title: Profile - ${uesio/studio.name}
-                          subtitle: $Param{namespace}
+                          uesio.variant: uesio/io.section
+                          title: Impersonation
+                      - uesio/io.titlebar:
                           actions:
                             - uesio/io.group:
                                 components:
                                   - uesio/io.button:
-                                      uesio.variant: uesio/io.primary
-                                      text: $Label{uesio/io.save}
+                                      uesio.variant: uesio/io.secondary
                                       uesio.display:
-                                        - type: wireHasChanges
-                                          wire: profiles
+                                        - type: wireHasNoRecords
+                                          wire: impersonation
+                                      text: Preview as this Profile
                                       signals:
-                                        - signal: wire/SAVE
+                                        - signal: bot/CALL
+                                          bot: uesio/studio.setworkspaceuser
+                                          params:
+                                            workspaceid: ${workspaces:uesio/core.id}
+                                            profile: ${uesio/studio.namespace}.${uesio/studio.name}
+                                        - signal: wire/LOAD
                                           wires:
-                                            - profiles
+                                            - impersonation
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      text: $Label{uesio/io.cancel}
                                       uesio.display:
-                                        - type: wireHasChanges
-                                          wire: profiles
+                                        - type: wireHasRecords
+                                          wire: impersonation
+                                      text: Stop Previewing as this Profile
                                       signals:
-                                        - signal: wire/CANCEL
-                                          wire: profiles
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: Use as public profile
-                                      uesio.display:
-                                        - field: uesio/studio.publicprofile
-                                          wire: workspaces
-                                          value: $Param{namespace}.${uesio/studio.name}
-                                          operator: NOT_EQUALS
-                                      signals:
-                                        - signal: wire/UPDATE_RECORD
-                                          wire: workspaces
-                                          field: uesio/studio.publicprofile
-                                          value: $Param{namespace}.${uesio/studio.name}
-                                        - signal: wire/SAVE
+                                        - signal: bot/CALL
+                                          bot: uesio/studio.setworkspaceuser
+                                          params:
+                                            workspaceid: ${workspaces:uesio/core.id}
+                                            profile: ""
+                                        - signal: wire/LOAD
                                           wires:
-                                            - workspaces
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: Stop using as public profile
-                                      uesio.display:
-                                        - field: uesio/studio.publicprofile
-                                          wire: workspaces
-                                          value: $Param{namespace}.${uesio/studio.name}
-                                          operator: EQUALS
-                                      signals:
-                                        - signal: wire/UPDATE_RECORD
-                                          wire: workspaces
-                                          field: uesio/studio.publicprofile
-                                          value: ""
-                                        - signal: wire/SAVE
-                                          wires:
-                                            - workspaces
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: $Label{uesio/io.delete}
-                                      uesio.display:
-                                        - field: uesio/studio.publicprofile
-                                          wire: workspaces
-                                          value: $Param{namespace}.${uesio/studio.name}
-                                          operator: NOT_EQUALS
-                                      signals:
-                                        - signal: panel/TOGGLE
-                                          panel: deleteProfile
-                      - uesio/io.box:
-                          uesio.variant: uesio/io.section
-                          components:
-                            - uesio/io.box:
-                                components:
-                                  - uesio/builder.multimetadatafield:
-                                      uesio.display:
-                                        - type: paramValue
-                                          param: app
-                                          field: uesio/core.dynamiccollection
-                                          operator: EQUALS
-                                          value: $Param{namespace}
-                                      fieldId: uesio/studio.permissionsetsrefs
-                                      metadataType: PERMISSIONSET
-                                      label: Permission Sets assigned to this Profile
-                                      uesio.context:
-                                        workspace:
-                                          name: $Param{workspacename}
-                                          app: $Param{app}
-                                  - uesio/builder.multimetadatafield:
-                                      uesio.display:
-                                        - type: paramValue
-                                          param: app
-                                          field: uesio/core.dynamiccollection
-                                          operator: NOT_EQUALS
-                                          value: $Param{namespace}
-                                      fieldId: uesio/studio.permissionsetsrefs
-                                      metadataType: PERMISSIONSET
-                                      label: Permission Sets assigned to this Profile
-                                      uesio.context:
-                                        workspace:
-                                          name: $Param{workspacename}
-                                          app: $Param{app}
-                                        fieldMode: READ
+                                            - impersonation
   panels:
     deleteProfile:
       uesio.type: uesio/io.dialog

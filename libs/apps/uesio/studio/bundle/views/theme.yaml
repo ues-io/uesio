@@ -16,156 +16,148 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     themes:
-      collection: uesio/studio.allmetadata
+      collection: uesio/studio.theme
       conditions:
-        - field: uesio/studio.type
-          value: themes
+        - field: uesio/studio.allmetadata
+          value: true
         - field: uesio/studio.item
           value: $Param{namespace}.$Param{themename}
   # Components are how we describe the layout of our view
   components:
-    - uesio/io.grid:
-        uesio.variant: uesio/studio.mainlayout
-        items:
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.topbar
+    - uesio/studio.mainlayout:
+        topbar:
+          - uesio/core.view:
+              view: uesio/studio.topbar
+              uesio.context:
+                wire: workspaces
+              params:
+                itemType: themes
+                itemIcon: palette
+                itemName: $Param{themename}
+                itemNameSpace: $Param{namespace}
+        leftbar:
+          - uesio/core.view:
+              uesio.context:
+                wire: workspaces
+              view: uesio/studio.workspacenav
+              params:
+                selected: themes
+        content:
+          - uesio/io.list:
+              uesio.id: themesDeck
+              wire: themes
+              mode: READ
               components:
-                - uesio/core.view:
-                    view: uesio/studio.topbar
-                    uesio.context:
-                      wire: workspaces
-                    params:
-                      itemType: themes
-                      itemIcon: palette
-                      itemName: $Param{themename}
-                      itemNameSpace: $Param{namespace}
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.leftbar
-              components:
-                - uesio/core.view:
-                    uesio.context:
-                      wire: workspaces
-                    view: uesio/studio.workspacenav
-                    params:
-                      selected: themes
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.content
-              components:
-                - uesio/io.list:
-                    uesio.id: themesDeck
-                    wire: themes
-                    mode: READ
-                    components:
-                      - uesio/io.titlebar:
-                          uesio.variant: uesio/io.main
-                          title: Theme - ${uesio/studio.name}
-                          subtitle: $Param{namespace}
-                          actions:
-                            - uesio/io.group:
-                                components:
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.primary
-                                      text: $Label{uesio/io.save}
-                                      hotkey: "meta+s"
-                                      uesio.display:
-                                        - type: wireHasChanges
-                                          wire: themes
-                                        - type: paramValue
-                                          param: app
-                                          field: uesio/core.dynamiccollection
-                                          operator: EQUALS
-                                          value: $Param{namespace}
-                                      signals:
-                                        - signal: wire/SAVE
-                                          wire: themes
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: $Label{uesio/io.cancel}
-                                      hotkey: "meta+shift+."
-                                      uesio.display:
-                                        - type: wireHasChanges
-                                          wire: themes
-                                        - type: paramValue
-                                          param: app
-                                          field: uesio/core.dynamiccollection
-                                          operator: EQUALS
-                                          value: $Param{namespace}
-                                      signals:
-                                        - signal: wire/CANCEL
-                                          wire: themes
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: Use as default theme
-                                      uesio.display:
-                                        - field: uesio/studio.defaulttheme
-                                          wire: workspaces
-                                          value: $Param{namespace}.${uesio/studio.name}
-                                          operator: NOT_EQUALS
-                                      signals:
-                                        - signal: wire/UPDATE_RECORD
-                                          wire: workspaces
-                                          field: uesio/studio.defaulttheme
-                                          value: $Param{namespace}.${uesio/studio.name}
-                                        - signal: wire/SAVE
-                                          wires:
-                                            - workspaces
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: Stop using as default theme
-                                      uesio.display:
-                                        - field: uesio/studio.defaulttheme
-                                          wire: workspaces
-                                          value: $Param{namespace}.${uesio/studio.name}
-                                          operator: EQUALS
-                                      signals:
-                                        - signal: wire/UPDATE_RECORD
-                                          wire: workspaces
-                                          field: uesio/studio.defaulttheme
-                                          value: ""
-                                        - signal: wire/SAVE
-                                          wires:
-                                            - workspaces
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: $Label{uesio/io.delete}
-                                      uesio.display:
-                                        - type: paramValue
-                                          param: app
-                                          field: uesio/core.dynamiccollection
-                                          operator: EQUALS
-                                          value: $Param{namespace}
-                                      signals:
-                                        - signal: panel/TOGGLE
-                                          panel: deleteTheme
-                      - uesio/io.box:
-                          uesio.variant: uesio/io.section
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.main
+                    title: Theme - ${uesio/studio.name}
+                    subtitle: $Param{namespace}
+                    actions:
+                      - uesio/io.group:
                           components:
-                            - uesio/io.grid:
-                                uesio.variant: uesio/io.four_columns
-                                items:
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.name
-                            - uesio/studio.codefield:
-                                fieldId: uesio/studio.definition
-                                height: 350px
-                                language: yaml
-                                mode: READ
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.primary
+                                text: $Label{uesio/io.save}
+                                hotkey: "meta+s"
                                 uesio.display:
+                                  - type: wireHasChanges
+                                    wire: themes
                                   - type: paramValue
                                     param: app
                                     field: uesio/core.dynamiccollection
-                                    operator: NOT_EQUALS
+                                    operator: EQUALS
                                     value: $Param{namespace}
-                            - uesio/studio.codefield:
-                                fieldId: uesio/studio.definition
-                                height: 350px
-                                language: yaml
+                                signals:
+                                  - signal: wire/SAVE
+                                    wire: themes
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: $Label{uesio/io.cancel}
+                                hotkey: "meta+shift+."
+                                uesio.display:
+                                  - type: wireHasChanges
+                                    wire: themes
+                                  - type: paramValue
+                                    param: app
+                                    field: uesio/core.dynamiccollection
+                                    operator: EQUALS
+                                    value: $Param{namespace}
+                                signals:
+                                  - signal: wire/CANCEL
+                                    wire: themes
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: Use as default theme
+                                uesio.display:
+                                  - field: uesio/studio.defaulttheme
+                                    wire: workspaces
+                                    value: $Param{namespace}.${uesio/studio.name}
+                                    operator: NOT_EQUALS
+                                signals:
+                                  - signal: wire/UPDATE_RECORD
+                                    wire: workspaces
+                                    field: uesio/studio.defaulttheme
+                                    value: $Param{namespace}.${uesio/studio.name}
+                                  - signal: wire/SAVE
+                                    wires:
+                                      - workspaces
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: Stop using as default theme
+                                uesio.display:
+                                  - field: uesio/studio.defaulttheme
+                                    wire: workspaces
+                                    value: $Param{namespace}.${uesio/studio.name}
+                                    operator: EQUALS
+                                signals:
+                                  - signal: wire/UPDATE_RECORD
+                                    wire: workspaces
+                                    field: uesio/studio.defaulttheme
+                                    value: ""
+                                  - signal: wire/SAVE
+                                    wires:
+                                      - workspaces
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: $Label{uesio/io.delete}
                                 uesio.display:
                                   - type: paramValue
                                     param: app
                                     field: uesio/core.dynamiccollection
                                     operator: EQUALS
                                     value: $Param{namespace}
+                                signals:
+                                  - signal: panel/TOGGLE
+                                    panel: deleteTheme
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.grid:
+                          uesio.variant: uesio/io.four_columns
+                          items:
+                            - uesio/io.field:
+                                fieldId: uesio/studio.name
+                      - uesio/studio.codefield:
+                          fieldId: uesio/studio.definition
+                          height: 350px
+                          language: yaml
+                          mode: READ
+                          uesio.display:
+                            - type: paramValue
+                              param: app
+                              field: uesio/core.dynamiccollection
+                              operator: NOT_EQUALS
+                              value: $Param{namespace}
+                      - uesio/studio.codefield:
+                          fieldId: uesio/studio.definition
+                          height: 350px
+                          language: yaml
+                          uesio.display:
+                            - type: paramValue
+                              param: app
+                              field: uesio/core.dynamiccollection
+                              operator: EQUALS
+                              value: $Param{namespace}
   panels:
     deleteTheme:
       uesio.type: uesio/io.dialog

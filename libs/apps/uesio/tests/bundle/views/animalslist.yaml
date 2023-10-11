@@ -1,0 +1,24 @@
+name: animalslist
+definition:
+  # Wires connect to data in collections
+  wires:
+    animals:
+      collection: uesio/tests.animal
+      fields:
+        uesio/tests.genus:
+        uesio/tests.species:
+      batchsize: 2
+      conditions:
+        - field: uesio/tests.genus
+          operator: EQ
+          value: Mouton
+  # Components determine the layout and composition of your view
+  components:
+    - uesio/io.button:
+        text: $Label{uesio/tests.helloworld}
+    - uesio/io.table:
+        wire: animals
+        columns:
+          # SHOULD be visible to Public user due to Field level security
+          - field: uesio/tests.genus
+          - field: uesio/tests.species

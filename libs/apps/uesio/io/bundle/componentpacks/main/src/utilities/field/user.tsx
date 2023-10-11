@@ -1,4 +1,3 @@
-import { FunctionComponent } from "react"
 import { definition, context as ctx, collection, wire, api } from "@uesio/ui"
 import ReferenceField, { ReferenceFieldOptions } from "./reference"
 import Tile from "../tile/tile"
@@ -9,7 +8,7 @@ export type UserFieldOptions = {
 	subtitle?: string
 }
 
-interface UserFieldProps extends definition.UtilityProps {
+interface UserFieldProps {
 	path: string
 	fieldMetadata: collection.Field
 	fieldId: string
@@ -20,7 +19,7 @@ interface UserFieldProps extends definition.UtilityProps {
 	setValue?: (value: wire.PlainWireRecord | null) => void
 }
 
-const UserField: FunctionComponent<UserFieldProps> = (props) => {
+const UserField: definition.UtilityComponent<UserFieldProps> = (props) => {
 	const { mode, record, fieldId, context, options, refoptions, setValue } =
 		props
 	const readonly = mode === "READ"

@@ -1,5 +1,7 @@
 import { component, context, definition, metadata, wire } from "@uesio/ui"
 import { PropertiesPanelSection } from "../api/propertysection"
+import { FullPath } from "../api/path"
+import { ReactElement } from "react"
 
 type FieldUpdate = {
 	field: string
@@ -28,6 +30,7 @@ type BaseProperty = {
 	displayConditions?: component.DisplayCondition[]
 	// Updates to perform when this property's value is changed.
 	onChange?: PropertyOnChange[]
+	unique?: boolean
 }
 type TextProperty = {
 	type: "TEXT"
@@ -71,7 +74,7 @@ type MetadataProperty = {
 } & BaseProperty
 
 type MultiMetadataProperty = {
-	type: "MULTI_METADATA"
+	type: "MULTIMETADATA"
 	metadataType: metadata.MetadataType
 	groupingPath?: string
 	groupingValue?: string
@@ -102,25 +105,53 @@ type WiresProperty = {
 	type: "WIRES"
 } & BaseProperty
 
+type FieldMetadataProperty = {
+	type: "FIELD_METADATA"
+	fieldProperty: string
+	metadataProperty: wire.FieldMetadataPropertyPath
+	wireProperty?: string
+	wireName?: string
+} & BaseProperty
+
 type FieldPropertyBase = {
 	wireField?: string
 	wireName?: string
 } & BaseProperty
 
-type FieldMetadataProperty = {
-	type: "FIELD_METADATA"
-	fieldProperty: string
-	metadataProperty: "type" // TODO: Add more properties here, e.g. referenceType, etc.
-	wireProperty?: string
-	wireName?: string
-} & BaseProperty
-
+// FIELD / FIELDS are for selecting fields in a WIRE.
 type FieldProperty = {
 	type: "FIELD"
 } & FieldPropertyBase
 type FieldsProperty = {
 	type: "FIELDS"
 } & FieldPropertyBase
+
+// FIELD_VALUE / FIELD_VALUES
+type FieldValuePropertyBase = {
+	wireProperty: string
+	fieldProperty: string
+} & BaseProperty
+
+type FieldValueProperty = {
+	type: "FIELD_VALUE"
+} & FieldValuePropertyBase
+type FieldValuesProperty = {
+	type: "FIELD_VALUES"
+} & FieldValuePropertyBase
+
+type CollectionFieldPropertyBase = {
+	collectionName?: string
+	collectionPath?: string
+	allowReferenceTraversal?: boolean
+} & BaseProperty
+
+// COLLECTION_FIELD / COLLECTION_FIELDS are for selecting fields in a COLLECTION.
+type CollectionFieldProperty = {
+	type: "COLLECTION_FIELD"
+} & CollectionFieldPropertyBase
+type CollectionFieldsProperty = {
+	type: "COLLECTION_FIELDS"
+} & CollectionFieldPropertyBase
 
 type SelectProperty = {
 	type: "SELECT"
@@ -150,13 +181,41 @@ type ComponentPropertiesGetter = (
 
 type DisplayTemplateGetter = (record: wire.PlainWireRecord) => string
 
+interface ListPropertyActionOptions {
+	context: context.Context
+	path: FullPath
+	items: definition.DefinitionMap[]
+}
+
+interface ListPropertyItemChildrenFunctionOptions {
+	context: context.Context
+	path: FullPath
+	item: wire.PlainWireRecord
+	index: number
+}
+
+type ListPropertyItemChildrenFunction = (
+	options: ListPropertyItemChildrenFunctionOptions
+) => ReactElement | null
+
+type ListPropertyActionFunction = (options: ListPropertyActionOptions) => void
+
+interface ListPropertyAction {
+	icon?: string
+	label?: string
+	defaultDefinition?: definition.DefinitionMap
+	action?: ListPropertyActionFunction
+}
+
 interface ListPropertyItemsDefinition {
+	actions?: ListPropertyAction[]
 	addLabel?: string
 	defaultDefinition?: definition.DefinitionMap
 	displayTemplate?: string | DisplayTemplateGetter
 	properties?: ComponentProperty[] | ComponentPropertiesGetter
 	sections?: PropertiesPanelSection[]
 	title?: string
+	children?: ListPropertyItemChildrenFunction
 }
 
 type ListProperty = {
@@ -164,6 +223,14 @@ type ListProperty = {
 	items?: ListPropertyItemsDefinition
 	subtype?: wire.FieldType
 	subtypeOptions?: wire.SelectOption[]
+} & BaseProperty
+
+/**
+ * Signals property is a convenience wrapper around LIST
+ * which will add in all necessary sub-properties to allowing editing a list of Signals
+ */
+type SignalsProperty = {
+	type: "SIGNALS"
 } & BaseProperty
 
 type ParamsProperty = {
@@ -191,6 +258,8 @@ type ComponentProperty =
 	| ParamProperty
 	| SelectProperty
 	| ConditionProperty
+	| CollectionFieldProperty
+	| CollectionFieldsProperty
 	| WireProperty
 	| WiresProperty
 	| FieldMetadataProperty
@@ -201,13 +270,18 @@ type ComponentProperty =
 	| MapProperty
 	| ParamsProperty
 	| ListProperty
+	| SignalsProperty
 	| TextAreaProperty
 	| IconProperty
 	| StructProperty
 	| DateProperty
+	| CollectionFieldProperty
+	| CollectionFieldsProperty
+	| FieldValueProperty
+	| FieldValuesProperty
 
 const getStyleVariantProperty = (componentType: string): ComponentProperty => ({
-	name: "uesio.variant",
+	name: component.STYLE_VARIANT,
 	type: "METADATA",
 	metadataType: "COMPONENTVARIANT",
 	label: "Variant",
@@ -216,11 +290,18 @@ const getStyleVariantProperty = (componentType: string): ComponentProperty => ({
 
 export type {
 	BotProperty,
+	CollectionFieldProperty,
 	ComponentProperty,
+	ComponentPropertiesGetter,
 	FieldProperty,
 	FieldMetadataProperty,
 	IconProperty,
 	ListProperty,
+	ListPropertyAction,
+	ListPropertyActionFunction,
+	ListPropertyActionOptions,
+	ListPropertyItemChildrenFunction,
+	ListPropertyItemChildrenFunctionOptions,
 	ListPropertyItemsDefinition,
 	MapProperty,
 	PropertyOnChange,
@@ -231,6 +312,7 @@ export type {
 	NumberProperty,
 	CheckboxProperty,
 	DateProperty,
+	FieldValueProperty,
 }
 
 export { getStyleVariantProperty }

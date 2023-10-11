@@ -1,0 +1,4 @@
+name: view_with_single_optional_param
+path: view_with_single_optional_param
+view: view_with_single_optional_param
+title: View that has a single optional param. SHOW=$Param{show}

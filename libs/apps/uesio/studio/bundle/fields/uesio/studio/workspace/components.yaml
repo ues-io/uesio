@@ -1,0 +1,7 @@
+name: components
+type: REFERENCEGROUP
+label: Components
+referenceGroup:
+  collection: component
+  field: workspace
+  onDelete: CASCADE

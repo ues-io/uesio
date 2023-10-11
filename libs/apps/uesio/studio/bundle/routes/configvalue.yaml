@@ -1,5 +1,5 @@
 name: configvalue
-path: app/{app:\w*\/\w*}/workspace/{workspacename}/configvalues/{configvaluename}
-view: uesio/studio.configvalue
-theme: uesio/studio.default
+path: app/{app:\w*\/\w*}/workspace/{workspacename}/configvalues/{namespace:\w*\/\w*}/{configvaluename}
+view: configvalue
+theme: default
 title: "Config Value: $Param{configvaluename}"

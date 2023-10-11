@@ -1,7 +1,6 @@
-import { FunctionComponent } from "react"
 import { definition, api, wire, collection, styles } from "@uesio/ui"
 
-interface WeekFilterProps extends definition.UtilityProps {
+interface WeekFilterProps {
 	path: string
 	wire: wire.Wire
 	fieldMetadata: collection.Field
@@ -48,7 +47,7 @@ const StyleDefaults = Object.freeze({
 	readonly: [],
 })
 
-const WeekFilter: FunctionComponent<WeekFilterProps> = (props) => {
+const WeekFilter: definition.UtilityComponent<WeekFilterProps> = (props) => {
 	const { wire, context, condition } = props
 	const wireId = wire.getId()
 

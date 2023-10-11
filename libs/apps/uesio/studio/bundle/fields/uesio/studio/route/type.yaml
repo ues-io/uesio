@@ -1,6 +1,6 @@
 name: type
 type: SELECT
 label: Route type
-selectList: uesio/studio.routetype
+selectList: routetype
 required: false
 createOnly: true

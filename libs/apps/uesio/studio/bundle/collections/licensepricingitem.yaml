@@ -5,5 +5,7 @@ uniqueKey:
   - uesio/studio.metadatatype
   - uesio/studio.actiontype
 nameField: uesio/studio.app
+access: protected
+accessField: uesio/studio.license
 label: license pricing item
 pluralLabel: license pricing items

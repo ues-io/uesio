@@ -23,20 +23,6 @@ func NewBaseField(collectionKey, namespace, name string) *Field {
 	}
 }
 
-func NewFields(keys map[string]bool, collectionKey string) ([]BundleableItem, error) {
-	items := []BundleableItem{}
-
-	for key := range keys {
-		newField, err := NewField(collectionKey, key)
-		if err != nil {
-			return nil, err
-		}
-		items = append(items, newField)
-	}
-
-	return items, nil
-}
-
 type Field struct {
 	BuiltIn                `yaml:",inline"`
 	BundleableBase         `yaml:",inline"`
@@ -54,6 +40,7 @@ type Field struct {
 	ValidationMetadata     *ValidationMetadata     `yaml:"validate,omitempty" json:"uesio/studio.validate"`
 	AutoNumberMetadata     *AutoNumberMetadata     `yaml:"autonumber,omitempty" json:"uesio/studio.autonumber"`
 	FormulaMetadata        *FormulaMetadata        `yaml:"formula,omitempty" json:"uesio/studio.formula"`
+	MetadataFieldMetadata  *MetadataFieldMetadata  `yaml:"metadata,omitempty" json:"uesio/studio.metadata"`
 	AutoPopulate           string                  `yaml:"autopopulate,omitempty" json:"uesio/studio.autopopulate"`
 	SubFields              []SubField              `yaml:"subfields,omitempty" json:"uesio/studio.subfields"`
 	SubType                string                  `yaml:"subtype,omitempty" json:"uesio/studio.subtype"`
@@ -65,24 +52,26 @@ type FieldWrapper Field
 
 func GetFieldTypes() map[string]bool {
 	return map[string]bool{
-		"TEXT":           true,
-		"NUMBER":         true,
-		"LONGTEXT":       true,
-		"CHECKBOX":       true,
-		"MULTISELECT":    true,
-		"SELECT":         true,
-		"REFERENCE":      true,
-		"FILE":           true,
-		"USER":           true,
-		"LIST":           true,
-		"DATE":           true,
-		"MAP":            true,
-		"TIMESTAMP":      true,
-		"EMAIL":          true,
 		"AUTONUMBER":     true,
-		"REFERENCEGROUP": true,
+		"CHECKBOX":       true,
+		"DATE":           true,
+		"EMAIL":          true,
+		"FILE":           true,
 		"FORMULA":        true,
+		"LIST":           true,
+		"LONGTEXT":       true,
+		"MAP":            true,
+		"METADATA":       true,
+		"MULTIMETADATA":  true,
+		"MULTISELECT":    true,
+		"NUMBER":         true,
+		"REFERENCE":      true,
+		"REFERENCEGROUP": true,
+		"SELECT":         true,
 		"STRUCT":         true,
+		"TEXT":           true,
+		"TIMESTAMP":      true,
+		"USER":           true,
 	}
 }
 
@@ -129,7 +118,9 @@ func (f *Field) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
-	fieldType := GetNodeValueAsString(node, "type")
+	fieldType := pickStringProperty(node, "type", "")
+	f.Type = fieldType
+
 	_, ok := GetFieldTypes()[fieldType]
 	if !ok {
 		return errors.New("Invalid Field Type for Field: " + f.GetKey() + " : " + fieldType)
@@ -137,78 +128,91 @@ func (f *Field) UnmarshalYAML(node *yaml.Node) error {
 	if f.CollectionRef == "" {
 		return errors.New("Invalid Collection Value for Field: " + f.GetKey())
 	}
-	err = setMapNode(node, "collection", f.CollectionRef)
-	if err != nil {
-		return err
-	}
 
 	if fieldType == "REFERENCE" {
-		err := validateReferenceField(node, f.GetKey())
+		f.ReferenceMetadata = &ReferenceMetadata{
+			Namespace: f.Namespace,
+		}
+		referenceNode := pickNodeFromMap(node, "reference")
+		if referenceNode == nil {
+			return errors.New("no reference metadata property provided")
+		}
+		// It's unfortunate that we have to do this check, but golang's YAML
+		// library doesn't call the custom unmarshaler if the node is a null scalar.
+		if nodeIsNull(referenceNode) {
+			return errors.New("reference metadata property is empty")
+		}
+		err := referenceNode.Decode(f.ReferenceMetadata)
 		if err != nil {
 			return err
 		}
 	}
-	if fieldType == "SELECT" {
-		err := validateSelectListField(node, f.GetKey())
+
+	if fieldType == "REFERENCEGROUP" {
+		f.ReferenceGroupMetadata = &ReferenceGroupMetadata{
+			Namespace: f.Namespace,
+		}
+		referenceGroupNode := pickNodeFromMap(node, "referenceGroup")
+		if referenceGroupNode == nil {
+			return errors.New("no reference group metadata property provided")
+		}
+		// It's unfortunate that we have to do this check, but golang's YAML
+		// library doesn't call the custom unmarshaler if the node is a null scalar.
+		if nodeIsNull(referenceGroupNode) {
+			return errors.New("reference group metadata property is empty")
+		}
+		err := referenceGroupNode.Decode(f.ReferenceGroupMetadata)
 		if err != nil {
 			return err
 		}
 	}
+
+	if fieldType == "SELECT" || fieldType == "MULTISELECT" {
+		f.SelectList, err = pickRequiredMetadataItem(node, "selectList", f.Namespace)
+		if err != nil {
+			return fmt.Errorf("Invalid selectlist metadata provided for field: " + f.GetKey() + " : Missing select list name")
+		}
+	}
+
 	if fieldType == "NUMBER" {
-		err := validateNumberField(node, f.GetKey())
-		if err != nil {
-			f.NumberMetadata = &NumberMetadata{Decimals: 0}
-		}
+		f.NumberMetadata = &NumberMetadata{}
+	}
+
+	if fieldType == "METADATA" || fieldType == "MULTIMETADATA" {
+		f.MetadataFieldMetadata = &MetadataFieldMetadata{}
 	}
 
 	if fieldType == "FILE" {
-		err := validateFileField(node, f.GetKey())
-		if err != nil {
-			return err
+		f.FileMetadata = &FileMetadata{
+			FileSource: "uesio/core.platform",
+			Namespace:  f.Namespace,
 		}
 	}
+
 	return node.Decode((*FieldWrapper)(f))
 }
 
-func validateFileField(node *yaml.Node, fieldKey string) error {
-	fileNode, err := getOrCreateMapNode(node, "file")
-	if err != nil {
-		return fmt.Errorf("Invalid File metadata provided for field: " + fieldKey + " : " + err.Error())
+func (f *Field) MarshalYAML() (interface{}, error) {
+
+	// We have to pass our namespace down to our children so that they
+	// can properly localize their references to other metadata items
+	if f.ReferenceMetadata != nil {
+		f.ReferenceMetadata.Namespace = f.Namespace
 	}
-	return setDefaultValue(fileNode, "filesource", "uesio/core.platform")
+
+	if f.FileMetadata != nil {
+		f.FileMetadata.Namespace = f.Namespace
+	}
+
+	if f.ReferenceGroupMetadata != nil {
+		f.ReferenceGroupMetadata.Namespace = f.Namespace
+	}
+
+	f.SelectList = GetLocalizedKey(f.SelectList, f.Namespace)
+
+	return (*FieldWrapper)(f), nil
 }
 
-func validateNumberField(node *yaml.Node, fieldKey string) error {
-	numberNode, err := GetMapNode(node, "number")
-	if err != nil {
-		return fmt.Errorf("Invalid Number metadata provided for field: " + fieldKey + " : " + err.Error())
-	}
-	decimals := GetNodeValueAsString(numberNode, "decimals")
-	if decimals == "" {
-		return fmt.Errorf("Invalid Number metadata provided for field: " + fieldKey + " : No decimals value provided")
-	}
-	return nil
-}
-
-func validateSelectListField(node *yaml.Node, fieldKey string) error {
-	selectListName := GetNodeValueAsString(node, "selectList")
-	if selectListName == "" {
-		return fmt.Errorf("Invalid selectlist metadata provided for field: " + fieldKey + " : Missing select list name")
-	}
-	return nil
-}
-
-func validateReferenceField(node *yaml.Node, fieldKey string) error {
-	referenceNode, err := GetMapNode(node, "reference")
-	if err != nil {
-		return fmt.Errorf("Invalid Reference metadata provided for field: " + fieldKey + " : " + err.Error())
-	}
-	referencedCollection := GetNodeValueAsString(referenceNode, "collection")
-	if referencedCollection == "" {
-		return fmt.Errorf("Invalid Reference metadata provided for field: " + fieldKey + " : No collection provided")
-	}
-	return nil
-}
 func (c *Field) IsPublic() bool {
 	return true
 }

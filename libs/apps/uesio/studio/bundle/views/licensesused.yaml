@@ -51,89 +51,81 @@ definition:
           desc: true
   # Components are how we describe the layout of our view
   components:
-    - uesio/io.grid:
-        uesio.variant: uesio/studio.mainlayout
-        items:
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.topbar
-              components:
-                - uesio/core.view:
-                    view: uesio/studio.topbar
-                    uesio.context:
-                      wire: apps
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.leftbar
-              components:
-                - uesio/core.view:
-                    uesio.id: appnavview
-                    view: uesio/studio.appnav
-                    uesio.context:
-                      wire: apps
-                    params:
-                      app: $Param{app}
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.content
+    - uesio/studio.mainlayout:
+        topbar:
+          - uesio/core.view:
+              view: uesio/studio.topbar
+              uesio.context:
+                wire: apps
+        leftbar:
+          - uesio/core.view:
+              uesio.id: appnavview
+              view: uesio/studio.appnav
+              uesio.context:
+                wire: apps
+              params:
+                app: $Param{app}
+        content:
+          - uesio/io.titlebar:
+              uesio.variant: uesio/io.main
+              title: Billing & Costs
+              subtitle: Billing & Costs for $Param{app}
+          - uesio/io.box:
+              uesio.variant: uesio/io.section
               components:
                 - uesio/io.titlebar:
-                    uesio.variant: uesio/io.main
-                    title: Billing & Costs
-                    subtitle: Billing & Costs for $Param{app}
-                - uesio/io.box:
                     uesio.variant: uesio/io.section
-                    components:
-                      - uesio/io.titlebar:
-                          uesio.variant: uesio/io.section
-                          title: Invoices
-                          subtitle: a list of goods sent or services provided, with a statement of the sum due for these.
-                      - uesio/io.table:
-                          uesio.id: invoiceTable
-                          wire: invoices
-                          pagesize: 10
-                          columns:
-                            - field: uesio/studio.autoid
-                            - field: uesio/studio.total
-                            - field: uesio/studio.date
-                          rowactions:
-                            - text: Details
-                              signals:
-                                - signal: route/NAVIGATE
-                                  path: app/$Param{app}/invoice/${uesio/studio.autoid}
-                - uesio/io.box:
+                    title: Invoices
+                    subtitle: a list of goods sent or services provided, with a statement of the sum due for these.
+                - uesio/io.table:
+                    uesio.id: invoiceTable
+                    wire: invoices
+                    pagesize: 10
+                    columns:
+                      - field: uesio/studio.autoid
+                      - field: uesio/studio.total
+                      - field: uesio/studio.date
+                    rowactions:
+                      - text: Details
+                        signals:
+                          - signal: route/NAVIGATE
+                            path: app/$Param{app}/invoice/${uesio/studio.autoid}
+          - uesio/io.box:
+              uesio.variant: uesio/io.section
+              components:
+                - uesio/io.titlebar:
                     uesio.variant: uesio/io.section
-                    components:
-                      - uesio/io.titlebar:
-                          uesio.variant: uesio/io.section
-                          title: Licenses
-                          subtitle: List of applications licensed for use by $Param{app}
-                      - uesio/io.table:
-                          uesio.id: licensesTable
-                          wire: licenses
-                          pagesize: 10
-                          columns:
-                            - label: SOURCE APP
-                              components:
-                                - uesio/studio.iconlabel:
-                                    uesio.variant: uesio/studio.namespacefield
-                                    text: ${uesio/studio.app->uesio/studio.fullname}
-                                    icon: ${uesio/studio.app->uesio/studio.icon}
-                                    color: ${uesio/studio.app->uesio/studio.color}
-                            - label: status
-                              components:
-                                - uesio/studio.iconlabel:
-                                    uesio.variant: uesio/studio.namespacefield
-                                    text: Active
-                                    icon: verified
-                                    color: rgb(29,173,113)
-                                    uesio.display:
-                                      - field: uesio/studio.active
-                                        value: true
-                                        operator: EQUALS
-                                - uesio/studio.iconlabel:
-                                    uesio.variant: uesio/studio.namespacefield
-                                    text: Inactive
-                                    icon: cancel
-                                    color: rgb(255,0,0)
-                                    uesio.display:
-                                      - field: uesio/studio.active
-                                        value: false
-                                        operator: EQUALS
+                    title: Licenses
+                    subtitle: List of applications licensed for use by $Param{app}
+                - uesio/io.table:
+                    uesio.id: licensesTable
+                    wire: licenses
+                    pagesize: 10
+                    columns:
+                      - label: SOURCE APP
+                        components:
+                          - uesio/io.iconlabel:
+                              uesio.variant: uesio/io.namespacefield
+                              text: ${uesio/studio.app->uesio/studio.fullname}
+                              icon: ${uesio/studio.app->uesio/studio.icon}
+                              color: ${uesio/studio.app->uesio/studio.color}
+                      - label: status
+                        components:
+                          - uesio/io.iconlabel:
+                              uesio.variant: uesio/io.namespacefield
+                              text: Active
+                              icon: verified
+                              color: rgb(29,173,113)
+                              uesio.display:
+                                - field: uesio/studio.active
+                                  value: true
+                                  operator: EQUALS
+                          - uesio/io.iconlabel:
+                              uesio.variant: uesio/io.namespacefield
+                              text: Inactive
+                              icon: cancel
+                              color: rgb(255,0,0)
+                              uesio.display:
+                                - field: uesio/studio.active
+                                  value: false
+                                  operator: EQUALS

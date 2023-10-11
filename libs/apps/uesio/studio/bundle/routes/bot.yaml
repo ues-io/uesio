@@ -1,5 +1,5 @@
 name: bot
-path: app/{app:\w*\/\w*}/workspace/{workspacename}/bots/{botname}
-view: uesio/studio.bot
-theme: uesio/studio.default
+path: app/{app:\w*\/\w*}/workspace/{workspacename}/bots/{bottype}/{namespace:\w*\/\w*}/{botname}
+view: bot
+theme: default
 title: "Bot: $Param{botname}"

@@ -1,5 +1,5 @@
 name: users
 path: app/{app:\w*\/\w*}/site/{sitename}/users
-view: uesio/studio.users
-theme: uesio/studio.default
+view: users
+theme: default
 title: Users

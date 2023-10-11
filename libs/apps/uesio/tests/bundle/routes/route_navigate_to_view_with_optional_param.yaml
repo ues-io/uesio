@@ -1,0 +1,4 @@
+name: route_navigate_to_view_with_optional_param
+path: route_navigate_to_view_with_optional_param
+view: view_with_route_navigate_to_single_param
+title: Tests ROUTE/NAVIGATE signals going to route with optional params

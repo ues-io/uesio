@@ -1,5 +1,4 @@
 import { getCurrentState } from "../store/store"
-import Collection from "../bands/collection/class"
 import {
 	RouteState,
 	SiteAdminState,
@@ -7,6 +6,7 @@ import {
 } from "../bands/route/types"
 import { selectors as viewSelectors } from "../bands/viewdef"
 import { selectors as labelSelectors } from "../bands/label"
+import { selectors as fileSelectors } from "../bands/file"
 import { selectors as componentVariantSelectors } from "../bands/componentvariant"
 import { selectors as themeSelectors } from "../bands/theme"
 import { selectByName } from "../bands/featureflag"
@@ -18,7 +18,7 @@ import { getAncestorPath } from "../component/path"
 import { PlainWireRecord } from "../bands/wirerecord/types"
 import WireRecord from "../bands/wirerecord/class"
 import { parseVariantName } from "../component/component"
-import { MetadataKey } from "../bands/builder/types"
+import { MetadataKey } from "../metadata/types"
 import { SiteState } from "../bands/site"
 import { handlers, MergeType } from "./merge"
 import { getCollection } from "../bands/collection/selectors"
@@ -31,12 +31,14 @@ const ERROR = "ERROR",
 	ROUTE = "ROUTE",
 	FIELD_MODE = "FIELD_MODE",
 	WIRE = "WIRE",
+	PROPS = "PROPS",
 	RECORD_DATA = "RECORD_DATA",
 	SIGNAL_OUTPUT = "SIGNAL_OUTPUT"
 
 type FieldMode = "READ" | "EDIT"
 
 type Mergeable = string | number | boolean | undefined
+type DeepMergeable = Mergeable | Record<string, Mergeable> | Mergeable[]
 
 interface ErrorContext {
 	errors: string[]
@@ -98,8 +100,16 @@ interface ComponentContext {
 	data: Record<string, unknown>
 }
 
+interface PropsContext {
+	data: Record<string, unknown>
+}
+
 interface ComponentContextFrame extends ComponentContext {
 	type: typeof COMPONENT
+}
+
+interface PropsContextFrame extends PropsContext {
+	type: typeof PROPS
 }
 
 interface ThemeContextFrame extends ThemeContext {
@@ -159,6 +169,7 @@ type ContextFrame =
 	| ErrorContextFrame
 	| FieldModeContextFrame
 	| SignalOutputContextFrame
+	| PropsContextFrame
 
 // Type Guards for fully-resolved Context FRAMES (with "type" property appended)
 const isErrorContextFrame = (frame: ContextFrame): frame is ErrorContextFrame =>
@@ -196,6 +207,8 @@ const isViewContextFrame = (frame: ContextFrame): frame is ViewContextFrame =>
 	frame.type === VIEW
 const isRouteContextFrame = (frame: ContextFrame): frame is RouteContextFrame =>
 	frame.type === ROUTE
+const isPropsContextFrame = (frame: ContextFrame): frame is PropsContextFrame =>
+	frame.type === PROPS
 const hasWireContext = (
 	frame: ContextFrame
 ): frame is RecordContextFrame | WireContextFrame =>
@@ -276,7 +289,7 @@ class Context {
 		ctx.workspace = this.workspace
 		ctx.siteadmin = this.siteadmin
 		ctx.site = this.site
-		ctx.slot = this.slot
+		ctx.slotLoader = this.slotLoader
 		return ctx
 	}
 
@@ -284,7 +297,7 @@ class Context {
 	site?: SiteState
 	workspace?: WorkspaceState
 	siteadmin?: SiteAdminState
-	slot?: MetadataKey
+	slotLoader?: MetadataKey
 
 	getRecordId = () => this.getRecord()?.getId()
 
@@ -359,6 +372,8 @@ class Context {
 
 	getParam = (param: string) => this.getParams()?.[param]
 
+	getProp = (prop: string) => this.stack.find(isPropsContextFrame)?.data[prop]
+
 	getParentComponentDef = (path: string) =>
 		get(this.getViewDef(), getAncestorPath(path, 3))
 
@@ -368,7 +383,7 @@ class Context {
 
 	getThemeId = () => this.stack.find(isThemeContextFrame)?.theme
 
-	getCustomSlot = () => this.slot
+	getCustomSlotLoader = () => this.slotLoader
 
 	getComponentVariant = (
 		componentType: MetadataKey,
@@ -386,6 +401,9 @@ class Context {
 
 	getLabel = (labelKey: string) =>
 		labelSelectors.selectById(getCurrentState(), labelKey)?.value
+
+	getStaticFileModstamp = (fileKey: string) =>
+		fileSelectors.selectById(getCurrentState(), fileKey)?.updatedAt
 
 	getFeatureFlag = (name: string) => selectByName(getCurrentState(), name)
 
@@ -415,9 +433,9 @@ class Context {
 		return newContext
 	}
 
-	deleteCustomSlot = () => {
+	deleteCustomSlotLoader = () => {
 		const newContext = this.clone()
-		delete newContext.slot
+		delete newContext.slotLoader
 		return newContext
 	}
 
@@ -442,10 +460,7 @@ class Context {
 		const plainWire = this.getPlainWire(wireid)
 		if (!plainWire) return undefined
 		const wire = new Wire(plainWire)
-		const plainCollection = getCollection(plainWire.collection)
-		if (!plainCollection) return undefined
-		const collection = new Collection(plainCollection)
-		wire.attachCollection(collection.source)
+		wire.attachCollection(getCollection(plainWire.collection))
 		return wire
 	}
 
@@ -520,9 +535,9 @@ class Context {
 		return newContext
 	}
 
-	setCustomSlot = (slot: MetadataKey) => {
+	setCustomSlotLoader = (slot: MetadataKey) => {
 		const newContext = this.clone()
-		newContext.slot = slot
+		newContext.slotLoader = slot
 		return newContext
 	}
 
@@ -539,6 +554,12 @@ class Context {
 		this.#addFrame({
 			type: COMPONENT,
 			componentType,
+			data,
+		})
+
+	addPropsFrame = (data: Record<string, unknown>) =>
+		this.#addFrame({
+			type: PROPS,
 			data,
 		})
 
@@ -559,24 +580,40 @@ class Context {
 	#addFrame = (frame: ContextFrame) => this.clone([frame].concat(this.stack))
 
 	merge = (template: Mergeable) => {
-		if (typeof template !== "string") {
+		if (typeof template !== "string" || !template.length) {
 			return template
 		}
 
-		return template.replace(
+		const expressionResults = [] as Mergeable[]
+		const mergedString = template.replace(
 			/\$([.\w]*){(.*?)}/g,
 			(x, mergeType, expression) => {
 				const mergeSplit = mergeType.split(ANCESTOR_INDICATOR)
 				const mergeTypeName = mergeSplit.pop() as MergeType
 
-				return handlers[mergeTypeName || "Record"](
+				const expressionResult = handlers[mergeTypeName || "Record"](
 					expression,
 					mergeSplit.length
 						? this.removeRecordFrame(mergeSplit.length)
 						: this
 				)
+				expressionResults.push(expressionResult)
+
+				// Don't merge "undefined" into a string --- put empty string instead
+				if (expressionResult === undefined) {
+					return ""
+				}
+				return expressionResult
 			}
 		)
+		// If we only have one expression result, and it is not a string, then return it as its value
+		if (
+			expressionResults.length === 1 &&
+			typeof expressionResults[0] !== "string"
+		) {
+			return expressionResults[0]
+		}
+		return mergedString
 	}
 
 	mergeString = (template: Mergeable) => {
@@ -590,15 +627,31 @@ class Context {
 		return result
 	}
 
+	mergeDeep = (value: DeepMergeable) => {
+		if (!value) return value
+		if (Array.isArray(value)) {
+			return this.mergeList(value)
+		}
+		if (typeof value === "object" && value !== null) {
+			return this.mergeMap(value)
+		}
+		return this.merge(value)
+	}
+
+	mergeList = (list: DeepMergeable[] | undefined): unknown[] | undefined => {
+		if (!list) return undefined
+		return list.map((item) => this.mergeDeep(item))
+	}
+
 	mergeMap = (
 		map: Record<string, Mergeable> | undefined
 	): Record<string, Mergeable> =>
 		map
 			? Object.fromEntries(
-					Object.entries(map).map((entries) => [
-						entries[0],
-						this.merge(entries[1]),
-					])
+					Object.entries(map).map((entry) => {
+						const [key, value] = entry
+						return [key, this.mergeDeep(value) as Mergeable]
+					})
 			  )
 			: {}
 
@@ -626,6 +679,11 @@ class Context {
 			(f) =>
 				isComponentContextFrame(f) && f.componentType === componentType
 		) as ComponentContextFrame
+
+	getRecordFrame = (wireId: string) =>
+		this.stack.find(
+			(f) => isRecordContextFrame(f) && f.wire === wireId
+		) as RecordContextFrame
 }
 
 export {
@@ -638,4 +696,17 @@ export {
 
 export { Context }
 
-export type { ContextFrame, FieldMode, ContextOptions }
+export type {
+	ComponentContext,
+	ContextFrame,
+	ContextOptions,
+	ErrorContext,
+	FieldMode,
+	FieldModeContext,
+	Mergeable,
+	RecordContext,
+	RecordDataContext,
+	RouteContext,
+	SignalOutputContext,
+	ViewContext,
+}

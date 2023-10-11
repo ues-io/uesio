@@ -1,4 +1,4 @@
-import { FC, DragEvent, useState } from "react"
+import { DragEvent, useState } from "react"
 import {
 	definition,
 	component,
@@ -20,7 +20,6 @@ import {
 	setSelectedPath,
 	useSelectedPath,
 } from "../../../api/stateapi"
-import NamespaceLabel from "../../../utilities/namespacelabel/namespacelabel"
 import PropNodeTag from "../../../utilities/propnodetag/propnodetag"
 import { FullPath } from "../../../api/path"
 import SearchArea from "../../../helpers/searcharea"
@@ -56,18 +55,21 @@ type VariantsBlockProps = {
 	variants: component.ComponentVariant[]
 	isSelected: (itemtype: string, itemname: metadata.MetadataKey) => boolean
 	component: ComponentDef
-} & definition.UtilityProps
+}
 
 const VariantsBlockStyleDefaults = Object.freeze({
 	root: ["m-2", "flex", "flex-wrap", "gap-2"],
 })
 
-const VariantsBlock: FC<VariantsBlockProps> = (props) => {
+const VariantsBlock: definition.UtilityComponent<VariantsBlockProps> = (
+	props
+) => {
 	const { component: componentDef, context, variants, isSelected } = props
 	const classes = styles.useUtilityStyleTokens(
 		VariantsBlockStyleDefaults,
 		props
 	)
+	const NamespaceLabel = getUtility("uesio/io.namespacelabel")
 
 	return (
 		<div className={classes.root}>
@@ -94,7 +96,8 @@ const VariantsBlock: FC<VariantsBlockProps> = (props) => {
 							// from running as well
 							e.stopPropagation()
 							addComponentToCanvas(context, componentDef, {
-								"uesio.variant": variantKey,
+								[component.STYLE_VARIANT]:
+									metadata.getKey(variant),
 							})
 						}}
 						selected={isSelected("componentvariant", variantKey)}
@@ -120,9 +123,11 @@ type ComponentBlockProps = {
 	componentDef: ComponentDef
 	variants: component.ComponentVariant[]
 	isSelected: (itemtype: string, itemname: metadata.MetadataKey) => boolean
-} & definition.UtilityProps
+}
 
-const ComponentBlock: FC<ComponentBlockProps> = (props) => {
+const ComponentBlock: definition.UtilityComponent<ComponentBlockProps> = (
+	props
+) => {
 	const IOExpandPanel = getUtility("uesio/io.expandpanel")
 	const { context, componentDef, variants, isSelected } = props
 	const { namespace, name } = componentDef
@@ -175,7 +180,7 @@ type CategoryBlockProps = {
 	variants: Record<string, component.ComponentVariant[]>
 	isSelected: (itemtype: string, itemname: metadata.MetadataKey) => boolean
 	category: string
-} & definition.UtilityProps
+}
 
 const CategoryBlockStyleDefaults = Object.freeze({
 	categoryLabel: [
@@ -188,7 +193,9 @@ const CategoryBlockStyleDefaults = Object.freeze({
 	],
 })
 
-const CategoryBlock: FC<CategoryBlockProps> = (props) => {
+const CategoryBlock: definition.UtilityComponent<CategoryBlockProps> = (
+	props
+) => {
 	const classes = styles.useUtilityStyleTokens(
 		CategoryBlockStyleDefaults,
 		props
@@ -224,10 +231,13 @@ const CategoryBlock: FC<CategoryBlockProps> = (props) => {
 
 type ComponentTagProps = {
 	component: ComponentDef
-} & definition.UtilityProps
+}
 
-const ComponentTag: FC<ComponentTagProps> = (props) => {
+const ComponentTag: definition.UtilityComponent<ComponentTagProps> = (
+	props
+) => {
 	const { context, component } = props
+	const NamespaceLabel = getUtility("uesio/io.namespacelabel")
 
 	const nsInfo = getBuilderNamespace(
 		context,
@@ -256,7 +266,7 @@ const ComponentsPanel: definition.UC = (props) => {
 	const [searchTerm, setSearchTerm] = useState("")
 	const searchTermLC = searchTerm?.toLowerCase()
 	const components = pickBy(
-		getComponentDefs(context),
+		getComponentDefs(),
 		(component) =>
 			component.discoverable &&
 			(component.name?.toLowerCase().includes(searchTermLC) ||
@@ -318,6 +328,7 @@ const ComponentsPanel: definition.UC = (props) => {
 		<ScrollPanel
 			header={
 				<SearchArea
+					id="builder-components-search"
 					searchTerm={searchTerm}
 					context={context}
 					setSearchTerm={setSearchTerm}

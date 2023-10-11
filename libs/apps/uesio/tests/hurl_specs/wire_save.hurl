@@ -5,7 +5,7 @@
 # Test as a logged-in user so that we don't get redirected to the login page
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"uesio\"}"
+    "token": "uesio"
 }
 
 # Get a record
@@ -38,7 +38,7 @@ Accept: application/json
 }
 HTTP 200
 [Captures]
-idvalue: jsonpath "$.wires[0].data[*]['uesio/core.id']"
+idvalue: jsonpath "$.wires[0].data[0]['uesio/core.id']"
 
 # Test a simple update
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
@@ -96,9 +96,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.genus']" == "Genie"
-jsonpath "$.wires[0].data[*]['uesio/tests.species']" == "Frog"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" == "Genie:Frog"
+jsonpath "$.wires[0].data[0]['uesio/tests.genus']" == "Genie"
+jsonpath "$.wires[0].data[0]['uesio/tests.species']" == "Frog"
+jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "Genie:Frog"
 
 # Test a simple delete
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
@@ -131,8 +131,8 @@ Accept: application/json
             "deletes":{},
             "changes":{
                 "temp1":{
-                    "uesio/tests.species":"Alain",
-                    "uesio/tests.genus":"Kupker"
+                    "uesio/tests.species": "Alain",
+                    "uesio/tests.genus": "Kupker"
                 }
             },
             "wire":"mywire"
@@ -146,7 +146,7 @@ jsonpath "$.wires[0].changes['temp1']['uesio/tests.genus']" == "Kupker"
 jsonpath "$.wires[0].changes['temp1']['uesio/core.id']" matches /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 jsonpath "$.wires[0].errors" == null
 [Captures]
-newid: jsonpath "$.wires[0].changes[*]['uesio/core.id']"
+newid: jsonpath "$.wires[0].changes[*]['uesio/core.id']" nth 0
 
 # Now see if the insert worked
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
@@ -178,6 +178,6 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.genus']" == "Kupker"
-jsonpath "$.wires[0].data[*]['uesio/tests.species']" == "Alain"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" == "Kupker:Alain"
+jsonpath "$.wires[0].data[0]['uesio/tests.genus']" == "Kupker"
+jsonpath "$.wires[0].data[0]['uesio/tests.species']" == "Alain"
+jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "Kupker:Alain"

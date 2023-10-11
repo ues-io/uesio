@@ -1,7 +1,0 @@
-name: content
-public: true
-label: Content Area
-definition:
-  uesio.styleTokens:
-    root:
-      - p-5

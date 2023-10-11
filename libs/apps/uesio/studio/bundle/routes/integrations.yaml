@@ -1,0 +1,5 @@
+name: integrations
+path: app/{app:\w*\/\w*}/workspace/{workspacename}/integrations
+view: integrations
+theme: default
+title: Integrations

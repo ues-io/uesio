@@ -1,6 +1,6 @@
 name: type
 type: SELECT
 label: Bot type
-selectList: uesio/studio.bottype
+selectList: bottype
 required: true
 createOnly: true

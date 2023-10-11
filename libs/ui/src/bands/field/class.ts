@@ -1,6 +1,7 @@
 import { FieldMetadata, SelectOption } from "./types"
 import { Context } from "../../context/context"
 import { addBlankSelectOption } from "./utils"
+import { getKey } from "../../metadata/metadata"
 
 class Field {
 	constructor(source: FieldMetadata) {
@@ -9,7 +10,9 @@ class Field {
 
 	source: FieldMetadata
 
-	getId = () => this.source.namespace + "." + this.source.name
+	getId = () => getKey(this.source)
+	getName = () => this.source.name
+	getNamespace = () => this.source.namespace
 	getLabel = () => this.source.label
 	getReferenceMetadata = () => this.source.reference
 	getType = () => this.source.type
@@ -57,12 +60,16 @@ class Field {
 				return ""
 		}
 	}
+	getFileMetadata = () => this.source.file
+	getMetadataFieldMetadata = () => this.source.metadata
 	getNumberMetadata = () => this.source.number
 	isReference = () =>
 		this.source.type === "REFERENCE" ||
 		this.source.type === "USER" ||
 		this.source.type === "FILE"
+	isRequired = () => this.source.required === true
 	getSubFields = () => this.source.subfields
+	getSubType = () => this.source.subtype
 }
 
 export default Field

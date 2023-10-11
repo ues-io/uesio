@@ -7,6 +7,7 @@ import (
 	"text/template"
 
 	"github.com/francoispqt/gojay"
+
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
@@ -20,8 +21,20 @@ type SaveOp struct {
 	Errors      *[]SaveError
 	InsertCount int
 	Metadata    *CollectionMetadata
-	Conditions  []LoadRequestCondition
 	Params      map[string]string
+
+	integrationConnection IntegrationConnection
+}
+
+func (op *SaveOp) GetIntegration() (IntegrationConnection, error) {
+	if op.integrationConnection != nil {
+		return op.integrationConnection, nil
+	}
+	return nil, errors.New("integration not available on SaveOp")
+}
+
+func (op *SaveOp) AttachIntegration(ic IntegrationConnection) {
+	op.integrationConnection = ic
 }
 
 func (op *SaveOp) AddError(saveError *SaveError) {
@@ -74,6 +87,14 @@ func (op *SaveOp) LoopDeletes(changeFunc func(change *ChangeItem) error) error {
 		}
 	}
 	return nil
+}
+
+func (op *SaveOp) HasChanges() bool {
+	return len(op.Updates)+len(op.Inserts) > 0
+}
+
+func (op *SaveOp) HasDeletes() bool {
+	return len(op.Deletes) > 0
 }
 
 func (op *SaveOp) LoopChanges(changeFunc func(change *ChangeItem) error) error {
@@ -174,6 +195,22 @@ func (ci *ChangeItem) GetFieldAsString(fieldID string) (string, error) {
 	return GetValueString(value)
 }
 
+func (ci *ChangeItem) GetReferenceKey(fieldID string) (string, error) {
+	value, err := ci.GetField(fieldID)
+	if err != nil {
+		return "", err
+	}
+	return GetReferenceKey(value)
+}
+
+func (ci *ChangeItem) GetOldReferenceKey(fieldID string) (string, error) {
+	value, err := ci.GetOldField(fieldID)
+	if err != nil {
+		return "", err
+	}
+	return GetReferenceKey(value)
+}
+
 func (ci *ChangeItem) GetOldFieldAsString(fieldID string) (string, error) {
 	value, err := ci.GetOldField(fieldID)
 	if err != nil {
@@ -234,37 +271,21 @@ func (ci *ChangeItem) GetOwnerID() (string, error) {
 		return ci.GetProposedOwnerID()
 	}
 
-	ownerVal, err := ci.GetOldField(OWNER_FIELD)
-	if err != nil {
-		return "", err
-	}
-	return GetReferenceKey(ownerVal)
+	return ci.GetOldReferenceKey(OWNER_FIELD)
 
 }
 
 // This get the owner id that may be changing
 func (ci *ChangeItem) GetProposedOwnerID() (string, error) {
-	ownerVal, err := ci.GetField(OWNER_FIELD)
-	if err != nil {
-		return "", err
-	}
-	return GetReferenceKey(ownerVal)
+	return ci.GetReferenceKey(OWNER_FIELD)
 }
 
 func (ci *ChangeItem) GetCreatedByID() (string, error) {
-	ownerVal, err := ci.GetField(CREATED_BY_FIELD)
-	if err != nil {
-		return "", err
-	}
-	return GetReferenceKey(ownerVal)
+	return ci.GetReferenceKey(CREATED_BY_FIELD)
 }
 
 func (ci *ChangeItem) GetUpdatedByID() (string, error) {
-	ownerVal, err := ci.GetField(UPDATED_BY_FIELD)
-	if err != nil {
-		return "", err
-	}
-	return GetReferenceKey(ownerVal)
+	return ci.GetReferenceKey(UPDATED_BY_FIELD)
 }
 
 type SaveOptions struct {
@@ -273,26 +294,21 @@ type SaveOptions struct {
 }
 
 func GetValueInt(value interface{}) (int64, error) {
-	switch value.(type) {
+	switch typedVal := value.(type) {
 	case nil:
 		return 0, nil
 	case int64:
-		return value.(int64), nil
+		return typedVal, nil
 	case float64:
-		valueFloat, ok := value.(float64)
-		if !ok {
-			return 0, fmt.Errorf("Could not get value as int, invalid cast type: %T", value)
-		}
-		return int64(valueFloat), nil
+		return int64(typedVal), nil
 	}
-
-	return 0, fmt.Errorf("Could not get value as int: %T", value)
+	return 0, fmt.Errorf("could not get value as int: %T", value)
 }
 
 func GetValueString(value interface{}) (string, error) {
 	valueString, ok := value.(string)
 	if !ok {
-		return "", fmt.Errorf("Could not get value as string: %T", value)
+		return "", fmt.Errorf("could not get value as string: %T", value)
 	}
 	return valueString, nil
 }
@@ -317,7 +333,7 @@ func GetLoadable(value interface{}) (meta.Item, error) {
 		return loadableValueItem, nil
 	}
 
-	return nil, fmt.Errorf("Invalid Loadable type: %T", value)
+	return nil, fmt.Errorf("invalid Loadable type: %T", value)
 }
 
 func GetFieldValue(value interface{}, key string) (interface{}, error) {
@@ -362,9 +378,9 @@ func GetReferenceKey(value interface{}) (string, error) {
 }
 
 // NewFieldChanges function returns a template that can merge field changes
-func NewFieldChanges(templateString string, collectionMetadata *CollectionMetadata) (*template.Template, error) {
+func NewFieldChanges(templateString string, collectionMetadata *CollectionMetadata, metadata *MetadataCache) (*template.Template, error) {
 	return templating.NewWithFunc(templateString, func(item meta.Item, key string) (interface{}, error) {
-		fieldMetadata, err := collectionMetadata.GetField(key)
+		fieldMetadata, err := collectionMetadata.GetFieldWithMetadata(key, metadata)
 		if err != nil {
 			return nil, err
 		}

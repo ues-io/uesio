@@ -6,8 +6,9 @@ import (
 
 	"github.com/sendgrid/sendgrid-go"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/integ"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -18,6 +19,7 @@ type SendEmailOptions struct {
 	BCC                 []string               `json:"bcc"`
 	Subject             string                 `json:"subject"`
 	PlainBody           string                 `json:"plainBody"`
+	ContentType         string                 `json:"contentType"`
 	From                string                 `json:"from"`
 	TemplateId          string                 `json:"templateId"`
 	DynamicTemplateData map[string]interface{} `json:"dynamicTemplateData"`
@@ -26,7 +28,7 @@ type SendEmailOptions struct {
 type SendGridIntegration struct {
 }
 
-func (sgi *SendGridIntegration) GetIntegrationConnection(integration *meta.Integration, session *sess.Session, credentials *adapt.Credentials) (integ.IntegrationConnection, error) {
+func (sgi *SendGridIntegration) GetIntegrationConnection(integration *meta.Integration, session *sess.Session, credentials *adapt.Credentials) (adapt.IntegrationConnection, error) {
 	return &SendGridIntegrationConnection{
 		session:     session,
 		integration: integration,
@@ -38,6 +40,14 @@ type SendGridIntegrationConnection struct {
 	session     *sess.Session
 	integration *meta.Integration
 	credentials *adapt.Credentials
+}
+
+func (sgic *SendGridIntegrationConnection) GetCredentials() *adapt.Credentials {
+	return sgic.credentials
+}
+
+func (sgic *SendGridIntegrationConnection) GetIntegration() *meta.Integration {
+	return sgic.integration
 }
 
 func (sgic *SendGridIntegrationConnection) RunAction(actionName string, requestOptions interface{}) (interface{}, error) {
@@ -54,13 +64,13 @@ func (sgic *SendGridIntegrationConnection) RunAction(actionName string, requestO
 func (sgic *SendGridIntegrationConnection) SendEmail(requestOptions interface{}) error {
 
 	options := &SendEmailOptions{}
-	err := integ.HydrateOptions(requestOptions, options)
+	err := datasource.HydrateOptions(requestOptions, options)
 	if err != nil {
 		return err
 	}
 
 	apikey, ok := (*sgic.credentials)["apikey"]
-	if !ok {
+	if !ok || apikey == "" {
 		return errors.New("No API Key provided")
 	}
 
@@ -93,7 +103,11 @@ func (sgic *SendGridIntegrationConnection) SendEmail(requestOptions interface{})
 
 	message.AddPersonalizations(p)
 	if options.PlainBody != "" {
-		message.AddContent(mail.NewContent("text/plain", options.PlainBody))
+		contentType := "text/plain"
+		if options.ContentType != "" {
+			contentType = options.ContentType
+		}
+		message.AddContent(mail.NewContent(contentType, options.PlainBody))
 	}
 	message.SetFrom(mail.NewEmail(options.From, options.From))
 	client := sendgrid.NewSendClient(apikey)

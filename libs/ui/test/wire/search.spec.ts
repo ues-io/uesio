@@ -1,17 +1,16 @@
 import testWireSignal, { WireSignalTest } from "./utils"
 import * as platformModule from "../../src/platform/platform"
-import { testEnv } from "../utils/defaults"
 
-const { viewId, wireId, collectionId, ns } = testEnv
+const wireId = "mywire"
+const collectionId = "ben/planets.exoplanet"
+
 const SEARCH_CONDITION_ID = "uesio.search"
 const SEARCH_VALUE = "kepler"
 const tests: WireSignalTest[] = [
 	{
-		view: viewId,
-
 		name: "Search for a string",
 		wireId,
-		wireDef: { collection: `${ns}.${collectionId}`, fields: {} },
+		wireDef: { collection: collectionId, fields: {} },
 		signals: [
 			{
 				signal: "wire/SEARCH",
@@ -45,11 +44,9 @@ const tests: WireSignalTest[] = [
 		},
 	},
 	{
-		view: viewId,
-
 		name: "Search for a string, then search for empty string",
 		wireId,
-		wireDef: { collection: `${ns}.${collectionId}`, fields: {} },
+		wireDef: { collection: collectionId, fields: {} },
 		signals: [
 			{
 				signal: "wire/SEARCH",

@@ -67,9 +67,11 @@ __debug_bin
 
 # Uesio Component Packs and Types
 **/bundle/componentpacks/*/dist/
-**/generated/
 
 # Cypress
 cypress/downloads
 cypress/screenshots
 cypress/videos
+
+# Ad-hoc query results
+queries/results

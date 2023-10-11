@@ -13,6 +13,7 @@ func getCascadeDeletes(
 	connection adapt.Connection,
 	session *sess.Session,
 ) (map[string]adapt.Collection, error) {
+
 	cascadeDeleteFKs := map[string]adapt.Collection{}
 
 	if len(wire.Deletes) == 0 {
@@ -20,6 +21,8 @@ func getCascadeDeletes(
 	}
 
 	metadata := connection.GetMetadata()
+
+	cascadeDeleteIdsByCollection := map[string]map[string]bool{}
 
 	for _, collectionMetadata := range metadata.Collections {
 		collectionKey := collectionMetadata.GetFullName()
@@ -66,15 +69,12 @@ func getCascadeDeletes(
 					if !ok {
 						return nil, errors.New("Delete id must be a string")
 					}
-					currentCollectionIds, ok := cascadeDeleteFKs[referencedCollection]
+					currentCollectionIds, ok := cascadeDeleteIdsByCollection[referencedCollection]
 					if !ok {
-						currentCollectionIds = adapt.Collection{}
+						currentCollectionIds = map[string]bool{}
+						cascadeDeleteIdsByCollection[referencedCollection] = currentCollectionIds
 					}
-
-					currentCollectionIds = append(currentCollectionIds, &adapt.Item{
-						adapt.ID_FIELD: fkString,
-					})
-					cascadeDeleteFKs[referencedCollection] = currentCollectionIds
+					currentCollectionIds[fkString] = true
 				}
 			}
 
@@ -108,7 +108,8 @@ func getCascadeDeletes(
 							Operator: "IN",
 						},
 					},
-					Query: true,
+					Query:  true,
+					Params: wire.Params,
 				}
 
 				err := connection.Load(op, session)
@@ -116,9 +117,10 @@ func getCascadeDeletes(
 					return nil, errors.New("Cascade delete error")
 				}
 
-				currentCollectionIds, ok := cascadeDeleteFKs[referencedCollection]
+				currentCollectionIds, ok := cascadeDeleteIdsByCollection[referencedCollection]
 				if !ok {
-					currentCollectionIds = adapt.Collection{}
+					currentCollectionIds = map[string]bool{}
+					cascadeDeleteIdsByCollection[referencedCollection] = currentCollectionIds
 				}
 
 				err = op.Collection.Loop(func(refItem meta.Item, _ string) error {
@@ -133,9 +135,7 @@ func getCascadeDeletes(
 						return errors.New("Delete id must be a string")
 					}
 
-					currentCollectionIds = append(currentCollectionIds, &adapt.Item{
-						adapt.ID_FIELD: refRKAsString,
-					})
+					currentCollectionIds[refRKAsString] = true
 
 					return nil
 				})
@@ -144,12 +144,32 @@ func getCascadeDeletes(
 					return nil, err
 				}
 
-				cascadeDeleteFKs[referencedCollection] = currentCollectionIds
-
 			}
 
 		}
 	}
+
+	// Now that we've built a unique set of reference ids to cascade delete by Collection,
+	// convert this to a map of collection names to adapt.Collection
+	// so that we can more easily perform the deletes (elsewhere)
+	if len(cascadeDeleteIdsByCollection) > 0 {
+		for collectionName, idsMap := range cascadeDeleteIdsByCollection {
+			numIds := len(idsMap)
+			if numIds == 0 {
+				continue
+			}
+			collectionItems := make(adapt.Collection, numIds)
+			i := 0
+			for id := range idsMap {
+				collectionItems[i] = &adapt.Item{
+					adapt.ID_FIELD: id,
+				}
+				i++
+			}
+			cascadeDeleteFKs[collectionName] = collectionItems
+		}
+	}
+
 	return cascadeDeleteFKs, nil
 }
 
@@ -173,6 +193,7 @@ func performCascadeDeletes(op *adapt.SaveOp, connection adapt.Connection, sessio
 				Options: &adapt.SaveOptions{
 					IgnoreMissingRecords: true,
 				},
+				Params: op.Params,
 			})
 		}
 	}

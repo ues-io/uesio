@@ -2,4 +2,4 @@ name: app
 type: REFERENCE
 label: Source app
 reference:
-  collection: uesio/studio.app
+  collection: app

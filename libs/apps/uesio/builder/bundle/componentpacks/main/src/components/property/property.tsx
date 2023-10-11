@@ -3,7 +3,7 @@ import { get } from "../../api/defapi"
 import { FullPath } from "../../api/path"
 import { ComponentProperty } from "../../properties/componentproperty"
 
-const { COMPONENT_ID, DISPLAY_CONDITIONS } = component
+const { COMPONENT_ID, DISPLAY_CONDITIONS, STYLE_VARIANT } = component
 
 type Definition = {
 	property: ComponentProperty
@@ -51,7 +51,7 @@ export const getFormFieldFromProperty = (
 	const baseFieldDef = {
 		fieldId: name,
 		[COMPONENT_ID]: `property:${name}`,
-		"uesio.variant": "uesio/builder.propfield",
+		[STYLE_VARIANT]: "uesio/builder.propfield",
 		[DISPLAY_CONDITIONS]: displayConditions,
 		labelPosition: "left",
 		label,
@@ -59,20 +59,34 @@ export const getFormFieldFromProperty = (
 	}
 	switch (type) {
 		case "METADATA":
-		case "MULTI_METADATA":
+		case "MULTIMETADATA":
 			return {
-				[`uesio/builder.${
-					type === "METADATA" ? "" : "multi"
-				}metadatafield`]: {
+				"uesio/io.field": {
 					...baseFieldDef,
-					metadataType: property.metadataType,
+					wrapperVariant: "uesio/builder.propfield",
+					metadata: {
+						grouping: getGrouping(
+							path,
+							context,
+							property.groupingPath,
+							property.groupingValue
+						),
+					},
+				},
+			}
+		case "COLLECTION_FIELD":
+		case "COLLECTION_FIELDS":
+			return {
+				"uesio/builder.collectionfieldpicker": {
+					...baseFieldDef,
 					fieldWrapperVariant: "uesio/builder.propfield",
-					grouping: getGrouping(
+					collectionName: getGrouping(
 						path,
 						context,
-						property.groupingPath,
-						property.groupingValue
+						property.collectionPath,
+						property.collectionName
 					),
+					allowReferenceTraversal: property.allowReferenceTraversal,
 				},
 			}
 		case "NUMBER": {

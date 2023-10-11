@@ -1,4 +1,3 @@
-import { FunctionComponent } from "react"
 import {
 	wire,
 	collection,
@@ -13,18 +12,22 @@ import IconButton from "../iconbutton/iconbutton"
 import Field from "./field"
 import { ListFieldOptions } from "./listdeck"
 
-interface ListFieldUtilityProps extends definition.UtilityProps {
+interface ListFieldUtilityProps {
 	fieldId: string
+	fieldMetadata?: collection.Field
 	mode: context.FieldMode
 	value: wire.FieldValue
 	setValue: (value: wire.FieldValue) => void
 	subFields?: collection.FieldMetadataMap
 	subType?: collection.FieldType
+	addLabel?: string
+	deleteLabel?: string
 	noAdd?: boolean
 	noDelete?: boolean
 	subFieldVariant?: metadata.MetadataKey
 	labelVariant?: metadata.MetadataKey
 	options?: ListFieldOptions
+	getDefaultValue?: () => wire.PlainWireRecord
 	path: string
 }
 
@@ -33,20 +36,33 @@ const StyleDefaults = Object.freeze({
 	row: [],
 })
 
-const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
+const ListField: definition.UtilityComponent<ListFieldUtilityProps> = (
+	props
+) => {
 	const {
 		subFields,
 		subType,
 		mode,
 		context,
+		addLabel = context.getLabel("uesio/io.add"),
+		deleteLabel = context.getLabel("uesio/io.delete"),
 		noAdd,
 		noDelete,
-		subFieldVariant,
 		labelVariant,
 		path,
+		fieldId,
+		getDefaultValue = (): wire.FieldValue => {
+			if (subType === "STRUCT") return {}
+			if (subType === "NUMBER") return 0
+			return ""
+		},
 	} = props
 
 	if (!subType) return null
+
+	const fieldMetadata =
+		props.fieldMetadata ||
+		context.getRecord()?.getWire().getCollection().getFieldMetadata(fieldId)
 
 	const value = props.value as (wire.PlainWireRecord | wire.FieldValue)[]
 	const setValue = props.setValue as (
@@ -59,6 +75,7 @@ const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 		props,
 		"uesio/io.listfield"
 	)
+	const subFieldVariant = props.subFieldVariant || props.variant
 
 	const getFields = (): collection.FieldMetadataMap => {
 		if (subType === "STRUCT") {
@@ -73,6 +90,18 @@ const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 				createable: true,
 				accessible: true,
 				updateable: true,
+				selectlist:
+					subType === "SELECT" || subType === "MULTISELECT"
+						? fieldMetadata?.getSelectMetadata()
+						: undefined,
+				number:
+					subType === "NUMBER"
+						? fieldMetadata?.getNumberMetadata()
+						: undefined,
+				file:
+					subType === "FILE"
+						? fieldMetadata?.getFileMetadata()
+						: undefined,
 				label: " ",
 			},
 		}
@@ -124,12 +153,6 @@ const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 		setValue(value.filter((_, i) => i !== index))
 	}
 
-	const getDefaultValue = (): wire.FieldValue => {
-		if (subType === "STRUCT") return {}
-		if (subType === "NUMBER") return 0
-		return ""
-	}
-
 	const fields = getFields()
 	const fieldKeys = Object.keys(fields)
 
@@ -153,7 +176,7 @@ const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 				})}
 				{editMode && !noAdd && (
 					<IconButton
-						label="add"
+						label={addLabel}
 						icon={noAdd ? "" : "add_circle"}
 						context={context}
 						className="editicon"
@@ -203,7 +226,7 @@ const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 						})}
 						{editMode && !noDelete && (
 							<IconButton
-								label="delete"
+								label={deleteLabel}
 								icon="delete"
 								className="invisible group-hover:visible"
 								context={context}

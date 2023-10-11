@@ -1,11 +1,13 @@
 name: public
 named:
 views:
+  uesio/studio.signup: true
 routes:
   uesio/studio.login: true
   uesio/studio.signup: true
-  uesio/studio.signupconfirm: true
+  uesio/studio.signuplanding: true
   uesio/studio.changepassword: true
   uesio/studio.requestpassword: true
-  uesio/studio.signuplanding: true
 files:
+bots:
+  uesio/studio.checkavailability: true

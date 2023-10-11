@@ -1,4 +1,4 @@
-import { configureStore, EntityState } from "@reduxjs/toolkit"
+import { configureStore } from "@reduxjs/toolkit"
 
 import collection from "../bands/collection"
 import route from "../bands/route"
@@ -6,56 +6,38 @@ import user from "../bands/user"
 import session from "../bands/session"
 import component from "../bands/component"
 import wire from "../bands/wire"
+import file from "../bands/file"
 import site, { SiteState } from "../bands/site"
 import panel from "../bands/panel"
 import viewdef from "../bands/viewdef"
 import label from "../bands/label"
 import theme from "../bands/theme"
 import componentvariant from "../bands/componentvariant"
+import componenttype from "../bands/componenttype"
 import configvalue from "../bands/configvalue"
 import featureflag from "../bands/featureflag"
 import notification from "../bands/notification"
 import { RouteState } from "../bands/route/types"
 import { UserState } from "../bands/user/types"
 import { SessionState } from "../bands/session/types"
-import { PlainViewDef } from "../definition/viewdef"
-import { ThemeState } from "../definition/theme"
-import { ComponentVariant } from "../definition/componentvariant"
-import { LabelState } from "../definition/label"
-import { ConfigValueState } from "../definition/configvalue"
-import { FeatureFlagState } from "../definition/featureflag"
-import { PlainWire } from "../bands/wire/types"
-import { PlainCollection } from "../bands/collection/types"
-import { attachDefToWires } from "../bands/route/utils"
+import { newContext } from "../context/context"
+import { handleNavigateResponse } from "../bands/route/operations"
 
 type InitialState = {
 	route?: RouteState
 	user?: UserState
 	session?: SessionState
 	site?: SiteState
-	theme?: EntityState<ThemeState>
-	viewdef?: EntityState<PlainViewDef>
-	componentvariant?: EntityState<ComponentVariant>
-	label?: EntityState<LabelState>
-	configvalue?: EntityState<ConfigValueState>
-	featureflag?: EntityState<FeatureFlagState>
-	wire?: EntityState<PlainWire>
-	collection?: EntityState<PlainCollection>
 }
 
 let store: ReturnType<typeof create>
 
 const create = (initialState: InitialState) => {
-	attachDefToWires(
-		initialState.wire,
-		initialState.viewdef,
-		initialState.collection
-	)
-
 	const newStore = configureStore({
 		reducer: {
 			collection,
 			component,
+			file,
 			route,
 			user,
 			session,
@@ -66,14 +48,20 @@ const create = (initialState: InitialState) => {
 			viewdef,
 			label,
 			componentvariant,
+			componenttype,
 			configvalue,
 			featureflag,
 			site,
 		},
 		devTools: true,
-		preloadedState: initialState,
+		preloadedState: {
+			user: initialState.user,
+			session: initialState.session,
+			site: initialState.site,
+		},
 	})
 	store = newStore
+	handleNavigateResponse(newContext(), initialState.route)
 	return newStore
 }
 

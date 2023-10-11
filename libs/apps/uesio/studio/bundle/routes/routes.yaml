@@ -1,5 +1,5 @@
 name: routes
 path: app/{app:\w*\/\w*}/workspace/{workspacename}/routes
-view: uesio/studio.routes
-theme: uesio/studio.default
+view: routes
+theme: default
 title: Routes

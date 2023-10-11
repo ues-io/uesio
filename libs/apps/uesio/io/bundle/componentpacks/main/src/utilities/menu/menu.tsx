@@ -14,7 +14,7 @@ import {
 	FloatingFocusManager,
 } from "@floating-ui/react"
 
-interface MenuButtonUtilityProps<T> extends definition.UtilityProps {
+interface MenuButtonUtilityProps<T> {
 	itemRenderer: (item: T) => ReactNode
 	onSelect: (item: T) => void
 	items: T[]
@@ -115,8 +115,9 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 			>
 				{children}
 			</div>
-			<FloatingPortal>
-				{isOpen && (
+
+			{isOpen && (
+				<FloatingPortal>
 					<FloatingFocusManager
 						context={floating.context}
 						modal={false}
@@ -196,8 +197,8 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 							</div>
 						</div>
 					</FloatingFocusManager>
-				)}
-			</FloatingPortal>
+				</FloatingPortal>
+			)}
 		</>
 	)
 }

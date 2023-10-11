@@ -2,5 +2,5 @@ name: bundle
 type: REFERENCE
 label: Bundle
 reference:
-  collection: uesio/studio.bundle
+  collection: bundle
 required: true

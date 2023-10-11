@@ -6,6 +6,7 @@ import (
 	"net/url"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 
 	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/auth"
@@ -22,11 +23,25 @@ func getAuthSourceID(vars map[string]string) string {
 	return authSourceNamespace + "." + authSourceName
 }
 
-func redirectResponse(w http.ResponseWriter, r *http.Request, redirectKey string, user *meta.User, site *meta.Site) {
+func loginRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta.User, session *sess.Session) {
 
+	site := session.GetSite()
+
+	profile, err := datasource.LoadAndHydrateProfile(user.Profile, session)
+	if err != nil {
+		logger.LogError(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	redirectKey := site.GetAppBundle().HomeRoute
+
+	if profile.HomeRoute != "" {
+		redirectKey = profile.HomeRoute
+	}
 	// If we had an old session, remove it.
 	w.Header().Del("set-cookie")
-	session := sess.Login(w, user, site)
+	session = sess.Login(w, user, site)
 
 	// Check for redirect parameter on the referrer
 	referer, err := url.Parse(r.Referer())
@@ -74,28 +89,22 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	s := middleware.GetSession(r)
-	site := s.GetSite()
 
 	user, err := auth.Login(getAuthSourceID(mux.Vars(r)), loginRequest, s)
 	if err != nil {
-		logger.LogError(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		var responseCode int
+		switch err.(type) {
+		case *auth.AuthRequestError:
+			responseCode = http.StatusBadRequest
+		default:
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			logger.LogError(err)
+			return
+		}
+		http.Error(w, err.Error(), responseCode)
 		return
 	}
 
-	profile, err := auth.LoadAndHydrateProfile(user.Profile, s)
-	if err != nil {
-		logger.LogError(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	redirectRoute := site.GetAppBundle().HomeRoute
-
-	if profile.HomeRoute != "" {
-		redirectRoute = profile.HomeRoute
-	}
-
-	redirectResponse(w, r, redirectRoute, user, site)
+	loginRedirectResponse(w, r, user, s)
 
 }

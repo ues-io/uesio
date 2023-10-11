@@ -53,10 +53,13 @@ const FileField: definition.UtilityComponent<FileUtilityProps> = (props) => {
 
 		const fileResponse = await api.file.uploadFile(
 			context,
-			file,
-			collectionFullName,
-			recordId,
-			fieldId
+			{
+				collectionID: collectionFullName,
+				recordID: recordId,
+				fieldID: fieldId,
+				params: context.getParams(),
+			},
+			file
 		)
 
 		record.set(fieldId, fileResponse)

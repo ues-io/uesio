@@ -2,18 +2,19 @@ import testWireSignal, {
 	WireSignalTest,
 	defaultPlainWireProperties,
 } from "./utils"
-import { getCollection, testEnv } from "../utils/defaults"
+import { getExoplanetCollection } from "../utils/defaults"
 import * as api from "../../src/api/api"
 import * as platformModule from "../../src/platform/platform"
+import { PlainWire } from "../../src/bands/wire/types"
 
-const { viewId, wireId, collectionId, ns } = testEnv
+const wireId = "mywire"
+const collectionId = "ben/planets.exoplanet"
 
 const tests: WireSignalTest[] = [
 	{
 		name: "Load",
-		view: viewId,
 		wireId,
-		wireDef: { collection: `${ns}.${collectionId}`, fields: {} },
+		wireDef: { collection: collectionId, fields: {} },
 		signals: [
 			{
 				signal: "wire/LOAD",
@@ -26,13 +27,13 @@ const tests: WireSignalTest[] = [
 				.mockImplementation(() =>
 					Promise.resolve({
 						collections: {
-							"ben/planets.exoplanet": getCollection(),
+							[collectionId]: getExoplanetCollection(),
 						},
 						wires: [
 							{
 								...defaultPlainWireProperties,
-								view: viewId,
-								collection: `${ns}.${collectionId}`,
+								view: "myview",
+								collection: collectionId,
 								name: wireId,
 								data: {
 									record1: {
@@ -46,9 +47,11 @@ const tests: WireSignalTest[] = [
 						],
 					})
 				)
-			console.log(`${ns}.${collectionId}`)
 			return (wire) => {
 				expect(spy).toBeCalledTimes(1)
+				const loadWire = spy.mock.calls[0][1].wires[0]
+				expect(loadWire).toHaveProperty("name", wireId)
+				expect(loadWire).toHaveProperty("collection", collectionId)
 				spy.mockRestore()
 				expect(wire.data).toEqual({
 					record1: { "ben/planets.name": "kepler" },
@@ -59,10 +62,9 @@ const tests: WireSignalTest[] = [
 	},
 	{
 		name: "Check if the error is thrown when the lookup wires are missing from the load",
-		view: viewId,
 		wireId,
 		wireDef: {
-			collection: `${ns}.${collectionId}`,
+			collection: collectionId,
 			fields: {},
 			conditions: [
 				{
@@ -93,6 +95,79 @@ const tests: WireSignalTest[] = [
 			}
 		},
 	},
+	{
+		name: "Load should not request metadata if wire already has loaded it",
+		wireId,
+		wireDef: {
+			collection: collectionId,
+			fields: {},
+		},
+		signals: [
+			// First load should request metadata (since wire doesn't yet have it loaded)
+			{
+				signal: "wire/LOAD",
+				wires: [wireId],
+			},
+			// Second load should NOT request metadata (since wire already has it loaded)
+			{
+				signal: "wire/LOAD",
+				wires: [wireId],
+			},
+		],
+		run: () => {
+			const spy = jest
+				.spyOn(platformModule.platform, "loadData")
+				.mockImplementation((_ctx, requestBody) =>
+					Promise.resolve({
+						// Only add collections if includeMetadata was true
+						...(requestBody.includeMetadata
+							? {
+									collections: {
+										[collectionId]:
+											getExoplanetCollection(),
+									},
+							  }
+							: {}),
+						wires: [
+							{
+								...defaultPlainWireProperties,
+								view: "myview",
+								collection: collectionId,
+								name: wireId,
+								data: requestBody.wires[0].query
+									? {
+											record1: {
+												"ben/planets.name": "kepler",
+											},
+											record2: {
+												"ben/planets.name": "foobar",
+											},
+									  }
+									: {},
+								query: !!requestBody.wires[0].query,
+							} as PlainWire,
+						],
+					})
+				)
+			return (wire) => {
+				expect(spy).toBeCalledTimes(2)
+				expect(spy.mock.calls[0][1].includeMetadata).toBe(true)
+				expect(spy.mock.calls[1][1].includeMetadata).toBe(false)
+				spy.mock.calls.forEach((call) => {
+					const loadWire = call[1].wires[0]
+					expect(loadWire).toHaveProperty("name", wireId)
+					expect(loadWire).toHaveProperty("collection", collectionId)
+				})
+				spy.mockRestore()
+				expect(wire.data).toEqual({
+					record1: { "ben/planets.name": "kepler" },
+					record2: { "ben/planets.name": "foobar" },
+				})
+			}
+		},
+	},
 ]
 
-tests.map((el) => test(el.name, () => testWireSignal(el)))
+describe("Wire Load", () => {
+	tests.map((el) => test(el.name, () => testWireSignal(el)))
+})

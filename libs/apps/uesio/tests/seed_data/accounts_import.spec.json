@@ -1,0 +1,10 @@
+{
+	"jobtype": "IMPORT",
+	"collection": "uesio/tests.account",
+	"filetype": "CSV",
+	"mappings": {
+		"uesio/tests.name": {
+			"columnname": "name"
+		}
+	}
+}

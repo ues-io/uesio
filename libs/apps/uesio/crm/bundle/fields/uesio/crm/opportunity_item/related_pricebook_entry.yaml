@@ -1,5 +1,0 @@
-name: related_pricebook_entry
-type: REFERENCE
-label: Related Pricebook Entry
-reference:
-  collection: uesio/crm.pricebook_entry

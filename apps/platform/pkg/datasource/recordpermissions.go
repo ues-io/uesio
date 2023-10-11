@@ -78,15 +78,11 @@ func loadInAccessFieldData(op *adapt.SaveOp, connection adapt.Connection, sessio
 	refReq.AddFields(fields)
 
 	err = op.LoopChanges(func(change *adapt.ChangeItem) error {
-		fk, err := change.GetField(op.Metadata.AccessField)
+		fk, err := change.GetReferenceKey(op.Metadata.AccessField)
 		if err != nil {
 			return err
 		}
-		fkField, err := adapt.GetReferenceKey(fk)
-		if err != nil {
-			return err
-		}
-		return refReq.AddID(fkField, adapt.ReferenceLocator{
+		return refReq.AddID(fk, adapt.ReferenceLocator{
 			Item:  change,
 			Field: fieldMetadata,
 		})
@@ -110,7 +106,9 @@ func handleStandardChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, sess
 
 	userCanModifyAllRecords := session.GetContextPermissions().ModifyAllRecords
 
-	for _, userToken := range session.GetTokens() {
+	flatTokens := session.GetFlatTokens()
+
+	for _, userToken := range flatTokens {
 		if ownerToken == userToken {
 			hasToken = true
 		}
@@ -129,7 +127,7 @@ func handleStandardChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, sess
 		}
 
 		if isReadWrite {
-			for _, userToken := range session.GetTokens() {
+			for _, userToken := range flatTokens {
 				if token == userToken {
 					hasToken = true
 				}
@@ -141,7 +139,7 @@ func handleStandardChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, sess
 	}
 
 	if !hasToken && !userCanModifyAllRecords {
-		return errors.New("User does not have access to write to this field: " + change.UniqueKey)
+		return errors.New("User does not have access to write to this record: " + change.UniqueKey + " of collection: " + change.Metadata.GetFullName())
 	}
 
 	return nil
@@ -193,7 +191,9 @@ func handleAccessFieldChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, m
 
 	hasToken := false
 
-	for _, userToken := range session.GetTokens() {
+	flatTokens := session.GetFlatTokens()
+
+	for _, userToken := range flatTokens {
 		if ownerToken == userToken {
 			hasToken = true
 			//fmt.Println("GRANTED BASED ON OWNER OF: " + challengeMetadata.GetFullName())
@@ -208,7 +208,7 @@ func handleAccessFieldChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, m
 
 		// We don't care about read tokens here because we're doing a write
 		if isReadWrite {
-			for _, userToken := range session.GetTokens() {
+			for _, userToken := range flatTokens {
 				if token == userToken {
 					//fmt.Println("GRANTED BASED ON TOKEN: " + challengeMetadata.GetFullName() + " MATCHING " + token)
 					hasToken = true
@@ -219,7 +219,7 @@ func handleAccessFieldChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, m
 	}
 
 	if !hasToken && !userCanModifyAllRecords {
-		return errors.New("User does not have parent access to write to this field: " + change.IDValue)
+		return errors.New("User does not have parent access to write to this record: " + change.UniqueKey + " of collection: " + change.Metadata.GetFullName())
 	}
 
 	return nil
@@ -250,7 +250,7 @@ func GenerateRecordChallengeTokens(op *adapt.SaveOp, connection adapt.Connection
 
 	for index := range challengeMetadata.RecordChallengeTokens {
 		challengeToken := challengeMetadata.RecordChallengeTokens[index]
-		tokenTemplate, err := adapt.NewFieldChanges(challengeToken.Token, challengeMetadata)
+		tokenTemplate, err := adapt.NewFieldChanges(challengeToken.Token, challengeMetadata, metadata)
 		if err != nil {
 			return err
 		}

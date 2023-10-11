@@ -1,0 +1,80 @@
+name: declarative_components_2
+definition:
+  # Wires connect to data in collections
+  wires:
+    foo:
+      viewOnly: true
+      init:
+        query: false
+        create: true
+      fields:
+        one:
+          type: TEXT
+          label: One
+        two:
+          type: TEXT
+          label: Two
+        three:
+          type: TEXT
+          label: Three
+        four:
+          type: TEXT
+          label: Four
+      defaults:
+        - valueSource: VALUE
+          field: one
+          value: left
+        - valueSource: VALUE
+          field: two
+          value: right
+        - valueSource: VALUE
+          field: three
+          value: footer
+        - valueSource: VALUE
+          field: four
+          value: header
+  # Components determine the layout and composition of your view
+  components:
+    - uesio/io.list:
+        wire: foo
+        components:
+          - uesio/tests.declarative2:
+              text1: I am on the ${one}
+              text2: I am on the ${two}
+              header:
+                - uesio/io.titlebar:
+                    title: This is the ${four}
+                    uesio.variant: uesio/io.main
+                    actions:
+                      - uesio/io.button:
+                          uesio.variant: uesio/io.primary
+                          text: Update fields
+                          uesio.id: btn-update-fields
+                          signals:
+                            - signal: wire/UPDATE_RECORD
+                              wire: foo
+                              field: one
+                              value: izquierda
+                            - signal: wire/UPDATE_RECORD
+                              wire: foo
+                              field: two
+                              value: derecha
+                            - signal: wire/UPDATE_RECORD
+                              wire: foo
+                              field: three
+                              value: pie
+                            - signal: wire/UPDATE_RECORD
+                              wire: foo
+                              field: four
+                              value: cabeza
+                      - uesio/io.button:
+                          uesio.variant: uesio/io.primary
+                          text: Go to View 1
+                          uesio.id: btn-go-to-view1
+                          signals:
+                            - signal: route/NAVIGATE
+                              path: declarative1
+              footer:
+                - uesio/io.titlebar:
+                    title: And this is the ${three}
+                    uesio.variant: uesio/io.main

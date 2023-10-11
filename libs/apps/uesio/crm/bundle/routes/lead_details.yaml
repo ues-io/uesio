@@ -1,6 +1,0 @@
-name: lead_details
-path: lead/{recordid}
-view: uesio/crm.lead_details
-theme: uesio/core.default
-title: ""
-public: true

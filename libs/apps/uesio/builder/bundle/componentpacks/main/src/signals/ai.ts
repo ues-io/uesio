@@ -138,6 +138,7 @@ const signals: SignalBandDefinition = {
 					label: "Cache responses",
 				},
 			],
+			canError: true,
 			outputs: [{ name: "choices", type: "LIST" }],
 		},
 	} as Record<string, SignalDescriptor>,

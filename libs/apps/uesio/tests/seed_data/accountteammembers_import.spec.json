@@ -1,0 +1,13 @@
+{
+	"jobtype": "IMPORT",
+	"collection": "uesio/tests.accountteammember",
+	"filetype": "CSV",
+	"mappings": {
+		"uesio/tests.member": {
+			"columnname": "member"
+		},
+		"uesio/tests.account": {
+			"columnname": "account"
+		}
+	}
+}

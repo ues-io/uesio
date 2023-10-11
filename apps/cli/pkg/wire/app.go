@@ -126,7 +126,8 @@ func GetApps() (map[string]*App, error) {
 	appsResult, err := Load(
 		"uesio/studio.app",
 		&LoadOptions{
-			Fields: appRequestFields,
+			Fields:             appRequestFields,
+			RequireWriteAccess: true,
 		},
 	)
 	if err != nil {

@@ -1,5 +1,0 @@
-name: related_event
-type: REFERENCE
-label: Related Event
-reference:
-  collection: uesio/crm.event

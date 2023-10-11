@@ -1,9 +1,11 @@
 import { LoadRequestBatch } from "../load/loadrequest"
-import { LoadResponseBatch } from "../load/loadresponse"
+import {
+	CollectionMetadataResponseBatch,
+	LoadResponseBatch,
+} from "../load/loadresponse"
 import { SaveRequestBatch } from "../load/saverequest"
 import { SaveResponseBatch } from "../load/saveresponse"
 import { Context } from "../context/context"
-import { MetadataType, METADATA } from "../bands/builder/types"
 import { Dependencies, RouteState, RouteTag } from "../bands/route/types"
 import { Spec } from "../definition/definition"
 import { parseKey } from "../component/path"
@@ -17,8 +19,37 @@ import {
 	postJSON,
 	respondJSON,
 	respondVoid,
+	postMultipartForm,
 } from "./async"
 import { memoizedGetJSON } from "./memoizedAsync"
+import { SiteState } from "../bands/site"
+import { UploadRequest } from "../load/uploadrequest"
+import { PlainCollectionMap } from "../bands/collection/types"
+import { ServerWire } from "../bands/wire/types"
+import { transformServerWire } from "../bands/wire/transform"
+import {
+	Bundleable,
+	BundleableBase,
+	METADATA,
+	MetadataType,
+} from "../metadata/types"
+
+type ServerWireLoadResponse = {
+	wires: ServerWire[]
+	collections: PlainCollectionMap
+}
+
+interface HasParams {
+	params?: Record<string, string>
+}
+
+const injectParams = (
+	x: HasParams[],
+	paramsToInject?: Record<string, string>
+) => {
+	if (!x || !x.length || !paramsToInject) return
+	x.forEach((y) => (y.params = paramsToInject))
+}
 
 // Allows us to load static vendor assets, such as Monaco modules, from custom paths
 // and for us to load Uesio-app-versioned files from the server
@@ -29,8 +60,16 @@ interface UesioWindow extends Window {
 	monacoEditorVersion: string
 }
 
-const getStaticAssetsPath = () =>
-	(window as unknown as UesioWindow).uesioStaticAssetsPath
+let staticAssetsPath: string | undefined
+
+export const getStaticAssetsPath = () => {
+	if (staticAssetsPath) return staticAssetsPath
+	return (window as unknown as UesioWindow).uesioStaticAssetsPath
+}
+
+export const setStaticAssetsPath = (path: string | undefined) => {
+	staticAssetsPath = path
+}
 
 const getStaticAssetsHost = () =>
 	(window as unknown as UesioWindow).uesioStaticAssetsHost
@@ -49,23 +88,18 @@ type BotResponse = {
 }
 
 type ConfigValueResponse = {
-	name: string
-	namespace: string
 	value: string
 	managedby: string
-}
+} & BundleableBase
 
 type SecretResponse = {
-	name: string
-	namespace: string
 	managedby: string
 	value: string
-}
+} & BundleableBase
 
-interface BaseFeatureFlag {
-	name: string
-	namespace: string
+interface BaseFeatureFlag extends Bundleable {
 	user: string
+	validForOrgs?: boolean
 }
 
 interface NumberFeatureFlag extends BaseFeatureFlag {
@@ -139,18 +173,68 @@ export const getPrefix = (context: Context) => {
 	return "/site"
 }
 
-const getSiteBundleVersion = (context: Context) => {
-	const site = context.getSite()
+const systemBundles = [
+	"uesio/io",
+	"uesio/builder",
+	"uesio/studio",
+	"uesio/core",
+]
+
+export const isSystemBundle = (namespace: string) =>
+	systemBundles.includes(namespace)
+
+// Returns a version number to use for requesting a site static asset, such as a File or a Component Pack file, such as:
+// - "/v1.2.3" (for regularly-versioned site assets)
+// - "/abcd1234" (for system bundle resources in Prod environments)
+// - "/1234567890" (for system bundle resources in local development)
+// THIS LOGIC SHOULD CORRESPOND ROUGHLY TO THE SERVER-SIDE LOGIC (pkg/controller/mergedata.go#getPackUrl)
+export const getSiteBundleAssetVersion = (
+	site: SiteState | undefined,
+	namespace: string,
+	assetModstamp?: number
+) => {
 	const staticAssetsPath = getStaticAssetsPath()
-	if (site && site.version) {
-		// Special case --- if this is a Uesio-provided site, we don't (currently) ever update the bundle versions,
-		// but we DO update the static assets path for the whole Docker image, so use that. It will look like "/abcdefg"
-		if (site.app.startsWith("uesio/") && staticAssetsPath) {
-			return staticAssetsPath
+
+	let siteBundleVersion = ""
+
+	// Handle requests for system bundles specially,
+	// since we don't update their bundle dependencies at all and just use dummy "v0.0.1" everywhere
+	if (isSystemBundle(namespace)) {
+		if (staticAssetsPath) {
+			// We DO update the static assets version for the whole Docker image, so use that if we have it
+			siteBundleVersion = staticAssetsPath // assets path SHOULD have a leading / already
+		} else if (assetModstamp) {
+			// If we don't have a Git sha, then we are in local development,
+			// in which case we want to use the asset modstamp to avoid stale file loads
+			siteBundleVersion = `/${assetModstamp}`
 		}
-		return `/${site.version}`
+	} else {
+		// NON-system bundles
+		if (namespace === site?.app) {
+			// If requested namespace is the app's name, use the site version
+			siteBundleVersion = `/${site.version}`
+		} else if (site?.dependencies) {
+			// For all other deps, use the site's declared bundle dependency version,
+			// which SHOULD be present (otherwise how are they using it...)
+			const match = site.dependencies[namespace]
+			if (match?.version) {
+				siteBundleVersion = `/${match.version}`
+			}
+		}
 	}
-	return ""
+
+	// If we still don't have a bundle version, for some bizarre reason...
+	if (!siteBundleVersion) {
+		if (assetModstamp) {
+			// Prefer modstamp
+			siteBundleVersion = `/${assetModstamp}`
+		} else if (site?.version) {
+			// Final fallback --- use site version
+			siteBundleVersion = `/${site?.version}`
+		}
+	}
+
+	return siteBundleVersion
 }
 
 const platform = {
@@ -194,18 +278,34 @@ const platform = {
 		requestBody: LoadRequestBatch
 	): Promise<LoadResponseBatch> => {
 		const prefix = getPrefix(context)
-		const response = await postJSON(
-			context,
-			`${prefix}/wires/load`,
-			requestBody
-		)
-		return respondJSON(response)
+		injectParams(requestBody.wires, context.getParams())
+		let response
+		try {
+			response = await postJSON(
+				context,
+				`${prefix}/wires/load`,
+				requestBody
+			)
+		} catch (err) {
+			return Promise.reject(err)
+		}
+		const loadResponse = (await respondJSON(
+			response
+		)) as ServerWireLoadResponse
+
+		const { collections, wires } = loadResponse
+
+		return {
+			collections,
+			wires: wires.map(transformServerWire),
+		}
 	},
 	saveData: async (
 		context: Context,
 		requestBody: SaveRequestBatch
 	): Promise<SaveResponseBatch> => {
 		const prefix = getPrefix(context)
+		injectParams(requestBody.wires, context.getParams())
 		const response = await postJSON(
 			context,
 			`${prefix}/wires/save`,
@@ -260,10 +360,19 @@ const platform = {
 			context,
 			`${getPrefix(context)}/views/params/${namespace}/${name}`
 		),
-	getFileURL: (context: Context, namespace: string, name: string) => {
-		const siteBundleVersion = getSiteBundleVersion(context)
+	getFileURL: (
+		context: Context,
+		namespace: string,
+		name: string,
+		modstamp?: number
+	) => {
+		const version = getSiteBundleAssetVersion(
+			context.getSite(),
+			namespace,
+			modstamp || context.getStaticFileModstamp(`${namespace}.${name}`)
+		)
 		const prefix = getPrefix(context)
-		return `${prefix}/files/${namespace}${siteBundleVersion}/${name}`
+		return `${prefix}/files/${namespace}${version}/${name}`
 	},
 	getUserFileURL: (
 		context: Context,
@@ -280,24 +389,23 @@ const platform = {
 	},
 	uploadFile: async (
 		context: Context,
-		fileData: File,
-		collectionID: string,
-		recordID: string,
-		fieldID?: string
+		request: UploadRequest,
+		fileData: File
 	): Promise<PlainWireRecord> => {
 		const prefix = getPrefix(context)
 		const url = `${prefix}/userfiles/upload`
-		const params = new URLSearchParams()
-		params.append("name", fileData.name)
-		params.append("collectionid", collectionID)
-		params.append("recordid", recordID)
-		if (fieldID) params.append("fieldid", fieldID)
-
-		const response = await postBinary(
-			context,
-			url + "?" + params.toString(),
-			fileData
+		const formData = new FormData()
+		// HTML file input, chosen by user
+		formData.append(
+			"details",
+			JSON.stringify({
+				...request,
+				name: fileData.name,
+			})
 		)
+
+		formData.append("file", fileData)
+		const response = await postMultipartForm(context, url, formData)
 		return respondJSON(response)
 	},
 	deleteFile: async (
@@ -313,11 +421,21 @@ const platform = {
 		context: Context,
 		namespace: string,
 		name: string,
+		modstamp = new Date().getTime(),
 		path = "runtime.js"
 	) => {
-		const siteBundleVersion = getSiteBundleVersion(context)
-		const prefix = getPrefix(context)
-		return `${prefix}/componentpacks/${namespace}${siteBundleVersion}/${name}/${path}`
+		const workspace = context.getWorkspace()
+		if (workspace) {
+			// If we are in a workspace context, use component pack modstamps to load in their resources,
+			// since we don't have a stable "site" version that we can safely use, as the bundle dependency list is not immutable.
+			return `/workspace/${workspace.app}/${workspace.name}/componentpacks/${namespace}/${modstamp}/${name}/${path}`
+		}
+		const version = getSiteBundleAssetVersion(
+			context.getSite(),
+			namespace,
+			modstamp
+		)
+		return `/site/componentpacks/${namespace}${version}/${name}/${path}`
 	},
 	getMetadataList: async (
 		context: Context,
@@ -337,8 +455,8 @@ const platform = {
 	getCollectionMetadata: async (
 		context: Context,
 		collectionName: string
-	): Promise<LoadResponseBatch> =>
-		memoizedGetJSON<LoadResponseBatch>(
+	): Promise<CollectionMetadataResponseBatch> =>
+		memoizedGetJSON<CollectionMetadataResponseBatch>(
 			context,
 			`${getPrefix(context)}/collections/meta/${collectionName}`
 		),
@@ -425,31 +543,6 @@ const platform = {
 			requestBody
 		)
 		return respondJSON(response)
-	},
-	signUpConfirm: async (
-		context: Context,
-		signupMethod: string,
-		requestBody: Record<string, string>
-	): Promise<void> => {
-		const [namespace, name] = parseKey(signupMethod)
-		const response = await postJSON(
-			context,
-			`/site/auth/${namespace}/${name}/signup/confirm`,
-			requestBody
-		)
-		return respondVoid(response)
-	},
-	checkAvailability: async (
-		context: Context,
-		signupMethod: string,
-		username: string
-	): Promise<void> => {
-		const [namespace, name] = parseKey(signupMethod)
-		const response = await post(
-			context,
-			`/site/auth/${namespace}/${name}/checkavailability/${username}`
-		)
-		return respondVoid(response)
 	},
 	login: async (
 		context: Context,

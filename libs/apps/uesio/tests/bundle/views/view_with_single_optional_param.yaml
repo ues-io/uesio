@@ -1,0 +1,25 @@
+name: view_with_single_optional_param
+definition:
+  wires: {}
+  components:
+    - uesio/io.box:
+        components:
+          - uesio/io.text:
+              text: Only shown if show is true
+              element: div
+              align: left
+              uesio.id: conditionallyShown
+              uesio.display:
+                - type: paramValue
+                  operator: EQUALS
+                  param: show
+                  value: "true"
+    - uesio/io.text:
+        uesio.id: alwaysShown
+        text: Always shown
+        element: div
+        align: left
+  params:
+    show:
+      type: TEXT
+      required: false

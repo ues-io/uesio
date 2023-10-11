@@ -1,18 +1,9 @@
-import { FunctionComponent } from "react"
-import {
-	definition,
-	styles,
-	context,
-	collection,
-	wire,
-	component,
-} from "@uesio/ui"
+import { definition, styles, context, wire, component } from "@uesio/ui"
 import TextField from "./text"
 
-interface SelectFieldProps extends definition.UtilityProps {
+interface SelectFieldProps {
 	setValue: (value: wire.FieldValue) => void
 	value: wire.FieldValue
-	fieldMetadata: collection.Field
 	mode?: context.FieldMode
 	options: wire.SelectOption[] | null
 	readonly?: boolean
@@ -23,14 +14,22 @@ const StyleDefaults = Object.freeze({
 	input: [],
 })
 
-const SelectField: FunctionComponent<SelectFieldProps> = (props) => {
+const SelectField: definition.UtilityComponent<SelectFieldProps> = (props) => {
 	const { readonly, setValue, mode, options, id, context } = props
 	const value = (props.value as string) || ""
 
 	if (mode === "READ") {
 		const optionMatch = options?.find((option) => option.value === value)
 		const valueLabel = optionMatch?.label || ""
-		return <TextField {...props} value={valueLabel} />
+		return (
+			<TextField
+				setValue={setValue}
+				value={valueLabel}
+				mode={mode}
+				readonly={readonly}
+				context={context}
+			/>
+		)
 	}
 
 	const classes = styles.useUtilityStyleTokens(

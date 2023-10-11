@@ -1,16 +1,10 @@
-import { FunctionComponent } from "react"
-import { definition, styles } from "@uesio/ui"
+import { component, definition, styles } from "@uesio/ui"
 import Button from "../button/button"
 import Icon from "../icon/icon"
+import { TabDefinition } from "../../components/tabs/tabs"
 
-interface Tab {
-	label: string
-	id: string
-	icon?: string
-}
-
-interface TabsUtilityProps extends definition.UtilityProps {
-	tabs: Tab[]
+interface TabsUtilityProps {
+	tabs: TabDefinition[]
 	selectedTab: string
 	setSelectedTab: (selected: string) => void
 }
@@ -21,7 +15,7 @@ const StyleDefaults = Object.freeze({
 	tabSelected: [],
 })
 
-const TabLabels: FunctionComponent<TabsUtilityProps> = (props) => {
+const TabLabels: definition.UtilityComponent<TabsUtilityProps> = (props) => {
 	const { tabs, selectedTab, setSelectedTab, context } = props
 	const classes = styles.useUtilityStyleTokens(
 		StyleDefaults,
@@ -31,26 +25,28 @@ const TabLabels: FunctionComponent<TabsUtilityProps> = (props) => {
 
 	return (
 		<div className={classes.root}>
-			{tabs?.map((tab) => (
-				<Button
-					context={context}
-					onClick={() => {
-						setSelectedTab(tab.id)
-					}}
-					key={tab.id}
-					classes={{
-						root: classes.tab,
-						selected: classes.tabSelected,
-					}}
-					isSelected={tab.id === selectedTab}
-					label={tab.label}
-					icon={
-						tab.icon ? (
-							<Icon context={context} icon={tab.icon} />
-						) : undefined
-					}
-				/>
-			))}
+			{component
+				.useShouldFilter<TabDefinition>(tabs, context)
+				.map((tab) => (
+					<Button
+						context={context}
+						onClick={() => {
+							setSelectedTab(tab.id)
+						}}
+						key={tab.id}
+						classes={{
+							root: classes.tab,
+							selected: classes.tabSelected,
+						}}
+						isSelected={tab.id === selectedTab}
+						label={tab.label}
+						icon={
+							tab.icon ? (
+								<Icon context={context} icon={tab.icon} />
+							) : undefined
+						}
+					/>
+				))}
 		</div>
 	)
 }

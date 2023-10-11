@@ -13,7 +13,7 @@ func GetTranslatedLabels(session *sess.Session) (map[string]string, error) {
 	if session.HasLabels() {
 		return session.GetLabels(), nil
 	}
-	userLanguage := session.GetUserInfo().Language
+	userLanguage := session.GetContextUser().Language
 
 	var labels meta.LabelCollection
 	err := bundle.LoadAllFromAny(&labels, nil, session, nil)

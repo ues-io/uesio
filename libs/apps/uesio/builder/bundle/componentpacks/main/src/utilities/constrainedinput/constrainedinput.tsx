@@ -6,9 +6,9 @@ import {
 	wire,
 	styles,
 } from "@uesio/ui"
-import { FunctionComponent, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 
-interface ConstrainedInputProps extends definition.UtilityProps {
+interface ConstrainedInputProps {
 	setValue: (value: wire.FieldValue) => void
 	value: wire.FieldValue
 	label: string
@@ -24,7 +24,9 @@ const StyleDefaults = Object.freeze({
 	button: ["p-1"],
 })
 
-const ConstrainedInput: FunctionComponent<ConstrainedInputProps> = (props) => {
+const ConstrainedInput: definition.UtilityComponent<ConstrainedInputProps> = (
+	props
+) => {
 	const {
 		context,
 		fieldWrapperVariant,
@@ -83,7 +85,7 @@ const ConstrainedInput: FunctionComponent<ConstrainedInputProps> = (props) => {
 				/>
 				<IconButton
 					onClick={onClickButton}
-					icon={inEditMode ? "save" : "edit"}
+					icon={inEditMode ? "done" : "edit"}
 					context={context}
 					label={
 						inEditMode ? "Apply change" : "Click to change value"

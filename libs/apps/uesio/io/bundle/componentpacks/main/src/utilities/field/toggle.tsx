@@ -1,20 +1,19 @@
-import { FC } from "react"
 import { definition, styles, context, wire } from "@uesio/ui"
 
-interface ToggleFieldProps extends definition.UtilityProps {
+interface ToggleFieldProps {
 	setValue: (value: boolean) => void
 	value: wire.FieldValue
 	mode?: context.FieldMode
 }
 
-const ToggleField: FC<ToggleFieldProps> = (props) => {
+const ToggleField: definition.UtilityComponent<ToggleFieldProps> = (props) => {
 	const { setValue, value, mode } = props
 
 	const readonly = mode === "READ"
 	const checked = value === true
 	const classes = styles.useUtilityStyleTokens(
 		{
-			root: ["w-full", "text-center"],
+			root: ["p-[7px]"],
 			switch: [
 				"[&:has(:focus-visible)]:(outline(& 2 offset-2 blue-600))",
 				"relative",

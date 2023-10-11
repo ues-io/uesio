@@ -2,6 +2,6 @@ name: filesources
 type: REFERENCEGROUP
 label: Filesources
 referenceGroup:
-  collection: uesio/studio.filesource
-  field: uesio/studio.workspace
+  collection: filesource
+  field: workspace
   onDelete: CASCADE

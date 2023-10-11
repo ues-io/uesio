@@ -1,128 +1,117 @@
 package datasource
 
-import "github.com/thecloudmasters/uesio/pkg/adapt"
+import (
+	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/meta"
+)
 
-var BUILTIN_FIELDS = [...]adapt.FieldMetadata{ID_FIELD_METADATA, UNIQUE_KEY_FIELD_METADATA, OWNER_FIELD_METADATA, CREATEDBY_FIELD_METADATA, UPDATEDBY_FIELD_METADATA, CREATEDAT_FIELD_METADATA, UPDATEDAT_FIELD_METADATA}
-
-var ID_FIELD_METADATA = adapt.FieldMetadata{
-	Name:       "id",
-	Namespace:  "uesio/core",
-	Createable: false,
-	Accessible: true,
-	Updateable: false,
-	Type:       "TEXT",
-	Label:      "Id",
+var ID_FIELD_DEF = meta.Field{
+	BundleableBase: meta.BundleableBase{
+		Name:      "id",
+		Namespace: "uesio/core",
+	},
+	ReadOnly: true,
+	Type:     "TEXT",
+	Label:    "Id",
 }
 
-var UNIQUE_KEY_FIELD_METADATA = adapt.FieldMetadata{
-	Name:       "uniquekey",
-	Namespace:  "uesio/core",
-	Createable: false,
-	Accessible: true,
-	Updateable: false,
-	Type:       "TEXT",
-	Label:      "Unique Key",
+var UNIQUE_KEY_FIELD_DEF = meta.Field{
+	BundleableBase: meta.BundleableBase{
+		Name:      "uniquekey",
+		Namespace: "uesio/core",
+	},
+	ReadOnly: true,
+	Type:     "TEXT",
+	Label:    "Unique Key",
 }
 
-var OWNER_FIELD_METADATA = adapt.FieldMetadata{
-	Name:         "owner",
-	Namespace:    "uesio/core",
-	Createable:   false,
-	Accessible:   true,
-	Updateable:   false,
+var OWNER_FIELD_DEF = meta.Field{
+	BundleableBase: meta.BundleableBase{
+		Name:      "owner",
+		Namespace: "uesio/core",
+	},
+	ReadOnly:     true,
 	Type:         "USER",
 	Label:        "Owner",
 	AutoPopulate: "CREATE",
 }
 
-var CREATEDBY_FIELD_METADATA = adapt.FieldMetadata{
-	Name:         "createdby",
-	Namespace:    "uesio/core",
-	Createable:   false,
-	Accessible:   true,
-	Updateable:   false,
+var CREATEDBY_FIELD_DEF = meta.Field{
+	BundleableBase: meta.BundleableBase{
+		Name:      "createdby",
+		Namespace: "uesio/core",
+	},
+	ReadOnly:     true,
 	Type:         "USER",
 	Label:        "Created By",
 	AutoPopulate: "CREATE",
 }
 
-var UPDATEDBY_FIELD_METADATA = adapt.FieldMetadata{
-	Name:         "updatedby",
-	Namespace:    "uesio/core",
-	Createable:   false,
-	Accessible:   true,
-	Updateable:   false,
+var UPDATEDBY_FIELD_DEF = meta.Field{
+	BundleableBase: meta.BundleableBase{
+		Name:      "updatedby",
+		Namespace: "uesio/core",
+	},
+	ReadOnly:     true,
 	Type:         "USER",
 	Label:        "Updated By",
 	AutoPopulate: "UPDATE",
 }
 
-var CREATEDAT_FIELD_METADATA = adapt.FieldMetadata{
-	Name:         "createdat",
-	Namespace:    "uesio/core",
-	Createable:   false,
-	Accessible:   true,
-	Updateable:   false,
+var CREATEDAT_FIELD_DEF = meta.Field{
+	BundleableBase: meta.BundleableBase{
+		Name:      "createdat",
+		Namespace: "uesio/core",
+	},
+	ReadOnly:     true,
 	Type:         "TIMESTAMP",
 	Label:        "Created At",
 	AutoPopulate: "CREATE",
 }
 
-var UPDATEDAT_FIELD_METADATA = adapt.FieldMetadata{
-	Name:         "updatedat",
-	Namespace:    "uesio/core",
-	Createable:   false,
-	Accessible:   true,
-	Updateable:   false,
+var UPDATEDAT_FIELD_DEF = meta.Field{
+	BundleableBase: meta.BundleableBase{
+		Name:      "updatedat",
+		Namespace: "uesio/core",
+	},
+	ReadOnly:     true,
 	Type:         "TIMESTAMP",
 	Label:        "Updated At",
 	AutoPopulate: "UPDATE",
 }
 
-var DYNAMIC_COLLECTION_FIELD = adapt.FieldMetadata{
-	Name:       "dynamiccollection",
-	Namespace:  "uesio/core",
-	Createable: false,
-	Accessible: true,
-	Updateable: false,
-	Type:       "TEXT",
-	Label:      "Dynamic Collection",
+var BUILTIN_FIELDS_MAP = map[string]meta.Field{
+	adapt.ID_FIELD:         ID_FIELD_DEF,
+	adapt.UNIQUE_KEY_FIELD: UNIQUE_KEY_FIELD_DEF,
+	adapt.OWNER_FIELD:      OWNER_FIELD_DEF,
+	adapt.CREATED_BY_FIELD: CREATEDBY_FIELD_DEF,
+	adapt.UPDATED_BY_FIELD: UPDATEDBY_FIELD_DEF,
+	adapt.CREATED_AT_FIELD: CREATEDAT_FIELD_DEF,
+	adapt.UPDATED_AT_FIELD: UPDATEDAT_FIELD_DEF,
 }
 
-func addAllBuiltinFields(collectionMetadata *adapt.CollectionMetadata) {
-	collectionMetadata.SetField(&ID_FIELD_METADATA)
-	collectionMetadata.SetField(&UNIQUE_KEY_FIELD_METADATA)
-	collectionMetadata.SetField(&OWNER_FIELD_METADATA)
-	collectionMetadata.SetField(&CREATEDBY_FIELD_METADATA)
-	collectionMetadata.SetField(&UPDATEDBY_FIELD_METADATA)
-	collectionMetadata.SetField(&CREATEDAT_FIELD_METADATA)
-	collectionMetadata.SetField(&UPDATEDAT_FIELD_METADATA)
-	return
+var BUILTIN_FIELD_KEYS = []string{
+	adapt.ID_FIELD,
+	adapt.UNIQUE_KEY_FIELD,
+	adapt.OWNER_FIELD,
+	adapt.CREATED_BY_FIELD,
+	adapt.UPDATED_BY_FIELD,
+	adapt.CREATED_AT_FIELD,
+	adapt.UPDATED_AT_FIELD,
 }
 
-func addBuiltinFields(collectionMetadata *adapt.CollectionMetadata, requestedFields FieldsMap) {
-	collectionMetadata.SetField(&ID_FIELD_METADATA)
-	collectionMetadata.SetField(&UNIQUE_KEY_FIELD_METADATA)
-	_, ok := requestedFields[adapt.OWNER_FIELD]
-	if ok {
-		collectionMetadata.SetField(&OWNER_FIELD_METADATA)
+func AddAllBuiltinFields(fields meta.BundleableGroup, collectionKey string) {
+	for _, key := range BUILTIN_FIELD_KEYS {
+		field, _ := GetBuiltinField(key, collectionKey)
+		fields.AddItem(&field)
 	}
-	_, ok = requestedFields["uesio/core.createdby"]
-	if ok {
-		collectionMetadata.SetField(&CREATEDBY_FIELD_METADATA)
-	}
-	_, ok = requestedFields["uesio/core.updatedby"]
-	if ok {
-		collectionMetadata.SetField(&UPDATEDBY_FIELD_METADATA)
-	}
-	_, ok = requestedFields["uesio/core.createdat"]
-	if ok {
-		collectionMetadata.SetField(&CREATEDAT_FIELD_METADATA)
-	}
-	_, ok = requestedFields["uesio/core.updatedat"]
-	if ok {
-		collectionMetadata.SetField(&UPDATEDAT_FIELD_METADATA)
-	}
+}
 
-	return
+func GetBuiltinField(key string, collectionKey string) (meta.Field, bool) {
+	field, ok := BUILTIN_FIELDS_MAP[key]
+	if !ok {
+		return field, false
+	}
+	field.CollectionRef = collectionKey
+	return field, true
 }

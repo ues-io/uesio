@@ -1,11 +1,10 @@
-import { MetadataKey } from "../bands/builder/types"
-import { DefinitionMap } from "./definition"
+import type { MetadataKey } from "../metadata/types"
+import { BundleableBase } from "../metadataexports"
+import type { DefinitionMap } from "./definition"
 
 export type ComponentVariant = {
-	name: string
-	namespace: string
 	label: string
 	extends?: string
 	component: MetadataKey
 	definition: DefinitionMap
-}
+} & BundleableBase

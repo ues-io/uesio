@@ -3,5 +3,7 @@ uniqueKey:
   - uesio/studio.app
   - uesio/studio.applicensed
 nameField: uesio/studio.app
+access: protected
+accessField: uesio/studio.applicensed
 label: license
 pluralLabel: licenses

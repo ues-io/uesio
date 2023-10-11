@@ -1,8 +1,14 @@
 name: subtype
 options:
+  - label: "Date"
+    value: "DATE"
+  - label: "Long Text"
+    value: "LONGTEXT"
+  - label: "Number"
+    value: "NUMBER"
   - label: "Struct"
     value: "STRUCT"
   - label: "Text"
     value: "TEXT"
-  - label: "Number"
-    value: "NUMBER"
+  - label: "Timestamp"
+    value: "TIMESTAMP"

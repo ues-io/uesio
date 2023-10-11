@@ -191,14 +191,10 @@ In mac, double-click certificate.crt in Finder. Right-click on the uesio-dev.com
 
 # <a id="set-up-local-dns"></a> Set up your local DNS
 
-On Mac modify the `/etc/hosts` file to include the following lines
+On Mac/Linux, modify the `/etc/hosts` file to resolve local subdomains to 127.0.0.1
 
 ```
-127.0.0.1 uesio-dev.com
-127.0.0.1 studio.uesio-dev.com
-127.0.0.1 www.uesio-dev.com
-127.0.0.1 docs.uesio-dev.com
-127.0.0.1 www.docs.uesio-dev.com
+bash ./scripts/seed-etc-hosts.sh
 ```
 
 Mac users can also use a service called dnsmasq for managing local DNS.

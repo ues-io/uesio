@@ -1,7 +1,0 @@
-name: datasource
-uniqueKey:
-  - uesio/studio.workspace
-  - uesio/studio.name
-nameField: uesio/studio.name
-label: data source
-pluralLabel: data sources

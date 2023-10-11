@@ -1,4 +1,3 @@
-import { FunctionComponent } from "react"
 import { definition, styles } from "@uesio/ui"
 import {
 	FloatingFocusManager,
@@ -8,12 +7,14 @@ import {
 	useInteractions,
 } from "@floating-ui/react"
 
-interface SidePanelUtilityProps extends definition.UtilityProps {
+interface SidePanelUtilityProps {
 	onClose?: () => void
 	initialFocus?: number
 }
 
-const SidePanelPlain: FunctionComponent<SidePanelUtilityProps> = (props) => {
+const SidePanelPlain: definition.UtilityComponent<SidePanelUtilityProps> = (
+	props
+) => {
 	const classes = styles.useUtilityStyleTokens(
 		{
 			blocker: [

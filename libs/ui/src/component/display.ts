@@ -37,6 +37,13 @@ type ParamIsSetCondition = {
 	param: string
 }
 
+type MergeValue = {
+	type: "mergeValue"
+	operator: DisplayOperator
+	sourceValue: string
+	value: string
+}
+
 type ParamIsNotSetCondition = {
 	type: "paramIsNotSet"
 	param: string
@@ -127,8 +134,16 @@ type HasProfile = {
 	type: "hasProfile"
 	profile: string
 }
+type Conjunction = "AND" | "OR"
+
+type GroupCondition = {
+	type: "group"
+	conjunction: Conjunction
+	conditions: DisplayCondition[]
+}
 
 type DisplayCondition =
+	| GroupCondition
 	| HasProfile
 	| WireHasChanges
 	| WireHasNoChanges
@@ -149,6 +164,7 @@ type DisplayCondition =
 	| WireHasRecords
 	| WireHasLoadedAllRecords
 	| WireHasMoreRecordsToLoad
+	| MergeValue
 
 type ItemContext<T> = {
 	item: T
@@ -183,11 +199,20 @@ function compare(a: unknown, b: unknown, op: DisplayOperator) {
 	}
 }
 
-function should(condition: DisplayCondition, context: Context) {
+function should(condition: DisplayCondition, context: Context): boolean {
+	if (!condition) return true
+
 	if (condition.type === "collectionContext") {
 		const wire = context.getWire()
 		const collection = wire?.getCollection()
 		return collection?.getFullName() === condition.collection
+	}
+
+	if (condition.type === "group") {
+		const { conjunction = "AND", conditions = [] } = condition
+		return conditions[
+			conjunction === "OR" && conditions?.length ? "some" : "every"
+		]((c) => should(c, context))
 	}
 
 	if (condition.type === "paramIsSet")
@@ -252,8 +277,8 @@ function should(condition: DisplayCondition, context: Context) {
 
 	const compareToValue =
 		typeof condition.value === "string"
-			? context.mergeString(condition.value as string)
-			: condition.value || (canHaveMultipleValues ? condition.values : "")
+			? context.merge(condition.value as string)
+			: condition.value ?? (canHaveMultipleValues ? condition.values : "")
 
 	if (condition.type === "hasNoValue") return !compareToValue
 	if (condition.type === "hasValue") return !!compareToValue
@@ -263,13 +288,19 @@ function should(condition: DisplayCondition, context: Context) {
 			context.getParam(condition.param),
 			condition.operator
 		)
+	if (condition.type === "mergeValue")
+		return compare(
+			compareToValue,
+			context.merge(condition.sourceValue),
+			condition.operator
+		)
 
 	if (!condition.type || condition.type === "fieldValue") {
 		const record = context.getRecord(condition.wire)
 		const comparator = (r: WireRecord) =>
 			compare(
 				compareToValue,
-				condition.field ? r.getFieldValue(condition.field) || "" : "",
+				condition.field ? r.getFieldValue(condition.field) ?? "" : "",
 				condition.operator
 			)
 		if (record) return comparator(record)
@@ -280,7 +311,8 @@ function should(condition: DisplayCondition, context: Context) {
 		const records = wire.getData()
 
 		// If there are no records, not_equal applies
-		if (!records.length) return condition.operator?.includes("NOT")
+		if (!records.length && condition.operator)
+			return condition.operator.includes("NOT")
 
 		// When we check for false condition, we want to check every record.
 		const arrayMethod = condition.operator?.includes("NOT")
@@ -302,19 +334,33 @@ const shouldAll = (
 	return conditions.every((condition) => should(condition, context))
 }
 
+const extractWireIdsFromConditions = (
+	conditions: DisplayCondition[],
+	uniqueWires: Set<string>
+) => {
+	conditions.forEach((condition) => {
+		if ("wire" in condition && condition.wire) {
+			uniqueWires.add(condition.wire)
+		} else if (
+			condition.type === "group" &&
+			condition.conditions instanceof Array
+		) {
+			extractWireIdsFromConditions(condition.conditions, uniqueWires)
+		}
+	})
+}
+
 // Create a list of all of the wires that we're going to care about
-const getWiresForConditions = (
+export const getWiresForConditions = (
 	conditions: DisplayCondition[] | undefined,
-	context: Context
+	context: Context | undefined,
+	uniqueWires = new Set<string>()
 ) => {
 	if (!conditions) return []
-	const contextWire = context.getWireId()
-	return [
-		...(contextWire ? [contextWire] : []),
-		...conditions.flatMap((condition) =>
-			"wire" in condition && condition.wire ? [condition.wire] : []
-		),
-	]
+	const contextWire = context?.getWireId()
+	if (contextWire) uniqueWires.add(contextWire)
+	extractWireIdsFromConditions(conditions, uniqueWires)
+	return Array.from(uniqueWires.values())
 }
 
 const useShouldFilter = <T extends BaseDefinition>(
@@ -334,9 +380,7 @@ const useShouldFilter = <T extends BaseDefinition>(
 		context
 	)
 
-	return items?.filter((item, index) =>
-		shouldAll(conditionsList[index], context)
-	)
+	return items?.filter((item) => shouldAll(item[DISPLAY_CONDITIONS], context))
 }
 
 const useContextFilter = <T>(
@@ -383,6 +427,7 @@ function shouldHaveClass(
 
 export {
 	useShould,
+	should,
 	shouldAll,
 	useShouldFilter,
 	useContextFilter,

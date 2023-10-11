@@ -1,4 +1,4 @@
 name: dependencies_group
 path: dependencies_group
-view: uesio/tests.dependencies_group
+view: dependencies_group
 title: Tests loading of group component dependencies

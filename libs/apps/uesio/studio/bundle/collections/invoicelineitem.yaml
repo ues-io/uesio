@@ -2,3 +2,5 @@ name: invoicelineitem
 nameField: uesio/studio.invoice
 label: invoice line item
 pluralLabel: invoice line items
+access: protected
+accessField: uesio/studio.invoice

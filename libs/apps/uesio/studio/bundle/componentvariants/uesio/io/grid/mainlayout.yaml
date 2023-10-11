@@ -1,8 +1,0 @@
-name: mainlayout
-label: Main Layout
-definition:
-  uesio.styleTokens:
-    root:
-      - grid-cols-[300px_1fr]
-      - grid-rows-[60px_1fr]
-      - h-screen

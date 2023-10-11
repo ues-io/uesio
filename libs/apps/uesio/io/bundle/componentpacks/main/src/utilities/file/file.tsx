@@ -1,4 +1,3 @@
-import { FunctionComponent } from "react"
 import { definition, styles, collection, context, api } from "@uesio/ui"
 import { nanoid } from "@reduxjs/toolkit"
 import Tile from "../tile/tile"
@@ -6,7 +5,7 @@ import Icon from "../icon/icon"
 import UploadArea from "../uploadarea/uploadarea"
 import { UserFileMetadata } from "../../components/field/field"
 
-interface FileUtilityProps extends definition.UtilityProps {
+interface FileUtilityProps {
 	id?: string
 	mode?: context.FieldMode
 	userFile?: UserFileMetadata
@@ -39,7 +38,7 @@ const StyleDefaults = Object.freeze({
 	actionbutton: ["p-1", "cursor-pointer", "m-1", "text-slate-700"],
 })
 
-const File: FunctionComponent<FileUtilityProps> = (props) => {
+const File: definition.UtilityComponent<FileUtilityProps> = (props) => {
 	const { context, userFile, onUpload, onDelete, accept, mode } = props
 
 	const userFileId = userFile?.[collection.ID_FIELD]

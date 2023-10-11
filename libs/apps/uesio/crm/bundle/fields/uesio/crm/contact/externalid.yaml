@@ -1,7 +1,0 @@
-name: externalid
-type: AUTONUMBER
-label: External ID
-readOnly: true
-autonumber:
-  prefix: CON
-  leadingZeros: 5

@@ -1,38 +1,50 @@
-import { FunctionComponent } from "react"
 import { wire, collection, definition, context, metadata } from "@uesio/ui"
 import ListField from "../field/list"
 
-interface MapFieldUtilityProps extends definition.UtilityProps {
-	mode: context.FieldMode
-	value: wire.FieldValue
-	setValue: (value: wire.PlainWireRecord) => void
+interface MapFieldUtilityProps {
+	fieldId: string
 	keyField: collection.FieldMetadata
-	valueField: collection.FieldMetadata
 	keys?: string[]
+	labelVariant?: metadata.MetadataKey
+	mode: context.FieldMode
 	noAdd?: boolean
 	noDelete?: boolean
-	subFieldVariant?: metadata.MetadataKey
-	labelVariant?: metadata.MetadataKey
 	path: string
-	fieldId: string
+	setValue: (value: wire.PlainWireRecord) => void
+	subFieldVariant?: metadata.MetadataKey
+	value: wire.FieldValue
+	valueField: collection.FieldMetadata
 }
 
-const MapField: FunctionComponent<MapFieldUtilityProps> = (props) => {
+const getStructFieldValuesObject = (
+	valueFields: collection.FieldMetadataMap,
+	record: wire.PlainWireRecord
+) =>
+	Object.entries(valueFields).reduce((newStruct, [subFieldId]) => {
+		const value = record[subFieldId] as string
+		if (value || value === "") {
+			newStruct[subFieldId] = value
+		}
+		return newStruct
+	}, {} as Record<string, wire.FieldValue>)
+
+const MapField: definition.UtilityComponent<MapFieldUtilityProps> = (props) => {
 	const {
-		fieldId,
-		mode,
 		context,
-		keys,
-		setValue,
+		fieldId,
 		keyField,
-		valueField,
-		noAdd,
-		noDelete,
-		subFieldVariant,
+		keys,
 		labelVariant,
+		mode,
+		noAdd = false,
+		noDelete = false,
 		path,
+		setValue,
+		subFieldVariant,
+		valueField,
 	} = props
 
+	const internalKey = "__key__"
 	const value = (props.value as Record<string, wire.FieldValue>) || {}
 	const mapValue = keys
 		? {
@@ -41,9 +53,38 @@ const MapField: FunctionComponent<MapFieldUtilityProps> = (props) => {
 		  }
 		: value
 
-	const listValue = Object.keys(mapValue).map((key) => ({
-		key,
-		value: mapValue[key],
+	const getDefaultValue = () => ({
+		[internalKey]:
+			(keyField?.name || keyField?.label || "item") +
+			((keys?.length || 0) + 1),
+	})
+	// hack the key field provided to give it a different name, so that we can safely isolate the key field from value fields
+	const useKeyField = {
+		...keyField,
+		name: internalKey,
+	} as collection.FieldMetadata
+	const subFields = {
+		[internalKey]: useKeyField,
+	} as collection.FieldMetadataMap
+	// If our value field is a struct, flatten out all of the subFields into top-level fields, for better UX.
+	// We will recombine them in the setValue function into a struct object to be saved.
+	const valueFields =
+		valueField.type === "STRUCT" ? valueField.subfields : undefined
+	if (valueFields) {
+		Object.entries(valueFields).forEach(([subFieldId, subField]) => {
+			subFields[subFieldId] = subField
+		})
+	}
+	const listValue = Object.entries(mapValue).map(([key, value]) => ({
+		[internalKey]: key,
+		...(valueFields
+			? getStructFieldValuesObject(
+					valueFields,
+					value as wire.PlainWireRecord
+			  )
+			: {
+					value,
+			  }),
 	}))
 
 	return (
@@ -54,22 +95,30 @@ const MapField: FunctionComponent<MapFieldUtilityProps> = (props) => {
 			noAdd={noAdd}
 			noDelete={noDelete}
 			subType="STRUCT"
-			subFields={{
-				key: keyField,
-				value: valueField,
-			}}
+			subFields={subFields}
 			setValue={(value: wire.PlainWireRecord[]) => {
 				setValue(
 					value.reduce((obj, record) => {
-						const key = record.key as string
-						const value = record.value as string
-						if (value || value === "") {
-							obj[key] = value
+						const key = record[internalKey] as string
+						// If the Sub Type is STRUCT, combine all of the flattened field values back into a STRUCT
+						// to save as the Map's value for this key
+						if (valueFields) {
+							obj[key] = getStructFieldValuesObject(
+								valueFields,
+								record
+							)
+						} else {
+							// For all other Sub Types, just save the value
+							const value = record.value as string
+							if (value || value === "") {
+								obj[key] = value
+							}
 						}
 						return obj
 					}, {})
 				)
 			}}
+			getDefaultValue={getDefaultValue}
 			mode={mode}
 			context={context}
 			labelVariant={labelVariant}

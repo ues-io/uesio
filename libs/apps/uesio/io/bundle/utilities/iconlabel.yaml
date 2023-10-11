@@ -1,0 +1,3 @@
+name: iconlabel
+pack: main
+entrypoint: utilities/iconlabel/iconlabel

@@ -2,6 +2,6 @@ name: translations
 type: REFERENCEGROUP
 label: Translations
 referenceGroup:
-  collection: uesio/studio.translation
-  field: uesio/studio.workspace
+  collection: translation
+  field: workspace
   onDelete: CASCADE

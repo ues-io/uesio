@@ -2,4 +2,4 @@ name: invoice
 type: REFERENCE
 label: Invoice
 reference:
-  collection: uesio/studio.invoice
+  collection: invoice

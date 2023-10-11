@@ -15,10 +15,10 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     collections:
-      collection: uesio/studio.allmetadata
+      collection: uesio/studio.collection
       conditions:
-        - field: uesio/studio.type
-          value: collections
+        - field: uesio/studio.allmetadata
+          value: true
         - field: uesio/studio.item
           value: $Param{namespace}.$Param{collectionname}
     bulkjobs:
@@ -47,86 +47,78 @@ definition:
 
   # Components are how we describe the layout of our view
   components:
-    - uesio/io.grid:
-        uesio.variant: uesio/studio.mainlayout
-        items:
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.topbar
+    - uesio/studio.mainlayout:
+        topbar:
+          - uesio/core.view:
+              view: uesio/studio.topbar
+              uesio.context:
+                wire: workspaces
+              params:
+                itemType: collections
+                itemIcon: list
+                itemName: $Param{collectionname}
+                itemNameSpace: $Param{namespace}
+        leftbar:
+          - uesio/core.view:
+              uesio.context:
+                wire: workspaces
+              view: uesio/studio.workspacenav
+              params:
+                selected: collections
+        content:
+          - uesio/io.list:
+              uesio.id: collectionsDeck
+              wire: collections
+              mode: READ
               components:
-                - uesio/core.view:
-                    view: uesio/studio.topbar
-                    uesio.context:
-                      wire: workspaces
-                    params:
-                      itemType: collections
-                      itemIcon: list
-                      itemName: $Param{collectionname}
-                      itemNameSpace: $Param{namespace}
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.leftbar
-              components:
-                - uesio/core.view:
-                    uesio.context:
-                      wire: workspaces
-                    view: uesio/studio.workspacenav
-                    params:
-                      selected: collections
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.content
-              components:
-                - uesio/io.list:
-                    uesio.id: collectionsDeck
-                    wire: collections
-                    mode: READ
-                    components:
-                      - uesio/io.titlebar:
-                          uesio.variant: uesio/io.main
-                          title: ${uesio/studio.name}
-                          subtitle: Export Jobs
-                          actions:
-                            - uesio/io.group:
-                                components:
-                                  - uesio/io.button:
-                                      signals:
-                                        - signal: context/SET
-                                          type: WORKSPACE
-                                          name: $Param{workspacename}
-                                          app: $Param{app}
-                                        - signal: collection/CREATE_JOB
-                                          collection: $Param{namespace}.$Param{collectionname}
-                                          onerror:
-                                            signals:
-                                              - signal: notification/ADD_ERRORS
-                                        - signal: wire/LOAD
-                                          wires:
-                                            - bulkjobs
-                                      text: Create Export Job
-                                      uesio.variant: uesio/io.primary
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: Collection Config
-                                      signals:
-                                        - signal: route/NAVIGATE
-                                          path: app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{namespace}/$Param{collectionname}
-                      - uesio/io.box:
-                          uesio.variant: uesio/io.section
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.main
+                    title: ${uesio/studio.name}
+                    subtitle: Export Jobs
+                    actions:
+                      - uesio/io.group:
                           components:
-                            - uesio/io.deck:
-                                uesio.id: bulkjobsDeck
-                                wire: bulkjobs
-                                components:
-                                  - uesio/io.tile:
-                                      uesio.variant: uesio/io.item
+                            - uesio/io.button:
+                                signals:
+                                  - signal: context/SET
+                                    type: WORKSPACE
+                                    name: $Param{workspacename}
+                                    app: $Param{app}
+                                  - signal: collection/CREATE_JOB
+                                    collection: $Param{namespace}.$Param{collectionname}
+                                    onerror:
                                       signals:
-                                        - signal: "route/NAVIGATE"
-                                          path: "app/$Param{app}/workspace/$Param{workspacename}/export/$Param{namespace}/$Param{collectionname}/${uesio/core.id}/batches"
-                                      content:
-                                        - uesio/io.field:
-                                            fieldId: uesio/core.id
-                                        - uesio/io.field:
-                                            fieldId: uesio/core.createdat
-                                      avatar:
-                                        - uesio/io.text:
-                                            uesio.variant: uesio/io.icon
-                                            color: "#ccc"
-                                            text: ads_click
+                                        - signal: notification/ADD_ERRORS
+                                  - signal: wire/LOAD
+                                    wires:
+                                      - bulkjobs
+                                text: Create Export Job
+                                uesio.variant: uesio/io.primary
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: Collection Config
+                                signals:
+                                  - signal: route/NAVIGATE
+                                    path: app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{namespace}/$Param{collectionname}
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.deck:
+                          uesio.id: bulkjobsDeck
+                          wire: bulkjobs
+                          components:
+                            - uesio/io.tile:
+                                uesio.variant: uesio/io.item
+                                signals:
+                                  - signal: "route/NAVIGATE"
+                                    path: "app/$Param{app}/workspace/$Param{workspacename}/export/$Param{namespace}/$Param{collectionname}/${uesio/core.id}/batches"
+                                content:
+                                  - uesio/io.field:
+                                      fieldId: uesio/core.id
+                                  - uesio/io.field:
+                                      fieldId: uesio/core.createdat
+                                avatar:
+                                  - uesio/io.text:
+                                      uesio.variant: uesio/io.icon
+                                      color: "#ccc"
+                                      text: ads_click

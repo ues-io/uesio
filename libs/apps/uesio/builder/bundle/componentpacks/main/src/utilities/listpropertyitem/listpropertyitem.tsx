@@ -6,9 +6,11 @@ import { setSelectedPath, useSelectedPath } from "../../api/stateapi"
 import BuildActionsArea from "../../helpers/buildactionsarea"
 import PropertiesForm from "../../helpers/propertiesform"
 import PropNodeTag from "../../utilities/propnodetag/propnodetag"
-import { ComponentProperty } from "../../properties/componentproperty"
+import {
+	ComponentProperty,
+	ListPropertyItemChildrenFunction,
+} from "../../properties/componentproperty"
 import { PropertiesPanelSection } from "../../api/propertysection"
-import { ReactNode } from "react"
 import CloneAction from "../../actions/cloneaction"
 import ItemTag from "../itemtag/itemtag"
 
@@ -28,8 +30,8 @@ type Props = {
 	itemProperties?: PropertiesListOrGetter
 	itemPropertiesPanelTitle?: StringOrItemPropertyGetter
 	itemPropertiesSections?: PropertiesPanelSection[]
-	itemChildren?: (item: wire.PlainWireRecord, index: number) => ReactNode
-} & definition.UtilityComponent
+	itemChildren?: ListPropertyItemChildrenFunction
+}
 
 const ListPropertyItem: definition.UtilityComponent<Props> = (props) => {
 	const {
@@ -53,6 +55,10 @@ const ListPropertyItem: definition.UtilityComponent<Props> = (props) => {
 	const listItemPath = parentPath.addLocal(`${index}`)
 	const selected = selectedPath && selectedPath.startsWith(listItemPath)
 
+	const itemPropertiesProcessed =
+		itemProperties && typeof itemProperties === "function"
+			? itemProperties(record.source, context)
+			: itemProperties
 	return (
 		<PropNodeTag
 			onClick={(e: MouseEvent) => {
@@ -62,7 +68,7 @@ const ListPropertyItem: definition.UtilityComponent<Props> = (props) => {
 			selected={selected}
 			context={context}
 			popperChildren={
-				itemProperties && (
+				itemPropertiesProcessed && (
 					<PropertiesForm
 						id={listItemPath.combine()}
 						path={listItemPath}
@@ -72,11 +78,7 @@ const ListPropertyItem: definition.UtilityComponent<Props> = (props) => {
 								? itemPropertiesPanelTitle(record.source)
 								: itemPropertiesPanelTitle) || "Properties"
 						}
-						properties={
-							typeof itemProperties === "function"
-								? itemProperties(record.source, context)
-								: itemProperties
-						}
+						properties={itemPropertiesProcessed}
 						sections={itemPropertiesSections}
 					/>
 				)
@@ -87,16 +89,29 @@ const ListPropertyItem: definition.UtilityComponent<Props> = (props) => {
 					? displayTemplate(record.source)
 					: context.merge(displayTemplate)}
 			</ItemTag>
-			{itemChildren?.(record.source, index as number)}
+			{itemChildren?.({
+				item: record.source,
+				index: index as number,
+				context,
+				path: listItemPath,
+			})}
 			<IOExpandPanel context={context} expanded={selected}>
 				<BuildActionsArea context={context}>
 					<DeleteAction context={context} path={listItemPath} />
 					<MoveActions context={context} path={listItemPath} />
-					<CloneAction context={context} path={listItemPath} />
+					<CloneAction
+						context={context}
+						path={listItemPath}
+						purgeProperties={itemPropertiesProcessed
+							?.filter((p) => p.unique)
+							.map((p) => p.name)}
+					/>
 				</BuildActionsArea>
 			</IOExpandPanel>
 		</PropNodeTag>
 	)
 }
+
+ListPropertyItem.displayName = "ListPropertyItem"
 
 export default ListPropertyItem

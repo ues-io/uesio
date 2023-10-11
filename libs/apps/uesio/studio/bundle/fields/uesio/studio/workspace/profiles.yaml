@@ -2,6 +2,6 @@ name: profiles
 type: REFERENCEGROUP
 label: Porfiles
 referenceGroup:
-  collection: uesio/studio.profile
-  field: uesio/studio.workspace
+  collection: profile
+  field: workspace
   onDelete: CASCADE

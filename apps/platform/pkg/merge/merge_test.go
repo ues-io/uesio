@@ -72,7 +72,7 @@ func Test_serverMergeFuncs(t *testing.T) {
 			},
 			"foo",
 			"",
-			errors.New("missing param foo"),
+			nil,
 		},
 		{
 			"Param: valid param",
@@ -91,7 +91,7 @@ func Test_serverMergeFuncs(t *testing.T) {
 			"User: valid user field",
 			"User",
 			ServerMergeData{
-				Session: sess.New(&meta.User{
+				Session: sess.New("", &meta.User{
 					FirstName: "Luigi",
 					LastName:  "Vampa",
 				}, &meta.Site{
@@ -106,7 +106,7 @@ func Test_serverMergeFuncs(t *testing.T) {
 			"User: invalid field",
 			"User",
 			ServerMergeData{
-				Session: sess.New(&meta.User{
+				Session: sess.New("", &meta.User{
 					FirstName: "Luigi",
 					LastName:  "Vampa",
 				}, &meta.Site{
@@ -122,7 +122,7 @@ func Test_serverMergeFuncs(t *testing.T) {
 			"Site: valid site field",
 			"Site",
 			ServerMergeData{
-				Session: sess.New(&meta.User{
+				Session: sess.New("", &meta.User{
 					FirstName: "Luigi",
 					LastName:  "Vampa",
 				}, &meta.Site{
@@ -137,7 +137,7 @@ func Test_serverMergeFuncs(t *testing.T) {
 			"Site: url with domain and subdomain",
 			"Site",
 			ServerMergeData{
-				Session: sess.New(&meta.User{
+				Session: sess.New("", &meta.User{
 					FirstName: "Luigi",
 					LastName:  "Vampa",
 				}, &meta.Site{
@@ -153,7 +153,7 @@ func Test_serverMergeFuncs(t *testing.T) {
 			"Site: url without subdomain",
 			"Site",
 			ServerMergeData{
-				Session: sess.New(&meta.User{
+				Session: sess.New("", &meta.User{
 					FirstName: "Luigi",
 					LastName:  "Vampa",
 				}, &meta.Site{
@@ -168,7 +168,7 @@ func Test_serverMergeFuncs(t *testing.T) {
 			"Site: invalid field",
 			"Site",
 			ServerMergeData{
-				Session: sess.New(&meta.User{
+				Session: sess.New("", &meta.User{
 					FirstName: "Luigi",
 					LastName:  "Vampa",
 				}, &meta.Site{

@@ -1,0 +1,50 @@
+name: usertokens
+definition:
+  # Wires are how we pull in data
+  wires:
+    users:
+      collection: uesio/core.user
+      fields:
+        uesio/core.id:
+        uesio/core.firstname:
+        uesio/core.lastname:
+        uesio/core.username:
+        uesio/core.initials:
+        uesio/core.profile:
+        uesio/core.picture:
+        uesio/core.language:
+      conditions:
+        - field: uesio/core.id
+          valueSource: VALUE
+          value: $User{id}
+    tokens:
+      collection: uesio/studio.usertokenvalue
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/studio.mainlayout:
+        topbar:
+          - uesio/core.view:
+              view: uesio/studio.topbar
+        leftbar:
+          - uesio/core.view:
+              view: uesio/studio.userprofilenav
+              uesio.context:
+                wire: users
+              params:
+                selected: tokens
+        content:
+          - uesio/io.box:
+              components:
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.main
+                    title: My User Access Tokens
+                - uesio/io.searchbox:
+                    wire: tokens
+                    focusOnRender: true
+                - uesio/io.table:
+                    wire: tokens
+                    columns:
+                      - field: uesio/studio.name
+                      - field: uesio/studio.token
+                      - field: uesio/studio.reason
+                    pagesize: 10

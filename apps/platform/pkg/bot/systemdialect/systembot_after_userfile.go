@@ -2,7 +2,7 @@ package systemdialect
 
 import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/cache"
+	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -39,7 +39,7 @@ func runUserFileAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection,
 				continue
 			}
 			if relatedField == "uesio/core.picture" {
-				userKeysToDelete = append(userKeysToDelete, cache.GetUserKey(relatedRecord.(string), appFullName))
+				userKeysToDelete = append(userKeysToDelete, auth.GetUserCacheKey(relatedRecord.(string), appFullName))
 			}
 		} else if relatedCollection == studioFileCollectionId {
 			pathField, err := insert.GetField("uesio/core.path")
@@ -73,12 +73,12 @@ func runUserFileAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection,
 		}
 		if (relatedCollection == "uesio/core.user") &&
 			(relatedField == "uesio/core.picture") {
-			userKeysToDelete = append(userKeysToDelete, cache.GetUserKey(relatedRecord.(string), appFullName))
+			userKeysToDelete = append(userKeysToDelete, auth.GetUserCacheKey(relatedRecord.(string), appFullName))
 		}
 	}
 	// Continue on even if there are failures here, maybe in the future we can schedule an update to clean up bad keys
 	// if Redis is temporarily down?
-	err := cache.DeleteKeys(userKeysToDelete)
+	err := auth.DeleteUserCacheEntries(userKeysToDelete...)
 
 	// If the related collection is uesio/studio.file,
 	// we need to set the file path on the related record as well
@@ -88,6 +88,7 @@ func runUserFileAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection,
 				Collection: studioFileCollectionId,
 				Wire:       "StudioFiles",
 				Changes:    &studioFileUpdates,
+				Params:     request.Params,
 			},
 		}, session, datasource.GetConnectionSaveOptions(connection))
 	}

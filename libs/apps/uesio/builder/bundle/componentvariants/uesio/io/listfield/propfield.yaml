@@ -1,6 +1,6 @@
 name: propfield
 label: Property Field
-extends: uesio/io.listfield
+extends: uesio/io.listfield:uesio/io.default
 definition:
   uesio.styleTokens:
     root:

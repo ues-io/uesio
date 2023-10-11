@@ -9,6 +9,11 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+const (
+	ReactComponent       = "REACT"
+	DeclarativeComponent = "DECLARATIVE"
+)
+
 func NewComponent(key string) (*Component, error) {
 	namespace, name, err := ParseKey(key)
 	if err != nil {
@@ -27,10 +32,13 @@ type Component struct {
 	Category       string    `yaml:"category,omitempty" json:"uesio/studio.category"`
 	Pack           string    `yaml:"pack,omitempty" json:"uesio/studio.pack"`
 	EntryPoint     string    `yaml:"entrypoint,omitempty" json:"uesio/studio.entrypoint"`
+	Type           string    `yaml:"type,omitempty" json:"uesio/studio.type"`
 	ConfigValues   []string  `yaml:"configvalues,omitempty" json:"uesio/studio.configvalues"`
 	Variants       []string  `yaml:"variants,omitempty" json:"uesio/studio.variants"`
 	Utilities      []string  `yaml:"utilities,omitempty" json:"uesio/studio.utilities"`
 	Slots          yaml.Node `yaml:"slots,omitempty" json:"uesio/studio.slots"`
+	// Definition defines the Component body, for Declarative components
+	Definition yaml.Node `yaml:"definition,omitempty" json:"uesio/studio.definition"`
 
 	// Builder Properties
 	Title             string    `yaml:"title,omitempty" json:"uesio/studio.title"`
@@ -115,6 +123,7 @@ func (c *Component) MarshalJSONObject(enc *gojay.Encoder) {
 	enc.AddStringKey("name", c.Name)
 	enc.AddStringKey("title", c.Title)
 	enc.AddStringKey("description", c.Description)
+	enc.AddStringKey("type", c.GetType())
 	enc.AddStringKey("category", c.Category)
 	enc.AddBoolKey("discoverable", c.Discoverable)
 	if c.Icon != "" {
@@ -137,6 +146,9 @@ func (c *Component) MarshalJSONObject(enc *gojay.Encoder) {
 	}
 	if c.StyleRegions.Content != nil {
 		enc.AddObjectKey("styleRegions", (*YAMLDefinition)(&c.StyleRegions))
+	}
+	if c.Definition.Content != nil {
+		enc.AddArrayKey("definition", (*YAMLDefinition)(&c.Definition))
 	}
 }
 
@@ -178,4 +190,44 @@ func (c *Component) UnmarshalYAML(node *yaml.Node) error {
 
 func (c *Component) IsPublic() bool {
 	return true
+}
+
+func (c *Component) GetType() string {
+	return GetType(c.Type)
+}
+
+// RuntimeComponentMetadata allows us to send a trimmed-down runtime component metadata payload
+// containing only those properties needed at runtime into the componentType Redux slice.
+// In Build mode, the full Component metadata will be sent, to facilitate full Builder functionality.
+type RuntimeComponentMetadata Component
+
+func (cdw *RuntimeComponentMetadata) GetBytes() ([]byte, error) {
+	return gojay.MarshalJSONObject(cdw)
+}
+
+func (cdw *RuntimeComponentMetadata) IsNil() bool {
+	return cdw == nil
+}
+
+func (cdw *RuntimeComponentMetadata) MarshalJSONObject(enc *gojay.Encoder) {
+	enc.AddStringKey("namespace", cdw.Namespace)
+	enc.AddStringKey("name", cdw.Name)
+	enc.AddStringKey("type", cdw.GetType())
+	if cdw.Definition.Content != nil {
+		enc.AddArrayKey("definition", (*YAMLDefinition)(&cdw.Definition))
+	}
+	if cdw.Slots.Content != nil {
+		enc.AddArrayKey("slots", (*YAMLDefinition)(&cdw.Slots))
+	}
+}
+
+func (cdw *RuntimeComponentMetadata) GetType() string {
+	return GetType(cdw.Type)
+}
+
+func GetType(componentType string) string {
+	if componentType != "" {
+		return componentType
+	}
+	return ReactComponent
 }

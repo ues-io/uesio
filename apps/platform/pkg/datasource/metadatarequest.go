@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/thecloudmasters/uesio/pkg/constant"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -16,7 +18,8 @@ func ParseSelectListKey(key string) (string, string, string) {
 func GetFullMetadataForCollection(metadataResponse *adapt.MetadataCache, collectionID string, session *sess.Session) error {
 	collections := MetadataRequest{
 		Options: &MetadataRequestOptions{
-			LoadAllFields: true,
+			LoadAllFields:    true,
+			LoadAccessFields: true,
 		},
 	}
 	err := collections.AddCollection(collectionID)
@@ -49,6 +52,24 @@ func GetMetadataResponse(metadataResponse *adapt.MetadataCache, collectionID, fi
 // FieldsMap type a recursive type to store an arbitrary list of nested fields
 type FieldsMap map[string]FieldsMap
 
+func (fm *FieldsMap) getRequestFields() []adapt.LoadRequestField {
+	fields := []adapt.LoadRequestField{
+		{
+			ID: adapt.ID_FIELD,
+		},
+	}
+	if fm == nil {
+		return fields
+	}
+	for fieldKey, subFields := range *fm {
+		fields = append(fields, adapt.LoadRequestField{
+			ID:     fieldKey,
+			Fields: subFields.getRequestFields(),
+		})
+	}
+	return fields
+}
+
 func (fm *FieldsMap) merge(newFields *FieldsMap) {
 	if newFields == nil {
 		return
@@ -64,7 +85,8 @@ func (fm *FieldsMap) merge(newFields *FieldsMap) {
 }
 
 type MetadataRequestOptions struct {
-	LoadAllFields bool
+	LoadAllFields    bool
+	LoadAccessFields bool
 }
 
 type MetadataRequest struct {
@@ -92,8 +114,11 @@ func (mr *MetadataRequest) AddCollection(collectionName string) error {
 }
 
 func (mr *MetadataRequest) AddField(collectionName, fieldName string, subFields *FieldsMap) error {
-	if collectionName == "" || fieldName == "" {
-		return fmt.Errorf("adding field: %s, %s", collectionName, fieldName)
+	if collectionName == "" {
+		return fmt.Errorf("cannot request metadata without a valid collection name (field = %s)", fieldName)
+	}
+	if fieldName == "" {
+		return fmt.Errorf("cannot request metadata without a valid field name (collection = %s)", collectionName)
 	}
 	err := mr.AddCollection(collectionName)
 	if err != nil {
@@ -137,7 +162,7 @@ func ProcessFieldsMetadata(fields map[string]*adapt.FieldMetadata, collectionKey
 
 		newKey := fieldKey
 		if prefix != "" {
-			newKey = prefix + "->" + fieldKey
+			newKey = prefix + constant.RefSep + fieldKey
 		}
 
 		specialRef, ok := specialRefs[fieldMetadata.Type]
@@ -278,10 +303,14 @@ func ProcessFieldsMetadata(fields map[string]*adapt.FieldMetadata, collectionKey
 }
 
 func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *sess.Session, connection adapt.Connection) error {
+	if mr.Options == nil {
+		mr.Options = &MetadataRequestOptions{}
+	}
 	// Keep a list of additional metadata that we need to request in a subsequent call
 	additionalRequests := MetadataRequest{
 		Options: &MetadataRequestOptions{
-			LoadAllFields: false,
+			LoadAllFields:    false,
+			LoadAccessFields: mr.Options.LoadAccessFields,
 		},
 	}
 	// Implement the old way to make sure it still works
@@ -291,22 +320,15 @@ func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *
 			return err
 		}
 
-		if metadata.Type == "DYNAMIC" {
-			addAllBuiltinFields(metadata)
-			continue
-		}
-
-		if mr.Options != nil && mr.Options.LoadAllFields {
-			addAllBuiltinFields(metadata)
+		if metadata.IsDynamic() || mr.Options.LoadAllFields {
 			err = LoadAllFieldsMetadata(collectionKey, metadata, session, connection)
 			if err != nil {
 				return err
 			}
 			metadata.HasAllFields = true
 		} else {
-			addBuiltinFields(metadata, collection)
 			// Automagically add the id field and the name field whether they were requested or not.
-			fieldsToLoad := []string{adapt.ID_FIELD, metadata.NameField}
+			fieldsToLoad := []string{adapt.ID_FIELD, adapt.UNIQUE_KEY_FIELD, metadata.NameField}
 			for fieldKey := range collection {
 				fieldsToLoad = append(fieldsToLoad, fieldKey)
 			}
@@ -319,7 +341,7 @@ func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *
 			}
 		}
 
-		if metadata.AccessField != "" {
+		if mr.Options.LoadAccessFields && metadata.AccessField != "" {
 			accessFieldMetadata, err := metadata.GetField(metadata.AccessField)
 			if err != nil {
 				return err

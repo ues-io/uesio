@@ -1,27 +1,40 @@
-import { definition, metadata, collection, component } from "@uesio/ui"
-import { remove, set } from "../../../../api/defapi"
+import { definition, metadata, collection, component, context } from "@uesio/ui"
 import { FullPath } from "../../../../api/path"
 
 import { getBuilderNamespace } from "../../../../api/stateapi"
 import ActionButton from "../../../../helpers/actionbutton"
 import BuildActionsArea from "../../../../helpers/buildactionsarea"
-import NamespaceLabel from "../../../../utilities/namespacelabel/namespacelabel"
 import PropNodeTag from "../../../../utilities/propnodetag/propnodetag"
 import ItemTag from "../../../../utilities/itemtag/itemtag"
 
 type Props = {
 	setReferencePath: (path: FullPath) => void
+	onSelect?: (ctx: context.Context, path: FullPath) => void
+	onUnselect?: (ctx: context.Context, path: FullPath) => void
 	fieldMetadata: collection.Field
 	path: FullPath
 	selected: boolean
+	allowReferenceTraversal?: boolean
 }
 const FieldSelectPropTag: definition.UtilityComponent<Props> = (props) => {
 	const Text = component.getUtility("uesio/io.text")
-	const { fieldMetadata, context, path, selected, setReferencePath } = props
+	const NamespaceLabel = component.getUtility("uesio/io.namespacelabel")
+	const {
+		allowReferenceTraversal = true,
+		fieldMetadata,
+		context,
+		onSelect,
+		onUnselect,
+		path,
+		selected,
+		setReferencePath,
+	} = props
 	const fieldId = fieldMetadata.getId()
 
 	const referenceMetadata =
-		fieldMetadata.isReference() && fieldMetadata.getReferenceMetadata()
+		allowReferenceTraversal && fieldMetadata.isReference()
+			? fieldMetadata.getReferenceMetadata()
+			: undefined
 
 	const nsInfo = getBuilderNamespace(context, fieldId as metadata.MetadataKey)
 
@@ -32,7 +45,9 @@ const FieldSelectPropTag: definition.UtilityComponent<Props> = (props) => {
 			context={context}
 			onClick={(e: MouseEvent) => {
 				e.stopPropagation()
-				selected ? remove(context, path) : set(context, path, {})
+				selected
+					? onUnselect?.(context, path)
+					: onSelect?.(context, path)
 			}}
 		>
 			<ItemTag context={context}>

@@ -1,0 +1,11 @@
+name: recorddatamanager
+pack: main
+entrypoint: components/recorddatamanager/recorddatamanager
+variants:
+  - uesio/io.grid:uesio/io.four_columns
+  - uesio/io.fieldwrapper:uesio/io.table
+  - uesio/io.customselectfield:uesio/io.default
+  - uesio/io.menu:uesio/io.default
+  - uesio/io.field:uesio/io.search
+utilities:
+  - uesio/io.grid

@@ -11,6 +11,8 @@ type FileDefinition = {
 	displayAs?: string
 	accept?: string
 	mode?: context.FieldMode
+	// The language to use for syntax highlighting
+	language?: string
 	// The Monaco editor theme to use
 	theme?: string
 	// An array of URIs which contain ambient type definitions to load in this code field
@@ -26,12 +28,15 @@ const FileAttachment: definition.UC<FileDefinition> = (props) => {
 	const {
 		accept,
 		displayAs,
-		mode,
+		mode = context.getFieldMode(),
 		onUploadSignals,
 		onDeleteSignals,
 		theme,
 		typeDefinitionFileURIs,
 	} = definition
+	const language = definition.language
+		? context.mergeString(definition.language)?.toLowerCase()
+		: undefined
 	const id = api.component.getComponentIdFromProps(props)
 
 	const record = context.getRecord()
@@ -62,9 +67,12 @@ const FileAttachment: definition.UC<FileDefinition> = (props) => {
 		if (!recordId || !collectionId) return
 		const uploadResult = await api.file.uploadFile(
 			context,
-			file,
-			collectionId,
-			recordId
+			{
+				collectionID: collectionId,
+				recordID: recordId,
+				params: context.getParams(),
+			},
+			file
 		)
 		if (onUploadSignals) {
 			await api.signal.getHandler(
@@ -108,6 +116,7 @@ const FileAttachment: definition.UC<FileDefinition> = (props) => {
 			return (
 				<FileText
 					{...common}
+					language={language}
 					typeDefinitionFileURIs={typeDefinitionFileURIs}
 					theme={theme}
 				/>

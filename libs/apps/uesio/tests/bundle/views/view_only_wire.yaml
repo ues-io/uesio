@@ -1,0 +1,31 @@
+name: view_only_wire
+definition:
+  # Wires connect to data in collections
+  wires:
+    myViewOnlyWire:
+      init:
+        query: false
+        create: true
+      viewOnly: true
+      fields:
+        myField:
+          type: TEXT
+  # Components determine the layout and composition of your view
+  components:
+    - uesio/io.box:
+        components:
+          - uesio/io.field:
+              wire: myViewOnlyWire
+              fieldId: myField
+          - uesio/io.button:
+              text: Do Not Disappear
+              icon: bolt
+              uesio.variant: uesio/io.primary
+              iconPlacement: start
+              uesio.id: do-not-disappear
+              signals:
+                - signal: route/NAVIGATE
+                  path: view_only_wire
+        uesio.styleTokens:
+          root:
+            - p-10

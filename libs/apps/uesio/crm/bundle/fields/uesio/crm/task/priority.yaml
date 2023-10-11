@@ -1,4 +1,0 @@
-name: priority
-type: SELECT
-label: priority
-selectList: uesio/crm.task_priority

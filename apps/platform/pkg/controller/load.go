@@ -32,8 +32,12 @@ func Load(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, msg, http.StatusBadRequest)
 		return
 	}
-	file.RespondJSON(w, r, &adapt.LoadResponseBatch{
-		Wires:       batch.Wires,
-		Collections: metadata.Collections,
-	})
+	loadResponse := &adapt.LoadResponseBatch{
+		Wires: batch.Wires,
+	}
+	// Only include metadata if explicitly requested
+	if batch.IncludeMetadata == true {
+		loadResponse.Collections = metadata.Collections
+	}
+	file.RespondJSON(w, r, loadResponse.TrimStructForSerialization())
 }

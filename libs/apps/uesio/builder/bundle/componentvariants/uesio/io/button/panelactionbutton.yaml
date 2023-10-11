@@ -10,4 +10,7 @@ definition:
       - rounded-md
       - hover:bg-slate-200
       - text-slate-600
+      - border
+      - border-slate-200
+      - hover:border-slate-300
 public: true

@@ -1,4 +1,5 @@
 name: selectlist
+public: true
 options:
   - label: One
     value: one
@@ -10,4 +11,3 @@ options:
     value: four
   - label: Five
     value: five
-public: true

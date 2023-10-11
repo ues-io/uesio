@@ -23,7 +23,7 @@ const TitleBar: definition.UC<TitleBarDefinition> = (props) => {
 		<IOTitleBar
 			classes={classes}
 			context={context}
-			variant={definition["uesio.variant"]}
+			variant={definition[component.STYLE_VARIANT]}
 			title={definition.title}
 			subtitle={definition.subtitle}
 			actions={

@@ -3,3 +3,4 @@ type: LONGTEXT
 label: Definition
 validate:
   type: YAML
+  schemaUri: $StaticFile{/ui/types/metadata/view/viewDefinition.schema.json}

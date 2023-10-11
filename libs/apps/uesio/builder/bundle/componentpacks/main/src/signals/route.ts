@@ -17,6 +17,11 @@ const signals: SignalBandDefinition = {
 					name: "path",
 					label: "Path",
 				},
+				{
+					type: "CHECKBOX",
+					name: "newtab",
+					label: "Open in new tab",
+				},
 			],
 		},
 		[`${BAND}/REDIRECT_TO_VIEW_CONFIG`]: {

@@ -1,0 +1,7 @@
+name: pricingitems
+type: REFERENCEGROUP
+label: Pricing Items
+referenceGroup:
+  collection: licensepricingitem
+  field: license
+  onDelete: CASCADE

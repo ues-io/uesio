@@ -3,7 +3,7 @@ import { MutableRefObject } from "react"
 import List from "../../components/list/list"
 import { useDeepCompareEffect } from "react-use"
 
-interface FormProps extends definition.UtilityProps {
+interface FormProps {
 	path: string
 	fields: Record<string, wire.ViewOnlyField>
 	content?: definition.DefinitionList
@@ -64,7 +64,7 @@ const DynamicForm: definition.UtilityComponent<FormProps> = (props) => {
 			const { wireId, recordId, field, value } = e.detail
 			if (wireId !== wire?.getFullId()) return
 			const record = wire?.getFirstRecord()
-			if (recordId !== record?.getId()) return
+			if (!record || recordId !== record?.getId()) return
 			onUpdate?.(field, value, record)
 		},
 		[wire]

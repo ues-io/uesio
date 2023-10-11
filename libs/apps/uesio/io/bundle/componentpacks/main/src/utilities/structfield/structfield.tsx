@@ -1,10 +1,9 @@
-import { FunctionComponent } from "react"
 import { wire, collection, definition, context, metadata } from "@uesio/ui"
 import Field from "../field/field"
 import FieldWrapper from "../fieldwrapper/fieldwrapper"
 import { LabelPosition } from "../../components/field/field"
 
-interface StructFieldUtilityProps extends definition.UtilityProps {
+interface StructFieldUtilityProps {
 	fieldId: string
 	mode: context.FieldMode
 	value: wire.PlainWireRecord
@@ -18,7 +17,9 @@ interface StructFieldUtilityProps extends definition.UtilityProps {
 	record: wire.WireRecord
 }
 
-const StructField: FunctionComponent<StructFieldUtilityProps> = (props) => {
+const StructField: definition.UtilityComponent<StructFieldUtilityProps> = (
+	props
+) => {
 	const {
 		fieldId,
 		subFields,

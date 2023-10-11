@@ -1,0 +1,6 @@
+name: account
+type: REFERENCE
+label: Account
+required: true
+reference:
+  collection: account

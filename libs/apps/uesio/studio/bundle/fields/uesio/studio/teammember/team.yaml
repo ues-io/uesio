@@ -2,5 +2,5 @@ name: team
 type: REFERENCE
 label: Team
 reference:
-  collection: uesio/studio.team
+  collection: team
 required: true

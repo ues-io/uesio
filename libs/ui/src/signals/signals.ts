@@ -14,6 +14,7 @@ import notificationSignals from "../bands/notification/signals"
 import contextSignals from "../context/signals"
 import debounce from "lodash/debounce"
 import { getErrorString } from "../utilexports"
+import { COMPONENT_CONTEXT } from "../componentexports"
 
 const registry: Record<string, SignalDescriptor> = {
 	...aiSignals,
@@ -32,7 +33,7 @@ const run = (signal: SignalDefinition, context: Context) => {
 	const descriptor = registry[signal.signal] || getComponentSignalDefinition()
 	return descriptor.dispatcher(
 		signal,
-		injectDynamicContext(context, signal?.["uesio.context"])
+		injectDynamicContext(context, signal?.[COMPONENT_CONTEXT])
 	)
 }
 
@@ -47,7 +48,12 @@ const runMany = async (signals: SignalDefinition[], context: Context) => {
 			console.error(error)
 		}
 
-		// Any errors in this frame are the result of the signal run above, nothing else
+		// Any errors in this frame are the result of the signal run above,
+		// but it's possible that we have already handled the errors with a notification,
+		// so if the current signal being run IS a notification frame (which cannot throw errors),
+		// we can skip this check.
+		if (signal?.signal === "notification/ADD") continue
+
 		const currentErrors = context.getCurrentErrors() || []
 
 		if (currentErrors.length) {

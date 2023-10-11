@@ -8,49 +8,41 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
-	"github.com/thecloudmasters/uesio/pkg/localcache"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func GetAppBundle(session *sess.Session, connection adapt.Connection) (*meta.BundleDef, error) {
-	appName := session.GetContextAppName()
-	appVersion := session.GetContextVersionName()
-	return getAppBundleInternal(appName, appVersion, session, connection)
+func GetSiteBundleDef(site *meta.Site, connection adapt.Connection) (*meta.BundleDef, error) {
+	return GetVersionBundleDef(site.GetAppFullName(), site.Bundle.GetVersionString(), connection)
 }
 
-// GetSiteAppBundle gets the app bundle for the site without regard for the workspace
-func GetSiteAppBundle(site *meta.Site) (*meta.BundleDef, error) {
-	// MockSession. Since we're always just going to the local bundles store
-	// we're good with just a fake session.
-	session := &sess.Session{}
-	session.SetSite(site)
-	return getAppBundleInternal(site.GetAppFullName(), site.Bundle.GetVersionString(), session, nil)
-}
-
-func ClearAppBundleCache(session *sess.Session) {
-	appName := session.GetContextAppName()
-	appVersion := session.GetContextVersionName()
-	localcache.RemoveCacheEntry("bundle-yaml", appName+":"+appVersion)
-}
-
-func getAppBundleInternal(appName, appVersion string, session *sess.Session, connection adapt.Connection) (*meta.BundleDef, error) {
-
-	bs, err := bundlestore.GetBundleStore(appName, session)
+func GetVersionBundleDef(namespace, version string, connection adapt.Connection) (*meta.BundleDef, error) {
+	bs, err := bundlestore.GetConnection(bundlestore.ConnectionOptions{
+		Namespace:  namespace,
+		Version:    version,
+		Connection: connection,
+	})
 	if err != nil {
 		return nil, err
 	}
-	bundleyaml, err := bs.GetBundleDef(appName, appVersion, session, connection)
+	return bs.GetBundleDef()
+}
+
+func GetWorkspaceBundleDef(workspace *meta.Workspace, connection adapt.Connection) (*meta.BundleDef, error) {
+
+	bs, err := bundlestore.GetConnection(bundlestore.ConnectionOptions{
+		Namespace:  workspace.GetAppFullName(),
+		Version:    workspace.Name,
+		Connection: connection,
+		Workspace:  workspace,
+	})
 	if err != nil {
 		return nil, err
 	}
-	if bundleyaml == nil {
-		return nil, errors.New("No bundleyaml found for app: " + appName + " with version:" + appVersion)
-	}
-	return bundleyaml, nil
+	return bs.GetBundleDef()
 }
 
-func getVersion(namespace string, session *sess.Session) (string, error) {
+func GetVersion(namespace string, session *sess.Session) (string, error) {
 
 	appName := session.GetContextAppName()
 	appVersion := session.GetContextVersionName()
@@ -92,16 +84,20 @@ func getVersion(namespace string, session *sess.Session) (string, error) {
 	return depBundle.Version, nil
 }
 
-func GetBundleStoreWithVersion(namespace string, session *sess.Session) (string, bundlestore.BundleStore, error) {
-	version, err := getVersion(namespace, session)
+func GetBundleStoreConnection(namespace string, session *sess.Session, connection adapt.Connection) (bundlestore.BundleStoreConnection, error) {
+	version, err := GetVersion(namespace, session)
 	if err != nil {
-		return "", nil, err
+		return nil, err
 	}
-	bs, err := bundlestore.GetBundleStore(namespace, session)
-	if err != nil {
-		return "", nil, err
-	}
-	return version, bs, nil
+
+	return bundlestore.GetConnection(bundlestore.ConnectionOptions{
+		Namespace:    namespace,
+		Version:      version,
+		Connection:   connection,
+		Workspace:    session.GetWorkspace(),
+		Permissions:  session.GetContextPermissions(),
+		AllowPrivate: session.GetContextAppName() == namespace,
+	})
 }
 
 func LoadAllFromAny(group meta.BundleableGroup, conditions meta.BundleConditions, session *sess.Session, connection adapt.Connection) error {
@@ -119,20 +115,20 @@ func LoadAllFromNamespaces(namespaces []string, group meta.BundleableGroup, cond
 }
 
 func HasAny(group meta.BundleableGroup, namespace string, conditions meta.BundleConditions, session *sess.Session, connection adapt.Connection) (bool, error) {
-	version, bs, err := GetBundleStoreWithVersion(namespace, session)
+	bs, err := GetBundleStoreConnection(namespace, session, connection)
 	if err != nil {
 		return false, err
 	}
-	return bs.HasAny(group, namespace, version, conditions, session, connection)
+	return bs.HasAny(group, conditions)
 }
 
 func LoadAll(group meta.BundleableGroup, namespace string, conditions meta.BundleConditions, session *sess.Session, connection adapt.Connection) error {
-	version, bs, err := GetBundleStoreWithVersion(namespace, session)
+	bs, err := GetBundleStoreConnection(namespace, session, connection)
 	if err != nil {
 		fmt.Println("Failed Load All: " + group.GetName())
 		return err
 	}
-	return bs.GetAllItems(group, namespace, version, conditions, session, connection)
+	return bs.GetAllItems(group, conditions)
 }
 
 func LoadMany(items []meta.BundleableItem, session *sess.Session, connection adapt.Connection) error {
@@ -147,7 +143,7 @@ func LoadMany(items []meta.BundleableItem, session *sess.Session, connection ada
 		coalated[namespace] = append(coalated[namespace], item)
 	}
 	for namespace, items := range coalated {
-		version, bs, err := GetBundleStoreWithVersion(namespace, session)
+		bs, err := GetBundleStoreConnection(namespace, session, connection)
 		if err != nil {
 			fmt.Println("Failed load many")
 			for _, item := range items {
@@ -156,7 +152,7 @@ func LoadMany(items []meta.BundleableItem, session *sess.Session, connection ada
 			return err
 		}
 
-		err = bs.GetManyItems(items, version, session, connection)
+		err = bs.GetManyItems(items)
 		if err != nil {
 			return err
 		}
@@ -166,20 +162,20 @@ func LoadMany(items []meta.BundleableItem, session *sess.Session, connection ada
 }
 
 func Load(item meta.BundleableItem, session *sess.Session, connection adapt.Connection) error {
-	version, bs, err := GetBundleStoreWithVersion(item.GetNamespace(), session)
+	bs, err := GetBundleStoreConnection(item.GetNamespace(), session, connection)
 	if err != nil {
 		fmt.Println("Failed load one: " + item.GetKey() + " : " + err.Error())
 		return err
 	}
-	return bs.GetItem(item, version, session, connection)
+	return bs.GetItem(item)
 }
 
 func GetItemAttachment(item meta.AttachableItem, path string, session *sess.Session) (time.Time, io.ReadSeeker, error) {
-	version, bs, err := GetBundleStoreWithVersion(item.GetNamespace(), session)
+	bs, err := GetBundleStoreConnection(item.GetNamespace(), session, nil)
 	if err != nil {
 		return time.Time{}, nil, err
 	}
-	return bs.GetItemAttachment(item, version, path, session)
+	return bs.GetItemAttachment(item, path)
 }
 
 func IsValid(items []meta.BundleableItem, session *sess.Session, connection adapt.Connection) error {
@@ -195,12 +191,12 @@ func IsValid(items []meta.BundleableItem, session *sess.Session, connection adap
 		coalated[namespace] = append(coalated[namespace], item)
 	}
 	for namespace, items := range coalated {
-		version, bs, err := GetBundleStoreWithVersion(namespace, session)
+		bs, err := GetBundleStoreConnection(namespace, session, connection)
 		if err != nil {
 			return err
 		}
 
-		err = bs.HasAllItems(items, version, session, connection)
+		err = bs.HasAllItems(items)
 		if err != nil {
 			return err
 		}

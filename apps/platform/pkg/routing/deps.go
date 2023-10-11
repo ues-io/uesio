@@ -2,7 +2,6 @@ package routing
 
 import (
 	"bytes"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
@@ -149,11 +148,17 @@ func getDepsForUtilityComponent(key string, deps *PreloadMetadata, session *sess
 
 func getDepsForComponent(component *meta.Component, deps *PreloadMetadata, session *sess.Session) error {
 
-	if component.Pack == "" {
-		return nil
+	if component.Pack != "" {
+		addComponentPackToDeps(deps, component.Namespace, component.Pack, session)
 	}
 
-	addComponentPackToDeps(deps, component.Namespace, component.Pack, session)
+	// Add all Declarative Components to the Component Type dependency map
+	// so that we can send down their definitions into the View HTML.
+	// In the future we may want to send down portions of the defs for React components as well,
+	// but right now we don't need to do that.
+	if component.Type == meta.DeclarativeComponent {
+		deps.ComponentType.AddItemIfNotExists((*meta.RuntimeComponentMetadata)(component))
+	}
 
 	// need an admin session for retrieving config values
 	// in order to prevent users from having to have read on the uesio/core.configvalue table
@@ -328,6 +333,15 @@ func processView(key string, viewInstanceID string, deps *PreloadMetadata, param
 
 }
 
+func InBuildMode(fullViewId string, deps *MetadataMergeData) bool {
+	if deps == nil {
+		return false
+	}
+	builderComponentID := getBuilderComponentID(fullViewId)
+	buildModeKey := GetBuildModeKey(builderComponentID)
+	return deps.Has(buildModeKey)
+}
+
 func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadata, session *sess.Session) error {
 
 	view, err := loadViewDef(viewNamespace+"."+viewName, session)
@@ -347,7 +361,7 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 
 	builderComponentID := getBuilderComponentID(viewNamespace + "." + viewName)
 
-	deps.Component.AddItem(fmt.Sprintf("%s:metadata:viewdef:%s", builderComponentID, view.GetKey()), viewBytes.String())
+	deps.Component.AddItem(NewComponentMergeData(fmt.Sprintf("%s:metadata:viewdef:%s", builderComponentID, view.GetKey()), viewBytes.String()))
 
 	var variants meta.ComponentVariantCollection
 	err = bundle.LoadAllFromAny(&variants, nil, session, nil)
@@ -366,24 +380,12 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 		return errors.New("Failed to get translated labels: " + err.Error())
 	}
 
-	componentDefs := map[string]json.RawMessage{}
-
 	for _, component := range components {
-
-		err := getDepsForComponent(component, deps, session)
-		if err != nil {
+		if err = getDepsForComponent(component, deps, session); err != nil {
 			return err
 		}
-
-		componentYamlBytes, err := component.GetBytes()
-		if err != nil {
-			return err
-		}
-
-		componentDefs[component.GetKey()] = componentYamlBytes
+		deps.ComponentType.AddItem(component)
 	}
-
-	deps.Component.AddItem(fmt.Sprintf("%s:componentdefs", builderComponentID), componentDefs)
 
 	for i := range variants {
 		deps.ComponentVariant.AddItem(variants[i])
@@ -397,6 +399,19 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 		}
 		label.Value = value
 		deps.Label.AddItem(label)
+	}
+
+	// need an admin session for retrieving feature flags
+	// in order to prevent users from having to have read on the uesio/core.featureflagassignment table
+	adminSession := sess.GetAnonSession(session.GetSite())
+
+	featureFlags, err := featureflagstore.GetFeatureFlags(adminSession, session.GetContextUser().ID)
+	if err != nil {
+		return errors.New("Failed to get feature flags: " + err.Error())
+	}
+
+	for _, flag := range *featureFlags {
+		deps.FeatureFlag.AddItem(flag)
 	}
 
 	// Load in the studio theme.
@@ -422,10 +437,14 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 		return err
 	}
 
-	deps.Component.AddItem(fmt.Sprintf("%s:namespaces", builderComponentID), appData)
-	deps.Component.AddItem(fmt.Sprintf("%s:buildmode", builderComponentID), true)
+	deps.Component.AddItem(NewComponentMergeData(fmt.Sprintf("%s:namespaces", builderComponentID), appData))
+	deps.Component.AddItem(NewComponentMergeData(GetBuildModeKey(builderComponentID), true))
 
 	return nil
+}
+
+func GetBuildModeKey(builderComponentID string) string {
+	return fmt.Sprintf("%s:buildmode", builderComponentID)
 }
 
 func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata, error) {
@@ -454,11 +473,11 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 		return nil, errors.New("Failed to get translated labels: " + err.Error())
 	}
 
-	// need an admin session for retrieving feature falgs
+	// need an admin session for retrieving feature flags
 	// in order to prevent users from having to have read on the uesio/core.featureflagassignment table
 	adminSession := datasource.GetSiteAdminSession(session)
 
-	featureflags, err := featureflagstore.GetFeatureFlags(adminSession, session.GetUserID())
+	featureFlags, err := featureflagstore.GetFeatureFlags(adminSession, session.GetContextUser().ID)
 	if err != nil {
 		return nil, errors.New("Failed to get feature flags: " + err.Error())
 	}
@@ -472,20 +491,48 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 		deps.Label.AddItem(label)
 	}
 
-	for _, flag := range *featureflags {
+	for _, flag := range *featureFlags {
 		deps.FeatureFlag.AddItem(flag)
 	}
 
 	workspace := session.GetWorkspace()
 
-	// In workspace mode, make sure we have the builder pack so that we can include the buildwrapper
 	if workspace != nil {
+		// In workspace mode, make sure we have the builder pack so that we can include the buildwrapper
 		builderComponentID := getBuilderComponentID(route.ViewRef)
-		deps.Component.AddItem(fmt.Sprintf("%s:buildmode", builderComponentID), false)
+		// If there is already an entry for build mode, don't override it, as it may be set to true
+		deps.Component.AddItemIfNotExists(NewComponentMergeData(GetBuildModeKey(builderComponentID), false))
 		addComponentPackToDeps(deps, DEFAULT_BUILDER_PACK_NAMESPACE, DEFAULT_BUILDER_PACK_NAME, session)
+		// Also load in the modstamps for all static files in the workspace
+		// so that we never have stale URLs in the view builder / preview
+		err = addStaticFileModstampsForWorkspaceToDeps(deps, workspace, session)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return deps, nil
+}
+
+func addStaticFileModstampsForWorkspaceToDeps(deps *PreloadMetadata, workspace *meta.Workspace, session *sess.Session) error {
+	// Query for all static files in the workspace
+	var files meta.FileCollection
+	err := bundle.LoadAllFromNamespaces([]string{workspace.App.FullName}, &files, nil, session, nil)
+	if err != nil {
+		return errors.New("failed to load static files: " + err.Error())
+	}
+	err = files.Loop(func(item meta.Item, index string) error {
+		file, ok := item.(*meta.File)
+		if !ok {
+			return errors.New("item is not a valid File")
+		}
+		deps.StaticFile.AddItem(file)
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func addComponentVariantDep(depMap *ViewDepMap, variantName string, compName string) error {
@@ -529,8 +576,7 @@ func getComponentAreaDeps(node *yaml.Node, depMap *ViewDepMap, session *sess.Ses
 						}
 					}
 				} else {
-					err := getComponentAreaDeps(prop, depMap, session)
-					if err != nil {
+					if err = getComponentAreaDeps(prop, depMap, session); err != nil {
 						return err
 					}
 				}
@@ -623,6 +669,7 @@ func (vdm *ViewDepMap) AddComponent(key string, session *sess.Session) (*meta.Co
 	if ok {
 		return component, nil
 	}
+	// Load the Component meta info from bundle store
 	component, err := meta.NewComponent(key)
 	if err != nil {
 		return nil, err
@@ -632,6 +679,12 @@ func (vdm *ViewDepMap) AddComponent(key string, session *sess.Session) (*meta.Co
 		return nil, err
 	}
 	vdm.Components[key] = component
+	// If this is a declarative component, we need to process dependencies of the component's definition
+	if component.Type == meta.DeclarativeComponent {
+		if err = getComponentAreaDeps(&component.Definition, vdm, session); err != nil {
+			return nil, err
+		}
+	}
 	return component, nil
 }
 

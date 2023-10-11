@@ -1,0 +1,388 @@
+package jsdialect
+
+import (
+	"encoding/json"
+	"github.com/thecloudmasters/uesio/pkg/meta"
+	"io"
+	"net/http"
+	"net/http/httptest"
+	"sync/atomic"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/thecloudmasters/uesio/pkg/sess"
+)
+
+func Test_Request(t *testing.T) {
+
+	var serveResponseBody, serveContentType string
+	var serveStatusCode int
+	var testInstance *testing.T
+	var requestAsserts func(t *testing.T, request *http.Request)
+	var countRequests map[string]uint32
+
+	// set up a mock server to handle our test requests
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		reqURL := r.URL.String()
+		if count, isPresent := countRequests[reqURL]; isPresent {
+			atomic.AddUint32(&count, 1)
+		} else {
+			countRequests[reqURL] = 1
+		}
+		if requestAsserts != nil && testInstance != nil {
+			requestAsserts(testInstance, r)
+		}
+		w.Header().Set("content-type", serveContentType)
+		w.WriteHeader(serveStatusCode)
+		if serveResponseBody != "" {
+			w.Write([]byte(serveResponseBody))
+		}
+	}))
+	defer (func() {
+		server.Close()
+	})()
+
+	type Address struct {
+		Street1       string `json:"street1"`
+		Street2       string `json:"street2"`
+		City          string `json:"city"`
+		ZipPostalCode string `json:"zip"`
+		Country       string `json:"country"`
+		State         string `json:"state"`
+	}
+
+	type User struct {
+		First         string   `json:"first"`
+		Last          string   `json:"last"`
+		FavoriteFoods []string `json:"favoriteFoods"`
+	}
+
+	type ResponseArgs struct {
+		responseData   interface{}
+		requestOptions interface{}
+	}
+
+	type ResponseAssertsFunc func(t *testing.T, response *BotHttpResponse)
+
+	type args struct {
+		request             *BotHttpRequest
+		response            string
+		responseContentType string
+		requestAsserts      func(t *testing.T, request *http.Request)
+		responseAsserts     ResponseAssertsFunc
+		responseStatusCode  int
+		makeRequestNTimes   int
+	}
+
+	botApi := NewBotHttpAPI(&meta.Bot{}, &sess.Session{})
+
+	tests := []struct {
+		name string
+		args args
+	}{
+		{
+			"GET: it should handle JSON object responses",
+			args{
+				request: &BotHttpRequest{
+					Method: "GET",
+					URL:    server.URL + "/test",
+				},
+				response:            `{"foo":"bar"}`,
+				responseContentType: "application/json",
+				requestAsserts: func(t *testing.T, request *http.Request) {
+					assert.Equal(t, "GET", request.Method)
+					assert.Equal(t, "/test", request.URL.Path)
+					assert.EqualValues(t, uint32(1), countRequests[request.URL.String()])
+				},
+				responseAsserts: func(t *testing.T, response *BotHttpResponse) {
+					assert.Equal(t, "200 OK", response.Status)
+					assert.Equal(t, http.StatusOK, response.Code)
+					assert.Equal(t, "application/json", response.Headers["Content-Type"])
+					if responseMap, ok := response.Body.(*map[string]interface{}); ok {
+						assert.Equal(t, "bar", (*responseMap)["foo"])
+					} else {
+						assert.Fail(t, "response is not a map[string]interface{}")
+					}
+				},
+			},
+		},
+		{
+			"GET: it should handle JSON array responses",
+			args{
+				request: &BotHttpRequest{
+					Method: "GET",
+					URL:    server.URL + "/array",
+				},
+				response:            `[{"foo":"bar"},{"hello":"world"}]`,
+				responseContentType: "text/json",
+				requestAsserts: func(t *testing.T, request *http.Request) {
+					assert.Equal(t, "GET", request.Method)
+					assert.Equal(t, "/array", request.URL.Path)
+				},
+				responseAsserts: func(t *testing.T, response *BotHttpResponse) {
+					assert.Equal(t, "200 OK", response.Status)
+					assert.Equal(t, http.StatusOK, response.Code)
+					assert.Equal(t, "text/json", response.Headers["Content-Type"])
+					if responses, ok := response.Body.(*[]interface{}); ok {
+						if item, isMap := (*responses)[1].(map[string]interface{}); isMap {
+							assert.Equal(t, "world", item["hello"])
+						}
+					} else {
+						assert.Fail(t, "response is not a valid array")
+					}
+				},
+			},
+		},
+		{
+			"GET: it should return other response types as raw data",
+			args{
+				request: &BotHttpRequest{
+					Method: "GET",
+					URL:    server.URL + "/xml",
+					Headers: map[string]string{
+						"Accept":        "text/xml",
+						"Authorization": "my-api-key",
+					},
+				},
+				response:            `<books/>`,
+				responseContentType: "text/xml",
+				requestAsserts: func(t *testing.T, request *http.Request) {
+					assert.Equal(t, "GET", request.Method)
+					assert.Equal(t, "/xml", request.URL.Path)
+					assert.Equal(t, "text/xml", request.Header.Get("Accept"))
+					assert.Equal(t, "my-api-key", request.Header.Get("Authorization"))
+				},
+				responseAsserts: func(t *testing.T, response *BotHttpResponse) {
+					assert.Equal(t, "200 OK", response.Status)
+					assert.Equal(t, http.StatusOK, response.Code)
+					assert.Equal(t, "text/xml", response.Headers["Content-Type"])
+					assert.Equal(t, `<books/>`, response.Body)
+				},
+			},
+		},
+		{
+			"POST: it should send a payload to the API",
+			args{
+				request: &BotHttpRequest{
+					Method: "POST",
+					URL:    server.URL + "/user/create",
+					Body:   `{"first":"Luigi","last":"Vampa"}`,
+					Headers: map[string]string{
+						"Accept":        "text/plain",
+						"Content-Type":  "text/json",
+						"Authorization": "api-key",
+					},
+				},
+				response:            `ok`,
+				responseContentType: "text/plain",
+				requestAsserts: func(t *testing.T, request *http.Request) {
+					assert.Equal(t, "POST", request.Method)
+					assert.Equal(t, "/user/create", request.URL.Path)
+					assert.Equal(t, "text/plain", request.Header.Get("Accept"))
+					assert.Equal(t, "api-key", request.Header.Get("Authorization"))
+					body, err := io.ReadAll(request.Body)
+					assert.Equal(t, nil, err)
+					assert.Equal(t, string(body), `{"first":"Luigi","last":"Vampa"}`)
+				},
+				responseAsserts: func(t *testing.T, response *BotHttpResponse) {
+					assert.Equal(t, "200 OK", response.Status)
+					assert.Equal(t, http.StatusOK, response.Code)
+					assert.Equal(t, "text/plain", response.Headers["Content-Type"])
+					assert.Equal(t, `ok`, response.Body)
+				},
+			},
+		},
+		{
+			"PUT: it should send a payload to the API",
+			args{
+				request: &BotHttpRequest{
+					Method: "PUT",
+					URL:    server.URL + "/user/111",
+					Headers: map[string]string{
+						"Accept":       "text/plain",
+						"Content-Type": "text/json",
+					},
+					Body: `{"first":"Mario","last":"Vampa"}`,
+				},
+				response:            `ok`,
+				responseContentType: "text/plain",
+				responseStatusCode:  http.StatusAccepted,
+				requestAsserts: func(t *testing.T, request *http.Request) {
+					assert.Equal(t, "PUT", request.Method)
+					assert.Equal(t, "/user/111", request.URL.Path)
+					assert.Equal(t, "text/plain", request.Header.Get("Accept"))
+					body, err := io.ReadAll(request.Body)
+					assert.Equal(t, nil, err)
+					assert.Equal(t, string(body), `{"first":"Mario","last":"Vampa"}`)
+				},
+				responseAsserts: func(t *testing.T, response *BotHttpResponse) {
+					assert.Equal(t, "202 Accepted", response.Status)
+					assert.Equal(t, http.StatusAccepted, response.Code)
+					assert.Equal(t, `ok`, response.Body)
+				},
+			},
+		},
+		{
+			"PATCH: it should send a payload to the API",
+			args{
+				request: &BotHttpRequest{
+					Method: "patch",
+					URL:    server.URL + "/user/111",
+					Body: map[string]interface{}{
+						"first": "Mario",
+					},
+					Headers: map[string]string{
+						"Content-Type": "text/json",
+					},
+				},
+				responseStatusCode: http.StatusNoContent,
+				requestAsserts: func(t *testing.T, request *http.Request) {
+					assert.Equal(t, "PATCH", request.Method)
+					assert.Equal(t, "/user/111", request.URL.Path)
+					body, err := io.ReadAll(request.Body)
+					assert.Equal(t, nil, err)
+					assert.Equal(t, string(body), `{"first":"Mario"}`)
+				},
+				responseAsserts: func(t *testing.T, response *BotHttpResponse) {
+					assert.Equal(t, "204 No Content", response.Status)
+					assert.Equal(t, http.StatusNoContent, response.Code)
+				},
+			},
+		},
+		{
+			"DELETE: it should send a payload to the API",
+			args{
+				request: &BotHttpRequest{
+					Method: "delete",
+					URL:    server.URL + "/user/111",
+					Body:   `{"__delete__":true}`,
+					Headers: map[string]string{
+						"Content-Type": "text/json",
+					},
+				},
+				responseStatusCode: http.StatusNoContent,
+				requestAsserts: func(t *testing.T, request *http.Request) {
+					assert.Equal(t, "DELETE", request.Method)
+					assert.Equal(t, "/user/111", request.URL.Path)
+					body, err := io.ReadAll(request.Body)
+					assert.Equal(t, nil, err)
+					assert.Equal(t, string(body), `{"__delete__":true}`)
+				},
+				responseAsserts: func(t *testing.T, response *BotHttpResponse) {
+					assert.Equal(t, "204 No Content", response.Status)
+					assert.Equal(t, http.StatusNoContent, response.Code)
+				},
+			},
+		},
+		{
+			"PUT: it should send a map[string]interface{} payload to the API",
+			args{
+				request: &BotHttpRequest{
+					Method: "PUT",
+					URL:    server.URL + "/user/create",
+					Body: map[string]interface{}{
+						"favoriteFoods": []string{
+							"Mango",
+							"Pineapple",
+						},
+						"first": "Luigi",
+						"last":  "Vampa",
+					},
+					Headers: map[string]string{
+						"Accept":  "text/plain",
+						"x-hello": "world",
+					},
+				},
+				response:            `ok`,
+				responseContentType: "text/plain",
+				requestAsserts: func(t *testing.T, request *http.Request) {
+					assert.Equal(t, "PUT", request.Method)
+					assert.Equal(t, "/user/create", request.URL.Path)
+					assert.Equal(t, "text/plain", request.Header.Get("Accept"))
+					assert.Equal(t, "world", request.Header.Get("x-hello"))
+					body, err := io.ReadAll(request.Body)
+					assert.Equal(t, nil, err)
+					// Verify that we can deserialize our body into an expected format
+					user := &User{}
+					err = json.Unmarshal(body, user)
+					assert.Equal(t, nil, err)
+					assert.Equal(t, "Luigi", user.First)
+					assert.Equal(t, "Vampa", user.Last)
+					assert.Equal(t, "Mango", user.FavoriteFoods[0])
+					assert.Equal(t, "Pineapple", user.FavoriteFoods[1])
+				},
+				responseAsserts: func(t *testing.T, response *BotHttpResponse) {
+					assert.Equal(t, "200 OK", response.Status)
+					assert.Equal(t, http.StatusOK, response.Code)
+					assert.Equal(t, `ok`, response.Body)
+				},
+			},
+		},
+		{
+			"it should reject unknown HTTP Method",
+			args{
+				request: &BotHttpRequest{
+					Method: "foo",
+					URL:    server.URL + "/users",
+				},
+				responseAsserts: func(t *testing.T, response *BotHttpResponse) {
+					assert.Equal(t, "Bad Request", response.Status)
+					assert.Equal(t, http.StatusBadRequest, response.Code)
+					if responseObject, ok := response.Body.(map[string]string); ok {
+						assert.Equal(t, "Bad Request", responseObject["status"])
+						assert.Equal(t, "invalid HTTP request method: foo", responseObject["error"])
+					} else {
+						assert.Fail(t, "expected response body to be a map")
+					}
+				},
+			},
+		},
+		{
+			"missing URL in http request",
+			args{
+				request: &BotHttpRequest{
+					Method: "post",
+				},
+				responseAsserts: func(t *testing.T, response *BotHttpResponse) {
+					assert.Equal(t, "Bad Request", response.Status)
+					assert.Equal(t, http.StatusBadRequest, response.Code)
+					if responseObject, ok := response.Body.(map[string]string); ok {
+						assert.Equal(t, "Bad Request", responseObject["status"])
+						assert.Equal(t, "no url provided", responseObject["error"])
+					} else {
+						assert.Fail(t, "expected response body to be a map")
+					}
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			serveResponseBody = tt.args.response
+			serveContentType = tt.args.responseContentType
+			serveStatusCode = tt.args.responseStatusCode
+			// Default to serving a 200 status code
+			if serveStatusCode == 0 {
+				serveStatusCode = 200
+			}
+			requestAsserts = tt.args.requestAsserts
+			testInstance = t
+			countRequests = map[string]uint32{}
+			reqsToMake := 1
+			if tt.args.makeRequestNTimes > 1 {
+				reqsToMake = tt.args.makeRequestNTimes
+			}
+			var actualResponse *BotHttpResponse
+			for {
+				reqsToMake = reqsToMake - 1
+				actualResponse = botApi.Request(tt.args.request)
+				if reqsToMake == 0 {
+					break
+				}
+			}
+			if tt.args.responseAsserts != nil {
+				tt.args.responseAsserts(t, actualResponse)
+			}
+		})
+	}
+}

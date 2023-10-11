@@ -24,7 +24,6 @@ func GetCollectionMetadata(e *meta.Collection) *adapt.CollectionMetadata {
 		Updateable:            !e.ReadOnly,
 		Deleteable:            !e.ReadOnly,
 		Fields:                fieldMetadata,
-		DataSource:            e.DataSourceRef,
 		Access:                e.Access,
 		AccessField:           e.AccessField,
 		RecordChallengeTokens: e.RecordChallengeTokens,
@@ -32,6 +31,9 @@ func GetCollectionMetadata(e *meta.Collection) *adapt.CollectionMetadata {
 		Public:                e.Public,
 		Label:                 e.Label,
 		PluralLabel:           e.PluralLabel,
+		Integration:           e.IntegrationRef,
+		LoadBot:               e.LoadBot,
+		SaveBot:               e.SaveBot,
 	}
 }
 
@@ -71,6 +73,7 @@ func GetFieldMetadata(f *meta.Field, session *sess.Session) *adapt.FieldMetadata
 		AutoNumberMetadata:     GetAutoNumberMetadata(f),
 		FormulaMetadata:        GetFormulaMetadata(f),
 		SelectListMetadata:     GetSelectListMetadata(f),
+		MetadataFieldMetadata:  GetMetadataFieldMetadata(f),
 		Required:               f.Required,
 		AutoPopulate:           f.AutoPopulate,
 		SubFields:              GetSubFieldMetadata(f),
@@ -104,6 +107,10 @@ func GetSubFieldMetadata(f *meta.Field) map[string]*adapt.FieldMetadata {
 				Type:       subField.Type,
 				SelectList: subField.SelectList,
 			}),
+			MetadataFieldMetadata: GetMetadataFieldMetadata(&meta.Field{
+				Type:                  subField.Type,
+				MetadataFieldMetadata: subField.Metadata,
+			}),
 		}
 	}
 	return fieldMetadata
@@ -113,6 +120,17 @@ func GetSelectListMetadata(f *meta.Field) *adapt.SelectListMetadata {
 	if f.Type == "SELECT" || f.Type == "MULTISELECT" {
 		return &adapt.SelectListMetadata{
 			Name: f.SelectList,
+		}
+	}
+	return nil
+}
+
+func GetMetadataFieldMetadata(f *meta.Field) *adapt.MetadataFieldMetadata {
+	if f.Type == "METADATA" || f.Type == "MULTIMETADATA" && f.MetadataFieldMetadata != nil {
+		return &adapt.MetadataFieldMetadata{
+			Type:      f.MetadataFieldMetadata.Type,
+			Grouping:  f.MetadataFieldMetadata.Grouping,
+			Namespace: f.MetadataFieldMetadata.Namespace,
 		}
 	}
 	return nil
@@ -180,8 +198,9 @@ func GetReferenceGroupMetadata(f *meta.Field) *adapt.ReferenceGroupMetadata {
 func GetValidationMetadata(f *meta.Field) *adapt.ValidationMetadata {
 	if f.ValidationMetadata != nil {
 		return &adapt.ValidationMetadata{
-			Type:  f.ValidationMetadata.Type,
-			Regex: f.ValidationMetadata.Regex,
+			Type:      f.ValidationMetadata.Type,
+			Regex:     f.ValidationMetadata.Regex,
+			SchemaUri: f.ValidationMetadata.SchemaUri,
 		}
 	}
 	return nil
@@ -220,6 +239,8 @@ func LoadAllFieldsMetadata(collectionKey string, collectionMetadata *adapt.Colle
 		return err
 	}
 
+	AddAllBuiltinFields(&fields, collectionKey)
+
 	for _, field := range fields {
 		collectionMetadata.SetField(GetFieldMetadata(field, session))
 	}
@@ -232,7 +253,13 @@ func LoadFieldsMetadata(keys []string, collectionKey string, collectionMetadata 
 	for _, key := range keys {
 		_, err := collectionMetadata.GetField(key)
 		if err != nil {
-			field, err := meta.NewField(collectionKey, key)
+			// Check if this field is built-in, if so, handle its metadata here
+			builtInField, isBuiltIn := GetBuiltinField(key, collectionKey)
+			if isBuiltIn {
+				collectionMetadata.SetField(GetFieldMetadata(&builtInField, session))
+				continue
+			}
+			field, err := meta.NewField(collectionKey, meta.GetFullyQualifiedKey(key, collectionMetadata.Namespace))
 			if err != nil {
 				return err
 			}

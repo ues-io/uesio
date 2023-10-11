@@ -1,11 +1,14 @@
 package jsdialect
 
 import (
+	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
+	"strings"
 	"time"
 
 	"github.com/dop251/goja"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -20,13 +23,69 @@ func Logger(message string) {
 type JSDialect struct {
 }
 
-const DefaultListenerBotBody = `function %s(bot) {
+const DefaultListenerBotBody = `export default function %s(bot) {
     const a = bot.params.get("a")
     const b = bot.params.get("b")
     bot.addResult("answer", a + b)
 }`
 
-const DefaultBeforeSaveBotBody = `function %s(bot) {
+const DefaultRunIntegrationActionBotBody = `export default function %s(bot) {
+    const itemNumbers = bot.params.get("itemNumbers")
+    const amount = bot.params.get("amount")
+	const actionName = bot.getActionName()
+
+	if (actionName !== "createOrder") {
+		bot.addError("unsupported action name: " + actionName)
+		return
+	}
+
+	// Call API to create order
+	const result = bot.http.request({
+		method: "POST",
+		url: bot.getIntegration().getBaseURL() + "/api/v1/orders",
+		body: {
+			lineItems: itemNumbers,
+			amount: amount,
+		},
+	})
+	if (result.code !== 200) {
+		bot.addError("could not place order: " + result.status)
+		return
+	}
+	const orderDetails = result.body
+	const { orderNumber } = orderDetails
+
+    bot.addResult("orderNumber", orderNumber)
+}`
+
+const DefaultLoadBotBody = `export default function %s(bot) {
+	const collectionName = bot.loadRequest.GetCollectionName()
+	[
+		{
+			"first_name": "Luigi",
+			"last_name": "Vampa"
+		},
+		{
+			"first_name": "Myasia",
+			"last_name": "Harvey"
+		},
+	].forEach((record) => bot.addRecord(record))
+}`
+
+const DefaultSaveBotBody = `export default function %s(bot) {
+	const collectionName = bot.getCollectionName()
+	bot.deletes.get().forEach((deleteApi) => {
+		bot.log.info("got a record to delete, with id: " + deleteApi.getId())
+	})
+	bot.inserts.get().forEach((insertApi) => {
+		bot.log.info("got a record to insert, with id: " + insertApi.getId())
+	})
+	bot.updates.get().forEach((updateApi) => {
+		bot.log.info("got a record to update, with id: " + updateApi.getId())
+	})
+}`
+
+const DefaultBeforeSaveBotBody = `export default function %s(bot) {
 	bot.inserts.get().forEach(function (change) {
 		const recordId = change.get("uesio/core.id");
 	});
@@ -35,7 +94,7 @@ const DefaultBeforeSaveBotBody = `function %s(bot) {
 	});
 }`
 
-const DefaultAfterSaveBotBody = `function %s(bot) {
+const DefaultAfterSaveBotBody = `export default function %s(bot) {
 	bot.inserts.get().forEach(function (change) {
 		const recordId = change.get("uesio/core.id");
 	});
@@ -44,7 +103,7 @@ const DefaultAfterSaveBotBody = `function %s(bot) {
 	});
 }`
 
-const DefaultBotBody = `function %s(bot) {
+const DefaultBotBody = `export default function %s(bot) {
 
 }`
 
@@ -55,7 +114,7 @@ func (b *JSDialect) hydrateBot(bot *meta.Bot, session *sess.Session) error {
 	if err != nil {
 		return err
 	}
-	content, err := ioutil.ReadAll(stream)
+	content, err := io.ReadAll(stream)
 	if err != nil {
 		return err
 	}
@@ -78,13 +137,17 @@ func RunBot(botName string, contents string, api interface{}, errorFunc func(str
 		return //Interrupt native Go functions
 	})
 
-	runner, err := vm.RunString("(" + contents + ")")
+	runner, err := vm.RunString(strings.ReplaceAll("("+contents+")", "export default function", "function"))
 	if err != nil {
 		return err
 	}
 	change, ok := goja.AssertFunction(runner)
 	if !ok {
-		return err
+		// If the bot is not a function, check for a function with the same name as the bot
+		change, ok = goja.AssertFunction(vm.Get(botName))
+		if !ok {
+			return errors.New("invalid bot code. A bot must export a function with the same name as the bot")
+		}
 	}
 
 	_, err = change(goja.Undefined(), vm.ToValue(api))
@@ -122,18 +185,7 @@ func (b *JSDialect) AfterSave(bot *meta.Bot, request *adapt.SaveOp, connection a
 }
 
 func (b *JSDialect) CallBot(bot *meta.Bot, params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
-	botAPI := &CallBotAPI{
-		Session: session,
-		Params: &ParamsAPI{
-			Params: params,
-		},
-		AsAdmin: AdminCallBotAPI{
-			Session:    session,
-			Connection: connection,
-		},
-		Connection: connection,
-		Results:    map[string]interface{}{},
-	}
+	botAPI := NewCallBotAPI(bot, session, connection, params)
 	err := b.hydrateBot(bot, session)
 	if err != nil {
 		return nil, err
@@ -155,23 +207,60 @@ func (b *JSDialect) CallGeneratorBot(bot *meta.Bot, create retrieve.WriterCreato
 		Bot:        bot,
 		Connection: connection,
 	}
-	err := b.hydrateBot(bot, session)
-	if err != nil {
-		return nil
+	if err := b.hydrateBot(bot, session); err != nil {
+		return err
 	}
 	return RunBot(bot.Name, bot.FileContents, botAPI, nil)
 }
 
-func (b *JSDialect) RouteBot(bot *meta.Bot, route *meta.Route, session *sess.Session) error {
-	return nil
+func (b *JSDialect) RouteBot(bot *meta.Bot, route *meta.Route, session *sess.Session) (*meta.Route, error) {
+	return route, nil
 }
 
 func (b *JSDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+	integrationConnection, err := op.GetIntegration()
+	if err != nil {
+		return err
+	}
+	botAPI := NewLoadBotAPI(bot, session, connection, op, integrationConnection)
+	if err = b.hydrateBot(bot, session); err != nil {
+		return err
+	}
+	if err = RunBot(bot.Name, bot.FileContents, botAPI, nil); err != nil {
+		return err
+	}
+	if len(botAPI.loadErrors) > 0 {
+		return errors.New(strings.Join(botAPI.loadErrors, "\n"))
+	}
 	return nil
 }
 
 func (b *JSDialect) SaveBot(bot *meta.Bot, op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
-	return nil
+	integrationConnection, err := op.GetIntegration()
+	if err != nil {
+		return err
+	}
+	botAPI := NewSaveBotAPI(bot, session, connection, op, integrationConnection)
+	if err := b.hydrateBot(bot, session); err != nil {
+		return err
+	}
+	return RunBot(bot.Name, bot.FileContents, botAPI, nil)
+}
+
+func (b *JSDialect) RunIntegrationActionBot(bot *meta.Bot, action *meta.IntegrationAction, integration adapt.IntegrationConnection, params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
+	botAPI := NewRunIntegrationActionBotAPI(bot, action, integration, params, session, connection)
+	err := b.hydrateBot(bot, session)
+	if err != nil {
+		return nil, err
+	}
+	err = RunBot(bot.Name, bot.FileContents, botAPI, nil)
+	if err != nil {
+		return nil, err
+	}
+	if len(botAPI.Errors) > 0 {
+		err = errors.New(strings.Join(botAPI.Errors, ", "))
+	}
+	return botAPI.Results, err
 }
 
 func (b *JSDialect) GetFilePath() string {
@@ -186,6 +275,12 @@ func (b *JSDialect) GetDefaultFileBody(botType string) string {
 		return DefaultBeforeSaveBotBody
 	case "AFTERSAVE":
 		return DefaultAfterSaveBotBody
+	case "LOAD":
+		return DefaultLoadBotBody
+	case "SAVE":
+		return DefaultSaveBotBody
+	case "RUNACTION":
+		return DefaultRunIntegrationActionBotBody
 	default:
 		return DefaultBotBody
 	}

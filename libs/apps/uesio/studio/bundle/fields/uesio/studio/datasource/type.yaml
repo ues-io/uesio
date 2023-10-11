@@ -1,5 +1,0 @@
-name: type
-type: SELECT
-selectList: uesio/studio.datasourcetypes
-label: Type
-required: true

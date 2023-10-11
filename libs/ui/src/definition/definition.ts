@@ -1,8 +1,8 @@
-import { FC, ReactNode } from "react"
-import { MetadataKey } from "../bands/builder/types"
-import { DisplayCondition } from "../component/display"
-import { Context } from "../context/context"
-import { ComponentSignalDescriptor } from "./signal"
+import type { FC, ReactNode } from "react"
+import type { MetadataKey } from "../metadata/types"
+import type { DisplayCondition } from "../component/display"
+import type { Context } from "../context/context"
+import type { ComponentSignalDescriptor } from "./signal"
 
 export type BaseDefinition = {
 	// "id" here is TEMPORARY - for backwards compatibility on components like Table/List/Deck that initially had "id"
@@ -12,7 +12,7 @@ export type BaseDefinition = {
 	"uesio.styleTokens"?: Record<string, string[]>
 	"uesio.variant"?: MetadataKey
 	"uesio.display"?: DisplayCondition[]
-	"uesio.classes"?: DisplayCondition[]
+	"uesio.classes"?: Record<string, DisplayCondition[]>
 }
 
 export type ImportMapping = {

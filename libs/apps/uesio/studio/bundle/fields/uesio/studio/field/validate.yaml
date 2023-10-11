@@ -9,3 +9,6 @@ subfields:
   - name: uesio/studio.regex
     label: Regex
     type: TEXT
+  - name: uesio/studio.schema_uri
+    label: Schema URI
+    type: TEXT

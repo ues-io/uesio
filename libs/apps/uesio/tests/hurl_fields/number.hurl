@@ -6,7 +6,7 @@
 # entry 1
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"uesio\"}"
+    "token": "uesio"
 }
 HTTP 200
 
@@ -488,9 +488,8 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[1].data[*]['uesio/tests.number']" isInteger
-jsonpath "$.wires[1].data[*]['uesio/tests.number']" == 1
-jsonpath "$.wires[1].data[*]['uesio/core.uniquekey']" == "ID-001"
+jsonpath "$.wires[1].data[0]['uesio/tests.number']" == 1
+jsonpath "$.wires[1].data[0]['uesio/core.uniquekey']" == "ID-001"
 
 # Operator: IN | valueSource: PARAM
 # entry 18
@@ -584,7 +583,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[1].data[*]" not exists
+jsonpath "$.wires[1].data[*]" isEmpty
 
 # Operator: NOT_IN | valueSource: PARAM
 ## entry 21

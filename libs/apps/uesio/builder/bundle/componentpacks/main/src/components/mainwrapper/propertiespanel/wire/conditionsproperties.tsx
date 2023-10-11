@@ -4,13 +4,16 @@ import { FullPath } from "../../../../api/path"
 import { useSelectedPath } from "../../../../api/stateapi"
 import { getFieldMetadata } from "../../../../api/wireapi"
 import {
-	ComponentProperty,
 	TextProperty,
 	NumberProperty,
 	CheckboxProperty,
 	SelectProperty,
 	DateProperty,
+	ListPropertyItemChildrenFunctionOptions,
+	ComponentProperty,
 } from "../../../../properties/componentproperty"
+
+import ListPropertyItem from "../../../../utilities/listpropertyitem/listpropertyitem"
 
 function getConditionPropertiesPanelTitle(
 	condition: wire.WireConditionState
@@ -196,27 +199,45 @@ function getValueProperty(
 	return { ...baseValueProp, type: "TEXT" } as TextProperty
 }
 
-const ConditionsProperties: definition.UC = (props) => {
-	const { context } = props
-	const ListPropertyUtility = component.getUtility(
-		"uesio/builder.listproperty"
-	)
-	const ListPropertyItem = component.getUtility(
-		"uesio/builder.listpropertyitem"
-	)
+const getWireConditionItemsChildrenFunction =
+	(wireName: string) =>
+	(options: ListPropertyItemChildrenFunctionOptions) => {
+		const { context, item, index, path } = options
+		const wireCondition = item as wire.WireConditionState
+		const isGroup = wireCondition.type === "GROUP"
+		const groupConditions =
+			isGroup && !wireCondition.valueSource
+				? wireCondition.conditions
+				: null
+		if (!groupConditions) return null
+		return groupConditions.map(
+			(conditionOnGroup: wire.WireConditionState, secindex: number) => {
+				const conditionOnGroupPath = path.addLocal("conditions")
 
-	const propertyName = "conditions"
-	const selectedPath = useSelectedPath(context)
-	const wirePath = selectedPath.trimToSize(2)
-	const conditionsPath = wirePath.addLocal(propertyName)
-	const [wireName] = wirePath.pop()
+				return (
+					<ListPropertyItem
+						key={index + "." + secindex}
+						context={context.addRecordDataFrame(
+							conditionOnGroup as wire.PlainWireRecord,
+							secindex
+						)}
+						parentPath={conditionOnGroupPath}
+						displayTemplate={getConditionTitle(conditionOnGroup)}
+						itemProperties={getItemPropertiesFunction(
+							context,
+							conditionOnGroupPath,
+							wireName
+						)}
+						itemPropertiesPanelTitle="Condition Properties"
+					/>
+				)
+			}
+		)
+	}
 
-	const items = get(context, conditionsPath) as wire.WireConditionState[]
-
-	const getProperties = (
-		parentPath: FullPath,
-		itemState: wire.PlainWireRecord
-	): ComponentProperty[] => {
+const getItemPropertiesFunction =
+	(context: context.Context, parentPath: FullPath, wireName: string) =>
+	(itemState: wire.PlainWireRecord): ComponentProperty[] => {
 		const fieldMetadata =
 			itemState.field && wireName
 				? getFieldMetadata(
@@ -233,20 +254,20 @@ const ConditionsProperties: definition.UC = (props) => {
 				name: "id",
 				type: "TEXT",
 				label: "Condition Id",
+				unique: true,
 			},
 			{
 				name: "field",
-				type: "METADATA",
-				metadataType: "FIELD",
+				type: "COLLECTION_FIELD",
 				label: "Field",
-				groupingPath: `${"../".repeat(
+				collectionPath: `${"../".repeat(
 					parentPath.size() - 3
 				)}../collection`,
 				displayConditions: [
 					{
-						operator: "NOT_EQUALS",
+						operator: "NOT_IN",
 						field: "type",
-						value: "GROUP",
+						values: ["GROUP", "SUBQUERY"],
 						type: "fieldValue",
 					},
 				],
@@ -403,6 +424,42 @@ const ConditionsProperties: definition.UC = (props) => {
 							"HAS_ALL",
 							"CONTAINS",
 							"STARTS_WITH",
+						],
+					},
+				],
+				onChange: [
+					{
+						updates: [
+							{
+								field: "value",
+							},
+							{
+								field: "values",
+							},
+							{
+								field: "param",
+							},
+							{
+								field: "params",
+							},
+							{
+								field: "lookupWire",
+							},
+							{
+								field: "lookupField",
+							},
+							{
+								field: "start",
+							},
+							{
+								field: "end",
+							},
+							{
+								field: "inclusiveStart",
+							},
+							{
+								field: "inclusiveEnd",
+							},
 						],
 					},
 				],
@@ -629,11 +686,25 @@ const ConditionsProperties: definition.UC = (props) => {
 		]
 	}
 
+const ConditionsProperties: definition.UC = (props) => {
+	const { context } = props
+	const ListPropertyUtility = component.getUtility(
+		"uesio/builder.listproperty"
+	)
+
+	const propertyName = "conditions"
+	const selectedPath = useSelectedPath(context)
+	const wirePath = selectedPath.trimToSize(2)
+	const conditionsPath = wirePath.addLocal(propertyName)
+	const [wireName] = wirePath.pop()
+
+	const items = get(context, conditionsPath) as wire.WireConditionState[]
+
 	const defaultConditionDef = {}
 
 	const defaultConditionGroupDef = {
 		type: "GROUP",
-		conjunction: "AND",
+		conjunction: "OR",
 		conditions: [defaultConditionDef],
 	}
 
@@ -686,55 +757,16 @@ const ConditionsProperties: definition.UC = (props) => {
 					},
 				]}
 				items={items}
-				itemProperties={(itemState: wire.PlainWireRecord) =>
-					getProperties(conditionsPath, itemState)
-				}
+				itemProperties={getItemPropertiesFunction(
+					context,
+					conditionsPath,
+					wireName || ""
+				)}
 				itemDisplayTemplate={getConditionTitle}
 				itemPropertiesPanelTitle={getConditionPropertiesPanelTitle}
-				itemChildren={(
-					item: wire.WireConditionState,
-					index: number
-				) => {
-					const isGroup = item.type === "GROUP"
-					const groupConditions =
-						isGroup && !item.valueSource ? item.conditions : null
-					return (
-						!!groupConditions &&
-						groupConditions.map(
-							(
-								conditionOnGroup: wire.WireConditionState,
-								secindex
-							) => {
-								const conditionOnGroupPath = conditionsPath
-									.addLocal(index.toString())
-									.addLocal(propertyName)
-
-								return (
-									<ListPropertyItem
-										key={index + "." + secindex}
-										context={context.addRecordDataFrame(
-											conditionOnGroup as wire.PlainWireRecord,
-											secindex
-										)}
-										parentPath={conditionOnGroupPath}
-										displayTemplate={getConditionTitle(
-											conditionOnGroup
-										)}
-										itemProperties={(
-											itemState: wire.PlainWireRecord
-										) =>
-											getProperties(
-												conditionOnGroupPath,
-												itemState
-											)
-										}
-										itemPropertiesPanelTitle="Condition Properties"
-									/>
-								)
-							}
-						)
-					)
-				}}
+				itemChildren={getWireConditionItemsChildrenFunction(
+					wireName || ""
+				)}
 			/>
 		</>
 	)

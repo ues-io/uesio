@@ -1,6 +1,5 @@
 name: workspace
-collection: studio.translations
 type: REFERENCE
 label: Workspace
 reference:
-  collection: uesio/studio.workspace
+  collection: workspace

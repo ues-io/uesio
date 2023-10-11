@@ -1,0 +1,145 @@
+name: integrations
+definition:
+  # Wires are how we pull in data
+  wires:
+    workspaces:
+      collection: uesio/studio.workspace
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.app:
+          fields:
+            uesio/studio.color:
+            uesio/studio.icon:
+      conditions:
+        - field: uesio/core.uniquekey
+          value: $Param{app}:$Param{workspacename}
+    integrations:
+      collection: uesio/studio.integration
+      conditions:
+        - field: uesio/studio.allmetadata
+          value: true
+    newintegration:
+      collection: uesio/studio.integration
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.workspace:
+        uesio/studio.type:
+      conditions:
+        - field: uesio/studio.workspace
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio/core.id
+      init:
+        query: false
+        create: true
+      defaults:
+        - field: uesio/studio.workspace
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio/core.id
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/studio.mainlayout:
+        topbar:
+          - uesio/core.view:
+              view: uesio/studio.topbar
+              uesio.context:
+                wire: workspaces
+              params:
+                itemType: integrations
+                itemIcon: electrical_services
+        leftbar:
+          - uesio/core.view:
+              uesio.context:
+                wire: workspaces
+              view: uesio/studio.workspacenav
+              params:
+                selected: integrations
+        content:
+          - uesio/io.titlebar:
+              uesio.variant: uesio/io.main
+              title: Integrations
+              subtitle: Let's bring the whole family together
+              actions:
+                - uesio/io.group:
+                    components:
+                      - uesio/io.button:
+                          text: Create a new Integration
+                          uesio.variant: uesio/io.primary
+                          hotkey: "n"
+                          signals:
+                            - signal: wire/RESET
+                              wire: newintegration
+                            - signal: panel/TOGGLE
+                              panel: newIntegration
+          - uesio/io.box:
+              uesio.variant: uesio/io.section
+              components:
+                - uesio/io.table:
+                    uesio.id: integrationsTable
+                    wire: integrations
+                    columns:
+                      - label: Integration Name
+                        components:
+                          - uesio/io.iconlabel:
+                              uesio.variant: uesio/io.namespacefield
+                              text: ${uesio/studio.name}
+                              subtitle: ${uesio/studio.namespace}
+                              icon: ${uesio/studio.appicon}
+                              color: ${uesio/studio.appcolor}
+                      - field: uesio/studio.type
+                      - field: uesio/core.updatedby
+                        user:
+                          subtitle: $Time{uesio/core.updatedat}
+                      - field: uesio/core.createdby
+                        user:
+                          subtitle: $Time{uesio/core.createdat}
+                    rowactions:
+                      - text: Details
+                        type: DEFAULT
+                        signals:
+                          - signal: route/NAVIGATE
+                            path: app/$Param{app}/workspace/$Param{workspacename}/integrations/${uesio/studio.namespace}/${uesio/studio.name}
+                    pagesize: 10
+  panels:
+    newIntegration:
+      uesio.type: uesio/io.dialog
+      title: Create a new Integration
+      width: 500px
+      height: 600px
+      components:
+        - uesio/io.item:
+            uesio.id: newintegration
+            wire: newintegration
+            mode: EDIT
+            components:
+              - uesio/io.field:
+                  fieldId: uesio/studio.name
+              - uesio/io.field:
+                  fieldId: uesio/studio.type
+              - uesio/io.field:
+                  fieldId: uesio/studio.credentials
+                  uesio.context:
+                    workspace:
+                      name: $Param{workspacename}
+                      app: $Param{app}
+      actions:
+        - uesio/io.button:
+            uesio.variant: uesio/io.primary
+            text: $Label{uesio/io.save}
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - newintegration
+              - signal: route/NAVIGATE
+                path: app/$Param{app}/workspace/$Param{workspacename}/integrations/$Param{app}/${uesio/studio.name}
+        - uesio/io.button:
+            uesio.variant: uesio/io.secondary
+            text: $Label{uesio/io.cancel}
+            signals:
+              - signal: wire/CANCEL
+                wire: newintegration
+              - signal: panel/TOGGLE
+                panel: newIntegration

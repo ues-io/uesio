@@ -1,6 +1,0 @@
-name: accounts
-path: accounts
-view: uesio/crm.accounts
-theme: uesio/core.default
-title: ""
-public: true

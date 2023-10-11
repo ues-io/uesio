@@ -1,6 +1,0 @@
-name: externalid
-type: AUTONUMBER
-label: External ID
-autonumber:
-  prefix: ACC
-  leadingZeros: 5

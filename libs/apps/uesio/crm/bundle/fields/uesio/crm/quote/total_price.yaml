@@ -1,5 +1,0 @@
-name: total_price
-type: NUMBER
-label: Total Price
-number:
-  decimals: 2

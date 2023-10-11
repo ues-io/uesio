@@ -3,6 +3,7 @@ package reflecttool
 import (
 	"errors"
 	"fmt"
+	"github.com/thecloudmasters/uesio/pkg/constant"
 	"reflect"
 	"strings"
 
@@ -21,7 +22,7 @@ func reflectValue(obj interface{}) reflect.Value {
 func GetField(obj interface{}, name string) (interface{}, error) {
 
 	// Split the field name into tokens
-	names := strings.Split(name, "->")
+	names := strings.Split(name, constant.RefSep)
 
 	for _, name := range names {
 

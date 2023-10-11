@@ -1,5 +1,0 @@
-name: converted_to_contact
-type: REFERENCE
-label: Converted Contact
-reference:
-  collection: uesio/crm.contact

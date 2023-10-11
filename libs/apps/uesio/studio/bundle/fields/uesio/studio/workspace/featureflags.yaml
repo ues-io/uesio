@@ -2,6 +2,6 @@ name: featureflags
 type: REFERENCEGROUP
 label: Feature Flags
 referenceGroup:
-  collection: uesio/studio.featureflag
-  field: uesio/studio.workspace
+  collection: featureflag
+  field: workspace
   onDelete: CASCADE

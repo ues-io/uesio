@@ -1,8 +1,7 @@
-import { FunctionComponent } from "react"
 import { definition, api, wire, collection } from "@uesio/ui"
 import ReferenceField, { ReferenceFieldOptions } from "../field/reference"
 
-interface ReferenceFilterProps extends definition.UtilityProps {
+interface ReferenceFilterProps {
 	path: string
 	wire: wire.Wire
 	fieldMetadata: collection.Field
@@ -10,8 +9,10 @@ interface ReferenceFilterProps extends definition.UtilityProps {
 	options?: ReferenceFieldOptions
 }
 
-const ReferenceFilter: FunctionComponent<ReferenceFilterProps> = (props) => {
-	const { wire, fieldMetadata, context, condition, options, path } = props
+const ReferenceFilter: definition.UtilityComponent<ReferenceFilterProps> = (
+	props
+) => {
+	const { context, condition, fieldMetadata, options, path, wire } = props
 	const wireId = wire.getId()
 	return (
 		<ReferenceField

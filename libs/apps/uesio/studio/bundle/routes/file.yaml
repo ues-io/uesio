@@ -1,5 +1,5 @@
 name: file
 path: app/{app:\w*\/\w*}/workspace/{workspacename}/files/{namespace:\w*\/\w*}/{filename}
-view: uesio/studio.file
-theme: uesio/studio.default
+view: file
+theme: default
 title: "File: $Param{filename}"

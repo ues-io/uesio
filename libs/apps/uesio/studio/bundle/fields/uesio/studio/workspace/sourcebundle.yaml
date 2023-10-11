@@ -1,0 +1,5 @@
+name: sourcebundle
+type: REFERENCE
+label: Source Bundle
+reference:
+  collection: bundle

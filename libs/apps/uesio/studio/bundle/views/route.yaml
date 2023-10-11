@@ -15,181 +15,171 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     routes:
-      collection: uesio/studio.allmetadata
+      collection: uesio/studio.route
       conditions:
-        - field: uesio/studio.type
-          value: routes
+        - field: uesio/studio.allmetadata
+          value: true
         - field: uesio/studio.item
           value: $Param{namespace}.$Param{routename}
   # Components are how we describe the layout of our view
   components:
-    - uesio/io.grid:
-        uesio.variant: uesio/studio.mainlayout
-        items:
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.topbar
+    - uesio/studio.mainlayout:
+        topbar:
+          - uesio/core.view:
+              view: uesio/studio.topbar
+              uesio.context:
+                wire: workspaces
+              params:
+                itemType: routes
+                itemIcon: map
+                itemName: $Param{routename}
+                itemNameSpace: $Param{namespace}
+        leftbar:
+          - uesio/core.view:
+              uesio.context:
+                wire: workspaces
+              view: uesio/studio.workspacenav
+              params:
+                selected: routes
+        content:
+          - uesio/io.list:
+              uesio.id: routesList
+              wire: routes
+              mode: READ
               components:
-                - uesio/core.view:
-                    view: uesio/studio.topbar
-                    uesio.context:
-                      wire: workspaces
-                    params:
-                      itemType: routes
-                      itemIcon: map
-                      itemName: $Param{routename}
-                      itemNameSpace: $Param{namespace}
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.leftbar
-              components:
-                - uesio/core.view:
-                    uesio.context:
-                      wire: workspaces
-                    view: uesio/studio.workspacenav
-                    params:
-                      selected: routes
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.content
-              components:
-                - uesio/io.list:
-                    uesio.id: routesList
-                    wire: routes
-                    mode: READ
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.main
+                    title: Route - ${uesio/studio.path}
+                    subtitle: $Param{namespace}
+                    actions:
+                      - uesio/io.group:
+                          components:
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                hotkey: "meta+p"
+                                text: $Label{uesio/io.preview}
+                                uesio.display:
+                                  - type: fieldMode
+                                    mode: READ
+                                signals:
+                                  - signal: "route/REDIRECT"
+                                    path: "/workspace/$Param{app}/$Param{workspacename}/app/$Param{namespace}/${uesio/studio.path}"
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: $Label{uesio/io.edit}
+                                uesio.display:
+                                  - type: fieldMode
+                                    mode: READ
+                                  - type: paramValue
+                                    param: app
+                                    field: uesio/core.dynamiccollection
+                                    operator: EQUALS
+                                    value: $Param{namespace}
+                                signals:
+                                  - signal: component/CALL
+                                    component: uesio/io.list
+                                    componentsignal: TOGGLE_MODE
+                                    targettype: specific
+                                    componentid: routesList
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.primary
+                                text: $Label{uesio/io.save}
+                                hotkey: "meta+s"
+                                uesio.display:
+                                  - type: wireHasChanges
+                                    wire: routes
+                                signals:
+                                  - signal: wire/SAVE
+                                    wires:
+                                      - routes
+                                  - signal: component/CALL
+                                    component: uesio/io.list
+                                    componentsignal: TOGGLE_MODE
+                                    targettype: specific
+                                    componentid: routesList
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: $Label{uesio/io.cancel}
+                                uesio.display:
+                                  - type: fieldMode
+                                    mode: EDIT
+                                signals:
+                                  - signal: wire/CANCEL
+                                    wire: routes
+                                  - signal: component/CALL
+                                    component: uesio/io.list
+                                    componentsignal: TOGGLE_MODE
+                                    targettype: specific
+                                    componentid: routesList
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: $Label{uesio/io.delete}
+                                signals:
+                                  - signal: panel/TOGGLE
+                                    panel: deleteRoute
+                                uesio.display:
+                                  - type: paramValue
+                                    param: app
+                                    field: uesio/core.dynamiccollection
+                                    operator: EQUALS
+                                    value: $Param{namespace}
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
                     components:
-                      - uesio/io.titlebar:
-                          uesio.variant: uesio/io.main
-                          title: Route - ${uesio/studio.path}
-                          subtitle: $Param{namespace}
-                          actions:
-                            - uesio/io.group:
-                                components:
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      hotkey: "meta+p"
-                                      text: $Label{uesio/io.preview}
-                                      uesio.display:
-                                        - type: fieldMode
-                                          mode: READ
-                                      signals:
-                                        - signal: "route/REDIRECT"
-                                          path: "/workspace/$Param{app}/$Param{workspacename}/app/$Param{namespace}/${uesio/studio.path}"
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: $Label{uesio/io.edit}
-                                      uesio.display:
-                                        - type: fieldMode
-                                          mode: READ
-                                        - type: paramValue
-                                          param: app
-                                          field: uesio/core.dynamiccollection
-                                          operator: EQUALS
-                                          value: $Param{namespace}
-                                      signals:
-                                        - signal: component/CALL
-                                          component: uesio/io.list
-                                          componentsignal: TOGGLE_MODE
-                                          targettype: specific
-                                          componentid: routesList
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.primary
-                                      text: $Label{uesio/io.save}
-                                      hotkey: "meta+s"
-                                      uesio.display:
-                                        - type: wireHasChanges
-                                          wire: routes
-                                      signals:
-                                        - signal: wire/SAVE
-                                          wires:
-                                            - routes
-                                        - signal: component/CALL
-                                          component: uesio/io.list
-                                          componentsignal: TOGGLE_MODE
-                                          targettype: specific
-                                          componentid: routesList
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: $Label{uesio/io.cancel}
-                                      uesio.display:
-                                        - type: fieldMode
-                                          mode: EDIT
-                                      signals:
-                                        - signal: wire/CANCEL
-                                          wire: routes
-                                        - signal: component/CALL
-                                          component: uesio/io.list
-                                          componentsignal: TOGGLE_MODE
-                                          targettype: specific
-                                          componentid: routesList
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: $Label{uesio/io.delete}
-                                      signals:
-                                        - signal: panel/TOGGLE
-                                          panel: deleteRoute
-                                      uesio.display:
-                                        - type: paramValue
-                                          param: app
-                                          field: uesio/core.dynamiccollection
-                                          operator: EQUALS
-                                          value: $Param{namespace}
-                      - uesio/io.box:
-                          uesio.variant: uesio/io.section
-                          components:
-                            - uesio/io.grid:
-                                uesio.variant: uesio/io.four_columns
-                                uesio.context:
-                                  workspace:
-                                    name: $Param{workspacename}
-                                    app: $Param{app}
-                                items:
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.path
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.type
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.redirect
-                                      uesio.display:
-                                        - field: uesio/studio.type
-                                          value: redirect
-                                  - uesio/builder.metadatafield:
-                                      fieldId: uesio/studio.view
-                                      metadataType: VIEW
-                                      label: View
-                                      uesio.display:
-                                        - field: uesio/studio.type
-                                          value: redirect
-                                          operator: NOT_EQUALS
-                                  - uesio/builder.metadatafield:
-                                      fieldId: uesio/studio.theme
-                                      metadataType: THEME
-                                      label: Theme
-                                      uesio.display:
-                                        - field: uesio/studio.type
-                                          value: redirect
-                                          operator: NOT_EQUALS
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.title
-                                      uesio.display:
-                                        - field: uesio/studio.type
-                                          value: redirect
-                                          operator: NOT_EQUALS
-                      - uesio/io.titlebar:
-                          uesio.variant: uesio/io.main
-                          title: Search Engine Optimization
-                          subtitle: Route <meta> tags
-                          uesio.display:
-                            - field: uesio/studio.type
-                              value: redirect
-                              operator: NOT_EQUALS
-                      - uesio/io.box:
-                          uesio.variant: uesio/io.section
-                          uesio.display:
-                            - field: uesio/studio.type
-                              value: redirect
-                              operator: NOT_EQUALS
-                          components:
+                      - uesio/io.grid:
+                          uesio.variant: uesio/io.four_columns
+                          uesio.context:
+                            workspace:
+                              name: $Param{workspacename}
+                              app: $Param{app}
+                          items:
                             - uesio/io.field:
-                                label: " "
-                                fieldId: uesio/studio.tags
+                                fieldId: uesio/studio.path
+                            - uesio/io.field:
+                                fieldId: uesio/studio.type
+                            - uesio/io.field:
+                                fieldId: uesio/studio.redirect
+                                uesio.display:
+                                  - field: uesio/studio.type
+                                    value: redirect
+                            - uesio/io.field:
+                                fieldId: uesio/studio.view
+                                label: View
+                                uesio.display:
+                                  - field: uesio/studio.type
+                                    value: redirect
+                                    operator: NOT_EQUALS
+                            - uesio/io.field:
+                                fieldId: uesio/studio.theme
+                                label: Theme
+                                uesio.display:
+                                  - field: uesio/studio.type
+                                    value: redirect
+                                    operator: NOT_EQUALS
+                            - uesio/io.field:
+                                fieldId: uesio/studio.title
+                                uesio.display:
+                                  - field: uesio/studio.type
+                                    value: redirect
+                                    operator: NOT_EQUALS
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.main
+                    title: Search Engine Optimization
+                    subtitle: Route <meta> tags
+                    uesio.display:
+                      - field: uesio/studio.type
+                        value: redirect
+                        operator: NOT_EQUALS
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    uesio.display:
+                      - field: uesio/studio.type
+                        value: redirect
+                        operator: NOT_EQUALS
+                    components:
+                      - uesio/io.field:
+                          label: " "
+                          fieldId: uesio/studio.tags
   panels:
     deleteRoute:
       uesio.type: uesio/io.dialog

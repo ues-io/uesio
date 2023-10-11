@@ -5,10 +5,19 @@ definition:
     root:
       - text-slate-800
       - py-2.5
+      - grid
+      - gap-1
     labelLeft:
       - grid
       - grid-cols-[40%_60%]
       - items-center
+    labelRight:
+      - grid
+      - justify-start
+      - grid-flow-col-dense
+      - items-center
+      - gap-2
+      - "[&>div:first-child]:order-last"
     errorwrapper:
       - flex
       - items-center

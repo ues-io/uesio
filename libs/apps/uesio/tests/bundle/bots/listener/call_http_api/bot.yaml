@@ -1,0 +1,10 @@
+name: call_http_api
+type: LISTENER
+dialect: TYPESCRIPT
+params:
+  - name: a
+    type: NUMBER
+    required: true
+  - name: b
+    type: NUMBER
+    required: true

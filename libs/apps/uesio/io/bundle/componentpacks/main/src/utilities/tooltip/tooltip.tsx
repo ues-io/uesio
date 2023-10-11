@@ -1,10 +1,4 @@
-import {
-	FunctionComponent,
-	cloneElement,
-	isValidElement,
-	useRef,
-	useState,
-} from "react"
+import { cloneElement, isValidElement, useRef, useState } from "react"
 import { definition, styles } from "@uesio/ui"
 import {
 	useFloating,
@@ -18,7 +12,7 @@ import {
 	FloatingArrow,
 } from "@floating-ui/react"
 
-interface TooltipUtilityProps extends definition.UtilityProps {
+interface TooltipUtilityProps {
 	text: string
 	placement?: Placement
 	offset?: number
@@ -37,7 +31,7 @@ const StyleDefaults = Object.freeze({
 	arrow: ["fill-slate-800"],
 })
 
-const Tooltip: FunctionComponent<TooltipUtilityProps> = (props) => {
+const Tooltip: definition.UtilityComponent<TooltipUtilityProps> = (props) => {
 	const { children } = props
 	const arrowRef = useRef(null)
 	const [open, setOpen] = useState<boolean>(false)
@@ -70,7 +64,6 @@ const Tooltip: FunctionComponent<TooltipUtilityProps> = (props) => {
 					children,
 					getReferenceProps({
 						ref: refs.setReference,
-						...props,
 						...children.props,
 					})
 				)}

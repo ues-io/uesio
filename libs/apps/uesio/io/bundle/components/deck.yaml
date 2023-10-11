@@ -11,7 +11,7 @@ slots:
       - type: RECORD
         wireProperty: wire
       - type: FIELD_MODE
-        property: mode
+        modeProperty: mode
 defaultDefinition:
   mode: READ
 properties:
@@ -38,6 +38,11 @@ sections:
       - uesio.id
       - mode
   - type: STYLES
+  # Record Display Conditions - to determine what wire records are displayed in the Deck
+  - type: DISPLAY
+    id: recordDisplay
+    label: Records
+  # Component Display Conditions - to determine whether or not to display the Deck itself
   - type: DISPLAY
 signals:
   TOGGLE_MODE:

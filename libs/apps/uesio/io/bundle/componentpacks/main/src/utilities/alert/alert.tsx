@@ -1,7 +1,8 @@
-import { FunctionComponent, useEffect } from "react"
+import { useEffect } from "react"
 import { definition, styles, notification, api } from "@uesio/ui"
 import Icon from "../icon/icon"
-interface AlertProps extends definition.UtilityProps {
+
+interface AlertProps {
 	text?: string
 	details?: string
 	severity?: notification.NotificationSeverity
@@ -29,7 +30,7 @@ const types = {
 	},
 }
 
-const Alert: FunctionComponent<AlertProps> = (props) => {
+const Alert: definition.UtilityComponent<AlertProps> = (props) => {
 	const { text, severity, context, details, id, duration } = props
 	let alertType = types[severity || "error"]
 	if (!alertType) {
@@ -51,6 +52,7 @@ const Alert: FunctionComponent<AlertProps> = (props) => {
 				"items-start",
 			],
 			title: ["font-medium", "text-xs"],
+			details: ["text-xs"],
 			closeIcon: ["text-slate-500"],
 			severityIcon: [
 				`bg-[${color}]`,
@@ -91,7 +93,7 @@ const Alert: FunctionComponent<AlertProps> = (props) => {
 			/>
 			<div>
 				<p className={classes.title}>{mergedText}</p>
-				<p>{mergedDetails}</p>
+				<p className={classes.details}>{mergedDetails}</p>
 			</div>
 			<Icon
 				className={classes.closeIcon}

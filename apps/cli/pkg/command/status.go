@@ -1,8 +1,6 @@
 package command
 
 import (
-	"fmt"
-
 	"github.com/thecloudmasters/cli/pkg/auth"
 	"github.com/thecloudmasters/cli/pkg/config/host"
 	"github.com/thecloudmasters/cli/pkg/config/ws"
@@ -10,8 +8,6 @@ import (
 )
 
 func Status() error {
-
-	fmt.Println("Running Status Command")
 
 	user, err := auth.Check()
 	if err != nil {

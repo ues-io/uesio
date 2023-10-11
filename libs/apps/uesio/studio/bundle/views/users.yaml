@@ -76,77 +76,69 @@ definition:
         wires:
           - users
   components:
-    - uesio/io.grid:
-        uesio.variant: uesio/studio.mainlayout
-        items:
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.topbar
-              components:
-                - uesio/core.view:
-                    view: uesio/studio.topbar
-                    uesio.context:
-                      wire: sites
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.leftbar
-              components:
-                - uesio/core.view:
-                    view: uesio/studio.sitenav
-                    uesio.context:
-                      wire: sites
-                    params:
-                      selected: users
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.content
-              components:
-                - uesio/io.titlebar:
-                    uesio.variant: uesio/io.main
-                    title: Users
-                    subtitle: User is as user does.
-                    actions:
-                      - uesio/io.group:
-                          components:
-                            - uesio/io.button:
-                                text: "Add a User"
-                                hotkey: "n"
-                                uesio.variant: uesio/io.primary
-                                signals:
-                                  - signal: "panel/TOGGLE"
-                                    panel: "newUser"
-                - uesio/io.box:
-                    uesio.variant: uesio/io.section
+    - uesio/studio.mainlayout:
+        topbar:
+          - uesio/core.view:
+              view: uesio/studio.topbar
+              uesio.context:
+                wire: sites
+        leftbar:
+          - uesio/core.view:
+              view: uesio/studio.sitenav
+              uesio.context:
+                wire: sites
+              params:
+                selected: users
+        content:
+          - uesio/io.titlebar:
+              uesio.variant: uesio/io.main
+              title: Users
+              subtitle: User is as user does.
+              actions:
+                - uesio/io.group:
                     components:
-                      - uesio/io.searchbox:
-                          uesio.context:
-                            siteadmin:
-                              name: $Param{sitename}
-                              app: $Param{app}
-                          wire: users
-                          focusOnRender: true
-                          searchfields:
-                            - uesio/studio.firstname
-                            - uesio/studio.lastname
-                            - uesio/studio.username
-                      - uesio/io.deck:
-                          uesio.id: userslist
-                          wire: users
-                          components:
-                            - uesio/io.tile:
-                                uesio.variant: uesio/io.item
-                                content:
-                                  - uesio/io.text:
-                                      text: ${uesio/core.firstname} ${uesio/core.lastname}
-                                      element: div
-                                  - uesio/io.text:
-                                      text: ${uesio/core.id}
-                                      uesio.variant: uesio/io.aside
-                                      element: div
-                                signals:
-                                  - signal: "route/NAVIGATE"
-                                    path: "app/$Param{app}/site/$Param{sitename}/users/${uesio/core.username}"
-                                avatar:
-                                  - uesio/io.avatar:
-                                      image: $UserFile{uesio/core.picture}
-                                      text: ${uesio/core.initials}
+                      - uesio/io.button:
+                          text: "Add a User"
+                          hotkey: "n"
+                          uesio.variant: uesio/io.primary
+                          signals:
+                            - signal: "panel/TOGGLE"
+                              panel: "newUser"
+          - uesio/io.box:
+              uesio.variant: uesio/io.section
+              components:
+                - uesio/io.searchbox:
+                    uesio.context:
+                      siteadmin:
+                        name: $Param{sitename}
+                        app: $Param{app}
+                    wire: users
+                    focusOnRender: true
+                    searchFields:
+                      - uesio/core.firstname
+                      - uesio/core.lastname
+                      - uesio/core.username
+                - uesio/io.deck:
+                    uesio.id: userslist
+                    wire: users
+                    components:
+                      - uesio/io.tile:
+                          uesio.variant: uesio/io.item
+                          content:
+                            - uesio/io.text:
+                                text: ${uesio/core.firstname} ${uesio/core.lastname}
+                                element: div
+                            - uesio/io.text:
+                                text: ${uesio/core.id}
+                                uesio.variant: uesio/io.aside
+                                element: div
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: "app/$Param{app}/site/$Param{sitename}/users/${uesio/core.username}"
+                          avatar:
+                            - uesio/io.avatar:
+                                image: $UserFile{uesio/core.picture}
+                                text: ${uesio/core.initials}
   panels:
     newUser:
       uesio.type: uesio/io.dialog
@@ -167,14 +159,12 @@ definition:
                   fieldId: uesio/core.lastname
               - uesio/io.field:
                   fieldId: uesio/core.email
-              - uesio/builder.metadatafield:
+              - uesio/io.field:
+                  fieldId: uesio/core.profile
                   uesio.context:
                     siteadmin:
                       name: $Param{sitename}
                       app: $Param{app}
-                  fieldId: uesio/core.profile
-                  metadataType: "PROFILE"
-                  label: "Profile"
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary

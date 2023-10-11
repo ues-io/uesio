@@ -1,10 +1,9 @@
-import { FunctionComponent } from "react"
 import { definition } from "@uesio/ui"
 import { Placement } from "@floating-ui/react"
 import Button from "../button/button"
 import Icon from "../icon/icon"
 
-interface IconButtonUtilityProps extends definition.UtilityProps {
+interface IconButtonUtilityProps {
 	onClick?: () => void
 	label?: string
 	icon?: string
@@ -14,7 +13,9 @@ interface IconButtonUtilityProps extends definition.UtilityProps {
 	tooltipOffset?: number
 }
 
-const IconButton: FunctionComponent<IconButtonUtilityProps> = (props) => {
+const IconButton: definition.UtilityComponent<IconButtonUtilityProps> = (
+	props
+) => {
 	const {
 		context,
 		icon,

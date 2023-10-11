@@ -2,7 +2,16 @@ name: bottype
 options:
   - label: "Listener"
     value: "LISTENER"
+  - label: "Integration - Load"
+    value: "LOAD"
+  - label: "Integration - Save"
+    value: "SAVE"
+  - label: "Integration - Run Action"
+    value: "RUNACTION"
   - label: "After Save"
     value: "AFTERSAVE"
   - label: "Before Save"
     value: "BEFORESAVE"
+  - label: "Generator"
+    value: "GENERATOR"
+    disabled: true

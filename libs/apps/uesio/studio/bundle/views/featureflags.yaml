@@ -16,25 +16,9 @@ definition:
           value: $Param{app}:$Param{workspacename}
     featureflags:
       collection: uesio/studio.featureflag
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.type:
-        uesio/core.updatedby:
-          fields:
-            uesio/core.firstname:
-            uesio/core.lastname:
-        uesio/core.updatedat:
-        uesio/core.createdby:
-          fields:
-            uesio/core.firstname:
-            uesio/core.lastname:
-        uesio/core.createdat:
       conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
+        - field: uesio/studio.allmetadata
+          value: true
     newfeatureflag:
       collection: uesio/studio.featureflag
       fields:
@@ -60,81 +44,117 @@ definition:
           value: CHECKBOX
         - field: uesio/studio.defaultvalue
           valueSource: VALUE
-          value: false
+          value: "false"
+      events:
+        - type: onChange
+          fields:
+            - uesio/studio.type
+          conditions:
+            - field: uesio/studio.type
+              value: CHECKBOX
+          signals:
+            # Clear out the value of min/max
+            - signal: wire/UPDATE_RECORD
+              field: uesio/studio.min
+              value: null
+            - signal: wire/UPDATE_RECORD
+              field: uesio/studio.max
+              value: null
+            # Set a checkbox-appropriate default value
+            - signal: wire/UPDATE_RECORD
+              field: uesio/studio.defaultvalue
+              value: "false"
+        - type: onChange
+          fields:
+            - uesio/studio.type
+          conditions:
+            - field: uesio/studio.type
+              value: NUMBER
+          signals:
+            # Set a number-appropriate default value
+            - signal: wire/UPDATE_RECORD
+              field: uesio/studio.defaultvalue
+              value: "0"
+            # Set default value of min/max to 0
+            - signal: wire/UPDATE_RECORD
+              field: uesio/studio.min
+              value: 0
+            - signal: wire/UPDATE_RECORD
+              field: uesio/studio.max
+              value: 0
   # Components are how we describe the layout of our view
   components:
-    - uesio/io.grid:
-        uesio.variant: uesio/studio.mainlayout
-        items:
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.topbar
-              components:
-                - uesio/core.view:
-                    view: uesio/studio.topbar
-                    uesio.context:
-                      wire: workspaces
-                    params:
-                      itemType: featureflags
-                      itemIcon: tune
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.leftbar
-              components:
-                - uesio/core.view:
-                    uesio.context:
-                      wire: workspaces
-                    view: uesio/studio.workspacenav
-                    params:
-                      selected: featureflags
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.content
-              components:
-                - uesio/io.titlebar:
-                    uesio.variant: uesio/io.main
-                    title: Feature Flags
-                    subtitle: Change a user's experience of your app with the click of a button
-                    actions:
-                      - uesio/io.group:
-                          components:
-                            - uesio/io.button:
-                                text: Create a New Feature Flag
-                                uesio.variant: uesio/io.primary
-                                hotkeys: "n"
-                                signals:
-                                  - signal: panel/TOGGLE
-                                    panel: newfeatureflag
-                - uesio/io.box:
-                    uesio.variant: uesio/io.section
+    - uesio/studio.mainlayout:
+        topbar:
+          - uesio/core.view:
+              view: uesio/studio.topbar
+              uesio.context:
+                wire: workspaces
+              params:
+                itemType: featureflags
+                itemIcon: tune
+        leftbar:
+          - uesio/core.view:
+              uesio.context:
+                wire: workspaces
+              view: uesio/studio.workspacenav
+              params:
+                selected: featureflags
+        content:
+          - uesio/io.titlebar:
+              uesio.variant: uesio/io.main
+              title: Feature Flags
+              subtitle: Change a user's experience of your app with the click of a button
+              actions:
+                - uesio/io.group:
                     components:
-                      - uesio/io.searchbox:
-                          wire: featureflags
-                          focusOnRender: true
-                          searchfields:
-                            - uesio/studio.name
-                      - uesio/io.table:
-                          uesio.id: featureflagsTable
-                          wire: featureflags
-                          columns:
-                            - field: uesio/studio.name
-                            - field: uesio/studio.type
-                            - field: uesio/core.updatedby
-                              user:
-                                subtitle: $Time{uesio/core.updatedat}
-                            - field: uesio/core.createdby
-                              user:
-                                subtitle: $Time{uesio/core.createdat}
-                          rowactions:
-                            - text: Details
-                              type: DEFAULT
-                              signals:
-                                - signal: route/NAVIGATE
-                                  path: app/$Param{app}/workspace/$Param{workspacename}/featureflags/${uesio/studio.name}
-                          pagesize: 10
+                      - uesio/io.button:
+                          text: Create a new Feature Flag
+                          uesio.variant: uesio/io.primary
+                          hotkey: "n"
+                          signals:
+                            - signal: panel/TOGGLE
+                              panel: newfeatureflag
+          - uesio/io.box:
+              uesio.variant: uesio/io.section
+              components:
+                - uesio/io.searchbox:
+                    wire: featureflags
+                    focusOnRender: true
+                    searchFields:
+                      - uesio/studio.name
+                - uesio/io.table:
+                    uesio.id: featureflagsTable
+                    wire: featureflags
+                    columns:
+                      - label: Feature Flag Name
+                        components:
+                          - uesio/io.iconlabel:
+                              uesio.variant: uesio/io.namespacefield
+                              text: ${uesio/studio.name}
+                              subtitle: ${uesio/studio.namespace}
+                              icon: ${uesio/studio.appicon}
+                              color: ${uesio/studio.appcolor}
+                      - field: uesio/studio.type
+                      - field: uesio/core.updatedby
+                        user:
+                          subtitle: $Time{uesio/core.updatedat}
+                      - field: uesio/core.createdby
+                        user:
+                          subtitle: $Time{uesio/core.createdat}
+                    rowactions:
+                      - text: Details
+                        type: DEFAULT
+                        signals:
+                          - signal: route/NAVIGATE
+                            path: app/$Param{app}/workspace/$Param{workspacename}/featureflags/${uesio/studio.namespace}/${uesio/studio.name}
+                    pagesize: 10
   panels:
     newfeatureflag:
       uesio.type: uesio/io.dialog
       title: Create a New Feature Flag
-      width: 400px
-      height: 500px
+      width: 500px
+      height: 600px
       components:
         - uesio/io.list:
             uesio.id: newfeatureflaglist
@@ -145,19 +165,45 @@ definition:
                   fieldId: uesio/studio.name
               - uesio/io.field:
                   fieldId: uesio/studio.type
+              - uesio/io.field:
+                  fieldId: uesio/studio.validfororgs
+              - uesio/io.field:
+                  fieldId: uesio/studio.defaultvalue
+              - uesio/io.field:
+                  fieldId: uesio/studio.min
+                  uesio.display:
+                    - field: uesio/studio.type
+                      value: NUMBER
+              - uesio/io.field:
+                  fieldId: uesio/studio.max
+                  uesio.display:
+                    - field: uesio/studio.type
+                      value: NUMBER
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
+            text: Save and New
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - newfeatureflag
+              - signal: wire/RESET
+                wire: newfeatureflag
+              - signal: wire/LOAD
+                wires:
+                  - featureflags
+        - uesio/io.button:
+            uesio.variant: uesio/io.secondary
             text: $Label{uesio/io.save}
             signals:
               - signal: wire/SAVE
                 wires:
-                  - "newfeatureflag"
-              - signal: "route/NAVIGATE"
-                path: "app/$Param{app}/workspace/$Param{workspacename}/featureflags/${uesio/studio.name}"
+                  - newfeatureflag
+              - signal: route/NAVIGATE
+                path: app/$Param{app}/workspace/$Param{workspacename}/featureflags/$Param{app}/${uesio/studio.name}
         - uesio/io.button:
-            uesio.variant: "uesio/io.secondary"
+            uesio.variant: uesio/io.secondary
             text: $Label{uesio/io.cancel}
             signals:
-              - signal: "panel/TOGGLE"
-                panel: "newfeatureflag"
+              - signal: panel/TOGGLE
+                panel: newfeatureflag

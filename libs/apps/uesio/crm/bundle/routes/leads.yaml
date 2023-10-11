@@ -1,6 +1,0 @@
-name: leads
-path: leads
-view: uesio/crm.leads
-theme: uesio/core.default
-title: ""
-public: true

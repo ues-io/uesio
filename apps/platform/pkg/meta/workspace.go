@@ -4,8 +4,7 @@ type Workspace struct {
 	BuiltIn     `yaml:",inline"`
 	Name        string `json:"uesio/studio.name"`
 	AppSettings `yaml:",inline"`
-	App         *App           `json:"uesio/studio.app"`
-	Permissions *PermissionSet `json:"-"`
+	App         *App `json:"uesio/studio.app"`
 	bundleDef   *BundleDef
 }
 

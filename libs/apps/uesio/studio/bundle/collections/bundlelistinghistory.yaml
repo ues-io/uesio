@@ -1,0 +1,5 @@
+name: bundlelistinghistory
+label: bundle listing history
+pluralLabel: Bundle Listing Histories
+access: protected_write
+accessField: uesio/studio.app

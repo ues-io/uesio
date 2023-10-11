@@ -1,13 +1,14 @@
-import { MetadataKey } from "../bands/builder/types"
-import { DefinitionMap } from "./definition"
-import { SignalDefinition } from "./signal"
+import type { MetadataKey } from "../metadata/types"
+import type { DefinitionList } from "./definition"
+import type { SignalDefinition } from "./signal"
 
-export type PanelDefinition = {
+export interface PanelDefinition {
 	"uesio.type": MetadataKey
-	title: string
-	width: string
-	height: string
-	components: DefinitionMap[]
+	title?: string
+	width?: string
+	height?: string
+	components?: DefinitionList
+	actions?: DefinitionList
 	afterClose?: SignalDefinition[]
 }
 

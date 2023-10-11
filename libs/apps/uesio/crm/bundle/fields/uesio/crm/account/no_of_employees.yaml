@@ -1,5 +1,0 @@
-name: no_of_employees
-type: NUMBER
-label: No. of Employees
-number:
-  decimals: 0

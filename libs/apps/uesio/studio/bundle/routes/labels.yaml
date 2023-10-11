@@ -1,5 +1,5 @@
 name: labels
 path: app/{app:\w*\/\w*}/workspace/{workspacename}/labels
-view: uesio/studio.labels
-theme: uesio/studio.default
+view: labels
+theme: default
 title: Labels

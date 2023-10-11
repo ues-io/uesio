@@ -1,7 +1,9 @@
 language: it
 labels:
+  uesio/io.add: Aggiungi
   uesio/io.cancel: Annula
   uesio/io.copy: Copia
+  uesio/io.create: Creare
   uesio/io.delete: Elimina
   uesio/io.edit: Modifica
   uesio/io.no_data_available: Nessun dato disponibile

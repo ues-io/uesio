@@ -1,5 +1,0 @@
-name: comment
-public: true
-label: comment
-pluralLabel: comments
-nameField: uesio/crm.name

@@ -1,0 +1,5 @@
+name: component
+path: app/{app:\w*\/\w*}/workspace/{workspacename}/components/{namespace:\w*\/\w*}/{componentname}
+view: component
+theme: default
+title: "Component: $Param{componentname}"

@@ -1,69 +1,68 @@
-import { FunctionComponent } from "react"
-import { definition, component, api, styles, wire } from "@uesio/ui"
+import { definition, component, styles } from "@uesio/ui"
 
-interface Props extends definition.UtilityProps {
+interface Props {
 	namespace: string
-	value: wire.PlainWireRecord
-	setValue: (value: wire.PlainWireRecord) => void
+	translations: TranslationRecord[]
+	setTranslations: (newTranslations: TranslationRecord[]) => void
 }
 
 const StyleDefaults = Object.freeze({
 	root: ["mt-10"],
 })
 
-const TranslationItem: FunctionComponent<Props> = (props) => {
-	const MapField = component.getUtility("uesio/io.mapfield")
+const subFields = {
+	key: {
+		name: "key",
+		label: "Name",
+		updateable: false,
+	},
+	displayLabel: {
+		name: "displayLabel",
+		label: "Value",
+		updateable: false,
+	},
+	translation: {
+		name: "translation",
+		label: "Translation",
+	},
+}
+
+export type TranslationRecord = {
+	key: string
+	displayLabel: string
+	translation: string
+}
+
+/**
+ * Displays an editable list of translations for a particular namespace
+ * @param props
+ * @returns
+ */
+const TranslationItem: definition.UtilityComponent<Props> = (props) => {
+	const ListField = component.getUtility("uesio/io.listfield")
 	const TitleBar = component.getUtility("uesio/io.titlebar")
-	const { context, namespace, value, setValue } = props
+	const {
+		context,
+		// The namespace to display translations for, e.g. "uesio/io"
+		namespace,
+		// Translations for this namespace
+		translations,
+		// Setter to be invoked when translations for this namespace are updated
+		setTranslations,
+	} = props
 	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
-
-	const [metadata] = api.builder.useMetadataList(context, "LABEL", namespace)
-
-	if (!metadata) return null
-
-	const namespaceValues = Object.keys(value || {})
-		.filter((key) => key.startsWith(namespace + "."))
-		.reduce(
-			(obj, key) => ({
-				...obj,
-				[key]: value[key],
-			}),
-			{}
-		)
-	const nonNamespaceValues = Object.keys(value || {})
-		.filter((key) => !key.startsWith(namespace + "."))
-		.reduce(
-			(obj, key) => ({
-				...obj,
-				[key]: value[key],
-			}),
-			{}
-		)
-
 	return (
 		<div className={classes.root}>
 			<TitleBar title={namespace} context={context} />
-			<MapField
-				value={namespaceValues}
-				noAdd
-				setValue={(value: wire.PlainWireRecord) =>
-					setValue({
-						...nonNamespaceValues,
-						...value,
-					})
-				}
-				mode="EDIT"
+			<ListField
+				value={translations}
+				noAdd={true}
+				noDelete={true}
+				subType="STRUCT"
+				subFields={subFields}
+				setValue={setTranslations}
+				mode={"EDIT"}
 				context={context}
-				keys={Object.keys(metadata)}
-				keyField={{
-					name: "key",
-					label: "Label",
-					updateable: false,
-				}}
-				valueField={{
-					name: "value",
-					label: "Translation",
-				}}
 			/>
 		</div>
 	)

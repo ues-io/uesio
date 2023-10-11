@@ -2,6 +2,7 @@ import { definition, styles } from "@uesio/ui"
 import { ReactNode } from "react"
 
 interface Props {
+	id?: string
 	placeholder?: string
 	searchTerm: string | undefined
 	setSearchTerm: (searchTerm: string) => void
@@ -28,6 +29,7 @@ const StyleDefaults = Object.freeze({
 const SearchArea: definition.UtilityComponent<Props> = (props) => {
 	const {
 		context,
+		id,
 		searchTerm,
 		setSearchTerm,
 		actions,
@@ -41,6 +43,7 @@ const SearchArea: definition.UtilityComponent<Props> = (props) => {
 			<input
 				autoFocus
 				className={classes.input}
+				id={id}
 				value={searchTerm || ""}
 				onChange={(e) => setSearchTerm(e.target.value.toLowerCase())}
 				type="search"

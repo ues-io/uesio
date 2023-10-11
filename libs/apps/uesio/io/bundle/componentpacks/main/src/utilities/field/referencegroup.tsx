@@ -1,4 +1,3 @@
-import { FunctionComponent } from "react"
 import {
 	wire,
 	api,
@@ -14,7 +13,7 @@ export type ReferenceGroupFieldOptions = {
 	template?: string
 }
 
-interface ReferenceGroupFieldProps extends definition.UtilityProps {
+interface ReferenceGroupFieldProps {
 	path: string
 	fieldMetadata: collection.Field
 	fieldId: string
@@ -23,9 +22,9 @@ interface ReferenceGroupFieldProps extends definition.UtilityProps {
 	options?: ReferenceGroupFieldOptions
 }
 
-const ReferenceGroupField: FunctionComponent<ReferenceGroupFieldProps> = (
-	props
-) => {
+const ReferenceGroupField: definition.UtilityComponent<
+	ReferenceGroupFieldProps
+> = (props) => {
 	const { fieldMetadata, fieldId, record, context, variant, options, path } =
 		props
 

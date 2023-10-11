@@ -8,6 +8,8 @@ type DialogDefinition = {
 	height?: string
 	id?: string
 	afterClose?: signal.SignalDefinition[]
+	actions?: definition.DefinitionList[]
+	components?: definition.DefinitionList[]
 }
 
 const Dialog: definition.UC<DialogDefinition> = (props) => {
@@ -31,12 +33,14 @@ const Dialog: definition.UC<DialogDefinition> = (props) => {
 			height={definition.height as string}
 			title={definition.title as string}
 			actions={
-				<component.Slot
-					definition={definition}
-					listName="actions"
-					path={path}
-					context={context}
-				/>
+				definition.actions && (
+					<component.Slot
+						definition={definition}
+						listName="actions"
+						path={path}
+						context={context}
+					/>
+				)
 			}
 		>
 			<component.Slot

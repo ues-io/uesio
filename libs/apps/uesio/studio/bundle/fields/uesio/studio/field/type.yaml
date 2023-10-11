@@ -1,5 +1,5 @@
 name: type
 type: SELECT
-selectList: uesio/studio.fieldtypes
+selectList: fieldtypes
 label: Type
 required: true

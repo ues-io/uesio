@@ -59,61 +59,53 @@ definition:
 
   # Components are how we describe the layout of our view
   components:
-    - uesio/io.grid:
-        uesio.variant: uesio/studio.mainlayout
-        items:
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.topbar
-              components:
-                - uesio/core.view:
-                    view: uesio/studio.topbar
-                    uesio.context:
-                      wire: sites
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.leftbar
-              components:
-                - uesio/core.view:
-                    view: uesio/studio.sitenav
-                    uesio.context:
-                      wire: sites
-                    params:
-                      selected: sitecollections
-          - uesio/io.griditem:
-              uesio.variant: uesio/studio.content
-              components:
-                - uesio/io.titlebar:
-                    uesio.variant: uesio/io.main
-                    title: $Param{jobid}
-                    subtitle: Export Batches
-                    actions:
-                      - uesio/io.group:
-                          components:
-                            - uesio/io.button:
-                                uesio.variant: uesio/io.secondary
-                                text: Export Jobs
-                                signals:
-                                  - signal: "route/NAVIGATE"
-                                    path: app/$Param{app}/site/$Param{sitename}/export/$Param{namespace}/$Param{collectionname}
-                - uesio/io.box:
-                    uesio.variant: uesio/io.section
+    - uesio/studio.mainlayout:
+        topbar:
+          - uesio/core.view:
+              view: uesio/studio.topbar
+              uesio.context:
+                wire: sites
+        leftbar:
+          - uesio/core.view:
+              view: uesio/studio.sitenav
+              uesio.context:
+                wire: sites
+              params:
+                selected: sitecollections
+        content:
+          - uesio/io.titlebar:
+              uesio.variant: uesio/io.main
+              title: $Param{jobid}
+              subtitle: Export Batches
+              actions:
+                - uesio/io.group:
                     components:
-                      - uesio/io.deck:
-                          uesio.id: bulkbatchesDeck
-                          wire: bulkbatches
-                          components:
-                            - uesio/io.tile:
-                                uesio.variant: uesio/io.item
-                                content:
-                                  - uesio/io.field:
-                                      fieldId: uesio/core.createdat
-                                  - uesio/io.field:
-                                      fieldId: uesio/core.status
-                                  - uesio/io.field:
-                                      uesio.context:
-                                        siteadmin:
-                                          name: $Param{sitename}
-                                          app: $Param{app}
-                                      uesio.display:
-                                        - field: uesio/core.status
-                                          value: "completed"
-                                      fieldId: uesio/core.result
+                      - uesio/io.button:
+                          uesio.variant: uesio/io.secondary
+                          text: Export Jobs
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: app/$Param{app}/site/$Param{sitename}/export/$Param{namespace}/$Param{collectionname}
+          - uesio/io.box:
+              uesio.variant: uesio/io.section
+              components:
+                - uesio/io.deck:
+                    uesio.id: bulkbatchesDeck
+                    wire: bulkbatches
+                    components:
+                      - uesio/io.tile:
+                          uesio.variant: uesio/io.item
+                          content:
+                            - uesio/io.field:
+                                fieldId: uesio/core.createdat
+                            - uesio/io.field:
+                                fieldId: uesio/core.status
+                            - uesio/io.field:
+                                uesio.context:
+                                  siteadmin:
+                                    name: $Param{sitename}
+                                    app: $Param{app}
+                                uesio.display:
+                                  - field: uesio/core.status
+                                    value: "completed"
+                                fieldId: uesio/core.result

@@ -1,4 +1,0 @@
-name: externalid
-type: TEXT
-label: External ID
-readOnly: true

@@ -31,3 +31,5 @@ sections:
   - type: DISPLAY
 variants:
   - uesio/io.field:uesio/io.search
+styleRegions:
+  root:

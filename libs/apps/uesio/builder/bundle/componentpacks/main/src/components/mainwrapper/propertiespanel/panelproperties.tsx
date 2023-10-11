@@ -22,7 +22,6 @@ const PanelProperties: definition.UtilityComponent = (props) => {
 	// force rerender if definition changes - otherwise, properties won't update
 	useDefinition(path)
 	const componentDef = getComponentDef(
-		context,
 		get(context, path.addLocal(panelComponentTypeProp)) as string
 	)
 	return (

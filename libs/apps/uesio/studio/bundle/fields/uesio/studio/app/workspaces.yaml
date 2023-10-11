@@ -2,6 +2,5 @@ name: workspaces
 type: REFERENCEGROUP
 label: Workspaces
 referenceGroup:
-  collection: uesio/studio.workspace
-  field: uesio/studio.app
-  onDelete: CASCADE
+  collection: workspace
+  field: app

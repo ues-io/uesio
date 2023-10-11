@@ -38,6 +38,10 @@ const ViewInfoPanel: definition.UtilityComponent = (props) => {
 			defaultDefinition: {
 				fields: null,
 				batchsize: 200,
+				init: {
+					query: true,
+					create: false,
+				},
 			},
 			defaultKey: "wire",
 			type: "MAP",
@@ -48,7 +52,7 @@ const ViewInfoPanel: definition.UtilityComponent = (props) => {
 			defaultDefinition: {
 				"uesio.type": defaultPanelComponentType,
 				components: [],
-				...getComponentDef(context, defaultPanelComponentType)
+				...getComponentDef(defaultPanelComponentType)
 					?.defaultDefinition,
 			},
 			defaultKey: "panel",

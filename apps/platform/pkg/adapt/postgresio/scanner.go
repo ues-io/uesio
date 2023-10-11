@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/jackc/pgx/v5"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
@@ -130,7 +131,7 @@ func getScanner(item *meta.Item, fieldMetadata *adapt.FieldMetadata, referencedC
 		}
 	}
 	switch fieldMetadata.Type {
-	case "LIST":
+	case "LIST", "MULTIMETADATA":
 		return NewDataScanner(ScanList, item, fieldMetadata)
 	case "MAP", "MULTISELECT", "STRUCT":
 		return NewDataScanner(ScanMap, item, fieldMetadata)

@@ -1,7 +1,7 @@
 name: siteusage_route_load
 path: app/{app:\w*\/\w*}/site/{sitename}/usage/routes/load
-view: uesio/studio.usage
-theme: uesio/studio.default
+view: usage
+theme: default
 title: Site Route Load Usage
 params:
   metadatatype: ROUTE

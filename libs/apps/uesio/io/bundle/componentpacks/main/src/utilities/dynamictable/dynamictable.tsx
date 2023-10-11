@@ -7,7 +7,7 @@ type RowAction = {
 	signals: signal.SignalDefinition[]
 	type?: "DEFAULT"
 }
-interface DynamicTableProps extends definition.UtilityProps {
+interface DynamicTableProps {
 	path: string
 	fields: Record<string, wire.ViewOnlyField>
 	rowactions?: RowAction[]
@@ -21,6 +21,15 @@ interface DynamicTableProps extends definition.UtilityProps {
 		record: wire.PlainWireRecord
 	) => void
 	wireRef?: MutableRefObject<wire.Wire | undefined>
+}
+
+const createRecordsInWire = (
+	wire: wire.Wire,
+	initialValues: Record<string, wire.PlainWireRecord>
+) => {
+	Object.entries(initialValues).forEach(([recordId, initialValue]) => {
+		wire.createRecord(initialValue, false, recordId)
+	})
 }
 
 const DynamicTable: definition.UtilityComponent<DynamicTableProps> = (
@@ -60,11 +69,10 @@ const DynamicTable: definition.UtilityComponent<DynamicTableProps> = (
 	useDeepCompareEffect(() => {
 		if (!wire || !initialValues) return
 		if (!wire.getData().length) {
-			Object.entries(initialValues).forEach(
-				([recordId, initialValue]) => {
-					wire.createRecord(initialValue, false, recordId)
-				}
-			)
+			createRecordsInWire(wire, initialValues)
+		} else if (Object.keys(initialValues).length) {
+			wire.empty()
+			createRecordsInWire(wire, initialValues)
 		}
 	}, [!!wire, initialValues])
 
@@ -95,7 +103,7 @@ const DynamicTable: definition.UtilityComponent<DynamicTableProps> = (
 					})),
 				mode,
 				[component.COMPONENT_ID]: id,
-				"uesio.variant": "uesio/io.default",
+				[component.STYLE_VARIANT]: "uesio/io.default",
 				rowactions,
 			}}
 			context={context}

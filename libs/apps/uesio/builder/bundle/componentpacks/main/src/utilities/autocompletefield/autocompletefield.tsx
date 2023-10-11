@@ -14,7 +14,7 @@ import {
 	FloatingFocusManager,
 } from "@floating-ui/react"
 
-interface AutocompleteFieldUtilityProps<T> extends definition.UtilityProps {
+interface AutocompleteFieldUtilityProps<T> {
 	itemRenderer: (item: T) => ReactNode
 	onSelect: (item: T) => void
 	getItemKey: (item: T) => string
@@ -137,8 +137,9 @@ const AutocompleteField: definition.UtilityComponent<
 					}}
 				/>
 			</div>
-			<FloatingPortal>
-				{isOpen && (
+
+			{isOpen && (
+				<FloatingPortal>
 					<FloatingFocusManager
 						context={floating.context}
 						modal={false}
@@ -199,8 +200,8 @@ const AutocompleteField: definition.UtilityComponent<
 							</div>
 						</div>
 					</FloatingFocusManager>
-				)}
-			</FloatingPortal>
+				</FloatingPortal>
+			)}
 		</>
 	)
 }

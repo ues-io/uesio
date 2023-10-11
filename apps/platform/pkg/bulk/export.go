@@ -9,7 +9,6 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/retrieve"
@@ -33,13 +32,6 @@ func NewExportBatch(job meta.BulkJob, session *sess.Session) (*meta.BulkBatch, e
 	tenantID := strings.ReplaceAll(session.GetTenantID(), "/", "_")
 	fileName := strings.ReplaceAll(fmt.Sprintf("uesio_export_%s_%s.zip", tenantID, time.Now().Format(time.RFC3339)), ":", "_")
 
-	details := &fileadapt.FileDetails{
-		Path:         fileName,
-		CollectionID: "uesio/core.bulkbatch",
-		RecordID:     batch.ID,
-		FieldID:      "uesio/core.result",
-	}
-
 	buf := new(bytes.Buffer)
 
 	// Create a new zip archive.
@@ -59,12 +51,15 @@ func NewExportBatch(job meta.BulkJob, session *sess.Session) (*meta.BulkBatch, e
 
 	zipwriter.Close()
 
-	_, err = filesource.Upload([]filesource.FileUploadOp{
+	_, err = filesource.Upload([]*filesource.FileUploadOp{
 		{
-			Data:    buf,
-			Details: details,
+			Data:         buf,
+			Path:         fileName,
+			CollectionID: "uesio/core.bulkbatch",
+			RecordID:     batch.ID,
+			FieldID:      "uesio/core.result",
 		},
-	}, nil, session)
+	}, nil, session, nil)
 	if err != nil {
 		return nil, err
 	}

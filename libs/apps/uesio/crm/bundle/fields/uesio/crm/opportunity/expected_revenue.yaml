@@ -1,5 +1,0 @@
-name: expected_revenue
-type: NUMBER
-label: Expected Revenue
-number:
-  decimals: 0

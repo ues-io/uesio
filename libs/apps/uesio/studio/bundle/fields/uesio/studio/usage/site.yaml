@@ -2,5 +2,5 @@ name: site
 label: Site
 type: REFERENCE
 reference:
-  collection: uesio/studio.site
+  collection: site
 required: true

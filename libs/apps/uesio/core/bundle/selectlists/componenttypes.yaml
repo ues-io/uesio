@@ -1,0 +1,7 @@
+name: componenttypes
+options:
+  - label: "React"
+    value: "REACT"
+  - label: "Declarative"
+    value: "DECLARATIVE"
+public: true

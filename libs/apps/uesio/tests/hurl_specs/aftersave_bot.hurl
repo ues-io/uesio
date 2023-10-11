@@ -5,7 +5,7 @@
 # Test as a logged-in user so that we don't get redirected to the login page
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"uesio\"}"
+    "token": "uesio"
 }
 
 # Try to insert a zebra
@@ -28,8 +28,8 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
+jsonpath "$.wires[0].errors" count == 1
 jsonpath "$.wires[0].errors[0].message" == "No Zebras Allowed!"
-
 
 # Verify that no zebras were created
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
@@ -61,4 +61,5 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]" not exists
+jsonpath "$.wires[0].data[*]" isEmpty
+jsonpath "$.wires[0].errors" not exists

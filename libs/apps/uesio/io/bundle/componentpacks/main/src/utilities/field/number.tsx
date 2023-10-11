@@ -1,4 +1,3 @@
-import { FunctionComponent } from "react"
 import { definition, styles, context, collection, wire } from "@uesio/ui"
 import { ApplyChanges } from "../../components/field/field"
 import { useControlledInputNumber } from "../../shared/useControlledFieldValue"
@@ -10,7 +9,7 @@ export type NumberFieldOptions = {
 	min?: number
 }
 
-interface NumberFieldProps extends definition.UtilityProps {
+interface NumberFieldProps {
 	applyChanges?: ApplyChanges
 	setValue: (value: wire.FieldValue) => void
 	value: wire.FieldValue
@@ -20,6 +19,7 @@ interface NumberFieldProps extends definition.UtilityProps {
 	placeholder?: string
 	type?: "number" | "range"
 	focusOnRender?: boolean
+	readonly?: boolean
 }
 
 const StyleDefaults = Object.freeze({
@@ -29,7 +29,7 @@ const StyleDefaults = Object.freeze({
 	rangevalue: ["p-2"],
 })
 
-const NumberField: FunctionComponent<NumberFieldProps> = (props) => {
+const NumberField: definition.UtilityComponent<NumberFieldProps> = (props) => {
 	const {
 		mode,
 		placeholder,
@@ -45,7 +45,7 @@ const NumberField: FunctionComponent<NumberFieldProps> = (props) => {
 	} = props
 
 	const value = props.value as number | string
-	const readonly = mode === "READ"
+	const readonly = mode === "READ" || props.readonly
 	const numberOptions = fieldMetadata?.getNumberMetadata()
 	const decimals = numberOptions?.decimals || 2
 
@@ -61,7 +61,7 @@ const NumberField: FunctionComponent<NumberFieldProps> = (props) => {
 		"uesio/io.field"
 	)
 
-	if (mode === "READ") {
+	if (readonly) {
 		return (
 			<ReadOnlyField variant={variant} context={context}>
 				{typeof value === "number" ? value.toFixed(decimals) : value}

@@ -1,0 +1,8 @@
+name: workspace_static_file_dependencies
+definition:
+  wires: {}
+  components:
+    - uesio/io.image:
+        loading: lazy
+        file: uesio/tests.turtle
+        width: 400

@@ -4,3 +4,5 @@ options:
     value: "REGEX"
   - label: "Metadata"
     value: "METADATA"
+  - label: "Yaml"
+    value: "YAML"

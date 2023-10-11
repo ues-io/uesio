@@ -1,7 +1,6 @@
-import { FunctionComponent } from "react"
 import { definition, styles } from "@uesio/ui"
 
-interface FieldLabelProps extends definition.UtilityProps {
+interface FieldLabelProps {
 	label?: string
 }
 
@@ -9,7 +8,7 @@ const StyleDefaults = Object.freeze({
 	root: [],
 })
 
-const FieldLabel: FunctionComponent<FieldLabelProps> = (props) => {
+const FieldLabel: definition.UtilityComponent<FieldLabelProps> = (props) => {
 	const { label, context } = props
 	const classes = styles.useUtilityStyleTokens(
 		StyleDefaults,

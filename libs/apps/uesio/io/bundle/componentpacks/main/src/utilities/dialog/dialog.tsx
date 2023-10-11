@@ -1,4 +1,4 @@
-import { FunctionComponent, ReactNode } from "react"
+import { ReactNode } from "react"
 import { definition, styles } from "@uesio/ui"
 import DialogPlain from "../dialogplain/dialogplain"
 import Grid from "../grid/grid"
@@ -6,7 +6,7 @@ import TitleBar from "../titlebar/titlebar"
 import IconButton from "../iconbutton/iconbutton"
 import Group from "../group/group"
 
-interface DialogUtilityProps extends definition.UtilityProps {
+interface DialogUtilityProps {
 	onClose?: () => void
 	width?: string
 	height?: string
@@ -20,7 +20,7 @@ const StyleDefaults = Object.freeze({
 	footer: ["p-5", "justify-end"],
 })
 
-const Dialog: FunctionComponent<DialogUtilityProps> = (props) => {
+const Dialog: definition.UtilityComponent<DialogUtilityProps> = (props) => {
 	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 	const { context, title, onClose, width, height, children, actions } = props
 	return (
@@ -45,9 +45,11 @@ const Dialog: FunctionComponent<DialogUtilityProps> = (props) => {
 					}
 				/>
 				<div className={classes.content}>{children}</div>
-				<Group className={classes.footer} context={context}>
-					{actions}
-				</Group>
+				{actions && (
+					<Group className={classes.footer} context={context}>
+						{actions}
+					</Group>
+				)}
 			</Grid>
 		</DialogPlain>
 	)

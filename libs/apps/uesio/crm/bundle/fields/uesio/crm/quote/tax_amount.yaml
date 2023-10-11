@@ -1,5 +1,0 @@
-name: tax_amount
-type: NUMBER
-label: Tax Amount
-number:
-  decimals: 2

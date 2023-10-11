@@ -7,12 +7,7 @@ definition:
     - uesio/io.list:
         components:
           - uesio/io.box:
-              uesio.styleTokens:
-                root:
-                  - pb-3
-                  - bg-slate-100
-                  - m-2
-                  - rounded-lg
+              uesio.variant: uesio/studio.navarea
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.nav
@@ -133,24 +128,24 @@ definition:
           - uesio/io.tile:
               uesio.display:
                 - type: featureFlag
-                  name: manage_datasources
+                  name: manage_integrations
               uesio.variant: uesio/io.nav
-              uesio.id: datasources
+              uesio.id: integrations
               uesio.classes:
                 selected:
                   - type: paramValue
                     param: selected
-                    value: datasources
+                    value: integrations
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/datasources
+                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/integrations
               content:
                 - uesio/io.text:
-                    text: Data Sources
+                    text: Integrations
               avatar:
                 - uesio/io.text:
                     uesio.variant: uesio/io.icon
-                    text: dynamic_feed
+                    text: electrical_services
           - uesio/io.tile:
               uesio.variant: uesio/io.nav
               uesio.id: selectlists
@@ -328,27 +323,6 @@ definition:
           - uesio/io.tile:
               uesio.display:
                 - type: featureFlag
-                  name: manage_credentials
-              uesio.variant: uesio/io.nav
-              uesio.id: credentials
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: credentials
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/credentials
-              content:
-                - uesio/io.text:
-                    text: Credentials
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: vpn_key
-          - uesio/io.tile:
-              uesio.display:
-                - type: featureFlag
                   name: manage_secrets
               uesio.variant: uesio/io.nav
               uesio.id: secrets
@@ -367,6 +341,27 @@ definition:
                 - uesio/io.text:
                     uesio.variant: uesio/io.icon
                     text: lock
+          - uesio/io.tile:
+              uesio.display:
+                - type: featureFlag
+                  name: manage_credentials
+              uesio.variant: uesio/io.nav
+              uesio.id: credentials
+              uesio.classes:
+                selected:
+                  - type: paramValue
+                    param: selected
+                    value: credentials
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/credentials
+              content:
+                - uesio/io.text:
+                    text: Credentials
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: vpn_key
           - uesio/io.tile:
               uesio.display:
                 - type: featureFlag
@@ -391,8 +386,8 @@ definition:
           - uesio/io.tile:
               uesio.display:
                 - type: featureFlag
-                  name: manage_auth_methods
-              uesio.id: auth-methods
+                  name: manage_auth_sources
+              uesio.id: auth-sources
               uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
@@ -404,7 +399,7 @@ definition:
                   path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/authsources
               content:
                 - uesio/io.text:
-                    text: Auth Methods
+                    text: Auth Sources
               avatar:
                 - uesio/io.text:
                     uesio.variant: uesio/io.icon

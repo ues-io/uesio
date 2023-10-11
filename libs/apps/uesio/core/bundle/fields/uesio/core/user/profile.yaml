@@ -1,4 +1,6 @@
 name: profile
-type: TEXT
+type: METADATA
 label: Profile
 required: true
+metadata:
+  type: PROFILE

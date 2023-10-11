@@ -1,4 +1,0 @@
-name: probalabilty_percentage
-type: SELECT
-label: Probability %
-selectList: uesio/crm.probability

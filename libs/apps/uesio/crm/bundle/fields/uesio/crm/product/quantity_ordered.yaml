@@ -1,5 +1,0 @@
-name: quantity_ordered
-type: NUMBER
-label: Quantity Ordered
-number:
-  decimals: 0

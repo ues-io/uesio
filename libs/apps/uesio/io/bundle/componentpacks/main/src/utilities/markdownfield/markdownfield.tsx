@@ -13,7 +13,7 @@ export interface MarkdownFieldOptions {
 	attachments?: wire.WireRecord[]
 }
 
-interface MarkDownFieldProps extends definition.UtilityProps {
+interface MarkDownFieldProps {
 	setValue?: (value: wire.FieldValue) => void
 	value: wire.FieldValue
 	mode?: context.FieldMode

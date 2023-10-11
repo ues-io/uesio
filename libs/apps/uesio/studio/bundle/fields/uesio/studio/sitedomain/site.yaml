@@ -1,5 +1,5 @@
 name: site
 type: REFERENCE
 reference:
-  collection: uesio/studio.site
+  collection: site
 label: Site ID

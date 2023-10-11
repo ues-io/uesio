@@ -1,25 +1,25 @@
 import { component, definition, wire, api, metadata } from "@uesio/ui"
 
-import { FC, useState } from "react"
+import { useState } from "react"
 import DeleteAction from "../../../../actions/deleteaction"
 import MoveActions from "../../../../actions/moveactions"
 import { FullPath } from "../../../../api/path"
 import { getBuilderNamespace, setSelectedPath } from "../../../../api/stateapi"
 import BuildActionsArea from "../../../../helpers/buildactionsarea"
-import NamespaceLabel from "../../../../utilities/namespacelabel/namespacelabel"
 import PropNodeTag from "../../../../utilities/propnodetag/propnodetag"
 import ItemTag from "../../../../utilities/itemtag/itemtag"
 
-interface T extends definition.UtilityProps {
+interface T {
 	collectionKey: string
 	fieldId: string
 	fieldDef: wire.WireFieldDefinition
 	path: FullPath
 	selectedPath: FullPath
 }
-const FieldPropTag: FC<T> = (props) => {
+const FieldPropTag: definition.UtilityComponent<T> = (props) => {
 	const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
 	const Text = component.getUtility("uesio/io.text")
+	const NamespaceLabel = component.getUtility("uesio/io.namespacelabel")
 	const { fieldId, fieldDef, collectionKey, context, path, selectedPath } =
 		props
 
@@ -95,7 +95,7 @@ const FieldPropTag: FC<T> = (props) => {
 									fieldId={fieldId}
 									path={subFieldsPath.addLocal(fieldId)}
 									selectedPath={selectedPath}
-									fieldDef={fieldDef?.fields[fieldId]}
+									fieldDef={fieldDef?.fields?.[fieldId]}
 									context={context}
 									key={fieldId}
 								/>

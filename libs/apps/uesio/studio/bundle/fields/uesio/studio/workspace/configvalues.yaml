@@ -2,6 +2,6 @@ name: configvalues
 type: REFERENCEGROUP
 label: Config Values
 referenceGroup:
-  collection: uesio/studio.configvalue
-  field: uesio/studio.workspace
+  collection: configvalue
+  field: workspace
   onDelete: CASCADE

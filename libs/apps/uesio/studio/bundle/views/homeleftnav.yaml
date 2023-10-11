@@ -62,86 +62,118 @@ definition:
           valueSource: VALUE
           value: uesio/studio.standard
   components:
-    - uesio/io.titlebar:
-        uesio.variant: uesio/io.nav
-        title: My Apps
-        actions:
-          - uesio/io.button:
-              icon: add
-              uesio.id: add-app
-              uesio.variant: uesio/studio.navctawithpointer
-              uesio.display:
-                - type: wireHasNoRecords
-                  wire: apps
-              signals:
-                - signal: wire/RESET
-                  wire: newApp
-                - signal: panel/TOGGLE
-                  panel: newApp
-          - uesio/io.button:
-              icon: add
-              uesio.id: add-app-2
-              uesio.display:
-                - type: wireHasRecords
-                  wire: apps
-              signals:
-                - signal: wire/RESET
-                  wire: newApp
-                - signal: panel/TOGGLE
-                  panel: newApp
-    - uesio/io.list:
-        uesio.id: appslist
-        wire: apps
-        components:
-          - uesio/io.tile:
-              uesio.variant: uesio/io.nav
+    - uesio/io.grid:
+        uesio.styleTokens:
+          root:
+            - grid-rows-3
+            - h-full
+        items:
+          - uesio/io.scrollpanel:
               uesio.styleTokens:
                 root:
-                  - gap-3
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: "app/${uesio/core.uniquekey}"
+                  - row-span-2
+              uesio.variant: uesio/io.default
+              header:
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.nav
+                    title: My Apps
+                    actions:
+                      - uesio/io.group:
+                          uesio.styleTokens:
+                            root:
+                              - gap-3
+                          components:
+                            - uesio/io.searchbox:
+                                wire: apps
+                                focusOnRender: true
+                                searchFields:
+                                  - uesio/studio.name
+                                  - uesio/studio.description
+                            - uesio/io.button:
+                                icon: add
+                                uesio.id: add-app
+                                uesio.variant: uesio/studio.navctawithpointer
+                                uesio.display:
+                                  - type: wireHasNoRecords
+                                    wire: apps
+                                signals:
+                                  - signal: wire/RESET
+                                    wire: newApp
+                                  - signal: panel/TOGGLE
+                                    panel: newApp
+                            - uesio/io.button:
+                                icon: add
+                                uesio.id: add-app-2
+                                uesio.display:
+                                  - type: wireHasRecords
+                                    wire: apps
+                                signals:
+                                  - signal: wire/RESET
+                                    wire: newApp
+                                  - signal: panel/TOGGLE
+                                    panel: newApp
               content:
-                - uesio/io.text:
-                    text: ${uesio/core.uniquekey}
-                    element: div
-                - uesio/io.text:
-                    text: ${uesio/studio.description}
-                    element: div
-                    uesio.variant: uesio/io.aside
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    color: "${uesio/studio.color}"
-                    text: ${uesio/studio.icon}
-    - uesio/io.titlebar:
-        uesio.variant: uesio/io.nav
-        title: My Organizations
-        actions:
-          - uesio/io.button:
-              icon: add
-              uesio.id: add-organization
-              signals:
-                - signal: panel/TOGGLE
-                  panel: newOrg
-    - uesio/io.list:
-        uesio.id: orglist
-        wire: orgs
-        components:
-          - uesio/io.tile:
-              uesio.variant: uesio/io.nav
+                - uesio/io.list:
+                    uesio.id: appslist
+                    wire: apps
+                    components:
+                      - uesio/io.tile:
+                          uesio.variant: uesio/io.nav
+                          uesio.styleTokens:
+                            root:
+                              - gap-3
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: "app/${uesio/core.uniquekey}"
+                          content:
+                            - uesio/io.text:
+                                text: ${uesio/core.uniquekey}
+                                element: div
+                            - uesio/io.text:
+                                text: ${uesio/studio.description}
+                                element: div
+                                uesio.variant: uesio/io.aside
+                          avatar:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.icon
+                                color: "${uesio/studio.color}"
+                                text: ${uesio/studio.icon}
+          - uesio/io.scrollpanel:
+              uesio.variant: uesio/io.default
+              uesio.styleTokens:
+                root:
+                  - border-t-2
+                  - border-slate-100
+              header:
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.nav
+                    title: My Organizations
+                    actions:
+                      - uesio/io.button:
+                          icon: add
+                          uesio.id: add-organization
+                          signals:
+                            - signal: panel/TOGGLE
+                              panel: newOrg
               content:
-                - uesio/io.text:
-                    text: ${uesio/core.uniquekey}
-                    element: div
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    color: "#21242D"
-                    text: domain
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: "organization/${uesio/core.uniquekey}"
+                - uesio/io.list:
+                    uesio.id: orglist
+                    wire: orgs
+                    components:
+                      - uesio/io.tile:
+                          uesio.variant: uesio/io.nav
+                          content:
+                            - uesio/io.text:
+                                text: ${uesio/core.uniquekey}
+                                element: div
+                          avatar:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.icon
+                                color: "#21242D"
+                                text: domain
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: "organization/${uesio/core.uniquekey}"
   panels:
     newApp:
       uesio.type: uesio/io.dialog

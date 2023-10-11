@@ -27,18 +27,20 @@ const StructProperty: definition.UC<Definition> = (props) => {
 			label={property.label || property.name}
 			labelPosition="left"
 			context={context}
-			variant="uesio/io.minimal"
+			variant="uesio/builder.structproperty"
 		>
 			{structProperties.map((subProperty, index) => {
 				const formField = getFormFieldFromProperty(
 					subProperty,
 					context,
 					definition.path
-				) as Record<string, definition.DefinitionMap>
+				) as definition.DefinitionMap
 				const componentType = Object.keys(
 					formField
 				)[0] as metadata.MetadataKey
-				const subFieldDefinition = formField[componentType]
+				const subFieldDefinition = formField[
+					componentType
+				] as definition.DefinitionMap
 				return (
 					<component.Component
 						key={index}

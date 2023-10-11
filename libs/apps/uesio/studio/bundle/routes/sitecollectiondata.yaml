@@ -1,4 +1,4 @@
 name: sitecollectiondata
 path: app/{app:\w*\/\w*}/site/{sitename}/data/{namespace:\w*\/\w*}/{collectionname}
-view: uesio/studio.sitecollectiondata
-theme: uesio/studio.default
+view: sitecollectiondata
+theme: default

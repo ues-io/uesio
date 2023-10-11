@@ -206,7 +206,11 @@ const move = (context: ctx.Context, fromPath: FullPath, toPath: FullPath) => {
 	setSelectedPath(context, toPath)
 }
 
-const clone = (context: ctx.Context, path: FullPath) => {
+const clone = (
+	context: ctx.Context,
+	path: FullPath,
+	purgeProperties?: string[]
+) => {
 	const current = getMetadataValue(context, path)
 	if (!current) return
 
@@ -217,8 +221,25 @@ const clone = (context: ctx.Context, path: FullPath) => {
 	const parentNode = getNodeAtPath(parentPath, yamlDoc.contents)
 	if (!yaml.isSeq(parentNode)) return
 	const items = parentNode.items
-	items.splice(index, 0, items[index])
+	//Purge properties
+	const itemToClone = items[index]
+	if (!yaml.isCollection(itemToClone)) return
+	const itemToCloneComponentType = itemToClone.items[0]
+	if (!yaml.isPair(itemToCloneComponentType)) return
+	const itemToCloneCopy = itemToClone.clone()
 
+	purgeProperties?.forEach((property) => {
+		// Handle clones of Components
+		if (itemToCloneCopy.hasIn([itemToCloneComponentType.key, property])) {
+			itemToCloneCopy.deleteIn([itemToCloneComponentType.key, property])
+		}
+		// Handle clones of more normal objects in an array
+		if (itemToCloneCopy.has(property)) {
+			itemToCloneCopy.delete(property)
+		}
+	})
+
+	items.splice(index, 0, itemToCloneCopy)
 	setMetadataValue(context, path, yamlDoc)
 }
 
@@ -300,7 +321,10 @@ const useHasChanges = (context: ctx.Context) => {
 const save = async (context: ctx.Context) => {
 	const workspace = context.getWorkspace()
 
-	if (!workspace) throw new Error("No Workspace in context")
+	if (!workspace) {
+		api.notification.addError("No Workspace in context", context)
+		return
+	}
 	const originalEntities = getBuilderExternalStates(
 		context,
 		"original:metadata:"
@@ -326,19 +350,40 @@ const save = async (context: ctx.Context) => {
 		})
 	}
 
-	await platform.platform.saveData(ctx.newContext(), {
-		wires: [
-			{
-				wire: "saveview",
-				collection: "uesio/studio.view",
-				changes: viewChanges,
-				deletes: {},
-				options: {
-					upsert: true,
-				},
+	// We do NOT want to use the existing context, because that would put us in workspace context.
+	// Here, to save the view (workspace METADATA), we need to save in the Studio context,
+	// BUT we have to indicate which workspace and app we are saving for.
+	const result = await platform.platform.saveData(
+		// THis is a bit hacky, the only way to attach params is via a ViewFrame
+		ctx.newContext().addViewFrame({
+			view: "",
+			viewDef: "",
+			params: {
+				workspacename: workspace.name,
+				app: workspace.app,
 			},
-		],
-	})
+		}),
+		{
+			wires: [
+				{
+					wire: "saveview",
+					collection: "uesio/studio.view",
+					changes: viewChanges,
+					deletes: {},
+					options: {
+						upsert: true,
+					},
+				},
+			],
+		}
+	)
+	if (result?.wires?.length === 1 && result.wires[0].errors?.length) {
+		api.notification.addError(
+			"Error saving view: " + result.wires[0].errors[0].message,
+			context
+		)
+		return
+	}
 
 	if (originalEntities && originalEntities.length) {
 		originalEntities.forEach((entity) => {

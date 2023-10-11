@@ -1,108 +1,95 @@
 package systemdialect
 
 import (
+	"errors"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 func runUsageLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
 
-	op.CollectionName = "uesio/studio.usage"
-	op.Conditions = append(op.Conditions, adapt.LoadRequestCondition{
-		Field:    "uesio/studio.site",
-		Value:    session.GetContextSite().ID,
-		Operator: "EQ",
-	})
-	op.Fields = []adapt.LoadRequestField{
-		{ID: "uesio/studio.actiontype"},
-		{ID: "uesio/studio.app"},
-		{ID: "uesio/studio.day"},
-		{ID: "uesio/studio.metadataname"},
-		{ID: "uesio/studio.metadatatype"},
-		{ID: "uesio/studio.site"},
-		{ID: "uesio/studio.total"},
-		{ID: "uesio/studio.user"},
+	siteAdmin := session.GetSiteAdmin()
+
+	if siteAdmin == nil {
+		return errors.New("unable to retrieve usage, site admin context is missing")
 	}
 
-	metadata, err := datasource.Load([]*adapt.LoadOp{op}, sess.GetStudioAnonSession(), &datasource.LoadOptions{})
-	if err != nil {
-		return err
-	}
+	usageData := NewNamespaceSwapCollection("uesio/core", "uesio/studio")
 
-	// Now change the collection name back
-	op.CollectionName = "uesio/core.usage"
-
-	originalCollectionMetadata, err := metadata.GetCollection("uesio/studio.usage")
-	if err != nil {
-		return err
-	}
-
-	dynamicCollectionMetadata, err := connection.GetMetadata().GetCollection("uesio/core.usage")
-	if err != nil {
-		return err
-	}
-
-	meta.Copy(dynamicCollectionMetadata, originalCollectionMetadata)
-
-	dynamicCollectionMetadata.SetField(&adapt.FieldMetadata{
-		Name:       "user",
-		Namespace:  "uesio/core",
-		Createable: false,
-		Accessible: true,
-		Updateable: false,
-		Type:       "REFERENCE",
-		Label:      "User",
-		ReferenceMetadata: &adapt.ReferenceMetadata{
-			Collection: "uesio/core.user",
+	newOp := &adapt.LoadOp{
+		CollectionName: "uesio/studio.usage",
+		WireName:       "loadStudioUsage",
+		View:           op.View,
+		Collection:     usageData,
+		Conditions: append(usageData.MapConditions(op.Conditions), adapt.LoadRequestCondition{
+			Field:    "site",
+			Value:    session.GetContextSite().ID,
+			Operator: "EQ",
+		}),
+		Fields: []adapt.LoadRequestField{
+			{ID: "actiontype"},
+			{ID: "app"},
+			{ID: "day"},
+			{ID: "metadataname"},
+			{ID: "metadatatype"},
+			{ID: "site"},
+			{ID: "total"},
+			{ID: "user"},
 		},
-	})
+		Order:          usageData.MapOrder(op.Order),
+		Query:          true,
+		BatchSize:      op.BatchSize,
+		LoadAll:        op.LoadAll,
+		Params:         op.Params,
+		HasMoreBatches: op.HasMoreBatches,
+		BatchNumber:    op.BatchNumber,
+	}
 
-	dynamicCollectionMetadata.Name = "usage"
-	dynamicCollectionMetadata.Namespace = "uesio/core"
-
-	err = datasource.GetMetadataResponse(connection.GetMetadata(), "uesio/core.user", "", session)
+	studioMetadata, err := datasource.Load([]*adapt.LoadOp{newOp}, sess.GetStudioAnonSession(), &datasource.LoadOptions{})
 	if err != nil {
 		return err
 	}
 
-	userRefs := adapt.ReferenceRegistry{}
+	//make sure we pase this back to the original OP
+	op.BatchNumber = newOp.BatchNumber
+	op.HasMoreBatches = newOp.HasMoreBatches
 
-	userCollectionMetadata, err := metadata.GetCollection("uesio/core.user")
+	metadataResponse := connection.GetMetadata()
+
+	err = usageData.TransferFieldMetadata("uesio/studio.usage", studioMetadata, metadataResponse)
 	if err != nil {
 		return err
 	}
 
-	refReq := userRefs.Get("uesio/core.user")
-	refReq.Metadata = userCollectionMetadata
+	referencedCollections := adapt.ReferenceRegistry{}
+	userCollectionMetadata, err := metadataResponse.GetCollection("uesio/core.user")
+	if err != nil {
+		return err
+	}
 
-	err = op.Collection.Loop(func(item meta.Item, index string) error {
-		user, err := item.GetField("uesio/studio.user")
+	userRefReq := referencedCollections.Get("uesio/core.user")
+	userRefReq.Metadata = userCollectionMetadata
+
+	for _, item := range usageData.collection {
+		value, err := item.GetFieldAsString("uesio/studio.user")
 		if err != nil {
 			return err
 		}
-
-		userFieldMetadata, err := dynamicCollectionMetadata.GetField("uesio/core.user")
-		if err != nil {
-			return err
-		}
-
-		userIDString, ok := user.(string)
-		if !ok {
-			return nil
-		}
-
-		refReq.AddID(userIDString, adapt.ReferenceLocator{
-			Item:  item,
-			Field: userFieldMetadata,
+		userRefReq.AddID(value, adapt.ReferenceLocator{
+			Item: item,
+			Field: &adapt.FieldMetadata{
+				Namespace: "uesio/studio",
+				Name:      "user",
+			},
 		})
-		return nil
-	})
-	if err != nil {
-		return err
+
 	}
 
-	return adapt.HandleReferences(connection, userRefs, session, true)
+	op.Collection = usageData
+
+	//get user references with the current site session
+	return adapt.HandleReferences(connection, referencedCollections, session, true)
 
 }

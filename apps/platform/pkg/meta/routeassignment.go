@@ -87,14 +87,15 @@ func (r *RouteAssignment) Len() int {
 }
 
 func (r *RouteAssignment) UnmarshalYAML(node *yaml.Node) error {
-
-	err := setMapNode(node, "collection", r.Collection)
+	var err error
+	r.RouteRef, err = pickRequiredMetadataItem(node, "route", r.Namespace)
 	if err != nil {
-		return err
-	}
-	err = validateRequiredMetadataItem(node, "route")
-	if err != nil {
-		return err
+		return fmt.Errorf("invalid routeassignment %s: %s", r.GetKey(), err.Error())
 	}
 	return node.Decode((*RouteAssignmentWrapper)(r))
+}
+
+func (r *RouteAssignment) MarshalYAML() (interface{}, error) {
+	r.RouteRef = GetLocalizedKey(r.RouteRef, r.Namespace)
+	return (*RouteAssignmentWrapper)(r), nil
 }

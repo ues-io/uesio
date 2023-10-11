@@ -1,0 +1,7 @@
+name: workspaceusers
+type: REFERENCEGROUP
+label: Workspace Users
+referenceGroup:
+  collection: workspaceuser
+  field: workspace
+  onDelete: CASCADE

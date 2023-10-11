@@ -13,4 +13,9 @@ definition:
       - text-slate-400
       - text-base
       - text-xs
+      - font-light
+    actions:
+      - flex
+      - gap-2
+      - justify-end
 public: true

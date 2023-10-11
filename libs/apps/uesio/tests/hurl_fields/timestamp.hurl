@@ -6,7 +6,7 @@
 # entry 1
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"uesio\"}"
+    "token": "uesio"
 }
 HTTP 200
 
@@ -68,7 +68,7 @@ main.tenant = $2 AND
 (main.fields->>'uesio/tests.timestamp')::bigint = $3
 ORDER BY main.id::text asc
 LIMIT 501```
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" == 978310860
+jsonpath "$.wires[0].data[0]['uesio/tests.timestamp']" == 978310860
 
 # Operator: EQ | valueSource: VALUE | Bad Value value as string (ISO-8601 UTC datetime)
 # entry 4
@@ -116,7 +116,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" == 978310860
+jsonpath "$.wires[0].data[0]['uesio/tests.timestamp']" == 978310860
 
 
 # Operator: EQ | valueSource: PARAM
@@ -144,7 +144,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" == 978310860
+jsonpath "$.wires[0].data[0]['uesio/tests.timestamp']" == 978310860
 
 # Operator: NOT_EQ | valueSource: VALUE
 # entry 7
@@ -488,8 +488,8 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[1].data[*]['uesio/tests.timestamp']" == 978310860
-jsonpath "$.wires[1].data[*]['uesio/core.uniquekey']" == "ID-001"
+jsonpath "$.wires[1].data[0]['uesio/tests.timestamp']" == 978310860
+jsonpath "$.wires[1].data[0]['uesio/core.uniquekey']" == "ID-001"
 
 # Operator: IN | valueSource: PARAM
 # entry 19
@@ -584,7 +584,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[1].data[*]" not exists
+jsonpath "$.wires[1].data[*]" isEmpty
 
 # Operator: NOT_IN | valueSource: PARAM
 ## entry 22
@@ -722,7 +722,7 @@ Accept: application/json
                     "operator": "BETWEEN",
                     "valueSource": "VALUE",
                     "start": 978310860,
-                    "end": 1046656980,    
+                    "end": 1046656980,
                     "inclusiveStart":true,
                     "inclusiveEnd":true
                 }

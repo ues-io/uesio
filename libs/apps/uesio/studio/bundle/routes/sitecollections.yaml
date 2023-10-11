@@ -1,5 +1,5 @@
 name: sitecollections
 path: app/{app:\w*\/\w*}/site/{sitename}/collections
-view: uesio/studio.sitecollections
-theme: uesio/studio.default
+view: sitecollections
+theme: default
 title: Site Collections

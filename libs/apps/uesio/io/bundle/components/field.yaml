@@ -9,18 +9,20 @@ discoverable: true
 category: DATA
 icon: select_check_box
 variants:
+  - uesio/io.avatar:uesio/io.default
+  - uesio/io.checkboxfield:uesio/io.default
+  - uesio/io.codefield:uesio/io.default
+  - uesio/io.customselectfield:uesio/io.default
   - uesio/io.field:uesio/io.default
   - uesio/io.fieldlabel:uesio/io.default
   - uesio/io.fieldwrapper:uesio/io.default
-  - uesio/io.tile:uesio/io.default
-  - uesio/io.titlebar:uesio/io.infotag
+  - uesio/io.iconlabel:uesio/io.default
   - uesio/io.listfield:uesio/io.default
-  - uesio/io.selectfield:uesio/io.default
-  - uesio/io.customselectfield:uesio/io.default
-  - uesio/io.codefield:uesio/io.default
   - uesio/io.markdownfield:uesio/io.default
   - uesio/io.menu:uesio/io.default
-  - uesio/io.avatar:uesio/io.default
+  - uesio/io.selectfield:uesio/io.default
+  - uesio/io.tile:uesio/io.default
+  - uesio/io.titlebar:uesio/io.infotag
 slots:
   - name: components
     path: /list
@@ -45,6 +47,7 @@ properties:
       - updates:
           - field: displayAs
           - field: placeholder
+          - field: readonly
       # If the display type is now a type for which display-type specific properties are not relevant,
       # clear out these old properties
       - updates:
@@ -77,6 +80,21 @@ properties:
             values:
               - TEXT
               - NUMBER
+  - name: referenceCollection
+    type: FIELD_METADATA
+    display: false
+    viewOnly: true
+    wireProperty: wire
+    fieldProperty: fieldId
+    metadataProperty: reference.collection
+    displayConditions:
+      - type: fieldValue
+        field: fieldDisplayType
+        operator: IN
+        values:
+          - REFERENCE
+          - USER
+          - FILE
   - name: label
     type: TEXT
     label: Label
@@ -101,6 +119,9 @@ properties:
           - TEXT
           - LONGTEXT
           - REFERENCE
+  - name: readonly
+    type: CHECKBOX
+    label: Read Only
   - name: applyChanges
     type: SELECT
     label: "Apply field changes"
@@ -116,12 +137,14 @@ properties:
         values:
           - TEXT
           - NUMBER
+      - type: fieldValue
+        field: readonly
+        operator: NOT_EQUALS
+        value: true
   - name: displayAs
     type: SELECT
     label: Display as
     options:
-      - value: ""
-        label: "--None Selected--"
       - label: Text
         value: ""
         validFor:
@@ -135,21 +158,25 @@ properties:
         value: ""
         validFor:
           - field: fieldDisplayType
+            type: fieldValue
             value: SELECT
       - label: Checkboxes
         value: ""
         validFor:
           - field: fieldDisplayType
+            type: fieldValue
             value: MULTISELECT
       - label: Checkbox
         value: ""
         validFor:
           - field: fieldDisplayType
+            type: fieldValue
             value: CHECKBOX
       - label: Password
         value: PASSWORD
         validFor:
           - field: fieldDisplayType
+            type: fieldValue
             value: TEXT
       - label: Markdown
         value: MARKDOWN
@@ -184,13 +211,12 @@ properties:
           - CHECKBOX
           - LONGTEXT
           - MULTISELECT
-          - REFERENCE
+          - NUMBER
           - SELECT
           - TEXT
-          - NUMBER
   # Number-only properties
   - name: number
-    label: " "
+    label: Number field options
     type: STRUCT
     displayConditions:
       - type: fieldValue
@@ -199,16 +225,16 @@ properties:
     properties:
       - name: min
         type: NUMBER
-        label: Min
+        label: Min value
       - name: max
         type: NUMBER
-        label: Max
+        label: Max value
       - name: step
         type: NUMBER
         label: Step
   # Longtext field properties
   - name: longtext
-    label: " "
+    label: Long text field options
     type: STRUCT
     displayConditions:
       - type: fieldValue
@@ -223,24 +249,60 @@ properties:
         label: "# of Rows"
   # Reference properties
   - name: reference
-    label: " "
+    label: Reference field options
     type: STRUCT
     displayConditions:
       - type: fieldValue
         field: fieldDisplayType
-        value: REFERENCE
+        operator: IN
+        values:
+          - REFERENCE
+          - USER
+          - FILE
     properties:
       - name: template
         type: TEXT
         label: Display Template
       - name: searchFields
-        type: FIELDS
-        wireField: wire
+        type: COLLECTION_FIELDS
+        collectionName: "$Parent.Record{referenceCollection}"
         label: Search Fields
+        displayConditions:
+          - type: fieldValue
+            field: readonly
+            operator: NOT_EQUALS
+            value: true
       - name: returnFields
-        type: FIELDS
-        wireField: wire
+        type: COLLECTION_FIELDS
+        collectionName: "$Parent.Record{referenceCollection}"
         label: Return Fields
+        displayConditions:
+          - type: fieldValue
+            field: readonly
+            operator: NOT_EQUALS
+            value: true
+      - name: order
+        type: LIST
+        subtype: STRUCT
+        displayConditions:
+          - type: fieldValue
+            field: readonly
+            operator: NOT_EQUALS
+            value: true
+        items:
+          addLabel: Add Reference Search Order Field
+          displayTemplate: "${field} - ${desc}"
+          title: Reference Search Order Field
+          defaultDefinition:
+            desc: false
+          properties:
+            - name: field
+              type: COLLECTION_FIELD
+              label: Order Field
+              collectionName: "$Parent.Parent.Parent.Record{referenceCollection}"
+            - name: desc
+              type: CHECKBOX
+              label: Descending
 sections:
   - type: HOME
     id: uesio.home
@@ -248,9 +310,11 @@ sections:
       - wire
       - fieldId
       - fieldDisplayType
+      - referenceCollection
       - label
       - labelPosition
       - placeholder
+      - readonly
       - displayAs
       - applyChanges
       # Display type specific properties

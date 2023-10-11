@@ -1,5 +1,0 @@
-name: related_task
-type: REFERENCE
-label: Related Task
-reference:
-  collection: uesio/crm.task

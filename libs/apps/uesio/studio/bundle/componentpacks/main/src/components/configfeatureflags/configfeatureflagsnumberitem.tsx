@@ -1,7 +1,7 @@
-import { FunctionComponent, useState } from "react"
+import { useState } from "react"
 import { definition, component } from "@uesio/ui"
 
-interface Props extends definition.UtilityProps {
+interface Props {
 	title: string
 	value: number
 	min?: number
@@ -9,7 +9,9 @@ interface Props extends definition.UtilityProps {
 	handleSet: (key: string, value: number) => Promise<void>
 }
 
-const ConfigFeatureFlagsNumberItem: FunctionComponent<Props> = (props) => {
+const ConfigFeatureFlagsNumberItem: definition.UtilityComponent<Props> = (
+	props
+) => {
 	const TitleBar = component.getUtility("uesio/io.titlebar")
 	const NumberField = component.getUtility("uesio/io.numberfield")
 	const { context, title, value, handleSet, min, max } = props

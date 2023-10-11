@@ -1,5 +1,0 @@
-name: stationary
-public: true
-label: stationary
-pluralLabel: stationaries
-nameField: uesio/crm.name

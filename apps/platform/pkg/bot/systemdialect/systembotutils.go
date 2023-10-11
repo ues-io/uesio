@@ -2,11 +2,9 @@ package systemdialect
 
 import (
 	"errors"
-	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
-	"github.com/thecloudmasters/uesio/pkg/cache"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -101,46 +99,49 @@ func (m *MetadataDependencyMap) GetItems() ([]meta.BundleableItem, error) {
 }
 
 func getIDsFromUpdatesAndDeletes(request *adapt.SaveOp) []string {
-	keys := []string{}
+	keys := make([]string, len(request.Updates)+len(request.Deletes))
+	index := 0
 	for i := range request.Updates {
-		keys = append(keys, request.Updates[i].IDValue)
+		keys[index] = request.Updates[i].IDValue
+		index++
 	}
 	for i := range request.Deletes {
-		keys = append(keys, request.Deletes[i].IDValue)
+		keys[index] = request.Deletes[i].IDValue
+		index++
+	}
+	return keys
+}
+
+func getIDsFromDeletes(request *adapt.SaveOp) []string {
+	keys := make([]string, len(request.Deletes))
+	for i := range request.Deletes {
+		keys[i] = request.Deletes[i].IDValue
 	}
 	return keys
 }
 
 func getUniqueKeysFromUpdatesAndDeletes(request *adapt.SaveOp) []string {
-	keys := []string{}
+	keys := make([]string, len(request.Updates)+len(request.Deletes))
+	index := 0
 	for i := range request.Updates {
-		keys = append(keys, request.Updates[i].UniqueKey)
+		keys[index] = request.Updates[i].UniqueKey
+		index++
 	}
 	for i := range request.Deletes {
-		keys = append(keys, request.Deletes[i].UniqueKey)
+		keys[index] = request.Deletes[i].UniqueKey
+		index++
 	}
 	return keys
 }
 
-func clearHostForDomains(ids []string) error {
-	keys := []string{}
-	for _, id := range ids {
-		key, err := getHostKeyFromDomainId(id)
-		if err != nil {
-			return err
-		}
-		keys = append(keys, key)
+func getUniqueKeysFromDeletes(request *adapt.SaveOp) []string {
+	keys := make([]string, len(request.Deletes))
+	index := 0
+	for i := range request.Deletes {
+		keys[index] = request.Deletes[i].UniqueKey
+		index++
 	}
-
-	return cache.DeleteKeys(keys)
-}
-
-func getHostKeyFromDomainId(id string) (string, error) {
-	idParts := strings.Split(id, ":")
-	if len(idParts) != 2 {
-		return "", errors.New("Bad Domain ID: " + id)
-	}
-	return cache.GetHostKey(idParts[1], idParts[0]), nil
+	return keys
 }
 
 func checkValidItems(workspaceID string, items []meta.BundleableItem, session *sess.Session, connection adapt.Connection) error {
@@ -148,10 +149,7 @@ func checkValidItems(workspaceID string, items []meta.BundleableItem, session *s
 		return nil
 	}
 
-	//This creates a copy of the session
-	wsSession := session.RemoveWorkspaceContext()
-
-	err := datasource.AddWorkspaceContextByID(workspaceID, wsSession, connection)
+	wsSession, err := datasource.AddWorkspaceContextByID(workspaceID, session, connection)
 	if err != nil {
 		return err
 	}
@@ -159,28 +157,14 @@ func checkValidItems(workspaceID string, items []meta.BundleableItem, session *s
 
 }
 
-func checkWorkspaceID(currentWorkspace *string, change *adapt.ChangeItem) error {
-
-	workspaceID, err := change.GetFieldAsString("uesio/studio.workspace->uesio/core.id")
-	if err != nil {
-		return err
-	}
-
-	if *currentWorkspace == "" {
-		*currentWorkspace = workspaceID
-	}
-
-	if *currentWorkspace != workspaceID {
-		return errors.New("Can't change different WS or APPS")
-	}
-
-	return nil
-}
-
 func requireValue(change *adapt.ChangeItem, fieldName string) (string, error) {
 
 	value, err := change.GetFieldAsString(fieldName)
-	if err != nil || value == "" {
+	valueIsUndefined := err != nil
+	valueIsEmpty := value == ""
+	isMissingInsert := change.IsNew && (valueIsUndefined || valueIsEmpty)
+	isMissingUpdate := !change.IsNew && !valueIsUndefined && valueIsEmpty
+	if isMissingInsert || isMissingUpdate {
 		return "", errors.New(fieldName + " is required")
 	}
 

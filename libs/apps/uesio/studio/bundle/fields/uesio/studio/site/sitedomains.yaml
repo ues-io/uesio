@@ -2,6 +2,6 @@ name: sitedomains
 type: REFERENCEGROUP
 label: Site Domains
 referenceGroup:
-  collection: uesio/studio.sitedomain
-  field: uesio/studio.site
+  collection: sitedomain
+  field: site
   onDelete: CASCADE

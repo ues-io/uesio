@@ -17,7 +17,7 @@ type LoadBotFunc func(request *adapt.LoadOp, connection adapt.Connection, sessio
 
 type SaveBotFunc func(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error
 
-type RouteBotFunc func(*meta.Route, *sess.Session) error
+type RouteBotFunc func(*meta.Route, *sess.Session) (*meta.Route, error)
 
 type SystemDialect struct {
 }
@@ -83,6 +83,10 @@ func (b *SystemDialect) AfterSave(bot *meta.Bot, request *adapt.SaveOp, connecti
 		botFunction = runLicenseAfterSaveBot
 	case "uesio/studio.bot":
 		botFunction = runBotAfterSaveBot
+	case "uesio/studio.app":
+		botFunction = runAppAfterSaveBot
+	case "uesio/studio.integration":
+		botFunction = runIntegrationAfterSaveBot
 	}
 
 	if botFunction == nil {
@@ -102,7 +106,13 @@ func (b *SystemDialect) CallBot(bot *meta.Bot, params map[string]interface{}, co
 	case "listener:uesio/studio.makepayment":
 		botFunction = runMakePaymentListenerBot
 	case "listener:uesio/studio.workspacetruncate":
-		botFunction = runWorkspaceTruncateListenerBot
+		botFunction = RunWorkspaceTruncateListenerBot
+	case "listener:uesio/studio.resetrecordaccesstokens":
+		botFunction = runResetRecordAccessTokensListenerBot
+	case "listener:uesio/studio.setworkspaceuser":
+		botFunction = runSetWorkspaceUserBot
+	case "listener:uesio/studio.checkavailability":
+		botFunction = runCheckAvailabilityBot
 	}
 
 	if botFunction == nil {
@@ -113,11 +123,15 @@ func (b *SystemDialect) CallBot(bot *meta.Bot, params map[string]interface{}, co
 
 }
 
+func (b *SystemDialect) RunIntegrationActionBot(bot *meta.Bot, action *meta.IntegrationAction, integration adapt.IntegrationConnection, params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
+	return nil, datasource.NewSystemBotNotFoundError()
+}
+
 func (b *SystemDialect) CallGeneratorBot(bot *meta.Bot, create retrieve.WriterCreator, params map[string]interface{}, connection adapt.Connection, session *sess.Session) error {
 	return nil
 }
 
-func (b *SystemDialect) RouteBot(bot *meta.Bot, route *meta.Route, session *sess.Session) error {
+func (b *SystemDialect) RouteBot(bot *meta.Bot, route *meta.Route, session *sess.Session) (*meta.Route, error) {
 	var botFunction RouteBotFunc
 
 	routeKey := route.GetKey()
@@ -125,10 +139,14 @@ func (b *SystemDialect) RouteBot(bot *meta.Bot, route *meta.Route, session *sess
 	switch routeKey {
 	case "uesio/studio.paymentsuccess":
 		botFunction = runPaymentSuccessRouteBot
+	case "uesio/core.login":
+		botFunction = runLoginRouteBot
+	case "uesio/core.signup":
+		botFunction = runSignupRouteBot
 	}
 
 	if botFunction == nil {
-		return datasource.NewSystemBotNotFoundError()
+		return nil, datasource.NewSystemBotNotFoundError()
 	}
 
 	return botFunction(route, session)
@@ -141,18 +159,26 @@ func (b *SystemDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adap
 	switch op.CollectionName {
 	case "uesio/core.usage":
 		botFunction = runUsageLoadBot
-	case "uesio/studio.allmetadata":
-		botFunction = runAllMetadataLoadBot
 	case "uesio/studio.recentmetadata":
 		botFunction = runRecentMetadataLoadBot
 	case "uesio/studio.blogentry":
 		botFunction = runBlogEntryLoadBot
 	case "uesio/studio.recentdoc":
 		botFunction = runRecentDocLoadBot
+	case "uesio/studio.usertokenvalue":
+		botFunction = runUserTokenValueLoadBot
+	case "uesio/studio.recordtokenvalue":
+		botFunction = runRecordTokenValueLoadBot
 	case "tcm/timetracker.project":
 		botFunction = clickup.ProjectLoadBot
 	case "tcm/timetracker.task":
 		botFunction = clickup.TaskLoadBot
+	}
+
+	if meta.IsBundleableCollection(op.CollectionName) {
+		botFunction = runStudioMetadataLoadBot
+	} else if meta.IsCoreBundleableCollection(op.CollectionName) {
+		botFunction = runCoreMetadataLoadBot
 	}
 
 	if botFunction == nil {
@@ -167,9 +193,11 @@ func (b *SystemDialect) SaveBot(bot *meta.Bot, op *adapt.SaveOp, connection adap
 	var botFunction SaveBotFunc
 
 	switch op.Metadata.GetFullName() {
-	case "uesio/studio.allmetadata":
-		botFunction = runAllMetadataSaveBot
 
+	}
+
+	if meta.IsBundleableCollection(op.Metadata.GetFullName()) {
+		botFunction = runStudioMetadataSaveBot
 	}
 
 	if botFunction == nil {

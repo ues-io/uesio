@@ -1,0 +1,4 @@
+name: display_conditions
+path: display_conditions
+view: display_conditions
+title: E2E tests of Display Conditions

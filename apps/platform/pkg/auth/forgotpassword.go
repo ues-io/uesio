@@ -12,12 +12,12 @@ func ForgotPassword(signupMethodID string, payload map[string]interface{}, site 
 		return err
 	}
 
-	signupMethod, err := getSignupMethod(signupMethodID, session)
+	signupMethod, err := GetSignupMethod(signupMethodID, session)
 	if err != nil {
 		return err
 	}
 
-	authconn, err := GetAuthConnection(signupMethod.AuthSource, session)
+	authconn, err := GetAuthConnection(signupMethod.AuthSource, nil, session)
 	if err != nil {
 		return err
 	}
@@ -32,7 +32,7 @@ func ForgotPassword(signupMethodID string, payload map[string]interface{}, site 
 		return err
 	}
 
-	return authconn.ForgotPassword(payload, session)
+	return authconn.ForgotPassword(signupMethod, payload)
 }
 
 func ConfirmForgotPassword(signupMethodID string, payload map[string]interface{}, site *meta.Site) error {
@@ -42,14 +42,14 @@ func ConfirmForgotPassword(signupMethodID string, payload map[string]interface{}
 		return err
 	}
 
-	signupMethod, err := getSignupMethod(signupMethodID, session)
+	signupMethod, err := GetSignupMethod(signupMethodID, session)
 	if err != nil {
 		return err
 	}
 
-	authconn, err := GetAuthConnection(signupMethod.AuthSource, session)
+	authconn, err := GetAuthConnection(signupMethod.AuthSource, nil, session)
 	if err != nil {
 		return err
 	}
-	return authconn.ConfirmForgotPassword(payload, session)
+	return authconn.ConfirmForgotPassword(signupMethod, payload)
 }

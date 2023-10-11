@@ -2,9 +2,10 @@ import { createSlice, createEntityAdapter } from "@reduxjs/toolkit"
 import { useSelector } from "react-redux"
 import { LabelState } from "../../definition/label"
 import { RootState } from "../../store/store"
+import { getKey } from "../../metadata/metadata"
 
 const adapter = createEntityAdapter<LabelState>({
-	selectId: (label) => `${label.namespace}.${label.name}`,
+	selectId: getKey,
 })
 
 const selectors = adapter.getSelectors((state: RootState) => state.label)
@@ -23,7 +24,7 @@ const useLabel = (key: string) =>
 
 const useLabelKeys = () => useSelector(selectors.selectIds) as string[]
 
-export { useLabel, useLabelKeys, selectors }
+export { useLabel, useLabelKeys, selectors, adapter }
 
 export const { set, setMany } = metadataSlice.actions
 export default metadataSlice.reducer

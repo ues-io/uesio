@@ -3,7 +3,7 @@ import { RouteState } from "./types"
 
 const routeSlice = createSlice({
 	name: "route",
-	initialState: null as RouteState,
+	initialState: {} as RouteState,
 	reducers: {
 		set: (state, { payload }: PayloadAction<RouteState>) => payload,
 		setLoading: (state) => {

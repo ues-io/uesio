@@ -32,15 +32,24 @@ func CallListenerBot(w http.ResponseWriter, r *http.Request) {
 
 	returnParams, err := datasource.CallListenerBot(namespace, name, params, nil, session)
 	if err != nil {
-
-		// Validation errors should be returned as BadRequest
-		if _, ok := err.(*meta.BotParamValidationError); ok {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
+		var statusCode int
+		switch err.(type) {
+		case *meta.BotParamValidationError, *meta.BotExecutionError:
+			statusCode = http.StatusBadRequest
+		case *meta.BotAccessError:
+			statusCode = http.StatusForbidden
+		case *datasource.SystemBotNotFoundError, *meta.BotNotFoundError:
+			statusCode = http.StatusNotFound
+		default:
+			statusCode = http.StatusInternalServerError
 		}
-
-		logger.LogError(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		errMessage := err.Error()
+		if statusCode == http.StatusInternalServerError {
+			// Best practice - don't display internal server error details to users
+			errMessage = http.StatusText(http.StatusInternalServerError)
+			logger.LogError(err)
+		}
+		http.Error(w, errMessage, statusCode)
 		return
 	}
 

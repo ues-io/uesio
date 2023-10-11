@@ -1,31 +1,37 @@
-import { WireDefault } from "../bands/wire/defaults/defaults"
-import {
+import type { WireDefault } from "../bands/wire/defaults/defaults"
+import type {
 	FieldType,
+	MetadataFieldMetadata,
 	NumberMetadata,
 	ReferenceMetadata,
 	SelectListMetadata,
 } from "../bands/field/types"
-import { SignalDefinition } from "./signal"
-import { WireConditionState } from "../bands/wire/conditions/conditions"
-import { MetadataKey } from "../bands/builder/types"
-import { DisplayCondition } from "../componentexports"
+import type { SignalDefinition } from "./signal"
+import type { WireConditionState } from "../bands/wire/conditions/conditions"
+import type { MetadataKey } from "../metadata/types"
+import type { DisplayCondition } from "../componentexports"
+import { CollectionFieldKey, CollectionKey } from "../bands/wire/types"
 type WireDefinitionMap = {
 	[key: string]: WireDefinition
 }
 
 type ViewOnlyField = {
-	label: string
-	required: boolean
-	type: FieldType // get better type
+	type: FieldType
+	subtype?: FieldType // For STRUCT/LIST/MAP types
+	label?: string
+	required?: boolean
 	reference?: ReferenceMetadata
 	selectlist?: SelectListMetadata
 	number?: NumberMetadata
+	metadata?: MetadataFieldMetadata
 	fields?: Record<string, ViewOnlyField>
+	viewOnly?: boolean
+	createable?: boolean
+	updateable?: boolean
 }
 
 type RegularField = {
-	id: string
-	fields: WireFieldDefinitionMap
+	fields?: WireFieldDefinitionMap
 }
 
 type OnChangeEvent = {
@@ -35,6 +41,7 @@ type OnChangeEvent = {
 
 // Todo: add all wire signal types
 type WireEventType =
+	| "onLoadError"
 	| "onLoadSuccess"
 	| "onSaveSuccess"
 	| "onSaveError"
@@ -62,41 +69,49 @@ type WireEvent<T = WireEventType> =
 
 type WireDefinitionBase = {
 	defaults?: WireDefault[]
+	events?: WireEvents
 	init?: {
 		query?: boolean
 		create?: boolean
 	}
 	viewOnly?: boolean
-	events?: WireEvents
 }
 
 type ViewOnlyWireDefinition = WireDefinitionBase & {
-	viewOnly: true
 	fields: Record<string, ViewOnlyField>
+	label?: string
+	pluralLabel?: string
+	viewOnly: true
 }
 
 type RegularWireDefinition = WireDefinitionBase & {
-	viewOnly?: false
-	fields: WireFieldDefinitionMap
-	collection: string
-	order?: WireOrderDescription[]
+	/**
+	 * @minimum 0
+	 */
 	batchsize?: number
+	/**
+	 * @minLength 2
+	 */
+	collection: CollectionKey
 	conditions?: WireConditionState[]
-	requirewriteaccess?: boolean
+	fields?: WireFieldDefinitionMap
 	loadAll?: boolean
+	order?: WireOrderDescription[]
+	requirewriteaccess?: boolean
+	viewOnly?: false
 }
 
 type WireDefinition = ViewOnlyWireDefinition | RegularWireDefinition
 
 type WireFieldDefinitionMap = {
-	[key: string]: WireFieldDefinition
+	[key: CollectionFieldKey]: WireFieldDefinition | ViewOnlyField
 }
 
 type WireFieldDefinition = RegularField | undefined | null
 
 type WireOrderDescription = {
 	field: MetadataKey
-	desc: boolean
+	desc?: boolean
 }
 
 export type {

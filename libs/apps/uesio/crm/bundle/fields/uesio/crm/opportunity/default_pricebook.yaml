@@ -1,5 +1,0 @@
-name: default_pricebook
-type: REFERENCE
-label: Default Pricebook
-reference:
-  collection: uesio/crm.pricebook

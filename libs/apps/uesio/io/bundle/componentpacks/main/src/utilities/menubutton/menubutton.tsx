@@ -1,10 +1,10 @@
-import { FunctionComponent, ReactNode } from "react"
+import { ReactNode } from "react"
 import { definition } from "@uesio/ui"
 
 import Menu from "../menu/menu"
 import IconButton from "../iconbutton/iconbutton"
 
-interface MenuButtonUtilityProps<I> extends definition.UtilityProps {
+interface MenuButtonUtilityProps<I> {
 	itemRenderer: (item: I) => ReactNode
 	onSelect: (item: I) => void
 	getItemKey: (item: I) => string
@@ -13,9 +13,9 @@ interface MenuButtonUtilityProps<I> extends definition.UtilityProps {
 	items: I[]
 }
 
-const MenuButton: FunctionComponent<MenuButtonUtilityProps<unknown>> = (
-	props
-) => {
+const MenuButton: definition.UtilityComponent<
+	MenuButtonUtilityProps<unknown>
+> = (props) => {
 	const { context, icon, fill, items, itemRenderer, onSelect, getItemKey } =
 		props
 

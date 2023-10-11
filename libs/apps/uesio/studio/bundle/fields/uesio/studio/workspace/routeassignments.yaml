@@ -2,6 +2,6 @@ name: routeassignments
 type: REFERENCEGROUP
 label: Route Assignments
 referenceGroup:
-  collection: uesio/studio.routeassignment
-  field: uesio/studio.workspace
+  collection: routeassignment
+  field: workspace
   onDelete: CASCADE

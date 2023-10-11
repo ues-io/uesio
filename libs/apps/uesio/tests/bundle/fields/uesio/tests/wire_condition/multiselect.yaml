@@ -1,4 +1,4 @@
 name: multiselect
 type: MULTISELECT
 label: MultiSelect
-selectList: uesio/tests.selectlist
+selectList: selectlist

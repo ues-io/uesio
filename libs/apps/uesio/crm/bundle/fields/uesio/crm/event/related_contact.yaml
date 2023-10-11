@@ -1,5 +1,0 @@
-name: related_contact
-type: REFERENCE
-label: Related Contact
-reference:
-  collection: uesio/crm.contact
