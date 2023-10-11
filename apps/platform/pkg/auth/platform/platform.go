@@ -8,13 +8,14 @@ import (
 	"strings"
 	"time"
 
+	"golang.org/x/crypto/bcrypt"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/integ/sendgrid"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type Auth struct{}
@@ -67,31 +68,31 @@ type Connection struct {
 
 func (c *Connection) Login(payload map[string]interface{}) (*meta.User, error) {
 
-	username, err := auth.GetPayloadValue(payload, "username")
+	username, err := auth.GetRequiredPayloadValue(payload, "username")
 	if err != nil {
-		return nil, errors.New("Uesio login:" + err.Error())
+		return nil, auth.NewAuthRequestError("Unable to login, " + err.Error())
 	}
-	plainPassword, err := auth.GetPayloadValue(payload, "password")
+	plainPassword, err := auth.GetRequiredPayloadValue(payload, "password")
 	if err != nil {
-		return nil, errors.New("Uesio login:" + err.Error())
+		return nil, auth.NewAuthRequestError("Unable to login, " + err.Error())
 	}
 
 	loginmethod, err := auth.GetLoginMethod(username, c.authSource.GetKey(), c.session)
 	if err != nil {
-		return nil, errors.New("Failed Getting Login Method Data: " + err.Error())
+		return nil, auth.NewAuthRequestError("Failed getting login method data: " + err.Error())
 	}
 
 	if loginmethod == nil {
-		return nil, errors.New("No account found with this login method")
+		return nil, auth.NewAuthRequestError("No account found with this login method")
 	}
 
 	if loginmethod.VerificationCode != "" {
-		return nil, errors.New("Please verify your email")
+		return nil, auth.NewNotAuthorizedError("Unable to login - your email address has not yet been verified. Please verify your email and then try again.")
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(loginmethod.Hash), []byte(plainPassword))
 	if err != nil {
-		return nil, errors.New("The password you are trying to log in with is incorrect")
+		return nil, auth.NewNotAuthorizedError("The password you are trying to log in with is incorrect")
 	}
 
 	return auth.GetUserByID(loginmethod.User.ID, c.session, c.connection)
@@ -100,19 +101,29 @@ func (c *Connection) Login(payload map[string]interface{}) (*meta.User, error) {
 
 func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]interface{}, username string) error {
 
-	email, err := auth.GetPayloadValue(payload, "email")
+	email, err := auth.GetRequiredPayloadValue(payload, "email")
 	if err != nil {
-		return err
+		return errors.New("Signup failed, " + err.Error())
 	}
 
-	password, err := auth.GetPayloadValue(payload, "password")
+	firstname, err := auth.GetRequiredPayloadValue(payload, "firstname")
 	if err != nil {
-		return err
+		return errors.New("Signup failed, " + err.Error())
+	}
+
+	lastname, err := auth.GetRequiredPayloadValue(payload, "lastname")
+	if err != nil {
+		return errors.New("Signup failed, " + err.Error())
+	}
+
+	password, err := auth.GetRequiredPayloadValue(payload, "password")
+	if err != nil {
+		return errors.New("Signup failed, " + err.Error())
 	}
 
 	err = passwordPolicyValidation(password)
 	if err != nil {
-		return err
+		return errors.New("Signup failed: " + err.Error())
 	}
 
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
@@ -122,16 +133,6 @@ func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]
 
 	//Studio session is required to use the right integration
 	integration, err := datasource.GetIntegration("uesio/core.sendgrid", sess.GetStudioAnonSession())
-	if err != nil {
-		return err
-	}
-
-	firstname, err := auth.GetRequiredPayloadValue(payload, "firstname")
-	if err != nil {
-		return err
-	}
-
-	lastname, err := auth.GetRequiredPayloadValue(payload, "lastname")
 	if err != nil {
 		return err
 	}
@@ -152,7 +153,7 @@ func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]
 	options := sendgrid.SendEmailOptions{To: []string{email}, From: signupMethod.FromEmail, Subject: subject, PlainBody: plainBody, ContentType: signupMethod.Signup.EmailContentType}
 	_, err = integration.RunAction("sendEmail", options)
 	if err != nil {
-		return fmt.Errorf("Error sending signup Email: %w", err)
+		return fmt.Errorf("error sending signup email: %w", err)
 	}
 
 	user, err := auth.CreateUser(signupMethod, &meta.User{
@@ -179,28 +180,28 @@ func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]
 func (c *Connection) ForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {
 	username, err := auth.GetPayloadValue(payload, "username")
 	if err != nil {
-		return errors.New("Uesio forgot password:" + err.Error())
+		return auth.NewAuthRequestError("Unable to reset password: you must provide a username")
 	}
 
 	user, err := auth.GetUserByKey(username, c.session, nil)
 	if err != nil {
-		return errors.New("Uesio forgot password:" + err.Error())
+		return auth.NewAuthRequestError("Unable to reset password forgot: this user cannot be found")
 	}
 
 	//Studio session is required to use the right integration
 	integration, err := datasource.GetIntegration("uesio/core.sendgrid", sess.GetStudioAnonSession())
 	if err != nil {
-		return errors.New("Uesio forgot password:" + err.Error())
+		return errors.New("Unable to send email: " + err.Error())
 	}
 
 	subject, err := auth.GetRequiredPayloadValue(payload, "subject")
 	if err != nil {
-		return errors.New("Uesio forgot password:" + err.Error())
+		return errors.New("Uesio forgot password: " + err.Error())
 	}
 
 	message, err := auth.GetRequiredPayloadValue(payload, "message")
 	if err != nil {
-		return errors.New("Uesio forgot password:" + err.Error())
+		return errors.New("Uesio forgot password: " + err.Error())
 	}
 
 	code := generateCode()
@@ -222,7 +223,7 @@ func (c *Connection) ForgotPassword(signupMethod *meta.SignupMethod, payload map
 	options := sendgrid.SendEmailOptions{To: []string{user.Email}, From: signupMethod.FromEmail, Subject: subject, PlainBody: plainBody, ContentType: signupMethod.ForgotPassword.EmailContentType}
 	_, err = integration.RunAction("sendEmail", options)
 	if err != nil {
-		return errors.New("Uesio forgot password:" + err.Error())
+		return errors.New("Could not reset password - unable to password reset email: " + err.Error())
 	}
 
 	return nil
@@ -231,22 +232,22 @@ func (c *Connection) ForgotPassword(signupMethod *meta.SignupMethod, payload map
 func (c *Connection) ConfirmForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {
 	username, err := auth.GetPayloadValue(payload, "username")
 	if err != nil {
-		return err
+		return auth.NewAuthRequestError("A username must be provided")
 	}
 
 	verificationCode, err := auth.GetPayloadValue(payload, "verificationcode")
 	if err != nil {
-		return errors.New("Uesio confirm forgot password:" + err.Error())
+		return auth.NewAuthRequestError("A verification code must be provided")
 	}
 
 	newPassword, err := auth.GetPayloadValue(payload, "newpassword")
 	if err != nil {
-		return errors.New("Uesio confirm forgot password:" + err.Error())
+		return auth.NewAuthRequestError("A new password must be provided")
 	}
 
 	err = passwordPolicyValidation(newPassword)
 	if err != nil {
-		return errors.New("Uesio confirm forgot password:" + err.Error())
+		return auth.NewAuthRequestError("This password does not meet the password policy requirements: " + err.Error())
 	}
 
 	loginmethod, err := auth.GetLoginMethod(username, c.authSource.GetKey(), c.session)
@@ -255,20 +256,20 @@ func (c *Connection) ConfirmForgotPassword(signupMethod *meta.SignupMethod, payl
 	}
 
 	if loginmethod == nil {
-		return errors.New("No account found with this login method")
+		return auth.NewAuthRequestError("Unable to find this login method")
 	}
 
 	if isExpired(loginmethod.VerificationExpires) {
-		return errors.New("The code Expired, please request a new one")
+		return auth.NewAuthRequestError("The provided verification code has expired.")
 	}
 
 	if loginmethod.VerificationCode != verificationCode {
-		return errors.New("The codes do not match")
+		return auth.NewAuthRequestError("The provided verification code does not match.")
 	}
 
 	hash, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
 	if err != nil {
-		return errors.New("Uesio confirm forgot password:" + err.Error())
+		return auth.NewAuthRequestError("The new password could not be used, please try another password")
 	}
 
 	loginmethod.Hash = string(hash)
@@ -319,14 +320,14 @@ func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[st
 
 }
 func (c *Connection) ConfirmSignUp(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {
-	username, err := auth.GetPayloadValue(payload, "username")
+	username, err := auth.GetRequiredPayloadValue(payload, "username")
 	if err != nil {
-		return errors.New("Uesio confirm forgot password:" + err.Error())
+		return auth.NewAuthRequestError("Username not provided")
 	}
 
-	verificationCode, err := auth.GetPayloadValue(payload, "verificationcode")
+	verificationCode, err := auth.GetRequiredPayloadValue(payload, "verificationcode")
 	if err != nil {
-		return errors.New("Uesio confirm forgot password:" + err.Error())
+		return auth.NewAuthRequestError("Verification code not provided")
 	}
 
 	loginmethod, err := auth.GetLoginMethod(username, c.authSource.GetKey(), c.session)
@@ -339,15 +340,15 @@ func (c *Connection) ConfirmSignUp(signupMethod *meta.SignupMethod, payload map[
 	}
 
 	if loginmethod.VerificationCode == "" {
-		return errors.New("This account is already verified")
+		return auth.NewAuthRequestError("This account is already verified")
 	}
 
 	if isExpired(loginmethod.VerificationExpires) {
-		return errors.New("The code Expired, please request a new one")
+		return auth.NewAuthRequestError("The code is expired, please request a new one")
 	}
 
 	if loginmethod.VerificationCode != verificationCode {
-		return errors.New("The codes do not match")
+		return auth.NewAuthRequestError("The codes do not match")
 	}
 
 	loginmethod.VerificationCode = ""
