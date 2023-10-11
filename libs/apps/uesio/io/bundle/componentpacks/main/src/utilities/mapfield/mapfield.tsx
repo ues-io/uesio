@@ -1,19 +1,33 @@
 import { wire, collection, definition, context, metadata } from "@uesio/ui"
 import ListField from "../field/list"
 
-interface MapFieldUtilityProps {
-	fieldId: string
+export type MapFieldOptions = {
 	keyField: collection.FieldMetadata
+	/**
+	 * The label to display for the Field for editing a map entry's key
+	 * @default "Key"
+	 */
+	keyFieldLabel?: string
 	keys?: string[]
 	labelVariant?: metadata.MetadataKey
-	mode: context.FieldMode
 	noAdd?: boolean
 	noDelete?: boolean
+	subFieldVariant?: metadata.MetadataKey
+	valueField: collection.FieldMetadata
+	/**
+	 * The label to display for the Field for editing a map entry's value
+	 * @default "Value"
+	 */
+	valueFieldLabel?: string
+}
+
+interface MapFieldUtilityProps {
+	fieldId: string
+	mode: context.FieldMode
+	options?: MapFieldOptions
 	path: string
 	setValue: (value: wire.PlainWireRecord) => void
-	subFieldVariant?: metadata.MetadataKey
 	value: wire.FieldValue
-	valueField: collection.FieldMetadata
 }
 
 const getStructFieldValuesObject = (
@@ -32,17 +46,20 @@ const MapField: definition.UtilityComponent<MapFieldUtilityProps> = (props) => {
 	const {
 		context,
 		fieldId,
-		keyField,
-		keys,
-		labelVariant,
 		mode,
-		noAdd = false,
-		noDelete = false,
+		options = {} as MapFieldOptions,
 		path,
 		setValue,
+	} = props
+	const {
+		keys,
+		keyField,
+		noAdd = false,
+		noDelete = false,
+		labelVariant,
 		subFieldVariant,
 		valueField,
-	} = props
+	} = options
 
 	const internalKey = "__key__"
 	const value = (props.value as Record<string, wire.FieldValue>) || {}
@@ -89,13 +106,20 @@ const MapField: definition.UtilityComponent<MapFieldUtilityProps> = (props) => {
 
 	return (
 		<ListField
+			context={context}
 			fieldId={fieldId}
+			mode={mode}
+			options={{
+				getDefaultValue,
+				labelVariant,
+				subFieldVariant,
+				noAdd,
+				noDelete,
+				subType: "STRUCT",
+				subFields,
+			}}
 			path={path}
 			value={listValue}
-			noAdd={noAdd}
-			noDelete={noDelete}
-			subType="STRUCT"
-			subFields={subFields}
 			setValue={(value: wire.PlainWireRecord[]) => {
 				setValue(
 					value.reduce((obj, record) => {
@@ -118,11 +142,6 @@ const MapField: definition.UtilityComponent<MapFieldUtilityProps> = (props) => {
 					}, {})
 				)
 			}}
-			getDefaultValue={getDefaultValue}
-			mode={mode}
-			context={context}
-			labelVariant={labelVariant}
-			subFieldVariant={subFieldVariant}
 		/>
 	)
 }
