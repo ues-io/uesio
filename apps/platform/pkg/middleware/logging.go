@@ -4,12 +4,29 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/fatih/color"
 	"github.com/felixge/httpsnoop"
 )
+
+var defaultMinStatusCode = 200
+var minStatusCode int
+
+func init() {
+	// Allows for only certain status codes to be logged
+	if val, isSet := os.LookupEnv("UESIO_REQUEST_LOGGER_MIN_CODE"); isSet {
+		if code, err := strconv.Atoi(val); err == nil {
+			minStatusCode = code
+		}
+	}
+	if minStatusCode == 0 {
+		minStatusCode = defaultMinStatusCode
+	}
+}
 
 func byteCountDecimal(b int64) string {
 	const unit = 1000
@@ -80,6 +97,11 @@ func LogRequestHandler(h http.Handler) http.Handler {
 		// this runs handler h and captures information about
 		// HTTP request
 		m := httpsnoop.CaptureMetrics(h, w, r)
+
+		// Don't log requests if their status code is below the min
+		if m.Code < minStatusCode {
+			return
+		}
 
 		session := GetSession(r)
 		size := color.BlueString(byteCountDecimal(m.Written))
