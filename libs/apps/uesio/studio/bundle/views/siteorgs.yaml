@@ -72,7 +72,7 @@ definition:
               uesio.context:
                 wire: sites
               params:
-                selected: orgs
+                selected: organizations
         content:
           - uesio/io.titlebar:
               uesio.variant: uesio/io.main

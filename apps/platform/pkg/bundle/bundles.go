@@ -4,12 +4,12 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/file"
 )
 
 func GetSiteBundleDef(site *meta.Site, connection adapt.Connection) (*meta.BundleDef, error) {
@@ -132,31 +132,18 @@ func LoadAll(group meta.BundleableGroup, namespace string, conditions meta.Bundl
 }
 
 func LoadMany(items []meta.BundleableItem, session *sess.Session, connection adapt.Connection) error {
-	// Coalate items into same namespace
-	coalated := map[string][]meta.BundleableItem{}
-	for _, item := range items {
-		namespace := item.GetNamespace()
-		_, ok := coalated[namespace]
-		if !ok {
-			coalated[namespace] = []meta.BundleableItem{}
-		}
-		coalated[namespace] = append(coalated[namespace], item)
-	}
-	for namespace, items := range coalated {
+	for namespace, nsItems := range groupItemsByNamespace(items) {
 		bs, err := GetBundleStoreConnection(namespace, session, connection)
 		if err != nil {
 			fmt.Println("Failed load many")
-			for _, item := range items {
+			for _, item := range nsItems {
 				fmt.Println(item.GetKey())
 			}
 			return err
 		}
-
-		err = bs.GetManyItems(items)
-		if err != nil {
+		if err = bs.GetManyItems(nsItems); err != nil {
 			return err
 		}
-
 	}
 	return nil
 }
@@ -170,37 +157,37 @@ func Load(item meta.BundleableItem, session *sess.Session, connection adapt.Conn
 	return bs.GetItem(item)
 }
 
-func GetItemAttachment(item meta.AttachableItem, path string, session *sess.Session) (time.Time, io.ReadSeeker, error) {
+func GetItemAttachment(item meta.AttachableItem, path string, session *sess.Session) (file.Metadata, io.ReadSeeker, error) {
 	bs, err := GetBundleStoreConnection(item.GetNamespace(), session, nil)
 	if err != nil {
-		return time.Time{}, nil, err
+		return nil, nil, err
 	}
 	return bs.GetItemAttachment(item, path)
 }
 
 func IsValid(items []meta.BundleableItem, session *sess.Session, connection adapt.Connection) error {
-
-	// Coalate items into same namespace
-	coalated := map[string][]meta.BundleableItem{}
-	for _, item := range items {
-		namespace := item.GetNamespace()
-		_, ok := coalated[namespace]
-		if !ok {
-			coalated[namespace] = []meta.BundleableItem{}
-		}
-		coalated[namespace] = append(coalated[namespace], item)
-	}
-	for namespace, items := range coalated {
+	for namespace, nsItems := range groupItemsByNamespace(items) {
 		bs, err := GetBundleStoreConnection(namespace, session, connection)
 		if err != nil {
 			return err
 		}
-
-		err = bs.HasAllItems(items)
-		if err != nil {
+		if err = bs.HasAllItems(nsItems); err != nil {
 			return err
 		}
-
 	}
 	return nil
+}
+
+// groups a slice of BundleableItem by namespace
+func groupItemsByNamespace(items []meta.BundleableItem) map[string][]meta.BundleableItem {
+	collated := map[string][]meta.BundleableItem{}
+	for _, item := range items {
+		namespace := item.GetNamespace()
+		_, ok := collated[namespace]
+		if !ok {
+			collated[namespace] = []meta.BundleableItem{}
+		}
+		collated[namespace] = append(collated[namespace], item)
+	}
+	return collated
 }

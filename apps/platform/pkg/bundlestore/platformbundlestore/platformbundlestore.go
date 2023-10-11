@@ -6,7 +6,6 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
@@ -14,6 +13,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/file"
 )
 
 type PlatformBundleStore struct{}
@@ -28,7 +28,7 @@ type PlatformBundleStoreConnection struct {
 	bundlestore.ConnectionOptions
 }
 
-func getPlatformFileConnection() (fileadapt.FileConnection, error) {
+func getPlatformFileConnection() (file.Connection, error) {
 	return fileadapt.GetFileConnection("uesio/core.bundlestore", sess.GetStudioAnonSession())
 }
 
@@ -36,12 +36,12 @@ func getBasePath(namespace, version string) string {
 	return filepath.Join(namespace, version, "bundle")
 }
 
-func getStream(namespace string, version string, objectname string, filename string) (time.Time, io.ReadSeeker, error) {
+func getStream(namespace string, version string, objectname string, filename string) (file.Metadata, io.ReadSeeker, error) {
 	filePath := filepath.Join(getBasePath(namespace, version), objectname, filename)
 
 	conn, err := getPlatformFileConnection()
 	if err != nil {
-		return time.Time{}, nil, err
+		return nil, nil, err
 	}
 
 	return conn.Download(filePath)
@@ -68,12 +68,11 @@ func (b *PlatformBundleStoreConnection) GetItem(item meta.BundleableItem) error 
 		meta.Copy(item, cachedItem)
 		return nil
 	}
-	modTime, stream, err := getStream(b.Namespace, b.Version, collectionName, item.GetPath())
+	fileMetadata, stream, err := getStream(b.Namespace, b.Version, collectionName, item.GetPath())
 	if err != nil {
-		return err
+		return bundlestore.NewNotFoundError("Metadata item: " + key + " does not exist")
 	}
-
-	item.SetModified(modTime)
+	item.SetModified(*fileMetadata.LastModified())
 	err = bundlestore.DecodeYAML(item, stream)
 	if err != nil {
 		return err
@@ -124,20 +123,29 @@ func (b *PlatformBundleStoreConnection) GetAllItems(group meta.BundleableGroup, 
 		}
 
 		err = b.GetItem(retrievedItem)
+
 		if err != nil {
 			if _, ok := err.(*bundlestore.PermissionError); ok {
 				continue
 			}
+			if _, ok := err.(*bundlestore.NotFoundError); ok {
+				continue
+			}
 			return err
 		}
-		group.AddItem(retrievedItem)
+
+		// Check to see if the item meets bundle conditions
+		// which are not associated with the Item's filesystem path
+		if bundlestore.DoesItemMeetBundleConditions(retrievedItem, conditions) {
+			group.AddItem(retrievedItem)
+		}
 	}
 
 	return nil
 
 }
 
-func (b *PlatformBundleStoreConnection) GetItemAttachment(item meta.AttachableItem, path string) (time.Time, io.ReadSeeker, error) {
+func (b *PlatformBundleStoreConnection) GetItemAttachment(item meta.AttachableItem, path string) (file.Metadata, io.ReadSeeker, error) {
 	return getStream(item.GetNamespace(), b.Version, item.GetBundleFolderName(), filepath.Join(item.GetBasePath(), path))
 }
 

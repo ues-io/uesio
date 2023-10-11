@@ -178,6 +178,8 @@ routes:
   uesio/studio.sitecollectionexportbatches: true
   uesio/studio.sitecollectionrecorddata: true
   uesio/studio.sitecollections: true
+  uesio/studio.siteusage_file_downloads: true
+  uesio/studio.siteusage_file_download_bytes: true
   uesio/studio.siteusage_route_load: true
   uesio/studio.siteusage_collection_load: true
   uesio/studio.siteusage_collection_save: true

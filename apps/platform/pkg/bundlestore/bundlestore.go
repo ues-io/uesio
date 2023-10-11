@@ -3,11 +3,12 @@ package bundlestore
 import (
 	"errors"
 	"io"
-	"time"
+
+	"gopkg.in/yaml.v3"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"gopkg.in/yaml.v3"
+	"github.com/thecloudmasters/uesio/pkg/types/file"
 )
 
 var bundleStoreMap = map[string]BundleStore{}
@@ -48,6 +49,18 @@ func NewPermissionError(message string) *PermissionError {
 	}
 }
 
+type NotFoundError struct {
+	message string
+}
+
+func (e *NotFoundError) Error() string { return e.message }
+
+func NewNotFoundError(message string) *NotFoundError {
+	return &NotFoundError{
+		message: message,
+	}
+}
+
 type ConnectionOptions struct {
 	Namespace    string
 	Version      string
@@ -66,7 +79,7 @@ type BundleStoreConnection interface {
 	GetManyItems(items []meta.BundleableItem) error
 	GetAllItems(group meta.BundleableGroup, conditions meta.BundleConditions) error
 	HasAny(group meta.BundleableGroup, conditions meta.BundleConditions) (bool, error)
-	GetItemAttachment(item meta.AttachableItem, path string) (time.Time, io.ReadSeeker, error)
+	GetItemAttachment(item meta.AttachableItem, path string) (file.Metadata, io.ReadSeeker, error)
 	GetAttachmentPaths(item meta.AttachableItem) ([]string, error)
 	StoreItem(path string, reader io.Reader) error
 	GetBundleDef() (*meta.BundleDef, error)
@@ -107,4 +120,21 @@ func GetConnection(options ConnectionOptions) (BundleStoreConnection, error) {
 
 func DecodeYAML(v interface{}, reader io.Reader) error {
 	return yaml.NewDecoder(reader).Decode(v)
+}
+
+func DoesItemMeetBundleConditions(item meta.BundleableItem, conditions meta.BundleConditions) bool {
+	if len(conditions) == 0 {
+		return true
+	}
+	for field, conditionDef := range conditions {
+		fieldValue, err := item.GetField(field)
+		// If any condition fails, bail early
+		if err != nil {
+			return false
+		}
+		if fieldValue != conditionDef {
+			return false
+		}
+	}
+	return true
 }
