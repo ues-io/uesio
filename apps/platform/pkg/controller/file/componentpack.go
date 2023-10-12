@@ -1,6 +1,7 @@
 package file
 
 import (
+	"log/slog"
 	"net/http"
 	"strings"
 	"time"
@@ -8,7 +9,6 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
-	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 )
@@ -26,7 +26,7 @@ func ServeComponentPackFile(w http.ResponseWriter, r *http.Request) {
 
 	err := bundle.Load(componentPack, session, nil)
 	if err != nil {
-		logger.LogError(err)
+		slog.Error(err.Error())
 		http.Error(w, "Not Found", http.StatusNotFound)
 		return
 	}
@@ -34,7 +34,7 @@ func ServeComponentPackFile(w http.ResponseWriter, r *http.Request) {
 	fileMeta, stream, err := bundle.GetItemAttachment(componentPack, "dist/"+path, session)
 
 	if err != nil {
-		logger.LogError(err)
+		slog.Error(err.Error())
 		http.Error(w, "Failed ComponentPack Download", http.StatusInternalServerError)
 		return
 	}

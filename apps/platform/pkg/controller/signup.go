@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"log/slog"
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
@@ -12,7 +13,6 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/thecloudmasters/uesio/pkg/auth"
-	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 )
 
@@ -25,7 +25,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
 		msg := "Signup failed: " + err.Error()
-		logger.Log(msg, logger.ERROR)
+		slog.Error(msg)
 		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
@@ -33,7 +33,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	systemSession, err := auth.GetSystemSession(site, nil)
 	if err != nil {
 		msg := "Signup failed: " + err.Error()
-		logger.Log(msg, logger.ERROR)
+		slog.Error(msg)
 		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
@@ -41,7 +41,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	signupMethod, err := auth.GetSignupMethod(getSignupMethodID(mux.Vars(r)), session)
 	if err != nil {
 		msg := "Signup failed: " + err.Error()
-		logger.Log(msg, logger.ERROR)
+		slog.Error(msg)
 		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
@@ -120,7 +120,7 @@ func handleError(w http.ResponseWriter, err error) {
 		responseCode = http.StatusUnauthorized
 	default:
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		logger.LogError(err)
+		slog.Error(err.Error())
 		return
 	}
 	http.Error(w, err.Error(), responseCode)

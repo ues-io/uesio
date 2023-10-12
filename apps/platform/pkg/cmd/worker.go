@@ -1,8 +1,10 @@
 package cmd
 
 import (
+	"log/slog"
+
 	"github.com/spf13/cobra"
-	"github.com/thecloudmasters/uesio/pkg/logger"
+
 	"github.com/thecloudmasters/uesio/pkg/worker"
 )
 
@@ -16,6 +18,6 @@ func init() {
 }
 
 func runJobs(*cobra.Command, []string) {
-	logger.Log("Running Uesio worker process", logger.INFO)
+	slog.Info("Running Uesio worker process")
 	worker.ScheduleJobs()
 }

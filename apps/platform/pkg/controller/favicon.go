@@ -1,10 +1,10 @@
 package controller
 
 import (
+	"log/slog"
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
-	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 )
@@ -20,7 +20,7 @@ func Favicon(w http.ResponseWriter, r *http.Request) {
 	}
 	fileItem, err := meta.NewFile(favicon)
 	if err != nil {
-		logger.LogError(err)
+		slog.Error(err.Error())
 		http.Error(w, "Not Found", http.StatusNotFound)
 		return
 	}
