@@ -140,13 +140,10 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 			conditions || []
 		).map((condition) => {
 			if (!isValueCondition(condition)) return condition
-
 			return {
 				...condition,
-				value: condition.value
-					? context.merge(condition.value)
-					: condition.value,
-			}
+				value: context.merge(condition.value as string),
+			} as wire.WireConditionState
 		})
 
 		const result = await api.platform.loadData(context, {

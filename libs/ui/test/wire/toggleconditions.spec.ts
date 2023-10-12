@@ -110,7 +110,7 @@ const tests: WireSignalTest[] = [
 			}),
 	},
 	{
-		name: "toggling unexisting",
+		name: "toggling nonexistent condition",
 		wireId,
 		wireDef: {
 			collection: collectionId,
@@ -143,4 +143,6 @@ const tests: WireSignalTest[] = [
 	},
 ]
 
-tests.map((el) => test(el.name, () => testWireSignal(el)))
+describe("signals: wire/TOGGLE_CONDITION", () => {
+	tests.map((el) => test(el.name, () => testWireSignal(el)))
+})

@@ -8,6 +8,7 @@ import { getStaticAssetsPath } from "../hooks/platformapi"
 import { UserState } from "../bands/user/types"
 import get from "lodash/get"
 import { SiteState } from "../bands/site"
+import { wire } from ".."
 
 type MergeType =
 	| "Error"
@@ -30,7 +31,7 @@ type MergeType =
 	| "SignalOutput"
 	| "ComponentOutput"
 
-type MergeHandler = (expression: string, context: Context) => string
+type MergeHandler = (expression: string, context: Context) => wire.FieldValue
 
 export const InvalidSignalOutputMergeMsg =
 	"Invalid SignalOutput merge - a stepId and propertyPath must be provided, e.g. $SignalOutput{stepId:propertyPath}"
@@ -49,8 +50,7 @@ const handlers: Record<MergeType, MergeHandler> = {
 			record = context.getRecord(wirename)
 			expression = expressionParts[1]
 		}
-		const value = record?.getFieldValue(expression)
-		return value !== undefined && value !== null ? `${value}` : ""
+		return record?.getFieldValue(expression) ?? ""
 	},
 	Sum: (fullExpression, context) => {
 		const expressionParts = fullExpression.split(":")
@@ -68,9 +68,9 @@ const handlers: Record<MergeType, MergeHandler> = {
 		wire?.getData().forEach((record) => {
 			total += (record.getFieldValue(expression) as number) || 0
 		})
-		return "" + total
+		return total
 	},
-	Param: (expression, context) => context.getParam(expression) || "",
+	Param: (expression, context) => context.getParam(expression) ?? "",
 	SignalOutput: (expression, context) => {
 		// Expression MUST have 2+ parts, e.g. $SignalOutput{[stepId][propertyPath]}
 		let parts
@@ -122,7 +122,7 @@ const handlers: Record<MergeType, MergeHandler> = {
 				"" + user.picture.updatedat
 			)
 		}
-		return user[expression as keyof Omit<UserState, "picture">] || ""
+		return user[expression as keyof Omit<UserState, "picture">] ?? ""
 	},
 	Time: (expression, context) => {
 		const value = context.getRecord()?.getDateValue(expression)
@@ -136,7 +136,7 @@ const handlers: Record<MergeType, MergeHandler> = {
 	},
 	Route: (expression, context) => {
 		if (expression !== "path" && expression !== "title") return ""
-		return context.getRoute()?.[expression] || ""
+		return context.getRoute()?.[expression] ?? ""
 	},
 	RecordMeta: (expression, context) => {
 		const record = context.getRecord()
@@ -144,16 +144,16 @@ const handlers: Record<MergeType, MergeHandler> = {
 			return record?.getId() || ""
 		}
 		if (expression === "uniqueKey") {
-			return record?.getUniqueKey() || ""
+			return record?.getUniqueKey() ?? ""
 		}
 		if (expression === "index") {
-			return `${context.getRecordDataIndex() || 0}`
+			return context.getRecordDataIndex() || 0
 		}
 		if (expression === "isNew") {
-			return `${record?.isNew() || false}`
+			return record?.isNew() || false
 		}
 		if (expression === "isDeleted") {
-			return `${record?.isDeleted() || false}`
+			return record?.isDeleted() || false
 		}
 		return ""
 	},
@@ -210,7 +210,7 @@ const handlers: Record<MergeType, MergeHandler> = {
 		// Technically the result doesn't have to be a string,
 		// but until we improve merge typing to allow for non-string values,
 		// we'll pretend the prop will always be a string
-		(context.getProp(expression) as string) || "",
+		(context.getProp(expression) as string) ?? "",
 }
 
 /**
