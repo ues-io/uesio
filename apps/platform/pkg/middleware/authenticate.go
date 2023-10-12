@@ -10,7 +10,6 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/logger"
 )
 
 // Checks if the session returned with the user's original HTML route load
@@ -116,7 +115,7 @@ func AuthenticateVersion(next http.Handler) http.Handler {
 		app := vars["app"]
 		versionSession, err := datasource.AddVersionContext(app, version, GetSession(r), nil)
 		if err != nil {
-			logger.LogError(err)
+			slog.Error(err.Error())
 			http.Error(w, "Failed querying version: "+err.Error(), http.StatusInternalServerError)
 			return
 		}

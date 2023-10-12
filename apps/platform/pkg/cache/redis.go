@@ -3,13 +3,12 @@ package cache
 import (
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"os"
 	"strconv"
 	"time"
 
 	"github.com/gomodule/redigo/redis"
-
-	"github.com/thecloudmasters/uesio/pkg/logger"
 )
 
 var redisPool *redis.Pool
@@ -85,7 +84,7 @@ func (r RedisCache[T]) WithInitializer(initializer func() T) RedisCache[T] {
 func NewRedisCache[T any](namespace string) *RedisCache[T] {
 	_, exists := existingNamespaces[namespace]
 	if exists {
-		logger.LogError(fmt.Errorf("cannot create a cache for namespace %s, one already exists", namespace))
+		slog.Error("cannot create a cache for namespace %s, one already exists", namespace)
 		return nil
 	}
 	existingNamespaces[namespace] = true

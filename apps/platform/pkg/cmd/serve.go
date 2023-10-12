@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"log/slog"
 	"net/http"
 	"os"
 
@@ -9,9 +10,9 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
+
 	"github.com/thecloudmasters/uesio/pkg/controller"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
-	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 	//_ "net/http/pprof"
 )
@@ -67,12 +68,12 @@ const vendorPrefix = "/static/vendor"
 
 func serve(cmd *cobra.Command, args []string) {
 
-	logger.Log("Running serv command!", logger.INFO)
+	slog.Info("Starting Uesio server")
 	r := mux.NewRouter()
 
 	cwd, err := os.Getwd()
 	if err != nil {
-		logger.LogError(err)
+		slog.Error("Failed to obtain working directory")
 		panic("Failed to obtain working directory")
 	}
 
@@ -372,14 +373,14 @@ func serve(cmd *cobra.Command, args []string) {
 
 	var serveErr error
 	if tls.ServeAppWithTLS() {
-		logger.Log("Service started over TLS on port: "+port, logger.INFO)
+		slog.Info("Service started over TLS on port: " + port)
 		serveErr = server.ListenAndServeTLS(tls.GetSelfSignedCertFilePath(), tls.GetSelfSignedPrivateKeyFile())
 	} else {
-		logger.Log("Service started on port: "+port, logger.INFO)
+		slog.Info("Service started on port: " + port)
 		serveErr = server.ListenAndServe()
 	}
 	if serveErr != nil {
-		logger.LogError(serveErr)
+		slog.Error("Failed to start server: " + serveErr.Error())
 	}
 
 	// CORS Stuff we don't need right now

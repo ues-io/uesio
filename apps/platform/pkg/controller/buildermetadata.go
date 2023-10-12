@@ -1,12 +1,13 @@
 package controller
 
 import (
+	"log/slog"
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 
 	"github.com/gorilla/mux"
-	"github.com/thecloudmasters/uesio/pkg/logger"
+
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 	"github.com/thecloudmasters/uesio/pkg/routing"
 )
@@ -28,7 +29,7 @@ func BuilderMetadata(w http.ResponseWriter, r *http.Request) {
 	err := routing.GetBuilderDependencies(namespace, name, deps, session)
 	if err != nil {
 		msg := "Failed Getting Builder Metadata: " + err.Error()
-		logger.Log(msg, logger.ERROR)
+		slog.Error(msg)
 		http.Error(w, msg, http.StatusBadRequest)
 		return
 	}

@@ -2,6 +2,7 @@ package worker
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
 	"os/signal"
 	"strconv"
@@ -11,7 +12,6 @@ import (
 	"github.com/robfig/cron/v3"
 
 	"github.com/thecloudmasters/uesio/pkg/invoices"
-	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/usage/usage_worker"
 )
 
@@ -32,7 +32,7 @@ func getUsageCronSchedule() string {
 	}
 	intVal, err := strconv.Atoi(usageJobRecurrenceMinutes)
 	if err != nil || intVal < 1 || intVal > 30 {
-		logger.Log("UESIO_USAGE_JOB_RECURRENCE_MINUTES must be an integer in the range [1, 30]", logger.ERROR)
+		slog.Error("UESIO_USAGE_JOB_RECURRENCE_MINUTES must be an integer in the range [1, 30]")
 		os.Exit(1)
 	}
 	return fmt.Sprintf("*/%d * * * *", intVal)
@@ -48,23 +48,23 @@ func ScheduleJobs() {
 	// Load all jobs
 	for i, job := range jobs {
 		schedule := job.Schedule()
-		logger.Info("Scheduling job " + job.Name() + " with schedule: " + schedule)
+		slog.Info("Scheduling job " + job.Name() + " with schedule: " + schedule)
 		entryId, err := s.AddFunc(job.Schedule(), wrapJob(job))
 		if err != nil {
-			logger.Log(fmt.Sprintf("Failed to schedule job %s, reason: %s", job.Name(), err.Error()), logger.ERROR)
+			slog.Error("Failed to schedule job %s, reason: %s", job.Name(), err.Error())
 		} else {
 			jobEntries[i] = entryId
 		}
 
 	}
-	logger.Info("Finished loading all jobs, starting scheduler now...")
+	slog.Info("Finished loading all jobs, starting scheduler now...")
 
 	// (Helpful for local development to see when jobs will next be run...)
 	//go func() {
 	//	time.Sleep(time.Second * 2)
 	//	for {
 	//		for i, entryID := range jobEntries {
-	//			logger.Info(fmt.Sprintf("Cron job %s (%d) next run will be at: %s", jobs[i].Name(), entryID, s.Entry(entryID).Next.Format(time.Stamp)))
+	//			slog.Info(fmt.Sprintf("Cron job %s (%d) next run will be at: %s", jobs[i].Name(), entryID, s.Entry(entryID).Next.Format(time.Stamp)))
 	//		}
 	//		time.Sleep(time.Minute)
 	//	}
@@ -76,10 +76,10 @@ func ScheduleJobs() {
 	done := make(chan os.Signal, 1)
 	signal.Notify(done, syscall.SIGINT, syscall.SIGTERM)
 	<-done // Will block here until process is terminated
-	logger.Info("Received SIGTERM, stopping job scheduler with 5 second grace period...")
+	slog.Info("Received SIGTERM, stopping job scheduler with 5 second grace period...")
 	s.Stop()
 	time.Sleep(5 * time.Second)
-	logger.Info("Process completed")
+	slog.Info("Process completed")
 }
 
 // wraps a Job so that we can perform logging and other utility work,
@@ -88,7 +88,7 @@ func wrapJob(job Job) func() {
 	return func() {
 		jobErr := job.Run()
 		if jobErr != nil {
-			logger.Log(fmt.Sprintf("%s job failed reason: %s", job.Name(), jobErr.Error()), logger.ERROR)
+			slog.Error("%s job failed reason: %s", job.Name(), jobErr.Error())
 		}
 	}
 }

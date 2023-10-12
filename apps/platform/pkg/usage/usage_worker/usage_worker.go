@@ -3,29 +3,31 @@ package usage_worker
 import (
 	"errors"
 	"fmt"
+	"log/slog"
+	"strconv"
+	"strings"
+
 	"github.com/gomodule/redigo/redis"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/cache"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/usage/usage_common"
-	"strconv"
-	"strings"
 )
 
 const MAX_USAGE_PER_RUN = 1000
 
 func UsageWorker() error {
 
-	logger.Log("Running usage worker job", logger.INFO)
+	slog.Info("Running usage worker job")
 
 	conn := cache.GetRedisConn()
 	defer func(conn redis.Conn) {
 		err := conn.Close()
 		if err != nil {
-			logger.LogError(err)
+			slog.Error(err.Error())
 		}
 	}(conn)
 
@@ -43,7 +45,7 @@ func UsageWorker() error {
 	}
 
 	if len(keys) == 0 {
-		logger.Log("Job completed, no usage events to process", logger.INFO)
+		slog.Info("Job completed, no usage events to process")
 		return nil
 	}
 
@@ -62,7 +64,7 @@ func UsageWorker() error {
 		}
 		keyParts := strings.Split(key, ":")
 		if len(keyParts) != 9 {
-			logger.LogError(errors.New("Usage key did not match expected pattern: " + key))
+			slog.Error("Usage key did not match expected pattern: " + key)
 			continue
 		}
 
@@ -115,7 +117,7 @@ func UsageWorker() error {
 			_, err = conn.Do("SADD", redis.Args{}.Add(usage_common.RedisKeysSetName).AddFlat(keys))
 			return errors.New("Failed to update usage events: " + err.Error())
 		} else {
-			logger.Log(fmt.Sprintf("Successfully processed %d usage events", len(changes)), logger.INFO)
+			slog.Info("Successfully processed %d usage events", len(changes))
 		}
 	}
 
@@ -125,6 +127,6 @@ func UsageWorker() error {
 		return fmt.Errorf("Error deleting usage keys: " + err.Error())
 	}
 
-	logger.Log("Usage job completed, no issues found", logger.INFO)
+	slog.Info("Usage job completed, no issues found")
 	return nil
 }

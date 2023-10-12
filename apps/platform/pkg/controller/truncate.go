@@ -1,10 +1,10 @@
 package controller
 
 import (
+	"log/slog"
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
-	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/truncate"
 
@@ -23,7 +23,7 @@ func Truncate(w http.ResponseWriter, r *http.Request) {
 			responseCode = http.StatusForbidden
 		default:
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-			logger.LogError(err)
+			slog.Error(err.Error())
 			return
 		}
 		http.Error(w, err.Error(), responseCode)

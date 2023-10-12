@@ -4,14 +4,15 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"log/slog"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/gorilla/mux"
+
 	"github.com/thecloudmasters/uesio/pkg/controller/bot"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
-	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 )
@@ -76,7 +77,7 @@ func UploadUserFile(w http.ResponseWriter, r *http.Request) {
 
 	result, err := processUploadRequest(r)
 	if err != nil {
-		logger.LogError(err)
+		slog.Error(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -91,7 +92,7 @@ func DeleteUserFile(w http.ResponseWriter, r *http.Request) {
 	// Load all the userfile records
 	err := filesource.Delete(userFileID, session)
 	if err != nil {
-		logger.LogError(err)
+		slog.Error(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -106,14 +107,14 @@ func DownloadUserFile(w http.ResponseWriter, r *http.Request) {
 	version := r.URL.Query().Get("version")
 	if userFileID == "" {
 		err := errors.New("no userfileid in the request url query")
-		logger.LogError(err)
+		slog.Error(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	fileStream, userFile, err := filesource.Download(userFileID, session)
 	if err != nil {
 		err := errors.New("unable to load file:" + err.Error())
-		logger.LogError(err)
+		slog.Error(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

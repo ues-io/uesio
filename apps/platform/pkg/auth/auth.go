@@ -3,6 +3,7 @@ package auth
 import (
 	"errors"
 	"fmt"
+	"log/slog"
 	"os"
 	"strings"
 
@@ -12,7 +13,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
@@ -281,7 +281,7 @@ func GetLoginMethod(federationID string, authSourceID string, session *sess.Sess
 	if err != nil {
 		if _, ok := err.(*datasource.RecordNotFoundError); ok {
 			// User not found. No error though.
-			logger.Log("Could not find login method for federationID: "+federationID+":"+authSourceID, logger.INFO)
+			slog.With("federationId", federationID, "authSourceId", authSourceID).Info("Could not find login method")
 			return nil, nil
 		}
 		return nil, err
