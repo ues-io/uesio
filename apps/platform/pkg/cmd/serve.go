@@ -101,6 +101,7 @@ func serve(cmd *cobra.Command, args []string) {
 	workspacePath := fmt.Sprintf("/workspace/%s/{workspace}", appParam)
 	wr := r.PathPrefix(workspacePath).Subrouter()
 	wr.Use(
+		middleware.AttachRequestToContext,
 		middleware.Authenticate,
 		middleware.LogRequestHandler,
 		middleware.AuthenticateWorkspace,
@@ -110,6 +111,7 @@ func serve(cmd *cobra.Command, args []string) {
 	versionPath := fmt.Sprintf("/version/%s/%s", appParam, versionParam)
 	vr := r.PathPrefix(versionPath).Subrouter()
 	vr.Use(
+		middleware.AttachRequestToContext,
 		middleware.Authenticate,
 		middleware.LogRequestHandler,
 		middleware.AuthenticateVersion,
@@ -119,6 +121,7 @@ func serve(cmd *cobra.Command, args []string) {
 	versionCompatPath := fmt.Sprintf("/version/%s/%s/%s", appParam, nsParam, versionParam)
 	vr_compat := r.PathPrefix(versionCompatPath).Subrouter()
 	vr_compat.Use(
+		middleware.AttachRequestToContext,
 		middleware.Authenticate,
 		middleware.LogRequestHandler,
 		middleware.AuthenticateVersion,
@@ -128,6 +131,7 @@ func serve(cmd *cobra.Command, args []string) {
 	siteAdminPath := fmt.Sprintf("/siteadmin/%s/{site}", appParam)
 	sa := r.PathPrefix(siteAdminPath).Subrouter()
 	sa.Use(
+		middleware.AttachRequestToContext,
 		middleware.Authenticate,
 		middleware.LogRequestHandler,
 		middleware.AuthenticateSiteAdmin,
@@ -136,6 +140,7 @@ func serve(cmd *cobra.Command, args []string) {
 	// The site router
 	sr := r.PathPrefix("/site").Subrouter()
 	sr.Use(
+		middleware.AttachRequestToContext,
 		middleware.Authenticate,
 		middleware.LogRequestHandler,
 	)
@@ -143,6 +148,7 @@ func serve(cmd *cobra.Command, args []string) {
 	// The local router
 	lr := r.NewRoute().Subrouter()
 	lr.Use(
+		middleware.AttachRequestToContext,
 		middleware.Authenticate,
 		middleware.LogRequestHandler,
 	)
