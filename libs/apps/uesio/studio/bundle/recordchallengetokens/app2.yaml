@@ -1,0 +1,6 @@
+name: app2
+collection: uesio/studio.app
+token: "${uesio/core.uniquekey}"
+useraccesstoken: "uesio.installed"
+access: read
+public: true

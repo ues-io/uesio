@@ -4,17 +4,17 @@ uniqueKey:
 nameField: uesio/studio.fullname
 access: "protected"
 recordChallengeTokens:
-  - token: "${uesio/core.id}"
-    userAccessToken: "uesio/studio.teammember"
-    access: readwrite
-  - token: "${uesio/core.uniquekey}"
-    userAccessToken: "uesio.installed"
-    access: read
-  - token: "uesio/studio.workspace_admin"
-    userAccessToken: "uesio.namedpermission"
-    access: read
-    conditions:
-      - field: uesio/studio.public
-        value: true
+  # - token: "${uesio/core.id}"
+  #   userAccessToken: "uesio/studio.teammember"
+  #   access: readwrite
+  # - token: "${uesio/core.uniquekey}"
+  #   userAccessToken: "uesio.installed"
+  #   access: read
+  # - token: "uesio/studio.workspace_admin"
+  #   userAccessToken: "uesio.namedpermission"
+  #   access: read
+  #   conditions:
+  #     - field: uesio/studio.public
+  #       value: true
 label: app
 pluralLabel: apps

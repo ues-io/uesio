@@ -1,0 +1,9 @@
+name: app3
+collection: uesio/studio.app
+token: "uesio/studio.workspace_admin"
+useraccesstoken: "uesio.namedpermission"
+access: read
+conditions:
+  - field: uesio/studio.public
+    value: true
+public: true

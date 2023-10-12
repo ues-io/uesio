@@ -320,6 +320,11 @@ func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *
 			return err
 		}
 
+		err = LoadRecordChallengeTokens(metadata, session, connection)
+		if err != nil {
+			return err
+		}
+
 		if metadata.IsDynamic() || mr.Options.LoadAllFields {
 			err = LoadAllFieldsMetadata(collectionKey, metadata, session, connection)
 			if err != nil {

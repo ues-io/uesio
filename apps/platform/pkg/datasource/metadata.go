@@ -14,26 +14,26 @@ func GetCollectionMetadata(e *meta.Collection) *adapt.CollectionMetadata {
 	fieldMetadata := map[string]*adapt.FieldMetadata{}
 
 	return &adapt.CollectionMetadata{
-		Name:                  e.Name,
-		Namespace:             e.Namespace,
-		Type:                  e.Type,
-		NameField:             GetNameField(e),
-		UniqueKey:             e.UniqueKeyFields,
-		Createable:            !e.ReadOnly,
-		Accessible:            true,
-		Updateable:            !e.ReadOnly,
-		Deleteable:            !e.ReadOnly,
-		Fields:                fieldMetadata,
-		Access:                e.Access,
-		AccessField:           e.AccessField,
-		RecordChallengeTokens: e.RecordChallengeTokens,
-		TableName:             e.TableName,
-		Public:                e.Public,
-		Label:                 e.Label,
-		PluralLabel:           e.PluralLabel,
-		Integration:           e.IntegrationRef,
-		LoadBot:               e.LoadBot,
-		SaveBot:               e.SaveBot,
+		Name:        e.Name,
+		Namespace:   e.Namespace,
+		Type:        e.Type,
+		NameField:   GetNameField(e),
+		UniqueKey:   e.UniqueKeyFields,
+		Createable:  !e.ReadOnly,
+		Accessible:  true,
+		Updateable:  !e.ReadOnly,
+		Deleteable:  !e.ReadOnly,
+		Fields:      fieldMetadata,
+		Access:      e.Access,
+		AccessField: e.AccessField,
+		//RecordChallengeTokens: GetRecordChallengeTokens(e), //TO-DO this in a later stage
+		TableName:   e.TableName,
+		Public:      e.Public,
+		Label:       e.Label,
+		PluralLabel: e.PluralLabel,
+		Integration: e.IntegrationRef,
+		LoadBot:     e.LoadBot,
+		SaveBot:     e.SaveBot,
 	}
 }
 
@@ -316,5 +316,21 @@ func LoadSelectListMetadata(key string, metadataCache *adapt.MetadataCache, sess
 
 	fieldMetadata.SelectListMetadata = selectListMetadata
 
+	return nil
+}
+
+func LoadRecordChallengeTokens(c *adapt.CollectionMetadata, session *sess.Session, connection adapt.Connection) error {
+	var recordchallengetokens meta.RecordChallengeTokenCollection
+	err := bundle.LoadAllFromAny(&recordchallengetokens, meta.BundleConditions{
+		"uesio/studio.collection": c.GetKey(),
+	}, session, connection)
+	if err != nil {
+		return nil
+	}
+	if recordchallengetokens.Len() > 0 {
+		for _, rct := range recordchallengetokens {
+			c.RecordChallengeTokens = append(c.RecordChallengeTokens, rct)
+		}
+	}
 	return nil
 }

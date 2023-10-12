@@ -1,0 +1,9 @@
+name: bundlelisting
+collection: uesio/studio.bundlelisting
+token: "uesio/studio.workspace_admin"
+useraccesstoken: "uesio.namedpermission"
+access: read
+conditions:
+  - field: uesio/studio.status
+    value: PUBLISHED
+public: true
