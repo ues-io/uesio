@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"fmt"
 	"log/slog"
 
 	"github.com/icza/session"
@@ -32,7 +33,7 @@ func (s *RedisSessionStore) Get(id string) session.Session {
 // for when the server is restarted
 func (s *RedisSessionStore) Add(sess session.Session) {
 	if err := s.cacheManager.Set(sess.ID(), sess); err != nil {
-		slog.Error("error adding session to redis: %s", err.Error())
+		slog.Error(fmt.Sprintf("error adding session to redis: %s", err.Error()))
 	}
 }
 
@@ -40,7 +41,7 @@ func (s *RedisSessionStore) Add(sess session.Session) {
 // Will remove it from both the memory store and the FS
 func (s *RedisSessionStore) Remove(sess session.Session) {
 	if err := s.cacheManager.Del(sess.ID()); err != nil {
-		slog.Error("error removing Redis session: %s", err.Error())
+		slog.Error(fmt.Sprintf("error removing Redis session: %s", err.Error()))
 	}
 }
 

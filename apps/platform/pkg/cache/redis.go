@@ -84,7 +84,7 @@ func (r RedisCache[T]) WithInitializer(initializer func() T) RedisCache[T] {
 func NewRedisCache[T any](namespace string) *RedisCache[T] {
 	_, exists := existingNamespaces[namespace]
 	if exists {
-		slog.Error("cannot create a cache for namespace %s, one already exists", namespace)
+		slog.Error(fmt.Sprintf("cannot create a cache for namespace %s, one already exists", namespace))
 		return nil
 	}
 	existingNamespaces[namespace] = true

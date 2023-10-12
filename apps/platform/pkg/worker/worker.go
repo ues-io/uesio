@@ -48,10 +48,10 @@ func ScheduleJobs() {
 	// Load all jobs
 	for i, job := range jobs {
 		schedule := job.Schedule()
-		slog.Info("Scheduling job " + job.Name() + " with schedule: " + schedule)
+		slog.Info(fmt.Sprintf("Scheduling job %s with schedule: %s", job.Name(), schedule))
 		entryId, err := s.AddFunc(job.Schedule(), wrapJob(job))
 		if err != nil {
-			slog.Error("Failed to schedule job %s, reason: %s", job.Name(), err.Error())
+			slog.Error(fmt.Sprintf("Failed to schedule job %s, reason: %s", job.Name(), err.Error()))
 		} else {
 			jobEntries[i] = entryId
 		}
@@ -88,7 +88,7 @@ func wrapJob(job Job) func() {
 	return func() {
 		jobErr := job.Run()
 		if jobErr != nil {
-			slog.Error("%s job failed reason: %s", job.Name(), jobErr.Error())
+			slog.Error(fmt.Sprintf("%s job failed reason: %s", job.Name(), jobErr.Error()))
 		}
 	}
 }

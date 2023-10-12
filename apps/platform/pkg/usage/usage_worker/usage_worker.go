@@ -117,7 +117,7 @@ func UsageWorker() error {
 			_, err = conn.Do("SADD", redis.Args{}.Add(usage_common.RedisKeysSetName).AddFlat(keys))
 			return errors.New("Failed to update usage events: " + err.Error())
 		} else {
-			slog.Info("Successfully processed %d usage events", len(changes))
+			slog.Info(fmt.Sprintf("Successfully processed %d usage events", len(changes)))
 		}
 	}
 
