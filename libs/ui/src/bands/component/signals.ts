@@ -51,7 +51,11 @@ const getComponentSignalDefinition = () => ({
 			throw new Error("No component signal selected")
 		}
 
-		const handler = getSignal(componentType, componentSignal)
+		const handler = getSignal(
+			`${context.merge(componentType)}`,
+			`${context.merge(componentSignal)}`
+		)
+
 		if (!handler) {
 			throw new Error(
 				`Missing handler for component signal. "${componentType}" has no signal "${componentSignal}"`

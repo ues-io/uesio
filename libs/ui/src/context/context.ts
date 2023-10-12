@@ -22,6 +22,7 @@ import { MetadataKey } from "../metadata/types"
 import { SiteState } from "../bands/site"
 import { handlers, MergeType } from "./merge"
 import { getCollection } from "../bands/collection/selectors"
+import { DefinitionList } from "../definition/definition"
 
 const ERROR = "ERROR",
 	COMPONENT = "COMPONENT",
@@ -627,7 +628,8 @@ class Context {
 		return result
 	}
 
-	mergeDeep = (value: DeepMergeable) => {
+	mergeDeep<T>(value: T): T
+	mergeDeep(value: DeepMergeable) {
 		if (!value) return value
 		if (Array.isArray(value)) {
 			return this.mergeList(value)
@@ -638,8 +640,8 @@ class Context {
 		return this.merge(value)
 	}
 
-	mergeList = (list: DeepMergeable[] | undefined): unknown[] | undefined => {
-		if (!list) return undefined
+	mergeList<T extends Mergeable[] | undefined>(list: T): T
+	mergeList(list: Mergeable[]) {
 		return list.map((item) => this.mergeDeep(item))
 	}
 
