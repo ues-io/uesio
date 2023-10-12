@@ -1,9 +1,7 @@
 name: user
-collection: uesio/core.user
 token: "${uesio/core.id}"
 useraccesstoken: "uesio/core.orguser"
 access: readwrite
 conditions:
   - field: uesio/core.type
     value: ORG
-public: true

@@ -1,6 +1,4 @@
 name: app1
-collection: uesio/studio.app
 token: "${uesio/core.id}"
 useraccesstoken: "uesio/studio.teammember"
 access: readwrite
-public: true

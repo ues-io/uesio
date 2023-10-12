@@ -2,28 +2,28 @@ package meta
 
 import (
 	"errors"
+	"path/filepath"
 )
 
-func NewRecordChallengeToken(key string) (*RecordChallengeToken, error) {
+func NewRecordChallengeToken(collectionKey, key string) (*RecordChallengeToken, error) {
 	namespace, name, err := ParseKey(key)
 	if err != nil {
-		return nil, errors.New("Bad Key for Record Challeng Token: " + key)
+		return nil, errors.New("Bad Key for Record Challeng Token: " + collectionKey + " : " + key)
 	}
-	return NewBaseRecordChallengeToken(namespace, name), nil
+	return NewBaseRecordChallengeToken(collectionKey, namespace, name), nil
 }
 
-func NewBaseRecordChallengeToken(namespace, name string) *RecordChallengeToken {
-	return &RecordChallengeToken{BundleableBase: NewBase(namespace, name)}
+func NewBaseRecordChallengeToken(collectionKey, namespace, name string) *RecordChallengeToken {
+	return &RecordChallengeToken{BundleableBase: NewBase(namespace, name), CollectionRef: collectionKey}
 }
 
 type RecordChallengeToken struct {
-	BuiltIn        `yaml:",inline"`
-	BundleableBase `yaml:",inline"`
-	//Type            string            `yaml:"type" json:"uesio/studio.type"` //TO-DO is this even used?
-	Collection      string            `yaml:"collection" json:"uesio/studio.collection"`
+	BuiltIn         `yaml:",inline"`
+	BundleableBase  `yaml:",inline"`
+	CollectionRef   string            `yaml:"-" json:"uesio/studio.collection"`
 	Conditions      []*TokenCondition `yaml:"conditions"  json:"uesio/studio.conditions"`
 	Token           string            `yaml:"token"  json:"uesio/studio.token"`
-	UserAccessToken string            `yaml:"useraccesstoken" json:"uesio/studio.useraccesstoken"` //TO-DO userAccessToken lower or upper
+	UserAccessToken string            `yaml:"useraccesstoken" json:"uesio/studio.useraccesstoken"`
 	Access          string            `yaml:"access" json:"uesio/studio.access"`
 }
 
@@ -33,6 +33,12 @@ func (rct *RecordChallengeToken) GetCollectionName() string {
 
 func (rct *RecordChallengeToken) GetBundleFolderName() string {
 	return RECORDCHALLENGETOKEN_FOLDER_NAME
+}
+
+func (rct *RecordChallengeToken) GetPath() string {
+	collectionNamespace, collectionName, _ := ParseKey(rct.CollectionRef)
+	nsUser, appName, _ := ParseNamespace(collectionNamespace)
+	return filepath.Join(nsUser, appName, collectionName, rct.Name) + ".yaml"
 }
 
 func (rct *RecordChallengeToken) SetField(fieldName string, value interface{}) error {

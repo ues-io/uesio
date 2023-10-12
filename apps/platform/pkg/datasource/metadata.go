@@ -224,6 +224,18 @@ func LoadCollectionMetadata(key string, metadataCache *adapt.MetadataCache, sess
 	}
 
 	collectionMetadata = GetCollectionMetadata(collection)
+
+	var recordchallengetokens meta.RecordChallengeTokenCollection
+	err = bundle.LoadAllFromAny(&recordchallengetokens, meta.BundleConditions{"uesio/studio.collection": collectionMetadata.GetKey()}, session, connection)
+	if err != nil {
+		return nil, err
+	}
+	if recordchallengetokens.Len() > 0 {
+		for _, rct := range recordchallengetokens {
+			collectionMetadata.RecordChallengeTokens = append(collectionMetadata.RecordChallengeTokens, rct)
+		}
+	}
+
 	metadataCache.AddCollection(key, collectionMetadata)
 
 	return collectionMetadata, nil
@@ -316,21 +328,5 @@ func LoadSelectListMetadata(key string, metadataCache *adapt.MetadataCache, sess
 
 	fieldMetadata.SelectListMetadata = selectListMetadata
 
-	return nil
-}
-
-func LoadRecordChallengeTokens(c *adapt.CollectionMetadata, session *sess.Session, connection adapt.Connection) error {
-	var recordchallengetokens meta.RecordChallengeTokenCollection
-	err := bundle.LoadAllFromAny(&recordchallengetokens, meta.BundleConditions{
-		"uesio/studio.collection": c.GetKey(),
-	}, session, connection)
-	if err != nil {
-		return nil
-	}
-	if recordchallengetokens.Len() > 0 {
-		for _, rct := range recordchallengetokens {
-			c.RecordChallengeTokens = append(c.RecordChallengeTokens, rct)
-		}
-	}
 	return nil
 }
