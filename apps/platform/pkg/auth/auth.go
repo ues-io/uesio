@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -261,9 +262,9 @@ func GetSignupMethod(key string, session *sess.Session) (*meta.SignupMethod, err
 
 func GetLoginMethod(federationID string, authSourceID string, session *sess.Session) (*meta.LoginMethod, error) {
 
-	var loginmethod meta.LoginMethod
+	var loginMethod meta.LoginMethod
 	err := datasource.PlatformLoadOne(
-		&loginmethod,
+		&loginMethod,
 		&datasource.PlatformLoadOptions{
 			Conditions: []adapt.LoadRequestCondition{
 				{
@@ -280,14 +281,18 @@ func GetLoginMethod(federationID string, authSourceID string, session *sess.Sess
 	)
 	if err != nil {
 		if _, ok := err.(*datasource.RecordNotFoundError); ok {
-			// User not found. No error though.
-			slog.With("federationId", federationID, "authSourceId", authSourceID).Info("Could not find login method")
+			// Login method not found. Log as a warning.
+			slog.LogAttrs(context.Background(),
+				slog.LevelWarn,
+				"Could not find login method",
+				slog.String("federationId", federationID),
+				slog.String("authSourceId", authSourceID))
 			return nil, nil
 		}
 		return nil, err
 	}
 
-	return &loginmethod, nil
+	return &loginMethod, nil
 }
 
 func CreateLoginMethod(loginMethod *meta.LoginMethod, connection adapt.Connection, session *sess.Session) error {
