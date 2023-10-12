@@ -23,7 +23,7 @@ func (h *RequestContextInjector) Handle(ctx context.Context, r slog.Record) erro
 		site := session.GetSite()
 		r.AddAttrs(
 			slog.String("site", site.Name),
-			slog.String("app", site.App.FullName),
+			slog.String("app", site.GetAppFullName()),
 			slog.String("user", session.GetContextUser().Username))
 	}
 	if request != nil {
@@ -31,7 +31,7 @@ func (h *RequestContextInjector) Handle(ctx context.Context, r slog.Record) erro
 			slog.Group("request",
 				slog.String("method", request.Method),
 				slog.String("path", request.URL.Path),
-				slog.String("referer", request.Header.Get("Referer")),
+				//slog.String("referer", request.Header.Get("Referer")),
 				slog.String("userAgent", request.Header.Get("User-Agent")),
 				slog.String("ipAddress", getRemoteIp(request))))
 	}

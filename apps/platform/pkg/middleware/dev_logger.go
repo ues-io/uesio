@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"log/slog"
+	"time"
 
 	"github.com/fatih/color"
 )
@@ -21,44 +22,70 @@ type DevLogHandler struct {
 func (h *DevLogHandler) Handle(ctx context.Context, r slog.Record) error {
 	level := r.Level.String() + ":"
 
+	color.NoColor = false
+
+	var colorFunc func(string, ...interface{}) string
+
 	switch r.Level {
-	case slog.LevelDebug:
-		level = color.MagentaString(level)
 	case slog.LevelInfo:
-		level = color.BlueString(level)
+		colorFunc = color.BlueString
 	case slog.LevelWarn:
-		level = color.YellowString(level)
+		colorFunc = color.YellowString
 	case slog.LevelError:
-		level = color.RedString(level)
+		colorFunc = color.RedString
+	default:
+		colorFunc = color.MagentaString
 	}
+	level = colorFunc(level)
+	msg := colorFunc(r.Message)
 
-	fields := make(map[string]interface{}, r.NumAttrs())
+	fields := map[string]interface{}{}
+
 	r.Attrs(func(a slog.Attr) bool {
-		fields[a.Key] = a.Value.Any()
-
+		// Assuming a single level here
+		if a.Value.Kind() == slog.KindGroup {
+			groupVal := map[string]interface{}{}
+			for _, v := range a.Value.Group() {
+				groupVal[v.Key] = v.Value.Any()
+			}
+			fields[a.Key] = groupVal
+		} else {
+			fields[a.Key] = a.Value.Any()
+		}
 		return true
 	})
 
-	b, err := json.MarshalIndent(fields, "", "  ")
-	if err != nil {
-		return err
+	timeStr := r.Time.Format("[15:05:05.000]")
+	var siteKey, user string
+	if fields["app"] != nil {
+		app := fields["app"].(string)
+		site := fields["site"].(string)
+		user = color.MagentaString(fields["user"].(string))
+		siteKey = color.CyanString(fmt.Sprintf("%s:%s", site, app))
+		delete(fields, "user")
+		delete(fields, "app")
+		delete(fields, "site")
 	}
 
-	timeStr := r.Time.Format("[15:05:05.000]")
-	msg := color.CyanString(r.Message)
-
-	h.l.Println(timeStr, level, msg, color.WhiteString(string(b)))
-	/*
-
-		size := color.BlueString(byteCountDecimal(m.Written))
-		duration := m.Duration.Round(time.Millisecond)
-		timestamp := time.Now().Format(time.Kitchen)
-		code := getColoredResponseCode(m.Code)
-		site := color.CyanString(session.GetSite().GetFullName())
-		user := color.MagentaString(session.GetContextUser().UniqueKey)
-		log.Printf("[%v] %-4s %-32s %s %5s %16s %s %s\n", timestamp, method, uri, code, duration, size, site, user)
-	*/
-
+	// If this is the "per-request" log, use a specific formatter
+	if fields["stats"] != nil && fields["request"] != nil {
+		requestObject := fields["request"].(map[string]interface{})
+		statsObject := fields["stats"].(map[string]interface{})
+		size := color.BlueString(byteCountDecimal(statsObject["size"].(int64)))
+		duration := statsObject["duration"].(time.Duration).Round(time.Millisecond)
+		path := colorFunc(requestObject["path"].(string))
+		method := colorFunc(requestObject["method"].(string))
+		code := colorFunc(fmt.Sprintf("%d", int(statsObject["code"].(int64))))
+		h.l.Printf("%v %-4s %-32s %s %5s %16s %s %s\n", timeStr, method, path, code, duration, size, siteKey, user)
+	} else {
+		var fieldsString string
+		if len(fields) > 0 {
+			if fieldsBytes, err := json.MarshalIndent(fields, "", "  "); err == nil && len(fieldsBytes) > 0 {
+				fieldsString = color.HiMagentaString(string(fieldsBytes))
+			}
+		}
+		h.l.Printf("%v %-4s %s %s %s\n", timeStr, msg, siteKey, user, fieldsString)
+	}
 	return nil
 }
 
@@ -67,7 +94,7 @@ func NewDevLogHandler(
 	opts *slog.HandlerOptions,
 ) *DevLogHandler {
 	return &DevLogHandler{
-		Handler: slog.NewJSONHandler(out, opts),
+		Handler: slog.NewTextHandler(out, opts),
 		l:       log.New(out, "", 0),
 	}
 }
@@ -83,11 +110,4 @@ func byteCountDecimal(b int64) string {
 		exp++
 	}
 	return fmt.Sprintf("%.1f%cB", float64(b)/float64(div), "kMGTPE"[exp])
-}
-
-func getColoredResponseCode(code int) string {
-	if code == 200 {
-		return color.GreenString("%d", code)
-	}
-	return color.RedString("%d", code)
 }
