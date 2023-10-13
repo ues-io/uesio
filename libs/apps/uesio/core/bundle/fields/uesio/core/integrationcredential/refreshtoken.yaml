@@ -1,0 +1,4 @@
+name: refreshtoken
+type: "TEXT"
+label: Refresh Token
+# encrypted: true
