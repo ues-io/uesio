@@ -15,7 +15,7 @@ func NewLoadBotAPI(bot *meta.Bot, session *sess.Session, connection adapt.Connec
 		LoadOp:                loadOp,
 		connection:            connection,
 		LogApi:                NewBotLogAPI(bot),
-		Http:                  NewBotHttpAPI(bot, session),
+		Http:                  NewBotHttpAPI(bot, session, integrationConnection),
 		integrationConnection: integrationConnection,
 	}
 }

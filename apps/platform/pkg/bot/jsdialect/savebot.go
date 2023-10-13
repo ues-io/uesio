@@ -14,7 +14,7 @@ func NewSaveBotAPI(bot *meta.Bot, session *sess.Session, connection adapt.Connec
 		connection: connection,
 		Options:    &SaveOptionsAPI{Upsert: saveOp.Options != nil && saveOp.Options.Upsert},
 
-		Http:                  NewBotHttpAPI(bot, session),
+		Http:                  NewBotHttpAPI(bot, session, integrationConnection),
 		IntegrationConnection: integrationConnection,
 		Deletes:               &DeletesAPI{saveOp},
 		Inserts:               &InsertsAPI{saveOp},

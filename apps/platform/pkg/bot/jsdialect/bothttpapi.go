@@ -2,12 +2,16 @@ package jsdialect
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"io"
 	"log/slog"
 	"net/http"
 	"strings"
+	"time"
+
+	"golang.org/x/oauth2"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	httpClient "github.com/thecloudmasters/uesio/pkg/http"
@@ -17,14 +21,16 @@ import (
 )
 
 type BotHttpAPI struct {
-	bot     *meta.Bot
-	session *sess.Session
+	bot         *meta.Bot
+	session     *sess.Session
+	integration adapt.IntegrationConnection
 }
 
-func NewBotHttpAPI(bot *meta.Bot, session *sess.Session) *BotHttpAPI {
+func NewBotHttpAPI(bot *meta.Bot, session *sess.Session, integration adapt.IntegrationConnection) *BotHttpAPI {
 	return &BotHttpAPI{
-		bot:     bot,
-		session: session,
+		bot:         bot,
+		session:     session,
+		integration: integration,
 	}
 }
 
@@ -128,14 +134,14 @@ func (api *BotHttpAPI) Request(req *BotHttpRequest) *BotHttpResponse {
 	}
 
 	// Apply authentication
-	if req.Auth != nil {
-		err = authenticate(httpReq, req.Auth)
-		if err != nil {
-			return Unauthorized("unable to authenticate: " + err.Error())
-		}
+	client, err := authenticateRequest(httpReq, req)
+	if err != nil {
+		// TODO: figure out what kind of error it was
+		//return Unauthorized("unable to authenticate: " + err.Error())
+		return ServerError(err)
 	}
 
-	httpResp, err := httpClient.Get().Do(httpReq)
+	httpResp, err := client.Do(httpReq)
 	if err != nil {
 		return ServerError(err)
 	}
@@ -168,8 +174,10 @@ func (api *BotHttpAPI) Request(req *BotHttpRequest) *BotHttpResponse {
 	}
 }
 
-// authenticate the provided http request using a bot http auth spec
-func authenticate(req *http.Request, auth *BotHttpAuth) error {
+// authenticateRequest performs any authentication needed for the request, mutating it as necessary,
+// and returns an HTTP client which can be ued for perform the request
+func authenticateRequest(req *http.Request, auth *BotHttpAuth) (*http.Client, error) {
+	client := httpClient.Get()
 	switch auth.Type {
 	case "API_KEY":
 		// TODO: Determine where to put the key (header, query param, etc.)
@@ -184,6 +192,47 @@ func authenticate(req *http.Request, auth *BotHttpAuth) error {
 
 		break
 	}
+	return client, nil
+}
+
+func getOAuth2Client(client *http.Client, credentials *adapt.Credentials) (*http.Client, error) {
+	ctx := context.Background()
+
+	clientId, err := credentials.GetRequiredEntry("clientId")
+	if err != nil {
+		return nil, err
+	}
+	clientSecret, err := credentials.GetRequiredEntry("clientSecret")
+	if err != nil {
+		return nil, err
+	}
+	tokenURL, err := credentials.GetRequiredEntry("tokenUrl")
+	if err != nil {
+		return nil, err
+	}
+
+	conf := &oauth2.Config{
+		ClientID:     clientId,
+		ClientSecret: clientSecret,
+		Endpoint: oauth2.Endpoint{
+			TokenURL: tokenURL,
+		},
+	}
+
+	// Fetch OAuth credentials from the DB Integration Collection record
+	// integrationCredential := getIntegrationCredential(userId, integrationKey)
+	integrationCredential := adapt.Item{}
+	accessToken, _ := integrationCredential.GetFieldAsString("uesio/studio.access_token")
+	refreshToken, _ := integrationCredential.GetFieldAsString("uesio/studio.refresh_token")
+	//_, _ := integrationCredential.GetField("uesio/studio.accesstokenexpiration")
+
+	tok := &oauth2.Token{
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+		Expiry:       time.Time{}, // todo pass in the expiry
+	}
+
+	return conf.Client(ctx, tok), nil
 }
 
 func getBotHeaders(header http.Header) map[string]string {
