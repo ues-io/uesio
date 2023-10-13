@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 	httpClient "github.com/thecloudmasters/uesio/pkg/http"
 	"github.com/thecloudmasters/uesio/pkg/integ/web"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -27,11 +28,17 @@ func NewBotHttpAPI(bot *meta.Bot, session *sess.Session) *BotHttpAPI {
 	}
 }
 
+type BotHttpAuth struct {
+	Type        string             `json:"type" bot:"type"`
+	Credentials *adapt.Credentials `json:"credentials" bot:"credentials"`
+}
+
 type BotHttpRequest struct {
 	Headers map[string]string `json:"headers" bot:"headers"`
 	Method  string            `json:"method" bot:"method"`
 	URL     string            `json:"url" bot:"url"`
 	Body    interface{}       `json:"body" bot:"body"`
+	Auth    *BotHttpAuth      `json:"auth" bot:"auth"`
 }
 
 type BotHttpResponse struct {
@@ -39,6 +46,19 @@ type BotHttpResponse struct {
 	Code    int               `json:"code" bot:"code"`
 	Status  string            `json:"status" bot:"status"`
 	Body    interface{}       `json:"body" bot:"body"`
+}
+
+func Unauthorized(message string) *BotHttpResponse {
+	statusText := http.StatusText(http.StatusUnauthorized)
+	return &BotHttpResponse{
+		Code:    http.StatusUnauthorized,
+		Status:  statusText,
+		Headers: map[string]string{},
+		Body: map[string]string{
+			"error":  message,
+			"status": statusText,
+		},
+	}
 }
 
 func BadRequest(message string) *BotHttpResponse {
@@ -107,6 +127,14 @@ func (api *BotHttpAPI) Request(req *BotHttpRequest) *BotHttpResponse {
 		}
 	}
 
+	// Apply authentication
+	if req.Auth != nil {
+		err = authenticate(httpReq, req.Auth)
+		if err != nil {
+			return Unauthorized("unable to authenticate: " + err.Error())
+		}
+	}
+
 	httpResp, err := httpClient.Get().Do(httpReq)
 	if err != nil {
 		return ServerError(err)
@@ -137,6 +165,24 @@ func (api *BotHttpAPI) Request(req *BotHttpRequest) *BotHttpResponse {
 		Code:    httpResp.StatusCode,
 		Status:  httpResp.Status,
 		Body:    parsedBody,
+	}
+}
+
+// authenticate the provided http request using a bot http auth spec
+func authenticate(req *http.Request, auth *BotHttpAuth) error {
+	switch auth.Type {
+	case "API_KEY":
+		// TODO: Determine where to put the key (header, query param, etc.)
+		// and apply this to the request
+		break
+	case "OAUTH2_AUTHORIZATION_CODE":
+		break
+	case "OAUTH2_CLIENT_CREDENTIALS":
+		// TODO: Check for an integration credential record for the "system" user for the tenant,
+		// and if one exists and is unexpired, use this token directly,
+		// otherwise hit the access token endpoint to get a fresh token
+
+		break
 	}
 }
 
