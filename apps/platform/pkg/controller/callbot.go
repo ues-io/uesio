@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"log/slog"
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/bot"
@@ -9,8 +10,8 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 
 	"github.com/gorilla/mux"
+
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 )
 
@@ -23,7 +24,7 @@ func CallListenerBot(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&params)
 	if err != nil {
 		msg := "Invalid request format: " + err.Error()
-		logger.Log(msg, logger.ERROR)
+		slog.Error(msg)
 		http.Error(w, msg, http.StatusBadRequest)
 		return
 	}
@@ -47,7 +48,7 @@ func CallListenerBot(w http.ResponseWriter, r *http.Request) {
 		if statusCode == http.StatusInternalServerError {
 			// Best practice - don't display internal server error details to users
 			errMessage = http.StatusText(http.StatusInternalServerError)
-			logger.LogError(err)
+			slog.Error(err.Error())
 		}
 		http.Error(w, errMessage, statusCode)
 		return

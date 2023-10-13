@@ -2,13 +2,13 @@ package invoices
 
 import (
 	"errors"
+	"log/slog"
 	"strings"
 	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
@@ -17,7 +17,7 @@ import (
 
 func InvoicingJob() error {
 
-	logger.Info("Starting Invoicing job...")
+	slog.Info("Starting Invoicing job...")
 
 	session, err := auth.GetStudioSystemSession(nil)
 	if err != nil {
@@ -37,7 +37,7 @@ func InvoicingJob() error {
 		}
 	}
 
-	logger.Info("Invoicing job successfully completed.")
+	slog.Info("Invoicing job successfully completed.")
 
 	return nil
 

@@ -1,8 +1,10 @@
 package auth
 
 import (
+	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 	"os"
 	"strings"
 
@@ -12,7 +14,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
@@ -261,9 +262,9 @@ func GetSignupMethod(key string, session *sess.Session) (*meta.SignupMethod, err
 
 func GetLoginMethod(federationID string, authSourceID string, session *sess.Session) (*meta.LoginMethod, error) {
 
-	var loginmethod meta.LoginMethod
+	var loginMethod meta.LoginMethod
 	err := datasource.PlatformLoadOne(
-		&loginmethod,
+		&loginMethod,
 		&datasource.PlatformLoadOptions{
 			Conditions: []adapt.LoadRequestCondition{
 				{
@@ -280,14 +281,18 @@ func GetLoginMethod(federationID string, authSourceID string, session *sess.Sess
 	)
 	if err != nil {
 		if _, ok := err.(*datasource.RecordNotFoundError); ok {
-			// User not found. No error though.
-			logger.Log("Could not find login method for federationID: "+federationID+":"+authSourceID, logger.INFO)
+			// Login method not found. Log as a warning.
+			slog.LogAttrs(context.Background(),
+				slog.LevelWarn,
+				"Could not find login method",
+				slog.String("federationId", federationID),
+				slog.String("authSourceId", authSourceID))
 			return nil, nil
 		}
 		return nil, err
 	}
 
-	return &loginmethod, nil
+	return &loginMethod, nil
 }
 
 func CreateLoginMethod(loginMethod *meta.LoginMethod, connection adapt.Connection, session *sess.Session) error {

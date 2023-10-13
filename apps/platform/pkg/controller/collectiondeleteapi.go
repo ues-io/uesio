@@ -1,14 +1,15 @@
 package controller
 
 import (
+	"log/slog"
 	"net/http"
 	"net/url"
 	"strings"
 
 	"github.com/gorilla/mux"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 )
 
@@ -107,7 +108,7 @@ func DeleteRecordApi(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		msg := "Error querying collection records to delete: " + err.Error()
-		logger.Log(msg, logger.ERROR)
+		slog.Error(msg)
 		http.Error(w, msg, http.StatusBadRequest)
 		return
 	}
@@ -121,7 +122,7 @@ func DeleteRecordApi(w http.ResponseWriter, r *http.Request) {
 	err = datasource.HandleSaveRequestErrors(saveRequests, err)
 	if err != nil {
 		msg := "Delete failed: " + err.Error()
-		logger.Log(msg, logger.ERROR)
+		slog.Error(msg)
 		http.Error(w, msg, http.StatusBadRequest)
 		return
 	}

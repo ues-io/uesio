@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -13,8 +14,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 	"github.com/thecloudmasters/uesio/pkg/usage"
-
-	"github.com/thecloudmasters/uesio/pkg/logger"
 )
 
 const CacheFor1Year = "private, no-transform, max-age=31536000, s-maxage=31536000"
@@ -24,7 +23,7 @@ func RespondJSON(w http.ResponseWriter, r *http.Request, v interface{}) {
 
 	err := json.NewEncoder(w).Encode(v)
 	if err != nil {
-		logger.LogError(err)
+		slog.Error(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -37,7 +36,7 @@ func respondFile(w http.ResponseWriter, r *http.Request, fileRequest *FileReques
 		resp["message"] = "Resource Not Found"
 		jsonResp, err := json.Marshal(resp)
 		if err != nil {
-			logger.LogError(err)
+			slog.Error(err.Error())
 		}
 		w.Write(jsonResp)
 		return
@@ -59,13 +58,13 @@ func ServeFileContent(file *meta.File, version string, w http.ResponseWriter, r 
 
 	err := bundle.Load(file, session, nil)
 	if err != nil {
-		logger.LogError(err)
+		slog.Error(err.Error())
 		http.Error(w, "Not Found", http.StatusNotFound)
 		return
 	}
 	fileMetadata, stream, err := bundle.GetItemAttachment(file, file.Path, session)
 	if err != nil {
-		logger.LogError(err)
+		slog.Error(err.Error())
 		http.Error(w, "Failed File Download", http.StatusInternalServerError)
 		return
 	}

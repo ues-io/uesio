@@ -3,9 +3,9 @@ package environment
 import (
 	"errors"
 	"log"
+	"log/slog"
 	"os"
 
-	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -48,12 +48,12 @@ var configValues = map[string]string{
 func (cs *ConfigStore) Get(key string, session *sess.Session) (string, error) {
 	value, ok := configValues[key]
 	if !ok {
-		logger.LogError(errors.New("Config Value not found: " + key))
+		slog.Debug("Config Value not found: " + key)
 		return "", nil
 	}
 	return value, nil
 }
 
 func (cs *ConfigStore) Set(key, value string, session *sess.Session) error {
-	return errors.New("You cannot set config values in the environment store")
+	return errors.New("you cannot set config values in the environment store")
 }

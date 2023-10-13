@@ -18,13 +18,16 @@ export type WireSignalTest = {
 	run: () => (wire: PlainWire, context: Context) => void
 }
 
+export const getDefaultContext = (view = "myview") =>
+	newContext().addViewFrame({ view, viewDef: view })
+
 export const testWireSignal = async ({
 	signals,
 	wireId,
 	wireDef,
 	view = "myview",
 	run,
-	context = newContext().addViewFrame({ view, viewDef: view }),
+	context = getDefaultContext(view),
 }: WireSignalTest) => {
 	const store = create({})
 
