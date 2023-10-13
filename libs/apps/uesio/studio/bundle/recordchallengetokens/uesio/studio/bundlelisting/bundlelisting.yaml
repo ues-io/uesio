@@ -6,4 +6,3 @@ access: read
 conditions:
   - field: uesio/studio.status
     value: PUBLISHED
-public: true
