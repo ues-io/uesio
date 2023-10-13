@@ -49,7 +49,7 @@ const TextField: definition.UtilityComponent<TextFieldProps> = (props) => {
 		mode,
 		options,
 		placeholder,
-		readonly,
+		readonly = false,
 		setValue,
 		type = "text",
 		value = "",
@@ -60,14 +60,15 @@ const TextField: definition.UtilityComponent<TextFieldProps> = (props) => {
 		props,
 		"uesio/io.field"
 	)
-	const controlledInputProps = useControlledInput(
-		value as string,
-		setValue,
-		applyChanges
-	)
 
 	const isReadMode = readonly || mode === "READ"
 	const isPassword = type === "password"
+	const controlledInputProps = useControlledInput(
+		value as string,
+		setValue,
+		applyChanges,
+		isReadMode
+	)
 
 	const [useType, setType] = useState(type)
 
