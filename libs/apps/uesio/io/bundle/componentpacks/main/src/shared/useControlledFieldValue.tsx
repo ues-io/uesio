@@ -12,31 +12,30 @@ const useControlledInput = <T extends HTMLInputElement | HTMLTextAreaElement>(
 		setControlledValue(value || "")
 	}, [value])
 	const applyOnBlur = applyChanges === "onBlur"
-
-	return {
-		value: (controlledValue as string) || "",
-		onChange: (e: ChangeEvent<T>) => {
-			if (!readonly) {
-				setControlledValue(e.target.value)
-				!applyOnBlur && setValue?.(e.target.value)
-			}
-		},
-		onBlur: (e: ChangeEvent<T>) =>
-			!readonly &&
-			applyOnBlur &&
-			value !== e.target.value &&
-			setValue?.(e.target.value),
-		onKeyPress: (e: KeyboardEvent<T>) => {
-			if (
-				!readonly &&
-				applyOnBlur &&
-				e.key === "Enter" &&
-				value !== e.currentTarget.value
-			) {
-				setValue?.(e.currentTarget.value)
-			}
-		},
-	}
+	return readonly
+		? {
+				value: (controlledValue as string) || "",
+		  }
+		: {
+				value: (controlledValue as string) || "",
+				onChange: (e: ChangeEvent<T>) => {
+					setControlledValue(e.target.value)
+					!applyOnBlur && setValue?.(e.target.value)
+				},
+				onBlur: (e: ChangeEvent<T>) =>
+					applyOnBlur &&
+					value !== e.target.value &&
+					setValue?.(e.target.value),
+				onKeyPress: (e: KeyboardEvent<T>) => {
+					if (
+						applyOnBlur &&
+						e.key === "Enter" &&
+						value !== e.currentTarget.value
+					) {
+						setValue?.(e.currentTarget.value)
+					}
+				},
+		  }
 }
 
 const useControlledInputNumber = <T extends HTMLInputElement>(

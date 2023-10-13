@@ -49,7 +49,7 @@ const TextField: definition.UtilityComponent<TextFieldProps> = (props) => {
 		mode,
 		options,
 		placeholder,
-		readonly,
+		readonly = false,
 		setValue,
 		type = "text",
 		value = "",
