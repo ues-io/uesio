@@ -6,10 +6,3 @@ label: User
 pluralLabel: Users
 nameField: uesio/core.username
 access: "protected_write"
-# recordChallengeTokens:
-#   - token: "${uesio/core.id}"
-#     userAccessToken: "uesio/core.orguser"
-#     access: readwrite
-#     conditions:
-#       - field: uesio/core.type
-#         value: ORG

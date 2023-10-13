@@ -8,7 +8,6 @@ subfields:
     label: User Reference Field
     metadata:
       type: FIELD
-      # TO-DO
       grouping: ${uesio/studio.collection}
   - name: value
     type: TEXT

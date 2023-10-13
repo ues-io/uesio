@@ -26,7 +26,6 @@ func GetCollectionMetadata(e *meta.Collection) *adapt.CollectionMetadata {
 		Fields:      fieldMetadata,
 		Access:      e.Access,
 		AccessField: e.AccessField,
-		//RecordChallengeTokens: GetRecordChallengeTokens(e), //TO-DO this in a later stage
 		TableName:   e.TableName,
 		Public:      e.Public,
 		Label:       e.Label,
