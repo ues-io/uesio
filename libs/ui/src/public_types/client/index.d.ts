@@ -198,6 +198,8 @@ export type METADATA = {
 	COMPONENT: "components"
 	FILE: "files"
 	LABEL: "labels"
+	USERACCESSTOKEN: "useraccesstokens"
+	RECORDCHALLENGETOKEN: "recordchallengetokens"
 }
 export type MetadataType = keyof METADATA
 type MetadataKey = `${string}/${string}.${string}`
