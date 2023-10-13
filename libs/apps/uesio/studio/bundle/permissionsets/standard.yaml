@@ -36,6 +36,7 @@ views:
   uesio/studio.configvalue: true
   uesio/studio.configvalues: true
   uesio/studio.credential: true
+  uesio/studio.credentialentrieseditor: true
   uesio/studio.credentials: true
   uesio/studio.domains: true
   uesio/studio.field: true

@@ -274,7 +274,7 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 				)
 			break
 		case "MAP":
-			mapFieldOptions = map as MapFieldOptions
+			mapFieldOptions = (map || {}) as MapFieldOptions
 			content =
 				displayAs === "DECK" ? (
 					<MapFieldDeck {...common} options={map as MapDeckOptions} />
@@ -287,8 +287,7 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 								keyField: mapFieldOptions.keyField || {
 									name: "key",
 									label:
-										(map as MapFieldOptions)
-											?.keyFieldLabel || "Key",
+										mapFieldOptions.keyFieldLabel || "Key",
 									type: "TEXT",
 									namespace: "",
 									accessible: true,
@@ -298,8 +297,8 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 								valueField: mapFieldOptions.valueField || {
 									name: "value",
 									label:
-										(map as MapFieldOptions)
-											?.valueFieldLabel || "Value",
+										mapFieldOptions.valueFieldLabel ||
+										"Value",
 									type: subType,
 									selectlist:
 										fieldMetadata.getSelectMetadata(),
