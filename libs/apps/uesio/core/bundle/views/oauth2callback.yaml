@@ -1,0 +1,14 @@
+name: oauth2callback
+public: true
+definition:
+  events:
+    onload:
+      - signal: oauth2/CALLBACK
+        state: $Param{state}
+  components:
+    - uesio/io.text:
+        text: Authentication successful! This window should close on its own.
+  params:
+    state:
+      type: TEXT
+      required: true

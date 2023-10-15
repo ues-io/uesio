@@ -22,6 +22,7 @@ bots:
   uesio/studio.suggestdata: true
   uesio/studio.suggestfields: true
 views:
+  uesio/core.oauth2callback: true
   uesio/studio.bundlestore: true
   uesio/studio.app: true
   uesio/studio.appedit: true
@@ -114,6 +115,7 @@ views:
   uesio/studio.useraccesstokens: true
   uesio/studio.useraccesstoken: true
 routes:
+  uesio/core.oauth2callback: true
   uesio/studio.appsettings: true
   uesio/studio.authsources: true
   uesio/studio.authsource: true
@@ -207,6 +209,7 @@ collections:
   uesio/studio.recentdoc: true
   uesio/studio.authsource: true
   uesio/studio.signupmethod: true
+  uesio/core.integrationcredential: true
   uesio/core.signupmethod: true
   uesio/studio.app: true
   uesio/studio.bot: true

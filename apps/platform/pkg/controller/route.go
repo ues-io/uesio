@@ -87,7 +87,7 @@ func Route(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleApiErrorRoute(w http.ResponseWriter, r *http.Request, path string, session *sess.Session, err error) {
-	routingMergeData, err := getRouteAPIResult(getErrorRoute(path, err.Error()), sess.GetAnonSession(session.GetSite()))
+	routingMergeData, err := getRouteAPIResult(GetErrorRoute(path, err.Error()), sess.GetAnonSession(session.GetSite()))
 	if err != nil {
 		slog.Error(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -145,7 +145,7 @@ func getNotFoundRoute(path string) *meta.Route {
 	}
 }
 
-func getErrorRoute(path string, err string) *meta.Route {
+func GetErrorRoute(path string, err string) *meta.Route {
 	params := map[string]string{"error": err}
 	return &meta.Route{
 		ViewRef: "uesio/core.error",
@@ -172,7 +172,7 @@ func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Sess
 	if redirect {
 		route = getNotFoundRoute(path)
 	} else {
-		route = getErrorRoute(path, err.Error())
+		route = GetErrorRoute(path, err.Error())
 	}
 
 	// We can upgrade to the site session so we can be sure to have access to the not found route
