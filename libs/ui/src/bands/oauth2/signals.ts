@@ -11,6 +11,11 @@ interface OAuth2CallbackSignal extends SignalDefinition {
 	state: string
 }
 
+export type OAuth2RedirectMetadataResponse = {
+	authUrl: string
+	state: string
+}
+
 type AuthorizationWindowDisplay = "popup" | "tab"
 
 interface OAuth2AuthorizeSignal extends SignalDefinition {
@@ -41,22 +46,23 @@ const signals: Record<string, SignalDescriptor> = {
 			context: Context
 		) => {
 			const { integration, timeout = 90 } = signalInvocation
-			let authorizeMetadataResponse
+			let authorizeMetadataResponse: OAuth2RedirectMetadataResponse
 			try {
 				authorizeMetadataResponse =
-					await platform.getOAuth2AuthCodeMetadata(context, {
-						integration,
-					})
+					await platform.getOAuth2RedirectMetadata(
+						context,
+						integration
+					)
 			} catch (e) {
 				// TODO error handling - maybe add a notification?
 				return context.addErrorFrame([getErrorString(e)])
 			}
 
-			const { authorizeUrl, state } = authorizeMetadataResponse
+			const { authUrl, state } = authorizeMetadataResponse
 
 			const authFlowPromise = new Promise((resolve, reject) => {
 				// Open the authorize window / tab
-				const authorizeWindow = window.open(authorizeUrl, "_blank")
+				const authorizeWindow = window.open(authUrl, "_blank")
 				// TODO: Listen for a message on the window itself?
 				if (!authorizeWindow) {
 					reject("failed to open window for OAuth authorization")

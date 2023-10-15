@@ -184,6 +184,13 @@ func serve(cmd *cobra.Command, args []string) {
 	wr.HandleFunc(wireSavePath, controller.Save).Methods(http.MethodPost)
 	sa.HandleFunc(wireSavePath, controller.Save).Methods(http.MethodPost)
 
+	// OAuth 2 authorization code routes
+	oauth2Path := "/oauth2"
+	oauth2MetadataRoute := fmt.Sprintf("%s/authorize/%s", oauth2Path, itemParam)
+	sr.HandleFunc(oauth2MetadataRoute, controller.GetOAuth2RedirectMetadata).Methods(http.MethodGet)
+	wr.HandleFunc(oauth2MetadataRoute, controller.GetOAuth2RedirectMetadata).Methods(http.MethodGet)
+	sa.HandleFunc(oauth2MetadataRoute, controller.GetOAuth2RedirectMetadata).Methods(http.MethodGet)
+
 	// Bot routes for site and workspace context
 	callBotPath := fmt.Sprintf("/bots/call/%s", itemParam)
 	sr.HandleFunc(callBotPath, controller.CallListenerBot).Methods(http.MethodPost)
