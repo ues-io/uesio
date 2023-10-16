@@ -37,6 +37,8 @@ const getGrouping = (
 	if (groupingValue) return groupingValue
 	if (!groupingPath) return undefined
 
+	console.log({ groupingPath, groupingValue })
+
 	const parsePath = parseRelativePath(groupingPath, path.localPath || "")
 
 	return get(context, path.setLocal(parsePath)) as string
@@ -76,16 +78,21 @@ export const getFormFieldFromProperty = (
 			}
 		case "COLLECTION_FIELD":
 		case "COLLECTION_FIELDS":
+			// eslint-disable-next-line no-case-declarations
+			const test = getGrouping(
+				path,
+				context,
+				property.collectionPath,
+				property.collectionName
+			)
+
+			console.log({ path, property, test })
+
 			return {
 				"uesio/builder.collectionfieldpicker": {
 					...baseFieldDef,
 					fieldWrapperVariant: "uesio/builder.propfield",
-					collectionName: getGrouping(
-						path,
-						context,
-						property.collectionPath,
-						property.collectionName
-					),
+					collectionName: test,
 					allowReferenceTraversal: property.allowReferenceTraversal,
 				},
 			}

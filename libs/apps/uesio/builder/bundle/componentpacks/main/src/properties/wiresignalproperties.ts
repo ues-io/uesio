@@ -157,6 +157,28 @@ const signals: SignalBandDefinition = {
 				},
 			],
 		},
+		// [`${BAND}/UPDATE_FIELDS`]: {
+		// 	label: "Update Fields",
+		// 	description: "update record fields",
+		// 	properties: (): ComponentProperty[] => [
+		// 		{
+		// 			name: "wire",
+		// 			type: "WIRE",
+		// 			label: "Wire",
+		// 		},
+		// 		{
+		// 			name: "field",
+		// 			type: "FIELD",
+		// 			label: "Field",
+		// 			wireField: "wire",
+		// 		},
+		// 		{
+		// 			name: "value",
+		// 			type: "TEXT",
+		// 			label: "Value",
+		// 		},
+		// 	],
+		// },
 		[`${BAND}/CANCEL`]: {
 			label: "Cancel Wire Changes",
 			description: "Cancel all wire changes",

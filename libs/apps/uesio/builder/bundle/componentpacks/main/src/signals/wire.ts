@@ -129,6 +129,54 @@ const signals: SignalBandDefinition = {
 				},
 			],
 		},
+		[`${BAND}/UPDATE_FIELDS`]: {
+			label: "Update Fields",
+			description: "update record fields",
+			properties: (): ComponentProperty[] => [
+				{
+					name: "wire",
+					type: "WIRE",
+					label: "Wire",
+				},
+				{
+					name: "fields",
+					type: "LIST",
+					label: "Fields",
+					subtype: "STRUCT",
+					items: {
+						title: "Fields",
+						addLabel: "Add Field",
+						displayTemplate: (fields: {
+							value: string
+							field: string
+						}) => {
+							if (fields.field) {
+								return `${fields.field} | ${fields.value}`
+							}
+							return "NEW_VALUE"
+						},
+						properties: [
+							{
+								name: "field",
+								type: "COLLECTION_FIELD",
+								label: "Field",
+								// TO-DO
+								allowReferenceTraversal: false,
+								collectionPath: "../wire", //This was pointing to ../collection
+								//collectionName: "account", don't do this then getGrouping don't run
+							},
+							{
+								name: "value",
+								type: "FIELD_VALUE",
+								label: "Value",
+								wireProperty: "wire",
+								fieldProperty: "field",
+							},
+						],
+					},
+				},
+			],
+		},
 		[`${BAND}/CANCEL`]: {
 			label: "Cancel Wire Changes",
 			description: "Cancel all wire changes",
