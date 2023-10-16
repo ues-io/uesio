@@ -4,8 +4,7 @@ uniqueKey:
   - uesio/studio.collection
   - uesio/studio.name
 nameField: uesio/studio.name
-#TO-DO
-#access: protected
-#accessField: uesio/studio.workspace
+access: protected
+accessField: uesio/studio.workspace
 label: Record Challenge Token
 pluralLabel: Record Challenge Tokens

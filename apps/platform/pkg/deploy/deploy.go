@@ -41,6 +41,7 @@ var ORDERED_ITEMS = [...]string{
 	"labels",
 	"translations",
 	"useraccesstokens",
+	"recordchallengetokens",
 	"signupmethods",
 	"secrets",
 	"configvalues",
