@@ -22,13 +22,13 @@ func parseUniquekeyToCollectionKey(uniquekey string) (string, error) {
 
 func runCollectionAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 
-	collectionUniqueKeys := []string{}
+	var collectionUniqueKeys []string
 	for i := range request.Deletes {
-		collectionUniqueKey, err := request.Deletes[i].GetOldFieldAsString("uesio/core.uniquekey")
-		if err != nil {
+		if collectionUniqueKey, err := request.Deletes[i].GetOldFieldAsString(adapt.UNIQUE_KEY_FIELD); err == nil {
+			collectionUniqueKeys = append(collectionUniqueKeys, collectionUniqueKey)
+		} else {
 			return err
 		}
-		collectionUniqueKeys = append(collectionUniqueKeys, collectionUniqueKey)
 	}
 
 	if len(collectionUniqueKeys) == 0 {
@@ -38,13 +38,13 @@ func runCollectionAfterSaveBot(request *adapt.SaveOp, connection adapt.Connectio
 	// collection unique keys will be something like "uesio/tests:dev:rare_and_unusual_object",
 	// but the "uesio/studio.collection" field for fields will be something like "uesio/tests.rare_and_unusual_object",
 	// so we need to parse this
-	targetCollections := []string{}
+	var targetCollections []string
 	for _, collectionUniqueKey := range collectionUniqueKeys {
-		targetCollection, err := parseUniquekeyToCollectionKey(collectionUniqueKey)
-		if err != nil {
+		if targetCollection, err := parseUniquekeyToCollectionKey(collectionUniqueKey); err == nil {
+			targetCollections = append(targetCollections, targetCollection)
+		} else {
 			return err
 		}
-		targetCollections = append(targetCollections, targetCollection)
 	}
 
 	if len(targetCollections) == 0 {
@@ -52,10 +52,10 @@ func runCollectionAfterSaveBot(request *adapt.SaveOp, connection adapt.Connectio
 	}
 
 	fc := meta.FieldCollection{}
-	err := datasource.PlatformLoad(&fc, &datasource.PlatformLoadOptions{
+	if err := datasource.PlatformLoad(&fc, &datasource.PlatformLoadOptions{
 		Fields: []adapt.LoadRequestField{
 			{
-				ID: "uesio/core.id",
+				ID: adapt.ID_FIELD,
 			},
 		},
 		Conditions: []adapt.LoadRequestCondition{
@@ -67,16 +67,15 @@ func runCollectionAfterSaveBot(request *adapt.SaveOp, connection adapt.Connectio
 		},
 		Connection: connection,
 		Params:     request.Params,
-	}, session)
-	if err != nil {
+	}, session); err != nil {
 		return err
 	}
 
 	rac := meta.RouteAssignmentCollection{}
-	err = datasource.PlatformLoad(&rac, &datasource.PlatformLoadOptions{
+	if err := datasource.PlatformLoad(&rac, &datasource.PlatformLoadOptions{
 		Fields: []adapt.LoadRequestField{
 			{
-				ID: "uesio/core.id",
+				ID: adapt.ID_FIELD,
 			},
 		},
 		Conditions: []adapt.LoadRequestCondition{
@@ -88,17 +87,36 @@ func runCollectionAfterSaveBot(request *adapt.SaveOp, connection adapt.Connectio
 		},
 		Connection: connection,
 		Params:     request.Params,
-	}, session)
-	if err != nil {
+	}, session); err != nil {
 		return err
 	}
 
-	requests := []datasource.SaveRequest{}
+	rct := meta.RecordChallengeTokenCollection{}
+	if err := datasource.PlatformLoad(&rct, &datasource.PlatformLoadOptions{
+		Fields: []adapt.LoadRequestField{
+			{
+				ID: adapt.ID_FIELD,
+			},
+		},
+		Conditions: []adapt.LoadRequestCondition{
+			{
+				Field:    "uesio/studio.collection",
+				Values:   targetCollections,
+				Operator: "IN",
+			},
+		},
+		Connection: connection,
+		Params:     request.Params,
+	}, session); err != nil {
+		return err
+	}
+
+	var requests []datasource.SaveRequest
 
 	if len(fc) > 0 {
 		requests = append(requests, datasource.SaveRequest{
 			Collection: "uesio/studio.field",
-			Wire:       "RunCollectionAfterSaveBot",
+			Wire:       "DeleteCollectionFields",
 			Deletes:    &fc,
 			Params:     request.Params,
 		})
@@ -107,8 +125,17 @@ func runCollectionAfterSaveBot(request *adapt.SaveOp, connection adapt.Connectio
 	if len(rac) > 0 {
 		requests = append(requests, datasource.SaveRequest{
 			Collection: "uesio/studio.routeassignment",
-			Wire:       "RunCollectionAfterSaveBot",
+			Wire:       "DeleteCollectionRouteAssignments",
 			Deletes:    &rac,
+			Params:     request.Params,
+		})
+	}
+
+	if len(rct) > 0 {
+		requests = append(requests, datasource.SaveRequest{
+			Collection: "uesio/studio.recordchallengetoken",
+			Wire:       "DeleteCollectionRecordChallengeTokens",
+			Deletes:    &rct,
 			Params:     request.Params,
 		})
 	}
