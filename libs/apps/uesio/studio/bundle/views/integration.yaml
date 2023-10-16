@@ -13,7 +13,7 @@ definition:
       conditions:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
-    integrations:
+    integration:
       collection: uesio/studio.integration
       conditions:
         - field: uesio/studio.allmetadata
@@ -48,9 +48,9 @@ definition:
               params:
                 selected: integrations
         content:
-          - uesio/io.list:
-              uesio.id: integrationsList
-              wire: integrations
+          - uesio/io.item:
+              uesio.id: integrationItem
+              wire: integration
               mode: READ
               components:
                 - uesio/io.titlebar:
@@ -73,25 +73,25 @@ definition:
                                     value: $Param{namespace}
                                 signals:
                                   - signal: component/CALL
-                                    component: uesio/io.list
+                                    component: uesio/io.item
                                     componentsignal: TOGGLE_MODE
                                     targettype: specific
-                                    componentid: integrationsList
+                                    componentid: integrationItem
                             - uesio/io.button:
                                 uesio.variant: uesio/io.primary
                                 text: $Label{uesio/io.save}
                                 uesio.display:
                                   - type: wireHasChanges
-                                    wire: integrations
+                                    wire: integration
                                 signals:
                                   - signal: wire/SAVE
                                     wires:
-                                      - integrations
+                                      - integration
                                   - signal: component/CALL
-                                    component: uesio/io.list
+                                    component: uesio/io.item
                                     componentsignal: SET_READ_MODE
                                     targettype: specific
-                                    componentid: integrationsList
+                                    componentid: integrationItem
                             - uesio/io.button:
                                 uesio.variant: uesio/io.secondary
                                 text: $Label{uesio/io.cancel}
@@ -100,12 +100,12 @@ definition:
                                     mode: EDIT
                                 signals:
                                   - signal: wire/CANCEL
-                                    wire: integrations
+                                    wire: integration
                                   - signal: component/CALL
-                                    component: uesio/io.list
+                                    component: uesio/io.item
                                     componentsignal: SET_READ_MODE
                                     targettype: specific
-                                    target: integrationsList
+                                    target: integrationItem
                             - uesio/io.button:
                                 uesio.variant: uesio/io.secondary
                                 text: $Label{uesio/io.delete}
@@ -121,7 +121,7 @@ definition:
                                   - signal: wire/MARK_FOR_DELETE
                                   - signal: wire/SAVE
                                     wires:
-                                      - integrations
+                                      - integration
                                   - signal: route/NAVIGATE
                                     path: app/$Param{app}/workspace/$Param{workspacename}/integrations
                 - uesio/io.box:
@@ -146,13 +146,15 @@ definition:
                           uesio.variant: uesio/io.four_columns
                           items:
                             - uesio/io.field:
-                                fieldId: uesio/studio.baseurl
+                                fieldId: uesio/studio.authentication
                             - uesio/io.field:
                                 fieldId: uesio/studio.credentials
                                 uesio.context:
                                   workspace:
                                     name: $Param{workspacename}
                                     app: $Param{app}
+                            - uesio/io.field:
+                                fieldId: uesio/studio.baseurl
                             - uesio/io.field:
                               fieldId: uesio/studio.headers
                               uesio.display:
@@ -188,7 +190,7 @@ definition:
                     uesio.variant: uesio/io.section
                     uesio.display:
                       - type: fieldValue
-                        wire: integrations
+                        wire: integration
                         field: uesio/studio.type
                         value: uesio/core.custom
                     components:
@@ -270,7 +272,7 @@ definition:
                                     uesio.display:
                                       - type: hasNoValue
                                         value: ${uesio/studio.bot}
-                                    wire: integrations
+                                    wire: integration
                                     fieldId: uesio/studio.runactionbot
                                 - uesio/io.field:
                                     wrapperVariant: uesio/io.table
@@ -319,7 +321,7 @@ definition:
               - signal: wire/LOAD
                 wires:
                   - workspaces
-                  - integrations
+                  - integration
                   - integrationActions
               - signal: panel/TOGGLE
                 panel: editIntegrationAction
