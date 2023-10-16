@@ -7,6 +7,8 @@ import { getErrorString } from "../utils"
 // The key for the entire band
 const BAND = "oauth2"
 
+const callbackEventName = "uesio.oauth2.callback"
+
 interface OAuth2CallbackSignal extends SignalDefinition {
 	state: string
 }
@@ -32,7 +34,7 @@ const signals: Record<string, SignalDescriptor> = {
 		) => {
 			const { state } = signalInvocation
 			self.postMessage({
-				name: "uesio.oauth2.callback",
+				name: callbackEventName,
 				data: {
 					state,
 				},
@@ -60,6 +62,11 @@ const signals: Record<string, SignalDescriptor> = {
 
 			const { authUrl, state } = authorizeMetadataResponse
 
+			console.log(
+				"[OAUTH] Received metadata response",
+				JSON.stringify(authorizeMetadataResponse, null, 2)
+			)
+
 			const authFlowPromise = new Promise((resolve, reject) => {
 				// Open the authorize window / tab
 				const authorizeWindow = window.open(authUrl, "_blank")
@@ -72,7 +79,7 @@ const signals: Record<string, SignalDescriptor> = {
 						if (event.origin !== window.location.origin) {
 							return
 						}
-						if (event.data.name === "uesio.oauth2.callback") {
+						if (event.data.name === callbackEventName) {
 							const { state: callbackState } = event.data.data
 							if (callbackState === state) {
 								resolve(null)

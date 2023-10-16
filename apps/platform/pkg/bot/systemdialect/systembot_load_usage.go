@@ -52,7 +52,7 @@ func runUsageLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *ses
 		return err
 	}
 
-	//make sure we pase this back to the original OP
+	//make sure we pass these back to the original OP
 	op.BatchNumber = newOp.BatchNumber
 	op.HasMoreBatches = newOp.HasMoreBatches
 

@@ -134,7 +134,7 @@ func (api *BotHttpAPI) Request(req *BotHttpRequest) *BotHttpResponse {
 	}
 
 	// Apply authentication
-	client, err := authenticateRequest(httpReq, req)
+	client, err := authenticateRequest(httpReq, req.Auth)
 	if err != nil {
 		// TODO: figure out what kind of error it was
 		//return Unauthorized("unable to authenticate: " + err.Error())

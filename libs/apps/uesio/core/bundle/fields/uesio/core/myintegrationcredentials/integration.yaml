@@ -1,7 +1,5 @@
 name: integration
 type: METADATA
 label: Integration
-required: true
-createOnly: true
 metadata:
   type: INTEGRATION

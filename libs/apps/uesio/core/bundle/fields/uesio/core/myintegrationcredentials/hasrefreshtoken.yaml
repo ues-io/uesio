@@ -1,0 +1,3 @@
+name: hasrefreshtoken
+type: CHECKBOX
+label: Has Refresh Token
