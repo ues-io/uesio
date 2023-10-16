@@ -1,4 +1,4 @@
-name: app1
+name: teammember
 token: "${uesio/core.id}"
 useraccesstoken: "uesio/studio.teammember"
 access: readwrite

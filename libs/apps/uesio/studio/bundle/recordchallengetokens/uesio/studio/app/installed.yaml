@@ -1,4 +1,4 @@
-name: app2
+name: installed
 token: "${uesio/core.uniquekey}"
 useraccesstoken: "uesio.installed"
 access: read

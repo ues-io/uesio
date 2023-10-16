@@ -1,4 +1,4 @@
-name: app3
+name: namedpermission
 token: "uesio/studio.workspace_admin"
 useraccesstoken: "uesio.namedpermission"
 access: read
