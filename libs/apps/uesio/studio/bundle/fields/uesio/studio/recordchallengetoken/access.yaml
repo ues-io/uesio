@@ -1,0 +1,4 @@
+name: access
+type: SELECT
+label: Access
+selectList: recordchallengetokenaccess

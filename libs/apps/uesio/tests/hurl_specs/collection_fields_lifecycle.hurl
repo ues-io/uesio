@@ -160,7 +160,33 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].errors" == null
 
-# Verify the collection and field were saved successfully
+# Create a record challenge token associated with the collection
+POST https://{{host}}:{{port}}/site/wires/save
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/studio.recordchallengetoken",
+            "deletes":{},
+            "changes":{
+                "temp1":{
+                    "uesio/studio.collection":"{{app_fullname}}.rare_and_unusual_object",
+                    "uesio/studio.name":"sometoken",
+                    "uesio/studio.access":"read"
+                }
+            },
+            "params": {
+                "workspaceid": "{{workspace_id}}"
+            },
+            "wire":"mywire"
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" == null
+
+# Verify the collection and related entities were saved successfully
 POST https://{{host}}:{{port}}/site/wires/load
 Accept: application/json
 {
@@ -255,6 +281,31 @@ Accept: application/json
             "params": {
                 "workspaceid": "{{workspace_id}}"
             }
+        },
+        {
+            "collection":"uesio/studio.recordchallengetoken",
+            "name": "recordchallengetokens",
+            "query":true,
+            "fields": [
+                {
+                    "id": "uesio/studio.name"
+                },
+                {
+                    "id": "uesio/studio.access"
+                },
+                {
+                    "id": "uesio/studio.collection"
+                }
+            ],
+            "conditions": [
+                {
+                    "field": "uesio/studio.collection",
+                    "value": "{{app_fullname}}.rare_and_unusual_object"
+                }
+            ],
+            "params": {
+                "workspaceid": "{{workspace_id}}"
+            }
         }
     ]
 }
@@ -272,9 +323,14 @@ jsonpath "$.wires[2].data" count == 2
 jsonpath "$.wires[2].data[*]['uesio/studio.collection']" includes "{{app_fullname}}.rare_and_unusual_object"
 jsonpath "$.wires[2].data[*]['uesio/studio.type']" includes "list"
 jsonpath "$.wires[2].data[*]['uesio/studio.type']" includes "list"
-# TODO This should really be 3 but we are loading too many collections server-side
-jsonpath "$.collections[*].name" count <= 10
+jsonpath "$.wires[3].data" count == 1
+jsonpath "$.wires[3].data[0]['uesio/studio.collection']" == "{{app_fullname}}.rare_and_unusual_object"
+jsonpath "$.wires[3].data[0]['uesio/studio.access']" == "read"
+jsonpath "$.wires[3].data[0]['uesio/studio.name']" == "sometoken"
+# TODO This should really be 4 but we are loading too many collections server-side
+jsonpath "$.collections[*].name" count <= 11
 jsonpath "$.collections['uesio/studio.collection'].name" == "collection"
+jsonpath "$.collections['uesio/studio.recordchallengetoken'].name" == "recordchallengetoken"
 jsonpath "$.collections['uesio/studio.routeassignment'].name" == "routeassignment"
 jsonpath "$.collections['uesio/studio.field'].name" == "field"
 [Captures]
@@ -325,7 +381,7 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].errors" == null
 
-# Verify that the collection and fields were deleted successfully
+# Verify that the collection, and its dependencies, were deleted successfully
 POST https://{{host}}:{{port}}/site/wires/load
 Accept: application/json
 {
@@ -395,6 +451,28 @@ Accept: application/json
             "params": {
                 "workspaceid": "{{workspace_id}}"
             }
+        },
+        {
+            "collection":"uesio/studio.recordchallengetoken",
+            "query":true,
+            "fields": [
+                {
+                    "id": "uesio/core.id"
+                }
+            ],
+            "conditions": [
+                {
+                    "field": "uesio/studio.collection",
+                    "value": "{{app_fullname}}.rare_and_unusual_object"
+                },
+                {
+                    "field": "uesio/studio.workspace",
+                    "value": "{{workspace_id}}"
+                }
+            ],
+            "params": {
+                "workspaceid": "{{workspace_id}}"
+            }
         }
     ]
 }
@@ -403,3 +481,4 @@ HTTP 200
 jsonpath "$.wires[0].data[*]" isEmpty
 jsonpath "$.wires[1].data[*]" isEmpty
 jsonpath "$.wires[2].data[*]" isEmpty
+jsonpath "$.wires[3].data[*]" isEmpty

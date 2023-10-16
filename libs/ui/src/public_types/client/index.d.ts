@@ -194,11 +194,13 @@ export type METADATA = {
 	LABEL: "labels"
 	PERMISSIONSET: "permissionsets"
 	PROFILE: "profiles"
+	RECORDCHALLENGETOKEN: "recordchallengetokens"
 	ROUTE: "routes"
 	SECRET: "secrets"
 	SELECTLIST: "selectlists"
 	SIGNUPMETHOD: "signupmethods"
 	THEME: "themes"
+	USERACCESSTOKEN: "useraccesstokens"
 	VIEW: "views"
 }
 export type MetadataType = keyof METADATA

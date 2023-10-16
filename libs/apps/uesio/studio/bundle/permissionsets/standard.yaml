@@ -239,6 +239,7 @@ collections:
   uesio/studio.label: true
   uesio/studio.permissionset: true
   uesio/studio.profile: true
+  uesio/studio.recordchallengetoken: true
   uesio/studio.route: true
   uesio/studio.routeassignment: true
   uesio/studio.secret: true
