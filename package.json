@@ -45,7 +45,7 @@
     "@monaco-editor/react": "^4.5.1",
     "@nrwl/cli": "14.7.13",
     "@nrwl/eslint-plugin-nx": "14.7.13",
-    "@nrwl/jest": "14.7.13",
+    "@nrwl/jest": "16.10.0",
     "@nrwl/linter": "14.7.13",
     "@orangeopensource/hurl": "^4.0.0",
     "@reduxjs/toolkit": "^1.9.5",
