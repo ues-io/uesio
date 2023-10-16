@@ -16,11 +16,13 @@ const METADATA = {
 	LABEL: "labels",
 	PERMISSIONSET: "permissionsets",
 	PROFILE: "profiles",
+	RECORDCHALLENGETOKEN: "recordchallengetokens",
 	ROUTE: "routes",
 	SECRET: "secrets",
 	SELECTLIST: "selectlists",
 	SIGNUPMETHOD: "signupmethods",
 	THEME: "themes",
+	USERACCESSTOKEN: "useraccesstokens",
 	VIEW: "views",
 }
 type MetadataType = keyof typeof METADATA
