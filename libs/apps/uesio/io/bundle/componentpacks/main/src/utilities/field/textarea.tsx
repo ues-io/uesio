@@ -56,7 +56,7 @@ const TextAreaField: definition.UtilityComponent<TextAreaFieldProps> = (
 		placeholder,
 		...controlledInputProps,
 		className: styles.cx(classes.input, readOnly && classes.readonly),
-		readOnly,
+		disabled: readOnly,
 		rows: options?.rows,
 		cols: options?.cols,
 	}
