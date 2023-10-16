@@ -13,7 +13,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/integ/sendgrid"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -66,6 +65,33 @@ type Connection struct {
 	session     *sess.Session
 }
 
+func (c *Connection) callListnerBot(botKey, code string, payload map[string]interface{}) error {
+
+	site := c.session.GetSite()
+
+	domain, err := datasource.QueryDomainFromSite(site.ID)
+	if err != nil {
+		return err
+	}
+
+	host := datasource.GetHostFromDomain(domain, site)
+
+	payload["host"] = host
+	payload["code"] = code
+
+	namespace, name, err := meta.ParseKey(botKey)
+	if err != nil {
+		return err
+	}
+
+	_, err = datasource.CallListenerBot(namespace, name, payload, c.connection, c.session)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (c *Connection) Login(payload map[string]interface{}) (*meta.User, error) {
 
 	username, err := auth.GetRequiredPayloadValue(payload, "username")
@@ -85,6 +111,16 @@ func (c *Connection) Login(payload map[string]interface{}) (*meta.User, error) {
 	if loginmethod == nil {
 		return nil, auth.NewAuthRequestError("No account found with this login method")
 	}
+
+	// TEMPORARY FOR MIGRATION FROM COGNITO
+	if loginmethod.VerificationCode == "" && loginmethod.Hash == "" {
+		cognitoConnection, err := auth.GetAuthConnection("uesio/core.cognito", c.connection, c.session)
+		if err != nil {
+			return nil, err
+		}
+		return cognitoConnection.Login(payload)
+	}
+	// END TEMPORARY
 
 	if loginmethod.VerificationCode != "" {
 		return nil, auth.NewNotAuthorizedError("Unable to login - your email address has not yet been verified. Please verify your email and then try again.")
@@ -131,30 +167,7 @@ func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]
 		return err
 	}
 
-	//Studio session is required to use the right integration
-	integration, err := datasource.GetIntegration("uesio/core.sendgrid", sess.GetStudioAnonSession())
-	if err != nil {
-		return err
-	}
-
-	subject, err := auth.GetRequiredPayloadValue(payload, "subject")
-	if err != nil {
-		return err
-	}
-
-	message, err := auth.GetRequiredPayloadValue(payload, "message")
-	if err != nil {
-		return err
-	}
-
 	code := generateCode()
-	plainBody := strings.Replace(message, "{####}", code, 1)
-
-	options := sendgrid.SendEmailOptions{To: []string{email}, From: signupMethod.FromEmail, Subject: subject, PlainBody: plainBody, ContentType: signupMethod.Signup.EmailContentType}
-	_, err = integration.RunAction("sendEmail", options)
-	if err != nil {
-		return fmt.Errorf("error sending signup email: %w", err)
-	}
 
 	user, err := auth.CreateUser(signupMethod, &meta.User{
 		Username:  username,
@@ -167,7 +180,7 @@ func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]
 	}
 
 	// Add verification code and password hash
-	return auth.CreateLoginMethod(&meta.LoginMethod{
+	err = auth.CreateLoginMethod(&meta.LoginMethod{
 		FederationID:        username,
 		User:                user,
 		Hash:                string(hash),
@@ -175,6 +188,11 @@ func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]
 		VerificationExpires: time.Now().Add(time.Hour * 24).UnixNano(),
 		AuthSource:          signupMethod.AuthSource,
 	}, c.connection, c.session)
+	if err != nil {
+		return err
+	}
+
+	return c.callListnerBot(signupMethod.SignupBot, code, payload)
 
 }
 func (c *Connection) ForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {
@@ -183,29 +201,7 @@ func (c *Connection) ForgotPassword(signupMethod *meta.SignupMethod, payload map
 		return auth.NewAuthRequestError("Unable to reset password: you must provide a username")
 	}
 
-	user, err := auth.GetUserByKey(username, c.session, nil)
-	if err != nil {
-		return auth.NewAuthRequestError("Unable to reset password forgot: this user cannot be found")
-	}
-
-	//Studio session is required to use the right integration
-	integration, err := datasource.GetIntegration("uesio/core.sendgrid", sess.GetStudioAnonSession())
-	if err != nil {
-		return errors.New("Unable to send email: " + err.Error())
-	}
-
-	subject, err := auth.GetRequiredPayloadValue(payload, "subject")
-	if err != nil {
-		return errors.New("Uesio forgot password: " + err.Error())
-	}
-
-	message, err := auth.GetRequiredPayloadValue(payload, "message")
-	if err != nil {
-		return errors.New("Uesio forgot password: " + err.Error())
-	}
-
 	code := generateCode()
-	plainBody := strings.Replace(message, "{####}", code, 1)
 
 	adminSession := sess.GetAnonSession(c.session.GetSite())
 	loginmethod, err := auth.GetLoginMethod(username, signupMethod.AuthSource, adminSession)
@@ -220,13 +216,7 @@ func (c *Connection) ForgotPassword(signupMethod *meta.SignupMethod, payload map
 		return err
 	}
 
-	options := sendgrid.SendEmailOptions{To: []string{user.Email}, From: signupMethod.FromEmail, Subject: subject, PlainBody: plainBody, ContentType: signupMethod.ForgotPassword.EmailContentType}
-	_, err = integration.RunAction("sendEmail", options)
-	if err != nil {
-		return errors.New("Could not reset password - unable to password reset email: " + err.Error())
-	}
-
-	return nil
+	return c.callListnerBot(signupMethod.ForgotPasswordBot, code, payload)
 
 }
 func (c *Connection) ConfirmForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {
@@ -280,43 +270,20 @@ func (c *Connection) ConfirmForgotPassword(signupMethod *meta.SignupMethod, payl
 }
 func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[string]interface{}, user *meta.User) error {
 
-	email, err := auth.GetPayloadValue(payload, "email")
-	if err != nil {
-		return err
-	}
-
-	//Studio session is required to use the right integration
-	integration, err := datasource.GetIntegration("uesio/core.sendgrid", sess.GetStudioAnonSession())
-	if err != nil {
-		return err
-	}
-
-	subject, err := auth.GetRequiredPayloadValue(payload, "subject")
-	if err != nil {
-		return err
-	}
-
-	message, err := auth.GetRequiredPayloadValue(payload, "message")
-	if err != nil {
-		return err
-	}
-
 	code := generateCode()
-	plainBody := strings.Replace(message, "{####}", code, 1)
 
-	options := sendgrid.SendEmailOptions{To: []string{email}, From: signupMethod.FromEmail, Subject: subject, PlainBody: plainBody, ContentType: signupMethod.AdminCreate.EmailContentType}
-	_, err = integration.RunAction("sendEmail", options)
-	if err != nil {
-		return err
-	}
-
-	return auth.CreateLoginMethod(&meta.LoginMethod{
+	err := auth.CreateLoginMethod(&meta.LoginMethod{
 		FederationID:        user.Username,
 		User:                user,
 		AuthSource:          signupMethod.AuthSource,
 		VerificationCode:    code,
 		VerificationExpires: getExpireTimestamp(),
 	}, c.connection, c.session)
+	if err != nil {
+		return err
+	}
+
+	return c.callListnerBot(signupMethod.CreateLoginBot, code, payload)
 
 }
 func (c *Connection) ConfirmSignUp(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {

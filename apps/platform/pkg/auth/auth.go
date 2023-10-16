@@ -3,7 +3,6 @@ package auth
 import (
 	"context"
 	"errors"
-	"fmt"
 	"log/slog"
 	"os"
 	"strings"
@@ -16,7 +15,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
-	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
 func init() {
@@ -324,52 +322,4 @@ func GetRequiredPayloadValue(payload map[string]interface{}, key string) (string
 		return "", errors.New("missing required value: " + key)
 	}
 	return value, nil
-}
-
-func boostPayloadWithTemplate(username string, payload map[string]interface{}, site *meta.Site, options *meta.EmailTemplateOptions) error {
-
-	domain, err := datasource.QueryDomainFromSite(site.ID)
-	if err != nil {
-		return err
-	}
-
-	host := datasource.GetHostFromDomain(domain, site)
-
-	link := fmt.Sprintf("%s/%s?code={####}&username=%s", host, options.Redirect, username)
-
-	siteTitle := site.Title
-	if siteTitle == "" {
-		siteTitle = site.Name
-	}
-
-	templateMergeValues := map[string]interface{}{
-		"app":       site.GetAppFullName(),
-		"siteName":  site.Name,
-		"siteTitle": siteTitle,
-		"link":      link,
-		"username":  username,
-	}
-
-	subjectTemplate, err := templating.NewTemplateWithValidKeysOnly(options.EmailSubject)
-	if err != nil {
-		return err
-	}
-	mergedSubject, err := templating.Execute(subjectTemplate, templateMergeValues)
-	if err != nil {
-		return err
-	}
-
-	bodyTemplate, err := templating.NewTemplateWithValidKeysOnly(options.EmailBody)
-	if err != nil {
-		return err
-	}
-	mergedBody, err := templating.Execute(bodyTemplate, templateMergeValues)
-	if err != nil {
-		return err
-	}
-
-	payload["subject"] = mergedSubject
-	payload["message"] = mergedBody
-
-	return nil
 }
