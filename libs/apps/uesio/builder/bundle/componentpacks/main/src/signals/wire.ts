@@ -144,7 +144,7 @@ const signals: SignalBandDefinition = {
 					label: "Field Updates",
 					subtype: "STRUCT",
 					items: {
-						title: "Fields",
+						title: "Field Updates",
 						addLabel: "Add Field",
 						displayTemplate: (fields: {
 							value: string
