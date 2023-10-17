@@ -157,28 +157,51 @@ const signals: SignalBandDefinition = {
 				},
 			],
 		},
-		// [`${BAND}/UPDATE_FIELDS`]: {
-		// 	label: "Update Fields",
-		// 	description: "update record fields",
-		// 	properties: (): ComponentProperty[] => [
-		// 		{
-		// 			name: "wire",
-		// 			type: "WIRE",
-		// 			label: "Wire",
-		// 		},
-		// 		{
-		// 			name: "field",
-		// 			type: "FIELD",
-		// 			label: "Field",
-		// 			wireField: "wire",
-		// 		},
-		// 		{
-		// 			name: "value",
-		// 			type: "TEXT",
-		// 			label: "Value",
-		// 		},
-		// 	],
-		// },
+		[`${BAND}/UPDATE_FIELDS`]: {
+			label: "Update Fields",
+			description: "update record fields",
+			properties: (): ComponentProperty[] => [
+				{
+					name: "wire",
+					type: "WIRE",
+					label: "Wire",
+				},
+				{
+					name: "fields",
+					type: "LIST",
+					label: "Fields",
+					subtype: "STRUCT",
+					items: {
+						title: "Fields",
+						addLabel: "Add Field",
+						displayTemplate: (fields: {
+							value: string
+							field: string
+						}) => {
+							if (fields.field) {
+								return `${fields.field} | ${fields.value}`
+							}
+							return "NEW_VALUE"
+						},
+						properties: [
+							{
+								name: "field",
+								type: "FIELD",
+								label: "Field",
+								wirePath: "../wire",
+							},
+							{
+								name: "value",
+								type: "FIELD_VALUE",
+								label: "Value",
+								wirePath: "../wire",
+								fieldProperty: "field",
+							},
+						],
+					},
+				},
+			],
+		},
 		[`${BAND}/CANCEL`]: {
 			label: "Cancel Wire Changes",
 			description: "Cancel all wire changes",
