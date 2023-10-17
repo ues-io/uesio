@@ -39,6 +39,7 @@ import {
 import { getComponentDef, setSelectedPath } from "../api/stateapi"
 import { getDisplaySectionProperties } from "../properties/displayconditionproperties"
 import { getSignalProperties } from "../api/signalsapi"
+import { getGrouping } from "../components/property/property"
 
 type Props = {
 	properties?: ComponentProperty[]
@@ -50,36 +51,6 @@ type Props = {
 
 const PATH_ARROW = "->"
 const LODASH_PATH_SEPARATOR = "."
-
-const parseRelativePath = (relativePath: string, basePath: string) => {
-	// Clean strings starting with './', we don't need that
-	const niceString = relativePath.startsWith("./")
-		? relativePath.replace("./", "")
-		: relativePath
-	// get the N levels up the tree
-	const arr = niceString.split("../")
-
-	const startingPath = component.path.getAncestorPath(basePath, arr.length)
-	const endingPath = arr
-		.pop()
-		?.split("/")
-		.map((el) => `["${el}"]`)
-		.join("")
-
-	return startingPath + endingPath
-}
-
-const getGrouping = (
-	path: FullPath,
-	context: context.Context,
-	groupingPath?: string,
-	groupingValue?: string
-): string | undefined => {
-	if (groupingValue) return groupingValue
-	if (!groupingPath) return undefined
-	const parsePath = parseRelativePath(groupingPath, path.localPath || "")
-	return getDef(context, path.setLocal(parsePath)) as string
-}
 
 const getWireFieldSelectOptions = (wireDef?: wire.WireDefinition) => {
 	if (!wireDef || !wireDef.fields) return [] as wire.SelectOption[]
