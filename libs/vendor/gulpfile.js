@@ -13,6 +13,7 @@ const devMode = process.env.UESIO_DEV === "true"
 const REACT = "react"
 const REACT_DOM = "react-dom"
 const MONACO = "monaco-editor"
+const AJV = "ajv"
 
 // NOTE: Modules are loaded in the sequence of this array
 const modules = [
@@ -35,6 +36,11 @@ const modules = [
 		src: "min/vs/**",
 		dest: "min/vs",
 	},
+	// {
+	// 	name: AJV,
+	// 	src: "dist/2019.js",
+	// 	dest: "dist",
+	// },
 ]
 
 // END EDITABLE REGION

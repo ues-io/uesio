@@ -28,6 +28,7 @@ import {
 	useBuilderExternalStatesCount,
 } from "./stateapi"
 import yaml from "yaml"
+import { validateViewDefinition } from "../yaml/validate"
 
 const moveInArray = (arr: unknown[], fromIndex: number, toIndex: number) =>
 	arr.splice(toIndex, 0, arr.splice(fromIndex, 1)[0])
@@ -48,6 +49,29 @@ const setMetadataValue = (
 	const original = getBuilderState<string>(context, originalMetadataId)
 	const newTextValue = text || yamlDoc.toString()
 	const current = getMetadataValue(context, path)
+
+	const isViewDef = path.itemType === "viewdef"
+
+	// Validate the view definition before proceeding any further
+	if (isViewDef) {
+		const validationResult = validateViewDefinition(yamlDoc.toJS())
+
+		if (!validationResult) {
+			api.signal.run(
+				{
+					signal: "notification/ADD",
+					id: "viewdef-validation",
+					severity: "warn",
+					text: "View definition is invalid",
+					// details: "results"
+					path,
+				},
+				context
+			)
+			return
+		}
+	}
+
 	if (original === undefined) {
 		setBuilderState(context, originalMetadataId, current)
 	}
@@ -55,7 +79,7 @@ const setMetadataValue = (
 		removeBuilderState(context, originalMetadataId)
 	}
 	setBuilderState(context, metadataId, newTextValue)
-	if (path.itemType === "viewdef") {
+	if (isViewDef) {
 		api.view.setViewDefinition(path.itemName, yamlDoc.toJSON())
 	}
 }

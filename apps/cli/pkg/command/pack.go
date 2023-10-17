@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/evanw/esbuild/pkg/api"
+
 	"github.com/thecloudmasters/cli/pkg/pack"
 )
 
@@ -27,6 +28,7 @@ func Pack(options *PackOptions) error {
 		"react-dom":        "ReactDOM",
 		"@uesio/ui":        "uesio",
 		"react-dom/server": "ReactDOM",
+		//"ajv":              "Ajv",
 	}
 
 	entryPoints, err := pack.CreateEntryFiles()
