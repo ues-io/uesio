@@ -158,18 +158,15 @@ const signals: SignalBandDefinition = {
 						properties: [
 							{
 								name: "field",
-								type: "COLLECTION_FIELD",
+								type: "FIELD",
 								label: "Field",
-								// TO-DO
-								allowReferenceTraversal: false,
-								collectionPath: "../wire", //This was pointing to ../collection
-								//collectionName: "account", don't do this then getGrouping don't run
+								wirePath: "../wire",
 							},
 							{
 								name: "value",
 								type: "FIELD_VALUE",
 								label: "Value",
-								wireProperty: "wire",
+								wirePath: "../wire",
 								fieldProperty: "field",
 							},
 						],

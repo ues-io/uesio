@@ -116,6 +116,7 @@ type FieldMetadataProperty = {
 type FieldPropertyBase = {
 	wireField?: string
 	wireName?: string
+	wirePath?: string
 } & BaseProperty
 
 // FIELD / FIELDS are for selecting fields in a WIRE.
@@ -128,8 +129,9 @@ type FieldsProperty = {
 
 // FIELD_VALUE / FIELD_VALUES
 type FieldValuePropertyBase = {
-	wireProperty: string
+	wireProperty?: string
 	fieldProperty: string
+	wirePath?: string
 } & BaseProperty
 
 type FieldValueProperty = {

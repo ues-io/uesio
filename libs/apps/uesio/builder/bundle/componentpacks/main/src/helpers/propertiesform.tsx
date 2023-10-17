@@ -51,6 +51,36 @@ type Props = {
 const PATH_ARROW = "->"
 const LODASH_PATH_SEPARATOR = "."
 
+const parseRelativePath = (relativePath: string, basePath: string) => {
+	// Clean strings starting with './', we don't need that
+	const niceString = relativePath.startsWith("./")
+		? relativePath.replace("./", "")
+		: relativePath
+	// get the N levels up the tree
+	const arr = niceString.split("../")
+
+	const startingPath = component.path.getAncestorPath(basePath, arr.length)
+	const endingPath = arr
+		.pop()
+		?.split("/")
+		.map((el) => `["${el}"]`)
+		.join("")
+
+	return startingPath + endingPath
+}
+
+const getGrouping = (
+	path: FullPath,
+	context: context.Context,
+	groupingPath?: string,
+	groupingValue?: string
+): string | undefined => {
+	if (groupingValue) return groupingValue
+	if (!groupingPath) return undefined
+	const parsePath = parseRelativePath(groupingPath, path.localPath || "")
+	return getDef(context, path.setLocal(parsePath)) as string
+}
+
 const getWireFieldSelectOptions = (wireDef?: wire.WireDefinition) => {
 	if (!wireDef || !wireDef.fields) return [] as wire.SelectOption[]
 	const { fields, viewOnly } = wireDef
@@ -281,9 +311,16 @@ const getWireFieldFromPropertyDef = (
 			})
 		case "FIELDS":
 		case "FIELD":
-			wireId = def.wireField
-				? (getObjectProperty(currentValue, def.wireField) as string)
-				: def.wireName
+			if (def.wireField) {
+				wireId = getObjectProperty(
+					currentValue,
+					def.wireField
+				) as string
+			} else if (def.wireName) {
+				wireId = def.wireName
+			} else if (def.wirePath) {
+				wireId = getGrouping(path, context, def.wirePath)
+			}
 			wireDefinition =
 				wireId === undefined
 					? undefined
@@ -301,9 +338,10 @@ const getWireFieldFromPropertyDef = (
 			)
 		case "FIELD_VALUE":
 		case "FIELD_VALUES":
-			wireId =
-				def.wireProperty &&
-				(getObjectProperty(currentValue, def.wireProperty) as string)
+			wireId = def.wireProperty
+				? (getObjectProperty(currentValue, def.wireProperty) as string)
+				: getGrouping(path, context, def.wirePath)
+
 			wireField =
 				def.fieldProperty &&
 				(getObjectProperty(currentValue, def.fieldProperty) as string)
