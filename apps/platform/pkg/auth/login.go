@@ -67,7 +67,11 @@ func GetUserFromFederationID(authSourceID string, federationID string, session *
 }
 
 func Login(authSourceID string, payload map[string]interface{}, session *sess.Session) (*meta.User, error) {
-	conn, err := GetAuthConnection(authSourceID, nil, session)
+	adminSession, err := GetSystemSession(session.GetSite(), nil)
+	if err != nil {
+		return nil, err
+	}
+	conn, err := GetAuthConnection(authSourceID, nil, adminSession)
 	if err != nil {
 		return nil, err
 	}

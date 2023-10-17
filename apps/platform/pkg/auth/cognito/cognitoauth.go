@@ -92,7 +92,15 @@ func (c *Connection) Login(payload map[string]interface{}) (*meta.User, error) {
 	}
 	claims := tokenObj.Claims.(jwt.MapClaims)
 
-	return auth.GetUserFromFederationID(c.authSource.GetKey(), claims["sub"].(string), c.session)
+	// TEMPORARY FIX
+	// since this authsource used to be called uesio/core.platform,
+	// to match it with existing loginmethods, we need to use the
+	// uesio/core.platform auth source key.
+	// Once the migration is complete, all this code will be deleted anyways.
+	authSourceKey := "uesio/core.platform"
+	// END TEMPORARY FIX
+
+	return auth.GetUserFromFederationID(authSourceKey, claims["sub"].(string), c.session)
 
 }
 

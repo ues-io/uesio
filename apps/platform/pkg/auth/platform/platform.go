@@ -109,18 +109,15 @@ func (c *Connection) Login(payload map[string]interface{}) (*meta.User, error) {
 	}
 
 	if loginmethod == nil {
-		return nil, auth.NewAuthRequestError("No account found with this login method")
-	}
-
-	// TEMPORARY FOR MIGRATION FROM COGNITO
-	if loginmethod.VerificationCode == "" && loginmethod.Hash == "" {
+		// TEMPORARY FOR MIGRATION FROM COGNITO
 		cognitoConnection, err := auth.GetAuthConnection("uesio/core.cognito", c.connection, c.session)
 		if err != nil {
 			return nil, err
 		}
 		return cognitoConnection.Login(payload)
+		// END TEMPORARY
+		//return nil, auth.NewAuthRequestError("No account found with this login method")
 	}
-	// END TEMPORARY
 
 	if loginmethod.VerificationCode != "" {
 		return nil, auth.NewNotAuthorizedError("Unable to login - your email address has not yet been verified. Please verify your email and then try again.")
