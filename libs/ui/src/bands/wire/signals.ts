@@ -173,14 +173,7 @@ const signals: Record<string, SignalDescriptor> = {
 	[`${WIRE_BAND}/UPDATE_FIELDS`]: {
 		dispatcher: (signal: UpdateFieldsSignal, context: Context) => {
 			const wireName = context.mergeString(signal.wire)
-			let record = context.getRecord(wireName)
-			// If there's no context record for this wire, use the first record on the wire
-			if (!record && wireName) {
-				const wire = context.getWire(wireName)
-				if (wire) {
-					record = wire.getFirstRecord()
-				}
-			}
+			const record = context.getRecord(wireName)
 			if (!record) return context
 
 			signal.fields?.forEach((fieldPair) => {
