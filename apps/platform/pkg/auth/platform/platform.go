@@ -206,12 +206,28 @@ func (c *Connection) ForgotPassword(signupMethod *meta.SignupMethod, payload map
 		return errors.New("Failed Getting Login Method Data: " + err.Error())
 	}
 
+	user, err := auth.GetUserByKey(username, c.session, c.connection)
+	if err != nil {
+		return err
+	}
+
+	loginmethod, err = auth.GetLoginMethodByUserID(user.ID, signupMethod.AuthSource, c.session)
+	if err != nil {
+		return err
+	}
+
+	if loginmethod == nil {
+		return auth.NewAuthRequestError("No account found with this login method")
+	}
+	loginmethod.FederationID = username
 	loginmethod.VerificationCode = code
 	loginmethod.VerificationExpires = getExpireTimestamp()
 	err = datasource.PlatformSaveOne(loginmethod, nil, c.connection, c.session)
 	if err != nil {
 		return err
 	}
+
+	payload["email"] = user.Email
 
 	return c.callListenerBot(signupMethod.ForgotPasswordBot, code, payload)
 

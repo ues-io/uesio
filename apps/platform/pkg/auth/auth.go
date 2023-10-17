@@ -193,6 +193,9 @@ func getUser(field, value string, session *sess.Session, connection adapt.Connec
 					ID: "uesio/core.profile",
 				},
 				{
+					ID: "uesio/core.email",
+				},
+				{
 					ID: "uesio/core.picture",
 					Fields: []adapt.LoadRequestField{
 						{
@@ -258,7 +261,7 @@ func GetSignupMethod(key string, session *sess.Session) (*meta.SignupMethod, err
 	return signupMethod, nil
 }
 
-func GetLoginMethod(federationID string, authSourceID string, session *sess.Session) (*meta.LoginMethod, error) {
+func getLoginMethod(value, field, authSourceID string, session *sess.Session) (*meta.LoginMethod, error) {
 
 	var loginMethod meta.LoginMethod
 	err := datasource.PlatformLoadOne(
@@ -270,8 +273,8 @@ func GetLoginMethod(federationID string, authSourceID string, session *sess.Sess
 					Value: authSourceID,
 				},
 				{
-					Field: "uesio/core.federation_id",
-					Value: federationID,
+					Field: field,
+					Value: value,
 				},
 			},
 		},
@@ -283,7 +286,7 @@ func GetLoginMethod(federationID string, authSourceID string, session *sess.Sess
 			slog.LogAttrs(context.Background(),
 				slog.LevelWarn,
 				"Could not find login method",
-				slog.String("federationId", federationID),
+				slog.String(field, value),
 				slog.String("authSourceId", authSourceID))
 			return nil, nil
 		}
@@ -291,6 +294,14 @@ func GetLoginMethod(federationID string, authSourceID string, session *sess.Sess
 	}
 
 	return &loginMethod, nil
+}
+
+func GetLoginMethod(federationID string, authSourceID string, session *sess.Session) (*meta.LoginMethod, error) {
+	return getLoginMethod(federationID, "uesio/core.federation_id", authSourceID, session)
+}
+
+func GetLoginMethodByUserID(userID string, authSourceID string, session *sess.Session) (*meta.LoginMethod, error) {
+	return getLoginMethod(userID, "uesio/core.user", authSourceID, session)
 }
 
 func CreateLoginMethod(loginMethod *meta.LoginMethod, connection adapt.Connection, session *sess.Session) error {
