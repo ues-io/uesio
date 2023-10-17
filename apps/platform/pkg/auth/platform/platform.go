@@ -96,11 +96,11 @@ func (c *Connection) Login(payload map[string]interface{}) (*meta.User, error) {
 
 	username, err := auth.GetRequiredPayloadValue(payload, "username")
 	if err != nil {
-		return nil, auth.NewAuthRequestError("Unable to login, " + err.Error())
+		return nil, auth.NewAuthRequestError("You must enter a username")
 	}
 	plainPassword, err := auth.GetRequiredPayloadValue(payload, "password")
 	if err != nil {
-		return nil, auth.NewAuthRequestError("Unable to login, " + err.Error())
+		return nil, auth.NewAuthRequestError("You must enter a password")
 	}
 
 	loginmethod, err := auth.GetLoginMethod(username, c.authSource.GetKey(), c.session)

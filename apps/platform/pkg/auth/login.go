@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -67,11 +68,7 @@ func GetUserFromFederationID(authSourceID string, federationID string, session *
 }
 
 func Login(authSourceID string, payload map[string]interface{}, session *sess.Session) (*meta.User, error) {
-	adminSession, err := GetSystemSession(session.GetSite(), nil)
-	if err != nil {
-		return nil, err
-	}
-	conn, err := GetAuthConnection(authSourceID, nil, adminSession)
+	conn, err := GetAuthConnection(authSourceID, nil, datasource.GetSiteAdminSession(session))
 	if err != nil {
 		return nil, err
 	}

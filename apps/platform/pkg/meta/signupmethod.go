@@ -28,9 +28,9 @@ type SignupMethod struct {
 	AutoLogin                 bool   `yaml:"autoLogin" json:"uesio/studio.autologin"`
 	UsernameRegex             string `yaml:"usernameRegex" json:"uesio/studio.usernameregex"`
 	UsernameFormatExplanation string `yaml:"usernameFormatExplanation" json:"uesio/studio.usernameformatexplanation"`
-	CreateLoginBot            string `yaml:"createLoginBot" json:"uesio/studio.admincreate"`
-	SignupBot                 string `yaml:"signupBot" json:"uesio/studio.signup"`
-	ForgotPasswordBot         string `yaml:"forgotPasswordBot" json:"uesio/studio.forgotpassword"`
+	CreateLoginBot            string `yaml:"createLoginBot" json:"uesio/studio.createloginbot"`
+	SignupBot                 string `yaml:"signupBot" json:"uesio/studio.signupbot"`
+	ForgotPasswordBot         string `yaml:"forgotPasswordBot" json:"uesio/studio.forgotpasswordbot"`
 }
 
 type SignupMethodWrapper SignupMethod
