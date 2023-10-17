@@ -47,6 +47,11 @@ const getWireAndConditionsDescriptor = (wire: string) => [
 	getConditionIdsDescriptor(wire),
 ]
 
+type FieldUpdate = {
+	field: string
+	value: wire.PlainFieldValue
+}
+
 // Metadata for all of the signals in the band
 const signals: SignalBandDefinition = {
 	band: BAND,
@@ -146,10 +151,7 @@ const signals: SignalBandDefinition = {
 					items: {
 						title: "Field Updates",
 						addLabel: "Add Field Update",
-						displayTemplate: (fields: {
-							value: string
-							field: string
-						}) => {
+						displayTemplate: (fields: FieldUpdate) => {
 							if (fields.field) {
 								return `${fields.field} | ${fields.value}`
 							}
