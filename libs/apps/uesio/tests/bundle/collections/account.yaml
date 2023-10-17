@@ -4,7 +4,3 @@ pluralLabel: Account
 uniqueKey:
   - uesio/tests.name
 access: protected
-recordChallengeTokens:
-  - token: ${uesio/core.id}
-    userAccessToken: uesio/tests.accountmember
-    access: readwrite

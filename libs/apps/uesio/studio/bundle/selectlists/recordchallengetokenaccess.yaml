@@ -1,0 +1,6 @@
+name: recordchallengetokenaccess
+options:
+  - label: Read
+    value: read
+  - label: Read & Write
+    value: readwrite
