@@ -14,26 +14,25 @@ func GetCollectionMetadata(e *meta.Collection) *adapt.CollectionMetadata {
 	fieldMetadata := map[string]*adapt.FieldMetadata{}
 
 	return &adapt.CollectionMetadata{
-		Name:                  e.Name,
-		Namespace:             e.Namespace,
-		Type:                  e.Type,
-		NameField:             GetNameField(e),
-		UniqueKey:             e.UniqueKeyFields,
-		Createable:            !e.ReadOnly,
-		Accessible:            true,
-		Updateable:            !e.ReadOnly,
-		Deleteable:            !e.ReadOnly,
-		Fields:                fieldMetadata,
-		Access:                e.Access,
-		AccessField:           e.AccessField,
-		RecordChallengeTokens: e.RecordChallengeTokens,
-		TableName:             e.TableName,
-		Public:                e.Public,
-		Label:                 e.Label,
-		PluralLabel:           e.PluralLabel,
-		Integration:           e.IntegrationRef,
-		LoadBot:               e.LoadBot,
-		SaveBot:               e.SaveBot,
+		Name:        e.Name,
+		Namespace:   e.Namespace,
+		Type:        e.Type,
+		NameField:   GetNameField(e),
+		UniqueKey:   e.UniqueKeyFields,
+		Createable:  !e.ReadOnly,
+		Accessible:  true,
+		Updateable:  !e.ReadOnly,
+		Deleteable:  !e.ReadOnly,
+		Fields:      fieldMetadata,
+		Access:      e.Access,
+		AccessField: e.AccessField,
+		TableName:   e.TableName,
+		Public:      e.Public,
+		Label:       e.Label,
+		PluralLabel: e.PluralLabel,
+		Integration: e.IntegrationRef,
+		LoadBot:     e.LoadBot,
+		SaveBot:     e.SaveBot,
 	}
 }
 
@@ -224,6 +223,18 @@ func LoadCollectionMetadata(key string, metadataCache *adapt.MetadataCache, sess
 	}
 
 	collectionMetadata = GetCollectionMetadata(collection)
+
+	var recordchallengetokens meta.RecordChallengeTokenCollection
+	err = bundle.LoadAllFromAny(&recordchallengetokens, meta.BundleConditions{"uesio/studio.collection": collectionMetadata.GetKey()}, session, connection)
+	if err != nil {
+		return nil, err
+	}
+	if recordchallengetokens.Len() > 0 {
+		for _, rct := range recordchallengetokens {
+			collectionMetadata.RecordChallengeTokens = append(collectionMetadata.RecordChallengeTokens, rct)
+		}
+	}
+
 	metadataCache.AddCollection(key, collectionMetadata)
 
 	return collectionMetadata, nil

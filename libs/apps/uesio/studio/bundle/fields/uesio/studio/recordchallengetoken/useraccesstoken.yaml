@@ -1,0 +1,5 @@
+name: useraccesstoken
+type: METADATA
+label: User Access Token
+metadata:
+  type: USERACCESSTOKEN

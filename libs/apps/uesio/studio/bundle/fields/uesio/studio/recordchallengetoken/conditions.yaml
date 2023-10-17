@@ -1,0 +1,14 @@
+name: conditions
+type: LIST
+label: Conditions
+subtype: STRUCT
+subfields:
+  - name: field
+    type: METADATA
+    label: User Reference Field
+    metadata:
+      type: FIELD
+      grouping: ${uesio/studio.collection}
+  - name: value
+    type: TEXT
+    label: Value

@@ -32,36 +32,26 @@ func NewCollections(keys map[string]bool) ([]BundleableItem, error) {
 	return items, nil
 }
 
-type RecordChallengeTokenDefinition struct {
-	Type            string            `yaml:"type,omitempty" json:"type"`
-	Collection      string            `yaml:"collection,omitempty" json:"collection"`
-	Token           string            `yaml:"token" json:"token"`
-	UserAccessToken string            `yaml:"userAccessToken" json:"userAccessToken"`
-	Access          string            `yaml:"access" json:"access"`
-	Conditions      []*TokenCondition `yaml:"conditions,omitempty" json:"conditions"`
-}
-
 type TokenCondition struct {
 	Field string      `yaml:"field" json:"field"`
 	Value interface{} `yaml:"value" json:"value"`
 }
 
 type Collection struct {
-	BuiltIn               `yaml:",inline"`
-	BundleableBase        `yaml:",inline"`
-	Type                  string                            `yaml:"type,omitempty" json:"uesio/studio.type"`
-	Label                 string                            `yaml:"label" json:"uesio/studio.label"`
-	PluralLabel           string                            `yaml:"pluralLabel" json:"uesio/studio.plurallabel"`
-	UniqueKeyFields       []string                          `yaml:"uniqueKey,omitempty" json:"uesio/studio.uniquekey"`
-	NameField             string                            `yaml:"nameField,omitempty" json:"uesio/studio.namefield"`
-	ReadOnly              bool                              `yaml:"readOnly,omitempty" json:"-"`
-	Access                string                            `yaml:"access,omitempty" json:"uesio/studio.access"`
-	AccessField           string                            `yaml:"accessField,omitempty" json:"uesio/studio.accessfield"`
-	RecordChallengeTokens []*RecordChallengeTokenDefinition `yaml:"recordChallengeTokens,omitempty" json:"uesio/studio.recordchallengetokens"`
-	TableName             string                            `yaml:"tablename,omitempty" json:"uesio/studio.tablename"`
-	IntegrationRef        string                            `yaml:"integration,omitempty" json:"uesio/studio.integration"`
-	LoadBot               string                            `yaml:"loadBot,omitempty" json:"uesio/studio.loadbot"`
-	SaveBot               string                            `yaml:"saveBot,omitempty" json:"uesio/studio.savebot"`
+	BuiltIn         `yaml:",inline"`
+	BundleableBase  `yaml:",inline"`
+	Type            string   `yaml:"type,omitempty" json:"uesio/studio.type"`
+	Label           string   `yaml:"label" json:"uesio/studio.label"`
+	PluralLabel     string   `yaml:"pluralLabel" json:"uesio/studio.plurallabel"`
+	UniqueKeyFields []string `yaml:"uniqueKey,omitempty" json:"uesio/studio.uniquekey"`
+	NameField       string   `yaml:"nameField,omitempty" json:"uesio/studio.namefield"`
+	ReadOnly        bool     `yaml:"readOnly,omitempty" json:"-"`
+	Access          string   `yaml:"access,omitempty" json:"uesio/studio.access"`
+	AccessField     string   `yaml:"accessField,omitempty" json:"uesio/studio.accessfield"`
+	TableName       string   `yaml:"tablename,omitempty" json:"uesio/studio.tablename"`
+	IntegrationRef  string   `yaml:"integration,omitempty" json:"uesio/studio.integration"`
+	LoadBot         string   `yaml:"loadBot,omitempty" json:"uesio/studio.loadbot"`
+	SaveBot         string   `yaml:"saveBot,omitempty" json:"uesio/studio.savebot"`
 }
 
 type CollectionWrapper Collection

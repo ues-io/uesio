@@ -24,7 +24,7 @@ interface TextFieldProps {
 
 const StyleDefaults = Object.freeze({
 	input: [],
-	readonly: [],
+	readonly: ["disabled:pointer-events-none"],
 	wrapper: ["relative"],
 	toggle: [
 		"absolute",
