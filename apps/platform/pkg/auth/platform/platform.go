@@ -65,7 +65,7 @@ type Connection struct {
 	session     *sess.Session
 }
 
-func (c *Connection) callListnerBot(botKey, code string, payload map[string]interface{}) error {
+func (c *Connection) callListenerBot(botKey, code string, payload map[string]interface{}) error {
 
 	site := c.session.GetSite()
 
@@ -192,7 +192,7 @@ func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]
 		return err
 	}
 
-	return c.callListnerBot(signupMethod.SignupBot, code, payload)
+	return c.callListenerBot(signupMethod.SignupBot, code, payload)
 
 }
 func (c *Connection) ForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {
@@ -216,7 +216,7 @@ func (c *Connection) ForgotPassword(signupMethod *meta.SignupMethod, payload map
 		return err
 	}
 
-	return c.callListnerBot(signupMethod.ForgotPasswordBot, code, payload)
+	return c.callListenerBot(signupMethod.ForgotPasswordBot, code, payload)
 
 }
 func (c *Connection) ConfirmForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {
@@ -283,7 +283,7 @@ func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[st
 		return err
 	}
 
-	return c.callListnerBot(signupMethod.CreateLoginBot, code, payload)
+	return c.callListenerBot(signupMethod.CreateLoginBot, code, payload)
 
 }
 func (c *Connection) ConfirmSignUp(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {

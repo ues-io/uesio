@@ -1,6 +1,6 @@
 import { ListenerBotApi } from "@uesio/bots"
-// @ts-ignore
-function signup(bot: ListenerBotApi) {
+
+export default function signup(bot: ListenerBotApi) {
 	const redirect = "/site/auth/uesio/studio/platform/signup/confirm"
 	const username = bot.params.get("username")
 	const email = bot.params.get("email")
