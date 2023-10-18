@@ -33,12 +33,6 @@ definition:
         query: false
         create: false
       conditions:
-        - field: uesio/core.id
-          value: foo
-        - field: uesio/core.id
-          value: $Param{foo}
-        - field: uesio/core.uniquekey
-          value: "$Param{foo}"
         - field: uesio/core.integration
           value: "$Param{namespace}.$Param{integrationname}"
           valueSource: VALUE
@@ -96,10 +90,7 @@ definition:
                                     wires:
                                       - integrationcredentials
                                   - signal: panel/TOGGLE
-                                    component: uesio/io.item
-                                    componentsignal: TOGGLE_MODE
-                                    targettype: specific
-                                    componentid: integrationItem
+                                    panel: testAuthentication
                             - uesio/io.button:
                                 uesio.variant: uesio/io.secondary
                                 text: $Label{uesio/io.edit}
@@ -326,7 +317,7 @@ definition:
       uesio.type: uesio/io.dialog
       title: Test Authentication
       width: 600px
-      height: 500px
+      height: 680px
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
@@ -336,20 +327,28 @@ definition:
                 panel: testAuthentication
       components:
         - uesio/io.box:
+            uesio.variant: uesio/io.section
             components:
               - uesio/io.titlebar:
                   uesio.variant: uesio/io.main
                   title: Integration Credentials
               - uesio/io.item:
                   wire: integrationcredentials
+                  uesio.id: integrationCredentialItem
                   mode: READ
                   components:
-                    - field: uesio/core.integration
-                    - field: uesio/core.hasrefreshtoken
-                    - field: uesio/core.hasaccesstoken
-                    - field: uesio/core.accesstokenexpiration
-                    - field: uesio/core.updatedat
-                    - field: uesio/core.createdat
+                    - uesio/io.field:
+                        fieldId: uesio/core.integration
+                    - uesio/io.field:
+                        fieldId: uesio/core.hasrefreshtoken
+                    - uesio/io.field:
+                        fieldId: uesio/core.hasaccesstoken
+                    - uesio/io.field:
+                        fieldId: uesio/core.accesstokenexpiration
+                    - uesio/io.field:
+                        fieldId: uesio/core.updatedat
+                    - uesio/io.field:
+                        fieldId: uesio/core.createdat
     editIntegrationAction:
       uesio.type: uesio/io.dialog
       title: Edit Integration Action

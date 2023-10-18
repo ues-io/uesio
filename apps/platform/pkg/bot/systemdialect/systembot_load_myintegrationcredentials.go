@@ -34,9 +34,8 @@ func runMyIntegrationCredentialsLoadBot(op *adapt.LoadOp, connection adapt.Conne
 		return err
 	}
 	// Construct a final list of myintegrationcredential records
-	finalList := &adapt.Collection{}
 	if err = integrationCollection.Loop(func(integrationItem meta.Item, index string) error {
-		item := finalList.NewItem()
+		item := op.Collection.NewItem()
 		integration := integrationItem.(*meta.Integration)
 		integrationName := integration.GetKey()
 		item.SetField("uesio/core.integration", integrationName)
@@ -65,7 +64,8 @@ func runMyIntegrationCredentialsLoadBot(op *adapt.LoadOp, connection adapt.Conne
 			item.SetField("uesio/core.hasrefreshtoken", false)
 			item.SetField("uesio/core.id", integrationName)
 		}
-		return finalList.AddItem(item)
+		op.Collection.AddItem(item)
+		return nil
 	}); err != nil {
 		return err
 	}
@@ -82,8 +82,6 @@ func getTargetIntegrationNameFromConditions(conditions []adapt.LoadRequestCondit
 		if c.Field == "uesio/core.integration" {
 			if c.Value != nil && c.Value != "" {
 				name = c.Value.(string)
-			} else if c.RawValue != nil && c.RawValue != "" {
-				name = c.RawValue.(string)
 			}
 		}
 		if name != "" {
@@ -107,9 +105,9 @@ func getAllPerUserIntegrationsUserHasAccessTo(session *sess.Session, connection 
 	// and other per-user authentication types
 	conditions["uesio/studio.authentication"] = "OAUTH2_AUTHORIZATION_CODE"
 	if integrationName != "" {
-		if namespace, name, err := meta.ParseKey(integrationName); err == nil {
+		if _, name, err := meta.ParseKey(integrationName); err == nil {
 			conditions["uesio/studio.name"] = name
-			conditions["uesio/studio.namespace"] = namespace
+			//conditions["uesio/studio.namespace"] = namespace
 		}
 	}
 	// TO VERIFY: connection here can be nil?
