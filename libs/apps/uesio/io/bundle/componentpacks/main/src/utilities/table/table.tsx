@@ -22,6 +22,21 @@ interface TableUtilityProps<R, C extends TableColumn> {
 	rowActionsFunc?: (row: R) => ReactNode
 }
 
+const StyleDefaults = Object.freeze({
+	root: [],
+	table: [],
+	header: [],
+	headerCell: [],
+	headerCellInner: [],
+	rowNumberCell: [],
+	rowNumber: [],
+	cell: [],
+	body: [],
+	row: ["group"],
+	rowDeleted: [],
+	noData: [],
+})
+
 const Table: definition.UtilityComponent<
 	TableUtilityProps<unknown, TableColumn>
 > = (props) => {
@@ -43,20 +58,7 @@ const Table: definition.UtilityComponent<
 		context,
 	} = props
 	const classes = styles.useUtilityStyleTokens(
-		{
-			root: [],
-			table: [],
-			header: [],
-			headerCell: [],
-			headerCellInner: [],
-			rowNumberCell: [],
-			rowNumber: [],
-			cell: [],
-			body: [],
-			row: ["group"],
-			rowDeleted: [],
-			noData: [],
-		},
+		StyleDefaults,
 		props,
 		"uesio/io.table"
 	)

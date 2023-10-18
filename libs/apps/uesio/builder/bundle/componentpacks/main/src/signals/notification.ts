@@ -61,6 +61,11 @@ const signals: SignalBandDefinition = {
 						},
 					],
 				},
+				{
+					type: "TEXT",
+					name: "id",
+					label: "Notification Id (optional)",
+				},
 			],
 		},
 		[`${BAND}/REMOVE`]: {

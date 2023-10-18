@@ -4,6 +4,8 @@ import type { SignalDefinition } from "./signal"
 
 export interface PanelDefinition {
 	"uesio.type": MetadataKey
+	"uesio.styleTokens"?: Record<string, string[]>
+	"uesio.variant"?: MetadataKey
 	title?: string
 	width?: string
 	height?: string

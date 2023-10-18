@@ -45,7 +45,7 @@ export default async (context: Context, wires?: string[]) => {
 			},
 			changes: requestWire.changes,
 			deletes: requestWire.deletes,
-			batchnumber: requestWire.batchnumber + 1,
+			batchnumber: (requestWire.batchnumber || 0) + 1,
 			more: wire.more,
 			errors: undefined,
 			conditions: requestWire.conditions,
