@@ -71,11 +71,6 @@ func signupWithConnection(signupMethod *meta.SignupMethod, payload map[string]in
 		return nil, NewAuthRequestError("Signup failed - username does not match required pattern: " + signupMethod.UsernameFormatExplanation)
 	}
 
-	err = boostPayloadWithTemplate(username, payload, session.GetSite(), &signupMethod.Signup)
-	if err != nil {
-		return nil, err
-	}
-
 	err = authconn.Signup(signupMethod, payload, username)
 	if err != nil {
 		return nil, err
