@@ -1,0 +1,12 @@
+name: integrationauthtypes
+blankOptionLabel: "No Authentication"
+options:
+  - label: "API Key"
+    value: "API_KEY"
+  - label: "Basic HTTP Authentication"
+    value: "BASIC_AUTH"
+  - label: "OAuth 2: Authorization Code"
+    value: "OAUTH2_AUTHORIZATION_CODE"
+  - label: "OAuth 2: Client Credentials"
+    value: "OAUTH2_CLIENT_CREDENTIALS"
+public: true

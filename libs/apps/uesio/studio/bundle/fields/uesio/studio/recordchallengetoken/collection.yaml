@@ -1,0 +1,6 @@
+name: collection
+type: METADATA
+label: Collection
+required: true
+metadata:
+  type: COLLECTION

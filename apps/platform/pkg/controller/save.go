@@ -2,12 +2,13 @@ package controller
 
 import (
 	"encoding/json"
-	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"log/slog"
 	"net/http"
+
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 )
 
@@ -18,7 +19,7 @@ func Save(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&saveRequestBatch)
 	if err != nil {
 		msg := "Invalid request format: " + err.Error()
-		logger.Log(msg, logger.ERROR)
+		slog.Error(msg)
 		http.Error(w, msg, http.StatusBadRequest)
 		return
 	}
@@ -34,7 +35,7 @@ func Save(w http.ResponseWriter, r *http.Request) {
 		}
 		// If the error is a save error still respond
 		msg := "Save Failed: " + err.Error()
-		logger.Log(msg, logger.ERROR)
+		slog.Error(msg)
 		http.Error(w, msg, http.StatusBadRequest)
 		return
 	}

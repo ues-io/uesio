@@ -1,8 +1,9 @@
 package datasource
 
 import (
+	"log/slog"
+
 	"github.com/thecloudmasters/uesio/pkg/bundle"
-	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -14,7 +15,7 @@ func LoadAndHydrateProfile(profileKey string, session *sess.Session) (*meta.Prof
 	}
 	err = bundle.Load(profile, session, nil)
 	if err != nil {
-		logger.Log("Failed Permission Request: "+profileKey+" : "+err.Error(), logger.INFO)
+		slog.Error("Failed Permission Request: " + profileKey + " : " + err.Error())
 		return nil, err
 	}
 	// LoadFromSite in the permission sets for this profile
@@ -27,7 +28,7 @@ func LoadAndHydrateProfile(profileKey string, session *sess.Session) (*meta.Prof
 
 		err = bundle.Load(permissionSet, session, nil)
 		if err != nil {
-			logger.Log("Failed Permission Request: "+permissionSetRef+" : "+err.Error(), logger.INFO)
+			slog.Error("Failed Permission Request: " + permissionSetRef + ": " + err.Error())
 			return nil, err
 		}
 		profile.PermissionSets = append(profile.PermissionSets, *permissionSet)

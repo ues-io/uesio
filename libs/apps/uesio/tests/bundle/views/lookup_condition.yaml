@@ -1,0 +1,48 @@
+name: lookup_condition
+definition:
+  # Wires connect to data in collections
+  wires:
+    accounts:
+      collection: uesio/tests.account
+      fields:
+        uesio/core.id:
+        uesio/tests.name:
+      conditions:
+        - field: uesio/tests.name
+          value: Evil Corp
+    contacts:
+      collection: uesio/tests.contact
+      fields:
+        uesio/tests.firstname:
+        uesio/tests.lastname:
+        uesio/tests.account:
+          fields:
+            uesio/tests.name:
+            uesio/core.id:
+      conditions:
+        - field: uesio/tests.account
+          valueSource: LOOKUP
+          lookupWire: accounts
+          lookupField: uesio/core.id
+  # Components determine the layout and composition of your view
+  components:
+    - uesio/io.titlebar:
+        title: uesio/tests.account
+        uesio.variant: uesio/io.main
+    - uesio/io.box:
+        uesio.variant: uesio/io.section
+        components:
+          - uesio/io.searchbox:
+              uesio.id: contactsSearch
+              wire: contacts
+              searchFields:
+                - uesio/tests.firstname
+                - uesio/tests.lastname
+          - uesio/io.table:
+              columns:
+                - field: uesio/tests.firstname
+                - field: uesio/tests.lastname
+                - field: uesio/tests.account
+              uesio.id: contactsTable
+              mode: EDIT
+              wire: contacts

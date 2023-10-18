@@ -10,25 +10,27 @@ import Grid from "../grid/grid"
 import FieldLabel from "../fieldlabel/fieldlabel"
 import IconButton from "../iconbutton/iconbutton"
 import Field from "./field"
-import { ListFieldOptions } from "./listdeck"
+
+export type ListFieldOptions = {
+	addLabel?: string
+	deleteLabel?: string
+	getDefaultValue?: () => wire.PlainWireRecord
+	labelVariant?: metadata.MetadataKey
+	noAdd?: boolean
+	noDelete?: boolean
+	subFields?: collection.FieldMetadataMap
+	subFieldVariant?: metadata.MetadataKey
+	subType?: collection.FieldType
+}
 
 interface ListFieldUtilityProps {
 	fieldId: string
 	fieldMetadata?: collection.Field
 	mode: context.FieldMode
-	value: wire.FieldValue
-	setValue: (value: wire.FieldValue) => void
-	subFields?: collection.FieldMetadataMap
-	subType?: collection.FieldType
-	addLabel?: string
-	deleteLabel?: string
-	noAdd?: boolean
-	noDelete?: boolean
-	subFieldVariant?: metadata.MetadataKey
-	labelVariant?: metadata.MetadataKey
 	options?: ListFieldOptions
-	getDefaultValue?: () => wire.PlainWireRecord
 	path: string
+	setValue: (value: wire.FieldValue) => void
+	value: wire.FieldValue
 }
 
 const StyleDefaults = Object.freeze({
@@ -40,29 +42,37 @@ const ListField: definition.UtilityComponent<ListFieldUtilityProps> = (
 	props
 ) => {
 	const {
-		subFields,
-		subType,
-		mode,
 		context,
+		fieldId,
+		mode,
+		options = {} as ListFieldOptions,
+		path,
+		variant,
+	} = props
+	const {
 		addLabel = context.getLabel("uesio/io.add"),
 		deleteLabel = context.getLabel("uesio/io.delete"),
-		noAdd,
-		noDelete,
-		labelVariant,
-		path,
-		fieldId,
 		getDefaultValue = (): wire.FieldValue => {
 			if (subType === "STRUCT") return {}
 			if (subType === "NUMBER") return 0
 			return ""
 		},
-	} = props
-
-	if (!subType) return null
+		labelVariant,
+		noAdd,
+		noDelete,
+		subFieldVariant = variant,
+	} = options
 
 	const fieldMetadata =
 		props.fieldMetadata ||
 		context.getRecord()?.getWire().getCollection().getFieldMetadata(fieldId)
+
+	const {
+		subFields = fieldMetadata?.getSubFields(),
+		subType = fieldMetadata?.getSubType(),
+	} = options
+
+	if (!subType) return null
 
 	const value = props.value as (wire.PlainWireRecord | wire.FieldValue)[]
 	const setValue = props.setValue as (
@@ -75,7 +85,6 @@ const ListField: definition.UtilityComponent<ListFieldUtilityProps> = (
 		props,
 		"uesio/io.listfield"
 	)
-	const subFieldVariant = props.subFieldVariant || props.variant
 
 	const getFields = (): collection.FieldMetadataMap => {
 		if (subType === "STRUCT") {

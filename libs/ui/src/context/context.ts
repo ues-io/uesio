@@ -15,7 +15,7 @@ import Wire from "../bands/wire/class"
 import { defaultTheme } from "../styles/styles"
 import get from "lodash/get"
 import { getAncestorPath } from "../component/path"
-import { PlainWireRecord } from "../bands/wirerecord/types"
+import { FieldValue, PlainWireRecord } from "../bands/wirerecord/types"
 import WireRecord from "../bands/wirerecord/class"
 import { parseVariantName } from "../component/component"
 import { MetadataKey } from "../metadata/types"
@@ -584,7 +584,7 @@ class Context {
 			return template
 		}
 
-		const expressionResults = [] as Mergeable[]
+		const expressionResults = [] as FieldValue[]
 		const mergedString = template.replace(
 			/\$([.\w]*){(.*?)}/g,
 			(x, mergeType, expression) => {
@@ -600,10 +600,13 @@ class Context {
 				expressionResults.push(expressionResult)
 
 				// Don't merge "undefined" into a string --- put empty string instead
-				if (expressionResult === undefined) {
+				if (
+					expressionResult === undefined ||
+					expressionResult === null
+				) {
 					return ""
 				}
-				return expressionResult
+				return `${expressionResult}`
 			}
 		)
 		// If we only have one expression result, and it is not a string, then return it as its value
@@ -618,13 +621,12 @@ class Context {
 
 	mergeString = (template: Mergeable) => {
 		const result = this.merge(template)
-		if (!result) return ""
-		if (typeof result !== "string") {
+		if (typeof result === "object" || typeof result === "function") {
 			throw new Error(
-				`Merge failed: result is not a string it's a ${typeof result} instead: ${result}`
+				`Merge failed: result is of type ${typeof result} and cannot be returned as a string, please check your merge.`
 			)
 		}
-		return result
+		return `${result ?? ""}`
 	}
 
 	mergeDeep = (value: DeepMergeable) => {
@@ -639,7 +641,7 @@ class Context {
 	}
 
 	mergeList = (list: DeepMergeable[] | undefined): unknown[] | undefined => {
-		if (!list) return undefined
+		if (!Array.isArray(list)) return list
 		return list.map((item) => this.mergeDeep(item))
 	}
 

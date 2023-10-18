@@ -1,12 +1,13 @@
 import { dispatch } from "../../../store/store"
 import { Context } from "../../../context/context"
 import { setConditionValue, getFullWireId } from ".."
+import { PlainFieldValue } from "../../wirerecord/types"
 
 export default (
 	context: Context,
 	wireName: string,
 	conditionId: string,
-	value: string | number | boolean | undefined
+	value: PlainFieldValue
 ) => {
 	const viewId = context.getViewId()
 	if (viewId)
@@ -14,7 +15,7 @@ export default (
 			setConditionValue({
 				entity: getFullWireId(viewId, wireName),
 				id: conditionId,
-				value: context.merge(value),
+				value,
 			})
 		)
 	return context

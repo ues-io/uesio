@@ -404,6 +404,27 @@ definition:
                 - uesio/io.text:
                     uesio.variant: uesio/io.icon
                     text: dynamic_feed
+          - uesio/io.tile:
+              uesio.display:
+                - type: featureFlag
+                  name: manage_user_access_tokens
+              uesio.id: user-access-tokens
+              uesio.variant: uesio/io.nav
+              uesio.classes:
+                selected:
+                  - type: paramValue
+                    param: selected
+                    value: useraccesstokens
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/useraccesstokens
+              content:
+                - uesio/io.text:
+                    text: User Access Tokens
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: token
           - uesio/io.titlebar:
               uesio.variant: uesio/io.nav
               title: Internationalization

@@ -13,14 +13,14 @@ import { init as initCollection } from "../collection"
 import { ViewMetadata } from "../../definition/ViewMetadata"
 import { Context } from "../../context/context"
 import { initExistingWire } from "../wire/operations/initialize"
-import { ServerWire } from "../wire/types"
+import { PlainWire, ServerWire } from "../wire/types"
 import { dispatch } from "../../store/store"
 import { transformServerWire } from "../wire/transform"
 import { getKey } from "../../metadata/metadata"
 import { Bundleable } from "../../metadata/types"
 
 const attachDefToWires = (wires?: ServerWire[], viewdefs?: ViewMetadata[]) => {
-	if (!wires || !viewdefs) return wires
+	if (!wires || !viewdefs) return [] as PlainWire[]
 	return wires.map((wire) => {
 		const viewId = wire.view.split("(")[0]
 		const wireDef = viewdefs.find(

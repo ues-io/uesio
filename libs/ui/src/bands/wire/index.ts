@@ -5,7 +5,7 @@ import {
 	PayloadAction,
 } from "@reduxjs/toolkit"
 import { SaveError, SaveResponseBatch } from "../../load/saveresponse"
-import { WireConditionState } from "../../wireexports"
+import { OrderState, WireConditionState } from "../../wireexports"
 import { ID_FIELD, PlainCollection } from "../collection/types"
 import { createEntityReducer, EntityPayload } from "../utils"
 import {
@@ -19,7 +19,6 @@ import get from "lodash/get"
 import { RootState } from "../../store/store"
 import { Context, getWire } from "../../context/context"
 import { useSelector } from "react-redux"
-import { MetadataKey } from "../../metadata/types"
 import { isValueCondition } from "./conditions/conditions"
 
 type DeletePayload = {
@@ -71,11 +70,11 @@ type RemoveOrderPayload = {
 } & EntityPayload
 
 type AddOrderPayload = {
-	order: { field: MetadataKey; desc: boolean }
+	order: OrderState
 } & EntityPayload
 
 type SetOrderPayload = {
-	order: { field: MetadataKey; desc: boolean }[]
+	order: OrderState[]
 } & EntityPayload
 
 type RemoveConditionPayload = {

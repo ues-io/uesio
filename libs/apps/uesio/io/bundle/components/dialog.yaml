@@ -10,6 +10,7 @@ defaultDefinition:
   width: "60%"
   height: "60%"
   title: "New Panel"
+  uesio.variant: uesio/io.default
 properties:
   - name: panelid
     label: Panel Id
@@ -30,10 +31,12 @@ properties:
 sections:
   - type: HOME
     properties:
+      - uesio.type
       - panelid
       - title
       - width
       - height
+  - type: STYLES
   - type: SIGNALS
     id: afterClose
     label: On-close Signals

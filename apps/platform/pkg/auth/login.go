@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -23,6 +24,20 @@ func NewAuthRequestError(message string) *AuthRequestError {
 }
 
 func (e *AuthRequestError) Error() string {
+	return e.message
+}
+
+type NotAuthorizedError struct {
+	message string
+}
+
+func NewNotAuthorizedError(message string) *NotAuthorizedError {
+	return &NotAuthorizedError{
+		message: message,
+	}
+}
+
+func (e *NotAuthorizedError) Error() string {
 	return e.message
 }
 
@@ -53,7 +68,7 @@ func GetUserFromFederationID(authSourceID string, federationID string, session *
 }
 
 func Login(authSourceID string, payload map[string]interface{}, session *sess.Session) (*meta.User, error) {
-	conn, err := GetAuthConnection(authSourceID, nil, session)
+	conn, err := GetAuthConnection(authSourceID, nil, datasource.GetSiteAdminSession(session))
 	if err != nil {
 		return nil, err
 	}

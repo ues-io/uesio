@@ -54,11 +54,6 @@ func createLoginWithConnection(signupMethod *meta.SignupMethod, payload map[stri
 		return err
 	}
 
-	err = boostPayloadWithTemplate(username, payload, siteAdmin, &signupMethod.AdminCreate)
-	if err != nil {
-		return err
-	}
-
 	user, err := GetUserByKey(username, session, nil)
 	if err != nil {
 		return err

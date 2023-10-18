@@ -36,6 +36,7 @@ views:
   uesio/studio.configvalue: true
   uesio/studio.configvalues: true
   uesio/studio.credential: true
+  uesio/studio.credentialentrieseditor: true
   uesio/studio.credentials: true
   uesio/studio.domains: true
   uesio/studio.field: true
@@ -108,6 +109,8 @@ views:
   uesio/studio.paymentsuccess: true
   uesio/studio.recorddata: true
   uesio/studio.apppublish: true
+  uesio/studio.useraccesstokens: true
+  uesio/studio.useraccesstoken: true
 routes:
   uesio/studio.appsettings: true
   uesio/studio.authsources: true
@@ -178,6 +181,8 @@ routes:
   uesio/studio.sitecollectionexportbatches: true
   uesio/studio.sitecollectionrecorddata: true
   uesio/studio.sitecollections: true
+  uesio/studio.siteusage_file_downloads: true
+  uesio/studio.siteusage_file_download_bytes: true
   uesio/studio.siteusage_route_load: true
   uesio/studio.siteusage_collection_load: true
   uesio/studio.siteusage_collection_save: true
@@ -191,6 +196,8 @@ routes:
   uesio/studio.paymentsuccess: true
   uesio/studio.recorddata: true
   uesio/studio.apppublish: true
+  uesio/studio.useraccesstokens: true
+  uesio/studio.useraccesstoken: true
 files: {}
 collections:
   uesio/studio.recentmetadata: true
@@ -232,6 +239,7 @@ collections:
   uesio/studio.label: true
   uesio/studio.permissionset: true
   uesio/studio.profile: true
+  uesio/studio.recordchallengetoken: true
   uesio/studio.route: true
   uesio/studio.routeassignment: true
   uesio/studio.secret: true

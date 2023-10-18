@@ -3,6 +3,7 @@ import PropertiesForm from "../../../helpers/propertiesform"
 import { getComponentDef, useSelectedPath } from "../../../api/stateapi"
 import { get, useDefinition } from "../../../api/defapi"
 import { ComponentProperty } from "../../../properties/componentproperty"
+import { getSections } from "./componentinstanceproperties"
 export const panelComponentTypeProp = "uesio.type"
 const defaultPanelComponentType = "uesio/io.dialog"
 
@@ -12,7 +13,10 @@ const panelProperties = [
 		label: "Panel Type",
 		required: true,
 		type: "SELECT",
-		options: [{ value: defaultPanelComponentType, label: "Dialog" }],
+		options: [
+			{ value: defaultPanelComponentType, label: "Dialog" },
+			{ value: "uesio/io.sidepanel", label: "Side Panel" },
+		],
 	},
 ] as ComponentProperty[]
 
@@ -21,9 +25,11 @@ const PanelProperties: definition.UtilityComponent = (props) => {
 	const path = useSelectedPath(context).trimToSize(2)
 	// force rerender if definition changes - otherwise, properties won't update
 	useDefinition(path)
-	const componentDef = getComponentDef(
-		get(context, path.addLocal(panelComponentTypeProp)) as string
-	)
+	const componentType = get(
+		context,
+		path.addLocal(panelComponentTypeProp)
+	) as string
+	const componentDef = getComponentDef(componentType)
 	return (
 		<PropertiesForm
 			context={context}
@@ -31,7 +37,7 @@ const PanelProperties: definition.UtilityComponent = (props) => {
 			id={path.combine()}
 			title={"Panel Properties"}
 			properties={panelProperties.concat(componentDef?.properties || [])}
-			sections={componentDef?.sections}
+			sections={getSections(componentType, componentDef)}
 		/>
 	)
 }

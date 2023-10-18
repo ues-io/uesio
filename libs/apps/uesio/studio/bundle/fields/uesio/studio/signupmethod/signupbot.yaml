@@ -1,0 +1,6 @@
+name: signupbot
+type: METADATA
+metadata:
+  type: BOT
+  grouping: LISTENER
+label: Signup Bot
