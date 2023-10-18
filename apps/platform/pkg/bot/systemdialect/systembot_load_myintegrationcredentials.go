@@ -26,8 +26,10 @@ func runMyIntegrationCredentialsLoadBot(op *adapt.LoadOp, connection adapt.Conne
 	if err != nil {
 		return err
 	}
-	// Find all integrations with per-user credentials that the user has access to
-	integrationCollection, err := getAllPerUserIntegrationsUserHasAccessTo(session, connection)
+	// Find all integrations with per-user credentials that the user has access to,
+	// or just one if there is only one requested
+	targetIntegrationName := getTargetIntegrationNameFromConditions(op.Conditions)
+	integrationCollection, err := getAllPerUserIntegrationsUserHasAccessTo(session, connection, targetIntegrationName)
 	if err != nil {
 		return err
 	}
@@ -71,6 +73,26 @@ func runMyIntegrationCredentialsLoadBot(op *adapt.LoadOp, connection adapt.Conne
 	return nil
 }
 
+func getTargetIntegrationNameFromConditions(conditions []adapt.LoadRequestCondition) string {
+	name := ""
+	if len(conditions) < 1 {
+		return name
+	}
+	for _, c := range conditions {
+		if c.Field == "uesio/core.integration" {
+			if c.Value != nil && c.Value != "" {
+				name = c.Value.(string)
+			} else if c.RawValue != nil && c.RawValue != "" {
+				name = c.RawValue.(string)
+			}
+		}
+		if name != "" {
+			return name
+		}
+	}
+	return name
+}
+
 func hasStringField(item meta.Item, fieldName string) bool {
 	if val, err := item.GetField(fieldName); err != nil {
 		return val != nil && val != ""
@@ -78,13 +100,20 @@ func hasStringField(item meta.Item, fieldName string) bool {
 	return false
 }
 
-func getAllPerUserIntegrationsUserHasAccessTo(session *sess.Session, connection adapt.Connection) (*meta.IntegrationCollection, error) {
+func getAllPerUserIntegrationsUserHasAccessTo(session *sess.Session, connection adapt.Connection, integrationName string) (*meta.IntegrationCollection, error) {
 	group := &meta.IntegrationCollection{}
 	conditions := meta.BundleConditions{}
 	// TODO: Eventually we need to support "IN" Bundle Conditions
 	// and other per-user authentication types
 	conditions["uesio/studio.authentication"] = "OAUTH2_AUTHORIZATION_CODE"
-	if err := bundle.LoadAllFromAny(group, conditions, session, nil); err != nil {
+	if integrationName != "" {
+		if namespace, name, err := meta.ParseKey(integrationName); err == nil {
+			conditions["uesio/studio.name"] = name
+			conditions["uesio/studio.namespace"] = namespace
+		}
+	}
+	// TO VERIFY: connection here can be nil?
+	if err := bundle.LoadAllFromAny(group, conditions, session, connection); err != nil {
 		return nil, errors.New("unable to load integrations: " + err.Error())
 	}
 	return group, nil

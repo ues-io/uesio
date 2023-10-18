@@ -1,7 +1,9 @@
 package controller
 
 import (
+	"bytes"
 	"encoding/json"
+	"fmt"
 	"log/slog"
 	"net/http"
 
@@ -15,7 +17,14 @@ import (
 func Load(w http.ResponseWriter, r *http.Request) {
 
 	var batch adapt.LoadRequestBatch
-	err := json.NewDecoder(r.Body).Decode(&batch)
+
+	buf := new(bytes.Buffer)
+	buf.ReadFrom(r.Body)
+	raw := buf.String()
+	fmt.Println("** raw: ")
+	fmt.Printf("%v", raw)
+
+	err := json.NewDecoder(buf).Decode(&batch)
 	if err != nil {
 		msg := "Invalid request format: " + err.Error()
 		slog.Error(msg)

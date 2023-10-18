@@ -111,7 +111,6 @@ views:
   uesio/studio.apppublish: true
   uesio/studio.useraccesstokens: true
   uesio/studio.useraccesstoken: true
-  uesio/studio.userintegrationcredentials: true
   uesio/studio.userpayments: true
   uesio/studio.userprofile: true
   uesio/studio.userprofilenav: true
@@ -201,7 +200,6 @@ routes:
   uesio/studio.apppublish: true
   uesio/studio.useraccesstoken: true
   uesio/studio.useraccesstokens: true
-  uesio/studio.userintegrationcredentials: true
   uesio/studio.userpayments: true
   uesio/studio.userprofile: true
 files: {}

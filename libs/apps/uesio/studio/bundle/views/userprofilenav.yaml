@@ -63,20 +63,3 @@ definition:
                 - uesio/io.text:
                     uesio.variant: uesio/io.icon
                     text: token
-          - uesio/io.tile:
-              uesio.variant: uesio/io.nav
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: integrationcredentials
-              signals:
-                - signal: route/NAVIGATE
-                  path: user/security/integration-credentials
-              content:
-                - uesio/io.text:
-                    text: Integration Credentials
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: key
