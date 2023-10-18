@@ -1,6 +1,6 @@
 import { PlainCollection } from "../../src/bands/collection/types"
 
-const NS = "ben/planets"
+export const NS = "ben/planets"
 
 export const getExoplanetCollection = (): PlainCollection => ({
 	name: "exoplanet",
