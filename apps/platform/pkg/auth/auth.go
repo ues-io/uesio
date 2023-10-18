@@ -3,7 +3,6 @@ package auth
 import (
 	"context"
 	"errors"
-	"fmt"
 	"log/slog"
 	"os"
 	"strings"
@@ -16,7 +15,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
-	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
 func init() {
@@ -195,6 +193,9 @@ func getUser(field, value string, session *sess.Session, connection adapt.Connec
 					ID: "uesio/core.profile",
 				},
 				{
+					ID: "uesio/core.email",
+				},
+				{
 					ID: "uesio/core.picture",
 					Fields: []adapt.LoadRequestField{
 						{
@@ -260,7 +261,7 @@ func GetSignupMethod(key string, session *sess.Session) (*meta.SignupMethod, err
 	return signupMethod, nil
 }
 
-func GetLoginMethod(federationID string, authSourceID string, session *sess.Session) (*meta.LoginMethod, error) {
+func getLoginMethod(value, field, authSourceID string, session *sess.Session) (*meta.LoginMethod, error) {
 
 	var loginMethod meta.LoginMethod
 	err := datasource.PlatformLoadOne(
@@ -272,8 +273,8 @@ func GetLoginMethod(federationID string, authSourceID string, session *sess.Sess
 					Value: authSourceID,
 				},
 				{
-					Field: "uesio/core.federation_id",
-					Value: federationID,
+					Field: field,
+					Value: value,
 				},
 			},
 		},
@@ -285,7 +286,7 @@ func GetLoginMethod(federationID string, authSourceID string, session *sess.Sess
 			slog.LogAttrs(context.Background(),
 				slog.LevelWarn,
 				"Could not find login method",
-				slog.String("federationId", federationID),
+				slog.String(field, value),
 				slog.String("authSourceId", authSourceID))
 			return nil, nil
 		}
@@ -293,6 +294,14 @@ func GetLoginMethod(federationID string, authSourceID string, session *sess.Sess
 	}
 
 	return &loginMethod, nil
+}
+
+func GetLoginMethod(federationID string, authSourceID string, session *sess.Session) (*meta.LoginMethod, error) {
+	return getLoginMethod(federationID, "uesio/core.federation_id", authSourceID, session)
+}
+
+func GetLoginMethodByUserID(userID string, authSourceID string, session *sess.Session) (*meta.LoginMethod, error) {
+	return getLoginMethod(userID, "uesio/core.user", authSourceID, session)
 }
 
 func CreateLoginMethod(loginMethod *meta.LoginMethod, connection adapt.Connection, session *sess.Session) error {
@@ -324,52 +333,4 @@ func GetRequiredPayloadValue(payload map[string]interface{}, key string) (string
 		return "", errors.New("missing required value: " + key)
 	}
 	return value, nil
-}
-
-func boostPayloadWithTemplate(username string, payload map[string]interface{}, site *meta.Site, options *meta.EmailTemplateOptions) error {
-
-	domain, err := datasource.QueryDomainFromSite(site.ID)
-	if err != nil {
-		return err
-	}
-
-	host := datasource.GetHostFromDomain(domain, site)
-
-	link := fmt.Sprintf("%s/%s?code={####}&username=%s", host, options.Redirect, username)
-
-	siteTitle := site.Title
-	if siteTitle == "" {
-		siteTitle = site.Name
-	}
-
-	templateMergeValues := map[string]interface{}{
-		"app":       site.GetAppFullName(),
-		"siteName":  site.Name,
-		"siteTitle": siteTitle,
-		"link":      link,
-		"username":  username,
-	}
-
-	subjectTemplate, err := templating.NewTemplateWithValidKeysOnly(options.EmailSubject)
-	if err != nil {
-		return err
-	}
-	mergedSubject, err := templating.Execute(subjectTemplate, templateMergeValues)
-	if err != nil {
-		return err
-	}
-
-	bodyTemplate, err := templating.NewTemplateWithValidKeysOnly(options.EmailBody)
-	if err != nil {
-		return err
-	}
-	mergedBody, err := templating.Execute(bodyTemplate, templateMergeValues)
-	if err != nil {
-		return err
-	}
-
-	payload["subject"] = mergedSubject
-	payload["message"] = mergedBody
-
-	return nil
 }
