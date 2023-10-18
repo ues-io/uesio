@@ -18,8 +18,8 @@ const StyleDefaults = Object.freeze({
 
 const Dialog: definition.UC<DialogDefinition> = (props) => {
 	const { context, definition, path } = props
-	const classes = styles.useStyleTokens(StyleDefaults, props)
 	if (!definition) return null
+	const classes = styles.useStyleTokens(StyleDefaults, props)
 	const panelId = definition?.id as string
 	const onClose = api.signal.getHandler(
 		[
