@@ -1,7 +1,7 @@
 {
 	"name": "apps-uesio-builder",
 	"$schema": "../../../../node_modules/nx/schemas/project-schema.json",
-	"sourceRoot": "libs/apps/uesio/uesio/bundle",
+	"sourceRoot": "libs/apps/uesio/builder/bundle",
 	"projectType": "library",
 	"generators": {},
 	"targets": {
