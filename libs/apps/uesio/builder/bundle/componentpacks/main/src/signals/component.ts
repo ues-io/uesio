@@ -93,8 +93,8 @@ const signals: SignalBandDefinition = {
 						name: "component",
 						label: "Component Type",
 						options: getComponentTypesWithSignals().map(
-							([type, def]) => ({
-								value: type,
+							([, def]) => ({
+								value: `${def.namespace}.${def.name}`,
 								label: def.title,
 							})
 						),
