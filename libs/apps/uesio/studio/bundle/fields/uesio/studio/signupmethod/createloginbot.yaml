@@ -1,0 +1,6 @@
+name: createloginbot
+type: METADATA
+metadata:
+  type: BOT
+  grouping: LISTENER
+label: Create Login Bot

@@ -1,0 +1,4 @@
+name: cognito
+type: cognito
+credentials: uesio/core.cognito
+public: true
