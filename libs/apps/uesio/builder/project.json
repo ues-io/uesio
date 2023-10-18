@@ -1,0 +1,44 @@
+{
+	"name": "apps-uesio-builder",
+	"$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+	"sourceRoot": "libs/apps/uesio/studio/bundle",
+	"projectType": "library",
+	"generators": {},
+	"targets": {
+		"build": {
+			"executor": "nx:run-commands",
+			"outputs": ["{projectRoot}/bundle/componentpacks/main/dist"],
+			"options": {
+				"commands": [
+					"uesio pack",
+					"npx tsc --noEmit --project ./tsconfig.lib.json",
+					"node ./build/generate-tailwind-classes-index.js"
+				],
+				"parallel": true,
+				"cwd": "libs/apps/uesio/builder"
+			}
+		},
+		"watch": {
+			"executor": "nx:run-commands",
+			"options": {
+				"command": "uesio pack -w",
+				"cwd": "libs/apps/uesio/builder"
+			}
+		},
+		"lint": {
+			"executor": "@nx/linter:eslint",
+			"options": {
+				"lintFilePatterns": ["libs/apps/uesio/builder/**/*.ts*"]
+			}
+		},
+		"test": {
+			"executor": "@nx/jest:jest",
+			"options": {
+				"jestConfig": "libs/apps/uesio/builder/jest.config.ts"
+			},
+			"outputs": ["{workspaceRoot}/coverage/libs/apps/uesio/builder"]
+		}
+	},
+	"tags": [],
+	"implicitDependencies": ["cli", "ui"]
+}
