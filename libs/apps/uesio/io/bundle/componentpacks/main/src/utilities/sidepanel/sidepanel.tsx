@@ -9,15 +9,19 @@ interface SidePanelUtilityProps {
 
 const StyleDefaults = Object.freeze({
 	root: [],
-	content: ["p-4"],
-	header: ["text-right"],
-	icon: ["text-2xl", "m-2", "p-1"],
+	content: [],
+	header: [],
+	icon: [],
 })
 
 const SidePanel: definition.UtilityComponent<SidePanelUtilityProps> = (
 	props
 ) => {
-	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
+	const classes = styles.useUtilityStyleTokens(
+		StyleDefaults,
+		props,
+		"uesio/io.sidepanel"
+	)
 	const { context, onClose, children } = props
 	return (
 		<SidePanelPlain
