@@ -36,7 +36,7 @@ func ZipDir(localPath string) io.Reader {
 			}
 			defer file.Close()
 
-			f, err := w.Create(strings.TrimPrefix(path, filepath.ToSlash(localPath)+"/"))
+			f, err := w.Create(filepath.ToSlash(strings.TrimPrefix(path, localPath+string(os.PathSeparator))))
 			if err != nil {
 				return err
 			}
