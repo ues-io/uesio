@@ -32,6 +32,25 @@ const SelectField: definition.UtilityComponent<SelectFieldProps> = (props) => {
 		)
 	}
 
+	const renderOptions = (options: wire.SelectOption[]) => {
+		if (!options || options.length === 0) {
+			return
+		}
+		return options
+			?.filter(({ validFor }) => component.shouldAll(validFor, context))
+			.map(({ disabled, value, label, options: groupOptions }) =>
+				groupOptions && groupOptions.length ? (
+					<optgroup key={label} label={label}>
+						{renderOptions(groupOptions)}
+					</optgroup>
+				) : (
+					<option disabled={disabled} key={value} value={value}>
+						{label}
+					</option>
+				)
+			)
+	}
+
 	const classes = styles.useUtilityStyleTokens(
 		StyleDefaults,
 		props,
@@ -47,15 +66,7 @@ const SelectField: definition.UtilityComponent<SelectFieldProps> = (props) => {
 				value={value}
 				id={id}
 			>
-				{options
-					?.filter(({ validFor }) =>
-						component.shouldAll(validFor, context)
-					)
-					.map(({ disabled, value, label }) => (
-						<option disabled={disabled} key={value} value={value}>
-							{label}
-						</option>
-					))}
+				{renderOptions(options || [])}
 			</select>
 		</div>
 	)
