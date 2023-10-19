@@ -3,7 +3,6 @@ package meta
 import (
 	"errors"
 	"fmt"
-	"os"
 	"strconv"
 	"strings"
 )
