@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path"
 	"path/filepath"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -28,7 +29,7 @@ type SystemBundleStoreConnection struct {
 
 func getBasePath(namespace, version string) string {
 	// We're ignoring the version here because we always get the latest
-	return filepath.Join("..", "..", "libs", "apps", namespace, "bundle")
+	return path.Join("..", "..", "libs", "apps", namespace, "bundle")
 }
 
 func getFile(namespace string, version string, objectname string, filename string) (*os.File, error) {
@@ -129,7 +130,7 @@ func (b *SystemBundleStoreConnection) GetManyItems(items []meta.BundleableItem) 
 func (b *SystemBundleStoreConnection) GetAllItems(group meta.BundleableGroup, conditions meta.BundleConditions) error {
 
 	// TODO: Think about caching this, but remember conditions
-	basePath := filepath.Join(getBasePath(b.Namespace, b.Version), group.GetBundleFolderName()) + "/"
+	basePath := path.Join(getBasePath(b.Namespace, b.Version), group.GetBundleFolderName()) + "/"
 
 	conn := localfiles.Connection{}
 	paths, err := GetFilePaths(basePath, group, conditions, &conn)
@@ -166,8 +167,8 @@ func (b *SystemBundleStoreConnection) GetAllItems(group meta.BundleableGroup, co
 	return nil
 }
 
-func (b *SystemBundleStoreConnection) GetItemAttachment(item meta.AttachableItem, path string) (filetypes.Metadata, io.ReadSeeker, error) {
-	osFile, err := getFile(item.GetNamespace(), b.Version, item.GetBundleFolderName(), filepath.Join(item.GetBasePath(), path))
+func (b *SystemBundleStoreConnection) GetItemAttachment(item meta.AttachableItem, itempath string) (filetypes.Metadata, io.ReadSeeker, error) {
+	osFile, err := getFile(item.GetNamespace(), b.Version, item.GetBundleFolderName(), path.Join(item.GetBasePath(), itempath))
 	if err != nil {
 		return nil, nil, err
 	}

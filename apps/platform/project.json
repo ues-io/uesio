@@ -8,7 +8,7 @@
 			"executor": "nx:run-commands",
 			"outputs": ["{workspaceRoot}/dist/platform"],
 			"options": {
-				"commands": ["go build -o ../../dist/platform/uesio"],
+				"commands": ["go build -o ../../dist/platform/"],
 				"cwd": "apps/platform"
 			}
 		},

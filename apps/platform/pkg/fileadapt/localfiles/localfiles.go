@@ -33,8 +33,7 @@ func (a *FileAdapter) GetFileConnection(credentials *adapt.Credentials, bucket s
 }
 
 type Connection struct {
-	credentials *adapt.Credentials
-	bucket      string
+	bucket string
 }
 
 func (c *Connection) List(dirPath string) ([]string, error) {
@@ -48,7 +47,7 @@ func (c *Connection) List(dirPath string) ([]string, error) {
 		if path == basePath {
 			return nil
 		}
-		paths = append(paths, strings.TrimPrefix(path, basePath))
+		paths = append(paths, filepath.ToSlash(strings.TrimPrefix(path, basePath)))
 
 		return nil
 	})
