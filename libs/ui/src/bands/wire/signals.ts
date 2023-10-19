@@ -45,6 +45,11 @@ interface UpdateRecordSignal extends SignalDefinition {
 	record: string
 }
 
+interface UpdateFieldsSignal extends SignalDefinition {
+	wire: string
+	fields: { field: string; value: string }[]
+}
+
 interface CancelWireSignal extends SignalDefinition {
 	wire: string
 }
@@ -163,6 +168,23 @@ const signals: Record<string, SignalDescriptor> = {
 				context.merge(signal.value),
 				context
 			)
+		},
+	},
+	[`${WIRE_BAND}/UPDATE_FIELDS`]: {
+		dispatcher: (signal: UpdateFieldsSignal, context: Context) => {
+			const wireName = context.mergeString(signal.wire)
+			const record = context.getRecord(wireName)
+			if (!record) return context
+
+			signal.fields?.forEach((fieldPair) => {
+				record?.update(
+					context.mergeString(fieldPair.field),
+					context.merge(fieldPair.value),
+					context
+				)
+			})
+
+			return context
 		},
 	},
 	[`${WIRE_BAND}/CANCEL`]: {
