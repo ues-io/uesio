@@ -226,3 +226,4 @@ const Property: definition.UC<Definition> = (props) => {
 }
 
 export default Property
+export { getGrouping }
