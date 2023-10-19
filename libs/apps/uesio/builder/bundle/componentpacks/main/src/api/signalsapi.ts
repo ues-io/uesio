@@ -86,7 +86,7 @@ const allSignalSelectOptions = signalBandDefinitions
 					value: signal,
 					label: label || signal,
 					title: description || signal,
-					disabled: disabled,
+					disabled,
 				} as wire.SelectOption
 			}
 		) as wire.SelectOption[]
