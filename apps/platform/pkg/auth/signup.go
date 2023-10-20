@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"errors"
 	"regexp"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -65,16 +64,11 @@ func signupWithConnection(signupMethod *meta.SignupMethod, payload map[string]in
 
 	username, err := mergeTemplate(payload, signupMethod.UsernameTemplate)
 	if err != nil {
-		return nil, err
+		return nil, NewAuthRequestError("Signup failed - username not provided")
 	}
 
 	if !matchesRegex(username, signupMethod.UsernameRegex) {
-		return nil, errors.New("username does not match required pattern: " + signupMethod.UsernameFormatExplanation)
-	}
-
-	err = boostPayloadWithTemplate(username, payload, session.GetSite(), &signupMethod.Signup)
-	if err != nil {
-		return nil, err
+		return nil, NewAuthRequestError("Signup failed - username does not match required pattern: " + signupMethod.UsernameFormatExplanation)
 	}
 
 	err = authconn.Signup(signupMethod, payload, username)

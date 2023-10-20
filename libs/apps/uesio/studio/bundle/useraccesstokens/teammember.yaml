@@ -4,4 +4,4 @@ collection: uesio/studio.teammember
 conditions:
   - field: "uesio/studio.member"
 token: "${uesio/studio.app}"
-reason: "Team Member of ${uesio/studio.team->uesio/studio.name} for ${uesio/studio.app->uesio/core.uniquekey}"
+reason: "Member of team ${uesio/studio.team->uesio/studio.name} for ${uesio/studio.app->uesio/core.uniquekey}"

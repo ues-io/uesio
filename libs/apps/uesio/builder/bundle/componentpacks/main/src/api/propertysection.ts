@@ -64,10 +64,10 @@ const HOME_ICON = "home"
 
 const STYLES_LABEL = "Styles"
 const STYLES_TYPE = "STYLES"
-const STYLES_ID = "uesio.styleTokens"
+const DISPLAY_TYPE = "DISPLAY"
 
 const getStylesSection = (componentType: string): StylesSection => ({
-	id: STYLES_ID,
+	id: component.STYLE_TOKENS,
 	label: STYLES_LABEL,
 	type: STYLES_TYPE,
 	icon: "",
@@ -84,7 +84,7 @@ const DISPLAY_SECTION: DisplaySection = {
 const isStylesSection = (s: PropertiesPanelSection): s is StylesSection =>
 	s.type === STYLES_TYPE
 const isDisplaySection = (s: PropertiesPanelSection): s is DisplaySection =>
-	s.type === "DISPLAY"
+	s.type === DISPLAY_TYPE
 const isCustomSection = (s: PropertiesPanelSection): s is CustomSection =>
 	!s.type || s.type === "CUSTOM"
 
@@ -93,8 +93,8 @@ const getSectionId = (s: PropertiesPanelSection): string => {
 		case HOME_TYPE:
 			return s.id || HOME_ID
 		case STYLES_TYPE:
-			return s.id || "uesio.styleTokens"
-		case "DISPLAY":
+			return s.id || component.STYLE_TOKENS
+		case DISPLAY_TYPE:
 			return s.id || component.DISPLAY_CONDITIONS
 		case "SIGNALS":
 			return s.id || "signals"
@@ -109,7 +109,7 @@ const getSectionLabel = (s: PropertiesPanelSection): string => {
 			return HOME_LABEL
 		case STYLES_TYPE:
 			return STYLES_LABEL
-		case "DISPLAY":
+		case DISPLAY_TYPE:
 			return s.label || DISPLAY_SECTION.label
 		case "SIGNALS":
 			return s.label === undefined ? "Signals" : s.label

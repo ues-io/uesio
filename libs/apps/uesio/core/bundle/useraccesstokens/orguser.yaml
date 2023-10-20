@@ -5,6 +5,8 @@ type: lookup
 collection: uesio/core.organizationuser
 # token = the user id that we want to grant access TO, i.e. the org id
 token: "${uesio/core.org}"
+# reason = a human-readable explanation of why we are granting access
+reason: "Member of organization: ${uesio/core.org->uesio/core.username}"
 # conditions = define the user reference fields to use for merging in the running user id,
 # i.e. here we want to find organizationuser records where "uesio/core.user" = the running user's id
 conditions:

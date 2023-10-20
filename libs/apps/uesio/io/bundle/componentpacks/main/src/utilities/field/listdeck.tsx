@@ -1,14 +1,14 @@
 import { wire, definition, context, component } from "@uesio/ui"
 
-export type ListFieldOptions = {
-	components?: definition.DefinitionList
+export type ListDeckOptions = {
+	components: definition.DefinitionList
 }
 
 interface ListFieldDeckUtilityProps {
 	mode: context.FieldMode
 	value: wire.FieldValue
 	path: string
-	options?: ListFieldOptions
+	options?: ListDeckOptions
 }
 
 const ListFieldDeck: definition.UtilityComponent<ListFieldDeckUtilityProps> = (

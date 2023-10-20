@@ -5,10 +5,3 @@ label: bundlelisting
 pluralLabel: Bundle Listings
 access: protected
 accessField: uesio/studio.app
-recordChallengeTokens:
-  - token: "uesio/studio.workspace_admin"
-    userAccessToken: "uesio.namedpermission"
-    access: read
-    conditions:
-      - field: uesio/studio.status
-        value: PUBLISHED

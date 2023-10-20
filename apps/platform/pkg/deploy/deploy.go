@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"errors"
 	"io"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"strings"
@@ -15,7 +16,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
-	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -41,6 +41,7 @@ var ORDERED_ITEMS = [...]string{
 	"labels",
 	"translations",
 	"useraccesstokens",
+	"recordchallengetokens",
 	"signupmethods",
 	"secrets",
 	"configvalues",
@@ -148,7 +149,7 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 			collection, err = meta.GetBundleableGroupFromType(metadataType)
 			if err != nil {
 				// Most likely found a folder that we don't have a metadata type for
-				logger.Log("Found bad metadata type: "+metadataType, logger.INFO)
+				slog.Info("Found bad metadata type: " + metadataType)
 				continue
 			}
 			dep[metadataType] = collection

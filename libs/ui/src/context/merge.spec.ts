@@ -136,22 +136,6 @@ const signalOutputMergeTestCases = [
 	},
 ] as MergeWithContextTestCase[]
 
-describe("context.merge: $SignalOutput", () => {
-	signalOutputMergeTestCases.forEach((tc) => {
-		test(tc.name, () => {
-			let errCaught
-			let actual
-			try {
-				actual = tc.context.merge(tc.input)
-			} catch (e) {
-				errCaught = e
-			}
-			expect(errCaught).toEqual(tc.expectError)
-			expect(actual).toEqual(tc.expected)
-		})
-	})
-})
-
 const componentOutputContextHappyPath = new Context().addComponentFrame(
 	"uesio/io.barchart",
 	{
@@ -186,18 +170,280 @@ const componentOutputMergeTestCases = [
 	},
 ] as MergeWithContextTestCase[]
 
-describe("context.merge: $ComponentOutput", () => {
-	componentOutputMergeTestCases.forEach((tc) => {
-		test(tc.name, () => {
-			let errCaught
-			let actual
-			try {
-				actual = tc.context.merge(tc.input)
-			} catch (e) {
-				errCaught = e
-			}
-			expect(errCaught).toEqual(tc.expectError)
-			expect(actual).toEqual(tc.expected)
+const mergeStringTestCases = [
+	{
+		name: "happy path - value is a string",
+		context: new Context().addRecordDataFrame({
+			foo: "bar",
+		}),
+		input: "${foo}",
+		expected: "bar",
+	},
+	{
+		name: "value is undefined",
+		context: new Context().addRecordDataFrame({}),
+		input: "${foo}",
+		expected: "",
+	},
+	{
+		name: "value is null",
+		context: new Context().addRecordDataFrame({
+			foo: null,
+		}),
+		input: "${foo}",
+		expected: "",
+	},
+	{
+		name: "value is empty string",
+		context: new Context().addRecordDataFrame({
+			foo: "",
+		}),
+		input: "${foo}",
+		expected: "",
+	},
+	{
+		name: "value is boolean true",
+		context: new Context().addRecordDataFrame({
+			foo: true,
+		}),
+		input: "${foo}",
+		expected: "true",
+	},
+	{
+		name: "value is boolean false",
+		context: new Context().addRecordDataFrame({
+			foo: false,
+		}),
+		input: "${foo}",
+		expected: "false",
+	},
+	{
+		name: "value is number zero",
+		context: new Context().addRecordDataFrame({
+			foo: 0,
+		}),
+		input: "${foo}",
+		expected: "0",
+	},
+	{
+		name: "value is float zero",
+		context: new Context().addRecordDataFrame({
+			foo: 0.0,
+		}),
+		input: "${foo}",
+		expected: "0",
+	},
+	{
+		name: "value is number 1",
+		context: new Context().addRecordDataFrame({
+			foo: 1,
+		}),
+		input: "${foo}",
+		expected: "1",
+	},
+	{
+		name: "value is object, merge is a nested piece of it",
+		context: new Context().addRecordDataFrame({
+			foo: {
+				bar: "baz",
+			},
+		}),
+		input: "${foo->bar}",
+		expected: "baz",
+	},
+	{
+		name: "value is object, merge is the object itself",
+		context: new Context().addRecordDataFrame({
+			foo: {
+				bar: "baz",
+			},
+		}),
+		input: "${foo}",
+		expectError:
+			"Merge failed: result is of type object and cannot be returned as a string, please check your merge.",
+	},
+] as MergeWithContextTestCase[]
+
+const mergeTestCases = [
+	{
+		name: "value is a string",
+		context: new Context().addRecordDataFrame({
+			foo: "bar",
+		}),
+		input: "${foo}",
+		expected: "bar",
+	},
+	{
+		name: "value is undefined",
+		context: new Context().addRecordDataFrame({}),
+		input: "${foo}",
+		expected: "",
+	},
+	{
+		name: "value is null",
+		context: new Context().addRecordDataFrame({
+			foo: null,
+		}),
+		input: "${foo}",
+		expected: "",
+	},
+	{
+		name: "value is empty string",
+		context: new Context().addRecordDataFrame({
+			foo: "",
+		}),
+		input: "${foo}",
+		expected: "",
+	},
+	{
+		name: "value is boolean true",
+		context: new Context().addRecordDataFrame({
+			foo: true,
+		}),
+		input: "${foo}",
+		expected: true,
+	},
+	{
+		name: "value is boolean false",
+		context: new Context().addRecordDataFrame({
+			foo: false,
+		}),
+		input: "${foo}",
+		expected: false,
+	},
+	{
+		name: "value is number zero",
+		context: new Context().addRecordDataFrame({
+			foo: 0,
+		}),
+		input: "${foo}",
+		expected: 0,
+	},
+	{
+		name: "value is float zero",
+		context: new Context().addRecordDataFrame({
+			foo: 0.0,
+		}),
+		input: "${foo}",
+		expected: 0.0,
+	},
+	{
+		name: "value is number 1",
+		context: new Context().addRecordDataFrame({
+			foo: 1,
+		}),
+		input: "${foo}",
+		expected: 1,
+	},
+	{
+		name: "value is object, merge is a nested piece of it",
+		context: new Context().addRecordDataFrame({
+			foo: {
+				bar: "baz",
+			},
+		}),
+		input: "${foo->bar}",
+		expected: "baz",
+	},
+	{
+		name: "value is object, merge is the object itself",
+		context: new Context().addRecordDataFrame({
+			foo: {
+				bar: "baz",
+			},
+		}),
+		input: "${foo}",
+		expected: {
+			bar: "baz",
+		},
+	},
+	{
+		name: "value is array, merge is the array itself",
+		context: new Context().addRecordDataFrame({
+			foo: ["bar", "baz"],
+		}),
+		input: "${foo}",
+		expected: ["bar", "baz"],
+	},
+	{
+		name: "multiple values requested in the merge, values are numbers",
+		context: new Context().addRecordDataFrame({
+			foo: 0,
+			bar: 1,
+		}),
+		input: "${foo} + ${bar} = 1",
+		expected: "0 + 1 = 1",
+	},
+	{
+		name: "multiple values requested in the merge, values are booleans",
+		context: new Context().addRecordDataFrame({
+			foo: true,
+			bar: false,
+		}),
+		input: "${foo} || ${bar} => ${foo}",
+		expected: "true || false => true",
+	},
+] as MergeWithContextTestCase[]
+
+describe("merge", () => {
+	describe("$SignalOutput context", () => {
+		signalOutputMergeTestCases.forEach((tc) => {
+			test(tc.name, () => {
+				let errCaught
+				let actual
+				try {
+					actual = tc.context.merge(tc.input)
+				} catch (e) {
+					errCaught = e
+				}
+				expect(errCaught).toEqual(tc.expectError)
+				expect(actual).toEqual(tc.expected)
+			})
+		})
+	})
+	describe("$ComponentOutput context", () => {
+		componentOutputMergeTestCases.forEach((tc) => {
+			test(tc.name, () => {
+				let errCaught
+				let actual
+				try {
+					actual = tc.context.merge(tc.input)
+				} catch (e) {
+					errCaught = e
+				}
+				expect(errCaught).toEqual(tc.expectError)
+				expect(actual).toEqual(tc.expected)
+			})
+		})
+	})
+	describe("mergeString", () => {
+		mergeStringTestCases.forEach((tc) => {
+			test(tc.name, () => {
+				let errCaught
+				let actual
+				try {
+					actual = tc.context.mergeString(tc.input)
+				} catch (e) {
+					errCaught = (e as Error).message
+				}
+				expect(errCaught).toEqual(tc.expectError)
+				expect(actual).toEqual(tc.expected)
+			})
+		})
+	})
+	describe("merge", () => {
+		mergeTestCases.forEach((tc) => {
+			test(tc.name, () => {
+				let errCaught
+				let actual
+				try {
+					actual = tc.context.merge(tc.input)
+				} catch (e) {
+					errCaught = (e as Error).message
+				}
+				expect(errCaught).toEqual(tc.expectError)
+				expect(actual).toEqual(tc.expected)
+			})
 		})
 	})
 })

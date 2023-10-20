@@ -1,0 +1,36 @@
+{
+	"name": "apps-uesio-io",
+	"$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+	"sourceRoot": "libs/apps/uesio/io/bundle",
+	"projectType": "library",
+	"generators": {},
+	"targets": {
+		"build": {
+			"executor": "nx:run-commands",
+			"outputs": ["{projectRoot}/bundle/componentpacks/main/dist"],
+			"options": {
+				"commands": [
+					"uesio pack",
+					"npx tsc --noEmit --project ./tsconfig.lib.json"
+				],
+				"parallel": false,
+				"cwd": "libs/apps/uesio/io"
+			}
+		},
+		"watch": {
+			"executor": "nx:run-commands",
+			"options": {
+				"command": "uesio pack -w",
+				"cwd": "libs/apps/uesio/io"
+			}
+		},
+		"lint": {
+			"executor": "@nx/linter:eslint",
+			"options": {
+				"lintFilePatterns": ["libs/apps/uesio/io/**/*.ts*"]
+			}
+		}
+	},
+	"tags": [],
+	"implicitDependencies": ["cli", "ui"]
+}

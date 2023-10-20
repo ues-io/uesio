@@ -15,13 +15,17 @@ interface DialogUtilityProps {
 }
 
 const StyleDefaults = Object.freeze({
-	root: ["grid-rows-[auto_1fr_auto]", "h-full"],
-	content: ["p-5", "overflow-auto"],
-	footer: ["p-5", "justify-end"],
+	root: [],
+	content: [],
+	footer: [],
 })
 
 const Dialog: definition.UtilityComponent<DialogUtilityProps> = (props) => {
-	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
+	const classes = styles.useUtilityStyleTokens(
+		StyleDefaults,
+		props,
+		"uesio/io.dialog"
+	)
 	const { context, title, onClose, width, height, children, actions } = props
 	return (
 		<DialogPlain

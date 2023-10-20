@@ -2,4 +2,4 @@ name: permissionsetsrefs
 type: MULTIMETADATA
 label: Permission sets refs
 metadata:
-  type: PROFILE
+  type: PERMISSIONSET

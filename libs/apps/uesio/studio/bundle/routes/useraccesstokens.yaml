@@ -1,0 +1,5 @@
+name: useraccesstokens
+path: app/{app:\w*\/\w*}/workspace/{workspacename}/useraccesstokens
+view: useraccesstokens
+theme: default
+title: User Access Tokens

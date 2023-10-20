@@ -1,0 +1,14 @@
+name: default
+label: Default
+definition:
+  uesio.styleTokens:
+    root:
+      - grid-rows-[auto_1fr_auto]
+      - h-full
+    content:
+      - p-5
+      - overflow-auto
+    footer:
+      - p-5
+      - justify-end
+public: true

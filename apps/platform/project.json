@@ -1,0 +1,60 @@
+{
+	"name": "platform",
+	"$schema": "../../node_modules/nx/schemas/project-schema.json",
+	"projectType": "application",
+	"sourceRoot": "apps/platform",
+	"targets": {
+		"build": {
+			"executor": "nx:run-commands",
+			"outputs": ["{workspaceRoot}/dist/platform"],
+			"options": {
+				"commands": ["go build -o ../../dist/platform/uesio"],
+				"cwd": "apps/platform"
+			}
+		},
+		"lint": {
+			"executor": "nx:run-commands",
+			"options": {
+				"command": "output=$(gofmt -l ./pkg/**) && echo \"$output\" && test -z \"$output\"",
+				"cwd": "apps/platform"
+			}
+		},
+		"seed": {
+			"executor": "nx:run-commands",
+			"options": {
+				"command": "../../dist/platform/uesio seed",
+				"cwd": "apps/platform"
+			}
+		},
+		"serve": {
+			"executor": "nx:run-commands",
+			"options": {
+				"command": "../../dist/platform/uesio serve",
+				"cwd": "apps/platform"
+			}
+		},
+		"worker": {
+			"executor": "nx:run-commands",
+			"options": {
+				"command": "../../dist/platform/uesio worker",
+				"cwd": "apps/platform"
+			}
+		},
+		"build-image": {
+			"executor": "nx:run-commands",
+			"options": {
+				"command": "export GITSHA=$(git rev-parse --short HEAD) && docker build --tag uesio:$GITSHA --tag uesio:latest -f ./apps/platform/Dockerfile .",
+				"cwd": "."
+			}
+		},
+		"test": {
+			"executor": "nx:run-commands",
+			"options": {
+				"command": "go test -v ./...",
+				"cwd": "apps/platform"
+			}
+		}
+	},
+	"tags": [],
+	"implicitDependencies": ["vendor"]
+}
