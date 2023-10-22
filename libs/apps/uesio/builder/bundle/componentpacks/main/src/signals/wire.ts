@@ -111,6 +111,7 @@ const signals: SignalBandDefinition = {
 			],
 		},
 		[`${BAND}/UPDATE_RECORD`]: {
+			disabled: true,
 			label: "Update Record",
 			description: "update record",
 			properties: (): ComponentProperty[] => [

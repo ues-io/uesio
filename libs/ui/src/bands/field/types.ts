@@ -38,6 +38,8 @@ type SelectOption = {
 	// if you hover over a SelectOption for long enough
 	title?: string
 	validFor?: DisplayCondition[]
+	// if a SelectOption has childs then it will be a optgroup
+	options?: SelectOption[] | null
 }
 
 type NumberMetadata = {
