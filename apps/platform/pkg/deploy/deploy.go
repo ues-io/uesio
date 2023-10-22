@@ -6,6 +6,7 @@ import (
 	"errors"
 	"io"
 	"log/slog"
+	"path"
 	"path/filepath"
 	"strings"
 
@@ -158,7 +159,7 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 			continue
 		}
 
-		path := filepath.Join(filepath.Join(dirParts[1:]...), fileName)
+		path := path.Join(path.Join(dirParts[1:]...), fileName)
 
 		if !collection.FilterPath(path, nil, false) {
 			continue
