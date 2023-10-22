@@ -7,7 +7,6 @@ import (
 	"errors"
 	"io"
 	"io/ioutil"
-	"os"
 
 	"github.com/dimchansky/utfbom"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -103,7 +102,7 @@ func NewFileUploadBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Sess
 		// That means it's an attachment
 		fieldid := record[fieldIDIndex]
 
-		f, err := zipReader.Open("files" + string(os.PathSeparator) + path)
+		f, err := zipReader.Open("files/" + path)
 		if err != nil {
 			return nil, errors.New("No file found at path: " + path)
 		}

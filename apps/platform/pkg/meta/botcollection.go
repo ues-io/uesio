@@ -2,7 +2,6 @@ package meta
 
 import (
 	"fmt"
-	"os"
 	"strconv"
 	"strings"
 )
@@ -36,7 +35,7 @@ func (bc *BotCollection) AddItem(item Item) error {
 
 func (bc *BotCollection) GetItemFromPath(path, namespace string) BundleableItem {
 
-	parts := strings.Split(path, string(os.PathSeparator))
+	parts := strings.Split(path, "/")
 	partLength := len(parts)
 	botType := parts[0]
 
@@ -63,7 +62,7 @@ func IsBotTypeWithCollection(botType string) bool {
 }
 
 func (bc *BotCollection) IsDefinitionPath(path string) bool {
-	parts := strings.Split(path, string(os.PathSeparator))
+	parts := strings.Split(path, "/")
 	botType := parts[0]
 	if IsBotTypeWithCollection(botType) {
 		return parts[5] == "bot.yaml"
@@ -75,7 +74,7 @@ func (bc *BotCollection) IsDefinitionPath(path string) bool {
 func (bc *BotCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	collectionKey, hasCollection := conditions["uesio/studio.collection"]
 	botTypeKey, hasType := GetBotTypes()[conditions["uesio/studio.type"]]
-	parts := strings.Split(path, string(os.PathSeparator))
+	parts := strings.Split(path, "/")
 	partLength := len(parts)
 	if partLength < 1 {
 		return false

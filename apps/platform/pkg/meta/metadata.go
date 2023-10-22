@@ -3,7 +3,6 @@ package meta
 import (
 	"errors"
 	"fmt"
-	"os"
 	"reflect"
 	"regexp"
 	"strings"
@@ -124,7 +123,7 @@ func ParseNamespace(namespace string) (string, string, error) {
 }
 
 func StandardPathFilter(path string) bool {
-	parts := strings.Split(path, string(os.PathSeparator))
+	parts := strings.Split(path, "/")
 	if len(parts) != 1 || !strings.HasSuffix(parts[0], ".yaml") {
 		// Ignore this file
 		return false

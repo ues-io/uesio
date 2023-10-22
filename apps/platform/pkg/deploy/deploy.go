@@ -6,7 +6,7 @@ import (
 	"errors"
 	"io"
 	"log/slog"
-	"os"
+	"path"
 	"path/filepath"
 	"strings"
 
@@ -116,7 +116,7 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 	for _, zipFile := range zipReader.File {
 		// Don't forget to fix the windows filenames here
 		dir, fileName := filepath.Split(zipFile.Name)
-		dirParts := strings.Split(dir, string(os.PathSeparator))
+		dirParts := strings.Split(dir, "/")
 		partsLength := len(dirParts)
 
 		if fileName == "" || partsLength < 1 {
@@ -159,7 +159,7 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 			continue
 		}
 
-		path := filepath.Join(filepath.Join(dirParts[1:]...), fileName)
+		path := path.Join(path.Join(dirParts[1:]...), fileName)
 
 		if !collection.FilterPath(path, nil, false) {
 			continue

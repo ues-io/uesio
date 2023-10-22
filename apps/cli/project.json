@@ -8,7 +8,7 @@
 			"executor": "nx:run-commands",
 			"outputs": ["{workspaceRoot}/dist/cli"],
 			"options": {
-				"commands": ["go build -o ../../dist/cli/uesio"],
+				"commands": ["go build -o ../../dist/cli/ uesio.go"],
 				"cwd": "apps/cli"
 			}
 		},
@@ -16,7 +16,7 @@
 			"executor": "nx:run-commands",
 			"outputs": ["{workspaceRoot}/dist/cli"],
 			"options": {
-				"commands": ["go build -o ../../dist/cli/uesio"],
+				"commands": ["go build -o ../../dist/cli/ uesio.go"],
 				"cwd": "apps/cli"
 			}
 		},
