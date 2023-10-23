@@ -75,7 +75,7 @@ const Tabs: definition.UC<TabsDefinition> = (props) => {
 				/>
 			}
 		>
-			{allVisibleTabs && (
+			{shouldDisplaySelectedTab && (
 				<component.Slot
 					definition={selectedTab}
 					listName="components"
