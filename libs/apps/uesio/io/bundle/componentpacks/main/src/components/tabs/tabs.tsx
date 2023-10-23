@@ -22,11 +22,7 @@ interface SelectTabSignal extends signal.SignalDefinition {
 
 const signals: Record<string, signal.ComponentSignalDescriptor> = {
 	SELECT_TAB: {
-		dispatcher: (state, signal: SelectTabSignal) => {
-			console.log({ state, signal })
-			state = "signals"
-			console.log({ state })
-		},
+		dispatcher: (_, signal: SelectTabSignal) => signal.id,
 	},
 }
 
