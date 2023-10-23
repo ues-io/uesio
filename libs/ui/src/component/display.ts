@@ -129,6 +129,14 @@ type WireHasRecords = {
 	type: "wireHasRecords"
 	wire: string
 }
+type WireHasSearchCondition = {
+	type: "wireHasSearchCondition"
+	wire: string
+}
+type WireHasNoSearchCondition = {
+	type: "wireHasNoSearchCondition"
+	wire: string
+}
 
 type HasProfile = {
 	type: "hasProfile"
@@ -162,6 +170,8 @@ type DisplayCondition =
 	| WireIsNotLoading
 	| WireHasNoRecords
 	| WireHasRecords
+	| WireHasSearchCondition
+	| WireHasNoSearchCondition
 	| WireHasLoadedAllRecords
 	| WireHasMoreRecordsToLoad
 	| MergeValue
@@ -260,6 +270,19 @@ function should(condition: DisplayCondition, context: Context): boolean {
 		const wire = context.getWire(condition.wire)
 		const hasRecords = !!wire?.getData().length
 		return condition.type === "wireHasNoRecords" ? !hasRecords : hasRecords
+	}
+
+	if (
+		condition.type === "wireHasSearchCondition" ||
+		condition.type === "wireHasNoSearchCondition"
+	) {
+		const wire = context.getWire(condition.wire)
+		const hasSearchCondition = !!wire
+			?.getConditions()
+			.some((condition) => condition.type === "SEARCH")
+		return condition.type === "wireHasNoSearchCondition"
+			? !hasSearchCondition
+			: hasSearchCondition
 	}
 
 	if (

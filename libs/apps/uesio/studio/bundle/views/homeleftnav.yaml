@@ -96,6 +96,10 @@ definition:
                                 uesio.display:
                                   - type: wireHasNoRecords
                                     wire: apps
+                                  - type: wireHasNoSearchCondition
+                                    wire: apps
+                                  - type: wireIsNotLoading
+                                    wire: apps
                                 signals:
                                   - signal: wire/RESET
                                     wire: newApp
@@ -105,8 +109,15 @@ definition:
                                 icon: add
                                 uesio.id: add-app-2
                                 uesio.display:
-                                  - type: wireHasRecords
-                                    wire: apps
+                                  - type: group
+                                    conjunction: OR
+                                    conditions:
+                                      - type: wireHasRecords
+                                        wire: apps
+                                      - type: wireHasSearchCondition
+                                        wire: apps
+                                      - type: wireIsLoading
+                                        wire: apps
                                 signals:
                                   - signal: wire/RESET
                                     wire: newApp
@@ -117,6 +128,10 @@ definition:
                     uesio.variant: uesio/studio.calloutsection
                     uesio.display:
                       - type: wireHasNoRecords
+                        wire: apps
+                      - type: wireHasNoSearchCondition
+                        wire: apps
+                      - type: wireIsNotLoading
                         wire: apps
                     components:
                       - uesio/io.text:
