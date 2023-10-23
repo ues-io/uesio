@@ -35,7 +35,6 @@ const Tabs: definition.UC<TabsDefinition> = (props) => {
 
 	const [selectedTabId, setSelectedTab] =
 		api.component.useState<string>(componentId)
-
 	const foundIndex = tabs.findIndex((tab) => tab.id === selectedTabId)
 	const selectedIndex = foundIndex === -1 ? 0 : foundIndex
 	const selectedTab = tabs[selectedIndex]
