@@ -44,6 +44,7 @@ Thumbs.db
 *.in
 *.out
 *.env
+myenv.ps1
 .google-creds.json
 pgdata
 /bundles/

@@ -1,0 +1,44 @@
+name: dependencies_panel
+definition:
+  wires:
+    animals:
+      collection: uesio/tests.animal
+      fields:
+        uesio/core.id:
+        uesio/tests.species:
+        uesio/tests.genus:
+        uesio/tests.total_population:
+      order:
+        - field: uesio/tests.genus
+          desc: false
+        - field: uesio/tests.species
+          desc: false
+  components:
+  panels:
+    panel1:
+      uesio.type: uesio/io.dialog
+      title: My Panel
+      components:
+        - uesio/io.table:
+            wire: animals
+            columns:
+              - field: uesio/tests.genus
+              - label: A column with a field and a chart
+                components:
+                  - uesio/io.field:
+                    fieldId: uesio/tests.species
+                    label: Species
+                  - uesio/io.barchart:
+                      title: "Animals by Genus"
+                      series:
+                        - label: Animals
+                          name: animals
+                          wire: animals
+                          valueField: uesio/tests.total_population
+                          categoryField: uesio/tests.genus
+                      labels:
+                        source: DATA
+      actions:
+        - uesio/io.button:
+            uesio.variant: uesio/io.primary
+            label: This is a button

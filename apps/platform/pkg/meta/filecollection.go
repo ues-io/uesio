@@ -1,7 +1,6 @@
 package meta
 
 import (
-	"os"
 	"strconv"
 	"strings"
 )
@@ -34,7 +33,7 @@ func (fc *FileCollection) AddItem(item Item) error {
 }
 
 func (fc *FileCollection) GetItemFromPath(path, namespace string) BundleableItem {
-	parts := strings.Split(path, string(os.PathSeparator))
+	parts := strings.Split(path, "/")
 	return NewBaseFile(namespace, parts[0])
 }
 
@@ -43,7 +42,7 @@ func (fc *FileCollection) GetItemFromKey(key string) (BundleableItem, error) {
 }
 
 func (fc *FileCollection) IsDefinitionPath(path string) bool {
-	parts := strings.Split(path, string(os.PathSeparator))
+	parts := strings.Split(path, "/")
 	return len(parts) == 2 && parts[1] == "file.yaml"
 }
 

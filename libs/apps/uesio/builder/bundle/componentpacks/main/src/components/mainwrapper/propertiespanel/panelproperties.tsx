@@ -13,7 +13,10 @@ const panelProperties = [
 		label: "Panel Type",
 		required: true,
 		type: "SELECT",
-		options: [{ value: defaultPanelComponentType, label: "Dialog" }],
+		options: [
+			{ value: defaultPanelComponentType, label: "Dialog" },
+			{ value: "uesio/io.sidepanel", label: "Side Panel" },
+		],
 	},
 ] as ComponentProperty[]
 

@@ -33,13 +33,12 @@ func (a *FileAdapter) GetFileConnection(credentials *adapt.Credentials, bucket s
 }
 
 type Connection struct {
-	credentials *adapt.Credentials
-	bucket      string
+	bucket string
 }
 
 func (c *Connection) List(dirPath string) ([]string, error) {
 	paths := []string{}
-	basePath := filepath.Join(c.bucket, dirPath) + string(os.PathSeparator)
+	basePath := filepath.Join(c.bucket, filepath.FromSlash(dirPath)) + string(os.PathSeparator)
 	err := filepath.Walk(basePath, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			// Ignore walking errors
@@ -48,7 +47,7 @@ func (c *Connection) List(dirPath string) ([]string, error) {
 		if path == basePath {
 			return nil
 		}
-		paths = append(paths, strings.TrimPrefix(path, basePath))
+		paths = append(paths, filepath.ToSlash(strings.TrimPrefix(path, basePath)))
 
 		return nil
 	})
@@ -60,7 +59,7 @@ func (c *Connection) List(dirPath string) ([]string, error) {
 
 func (c *Connection) Upload(fileData io.Reader, path string) error {
 
-	fullPath := filepath.Join(c.bucket, path)
+	fullPath := filepath.Join(c.bucket, filepath.FromSlash(path))
 
 	directory := filepath.Dir(fullPath)
 
@@ -83,7 +82,7 @@ func (c *Connection) Upload(fileData io.Reader, path string) error {
 }
 
 func (c *Connection) Download(path string) (file.Metadata, io.ReadSeeker, error) {
-	fullPath := filepath.Join(c.bucket, path)
+	fullPath := filepath.Join(c.bucket, filepath.FromSlash(path))
 	outFile, err := os.Open(fullPath)
 	if err != nil {
 		return nil, strings.NewReader(""), errors.New("unable to read file at path: " + path)
@@ -96,7 +95,7 @@ func (c *Connection) Download(path string) (file.Metadata, io.ReadSeeker, error)
 }
 
 func (c *Connection) Delete(path string) error {
-	fullPath := filepath.Join(c.bucket, path)
+	fullPath := filepath.Join(c.bucket, filepath.FromSlash(path))
 	err := os.Remove(fullPath)
 	if err != nil {
 		return errors.New("Error Reading File: " + err.Error())
@@ -107,7 +106,7 @@ func (c *Connection) Delete(path string) error {
 }
 
 func (c *Connection) EmptyDir(path string) error {
-	fullPath := filepath.Join(c.bucket, path)
+	fullPath := filepath.Join(c.bucket, filepath.FromSlash(path))
 	err := os.RemoveAll(fullPath)
 	if err != nil {
 		return errors.New("Error Reading File: " + err.Error())
