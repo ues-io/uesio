@@ -1,6 +1,6 @@
 import { signal, component, api, metadata, definition } from "@uesio/ui"
 import TabLabels from "../../utilities/tablabels/tablabels"
-//import { useEffect } from "react"
+import { useEffect } from "react"
 
 export type TabDefinition = {
 	id: string
@@ -37,30 +37,29 @@ const Tabs: definition.UC<TabsDefinition> = (props) => {
 
 	const componentId = api.component.getComponentIdFromProps(props)
 
-	const [selectedTabId, setSelectedTab] = api.component.useState<string>(
-		componentId,
-		tabs[0].id
-	)
+	const [selectedTabId, setSelectedTab] =
+		api.component.useState<string>(componentId)
+
 	const foundIndex = tabs.findIndex((tab) => tab.id === selectedTabId)
 	const selectedIndex = foundIndex === -1 ? 0 : foundIndex
 	const selectedTab = tabs[selectedIndex]
-	// const allVisibleTabs = component.useShouldFilter<TabDefinition>(
-	// 	tabs,
-	// 	context
-	// )
-	// const shouldDisplaySelectedTab =
-	// 	allVisibleTabs.findIndex((tab) => tab.id === selectedTab.id) > -1
-	// useEffect(() => {
-	// 	if (!shouldDisplaySelectedTab) {
-	// 		setSelectedTab(allVisibleTabs[0]?.id)
-	// 	}
-	// }, [
-	// 	selectedTabId,
-	// 	shouldDisplaySelectedTab,
-	// 	tabs,
-	// 	setSelectedTab,
-	// 	allVisibleTabs,
-	// ])
+	const allVisibleTabs = component.useShouldFilter<TabDefinition>(
+		tabs,
+		context
+	)
+	const shouldDisplaySelectedTab =
+		allVisibleTabs.findIndex((tab) => tab.id === selectedTab.id) > -1
+	useEffect(() => {
+		if (!shouldDisplaySelectedTab) {
+			setSelectedTab(allVisibleTabs[0]?.id)
+		}
+	}, [
+		selectedTabId,
+		shouldDisplaySelectedTab,
+		tabs,
+		setSelectedTab,
+		allVisibleTabs,
+	])
 
 	return (
 		<ScrollPanel
@@ -76,7 +75,7 @@ const Tabs: definition.UC<TabsDefinition> = (props) => {
 				/>
 			}
 		>
-			{true && (
+			{allVisibleTabs && (
 				<component.Slot
 					definition={selectedTab}
 					listName="components"
