@@ -156,6 +156,30 @@ definition:
               signals:
                 - signal: panel/TOGGLE
                   panel: newWorkspace
+    - uesio/io.box:
+        uesio.variant: uesio/studio.calloutsection
+        uesio.display:
+          - type: wireHasNoRecords
+            wire: workspaces
+          - type: wireHasNoRecords
+            wire: sites
+        components:
+          - uesio/io.text:
+              text: To get started building your app, you will need a workspace. This is where you can build and preview new functionality for your app.
+              element: p
+              uesio.styleTokens:
+                root:
+                  - mb-4
+          - uesio/io.text:
+              text: Click the
+          - uesio/io.button:
+              uesio.variant: uesio/studio.navcta
+              icon: +
+              uesio.styleTokens:
+                root:
+                  - px-2
+          - uesio/io.text:
+              text: to create a workspace.
     - uesio/io.list:
         uesio.id: workspaceslist
         wire: workspaces

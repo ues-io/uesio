@@ -113,6 +113,25 @@ definition:
                                   - signal: panel/TOGGLE
                                     panel: newApp
               content:
+                - uesio/io.box:
+                    uesio.variant: uesio/studio.calloutsection
+                    uesio.display:
+                      - type: wireHasNoRecords
+                        wire: apps
+                    components:
+                      - uesio/io.text:
+                          text: Welcome to the ues.io studio!
+                          element: p
+                      - uesio/io.text:
+                          text: Click the
+                      - uesio/io.button:
+                          uesio.variant: uesio/studio.navcta
+                          icon: +
+                          uesio.styleTokens:
+                            root:
+                              - px-2
+                      - uesio/io.text:
+                          text: to create your first app.
                 - uesio/io.list:
                     uesio.id: appslist
                     wire: apps
