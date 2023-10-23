@@ -3,7 +3,6 @@ package meta
 import (
 	"errors"
 	"fmt"
-	"os"
 	"strconv"
 	"strings"
 )
@@ -36,7 +35,7 @@ func (rctc *RecordChallengeTokenCollection) AddItem(item Item) error {
 }
 
 func (rctc *RecordChallengeTokenCollection) GetItemFromPath(path, namespace string) BundleableItem {
-	parts := strings.Split(path, string(os.PathSeparator))
+	parts := strings.Split(path, "/")
 	partLength := len(parts)
 	if partLength != 4 {
 		return nil
@@ -56,7 +55,7 @@ func (rctc *RecordChallengeTokenCollection) GetItemFromKey(key string) (Bundleab
 
 func (rctc *RecordChallengeTokenCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	collectionKey, hasCollection := conditions["uesio/studio.collection"]
-	parts := strings.Split(path, string(os.PathSeparator))
+	parts := strings.Split(path, "/")
 	if len(parts) != 4 || !strings.HasSuffix(parts[3], ".yaml") {
 		// Ignore this file
 		return false

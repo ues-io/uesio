@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"os"
 	"path/filepath"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -104,7 +103,7 @@ func (b *PlatformBundleStoreConnection) GetManyItems(items []meta.BundleableItem
 
 func (b *PlatformBundleStoreConnection) GetAllItems(group meta.BundleableGroup, conditions meta.BundleConditions) error {
 	// TODO: Think about caching this, but remember conditions
-	basePath := filepath.Join(getBasePath(b.Namespace, b.Version), group.GetBundleFolderName()) + string(os.PathSeparator)
+	basePath := filepath.Join(getBasePath(b.Namespace, b.Version), group.GetBundleFolderName()) + "/"
 
 	conn, err := getPlatformFileConnection()
 	if err != nil {
