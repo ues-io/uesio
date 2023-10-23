@@ -8,28 +8,17 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-const (
-	InfoColor    = "\033[1;34m%s\033[0m"
-	NoticeColor  = "\033[1;36m%s\033[0m"
-	WarningColor = "\033[1;33m%s\033[0m"
-	ErrorColor   = "\033[1;31m%s\033[0m"
-	DebugColor   = "\033[0;36m%s\033[0m"
-)
+const WarningColor = "\033[1;33m%s\033[0m"
 
 type customLocale struct {
 	gojsonschema.DefaultLocale
 }
 
-const (
-	Const                        = "value does not match: {{.allowed}}"
-	AdditionalPropertyNotAllowed = "Additional property \033[0;36m{{.property}}\033[0m is not allowed"
-)
-
 func (l customLocale) Const() string {
-	return fmt.Sprintf(WarningColor, Const)
+	return fmt.Sprintf(WarningColor, "value does not match: {{.allowed}}")
 }
 func (l customLocale) AdditionalPropertyNotAllowed() string {
-	return fmt.Sprintf(WarningColor, AdditionalPropertyNotAllowed)
+	return fmt.Sprintf(WarningColor, "Additional property \033[0;36m{{.property}}\033[0m is not allowed")
 }
 
 // ValidateYaml validates YAML content against a target schema,
