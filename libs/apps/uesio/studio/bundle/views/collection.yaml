@@ -155,25 +155,6 @@ definition:
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: uesio/core.id
-    # newrecordchallengetoken:
-    #   collection: uesio/studio.recordchallengetoken
-    #   fields:
-    #     uesio/core.id:
-    #     uesio/studio.useraccesstoken:
-    #     uesio/studio.token:
-    #     uesio/studio.conditions:
-    #     uesio/studio.access:
-    #   init:
-    #     query: false
-    #     create: true
-    #   defaults:
-    #     - field: uesio/studio.collection
-    #       valueSource: VALUE
-    #       value: $Param{app}.$Param{collectionname}
-    #     - field: uesio/studio.workspace
-    #       valueSource: LOOKUP
-    #       lookupWire: workspaces
-    #       lookupField: uesio/core.id
     viewOnly:
       viewOnly: true
       fields:
