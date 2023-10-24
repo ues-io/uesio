@@ -2,7 +2,7 @@ package meta
 
 import (
 	"fmt"
-	"path/filepath"
+	"path"
 
 	"gopkg.in/yaml.v3"
 )
@@ -41,7 +41,7 @@ func (r *RouteAssignment) GetKey() string {
 func (r *RouteAssignment) GetPath() string {
 	collectionNamespace, collectionName, _ := ParseKey(r.Collection)
 	nsUser, appName, _ := ParseNamespace(collectionNamespace)
-	return filepath.Join(nsUser, appName, collectionName, r.Type) + ".yaml"
+	return path.Join(nsUser, appName, collectionName, r.Type) + ".yaml"
 }
 
 func (r *RouteAssignment) GetCollectionName() string {

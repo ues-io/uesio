@@ -3,7 +3,7 @@ package meta
 import (
 	"errors"
 	"fmt"
-	"path/filepath"
+	"path"
 	"strings"
 
 	"github.com/francoispqt/gojay"
@@ -73,7 +73,7 @@ func (c *ComponentVariant) GetExtendsKey() string {
 func (c *ComponentVariant) GetPath() string {
 	componentNamespace, componentName, _ := ParseKey(c.Component)
 	nsUser, appName, _ := ParseNamespace(componentNamespace)
-	return filepath.Join(nsUser, appName, componentName, c.Name) + ".yaml"
+	return path.Join(nsUser, appName, componentName, c.Name) + ".yaml"
 }
 
 func (c *ComponentVariant) GetDBID(workspace string) string {
