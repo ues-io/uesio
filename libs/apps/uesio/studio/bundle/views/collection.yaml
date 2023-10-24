@@ -646,8 +646,49 @@ definition:
                                                   value: $Record{uesio/studio.accessfield}
                                                 - type: wireHasChanges
                                                   wire: collections
+                                            - type: group
+                                              conjunction: AND
+                                              conditions:
+                                                - type: fieldValue
+                                                  operator: NOT_EQUALS
+                                                  value: protected
+                                                  field: uesio/studio.access
+                                                - type: wireHasChanges
+                                                  wire: collections
+                                            - type: group
+                                              conjunction: AND
+                                              conditions:
+                                                - type: group
+                                                  conjunction: OR
+                                                  conditions:
+                                                    - type: wireHasChanges
+                                                      wire: collections
+                                                    - type: wireHasChanges
+                                                      wire: recordchallengetokens
+                                                - type: fieldValue
+                                                  operator: EQUALS
+                                                  value: protected
+                                                  field: uesio/studio.access
+                                                - type: wireHasRecords
+                                                  wire: recordchallengetokens
                                             - type: wireHasChanges
                                               wire: recordchallengetokens
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.secondary
+                                      text: $Label{uesio/io.cancel}
+                                      uesio.display:
+                                        - type: group
+                                          conjunction: OR
+                                          conditions:
+                                            - type: wireHasChanges
+                                              wire: recordchallengetokens
+                                            - type: wireHasChanges
+                                              wire: collections
+                                      signals:
+                                        - signal: wire/CANCEL
+                                          wire: recordchallengetokens
+                                        - signal: wire/CANCEL
+                                          wire: collections
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: Add Token
@@ -1121,7 +1162,12 @@ definition:
                     workspace:
                       name: $Param{workspacename}
                       app: $Param{app}
-
+      onClose:
+        - signal: wire/MARK_FOR_DELETE
+          wire: recordchallengetokens
+        - signal: wire/SAVE
+          wires:
+            - recordchallengetokens
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
