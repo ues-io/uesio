@@ -1,6 +1,7 @@
 package datasource
 
 import (
+	"errors"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -29,6 +30,9 @@ func getTokensForRequest(connection adapt.Connection, session *sess.Session, tok
 			fieldMetadata, err := challengeMetadata.GetField(challengeMetadata.AccessField)
 			if err != nil {
 				return nil, err
+			}
+			if fieldMetadata.ReferenceMetadata == nil {
+				return nil, errors.New("Access field is not a reference field")
 			}
 			challengeMetadata, err = metadata.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
 			if err != nil {
