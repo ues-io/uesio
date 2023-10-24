@@ -30,9 +30,11 @@ func getTokensForRequest(connection adapt.Connection, session *sess.Session, tok
 			if err != nil {
 				return nil, err
 			}
-			challengeMetadata, err = metadata.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
-			if err != nil {
-				return nil, err
+			if fieldMetadata.ReferenceMetadata != nil {
+				challengeMetadata, err = metadata.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
+				if err != nil {
+					return nil, err
+				}
 			}
 		}
 
