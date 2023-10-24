@@ -1162,7 +1162,7 @@ definition:
                     workspace:
                       name: $Param{workspacename}
                       app: $Param{app}
-      onClose:
+      afterClose:
         - signal: wire/MARK_FOR_DELETE
           wire: recordchallengetokens
         - signal: wire/SAVE
