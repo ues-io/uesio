@@ -3,7 +3,7 @@ package auth
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log/slog"
 	"os"
 	"path/filepath"
@@ -45,7 +45,7 @@ func (s *FSSessionStore) Get(id string) session.Session {
 			return nil
 		}
 		defer file.Close()
-		jsonContent, err := ioutil.ReadAll(file)
+		jsonContent, err := io.ReadAll(file)
 		if err != nil {
 			fmt.Println(err)
 			return nil
@@ -80,7 +80,7 @@ func (s *FSSessionStore) Add(sess session.Session) {
 			fmt.Println(err)
 		}
 	}
-	err := ioutil.WriteFile(filePath, byteSlice, 0644)
+	err := os.WriteFile(filePath, byteSlice, 0644)
 	if err != nil {
 		fmt.Println(err)
 	}

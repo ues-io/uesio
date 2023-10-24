@@ -3,7 +3,7 @@ package meta
 import (
 	"errors"
 	"fmt"
-	"path/filepath"
+	"path"
 
 	"gopkg.in/yaml.v3"
 )
@@ -94,7 +94,7 @@ func (f *Field) GetKey() string {
 func (f *Field) GetPath() string {
 	collectionNamespace, collectionName, _ := ParseKey(f.CollectionRef)
 	nsUser, appName, _ := ParseNamespace(collectionNamespace)
-	return filepath.Join(nsUser, appName, collectionName, f.Name) + ".yaml"
+	return path.Join(nsUser, appName, collectionName, f.Name) + ".yaml"
 }
 
 func (f *Field) SetField(fieldName string, value interface{}) error {
