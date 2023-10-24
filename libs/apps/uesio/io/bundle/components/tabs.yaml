@@ -20,6 +20,9 @@ defaultDefinition:
       label: Beta
       components: []
 properties:
+  - name: uesio.id
+    type: COMPONENT_ID
+    label: Tabs Id
   - name: tabs
     type: LIST
     items:
@@ -61,6 +64,14 @@ sections:
     id: tabs
     type: CUSTOM
     properties:
+      - uesio.id
       - tabs
   - type: STYLES
   - type: DISPLAY
+signals:
+  SELECT_TAB:
+    label: Select Tab
+    properties:
+      - name: id
+        type: TEXT
+        label: Tab Id
