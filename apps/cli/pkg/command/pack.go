@@ -93,14 +93,12 @@ func Build(options *api.BuildOptions, metaFilePath string, watch bool) error {
 		}
 	}
 
-	if metaFilePath != "" {
-		err := os.WriteFile(metaFilePath, []byte(result.Metafile), 0644)
-		if err != nil {
-			return err
-		}
+	if metaFilePath == "" {
+		return nil
 	}
 
-	return nil
+	return os.WriteFile(metaFilePath, []byte(result.Metafile), 0644)
+
 }
 
 func Watch(options *api.BuildOptions) error {
@@ -109,20 +107,12 @@ func Watch(options *api.BuildOptions) error {
 	options.MinifyWhitespace = false
 	options.MinifyIdentifiers = false
 	options.MinifySyntax = false
+	options.LogLevel = api.LogLevelDebug
 
 	ctx, err := api.Context(*options)
 	if err != nil {
 		return err
 	}
 
-	watchErr := ctx.Watch(api.WatchOptions{})
-	if watchErr != nil {
-		return err
-	}
-
-	// Returning from main() exits immediately in Go.
-	// Block forever so we keep watching and don't exit.
-	<-make(chan struct{})
-
-	return nil
+	return ctx.Watch(api.WatchOptions{})
 }
