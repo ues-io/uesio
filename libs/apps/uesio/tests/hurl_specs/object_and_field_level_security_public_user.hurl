@@ -63,10 +63,12 @@ jsonpath "$.dependencies.wire[*].data[0]['uesio/tests.species']" nth 0 == "Abrah
 jsonpath "$.dependencies.wire[*].data[0]['uesio/tests.genus']" nth 0 == "Mouton"
 jsonpath "$.dependencies.wire[*]['debugQueryString']" nth 0 == ```
 SELECT
-main.fields->>'uesio/tests.genus' AS "uesio/tests.genus",
-main.fields->>'uesio/tests.species' AS "uesio/tests.species",
-main.id::text AS "uesio/core.id",
-main.uniquekey AS "uesio/core.uniquekey"
+jsonb_build_object(
+'uesio/core.id',main.id,
+'uesio/core.uniquekey',main.uniquekey,
+'uesio/tests.genus',main.fields->'uesio/tests.genus',
+'uesio/tests.species',main.fields->'uesio/tests.species'
+)
 FROM data as "main"
 WHERE
 main.collection = $1 AND

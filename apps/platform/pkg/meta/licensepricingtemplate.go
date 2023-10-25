@@ -29,3 +29,8 @@ func (lt *LicensePricingTemplate) Loop(iter func(string, interface{}) error) err
 func (lt *LicensePricingTemplate) Len() int {
 	return StandardItemLen(lt)
 }
+
+func (lt *LicensePricingTemplate) UnmarshalJSON(data []byte) error {
+	type alias LicensePricingTemplate
+	return refScanner((*alias)(lt), data)
+}
