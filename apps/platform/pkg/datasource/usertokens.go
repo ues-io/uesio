@@ -1,6 +1,7 @@
 package datasource
 
 import (
+	"errors"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -29,6 +30,9 @@ func getTokensForRequest(connection adapt.Connection, session *sess.Session, tok
 			fieldMetadata, err := challengeMetadata.GetField(challengeMetadata.AccessField)
 			if err != nil {
 				return nil, err
+			}
+			if fieldMetadata.ReferenceMetadata == nil {
+				return nil, errors.New("Access field is not a reference field")
 			}
 			challengeMetadata, err = metadata.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
 			if err != nil {
@@ -134,7 +138,7 @@ func HydrateTokenMap(tokenMap sess.TokenMap, tokenDefs meta.UserAccessTokenColle
 				fieldsMap.merge(getFieldsMap(templating.ExtractKeys(token.Reason)))
 			}
 
-			loadConditions := []adapt.LoadRequestCondition{}
+			var loadConditions []adapt.LoadRequestCondition
 			for _, condition := range token.Conditions {
 				fieldsMap.merge(&FieldsMap{
 					condition.Field: nil,
@@ -182,7 +186,7 @@ func HydrateTokenMap(tokenMap sess.TokenMap, tokenDefs meta.UserAccessTokenColle
 				return err
 			}
 
-			tokenStrings := []sess.TokenValue{}
+			var tokenStrings []sess.TokenValue
 			err = lookupResults.Loop(func(record meta.Item, _ string) error {
 				tokenValue, err := templating.Execute(template, record)
 				if err != nil {

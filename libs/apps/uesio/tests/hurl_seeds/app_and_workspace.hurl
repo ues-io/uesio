@@ -11,6 +11,7 @@ user_id: jsonpath "$.user.id"
 
 # Delete the test site if it already exists
 DELETE https://{{host}}:{{port}}/site/api/v1/collection/uesio/studio/site?uesio/studio.name=eq.testsite
+x-uesio-app: uesio/tests
 HTTP 204
 
 # Delete the tests app if it already exists, which should cascade delete the workspace and all of its metadata

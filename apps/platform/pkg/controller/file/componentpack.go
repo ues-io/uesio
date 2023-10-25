@@ -1,13 +1,14 @@
 package file
 
 import (
+	"log/slog"
 	"net/http"
 	"strings"
 	"time"
 
 	"github.com/gorilla/mux"
+
 	"github.com/thecloudmasters/uesio/pkg/bundle"
-	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 )
@@ -25,24 +26,24 @@ func ServeComponentPackFile(w http.ResponseWriter, r *http.Request) {
 
 	err := bundle.Load(componentPack, session, nil)
 	if err != nil {
-		logger.LogError(err)
+		slog.Error(err.Error())
 		http.Error(w, "Not Found", http.StatusNotFound)
 		return
 	}
 
-	fileModTime, stream, err := bundle.GetItemAttachment(componentPack, "dist/"+path, session)
+	fileMeta, stream, err := bundle.GetItemAttachment(componentPack, "dist/"+path, session)
 
 	if err != nil {
-		logger.LogError(err)
+		slog.Error(err.Error())
 		http.Error(w, "Failed ComponentPack Download", http.StatusInternalServerError)
 		return
 	}
 
-	modTime := fileModTime.Unix()
+	lastModified := *fileMeta.LastModified()
 
-	// Get the greater of the two modtimes
-	if modTime < componentPack.UpdatedAt {
-		modTime = componentPack.UpdatedAt
+	// Get the greater of the two modification times
+	if lastModified.Unix() < componentPack.UpdatedAt {
+		lastModified = time.Unix(componentPack.UpdatedAt, 0)
 	}
 
 	usePath := "pack.js"
@@ -52,7 +53,7 @@ func ServeComponentPackFile(w http.ResponseWriter, r *http.Request) {
 
 	respondFile(w, r, &FileRequest{
 		Path:         usePath,
-		LastModified: time.Unix(modTime, 0),
+		LastModified: lastModified,
 		Namespace:    namespace,
 		Version:      resourceVersion,
 	}, stream)

@@ -1,8 +1,14 @@
 package jsdialect
 
+import "encoding/json"
+
 type ParamsAPI struct {
 	// TODO: This field should not be bot-accessible, users should have to use GetAll()
 	Params map[string]interface{} `bot:"params"`
+}
+
+func (p *ParamsAPI) MarshalJSON() ([]byte, error) {
+	return json.Marshal(p.Params)
 }
 
 func (p *ParamsAPI) Get(paramName string) interface{} {

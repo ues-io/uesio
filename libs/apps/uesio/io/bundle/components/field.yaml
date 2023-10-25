@@ -145,8 +145,6 @@ properties:
     type: SELECT
     label: Display as
     options:
-      - value: ""
-        label: "--None Selected--"
       - label: Text
         value: ""
         validFor:
@@ -160,21 +158,25 @@ properties:
         value: ""
         validFor:
           - field: fieldDisplayType
+            type: fieldValue
             value: SELECT
       - label: Checkboxes
         value: ""
         validFor:
           - field: fieldDisplayType
+            type: fieldValue
             value: MULTISELECT
       - label: Checkbox
         value: ""
         validFor:
           - field: fieldDisplayType
+            type: fieldValue
             value: CHECKBOX
       - label: Password
         value: PASSWORD
         validFor:
           - field: fieldDisplayType
+            type: fieldValue
             value: TEXT
       - label: Markdown
         value: MARKDOWN

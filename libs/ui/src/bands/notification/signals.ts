@@ -8,7 +8,7 @@ import { dispatch } from "../../store/store"
 // The key for the entire band
 const NOTIFICATION_BAND = "notification"
 
-interface AddNotificationSignal extends SignalDefinition {
+export interface AddNotificationSignal extends SignalDefinition {
 	id?: string
 	severity: NotificationSeverity
 	text: string

@@ -1,13 +1,14 @@
 package controller
 
 import (
+	"log/slog"
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 
 	"github.com/gorilla/mux"
+
 	"github.com/thecloudmasters/uesio/pkg/bundle"
-	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -47,7 +48,7 @@ func NamespaceList(w http.ResponseWriter, r *http.Request) {
 
 	namespaces, err := getNamespaces(metadatatype, session)
 	if err != nil {
-		logger.LogError(err)
+		slog.Error(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

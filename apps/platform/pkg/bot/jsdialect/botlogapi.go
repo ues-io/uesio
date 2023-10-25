@@ -1,13 +1,13 @@
 package jsdialect
 
 import (
-	"encoding/json"
+	"context"
 	"fmt"
-	"github.com/thecloudmasters/uesio/pkg/meta"
-	"log"
-	"strings"
+	"log/slog"
 	"sync/atomic"
 	"time"
+
+	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
 type BotLogAPI struct {
@@ -26,43 +26,54 @@ func NewBotLogAPI(bot *meta.Bot) *BotLogAPI {
 
 // BotLogEntry defines a bot logging entry
 type BotLogEntry struct {
-	Message      string `json:"message"`
-	Instant      string `json:"instant"`
-	Sequence     uint64 `json:"sequence"`
-	BotName      string `json:"botName"`
-	BotNamespace string `json:"botNamespace"`
-	Level        string `json:"level"`
-	Elapsed      string `json:"elapsed"`
+	Sequence     uint64      `json:"sequence"`
+	BotName      string      `json:"name"`
+	BotNamespace string      `json:"namespace"`
+	Elapsed      string      `json:"elapsed"`
+	Data         interface{} `json:"data,omitempty"`
 }
 
-func (logapi *BotLogAPI) log(level, message string, data ...interface{}) {
-	elapsed := time.Since(logapi.start)
-	dataString := ""
-	if len(data) > 0 {
-		dataString = fmt.Sprintf(strings.Repeat(" %v", len(data)), data...)
+// LogValue implements the LogValuer interface to define how this struct
+// should be serialized by structured loggers
+func (e *BotLogEntry) LogValue() slog.Value {
+	var attrs []slog.Attr
+	if e.Sequence != 0 {
+		attrs = append(attrs, slog.Uint64("sequence", e.Sequence))
 	}
+	if e.Elapsed != "" {
+		attrs = append(attrs, slog.String("elapsed", e.Elapsed))
+	}
+	if e.BotName != "" {
+		attrs = append(attrs, slog.String("name", e.BotName))
+	}
+	if e.BotNamespace != "" {
+		attrs = append(attrs, slog.String("namespace", e.BotNamespace))
+	}
+	// TODO: Obscure any data in here unless we are in local development, to prevent exposure of PII, etc.
+	if e.Data != nil {
+		attrs = append(attrs, slog.Any("data", e.Data))
+	}
+	return slog.GroupValue(attrs...)
+}
+
+func (logapi *BotLogAPI) log(level slog.Level, message string, data interface{}) {
+	elapsed := time.Since(logapi.start)
 	logEntry := BotLogEntry{
 		Elapsed:      fmt.Sprintf("%ds%dms", int64(elapsed.Seconds()), elapsed.Milliseconds()),
-		Instant:      time.Now().Format(time.RFC3339),
 		BotName:      logapi.bot.Name,
 		BotNamespace: logapi.bot.Namespace,
-		Level:        strings.ToUpper(level),
-		Message:      message + dataString,
+		Data:         data,
 		Sequence:     atomic.AddUint64(&logapi.counter, 1),
 	}
-	logMessage, err := json.Marshal(logEntry)
-	if err != nil {
-		return
-	}
-	log.Println(string(logMessage))
+	slog.Log(context.Background(), level, message, "bot", &logEntry)
 }
 
-func (logapi *BotLogAPI) Info(message string, data ...interface{}) {
-	logapi.log("info", message, data)
+func (logapi *BotLogAPI) Info(message string, data interface{}) {
+	logapi.log(slog.LevelInfo, message, data)
 }
-func (logapi *BotLogAPI) Warn(message string, data ...interface{}) {
-	logapi.log("warn", message, data)
+func (logapi *BotLogAPI) Warn(message string, data interface{}) {
+	logapi.log(slog.LevelWarn, message, data)
 }
-func (logapi *BotLogAPI) Error(message string, data ...interface{}) {
-	logapi.log("error", message, data)
+func (logapi *BotLogAPI) Error(message string, data interface{}) {
+	logapi.log(slog.LevelError, message, data)
 }

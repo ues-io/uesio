@@ -55,11 +55,13 @@ const TranslationItem: definition.UtilityComponent<Props> = (props) => {
 		<div className={classes.root}>
 			<TitleBar title={namespace} context={context} />
 			<ListField
+				options={{
+					noAdd: true,
+					noDelete: true,
+					subType: "STRUCT",
+					subFields,
+				}}
 				value={translations}
-				noAdd={true}
-				noDelete={true}
-				subType="STRUCT"
-				subFields={subFields}
 				setValue={setTranslations}
 				mode={"EDIT"}
 				context={context}

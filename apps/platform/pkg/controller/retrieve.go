@@ -2,9 +2,9 @@ package controller
 
 import (
 	"fmt"
+	"log/slog"
 	"net/http"
 
-	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 	"github.com/thecloudmasters/uesio/pkg/retrieve"
 )
@@ -17,7 +17,7 @@ func Retrieve(w http.ResponseWriter, r *http.Request) {
 
 	err := retrieve.Retrieve(w, session)
 	if err != nil {
-		logger.LogError(err)
+		slog.Error(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

@@ -1,0 +1,153 @@
+name: useraccesstoken
+definition:
+  wires:
+    workspaces:
+      collection: uesio/studio.workspace
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.app:
+          fields:
+            uesio/studio.color:
+            uesio/studio.icon:
+      conditions:
+        - field: uesio/core.uniquekey
+          value: $Param{app}:$Param{workspacename}
+    useraccesstokens:
+      collection: uesio/studio.useraccesstoken
+      conditions:
+        - field: uesio/studio.allmetadata
+          value: true
+        - field: uesio/studio.item
+          value: $Param{namespace}.$Param{useraccesstokenname}
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/studio.mainlayout:
+        topbar:
+          - uesio/core.view:
+              view: uesio/studio.topbar
+              uesio.context:
+                wire: workspaces
+              params:
+                itemType: useraccesstokens
+                itemIcon: dynamic_feed
+                itemName: $Param{useraccesstokenname}
+                itemNameSpace: $Param{namespace}
+        leftbar:
+          - uesio/core.view:
+              uesio.context:
+                wire: workspaces
+              view: uesio/studio.workspacenav
+              params:
+                selected: useraccesstokens
+        content:
+          - uesio/io.list:
+              uesio.id: useraccesstokensList
+              wire: useraccesstokens
+              mode: READ
+              components:
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.main
+                    title: User Access Token - ${uesio/studio.name}
+                    subtitle: $Param{namespace}
+                    actions:
+                      - uesio/io.group:
+                          components:
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: $Label{uesio/io.edit}
+                                uesio.display:
+                                  - type: fieldMode
+                                    mode: READ
+                                  - type: paramValue
+                                    param: app
+                                    field: uesio/core.dynamiccollection
+                                    operator: EQUALS
+                                    value: $Param{namespace}
+                                signals:
+                                  - signal: component/CALL
+                                    component: uesio/io.list
+                                    componentsignal: TOGGLE_MODE
+                                    targettype: specific
+                                    componentid: useraccesstokensList
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.primary
+                                text: $Label{uesio/io.save}
+                                uesio.display:
+                                  - type: wireHasChanges
+                                    wire: useraccesstokens
+                                signals:
+                                  - signal: wire/SAVE
+                                    wires:
+                                      - useraccesstokens
+                                  - signal: component/CALL
+                                    component: uesio/io.list
+                                    componentsignal: SET_READ_MODE
+                                    targettype: specific
+                                    componentid: useraccesstokensList
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: $Label{uesio/io.cancel}
+                                uesio.display:
+                                  - type: fieldMode
+                                    mode: EDIT
+                                signals:
+                                  - signal: wire/CANCEL
+                                    wire: useraccesstokens
+                                  - signal: component/CALL
+                                    component: uesio/io.list
+                                    componentsignal: SET_READ_MODE
+                                    targettype: specific
+                                    target: useraccesstokensList
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: $Label{uesio/io.delete}
+                                uesio.display:
+                                  - type: fieldMode
+                                    mode: READ
+                                  - type: paramValue
+                                    param: app
+                                    field: uesio/core.dynamiccollection
+                                    operator: EQUALS
+                                    value: $Param{namespace}
+                                signals:
+                                  - signal: wire/MARK_FOR_DELETE
+                                  - signal: wire/SAVE
+                                    wires:
+                                      - useraccesstokens
+                                  - signal: route/NAVIGATE
+                                    path: app/$Param{app}/workspace/$Param{workspacename}/useraccesstokens
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.grid:
+                          uesio.variant: uesio/io.four_columns
+                          items:
+                            - uesio/io.field:
+                                fieldId: uesio/studio.type
+                            - uesio/io.field:
+                                fieldId: uesio/studio.collection
+                                uesio.context:
+                                  workspace:
+                                    name: $Param{workspacename}
+                                    app: $Param{app}
+                            - uesio/io.field:
+                                fieldId: uesio/studio.reason
+                            - uesio/io.field:
+                                fieldId: uesio/studio.token
+                      - uesio/io.grid:
+                          uesio.variant: uesio/io.four_columns
+                          items:
+                            - uesio/io.field:
+                                fieldId: uesio/studio.conditions
+                                label: " "
+                                uesio.display:
+                                  - type: hasValue
+                                    value: ${uesio/studio.collection}
+                                list:
+                                  noAdd: true
+                                  noDelete: true
+                                uesio.context:
+                                  workspace:
+                                    name: $Param{workspacename}
+                                    app: $Param{app}

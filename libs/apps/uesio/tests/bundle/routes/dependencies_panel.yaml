@@ -1,0 +1,4 @@
+name: dependencies_panel
+path: dependencies_panel
+view: dependencies_panel
+title: Tests loading of panel dependencies

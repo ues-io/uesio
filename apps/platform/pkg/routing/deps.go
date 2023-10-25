@@ -554,68 +554,8 @@ func getComponentAreaDeps(node *yaml.Node, depMap *ViewDepMap, session *sess.Ses
 		comp := node.Content[i]
 		if isComponentLike(comp) {
 			compName := comp.Content[0].Value
-
-			compDef, err := depMap.AddComponent(compName, session)
-			if err != nil {
+			if err := getComponentDeps(compName, comp.Content[1], depMap, session); err != nil {
 				return err
-			}
-
-			// Load a pre-parsed slot traversal map
-			slotPaths := compDef.GetSlotPaths()
-
-			foundComponentVariant := false
-
-			for i, prop := range comp.Content[1].Content {
-				if prop.Kind == yaml.ScalarNode && prop.Value == "uesio.variant" {
-					if len(comp.Content[1].Content) > i {
-						valueNode := comp.Content[1].Content[i+1]
-						if valueNode.Kind == yaml.ScalarNode && valueNode.Value != "" {
-							if err = addComponentVariantDep(depMap, valueNode.Value, compName); err == nil {
-								foundComponentVariant = true
-							}
-						}
-					}
-				} else {
-					if err = getComponentAreaDeps(prop, depMap, session); err != nil {
-						return err
-					}
-				}
-			}
-			// If we did not find a specific component variant,
-			// see if this component type has a default variant,
-			// and if so, request it, and populate it in the View YAML
-			// so that we know what variant to use client-side
-			if !foundComponentVariant {
-				defaultVariant := compDef.GetDefaultVariant()
-				if defaultVariant != "" {
-					if err := addComponentVariantDep(depMap, defaultVariant, compName); err == nil {
-						comp.Content[1].Content = append(comp.Content[1].Content,
-							&yaml.Node{
-								Kind:  yaml.ScalarNode,
-								Value: "uesio.variant",
-							},
-							&yaml.Node{
-								Kind:  yaml.ScalarNode,
-								Value: defaultVariant,
-							},
-						)
-					}
-				}
-			}
-
-			if len(slotPaths) > 0 {
-				for _, path := range slotPaths {
-					matchingNodes, err := yptr.FindAll(comp.Content[1], path)
-					if err != nil {
-						continue
-					}
-					for _, n := range matchingNodes {
-						err := getComponentAreaDeps(n, depMap, session)
-						if err != nil {
-							return err
-						}
-					}
-				}
 			}
 			if compName == "uesio/core.view" {
 				for i, prop := range comp.Content[1].Content {
@@ -631,6 +571,73 @@ func getComponentAreaDeps(node *yaml.Node, depMap *ViewDepMap, session *sess.Ses
 					if err != nil {
 						return err
 					}
+				}
+			}
+		}
+	}
+	return nil
+}
+
+func getComponentDeps(compName string, compDefinitionMap *yaml.Node, depMap *ViewDepMap, session *sess.Session) error {
+
+	compDef, err := depMap.AddComponent(compName, session)
+	if err != nil {
+		return err
+	}
+
+	// Load a pre-parsed slot traversal map
+	slotPaths := compDef.GetSlotPaths()
+
+	foundComponentVariant := false
+
+	for i, prop := range compDefinitionMap.Content {
+		if prop.Kind == yaml.ScalarNode && prop.Value == "uesio.variant" {
+			if len(compDefinitionMap.Content) > i {
+				valueNode := compDefinitionMap.Content[i+1]
+				if valueNode.Kind == yaml.ScalarNode && valueNode.Value != "" {
+					if err = addComponentVariantDep(depMap, valueNode.Value, compName); err == nil {
+						foundComponentVariant = true
+					}
+				}
+			}
+		} else {
+			if err = getComponentAreaDeps(prop, depMap, session); err != nil {
+				return err
+			}
+		}
+	}
+	// If we did not find a specific component variant,
+	// see if this component type has a default variant,
+	// and if so, request it, and populate it in the View YAML
+	// so that we know what variant to use client-side
+	if !foundComponentVariant {
+		defaultVariant := compDef.GetDefaultVariant()
+		if defaultVariant != "" {
+			if err := addComponentVariantDep(depMap, defaultVariant, compName); err == nil {
+				compDefinitionMap.Content = append(compDefinitionMap.Content,
+					&yaml.Node{
+						Kind:  yaml.ScalarNode,
+						Value: "uesio.variant",
+					},
+					&yaml.Node{
+						Kind:  yaml.ScalarNode,
+						Value: defaultVariant,
+					},
+				)
+			}
+		}
+	}
+
+	if len(slotPaths) > 0 {
+		for _, path := range slotPaths {
+			matchingNodes, err := yptr.FindAll(compDefinitionMap, path)
+			if err != nil {
+				continue
+			}
+			for _, n := range matchingNodes {
+				err := getComponentAreaDeps(n, depMap, session)
+				if err != nil {
+					return err
 				}
 			}
 		}
@@ -731,18 +738,9 @@ func GetViewDependencies(v *meta.View, session *sess.Session) (*ViewDepMap, erro
 					return nil, err
 				}
 				if panelType.Kind == yaml.ScalarNode {
-					_, err = depMap.AddComponent(panelType.Value, session)
-					if err != nil {
+					compName := panelType.Value
+					if err = getComponentDeps(compName, panel, depMap, session); err != nil {
 						return nil, err
-					}
-				}
-				for i := range panel.Content {
-					if i%2 != 0 {
-						node := panel.Content[i]
-						err := getComponentAreaDeps(node, depMap, session)
-						if err != nil {
-							return nil, err
-						}
 					}
 				}
 			}

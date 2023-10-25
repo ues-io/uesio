@@ -1,8 +1,6 @@
 package auth
 
 import (
-	"errors"
-
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
@@ -18,16 +16,6 @@ func ForgotPassword(signupMethodID string, payload map[string]interface{}, site 
 	}
 
 	authconn, err := GetAuthConnection(signupMethod.AuthSource, nil, session)
-	if err != nil {
-		return err
-	}
-
-	username, err := GetPayloadValue(payload, "username")
-	if err != nil {
-		return errors.New("Cognito Forgot Password:" + err.Error())
-	}
-
-	err = boostPayloadWithTemplate(username, payload, site, &signupMethod.ForgotPassword)
 	if err != nil {
 		return err
 	}

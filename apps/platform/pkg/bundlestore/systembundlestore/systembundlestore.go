@@ -5,14 +5,14 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path"
 	"path/filepath"
-	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
-	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt/localfiles"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	filetypes "github.com/thecloudmasters/uesio/pkg/types/file"
 )
 
 type SystemBundleStore struct{}
@@ -29,7 +29,7 @@ type SystemBundleStoreConnection struct {
 
 func getBasePath(namespace, version string) string {
 	// We're ignoring the version here because we always get the latest
-	return filepath.Join("..", "..", "libs", "apps", namespace, "bundle")
+	return path.Join("..", "..", "libs", "apps", namespace, "bundle")
 }
 
 func getFile(namespace string, version string, objectname string, filename string) (*os.File, error) {
@@ -37,7 +37,7 @@ func getFile(namespace string, version string, objectname string, filename strin
 	return os.Open(filePath)
 }
 
-func GetFilePaths(basePath string, group meta.BundleableGroup, conditions meta.BundleConditions, conn fileadapt.FileConnection) ([]string, error) {
+func GetFilePaths(basePath string, group meta.BundleableGroup, conditions meta.BundleConditions, conn filetypes.Connection) ([]string, error) {
 
 	cachedKeys, ok := bundle.GetFileListFromCache(basePath, conditions)
 	if ok {
@@ -127,27 +127,10 @@ func (b *SystemBundleStoreConnection) GetManyItems(items []meta.BundleableItem) 
 	return nil
 }
 
-func (b *SystemBundleStoreConnection) doesItemMeetBundleConditions(item meta.BundleableItem, conditions meta.BundleConditions) bool {
-	if len(conditions) == 0 {
-		return true
-	}
-	for field, conditionDef := range conditions {
-		fieldValue, err := item.GetField(field)
-		// If any condition fails, bail early
-		if err != nil {
-			return false
-		}
-		if fieldValue != conditionDef {
-			return false
-		}
-	}
-	return true
-}
-
 func (b *SystemBundleStoreConnection) GetAllItems(group meta.BundleableGroup, conditions meta.BundleConditions) error {
 
 	// TODO: Think about caching this, but remember conditions
-	basePath := filepath.Join(getBasePath(b.Namespace, b.Version), group.GetBundleFolderName()) + string(os.PathSeparator)
+	basePath := path.Join(getBasePath(b.Namespace, b.Version), group.GetBundleFolderName()) + "/"
 
 	conn := localfiles.Connection{}
 	paths, err := GetFilePaths(basePath, group, conditions, &conn)
@@ -164,34 +147,36 @@ func (b *SystemBundleStoreConnection) GetAllItems(group meta.BundleableGroup, co
 
 		err = b.GetItem(retrievedItem)
 
-		// Check to see if the item meets bundle conditions
-		// which are not associated with the Item's filesystem path
-		if !b.doesItemMeetBundleConditions(retrievedItem, conditions) {
-			continue
-		}
-
 		if err != nil {
 			if _, ok := err.(*bundlestore.PermissionError); ok {
 				continue
 			}
+			if _, ok := err.(*bundlestore.NotFoundError); ok {
+				continue
+			}
 			return err
 		}
-		group.AddItem(retrievedItem)
+
+		// Check to see if the item meets bundle conditions
+		// which are not associated with the Item's filesystem path
+		if bundlestore.DoesItemMeetBundleConditions(retrievedItem, conditions) {
+			group.AddItem(retrievedItem)
+		}
 	}
 
 	return nil
 }
 
-func (b *SystemBundleStoreConnection) GetItemAttachment(item meta.AttachableItem, path string) (time.Time, io.ReadSeeker, error) {
-	file, err := getFile(item.GetNamespace(), b.Version, item.GetBundleFolderName(), filepath.Join(item.GetBasePath(), path))
+func (b *SystemBundleStoreConnection) GetItemAttachment(item meta.AttachableItem, itempath string) (filetypes.Metadata, io.ReadSeeker, error) {
+	osFile, err := getFile(item.GetNamespace(), b.Version, item.GetBundleFolderName(), path.Join(item.GetBasePath(), itempath))
 	if err != nil {
-		return time.Time{}, nil, err
+		return nil, nil, err
 	}
-	fileInfo, err := file.Stat()
+	fileInfo, err := osFile.Stat()
 	if err != nil {
-		return time.Time{}, nil, err
+		return nil, nil, err
 	}
-	return fileInfo.ModTime(), file, nil
+	return filetypes.NewLocalFileMeta(fileInfo), osFile, nil
 }
 
 func (b *SystemBundleStoreConnection) GetAttachmentPaths(item meta.AttachableItem) ([]string, error) {

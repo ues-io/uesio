@@ -39,6 +39,7 @@ import {
 import { getComponentDef, setSelectedPath } from "../api/stateapi"
 import { getDisplaySectionProperties } from "../properties/displayconditionproperties"
 import { getSignalProperties } from "../api/signalsapi"
+import { getGrouping } from "../components/property/property"
 
 type Props = {
 	properties?: ComponentProperty[]
@@ -224,7 +225,7 @@ const getNamespaceSelectListMetadata = (
 					label: ns,
 				} as wire.SelectOption)
 		) || [],
-		"Select a namespace"
+		"(Select a namespace)"
 	)
 }
 
@@ -241,6 +242,19 @@ const getBaseWireFieldDef = (
 		...additional,
 	}
 }
+
+const getParamsSelectListMetadata = (
+	context: context.Context,
+	def: ComponentProperty
+): wire.SelectListMetadata =>
+	getSelectListMetadataFromOptions(
+		def.name,
+		Object.keys(context.getViewDef()?.params || {}).map((option) => ({
+			value: option,
+			label: option,
+		})),
+		"(Select a parameter)"
+	)
 
 const getWireFieldFromPropertyDef = (
 	def: ComponentProperty,
@@ -259,6 +273,10 @@ const getWireFieldFromPropertyDef = (
 		case "SELECT":
 			return getBaseWireFieldDef(def, "SELECT", {
 				selectlist: getSelectListMetadata(def, currentValue),
+			})
+		case "PARAM":
+			return getBaseWireFieldDef(def, "SELECT", {
+				selectlist: getParamsSelectListMetadata(context, def),
 			})
 		case "KEY":
 			return getBaseWireFieldDef(def, "TEXT")
@@ -281,9 +299,16 @@ const getWireFieldFromPropertyDef = (
 			})
 		case "FIELDS":
 		case "FIELD":
-			wireId = def.wireField
-				? (getObjectProperty(currentValue, def.wireField) as string)
-				: def.wireName
+			if (def.wireField) {
+				wireId = getObjectProperty(
+					currentValue,
+					def.wireField
+				) as string
+			} else if (def.wireName) {
+				wireId = def.wireName
+			} else if (def.wirePath) {
+				wireId = getGrouping(path, context, def.wirePath)
+			}
 			wireDefinition =
 				wireId === undefined
 					? undefined
@@ -301,9 +326,10 @@ const getWireFieldFromPropertyDef = (
 			)
 		case "FIELD_VALUE":
 		case "FIELD_VALUES":
-			wireId =
-				def.wireProperty &&
-				(getObjectProperty(currentValue, def.wireProperty) as string)
+			wireId = def.wireProperty
+				? (getObjectProperty(currentValue, def.wireProperty) as string)
+				: getGrouping(path, context, def.wirePath)
+
 			wireField =
 				def.fieldProperty &&
 				(getObjectProperty(currentValue, def.fieldProperty) as string)

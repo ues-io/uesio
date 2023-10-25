@@ -18,7 +18,7 @@ const StyleDefaults = Object.freeze({
 
 const IndexComponent: definition.UC = (props) => {
 	const { componentType, context, path, definition } = props
-	const { [component.COMPONENT_ID]: componentId } = definition
+
 	const componentDef = getComponentDef(componentType)
 	const NamespaceLabel = component.getUtility("uesio/io.namespacelabel")
 	const classes = styles.useStyleTokens(StyleDefaults, props)
@@ -34,6 +34,10 @@ const IndexComponent: definition.UC = (props) => {
 	const isSelected = selectedPath.equals(fullPath)
 	const searchTerm = (context.getComponentData("uesio/builder.indexpanel")
 		?.data?.searchTerm || "") as string
+
+	if (!definition) return null
+
+	const { [component.COMPONENT_ID]: componentId } = definition
 
 	const isVisible =
 		!searchTerm ||

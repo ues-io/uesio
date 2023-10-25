@@ -14,7 +14,7 @@ params:
     default: main
     required: true
     conditions:
-      - field: type
+      - param: type
         value: "REACT"
   - name: name
     prompt: Component Name

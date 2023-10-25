@@ -2,7 +2,7 @@ package meta
 
 import (
 	"errors"
-	"path/filepath"
+	"path"
 
 	"github.com/francoispqt/gojay"
 	"gopkg.in/yaml.v3"
@@ -56,7 +56,7 @@ func (cp *ComponentPack) GetBasePath() string {
 }
 
 func (cp *ComponentPack) GetPath() string {
-	return filepath.Join(cp.Name, "pack.yaml")
+	return path.Join(cp.Name, "pack.yaml")
 }
 
 func (cp *ComponentPack) SetField(fieldName string, value interface{}) error {
