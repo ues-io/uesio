@@ -579,11 +579,6 @@ const getItemPropertiesFunction =
 				],
 			},
 			{
-				name: "inactive",
-				type: "CHECKBOX",
-				label: "Inactive by default",
-			},
-			{
 				name: "lookupWire",
 				type: "WIRE",
 				label: "Lookup Wire",
@@ -649,6 +644,11 @@ const getItemPropertiesFunction =
 						values: multiValueOperators,
 					},
 				],
+			},
+			{
+				name: "inactive",
+				type: "CHECKBOX",
+				label: "Inactive by default",
 			},
 			{
 				name: "type",
