@@ -1,4 +1,4 @@
-import { api, context, wire } from "@uesio/ui"
+import { context, wire } from "@uesio/ui"
 import { get } from "./defapi"
 import { FullPath } from "./path"
 
@@ -21,7 +21,7 @@ const getFieldMetadata = (
 	wireId: string,
 	fieldId: string
 ) => {
-	const lwire = api.wire.useWire(wireId, context)
+	const lwire = context.getWire(wireId)
 	if (!lwire) return
 	return lwire.getCollection().getField(fieldId)
 }
