@@ -199,6 +199,14 @@ function getValueProperty(
 	return { ...baseValueProp, type: "TEXT" } as TextProperty
 }
 
+const getParamOptions = (context: context.Context): wire.SelectOption[] =>
+	collection.addBlankSelectOption(
+		Object.keys(context.getViewDef()?.params || {}).map((option) => ({
+			value: option,
+			label: option,
+		}))
+	)
+
 const getWireConditionItemsChildrenFunction =
 	(wireName: string) =>
 	(options: ListPropertyItemChildrenFunctionOptions) => {
@@ -624,8 +632,9 @@ const getItemPropertiesFunction =
 			},
 			{
 				name: "param",
-				type: "PARAM",
+				type: "SELECT",
 				label: "Param",
+				options: getParamOptions(context),
 				displayConditions: [
 					{
 						field: "valueSource",
