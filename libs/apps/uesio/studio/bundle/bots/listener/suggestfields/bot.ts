@@ -10,5 +10,8 @@ export default function suggestfields(bot: ListenerBotApi) {
 			format: "chat",
 		}
 	) as string[]
-	bot.addResult("data", result)
+	if (!result.length) {
+		throw new Error("invalid response for suggesting fields")
+	}
+	bot.addResult("data", result[0])
 }

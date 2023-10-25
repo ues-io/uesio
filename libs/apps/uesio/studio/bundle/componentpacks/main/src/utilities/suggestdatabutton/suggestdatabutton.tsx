@@ -12,7 +12,7 @@ type Props = {
 }
 
 export type AutocompleteResponse = {
-	data?: string[]
+	data?: string
 }
 
 const OPENAI_JSON_PREAMBLE = "```json\n"
@@ -36,10 +36,9 @@ export const handleAutocompleteData = (
 	response: AutocompleteResponse,
 	handleResults: (results: unknown[]) => void
 ) => {
-	const output = response?.data
+	const data = response?.data
 
-	if (output) {
-		const data = output[0]
+	if (data) {
 		const dataArray: unknown[] = parse(preparse(data))
 		if (dataArray?.length) {
 			handleResults(dataArray)
