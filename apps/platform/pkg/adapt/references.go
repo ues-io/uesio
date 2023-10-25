@@ -40,6 +40,7 @@ type ReferenceRequest struct {
 	Metadata   *CollectionMetadata
 	IDMap      LocatorMap
 	MatchField string
+	RefFields  map[string]*FieldMetadata
 }
 
 type ReferenceLocator struct {
@@ -72,6 +73,13 @@ func (rr *ReferenceRequest) AddFields(fields []LoadRequestField) {
 	}
 }
 
+func (rr *ReferenceRequest) AddRefField(field *FieldMetadata) {
+	_, ok := rr.RefFields[field.GetFullName()]
+	if !ok {
+		rr.RefFields[field.GetFullName()] = field
+	}
+}
+
 type ReferenceRegistry map[string]*ReferenceRequest
 
 func (rr *ReferenceRegistry) Add(collectionKey string) {
@@ -79,6 +87,7 @@ func (rr *ReferenceRegistry) Add(collectionKey string) {
 		IDMap:     map[string][]ReferenceLocator{},
 		Fields:    []LoadRequestField{},
 		FieldsMap: map[string]bool{},
+		RefFields: map[string]*FieldMetadata{},
 	}
 }
 

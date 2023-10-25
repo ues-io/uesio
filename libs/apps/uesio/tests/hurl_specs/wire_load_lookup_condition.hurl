@@ -49,9 +49,11 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[1].debugQueryString" == ```
 SELECT
-main.fields->>'uesio/tests.text' AS "uesio/tests.text",
-main.id::text AS "uesio/core.id",
-main.uniquekey AS "uesio/core.uniquekey"
+jsonb_build_object(
+'uesio/core.id',main.id,
+'uesio/core.uniquekey',main.uniquekey,
+'uesio/tests.text',main.fields->'uesio/tests.text'
+)
 FROM data as "main"
 WHERE
 main.collection = $1 AND
@@ -102,9 +104,11 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[1].debugQueryString" == ```
 SELECT
-main.fields->>'uesio/tests.text' AS "uesio/tests.text",
-main.id::text AS "uesio/core.id",
-main.uniquekey AS "uesio/core.uniquekey"
+jsonb_build_object(
+'uesio/core.id',main.id,
+'uesio/core.uniquekey',main.uniquekey,
+'uesio/tests.text',main.fields->'uesio/tests.text'
+)
 FROM data as "main"
 WHERE
 main.collection = $1 AND
@@ -154,9 +158,11 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[1].debugQueryString" == ```
 SELECT
-main.fields->>'uesio/tests.text' AS "uesio/tests.text",
-main.id::text AS "uesio/core.id",
-main.uniquekey AS "uesio/core.uniquekey"
+jsonb_build_object(
+'uesio/core.id',main.id,
+'uesio/core.uniquekey',main.uniquekey,
+'uesio/tests.text',main.fields->'uesio/tests.text'
+)
 FROM data as "main"
 WHERE
 main.collection = $1 AND
@@ -206,9 +212,11 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[1].debugQueryString" == ```
 SELECT
-main.fields->>'uesio/tests.text' AS "uesio/tests.text",
-main.id::text AS "uesio/core.id",
-main.uniquekey AS "uesio/core.uniquekey"
+jsonb_build_object(
+'uesio/core.id',main.id,
+'uesio/core.uniquekey',main.uniquekey,
+'uesio/tests.text',main.fields->'uesio/tests.text'
+)
 FROM data as "main"
 WHERE
 main.collection = $1 AND

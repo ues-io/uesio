@@ -3,7 +3,6 @@ package featureflagstore
 import (
 	"errors"
 	"fmt"
-	"strconv"
 
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -44,19 +43,7 @@ func GetFeatureFlags(session *sess.Session, user string) (*meta.FeatureFlagColle
 		if value == nil {
 			continue
 		}
-		if ff.Type == "NUMBER" {
-			if intVal, conversionErr := strconv.Atoi(value.(string)); conversionErr == nil {
-				ff.Value = intVal
-			} else {
-				ff.Value = value
-			}
-		} else {
-			if boolVal, conversionErr := strconv.ParseBool(value.(string)); conversionErr == nil {
-				ff.Value = boolVal
-			} else {
-				ff.Value = value
-			}
-		}
+		ff.Value = value
 	}
 	return &featureFlags, nil
 }

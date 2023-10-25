@@ -210,6 +210,8 @@ func GetFieldsMap(fields []LoadRequestField, collectionMetadata *CollectionMetad
 			refReq := referencedCollections.Get(referencedCollection)
 			refReq.Metadata = referencedCollectionMetadata
 
+			refReq.AddRefField(fieldMetadata)
+
 			if referencedCollectionMetadata.Integration != collectionMetadata.Integration {
 				continue
 			}

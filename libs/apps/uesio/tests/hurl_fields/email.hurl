@@ -30,8 +30,10 @@ HTTP 200
 # and then re-run the app
 jsonpath "$.wires[0].debugQueryString" == ```
 SELECT
-main.id::text AS "uesio/core.id",
-main.uniquekey AS "uesio/core.uniquekey"
+jsonb_build_object(
+'uesio/core.id',main.id,
+'uesio/core.uniquekey',main.uniquekey
+)
 FROM data as "main"
 WHERE
 main.collection = $1 AND

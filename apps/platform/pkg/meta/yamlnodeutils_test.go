@@ -46,8 +46,8 @@ func TestPickNodeFromMap(t *testing.T) {
 	for _, tc := range tests {
 		t.Run("it should "+tc.description, func(t *testing.T) {
 			node := getYamlNode(tc.initialYaml)
-			result := pickNodeFromMap(&node, tc.key)
-			mutatedNode, err := yaml.Marshal(&node)
+			result := pickNodeFromMap((*yaml.Node)(node), tc.key)
+			mutatedNode, err := yaml.Marshal(node)
 			if err != nil {
 				t.Errorf("Unexpected failure marshalling: %s", err.Error())
 			}
@@ -95,7 +95,7 @@ func TestPickStringProperty(t *testing.T) {
 	for _, tc := range tests {
 		t.Run("it should "+tc.description, func(t *testing.T) {
 			node := getYamlNode(tc.initialYaml)
-			assert.Equal(t, tc.returnValue, pickStringProperty(&node, tc.key, tc.defaultValue))
+			assert.Equal(t, tc.returnValue, pickStringProperty((*yaml.Node)(node), tc.key, tc.defaultValue))
 		})
 	}
 
@@ -137,7 +137,7 @@ func TestPickMetadataItem(t *testing.T) {
 	for _, tc := range tests {
 		t.Run("it should "+tc.description, func(t *testing.T) {
 			node := getYamlNode(tc.initialYaml)
-			assert.Equal(t, tc.returnValue, pickMetadataItem(&node, tc.key, tc.namespace, tc.defaultValue))
+			assert.Equal(t, tc.returnValue, pickMetadataItem((*yaml.Node)(node), tc.key, tc.namespace, tc.defaultValue))
 		})
 	}
 

@@ -32,19 +32,25 @@ const getWireRequest = (
 			collection,
 			conditions,
 			fields,
+			loadAll,
 			name,
 			order,
 			query,
 			requirewriteaccess,
 			view,
-			loadAll,
+			viewOnlyMetadata,
 		}) => ({
 			batchid,
 			batchnumber: resetBatchNumber ? 0 : batchnumber,
 			batchsize,
 			collection,
 			conditions,
-			fields,
+			fields: !viewOnlyMetadata
+				? fields
+				: // Strip out view only fields from when building a load request of regular wires
+				  fields?.filter(
+						(f) => viewOnlyMetadata.fields[f.id] === undefined
+				  ),
 			name,
 			order,
 			query: forceQuery ? true : query,
