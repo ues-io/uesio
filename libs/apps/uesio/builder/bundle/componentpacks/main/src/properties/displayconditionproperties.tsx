@@ -53,6 +53,10 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 				value: "paramIsSet",
 			},
 			{
+				label: "View Param is not set",
+				value: "paramIsNotSet",
+			},
+			{
 				label: "Param equals",
 				value: "paramValue",
 			},
@@ -96,7 +100,7 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 					{
 						field: "type",
 						operator: "NOT_IN",
-						values: ["paramValue", "paramIsSet"],
+						values: ["paramValue", "paramIsSet", "paramIsNotSet"],
 						type: "fieldValue",
 					},
 				],
@@ -352,7 +356,7 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 			{
 				field: "type",
 				operator: "IN",
-				values: ["paramValue", "paramIsSet"],
+				values: ["paramValue", "paramIsSet", "paramIsNotSet"],
 				type: "fieldValue",
 			},
 		],
@@ -493,6 +497,10 @@ export const getDisplayConditionLabel = (
 			details = `${condition.param || "No Param"} = ${
 				condition.value || "[No Value]"
 			}`
+			break
+		case "paramIsSet":
+		case "paramIsNotSet":
+			details = `${condition.param || "No Param"}`
 			break
 		case "group":
 			return `${condition.type.toLocaleUpperCase()}: ${

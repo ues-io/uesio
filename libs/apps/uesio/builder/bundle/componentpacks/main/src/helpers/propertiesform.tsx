@@ -225,7 +225,7 @@ const getNamespaceSelectListMetadata = (
 					label: ns,
 				} as wire.SelectOption)
 		) || [],
-		"Select a namespace"
+		"(Select a namespace)"
 	)
 }
 
@@ -242,6 +242,19 @@ const getBaseWireFieldDef = (
 		...additional,
 	}
 }
+
+const getParamsSelectListMetadata = (
+	context: context.Context,
+	def: ComponentProperty
+): wire.SelectListMetadata =>
+	getSelectListMetadataFromOptions(
+		def.name,
+		Object.keys(context.getViewDef()?.params || {}).map((option) => ({
+			value: option,
+			label: option,
+		})),
+		"(Select a parameter)"
+	)
 
 const getWireFieldFromPropertyDef = (
 	def: ComponentProperty,
@@ -260,6 +273,10 @@ const getWireFieldFromPropertyDef = (
 		case "SELECT":
 			return getBaseWireFieldDef(def, "SELECT", {
 				selectlist: getSelectListMetadata(def, currentValue),
+			})
+		case "PARAM":
+			return getBaseWireFieldDef(def, "SELECT", {
+				selectlist: getParamsSelectListMetadata(context, def),
 			})
 		case "KEY":
 			return getBaseWireFieldDef(def, "TEXT")
