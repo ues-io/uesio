@@ -21,14 +21,9 @@ const getFieldMetadata = (
 	wireId: string,
 	fieldId: string
 ) => {
-	const wireCollection = getWireProperty(
-		context,
-		wireId,
-		"collection"
-	) as string
-	const collection = api.collection.getCollection(wireCollection)
-	if (!collection) return
-	return collection.getField(fieldId)
+	const lwire = api.wire.useWire(wireId, context)
+	if (!lwire) return
+	return lwire.getCollection().getField(fieldId)
 }
 
 // getWirePath returns a FullPath corresponding to a View Wire,
