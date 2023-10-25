@@ -2,7 +2,7 @@ package command
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 	"time"
 
 	"github.com/evanw/esbuild/pkg/api"
@@ -51,6 +51,7 @@ func Pack(options *PackOptions) error {
 			External:          pack.GetGlobalsList(globalsMap),
 			Write:             true,
 			Plugins:           []api.Plugin{pack.GetGlobalsPlugin(globalsMap)},
+			TsconfigRaw:       "{}",
 			MinifyWhitespace:  true,
 			MinifyIdentifiers: true,
 			MinifySyntax:      true,
@@ -58,19 +59,13 @@ func Pack(options *PackOptions) error {
 			Sourcemap:         api.SourceMapLinked,
 		}
 
-		if options.Watch {
-			pack.ModifyWatchOptions(buildOptions)
-		}
-		// Then pack with esbuild
-		result := api.Build(*buildOptions)
-		if result.Errors != nil {
-			pack.HandleBuildErrors(result.Errors)
-		}
+		basePath := fmt.Sprintf("bundle/componentpacks/%s/", packName)
+		metaFilePath := fmt.Sprintf("%sdist/meta.json", basePath)
 
-		baseURL := fmt.Sprintf("bundle/componentpacks/%s/", packName)
-		metaURL := fmt.Sprintf("%sdist/meta.json", baseURL)
-
-		ioutil.WriteFile(metaURL, []byte(result.Metafile), 0644)
+		err := Build(buildOptions, metaFilePath, options.Watch)
+		if err != nil {
+			return err
+		}
 
 		fmt.Println(fmt.Sprintf("Done Packing %s: %v", packName, time.Since(start)))
 	}
@@ -83,5 +78,51 @@ func Pack(options *PackOptions) error {
 		fmt.Println("Watching for changes... (Ctrl-C to exit)")
 		<-make(chan bool)
 	}
+	return nil
+}
+
+func Build(options *api.BuildOptions, metaFilePath string, watch bool) error {
+	if watch {
+		return Watch(options)
+	}
+	result := api.Build(*options)
+	if result.Errors != nil {
+		for _, err := range result.Errors {
+			fmt.Println(err)
+			fmt.Println(err.Location)
+		}
+	}
+
+	if metaFilePath != "" {
+		err := os.WriteFile(metaFilePath, []byte(result.Metafile), 0644)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func Watch(options *api.BuildOptions) error {
+
+	options.Define = map[string]string{"process.env.NODE_ENV": `"development"`}
+	options.MinifyWhitespace = false
+	options.MinifyIdentifiers = false
+	options.MinifySyntax = false
+
+	ctx, err := api.Context(*options)
+	if err != nil {
+		return err
+	}
+
+	watchErr := ctx.Watch(api.WatchOptions{})
+	if watchErr != nil {
+		return err
+	}
+
+	// Returning from main() exits immediately in Go.
+	// Block forever so we keep watching and don't exit.
+	<-make(chan struct{})
+
 	return nil
 }
