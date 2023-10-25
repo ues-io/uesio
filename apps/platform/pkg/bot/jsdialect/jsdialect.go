@@ -60,7 +60,7 @@ const DefaultRunIntegrationActionBotBody = `export default function %s(bot) {
 
 const DefaultLoadBotBody = `export default function %s(bot) {
 	const collectionName = bot.loadRequest.GetCollectionName()
-	[
+	const results = [
 		{
 			"first_name": "Luigi",
 			"last_name": "Vampa"
@@ -69,7 +69,8 @@ const DefaultLoadBotBody = `export default function %s(bot) {
 			"first_name": "Myasia",
 			"last_name": "Harvey"
 		},
-	].forEach((record) => bot.addRecord(record))
+	]
+	results.forEach((record) => bot.addRecord(record))
 }`
 
 const DefaultSaveBotBody = `export default function %s(bot) {
