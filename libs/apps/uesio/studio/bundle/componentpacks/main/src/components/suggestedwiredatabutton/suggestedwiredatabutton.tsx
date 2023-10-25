@@ -120,8 +120,17 @@ const SuggestedWireDataButton: definition.UC<ComponentDefinition> = (props) => {
 
 	return (
 		<SuggestDataButton
-			context={context}
-			prompt={prompt}
+			context={context.deleteWorkspace()}
+			onClickSignals={[
+				{
+					signal: "bot/CALL",
+					bot: "uesio/studio.suggestdata",
+					stepId: "autocomplete",
+					params: {
+						prompt,
+					},
+				},
+			]}
 			label={"Generate sample data"}
 			loadingLabel={"Generating data..."}
 			handleResults={(results: wire.PlainWireRecord[]) => {

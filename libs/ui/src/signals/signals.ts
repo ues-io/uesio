@@ -2,7 +2,6 @@ import { Context, injectDynamicContext, newContext } from "../context/context"
 import { SignalDefinition, SignalDescriptor } from "../definition/signal"
 import { getComponentSignalDefinition } from "../bands/component/signals"
 
-import aiSignals from "../bands/ai/signals"
 import collectionSignals from "../bands/collection/signals"
 import botSignals from "../bands/bot/signals"
 import routeSignals from "../bands/route/signals"
@@ -17,7 +16,6 @@ import { getErrorString } from "../utilexports"
 import { COMPONENT_CONTEXT } from "../componentexports"
 
 const registry: Record<string, SignalDescriptor> = {
-	...aiSignals,
 	...collectionSignals,
 	...botSignals,
 	...routeSignals,

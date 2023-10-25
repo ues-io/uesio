@@ -1,7 +1,6 @@
 import { collection, component, context, definition, wire } from "@uesio/ui"
 import collectionSignals from "../signals/collection"
 import componentSignals from "../signals/component"
-import aiSignals from "../signals/ai"
 import botSignals from "../signals/bot"
 import notificationSignals from "../signals/notification"
 import panelSignals from "../signals/panel"
@@ -24,7 +23,6 @@ const signalBandDefinitions: SignalBandDefinition[] = [
 	componentSignals,
 	collectionSignals,
 	userSignals,
-	aiSignals,
 ]
 
 type SignalOutput = {

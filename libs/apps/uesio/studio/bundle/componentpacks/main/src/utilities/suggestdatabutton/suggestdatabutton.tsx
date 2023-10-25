@@ -1,19 +1,18 @@
-import { component, definition, api, context, styles } from "@uesio/ui"
+import { component, definition, api, context, styles, signal } from "@uesio/ui"
 import { useState } from "react"
 import { parse } from "best-effort-json-parser"
 
 type Props = {
-	prompt: string
 	label: string
 	loadingLabel: string
+	onClickSignals?: signal.SignalDefinition[]
 	handleResults: (results: unknown[]) => void
 	icon?: string
 	targetTableId?: string
 }
 
 export type AutocompleteResponse = {
-	choices?: string[]
-	errors?: string[]
+	data?: string[]
 }
 
 const OPENAI_JSON_PREAMBLE = "```json\n"
@@ -37,11 +36,10 @@ export const handleAutocompleteData = (
 	response: AutocompleteResponse,
 	handleResults: (results: unknown[]) => void
 ) => {
-	if (response.errors) {
-		throw new Error(response.errors[0])
-	}
-	if (response.choices?.length) {
-		const data = response.choices[0] as string
+	const output = response?.data
+
+	if (output) {
+		const data = output[0]
 		const dataArray: unknown[] = parse(preparse(data))
 		if (dataArray?.length) {
 			handleResults(dataArray)
@@ -56,7 +54,7 @@ const StyleDefaults = Object.freeze({
 const SuggestDataButton: definition.UtilityComponent<Props> = (props) => {
 	const {
 		context,
-		prompt,
+		onClickSignals,
 		targetTableId,
 		icon = "magic_button",
 		handleResults,
@@ -85,17 +83,11 @@ const SuggestDataButton: definition.UtilityComponent<Props> = (props) => {
 				/>
 			}
 			onClick={() => {
+				if (!onClickSignals) return
 				setLoading(true)
 
-				const signalResult = api.signal.run(
-					{
-						signal: "ai/AUTOCOMPLETE",
-						model: "gpt-3.5-turbo",
-						format: "chat",
-						input: context.merge(prompt),
-						stepId: "autocomplete",
-						maxResults: 1,
-					},
+				const signalResult = api.signal.runMany(
+					onClickSignals,
 					context
 				) as Promise<context.Context>
 

@@ -455,7 +455,15 @@ definition:
                                 - type: recordIsNew
                       - field: uesio/studio.type
                       - field: uesio/studio.label
-                      - field: uesio/studio.languagelabel
+                      - label: Language Label
+                        components:
+                          - uesio/io.field:
+                            fieldId: uesio/studio.languagelabel
+                            # We only need this context for the METADATA fields
+                            uesio.context:
+                              workspace:
+                                name: $Param{workspacename}
+                                app: $Param{app}
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.section
                     uesio.styleTokens:
