@@ -6,9 +6,45 @@ import { getExoplanetCollection } from "../utils/defaults"
 import * as api from "../../src/api/api"
 import * as platformModule from "../../src/platform/platform"
 import { PlainWire } from "../../src/bands/wire/types"
+import { Context } from "../../src/context/context"
+import { LoadRequestBatch } from "../../src/load/loadrequest"
 
 const wireId = "mywire"
 const collectionId = "ben/planets.exoplanet"
+
+const defaultPlanetsWireLoadImplementation = (
+	_ctx: Context,
+	requestBody: LoadRequestBatch
+) =>
+	Promise.resolve({
+		// Only add collections if includeMetadata was true
+		...(requestBody.includeMetadata
+			? {
+					collections: {
+						[collectionId]: getExoplanetCollection(),
+					},
+			  }
+			: {}),
+		wires: [
+			{
+				...defaultPlainWireProperties,
+				view: "myview",
+				collection: collectionId,
+				name: wireId,
+				data: requestBody.wires[0].query
+					? {
+							record1: {
+								"ben/planets.name": "kepler",
+							},
+							record2: {
+								"ben/planets.name": "foobar",
+							},
+					  }
+					: {},
+				query: !!requestBody.wires[0].query,
+			} as PlainWire,
+		],
+	})
 
 const tests: WireSignalTest[] = [
 	{
@@ -24,29 +60,7 @@ const tests: WireSignalTest[] = [
 		run: () => {
 			const spy = jest
 				.spyOn(platformModule.platform, "loadData")
-				.mockImplementation(() =>
-					Promise.resolve({
-						collections: {
-							[collectionId]: getExoplanetCollection(),
-						},
-						wires: [
-							{
-								...defaultPlainWireProperties,
-								view: "myview",
-								collection: collectionId,
-								name: wireId,
-								data: {
-									record1: {
-										"ben/planets.name": "kepler",
-									},
-									record2: {
-										"ben/planets.name": "foobar",
-									},
-								},
-							},
-						],
-					})
-				)
+				.mockImplementation(defaultPlanetsWireLoadImplementation)
 			return (wire) => {
 				expect(spy).toBeCalledTimes(1)
 				const loadWire = spy.mock.calls[0][1].wires[0]
@@ -117,38 +131,7 @@ const tests: WireSignalTest[] = [
 		run: () => {
 			const spy = jest
 				.spyOn(platformModule.platform, "loadData")
-				.mockImplementation((_ctx, requestBody) =>
-					Promise.resolve({
-						// Only add collections if includeMetadata was true
-						...(requestBody.includeMetadata
-							? {
-									collections: {
-										[collectionId]:
-											getExoplanetCollection(),
-									},
-							  }
-							: {}),
-						wires: [
-							{
-								...defaultPlainWireProperties,
-								view: "myview",
-								collection: collectionId,
-								name: wireId,
-								data: requestBody.wires[0].query
-									? {
-											record1: {
-												"ben/planets.name": "kepler",
-											},
-											record2: {
-												"ben/planets.name": "foobar",
-											},
-									  }
-									: {},
-								query: !!requestBody.wires[0].query,
-							} as PlainWire,
-						],
-					})
-				)
+				.mockImplementation(defaultPlanetsWireLoadImplementation)
 			return (wire) => {
 				expect(spy).toBeCalledTimes(2)
 				expect(spy.mock.calls[0][1].includeMetadata).toBe(true)
@@ -157,6 +140,52 @@ const tests: WireSignalTest[] = [
 					const loadWire = call[1].wires[0]
 					expect(loadWire).toHaveProperty("name", wireId)
 					expect(loadWire).toHaveProperty("collection", collectionId)
+				})
+				spy.mockRestore()
+				expect(wire.data).toEqual({
+					record1: { "ben/planets.name": "kepler" },
+					record2: { "ben/planets.name": "foobar" },
+				})
+			}
+		},
+	},
+	{
+		name: "Load request should not include view only fields",
+		wireId,
+		wireDef: {
+			collection: collectionId,
+			fields: {
+				// Standard field on the collection
+				name: {},
+				// View only field
+				viewOnly: {
+					viewOnly: true,
+					type: "CHECKBOX",
+					label: "View Only",
+				},
+			},
+		},
+		signals: [
+			{
+				signal: "wire/LOAD",
+				wires: [wireId],
+			},
+		],
+		run: () => {
+			const spy = jest
+				.spyOn(platformModule.platform, "loadData")
+				.mockImplementation(defaultPlanetsWireLoadImplementation)
+			return (wire) => {
+				expect(spy).toBeCalledTimes(1)
+				expect(spy.mock.calls[0][1].includeMetadata).toBe(true)
+				spy.mock.calls.forEach((call) => {
+					const loadWire = call[1].wires[0]
+					expect(loadWire).toHaveProperty("name", wireId)
+					expect(loadWire).toHaveProperty("collection", collectionId)
+					const { fields } = loadWire
+					// Verify that the view only field was NOT included
+					expect(fields).toHaveLength(1)
+					expect(fields[0].id).toBe("name")
 				})
 				spy.mockRestore()
 				expect(wire.data).toEqual({
