@@ -97,21 +97,13 @@ const allSignalSelectOptions = signalBandDefinitions
 	})
 	.flat()
 
-type SelectOptionFilter = (option: wire.SelectOption) => boolean
-
-const getDefaultSignalProperties = (
-	optionsFilter?: SelectOptionFilter
-): ComponentProperty[] =>
+const getDefaultSignalProperties = (): ComponentProperty[] =>
 	[
 		{
 			name: "signal",
 			label: "Signal",
 			type: "SELECT",
-			options: collection.addBlankSelectOption(
-				optionsFilter
-					? allSignalSelectOptions.filter(optionsFilter)
-					: allSignalSelectOptions
-			),
+			options: collection.addBlankSelectOption(allSignalSelectOptions),
 		},
 	] as ComponentProperty[]
 
@@ -175,16 +167,9 @@ const getSignalProperties = (
 			}
 		}
 	}
-	// If the user doesn't have permission to use AI signals, strip these out
-	let optionsFilter = undefined
-	const useAiSignalsFlag = context.getFeatureFlag("use_ai_signals")
-	if (!useAiSignalsFlag || !useAiSignalsFlag.value) {
-		optionsFilter = (option: wire.SelectOption) =>
-			!option.value.startsWith("ai/")
-	}
 
 	return [
-		...getDefaultSignalProperties(optionsFilter),
+		...getDefaultSignalProperties(),
 		...(descriptor && descriptor.outputs?.length ? [stepIdProperty] : []),
 		...(descriptor && descriptor.properties
 			? descriptor.properties(signalDefinition, context)

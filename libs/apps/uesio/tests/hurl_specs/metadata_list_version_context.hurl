@@ -85,7 +85,7 @@ GET https://{{host}}:{{port}}/version/uesio/tests/v0.0.1/metadata/types/secrets/
 Accept: application/json
 HTTP 200
 [Asserts]
-jsonpath "$[*]" count == 3
+jsonpath "$[*]" count == 4
 jsonpath "$['uesio/core.sendgridkey'].key" == "uesio/core.sendgridkey"
 jsonpath "$['uesio/core.sendgridkey'].namespace" == "uesio/core"
 jsonpath "$['uesio/core.sendgridkey'].icon" == "hub"
@@ -99,4 +99,4 @@ GET https://{{host}}:{{port}}/version/uesio/core/v0.0.1/metadata/types/secrets/l
 Accept: application/json
 HTTP 200
 [Asserts]
-jsonpath "$[*]" count == 7
+jsonpath "$[*]" count == 8
