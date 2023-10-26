@@ -1,0 +1,6 @@
+name: openai
+public: true
+type: openai
+credentials: uesio/core.openai
+headers: {}
+baseUrl: ""

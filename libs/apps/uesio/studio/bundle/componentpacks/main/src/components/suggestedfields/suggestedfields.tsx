@@ -1,4 +1,5 @@
-import { component, definition, api, wire } from "@uesio/ui"
+import { definition, api, wire } from "@uesio/ui"
+import SuggestDataButton from "../../utilities/suggestdatabutton/suggestdatabutton"
 
 type ComponentDefinition = {
 	collectionWire: string
@@ -133,10 +134,6 @@ const SuggestedFields: definition.UC<ComponentDefinition> = (props) => {
 		},
 	} = props
 
-	const SuggestDataButton = component.getUtility(
-		"uesio/studio.suggestdatabutton"
-	)
-
 	const fieldWire = api.wire.useWire(fieldWireName || "", context)
 	const collectionWire = api.wire.useWire(collectionWireName || "", context)
 	const workspaceWire = api.wire.useWire("workspaces", context)
@@ -150,8 +147,9 @@ const SuggestedFields: definition.UC<ComponentDefinition> = (props) => {
 	const targetCollectionName = context.mergeString(collectionId)
 	return (
 		<SuggestDataButton
-			context={context}
+			context={context.deleteWorkspace()}
 			prompt={getPrompt(pluralLabel)}
+			botName="uesio/studio.suggestfields"
 			label={"Suggest Fields"}
 			loadingLabel={"Suggesting fields..."}
 			targetTableId={targetTableId}

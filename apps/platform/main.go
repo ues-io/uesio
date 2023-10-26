@@ -6,6 +6,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/bot"
 	"github.com/thecloudmasters/uesio/pkg/integ/custom"
+	"github.com/thecloudmasters/uesio/pkg/integ/openai"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/adapt/postgresio"
@@ -86,6 +87,7 @@ func init() {
 	adapt.RegisterIntegration("web", &web.WebIntegration{})
 	adapt.RegisterIntegration("sendgrid", &sendgrid.SendGridIntegration{})
 	adapt.RegisterIntegration("stripe", &stripe.StripeIntegration{})
+	adapt.RegisterIntegration("openai", &openai.OpenAIIntegration{})
 	adapt.RegisterIntegration("uesio/core.custom", &custom.CustomIntegration{})
 }
 
