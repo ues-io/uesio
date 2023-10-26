@@ -1,0 +1,147 @@
+name: permissionsetintegration
+definition:
+  # Wires are how we pull in data
+  wires:
+    workspaces:
+      collection: uesio/studio.workspace
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.app:
+          fields:
+            uesio/studio.color:
+            uesio/studio.icon:
+      conditions:
+        - field: uesio/core.uniquekey
+          value: $Param{app}:$Param{workspacename}
+    permissionsets:
+      collection: uesio/studio.permissionset
+      conditions:
+        - field: uesio/studio.allmetadata
+          value: true
+        - field: uesio/studio.item
+          value: $Param{namespace}.$Param{permissionsetname}
+    integrationActions:
+      collection: uesio/studio.integrationaction
+      conditions:
+        - field: uesio/studio.allmetadata
+          value: true
+        - field: uesio/studio.grouping
+          value: $Param{integrationNamespace}.$Param{integrationName}
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/studio.mainlayout:
+        topbar:
+          - uesio/core.view:
+              view: uesio/studio.topbar
+              uesio.context:
+                wire: workspaces
+              params:
+                itemType: permissionsets
+                itemIcon: rule
+                itemName: $Param{permissionsetname}
+                itemNameSpace: $Param{namespace}
+                subItemType: integration
+                subItemName: $Param{integrationName}
+                subItemNameSpace: $Param{integrationNamespace}
+        leftbar:
+          - uesio/core.view:
+              uesio.context:
+                wire: workspaces
+              view: uesio/studio.workspacenav
+              params:
+                selected: permissionsets
+        content:
+          - uesio/io.list:
+              uesio.id: permissionsetsList
+              wire: permissionsets
+              mode: READ
+              components:
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.main
+                    title: Permission Set - ${uesio/studio.name}
+                    subtitle: $Param{namespace}
+                    actions:
+                      - uesio/io.group:
+                          components:
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: $Label{uesio/io.edit}
+                                uesio.display:
+                                  - type: fieldMode
+                                    mode: READ
+                                  - type: paramValue
+                                    param: app
+                                    field: uesio/core.dynamiccollection
+                                    operator: EQUALS
+                                    value: $Param{namespace}
+                                signals:
+                                  - signal: component/CALL
+                                    component: uesio/io.list
+                                    componentsignal: TOGGLE_MODE
+                                    targettype: specific
+                                    componentid: permissionsetsList
+                                  - signal: component/CALL
+                                    component: uesio/io.table
+                                    componentsignal: TOGGLE_MODE
+                                    targettype: specific
+                                    componentid: integrationActionPerms-table
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.primary
+                                text: $Label{uesio/io.save}
+                                uesio.display:
+                                  - type: wireHasChanges
+                                    wire: permissionsets
+                                signals:
+                                  - signal: wire/SAVE
+                                    wires:
+                                      - permissionsets
+                                  - signal: component/CALL
+                                    component: uesio/io.list
+                                    componentsignal: TOGGLE_MODE
+                                    targettype: specific
+                                    componentid: permissionsetsList
+                                  - signal: component/CALL
+                                    component: uesio/io.table
+                                    componentsignal: TOGGLE_MODE
+                                    targettype: specific
+                                    componentid: integrationActionPerms-table
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: $Label{uesio/io.cancel}
+                                uesio.display:
+                                  - type: fieldMode
+                                    mode: EDIT
+                                signals:
+                                  - signal: wire/CANCEL
+                                    wire: permissionsets
+                                  - signal: component/CALL
+                                    component: uesio/io.list
+                                    componentsignal: TOGGLE_MODE
+                                    targettype: specific
+                                    componentid: permissionsetsList
+                                  - signal: component/CALL
+                                    component: uesio/io.table
+                                    componentsignal: TOGGLE_MODE
+                                    targettype: specific
+                                    componentid: integrationActionPerms-table
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.titlebar:
+                          title: Integration Actions
+                          subtitle: $Param{integrationNamespace}.$Param{integrationName}
+                          uesio.variant: uesio/io.section
+                      - uesio/io.box:
+                          components:
+                            - uesio/studio.multipermissionpicker:
+                                uesio.id: integrationActionPerms
+                                uesio.context:
+                                  workspace:
+                                    name: $Param{workspacename}
+                                    app: $Param{app}
+                                fieldId: uesio/studio.integrationactionrefs->$Param{integrationNamespace}.$Param{integrationName}->actions
+                                wireName: integrationActions
+                                permissionFields:
+                                  - label: Allow access to this Action
+                                    type: CHECKBOX

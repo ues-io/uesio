@@ -1,0 +1,7 @@
+name: iconlabel
+pack: main
+entrypoint: components/iconlabel/iconlabel
+variants:
+  - uesio/io.iconlabel:uesio/io.default
+utilities:
+  - uesio/io.iconlabel

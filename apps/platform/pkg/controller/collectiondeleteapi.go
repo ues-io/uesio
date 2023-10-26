@@ -1,14 +1,15 @@
 package controller
 
 import (
+	"log/slog"
 	"net/http"
 	"net/url"
 	"strings"
 
 	"github.com/gorilla/mux"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 )
 
@@ -44,7 +45,7 @@ func parseConditionFromQueryValue(paramName string, paramValue string) adapt.Loa
 		value = parts[0]
 	} else {
 		operator = getUesioOperatorFromPostgrestOperator(parts[0])
-		value = parts[1]
+		value = strings.Join(parts[1:], ".")
 	}
 	var useValue interface{}
 	// Special value handling
@@ -92,6 +93,8 @@ func DeleteRecordApi(w http.ResponseWriter, r *http.Request) {
 
 	useCollectionName := collectionNamespace + "." + collectionName
 
+	params := getWireParamsFromRequestHeaders(r)
+
 	collection := &adapt.Collection{}
 
 	op := &adapt.LoadOp{
@@ -101,33 +104,52 @@ func DeleteRecordApi(w http.ResponseWriter, r *http.Request) {
 		Fields:         fields,
 		Conditions:     conditions,
 		Query:          true,
+		Params:         params,
 	}
 
 	_, err := datasource.Load([]*adapt.LoadOp{op}, session, nil)
 
 	if err != nil {
 		msg := "Error querying collection records to delete: " + err.Error()
-		logger.Log(msg, logger.ERROR)
+		slog.Error(msg)
 		http.Error(w, msg, http.StatusBadRequest)
 		return
 	}
 
-	saveRequests := []datasource.SaveRequest{{
-		Collection: useCollectionName,
-		Wire:       "save",
-		Deletes:    collection,
-	}}
-	err = datasource.Save(saveRequests, session)
-	err = datasource.HandleSaveRequestErrors(saveRequests, err)
-	if err != nil {
-		msg := "Delete failed: " + err.Error()
-		logger.Log(msg, logger.ERROR)
-		http.Error(w, msg, http.StatusBadRequest)
-		return
+	// Only do a save if we found records to delete
+	if collection.Len() > 0 {
+		saveRequests := []datasource.SaveRequest{{
+			Collection: useCollectionName,
+			Wire:       "save",
+			Deletes:    collection,
+			Params:     params,
+		}}
+		err = datasource.Save(saveRequests, session)
+		err = datasource.HandleSaveRequestErrors(saveRequests, err)
+		if err != nil {
+			msg := "Delete failed: " + err.Error()
+			slog.Error(msg)
+			http.Error(w, msg, http.StatusBadRequest)
+			return
+		}
 	}
 
 	// TODO: optionally respond with a representation of the deleted content
 	w.WriteHeader(204)
 	//file.RespondJSON(w, r, op.Collection)
 
+}
+
+func getWireParamsFromRequestHeaders(r *http.Request) map[string]string {
+	params := map[string]string{}
+	if workspaceName := r.Header.Get("x-uesio-workspacename"); workspaceName != "" {
+		params["workspacename"] = workspaceName
+	}
+	if siteName := r.Header.Get("x-uesio-sitename"); siteName != "" {
+		params["workspacename"] = siteName
+	}
+	if appName := r.Header.Get("x-uesio-app"); appName != "" {
+		params["app"] = appName
+	}
+	return params
 }

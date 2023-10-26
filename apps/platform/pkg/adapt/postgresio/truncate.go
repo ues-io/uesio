@@ -2,12 +2,13 @@ package postgresio
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"log/slog"
 
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/jackc/pgx/v5"
-	"github.com/thecloudmasters/uesio/pkg/logger"
 )
 
 const (
@@ -16,7 +17,7 @@ const (
 )
 
 func (c *Connection) TruncateTenantData(tenantID string) error {
-	logger.Log("Truncating all data from tenant: "+tenantID, logger.INFO)
+	slog.Info("Truncating all data from tenant: " + tenantID)
 
 	db := c.GetClient()
 	batch := &pgx.Batch{}
@@ -30,7 +31,9 @@ func (c *Connection) TruncateTenantData(tenantID string) error {
 		_, err := results.Exec()
 		if err != nil {
 			results.Close()
-			return fmt.Errorf("error truncating data from tenant '%s': %s", tenantID, err.Error())
+			msg := fmt.Sprintf("error truncating data from tenant '%s': %s", tenantID, err.Error())
+			slog.Error(msg)
+			return errors.New(msg)
 		}
 	}
 	results.Close()

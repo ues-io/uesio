@@ -18,7 +18,8 @@ func ParseSelectListKey(key string) (string, string, string) {
 func GetFullMetadataForCollection(metadataResponse *adapt.MetadataCache, collectionID string, session *sess.Session) error {
 	collections := MetadataRequest{
 		Options: &MetadataRequestOptions{
-			LoadAllFields: true,
+			LoadAllFields:    true,
+			LoadAccessFields: true,
 		},
 	}
 	err := collections.AddCollection(collectionID)
@@ -84,7 +85,8 @@ func (fm *FieldsMap) merge(newFields *FieldsMap) {
 }
 
 type MetadataRequestOptions struct {
-	LoadAllFields bool
+	LoadAllFields    bool
+	LoadAccessFields bool
 }
 
 type MetadataRequest struct {
@@ -301,10 +303,14 @@ func ProcessFieldsMetadata(fields map[string]*adapt.FieldMetadata, collectionKey
 }
 
 func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *sess.Session, connection adapt.Connection) error {
+	if mr.Options == nil {
+		mr.Options = &MetadataRequestOptions{}
+	}
 	// Keep a list of additional metadata that we need to request in a subsequent call
 	additionalRequests := MetadataRequest{
 		Options: &MetadataRequestOptions{
-			LoadAllFields: false,
+			LoadAllFields:    false,
+			LoadAccessFields: mr.Options.LoadAccessFields,
 		},
 	}
 	// Implement the old way to make sure it still works
@@ -314,7 +320,7 @@ func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *
 			return err
 		}
 
-		if metadata.IsDynamic() || (mr.Options != nil && mr.Options.LoadAllFields) {
+		if metadata.IsDynamic() || mr.Options.LoadAllFields {
 			err = LoadAllFieldsMetadata(collectionKey, metadata, session, connection)
 			if err != nil {
 				return err
@@ -335,7 +341,7 @@ func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *
 			}
 		}
 
-		if metadata.AccessField != "" {
+		if mr.Options.LoadAccessFields && metadata.AccessField != "" {
 			accessFieldMetadata, err := metadata.GetField(metadata.AccessField)
 			if err != nil {
 				return err

@@ -5,7 +5,7 @@
 # Test as a logged-in user so that we don't get redirected to the login page
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"uesio\"}"
+    "token": "uesio"
 }
 
 # Get the dev workspace id so we can test saving a view in a workspace
@@ -174,5 +174,5 @@ Accept: application/json
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].errors" count == 1
-jsonpath "$.wires[0].errors[0].message" == ```Field 'Definition' failed YAML schema validation: [1] wires.users.fields.foo.number: Additional property some is not allowed [2] wires.users.fields.foo.number: decimals is required [3] wires.users.fields.foo.required: Invalid type. Expected: boolean, given: string [4] wires.users.fields.foo.type: wires.users.fields.foo.type must be one of the following: "AUTONUMBER", "CHECKBOX", "DATE", "EMAIL", "FILE", "LIST", "LONGTEXT", "MAP", "MULTISELECT", "NUMBER", "REFERENCE", "REFERENCEGROUP", "SELECT", "STRUCT", "TEXT", "TIMESTAMP", "USER"```
+jsonpath "$.wires[0].errors[0].message" == ```Field 'Definition' failed YAML schema validation: [1] wires.users.fields.foo.number: Additional property some is not allowed [2] wires.users.fields.foo.number: decimals is required [3] wires.users.fields.foo.required: Invalid type. Expected: boolean, given: string [4] wires.users.fields.foo.type: wires.users.fields.foo.type must be one of the following: "AUTONUMBER", "CHECKBOX", "DATE", "EMAIL", "FILE", "LIST", "LONGTEXT", "MAP", "METADATA", "MULTIMETADATA", "MULTISELECT", "NUMBER", "REFERENCE", "REFERENCEGROUP", "SELECT", "STRUCT", "TEXT", "TIMESTAMP", "USER"```
 

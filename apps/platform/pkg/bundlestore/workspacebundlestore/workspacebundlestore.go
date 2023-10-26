@@ -12,7 +12,25 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/file"
 )
+
+type wsFileMeta struct {
+	userFileMeta *meta.UserFileMetadata
+}
+
+func newWorkspaceFileMeta(info *meta.UserFileMetadata) file.Metadata {
+	return &wsFileMeta{info}
+}
+
+func (fm *wsFileMeta) ContentLength() int64 {
+	return fm.userFileMeta.ContentLength
+}
+
+func (fm *wsFileMeta) LastModified() *time.Time {
+	t := time.Unix(fm.userFileMeta.UpdatedAt, 0)
+	return &t
+}
 
 func getParamsFromWorkspace(workspace *meta.Workspace) map[string]string {
 	return map[string]string{
@@ -105,9 +123,7 @@ type WorkspaceBundleStoreConnection struct {
 
 func (b *WorkspaceBundleStoreConnection) GetItem(item meta.BundleableItem) error {
 
-	item.SetNamespace(b.Namespace)
-
-	return datasource.PlatformLoadOne(item, &datasource.PlatformLoadOptions{
+	err := datasource.PlatformLoadOne(item, &datasource.PlatformLoadOptions{
 		Conditions: []adapt.LoadRequestCondition{
 			{
 				Field: adapt.UNIQUE_KEY_FIELD,
@@ -117,6 +133,14 @@ func (b *WorkspaceBundleStoreConnection) GetItem(item meta.BundleableItem) error
 		Params:     getParamsFromWorkspace(b.Workspace),
 		Connection: b.Connection,
 	}, sess.GetStudioAnonSession())
+
+	if err != nil {
+		return err
+	}
+
+	item.SetNamespace(b.Namespace)
+
+	return nil
 }
 
 func (b *WorkspaceBundleStoreConnection) HasAny(group meta.BundleableGroup, conditions meta.BundleConditions) (bool, error) {
@@ -145,13 +169,15 @@ func (b *WorkspaceBundleStoreConnection) GetManyItems(items []meta.BundleableIte
 func (b *WorkspaceBundleStoreConnection) GetAllItems(group meta.BundleableGroup, conditions meta.BundleConditions) error {
 
 	// Add the workspace id as a condition
-	loadConditions := []adapt.LoadRequestCondition{}
+	loadConditions := make([]adapt.LoadRequestCondition, len(conditions))
 
+	i := 0
 	for field, value := range conditions {
-		loadConditions = append(loadConditions, adapt.LoadRequestCondition{
+		loadConditions[i] = adapt.LoadRequestCondition{
 			Field: field,
 			Value: value,
-		})
+		}
+		i++
 	}
 
 	return datasource.PlatformLoad(&WorkspaceLoadCollection{
@@ -169,21 +195,20 @@ func (b *WorkspaceBundleStoreConnection) GetAllItems(group meta.BundleableGroup,
 
 }
 
-func (b *WorkspaceBundleStoreConnection) GetItemAttachment(item meta.AttachableItem, path string) (time.Time, io.ReadSeeker, error) {
-	modTime := time.Time{}
+func (b *WorkspaceBundleStoreConnection) GetItemAttachment(item meta.AttachableItem, path string) (file.Metadata, io.ReadSeeker, error) {
 	err := b.GetItem(item)
 	if err != nil {
-		return modTime, nil, err
+		return nil, nil, err
 	}
 	recordID, err := item.GetField(adapt.ID_FIELD)
 	if err != nil {
-		return modTime, nil, err
+		return nil, nil, err
 	}
-	stream, _, err := filesource.DownloadAttachment(recordID.(string), path, sess.GetStudioAnonSession())
+	stream, userFileMetadata, err := filesource.DownloadAttachment(recordID.(string), path, sess.GetStudioAnonSession())
 	if err != nil {
-		return modTime, nil, err
+		return nil, nil, err
 	}
-	return modTime, stream, nil
+	return newWorkspaceFileMeta(userFileMetadata), stream, nil
 }
 
 func (b *WorkspaceBundleStoreConnection) GetAttachmentPaths(item meta.AttachableItem) ([]string, error) {
@@ -213,7 +238,7 @@ func (b *WorkspaceBundleStoreConnection) GetAttachmentPaths(item meta.Attachable
 	if err != nil {
 		return nil, err
 	}
-	paths := []string{}
+	var paths []string
 	for _, ufm := range *userFiles {
 		paths = append(paths, ufm.Path)
 	}
@@ -299,6 +324,7 @@ func (b *WorkspaceBundleStoreConnection) GetBundleDef() (*meta.BundleDef, error)
 	by.PublicProfile = b.Workspace.PublicProfile
 	by.HomeRoute = b.Workspace.HomeRoute
 	by.LoginRoute = b.Workspace.LoginRoute
+	by.SignupRoute = b.Workspace.SignupRoute
 	by.DefaultTheme = b.Workspace.DefaultTheme
 	by.Favicon = b.Workspace.Favicon
 

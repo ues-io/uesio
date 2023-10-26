@@ -18,23 +18,19 @@ func NewBaseSignupMethod(namespace, name string) *SignupMethod {
 	return &SignupMethod{BundleableBase: NewBase(namespace, name)}
 }
 
-type EmailTemplateOptions struct {
-	EmailSubject string `yaml:"emailSubject" json:"uesio/studio.emailsubject"`
-	EmailBody    string `yaml:"emailBody" json:"uesio/studio.emailbody"`
-	Redirect     string `yaml:"redirect" json:"uesio/studio.redirect"`
-}
 type SignupMethod struct {
 	BuiltIn                   `yaml:",inline"`
 	BundleableBase            `yaml:",inline"`
-	AuthSource                string               `yaml:"authsource" json:"uesio/studio.authsource"`
-	Profile                   string               `yaml:"profile" json:"uesio/studio.profile"`
-	UsernameTemplate          string               `yaml:"usernameTemplate" json:"uesio/studio.usernametemplate"`
-	LandingRoute              string               `yaml:"landingRoute" json:"uesio/studio.landingroute"`
-	UsernameRegex             string               `yaml:"usernameRegex" json:"uesio/studio.usernameregex"`
-	UsernameFormatExplanation string               `yaml:"usernameFormatExplanation" json:"uesio/studio.usernameformatexplanation"`
-	AdminCreate               EmailTemplateOptions `yaml:"adminCreate" json:"uesio/studio.admincreate"`
-	Signup                    EmailTemplateOptions `yaml:"signup" json:"uesio/studio.signup"`
-	ForgotPassword            EmailTemplateOptions `yaml:"forgotPassword" json:"uesio/studio.forgotpassword"`
+	AuthSource                string `yaml:"authsource" json:"uesio/studio.authsource"`
+	Profile                   string `yaml:"profile" json:"uesio/studio.profile"`
+	UsernameTemplate          string `yaml:"usernameTemplate" json:"uesio/studio.usernametemplate"`
+	LandingRoute              string `yaml:"landingRoute" json:"uesio/studio.landingroute"`
+	AutoLogin                 bool   `yaml:"autoLogin" json:"uesio/studio.autologin"`
+	UsernameRegex             string `yaml:"usernameRegex" json:"uesio/studio.usernameregex"`
+	UsernameFormatExplanation string `yaml:"usernameFormatExplanation" json:"uesio/studio.usernameformatexplanation"`
+	CreateLoginBot            string `yaml:"createLoginBot" json:"uesio/studio.createloginbot"`
+	SignupBot                 string `yaml:"signupBot" json:"uesio/studio.signupbot"`
+	ForgotPasswordBot         string `yaml:"forgotPasswordBot" json:"uesio/studio.forgotpasswordbot"`
 }
 
 type SignupMethodWrapper SignupMethod

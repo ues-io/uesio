@@ -3,12 +3,14 @@ package http
 import (
 	"crypto/tls"
 	"crypto/x509"
-	tlsConfig "github.com/thecloudmasters/uesio/pkg/tls"
-	"log"
+	"fmt"
+	"log/slog"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
+
+	tlsConfig "github.com/thecloudmasters/uesio/pkg/tls"
 )
 
 var client *http.Client
@@ -46,13 +48,13 @@ func buildClient() *http.Client {
 
 	cert, err := os.ReadFile(certFilePath)
 	if err != nil {
-		log.Fatalf("Failed to append %q to RootCAs: %v", certFilePath, err)
+		slog.Error(fmt.Sprintf("Failed to append %q to RootCAs: %v", certFilePath, err))
 		return http.DefaultClient
 	}
 
 	// Append our cert to the system pool
 	if ok := rootCAs.AppendCertsFromPEM(cert); !ok {
-		log.Println("No certs appended, using system certs only")
+		slog.Info("No certs appended, using system certs only")
 		return http.DefaultClient
 	}
 

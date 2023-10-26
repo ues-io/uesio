@@ -6,7 +6,7 @@
 
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"uesio\"}"
+    "token": "uesio"
 }
 
 # Extract the sessionid from set-cookie header
@@ -51,6 +51,24 @@ HTTP 200
 # Verify that the chart pack is loaded, to verify parsing of table column component dependencies
 jsonpath "$.dependencies.componentpack[0].name" == "main"
 jsonpath "$.dependencies.componentpack[1].name" == "chart"
+
+# Fetch component pack dependencies - via workspace router - for a Panel with nested chart
+GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/dependencies_panel
+HTTP 200
+[Asserts]
+# Verify that the chart pack is loaded, to verify parsing of Panel component dependencies
+jsonpath "$.dependencies.componentpack[0].name" == "main"
+jsonpath "$.dependencies.componentpack[1].name" == "chart"
+# verify that the default variant is loaded for the panel dialog
+jsonpath "$.dependencies.viewdef[0].definition.panels.panel1['uesio.variant']" == "uesio/io.default"
+jsonpath "$.dependencies.viewdef[0].definition.panels.panel1['title']" == "My Panel"
+# Verify that a manually specified variant is maintained
+jsonpath "$.dependencies.viewdef[0].definition.panels.panel1.actions[0]['uesio/io.button']['uesio.variant']" == "uesio/io.primary"
+jsonpath "$.dependencies.componentvariant[1].component" == "uesio/io.button"
+# verify that variants are loaded
+jsonpath "$.dependencies.componentvariant[*].component" includes "uesio/io.button"
+jsonpath "$.dependencies.componentvariant[*].component" includes "uesio/io.dialog"
+jsonpath "$.dependencies.componentvariant[*].component" includes "uesio/io.table"
 
 # Fetch component pack dependencies - via workspace router - for a View with a declarative component,
 # to verify that dependent component packs are loaded

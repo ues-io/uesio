@@ -71,23 +71,25 @@ const ParamsField: definition.UC<ParamsFieldDefinition> = (props) => {
 		>
 			<MapField
 				value={params}
-				noAdd
-				noDelete
 				setValue={(value: wire.FieldValue) =>
 					record.update(fieldId, value, context)
 				}
 				mode="EDIT"
 				context={context}
-				keys={Object.keys(paramsDef)}
-				keyField={{
-					name: "key",
-					label: "Param",
-					updateable: false,
-					createable: false,
-				}}
-				valueField={{
-					name: "value",
-					label: "Value",
+				options={{
+					noAdd: true,
+					noDelete: true,
+					keys: Object.keys(paramsDef),
+					keyField: {
+						name: "key",
+						label: "Param",
+						updateable: false,
+						createable: false,
+					},
+					valueField: {
+						name: "value",
+						label: "Value",
+					},
 				}}
 			/>
 		</FieldWrapper>

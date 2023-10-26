@@ -14,6 +14,7 @@ type TempResult = {
 
 type BotResult = {
 	success: boolean
+	error?: string
 	params?: Record<string, unknown>
 }
 
@@ -39,7 +40,7 @@ function load_weather_forecast(bot: LoadBotApi) {
 	const botResult = result.body as BotResult
 
 	if (botResult.success === false) {
-		bot.addError("Failed to get weather forecast")
+		bot.addError("Failed to get weather forecast: " + botResult.error)
 		return
 	}
 

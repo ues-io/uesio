@@ -17,8 +17,8 @@ type OrderState = {
 }
 
 type PlainWire = {
-	batchid: string
-	batchnumber: number
+	batchid?: string
+	batchnumber?: number
 	changes: Record<string, PlainWireRecord>
 	collection: CollectionKey
 	conditions?: WireConditionState[]
@@ -37,14 +37,18 @@ type PlainWire = {
 	events?: WireEvents
 	batchsize?: number
 	requirewriteaccess?: boolean
-	viewOnly: boolean
+	viewOnly?: boolean
 	viewOnlyMetadata?: PlainCollection
 	fields: LoadRequestField[]
 	isLoading?: boolean
 	loadAll?: boolean
+	hasLoadedMetadata?: boolean
 }
 
-type ServerWire = PlainWire & {
+type ServerWire = Omit<
+	PlainWire,
+	"changes" | "deletes" | "original" | "data"
+> & {
 	data: PlainWireRecord[]
 }
 

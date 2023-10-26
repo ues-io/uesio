@@ -31,27 +31,27 @@ func (mc *MetadataCache) GetCollection(key string) (*CollectionMetadata, error) 
 }
 
 type CollectionMetadata struct {
-	Name                  string                                 `json:"name"`
-	Namespace             string                                 `json:"namespace"`
-	Type                  string                                 `json:"-"`
-	UniqueKey             []string                               `json:"uniqueKey"`
-	NameField             string                                 `json:"nameField"`
-	Createable            bool                                   `json:"createable"`
-	Accessible            bool                                   `json:"accessible"`
-	Updateable            bool                                   `json:"updateable"`
-	Deleteable            bool                                   `json:"deleteable"`
-	Fields                map[string]*FieldMetadata              `json:"fields"`
-	Access                string                                 `json:"-"`
-	AccessField           string                                 `json:"-"`
-	RecordChallengeTokens []*meta.RecordChallengeTokenDefinition `json:"-"`
-	TableName             string                                 `json:"-"`
-	Public                bool                                   `json:"public"`
-	HasAllFields          bool                                   `json:"hasAllFields"`
-	Label                 string                                 `json:"label"`
-	PluralLabel           string                                 `json:"pluralLabel"`
-	Integration           string                                 `json:"-"`
-	LoadBot               string                                 `json:"-"`
-	SaveBot               string                                 `json:"-"`
+	Name                  string                       `json:"name"`
+	Namespace             string                       `json:"namespace"`
+	Type                  string                       `json:"-"`
+	UniqueKey             []string                     `json:"uniqueKey"`
+	NameField             string                       `json:"nameField"`
+	Createable            bool                         `json:"createable"`
+	Accessible            bool                         `json:"accessible"`
+	Updateable            bool                         `json:"updateable"`
+	Deleteable            bool                         `json:"deleteable"`
+	Fields                map[string]*FieldMetadata    `json:"fields"`
+	Access                string                       `json:"-"`
+	AccessField           string                       `json:"-"`
+	RecordChallengeTokens []*meta.RecordChallengeToken `json:"-"`
+	TableName             string                       `json:"-"`
+	Public                bool                         `json:"public"`
+	HasAllFields          bool                         `json:"hasAllFields"`
+	Label                 string                       `json:"label"`
+	PluralLabel           string                       `json:"pluralLabel"`
+	Integration           string                       `json:"-"`
+	LoadBot               string                       `json:"-"`
+	SaveBot               string                       `json:"-"`
 }
 
 func (cm *CollectionMetadata) GetIntegrationName() string {
@@ -176,6 +176,12 @@ type NumberMetadata struct {
 	Decimals int `json:"decimals"`
 }
 
+type MetadataFieldMetadata struct {
+	Type      string `json:"type"`
+	Grouping  string `json:"grouping"`
+	Namespace string `json:"namespace"`
+}
+
 type AutoNumberMetadata struct {
 	Prefix       string `json:"prefix"`
 	LeadingZeros int    `json:"leadingZeros"`
@@ -219,6 +225,7 @@ type FieldMetadata struct {
 	FileMetadata           *FileMetadata             `json:"file,omitempty"`
 	ValidationMetadata     *ValidationMetadata       `json:"validate,omitempty"`
 	AutoNumberMetadata     *AutoNumberMetadata       `json:"autonumber,omitempty"`
+	MetadataFieldMetadata  *MetadataFieldMetadata    `json:"metadata,omitempty"`
 	FormulaMetadata        *FormulaMetadata          `json:"-"`
 	AutoPopulate           string                    `json:"autopopulate,omitempty"`
 	SubFields              map[string]*FieldMetadata `json:"subfields,omitempty"`

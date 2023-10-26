@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -26,7 +27,21 @@ func (e *AuthRequestError) Error() string {
 	return e.message
 }
 
-func getUserFromClaims(authSourceID string, claims *AuthenticationClaims, session *sess.Session) (*meta.User, error) {
+type NotAuthorizedError struct {
+	message string
+}
+
+func NewNotAuthorizedError(message string) *NotAuthorizedError {
+	return &NotAuthorizedError{
+		message: message,
+	}
+}
+
+func (e *NotAuthorizedError) Error() string {
+	return e.message
+}
+
+func GetUserFromFederationID(authSourceID string, federationID string, session *sess.Session) (*meta.User, error) {
 
 	if session.GetWorkspace() != nil {
 		return nil, NewAuthRequestError("Login isn't currently supported for workspaces")
@@ -35,7 +50,7 @@ func getUserFromClaims(authSourceID string, claims *AuthenticationClaims, sessio
 	adminSession := sess.GetAnonSession(session.GetSite())
 
 	// 4. Check for Existing User
-	loginmethod, err := GetLoginMethod(claims, authSourceID, adminSession)
+	loginmethod, err := GetLoginMethod(federationID, authSourceID, adminSession)
 	if err != nil {
 		return nil, errors.New("Failed Getting Login Method Data: " + err.Error())
 	}
@@ -53,18 +68,11 @@ func getUserFromClaims(authSourceID string, claims *AuthenticationClaims, sessio
 }
 
 func Login(authSourceID string, payload map[string]interface{}, session *sess.Session) (*meta.User, error) {
-	conn, err := GetAuthConnection(authSourceID, session)
+	conn, err := GetAuthConnection(authSourceID, nil, datasource.GetSiteAdminSession(session))
 	if err != nil {
 		return nil, err
 	}
-
-	claims, err := conn.Login(payload, session)
-	if err != nil {
-		return nil, err
-	}
-
-	return getUserFromClaims(authSourceID, claims, session)
-
+	return conn.Login(payload)
 }
 
 func getLoginRoute(session *sess.Session) (*meta.Route, error) {

@@ -1,12 +1,8 @@
 *
 !apps
 !libs/apps/uesio/builder
-!libs/apps/uesio/cms
 !libs/apps/uesio/core
-!libs/apps/uesio/crm
-!libs/apps/uesio/docs
 !libs/apps/uesio/io
 !libs/apps/uesio/studio
-!libs/apps/uesio/web
 !dist/ui
 !dist/vendor

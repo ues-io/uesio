@@ -1,3 +1,5 @@
 name: loginroute
-type: TEXT
+type: METADATA
 label: Login Route
+metadata:
+  type: ROUTE

@@ -1,0 +1,42 @@
+{
+	"name": "ui",
+	"$schema": "../../node_modules/nx/schemas/project-schema.json",
+	"sourceRoot": "libs/ui/src",
+	"projectType": "library",
+	"generators": {},
+	"targets": {
+		"build": {
+			"executor": "nx:run-commands",
+			"outputs": ["{workspaceRoot}/dist/ui"],
+			"options": {
+				"commands": ["bash build.sh"],
+				"parallel": false,
+				"cwd": "libs/ui"
+			}
+		},
+		"watch": {
+			"executor": "nx:run-commands",
+			"outputs": ["{workspaceRoot}/dist/ui"],
+			"options": {
+				"command": "uesio packui --watch",
+				"cwd": "libs/ui"
+			}
+		},
+		"lint": {
+			"executor": "@nx/linter:eslint",
+			"options": {
+				"lintFilePatterns": ["libs/ui/**/*.ts*"]
+			}
+		},
+		"test": {
+			"executor": "@nx/jest:jest",
+			"options": {
+				"jestConfig": "libs/ui/jest.config.ts",
+				"passWithNoTests": true
+			},
+			"outputs": ["{workspaceRoot}/coverage/libs/ui"]
+		}
+	},
+	"tags": [],
+	"implicitDependencies": ["cli"]
+}

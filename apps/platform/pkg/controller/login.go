@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"log/slog"
 	"net/http"
 	"net/url"
 
@@ -9,8 +10,8 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 
 	"github.com/gorilla/mux"
+
 	"github.com/thecloudmasters/uesio/pkg/auth"
-	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 	"github.com/thecloudmasters/uesio/pkg/routing"
@@ -23,16 +24,30 @@ func getAuthSourceID(vars map[string]string) string {
 	return authSourceNamespace + "." + authSourceName
 }
 
-func loginRedirectResponse(w http.ResponseWriter, r *http.Request, redirectKey string, user *meta.User, site *meta.Site) {
+func loginRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta.User, session *sess.Session) {
 
+	site := session.GetSite()
+
+	profile, err := datasource.LoadAndHydrateProfile(user.Profile, session)
+	if err != nil {
+		slog.Error(err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	redirectKey := site.GetAppBundle().HomeRoute
+
+	if profile.HomeRoute != "" {
+		redirectKey = profile.HomeRoute
+	}
 	// If we had an old session, remove it.
 	w.Header().Del("set-cookie")
-	session := sess.Login(w, user, site)
+	session = sess.Login(w, user, site)
 
 	// Check for redirect parameter on the referrer
 	referer, err := url.Parse(r.Referer())
 	if err != nil {
-		logger.LogError(err)
+		slog.Error(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -48,7 +63,7 @@ func loginRedirectResponse(w http.ResponseWriter, r *http.Request, redirectKey s
 		}
 		redirectNamespace, redirectRoute, err = meta.ParseKey(redirectKey)
 		if err != nil {
-			logger.LogError(err)
+			slog.Error(err.Error())
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -69,13 +84,12 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&loginRequest)
 	if err != nil {
 		msg := "Invalid request format: " + err.Error()
-		logger.Log(msg, logger.ERROR)
+		slog.Error(msg)
 		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
 
 	s := middleware.GetSession(r)
-	site := s.GetSite()
 
 	user, err := auth.Login(getAuthSourceID(mux.Vars(r)), loginRequest, s)
 	if err != nil {
@@ -83,28 +97,17 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		switch err.(type) {
 		case *auth.AuthRequestError:
 			responseCode = http.StatusBadRequest
+		case *auth.NotAuthorizedError:
+			responseCode = http.StatusUnauthorized
 		default:
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-			logger.LogError(err)
+			slog.Error(err.Error())
 			return
 		}
 		http.Error(w, err.Error(), responseCode)
 		return
 	}
 
-	profile, err := datasource.LoadAndHydrateProfile(user.Profile, s)
-	if err != nil {
-		logger.LogError(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	redirectRoute := site.GetAppBundle().HomeRoute
-
-	if profile.HomeRoute != "" {
-		redirectRoute = profile.HomeRoute
-	}
-
-	loginRedirectResponse(w, r, redirectRoute, user, site)
+	loginRedirectResponse(w, r, user, s)
 
 }

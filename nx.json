@@ -1,41 +1,37 @@
 {
-  "npmScope": "uesio",
-  "affected": {
-    "defaultBase": "master"
-  },
-  "implicitDependencies": {
-    "workspace.json": "*",
-    "package.json": {
-      "dependencies": "*",
-      "devDependencies": "*"
-    },
-    "tsconfig.base.json": "*",
-    "tslint.json": "*",
-    ".eslintrc.json": "*",
-    "nx.json": "*"
-  },
-  "tasksRunnerOptions": {
-    "default": {
-      "runner": "nx/tasks-runners/default",
-      "options": {
-        "cacheableOperations": [
-          "lint",
-          "build",
-          "test",
-          "e2e"
-        ],
-        "parallel": 1,
-        "useDaemonProcess": false
-      }
-    }
-  },
-  "defaultProject": "cli",
-  "$schema": "./node_modules/nx/schemas/nx-schema.json",
-  "targetDefaults": {
-    "build": {
-      "dependsOn": [
-        "^build"
-      ]
-    }
-  }
+	"npmScope": "uesio",
+	"affected": {
+		"defaultBase": "master"
+	},
+	"tasksRunnerOptions": {
+		"default": {
+			"runner": "nx/tasks-runners/default",
+			"options": {
+				"cacheableOperations": ["lint", "build", "test", "e2e"],
+				"parallel": 1,
+				"useDaemonProcess": false
+			}
+		}
+	},
+	"defaultProject": "cli",
+	"$schema": "./node_modules/nx/schemas/nx-schema.json",
+	"targetDefaults": {
+		"build": {
+			"dependsOn": ["^build"]
+		}
+	},
+	"namedInputs": {
+		"default": ["{projectRoot}/**/*", "sharedGlobals"],
+		"sharedGlobals": [
+			"{workspaceRoot}/workspace.json",
+			"{workspaceRoot}/tsconfig.base.json",
+			"{workspaceRoot}/tslint.json",
+			"{workspaceRoot}/nx.json"
+		],
+		"production": [
+			"default",
+			"!{projectRoot}/.eslintrc.json",
+			"!{projectRoot}/src/test-setup.[jt]s"
+		]
+	}
 }

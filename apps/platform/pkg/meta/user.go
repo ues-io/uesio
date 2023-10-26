@@ -51,3 +51,8 @@ func (u *User) Loop(iter func(string, interface{}) error) error {
 func (u *User) Len() int {
 	return StandardItemLen(u)
 }
+
+func (u *User) UnmarshalJSON(data []byte) error {
+	type alias User
+	return refScanner((*alias)(u), data)
+}

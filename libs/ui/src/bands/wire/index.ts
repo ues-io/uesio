@@ -5,7 +5,7 @@ import {
 	PayloadAction,
 } from "@reduxjs/toolkit"
 import { SaveError, SaveResponseBatch } from "../../load/saveresponse"
-import { WireConditionState } from "../../wireexports"
+import { OrderState, WireConditionState } from "../../wireexports"
 import { ID_FIELD, PlainCollection } from "../collection/types"
 import { createEntityReducer, EntityPayload } from "../utils"
 import {
@@ -19,7 +19,6 @@ import get from "lodash/get"
 import { RootState } from "../../store/store"
 import { Context, getWire } from "../../context/context"
 import { useSelector } from "react-redux"
-import { MetadataKey } from "../../metadata/types"
 import { isValueCondition } from "./conditions/conditions"
 
 type DeletePayload = {
@@ -71,11 +70,11 @@ type RemoveOrderPayload = {
 } & EntityPayload
 
 type AddOrderPayload = {
-	order: { field: MetadataKey; desc: boolean }
+	order: OrderState
 } & EntityPayload
 
 type SetOrderPayload = {
-	order: { field: MetadataKey; desc: boolean }[]
+	order: OrderState[]
 } & EntityPayload
 
 type RemoveConditionPayload = {
@@ -108,24 +107,28 @@ const getWires = (
 	})
 }
 
+const processCondition = (
+	condition: WireConditionState,
+	wires: PlainWire[]
+): string[] => {
+	const isGroupCondition = "type" in condition && condition.type === "GROUP"
+	if (isGroupCondition) {
+		return condition.conditions?.flatMap((c) => processCondition(c, wires))
+	}
+	const lookupWire = "lookupWire" in condition && condition.lookupWire
+	if (!lookupWire) return []
+	// Now check to make sure we're not already loading this wire
+	return wires.find((wire) => wire.name === lookupWire) ? [] : [lookupWire]
+}
+
 const addLookupWires = (wires: PlainWire[], context: Context): PlainWire[] => {
 	const wireNamesToLookup = wires.flatMap(
 		(wire) =>
-			wire.conditions?.flatMap((c) => {
-				const lookupWire = "lookupWire" in c && c.lookupWire
-				if (!lookupWire) return []
-				// Now check to make sure we're not already loading this wire
-				return wires.find((wire) => wire.name === lookupWire)
-					? []
-					: [lookupWire]
-			}) || []
+			wire.conditions?.flatMap((c) => processCondition(c, wires)) || []
 	)
-
 	// If we don't have any lookup wires, quit
 	if (!wireNamesToLookup.length) return wires
-
 	const lookupWires = getWires(wireNamesToLookup, context)
-
 	// Recursively lookup wires
 	return addLookupWires(lookupWires, context).concat(wires)
 }

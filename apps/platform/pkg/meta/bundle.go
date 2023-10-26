@@ -66,3 +66,8 @@ func (b *Bundle) Loop(iter func(string, interface{}) error) error {
 func (b *Bundle) Len() int {
 	return StandardItemLen(b)
 }
+
+func (b *Bundle) UnmarshalJSON(data []byte) error {
+	type alias Bundle
+	return refScanner((*alias)(b), data)
+}

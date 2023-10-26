@@ -1,8 +1,6 @@
 import { Context } from "../../context/context"
 import { dispatch } from "../../store/store"
 import { set as setUser } from "."
-import wireAddError from "../wire/operations/adderror"
-import wireRemoveError from "../wire/operations/removeerror"
 import { navigate, redirect } from "../../bands/route/operations"
 import { getErrorString } from "../utils"
 import { LoginResponse, platform } from "../../platform/platform"
@@ -37,24 +35,6 @@ const signup = async (
 	return responseRedirect(response, context)
 }
 
-const signUpConfirm = async (
-	context: Context,
-	signupMethod: string,
-	payload: Payload
-) => {
-	if (!payload)
-		throw new Error("No credentials were provided for signup confirmation.")
-	const mergedPayload = context.mergeStringMap(payload)
-	const mergedSignupMethod = context.mergeString(signupMethod)
-	try {
-		await platform.signUpConfirm(context, mergedSignupMethod, mergedPayload)
-		return context
-	} catch (error) {
-		const message = getErrorString(error)
-		return context.addErrorFrame([message])
-	}
-}
-
 const login = async (
 	context: Context,
 	authSource: string,
@@ -81,32 +61,6 @@ const logout = async (context: Context) => {
 	const response = await platform.logout(context)
 	dispatch(setUser(response.user))
 	return responseRedirect(response, context)
-}
-
-const checkAvailability = async (
-	context: Context,
-	username: string,
-	signupMethod: string,
-	usernameFieldId: string
-) => {
-	const mergedUsername = context.mergeString(username)
-	if (mergedUsername) {
-		const mergedSignupMethod = context.mergeString(signupMethod)
-		try {
-			await platform.checkAvailability(
-				context,
-				mergedSignupMethod,
-				mergedUsername
-			)
-			wireRemoveError(context, usernameFieldId)
-			return context
-		} catch (error) {
-			const message = getErrorString(error)
-			wireAddError(context, usernameFieldId, message)
-			return context
-		}
-	}
-	return context
 }
 
 const forgotPassword = async (
@@ -171,8 +125,6 @@ export default {
 	login,
 	logout,
 	signup,
-	signUpConfirm,
-	checkAvailability,
 	forgotPassword,
 	forgotPasswordConfirm,
 	createLogin,

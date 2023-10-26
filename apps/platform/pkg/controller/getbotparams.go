@@ -7,13 +7,15 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 
 	"github.com/gorilla/mux"
+
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 )
 
 func getParamConditionsResponse(conditions []meta.BotParamCondition) []meta.BotParamConditionResponse {
-	response := []meta.BotParamConditionResponse{}
+
+	var response []meta.BotParamConditionResponse
 
 	for _, condition := range conditions {
 		response = append(response, meta.BotParamConditionResponse(condition))
@@ -50,7 +52,7 @@ func GetBotParams(w http.ResponseWriter, r *http.Request) {
 	metadataType := strings.ToUpper(vars["type"])
 	session := middleware.GetSession(r)
 
-	if metadataType != "GENERATOR" && metadataType != "LISTENER" {
+	if metadataType != "GENERATOR" && metadataType != "LISTENER" && metadataType != "RUNACTION" {
 		http.Error(w, "Wrong bot type", http.StatusBadRequest)
 		return
 	}
@@ -60,6 +62,8 @@ func GetBotParams(w http.ResponseWriter, r *http.Request) {
 		robot = meta.NewGeneratorBot(namespace, name)
 	} else if metadataType == "LISTENER" {
 		robot = meta.NewListenerBot(namespace, name)
+	} else if metadataType == "RUNACTION" {
+		robot = meta.NewRunActionBot(namespace, name)
 	}
 
 	err := bundle.Load(robot, session, nil)

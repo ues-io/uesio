@@ -6,10 +6,10 @@ definition:
     credentials:
       viewOnly: true
       fields:
-        uesio/viewonly.username:
+        username:
           label: Username
           type: TEXT
-        uesio/viewonly.password:
+        password:
           label: Password
           type: TEXT
       init:
@@ -48,17 +48,21 @@ definition:
           - uesio/io.grid:
               items:
                 - uesio/io.field:
-                    fieldId: uesio/viewonly.username
+                    fieldId: username
                     uesio.id: username
+                    text:
+                      autoComplete: "username"
                 - uesio/io.box:
                     uesio.styleTokens:
                       root:
                         - relative
                     components:
                       - uesio/io.field:
-                          fieldId: uesio/viewonly.password
+                          fieldId: password
                           uesio.id: password
                           displayAs: PASSWORD
+                          text:
+                            autoComplete: "current-password"
                       - uesio/io.button:
                           text: Forgot password?
                           uesio.styleTokens:
@@ -75,6 +79,9 @@ definition:
                             - signal: route/REDIRECT
                               path: requestpassword
                 - uesio/io.button:
+                    uesio.styleTokens:
+                      root:
+                        - mt-2
                     uesio.variant: uesio/io.primary
                     uesio.id: sign-in
                     text: Sign In
@@ -85,8 +92,8 @@ definition:
                             - signal: notification/ADD_ERRORS
                         authSource: uesio/core.platform
                         payload:
-                          username: ${uesio/viewonly.username}
-                          password: ${uesio/viewonly.password}
+                          username: ${username}
+                          password: ${password}
     - uesio/core.logingoogle:
         minWidth: 240
         onLoginSignals:

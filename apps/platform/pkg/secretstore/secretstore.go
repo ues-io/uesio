@@ -3,7 +3,6 @@ package secretstore
 import (
 	"errors"
 
-	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -27,41 +26,12 @@ func RegisterSecretStore(name string, store SecretStore) {
 	secretStoreMap[name] = store
 }
 
-func GetSecretFromKey(key string, session *sess.Session) (string, error) {
-	if key == "" {
-		return "", nil
-	}
-
-	secret, err := meta.NewSecret(key)
-	if err != nil {
-		return "", err
-	}
-	err = bundle.Load(secret, session, nil)
-	if err != nil {
-		return "", err
-	}
-	return GetSecret(secret, session)
-
-}
-
 func GetSecret(secret *meta.Secret, session *sess.Session) (string, error) {
 	store, err := GetSecretStore(secret.Store)
 	if err != nil {
 		return "", err
 	}
 	return store.Get(secret.GetKey(), session)
-}
-
-func SetSecretFromKey(key, value string, session *sess.Session) error {
-	secret, err := meta.NewSecret(key)
-	if err != nil {
-		return err
-	}
-	err = bundle.Load(secret, session, nil)
-	if err != nil {
-		return err
-	}
-	return SetSecret(secret, value, session)
 }
 
 func SetSecret(secret *meta.Secret, value string, session *sess.Session) error {

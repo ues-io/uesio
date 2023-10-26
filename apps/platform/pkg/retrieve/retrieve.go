@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path"
 	"path/filepath"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -58,7 +59,7 @@ func Retrieve(writer io.Writer, session *sess.Session) error {
 	zipwriter := zip.NewWriter(writer)
 	create := NewWriterCreator(zipwriter.Create)
 	// Retrieve bundle contents
-	err = RetrieveBundle(bundleDirectory, create, bs, session)
+	err = RetrieveBundle(bundleDirectory, create, bs)
 	if err != nil {
 		return err
 	}
@@ -77,12 +78,12 @@ func retrieveGeneratedFiles(targetDirectory string, create WriterCreator) error 
 		return err
 	}
 	// Add all Uesio-provided types
-	err = copyFileIntoZip(create, filepath.Join(wd, clientTypesSrc, "index.d.ts"), filepath.Join(generatedDir, uesioTypesDir, "index.d.ts"))
+	err = copyFileIntoZip(create, filepath.Join(wd, clientTypesSrc, "index.d.ts"), path.Join(generatedDir, uesioTypesDir, "index.d.ts"))
 	if err != nil {
 		return err
 	}
 	// Add package.json to generated directory so that TS will know where to find the types
-	err = copyFileIntoZip(create, filepath.Join(wd, clientTypesSrc, "package.json"), filepath.Join(generatedDir, uesioTypesDir, "package.json"))
+	err = copyFileIntoZip(create, filepath.Join(wd, clientTypesSrc, "package.json"), path.Join(generatedDir, uesioTypesDir, "package.json"))
 	if err != nil {
 		return err
 	}
@@ -91,7 +92,7 @@ func retrieveGeneratedFiles(targetDirectory string, create WriterCreator) error 
 }
 
 // RetrieveBundle retrieves the content of a specific bundle version into the designated targetDirectory
-func RetrieveBundle(targetDirectory string, create WriterCreator, bs bundlestore.BundleStoreConnection, session *sess.Session) error {
+func RetrieveBundle(targetDirectory string, create WriterCreator, bs bundlestore.BundleStoreConnection) error {
 
 	for _, metadataType := range meta.GetMetadataTypes() {
 		group, err := meta.GetBundleableGroupFromType(metadataType)
@@ -105,11 +106,11 @@ func RetrieveBundle(targetDirectory string, create WriterCreator, bs bundlestore
 
 		err = group.Loop(func(item meta.Item, _ string) error {
 
-			path := item.(meta.BundleableItem).GetPath()
+			itempath := item.(meta.BundleableItem).GetPath()
 
-			f, err := create(filepath.Join(targetDirectory, metadataType, path))
+			f, err := create(path.Join(targetDirectory, metadataType, itempath))
 			if err != nil {
-				return errors.New("failed to create " + metadataType + " file: " + path + ": " + err.Error())
+				return errors.New("failed to create " + metadataType + " file: " + itempath + ": " + err.Error())
 			}
 			defer f.Close()
 
@@ -117,7 +118,7 @@ func RetrieveBundle(targetDirectory string, create WriterCreator, bs bundlestore
 			encoder.SetIndent(2)
 			err = encoder.Encode(item)
 			if err != nil {
-				return errors.New("failed to encode metadata item of type " + metadataType + " into YAML: " + path + ": " + err.Error())
+				return errors.New("failed to encode metadata item of type " + metadataType + " into YAML: " + itempath + ": " + err.Error())
 			}
 
 			attachableItem, isAttachable := item.(meta.AttachableItem)
@@ -127,12 +128,12 @@ func RetrieveBundle(targetDirectory string, create WriterCreator, bs bundlestore
 				if err != nil {
 					return err
 				}
-				for _, path := range paths {
-					_, attachment, err := bs.GetItemAttachment(attachableItem, path)
+				for _, itempath := range paths {
+					_, attachment, err := bs.GetItemAttachment(attachableItem, itempath)
 					if err != nil {
 						return err
 					}
-					f, err := create(filepath.Join(targetDirectory, metadataType, attachableItem.GetBasePath(), path))
+					f, err := create(path.Join(targetDirectory, metadataType, attachableItem.GetBasePath(), itempath))
 					if err != nil {
 						return err
 					}
@@ -154,9 +155,12 @@ func RetrieveBundle(targetDirectory string, create WriterCreator, bs bundlestore
 	}
 
 	// Add bundle.yaml
-	by := session.GetContextAppBundle()
+	bundleDef, err := bs.GetBundleDef()
+	if err != nil {
+		return err
+	}
 
-	f, err := create(filepath.Join(targetDirectory, "bundle.yaml"))
+	f, err := create(path.Join(targetDirectory, "bundle.yaml"))
 	if err != nil {
 		return errors.New("failed to create bundle.yaml file: " + err.Error())
 	}
@@ -164,7 +168,7 @@ func RetrieveBundle(targetDirectory string, create WriterCreator, bs bundlestore
 
 	encoder := yaml.NewEncoder(f)
 	encoder.SetIndent(2)
-	err = encoder.Encode(by)
+	err = encoder.Encode(bundleDef)
 	if err != nil {
 		return errors.New("failed to encode bundle.yaml file into YAML: " + err.Error())
 	}

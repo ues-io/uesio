@@ -1,17 +1,9 @@
-import {
-	definition,
-	styles,
-	context,
-	collection,
-	wire,
-	component,
-} from "@uesio/ui"
+import { definition, styles, context, wire, component } from "@uesio/ui"
 import TextField from "./text"
 
 interface SelectFieldProps {
 	setValue: (value: wire.FieldValue) => void
 	value: wire.FieldValue
-	fieldMetadata: collection.Field
 	mode?: context.FieldMode
 	options: wire.SelectOption[] | null
 	readonly?: boolean
@@ -29,7 +21,34 @@ const SelectField: definition.UtilityComponent<SelectFieldProps> = (props) => {
 	if (mode === "READ") {
 		const optionMatch = options?.find((option) => option.value === value)
 		const valueLabel = optionMatch?.label || ""
-		return <TextField {...props} value={valueLabel} />
+		return (
+			<TextField
+				setValue={setValue}
+				value={valueLabel}
+				mode={mode}
+				readonly={readonly}
+				context={context}
+			/>
+		)
+	}
+
+	const renderOptions = (options: wire.SelectOption[]) => {
+		if (!options || options.length === 0) {
+			return
+		}
+		return options
+			?.filter(({ validFor }) => component.shouldAll(validFor, context))
+			.map(({ disabled, value, label, options: groupOptions }) =>
+				groupOptions && groupOptions.length ? (
+					<optgroup key={label} label={label}>
+						{renderOptions(groupOptions)}
+					</optgroup>
+				) : (
+					<option disabled={disabled} key={value} value={value}>
+						{label}
+					</option>
+				)
+			)
 	}
 
 	const classes = styles.useUtilityStyleTokens(
@@ -47,15 +66,7 @@ const SelectField: definition.UtilityComponent<SelectFieldProps> = (props) => {
 				value={value}
 				id={id}
 			>
-				{options
-					?.filter(({ validFor }) =>
-						component.shouldAll(validFor, context)
-					)
-					.map(({ disabled, value, label }) => (
-						<option disabled={disabled} key={value} value={value}>
-							{label}
-						</option>
-					))}
+				{renderOptions(options || [])}
 			</select>
 		</div>
 	)

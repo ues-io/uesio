@@ -54,5 +54,5 @@ func GetViewParams(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
-	file.RespondJSON(w, r, getViewParamResponse(&view.Definition))
+	file.RespondJSON(w, r, getViewParamResponse((*yaml.Node)(view.Definition)))
 }

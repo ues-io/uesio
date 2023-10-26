@@ -1,4 +1,4 @@
-import { component, api, metadata, definition } from "@uesio/ui"
+import { signal, component, api, metadata, definition } from "@uesio/ui"
 import TabLabels from "../../utilities/tablabels/tablabels"
 import { useEffect } from "react"
 
@@ -14,6 +14,16 @@ type TabsDefinition = {
 	tabs?: TabDefinition[]
 	panelVariant?: metadata.MetadataKey
 	labelsVariant?: metadata.MetadataKey
+}
+
+interface SelectTabSignal extends signal.SignalDefinition {
+	id: string
+}
+
+const signals: Record<string, signal.ComponentSignalDescriptor> = {
+	SELECT_TAB: {
+		dispatcher: (_, signal: SelectTabSignal) => signal.id,
+	},
 }
 
 const Tabs: definition.UC<TabsDefinition> = (props) => {
@@ -73,4 +83,5 @@ const Tabs: definition.UC<TabsDefinition> = (props) => {
 	)
 }
 
+Tabs.signals = signals
 export default Tabs

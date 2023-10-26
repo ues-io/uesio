@@ -29,27 +29,27 @@ func NewBaseComponent(namespace, name string) *Component {
 type Component struct {
 	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
-	Category       string    `yaml:"category,omitempty" json:"uesio/studio.category"`
-	Pack           string    `yaml:"pack,omitempty" json:"uesio/studio.pack"`
-	EntryPoint     string    `yaml:"entrypoint,omitempty" json:"uesio/studio.entrypoint"`
-	Type           string    `yaml:"type,omitempty" json:"uesio/studio.type"`
-	ConfigValues   []string  `yaml:"configvalues,omitempty" json:"uesio/studio.configvalues"`
-	Variants       []string  `yaml:"variants,omitempty" json:"uesio/studio.variants"`
-	Utilities      []string  `yaml:"utilities,omitempty" json:"uesio/studio.utilities"`
-	Slots          yaml.Node `yaml:"slots,omitempty" json:"uesio/studio.slots"`
+	Category       string   `yaml:"category,omitempty" json:"uesio/studio.category"`
+	Pack           string   `yaml:"pack,omitempty" json:"uesio/studio.pack"`
+	EntryPoint     string   `yaml:"entrypoint,omitempty" json:"uesio/studio.entrypoint"`
+	Type           string   `yaml:"type,omitempty" json:"uesio/studio.type"`
+	ConfigValues   []string `yaml:"configvalues,omitempty" json:"uesio/studio.configvalues"`
+	Variants       []string `yaml:"variants,omitempty" json:"uesio/studio.variants"`
+	Utilities      []string `yaml:"utilities,omitempty" json:"uesio/studio.utilities"`
+	Slots          *YAMLDef `yaml:"slots,omitempty" json:"uesio/studio.slots"`
 	// Definition defines the Component body, for Declarative components
-	Definition yaml.Node `yaml:"definition,omitempty" json:"uesio/studio.definition"`
+	Definition *YAMLDef `yaml:"definition,omitempty" json:"uesio/studio.definition"`
 
 	// Builder Properties
-	Title             string    `yaml:"title,omitempty" json:"uesio/studio.title"`
-	Icon              string    `yaml:"icon,omitempty" json:"uesio/studio.icon"`
-	Discoverable      bool      `yaml:"discoverable,omitempty" json:"uesio/studio.discoverable"`
-	Description       string    `yaml:"description,omitempty" json:"uesio/studio.description"`
-	Properties        yaml.Node `yaml:"properties,omitempty" json:"uesio/studio.properties"`
-	DefaultDefinition yaml.Node `yaml:"defaultDefinition,omitempty" json:"uesio/studio.defaultdefinition"`
-	Sections          yaml.Node `yaml:"sections,omitempty" json:"uesio/studio.sections"`
-	Signals           yaml.Node `yaml:"signals,omitempty" json:"uesio/studio.signals"`
-	StyleRegions      yaml.Node `yaml:"styleRegions,omitempty" json:"uesio/studio.styleregions"`
+	Title             string   `yaml:"title,omitempty" json:"uesio/studio.title"`
+	Icon              string   `yaml:"icon,omitempty" json:"uesio/studio.icon"`
+	Discoverable      bool     `yaml:"discoverable,omitempty" json:"uesio/studio.discoverable"`
+	Description       string   `yaml:"description,omitempty" json:"uesio/studio.description"`
+	Properties        *YAMLDef `yaml:"properties,omitempty" json:"uesio/studio.properties"`
+	DefaultDefinition *YAMLDef `yaml:"defaultDefinition,omitempty" json:"uesio/studio.defaultdefinition"`
+	Sections          *YAMLDef `yaml:"sections,omitempty" json:"uesio/studio.sections"`
+	Signals           *YAMLDef `yaml:"signals,omitempty" json:"uesio/studio.signals"`
+	StyleRegions      *YAMLDef `yaml:"styleRegions,omitempty" json:"uesio/studio.styleregions"`
 
 	// Internal only
 	slotPaths      []string
@@ -72,7 +72,7 @@ type SlotDef struct {
 
 // GetSlotPaths returns a slice of JSONPointers for extracting component slots within an instance of this component
 func (c *Component) GetSlotPaths() []string {
-	if c.slotPaths == nil {
+	if c.slotPaths == nil && c.Slots != nil {
 		parsedSlots := make([]SlotDefinition, 0)
 		// Decode the slots into the parsedSlots
 		err := c.Slots.Decode(&parsedSlots)
@@ -100,8 +100,8 @@ func (c *Component) GetDefaultVariant() string {
 		return ""
 	}
 	if c.defaultVariant == "" {
-		if c.DefaultDefinition.Content != nil && len(c.DefaultDefinition.Content) >= 2 {
-			val, err := yptr.Find(&c.DefaultDefinition, "/uesio.variant")
+		if c.DefaultDefinition != nil && c.DefaultDefinition.Content != nil && len(c.DefaultDefinition.Content) >= 2 {
+			val, err := yptr.Find((*yaml.Node)(c.DefaultDefinition), "/uesio.variant")
 			if val != nil && err == nil && val.Value != "" {
 				// Check if it is a string
 				c.defaultVariant = val.Value
@@ -129,26 +129,26 @@ func (c *Component) MarshalJSONObject(enc *gojay.Encoder) {
 	if c.Icon != "" {
 		enc.AddStringKey("icon", c.Icon)
 	}
-	if c.Slots.Content != nil {
-		enc.AddArrayKey("slots", (*YAMLDefinition)(&c.Slots))
+	if c.Slots != nil {
+		enc.AddArrayKey("slots", (*YAMLDefinition)(c.Slots))
 	}
-	if c.Properties.Content != nil {
-		enc.AddArrayKey("properties", (*YAMLDefinition)(&c.Properties))
+	if c.Properties != nil {
+		enc.AddArrayKey("properties", (*YAMLDefinition)(c.Properties))
 	}
-	if c.Sections.Content != nil {
-		enc.AddArrayKey("sections", (*YAMLDefinition)(&c.Sections))
+	if c.Sections != nil {
+		enc.AddArrayKey("sections", (*YAMLDefinition)(c.Sections))
 	}
-	if c.DefaultDefinition.Content != nil {
-		enc.AddObjectKey("defaultDefinition", (*YAMLDefinition)(&c.DefaultDefinition))
+	if c.DefaultDefinition != nil {
+		enc.AddObjectKey("defaultDefinition", (*YAMLDefinition)(c.DefaultDefinition))
 	}
-	if c.Signals.Content != nil {
-		enc.AddObjectKey("signals", (*YAMLDefinition)(&c.Signals))
+	if c.Signals != nil {
+		enc.AddObjectKey("signals", (*YAMLDefinition)(c.Signals))
 	}
-	if c.StyleRegions.Content != nil {
-		enc.AddObjectKey("styleRegions", (*YAMLDefinition)(&c.StyleRegions))
+	if c.StyleRegions != nil {
+		enc.AddObjectKey("styleRegions", (*YAMLDefinition)(c.StyleRegions))
 	}
-	if c.Definition.Content != nil {
-		enc.AddArrayKey("definition", (*YAMLDefinition)(&c.Definition))
+	if c.Definition != nil {
+		enc.AddArrayKey("definition", (*YAMLDefinition)(c.Definition))
 	}
 }
 
@@ -213,11 +213,11 @@ func (cdw *RuntimeComponentMetadata) MarshalJSONObject(enc *gojay.Encoder) {
 	enc.AddStringKey("namespace", cdw.Namespace)
 	enc.AddStringKey("name", cdw.Name)
 	enc.AddStringKey("type", cdw.GetType())
-	if cdw.Definition.Content != nil {
-		enc.AddArrayKey("definition", (*YAMLDefinition)(&cdw.Definition))
+	if cdw.Definition != nil {
+		enc.AddArrayKey("definition", (*YAMLDefinition)(cdw.Definition))
 	}
-	if cdw.Slots.Content != nil {
-		enc.AddArrayKey("slots", (*YAMLDefinition)(&cdw.Slots))
+	if cdw.Slots != nil {
+		enc.AddArrayKey("slots", (*YAMLDefinition)(cdw.Slots))
 	}
 }
 

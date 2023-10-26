@@ -4,12 +4,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"regexp"
+	"strings"
+
 	"github.com/thecloudmasters/cli/pkg/config"
 	"github.com/thecloudmasters/cli/pkg/config/ws"
 	"github.com/thecloudmasters/cli/pkg/wire"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"regexp"
-	"strings"
 
 	"github.com/thecloudmasters/cli/pkg/goutils"
 
@@ -76,7 +77,7 @@ func getMetadataList(metadataType, app, version, sessid, grouping string) ([]str
 		if grouping != "" {
 			groupingURL = "/" + grouping
 		}
-		url := fmt.Sprintf("version/%s/%s/metadata/types/%s/namespace/%s/list%s", app, dep.Version, metadataType, depNamespace, groupingURL)
+		url := fmt.Sprintf("version/%s/%s/metadata/types/%s/namespace/%s/list%s", depNamespace, dep.Version, metadataType, depNamespace, groupingURL)
 
 		metadataList := map[string]datasource.MetadataResponse{}
 		err = call.GetJSON(url, sessid, &metadataList)
@@ -207,7 +208,7 @@ func Ask(param meta.BotParamResponse, app, version, sessid string, answers map[s
 			return err
 		}
 		answers[param.Name] = answer
-	case "METADATAMULTI":
+	case "MULTIMETADATA":
 		var answer []string
 		grouping, err := mergeParam(param.Grouping, answers)
 		if err != nil {

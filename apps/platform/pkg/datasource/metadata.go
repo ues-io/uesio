@@ -14,26 +14,25 @@ func GetCollectionMetadata(e *meta.Collection) *adapt.CollectionMetadata {
 	fieldMetadata := map[string]*adapt.FieldMetadata{}
 
 	return &adapt.CollectionMetadata{
-		Name:                  e.Name,
-		Namespace:             e.Namespace,
-		Type:                  e.Type,
-		NameField:             GetNameField(e),
-		UniqueKey:             e.UniqueKeyFields,
-		Createable:            !e.ReadOnly,
-		Accessible:            true,
-		Updateable:            !e.ReadOnly,
-		Deleteable:            !e.ReadOnly,
-		Fields:                fieldMetadata,
-		Access:                e.Access,
-		AccessField:           e.AccessField,
-		RecordChallengeTokens: e.RecordChallengeTokens,
-		TableName:             e.TableName,
-		Public:                e.Public,
-		Label:                 e.Label,
-		PluralLabel:           e.PluralLabel,
-		Integration:           e.IntegrationRef,
-		LoadBot:               e.LoadBot,
-		SaveBot:               e.SaveBot,
+		Name:        e.Name,
+		Namespace:   e.Namespace,
+		Type:        e.Type,
+		NameField:   GetNameField(e),
+		UniqueKey:   e.UniqueKeyFields,
+		Createable:  !e.ReadOnly,
+		Accessible:  true,
+		Updateable:  !e.ReadOnly,
+		Deleteable:  !e.ReadOnly,
+		Fields:      fieldMetadata,
+		Access:      e.Access,
+		AccessField: e.AccessField,
+		TableName:   e.TableName,
+		Public:      e.Public,
+		Label:       e.Label,
+		PluralLabel: e.PluralLabel,
+		Integration: e.IntegrationRef,
+		LoadBot:     e.LoadBot,
+		SaveBot:     e.SaveBot,
 	}
 }
 
@@ -73,6 +72,7 @@ func GetFieldMetadata(f *meta.Field, session *sess.Session) *adapt.FieldMetadata
 		AutoNumberMetadata:     GetAutoNumberMetadata(f),
 		FormulaMetadata:        GetFormulaMetadata(f),
 		SelectListMetadata:     GetSelectListMetadata(f),
+		MetadataFieldMetadata:  GetMetadataFieldMetadata(f),
 		Required:               f.Required,
 		AutoPopulate:           f.AutoPopulate,
 		SubFields:              GetSubFieldMetadata(f),
@@ -106,6 +106,10 @@ func GetSubFieldMetadata(f *meta.Field) map[string]*adapt.FieldMetadata {
 				Type:       subField.Type,
 				SelectList: subField.SelectList,
 			}),
+			MetadataFieldMetadata: GetMetadataFieldMetadata(&meta.Field{
+				Type:                  subField.Type,
+				MetadataFieldMetadata: subField.Metadata,
+			}),
 		}
 	}
 	return fieldMetadata
@@ -115,6 +119,17 @@ func GetSelectListMetadata(f *meta.Field) *adapt.SelectListMetadata {
 	if f.Type == "SELECT" || f.Type == "MULTISELECT" {
 		return &adapt.SelectListMetadata{
 			Name: f.SelectList,
+		}
+	}
+	return nil
+}
+
+func GetMetadataFieldMetadata(f *meta.Field) *adapt.MetadataFieldMetadata {
+	if f.Type == "METADATA" || f.Type == "MULTIMETADATA" && f.MetadataFieldMetadata != nil {
+		return &adapt.MetadataFieldMetadata{
+			Type:      f.MetadataFieldMetadata.Type,
+			Grouping:  f.MetadataFieldMetadata.Grouping,
+			Namespace: f.MetadataFieldMetadata.Namespace,
 		}
 	}
 	return nil
@@ -208,6 +223,18 @@ func LoadCollectionMetadata(key string, metadataCache *adapt.MetadataCache, sess
 	}
 
 	collectionMetadata = GetCollectionMetadata(collection)
+
+	var recordchallengetokens meta.RecordChallengeTokenCollection
+	err = bundle.LoadAllFromAny(&recordchallengetokens, meta.BundleConditions{"uesio/studio.collection": collectionMetadata.GetKey()}, session, connection)
+	if err != nil {
+		return nil, err
+	}
+	if recordchallengetokens.Len() > 0 {
+		for _, rct := range recordchallengetokens {
+			collectionMetadata.RecordChallengeTokens = append(collectionMetadata.RecordChallengeTokens, rct)
+		}
+	}
+
 	metadataCache.AddCollection(key, collectionMetadata)
 
 	return collectionMetadata, nil

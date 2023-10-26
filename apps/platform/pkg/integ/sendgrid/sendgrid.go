@@ -19,6 +19,7 @@ type SendEmailOptions struct {
 	BCC                 []string               `json:"bcc"`
 	Subject             string                 `json:"subject"`
 	PlainBody           string                 `json:"plainBody"`
+	ContentType         string                 `json:"contentType"`
 	From                string                 `json:"from"`
 	TemplateId          string                 `json:"templateId"`
 	DynamicTemplateData map[string]interface{} `json:"dynamicTemplateData"`
@@ -69,7 +70,7 @@ func (sgic *SendGridIntegrationConnection) SendEmail(requestOptions interface{})
 	}
 
 	apikey, ok := (*sgic.credentials)["apikey"]
-	if !ok {
+	if !ok || apikey == "" {
 		return errors.New("No API Key provided")
 	}
 
@@ -102,7 +103,11 @@ func (sgic *SendGridIntegrationConnection) SendEmail(requestOptions interface{})
 
 	message.AddPersonalizations(p)
 	if options.PlainBody != "" {
-		message.AddContent(mail.NewContent("text/plain", options.PlainBody))
+		contentType := "text/plain"
+		if options.ContentType != "" {
+			contentType = options.ContentType
+		}
+		message.AddContent(mail.NewContent(contentType, options.PlainBody))
 	}
 	message.SetFrom(mail.NewEmail(options.From, options.From))
 	client := sendgrid.NewSendClient(apikey)

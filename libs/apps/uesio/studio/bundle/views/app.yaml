@@ -17,20 +17,6 @@ definition:
           valueSource: PARAM
           param: app
       requirewriteaccess: true
-    myotherapps:
-      collection: uesio/studio.app
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-      conditions:
-        - field: uesio/core.uniquekey
-          valueSource: PARAM
-          operator: NOT_EQ
-          param: app
-        - field: uesio/core.owner
-          valueSource: VALUE
-          value: $User{id}
-      requirewriteaccess: true
     workspaces:
       collection: uesio/studio.workspace
       fields:
@@ -145,46 +131,6 @@ definition:
                           subtitle: ${uesio/studio.description}
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
-                    uesio.display:
-                      - type: wireHasNoRecords
-                        wire: workspaces
-                      - type: wireHasRecords
-                        wire: apps
-                    components:
-                      - uesio/io.titlebar:
-                          uesio.variant: uesio/io.section
-                          title: 🎉 Congratulations! You've successfully created your first App! 🎉
-                          uesio.styleTokens:
-                            title:
-                              - text-xl
-                          uesio.display:
-                            - type: wireHasNoRecords
-                              wire: myotherapps
-                      - uesio/io.box:
-                          uesio.variant: uesio/studio.calloutsection
-                          uesio.styleTokens:
-                            root:
-                              - -my-4
-                          components:
-                            - uesio/io.group:
-                                components:
-                                  - uesio/io.text:
-                                      text: Let's create your first Workspace for this App. Click the
-                                  - uesio/io.button:
-                                      icon: +
-                                      uesio.variant: uesio/studio.navcta
-                                      uesio.styleTokens:
-                                        root:
-                                          - pb-2
-                                  - uesio/io.text:
-                                      text: button to the right of "Workspaces"
-                - uesio/io.box:
-                    uesio.variant: uesio/io.section
-                    uesio.display:
-                      - type: wireHasRecords
-                        wire: bundles
-                      - type: wireHasRecords
-                        wire: workspaces
                     components:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.section
@@ -214,9 +160,6 @@ definition:
                                   path: "app/$Param{app}/bundle/${uesio/studio.major}/${uesio/studio.minor}/${uesio/studio.patch}"
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
-                    uesio.display:
-                      - type: wireHasRecords
-                        wire: workspaces
                     components:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.section

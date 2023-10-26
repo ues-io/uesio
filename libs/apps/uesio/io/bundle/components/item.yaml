@@ -1,0 +1,53 @@
+name: item
+title: Item
+icon: check_box_outline_blank
+description: Render child components in the context of a specific wire record.
+category: DATA
+pack: main
+entrypoint: components/item/item
+discoverable: true
+slots:
+  - name: components
+    providesContexts:
+      - type: RECORD
+        wireProperty: wire
+      - type: FIELD_MODE
+        modeProperty: mode
+defaultDefinition:
+  mode: READ
+properties:
+  - name: wire
+    label: Wire
+    type: WIRE
+    required: true
+  - name: uesio.id
+    label: Component Id
+    type: COMPONENT_ID
+  - name: mode
+    label: Display Mode
+    type: SELECT
+    required: true
+    options:
+      - value: READ
+        label: Read
+      - value: EDIT
+        label: Edit
+sections:
+  - type: HOME
+    properties:
+      - wire
+      - uesio.id
+      - mode
+  - type: STYLES
+  # Component Display Conditions - to determine whether or not to display the List itself
+  - type: DISPLAY
+signals:
+  TOGGLE_MODE:
+    label: Toggle Mode
+    properties: []
+  SET_READ_MODE:
+    label: Set Read Mode
+    properties: []
+  SET_EDIT_MODE:
+    label: Set Edit Mode
+    properties: []

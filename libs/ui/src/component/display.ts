@@ -37,6 +37,13 @@ type ParamIsSetCondition = {
 	param: string
 }
 
+type MergeValue = {
+	type: "mergeValue"
+	operator: DisplayOperator
+	sourceValue: string
+	value: string
+}
+
 type ParamIsNotSetCondition = {
 	type: "paramIsNotSet"
 	param: string
@@ -122,6 +129,14 @@ type WireHasRecords = {
 	type: "wireHasRecords"
 	wire: string
 }
+type WireHasSearchCondition = {
+	type: "wireHasSearchCondition"
+	wire: string
+}
+type WireHasNoSearchCondition = {
+	type: "wireHasNoSearchCondition"
+	wire: string
+}
 
 type HasProfile = {
 	type: "hasProfile"
@@ -155,8 +170,11 @@ type DisplayCondition =
 	| WireIsNotLoading
 	| WireHasNoRecords
 	| WireHasRecords
+	| WireHasSearchCondition
+	| WireHasNoSearchCondition
 	| WireHasLoadedAllRecords
 	| WireHasMoreRecordsToLoad
+	| MergeValue
 
 type ItemContext<T> = {
 	item: T
@@ -255,6 +273,19 @@ function should(condition: DisplayCondition, context: Context): boolean {
 	}
 
 	if (
+		condition.type === "wireHasSearchCondition" ||
+		condition.type === "wireHasNoSearchCondition"
+	) {
+		const wire = context.getWire(condition.wire)
+		const hasSearchCondition = !!wire
+			?.getConditions()
+			.some((condition) => condition.type === "SEARCH")
+		return condition.type === "wireHasNoSearchCondition"
+			? !hasSearchCondition
+			: hasSearchCondition
+	}
+
+	if (
 		condition.type === "wireHasLoadedAllRecords" ||
 		condition.type === "wireHasMoreRecordsToLoad"
 	) {
@@ -269,7 +300,7 @@ function should(condition: DisplayCondition, context: Context): boolean {
 
 	const compareToValue =
 		typeof condition.value === "string"
-			? context.mergeString(condition.value as string)
+			? context.merge(condition.value as string)
 			: condition.value ?? (canHaveMultipleValues ? condition.values : "")
 
 	if (condition.type === "hasNoValue") return !compareToValue
@@ -278,6 +309,12 @@ function should(condition: DisplayCondition, context: Context): boolean {
 		return compare(
 			compareToValue,
 			context.getParam(condition.param),
+			condition.operator
+		)
+	if (condition.type === "mergeValue")
+		return compare(
+			compareToValue,
+			context.merge(condition.sourceValue),
 			condition.operator
 		)
 

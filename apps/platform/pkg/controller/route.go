@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"log/slog"
 	"net/http"
 	"strings"
 
@@ -11,7 +12,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 
 	"github.com/gorilla/mux"
-	"github.com/thecloudmasters/uesio/pkg/logger"
+
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 	"github.com/thecloudmasters/uesio/pkg/routing"
@@ -88,7 +89,7 @@ func Route(w http.ResponseWriter, r *http.Request) {
 func handleApiErrorRoute(w http.ResponseWriter, r *http.Request, path string, session *sess.Session, err error) {
 	routingMergeData, err := getRouteAPIResult(getErrorRoute(path, err.Error()), sess.GetAnonSession(session.GetSite()))
 	if err != nil {
-		logger.LogError(err)
+		slog.Error(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 	file.RespondJSON(w, r, routingMergeData)
@@ -97,7 +98,7 @@ func handleApiErrorRoute(w http.ResponseWriter, r *http.Request, path string, se
 func handleApiNotFoundRoute(w http.ResponseWriter, r *http.Request, path string, session *sess.Session) {
 	routingMergeData, err := getRouteAPIResult(getNotFoundRoute(path), sess.GetAnonSession(session.GetSite()))
 	if err != nil {
-		logger.LogError(err)
+		slog.Error(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 	file.RespondJSON(w, r, routingMergeData)
@@ -159,7 +160,7 @@ func getErrorRoute(path string, err string) *meta.Route {
 }
 
 func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Session, path string, err error, redirect bool) {
-	logger.Log("Error Getting Route: "+err.Error(), logger.INFO)
+	slog.Debug("Error Getting Route: " + err.Error())
 	// If our profile is the public profile, redirect to the login route
 	if redirect && session.IsPublicProfile() {
 		if auth.RedirectToLoginRoute(w, r, session, auth.NotFound) {

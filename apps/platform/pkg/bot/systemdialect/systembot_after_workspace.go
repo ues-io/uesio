@@ -45,7 +45,7 @@ func deployWorkspaceFromBundle(workspaceID, bundleID string, connection adapt.Co
 	zipwriter := zip.NewWriter(buf)
 	create := retrieve.NewWriterCreator(zipwriter.Create)
 	// Retrieve bundle contents
-	err = retrieve.RetrieveBundle("", create, bs, session)
+	err = retrieve.RetrieveBundle("", create, bs)
 	if err != nil {
 		return err
 	}

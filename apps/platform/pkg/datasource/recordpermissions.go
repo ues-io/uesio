@@ -148,13 +148,16 @@ func handleStandardChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, sess
 
 func handleAccessFieldChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, metadata *adapt.MetadataCache, session *sess.Session) error {
 
+	// Shortcut - if user can modify all records, no need to do any other checks
+	if session.GetContextPermissions().ModifyAllRecords {
+		return nil
+	}
+
 	var accessItem meta.Item
 
 	accessItem = change.FieldChanges
 
 	challengeMetadata := change.Metadata
-
-	userCanModifyAllRecords := session.GetContextPermissions().ModifyAllRecords
 
 	for challengeMetadata.AccessField != "" {
 		accessInterface, err := accessItem.GetField(challengeMetadata.AccessField)
@@ -218,7 +221,7 @@ func handleAccessFieldChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, m
 		}
 	}
 
-	if !hasToken && !userCanModifyAllRecords {
+	if !hasToken {
 		return errors.New("User does not have parent access to write to this record: " + change.UniqueKey + " of collection: " + change.Metadata.GetFullName())
 	}
 

@@ -2,11 +2,18 @@ import { component, context, definition } from "@uesio/ui"
 import { move, get } from "../api/defapi"
 import { FullPath } from "../api/path"
 import ActionButton from "../helpers/actionbutton"
+import { setSelectedPath } from "../api/stateapi"
+import { SyntheticEvent } from "react"
 
 const getArrayMoveParams = (
 	context: context.Context,
 	path: FullPath
-): [boolean, boolean, () => void, () => void] => {
+): [
+	boolean,
+	boolean,
+	(e: SyntheticEvent) => void,
+	(e: SyntheticEvent) => void
+] => {
 	const index = component.path.getIndexFromPath(path.localPath)
 	const indexPath = component.path.getIndexPath(path.localPath)
 	const parentPath = component.path.getParentPath(indexPath)
@@ -19,16 +26,20 @@ const getArrayMoveParams = (
 	const enableForward = !!(index !== null && size && index < size - 1)
 
 	const moveToIndex = (index: number) => {
-		move(context, path, path.setLocal(`${parentPath}["${index}"]`))
+		const destination = path.setLocal(`${parentPath}["${index}"]`)
+		move(context, path, destination)
+		setSelectedPath(context, destination)
 	}
 
 	return [
 		enableBackward,
 		enableForward,
-		() => {
+		(e) => {
+			e.stopPropagation()
 			index && moveToIndex(index - 1)
 		},
-		() => {
+		(e) => {
+			e.stopPropagation()
 			index !== null && moveToIndex(index + 1)
 		},
 	]
@@ -37,7 +48,12 @@ const getArrayMoveParams = (
 const getMapMoveParams = (
 	context: context.Context,
 	path: FullPath
-): [boolean, boolean, () => void, () => void] => {
+): [
+	boolean,
+	boolean,
+	(e: SyntheticEvent) => void,
+	(e: SyntheticEvent) => void
+] => {
 	const parentPath = component.path.getParentPath(path.localPath)
 	const itemKey = component.path.getKeyAtPath(path.localPath)
 	const parentDef = get(

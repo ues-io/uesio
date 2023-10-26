@@ -22,7 +22,7 @@ func TestGetConnectionString(t *testing.T) {
 			&adapt.Credentials{
 				"host":     "some.host",
 				"port":     "1234",
-				"user":     "un",
+				"username": "un",
 				"password": "pw",
 				"database": "foo",
 			},
@@ -33,7 +33,7 @@ func TestGetConnectionString(t *testing.T) {
 			"default to 5432 if no port provided",
 			&adapt.Credentials{
 				"host":     "some.host",
-				"user":     "un",
+				"username": "un",
 				"password": "pw",
 				"database": "foo",
 			},
@@ -41,18 +41,18 @@ func TestGetConnectionString(t *testing.T) {
 			nil,
 		},
 		{
-			"require user",
+			"require username",
 			&adapt.Credentials{
 				"host": "localhost",
 			},
 			"",
-			errors.New("no user entry provided in credentials"),
+			errors.New("no username entry provided in credentials"),
 		},
 		{
 			"require password",
 			&adapt.Credentials{
-				"host": "localhost",
-				"user": "foo",
+				"host":     "localhost",
+				"username": "foo",
 			},
 			"",
 			errors.New("no password entry provided in credentials"),
@@ -61,7 +61,7 @@ func TestGetConnectionString(t *testing.T) {
 			"require database",
 			&adapt.Credentials{
 				"host":     "localhost",
-				"user":     "foo",
+				"username": "foo",
 				"password": "bar",
 			},
 			"",
@@ -71,7 +71,7 @@ func TestGetConnectionString(t *testing.T) {
 			"escape URL-unsafe characters in password",
 			&adapt.Credentials{
 				"host":     "some.host",
-				"user":     "un",
+				"username": "un",
 				"password": "acbd`cjaskf;",
 				"database": "foo",
 			},

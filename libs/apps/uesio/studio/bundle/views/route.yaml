@@ -142,17 +142,15 @@ definition:
                                 uesio.display:
                                   - field: uesio/studio.type
                                     value: redirect
-                            - uesio/builder.metadatafield:
+                            - uesio/io.field:
                                 fieldId: uesio/studio.view
-                                metadataType: VIEW
                                 label: View
                                 uesio.display:
                                   - field: uesio/studio.type
                                     value: redirect
                                     operator: NOT_EQUALS
-                            - uesio/builder.metadatafield:
+                            - uesio/io.field:
                                 fieldId: uesio/studio.theme
-                                metadataType: THEME
                                 label: Theme
                                 uesio.display:
                                   - field: uesio/studio.type

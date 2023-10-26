@@ -1,5 +1,5 @@
-import { component, definition } from "@uesio/ui"
-import { add, get } from "../../../api/defapi"
+import { component, context, definition } from "@uesio/ui"
+import { add, get, remove, set } from "../../../api/defapi"
 import {
 	getComponentDef,
 	setSelectedPath,
@@ -13,16 +13,15 @@ import {
 
 import PropNodeTag from "../../../utilities/propnodetag/propnodetag"
 import ItemTag from "../../../utilities/itemtag/itemtag"
+import { useRef, useState } from "react"
+import FieldPicker from "./wire/fieldpicker"
+import { FullPath } from "../../../api/path"
+import { getWirePath, getWireProperty } from "../../../api/wireapi"
 
-type ColumnDefinition = {
-	field: string
-	label: string
-	// reference?: ReferenceFieldOptions
-	// user?: UserFieldOptions
-	// number?: NumberFieldOptions
-	// longtext?: LongTextFieldOptions
-	// label: string
-	components: definition.DefinitionList
+export type ColumnDefinition = {
+	field?: string
+	label?: string
+	components?: definition.DefinitionList
 	type?: "" | "custom"
 } & definition.BaseDefinition
 
@@ -72,7 +71,7 @@ const widthProperty = {
 const TABLE_TYPE = "uesio/io.table"
 
 const isCustomColumn = (column: ColumnDefinition) =>
-	column?.components?.length > 0 || column?.type === "custom"
+	(column?.components?.length || 0) > 0 || column?.type === "custom"
 
 const getColumnTitle = (column: ColumnDefinition) => {
 	if (isCustomColumn(column)) {
@@ -82,12 +81,49 @@ const getColumnTitle = (column: ColumnDefinition) => {
 	}
 }
 
+const getComponentType = (def: definition.DefinitionMap): string =>
+	Object.keys(def)[0] as string
+
+/**
+ * Converts the Field Picker FullPath of a selected field to a field selector, e.g. "uesio/core.owner->uesio/core.firstname")
+ * @param path FullPath
+ * @returns string
+ */
+const transformFieldPickerPath = (path: FullPath) =>
+	component.path
+		.toPath(path.localPath)
+		.filter((x) => x !== "fields")
+		.join("->")
+
+export const isSelected = (
+	columns: ColumnDefinition[],
+	fieldPickerPath: FullPath,
+	fieldId: string
+) => {
+	if (!columns || !columns.length) return false
+	const qualifiedFieldId = transformFieldPickerPath(
+		fieldPickerPath.addLocal(fieldId)
+	)
+	return columns.some((e) => {
+		const columnField = e.field as string
+		if (!columnField) return false
+		//  direct match
+		if (columnField === qualifiedFieldId) return true
+		// check if the column field starts with the qualified picker path,
+		// as long as we have a qualified path to check for (which will not be true top-level)
+		return qualifiedFieldId && columnField.startsWith(qualifiedFieldId)
+	})
+}
+
 const TableColumns: definition.UC = (props) => {
 	const { context } = props
 
 	const ListPropertyUtility = component.getUtility(
 		"uesio/builder.listproperty"
 	)
+	const Popper = component.getUtility("uesio/io.popper")
+	const anchorEl = useRef<HTMLDivElement>(null)
+	const [showPopper, setShowPopper] = useState(false)
 
 	let selectedPath = useSelectedPath(context)
 	let localPath
@@ -113,10 +149,34 @@ const TableColumns: definition.UC = (props) => {
 	// in order to build a FIELD property that only shows fields from that wire
 	const [, tablePath] = columnsPath.pop()
 	const wireName = get(context, tablePath.addLocal("wire")) as string
+	const wireCollection = getWireProperty(
+		context,
+		wireName,
+		"collection"
+	) as string
+	const wireFieldsPath = getWirePath(context, wireName).addLocal("fields")
 	const fieldComponentDef = getComponentDef("uesio/io.field")
+	const columns = get(context, columnsPath) as ColumnDefinition[]
 
-	const getComponentType = (def: definition.DefinitionMap): string =>
-		Object.keys(def)[0] as string
+	const onSelect = (ctx: context.Context, path: FullPath) => {
+		const numColumns = columns?.length || 0
+		if (numColumns === 0) {
+			add(context, columnsPath.addLocal("0"), {})
+		}
+		set(
+			ctx,
+			columnsPath.addLocal(`${numColumns}`).addLocal("field"),
+			transformFieldPickerPath(path)
+		)
+		// ADD the selected field to the wire as well to keep it in sync
+		set(ctx, wireFieldsPath.merge(path), null)
+	}
+
+	const onUnselect = (ctx: context.Context, path: FullPath) => {
+		const qualifiedFieldId = transformFieldPickerPath(path)
+		const index = columns.findIndex((e) => e.field === qualifiedFieldId)
+		if (index > -1) remove(ctx, columnsPath.addLocal(index.toString()))
+	}
 
 	const getColumnProperties = (column: ColumnDefinition) => {
 		// If the column has components, then the individual components can be edited through their child components,
@@ -177,30 +237,61 @@ const TableColumns: definition.UC = (props) => {
 		})
 	}
 
-	const columns = get(context, columnsPath) as definition.DefinitionMap[]
-
 	return (
-		<ListPropertyUtility
-			context={context}
-			path={columnsPath}
-			actions={[
-				{
-					label: "Add Column",
-					action: () => {
-						add(
-							context,
-							columnsPath.addLocal(`${columns?.length || 0}`),
-							{}
-						)
+		<div ref={anchorEl}>
+			{showPopper && anchorEl && (
+				<Popper
+					referenceEl={anchorEl.current}
+					context={context}
+					placement="right-start"
+					autoPlacement={["right-start"]}
+					offset={6}
+					useFirstRelativeParent
+					matchHeight
+				>
+					<FieldPicker
+						context={context}
+						baseCollectionKey={wireCollection}
+						onClose={() => setShowPopper(false)}
+						onSelect={onSelect}
+						onUnselect={onUnselect}
+						allowMultiselect={true}
+						isSelected={(
+							ctx: context.Context,
+							path: FullPath,
+							fieldId: string
+						) => isSelected(columns, path, fieldId)}
+					/>
+				</Popper>
+			)}
+			<ListPropertyUtility
+				context={context}
+				path={columnsPath}
+				actions={[
+					{
+						label: "Add Column",
+						action: () => {
+							add(
+								context,
+								columnsPath.addLocal(`${columns?.length || 0}`),
+								{}
+							)
+						},
 					},
-				},
-			]}
-			items={columns}
-			itemProperties={getColumnProperties}
-			itemDisplayTemplate={getColumnTitle}
-			itemPropertiesPanelTitle="Column Properties"
-			itemChildren={getItemChildren}
-		/>
+					{
+						label: "Add Fields",
+						action: () => {
+							setShowPopper(true)
+						},
+					},
+				]}
+				items={columns}
+				itemProperties={getColumnProperties}
+				itemDisplayTemplate={getColumnTitle}
+				itemPropertiesPanelTitle="Column Properties"
+				itemChildren={getItemChildren}
+			/>
+		</div>
 	)
 }
 

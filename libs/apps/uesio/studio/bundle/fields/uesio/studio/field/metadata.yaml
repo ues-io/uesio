@@ -1,0 +1,14 @@
+name: metadata
+type: STRUCT
+label: Metadata field metadata
+subfields:
+  - name: uesio/studio.type
+    label: Metadata Type
+    type: TEXT
+    required: true
+  - name: uesio/studio.grouping
+    label: Grouping
+    type: TEXT
+  - name: uesio/studio.namespace
+    label: Namespace
+    type: TEXT

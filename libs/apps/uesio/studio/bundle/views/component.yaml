@@ -329,8 +329,8 @@ definition:
                           columns:
                             - label: Variant
                               components:
-                                - uesio/studio.iconlabel:
-                                    uesio.variant: uesio/studio.namespacefield
+                                - uesio/io.iconlabel:
+                                    uesio.variant: uesio/io.namespacefield
                                     text: ${uesio/studio.name}
                                     subtitle: ${uesio/studio.namespace}
                                     icon: ${uesio/studio.appicon}

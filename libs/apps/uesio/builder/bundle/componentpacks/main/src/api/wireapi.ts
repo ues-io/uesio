@@ -1,4 +1,4 @@
-import { api, context, wire } from "@uesio/ui"
+import { context, wire } from "@uesio/ui"
 import { get } from "./defapi"
 import { FullPath } from "./path"
 
@@ -10,7 +10,7 @@ const getAvailableWires = (context: context.Context) => {
 		context,
 		new FullPath("viewdef", context.getViewDefId(), '["wires"]')
 	) as wire.WireDefinitionMap
-	return result
+	return result || {}
 }
 
 const getWireDefinition = (context: context.Context, wireId: string) =>
@@ -21,22 +21,33 @@ const getFieldMetadata = (
 	wireId: string,
 	fieldId: string
 ) => {
-	const wireCollection = get(
-		context,
-		new FullPath(
-			"viewdef",
-			context.getViewDefId(),
-			`["wires"]["${wireId}"]["collection"]`
-		)
-	) as string
-	const collection = api.collection.getCollection(wireCollection)
-	if (!collection) return
-	return collection.getField(fieldId)
+	const lwire = context.getWire(wireId)
+	if (!lwire) return
+	return lwire.getCollection().getField(fieldId)
 }
+
+// getWirePath returns a FullPath corresponding to a View Wire,
+// which can be used to get/set properties on that Wire.
+const getWirePath = (context: context.Context, wireName: string): FullPath =>
+	new FullPath("viewdef", context.getViewDefId(), `["wires"]["${wireName}"]`)
+
+// getWireProperty returns the value of a property on one of the view's wires,
+// e.g. "collection", "batchsize", "fields", "conditions"
+const getWireProperty = (
+	context: context.Context,
+	wireName: string,
+	wireProperty: string
+) =>
+	get(
+		context,
+		getWirePath(context, wireName).addLocal(wireProperty)
+	) as string
 
 export {
 	getAvailableWireIds,
 	getAvailableWires,
+	getWirePath,
+	getWireProperty,
 	getFieldMetadata,
 	getWireDefinition,
 }
