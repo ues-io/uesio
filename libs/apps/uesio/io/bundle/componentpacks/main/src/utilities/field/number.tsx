@@ -33,9 +33,6 @@ const NumberField: definition.UtilityComponent<NumberFieldProps> = (props) => {
 	const {
 		mode,
 		placeholder,
-		variant,
-		context,
-		fieldMetadata,
 		id,
 		options,
 		setValue,
@@ -46,8 +43,6 @@ const NumberField: definition.UtilityComponent<NumberFieldProps> = (props) => {
 
 	const value = props.value as number | string
 	const readonly = mode === "READ" || props.readonly
-	const numberOptions = fieldMetadata?.getNumberMetadata()
-	const decimals = numberOptions?.decimals || 2
 
 	const controlledInputProps = useControlledInputNumber(
 		value,
@@ -61,39 +56,31 @@ const NumberField: definition.UtilityComponent<NumberFieldProps> = (props) => {
 		"uesio/io.field"
 	)
 
-	if (readonly) {
-		return (
-			<ReadOnlyField variant={variant} context={context}>
-				{typeof value === "number" ? value.toFixed(decimals) : value}
-			</ReadOnlyField>
-		)
-	} else {
-		return (
-			<div className={classes.wrapper}>
-				<input
-					id={id}
-					className={styles.cx(
-						classes.input,
-						readonly && classes.readonly
-					)}
-					{...controlledInputProps}
-					type={type}
-					disabled={readonly}
-					placeholder={placeholder}
-					step={options?.step}
-					min={options?.min}
-					max={options?.max}
-					title={`${controlledInputProps.value}`}
-					autoFocus={focusOnRender}
-				/>
-				{type === "range" ? (
-					<span className={classes.rangevalue}>
-						{controlledInputProps.value}
-					</span>
-				) : null}
-			</div>
-		)
-	}
+	return (
+		<div className={classes.wrapper}>
+			<input
+				id={id}
+				className={styles.cx(
+					classes.input,
+					readonly && classes.readonly
+				)}
+				{...controlledInputProps}
+				type={type}
+				disabled={readonly}
+				placeholder={placeholder}
+				step={options?.step}
+				min={options?.min}
+				max={options?.max}
+				title={`${controlledInputProps.value}`}
+				autoFocus={focusOnRender}
+			/>
+			{type === "range" ? (
+				<span className={classes.rangevalue}>
+					{controlledInputProps.value}
+				</span>
+			) : null}
+		</div>
+	)
 }
 
 export default NumberField
