@@ -27,7 +27,7 @@ HTTP 200
 # There are currently 10 public uesio/core collections and 7 uesio/test collections
 # we want to bring this number down at some point by making most of the uesio/core
 # collections private.
-jsonpath "$[*]" count == 19
+jsonpath "$[*]" count == 18
 # Spot check a uesio/tests collection
 jsonpath "$['uesio/tests.animal'].key" == "uesio/tests.animal"
 jsonpath "$['uesio/tests.animal'].namespace" == "uesio/tests"
