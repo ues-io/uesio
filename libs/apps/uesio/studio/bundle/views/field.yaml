@@ -151,22 +151,18 @@ definition:
                                       - MAP
                             - uesio/io.field:
                                 fieldId: uesio/studio.label
-                            - uesio/builder.metadatafield:
+                            - uesio/io.field:
                                 fieldId: uesio/studio.languagelabel
-                                metadataType: LABEL
-                                label: Language Label
-                            - uesio/builder.metadatafield:
+                            - uesio/io.field:
                                 fieldId: uesio/studio.collection
-                                metadataType: COLLECTION
                                 label: Collection
                             - uesio/io.box:
                                 uesio.display:
                                   - field: uesio/studio.type
                                     value: REFERENCE
                                 components:
-                                  - uesio/builder.metadatafield:
+                                  - uesio/io.field:
                                       fieldId: uesio/studio.reference->uesio/studio.collection
-                                      metadataType: COLLECTION
                                       label: Ref. Collection
                             - uesio/io.field:
                                 fieldId: uesio/studio.required
@@ -183,19 +179,15 @@ definition:
                                   - field: uesio/studio.type
                                     value: SELECT
                                 components:
-                                  - uesio/builder.metadatafield:
+                                  - uesio/io.field:
                                       fieldId: uesio/studio.selectlist
-                                      metadataType: SELECTLIST
-                                      label: Select List
                             - uesio/io.box:
                                 uesio.display:
                                   - field: uesio/studio.type
                                     value: FILE
                                 components:
-                                  - uesio/builder.metadatafield:
+                                  - uesio/io.field:
                                       fieldId: uesio/studio.file->uesio/studio.filesource
-                                      metadataType: FILESOURCE
-                                      label: File Source
                             - uesio/io.box:
                                 uesio.display:
                                   - field: uesio/studio.type
@@ -229,10 +221,8 @@ definition:
                                   - field: uesio/studio.type
                                     value: MULTISELECT
                                 components:
-                                  - uesio/builder.metadatafield:
+                                  - uesio/io.field:
                                       fieldId: uesio/studio.selectlist
-                                      metadataType: SELECTLIST
-                                      label: Select List
                             - uesio/io.field:
                                 fieldId: uesio/studio.validate->uesio/studio.type
                             - uesio/io.field:
@@ -250,9 +240,8 @@ definition:
                                   - field: uesio/studio.type
                                     value: REFERENCEGROUP
                                 components:
-                                  - uesio/builder.metadatafield:
+                                  - uesio/io.field:
                                       fieldId: uesio/studio.referencegroup->uesio/studio.collection
-                                      metadataType: COLLECTION
                                       label: Ref. Collection
                             - uesio/io.box:
                                 uesio.display:
@@ -263,10 +252,10 @@ definition:
                                     operator: NOT_EQUALS
                                     value: ""
                                 components:
-                                  - uesio/builder.metadatafield:
+                                  - uesio/io.field:
                                       fieldId: uesio/studio.referencegroup->uesio/studio.field
-                                      metadataType: FIELD
-                                      grouping: ${uesio/studio.referencegroup->uesio/studio.collection}
+                                      metadata:
+                                        grouping: ${uesio/studio.referencegroup->uesio/studio.collection}
                                       label: Ref. Field
                             - uesio/io.box:
                                 uesio.display:

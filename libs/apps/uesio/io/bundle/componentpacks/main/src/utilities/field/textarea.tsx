@@ -32,15 +32,17 @@ const TextAreaField: definition.UtilityComponent<TextAreaFieldProps> = (
 		options,
 		setValue,
 		applyChanges,
+		readonly = false,
 		focusOnRender = false,
 	} = props
 	const value = props.value as string
-	const readonly = props.readonly || mode === "READ"
+	const readOnly = readonly || mode === "READ"
 
 	const controlledInputProps = useControlledInput(
 		value,
 		setValue,
-		applyChanges
+		applyChanges,
+		readOnly
 	)
 
 	const classes = styles.useUtilityStyleTokens(
@@ -53,8 +55,8 @@ const TextAreaField: definition.UtilityComponent<TextAreaFieldProps> = (
 		id,
 		placeholder,
 		...controlledInputProps,
-		className: styles.cx(classes.input, readonly && classes.readonly),
-		disabled: readonly,
+		className: styles.cx(classes.input, readOnly && classes.readonly),
+		disabled: readOnly,
 		rows: options?.rows,
 		cols: options?.cols,
 	}

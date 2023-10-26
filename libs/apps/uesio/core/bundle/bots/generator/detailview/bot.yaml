@@ -9,7 +9,7 @@ params:
     required: true
   - name: fields
     prompt: Fields
-    type: METADATAMULTI
+    type: MULTIMETADATA
     metadataType: FIELD
     grouping: ${collection}
     conditions:

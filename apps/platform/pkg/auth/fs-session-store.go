@@ -3,13 +3,13 @@ package auth
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"sync"
 
 	"github.com/icza/session"
-	"github.com/thecloudmasters/uesio/pkg/logger"
 )
 
 // FSSessionStore struct
@@ -33,7 +33,7 @@ func NewFSSessionStore() session.Store {
 func (s *FSSessionStore) Get(id string) session.Session {
 	sess := s.memoryStore.Get(id)
 	if sess == nil {
-		logger.Log("checking in FS for the session: "+id, logger.INFO)
+		slog.Info("checking in FS for the session: " + id)
 		// We want to make sure we do not conflict with other adds, etc.
 		s.mux.RLock()
 		defer s.mux.RUnlock()
@@ -45,7 +45,7 @@ func (s *FSSessionStore) Get(id string) session.Session {
 			return nil
 		}
 		defer file.Close()
-		jsonContent, err := ioutil.ReadAll(file)
+		jsonContent, err := io.ReadAll(file)
 		if err != nil {
 			fmt.Println(err)
 			return nil
@@ -67,7 +67,7 @@ func (s *FSSessionStore) Get(id string) session.Session {
 // for when the server is restarted
 func (s *FSSessionStore) Add(sess session.Session) {
 
-	logger.Log("Adding new session to FS: "+sess.ID(), logger.INFO)
+	slog.Info("Adding new session to FS: " + sess.ID())
 	byteSlice, _ := json.Marshal(sess)
 	sessDir := "sessions"
 	filePath := filepath.Join(sessDir, sess.ID())
@@ -80,7 +80,7 @@ func (s *FSSessionStore) Add(sess session.Session) {
 			fmt.Println(err)
 		}
 	}
-	err := ioutil.WriteFile(filePath, byteSlice, 0644)
+	err := os.WriteFile(filePath, byteSlice, 0644)
 	if err != nil {
 		fmt.Println(err)
 	}

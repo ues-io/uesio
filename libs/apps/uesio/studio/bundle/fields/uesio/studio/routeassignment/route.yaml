@@ -1,5 +1,7 @@
 name: route
-type: TEXT
+type: METADATA
 label: Route
+metadata:
+  type: ROUTE
 required: true
 createOnly: true

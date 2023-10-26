@@ -11,7 +11,7 @@ params:
     metadataType: COLLECTION
   - name: fields
     prompt: Fields
-    type: METADATAMULTI
+    type: MULTIMETADATA
     metadataType: FIELD
     grouping: ${collection}
   - name: detailview

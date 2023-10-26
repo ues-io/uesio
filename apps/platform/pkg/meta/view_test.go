@@ -40,7 +40,7 @@ func TestViewGetField(t *testing.T) {
 			&View{
 				Definition: getYamlNode(basicViewDef),
 			},
-			basicViewDef,
+			getYamlNode(basicViewDef),
 		},
 	}
 
@@ -78,7 +78,7 @@ func TestViewSetField(t *testing.T) {
 		{
 			"uesio/studio.definition",
 			"set the definition field",
-			basicViewDef,
+			getYamlNode(basicViewDef),
 			&View{
 				Definition: getYamlNode(basicViewDef),
 			},

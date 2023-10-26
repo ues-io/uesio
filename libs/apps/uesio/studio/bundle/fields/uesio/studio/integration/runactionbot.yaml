@@ -1,0 +1,6 @@
+name: runactionbot
+type: METADATA
+label: Run Action Bot
+metadata:
+  type: BOT
+  grouping: RUNACTION

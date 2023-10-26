@@ -3,7 +3,7 @@ package meta
 import (
 	"errors"
 	"fmt"
-	"path/filepath"
+	"path"
 
 	"gopkg.in/yaml.v3"
 )
@@ -40,6 +40,7 @@ type Field struct {
 	ValidationMetadata     *ValidationMetadata     `yaml:"validate,omitempty" json:"uesio/studio.validate"`
 	AutoNumberMetadata     *AutoNumberMetadata     `yaml:"autonumber,omitempty" json:"uesio/studio.autonumber"`
 	FormulaMetadata        *FormulaMetadata        `yaml:"formula,omitempty" json:"uesio/studio.formula"`
+	MetadataFieldMetadata  *MetadataFieldMetadata  `yaml:"metadata,omitempty" json:"uesio/studio.metadata"`
 	AutoPopulate           string                  `yaml:"autopopulate,omitempty" json:"uesio/studio.autopopulate"`
 	SubFields              []SubField              `yaml:"subfields,omitempty" json:"uesio/studio.subfields"`
 	SubType                string                  `yaml:"subtype,omitempty" json:"uesio/studio.subtype"`
@@ -51,24 +52,26 @@ type FieldWrapper Field
 
 func GetFieldTypes() map[string]bool {
 	return map[string]bool{
-		"TEXT":           true,
-		"NUMBER":         true,
-		"LONGTEXT":       true,
-		"CHECKBOX":       true,
-		"MULTISELECT":    true,
-		"SELECT":         true,
-		"REFERENCE":      true,
-		"FILE":           true,
-		"USER":           true,
-		"LIST":           true,
-		"DATE":           true,
-		"MAP":            true,
-		"TIMESTAMP":      true,
-		"EMAIL":          true,
 		"AUTONUMBER":     true,
-		"REFERENCEGROUP": true,
+		"CHECKBOX":       true,
+		"DATE":           true,
+		"EMAIL":          true,
+		"FILE":           true,
 		"FORMULA":        true,
+		"LIST":           true,
+		"LONGTEXT":       true,
+		"MAP":            true,
+		"METADATA":       true,
+		"MULTIMETADATA":  true,
+		"MULTISELECT":    true,
+		"NUMBER":         true,
+		"REFERENCE":      true,
+		"REFERENCEGROUP": true,
+		"SELECT":         true,
 		"STRUCT":         true,
+		"TEXT":           true,
+		"TIMESTAMP":      true,
+		"USER":           true,
 	}
 }
 
@@ -91,7 +94,7 @@ func (f *Field) GetKey() string {
 func (f *Field) GetPath() string {
 	collectionNamespace, collectionName, _ := ParseKey(f.CollectionRef)
 	nsUser, appName, _ := ParseNamespace(collectionNamespace)
-	return filepath.Join(nsUser, appName, collectionName, f.Name) + ".yaml"
+	return path.Join(nsUser, appName, collectionName, f.Name) + ".yaml"
 }
 
 func (f *Field) SetField(fieldName string, value interface{}) error {
@@ -175,6 +178,10 @@ func (f *Field) UnmarshalYAML(node *yaml.Node) error {
 		f.NumberMetadata = &NumberMetadata{}
 	}
 
+	if fieldType == "METADATA" || fieldType == "MULTIMETADATA" {
+		f.MetadataFieldMetadata = &MetadataFieldMetadata{}
+	}
+
 	if fieldType == "FILE" {
 		f.FileMetadata = &FileMetadata{
 			FileSource: "uesio/core.platform",
@@ -187,8 +194,8 @@ func (f *Field) UnmarshalYAML(node *yaml.Node) error {
 
 func (f *Field) MarshalYAML() (interface{}, error) {
 
-	// We have to pass our namespace down to our childen so they
-	// can propery localize their references to other metadata items
+	// We have to pass our namespace down to our children so that they
+	// can properly localize their references to other metadata items
 	if f.ReferenceMetadata != nil {
 		f.ReferenceMetadata.Namespace = f.Namespace
 	}

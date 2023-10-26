@@ -3,18 +3,23 @@ import Field from "../field/field"
 import FieldWrapper from "../fieldwrapper/fieldwrapper"
 import { LabelPosition } from "../../components/field/field"
 
+export type StructFieldOptions = {
+	labelVariant?: metadata.MetadataKey
+	subFieldVariant?: metadata.MetadataKey
+	subFields?: collection.FieldMetadataMap
+	subType?: string
+}
+
 interface StructFieldUtilityProps {
 	fieldId: string
+	fieldMetadata?: collection.Field
+	labelPosition?: LabelPosition
 	mode: context.FieldMode
 	value: wire.PlainWireRecord
 	setValue: (value: wire.FieldValue) => void
-	subFields?: collection.FieldMetadataMap
-	subType?: string
-	subFieldVariant?: metadata.MetadataKey
-	labelVariant?: metadata.MetadataKey
-	labelPosition?: LabelPosition
 	path: string
 	record: wire.WireRecord
+	options?: StructFieldOptions
 }
 
 const StructField: definition.UtilityComponent<StructFieldUtilityProps> = (
@@ -22,16 +27,20 @@ const StructField: definition.UtilityComponent<StructFieldUtilityProps> = (
 ) => {
 	const {
 		fieldId,
-		subFields,
+		fieldMetadata,
+		labelPosition,
 		mode,
 		context,
-		subFieldVariant,
-		labelVariant,
-		labelPosition,
+		options = {} as StructFieldOptions,
 		path,
 		record,
 		setValue,
 	} = props
+	const {
+		labelVariant,
+		subFields = fieldMetadata?.getSubFields(),
+		subFieldVariant,
+	} = options
 
 	const recordId = record?.id
 	const value = props.value || {}

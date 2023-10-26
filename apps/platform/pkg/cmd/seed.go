@@ -3,14 +3,15 @@ package cmd
 import (
 	"bufio"
 	"encoding/json"
+	"log/slog"
 	"os"
 	"path/filepath"
 
 	"github.com/spf13/cobra"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -156,7 +157,7 @@ func runSeeds(connection adapt.Connection) error {
 
 func seed(cmd *cobra.Command, args []string) {
 
-	logger.Log("Running seed command!", logger.INFO)
+	slog.Info("Running seeds")
 
 	anonSession := sess.GetStudioAnonSession()
 
@@ -168,7 +169,7 @@ func seed(cmd *cobra.Command, args []string) {
 
 	err = runSeeds(connection)
 	if err != nil {
-		logger.Log("Seeds Failed", logger.ERROR)
+		slog.Error("Seeds failed: " + err.Error())
 		rollbackErr := connection.RollbackTransaction()
 		cobra.CheckErr(rollbackErr)
 		cobra.CheckErr(err)
@@ -178,6 +179,6 @@ func seed(cmd *cobra.Command, args []string) {
 	err = connection.CommitTransaction()
 	cobra.CheckErr(err)
 
-	logger.Log("Success", logger.INFO)
+	slog.Info("Successfully ran seeds")
 
 }

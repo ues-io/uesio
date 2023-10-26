@@ -4,7 +4,11 @@ import Progress from "./progress"
 import { ViewArea } from "../components/view"
 import { useSite } from "../bands/site"
 import { Context } from "../context/context"
-import { navigate, redirect } from "../bands/route/operations"
+import {
+	getRouteUrlPrefix,
+	navigate,
+	redirect,
+} from "../bands/route/operations"
 import NotificationArea from "./notificationarea"
 import { Component } from "../component/component"
 import { makeViewId } from "../bands/view"
@@ -44,9 +48,18 @@ const Route: UtilityComponent = (props) => {
 				path,
 				workspace,
 			},
-			""
+			"",
+			route.path
+				? getRouteUrlPrefix(routeContext, namespace) +
+						route.path +
+						window.location.search
+				: undefined
 		)
-	}, [route])
+		// We only want this hook to fire once (when this route component was first mounted)
+		// If it fires when the route changes, then we're just overwriting the changes we made
+		// in the navigate operation (with pushState)
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
 
 	useEffect(() => {
 		window.onpopstate = (event: PopStateEvent) => {

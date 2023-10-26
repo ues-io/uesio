@@ -96,9 +96,14 @@ func (b *LocalBundleStore) GetAllItems(group meta.BundleableGroup, namespace, ve
 			if _, ok := err.(*bundlestore.PermissionError); ok {
 				continue
 			}
+			if _, ok := err.(*bundlestore.NotFoundError); ok {
+				continue
+			}
 			return err
 		}
-		group.AddItem(retrievedItem)
+		if bundlestore.DoesItemMeetBundleConditions(retrievedItem, conditions) {
+			group.AddItem(retrievedItem)
+		}
 	}
 
 	return nil

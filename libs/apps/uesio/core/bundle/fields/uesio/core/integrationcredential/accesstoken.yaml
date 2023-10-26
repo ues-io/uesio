@@ -1,0 +1,4 @@
+name: accesstoken
+type: "TEXT"
+label: Access Token
+# encrypted: true

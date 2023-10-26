@@ -2,5 +2,5 @@ name: bulkjob
 uniqueKey:
   - uesio/core.autoid
 public: true
-label: bulkjob
-pluralLabel: bulk jobs
+label: Bulk Job
+pluralLabel: Bulk Jobs

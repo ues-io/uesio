@@ -47,6 +47,11 @@ const getWireAndConditionsDescriptor = (wire: string) => [
 	getConditionIdsDescriptor(wire),
 ]
 
+type FieldUpdate = {
+	field: string
+	value: wire.PlainFieldValue
+}
+
 // Metadata for all of the signals in the band
 const signals: SignalBandDefinition = {
 	band: BAND,
@@ -106,6 +111,7 @@ const signals: SignalBandDefinition = {
 			],
 		},
 		[`${BAND}/UPDATE_RECORD`]: {
+			disabled: true,
 			label: "Update Record",
 			description: "update record",
 			properties: (): ComponentProperty[] => [
@@ -126,6 +132,48 @@ const signals: SignalBandDefinition = {
 					label: "Value",
 					wireProperty: "wire",
 					fieldProperty: "field",
+				},
+			],
+		},
+		[`${BAND}/UPDATE_FIELDS`]: {
+			label: "Update Fields",
+			description: "update record fields",
+			properties: (): ComponentProperty[] => [
+				{
+					name: "wire",
+					type: "WIRE",
+					label: "Wire",
+				},
+				{
+					name: "fields",
+					type: "LIST",
+					label: "Field Updates",
+					subtype: "STRUCT",
+					items: {
+						title: "Field Updates",
+						addLabel: "Add Field Update",
+						displayTemplate: (fields: FieldUpdate) => {
+							if (fields.field) {
+								return `${fields.field} | ${fields.value}`
+							}
+							return "NEW_VALUE"
+						},
+						properties: [
+							{
+								name: "field",
+								type: "FIELD",
+								label: "Field",
+								wirePath: "../wire",
+							},
+							{
+								name: "value",
+								type: "FIELD_VALUE",
+								label: "Value",
+								wirePath: "../wire",
+								fieldProperty: "field",
+							},
+						],
+					},
 				},
 			],
 		},

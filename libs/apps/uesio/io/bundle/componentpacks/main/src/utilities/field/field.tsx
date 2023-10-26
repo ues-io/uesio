@@ -1,42 +1,38 @@
 import { ReactElement } from "react"
 import { collection, definition, metadata, context, wire } from "@uesio/ui"
 
-import CheckboxField, {
-	CheckboxFieldOptions,
-} from "../../utilities/field/checkbox"
-import DateField from "../../utilities/field/date"
+import CheckboxField, { CheckboxFieldOptions } from "./checkbox"
+import DateField from "./date"
 import MarkDownField, {
 	MarkdownFieldOptions,
 } from "../../utilities/markdownfield/markdownfield"
-import MultiCheckField from "../../utilities/field/multicheck"
-import MultiSelectField from "../../utilities/field/multiselect"
-import NumberField, { NumberFieldOptions } from "../../utilities/field/number"
-import RadioButtons from "../../utilities/field/radiobuttons"
-import ReferenceField, {
-	ReferenceFieldOptions,
-} from "../../utilities/field/reference"
-import SelectField from "../../utilities/field/select"
-import TextAreaField, {
-	LongTextFieldOptions,
-} from "../../utilities/field/textarea"
-import TextField from "../../utilities/field/text"
-import TimestampField from "../../utilities/field/timestamp"
-import ToggleField from "../../utilities/field/toggle"
-import UserField, { UserFieldOptions } from "../../utilities/field/user"
-import ListFieldDeck, { ListFieldOptions } from "../../utilities/field/listdeck"
-import ListField from "../../utilities/field/list"
+import MultiCheckField from "./multicheck"
+import MultiSelectField from "./multiselect"
+import NumberField, { NumberFieldOptions } from "./number"
+import RadioButtons from "./radiobuttons"
+import ReferenceField, { ReferenceFieldOptions } from "./reference"
+import SelectField from "./select"
+import TextAreaField, { LongTextFieldOptions } from "./textarea"
+import TextField, { TextFieldOptions } from "./text"
+import TimestampField from "./timestamp"
+import ToggleField from "./toggle"
+import UserField, { UserFieldOptions } from "./user"
+import ListFieldDeck, { ListDeckOptions } from "./listdeck"
+import ListField, { ListFieldOptions } from "./list"
 import ReferenceGroupField, {
 	ReferenceGroupFieldOptions,
-} from "../../utilities/field/referencegroup"
-import FileField from "../../utilities/field/file"
-import MapField from "../../utilities/mapfield/mapfield"
-import StructField from "../../utilities/structfield/structfield"
-import MapFieldDeck from "../../utilities/field/mapdeck"
+} from "./referencegroup"
+import FileField from "./file"
+import MetadataField, { MetadataFieldOptions } from "./metadata"
+import MapField, { MapFieldOptions } from "../../utilities/mapfield/mapfield"
+import StructField, {
+	StructFieldOptions,
+} from "../../utilities/structfield/structfield"
+import MapFieldDeck, { MapDeckOptions } from "./mapdeck"
 import {
 	ApplyChanges,
 	FieldValueSetter,
 	LabelPosition,
-	MapFieldOptions,
 } from "../../components/field/field"
 
 interface FieldProps {
@@ -54,19 +50,19 @@ interface FieldProps {
 	displayAs?: string
 	focusOnRender?: boolean
 	applyChanges?: ApplyChanges
+	labelPosition?: LabelPosition
 	// Type specific
 	reference?: ReferenceFieldOptions | ReferenceGroupFieldOptions
-	list?: ListFieldOptions
-	map?: MapFieldOptions
+	list?: ListFieldOptions | ListDeckOptions
+	map?: MapFieldOptions | MapDeckOptions
 	markdown?: MarkdownFieldOptions
+	metadata?: MetadataFieldOptions
 	number?: NumberFieldOptions
 	longtext?: LongTextFieldOptions
 	checkbox?: CheckboxFieldOptions
 	user?: UserFieldOptions
-	// Special variants for map/list/struct
-	subFieldVariant?: metadata.MetadataKey
-	labelVariant?: metadata.MetadataKey
-	labelPosition?: LabelPosition
+	struct?: StructFieldOptions
+	text?: TextFieldOptions
 }
 
 const Field: definition.UtilityComponent<FieldProps> = (props) => {
@@ -81,7 +77,6 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 		focusOnRender,
 		id,
 		labelPosition,
-		labelVariant,
 		list,
 		longtext,
 		map,
@@ -93,7 +88,8 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 		record,
 		reference,
 		setValue,
-		subFieldVariant,
+		struct,
+		text,
 		user,
 		value,
 		variant,
@@ -121,6 +117,7 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 		fieldMetadata,
 		focusOnRender,
 		id,
+		labelPosition,
 		mode,
 		path,
 		placeholder,
@@ -131,16 +128,15 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 		variant,
 	}
 
-	const complexFieldOptions = {
-		subFieldVariant,
-		labelVariant,
-	}
+	const displayType = fieldMetadata.getType()
+	const subType = fieldMetadata.getSubType() as collection.FieldType
+	let mapFieldOptions: MapFieldOptions
 
 	let selectOptions: wire.SelectOption[]
 	let multiSelectProps
 	let content: ReactElement
 
-	switch (fieldMetadata.getType()) {
+	switch (displayType) {
 		case "DATE":
 			content = <DateField {...common} />
 			break
@@ -155,9 +151,9 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 		case "TEXT":
 			content =
 				displayAs === "PASSWORD" ? (
-					<TextField {...common} type="password" />
+					<TextField {...common} options={text} type="password" />
 				) : (
-					<TextField {...common} />
+					<TextField {...common} options={text} />
 				)
 			break
 		case "AUTONUMBER":
@@ -242,6 +238,10 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 					content = <CheckboxField {...common} />
 			}
 			break
+		case "METADATA":
+		case "MULTIMETADATA":
+			content = <MetadataField {...common} options={props.metadata} />
+			break
 		case "REFERENCE":
 			content = <ReferenceField {...common} options={reference} />
 			break
@@ -265,45 +265,51 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 		case "LIST":
 			content =
 				displayAs === "DECK" ? (
-					<ListFieldDeck {...common} options={list} />
-				) : (
-					<ListField
+					<ListFieldDeck
 						{...common}
-						{...complexFieldOptions}
-						options={list}
-						subFields={fieldMetadata.getSubFields()}
-						subType={fieldMetadata.getSubType()}
+						options={list as ListDeckOptions}
 					/>
+				) : (
+					<ListField {...common} options={list as ListFieldOptions} />
 				)
 			break
 		case "MAP":
+			mapFieldOptions = (map || {}) as MapFieldOptions
 			content =
 				displayAs === "DECK" ? (
-					<MapFieldDeck {...common} options={map} />
+					<MapFieldDeck {...common} options={map as MapDeckOptions} />
 				) : (
 					<MapField
 						{...common}
-						{...complexFieldOptions}
-						keyField={{
-							name: "key",
-							label: map?.keyFieldLabel || "Key",
-							type: "TEXT",
-							namespace: "",
-							accessible: true,
-							createable: true,
-							updateable: true,
-						}}
-						valueField={{
-							name: "value",
-							label: map?.valueFieldLabel || "Value",
-							type: fieldMetadata.getSubType() as collection.FieldType,
-							selectlist: fieldMetadata.getSelectMetadata(),
-							number: fieldMetadata.getNumberMetadata(),
-							subfields: fieldMetadata.getSubFields(),
-							namespace: "",
-							accessible: true,
-							createable: true,
-							updateable: true,
+						options={{
+							...mapFieldOptions,
+							...{
+								keyField: mapFieldOptions.keyField || {
+									name: "key",
+									label:
+										mapFieldOptions.keyFieldLabel || "Key",
+									type: "TEXT",
+									namespace: "",
+									accessible: true,
+									createable: true,
+									updateable: true,
+								},
+								valueField: mapFieldOptions.valueField || {
+									name: "value",
+									label:
+										mapFieldOptions.valueFieldLabel ||
+										"Value",
+									type: subType,
+									selectlist:
+										fieldMetadata.getSelectMetadata(),
+									number: fieldMetadata.getNumberMetadata(),
+									subfields: fieldMetadata.getSubFields(),
+									namespace: "",
+									accessible: true,
+									createable: true,
+									updateable: true,
+								},
+							},
 						}}
 					/>
 				)
@@ -312,9 +318,7 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 			content = (
 				<StructField
 					{...common}
-					{...complexFieldOptions}
-					labelPosition={labelPosition}
-					subFields={fieldMetadata.source.subfields}
+					options={struct}
 					value={value as wire.PlainWireRecord}
 				/>
 			)

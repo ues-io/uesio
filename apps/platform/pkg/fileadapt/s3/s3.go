@@ -5,15 +5,16 @@ import (
 	"errors"
 
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/creds"
-	"github.com/thecloudmasters/uesio/pkg/fileadapt"
+	"github.com/thecloudmasters/uesio/pkg/types/file"
 )
 
 type FileAdapter struct {
 }
 
-func (a *FileAdapter) GetFileConnection(credentials *adapt.Credentials, bucket string) (fileadapt.FileConnection, error) {
+func (a *FileAdapter) GetFileConnection(credentials *adapt.Credentials, bucket string) (file.Connection, error) {
 	client, err := getS3Client(context.Background(), credentials)
 	if err != nil {
 		return nil, errors.New("invalid FileAdapterCredentials specified: " + err.Error())

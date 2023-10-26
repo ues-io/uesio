@@ -5,12 +5,12 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"log/slog"
 	"net/http"
 	"strings"
 
 	httpClient "github.com/thecloudmasters/uesio/pkg/http"
 	"github.com/thecloudmasters/uesio/pkg/integ/web"
-	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -55,7 +55,7 @@ func BadRequest(message string) *BotHttpResponse {
 }
 
 func ServerError(err error) *BotHttpResponse {
-	logger.LogError(err)
+	slog.Error(err.Error())
 	statusText := http.StatusText(http.StatusInternalServerError)
 	return &BotHttpResponse{
 		Code:    http.StatusInternalServerError,

@@ -1,3 +1,5 @@
 name: collection
-type: TEXT
-label: Name
+type: METADATA
+label: Collection
+metadata:
+  type: COLLECTION

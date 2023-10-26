@@ -2,11 +2,13 @@ package postgresio
 
 import (
 	"fmt"
+	"log/slog"
 	"net/url"
 
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 )
 
@@ -21,7 +23,7 @@ func getConnectionString(credentials *adapt.Credentials) (string, error) {
 
 	port := credentials.GetEntry("port", "5432")
 
-	user, err := credentials.GetRequiredEntry("user")
+	user, err := credentials.GetRequiredEntry("username")
 	if err != nil {
 		return "", err
 	}
@@ -42,7 +44,7 @@ func getConnectionString(credentials *adapt.Credentials) (string, error) {
 }
 
 func (c *Connection) Migrate() error {
-	fmt.Println("Migrating Postgresio")
+	slog.Info("Migrating database")
 
 	migrationsDir := getMigrationsDirectory()
 

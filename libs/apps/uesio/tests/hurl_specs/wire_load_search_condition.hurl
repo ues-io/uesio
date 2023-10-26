@@ -5,7 +5,7 @@
 # Test as a logged-in user so that we don't get redirected to the login page
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"uesio\"}"
+    "token": "uesio"
 }
 
 # Test a wire load with a search condition
@@ -33,8 +33,10 @@ HTTP 200
 jsonpath "$.wires[0].errors" not exists
 jsonpath "$.wires[0].debugQueryString" == ```
 SELECT
-main.id::text AS "uesio/core.id",
-main.uniquekey AS "uesio/core.uniquekey"
+jsonb_build_object(
+'uesio/core.id',main.id,
+'uesio/core.uniquekey',main.uniquekey
+)
 FROM data as "main"
 WHERE
 main.collection = $1 AND

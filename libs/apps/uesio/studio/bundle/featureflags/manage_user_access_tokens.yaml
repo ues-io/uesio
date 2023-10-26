@@ -1,0 +1,4 @@
+name: manage_user_access_tokens
+label: Manage User Access Tokens
+type: CHECKBOX
+defaultValue: false

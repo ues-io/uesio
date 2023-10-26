@@ -50,3 +50,8 @@ func (ufm *UserFileMetadata) GetRelativePath() string {
 	}
 	return fmt.Sprintf("%s/%s/attachment/%s", collectionPath, ufm.RecordID, ufm.Path)
 }
+
+func (ufm *UserFileMetadata) UnmarshalJSON(data []byte) error {
+	type alias UserFileMetadata
+	return refScanner((*alias)(ufm), data)
+}

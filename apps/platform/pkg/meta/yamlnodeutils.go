@@ -5,7 +5,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/francoispqt/gojay"
 	"gopkg.in/yaml.v3"
 )
 
@@ -57,6 +56,9 @@ type NodePair struct {
 }
 
 func GetMapNodes(node *yaml.Node) ([]NodePair, error) {
+	if node.Kind == yaml.DocumentNode {
+		node = node.Content[0]
+	}
 	if node.Kind != yaml.MappingNode {
 		return nil, fmt.Errorf("Definition is not a mapping node.")
 	}
@@ -84,6 +86,9 @@ func GetMapNode(node *yaml.Node, key string) (*yaml.Node, error) {
 }
 
 func GetMapNodeWithIndex(node *yaml.Node, key string) (*yaml.Node, int, error) {
+	if node.Kind == yaml.DocumentNode {
+		node = node.Content[0]
+	}
 	if node.Kind != yaml.MappingNode {
 		return nil, 0, fmt.Errorf("Definition is not a mapping node.")
 	}
@@ -96,81 +101,6 @@ func GetMapNodeWithIndex(node *yaml.Node, key string) (*yaml.Node, int, error) {
 	}
 
 	return nil, 0, fmt.Errorf("Node not found of key: " + key)
-}
-
-type YAMLDefinition yaml.Node
-
-func (yd *YAMLDefinition) MarshalJSONArray(enc *gojay.Encoder) {
-	for i := range yd.Content {
-		item := YAMLDefinition(*yd.Content[i])
-		if item.Kind == yaml.ScalarNode {
-			var value interface{}
-			err := yd.Content[i].Decode(&value)
-			if err != nil {
-				fmt.Println("Got an error decoding scalar: " + item.Value)
-				continue
-			}
-			if value == nil {
-				enc.AddNull()
-			} else {
-				enc.AddInterface(value)
-			}
-		}
-		if item.Kind == yaml.SequenceNode {
-			enc.AddArray(&item)
-		}
-		if item.Kind == yaml.MappingNode {
-			enc.AddObject(&item)
-		}
-	}
-}
-
-func (yd *YAMLDefinition) MarshalJSONObject(enc *gojay.Encoder) {
-
-	if yd.Kind == yaml.ScalarNode {
-		enc.AddString(yd.Value)
-	}
-	if yd.Kind == yaml.SequenceNode {
-		yd.MarshalJSONArray(enc)
-	}
-	if yd.Kind == yaml.MappingNode {
-		for i := range yd.Content {
-			if i%2 != 0 {
-				continue
-			}
-			keyItem := yd.Content[i]
-			valueItem := YAMLDefinition(*yd.Content[i+1])
-			if valueItem.Kind == yaml.ScalarNode {
-				var value interface{}
-				err := yd.Content[i+1].Decode(&value)
-				if err != nil {
-					fmt.Println("Got an error decoding scalar in map: " + keyItem.Value + " : " + valueItem.Value)
-					continue
-				}
-				if value == nil {
-					enc.AddNullKey(keyItem.Value)
-				} else {
-					enc.AddInterfaceKey(keyItem.Value, value)
-				}
-
-			}
-			if valueItem.Kind == yaml.SequenceNode {
-				enc.AddArrayKey(keyItem.Value, &valueItem)
-			}
-			if valueItem.Kind == yaml.MappingNode {
-				enc.AddObjectKey(keyItem.Value, &valueItem)
-			}
-
-		}
-	}
-
-}
-func (yd *YAMLDefinition) IsNil() bool {
-	return yd == nil
-}
-
-func nodeIsNull(node *yaml.Node) bool {
-	return node.Kind == yaml.ScalarNode && node.ShortTag() == "!!null"
 }
 
 // Removes an entry from a map node and returns it.
@@ -233,10 +163,10 @@ func validateNodeName(node *yaml.Node, expectedName string) error {
 	return validateMetadataNameNode(node, expectedName, "name")
 }
 
-func getYamlNode(yamlContent string) yaml.Node {
-	yamlNode := &yaml.Node{}
+func getYamlNode(yamlContent string) *YAMLDef {
+	yamlNode := &YAMLDef{}
 	yaml.Unmarshal([]byte(yamlContent), yamlNode)
-	return *yamlNode.Content[0]
+	return yamlNode
 }
 
 func trimYamlString(yamlContent string) string {

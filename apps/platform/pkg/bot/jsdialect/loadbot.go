@@ -16,7 +16,7 @@ func NewLoadBotAPI(bot *meta.Bot, session *sess.Session, connection adapt.Connec
 		connection:            connection,
 		LogApi:                NewBotLogAPI(bot),
 		Http:                  NewBotHttpAPI(bot, session),
-		IntegrationConnection: integrationConnection,
+		integrationConnection: integrationConnection,
 	}
 }
 
@@ -26,22 +26,22 @@ type LoadBotAPI struct {
 	connection            adapt.Connection
 	LogApi                *BotLogAPI  `bot:"log"`
 	Http                  *BotHttpAPI `bot:"http"`
-	IntegrationConnection adapt.IntegrationConnection
+	integrationConnection adapt.IntegrationConnection
 	loadErrors            []string
 }
 
 func (lb *LoadBotAPI) GetCredentials() map[string]interface{} {
-	if lb.IntegrationConnection == nil || lb.IntegrationConnection.GetCredentials() == nil {
+	if lb.integrationConnection == nil || lb.integrationConnection.GetCredentials() == nil {
 		return map[string]interface{}{}
 	}
-	return lb.IntegrationConnection.GetCredentials().GetInterfaceMap()
+	return lb.integrationConnection.GetCredentials().GetInterfaceMap()
 }
 
 func (lb *LoadBotAPI) GetIntegration() *IntegrationMetadata {
-	if lb.IntegrationConnection == nil || lb.IntegrationConnection.GetIntegration() == nil {
+	if lb.integrationConnection == nil || lb.integrationConnection.GetIntegration() == nil {
 		return nil
 	}
-	return (*IntegrationMetadata)(lb.IntegrationConnection.GetIntegration())
+	return (*IntegrationMetadata)(lb.integrationConnection.GetIntegration())
 }
 
 func (lb *LoadBotAPI) GetConfigValue(configValueKey string) (string, error) {

@@ -1,5 +1,8 @@
 import { LoadRequestBatch } from "../load/loadrequest"
-import { LoadResponseBatch } from "../load/loadresponse"
+import {
+	CollectionMetadataResponseBatch,
+	LoadResponseBatch,
+} from "../load/loadresponse"
 import { SaveRequestBatch } from "../load/saverequest"
 import { SaveResponseBatch } from "../load/saveresponse"
 import { Context } from "../context/context"
@@ -452,8 +455,8 @@ const platform = {
 	getCollectionMetadata: async (
 		context: Context,
 		collectionName: string
-	): Promise<LoadResponseBatch> =>
-		memoizedGetJSON<LoadResponseBatch>(
+	): Promise<CollectionMetadataResponseBatch> =>
+		memoizedGetJSON<CollectionMetadataResponseBatch>(
 			context,
 			`${getPrefix(context)}/collections/meta/${collectionName}`
 		),
@@ -540,31 +543,6 @@ const platform = {
 			requestBody
 		)
 		return respondJSON(response)
-	},
-	signUpConfirm: async (
-		context: Context,
-		signupMethod: string,
-		requestBody: Record<string, string>
-	): Promise<void> => {
-		const [namespace, name] = parseKey(signupMethod)
-		const response = await postJSON(
-			context,
-			`/site/auth/${namespace}/${name}/signup/confirm`,
-			requestBody
-		)
-		return respondVoid(response)
-	},
-	checkAvailability: async (
-		context: Context,
-		signupMethod: string,
-		username: string
-	): Promise<void> => {
-		const [namespace, name] = parseKey(signupMethod)
-		const response = await post(
-			context,
-			`/site/auth/${namespace}/${name}/checkavailability/${username}`
-		)
-		return respondVoid(response)
 	},
 	login: async (
 		context: Context,

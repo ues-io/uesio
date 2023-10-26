@@ -2,28 +2,18 @@ package fileadapt
 
 import (
 	"errors"
-	"io"
-	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
-	"github.com/thecloudmasters/uesio/pkg/creds"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/file"
 )
 
 type FileAdapter interface {
-	GetFileConnection(*adapt.Credentials, string) (FileConnection, error)
-}
-
-type FileConnection interface {
-	Upload(fileData io.Reader, path string) error
-	Download(path string) (time.Time, io.ReadSeeker, error)
-	Delete(path string) error
-	List(path string) ([]string, error)
-	EmptyDir(path string) error
+	GetFileConnection(*adapt.Credentials, string) (file.Connection, error)
 }
 
 var adapterMap = map[string]FileAdapter{}
@@ -44,7 +34,7 @@ func RegisterFileAdapter(name string, adapter FileAdapter) {
 	adapterMap[name] = adapter
 }
 
-func GetFileConnection(fileSourceID string, session *sess.Session) (FileConnection, error) {
+func GetFileConnection(fileSourceID string, session *sess.Session) (file.Connection, error) {
 	fs, err := meta.NewFileSource(fileSourceID)
 	if err != nil {
 		return nil, err
@@ -55,7 +45,7 @@ func GetFileConnection(fileSourceID string, session *sess.Session) (FileConnecti
 	}
 
 	// Enter into a version context to get these
-	// credentails as the datasource's namespace
+	// credentials as the datasource's namespace
 	versionSession, err := datasource.EnterVersionContext(fs.Namespace, session, nil)
 	if err != nil {
 		return nil, err
@@ -66,7 +56,7 @@ func GetFileConnection(fileSourceID string, session *sess.Session) (FileConnecti
 		return nil, err
 	}
 
-	credentials, err := creds.GetCredentials(fs.Credentials, versionSession)
+	credentials, err := datasource.GetCredentials(fs.Credentials, versionSession)
 	if err != nil {
 		return nil, err
 	}

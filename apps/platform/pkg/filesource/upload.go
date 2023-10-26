@@ -4,7 +4,7 @@ import (
 	"errors"
 	"io"
 	"mime"
-	"path/filepath"
+	"path"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -122,7 +122,7 @@ func Upload(ops []*FileUploadOp, connection adapt.Connection, session *sess.Sess
 
 		ufm := &meta.UserFileMetadata{
 			CollectionID:  op.CollectionID,
-			MimeType:      mime.TypeByExtension(filepath.Ext(op.Path)),
+			MimeType:      mime.TypeByExtension(path.Ext(op.Path)),
 			FieldID:       op.FieldID,
 			Path:          op.Path,
 			Type:          GetFileType(op),

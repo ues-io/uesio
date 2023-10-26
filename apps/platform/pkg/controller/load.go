@@ -2,13 +2,13 @@ package controller
 
 import (
 	"encoding/json"
+	"log/slog"
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 )
 
@@ -18,7 +18,7 @@ func Load(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&batch)
 	if err != nil {
 		msg := "Invalid request format: " + err.Error()
-		logger.Log(msg, logger.ERROR)
+		slog.Error(msg)
 		http.Error(w, msg, http.StatusBadRequest)
 		return
 	}
@@ -28,12 +28,16 @@ func Load(w http.ResponseWriter, r *http.Request) {
 	metadata, err := datasource.Load(batch.Wires, session, nil)
 	if err != nil {
 		msg := "Load Failed: " + err.Error()
-		logger.Log(msg, logger.ERROR)
+		slog.Error(msg)
 		http.Error(w, msg, http.StatusBadRequest)
 		return
 	}
-	file.RespondJSON(w, r, &adapt.LoadResponseBatch{
-		Wires:       batch.Wires,
-		Collections: metadata.Collections,
-	})
+	loadResponse := &adapt.LoadResponseBatch{
+		Wires: batch.Wires,
+	}
+	// Only include metadata if explicitly requested
+	if batch.IncludeMetadata == true {
+		loadResponse.Collections = metadata.Collections
+	}
+	file.RespondJSON(w, r, loadResponse.TrimStructForSerialization())
 }

@@ -12,9 +12,10 @@ import {
 import FieldWrapper from "../../utilities/fieldwrapper/fieldwrapper"
 import FieldUtility from "../../utilities/field/field"
 
-import { ListFieldOptions } from "../../utilities/field/listdeck"
+import { ListFieldOptions } from "../../utilities/field/list"
+import { ListDeckOptions } from "../../utilities/field/listdeck"
+import { StructFieldOptions } from "../../utilities/structfield/structfield"
 import { LongTextFieldOptions } from "../../utilities/field/textarea"
-import { MapFieldOptions } from "../../utilities/mapfield/MapFieldOptions"
 import {
 	MarkdownComponentOptions,
 	MarkdownFieldOptions,
@@ -24,6 +25,10 @@ import { ReferenceFieldOptions } from "../../utilities/field/reference"
 import { ReferenceGroupFieldOptions } from "../../utilities/field/referencegroup"
 import { UserFieldOptions } from "../../utilities/field/user"
 import { CheckboxFieldOptions } from "../../utilities/field/checkbox"
+import { TextFieldOptions } from "../../utilities/field/text"
+import { MetadataFieldOptions } from "../../utilities/field/metadata"
+import { MapFieldOptions } from "../../utilities/mapfield/mapfield"
+import { MapDeckOptions } from "../../utilities/field/mapdeck"
 
 type FieldDefinition = {
 	// Wire will default to the context wire, but can optionally be overridden
@@ -35,17 +40,18 @@ type FieldDefinition = {
 	focusOnRender?: boolean
 	reference?: ReferenceFieldOptions | ReferenceGroupFieldOptions
 	checkbox?: CheckboxFieldOptions
-	list?: ListFieldOptions
-	map?: MapFieldOptions
+	list?: ListFieldOptions | ListDeckOptions
+	map?: MapFieldOptions | MapDeckOptions
 	markdown?: MarkdownComponentOptions
+	metadata?: MetadataFieldOptions
 	user?: UserFieldOptions
 	number?: NumberFieldOptions
 	longtext?: LongTextFieldOptions
+	struct?: StructFieldOptions
 	placeholder?: string
 	readonly?: boolean
+	text?: TextFieldOptions
 	wrapperVariant: metadata.MetadataKey
-	subFieldVariant?: metadata.MetadataKey
-	labelVariant?: metadata.MetadataKey
 	applyChanges?: ApplyChanges
 } & definition.BaseDefinition
 
@@ -63,7 +69,7 @@ type UserFileMetadata = {
 	["uesio/core.recordid"]: string
 	["uesio/core.collectionid"]: string
 	["uesio/core.fieldid"]?: string
-	["uesio/core.updatedat"]: string
+	[collection.UPDATED_AT_FIELD]: string
 }
 
 const UPLOAD_FILE_EVENT = "component:uesio/io.field:upload"
@@ -107,10 +113,9 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		longtext,
 		markdown: markdownComponentOptions,
 		readonly,
+		struct,
+		text,
 		wrapperVariant,
-		// Special variants used for Map/List/Struct fields
-		subFieldVariant,
-		labelVariant,
 		labelPosition,
 		applyChanges,
 	} = definition
@@ -157,8 +162,6 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		variant: definition[component.STYLE_VARIANT],
 		placeholder,
 		displayAs,
-		subFieldVariant,
-		labelVariant,
 		applyChanges,
 		// Some components have sub-fields that need to know about label position
 		labelPosition,
@@ -182,9 +185,12 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		list,
 		map,
 		markdown,
+		metadata: definition.metadata,
 		user,
 		number,
 		longtext,
+		struct,
+		text,
 	}
 
 	return (
@@ -210,6 +216,7 @@ export type {
 	FieldValueSetter,
 	UserFileMetadata,
 	LabelPosition,
+	ListDeckOptions,
 	ListFieldOptions,
 	MapFieldOptions,
 	MarkdownFieldOptions,

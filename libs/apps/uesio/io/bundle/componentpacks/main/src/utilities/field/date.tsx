@@ -19,9 +19,13 @@ const DateField: definition.UtilityComponent<DateFieldProps> = (props) => {
 	const { focusOnRender = false, setValue, mode, id } = props
 
 	const value = props.value as string
-	const controlledInputProps = useControlledInput(value, setValue, "")
-
 	const readonly = props.readonly || mode === "READ"
+	const controlledInputProps = useControlledInput(
+		value,
+		setValue,
+		"",
+		readonly
+	)
 
 	if (readonly) {
 		return (

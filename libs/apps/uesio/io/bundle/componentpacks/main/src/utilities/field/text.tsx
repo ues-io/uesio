@@ -5,6 +5,10 @@ import { useControlledInput } from "../../shared/useControlledFieldValue"
 
 import Icon from "../icon/icon"
 
+export type TextFieldOptions = {
+	autoComplete?: string
+}
+
 interface TextFieldProps {
 	applyChanges?: ApplyChanges
 	focusOnRender?: boolean
@@ -12,6 +16,7 @@ interface TextFieldProps {
 	mode?: context.FieldMode
 	placeholder?: string
 	readonly?: boolean
+	options?: TextFieldOptions
 	setValue?: FieldValueSetter
 	type?: "search" | "password" | "text" | "email" | "tel" | "url"
 	value?: wire.FieldValue
@@ -19,7 +24,7 @@ interface TextFieldProps {
 
 const StyleDefaults = Object.freeze({
 	input: [],
-	readonly: [],
+	readonly: ["disabled:pointer-events-none"],
 	wrapper: ["relative"],
 	toggle: [
 		"absolute",
@@ -42,8 +47,9 @@ const TextField: definition.UtilityComponent<TextFieldProps> = (props) => {
 		id,
 		list,
 		mode,
+		options,
 		placeholder,
-		readonly,
+		readonly = false,
 		setValue,
 		type = "text",
 		value = "",
@@ -54,14 +60,15 @@ const TextField: definition.UtilityComponent<TextFieldProps> = (props) => {
 		props,
 		"uesio/io.field"
 	)
-	const controlledInputProps = useControlledInput(
-		value as string,
-		setValue,
-		applyChanges
-	)
 
 	const isReadMode = readonly || mode === "READ"
 	const isPassword = type === "password"
+	const controlledInputProps = useControlledInput(
+		value as string,
+		setValue,
+		applyChanges,
+		isReadMode
+	)
 
 	const [useType, setType] = useState(type)
 
@@ -77,6 +84,7 @@ const TextField: definition.UtilityComponent<TextFieldProps> = (props) => {
 					isReadMode && classes.readonly,
 					isPassword && classes.password
 				)}
+				autoComplete={options?.autoComplete}
 				disabled={isReadMode}
 				autoFocus={focusOnRender}
 				{...controlledInputProps}

@@ -7,7 +7,10 @@ import {
 } from "../../../api/stateapi"
 import PropertiesForm from "../../../helpers/propertiesform"
 
-function getSections(componentType: string, componentDef?: ComponentDef) {
+export function getSections(
+	componentType: string,
+	componentDef?: ComponentDef
+) {
 	const sections = componentDef?.sections
 	if (sections && sections.length) {
 		// The Styles section needs to have the Component Type merged in to be valid

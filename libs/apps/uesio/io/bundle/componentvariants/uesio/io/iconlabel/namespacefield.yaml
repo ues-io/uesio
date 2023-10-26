@@ -1,0 +1,16 @@
+name: namespacefield
+label: Namespace Field
+extends: uesio/io.iconlabel:uesio/io.default
+definition:
+  uesio.styleTokens:
+    root:
+      - text-sm
+      - text-slate-700
+      - p-5
+    title:
+      - text-slate-700
+    subtitle:
+      - text-slate-500
+      - text-xs
+      - font-light
+public: true

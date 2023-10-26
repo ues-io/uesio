@@ -2,7 +2,6 @@ package meta
 
 import (
 	"fmt"
-	"os"
 	"strconv"
 	"strings"
 )
@@ -35,7 +34,7 @@ func (cvc *ComponentVariantCollection) AddItem(item Item) error {
 }
 
 func (cvc *ComponentVariantCollection) GetItemFromPath(path, namespace string) BundleableItem {
-	parts := strings.Split(path, string(os.PathSeparator))
+	parts := strings.Split(path, "/")
 	componentKey := fmt.Sprintf("%s/%s.%s", parts[0], parts[1], parts[2])
 	name := strings.TrimSuffix(parts[3], ".yaml")
 	return NewBaseComponentVariant(componentKey, namespace, name)
@@ -47,7 +46,7 @@ func (cvc *ComponentVariantCollection) GetItemFromKey(key string) (BundleableIte
 
 func (cvc *ComponentVariantCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	componentKey, hasComponent := conditions["uesio/studio.component"]
-	parts := strings.Split(path, string(os.PathSeparator))
+	parts := strings.Split(path, "/")
 	if len(parts) != 4 || !strings.HasSuffix(parts[3], ".yaml") {
 		// Ignore this file
 		return false

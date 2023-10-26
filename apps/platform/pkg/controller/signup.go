@@ -2,15 +2,17 @@ package controller
 
 import (
 	"encoding/json"
+	"log/slog"
+	"net/http"
+
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/routing"
 	"github.com/thecloudmasters/uesio/pkg/sess"
-	"net/http"
 
 	"github.com/gorilla/mux"
+
 	"github.com/thecloudmasters/uesio/pkg/auth"
-	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 )
 
@@ -23,20 +25,41 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
 		msg := "Signup failed: " + err.Error()
-		logger.Log(msg, logger.ERROR)
+		slog.Error(msg)
 		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
 
-	signupMethod, err := auth.Signup(getSignupMethodID(mux.Vars(r)), payload, site)
+	systemSession, err := auth.GetSystemSession(site, nil)
 	if err != nil {
-		signupInternalServerError(w, err)
+		msg := "Signup failed: " + err.Error()
+		slog.Error(msg)
+		http.Error(w, msg, http.StatusInternalServerError)
+		return
+	}
+
+	signupMethod, err := auth.GetSignupMethod(getSignupMethodID(mux.Vars(r)), session)
+	if err != nil {
+		msg := "Signup failed: " + err.Error()
+		slog.Error(msg)
+		http.Error(w, msg, http.StatusInternalServerError)
+		return
+	}
+
+	user, err := auth.Signup(signupMethod, payload, systemSession)
+	if err != nil {
+		handleError(w, err)
+		return
+	}
+
+	if signupMethod.AutoLogin {
+		loginRedirectResponse(w, r, user, systemSession)
 		return
 	}
 
 	redirectRouteNamespace, redirectRouteName, err := meta.ParseKey(signupMethod.LandingRoute)
 	if err != nil {
-		signupInternalServerError(w, err)
+		handleError(w, err)
 		return
 	}
 
@@ -47,52 +70,36 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func signupInternalServerError(w http.ResponseWriter, err error) {
-	msg := "Signup failed: " + err.Error()
-	logger.Log(msg, logger.ERROR)
-	http.Error(w, msg, http.StatusInternalServerError)
-}
-
-// ConfirmSignUpV2 directly confirms the user, logs them in, and redirects them to the Home route, without any manual intervention
-func ConfirmSignUpV2(w http.ResponseWriter, r *http.Request) {
+// ConfirmSignUp directly confirms the user, logs them in, and redirects them to the Home route, without any manual intervention
+func ConfirmSignUp(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
 	site := session.GetSite()
-
-	username := r.URL.Query().Get("username")
-	verificationCode := r.URL.Query().Get("code")
-
+	queryParams := r.URL.Query()
+	username := queryParams.Get("username")
 	signupMethodId := getSignupMethodID(mux.Vars(r))
 
 	// Convert all query-string params into a map of values to send to the signup confirmation method
-	payload := map[string]interface{}{
+	err := auth.ConfirmSignUp(signupMethodId, map[string]interface{}{
 		"username":         username,
-		"verificationcode": verificationCode,
-	}
-
-	err := auth.ConfirmSignUp(signupMethodId, payload, site)
-
-	// TODO: Can we do something other than 500 here? Detect bad verification code perhaps?
-	// a 5xx error here is not appropriate if the verification code was wrong, expected params were wrong, etc.
+		"verificationcode": queryParams.Get("code"),
+	}, site)
 
 	if err != nil {
-		logger.LogError(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		handleError(w, err)
 		return
 	}
 
 	systemSession, err := auth.GetSystemSession(site, nil)
 	if err != nil {
-		logger.LogError(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		handleError(w, err)
 		return
 	}
 
 	// If signup confirmation succeeded, go ahead and log the user in
 	user, err := auth.GetUserByKey(username, systemSession, nil)
 	if err != nil {
-		logger.LogError(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		handleError(w, err)
 		return
 	}
 
@@ -102,4 +109,19 @@ func ConfirmSignUpV2(w http.ResponseWriter, r *http.Request) {
 	sess.Login(w, user, site)
 	// Redirect to studio home
 	http.Redirect(w, r, "/", http.StatusFound)
+}
+
+func handleError(w http.ResponseWriter, err error) {
+	var responseCode int
+	switch err.(type) {
+	case *auth.AuthRequestError:
+		responseCode = http.StatusBadRequest
+	case *auth.NotAuthorizedError:
+		responseCode = http.StatusUnauthorized
+	default:
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		slog.Error(err.Error())
+		return
+	}
+	http.Error(w, err.Error(), responseCode)
 }

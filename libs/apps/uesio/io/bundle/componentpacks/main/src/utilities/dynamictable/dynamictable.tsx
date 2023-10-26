@@ -23,6 +23,15 @@ interface DynamicTableProps {
 	wireRef?: MutableRefObject<wire.Wire | undefined>
 }
 
+const createRecordsInWire = (
+	wire: wire.Wire,
+	initialValues: Record<string, wire.PlainWireRecord>
+) => {
+	Object.entries(initialValues).forEach(([recordId, initialValue]) => {
+		wire.createRecord(initialValue, false, recordId)
+	})
+}
+
 const DynamicTable: definition.UtilityComponent<DynamicTableProps> = (
 	props
 ) => {
@@ -60,11 +69,10 @@ const DynamicTable: definition.UtilityComponent<DynamicTableProps> = (
 	useDeepCompareEffect(() => {
 		if (!wire || !initialValues) return
 		if (!wire.getData().length) {
-			Object.entries(initialValues).forEach(
-				([recordId, initialValue]) => {
-					wire.createRecord(initialValue, false, recordId)
-				}
-			)
+			createRecordsInWire(wire, initialValues)
+		} else if (Object.keys(initialValues).length) {
+			wire.empty()
+			createRecordsInWire(wire, initialValues)
 		}
 	}, [!!wire, initialValues])
 

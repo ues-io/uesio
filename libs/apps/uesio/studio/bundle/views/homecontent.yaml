@@ -2,12 +2,6 @@ name: homecontent
 definition:
   # Wires are how we pull in data
   wires:
-    appsexist:
-      collection: uesio/studio.app
-      fields:
-        uesio/core.id:
-      batchsize: 1
-      requirewriteaccess: true
     blogentries:
       collection: uesio/studio.blogentry
       batchsize: 5
@@ -78,33 +72,6 @@ definition:
                           text: "Iterate "
                       - uesio/io.text:
                           text: "quickly."
-    - uesio/io.box:
-        uesio.variant: uesio/studio.calloutsection
-        uesio.display:
-          - type: wireHasNoRecords
-            wire: appsexist
-        components:
-          - uesio/io.text:
-              text: 👋 Welcome! 👋 We're glad you're here. 🤗
-              element: h1
-              uesio.styleTokens:
-                root:
-                  - text-3xl
-                  - mb-2
-          - uesio/io.group:
-              components:
-                - uesio/io.text:
-                    text: To create your first app, click the
-                    element: h2
-                - uesio/io.button:
-                    uesio.variant: uesio/studio.navcta
-                    icon: +
-                    uesio.styleTokens:
-                      root:
-                        - pb-2
-                - uesio/io.text:
-                    text: button in the top left.
-                    element: h2
     - uesio/io.box:
         uesio.variant: uesio/io.section
         components:

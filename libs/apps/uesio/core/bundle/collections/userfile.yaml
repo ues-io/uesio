@@ -6,5 +6,5 @@ uniqueKey:
   - uesio/core.path
 nameField: uesio/core.path
 public: true
-label: user file
-pluralLabel: user files
+label: User File
+pluralLabel: User Files

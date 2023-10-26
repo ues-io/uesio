@@ -12,28 +12,30 @@ interface SidePanelUtilityProps {
 	initialFocus?: number
 }
 
+const StyleDefaults = Object.freeze({
+	blocker: [
+		"backdrop-blur-sm",
+		"backdrop-grayscale-[50%]",
+		"backdrop-brightness-50",
+	],
+	root: ["absolute", "inset-0", "pointer-events-none"],
+	inner: [
+		"shadow-md",
+		"inset-y-0",
+		"right-0",
+		"pointer-events-auto",
+		"bg-white",
+		"w-10/12",
+		"max-w-xs",
+		"absolute",
+	],
+})
+
 const SidePanelPlain: definition.UtilityComponent<SidePanelUtilityProps> = (
 	props
 ) => {
 	const classes = styles.useUtilityStyleTokens(
-		{
-			blocker: [
-				"backdrop-blur-sm",
-				"backdrop-grayscale-[50%]",
-				"backdrop-brightness-50",
-			],
-			root: ["absolute", "inset-0", "pointer-events-none"],
-			inner: [
-				"shadow-md",
-				"inset-y-0",
-				"right-0",
-				"pointer-events-auto",
-				"bg-white",
-				"w-10/12",
-				"max-w-xs",
-				"absolute",
-			],
-		},
+		StyleDefaults,
 		props,
 		"uesio/io.dialogplain"
 	)

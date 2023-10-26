@@ -1,5 +1,6 @@
 name: uesio/studio
 loginRoute: uesio/studio.login
+signupRoute: uesio/studio.signup
 homeRoute: uesio/studio.home
 defaultTheme: uesio/studio.default
 publicProfile: uesio/studio.public

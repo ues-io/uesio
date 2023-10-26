@@ -405,6 +405,263 @@ const shouldTestCases = [
 		],
 	},
 	{
+		type: "hasValue",
+		tests: [
+			{
+				name: "value is present",
+				context: new Context()
+					.addViewFrame({
+						view: viewName,
+						viewDef,
+					} as ViewContext)
+					.addSignalOutputFrame("step1", {
+						foo: "bar",
+					}),
+				condition: {
+					type: "hasValue",
+					value: "$SignalOutput{step1:foo}",
+				},
+				expected: true,
+			},
+			{
+				name: "value is present but empty - should NOT be considered to be there",
+				context: new Context()
+					.addViewFrame({
+						view: viewName,
+						viewDef,
+					} as ViewContext)
+					.addSignalOutputFrame("step1", {
+						foo: "",
+					}),
+				condition: {
+					type: "hasValue",
+					value: "$SignalOutput{step1:foo}",
+				},
+				expected: false,
+			},
+			{
+				name: "value is not present",
+				context: new Context()
+					.addViewFrame({
+						view: viewName,
+						viewDef,
+					} as ViewContext)
+					.addSignalOutputFrame("step1", {}),
+				condition: {
+					type: "hasValue",
+					value: "$SignalOutput{step1:foo}",
+				},
+				expected: false,
+			},
+		],
+	},
+	{
+		type: "hasNoValue",
+		tests: [
+			{
+				name: "value is present",
+				context: new Context()
+					.addViewFrame({
+						view: viewName,
+						viewDef,
+					} as ViewContext)
+					.addSignalOutputFrame("step1", {
+						foo: "bar",
+					}),
+				condition: {
+					type: "hasNoValue",
+					value: "$SignalOutput{step1:foo}",
+				},
+				expected: false,
+			},
+			{
+				name: "value is present but empty - should NOT be considered to be there",
+				context: new Context()
+					.addViewFrame({
+						view: viewName,
+						viewDef,
+					} as ViewContext)
+					.addSignalOutputFrame("step1", {
+						foo: "",
+					}),
+				condition: {
+					type: "hasNoValue",
+					value: "$SignalOutput{step1:foo}",
+				},
+				expected: true,
+			},
+			{
+				name: "value is not present",
+				context: new Context()
+					.addViewFrame({
+						view: viewName,
+						viewDef,
+					} as ViewContext)
+					.addSignalOutputFrame("step1", {}),
+				condition: {
+					type: "hasNoValue",
+					value: "$SignalOutput{step1:foo}",
+				},
+				expected: true,
+			},
+		],
+	},
+	{
+		type: "mergeValue",
+		tests: [
+			{
+				name: "values match - strings - EQUALS operator",
+				context: new Context()
+					.addViewFrame({
+						view: viewName,
+						viewDef,
+					} as ViewContext)
+					.addSignalOutputFrame("step1", {
+						alice: "apples",
+						bob: "apples",
+					}),
+				condition: {
+					type: "mergeValue",
+					sourceValue: "$SignalOutput{step1:alice}",
+					value: "$SignalOutput{step1:bob}",
+					operator: "EQUALS",
+				},
+				expected: true,
+			},
+			{
+				name: "values match - strings - no operator specified",
+				context: new Context()
+					.addViewFrame({
+						view: viewName,
+						viewDef,
+					} as ViewContext)
+					.addSignalOutputFrame("step1", {
+						alice: "apples",
+						bob: "apples",
+					}),
+				condition: {
+					type: "mergeValue",
+					sourceValue: "$SignalOutput{step1:alice}",
+					value: "$SignalOutput{step1:bob}",
+				},
+				expected: true,
+			},
+			{
+				name: "values match - strings - NOT_EQUALS operator",
+				context: new Context()
+					.addViewFrame({
+						view: viewName,
+						viewDef,
+					} as ViewContext)
+					.addSignalOutputFrame("step1", {
+						alice: "apples",
+						bob: "apples",
+					}),
+				condition: {
+					type: "mergeValue",
+					sourceValue: "$SignalOutput{step1:alice}",
+					value: "$SignalOutput{step1:bob}",
+					operator: "NOT_EQUALS",
+				},
+				expected: false,
+			},
+			{
+				name: "values do not match - strings",
+				context: new Context()
+					.addViewFrame({
+						view: viewName,
+						viewDef,
+					} as ViewContext)
+					.addSignalOutputFrame("step1", {
+						alice: "peaches",
+						bob: "apples",
+					}),
+				condition: {
+					type: "mergeValue",
+					sourceValue: "$SignalOutput{step1:alice}",
+					value: "$SignalOutput{step1:bob}",
+				},
+				expected: false,
+			},
+			{
+				name: "values match - numbers",
+				context: new Context()
+					.addViewFrame({
+						view: viewName,
+						viewDef,
+					} as ViewContext)
+					.addSignalOutputFrame("step1", {
+						alice: 2,
+						bob: 2,
+					}),
+				condition: {
+					type: "mergeValue",
+					sourceValue: "$SignalOutput{step1:alice}",
+					value: "$SignalOutput{step1:bob}",
+					operator: "EQUALS",
+				},
+				expected: true,
+			},
+			{
+				name: "values do not match - numbers",
+				context: new Context()
+					.addViewFrame({
+						view: viewName,
+						viewDef,
+					} as ViewContext)
+					.addSignalOutputFrame("step1", {
+						alice: 2,
+						bob: 1,
+					}),
+				condition: {
+					type: "mergeValue",
+					sourceValue: "$SignalOutput{step1:alice}",
+					value: "$SignalOutput{step1:bob}",
+					operator: "EQUALS",
+				},
+				expected: false,
+			},
+			{
+				name: "values match - booleans",
+				context: new Context()
+					.addViewFrame({
+						view: viewName,
+						viewDef,
+					} as ViewContext)
+					.addSignalOutputFrame("step1", {
+						alice: true,
+						bob: true,
+					}),
+				condition: {
+					type: "mergeValue",
+					sourceValue: "$SignalOutput{step1:alice}",
+					value: "$SignalOutput{step1:bob}",
+					operator: "EQUALS",
+				},
+				expected: true,
+			},
+			{
+				name: "values do not match - booleans",
+				context: new Context()
+					.addViewFrame({
+						view: viewName,
+						viewDef,
+					} as ViewContext)
+					.addSignalOutputFrame("step1", {
+						alice: false,
+						bob: true,
+					}),
+				condition: {
+					type: "mergeValue",
+					sourceValue: "$SignalOutput{step1:alice}",
+					value: "$SignalOutput{step1:bob}",
+					operator: "EQUALS",
+				},
+				expected: false,
+			},
+		],
+	},
+	{
 		type: "group",
 		tests: [
 			{

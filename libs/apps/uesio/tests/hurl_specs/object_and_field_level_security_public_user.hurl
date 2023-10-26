@@ -63,10 +63,12 @@ jsonpath "$.dependencies.wire[*].data[0]['uesio/tests.species']" nth 0 == "Abrah
 jsonpath "$.dependencies.wire[*].data[0]['uesio/tests.genus']" nth 0 == "Mouton"
 jsonpath "$.dependencies.wire[*]['debugQueryString']" nth 0 == ```
 SELECT
-main.fields->>'uesio/tests.genus' AS "uesio/tests.genus",
-main.fields->>'uesio/tests.species' AS "uesio/tests.species",
-main.id::text AS "uesio/core.id",
-main.uniquekey AS "uesio/core.uniquekey"
+jsonb_build_object(
+'uesio/core.id',main.id,
+'uesio/core.uniquekey',main.uniquekey,
+'uesio/tests.genus',main.fields->'uesio/tests.genus',
+'uesio/tests.species',main.fields->'uesio/tests.species'
+)
 FROM data as "main"
 WHERE
 main.collection = $1 AND
@@ -305,7 +307,7 @@ body contains "Save Failed: Profile uesio/tests.public does not have create acce
 # Log into the studio as uesio
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"uesio\"}"
+    "token": "uesio"
 }
 HTTP 200
 [Captures]
@@ -337,7 +339,7 @@ workspace_id: jsonpath "$.wires[0].data[0]['uesio/core.id']"
 # Log into the studio as ben
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"ben\"}"
+    "token": "ben"
 }
 HTTP 200
 

@@ -1,6 +1,7 @@
 import type { WireDefault } from "../bands/wire/defaults/defaults"
 import type {
 	FieldType,
+	MetadataFieldMetadata,
 	NumberMetadata,
 	ReferenceMetadata,
 	SelectListMetadata,
@@ -22,8 +23,11 @@ type ViewOnlyField = {
 	reference?: ReferenceMetadata
 	selectlist?: SelectListMetadata
 	number?: NumberMetadata
+	metadata?: MetadataFieldMetadata
 	fields?: Record<string, ViewOnlyField>
 	viewOnly?: boolean
+	createable?: boolean
+	updateable?: boolean
 }
 
 type RegularField = {
@@ -65,36 +69,36 @@ type WireEvent<T = WireEventType> =
 
 type WireDefinitionBase = {
 	defaults?: WireDefault[]
+	events?: WireEvents
 	init?: {
 		query?: boolean
 		create?: boolean
 	}
 	viewOnly?: boolean
-	events?: WireEvents
 }
 
 type ViewOnlyWireDefinition = WireDefinitionBase & {
-	viewOnly: true
+	fields: Record<string, ViewOnlyField>
 	label?: string
 	pluralLabel?: string
-	fields: Record<string, ViewOnlyField>
+	viewOnly: true
 }
 
 type RegularWireDefinition = WireDefinitionBase & {
-	viewOnly?: false
-	fields?: WireFieldDefinitionMap
-	/**
-	 * @minLength 2
-	 */
-	collection: CollectionKey
-	order?: WireOrderDescription[]
 	/**
 	 * @minimum 0
 	 */
 	batchsize?: number
+	/**
+	 * @minLength 2
+	 */
+	collection: CollectionKey
 	conditions?: WireConditionState[]
-	requirewriteaccess?: boolean
+	fields?: WireFieldDefinitionMap
 	loadAll?: boolean
+	order?: WireOrderDescription[]
+	requirewriteaccess?: boolean
+	viewOnly?: false
 }
 
 type WireDefinition = ViewOnlyWireDefinition | RegularWireDefinition

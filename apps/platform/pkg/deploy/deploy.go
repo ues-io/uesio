@@ -5,8 +5,8 @@ import (
 	"bytes"
 	"errors"
 	"io"
-	"os"
-	"path/filepath"
+	"log/slog"
+	"path"
 	"strings"
 
 	"gopkg.in/yaml.v3"
@@ -15,11 +15,12 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
-	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
+// TODO: Eliminate the need to keep this manual list.
+// Evaluate the dependencies of each item and deploy in dependency order.
 var ORDERED_ITEMS = [...]string{
 	"collections",
 	"selectlists",
@@ -39,11 +40,13 @@ var ORDERED_ITEMS = [...]string{
 	"labels",
 	"translations",
 	"useraccesstokens",
+	"recordchallengetokens",
 	"signupmethods",
 	"secrets",
 	"configvalues",
 	"credentials",
 	"integrations",
+	"integrationactions",
 }
 
 type DeployOptions struct {
@@ -110,9 +113,8 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 
 	// Read all the files from zip archive
 	for _, zipFile := range zipReader.File {
-		// Don't forget to fix the windows filenames here
-		dir, fileName := filepath.Split(zipFile.Name)
-		dirParts := strings.Split(dir, string(os.PathSeparator))
+		dir, fileName := path.Split(zipFile.Name)
+		dirParts := strings.Split(dir, "/")
 		partsLength := len(dirParts)
 
 		if fileName == "" || partsLength < 1 {
@@ -145,7 +147,7 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 			collection, err = meta.GetBundleableGroupFromType(metadataType)
 			if err != nil {
 				// Most likely found a folder that we don't have a metadata type for
-				logger.Log("Found bad metadata type: "+metadataType, logger.INFO)
+				slog.Info("Found bad metadata type: " + metadataType)
 				continue
 			}
 			dep[metadataType] = collection
@@ -155,7 +157,7 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 			continue
 		}
 
-		path := filepath.Join(filepath.Join(dirParts[1:]...), fileName)
+		path := path.Join(path.Join(dirParts[1:]...), fileName)
 
 		if !collection.FilterPath(path, nil, false) {
 			continue
@@ -253,6 +255,7 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 			},
 			AppSettings: meta.AppSettings{
 				LoginRoute:    by.LoginRoute,
+				SignupRoute:   by.SignupRoute,
 				HomeRoute:     by.HomeRoute,
 				PublicProfile: by.PublicProfile,
 				DefaultTheme:  by.DefaultTheme,
@@ -266,6 +269,7 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 			ValidFields: map[string]bool{
 				adapt.ID_FIELD:               true,
 				"uesio/studio.loginroute":    true,
+				"uesio/studio.signuproute":   true,
 				"uesio/studio.homeroute":     true,
 				"uesio/studio.publicprofile": true,
 				"uesio/studio.defaulttheme":  true,

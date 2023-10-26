@@ -3,7 +3,6 @@ package meta
 import (
 	"errors"
 	"fmt"
-	"os"
 	"strconv"
 	"strings"
 )
@@ -53,7 +52,7 @@ func (rc *RouteAssignmentCollection) AddItem(item Item) error {
 }
 
 func (rc *RouteAssignmentCollection) GetItemFromPath(path, namespace string) BundleableItem {
-	parts := strings.Split(path, string(os.PathSeparator))
+	parts := strings.Split(path, "/")
 	collectionKey := fmt.Sprintf("%s/%s.%s", parts[0], parts[1], parts[2])
 	viewType := strings.TrimSuffix(parts[3], ".yaml")
 	return NewBaseRouteAssignment(collectionKey, namespace, viewType)
@@ -73,7 +72,7 @@ func (rc *RouteAssignmentCollection) GetItemFromKey(key string) (BundleableItem,
 
 func (rc *RouteAssignmentCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	collectionKey, hasCollection := conditions["uesio/studio.collection"]
-	parts := strings.Split(path, string(os.PathSeparator))
+	parts := strings.Split(path, "/")
 	if len(parts) != 4 || !strings.HasSuffix(parts[3], ".yaml") {
 		// Ignore this file
 		return false

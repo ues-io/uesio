@@ -1,8 +1,11 @@
 name: calloutsection
 label: Callout section
-extends: uesio/io.section
 definition:
   uesio.styleTokens:
     root:
-      - bg-yellow-100
-      - text-xl
+      - bg-yellow-300
+      - p-3
+      - m-2
+      - text-sm
+      - rounded
+      - text-slate-900

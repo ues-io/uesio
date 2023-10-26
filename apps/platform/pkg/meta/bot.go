@@ -3,7 +3,7 @@ package meta
 import (
 	"errors"
 	"fmt"
-	"path/filepath"
+	"path"
 	"strconv"
 	"strings"
 
@@ -69,6 +69,10 @@ func NewLoadBot(namespace, name string) *Bot {
 
 func NewSaveBot(namespace, name string) *Bot {
 	return NewBaseBot("SAVE", "", namespace, name)
+}
+
+func NewRunActionBot(namespace, name string) *Bot {
+	return NewBaseBot("RUNACTION", "", namespace, name)
 }
 
 func NewBaseBot(botType, collectionKey, namespace, name string) *Bot {
@@ -144,7 +148,7 @@ func (b BotParam) GetName() string {
 }
 
 func (b BotParam) GetConditions() []IBotParamCondition {
-	conditions := make([]IBotParamCondition, len(b.Conditions), len(b.Conditions))
+	conditions := make([]IBotParamCondition, len(b.Conditions))
 	if len(b.Conditions) > 0 {
 		for i, c := range b.Conditions {
 			conditions[i] = c
@@ -172,7 +176,7 @@ func (b BotParamResponse) GetName() string {
 }
 
 func (b BotParamResponse) GetConditions() []IBotParamCondition {
-	conditions := make([]IBotParamCondition, len(b.Conditions), len(b.Conditions))
+	conditions := make([]IBotParamCondition, len(b.Conditions))
 	if len(b.Conditions) > 0 {
 		for i, c := range b.Conditions {
 			conditions[i] = c
@@ -206,6 +210,7 @@ func GetBotTypes() map[string]string {
 		"LOAD":       "load",
 		"ROUTE":      "route",
 		"SAVE":       "save",
+		"RUNACTION":  "runaction",
 	}
 }
 
@@ -222,11 +227,11 @@ func (b *Bot) GetBotFilePath() string {
 	if b.Dialect == "TYPESCRIPT" {
 		botFile = "bot.ts"
 	}
-	return filepath.Join(b.GetBasePath(), botFile)
+	return path.Join(b.GetBasePath(), botFile)
 }
 
 func (b *Bot) GetGenerateBotTemplateFilePath(template string) string {
-	return filepath.Join(b.GetBasePath(), "templates", template)
+	return path.Join(b.GetBasePath(), "templates", template)
 }
 
 func (b *Bot) GetCollectionName() string {
@@ -253,15 +258,15 @@ func (b *Bot) GetKey() string {
 func (b *Bot) GetBasePath() string {
 	botType := GetBotTypes()[b.Type]
 	if !IsBotTypeWithCollection(botType) {
-		return filepath.Join(botType, b.Name)
+		return path.Join(botType, b.Name)
 	}
 	collectionNamespace, collectionName, _ := ParseKey(b.CollectionRef)
 	nsUser, appName, _ := ParseNamespace(collectionNamespace)
-	return filepath.Join(botType, nsUser, appName, collectionName, b.Name)
+	return path.Join(botType, nsUser, appName, collectionName, b.Name)
 }
 
 func (b *Bot) GetPath() string {
-	return filepath.Join(b.GetBasePath(), "bot.yaml")
+	return path.Join(b.GetBasePath(), "bot.yaml")
 }
 
 func (b *Bot) SetField(fieldName string, value interface{}) error {
@@ -299,6 +304,18 @@ func (e *BotParamValidationError) Error() string {
 
 func NewParamError(message string, param string) error {
 	return &BotParamValidationError{Param: param, Message: message}
+}
+
+type BotExecutionError struct {
+	Message string
+}
+
+func (e *BotExecutionError) Error() string {
+	return e.Message
+}
+
+func NewBotExecutionError(message string) error {
+	return &BotExecutionError{Message: message}
 }
 
 type BotAccessError struct {

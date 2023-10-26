@@ -1,7 +1,7 @@
 # Log into the studio as uesio
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"uesio\"}"
+    "token": "uesio"
 }
 HTTP 200
 [Captures]
@@ -57,7 +57,7 @@ account_id: jsonpath "$.wires[0].data[0]['uesio/core.id']"
 # Log into the studio as ben
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"ben\"}"
+    "token": "ben"
 }
 HTTP 200
 
@@ -93,7 +93,7 @@ jsonpath "$.wires[0].data" isEmpty
 # Log into the studio as uesio
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"uesio\"}"
+    "token": "uesio"
 }
 
 # Put ben on the account team
@@ -125,7 +125,7 @@ jsonpath "$.wires[0].errors" == null
 # Log into the studio as ben
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"ben\"}"
+    "token": "ben"
 }
 
 # Now that ben is on the account team, he can see the evil corp.
@@ -178,19 +178,24 @@ jsonpath "$.wires[0].data[1]['uesio/studio.recordid']" == "{{account_id}}"
 jsonpath "$.wires[0].data[*]['uesio/studio.token']" includes "uesio.owner:{{uesio_user_id}}"
 jsonpath "$.wires[0].data[*]['uesio/studio.token']" includes "uesio/tests.accountmember:{{account_id}}"
 
+# Remove record challenge tokens from the account object
+DELETE https://{{host}}:{{port}}/site/api/v1/collection/uesio/studio/recordchallengetoken?uesio/studio.collection=eq.uesio%2Ftests.account
+x-uesio-app: uesio/tests
+x-uesio-workspacename: dev
+HTTP 204
 
-# Get the accounts collection id
+# Verify that the tokens are gone
 POST https://{{host}}:{{port}}/site/wires/load
 Accept: application/json
 {
     "wires": [
         {
-            "collection":"uesio/studio.collection",
-            "query":true,
+            "collection":"uesio/studio.recordchallengetoken",
+            "query": true,
             "conditions": [
                 {
-                    "field": "uesio/core.uniquekey",
-                    "value": "uesio/tests:dev:account"
+                    "field": "uesio/studio.collection",
+                    "value": "uesio/tests.account"
                 }
             ],
             "params": {
@@ -201,34 +206,8 @@ Accept: application/json
     ]
 }
 HTTP 200
-[Captures]
-collection_id: jsonpath "$.wires[0].data[0]['uesio/core.id']"
-
-# Remove record challenge tokens from the account object
-POST https://{{host}}:{{port}}/site/wires/save
-Accept: application/json
-{
-    "wires": [
-        {
-            "collection":"uesio/studio.collection",
-            "deletes":{},
-            "changes":{
-                "temp1":{
-                    "uesio/core.id":"{{collection_id}}",
-                    "uesio/studio.recordchallengetokens":null
-                }
-            },
-            "wire":"mywire",
-            "params": {
-                "app": "uesio/tests",
-                "workspacename": "dev"
-            }
-        }
-    ]
-}
-HTTP 200
 [Asserts]
-jsonpath "$.wires[0].errors" == null
+jsonpath "$.wires[0].data" count == 0
 
 # Ben immeditately loses access because the user access tokens are no longer calculated
 # for account team members (however for other cases, like when we add a record access token,
@@ -321,16 +300,15 @@ Accept: application/json
 {
     "wires": [
         {
-            "collection":"uesio/studio.collection",
+            "collection": "uesio/studio.recordchallengetoken",
             "deletes":{},
             "changes":{
                 "temp1":{
-                    "uesio/core.id":"{{collection_id}}",
-                    "uesio/studio.recordchallengetokens": [{
-                        "token": "${uesio/core.id}",
-                        "userAccessToken": "uesio/tests.accountmember",
-                        "access": "readwrite"
-                    }]
+                    "uesio/studio.name": "account",
+                    "uesio/studio.collection":"uesio/tests.account",
+                    "uesio/studio.token": "${uesio/core.id}",
+                    "uesio/studio.useraccesstoken": "uesio/tests.accountmember",
+                    "uesio/studio.access": "readwrite"
                 }
             },
             "wire":"mywire",

@@ -1,0 +1,4 @@
+name: hasactiveaccesstoken
+type: FORMULA
+label: Has active Access Token
+# encrypted: true
