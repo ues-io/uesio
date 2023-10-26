@@ -78,7 +78,7 @@ func Callback(w http.ResponseWriter, r *http.Request) {
 	}
 	// Now that we have an access token (and maybe refresh token),
 	// store this into an Integration Credential record in the DB.
-	if err = upsertIntegrationCredential(oauth.BuildIntegrationCredential(integrationName, userId, tok), versionSession, connection); err != nil {
+	if err = oauth.UpsertIntegrationCredential(oauth.BuildIntegrationCredential(integrationName, userId, tok), versionSession, connection); err != nil {
 		controller.HandleErrorRoute(w, r, s, r.URL.Path, errors.New("failed to obtain access token from authorization code: "+err.Error()), false)
 		return
 	}
@@ -115,74 +115,3 @@ func extractAuthCodeAndState(query url.Values) (authCode string, state *oauth.St
 	}
 	return authCode, state, nil
 }
-
-func getSaveParamsFromSession(session *sess.Session) map[string]string {
-	params := map[string]string{}
-	if session.GetWorkspace() != nil {
-		params["workspacename"] = session.GetWorkspace().Name
-		params["app"] = session.GetWorkspace().GetAppFullName()
-	} else if session.GetSiteAdmin() != nil {
-		params["sitename"] = session.GetSiteAdmin().Name
-		params["app"] = session.GetSiteAdmin().GetAppFullName()
-	}
-	return params
-}
-
-func upsertIntegrationCredential(integrationCredential *adapt.Item, coreSession *sess.Session, platformConn adapt.Connection) error {
-
-	requests := []datasource.SaveRequest{
-		{
-			Collection: "uesio/core.integrationcredential",
-			Wire:       "integrationcreds",
-			Options:    &adapt.SaveOptions{Upsert: true},
-			Changes: &adapt.Collection{
-				integrationCredential,
-			},
-			Params: getSaveParamsFromSession(coreSession),
-		},
-	}
-	if err := datasource.SaveWithOptions(requests, coreSession, datasource.GetConnectionSaveOptions(platformConn)); err != nil {
-		return err
-	}
-	return nil
-}
-
-//func getIntegrationCredential() {
-//var integrationCredentials *adapt.Collection
-//fetchIntegrationCredentialOp := &adapt.LoadOp{
-//	CollectionName: "uesio/core.integrationcollection",
-//	Collection:     integrationCredentials,
-//	BatchSize:      1,
-//	Fields: []adapt.LoadRequestField{
-//		{
-//			ID: "uesio/core.id",
-//		},
-//		{
-//			ID: "uesio/core.refreshtoken",
-//		},
-//	},
-//	Conditions: []adapt.LoadRequestCondition{
-//		{
-//			Field: "uesio/core.integration",
-//			Value: integrationName,
-//		},
-//		{
-//			Field: "uesio/core.user",
-//			Value: userId,
-//		},
-//	},
-//}
-//err = datasource.LoadOp(
-//	fetchIntegrationCredentialOp,
-//	connection,
-//	versionSession,
-//)
-//if err != nil {
-//	return errors.New("unable to load existing integration credentials")
-//}
-//// was there an existing record? if so , upsert?
-//var integrationCredential *adapt.Item
-//if integrationCredentials.Len() == 1 {
-//	integrationCredential = (*integrationCredentials)[0]
-//} else {
-//}

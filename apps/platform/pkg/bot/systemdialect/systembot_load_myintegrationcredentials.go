@@ -7,6 +7,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	oauthlib "github.com/thecloudmasters/uesio/pkg/oauth2"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -38,25 +39,25 @@ func runMyIntegrationCredentialsLoadBot(op *adapt.LoadOp, connection adapt.Conne
 		item := op.Collection.NewItem()
 		integration := integrationItem.(*meta.Integration)
 		integrationName := integration.GetKey()
-		item.SetField("uesio/core.integration", integrationName)
-		item.SetField("uesio/core.user", userId)
+		item.SetField(oauthlib.IntegrationField, integrationName)
+		item.SetField(oauthlib.UserField, userId)
 		// If we have an integration credential record already, use it to flesh out the rest of the fields
 		if existingCred, isPresent := existingCredsByIntegration[integrationName]; isPresent {
-			item.SetField("uesio/core.hasaccesstoken", hasStringField(existingCred, "uesio/core.accesstoken"))
-			item.SetField("uesio/core.hasrefreshtoken", hasStringField(existingCred, "uesio/core.refreshtoken"))
+			item.SetField("uesio/core.hasaccesstoken", hasStringField(existingCred, oauthlib.AccessTokenField))
+			item.SetField("uesio/core.hasrefreshtoken", hasStringField(existingCred, oauthlib.RefreshTokenField))
 			if idField, err := existingCred.GetField("uesio/core.id"); err == nil && idField != "" {
 				item.SetField("uesio/core.id", idField)
 			} else {
 				item.SetField("uesio/core.id", integrationName)
 			}
-			if expiry, err := existingCred.GetField("uesio/core.accesstokenexpiration"); err == nil {
+			if expiry, err := existingCred.GetField(oauthlib.AccessTokenExpirationField); err == nil {
 				item.SetField("uesio/core.accesstokenexpiration", expiry)
 			}
-			if updatedAt, err := existingCred.GetField("uesio/core.updatedat"); err == nil {
-				item.SetField("uesio/core.updatedat", updatedAt)
+			if updatedAt, err := existingCred.GetField(adapt.UPDATED_AT_FIELD); err == nil {
+				item.SetField(adapt.UPDATED_AT_FIELD, updatedAt)
 			}
-			if createdAt, err := existingCred.GetField("uesio/core.createdat"); err == nil {
-				item.SetField("uesio/core.createdat", createdAt)
+			if createdAt, err := existingCred.GetField(adapt.CREATED_AT_FIELD); err == nil {
+				item.SetField(adapt.CREATED_AT_FIELD, createdAt)
 			}
 		} else {
 			// Otherwise populate empty state values for all fields
@@ -79,7 +80,7 @@ func getTargetIntegrationNameFromConditions(conditions []adapt.LoadRequestCondit
 		return name
 	}
 	for _, c := range conditions {
-		if c.Field == "uesio/core.integration" {
+		if c.Field == oauthlib.IntegrationField {
 			if c.Value != nil && c.Value != "" {
 				name = c.Value.(string)
 			}
@@ -126,23 +127,23 @@ func getAllIntegrationCredentialsForUser(userId string, session *sess.Session, c
 
 	collection := &adapt.Collection{}
 	newOp := &adapt.LoadOp{
-		CollectionName: "uesio/core.integrationcredential",
+		CollectionName: oauthlib.IntegrationCredentialCollection,
 		WireName:       "loadIntegrationCredentials",
 		Collection:     collection,
 		Conditions: []adapt.LoadRequestCondition{
 			{
-				Field:    "uesio/core.user",
+				Field:    oauthlib.UserField,
 				Value:    userId,
 				Operator: "EQ",
 			},
 		},
 		Fields: []adapt.LoadRequestField{
-			{ID: "uesio/core.accesstoken"},
-			{ID: "uesio/core.refreshtoken"},
-			{ID: "uesio/core.accesstokenexpiration"},
-			{ID: "uesio/core.integration"},
-			{ID: "uesio/core.createdat"},
-			{ID: "uesio/core.updatedat"},
+			{ID: oauthlib.AccessTokenField},
+			{ID: oauthlib.RefreshTokenField},
+			{ID: oauthlib.AccessTokenExpirationField},
+			{ID: oauthlib.IntegrationField},
+			{ID: adapt.CREATED_AT_FIELD},
+			{ID: adapt.UPDATED_AT_FIELD},
 		},
 		Query:   true,
 		LoadAll: true,

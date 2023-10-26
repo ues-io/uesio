@@ -14,9 +14,11 @@ import (
 	"golang.org/x/oauth2"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 	httpClient "github.com/thecloudmasters/uesio/pkg/http"
 	"github.com/thecloudmasters/uesio/pkg/integ/web"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	oauthlib "github.com/thecloudmasters/uesio/pkg/oauth2"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -35,8 +37,15 @@ func NewBotHttpAPI(bot *meta.Bot, session *sess.Session, integration adapt.Integ
 }
 
 type BotHttpAuth struct {
-	Type        string             `json:"type" bot:"type"`
-	Credentials *adapt.Credentials `json:"credentials" bot:"credentials"`
+	Type        string             `json:"type"`
+	Credentials *adapt.Credentials `json:"credentials"`
+}
+
+func NewBotHttpAuth(connection adapt.IntegrationConnection) *BotHttpAuth {
+	return &BotHttpAuth{
+		Type:        connection.GetIntegration().Authentication,
+		Credentials: connection.GetCredentials(),
+	}
 }
 
 type BotHttpRequest struct {
@@ -134,11 +143,14 @@ func (api *BotHttpAPI) Request(req *BotHttpRequest) *BotHttpResponse {
 	}
 
 	// Apply authentication
-	client, err := authenticateRequest(httpReq, req.Auth)
+	client, err := api.authenticateRequest(httpReq, NewBotHttpAuth(api.integration))
 	if err != nil {
-		// TODO: figure out what kind of error it was
-		//return Unauthorized("unable to authenticate: " + err.Error())
-		return ServerError(err)
+		switch err.(type) {
+		case *UnauthorizedException:
+			return Unauthorized(err.Error())
+		default:
+			return ServerError(err)
+		}
 	}
 
 	httpResp, err := client.Do(httpReq)
@@ -176,7 +188,7 @@ func (api *BotHttpAPI) Request(req *BotHttpRequest) *BotHttpResponse {
 
 // authenticateRequest performs any authentication needed for the request, mutating it as necessary,
 // and returns an HTTP client which can be ued for perform the request
-func authenticateRequest(req *http.Request, auth *BotHttpAuth) (*http.Client, error) {
+func (api *BotHttpAPI) authenticateRequest(req *http.Request, auth *BotHttpAuth) (*http.Client, error) {
 	client := httpClient.Get()
 	switch auth.Type {
 	case "API_KEY":
@@ -184,7 +196,7 @@ func authenticateRequest(req *http.Request, auth *BotHttpAuth) (*http.Client, er
 		// and apply this to the request
 		break
 	case "OAUTH2_AUTHORIZATION_CODE":
-		break
+		return api.getOAuth2AuthorizationCodeClient(req, auth)
 	case "OAUTH2_CLIENT_CREDENTIALS":
 		// TODO: Check for an integration credential record for the "system" user for the tenant,
 		// and if one exists and is unexpired, use this token directly,
@@ -195,44 +207,60 @@ func authenticateRequest(req *http.Request, auth *BotHttpAuth) (*http.Client, er
 	return client, nil
 }
 
-func getOAuth2Client(client *http.Client, credentials *adapt.Credentials) (*http.Client, error) {
+type UnauthorizedException struct {
+	msg string
+}
+
+func NewUnauthorizedException(msg string) *UnauthorizedException {
+	return &UnauthorizedException{msg}
+}
+func (e *UnauthorizedException) Error() string {
+	return e.msg
+}
+
+func (api *BotHttpAPI) getOAuth2AuthorizationCodeClient(req *http.Request, auth *BotHttpAuth) (*http.Client, error) {
 	ctx := context.Background()
 
-	clientId, err := credentials.GetRequiredEntry("clientId")
+	config, err := oauthlib.GetConfig(auth.Credentials, api.session.GetContextSite().GetHost())
 	if err != nil {
-		return nil, err
-	}
-	clientSecret, err := credentials.GetRequiredEntry("clientSecret")
-	if err != nil {
-		return nil, err
-	}
-	tokenURL, err := credentials.GetRequiredEntry("tokenUrl")
-	if err != nil {
-		return nil, err
-	}
-
-	conf := &oauth2.Config{
-		ClientID:     clientId,
-		ClientSecret: clientSecret,
-		Endpoint: oauth2.Endpoint{
-			TokenURL: tokenURL,
-		},
+		return nil, NewUnauthorizedException(err.Error())
 	}
 
 	// Fetch OAuth credentials from the DB Integration Collection record
-	// integrationCredential := getIntegrationCredential(userId, integrationKey)
-	integrationCredential := adapt.Item{}
-	accessToken, _ := integrationCredential.GetFieldAsString("uesio/core.accesstoken")
-	refreshToken, _ := integrationCredential.GetFieldAsString("uesio/studio.refreshtoken")
-	//_, _ := integrationCredential.GetField("uesio/studio.accesstokenexpiration")
+	// TODO: use existing metadata cache... or connection...
+	connection, err := datasource.GetPlatformConnection(nil, api.session, nil)
+	if err != nil {
+		return nil, errors.New("unable to obtain platform connection")
+	}
+	coreSession, err := datasource.EnterVersionContext("uesio/core", api.session, connection)
+	if err != nil {
+		return nil, errors.New("failed to enter uesio/core context: " + err.Error())
+	}
 
+	integrationCredential, err := oauthlib.GetIntegrationCredential(
+		api.session.GetSiteUser().ID, api.integration.GetIntegration().GetKey(), coreSession, connection)
+	if err != nil {
+		return nil, errors.New("unable to retrieve integration credential: " + err.Error())
+	}
+	// If we do NOT have an existing record, then we cannot authenticate
+	if integrationCredential == nil {
+		return nil, NewUnauthorizedException("user has not yet authorized this integration")
+	}
+	accessToken, _ := integrationCredential.GetFieldAsString(oauthlib.AccessTokenField)
+	refreshToken, _ := integrationCredential.GetFieldAsString(oauthlib.RefreshTokenField)
+	accessTokenExpiry, _ := integrationCredential.GetField(oauthlib.AccessTokenExpirationField)
+	var expiry time.Time
+	if accessTokenExpiry != nil {
+		if int64Value, isValid := accessTokenExpiry.(int64); isValid {
+			expiry = time.Unix(int64Value, 0)
+		}
+	}
 	tok := &oauth2.Token{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
-		Expiry:       time.Time{}, // todo pass in the expiry
+		Expiry:       expiry,
 	}
-
-	return conf.Client(ctx, tok), nil
+	return config.Client(ctx, tok), nil
 }
 
 func getBotHeaders(header http.Header) map[string]string {
