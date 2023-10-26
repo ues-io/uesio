@@ -546,6 +546,8 @@ func addComponentVariantDep(depMap *ViewDepMap, variantName string, compName str
 }
 
 func getComponentAreaDeps(node *yaml.Node, depMap *ViewDepMap, session *sess.Session) error {
+
+	node = meta.UnwrapDocumentNode(node)
 	if node == nil || node.Kind != yaml.SequenceNode {
 		return nil
 	}

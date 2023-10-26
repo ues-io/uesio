@@ -55,10 +55,16 @@ type NodePair struct {
 	Key  string
 }
 
-func GetMapNodes(node *yaml.Node) ([]NodePair, error) {
-	if node.Kind == yaml.DocumentNode {
-		node = node.Content[0]
+func UnwrapDocumentNode(node *yaml.Node) *yaml.Node {
+	if node != nil && node.Kind == yaml.DocumentNode {
+		return node.Content[0]
 	}
+	return node
+}
+
+func GetMapNodes(node *yaml.Node) ([]NodePair, error) {
+
+	node = UnwrapDocumentNode(node)
 	if node.Kind != yaml.MappingNode {
 		return nil, fmt.Errorf("Definition is not a mapping node.")
 	}
@@ -86,9 +92,7 @@ func GetMapNode(node *yaml.Node, key string) (*yaml.Node, error) {
 }
 
 func GetMapNodeWithIndex(node *yaml.Node, key string) (*yaml.Node, int, error) {
-	if node.Kind == yaml.DocumentNode {
-		node = node.Content[0]
-	}
+	node = UnwrapDocumentNode(node)
 	if node.Kind != yaml.MappingNode {
 		return nil, 0, fmt.Errorf("Definition is not a mapping node.")
 	}
