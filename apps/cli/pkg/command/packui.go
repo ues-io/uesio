@@ -2,7 +2,6 @@ package command
 
 import (
 	"fmt"
-	"io/ioutil"
 	"time"
 
 	"github.com/evanw/esbuild/pkg/api"
@@ -42,6 +41,7 @@ func PackUI(options *PackOptions) error {
 		External:          globalsList,
 		Write:             true,
 		Plugins:           []api.Plugin{pack.GetGlobalsPlugin(globalsMap)},
+		TsconfigRaw:       "{}",
 		MinifyWhitespace:  true,
 		MinifyIdentifiers: true,
 		MinifySyntax:      true,
@@ -51,17 +51,10 @@ func PackUI(options *PackOptions) error {
 		Sourcemap:         api.SourceMapLinked,
 	}
 
-	if options.Watch {
-		pack.ModifyWatchOptions(buildOptions)
+	err := Build(buildOptions, "../../dist/ui/meta.json", options.Watch)
+	if err != nil {
+		return err
 	}
-
-	// Then pack with esbuild
-	result := api.Build(*buildOptions)
-	if result.Errors != nil {
-		pack.HandleBuildErrors(result.Errors)
-	}
-
-	ioutil.WriteFile("../../dist/ui/meta.json", []byte(result.Metafile), 0644)
 
 	fmt.Println(fmt.Sprintf("Done Packing: %v", time.Since(start)))
 
