@@ -1,11 +1,12 @@
-import { component, definition, api, context, styles, signal } from "@uesio/ui"
+import { component, definition, api, context, styles } from "@uesio/ui"
 import { useState } from "react"
 import { parse } from "best-effort-json-parser"
 
 type Props = {
+	prompt: string
+	botName: string
 	label: string
 	loadingLabel: string
-	onClickSignals?: signal.SignalDefinition[]
 	handleResults: (results: unknown[]) => void
 	icon?: string
 	targetTableId?: string
@@ -53,7 +54,8 @@ const StyleDefaults = Object.freeze({
 const SuggestDataButton: definition.UtilityComponent<Props> = (props) => {
 	const {
 		context,
-		onClickSignals,
+		prompt,
+		botName,
 		targetTableId,
 		icon = "magic_button",
 		handleResults,
@@ -82,11 +84,17 @@ const SuggestDataButton: definition.UtilityComponent<Props> = (props) => {
 				/>
 			}
 			onClick={() => {
-				if (!onClickSignals) return
 				setLoading(true)
 
-				const signalResult = api.signal.runMany(
-					onClickSignals,
+				const signalResult = api.signal.run(
+					{
+						signal: "bot/CALL",
+						bot: botName,
+						stepId: "autocomplete",
+						params: {
+							prompt,
+						},
+					},
 					context
 				) as Promise<context.Context>
 

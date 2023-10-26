@@ -148,16 +148,8 @@ const SuggestedFields: definition.UC<ComponentDefinition> = (props) => {
 	return (
 		<SuggestDataButton
 			context={context.deleteWorkspace()}
-			onClickSignals={[
-				{
-					signal: "bot/CALL",
-					bot: "uesio/studio.suggestfields",
-					stepId: "autocomplete",
-					params: {
-						prompt: getPrompt(pluralLabel),
-					},
-				},
-			]}
+			prompt={getPrompt(pluralLabel)}
+			botName="uesio/studio.suggestfields"
 			label={"Suggest Fields"}
 			loadingLabel={"Suggesting fields..."}
 			targetTableId={targetTableId}
