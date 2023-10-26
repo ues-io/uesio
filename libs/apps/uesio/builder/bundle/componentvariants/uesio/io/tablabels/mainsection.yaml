@@ -6,7 +6,6 @@ definition:
       - bg-[$Theme{color.primary}]
       - p-2
       - leading-none
-
     tab:
       - uppercase
       - inline
