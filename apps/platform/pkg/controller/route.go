@@ -196,23 +196,30 @@ func ServeRoute(w http.ResponseWriter, r *http.Request) {
 	path := vars["route"]
 	session := middleware.GetSession(r)
 	prefix := strings.TrimSuffix(r.URL.Path, path)
-	serveRouteInternal(w, r, session, vars["namespace"], path, prefix)
+	if route, err := fetchRoute(w, r, session, vars["namespace"], path, prefix); err == nil {
+		ServeRouteInternal(w, r, session, path, route)
+	}
 }
 
 func ServeLocalRoute(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	path := vars["route"]
 	session := middleware.GetSession(r)
-	serveRouteInternal(w, r, session, session.GetSite().GetAppFullName(), path, "/")
+	if route, err := fetchRoute(w, r, session, session.GetSite().GetAppFullName(), path, "/"); err == nil {
+		ServeRouteInternal(w, r, session, path, route)
+	}
 }
 
-func serveRouteInternal(w http.ResponseWriter, r *http.Request, session *sess.Session, namespace, path, prefix string) {
+func fetchRoute(w http.ResponseWriter, r *http.Request, session *sess.Session, namespace, path, prefix string) (*meta.Route, error) {
 	route, err := routing.GetRouteFromPath(r, namespace, path, prefix, session)
 	if err != nil {
 		HandleErrorRoute(w, r, session, path, err, true)
-		return
+		return nil, err
 	}
+	return route, nil
+}
 
+func ServeRouteInternal(w http.ResponseWriter, r *http.Request, session *sess.Session, path string, route *meta.Route) {
 	usage.RegisterEvent("LOAD", "ROUTE", route.GetKey(), 0, session)
 	// Handle redirect routes
 	if route.Type == "redirect" {

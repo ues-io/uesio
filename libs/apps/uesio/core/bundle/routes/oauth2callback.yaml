@@ -1,5 +1,4 @@
 name: oauth2callback
 path: oauth2/callback
 view: oauth2callback
-public: true
 title: OAuth Callback

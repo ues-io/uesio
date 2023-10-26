@@ -12,8 +12,8 @@ import (
 
 // ExchangeAuthorizationCodeForAccessToken takes an authorization code that is pushed to the redirect URL
 // and exchanges it for an access token.
-func ExchangeAuthorizationCodeForAccessToken(credentials *adapt.Credentials, userId string, code string) (*oauth2.Token, error) {
-	conf, err := GetConfig(credentials)
+func ExchangeAuthorizationCodeForAccessToken(credentials *adapt.Credentials, host, code string) (*oauth2.Token, error) {
+	conf, err := GetConfig(credentials, host)
 	if err != nil {
 		return nil, err
 	}

@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/thecloudmasters/uesio/pkg/controller/oauth"
 	"github.com/thecloudmasters/uesio/pkg/tls"
 
 	"github.com/gorilla/mux"
@@ -157,6 +158,13 @@ func serve(cmd *cobra.Command, args []string) {
 	lr.HandleFunc("/robots.txt", controller.Robots).Methods(http.MethodGet)
 	lr.HandleFunc("/favicon.ico", controller.Favicon).Methods(http.MethodGet)
 
+	// OAuth routes
+	sr.HandleFunc("/oauth2/callback", oauth.Callback).Methods(http.MethodGet)
+	wr.HandleFunc(fmt.Sprintf("/oauth2/authorize/%s", itemParam), oauth.GetRedirectMetadata).Methods(http.MethodGet)
+	sr.HandleFunc(fmt.Sprintf("/oauth2/authorize/%s", itemParam), oauth.GetRedirectMetadata).Methods(http.MethodGet)
+	sa.HandleFunc(fmt.Sprintf("/oauth2/authorize/%s", itemParam), oauth.GetRedirectMetadata).Methods(http.MethodGet)
+	vr.HandleFunc(fmt.Sprintf("/oauth2/authorize/%s", itemParam), oauth.GetRedirectMetadata).Methods(http.MethodGet)
+
 	// Userfile routes for site and workspace context
 	userfileUploadPath := "/userfiles/upload"
 	sr.HandleFunc(userfileUploadPath, file.UploadUserFile).Methods(http.MethodPost)
@@ -183,13 +191,6 @@ func serve(cmd *cobra.Command, args []string) {
 	sr.HandleFunc(wireSavePath, controller.Save).Methods(http.MethodPost)
 	wr.HandleFunc(wireSavePath, controller.Save).Methods(http.MethodPost)
 	sa.HandleFunc(wireSavePath, controller.Save).Methods(http.MethodPost)
-
-	// OAuth 2 authorization code routes
-	oauth2Path := "/oauth2"
-	oauth2MetadataRoute := fmt.Sprintf("%s/authorize/%s", oauth2Path, itemParam)
-	sr.HandleFunc(oauth2MetadataRoute, controller.GetOAuth2RedirectMetadata).Methods(http.MethodGet)
-	wr.HandleFunc(oauth2MetadataRoute, controller.GetOAuth2RedirectMetadata).Methods(http.MethodGet)
-	sa.HandleFunc(oauth2MetadataRoute, controller.GetOAuth2RedirectMetadata).Methods(http.MethodGet)
 
 	// Bot routes for site and workspace context
 	callBotPath := fmt.Sprintf("/bots/call/%s", itemParam)

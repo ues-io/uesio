@@ -53,7 +53,7 @@ const signals: Record<string, SignalDescriptor> = {
 				authorizeMetadataResponse =
 					await platform.getOAuth2RedirectMetadata(
 						context,
-						integration
+						context.mergeString(integration)
 					)
 			} catch (e) {
 				// TODO error handling - maybe add a notification?
@@ -66,6 +66,7 @@ const signals: Record<string, SignalDescriptor> = {
 				"[OAUTH] Received metadata response",
 				JSON.stringify(authorizeMetadataResponse, null, 2)
 			)
+			console.log("auth url", authUrl)
 
 			const authFlowPromise = new Promise((resolve, reject) => {
 				// Open the authorize window / tab
@@ -74,12 +75,36 @@ const signals: Record<string, SignalDescriptor> = {
 				if (!authorizeWindow) {
 					reject("failed to open window for OAuth authorization")
 				} else {
+					authorizeWindow.onclose = () => {
+						reject("Authentication cancelled.")
+					}
+					authorizeWindow.onload = () => {
+						// Detect if a 4xx error was returned, and surface that to the user as an error
+						const textBody = authorizeWindow.document.textContent
+						if (textBody?.includes("error=")) {
+							const matches = textBody.match(
+								/error=([^&]+)&error_description=([^&]+)/
+							)
+							console.log("matches", matches)
+							reject(
+								"Failed to authenticate. Error: " +
+									matches?.join(", ")
+							)
+						}
+						// Detect if the authentication succeeded
+						if (textBody?.includes("Authentication successful")) {
+							// TODO: Also verify state here?
+							resolve(null)
+						}
+					}
 					authorizeWindow.onmessage = (event) => {
+						console.log("got message!", event)
 						// Ignore events from any other origin
 						if (event.origin !== window.location.origin) {
 							return
 						}
 						if (event.data.name === callbackEventName) {
+							console.log("checking state")
 							const { state: callbackState } = event.data.data
 							if (callbackState === state) {
 								resolve(null)

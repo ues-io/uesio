@@ -143,8 +143,6 @@ func (b *SystemDialect) RouteBot(bot *meta.Bot, route *meta.Route, session *sess
 		botFunction = runLoginRouteBot
 	case "uesio/core.signup":
 		botFunction = runSignupRouteBot
-	case "uesio/core.oauth2callback":
-		botFunction = runOAuth2CallbackRouteBot
 	}
 
 	if botFunction == nil {

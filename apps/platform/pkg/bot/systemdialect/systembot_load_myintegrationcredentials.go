@@ -92,7 +92,7 @@ func getTargetIntegrationNameFromConditions(conditions []adapt.LoadRequestCondit
 }
 
 func hasStringField(item meta.Item, fieldName string) bool {
-	if val, err := item.GetField(fieldName); err != nil {
+	if val, err := item.GetField(fieldName); err == nil {
 		return val != nil && val != ""
 	}
 	return false

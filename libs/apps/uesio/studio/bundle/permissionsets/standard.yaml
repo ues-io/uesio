@@ -22,7 +22,6 @@ bots:
   uesio/studio.suggestdata: true
   uesio/studio.suggestfields: true
 views:
-  uesio/core.oauth2callback: true
   uesio/studio.bundlestore: true
   uesio/studio.app: true
   uesio/studio.appedit: true
@@ -115,7 +114,6 @@ views:
   uesio/studio.userprofile: true
   uesio/studio.userprofilenav: true
 routes:
-  uesio/core.oauth2callback: true
   uesio/studio.appsettings: true
   uesio/studio.authsources: true
   uesio/studio.authsource: true

@@ -222,8 +222,8 @@ func getOAuth2Client(client *http.Client, credentials *adapt.Credentials) (*http
 	// Fetch OAuth credentials from the DB Integration Collection record
 	// integrationCredential := getIntegrationCredential(userId, integrationKey)
 	integrationCredential := adapt.Item{}
-	accessToken, _ := integrationCredential.GetFieldAsString("uesio/studio.access_token")
-	refreshToken, _ := integrationCredential.GetFieldAsString("uesio/studio.refresh_token")
+	accessToken, _ := integrationCredential.GetFieldAsString("uesio/core.accesstoken")
+	refreshToken, _ := integrationCredential.GetFieldAsString("uesio/studio.refreshtoken")
 	//_, _ := integrationCredential.GetField("uesio/studio.accesstokenexpiration")
 
 	tok := &oauth2.Token{
