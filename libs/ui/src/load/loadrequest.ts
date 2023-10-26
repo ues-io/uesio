@@ -6,8 +6,8 @@ import {
 } from "../bands/wire/types"
 
 type LoadRequest = {
-	batchid: string
-	batchnumber: number
+	batchid?: string
+	batchnumber?: number
 	collection: CollectionKey
 	conditions?: WireConditionState[]
 	order?: OrderState[]
@@ -27,6 +27,7 @@ type LoadRequestField = {
 
 type LoadRequestBatch = {
 	wires: LoadRequest[]
+	includeMetadata?: boolean
 }
 
 export type { LoadRequest, LoadRequestField, LoadRequestBatch }

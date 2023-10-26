@@ -58,3 +58,8 @@ func (as *AuthSource) UnmarshalYAML(node *yaml.Node) error {
 	}
 	return node.Decode((*AuthSourceWrapper)(as))
 }
+
+func (as *AuthSource) UnmarshalJSON(data []byte) error {
+	type alias AuthSource
+	return refScanner((*alias)(as), data)
+}

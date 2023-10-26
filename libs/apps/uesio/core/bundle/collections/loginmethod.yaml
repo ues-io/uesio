@@ -4,5 +4,5 @@ uniqueKey:
   - uesio/core.federation_id
 nameField: uesio/core.federation_id
 public: true
-label: login method
-pluralLabel: login methods
+label: Login Method
+pluralLabel: Login Methods

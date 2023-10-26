@@ -1,0 +1,10 @@
+name: get_weather_forecast
+type: RUNACTION
+dialect: TYPESCRIPT
+params:
+  - name: latitude
+    type: NUMBER
+    required: true
+  - name: longitude
+    type: NUMBER
+    required: true

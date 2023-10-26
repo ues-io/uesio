@@ -1,0 +1,14 @@
+name: default
+label: Default
+definition:
+  uesio.styleTokens:
+    root:
+    content:
+      - p-4
+    header:
+      - text-right
+    icon:
+      - text-2xl
+      - m-2
+      - p-1
+public: true

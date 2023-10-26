@@ -1,0 +1,3 @@
+name: metadatafield
+pack: main
+entrypoint: utilities/field/metadata

@@ -4,8 +4,16 @@ label: Conditions
 subtype: STRUCT
 subfields:
   - name: field
-    type: TEXT
-    label: Field
-  - name: value
-    type: TEXT
-    label: Value
+    type: METADATA
+    label: User Reference Field
+    metadata:
+      type: FIELD
+      # For UserAccessTokens, this must be a Field on the related Collection
+      # which is a REFERENCE to the user collection
+      grouping: ${uesio/studio.collection}
+  # Value currently is meaningless for User Access Tokens, the only value we support is the running user's id
+  # which is merged in automatically. If we add additional Condition Types, then value would be meaningful,
+  # but currently it is not.
+  # - name: value
+  #   type: TEXT
+  #   label: Value

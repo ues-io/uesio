@@ -1,0 +1,7 @@
+name: namedpermission
+token: "uesio/studio.workspace_admin"
+useraccesstoken: "uesio.namedpermission"
+access: read
+conditions:
+  - field: uesio/studio.public
+    value: true

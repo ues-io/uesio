@@ -1,0 +1,42 @@
+name: sitenavusagetile
+category: LAYOUT
+pack: main
+type: DECLARATIVE
+slots: null
+description: A usage-related item in the Studio Site Admin navigation for
+properties:
+  - type: TEXT
+    name: title
+    label: Title text
+  - type: ICON
+    name: icon
+  - type: TEXT
+    name: usageMetadataType
+    label: The type of metadata for which Usage is being displayed
+  - type: TEXT
+    name: usageActionType
+    label: The type of action for which Usage is being displayed
+  - type: TEXT
+    name: path
+    label: Relative path to navigate to within the Site Admin /usage route prefix
+definition:
+  - uesio/io.tile:
+      uesio.variant: uesio/io.nav
+      uesio.classes:
+        selected:
+          - type: paramValue
+            param: selectedusagemetadatatype
+            value: $Prop{usageMetadataType}
+          - type: paramValue
+            param: selectedusageactiontype
+            value: $Prop{usageActionType}
+      signals:
+        - signal: "route/NAVIGATE"
+          path: app/${uesio/studio.app->uesio/core.uniquekey}/site/${uesio/studio.name}/usage/$Prop{path}
+      content:
+        - uesio/io.text:
+            text: $Prop{title}
+      avatar:
+        - uesio/io.text:
+            uesio.variant: uesio/io.icon
+            text: $Prop{icon}

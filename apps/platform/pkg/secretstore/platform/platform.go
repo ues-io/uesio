@@ -12,7 +12,12 @@ type SecretStore struct {
 
 func (ss *SecretStore) Get(key string, session *sess.Session) (string, error) {
 	var s meta.SecretStoreValue
-	err := datasource.PlatformLoadOne(
+	// Enter into a version context to be able to interact with the uesio/core.secretstorevalue collection
+	versionSession, err := datasource.EnterVersionContext("uesio/core", session, nil)
+	if err != nil {
+		return "", err
+	}
+	err = datasource.PlatformLoadOne(
 		&s,
 		&datasource.PlatformLoadOptions{
 			Conditions: []adapt.LoadRequestCondition{
@@ -27,7 +32,7 @@ func (ss *SecretStore) Get(key string, session *sess.Session) (string, error) {
 				},
 			},
 		},
-		session,
+		versionSession,
 	)
 	if err != nil {
 		return "", nil
@@ -40,7 +45,12 @@ func (ss *SecretStore) Set(key, value string, session *sess.Session) error {
 		Key:   key,
 		Value: value,
 	}
+	// Enter into a version context to be able to interact with the uesio/core.secretstorevalue collection
+	versionSession, err := datasource.EnterVersionContext("uesio/core", session, nil)
+	if err != nil {
+		return err
+	}
 	return datasource.PlatformSaveOne(&s, &adapt.SaveOptions{
 		Upsert: true,
-	}, nil, session)
+	}, nil, versionSession)
 }

@@ -1,4 +1,4 @@
-import { collection, context, definition, wire } from "@uesio/ui"
+import { collection, component, context, definition, wire } from "@uesio/ui"
 import collectionSignals from "../signals/collection"
 import componentSignals from "../signals/component"
 import aiSignals from "../signals/ai"
@@ -47,6 +47,7 @@ type SignalDescriptor = {
 	) => ComponentProperty[]
 	outputs?: SignalOutput[]
 	canError?: boolean
+	disabled?: boolean
 }
 
 type ComponentSignalDescriptor = {
@@ -62,7 +63,7 @@ type ComponentSignalDescriptor = {
 type SignalDefinition = {
 	signal: string
 	[key: string]: definition.Definition
-	"uesio.context"?: context.ContextOptions
+	[component.COMPONENT_CONTEXT]?: context.ContextOptions
 	stepId?: string
 	onerror?: {
 		continue: boolean
@@ -77,7 +78,7 @@ const allSignalSelectOptions = signalBandDefinitions
 	.map(({ band, label, signals }) => {
 		const bandSignals = Object.entries(signals).map(
 			([signal, signalDescriptor]) => {
-				const { label, description } = signalDescriptor
+				const { label, description, disabled } = signalDescriptor
 				// Add an index while we're here
 				signalDescriptorsIndex[signal] = signalDescriptor
 				// Construct a select option
@@ -85,17 +86,16 @@ const allSignalSelectOptions = signalBandDefinitions
 					value: signal,
 					label: label || signal,
 					title: description || signal,
+					disabled,
 				} as wire.SelectOption
 			}
 		) as wire.SelectOption[]
 		bandSignals.sort((a, b) => a.label.localeCompare(b.label))
-		bandSignals.unshift({
-			value: band,
-			label,
-			disabled: true,
+		return {
 			title: label || band,
-		} as wire.SelectOption)
-		return bandSignals
+			label,
+			options: bandSignals,
+		} as wire.SelectOption
 	})
 	.flat()
 

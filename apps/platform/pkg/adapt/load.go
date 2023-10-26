@@ -16,14 +16,14 @@ type LoadOp struct {
 	View               string                 `json:"view"`
 	Collection         meta.Group             `json:"data"`
 	Conditions         []LoadRequestCondition `json:"conditions" bot:"conditions"`
-	Fields             []LoadRequestField     `json:"fields" bot:"fields"`
+	Fields             []LoadRequestField     `json:"fields,omitempty" bot:"fields"`
 	Query              bool                   `json:"query"`
-	Order              []LoadRequestOrder     `json:"order" bot:"order"`
+	Order              []LoadRequestOrder     `json:"order,omitempty" bot:"order"`
 	BatchSize          int                    `json:"batchsize" bot:"batchsize"`
 	BatchNumber        int                    `json:"batchnumber" bot:"batchnumber"`
 	HasMoreBatches     bool                   `json:"more"`
 	RequireWriteAccess bool                   `json:"requirewriteaccess"`
-	Params             map[string]string      `json:"params"`
+	Params             map[string]string      `json:"params,omitempty"`
 	Preloaded          bool                   `json:"preloaded"`
 	LoadAll            bool                   `json:"loadAll" bot:"loadAll"`
 	DebugQueryString   string                 `json:"debugQueryString"`
@@ -112,12 +112,25 @@ func (op *LoadOp) AttachIntegration(integration IntegrationConnection) *LoadOp {
 }
 
 type LoadRequestBatch struct {
-	Wires []*LoadOp `json:"wires"`
+	Wires           []*LoadOp `json:"wires"`
+	IncludeMetadata bool      `json:"includeMetadata"`
 }
 
 type LoadResponseBatch struct {
 	Wires       []*LoadOp                      `json:"wires"`
-	Collections map[string]*CollectionMetadata `json:"collections"`
+	Collections map[string]*CollectionMetadata `json:"collections,omitempty"`
+}
+
+// TrimStructForSerialization removes properties which do not need to be returned to callers
+// because the caller provided them and they will not have changed.
+func (lr *LoadResponseBatch) TrimStructForSerialization() *LoadResponseBatch {
+	for _, wire := range lr.Wires {
+		// Need Conditions because the value / inactive properties may have changed
+		wire.Order = nil
+		wire.Fields = nil
+		wire.Params = nil
+	}
+	return lr
 }
 
 type FieldsMap map[string]*FieldMetadata
@@ -196,6 +209,8 @@ func GetFieldsMap(fields []LoadRequestField, collectionMetadata *CollectionMetad
 
 			refReq := referencedCollections.Get(referencedCollection)
 			refReq.Metadata = referencedCollectionMetadata
+
+			refReq.AddRefField(fieldMetadata)
 
 			if referencedCollectionMetadata.Integration != collectionMetadata.Integration {
 				continue

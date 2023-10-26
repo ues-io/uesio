@@ -1,10 +1,10 @@
 package controller
 
 import (
+	"log/slog"
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
-	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/truncate"
 
@@ -17,13 +17,13 @@ func Truncate(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		var responseCode int
 		switch err.(type) {
-		case *meta.BotParamValidationError:
+		case *meta.BotParamValidationError, *meta.BotExecutionError:
 			responseCode = http.StatusBadRequest
 		case *meta.BotAccessError:
 			responseCode = http.StatusForbidden
 		default:
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-			logger.LogError(err)
+			slog.Error(err.Error())
 			return
 		}
 		http.Error(w, err.Error(), responseCode)

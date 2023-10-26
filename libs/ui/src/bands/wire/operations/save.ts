@@ -11,6 +11,20 @@ import { getErrorString } from "../../utils"
 import { platform } from "../../../platform/platform"
 import { ID_FIELD } from "../../collection/types"
 import { PlainWireRecord } from "../../wirerecord/types"
+import { PlainWire } from "../types"
+
+const removeViewOnlyFields = (
+	wire: PlainWire,
+	change: PlainWireRecord
+): PlainWireRecord => {
+	const viewOnlyFields = wire.viewOnlyMetadata?.fields
+	if (!viewOnlyFields) return change
+	const copy = { ...change }
+	Object.keys(viewOnlyFields).forEach((key) => {
+		delete copy[key]
+	})
+	return copy
+}
 
 const getErrorStrings = (response: SaveResponse) =>
 	response.errors?.map((error) => error.message) || []
@@ -36,7 +50,7 @@ export default async (context: Context, wires?: string[]) => {
 		// If we're deleting this item, then we don't need to process its changes.
 		Object.keys(changes).forEach((key) => {
 			if (!deletes[key]) {
-				serverChanges[key] = changes[key]
+				serverChanges[key] = removeViewOnlyFields(wire, changes[key])
 			} else {
 				clientChanges[key] = {}
 			}
@@ -45,7 +59,7 @@ export default async (context: Context, wires?: string[]) => {
 		// If we're trying to delete an item that was never persisted, don't bother.
 		Object.keys(deletes).forEach((key) => {
 			if (deletes[key][ID_FIELD]) {
-				serverDeletes[key] = deletes[key]
+				serverDeletes[key] = removeViewOnlyFields(wire, deletes[key])
 			} else {
 				clientDeletes[key] = {}
 			}

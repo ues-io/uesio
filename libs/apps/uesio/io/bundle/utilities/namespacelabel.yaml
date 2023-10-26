@@ -1,0 +1,3 @@
+name: namespacelabel
+pack: main
+entrypoint: utilities/namespacelabel/namespacelabel

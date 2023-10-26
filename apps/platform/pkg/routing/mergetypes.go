@@ -2,8 +2,8 @@ package routing
 
 import (
 	"encoding/json"
+	"log/slog"
 
-	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
@@ -75,7 +75,7 @@ type MergeData struct {
 	StaticAssetsPath    string   `json:"-"`
 	StaticAssetsHost    string   `json:"-"`
 	VendorScriptUrls    []string `json:"-"`
-	*PreloadMetadata
+	*PreloadMetadata    `json:"-"`
 }
 
 // String function controls how MergeData is marshalled
@@ -85,11 +85,11 @@ func (md MergeData) String() string {
 	// Remove the component pack dep info because we don't need it on the client
 	md.ComponentPack = nil
 
-	json, err := json.MarshalIndent(md, "        ", "  ")
+	serialized, err := json.MarshalIndent(md, "        ", "  ")
 	//json, err := json.Marshal(md)
 	if err != nil {
-		logger.LogError(err)
+		slog.Error(err.Error())
 		return ""
 	}
-	return string(json)
+	return string(serialized)
 }

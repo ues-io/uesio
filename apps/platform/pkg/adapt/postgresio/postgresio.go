@@ -7,6 +7,7 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 )
 
@@ -94,7 +95,7 @@ func getConnection(credentials *adapt.Credentials, hash string) (*pgxpool.Pool, 
 
 	port := credentials.GetEntry("port", "5432")
 
-	user, err := credentials.GetRequiredEntry("user")
+	user, err := credentials.GetRequiredEntry("username")
 	if err != nil {
 		return nil, err
 	}

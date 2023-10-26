@@ -5,7 +5,7 @@
 # Test as a logged-in user so that we don't get redirected to the login page
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"uesio\"}"
+    "token": "uesio"
 }
 
 
@@ -49,9 +49,11 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[1].debugQueryString" == ```
 SELECT
-main.fields->>'uesio/tests.text' AS "uesio/tests.text",
-main.id::text AS "uesio/core.id",
-main.uniquekey AS "uesio/core.uniquekey"
+jsonb_build_object(
+'uesio/core.id',main.id,
+'uesio/core.uniquekey',main.uniquekey,
+'uesio/tests.text',main.fields->'uesio/tests.text'
+)
 FROM data as "main"
 WHERE
 main.collection = $1 AND
@@ -102,9 +104,11 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[1].debugQueryString" == ```
 SELECT
-main.fields->>'uesio/tests.text' AS "uesio/tests.text",
-main.id::text AS "uesio/core.id",
-main.uniquekey AS "uesio/core.uniquekey"
+jsonb_build_object(
+'uesio/core.id',main.id,
+'uesio/core.uniquekey',main.uniquekey,
+'uesio/tests.text',main.fields->'uesio/tests.text'
+)
 FROM data as "main"
 WHERE
 main.collection = $1 AND
@@ -154,9 +158,11 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[1].debugQueryString" == ```
 SELECT
-main.fields->>'uesio/tests.text' AS "uesio/tests.text",
-main.id::text AS "uesio/core.id",
-main.uniquekey AS "uesio/core.uniquekey"
+jsonb_build_object(
+'uesio/core.id',main.id,
+'uesio/core.uniquekey',main.uniquekey,
+'uesio/tests.text',main.fields->'uesio/tests.text'
+)
 FROM data as "main"
 WHERE
 main.collection = $1 AND
@@ -206,9 +212,11 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[1].debugQueryString" == ```
 SELECT
-main.fields->>'uesio/tests.text' AS "uesio/tests.text",
-main.id::text AS "uesio/core.id",
-main.uniquekey AS "uesio/core.uniquekey"
+jsonb_build_object(
+'uesio/core.id',main.id,
+'uesio/core.uniquekey',main.uniquekey,
+'uesio/tests.text',main.fields->'uesio/tests.text'
+)
 FROM data as "main"
 WHERE
 main.collection = $1 AND

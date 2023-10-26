@@ -49,8 +49,6 @@ Standalone **libraries** are located in the `libs` folder. These libs are compon
 The monorepo is managed by a tool called [nx](https://nx.dev/).
 `nx` has the particularity of having one single `package.json` for the whole monorepo.
 
-The `workspace.json` is the entry point for the **build**, **watcher**, **test**, **linting** processes for the whole monorepo. `nx.json` holds the configuration on dependency of apps/libs - esp. for the build process.
-
 # Set up dev environment
 
 -   Install [homebrew](https://brew.sh/) (for macOS user)
@@ -68,6 +66,7 @@ The `workspace.json` is the entry point for the **build**, **watcher**, **test**
 -   _Optional_. Install [Oh My Zsh](https://ohmyz.sh/)
 -   _Optional_. [Add a SSH key to your github account](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
 -   _Optional_. Install the `nx` cli globally: `npm i -g nx`
+-   _Optional_. An alternative to installing `nx` globally is to set an alias in your `~/.zshrc` file or equivalent: `alias nx="npx nx"`. This way your global nx version will always be the correct version.
 -   Use Git clone and store this repository in your local machine
 -   Set up SSL [here](#set-up-ssl).
 -   Set up local DNS [here](#set-up-local-dns).
@@ -127,7 +126,7 @@ cd ./libs/apps/uesio/crm && uesio pack
 // or
 npm run nx -- build apps-uesio-crm
 
-// or, if you have nx globally
+// or, if you have nx installed globally (or aliased)
 nx build apps-uesio-crm
 ```
 
@@ -165,7 +164,7 @@ cd ./libs/apps/uesio/crm && uesio deploy
 // or
 npm run nx -- deploy apps-uesio-crm
 
-// or, if you have nx globally
+// or, if you have nx installed globally (or aliased)
 nx deploy apps-uesio-crm
 ```
 

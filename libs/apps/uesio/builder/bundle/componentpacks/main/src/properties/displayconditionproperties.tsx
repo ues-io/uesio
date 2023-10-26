@@ -38,7 +38,7 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 	{
 		name: "type",
 		type: "SELECT",
-		label: "Value Source",
+		label: "Condition Type",
 		options: [
 			{
 				label: "Select an option",
@@ -53,23 +53,31 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 				value: "paramIsSet",
 			},
 			{
+				label: "View Param is not set",
+				value: "paramIsNotSet",
+			},
+			{
 				label: "Param equals",
 				value: "paramValue",
 			},
 			{
-				label: "Has No Value",
+				label: "Merge value comparison",
+				value: "mergeValue",
+			},
+			{
+				label: "Merge value is empty",
 				value: "hasNoValue",
 			},
 			{
-				label: "Has Value",
+				label: "Merge value is not empty",
 				value: "hasValue",
 			},
 			{
-				label: "Collection Context",
+				label: "Collection context",
 				value: "collectionContext",
 			},
 			{
-				label: "Feature Flag",
+				label: "Feature Flag value",
 				value: "featureFlag",
 			},
 			{
@@ -83,6 +91,149 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 			{
 				label: "Wire has no changes",
 				value: "wireHasNoChanges",
+			},
+		],
+		onChange: [
+			{
+				// If type no longer needs a Param, clear out "param"
+				conditions: [
+					{
+						field: "type",
+						operator: "NOT_IN",
+						values: ["paramValue", "paramIsSet", "paramIsNotSet"],
+						type: "fieldValue",
+					},
+				],
+				updates: [
+					{
+						field: "param",
+					},
+				],
+			},
+			{
+				// If type no longer needs a Wire, clear out "wire"
+				conditions: [
+					{
+						field: "type",
+						operator: "NOT_IN",
+						values: [
+							"fieldValue",
+							"wireHasChanges",
+							"wireHasNoChanges",
+						],
+						type: "fieldValue",
+					},
+				],
+				updates: [
+					{
+						field: "wire",
+					},
+				],
+			},
+			{
+				// If type is no longer fieldValue, clear out field and values
+				conditions: [
+					{
+						field: "type",
+						operator: "NOT_EQUALS",
+						value: "fieldValue",
+						type: "fieldValue",
+					},
+				],
+				updates: [
+					{
+						field: "field",
+					},
+					{
+						field: "values",
+					},
+				],
+			},
+			{
+				// If type no longer needs "value", clear out "value"
+				conditions: [
+					{
+						field: "type",
+						operator: "NOT_IN",
+						values: [
+							"paramValue",
+							"fieldValue",
+							"hasNoValue",
+							"hasValue",
+							"mergeValue",
+						],
+						type: "fieldValue",
+					},
+				],
+				updates: [
+					{
+						field: "value",
+					},
+				],
+			},
+			{
+				// If type is no longer collectionContext, clear out collection
+				conditions: [
+					{
+						field: "type",
+						operator: "NOT_EQUALS",
+						value: "collectionContext",
+						type: "fieldValue",
+					},
+				],
+				updates: [
+					{
+						field: "collection",
+					},
+				],
+			},
+			{
+				// If type is no longer featureFlag, clear out name
+				conditions: [
+					{
+						field: "type",
+						operator: "NOT_EQUALS",
+						value: "featureFlag",
+						type: "fieldValue",
+					},
+				],
+				updates: [
+					{
+						field: "name",
+					},
+				],
+			},
+			{
+				// If type is no longer fieldMode, clear out mode
+				conditions: [
+					{
+						field: "type",
+						operator: "NOT_EQUALS",
+						value: "fieldMode",
+						type: "fieldValue",
+					},
+				],
+				updates: [
+					{
+						field: "mode",
+					},
+				],
+			},
+			{
+				// If type is no longer "mergeValue", clear out "sourceValue"
+				conditions: [
+					{
+						type: "fieldValue",
+						field: "operator",
+						operator: "NOT_EQUALS",
+						value: "mergeValue",
+					},
+				],
+				updates: [
+					{
+						field: "sourceValue",
+					},
+				],
 			},
 		],
 	},
@@ -109,6 +260,19 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 				field: "type",
 				operator: "EQUALS",
 				value: "fieldValue",
+				type: "fieldValue",
+			},
+		],
+	},
+	{
+		name: "sourceValue",
+		type: "TEXT",
+		label: "Source Value",
+		displayConditions: [
+			{
+				field: "type",
+				operator: "IN",
+				values: ["mergeValue"],
 				type: "fieldValue",
 			},
 		],
@@ -143,7 +307,7 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 			{
 				field: "type",
 				operator: "IN",
-				values: ["fieldValue", "paramValue"],
+				values: ["fieldValue", "paramValue", "mergeValue"],
 				type: "fieldValue",
 			},
 		],
@@ -192,7 +356,7 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 			{
 				field: "type",
 				operator: "IN",
-				values: ["paramValue", "paramIsSet"],
+				values: ["paramValue", "paramIsSet", "paramIsNotSet"],
 				type: "fieldValue",
 			},
 		],
@@ -207,7 +371,13 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 			{
 				field: "type",
 				operator: "IN",
-				values: ["paramValue", "fieldValue", "hasNoValue", "hasValue"],
+				values: [
+					"paramValue",
+					"fieldValue",
+					"hasNoValue",
+					"hasValue",
+					"mergeValue",
+				],
 				type: "fieldValue",
 			},
 			{
@@ -327,6 +497,10 @@ export const getDisplayConditionLabel = (
 			details = `${condition.param || "No Param"} = ${
 				condition.value || "[No Value]"
 			}`
+			break
+		case "paramIsSet":
+		case "paramIsNotSet":
+			details = `${condition.param || "No Param"}`
 			break
 		case "group":
 			return `${condition.type.toLocaleUpperCase()}: ${

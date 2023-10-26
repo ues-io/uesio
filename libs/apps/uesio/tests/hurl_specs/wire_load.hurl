@@ -5,7 +5,7 @@
 # Test as a logged-in user so that we don't get redirected to the login page
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"uesio\"}"
+    "token": "uesio"
 }
 
 
@@ -27,8 +27,10 @@ HTTP 200
 # and then re-run the app
 jsonpath "$.wires[0].debugQueryString" == ```
 SELECT
-main.id::text AS "uesio/core.id",
-main.uniquekey AS "uesio/core.uniquekey"
+jsonb_build_object(
+'uesio/core.id',main.id,
+'uesio/core.uniquekey',main.uniquekey
+)
 FROM data as "main"
 WHERE
 main.collection = $1 AND
@@ -36,6 +38,7 @@ main.tenant = $2
 ORDER BY main.id::text asc
 LIMIT 3```
 jsonpath "$.wires[0].data" count == 2
+jsonpath "$.collections" not exists
 
 # Test a wire load with a simple condition
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
@@ -65,8 +68,10 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].debugQueryString" == ```
 SELECT
-main.id::text AS "uesio/core.id",
-main.uniquekey AS "uesio/core.uniquekey"
+jsonb_build_object(
+'uesio/core.id',main.id,
+'uesio/core.uniquekey',main.uniquekey
+)
 FROM data as "main"
 WHERE
 main.collection = $1 AND
@@ -78,6 +83,7 @@ jsonpath "$.wires[0].conditions[0].id" == "mycoolid"
 jsonpath "$.wires[0].data" count == 2
 jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "MacAughtrie:Jerrine"
 jsonpath "$.wires[0].data[1]['uesio/core.uniquekey']" == "McCreary:Jerrine"
+jsonpath "$.wires[0].order" not exists # Order should not be sent back to us
 
 # Test a wire load with a param merge condition
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
@@ -104,8 +110,10 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].debugQueryString" == ```
 SELECT
-main.id::text AS "uesio/core.id",
-main.uniquekey AS "uesio/core.uniquekey"
+jsonb_build_object(
+'uesio/core.id',main.id,
+'uesio/core.uniquekey',main.uniquekey
+)
 FROM data as "main"
 WHERE
 main.collection = $1 AND
@@ -118,6 +126,7 @@ jsonpath "$.wires[0].conditions[0].value" == "$Param{myparam}"
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" count == 2
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "MacAughtrie:Jerrine"
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "McCreary:Jerrine"
+jsonpath "$.wires[0].params" not exists # params should not be sent back to us
 
 # Test a wire load with a condition on the unique key field
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
@@ -145,9 +154,11 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].debugQueryString" == ```
 SELECT
-main.fields->>'uesio/tests.genus' AS "uesio/tests.genus",
-main.id::text AS "uesio/core.id",
-main.uniquekey AS "uesio/core.uniquekey"
+jsonb_build_object(
+'uesio/core.id',main.id,
+'uesio/core.uniquekey',main.uniquekey,
+'uesio/tests.genus',main.fields->'uesio/tests.genus'
+)
 FROM data as "main"
 WHERE
 main.collection = $1 AND
@@ -156,6 +167,7 @@ main.uniquekey = $3
 ORDER BY main.id::text asc
 LIMIT 501```
 jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "MacAughtrie:Jerrine"
+jsonpath "$.wires[0].fields" not exists # Fields should not be sent back to us
 [Captures]
 idvalue: jsonpath "$.wires[0].data[0]['uesio/core.id']"
 
@@ -179,15 +191,18 @@ Accept: application/json
                 }
             ]
         }
-    ]
+    ],
+    "includeMetadata": true
 }
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].debugQueryString" == ```
 SELECT
-main.fields->>'uesio/tests.genus' AS "uesio/tests.genus",
-main.id::text AS "uesio/core.id",
-main.uniquekey AS "uesio/core.uniquekey"
+jsonb_build_object(
+'uesio/core.id',main.id,
+'uesio/core.uniquekey',main.uniquekey,
+'uesio/tests.genus',main.fields->'uesio/tests.genus'
+)
 FROM data as "main"
 WHERE
 main.collection = $1 AND
@@ -247,8 +262,10 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].debugQueryString" == ```
 SELECT
-main.id::text AS "uesio/core.id",
-main.uniquekey AS "uesio/core.uniquekey"
+jsonb_build_object(
+'uesio/core.id',main.id,
+'uesio/core.uniquekey',main.uniquekey
+)
 FROM data as "main"
 WHERE
 main.collection = $1 AND
@@ -293,8 +310,10 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].debugQueryString" == ```
 SELECT
-main.id::text AS "uesio/core.id",
-main.uniquekey AS "uesio/core.uniquekey"
+jsonb_build_object(
+'uesio/core.id',main.id,
+'uesio/core.uniquekey',main.uniquekey
+)
 FROM data as "main"
 WHERE
 main.collection = $1 AND
@@ -330,15 +349,18 @@ Accept: application/json
                 }
             ]
         }
-    ]
+    ],
+    "includeMetadata": true
 }
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].errors" not exists
 jsonpath "$.wires[0].debugQueryString" == ```
 SELECT
-main.id::text AS "uesio/core.id",
-main.uniquekey AS "uesio/core.uniquekey"
+jsonb_build_object(
+'uesio/core.id',main.id,
+'uesio/core.uniquekey',main.uniquekey
+)
 FROM data as "main"
 WHERE
 main.collection = $1 AND
@@ -351,5 +373,3 @@ jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "Lathe:Franklin"
 jsonpath "$.wires[0].data[1]['uesio/core.uniquekey']" == "Soitoux:Franklin"
 # Verify that metadata for the order fields was loaded and is available in the wire
 jsonpath "$.collections['uesio/tests.animal'].fields['uesio/tests.total_population'].type" == "NUMBER"
-
-

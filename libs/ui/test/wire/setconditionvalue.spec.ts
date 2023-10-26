@@ -185,12 +185,14 @@ const tests: WireSignalTest[] = [
 			})
 			.addSignalOutputFrame("ageCalculation", {
 				age: 37,
+				conditionName: "123",
+				wirename: wireId,
 			}),
 		signals: [
 			{
 				signal: "wire/SET_CONDITION_VALUE",
-				wire: wireId,
-				conditionId: "123",
+				wire: "$SignalOutput{ageCalculation:wirename}",
+				conditionId: "$SignalOutput{ageCalculation:conditionName}",
 				value: "$Param{first} $Param{last} (Age: $SignalOutput{ageCalculation:age})",
 			},
 		],
@@ -207,6 +209,6 @@ const tests: WireSignalTest[] = [
 	},
 ]
 
-describe("setConditionValue", () => {
+describe("signals: wire/SET_CONDITION_VALUE", () => {
 	tests.map((el) => test(el.name, () => testWireSignal(el)))
 })

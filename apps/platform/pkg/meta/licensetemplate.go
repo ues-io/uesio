@@ -26,3 +26,8 @@ func (lt *LicenseTemplate) Loop(iter func(string, interface{}) error) error {
 func (lt *LicenseTemplate) Len() int {
 	return StandardItemLen(lt)
 }
+
+func (lt *LicenseTemplate) UnmarshalJSON(data []byte) error {
+	type alias LicenseTemplate
+	return refScanner((*alias)(lt), data)
+}

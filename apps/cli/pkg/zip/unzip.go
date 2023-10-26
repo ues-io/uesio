@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -64,7 +63,7 @@ func extract(zf *zip.File, dest string) error {
 func Unzip(data io.ReadCloser, dest string) error {
 
 	// Unfortunately, we have to read the whole thing into memory
-	bodybytes, err := ioutil.ReadAll(data)
+	bodybytes, err := io.ReadAll(data)
 	if err != nil {
 		return err
 	}

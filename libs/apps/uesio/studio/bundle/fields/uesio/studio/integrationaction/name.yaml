@@ -1,0 +1,7 @@
+name: name
+type: TEXT
+label: Action Name
+required: true
+createOnly: true
+validate:
+  type: METADATA

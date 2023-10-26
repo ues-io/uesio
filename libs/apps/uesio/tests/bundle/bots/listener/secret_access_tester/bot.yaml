@@ -1,0 +1,10 @@
+name: secret_access_tester
+type: LISTENER
+dialect: TYPESCRIPT
+params:
+  - name: integrationName
+    type: TEXT
+    required: true
+  - name: actionName
+    type: TEXT
+    required: true

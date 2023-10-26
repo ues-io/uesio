@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"log/slog"
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/bot"
@@ -9,8 +10,8 @@ import (
 
 	"github.com/francoispqt/gojay"
 	"github.com/gorilla/mux"
+
 	"github.com/thecloudmasters/uesio/pkg/featureflagstore"
-	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 )
 
@@ -22,14 +23,14 @@ func FeatureFlag(w http.ResponseWriter, r *http.Request) {
 
 	response, err := featureflagstore.GetFeatureFlags(session, user)
 	if err != nil {
-		logger.LogError(err)
+		slog.Error(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	bytes, err := gojay.MarshalJSONArray(response)
 	if err != nil {
-		logger.LogError(err)
+		slog.Error(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -51,7 +52,7 @@ func SetFeatureFlag(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&setRequest)
 	if err != nil {
 		msg := "Invalid request format: " + err.Error()
-		logger.Log(msg, logger.ERROR)
+		slog.Error(msg)
 		http.Error(w, msg, http.StatusBadRequest)
 		return
 	}
@@ -62,7 +63,7 @@ func SetFeatureFlag(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		logger.LogError(err)
+		slog.Error(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

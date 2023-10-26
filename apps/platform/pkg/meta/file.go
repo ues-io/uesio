@@ -3,8 +3,9 @@ package meta
 import (
 	"errors"
 	"fmt"
+	"path"
+
 	"github.com/francoispqt/gojay"
-	"path/filepath"
 
 	"gopkg.in/yaml.v3"
 )
@@ -58,7 +59,7 @@ func (f *File) GetBasePath() string {
 }
 
 func (f *File) GetPath() string {
-	return filepath.Join(f.Name, "file.yaml")
+	return path.Join(f.Name, "file.yaml")
 }
 
 func (f *File) GetPermChecker() *PermissionSet {

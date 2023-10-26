@@ -1,7 +1,7 @@
 # Test as a logged-in user so that we don't get redirected to the login page
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"uesio\"}"
+    "token": "uesio"
 }
 
 # Try to navigate to the workspace home route
@@ -18,8 +18,12 @@ GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/configvalues
 Accept: application/json
 HTTP 200
 [Asserts]
-jsonpath "$" count == 1
-jsonpath "$[0].name" == "google_auth_client_id"
+jsonpath "$" count == 5
+jsonpath "$[*].name" includes "google_auth_client_id"
+jsonpath "$[*].name" includes "studio_apis_url"
+jsonpath "$[*].name" includes "test_oauth_token_url"
+jsonpath "$[*].name" includes "test_oauth_authorize_url"
+jsonpath "$[*].name" includes "test_oauth_scopes"
 
 # Logout
 POST https://{{host}}:{{port}}/site/auth/logout
@@ -28,7 +32,7 @@ HTTP 200
 # Now log in as a user who is on the app team, but not the owner
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"ben\"}"
+    "token": "ben"
 }
 
 # Try to navigate to the workspace home route
@@ -45,8 +49,12 @@ GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/configvalues
 Accept: application/json
 HTTP 200
 [Asserts]
-jsonpath "$" count == 1
-jsonpath "$[0].name" == "google_auth_client_id"
+jsonpath "$" count == 5
+jsonpath "$[*].name" includes "google_auth_client_id"
+jsonpath "$[*].name" includes "studio_apis_url"
+jsonpath "$[*].name" includes "test_oauth_authorize_url"
+jsonpath "$[*].name" includes "test_oauth_token_url"
+jsonpath "$[*].name" includes "test_oauth_scopes"
 
 # Logout
 POST https://{{host}}:{{port}}/site/auth/logout
@@ -55,7 +63,7 @@ HTTP 200
 # Now test as a user that doesn't have access to the test app
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"abel\"}"
+    "token": "abel"
 }
 
 # Try to navigate to the workspace home route

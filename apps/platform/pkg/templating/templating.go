@@ -33,15 +33,15 @@ func NewWithFunc(templateString string, templateFunc interface{}) (*template.Tem
 func ExtractKeys(templateString string) []string {
 	cursor := 0
 	keys := []string{}
-	len := len(templateString)
-	for cursor < len {
-		if templateString[cursor] == '$' && cursor+3 < len && templateString[cursor+1] == '{' {
+	length := len(templateString)
+	for cursor < length {
+		if templateString[cursor] == '$' && cursor+3 < length && templateString[cursor+1] == '{' {
 			cursor += 2
 			startIndex := cursor
-			for cursor < len && templateString[cursor] != '}' {
+			for cursor < length && templateString[cursor] != '}' {
 				cursor++
 			}
-			if cursor < len {
+			if cursor < length {
 				keys = append(keys, templateString[startIndex:cursor])
 			}
 		}

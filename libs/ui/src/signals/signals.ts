@@ -14,6 +14,7 @@ import notificationSignals from "../bands/notification/signals"
 import contextSignals from "../context/signals"
 import debounce from "lodash/debounce"
 import { getErrorString } from "../utilexports"
+import { COMPONENT_CONTEXT } from "../componentexports"
 
 const registry: Record<string, SignalDescriptor> = {
 	...aiSignals,
@@ -32,7 +33,7 @@ const run = (signal: SignalDefinition, context: Context) => {
 	const descriptor = registry[signal.signal] || getComponentSignalDefinition()
 	return descriptor.dispatcher(
 		signal,
-		injectDynamicContext(context, signal?.["uesio.context"])
+		injectDynamicContext(context, signal?.[COMPONENT_CONTEXT])
 	)
 }
 

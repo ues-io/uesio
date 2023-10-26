@@ -4,7 +4,6 @@ import { FullPath } from "../../../../api/path"
 import { getBuilderNamespace } from "../../../../api/stateapi"
 import ActionButton from "../../../../helpers/actionbutton"
 import BuildActionsArea from "../../../../helpers/buildactionsarea"
-import NamespaceLabel from "../../../../utilities/namespacelabel/namespacelabel"
 import PropNodeTag from "../../../../utilities/propnodetag/propnodetag"
 import ItemTag from "../../../../utilities/itemtag/itemtag"
 
@@ -19,6 +18,7 @@ type Props = {
 }
 const FieldSelectPropTag: definition.UtilityComponent<Props> = (props) => {
 	const Text = component.getUtility("uesio/io.text")
+	const NamespaceLabel = component.getUtility("uesio/io.namespacelabel")
 	const {
 		allowReferenceTraversal = true,
 		fieldMetadata,

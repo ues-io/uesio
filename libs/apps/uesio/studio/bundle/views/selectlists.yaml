@@ -84,8 +84,8 @@ definition:
                     columns:
                       - label: Select List
                         components:
-                          - uesio/studio.iconlabel:
-                              uesio.variant: uesio/studio.namespacefield
+                          - uesio/io.iconlabel:
+                              uesio.variant: uesio/io.namespacefield
                               text: ${uesio/studio.name}
                               subtitle: ${uesio/studio.namespace}
                               icon: ${uesio/studio.appicon}
@@ -114,6 +114,10 @@ definition:
             uesio.id: newselectlistlist
             wire: newselectlist
             mode: EDIT
+            uesio.context:
+              workspace:
+                name: $Param{workspacename}
+                app: $Param{app}
             components:
               - uesio/io.field:
                   fieldId: uesio/studio.name
@@ -124,13 +128,8 @@ definition:
                   items:
                     - uesio/io.field:
                         fieldId: uesio/studio.blank_option_label
-                    - uesio/builder.metadatafield:
-                        uesio.context:
-                          workspace:
-                            name: $Param{workspacename}
-                            app: $Param{app}
+                    - uesio/io.field:
                         fieldId: uesio/studio.blank_option_language_label
-                        metadataType: LABEL
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary

@@ -5,7 +5,7 @@
 # Test as a logged-in user so that we don't get redirected to the login page
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"uesio\"}"
+    "token": "uesio"
 }
 
 # Get a list of all available namespaces from a siteadmin context
@@ -24,16 +24,17 @@ GET https://{{host}}:{{port}}/siteadmin/uesio/tests/testsite/metadata/types/coll
 Accept: application/json
 HTTP 200
 [Asserts]
-# There are currently 10 public uesio/core collections and 6 uesio/test collections
+# There are currently 10 public uesio/core collections and 7 uesio/test collections
 # we want to bring this number down at some point by making most of the uesio/core
 # collections private.
-jsonpath "$[*]" count == 18
+jsonpath "$[*]" count == 17
 # Spot check a uesio/tests collection
 jsonpath "$['uesio/tests.animal'].key" == "uesio/tests.animal"
 jsonpath "$['uesio/tests.animal'].namespace" == "uesio/tests"
 # Spot check a uesio/core collection
 jsonpath "$['uesio/core.user'].key" == "uesio/core.user"
 jsonpath "$['uesio/core.user'].namespace" == "uesio/core"
+jsonpath "$['uesio/core.secretstorevalue']" not exists
 
 # Get a list of collections in the uesio/test namespace available from a siteadmin context
 GET https://{{host}}:{{port}}/siteadmin/uesio/tests/testsite/metadata/types/collections/namespace/uesio/tests/list
@@ -50,10 +51,11 @@ GET https://{{host}}:{{port}}/siteadmin/uesio/tests/testsite/metadata/types/coll
 Accept: application/json
 HTTP 200
 [Asserts]
-jsonpath "$[*]" count == 11
+jsonpath "$[*]" count == 10
 # Spot check a uesio/core collection
 jsonpath "$['uesio/core.user'].key" == "uesio/core.user"
 jsonpath "$['uesio/core.user'].namespace" == "uesio/core"
+jsonpath "$['uesio/core.secretstorevalue']" not exists
 
 # Get a list of all fields from the animal collection available from a siteadmin context
 GET https://{{host}}:{{port}}/siteadmin/uesio/tests/testsite/metadata/types/fields/list/uesio/tests.animal
@@ -83,4 +85,11 @@ GET https://{{host}}:{{port}}/siteadmin/uesio/tests/testsite/metadata/types/secr
 Accept: application/json
 HTTP 200
 [Asserts]
-jsonpath "$[*]" count == 0
+jsonpath "$[*]" count == 3
+jsonpath "$['uesio/core.sendgridkey'].key" == "uesio/core.sendgridkey"
+jsonpath "$['uesio/core.sendgridkey'].namespace" == "uesio/core"
+jsonpath "$['uesio/core.sendgridkey'].icon" == "hub"
+jsonpath "$['uesio/tests.test_oauth_client_id'].key" == "uesio/tests.test_oauth_client_id"
+jsonpath "$['uesio/tests.test_oauth_client_id'].namespace" == "uesio/tests"
+jsonpath "$['uesio/tests.test_oauth_client_secret'].key" == "uesio/tests.test_oauth_client_secret"
+jsonpath "$['uesio/tests.test_oauth_client_secret'].namespace" == "uesio/tests"

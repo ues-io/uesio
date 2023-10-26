@@ -2,6 +2,7 @@ import { Context } from "../../../context/context"
 import { addOrder, setOrder, removeOrder, getFullWireId } from ".."
 import { dispatch } from "../../../store/store"
 import { MetadataKey } from "../../../metadata/types"
+import { OrderState } from "../types"
 
 export const add = (
 	context: Context,
@@ -26,7 +27,7 @@ export const add = (
 export const set = (
 	context: Context,
 	wireName: string,
-	order: { field: MetadataKey; desc: boolean }[]
+	order: OrderState[]
 ) => {
 	const viewId = context.getViewId()
 	if (order.constructor !== Array) {

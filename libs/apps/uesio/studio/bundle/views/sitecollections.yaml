@@ -53,7 +53,7 @@ definition:
               uesio.context:
                 wire: sites
               params:
-                selected: sitecollections
+                selected: collections
         content:
           - uesio/io.titlebar:
               uesio.variant: uesio/io.main

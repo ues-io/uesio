@@ -1,6 +1,6 @@
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"uesio\"}"
+    "token": "uesio"
 }
 
 # Extract the sessionid from set-cookie header
@@ -11,6 +11,7 @@ user_id: jsonpath "$.user.id"
 
 # Delete the test site if it already exists
 DELETE https://{{host}}:{{port}}/site/api/v1/collection/uesio/studio/site?uesio/studio.name=eq.testsite
+x-uesio-app: uesio/tests
 HTTP 204
 
 # Delete the tests app if it already exists, which should cascade delete the workspace and all of its metadata
@@ -186,7 +187,7 @@ HTTP 200
 jsonpath "$.wires[0].errors" == null
 
 # Set the google auth source config client id value for the workspace
-POST https://{{host}}:{{port}}/siteadmin/uesio/tests/testsite/configvalues/uesio/core/google_auth_client_id
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/configvalues/uesio/core/google_auth_client_id
 {
     "value": "A client id"
 }

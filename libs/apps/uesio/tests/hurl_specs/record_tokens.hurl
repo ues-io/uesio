@@ -1,7 +1,7 @@
 # Log into the studio as uesio
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"uesio\"}"
+    "token": "uesio"
 }
 
 # Workspace users can access everything
@@ -28,7 +28,7 @@ jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "Evil Corp"
 # Log into a real site as chad
 POST https://tests.{{domain}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"chad\"}"
+    "token": "chad"
 }
 HTTP 200
 
@@ -88,7 +88,7 @@ HTTP 200
 # Log in as vlad
 POST https://tests.{{domain}}:{{port}}/site/auth/uesio/core/mock/login
 {
-    "token": "{\"subject\":\"vlad\"}"
+    "token": "vlad"
 }
 HTTP 200
 

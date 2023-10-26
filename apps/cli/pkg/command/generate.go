@@ -42,7 +42,7 @@ func Generate(key string) error {
 		return err
 	}
 
-	paramsURL := fmt.Sprintf("version/%s/%s/bots/params/generator/%s/%s", app, version, namespace, name)
+	paramsURL := fmt.Sprintf("version/%s/%s/bots/params/generator/%s/%s", namespace, version, namespace, name)
 
 	botParams := &meta.BotParamsResponse{}
 	err = call.GetJSON(paramsURL, sessid, botParams)
@@ -55,7 +55,7 @@ func Generate(key string) error {
 		return err
 	}
 
-	generateURL := fmt.Sprintf("version/%s/%s/metadata/generate/%s/%s", app, version, namespace, name)
+	generateURL := fmt.Sprintf("version/%s/%s/metadata/generate/%s/%s", namespace, version, namespace, name)
 
 	payloadBytes := &bytes.Buffer{}
 

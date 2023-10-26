@@ -1,0 +1,4 @@
+name: integration
+type: "TEXT"
+label: Integration
+required: true

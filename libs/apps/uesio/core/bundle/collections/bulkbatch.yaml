@@ -2,5 +2,5 @@ name: bulkbatch
 uniqueKey:
   - uesio/core.autoid
 public: true
-label: bulk batch
-pluralLabel: bulk batches
+label: Bulk Batch
+pluralLabel: Bulk Batches

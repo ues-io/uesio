@@ -1,0 +1,5 @@
+name: signuproute
+type: METADATA
+label: Signup Route
+metadata:
+  type: ROUTE

@@ -1,0 +1,7 @@
+name: recordchallengetokens
+type: REFERENCEGROUP
+label: Record Challenge Tokens
+referenceGroup:
+  collection: recordchallengetoken
+  field: workspace
+  onDelete: CASCADE
