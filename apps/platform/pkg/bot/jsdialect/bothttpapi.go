@@ -8,6 +8,7 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 
@@ -15,7 +16,6 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	httpClient "github.com/thecloudmasters/uesio/pkg/http"
 	"github.com/thecloudmasters/uesio/pkg/integ/web"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	oauthlib "github.com/thecloudmasters/uesio/pkg/oauth2"
@@ -142,8 +142,8 @@ func (api *BotHttpAPI) Request(req *BotHttpRequest) *BotHttpResponse {
 		}
 	}
 
-	// Apply authentication
-	client, err := api.authenticateRequest(httpReq, NewBotHttpAuth(api.integration))
+	// Perform the request using the selected authentication paradigm
+	httpResp, err := api.makeRequest(httpReq, NewBotHttpAuth(api.integration))
 	if err != nil {
 		switch err.(type) {
 		case *UnauthorizedException:
@@ -153,10 +153,6 @@ func (api *BotHttpAPI) Request(req *BotHttpRequest) *BotHttpResponse {
 		}
 	}
 
-	httpResp, err := client.Do(httpReq)
-	if err != nil {
-		return ServerError(err)
-	}
 	defer httpResp.Body.Close()
 
 	// Read the full body into a byte array, so we can cache / parse
@@ -186,17 +182,16 @@ func (api *BotHttpAPI) Request(req *BotHttpRequest) *BotHttpResponse {
 	}
 }
 
-// authenticateRequest performs any authentication needed for the request, mutating it as necessary,
-// and returns an HTTP client which can be ued for perform the request
-func (api *BotHttpAPI) authenticateRequest(req *http.Request, auth *BotHttpAuth) (*http.Client, error) {
-	client := httpClient.Get()
+// makeRequest performs any authentication needed for the request, mutating it as necessary,
+// and then performs the request.
+func (api *BotHttpAPI) makeRequest(req *http.Request, auth *BotHttpAuth) (*http.Response, error) {
 	switch auth.Type {
 	case "API_KEY":
 		// TODO: Determine where to put the key (header, query param, etc.)
 		// and apply this to the request
 		break
 	case "OAUTH2_AUTHORIZATION_CODE":
-		return api.getOAuth2AuthorizationCodeClient(req, auth)
+		return api.makeRequestWithOAuth2AuthorizationCode(req, auth)
 	case "OAUTH2_CLIENT_CREDENTIALS":
 		// TODO: Check for an integration credential record for the "system" user for the tenant,
 		// and if one exists and is unexpired, use this token directly,
@@ -204,7 +199,7 @@ func (api *BotHttpAPI) authenticateRequest(req *http.Request, auth *BotHttpAuth)
 
 		break
 	}
-	return client, nil
+	return nil, nil
 }
 
 type UnauthorizedException struct {
@@ -218,7 +213,7 @@ func (e *UnauthorizedException) Error() string {
 	return e.msg
 }
 
-func (api *BotHttpAPI) getOAuth2AuthorizationCodeClient(req *http.Request, auth *BotHttpAuth) (*http.Client, error) {
+func (api *BotHttpAPI) makeRequestWithOAuth2AuthorizationCode(req *http.Request, auth *BotHttpAuth) (*http.Response, error) {
 	ctx := context.Background()
 
 	config, err := oauthlib.GetConfig(auth.Credentials, api.session.GetContextSite().GetHost())
@@ -246,13 +241,16 @@ func (api *BotHttpAPI) getOAuth2AuthorizationCodeClient(req *http.Request, auth 
 	if integrationCredential == nil {
 		return nil, NewUnauthorizedException("user has not yet authorized this integration")
 	}
+	if integrationCredential == nil {
+		return nil, NewUnauthorizedException("user has not yet authorized this integration")
+	}
 	accessToken, _ := integrationCredential.GetFieldAsString(oauthlib.AccessTokenField)
 	refreshToken, _ := integrationCredential.GetFieldAsString(oauthlib.RefreshTokenField)
 	accessTokenExpiry, _ := integrationCredential.GetField(oauthlib.AccessTokenExpirationField)
 	var expiry time.Time
 	if accessTokenExpiry != nil {
-		if int64Value, isValid := accessTokenExpiry.(int64); isValid {
-			expiry = time.Unix(int64Value, 0)
+		if typedVal, isValid := accessTokenExpiry.(float64); isValid {
+			expiry = time.Unix(int64(typedVal), 0)
 		}
 	}
 	tok := &oauth2.Token{
@@ -260,7 +258,33 @@ func (api *BotHttpAPI) getOAuth2AuthorizationCodeClient(req *http.Request, auth 
 		RefreshToken: refreshToken,
 		Expiry:       expiry,
 	}
-	return config.Client(ctx, tok), nil
+	// If we already have an authorization header, add it in
+	if accessToken != "" {
+		req.Header.Add("Bearer", "Authorization "+accessToken)
+	}
+	client := config.Client(ctx, tok)
+
+	httpResp, err := client.Do(req)
+
+	// If there are no errors, return the response directly
+	if err == nil {
+		return httpResp, nil
+	}
+
+	// Otherwise, we may need to reauthenticate
+	switch typedErr := err.(type) {
+	case *url.Error:
+		switch innerErr := typedErr.Err.(type) {
+		case *oauth2.RetrieveError:
+			// This usually means that the refresh token is invalid, expired, or can't be obtained.
+			// Delete it, or at least attempt to
+			if deleteErr := oauthlib.DeleteIntegrationCredential(integrationCredential, coreSession, connection); deleteErr != nil {
+				slog.Error("unable to delete integration credential record: " + deleteErr.Error())
+			}
+			return nil, NewUnauthorizedException(innerErr.Error())
+		}
+	}
+	return nil, errors.New("authentication failed: " + err.Error())
 }
 
 func getBotHeaders(header http.Header) map[string]string {

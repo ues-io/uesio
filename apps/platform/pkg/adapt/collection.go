@@ -51,6 +51,10 @@ func (c *Collection) Loop(iter meta.GroupIterator) error {
 	return nil
 }
 
+func (c *Collection) First() *Item {
+	return (*c)[0]
+}
+
 func (c *Collection) Len() int {
 	return len(*c)
 }

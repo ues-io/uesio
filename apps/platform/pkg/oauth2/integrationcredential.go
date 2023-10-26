@@ -56,16 +56,36 @@ func UpsertIntegrationCredential(integrationCredential *adapt.Item, coreSession 
 	return nil
 }
 
+// DeleteIntegrationCredential deletes a provided integration credential
+func DeleteIntegrationCredential(integrationCredential *adapt.Item, coreSession *sess.Session, platformConn adapt.Connection) error {
+	requests := []datasource.SaveRequest{
+		{
+			Collection: IntegrationCredentialCollection,
+			Wire:       "integrationcreds",
+			Options:    &adapt.SaveOptions{},
+			Deletes: &adapt.Collection{
+				integrationCredential,
+			},
+			Params: datasource.GetParamsFromSession(coreSession),
+		},
+	}
+	if err := datasource.SaveWithOptions(requests, coreSession, datasource.GetConnectionSaveOptions(platformConn)); err != nil {
+		return err
+	}
+	return nil
+}
+
 // GetIntegrationCredential retrieves any existing integration credential record for the provided user / integration
 func GetIntegrationCredential(
 	userId, integrationName string, coreSession *sess.Session, connection adapt.Connection,
 ) (*adapt.Item, error) {
-	var integrationCredentials *adapt.Collection
+	integrationCredentials := &adapt.Collection{}
 	fetchIntegrationCredentialOp := &adapt.LoadOp{
 		Params:         datasource.GetParamsFromSession(coreSession),
 		CollectionName: IntegrationCredentialCollection,
 		Collection:     integrationCredentials,
 		BatchSize:      1,
+		Query:          true,
 		Fields: []adapt.LoadRequestField{
 			{
 				ID: adapt.ID_FIELD,
@@ -91,10 +111,13 @@ func GetIntegrationCredential(
 			},
 		},
 	}
-	if err := datasource.LoadOp(
-		fetchIntegrationCredentialOp,
-		connection,
+	if _, err := datasource.Load(
+		[]*adapt.LoadOp{fetchIntegrationCredentialOp},
 		coreSession,
+		&datasource.LoadOptions{
+			Connection: connection,
+			Metadata:   connection.GetMetadata(),
+		},
 	); err != nil {
 		return nil, errors.New("unable to load existing integration credentials: " + err.Error())
 	}
@@ -102,5 +125,5 @@ func GetIntegrationCredential(
 	if integrationCredentials.Len() == 0 {
 		return nil, nil
 	}
-	return (*integrationCredentials)[0], nil
+	return integrationCredentials.First(), nil
 }

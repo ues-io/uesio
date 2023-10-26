@@ -670,6 +670,8 @@ func performExternalIntegrationLoad(integrationName string, op *adapt.LoadOp, co
 	return nil
 }
 
+// LoadOp loads one operation within a sequence.
+// WARNING!!! This is not a shortcut for Load(ops...)---DO NOT CALL THIS unless you know what you're doing
 func LoadOp(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
 
 	if err := connection.Load(op, session); err != nil {
