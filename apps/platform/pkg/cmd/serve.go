@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/thecloudmasters/uesio/pkg/controller/oauth"
 	"github.com/thecloudmasters/uesio/pkg/tls"
 
 	"github.com/gorilla/mux"
@@ -156,6 +157,13 @@ func serve(cmd *cobra.Command, args []string) {
 	// SEO Routes
 	lr.HandleFunc("/robots.txt", controller.Robots).Methods(http.MethodGet)
 	lr.HandleFunc("/favicon.ico", controller.Favicon).Methods(http.MethodGet)
+
+	// OAuth routes
+	sr.HandleFunc("/oauth2/callback", oauth.Callback).Methods(http.MethodGet)
+	wr.HandleFunc(fmt.Sprintf("/oauth2/authorize/%s", itemParam), oauth.GetRedirectMetadata).Methods(http.MethodGet)
+	sr.HandleFunc(fmt.Sprintf("/oauth2/authorize/%s", itemParam), oauth.GetRedirectMetadata).Methods(http.MethodGet)
+	sa.HandleFunc(fmt.Sprintf("/oauth2/authorize/%s", itemParam), oauth.GetRedirectMetadata).Methods(http.MethodGet)
+	vr.HandleFunc(fmt.Sprintf("/oauth2/authorize/%s", itemParam), oauth.GetRedirectMetadata).Methods(http.MethodGet)
 
 	// Userfile routes for site and workspace context
 	userfileUploadPath := "/userfiles/upload"

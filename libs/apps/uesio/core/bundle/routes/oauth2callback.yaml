@@ -1,0 +1,4 @@
+name: oauth2callback
+path: oauth2/callback
+view: oauth2callback
+title: OAuth Callback

@@ -11,13 +11,15 @@ import (
 
 func NewLoadBotAPI(bot *meta.Bot, session *sess.Session, connection adapt.Connection, loadOp *adapt.LoadOp, integrationConnection adapt.IntegrationConnection) *LoadBotAPI {
 	return &LoadBotAPI{
+		// Private
 		session:               session,
 		loadOp:                loadOp,
 		connection:            connection,
 		integrationConnection: integrationConnection,
-		LogApi:                NewBotLogAPI(bot),
-		Http:                  NewBotHttpAPI(bot, session, integrationConnection),
-		LoadRequestMetadata:   NewLoadRequestMetadata(loadOp),
+		// Public
+		LogApi:              NewBotLogAPI(bot),
+		Http:                NewBotHttpAPI(bot, session, integrationConnection),
+		LoadRequestMetadata: NewLoadRequestMetadata(loadOp),
 	}
 }
 
