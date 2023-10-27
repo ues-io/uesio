@@ -46,7 +46,7 @@ func (c *ComponentVariant) GetBytes() ([]byte, error) {
 }
 
 func (c *ComponentVariant) MarshalJSONObject(enc *gojay.Encoder) {
-	enc.AddObjectKey("definition", (*YAMLDefinition)(c.Definition))
+	enc.AddObjectKey("definition", (*YAMLtoJSONMap)(c.Definition))
 	enc.AddStringKey("extends", c.Extends)
 	enc.AddStringKey("component", c.Component)
 	enc.AddStringKey("namespace", c.Namespace)
