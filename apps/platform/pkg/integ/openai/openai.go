@@ -10,6 +10,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/usage"
 )
 
 type AutoCompleteOptions struct {
@@ -96,6 +97,9 @@ func (c *Connection) AutoCompleteDefault(options *AutoCompleteOptions) ([]string
 		return nil, err
 	}
 
+	usage.RegisterEvent("INPUT_TOKENS", "INTEGRATION", c.integration.GetKey(), int64(resp.Usage.PromptTokens), c.session)
+	usage.RegisterEvent("OUTPUT_TOKENS", "INTEGRATION", c.integration.GetKey(), int64(resp.Usage.CompletionTokens), c.session)
+
 	outputs := []string{}
 
 	for _, choice := range resp.Choices {
@@ -125,6 +129,9 @@ func (c *Connection) AutoCompleteChat(options *AutoCompleteOptions) ([]string, e
 		fmt.Printf("error performing chat completion: %v\n", err)
 		return nil, err
 	}
+
+	usage.RegisterEvent("INPUT_TOKENS", "INTEGRATION", c.integration.GetKey(), int64(resp.Usage.PromptTokens), c.session)
+	usage.RegisterEvent("OUTPUT_TOKENS", "INTEGRATION", c.integration.GetKey(), int64(resp.Usage.CompletionTokens), c.session)
 
 	outputs := []string{}
 
