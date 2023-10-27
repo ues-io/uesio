@@ -1,0 +1,3 @@
+name: hasaccesstoken
+type: CHECKBOX
+label: Has Access Token?
