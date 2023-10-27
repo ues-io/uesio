@@ -205,15 +205,15 @@ type FormulaMetadata struct {
 }
 
 type FieldMetadata struct {
-	Name                   string                    `json:"name"`
-	Namespace              string                    `json:"namespace"`
-	Createable             bool                      `json:"createable"`
-	Accessible             bool                      `json:"accessible"`
-	Updateable             bool                      `json:"updateable"`
-	Required               bool                      `json:"required"`
-	Length                 int                       `json:"length"`
-	Type                   string                    `json:"type"`
-	Label                  string                    `json:"label"`
+	Name                   string                    `json:"name" bot:"name"`
+	Namespace              string                    `json:"namespace" bot:"namespace"`
+	Createable             bool                      `json:"createable" bot:"createable"`
+	Accessible             bool                      `json:"accessible" bot:"accessible"`
+	Updateable             bool                      `json:"updateable" bot:"updateable"`
+	Required               bool                      `json:"required" bot:"required"`
+	Length                 int                       `json:"length" bot:"length"`
+	Type                   string                    `json:"type" bot:"type"`
+	Label                  string                    `json:"label" bot:"label"`
 	SelectListMetadata     *SelectListMetadata       `json:"selectlist,omitempty"`
 	NumberMetadata         *NumberMetadata           `json:"number,omitempty"`
 	ReferenceMetadata      *ReferenceMetadata        `json:"reference,omitempty"`
@@ -226,7 +226,7 @@ type FieldMetadata struct {
 	AutoPopulate           string                    `json:"autopopulate,omitempty"`
 	SubFields              map[string]*FieldMetadata `json:"subfields,omitempty"`
 	SubType                string                    `json:"subtype,omitempty"`
-	ColumnName             string                    `json:"-"`
+	ColumnName             string                    `json:"-" bot:"externalName"`
 	IsFormula              bool                      `json:"-"`
 }
 

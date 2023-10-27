@@ -156,6 +156,13 @@ definition:
                             - uesio/io.field:
                                 fieldId: uesio/studio.collection
                                 label: Collection
+                            - uesio/io.field:
+                                fieldId: uesio/studio.columnname
+                                uesio.display:
+                                  - type: fieldValue
+                                    wire: collections
+                                    field: uesio/studio.type
+                                    value: EXTERNAL
                             - uesio/io.box:
                                 uesio.display:
                                   - field: uesio/studio.type

@@ -2,14 +2,16 @@ package jsdialect
 
 import (
 	"encoding/json"
-	"github.com/thecloudmasters/uesio/pkg/meta"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"sync/atomic"
 	"testing"
 
+	"github.com/thecloudmasters/uesio/pkg/meta"
+
 	"github.com/stretchr/testify/assert"
+
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -74,7 +76,7 @@ func Test_Request(t *testing.T) {
 		makeRequestNTimes   int
 	}
 
-	botApi := NewBotHttpAPI(&meta.Bot{}, &sess.Session{})
+	botApi := NewBotHttpAPI(&meta.Bot{}, &sess.Session{}, nil)
 
 	tests := []struct {
 		name string

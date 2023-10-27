@@ -1,3 +1,3 @@
 name: tablename
 type: TEXT
-label: Table Name
+label: External Collection Name
