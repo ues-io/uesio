@@ -96,6 +96,10 @@ definition:
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: uesio/core.id
+        - field: uesio/studio.conditions
+          valueSource: VALUE
+          value:
+            - field: ""
     newfield:
       collection: uesio/studio.field
       fields:
@@ -611,7 +615,7 @@ definition:
                     components:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.section
-                          title: Record Challenge Tokens
+                          title: Record-level Security
                           actions:
                             - uesio/io.group:
                                 components:
@@ -632,6 +636,7 @@ definition:
                                               conditions:
                                                 - type: hasValue
                                                   operator: EQUALS
+                                                  wire: collections
                                                   value: $Record{uesio/studio.accessfield}
                                                 - type: wireHasChanges
                                                   wire: collections
@@ -1147,16 +1152,17 @@ definition:
                   fieldId: uesio/studio.access
               - uesio/io.field:
                   fieldId: uesio/studio.conditions
+                  label: " "
+                  list:
+                    noAdd: true
+                    noDelete: true
                   uesio.context:
                     workspace:
                       name: $Param{workspacename}
                       app: $Param{app}
       afterClose:
-        - signal: wire/MARK_FOR_DELETE
+        - signal: wire/CANCEL
           wire: recordchallengetokens
-        - signal: wire/SAVE
-          wires:
-            - recordchallengetokens
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
@@ -1170,17 +1176,13 @@ definition:
               - signal: wire/SAVE
                 wires:
                   - recordchallengetokens
-                  - collections
               - signal: panel/TOGGLE
                 panel: newRecordChallengeToken
         - uesio/io.button:
             uesio.variant: uesio/io.secondary
             text: $Label{uesio/io.cancel}
             signals:
-              - signal: wire/MARK_FOR_DELETE
+              - signal: wire/CANCEL
                 wire: recordchallengetokens
-              - signal: wire/SAVE
-                wires:
-                  - recordchallengetokens
               - signal: panel/TOGGLE
                 panel: newRecordChallengeToken
