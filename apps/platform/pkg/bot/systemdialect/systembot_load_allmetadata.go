@@ -2,7 +2,6 @@ package systemdialect
 
 import (
 	"errors"
-	"fmt"
 	"strings"
 
 	"github.com/teris-io/shortid"
@@ -38,33 +37,11 @@ func GetWorkspaceIDFromParams(params map[string]string, connection adapt.Connect
 	if workspaceid != "" {
 		return workspaceid, nil
 	}
-	inContextSession, err := getContextSessionFromParams(params, connection, session)
+	inContextSession, err := datasource.GetContextSessionFromParams(params, connection, session)
 	if err != nil {
 		return "", err
 	}
 	return inContextSession.GetWorkspaceID(), nil
-}
-
-func getContextSessionFromParams(params map[string]string, connection adapt.Connection, session *sess.Session) (*sess.Session, error) {
-
-	workspace := params["workspacename"]
-	site := params["sitename"]
-	if workspace == "" && site == "" {
-		return nil, errors.New("no workspace name or site name parameter provided")
-	}
-	app := params["app"]
-	if app == "" {
-		return nil, errors.New("no app parameter provided")
-	}
-
-	if workspace != "" {
-		workspaceKey := fmt.Sprintf("%s:%s", app, workspace)
-		return datasource.AddWorkspaceContextByKey(workspaceKey, session, connection)
-	}
-
-	siteKey := fmt.Sprintf("%s:%s", app, site)
-	return datasource.AddSiteAdminContextByKey(siteKey, session, connection)
-
 }
 
 func runCoreMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
@@ -118,7 +95,7 @@ func runStudioMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 	allMetadataCondition := extractConditionByField(op.Conditions, allMetadataField)
 
 	if allMetadataCondition != nil && allMetadataCondition.Value == true {
-		inContextSession, err := getContextSessionFromParams(op.Params, connection, session)
+		inContextSession, err := datasource.GetContextSessionFromParams(op.Params, connection, session)
 		if err != nil {
 			return err
 		}

@@ -159,6 +159,8 @@ func (b *SystemDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adap
 	switch op.CollectionName {
 	case "uesio/core.usage":
 		botFunction = runUsageLoadBot
+	case "uesio/core.myintegrationcredentials":
+		botFunction = runMyIntegrationCredentialsLoadBot
 	case "uesio/studio.recentmetadata":
 		botFunction = runRecentMetadataLoadBot
 	case "uesio/studio.blogentry":

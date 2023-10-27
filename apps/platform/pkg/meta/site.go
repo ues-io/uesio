@@ -6,6 +6,7 @@ type Site struct {
 	Bundle    *Bundle    `json:"uesio/studio.bundle"`
 	App       *App       `json:"uesio/studio.app"`
 	bundleDef *BundleDef `json:"-"`
+	host      string     `json:"-"`
 	Domain    string
 	Subdomain string
 	Title     string `json:"uesio/studio.title"`
@@ -54,4 +55,14 @@ func (s *Site) Len() int {
 func (s *Site) UnmarshalJSON(data []byte) error {
 	type alias Site
 	return refScanner((*alias)(s), data)
+}
+
+// GetHost - return the host associated with this site, which must be set with SetHost()
+func (s *Site) GetHost() string {
+	return s.host
+}
+
+// SetHost - return the host associated with this site, which must be set with SetHost()
+func (s *Site) SetHost(host string) {
+	s.host = host
 }
