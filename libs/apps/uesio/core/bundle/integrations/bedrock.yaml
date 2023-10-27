@@ -1,0 +1,4 @@
+name: bedrock
+public: true
+type: bedrock
+credentials: uesio/core.aws

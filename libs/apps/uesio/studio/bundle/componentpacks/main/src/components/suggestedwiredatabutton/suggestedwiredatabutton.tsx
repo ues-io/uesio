@@ -110,10 +110,10 @@ const SuggestedWireDataButton: definition.UC<ComponentDefinition> = (props) => {
 	const collection = wire?.getCollection()
 	const pluralLabel = collection?.getPluralLabel()
 
-	const prompt = `I have a database table that stores ${pluralLabel}. I would like to generate sample data for this table. Please generate 10 sample records for this table, output as a JSON array of JSON objects, with each JSON object having the following properties: ${getFieldMetadataForPrompt(
+	const prompt = `I have a database table that stores ${pluralLabel}. I would like to generate sample data for this table. Please generate 5 sample records for this table, output as a JSON array of JSON objects, with each JSON object having the following properties: ${getFieldMetadataForPrompt(
 		fields,
 		collection
-	)}. Please respond with valid JSON!`
+	)}. Please respond with valid JSON! Do not respond with any text other than valid JSON.`
 
 	return (
 		<SuggestDataButton
