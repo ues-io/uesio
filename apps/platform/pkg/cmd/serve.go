@@ -313,10 +313,6 @@ func serve(cmd *cobra.Command, args []string) {
 	wr.HandleFunc("/secrets/"+itemParam, controller.SetSecret).Methods("POST")
 	sa.HandleFunc("/secrets/"+itemParam, controller.SetSecret).Methods("POST")
 
-	// AI autocompletion routes
-	wr.HandleFunc("/ai/complete", controller.AutocompleteHandler).Methods("POST")
-	sa.HandleFunc("/ai/complete", controller.AutocompleteHandler).Methods("POST")
-
 	// Feature Flag Routes
 	wr.HandleFunc("/featureflags", controller.FeatureFlag).Methods("GET")
 	sa.HandleFunc("/featureflags/{user}", controller.FeatureFlag).Methods("GET")

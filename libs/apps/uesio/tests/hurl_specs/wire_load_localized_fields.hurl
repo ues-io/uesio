@@ -43,10 +43,12 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].debugQueryString" == ```
 SELECT
-main.fields->>'uesio/tests.genus' AS "uesio/tests.genus",
-main.fields->>'uesio/tests.species' AS "uesio/tests.species",
-main.id::text AS "uesio/core.id",
-main.uniquekey AS "uesio/core.uniquekey"
+jsonb_build_object(
+'uesio/core.id',main.id,
+'uesio/core.uniquekey',main.uniquekey,
+'uesio/tests.genus',main.fields->'uesio/tests.genus',
+'uesio/tests.species',main.fields->'uesio/tests.species'
+)
 FROM data as "main"
 WHERE
 main.collection = $1 AND

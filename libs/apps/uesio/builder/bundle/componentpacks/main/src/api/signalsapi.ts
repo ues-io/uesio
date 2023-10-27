@@ -1,7 +1,6 @@
 import { collection, component, context, definition, wire } from "@uesio/ui"
 import collectionSignals from "../signals/collection"
 import componentSignals from "../signals/component"
-import aiSignals from "../signals/ai"
 import botSignals from "../signals/bot"
 import notificationSignals from "../signals/notification"
 import panelSignals from "../signals/panel"
@@ -24,7 +23,6 @@ const signalBandDefinitions: SignalBandDefinition[] = [
 	componentSignals,
 	collectionSignals,
 	userSignals,
-	aiSignals,
 ]
 
 type SignalOutput = {
@@ -99,21 +97,13 @@ const allSignalSelectOptions = signalBandDefinitions
 	})
 	.flat()
 
-type SelectOptionFilter = (option: wire.SelectOption) => boolean
-
-const getDefaultSignalProperties = (
-	optionsFilter?: SelectOptionFilter
-): ComponentProperty[] =>
+const getDefaultSignalProperties = (): ComponentProperty[] =>
 	[
 		{
 			name: "signal",
 			label: "Signal",
 			type: "SELECT",
-			options: collection.addBlankSelectOption(
-				optionsFilter
-					? allSignalSelectOptions.filter(optionsFilter)
-					: allSignalSelectOptions
-			),
+			options: collection.addBlankSelectOption(allSignalSelectOptions),
 		},
 	] as ComponentProperty[]
 
@@ -177,16 +167,9 @@ const getSignalProperties = (
 			}
 		}
 	}
-	// If the user doesn't have permission to use AI signals, strip these out
-	let optionsFilter = undefined
-	const useAiSignalsFlag = context.getFeatureFlag("use_ai_signals")
-	if (!useAiSignalsFlag || !useAiSignalsFlag.value) {
-		optionsFilter = (option: wire.SelectOption) =>
-			!option.value.startsWith("ai/")
-	}
 
 	return [
-		...getDefaultSignalProperties(optionsFilter),
+		...getDefaultSignalProperties(),
 		...(descriptor && descriptor.outputs?.length ? [stepIdProperty] : []),
 		...(descriptor && descriptor.properties
 			? descriptor.properties(signalDefinition, context)

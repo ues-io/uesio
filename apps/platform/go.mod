@@ -9,13 +9,13 @@ require (
 	github.com/aws/aws-sdk-go-v2/config v1.19.0
 	github.com/aws/aws-sdk-go-v2/credentials v1.13.43
 	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.11.91
-	github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider v1.27.1
+	github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider v1.27.2
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.40.2
 	github.com/bigkevmcd/go-cachewrapper v0.0.0-20200727210054-e5d8068f6a7e
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/dimchansky/utfbom v1.1.1
 	github.com/dop251/goja v0.0.0-20230707174833-636fdf960de1
-	github.com/evanw/esbuild v0.14.50
+	github.com/evanw/esbuild v0.19.5
 	github.com/fatih/color v1.15.0
 	github.com/felixge/httpsnoop v1.0.3
 	github.com/francoispqt/gojay v1.2.13
@@ -37,7 +37,7 @@ require (
 	github.com/zachelrath/yaml-jsonpointer v0.2.0
 	golang.org/x/exp v0.0.0-20230315142452-642cacee5cc0
 	golang.org/x/text v0.13.0
-	google.golang.org/api v0.147.0
+	google.golang.org/api v0.148.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -65,8 +65,8 @@ require (
 	go.uber.org/atomic v1.11.0 // indirect
 	golang.org/x/oauth2 v0.13.0 // indirect
 	golang.org/x/sync v0.4.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20231009173412-8bfb1ae86b6c // indirect
-	google.golang.org/grpc v1.58.2 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20231012201019-e917dd12ba7a // indirect
+	google.golang.org/grpc v1.58.3 // indirect
 )
 
 require (

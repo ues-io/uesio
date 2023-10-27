@@ -4,6 +4,7 @@ extends: uesio/studio.navcta
 definition:
   uesio.styleTokens:
     icon:
+      - relative
       - after:content-['👆']
       - after:text-xl
       - after:absolute

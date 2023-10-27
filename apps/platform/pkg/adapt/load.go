@@ -35,11 +35,7 @@ type LoadOp struct {
 type LoadOpWrapper LoadOp
 
 func (op *LoadOp) GetBytes() ([]byte, error) {
-	bytes, err := json.Marshal(op)
-	if err != nil {
-		return nil, err
-	}
-	return bytes, nil
+	return json.Marshal(op)
 }
 
 func (op *LoadOp) GetKey() string {
@@ -209,6 +205,8 @@ func GetFieldsMap(fields []LoadRequestField, collectionMetadata *CollectionMetad
 
 			refReq := referencedCollections.Get(referencedCollection)
 			refReq.Metadata = referencedCollectionMetadata
+
+			refReq.AddRefField(fieldMetadata)
 
 			if referencedCollectionMetadata.Integration != collectionMetadata.Integration {
 				continue

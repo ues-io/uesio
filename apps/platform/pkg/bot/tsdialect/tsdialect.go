@@ -149,8 +149,8 @@ func (b *TSDialect) hydrateBot(bot *meta.Bot, session *sess.Session) error {
 	return nil
 }
 
-func RunBot(botName string, contents string, api interface{}, errorFunc func(string)) error {
-	return jsdialect.RunBot(botName, contents, api, errorFunc)
+func RunBot(bot *meta.Bot, api interface{}, errorFunc func(string)) error {
+	return jsdialect.RunBot(bot, api, errorFunc)
 }
 
 func (b *TSDialect) BeforeSave(bot *meta.Bot, request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
@@ -159,7 +159,7 @@ func (b *TSDialect) BeforeSave(bot *meta.Bot, request *adapt.SaveOp, connection 
 	if err != nil {
 		return nil
 	}
-	return RunBot(bot.Name, bot.FileContents, botAPI, botAPI.AddError)
+	return RunBot(bot, botAPI, botAPI.AddError)
 }
 
 func (b *TSDialect) AfterSave(bot *meta.Bot, request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
@@ -168,7 +168,7 @@ func (b *TSDialect) AfterSave(bot *meta.Bot, request *adapt.SaveOp, connection a
 	if err != nil {
 		return nil
 	}
-	return RunBot(bot.Name, bot.FileContents, botAPI, botAPI.AddError)
+	return RunBot(bot, botAPI, botAPI.AddError)
 }
 
 func (b *TSDialect) CallBot(bot *meta.Bot, params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
@@ -177,7 +177,7 @@ func (b *TSDialect) CallBot(bot *meta.Bot, params map[string]interface{}, connec
 	if err != nil {
 		return nil, err
 	}
-	err = RunBot(bot.Name, bot.FileContents, botAPI, nil)
+	err = RunBot(bot, botAPI, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -198,7 +198,7 @@ func (b *TSDialect) CallGeneratorBot(bot *meta.Bot, create retrieve.WriterCreato
 	if err != nil {
 		return nil
 	}
-	return RunBot(bot.Name, bot.FileContents, botAPI, nil)
+	return RunBot(bot, botAPI, nil)
 }
 
 func (b *TSDialect) RouteBot(bot *meta.Bot, route *meta.Route, session *sess.Session) (*meta.Route, error) {
@@ -214,7 +214,7 @@ func (b *TSDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adapt.Co
 	if err := b.hydrateBot(bot, session); err != nil {
 		return err
 	}
-	return RunBot(bot.Name, bot.FileContents, botAPI, nil)
+	return RunBot(bot, botAPI, nil)
 }
 
 func (b *TSDialect) SaveBot(bot *meta.Bot, op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
@@ -226,7 +226,7 @@ func (b *TSDialect) SaveBot(bot *meta.Bot, op *adapt.SaveOp, connection adapt.Co
 	if err := b.hydrateBot(bot, session); err != nil {
 		return err
 	}
-	return RunBot(bot.Name, bot.FileContents, botAPI, nil)
+	return RunBot(bot, botAPI, nil)
 }
 
 func (b *TSDialect) RunIntegrationActionBot(bot *meta.Bot, action *meta.IntegrationAction, integration adapt.IntegrationConnection, params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
@@ -235,7 +235,7 @@ func (b *TSDialect) RunIntegrationActionBot(bot *meta.Bot, action *meta.Integrat
 	if err != nil {
 		return nil, err
 	}
-	err = RunBot(bot.Name, bot.FileContents, botAPI, nil)
+	err = RunBot(bot, botAPI, nil)
 	if err != nil {
 		return nil, err
 	}

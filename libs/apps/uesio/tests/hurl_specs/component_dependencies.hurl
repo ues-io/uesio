@@ -88,10 +88,17 @@ GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/
 HTTP 200
 [Asserts]
 jsonpath "$.dependencies.componentpack[0].name" == "main"
+#Verify that we get the view def from the declarative component
+jsonpath "$.dependencies.viewdef" count == 2
 # Verify that our expected dependencies are loaded
-jsonpath "$.dependencies.componenttype[0].name" == "declarative2"
 jsonpath "$.dependencies.componenttype[0].type" == "DECLARATIVE"
 jsonpath "$.dependencies.componenttype[0].definition" exists
-jsonpath "$.dependencies.componenttype[0].definition" count == 3
-jsonpath "$.dependencies.componenttype[0].slots" count == 2
+jsonpath "$.dependencies.componenttype[0].definition" count == 2
 jsonpath "$.dependencies.componenttype[0].title" not exists # no builder metadata should be loaded
+jsonpath "$.dependencies.componenttype[1].name" == "declarative2"
+jsonpath "$.dependencies.componenttype[1].type" == "DECLARATIVE"
+jsonpath "$.dependencies.componenttype[1].definition" exists
+jsonpath "$.dependencies.componenttype[1].definition" count == 3
+jsonpath "$.dependencies.componenttype[1].slots" count == 2
+jsonpath "$.dependencies.componenttype[1].title" not exists # no builder metadata should be loaded
+

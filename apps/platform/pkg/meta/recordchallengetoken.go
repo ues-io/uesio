@@ -2,7 +2,7 @@ package meta
 
 import (
 	"errors"
-	"path/filepath"
+	"path"
 )
 
 func NewRecordChallengeToken(collectionKey, key string) (*RecordChallengeToken, error) {
@@ -38,7 +38,7 @@ func (rct *RecordChallengeToken) GetBundleFolderName() string {
 func (rct *RecordChallengeToken) GetPath() string {
 	collectionNamespace, collectionName, _ := ParseKey(rct.CollectionRef)
 	nsUser, appName, _ := ParseNamespace(collectionNamespace)
-	return filepath.Join(nsUser, appName, collectionName, rct.Name) + ".yaml"
+	return path.Join(nsUser, appName, collectionName, rct.Name) + ".yaml"
 }
 
 func (rct *RecordChallengeToken) SetField(fieldName string, value interface{}) error {

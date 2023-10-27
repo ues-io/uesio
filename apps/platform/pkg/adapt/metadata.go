@@ -75,11 +75,7 @@ func (cm *CollectionMetadata) IsReadProtected() bool {
 }
 
 func (cm *CollectionMetadata) GetBytes() ([]byte, error) {
-	bytes, err := json.Marshal(cm)
-	if err != nil {
-		return nil, err
-	}
-	return bytes, nil
+	return json.Marshal(cm)
 }
 
 // GetKey satisfies the Depable interface

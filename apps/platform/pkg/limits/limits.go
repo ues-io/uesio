@@ -5,7 +5,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/featureflagstore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
-	"strconv"
 )
 
 const limitNameMaxDomainsPerUser = "uesio/studio.max_domains_per_user"
@@ -23,10 +22,8 @@ func GetNumericLimit(numericLimitName, user string, session *sess.Session) (int,
 	for _, assignment := range *assignments {
 		if assignment.Flag == numericLimitName {
 			if assignment.Value != nil {
-				if strVal, ok := assignment.Value.(string); ok {
-					if intVal, conversionErr := strconv.Atoi(strVal); conversionErr == nil {
-						return intVal, nil
-					}
+				if floatVal, ok := assignment.Value.(float64); ok {
+					return int(floatVal), nil
 				}
 			}
 		}

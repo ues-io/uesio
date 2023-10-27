@@ -3,7 +3,7 @@ package meta
 import (
 	"errors"
 	"fmt"
-	"path/filepath"
+	"path"
 
 	"gopkg.in/yaml.v3"
 )
@@ -58,7 +58,7 @@ func (ia *IntegrationAction) GetKey() string {
 func (ia *IntegrationAction) GetPath() string {
 	integrationNamespace, integrationName, _ := ParseKey(ia.IntegrationRef)
 	nsUser, appName, _ := ParseNamespace(integrationNamespace)
-	return filepath.Join(nsUser, appName, integrationName, ia.Name) + ".yaml"
+	return path.Join(nsUser, appName, integrationName, ia.Name) + ".yaml"
 }
 
 func (ia *IntegrationAction) SetField(fieldName string, value interface{}) error {

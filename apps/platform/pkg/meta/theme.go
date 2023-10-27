@@ -10,7 +10,7 @@ import (
 type Theme struct {
 	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
-	Definition     yaml.Node `yaml:"definition" json:"uesio/studio.definition"`
+	Definition     *YAMLDef `yaml:"definition" json:"uesio/studio.definition"`
 }
 
 type ThemeWrapper Theme
@@ -20,7 +20,7 @@ func (t *Theme) GetBytes() ([]byte, error) {
 }
 
 func (t *Theme) MarshalJSONObject(enc *gojay.Encoder) {
-	enc.AddObjectKey("definition", (*YAMLDefinition)(&t.Definition))
+	enc.AddObjectKey("definition", (*YAMLtoJSONMap)(t.Definition))
 	enc.AddStringKey("namespace", t.Namespace)
 	enc.AddStringKey("name", t.Name)
 }
