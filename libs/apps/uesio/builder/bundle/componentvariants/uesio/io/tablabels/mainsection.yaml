@@ -5,13 +5,10 @@ definition:
     root:
       - bg-[$Theme{color.primary}]
       - p-2
-      - gap-2
-      - grid
-      - grid-flow-col
-      - auto-cols-max
       - leading-none
     tab:
       - uppercase
+      - inline
       - p-1.5
       - text-[8pt]
       - rounded
