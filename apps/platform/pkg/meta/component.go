@@ -126,30 +126,14 @@ func (c *Component) MarshalJSONObject(enc *gojay.Encoder) {
 	enc.AddStringKey("type", c.GetType())
 	enc.AddStringKey("category", c.Category)
 	enc.AddBoolKey("discoverable", c.Discoverable)
-	if c.Icon != "" {
-		enc.AddStringKey("icon", c.Icon)
-	}
-	if c.Slots != nil {
-		enc.AddArrayKey("slots", (*YAMLDefinition)(c.Slots))
-	}
-	if c.Properties != nil {
-		enc.AddArrayKey("properties", (*YAMLDefinition)(c.Properties))
-	}
-	if c.Sections != nil {
-		enc.AddArrayKey("sections", (*YAMLDefinition)(c.Sections))
-	}
-	if c.DefaultDefinition != nil {
-		enc.AddObjectKey("defaultDefinition", (*YAMLDefinition)(c.DefaultDefinition))
-	}
-	if c.Signals != nil {
-		enc.AddObjectKey("signals", (*YAMLDefinition)(c.Signals))
-	}
-	if c.StyleRegions != nil {
-		enc.AddObjectKey("styleRegions", (*YAMLDefinition)(c.StyleRegions))
-	}
-	if c.Definition != nil {
-		enc.AddArrayKey("definition", (*YAMLDefinition)(c.Definition))
-	}
+	enc.AddStringKeyOmitEmpty("icon", c.Icon)
+	enc.AddArrayKeyOmitEmpty("slots", (*YAMLtoJSONArray)(c.Slots))
+	enc.AddArrayKeyOmitEmpty("properties", (*YAMLtoJSONArray)(c.Properties))
+	enc.AddArrayKeyOmitEmpty("sections", (*YAMLtoJSONArray)(c.Sections))
+	enc.AddObjectKeyOmitEmpty("defaultDefinition", (*YAMLtoJSONMap)(c.DefaultDefinition))
+	enc.AddObjectKeyOmitEmpty("signals", (*YAMLtoJSONMap)(c.Signals))
+	enc.AddObjectKeyOmitEmpty("styleRegions", (*YAMLtoJSONMap)(c.StyleRegions))
+	enc.AddArrayKeyOmitEmpty("definition", (*YAMLtoJSONArray)(c.Definition))
 }
 
 func (c *Component) IsNil() bool {
@@ -214,10 +198,10 @@ func (cdw *RuntimeComponentMetadata) MarshalJSONObject(enc *gojay.Encoder) {
 	enc.AddStringKey("name", cdw.Name)
 	enc.AddStringKey("type", cdw.GetType())
 	if cdw.Definition != nil {
-		enc.AddArrayKey("definition", (*YAMLDefinition)(cdw.Definition))
+		enc.AddArrayKey("definition", (*YAMLtoJSONArray)(cdw.Definition))
 	}
 	if cdw.Slots != nil {
-		enc.AddArrayKey("slots", (*YAMLDefinition)(cdw.Slots))
+		enc.AddArrayKey("slots", (*YAMLtoJSONArray)(cdw.Slots))
 	}
 }
 

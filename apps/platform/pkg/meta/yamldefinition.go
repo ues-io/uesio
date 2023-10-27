@@ -7,16 +7,20 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// YAMLDefinition is a Gojay wrapper around a yaml.Node,
+// YAMLtoJSONArray is a Gojay wrapper around a yaml.Node,
 // providing methods to satisfy Gojay's JSON marshalling interfaces
-type YAMLDefinition yaml.Node
+type YAMLtoJSONArray yaml.Node
 
-func (yd *YAMLDefinition) MarshalJSONArray(enc *gojay.Encoder) {
+func (yd *YAMLtoJSONArray) IsNil() bool {
+	return yd == nil || (yd.Kind != yaml.DocumentNode && yd.Kind != yaml.SequenceNode)
+}
+
+func (yd *YAMLtoJSONArray) MarshalJSONArray(enc *gojay.Encoder) {
 	if yd.Kind == yaml.DocumentNode {
-		yd = (*YAMLDefinition)(yd.Content[0])
+		yd = (*YAMLtoJSONArray)(yd.Content[0])
 	}
 	for i := range yd.Content {
-		item := YAMLDefinition(*yd.Content[i])
+		item := yd.Content[i]
 		if item.Kind == yaml.ScalarNode {
 			var value interface{}
 			err := yd.Content[i].Decode(&value)
@@ -31,23 +35,23 @@ func (yd *YAMLDefinition) MarshalJSONArray(enc *gojay.Encoder) {
 			}
 		}
 		if item.Kind == yaml.SequenceNode {
-			enc.AddArray(&item)
+			enc.AddArray((*YAMLtoJSONArray)(item))
 		}
 		if item.Kind == yaml.MappingNode {
-			enc.AddObject(&item)
+			enc.AddObject((*YAMLtoJSONMap)(item))
 		}
 	}
 }
 
-func (yd *YAMLDefinition) MarshalJSONObject(enc *gojay.Encoder) {
+type YAMLtoJSONMap yaml.Node
+
+func (yd *YAMLtoJSONMap) IsNil() bool {
+	return yd == nil || (yd.Kind != yaml.DocumentNode && yd.Kind != yaml.MappingNode)
+}
+
+func (yd *YAMLtoJSONMap) MarshalJSONObject(enc *gojay.Encoder) {
 	if yd.Kind == yaml.DocumentNode {
-		yd = (*YAMLDefinition)(yd.Content[0])
-	}
-	if yd.Kind == yaml.ScalarNode {
-		enc.AddString(yd.Value)
-	}
-	if yd.Kind == yaml.SequenceNode {
-		yd.MarshalJSONArray(enc)
+		yd = (*YAMLtoJSONMap)(yd.Content[0])
 	}
 	if yd.Kind == yaml.MappingNode {
 		for i := range yd.Content {
@@ -55,7 +59,7 @@ func (yd *YAMLDefinition) MarshalJSONObject(enc *gojay.Encoder) {
 				continue
 			}
 			keyItem := yd.Content[i]
-			valueItem := YAMLDefinition(*yd.Content[i+1])
+			valueItem := yd.Content[i+1]
 			if valueItem.Kind == yaml.ScalarNode {
 				var value interface{}
 				err := yd.Content[i+1].Decode(&value)
@@ -71,18 +75,15 @@ func (yd *YAMLDefinition) MarshalJSONObject(enc *gojay.Encoder) {
 
 			}
 			if valueItem.Kind == yaml.SequenceNode {
-				enc.AddArrayKey(keyItem.Value, &valueItem)
+				enc.AddArrayKey(keyItem.Value, (*YAMLtoJSONArray)(valueItem))
 			}
 			if valueItem.Kind == yaml.MappingNode {
-				enc.AddObjectKey(keyItem.Value, &valueItem)
+				enc.AddObjectKey(keyItem.Value, (*YAMLtoJSONMap)(valueItem))
 			}
 
 		}
 	}
 
-}
-func (yd *YAMLDefinition) IsNil() bool {
-	return yd == nil
 }
 
 func nodeIsNull(node *yaml.Node) bool {

@@ -20,7 +20,7 @@ func (v *View) GetBytes() ([]byte, error) {
 }
 
 func (v *View) MarshalJSONObject(enc *gojay.Encoder) {
-	enc.AddObjectKey("definition", (*YAMLDefinition)(v.Definition))
+	enc.AddObjectKey("definition", (*YAMLtoJSONMap)(v.Definition))
 	enc.AddStringKey("namespace", v.Namespace)
 	enc.AddStringKey("name", v.Name)
 }
