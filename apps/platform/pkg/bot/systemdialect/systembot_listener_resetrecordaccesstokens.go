@@ -20,7 +20,7 @@ func runResetRecordAccessTokensListenerBot(params map[string]interface{}, connec
 	siteName, _ := paramItems.GetFieldAsString("sitename")
 	workspaceName, _ := paramItems.GetFieldAsString("workspacename")
 
-	inContextSession, err := getContextSessionFromParams(map[string]string{
+	inContextSession, err := datasource.GetContextSessionFromParams(map[string]string{
 		"app":           app,
 		"sitename":      siteName,
 		"workspacename": workspaceName,
