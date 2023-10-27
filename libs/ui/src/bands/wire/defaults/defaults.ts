@@ -1,10 +1,6 @@
 import { nanoid } from "@reduxjs/toolkit"
 import { Context, Mergeable } from "../../../context/context"
-import {
-	FieldValue,
-	PlainFieldValue,
-	PlainWireRecord,
-} from "../../wirerecord/types"
+import { FieldValue, PlainWireRecord } from "../../wirerecord/types"
 import { ID_FIELD } from "../../collection/types"
 import set from "lodash/set"
 import Wire from "../class"
@@ -31,7 +27,7 @@ type LookupDefault = WireDefaultBase & {
 
 type ValueDefault = WireDefaultBase & {
 	valueSource: typeof VALUE
-	value: PlainFieldValue
+	value: FieldValue
 }
 type ParamDefault = WireDefaultBase & {
 	valueSource: typeof PARAM

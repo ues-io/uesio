@@ -21,7 +21,7 @@ func NewRunIntegrationActionBotAPI(
 		session:    session,
 		connection: connection,
 		LogApi:     NewBotLogAPI(bot),
-		Http:       NewBotHttpAPI(bot, session),
+		Http:       NewBotHttpAPI(bot, session, integrationConnection),
 		Params: &ParamsAPI{
 			Params: params,
 		},
