@@ -9,6 +9,7 @@ subfields:
     metadata:
       type: FIELD
       grouping: ${uesio/studio.collection}
-  - name: value
-    type: TEXT
-    label: Value
+  # Currently - value is never used, so there's no point to exposing it here.
+  # - name: value
+  #   type: TEXT
+  #   label: Value

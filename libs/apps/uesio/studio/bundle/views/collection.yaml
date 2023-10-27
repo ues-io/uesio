@@ -76,6 +76,30 @@ definition:
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: uesio/core.id
+    recordchallengetokens:
+      collection: uesio/studio.recordchallengetoken
+      conditions:
+        - field: uesio/studio.allmetadata
+          value: true
+        - field: uesio/studio.grouping
+          value: $Param{namespace}.$Param{collectionname}
+      order:
+        - field: uesio/studio.namespace
+          desc: false
+        - field: uesio/studio.name
+          desc: false
+      defaults:
+        - field: uesio/studio.collection
+          valueSource: VALUE
+          value: $Param{app}.$Param{collectionname}
+        - field: uesio/studio.workspace
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio/core.id
+        - field: uesio/studio.conditions
+          valueSource: VALUE
+          value:
+            - field: ""
     newfield:
       collection: uesio/studio.field
       fields:
@@ -581,6 +605,160 @@ definition:
                     columns:
                       - field: uesio/studio.type
                       - field: uesio/studio.route
+          - uesio/io.list:
+              uesio.id: collectionsDeckTokens
+              wire: collections
+              mode: EDIT
+              components:
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.titlebar:
+                          uesio.variant: uesio/io.section
+                          title: Record-level Security
+                          actions:
+                            - uesio/io.group:
+                                components:
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.primary
+                                      text: SAVE
+                                      signals:
+                                        - signal: wire/SAVE
+                                          wires:
+                                            - recordchallengetokens
+                                            - collections
+                                      uesio.display:
+                                        - type: group
+                                          conjunction: OR
+                                          conditions:
+                                            - type: group
+                                              conjunction: AND
+                                              conditions:
+                                                - type: hasValue
+                                                  operator: EQUALS
+                                                  wire: collections
+                                                  value: $Record{uesio/studio.accessfield}
+                                                - type: wireHasChanges
+                                                  wire: collections
+                                            - type: group
+                                              conjunction: AND
+                                              conditions:
+                                                - type: fieldValue
+                                                  operator: NOT_EQUALS
+                                                  value: protected
+                                                  field: uesio/studio.access
+                                                - type: wireHasChanges
+                                                  wire: collections
+                                            - type: group
+                                              conjunction: AND
+                                              conditions:
+                                                - type: group
+                                                  conjunction: OR
+                                                  conditions:
+                                                    - type: wireHasChanges
+                                                      wire: collections
+                                                    - type: wireHasChanges
+                                                      wire: recordchallengetokens
+                                                - type: fieldValue
+                                                  operator: EQUALS
+                                                  value: protected
+                                                  field: uesio/studio.access
+                                                - type: wireHasRecords
+                                                  wire: recordchallengetokens
+                                            - type: wireHasChanges
+                                              wire: recordchallengetokens
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.secondary
+                                      text: $Label{uesio/io.cancel}
+                                      uesio.display:
+                                        - type: group
+                                          conjunction: OR
+                                          conditions:
+                                            - type: wireHasChanges
+                                              wire: recordchallengetokens
+                                            - type: wireHasChanges
+                                              wire: collections
+                                      signals:
+                                        - signal: wire/CANCEL
+                                          wire: recordchallengetokens
+                                        - signal: wire/CANCEL
+                                          wire: collections
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.secondary
+                                      text: Add Token
+                                      signals:
+                                        - signal: wire/CREATE_RECORD
+                                          wire: recordchallengetokens
+                                        - signal: wire/UPDATE_RECORD
+                                          wire: viewOnly
+                                          field: newRecordChallengeToken
+                                          valueSource: VALUE
+                                          value: true
+                                        - signal: panel/TOGGLE
+                                          panel: newRecordChallengeToken
+                                      uesio.display:
+                                        - type: fieldValue
+                                          operator: EQUALS
+                                          value: protected
+                                          field: uesio/studio.access
+                                        - type: hasNoValue
+                                          operator: EQUALS
+                                          value: $Record{uesio/studio.accessfield}
+                      - uesio/io.grid:
+                          uesio.variant: uesio/io.four_columns
+                          items:
+                            - uesio/io.field:
+                                fieldId: uesio/studio.access
+                            - uesio/io.field:
+                                uesio.display:
+                                  - type: fieldValue
+                                    operator: EQUALS
+                                    value: protected
+                                    field: uesio/studio.access
+                                  - type: wireHasNoRecords
+                                    wire: recordchallengetokens
+                                fieldId: uesio/studio.accessfield
+                                metadata:
+                                  grouping: $Param{app}.$Param{collectionname}
+                                  namespace: $Param{app}
+                                uesio.context:
+                                  workspace:
+                                    name: $Param{workspacename}
+                                    app: $Param{app}
+                      - uesio/io.box:
+                          uesio.display:
+                            - type: fieldValue
+                              operator: EQUALS
+                              value: protected
+                              field: uesio/studio.access
+                            - type: hasNoValue
+                              operator: EQUALS
+                              value: $Record{uesio/studio.accessfield}
+                          components:
+                            - uesio/io.box:
+                                components:
+                                  - uesio/io.table:
+                                      uesio.id: recordchallengetokensTable
+                                      wire: recordchallengetokens
+                                      mode: READ
+                                      columns:
+                                        - label: Token Name
+                                          components:
+                                            - uesio/io.iconlabel:
+                                                uesio.variant: uesio/io.namespacefield
+                                                text: ${uesio/studio.name}
+                                                subtitle: ${uesio/studio.namespace}
+                                                icon: ${uesio/studio.appicon}
+                                                color: ${uesio/studio.appcolor}
+                                        - field: uesio/studio.token
+                                        - field: uesio/studio.useraccesstoken
+                                        - field: uesio/studio.access
+                                        - field: uesio/studio.conditions
+                                      rowactions:
+                                        - text: Remove
+                                          signals:
+                                            - signal: wire/MARK_FOR_DELETE
+                                              wire: recordchallengetokens
   panels:
     deleteCollection:
       uesio.type: uesio/io.dialog
@@ -950,3 +1128,61 @@ definition:
                   - fields
               - signal: panel/TOGGLE
                 panel: newField
+    newRecordChallengeToken:
+      uesio.type: uesio/io.dialog
+      title: Create a new Record Challenge Token
+      width: 400px
+      height: 600px
+      components:
+        - uesio/io.item:
+            wire: recordchallengetokens
+            mode: EDIT
+            components:
+              - uesio/io.field:
+                  fieldId: uesio/studio.name
+              - uesio/io.field:
+                  fieldId: uesio/studio.token
+              - uesio/io.field:
+                  fieldId: uesio/studio.useraccesstoken
+                  uesio.context:
+                    workspace:
+                      name: $Param{workspacename}
+                      app: $Param{app}
+              - uesio/io.field:
+                  fieldId: uesio/studio.access
+              - uesio/io.field:
+                  fieldId: uesio/studio.conditions
+                  label: " "
+                  list:
+                    noAdd: true
+                    noDelete: true
+                  uesio.context:
+                    workspace:
+                      name: $Param{workspacename}
+                      app: $Param{app}
+      afterClose:
+        - signal: wire/CANCEL
+          wire: recordchallengetokens
+      actions:
+        - uesio/io.button:
+            uesio.variant: uesio/io.primary
+            uesio.display:
+              - type: fieldValue
+                field: name
+                operator: NOT_EQUALS
+                value: ""
+            text: Add Token
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - recordchallengetokens
+              - signal: panel/TOGGLE
+                panel: newRecordChallengeToken
+        - uesio/io.button:
+            uesio.variant: uesio/io.secondary
+            text: $Label{uesio/io.cancel}
+            signals:
+              - signal: wire/CANCEL
+                wire: recordchallengetokens
+              - signal: panel/TOGGLE
+                panel: newRecordChallengeToken
