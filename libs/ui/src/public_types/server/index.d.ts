@@ -170,10 +170,69 @@ interface RunActionBotApi {
 	save: (collectionName: string, records: WireRecord[]) => void
 }
 
+type FieldType =
+	| "AUTONUMBER"
+	| "CHECKBOX"
+	| "DATE"
+	| "EMAIL"
+	| "FILE"
+	| "LIST"
+	| "LONGTEXT"
+	| "MAP"
+	| "METADATA"
+	| "MULTIMETADATA"
+	| "MULTISELECT"
+	| "NUMBER"
+	| "REFERENCE"
+	| "REFERENCEGROUP"
+	| "SELECT"
+	| "STRUCT"
+	| "TEXT"
+	| "TIMESTAMP"
+	| "USER"
+
+interface FieldMetadata {
+	accessible: boolean
+	createable: boolean
+	externalName?: string
+	label: string
+	name: string
+	namespace: string
+	type: FieldType
+}
+
+interface LoadRequestCollectionMetadata {
+	accessible: boolean
+	getFieldMetadata: (fieldId: string) => FieldMetadata
+	getAllFieldMetadata: () => Record<string, FieldMetadata>
+	deleteable: boolean
+	createble: boolean
+	externalName?: string
+	label: string
+	labelPlural: string
+	name: string
+	namespace: string
+	updateable: boolean
+}
+
+interface LoadRequestMetadata {
+	accessible: boolean
+	batchNumber?: number
+	batchSize?: number
+	deleteable: boolean
+	collection: string
+	collectionMetadata: LoadRequestCollectionMetadata
+	conditions?: ConditionRequest[]
+	createble: boolean
+	fields?: FieldRequest[]
+	order?: LoadOrder[]
+	updateable: boolean
+}
+
 interface LoadBotApi {
 	addError: (error: string) => void
 	addRecord: (record: Record<string, unknown>) => void
-	loadRequest: LoadRequest
+	loadRequest: LoadRequestMetadata
 	getIntegration: () => IntegrationApi
 	getCredentials: () => Record<string, string | undefined>
 	getConfigValue: (configValueKey: string) => string

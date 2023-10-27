@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 	httpClient "github.com/thecloudmasters/uesio/pkg/http"
 	"github.com/thecloudmasters/uesio/pkg/integ/web"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -16,14 +17,36 @@ import (
 )
 
 type BotHttpAPI struct {
-	bot     *meta.Bot
-	session *sess.Session
+	bot         *meta.Bot
+	session     *sess.Session
+	integration adapt.IntegrationConnection
 }
 
-func NewBotHttpAPI(bot *meta.Bot, session *sess.Session) *BotHttpAPI {
+func NewBotHttpAPI(bot *meta.Bot, session *sess.Session, integration adapt.IntegrationConnection) *BotHttpAPI {
 	return &BotHttpAPI{
-		bot:     bot,
-		session: session,
+		bot:         bot,
+		session:     session,
+		integration: integration,
+	}
+}
+
+type BotHttpAuth struct {
+	Type        string             `json:"type"`
+	Credentials *adapt.Credentials `json:"credentials"`
+}
+
+func NewBotHttpAuth(connection adapt.IntegrationConnection) *BotHttpAuth {
+	authType := "NONE"
+	var credentials *adapt.Credentials
+	if connection != nil {
+		if connection.GetIntegration() != nil {
+			authType = connection.GetIntegration().Authentication
+		}
+		credentials = connection.GetCredentials()
+	}
+	return &BotHttpAuth{
+		Type:        authType,
+		Credentials: credentials,
 	}
 }
 
@@ -32,6 +55,7 @@ type BotHttpRequest struct {
 	Method  string            `json:"method" bot:"method"`
 	URL     string            `json:"url" bot:"url"`
 	Body    interface{}       `json:"body" bot:"body"`
+	Auth    *BotHttpAuth      `json:"auth" bot:"auth"`
 }
 
 type BotHttpResponse struct {
@@ -39,6 +63,19 @@ type BotHttpResponse struct {
 	Code    int               `json:"code" bot:"code"`
 	Status  string            `json:"status" bot:"status"`
 	Body    interface{}       `json:"body" bot:"body"`
+}
+
+func Unauthorized(message string) *BotHttpResponse {
+	statusText := http.StatusText(http.StatusUnauthorized)
+	return &BotHttpResponse{
+		Code:    http.StatusUnauthorized,
+		Status:  statusText,
+		Headers: map[string]string{},
+		Body: map[string]string{
+			"error":  message,
+			"status": statusText,
+		},
+	}
 }
 
 func BadRequest(message string) *BotHttpResponse {
@@ -107,10 +144,17 @@ func (api *BotHttpAPI) Request(req *BotHttpRequest) *BotHttpResponse {
 		}
 	}
 
-	httpResp, err := httpClient.Get().Do(httpReq)
+	// Perform the request using the selected authentication paradigm
+	httpResp, err := api.makeRequest(httpReq, NewBotHttpAuth(api.integration))
 	if err != nil {
-		return ServerError(err)
+		switch err.(type) {
+		case *UnauthorizedException:
+			return Unauthorized(err.Error())
+		default:
+			return ServerError(err)
+		}
 	}
+
 	defer httpResp.Body.Close()
 
 	// Read the full body into a byte array, so we can cache / parse
@@ -140,6 +184,41 @@ func (api *BotHttpAPI) Request(req *BotHttpRequest) *BotHttpResponse {
 	}
 }
 
+// makeRequest performs any authentication needed for the request, mutating it as necessary,
+// and then performs the request.
+func (api *BotHttpAPI) makeRequest(req *http.Request, auth *BotHttpAuth) (*http.Response, error) {
+	switch auth.Type {
+	case "API_KEY":
+		// TODO: Determine where to put the key (header, query param, etc.)
+		// and apply this to the request
+		break
+	case "BASIC_AUTH":
+		// TODO: Grab the username and password and do base64 authentication
+		break
+	case "OAUTH2_AUTHORIZATION_CODE":
+		// For next PR
+		//return api.makeRequestWithOAuth2AuthorizationCode(req, auth)
+		break
+	case "OAUTH2_CLIENT_CREDENTIALS":
+		// TODO: Check for an integration credential record for the "system" user for the tenant,
+		// and if one exists and is unexpired, use this token directly,
+		// otherwise hit the access token endpoint to get a fresh token
+		break
+	}
+	// Default
+	return httpClient.Get().Do(req)
+}
+
+type UnauthorizedException struct {
+	msg string
+}
+
+func NewUnauthorizedException(msg string) *UnauthorizedException {
+	return &UnauthorizedException{msg}
+}
+func (e *UnauthorizedException) Error() string {
+	return e.msg
+}
 func getBotHeaders(header http.Header) map[string]string {
 	headers := map[string]string{}
 	for k := range header {

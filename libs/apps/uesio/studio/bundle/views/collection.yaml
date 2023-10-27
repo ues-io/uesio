@@ -328,6 +328,14 @@ definition:
                                     operator: EQUALS
                                     value: EXTERNAL
                             - uesio/io.field:
+                                fieldId: uesio/studio.tablename
+                                uesio.display:
+                                  - type: fieldValue
+                                    wire: collections
+                                    field: uesio/studio.type
+                                    operator: EQUALS
+                                    value: EXTERNAL
+                            - uesio/io.field:
                                 fieldId: uesio/studio.loadbot
                                 label: Collection Load Bot
                                 uesio.display:
@@ -478,6 +486,13 @@ definition:
                               uesio.display:
                                 - type: recordIsNew
                       - field: uesio/studio.type
+                      - field: uesio/studio.columnname
+                        uesio.display:
+                          - type: fieldValue
+                            wire: collections
+                            field: uesio/studio.type
+                            operator: EQUALS
+                            value: EXTERNAL
                       - field: uesio/studio.label
                       - label: Language Label
                         components:
@@ -835,6 +850,14 @@ definition:
                       wire: integration
                       field: uesio/studio.type
                       value: uesio/core.custom
+              - uesio/io.field:
+                  fieldId: uesio/studio.tablename
+                  uesio.display:
+                    - type: fieldValue
+                      wire: collections
+                      field: uesio/studio.type
+                      operator: EQUALS
+                      value: EXTERNAL
               - uesio/io.field:
                   fieldId: uesio/studio.loadbot
                   label: Collection Load Bot
