@@ -66,11 +66,11 @@ export default function %s(bot: RunActionBotApi) {
     bot.addResult("orderNumber", orderNumber)
 }`
 
-const DefaultLoadBotBody = `import { LoadBotApi } from "@uesio/bots
+const DefaultLoadBotBody = `import { LoadBotApi } from "@uesio/bots"
 
 export default function %s(bot: LoadBotApi) {
 	const { collection, conditions, fields, order } = bot.loadRequest
-	[
+	const results = [
 		{
 			"first_name": "Luigi",
 			"last_name": "Vampa"
@@ -79,10 +79,11 @@ export default function %s(bot: LoadBotApi) {
 			"first_name": "Myasia",
 			"last_name": "Harvey"
 		},
-	].forEach((record) => bot.addRecord(record))
+	]
+	results.forEach((record) => bot.addRecord(record))
 }`
 
-const DefaultSaveBotBody = `import { SaveBotApi } from "@uesio/bots
+const DefaultSaveBotBody = `import { SaveBotApi } from "@uesio/bots"
 
 export default function %s(bot: SaveBotApi) {
 	const collectionName = bot.getCollectionName()

@@ -130,6 +130,8 @@ func GetSiteFromHost(host string) (*meta.Site, error) {
 	bundleDef.Licenses = licenseMap
 
 	site.SetAppBundle(bundleDef)
+	// Retain the full, original host, which may include things like a port which were ignored
+	site.SetHost(host)
 
 	return site, nil
 }
