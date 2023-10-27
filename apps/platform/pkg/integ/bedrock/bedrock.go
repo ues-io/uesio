@@ -81,7 +81,7 @@ func (c *Connection) InvokeModel(requestOptions interface{}) (interface{}, error
 	}
 
 	body, err := json.Marshal(&map[string]interface{}{
-		"prompt":               "\n\nHuman:" + options.Input + "\n\nAssistant:",
+		"prompt":               options.Input,
 		"max_tokens_to_sample": 2000,
 	})
 	if err != nil {

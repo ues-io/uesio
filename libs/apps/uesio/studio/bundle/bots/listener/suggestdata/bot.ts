@@ -16,7 +16,7 @@ export default function suggestdata(bot: ListenerBotApi) {
 		"uesio/core.bedrock",
 		"invokemodel",
 		{
-			input: bot.params.get("prompt"),
+			input: "\n\nHuman:" + bot.params.get("prompt") + "\n\nAssistant:",
 			model: "anthropic.claude-v2",
 		}
 	) as string[]
