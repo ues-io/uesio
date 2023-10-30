@@ -66,7 +66,7 @@
 		"chai": "^4.3.6",
 		"chart.js": "^3.9.1",
 		"css-tree": "^2.3.1",
-		"cypress": "^13.2.0",
+		"cypress": "^13.3.3",
 		"eslint": "8.46.0",
 		"eslint-config-prettier": "8.5.0",
 		"eslint-plugin-prettier": "^4.2.1",
