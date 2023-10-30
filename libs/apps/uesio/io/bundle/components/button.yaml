@@ -7,7 +7,6 @@ pack: main
 entrypoint: components/button/button
 discoverable: true
 defaultDefinition:
-  text: New Button
   icon: bolt
   uesio.variant: uesio/io.default
   iconPlacement: start
@@ -15,6 +14,7 @@ properties:
   - name: text
     type: TEXT
     label: Text
+    defaultValue: New Button
   - name: icon
     type: ICON
     label: Icon
