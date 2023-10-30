@@ -86,7 +86,7 @@ const IconProp: definition.UC<Definition> = (props) => {
 					offset={6}
 					placement="right-start"
 					autoPlacement={["right-start"]}
-					useFirstRelativeParent
+					parentSelector="#propertieswrapper"
 				>
 					<PropertiesWrapper
 						title="Select an Icon"
