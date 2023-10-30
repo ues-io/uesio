@@ -56,13 +56,12 @@ properties:
       addLabel: Add Row Action
       displayTemplate: "${text}"
       title: Row Action Properties
-      defaultDefinition:
-        text: New action
       properties:
         - name: text
           label: Label
           type: TEXT
           required: true
+          defaultValue: New action
         - name: type
           label: Type
           type: SELECT

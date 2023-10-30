@@ -12,7 +12,12 @@ import {
 import NotificationArea from "./utilities/notificationarea"
 import * as path from "./component/path"
 import * as registry from "./component/registry"
-import { Component, getUtility } from "./component/component"
+import {
+	Component,
+	DECLARATIVE_COMPONENT,
+	DeclarativeComponentSlotContext,
+	getUtility,
+} from "./component/component"
 import {
 	shouldHaveClass,
 	useShould,
@@ -36,15 +41,17 @@ const STYLE_TOKENS = "uesio.styleTokens"
 
 export type {
 	ComponentDef,
-	SlotUtilityProps,
 	ComponentVariant,
-	ItemContext,
+	DeclarativeComponentSlotContext,
 	DisplayCondition,
 	DisplayOperator,
+	ItemContext,
+	SlotUtilityProps,
 	ViewComponentDefinition,
 }
 
 export {
+	DECLARATIVE_COMPONENT,
 	DISPLAY_CONDITIONS,
 	COMPONENT_CONTEXT,
 	COMPONENT_ID,

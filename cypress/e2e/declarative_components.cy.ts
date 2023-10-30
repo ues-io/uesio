@@ -16,17 +16,21 @@ describe("Declarative Components", () => {
 	const declarative1Tests = () => {
 		cy.get("div#root").should("contain", "Such declarative")
 		cy.get("div#root").should("contain", "Much magic")
+		cy.get("div#root").should("contain", "This is a title")
+		cy.get("div#root").should("contain", "This is a subtitle")
 	}
 	const declarative2Tests = () => {
 		cy.get("div#root").should("contain", "I am on the left")
 		cy.get("div#root").should("contain", "I am on the right")
 		cy.get("div#root").should("contain", "This is the header")
 		cy.get("div#root").should("contain", "And this is the footer")
+		cy.get("div#root").should("contain", "This is a default header")
 		cy.clickButtonIfExists("btn-update-fields")
 		cy.get("div#root").should("contain", "I am on the izquierda")
 		cy.get("div#root").should("contain", "I am on the derecha")
 		cy.get("div#root").should("contain", "This is the cabeza")
 		cy.get("div#root").should("contain", "And this is the pie")
+		cy.get("div#root").should("contain", "This is a default header")
 	}
 
 	const runTests = () => {
