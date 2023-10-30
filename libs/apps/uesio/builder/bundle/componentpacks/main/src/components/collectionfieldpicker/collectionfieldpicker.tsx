@@ -111,7 +111,7 @@ const CollectionFieldPicker: definition.UC<ComponentDefinition> = (props) => {
 					placement="right-start"
 					autoPlacement={["right-start"]}
 					offset={6}
-					useFirstRelativeParent
+					parentSelector="#propertieswrapper"
 					matchHeight
 				>
 					<FieldPicker

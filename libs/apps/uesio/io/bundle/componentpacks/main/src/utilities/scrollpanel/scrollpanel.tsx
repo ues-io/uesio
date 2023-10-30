@@ -19,7 +19,7 @@ const ScrollPanel = forwardRef<HTMLDivElement, ScrollPanelProps>(
 			"uesio/io.scrollpanel"
 		)
 		return (
-			<div ref={ref} className={classes.root}>
+			<div id={props.id} ref={ref} className={classes.root}>
 				{props.header}
 				<div className={classes.inner}>{props.children}</div>
 				{props.footer}
