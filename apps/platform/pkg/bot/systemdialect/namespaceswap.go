@@ -110,7 +110,7 @@ func (c *NamespaceSwapCollection) SwapNSBack(value string) string {
 	return meta.SwapKeyNamespace(value, c.modified, c.original)
 }
 
-// Gets the conditions from the wire and translates them from core to studio
+// MapConditions Gets the conditions from the wire and translates them from core to studio
 func (c *NamespaceSwapCollection) MapConditions(coreConditions []adapt.LoadRequestCondition) []adapt.LoadRequestCondition {
 	var studioConditions []adapt.LoadRequestCondition
 	for _, elem := range coreConditions {

@@ -16,17 +16,17 @@ HTTP 200
 [Asserts]
 body == "Usage Worker Success"
 
-# Test a wire load with no conditions
+# load usage for the Studio prod site
 POST https://{{host}}:{{port}}/siteadmin/uesio/studio/prod/wires/load
 Accept: application/json
 [Options]
 {
     "wires": [
         {
-            "collection":"uesio/core.usage",
-            "query":true,
-            "batchsize":100,
-            "fields":[],
+            "collection": "uesio/core.usage",
+            "query": true,
+            "batchsize": 10,
+            "fields": [],
             "conditions": [
                 {
                     "field": "metadatatype",
@@ -49,3 +49,51 @@ Accept: application/json
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data" count > 0
+jsonpath "$.wires[0].data" count <= 10 # verify batchsize works
+jsonpath "$.wires[0].data[0]['uesio/core.metadatatype']" == "COLLECTION"
+jsonpath "$.wires[0].data[0]['uesio/core.actiontype']" == "LOAD"
+jsonpath "$.wires[0].data[0]['uesio/core.total']" >= 1
+jsonpath "$.wires[0].collection" == "uesio/core.usage"
+
+# Load with different conditions
+POST https://{{host}}:{{port}}/siteadmin/uesio/studio/prod/wires/load
+Accept: application/json
+[Options]
+{
+    "wires": [
+        {
+            "collection": "uesio/core.usage",
+            "query": true,
+            "batchsize": 10,
+            "fields": [],
+            "conditions": [
+                {
+                    "field": "metadatatype",
+                    "value": "COLLECTION"
+                },
+                {
+                    "field": "actiontype",
+                    "value": "SAVE"
+                },
+                {
+                    "field": "total",
+                    "operator": "GT",
+                    "value": 10
+                }
+            ],
+            "order": [
+                {
+                    "field": "day",
+                    "desc": true
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].data" count > 0
+jsonpath "$.wires[0].data" count <= 10 # verify batchsize works
+jsonpath "$.wires[0].data[0]['uesio/core.metadatatype']" == "COLLECTION"
+jsonpath "$.wires[0].data[0]['uesio/core.actiontype']" == "SAVE"
+jsonpath "$.wires[0].data[0]['uesio/core.total']" > 10
