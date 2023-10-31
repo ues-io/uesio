@@ -80,7 +80,7 @@ const getComponentInfoFromPath = (path: FullPath, context: context.Context) => {
 
 const getTargetsFromSlotIndex = (slotPath: FullPath, index: number) => {
 	const targetWrappers = document.querySelectorAll(
-		`#innercanvas  [data-path="${CSS.escape(
+		`[data-path="${CSS.escape(
 			slotPath.localPath
 		)}"]>[data-index="${index}"]`
 	)
@@ -145,7 +145,7 @@ const SelectBorder: definition.UtilityComponent<Props> = (props) => {
 			})
 		}
 		const targets = document.querySelectorAll(
-			`#innercanvas [data-path]>[data-component]:empty`
+			`[data-path]>[data-component]:empty`
 		)
 
 		if (!targets.length) {

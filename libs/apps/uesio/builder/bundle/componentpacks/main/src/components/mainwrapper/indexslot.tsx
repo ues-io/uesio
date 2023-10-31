@@ -23,18 +23,12 @@ const IndexPlaceHolder: definition.UtilityComponent = (props) => {
 }
 
 const IndexBuildWrapper: definition.UC = (props) => {
-	const { children, path, context, componentType } = props
+	const { children, path, context } = props
 
 	const [addBefore, addAfter, index] = usePlaceHolders(context, path)
 
 	return (
-		<div
-			className="contents"
-			data-placeholder="true"
-			data-index={index}
-			data-component={componentType}
-			data-empty-label={"Invisible Component: " + componentType}
-		>
+		<div className="contents" data-placeholder="true">
 			{addBefore && (
 				<IndexPlaceHolder
 					label="0"

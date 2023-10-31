@@ -95,7 +95,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 		>
 			<div className={classes.scrollwrapper}>
 				<div className={classes.outerwrapper}>
-					<div id="innercanvas" className={classes.contentwrapper}>
+					<div className={classes.contentwrapper}>
 						{props.children}
 						<SelectBorder viewdef={viewDef} context={context} />
 					</div>
