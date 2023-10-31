@@ -68,6 +68,18 @@ const ViewOnlyFieldPropTag: definition.UtilityComponent<T> = (props) => {
 								{ label: "Select List", value: "SELECT" },
 								{ label: "Text", value: "TEXT" },
 							]),
+							onChange: [
+								{
+									updates: [
+										{
+											field: "selectlist",
+										},
+										{
+											field: "number",
+										},
+									],
+								},
+							],
 						},
 						{
 							name: "label",
