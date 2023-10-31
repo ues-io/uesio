@@ -283,7 +283,7 @@ func (api *BotHttpAPI) makeRequestWithOAuth2AuthorizationCode(req *http.Request,
 		newVal, _ := strings.CutPrefix(newAuthHeader, "Bearer ")
 		newVal = strings.TrimSpace(newVal)
 		if newVal != accessToken {
-			slog.Info("GOT new AccessToken, SAVING to DB...")
+			//slog.Info("GOT new AccessToken, SAVING to DB...")
 			// We don't really have a way of getting back the expiration data, so assume 1 hour...
 			integrationCredential.SetField(oauthlib.AccessTokenExpirationField, time.Now().Add(time.Hour).Unix())
 			integrationCredential.SetField(oauthlib.AccessTokenField, newVal)
@@ -306,7 +306,7 @@ func (api *BotHttpAPI) makeRequestWithOAuth2AuthorizationCode(req *http.Request,
 		case *oauth2.RetrieveError:
 			// This usually means that the refresh token is invalid, expired, or can't be obtained.
 			// Delete it, or at least attempt to
-			slog.Info("Refresh token must be invalid/expired, so we are purging it...")
+			slog.Debug("Refresh token must be invalid/expired, so we are purging it...")
 			if deleteErr := oauthlib.DeleteIntegrationCredential(integrationCredential, coreSession, connection); deleteErr != nil {
 				slog.Error("unable to delete integration credential record: " + deleteErr.Error())
 			}

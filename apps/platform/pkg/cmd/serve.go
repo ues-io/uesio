@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/oauth"
+	"github.com/thecloudmasters/uesio/pkg/env"
 	"github.com/thecloudmasters/uesio/pkg/tls"
 
 	"github.com/gorilla/mux"
@@ -164,6 +165,11 @@ func serve(cmd *cobra.Command, args []string) {
 	sr.HandleFunc(fmt.Sprintf("/oauth2/authorize/%s", itemParam), oauth.GetRedirectMetadata).Methods(http.MethodGet)
 	sa.HandleFunc(fmt.Sprintf("/oauth2/authorize/%s", itemParam), oauth.GetRedirectMetadata).Methods(http.MethodGet)
 	vr.HandleFunc(fmt.Sprintf("/oauth2/authorize/%s", itemParam), oauth.GetRedirectMetadata).Methods(http.MethodGet)
+	if env.InDevMode() {
+		// Add a mock oauth2 token server for testing. Someday this could be a real server
+		// but for now we just need it for integration tests
+		sr.HandleFunc("/oauth2/token", oauth.GetOAuthToken).Methods(http.MethodPost)
+	}
 
 	// Userfile routes for site and workspace context
 	userfileUploadPath := "/userfiles/upload"
@@ -354,7 +360,7 @@ func serve(cmd *cobra.Command, args []string) {
 	sr.HandleFunc("/rest/"+itemParam, controller.Rest).Methods("GET")
 
 	// Dev Only Route for running usage worker
-	if os.Getenv("UESIO_DEV") == "true" {
+	if env.InDevMode() {
 		sr.HandleFunc("/worker/usage", controller.RunUsageWorker).Methods("POST")
 	}
 

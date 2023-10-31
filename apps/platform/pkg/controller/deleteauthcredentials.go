@@ -21,13 +21,7 @@ func DeleteAuthCredentials(w http.ResponseWriter, r *http.Request) {
 	user := session.GetContextUser()
 
 	vars := mux.Vars(r)
-	namespace := vars["namespace"]
-	name := vars["name"]
-
-	if namespace == "" || name == "" {
-		http.Error(w, "integration name not provided", http.StatusBadRequest)
-		return
-	}
+	integrationName := fmt.Sprintf("%s.%s", vars["namespace"], vars["name"])
 
 	conn, err := datasource.GetPlatformConnection(&adapt.MetadataCache{}, session, nil)
 	if err != nil {
@@ -42,10 +36,10 @@ func DeleteAuthCredentials(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	credential, err := oauth2.GetIntegrationCredential(user.ID, fmt.Sprintf("%s.%s", namespace, name), coreSession, conn)
+	credential, err := oauth2.GetIntegrationCredential(user.ID, integrationName, coreSession, conn)
 
 	if err != nil {
-		slog.Error("unable to retrieve integration credential", err.Error())
+		slog.Error("unable to retrieve integration credential: " + err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
