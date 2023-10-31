@@ -20,6 +20,7 @@ import {
 	respondJSON,
 	respondVoid,
 	postMultipartForm,
+	del,
 } from "./async"
 import { memoizedGetJSON } from "./memoizedAsync"
 import { SiteState } from "../bands/site"
@@ -507,6 +508,14 @@ const platform = {
 		)
 		return respondJSON(response)
 	},
+	deleteAuthCredentials: async (
+		context: Context,
+		integrationName: MetadataKey
+	): Promise<Response> =>
+		del(
+			context,
+			`${getPrefix(context)}/auth/credentials/${integrationName}`
+		),
 	getOAuth2RedirectMetadata: async (
 		context: Context,
 		integrationName: MetadataKey
