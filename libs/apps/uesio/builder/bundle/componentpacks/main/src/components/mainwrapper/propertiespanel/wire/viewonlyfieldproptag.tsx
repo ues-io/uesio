@@ -61,38 +61,84 @@ const ViewOnlyFieldPropTag: definition.UtilityComponent<T> = (props) => {
 							label: "Type",
 							type: "SELECT",
 							options: collection.addBlankSelectOption([
-								{ label: "Auto Number", value: "AUTONUMBER" },
+								//{ label: "Auto Number", value: "AUTONUMBER" },
 								{ label: "Check Box", value: "CHECKBOX" },
 								{ label: "Date", value: "DATE" },
 								{ label: "Email", value: "EMAIL" },
-								{ label: "File", value: "FILE" },
+								//{ label: "File", value: "FILE" },
 								{ label: "Formula", value: "FORMULA" },
 								{ label: "List", value: "LIST" },
 								{ label: "Long Text", value: "LONGTEXT" },
-								{ label: "Map", value: "MAP" },
-								{ label: "Metadata", value: "METADATA" },
-								{
-									label: "Multi Metadata",
-									value: "MULTIMETADATA",
-								},
-								{ label: "Multi Select", value: "MULTISELECT" },
+								//{ label: "Map", value: "MAP" },
+								//{ label: "Metadata", value: "METADATA" },
+								// {
+								// 	label: "Multi Metadata",
+								// 	value: "MULTIMETADATA",
+								// },
+								// { label: "Multi Select", value: "MULTISELECT" },
 								{ label: "Number", value: "NUMBER" },
-								{ label: "Reference", value: "REFERENCE" },
-								{
-									label: "Reference Group",
-									value: "REFERENCEGROUP",
-								},
+								//{ label: "Reference", value: "REFERENCE" },
+								// {
+								// 	label: "Reference Group",
+								// 	value: "REFERENCEGROUP",
+								// },
 								{ label: "Select List", value: "SELECT" },
 								{ label: "Struct", value: "STRUCT" },
 								{ label: "Text", value: "TEXT" },
 								{ label: "Timestamp", value: "TIMESTAMP" },
-								{ label: "User", value: "USER" },
+								//{ label: "User", value: "USER" },
 							]),
 						},
 						{
 							name: "label",
 							label: "Label",
 							type: "TEXT",
+						},
+						{
+							name: "selectlist",
+							label: "Select list",
+							type: "STRUCT",
+							properties: [
+								{
+									name: "options",
+									label: "Options",
+									type: "LIST",
+									subtype: "STRUCT",
+									items: {
+										title: "Options",
+										addLabel: "New Option",
+										displayTemplate: (option: {
+											label: string
+											value: string
+										}) => {
+											if (option.label) {
+												return `${option.label}`
+											}
+											return "NEW_VALUE"
+										},
+										properties: [
+											{
+												name: "label",
+												label: "Label",
+												type: "TEXT",
+											},
+											{
+												name: "value",
+												label: "Value",
+												type: "TEXT",
+											},
+										],
+									},
+								},
+							],
+							displayConditions: [
+								{
+									type: "fieldValue",
+									field: "type",
+									operator: "EQUALS",
+									value: "SELECT",
+								},
+							],
 						},
 					]}
 				/>
