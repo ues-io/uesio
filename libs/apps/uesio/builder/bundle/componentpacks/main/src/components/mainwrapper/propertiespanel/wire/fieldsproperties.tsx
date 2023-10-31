@@ -85,7 +85,7 @@ const FieldsProperties: definition.UC<FieldsPropertiesDefinition> = (props) => {
 									variant="uesio/builder.actionicon"
 								/>
 							}
-							label={"View Only Field"}
+							label={"View-only Field"}
 							onClick={() => {
 								set(
 									context,
@@ -93,7 +93,12 @@ const FieldsProperties: definition.UC<FieldsPropertiesDefinition> = (props) => {
 										"field" +
 											(Math.floor(Math.random() * 60) + 1)
 									),
-									isViewOnlyWire ? {} : { viewOnly: true }
+									isViewOnlyWire
+										? {
+												type: "TEXT",
+										  }
+										: { viewOnly: true, type: "TEXT" },
+									true
 								)
 							}}
 						/>
@@ -108,7 +113,7 @@ const FieldsProperties: definition.UC<FieldsPropertiesDefinition> = (props) => {
 										variant="uesio/builder.actionicon"
 									/>
 								}
-								label={"Select Fields"}
+								label={"Collection Fields"}
 								onClick={() => {
 									setShowPopper(true)
 								}}

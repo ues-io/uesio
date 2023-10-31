@@ -9,6 +9,7 @@ import BuildActionsArea from "../../../../helpers/buildactionsarea"
 import PropNodeTag from "../../../../utilities/propnodetag/propnodetag"
 import ItemTag from "../../../../utilities/itemtag/itemtag"
 import PropertiesForm from "../../../../helpers/propertiesform"
+import { getHomeSection } from "../../../../api/propertysection"
 
 interface T {
 	fieldId: string
@@ -88,12 +89,17 @@ const ViewOnlyFieldPropTag: definition.UtilityComponent<T> = (props) => {
 						},
 						{
 							name: "selectlist",
-							label: "Select list",
 							type: "STRUCT",
+							label: " ",
 							properties: [
 								{
+									name: "blank_option_label",
+									label: "Blank option label",
+									type: "TEXT",
+								},
+								{
 									name: "options",
-									label: "Options",
+									label: "Select Options",
 									type: "LIST",
 									subtype: "STRUCT",
 									items: {
@@ -123,18 +129,10 @@ const ViewOnlyFieldPropTag: definition.UtilityComponent<T> = (props) => {
 									},
 								},
 							],
-							displayConditions: [
-								{
-									type: "fieldValue",
-									field: "type",
-									operator: "EQUALS",
-									value: "SELECT",
-								},
-							],
 						},
 						{
 							name: "number",
-							label: "Number",
+							label: "Number Properties",
 							type: "STRUCT",
 							properties: [
 								{
@@ -149,6 +147,23 @@ const ViewOnlyFieldPropTag: definition.UtilityComponent<T> = (props) => {
 									field: "type",
 									operator: "EQUALS",
 									value: "NUMBER",
+								},
+							],
+						},
+					]}
+					sections={[
+						getHomeSection(["name", "type", "label", "number"]),
+						{
+							id: "selectlist",
+							label: "Select Options",
+							type: "CUSTOM",
+							properties: ["selectlist"],
+							displayConditions: [
+								{
+									type: "fieldValue",
+									field: "type",
+									operator: "EQUALS",
+									value: "SELECT",
 								},
 							],
 						},

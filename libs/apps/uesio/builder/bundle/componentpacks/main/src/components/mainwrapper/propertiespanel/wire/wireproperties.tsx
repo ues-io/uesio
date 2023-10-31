@@ -37,35 +37,6 @@ const WireProperties: definition.UtilityComponent = (props) => {
 			type: "KEY",
 		},
 		{
-			name: "viewOnly",
-			label: "View Only",
-			type: "CHECKBOX",
-			onChange: [
-				{
-					updates: [
-						{
-							field: "collection",
-						},
-						{
-							field: "batchsize",
-						},
-						{
-							field: "init",
-						},
-						{
-							field: "order",
-						},
-						{
-							field: "fields",
-						},
-						{
-							field: "events",
-						},
-					],
-				},
-			],
-		},
-		{
 			name: "collection",
 			label: "Collection",
 			required: true,
@@ -210,13 +181,6 @@ const WireProperties: definition.UtilityComponent = (props) => {
 							defaultDefinition: { operator: "EQUALS" },
 							properties: DisplayConditionProperties,
 						},
-						displayConditions: [
-							{
-								field: "type",
-								value: "onChange",
-								operator: "EQUALS",
-							},
-						] as component.DisplayCondition[],
 					},
 				],
 				sections: [
@@ -233,6 +197,13 @@ const WireProperties: definition.UtilityComponent = (props) => {
 						id: "wireeventconditions",
 						properties: ["conditions"],
 						label: "Conditions",
+						displayConditions: [
+							{
+								field: "type",
+								value: "onChange",
+								operator: "EQUALS",
+							},
+						] as component.DisplayCondition[],
 					},
 				],
 			},
@@ -246,13 +217,7 @@ const WireProperties: definition.UtilityComponent = (props) => {
 			id="wireproperties"
 			properties={properties}
 			sections={[
-				getHomeSection([
-					"wirename",
-					"viewOnly",
-					"collection",
-					"batchsize",
-					"init",
-				]),
+				getHomeSection(["wirename", "collection", "batchsize", "init"]),
 				{
 					id: "fields",
 					label: "Fields",

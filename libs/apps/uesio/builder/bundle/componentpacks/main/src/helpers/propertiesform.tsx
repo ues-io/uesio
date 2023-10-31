@@ -925,36 +925,50 @@ const onUpdate = (
 	}
 }
 
+const getPropertiesContext = (context: context.Context, wire?: wire.Wire) => {
+	if (wire) {
+		const record = wire.getFirstRecord()?.getId()
+		if (record) {
+			return context.addRecordFrame({
+				wire: wire.getId(),
+				record,
+			})
+		}
+	}
+	return context
+}
+
 const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 	const DynamicForm = component.getUtility("uesio/io.dynamicform")
-	const { context, id, path, sections, title } = props
+	const { path, sections = [], title, id = title } = props
 
 	const [selectedTab, setSelectedTab] = useState<string>(
-		sections ? getSectionId(sections[0]) : ""
+		sections && sections.length ? getSectionId(sections[0]) : ""
 	)
 	const { content, properties } = getPropertiesAndContent(props, selectedTab)
 
 	const { setters, initialValue, onChangeHandlers } = parseProperties(
 		properties || [],
-		context,
+		props.context,
 		path
 	)
 	const pathString = path?.combine()
+	const wire = api.wire.useWire("dynamicwire:" + id, props.context)
+	const context = getPropertiesContext(props.context)
+	const propSections = component
+		.useShouldFilter(sections, context)
+		?.map((section) => getPropertyTabForSection(section))
 
 	return (
 		<PropertiesWrapper
-			context={props.context}
+			context={context}
 			className={props.className}
 			path={path}
 			title={title}
 			onUnselect={() => setSelectedPath(context)}
 			selectedTab={selectedTab}
 			setSelectedTab={setSelectedTab}
-			tabs={sections
-				?.filter((section) =>
-					component.shouldAll(section?.displayConditions, context)
-				)
-				.map((section) => getPropertyTabForSection(section))}
+			tabs={propSections}
 		>
 			<DynamicForm
 				id={id}

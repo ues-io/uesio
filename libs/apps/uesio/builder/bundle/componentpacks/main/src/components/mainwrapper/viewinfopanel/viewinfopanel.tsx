@@ -1,9 +1,10 @@
-import { definition, api } from "@uesio/ui"
+import { definition, api, wire } from "@uesio/ui"
 
 import PropertiesForm from "../../../helpers/propertiesform"
 import { FullPath } from "../../../api/path"
 import { ComponentProperty } from "../../../properties/componentproperty"
 import { getComponentDef } from "../../../api/stateapi"
+import { set } from "../../../api/defapi"
 
 const defaultPanelComponentType = "uesio/io.dialog"
 
@@ -26,6 +27,15 @@ const ViewInfoPanel: definition.UtilityComponent = (props) => {
 	const viewDef = api.view.useViewDef(viewDefId)
 	if (!viewDefId || !viewDef) return null
 	const path = new FullPath("viewdef", viewDefId)
+	const addWireWithDefaultDefinition = (def: wire.WireDefinition) =>
+		set(
+			context,
+			path
+				.addLocal("wires")
+				.addLocal(`wire${Math.floor(Math.random() * 60) + 1}`),
+			def,
+			true
+		)
 
 	const properties: ComponentProperty[] = [
 		{
@@ -35,16 +45,36 @@ const ViewInfoPanel: definition.UtilityComponent = (props) => {
 					"uesio/builder.wiretag": {},
 				},
 			],
-			defaultDefinition: {
-				fields: null,
-				batchsize: 200,
-				init: {
-					query: true,
-					create: false,
-				},
-			},
 			defaultKey: "wire",
 			type: "MAP",
+			actions: [
+				{
+					label: "Collection Wire",
+					action: () => {
+						addWireWithDefaultDefinition({
+							fields: {},
+							collection: "",
+							batchsize: 200,
+							init: {
+								query: true,
+								create: false,
+							},
+						})
+					},
+				},
+				{
+					label: "View-only Wire",
+					action: () =>
+						addWireWithDefaultDefinition({
+							viewOnly: true,
+							fields: {},
+							init: {
+								query: false,
+								create: true,
+							},
+						}),
+				},
+			],
 		},
 		{
 			name: "panels",
