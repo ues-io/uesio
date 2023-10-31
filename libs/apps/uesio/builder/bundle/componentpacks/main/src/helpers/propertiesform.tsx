@@ -954,7 +954,7 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 	)
 	const pathString = path?.combine()
 	const wire = api.wire.useWire("dynamicwire:" + id, props.context)
-	const context = getPropertiesContext(props.context)
+	const context = getPropertiesContext(props.context, wire)
 	const propSections = component
 		.useShouldFilter(sections, context)
 		?.map((section) => getPropertyTabForSection(section))
