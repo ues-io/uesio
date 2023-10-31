@@ -6,12 +6,11 @@ import (
 	"strings"
 
 	"github.com/gorilla/mux"
+
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/merge"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
-	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
 func GetHomeRoute(session *sess.Session) (*meta.Route, error) {
@@ -48,13 +47,13 @@ func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *
 		router.Path(prefix + item.Path)
 	}
 
-	routematch := &mux.RouteMatch{}
+	routeMatch := &mux.RouteMatch{}
 
-	if matched := router.Match(r, routematch); !matched {
+	if matched := router.Match(r, routeMatch); !matched {
 		return nil, errors.New("No Route Match Found: " + path)
 	}
 
-	pathTemplate, err := routematch.Route.GetPathTemplate()
+	pathTemplate, err := routeMatch.Route.GetPathTemplate()
 	if err != nil {
 		return nil, errors.New("no Path Template found for route")
 	}
@@ -63,68 +62,49 @@ func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *
 
 	for _, item := range routes {
 		if item.Path == pathTemplate {
+			// Clone the route to ensure we don't mutate in-memory metadata
 			meta.Copy(route, item)
 			break
 		}
 	}
-
-	processedParams := map[string]string{}
-
-	for paramName, paramValue := range route.Params {
-		template, err := templating.NewWithFuncs(paramValue, templating.ForceErrorFunc, merge.ServerMergeFuncs)
-		if err != nil {
-			return nil, err
+	if route != nil {
+		route.Path = path
+		if route.Params == nil {
+			route.Params = map[string]string{}
 		}
-
-		mergedValue, err := templating.Execute(template, merge.ServerMergeData{
-			Session:     session,
-			ParamValues: nil,
-		})
-		if err != nil {
-			return nil, err
+		// Inject all routeMatch vars, which are fully-resolved and can safely override anything in route params
+		if len(routeMatch.Vars) > 0 {
+			for k, v := range routeMatch.Vars {
+				route.Params[k] = v
+			}
 		}
-
-		processedParams[paramName] = mergedValue
 	}
 
-	// Now add in querystring parameters
-	for k, v := range r.URL.Query() {
-		processedParams[k] = v[0]
-	}
-
-	// Add the routematch params
-	for k, v := range routematch.Vars {
-		processedParams[k] = v
-	}
-
-	route.Path = path
-	route.Params = processedParams
-
-	return datasource.RunRouteBots(route, session)
+	return route, nil
 }
 
 func GetRouteFromAssignment(r *http.Request, namespace, collection string, viewtype string, recordID string, session *sess.Session) (*meta.Route, error) {
 
-	var routeassignment *meta.RouteAssignment
-	var routeassignments meta.RouteAssignmentCollection
+	var routeAssignment *meta.RouteAssignment
+	var routeAssignments meta.RouteAssignmentCollection
 
-	err := bundle.LoadAllFromAny(&routeassignments, map[string]string{"uesio/studio.collection": namespace + "." + collection}, session, nil)
+	err := bundle.LoadAllFromAny(&routeAssignments, map[string]string{"uesio/studio.collection": namespace + "." + collection}, session, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	for _, item := range routeassignments {
+	for _, item := range routeAssignments {
 		if item.Type == viewtype {
-			routeassignment = item
+			routeAssignment = item
 			break
 		}
 	}
 
-	if routeassignment == nil {
+	if routeAssignment == nil {
 		return nil, errors.New("No route found with this collection and view type: " + namespace + "." + collection + " : " + viewtype)
 	}
 
-	route, err := meta.NewRoute(routeassignment.RouteRef)
+	route, err := meta.NewRoute(routeAssignment.RouteRef)
 	if err != nil {
 		return nil, err
 	}
