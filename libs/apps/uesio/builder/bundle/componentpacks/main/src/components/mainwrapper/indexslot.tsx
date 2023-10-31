@@ -4,45 +4,32 @@ import IndexComponent from "./indexcomponent"
 import { standardAccepts } from "../../helpers/dragdrop"
 import { usePlaceHolders } from "../../utilities/buildwrapper/buildwrapper"
 
-const IndexPlaceHolder: definition.UtilityComponent = (props) => {
-	const classes = styles.useUtilityStyleTokens(
-		{
-			root: [
-				"bg-blue-600",
-				"py-2",
-				"px-3",
-				"grid",
-				"m-1",
-				"rounded-sm",
-				"items-center",
-			],
-		},
-		props
-	)
-	return <div className={classes.root} data-placeholder="true" />
-}
+const StyleDefaults = Object.freeze({
+	placeholder: [
+		"bg-blue-600",
+		"py-2",
+		"px-3",
+		"grid",
+		"m-1",
+		"rounded-sm",
+		"items-center",
+	],
+})
 
 const IndexBuildWrapper: definition.UC = (props) => {
 	const { children, path, context } = props
 
-	const [addBefore, addAfter, index] = usePlaceHolders(context, path)
+	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
+	const [addBefore, addAfter] = usePlaceHolders(context, path)
 
 	return (
 		<div className="contents" data-placeholder="true">
 			{addBefore && (
-				<IndexPlaceHolder
-					label="0"
-					isHovering={true}
-					context={context}
-				/>
+				<div className={classes.placeholder} data-placeholder="true" />
 			)}
 			{children}
 			{addAfter && (
-				<IndexPlaceHolder
-					label={index + 1 + ""}
-					isHovering={true}
-					context={context}
-				/>
+				<div className={classes.placeholder} data-placeholder="true" />
 			)}
 		</div>
 	)
