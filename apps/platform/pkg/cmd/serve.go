@@ -343,6 +343,11 @@ func serve(cmd *cobra.Command, args []string) {
 	// Experimental REST api route
 	sr.HandleFunc("/rest/"+itemParam, controller.Rest).Methods("GET")
 
+	// Dev Only Route for running usage worker
+	if os.Getenv("UESIO_DEV") == "true" {
+		sr.HandleFunc("/worker/usage", controller.RunUsageWorker).Methods("POST")
+	}
+
 	// REST API routes
 	sr.HandleFunc("/api/v1/collection/"+itemParam, controller.DeleteRecordApi).Methods("DELETE")
 

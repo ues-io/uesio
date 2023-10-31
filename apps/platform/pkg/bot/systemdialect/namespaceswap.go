@@ -13,6 +13,14 @@ type NamespaceSwapItem struct {
 	item       *adapt.Item
 }
 
+func (i *NamespaceSwapItem) Scan(src interface{}) error {
+	return json.Unmarshal([]byte(src.(string)), i)
+}
+
+func (i *NamespaceSwapItem) UnmarshalJSON(bytes []byte) error {
+	return json.Unmarshal(bytes, i.item)
+}
+
 func (i *NamespaceSwapItem) MarshalJSON() ([]byte, error) {
 	result := map[string]json.RawMessage{}
 	err := i.Loop(func(fieldName string, value interface{}) error {
