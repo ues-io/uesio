@@ -1,4 +1,4 @@
-import { DragEvent, useState } from "react"
+import { useState } from "react"
 import {
 	definition,
 	component,
@@ -15,8 +15,6 @@ import {
 	getBuilderNamespace,
 	getBuilderNamespaces,
 	getComponentDefs,
-	setDragPath,
-	setDropPath,
 	setSelectedPath,
 	useSelectedPath,
 } from "../../../api/stateapi"
@@ -25,6 +23,10 @@ import { FullPath } from "../../../api/path"
 import SearchArea from "../../../helpers/searcharea"
 import { add } from "../../../api/defapi"
 import ItemTag from "../../../utilities/itemtag/itemtag"
+import {
+	getDragEndHandler,
+	getDragStartHandler,
+} from "../../../helpers/dragdrop"
 
 const getUtility = component.getUtility
 
@@ -257,8 +259,6 @@ const ComponentTag: definition.UtilityComponent<ComponentTagProps> = (
 	)
 }
 
-const CURSOR_GRABBING = "cursor-grabbing"
-
 const ComponentsPanel: definition.UC = (props) => {
 	const ScrollPanel = getUtility("uesio/io.scrollpanel")
 	const { context } = props
@@ -275,28 +275,6 @@ const ComponentsPanel: definition.UC = (props) => {
 	)
 
 	const selectedPath = useSelectedPath(context)
-
-	const onDragStart = (e: DragEvent) => {
-		const target = e.target as HTMLDivElement
-		if (target && target.dataset.type) {
-			const typeArray = target.dataset.type.split(":")
-			const metadataType = typeArray.shift()
-			const metadataItem = typeArray.join(":")
-			if (metadataType && metadataItem) {
-				setDragPath(context, new FullPath(metadataType, metadataItem))
-			}
-			target.classList.remove(CURSOR_GRABBING)
-			target.classList.add(CURSOR_GRABBING)
-		}
-	}
-	const onDragEnd = (e: DragEvent) => {
-		setDragPath(context)
-		setDropPath(context)
-		const target = e.target as HTMLDivElement
-		if (target?.classList?.length) {
-			target.classList.remove(CURSOR_GRABBING)
-		}
-	}
 
 	const categoryOrder = [
 		"LAYOUT",
@@ -336,7 +314,10 @@ const ComponentsPanel: definition.UC = (props) => {
 			}
 			context={context}
 		>
-			<div onDragStart={onDragStart} onDragEnd={onDragEnd}>
+			<div
+				onDragStart={getDragStartHandler(context)}
+				onDragEnd={getDragEndHandler(context)}
+			>
 				{categoryOrder.map((category) => (
 					<CategoryBlock
 						key={category}
