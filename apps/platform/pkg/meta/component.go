@@ -37,61 +37,55 @@ type Component struct {
 	Variants       []string `yaml:"variants,omitempty" json:"uesio/studio.variants"`
 	Utilities      []string `yaml:"utilities,omitempty" json:"uesio/studio.utilities"`
 	Slots          *YAMLDef `yaml:"slots,omitempty" json:"uesio/studio.slots"`
+	Properties     *YAMLDef `yaml:"properties,omitempty" json:"uesio/studio.properties"`
 	// Definition defines the Component body, for Declarative components
 	Definition *YAMLDef `yaml:"definition,omitempty" json:"uesio/studio.definition"`
 
-	// Builder Properties
+	// Builder-only Properties
 	Title             string   `yaml:"title,omitempty" json:"uesio/studio.title"`
 	Icon              string   `yaml:"icon,omitempty" json:"uesio/studio.icon"`
 	Discoverable      bool     `yaml:"discoverable,omitempty" json:"uesio/studio.discoverable"`
 	Description       string   `yaml:"description,omitempty" json:"uesio/studio.description"`
-	Properties        *YAMLDef `yaml:"properties,omitempty" json:"uesio/studio.properties"`
 	DefaultDefinition *YAMLDef `yaml:"defaultDefinition,omitempty" json:"uesio/studio.defaultdefinition"`
 	Sections          *YAMLDef `yaml:"sections,omitempty" json:"uesio/studio.sections"`
 	Signals           *YAMLDef `yaml:"signals,omitempty" json:"uesio/studio.signals"`
 	StyleRegions      *YAMLDef `yaml:"styleRegions,omitempty" json:"uesio/studio.styleregions"`
 
 	// Internal only
-	slotPaths      []string
+	slotDefs       []*SlotDefinition
 	defaultVariant string
 }
 
 var no_default_variant = "--no-default--"
 
 type SlotDefinition struct {
-	Name string `yaml:"name"`
-	Path string `yaml:"path,omitempty"`
+	Name           string   `yaml:"name"`
+	Path           string   `yaml:"path,omitempty"`
+	DefaultContent *YAMLDef `yaml:"defaultContent,omitempty"`
+}
+
+// GetFullPath returns a JSONPointer for extracting a component slot within an instance of this component
+func (sd *SlotDefinition) GetFullPath() string {
+	return fmt.Sprintf("%s/%s", sd.Path, sd.Name)
 }
 
 type ComponentWrapper Component
 
-type SlotDef struct {
-	Name string
-	Path string
-}
-
-// GetSlotPaths returns a slice of JSONPointers for extracting component slots within an instance of this component
-func (c *Component) GetSlotPaths() []string {
-	if c.slotPaths == nil && c.Slots != nil {
-		parsedSlots := make([]SlotDefinition, 0)
+// GetSlotDefinitions returns a slice of parsed slot definitions to use for dependency processing
+func (c *Component) GetSlotDefinitions() []*SlotDefinition {
+	if c.slotDefs == nil && c.Slots != nil {
+		parsedSlots := make([]*SlotDefinition, 0)
 		// Decode the slots into the parsedSlots
 		err := c.Slots.Decode(&parsedSlots)
 		if err != nil {
-			parsedSlots = []SlotDefinition{}
+			parsedSlots = []*SlotDefinition{}
 		}
-		c.slotPaths = make([]string, len(parsedSlots))
-
-		// If the component has slots, we need to traverse the slots to find other components
-		// that need to be added to our dependencies
-		for i, parsedSlot := range parsedSlots {
-			c.slotPaths[i] = fmt.Sprintf("%s/%s", parsedSlot.Path, parsedSlot.Name)
-
-		}
+		c.slotDefs = parsedSlots
 	}
-	return c.slotPaths
+	return c.slotDefs
 }
 
-// Returns the default variant for a Component by inspecting the default definition
+// GetDefaultVariant returns the default variant for a Component by inspecting the default definition
 // and looking for the "uesio.variant" key
 func (c *Component) GetDefaultVariant() string {
 
@@ -197,16 +191,49 @@ func (cdw *RuntimeComponentMetadata) MarshalJSONObject(enc *gojay.Encoder) {
 	enc.AddStringKey("namespace", cdw.Namespace)
 	enc.AddStringKey("name", cdw.Name)
 	enc.AddStringKey("type", cdw.GetType())
-	if cdw.Definition != nil {
-		enc.AddArrayKey("definition", (*YAMLtoJSONArray)(cdw.Definition))
-	}
-	if cdw.Slots != nil {
-		enc.AddArrayKey("slots", (*YAMLtoJSONArray)(cdw.Slots))
+	enc.AddArrayKeyOmitEmpty("definition", (*YAMLtoJSONArray)(cdw.Definition))
+	enc.AddArrayKeyOmitEmpty("slots", (*YAMLtoJSONArray)(cdw.Slots))
+	// This is a hassle, but to avoid sending down a LOT of property metadata which the runtime doesn't need,
+	// we decode into a custom struct and then serialize just that.
+	if cdw.Properties != nil {
+		props := PropertyDefs{}
+		err := cdw.Properties.Decode(&props)
+		if err == nil {
+			enc.AddArrayKeyOmitEmpty("properties", &props)
+		}
 	}
 }
 
 func (cdw *RuntimeComponentMetadata) GetType() string {
 	return GetType(cdw.Type)
+}
+
+type PropertyDef struct {
+	Name         string `yaml:"name"`
+	DefaultValue string `yaml:"defaultValue,omitempty"`
+}
+
+func (p *PropertyDef) IsNil() bool {
+	return p == nil
+}
+
+func (p *PropertyDef) MarshalJSONObject(enc *gojay.Encoder) {
+	enc.AddStringKey("name", p.Name)
+	enc.AddStringKeyOmitEmpty("defaultValue", p.DefaultValue)
+}
+
+type PropertyDefs []*PropertyDef
+
+func (props *PropertyDefs) IsNil() bool {
+	return props == nil || len(*props) == 0
+}
+
+func (props *PropertyDefs) MarshalJSONArray(enc *gojay.Encoder) {
+	if props != nil {
+		for _, prop := range *props {
+			enc.AddObject(prop)
+		}
+	}
 }
 
 func GetType(componentType string) string {

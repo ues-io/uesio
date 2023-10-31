@@ -246,7 +246,7 @@ const TableColumns: definition.UC = (props) => {
 					placement="right-start"
 					autoPlacement={["right-start"]}
 					offset={6}
-					useFirstRelativeParent
+					parentSelector="#propertieswrapper"
 					matchHeight
 				>
 					<FieldPicker

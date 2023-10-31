@@ -43,6 +43,7 @@ type SlotDef = {
 	name: string
 	path?: string
 	providesContexts?: SlotContextProvision[]
+	defaultContent?: definition.DefinitionList
 }
 
 type StyleRegion = {

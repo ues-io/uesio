@@ -20,20 +20,22 @@ interface TooltipProps {
 	onOutsideClick?: () => void
 	offset?: number
 	autoPlacement?: Placement[]
-	useFirstRelativeParent?: boolean
+	parentSelector?: string
 	matchHeight?: boolean
 	arrow?: boolean
 }
 
 const defaultPlacement: Placement[] = ["top", "bottom"]
 
-const getRelativeParent = (elem: Element | null): Element | null => {
+const getRelativeParent = (
+	elem: Element | null,
+	parentSelector: string
+): Element | null => {
 	if (!elem) return null
 	const parent = elem.parentElement
 	if (!parent) return elem
-	const style = window.getComputedStyle(parent)
-	if (style.getPropertyValue("position") === "relative") return parent
-	return getRelativeParent(parent)
+	if (parent.matches(parentSelector)) return parent
+	return getRelativeParent(parent, parentSelector)
 }
 
 const StyleDefaults = Object.freeze({
@@ -76,11 +78,11 @@ const Popper: definition.UtilityComponent<TooltipProps> = (props) => {
 	})
 
 	useLayoutEffect(() => {
-		const referenceEl = props.useFirstRelativeParent
-			? getRelativeParent(props.referenceEl)
+		const referenceEl = props.parentSelector
+			? getRelativeParent(props.referenceEl, props.parentSelector)
 			: props.referenceEl
 		refs.setReference(referenceEl)
-	}, [refs, props.referenceEl, props.useFirstRelativeParent])
+	}, [refs, props.referenceEl, props.parentSelector])
 
 	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 

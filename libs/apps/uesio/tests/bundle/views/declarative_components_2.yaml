@@ -78,3 +78,4 @@ definition:
                 - uesio/io.titlebar:
                     title: And this is the ${three}
                     uesio.variant: uesio/io.main
+          - uesio/tests.declarative2: {}

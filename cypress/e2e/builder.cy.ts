@@ -14,7 +14,6 @@ wires: {}
 # Components determine the layout and composition of your view
 components:
   - uesio/io.button:
-      text: New Button
       icon: bolt
       uesio.variant: uesio/io.default
       iconPlacement: start
@@ -25,10 +24,10 @@ wires: {}
 # Components determine the layout and composition of your view
 components:
   - uesio/io.button:
-      text: First
       icon: bolt
       uesio.variant: uesio/io.default
       iconPlacement: start
+      text: First
 `
 
 const cloneButtonPageDef = `# Wires connect to data in collections
@@ -36,15 +35,15 @@ wires: {}
 # Components determine the layout and composition of your view
 components:
   - uesio/io.button:
-      text: First
       icon: bolt
       uesio.variant: uesio/io.default
       iconPlacement: start
+      text: First
   - uesio/io.button:
-      text: First
       icon: bolt
       uesio.variant: uesio/io.default
       iconPlacement: start
+      text: First
 `
 
 const setButtonPageDef2 = `# Wires connect to data in collections
@@ -52,15 +51,15 @@ wires: {}
 # Components determine the layout and composition of your view
 components:
   - uesio/io.button:
+      icon: bolt
+      uesio.variant: uesio/io.default
+      iconPlacement: start
       text: First
-      icon: bolt
-      uesio.variant: uesio/io.default
-      iconPlacement: start
   - uesio/io.button:
-      text: Second
       icon: bolt
       uesio.variant: uesio/io.default
       iconPlacement: start
+      text: Second
 `
 
 const moveBackwardPageDef = `# Wires connect to data in collections
@@ -68,15 +67,15 @@ wires: {}
 # Components determine the layout and composition of your view
 components:
   - uesio/io.button:
+      icon: bolt
+      uesio.variant: uesio/io.default
+      iconPlacement: start
       text: Second
-      icon: bolt
-      uesio.variant: uesio/io.default
-      iconPlacement: start
   - uesio/io.button:
-      text: First
       icon: bolt
       uesio.variant: uesio/io.default
       iconPlacement: start
+      text: First
 `
 
 describe("Uesio Builder Tests", () => {
