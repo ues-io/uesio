@@ -950,7 +950,11 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 			onUnselect={() => setSelectedPath(context)}
 			selectedTab={selectedTab}
 			setSelectedTab={setSelectedTab}
-			tabs={sections?.map(getPropertyTabForSection)}
+			tabs={sections
+				?.filter((section) =>
+					component.shouldAll(section?.displayConditions, context)
+				)
+				.map((section) => getPropertyTabForSection(section))}
 		>
 			<DynamicForm
 				id={id}
