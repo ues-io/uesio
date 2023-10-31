@@ -19,7 +19,12 @@ type BaseProperty = {
 	label?: string
 	required?: boolean
 	type: string
+	// defaultValue will be used at runtime if the property is not set in the YAML definition.
+	// It will also be used as the placeholder if no placeholder is specified.
+	defaultValue?: wire.FieldValue
+	// placeholder defines what placeholder text is displayed in the property editor.
 	placeholder?: string
+	// readonly will prevent the property from being edited in the properties UI.
 	readonly?: boolean
 	// If false, then the property will be stored in local state and YAML definition,
 	// but will not be displayed in the properties UI.

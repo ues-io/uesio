@@ -47,7 +47,15 @@ export const getFormFieldFromProperty = (
 	context: context.Context,
 	path: FullPath
 ) => {
-	const { name, type, displayConditions, readonly, label } = property
+	const {
+		defaultValue,
+		displayConditions,
+		label,
+		name,
+		placeholder,
+		readonly,
+		type,
+	} = property
 	const baseFieldDef = {
 		fieldId: name,
 		[COMPONENT_ID]: `property:${name}`,
@@ -56,6 +64,7 @@ export const getFormFieldFromProperty = (
 		labelPosition: "left",
 		label,
 		readonly,
+		placeholder: placeholder || defaultValue,
 	}
 	switch (type) {
 		case "METADATA":
@@ -196,7 +205,6 @@ export const getFormFieldFromProperty = (
 			return {
 				"uesio/io.field": {
 					...baseFieldDef,
-					placeholder: property.placeholder,
 					wrapperVariant: "uesio/builder.propfield",
 				},
 			}

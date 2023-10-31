@@ -3,6 +3,9 @@ category: LAYOUT
 type: DECLARATIVE
 slots:
   - name: header
+    defaultContent:
+      - uesio/io.titlebar:
+          title: This is a default header
   - name: footer
 definition:
   - uesio/core.slot:

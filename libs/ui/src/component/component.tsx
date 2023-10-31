@@ -24,6 +24,7 @@ import { component } from ".."
 import { getKey } from "../metadata/metadata"
 import { getComponentType } from "../bands/componenttype/selectors"
 import {
+	ComponentProperty,
 	Declarative,
 	DeclarativeComponent as DeclarativeComponentDef,
 	SlotDef,
@@ -129,6 +130,48 @@ const resolveDeclarativeComponentDefinition = (
 			componentTypeDef.definition as Record<string, string>[]
 		) as DefinitionList) || []
 
+function addDefaultPropertyAndSlotValues(
+	def: DefinitionMap,
+	componentTypeDef?: component.ComponentDef
+) {
+	const propsWithDefaults = componentTypeDef?.properties?.filter(
+		(prop) => prop.defaultValue !== undefined
+	)
+	const slotsWithDefaults = componentTypeDef?.slots?.filter(
+		(prop) => prop.defaultContent !== undefined
+	)
+	const havePropsWithDefaults =
+		propsWithDefaults && propsWithDefaults.length > 0
+	const haveSlotsWithDefaults =
+		slotsWithDefaults && slotsWithDefaults.length > 0
+	// Shortcut - if we have no defaults, we are done
+	if (!havePropsWithDefaults && !haveSlotsWithDefaults) return def
+	const defaults = {} as DefinitionMap
+	if (havePropsWithDefaults) {
+		propsWithDefaults.forEach((prop: ComponentProperty) => {
+			const { defaultValue, name } = prop
+			if (typeof def[name] === "undefined" || def[name] === null) {
+				defaults[name] = defaultValue
+			}
+		})
+	}
+	if (haveSlotsWithDefaults) {
+		slotsWithDefaults.forEach((slot: SlotDef) => {
+			const { defaultContent, name } = slot
+			if (typeof def[name] === "undefined" || def[name] === null) {
+				defaults[name] = defaultContent
+			}
+		})
+	}
+	// Shortcut - if all properties were populated, no need to do a merge
+	if (Object.keys(defaults).length === 0) return def
+	// Merge defaults into definition
+	return {
+		...defaults,
+		...def,
+	}
+}
+
 const DeclarativeComponent: UC<DeclarativeProps> = (props) => {
 	const { componentType, context, definition, path } = props
 	if (!componentType) return null
@@ -185,9 +228,10 @@ const Component: UC<DefinitionMap> = (props) => {
 
 	let Loader = getRuntimeLoader(componentType) as UC | undefined
 
+	const componentTypeDef = getComponentType(componentType)
+
 	if (!Loader) {
 		// Check if this is a declarative component, and if so use the declarative loader
-		const componentTypeDef = getComponentType(componentType)
 		if (componentTypeDef?.type === Declarative) {
 			Loader = DeclarativeComponent
 		}
@@ -197,8 +241,10 @@ const Component: UC<DefinitionMap> = (props) => {
 		return <NotFound {...props} />
 	}
 
-	const mergedDefinition =
-		mergeContextVariants(definition, componentType, context) || {}
+	const mergedDefinition = addDefaultPropertyAndSlotValues(
+		mergeContextVariants(definition, componentType, context) || {},
+		componentTypeDef
+	)
 
 	return (
 		<ErrorBoundary {...props}>
@@ -242,8 +288,9 @@ const getUtility = <T extends UtilityProps = UtilityPropsPlus>(
 ) => getUtilityLoader(key) as UtilityComponent<T>
 
 export {
-	DECLARATIVE_COMPONENT,
+	addDefaultPropertyAndSlotValues,
 	Component,
+	DECLARATIVE_COMPONENT,
 	getDefinitionFromVariant,
 	getUtility,
 	parseVariantName,

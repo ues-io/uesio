@@ -1,7 +1,10 @@
 import { Context, ViewContext } from "../context/context"
 import { DeclarativeComponent } from "../definition/component"
 import { BaseDefinition } from "../definition/definition"
-import { resolveDeclarativeComponentDefinition } from "./component"
+import {
+	addDefaultPropertyAndSlotValues,
+	resolveDeclarativeComponentDefinition,
+} from "./component"
 
 const viewName = "uesio/core.foo"
 const viewDef = `
@@ -164,6 +167,113 @@ describe("resolveDeclarativeComponentDefinition", () => {
 		test(tc.name, () => {
 			const actual = resolveDeclarativeComponentDefinition(
 				tc.context || new Context(),
+				tc.inputDefinition as BaseDefinition,
+				tc.componentDef as DeclarativeComponent
+			)
+			expect(actual).toEqual(tc.expected)
+		})
+	})
+})
+
+const componentTypeWithSlotAndPropertyDefaults = {
+	type: "DECLARATIVE",
+	namespace: "uesio/tests",
+	name: "hasslotandpropertydefaults",
+	definition: [
+		{
+			"uesio/io.box": {
+				components: [
+					{
+						"uesio/core.slot": {
+							name: "header",
+						},
+					},
+				],
+			},
+		},
+		{
+			"uesio/io.text": {
+				text: "$Prop{title}",
+			},
+		},
+	],
+	slots: [
+		{
+			name: "header",
+			defaultContent: [
+				{
+					"uesio/io.titlebar": {
+						title: "This is a title: ${uesio/core.uniquekey}",
+					},
+				},
+			],
+		},
+	],
+	properties: [{ name: "title", defaultValue: "Hello $User{email}!" }],
+}
+
+const addDefaultPropertyAndSlotValuesTests = [
+	{
+		name: "component type has no slots",
+		inputDefinition: {},
+		componentDef: componentTypeWithoutSlots,
+		expected: {},
+	},
+	{
+		name: "no defaults defined on the component type for either slots or properties",
+		inputDefinition: {
+			title: "foo",
+		},
+		componentDef: componentTypeWithSlots,
+		expected: {
+			title: "foo",
+		},
+	},
+	{
+		name: "no slot/prop values provided, for component type with defaults defined",
+		inputDefinition: {},
+		componentDef: componentTypeWithSlotAndPropertyDefaults,
+		expected: {
+			header: [
+				{
+					"uesio/io.titlebar": {
+						title: "This is a title: ${uesio/core.uniquekey}",
+					},
+				},
+			],
+			title: "Hello $User{email}!",
+		},
+	},
+	{
+		name: "values provided for slots and props, for component type with defaults defined",
+		inputDefinition: {
+			header: [
+				{
+					"uesio/io.text": {
+						text: "We provided our own header",
+					},
+				},
+			],
+			title: "We provided our own title",
+		},
+		componentDef: componentTypeWithSlotAndPropertyDefaults,
+		expected: {
+			header: [
+				{
+					"uesio/io.text": {
+						text: "We provided our own header",
+					},
+				},
+			],
+			title: "We provided our own title",
+		},
+	},
+]
+
+describe("addDefaultPropertyAndSlotValues", () => {
+	addDefaultPropertyAndSlotValuesTests.forEach((tc) => {
+		test(tc.name, () => {
+			const actual = addDefaultPropertyAndSlotValues(
 				tc.inputDefinition as BaseDefinition,
 				tc.componentDef as DeclarativeComponent
 			)

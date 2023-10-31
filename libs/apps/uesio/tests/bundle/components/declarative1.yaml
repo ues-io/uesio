@@ -14,12 +14,11 @@ properties:
   - type: TEXT
     name: title
     label: Title
+    defaultValue: This is a title
   - type: TEXT
     name: subtitle
     label: Subtitle
-defaultDefinition:
-  title: This is a title
-  subtitle: This is a subtitle
+    defaultValue: This is a subtitle
 sections:
   - type: HOME
     properties:

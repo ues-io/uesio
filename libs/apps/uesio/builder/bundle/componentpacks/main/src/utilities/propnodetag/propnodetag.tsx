@@ -53,7 +53,7 @@ const PropNodeTag: definition.UtilityComponent<Props> = (props) => {
 					context={context}
 					placement="right-start"
 					autoPlacement={["right-start"]}
-					useFirstRelativeParent
+					parentSelector="#propertieswrapper"
 				>
 					{popperChildren}
 				</Popper>
