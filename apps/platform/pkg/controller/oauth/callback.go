@@ -92,7 +92,10 @@ func loadCallbackRoute(coreSession *sess.Session, platformConn adapt.Connection)
 	if err := bundle.Load(route, coreSession, platformConn); err != nil {
 		return nil, errors.New("unable to load oauth callback route: " + err.Error())
 	}
-	return route, nil
+	// Make sure to do a copy to avoid mutating in-memory/cached metadata
+	cloned := &meta.Route{}
+	meta.Copy(cloned, route)
+	return cloned, nil
 }
 
 func extractAuthCodeAndState(query url.Values) (authCode string, state *oauth.State, err error) {

@@ -253,9 +253,6 @@ func (api *BotHttpAPI) makeRequestWithOAuth2AuthorizationCode(req *http.Request,
 	if integrationCredential == nil {
 		return nil, NewUnauthorizedException("user has not yet authorized this integration")
 	}
-	if integrationCredential == nil {
-		return nil, NewUnauthorizedException("user has not yet authorized this integration")
-	}
 	accessToken, _ := integrationCredential.GetFieldAsString(oauthlib.AccessTokenField)
 	refreshToken, _ := integrationCredential.GetFieldAsString(oauthlib.RefreshTokenField)
 	accessTokenExpiry, _ := integrationCredential.GetField(oauthlib.AccessTokenExpirationField)

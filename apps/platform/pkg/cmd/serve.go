@@ -344,8 +344,9 @@ func serve(cmd *cobra.Command, args []string) {
 	sr.HandleFunc("/auth/"+itemParam+"/forgotpassword", controller.ForgotPassword).Methods("POST")
 	sr.HandleFunc("/auth/"+itemParam+"/forgotpassword/confirm", controller.ConfirmForgotPassword).Methods("POST")
 	sr.HandleFunc("/auth/"+itemParam+"/signup/confirm", controller.ConfirmSignUp).Methods("GET")
-
+	wr.HandleFunc("/auth/credentials/"+itemParam, controller.DeleteAuthCredentials).Methods("DELETE")
 	sr.HandleFunc("/auth/credentials/"+itemParam, controller.DeleteAuthCredentials).Methods("DELETE")
+	sa.HandleFunc("/auth/credentials/"+itemParam, controller.DeleteAuthCredentials).Methods("DELETE")
 	sr.HandleFunc("/auth/logout", controller.Logout).Methods("POST")
 	sr.HandleFunc("/auth/check", controller.AuthCheck).Methods("GET")
 

@@ -353,6 +353,33 @@ definition:
                       field: uesio/core.hasaccesstoken
                       operator: EQUALS
                       value: false
+              - uesio/io.button:
+                  uesio.variant: uesio/io.destructive
+                  text: Clear credentials
+                  signals:
+                    - signal: context/SET
+                      type: WORKSPACE
+                      name: $Param{workspacename}
+                      app: $Param{app}
+                    - signal: auth/DELETE_CREDENTIALS
+                      integration: $Param{namespace}/$Param{integrationname}
+                    - signal: wire/LOAD
+                      wires:
+                        - integrationcredentials
+                  uesio.display:
+                    - type: group
+                      conjunction: OR
+                      conditions:
+                        - type: fieldValue
+                          wire: integrationcredentials
+                          field: uesio/core.hasaccesstoken
+                          operator: EQUALS
+                          value: true
+                        - type: fieldValue
+                          wire: integrationcredentials
+                          field: uesio/core.hasrefreshtoken
+                          operator: EQUALS
+                          value: true
         - uesio/io.item:
             wire: integrationcredentials
             uesio.id: integrationCredentialItem
