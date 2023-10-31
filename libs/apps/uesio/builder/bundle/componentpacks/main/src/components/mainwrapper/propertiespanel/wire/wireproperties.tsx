@@ -40,16 +40,8 @@ const WireProperties: definition.UtilityComponent = (props) => {
 			name: "viewOnly",
 			label: "View Only",
 			type: "CHECKBOX",
-			//CLEAN WIRE PROPS
 			onChange: [
-				// if VIEW_ONLY changes reset the wire props
 				{
-					// conditions: [
-					// 	{
-					// 		value: VIEW_ONLY,
-					// 		type: "hasNoValue",
-					// 	},
-					// ],
 					updates: [
 						{
 							field: "collection",
