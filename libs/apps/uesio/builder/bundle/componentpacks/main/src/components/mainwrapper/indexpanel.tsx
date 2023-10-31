@@ -1,9 +1,19 @@
 import { definition, component, api, styles } from "@uesio/ui"
 import { useDefinition } from "../../api/defapi"
-import { useSelectedViewPath } from "../../api/stateapi"
-import IndexComponent from "./indexcomponent"
+import {
+	useDragPath,
+	useDropPath,
+	useSelectedViewPath,
+} from "../../api/stateapi"
 import SearchArea from "../../helpers/searcharea"
 import { useState } from "react"
+import {
+	getDragEndHandler,
+	getDragOverHandler,
+	getDragStartHandler,
+	getDropHandler,
+} from "../../helpers/dragdrop"
+import IndexSlot from "./indexslot"
 
 const StyleDefaults = Object.freeze({
 	root: [],
@@ -16,6 +26,9 @@ const IndexPanel: definition.UtilityComponent = (props) => {
 	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
 	const selectedPath = useSelectedViewPath(props.context)
+
+	const dragPath = useDragPath(props.context)
+	const dropPath = useDropPath(props.context)
 
 	const definition = useDefinition(
 		selectedPath.setLocal("")
@@ -68,23 +81,23 @@ const IndexPanel: definition.UtilityComponent = (props) => {
 			context={context}
 			className={classes.root}
 		>
-			{component
-				.getSlotProps({
-					listName: "components",
-					definition,
-					path: "",
-					context,
-				})
-				.map((props, index) => (
-					<IndexComponent
-						{...props}
-						definition={{
-							...props.definition,
-							searchTerm,
+			<div
+				onDragStart={getDragStartHandler(context)}
+				onDragEnd={getDragEndHandler(context)}
+				onDragOver={getDragOverHandler(context, dragPath, dropPath)}
+				onDrop={getDropHandler(context, dragPath, dropPath)}
+			>
+				{
+					<IndexSlot
+						slot={{
+							name: "components",
 						}}
-						key={index}
+						definition={definition}
+						path={""}
+						context={context}
 					/>
-				))}
+				}
+			</div>
 		</ScrollPanel>
 	)
 }

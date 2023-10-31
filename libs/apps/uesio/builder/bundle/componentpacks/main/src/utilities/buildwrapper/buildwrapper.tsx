@@ -1,11 +1,12 @@
-import { definition } from "@uesio/ui"
+import { definition, context } from "@uesio/ui"
 import PlaceHolder from "../placeholder/placeholder"
 import { useDropPath } from "../../api/stateapi"
 import { FullPath } from "../../api/path"
 
-const BuildWrapper: definition.UC = (props) => {
-	const { children, path, context, componentType } = props
-
+const usePlaceHolders = (
+	context: context.Context,
+	path: string
+): [boolean, boolean, number] => {
 	const dropPath = useDropPath(context)
 
 	const viewDefId = context.getViewDefId()
@@ -13,17 +14,25 @@ const BuildWrapper: definition.UC = (props) => {
 
 	const [, index, slotPath] = fullPath.popIndexAndType()
 
-	let addBeforePlaceholder,
-		addAfterPlaceholder = false
+	let addBefore = false,
+		addAfter = false
 
 	if (dropPath.isSet() && dropPath.size() > 1) {
 		const [dropIndex, dropSlotPath] = dropPath.popIndex()
 		const isDroppingInMySlot = slotPath.equals(dropSlotPath)
 		if (isDroppingInMySlot) {
-			if (index === 0 && dropIndex === 0) addBeforePlaceholder = true
-			if (dropIndex === index + 1) addAfterPlaceholder = true
+			if (index === 0 && dropIndex === 0) addBefore = true
+			if (dropIndex === index + 1) addAfter = true
 		}
 	}
+
+	return [addBefore, addAfter, index]
+}
+
+const BuildWrapper: definition.UC = (props) => {
+	const { children, path, context, componentType } = props
+
+	const [addBefore, addAfter, index] = usePlaceHolders(context, path)
 
 	return (
 		<div
@@ -33,11 +42,11 @@ const BuildWrapper: definition.UC = (props) => {
 			data-component={componentType}
 			data-empty-label={"Invisible Component: " + componentType}
 		>
-			{addBeforePlaceholder && (
+			{addBefore && (
 				<PlaceHolder label="0" isHovering={true} context={context} />
 			)}
 			{children}
-			{addAfterPlaceholder && (
+			{addAfter && (
 				<PlaceHolder
 					label={index + 1 + ""}
 					isHovering={true}
@@ -47,5 +56,7 @@ const BuildWrapper: definition.UC = (props) => {
 		</div>
 	)
 }
+
+export { usePlaceHolders }
 
 export default BuildWrapper
