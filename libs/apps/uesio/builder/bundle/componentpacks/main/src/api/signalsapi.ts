@@ -27,7 +27,7 @@ const signalBandDefinitions: SignalBandDefinition[] = [
 
 type SignalOutput = {
 	name: string
-	type: "TEXT" | "RECORD" | "MAP" | "LIST"
+	type: "TEXT" | "RECORD" | "MAP" | "LIST" | "STRUCT"
 }
 
 type SignalBandDefinition = {
