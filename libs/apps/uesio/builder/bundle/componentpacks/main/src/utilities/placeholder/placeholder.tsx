@@ -1,12 +1,12 @@
 import { definition, styles } from "@uesio/ui"
 
-interface T {
+type PlaceHolderProps = {
 	isHovering: boolean
 	label?: string
 	message?: string
 	direction?: "HORIZONTAL" | "VERTICAL"
 }
-const PlaceHolder: definition.UtilityComponent<T> = (props) => {
+const PlaceHolder: definition.UtilityComponent<PlaceHolderProps> = (props) => {
 	const { isHovering, label } = props
 
 	const classes = styles.useUtilityStyleTokens(

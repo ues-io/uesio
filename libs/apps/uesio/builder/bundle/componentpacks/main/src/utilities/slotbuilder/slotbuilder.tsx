@@ -10,8 +10,7 @@ import {
 import BuildWrapper from "../buildwrapper/buildwrapper"
 import PlaceHolder from "../placeholder/placeholder"
 import { DeclarativeComponentSlotLoaderId } from "../declarativecomponentslotloader/declarativecomponentslotloader"
-
-const accepts = ["component", "viewdef", "componentvariant"]
+import { standardAccepts } from "../../helpers/dragdrop"
 
 const StyleDefaults = Object.freeze({
 	slotTagOn: [
@@ -74,7 +73,7 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 	useEffect(() => {
 		const parentElem = ref?.current?.parentElement
 		if (!parentElem) return
-		parentElem.setAttribute("data-accepts", accepts.join(","))
+		parentElem.setAttribute("data-accepts", standardAccepts.join(","))
 		parentElem.setAttribute("data-direction", direction)
 		parentElem.setAttribute("data-path", listPath)
 		parentElem.setAttribute("data-title", label)
