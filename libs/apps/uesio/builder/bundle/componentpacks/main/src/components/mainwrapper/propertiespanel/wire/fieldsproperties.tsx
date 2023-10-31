@@ -4,15 +4,22 @@ import { get, remove, set } from "../../../../api/defapi"
 import { useSelectedPath } from "../../../../api/stateapi"
 import BuildActionsArea from "../../../../helpers/buildactionsarea"
 import FieldPropTag from "./fieldproptag"
+import ViewOnlyFieldPropTag from "./viewonlyfieldproptag"
 import FieldPicker from "./fieldpicker"
 import { FullPath } from "../../../../api/path"
 
-const FieldsProperties: definition.UC = (props) => {
+type FieldsPropertiesDefinition = {
+	viewOnly?: boolean
+}
+
+const FieldsProperties: definition.UC<FieldsPropertiesDefinition> = (props) => {
 	const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
 	const Icon = component.getUtility("uesio/io.icon")
 	const Button = component.getUtility("uesio/io.button")
 	const Popper = component.getUtility("uesio/io.popper")
-	const { context } = props
+	const { context, definition } = props
+	const { viewOnly } = definition
+	const isViewOnlyWire = viewOnly
 	const anchorEl = useRef<HTMLDivElement>(null)
 	const [showPopper, setShowPopper] = useState(false)
 
@@ -34,10 +41,10 @@ const FieldsProperties: definition.UC = (props) => {
 		return wireField !== undefined
 	}
 
-	// TODO: Handle view only wires here too.
-	const wireDef = get(context, wirePath) as wire.RegularWireDefinition
-
+	const wireDef = get(context, wirePath) as wire.WireDefinition
 	if (!wireDef) return null
+	const collection =
+		(wireDef && !wireDef.viewOnly && wireDef.collection) || ""
 
 	return (
 		<>
@@ -53,7 +60,7 @@ const FieldsProperties: definition.UC = (props) => {
 				>
 					<FieldPicker
 						context={context}
-						baseCollectionKey={wireDef.collection}
+						baseCollectionKey={collection}
 						onClose={() => setShowPopper(false)}
 						onSelect={onSelect}
 						onUnselect={onUnselect}
@@ -78,25 +85,72 @@ const FieldsProperties: definition.UC = (props) => {
 									variant="uesio/builder.actionicon"
 								/>
 							}
-							label="Select Fields"
+							label={"View-only Field"}
 							onClick={() => {
-								setShowPopper(true)
+								set(
+									context,
+									fieldsPath.addLocal(
+										"field" +
+											(Math.floor(Math.random() * 60) + 1)
+									),
+									isViewOnlyWire
+										? {
+												type: "TEXT",
+										  }
+										: { viewOnly: true, type: "TEXT" },
+									true
+								)
 							}}
 						/>
+						{!viewOnly && (
+							<Button
+								context={context}
+								variant="uesio/builder.panelactionbutton"
+								icon={
+									<Icon
+										context={context}
+										icon="add"
+										variant="uesio/builder.actionicon"
+									/>
+								}
+								label={"Collection Fields"}
+								onClick={() => {
+									setShowPopper(true)
+								}}
+							/>
+						)}
 					</BuildActionsArea>
 				}
 			>
-				{Object.keys(wireDef.fields || {}).map((fieldId) => (
-					<FieldPropTag
-						collectionKey={wireDef.collection}
-						fieldId={fieldId}
-						key={fieldId}
-						path={fieldsPath.addLocal(fieldId)}
-						selectedPath={selectedPath}
-						fieldDef={wireDef.fields?.[fieldId]}
-						context={context}
-					/>
-				))}
+				{Object.entries(wireDef.fields || {}).map(
+					([fieldId, fieldDef]) => {
+						const viewOnlyField =
+							isViewOnlyWire ||
+							(fieldDef && "viewOnly" in fieldDef) ||
+							false
+
+						return viewOnlyField ? (
+							<ViewOnlyFieldPropTag
+								fieldId={fieldId}
+								key={fieldId}
+								path={fieldsPath.addLocal(fieldId)}
+								selectedPath={selectedPath}
+								fieldDef={fieldDef as wire.ViewOnlyField}
+								context={context}
+							/>
+						) : (
+							<FieldPropTag
+								collectionKey={collection}
+								fieldId={fieldId}
+								key={fieldId}
+								path={fieldsPath.addLocal(fieldId)}
+								selectedPath={selectedPath}
+								fieldDef={fieldDef}
+								context={context}
+							/>
+						)
+					}
+				)}
 			</ScrollPanel>
 		</>
 	)

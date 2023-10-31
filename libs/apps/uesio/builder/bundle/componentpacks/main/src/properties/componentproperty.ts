@@ -172,8 +172,9 @@ type SelectProperty = {
 type MapProperty = {
 	type: "MAP"
 	content: definition.DefinitionList
-	defaultDefinition: definition.DefinitionMap
+	defaultDefinition?: definition.DefinitionMap
 	defaultKey: string
+	actions?: PropertyAction[]
 } & BaseProperty
 
 type StructProperty = {
@@ -207,7 +208,7 @@ type ListPropertyItemChildrenFunction = (
 
 type ListPropertyActionFunction = (options: ListPropertyActionOptions) => void
 
-interface ListPropertyAction {
+interface PropertyAction {
 	icon?: string
 	label?: string
 	defaultDefinition?: definition.DefinitionMap
@@ -215,7 +216,7 @@ interface ListPropertyAction {
 }
 
 interface ListPropertyItemsDefinition {
-	actions?: ListPropertyAction[]
+	actions?: PropertyAction[]
 	addLabel?: string
 	defaultDefinition?: definition.DefinitionMap
 	displayTemplate?: string | DisplayTemplateGetter
@@ -304,7 +305,7 @@ export type {
 	FieldMetadataProperty,
 	IconProperty,
 	ListProperty,
-	ListPropertyAction,
+	PropertyAction as ListPropertyAction,
 	ListPropertyActionFunction,
 	ListPropertyActionOptions,
 	ListPropertyItemChildrenFunction,
