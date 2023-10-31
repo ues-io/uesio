@@ -198,8 +198,18 @@ func (cdw *RuntimeComponentMetadata) MarshalJSONObject(enc *gojay.Encoder) {
 	if cdw.Properties != nil {
 		props := PropertyDefs{}
 		err := cdw.Properties.Decode(&props)
+		// Only send down properties if we have a default value for one of them
 		if err == nil {
-			enc.AddArrayKeyOmitEmpty("properties", &props)
+			havePropWithDefault := false
+			for _, prop := range props {
+				if prop.DefaultValue != "" {
+					havePropWithDefault = true
+					break
+				}
+			}
+			if havePropWithDefault {
+				enc.AddArrayKeyOmitEmpty("properties", &props)
+			}
 		}
 	}
 }
@@ -231,7 +241,10 @@ func (props *PropertyDefs) IsNil() bool {
 func (props *PropertyDefs) MarshalJSONArray(enc *gojay.Encoder) {
 	if props != nil {
 		for _, prop := range *props {
-			enc.AddObject(prop)
+			// Only serialize props with default values, since that's all we need them for (runtime)
+			if prop.DefaultValue != "" {
+				enc.AddObject(prop)
+			}
 		}
 	}
 }
