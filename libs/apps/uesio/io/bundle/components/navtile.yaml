@@ -1,0 +1,26 @@
+name: navtile
+category: LAYOUT
+pack: main
+type: DECLARATIVE
+slots: null
+description: A tile with a navigate link and icon
+properties:
+  - type: TEXT
+    name: title
+    label: Title text
+  - type: ICON
+    name: icon
+  - type: TEXT
+    name: iconcolor
+    defaultValue: "#AAA"
+  - type: TEXT
+    name: path
+    label: Link navigate path
+definition:
+  - uesio/io.icontile:
+      signals:
+        - signal: "route/NAVIGATE"
+          path: $Prop{path}
+      title: $Prop{title}
+      icon: $Prop{icon}
+      iconcolor: $Prop{iconcolor}
