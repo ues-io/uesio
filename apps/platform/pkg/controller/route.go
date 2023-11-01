@@ -3,18 +3,14 @@ package controller
 import (
 	"log/slog"
 	"net/http"
-	"net/url"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/auth"
-	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/merge"
-	"github.com/thecloudmasters/uesio/pkg/templating"
-	"github.com/thecloudmasters/uesio/pkg/usage"
-
-	"github.com/thecloudmasters/uesio/pkg/controller/file"
-
 	"github.com/gorilla/mux"
+
+	"github.com/thecloudmasters/uesio/pkg/auth"
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/merge"
+	"github.com/thecloudmasters/uesio/pkg/usage"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
@@ -178,7 +174,7 @@ func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Sess
 		route = GetErrorRoute(path, err.Error())
 	}
 
-	// We can upgrade to the site session so we can be sure to have access to the not found route
+	// We can upgrade to the site session to be sure to have access to the not found route
 	adminSession := sess.GetAnonSession(session.GetSite())
 	depsCache, _ := routing.GetMetadataDeps(route, adminSession)
 
@@ -222,47 +218,7 @@ func fetchRoute(w http.ResponseWriter, r *http.Request, session *sess.Session, n
 	return route, nil
 }
 
-func resolveRouteParams(route *meta.Route, s *sess.Session, vars url.Values) (map[string]string, error) {
-	processedParams := map[string]string{}
-
-	for paramName, paramValue := range route.Params {
-		template, err := templating.NewWithFuncs(paramValue, templating.ForceErrorFunc, merge.ServerMergeFuncs)
-		if err != nil {
-			return nil, err
-		}
-
-		mergedValue, err := templating.Execute(template, merge.ServerMergeData{
-			Session:     s,
-			ParamValues: nil,
-		})
-		if err != nil {
-			return nil, err
-		}
-		processedParams[paramName] = mergedValue
-	}
-
-	// Inject query-string parameters
-	for k, v := range vars {
-		processedParams[k] = v[0]
-	}
-
-	return processedParams, nil
-}
-
 func ServeRouteInternal(w http.ResponseWriter, r *http.Request, session *sess.Session, path string, route *meta.Route) {
-	params, err := resolveRouteParams(route, session, r.URL.Query())
-	if err != nil {
-		HandleErrorRoute(w, r, session, path, err, false)
-		return
-	}
-	// Route SHOULD be a clone at this point which we can safely mutate
-	route.Params = params
-	// Run any route bots
-	route, err = datasource.RunRouteBots(route, session)
-	if err != nil {
-		HandleErrorRoute(w, r, session, path, err, true)
-		return
-	}
 	usage.RegisterEvent("LOAD", "ROUTE", route.GetKey(), 0, session)
 	// Handle redirect routes
 	if route.Type == "redirect" {
