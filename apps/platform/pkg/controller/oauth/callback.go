@@ -14,6 +14,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 	oauth "github.com/thecloudmasters/uesio/pkg/oauth2"
+	"github.com/thecloudmasters/uesio/pkg/routing"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -55,7 +56,7 @@ func Callback(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	route, err := loadCallbackRoute(versionSession, connection)
+	route, err := loadCallbackRoute(r, versionSession, connection)
 	if err != nil {
 		controller.HandleErrorRoute(w, r, s, r.URL.Path, err, false)
 		return
@@ -83,11 +84,10 @@ func Callback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Finally, serve the route
 	controller.ServeRouteInternal(w, r, s, route.Path, route)
 }
 
-func loadCallbackRoute(coreSession *sess.Session, platformConn adapt.Connection) (*meta.Route, error) {
+func loadCallbackRoute(r *http.Request, coreSession *sess.Session, platformConn adapt.Connection) (*meta.Route, error) {
 	route := meta.NewBaseRoute("uesio/core", "oauth2callback")
 	if err := bundle.Load(route, coreSession, platformConn); err != nil {
 		return nil, errors.New("unable to load oauth callback route: " + err.Error())
@@ -95,6 +95,11 @@ func loadCallbackRoute(coreSession *sess.Session, platformConn adapt.Connection)
 	// Make sure to do a copy to avoid mutating in-memory/cached metadata
 	cloned := &meta.Route{}
 	meta.Copy(cloned, route)
+	params, err := routing.ResolveRouteParams(route.Params, coreSession, r.URL.Query())
+	if err != nil {
+		return nil, err
+	}
+	cloned.Params = params
 	return cloned, nil
 }
 
