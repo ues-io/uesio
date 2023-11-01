@@ -32,6 +32,7 @@ interface ConditionRequest {
 	conditions?: ConditionRequest[]
 	subcollection?: string
 	subfield?: string
+	inactive?: boolean
 }
 interface LoadOrder {
 	field: string
