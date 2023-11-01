@@ -5,11 +5,12 @@ import (
 	"strings"
 
 	"github.com/gorilla/mux"
+	"gopkg.in/yaml.v3"
+
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 	"github.com/thecloudmasters/uesio/pkg/routing"
-	"gopkg.in/yaml.v3"
 )
 
 type ViewResponse struct {
@@ -45,6 +46,7 @@ func ViewPreview(buildMode bool) http.HandlerFunc {
 			ViewRef:  view.GetKey(),
 			Params:   params,
 			ThemeRef: session.GetDefaultTheme(),
+			Title:    "Preview: " + view.Name,
 		}
 
 		depsCache, err := routing.GetMetadataDeps(route, session)
@@ -59,6 +61,7 @@ func ViewPreview(buildMode bool) http.HandlerFunc {
 				HandleErrorRoute(w, r, session, "", err, false)
 				return
 			}
+			route.Title = "Edit: " + view.Name
 		}
 
 		ExecuteIndexTemplate(w, route, depsCache, buildMode, session)
