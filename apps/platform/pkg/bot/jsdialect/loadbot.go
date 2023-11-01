@@ -164,3 +164,7 @@ func (lb *LoadBotAPI) AddRecord(record interface{}) {
 		lb.loadOp.Collection.AddItem(&item)
 	}
 }
+
+func (lb *LoadBotAPI) SetHasMoreRecords() {
+	lb.loadOp.HasMoreBatches = true
+}

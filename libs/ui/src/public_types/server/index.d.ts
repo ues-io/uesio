@@ -239,6 +239,9 @@ interface LoadBotApi {
 	getConfigValue: (configValueKey: string) => string
 	getSession: () => SessionApi
 	getUser: () => UserApi
+	// setHasMoreRecords - call this to indicate that the server could return more records
+	// in subsequent pages/batches.
+	setHasMoreRecords: () => void
 	log: LogApi
 	http: HttpApi
 }
