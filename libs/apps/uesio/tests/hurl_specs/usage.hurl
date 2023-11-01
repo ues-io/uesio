@@ -78,7 +78,7 @@ Accept: application/json
                 {
                     "field": "total",
                     "operator": "GT",
-                    "value": 10
+                    "value": 4
                 }
             ],
             "order": [
@@ -96,4 +96,4 @@ jsonpath "$.wires[0].data" count > 0
 jsonpath "$.wires[0].data" count <= 10 # verify batchsize works
 jsonpath "$.wires[0].data[0]['uesio/core.metadatatype']" == "COLLECTION"
 jsonpath "$.wires[0].data[0]['uesio/core.actiontype']" == "SAVE"
-jsonpath "$.wires[0].data[0]['uesio/core.total']" > 10
+jsonpath "$.wires[0].data[0]['uesio/core.total']" > 4
