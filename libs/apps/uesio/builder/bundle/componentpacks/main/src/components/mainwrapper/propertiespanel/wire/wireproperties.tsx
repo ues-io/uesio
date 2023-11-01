@@ -19,7 +19,14 @@ const WireProperties: definition.UtilityComponent = (props) => {
 	const [wireName] = wirePath.pop()
 
 	// This forces a rerender if the definition changes
-	useDefinition(wirePath) as wire.WireDefinition
+	const wireDefinition = useDefinition(wirePath) as wire.WireDefinition
+	const VIEW_ONLY = !!(wireDefinition && wireDefinition.viewOnly)
+	const IS_NOT_VIEW_ONLY = [
+		{
+			type: "hasNoValue",
+			value: VIEW_ONLY,
+		},
+	] as component.DisplayCondition[]
 
 	const properties: ComponentProperty[] = [
 		// Wire Home properties
@@ -35,11 +42,13 @@ const WireProperties: definition.UtilityComponent = (props) => {
 			required: true,
 			type: "METADATA",
 			metadataType: "COLLECTION",
+			displayConditions: IS_NOT_VIEW_ONLY,
 		},
 		{
 			name: "batchsize",
 			label: "Batch Size",
 			type: "NUMBER",
+			displayConditions: IS_NOT_VIEW_ONLY,
 		},
 		{
 			name: "init",
@@ -50,6 +59,7 @@ const WireProperties: definition.UtilityComponent = (props) => {
 					name: "query",
 					type: "CHECKBOX",
 					label: "Query for Wire data",
+					displayConditions: IS_NOT_VIEW_ONLY,
 				},
 				{
 					name: "create",
@@ -171,13 +181,6 @@ const WireProperties: definition.UtilityComponent = (props) => {
 							defaultDefinition: { operator: "EQUALS" },
 							properties: DisplayConditionProperties,
 						},
-						displayConditions: [
-							{
-								field: "type",
-								value: "onChange",
-								operator: "EQUALS",
-							},
-						] as component.DisplayCondition[],
 					},
 				],
 				sections: [
@@ -194,6 +197,13 @@ const WireProperties: definition.UtilityComponent = (props) => {
 						id: "wireeventconditions",
 						properties: ["conditions"],
 						label: "Conditions",
+						displayConditions: [
+							{
+								field: "type",
+								value: "onChange",
+								operator: "EQUALS",
+							},
+						] as component.DisplayCondition[],
 					},
 				],
 			},
@@ -214,7 +224,9 @@ const WireProperties: definition.UtilityComponent = (props) => {
 					type: "CUSTOM",
 					viewDefinition: [
 						{
-							"uesio/builder.fieldsproperties": {},
+							"uesio/builder.fieldsproperties": {
+								viewOnly: VIEW_ONLY,
+							},
 						},
 					],
 				},
@@ -227,12 +239,14 @@ const WireProperties: definition.UtilityComponent = (props) => {
 							"uesio/builder.conditionsproperties": {},
 						},
 					],
+					displayConditions: IS_NOT_VIEW_ONLY,
 				},
 				{
 					id: "order",
 					label: "Order",
 					type: "CUSTOM",
 					properties: ["order"],
+					displayConditions: IS_NOT_VIEW_ONLY,
 				},
 				{
 					id: "events",

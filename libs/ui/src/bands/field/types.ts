@@ -47,7 +47,7 @@ type NumberMetadata = {
 }
 
 type SelectListMetadata = {
-	name: string
+	name?: string
 	options: SelectOption[]
 	blank_option_label?: string
 	blank_option_language_label?: string

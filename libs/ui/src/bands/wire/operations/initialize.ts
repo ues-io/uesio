@@ -121,7 +121,7 @@ const getViewOnlyMetadata = (
 			label: "ID",
 		},
 	}
-	Object.keys(wireDef.fields).forEach((field) => {
+	Object.keys(wireDef?.fields || {}).forEach((field) => {
 		const fieldDef = wireDef.fields[field]
 		fieldMetadata[field] = getViewOnlyFieldMetadata(field, fieldDef)
 	})
