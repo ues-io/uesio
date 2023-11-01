@@ -5,10 +5,13 @@ definition:
     root:
       - bg-[$Theme{color.primary}]
       - p-2
+      - gap-x-2
+      - gap-y-1
+      - flex
+      - flex-wrap
       - leading-none
     tab:
       - uppercase
-      - inline
       - p-1.5
       - text-[8pt]
       - rounded
