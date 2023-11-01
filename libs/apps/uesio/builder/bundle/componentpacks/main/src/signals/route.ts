@@ -24,11 +24,6 @@ const signals: SignalBandDefinition = {
 				},
 			],
 		},
-		[`${BAND}/REDIRECT_TO_VIEW_CONFIG`]: {
-			label: "Redirect to View Config",
-			description: "Redirect to View Config",
-			properties: () => [],
-		},
 		[`${BAND}/RELOAD`]: {
 			label: "Reload current route",
 			description: "Reloads the current route",

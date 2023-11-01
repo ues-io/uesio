@@ -49,7 +49,20 @@ const MainWrapper: definition.UC<component.ViewComponentDefinition> = (
 	)
 
 	hooks.useHotKeyCallback("meta+p", () => {
-		api.signal.run({ signal: "route/REDIRECT_TO_VIEW_CONFIG" }, context)
+		const workspace = context.getWorkspace()
+		const route = context.getRoute()
+		if (!workspace || !route) {
+			throw new Error("Not in a Workspace Context")
+		}
+		const [viewNamespace, viewName] = component.path.parseKey(route.view)
+		api.signal.run(
+			{
+				signal: "route/NAVIGATE",
+				path: `/app/${workspace.app}/workspace/${workspace.name}/views/${viewNamespace}/${viewName}`,
+				namespace: "uesio/studio",
+			},
+			context.deleteWorkspace()
+		)
 	})
 
 	const [showCode] = useBuilderState<boolean>(props.context, "codepanel")
