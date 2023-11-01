@@ -333,8 +333,9 @@ const Table: definition.UC<TableDefinition> = (props) => {
 				onAllSelectChange={onAllSelectChange}
 				isAllSelectedFunc={isAllSelectedFunc}
 			/>
-			{pageSize > 0 && maxPages > 1 && (
+			{((pageSize > 0 && maxPages > 1) || wire.hasMore()) && (
 				<Paginator
+					id={`${componentId}-pagination`}
 					setPage={setCurrentPage}
 					currentPage={currentPage}
 					maxPages={maxPages}

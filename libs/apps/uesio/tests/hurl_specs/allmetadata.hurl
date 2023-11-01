@@ -329,3 +329,170 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data" count == 1
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "uesio/tests.test_oauth_credentials"
+
+# Test pagination on a query for views in the workspace
+POST https://{{host}}:{{port}}/site/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection": "uesio/studio.view",
+            "name": "views",
+            "query": true,
+            "fields": [
+                {
+                    "id": "uesio/studio.name"
+                }
+            ],
+            "conditions": [
+                {
+                    "field": "uesio/studio.allmetadata",
+                    "value": true
+                }
+            ],
+            "params": {
+                "app": "uesio/tests",
+                "workspacename": "dev"
+            },
+            "order": [
+                {
+                    "field": "uesio/core.uniquekey",
+                    "desc": false
+                }
+            ],
+            "batchsize": 5,
+            "batchnumber": 0
+        }
+    ]
+}
+HTTP 200
+[Captures]
+last-batch-id: jsonpath "$.wires[0].data[4]['uesio/core.id']"
+[Asserts]
+jsonpath "$.wires[0].data" count == 5
+jsonpath "$.wires[0].batchnumber" == 0
+jsonpath "$.wires[0].batchsize" == 5
+jsonpath "$.wires[0].more" == true
+
+POST https://{{host}}:{{port}}/site/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection": "uesio/studio.view",
+            "name": "views",
+            "query": true,
+            "fields": [
+                {
+                    "id": "uesio/studio.name"
+                }
+            ],
+            "conditions": [
+                {
+                    "field": "uesio/studio.allmetadata",
+                    "value": true
+                }
+            ],
+            "params": {
+                "app": "uesio/tests",
+                "workspacename": "dev"
+            },
+            "order": [
+                {
+                    "field": "uesio/core.uniquekey",
+                    "desc": false
+                }
+            ],
+            "batchsize": 5,
+            "batchnumber": 1
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].data" count == 5
+jsonpath "$.wires[0].batchnumber" == 1
+jsonpath "$.wires[0].batchsize" == 5
+jsonpath "$.wires[0].more" == true
+jsonpath "$.wires[0].data[0]['uesio/core.id']" != {{last-batch-id}}
+
+# Do a query that loads all routes, to test that the "more" (HasMoreBatches) property
+# is properly set to false when there are no more records available
+POST https://{{host}}:{{port}}/site/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection": "uesio/studio.route",
+            "name": "routes",
+            "query": true,
+            "fields": [
+                {
+                    "id": "uesio/studio.name"
+                }
+            ],
+            "conditions": [
+                {
+                    "field": "uesio/studio.allmetadata",
+                    "value": true
+                }
+            ],
+            "params": {
+                "app": "uesio/tests",
+                "workspacename": "dev"
+            },
+            "order": [
+                {
+                    "field": "uesio/core.uniquekey",
+                    "desc": false
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Captures]
+total-routes: jsonpath "$.wires[0].data" count
+[Asserts]
+jsonpath "$.wires[0].data" count > 0
+
+POST https://{{host}}:{{port}}/site/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection": "uesio/studio.route",
+            "name": "routes",
+            "batchsize": {{total-routes}},
+            "batchnumber": 0,
+            "query": true,
+            "fields": [
+                {
+                    "id": "uesio/studio.name"
+                }
+            ],
+            "conditions": [
+                {
+                    "field": "uesio/studio.allmetadata",
+                    "value": true
+                }
+            ],
+            "params": {
+                "app": "uesio/tests",
+                "workspacename": "dev"
+            },
+            "order": [
+                {
+                    "field": "uesio/core.uniquekey",
+                    "desc": false
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].data" count == {{total-routes}}
+jsonpath "$.wires[0].batchsize" == {{total-routes}}
+jsonpath "$.wires[0].batchnumber" == 0
+jsonpath "$.wires[0].more" == false
