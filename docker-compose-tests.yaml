@@ -46,6 +46,7 @@ services:
       UESIO_USE_HTTPS: "true"
       UESIO_DEBUG_SQL: "true"
       PORT: 3000
+      UESIO_DEV: "true"
     volumes:
       - ./apps/platform/ssl:/ssl
     command: sh -c "./uesio seed && ./uesio serve"

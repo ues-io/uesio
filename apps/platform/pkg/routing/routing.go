@@ -3,14 +3,17 @@ package routing
 import (
 	"errors"
 	"net/http"
+	"net/url"
 	"strings"
 
 	"github.com/gorilla/mux"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/merge"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
 func GetHomeRoute(session *sess.Session) (*meta.Route, error) {
@@ -80,7 +83,13 @@ func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *
 		}
 	}
 
-	return route, nil
+	params, err := resolveRouteParams(route.Params, session, r.URL.Query())
+	if err != nil {
+		return nil, errors.New("unable to resolve route parameters: " + err.Error())
+	}
+	route.Params = params
+
+	return datasource.RunRouteBots(route, session)
 }
 
 func GetRouteFromAssignment(r *http.Request, namespace, collection string, viewtype string, recordID string, session *sess.Session) (*meta.Route, error) {
@@ -129,5 +138,34 @@ func GetRouteFromAssignment(r *http.Request, namespace, collection string, viewt
 		route.Params = map[string]string{}
 	}
 
+	// TODO: Allow use of other parameters, e.g. query string parameters, route parameters
+
 	return datasource.RunRouteBots(route, session)
+}
+
+func resolveRouteParams(routeParams map[string]string, s *sess.Session, vars url.Values) (map[string]string, error) {
+	processedParams := map[string]string{}
+
+	for paramName, paramValue := range routeParams {
+		template, err := templating.NewWithFuncs(paramValue, templating.ForceErrorFunc, merge.ServerMergeFuncs)
+		if err != nil {
+			return nil, err
+		}
+
+		mergedValue, err := templating.Execute(template, merge.ServerMergeData{
+			Session:     s,
+			ParamValues: nil,
+		})
+		if err != nil {
+			return nil, err
+		}
+		processedParams[paramName] = mergedValue
+	}
+
+	// Inject query-string parameters
+	for k, v := range vars {
+		processedParams[k] = v[0]
+	}
+
+	return processedParams, nil
 }
