@@ -75,6 +75,23 @@ const FieldsProperties: definition.UC<FieldsPropertiesDefinition> = (props) => {
 				context={context}
 				footer={
 					<BuildActionsArea justify="space-around" context={context}>
+						{!viewOnly && (
+							<Button
+								context={context}
+								variant="uesio/builder.panelactionbutton"
+								icon={
+									<Icon
+										context={context}
+										icon="add"
+										variant="uesio/builder.actionicon"
+									/>
+								}
+								label={"Collection Fields"}
+								onClick={() => {
+									setShowPopper(true)
+								}}
+							/>
+						)}
 						<Button
 							context={context}
 							variant="uesio/builder.panelactionbutton"
@@ -102,23 +119,6 @@ const FieldsProperties: definition.UC<FieldsPropertiesDefinition> = (props) => {
 								)
 							}}
 						/>
-						{!viewOnly && (
-							<Button
-								context={context}
-								variant="uesio/builder.panelactionbutton"
-								icon={
-									<Icon
-										context={context}
-										icon="add"
-										variant="uesio/builder.actionicon"
-									/>
-								}
-								label={"Collection Fields"}
-								onClick={() => {
-									setShowPopper(true)
-								}}
-							/>
-						)}
 					</BuildActionsArea>
 				}
 			>
