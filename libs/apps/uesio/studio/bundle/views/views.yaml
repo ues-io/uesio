@@ -16,6 +16,7 @@ definition:
           value: $Param{app}:$Param{workspacename}
     allviews:
       collection: uesio/studio.view
+      batchsize: 20
       conditions:
         - field: uesio/studio.allmetadata
           value: true

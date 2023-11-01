@@ -44,7 +44,6 @@ func (op *LoadOp) GetKey() string {
 
 func (op *LoadOp) UnmarshalJSON(data []byte) error {
 	op.Collection = &Collection{}
-	op.HasMoreBatches = true
 	return json.Unmarshal(data, (*LoadOpWrapper)(op))
 }
 

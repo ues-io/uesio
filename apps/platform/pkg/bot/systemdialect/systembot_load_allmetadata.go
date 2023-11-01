@@ -51,6 +51,8 @@ func runCoreMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessi
 	studioCollectionName := meta.SwapKeyNamespace(op.CollectionName, "uesio/core", "uesio/studio")
 
 	newOp := &adapt.LoadOp{
+		BatchSize:      op.BatchSize,
+		BatchNumber:    op.BatchNumber,
 		CollectionName: studioCollectionName,
 		Collection:     newCollection,
 		Conditions:     newCollection.MapConditions(op.Conditions),
@@ -303,8 +305,25 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 	// Sort the items
 	sortItems(itemsSlice, op.Order)
 
-	// Now that the items are ordered, add them to the collection in order
-	for _, item := range itemsSlice {
+	// Now that the items are ordered, add them to the collection in order,
+	// but only add the ones for the batch we are currently looking at
+	op.HasMoreBatches = false
+	totalSize := len(itemsSlice)
+	startIdx := 0
+	endIdx := totalSize
+	if op.BatchSize != 0 {
+		startIdx = op.BatchNumber * op.BatchSize
+		endIdx = startIdx + op.BatchSize
+		if totalSize > endIdx+1 {
+			op.HasMoreBatches = true
+		}
+		// Make sure that end idx doesn't overflow the slice
+		if endIdx > totalSize {
+			endIdx = totalSize
+		}
+	}
+
+	for _, item := range itemsSlice[startIdx:endIdx] {
 		op.Collection.AddItem(item)
 	}
 
