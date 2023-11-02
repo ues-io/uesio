@@ -10,37 +10,6 @@ HTTP 200
 [Captures]
 user_id: jsonpath "$.user.id"
 
-# populate the secrets and config values needed for performing OAuth 2 authorization code flow
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/secrets/uesio/tests/test_oauth_client_id
-{
-    "value": "test-client-id"
-}
-HTTP 200
-
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/secrets/uesio/tests/test_oauth_client_secret
-{
-    "value": "test-client-secret"
-}
-HTTP 200
-
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/configvalues/uesio/tests/test_oauth_authorize_url
-{
-    "value": "https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/mock_oauth_authorize_url"
-}
-HTTP 200
-
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/configvalues/uesio/tests/test_oauth_token_url
-{
-    "value": "https://{{host}}:{{port}}/site/oauth2/token"
-}
-HTTP 200
-
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/configvalues/uesio/tests/test_oauth_scopes
-{
-    "value": "id,refresh_token"
-}
-HTTP 200
-
 # at this point, we should NOT have any integration credential for our user record in the workspace,
 # so if we attempt to delete, it should fail
 # first, verify that we don't have an access token yet.
@@ -66,10 +35,6 @@ jsonpath "$.wires[0].data[0]['uesio/core.integration']" == "uesio/tests.oauth2_a
 jsonpath "$.wires[0].data[0]['uesio/core.user']" == "{{user_id}}"
 jsonpath "$.wires[0].data[0]['uesio/core.hasaccesstoken']" == false
 jsonpath "$.wires[0].data[0]['uesio/core.hasrefreshtoken']" == false
-jsonpath "$.wires[0].data[1]['uesio/core.integration']" == "uesio/tests.oauth2_authorization_code_2"
-jsonpath "$.wires[0].data[1]['uesio/core.user']" == "{{user_id}}"
-jsonpath "$.wires[0].data[1]['uesio/core.hasaccesstoken']" == false
-jsonpath "$.wires[0].data[1]['uesio/core.hasrefreshtoken']" == false
 
 # try to delete, which should fail
 DELETE https://{{host}}:{{port}}/workspace/uesio/tests/dev/auth/credentials/uesio/tests/oauth2_authorization_code_1
@@ -110,7 +75,7 @@ jsonpath "$.wires[0].data" count == 1
 jsonpath "$.wires[0].data[0]['uesio/core.integration']" == "uesio/tests.oauth2_authorization_code_1"
 jsonpath "$.wires[0].data[0]['uesio/core.user']" == "{{user_id}}"
 jsonpath "$.wires[0].data[0]['uesio/core.hasaccesstoken']" == true
-jsonpath "$.wires[0].data[0]['uesio/core.hasrefreshtoken']" == false
+jsonpath "$.wires[0].data[0]['uesio/core.hasrefreshtoken']" == true
 
 # try to delete - should work now
 DELETE https://{{host}}:{{port}}/workspace/uesio/tests/dev/auth/credentials/uesio/tests/oauth2_authorization_code_1

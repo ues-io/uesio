@@ -7,6 +7,8 @@ definition:
         state: $Param{state}
   components:
     - uesio/io.text:
+        uesio.id: auth-message
+        element: span
         text: Authentication successful! This window should close on its own.
   params:
     state:

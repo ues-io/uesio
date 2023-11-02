@@ -7,10 +7,11 @@ import (
 )
 
 type OAuthTokenResponse struct {
-	AccessToken string `json:"access_token"`
-	TokenType   string `json:"token_type"`
-	ExpiresIn   int64  `json:"expires_in"`
-	Scopes      string `json:"scopes"`
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
+	TokenType    string `json:"token_type"`
+	ExpiresIn    int64  `json:"expires_in"`
+	Scopes       string `json:"scopes"`
 }
 
 // GetOAuthToken is currently just a mock oauth token server, only exposed in dev.
@@ -40,10 +41,11 @@ func GetOAuthToken(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response := &OAuthTokenResponse{
-		AccessToken: authorizationCode + "-access-token",
-		TokenType:   "Bearer",
-		ExpiresIn:   3600,
-		Scopes:      "openid email profile",
+		AccessToken:  authorizationCode + "-access-token",
+		RefreshToken: authorizationCode + "-refresh-token",
+		TokenType:    "Bearer",
+		ExpiresIn:    3600,
+		Scopes:       "openid email profile",
 	}
 
 	file.RespondJSON(w, r, response)

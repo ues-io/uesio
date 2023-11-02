@@ -63,12 +63,14 @@ const signals: Record<string, SignalDescriptor> = {
 			context: Context
 		) => {
 			const state = context.mergeString(signalInvocation.state)
-			window.opener.postMessage({
-				name: callbackEventName,
-				data: {
-					state,
-				},
-			})
+			if (window.opener) {
+				window.opener.postMessage({
+					name: callbackEventName,
+					data: {
+						state,
+					},
+				})
+			}
 			window.close()
 			return context
 		},

@@ -72,6 +72,7 @@ definition:
                           components:
                             - uesio/io.button:
                                 uesio.variant: uesio/io.secondary
+                                uesio.id: test-authentication
                                 text: Test Authentication
                                 uesio.display:
                                   - type: fieldMode
@@ -335,6 +336,7 @@ definition:
             actions:
               - uesio/io.button:
                   uesio.variant: uesio/io.primary
+                  uesio.id: authenticate
                   text: Authenticate
                   signals:
                     - signal: context/SET
@@ -355,6 +357,7 @@ definition:
                       value: false
               - uesio/io.button:
                   uesio.variant: uesio/io.destructive
+                  uesio.id: clear-credentials
                   text: Clear credentials
                   signals:
                     - signal: context/SET
@@ -387,8 +390,10 @@ definition:
             components:
               - uesio/io.field:
                   fieldId: uesio/core.hasaccesstoken
+                  uesio.id: has-access-token
               - uesio/io.field:
                   fieldId: uesio/core.hasrefreshtoken
+                  uesio.id: has-refresh-token
                   uesio.display:
                     - field: uesio/core.hasaccesstoken
                       value: true
