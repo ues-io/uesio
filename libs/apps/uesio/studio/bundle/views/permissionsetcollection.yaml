@@ -28,6 +28,18 @@ definition:
           value: true
         - field: uesio/studio.grouping
           value: $Param{collectionNamespace}.$Param{collectionname}
+    commonfields:
+      collection: uesio/studio.field
+      conditions:
+        - field: uesio/studio.allmetadata
+          value: true
+        - field: uesio/studio.grouping
+          value: $Param{namespace}.$Param{collectionname}
+        - field: uesio/studio.iscommonfield
+          value: true
+      order:
+        - field: uesio/studio.name
+          desc: false
   # Components are how we describe the layout of our view
   components:
     - uesio/studio.mainlayout:
@@ -86,6 +98,11 @@ definition:
                                     componentsignal: TOGGLE_MODE
                                     targettype: specific
                                     componentid: fieldPerms-table
+                                  - signal: component/CALL
+                                    component: uesio/io.table
+                                    componentsignal: TOGGLE_MODE
+                                    targettype: specific
+                                    componentid: commonfieldPerms-table
                             - uesio/io.button:
                                 uesio.variant: uesio/io.primary
                                 text: $Label{uesio/io.save}
@@ -106,6 +123,11 @@ definition:
                                     componentsignal: TOGGLE_MODE
                                     targettype: specific
                                     componentid: fieldPerms-table
+                                  - signal: component/CALL
+                                    component: uesio/io.table
+                                    componentsignal: TOGGLE_MODE
+                                    targettype: specific
+                                    componentid: commonfieldPerms-table
                             - uesio/io.button:
                                 uesio.variant: uesio/io.secondary
                                 text: $Label{uesio/io.cancel}
@@ -125,6 +147,11 @@ definition:
                                     componentsignal: TOGGLE_MODE
                                     targettype: specific
                                     componentid: fieldPerms-table
+                                  - signal: component/CALL
+                                    component: uesio/io.table
+                                    componentsignal: TOGGLE_MODE
+                                    targettype: specific
+                                    componentid: commonfieldPerms-table
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
@@ -149,3 +176,26 @@ definition:
                                   - name: edit
                                     label: Edit
                                     type: CHECKBOX
+                            - uesio/io.titlebar:
+                                title: Common Fields
+                                uesio.variant: uesio/io.section
+                                uesio.styleTokens:
+                                  root:
+                                    - mt-2
+                            - uesio/io.box:
+                                components:
+                                  - uesio/studio.multipermissionpicker:
+                                      uesio.id: commonfieldPerms
+                                      uesio.context:
+                                        workspace:
+                                          name: $Param{workspacename}
+                                          app: $Param{app}
+                                      fieldId: uesio/studio.collectionrefs->$Param{collectionNamespace}.$Param{collectionname}->fields
+                                      wireName: commonfields
+                                      permissionFields:
+                                        - name: read
+                                          label: Read
+                                          type: CHECKBOX
+                                        - name: edit
+                                          label: Edit
+                                          type: CHECKBOX

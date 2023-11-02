@@ -30,7 +30,9 @@ func (c *Connection) Save(request *adapt.SaveOp, session *sess.Session) error {
 			return err
 		}
 
-		ownerID, err := change.GetOwnerID()
+		//We trust the owner send by the client
+		//Then we'll see if it can change it
+		ownerID, err := change.GetProposedOwnerID()
 		if err != nil {
 			return err
 		}
