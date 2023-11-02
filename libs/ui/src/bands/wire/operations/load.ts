@@ -16,12 +16,7 @@ import partition from "lodash/partition"
 import { batch } from "react-redux"
 import { addError } from "../../../../src/hooks/notificationapi"
 
-const getWireRequest = (
-	wires: PlainWire[],
-	resetBatchNumber: boolean,
-	context: Context,
-	forceQuery?: boolean
-): LoadRequest[] =>
+const getWireRequest = (context: Context, wires: PlainWire[]): LoadRequest[] =>
 	wires.map(
 		({
 			// Select the specific properties that we want to include in the load,
@@ -41,7 +36,7 @@ const getWireRequest = (
 			viewOnlyMetadata,
 		}) => ({
 			batchid,
-			batchnumber: resetBatchNumber ? 0 : batchnumber,
+			batchnumber,
 			batchsize,
 			collection,
 			conditions,
@@ -53,7 +48,7 @@ const getWireRequest = (
 				  ),
 			name,
 			order,
-			query: forceQuery ? true : query,
+			query,
 			requirewriteaccess,
 			view,
 			loadAll,
@@ -92,11 +87,14 @@ export default async (
 
 	const toLoadWithLookups = addLookupWires(validToLoad, context)
 
-	const loadRequests = getWireRequest(
-		toLoadWithLookups,
-		true,
-		context,
-		forceQuery
+	const loadRequests = getWireRequest(context, toLoadWithLookups).map(
+		(loadRequest) => {
+			if (forceQuery) {
+				loadRequest.query = true
+			}
+			loadRequest.batchnumber = 0
+			return loadRequest
+		}
 	)
 
 	if (toLoadWithLookups.length) {

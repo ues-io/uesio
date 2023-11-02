@@ -17,8 +17,15 @@ function getWiresMap(wires: PlainWire[]) {
 export default async (context: Context, wires?: string[]) => {
 	// Turn the list of wires into a load request
 	const wiresToLoad = getWiresFromDefinitonOrContext(wires, context)
+	const loadRequests = getWireRequest(context, wiresToLoad).map(
+		(loadRequest) => {
+			loadRequest.batchnumber = (loadRequest.batchnumber || 0) + 1
+			loadRequest.query = true
+			return loadRequest
+		}
+	)
 	const response = await platform.loadData(context, {
-		wires: getWireRequest(wiresToLoad, false, context, true),
+		wires: loadRequests,
 	})
 
 	// Add in the local ids
@@ -35,6 +42,7 @@ export default async (context: Context, wires?: string[]) => {
 			view,
 			query: true,
 			batchid: requestWire.batchid,
+			batchnumber: wire.batchnumber,
 			data: {
 				...requestWire.data,
 				...wire.data,
@@ -45,7 +53,6 @@ export default async (context: Context, wires?: string[]) => {
 			},
 			changes: requestWire.changes,
 			deletes: requestWire.deletes,
-			batchnumber: (requestWire.batchnumber || 0) + 1,
 			more: wire.more,
 			errors: undefined,
 			conditions: requestWire.conditions,
