@@ -43,7 +43,7 @@ func (op *LoadOp) GetKey() string {
 }
 
 func (op *LoadOp) UnmarshalJSON(data []byte) error {
-	op.Collection = &Collection{}
+	op.Collection = &RawJSONCollection{}
 	return json.Unmarshal(data, (*LoadOpWrapper)(op))
 }
 
