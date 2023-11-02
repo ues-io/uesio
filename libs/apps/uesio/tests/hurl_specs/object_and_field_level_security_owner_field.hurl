@@ -229,9 +229,3 @@ Content-Type: application/json
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].errors[0].message" == "Profile uesio/tests.owner_locked does not have edit access to the uesio/core.owner field."
-
-
-# un-protected change the owner field
-# protected able to change the owner
-# protected no able to change the ower
-#owner_locked profile can modifiy all but not the owner
