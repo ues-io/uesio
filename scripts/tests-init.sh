@@ -34,6 +34,10 @@ echo "Changing to truncatetests workspace..."
 uesio work -n truncatetests
 echo "Deploying tests app to Studio truncatetests workspace..."
 uesio deploy
+
+# Populate secrets and config values for the workspace
+hurl -k --no-output --variable host=studio.uesio-dev.com --variable port=3000 --variable domain=uesio-dev.com hurl_seeds/populate_secrets_and_config_values.hurl
+
 echo "Upserting seed data into truncatetests workspace..."
 uesio upsert -f seed_data/wire_conditions.csv -s seed_data/wire_conditions_import.spec.json
 
