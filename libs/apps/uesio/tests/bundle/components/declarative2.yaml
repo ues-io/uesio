@@ -7,6 +7,13 @@ slots:
       - uesio/io.titlebar:
           title: This is a default header
   - name: footer
+properties:
+  - type: TEXT
+    name: text1
+    label: Text 1
+  - type: TEXT
+    name: text2
+    label: Text 2
 definition:
   - uesio/core.slot:
       name: header
@@ -27,13 +34,6 @@ definition:
 title: Declarative 2
 discoverable: true
 description: Two little text boxes sitting in a grid
-properties:
-  - type: TEXT
-    name: text1
-    label: Text 1
-  - type: TEXT
-    name: text2
-    label: Text 2
 defaultDefinition:
   text1: I'm on the left
   text2: I'm on the right
@@ -43,5 +43,3 @@ sections:
       - text1
       - text2
   - type: DISPLAY
-signals: null
-styleRegions: null

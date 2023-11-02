@@ -1,5 +1,5 @@
 name: oauth2_authorization_code_2
 type: uesio/core.custom
-baseUrl: https://studio.uesio-dev.com:3000
-credentials: test_oauth_credentials
 authentication: OAUTH2_AUTHORIZATION_CODE
+credentials: test_oauth_credentials
+baseUrl: https://studio.uesio-dev.com:3000
