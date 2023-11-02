@@ -54,6 +54,7 @@ type Component struct {
 	// Internal only
 	slotDefs       []*SlotDefinition
 	defaultVariant string
+	propertiesMap  map[string]ComponentProperty
 }
 
 var no_default_variant = "--no-default--"
@@ -70,6 +71,14 @@ func (sd *SlotDefinition) GetFullPath() string {
 }
 
 type ComponentWrapper Component
+
+func (c *Component) GetPropertiesMap() map[string]ComponentProperty {
+	return c.propertiesMap
+}
+
+func (c *Component) SetPropertiesMap(propertiesMap map[string]ComponentProperty) {
+	c.propertiesMap = propertiesMap
+}
 
 // GetSlotDefinitions returns a slice of parsed slot definitions to use for dependency processing
 func (c *Component) GetSlotDefinitions() []*SlotDefinition {
@@ -254,4 +263,11 @@ func GetType(componentType string) string {
 		return componentType
 	}
 	return ReactComponent
+}
+
+type ComponentProperty struct {
+	Type          string
+	MetadataType  string
+	DefaultValue  string
+	GroupingValue string
 }

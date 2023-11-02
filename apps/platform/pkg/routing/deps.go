@@ -586,14 +586,47 @@ func getComponentDeps(compName string, compDefinitionMap *yaml.Node, depMap *Vie
 	slotDefinitions := compDef.GetSlotDefinitions()
 
 	foundComponentVariant := false
+	propertiesMap := compDef.GetPropertiesMap()
 
 	for i, prop := range compDefinitionMap.Content {
-		if prop.Kind == yaml.ScalarNode && prop.Value == "uesio.variant" {
-			if len(compDefinitionMap.Content) > i {
-				valueNode := compDefinitionMap.Content[i+1]
-				if valueNode.Kind == yaml.ScalarNode && valueNode.Value != "" {
-					if err = addComponentVariantDep(depMap, valueNode.Value, compName); err == nil {
-						foundComponentVariant = true
+		isKey := i%2 == 0
+		if isKey {
+			if prop.Kind != yaml.ScalarNode {
+				continue
+			}
+			if propertiesMap != nil {
+				componentProperty, needsProcessing := propertiesMap[prop.Value]
+				if needsProcessing {
+					if len(compDefinitionMap.Content) > i {
+						valueNode := compDefinitionMap.Content[i+1]
+						if componentProperty.Type == "METADATA" &&
+							componentProperty.MetadataType == "COMPONENTVARIANT" &&
+							componentProperty.GroupingValue != "" {
+							variantToAdd := componentProperty.DefaultValue
+							if valueNode.Value != "" && !strings.HasPrefix(valueNode.Value, "$Prop{") {
+								variantToAdd = valueNode.Value
+							}
+							if variantToAdd != "" {
+								err := addComponentVariantDep(depMap, variantToAdd, componentProperty.GroupingValue)
+								if err != nil {
+									return err
+								}
+							}
+						}
+					}
+				}
+			}
+			if prop.Value == "uesio.variant" {
+				if len(compDefinitionMap.Content) > i {
+					valueNode := compDefinitionMap.Content[i+1]
+					// Don't process variants with prop merges
+					if strings.HasPrefix(valueNode.Value, "$Prop{") {
+						continue
+					}
+					if valueNode.Kind == yaml.ScalarNode && valueNode.Value != "" {
+						if err = addComponentVariantDep(depMap, valueNode.Value, compName); err == nil {
+							foundComponentVariant = true
+						}
 					}
 				}
 			}
@@ -697,6 +730,33 @@ func (vdm *ViewDepMap) AddComponent(key string, session *sess.Session) (*meta.Co
 		if err = getComponentAreaDeps((*yaml.Node)(component.Definition), vdm, session); err != nil {
 			return nil, err
 		}
+
+		// Generate a map of properties we care about
+		if component.Properties != nil {
+			relevantPropertiesMap := map[string]meta.ComponentProperty{}
+			for _, propertyNode := range component.Properties.Content {
+				propertyType := meta.GetNodeValueAsString(propertyNode, "type")
+				if propertyType != "METADATA" {
+					continue
+				}
+				metadataType := meta.GetNodeValueAsString(propertyNode, "metadataType")
+				if metadataType != "COMPONENTVARIANT" {
+					continue
+				}
+				propertyName := meta.GetNodeValueAsString(propertyNode, "name")
+				if propertyName == "" {
+					continue
+				}
+				relevantPropertiesMap[propertyName] = meta.ComponentProperty{
+					Type:          propertyType,
+					MetadataType:  metadataType,
+					DefaultValue:  meta.GetNodeValueAsString(propertyNode, "defaultValue"),
+					GroupingValue: meta.GetNodeValueAsString(propertyNode, "groupingValue"),
+				}
+			}
+			component.SetPropertiesMap(relevantPropertiesMap)
+		}
+
 	}
 	return component, nil
 }

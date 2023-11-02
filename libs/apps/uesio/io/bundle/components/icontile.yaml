@@ -16,10 +16,16 @@ properties:
   - type: SIGNALS
     name: signals
     label: Signals
+  - type: METADATA
+    name: tilevariant
+    metadataType: "COMPONENTVARIANT"
+    label: "Tile Variant"
+    groupingValue: "uesio/io.tile"
+    defaultValue: "uesio/io.nav"
 definition:
   - uesio/io.tile:
       signals: $Prop{signals}
-      uesio.variant: uesio/io.tag
+      uesio.variant: $Prop{tilevariant}
       content:
         - uesio/io.text:
             text: $Prop{title}
