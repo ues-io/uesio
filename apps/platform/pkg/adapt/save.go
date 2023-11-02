@@ -346,11 +346,6 @@ func GetFieldValue(value interface{}, key string) (interface{}, error) {
 		return fk, nil
 	}
 
-	valueItem, ok := value.(Item)
-	if ok {
-		return valueItem.GetField(key)
-	}
-
 	loadableValueItem, ok := value.(meta.Item)
 	if ok {
 		return loadableValueItem.GetField(key)

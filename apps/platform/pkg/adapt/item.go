@@ -3,8 +3,9 @@ package adapt
 import (
 	"errors"
 	"fmt"
-	"github.com/thecloudmasters/uesio/pkg/constant"
 	"strings"
+
+	"github.com/thecloudmasters/uesio/pkg/constant"
 )
 
 type Item map[string]interface{}
@@ -26,7 +27,7 @@ func (i *Item) GetField(fieldName string) (interface{}, error) {
 	}
 
 	var value interface{}
-	value = *i
+	value = i
 
 	for _, name := range names {
 		var err error
