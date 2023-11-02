@@ -7,7 +7,7 @@ type InsertsAPI struct {
 }
 
 func (c *InsertsAPI) Get() []*ChangeAPI {
-	changeAPIs := []*ChangeAPI{}
+	var changeAPIs []*ChangeAPI
 
 	_ = c.op.LoopInserts(func(change *adapt.ChangeItem) error {
 		changeAPIs = append(changeAPIs, &ChangeAPI{
