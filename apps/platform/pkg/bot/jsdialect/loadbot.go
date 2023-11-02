@@ -152,13 +152,16 @@ func (lb *LoadBotAPI) AddError(error string) {
 func (lb *LoadBotAPI) AddRecord(record interface{}) {
 	switch typedRecord := record.(type) {
 	case map[string]interface{}:
-		item := (adapt.Item)(typedRecord)
+		item := lb.loadOp.Collection.NewItem()
+		for key, typedField := range typedRecord {
+			item.SetField(key, typedField)
+		}
 		// Make sure that the Item has a valid for its Id field. If not, generate a fake id.
 		if val, err := item.GetField(adapt.ID_FIELD); err == nil || val == nil || val == "" {
 			if shortId, shortIdErr := shortid.Generate(); shortIdErr != nil {
 				item.SetField(adapt.ID_FIELD, shortId)
 			}
 		}
-		lb.loadOp.Collection.AddItem(&item)
+		lb.loadOp.Collection.AddItem(item)
 	}
 }
