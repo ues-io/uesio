@@ -81,6 +81,7 @@ type ViewOnlyWireDefinition = WireDefinitionBase & {
 	fields: Record<string, ViewOnlyField>
 	label?: string
 	pluralLabel?: string
+	nameField?: string
 	viewOnly: true
 }
 
