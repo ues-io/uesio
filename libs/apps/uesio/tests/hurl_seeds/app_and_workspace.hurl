@@ -125,7 +125,6 @@ HTTP 200
 ben_id: jsonpath "$.wires[0].data[0]['uesio/core.id']"
 wessel_id: jsonpath "$.wires[0].data[1]['uesio/core.id']"
 
-
 # Put ben & wessel on the team
 POST https://{{host}}:{{port}}/site/wires/save
 {

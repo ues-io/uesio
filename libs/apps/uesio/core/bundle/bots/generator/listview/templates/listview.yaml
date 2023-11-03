@@ -20,21 +20,28 @@ components:
                         signals:
                           - signal: wire/CREATE_RECORD
                             wire: ${wirename}
-                        text: Create
+                            prepend: true
+                        text: $Label{uesio/io.create}
                         uesio.variant: uesio/io.primary
                     - uesio/io.button:
                         signals:
                           - signal: wire/SAVE
                             wires:
                               - ${wirename}
-                        text: Save
+                        text: $Label{uesio/io.save}
                         hotkey: "meta+s"
                         uesio.variant: uesio/io.secondary
+                        uesio.display:
+                          - type: wireHasChanges
+                            wire: ${wirename}
                     - uesio/io.button:
                         signals:
                           - signal: wire/CANCEL
                             wire: ${wirename}
-                        text: Cancel
+                        uesio.display:
+                          - type: wireHasChanges
+                            wire: ${wirename}
+                        text: $Label{uesio/io.cancel}
                         uesio.variant: uesio/io.secondary
                     - uesio/io.button:
                         signals:

@@ -64,6 +64,9 @@ definition:
               components:
                 - uesio/io.box:
                     components:
+                      - uesio/io.searchbox:
+                          wire: allcollections
+                          focusOnRender: true
                       - uesio/io.table:
                           wire: allcollections
                           columns:

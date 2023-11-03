@@ -32,6 +32,7 @@ interface ConditionRequest {
 	conditions?: ConditionRequest[]
 	subcollection?: string
 	subfield?: string
+	inactive?: boolean
 }
 interface LoadOrder {
 	field: string
@@ -64,7 +65,9 @@ interface BaseChangeApi {
 
 interface InsertApi extends BaseChangeApi {
 	get: (field: string) => FieldValue
+	getAll: () => Record<string, FieldValue>
 	set: (field: string, value: FieldValue) => void
+	setAll: (fields: Record<string, FieldValue>) => void
 }
 interface ChangeApi extends InsertApi {
 	getOld: (field: string) => FieldValue
@@ -199,14 +202,15 @@ interface FieldMetadata {
 	name: string
 	namespace: string
 	type: FieldType
+	updateable: boolean
 }
 
-interface LoadRequestCollectionMetadata {
+interface CollectionMetadata {
 	accessible: boolean
 	getFieldMetadata: (fieldId: string) => FieldMetadata
 	getAllFieldMetadata: () => Record<string, FieldMetadata>
 	deleteable: boolean
-	createble: boolean
+	createable: boolean
 	externalName?: string
 	label: string
 	labelPlural: string
@@ -216,17 +220,19 @@ interface LoadRequestCollectionMetadata {
 }
 
 interface LoadRequestMetadata {
-	accessible: boolean
 	batchNumber?: number
 	batchSize?: number
-	deleteable: boolean
 	collection: string
-	collectionMetadata: LoadRequestCollectionMetadata
+	collectionMetadata: CollectionMetadata
 	conditions?: ConditionRequest[]
-	createble: boolean
 	fields?: FieldRequest[]
 	order?: LoadOrder[]
-	updateable: boolean
+}
+
+interface SaveRequestMetadata {
+	collection: string
+	collectionMetadata: CollectionMetadata
+	upsert: boolean
 }
 
 interface LoadBotApi {
@@ -238,6 +244,9 @@ interface LoadBotApi {
 	getConfigValue: (configValueKey: string) => string
 	getSession: () => SessionApi
 	getUser: () => UserApi
+	// setHasMoreRecords - call this to indicate that the server could return more records
+	// in subsequent pages/batches.
+	setHasMoreRecords: () => void
 	log: LogApi
 	http: HttpApi
 }
@@ -246,7 +255,7 @@ interface SaveBotApi {
 	deletes: DeletesApi
 	inserts: InsertsApi
 	updates: UpdatesApi
-	getCollectionName: () => string
+	saveRequest: SaveRequestMetadata
 	getIntegration: () => IntegrationApi
 	getCredentials: () => Record<string, string | undefined>
 	getConfigValue: (configValueKey: string) => string
@@ -254,7 +263,6 @@ interface SaveBotApi {
 	getUser: () => UserApi
 	log: LogApi
 	http: HttpApi
-	saveOptions: SaveOptionsApi
 }
 export type {
 	AfterSaveBotApi,

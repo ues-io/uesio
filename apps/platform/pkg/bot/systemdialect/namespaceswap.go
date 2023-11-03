@@ -13,8 +13,8 @@ type NamespaceSwapItem struct {
 	item       *adapt.Item
 }
 
-func (i *NamespaceSwapItem) Scan(src interface{}) error {
-	return json.Unmarshal([]byte(src.(string)), i)
+func (i *NamespaceSwapItem) ScanBytes(v []byte) error {
+	return json.Unmarshal(v, i)
 }
 
 func (i *NamespaceSwapItem) UnmarshalJSON(bytes []byte) error {

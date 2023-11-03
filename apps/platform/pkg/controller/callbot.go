@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log/slog"
 	"net/http"
+	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/bot"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
@@ -21,12 +22,30 @@ func CallListenerBot(w http.ResponseWriter, r *http.Request) {
 	name := vars["name"]
 
 	var params map[string]interface{}
-	err := json.NewDecoder(r.Body).Decode(&params)
-	if err != nil {
-		msg := "Invalid request format: " + err.Error()
-		slog.Error(msg)
-		http.Error(w, msg, http.StatusBadRequest)
-		return
+
+	// Currently we accept params only as form data or JSON
+	contentType := r.Header.Get(contentTypeHeader)
+
+	if strings.Contains(contentType, "application/x-www-form-urlencoded") {
+		params = map[string]interface{}{}
+		// ParseForm must be called in order for r.Form to contain any parsed form data variables
+		if err := r.ParseForm(); err != nil {
+			msg := "Unable to parse form data: " + err.Error()
+			slog.Error(msg)
+			http.Error(w, msg, http.StatusBadRequest)
+			return
+		}
+		for param, values := range r.Form {
+			params[param] = values[0]
+		}
+	} else {
+		err := json.NewDecoder(r.Body).Decode(&params)
+		if err != nil {
+			msg := "Invalid request format: " + err.Error()
+			slog.Error(msg)
+			http.Error(w, msg, http.StatusBadRequest)
+			return
+		}
 	}
 
 	session := middleware.GetSession(r)

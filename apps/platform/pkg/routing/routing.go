@@ -83,7 +83,7 @@ func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *
 		}
 	}
 
-	params, err := resolveRouteParams(route.Params, session, r.URL.Query())
+	params, err := ResolveRouteParams(route.Params, session, r.URL.Query())
 	if err != nil {
 		return nil, errors.New("unable to resolve route parameters: " + err.Error())
 	}
@@ -143,7 +143,7 @@ func GetRouteFromAssignment(r *http.Request, namespace, collection string, viewt
 	return datasource.RunRouteBots(route, session)
 }
 
-func resolveRouteParams(routeParams map[string]string, s *sess.Session, vars url.Values) (map[string]string, error) {
+func ResolveRouteParams(routeParams map[string]string, s *sess.Session, vars url.Values) (map[string]string, error) {
 	processedParams := map[string]string{}
 
 	for paramName, paramValue := range routeParams {

@@ -59,7 +59,7 @@ const DefaultRunIntegrationActionBotBody = `export default function %s(bot) {
 }`
 
 const DefaultLoadBotBody = `export default function %s(bot) {
-	const collectionName = bot.loadRequest.GetCollectionName()
+	const { collection, fields, conditions, order, batchSize, batchNumber, collectionMetadata } = bot.loadRequest
 	const results = [
 		{
 			"first_name": "Luigi",
@@ -74,7 +74,7 @@ const DefaultLoadBotBody = `export default function %s(bot) {
 }`
 
 const DefaultSaveBotBody = `export default function %s(bot) {
-	const collectionName = bot.getCollectionName()
+	const { collection, collectionMetadata, upsert } = bot.saveRequest
 	bot.deletes.get().forEach((deleteApi) => {
 		bot.log.info("got a record to delete, with id: " + deleteApi.getId())
 	})

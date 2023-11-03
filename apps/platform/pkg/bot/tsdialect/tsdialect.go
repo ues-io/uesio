@@ -69,7 +69,7 @@ export default function %s(bot: RunActionBotApi) {
 const DefaultLoadBotBody = `import { LoadBotApi } from "@uesio/bots"
 
 export default function %s(bot: LoadBotApi) {
-	const { collection, conditions, fields, order } = bot.loadRequest
+	const { collection, fields, conditions, order, batchSize, batchNumber, collectionMetadata } = bot.loadRequest
 	const results = [
 		{
 			"first_name": "Luigi",
@@ -86,7 +86,7 @@ export default function %s(bot: LoadBotApi) {
 const DefaultSaveBotBody = `import { SaveBotApi } from "@uesio/bots"
 
 export default function %s(bot: SaveBotApi) {
-	const collectionName = bot.getCollectionName()
+	const { collection, collectionMetadata, upsert } = bot.saveRequest
 	bot.deletes.get().forEach((deleteApi) => {
 		bot.log.info("got a record to delete, with id: " + deleteApi.getId())
 	})

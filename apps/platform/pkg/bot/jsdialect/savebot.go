@@ -7,12 +7,27 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
+type SaveRequestMetadata struct {
+	// NOTE: We have separate structs for Bots to ensure that we don't accidentally expose sensitive API methods
+	// to Bots, since all public API methods defined on a struct are accessible to Bots.
+	CollectionMetadata *BotCollectionMetadata `bot:"collectionMetadata"`
+	CollectionName     string                 `bot:"collection"`
+	Upsert             bool                   `bot:"upsert"`
+}
+
+func NewSaveRequestMetadata(op *adapt.SaveOp) *SaveRequestMetadata {
+	return &SaveRequestMetadata{
+		CollectionMetadata: NewBotCollectionMetadata(op.Metadata),
+		CollectionName:     op.Metadata.GetFullName(),
+		Upsert:             op.Options != nil && op.Options.Upsert,
+	}
+}
+
 func NewSaveBotAPI(bot *meta.Bot, session *sess.Session, connection adapt.Connection, saveOp *adapt.SaveOp, integrationConnection adapt.IntegrationConnection) *SaveBotAPI {
 	return &SaveBotAPI{
 		session:    session,
 		saveOp:     saveOp,
 		connection: connection,
-		Options:    &SaveOptionsAPI{Upsert: saveOp.Options != nil && saveOp.Options.Upsert},
 
 		Http:                  NewBotHttpAPI(bot, session, integrationConnection),
 		IntegrationConnection: integrationConnection,
@@ -20,6 +35,7 @@ func NewSaveBotAPI(bot *meta.Bot, session *sess.Session, connection adapt.Connec
 		Inserts:               &InsertsAPI{saveOp},
 		Updates:               &UpdatesAPI{saveOp},
 		LogApi:                NewBotLogAPI(bot),
+		SaveRequestMetadata:   NewSaveRequestMetadata(saveOp),
 	}
 }
 
@@ -27,12 +43,12 @@ type SaveBotAPI struct {
 	session               *sess.Session
 	saveOp                *adapt.SaveOp
 	connection            adapt.Connection
-	Options               *SaveOptionsAPI `bot:"saveOptions"`
-	Inserts               *InsertsAPI     `bot:"inserts"`
-	Updates               *UpdatesAPI     `bot:"updates"`
-	Deletes               *DeletesAPI     `bot:"deletes"`
-	LogApi                *BotLogAPI      `bot:"log"`
-	Http                  *BotHttpAPI     `bot:"http"`
+	SaveRequestMetadata   *SaveRequestMetadata `bot:"saveRequest"`
+	Inserts               *InsertsAPI          `bot:"inserts"`
+	Updates               *UpdatesAPI          `bot:"updates"`
+	Deletes               *DeletesAPI          `bot:"deletes"`
+	LogApi                *BotLogAPI           `bot:"log"`
+	Http                  *BotHttpAPI          `bot:"http"`
 	IntegrationConnection adapt.IntegrationConnection
 }
 
@@ -62,18 +78,10 @@ func (sba *SaveBotAPI) GetUser() *UserAPI {
 	return NewUserAPI(sba.session.GetContextUser())
 }
 
-func (sba *SaveBotAPI) GetCollectionName() string {
-	return sba.saveOp.Metadata.GetFullName()
-}
-
 func (sba *SaveBotAPI) AddError(message, fieldId, recordId string) {
 	sba.saveOp.AddError(&adapt.SaveError{
 		RecordID: recordId,
 		FieldID:  fieldId,
 		Message:  message,
 	})
-}
-
-type SaveOptionsAPI struct {
-	Upsert bool `bot:"upsert"`
 }
