@@ -8,6 +8,7 @@ type MultiPermissionPickerDefinition = {
 	sourceWires: string[]
 	permissionFields: PermissionFieldDefinition[]
 	rowactions?: RowAction[]
+	itemColumnLabel?: string
 }
 
 type RowAction = {
@@ -27,7 +28,12 @@ const MultiPermissionPicker: definition.UC<MultiPermissionPickerDefinition> = (
 	const {
 		context,
 		path,
-		definition: { sourceWires = [], permissionFields, rowactions },
+		definition: {
+			itemColumnLabel,
+			sourceWires = [],
+			permissionFields,
+			rowactions,
+		},
 	} = props
 	const fieldId = context.mergeString(props.definition.fieldId)
 	const uesioId =
@@ -42,12 +48,15 @@ const MultiPermissionPicker: definition.UC<MultiPermissionPickerDefinition> = (
 	const permsStorageRecord = context.getRecord()
 
 	const sourceWiresMap = api.wire.useWires(sourceWires, context)
-	const sourceWiresList = sourceWiresMap ? Object.values(sourceWiresMap) : []
 
 	const workspaceContext = context.getWorkspace()
 	if (!workspaceContext) throw new Error("No workspace context provided")
 
-	if (!sourceWiresList || !sourceWiresList.length || !permsStorageRecord) {
+	if (
+		!sourceWiresMap ||
+		!Object.values(sourceWiresMap).length ||
+		!permsStorageRecord
+	) {
 		return null
 	}
 
@@ -118,8 +127,12 @@ const MultiPermissionPicker: definition.UC<MultiPermissionPickerDefinition> = (
 		} as wire.PlainWireRecord)
 	}
 
-	const initialValues = sourceWiresList
+	// Iterate over the wires in the order specified by the sourceWires prop
+	// to ensure the items are in the order requested
+	const sourceWiresList = sourceWires
+		.map((wireName) => sourceWiresMap[wireName])
 		.filter((wire) => !!wire)
+	const initialValues = sourceWiresList
 		.flatMap((wire: wire.Wire) => {
 			const collection = wire.getCollection()
 			const nameField = collection.getNameField()
@@ -151,7 +164,7 @@ const MultiPermissionPicker: definition.UC<MultiPermissionPickerDefinition> = (
 		{
 			name: ID_FIELD,
 			type: "TEXT",
-			label: firstCollectionLabel,
+			label: itemColumnLabel || firstCollectionLabel,
 			createable: false,
 			updateable: false,
 		},

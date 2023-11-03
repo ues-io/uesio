@@ -28,7 +28,7 @@ definition:
           value: true
         - field: uesio/studio.grouping
           value: $Param{collectionNamespace}.$Param{collectionname}
-    commonfields:
+    permissionableCommonFields:
       viewOnly: true
       nameField: uesio/studio.name
       fields:
@@ -162,8 +162,9 @@ definition:
                                     app: $Param{app}
                                 fieldId: uesio/studio.collectionrefs->$Param{collectionNamespace}.$Param{collectionname}->fields
                                 sourceWires:
+                                  - permissionableCommonFields
                                   - fields
-                                  - commonfields
+                                itemColumnLabel: Field
                                 permissionFields:
                                   - name: read
                                     label: Read
