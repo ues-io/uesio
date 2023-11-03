@@ -33,6 +33,7 @@ interface ConditionRequest {
 	conditions?: ConditionRequest[]
 	subcollection?: string
 	subfield?: string
+	inactive?: boolean
 }
 interface LoadOrder {
 	field: string
@@ -65,7 +66,9 @@ interface BaseChangeApi {
 
 interface InsertApi extends BaseChangeApi {
 	get: (field: string) => FieldValue
+	getAll: () => Record<string, FieldValue>
 	set: (field: string, value: FieldValue) => void
+	setAll: (fields: Record<string, FieldValue>) => void
 }
 interface ChangeApi extends InsertApi {
 	getOld: (field: string) => FieldValue
@@ -171,15 +174,80 @@ interface RunActionBotApi {
 	save: (collectionName: string, records: WireRecord[]) => void
 }
 
+type FieldType =
+	| "AUTONUMBER"
+	| "CHECKBOX"
+	| "DATE"
+	| "EMAIL"
+	| "FILE"
+	| "LIST"
+	| "LONGTEXT"
+	| "MAP"
+	| "METADATA"
+	| "MULTIMETADATA"
+	| "MULTISELECT"
+	| "NUMBER"
+	| "REFERENCE"
+	| "REFERENCEGROUP"
+	| "SELECT"
+	| "STRUCT"
+	| "TEXT"
+	| "TIMESTAMP"
+	| "USER"
+
+interface FieldMetadata {
+	accessible: boolean
+	createable: boolean
+	externalName?: string
+	label: string
+	name: string
+	namespace: string
+	type: FieldType
+	updateable: boolean
+}
+
+interface CollectionMetadata {
+	accessible: boolean
+	getFieldMetadata: (fieldId: string) => FieldMetadata
+	getAllFieldMetadata: () => Record<string, FieldMetadata>
+	deleteable: boolean
+	createable: boolean
+	externalName?: string
+	label: string
+	labelPlural: string
+	name: string
+	namespace: string
+	updateable: boolean
+}
+
+interface LoadRequestMetadata {
+	batchNumber?: number
+	batchSize?: number
+	collection: string
+	collectionMetadata: CollectionMetadata
+	conditions?: ConditionRequest[]
+	fields?: FieldRequest[]
+	order?: LoadOrder[]
+}
+
+interface SaveRequestMetadata {
+	collection: string
+	collectionMetadata: CollectionMetadata
+	upsert: boolean
+}
+
 interface LoadBotApi {
 	addError: (error: string) => void
 	addRecord: (record: Record<string, unknown>) => void
-	loadRequest: LoadRequest
+	loadRequest: LoadRequestMetadata
 	getIntegration: () => IntegrationApi
 	getCredentials: () => Record<string, string | undefined>
 	getConfigValue: (configValueKey: string) => string
 	getSession: () => SessionApi
 	getUser: () => UserApi
+	// setHasMoreRecords - call this to indicate that the server could return more records
+	// in subsequent pages/batches.
+	setHasMoreRecords: () => void
 	log: LogApi
 	http: HttpApi
 }
@@ -188,7 +256,7 @@ interface SaveBotApi {
 	deletes: DeletesApi
 	inserts: InsertsApi
 	updates: UpdatesApi
-	getCollectionName: () => string
+	saveRequest: SaveRequestMetadata
 	getIntegration: () => IntegrationApi
 	getCredentials: () => Record<string, string | undefined>
 	getConfigValue: (configValueKey: string) => string
@@ -196,7 +264,6 @@ interface SaveBotApi {
 	getUser: () => UserApi
 	log: LogApi
 	http: HttpApi
-	saveOptions: SaveOptionsApi
 }
 export type {
 	AfterSaveBotApi,
@@ -400,26 +467,30 @@ export type BaseProps<T = DefinitionMap> = {
 }
 
 export type METADATA = {
-	COLLECTION: "collections"
-	FIELD: "fields"
-	VIEW: "views"
-	DATASOURCE: "datasources"
 	AUTHSOURCE: "authsources"
-	FILESOURCE: "filesources"
-	SIGNUPMETHOD: "signupmethods"
-	SECRET: "secrets"
-	THEME: "themes"
-	SELECTLIST: "selectlists"
 	BOT: "bots"
-	CREDENTIALS: "credentials"
-	ROUTE: "routes"
-	PROFILE: "profiles"
-	PERMISSIONSET: "permissionsets"
-	COMPONENTVARIANT: "componentvariants"
-	COMPONENTPACK: "componentpacks"
+	COLLECTION: "collections"
 	COMPONENT: "components"
+	COMPONENTPACK: "componentpacks"
+	COMPONENTVARIANT: "componentvariants"
+	CONFIGVALUE: "configvalues"
+	CREDENTIALS: "credentials"
+	FIELD: "fields"
 	FILE: "files"
+	FILESOURCE: "filesources"
+	INTEGRATION: "integrations"
+	INTEGRATIONACTION: "integrationactions"
 	LABEL: "labels"
+	PERMISSIONSET: "permissionsets"
+	PROFILE: "profiles"
+	RECORDCHALLENGETOKEN: "recordchallengetokens"
+	ROUTE: "routes"
+	SECRET: "secrets"
+	SELECTLIST: "selectlists"
+	SIGNUPMETHOD: "signupmethods"
+	THEME: "themes"
+	USERACCESSTOKEN: "useraccesstokens"
+	VIEW: "views"
 }
 export type MetadataType = keyof METADATA
 type MetadataKey = `${string}/${string}.${string}`

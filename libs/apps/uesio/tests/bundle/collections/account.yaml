@@ -3,5 +3,5 @@ label: Account
 pluralLabel: Account
 uniqueKey:
   - uesio/tests.name
-access: protected
 nameField: uesio/tests.name
+access: protected

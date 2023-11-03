@@ -52,9 +52,9 @@ function save_weather_forecast(bot: SaveBotApi) {
 
 	bot.log.info(
 		"Saving external collection: " +
-			bot.getCollectionName() +
+			bot.saveRequest.collection +
 			", with upsert set to: " +
-			bot.saveOptions.upsert
+			bot.saveRequest.upsert
 	)
 	bot.deletes.get().forEach((deleteItem) => {
 		bot.log.info(
@@ -72,7 +72,9 @@ function save_weather_forecast(bot: SaveBotApi) {
 		bot.log.info(
 			"updating item with id: " + changeItem.get("uesio/core.id")
 		)
-		changeItem.set("uesio/tests.current", current)
-		changeItem.set("uesio/tests.forecast", forecast)
+		changeItem.setAll({
+			"uesio/tests.current": current,
+			"uesio/tests.forecast": forecast,
+		})
 	})
 }

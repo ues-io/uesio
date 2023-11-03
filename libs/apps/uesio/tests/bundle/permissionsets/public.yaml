@@ -79,6 +79,7 @@ bots:
   uesio/tests.get_weather_forecast: true
 integrationActions:
   uesio/tests.weather_api:
+    allowAllActions: false
     actions:
       uesio/tests.get_forecast: true
 allowallbots: false
