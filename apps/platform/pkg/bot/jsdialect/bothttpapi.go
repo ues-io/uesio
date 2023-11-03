@@ -3,6 +3,7 @@ package jsdialect
 import (
 	"bytes"
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"io"
@@ -200,7 +201,9 @@ func (api *BotHttpAPI) makeRequest(req *http.Request, auth *BotHttpAuth) (*http.
 		// and apply this to the request
 		break
 	case "BASIC_AUTH":
-		// TODO: Grab the username and password and do base64 authentication
+		if err := api.setBasicAuthHeaderInRequest(req, auth.Credentials); err != nil {
+			return nil, err
+		}
 		break
 	case "OAUTH2_AUTHORIZATION_CODE":
 		return api.makeRequestWithOAuth2AuthorizationCode(req, auth)
@@ -325,6 +328,24 @@ func (api *BotHttpAPI) makeRequestWithOAuth2AuthorizationCode(req *http.Request,
 		}
 	}
 	return nil, NewUnauthorizedException("Authentication failed: " + err.Error())
+}
+
+func (api *BotHttpAPI) setBasicAuthHeaderInRequest(req *http.Request, cred *adapt.Credentials) error {
+	username, err := cred.GetRequiredEntry("username")
+	if err != nil {
+		return NewUnauthorizedException("username is required")
+	}
+	password, err := cred.GetRequiredEntry("password")
+	if err != nil {
+		return NewUnauthorizedException("password is required")
+	}
+	buf := bytes.NewBuffer([]byte{})
+	_, err = base64.NewEncoder(base64.StdEncoding, buf).Write([]byte(username + ":" + password))
+	if err != nil {
+		return NewUnauthorizedException("invalid username and password provided for integration")
+	}
+	req.Header.Set("Authorization", "Basic "+buf.String())
+	return nil
 }
 
 func getBotHeaders(header http.Header) map[string]string {
