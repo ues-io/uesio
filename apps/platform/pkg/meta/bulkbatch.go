@@ -13,7 +13,7 @@ func (bb *BulkBatch) GetCollectionName() string {
 }
 
 func (bb *BulkBatch) GetCollection() CollectionableGroup {
-	return &BotCollection{}
+	return &BulkBatchCollection{}
 }
 
 func (bb *BulkBatch) SetField(fieldName string, value interface{}) error {
