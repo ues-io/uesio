@@ -41,6 +41,10 @@ type Credential struct {
 
 type CredentialWrapper Credential
 
+func (c *Credential) GetCollection() CollectionableGroup {
+	return &CredentialCollection{}
+}
+
 func (c *Credential) GetCollectionName() string {
 	return CREDENTIAL_COLLECTION_NAME
 }

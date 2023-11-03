@@ -10,6 +10,10 @@ type LicensePricingTemplate struct {
 	MetadataName    string           `json:"uesio/studio.metadataname"`
 }
 
+func (lt *LicensePricingTemplate) GetCollection() CollectionableGroup {
+	return &LicensePricingTemplateCollection{}
+}
+
 func (lt *LicensePricingTemplate) GetCollectionName() string {
 	return LICENSEPRICINGTEMPLATE_COLLECTION_NAME
 }

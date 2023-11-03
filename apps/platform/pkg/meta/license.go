@@ -8,6 +8,10 @@ type License struct {
 	MonthlyPrice float64 `json:"uesio/studio.monthlyprice"`
 }
 
+func (l *License) GetCollection() CollectionableGroup {
+	return &LicenseCollection{}
+}
+
 func (l *License) GetCollectionName() string {
 	return LICENSE_COLLECTION_NAME
 }

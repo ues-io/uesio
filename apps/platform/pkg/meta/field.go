@@ -75,6 +75,10 @@ func GetFieldTypes() map[string]bool {
 	}
 }
 
+func (f *Field) GetCollection() CollectionableGroup {
+	return &FieldCollection{}
+}
+
 func (f *Field) GetCollectionName() string {
 	return FIELD_COLLECTION_NAME
 }

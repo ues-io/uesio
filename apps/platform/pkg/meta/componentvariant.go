@@ -84,6 +84,10 @@ func (c *ComponentVariant) GetCollectionName() string {
 	return COMPONENTVARIANT_COLLECTION_NAME
 }
 
+func (c *ComponentVariant) GetCollection() CollectionableGroup {
+	return &ComponentVariantCollection{}
+}
+
 func (v *ComponentVariant) SetField(fieldName string, value interface{}) error {
 	return StandardFieldSet(v, fieldName, value)
 }

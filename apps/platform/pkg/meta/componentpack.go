@@ -43,6 +43,10 @@ func (cp *ComponentPack) IsNil() bool {
 	return cp == nil
 }
 
+func (cp *ComponentPack) GetCollection() CollectionableGroup {
+	return &ComponentCollection{}
+}
+
 func (cp *ComponentPack) GetCollectionName() string {
 	return COMPONENTPACK_COLLECTION_NAME
 }

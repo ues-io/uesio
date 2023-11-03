@@ -55,6 +55,10 @@ func NewThemes(keys map[string]bool) ([]BundleableItem, error) {
 	return items, nil
 }
 
+func (t *Theme) GetCollection() CollectionableGroup {
+	return &ThemeCollection{}
+}
+
 func (t *Theme) GetCollectionName() string {
 	return THEME_COLLECTION_NAME
 }

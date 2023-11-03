@@ -27,6 +27,10 @@ type RecordChallengeToken struct {
 	Access          string            `yaml:"access" json:"uesio/studio.access"`
 }
 
+func (rct *RecordChallengeToken) GetCollection() CollectionableGroup {
+	return &RecordChallengeTokenCollection{}
+}
+
 func (rct *RecordChallengeToken) GetCollectionName() string {
 	return RECORDCHALLENGETOKEN_COLLECTION_NAME
 }

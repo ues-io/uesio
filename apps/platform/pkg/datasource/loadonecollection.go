@@ -27,7 +27,7 @@ func (c *LoadOneCollection) Len() int {
 }
 
 func (c *LoadOneCollection) GetFields() []string {
-	return meta.StandardGetFields(c.Item)
+	return c.Item.GetCollection().GetFields()
 }
 
 func (c *LoadOneCollection) GetName() string {

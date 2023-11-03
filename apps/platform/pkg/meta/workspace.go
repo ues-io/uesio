@@ -23,6 +23,10 @@ func (w *Workspace) GetAppBundle() *BundleDef {
 	return w.bundleDef
 }
 
+func (w *Workspace) GetCollection() CollectionableGroup {
+	return &WorkspaceCollection{}
+}
+
 func (w *Workspace) GetCollectionName() string {
 	return WORKSPACE_COLLECTION_NAME
 }

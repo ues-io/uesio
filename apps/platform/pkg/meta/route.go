@@ -41,6 +41,10 @@ type Route struct {
 
 type RouteWrapper Route
 
+func (r *Route) GetCollection() CollectionableGroup {
+	return &RouteCollection{}
+}
+
 func (r *Route) GetCollectionName() string {
 	return ROUTE_COLLECTION_NAME
 }

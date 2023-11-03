@@ -44,6 +44,10 @@ func NewBaseConfigValue(namespace, name string) *ConfigValue {
 	return &ConfigValue{BundleableBase: NewBase(namespace, name)}
 }
 
+func (cv *ConfigValue) GetCollection() CollectionableGroup {
+	return &ConfigValueCollection{}
+}
+
 func (cv *ConfigValue) GetCollectionName() string {
 	return CONFIGVALUE_COLLECTION_NAME
 }
