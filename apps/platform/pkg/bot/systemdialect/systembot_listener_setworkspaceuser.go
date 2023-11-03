@@ -5,6 +5,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -24,7 +25,37 @@ func runSetWorkspaceUserBot(params map[string]interface{}, connection adapt.Conn
 		return nil, errors.New("you must be a workspace admin to update workspace user settings")
 	}
 
-	err := datasource.Save([]datasource.SaveRequest{
+	var profile meta.Profile
+	err := datasource.PlatformLoadOne(
+		&profile,
+		&datasource.PlatformLoadOptions{
+			Connection: connection,
+			Fields: []adapt.LoadRequestField{
+				{
+					ID: adapt.ID_FIELD,
+				},
+			},
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field: "uesio/studio.name",
+					Value: profileName,
+				},
+				{
+					Field: "uesio/studio.workspace",
+					Value: workspaceID.(string),
+				},
+			},
+			Params: map[string]string{
+				"workspaceid": workspaceID.(string),
+			},
+		},
+		session,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	err = datasource.Save([]datasource.SaveRequest{
 		{
 			Collection: "uesio/studio.workspaceuser",
 			Changes: &adapt.Collection{
@@ -32,7 +63,9 @@ func runSetWorkspaceUserBot(params map[string]interface{}, connection adapt.Conn
 					"uesio/studio.workspace": map[string]interface{}{
 						"uesio/core.id": workspaceID,
 					},
-					"uesio/studio.profile": profileName,
+					"uesio/studio.profile": map[string]interface{}{
+						"uesio/core.id": profile.ID,
+					},
 					"uesio/studio.user": map[string]interface{}{
 						"uesio/core.id": session.GetSiteUser().ID,
 					},

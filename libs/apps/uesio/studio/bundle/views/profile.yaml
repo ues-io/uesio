@@ -47,8 +47,8 @@ definition:
           lookupField: uesio/core.id
         - field: uesio/studio.user
           value: $User{id}
-        - field: uesio/studio.profile
-          value: $Param{namespace}.$Param{profilename}
+        # - field: uesio/studio.profile
+        #   value: $Param{namespace}.$Param{profilename}
   # Components are how we describe the layout of our view
   components:
     - uesio/studio.mainlayout:
@@ -194,7 +194,7 @@ definition:
                                           bot: uesio/studio.setworkspaceuser
                                           params:
                                             workspaceid: ${workspaces:uesio/core.id}
-                                            profile: ${uesio/studio.namespace}.${uesio/studio.name}
+                                            profile: ${uesio/studio.name}
                                         - signal: wire/LOAD
                                           wires:
                                             - impersonation

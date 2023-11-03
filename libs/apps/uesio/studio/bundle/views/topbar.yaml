@@ -2,7 +2,21 @@ name: topbar
 definition:
   # Wires are how we pull in data
   wires:
-  # Components are how we describe the layout of our view
+    impersonation:
+      collection: uesio/studio.workspaceuser
+      fields:
+        uesio/core.id:
+        uesio/studio.user:
+        uesio/studio.profile:
+        uesio/studio.workspace:
+      conditions:
+        # TO-DO this must work
+        # - field: uesio/studio.workspace
+        #   valueSource: LOOKUP
+        #   lookupWire: workspaces
+        #   lookupField: uesio/core.id
+        - field: uesio/studio.user
+          value: $User{id}
   components:
     - uesio/io.grid:
         uesio.styleTokens:
@@ -129,6 +143,13 @@ definition:
                           path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/$Param{itemType}/$Param{itemNameSpace}/$Param{itemName}/$Param{subItemType}/$Param{subItemNameSpace}/$Param{subItemName}
           - uesio/io.group:
               components:
+                - uesio/io.item:
+                    wire: impersonation
+                    mode: EDIT
+                    components:
+                      - uesio/io.field:
+                          labelPosition: "none"
+                          fieldId: uesio/studio.profile
                 - uesio/io.button:
                     uesio.variant: uesio/io.nav
                     uesio.id: logout

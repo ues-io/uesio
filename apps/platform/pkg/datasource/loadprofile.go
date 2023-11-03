@@ -18,6 +18,11 @@ func LoadAndHydrateProfile(profileKey string, session *sess.Session) (*meta.Prof
 		slog.Error("Failed Permission Request: " + profileKey + " : " + err.Error())
 		return nil, err
 	}
+
+	return HydrateProfile(profile, session)
+}
+
+func HydrateProfile(profile *meta.Profile, session *sess.Session) (*meta.Profile, error) {
 	// LoadFromSite in the permission sets for this profile
 	for _, permissionSetRef := range profile.PermissionSetRefs {
 
