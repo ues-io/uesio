@@ -44,7 +44,7 @@ func (cp *ComponentPack) IsNil() bool {
 }
 
 func (cp *ComponentPack) GetCollection() CollectionableGroup {
-	return &ComponentCollection{}
+	return &ComponentPackCollection{}
 }
 
 func (cp *ComponentPack) GetCollectionName() string {
