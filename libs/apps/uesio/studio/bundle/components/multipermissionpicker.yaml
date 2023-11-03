@@ -4,11 +4,13 @@ entrypoint: components/multipermissionpicker/multipermissionpicker
 utilities:
   - uesio/io.button
   - uesio/io.dynamictable
+  - uesio/io.checkboxfield
   - uesio/io.field
   - uesio/io.table
   - uesio/io.titlebar
 variants:
   - uesio/io.button:uesio/io.rowaction
+  - uesio/io.checkboxfield:uesio/io.default
   - uesio/io.field:uesio/io.default
   - uesio/io.table:uesio/io.default
   - uesio/io.fieldwrapper:uesio/io.table

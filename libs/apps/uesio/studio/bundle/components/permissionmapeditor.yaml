@@ -56,7 +56,8 @@ definition:
                       name: $Param{workspacename}
                       app: $Param{app}
                   fieldId: $Prop{recordPermsMapField}
-                  wireName: $Prop{metadataRecordsWireName}
+                  sourceWires:
+                    - $Prop{metadataRecordsWireName}
                   permissionFields:
                     - type: CHECKBOX
                       label: $Prop{accessFieldLabel}
