@@ -22,10 +22,13 @@ func (c *CollectionMap) SetMetadata(metadata *CollectionMetadata) error {
 	}
 	c.IDs = []string{}
 	c.Data = map[string]*ItemWithMetadata{}
-	if c.raw == nil || len(c.raw) == 0 {
+	err := gojay.UnmarshalJSONObject(c.raw, c)
+	if err != nil {
 		return nil
 	}
-	return gojay.UnmarshalJSONObject(c.raw, c)
+	// Clean up te raw data
+	c.raw = nil
+	return nil
 }
 
 func (c *CollectionMap) NewItem() meta.Item {
