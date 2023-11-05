@@ -8,8 +8,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const arrayOfObjects = `[
-	{
+const objectsKeyedById = `{
+	"abcdefg": {
 		"uesio/studio.name": "core",
 		"uesio/studio.fullname": "uesio/core",
 		"uesio/studio.description": "Base uesio functionality",
@@ -20,7 +20,7 @@ const arrayOfObjects = `[
 			"uesio/core.uniquekey": "uesio"
 		}
 	},
-	{
+	"cjfjakjf": {
 		"uesio/studio.name": "io",
 		"uesio/studio.fullname": "uesio/io",
 		"uesio/studio.description": "A component library for uesio",
@@ -31,9 +31,9 @@ const arrayOfObjects = `[
 			"uesio/core.uniquekey": "uesio"
 		}
 	}
-]`
+}`
 
-var expectContents = []string{
+var expectMapContents = []string{
 	"\"uesio/studio.color\":\"#a05195\"",
 	"\"uesio/studio.description\":\"Base uesio functionality\"",
 	"\"uesio/studio.icon\":\"hub\"",
@@ -42,7 +42,7 @@ var expectContents = []string{
 	"\"uesio/studio.color\":\"#2f4b7c\"",
 }
 
-func TestCollection_UnmarshalJSON(t *testing.T) {
+func TestCollectionMap_UnmarshalJSON(t *testing.T) {
 	tests := []struct {
 		name         string
 		input        string
@@ -51,21 +51,24 @@ func TestCollection_UnmarshalJSON(t *testing.T) {
 		wantContains []string
 	}{
 		{
-			"array of objects",
-			arrayOfObjects,
+			"objects keyed by id",
+			objectsKeyedById,
 			false,
 			2,
-			expectContents,
+			expectMapContents,
 		},
 	}
 	for _, tt := range tests {
 		t.Run("it should unmarshal "+tt.name, func(t *testing.T) {
-			coll := Collection{}
+			coll := CollectionMap{}
 			if err := json.Unmarshal([]byte(tt.input), &coll); (err != nil) != tt.wantErr {
 				t.Errorf("UnmarshalJSON() error = %v, wantErr %v", err, tt.wantErr)
 			}
+			if err := coll.SetMetadata(nil); (err != nil) != tt.wantErr {
+				t.Errorf("Set Metadata error = %v, wantErr %v", err, tt.wantErr)
+			}
 			// Verify length
-			assert.Equal(t, len(coll), tt.wantLength)
+			assert.Equal(t, len(coll.Data), tt.wantLength)
 			marshalledBytes, err := json.Marshal(coll)
 			if err != nil {
 				t.Errorf("Error unmarshalling json: %s", err.Error())

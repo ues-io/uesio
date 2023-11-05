@@ -48,19 +48,25 @@ func (i *ItemWithMetadata) Len() int {
 }
 
 func (i *ItemWithMetadata) UnmarshalJSONObject(dec *gojay.Decoder, k string) error {
-	fieldMetadata, err := i.metadata.GetField(k)
-	if err != nil {
-		return err
-	}
 
 	var embedded gojay.EmbeddedJSON
-	err = dec.EmbeddedJSON(&embedded)
+	err := dec.EmbeddedJSON(&embedded)
 	if err != nil {
 		return err
 	}
 
 	var value interface{}
 	err = json.Unmarshal(embedded, &value)
+	if err != nil {
+		return err
+	}
+
+	if i.metadata == nil {
+		// Quit early if no metadata was provided
+		return i.SetField(k, value)
+	}
+
+	fieldMetadata, err := i.metadata.GetField(k)
 	if err != nil {
 		return err
 	}
