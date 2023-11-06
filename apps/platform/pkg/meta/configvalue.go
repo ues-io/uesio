@@ -13,6 +13,7 @@ type ConfigValue struct {
 	BundleableBase `yaml:",inline"`
 	Store          string `yaml:"store,omitempty" json:"uesio/studio.store"`
 	ManagedBy      string `yaml:"managedBy,omitempty" json:"uesio/studio.managedby"`
+	DefaultValue   string `yaml:"defaultValue,omitempty" json:"uesio/studio.defaultvalue"`
 	Value          string `yaml:"-" json:"-"`
 }
 
@@ -25,7 +26,11 @@ func (cv *ConfigValue) GetBytes() ([]byte, error) {
 func (cv *ConfigValue) MarshalJSONObject(enc *gojay.Encoder) {
 	enc.AddStringKey("namespace", cv.Namespace)
 	enc.AddStringKey("name", cv.Name)
-	enc.AddStringKey("value", cv.Value)
+	value := cv.Value
+	if value == "" && cv.DefaultValue != "" {
+		value = cv.DefaultValue
+	}
+	enc.AddStringKey("value", value)
 }
 
 func (cv *ConfigValue) IsNil() bool {
