@@ -31,76 +31,60 @@ func TestGetValue(t *testing.T) {
 
 	RegisterConfigStore("test", &TestConfigStore{})
 
-	type args struct {
-		cv      *meta.ConfigValue
-		session *sess.Session
-	}
 	tests := []struct {
 		name    string
-		args    args
+		cv      *meta.ConfigValue
 		want    string
 		wantErr bool
 	}{
 		{
 			"should return value from the store",
-			args{
-				cv: &meta.ConfigValue{
-					BundleableBase: meta.BundleableBase{
-						Name:      "has_value",
-						Namespace: "uesio/core",
-					},
-					Store:        "test",
-					DefaultValue: "foo",
+			&meta.ConfigValue{
+				BundleableBase: meta.BundleableBase{
+					Name:      "has_value",
+					Namespace: "uesio/core",
 				},
-				session: nil,
+				Store:        "test",
+				DefaultValue: "foo",
 			},
 			"abcd",
 			false,
 		},
 		{
 			"should return default value if store has no value",
-			args{
-				cv: &meta.ConfigValue{
-					BundleableBase: meta.BundleableBase{
-						Name:      "has_no_value",
-						Namespace: "uesio/core",
-					},
-					Store:        "test",
-					DefaultValue: "foo",
+			&meta.ConfigValue{
+				BundleableBase: meta.BundleableBase{
+					Name:      "has_no_value",
+					Namespace: "uesio/core",
 				},
-				session: nil,
+				Store:        "test",
+				DefaultValue: "foo",
 			},
 			"foo",
 			false,
 		},
 		{
-			"should return default value if store has empty value",
-			args{
-				cv: &meta.ConfigValue{
-					BundleableBase: meta.BundleableBase{
-						Name:      "throw_error",
-						Namespace: "uesio/core",
-					},
-					Store:        "test",
-					DefaultValue: "foo",
+			"should return error if store throws error",
+			&meta.ConfigValue{
+				BundleableBase: meta.BundleableBase{
+					Name:      "throw_error",
+					Namespace: "uesio/core",
 				},
-				session: nil,
+				Store:        "test",
+				DefaultValue: "foo",
 			},
 			"",
 			true,
 		},
 		{
-			"should return error if store throws error",
-			args{
-				cv: &meta.ConfigValue{
-					BundleableBase: meta.BundleableBase{
-						Name:      "blah",
-						Namespace: "uesio/core",
-					},
-					Store:        "test",
-					DefaultValue: "foo",
+			"should return default value if store has empty value",
+			&meta.ConfigValue{
+				BundleableBase: meta.BundleableBase{
+					Name:      "blah",
+					Namespace: "uesio/core",
 				},
-				session: nil,
+				Store:        "test",
+				DefaultValue: "foo",
 			},
 			"foo",
 			false,
@@ -108,7 +92,7 @@ func TestGetValue(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := GetValue(tt.args.cv, tt.args.session)
+			got, err := GetValue(tt.cv, nil)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetValue() error = %v, wantErr %v", err, tt.wantErr)
 				return
