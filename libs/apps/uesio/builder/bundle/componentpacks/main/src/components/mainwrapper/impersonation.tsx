@@ -37,7 +37,14 @@ const Impersonation: definition.UtilityComponent = (props) => {
 					type: "onChange",
 					fields: ["uesio/studio.profile"],
 					signals: [
-						{ signal: "WIRE/SAVE", wire: "impersonationWire" },
+						{
+							signal: "bot/CALL",
+							bot: "uesio/studio.setworkspaceuser",
+							params: {
+								workspaceid: "",
+								profile: "${uesio/studio.profile}",
+							},
+						},
 					],
 				},
 			],
@@ -57,6 +64,7 @@ const Impersonation: definition.UtilityComponent = (props) => {
 				components: [
 					{
 						"uesio/io.field": {
+							variant: "uesio/builder.propfield",
 							labelPosition: "none",
 							fieldId: "uesio/studio.profile",
 						},
