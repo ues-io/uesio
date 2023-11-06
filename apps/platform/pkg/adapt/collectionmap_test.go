@@ -26,6 +26,7 @@ const objectsKeyedById = `{
 		"uesio/studio.description": "A component library for uesio",
 		"uesio/studio.color": "#2f4b7c",
 		"uesio/studio.icon": "widgets",
+		"uesio/studio.number": 3,
 		"uesio/studio.public": true,
 		"uesio/studio.user": {
 			"uesio/core.uniquekey": "uesio"
@@ -37,25 +38,73 @@ var expectMapContents = []string{
 	"\"uesio/studio.color\":\"#a05195\"",
 	"\"uesio/studio.description\":\"Base uesio functionality\"",
 	"\"uesio/studio.icon\":\"hub\"",
+	"\"uesio/studio.public\":true",
+	"\"uesio/studio.number\":3",
 	"\"uesio/studio.user\":{\"uesio/core.uniquekey\":\"uesio\"}",
 	"\"uesio/studio.description\":\"A component library for uesio\"",
 	"\"uesio/studio.color\":\"#2f4b7c\"",
 }
 
+const objectWithFloatNumberInput = `{
+	"cjfjarjf": {
+		"uesio/studio.number": 3.77
+	}
+}`
+
+var integerCollectionMetadata = &CollectionMetadata{
+	Fields: map[string]*FieldMetadata{
+		"uesio/studio.number": {
+			NumberMetadata: &NumberMetadata{
+				Decimals: 0,
+			},
+		},
+	},
+}
+
+var floatCollectionMetadata = &CollectionMetadata{
+	Fields: map[string]*FieldMetadata{
+		"uesio/studio.number": {
+			NumberMetadata: &NumberMetadata{},
+		},
+	},
+}
+
 func TestCollectionMap_UnmarshalJSON(t *testing.T) {
 	tests := []struct {
-		name         string
-		input        string
-		wantErr      bool
-		wantLength   int
-		wantContains []string
+		name          string
+		input         string
+		inputMetadata *CollectionMetadata
+		wantErr       bool
+		wantLength    int
+		wantContains  []string
 	}{
 		{
 			"objects keyed by id",
 			objectsKeyedById,
+			nil,
 			false,
 			2,
 			expectMapContents,
+		},
+		{
+			"object with int metadata",
+			objectWithFloatNumberInput,
+			integerCollectionMetadata,
+			false,
+			1,
+			[]string{
+				"\"uesio/studio.number\":3",
+			},
+		},
+		{
+			"object with float metadata",
+			objectWithFloatNumberInput,
+			floatCollectionMetadata,
+			false,
+			1,
+			[]string{
+				"\"uesio/studio.number\":3.77",
+			},
 		},
 	}
 	for _, tt := range tests {
@@ -64,7 +113,7 @@ func TestCollectionMap_UnmarshalJSON(t *testing.T) {
 			if err := json.Unmarshal([]byte(tt.input), &coll); (err != nil) != tt.wantErr {
 				t.Errorf("UnmarshalJSON() error = %v, wantErr %v", err, tt.wantErr)
 			}
-			if err := coll.SetMetadata(nil); (err != nil) != tt.wantErr {
+			if err := coll.SetMetadata(tt.inputMetadata); (err != nil) != tt.wantErr {
 				t.Errorf("Set Metadata error = %v, wantErr %v", err, tt.wantErr)
 			}
 			// Verify length
