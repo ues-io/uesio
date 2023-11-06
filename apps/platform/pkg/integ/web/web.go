@@ -14,7 +14,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/goutils"
 	httpClient "github.com/thecloudmasters/uesio/pkg/http"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
@@ -41,37 +40,23 @@ type RequestOptions struct {
 	ResponseData interface{}
 }
 
-type WebIntegration struct {
-}
-
-func (wi *WebIntegration) GetIntegrationConnection(integration *meta.Integration, session *sess.Session, credentials *adapt.Credentials) (adapt.IntegrationConnection, error) {
-	return &WebIntegrationConnection{
-		session:     session,
-		integration: integration,
-		credentials: credentials,
-	}, nil
-}
-
-type WebIntegrationConnection struct {
-	session     *sess.Session
+type connection struct {
 	integration *meta.Integration
 	credentials *adapt.Credentials
 }
 
-func (wic *WebIntegrationConnection) GetCredentials() *adapt.Credentials {
-	return wic.credentials
-}
+// TODO: ELIMINATE THE OLD WEB INTEGRATION
+func RunAction(ic *adapt.IntegrationConnection, actionName string, params interface{}) (interface{}, error) {
 
-func (wic *WebIntegrationConnection) GetIntegration() *meta.Integration {
-	return wic.integration
-}
+	wic := &connection{
+		integration: ic.GetIntegration(),
+		credentials: ic.GetCredentials(),
+	}
 
-func (wic *WebIntegrationConnection) RunAction(actionName string, requestOptions interface{}) (interface{}, error) {
-
-	switch actionName {
+	switch strings.ToLower(actionName) {
 	case "get", "post", "put", "patch", "delete":
 		// TODO: Validate request options somehow
-		result, err := wic.Request(strings.ToUpper(actionName), requestOptions)
+		result, err := wic.request(strings.ToUpper(actionName), params)
 		if err != nil {
 			return nil, err
 		}
@@ -82,7 +67,7 @@ func (wic *WebIntegrationConnection) RunAction(actionName string, requestOptions
 
 }
 
-func (wic *WebIntegrationConnection) Request(methodName string, requestOptions interface{}) (interface{}, error) {
+func (wic *connection) request(methodName string, requestOptions interface{}) (interface{}, error) {
 	var options *RequestOptions
 	// Coming from TS/JS bots, RequestOptions will very likely be a map[string]interface{},
 	// whereas coming from system bots, it will be a RequestOptions struct
@@ -126,10 +111,9 @@ func (wic *WebIntegrationConnection) Request(methodName string, requestOptions i
 		}
 	}
 
-	creds := wic.GetCredentials()
 	var credsInterfaceMap map[string]interface{}
-	if creds != nil {
-		credsInterfaceMap = creds.GetInterfaceMap()
+	if wic.credentials != nil {
+		credsInterfaceMap = wic.credentials.GetInterfaceMap()
 	} else {
 		credsInterfaceMap = map[string]interface{}{}
 	}

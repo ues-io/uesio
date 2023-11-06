@@ -169,6 +169,10 @@ definition:
                                 fieldId: uesio/studio.name
                             - uesio/io.field:
                                 fieldId: uesio/studio.type
+                                uesio.context:
+                                  workspace:
+                                    name: $Param{workspacename}
+                                    app: $Param{app}
                             - uesio/io.field:
                                 fieldId: uesio/core.updatedby
                                 user:
@@ -196,38 +200,8 @@ definition:
                                 - type: fieldValue
                                   field: uesio/studio.type
                                   value: web
-                      - uesio/io.grid:
-                          uesio.variant: uesio/io.four_columns
-                          uesio.context:
-                            workspace:
-                              name: $Param{workspacename}
-                              app: $Param{app}
-                          items:
-                            - uesio/io.field:
-                                uesio.display:
-                                  - field: uesio/studio.type
-                                    value: uesio/core.custom
-                                fieldId: uesio/studio.loadbot
-                                label: Default Collection Load Bot
-                            - uesio/io.field:
-                                uesio.display:
-                                  - field: uesio/studio.type
-                                    value: uesio/core.custom
-                                fieldId: uesio/studio.savebot
-                                label: Default Collection Save Bot
-                            - uesio/io.field:
-                                uesio.display:
-                                  - field: uesio/studio.type
-                                    value: uesio/core.custom
-                                fieldId: uesio/studio.runactionbot
-                                label: Default Run Action Bot
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
-                    uesio.display:
-                      - type: fieldValue
-                        wire: integration
-                        field: uesio/studio.type
-                        value: uesio/core.custom
                     components:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.main

@@ -3,6 +3,7 @@ package datasource
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -10,23 +11,32 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func GetIntegration(integrationID string, session *sess.Session) (adapt.IntegrationConnection, error) {
+func GetIntegrationConnection(integrationID string, session *sess.Session, connection adapt.Connection) (*adapt.IntegrationConnection, error) {
 	integration, err := meta.NewIntegration(integrationID)
 	if err != nil {
 		return nil, err
 	}
-	err = bundle.Load(integration, session, nil)
-	if err != nil {
-		return nil, fmt.Errorf("could not find Integration with name: %s", integrationID)
+	// First load the integration
+	if err = bundle.Load(integration, session, connection); err != nil {
+		return nil, fmt.Errorf("could not find Integration: %s", integrationID)
+	}
+	// Then load the integration type
+	// TEMPORARY backwards compatibility: map "web" to uesio/core.web
+	integrationTypeName := integration.Type
+	if strings.HasSuffix(integrationTypeName, ".web") {
+		integrationTypeName = "uesio/core.web"
 	}
 
-	integrationType, err := adapt.GetIntegrationType(integration.Type)
+	integrationType, err := meta.NewIntegrationType(integrationTypeName)
 	if err != nil {
-		return nil, fmt.Errorf("invalid Integration type %s for Integration %s", integration.Type, integrationID)
+		return nil, err
+	}
+	if err = bundle.Load(integrationType, session, connection); err != nil {
+		return nil, fmt.Errorf("could not find Integration Type: %s", integrationTypeName)
 	}
 
 	// Enter into a version context to load credentials in the integration's namespace
-	versionSession, err := EnterVersionContext(integration.Namespace, session, nil)
+	versionSession, err := EnterVersionContext(integration.Namespace, session, connection)
 	if err != nil {
 		return nil, err
 	}
@@ -38,18 +48,17 @@ func GetIntegration(integrationID string, session *sess.Session) (adapt.Integrat
 			return nil, fmt.Errorf("could not retrieve Credentials with name %s for Integration %s", integration.Credentials, integrationID)
 		}
 	}
-	return integrationType.GetIntegrationConnection(integration, session, credentials)
+
+	return adapt.NewIntegrationConnection(integration, integrationType, session, credentials), nil
 }
 
+// HydrateOptions takes loads arbitrary map[string]interface{} data into a struct.
+// It's not the prettiest or most performant approach, but it's simple.
 func HydrateOptions(optionsInput interface{}, optionsOutput interface{}) error {
-
-	// This isn't the prettiest thing in the world, but it works for getting
-	// Arbitrary map[string]interface{} data into a struct.
-	jsonbody, err := json.Marshal(optionsInput)
+	jsonBody, err := json.Marshal(optionsInput)
 	if err != nil {
 		return err
 	}
-
-	return json.Unmarshal(jsonbody, &optionsOutput)
+	return json.Unmarshal(jsonBody, &optionsOutput)
 
 }

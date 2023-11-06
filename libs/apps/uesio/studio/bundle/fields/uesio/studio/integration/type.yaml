@@ -1,5 +1,6 @@
 name: type
-type: SELECT
-selectList: integrationtypes
-label: Type
+type: METADATA
+metadata:
+  type: INTEGRATIONTYPE
+label: Integration Type
 required: true

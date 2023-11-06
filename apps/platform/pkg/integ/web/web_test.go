@@ -9,12 +9,20 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 func Test_RunAction(t *testing.T) {
+
+	webIntegrationType := &meta.IntegrationType{
+		BundleableBase: meta.BundleableBase{
+			Namespace: "uesio/core",
+			Name:      "web",
+		},
+	}
 
 	creds := &adapt.Credentials{}
 	(*creds)["apikey"] = "1234"
@@ -517,13 +525,12 @@ func Test_RunAction(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			wi := &WebIntegration{}
 			serveResponseBody = tt.args.response
 			serveContentType = tt.args.responseContentType
 			requestAsserts = tt.args.requestAsserts
 			testInstance = t
 			countRequests = map[string]uint32{}
-			conn, _ := wi.GetIntegrationConnection(tt.integration, session, creds)
+			ic := adapt.NewIntegrationConnection(tt.integration, webIntegrationType, session, creds)
 			reqsToMake := 1
 			if tt.args.makeRequestNTimes > 1 {
 				reqsToMake = tt.args.makeRequestNTimes
@@ -532,7 +539,7 @@ func Test_RunAction(t *testing.T) {
 			var err error
 			for {
 				reqsToMake = reqsToMake - 1
-				actualResponse, err = conn.RunAction(tt.args.method, tt.args.requestOptions)
+				actualResponse, err = RunAction(ic, tt.args.method, tt.args.requestOptions)
 				if reqsToMake == 0 {
 					break
 				}

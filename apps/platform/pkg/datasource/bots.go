@@ -310,18 +310,49 @@ func CallListenerBot(namespace, name string, params map[string]interface{}, conn
 
 }
 
-func RunIntegrationActionBot(namespace, name string, params map[string]interface{}, action *meta.IntegrationAction, integration adapt.IntegrationConnection, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
+func RunIntegrationAction(ic *adapt.IntegrationConnection, actionKey string, requestOptions interface{}, connection adapt.Connection) (interface{}, error) {
+	integration := ic.GetIntegration()
+	integrationType := ic.GetIntegrationType()
+	session := ic.GetSession()
+	integrationKey := integration.GetKey()
+	action, err := meta.NewIntegrationAction(integrationKey, actionKey)
+	if err != nil {
+		return nil, err
+	}
+	err = bundle.Load(action, session, nil)
+	if err != nil {
+		return nil, fmt.Errorf("could not find integrationConnection action with name %s for integrationConnection %s", actionKey, integrationKey)
+	}
+	// Use the action's associated BotRef, if defined, otherwise use the Integration Type's RunActionBot
+	var botNamespace, botName string
+	if action.BotRef != "" {
+		botNamespace, botName, err = meta.ParseKey(action.BotRef)
+		if err != nil {
+			return nil, fmt.Errorf("invalid Bot name '%s' for Integration Action: %s", action.BotRef, actionKey)
+		}
+	} else if integrationType.RunActionBot != "" {
+		botNamespace, botName, err = meta.ParseKey(integrationType.RunActionBot)
+		if err != nil {
+			return nil, fmt.Errorf("invalid Bot name '%s' for Integration: %s", integrationType.RunActionBot, integrationKey)
+		}
+	}
 
-	botKey := fmt.Sprintf("%s.%s", namespace, name)
-	integrationKey := integration.GetIntegration().GetKey()
-	actionKey := fmt.Sprintf("%s.%s", action.Namespace, action.Name)
+	// convert requestOptions into a params map
+	params, isMap := requestOptions.(map[string]interface{})
+	if !isMap {
+		return nil, fmt.Errorf("invalid request options provided to integrationConnection action with name %s for integrationConnection %s - must be a map", actionKey, integrationKey)
+	}
 
-	if !session.GetContextPermissions().CanRunIntegrationAction(integrationKey, actionKey) {
-		return nil, meta.NewBotAccessError(fmt.Sprintf("you do not have permission to run action %s for integration %s", actionKey, integrationKey))
+	botKey := fmt.Sprintf("%s.%s", botNamespace, botName)
+
+	fullyQualifiedActionKey := fmt.Sprintf("%s.%s", action.Namespace, action.Name)
+
+	if !session.GetContextPermissions().CanRunIntegrationAction(integrationKey, fullyQualifiedActionKey) {
+		return nil, meta.NewBotAccessError(fmt.Sprintf("you do not have permission to run action %s for integration %s", fullyQualifiedActionKey, integrationKey))
 	}
 
 	// First try to run a system bot
-	systemListenerBot := meta.NewListenerBot(namespace, name)
+	systemListenerBot := meta.NewListenerBot(botNamespace, botName)
 	systemListenerBot.Dialect = "SYSTEM"
 
 	systemDialect, err := bot.GetBotDialect(systemListenerBot.Dialect)
@@ -329,7 +360,7 @@ func RunIntegrationActionBot(namespace, name string, params map[string]interface
 		return nil, err
 	}
 
-	systemBotResults, err := systemDialect.RunIntegrationActionBot(systemListenerBot, action, integration, params, connection, session)
+	systemBotResults, err := systemDialect.RunIntegrationActionBot(systemListenerBot, action, ic, params)
 	_, isNotFoundError := err.(*SystemBotNotFoundError)
 	if !isNotFoundError {
 		// If we found a system bot, we can go ahead and just return the results of
@@ -337,7 +368,7 @@ func RunIntegrationActionBot(namespace, name string, params map[string]interface
 		return systemBotResults, err
 	}
 
-	robot := meta.NewRunActionBot(namespace, name)
+	robot := meta.NewRunActionBot(botNamespace, botName)
 	err = bundle.Load(robot, session, connection)
 	if err != nil {
 		return nil, meta.NewBotNotFoundError("integration run action bot not found: " + botKey)
@@ -353,6 +384,6 @@ func RunIntegrationActionBot(namespace, name string, params map[string]interface
 		return nil, err
 	}
 
-	return dialect.RunIntegrationActionBot(robot, action, integration, params, connection, session)
+	return dialect.RunIntegrationActionBot(robot, action, ic, params)
 
 }

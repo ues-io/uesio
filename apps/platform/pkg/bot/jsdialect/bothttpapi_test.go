@@ -9,7 +9,6 @@ import (
 	"testing"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/integ/custom"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 
 	"github.com/stretchr/testify/assert"
@@ -17,12 +16,12 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func getIntegrationConnection(authType string, credentials *adapt.Credentials) adapt.IntegrationConnection {
-	conn, _ := (&custom.CustomIntegration{}).GetIntegrationConnection(
+func getIntegrationConnection(authType string, credentials *adapt.Credentials) *adapt.IntegrationConnection {
+	return adapt.NewIntegrationConnection(
 		&meta.Integration{Authentication: authType},
+		&meta.IntegrationType{},
 		&sess.Session{},
 		credentials)
-	return conn
 }
 
 func Test_Request(t *testing.T) {
@@ -77,7 +76,7 @@ func Test_Request(t *testing.T) {
 	type ResponseAssertsFunc func(t *testing.T, response *BotHttpResponse)
 
 	type args struct {
-		integration         adapt.IntegrationConnection
+		integration         *adapt.IntegrationConnection
 		request             *BotHttpRequest
 		response            string
 		responseContentType string
@@ -425,7 +424,7 @@ func Test_Request(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			botApi := NewBotHttpAPI(&meta.Bot{}, &sess.Session{}, tt.args.integration)
+			botApi := NewBotHttpAPI(&meta.Bot{}, tt.args.integration)
 			serveResponseBody = tt.args.response
 			serveContentType = tt.args.responseContentType
 			serveStatusCode = tt.args.responseStatusCode

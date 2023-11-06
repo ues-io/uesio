@@ -4,12 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/bedrockruntime"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/creds"
-	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/usage"
@@ -26,58 +27,53 @@ type InvokeModelOptions struct {
 	Model string `json:"model"`
 }
 
-type BedrockIntegration struct {
-}
+func getBedrockConnection(ic *adapt.IntegrationConnection) (*connection, error) {
 
-func (i *BedrockIntegration) GetIntegrationConnection(integration *meta.Integration, session *sess.Session, credentials *adapt.Credentials) (adapt.IntegrationConnection, error) {
-
-	cfg, err := creds.GetAWSConfig(context.Background(), credentials)
+	cfg, err := creds.GetAWSConfig(context.Background(), ic.GetCredentials())
 	if err != nil {
 		return nil, err
 	}
 
 	client := bedrockruntime.NewFromConfig(cfg)
 
-	return &Connection{
-		session:     session,
-		integration: integration,
-		credentials: credentials,
+	return &connection{
+		session:     ic.GetSession(),
+		integration: ic.GetIntegration(),
+		credentials: ic.GetCredentials(),
 		client:      client,
 	}, nil
+
 }
 
-type Connection struct {
+type connection struct {
 	session     *sess.Session
 	integration *meta.Integration
 	credentials *adapt.Credentials
 	client      *bedrockruntime.Client
 }
 
-func (c *Connection) GetCredentials() *adapt.Credentials {
-	return c.credentials
-}
+// RunAction implements the system bot interface
+func RunAction(bot *meta.Bot, action *meta.IntegrationAction, ic *adapt.IntegrationConnection, params map[string]interface{}) (interface{}, error) {
 
-func (c *Connection) GetIntegration() *meta.Integration {
-	return c.integration
-}
-
-func (c *Connection) RunAction(actionName string, requestOptions interface{}) (interface{}, error) {
-
-	switch actionName {
-	case "invokemodel":
-		return c.InvokeModel(requestOptions)
-	}
-
-	return nil, errors.New("Invalid Action Name for Open AI integration")
-
-}
-
-func (c *Connection) InvokeModel(requestOptions interface{}) (interface{}, error) {
-
-	options := &InvokeModelOptions{}
-	err := datasource.HydrateOptions(requestOptions, options)
+	bc, err := getBedrockConnection(ic)
 	if err != nil {
 		return nil, err
+	}
+
+	switch strings.ToLower(action.Name) {
+	case "invokemodel":
+		return bc.invokeModel(params)
+	}
+
+	return nil, errors.New("invalid action name for Bedrock integration")
+
+}
+
+func (c *connection) invokeModel(requestOptions map[string]interface{}) (interface{}, error) {
+
+	options := &InvokeModelOptions{
+		requestOptions["input"].(string),
+		requestOptions["model"].(string),
 	}
 
 	body, err := json.Marshal(&map[string]interface{}{
