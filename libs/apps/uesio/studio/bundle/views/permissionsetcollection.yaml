@@ -28,6 +28,26 @@ definition:
           value: true
         - field: uesio/studio.grouping
           value: $Param{collectionNamespace}.$Param{collectionname}
+    permissionableCommonFields:
+      viewOnly: true
+      nameField: uesio/studio.name
+      fields:
+        uesio/studio.name:
+          type: TEXT
+          label: Name
+        uesio/studio.namespace:
+          type: TEXT
+          label: Namespace
+      init:
+        create: true
+        query: false
+      defaults:
+        - field: uesio/studio.name
+          valueSource: VALUE
+          value: "owner"
+        - field: uesio/studio.namespace
+          valueSource: VALUE
+          value: "uesio/core"
   # Components are how we describe the layout of our view
   components:
     - uesio/studio.mainlayout:
@@ -141,7 +161,10 @@ definition:
                                     name: $Param{workspacename}
                                     app: $Param{app}
                                 fieldId: uesio/studio.collectionrefs->$Param{collectionNamespace}.$Param{collectionname}->fields
-                                wireName: fields
+                                sourceWires:
+                                  - permissionableCommonFields
+                                  - fields
+                                itemColumnLabel: Field
                                 permissionFields:
                                   - name: read
                                     label: Read

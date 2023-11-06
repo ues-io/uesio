@@ -53,6 +53,12 @@ export const getJSON = (context: Context, url: string) =>
 		}),
 	}).then(respondJSON)
 
+export const del = (context: Context, url: string) =>
+	fetch(url, {
+		method: "DELETE",
+		headers: addOriginalSessionHashHeader(context),
+	})
+
 export const post = (context: Context, url: string) =>
 	fetch(url, {
 		method: "POST",

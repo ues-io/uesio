@@ -59,8 +59,8 @@ const DefaultRunIntegrationActionBotBody = `export default function %s(bot) {
 }`
 
 const DefaultLoadBotBody = `export default function %s(bot) {
-	const collectionName = bot.loadRequest.GetCollectionName()
-	[
+	const { collection, fields, conditions, order, batchSize, batchNumber, collectionMetadata } = bot.loadRequest
+	const results = [
 		{
 			"first_name": "Luigi",
 			"last_name": "Vampa"
@@ -69,11 +69,12 @@ const DefaultLoadBotBody = `export default function %s(bot) {
 			"first_name": "Myasia",
 			"last_name": "Harvey"
 		},
-	].forEach((record) => bot.addRecord(record))
+	]
+	results.forEach((record) => bot.addRecord(record))
 }`
 
 const DefaultSaveBotBody = `export default function %s(bot) {
-	const collectionName = bot.getCollectionName()
+	const { collection, collectionMetadata, upsert } = bot.saveRequest
 	bot.deletes.get().forEach((deleteApi) => {
 		bot.log.info("got a record to delete, with id: " + deleteApi.getId())
 	})
@@ -107,7 +108,18 @@ const DefaultBotBody = `export default function %s(bot) {
 
 }`
 
-const MAX_SECONDS time.Duration = 5
+const MAX_TIMEOUT int = 30
+const DEFAULT_TIMEOUT int = 5
+
+func getTimeout(timeout int) int {
+	if timeout <= 0 {
+		return DEFAULT_TIMEOUT
+	}
+	if timeout > MAX_TIMEOUT {
+		return MAX_TIMEOUT
+	}
+	return timeout
+}
 
 func (b *JSDialect) hydrateBot(bot *meta.Bot, session *sess.Session) error {
 	_, stream, err := bundle.GetItemAttachment(bot, b.GetFilePath(), session)
@@ -122,7 +134,7 @@ func (b *JSDialect) hydrateBot(bot *meta.Bot, session *sess.Session) error {
 	return nil
 }
 
-func RunBot(botName string, contents string, api interface{}, errorFunc func(string)) error {
+func RunBot(bot *meta.Bot, api interface{}, errorFunc func(string)) error {
 
 	// TODO: We could possibly not start a new VM for every Bot we run.
 	vm := goja.New()
@@ -132,19 +144,19 @@ func RunBot(botName string, contents string, api interface{}, errorFunc func(str
 		return err
 	}
 
-	time.AfterFunc(MAX_SECONDS*time.Second, func() {
-		vm.Interrupt("Bot: " + botName + " is running too long, please check your code and run the operation again.")
+	time.AfterFunc(time.Duration(getTimeout(bot.Timeout))*time.Second, func() {
+		vm.Interrupt("Bot: " + bot.Name + " is running too long, please check your code and run the operation again.")
 		return //Interrupt native Go functions
 	})
 
-	runner, err := vm.RunString(strings.ReplaceAll("("+contents+")", "export default function", "function"))
+	runner, err := vm.RunString(strings.ReplaceAll("("+bot.FileContents+")", "export default function", "function"))
 	if err != nil {
 		return err
 	}
 	change, ok := goja.AssertFunction(runner)
 	if !ok {
 		// If the bot is not a function, check for a function with the same name as the bot
-		change, ok = goja.AssertFunction(vm.Get(botName))
+		change, ok = goja.AssertFunction(vm.Get(bot.Name))
 		if !ok {
 			return errors.New("invalid bot code. A bot must export a function with the same name as the bot")
 		}
@@ -172,7 +184,7 @@ func (b *JSDialect) BeforeSave(bot *meta.Bot, request *adapt.SaveOp, connection 
 	if err != nil {
 		return nil
 	}
-	return RunBot(bot.Name, bot.FileContents, botAPI, botAPI.AddError)
+	return RunBot(bot, botAPI, botAPI.AddError)
 }
 
 func (b *JSDialect) AfterSave(bot *meta.Bot, request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
@@ -181,7 +193,7 @@ func (b *JSDialect) AfterSave(bot *meta.Bot, request *adapt.SaveOp, connection a
 	if err != nil {
 		return nil
 	}
-	return RunBot(bot.Name, bot.FileContents, botAPI, botAPI.AddError)
+	return RunBot(bot, botAPI, botAPI.AddError)
 }
 
 func (b *JSDialect) CallBot(bot *meta.Bot, params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
@@ -190,7 +202,7 @@ func (b *JSDialect) CallBot(bot *meta.Bot, params map[string]interface{}, connec
 	if err != nil {
 		return nil, err
 	}
-	err = RunBot(bot.Name, bot.FileContents, botAPI, nil)
+	err = RunBot(bot, botAPI, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -210,7 +222,7 @@ func (b *JSDialect) CallGeneratorBot(bot *meta.Bot, create retrieve.WriterCreato
 	if err := b.hydrateBot(bot, session); err != nil {
 		return err
 	}
-	return RunBot(bot.Name, bot.FileContents, botAPI, nil)
+	return RunBot(bot, botAPI, nil)
 }
 
 func (b *JSDialect) RouteBot(bot *meta.Bot, route *meta.Route, session *sess.Session) (*meta.Route, error) {
@@ -226,7 +238,7 @@ func (b *JSDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adapt.Co
 	if err = b.hydrateBot(bot, session); err != nil {
 		return err
 	}
-	if err = RunBot(bot.Name, bot.FileContents, botAPI, nil); err != nil {
+	if err = RunBot(bot, botAPI, nil); err != nil {
 		return err
 	}
 	if len(botAPI.loadErrors) > 0 {
@@ -244,7 +256,7 @@ func (b *JSDialect) SaveBot(bot *meta.Bot, op *adapt.SaveOp, connection adapt.Co
 	if err := b.hydrateBot(bot, session); err != nil {
 		return err
 	}
-	return RunBot(bot.Name, bot.FileContents, botAPI, nil)
+	return RunBot(bot, botAPI, nil)
 }
 
 func (b *JSDialect) RunIntegrationActionBot(bot *meta.Bot, action *meta.IntegrationAction, integration adapt.IntegrationConnection, params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
@@ -253,7 +265,7 @@ func (b *JSDialect) RunIntegrationActionBot(bot *meta.Bot, action *meta.Integrat
 	if err != nil {
 		return nil, err
 	}
-	err = RunBot(bot.Name, bot.FileContents, botAPI, nil)
+	err = RunBot(bot, botAPI, nil)
 	if err != nil {
 		return nil, err
 	}

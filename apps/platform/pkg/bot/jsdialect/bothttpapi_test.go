@@ -2,16 +2,28 @@ package jsdialect
 
 import (
 	"encoding/json"
-	"github.com/thecloudmasters/uesio/pkg/meta"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"sync/atomic"
 	"testing"
 
+	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/integ/custom"
+	"github.com/thecloudmasters/uesio/pkg/meta"
+
 	"github.com/stretchr/testify/assert"
+
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
+
+func getIntegrationConnection(authType string, credentials *adapt.Credentials) adapt.IntegrationConnection {
+	conn, _ := (&custom.CustomIntegration{}).GetIntegrationConnection(
+		&meta.Integration{Authentication: authType},
+		&sess.Session{},
+		credentials)
+	return conn
+}
 
 func Test_Request(t *testing.T) {
 
@@ -65,6 +77,7 @@ func Test_Request(t *testing.T) {
 	type ResponseAssertsFunc func(t *testing.T, response *BotHttpResponse)
 
 	type args struct {
+		integration         adapt.IntegrationConnection
 		request             *BotHttpRequest
 		response            string
 		responseContentType string
@@ -73,8 +86,6 @@ func Test_Request(t *testing.T) {
 		responseStatusCode  int
 		makeRequestNTimes   int
 	}
-
-	botApi := NewBotHttpAPI(&meta.Bot{}, &sess.Session{})
 
 	tests := []struct {
 		name string
@@ -355,9 +366,66 @@ func Test_Request(t *testing.T) {
 				},
 			},
 		},
+		{
+			"Basic Authentication",
+			args{
+				integration: getIntegrationConnection("BASIC_AUTH", &adapt.Credentials{
+					"username": "luigi",
+					"password": "abc123",
+				}),
+				request: &BotHttpRequest{
+					Method: "GET",
+					URL:    server.URL + "/array",
+				},
+				response:            `[{"foo":"bar"},{"hello":"world"}]`,
+				responseContentType: "text/json",
+				requestAsserts: func(t *testing.T, request *http.Request) {
+					assert.Equal(t, "GET", request.Method)
+					assert.Equal(t, "Basic bHVpZ2k6YWJjMTIz", request.Header.Get("Authorization"))
+					assert.Equal(t, "/array", request.URL.Path)
+				},
+				responseAsserts: func(t *testing.T, response *BotHttpResponse) {
+					assert.Equal(t, "200 OK", response.Status)
+					assert.Equal(t, http.StatusOK, response.Code)
+				},
+			},
+		},
+		{
+			"Basic Authentication - missing username",
+			args{
+				integration: getIntegrationConnection("BASIC_AUTH", &adapt.Credentials{
+					"password": "abc123",
+				}),
+				request: &BotHttpRequest{
+					Method: "GET",
+					URL:    server.URL + "/array",
+				},
+				responseAsserts: func(t *testing.T, response *BotHttpResponse) {
+					assert.Equal(t, "Unauthorized", response.Status)
+					assert.Equal(t, http.StatusUnauthorized, response.Code)
+				},
+			},
+		},
+		{
+			"Basic Authentication - missing password",
+			args{
+				integration: getIntegrationConnection("BASIC_AUTH", &adapt.Credentials{
+					"username": "luigi",
+				}),
+				request: &BotHttpRequest{
+					Method: "GET",
+					URL:    server.URL + "/array",
+				},
+				responseAsserts: func(t *testing.T, response *BotHttpResponse) {
+					assert.Equal(t, "Unauthorized", response.Status)
+					assert.Equal(t, http.StatusUnauthorized, response.Code)
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			botApi := NewBotHttpAPI(&meta.Bot{}, &sess.Session{}, tt.args.integration)
 			serveResponseBody = tt.args.response
 			serveContentType = tt.args.responseContentType
 			serveStatusCode = tt.args.responseStatusCode

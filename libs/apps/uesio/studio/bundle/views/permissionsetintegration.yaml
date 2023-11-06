@@ -141,7 +141,8 @@ definition:
                                     name: $Param{workspacename}
                                     app: $Param{app}
                                 fieldId: uesio/studio.integrationactionrefs->$Param{integrationNamespace}.$Param{integrationName}->actions
-                                wireName: integrationActions
+                                sourceWires:
+                                  - integrationActions
                                 permissionFields:
                                   - label: Allow access to this Action
                                     type: CHECKBOX

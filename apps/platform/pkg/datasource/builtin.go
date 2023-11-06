@@ -30,7 +30,7 @@ var OWNER_FIELD_DEF = meta.Field{
 		Name:      "owner",
 		Namespace: "uesio/core",
 	},
-	ReadOnly:     true,
+	ReadOnly:     false,
 	Type:         "USER",
 	Label:        "Owner",
 	AutoPopulate: "CREATE",

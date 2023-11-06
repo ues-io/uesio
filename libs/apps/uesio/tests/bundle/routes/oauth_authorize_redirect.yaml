@@ -1,0 +1,4 @@
+name: oauth_authorize_redirect
+type: redirect
+path: mock_oauth_authorize_url
+redirect: /site/oauth2/callback?state=$Param{state}&code=$Param{code}

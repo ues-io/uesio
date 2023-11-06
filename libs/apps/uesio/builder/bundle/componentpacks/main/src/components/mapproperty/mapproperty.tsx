@@ -35,35 +35,45 @@ const MapProperty: definition.UC<Definition> = (props) => {
 	>
 
 	const propertyPath = path.addLocal(property.name)
+	const actions = property.actions || [
+		{
+			icon: "add",
+			label: `New ${property.defaultKey}`,
+			action: () =>
+				set(
+					context,
+					propertyPath.addLocal(
+						property.defaultKey +
+							(Math.floor(Math.random() * 60) + 1)
+					),
+					property.defaultDefinition || {},
+					true
+				),
+		},
+	]
 
 	return (
 		<ScrollPanel
 			variant="uesio/builder.mainsection"
 			footer={
 				<BuildActionsArea justify="space-around" context={context}>
-					<Button
-						context={context}
-						variant="uesio/builder.panelactionbutton"
-						icon={
-							<Icon
+					{actions &&
+						actions.map((action) => (
+							<Button
+								key={action.label}
 								context={context}
-								icon="add"
-								variant="uesio/builder.actionicon"
+								variant="uesio/builder.panelactionbutton"
+								icon={
+									<Icon
+										context={context}
+										icon={action.icon || "add"}
+										variant="uesio/builder.actionicon"
+									/>
+								}
+								label={action.label}
+								onClick={action.action}
 							/>
-						}
-						label={`New ${property.defaultKey}`}
-						onClick={() =>
-							set(
-								context,
-								propertyPath.addLocal(
-									property.defaultKey +
-										(Math.floor(Math.random() * 60) + 1)
-								),
-								property.defaultDefinition,
-								true
-							)
-						}
-					/>
+						))}
 				</BuildActionsArea>
 			}
 			context={context}

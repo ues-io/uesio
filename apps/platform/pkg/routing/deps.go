@@ -152,13 +152,9 @@ func getDepsForComponent(component *meta.Component, deps *PreloadMetadata, sessi
 		addComponentPackToDeps(deps, component.Namespace, component.Pack, session)
 	}
 
-	// Add all Declarative Components to the Component Type dependency map
-	// so that we can send down their definitions into the View HTML.
-	// In the future we may want to send down portions of the defs for React components as well,
-	// but right now we don't need to do that.
-	if component.Type == meta.DeclarativeComponent {
-		deps.ComponentType.AddItemIfNotExists((*meta.RuntimeComponentMetadata)(component))
-	}
+	// Add all Components to the Component Type dependency map
+	// so that we can send down their runtime definition metadata into the View HTML.
+	deps.ComponentType.AddItemIfNotExists((*meta.RuntimeComponentMetadata)(component))
 
 	// need an admin session for retrieving config values
 	// in order to prevent users from having to have read on the uesio/core.configvalue table
@@ -546,6 +542,8 @@ func addComponentVariantDep(depMap *ViewDepMap, variantName string, compName str
 }
 
 func getComponentAreaDeps(node *yaml.Node, depMap *ViewDepMap, session *sess.Session) error {
+
+	node = meta.UnwrapDocumentNode(node)
 	if node == nil || node.Kind != yaml.SequenceNode {
 		return nil
 	}
@@ -585,8 +583,7 @@ func getComponentDeps(compName string, compDefinitionMap *yaml.Node, depMap *Vie
 		return err
 	}
 
-	// Load a pre-parsed slot traversal map
-	slotPaths := compDef.GetSlotPaths()
+	slotDefinitions := compDef.GetSlotDefinitions()
 
 	foundComponentVariant := false
 
@@ -628,14 +625,23 @@ func getComponentDeps(compName string, compDefinitionMap *yaml.Node, depMap *Vie
 		}
 	}
 
-	if len(slotPaths) > 0 {
-		for _, path := range slotPaths {
+	if len(slotDefinitions) > 0 {
+		for _, slotDef := range slotDefinitions {
+			path := slotDef.GetFullPath()
 			matchingNodes, err := yptr.FindAll(compDefinitionMap, path)
 			if err != nil {
 				continue
 			}
 			for _, n := range matchingNodes {
 				err := getComponentAreaDeps(n, depMap, session)
+				if err != nil {
+					return err
+				}
+			}
+			// If there were no matching nodes, and our slot has a default content,
+			// also parse through the default content
+			if len(matchingNodes) == 0 && slotDef.DefaultContent != nil {
+				err := getComponentAreaDeps((*yaml.Node)(slotDef.DefaultContent), depMap, session)
 				if err != nil {
 					return err
 				}
@@ -708,8 +714,6 @@ func GetViewDependencies(v *meta.View, session *sess.Session) (*ViewDepMap, erro
 
 	components, err := meta.GetMapNode((*yaml.Node)(v.Definition), "components")
 	if err != nil {
-		fmt.Println("Here")
-		fmt.Println(err)
 		return nil, err
 	}
 	panels, err := meta.GetMapNode((*yaml.Node)(v.Definition), "panels")

@@ -6,11 +6,14 @@ definition:
     root:
       - text-sm
       - text-slate-700
-      - p-5
+      - p-2
+      - pr-5
     title:
       - text-slate-700
     subtitle:
       - text-slate-500
       - text-xs
       - font-light
+    icon:
+      - p-2
 public: true

@@ -24,19 +24,19 @@ type Credential struct {
 	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
 	Type           string                           `yaml:"type" json:"uesio/studio.type"`
-	Entries        credentials.CredentialEntriesMap `yaml:"entries" json:"uesio/studio.entries"`
+	Entries        credentials.CredentialEntriesMap `yaml:"entries,omitempty" json:"uesio/studio.entries"`
 	// API_KEY
-	APIKey *credentials.APIKeyCredentials `yaml:"apiKey" json:"uesio/studio.api_key"`
+	APIKey *credentials.APIKeyCredentials `yaml:"apiKey,omitempty" json:"uesio/studio.api_key"`
 	// AWS_KEY
-	AwsKey *credentials.AwsKeyCredentials `yaml:"awsKey" json:"uesio/studio.aws_key"`
+	AwsKey *credentials.AwsKeyCredentials `yaml:"awsKey,omitempty" json:"uesio/studio.aws_key"`
 	// AWS_ASSUME_ROLE
-	AwsAssumeRole *credentials.AwsSTSCredentials `yaml:"awsAssumeRole" json:"uesio/studio.aws_assume_role"`
+	AwsAssumeRole *credentials.AwsSTSCredentials `yaml:"awsAssumeRole,omitempty" json:"uesio/studio.aws_assume_role"`
 	// OAUTH2_CREDENTIALS
-	OAuth2 *credentials.OAuth2Credentials `yaml:"oauth2" json:"uesio/studio.oauth2"`
+	OAuth2 *credentials.OAuth2Credentials `yaml:"oauth2,omitempty" json:"uesio/studio.oauth2"`
 	// POSTGRESQL_CONNECTION
-	Postgres *credentials.PostgreSQLConnection `yaml:"pg" json:"uesio/studio.postgresql_connection"`
+	Postgres *credentials.PostgreSQLConnection `yaml:"pg,omitempty" json:"uesio/studio.postgresql_connection"`
 	// USERNAME_PASSWORD
-	UsernamePassword *credentials.UsernamePasswordCredentials `yaml:"usernamePassword" json:"uesio/studio.username_password"`
+	UsernamePassword *credentials.UsernamePasswordCredentials `yaml:"usernamePassword,omitempty" json:"uesio/studio.username_password"`
 }
 
 type CredentialWrapper Credential

@@ -20,8 +20,8 @@ interface TileUtilityProps extends definition.UtilityProps {
 
 const StyleDefaults = Object.freeze({
 	root: ["block"],
-	content: [],
-	avatar: [],
+	content: ["empty:hidden"],
+	avatar: ["empty:hidden"],
 	selected: [],
 })
 

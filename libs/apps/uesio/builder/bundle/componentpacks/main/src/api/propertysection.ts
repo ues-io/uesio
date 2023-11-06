@@ -12,6 +12,7 @@ interface BaseSection {
 	label?: string
 	type?: PropertyPanelSectionType
 	icon?: string
+	displayConditions?: component.DisplayCondition[]
 }
 
 interface HomeSection extends BaseSection {

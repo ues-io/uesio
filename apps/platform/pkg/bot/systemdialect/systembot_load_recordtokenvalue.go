@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -17,7 +18,7 @@ func runRecordTokenValueLoadBot(op *adapt.LoadOp, connection adapt.Connection, s
 
 	recordID := recordIDCondition.Value.(string)
 
-	inContextSession, err := getContextSessionFromParams(op.Params, connection, session)
+	inContextSession, err := datasource.GetContextSessionFromParams(op.Params, connection, session)
 	if err != nil {
 		return err
 	}

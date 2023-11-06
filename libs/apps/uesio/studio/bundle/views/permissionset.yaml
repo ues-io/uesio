@@ -273,7 +273,8 @@ definition:
                                                   operator: NOT_EQUALS
                                                   value: true
                                           fieldId: uesio/studio.collectionrefs
-                                          wireName: collections
+                                          sourceWires:
+                                            - collections
                                           rowactions:
                                             - text: Field Permissions
                                               signals:
@@ -337,7 +338,8 @@ definition:
                                               name: $Param{workspacename}
                                               app: $Param{app}
                                           fieldId: uesio/studio.integrationactionrefs
-                                          wireName: integrations
+                                          sourceWires:
+                                            - integrations
                                           rowactions:
                                             - text: Grant access to individual Actions
                                               signals:

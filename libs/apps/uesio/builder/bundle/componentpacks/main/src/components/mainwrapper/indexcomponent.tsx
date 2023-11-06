@@ -8,6 +8,7 @@ import {
 import ItemTag from "../../utilities/itemtag/itemtag"
 import PropNodeTag from "../../utilities/propnodetag/propnodetag"
 import { FullPath } from "../../api/path"
+import IndexSlot from "./indexslot"
 
 const StyleDefaults = Object.freeze({
 	slot: ["border-l-4", "ml-1", "border-slate-50"],
@@ -50,6 +51,7 @@ const IndexComponent: definition.UC = (props) => {
 				<PropNodeTag
 					variant="uesio/builder.indextag"
 					context={context}
+					draggable={fullPath.combine()}
 					key={path}
 					onClick={() => {
 						setSelectedPath(context, fullPath)
@@ -77,18 +79,15 @@ const IndexComponent: definition.UC = (props) => {
 			)}
 
 			<div className={isSelected ? classes.slotSelected : classes.slot}>
-				{componentDef.slots?.map((slot) =>
-					component
-						.getSlotProps({
-							listName: slot.name,
-							definition,
-							path,
-							context,
-						})
-						.map((props, index) => (
-							<IndexComponent {...props} key={index} />
-						))
-				)}
+				{componentDef.slots?.map((slot) => (
+					<IndexSlot
+						key={slot.name}
+						slot={slot}
+						definition={definition}
+						path={path}
+						context={context}
+					/>
+				))}
 			</div>
 		</div>
 	)

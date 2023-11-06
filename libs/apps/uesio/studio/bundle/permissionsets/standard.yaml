@@ -19,6 +19,8 @@ bots:
   uesio/studio.workspacetruncate: true
   uesio/studio.setworkspaceuser: true
   uesio/studio.resetrecordaccesstokens: true
+  uesio/studio.suggestdata: true
+  uesio/studio.suggestfields: true
 views:
   uesio/studio.bundlestore: true
   uesio/studio.app: true
@@ -97,20 +99,20 @@ views:
   uesio/studio.authsources: true
   uesio/studio.authsource: true
   uesio/studio.usage: true
-  uesio/studio.userprofile: true
-  uesio/studio.userprofilenav: true
   uesio/studio.licensesused: true
   uesio/studio.licensesprovided: true
   uesio/studio.appnav: true
   uesio/studio.licensespricing: true
   uesio/studio.licensespricingvalues: true
   uesio/studio.invoice: true
-  uesio/studio.userpayments: true
   uesio/studio.paymentsuccess: true
   uesio/studio.recorddata: true
   uesio/studio.apppublish: true
   uesio/studio.useraccesstokens: true
   uesio/studio.useraccesstoken: true
+  uesio/studio.userpayments: true
+  uesio/studio.userprofile: true
+  uesio/studio.userprofilenav: true
 routes:
   uesio/studio.appsettings: true
   uesio/studio.authsources: true
@@ -186,18 +188,18 @@ routes:
   uesio/studio.siteusage_route_load: true
   uesio/studio.siteusage_collection_load: true
   uesio/studio.siteusage_collection_save: true
-  uesio/studio.userprofile: true
   uesio/studio.licensesused: true
   uesio/studio.licensesprovided: true
   uesio/studio.licensespricing: true
   uesio/studio.licensespricingvalues: true
   uesio/studio.invoice: true
-  uesio/studio.userpayments: true
   uesio/studio.paymentsuccess: true
   uesio/studio.recorddata: true
   uesio/studio.apppublish: true
-  uesio/studio.useraccesstokens: true
   uesio/studio.useraccesstoken: true
+  uesio/studio.useraccesstokens: true
+  uesio/studio.userpayments: true
+  uesio/studio.userprofile: true
 files: {}
 collections:
   uesio/studio.recentmetadata: true
@@ -205,6 +207,11 @@ collections:
   uesio/studio.recentdoc: true
   uesio/studio.authsource: true
   uesio/studio.signupmethod: true
+  uesio/core.myintegrationcredentials:
+    read: true
+    create: false
+    edit: false
+    delete: true
   uesio/core.signupmethod: true
   uesio/studio.app: true
   uesio/studio.bot: true

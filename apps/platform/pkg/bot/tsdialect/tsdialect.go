@@ -66,11 +66,11 @@ export default function %s(bot: RunActionBotApi) {
     bot.addResult("orderNumber", orderNumber)
 }`
 
-const DefaultLoadBotBody = `import { LoadBotApi } from "@uesio/bots
+const DefaultLoadBotBody = `import { LoadBotApi } from "@uesio/bots"
 
 export default function %s(bot: LoadBotApi) {
-	const { collection, conditions, fields, order } = bot.loadRequest
-	[
+	const { collection, fields, conditions, order, batchSize, batchNumber, collectionMetadata } = bot.loadRequest
+	const results = [
 		{
 			"first_name": "Luigi",
 			"last_name": "Vampa"
@@ -79,13 +79,14 @@ export default function %s(bot: LoadBotApi) {
 			"first_name": "Myasia",
 			"last_name": "Harvey"
 		},
-	].forEach((record) => bot.addRecord(record))
+	]
+	results.forEach((record) => bot.addRecord(record))
 }`
 
-const DefaultSaveBotBody = `import { SaveBotApi } from "@uesio/bots
+const DefaultSaveBotBody = `import { SaveBotApi } from "@uesio/bots"
 
 export default function %s(bot: SaveBotApi) {
-	const collectionName = bot.getCollectionName()
+	const { collection, collectionMetadata, upsert } = bot.saveRequest
 	bot.deletes.get().forEach((deleteApi) => {
 		bot.log.info("got a record to delete, with id: " + deleteApi.getId())
 	})
@@ -149,8 +150,8 @@ func (b *TSDialect) hydrateBot(bot *meta.Bot, session *sess.Session) error {
 	return nil
 }
 
-func RunBot(botName string, contents string, api interface{}, errorFunc func(string)) error {
-	return jsdialect.RunBot(botName, contents, api, errorFunc)
+func RunBot(bot *meta.Bot, api interface{}, errorFunc func(string)) error {
+	return jsdialect.RunBot(bot, api, errorFunc)
 }
 
 func (b *TSDialect) BeforeSave(bot *meta.Bot, request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
@@ -159,7 +160,7 @@ func (b *TSDialect) BeforeSave(bot *meta.Bot, request *adapt.SaveOp, connection 
 	if err != nil {
 		return nil
 	}
-	return RunBot(bot.Name, bot.FileContents, botAPI, botAPI.AddError)
+	return RunBot(bot, botAPI, botAPI.AddError)
 }
 
 func (b *TSDialect) AfterSave(bot *meta.Bot, request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
@@ -168,7 +169,7 @@ func (b *TSDialect) AfterSave(bot *meta.Bot, request *adapt.SaveOp, connection a
 	if err != nil {
 		return nil
 	}
-	return RunBot(bot.Name, bot.FileContents, botAPI, botAPI.AddError)
+	return RunBot(bot, botAPI, botAPI.AddError)
 }
 
 func (b *TSDialect) CallBot(bot *meta.Bot, params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
@@ -177,7 +178,7 @@ func (b *TSDialect) CallBot(bot *meta.Bot, params map[string]interface{}, connec
 	if err != nil {
 		return nil, err
 	}
-	err = RunBot(bot.Name, bot.FileContents, botAPI, nil)
+	err = RunBot(bot, botAPI, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -198,7 +199,7 @@ func (b *TSDialect) CallGeneratorBot(bot *meta.Bot, create retrieve.WriterCreato
 	if err != nil {
 		return nil
 	}
-	return RunBot(bot.Name, bot.FileContents, botAPI, nil)
+	return RunBot(bot, botAPI, nil)
 }
 
 func (b *TSDialect) RouteBot(bot *meta.Bot, route *meta.Route, session *sess.Session) (*meta.Route, error) {
@@ -214,7 +215,7 @@ func (b *TSDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adapt.Co
 	if err := b.hydrateBot(bot, session); err != nil {
 		return err
 	}
-	return RunBot(bot.Name, bot.FileContents, botAPI, nil)
+	return RunBot(bot, botAPI, nil)
 }
 
 func (b *TSDialect) SaveBot(bot *meta.Bot, op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
@@ -226,7 +227,7 @@ func (b *TSDialect) SaveBot(bot *meta.Bot, op *adapt.SaveOp, connection adapt.Co
 	if err := b.hydrateBot(bot, session); err != nil {
 		return err
 	}
-	return RunBot(bot.Name, bot.FileContents, botAPI, nil)
+	return RunBot(bot, botAPI, nil)
 }
 
 func (b *TSDialect) RunIntegrationActionBot(bot *meta.Bot, action *meta.IntegrationAction, integration adapt.IntegrationConnection, params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
@@ -235,7 +236,7 @@ func (b *TSDialect) RunIntegrationActionBot(bot *meta.Bot, action *meta.Integrat
 	if err != nil {
 		return nil, err
 	}
-	err = RunBot(bot.Name, bot.FileContents, botAPI, nil)
+	err = RunBot(bot, botAPI, nil)
 	if err != nil {
 		return nil, err
 	}

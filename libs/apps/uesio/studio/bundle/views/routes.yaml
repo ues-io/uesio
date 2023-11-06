@@ -20,6 +20,7 @@ definition:
           value: $Param{app}:$Param{workspacename}
     allroutes:
       collection: uesio/studio.route
+      batchsize: 20
       conditions:
         - field: uesio/studio.allmetadata
           value: true

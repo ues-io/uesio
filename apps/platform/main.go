@@ -6,6 +6,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/bot"
 	"github.com/thecloudmasters/uesio/pkg/integ/custom"
+	"github.com/thecloudmasters/uesio/pkg/integ/openai"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/adapt/postgresio"
@@ -30,6 +31,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt/localfiles"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt/s3"
+	"github.com/thecloudmasters/uesio/pkg/integ/bedrock"
 	"github.com/thecloudmasters/uesio/pkg/integ/sendgrid"
 	"github.com/thecloudmasters/uesio/pkg/integ/stripe"
 	"github.com/thecloudmasters/uesio/pkg/integ/web"
@@ -86,6 +88,8 @@ func init() {
 	adapt.RegisterIntegration("web", &web.WebIntegration{})
 	adapt.RegisterIntegration("sendgrid", &sendgrid.SendGridIntegration{})
 	adapt.RegisterIntegration("stripe", &stripe.StripeIntegration{})
+	adapt.RegisterIntegration("openai", &openai.OpenAIIntegration{})
+	adapt.RegisterIntegration("bedrock", &bedrock.BedrockIntegration{})
 	adapt.RegisterIntegration("uesio/core.custom", &custom.CustomIntegration{})
 }
 

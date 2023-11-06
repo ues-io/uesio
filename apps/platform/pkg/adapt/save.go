@@ -297,6 +297,8 @@ func GetValueInt(value interface{}) (int64, error) {
 	switch typedVal := value.(type) {
 	case nil:
 		return 0, nil
+	case int:
+		return int64(typedVal), nil
 	case int64:
 		return typedVal, nil
 	case float64:
@@ -344,11 +346,6 @@ func GetFieldValue(value interface{}, key string) (interface{}, error) {
 			return "", fmt.Errorf("could not get map property: "+key+" %T", value)
 		}
 		return fk, nil
-	}
-
-	valueItem, ok := value.(Item)
-	if ok {
-		return valueItem.GetField(key)
 	}
 
 	loadableValueItem, ok := value.(meta.Item)

@@ -24,10 +24,10 @@ GET https://{{host}}:{{port}}/version/uesio/tests/v0.0.1/metadata/types/collecti
 Accept: application/json
 HTTP 200
 [Asserts]
-# There are currently 10 public uesio/core collections and 7 uesio/test collections
+# There are currently 11 public uesio/core collections and 7 uesio/test collections
 # we want to bring this number down at some point by making most of the uesio/core
 # collections private.
-jsonpath "$[*]" count == 17
+jsonpath "$[*]" count == 18
 # Spot check a uesio/tests collection
 jsonpath "$['uesio/tests.animal'].key" == "uesio/tests.animal"
 jsonpath "$['uesio/tests.animal'].namespace" == "uesio/tests"
@@ -51,7 +51,7 @@ GET https://{{host}}:{{port}}/version/uesio/tests/v0.0.1/metadata/types/collecti
 Accept: application/json
 HTTP 200
 [Asserts]
-jsonpath "$[*]" count == 10
+jsonpath "$[*]" count == 11
 # Spot check a uesio/core collection
 jsonpath "$['uesio/core.user'].key" == "uesio/core.user"
 jsonpath "$['uesio/core.user'].namespace" == "uesio/core"
@@ -85,7 +85,7 @@ GET https://{{host}}:{{port}}/version/uesio/tests/v0.0.1/metadata/types/secrets/
 Accept: application/json
 HTTP 200
 [Asserts]
-jsonpath "$[*]" count == 3
+jsonpath "$[*]" count == 4
 jsonpath "$['uesio/core.sendgridkey'].key" == "uesio/core.sendgridkey"
 jsonpath "$['uesio/core.sendgridkey'].namespace" == "uesio/core"
 jsonpath "$['uesio/core.sendgridkey'].icon" == "hub"
@@ -99,4 +99,4 @@ GET https://{{host}}:{{port}}/version/uesio/core/v0.0.1/metadata/types/secrets/l
 Accept: application/json
 HTTP 200
 [Asserts]
-jsonpath "$[*]" count == 7
+jsonpath "$[*]" count == 8

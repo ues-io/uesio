@@ -33,4 +33,7 @@ definition:
     selectediteminner:
       - overflow-hidden
       - text-ellipsis
+    checkbox:
+      - p-0
+      - pt-0.5
 public: true

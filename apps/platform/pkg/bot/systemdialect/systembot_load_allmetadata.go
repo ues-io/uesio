@@ -2,7 +2,6 @@ package systemdialect
 
 import (
 	"errors"
-	"fmt"
 	"strings"
 
 	"github.com/teris-io/shortid"
@@ -38,33 +37,11 @@ func GetWorkspaceIDFromParams(params map[string]string, connection adapt.Connect
 	if workspaceid != "" {
 		return workspaceid, nil
 	}
-	inContextSession, err := getContextSessionFromParams(params, connection, session)
+	inContextSession, err := datasource.GetContextSessionFromParams(params, connection, session)
 	if err != nil {
 		return "", err
 	}
 	return inContextSession.GetWorkspaceID(), nil
-}
-
-func getContextSessionFromParams(params map[string]string, connection adapt.Connection, session *sess.Session) (*sess.Session, error) {
-
-	workspace := params["workspacename"]
-	site := params["sitename"]
-	if workspace == "" && site == "" {
-		return nil, errors.New("no workspace name or site name parameter provided")
-	}
-	app := params["app"]
-	if app == "" {
-		return nil, errors.New("no app parameter provided")
-	}
-
-	if workspace != "" {
-		workspaceKey := fmt.Sprintf("%s:%s", app, workspace)
-		return datasource.AddWorkspaceContextByKey(workspaceKey, session, connection)
-	}
-
-	siteKey := fmt.Sprintf("%s:%s", app, site)
-	return datasource.AddSiteAdminContextByKey(siteKey, session, connection)
-
 }
 
 func runCoreMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
@@ -74,6 +51,8 @@ func runCoreMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessi
 	studioCollectionName := meta.SwapKeyNamespace(op.CollectionName, "uesio/core", "uesio/studio")
 
 	newOp := &adapt.LoadOp{
+		BatchSize:      op.BatchSize,
+		BatchNumber:    op.BatchNumber,
 		CollectionName: studioCollectionName,
 		Collection:     newCollection,
 		Conditions:     newCollection.MapConditions(op.Conditions),
@@ -118,7 +97,7 @@ func runStudioMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 	allMetadataCondition := extractConditionByField(op.Conditions, allMetadataField)
 
 	if allMetadataCondition != nil && allMetadataCondition.Value == true {
-		inContextSession, err := getContextSessionFromParams(op.Params, connection, session)
+		inContextSession, err := datasource.GetContextSessionFromParams(op.Params, connection, session)
 		if err != nil {
 			return err
 		}
@@ -326,8 +305,25 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 	// Sort the items
 	sortItems(itemsSlice, op.Order)
 
-	// Now that the items are ordered, add them to the collection in order
-	for _, item := range itemsSlice {
+	// Now that the items are ordered, add them to the collection in order,
+	// but only add the ones for the batch we are currently looking at
+	op.HasMoreBatches = false
+	totalSize := len(itemsSlice)
+	startIdx := 0
+	endIdx := totalSize
+	if op.BatchSize != 0 {
+		startIdx = op.BatchNumber * op.BatchSize
+		endIdx = startIdx + op.BatchSize
+		if totalSize > endIdx+1 {
+			op.HasMoreBatches = true
+		}
+		// Make sure that end idx doesn't overflow the slice
+		if endIdx > totalSize {
+			endIdx = totalSize
+		}
+	}
+
+	for _, item := range itemsSlice[startIdx:endIdx] {
 		op.Collection.AddItem(item)
 	}
 

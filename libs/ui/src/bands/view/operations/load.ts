@@ -47,29 +47,30 @@ const useLoadWires = (
 
 	useEffect(() => {
 		;(async () => {
-			if (!wires) return
-			const wireNames = Object.keys(wires)
-			if (!wireNames.length) return
-			const state = getCurrentState()
+			if (wires) {
+				const wireNames = Object.keys(wires)
+				if (!wireNames.length) return
+				const state = getCurrentState()
 
-			const viewId = context.getViewId()
+				const viewId = context.getViewId()
 
-			// Only initialize wires that don't already exist in our redux store.
-			// This filters out our pre-loaded wires so they aren't initialized twice.
-			const wiresToInit = Object.fromEntries(
-				wireNames.flatMap((wirename) => {
-					const wireDef = wires[wirename]
-					const foundWire = selectWire(state, viewId, wirename)
-					return foundWire ? [] : [[wirename, wireDef]]
-				})
-			)
+				// Only initialize wires that don't already exist in our redux store.
+				// This filters out our pre-loaded wires so they aren't initialized twice.
+				const wiresToInit = Object.fromEntries(
+					wireNames.flatMap((wirename) => {
+						const wireDef = wires[wirename]
+						const foundWire = selectWire(state, viewId, wirename)
+						return foundWire ? [] : [[wirename, wireDef]]
+					})
+				)
 
-			if (Object.keys(wiresToInit).length) {
-				initializeWiresOp(context, wiresToInit)
-			}
+				if (Object.keys(wiresToInit).length) {
+					initializeWiresOp(context, wiresToInit)
+				}
 
-			if (wireNames.length) {
-				await loadWiresOp(context, wireNames)
+				if (wireNames.length) {
+					await loadWiresOp(context, wireNames)
+				}
 			}
 			await runEvents(events, context)
 		})()

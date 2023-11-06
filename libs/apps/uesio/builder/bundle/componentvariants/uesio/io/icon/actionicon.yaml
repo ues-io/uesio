@@ -5,4 +5,5 @@ definition:
     root:
       - text-sm
       - leading-none
+      - -ml-1
 public: true

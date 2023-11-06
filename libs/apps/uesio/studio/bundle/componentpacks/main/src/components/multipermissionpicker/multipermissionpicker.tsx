@@ -5,9 +5,10 @@ type PermissionFieldDefinition = wire.FieldMetadata
 
 type MultiPermissionPickerDefinition = {
 	fieldId: string
-	wireName: string
+	sourceWires: string[]
 	permissionFields: PermissionFieldDefinition[]
 	rowactions?: RowAction[]
+	itemColumnLabel?: string
 }
 
 type RowAction = {
@@ -27,7 +28,12 @@ const MultiPermissionPicker: definition.UC<MultiPermissionPickerDefinition> = (
 	const {
 		context,
 		path,
-		definition: { wireName, permissionFields, rowactions },
+		definition: {
+			itemColumnLabel,
+			sourceWires = [],
+			permissionFields,
+			rowactions,
+		},
 	} = props
 	const fieldId = context.mergeString(props.definition.fieldId)
 	const uesioId =
@@ -41,19 +47,19 @@ const MultiPermissionPicker: definition.UC<MultiPermissionPickerDefinition> = (
 
 	const permsStorageRecord = context.getRecord()
 
-	const wire = api.wire.useWire(wireName || "", context)
+	const sourceWiresMap = api.wire.useWires(sourceWires, context)
 
 	const workspaceContext = context.getWorkspace()
 	if (!workspaceContext) throw new Error("No workspace context provided")
 
-	if (!wire || !permsStorageRecord) {
+	if (
+		!sourceWiresMap ||
+		!Object.values(sourceWiresMap).length ||
+		!permsStorageRecord
+	) {
 		return null
 	}
 
-	const collection = wire.getCollection()
-	const nameField = collection.getNameField()
-	const nameNameField = nameField?.getId()
-	if (!nameNameField) return null
 	// This field will contain the permissions data as a map of values,
 	// where each key is one of the permissionsFields and the value is a boolean
 	const getDataValue = () =>
@@ -94,8 +100,6 @@ const MultiPermissionPicker: definition.UC<MultiPermissionPickerDefinition> = (
 		return itemPerms
 	}
 
-	const itemsData = wire.getData()
-
 	const permsDataValue = getDataValue()
 
 	if (!permsDataValue) return null
@@ -123,22 +127,44 @@ const MultiPermissionPicker: definition.UC<MultiPermissionPickerDefinition> = (
 		} as wire.PlainWireRecord)
 	}
 
-	const initialValues = itemsData.reduce((acc, record) => {
-		const itemName =
-			record.getFieldValue("uesio/studio.namespace") +
-			"." +
-			record.getFieldValue(nameNameField)
-		return {
-			...acc,
-			[itemName]: getPermRecord(itemName),
-		}
-	}, {})
+	// Iterate over the wires in the order specified by the sourceWires prop
+	// to ensure the items are in the order requested
+	const sourceWiresList = sourceWires
+		.map((wireName) => sourceWiresMap[wireName])
+		.filter((wire) => !!wire)
+	const initialValues = sourceWiresList
+		.flatMap((wire: wire.Wire) => {
+			const collection = wire.getCollection()
+			const nameField = collection.getNameField()
+			let nameFieldId = ID_FIELD
+			if (nameField) {
+				nameFieldId = nameField.getId()
+			}
+			const itemNames = wire
+				.getData()
+				.map(
+					(record) =>
+						record.getFieldValue("uesio/studio.namespace") +
+						"." +
+						record.getFieldValue(nameFieldId)
+				)
+			itemNames.sort()
+			return itemNames
+		})
+		.reduce(
+			(acc, itemName) => ({
+				...acc,
+				[itemName]: getPermRecord(itemName),
+			}),
+			{}
+		)
 
+	const firstCollectionLabel = sourceWiresList[0]?.getCollection().getLabel()
 	const tableFields = [
 		{
 			name: ID_FIELD,
 			type: "TEXT",
-			label: collection.getLabel(),
+			label: itemColumnLabel || firstCollectionLabel,
 			createable: false,
 			updateable: false,
 		},
@@ -156,7 +182,7 @@ const MultiPermissionPicker: definition.UC<MultiPermissionPickerDefinition> = (
 		permissionFields.map((field) => ({
 			...field,
 			name: field.name || DefaultFieldName,
-			label: field.label || `Allow access to ${collection.getLabel()}`,
+			label: field.label || `Allow access to ${firstCollectionLabel}`,
 			accessible: true,
 			createable: true,
 			updateable: true,

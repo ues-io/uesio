@@ -11,23 +11,73 @@ import (
 
 func NewLoadBotAPI(bot *meta.Bot, session *sess.Session, connection adapt.Connection, loadOp *adapt.LoadOp, integrationConnection adapt.IntegrationConnection) *LoadBotAPI {
 	return &LoadBotAPI{
+		// Private
 		session:               session,
-		LoadOp:                loadOp,
+		loadOp:                loadOp,
 		connection:            connection,
-		LogApi:                NewBotLogAPI(bot),
-		Http:                  NewBotHttpAPI(bot, session),
 		integrationConnection: integrationConnection,
+		// Public
+		LogApi:              NewBotLogAPI(bot),
+		Http:                NewBotHttpAPI(bot, session, integrationConnection),
+		LoadRequestMetadata: NewLoadRequestMetadata(loadOp),
 	}
 }
 
+func NewLoadRequestMetadata(op *adapt.LoadOp) *LoadRequestMetadata {
+	metadata, _ := op.GetCollectionMetadata()
+	fields := make([]*adapt.LoadRequestField, len(op.Fields))
+	conditions := make([]*adapt.LoadRequestCondition, len(op.Conditions))
+	orders := make([]*adapt.LoadRequestOrder, len(op.Order))
+	for i := range op.Fields {
+		fields[i] = &(op.Fields[i])
+	}
+	for i := range op.Conditions {
+		conditions[i] = &(op.Conditions[i])
+	}
+	for i := range op.Order {
+		orders[i] = &(op.Order[i])
+	}
+	return &LoadRequestMetadata{
+		CollectionMetadata: NewBotCollectionMetadata(metadata),
+		CollectionName:     op.CollectionName,
+		Conditions:         conditions,
+		Fields:             fields,
+		Query:              op.Query,
+		Order:              orders,
+		BatchSize:          op.BatchSize,
+		BatchNumber:        op.BatchNumber,
+		LoadAll:            op.LoadAll,
+	}
+}
+
+// NOTE: We have separate structs for Bots to ensure that we don't accidentally expose sensitive API methods
+// to Bots, since all public API methods defined on a struct are accessible to Bots.
+
+type LoadRequestMetadata struct {
+	// PRIVATE
+	CollectionMetadata *BotCollectionMetadata `bot:"collectionMetadata"`
+	// Public
+	CollectionName string                        `bot:"collection"`
+	Conditions     []*adapt.LoadRequestCondition `bot:"conditions"`
+	Fields         []*adapt.LoadRequestField     `bot:"fields"`
+	Order          []*adapt.LoadRequestOrder     `bot:"order"`
+	Query          bool                          `bot:"query"`
+	BatchSize      int                           `bot:"batchSize"`
+	BatchNumber    int                           `bot:"batchNumber"`
+	LoadAll        bool                          `bot:"loadAll"`
+}
+
 type LoadBotAPI struct {
-	session               *sess.Session
-	LoadOp                *adapt.LoadOp `bot:"loadRequest"`
+	// Private
 	connection            adapt.Connection
-	LogApi                *BotLogAPI  `bot:"log"`
-	Http                  *BotHttpAPI `bot:"http"`
 	integrationConnection adapt.IntegrationConnection
 	loadErrors            []string
+	loadOp                *adapt.LoadOp
+	session               *sess.Session
+	// Public
+	Http                *BotHttpAPI          `bot:"http"`
+	LoadRequestMetadata *LoadRequestMetadata `bot:"loadRequest"`
+	LogApi              *BotLogAPI           `bot:"log"`
 }
 
 func (lb *LoadBotAPI) GetCredentials() map[string]interface{} {
@@ -63,13 +113,20 @@ func (lb *LoadBotAPI) AddError(error string) {
 func (lb *LoadBotAPI) AddRecord(record interface{}) {
 	switch typedRecord := record.(type) {
 	case map[string]interface{}:
-		item := (adapt.Item)(typedRecord)
+		item := lb.loadOp.Collection.NewItem()
+		for key, typedField := range typedRecord {
+			item.SetField(key, typedField)
+		}
 		// Make sure that the Item has a valid for its Id field. If not, generate a fake id.
 		if val, err := item.GetField(adapt.ID_FIELD); err == nil || val == nil || val == "" {
 			if shortId, shortIdErr := shortid.Generate(); shortIdErr != nil {
 				item.SetField(adapt.ID_FIELD, shortId)
 			}
 		}
-		lb.LoadOp.Collection.AddItem(&item)
+		lb.loadOp.Collection.AddItem(item)
 	}
+}
+
+func (lb *LoadBotAPI) SetHasMoreRecords() {
+	lb.loadOp.HasMoreBatches = true
 }

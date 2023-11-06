@@ -9,7 +9,7 @@ import {
 	WireFieldDefinitionMap,
 } from "../../../definition/wire"
 import { CollectionFieldKey, PlainWire } from "../types"
-import { PlainCollection } from "../../collection/types"
+import { ID_FIELD, PlainCollection } from "../../collection/types"
 import { FieldMetadataMap, FieldMetadata } from "../../field/types"
 import { LoadRequestField } from "../../../load/loadrequest"
 
@@ -111,7 +111,7 @@ const getViewOnlyMetadata = (
 	wireDef: ViewOnlyWireDefinition
 ) => {
 	const fieldMetadata: FieldMetadataMap = {
-		"uesio/core.id": {
+		[ID_FIELD]: {
 			accessible: true,
 			createable: false,
 			name: "id",
@@ -121,13 +121,13 @@ const getViewOnlyMetadata = (
 			label: "ID",
 		},
 	}
-	Object.keys(wireDef.fields).forEach((field) => {
+	Object.keys(wireDef?.fields || {}).forEach((field) => {
 		const fieldDef = wireDef.fields[field]
 		fieldMetadata[field] = getViewOnlyFieldMetadata(field, fieldDef)
 	})
 	return {
 		name: wireName,
-		nameField: "uesio/core.id",
+		nameField: wireDef.nameField || ID_FIELD,
 		accessible: true,
 		createable: true,
 		deleteable: true,

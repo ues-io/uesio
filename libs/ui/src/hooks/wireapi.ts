@@ -1,4 +1,4 @@
-import { getCollection, useCollection } from "../bands/collection/selectors"
+import { useCollection, useCollections } from "../bands/collection/selectors"
 import {
 	getFullWireId,
 	useWire as uWire,
@@ -25,6 +25,35 @@ const useWire = (wireId: string | undefined, context: Context) => {
 	const collection = useCollection(plainWire?.collection)
 	if (!plainWire) return undefined
 	return new Wire(plainWire).attachCollection(collection)
+}
+
+const useWires = (
+	wireNames: string[],
+	context: Context
+): { [k: string]: Wire | undefined } => {
+	const view = context.getViewId() || ""
+	const fullWireIds = wireNames.map((wirename) =>
+		getFullWireId(view, wirename)
+	)
+	const plainWires = uWires(fullWireIds)
+	const collections = useCollections(
+		Object.values(plainWires).map(
+			(plainWire) => plainWire?.collection || ""
+		)
+	)
+	return Object.fromEntries(
+		Object.entries(plainWires).map(([wireId, plainWire]) => {
+			if (!plainWire) {
+				return [wireId, undefined]
+			}
+			return [
+				plainWire.name,
+				new Wire(plainWire).attachCollection(
+					collections[plainWire.collection]
+				),
+			]
+		})
+	)
 }
 
 const remove = (wireId: string, context: Context) => {
@@ -60,40 +89,6 @@ const useDynamicWire = (
 		dispatch(init([[initializedWires], undefined]))
 	}, [!!wire, wireDef])
 	return wire
-}
-
-const useWires = (
-	wireNames: string[],
-	context: Context
-): { [k: string]: Wire | undefined } => {
-	const view = context.getViewId() || ""
-	const fullWireIds = wireNames.map((wirename) =>
-		getFullWireId(view, wirename)
-	)
-	const plainWires = uWires(fullWireIds)
-	const collectionNames = Object.values(plainWires).map(
-		(plainWire) => plainWire?.collection || ""
-	)
-	const collections = Object.fromEntries(
-		collectionNames.map((collectionName) => [
-			collectionName,
-			getCollection(collectionName),
-		])
-	)
-
-	return Object.fromEntries(
-		Object.entries(plainWires).map(([, plainWire]) => {
-			if (!plainWire || !plainWire.collection)
-				return [plainWire?.name, undefined]
-
-			return [
-				plainWire?.name,
-				new Wire(plainWire).attachCollection(
-					collections[plainWire.collection]
-				),
-			]
-		})
-	)
 }
 
 const loadWires = loadWiresOp

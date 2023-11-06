@@ -4,6 +4,7 @@ import { parse } from "best-effort-json-parser"
 
 type Props = {
 	prompt: string
+	botName: string
 	label: string
 	loadingLabel: string
 	handleResults: (results: unknown[]) => void
@@ -12,8 +13,7 @@ type Props = {
 }
 
 export type AutocompleteResponse = {
-	choices?: string[]
-	errors?: string[]
+	data?: string
 }
 
 const OPENAI_JSON_PREAMBLE = "```json\n"
@@ -37,11 +37,9 @@ export const handleAutocompleteData = (
 	response: AutocompleteResponse,
 	handleResults: (results: unknown[]) => void
 ) => {
-	if (response.errors) {
-		throw new Error(response.errors[0])
-	}
-	if (response.choices?.length) {
-		const data = response.choices[0] as string
+	const data = response?.data
+
+	if (data) {
 		const dataArray: unknown[] = parse(preparse(data))
 		if (dataArray?.length) {
 			handleResults(dataArray)
@@ -57,6 +55,7 @@ const SuggestDataButton: definition.UtilityComponent<Props> = (props) => {
 	const {
 		context,
 		prompt,
+		botName,
 		targetTableId,
 		icon = "magic_button",
 		handleResults,
@@ -89,12 +88,12 @@ const SuggestDataButton: definition.UtilityComponent<Props> = (props) => {
 
 				const signalResult = api.signal.run(
 					{
-						signal: "ai/AUTOCOMPLETE",
-						model: "gpt-3.5-turbo",
-						format: "chat",
-						input: context.merge(prompt),
+						signal: "bot/CALL",
+						bot: botName,
 						stepId: "autocomplete",
-						maxResults: 1,
+						params: {
+							prompt,
+						},
 					},
 					context
 				) as Promise<context.Context>

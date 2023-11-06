@@ -35,175 +35,87 @@ definition:
                         collection: uesio/studio.app
                     uesio.id: appslist
                     components:
-                      - uesio/io.tile:
-                          uesio.variant: uesio/io.tag
-                          content:
-                            - uesio/io.text:
-                                text: ${uesio/core.uniquekey}
-                          avatar:
-                            - uesio/io.text:
-                                uesio.variant: uesio/io.icon
-                                color: "${uesio/studio.color}"
-                                text: ${uesio/studio.icon}
+                      - uesio/io.icontile:
+                          title: ${uesio/core.uniquekey}
+                          icon: ${uesio/studio.icon}
+                          iconcolor: ${uesio/studio.color}
                 - uesio/io.list:
                     uesio.display:
                       - type: collectionContext
                         collection: uesio/studio.site
                     uesio.id: sitestag
                     components:
-                      - uesio/io.tile:
-                          signals:
-                            - signal: "route/NAVIGATE"
-                              path: app/${uesio/studio.app->uesio/core.uniquekey}
-                          uesio.variant: uesio/io.tag
-                          content:
-                            - uesio/io.text:
-                                text: ${uesio/studio.app->uesio/core.uniquekey}
-                          avatar:
-                            - uesio/io.text:
-                                uesio.variant: uesio/io.icon
-                                color: ${uesio/studio.app->uesio/studio.color}
-                                text: ${uesio/studio.app->uesio/studio.icon}
-                      - uesio/io.tile:
-                          signals:
-                            - signal: "route/NAVIGATE"
-                              path: app/${uesio/studio.app->uesio/core.uniquekey}/site/${uesio/studio.name}
-                          uesio.variant: uesio/io.tag
-                          content:
-                            - uesio/io.text:
-                                text: ${uesio/studio.name}
-                          avatar:
-                            - uesio/io.text:
-                                uesio.variant: uesio/io.icon
-                                color: "#AAA"
-                                text: public
+                      - uesio/io.navtile:
+                          title: ${uesio/studio.app->uesio/core.uniquekey}
+                          icon: ${uesio/studio.app->uesio/studio.icon}
+                          iconcolor: ${uesio/studio.app->uesio/studio.color}
+                          path: app/${uesio/studio.app->uesio/core.uniquekey}
+                      - uesio/io.navtile:
+                          title: ${uesio/studio.name}
+                          icon: public
+                          path: app/${uesio/studio.app->uesio/core.uniquekey}/site/${uesio/studio.name}
                 - uesio/io.list:
                     uesio.display:
                       - type: collectionContext
                         collection: uesio/studio.bundle
                     uesio.id: sitestag
                     components:
-                      - uesio/io.tile:
-                          signals:
-                            - signal: "route/NAVIGATE"
-                              path: app/${uesio/studio.app->uesio/core.uniquekey}
-                          uesio.variant: uesio/io.tag
-                          content:
-                            - uesio/io.text:
-                                text: ${uesio/studio.app->uesio/core.uniquekey}
-                          avatar:
-                            - uesio/io.text:
-                                uesio.variant: uesio/io.icon
-                                color: ${uesio/studio.app->uesio/studio.color}
-                                text: ${uesio/studio.app->uesio/studio.icon}
-                      - uesio/io.tile:
-                          signals:
-                            - signal: "route/NAVIGATE"
-                              path: app/${uesio/studio.app->uesio/core.uniquekey}/bundle/${uesio/studio.major}/${uesio/studio.minor}/${uesio/studio.patch}
-                          uesio.variant: uesio/io.tag
-                          content:
-                            - uesio/io.text:
-                                text: ${uesio/studio.app->uesio/core.uniquekey}.${uesio/studio.major}.${uesio/studio.minor}.${uesio/studio.patch}
-                          avatar:
-                            - uesio/io.text:
-                                uesio.variant: uesio/io.icon
-                                color: "#AAA"
-                                text: inventory_2
+                      - uesio/io.navtile:
+                          title: ${uesio/studio.app->uesio/core.uniquekey}
+                          icon: ${uesio/studio.app->uesio/studio.icon}
+                          iconcolor: ${uesio/studio.app->uesio/studio.color}
+                          path: app/${uesio/studio.app->uesio/core.uniquekey}
+                      - uesio/io.navtile:
+                          title: ${uesio/studio.major}.${uesio/studio.minor}.${uesio/studio.patch}
+                          icon: inventory_2
+                          path: app/${uesio/studio.app->uesio/core.uniquekey}/bundle/${uesio/studio.major}/${uesio/studio.minor}/${uesio/studio.patch}
                 - uesio/io.list:
                     uesio.display:
                       - type: collectionContext
                         collection: uesio/studio.team
                     uesio.id: teamstag
                     components:
-                      - uesio/io.tile:
-                          signals:
-                            - signal: "route/NAVIGATE"
-                              path: app/${uesio/studio.app->uesio/core.uniquekey}
-                          uesio.variant: uesio/io.tag
-                          content:
-                            - uesio/io.text:
-                                text: ${uesio/studio.app->uesio/core.uniquekey}
-                          avatar:
-                            - uesio/io.text:
-                                uesio.variant: uesio/io.icon
-                                color: ${uesio/studio.app->uesio/studio.color}
-                                text: ${uesio/studio.app->uesio/studio.icon}
-                      - uesio/io.tile:
-                          signals:
-                            - signal: "route/NAVIGATE"
-                              path: app/${uesio/studio.app->uesio/core.uniquekey}/teams/${uesio/studio.name}
-                          uesio.variant: uesio/io.tag
-                          content:
-                            - uesio/io.text:
-                                text: ${uesio/studio.name}
-                          avatar:
-                            - uesio/io.text:
-                                uesio.variant: uesio/io.icon
-                                color: "#AAA"
-                                text: groups
+                      - uesio/io.navtile:
+                          title: ${uesio/studio.app->uesio/core.uniquekey}
+                          icon: ${uesio/studio.app->uesio/studio.icon}
+                          iconcolor: ${uesio/studio.app->uesio/studio.color}
+                          path: app/${uesio/studio.app->uesio/core.uniquekey}
+                      - uesio/io.navtile:
+                          title: ${uesio/studio.name}
+                          icon: groups
+                          path: app/${uesio/studio.app->uesio/core.uniquekey}/teams/${uesio/studio.name}
                 - uesio/io.list:
                     uesio.display:
                       - type: collectionContext
                         collection: uesio/studio.workspace
                     uesio.id: workspaceapptag
                     components:
-                      - uesio/io.tile:
-                          signals:
-                            - signal: "route/NAVIGATE"
-                              path: app/${uesio/studio.app->uesio/core.uniquekey}
-                          uesio.variant: uesio/io.tag
-                          content:
-                            - uesio/io.text:
-                                text: ${uesio/studio.app->uesio/core.uniquekey}
-                          avatar:
-                            - uesio/io.text:
-                                uesio.variant: uesio/io.icon
-                                color: ${uesio/studio.app->uesio/studio.color}
-                                text: ${uesio/studio.app->uesio/studio.icon}
-                      - uesio/io.tile:
-                          signals:
-                            - signal: "route/NAVIGATE"
-                              path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}
-                          uesio.variant: uesio/io.tag
-                          content:
-                            - uesio/io.text:
-                                text: ${uesio/studio.name}
-                          avatar:
-                            - uesio/io.text:
-                                uesio.variant: uesio/io.icon
-                                color: "#AAA"
-                                text: handyman
-                      - uesio/io.tile:
+                      - uesio/io.navtile:
+                          title: ${uesio/studio.app->uesio/core.uniquekey}
+                          icon: ${uesio/studio.app->uesio/studio.icon}
+                          iconcolor: ${uesio/studio.app->uesio/studio.color}
+                          path: app/${uesio/studio.app->uesio/core.uniquekey}
+                      - uesio/io.navtile:
+                          title: ${uesio/studio.name}
+                          icon: handyman
+                          path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}
+                      - uesio/io.navtile:
                           uesio.display:
                             - type: paramIsSet
                               param: itemType
-                          signals:
-                            - signal: "route/NAVIGATE"
-                              path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/$Param{itemType}
-                          uesio.variant: uesio/io.tag
-                          content:
-                            - uesio/io.text:
-                                text: $Param{itemType}
-                          avatar:
-                            - uesio/io.text:
-                                uesio.variant: uesio/io.icon
-                                color: "#AAA"
-                                text: $Param{itemIcon}
+                          title: $Param{itemType}
+                          icon: $Param{itemIcon}
+                          path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/$Param{itemType}
                       #Buttons for all views with updated URL's
-                      - uesio/io.tile:
+                      - uesio/io.navtile:
                           uesio.display:
                             - type: paramIsSet
                               param: itemName
                             - type: paramIsSet
                               param: itemType
-                          signals:
-                            - signal: route/NAVIGATE
-                              path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/$Param{itemType}/$Param{itemNameSpace}/$Param{itemName}$Param{itemParam}
-                          uesio.variant: uesio/io.tag
-                          content:
-                            - uesio/io.text:
-                                text: $Param{itemName}
-                      - uesio/io.tile:
+                          title: $Param{itemName}
+                          path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/$Param{itemType}/$Param{itemNameSpace}/$Param{itemName}$Param{itemParam}
+                      - uesio/io.navtile:
                           uesio.display:
                             - type: paramIsSet
                               param: itemName
@@ -213,13 +125,8 @@ definition:
                               param: subItemName
                             - type: paramIsSet
                               param: subItemType
-                          signals:
-                            - signal: route/NAVIGATE
-                              path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/$Param{itemType}/$Param{itemNameSpace}/$Param{itemName}/$Param{subItemType}/$Param{subItemNameSpace}/$Param{subItemName}
-                          uesio.variant: uesio/io.tag
-                          content:
-                            - uesio/io.text:
-                                text: $Param{subItemName}
+                          title: $Param{subItemName}
+                          path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/$Param{itemType}/$Param{itemNameSpace}/$Param{itemName}/$Param{subItemType}/$Param{subItemNameSpace}/$Param{subItemName}
           - uesio/io.group:
               components:
                 - uesio/io.button:

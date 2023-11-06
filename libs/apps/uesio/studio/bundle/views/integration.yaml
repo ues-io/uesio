@@ -26,7 +26,17 @@ definition:
         - field: uesio/studio.allmetadata
           value: true
         - field: uesio/studio.grouping
-          value: $Param{namespace}.$Param{integrationname}
+          value: "$Param{namespace}.$Param{integrationname}"
+    integrationcredentials:
+      collection: uesio/core.myintegrationcredentials
+      init:
+        query: false
+        create: false
+      conditions:
+        - field: uesio/core.integration
+          value: "$Param{namespace}.$Param{integrationname}"
+          valueSource: VALUE
+
   # Components are how we describe the layout of our view
   components:
     - uesio/studio.mainlayout:
@@ -60,6 +70,31 @@ definition:
                     actions:
                       - uesio/io.group:
                           components:
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                uesio.id: test-authentication
+                                text: Test Authentication
+                                uesio.display:
+                                  - type: fieldMode
+                                    mode: READ
+                                  - type: fieldValue
+                                    field: uesio/studio.authentication
+                                    operator: IN
+                                    values:
+                                      - OAUTH2_AUTHORIZATION_CODE
+                                signals:
+                                  - signal: context/SET
+                                    type: WORKSPACE
+                                    name: $Param{workspacename}
+                                    app: $Param{app}
+                                  - signal: wire/LOAD
+                                    wires:
+                                      - integrationcredentials
+                                  - signal: oauth2/GET_AUTHORIZATION_METADATA
+                                    stepId: authorizationMetadata
+                                    integration: $Param{namespace}/$Param{integrationname}
+                                  - signal: panel/TOGGLE
+                                    panel: testAuthentication
                             - uesio/io.button:
                                 uesio.variant: uesio/io.secondary
                                 text: $Label{uesio/io.edit}
@@ -282,6 +317,101 @@ definition:
                                       - type: hasValue
                                         value: ${uesio/studio.bot}
   panels:
+    testAuthentication:
+      uesio.type: uesio/io.dialog
+      title: "Test Authentication: ${uesio/studio.name}"
+      width: 600px
+      height: 680px
+      actions:
+        - uesio/io.button:
+            uesio.variant: uesio/io.secondary
+            text: Close
+            signals:
+              - signal: panel/TOGGLE
+                panel: testAuthentication
+      components:
+        - uesio/io.titlebar:
+            uesio.variant: uesio/io.main
+            title: "Test Authentication: ${uesio/studio.name}"
+            actions:
+              - uesio/io.button:
+                  uesio.variant: uesio/io.primary
+                  uesio.id: authenticate
+                  text: Authenticate
+                  signals:
+                    - signal: context/SET
+                      type: WORKSPACE
+                      name: $Param{workspacename}
+                      app: $Param{app}
+                    - signal: oauth2/AUTHORIZE
+                      state: $SignalOutput{[authorizationMetadata][state]}
+                      authUrl: $SignalOutput{[authorizationMetadata][authUrl]}
+                    - signal: wire/LOAD
+                      wires:
+                        - integrationcredentials
+                  uesio.display:
+                    - type: fieldValue
+                      wire: integrationcredentials
+                      field: uesio/core.hasaccesstoken
+                      operator: EQUALS
+                      value: false
+              - uesio/io.button:
+                  uesio.variant: uesio/io.destructive
+                  uesio.id: clear-credentials
+                  text: Clear credentials
+                  signals:
+                    - signal: context/SET
+                      type: WORKSPACE
+                      name: $Param{workspacename}
+                      app: $Param{app}
+                    - signal: auth/DELETE_CREDENTIALS
+                      integration: $Param{namespace}/$Param{integrationname}
+                    - signal: wire/LOAD
+                      wires:
+                        - integrationcredentials
+                  uesio.display:
+                    - type: group
+                      conjunction: OR
+                      conditions:
+                        - type: fieldValue
+                          wire: integrationcredentials
+                          field: uesio/core.hasaccesstoken
+                          operator: EQUALS
+                          value: true
+                        - type: fieldValue
+                          wire: integrationcredentials
+                          field: uesio/core.hasrefreshtoken
+                          operator: EQUALS
+                          value: true
+        - uesio/io.item:
+            wire: integrationcredentials
+            uesio.id: integrationCredentialItem
+            mode: READ
+            components:
+              - uesio/io.field:
+                  fieldId: uesio/core.hasaccesstoken
+                  uesio.id: has-access-token
+              - uesio/io.field:
+                  fieldId: uesio/core.hasrefreshtoken
+                  uesio.id: has-refresh-token
+                  uesio.display:
+                    - field: uesio/core.hasaccesstoken
+                      value: true
+              - uesio/io.field:
+                  fieldId: uesio/core.accesstokenexpiration
+                  uesio.display:
+                    - field: uesio/core.hasaccesstoken
+                      value: true
+              - uesio/io.field:
+                  fieldId: uesio/core.updatedat
+                  uesio.display:
+                    - field: uesio/core.hasaccesstoken
+                      value: true
+              - uesio/io.field:
+                  fieldId: uesio/core.createdat
+                  uesio.display:
+                    - field: uesio/core.hasaccesstoken
+                      value: true
     editIntegrationAction:
       uesio.type: uesio/io.dialog
       title: Edit Integration Action

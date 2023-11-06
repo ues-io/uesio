@@ -1,0 +1,33 @@
+name: icontile
+category: LAYOUT
+pack: main
+type: DECLARATIVE
+slots: null
+description: A tile with an icon
+properties:
+  - type: TEXT
+    name: title
+    label: Title text
+  - type: ICON
+    name: icon
+  - type: TEXT
+    name: iconcolor
+    defaultValue: "#AAA"
+  - type: SIGNALS
+    name: signals
+    label: Signals
+definition:
+  - uesio/io.tile:
+      signals: $Prop{signals}
+      uesio.variant: uesio/io.tag
+      content:
+        - uesio/io.text:
+            text: $Prop{title}
+      avatar:
+        - uesio/io.text:
+            uesio.display:
+              - type: hasValue
+                value: $Prop{icon}
+            uesio.variant: uesio/io.icon
+            color: $Prop{iconcolor}
+            text: $Prop{icon}

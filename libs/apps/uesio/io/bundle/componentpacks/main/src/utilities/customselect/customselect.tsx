@@ -28,6 +28,7 @@ const StyleDefaults = Object.freeze({
 	selecteditemwrapper: [],
 	selectediteminner: [],
 	notfound: [],
+	checkbox: [],
 })
 
 const CustomSelect: definition.UtilityComponent<CustomSelectProps<unknown>> = (
@@ -61,6 +62,9 @@ const CustomSelect: definition.UtilityComponent<CustomSelectProps<unknown>> = (
 				return (
 					<Group context={context}>
 						<CheckboxField
+							classes={{
+								root: classes.checkbox,
+							}}
 							value={selected}
 							setValue={() => {
 								selected ? onUnSelect(item) : onSelect(item)

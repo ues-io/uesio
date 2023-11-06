@@ -1,4 +1,5 @@
-import { component, definition, api, wire, collection } from "@uesio/ui"
+import { definition, api, wire, collection } from "@uesio/ui"
+import SuggestDataButton from "../../utilities/suggestdatabutton/suggestdatabutton"
 
 type ComponentDefinition = {
 	wire: string
@@ -104,24 +105,21 @@ const SuggestedWireDataButton: definition.UC<ComponentDefinition> = (props) => {
 		definition: { wire: wireName },
 	} = props
 
-	const SuggestDataButton = component.getUtility(
-		"uesio/studio.suggestdatabutton"
-	)
-
 	const wire = api.wire.useWire(wireName, context)
 	const fields = wire?.getFields()
 	const collection = wire?.getCollection()
 	const pluralLabel = collection?.getPluralLabel()
 
-	const prompt = `I have a database table that stores ${pluralLabel}. I would like to generate sample data for this table. Please generate 10 sample records for this table, output as a JSON array of JSON objects, with each JSON object having the following properties: ${getFieldMetadataForPrompt(
+	const prompt = `I have a database table that stores ${pluralLabel}. I would like to generate sample data for this table. Please generate 5 sample records for this table, output as a JSON array of JSON objects, with each JSON object having the following properties: ${getFieldMetadataForPrompt(
 		fields,
 		collection
-	)}. Please respond with valid JSON!`
+	)}. Please respond with valid JSON! Do not respond with any text other than valid JSON.`
 
 	return (
 		<SuggestDataButton
-			context={context}
+			context={context.deleteWorkspace()}
 			prompt={prompt}
+			botName="uesio/studio.suggestdata"
 			label={"Generate sample data"}
 			loadingLabel={"Generating data..."}
 			handleResults={(results: wire.PlainWireRecord[]) => {

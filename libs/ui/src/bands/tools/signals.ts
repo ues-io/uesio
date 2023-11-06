@@ -59,15 +59,12 @@ const signals: Record<string, SignalDescriptor> = {
 			}
 			return context
 		},
-		[`${BAND}/LOG`]: {
-			dispatcher: (
-				signalInvocation: ConsoleLogSignal,
-				context: Context
-			) => {
-				const { text } = signalInvocation
-				console.log(context.mergeString(text))
-				return context
-			},
+	},
+	[`${BAND}/LOG`]: {
+		dispatcher: (signalInvocation: ConsoleLogSignal, context: Context) => {
+			const { text } = signalInvocation
+			console.log(context.mergeString(text))
+			return context
 		},
 	},
 }

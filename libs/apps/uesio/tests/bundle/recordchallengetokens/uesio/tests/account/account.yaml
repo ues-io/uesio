@@ -1,4 +1,5 @@
 name: account
+conditions: []
 token: ${uesio/core.id}
 useraccesstoken: uesio/tests.accountmember
 access: readwrite

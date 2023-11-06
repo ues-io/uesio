@@ -2,7 +2,7 @@ import { Context, injectDynamicContext, newContext } from "../context/context"
 import { SignalDefinition, SignalDescriptor } from "../definition/signal"
 import { getComponentSignalDefinition } from "../bands/component/signals"
 
-import aiSignals from "../bands/ai/signals"
+import authSignals from "../bands/auth/signals"
 import collectionSignals from "../bands/collection/signals"
 import botSignals from "../bands/bot/signals"
 import routeSignals from "../bands/route/signals"
@@ -11,13 +11,14 @@ import wireSignals from "../bands/wire/signals"
 import panelSignals from "../bands/panel/signals"
 import toolsSignals from "../bands/tools/signals"
 import notificationSignals from "../bands/notification/signals"
+import oauth2Signals from "../bands/oauth2/signals"
 import contextSignals from "../context/signals"
 import debounce from "lodash/debounce"
 import { getErrorString } from "../utilexports"
 import { COMPONENT_CONTEXT } from "../componentexports"
 
 const registry: Record<string, SignalDescriptor> = {
-	...aiSignals,
+	...authSignals,
 	...collectionSignals,
 	...botSignals,
 	...routeSignals,
@@ -27,6 +28,7 @@ const registry: Record<string, SignalDescriptor> = {
 	...toolsSignals,
 	...notificationSignals,
 	...contextSignals,
+	...oauth2Signals,
 }
 
 const run = (signal: SignalDefinition, context: Context) => {

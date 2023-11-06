@@ -5,13 +5,12 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/gorilla/mux"
+
 	"github.com/thecloudmasters/uesio/pkg/auth"
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/merge"
 	"github.com/thecloudmasters/uesio/pkg/usage"
-
-	"github.com/thecloudmasters/uesio/pkg/controller/file"
-
-	"github.com/gorilla/mux"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
@@ -87,7 +86,7 @@ func Route(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleApiErrorRoute(w http.ResponseWriter, r *http.Request, path string, session *sess.Session, err error) {
-	routingMergeData, err := getRouteAPIResult(getErrorRoute(path, err.Error()), sess.GetAnonSession(session.GetSite()))
+	routingMergeData, err := getRouteAPIResult(GetErrorRoute(path, err.Error()), sess.GetAnonSession(session.GetSite()))
 	if err != nil {
 		slog.Error(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -145,7 +144,7 @@ func getNotFoundRoute(path string) *meta.Route {
 	}
 }
 
-func getErrorRoute(path string, err string) *meta.Route {
+func GetErrorRoute(path string, err string) *meta.Route {
 	params := map[string]string{"error": err}
 	return &meta.Route{
 		ViewRef: "uesio/core.error",
@@ -172,10 +171,10 @@ func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Sess
 	if redirect {
 		route = getNotFoundRoute(path)
 	} else {
-		route = getErrorRoute(path, err.Error())
+		route = GetErrorRoute(path, err.Error())
 	}
 
-	// We can upgrade to the site session so we can be sure to have access to the not found route
+	// We can upgrade to the site session to be sure to have access to the not found route
 	adminSession := sess.GetAnonSession(session.GetSite())
 	depsCache, _ := routing.GetMetadataDeps(route, adminSession)
 
@@ -196,23 +195,30 @@ func ServeRoute(w http.ResponseWriter, r *http.Request) {
 	path := vars["route"]
 	session := middleware.GetSession(r)
 	prefix := strings.TrimSuffix(r.URL.Path, path)
-	serveRouteInternal(w, r, session, vars["namespace"], path, prefix)
+	if route, err := fetchRoute(w, r, session, vars["namespace"], path, prefix); err == nil {
+		ServeRouteInternal(w, r, session, path, route)
+	}
 }
 
 func ServeLocalRoute(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	path := vars["route"]
 	session := middleware.GetSession(r)
-	serveRouteInternal(w, r, session, session.GetSite().GetAppFullName(), path, "/")
+	if route, err := fetchRoute(w, r, session, session.GetSite().GetAppFullName(), path, "/"); err == nil {
+		ServeRouteInternal(w, r, session, path, route)
+	}
 }
 
-func serveRouteInternal(w http.ResponseWriter, r *http.Request, session *sess.Session, namespace, path, prefix string) {
+func fetchRoute(w http.ResponseWriter, r *http.Request, session *sess.Session, namespace, path, prefix string) (*meta.Route, error) {
 	route, err := routing.GetRouteFromPath(r, namespace, path, prefix, session)
 	if err != nil {
 		HandleErrorRoute(w, r, session, path, err, true)
-		return
+		return nil, err
 	}
+	return route, nil
+}
 
+func ServeRouteInternal(w http.ResponseWriter, r *http.Request, session *sess.Session, path string, route *meta.Route) {
 	usage.RegisterEvent("LOAD", "ROUTE", route.GetKey(), 0, session)
 	// Handle redirect routes
 	if route.Type == "redirect" {

@@ -9,7 +9,7 @@ definition:
       - gap-1
     labelLeft:
       - grid
-      - grid-cols-[40%_60%]
+      - grid-cols-[2fr_3fr]
       - items-center
     labelRight:
       - grid
