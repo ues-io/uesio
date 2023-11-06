@@ -9,6 +9,10 @@ type Payment struct {
 	Payment string  `json:"uesio/studio.payment"`
 }
 
+func (l *Payment) GetCollection() CollectionableGroup {
+	return &PaymentCollection{}
+}
+
 func (l *Payment) GetCollectionName() string {
 	return PAYMENT_COLLECTION_NAME
 }

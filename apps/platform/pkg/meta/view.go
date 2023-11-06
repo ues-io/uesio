@@ -55,6 +55,10 @@ func NewViews(keys map[string]bool) ([]BundleableItem, error) {
 	return items, nil
 }
 
+func (v *View) GetCollection() CollectionableGroup {
+	return &ViewCollection{}
+}
+
 func (v *View) GetCollectionName() string {
 	return VIEW_COLLECTION_NAME
 }

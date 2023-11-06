@@ -31,6 +31,10 @@ func (b *BundleDependency) GetAppName() string {
 	return b.App.FullName
 }
 
+func (b *BundleDependency) GetCollection() CollectionableGroup {
+	return &BundleDependencyCollection{}
+}
+
 func (b *BundleDependency) GetCollectionName() string {
 	return BUNDLEDEPENDENCY_COLLECTION_NAME
 }

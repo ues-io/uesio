@@ -27,6 +27,10 @@ func NewBaseSecret(namespace, name string) *Secret {
 	return &Secret{BundleableBase: NewBase(namespace, name)}
 }
 
+func (s *Secret) GetCollection() CollectionableGroup {
+	return &SecretCollection{}
+}
+
 func (s *Secret) GetCollectionName() string {
 	return SECRET_COLLECTION_NAME
 }

@@ -7,6 +7,10 @@ type LicenseTemplate struct {
 	AutoCreate   bool    `json:"uesio/studio.autocreate"`
 }
 
+func (lt *LicenseTemplate) GetCollection() CollectionableGroup {
+	return &LicenseTemplateCollection{}
+}
+
 func (lt *LicenseTemplate) GetCollectionName() string {
 	return LICENSETEMPLATE_COLLECTION_NAME
 }

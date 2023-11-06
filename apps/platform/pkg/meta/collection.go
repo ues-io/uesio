@@ -60,6 +60,10 @@ func (c *Collection) GetCollectionName() string {
 	return COLLECTION_COLLECTION_NAME
 }
 
+func (c *Collection) GetCollection() CollectionableGroup {
+	return &CollectionCollection{}
+}
+
 func (c *Collection) GetBundleFolderName() string {
 	return COLLECTION_FOLDER_NAME
 }

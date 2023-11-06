@@ -35,6 +35,10 @@ type SignupMethod struct {
 
 type SignupMethodWrapper SignupMethod
 
+func (sm *SignupMethod) GetCollection() CollectionableGroup {
+	return &SignupMethodCollection{}
+}
+
 func (sm *SignupMethod) GetCollectionName() string {
 	return SIGNUPMETHOD_COLLECTION_NAME
 }

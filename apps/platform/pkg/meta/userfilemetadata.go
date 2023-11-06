@@ -17,6 +17,10 @@ type UserFileMetadata struct {
 	ContentLength int64  `json:"uesio/core.contentlength"`
 }
 
+func (ufm *UserFileMetadata) GetCollection() CollectionableGroup {
+	return &UserFileMetadataCollection{}
+}
+
 func (ufm *UserFileMetadata) GetCollectionName() string {
 	return USERFILEMETADATA_COLLECTION_NAME
 }

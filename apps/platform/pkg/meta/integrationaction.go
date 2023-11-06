@@ -39,6 +39,10 @@ type IntegrationAction struct {
 
 type IntegrationActionWrapper IntegrationAction
 
+func (ia *IntegrationAction) GetCollection() CollectionableGroup {
+	return &IntegrationActionCollection{}
+}
+
 func (ia *IntegrationAction) GetCollectionName() string {
 	return INTEGRATION_ACTION_COLLECTION_NAME
 }

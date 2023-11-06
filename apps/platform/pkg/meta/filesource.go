@@ -28,6 +28,10 @@ type FileSource struct {
 
 type FileSourceWrapper FileSource
 
+func (fs *FileSource) GetCollection() CollectionableGroup {
+	return &FileSourceCollection{}
+}
+
 func (fs *FileSource) GetCollectionName() string {
 	return FILESOURCE_COLLECTION_NAME
 }

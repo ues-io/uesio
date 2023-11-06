@@ -6,6 +6,10 @@ type SecretStoreValue struct {
 	Value   string `json:"uesio/core.value"`
 }
 
+func (s *SecretStoreValue) GetCollection() CollectionableGroup {
+	return &SecretStoreValueCollection{}
+}
+
 func (s *SecretStoreValue) GetCollectionName() string {
 	return SECRETSTOREVALUE_COLLECTION_NAME
 }
