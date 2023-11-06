@@ -42,8 +42,8 @@ definition:
               params:
                 selected: configvalues
         content:
-          - uesio/io.list:
-              uesio.id: configvaluesList
+          - uesio/io.item:
+              uesio.id: configValueItem
               wire: configvalues
               mode: READ
               components:
@@ -56,6 +56,54 @@ definition:
                           components:
                             - uesio/io.button:
                                 uesio.variant: uesio/io.secondary
+                                text: Edit
+                                uesio.display:
+                                  - type: fieldMode
+                                    mode: READ
+                                  - type: paramValue
+                                    param: app
+                                    field: uesio/core.dynamiccollection
+                                    operator: EQUALS
+                                    value: $Param{namespace}
+                                signals:
+                                  - signal: component/CALL
+                                    component: uesio/io.item
+                                    componentsignal: SET_EDIT_MODE
+                                    targettype: specific
+                                    componentid: configValueItem
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.primary
+                                text: $Label{uesio/io.save}
+                                uesio.display:
+                                  - type: fieldMode
+                                    mode: EDIT
+                                  - type: wireHasChanges
+                                    wire: configvalues
+                                signals:
+                                  - signal: wire/SAVE
+                                    wires:
+                                      - configvalues
+                                  - signal: component/CALL
+                                    component: uesio/io.item
+                                    componentsignal: SET_READ_MODE
+                                    targettype: specific
+                                    componentid: configValueItem
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: $Label{uesio/io.cancel}
+                                uesio.display:
+                                  - type: fieldMode
+                                    mode: EDIT
+                                signals:
+                                  - signal: wire/CANCEL
+                                    wire: configvalues
+                                  - signal: component/CALL
+                                    component: uesio/io.item
+                                    componentsignal: SET_READ_MODE
+                                    targettype: specific
+                                    componentid: configValueItem
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.destructive
                                 text: $Label{uesio/io.delete}
                                 uesio.display:
                                   - type: fieldMode
@@ -80,6 +128,8 @@ definition:
                           items:
                             - uesio/io.field:
                                 fieldId: uesio/studio.name
+                            - uesio/io.field:
+                                fieldId: uesio/studio.defaultvalue
                             - uesio/io.field:
                                 fieldId: uesio/core.updatedby
                                 user:

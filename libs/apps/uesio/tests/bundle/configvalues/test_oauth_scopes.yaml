@@ -1,3 +1,4 @@
 name: test_oauth_scopes
 store: platform
 managedBy: site
+defaultValue: id,refresh_token,openid,profile,email
