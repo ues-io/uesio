@@ -20,6 +20,20 @@ type SpecialReferences struct {
 	Fields            []string
 }
 
+type MetadataInformed interface {
+	SetMetadata(*adapt.CollectionMetadata) error
+}
+
+func addMetadataToCollection(group meta.Group, metadata *adapt.CollectionMetadata) error {
+	informedGroup, isMetadataInformed := group.(MetadataInformed)
+	if isMetadataInformed {
+		if err := informedGroup.SetMetadata(metadata); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 var specialRefs = map[string]SpecialReferences{
 	"FILE": {
 		ReferenceMetadata: &adapt.ReferenceMetadata{
@@ -606,9 +620,13 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 			return nil, err
 		}
 
-		collectionMetadata, err2 := metadataResponse.GetCollection(op.CollectionName)
-		if err2 != nil {
-			return nil, err2
+		collectionMetadata, err := metadataResponse.GetCollection(op.CollectionName)
+		if err != nil {
+			return nil, err
+		}
+
+		if err = addMetadataToCollection(op.Collection, collectionMetadata); err != nil {
+			return nil, err
 		}
 
 		collectionKey := collectionMetadata.GetFullName()

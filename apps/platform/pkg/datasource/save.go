@@ -74,6 +74,14 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 			return err
 		}
 
+		if err = addMetadataToCollection(request.Changes, collectionMetadata); err != nil {
+			return err
+		}
+
+		if err = addMetadataToCollection(request.Deletes, collectionMetadata); err != nil {
+			return err
+		}
+
 		// Split changes into inserts, updates, and deletes
 		ops, err := splitSave(request, collectionMetadata, session)
 		if err != nil {
