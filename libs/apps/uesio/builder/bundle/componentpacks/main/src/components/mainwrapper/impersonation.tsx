@@ -64,7 +64,6 @@ const Impersonation: definition.UtilityComponent = (props) => {
 				],
 			}}
 			context={context}
-			//context={context.deleteWorkspace()}
 		/>
 	)
 }
