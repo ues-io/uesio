@@ -33,22 +33,6 @@ definition:
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: uesio/core.id
-    impersonation:
-      collection: uesio/studio.workspaceuser
-      fields:
-        uesio/core.id:
-        uesio/studio.user:
-        uesio/studio.profile:
-        uesio/studio.workspace:
-      conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
-        - field: uesio/studio.user
-          value: $User{id}
-        - field: uesio/studio.profile
-          value: $Param{namespace}.$Param{profilename}
   # Components are how we describe the layout of our view
   components:
     - uesio/studio.mainlayout:
@@ -173,46 +157,6 @@ definition:
                                 label: Permission Sets assigned to this Profile
                                 uesio.context:
                                   fieldMode: READ
-                - uesio/io.box:
-                    uesio.variant: uesio/io.section
-                    components:
-                      - uesio/io.titlebar:
-                          uesio.variant: uesio/io.section
-                          title: Impersonation
-                      - uesio/io.titlebar:
-                          actions:
-                            - uesio/io.group:
-                                components:
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      uesio.display:
-                                        - type: wireHasNoRecords
-                                          wire: impersonation
-                                      text: Preview as this Profile
-                                      signals:
-                                        - signal: bot/CALL
-                                          bot: uesio/studio.setworkspaceuser
-                                          params:
-                                            workspaceid: ${workspaces:uesio/core.id}
-                                            profile: ${uesio/studio.namespace}.${uesio/studio.name}
-                                        - signal: wire/LOAD
-                                          wires:
-                                            - impersonation
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      uesio.display:
-                                        - type: wireHasRecords
-                                          wire: impersonation
-                                      text: Stop Previewing as this Profile
-                                      signals:
-                                        - signal: bot/CALL
-                                          bot: uesio/studio.setworkspaceuser
-                                          params:
-                                            workspaceid: ${workspaces:uesio/core.id}
-                                            profile: ""
-                                        - signal: wire/LOAD
-                                          wires:
-                                            - impersonation
   panels:
     deleteProfile:
       uesio.type: uesio/io.dialog

@@ -2,6 +2,7 @@ import { api, definition, component, styles } from "@uesio/ui"
 import SaveCancelArea from "./savecancelarea"
 import HeaderCrumbs from "./headercrumbs"
 import { useBuildMode } from "../../api/stateapi"
+import Impersonation from "./impersonation"
 
 const StyleDefaults = Object.freeze({
 	root: [
@@ -63,6 +64,7 @@ const MainHeader: definition.UtilityComponent = (props) => {
 				<HeaderCrumbs context={context} />
 			</Group>
 			<Group context={context} className="gap-3">
+				<Impersonation context={context} />
 				<Button
 					context={context}
 					label={"Preview"}

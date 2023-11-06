@@ -21,6 +21,36 @@ definition:
           value: true
         - field: uesio/studio.item
           value: $Param{namespace}.$Param{viewname}
+    impersonation:
+      collection: uesio/studio.workspaceuser
+      fields:
+        uesio/core.id:
+        uesio/studio.user:
+        uesio/studio.profile:
+        uesio/studio.workspace:
+      conditions:
+        - field: uesio/studio.workspace
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio/core.id
+        - field: uesio/studio.user
+          value: $User{id}
+      events:
+        - type: onChange
+          fields:
+            - uesio/studio.profile
+          signals:
+            - signal: wire/UPDATE_FIELDS
+              wire: impersonation
+              fields:
+                - field: uesio/studio.workspace->uesio/core.id
+                  value: ${workspaces:uesio/core.id}
+                - field: uesio/studio.user->uesio/core.id
+                  value: $User{id}
+            - signal: context/CLEAR
+              type: WORKSPACE
+            - signal: wire/SAVE
+              wire: impersonation
   # Components are how we describe the layout of our view
   components:
     - uesio/studio.mainlayout:
@@ -54,6 +84,17 @@ definition:
                     actions:
                       - uesio/io.group:
                           components:
+                            - uesio/io.item:
+                                wire: impersonation
+                                mode: EDIT
+                                uesio.context:
+                                  workspace:
+                                    name: $Param{workspacename}
+                                    app: $Param{app}
+                                components:
+                                  - uesio/io.field:
+                                      labelPosition: "none"
+                                      fieldId: uesio/studio.profile
                             - uesio/studio.previewbutton:
                                 view: $Param{namespace}.${uesio/studio.name}
                                 label: $Label{uesio/io.preview}

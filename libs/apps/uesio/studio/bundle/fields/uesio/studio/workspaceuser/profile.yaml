@@ -1,3 +1,5 @@
 name: profile
-type: TEXT
+type: METADATA
 label: Profile
+metadata:
+  type: PROFILE
