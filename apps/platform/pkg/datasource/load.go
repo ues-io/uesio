@@ -20,14 +20,14 @@ type SpecialReferences struct {
 	Fields            []string
 }
 
-type IsMetadataInformed interface {
+type MetadataInformed interface {
 	SetMetadata(*adapt.CollectionMetadata) error
 }
 
 func addMetadataToCollection(group meta.Group, metadata *adapt.CollectionMetadata) error {
-	metadataInformed, isMetadataInformed := group.(IsMetadataInformed)
+	informedGroup, isMetadataInformed := group.(MetadataInformed)
 	if isMetadataInformed {
-		err := metadataInformed.SetMetadata(metadata)
+		err := informedGroup.SetMetadata(metadata)
 		if err != nil {
 			return err
 		}
