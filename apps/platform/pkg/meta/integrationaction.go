@@ -8,33 +8,34 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func NewIntegrationAction(integrationName, actionName string) (*IntegrationAction, error) {
+func NewIntegrationAction(integrationTypeName, actionName string) (*IntegrationAction, error) {
 	namespace, name, err := ParseKey(actionName)
 	if err != nil {
-		// Action Name probably is local, so use the integration's namespace
-		integrationNamespace, _, err := ParseKey(integrationName)
+		// Action Name probably is local, so use the integration type's namespace
+		integrationTypeName, _, err := ParseKey(integrationTypeName)
 		if err != nil {
 			return nil, errors.New("bad key for Integration Action: " + actionName)
 		}
-		namespace = integrationNamespace
+		namespace = integrationTypeName
 		name = actionName
 	}
-	return NewBaseIntegrationAction(integrationName, namespace, name), nil
+	return NewBaseIntegrationAction(integrationTypeName, namespace, name), nil
 }
 
-func NewBaseIntegrationAction(integrationName, namespace, name string) *IntegrationAction {
+func NewBaseIntegrationAction(integrationTypeName, namespace, name string) *IntegrationAction {
 	return &IntegrationAction{
-		BundleableBase: NewBase(namespace, name),
-		IntegrationRef: integrationName,
+		BundleableBase:     NewBase(namespace, name),
+		IntegrationTypeRef: integrationTypeName,
 	}
 }
 
 type IntegrationAction struct {
 	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
-	// Integration will be extracted from the filesystem path
-	IntegrationRef string `yaml:"-" json:"uesio/studio.integration"`
-	BotRef         string `yaml:"bot,omitempty" json:"uesio/studio.bot"`
+	// IntegrationType will be extracted from the filesystem path
+	IntegrationTypeRef string `yaml:"-" json:"uesio/studio.integrationtype"`
+	BotRef             string `yaml:"bot,omitempty" json:"uesio/studio.bot"`
+	Label              string `yaml:"label,omitempty" json:"uesio/studio.label"`
 }
 
 type IntegrationActionWrapper IntegrationAction
@@ -52,17 +53,17 @@ func (ia *IntegrationAction) GetBundleFolderName() string {
 }
 
 func (ia *IntegrationAction) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s:%s:%s", workspace, ia.IntegrationRef, ia.Name)
+	return fmt.Sprintf("%s:%s:%s", workspace, ia.IntegrationTypeRef, ia.Name)
 }
 
 func (ia *IntegrationAction) GetKey() string {
-	return fmt.Sprintf("%s:%s.%s", ia.IntegrationRef, ia.Namespace, ia.Name)
+	return fmt.Sprintf("%s:%s.%s", ia.IntegrationTypeRef, ia.Namespace, ia.Name)
 }
 
 func (ia *IntegrationAction) GetPath() string {
-	integrationNamespace, integrationName, _ := ParseKey(ia.IntegrationRef)
-	nsUser, appName, _ := ParseNamespace(integrationNamespace)
-	return path.Join(nsUser, appName, integrationName, ia.Name) + ".yaml"
+	integrationTypeName, integrationTypeNamespace, _ := ParseKey(ia.IntegrationTypeRef)
+	nsUser, appName, _ := ParseNamespace(integrationTypeName)
+	return path.Join(nsUser, appName, integrationTypeNamespace, ia.Name) + ".yaml"
 }
 
 func (ia *IntegrationAction) SetField(fieldName string, value interface{}) error {

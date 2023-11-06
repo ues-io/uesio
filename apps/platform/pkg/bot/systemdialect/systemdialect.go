@@ -8,6 +8,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/integ/openai"
 	"github.com/thecloudmasters/uesio/pkg/integ/sendgrid"
 	"github.com/thecloudmasters/uesio/pkg/integ/stripe"
+	"github.com/thecloudmasters/uesio/pkg/integ/web"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/retrieve"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -23,7 +24,7 @@ type SaveBotFunc func(request *adapt.SaveOp, connection adapt.Connection, sessio
 
 type RouteBotFunc func(*meta.Route, *sess.Session) (*meta.Route, error)
 
-type RunIntegrationActionBotFunc func(bot *meta.Bot, action *meta.IntegrationAction, integration *adapt.IntegrationConnection, params map[string]interface{}) (interface{}, error)
+type RunIntegrationActionBotFunc func(bot *meta.Bot, integration *adapt.IntegrationConnection, actionName string, params map[string]interface{}) (interface{}, error)
 
 type SystemDialect struct {
 }
@@ -91,8 +92,8 @@ func (b *SystemDialect) AfterSave(bot *meta.Bot, request *adapt.SaveOp, connecti
 		botFunction = runBotAfterSaveBot
 	case "uesio/studio.app":
 		botFunction = runAppAfterSaveBot
-	case "uesio/studio.integration":
-		botFunction = runIntegrationAfterSaveBot
+	case "uesio/studio.integrationtype":
+		botFunction = runIntegrationTypeAfterSaveBot
 	}
 
 	if botFunction == nil {
@@ -129,7 +130,7 @@ func (b *SystemDialect) CallBot(bot *meta.Bot, params map[string]interface{}, co
 
 }
 
-func (b *SystemDialect) RunIntegrationActionBot(bot *meta.Bot, action *meta.IntegrationAction, ic *adapt.IntegrationConnection, params map[string]interface{}) (interface{}, error) {
+func (b *SystemDialect) RunIntegrationActionBot(bot *meta.Bot, ic *adapt.IntegrationConnection, actionName string, params map[string]interface{}) (interface{}, error) {
 
 	var botFunction RunIntegrationActionBotFunc
 
@@ -143,13 +144,15 @@ func (b *SystemDialect) RunIntegrationActionBot(bot *meta.Bot, action *meta.Inte
 		botFunction = stripe.RunAction
 	case "uesio/core.sendgrid":
 		botFunction = sendgrid.RunAction
+	case "uesio/core.web":
+		botFunction = web.RunAction
 	}
 
 	if botFunction == nil {
 		return nil, datasource.NewSystemBotNotFoundError()
 	}
 
-	return botFunction(bot, action, ic, params)
+	return botFunction(bot, ic, actionName, params)
 
 }
 

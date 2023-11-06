@@ -42,13 +42,13 @@ func newSendGridConnection(ic *adapt.IntegrationConnection) (*connection, error)
 }
 
 // RunAction implements the system bot interface
-func RunAction(bot *meta.Bot, action *meta.IntegrationAction, ic *adapt.IntegrationConnection, params map[string]interface{}) (interface{}, error) {
+func RunAction(bot *meta.Bot, ic *adapt.IntegrationConnection, actionName string, params map[string]interface{}) (interface{}, error) {
 
 	sgic, err := newSendGridConnection(ic)
 	if err != nil {
 		return nil, err
 	}
-	switch strings.ToLower(action.Name) {
+	switch strings.ToLower(actionName) {
 	case "sendemail":
 		return nil, sgic.sendEmail(params)
 	}

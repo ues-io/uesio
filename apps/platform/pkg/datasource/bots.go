@@ -315,13 +315,13 @@ func RunIntegrationAction(ic *adapt.IntegrationConnection, actionKey string, req
 	integrationType := ic.GetIntegrationType()
 	session := ic.GetSession()
 	integrationKey := integration.GetKey()
-	action, err := meta.NewIntegrationAction(integrationKey, actionKey)
+	action, err := meta.NewIntegrationAction(integration.GetType(), actionKey)
 	if err != nil {
 		return nil, err
 	}
 	err = bundle.Load(action, session, nil)
 	if err != nil {
-		return nil, fmt.Errorf("could not find integrationConnection action with name %s for integrationConnection %s", actionKey, integrationKey)
+		return nil, fmt.Errorf("could not find integration action with name %s for integration %s", actionKey, integrationKey)
 	}
 	// Use the action's associated BotRef, if defined, otherwise use the Integration Type's RunActionBot
 	var botNamespace, botName string
@@ -360,7 +360,7 @@ func RunIntegrationAction(ic *adapt.IntegrationConnection, actionKey string, req
 		return nil, err
 	}
 
-	systemBotResults, err := systemDialect.RunIntegrationActionBot(systemListenerBot, action, ic, params)
+	systemBotResults, err := systemDialect.RunIntegrationActionBot(systemListenerBot, ic, action.Name, params)
 	_, isNotFoundError := err.(*SystemBotNotFoundError)
 	if !isNotFoundError {
 		// If we found a system bot, we can go ahead and just return the results of
@@ -384,6 +384,6 @@ func RunIntegrationAction(ic *adapt.IntegrationConnection, actionKey string, req
 		return nil, err
 	}
 
-	return dialect.RunIntegrationActionBot(robot, action, ic, params)
+	return dialect.RunIntegrationActionBot(robot, ic, action.Name, params)
 
 }

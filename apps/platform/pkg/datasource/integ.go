@@ -3,7 +3,6 @@ package datasource
 import (
 	"encoding/json"
 	"fmt"
-	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -21,12 +20,7 @@ func GetIntegrationConnection(integrationID string, session *sess.Session, conne
 		return nil, fmt.Errorf("could not find Integration: %s", integrationID)
 	}
 	// Then load the integration type
-	// TEMPORARY backwards compatibility: map "web" to uesio/core.web
-	integrationTypeName := integration.Type
-	if strings.HasSuffix(integrationTypeName, ".web") {
-		integrationTypeName = "uesio/core.web"
-	}
-
+	integrationTypeName := integration.GetType()
 	integrationType, err := meta.NewIntegrationType(integrationTypeName)
 	if err != nil {
 		return nil, err

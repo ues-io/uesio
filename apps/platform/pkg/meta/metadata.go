@@ -266,7 +266,7 @@ func GetGroupingConditions(metadataType, grouping string) (BundleConditions, err
 		if grouping == "" {
 			return nil, errors.New("metadata type integration action requires grouping value")
 		}
-		conditions["uesio/studio.integration"] = grouping
+		conditions["uesio/studio.integrationtype"] = grouping
 	} else if metadataType == "recordchallengetokens" {
 		if grouping == "" {
 			return nil, errors.New("metadata type record challenge token requires grouping value")

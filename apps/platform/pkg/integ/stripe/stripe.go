@@ -43,14 +43,14 @@ func newStripeConnection(ic *adapt.IntegrationConnection) (*connection, error) {
 }
 
 // RunAction implements the system bot interface
-func RunAction(bot *meta.Bot, action *meta.IntegrationAction, ic *adapt.IntegrationConnection, params map[string]interface{}) (interface{}, error) {
+func RunAction(bot *meta.Bot, ic *adapt.IntegrationConnection, actionName string, params map[string]interface{}) (interface{}, error) {
 
 	c, err := newStripeConnection(ic)
 	if err != nil {
 		return nil, err
 	}
 
-	switch strings.ToLower(action.Name) {
+	switch strings.ToLower(actionName) {
 	case "checkout":
 		return c.checkout(params)
 	}

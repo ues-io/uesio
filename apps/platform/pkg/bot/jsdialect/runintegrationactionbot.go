@@ -7,14 +7,9 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
-func NewRunIntegrationActionBotAPI(
-	bot *meta.Bot,
-	integrationAction *meta.IntegrationAction,
-	integrationConnection *adapt.IntegrationConnection,
-	params map[string]interface{},
-) *RunIntegrationActionBotAPI {
+func NewRunIntegrationActionBotAPI(bot *meta.Bot, integrationConnection *adapt.IntegrationConnection, actionName string, params map[string]interface{}) *RunIntegrationActionBotAPI {
 	return &RunIntegrationActionBotAPI{
-		actionName: integrationAction.Name,
+		actionName: actionName,
 		LogApi:     NewBotLogAPI(bot),
 		Http:       NewBotHttpAPI(bot, integrationConnection),
 		Params: &ParamsAPI{

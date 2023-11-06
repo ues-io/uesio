@@ -45,8 +45,8 @@ type connection struct {
 	credentials *adapt.Credentials
 }
 
-// TODO: ELIMINATE THE OLD WEB INTEGRATION
-func RunAction(ic *adapt.IntegrationConnection, actionName string, params interface{}) (interface{}, error) {
+// TODO: ELIMINATE THE WEB INTEGRATION!
+func RunAction(bot *meta.Bot, ic *adapt.IntegrationConnection, actionName string, params map[string]interface{}) (interface{}, error) {
 
 	wic := &connection{
 		integration: ic.GetIntegration(),
@@ -69,6 +69,7 @@ func RunAction(ic *adapt.IntegrationConnection, actionName string, params interf
 
 func (wic *connection) request(methodName string, requestOptions interface{}) (interface{}, error) {
 	var options *RequestOptions
+	var responseData interface{}
 	// Coming from TS/JS bots, RequestOptions will very likely be a map[string]interface{},
 	// whereas coming from system bots, it will be a RequestOptions struct
 	switch opts := requestOptions.(type) {
@@ -86,11 +87,15 @@ func (wic *connection) request(methodName string, requestOptions interface{}) (i
 				}
 			}
 		}
+		if responseDataType, hasKey := opts["responseData"]; hasKey {
+			responseData = responseDataType
+		}
 		options = &RequestOptions{
-			Cache:   opts["cache"] == true,
-			Body:    opts["body"],
-			Headers: reqHeaders,
-			URL:     reqUrl,
+			Cache:        opts["cache"] == true,
+			Body:         opts["body"],
+			Headers:      reqHeaders,
+			URL:          reqUrl,
+			ResponseData: responseData,
 		}
 	case *RequestOptions:
 		options = opts

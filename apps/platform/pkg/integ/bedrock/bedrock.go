@@ -53,14 +53,14 @@ type connection struct {
 }
 
 // RunAction implements the system bot interface
-func RunAction(bot *meta.Bot, action *meta.IntegrationAction, ic *adapt.IntegrationConnection, params map[string]interface{}) (interface{}, error) {
+func RunAction(bot *meta.Bot, ic *adapt.IntegrationConnection, actionName string, params map[string]interface{}) (interface{}, error) {
 
 	bc, err := getBedrockConnection(ic)
 	if err != nil {
 		return nil, err
 	}
 
-	switch strings.ToLower(action.Name) {
+	switch strings.ToLower(actionName) {
 	case "invokemodel":
 		return bc.invokeModel(params)
 	}

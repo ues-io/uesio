@@ -259,8 +259,8 @@ func (b *JSDialect) SaveBot(bot *meta.Bot, op *adapt.SaveOp, connection adapt.Co
 	return RunBot(bot, botAPI, nil)
 }
 
-func (b *JSDialect) RunIntegrationActionBot(bot *meta.Bot, action *meta.IntegrationAction, ic *adapt.IntegrationConnection, params map[string]interface{}) (interface{}, error) {
-	botAPI := NewRunIntegrationActionBotAPI(bot, action, ic, params)
+func (b *JSDialect) RunIntegrationActionBot(bot *meta.Bot, ic *adapt.IntegrationConnection, actionName string, params map[string]interface{}) (interface{}, error) {
+	botAPI := NewRunIntegrationActionBotAPI(bot, ic, actionName, params)
 	err := b.hydrateBot(bot, ic.GetSession())
 	if err != nil {
 		return nil, err

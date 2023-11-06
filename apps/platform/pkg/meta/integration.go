@@ -2,6 +2,7 @@ package meta
 
 import (
 	"errors"
+	"strings"
 
 	"gopkg.in/yaml.v3"
 )
@@ -30,6 +31,15 @@ type Integration struct {
 }
 
 type IntegrationWrapper Integration
+
+func (i *Integration) GetType() string {
+	// TEMPORARY backwards compatibility: map "web" to uesio/core.web
+	integrationTypeName := i.Type
+	if strings.HasSuffix(integrationTypeName, ".web") {
+		integrationTypeName = "uesio/core.web"
+	}
+	return integrationTypeName
+}
 
 func (i *Integration) GetCollection() CollectionableGroup {
 	return &IntegrationCollection{}
