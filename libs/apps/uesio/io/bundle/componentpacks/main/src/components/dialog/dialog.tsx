@@ -6,6 +6,7 @@ type DialogDefinition = {
 	title?: string
 	width?: string
 	height?: string
+	zIndex?: string
 	id?: string
 	afterClose?: signal.SignalDefinition[]
 	actions?: definition.DefinitionList[]
@@ -37,6 +38,7 @@ const Dialog: definition.UC<DialogDefinition> = (props) => {
 			onClose={onClose}
 			context={context}
 			width={definition.width as string}
+			zIndex={definition.zIndex as string}
 			height={definition.height as string}
 			title={definition.title as string}
 			actions={

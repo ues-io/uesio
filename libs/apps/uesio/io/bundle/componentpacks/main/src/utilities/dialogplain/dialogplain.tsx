@@ -11,6 +11,7 @@ const minPagePadding = "40px"
 
 interface DialogPlainUtilityProps {
 	onClose?: () => void
+	zIndex?: string
 	width?: string
 	height?: string
 	initialFocus?: number
@@ -27,12 +28,15 @@ const DialogPlain: definition.UtilityComponent<DialogPlainUtilityProps> = (
 		props.height || "auto"
 	})_minmax(${minPagePadding},1fr)]`
 
+	const zIndex = props.zIndex || "auto"
+
 	const classes = styles.useUtilityStyleTokens(
 		{
 			blocker: [
 				"backdrop-blur-sm",
 				"backdrop-grayscale-[50%]",
 				"backdrop-brightness-50",
+				`z-[${zIndex}]`,
 			],
 			root: [
 				"absolute",

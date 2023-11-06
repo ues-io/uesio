@@ -9,6 +9,7 @@ import Group from "../group/group"
 interface DialogUtilityProps {
 	onClose?: () => void
 	width?: string
+	zIndex: string
 	height?: string
 	title?: string
 	actions?: ReactNode
@@ -26,12 +27,23 @@ const Dialog: definition.UtilityComponent<DialogUtilityProps> = (props) => {
 		props,
 		"uesio/io.dialog"
 	)
-	const { context, title, onClose, width, height, children, actions } = props
+	const {
+		context,
+		title,
+		onClose,
+		width,
+		zIndex,
+		height,
+		children,
+		actions,
+	} = props
+
 	return (
 		<DialogPlain
 			context={props.context}
 			height={height}
 			width={width}
+			zIndex={zIndex}
 			onClose={onClose}
 			initialFocus={1}
 		>

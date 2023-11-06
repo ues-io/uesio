@@ -28,6 +28,10 @@ properties:
     label: Height
     required: true
     type: TEXT
+  - name: zIndex
+    label: Z-Index
+    required: false
+    type: TEXT
 sections:
   - type: HOME
     properties:
