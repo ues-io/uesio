@@ -27,8 +27,7 @@ type MetadataInformed interface {
 func addMetadataToCollection(group meta.Group, metadata *adapt.CollectionMetadata) error {
 	informedGroup, isMetadataInformed := group.(MetadataInformed)
 	if isMetadataInformed {
-		err := informedGroup.SetMetadata(metadata)
-		if err != nil {
+		if err := informedGroup.SetMetadata(metadata); err != nil {
 			return err
 		}
 	}
@@ -626,8 +625,7 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 			return nil, err
 		}
 
-		err = addMetadataToCollection(op.Collection, collectionMetadata)
-		if err != nil {
+		if err = addMetadataToCollection(op.Collection, collectionMetadata); err != nil {
 			return nil, err
 		}
 

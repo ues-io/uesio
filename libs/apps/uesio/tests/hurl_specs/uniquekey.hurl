@@ -39,7 +39,7 @@ jsonpath "$.wires[0].errors" == null
 [Captures]
 newid: jsonpath "$.wires[0].changes[*]['uesio/core.id']" nth 0
 
-# Now see if the insert worked
+# Verify that the unique key is built using the metdadata of the number fields
 POST https://{{host}}:{{port}}/site/wires/load
 Accept: application/json
 {
@@ -77,7 +77,7 @@ jsonpath "$.wires[0].data[0]['uesio/studio.minor']" == 1
 jsonpath "$.wires[0].data[0]['uesio/studio.patch']" == 2
 jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "uesio/tests:5:1:2"
 
-# Test a simple insert into the bundle collection
+# Clean up the bundle we just created
 POST https://{{host}}:{{port}}/site/wires/save
 Accept: application/json
 {
