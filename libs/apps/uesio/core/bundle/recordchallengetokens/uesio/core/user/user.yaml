@@ -2,6 +2,7 @@ name: user
 token: "${uesio/core.id}"
 useraccesstoken: "uesio/core.orguser"
 access: readwrite
+public: true
 conditions:
   - field: uesio/core.type
     value: ORG

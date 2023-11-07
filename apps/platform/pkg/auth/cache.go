@@ -18,7 +18,9 @@ func init() {
 }
 
 func GetUserCacheKey(userid, siteId string) string {
-	return fmt.Sprintf("%s:%s", userid, siteId)
+	// 11/7/23 - added "v2:"" to force a cache bust because we added "uesio/core.owner" to the fields
+	// After a few days of this being live in Prod, we can remove "v2:" prefix again
+	return fmt.Sprintf("v2:%s:%s", userid, siteId)
 }
 
 func getHostKey(domainType, domainValue string) string {
