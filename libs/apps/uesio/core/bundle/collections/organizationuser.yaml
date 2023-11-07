@@ -7,3 +7,4 @@ label: Organization User
 pluralLabel: Organization Users
 nameField: uesio/core.uniquekey
 access: "protected_write"
+accessField: uesio/core.org
