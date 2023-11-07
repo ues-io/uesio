@@ -31,6 +31,7 @@ type FileUploadOp struct {
 	CollectionID    string            `json:"collectionID"`
 	RecordID        string            `json:"recordID"`
 	FieldID         string            `json:"fieldID"`
+	Overwrite       bool              `json:"overwrite"`
 	Params          map[string]string `json:"params"`
 }
 
@@ -132,6 +133,30 @@ func Upload(ops []*FileUploadOp, connection adapt.Connection, session *sess.Sess
 		}
 		ufms = append(ufms, ufm)
 
+		//before saving the new file, delete all the other attachments
+		if op.Overwrite {
+			ufmcToDelete := meta.UserFileMetadataCollection{}
+			err = datasource.PlatformLoad(
+				&ufmcToDelete,
+				&datasource.PlatformLoadOptions{
+					Conditions: []adapt.LoadRequestCondition{
+						{
+							Field:    "uesio/core.recordid",
+							Operator: "EQ",
+							Value:    ufm.RecordID,
+						},
+					},
+				},
+				session,
+			)
+
+			for _, ufmToDelete := range ufmcToDelete {
+				err := Delete(ufmToDelete.ID, session)
+				if err != nil {
+					return nil, err
+				}
+			}
+		}
 		conn, err := fileadapt.GetFileConnection(ufm.FileSourceID, session)
 		if err != nil {
 			return nil, err

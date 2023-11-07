@@ -11,6 +11,7 @@ type FileDefinition = {
 	displayAs?: string
 	accept?: string
 	mode?: context.FieldMode
+	overwrite?: boolean
 	// The language to use for syntax highlighting
 	language?: string
 	// The Monaco editor theme to use
@@ -33,6 +34,7 @@ const FileAttachment: definition.UC<FileDefinition> = (props) => {
 		onDeleteSignals,
 		theme,
 		typeDefinitionFileURIs,
+		overwrite,
 	} = definition
 	const language = definition.language
 		? context.mergeString(definition.language)?.toLowerCase()
@@ -71,6 +73,7 @@ const FileAttachment: definition.UC<FileDefinition> = (props) => {
 				collectionID: collectionId,
 				recordID: recordId,
 				params: context.getParams(),
+				overwrite,
 			},
 			file
 		)

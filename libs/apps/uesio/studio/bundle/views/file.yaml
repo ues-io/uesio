@@ -160,6 +160,7 @@ definition:
                             - uesio/io.fileattachment:
                                 displayAs: PREVIEW
                                 mode: EDIT
+                                overwrite: true
                                 onUploadSignals:
                                   - signal: wire/LOAD
                                     wires:
