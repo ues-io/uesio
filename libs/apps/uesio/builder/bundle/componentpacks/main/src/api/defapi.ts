@@ -168,8 +168,7 @@ const move = (context: ctx.Context, fromPath: FullPath, toPath: FullPath) => {
 	const isMapMove = yaml.isMap(fromParent) && fromParentPath === toParentPath
 
 	if (isArrayMove) {
-		const isCollection = yaml.isCollection(clonedNode)
-		if (!isCollection) return
+		if (!yaml.isCollection(clonedNode)) return
 		const index = component.path.getIndexFromPath(toPath.localPath) || 0
 		if (fromParentPath === toParentPath) {
 			const fromIndex =
