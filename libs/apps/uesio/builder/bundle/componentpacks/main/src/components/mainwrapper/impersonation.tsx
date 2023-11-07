@@ -20,8 +20,8 @@ const Impersonation: definition.UtilityComponent = (props) => {
 			},
 			conditions: [
 				{
-					field: "uesio/studio.workspace->uesio/core.uniquekey",
-					value: workspace.app + ":" + workspace.name,
+					field: "uesio/studio.workspace",
+					value: workspace.id,
 					operator: "EQ",
 					valueSource: "VALUE",
 				},
@@ -37,11 +37,25 @@ const Impersonation: definition.UtilityComponent = (props) => {
 					type: "onChange",
 					fields: ["uesio/studio.profile"],
 					signals: [
+						// Need to clear these contexts before calling navigate,
+						// so that the path is not prefixed with the workspace/site prefix
+						{
+							signal: "context/CLEAR",
+							type: "WORKSPACE",
+						},
+						{
+							signal: "context/CLEAR",
+							type: "SITE_ADMIN",
+						},
+						{
+							signal: "context/CLEAR",
+							type: "SITE",
+						},
 						{
 							signal: "bot/CALL",
 							bot: "uesio/studio.setworkspaceuser",
 							params: {
-								workspaceid: "",
+								workspaceid: workspace.id,
 								profile: "${uesio/studio.profile}",
 							},
 						},

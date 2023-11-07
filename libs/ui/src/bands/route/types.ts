@@ -13,6 +13,7 @@ import { Component } from "../componenttype/types"
 import { FileState } from "../../definition/file"
 
 type WorkspaceState = {
+	id: string
 	name: string
 	app: string
 	wrapper?: MetadataKey

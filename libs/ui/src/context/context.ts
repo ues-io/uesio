@@ -241,6 +241,7 @@ function injectDynamicContext(
 	if (providesWorkspace(additional)) {
 		const workspace = additional.workspace
 		context = context.setWorkspace({
+			id: context.mergeString(workspace.id),
 			name: context.mergeString(workspace.name),
 			app: context.mergeString(workspace.app),
 		})
