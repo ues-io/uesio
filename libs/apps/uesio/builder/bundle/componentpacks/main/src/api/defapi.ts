@@ -164,11 +164,12 @@ const move = (context: ctx.Context, fromPath: FullPath, toPath: FullPath) => {
 	const fromParent = getNodeAtPath(fromParentPath, yamlDoc.contents)
 	const toParentPath = component.path.getParentPath(toPath.localPath)
 	const clonedNode = fromNode?.clone()
-	if (!yaml.isCollection(clonedNode)) return
 	const isArrayMove = yaml.isSeq(fromParent)
 	const isMapMove = yaml.isMap(fromParent) && fromParentPath === toParentPath
 
 	if (isArrayMove) {
+		const isCollection = yaml.isCollection(clonedNode)
+		if (!isCollection) return
 		const index = component.path.getIndexFromPath(toPath.localPath) || 0
 		if (fromParentPath === toParentPath) {
 			const fromIndex =
