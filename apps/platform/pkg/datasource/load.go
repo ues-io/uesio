@@ -661,7 +661,7 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 }
 
 func performExternalIntegrationLoad(integrationName string, op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
-	integrationConnection, err := GetIntegration(integrationName, session)
+	integrationConnection, err := GetIntegrationConnection(integrationName, session, connection)
 	if err != nil {
 		return err
 	}
@@ -669,19 +669,15 @@ func performExternalIntegrationLoad(integrationName string, op *adapt.LoadOp, co
 	if err != nil {
 		return err
 	}
-	op.AttachIntegration(integrationConnection)
-	integration := integrationConnection.GetIntegration()
+	op.AttachIntegrationConnection(integrationConnection)
+	integrationType := integrationConnection.GetIntegrationType()
 	// If there's a collection-specific load bot defined, use that,
 	// otherwise default to the integration's defined load bot.
 	// If there's neither, then there's nothing to do.
 	botKey := collectionMetadata.LoadBot
-	if botKey == "" && integration != nil {
-		botKey = integration.LoadBot
+	if botKey == "" && integrationType != nil {
+		botKey = integrationType.LoadBot
 	}
-	if botKey == "" {
-		return fmt.Errorf("no load bot defined on collection %s or on integration %s", collectionMetadata.GetKey(), integration.GetKey())
-	}
-
 	if err = runExternalDataSourceLoadBot(botKey, op, connection, session); err != nil {
 		return err
 	}

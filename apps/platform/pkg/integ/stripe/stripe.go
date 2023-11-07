@@ -2,6 +2,7 @@ package stripe
 
 import (
 	"errors"
+	"strings"
 
 	"github.com/stripe/stripe-go/v74"
 	"github.com/stripe/stripe-go/v74/checkout/session"
@@ -23,43 +24,42 @@ type CheckoutOptions struct {
 	SuccessURL string         `json:"successURL"`
 }
 
-type StripeIntegration struct {
+type connection struct {
+	apiKey      string
+	integration *meta.Integration
+	session     *sess.Session
 }
 
-func (si *StripeIntegration) GetIntegrationConnection(integration *meta.Integration, session *sess.Session, credentials *adapt.Credentials) (adapt.IntegrationConnection, error) {
-	return &StripeIntegrationConnection{
-		session:     session,
-		integration: integration,
-		credentials: credentials,
+func newStripeConnection(ic *adapt.IntegrationConnection) (*connection, error) {
+	apikey, err := ic.GetCredentials().GetRequiredEntry("apikey")
+	if err != nil || apikey == "" {
+		return nil, errors.New("Stripe API Key not provided")
+	}
+	return &connection{
+		apiKey:      apikey,
+		integration: ic.GetIntegration(),
+		session:     ic.GetSession(),
 	}, nil
 }
 
-type StripeIntegrationConnection struct {
-	session     *sess.Session
-	integration *meta.Integration
-	credentials *adapt.Credentials
-}
+// RunAction implements the system bot interface
+func RunAction(bot *meta.Bot, ic *adapt.IntegrationConnection, actionName string, params map[string]interface{}) (interface{}, error) {
 
-func (sic *StripeIntegrationConnection) GetCredentials() *adapt.Credentials {
-	return sic.credentials
-}
-
-func (sic *StripeIntegrationConnection) GetIntegration() *meta.Integration {
-	return sic.integration
-}
-
-func (sic *StripeIntegrationConnection) RunAction(actionName string, requestOptions interface{}) (interface{}, error) {
-
-	switch actionName {
-	case "checkout":
-		return sic.Checkout(requestOptions)
+	c, err := newStripeConnection(ic)
+	if err != nil {
+		return nil, err
 	}
 
-	return nil, errors.New("Invalid Action Name for Stripe integration")
+	switch strings.ToLower(actionName) {
+	case "checkout":
+		return c.checkout(params)
+	}
+
+	return nil, errors.New("invalid action name for Stripe integration")
 
 }
 
-func (sic *StripeIntegrationConnection) Checkout(requestOptions interface{}) (interface{}, error) {
+func (sic *connection) checkout(requestOptions interface{}) (interface{}, error) {
 
 	options := &CheckoutOptions{}
 	err := datasource.HydrateOptions(requestOptions, options)
@@ -67,17 +67,12 @@ func (sic *StripeIntegrationConnection) Checkout(requestOptions interface{}) (in
 		return nil, err
 	}
 
-	apikey, ok := (*sic.credentials)["apikey"]
-	if !ok {
-		return nil, errors.New("No API Key provided")
-	}
+	stripe.Key = sic.apiKey
 
-	stripe.Key = apikey
+	lineItems := make([]*stripe.CheckoutSessionLineItemParams, len(options.Items))
 
-	lineItems := []*stripe.CheckoutSessionLineItemParams{}
-
-	for _, item := range options.Items {
-		lineItems = append(lineItems, &stripe.CheckoutSessionLineItemParams{
+	for i, item := range options.Items {
+		lineItems[i] = &stripe.CheckoutSessionLineItemParams{
 			PriceData: &stripe.CheckoutSessionLineItemPriceDataParams{
 				ProductData: &stripe.CheckoutSessionLineItemPriceDataProductDataParams{
 					Name: stripe.String(item.Name),
@@ -86,7 +81,7 @@ func (sic *StripeIntegrationConnection) Checkout(requestOptions interface{}) (in
 				UnitAmount: stripe.Int64(item.Price),
 			},
 			Quantity: stripe.Int64(item.Quantity),
-		})
+		}
 	}
 	params := &stripe.CheckoutSessionParams{
 		LineItems:  lineItems,

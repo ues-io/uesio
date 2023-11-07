@@ -47,6 +47,8 @@ views:
   uesio/studio.installed: true
   uesio/studio.integration: true
   uesio/studio.integrations: true
+  uesio/studio.integrationtype: true
+  uesio/studio.integrationtypes: true
   uesio/studio.home: true
   uesio/studio.homecontent: true
   uesio/studio.homeleftnav: true
@@ -144,6 +146,8 @@ routes:
   uesio/studio.installedbundle: true
   uesio/studio.integration: true
   uesio/studio.integrations: true
+  uesio/studio.integrationtype: true
+  uesio/studio.integrationtypes: true
   uesio/studio.org: true
   uesio/studio.packaging: true
   uesio/studio.permissionset: true
@@ -243,6 +247,7 @@ collections:
   uesio/studio.filesource: true
   uesio/studio.integration: true
   uesio/studio.integrationaction: true
+  uesio/studio.integrationtype: true
   uesio/studio.label: true
   uesio/studio.permissionset: true
   uesio/studio.profile: true
@@ -278,5 +283,7 @@ collections:
   uesio/studio.invoice: true
   uesio/studio.invoicelineitem: true
   uesio/studio.payment: true
+integrationActions: {}
+allowallintegrationactions: true
 modifyallrecords: false
 viewallrecords: false

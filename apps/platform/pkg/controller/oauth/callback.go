@@ -65,7 +65,7 @@ func Callback(w http.ResponseWriter, r *http.Request) {
 	integrationName := state.IntegrationName
 	userId := s.GetSiteUser().ID
 
-	integrationConnection, err := datasource.GetIntegration(integrationName, s)
+	integrationConnection, err := datasource.GetIntegrationConnection(integrationName, s, connection)
 	if err != nil {
 		controller.HandleErrorRoute(w, r, s, r.URL.Path, err, false)
 		return

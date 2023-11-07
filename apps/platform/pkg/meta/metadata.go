@@ -203,6 +203,7 @@ var METADATA_NAME_MAP = map[string]string{
 	"COMPONENT":            "components",
 	"FILE":                 "files",
 	"LABEL":                "labels",
+	"INTEGRATIONTYPE":      "integrationtypes",
 	"INTEGRATION":          "integrations",
 	"INTEGRATIONACTION":    "integrationactions",
 	"RECORDCHALLENGETOKEN": "recordchallengetokens",
@@ -235,6 +236,7 @@ var bundleableGroupMap = map[string]BundleableFactory{
 	(&SignupMethodCollection{}).GetBundleFolderName():         func() BundleableGroup { return &SignupMethodCollection{} },
 	(&IntegrationCollection{}).GetBundleFolderName():          func() BundleableGroup { return &IntegrationCollection{} },
 	(&IntegrationActionCollection{}).GetBundleFolderName():    func() BundleableGroup { return &IntegrationActionCollection{} },
+	(&IntegrationTypeCollection{}).GetBundleFolderName():      func() BundleableGroup { return &IntegrationTypeCollection{} },
 	(&ComponentCollection{}).GetBundleFolderName():            func() BundleableGroup { return &ComponentCollection{} },
 	(&UtilityCollection{}).GetBundleFolderName():              func() BundleableGroup { return &UtilityCollection{} },
 	(&RecordChallengeTokenCollection{}).GetBundleFolderName(): func() BundleableGroup { return &RecordChallengeTokenCollection{} },
@@ -264,7 +266,7 @@ func GetGroupingConditions(metadataType, grouping string) (BundleConditions, err
 		if grouping == "" {
 			return nil, errors.New("metadata type integration action requires grouping value")
 		}
-		conditions["uesio/studio.integration"] = grouping
+		conditions["uesio/studio.integrationtype"] = grouping
 	} else if metadataType == "recordchallengetokens" {
 		if grouping == "" {
 			return nil, errors.New("metadata type record challenge token requires grouping value")

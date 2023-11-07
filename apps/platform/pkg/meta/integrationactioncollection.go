@@ -55,22 +55,22 @@ func (iac *IntegrationActionCollection) GetItemFromKey(key string) (BundleableIt
 }
 
 func (iac *IntegrationActionCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
-	integrationKey, hasIntegration := conditions["uesio/studio.integration"]
+	integrationTypeKey, hasIntegrationType := conditions["uesio/studio.integrationtype"]
 	parts := strings.Split(path, string(os.PathSeparator))
 	if len(parts) != 4 || !strings.HasSuffix(parts[3], ".yaml") {
 		// Ignore this file
 		return false
 	}
-	if hasIntegration {
-		integrationNS, integrationName, err := ParseKey(integrationKey)
+	if hasIntegrationType {
+		integrationTypeNS, integrationTypeName, err := ParseKey(integrationTypeKey)
 		if err != nil {
 			return false
 		}
-		nsUser, nsApp, err := ParseNamespace(integrationNS)
+		nsUser, nsApp, err := ParseNamespace(integrationTypeNS)
 		if err != nil {
 			return false
 		}
-		if parts[0] != nsUser || parts[1] != nsApp || parts[2] != integrationName {
+		if parts[0] != nsUser || parts[1] != nsApp || parts[2] != integrationTypeName {
 			return false
 		}
 	}

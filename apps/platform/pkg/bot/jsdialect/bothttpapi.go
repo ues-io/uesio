@@ -25,16 +25,22 @@ import (
 )
 
 type BotHttpAPI struct {
-	bot         *meta.Bot
-	session     *sess.Session
-	integration adapt.IntegrationConnection
+	bot *meta.Bot
+	ic  *adapt.IntegrationConnection
 }
 
-func NewBotHttpAPI(bot *meta.Bot, session *sess.Session, integration adapt.IntegrationConnection) *BotHttpAPI {
+func (api *BotHttpAPI) getSession() *sess.Session {
+	return api.ic.GetSession()
+}
+
+func (api *BotHttpAPI) GetIntegration() *meta.Integration {
+	return api.ic.GetIntegration()
+}
+
+func NewBotHttpAPI(bot *meta.Bot, integrationConnection *adapt.IntegrationConnection) *BotHttpAPI {
 	return &BotHttpAPI{
-		bot:         bot,
-		session:     session,
-		integration: integration,
+		bot: bot,
+		ic:  integrationConnection,
 	}
 }
 
@@ -43,7 +49,7 @@ type BotHttpAuth struct {
 	Credentials *adapt.Credentials `json:"credentials"`
 }
 
-func NewBotHttpAuth(connection adapt.IntegrationConnection) *BotHttpAuth {
+func NewBotHttpAuth(connection *adapt.IntegrationConnection) *BotHttpAuth {
 	authType := "NONE"
 	var credentials *adapt.Credentials
 	if connection != nil {
@@ -153,7 +159,7 @@ func (api *BotHttpAPI) Request(req *BotHttpRequest) *BotHttpResponse {
 	}
 
 	// Perform the request using the selected authentication paradigm
-	httpResp, err := api.makeRequest(httpReq, NewBotHttpAuth(api.integration))
+	httpResp, err := api.makeRequest(httpReq, NewBotHttpAuth(api.ic))
 	if err != nil {
 		switch err.(type) {
 		case *UnauthorizedException:
@@ -231,24 +237,24 @@ func (e *UnauthorizedException) Error() string {
 func (api *BotHttpAPI) makeRequestWithOAuth2AuthorizationCode(req *http.Request, auth *BotHttpAuth) (*http.Response, error) {
 	ctx := context.Background()
 
-	config, err := oauthlib.GetConfig(auth.Credentials, api.session.GetContextSite().GetHost())
+	config, err := oauthlib.GetConfig(auth.Credentials, api.getSession().GetContextSite().GetHost())
 	if err != nil {
 		return nil, NewUnauthorizedException(err.Error())
 	}
 
 	// Fetch OAuth credentials from the DB Integration Collection record
 	// TODO: use existing metadata cache... or connection...
-	connection, err := datasource.GetPlatformConnection(nil, api.session, nil)
+	connection, err := datasource.GetPlatformConnection(nil, api.getSession(), nil)
 	if err != nil {
 		return nil, errors.New("unable to obtain platform connection")
 	}
-	coreSession, err := datasource.EnterVersionContext("uesio/core", api.session, connection)
+	coreSession, err := datasource.EnterVersionContext("uesio/core", api.getSession(), connection)
 	if err != nil {
 		return nil, errors.New("failed to enter uesio/core context: " + err.Error())
 	}
 
 	integrationCredential, err := oauthlib.GetIntegrationCredential(
-		api.session.GetSiteUser().ID, api.integration.GetIntegration().GetKey(), coreSession, connection)
+		api.getSession().GetSiteUser().ID, api.GetIntegration().GetKey(), coreSession, connection)
 	if err != nil {
 		return nil, errors.New("unable to retrieve integration credential: " + err.Error())
 	}

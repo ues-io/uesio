@@ -5,23 +5,13 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func NewRunIntegrationActionBotAPI(
-	bot *meta.Bot,
-	integrationAction *meta.IntegrationAction,
-	integrationConnection adapt.IntegrationConnection,
-	params map[string]interface{},
-	session *sess.Session,
-	connection adapt.Connection,
-) *RunIntegrationActionBotAPI {
+func NewRunIntegrationActionBotAPI(bot *meta.Bot, integrationConnection *adapt.IntegrationConnection, actionName string, params map[string]interface{}) *RunIntegrationActionBotAPI {
 	return &RunIntegrationActionBotAPI{
-		actionName: integrationAction.Name,
-		session:    session,
-		connection: connection,
+		actionName: actionName,
 		LogApi:     NewBotLogAPI(bot),
-		Http:       NewBotHttpAPI(bot, session, integrationConnection),
+		Http:       NewBotHttpAPI(bot, integrationConnection),
 		Params: &ParamsAPI{
 			Params: params,
 		},
@@ -32,10 +22,8 @@ func NewRunIntegrationActionBotAPI(
 
 type RunIntegrationActionBotAPI struct {
 	actionName            string
-	connection            adapt.Connection
-	session               *sess.Session
 	Http                  *BotHttpAPI `bot:"http"`
-	integrationConnection adapt.IntegrationConnection
+	integrationConnection *adapt.IntegrationConnection
 	LogApi                *BotLogAPI `bot:"log"`
 	Params                *ParamsAPI `bot:"params"`
 	Results               map[string]interface{}
@@ -62,7 +50,7 @@ func (b *RunIntegrationActionBotAPI) GetCredentials() map[string]interface{} {
 }
 
 func (b *RunIntegrationActionBotAPI) GetConfigValue(configValueKey string) (string, error) {
-	return configstore.GetValueFromKey(configValueKey, datasource.GetSiteAdminSession(b.session))
+	return configstore.GetValueFromKey(configValueKey, datasource.GetSiteAdminSession(b.integrationConnection.GetSession()))
 }
 
 func (b *RunIntegrationActionBotAPI) GetIntegration() *IntegrationMetadata {
@@ -73,9 +61,9 @@ func (b *RunIntegrationActionBotAPI) GetIntegration() *IntegrationMetadata {
 }
 
 func (b *RunIntegrationActionBotAPI) GetSession() *SessionAPI {
-	return NewSessionAPI(b.session)
+	return NewSessionAPI(b.integrationConnection.GetSession())
 }
 
 func (b *RunIntegrationActionBotAPI) GetUser() *UserAPI {
-	return NewUserAPI(b.session.GetContextUser())
+	return NewUserAPI(b.integrationConnection.GetSession().GetContextUser())
 }
