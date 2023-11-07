@@ -138,6 +138,10 @@ func (c *Component) GetCollectionName() string {
 	return COMPONENT_COLLECTION_NAME
 }
 
+func (c *Component) GetCollection() CollectionableGroup {
+	return &ComponentCollection{}
+}
+
 func (c *Component) GetBundleFolderName() string {
 	return COMPONENT_FOLDER_NAME
 }

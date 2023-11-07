@@ -54,7 +54,7 @@ func getValues(session *sess.Session) ([]ConfigValueResponse, error) {
 		return nil, err
 	}
 
-	response := []ConfigValueResponse{}
+	var response []ConfigValueResponse
 
 	for _, cv := range configValues {
 		if cv.ManagedBy == "app" || cv.Store == "environment" {

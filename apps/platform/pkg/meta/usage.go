@@ -12,6 +12,10 @@ type Usage struct {
 	Site         *Site  `json:"uesio/studio.site"`
 }
 
+func (u *Usage) GetCollection() CollectionableGroup {
+	return &UsageCollection{}
+}
+
 func (u *Usage) GetCollectionName() string {
 	return USAGE_COLLECTION_NAME
 }

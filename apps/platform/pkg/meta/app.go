@@ -15,6 +15,10 @@ func (a *App) GetCollectionName() string {
 	return APP_COLLECTION_NAME
 }
 
+func (a *App) GetCollection() CollectionableGroup {
+	return &AppCollection{}
+}
+
 func (a *App) SetField(fieldName string, value interface{}) error {
 	return StandardFieldSet(a, fieldName, value)
 }

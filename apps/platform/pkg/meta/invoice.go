@@ -8,6 +8,10 @@ type Invoice struct {
 	Total   float64 `json:"uesio/studio.total"`
 }
 
+func (l *Invoice) GetCollection() CollectionableGroup {
+	return &InvoiceCollection{}
+}
+
 func (l *Invoice) GetCollectionName() string {
 	return INVOICE_COLLECTION_NAME
 }

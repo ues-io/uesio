@@ -103,6 +103,10 @@ type PermissionSet struct {
 
 type PermissionSetWrapper PermissionSet
 
+func (ps *PermissionSet) GetCollection() CollectionableGroup {
+	return &PermissionSetCollection{}
+}
+
 func (ps *PermissionSet) GetCollectionName() string {
 	return PERMISSIONSET_COLLECTION_NAME
 }

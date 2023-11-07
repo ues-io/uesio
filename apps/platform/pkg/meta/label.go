@@ -55,6 +55,10 @@ func NewLabels(keys map[string]bool) ([]BundleableItem, error) {
 	return items, nil
 }
 
+func (l *Label) GetCollection() CollectionableGroup {
+	return &LabelCollection{}
+}
+
 func (l *Label) GetCollectionName() string {
 	return LABEL_COLLECTION_NAME
 }

@@ -32,6 +32,10 @@ func (u *User) GetPictureUpdatedAt() int64 {
 	return 0
 }
 
+func (u *User) GetCollection() CollectionableGroup {
+	return &UserCollection{}
+}
+
 func (u *User) GetCollectionName() string {
 	return USER_COLLECTION_NAME
 }
