@@ -42,6 +42,7 @@ definition:
         uesio/studio.minor:
         uesio/studio.patch:
         uesio/studio.description:
+        uesio/studio.published:
         uesio/core.createdby:
         uesio/core.createdat:
         uesio/studio.app:
@@ -78,6 +79,26 @@ definition:
           valueSource: LOOKUP
           lookupWire: bundles
           lookupField: uesio/core.id
+    bundlelisting:
+      collection: uesio/studio.bundlelisting
+      fields:
+        uesio/core.id:
+        uesio/studio.app:
+          fields:
+            uesio/studio.color:
+            uesio/studio.icon:
+            uesio/studio.fullname:
+        uesio/studio.status:
+        uesio/studio.approved:
+      conditions:
+        - field: uesio/studio.app
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio/core.id
+        - field: uesio/studio.status
+          value: PUBLISHED
+        - field: uesio/studio.approved
+          value: true
   # Components are how we describe the layout of our view
   components:
     - uesio/studio.mainlayout:
@@ -112,6 +133,47 @@ definition:
                                 signals:
                                   - signal: panel/TOGGLE
                                     panel: deleteBundle
+                            - uesio/io.button:
+                                uesio.display:
+                                  - type: wireHasRecords
+                                    wire: bundlelisting
+                                  - field: uesio/studio.published
+                                    value: true
+                                    operator: NOT_EQUALS
+                                text: Publish
+                                uesio.variant: uesio/io.primary
+                                signals:
+                                  - signal: wire/UPDATE_RECORD
+                                    wire: bundles
+                                    field: uesio/studio.published
+                                    valueSource: VALUE
+                                    value: true
+                                  - signal: wire/SAVE
+                                    wires:
+                                      - bundles
+                                  - signal: wire/LOAD
+                                    wires:
+                                      - bundles
+                            - uesio/io.button:
+                                uesio.display:
+                                  - type: wireHasRecords
+                                    wire: bundlelisting
+                                  - field: uesio/studio.published
+                                    value: true
+                                text: Unpublish
+                                uesio.variant: uesio/io.destructive
+                                signals:
+                                  - signal: wire/UPDATE_RECORD
+                                    wire: bundles
+                                    field: uesio/studio.published
+                                    valueSource: VALUE
+                                    value: false
+                                  - signal: wire/SAVE
+                                    wires:
+                                      - bundles
+                                  - signal: wire/LOAD
+                                    wires:
+                                      - bundles
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:

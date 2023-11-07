@@ -57,11 +57,14 @@ definition:
         uesio/studio.minor:
         uesio/studio.patch:
         uesio/studio.version:
+        uesio/studio.published:
       conditions:
         - field: uesio/studio.app
           valueSource: LOOKUP
           lookupWire: app
           lookupField: uesio/core.id
+        - field: uesio/studio.published
+          value: true
       order:
         - field: uesio/core.id
           desc: true
@@ -78,11 +81,14 @@ definition:
         uesio/studio.minor:
         uesio/studio.patch:
         uesio/studio.version:
+        uesio/studio.published:
       conditions:
         - field: uesio/studio.app
           valueSource: LOOKUP
           lookupWire: app
           lookupField: uesio/core.id
+        - field: uesio/studio.published
+          value: true
       order:
         - field: uesio/core.id
           desc: true
