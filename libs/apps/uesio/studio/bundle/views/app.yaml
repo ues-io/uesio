@@ -38,6 +38,7 @@ definition:
         uesio/studio.patch:
         uesio/studio.version:
         uesio/studio.description:
+        uesio/studio.published:
         uesio/core.createdat:
         uesio/core.createdby:
       conditions:
@@ -148,6 +149,7 @@ definition:
                           columns:
                             - field: uesio/studio.version
                             - field: uesio/studio.description
+                            - field: uesio/studio.published
                             - field: uesio/core.createdby
                               user:
                                 subtitle: $Time{uesio/core.createdat}
