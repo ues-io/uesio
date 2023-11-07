@@ -32,6 +32,10 @@ func (s *Site) GetAppBundle() *BundleDef {
 	return s.bundleDef
 }
 
+func (s *Site) GetCollection() CollectionableGroup {
+	return &SiteCollection{}
+}
+
 func (s *Site) GetCollectionName() string {
 	return SITE_COLLECTION_NAME
 }

@@ -7,6 +7,10 @@ type SiteDomain struct {
 	Domain  string `json:"uesio/studio.domain"`
 }
 
+func (s *SiteDomain) GetCollection() CollectionableGroup {
+	return &SiteDomainCollection{}
+}
+
 func (s *SiteDomain) GetCollectionName() string {
 	return SITEDOMAIN_COLLECTION_NAME
 }

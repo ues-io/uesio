@@ -12,6 +12,10 @@ func (bb *BulkBatch) GetCollectionName() string {
 	return BULKBATCH_COLLECTION_NAME
 }
 
+func (bb *BulkBatch) GetCollection() CollectionableGroup {
+	return &BulkBatchCollection{}
+}
+
 func (bb *BulkBatch) SetField(fieldName string, value interface{}) error {
 	return StandardFieldSet(bb, fieldName, value)
 }

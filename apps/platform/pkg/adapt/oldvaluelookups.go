@@ -10,20 +10,26 @@ import (
 )
 
 func GetUniqueKeyPart(change *ChangeItem, fieldName string) (string, error) {
+	fieldMetadata, err := change.Metadata.GetField(fieldName)
+	if err != nil {
+		return "", err
+	}
 	value, err := change.GetField(fieldName)
 	if err != nil {
 		return "", err
 	}
-	stringValue, ok := value.(string)
-	if ok {
-		return stringValue, nil
+	if IsReference(fieldMetadata.Type) {
+		return GetFieldValueString(value, UNIQUE_KEY_FIELD)
 	}
-	intValue, ok := value.(int)
-	if ok {
-		return strconv.Itoa(intValue), nil
+	if fieldMetadata.Type == "NUMBER" {
+		intValue, err := GetValueInt(value)
+		if err != nil {
+			return "", err
+		}
+		return strconv.FormatInt(intValue, 10), nil
 	}
+	return GetValueString(value)
 
-	return GetFieldValueString(value, UNIQUE_KEY_FIELD)
 }
 
 func GetUniqueKeyValue(change *ChangeItem) (string, error) {

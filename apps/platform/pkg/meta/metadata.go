@@ -58,6 +58,7 @@ type CollectionableGroup interface {
 type CollectionableItem interface {
 	Item
 	GetCollectionName() string
+	GetCollection() CollectionableGroup
 	GetItemMeta() *ItemMeta
 	SetItemMeta(*ItemMeta)
 }

@@ -43,6 +43,10 @@ func (t *Translation) GetDBID(workspace string) string {
 	return fmt.Sprintf("%s:%s", workspace, t.Language)
 }
 
+func (t *Translation) GetCollection() CollectionableGroup {
+	return &TranslationCollection{}
+}
+
 func (t *Translation) GetCollectionName() string {
 	return TRANSLATION_COLLECTION_NAME
 }

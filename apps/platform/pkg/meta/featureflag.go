@@ -77,6 +77,10 @@ func NewBaseFeatureFlag(namespace, name string) *FeatureFlag {
 	return &FeatureFlag{BundleableBase: NewBase(namespace, name)}
 }
 
+func (ff *FeatureFlag) GetCollection() CollectionableGroup {
+	return &FeatureFlagCollection{}
+}
+
 func (ff *FeatureFlag) GetCollectionName() string {
 	return FEATUREFLAG_COLLECTION_NAME
 }

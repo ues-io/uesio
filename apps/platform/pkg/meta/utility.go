@@ -27,6 +27,10 @@ type Utility struct {
 
 type UtilityWrapper Utility
 
+func (u *Utility) GetCollection() CollectionableGroup {
+	return &UtilityCollection{}
+}
+
 func (u *Utility) GetCollectionName() string {
 	return UTILITY_COLLECTION_NAME
 }

@@ -51,6 +51,10 @@ func (b *Bundle) GetCollectionName() string {
 	return BUNDLE_COLLECTION_NAME
 }
 
+func (b *Bundle) GetCollection() CollectionableGroup {
+	return &BundleCollection{}
+}
+
 func (b *Bundle) SetField(fieldName string, value interface{}) error {
 	return StandardFieldSet(b, fieldName, value)
 }

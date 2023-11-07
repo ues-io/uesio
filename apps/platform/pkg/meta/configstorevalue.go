@@ -6,6 +6,10 @@ type ConfigStoreValue struct {
 	Value   string `json:"uesio/core.value"`
 }
 
+func (c *ConfigStoreValue) GetCollection() CollectionableGroup {
+	return &ConfigStoreValueCollection{}
+}
+
 func (c *ConfigStoreValue) GetCollectionName() string {
 	return CONFIGSTOREVALUE_COLLECTION_NAME
 }

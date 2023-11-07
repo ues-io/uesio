@@ -297,6 +297,8 @@ func GetValueInt(value interface{}) (int64, error) {
 	switch typedVal := value.(type) {
 	case nil:
 		return 0, nil
+	case int:
+		return int64(typedVal), nil
 	case int64:
 		return typedVal, nil
 	case float64:

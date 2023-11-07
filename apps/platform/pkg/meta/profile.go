@@ -30,6 +30,10 @@ type Profile struct {
 
 type ProfileWrapper Profile
 
+func (p *Profile) GetCollection() CollectionableGroup {
+	return &ProfileCollection{}
+}
+
 func (p *Profile) GetCollectionName() string {
 	return PROFILE_COLLECTION_NAME
 }

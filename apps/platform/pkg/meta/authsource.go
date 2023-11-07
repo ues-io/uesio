@@ -31,6 +31,10 @@ func (as *AuthSource) GetCollectionName() string {
 	return AUTHSOURCE_COLLECTION_NAME
 }
 
+func (as *AuthSource) GetCollection() CollectionableGroup {
+	return &AuthSourceCollection{}
+}
+
 func (as *AuthSource) GetBundleFolderName() string {
 	return AUTHSOURCE_FOLDER_NAME
 }

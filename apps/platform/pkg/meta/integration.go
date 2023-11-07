@@ -34,6 +34,10 @@ type Integration struct {
 
 type IntegrationWrapper Integration
 
+func (i *Integration) GetCollection() CollectionableGroup {
+	return &IntegrationCollection{}
+}
+
 func (i *Integration) GetCollectionName() string {
 	return INTEGRATION_COLLECTION_NAME
 }

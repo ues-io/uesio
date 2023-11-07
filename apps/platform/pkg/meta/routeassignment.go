@@ -44,6 +44,10 @@ func (r *RouteAssignment) GetPath() string {
 	return path.Join(nsUser, appName, collectionName, r.Type) + ".yaml"
 }
 
+func (r *RouteAssignment) GetCollection() CollectionableGroup {
+	return &RouteAssignmentCollection{}
+}
+
 func (r *RouteAssignment) GetCollectionName() string {
 	return ROUTE_ASSIGNMENT_COLLECTION_NAME
 }

@@ -43,7 +43,7 @@ func (op *LoadOp) GetKey() string {
 }
 
 func (op *LoadOp) UnmarshalJSON(data []byte) error {
-	op.Collection = &Collection{}
+	op.Collection = &CollectionWithMetadata{}
 	return json.Unmarshal(data, (*LoadOpWrapper)(op))
 }
 
@@ -70,7 +70,7 @@ func (op *LoadOp) UnmarshalYAML(node *yaml.Node) error {
 	}
 
 	op.RequireWriteAccess = meta.GetNodeValueAsBool(node, "requirewriteaccess", false)
-	op.Collection = &Collection{}
+	op.Collection = &CollectionWithMetadata{}
 	op.CollectionName = meta.GetNodeValueAsString(node, "collection")
 	op.BatchSize = meta.GetNodeValueAsInt(node, "batchsize", 0)
 	op.Fields = fields
