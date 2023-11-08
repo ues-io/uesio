@@ -50,11 +50,6 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.
 		&workspace,
 		&datasource.PlatformLoadOptions{
 			Connection: connection,
-			Fields: []adapt.LoadRequestField{
-				{
-					ID: adapt.ID_FIELD,
-				},
-			},
 			Conditions: []adapt.LoadRequestCondition{
 				{
 					Field: adapt.UNIQUE_KEY_FIELD,
