@@ -9,6 +9,7 @@ import (
 	"github.com/thecloudmasters/cli/pkg/call"
 	"github.com/thecloudmasters/cli/pkg/config"
 	"github.com/thecloudmasters/cli/pkg/config/ws"
+	"github.com/thecloudmasters/cli/pkg/context"
 	"github.com/thecloudmasters/cli/pkg/zip"
 )
 
@@ -49,7 +50,7 @@ func Deploy(sourceDir string) error {
 
 	url := fmt.Sprintf("workspace/%s/%s/metadata/deploy", app, workspace)
 
-	resp, err := call.Request("POST", url, payload, sessid)
+	resp, err := call.Request("POST", url, payload, sessid, context.NewWorkspaceContext(app, workspace))
 	if err != nil {
 		return err
 	}

@@ -33,6 +33,11 @@ cd - >> /dev/null
 # Run specs
 hurl -k --variable host=studio.uesio-dev.com --variable port=3000 --test libs/apps/uesio/tests/hurl_specs_single_run/truncate_tenant_data_cli.hurl
 
+# Delete the workspaces
+cd libs/apps/uesio/tests
+uesio workspace delete -n truncatetests
+uesio workspace delete -n dev
+cd - >> /dev/null
 
 # Kill all Docker containers
 docker compose -f docker-compose-tests.yaml down
