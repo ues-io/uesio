@@ -150,14 +150,11 @@ const add = (
 	}
 }
 
-const move = (context: ctx.Context, fromPath: FullPath, toPath: FullPath) => {
-	if (toPath.itemType !== fromPath.itemType) return
-	if (toPath.itemName !== fromPath.itemName) return
-
-	const toCurrent = getMetadataValue(context, toPath)
-	if (!toCurrent) return
-
-	const yamlDoc = parse(toCurrent)
+const yamlMove = (
+	yamlDoc: yaml.Document,
+	fromPath: FullPath,
+	toPath: FullPath
+) => {
 	// First get the content of the from item
 	const fromNode = getNodeAtPath(fromPath.localPath, yamlDoc.contents)
 	const fromParentPath = component.path.getParentPath(fromPath.localPath)
@@ -200,9 +197,16 @@ const move = (context: ctx.Context, fromPath: FullPath, toPath: FullPath) => {
 		fromParent.items[fromIndex] = fromParent.items[toIndex]
 		fromParent.items[toIndex] = temp
 	}
+}
 
+const move = (context: ctx.Context, fromPath: FullPath, toPath: FullPath) => {
+	if (toPath.itemType !== fromPath.itemType) return
+	if (toPath.itemName !== fromPath.itemName) return
+	const toCurrent = getMetadataValue(context, toPath)
+	if (!toCurrent) return
+	const yamlDoc = parse(toCurrent)
+	yamlMove(yamlDoc, fromPath, toPath)
 	setMetadataValue(context, toPath, yamlDoc)
-
 	setSelectedPath(context, toPath)
 }
 
@@ -414,6 +418,7 @@ export {
 	add,
 	remove,
 	move,
+	yamlMove,
 	get,
 	clone,
 	cloneKey,
