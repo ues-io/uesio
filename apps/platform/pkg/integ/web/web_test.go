@@ -9,12 +9,20 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 func Test_RunAction(t *testing.T) {
+
+	webIntegrationType := &meta.IntegrationType{
+		BundleableBase: meta.BundleableBase{
+			Namespace: "uesio/core",
+			Name:      "web",
+		},
+	}
 
 	creds := &adapt.Credentials{}
 	(*creds)["apikey"] = "1234"
@@ -67,7 +75,7 @@ func Test_RunAction(t *testing.T) {
 
 	type args struct {
 		method              string
-		requestOptions      interface{}
+		requestOptions      map[string]interface{}
 		response            string
 		responseContentType string
 		requestAsserts      func(t *testing.T, request *http.Request)
@@ -90,8 +98,8 @@ func Test_RunAction(t *testing.T) {
 			},
 			args{
 				method: "get",
-				requestOptions: &RequestOptions{
-					URL: "/test",
+				requestOptions: map[string]interface{}{
+					"url": "/test",
 				},
 				response:            `{"foo":"bar"}`,
 				responseContentType: "application/json",
@@ -118,8 +126,8 @@ func Test_RunAction(t *testing.T) {
 			},
 			args{
 				method: "get",
-				requestOptions: &RequestOptions{
-					URL: "/array",
+				requestOptions: map[string]interface{}{
+					"url": "/array",
 				},
 				response:            `[{"foo":"bar"},{"hello":"world"}]`,
 				responseContentType: "text/json",
@@ -147,9 +155,9 @@ func Test_RunAction(t *testing.T) {
 			},
 			args{
 				method: "get",
-				requestOptions: &RequestOptions{
-					URL:   "/test/cached",
-					Cache: true,
+				requestOptions: map[string]interface{}{
+					"url":   "/test/cached",
+					"cache": true,
 				},
 				response:            `{"foo":"bar"}`,
 				responseContentType: "application/json",
@@ -180,8 +188,8 @@ func Test_RunAction(t *testing.T) {
 			},
 			args{
 				method: "get",
-				requestOptions: &RequestOptions{
-					URL: "/xml",
+				requestOptions: map[string]interface{}{
+					"url": "/xml",
 				},
 				response:            `<books/>`,
 				responseContentType: "text/xml",
@@ -205,9 +213,9 @@ func Test_RunAction(t *testing.T) {
 			},
 			args{
 				method: "get",
-				requestOptions: &RequestOptions{
-					URL:          "/address",
-					ResponseData: &Address{},
+				requestOptions: map[string]interface{}{
+					"url":          "/address",
+					"responseData": &Address{},
 				},
 				response:            `{"street1":"123 Main St","street2":"Apt 1","zip":"37411","state":"TN","city":"Chattanooga","country":"US"}`,
 				responseContentType: "text/json",
@@ -225,8 +233,8 @@ func Test_RunAction(t *testing.T) {
 						assert.Equal(t, "37411", address.ZipPostalCode)
 						assert.Equal(t, "US", address.Country)
 						// Next, make sure that this is the same struct that we provided in RequestOptions
-						if requestOpts, ok2 := responseArgs.requestOptions.(*RequestOptions); ok2 {
-							assert.Equal(t, address, requestOpts.ResponseData)
+						if requestOpts, ok2 := responseArgs.requestOptions.(map[string]interface{}); ok2 {
+							assert.Equal(t, address, requestOpts["responseData"].(*Address))
 						} else {
 							assert.Fail(t, "response body struct was not the same as the one we provided")
 						}
@@ -245,9 +253,9 @@ func Test_RunAction(t *testing.T) {
 			},
 			args{
 				method: "get",
-				requestOptions: &RequestOptions{
-					URL:          "/not-an-address-struct",
-					ResponseData: &Address{},
+				requestOptions: map[string]interface{}{
+					"url":          "/not-an-address-struct",
+					"responseData": &Address{},
 				},
 				response:            `["do I LOOK like an Address struct to YOU? DO I??????"]`,
 				responseContentType: "text/json",
@@ -279,9 +287,9 @@ func Test_RunAction(t *testing.T) {
 			},
 			args{
 				method: "post",
-				requestOptions: &RequestOptions{
-					URL:  "/user/create",
-					Body: `{"first":"Luigi","last":"Vampa"}`,
+				requestOptions: map[string]interface{}{
+					"url":  "/user/create",
+					"body": `{"first":"Luigi","last":"Vampa"}`,
 				},
 				response:            `ok`,
 				responseContentType: "text/plain",
@@ -311,9 +319,9 @@ func Test_RunAction(t *testing.T) {
 			},
 			args{
 				method: "put",
-				requestOptions: &RequestOptions{
-					URL:  "/user/111",
-					Body: `{"first":"Mario","last":"Vampa"}`,
+				requestOptions: map[string]interface{}{
+					"url":  "/user/111",
+					"body": `{"first":"Mario","last":"Vampa"}`,
 				},
 				response:            `ok`,
 				responseContentType: "text/plain",
@@ -342,9 +350,9 @@ func Test_RunAction(t *testing.T) {
 			},
 			args{
 				method: "patch",
-				requestOptions: &RequestOptions{
-					URL: "/user/111",
-					Body: map[string]interface{}{
+				requestOptions: map[string]interface{}{
+					"url": "/user/111",
+					"body": map[string]interface{}{
 						"first": "Mario",
 					},
 				},
@@ -375,9 +383,9 @@ func Test_RunAction(t *testing.T) {
 			},
 			args{
 				method: "delete",
-				requestOptions: &RequestOptions{
-					URL:  "/user/111",
-					Body: `{"__delete__":true}`,
+				requestOptions: map[string]interface{}{
+					"url":  "/user/111",
+					"body": `{"__delete__":true}`,
 				},
 				response:            `deleted`,
 				responseContentType: "text/plain",
@@ -493,37 +501,21 @@ func Test_RunAction(t *testing.T) {
 			},
 			args{
 				method: "foooo",
-				requestOptions: &RequestOptions{
-					URL: "/users",
+				requestOptions: map[string]interface{}{
+					"url": "/users",
 				},
 				wantErr: "invalid action name for web integration",
-			},
-		},
-		{
-			"unexpected options struct passed",
-			&meta.Integration{
-				BaseURL: server.URL,
-				Type:    "uesio/core.web",
-				Headers: map[string]string{},
-			},
-			args{
-				method: "post",
-				requestOptions: RequestOptions{
-					URL: "/users",
-				},
-				wantErr: "invalid options provided to web integration",
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			wi := &WebIntegration{}
 			serveResponseBody = tt.args.response
 			serveContentType = tt.args.responseContentType
 			requestAsserts = tt.args.requestAsserts
 			testInstance = t
 			countRequests = map[string]uint32{}
-			conn, _ := wi.GetIntegrationConnection(tt.integration, session, creds)
+			ic := adapt.NewIntegrationConnection(tt.integration, webIntegrationType, session, creds)
 			reqsToMake := 1
 			if tt.args.makeRequestNTimes > 1 {
 				reqsToMake = tt.args.makeRequestNTimes
@@ -532,7 +524,7 @@ func Test_RunAction(t *testing.T) {
 			var err error
 			for {
 				reqsToMake = reqsToMake - 1
-				actualResponse, err = conn.RunAction(tt.args.method, tt.args.requestOptions)
+				actualResponse, err = RunAction(nil, ic, tt.args.method, tt.args.requestOptions)
 				if reqsToMake == 0 {
 					break
 				}

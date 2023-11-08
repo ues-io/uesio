@@ -224,13 +224,16 @@ func LoadCollectionMetadata(key string, metadataCache *adapt.MetadataCache, sess
 
 	collectionMetadata = GetCollectionMetadata(collection)
 
-	var recordchallengetokens meta.RecordChallengeTokenCollection
-	err = bundle.LoadAllFromAny(&recordchallengetokens, meta.BundleConditions{"uesio/studio.collection": collectionMetadata.GetKey()}, session, connection)
+	// To fetch record challenge tokens, enter an admin context, since we don't have separate permissions for these things.
+	adminSession := GetSiteAdminSession(session)
+
+	var recordChallengeTokens meta.RecordChallengeTokenCollection
+	err = bundle.LoadAllFromAny(&recordChallengeTokens, meta.BundleConditions{"uesio/studio.collection": collectionMetadata.GetKey()}, adminSession, connection)
 	if err != nil {
 		return nil, err
 	}
-	if recordchallengetokens.Len() > 0 {
-		for _, rct := range recordchallengetokens {
+	if recordChallengeTokens.Len() > 0 {
+		for _, rct := range recordChallengeTokens {
 			collectionMetadata.RecordChallengeTokens = append(collectionMetadata.RecordChallengeTokens, rct)
 		}
 	}

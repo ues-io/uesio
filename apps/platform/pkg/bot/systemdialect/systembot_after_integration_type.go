@@ -10,45 +10,45 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func parseUniquekeyToIntegrationKey(uniquekey string) (string, error) {
+func parseUniquekeyToIntegrationTypeKey(uniquekey string) (string, error) {
 	//luigi/app:dev:salesforce to luigi/app.salesforce
 	keyArray := strings.Split(uniquekey, ":")
 	if len(keyArray) != 3 {
-		return "", errors.New("invalid integration key: " + uniquekey)
+		return "", errors.New("invalid integration type key: " + uniquekey)
 	}
 
 	return keyArray[0] + "." + keyArray[2], nil
 }
 
-// Delete all Integration Actions when an Integration is deleted
-func runIntegrationAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+// Delete all Integration Actions when an Integration Type is deleted
+func runIntegrationTypeAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 
-	var integrationKeys []string
+	var integrationTypeKeys []string
 	for i := range request.Deletes {
-		integrationKey, err := request.Deletes[i].GetOldFieldAsString("uesio/core.uniquekey")
+		integrationTypeKey, err := request.Deletes[i].GetOldFieldAsString("uesio/core.uniquekey")
 		if err != nil {
 			return err
 		}
-		integrationKeys = append(integrationKeys, integrationKey)
+		integrationTypeKeys = append(integrationTypeKeys, integrationTypeKey)
 	}
 
-	if len(integrationKeys) == 0 {
+	if len(integrationTypeKeys) == 0 {
 		return nil
 	}
 
 	// unique keys will be something like "uesio/tests:dev:salesforce",
-	// but the "uesio/studio.integration" field for fields will be something like "uesio/tests.salesforce",
+	// but the "uesio/studio.integrationtype" field for Integration Actions will be something like "uesio/tests.salesforce",
 	// so we need to parse this
-	var targetIntegrations []string
-	for _, integrationUniqueKey := range integrationKeys {
-		targetCollection, err := parseUniquekeyToIntegrationKey(integrationUniqueKey)
+	var targetIntegrationTypes []string
+	for _, integrationUniqueKey := range integrationTypeKeys {
+		targetCollection, err := parseUniquekeyToIntegrationTypeKey(integrationUniqueKey)
 		if err != nil {
 			return err
 		}
-		targetIntegrations = append(targetIntegrations, targetCollection)
+		targetIntegrationTypes = append(targetIntegrationTypes, targetCollection)
 	}
 
-	if len(targetIntegrations) == 0 {
+	if len(targetIntegrationTypes) == 0 {
 		return nil
 	}
 
@@ -61,8 +61,8 @@ func runIntegrationAfterSaveBot(request *adapt.SaveOp, connection adapt.Connecti
 		},
 		Conditions: []adapt.LoadRequestCondition{
 			{
-				Field:    "uesio/studio.integration",
-				Values:   targetIntegrations,
+				Field:    "uesio/studio.integrationtype",
+				Values:   targetIntegrationTypes,
 				Operator: "IN",
 			},
 		},
@@ -78,7 +78,7 @@ func runIntegrationAfterSaveBot(request *adapt.SaveOp, connection adapt.Connecti
 	if len(iac) > 0 {
 		requests = append(requests, datasource.SaveRequest{
 			Collection: "uesio/studio.integrationaction",
-			Wire:       "RunIntegrationAfterSaveBot",
+			Wire:       "RunIntegrationTypeAfterSaveBot",
 			Deletes:    &iac,
 			Params:     request.Params,
 		})

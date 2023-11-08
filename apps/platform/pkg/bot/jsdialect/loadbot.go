@@ -9,16 +9,15 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func NewLoadBotAPI(bot *meta.Bot, session *sess.Session, connection adapt.Connection, loadOp *adapt.LoadOp, integrationConnection adapt.IntegrationConnection) *LoadBotAPI {
+func NewLoadBotAPI(bot *meta.Bot, connection adapt.Connection, loadOp *adapt.LoadOp, integrationConnection *adapt.IntegrationConnection) *LoadBotAPI {
 	return &LoadBotAPI{
 		// Private
-		session:               session,
 		loadOp:                loadOp,
 		connection:            connection,
 		integrationConnection: integrationConnection,
 		// Public
 		LogApi:              NewBotLogAPI(bot),
-		Http:                NewBotHttpAPI(bot, session, integrationConnection),
+		Http:                NewBotHttpAPI(bot, integrationConnection),
 		LoadRequestMetadata: NewLoadRequestMetadata(loadOp),
 	}
 }
@@ -70,14 +69,17 @@ type LoadRequestMetadata struct {
 type LoadBotAPI struct {
 	// Private
 	connection            adapt.Connection
-	integrationConnection adapt.IntegrationConnection
+	integrationConnection *adapt.IntegrationConnection
 	loadErrors            []string
 	loadOp                *adapt.LoadOp
-	session               *sess.Session
 	// Public
 	Http                *BotHttpAPI          `bot:"http"`
 	LoadRequestMetadata *LoadRequestMetadata `bot:"loadRequest"`
 	LogApi              *BotLogAPI           `bot:"log"`
+}
+
+func (lb *LoadBotAPI) getSession() *sess.Session {
+	return lb.integrationConnection.GetSession()
 }
 
 func (lb *LoadBotAPI) GetCredentials() map[string]interface{} {
@@ -95,15 +97,15 @@ func (lb *LoadBotAPI) GetIntegration() *IntegrationMetadata {
 }
 
 func (lb *LoadBotAPI) GetConfigValue(configValueKey string) (string, error) {
-	return configstore.GetValueFromKey(configValueKey, lb.session)
+	return configstore.GetValueFromKey(configValueKey, lb.getSession())
 }
 
 func (lb *LoadBotAPI) GetSession() *SessionAPI {
-	return NewSessionAPI(lb.session)
+	return NewSessionAPI(lb.getSession())
 }
 
 func (lb *LoadBotAPI) GetUser() *UserAPI {
-	return NewUserAPI(lb.session.GetContextUser())
+	return NewUserAPI(lb.getSession().GetContextUser())
 }
 
 func (lb *LoadBotAPI) AddError(error string) {

@@ -2,6 +2,6 @@ name: integrationactions
 type: REFERENCEGROUP
 label: Integration Actions
 referenceGroup:
-  collection: integration
+  collection: integrationtype
   field: workspace
   onDelete: CASCADE

@@ -1,7 +1,7 @@
 name: integrationaction
 uniqueKey:
   - uesio/studio.workspace
-  - uesio/studio.integration
+  - uesio/studio.integrationtype
   - uesio/studio.name
 nameField: uesio/studio.name
 access: protected

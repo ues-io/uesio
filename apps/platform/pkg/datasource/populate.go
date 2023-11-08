@@ -89,7 +89,7 @@ func Populate(op *adapt.SaveOp, connection adapt.Connection, session *sess.Sessi
 		return err
 	}
 
-	populations := []ChangeProcessor{}
+	var populations []ChangeProcessor
 	for _, field := range op.Metadata.Fields {
 		if field.AutoPopulate == "UPDATE" || field.AutoPopulate == "CREATE" {
 			if field.Type == "TIMESTAMP" {

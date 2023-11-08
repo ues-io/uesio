@@ -191,6 +191,7 @@ export type METADATA = {
 	FILESOURCE: "filesources"
 	INTEGRATION: "integrations"
 	INTEGRATIONACTION: "integrationactions"
+	INTEGRATIONTYPE: "integrationtypes"
 	LABEL: "labels"
 	PERMISSIONSET: "permissionsets"
 	PROFILE: "profiles"
