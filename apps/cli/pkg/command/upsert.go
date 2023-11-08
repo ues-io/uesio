@@ -23,15 +23,15 @@ type UpsertOptions struct {
 	Collection string
 }
 
-func getUrlPrefix(tenanttype, app, tenant string) string {
-	return fmt.Sprintf("%s/%s/%s", tenanttype, app, tenant)
+func getUrlPrefix(tenantType, app, tenant string) string {
+	return fmt.Sprintf("%s/%s/%s", tenantType, app, tenant)
 }
 
-func createJob(prefix, sessid string, spec *meta.JobSpecRequest) (*bulk.JobResponse, error) {
+func createJob(prefix, sessionId string, spec *meta.JobSpecRequest) (*bulk.JobResponse, error) {
 	url := fmt.Sprintf("%s/bulk/job", prefix)
 	jobResponse := &bulk.JobResponse{}
 
-	err := call.PostJSON(url, sessid, spec, jobResponse)
+	err := call.PostJSON(url, sessionId, spec, jobResponse, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +50,7 @@ func getImportPayload(jobType, dataFile string) (io.Reader, error) {
 	return nil, errors.New("Invalid Job Type: " + jobType)
 }
 
-func runBatch(prefix, sessid, dataFile, jobID string, spec *meta.JobSpecRequest) (*bulk.BatchResponse, error) {
+func runBatch(prefix, sessionId, dataFile, jobID string, spec *meta.JobSpecRequest) (*bulk.BatchResponse, error) {
 	payload, err := getImportPayload(spec.JobType, dataFile)
 	if err != nil {
 		return nil, err
@@ -60,7 +60,7 @@ func runBatch(prefix, sessid, dataFile, jobID string, spec *meta.JobSpecRequest)
 
 	url := fmt.Sprintf("%s/bulk/job/%s/batch", prefix, jobID)
 
-	resp, err := call.Request("POST", url, payload, sessid)
+	resp, err := call.Request("POST", url, payload, sessionId, nil)
 	if err != nil {
 		return nil, err
 	}

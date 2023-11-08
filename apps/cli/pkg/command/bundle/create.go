@@ -8,6 +8,7 @@ import (
 	"github.com/thecloudmasters/cli/pkg/call"
 	"github.com/thecloudmasters/cli/pkg/config"
 	"github.com/thecloudmasters/cli/pkg/config/ws"
+	"github.com/thecloudmasters/cli/pkg/context"
 )
 
 type CallBotResponse struct {
@@ -18,8 +19,7 @@ type CallBotResponse struct {
 
 func CreateBundle(releaseType, majorVersion, minorVersion, patchVersion, bundleDescription string) error {
 
-	_, err := auth.Login()
-	if err != nil {
+	if _, err := auth.Login(); err != nil {
 		return err
 	}
 
@@ -28,7 +28,7 @@ func CreateBundle(releaseType, majorVersion, minorVersion, patchVersion, bundleD
 		return err
 	}
 
-	sessid, err := config.GetSessionID()
+	sessionId, err := config.GetSessionID()
 	if err != nil {
 		return err
 	}
@@ -41,16 +41,13 @@ func CreateBundle(releaseType, majorVersion, minorVersion, patchVersion, bundleD
 	createBundleURL := fmt.Sprintf("workspace/%s/%s/bots/call/uesio/studio/createbundle", appName, workspaceName)
 
 	botInputs := map[string]interface{}{}
-	err = addVersionNumberToInputsIfInt(majorVersion, "major", botInputs)
-	if err != nil {
+	if err = addVersionNumberToInputsIfInt(majorVersion, "major", botInputs); err != nil {
 		return err
 	}
-	err = addVersionNumberToInputsIfInt(minorVersion, "minor", botInputs)
-	if err != nil {
+	if err = addVersionNumberToInputsIfInt(minorVersion, "minor", botInputs); err != nil {
 		return err
 	}
-	err = addVersionNumberToInputsIfInt(patchVersion, "patch", botInputs)
-	if err != nil {
+	if err = addVersionNumberToInputsIfInt(patchVersion, "patch", botInputs); err != nil {
 		return err
 	}
 	if bundleDescription != "" {
@@ -62,7 +59,7 @@ func CreateBundle(releaseType, majorVersion, minorVersion, patchVersion, bundleD
 
 	botResponse := &CallBotResponse{}
 
-	err = call.PostJSON(createBundleURL, sessid, botInputs, botResponse)
+	err = call.PostJSON(createBundleURL, sessionId, botInputs, botResponse, context.NewWorkspaceContext(appName, workspaceName))
 	if err != nil {
 		return err
 	}

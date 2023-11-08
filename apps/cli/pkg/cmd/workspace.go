@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+
 	"github.com/thecloudmasters/cli/pkg/command/workspace"
 )
 
@@ -50,10 +51,18 @@ func init() {
 		Run:   workspaceTruncate,
 	}
 
-	workspaceCommand.AddCommand(workspaceCreateCmd, workspaceDeployCmd, workspaceRetrieveCmd, workspaceTruncateCmd)
+	workspaceDeleteCmd := &cobra.Command{
+		Use:   "delete",
+		Short: "Deletes a workspace",
+		Long:  "Deletes a workspace, and all data in all collections in the specified workspace",
+		Run:   workspaceDelete,
+	}
+	workspaceDeleteCmd.Flags().StringVarP(&name, "name", "n", "", "Name of workspace to delete")
+
+	workspaceCommand.AddCommand(workspaceCreateCmd, workspaceDeployCmd, workspaceRetrieveCmd, workspaceTruncateCmd, workspaceDeleteCmd)
 
 	//
-	// DEPRECATED aliases for retrieve and deploy
+	// convenience aliases for retrieve and deploy
 	//
 	oldDeployCommand := &cobra.Command{
 		Use:   "deploy",
@@ -101,6 +110,15 @@ func workspaceCreate(cmd *cobra.Command, args []string) {
 
 func workspaceTruncate(cmd *cobra.Command, args []string) {
 	err := workspace.Truncate()
+	if err != nil {
+		fmt.Println("Error: " + err.Error())
+		os.Exit(1)
+		return
+	}
+}
+
+func workspaceDelete(cmd *cobra.Command, args []string) {
+	err := workspace.Delete(name)
 	if err != nil {
 		fmt.Println("Error: " + err.Error())
 		os.Exit(1)

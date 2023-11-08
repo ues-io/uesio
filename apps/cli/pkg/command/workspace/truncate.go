@@ -8,6 +8,7 @@ import (
 	"github.com/thecloudmasters/cli/pkg/call"
 	"github.com/thecloudmasters/cli/pkg/config"
 	"github.com/thecloudmasters/cli/pkg/config/ws"
+	"github.com/thecloudmasters/cli/pkg/context"
 )
 
 func Truncate() error {
@@ -31,14 +32,14 @@ func Truncate() error {
 		return errors.New("No active workspace is set. Use \"uesio work\" to set one.")
 	}
 
-	sessid, err := config.GetSessionID()
+	sessionId, err := config.GetSessionID()
 	if err != nil {
 		return err
 	}
 
 	url := fmt.Sprintf("workspace/%s/%s/data/truncate", app, workspace)
 
-	resp, err := call.Request("POST", url, nil, sessid)
+	resp, err := call.Request("POST", url, nil, sessionId, context.NewWorkspaceContext(app, workspace))
 	if err != nil {
 		return err
 	}
