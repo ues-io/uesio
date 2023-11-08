@@ -1,0 +1,4 @@
+name: manage_integration_types
+label: Manage Integration Types
+type: CHECKBOX
+defaultValue: false

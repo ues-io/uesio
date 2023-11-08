@@ -207,11 +207,11 @@ func (b *TSDialect) RouteBot(bot *meta.Bot, route *meta.Route, session *sess.Ses
 }
 
 func (b *TSDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
-	integrationConnection, err := op.GetIntegration()
+	integrationConnection, err := op.GetIntegrationConnection()
 	if err != nil {
 		return err
 	}
-	botAPI := jsdialect.NewLoadBotAPI(bot, session, connection, op, integrationConnection)
+	botAPI := jsdialect.NewLoadBotAPI(bot, connection, op, integrationConnection)
 	if err := b.hydrateBot(bot, session); err != nil {
 		return err
 	}
@@ -223,16 +223,16 @@ func (b *TSDialect) SaveBot(bot *meta.Bot, op *adapt.SaveOp, connection adapt.Co
 	if err != nil {
 		return err
 	}
-	botAPI := jsdialect.NewSaveBotAPI(bot, session, connection, op, integrationConnection)
+	botAPI := jsdialect.NewSaveBotAPI(bot, connection, op, integrationConnection)
 	if err := b.hydrateBot(bot, session); err != nil {
 		return err
 	}
 	return RunBot(bot, botAPI, nil)
 }
 
-func (b *TSDialect) RunIntegrationActionBot(bot *meta.Bot, action *meta.IntegrationAction, integration adapt.IntegrationConnection, params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
-	botAPI := jsdialect.NewRunIntegrationActionBotAPI(bot, action, integration, params, session, connection)
-	err := b.hydrateBot(bot, session)
+func (b *TSDialect) RunIntegrationActionBot(bot *meta.Bot, ic *adapt.IntegrationConnection, actionName string, params map[string]interface{}) (interface{}, error) {
+	botAPI := jsdialect.NewRunIntegrationActionBotAPI(bot, ic, actionName, params)
+	err := b.hydrateBot(bot, ic.GetSession())
 	if err != nil {
 		return nil, err
 	}

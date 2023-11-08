@@ -1,6 +1,7 @@
 name: openai
 public: true
 type: openai
-credentials: uesio/core.openai
+credentials: openai
+authentication: API_KEY
 headers: {}
 baseUrl: ""

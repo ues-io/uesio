@@ -147,6 +147,27 @@ definition:
                     uesio.variant: uesio/io.icon
                     text: electrical_services
           - uesio/io.tile:
+              uesio.display:
+                - type: featureFlag
+                  name: manage_integration_types
+              uesio.variant: uesio/io.nav
+              uesio.id: integrationtypes
+              uesio.classes:
+                selected:
+                  - type: paramValue
+                    param: selected
+                    value: integrationtypes
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/integrationtypes
+              content:
+                - uesio/io.text:
+                    text: Integration Types
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: code
+          - uesio/io.tile:
               uesio.variant: uesio/io.nav
               uesio.id: selectlists
               uesio.classes:

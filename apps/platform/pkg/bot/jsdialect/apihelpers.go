@@ -46,11 +46,16 @@ func botLoad(request BotLoadOp, session *sess.Session, connection adapt.Connecti
 
 func runIntegrationAction(integrationID string, action string, options interface{}, session *sess.Session) (interface{}, error) {
 
-	integration, err := datasource.GetIntegration(integrationID, session)
+	platformConnection, err := datasource.GetPlatformConnection(&adapt.MetadataCache{}, session, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	return integration.RunAction(action, options)
+	ic, err := datasource.GetIntegrationConnection(integrationID, session, platformConnection)
+	if err != nil {
+		return nil, err
+	}
+
+	return datasource.RunIntegrationAction(ic, action, options, platformConnection)
 
 }

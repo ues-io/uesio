@@ -54,15 +54,15 @@ func ProjectLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess
 
 	data := &ProjectResponse{}
 
-	webIntegration, err := datasource.GetIntegration("tcm/timetracker.clickup", session)
+	webIntegration, err := datasource.GetIntegrationConnection("tcm/timetracker.clickup", session, connection)
 	if err != nil {
 		return err
 	}
 
-	_, err = webIntegration.RunAction("get", &web.RequestOptions{
-		URL:          url,
-		Cache:        true,
-		ResponseData: data,
+	_, err = web.RunAction(nil, webIntegration, "get", map[string]interface{}{
+		"url":          url,
+		"cache":        true,
+		"responseData": data,
 	})
 	if err != nil {
 		return err

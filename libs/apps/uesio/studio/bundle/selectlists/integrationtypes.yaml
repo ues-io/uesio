@@ -1,9 +1,0 @@
-# TODO Eliminate this and use a REFERENCE instead to Integration Type collection
-name: integrationtypes
-options:
-  - label: "Send Grid (Send email)"
-    value: "sendgrid"
-  - label: "Web (REST APIs)"
-    value: "web"
-  - label: "Custom"
-    value: "uesio/core.custom"

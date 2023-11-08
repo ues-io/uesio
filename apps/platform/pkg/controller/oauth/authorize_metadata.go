@@ -23,7 +23,7 @@ func GetRedirectMetadata(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	integrationName := fmt.Sprintf("%s.%s", vars["namespace"], vars["name"])
 	session := middleware.GetSession(r)
-	integrationConnection, err := datasource.GetIntegration(integrationName, session)
+	integrationConnection, err := datasource.GetIntegrationConnection(integrationName, session, nil)
 	if err != nil {
 		http.Error(w, "Invalid integration: "+err.Error(), http.StatusBadRequest)
 		return

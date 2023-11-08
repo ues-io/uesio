@@ -23,59 +23,65 @@ func NewSaveRequestMetadata(op *adapt.SaveOp) *SaveRequestMetadata {
 	}
 }
 
-func NewSaveBotAPI(bot *meta.Bot, session *sess.Session, connection adapt.Connection, saveOp *adapt.SaveOp, integrationConnection adapt.IntegrationConnection) *SaveBotAPI {
+func NewSaveBotAPI(bot *meta.Bot, connection adapt.Connection, saveOp *adapt.SaveOp, integrationConnection *adapt.IntegrationConnection) *SaveBotAPI {
 	return &SaveBotAPI{
-		session:    session,
-		saveOp:     saveOp,
-		connection: connection,
+		saveOp:                saveOp,
+		connection:            connection,
+		integrationConnection: integrationConnection,
 
-		Http:                  NewBotHttpAPI(bot, session, integrationConnection),
-		IntegrationConnection: integrationConnection,
-		Deletes:               &DeletesAPI{saveOp},
-		Inserts:               &InsertsAPI{saveOp},
-		Updates:               &UpdatesAPI{saveOp},
-		LogApi:                NewBotLogAPI(bot),
-		SaveRequestMetadata:   NewSaveRequestMetadata(saveOp),
+		Http:                NewBotHttpAPI(bot, integrationConnection),
+		Deletes:             &DeletesAPI{saveOp},
+		Inserts:             &InsertsAPI{saveOp},
+		Updates:             &UpdatesAPI{saveOp},
+		LogApi:              NewBotLogAPI(bot),
+		SaveRequestMetadata: NewSaveRequestMetadata(saveOp),
 	}
 }
 
 type SaveBotAPI struct {
-	session               *sess.Session
+	// PRIVATE
 	saveOp                *adapt.SaveOp
 	connection            adapt.Connection
-	SaveRequestMetadata   *SaveRequestMetadata `bot:"saveRequest"`
-	Inserts               *InsertsAPI          `bot:"inserts"`
-	Updates               *UpdatesAPI          `bot:"updates"`
-	Deletes               *DeletesAPI          `bot:"deletes"`
-	LogApi                *BotLogAPI           `bot:"log"`
-	Http                  *BotHttpAPI          `bot:"http"`
-	IntegrationConnection adapt.IntegrationConnection
+	integrationConnection *adapt.IntegrationConnection
+
+	// PUBLIC
+	SaveRequestMetadata *SaveRequestMetadata `bot:"saveRequest"`
+	Inserts             *InsertsAPI          `bot:"inserts"`
+	Updates             *UpdatesAPI          `bot:"updates"`
+	Deletes             *DeletesAPI          `bot:"deletes"`
+	LogApi              *BotLogAPI           `bot:"log"`
+	Http                *BotHttpAPI          `bot:"http"`
+}
+
+// PRIVATE access to the session
+func (sba *SaveBotAPI) getSession() *sess.Session {
+	return sba.integrationConnection.GetSession()
 }
 
 func (sba *SaveBotAPI) GetCredentials() map[string]interface{} {
-	if sba.IntegrationConnection == nil || sba.IntegrationConnection.GetCredentials() == nil {
+	if sba.integrationConnection == nil || sba.integrationConnection.GetCredentials() == nil {
 		return map[string]interface{}{}
 	}
-	return sba.IntegrationConnection.GetCredentials().GetInterfaceMap()
+	return sba.integrationConnection.GetCredentials().GetInterfaceMap()
 }
 
 func (sba *SaveBotAPI) GetIntegration() *IntegrationMetadata {
-	if sba.IntegrationConnection == nil || sba.IntegrationConnection.GetIntegration() == nil {
+	if sba.integrationConnection == nil || sba.integrationConnection.GetIntegration() == nil {
 		return nil
 	}
-	return (*IntegrationMetadata)(sba.IntegrationConnection.GetIntegration())
+	return (*IntegrationMetadata)(sba.integrationConnection.GetIntegration())
 }
 
 func (sba *SaveBotAPI) GetConfigValue(configValueKey string) (string, error) {
-	return configstore.GetValueFromKey(configValueKey, sba.session)
+	return configstore.GetValueFromKey(configValueKey, sba.getSession())
 }
 
 func (sba *SaveBotAPI) GetSession() *SessionAPI {
-	return NewSessionAPI(sba.session)
+	return NewSessionAPI(sba.getSession())
 }
 
 func (sba *SaveBotAPI) GetUser() *UserAPI {
-	return NewUserAPI(sba.session.GetContextUser())
+	return NewUserAPI(sba.getSession().GetContextUser())
 }
 
 func (sba *SaveBotAPI) AddError(message, fieldId, recordId string) {
