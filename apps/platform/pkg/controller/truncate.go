@@ -13,7 +13,8 @@ import (
 
 func Truncate(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
-	err := truncate.TruncateWorkspaceData(session)
+	tenantID := session.GetTenantID()
+	err := truncate.TruncateWorkspaceData(tenantID, session)
 	if err != nil {
 		var responseCode int
 		switch err.(type) {

@@ -164,12 +164,10 @@ definition:
             text: Yes, remove all data
             uesio.variant: uesio/io.primary
             signals:
-              - signal: context/SET
-                type: WORKSPACE
-                name: $Param{workspacename}
-                app: $Param{app}
               - signal: bot/CALL
                 bot: uesio/studio.workspacetruncate
+                params:
+                  workspaceUniqueKey: "$Param{app}:$Param{workspacename}"
                 onerror:
                   signals:
                     - signal: notification/ADD_ERRORS

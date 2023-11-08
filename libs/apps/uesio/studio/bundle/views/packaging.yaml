@@ -184,10 +184,6 @@ definition:
                 text: We are creating your new bundle
                 details: it may take a while, please wait until this notification disappears.
                 severity: info
-              - signal: context/SET
-                type: WORKSPACE
-                name: $Param{workspacename}
-                app: $Param{app}
               - signal: bot/CALL
                 stepId: createBundle
                 onerror:
@@ -196,6 +192,8 @@ definition:
                       id: newversion
                 bot: uesio/studio.createbundle
                 params:
+                  app: $Param{app}
+                  workspacename: $Param{workspacename}
                   type: $Record{newbundle:type}
                   major: $Record{newbundle:major}
                   minor: $Record{newbundle:minor}

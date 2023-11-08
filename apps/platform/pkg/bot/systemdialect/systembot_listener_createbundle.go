@@ -15,28 +15,61 @@ import (
 
 func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
 
-	appID := session.GetContextAppName()
+	appID := ""
+	if appParam, hasAppParam := params["app"]; hasAppParam {
+		if stringValue, isString := appParam.(string); isString {
+			appID = stringValue
+		}
+	}
 
 	if appID == "" {
-		return nil, errors.New("cannot create a bundle without an app in context")
+		return nil, errors.New("cannot create a bundle without an app as parameter")
 	}
 
 	if bundlestore.IsSystemBundle(appID) {
 		return nil, errors.New("cannot create a bundle for a system app")
 	}
 
-	workspace := session.GetWorkspace()
-
-	if workspace == nil {
-		return nil, errors.New("cannot create a new bundle as a non-studio user")
-	}
-
 	if !session.GetSitePermissions().HasNamedPermission("uesio/studio.workspace_admin") {
 		return nil, errors.New("you must be a workspace admin to create bundles")
 	}
 
-	var app meta.App
+	workspacename := ""
+	if workspacenameParam, hasWorkspacenameParam := params["workspacename"]; hasWorkspacenameParam {
+		if stringValue, isString := workspacenameParam.(string); isString {
+			workspacename = stringValue
+		}
+	}
+
+	if workspacename == "" {
+		return nil, errors.New("cannot create a bundle without a workspacename as parameter")
+	}
+
+	var workspace meta.Workspace
 	err := datasource.PlatformLoadOne(
+		&workspace,
+		&datasource.PlatformLoadOptions{
+			Connection: connection,
+			Fields: []adapt.LoadRequestField{
+				{
+					ID: adapt.ID_FIELD,
+				},
+			},
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field: adapt.UNIQUE_KEY_FIELD,
+					Value: appID + ":" + workspacename,
+				},
+			},
+		},
+		session,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	var app meta.App
+	err = datasource.PlatformLoadOne(
 		&app,
 		&datasource.PlatformLoadOptions{
 			Connection: connection,
@@ -52,7 +85,7 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.
 				},
 			},
 		},
-		session.RemoveWorkspaceContext(),
+		session,
 	)
 	if err != nil {
 		return nil, err
@@ -83,7 +116,7 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.
 				},
 			},
 		},
-		session.RemoveWorkspaceContext(),
+		session,
 	)
 	if err != nil {
 		return nil, err
@@ -102,7 +135,7 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.
 		return nil, err
 	}
 
-	err = datasource.PlatformSaveOne(bundle, nil, nil, session.RemoveWorkspaceContext())
+	err = datasource.PlatformSaveOne(bundle, nil, nil, session)
 	if err != nil {
 		return nil, err
 	}
@@ -111,7 +144,7 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.
 		Namespace:  appID,
 		Version:    workspace.Name,
 		Connection: connection,
-		Workspace:  workspace,
+		Workspace:  &workspace,
 	})
 	if err != nil {
 		return nil, err
