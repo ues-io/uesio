@@ -9,15 +9,17 @@ func (c *UsernamePasswordCredentials) IsNil() bool {
 	return c == nil
 }
 
-func (c *UsernamePasswordCredentials) GetEntriesMap() CredentialEntriesMap {
-	return CredentialEntriesMap{
-		"username": &CredentialEntry{
-			Type:  "secret",
-			Value: c.Username,
-		},
-		"password": &CredentialEntry{
-			Type:  "secret",
-			Value: c.Password,
-		},
-	}
+// Map iterates over each CredentialEntry and returns a new value for the entry
+func (c *UsernamePasswordCredentials) Map(mapper EntryMapper) {
+	c.Username = mapper(&CredentialEntry{
+		Name:  "username",
+		Type:  "secret",
+		Value: c.Username,
+	})
+	c.Password = mapper(&CredentialEntry{
+		Name:  "password",
+		Type:  "secret",
+		Value: c.Password,
+	})
+
 }

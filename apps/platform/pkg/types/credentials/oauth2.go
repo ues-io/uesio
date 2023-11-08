@@ -12,27 +12,31 @@ func (c *OAuth2Credentials) IsNil() bool {
 	return c == nil
 }
 
-func (c *OAuth2Credentials) GetEntriesMap() CredentialEntriesMap {
-	return CredentialEntriesMap{
-		"clientId": &CredentialEntry{
-			Type:  "secret",
-			Value: c.ClientId,
-		},
-		"clientSecret": &CredentialEntry{
-			Type:  "secret",
-			Value: c.ClientSecret,
-		},
-		"tokenUrl": &CredentialEntry{
-			Type:  "configvalue",
-			Value: c.TokenURL,
-		},
-		"authorizeUrl": &CredentialEntry{
-			Type:  "configvalue",
-			Value: c.AuthorizeURL,
-		},
-		"scopes": &CredentialEntry{
-			Type:  "configvalue",
-			Value: c.Scopes,
-		},
-	}
+// Map iterates over each CredentialEntry and returns a new value for the entry
+func (c *OAuth2Credentials) Map(mapper EntryMapper) {
+	c.ClientId = mapper(&CredentialEntry{
+		Name:  "clientId",
+		Type:  "secret",
+		Value: c.ClientId,
+	})
+	c.ClientSecret = mapper(&CredentialEntry{
+		Name:  "clientSecret",
+		Type:  "secret",
+		Value: c.ClientSecret,
+	})
+	c.TokenURL = mapper(&CredentialEntry{
+		Name:  "tokenUrl",
+		Type:  "configvalue",
+		Value: c.TokenURL,
+	})
+	c.AuthorizeURL = mapper(&CredentialEntry{
+		Name:  "authorizeUrl",
+		Type:  "configvalue",
+		Value: c.AuthorizeURL,
+	})
+	c.Scopes = mapper(&CredentialEntry{
+		Name:  "scopes",
+		Type:  "configvalue",
+		Value: c.Scopes,
+	})
 }
