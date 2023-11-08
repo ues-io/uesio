@@ -29,6 +29,9 @@ definition:
         uesio/studio.workspace:
         uesio/studio.type:
         uesio/studio.integration:
+        uesio/studio.tablename:
+        uesio/studio.loadbot:
+        uesio/studio.savebot:
         uesio/core.createdat:
       conditions:
         - field: uesio/studio.workspace
@@ -171,12 +174,20 @@ definition:
                     - field: uesio/studio.type
                       value: EXTERNAL
               - uesio/io.field:
+                  fieldId: uesio/studio.tablename
+                  label: External Collection Name
+                  uesio.display:
+                    - field: uesio/studio.type
+                      value: EXTERNAL
+              - uesio/io.field:
                   fieldId: uesio/studio.loadbot
+                  label: Collection-specific Load Bot (optional)
                   uesio.display:
                     - field: uesio/studio.type
                       value: EXTERNAL
               - uesio/io.field:
                   fieldId: uesio/studio.savebot
+                  label: Collection-specific Save Bot (optional)
                   uesio.display:
                     - field: uesio/studio.type
                       value: EXTERNAL
