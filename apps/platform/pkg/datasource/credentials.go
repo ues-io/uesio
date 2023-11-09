@@ -32,8 +32,8 @@ func GetCredentials(key string, session *sess.Session) (*adapt.Credentials, erro
 	}
 
 	// Inject type-specific entries
-	if container := getTypeSpecificCredentialContainer(credential); container != nil && !container.IsNil() {
-		if err = addCredentialEntries(credentialsMap, container.GetEntriesMap(), session); err != nil {
+	if container := credential.GetTypeSpecificCredentialContainer(); container != nil && !container.IsNil() {
+		if err = addCredentialEntries(credentialsMap, credentials.GetEntriesMap(container), session); err != nil {
 			return nil, err
 		}
 	}
@@ -45,24 +45,6 @@ func GetCredentials(key string, session *sess.Session) (*adapt.Credentials, erro
 	}
 
 	return &credentialsMap, nil
-}
-
-func getTypeSpecificCredentialContainer(credential *meta.Credential) credentials.CredentialContainer {
-	switch credential.Type {
-	case "API_KEY":
-		return credential.APIKey
-	case "AWS_KEY":
-		return credential.AwsKey
-	case "AWS_ASSUME_ROLE":
-		return credential.AwsAssumeRole
-	case "OAUTH2_CREDENTIALS":
-		return credential.OAuth2
-	case "POSTGRESQL_CONNECTION":
-		return credential.Postgres
-	case "USERNAME_PASSWORD":
-		return credential.UsernamePassword
-	}
-	return nil
 }
 
 func addCredentialEntries(credentialsMap adapt.Credentials, entriesSpec credentials.CredentialEntriesMap, session *sess.Session) error {
