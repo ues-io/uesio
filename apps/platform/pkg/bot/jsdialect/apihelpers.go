@@ -18,6 +18,18 @@ func botSave(collection string, changes adapt.Collection, session *sess.Session,
 	return datasource.HandleSaveRequestErrors(requests, err)
 }
 
+func botDelete(collection string, deletes adapt.Collection, session *sess.Session, connection adapt.Connection) error {
+	requests := []datasource.SaveRequest{
+		{
+			Collection: collection,
+			Wire:       "botsave",
+			Deletes:    &deletes,
+		},
+	}
+	err := datasource.SaveWithOptions(requests, session, datasource.GetConnectionSaveOptions(connection))
+	return datasource.HandleSaveRequestErrors(requests, err)
+}
+
 func botLoad(request BotLoadOp, session *sess.Session, connection adapt.Connection) (*adapt.Collection, error) {
 	collection := &adapt.Collection{}
 
