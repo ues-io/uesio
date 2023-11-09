@@ -9,15 +9,16 @@ func (c *AwsSTSCredentials) IsNil() bool {
 	return c == nil
 }
 
-func (c *AwsSTSCredentials) GetEntriesMap() CredentialEntriesMap {
-	return CredentialEntriesMap{
-		"assumeRoleARN": &CredentialEntry{
-			Type:  "secret",
-			Value: c.AssumeRoleARN,
-		},
-		"region": &CredentialEntry{
-			Type:  "configvalue",
-			Value: c.Region,
-		},
-	}
+// Map iterates over each CredentialEntry and returns a new value for the entry
+func (c *AwsSTSCredentials) Map(mapper EntryMapper) {
+	c.AssumeRoleARN = mapper(&CredentialEntry{
+		Name:  "assumeRoleARN",
+		Type:  "secret",
+		Value: c.AssumeRoleARN,
+	})
+	c.Region = mapper(&CredentialEntry{
+		Name:  "region",
+		Type:  "configvalue",
+		Value: c.Region,
+	})
 }

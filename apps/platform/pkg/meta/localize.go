@@ -12,7 +12,7 @@ func isLocalNamespace(ns, localNamespace string) bool {
 	return ns == localNamespace || ns == "this/app"
 }
 
-// Takes a possibly localized namespace and turns it into a fully qualified,
+// GetFullyQualifiedKey Takes a possibly localized namespace and turns it into a fully qualified,
 // (3rd person) namespace. If the namespace is not local, it is a no-op.
 func GetFullyQualifiedKey(itemkey, localNamespace string) string {
 	if itemkey == "" {
@@ -30,7 +30,7 @@ func GetFullyQualifiedKey(itemkey, localNamespace string) string {
 	return itemkey
 }
 
-// Takes a possibly fully qualified namespace and turns it into a localized version
+// GetLocalizedKey Takes a possibly fully qualified namespace and turns it into a localized version
 func GetLocalizedKey(itemkey, localNamespace string) string {
 	if itemkey == "" {
 		return ""
