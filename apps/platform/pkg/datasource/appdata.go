@@ -55,3 +55,30 @@ func GetAppData(namespaces []string) (map[string]NamespaceInfo, error) {
 
 	return appData, nil
 }
+
+// QueryAppForWrite queries an app with write access required
+func QueryAppForWrite(value, field string, session *sess.Session, connection adapt.Connection) (*meta.App, error) {
+	useSession := session
+	if useSession.GetWorkspace() != nil {
+		useSession = session.RemoveWorkspaceContext()
+	}
+	var app meta.App
+	err := PlatformLoadOne(
+		&app,
+		&PlatformLoadOptions{
+			Connection: connection,
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field: field,
+					Value: value,
+				},
+			},
+			RequireWriteAccess: true,
+		},
+		session,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &app, nil
+}

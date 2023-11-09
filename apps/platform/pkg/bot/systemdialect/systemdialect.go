@@ -1,6 +1,9 @@
 package systemdialect
 
 import (
+	"fmt"
+	"slices"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/clickup"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -106,6 +109,13 @@ func (b *SystemDialect) AfterSave(bot *meta.Bot, request *adapt.SaveOp, connecti
 
 func (b *SystemDialect) CallBot(bot *meta.Bot, params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
 	var botFunction CallBotFunc
+
+	botNamespace := bot.GetNamespace()
+	namespaces := session.GetContextNamespaces()
+
+	if !slices.Contains(namespaces, botNamespace) {
+		return nil, meta.NewBotAccessError(fmt.Sprintf(datasource.BotAccessErrorMessage, bot.GetKey()))
+	}
 
 	switch bot.GetKey() {
 	case "listener:uesio/studio.createbundle":

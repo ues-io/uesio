@@ -8,10 +8,9 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func TruncateWorkspaceData(session *sess.Session) error {
-	tenantID := session.GetTenantID()
+func TruncateWorkspaceData(tenantID string, session *sess.Session) error {
 
-	connection, err := datasource.GetPlatformConnection(nil, session.RemoveWorkspaceContext(), nil)
+	connection, err := datasource.GetPlatformConnection(nil, session, nil)
 	if err != nil {
 		return err
 	}

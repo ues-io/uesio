@@ -171,3 +171,12 @@ func requireValue(change *adapt.ChangeItem, fieldName string) (string, error) {
 	return value, nil
 
 }
+
+func getRequiredParameter(params map[string]interface{}, paramName string) (string, error) {
+	if paramValue, hasParam := params[paramName]; hasParam {
+		if stringValue, isString := paramValue.(string); isString {
+			return stringValue, nil
+		}
+	}
+	return "", meta.NewParamError("system bot: missing required parameter "+paramName, paramName)
+}
