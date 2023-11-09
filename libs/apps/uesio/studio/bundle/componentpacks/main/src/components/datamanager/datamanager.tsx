@@ -172,13 +172,21 @@ const DataManager: FunctionComponent<Props> = (props) => {
 	) as wire.CollectionKey
 	const collectionMetadata = api.collection.useCollection(
 		context,
-		collectionKey
+		collectionKey,
+		{
+			needAllFieldMetadata: true,
+		}
 	)
+
+	const hasAllFields = collectionMetadata?.hasAllFields()
+
 	const columns = getColumns(collectionMetadata)
-	const wireDef = getWireDefinition(collectionKey, collectionMetadata)
+	const wireDef = hasAllFields
+		? getWireDefinition(collectionKey, collectionMetadata)
+		: null
 	const dataWire = api.wire.useDynamicWire(wireId, wireDef, context)
 
-	if (!dataWire) return null
+	if (!dataWire || !hasAllFields) return null
 
 	// Have to compute this HERE , not in the signals,
 	// so that we still have Workspace / Site Admin context
