@@ -1,6 +1,3 @@
 name: impersonation
 pack: main
 entrypoint: components/impersonation/impersonation
-# variants:
-#   - uesio/io.field:uesio/io.search
-#   - uesio/io.field:uesio/io.default
