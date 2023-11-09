@@ -43,14 +43,14 @@ const Impersonation: definition.UtilityComponent = (props) => {
 							signal: "context/CLEAR",
 							type: "WORKSPACE",
 						},
-						{
-							signal: "context/CLEAR",
-							type: "SITE_ADMIN",
-						},
-						{
-							signal: "context/CLEAR",
-							type: "SITE",
-						},
+						// {
+						// 	signal: "context/CLEAR",
+						// 	type: "SITE_ADMIN",
+						// },
+						// {
+						// 	signal: "context/CLEAR",
+						// 	type: "SITE",
+						// },
 						{
 							signal: "bot/CALL",
 							bot: "uesio/studio.setworkspaceuser",
@@ -58,6 +58,15 @@ const Impersonation: definition.UtilityComponent = (props) => {
 								workspaceid: workspace.id,
 								profile: "${uesio/studio.profile}",
 							},
+						},
+						// {
+						// 	signal: "context/SET",
+						// 	type: "WORKSPACE",
+						// 	name: workspace.name,
+						// 	app: workspace.app,
+						// },
+						{
+							signal: "route/RELOAD",
 						},
 					],
 				},

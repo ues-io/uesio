@@ -129,6 +129,20 @@ definition:
                           path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/$Param{itemType}/$Param{itemNameSpace}/$Param{itemName}/$Param{subItemType}/$Param{subItemNameSpace}/$Param{subItemName}
           - uesio/io.group:
               components:
+                - uesio/builder.impersonation:
+                    uesio.context:
+                      workspace:
+                        id: ${uesio/core.id}
+                        name: ${uesio/studio.name}
+                        app: ${uesio/studio.app->uesio/core.uniquekey}
+                    uesio.display:
+                      - type: paramIsSet
+                        param: itemName
+                      - type: paramIsSet
+                        param: itemType
+                      - type: paramValue
+                        param: itemType
+                        value: views
                 - uesio/io.button:
                     uesio.variant: uesio/io.nav
                     uesio.id: logout

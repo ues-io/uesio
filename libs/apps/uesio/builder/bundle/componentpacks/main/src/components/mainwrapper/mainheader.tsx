@@ -2,7 +2,7 @@ import { api, definition, component, styles } from "@uesio/ui"
 import SaveCancelArea from "./savecancelarea"
 import HeaderCrumbs from "./headercrumbs"
 import { useBuildMode } from "../../api/stateapi"
-import Impersonation from "./impersonation"
+import Impersonation from "../impersonation/impersonation"
 
 const StyleDefaults = Object.freeze({
 	root: [
