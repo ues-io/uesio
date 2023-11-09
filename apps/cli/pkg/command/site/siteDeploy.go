@@ -3,8 +3,10 @@ package site
 import (
 	"errors"
 	"fmt"
-	"github.com/thecloudmasters/cli/pkg/wire"
 	"strings"
+
+	"github.com/thecloudmasters/cli/pkg/context"
+	"github.com/thecloudmasters/cli/pkg/wire"
 )
 
 func UseBundle(siteName, newBundleVersion string) error {
@@ -35,6 +37,6 @@ func UseBundle(siteName, newBundleVersion string) error {
 				"uesio/core.id": app.ID,
 			},
 		},
-	})
+	}, &context.AppContext{App: app.FullName})
 	return err
 }

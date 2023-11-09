@@ -10,6 +10,7 @@ import (
 	"github.com/thecloudmasters/cli/pkg/call"
 	"github.com/thecloudmasters/cli/pkg/config"
 	"github.com/thecloudmasters/cli/pkg/config/ws"
+	"github.com/thecloudmasters/cli/pkg/context"
 	"github.com/thecloudmasters/cli/pkg/zip"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
@@ -66,12 +67,12 @@ func RetrieveBundleForAppWorkspace(appName, workspaceName, outputDir string) err
 	// TODO: Send hashes of all local files so we aren't deleting/retrieving unchanged files every time...
 	url := fmt.Sprintf("workspace/%s/%s/metadata/retrieve", appName, workspaceName)
 
-	sessid, err := config.GetSessionID()
+	sessionId, err := config.GetSessionID()
 	if err != nil {
 		return err
 	}
 
-	resp, err := call.Request("GET", url, nil, sessid)
+	resp, err := call.Request("GET", url, nil, sessionId, context.NewWorkspaceContext(appName, workspaceName))
 	if err != nil {
 		return err
 	}
