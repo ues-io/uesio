@@ -104,7 +104,10 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 		return err
 	}
 
-	namespace := workspace.GetAppFullName()
+	namespace, err := workspace.GetAppFullName()
+	if err != nil {
+		return err
+	}
 
 	dep := map[string]meta.BundleableGroup{}
 

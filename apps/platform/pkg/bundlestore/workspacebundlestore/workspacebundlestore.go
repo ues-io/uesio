@@ -43,7 +43,10 @@ func processItems(items []meta.BundleableItem, workspace *meta.Workspace, connec
 		return errors.New("Workspace bundle store, needs a workspace in context")
 	}
 	collectionLocatorMap := map[string]adapt.LocatorMap{}
-	namespace := workspace.GetAppFullName()
+	namespace, err := workspace.GetAppFullName()
+	if err != nil {
+		return err
+	}
 
 	for _, item := range items {
 		collectionName := item.GetBundleFolderName()

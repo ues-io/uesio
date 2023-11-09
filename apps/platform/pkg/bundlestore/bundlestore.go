@@ -99,8 +99,14 @@ func getBundleStore(namespace string, workspace *meta.Workspace) (BundleStore, e
 		return nil, err
 	}
 
-	if workspace != nil && workspace.GetAppFullName() == namespace {
-		return GetBundleStoreByType("workspace")
+	if workspace != nil {
+		appFullName, err := workspace.GetAppFullName()
+		if err != nil {
+			return nil, err
+		}
+		if appFullName == namespace {
+			return GetBundleStoreByType("workspace")
+		}
 	}
 
 	if IsSystemBundle(namespace) {

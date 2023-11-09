@@ -61,9 +61,10 @@ func (s *State) Marshal() (string, error) {
 func (s *State) WithContext(session *sess.Session) *State {
 	ws := session.GetWorkspace()
 	if ws != nil {
+		appFullName, _ := ws.GetAppFullName()
 		s.ContextType = workspace
 		s.WorkspaceName = ws.Name
-		s.AppName = ws.GetAppFullName()
+		s.AppName = appFullName
 		return s
 	}
 	sa := session.GetSiteAdmin()

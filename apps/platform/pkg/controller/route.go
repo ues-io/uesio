@@ -60,7 +60,9 @@ func Route(w http.ResponseWriter, r *http.Request) {
 	prefix := "/site/routes/path/" + namespace + "/"
 
 	if workspace != nil {
-		prefix = "/workspace/" + workspace.GetAppFullName() + "/" + workspace.Name + "/routes/path/" + namespace + "/"
+		//TO-DO
+		appFullName, _ := workspace.GetAppFullName()
+		prefix = "/workspace/" + appFullName + "/" + workspace.Name + "/routes/path/" + namespace + "/"
 	}
 
 	route, err := routing.GetRouteFromPath(r, namespace, path, prefix, session)

@@ -149,9 +149,14 @@ func GetWorkspaceMergeData(workspace *meta.Workspace) *routing.WorkspaceMergeDat
 		return nil
 	}
 
+	appFullName, err := workspace.GetAppFullName()
+	if err != nil {
+		return nil
+	}
+
 	return &routing.WorkspaceMergeData{
 		Name:    workspace.Name,
-		App:     workspace.GetAppFullName(),
+		App:     appFullName,
 		Wrapper: routing.DEFAULT_BUILDER_COMPONENT,
 	}
 }

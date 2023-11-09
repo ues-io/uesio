@@ -30,8 +30,13 @@ func GetVersionBundleDef(namespace, version string, connection adapt.Connection)
 
 func GetWorkspaceBundleDef(workspace *meta.Workspace, connection adapt.Connection) (*meta.BundleDef, error) {
 
+	appFullName, err := workspace.GetAppFullName()
+	if err != nil {
+		return nil, err
+	}
+
 	bs, err := bundlestore.GetConnection(bundlestore.ConnectionOptions{
-		Namespace:  workspace.GetAppFullName(),
+		Namespace:  appFullName,
 		Version:    workspace.Name,
 		Connection: connection,
 		Workspace:  workspace,

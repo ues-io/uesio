@@ -90,7 +90,9 @@ func (s *WorkspaceSession) GetUniqueKey() string {
 }
 
 func (s *WorkspaceSession) GetAppFullName() string {
-	return s.workspace.GetAppFullName()
+	//TO-DO
+	appFullName, _ := s.workspace.GetAppFullName()
+	return appFullName
 }
 
 func (s *WorkspaceSession) GetVersion() string {

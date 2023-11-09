@@ -50,7 +50,11 @@ func Retrieve(writer io.Writer, session *sess.Session) error {
 	if workspace == nil {
 		return errors.New("no Workspace provided for retrieve")
 	}
-	namespace := workspace.GetAppFullName()
+	appFullName, err := workspace.GetAppFullName()
+	if err != nil {
+		return err
+	}
+	namespace := appFullName
 	bs, err := bundle.GetBundleStoreConnection(namespace, session, nil)
 	if err != nil {
 		return err

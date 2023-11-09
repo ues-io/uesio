@@ -67,7 +67,11 @@ func addWorkspaceContext(workspace *meta.Workspace, session *sess.Session, conne
 	if err != nil {
 		return err
 	}
-	licenseMap, err := GetLicenses(workspace.GetAppFullName(), connection)
+	appFullName, err := workspace.GetAppFullName()
+	if err != nil {
+		return err
+	}
+	licenseMap, err := GetLicenses(appFullName, connection)
 	if err != nil {
 		return err
 	}

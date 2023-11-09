@@ -13,8 +13,10 @@ import (
 func GetParamsFromSession(session *sess.Session) map[string]string {
 	params := map[string]string{}
 	if session.GetWorkspace() != nil {
+		//TO-DO
+		appFullName, _ := session.GetWorkspace().GetAppFullName()
 		params["workspacename"] = session.GetWorkspace().Name
-		params["app"] = session.GetWorkspace().GetAppFullName()
+		params["app"] = appFullName
 	} else if session.GetSiteAdmin() != nil {
 		params["sitename"] = session.GetSiteAdmin().Name
 		params["app"] = session.GetSiteAdmin().GetAppFullName()

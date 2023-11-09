@@ -1,5 +1,7 @@
 package meta
 
+import "errors"
+
 type Workspace struct {
 	BuiltIn     `yaml:",inline"`
 	Name        string `json:"uesio/studio.name"`
@@ -8,11 +10,19 @@ type Workspace struct {
 	bundleDef   *BundleDef
 }
 
-func (w *Workspace) GetAppFullName() string {
-	if w.App == nil {
-		return ""
+func (w *Workspace) GetAppFullName() (string, error) {
+	app, err := w.GetApp()
+	if err != nil {
+		return "", err
 	}
-	return w.App.UniqueKey
+	return app.UniqueKey, nil
+}
+
+func (w *Workspace) GetApp() (*App, error) {
+	if w.App == nil {
+		return nil, errors.New("This workspace does not have an in-context application.")
+	}
+	return w.App, nil
 }
 
 func (w *Workspace) SetAppBundle(bundleDef *BundleDef) {
