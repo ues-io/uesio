@@ -146,6 +146,7 @@ class Collection {
 		Object.values(this.source.fields)
 			.filter((f) => searchableFieldTypes.includes(f.type))
 			.map((v) => new Field(v))
+	hasAllFields = () => this.source.hasAllFields
 }
 
 const searchableFieldTypes = ["TEXT", "LONGTEXT", "SELECT"]
