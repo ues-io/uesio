@@ -100,12 +100,17 @@ func MakeRequestWithStoredUserCredentials(req *http.Request, integrationName str
 // NewClient creates a custom HTTP client which performs automatic token refreshing on expiration
 // while allowing for us (Uesio) to modify how the authorization header is set,
 // and notify other code when the header is set to know whether a new access token / refresh token was generated
-func NewClient(config *oauth2.Config, t *oauth2.Token, onAuthHeaderSet authHeaderEventListener) *http.Client {
+func NewClient(config *oauth2.Config, t *oauth2.Token, opts *ClientOptions) *http.Client {
 	return &http.Client{
 		Transport: &Transport{
-			Source:          config.TokenSource(context.Background(), t),
-			Base:            httpClient.Get().Transport,
-			OnAuthHeaderSet: onAuthHeaderSet,
+			Source:        config.TokenSource(context.Background(), t),
+			Base:          httpClient.Get().Transport,
+			ClientOptions: opts,
 		},
 	}
+}
+
+type ClientOptions struct {
+	// OnAuthHeaderSet is invoked when the authorization header is set during transport
+	OnAuthHeaderSet authHeaderEventListener
 }

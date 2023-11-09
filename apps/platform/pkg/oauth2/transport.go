@@ -24,8 +24,7 @@ type Transport struct {
 	// If nil, http.DefaultTransport is used.
 	Base http.RoundTripper
 
-	// OnAuthHeaderSet is invoked when the authorization header is set during transport
-	OnAuthHeaderSet authHeaderEventListener
+	ClientOptions *ClientOptions
 }
 
 // RoundTrip authorizes and authenticates the request with an
@@ -69,8 +68,8 @@ func (t *Transport) setAuthHeader(r *http.Request, token *oauth2.Token) {
 	authHeader := ""
 	r.Header.Set("Authorization", authHeader)
 	// Publish the results of the operation for downstream consumption
-	if t.OnAuthHeaderSet != nil {
-		t.OnAuthHeaderSet(token, authHeader)
+	if t.ClientOptions != nil && t.ClientOptions.OnAuthHeaderSet != nil {
+		t.ClientOptions.OnAuthHeaderSet(token, authHeader)
 	}
 }
 

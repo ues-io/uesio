@@ -14,6 +14,7 @@ import (
 const (
 	IntegrationCredentialCollection = "uesio/core.integrationcredential"
 	AccessTokenField                = "uesio/core.accesstoken"
+	TokenTypeField                  = "uesio/core.tokentype"
 	RefreshTokenField               = "uesio/core.refreshtoken"
 	IntegrationField                = "uesio/core.integration"
 	UserField                       = "uesio/core.user"
@@ -23,6 +24,7 @@ const (
 func GetTokenFromCredential(credential *adapt.Item) *oauth2.Token {
 	accessToken, _ := credential.GetFieldAsString(AccessTokenField)
 	refreshToken, _ := credential.GetFieldAsString(RefreshTokenField)
+	tokenType, _ := credential.GetFieldAsString(TokenTypeField)
 	accessTokenExpiry, _ := credential.GetField(AccessTokenExpirationField)
 	// Default expiry to the "nil" time, which is treated as non-expiring
 	expiry := time.Time{}
@@ -35,6 +37,7 @@ func GetTokenFromCredential(credential *adapt.Item) *oauth2.Token {
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 		Expiry:       expiry,
+		TokenType:    tokenType,
 	}
 }
 
