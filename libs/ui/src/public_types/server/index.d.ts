@@ -98,7 +98,7 @@ interface BotHttpRequest {
 	url: string
 	method: string
 	headers?: Record<string, string>
-	body?: string | Record<string, unknown>
+	body?: string | Record<string, unknown> | unknown[]
 }
 interface BotHttpResponse {
 	code: number
