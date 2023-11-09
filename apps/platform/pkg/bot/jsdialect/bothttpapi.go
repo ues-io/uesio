@@ -276,12 +276,15 @@ func (api *BotHttpAPI) makeRequestWithOAuth2AuthorizationCode(req *http.Request,
 		accessToken = ""
 	}
 
-	tok := &oauth2.Token{
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
-		Expiry:       expiry,
+	tok := &OAuthToken{
+		oauth2.Token{
+			AccessToken:  accessToken,
+			RefreshToken: refreshToken,
+			Expiry:       expiry,
+		},
 	}
-	// If we already have an authorization header, add it in
+
+	// If we already have an access token, add it in
 	var originalAuthorizationHeader string
 	if accessToken != "" {
 		originalAuthorizationHeader = "Bearer " + accessToken
@@ -308,7 +311,7 @@ func (api *BotHttpAPI) makeRequestWithOAuth2AuthorizationCode(req *http.Request,
 			if newVal != accessToken {
 				slog.Info("GOT new AccessToken, SAVING to DB...")
 				// We don't really have a way of getting back the expiration data, so assume 1 hour...
-				integrationCredential.SetField(oauthlib.AccessTokenExpirationField, time.Now().Add(time.Hour).Unix())
+				//integrationCredential.SetField(oauthlib.AccessTokenExpirationField, time.Now().Add(time.Hour).Unix())
 				integrationCredential.SetField(oauthlib.AccessTokenField, newVal)
 				integrationCredential.SetField(adapt.UPDATED_AT_FIELD, time.Now().Unix())
 				if upsertErr := oauthlib.UpsertIntegrationCredential(integrationCredential, coreSession, connection); upsertErr != nil {
@@ -335,6 +338,15 @@ func (api *BotHttpAPI) makeRequestWithOAuth2AuthorizationCode(req *http.Request,
 	}
 	return nil, NewUnauthorizedException("Authentication failed: " + err.Error())
 }
+
+//
+//type OAuthToken struct {
+//	oauth2.Token
+//}
+//
+//func (t *OAuthToken) SetAuthHeader(r *http.Request) {
+//	r.Header.Set("Authorization", t.Type()+" "+t.AccessToken)
+//}
 
 func (api *BotHttpAPI) setBasicAuthHeaderInRequest(req *http.Request, cred *adapt.Credentials) error {
 	username, err := cred.GetRequiredEntry("username")
