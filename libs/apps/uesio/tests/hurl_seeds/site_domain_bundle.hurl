@@ -31,7 +31,7 @@ POST https://studio.uesio-dev.com:3000/site/bots/call/uesio/studio/createbundle
     "type": "patch",
     "description": "test bundle",
     "app": "uesio/tests",
-    "workspacename": "dev"
+    "workspaceName": "dev"
 }
 HTTP 200
 [Captures]

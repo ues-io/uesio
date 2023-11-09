@@ -15,15 +15,14 @@ import (
 
 func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
 
-	appID := ""
-	if appParam, hasAppParam := params["app"]; hasAppParam {
-		if stringValue, isString := appParam.(string); isString {
-			appID = stringValue
-		}
+	appID, err := getRequiredParameter(params, "app")
+	if err != nil {
+		return nil, err
 	}
 
-	if appID == "" {
-		return nil, errors.New("cannot create a bundle without an app as parameter")
+	workspaceName, err := getRequiredParameter(params, "workspaceName")
+	if err != nil {
+		return nil, err
 	}
 
 	if bundlestore.IsSystemBundle(appID) {
@@ -34,26 +33,15 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.
 		return nil, errors.New("you must be a workspace admin to create bundles")
 	}
 
-	workspacename := ""
-	if workspacenameParam, hasWorkspacenameParam := params["workspacename"]; hasWorkspacenameParam {
-		if stringValue, isString := workspacenameParam.(string); isString {
-			workspacename = stringValue
-		}
-	}
-
-	if workspacename == "" {
-		return nil, errors.New("cannot create a bundle without a workspacename as parameter")
-	}
-
 	var workspace meta.Workspace
-	err := datasource.PlatformLoadOne(
+	err = datasource.PlatformLoadOne(
 		&workspace,
 		&datasource.PlatformLoadOptions{
 			Connection: connection,
 			Conditions: []adapt.LoadRequestCondition{
 				{
 					Field: adapt.UNIQUE_KEY_FIELD,
-					Value: appID + ":" + workspacename,
+					Value: appID + ":" + workspaceName,
 				},
 			},
 		},

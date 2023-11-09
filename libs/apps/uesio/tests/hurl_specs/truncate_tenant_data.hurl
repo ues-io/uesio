@@ -29,7 +29,8 @@ jsonpath "$.wires[0].data" count >= 0
 # Test truncate listener bot
 POST https://{{host}}:{{port}}/site/bots/call/uesio/studio/workspacetruncate
 {
-    "workspaceUniqueKey": "uesio/tests:truncatetests"
+    "app": "uesio/tests",
+    "workspaceName": "truncatetests"
 }
 HTTP 200
 [Asserts]

@@ -1,8 +1,6 @@
 package systemdialect
 
 import (
-	"errors"
-
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/truncate"
@@ -10,18 +8,17 @@ import (
 
 func RunWorkspaceTruncateListenerBot(params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
 
-	workspaceUniqueKey := ""
-	if workspaceUniqueKeyParam, hasWorkspaceUniqueKeyParam := params["workspaceUniqueKey"]; hasWorkspaceUniqueKeyParam {
-		if stringValue, isString := workspaceUniqueKeyParam.(string); isString {
-			workspaceUniqueKey = stringValue
-		}
+	appID, err := getRequiredParameter(params, "app")
+	if err != nil {
+		return nil, err
 	}
 
-	if workspaceUniqueKey == "" {
-		return nil, errors.New("cannot create truncate a workspace without an workspace UniqueKey as parameter")
+	workspaceName, err := getRequiredParameter(params, "workspaceName")
+	if err != nil {
+		return nil, err
 	}
 
-	tenantID := sess.MakeWorkspaceTenantID(workspaceUniqueKey)
+	tenantID := sess.MakeWorkspaceTenantID(appID + ":" + workspaceName)
 
 	return nil, truncate.TruncateWorkspaceData(tenantID, session)
 }

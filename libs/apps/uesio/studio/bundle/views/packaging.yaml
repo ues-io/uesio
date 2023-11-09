@@ -193,7 +193,7 @@ definition:
                 bot: uesio/studio.createbundle
                 params:
                   app: $Param{app}
-                  workspacename: $Param{workspacename}
+                  workspaceName: $Param{workspacename}
                   type: $Record{newbundle:type}
                   major: $Record{newbundle:major}
                   minor: $Record{newbundle:minor}

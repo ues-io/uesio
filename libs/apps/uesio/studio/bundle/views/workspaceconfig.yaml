@@ -167,7 +167,8 @@ definition:
               - signal: bot/CALL
                 bot: uesio/studio.workspacetruncate
                 params:
-                  workspaceUniqueKey: "$Param{app}:$Param{workspacename}"
+                  app: $Param{app}
+                  workspaceName: $Param{workspacename}
                 onerror:
                   signals:
                     - signal: notification/ADD_ERRORS
