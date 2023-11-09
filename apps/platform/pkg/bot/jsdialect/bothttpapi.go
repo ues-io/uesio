@@ -135,7 +135,7 @@ func (api *BotHttpAPI) Request(req *BotHttpRequest) *BotHttpResponse {
 			payloadReader = strings.NewReader(payload)
 		case []byte:
 			payloadReader = bytes.NewReader(payload)
-		case map[string]interface{}:
+		case map[string]interface{}, []interface{}:
 			// Marshall other payloads, e.g. map[string]interface{} (almost certainly coming from Uesio) to JSON
 			jsonBytes, err := json.Marshal(payload)
 			if err != nil {
