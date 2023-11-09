@@ -2,10 +2,15 @@ package wire
 
 import (
 	"errors"
+	"fmt"
+	"net/http"
+	"strings"
 
 	"github.com/teris-io/shortid"
+
 	"github.com/thecloudmasters/cli/pkg/call"
 	"github.com/thecloudmasters/cli/pkg/config"
+	"github.com/thecloudmasters/cli/pkg/context"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 )
 
@@ -15,6 +20,7 @@ type SaveRequest struct {
 	Wire       string                            `json:"wire"`
 	Errors     []adapt.SaveError                 `json:"errors"`
 	Options    SaveOptions                       `json:"options"`
+	Params     map[string]string                 `json:"params"`
 }
 
 type SaveReqBatch struct {
@@ -25,25 +31,41 @@ type SaveOptions struct {
 	Upsert bool
 }
 
-func Upsert(collectionName string, changes []map[string]interface{}) ([]map[string]interface{}, error) {
+func Upsert(collectionName string, changes []map[string]interface{}, appContext *context.AppContext) ([]map[string]interface{}, error) {
 	return Save(collectionName, changes, SaveOptions{
 		Upsert: true,
-	})
+	}, appContext)
 }
 
-func Insert(collectionName string, changes []map[string]interface{}) ([]map[string]interface{}, error) {
+func Insert(collectionName string, changes []map[string]interface{}, appContext *context.AppContext) ([]map[string]interface{}, error) {
 	return Save(collectionName, changes, SaveOptions{
 		Upsert: false,
-	})
+	}, appContext)
 }
 
-func Save(collectionName string, changes []map[string]interface{}, saveOptions SaveOptions) ([]map[string]interface{}, error) {
+func DeleteOne(collectionName, idField, idValue string, appContext *context.AppContext) (bool, error) {
+	sessionId, err := config.GetSessionID()
+	if err != nil {
+		return false, err
+	}
+	deleteUri := fmt.Sprintf("site/api/v1/collection/%s?%s=eq.%s", strings.ReplaceAll(collectionName, ".", "/"), idField, idValue)
+	if statusCode, err := call.Delete(deleteUri, sessionId, appContext); err != nil || statusCode != http.StatusNoContent {
+		return false, err
+	}
+	return true, nil
+}
+
+func Save(collectionName string, changes []map[string]interface{}, saveOptions SaveOptions, appContext *context.AppContext) ([]map[string]interface{}, error) {
 
 	changeMap := map[string]map[string]interface{}{}
 
 	for _, change := range changes {
-		tempid, _ := shortid.Generate()
-		changeMap[tempid] = change
+		tempId, _ := shortid.Generate()
+		changeMap[tempId] = change
+	}
+	var contextParams map[string]string
+	if appContext != nil {
+		contextParams = appContext.GetParamsObject()
 	}
 
 	payload := &SaveReqBatch{
@@ -53,18 +75,19 @@ func Save(collectionName string, changes []map[string]interface{}, saveOptions S
 				Changes:    changeMap,
 				Wire:       "cliwire",
 				Options:    saveOptions,
+				Params:     contextParams,
 			},
 		},
 	}
 
-	sessid, err := config.GetSessionID()
+	sessionId, err := config.GetSessionID()
 	if err != nil {
 		return nil, err
 	}
 
 	saveResponse := &SaveReqBatch{}
 
-	err = call.PostJSON("site/wires/save", sessid, payload, saveResponse)
+	err = call.PostJSON("site/wires/save", sessionId, payload, saveResponse, appContext)
 	if err != nil {
 		return nil, err
 	}

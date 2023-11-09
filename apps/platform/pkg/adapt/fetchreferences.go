@@ -69,7 +69,7 @@ func FetchReferences(
 	referencedIDCollections := ReferenceRegistry{}
 	referencedUniqueKeyCollections := ReferenceRegistry{}
 
-	// Load All Reference Fields for Inserts add add to changes
+	// Load All Reference Fields for Inserts and add to changes
 	for i := range op.Metadata.Fields {
 		field := op.Metadata.Fields[i]
 		if IsReference(field.Type) {

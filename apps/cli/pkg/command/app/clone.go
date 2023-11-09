@@ -13,6 +13,7 @@ import (
 	"github.com/thecloudmasters/cli/pkg/config/ws"
 
 	"github.com/AlecAivazis/survey/v2"
+
 	"github.com/thecloudmasters/cli/pkg/auth"
 	"github.com/thecloudmasters/cli/pkg/command/workspace"
 	"github.com/thecloudmasters/cli/pkg/config"
@@ -63,12 +64,12 @@ func AppClone(targetDir string) error {
 		return err
 	}
 
-	sessid, err := config.GetSessionID()
+	sessionId, err := config.GetSessionID()
 	if err != nil {
 		return err
 	}
 
-	app, err := askUserToSelectApp(sessid)
+	app, err := askUserToSelectApp(sessionId)
 	if err != nil {
 		return err
 	}
@@ -92,7 +93,7 @@ func AppClone(targetDir string) error {
 	if err != nil {
 		return err
 	}
-	resp, err := call.Request("POST", generateURL, payloadBytes, sessid)
+	resp, err := call.Request("POST", generateURL, payloadBytes, sessionId, nil)
 	if err != nil {
 		return err
 	}

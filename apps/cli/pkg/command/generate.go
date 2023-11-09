@@ -8,6 +8,8 @@ import (
 	"github.com/thecloudmasters/cli/pkg/auth"
 	"github.com/thecloudmasters/cli/pkg/call"
 	"github.com/thecloudmasters/cli/pkg/config"
+	"github.com/thecloudmasters/cli/pkg/config/ws"
+	"github.com/thecloudmasters/cli/pkg/context"
 	"github.com/thecloudmasters/cli/pkg/param"
 	"github.com/thecloudmasters/cli/pkg/zip"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -15,7 +17,7 @@ import (
 
 func Generate(key string) error {
 
-	fmt.Println("Running Generator Command")
+	fmt.Println("Running generator: " + key)
 
 	namespace, name, err := meta.ParseKeyWithDefault(key, "uesio/core")
 	if err != nil {
@@ -32,12 +34,19 @@ func Generate(key string) error {
 		return err
 	}
 
+	workspace, err := ws.GetWorkspace()
+	if err != nil {
+		return err
+	}
+
+	appContext := context.NewWorkspaceContext(app, workspace)
+
 	version, err := config.GetVersion(namespace)
 	if err != nil {
 		return err
 	}
 
-	sessid, err := config.GetSessionID()
+	sessionId, err := config.GetSessionID()
 	if err != nil {
 		return err
 	}
@@ -45,12 +54,12 @@ func Generate(key string) error {
 	paramsURL := fmt.Sprintf("version/%s/%s/bots/params/generator/%s/%s", namespace, version, namespace, name)
 
 	botParams := &meta.BotParamsResponse{}
-	err = call.GetJSON(paramsURL, sessid, botParams)
+	err = call.GetJSON(paramsURL, sessionId, botParams)
 	if err != nil {
 		return err
 	}
 
-	answers, err := param.AskMany(botParams, app, version, sessid)
+	answers, err := param.AskMany(botParams, app, version, sessionId)
 	if err != nil {
 		return err
 	}
@@ -63,7 +72,7 @@ func Generate(key string) error {
 	if err != nil {
 		return err
 	}
-	resp, err := call.Request("POST", generateURL, payloadBytes, sessid)
+	resp, err := call.Request("POST", generateURL, payloadBytes, sessionId, appContext)
 	if err != nil {
 		return err
 	}
@@ -73,7 +82,7 @@ func Generate(key string) error {
 		return err
 	}
 
-	fmt.Println("Generate Success")
+	fmt.Println("Generator completed successfully.")
 
 	return nil
 }

@@ -5,7 +5,9 @@ import (
 	"fmt"
 
 	"github.com/AlecAivazis/survey/v2"
+
 	"github.com/thecloudmasters/cli/pkg/auth"
+	"github.com/thecloudmasters/cli/pkg/config/ws"
 	"github.com/thecloudmasters/cli/pkg/wire"
 )
 
@@ -32,17 +34,16 @@ func Create(newWorkspace string) error {
 		}
 	}
 
-	// Invoke workspace creation API to create a default "dev" workspace
+	// Invoke workspace creation API to create the workspace
 	_, err = wire.CreateNewWorkspace(appObject.ID, newWorkspace)
 	if err != nil {
 		return errors.New("unable to create new workspace for app: " + err.Error())
 	}
 
-	// TODO: Maybe have config option to set the current workspace as the new workspace
-
-	// if err = ws.SetWorkspace(newWorkspace); err != nil {
-	// 	return "unable to set current workspace to newly-created workspace"
-	// }
+	// Set the current workspace as the new workspace
+	if err = ws.SetWorkspace(newWorkspace); err != nil {
+		return errors.New("unable to set current workspace to newly-created workspace")
+	}
 
 	fmt.Printf("Successfully created new workspace: %s\n", newWorkspace)
 

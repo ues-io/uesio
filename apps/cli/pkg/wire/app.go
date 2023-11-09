@@ -19,7 +19,7 @@ func CreateNewApp(user, name, color, icon string) (*App, error) {
 			"uesio/studio.color": color,
 			"uesio/studio.icon":  icon,
 		},
-	})
+	}, nil)
 	if err != nil {
 		return nil, err
 	}
