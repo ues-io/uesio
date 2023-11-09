@@ -20,29 +20,55 @@ const (
 	AccessTokenExpirationField      = "uesio/core.accesstokenexpiration"
 )
 
-func BuildIntegrationCredential(integrationName string, userId string, tok *oauth2.Token) *adapt.Item {
+func GetTokenFromCredential(credential *adapt.Item) *oauth2.Token {
+	accessToken, _ := credential.GetFieldAsString(AccessTokenField)
+	refreshToken, _ := credential.GetFieldAsString(RefreshTokenField)
+	accessTokenExpiry, _ := credential.GetField(AccessTokenExpirationField)
+	// Default expiry to the "nil" time, which is treated as non-expiring
+	expiry := time.Time{}
+	if accessTokenExpiry != nil && accessTokenExpiry != 0 {
+		if typedVal, isValid := accessTokenExpiry.(float64); isValid {
+			expiry = time.Unix(int64(typedVal), 0)
+		}
+	}
+	return &oauth2.Token{
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+		Expiry:       expiry,
+	}
+}
+
+// PopulateCredentialFieldsFromToken populates access token, refresh token, and access token expiration fields
+// on an integration_credential record using the corresponding fields from the token
+func PopulateCredentialFieldsFromToken(credential *adapt.Item, token *oauth2.Token) {
+	credential.SetField(AccessTokenField, token.AccessToken)
+	credential.SetField(RefreshTokenField, token.RefreshToken)
+	expiry := token.Expiry
+	if expiry.IsZero() {
+		credential.SetField(AccessTokenExpirationField, 0)
+	} else {
+		credential.SetField(AccessTokenExpirationField, expiry.Unix())
+	}
+
+}
+
+func BuildIntegrationCredential(integrationName string, userId string, token *oauth2.Token) *adapt.Item {
 	integrationCredential := &adapt.Item{}
 	userReference := &adapt.Item{}
 	userReference.SetField(adapt.ID_FIELD, userId)
 	integrationCredential.SetField(IntegrationField, integrationName)
 	integrationCredential.SetField(UserField, userReference)
-	integrationCredential.SetField(AccessTokenField, tok.AccessToken)
-	integrationCredential.SetField(RefreshTokenField, tok.RefreshToken)
-	expiry := tok.Expiry
-	if expiry.IsZero() {
-		// Use default expiry of 1 hour
-		expiry = time.Now().Add(time.Hour)
-	}
-	integrationCredential.SetField(AccessTokenExpirationField, expiry.Unix())
+	PopulateCredentialFieldsFromToken(integrationCredential, token)
 	return integrationCredential
 }
 
 // UpsertIntegrationCredential performs an upsert on the provided integration credential item
 func UpsertIntegrationCredential(integrationCredential *adapt.Item, coreSession *sess.Session, platformConn adapt.Connection) error {
+	integrationCredential.SetField(adapt.UPDATED_AT_FIELD, time.Now().Unix())
 	requests := []datasource.SaveRequest{
 		{
 			Collection: IntegrationCredentialCollection,
-			Wire:       "integrationcreds",
+			Wire:       "upsertIntegrationCredential",
 			Options:    &adapt.SaveOptions{Upsert: true},
 			Changes: &adapt.Collection{
 				integrationCredential,
@@ -61,7 +87,7 @@ func DeleteIntegrationCredential(integrationCredential *adapt.Item, coreSession 
 	requests := []datasource.SaveRequest{
 		{
 			Collection: IntegrationCredentialCollection,
-			Wire:       "integrationcreds",
+			Wire:       "deleteIntegrationCredential",
 			Options:    &adapt.SaveOptions{},
 			Deletes: &adapt.Collection{
 				integrationCredential,
