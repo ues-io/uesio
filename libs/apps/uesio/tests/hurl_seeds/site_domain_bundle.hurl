@@ -8,7 +8,7 @@ POST https://{{host}}:{{port}}/site/wires/load
 {
     "wires": [
         {
-            "wire": "app",
+            "name": "app",
             "collection": "uesio/studio.app",
             "fields": [
                 { "id": "uesio/core.id" },

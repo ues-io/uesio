@@ -1,7 +1,7 @@
 package systemdialect
 
 import (
-	"errors"
+	"fmt"
 	"io"
 	"strconv"
 
@@ -26,52 +26,21 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.
 	}
 
 	if bundlestore.IsSystemBundle(appID) {
-		return nil, errors.New("cannot create a bundle for a system app")
+		return nil, meta.NewBotAccessError("cannot create a bundle for a system app")
 	}
 
 	if !session.GetSitePermissions().HasNamedPermission("uesio/studio.workspace_admin") {
-		return nil, errors.New("you must be a workspace admin to create bundles")
+		return nil, meta.NewBotAccessError("you must be a workspace admin to create bundles")
 	}
 
-	var workspace meta.Workspace
-	err = datasource.PlatformLoadOne(
-		&workspace,
-		&datasource.PlatformLoadOptions{
-			Connection: connection,
-			Conditions: []adapt.LoadRequestCondition{
-				{
-					Field: adapt.UNIQUE_KEY_FIELD,
-					Value: appID + ":" + workspaceName,
-				},
-			},
-		},
-		session,
-	)
+	app, err := datasource.QueryAppForWrite(appID, adapt.UNIQUE_KEY_FIELD, session, connection)
 	if err != nil {
-		return nil, err
+		return nil, meta.NewBotAccessError(fmt.Sprintf("you do not have permission to create bundles for app %s", appID))
 	}
 
-	var app meta.App
-	err = datasource.PlatformLoadOne(
-		&app,
-		&datasource.PlatformLoadOptions{
-			Connection: connection,
-			Fields: []adapt.LoadRequestField{
-				{
-					ID: adapt.ID_FIELD,
-				},
-			},
-			Conditions: []adapt.LoadRequestCondition{
-				{
-					Field: adapt.UNIQUE_KEY_FIELD,
-					Value: appID,
-				},
-			},
-		},
-		session,
-	)
+	workspace, err := datasource.QueryWorkspaceForWrite(appID+":"+workspaceName, adapt.UNIQUE_KEY_FIELD, session, connection)
 	if err != nil {
-		return nil, err
+		return nil, meta.NewBotAccessError(fmt.Sprintf("you do not have permission to create bundles for workspace %s", workspaceName))
 	}
 
 	var bundles meta.BundleCollection
@@ -127,7 +96,7 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.
 		Namespace:  appID,
 		Version:    workspace.Name,
 		Connection: connection,
-		Workspace:  &workspace,
+		Workspace:  workspace,
 	})
 	if err != nil {
 		return nil, err

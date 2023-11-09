@@ -23,7 +23,7 @@ POST https://{{host}}:{{port}}/site/wires/load
 {
     "wires": [
         {
-            "wire": "workspaces",
+            "name": "workspaces",
             "collection": "uesio/studio.workspace",
             "conditions": [
                 {
