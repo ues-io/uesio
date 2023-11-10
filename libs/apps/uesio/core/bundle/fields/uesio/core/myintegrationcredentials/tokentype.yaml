@@ -1,0 +1,4 @@
+name: tokentype
+type: SELECT
+label: Token Type
+selectList: oauth2tokentype
