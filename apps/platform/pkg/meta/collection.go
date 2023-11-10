@@ -91,15 +91,26 @@ func (c *Collection) Len() int {
 }
 
 func (c *Collection) UnmarshalYAML(node *yaml.Node) error {
-	err := validateNodeName(node, c.Name)
-	if err != nil {
+	// Do this BEFORE unmarshalling to ensure that the file path name matches the YAML name property
+	if err := validateNodeName(node, c.Name); err != nil {
 		return err
 	}
-	c.IntegrationRef = pickMetadataItem(node, "integration", c.Namespace, "")
-	c.NameField = pickMetadataItem(node, "nameField", c.Namespace, "uesio/core.id")
-	c.LoadBot = pickMetadataItem(node, "loadBot", c.Namespace, "")
-	c.SaveBot = pickMetadataItem(node, "saveBot", c.Namespace, "")
-	return node.Decode((*CollectionWrapper)(c))
+	if err := node.Decode((*CollectionWrapper)(c)); err != nil {
+		return err
+	}
+	c.IntegrationRef = GetFullyQualifiedKey(c.IntegrationRef, c.Namespace)
+	c.NameField = GetFullyQualifiedKey(c.NameField, c.Namespace)
+	if c.NameField == "" {
+		c.NameField = "uesio/core.id"
+	}
+	c.LoadBot = GetFullyQualifiedKey(c.LoadBot, c.Namespace)
+	c.SaveBot = GetFullyQualifiedKey(c.SaveBot, c.Namespace)
+	if len(c.UniqueKeyFields) > 0 {
+		for i, _ := range c.UniqueKeyFields {
+			c.UniqueKeyFields[i] = GetFullyQualifiedKey(c.UniqueKeyFields[i], c.Namespace)
+		}
+	}
+	return nil
 }
 
 func (c *Collection) MarshalYAML() (interface{}, error) {
@@ -107,5 +118,10 @@ func (c *Collection) MarshalYAML() (interface{}, error) {
 	c.NameField = removeDefault(GetLocalizedKey(c.NameField, c.Namespace), "uesio/core.id")
 	c.LoadBot = GetLocalizedKey(c.LoadBot, c.Namespace)
 	c.SaveBot = GetLocalizedKey(c.SaveBot, c.Namespace)
+	if len(c.UniqueKeyFields) > 0 {
+		for i, _ := range c.UniqueKeyFields {
+			c.UniqueKeyFields[i] = GetLocalizedKey(c.UniqueKeyFields[i], c.Namespace)
+		}
+	}
 	return (*CollectionWrapper)(c), nil
 }

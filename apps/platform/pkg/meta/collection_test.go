@@ -11,6 +11,9 @@ import (
 var localMetadataNames = trimYamlString(`
 name: somecollection
 type: EXTERNAL
+uniqueKey:
+    - field1
+    - field2
 nameField: somefield
 integration: someintegration
 loadBot: someloadbot
@@ -20,6 +23,9 @@ saveBot: somesavebot
 var qualifiedMetadataReferences = trimYamlString(`
 name: somecollection
 type: EXTERNAL
+uniqueKey:
+    - luigi/foo.field1
+    - luigi/foo.field2
 nameField: luigi/foo.somefield
 integration: luigi/foo.someintegration
 loadBot: luigi/foo.someloadbot
@@ -29,6 +35,9 @@ saveBot: luigi/foo.somesavebot
 var thisAppMetadataReferences = trimYamlString(`
 name: somecollection
 type: EXTERNAL
+uniqueKey:
+    - this/app.field1
+    - this/app.field2
 nameField: this/app.somefield
 integration: this/app.someintegration
 loadBot: this/app.someloadbot
@@ -59,6 +68,10 @@ func TestCollectionUnmarshal(t *testing.T) {
 					Name:      "somecollection",
 					Namespace: "my/namespace",
 				},
+				UniqueKeyFields: []string{
+					"my/namespace.field1",
+					"my/namespace.field2",
+				},
 				NameField:      "my/namespace.somefield",
 				Type:           "EXTERNAL",
 				IntegrationRef: "my/namespace.someintegration",
@@ -78,6 +91,10 @@ func TestCollectionUnmarshal(t *testing.T) {
 					Name:      "somecollection",
 					Namespace: "my/namespace",
 				},
+				UniqueKeyFields: []string{
+					"my/namespace.field1",
+					"my/namespace.field2",
+				},
 				NameField:      "my/namespace.somefield",
 				Type:           "EXTERNAL",
 				IntegrationRef: "my/namespace.someintegration",
@@ -96,6 +113,10 @@ func TestCollectionUnmarshal(t *testing.T) {
 				BundleableBase: BundleableBase{
 					Name:      "somecollection",
 					Namespace: "my/namespace",
+				},
+				UniqueKeyFields: []string{
+					"luigi/foo.field1",
+					"luigi/foo.field2",
 				},
 				NameField:      "luigi/foo.somefield",
 				Type:           "EXTERNAL",
@@ -153,6 +174,10 @@ func TestCollectionMarshal(t *testing.T) {
 					Name:      "somecollection",
 					Namespace: "my/namespace",
 				},
+				UniqueKeyFields: []string{
+					"field1",
+					"field2",
+				},
 				NameField:      "somefield",
 				Type:           "EXTERNAL",
 				IntegrationRef: "someintegration",
@@ -170,6 +195,10 @@ func TestCollectionMarshal(t *testing.T) {
 				BundleableBase: BundleableBase{
 					Name:      "somecollection",
 					Namespace: "my/namespace",
+				},
+				UniqueKeyFields: []string{
+					"luigi/foo.field1",
+					"luigi/foo.field2",
 				},
 				NameField:      "luigi/foo.somefield",
 				Type:           "EXTERNAL",
