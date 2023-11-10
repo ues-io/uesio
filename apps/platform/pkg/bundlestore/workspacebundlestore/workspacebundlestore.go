@@ -195,20 +195,20 @@ func (b *WorkspaceBundleStoreConnection) GetAllItems(group meta.BundleableGroup,
 
 }
 
-func (b *WorkspaceBundleStoreConnection) GetItemAttachment(item meta.AttachableItem, path string) (file.Metadata, io.ReadSeeker, error) {
+func (b *WorkspaceBundleStoreConnection) GetItemAttachment(w io.Writer, item meta.AttachableItem, path string) (file.Metadata, error) {
 	err := b.GetItem(item)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 	recordID, err := item.GetField(adapt.ID_FIELD)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
-	stream, userFileMetadata, err := filesource.DownloadAttachment(recordID.(string), path, sess.GetStudioAnonSession())
+	userFileMetadata, err := filesource.DownloadAttachment(w, recordID.(string), path, sess.GetStudioAnonSession())
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
-	return newWorkspaceFileMeta(userFileMetadata), stream, nil
+	return newWorkspaceFileMeta(userFileMetadata), nil
 }
 
 func (b *WorkspaceBundleStoreConnection) GetAttachmentPaths(item meta.AttachableItem) ([]string, error) {

@@ -129,15 +129,13 @@ func RetrieveBundle(targetDirectory string, create WriterCreator, bs bundlestore
 					return err
 				}
 				for _, itempath := range paths {
-					_, attachment, err := bs.GetItemAttachment(attachableItem, itempath)
-					if err != nil {
-						return err
-					}
+
 					f, err := create(path.Join(targetDirectory, metadataType, attachableItem.GetBasePath(), itempath))
 					if err != nil {
 						return err
 					}
-					_, err = io.Copy(f, attachment)
+
+					_, err = bs.GetItemAttachment(f, attachableItem, itempath)
 					if err != nil {
 						f.Close()
 						return err

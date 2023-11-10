@@ -1,6 +1,7 @@
 package platformbundlestore
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"io"
@@ -35,15 +36,15 @@ func getBasePath(namespace, version string) string {
 	return filepath.Join(namespace, version, "bundle")
 }
 
-func getStream(namespace string, version string, objectname string, filename string) (file.Metadata, io.ReadSeeker, error) {
+func getStream(w io.Writer, namespace string, version string, objectname string, filename string) (file.Metadata, error) {
 	filePath := filepath.Join(getBasePath(namespace, version), objectname, filename)
 
 	conn, err := getPlatformFileConnection()
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	return conn.Download(filePath)
+	return conn.Download(w, filePath)
 
 }
 
@@ -67,12 +68,13 @@ func (b *PlatformBundleStoreConnection) GetItem(item meta.BundleableItem) error 
 		meta.Copy(item, cachedItem)
 		return nil
 	}
-	fileMetadata, stream, err := getStream(b.Namespace, b.Version, collectionName, item.GetPath())
+	buf := &bytes.Buffer{}
+	fileMetadata, err := getStream(buf, b.Namespace, b.Version, collectionName, item.GetPath())
 	if err != nil {
 		return bundlestore.NewNotFoundError("Metadata item: " + key + " does not exist")
 	}
 	item.SetModified(*fileMetadata.LastModified())
-	err = bundlestore.DecodeYAML(item, stream)
+	err = bundlestore.DecodeYAML(item, buf)
 	if err != nil {
 		return err
 	}
@@ -144,8 +146,8 @@ func (b *PlatformBundleStoreConnection) GetAllItems(group meta.BundleableGroup, 
 
 }
 
-func (b *PlatformBundleStoreConnection) GetItemAttachment(item meta.AttachableItem, path string) (file.Metadata, io.ReadSeeker, error) {
-	return getStream(item.GetNamespace(), b.Version, item.GetBundleFolderName(), filepath.Join(item.GetBasePath(), path))
+func (b *PlatformBundleStoreConnection) GetItemAttachment(w io.Writer, item meta.AttachableItem, path string) (file.Metadata, error) {
+	return getStream(w, item.GetNamespace(), b.Version, item.GetBundleFolderName(), filepath.Join(item.GetBasePath(), path))
 }
 
 func (b *PlatformBundleStoreConnection) GetAttachmentPaths(item meta.AttachableItem) ([]string, error) {
@@ -188,12 +190,13 @@ func (b *PlatformBundleStoreConnection) DeleteBundle() error {
 
 func (b *PlatformBundleStoreConnection) GetBundleDef() (*meta.BundleDef, error) {
 	var by meta.BundleDef
-	_, stream, err := getStream(b.Namespace, b.Version, "", "bundle.yaml")
+	buf := &bytes.Buffer{}
+	_, err := getStream(buf, b.Namespace, b.Version, "", "bundle.yaml")
 	if err != nil {
 		return nil, err
 	}
 
-	err = bundlestore.DecodeYAML(&by, stream)
+	err = bundlestore.DecodeYAML(&by, buf)
 	if err != nil {
 		return nil, err
 	}

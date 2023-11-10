@@ -81,17 +81,21 @@ func (c *Connection) Upload(fileData io.Reader, path string) error {
 	return nil
 }
 
-func (c *Connection) Download(path string) (file.Metadata, io.ReadSeeker, error) {
+func (c *Connection) Download(w io.Writer, path string) (file.Metadata, error) {
 	fullPath := filepath.Join(c.bucket, filepath.FromSlash(path))
 	outFile, err := os.Open(fullPath)
 	if err != nil {
-		return nil, strings.NewReader(""), errors.New("unable to read file at path: " + path)
+		return nil, errors.New("unable to read file at path: " + path)
 	}
 	fileInfo, err := outFile.Stat()
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
-	return file.NewLocalFileMeta(fileInfo), outFile, nil
+	_, err = io.Copy(w, outFile)
+	if err != nil {
+		return nil, err
+	}
+	return file.NewLocalFileMeta(fileInfo), nil
 }
 
 func (c *Connection) Delete(path string) error {

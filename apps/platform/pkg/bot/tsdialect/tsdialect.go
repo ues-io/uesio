@@ -1,8 +1,8 @@
 package tsdialect
 
 import (
+	"bytes"
 	"fmt"
-	"io"
 	"strings"
 
 	esbuild "github.com/evanw/esbuild/pkg/api"
@@ -126,17 +126,14 @@ const DefaultBotBody = `export default function %s(bot) {
 
 // TODO: cache the transformed code, or generate it server-side as part of save of bot.ts
 func (b *TSDialect) hydrateBot(bot *meta.Bot, session *sess.Session) error {
-	_, stream, err := bundle.GetItemAttachment(bot, b.GetFilePath(), session)
-	if err != nil {
-		return err
-	}
-	content, err := io.ReadAll(stream)
+	buf := &bytes.Buffer{}
+	_, err := bundle.GetItemAttachment(buf, bot, b.GetFilePath(), session)
 	if err != nil {
 		return err
 	}
 
 	// Transform from TS to JS
-	result := esbuild.Transform(string(content), esbuild.TransformOptions{
+	result := esbuild.Transform(string(buf.Bytes()), esbuild.TransformOptions{
 		Loader: esbuild.LoaderTS,
 	})
 

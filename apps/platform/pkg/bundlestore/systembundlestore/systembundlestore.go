@@ -167,16 +167,20 @@ func (b *SystemBundleStoreConnection) GetAllItems(group meta.BundleableGroup, co
 	return nil
 }
 
-func (b *SystemBundleStoreConnection) GetItemAttachment(item meta.AttachableItem, itempath string) (filetypes.Metadata, io.ReadSeeker, error) {
+func (b *SystemBundleStoreConnection) GetItemAttachment(w io.Writer, item meta.AttachableItem, itempath string) (filetypes.Metadata, error) {
 	osFile, err := getFile(item.GetNamespace(), b.Version, item.GetBundleFolderName(), path.Join(item.GetBasePath(), itempath))
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 	fileInfo, err := osFile.Stat()
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
-	return filetypes.NewLocalFileMeta(fileInfo), osFile, nil
+	_, err = io.Copy(w, osFile)
+	if err != nil {
+		return nil, err
+	}
+	return filetypes.NewLocalFileMeta(fileInfo), nil
 }
 
 func (b *SystemBundleStoreConnection) GetAttachmentPaths(item meta.AttachableItem) ([]string, error) {

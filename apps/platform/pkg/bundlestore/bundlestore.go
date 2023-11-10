@@ -79,7 +79,7 @@ type BundleStoreConnection interface {
 	GetManyItems(items []meta.BundleableItem) error
 	GetAllItems(group meta.BundleableGroup, conditions meta.BundleConditions) error
 	HasAny(group meta.BundleableGroup, conditions meta.BundleConditions) (bool, error)
-	GetItemAttachment(item meta.AttachableItem, path string) (file.Metadata, io.ReadSeeker, error)
+	GetItemAttachment(w io.Writer, item meta.AttachableItem, path string) (file.Metadata, error)
 	GetAttachmentPaths(item meta.AttachableItem) ([]string, error)
 	StoreItem(path string, reader io.Reader) error
 	GetBundleDef() (*meta.BundleDef, error)

@@ -3,7 +3,6 @@ package bulk
 import (
 	"encoding/csv"
 	"fmt"
-	"io"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -71,15 +70,11 @@ func exportFiles(create retrieve.WriterCreator, spec *meta.JobSpec, session *ses
 	}
 
 	for _, userFile := range *userFiles {
-		filedata, _, err := filesource.DownloadItem(userFile, session)
-		if err != nil {
-			return err
-		}
 		file, err := create(fmt.Sprintf("files/%s/%s", userFile.ID, userFile.Path))
 		if err != nil {
 			return err
 		}
-		_, err = io.Copy(file, filedata)
+		_, err = filesource.DownloadItem(file, userFile, session)
 		if err != nil {
 			return err
 		}
