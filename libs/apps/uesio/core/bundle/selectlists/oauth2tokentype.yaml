@@ -1,0 +1,8 @@
+name: oauth2tokentype
+blankOptionLabel: "(Use Default)"
+options:
+  - label: "Bearer"
+    value: "bearer"
+  - label: "None"
+    value: "none"
+public: true

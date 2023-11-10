@@ -47,27 +47,25 @@ func GetCredentials(key string, session *sess.Session) (*adapt.Credentials, erro
 	return &credentialsMap, nil
 }
 
+func getEntryValue(entry *credentials.CredentialEntry, session *sess.Session) (string, error) {
+	switch entry.Type {
+	case "secret":
+		return GetSecretFromKey(entry.Value, session)
+	case "configvalue":
+		return configstore.GetValueFromKey(entry.Value, session)
+	case "merge":
+		return configstore.Merge(entry.Value, session)
+	}
+	return entry.Value, nil
+}
+
 func addCredentialEntries(credentialsMap adapt.Credentials, entriesSpec credentials.CredentialEntriesMap, session *sess.Session) error {
 	for entryName, entry := range entriesSpec {
-		var value string
-		var err error
-		if entry.Type == "secret" {
-			value, err = GetSecretFromKey(entry.Value, session)
-			if err != nil {
-				return err
-			}
-		} else if entry.Type == "configvalue" {
-			value, err = configstore.GetValueFromKey(entry.Value, session)
-			if err != nil {
-				return err
-			}
-		} else if entry.Type == "merge" {
-			value, err = configstore.Merge(entry.Value, session)
-			if err != nil {
-				return err
-			}
+		if value, err := getEntryValue(entry, session); err != nil {
+			return err
+		} else {
+			credentialsMap[entryName] = value
 		}
-		credentialsMap[entryName] = value
 	}
 	return nil
 }
