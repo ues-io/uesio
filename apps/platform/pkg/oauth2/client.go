@@ -47,7 +47,7 @@ func MakeRequestWithStoredUserCredentials(req *http.Request, integrationName str
 	}
 	tok := GetTokenFromCredential(integrationCredential)
 	accessToken := tok.AccessToken
-	defaultTokenType := credentials.GetEntry("tokenType", "bearer")
+	tokenTypeOverride := credentials.GetEntry("tokenType", "")
 
 	var finalToken *oauth2.Token
 
@@ -55,7 +55,7 @@ func MakeRequestWithStoredUserCredentials(req *http.Request, integrationName str
 		OnAuthHeaderSet: func(useToken *oauth2.Token, authHeader string) {
 			finalToken = useToken
 		},
-		DefaultTokenType: defaultTokenType,
+		TokenTypeOverride: tokenTypeOverride,
 	}
 
 	httpResp, err := NewClient(config, tok, clientOptions).Do(req)
@@ -64,8 +64,8 @@ func MakeRequestWithStoredUserCredentials(req *http.Request, integrationName str
 	// Retry the request without the access token, just once.
 	// This shouldn't happen if the access token expiration is reliable,
 	// but that's not the case for many OAuth implementations
-	if err == nil && httpResp != nil && httpResp.StatusCode == http.StatusUnauthorized {
-		slog.Info("GOT unauthorized response, clearing access token to force reauth...")
+	if err == nil && httpResp != nil && httpResp.StatusCode == http.StatusUnauthorized && tok.RefreshToken != "" {
+		slog.Info("GOT unauthorized response, clearing access token to force reauth with refresh token...")
 		tok.AccessToken = ""
 		httpResp, err = NewClient(config, tok, clientOptions).Do(req)
 	}
@@ -91,7 +91,7 @@ func MakeRequestWithStoredUserCredentials(req *http.Request, integrationName str
 		case *oauth2.RetrieveError:
 			// This usually means that the refresh token is invalid, expired, or can't be obtained.
 			// Delete it, or at least attempt to
-			slog.Debug("Refresh token must be invalid/expired, so we are purging it...")
+			slog.Info("Refresh token must be invalid/expired, so we are purging it...")
 			if deleteErr := DeleteIntegrationCredential(integrationCredential, coreSession, connection); deleteErr != nil {
 				slog.Error("unable to delete integration credential record: " + deleteErr.Error())
 			}
@@ -117,6 +117,6 @@ func NewClient(config *oauth2.Config, t *oauth2.Token, opts *ClientOptions) *htt
 type ClientOptions struct {
 	// OnAuthHeaderSet is invoked when the authorization header is set during transport
 	OnAuthHeaderSet authHeaderEventListener
-	// DefaultTokenType is used when the retrieved token does not specify its type
-	DefaultTokenType string
+	// TokenTypeOverride is used when the retrieved token does not specify its type
+	TokenTypeOverride string
 }

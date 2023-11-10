@@ -3,6 +3,7 @@ package oauth2
 import (
 	"errors"
 	"net/http"
+	"strings"
 
 	"golang.org/x/oauth2"
 )
@@ -67,14 +68,18 @@ func (t *Transport) base() http.RoundTripper {
 
 func (t *Transport) setAuthHeader(r *http.Request, token *oauth2.Token) {
 	authHeader := ""
-	// Special case - if the token does NOT specify its type, and we have a default token type of "none",
-	// then just inject the access token directly
-	if token.TokenType == "" && t.ClientOptions != nil && t.ClientOptions.DefaultTokenType == "none" {
+	// Special case - if we have a token type override of "none",
+	// then just inject the access token directly, no prefix.
+	if t.ClientOptions != nil && t.ClientOptions.TokenTypeOverride == "none" {
 		authHeader = token.AccessToken
+		token.TokenType = "none"
 		r.Header.Set("Authorization", authHeader)
 	} else {
 		// Do the default functionality of the library
 		token.SetAuthHeader(r)
+		if token.TokenType == "" {
+			token.TokenType = strings.ToLower(token.Type())
+		}
 		// Just grab whatever got set by the library
 		authHeader = r.Header.Get("Authorization")
 	}

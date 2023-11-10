@@ -2,6 +2,7 @@ package oauth2
 
 import (
 	"errors"
+	"strings"
 	"time"
 
 	"golang.org/x/oauth2"
@@ -28,8 +29,8 @@ func GetTokenFromCredential(credential *adapt.Item) *oauth2.Token {
 	accessTokenExpiry, _ := credential.GetField(AccessTokenExpirationField)
 	// Default expiry to the "nil" time, which is treated as non-expiring
 	expiry := time.Time{}
-	if accessTokenExpiry != nil && accessTokenExpiry != 0 {
-		if typedVal, isValid := accessTokenExpiry.(float64); isValid {
+	if accessTokenExpiry != nil {
+		if typedVal, isValid := accessTokenExpiry.(float64); isValid && typedVal > 0 {
 			expiry = time.Unix(int64(typedVal), 0)
 		}
 	}
@@ -46,13 +47,27 @@ func GetTokenFromCredential(credential *adapt.Item) *oauth2.Token {
 func PopulateCredentialFieldsFromToken(credential *adapt.Item, token *oauth2.Token) {
 	credential.SetField(AccessTokenField, token.AccessToken)
 	credential.SetField(RefreshTokenField, token.RefreshToken)
+	credential.SetField(TokenTypeField, ResolveTokenType(token))
 	expiry := token.Expiry
-	if expiry.IsZero() {
-		credential.SetField(AccessTokenExpirationField, 0)
-	} else {
+	if !expiry.IsZero() {
 		credential.SetField(AccessTokenExpirationField, expiry.Unix())
+	} else {
+		credential.SetField(AccessTokenExpirationField, nil)
 	}
 
+}
+
+func ResolveTokenType(token *oauth2.Token) string {
+	// Exception case --- "none" is not supported by the Go oauth2 library,
+	// so we have to manually handle this
+	if token.TokenType == "none" {
+		return token.TokenType
+	}
+	tokenType := strings.ToLower(token.Type())
+	if tokenType == "" {
+		return "bearer"
+	}
+	return tokenType
 }
 
 func BuildIntegrationCredential(integrationName string, userId string, token *oauth2.Token) *adapt.Item {
@@ -127,6 +142,9 @@ func GetIntegrationCredential(
 			},
 			{
 				ID: RefreshTokenField,
+			},
+			{
+				ID: TokenTypeField,
 			},
 		},
 		Conditions: []adapt.LoadRequestCondition{

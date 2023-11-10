@@ -281,6 +281,11 @@ definition:
                     - field: uesio/core.hasaccesstoken
                       value: true
               - uesio/io.field:
+                  fieldId: uesio/core.tokentype
+                  uesio.display:
+                    - field: uesio/core.hasaccesstoken
+                      value: true
+              - uesio/io.field:
                   fieldId: uesio/core.updatedat
                   uesio.display:
                     - field: uesio/core.hasaccesstoken

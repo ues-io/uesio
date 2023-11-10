@@ -10,14 +10,15 @@ import (
 
 func TestTransport_setAuthHeader(t1 *testing.T) {
 	type args struct {
-		token            *oauth2.Token
-		defaultTokenType string
+		token             *oauth2.Token
+		tokenTypeOverride string
 	}
 	tests := []struct {
 		name              string
 		args              args
 		expectAuthHeader  string
 		expectAccessToken string
+		expectTokenType   string
 	}{
 		{
 			"it should populate bearer token auth in the request if token type is not set",
@@ -28,29 +29,32 @@ func TestTransport_setAuthHeader(t1 *testing.T) {
 			},
 			"Bearer 123",
 			"123",
+			"bearer",
 		},
 		{
-			"it should populate bearer token auth in the request if token type is set to bearer, over default",
+			"it should populate bearer token auth with override, even if TokenType is set to bearer",
 			args{
 				token: &oauth2.Token{
 					AccessToken: "123",
 					TokenType:   "bearer",
 				},
-				defaultTokenType: "none",
+				tokenTypeOverride: "none",
 			},
-			"Bearer 123",
 			"123",
+			"123",
+			"none",
 		},
 		{
-			"it should populate bearer token auth in the request if token type default is bearer",
+			"it should use token type override of none",
 			args{
 				token: &oauth2.Token{
 					AccessToken: "123",
 				},
-				defaultTokenType: "bearer",
+				tokenTypeOverride: "none",
 			},
-			"Bearer 123",
 			"123",
+			"123",
+			"none",
 		},
 		{
 			"it should populate plain token in auth header if token type default is none",
@@ -58,10 +62,11 @@ func TestTransport_setAuthHeader(t1 *testing.T) {
 				token: &oauth2.Token{
 					AccessToken: "123",
 				},
-				defaultTokenType: "none",
+				tokenTypeOverride: "none",
 			},
 			"123",
 			"123",
+			"none",
 		},
 	}
 	for _, tt := range tests {
@@ -76,8 +81,8 @@ func TestTransport_setAuthHeader(t1 *testing.T) {
 			}
 			t := &Transport{
 				ClientOptions: &ClientOptions{
-					OnAuthHeaderSet:  onAuthHeaderSet,
-					DefaultTokenType: tt.args.defaultTokenType,
+					OnAuthHeaderSet:   onAuthHeaderSet,
+					TokenTypeOverride: tt.args.tokenTypeOverride,
 				},
 			}
 			t.setAuthHeader(r, tt.args.token)
