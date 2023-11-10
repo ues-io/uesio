@@ -19,16 +19,14 @@ func NewBaseCollection(namespace, name string) *Collection {
 }
 
 func NewCollections(keys map[string]bool) ([]BundleableItem, error) {
-	items := []BundleableItem{}
-
+	var items []BundleableItem
 	for key := range keys {
-		newCollection, err := NewCollection(key)
-		if err != nil {
+		if newCollection, err := NewCollection(key); err != nil {
 			return nil, err
+		} else {
+			items = append(items, newCollection)
 		}
-		items = append(items, newCollection)
 	}
-
 	return items, nil
 }
 
@@ -41,8 +39,8 @@ type Collection struct {
 	BuiltIn         `yaml:",inline"`
 	BundleableBase  `yaml:",inline"`
 	Type            string   `yaml:"type,omitempty" json:"uesio/studio.type"`
-	Label           string   `yaml:"label" json:"uesio/studio.label"`
-	PluralLabel     string   `yaml:"pluralLabel" json:"uesio/studio.plurallabel"`
+	Label           string   `yaml:"label,omitempty" json:"uesio/studio.label"`
+	PluralLabel     string   `yaml:"pluralLabel,omitempty" json:"uesio/studio.plurallabel"`
 	UniqueKeyFields []string `yaml:"uniqueKey,omitempty" json:"uesio/studio.uniquekey"`
 	NameField       string   `yaml:"nameField,omitempty" json:"uesio/studio.namefield"`
 	ReadOnly        bool     `yaml:"readOnly,omitempty" json:"-"`
@@ -98,12 +96,16 @@ func (c *Collection) UnmarshalYAML(node *yaml.Node) error {
 		return err
 	}
 	c.IntegrationRef = pickMetadataItem(node, "integration", c.Namespace, "")
-	c.NameField = pickStringProperty(node, "nameField", "uesio/core.id")
+	c.NameField = pickMetadataItem(node, "nameField", c.Namespace, "uesio/core.id")
+	c.LoadBot = pickMetadataItem(node, "loadBot", c.Namespace, "")
+	c.SaveBot = pickMetadataItem(node, "saveBot", c.Namespace, "")
 	return node.Decode((*CollectionWrapper)(c))
 }
 
 func (c *Collection) MarshalYAML() (interface{}, error) {
 	c.IntegrationRef = removeDefault(GetLocalizedKey(c.IntegrationRef, c.Namespace), PLATFORM_DATA_SOURCE)
-	c.NameField = removeDefault(c.NameField, "uesio/core.id")
+	c.NameField = removeDefault(GetLocalizedKey(c.NameField, c.Namespace), "uesio/core.id")
+	c.LoadBot = GetLocalizedKey(c.LoadBot, c.Namespace)
+	c.SaveBot = GetLocalizedKey(c.SaveBot, c.Namespace)
 	return (*CollectionWrapper)(c), nil
 }
