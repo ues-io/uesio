@@ -24,6 +24,7 @@ type Transport struct {
 	// If nil, http.DefaultTransport is used.
 	Base http.RoundTripper
 
+	// ClientOptions
 	ClientOptions *ClientOptions
 }
 
@@ -66,7 +67,18 @@ func (t *Transport) base() http.RoundTripper {
 
 func (t *Transport) setAuthHeader(r *http.Request, token *oauth2.Token) {
 	authHeader := ""
-	r.Header.Set("Authorization", authHeader)
+	// Special case - if the token does NOT specify its type, and we have a default token type of "none",
+	// then just inject the access token directly
+	if token.TokenType == "" && t.ClientOptions != nil && t.ClientOptions.DefaultTokenType == "none" {
+		authHeader = token.AccessToken
+		r.Header.Set("Authorization", authHeader)
+	} else {
+		// Do the default functionality of the library
+		token.SetAuthHeader(r)
+		// Just grab whatever got set by the library
+		authHeader = r.Header.Get("Authorization")
+	}
+
 	// Publish the results of the operation for downstream consumption
 	if t.ClientOptions != nil && t.ClientOptions.OnAuthHeaderSet != nil {
 		t.ClientOptions.OnAuthHeaderSet(token, authHeader)

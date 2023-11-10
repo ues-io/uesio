@@ -1,12 +1,12 @@
 package credentials
 
 type OAuth2Credentials struct {
-	ClientId                  string `yaml:"clientId" json:"client_id"`
-	ClientSecret              string `yaml:"clientSecret" json:"client_secret"`
-	TokenURL                  string `yaml:"tokenUrl" json:"token_url"`
-	AuthorizeURL              string `yaml:"authorizeUrl" json:"authorize_url"`
-	Scopes                    string `yaml:"scopes,omitempty" json:"scopes"`
-	CustomAuthorizationHeader string `yaml:"customAuthorizationHeader,omitempty" json:"custom_authorization_header"`
+	ClientId     string `yaml:"clientId" json:"client_id"`
+	ClientSecret string `yaml:"clientSecret" json:"client_secret"`
+	TokenURL     string `yaml:"tokenUrl" json:"token_url"`
+	AuthorizeURL string `yaml:"authorizeUrl" json:"authorize_url"`
+	Scopes       string `yaml:"scopes,omitempty" json:"scopes"`
+	TokenType    string `yaml:"tokenType,omitempty" json:"token_type"`
 }
 
 func (c *OAuth2Credentials) IsNil() bool {
@@ -40,9 +40,9 @@ func (c *OAuth2Credentials) Map(mapper EntryMapper) {
 		Type:  "configvalue",
 		Value: c.Scopes,
 	})
-	c.CustomAuthorizationHeader = mapper(&CredentialEntry{
-		Name:  "customAuthorizationHeader",
-		Type:  "merge",
-		Value: c.CustomAuthorizationHeader,
+	c.TokenType = mapper(&CredentialEntry{
+		Name:  "tokenType",
+		Type:  "select",
+		Value: c.TokenType,
 	})
 }

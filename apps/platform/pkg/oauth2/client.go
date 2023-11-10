@@ -47,14 +47,18 @@ func MakeRequestWithStoredUserCredentials(req *http.Request, integrationName str
 	}
 	tok := GetTokenFromCredential(integrationCredential)
 	accessToken := tok.AccessToken
+	defaultTokenType := credentials.GetEntry("tokenType", "bearer")
 
 	var finalToken *oauth2.Token
 
-	onAuthorizationHeaderSet := func(useToken *oauth2.Token, authHeader string) {
-		finalToken = useToken
+	clientOptions := &ClientOptions{
+		OnAuthHeaderSet: func(useToken *oauth2.Token, authHeader string) {
+			finalToken = useToken
+		},
+		DefaultTokenType: defaultTokenType,
 	}
 
-	httpResp, err := NewClient(config, tok, onAuthorizationHeaderSet).Do(req)
+	httpResp, err := NewClient(config, tok, clientOptions).Do(req)
 
 	// If the status code is unauthorized, then we need to get a new access token.
 	// Retry the request without the access token, just once.
@@ -63,7 +67,7 @@ func MakeRequestWithStoredUserCredentials(req *http.Request, integrationName str
 	if err == nil && httpResp != nil && httpResp.StatusCode == http.StatusUnauthorized {
 		slog.Info("GOT unauthorized response, clearing access token to force reauth...")
 		tok.AccessToken = ""
-		httpResp, err = NewClient(config, tok, onAuthorizationHeaderSet).Do(req)
+		httpResp, err = NewClient(config, tok, clientOptions).Do(req)
 	}
 
 	if err == nil {
@@ -113,4 +117,6 @@ func NewClient(config *oauth2.Config, t *oauth2.Token, opts *ClientOptions) *htt
 type ClientOptions struct {
 	// OnAuthHeaderSet is invoked when the authorization header is set during transport
 	OnAuthHeaderSet authHeaderEventListener
+	// DefaultTokenType is used when the retrieved token does not specify its type
+	DefaultTokenType string
 }
