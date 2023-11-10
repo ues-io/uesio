@@ -183,8 +183,8 @@ func (b *SystemBundleStoreConnection) GetItemAttachment(w io.Writer, item meta.A
 	return filetypes.NewLocalFileMeta(fileInfo), nil
 }
 
-func (b *SystemBundleStoreConnection) GetAttachmentPaths(item meta.AttachableItem) ([]string, error) {
-	return nil, nil
+func (b *SystemBundleStoreConnection) GetItemAttachments(item meta.AttachableItem, creator bundlestore.FileCreator) error {
+	return nil
 }
 
 func (b *SystemBundleStoreConnection) StoreItem(path string, reader io.Reader) error {

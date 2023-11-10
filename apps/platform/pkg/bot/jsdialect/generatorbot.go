@@ -8,9 +8,9 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/retrieve"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 	"gopkg.in/yaml.v3"
@@ -27,7 +27,7 @@ func mergeTemplate(file io.Writer, params map[string]interface{}, templateString
 type GeneratorBotAPI struct {
 	Session    *sess.Session
 	Params     *ParamsAPI `bot:"params"`
-	Create     retrieve.WriterCreator
+	Create     bundlestore.FileCreator
 	Bot        *meta.Bot
 	Connection adapt.Connection
 }

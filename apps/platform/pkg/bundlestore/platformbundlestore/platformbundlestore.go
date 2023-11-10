@@ -150,8 +150,8 @@ func (b *PlatformBundleStoreConnection) GetItemAttachment(w io.Writer, item meta
 	return getStream(w, item.GetNamespace(), b.Version, item.GetBundleFolderName(), filepath.Join(item.GetBasePath(), path))
 }
 
-func (b *PlatformBundleStoreConnection) GetAttachmentPaths(item meta.AttachableItem) ([]string, error) {
-	return nil, nil
+func (b *PlatformBundleStoreConnection) GetItemAttachments(item meta.AttachableItem, creator bundlestore.FileCreator) error {
+	return nil
 }
 
 func (b *PlatformBundleStoreConnection) StoreItem(path string, reader io.Reader) error {

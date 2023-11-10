@@ -211,15 +211,15 @@ func (b *WorkspaceBundleStoreConnection) GetItemAttachment(w io.Writer, item met
 	return newWorkspaceFileMeta(userFileMetadata), nil
 }
 
-func (b *WorkspaceBundleStoreConnection) GetAttachmentPaths(item meta.AttachableItem) ([]string, error) {
+func (b *WorkspaceBundleStoreConnection) GetItemAttachments(item meta.AttachableItem, creator bundlestore.FileCreator) error {
 
 	err := b.GetItem(item)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	recordID, err := item.GetField(adapt.ID_FIELD)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	userFiles := &meta.UserFileMetadataCollection{}
 	err = datasource.PlatformLoad(
@@ -236,13 +236,24 @@ func (b *WorkspaceBundleStoreConnection) GetAttachmentPaths(item meta.Attachable
 		sess.GetStudioAnonSession(),
 	)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	var paths []string
+
 	for _, ufm := range *userFiles {
-		paths = append(paths, ufm.Path)
+		f, err := creator(ufm.Path)
+		if err != nil {
+			return err
+		}
+		_, err = filesource.DownloadItem(f, ufm, sess.GetStudioAnonSession())
+		if err != nil {
+			f.Close()
+			return err
+		}
+		f.Close()
+		return nil
+
 	}
-	return paths, nil
+	return nil
 }
 
 func (b *WorkspaceBundleStoreConnection) StoreItem(path string, reader io.Reader) error {

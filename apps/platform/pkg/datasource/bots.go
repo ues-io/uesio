@@ -5,11 +5,11 @@ import (
 	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/bot"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/retrieve"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -230,7 +230,7 @@ func runAfterSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessio
 	return nil
 }
 
-func CallGeneratorBot(create retrieve.WriterCreator, namespace, name string, params map[string]interface{}, connection adapt.Connection, session *sess.Session) error {
+func CallGeneratorBot(create bundlestore.FileCreator, namespace, name string, params map[string]interface{}, connection adapt.Connection, session *sess.Session) error {
 
 	if ok, err := canCallBot(namespace, name, session.GetContextPermissions()); !ok {
 		return err

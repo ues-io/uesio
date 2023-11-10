@@ -6,14 +6,14 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/retrieve"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func exportFiles(create retrieve.WriterCreator, spec *meta.JobSpec, session *sess.Session) error {
+func exportFiles(create bundlestore.FileCreator, spec *meta.JobSpec, session *sess.Session) error {
 
 	// Now do a special userfile export
 	userFiles := &meta.UserFileMetadataCollection{}

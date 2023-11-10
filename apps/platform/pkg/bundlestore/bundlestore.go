@@ -74,13 +74,15 @@ type BundleStore interface {
 	GetConnection(ConnectionOptions) (BundleStoreConnection, error)
 }
 
+type FileCreator func(string) (io.WriteCloser, error)
+
 type BundleStoreConnection interface {
 	GetItem(item meta.BundleableItem) error
 	GetManyItems(items []meta.BundleableItem) error
 	GetAllItems(group meta.BundleableGroup, conditions meta.BundleConditions) error
 	HasAny(group meta.BundleableGroup, conditions meta.BundleConditions) (bool, error)
 	GetItemAttachment(w io.Writer, item meta.AttachableItem, path string) (file.Metadata, error)
-	GetAttachmentPaths(item meta.AttachableItem) ([]string, error)
+	GetItemAttachments(item meta.AttachableItem, creator FileCreator) error
 	StoreItem(path string, reader io.Reader) error
 	GetBundleDef() (*meta.BundleDef, error)
 	HasAllItems(items []meta.BundleableItem) error
