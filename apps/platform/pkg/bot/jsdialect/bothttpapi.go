@@ -218,15 +218,6 @@ func (api *BotHttpAPI) makeRequest(req *http.Request, auth *BotHttpAuth) (*http.
 	return httpClient.Get().Do(req)
 }
 
-//
-//type OAuthToken struct {
-//	oauth2.Token
-//}
-//
-//func (t *OAuthToken) SetAuthHeader(r *http.Request) {
-//	r.Header.Set("Authorization", t.Type()+" "+t.AccessToken)
-//}
-
 func (api *BotHttpAPI) setBasicAuthHeaderInRequest(req *http.Request, cred *adapt.Credentials) error {
 	username, err := cred.GetRequiredEntry("username")
 	if err != nil {
