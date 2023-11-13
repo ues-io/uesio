@@ -45,8 +45,6 @@ jsonpath "$.params.description" == "test bundle"
 
 # Create a workspace using that bundle
 POST https://{{host}}:{{port}}/site/wires/save
-[Options]
-very-verbose:true
 {
     "wires": [
         {
