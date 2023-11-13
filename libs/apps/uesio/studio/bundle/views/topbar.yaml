@@ -130,9 +130,9 @@ definition:
           - uesio/io.group:
               components:
                 - uesio/builder.impersonation:
+                    workspaceID: ${uesio/core.id}
                     uesio.context:
                       workspace:
-                        id: ${uesio/core.id}
                         name: ${uesio/studio.name}
                         app: ${uesio/studio.app->uesio/core.uniquekey}
                     uesio.display:

@@ -54,7 +54,6 @@ type SiteMergeData struct {
 }
 
 type WorkspaceMergeData struct {
-	Id      string `json:"id"`
 	Name    string `json:"name"`
 	App     string `json:"app"`
 	Wrapper string `json:"wrapper,omitempty"`

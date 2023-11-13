@@ -1,10 +1,15 @@
 import { definition, component, api } from "@uesio/ui"
 
-const Impersonation: definition.UtilityComponent = (props) => {
-	const { context } = props
+type ImpersonationDefinition = {
+	workspaceID: string
+}
+
+const Impersonation: definition.UC<ImpersonationDefinition> = (props) => {
+	const { context, definition } = props
+	const workspaceID = context.mergeString(definition.workspaceID)
+	if (!workspaceID) throw new Error("No Workspace ID Provided")
 	const workspace = context.getWorkspace()
 	if (!workspace) throw new Error("No Workspace Context Provided")
-
 	const user = context.getUser()
 	if (!user) throw new Error("No User Context Provided")
 
@@ -21,7 +26,7 @@ const Impersonation: definition.UtilityComponent = (props) => {
 			conditions: [
 				{
 					field: "uesio/studio.workspace",
-					value: workspace.id,
+					value: workspaceID,
 					operator: "EQ",
 					valueSource: "VALUE",
 				},
@@ -43,30 +48,21 @@ const Impersonation: definition.UtilityComponent = (props) => {
 							signal: "context/CLEAR",
 							type: "WORKSPACE",
 						},
-						// {
-						// 	signal: "context/CLEAR",
-						// 	type: "SITE_ADMIN",
-						// },
-						// {
-						// 	signal: "context/CLEAR",
-						// 	type: "SITE",
-						// },
+						{
+							signal: "context/CLEAR",
+							type: "SITE_ADMIN",
+						},
+						{
+							signal: "context/CLEAR",
+							type: "SITE",
+						},
 						{
 							signal: "bot/CALL",
 							bot: "uesio/studio.setworkspaceuser",
 							params: {
-								workspaceid: workspace.id,
+								workspaceid: workspaceID,
 								profile: "${uesio/studio.profile}",
 							},
-						},
-						// {
-						// 	signal: "context/SET",
-						// 	type: "WORKSPACE",
-						// 	name: workspace.name,
-						// 	app: workspace.app,
-						// },
-						{
-							signal: "route/RELOAD",
 						},
 					],
 				},
