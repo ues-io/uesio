@@ -20,7 +20,7 @@ type ConditionOperator =
 	| "IS_BLANK"
 	| "IS_NOT_BLANK"
 type FieldValue = string | number | boolean | object | null
-type ConditionType = "SEARCH" | "GROUP"
+type ConditionType = "SEARCH" | "GROUP" | "SUBQUERY"
 interface ConditionRequest {
 	field: string
 	operator: ConditionOperator
