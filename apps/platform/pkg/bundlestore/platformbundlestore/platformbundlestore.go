@@ -145,7 +145,7 @@ func (b *PlatformBundleStoreConnection) GetItemAttachment(w io.Writer, item meta
 	return download(w, filepath.Join(getBasePath(item.GetNamespace(), b.Version), item.GetBundleFolderName(), filepath.Join(item.GetBasePath(), path)))
 }
 
-func (b *PlatformBundleStoreConnection) GetItemAttachments(item meta.AttachableItem, creator bundlestore.FileCreator) error {
+func (b *PlatformBundleStoreConnection) GetItemAttachments(creator bundlestore.FileCreator, item meta.AttachableItem) error {
 	// Get all of the file paths for this attachable item
 	basePath := filepath.Join(getBasePath(item.GetNamespace(), b.Version), item.GetBundleFolderName(), item.GetBasePath())
 	conn, err := getPlatformFileConnection()

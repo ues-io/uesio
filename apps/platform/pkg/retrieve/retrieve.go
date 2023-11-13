@@ -122,9 +122,9 @@ func RetrieveBundle(targetDirectory string, create bundlestore.FileCreator, bs b
 			attachableItem, isAttachable := item.(meta.AttachableItem)
 
 			if isAttachable {
-				err := bs.GetItemAttachments(attachableItem, func(localpath string) (io.WriteCloser, error) {
+				err := bs.GetItemAttachments(func(localpath string) (io.WriteCloser, error) {
 					return create(path.Join(targetDirectory, metadataType, attachableItem.GetBasePath(), localpath))
-				})
+				}, attachableItem)
 				if err != nil {
 					return err
 				}

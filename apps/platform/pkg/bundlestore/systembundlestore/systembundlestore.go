@@ -181,7 +181,7 @@ func (b *SystemBundleStoreConnection) GetItemAttachment(w io.Writer, item meta.A
 	return filetypes.NewLocalFileMeta(fileInfo), nil
 }
 
-func (b *SystemBundleStoreConnection) GetItemAttachments(item meta.AttachableItem, creator bundlestore.FileCreator) error {
+func (b *SystemBundleStoreConnection) GetItemAttachments(creator bundlestore.FileCreator, item meta.AttachableItem) error {
 	return nil
 }
 

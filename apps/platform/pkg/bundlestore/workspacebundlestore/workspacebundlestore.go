@@ -226,7 +226,8 @@ func (b *WorkspaceBundleStoreConnection) GetItemAttachment(w io.Writer, item met
 	return newWorkspaceFileMeta(userFileMetadata), nil
 }
 
-func (b *WorkspaceBundleStoreConnection) GetItemAttachments(item meta.AttachableItem, creator bundlestore.FileCreator) error {
+func (b *WorkspaceBundleStoreConnection) GetItemAttachments(creator bundlestore.FileCreator, item meta.AttachableItem) error {
+	session := sess.GetStudioAnonSession()
 	recordIDString, err := b.GetItemRecordID(item)
 	if err != nil {
 		return errors.New("Invalid Record ID for attachment")
@@ -243,7 +244,7 @@ func (b *WorkspaceBundleStoreConnection) GetItemAttachments(item meta.Attachable
 				},
 			},
 		},
-		sess.GetStudioAnonSession(),
+		session,
 	)
 	if err != nil {
 		return err
@@ -254,7 +255,7 @@ func (b *WorkspaceBundleStoreConnection) GetItemAttachments(item meta.Attachable
 		if err != nil {
 			return err
 		}
-		_, err = filesource.DownloadItem(f, ufm, sess.GetStudioAnonSession())
+		_, err = filesource.DownloadItem(f, ufm, session)
 		if err != nil {
 			f.Close()
 			return err
