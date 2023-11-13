@@ -1,0 +1,5 @@
+name: task
+label: Task
+pluralLabel: Tasks
+integration: static
+loadBot: load_tasks
