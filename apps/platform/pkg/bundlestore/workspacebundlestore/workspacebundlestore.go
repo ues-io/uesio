@@ -160,7 +160,10 @@ func (b *WorkspaceBundleStoreConnection) GetManyItems(items []meta.BundleableIte
 			return fmt.Errorf("Could not find workspace item: " + id)
 		}
 		for _, locator := range locators {
-			meta.Copy(locator.Item, item)
+			err := meta.Copy(locator.Item, item)
+			if err != nil {
+				return err
+			}
 		}
 		return nil
 	})

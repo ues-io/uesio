@@ -62,8 +62,7 @@ func (b *PlatformBundleStoreConnection) GetItem(item meta.BundleableItem) error 
 		if !b.AllowPrivate && !cachedItem.IsPublic() {
 			return bundlestore.NewPermissionError("Metadata item: " + key + " is not public")
 		}
-		meta.Copy(item, cachedItem)
-		return nil
+		return meta.Copy(item, cachedItem)
 	}
 	buf := &bytes.Buffer{}
 	fileMetadata, err := download(buf, filepath.Join(getBasePath(b.Namespace, b.Version), collectionName, item.GetPath()))
@@ -78,8 +77,7 @@ func (b *PlatformBundleStoreConnection) GetItem(item meta.BundleableItem) error 
 	if !b.AllowPrivate && !item.IsPublic() {
 		return bundlestore.NewPermissionError("Metadata item: " + key + " is not public")
 	}
-	bundle.AddItemToCache(item, b.Namespace, b.Version)
-	return nil
+	return bundle.AddItemToCache(item, b.Namespace, b.Version)
 }
 
 func (b *PlatformBundleStoreConnection) HasAny(group meta.BundleableGroup, conditions meta.BundleConditions) (bool, error) {

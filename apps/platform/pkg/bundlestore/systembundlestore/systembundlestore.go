@@ -79,8 +79,7 @@ func (b *SystemBundleStoreConnection) GetItem(item meta.BundleableItem) error {
 			message := fmt.Sprintf("Metadata item: %s is not public", key)
 			return bundlestore.NewPermissionError(message)
 		}
-		meta.Copy(item, cachedItem)
-		return nil
+		return meta.Copy(item, cachedItem)
 	}
 
 	file, err := getFile(b.Namespace, b.Version, collectionName, item.GetPath())
@@ -104,8 +103,7 @@ func (b *SystemBundleStoreConnection) GetItem(item meta.BundleableItem) error {
 		message := fmt.Sprintf("Metadata item: %s is not public", key)
 		return bundlestore.NewPermissionError(message)
 	}
-	bundle.AddItemToCache(item, b.Namespace, b.Version)
-	return nil
+	return bundle.AddItemToCache(item, b.Namespace, b.Version)
 
 }
 

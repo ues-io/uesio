@@ -106,7 +106,7 @@ func (c *Collection) UnmarshalYAML(node *yaml.Node) error {
 	c.LoadBot = GetFullyQualifiedKey(c.LoadBot, c.Namespace)
 	c.SaveBot = GetFullyQualifiedKey(c.SaveBot, c.Namespace)
 	if len(c.UniqueKeyFields) > 0 {
-		for i, _ := range c.UniqueKeyFields {
+		for i := range c.UniqueKeyFields {
 			c.UniqueKeyFields[i] = GetFullyQualifiedKey(c.UniqueKeyFields[i], c.Namespace)
 		}
 	}
@@ -119,7 +119,7 @@ func (c *Collection) MarshalYAML() (interface{}, error) {
 	c.LoadBot = GetLocalizedKey(c.LoadBot, c.Namespace)
 	c.SaveBot = GetLocalizedKey(c.SaveBot, c.Namespace)
 	if len(c.UniqueKeyFields) > 0 {
-		for i, _ := range c.UniqueKeyFields {
+		for i := range c.UniqueKeyFields {
 			c.UniqueKeyFields[i] = GetLocalizedKey(c.UniqueKeyFields[i], c.Namespace)
 		}
 	}
