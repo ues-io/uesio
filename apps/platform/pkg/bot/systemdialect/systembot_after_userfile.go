@@ -4,8 +4,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/filesource"
-	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -53,25 +51,6 @@ func runUserFileAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection,
 					"uesio/studio.path": pathString,
 					"uesio/core.id":     relatedRecord.(string),
 				})
-				//Delete previous records
-				ufmcToDelete := meta.UserFileMetadataCollection{}
-				err = datasource.PlatformLoad(
-					&ufmcToDelete,
-					&datasource.PlatformLoadOptions{
-						Conditions: []adapt.LoadRequestCondition{
-							{
-								Field:    "uesio/core.recordid",
-								Operator: "EQ",
-								Value:    relatedRecord.(string),
-							},
-						},
-					},
-					session,
-				)
-
-				for _, ufmToDelete := range ufmcToDelete {
-					filesource.Delete(ufmToDelete.ID, session)
-				}
 			} else {
 				continue
 			}
