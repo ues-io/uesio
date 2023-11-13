@@ -62,6 +62,13 @@ function getConditionTitle(condition: wire.WireConditionState): string {
 		return `SEARCH`
 	}
 
+	if (
+		condition.operator === "IS_BLANK" ||
+		condition.operator === "IS_NOT_BLANK"
+	) {
+		return `${condition.field} ${condition.operator}`
+	}
+
 	return "NEW_VALUE"
 }
 
