@@ -63,6 +63,9 @@ func runMyIntegrationCredentialsLoadBot(op *adapt.LoadOp, connection adapt.Conne
 			if createdAt, err := existingCred.GetField(adapt.CREATED_AT_FIELD); err == nil {
 				item.SetField(adapt.CREATED_AT_FIELD, createdAt)
 			}
+			if tokenType, err := existingCred.GetField(oauthlib.TokenTypeField); err == nil {
+				item.SetField(oauthlib.TokenTypeField, tokenType)
+			}
 		} else {
 			// Otherwise populate empty state values for all fields
 			item.SetField("uesio/core.hasaccesstoken", false)
@@ -144,6 +147,7 @@ func getAllIntegrationCredentialsForUser(userId string, session *sess.Session, c
 		Fields: []adapt.LoadRequestField{
 			{ID: oauthlib.AccessTokenField},
 			{ID: oauthlib.RefreshTokenField},
+			{ID: oauthlib.TokenTypeField},
 			{ID: oauthlib.AccessTokenExpirationField},
 			{ID: oauthlib.IntegrationField},
 			{ID: adapt.CREATED_AT_FIELD},

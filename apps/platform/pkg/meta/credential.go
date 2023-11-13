@@ -70,11 +70,20 @@ func (c *Credential) Len() int {
 	return StandardItemLen(c)
 }
 
-type defaultNamespaceMapper = func(input, defaultNamespace string) string
-
-var createEntryMapper = func(mapper defaultNamespaceMapper, defaultNamespace string) credentials.EntryMapper {
+func qualifyEntry(namespace string) credentials.EntryMapper {
 	return func(entry *credentials.CredentialEntry) string {
-		return mapper(entry.Value, defaultNamespace)
+		if entry.Type == "secret" || entry.Type == "configvalue" {
+			return GetFullyQualifiedKey(entry.Value, namespace)
+		}
+		return entry.Value
+	}
+}
+func localizeEntry(namespace string) credentials.EntryMapper {
+	return func(entry *credentials.CredentialEntry) string {
+		if entry.Type == "secret" || entry.Type == "configvalue" {
+			return GetLocalizedKey(entry.Value, namespace)
+		}
+		return entry.Value
 	}
 }
 
@@ -87,13 +96,13 @@ func (c *Credential) UnmarshalYAML(node *yaml.Node) error {
 		return err
 	}
 	// Now that we've unmarshalled, we need to fully-qualify all metadata references within our entries
-	c.MapEntries(createEntryMapper(GetFullyQualifiedKey, c.Namespace))
+	c.MapEntries(qualifyEntry(c.Namespace))
 	return nil
 }
 
 func (c *Credential) MarshalYAML() (interface{}, error) {
 	// Localize metadata references within credential entries
-	c.MapEntries(createEntryMapper(GetLocalizedKey, c.Namespace))
+	c.MapEntries(localizeEntry(c.Namespace))
 	return (*CredentialWrapper)(c), nil
 }
 

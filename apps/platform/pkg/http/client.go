@@ -19,7 +19,7 @@ func init() {
 	client = buildClient()
 }
 
-// Returns an HTTP client to use for HTTP operations.
+// Get returns an HTTP client to use for HTTP operations.
 // In production, this will just return the default client,
 // but for local dev / tests we need to return a client which trusts
 // our self-signed TLS certificate as a Root CA so that we can
