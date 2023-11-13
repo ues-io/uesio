@@ -37,7 +37,7 @@ func getFile(namespace string, version string, objectname string, filename strin
 	return os.Open(filePath)
 }
 
-func GetFilePaths(basePath string, group meta.BundleableGroup, conditions meta.BundleConditions, conn filetypes.Connection) ([]string, error) {
+func GetFilePaths(basePath string, filter meta.FilterFunc, conditions meta.BundleConditions, conn filetypes.Connection) ([]string, error) {
 
 	cachedKeys, ok := bundle.GetFileListFromCache(basePath, conditions)
 	if ok {
@@ -52,7 +52,7 @@ func GetFilePaths(basePath string, group meta.BundleableGroup, conditions meta.B
 	filteredPaths := []string{}
 
 	for _, path := range paths {
-		if group.FilterPath(path, conditions, true) {
+		if filter(path, conditions, true) {
 			filteredPaths = append(filteredPaths, path)
 		}
 	}
@@ -79,8 +79,7 @@ func (b *SystemBundleStoreConnection) GetItem(item meta.BundleableItem) error {
 			message := fmt.Sprintf("Metadata item: %s is not public", key)
 			return bundlestore.NewPermissionError(message)
 		}
-		meta.Copy(item, cachedItem)
-		return nil
+		return meta.Copy(item, cachedItem)
 	}
 
 	file, err := getFile(b.Namespace, b.Version, collectionName, item.GetPath())
@@ -104,8 +103,7 @@ func (b *SystemBundleStoreConnection) GetItem(item meta.BundleableItem) error {
 		message := fmt.Sprintf("Metadata item: %s is not public", key)
 		return bundlestore.NewPermissionError(message)
 	}
-	bundle.AddItemToCache(item, b.Namespace, b.Version)
-	return nil
+	return bundle.AddItemToCache(item, b.Namespace, b.Version)
 
 }
 
@@ -133,7 +131,7 @@ func (b *SystemBundleStoreConnection) GetAllItems(group meta.BundleableGroup, co
 	basePath := path.Join(getBasePath(b.Namespace, b.Version), group.GetBundleFolderName()) + "/"
 
 	conn := localfiles.Connection{}
-	paths, err := GetFilePaths(basePath, group, conditions, &conn)
+	paths, err := GetFilePaths(basePath, group.FilterPath, conditions, &conn)
 	if err != nil {
 		return err
 	}
@@ -167,20 +165,24 @@ func (b *SystemBundleStoreConnection) GetAllItems(group meta.BundleableGroup, co
 	return nil
 }
 
-func (b *SystemBundleStoreConnection) GetItemAttachment(item meta.AttachableItem, itempath string) (filetypes.Metadata, io.ReadSeeker, error) {
+func (b *SystemBundleStoreConnection) GetItemAttachment(w io.Writer, item meta.AttachableItem, itempath string) (filetypes.Metadata, error) {
 	osFile, err := getFile(item.GetNamespace(), b.Version, item.GetBundleFolderName(), path.Join(item.GetBasePath(), itempath))
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 	fileInfo, err := osFile.Stat()
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
-	return filetypes.NewLocalFileMeta(fileInfo), osFile, nil
+	_, err = io.Copy(w, osFile)
+	if err != nil {
+		return nil, err
+	}
+	return filetypes.NewLocalFileMeta(fileInfo), nil
 }
 
-func (b *SystemBundleStoreConnection) GetAttachmentPaths(item meta.AttachableItem) ([]string, error) {
-	return nil, nil
+func (b *SystemBundleStoreConnection) GetItemAttachments(creator bundlestore.FileCreator, item meta.AttachableItem) error {
+	return nil
 }
 
 func (b *SystemBundleStoreConnection) StoreItem(path string, reader io.Reader) error {
