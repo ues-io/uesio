@@ -143,18 +143,21 @@ func pickRequiredMetadataItem(node *yaml.Node, property, namespace string) (stri
 	return value, nil
 }
 
-func removeDefault(itemkey, defaultValue string) string {
-	if itemkey == defaultValue {
+func removeDefault(itemKey, defaultValue string) string {
+	if itemKey == defaultValue {
 		return ""
 	}
-	return itemkey
+	return itemKey
 }
 
 // This function removes the given property from a yaml node and verifies that it
 // matches the expected value. It also verifies that the value is a valid metadata name format.
 func validateMetadataNameNode(node *yaml.Node, expectedName, nameKey string) error {
-	name := pickStringProperty(node, nameKey, "")
-	if name != expectedName {
+	return validateMetadataName(pickStringProperty(node, nameKey, ""), expectedName)
+}
+
+func validateMetadataName(name string, expectedName string) error {
+	if expectedName != "" && name != expectedName {
 		return fmt.Errorf("Metadata name does not match filename: %s, %s", name, expectedName)
 	}
 	if !IsValidMetadataName(name) {
