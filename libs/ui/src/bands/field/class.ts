@@ -3,6 +3,8 @@ import { Context } from "../../context/context"
 import { addBlankSelectOption } from "./utils"
 import { getKey } from "../../metadata/metadata"
 
+const referenceTypes = ["REFERENCE", "USER", "FILE"]
+
 class Field {
 	constructor(source: FieldMetadata) {
 		this.source = source
@@ -10,8 +12,20 @@ class Field {
 
 	source: FieldMetadata
 
+	/**
+	 * getId - returns the fully-qualified id of the field, with namespace and name (if namespace is defined)
+	 * @returns string
+	 */
 	getId = () => getKey(this.source)
+	/**
+	 * getName - returns the local name of the field
+	 * @returns string
+	 */
 	getName = () => this.source.name
+	/**
+	 * getNamespace - returns the app namespace in which this field is defined
+	 * @returns string
+	 */
 	getNamespace = () => this.source.namespace
 	getLabel = () => this.source.label
 	getReferenceMetadata = () => this.source.reference
@@ -63,12 +77,17 @@ class Field {
 	getFileMetadata = () => this.source.file
 	getMetadataFieldMetadata = () => this.source.metadata
 	getNumberMetadata = () => this.source.number
-	isReference = () =>
-		this.source.type === "REFERENCE" ||
-		this.source.type === "USER" ||
-		this.source.type === "FILE"
+	/**
+	 * Returns true if this is one of the "Reference" field types:
+	 *  - Reference
+	 *  - User
+	 *  - File
+	 * @returns Boolean
+	 */
+	isReference = () => referenceTypes.includes(this.source.type)
 	isRequired = () => this.source.required === true
 	getSubFields = () => this.source.subfields
+	hasSubFields = () => this.source.subfields !== undefined
 	getSubType = () => this.source.subtype
 }
 

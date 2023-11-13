@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/constant"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -107,12 +108,12 @@ func processSearchCondition(condition adapt.LoadRequestCondition, collectionMeta
 
 	for _, token := range tokens {
 		paramNumber := builder.addValue(fmt.Sprintf("%%%v%%", token))
-		subbuilder := builder.getSubBuilder("OR")
+		subBuilder := builder.getSubBuilder("OR")
 		for _, field := range searchFieldsArray {
 			fieldCast := "(" + field + ")::text"
-			subbuilder.addQueryPart(fmt.Sprintf("%s ILIKE %s", fieldCast, paramNumber))
+			subBuilder.addQueryPart(fmt.Sprintf("%s ILIKE %s", fieldCast, paramNumber))
 		}
-		builder.addQueryPart(subbuilder.String())
+		builder.addQueryPart(subBuilder.String())
 	}
 	return nil
 }
@@ -122,12 +123,28 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 	if err != nil {
 		return err
 	}
-
+	fieldHasPath := strings.Contains(condition.Field, constant.RefSep)
 	fieldName := getFieldName(fieldMetadata, tableAlias)
-	isTextType := isTextAlike(fieldMetadata.Type)
+	fieldType := fieldMetadata.Type
+	isTextType := isTextAlike(fieldType)
+
+	// If the original condition field contains a path operator, we need to send that original field name
+	// into the actual query
+	if fieldHasPath {
+		mainFieldMetadata, err := collectionMetadata.GetField(strings.Split(condition.Field, constant.RefSep)[0])
+		if err != nil {
+			return err
+		} else if mainFieldMetadata.Type == "STRUCT" {
+			fieldName = getFieldNameString(fieldMetadata.Type, getAliasedName("fields", tableAlias), condition.Field)
+		} else {
+			return fmt.Errorf("field %s (type %s) does not support use of the path operator %s", condition.Field, mainFieldMetadata.Type, constant.RefSep)
+		}
+	}
+
 	switch condition.Operator {
 	case "IN", "NOT_IN":
-		if fieldMetadata.Type == "DATE" && condition.Values == nil {
+		//IF we got values use normal flow
+		if fieldType == "DATE" && condition.Values == nil {
 			return processDateRangeCondition(condition, fieldName, builder)
 		}
 		useOperator := "= ANY"
@@ -141,13 +158,13 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 		builder.addQueryPart(fmt.Sprintf("%s %s (%s)", fieldName, useOperator, builder.addValue(useValue)))
 
 	case "HAS_ANY":
-		if fieldMetadata.Type != "MULTISELECT" {
+		if fieldType != "MULTISELECT" {
 			return errors.New("Operator HAS_ANY only works with fieldType MULTI_SELECT")
 		}
 		builder.addQueryPart(fmt.Sprintf("%s ?| %s", fieldName, builder.addValue(condition.Values)))
 
 	case "HAS_ALL":
-		if fieldMetadata.Type != "MULTISELECT" {
+		if fieldType != "MULTISELECT" {
 			return errors.New("Operator HAS_ALL only works with fieldType MULTI_SELECT")
 		}
 		builder.addQueryPart(fmt.Sprintf("%s ?& %s", fieldName, builder.addValue(condition.Values)))
@@ -168,18 +185,22 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 		builder.addQueryPart(fmt.Sprintf("%s <= %s", fieldName, builder.addValue(condition.Value)))
 
 	case "IS_BLANK":
-		if fieldMetadata.Type == "CHECKBOX" || fieldMetadata.Type == "TIMESTAMP" {
+		if fieldType == "CHECKBOX" || fieldType == "TIMESTAMP" {
 			builder.addQueryPart(fmt.Sprintf("%s IS NULL", fieldName))
 		} else if isTextType {
 			builder.addQueryPart(fmt.Sprintf("((%s IS NULL) OR (%s = 'null') OR (%s = ''))", fieldName, fieldName, fieldName))
+		} else if fieldType == "STRUCT" {
+			builder.addQueryPart(fmt.Sprintf("((%s IS NULL) OR (%s = '{}'))", fieldName, fieldName))
 		} else {
 			builder.addQueryPart(fmt.Sprintf("((%s IS NULL) OR (%s = 'null'))", fieldName, fieldName))
 		}
 	case "IS_NOT_BLANK":
-		if fieldMetadata.Type == "CHECKBOX" || fieldMetadata.Type == "TIMESTAMP" {
+		if fieldType == "CHECKBOX" || fieldType == "TIMESTAMP" {
 			builder.addQueryPart(fmt.Sprintf("%s IS NOT NULL", fieldName))
 		} else if isTextType {
 			builder.addQueryPart(fmt.Sprintf("((%s IS NOT NULL) AND (%s != 'null') AND (%s != ''))", fieldName, fieldName, fieldName))
+		} else if fieldType == "STRUCT" {
+			builder.addQueryPart(fmt.Sprintf("((%s IS NOT NULL) AND (%s != '{}'))", fieldName, fieldName))
 		} else {
 			builder.addQueryPart(fmt.Sprintf("((%s IS NOT NULL) AND (%s != 'null'))", fieldName, fieldName))
 		}
@@ -200,18 +221,18 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 
 	case "CONTAINS":
 		if !isTextType {
-			return fmt.Errorf("Operator CONTAINS is not supported for field type %s", fieldMetadata.Type)
+			return fmt.Errorf("Operator CONTAINS is not supported for field type %s", fieldType)
 		}
 		builder.addQueryPart(fmt.Sprintf("%s ILIKE %s", fieldName, builder.addValue(fmt.Sprintf("%%%v%%", condition.Value))))
 
 	case "STARTS_WITH":
 		if !isTextType {
-			return fmt.Errorf("Operator STARTS_WITH is not supported for field type %s", fieldMetadata.Type)
+			return fmt.Errorf("Operator STARTS_WITH is not supported for field type %s", fieldType)
 		}
 		builder.addQueryPart(fmt.Sprintf("%s ILIKE %s", fieldName, builder.addValue(fmt.Sprintf("%v%%", condition.Value))))
 
 	default:
-		if fieldMetadata.Type == "MULTISELECT" {
+		if fieldType == "MULTISELECT" {
 			// Same as HAS_ANY
 			builder.addQueryPart(fmt.Sprintf("%s ?| %s", fieldName, builder.addValue(condition.Values)))
 		}
