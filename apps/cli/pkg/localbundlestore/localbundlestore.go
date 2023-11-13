@@ -80,7 +80,7 @@ func (b *LocalBundleStore) GetAllItems(group meta.BundleableGroup, namespace, ve
 	basePath := filepath.Join(getBasePath(namespace, version), group.GetBundleFolderName()) + string(os.PathSeparator)
 
 	conn := localfiles.Connection{}
-	paths, err := systembundlestore.GetFilePaths(basePath, group, conditions, &conn)
+	paths, err := systembundlestore.GetFilePaths(basePath, group.FilterPath, conditions, &conn)
 	if err != nil {
 		return err
 	}

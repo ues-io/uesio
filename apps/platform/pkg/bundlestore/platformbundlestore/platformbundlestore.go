@@ -161,9 +161,7 @@ func (b *PlatformBundleStoreConnection) GetItemAttachments(item meta.AttachableI
 	if err != nil {
 		return err
 	}
-	fmt.Println("CP BUNDDDDLING: " + basePath)
 	for _, path := range paths {
-		fmt.Println(path)
 		f, err := creator(path)
 		if err != nil {
 			return err
