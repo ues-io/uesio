@@ -154,10 +154,14 @@ func (b *PlatformBundleStoreConnection) GetItemAttachments(item meta.AttachableI
 	if err != nil {
 		return err
 	}
+	// Add condition here so that our cache key containts it
+	filterConditions := map[string]string{"attachments": "yes"}
+	originalFilter := item.GetCollection().(meta.BundleableGroup)
 	filter := func(s string, bc meta.BundleConditions, b bool) bool {
-		return true
+		// We want all files that *aren't* the definition file
+		return !originalFilter.FilterPath(filepath.Join(item.GetBasePath(), s), nil, true)
 	}
-	paths, err := systembundlestore.GetFilePaths(basePath, filter, nil, conn)
+	paths, err := systembundlestore.GetFilePaths(basePath, filter, filterConditions, conn)
 	if err != nil {
 		return err
 	}
@@ -166,7 +170,7 @@ func (b *PlatformBundleStoreConnection) GetItemAttachments(item meta.AttachableI
 		if err != nil {
 			return err
 		}
-		_, err = conn.Download(f, path)
+		_, err = conn.Download(f, filepath.Join(basePath, path))
 		if err != nil {
 			f.Close()
 			return err

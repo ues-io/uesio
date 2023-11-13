@@ -3,6 +3,7 @@ package localfiles
 import (
 	"errors"
 	"io"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -39,9 +40,12 @@ type Connection struct {
 func (c *Connection) List(dirPath string) ([]string, error) {
 	paths := []string{}
 	basePath := filepath.Join(c.bucket, filepath.FromSlash(dirPath)) + string(os.PathSeparator)
-	err := filepath.Walk(basePath, func(path string, info os.FileInfo, err error) error {
+	err := filepath.WalkDir(basePath, func(path string, info fs.DirEntry, err error) error {
 		if err != nil {
 			// Ignore walking errors
+			return nil
+		}
+		if info.IsDir() {
 			return nil
 		}
 		if path == basePath {
