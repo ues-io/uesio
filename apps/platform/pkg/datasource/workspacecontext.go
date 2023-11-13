@@ -101,7 +101,7 @@ func addWorkspaceContext(workspace *meta.Workspace, session *sess.Session, conne
 
 func AddWorkspaceContextByKey(workspaceKey string, session *sess.Session, connection adapt.Connection) (*sess.Session, error) {
 	sessClone := session.RemoveWorkspaceContext()
-	workspace, err := queryWorkspace(workspaceKey, adapt.UNIQUE_KEY_FIELD, sessClone, connection)
+	workspace, err := QueryWorkspaceForWrite(workspaceKey, adapt.UNIQUE_KEY_FIELD, sessClone, connection)
 	if err != nil {
 		return nil, fmt.Errorf("could not get workspace context: workspace %s does not exist or you don't have access to modify it.", workspaceKey)
 	}
@@ -110,15 +110,20 @@ func AddWorkspaceContextByKey(workspaceKey string, session *sess.Session, connec
 
 func AddWorkspaceContextByID(workspaceID string, session *sess.Session, connection adapt.Connection) (*sess.Session, error) {
 	sessClone := session.RemoveWorkspaceContext()
-	workspace, err := queryWorkspace(workspaceID, adapt.ID_FIELD, sessClone, connection)
+	workspace, err := QueryWorkspaceForWrite(workspaceID, adapt.ID_FIELD, sessClone, connection)
 	if err != nil {
 		return nil, fmt.Errorf("could not get workspace context: workspace does not exist or you don't have access to modify it.")
 	}
 	return sessClone, addWorkspaceContext(workspace, sessClone, connection)
 }
 
-func queryWorkspace(value, field string, session *sess.Session, connection adapt.Connection) (*meta.Workspace, error) {
+// QueryWorkspaceForWrite queries a workspace, with write access required
+func QueryWorkspaceForWrite(value, field string, session *sess.Session, connection adapt.Connection) (*meta.Workspace, error) {
 	var workspace meta.Workspace
+	useSession := session
+	if useSession.GetWorkspace() != nil {
+		useSession = session.RemoveWorkspaceContext()
+	}
 	err := PlatformLoadOne(
 		&workspace,
 		&PlatformLoadOptions{
@@ -131,7 +136,7 @@ func queryWorkspace(value, field string, session *sess.Session, connection adapt
 			},
 			RequireWriteAccess: true,
 		},
-		session.RemoveWorkspaceContext(),
+		useSession,
 	)
 	if err != nil {
 		return nil, err

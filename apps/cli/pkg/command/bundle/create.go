@@ -8,7 +8,6 @@ import (
 	"github.com/thecloudmasters/cli/pkg/call"
 	"github.com/thecloudmasters/cli/pkg/config"
 	"github.com/thecloudmasters/cli/pkg/config/ws"
-	"github.com/thecloudmasters/cli/pkg/context"
 )
 
 type CallBotResponse struct {
@@ -38,7 +37,7 @@ func CreateBundle(releaseType, majorVersion, minorVersion, patchVersion, bundleD
 		return err
 	}
 
-	createBundleURL := fmt.Sprintf("workspace/%s/%s/bots/call/uesio/studio/createbundle", appName, workspaceName)
+	createBundleURL := "site/bots/call/uesio/studio/createbundle"
 
 	botInputs := map[string]interface{}{}
 	if err = addVersionNumberToInputsIfInt(majorVersion, "major", botInputs); err != nil {
@@ -56,10 +55,16 @@ func CreateBundle(releaseType, majorVersion, minorVersion, patchVersion, bundleD
 	if releaseType != "" {
 		botInputs["type"] = releaseType
 	}
+	if appName != "" {
+		botInputs["app"] = appName
+	}
+	if workspaceName != "" {
+		botInputs["workspaceName"] = workspaceName
+	}
 
 	botResponse := &CallBotResponse{}
 
-	err = call.PostJSON(createBundleURL, sessionId, botInputs, botResponse, context.NewWorkspaceContext(appName, workspaceName))
+	err = call.PostJSON(createBundleURL, sessionId, botInputs, botResponse, nil)
 	if err != nil {
 		return err
 	}

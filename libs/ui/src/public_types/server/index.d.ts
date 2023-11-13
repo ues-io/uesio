@@ -98,7 +98,7 @@ interface BotHttpRequest {
 	url: string
 	method: string
 	headers?: Record<string, string>
-	body?: string | Record<string, unknown>
+	body?: string | Record<string, unknown> | unknown[]
 }
 interface BotHttpResponse {
 	code: number
@@ -140,6 +140,7 @@ interface AfterSaveBotApi extends BeforeSaveBotApi {
 }
 interface AsAdminApi {
 	load: (loadRequest: LoadRequest) => WireRecord[]
+	delete: (collectionName: string, records: WireRecord[]) => void
 	save: (collectionName: string, records: WireRecord[]) => void
 	runIntegrationAction: RunIntegrationAction
 	getConfigValue: (configValueKey: string) => string
@@ -148,6 +149,7 @@ interface ListenerBotApi {
 	addResult: (key: string, value: FieldValue | undefined) => void
 	load: (loadRequest: LoadRequest) => WireRecord[]
 	params: BotParamsApi
+	delete: (collectionName: string, records: WireRecord[]) => void
 	save: (collectionName: string, records: WireRecord[]) => void
 	runIntegrationAction: RunIntegrationAction
 	getConfigValue: (configValueKey: string) => string

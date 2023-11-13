@@ -141,11 +141,15 @@ const RecordDataManager: definition.UC<DataManagerDefinition> = (props) => {
 					: f.getCreateable()
 			) || []
 
-	const wireDef = getWireDefinition(collectionKey, collectionFields, recordID)
+	const hasAllFields = collectionMetadata?.hasAllFields()
+
+	const wireDef = hasAllFields
+		? getWireDefinition(collectionKey, collectionFields, recordID)
+		: null
 
 	const dataWire = api.wire.useDynamicWire(wireId, wireDef, context)
 
-	if (!dataWire || !collectionMetadata) return null
+	if (!dataWire || !collectionMetadata || !hasAllFields) return null
 
 	const components = getComponents(collectionFields, recordID)
 

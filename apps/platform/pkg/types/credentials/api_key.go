@@ -8,11 +8,11 @@ func (c *APIKeyCredentials) IsNil() bool {
 	return c == nil
 }
 
-func (c *APIKeyCredentials) GetEntriesMap() CredentialEntriesMap {
-	return CredentialEntriesMap{
-		"apikey": &CredentialEntry{
-			Type:  "secret",
-			Value: c.Key,
-		},
-	}
+// Map iterates over each CredentialEntry and returns a new value for the entry
+func (c *APIKeyCredentials) Map(mapper EntryMapper) {
+	c.Key = mapper(&CredentialEntry{
+		Name:  "apikey",
+		Type:  "secret",
+		Value: c.Key,
+	})
 }

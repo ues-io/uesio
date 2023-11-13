@@ -5,34 +5,44 @@ type OAuth2Credentials struct {
 	ClientSecret string `yaml:"clientSecret" json:"client_secret"`
 	TokenURL     string `yaml:"tokenUrl" json:"token_url"`
 	AuthorizeURL string `yaml:"authorizeUrl" json:"authorize_url"`
-	Scopes       string `yaml:"scopes" json:"scopes"`
+	Scopes       string `yaml:"scopes,omitempty" json:"scopes"`
+	TokenType    string `yaml:"tokenType,omitempty" json:"token_type"`
 }
 
 func (c *OAuth2Credentials) IsNil() bool {
 	return c == nil
 }
 
-func (c *OAuth2Credentials) GetEntriesMap() CredentialEntriesMap {
-	return CredentialEntriesMap{
-		"clientId": &CredentialEntry{
-			Type:  "secret",
-			Value: c.ClientId,
-		},
-		"clientSecret": &CredentialEntry{
-			Type:  "secret",
-			Value: c.ClientSecret,
-		},
-		"tokenUrl": &CredentialEntry{
-			Type:  "configvalue",
-			Value: c.TokenURL,
-		},
-		"authorizeUrl": &CredentialEntry{
-			Type:  "configvalue",
-			Value: c.AuthorizeURL,
-		},
-		"scopes": &CredentialEntry{
-			Type:  "configvalue",
-			Value: c.Scopes,
-		},
-	}
+// Map iterates over each CredentialEntry and returns a new value for the entry
+func (c *OAuth2Credentials) Map(mapper EntryMapper) {
+	c.ClientId = mapper(&CredentialEntry{
+		Name:  "clientId",
+		Type:  "secret",
+		Value: c.ClientId,
+	})
+	c.ClientSecret = mapper(&CredentialEntry{
+		Name:  "clientSecret",
+		Type:  "secret",
+		Value: c.ClientSecret,
+	})
+	c.TokenURL = mapper(&CredentialEntry{
+		Name:  "tokenUrl",
+		Type:  "configvalue",
+		Value: c.TokenURL,
+	})
+	c.AuthorizeURL = mapper(&CredentialEntry{
+		Name:  "authorizeUrl",
+		Type:  "configvalue",
+		Value: c.AuthorizeURL,
+	})
+	c.Scopes = mapper(&CredentialEntry{
+		Name:  "scopes",
+		Type:  "configvalue",
+		Value: c.Scopes,
+	})
+	c.TokenType = mapper(&CredentialEntry{
+		Name:  "tokenType",
+		Type:  "select",
+		Value: c.TokenType,
+	})
 }

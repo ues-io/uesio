@@ -22,5 +22,9 @@ func ExchangeAuthorizationCodeForAccessToken(credentials *adapt.Credentials, hos
 	if err != nil {
 		return nil, errors.New("failed to exchange authorization code for access token: " + err.Error())
 	}
+	// Override the token type, if necessary
+	if tokenTypeOverride := credentials.GetEntry("tokenType", ""); tokenTypeOverride != "" {
+		tok.TokenType = tokenTypeOverride
+	}
 	return tok, nil
 }

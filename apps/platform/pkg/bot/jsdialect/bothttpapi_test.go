@@ -203,6 +203,33 @@ func Test_Request(t *testing.T) {
 			},
 		},
 		{
+			"POST: it should send an array payload to the API",
+			args{
+				request: &BotHttpRequest{
+					Method: "POST",
+					URL:    server.URL + "/user/create",
+					Body: []interface{}{
+						"a cool",
+						"value",
+					},
+				},
+				response:            `ok`,
+				responseContentType: "text/plain",
+				requestAsserts: func(t *testing.T, request *http.Request) {
+					assert.Equal(t, "POST", request.Method)
+					assert.Equal(t, "/user/create", request.URL.Path)
+					body, err := io.ReadAll(request.Body)
+					assert.Equal(t, nil, err)
+					assert.Equal(t, string(body), `["a cool","value"]`)
+				},
+				responseAsserts: func(t *testing.T, response *BotHttpResponse) {
+					assert.Equal(t, "200 OK", response.Status)
+					assert.Equal(t, http.StatusOK, response.Code)
+					assert.Equal(t, `ok`, response.Body)
+				},
+			},
+		},
+		{
 			"PUT: it should send a payload to the API",
 			args{
 				request: &BotHttpRequest{

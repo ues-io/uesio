@@ -28,6 +28,8 @@ const mergeCollection = (
 				...state.entities[key]?.fields,
 				...collection.fields,
 			},
+			hasAllFields:
+				state.entities[key]?.hasAllFields || collection.hasAllFields,
 		}
 	}
 
