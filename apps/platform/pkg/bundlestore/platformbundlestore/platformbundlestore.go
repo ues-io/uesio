@@ -36,16 +36,13 @@ func getBasePath(namespace, version string) string {
 	return filepath.Join(namespace, version, "bundle")
 }
 
-func getStream(w io.Writer, namespace string, version string, objectname string, filename string) (file.Metadata, error) {
-	filePath := filepath.Join(getBasePath(namespace, version), objectname, filename)
-
+func download(w io.Writer, path string) (file.Metadata, error) {
 	conn, err := getPlatformFileConnection()
 	if err != nil {
 		return nil, err
 	}
 
-	return conn.Download(w, filePath)
-
+	return conn.Download(w, path)
 }
 
 func (b *PlatformBundleStoreConnection) GetItem(item meta.BundleableItem) error {
@@ -69,7 +66,7 @@ func (b *PlatformBundleStoreConnection) GetItem(item meta.BundleableItem) error 
 		return nil
 	}
 	buf := &bytes.Buffer{}
-	fileMetadata, err := getStream(buf, b.Namespace, b.Version, collectionName, item.GetPath())
+	fileMetadata, err := download(buf, filepath.Join(getBasePath(b.Namespace, b.Version), collectionName, item.GetPath()))
 	if err != nil {
 		return bundlestore.NewNotFoundError("Metadata item: " + key + " does not exist")
 	}
@@ -111,7 +108,7 @@ func (b *PlatformBundleStoreConnection) GetAllItems(group meta.BundleableGroup, 
 	if err != nil {
 		return err
 	}
-	paths, err := systembundlestore.GetFilePaths(basePath, group, conditions, conn)
+	paths, err := systembundlestore.GetFilePaths(basePath, group.FilterPath, conditions, conn)
 	if err != nil {
 		return err
 	}
@@ -147,10 +144,37 @@ func (b *PlatformBundleStoreConnection) GetAllItems(group meta.BundleableGroup, 
 }
 
 func (b *PlatformBundleStoreConnection) GetItemAttachment(w io.Writer, item meta.AttachableItem, path string) (file.Metadata, error) {
-	return getStream(w, item.GetNamespace(), b.Version, item.GetBundleFolderName(), filepath.Join(item.GetBasePath(), path))
+	return download(w, filepath.Join(getBasePath(item.GetNamespace(), b.Version), item.GetBundleFolderName(), filepath.Join(item.GetBasePath(), path)))
 }
 
 func (b *PlatformBundleStoreConnection) GetItemAttachments(item meta.AttachableItem, creator bundlestore.FileCreator) error {
+	// Get all of the file paths for this attachable item
+	basePath := filepath.Join(getBasePath(item.GetNamespace(), b.Version), item.GetBundleFolderName(), item.GetBasePath())
+	conn, err := getPlatformFileConnection()
+	if err != nil {
+		return err
+	}
+	filter := func(s string, bc meta.BundleConditions, b bool) bool {
+		return true
+	}
+	paths, err := systembundlestore.GetFilePaths(basePath, filter, nil, conn)
+	if err != nil {
+		return err
+	}
+	fmt.Println("CP BUNDDDDLING: " + basePath)
+	for _, path := range paths {
+		fmt.Println(path)
+		f, err := creator(path)
+		if err != nil {
+			return err
+		}
+		_, err = conn.Download(f, path)
+		if err != nil {
+			f.Close()
+			return err
+		}
+		f.Close()
+	}
 	return nil
 }
 
@@ -191,7 +215,7 @@ func (b *PlatformBundleStoreConnection) DeleteBundle() error {
 func (b *PlatformBundleStoreConnection) GetBundleDef() (*meta.BundleDef, error) {
 	var by meta.BundleDef
 	buf := &bytes.Buffer{}
-	_, err := getStream(buf, b.Namespace, b.Version, "", "bundle.yaml")
+	_, err := download(buf, filepath.Join(getBasePath(b.Namespace, b.Version), "", "bundle.yaml"))
 	if err != nil {
 		return nil, err
 	}

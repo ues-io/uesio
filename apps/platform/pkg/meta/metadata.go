@@ -63,6 +63,8 @@ type CollectionableItem interface {
 	SetItemMeta(*ItemMeta)
 }
 
+type FilterFunc func(string, BundleConditions, bool) bool
+
 type BundleableGroup interface {
 	CollectionableGroup
 	GetBundleFolderName() string

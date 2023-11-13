@@ -195,16 +195,28 @@ func (b *WorkspaceBundleStoreConnection) GetAllItems(group meta.BundleableGroup,
 
 }
 
-func (b *WorkspaceBundleStoreConnection) GetItemAttachment(w io.Writer, item meta.AttachableItem, path string) (file.Metadata, error) {
+func (b *WorkspaceBundleStoreConnection) GetItemRecordID(item meta.AttachableItem) (string, error) {
 	err := b.GetItem(item)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	recordID, err := item.GetField(adapt.ID_FIELD)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
-	userFileMetadata, err := filesource.DownloadAttachment(w, recordID.(string), path, sess.GetStudioAnonSession())
+	recordIDString, ok := recordID.(string)
+	if !ok {
+		return "", errors.New("Invalid Record ID for attachment")
+	}
+	return recordIDString, nil
+}
+
+func (b *WorkspaceBundleStoreConnection) GetItemAttachment(w io.Writer, item meta.AttachableItem, path string) (file.Metadata, error) {
+	recordIDString, err := b.GetItemRecordID(item)
+	if err != nil {
+		return nil, errors.New("Invalid Record ID for attachment")
+	}
+	userFileMetadata, err := filesource.DownloadAttachment(w, recordIDString, path, sess.GetStudioAnonSession())
 	if err != nil {
 		return nil, err
 	}
@@ -212,14 +224,9 @@ func (b *WorkspaceBundleStoreConnection) GetItemAttachment(w io.Writer, item met
 }
 
 func (b *WorkspaceBundleStoreConnection) GetItemAttachments(item meta.AttachableItem, creator bundlestore.FileCreator) error {
-
-	err := b.GetItem(item)
+	recordIDString, err := b.GetItemRecordID(item)
 	if err != nil {
-		return err
-	}
-	recordID, err := item.GetField(adapt.ID_FIELD)
-	if err != nil {
-		return err
+		return errors.New("Invalid Record ID for attachment")
 	}
 	userFiles := &meta.UserFileMetadataCollection{}
 	err = datasource.PlatformLoad(
@@ -229,7 +236,7 @@ func (b *WorkspaceBundleStoreConnection) GetItemAttachments(item meta.Attachable
 			Conditions: []adapt.LoadRequestCondition{
 				{
 					Field: "uesio/core.recordid",
-					Value: recordID,
+					Value: recordIDString,
 				},
 			},
 		},
@@ -250,8 +257,6 @@ func (b *WorkspaceBundleStoreConnection) GetItemAttachments(item meta.Attachable
 			return err
 		}
 		f.Close()
-		return nil
-
 	}
 	return nil
 }

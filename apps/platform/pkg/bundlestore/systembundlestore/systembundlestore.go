@@ -37,7 +37,7 @@ func getFile(namespace string, version string, objectname string, filename strin
 	return os.Open(filePath)
 }
 
-func GetFilePaths(basePath string, group meta.BundleableGroup, conditions meta.BundleConditions, conn filetypes.Connection) ([]string, error) {
+func GetFilePaths(basePath string, filter meta.FilterFunc, conditions meta.BundleConditions, conn filetypes.Connection) ([]string, error) {
 
 	cachedKeys, ok := bundle.GetFileListFromCache(basePath, conditions)
 	if ok {
@@ -52,7 +52,7 @@ func GetFilePaths(basePath string, group meta.BundleableGroup, conditions meta.B
 	filteredPaths := []string{}
 
 	for _, path := range paths {
-		if group.FilterPath(path, conditions, true) {
+		if filter(path, conditions, true) {
 			filteredPaths = append(filteredPaths, path)
 		}
 	}
@@ -133,7 +133,7 @@ func (b *SystemBundleStoreConnection) GetAllItems(group meta.BundleableGroup, co
 	basePath := path.Join(getBasePath(b.Namespace, b.Version), group.GetBundleFolderName()) + "/"
 
 	conn := localfiles.Connection{}
-	paths, err := GetFilePaths(basePath, group, conditions, &conn)
+	paths, err := GetFilePaths(basePath, group.FilterPath, conditions, &conn)
 	if err != nil {
 		return err
 	}
