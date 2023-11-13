@@ -3,6 +3,7 @@ package adapt
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/constant"
@@ -97,24 +98,34 @@ func (cm *CollectionMetadata) GetFieldWithMetadata(key string, metadata *Metadat
 		}
 		return fieldMetadata, nil
 	}
+	mainFieldName := names[0]
 
-	fieldMetadata, err := cm.GetField(meta.GetFullyQualifiedKey(names[0], cm.Namespace))
+	fieldMetadata, err := cm.GetField(meta.GetFullyQualifiedKey(mainFieldName, cm.Namespace))
 	if err != nil {
 		return nil, errors.New("No metadata provided for field: " + key + " in collection: " + cm.Name)
 	}
 
-	// Now determine the collection
 	if IsReference(fieldMetadata.Type) {
 		if metadata == nil {
-			return nil, errors.New("Getting metadata isn't supported for reference fields")
+			return nil, errors.New("no metadata found for reference field: " + mainFieldName)
 		}
-		refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
-		if err != nil {
+		if refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferenceMetadata.Collection); err != nil {
 			return nil, err
+		} else {
+			return refCollectionMetadata.GetFieldWithMetadata(strings.Join(names[1:], constant.RefSep), metadata)
 		}
-		return refCollectionMetadata.GetFieldWithMetadata(strings.Join(names[1:], constant.RefSep), metadata)
+	} else if fieldMetadata.Type == "STRUCT" {
+		// If it is a Struct, get the subfield by navigating through the field metadata recursively
+		var subFieldMetadata *FieldMetadata
+		for _, namePart := range names[1:] {
+			if tmp, exists := fieldMetadata.SubFields[namePart]; !exists {
+				return nil, errors.New(fmt.Sprintf("subfield '%s' doesn't exist on Struct field: '%s'.", namePart, mainFieldName))
+			} else {
+				subFieldMetadata = tmp
+			}
+		}
+		return subFieldMetadata, nil
 	}
-
 	return fieldMetadata.GetSubField(strings.Join(names[1:], constant.RefSep))
 
 }
@@ -263,6 +274,9 @@ func (fm *FieldMetadata) Merge(other *FieldMetadata) {
 }
 
 func (fm *FieldMetadata) GetFullName() string {
+	if fm.Namespace == "" {
+		return fm.Name
+	}
 	return fm.Namespace + "." + fm.Name
 }
 
