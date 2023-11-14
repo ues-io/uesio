@@ -16,7 +16,7 @@ func NewRoute(key string) (*Route, error) {
 }
 
 func NewBaseRoute(namespace, name string) *Route {
-	return &Route{ThemeRef: "uesio/core.default", BundleableBase: NewBase(namespace, name)}
+	return &Route{BundleableBase: NewBase(namespace, name)}
 }
 
 type Tag struct {

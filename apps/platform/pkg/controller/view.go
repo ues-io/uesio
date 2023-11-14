@@ -43,10 +43,9 @@ func ViewPreview(buildMode bool) http.HandlerFunc {
 		}
 
 		route := &meta.Route{
-			ViewRef:  view.GetKey(),
-			Params:   params,
-			ThemeRef: session.GetDefaultTheme(),
-			Title:    "Preview: " + view.Name,
+			ViewRef: view.GetKey(),
+			Params:  params,
+			Title:   "Preview: " + view.Name,
 		}
 
 		depsCache, err := routing.GetMetadataDeps(route, session)

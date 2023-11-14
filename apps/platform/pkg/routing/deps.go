@@ -447,6 +447,10 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 
 	deps := NewPreloadMetadata()
 
+	if route.ThemeRef == "" {
+		route.ThemeRef = session.GetDefaultTheme()
+	}
+
 	theme, err := meta.NewTheme(route.ThemeRef)
 	if err != nil {
 		return nil, err
