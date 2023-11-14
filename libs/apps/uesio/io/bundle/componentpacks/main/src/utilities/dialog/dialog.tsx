@@ -1,7 +1,6 @@
 import { ReactNode } from "react"
 import { definition, styles } from "@uesio/ui"
 import DialogPlain from "../dialogplain/dialogplain"
-import Grid from "../grid/grid"
 import TitleBar from "../titlebar/titlebar"
 import IconButton from "../iconbutton/iconbutton"
 import Group from "../group/group"
@@ -15,7 +14,10 @@ interface DialogUtilityProps {
 }
 
 const StyleDefaults = Object.freeze({
+	blocker: [],
+	wrapper: [],
 	root: [],
+	inner: [],
 	content: [],
 	footer: [],
 })
@@ -34,8 +36,11 @@ const Dialog: definition.UtilityComponent<DialogUtilityProps> = (props) => {
 			width={width}
 			onClose={onClose}
 			initialFocus={1}
+			classes={{
+				blocker: classes.blocker,
+			}}
 		>
-			<Grid className={classes.root} context={context}>
+			<div className={classes.root}>
 				<TitleBar
 					title={title}
 					variant="uesio/io.dialog"
@@ -54,7 +59,7 @@ const Dialog: definition.UtilityComponent<DialogUtilityProps> = (props) => {
 						{actions}
 					</Group>
 				)}
-			</Grid>
+			</div>
 		</DialogPlain>
 	)
 }
