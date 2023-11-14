@@ -27,7 +27,7 @@ export default function signup(bot: ListenerBotApi) {
 		</body>
 	</html>`
 
-	bot.runIntegrationAction("uesio/core.sendgrid", "sendEmail", {
+	bot.runIntegrationAction("uesio/core.sendgrid", "sendemail", {
 		to: [email],
 		from,
 		subject,
