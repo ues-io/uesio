@@ -1,11 +1,19 @@
 package systemdialect
 
 import (
+	"fmt"
+	"slices"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/clickup"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/integ/bedrock"
+	"github.com/thecloudmasters/uesio/pkg/integ/openai"
+	"github.com/thecloudmasters/uesio/pkg/integ/sendgrid"
+	"github.com/thecloudmasters/uesio/pkg/integ/stripe"
+	"github.com/thecloudmasters/uesio/pkg/integ/web"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/retrieve"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -18,6 +26,8 @@ type LoadBotFunc func(request *adapt.LoadOp, connection adapt.Connection, sessio
 type SaveBotFunc func(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error
 
 type RouteBotFunc func(*meta.Route, *sess.Session) (*meta.Route, error)
+
+type RunIntegrationActionBotFunc func(bot *meta.Bot, integration *adapt.IntegrationConnection, actionName string, params map[string]interface{}) (interface{}, error)
 
 type SystemDialect struct {
 }
@@ -85,8 +95,8 @@ func (b *SystemDialect) AfterSave(bot *meta.Bot, request *adapt.SaveOp, connecti
 		botFunction = runBotAfterSaveBot
 	case "uesio/studio.app":
 		botFunction = runAppAfterSaveBot
-	case "uesio/studio.integration":
-		botFunction = runIntegrationAfterSaveBot
+	case "uesio/studio.integrationtype":
+		botFunction = runIntegrationTypeAfterSaveBot
 	}
 
 	if botFunction == nil {
@@ -99,6 +109,13 @@ func (b *SystemDialect) AfterSave(bot *meta.Bot, request *adapt.SaveOp, connecti
 
 func (b *SystemDialect) CallBot(bot *meta.Bot, params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
 	var botFunction CallBotFunc
+
+	botNamespace := bot.GetNamespace()
+	namespaces := session.GetContextNamespaces()
+
+	if !slices.Contains(namespaces, botNamespace) {
+		return nil, meta.NewBotAccessError(fmt.Sprintf(datasource.BotAccessErrorMessage, bot.GetKey()))
+	}
 
 	switch bot.GetKey() {
 	case "listener:uesio/studio.createbundle":
@@ -123,11 +140,33 @@ func (b *SystemDialect) CallBot(bot *meta.Bot, params map[string]interface{}, co
 
 }
 
-func (b *SystemDialect) RunIntegrationActionBot(bot *meta.Bot, action *meta.IntegrationAction, integration adapt.IntegrationConnection, params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
-	return nil, datasource.NewSystemBotNotFoundError()
+func (b *SystemDialect) RunIntegrationActionBot(bot *meta.Bot, ic *adapt.IntegrationConnection, actionName string, params map[string]interface{}) (interface{}, error) {
+
+	var botFunction RunIntegrationActionBotFunc
+
+	// Intercept system integration types
+	switch ic.GetIntegrationType().GetKey() {
+	case "uesio/core.bedrock":
+		botFunction = bedrock.RunAction
+	case "uesio/core.openai":
+		botFunction = openai.RunAction
+	case "uesio/core.stripe":
+		botFunction = stripe.RunAction
+	case "uesio/core.sendgrid":
+		botFunction = sendgrid.RunAction
+	case "uesio/core.web":
+		botFunction = web.RunAction
+	}
+
+	if botFunction == nil {
+		return nil, datasource.NewSystemBotNotFoundError()
+	}
+
+	return botFunction(bot, ic, actionName, params)
+
 }
 
-func (b *SystemDialect) CallGeneratorBot(bot *meta.Bot, create retrieve.WriterCreator, params map[string]interface{}, connection adapt.Connection, session *sess.Session) error {
+func (b *SystemDialect) CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreator, params map[string]interface{}, connection adapt.Connection, session *sess.Session) error {
 	return nil
 }
 

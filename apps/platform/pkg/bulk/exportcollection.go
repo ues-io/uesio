@@ -6,13 +6,13 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/retrieve"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func exportCollection(create retrieve.WriterCreator, spec *meta.JobSpec, session *sess.Session) error {
+func exportCollection(create bundlestore.FileCreator, spec *meta.JobSpec, session *sess.Session) error {
 	metadataResponse, err := getBatchMetadata(spec.Collection, session)
 	if err != nil {
 		return err

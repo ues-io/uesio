@@ -27,8 +27,11 @@ HTTP 200
 jsonpath "$.wires[0].data" count >= 0
 
 # Test truncate listener bot
-POST https://{{host}}:{{port}}/workspace/uesio/tests/truncatetests/bots/call/uesio/studio/workspacetruncate
-{}
+POST https://{{host}}:{{port}}/site/bots/call/uesio/studio/workspacetruncate
+{
+    "app": "uesio/tests",
+    "workspaceName": "truncatetests"
+}
 HTTP 200
 [Asserts]
 jsonpath "$.success" == true

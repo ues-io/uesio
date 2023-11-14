@@ -239,6 +239,10 @@ func (b *Bot) GetCollectionName() string {
 	return BOT_COLLECTION_NAME
 }
 
+func (b *Bot) GetCollection() CollectionableGroup {
+	return &BotCollection{}
+}
+
 func (b *Bot) GetBundleFolderName() string {
 	return BOT_FOLDER_NAME
 }

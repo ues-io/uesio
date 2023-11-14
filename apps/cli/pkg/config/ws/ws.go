@@ -2,7 +2,9 @@ package ws
 
 import (
 	"errors"
+
 	"github.com/AlecAivazis/survey/v2"
+
 	"github.com/thecloudmasters/cli/pkg/config"
 	"github.com/thecloudmasters/cli/pkg/wire"
 )
@@ -15,6 +17,11 @@ func GetWorkspace() (string, error) {
 // SetWorkspace Updates local config to set the name of the current workspace
 func SetWorkspace(workspaceName string) error {
 	return config.SetConfigValue("workspace", workspaceName)
+}
+
+// ClearWorkspace Updates local config to remove the current workspace name
+func ClearWorkspace() error {
+	return config.DeleteConfigValue("workspace")
 }
 
 func SetWorkspacePrompt(appId string) (string, error) {
@@ -51,7 +58,7 @@ func SetWorkspacePrompt(appId string) (string, error) {
 			return "", err
 		}
 
-		// Invoke workspace creation API to create a default "dev" workspace
+		// Invoke workspace creation API to create the new workspace
 		_, err := wire.CreateNewWorkspace(appID, newWorkspaceName)
 		if err != nil {
 			return "", errors.New("unable to create new workspace for app: " + err.Error())

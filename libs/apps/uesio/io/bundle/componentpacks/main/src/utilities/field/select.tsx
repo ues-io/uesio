@@ -12,17 +12,24 @@ interface SelectFieldProps {
 const StyleDefaults = Object.freeze({
 	root: [],
 	input: [],
+	readonly: [],
 })
 
 const SelectField: definition.UtilityComponent<SelectFieldProps> = (props) => {
 	const { readonly, setValue, mode, options, id, context } = props
 	const value = (props.value as string) || ""
+	const classes = styles.useUtilityStyleTokens(
+		StyleDefaults,
+		props,
+		"uesio/io.selectfield"
+	)
 
 	if (mode === "READ") {
 		const optionMatch = options?.find((option) => option.value === value)
 		const valueLabel = optionMatch?.label || ""
 		return (
 			<TextField
+				classes={classes}
 				setValue={setValue}
 				value={valueLabel}
 				mode={mode}
@@ -50,12 +57,6 @@ const SelectField: definition.UtilityComponent<SelectFieldProps> = (props) => {
 				)
 			)
 	}
-
-	const classes = styles.useUtilityStyleTokens(
-		StyleDefaults,
-		props,
-		"uesio/io.selectfield"
-	)
 
 	return (
 		<div className={classes.root}>

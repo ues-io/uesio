@@ -1,6 +1,7 @@
 package file
 
 import (
+	"bytes"
 	"log/slog"
 	"net/http"
 	"strings"
@@ -31,7 +32,8 @@ func ServeComponentPackFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fileMeta, stream, err := bundle.GetItemAttachment(componentPack, "dist/"+path, session)
+	buf := &bytes.Buffer{}
+	fileMeta, err := bundle.GetItemAttachment(buf, componentPack, "dist/"+path, session)
 
 	if err != nil {
 		slog.Error(err.Error())
@@ -56,5 +58,5 @@ func ServeComponentPackFile(w http.ResponseWriter, r *http.Request) {
 		LastModified: lastModified,
 		Namespace:    namespace,
 		Version:      resourceVersion,
-	}, stream)
+	}, bytes.NewReader(buf.Bytes()))
 }

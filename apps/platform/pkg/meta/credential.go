@@ -23,8 +23,7 @@ func NewBaseCredential(namespace, name string) *Credential {
 type Credential struct {
 	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
-	Type           string                           `yaml:"type" json:"uesio/studio.type"`
-	Entries        credentials.CredentialEntriesMap `yaml:"entries,omitempty" json:"uesio/studio.entries"`
+	Type           string `yaml:"type" json:"uesio/studio.type"`
 	// API_KEY
 	APIKey *credentials.APIKeyCredentials `yaml:"apiKey,omitempty" json:"uesio/studio.api_key"`
 	// AWS_KEY
@@ -37,9 +36,15 @@ type Credential struct {
 	Postgres *credentials.PostgreSQLConnection `yaml:"pg,omitempty" json:"uesio/studio.postgresql_connection"`
 	// USERNAME_PASSWORD
 	UsernamePassword *credentials.UsernamePasswordCredentials `yaml:"usernamePassword,omitempty" json:"uesio/studio.username_password"`
+	// arbitrary entries
+	Entries credentials.CredentialEntriesMap `yaml:"entries,omitempty" json:"uesio/studio.entries"`
 }
 
 type CredentialWrapper Credential
+
+func (c *Credential) GetCollection() CollectionableGroup {
+	return &CredentialCollection{}
+}
 
 func (c *Credential) GetCollectionName() string {
 	return CREDENTIAL_COLLECTION_NAME
@@ -65,10 +70,67 @@ func (c *Credential) Len() int {
 	return StandardItemLen(c)
 }
 
+func qualifyEntry(namespace string) credentials.EntryMapper {
+	return func(entry *credentials.CredentialEntry) string {
+		if entry.Type == "secret" || entry.Type == "configvalue" {
+			return GetFullyQualifiedKey(entry.Value, namespace)
+		}
+		return entry.Value
+	}
+}
+func localizeEntry(namespace string) credentials.EntryMapper {
+	return func(entry *credentials.CredentialEntry) string {
+		if entry.Type == "secret" || entry.Type == "configvalue" {
+			return GetLocalizedKey(entry.Value, namespace)
+		}
+		return entry.Value
+	}
+}
+
 func (c *Credential) UnmarshalYAML(node *yaml.Node) error {
-	err := validateNodeName(node, c.Name)
-	if err != nil {
+	if err := validateNodeName(node, c.Name); err != nil {
 		return err
 	}
-	return node.Decode((*CredentialWrapper)(c))
+	// Unmarshal the YAML node directly
+	if err := node.Decode((*CredentialWrapper)(c)); err != nil {
+		return err
+	}
+	// Now that we've unmarshalled, we need to fully-qualify all metadata references within our entries
+	c.MapEntries(qualifyEntry(c.Namespace))
+	return nil
+}
+
+func (c *Credential) MarshalYAML() (interface{}, error) {
+	// Localize metadata references within credential entries
+	c.MapEntries(localizeEntry(c.Namespace))
+	return (*CredentialWrapper)(c), nil
+}
+
+func (c *Credential) GetTypeSpecificCredentialContainer() credentials.CredentialContainer {
+	switch c.Type {
+	case "API_KEY":
+		return c.APIKey
+	case "AWS_KEY":
+		return c.AwsKey
+	case "AWS_ASSUME_ROLE":
+		return c.AwsAssumeRole
+	case "OAUTH2_CREDENTIALS":
+		return c.OAuth2
+	case "POSTGRESQL_CONNECTION":
+		return c.Postgres
+	case "USERNAME_PASSWORD":
+		return c.UsernamePassword
+	}
+	return nil
+}
+
+// MapEntries invokes an entry mapper on all CredentialEntry instances defined
+// within the credential's type-specific container, and within the generic entries container
+func (c *Credential) MapEntries(mapper credentials.EntryMapper) {
+	if typeSpecificContainer := c.GetTypeSpecificCredentialContainer(); typeSpecificContainer != nil && !typeSpecificContainer.IsNil() {
+		typeSpecificContainer.Map(mapper)
+	}
+	if c.Entries != nil {
+		c.Entries.Map(mapper)
+	}
 }

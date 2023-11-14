@@ -74,7 +74,7 @@ func Load(collectionName string, options *LoadOptions) (adapt.Collection, error)
 
 	loadResponse := &LoadResBatch{}
 
-	err = call.PostJSON("site/wires/load", sessid, payload, loadResponse)
+	err = call.PostJSON("site/wires/load", sessid, payload, loadResponse, nil)
 	if err != nil {
 		return nil, err
 	}

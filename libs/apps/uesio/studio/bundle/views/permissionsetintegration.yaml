@@ -21,13 +21,22 @@ definition:
           value: true
         - field: uesio/studio.item
           value: $Param{namespace}.$Param{permissionsetname}
+    integration:
+      collection: uesio/studio.integration
+      conditions:
+        - field: uesio/studio.allmetadata
+          value: true
+        - field: uesio/studio.item
+          value: $Param{integrationNamespace}.$Param{integrationName}
     integrationActions:
       collection: uesio/studio.integrationaction
       conditions:
         - field: uesio/studio.allmetadata
           value: true
         - field: uesio/studio.grouping
-          value: $Param{integrationNamespace}.$Param{integrationName}
+          valueSource: LOOKUP
+          lookupWire: integration
+          lookupField: uesio/studio.type
   # Components are how we describe the layout of our view
   components:
     - uesio/studio.mainlayout:

@@ -1,8 +1,8 @@
 package tsdialect
 
 import (
+	"bytes"
 	"fmt"
-	"io"
 	"strings"
 
 	esbuild "github.com/evanw/esbuild/pkg/api"
@@ -11,8 +11,8 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bot/jsdialect"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/retrieve"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -126,17 +126,14 @@ const DefaultBotBody = `export default function %s(bot) {
 
 // TODO: cache the transformed code, or generate it server-side as part of save of bot.ts
 func (b *TSDialect) hydrateBot(bot *meta.Bot, session *sess.Session) error {
-	_, stream, err := bundle.GetItemAttachment(bot, b.GetFilePath(), session)
-	if err != nil {
-		return err
-	}
-	content, err := io.ReadAll(stream)
+	buf := &bytes.Buffer{}
+	_, err := bundle.GetItemAttachment(buf, bot, b.GetFilePath(), session)
 	if err != nil {
 		return err
 	}
 
 	// Transform from TS to JS
-	result := esbuild.Transform(string(content), esbuild.TransformOptions{
+	result := esbuild.Transform(string(buf.Bytes()), esbuild.TransformOptions{
 		Loader: esbuild.LoaderTS,
 	})
 
@@ -185,7 +182,7 @@ func (b *TSDialect) CallBot(bot *meta.Bot, params map[string]interface{}, connec
 	return botAPI.Results, nil
 }
 
-func (b *TSDialect) CallGeneratorBot(bot *meta.Bot, create retrieve.WriterCreator, params map[string]interface{}, connection adapt.Connection, session *sess.Session) error {
+func (b *TSDialect) CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreator, params map[string]interface{}, connection adapt.Connection, session *sess.Session) error {
 	botAPI := &jsdialect.GeneratorBotAPI{
 		Session: session,
 		Params: &jsdialect.ParamsAPI{
@@ -207,11 +204,11 @@ func (b *TSDialect) RouteBot(bot *meta.Bot, route *meta.Route, session *sess.Ses
 }
 
 func (b *TSDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
-	integrationConnection, err := op.GetIntegration()
+	integrationConnection, err := op.GetIntegrationConnection()
 	if err != nil {
 		return err
 	}
-	botAPI := jsdialect.NewLoadBotAPI(bot, session, connection, op, integrationConnection)
+	botAPI := jsdialect.NewLoadBotAPI(bot, connection, op, integrationConnection)
 	if err := b.hydrateBot(bot, session); err != nil {
 		return err
 	}
@@ -223,16 +220,16 @@ func (b *TSDialect) SaveBot(bot *meta.Bot, op *adapt.SaveOp, connection adapt.Co
 	if err != nil {
 		return err
 	}
-	botAPI := jsdialect.NewSaveBotAPI(bot, session, connection, op, integrationConnection)
+	botAPI := jsdialect.NewSaveBotAPI(bot, connection, op, integrationConnection)
 	if err := b.hydrateBot(bot, session); err != nil {
 		return err
 	}
 	return RunBot(bot, botAPI, nil)
 }
 
-func (b *TSDialect) RunIntegrationActionBot(bot *meta.Bot, action *meta.IntegrationAction, integration adapt.IntegrationConnection, params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
-	botAPI := jsdialect.NewRunIntegrationActionBotAPI(bot, action, integration, params, session, connection)
-	err := b.hydrateBot(bot, session)
+func (b *TSDialect) RunIntegrationActionBot(bot *meta.Bot, ic *adapt.IntegrationConnection, actionName string, params map[string]interface{}) (interface{}, error) {
+	botAPI := jsdialect.NewRunIntegrationActionBotAPI(bot, ic, actionName, params)
+	err := b.hydrateBot(bot, ic.GetSession())
 	if err != nil {
 		return nil, err
 	}

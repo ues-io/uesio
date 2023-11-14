@@ -8,7 +8,7 @@ POST https://{{host}}:{{port}}/site/wires/load
 {
     "wires": [
         {
-            "wire": "app",
+            "name": "app",
             "collection": "uesio/studio.app",
             "fields": [
                 { "id": "uesio/core.id" },
@@ -26,10 +26,12 @@ HTTP 200
 app_id: jsonpath "$.wires[0].data[0]['uesio/core.id']"
 
 # Create a bundle, so that we can create a site
-POST https://studio.uesio-dev.com:3000/workspace/uesio/tests/dev/bots/call/uesio/studio/createbundle
+POST https://studio.uesio-dev.com:3000/site/bots/call/uesio/studio/createbundle
 {
     "type": "patch",
-    "description": "test bundle"
+    "description": "test bundle",
+    "app": "uesio/tests",
+    "workspaceName": "dev"
 }
 HTTP 200
 [Captures]
@@ -40,6 +42,32 @@ patch: jsonpath "$.params.patch"
 jsonpath "$.success" == true
 jsonpath "$.error" == ""
 jsonpath "$.params.description" == "test bundle"
+
+# Create a workspace using that bundle
+POST https://{{host}}:{{port}}/site/wires/save
+{
+    "wires": [
+        {
+            "wire": "newworkspace",
+            "collection": "uesio/studio.workspace",
+            "changes": {
+                "1": {
+                    "uesio/studio.app": {
+                        "uesio/core.id": "{{app_id}}"
+                    },
+                    "uesio/studio.name": "quickstart",
+                    "uesio/studio.sourcebundle": {
+                        "uesio/core.uniquekey": "uesio/tests:{{major}}:{{minor}}:{{patch}}"
+                    }
+                }
+            }
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" == null
+jsonpath "$.wires[0].changes['1']['uesio/core.uniquekey']" == "uesio/tests:quickstart"
 
 # Create a site using that bundle
 POST https://{{host}}:{{port}}/site/wires/save

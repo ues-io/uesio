@@ -1,0 +1,5 @@
+name: integrationtypes
+path: app/{app:\w*\/\w*}/workspace/{workspacename}/integrationtypes
+view: integrationtypes
+theme: default
+title: Integration Types

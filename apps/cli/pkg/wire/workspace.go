@@ -1,6 +1,9 @@
 package wire
 
 import (
+	"fmt"
+
+	"github.com/thecloudmasters/cli/pkg/context"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 )
 
@@ -54,10 +57,15 @@ func CreateNewWorkspace(appId, workspaceName string) (map[string]interface{}, er
 				"uesio/core.id": appId,
 			},
 		},
-	})
+	}, nil)
 	if err != nil {
 		return nil, err
 	}
 
 	return response[0], nil
+}
+
+func DeleteWorkspace(appFullName, workspaceName string) (bool, error) {
+	workspaceUniqueKey := fmt.Sprintf("%s:%s", appFullName, workspaceName)
+	return DeleteOne("uesio/studio.workspace", "uesio/core.uniquekey", workspaceUniqueKey, context.NewWorkspaceContext(appFullName, workspaceName))
 }

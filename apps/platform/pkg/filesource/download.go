@@ -11,7 +11,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/usage"
 )
 
-func DownloadAttachment(recordID string, path string, session *sess.Session) (io.ReadSeeker, *meta.UserFileMetadata, error) {
+func DownloadAttachment(w io.Writer, recordID string, path string, session *sess.Session) (*meta.UserFileMetadata, error) {
 
 	userFile := &meta.UserFileMetadata{}
 	err := datasource.PlatformLoadOne(
@@ -31,13 +31,13 @@ func DownloadAttachment(recordID string, path string, session *sess.Session) (io
 		session,
 	)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	return DownloadItem(userFile, session)
+	return DownloadItem(w, userFile, session)
 }
 
-func Download(userFileID string, session *sess.Session) (io.ReadSeeker, *meta.UserFileMetadata, error) {
+func Download(w io.Writer, userFileID string, session *sess.Session) (*meta.UserFileMetadata, error) {
 
 	userFile := &meta.UserFileMetadata{}
 	err := datasource.PlatformLoadOne(
@@ -53,28 +53,28 @@ func Download(userFileID string, session *sess.Session) (io.ReadSeeker, *meta.Us
 		session,
 	)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	return DownloadItem(userFile, session)
+	return DownloadItem(w, userFile, session)
 }
 
-func DownloadItem(userFile *meta.UserFileMetadata, session *sess.Session) (io.ReadSeeker, *meta.UserFileMetadata, error) {
+func DownloadItem(w io.Writer, userFile *meta.UserFileMetadata, session *sess.Session) (*meta.UserFileMetadata, error) {
 
 	conn, err := fileadapt.GetFileConnection(userFile.FileSourceID, session)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	fullPath := userFile.GetFullPath(session.GetTenantID())
 
-	_, content, err := conn.Download(fullPath)
+	_, err = conn.Download(w, fullPath)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	usage.RegisterEvent("DOWNLOAD", "FILESOURCE", userFile.FileSourceID, 0, session)
 	usage.RegisterEvent("DOWNLOAD_BYTES", "FILESOURCE", userFile.FileSourceID, userFile.ContentLength, session)
 
-	return content, userFile, nil
+	return userFile, nil
 }

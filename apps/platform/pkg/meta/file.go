@@ -46,6 +46,10 @@ func (f *File) MarshalJSONObject(enc *gojay.Encoder) {
 	}
 }
 
+func (f *File) GetCollection() CollectionableGroup {
+	return &FileCollection{}
+}
+
 func (f *File) GetCollectionName() string {
 	return FILE_COLLECTION_NAME
 }

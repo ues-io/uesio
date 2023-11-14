@@ -3,6 +3,7 @@ package sendgrid
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/sendgrid/sendgrid-go"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
@@ -10,7 +11,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 type SendEmailOptions struct {
@@ -25,43 +25,39 @@ type SendEmailOptions struct {
 	DynamicTemplateData map[string]interface{} `json:"dynamicTemplateData"`
 }
 
-type SendGridIntegration struct {
+type connection struct {
+	client      *sendgrid.Client
+	integration *adapt.IntegrationConnection
 }
 
-func (sgi *SendGridIntegration) GetIntegrationConnection(integration *meta.Integration, session *sess.Session, credentials *adapt.Credentials) (adapt.IntegrationConnection, error) {
-	return &SendGridIntegrationConnection{
-		session:     session,
-		integration: integration,
-		credentials: credentials,
+func newSendGridConnection(ic *adapt.IntegrationConnection) (*connection, error) {
+	apikey, err := ic.GetCredentials().GetRequiredEntry("apikey")
+	if err != nil || apikey == "" {
+		return nil, errors.New("SendGrid API Key not provided")
+	}
+	return &connection{
+		client:      sendgrid.NewSendClient(apikey),
+		integration: ic,
 	}, nil
 }
 
-type SendGridIntegrationConnection struct {
-	session     *sess.Session
-	integration *meta.Integration
-	credentials *adapt.Credentials
-}
+// RunAction implements the system bot interface
+func RunAction(bot *meta.Bot, ic *adapt.IntegrationConnection, actionName string, params map[string]interface{}) (interface{}, error) {
 
-func (sgic *SendGridIntegrationConnection) GetCredentials() *adapt.Credentials {
-	return sgic.credentials
-}
-
-func (sgic *SendGridIntegrationConnection) GetIntegration() *meta.Integration {
-	return sgic.integration
-}
-
-func (sgic *SendGridIntegrationConnection) RunAction(actionName string, requestOptions interface{}) (interface{}, error) {
-
-	switch actionName {
-	case "sendEmail":
-		return nil, sgic.SendEmail(requestOptions)
+	sgic, err := newSendGridConnection(ic)
+	if err != nil {
+		return nil, err
+	}
+	switch strings.ToLower(actionName) {
+	case "sendemail":
+		return nil, sgic.sendEmail(params)
 	}
 
-	return nil, errors.New("Invalid Action Name for SendGrid integration")
+	return nil, errors.New("invalid action name for SendGrid integration")
 
 }
 
-func (sgic *SendGridIntegrationConnection) SendEmail(requestOptions interface{}) error {
+func (sgic *connection) sendEmail(requestOptions map[string]interface{}) error {
 
 	options := &SendEmailOptions{}
 	err := datasource.HydrateOptions(requestOptions, options)
@@ -69,22 +65,17 @@ func (sgic *SendGridIntegrationConnection) SendEmail(requestOptions interface{})
 		return err
 	}
 
-	apikey, ok := (*sgic.credentials)["apikey"]
-	if !ok || apikey == "" {
-		return errors.New("No API Key provided")
-	}
-
-	toUsers := []*mail.Email{}
+	var toUsers []*mail.Email
 	for _, toRecipient := range options.To {
 		toUsers = append(toUsers, mail.NewEmail(toRecipient, toRecipient))
 	}
 
-	ccUsers := []*mail.Email{}
+	var ccUsers []*mail.Email
 	for _, ccRecipient := range options.CC {
 		ccUsers = append(ccUsers, mail.NewEmail(ccRecipient, ccRecipient))
 	}
 
-	bccUsers := []*mail.Email{}
+	var bccUsers []*mail.Email
 	for _, bccRecipient := range options.BCC {
 		bccUsers = append(bccUsers, mail.NewEmail(bccRecipient, bccRecipient))
 	}
@@ -110,8 +101,7 @@ func (sgic *SendGridIntegrationConnection) SendEmail(requestOptions interface{})
 		message.AddContent(mail.NewContent(contentType, options.PlainBody))
 	}
 	message.SetFrom(mail.NewEmail(options.From, options.From))
-	client := sendgrid.NewSendClient(apikey)
-	response, err := client.Send(message)
+	response, err := sgic.client.Send(message)
 	if err != nil {
 		return err
 	}

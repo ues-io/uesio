@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/AlecAivazis/survey/v2"
+
 	"github.com/thecloudmasters/cli/pkg/call"
 	"github.com/thecloudmasters/cli/pkg/config"
 )
@@ -110,23 +111,30 @@ func getHandlerByLabel(label string) *LoginMethodHandler {
 }
 
 func getLoginPayload() (string, map[string]string, error) {
-	loginMethod := os.Getenv("UESIO_CLI_LOGIN_METHOD")
+	loginMethodOptions := getHandlerOptions()
 	var handler *LoginMethodHandler
-	if loginMethod == "" {
-		err := survey.AskOne(&survey.Select{
+	// If login method is specified via env vars, use that
+	loginMethod := os.Getenv("UESIO_CLI_LOGIN_METHOD")
+	if loginMethod != "" {
+		handler = getHandlerByKey(loginMethod)
+	}
+	// If only have one possible login method, just use that
+	if handler == nil && len(loginMethodOptions) == 1 {
+		handler = getHandlerByLabel(loginMethodOptions[0])
+	}
+	// If we still don't have a login method, then we need to prompt
+	if handler == nil {
+		if err := survey.AskOne(&survey.Select{
 			Message: "Select a login method.",
 			Options: getHandlerOptions(),
-		}, &loginMethod)
-		if err != nil {
+		}, &loginMethod); err != nil {
 			return "", nil, err
 		}
 		handler = getHandlerByLabel(loginMethod)
-	} else {
-		handler = getHandlerByKey(loginMethod)
 	}
-
+	// If we still don't have a handler --- fail
 	if handler == nil {
-		return "", nil, errors.New("Invalid Login Method")
+		return "", nil, errors.New("invalid login method")
 	}
 
 	payload, err := handler.Handler()
@@ -146,7 +154,7 @@ func Login() (*UserMergeData, error) {
 		return nil, err
 	}
 
-	if currentUser != nil && currentUser.Profile == "uesio/studio.standard" {
+	if currentUser != nil && (currentUser.Profile == "uesio/studio.standard" || currentUser.Profile == "uesio/studio.admin") {
 		return currentUser, nil
 	}
 
@@ -169,7 +177,7 @@ func Login() (*UserMergeData, error) {
 
 	url := fmt.Sprintf("site/auth/%s/%s/login", methodNamespace, methodName)
 
-	resp, err := call.Request("POST", url, payloadBytes, "")
+	resp, err := call.Request("POST", url, payloadBytes, "", nil)
 	if err != nil {
 		return nil, err
 	}

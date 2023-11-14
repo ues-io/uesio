@@ -3,11 +3,11 @@ package meta
 import (
 	"errors"
 	"fmt"
-	"reflect"
 	"regexp"
 	"strings"
 	"time"
 
+	"github.com/qdm12/reprint"
 	"github.com/thecloudmasters/uesio/pkg/goutils"
 	"github.com/thecloudmasters/uesio/pkg/reflecttool"
 )
@@ -58,9 +58,12 @@ type CollectionableGroup interface {
 type CollectionableItem interface {
 	Item
 	GetCollectionName() string
+	GetCollection() CollectionableGroup
 	GetItemMeta() *ItemMeta
 	SetItemMeta(*ItemMeta)
 }
+
+type FilterFunc func(string, BundleConditions, bool) bool
 
 type BundleableGroup interface {
 	CollectionableGroup
@@ -202,6 +205,7 @@ var METADATA_NAME_MAP = map[string]string{
 	"COMPONENT":            "components",
 	"FILE":                 "files",
 	"LABEL":                "labels",
+	"INTEGRATIONTYPE":      "integrationtypes",
 	"INTEGRATION":          "integrations",
 	"INTEGRATIONACTION":    "integrationactions",
 	"RECORDCHALLENGETOKEN": "recordchallengetokens",
@@ -234,6 +238,7 @@ var bundleableGroupMap = map[string]BundleableFactory{
 	(&SignupMethodCollection{}).GetBundleFolderName():         func() BundleableGroup { return &SignupMethodCollection{} },
 	(&IntegrationCollection{}).GetBundleFolderName():          func() BundleableGroup { return &IntegrationCollection{} },
 	(&IntegrationActionCollection{}).GetBundleFolderName():    func() BundleableGroup { return &IntegrationActionCollection{} },
+	(&IntegrationTypeCollection{}).GetBundleFolderName():      func() BundleableGroup { return &IntegrationTypeCollection{} },
 	(&ComponentCollection{}).GetBundleFolderName():            func() BundleableGroup { return &ComponentCollection{} },
 	(&UtilityCollection{}).GetBundleFolderName():              func() BundleableGroup { return &UtilityCollection{} },
 	(&RecordChallengeTokenCollection{}).GetBundleFolderName(): func() BundleableGroup { return &RecordChallengeTokenCollection{} },
@@ -263,7 +268,7 @@ func GetGroupingConditions(metadataType, grouping string) (BundleConditions, err
 		if grouping == "" {
 			return nil, errors.New("metadata type integration action requires grouping value")
 		}
-		conditions["uesio/studio.integration"] = grouping
+		conditions["uesio/studio.integrationtype"] = grouping
 	} else if metadataType == "recordchallengetokens" {
 		if grouping == "" {
 			return nil, errors.New("metadata type record challenge token requires grouping value")
@@ -298,8 +303,8 @@ func GetTypeFromCollectionName(studioCollectionName string) string {
 	return bundleableCollectionNames[studioCollectionName]
 }
 
-func Copy(to, from interface{}) {
-	reflect.Indirect(reflect.ValueOf(to)).Set(reflect.Indirect(reflect.ValueOf(from)))
+func Copy(to, from interface{}) error {
+	return reprint.FromTo(from, to)
 }
 
 var validMetaRegex, _ = regexp.Compile("^[a-z0-9_]+$")

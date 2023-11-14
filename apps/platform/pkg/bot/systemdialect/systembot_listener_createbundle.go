@@ -1,7 +1,7 @@
 package systemdialect
 
 import (
-	"errors"
+	"fmt"
 	"io"
 	"strconv"
 
@@ -15,47 +15,32 @@ import (
 
 func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
 
-	appID := session.GetContextAppName()
+	appID, err := getRequiredParameter(params, "app")
+	if err != nil {
+		return nil, err
+	}
 
-	if appID == "" {
-		return nil, errors.New("cannot create a bundle without an app in context")
+	workspaceName, err := getRequiredParameter(params, "workspaceName")
+	if err != nil {
+		return nil, err
 	}
 
 	if bundlestore.IsSystemBundle(appID) {
-		return nil, errors.New("cannot create a bundle for a system app")
-	}
-
-	workspace := session.GetWorkspace()
-
-	if workspace == nil {
-		return nil, errors.New("cannot create a new bundle as a non-studio user")
+		return nil, meta.NewBotAccessError("cannot create a bundle for a system app")
 	}
 
 	if !session.GetSitePermissions().HasNamedPermission("uesio/studio.workspace_admin") {
-		return nil, errors.New("you must be a workspace admin to create bundles")
+		return nil, meta.NewBotAccessError("you must be a workspace admin to create bundles")
 	}
 
-	var app meta.App
-	err := datasource.PlatformLoadOne(
-		&app,
-		&datasource.PlatformLoadOptions{
-			Connection: connection,
-			Fields: []adapt.LoadRequestField{
-				{
-					ID: adapt.ID_FIELD,
-				},
-			},
-			Conditions: []adapt.LoadRequestCondition{
-				{
-					Field: adapt.UNIQUE_KEY_FIELD,
-					Value: appID,
-				},
-			},
-		},
-		session.RemoveWorkspaceContext(),
-	)
+	app, err := datasource.QueryAppForWrite(appID, adapt.UNIQUE_KEY_FIELD, session, connection)
 	if err != nil {
-		return nil, err
+		return nil, meta.NewBotAccessError(fmt.Sprintf("you do not have permission to create bundles for app %s", appID))
+	}
+
+	workspace, err := datasource.QueryWorkspaceForWrite(appID+":"+workspaceName, adapt.UNIQUE_KEY_FIELD, session, connection)
+	if err != nil {
+		return nil, meta.NewBotAccessError(fmt.Sprintf("you do not have permission to create bundles for workspace %s", workspaceName))
 	}
 
 	var bundles meta.BundleCollection
@@ -83,7 +68,7 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.
 				},
 			},
 		},
-		session.RemoveWorkspaceContext(),
+		session,
 	)
 	if err != nil {
 		return nil, err
@@ -102,7 +87,7 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.
 		return nil, err
 	}
 
-	err = datasource.PlatformSaveOne(bundle, nil, nil, session.RemoveWorkspaceContext())
+	err = datasource.PlatformSaveOne(bundle, nil, nil, session)
 	if err != nil {
 		return nil, err
 	}

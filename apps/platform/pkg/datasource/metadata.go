@@ -55,10 +55,10 @@ func GetFieldLabel(f *meta.Field, session *sess.Session) string {
 }
 
 func GetFieldMetadata(f *meta.Field, session *sess.Session) *adapt.FieldMetadata {
-	return &adapt.FieldMetadata{
+	fieldMetadata := &adapt.FieldMetadata{
 		Name:                   f.Name,
 		Namespace:              f.Namespace,
-		Createable:             !f.ReadOnly && f.Type != "AUTONUMBER",
+		Createable:             !f.ReadOnly && f.Type != "AUTONUMBER" && f.Type != "FORMULA",
 		Accessible:             true,
 		Updateable:             GetUpdateable(f),
 		Type:                   GetType(f),
@@ -75,10 +75,16 @@ func GetFieldMetadata(f *meta.Field, session *sess.Session) *adapt.FieldMetadata
 		MetadataFieldMetadata:  GetMetadataFieldMetadata(f),
 		Required:               f.Required,
 		AutoPopulate:           f.AutoPopulate,
-		SubFields:              GetSubFieldMetadata(f),
 		SubType:                f.SubType,
 		ColumnName:             f.ColumnName,
 	}
+	if subFieldsSupported(f.Type, f.SubType) && len(f.SubFields) > 0 {
+		fieldMetadata.SubFields = map[string]*adapt.FieldMetadata{}
+		for _, subField := range f.SubFields {
+			fieldMetadata.SubFields[subField.Name] = GetSubFieldMetadata(&subField)
+		}
+	}
+	return fieldMetadata
 }
 
 func GetType(f *meta.Field) string {
@@ -92,25 +98,39 @@ func GetUpdateable(f *meta.Field) bool {
 	return !f.ReadOnly && !f.CreateOnly && f.Type != "AUTONUMBER" && f.Type != "FORMULA"
 }
 
-func GetSubFieldMetadata(f *meta.Field) map[string]*adapt.FieldMetadata {
-	fieldMetadata := map[string]*adapt.FieldMetadata{}
-	for _, subField := range f.SubFields {
-		fieldMetadata[subField.Name] = &adapt.FieldMetadata{
-			Name:       subField.Name,
-			Label:      subField.Label,
-			Type:       subField.Type,
-			Updateable: !f.ReadOnly && !f.CreateOnly,
-			Createable: !f.ReadOnly,
-			Accessible: true,
-			SelectListMetadata: GetSelectListMetadata(&meta.Field{
-				Type:       subField.Type,
-				SelectList: subField.SelectList,
-			}),
-			MetadataFieldMetadata: GetMetadataFieldMetadata(&meta.Field{
-				Type:                  subField.Type,
-				MetadataFieldMetadata: subField.Metadata,
-			}),
+func subFieldsSupported(fieldType, fieldSubType string) bool {
+	return fieldType == "STRUCT" || ((fieldType == "LIST" || fieldType == "MAP") && fieldSubType == "STRUCT")
+}
+
+func GetSubFieldMetadata(f *meta.SubField) *adapt.FieldMetadata {
+	fieldMetadata := &adapt.FieldMetadata{
+		Name:       f.Name,
+		Label:      f.Label,
+		Type:       f.Type,
+		Updateable: !f.CreateOnly,
+		Createable: true,
+		Accessible: true,
+		SelectListMetadata: GetSelectListMetadata(&meta.Field{
+			Type:       f.Type,
+			SelectList: f.SelectList,
+		}),
+		NumberMetadata: GetNumberMetadata(&meta.Field{
+			Type:           f.Type,
+			NumberMetadata: f.Number,
+		}),
+		MetadataFieldMetadata: GetMetadataFieldMetadata(&meta.Field{
+			Type:                  f.Type,
+			MetadataFieldMetadata: f.Metadata,
+		}),
+		SubType: f.SubType,
+	}
+	if subFieldsSupported(f.Type, f.SubType) && len(f.SubFields) > 0 {
+		subFieldsMetadata := map[string]*adapt.FieldMetadata{}
+		for i, _ := range f.SubFields {
+			subField := f.SubFields[i]
+			subFieldsMetadata[subField.Name] = GetSubFieldMetadata(&subField)
 		}
+		fieldMetadata.SubFields = subFieldsMetadata
 	}
 	return fieldMetadata
 }
@@ -224,13 +244,16 @@ func LoadCollectionMetadata(key string, metadataCache *adapt.MetadataCache, sess
 
 	collectionMetadata = GetCollectionMetadata(collection)
 
-	var recordchallengetokens meta.RecordChallengeTokenCollection
-	err = bundle.LoadAllFromAny(&recordchallengetokens, meta.BundleConditions{"uesio/studio.collection": collectionMetadata.GetKey()}, session, connection)
+	// To fetch record challenge tokens, enter an admin context, since we don't have separate permissions for these things.
+	adminSession := GetSiteAdminSession(session)
+
+	var recordChallengeTokens meta.RecordChallengeTokenCollection
+	err = bundle.LoadAllFromAny(&recordChallengeTokens, meta.BundleConditions{"uesio/studio.collection": collectionMetadata.GetKey()}, adminSession, connection)
 	if err != nil {
 		return nil, err
 	}
-	if recordchallengetokens.Len() > 0 {
-		for _, rct := range recordchallengetokens {
+	if recordChallengeTokens.Len() > 0 {
+		for _, rct := range recordChallengeTokens {
 			collectionMetadata.RecordChallengeTokens = append(collectionMetadata.RecordChallengeTokens, rct)
 		}
 	}

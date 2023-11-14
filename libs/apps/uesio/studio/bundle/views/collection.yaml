@@ -341,24 +341,22 @@ definition:
                                 uesio.display:
                                   - type: hasValue
                                     value: ${uesio/studio.integration}
-                                  - type: wireHasRecords
-                                    wire: integration
                                   - type: fieldValue
-                                    wire: integration
+                                    wire: collections
                                     field: uesio/studio.type
-                                    value: uesio/core.custom
+                                    operator: EQUALS
+                                    value: EXTERNAL
                             - uesio/io.field:
                                 fieldId: uesio/studio.savebot
                                 label: Collection Save Bot
                                 uesio.display:
                                   - type: hasValue
                                     value: ${uesio/studio.integration}
-                                  - type: wireHasRecords
-                                    wire: integration
                                   - type: fieldValue
-                                    wire: integration
+                                    wire: collections
                                     field: uesio/studio.type
-                                    value: uesio/core.custom
+                                    operator: EQUALS
+                                    value: EXTERNAL
 
           - uesio/io.box:
               uesio.variant: uesio/io.section
@@ -844,12 +842,6 @@ definition:
                       field: uesio/studio.type
                       operator: EQUALS
                       value: EXTERNAL
-                    - type: wireHasRecords
-                      wire: integration
-                    - type: fieldValue
-                      wire: integration
-                      field: uesio/studio.type
-                      value: uesio/core.custom
               - uesio/io.field:
                   fieldId: uesio/studio.tablename
                   uesio.display:
@@ -860,7 +852,7 @@ definition:
                       value: EXTERNAL
               - uesio/io.field:
                   fieldId: uesio/studio.loadbot
-                  label: Collection Load Bot
+                  label: Collection-specific Load Bot (optional)
                   uesio.display:
                     - type: fieldValue
                       field: uesio/studio.type
@@ -869,13 +861,9 @@ definition:
                       value: ${uesio/studio.integration}
                     - type: wireHasRecords
                       wire: integration
-                    - type: fieldValue
-                      wire: integration
-                      field: uesio/studio.type
-                      value: uesio/core.custom
               - uesio/io.field:
                   fieldId: uesio/studio.savebot
-                  label: Collection Save Bot
+                  label: Collection-specific Save Bot (optional)
                   uesio.display:
                     - type: fieldValue
                       field: uesio/studio.type
@@ -884,10 +872,6 @@ definition:
                       value: ${uesio/studio.integration}
                     - type: wireHasRecords
                       wire: integration
-                    - type: fieldValue
-                      wire: integration
-                      field: uesio/studio.type
-                      value: uesio/core.custom
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
@@ -981,6 +965,14 @@ definition:
               - uesio/io.field:
                   fieldId: uesio/studio.languagelabel
                   uesio.id: new-field-language-label
+              - uesio/io.field:
+                  fieldId: uesio/studio.columnname
+                  label: External Field Name
+                  uesio.display:
+                    - type: fieldValue
+                      wire: collections
+                      field: uesio/studio.type
+                      value: EXTERNAL
               - uesio/io.box:
                   uesio.display:
                     - field: uesio/studio.type

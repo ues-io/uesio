@@ -1,7 +1,6 @@
 package s3
 
 import (
-	"bytes"
 	"context"
 	"errors"
 	"io"
@@ -13,6 +12,16 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/types/file"
 )
+
+// see https://stackoverflow.com/a/55788634
+type FakeWriterAt struct {
+	w io.Writer
+}
+
+func (fw FakeWriterAt) WriteAt(p []byte, offset int64) (n int, err error) {
+	// ignore 'offset' because we forced sequential downloads
+	return fw.w.Write(p)
+}
 
 type s3FileMeta struct {
 	s3Output *s3.HeadObjectOutput
@@ -30,33 +39,29 @@ func (fm *s3FileMeta) LastModified() *time.Time {
 	return fm.s3Output.LastModified
 }
 
-func (c *Connection) Download(path string) (file.Metadata, io.ReadSeeker, error) {
-	return c.DownloadWithDownloader(&s3.GetObjectInput{
+func (c *Connection) Download(w io.Writer, path string) (file.Metadata, error) {
+	return c.DownloadWithDownloader(FakeWriterAt{w}, &s3.GetObjectInput{
 		Bucket: aws.String(c.bucket),
 		Key:    aws.String(path),
 	})
 }
 
-func (c *Connection) DownloadWithDownloader(input *s3.GetObjectInput) (file.Metadata, io.ReadSeeker, error) {
+func (c *Connection) DownloadWithDownloader(w io.WriterAt, input *s3.GetObjectInput) (file.Metadata, error) {
 	ctx := context.Background()
 	downloader := manager.NewDownloader(c.client)
+	downloader.Concurrency = 1
 	head, err := c.client.HeadObject(ctx, &s3.HeadObjectInput{
 		Bucket: aws.String(c.bucket),
 		Key:    input.Key,
 	})
-
 	if err != nil {
-		return nil, nil, errors.New("failed to retrieve object information: " + err.Error())
+		return nil, errors.New("failed to retrieve object information: " + err.Error())
 	}
-
-	buf := make([]byte, head.ContentLength)
-	w := manager.NewWriteAtBuffer(buf)
 
 	_, err = downloader.Download(ctx, w, input)
-
 	if err != nil {
-		return nil, nil, errors.New("failed to retrieve Object")
+		return nil, errors.New("failed to retrieve Object")
 	}
 
-	return newS3FileMeta(head), bytes.NewReader(buf), nil
+	return newS3FileMeta(head), nil
 }

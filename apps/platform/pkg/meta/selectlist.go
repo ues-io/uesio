@@ -49,6 +49,10 @@ func NewSelectLists(keys map[string]bool) ([]BundleableItem, error) {
 	return items, nil
 }
 
+func (sl *SelectList) GetCollection() CollectionableGroup {
+	return &SelectListCollection{}
+}
+
 func (sl *SelectList) GetCollectionName() string {
 	return SELECTLIST_COLLECTION_NAME
 }

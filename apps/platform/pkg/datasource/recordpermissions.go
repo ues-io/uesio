@@ -27,7 +27,7 @@ func getAccessFields(collectionMetadata *adapt.CollectionMetadata, metadata *ada
 		return nil, err
 	}
 
-	fields := []adapt.LoadRequestField{}
+	var fields []adapt.LoadRequestField
 
 	for fieldID, fieldInfo := range refCollectionMetadata.Fields {
 		// TODO: We should be better about deciding which field we load in here
@@ -77,7 +77,7 @@ func loadInAccessFieldData(op *adapt.SaveOp, connection adapt.Connection, sessio
 
 	refReq.AddFields(fields)
 
-	err = op.LoopChanges(func(change *adapt.ChangeItem) error {
+	if err = op.LoopChanges(func(change *adapt.ChangeItem) error {
 		fk, err := change.GetReferenceKey(op.Metadata.AccessField)
 		if err != nil {
 			return err
@@ -86,8 +86,7 @@ func loadInAccessFieldData(op *adapt.SaveOp, connection adapt.Connection, sessio
 			Item:  change,
 			Field: fieldMetadata,
 		})
-	})
-	if err != nil {
+	}); err != nil {
 		return err
 	}
 
@@ -249,7 +248,7 @@ func GenerateRecordChallengeTokens(op *adapt.SaveOp, connection adapt.Connection
 		return err
 	}
 
-	tokenFuncs := []tokenFunc{}
+	var tokenFuncs []tokenFunc
 
 	for index := range challengeMetadata.RecordChallengeTokens {
 		challengeToken := challengeMetadata.RecordChallengeTokens[index]

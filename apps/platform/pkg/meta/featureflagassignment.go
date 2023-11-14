@@ -7,6 +7,10 @@ type FeatureFlagAssignment struct {
 	User    *User       `json:"uesio/core.user"`
 }
 
+func (ffa *FeatureFlagAssignment) GetCollection() CollectionableGroup {
+	return &FeatureFlagAssignmentCollection{}
+}
+
 func (ffa *FeatureFlagAssignment) GetCollectionName() string {
 	return FEATUREFLAGASSIGNMENT_COLLECTION_NAME
 }

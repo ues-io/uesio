@@ -17,6 +17,10 @@ func (acba *AdminCallBotAPI) Save(collection string, changes adapt.Collection) e
 	return botSave(collection, changes, datasource.GetSiteAdminSession(acba.Session), acba.Connection)
 }
 
+func (acba *AdminCallBotAPI) Delete(collection string, deletes adapt.Collection) error {
+	return botDelete(collection, deletes, datasource.GetSiteAdminSession(acba.Session), acba.Connection)
+}
+
 func (acba *AdminCallBotAPI) RunIntegrationAction(integrationID string, action string, options interface{}) (interface{}, error) {
 	return runIntegrationAction(integrationID, action, options, datasource.GetSiteAdminSession(acba.Session))
 }
@@ -42,7 +46,7 @@ func NewCallBotAPI(bot *meta.Bot, session *sess.Session, connection adapt.Connec
 		Connection: connection,
 		Results:    map[string]interface{}{},
 		LogApi:     NewBotLogAPI(bot),
-		Http:       NewBotHttpAPI(bot, session, nil),
+		Http:       NewBotHttpAPI(bot, adapt.NewIntegrationConnection(nil, nil, session, nil)),
 	}
 }
 
@@ -62,6 +66,10 @@ func (cba *CallBotAPI) AddResult(key string, value interface{}) {
 
 func (cba *CallBotAPI) Save(collection string, changes adapt.Collection) error {
 	return botSave(collection, changes, cba.Session, cba.Connection)
+}
+
+func (cba *CallBotAPI) Delete(collection string, deletes adapt.Collection) error {
+	return botDelete(collection, deletes, cba.Session, cba.Connection)
 }
 
 func (bs *CallBotAPI) Load(request BotLoadOp) (*adapt.Collection, error) {

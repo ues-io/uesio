@@ -18,6 +18,18 @@ func botSave(collection string, changes adapt.Collection, session *sess.Session,
 	return datasource.HandleSaveRequestErrors(requests, err)
 }
 
+func botDelete(collection string, deletes adapt.Collection, session *sess.Session, connection adapt.Connection) error {
+	requests := []datasource.SaveRequest{
+		{
+			Collection: collection,
+			Wire:       "botsave",
+			Deletes:    &deletes,
+		},
+	}
+	err := datasource.SaveWithOptions(requests, session, datasource.GetConnectionSaveOptions(connection))
+	return datasource.HandleSaveRequestErrors(requests, err)
+}
+
 func botLoad(request BotLoadOp, session *sess.Session, connection adapt.Connection) (*adapt.Collection, error) {
 	collection := &adapt.Collection{}
 
@@ -46,11 +58,16 @@ func botLoad(request BotLoadOp, session *sess.Session, connection adapt.Connecti
 
 func runIntegrationAction(integrationID string, action string, options interface{}, session *sess.Session) (interface{}, error) {
 
-	integration, err := datasource.GetIntegration(integrationID, session)
+	platformConnection, err := datasource.GetPlatformConnection(&adapt.MetadataCache{}, session, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	return integration.RunAction(action, options)
+	ic, err := datasource.GetIntegrationConnection(integrationID, session, platformConnection)
+	if err != nil {
+		return nil, err
+	}
+
+	return datasource.RunIntegrationAction(ic, action, options, platformConnection)
 
 }

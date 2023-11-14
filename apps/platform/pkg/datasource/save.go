@@ -74,6 +74,14 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 			return err
 		}
 
+		if err = addMetadataToCollection(request.Changes, collectionMetadata); err != nil {
+			return err
+		}
+
+		if err = addMetadataToCollection(request.Deletes, collectionMetadata); err != nil {
+			return err
+		}
+
 		// Split changes into inserts, updates, and deletes
 		ops, err := splitSave(request, collectionMetadata, session)
 		if err != nil {
@@ -255,23 +263,19 @@ func SaveOp(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session
 }
 
 func performExternalIntegrationSave(integrationName string, op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
-	integrationConnection, err := GetIntegration(integrationName, session)
+	integrationConnection, err := GetIntegrationConnection(integrationName, session, connection)
 	if err != nil {
 		return err
 	}
-	op.AttachIntegration(integrationConnection)
-	integration := integrationConnection.GetIntegration()
+	op.AttachIntegrationConnection(integrationConnection)
+	integrationType := integrationConnection.GetIntegrationType()
 	// If there's a collection-specific save bot defined, use that,
 	// otherwise default to the integration's defined save bot.
 	// If there's neither, then there's nothing to do.
 	botKey := op.Metadata.SaveBot
-	if botKey == "" && integration != nil {
-		botKey = integration.SaveBot
+	if botKey == "" && integrationType != nil {
+		botKey = integrationType.SaveBot
 	}
-	if botKey == "" {
-		return fmt.Errorf("no save bot defined on collection %s or on integration %s", op.Metadata.GetKey(), integration.GetKey())
-	}
-
 	if err = runExternalDataSourceSaveBot(botKey, op, connection, session); err != nil {
 		return err
 	}

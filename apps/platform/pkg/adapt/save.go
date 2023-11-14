@@ -23,17 +23,17 @@ type SaveOp struct {
 	Metadata    *CollectionMetadata
 	Params      map[string]string
 
-	integrationConnection IntegrationConnection
+	integrationConnection *IntegrationConnection
 }
 
-func (op *SaveOp) GetIntegration() (IntegrationConnection, error) {
+func (op *SaveOp) GetIntegration() (*IntegrationConnection, error) {
 	if op.integrationConnection != nil {
 		return op.integrationConnection, nil
 	}
-	return nil, errors.New("integration not available on SaveOp")
+	return nil, errors.New("integrationConnection not available on SaveOp")
 }
 
-func (op *SaveOp) AttachIntegration(ic IntegrationConnection) {
+func (op *SaveOp) AttachIntegrationConnection(ic *IntegrationConnection) {
 	op.integrationConnection = ic
 }
 
@@ -297,6 +297,8 @@ func GetValueInt(value interface{}) (int64, error) {
 	switch typedVal := value.(type) {
 	case nil:
 		return 0, nil
+	case int:
+		return int64(typedVal), nil
 	case int64:
 		return typedVal, nil
 	case float64:

@@ -2,35 +2,12 @@ package adapt
 
 import (
 	"encoding/json"
-	"github.com/stretchr/testify/assert"
 	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
-const objectsKeyedById = `{
-	"abcdefg": {
-		"uesio/studio.name": "core",
-		"uesio/studio.fullname": "uesio/core",
-		"uesio/studio.description": "Base uesio functionality",
-		"uesio/studio.color": "#a05195",
-		"uesio/studio.icon": "hub",
-		"uesio/studio.public": true,
-		"uesio/studio.user": {
-			"uesio/core.uniquekey": "uesio"
-		}
-	},
-	"cjfjakjf": {
-		"uesio/studio.name": "io",
-		"uesio/studio.fullname": "uesio/io",
-		"uesio/studio.description": "A component library for uesio",
-		"uesio/studio.color": "#2f4b7c",
-		"uesio/studio.icon": "widgets",
-		"uesio/studio.public": true,
-		"uesio/studio.user": {
-			"uesio/core.uniquekey": "uesio"
-		}
-	}
-}`
 const arrayOfObjects = `[
 	{
 		"uesio/studio.name": "core",
@@ -76,13 +53,6 @@ func TestCollection_UnmarshalJSON(t *testing.T) {
 		{
 			"array of objects",
 			arrayOfObjects,
-			false,
-			2,
-			expectContents,
-		},
-		{
-			"objects keyed by id",
-			objectsKeyedById,
 			false,
 			2,
 			expectContents,

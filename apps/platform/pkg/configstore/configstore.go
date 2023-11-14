@@ -51,7 +51,17 @@ func GetValue(cv *meta.ConfigValue, session *sess.Session) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return store.Get(cv.GetKey(), session)
+	storeValue, err := store.Get(cv.GetKey(), session)
+	if err != nil {
+		return "", err
+	}
+	if storeValue != "" {
+		return storeValue, nil
+	}
+	if cv.DefaultValue != "" {
+		return cv.DefaultValue, nil
+	}
+	return "", nil
 }
 
 func SetValueFromKey(key, value string, session *sess.Session) error {

@@ -1,32 +1,38 @@
 package adapt
 
 import (
-	"errors"
-
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-type IntegrationType interface {
-	GetIntegrationConnection(*meta.Integration, *sess.Session, *Credentials) (IntegrationConnection, error)
-}
-
-type IntegrationConnection interface {
-	RunAction(actionName string, requestOptions interface{}) (interface{}, error)
-	GetCredentials() *Credentials
-	GetIntegration() *meta.Integration
-}
-
-var integrationTypeMap = map[string]IntegrationType{}
-
-func GetIntegrationType(integrationTypeName string) (IntegrationType, error) {
-	integrationType, ok := integrationTypeMap[integrationTypeName]
-	if !ok {
-		return nil, errors.New("Invalid integration type name: " + integrationTypeName)
+func NewIntegrationConnection(integration *meta.Integration, integrationType *meta.IntegrationType, session *sess.Session, credentials *Credentials) *IntegrationConnection {
+	return &IntegrationConnection{
+		session:         session,
+		integration:     integration,
+		integrationType: integrationType,
+		credentials:     credentials,
 	}
-	return integrationType, nil
 }
 
-func RegisterIntegration(name string, integrationType IntegrationType) {
-	integrationTypeMap[name] = integrationType
+type IntegrationConnection struct {
+	session         *sess.Session
+	integration     *meta.Integration
+	integrationType *meta.IntegrationType
+	credentials     *Credentials
+}
+
+func (ic *IntegrationConnection) GetSession() *sess.Session {
+	return ic.session
+}
+
+func (ic *IntegrationConnection) GetCredentials() *Credentials {
+	return ic.credentials
+}
+
+func (ic *IntegrationConnection) GetIntegration() *meta.Integration {
+	return ic.integration
+}
+
+func (ic *IntegrationConnection) GetIntegrationType() *meta.IntegrationType {
+	return ic.integrationType
 }

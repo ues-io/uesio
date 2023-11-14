@@ -1,0 +1,5 @@
+name: integrationtype
+path: app/{app:\w*\/\w*}/workspace/{workspacename}/integrationtypes/{namespace:\w*\/\w*}/{integrationtypename}
+view: integrationtype
+theme: default
+title: "Integration Type: $Param{integrationtypename}"

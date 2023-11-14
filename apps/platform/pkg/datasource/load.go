@@ -20,6 +20,20 @@ type SpecialReferences struct {
 	Fields            []string
 }
 
+type MetadataInformed interface {
+	SetMetadata(*adapt.CollectionMetadata) error
+}
+
+func addMetadataToCollection(group meta.Group, metadata *adapt.CollectionMetadata) error {
+	informedGroup, isMetadataInformed := group.(MetadataInformed)
+	if isMetadataInformed {
+		if err := informedGroup.SetMetadata(metadata); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 var specialRefs = map[string]SpecialReferences{
 	"FILE": {
 		ReferenceMetadata: &adapt.ReferenceMetadata{
@@ -59,17 +73,33 @@ func processConditions(
 
 	var err error
 
+	currentCollectionMeta, _ := metadata.GetCollection(collectionKey)
+
 	for i, condition := range conditions {
 
-		// Convert reference-crossing conditions to subquery conditions
+		// Convert potentially reference-crossing conditions to subquery conditions
 		if isReferenceCrossingField(condition.Field) {
-			conditionPointer := &condition
-			err = transformReferenceCrossingConditionToSubquery(collectionKey, conditionPointer, metadata)
-			if err != nil {
-				return err
+			// Just because it has an arrow does NOT mean it is reference-crossing, it might be a struct field,
+			// in which case, we just want to leave it alone. This will mostly be relevant for external integrations.
+			mainField := strings.Split(condition.Field, constant.RefSep)[0]
+			// Assume it's a reference, unless we can prove otherwise
+			isReferenceField := true
+			if mainField != "" && currentCollectionMeta != nil {
+				mainFieldMeta, err := currentCollectionMeta.GetField(mainField)
+				if err == nil && !adapt.IsReference(mainFieldMeta.Type) {
+					isReferenceField = false
+				}
 			}
-			// Mutate the original condition in the array, otherwise the changes will be lost
-			conditions[i] = *conditionPointer
+			// If this IS a Condition on a Reference field, then transform it to a Sub-query condition
+			if isReferenceField {
+				conditionPointer := &condition
+				err = transformReferenceCrossingConditionToSubquery(collectionKey, conditionPointer, metadata)
+				if err != nil {
+					return err
+				}
+				// Mutate the original condition in the array, otherwise the changes will be lost
+				conditions[i] = *conditionPointer
+			}
 		}
 
 		if condition.Type == "SUBQUERY" || condition.Type == "GROUP" {
@@ -606,9 +636,13 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 			return nil, err
 		}
 
-		collectionMetadata, err2 := metadataResponse.GetCollection(op.CollectionName)
-		if err2 != nil {
-			return nil, err2
+		collectionMetadata, err := metadataResponse.GetCollection(op.CollectionName)
+		if err != nil {
+			return nil, err
+		}
+
+		if err = addMetadataToCollection(op.Collection, collectionMetadata); err != nil {
+			return nil, err
 		}
 
 		collectionKey := collectionMetadata.GetFullName()
@@ -643,7 +677,7 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 }
 
 func performExternalIntegrationLoad(integrationName string, op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
-	integrationConnection, err := GetIntegration(integrationName, session)
+	integrationConnection, err := GetIntegrationConnection(integrationName, session, connection)
 	if err != nil {
 		return err
 	}
@@ -651,19 +685,15 @@ func performExternalIntegrationLoad(integrationName string, op *adapt.LoadOp, co
 	if err != nil {
 		return err
 	}
-	op.AttachIntegration(integrationConnection)
-	integration := integrationConnection.GetIntegration()
+	op.AttachIntegrationConnection(integrationConnection)
+	integrationType := integrationConnection.GetIntegrationType()
 	// If there's a collection-specific load bot defined, use that,
 	// otherwise default to the integration's defined load bot.
 	// If there's neither, then there's nothing to do.
 	botKey := collectionMetadata.LoadBot
-	if botKey == "" && integration != nil {
-		botKey = integration.LoadBot
+	if botKey == "" && integrationType != nil {
+		botKey = integrationType.LoadBot
 	}
-	if botKey == "" {
-		return fmt.Errorf("no load bot defined on collection %s or on integration %s", collectionMetadata.GetKey(), integration.GetKey())
-	}
-
 	if err = runExternalDataSourceLoadBot(botKey, op, connection, session); err != nil {
 		return err
 	}

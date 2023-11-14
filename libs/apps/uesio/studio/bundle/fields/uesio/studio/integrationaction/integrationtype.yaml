@@ -1,0 +1,7 @@
+name: integrationtype
+type: METADATA
+metadata:
+  type: INTEGRATIONTYPE
+label: Integration Type
+required: true
+createOnly: true

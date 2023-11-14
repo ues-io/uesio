@@ -6,32 +6,35 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"strings"
 
 	"github.com/thecloudmasters/cli/pkg/config/host"
+	"github.com/thecloudmasters/cli/pkg/context"
 )
 
-func Request(method, url string, body io.Reader, sessid string) (*http.Response, error) {
+func Request(method, url string, body io.Reader, sessionId string, appContext *context.AppContext) (*http.Response, error) {
 
-	host, err := host.GetHostPrompt()
+	hostName, err := host.GetHostPrompt()
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest(method, fmt.Sprintf("%s/%s", host, url), body)
+	req, err := http.NewRequest(method, fmt.Sprintf("%s/%s", hostName, url), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Set("Cookie", "sessid="+sessid)
+	req.Header.Set("Cookie", "sessid="+sessionId)
+	if appContext != nil {
+		appContext.AddHeadersToRequest(req)
+	}
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
-	if resp.StatusCode != 200 {
-		data, err := ioutil.ReadAll(resp.Body)
+	if resp.StatusCode >= 400 {
+		data, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return nil, err
 		}
@@ -46,8 +49,8 @@ func Request(method, url string, body io.Reader, sessid string) (*http.Response,
 	return resp, nil
 }
 
-func GetJSON(url, sessid string, response interface{}) error {
-	resp, err := Request("GET", url, nil, sessid)
+func GetJSON(url, sessionId string, response interface{}) error {
+	resp, err := Request("GET", url, nil, sessionId, nil)
 	if err != nil {
 		return err
 	}
@@ -56,7 +59,17 @@ func GetJSON(url, sessid string, response interface{}) error {
 	return json.NewDecoder(resp.Body).Decode(response)
 }
 
-func PostJSON(url, sessid string, request interface{}, response interface{}) error {
+func Delete(url, sessionId string, appContext *context.AppContext) (int, error) {
+	resp, err := Request("DELETE", url, nil, sessionId, appContext)
+	if err != nil {
+		return 0, err
+	}
+	defer resp.Body.Close()
+
+	return resp.StatusCode, nil
+}
+
+func PostJSON(url, sessionId string, request, response interface{}, appContext *context.AppContext) error {
 
 	payloadBytes := &bytes.Buffer{}
 
@@ -65,7 +78,7 @@ func PostJSON(url, sessid string, request interface{}, response interface{}) err
 		return err
 	}
 
-	resp, err := Request("POST", url, payloadBytes, sessid)
+	resp, err := Request("POST", url, payloadBytes, sessionId, appContext)
 	if err != nil {
 		return err
 	}

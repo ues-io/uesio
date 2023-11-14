@@ -1,4 +1,4 @@
-import { definition, api, context } from "@uesio/ui"
+import { definition, api, context, collection } from "@uesio/ui"
 import { useState } from "react"
 import { FullPath } from "../../../../api/path"
 import ActionButton from "../../../../helpers/actionbutton"
@@ -19,23 +19,55 @@ type Props = {
 	onUnselect?: (ctx: context.Context, path: FullPath) => void
 }
 
-const getNextCollectionKey = (
+const extractPickerContext = (
 	path: FullPath,
-	collectionKey: string
-): string => {
-	if (path.size() < 2) return collectionKey
+	collectionKey: string,
+	contextField?: collection.Field
+): [string, collection.Field?] => {
+	if (path.size() < 2) return [collectionKey, contextField]
 	const [currentField, pathWithoutFieldName] = path.shift()
 	const [, nextPath] = pathWithoutFieldName.shift()
 
-	if (!currentField) return collectionKey
+	if (!currentField) return [collectionKey, contextField]
 	const metadata = api.collection.getCollection(collectionKey)
 	const fieldMetadata = metadata?.getField(currentField)
 
-	if (!fieldMetadata || !fieldMetadata.isReference()) return collectionKey
-	const referenceMetadata = fieldMetadata.getReferenceMetadata()
-	if (!referenceMetadata) return collectionKey
+	if (fieldMetadata) {
+		// If this is a Reference field, we need to keep traversing the path to get the collection key
+		if (fieldMetadata.isReference()) {
+			const referenceMetadata = fieldMetadata.getReferenceMetadata()
+			if (!referenceMetadata) return [collectionKey, contextField]
+			return extractPickerContext(
+				nextPath,
+				referenceMetadata.collection,
+				fieldMetadata
+			)
+		} else if (
+			fieldMetadata.getType() === "STRUCT" &&
+			fieldMetadata.hasSubFields()
+		) {
+			// If this is a Struct field, we need to keep traversing the path to get the context struct field
+			return extractPickerContext(nextPath, collectionKey, fieldMetadata)
+		}
+	}
 
-	return getNextCollectionKey(nextPath, referenceMetadata.collection)
+	return [collectionKey, contextField]
+}
+
+const sortFields = (
+	a: collection.Field,
+	b: collection.Field,
+	localNamespace: string
+) => {
+	// First sort by local vs managed
+	const aIsLocal = a.getNamespace() === localNamespace
+	const bIsLocal = b.getNamespace() === localNamespace
+	if (aIsLocal && !bIsLocal) return -1
+	if (!aIsLocal && bIsLocal) return 1
+	// Then sort by label
+	return (a.getLabel() || a.getName()).localeCompare(
+		b.getLabel() || b.getName()
+	)
 }
 
 const FieldPicker: definition.UtilityComponent<Props> = (props) => {
@@ -55,13 +87,9 @@ const FieldPicker: definition.UtilityComponent<Props> = (props) => {
 	const [searchTerm, setSearchTerm] = useState("")
 
 	// Get the collection key from the referencePath
-	const collectionKey = getNextCollectionKey(referencePath, baseCollectionKey)
-
-	const [collectionFields] = api.builder.useMetadataList(
-		context,
-		"FIELD",
-		"",
-		collectionKey
+	const [collectionKey, parentFieldMetadata] = extractPickerContext(
+		referencePath,
+		baseCollectionKey
 	)
 
 	const collectionMetadata = api.collection.useCollection(
@@ -72,21 +100,26 @@ const FieldPicker: definition.UtilityComponent<Props> = (props) => {
 		}
 	)
 
-	if (!collectionFields || !collectionMetadata) return null
+	const workspace = context.getWorkspace()
+	if (!collectionMetadata || !workspace) return null
+	const localNamespace = workspace?.app || ""
 
-	const localNamespace = context.getWorkspace()?.app
+	let displayFields: collection.Field[]
+
+	if (
+		parentFieldMetadata &&
+		parentFieldMetadata.getType() === "STRUCT" &&
+		parentFieldMetadata.hasSubFields()
+	) {
+		displayFields = Object.values(
+			parentFieldMetadata.getSubFields() || {}
+		).map((field) => new collection.Field(field))
+	} else {
+		displayFields = collectionMetadata.getFields()
+	}
 
 	// Sort the collection fields such that the LOCAL fields are first, then all managed fields
-	const sortedFields = Object.values(collectionFields)
-	sortedFields.sort((a, b) => {
-		// First sort by local vs managed
-		const aIsLocal = a.namespace === localNamespace
-		const bIsLocal = b.namespace === localNamespace
-		if (aIsLocal && !bIsLocal) return -1
-		if (!aIsLocal && bIsLocal) return 1
-		// Then sort by name
-		return a.key.localeCompare(b.key)
-	})
+	displayFields.sort((a, b) => sortFields(a, b, localNamespace))
 
 	return (
 		<PropertiesWrapper
@@ -113,10 +146,8 @@ const FieldPicker: definition.UtilityComponent<Props> = (props) => {
 				)
 			}
 		>
-			{sortedFields.map((metadataInfo) => {
-				const fieldId = metadataInfo.key
-				const fieldMetadata = collectionMetadata.getField(fieldId)
-				if (!fieldMetadata) return null
+			{displayFields.map((fieldMetadata: collection.Field) => {
+				const fieldId = fieldMetadata.getId()
 				const selected = isSelected(context, referencePath, fieldId)
 				if (searchTerm && !fieldId.includes(searchTerm)) return null
 				return (

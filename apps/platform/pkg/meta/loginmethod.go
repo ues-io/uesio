@@ -10,6 +10,10 @@ type LoginMethod struct {
 	VerificationExpires int64  `json:"uesio/core.verification_expires"`
 }
 
+func (lm *LoginMethod) GetCollection() CollectionableGroup {
+	return &LoginMethodCollection{}
+}
+
 func (lm *LoginMethod) GetCollectionName() string {
 	return LOGINMETHOD_COLLECTION_NAME
 }

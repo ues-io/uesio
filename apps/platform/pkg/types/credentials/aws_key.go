@@ -11,23 +11,26 @@ func (c *AwsKeyCredentials) IsNil() bool {
 	return c == nil
 }
 
-func (c *AwsKeyCredentials) GetEntriesMap() CredentialEntriesMap {
-	return CredentialEntriesMap{
-		"accessKeyId": &CredentialEntry{
-			Type:  "secret",
-			Value: c.AccessKeyId,
-		},
-		"secretAccessKey": &CredentialEntry{
-			Type:  "secret",
-			Value: c.SecretAccessKey,
-		},
-		"sessionToken": &CredentialEntry{
-			Type:  "secret",
-			Value: c.SessionToken,
-		},
-		"region": &CredentialEntry{
-			Type:  "configvalue",
-			Value: c.Region,
-		},
-	}
+// Map iterates over each CredentialEntry and returns a new value for the entry
+func (c *AwsKeyCredentials) Map(mapper EntryMapper) {
+	c.AccessKeyId = mapper(&CredentialEntry{
+		Name:  "accessKeyId",
+		Type:  "secret",
+		Value: c.AccessKeyId,
+	})
+	c.SecretAccessKey = mapper(&CredentialEntry{
+		Name:  "secretAccessKey",
+		Type:  "secret",
+		Value: c.SecretAccessKey,
+	})
+	c.SessionToken = mapper(&CredentialEntry{
+		Name:  "sessionToken",
+		Type:  "secret",
+		Value: c.SessionToken,
+	})
+	c.Region = mapper(&CredentialEntry{
+		Name:  "region",
+		Type:  "configvalue",
+		Value: c.Region,
+	})
 }

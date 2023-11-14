@@ -11,6 +11,10 @@ func (bj *BulkJob) GetCollectionName() string {
 	return BULKJOB_COLLECTION_NAME
 }
 
+func (bj *BulkJob) GetCollection() CollectionableGroup {
+	return &BulkJobCollection{}
+}
+
 func (bj *BulkJob) SetField(fieldName string, value interface{}) error {
 	return StandardFieldSet(bj, fieldName, value)
 }

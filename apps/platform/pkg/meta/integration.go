@@ -2,6 +2,7 @@ package meta
 
 import (
 	"errors"
+	"strings"
 
 	"gopkg.in/yaml.v3"
 )
@@ -25,14 +26,24 @@ type Integration struct {
 	Authentication string `yaml:"authentication,omitempty" json:"uesio/studio.authentication"`
 	Credentials    string `yaml:"credentials,omitempty" json:"uesio/studio.credentials"`
 	BaseURL        string `yaml:"baseUrl,omitempty" json:"uesio/studio.baseurl"`
-	LoadBot        string `yaml:"loadBot,omitempty" json:"uesio/studio.loadbot"`
-	SaveBot        string `yaml:"saveBot,omitempty" json:"uesio/studio.savebot"`
-	RunActionBot   string `yaml:"runActionBot,omitempty" json:"uesio/studio.runactionbot"`
 	// TODO Remove headers
 	Headers map[string]string `yaml:"headers,omitempty" json:"uesio/studio.headers"`
 }
 
 type IntegrationWrapper Integration
+
+func (i *Integration) GetType() string {
+	// TEMPORARY backwards compatibility: map "web" to uesio/core.web
+	integrationTypeName := i.Type
+	if strings.HasSuffix(integrationTypeName, ".web") {
+		integrationTypeName = "uesio/core.web"
+	}
+	return integrationTypeName
+}
+
+func (i *Integration) GetCollection() CollectionableGroup {
+	return &IntegrationCollection{}
+}
 
 func (i *Integration) GetCollectionName() string {
 	return INTEGRATION_COLLECTION_NAME
@@ -62,17 +73,13 @@ func (i *Integration) UnmarshalYAML(node *yaml.Node) error {
 	if err := validateNodeName(node, i.Name); err != nil {
 		return err
 	}
+	i.Type = pickMetadataItem(node, "type", i.Namespace, "")
 	i.Credentials = pickMetadataItem(node, "credentials", i.Namespace, "")
-	i.LoadBot = pickMetadataItem(node, "loadBot", i.Namespace, "")
-	i.SaveBot = pickMetadataItem(node, "saveBot", i.Namespace, "")
-	i.RunActionBot = pickMetadataItem(node, "runActionBot", i.Namespace, "")
 	return node.Decode((*IntegrationWrapper)(i))
 }
 
 func (i *Integration) MarshalYAML() (interface{}, error) {
+	i.Type = removeDefault(GetLocalizedKey(i.Type, i.Namespace), "")
 	i.Credentials = removeDefault(GetLocalizedKey(i.Credentials, i.Namespace), "")
-	i.LoadBot = removeDefault(GetLocalizedKey(i.LoadBot, i.Namespace), "")
-	i.SaveBot = removeDefault(GetLocalizedKey(i.SaveBot, i.Namespace), "")
-	i.RunActionBot = removeDefault(GetLocalizedKey(i.RunActionBot, i.Namespace), "")
 	return (*IntegrationWrapper)(i), nil
 }

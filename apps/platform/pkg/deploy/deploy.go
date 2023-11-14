@@ -45,6 +45,7 @@ var ORDERED_ITEMS = [...]string{
 	"secrets",
 	"configvalues",
 	"credentials",
+	"integrationtypes",
 	"integrations",
 	"integrationactions",
 }

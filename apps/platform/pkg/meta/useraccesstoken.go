@@ -26,6 +26,10 @@ type UserAccessToken struct {
 	Reason         string            `yaml:"reason" json:"uesio/studio.reason"`
 }
 
+func (uat *UserAccessToken) GetCollection() CollectionableGroup {
+	return &UserAccessTokenCollection{}
+}
+
 func (uat *UserAccessToken) GetCollectionName() string {
 	return USERACCESSTOKEN_COLLECTION_NAME
 }
