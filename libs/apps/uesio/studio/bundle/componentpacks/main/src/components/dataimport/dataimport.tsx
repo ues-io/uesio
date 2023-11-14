@@ -1,4 +1,4 @@
-import { FunctionComponent, useState, useMemo, useEffect } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { definition, api, collection, util, component, styles } from "@uesio/ui"
 import ImportBodyItem from "./importbodyitem"
 import ImportButton from "./importbutton"
@@ -8,26 +8,21 @@ type DataImportDefinition = {
 	namespace: string
 }
 
-interface Props extends definition.BaseProps {
-	definition: DataImportDefinition
-}
-
 interface State {
 	success: boolean
 	csvFields: string[]
 	file: File | null
 }
 
-const DataImport: FunctionComponent<Props> = (props) => {
+const StyleTokens = Object.freeze({
+	root: ["flex", "gap-4", "justify-between"],
+})
+
+const DataImport: definition.UC<DataImportDefinition> = (props) => {
 	const Button = component.getUtility("uesio/io.button")
 	const { context, definition } = props
 
-	const classes = styles.useUtilityStyleTokens(
-		{
-			root: ["flex", "gap-4", "justify-between"],
-		},
-		props
-	)
+	const classes = styles.useUtilityStyleTokens(StyleTokens, props)
 
 	const collectionId = context.mergeString(definition.collectionId)
 
@@ -89,8 +84,6 @@ const DataImport: FunctionComponent<Props> = (props) => {
 		}
 	}, [uploaded.success, collectionFields, collectionInstance, memoCsvFields])
 
-	if (!collectionInstance) return null
-
 	const addBlankSelectOption = collection.addBlankSelectOption
 	const csvOptions = addBlankSelectOption(
 		uploaded.csvFields.map((key) => ({
@@ -114,6 +107,7 @@ const DataImport: FunctionComponent<Props> = (props) => {
 			return
 		}
 
+		if (!collectionInstance) return
 		api.signal.run(
 			{
 				signal: "route/REDIRECT",
@@ -133,6 +127,7 @@ const DataImport: FunctionComponent<Props> = (props) => {
 						changeUploaded={changeUploaded}
 						context={context}
 						type={"area"}
+						id={api.component.getComponentIdFromProps(props)}
 					/>
 				)}
 				{uploaded.success && (
@@ -156,7 +151,7 @@ const DataImport: FunctionComponent<Props> = (props) => {
 
 			{uploaded.success &&
 				collectionFields.map((fieldName, i) => {
-					const field = collectionInstance.getField(fieldName)
+					const field = collectionInstance?.getField(fieldName)
 					if (!field) return null
 					return (
 						<ImportBodyItem
