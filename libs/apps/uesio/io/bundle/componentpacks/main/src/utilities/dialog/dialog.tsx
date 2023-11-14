@@ -16,18 +16,14 @@ interface DialogUtilityProps {
 const StyleDefaults = Object.freeze({
 	blocker: [],
 	wrapper: [],
-	root: [],
 	inner: [],
 	content: [],
 	footer: [],
 })
 
 const Dialog: definition.UtilityComponent<DialogUtilityProps> = (props) => {
-	const classes = styles.useUtilityStyleTokens(
-		StyleDefaults,
-		props,
-		"uesio/io.dialog"
-	)
+	const { blocker, wrapper, inner, content, footer } =
+		styles.useUtilityStyleTokens(StyleDefaults, props, "uesio/io.dialog")
 	const { context, title, onClose, width, height, children, actions } = props
 	return (
 		<DialogPlain
@@ -37,29 +33,29 @@ const Dialog: definition.UtilityComponent<DialogUtilityProps> = (props) => {
 			onClose={onClose}
 			initialFocus={1}
 			classes={{
-				blocker: classes.blocker,
+				blocker,
+				wrapper,
+				inner,
 			}}
 		>
-			<div className={classes.root}>
-				<TitleBar
-					title={title}
-					variant="uesio/io.dialog"
-					context={context}
-					actions={
-						<IconButton
-							icon="close"
-							onClick={onClose}
-							context={context}
-						/>
-					}
-				/>
-				<div className={classes.content}>{children}</div>
-				{actions && (
-					<Group className={classes.footer} context={context}>
-						{actions}
-					</Group>
-				)}
-			</div>
+			<TitleBar
+				title={title}
+				variant="uesio/io.dialog"
+				context={context}
+				actions={
+					<IconButton
+						icon="close"
+						onClick={onClose}
+						context={context}
+					/>
+				}
+			/>
+			<div className={content}>{children}</div>
+			{actions && (
+				<Group className={footer} context={context}>
+					{actions}
+				</Group>
+			)}
 		</DialogPlain>
 	)
 }
