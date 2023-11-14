@@ -31,11 +31,10 @@ const FieldSelectPropTag: definition.UtilityComponent<Props> = (props) => {
 	} = props
 	const fieldId = fieldMetadata.getId()
 
-	const referenceMetadata =
-		allowReferenceTraversal && fieldMetadata.isReference()
-			? fieldMetadata.getReferenceMetadata()
-			: undefined
-
+	const isStruct = fieldMetadata.getType() === "STRUCT"
+	const isReference = fieldMetadata.isReference()
+	const supportsTraversal =
+		allowReferenceTraversal && (isStruct || isReference)
 	const nsInfo = getBuilderNamespace(context, fieldId as metadata.MetadataKey)
 
 	return (
@@ -64,10 +63,14 @@ const FieldSelectPropTag: definition.UtilityComponent<Props> = (props) => {
 					context={context}
 				/>
 			</ItemTag>
-			{referenceMetadata && (
+			{supportsTraversal && (
 				<BuildActionsArea context={context}>
 					<ActionButton
-						title="Add Reference Fields"
+						title={`${
+							isReference
+								? "Select Fields on referenced collection"
+								: `Select Sub-field of ${fieldMetadata.getType()} field`
+						}`}
 						icon={"arrow_forward"}
 						onClick={(e) => {
 							e.stopPropagation()

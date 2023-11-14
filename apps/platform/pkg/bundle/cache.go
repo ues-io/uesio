@@ -5,6 +5,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/qdm12/reprint"
 	"github.com/thecloudmasters/uesio/pkg/cache"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
@@ -57,9 +58,10 @@ func GetItemFromCache(namespace, version, bundleGroupName, key string) (meta.Bun
 	return entry, true
 }
 
-func AddItemToCache(item meta.BundleableItem, namespace, version string) {
+func AddItemToCache(item meta.BundleableItem, namespace, version string) error {
 	if !doCache {
-		return
+		return nil
 	}
-	bundleEntryCache.Set(namespace+version+item.GetCollectionName()+item.GetKey(), item)
+	bundleEntryCache.Set(namespace+version+item.GetCollectionName()+item.GetKey(), reprint.This(item).(meta.BundleableItem))
+	return nil
 }

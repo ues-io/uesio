@@ -1,0 +1,11 @@
+name: status
+type: STRUCT
+label: Status
+columnname: status
+subfields:
+  - name: name
+    label: Name
+    type: TEXT
+  - name: color
+    label: Color
+    type: TEXT

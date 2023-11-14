@@ -160,7 +160,10 @@ func (b *WorkspaceBundleStoreConnection) GetManyItems(items []meta.BundleableIte
 			return fmt.Errorf("Could not find workspace item: " + id)
 		}
 		for _, locator := range locators {
-			meta.Copy(locator.Item, item)
+			err := meta.Copy(locator.Item, item)
+			if err != nil {
+				return err
+			}
 		}
 		return nil
 	})
@@ -195,31 +198,39 @@ func (b *WorkspaceBundleStoreConnection) GetAllItems(group meta.BundleableGroup,
 
 }
 
-func (b *WorkspaceBundleStoreConnection) GetItemAttachment(item meta.AttachableItem, path string) (file.Metadata, io.ReadSeeker, error) {
+func (b *WorkspaceBundleStoreConnection) GetItemRecordID(item meta.AttachableItem) (string, error) {
 	err := b.GetItem(item)
 	if err != nil {
-		return nil, nil, err
+		return "", err
 	}
 	recordID, err := item.GetField(adapt.ID_FIELD)
 	if err != nil {
-		return nil, nil, err
+		return "", err
 	}
-	stream, userFileMetadata, err := filesource.DownloadAttachment(recordID.(string), path, sess.GetStudioAnonSession())
-	if err != nil {
-		return nil, nil, err
+	recordIDString, ok := recordID.(string)
+	if !ok {
+		return "", errors.New("Invalid Record ID for attachment")
 	}
-	return newWorkspaceFileMeta(userFileMetadata), stream, nil
+	return recordIDString, nil
 }
 
-func (b *WorkspaceBundleStoreConnection) GetAttachmentPaths(item meta.AttachableItem) ([]string, error) {
-
-	err := b.GetItem(item)
+func (b *WorkspaceBundleStoreConnection) GetItemAttachment(w io.Writer, item meta.AttachableItem, path string) (file.Metadata, error) {
+	recordIDString, err := b.GetItemRecordID(item)
+	if err != nil {
+		return nil, errors.New("Invalid Record ID for attachment")
+	}
+	userFileMetadata, err := filesource.DownloadAttachment(w, recordIDString, path, sess.GetStudioAnonSession())
 	if err != nil {
 		return nil, err
 	}
-	recordID, err := item.GetField(adapt.ID_FIELD)
+	return newWorkspaceFileMeta(userFileMetadata), nil
+}
+
+func (b *WorkspaceBundleStoreConnection) GetItemAttachments(creator bundlestore.FileCreator, item meta.AttachableItem) error {
+	session := sess.GetStudioAnonSession()
+	recordIDString, err := b.GetItemRecordID(item)
 	if err != nil {
-		return nil, err
+		return errors.New("Invalid Record ID for attachment")
 	}
 	userFiles := &meta.UserFileMetadataCollection{}
 	err = datasource.PlatformLoad(
@@ -229,20 +240,29 @@ func (b *WorkspaceBundleStoreConnection) GetAttachmentPaths(item meta.Attachable
 			Conditions: []adapt.LoadRequestCondition{
 				{
 					Field: "uesio/core.recordid",
-					Value: recordID,
+					Value: recordIDString,
 				},
 			},
 		},
-		sess.GetStudioAnonSession(),
+		session,
 	)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	var paths []string
+
 	for _, ufm := range *userFiles {
-		paths = append(paths, ufm.Path)
+		f, err := creator(ufm.Path)
+		if err != nil {
+			return err
+		}
+		_, err = filesource.DownloadItem(f, ufm, session)
+		if err != nil {
+			f.Close()
+			return err
+		}
+		f.Close()
 	}
-	return paths, nil
+	return nil
 }
 
 func (b *WorkspaceBundleStoreConnection) StoreItem(path string, reader io.Reader) error {

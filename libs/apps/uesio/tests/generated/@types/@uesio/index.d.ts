@@ -18,10 +18,11 @@ type ConditionOperator =
 	| "GTE"
 	| "LTE"
 	| "IN"
+	| "NOT_IN"
 	| "IS_BLANK"
 	| "IS_NOT_BLANK"
 type FieldValue = string | number | boolean | object | null
-type ConditionType = "SEARCH" | "GROUP"
+type ConditionType = "SEARCH" | "GROUP" | "SUBQUERY"
 interface ConditionRequest {
 	field: string
 	operator: ConditionOperator
@@ -586,6 +587,7 @@ type ConditionOperators =
 	| "GTE"
 	| "LTE"
 	| "IN"
+	| "NOT_IN"
 	| "IS_BLANK"
 	| "IS_NOT_BLANK"
 type WireCondition =

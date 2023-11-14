@@ -1,9 +1,9 @@
 package jsdialect
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
-	"io"
 	"strings"
 	"time"
 
@@ -11,8 +11,8 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/retrieve"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -122,15 +122,13 @@ func getTimeout(timeout int) int {
 }
 
 func (b *JSDialect) hydrateBot(bot *meta.Bot, session *sess.Session) error {
-	_, stream, err := bundle.GetItemAttachment(bot, b.GetFilePath(), session)
+	buf := &bytes.Buffer{}
+	_, err := bundle.GetItemAttachment(buf, bot, b.GetFilePath(), session)
 	if err != nil {
 		return err
 	}
-	content, err := io.ReadAll(stream)
-	if err != nil {
-		return err
-	}
-	bot.FileContents = string(content)
+
+	bot.FileContents = string(buf.Bytes())
 	return nil
 }
 
@@ -209,7 +207,7 @@ func (b *JSDialect) CallBot(bot *meta.Bot, params map[string]interface{}, connec
 	return botAPI.Results, nil
 }
 
-func (b *JSDialect) CallGeneratorBot(bot *meta.Bot, create retrieve.WriterCreator, params map[string]interface{}, connection adapt.Connection, session *sess.Session) error {
+func (b *JSDialect) CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreator, params map[string]interface{}, connection adapt.Connection, session *sess.Session) error {
 	botAPI := &GeneratorBotAPI{
 		Session: session,
 		Params: &ParamsAPI{

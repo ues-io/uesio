@@ -1,6 +1,7 @@
 package file
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -62,7 +63,8 @@ func ServeFileContent(file *meta.File, version string, w http.ResponseWriter, r 
 		http.Error(w, "Not Found", http.StatusNotFound)
 		return
 	}
-	fileMetadata, stream, err := bundle.GetItemAttachment(file, file.Path, session)
+	buf := &bytes.Buffer{}
+	fileMetadata, err := bundle.GetItemAttachment(buf, file, file.Path, session)
 	if err != nil {
 		slog.Error(err.Error())
 		http.Error(w, "Failed File Download", http.StatusInternalServerError)
@@ -79,7 +81,7 @@ func ServeFileContent(file *meta.File, version string, w http.ResponseWriter, r 
 		LastModified: *fileMetadata.LastModified(),
 		Namespace:    file.Namespace,
 		Version:      version,
-	}, stream)
+	}, bytes.NewReader(buf.Bytes()))
 }
 
 func ServeFile(w http.ResponseWriter, r *http.Request) {

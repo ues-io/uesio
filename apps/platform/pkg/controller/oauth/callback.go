@@ -94,7 +94,10 @@ func loadCallbackRoute(r *http.Request, coreSession *sess.Session, platformConn 
 	}
 	// Make sure to do a copy to avoid mutating in-memory/cached metadata
 	cloned := &meta.Route{}
-	meta.Copy(cloned, route)
+	err := meta.Copy(cloned, route)
+	if err != nil {
+		return nil, err
+	}
 	params, err := routing.ResolveRouteParams(route.Params, coreSession, r.URL.Query())
 	if err != nil {
 		return nil, err
