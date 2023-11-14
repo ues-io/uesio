@@ -136,7 +136,6 @@ func TestRouteUnmarshal(t *testing.T) {
 					Name:      "myroute",
 					Namespace: "my/namespace",
 				},
-				ThemeRef: "uesio/core.default",
 				Redirect: "http://www.google.com",
 				Type:     "redirect",
 			},
