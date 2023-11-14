@@ -5,6 +5,7 @@ import (
 	"slices"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/clickup"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/integ/bedrock"
@@ -13,7 +14,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/integ/stripe"
 	"github.com/thecloudmasters/uesio/pkg/integ/web"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/retrieve"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -166,7 +166,7 @@ func (b *SystemDialect) RunIntegrationActionBot(bot *meta.Bot, ic *adapt.Integra
 
 }
 
-func (b *SystemDialect) CallGeneratorBot(bot *meta.Bot, create retrieve.WriterCreator, params map[string]interface{}, connection adapt.Connection, session *sess.Session) error {
+func (b *SystemDialect) CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreator, params map[string]interface{}, connection adapt.Connection, session *sess.Session) error {
 	return nil
 }
 

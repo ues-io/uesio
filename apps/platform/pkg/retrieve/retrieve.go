@@ -16,9 +16,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-type WriterCreator func(fileName string) (io.WriteCloser, error)
-
-func NewWriterCreator(creator func(string) (io.Writer, error)) WriterCreator {
+func NewWriterCreator(creator func(string) (io.Writer, error)) bundlestore.FileCreator {
 	return func(path string) (io.WriteCloser, error) {
 		w, err := creator(path)
 		if err != nil {
@@ -72,7 +70,7 @@ func Retrieve(writer io.Writer, session *sess.Session) error {
 	return zipwriter.Close()
 }
 
-func retrieveGeneratedFiles(targetDirectory string, create WriterCreator) error {
+func retrieveGeneratedFiles(targetDirectory string, create bundlestore.FileCreator) error {
 	wd, err := os.Getwd()
 	if err != nil {
 		return err
@@ -92,7 +90,7 @@ func retrieveGeneratedFiles(targetDirectory string, create WriterCreator) error 
 }
 
 // RetrieveBundle retrieves the content of a specific bundle version into the designated targetDirectory
-func RetrieveBundle(targetDirectory string, create WriterCreator, bs bundlestore.BundleStoreConnection) error {
+func RetrieveBundle(targetDirectory string, create bundlestore.FileCreator, bs bundlestore.BundleStoreConnection) error {
 
 	for _, metadataType := range meta.GetMetadataTypes() {
 		group, err := meta.GetBundleableGroupFromType(metadataType)
@@ -124,25 +122,11 @@ func RetrieveBundle(targetDirectory string, create WriterCreator, bs bundlestore
 			attachableItem, isAttachable := item.(meta.AttachableItem)
 
 			if isAttachable {
-				paths, err := bs.GetAttachmentPaths(attachableItem)
+				err := bs.GetItemAttachments(func(localpath string) (io.WriteCloser, error) {
+					return create(path.Join(targetDirectory, metadataType, attachableItem.GetBasePath(), localpath))
+				}, attachableItem)
 				if err != nil {
 					return err
-				}
-				for _, itempath := range paths {
-					_, attachment, err := bs.GetItemAttachment(attachableItem, itempath)
-					if err != nil {
-						return err
-					}
-					f, err := create(path.Join(targetDirectory, metadataType, attachableItem.GetBasePath(), itempath))
-					if err != nil {
-						return err
-					}
-					_, err = io.Copy(f, attachment)
-					if err != nil {
-						f.Close()
-						return err
-					}
-					f.Close()
 				}
 			}
 
@@ -177,7 +161,7 @@ func RetrieveBundle(targetDirectory string, create WriterCreator, bs bundlestore
 
 }
 
-func copyFileIntoZip(create WriterCreator, sourcePath, targetPath string) error {
+func copyFileIntoZip(create bundlestore.FileCreator, sourcePath, targetPath string) error {
 	source, err := os.Open(sourcePath)
 	if err != nil {
 		return err
