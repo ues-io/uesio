@@ -136,27 +136,27 @@ func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]
 
 	email, err := auth.GetRequiredPayloadValue(payload, "email")
 	if err != nil {
-		return errors.New("Signup failed, " + err.Error())
+		return auth.NewAuthRequestError("Signup failed: " + err.Error())
 	}
 
 	firstname, err := auth.GetRequiredPayloadValue(payload, "firstname")
 	if err != nil {
-		return errors.New("Signup failed, " + err.Error())
+		return auth.NewAuthRequestError("Signup failed: " + err.Error())
 	}
 
 	lastname, err := auth.GetRequiredPayloadValue(payload, "lastname")
 	if err != nil {
-		return errors.New("Signup failed, " + err.Error())
+		return auth.NewAuthRequestError("Signup failed: " + err.Error())
 	}
 
 	password, err := auth.GetRequiredPayloadValue(payload, "password")
 	if err != nil {
-		return errors.New("Signup failed, " + err.Error())
+		return auth.NewAuthRequestError("Signup failed: " + err.Error())
 	}
 
 	err = passwordPolicyValidation(password)
 	if err != nil {
-		return errors.New("Signup failed: " + err.Error())
+		return auth.NewAuthRequestError("Signup failed: " + err.Error())
 	}
 
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
