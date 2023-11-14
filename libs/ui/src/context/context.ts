@@ -629,6 +629,16 @@ class Context {
 		return `${result ?? ""}`
 	}
 
+	mergeBoolean = (template: Mergeable) => {
+		const result = this.merge(template)
+		if (typeof result !== "boolean") {
+			throw new Error(
+				`Merge failed: result is of type ${typeof result} and cannot be returned as a boolean, please check your merge.`
+			)
+		}
+		return result
+	}
+
 	mergeDeep = (value: DeepMergeable) => {
 		if (!value) return value
 		if (Array.isArray(value)) {
@@ -645,17 +655,15 @@ class Context {
 		return list.map((item) => this.mergeDeep(item))
 	}
 
-	mergeMap = (
-		map: Record<string, Mergeable> | undefined
-	): Record<string, Mergeable> =>
-		map
+	mergeMap = <T extends Record<string, unknown> | undefined>(map: T): T =>
+		(map
 			? Object.fromEntries(
 					Object.entries(map).map((entry) => {
 						const [key, value] = entry
-						return [key, this.mergeDeep(value) as Mergeable]
+						return [key, this.mergeDeep(value as DeepMergeable)]
 					})
 			  )
-			: {}
+			: {}) as T
 
 	mergeStringMap = (map: Record<string, Mergeable> | undefined) =>
 		this.mergeMap(map) as Record<string, string>
