@@ -37,7 +37,7 @@
 		"nx": "nx",
 		"setup-ssl": "cd ./apps/platform/ssl && ./create.sh",
 		"start": "nx serve platform",
-		"test": "nx test"
+		"test": "nx run-many --target=test --all"
 	},
 	"files": [],
 	"devDependencies": {

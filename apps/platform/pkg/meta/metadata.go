@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/qdm12/reprint"
+
 	"github.com/thecloudmasters/uesio/pkg/goutils"
 	"github.com/thecloudmasters/uesio/pkg/reflecttool"
 )
@@ -274,6 +275,10 @@ func GetGroupingConditions(metadataType, grouping string) (BundleConditions, err
 			return nil, errors.New("metadata type record challenge token requires grouping value")
 		}
 		conditions["uesio/studio.collection"] = grouping
+	} else if metadataType == "credentials" {
+		if grouping != "" {
+			conditions["uesio/studio.type"] = grouping
+		}
 	}
 	return conditions, nil
 }
