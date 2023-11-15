@@ -94,7 +94,6 @@ func (r *Route) UnmarshalYAML(node *yaml.Node) error {
 		if err != nil {
 			return fmt.Errorf("invalid route %s: %s", r.GetKey(), err.Error())
 		}
-		r.ThemeRef = pickMetadataItem(node, "theme", r.Namespace, "uesio/core.default")
 
 	}
 	return node.Decode((*RouteWrapper)(r))
@@ -102,7 +101,6 @@ func (r *Route) UnmarshalYAML(node *yaml.Node) error {
 
 func (r *Route) MarshalYAML() (interface{}, error) {
 
-	r.ThemeRef = removeDefault(GetLocalizedKey(r.ThemeRef, r.Namespace), "uesio/core.default")
 	r.ViewRef = GetLocalizedKey(r.ViewRef, r.Namespace)
 
 	return (*RouteWrapper)(r), nil
