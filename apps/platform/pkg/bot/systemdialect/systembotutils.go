@@ -112,14 +112,6 @@ func getIDsFromUpdatesAndDeletes(request *adapt.SaveOp) []string {
 	return keys
 }
 
-func getIDsFromDeletes(request *adapt.SaveOp) []string {
-	keys := make([]string, len(request.Deletes))
-	for i := range request.Deletes {
-		keys[i] = request.Deletes[i].IDValue
-	}
-	return keys
-}
-
 func getUniqueKeysFromUpdatesAndDeletes(request *adapt.SaveOp) []string {
 	keys := make([]string, len(request.Updates)+len(request.Deletes))
 	index := 0
