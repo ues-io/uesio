@@ -18,7 +18,7 @@ type BotResult = {
 	params?: Record<string, unknown>
 }
 
-export default function load_weather_forecast(bot: LoadBotApi) {
+export default function load_weather_forecast_api_key(bot: LoadBotApi) {
 	const { conditions } = bot.loadRequest
 
 	const result = bot.http.request({
@@ -29,7 +29,6 @@ export default function load_weather_forecast(bot: LoadBotApi) {
 		body: {},
 		headers: {
 			"Content-Type": "application/json",
-			Cookie: "sessid=" + bot.getSession().getId(),
 		},
 	})
 

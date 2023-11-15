@@ -20,6 +20,15 @@ definition:
           value: true
         - field: uesio/studio.item
           value: $Param{namespace}.$Param{integrationname}
+      events:
+        - type: onChange
+          fields:
+            - uesio/studio.authentication
+          signals:
+            - signal: wire/UPDATE_RECORD
+              wire: integration
+              field: uesio/studio.credentials
+              value:
     integrationcredentials:
       collection: uesio/core.myintegrationcredentials
       init:
@@ -176,15 +185,41 @@ definition:
                                   subtitle: $Time{uesio/core.createdat}
                       - uesio/io.grid:
                           uesio.variant: uesio/io.four_columns
+                          uesio.context:
+                            workspace:
+                              name: $Param{workspacename}
+                              app: $Param{app}
                           items:
                             - uesio/io.field:
                                 fieldId: uesio/studio.authentication
                             - uesio/io.field:
                                 fieldId: uesio/studio.credentials
-                                uesio.context:
-                                  workspace:
-                                    name: $Param{workspacename}
-                                    app: $Param{app}
+                                label: OAuth Credentials
+                                metadata:
+                                  grouping: OAUTH2_CREDENTIALS
+                                uesio.display:
+                                  - field: uesio/studio.authentication
+                                    type: fieldValue
+                                    operator: IN
+                                    values:
+                                      - OAUTH2_AUTHORIZATION_CODE
+                                      - OAUTH2_CLIENT_CREDENTIALS
+                            - uesio/io.field:
+                                fieldId: uesio/studio.credentials
+                                label: Username/Password Credentials
+                                metadata:
+                                  grouping: USERNAME_PASSWORD
+                                uesio.display:
+                                  - field: uesio/studio.authentication
+                                    value: BASIC_AUTH
+                            - uesio/io.field:
+                                fieldId: uesio/studio.credentials
+                                label: API Credentials
+                                metadata:
+                                  grouping: API_KEY
+                                uesio.display:
+                                  - field: uesio/studio.authentication
+                                    value: API_KEY
                             - uesio/io.field:
                                 fieldId: uesio/studio.baseurl
                             - uesio/io.field:
