@@ -53,7 +53,7 @@ Cypress.Commands.add(
 	"loginWithAppAnd2Workspaces",
 	(appName: string, workspace1Name: string, workspace2Name: string) => {
 		// Caching session when logging in via page visit
-		cy.session("automationSession1", () => {
+		cy.session("automationSession3", () => {
 			login()
 			createApp(appName)
 			createWorkspaceInApp(workspace1Name, appName)

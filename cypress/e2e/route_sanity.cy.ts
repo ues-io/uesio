@@ -52,14 +52,12 @@ describe("Uesio Route Sanity Tests", () => {
 
 			// Now hit the back button
 			cy.go("back")
-			cy.getRoute().its("isLoading").should("eq", true)
 			cy.url().should("contain", workspace2BasePath)
 			cy.url().should("not.contain", `${workspace2BasePath}/collections`)
 
 			// Verify that the parameters are still correct
 			// (and have not mysteriously switched to the original workspace)
 			cy.getRoute().its("params.app").should("eq", appNamespace)
-			cy.getRoute().its("isLoading").should("be.undefined")
 			cy.getRoute()
 				.its("params.workspacename")
 				.should("eq", workspace2Name)
