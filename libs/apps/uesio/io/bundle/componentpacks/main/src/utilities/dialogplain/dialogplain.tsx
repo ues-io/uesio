@@ -32,10 +32,12 @@ const DialogPlain: definition.UtilityComponent<DialogPlainUtilityProps> = (
 				"grid",
 				"pointer-events-none",
 				...(props.width ? [`w-[${props.width}]`] : []),
-				...(props.height ? [`w-[${props.height}]`] : []),
+				...(props.height ? [`h-[${props.height}]`] : []),
 			],
 			inner: [
 				"shadow-md",
+				"overflow-hidden",
+				"m-2",
 				"rounded",
 				"pointer-events-auto",
 				"bg-white",

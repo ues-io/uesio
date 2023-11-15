@@ -4,6 +4,7 @@ import DialogPlain from "../dialogplain/dialogplain"
 import TitleBar from "../titlebar/titlebar"
 import IconButton from "../iconbutton/iconbutton"
 import Group from "../group/group"
+import ScrollPanel from "../scrollpanel/scrollpanel"
 
 interface DialogUtilityProps {
 	onClose?: () => void
@@ -38,24 +39,32 @@ const Dialog: definition.UtilityComponent<DialogUtilityProps> = (props) => {
 				inner,
 			}}
 		>
-			<TitleBar
-				title={title}
-				variant="uesio/io.dialog"
-				context={context}
-				actions={
-					<IconButton
-						icon="close"
-						onClick={onClose}
+			<ScrollPanel
+				header={
+					<TitleBar
+						title={title}
+						variant="uesio/io.dialog"
 						context={context}
+						actions={
+							<IconButton
+								icon="close"
+								onClick={onClose}
+								context={context}
+							/>
+						}
 					/>
 				}
-			/>
-			<div className={content}>{children}</div>
-			{actions && (
-				<Group className={footer} context={context}>
-					{actions}
-				</Group>
-			)}
+				footer={
+					actions && (
+						<Group className={footer} context={context}>
+							{actions}
+						</Group>
+					)
+				}
+				context={context}
+			>
+				<div className={content}>{children}</div>
+			</ScrollPanel>
 		</DialogPlain>
 	)
 }
