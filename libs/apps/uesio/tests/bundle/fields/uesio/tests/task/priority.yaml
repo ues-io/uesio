@@ -1,0 +1,4 @@
+name: priority
+type: NUMBER
+label: Priority
+columnname: priority

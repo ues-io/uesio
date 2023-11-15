@@ -1,0 +1,5 @@
+name: subject
+type: TEXT
+required: true
+label: Subject
+columnname: subject

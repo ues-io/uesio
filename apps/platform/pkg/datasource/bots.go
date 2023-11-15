@@ -3,6 +3,7 @@ package datasource
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/bot"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
@@ -315,6 +316,7 @@ func RunIntegrationAction(ic *adapt.IntegrationConnection, actionKey string, req
 	integrationType := ic.GetIntegrationType()
 	session := ic.GetSession()
 	integrationKey := integration.GetKey()
+	actionKey = strings.ToLower(actionKey)
 	action, err := meta.NewIntegrationAction(integration.GetType(), actionKey)
 	if err != nil {
 		return nil, err

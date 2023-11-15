@@ -4,8 +4,9 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/meta"
 	"gopkg.in/yaml.v3"
+
+	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
 func unmarshalConditions(node *yaml.Node) ([]LoadRequestCondition, error) {
@@ -26,10 +27,10 @@ func unmarshalConditions(node *yaml.Node) ([]LoadRequestCondition, error) {
 type LoadRequestCondition struct {
 	ID             string                 `json:"id,omitempty" bot:"id" yaml:"id"`
 	Field          string                 `json:"field" bot:"field" yaml:"field"`
-	Value          interface{}            `json:"-" bot:"-" yaml:"-"`
-	Values         interface{}            `json:"-" bot:"-" yaml:"-"`
-	RawValue       interface{}            `json:"value,omitempty" bot:"value" yaml:"value"`
-	RawValues      interface{}            `json:"values,omitempty" bot:"values" yaml:"values"`
+	Value          interface{}            `json:"-" bot:"value" yaml:"-"`
+	Values         interface{}            `json:"-" bot:"values" yaml:"-"`
+	RawValue       interface{}            `json:"value,omitempty" yaml:"value"`
+	RawValues      interface{}            `json:"values,omitempty" yaml:"values"`
 	Param          string                 `json:"param,omitempty" yaml:"param"`
 	Params         []string               `json:"params,omitempty" yaml:"params"`
 	ValueSource    string                 `json:"valueSource,omitempty" yaml:"valueSource"`
