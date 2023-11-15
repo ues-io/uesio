@@ -1,0 +1,10 @@
+name: default
+definition:
+  palette:
+    primary: "#FFC0CB"
+    secondary: "#FFC0CB"
+    error: "#FFC0CB"
+    warning: "#FFC0CB"
+    info: "#FFC0CB"
+    success: "#FFC0CB"
+public: true

@@ -1,0 +1,5 @@
+name: dependencies_theme
+path: dependencies_theme
+view: dependencies_table_columns
+title: Tests loading theme dependencies
+theme: christmas
