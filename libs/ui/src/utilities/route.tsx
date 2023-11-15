@@ -40,13 +40,14 @@ const Route: UtilityComponent = (props) => {
 
 	useEffect(() => {
 		if (!route) return
-		const { namespace, path, workspace } = route
+		const { namespace, path, workspace, params } = route
 		// This makes sure that the namespace and path of the route is specified in the history.
 		window.history.replaceState(
 			{
 				namespace,
 				path,
 				workspace,
+				params,
 			},
 			"",
 			route.path
