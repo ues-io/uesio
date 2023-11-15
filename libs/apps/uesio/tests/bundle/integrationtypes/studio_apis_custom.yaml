@@ -1,1 +1,3 @@
 name: studio_apis_custom
+loadBot: load_weather_forecast
+saveBot: save_weather_forecast

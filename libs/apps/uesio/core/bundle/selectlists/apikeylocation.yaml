@@ -1,0 +1,7 @@
+name: apikeylocation
+options:
+  - label: "Header"
+    value: "header"
+  - label: "URL Query String Parameter"
+    value: "querystring"
+public: true

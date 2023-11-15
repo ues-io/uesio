@@ -24,10 +24,10 @@ GET https://{{host}}:{{port}}/version/uesio/tests/v0.0.1/metadata/types/collecti
 Accept: application/json
 HTTP 200
 [Asserts]
-# There are currently 11 public uesio/core collections and 8 uesio/test collections
+# There are currently 11 public uesio/core collections and 9 uesio/test collections
 # we want to bring this number down at some point by making most of the uesio/core
 # collections private.
-jsonpath "$[*]" count == 19
+jsonpath "$[*]" count == 20
 # Spot check a uesio/tests collection
 jsonpath "$['uesio/tests.animal'].key" == "uesio/tests.animal"
 jsonpath "$['uesio/tests.animal'].namespace" == "uesio/tests"
@@ -41,7 +41,7 @@ GET https://{{host}}:{{port}}/version/uesio/tests/v0.0.1/metadata/types/collecti
 Accept: application/json
 HTTP 200
 [Asserts]
-jsonpath "$[*]" count == 8
+jsonpath "$[*]" count == 9
 # Spot check a uesio/tests collection
 jsonpath "$['uesio/tests.animal'].key" == "uesio/tests.animal"
 jsonpath "$['uesio/tests.animal'].namespace" == "uesio/tests"
@@ -85,7 +85,7 @@ GET https://{{host}}:{{port}}/version/uesio/tests/v0.0.1/metadata/types/secrets/
 Accept: application/json
 HTTP 200
 [Asserts]
-jsonpath "$[*]" count == 4
+jsonpath "$[*]" count == 5
 jsonpath "$['uesio/core.sendgridkey'].key" == "uesio/core.sendgridkey"
 jsonpath "$['uesio/core.sendgridkey'].namespace" == "uesio/core"
 jsonpath "$['uesio/core.sendgridkey'].icon" == "hub"
@@ -93,6 +93,8 @@ jsonpath "$['uesio/tests.test_oauth_client_id'].key" == "uesio/tests.test_oauth_
 jsonpath "$['uesio/tests.test_oauth_client_id'].namespace" == "uesio/tests"
 jsonpath "$['uesio/tests.test_oauth_client_secret'].key" == "uesio/tests.test_oauth_client_secret"
 jsonpath "$['uesio/tests.test_oauth_client_secret'].namespace" == "uesio/tests"
+jsonpath "$['uesio/tests.test_session_id'].key" == "uesio/tests.test_session_id"
+jsonpath "$['uesio/tests.test_session_id'].namespace" == "uesio/tests"
 
 # Now go into the uesio/core version context and get the secrets
 GET https://{{host}}:{{port}}/version/uesio/core/v0.0.1/metadata/types/secrets/list

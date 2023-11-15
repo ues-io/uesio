@@ -1,0 +1,4 @@
+name: weather_forecast_api_key_auth
+label: Weather Forecast (API Key Auth)
+pluralLabel: Weather Forecasts (API Key Auth)
+integration: test_api_key
