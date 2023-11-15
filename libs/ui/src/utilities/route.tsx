@@ -40,13 +40,14 @@ const Route: UtilityComponent = (props) => {
 
 	useEffect(() => {
 		if (!route) return
-		const { namespace, path, workspace } = route
+		const { namespace, path, workspace, params } = route
 		// This makes sure that the namespace and path of the route is specified in the history.
 		window.history.replaceState(
 			{
 				namespace,
 				path,
 				workspace,
+				params,
 			},
 			"",
 			route.path
@@ -63,7 +64,7 @@ const Route: UtilityComponent = (props) => {
 
 	useEffect(() => {
 		window.onpopstate = (event: PopStateEvent) => {
-			const { workspace, namespace, title, tags } = event.state
+			const { workspace, namespace, title, tags, params } = event.state
 			let { path } = event.state
 
 			if (!path || !namespace) {
@@ -80,8 +81,8 @@ const Route: UtilityComponent = (props) => {
 
 			// If there are params in the route, then we need to add them to our path,
 			// as long as our path doesn't already have a ? in it.
-			if (route?.params && path.indexOf("?") === -1) {
-				path = `${path}?${new URLSearchParams(route.params).toString()}`
+			if (params && path.indexOf("?") === -1) {
+				path = `${path}?${new URLSearchParams(params).toString()}`
 			}
 
 			navigate(
@@ -95,7 +96,6 @@ const Route: UtilityComponent = (props) => {
 				true
 			)
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [site])
 
 	// Quit rendering early if we don't have our route yet
