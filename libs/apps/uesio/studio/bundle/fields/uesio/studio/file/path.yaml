@@ -1,4 +1,4 @@
 name: path
 type: TEXT
 label: Path
-readOnly: true
+createOnly: true

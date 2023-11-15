@@ -23,7 +23,7 @@ func runAppAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, sess
 		Conditions: []adapt.LoadRequestCondition{
 			{
 				Field:    "uesio/studio.app",
-				Values:   getIDsFromDeletes(request),
+				Values:   request.Deletes.GetIDs(),
 				Operator: "IN",
 			},
 		},
