@@ -32,7 +32,7 @@ func NewAfterSaveAPI(request *adapt.SaveOp, connection adapt.Connection, session
 		connection: connection,
 		AsAdmin: AdminCallBotAPI{
 			Session:    session,
-			Connection: connection,
+			connection: connection,
 		},
 	}
 }
@@ -50,7 +50,7 @@ func (bs *AfterSaveAPI) Load(request BotLoadOp) (*adapt.Collection, error) {
 }
 
 func (bs *AfterSaveAPI) RunIntegrationAction(integrationID string, action string, options interface{}) (interface{}, error) {
-	return runIntegrationAction(integrationID, action, options, bs.session)
+	return runIntegrationAction(integrationID, action, options, bs.session, bs.connection)
 }
 
 func (bs *AfterSaveAPI) GetConfigValue(configValueKey string) (string, error) {

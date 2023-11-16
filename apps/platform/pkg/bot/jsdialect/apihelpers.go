@@ -1,8 +1,11 @@
 package jsdialect
 
 import (
+	"errors"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -56,18 +59,18 @@ func botLoad(request BotLoadOp, session *sess.Session, connection adapt.Connecti
 	return collection, nil
 }
 
-func runIntegrationAction(integrationID string, action string, options interface{}, session *sess.Session) (interface{}, error) {
-
-	platformConnection, err := datasource.GetPlatformConnection(&adapt.MetadataCache{}, session, nil)
+func runIntegrationAction(integrationID string, action string, options interface{}, session *sess.Session, connection adapt.Connection) (interface{}, error) {
+	ic, err := datasource.GetIntegrationConnection(integrationID, session, connection)
 	if err != nil {
 		return nil, err
 	}
+	return datasource.RunIntegrationAction(ic, action, options, connection)
+}
 
-	ic, err := datasource.GetIntegrationConnection(integrationID, session, platformConnection)
+func botCall(botKey string, params map[string]interface{}, session *sess.Session, connection adapt.Connection) (map[string]interface{}, error) {
+	botNamespace, botName, err := meta.ParseKeyWithDefault(botKey, session.GetContextAppName())
 	if err != nil {
-		return nil, err
+		return nil, errors.New("invalid bot name provided")
 	}
-
-	return datasource.RunIntegrationAction(ic, action, options, platformConnection)
-
+	return datasource.CallListenerBot(botNamespace, botName, params, connection, session)
 }

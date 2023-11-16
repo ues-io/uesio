@@ -126,6 +126,11 @@ type RunIntegrationAction = (
 	options: unknown
 ) => unknown
 
+type CallBot = (
+	botName: string,
+	params: Record<string, FieldValue>
+) => Record<string, FieldValue>
+
 interface BeforeSaveBotApi {
 	addError: (error: string) => void
 	load: (loadRequest: LoadRequest) => WireRecord[]
@@ -144,6 +149,7 @@ interface AsAdminApi {
 	delete: (collectionName: string, records: WireRecord[]) => void
 	save: (collectionName: string, records: WireRecord[]) => void
 	runIntegrationAction: RunIntegrationAction
+	callBot: CallBot
 	getConfigValue: (configValueKey: string) => string
 }
 interface ListenerBotApi {
@@ -153,6 +159,7 @@ interface ListenerBotApi {
 	delete: (collectionName: string, records: WireRecord[]) => void
 	save: (collectionName: string, records: WireRecord[]) => void
 	runIntegrationAction: RunIntegrationAction
+	callBot: CallBot
 	getConfigValue: (configValueKey: string) => string
 	asAdmin: AsAdminApi
 	getSession: () => SessionApi
