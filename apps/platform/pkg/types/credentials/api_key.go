@@ -1,7 +1,10 @@
 package credentials
 
 type APIKeyCredentials struct {
-	Key string `yaml:"key" json:"key"`
+	Key           string `yaml:"key" json:"key"`
+	Location      string `yaml:"location" json:"location"`
+	LocationName  string `yaml:"locationName" json:"locationName"`
+	LocationValue string `yaml:"locationValue,omitempty" json:"locationValue"`
 }
 
 func (c *APIKeyCredentials) IsNil() bool {
@@ -14,5 +17,20 @@ func (c *APIKeyCredentials) Map(mapper EntryMapper) {
 		Name:  "apikey",
 		Type:  "secret",
 		Value: c.Key,
+	})
+	c.Location = mapper(&CredentialEntry{
+		Name:  "location",
+		Type:  "select",
+		Value: c.Location,
+	})
+	c.LocationName = mapper(&CredentialEntry{
+		Name:  "locationName",
+		Type:  "text",
+		Value: c.LocationName,
+	})
+	c.LocationValue = mapper(&CredentialEntry{
+		Name:  "locationValue",
+		Type:  "text",
+		Value: c.LocationValue,
 	})
 }

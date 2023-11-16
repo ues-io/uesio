@@ -20,64 +20,40 @@ func getCascadeDeletes(
 		return cascadeDeleteFKs, nil
 	}
 
+	deleteIds := wire.Deletes.GetIDs()
+	ufmcToDelete := &adapt.Collection{}
+	op := &adapt.LoadOp{
+		CollectionName: meta.USERFILEMETADATA_COLLECTION_NAME,
+		Collection:     ufmcToDelete,
+		WireName:       "deleteUserFiles",
+		Conditions: []adapt.LoadRequestCondition{
+			{
+				Field:    "uesio/core.recordid",
+				Value:    deleteIds,
+				Operator: "IN",
+			},
+		},
+		Query:   true,
+		LoadAll: true,
+	}
+
+	_, err := Load([]*adapt.LoadOp{op}, session, &LoadOptions{
+		Connection: connection,
+		Metadata:   GetConnectionMetadata(connection),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	if ufmcToDelete.Len() > 0 {
+		cascadeDeleteFKs[meta.USERFILEMETADATA_COLLECTION_NAME] = *ufmcToDelete
+	}
+
 	metadata := connection.GetMetadata()
-
 	cascadeDeleteIdsByCollection := map[string]map[string]bool{}
-
 	for _, collectionMetadata := range metadata.Collections {
 		collectionKey := collectionMetadata.GetFullName()
 		for _, field := range collectionMetadata.Fields {
-			if field.Type == "FILE" {
-				referenceMetadata := field.ReferenceMetadata
-
-				// This is kind of a weird cascaded delete where we delete the parent
-				// if the child is deleted. This is not typical. Usually it's the
-				// other way around, but we're offering this feature because we
-				// need it ourselves for userfile.
-				referencedCollection := referenceMetadata.Collection
-
-				// Get the ids that we need to delete
-
-				if wire.Metadata.GetFullName() != collectionKey || len(wire.Deletes) == 0 {
-					continue
-				}
-				for _, deletion := range wire.Deletes {
-					item := deletion.OldValues
-					if item == nil {
-						continue
-					}
-					refInterface, err := item.GetField(field.GetFullName())
-					if err != nil {
-						continue
-					}
-
-					if refInterface == nil {
-						continue
-					}
-
-					refItem, ok := refInterface.(adapt.Item)
-					if !ok {
-						continue
-					}
-
-					refKey, err := refItem.GetField(adapt.ID_FIELD)
-					if err != nil {
-						continue
-					}
-
-					fkString, ok := refKey.(string)
-					if !ok {
-						return nil, errors.New("Delete id must be a string")
-					}
-					currentCollectionIds, ok := cascadeDeleteIdsByCollection[referencedCollection]
-					if !ok {
-						currentCollectionIds = map[string]bool{}
-						cascadeDeleteIdsByCollection[referencedCollection] = currentCollectionIds
-					}
-					currentCollectionIds[fkString] = true
-				}
-			}
-
 			if field.Type == "REFERENCEGROUP" {
 				referenceGroupMetadata := field.ReferenceGroupMetadata
 				if referenceGroupMetadata.OnDelete != "CASCADE" {

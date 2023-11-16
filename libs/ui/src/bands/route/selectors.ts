@@ -1,6 +1,7 @@
 import { useSelector } from "react-redux"
-import { RootState } from "../../store/store"
+import { RootState, getCurrentState } from "../../store/store"
 
 const useRoute = () => useSelector((state: RootState) => state.route)
+const getRoute = () => getCurrentState().route
 
-export { useRoute }
+export { useRoute, getRoute }

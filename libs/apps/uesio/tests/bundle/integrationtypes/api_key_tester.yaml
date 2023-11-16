@@ -1,0 +1,2 @@
+name: api_key_tester
+loadBot: load_weather_forecast_api_key

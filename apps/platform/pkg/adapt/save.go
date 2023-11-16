@@ -105,6 +105,14 @@ func (op *SaveOp) LoopChanges(changeFunc func(change *ChangeItem) error) error {
 	return op.LoopUpdates(changeFunc)
 }
 
+func (ci *ChangeItems) GetIDs() []string {
+	ids := make([]string, len(*ci))
+	for _, item := range *ci {
+		ids = append(ids, item.IDValue)
+	}
+	return ids
+}
+
 type ChangeItems []*ChangeItem
 
 type ChangeItem struct {

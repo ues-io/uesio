@@ -13,8 +13,7 @@ const useSecrets = (context: Context) => {
 				.then(setSecrets)
 				.finally(() => (loading.current = false))
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
+	}, [secrets, context])
 	const reset = () => setSecrets(null)
 	return [secrets, reset] as [SecretResponse[] | null, () => void]
 }

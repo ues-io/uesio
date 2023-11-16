@@ -7,7 +7,7 @@ export function getUniqueAppName() {
 }
 
 export function deleteApp(appName: string) {
-	cy.visitRoute(getAppBasePath(appName))
+	cy.visitRoute(`${getAppBasePath(appName)}/settings`)
 	cy.clickButtonIfExists("delete-app")
 	cy.clickButtonIfExists("confirm-delete-app")
 }

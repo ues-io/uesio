@@ -448,6 +448,140 @@ func Test_Request(t *testing.T) {
 				},
 			},
 		},
+		{
+			"API Key Authentication: header",
+			args{
+				integration: getIntegrationConnection("API_KEY", &adapt.Credentials{
+					"apikey":        "1234",
+					"location":      "header",
+					"locationName":  "Authorization",
+					"locationValue": "Bearer ${apikey}",
+				}),
+				request: &BotHttpRequest{
+					Method: "GET",
+					URL:    server.URL + "/array",
+				},
+				response:            `[{"foo":"bar"},{"hello":"world"}]`,
+				responseContentType: "text/json",
+				requestAsserts: func(t *testing.T, request *http.Request) {
+					assert.Equal(t, "Bearer 1234", request.Header.Get("Authorization"))
+				},
+				responseAsserts: func(t *testing.T, response *BotHttpResponse) {
+					assert.Equal(t, http.StatusOK, response.Code)
+				},
+			},
+		},
+		{
+			"API Key Authentication: header, use default template",
+			args{
+				integration: getIntegrationConnection("API_KEY", &adapt.Credentials{
+					"apikey":       "1234",
+					"location":     "header",
+					"locationName": "x-api-key",
+				}),
+				request: &BotHttpRequest{
+					Method: "GET",
+					URL:    server.URL + "/array",
+				},
+				response:            `[{"foo":"bar"},{"hello":"world"}]`,
+				responseContentType: "text/json",
+				requestAsserts: func(t *testing.T, request *http.Request) {
+					assert.Equal(t, "1234", request.Header.Get("x-api-key"))
+				},
+				responseAsserts: func(t *testing.T, response *BotHttpResponse) {
+					assert.Equal(t, http.StatusOK, response.Code)
+				},
+			},
+		},
+		{
+			"API Key Authentication: query string",
+			args{
+				integration: getIntegrationConnection("API_KEY", &adapt.Credentials{
+					"apikey":        "1234",
+					"location":      "querystring",
+					"locationName":  "key",
+					"locationValue": "${apikey}",
+				}),
+				request: &BotHttpRequest{
+					Method: "GET",
+					URL:    server.URL + "/array",
+				},
+				response:            `[{"foo":"bar"},{"hello":"world"}]`,
+				responseContentType: "text/json",
+				requestAsserts: func(t *testing.T, request *http.Request) {
+					assert.Equal(t, "1234", request.URL.Query().Get("key"))
+				},
+				responseAsserts: func(t *testing.T, response *BotHttpResponse) {
+					assert.Equal(t, http.StatusOK, response.Code)
+				},
+			},
+		},
+		{
+			"API Key Authentication: invalid location type",
+			args{
+				integration: getIntegrationConnection("API_KEY", &adapt.Credentials{
+					"apikey":        "1234",
+					"location":      "foo",
+					"locationName":  "key",
+					"locationValue": "${apikey}",
+				}),
+				request: &BotHttpRequest{
+					Method: "GET",
+					URL:    server.URL + "/array",
+				},
+				responseAsserts: func(t *testing.T, response *BotHttpResponse) {
+					assert.Equal(t, http.StatusUnauthorized, response.Code)
+					assert.Equal(t, "Unauthorized", response.Status)
+				},
+			},
+		},
+		{
+			"API Key Authentication: missing api key",
+			args{
+				integration: getIntegrationConnection("API_KEY", &adapt.Credentials{}),
+				request: &BotHttpRequest{
+					Method: "GET",
+					URL:    server.URL + "/array",
+				},
+				responseAsserts: func(t *testing.T, response *BotHttpResponse) {
+					assert.Equal(t, http.StatusUnauthorized, response.Code)
+					assert.Equal(t, "Unauthorized", response.Status)
+				},
+			},
+		},
+		{
+			"API Key Authentication: missing location",
+			args{
+				integration: getIntegrationConnection("API_KEY", &adapt.Credentials{
+					"apikey": "1234",
+				}),
+				request: &BotHttpRequest{
+					Method: "GET",
+					URL:    server.URL + "/array",
+				},
+				responseAsserts: func(t *testing.T, response *BotHttpResponse) {
+					assert.Equal(t, http.StatusUnauthorized, response.Code)
+					assert.Equal(t, "Unauthorized", response.Status)
+				},
+			},
+		},
+		{
+			"API Key Authentication: missing locationName",
+			args{
+				integration: getIntegrationConnection("API_KEY", &adapt.Credentials{
+					"apikey":   "1234",
+					"location": "header",
+				}),
+				request: &BotHttpRequest{
+					Method: "GET",
+					URL:    server.URL + "/array",
+				},
+				responseAsserts: func(t *testing.T, response *BotHttpResponse) {
+					assert.Equal(t, http.StatusUnauthorized, response.Code)
+					assert.Equal(t, "Unauthorized", response.Status)
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -18,8 +18,9 @@ type BotResult = {
 	params?: Record<string, unknown>
 }
 
-// @ts-ignore
-function load_weather_forecast(bot: LoadBotApi) {
+export default function load_weather_forecast(bot: LoadBotApi) {
+	const { conditions } = bot.loadRequest
+
 	const result = bot.http.request({
 		method: "POST",
 		url: `${bot
@@ -46,8 +47,51 @@ function load_weather_forecast(bot: LoadBotApi) {
 
 	const { current, forecast } = botResult.params as TempResult
 
+	// TBD: Not used yet in tests, but once we have support for List filtering,
+	// use this to filter the forecast list.
+	const forecastFilter = (item: WeatherInfo) => {
+		if (!conditions || !conditions.length) return true
+		return conditions.every((condition) => {
+			const { field, value, operator } = condition
+			const fieldParts = field.split(".")
+			const localField = fieldParts[1] as keyof WeatherInfo
+			const itemValue = item[localField]
+			switch (localField) {
+				case "low":
+				case "high":
+				case "avg":
+					const numericValue =
+						(typeof value === "string"
+							? parseFloat(value)
+							: value) || 0
+					if (operator === "GT") {
+						return itemValue > numericValue
+					} else if (operator === "LT") {
+						return itemValue < numericValue
+					} else if (operator === "GTE") {
+						return itemValue >= numericValue
+					} else if (operator === "LTE") {
+						return itemValue <= numericValue
+					} else if (operator === "EQ") {
+						return itemValue === numericValue
+					} else if (operator === "NOT_EQ") {
+						return itemValue === numericValue
+					}
+					break
+				case "day":
+					if (operator === "EQ") {
+						return itemValue === value
+					} else if (operator === "NOT_EQ") {
+						return itemValue !== value
+					}
+					break
+			}
+			return true
+		})
+	}
+
 	bot.addRecord({
 		"uesio/tests.current": current,
-		"uesio/tests.forecast": forecast,
+		"uesio/tests.forecast": forecast.filter(forecastFilter),
 	})
 }

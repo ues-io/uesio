@@ -26,6 +26,10 @@ variants:
 slots:
   - name: components
     path: /list
+  - name: components
+    path: /map
+  - name: components
+    path: /reference
 properties:
   - name: wire
     type: WIRE

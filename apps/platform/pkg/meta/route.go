@@ -16,7 +16,7 @@ func NewRoute(key string) (*Route, error) {
 }
 
 func NewBaseRoute(namespace, name string) *Route {
-	return &Route{ThemeRef: "uesio/core.default", BundleableBase: NewBase(namespace, name)}
+	return &Route{BundleableBase: NewBase(namespace, name)}
 }
 
 type Tag struct {
@@ -94,7 +94,7 @@ func (r *Route) UnmarshalYAML(node *yaml.Node) error {
 		if err != nil {
 			return fmt.Errorf("invalid route %s: %s", r.GetKey(), err.Error())
 		}
-		r.ThemeRef = pickMetadataItem(node, "theme", r.Namespace, "uesio/core.default")
+		r.ThemeRef = pickMetadataItem(node, "theme", r.Namespace, "")
 
 	}
 	return node.Decode((*RouteWrapper)(r))
@@ -102,7 +102,7 @@ func (r *Route) UnmarshalYAML(node *yaml.Node) error {
 
 func (r *Route) MarshalYAML() (interface{}, error) {
 
-	r.ThemeRef = removeDefault(GetLocalizedKey(r.ThemeRef, r.Namespace), "uesio/core.default")
+	r.ThemeRef = GetLocalizedKey(r.ThemeRef, r.Namespace)
 	r.ViewRef = GetLocalizedKey(r.ViewRef, r.Namespace)
 
 	return (*RouteWrapper)(r), nil
