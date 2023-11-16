@@ -86,6 +86,7 @@ const pushRouteState = (context: Context, route: RouteState, url?: string) => {
 			path: route.path,
 			title: route.title,
 			tags: route.tags,
+			params: route.params,
 			workspace: context.getWorkspace(),
 		},
 		"",

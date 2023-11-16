@@ -15,8 +15,11 @@ name: somecredential
 type: API_KEY
 apiKey:
     key: somesecret
+    location: header
+    locationName: Authorization
+    locationValue: Bearer ${apikey}
 entries:
-    keyLocation:
+    defaultSpaceId:
         type: configvalue
         value: someconfigvalue
 `)
@@ -26,8 +29,11 @@ name: somecredential
 type: API_KEY
 apiKey:
     key: luigi/foo.somesecret
+    location: header
+    locationName: Authorization
+    locationValue: Bearer ${apikey}
 entries:
-    keyLocation:
+    defaultSpaceId:
         type: configvalue
         value: luigi/foo.someconfigvalue
 `)
@@ -37,8 +43,11 @@ name: somecredential
 type: API_KEY
 apiKey:
     key: this/app.somesecret
+    location: header
+    locationName: Authorization
+    locationValue: Bearer ${apikey}
 entries:
-    keyLocation:
+    defaultSpaceId:
         type: configvalue
         value: this/app.someconfigvalue
 `)
@@ -84,10 +93,13 @@ func TestCredentialUnmarshal(t *testing.T) {
 				},
 				Type: "API_KEY",
 				APIKey: &credentials.APIKeyCredentials{
-					Key: "my/namespace.somesecret",
+					Key:           "my/namespace.somesecret",
+					Location:      "header",
+					LocationName:  "Authorization",
+					LocationValue: "Bearer ${apikey}",
 				},
 				Entries: map[string]*credentials.CredentialEntry{
-					"keyLocation": {
+					"defaultSpaceId": {
 						Type:  "configvalue",
 						Value: "my/namespace.someconfigvalue",
 					},
@@ -108,10 +120,13 @@ func TestCredentialUnmarshal(t *testing.T) {
 				},
 				Type: "API_KEY",
 				APIKey: &credentials.APIKeyCredentials{
-					Key: "my/namespace.somesecret",
+					Key:           "my/namespace.somesecret",
+					Location:      "header",
+					LocationName:  "Authorization",
+					LocationValue: "Bearer ${apikey}",
 				},
 				Entries: map[string]*credentials.CredentialEntry{
-					"keyLocation": {
+					"defaultSpaceId": {
 						Type:  "configvalue",
 						Value: "my/namespace.someconfigvalue",
 					},
@@ -132,10 +147,13 @@ func TestCredentialUnmarshal(t *testing.T) {
 				},
 				Type: "API_KEY",
 				APIKey: &credentials.APIKeyCredentials{
-					Key: "luigi/foo.somesecret",
+					Key:           "luigi/foo.somesecret",
+					Location:      "header",
+					LocationName:  "Authorization",
+					LocationValue: "Bearer ${apikey}",
 				},
 				Entries: map[string]*credentials.CredentialEntry{
-					"keyLocation": {
+					"defaultSpaceId": {
 						Type:  "configvalue",
 						Value: "luigi/foo.someconfigvalue",
 					},
@@ -193,11 +211,14 @@ func TestCredentialMarshal(t *testing.T) {
 				},
 				Type: "API_KEY",
 				APIKey: &credentials.APIKeyCredentials{
-					Key: "somesecret",
+					Key:           "somesecret",
+					Location:      "header",
+					LocationName:  "Authorization",
+					LocationValue: "Bearer ${apikey}",
 				},
 				Entries: map[string]*credentials.CredentialEntry{
-					"keyLocation": {
-						Name:  "keyLocation",
+					"defaultSpaceId": {
+						Name:  "defaultSpaceId",
 						Type:  "configvalue",
 						Value: "someconfigvalue",
 					},
@@ -217,11 +238,14 @@ func TestCredentialMarshal(t *testing.T) {
 				},
 				Type: "API_KEY",
 				APIKey: &credentials.APIKeyCredentials{
-					Key: "luigi/foo.somesecret",
+					Key:           "luigi/foo.somesecret",
+					Location:      "header",
+					LocationName:  "Authorization",
+					LocationValue: "Bearer ${apikey}",
 				},
 				Entries: map[string]*credentials.CredentialEntry{
-					"keyLocation": {
-						Name:  "keyLocation",
+					"defaultSpaceId": {
+						Name:  "defaultSpaceId",
 						Type:  "configvalue",
 						Value: "luigi/foo.someconfigvalue",
 					},

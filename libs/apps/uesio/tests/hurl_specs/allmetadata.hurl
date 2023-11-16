@@ -108,7 +108,6 @@ jsonpath "$.wires[0].data[4]['uesio/core.uniquekey']" == "uesio/tests.animal:ues
 jsonpath "$.wires[0].data[5]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.updatedat"
 jsonpath "$.wires[0].data[6]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.updatedby"
 
-
 # Get a list of all secrets available to our workspace
 POST https://{{host}}:{{port}}/site/wires/load
 Accept: application/json
@@ -144,13 +143,14 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data" count == 4
+jsonpath "$.wires[0].data" count == 5
 jsonpath "$.wires[0].data[0]['uesio/studio.name']" == "openaikey"
 jsonpath "$.wires[0].data[0]['uesio/studio.namespace']" == "uesio/core"
 jsonpath "$.wires[0].data[1]['uesio/studio.name']" == "sendgridkey"
 jsonpath "$.wires[0].data[1]['uesio/studio.namespace']" == "uesio/core"
 jsonpath "$.wires[0].data[2]['uesio/core.uniquekey']" == "uesio/tests.test_oauth_client_id"
 jsonpath "$.wires[0].data[3]['uesio/core.uniquekey']" == "uesio/tests.test_oauth_client_secret"
+jsonpath "$.wires[0].data[4]['uesio/core.uniquekey']" == "uesio/tests.test_session_id"
 
 # Test conditions on uesio/studio.item/grouping that have a ValueSource of LOOKUP from a previous wire
 POST https://{{host}}:{{port}}/site/wires/load
@@ -277,10 +277,12 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data" count == 4
+jsonpath "$.wires[0].data" count == 5
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "uesio/core.sendgrid"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "uesio/core.openai"
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "uesio/tests.secret_access_allowed"
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "uesio/tests.secret_access_forbidden"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "uesio/tests.test_api_key_credentials"
 
 POST https://{{host}}:{{port}}/site/wires/load
 Accept: application/json
