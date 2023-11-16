@@ -10,6 +10,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/merge"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/usage"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -160,6 +161,7 @@ func GetErrorRoute(path string, err string) *meta.Route {
 
 func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Session, path string, err error, redirect bool) {
 	slog.Debug("Error Getting Route: " + err.Error())
+
 	// If our profile is the public profile, redirect to the login route
 	if redirect && session.IsPublicProfile() {
 		if auth.RedirectToLoginRoute(w, r, session, auth.NotFound) {
@@ -178,16 +180,22 @@ func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Sess
 	adminSession := sess.GetAnonSession(session.GetSite())
 	depsCache, _ := routing.GetMetadataDeps(route, adminSession)
 
+	// This method is usually used for returning "not found" errors, so if we can't derive a more specific error code,
+	// default to 404, but ideally we would have a more specific code here.
+	statusCode := exceptions.GetStatusCodeForError(err)
+	if statusCode == http.StatusInternalServerError {
+		statusCode = http.StatusNotFound
+	}
 	acceptHeader := r.Header.Get("Accept")
 	// Only serve an HTML response to user-agents who are requesting HTML (e.g. browsers)
-	// otherwise, don't serve any content at all, just return 404 status code
+	// otherwise, don't serve any content at all, just return the status code
 	if strings.Contains(acceptHeader, "html") {
-		// Must write 404 status BEFORE executing index template
-		w.WriteHeader(http.StatusNotFound)
+		// Must write status code BEFORE executing index template
+		w.WriteHeader(statusCode)
 		ExecuteIndexTemplate(w, route, depsCache, false, adminSession)
 		return
 	}
-	http.Error(w, "Not Found", http.StatusNotFound)
+	http.Error(w, "Not Found", statusCode)
 }
 
 func ServeRoute(w http.ResponseWriter, r *http.Request) {
