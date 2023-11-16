@@ -16,6 +16,7 @@ import (
 	oauth "github.com/thecloudmasters/uesio/pkg/oauth2"
 	"github.com/thecloudmasters/uesio/pkg/routing"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
 
 func Callback(w http.ResponseWriter, r *http.Request) {
@@ -24,7 +25,7 @@ func Callback(w http.ResponseWriter, r *http.Request) {
 
 	authCode, state, err := extractAuthCodeAndState(r.URL.Query())
 	if err != nil {
-		controller.HandleErrorRoute(w, r, s, r.URL.Path, err, false)
+		controller.HandleErrorRoute(w, r, s, r.URL.Path, exceptions.NewBadRequestException(err.Error()), false)
 		return
 	}
 	// If we have either workspace / site admin context embedded in the state token,
@@ -38,7 +39,7 @@ func Callback(w http.ResponseWriter, r *http.Request) {
 	if contextSession != nil {
 		s = contextSession
 	} else if err != nil {
-		controller.HandleErrorRoute(w, r, s, r.URL.Path, errors.New("invalid state: insufficient privileges"), false)
+		controller.HandleErrorRoute(w, r, s, r.URL.Path, exceptions.NewForbiddenException("invalid state: insufficient privileges"), false)
 		return
 	}
 
@@ -113,10 +114,10 @@ func extractAuthCodeAndState(query url.Values) (authCode string, state *oauth.St
 
 	// If there's no code or state, it's an error
 	if authCode == "" {
-		return "", nil, errors.New("authorization code not provided")
+		return "", nil, extractCallbackErrorFromQuery(query, "authorization code not provided")
 	}
 	if stateString == "" {
-		return "", nil, errors.New("state not provided")
+		return "", nil, extractCallbackErrorFromQuery(query, "state not provided")
 	}
 
 	// Parse the state
@@ -125,4 +126,17 @@ func extractAuthCodeAndState(query url.Values) (authCode string, state *oauth.St
 		return "", nil, errors.New("invalid state")
 	}
 	return authCode, state, nil
+}
+
+// extract standard OAuth error fields from the query string,
+// so that we can return them to the user
+func extractCallbackErrorFromQuery(query url.Values, defaultMsg string) error {
+	if query.Has("error") {
+		if query.Has("error_description") {
+			return fmt.Errorf("%s: %s", query.Get("error"), query.Get("error_description"))
+		} else {
+			return errors.New(query.Get("error"))
+		}
+	}
+	return errors.New(defaultMsg)
 }
