@@ -131,3 +131,10 @@ POST https://{{host}}:{{port}}/siteadmin/uesio/tests/testsite/configvalues/uesio
     "value": "https://tests.{{domain}}:{{port}}/site"
 }
 HTTP 200
+
+# Set the SendGrid API key secret for the site
+POST https://{{host}}:{{port}}/siteadmin/uesio/tests/testsite/secrets/uesio/core/sendgridkey
+{
+    "value": "a-fake-send-grid-key"
+}
+HTTP 200
