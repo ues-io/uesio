@@ -33,6 +33,18 @@ jsonpath "$.params.answer" == 6
 jsonpath "$.params.dynamicAnswer" == 6
 jsonpath "$.success" == true
 
+# Invoke a bot that calls another bot
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/bots/call/uesio/tests/recursive_add_numbers
+{
+    "a": 345,
+    "b": 655
+}
+HTTP 200
+[Asserts]
+jsonpath "$.params.answer" == 1000
+jsonpath "$.params.namespacedAnswer" == 1000
+jsonpath "$.success" == true
+
 # Invoke with missing required parameters
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/bots/call/uesio/tests/add_numbers
 {
