@@ -74,6 +74,14 @@ type MergeWithContextTestCase = {
 	expectError: string | undefined
 }
 
+type MergeBooleanTestCase = {
+	name: string
+	defaultValue: boolean
+	context: Context
+	expected: boolean
+	input: string | boolean
+}
+
 const signalOutputContextHappyPath = new Context().addSignalOutputFrame(
 	"myStep",
 	{
@@ -264,6 +272,82 @@ const mergeStringTestCases = [
 	},
 ] as MergeWithContextTestCase[]
 
+const mergeBooleanTestCases = [
+	{
+		name: "happy path - merge result is a Boolean true",
+		context: new Context().addRecordDataFrame({
+			foo: true,
+		}),
+		input: "${foo}",
+		defaultValue: false,
+		expected: true,
+	},
+	{
+		name: "happy path - merge result is a Boolean false",
+		context: new Context().addRecordDataFrame({
+			bar: false,
+		}),
+		input: "${bar}",
+		defaultValue: true,
+		expected: false,
+	},
+	{
+		name: "happy path - value is a boolean true, not a merge",
+		context: new Context(),
+		input: true,
+		defaultValue: false,
+		expected: true,
+	},
+	{
+		name: "happy path - value is a boolean false, not a merge",
+		context: new Context(),
+		input: false,
+		defaultValue: true,
+		expected: false,
+	},
+	{
+		name: "value is undefined - use default true",
+		context: new Context().addRecordDataFrame({}),
+		input: "${foo}",
+		defaultValue: true,
+		expected: true,
+	},
+	{
+		name: "value is undefined - use default false",
+		context: new Context().addRecordDataFrame({}),
+		input: "${foo}",
+		defaultValue: false,
+		expected: false,
+	},
+	{
+		name: "result is not a boolean - use default",
+		context: new Context().addRecordDataFrame({
+			foo: "bar",
+		}),
+		input: "${foo}",
+		defaultValue: true,
+		expected: true,
+	},
+	{
+		name: "value is null - use default",
+		context: new Context().addRecordDataFrame({
+			foo: null,
+		}),
+		input: "${foo}",
+		defaultValue: false,
+		expected: false,
+	},
+	{
+		name: "value is empty string - use default",
+		context: new Context().addRecordDataFrame({
+			foo: "",
+		}),
+		input: "${foo}",
+		defaultValue: true,
+		expected: true,
+	},
+] as MergeBooleanTestCase[]
+
 const mergeTestCases = [
 	{
 		name: "value is a string",
@@ -443,6 +527,15 @@ describe("merge", () => {
 				}
 				expect(errCaught).toEqual(tc.expectError)
 				expect(actual).toEqual(tc.expected)
+			})
+		})
+	})
+	describe("mergeBoolean", () => {
+		mergeBooleanTestCases.forEach((tc) => {
+			test(tc.name, () => {
+				expect(
+					tc.context.mergeBoolean(tc.input, tc.defaultValue)
+				).toEqual(tc.expected)
 			})
 		})
 	})
