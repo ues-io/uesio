@@ -225,12 +225,7 @@ func (api *BotHttpAPI) setBasicAuthHeaderInRequest(req *http.Request, cred *adap
 	if err != nil {
 		return exceptions.NewUnauthorizedException("password is required")
 	}
-	buf := bytes.NewBuffer([]byte{})
-	_, err = base64.NewEncoder(base64.StdEncoding, buf).Write([]byte(username + ":" + password))
-	if err != nil {
-		return exceptions.NewUnauthorizedException("invalid username and password provided for integration")
-	}
-	req.Header.Set("Authorization", "Basic "+buf.String())
+	req.Header.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte(username+":"+password)))
 	return nil
 }
 

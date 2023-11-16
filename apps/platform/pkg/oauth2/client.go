@@ -83,9 +83,16 @@ func MakeRequestWithStoredUserCredentials(req *http.Request, ic *adapt.Integrati
 	if err != nil {
 		return nil, errors.New("unable to retrieve integration credential: " + err.Error())
 	}
-	// If we do NOT have an existing record, and this is the Authorization Code flow, then we cannot authenticate
-	if integrationCredential == nil && isAuthCodeFlow {
-		return nil, exceptions.NewUnauthorizedException("user has not yet authorized this integration")
+	// If we do NOT have an existing record...
+	if integrationCredential == nil {
+		// If this is the Authorization Code flow, then we cannot authenticate, we must have an existing access token
+		// or a refresh token present on an existing record
+		if isAuthCodeFlow {
+			return nil, exceptions.NewUnauthorizedException("user has not yet authorized this integration")
+		}
+		// If this is the Client Credentials flow, it's very likely we don't have an integration credential yet,
+		// so we'll need to create one
+		integrationCredential = BuildIntegrationCredential(integration.GetKey(), ic.GetSession().GetContextUser().ID, nil)
 	}
 	tok := GetTokenFromCredential(integrationCredential)
 	accessToken := tok.AccessToken
@@ -122,13 +129,7 @@ func MakeRequestWithStoredUserCredentials(req *http.Request, ic *adapt.Integrati
 		if finalToken != nil && finalToken != tok {
 			if finalToken.AccessToken != accessToken {
 				slog.Info("GOT new AccessToken, SAVING to DB...")
-				// If this is the Client Credentials flow, it's very likely we don't have an integration credential yet,
-				// so we'll need to build a new one
-				if !isAuthCodeFlow && integrationCredential == nil {
-					integrationCredential = BuildIntegrationCredential(integration.GetKey(), ic.GetSession().GetContextUser().ID, finalToken)
-				} else {
-					PopulateCredentialFieldsFromToken(integrationCredential, finalToken)
-				}
+				PopulateCredentialFieldsFromToken(integrationCredential, finalToken)
 				if upsertErr := credentialAccessors.Save(integrationCredential, ic); upsertErr != nil {
 					slog.Error("error upserting integration credential: " + upsertErr.Error())
 				}

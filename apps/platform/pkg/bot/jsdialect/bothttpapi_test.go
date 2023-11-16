@@ -1,12 +1,14 @@
 package jsdialect
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"sync/atomic"
 	"testing"
+	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -48,12 +50,14 @@ func Test_Request(t *testing.T) {
 	var testInstance *testing.T
 	var requestAsserts func(t *testing.T, request *http.Request)
 	var countRequests map[string]uint32
+	var credentialSaveCalled, credentialFetchCalled bool
 
 	// set up a mock server to handle our test requests
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		reqURL := r.URL.String()
 		if count, isPresent := countRequests[reqURL]; isPresent {
 			atomic.AddUint32(&count, 1)
+			countRequests[reqURL] = count
 		} else {
 			countRequests[reqURL] = 1
 		}
@@ -93,12 +97,15 @@ func Test_Request(t *testing.T) {
 	type ResponseAssertsFunc func(t *testing.T, response *BotHttpResponse)
 
 	var noOpFetch oauth2.CredentialFetcher
-	var noOpSave, noOpDelete oauth2.CredentialSaver
+	var noOpSave oauth2.CredentialSaver
+	var noOpDelete oauth2.CredentialSaver
 
 	noOpFetch = func(ic *adapt.IntegrationConnection) (*adapt.Item, error) {
+		credentialFetchCalled = true
 		return nil, nil
 	}
 	noOpSave = func(item *adapt.Item, ic *adapt.IntegrationConnection) error {
+		credentialSaveCalled = true
 		return nil
 	}
 	noOpDelete = func(item *adapt.Item, ic *adapt.IntegrationConnection) error {
@@ -614,7 +621,7 @@ func Test_Request(t *testing.T) {
 			},
 		},
 		{
-			"OAuth 2 Client Credentials authentication",
+			"OAuth 2 Client Credentials authentication - no existing token",
 			args{
 				integration: getIntegrationConnection("OAUTH2_CLIENT_CREDENTIALS", &adapt.Credentials{
 					"tokenUrl":     server.URL + "/oauth/token",
@@ -623,7 +630,85 @@ func Test_Request(t *testing.T) {
 					"scopes":       "api,refresh_token",
 				}),
 				credentialAccessors: &oauth2.CredentialAccessors{
-					Fetch:  noOpFetch,
+					Fetch: noOpFetch,
+					Save: func(item *adapt.Item, ic *adapt.IntegrationConnection) error {
+						credentialSaveCalled = true
+						// Verify that the expected fields were called
+						accessToken, _ := item.GetField(oauth2.AccessTokenField)
+						assert.Equal(t, "abcd1234", accessToken)
+						tokenType, _ := item.GetField(oauth2.TokenTypeField)
+						assert.Equal(t, "bearer", tokenType)
+						userReference, _ := item.GetField(oauth2.UserField)
+						expectUserReference := &adapt.Item{}
+						expectUserReference.SetField(adapt.ID_FIELD, "user123")
+						assert.Equal(t, expectUserReference, userReference)
+						integrationKey, _ := item.GetField(oauth2.IntegrationField)
+						assert.Equal(t, "luigi/foo.someservice", integrationKey)
+						return nil
+					},
+					Delete: noOpDelete,
+				},
+				request: &BotHttpRequest{
+					Method: "GET",
+					URL:    server.URL + "/array",
+				},
+				requestAsserts: func(t *testing.T, request *http.Request) {
+					// If this is a request for the access token, respond accordingly
+					if request.URL.Path == "/oauth/token" {
+						assert.Equal(t, "POST", request.Method)
+						err := request.ParseForm()
+						assert.Nil(t, err)
+						assert.Equal(t, "client_credentials", request.Form.Get("grant_type"))
+						assert.Equal(t, "api refresh_token", request.Form.Get("scope"))
+						expectedAuthHeader := "Basic " + base64.StdEncoding.EncodeToString([]byte("suchclient:muchsecret"))
+						assert.Equal(t, expectedAuthHeader, request.Header.Get("Authorization"))
+						accessTokenResponse, err := json.Marshal(map[string]interface{}{
+							"access_token": "abcd1234",
+							"token_type":   "bearer",
+						})
+						assert.Nil(t, err)
+						serveResponseBody = string(accessTokenResponse)
+						serveContentType = "application/json"
+						serveStatusCode = 200
+					} else if request.URL.Path == "/array" {
+						assert.Equal(t, "GET", request.Method)
+						assert.Equal(t, "Bearer abcd1234", request.Header.Get("Authorization"))
+						serveResponseBody = `[{"foo":"bar"},{"hello":"world"}]`
+						serveContentType = "text/json"
+					} else {
+						assert.Fail(t, "unexpected request")
+					}
+				},
+				responseAsserts: func(t *testing.T, response *BotHttpResponse) {
+					assert.Equal(t, "200 OK", response.Status)
+					assert.Equal(t, http.StatusOK, response.Code)
+					// Verify that the expected URLs were hit the expected number of times
+					assert.Equal(t, uint32(1), countRequests["/oauth/token"])
+					assert.Equal(t, uint32(1), countRequests["/array"])
+					assert.True(t, credentialFetchCalled, "a credential fetch should have occurred")
+					assert.True(t, credentialSaveCalled, "a new credential should have been saved")
+				},
+			},
+		},
+		{
+			"OAuth 2 Client Credentials authentication - don't reauthenticate if non-expired token exists",
+			args{
+				integration: getIntegrationConnection("OAUTH2_CLIENT_CREDENTIALS", &adapt.Credentials{
+					"tokenUrl":     server.URL + "/oauth/token",
+					"clientId":     "suchclient",
+					"clientSecret": "muchsecret",
+					"scopes":       "api,refresh_token",
+				}),
+				credentialAccessors: &oauth2.CredentialAccessors{
+					Fetch: func(ic *adapt.IntegrationConnection) (*adapt.Item, error) {
+						credentialFetchCalled = true
+						item := &adapt.Item{
+							oauth2.AccessTokenField:           "abcd1234",
+							oauth2.TokenTypeField:             "bearer",
+							oauth2.AccessTokenExpirationField: time.Now().Add(time.Hour).Unix(),
+						}
+						return item, nil
+					},
 					Save:   noOpSave,
 					Delete: noOpDelete,
 				},
@@ -631,16 +716,107 @@ func Test_Request(t *testing.T) {
 					Method: "GET",
 					URL:    server.URL + "/array",
 				},
-				response:            `[{"foo":"bar"},{"hello":"world"}]`,
-				responseContentType: "text/json",
 				requestAsserts: func(t *testing.T, request *http.Request) {
-					assert.Equal(t, "GET", request.Method)
-					assert.Equal(t, "Basic bHVpZ2k6YWJjMTIz", request.Header.Get("Authorization"))
-					assert.Equal(t, "/array", request.URL.Path)
+					// If this is a request for the access token, respond accordingly
+					if request.URL.Path == "/array" {
+						assert.Equal(t, "GET", request.Method)
+						assert.Equal(t, "Bearer abcd1234", request.Header.Get("Authorization"))
+						serveResponseBody = `[{"foo":"bar"},{"hello":"world"}]`
+						serveContentType = "text/json"
+					} else {
+						assert.Fail(t, "unexpected request")
+					}
 				},
 				responseAsserts: func(t *testing.T, response *BotHttpResponse) {
 					assert.Equal(t, "200 OK", response.Status)
 					assert.Equal(t, http.StatusOK, response.Code)
+					// Verify that the expected URLs were hit the expected number of times
+					assert.Equal(t, uint32(0), countRequests["/oauth/token"])
+					assert.Equal(t, uint32(1), countRequests["/array"])
+					assert.False(t, credentialSaveCalled, "no credential save should have occurred")
+					assert.True(t, credentialFetchCalled, "credential should have been retrieved from DB")
+				},
+			},
+		},
+		{
+			"OAuth 2 Client Credentials authentication - reauthenticate if 401 is returned",
+			args{
+				integration: getIntegrationConnection("OAUTH2_CLIENT_CREDENTIALS", &adapt.Credentials{
+					"tokenUrl":     server.URL + "/oauth/token",
+					"clientId":     "suchclient",
+					"clientSecret": "muchsecret",
+				}),
+				credentialAccessors: &oauth2.CredentialAccessors{
+					Fetch: func(ic *adapt.IntegrationConnection) (*adapt.Item, error) {
+						credentialFetchCalled = true
+						item := &adapt.Item{
+							oauth2.AccessTokenField:           "oldtoken",
+							oauth2.TokenTypeField:             "bearer",
+							oauth2.AccessTokenExpirationField: time.Now().Add(time.Hour).Unix(),
+						}
+						return item, nil
+					},
+					Save: func(item *adapt.Item, ic *adapt.IntegrationConnection) error {
+						credentialSaveCalled = true
+						// Verify that the expected fields were provided
+						accessToken, _ := item.GetField(oauth2.AccessTokenField)
+						assert.Equal(t, "newtoken", accessToken)
+						tokenType, _ := item.GetField(oauth2.TokenTypeField)
+						assert.Equal(t, "bearer", tokenType)
+						return nil
+					},
+					Delete: noOpDelete,
+				},
+				request: &BotHttpRequest{
+					Method: "GET",
+					URL:    server.URL + "/array",
+				},
+				requestAsserts: func(t *testing.T, request *http.Request) {
+					// If this is a request for the access token, respond accordingly
+					if request.URL.Path == "/oauth/token" {
+						assert.Equal(t, "POST", request.Method)
+						err := request.ParseForm()
+						assert.Nil(t, err)
+						assert.Equal(t, "client_credentials", request.Form.Get("grant_type"))
+						// verify no scope param was sent because we configured no scopes in the credentials
+						assert.False(t, request.Form.Has("scope"))
+						expectedAuthHeader := "Basic " + base64.StdEncoding.EncodeToString([]byte("suchclient:muchsecret"))
+						assert.Equal(t, expectedAuthHeader, request.Header.Get("Authorization"))
+						accessTokenResponse, err := json.Marshal(map[string]interface{}{
+							"access_token": "newtoken",
+							"token_type":   "bearer",
+						})
+						assert.Nil(t, err)
+						serveResponseBody = string(accessTokenResponse)
+						serveContentType = "application/json"
+						serveStatusCode = 200
+					} else if request.URL.Path == "/array" {
+						assert.Equal(t, "GET", request.Method)
+						// If we get called with the old token, return 401
+						if request.Header.Get("Authorization") == "Bearer oldtoken" {
+							serveResponseBody = `{"error":"access_denied"}`
+							serveContentType = "text/json"
+							serveStatusCode = http.StatusUnauthorized
+						} else {
+							// Otherwise verify that we are being called with the new token
+							assert.Equal(t, "GET", request.Method)
+							assert.Equal(t, "Bearer newtoken", request.Header.Get("Authorization"))
+							serveResponseBody = `[{"foo":"bar"},{"hello":"world"}]`
+							serveContentType = "text/json"
+							serveStatusCode = http.StatusOK
+						}
+					} else {
+						assert.Fail(t, "unexpected request")
+					}
+				},
+				responseAsserts: func(t *testing.T, response *BotHttpResponse) {
+					assert.Equal(t, "200 OK", response.Status)
+					assert.Equal(t, http.StatusOK, response.Code)
+					// Verify that the expected URLs were hit the expected number of times
+					assert.Equal(t, uint32(1), countRequests["/oauth/token"])
+					assert.Equal(t, uint32(2), countRequests["/array"])
+					assert.True(t, credentialFetchCalled, "a credential fetch should have occurred")
+					assert.True(t, credentialSaveCalled, "a new credential should have been saved")
 				},
 			},
 		},
@@ -649,7 +825,11 @@ func Test_Request(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if tt.args.credentialAccessors != nil {
 				oauth2.SetUserCredentialAccessors(tt.args.credentialAccessors)
+			} else {
+				oauth2.InitCredentialAccessors()
 			}
+			credentialSaveCalled = false
+			credentialFetchCalled = false
 			botApi := NewBotHttpAPI(&meta.Bot{}, tt.args.integration)
 			serveResponseBody = tt.args.response
 			serveContentType = tt.args.responseContentType

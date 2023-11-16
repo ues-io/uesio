@@ -25,10 +25,12 @@ func getCoreOAuthConfigFields(credentials *adapt.Credentials) (clientId, clientS
 	if err != nil {
 		return "", "", "", nil, err
 	}
-	scopesString := credentials.GetEntry("scopes", "")
-	scopes = strings.Split(scopesString, ",")
-	for i, v := range scopes {
-		scopes[i] = strings.TrimSpace(v)
+	scopesString := strings.TrimSpace(credentials.GetEntry("scopes", ""))
+	if scopesString != "" {
+		scopes = strings.Split(scopesString, ",")
+		for i, v := range scopes {
+			scopes[i] = strings.TrimSpace(v)
+		}
 	}
 	return clientId, clientSecret, tokenUrl, scopes, err
 }
