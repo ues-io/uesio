@@ -94,6 +94,7 @@ func (r *Route) UnmarshalYAML(node *yaml.Node) error {
 		if err != nil {
 			return fmt.Errorf("invalid route %s: %s", r.GetKey(), err.Error())
 		}
+		r.ThemeRef = pickMetadataItem(node, "theme", r.Namespace, "")
 
 	}
 	return node.Decode((*RouteWrapper)(r))
@@ -101,6 +102,7 @@ func (r *Route) UnmarshalYAML(node *yaml.Node) error {
 
 func (r *Route) MarshalYAML() (interface{}, error) {
 
+	r.ThemeRef = GetLocalizedKey(r.ThemeRef, r.Namespace)
 	r.ViewRef = GetLocalizedKey(r.ViewRef, r.Namespace)
 
 	return (*RouteWrapper)(r), nil
