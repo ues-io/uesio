@@ -46,7 +46,9 @@ func GetTokenFromCredential(credential *adapt.Item) *oauth2.Token {
 // on an integration_credential record using the corresponding fields from the token
 func PopulateCredentialFieldsFromToken(credential *adapt.Item, token *oauth2.Token) {
 	credential.SetField(AccessTokenField, token.AccessToken)
-	credential.SetField(RefreshTokenField, token.RefreshToken)
+	if token.RefreshToken != "" {
+		credential.SetField(RefreshTokenField, token.RefreshToken)
+	}
 	credential.SetField(TokenTypeField, ResolveTokenType(token))
 	expiry := token.Expiry
 	if !expiry.IsZero() {
@@ -76,7 +78,9 @@ func BuildIntegrationCredential(integrationName string, userId string, token *oa
 	userReference.SetField(adapt.ID_FIELD, userId)
 	integrationCredential.SetField(IntegrationField, integrationName)
 	integrationCredential.SetField(UserField, userReference)
-	PopulateCredentialFieldsFromToken(integrationCredential, token)
+	if token != nil {
+		PopulateCredentialFieldsFromToken(integrationCredential, token)
+	}
 	return integrationCredential
 }
 
