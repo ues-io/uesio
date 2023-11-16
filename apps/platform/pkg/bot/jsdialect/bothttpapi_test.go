@@ -582,6 +582,33 @@ func Test_Request(t *testing.T) {
 				},
 			},
 		},
+		{
+			"OAuth 2 Client Credentials authentication",
+			args{
+				integration: getIntegrationConnection("OAUTH2_CLIENT_CREDENTIALS", &adapt.Credentials{
+					"tokenUrl":     server.URL + "/oauth/token",
+					"clientId":     "suchclient",
+					"clientSecret": "muchsecret",
+					"scopes":       "api,refresh_token",
+				}),
+
+				request: &BotHttpRequest{
+					Method: "GET",
+					URL:    server.URL + "/array",
+				},
+				response:            `[{"foo":"bar"},{"hello":"world"}]`,
+				responseContentType: "text/json",
+				requestAsserts: func(t *testing.T, request *http.Request) {
+					assert.Equal(t, "GET", request.Method)
+					assert.Equal(t, "Basic bHVpZ2k6YWJjMTIz", request.Header.Get("Authorization"))
+					assert.Equal(t, "/array", request.URL.Path)
+				},
+				responseAsserts: func(t *testing.T, response *BotHttpResponse) {
+					assert.Equal(t, "200 OK", response.Status)
+					assert.Equal(t, http.StatusOK, response.Code)
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

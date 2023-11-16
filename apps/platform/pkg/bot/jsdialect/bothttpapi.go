@@ -208,12 +208,8 @@ func (api *BotHttpAPI) makeRequest(req *http.Request, auth *BotHttpAuth) (*http.
 			return nil, err
 		}
 		break
-	case "OAUTH2_AUTHORIZATION_CODE":
-		return oauthlib.MakeRequestWithStoredUserCredentials(req, api.ic.GetIntegration().GetKey(), api.getSession(), auth.Credentials)
-	case "OAUTH2_CLIENT_CREDENTIALS":
-		// TODO: Check for an integration credential record for the "system" user for the tenant,
-		// and if one exists and is unexpired, use this token directly,
-		// otherwise hit the access token endpoint to get a fresh token
+	case "OAUTH2_AUTHORIZATION_CODE", "OAUTH2_CLIENT_CREDENTIALS":
+		return oauthlib.MakeRequestWithStoredUserCredentials(req, api.ic.GetIntegration(), api.getSession(), auth.Credentials)
 		break
 	}
 	// Default
