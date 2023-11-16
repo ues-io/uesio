@@ -26,16 +26,17 @@ const signals: Record<string, SignalDescriptor> = {
 			redirect(
 				context,
 				context.mergeString(signal.path),
-				context.mergeBoolean(signal.newtab) || false
+				context.mergeBoolean(signal.newtab, false)
 			),
 	},
 	[`${ROUTE_BAND}/RELOAD`]: {
 		dispatcher: (signal: SignalDefinition, context: Context) => {
 			const routeState = getCurrentState().route
 			if (!routeState) return context
+			const { namespace, path } = routeState
 			return navigate(context, {
-				namespace: routeState.namespace,
-				path: routeState.path,
+				namespace,
+				path,
 			})
 		},
 	},

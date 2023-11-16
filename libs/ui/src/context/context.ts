@@ -629,16 +629,12 @@ class Context {
 		return `${result ?? ""}`
 	}
 
-	mergeBoolean = (template: Mergeable, defaultValue?: boolean) => {
+	mergeBoolean = (template: Mergeable, defaultValue: boolean) => {
 		const result = this.merge(template)
 		if (typeof result === "boolean") {
 			return result
 		}
-		// If a defaultValue is provided, return that instead of throwing an error
-		if (typeof defaultValue === "boolean") return defaultValue;
-		throw new Error(
-			`Merge failed: result is of type ${typeof result} and cannot be returned as a boolean, please check your merge.`
-		)
+		return defaultValue
 	}
 
 	mergeDeep = (value: DeepMergeable) => {
