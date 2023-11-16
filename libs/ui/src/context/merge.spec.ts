@@ -293,12 +293,14 @@ const mergeBooleanTestCases = [
 	},
 	{
 		name: "happy path - value is a boolean true, not a merge",
+		context: new Context(),
 		input: true,
 		defaultValue: false,
 		expected: true,
 	},
 	{
 		name: "happy path - value is a boolean false, not a merge",
+		context: new Context(),
 		input: false,
 		defaultValue: true,
 		expected: false,
