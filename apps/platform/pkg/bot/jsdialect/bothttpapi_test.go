@@ -10,6 +10,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/oauth2"
 
 	"github.com/stretchr/testify/assert"
 
@@ -18,10 +19,26 @@ import (
 
 func getIntegrationConnection(authType string, credentials *adapt.Credentials) *adapt.IntegrationConnection {
 	return adapt.NewIntegrationConnection(
-		&meta.Integration{Authentication: authType},
+		&meta.Integration{
+			BundleableBase: meta.BundleableBase{
+				Name:      "someservice",
+				Namespace: "luigi/foo",
+			},
+			Authentication: authType,
+		},
 		&meta.IntegrationType{},
-		&sess.Session{},
-		credentials)
+		(&sess.Session{}).SetSiteSession(sess.NewSiteSession(&meta.Site{
+			Name: "prod",
+			App: &meta.App{
+				BuiltIn:  meta.BuiltIn{UniqueKey: "luigi/foo"},
+				FullName: "luigi/foo",
+				Name:     "foo",
+			},
+		}, &meta.User{
+			BuiltIn: meta.BuiltIn{ID: "user123"},
+		})),
+		credentials,
+		nil)
 }
 
 func Test_Request(t *testing.T) {
@@ -75,6 +92,19 @@ func Test_Request(t *testing.T) {
 
 	type ResponseAssertsFunc func(t *testing.T, response *BotHttpResponse)
 
+	var noOpFetch oauth2.CredentialFetcher
+	var noOpSave, noOpDelete oauth2.CredentialSaver
+
+	noOpFetch = func(ic *adapt.IntegrationConnection) (*adapt.Item, error) {
+		return nil, nil
+	}
+	noOpSave = func(item *adapt.Item, ic *adapt.IntegrationConnection) error {
+		return nil
+	}
+	noOpDelete = func(item *adapt.Item, ic *adapt.IntegrationConnection) error {
+		return nil
+	}
+
 	type args struct {
 		integration         *adapt.IntegrationConnection
 		request             *BotHttpRequest
@@ -84,6 +114,7 @@ func Test_Request(t *testing.T) {
 		responseAsserts     ResponseAssertsFunc
 		responseStatusCode  int
 		makeRequestNTimes   int
+		credentialAccessors *oauth2.CredentialAccessors
 	}
 
 	tests := []struct {
@@ -591,7 +622,11 @@ func Test_Request(t *testing.T) {
 					"clientSecret": "muchsecret",
 					"scopes":       "api,refresh_token",
 				}),
-
+				credentialAccessors: &oauth2.CredentialAccessors{
+					Fetch:  noOpFetch,
+					Save:   noOpSave,
+					Delete: noOpDelete,
+				},
 				request: &BotHttpRequest{
 					Method: "GET",
 					URL:    server.URL + "/array",
@@ -612,6 +647,9 @@ func Test_Request(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			if tt.args.credentialAccessors != nil {
+				oauth2.SetUserCredentialAccessors(tt.args.credentialAccessors)
+			}
 			botApi := NewBotHttpAPI(&meta.Bot{}, tt.args.integration)
 			serveResponseBody = tt.args.response
 			serveContentType = tt.args.responseContentType

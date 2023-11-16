@@ -209,7 +209,7 @@ func (api *BotHttpAPI) makeRequest(req *http.Request, auth *BotHttpAuth) (*http.
 		}
 		break
 	case "OAUTH2_AUTHORIZATION_CODE", "OAUTH2_CLIENT_CREDENTIALS":
-		return oauthlib.MakeRequestWithStoredUserCredentials(req, api.ic.GetIntegration(), api.getSession(), auth.Credentials)
+		return oauthlib.MakeRequestWithStoredUserCredentials(req, api.ic)
 		break
 	}
 	// Default

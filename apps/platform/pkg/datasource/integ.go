@@ -43,7 +43,7 @@ func GetIntegrationConnection(integrationID string, session *sess.Session, conne
 		}
 	}
 
-	return adapt.NewIntegrationConnection(integration, integrationType, session, credentials), nil
+	return adapt.NewIntegrationConnection(integration, integrationType, session, credentials, connection), nil
 }
 
 // HydrateOptions takes loads arbitrary map[string]interface{} data into a struct.
