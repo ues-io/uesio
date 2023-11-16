@@ -22,7 +22,7 @@ func addVersionContext(app, version string, session *sess.Session, connection ad
 	}
 	bundleDef.Licenses = licenseMap
 
-	session.SetVersionSession(sess.NewVersionSession(app, version, session.GetSiteUser(), bundleDef))
+	session.SetVersionSession(sess.NewVersionSession(app, version, session.GetContextUser(), bundleDef))
 
 	return nil
 
