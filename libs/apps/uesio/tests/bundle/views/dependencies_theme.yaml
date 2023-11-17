@@ -1,0 +1,7 @@
+name: dependencies_theme
+definition:
+  wires: {}
+  components:
+    - uesio/io.button:
+        text: New Button
+        icon: bolt
