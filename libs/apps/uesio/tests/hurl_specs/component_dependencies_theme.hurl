@@ -18,7 +18,7 @@ jsonpath "$.dependencies.theme[0].name" == "christmas"
 jsonpath "$.dependencies.theme[0].namespace" == "uesio/tests"
 
 # Route without a theme (no app default theme specified)
-GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/dependencies_table_columns
+GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/dependencies_theme_no_theme
 HTTP 200
 [Asserts]
 # Verify that the theme is uesio/core.default
@@ -76,7 +76,7 @@ jsonpath "$.wires[0].errors" == null
 
 # Check again the route without a theme to see if it has the theme we just set
 # Route without a theme (app default theme specified)
-GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/dependencies_table_columns
+GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/dependencies_theme_no_theme
 HTTP 200
 [Asserts]
 # Verify that the theme is uesio/tests.default
@@ -108,3 +108,23 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].changes['temp1']['uesio/studio.defaulttheme']" == ""
 jsonpath "$.wires[0].errors" == null
+
+# Route with a theme for a SITE
+GET https://tests.{{domain}}:{{port}}/site/routes/path/uesio/tests/dependencies_theme
+HTTP 200
+[Asserts]
+# Verify that the theme is the one specified in the route
+jsonpath "$.theme" == "uesio/tests.christmas"
+jsonpath "$.dependencies.theme" count == 1
+jsonpath "$.dependencies.theme[0].name" == "christmas"
+jsonpath "$.dependencies.theme[0].namespace" == "uesio/tests"
+
+# Route without a theme on a SITE (no app default theme specified, since we removed the default theme for the app)
+GET https://tests.{{domain}}:{{port}}/site/routes/path/uesio/tests/dependencies_theme_no_theme
+HTTP 200
+[Asserts]
+# Verify that the theme is uesio/core.default
+jsonpath "$.theme" == "uesio/core.default"
+jsonpath "$.dependencies.theme" count == 1
+jsonpath "$.dependencies.theme[0].name" == "default"
+jsonpath "$.dependencies.theme[0].namespace" == "uesio/core"
