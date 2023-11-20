@@ -121,6 +121,12 @@ definition:
           valueSource: LOOKUP
           lookupWire: apps
           lookupField: uesio/core.id
+        - field: uesio/studio.autocreate
+          valueSource: VALUE
+          value: true
+        - field: uesio/studio.monthlyprice
+          valueSource: VALUE
+          value: 0
     licensetemplate:
       collection: uesio/studio.licensetemplate
       fields:
