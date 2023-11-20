@@ -22,7 +22,7 @@ require (
 	github.com/gofrs/uuid v4.4.0+incompatible
 	github.com/golang-migrate/migrate/v4 v4.16.2
 	github.com/gomodule/redigo v1.8.9
-	github.com/gorilla/mux v1.8.0
+	github.com/gorilla/mux v1.8.1
 	github.com/icza/session v1.2.0
 	github.com/jackc/pgx/v5 v5.4.3
 	github.com/patrickmn/go-cache v2.1.0+incompatible
