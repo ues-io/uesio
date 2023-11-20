@@ -22,13 +22,31 @@ describe("View SET_PARAMS signal and wire reloading", () => {
 			)
 		)
 
+	const loadAnimalAndVerifyDetailView = (
+		idx: number,
+		expectedTitle: string
+	) => {
+		cy.getByIdFragment("div", "uesio/io.deck:animalsDeck")
+			.children()
+			.eq(idx)
+			.click()
+		// This should load our detail view, which should initiate a wire load to fetch that animal's details
+		cy.getByIdFragment("div", "animalTitle").should("exist")
+		cy.getByIdFragment("div", "animalTitle").should(
+			"have.text",
+			expectedTitle
+		)
+	}
+
 	context("Wire loads", () => {
 		it("should reload wires when view params change", () => {
 			// Visit the original route
 			visitRoute()
+			// Verify that the animal title area is not displayed initially
+			cy.getByIdFragment("div", "animalTitle").should("not.exist")
 			// Click on the first animal
-			cy.get("div[id*='uesio/io.deck:animalsDeck']:first-child").click()
-			// This should load our detail view, which should initiate a wire load to fetch that animal's details
+			loadAnimalAndVerifyDetailView(0, "Abazi Daron")
+			loadAnimalAndVerifyDetailView(1, "Abrahamian Skelly")
 		})
 	})
 })

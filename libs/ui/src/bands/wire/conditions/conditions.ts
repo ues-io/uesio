@@ -1,3 +1,4 @@
+import { MetadataKey } from "../../../metadata/types"
 import { PlainFieldValue } from "../../wirerecord/types"
 
 const PARAM = "PARAM"
@@ -5,6 +6,7 @@ const LOOKUP = "LOOKUP"
 const VALUE = "VALUE"
 const SEARCH = "SEARCH"
 const GROUP = "GROUP"
+const SUBQUERY = "SUBQUERY"
 
 type Conjunction = "AND" | "OR"
 
@@ -28,6 +30,7 @@ type WireConditionState =
 	| ValueConditionState
 	| SearchConditionState
 	| GroupConditionState
+	| SubqueryConditionState
 
 type ConditionBase = {
 	id?: string
@@ -40,6 +43,14 @@ type GroupConditionState = ConditionBase & {
 	conjunction: Conjunction
 	conditions: WireConditionState[]
 	valueSource: undefined
+}
+
+type SubqueryConditionState = ConditionBase & {
+	type: typeof SUBQUERY
+	conditions?: WireConditionState[]
+	valueSource: undefined
+	subcollection: MetadataKey
+	subfield: MetadataKey
 }
 
 type SearchConditionState = ConditionBase & {
@@ -97,4 +108,5 @@ export type {
 	ParamConditionState,
 	ValueConditionState,
 	SearchConditionState,
+	SubqueryConditionState,
 }

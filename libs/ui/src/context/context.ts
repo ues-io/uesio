@@ -547,6 +547,19 @@ class Context {
 			...viewContext,
 		})
 
+	upsertViewFrame = (viewContext: ViewContext) => {
+		const existingFrame = this.stack
+			.filter(isViewContextFrame)
+			.find((f) => f.view === viewContext.view)
+		if (existingFrame) {
+			existingFrame.viewDef = viewContext.viewDef
+			existingFrame.params = viewContext.params
+			return this
+		} else {
+			return this.addViewFrame(viewContext)
+		}
+	}
+
 	addComponentFrame = (
 		componentType: string,
 		data: Record<string, unknown>

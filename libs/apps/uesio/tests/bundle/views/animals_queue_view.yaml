@@ -59,11 +59,6 @@ definition:
                       - uesio/io.titlebar:
                           title: Animal Details
                       - uesio/core.view:
-                          uesio.display:
-                            - type: paramIsSet
-                              param: genus
-                            - type: paramIsSet
-                              param: species
                           id: detailview
                           view: uesio/tests.view_with_param_condition
                           params:

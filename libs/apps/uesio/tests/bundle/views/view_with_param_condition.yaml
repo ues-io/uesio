@@ -24,24 +24,30 @@ definition:
   # Components determine the layout and composition of your view
   components:
     - uesio/io.item:
-      wire: animal
-      components:
-        - uesio/io.titlebar:
-            title: "Animal: ${uesio/tests.genus} ${uesio/tests.species}"
-        - uesio/io.field:
-            fieldId: uesio/tests.genus
-        - uesio/io.field:
-            fieldId: uesio/tests.species
-        - uesio/io.field:
-            fieldId: uesio/tests.total_population
-        - uesio/io.field:
-            fieldId: uesio/tests.ancestor
-        - uesio/io.field:
-            fieldId: uesio/tests.lookalike
-        - uesio/io.field:
-            fieldId: uesio/core.createdat
-        - uesio/io.field:
-            fieldId: uesio/core.updatedat
+        uesio.display:
+          - type: paramIsSet
+            param: genus
+          - type: paramIsSet
+            param: species
+        wire: animal
+        components:
+          - uesio/io.titlebar:
+              uesio.id: animalTitle
+              title: "${uesio/tests.genus} ${uesio/tests.species}"
+          - uesio/io.field:
+              fieldId: uesio/tests.genus
+          - uesio/io.field:
+              fieldId: uesio/tests.species
+          - uesio/io.field:
+              fieldId: uesio/tests.total_population
+          - uesio/io.field:
+              fieldId: uesio/tests.ancestor
+          - uesio/io.field:
+              fieldId: uesio/tests.lookalike
+          - uesio/io.field:
+              fieldId: uesio/core.createdat
+          - uesio/io.field:
+              fieldId: uesio/core.updatedat
   params:
     genus:
       type: TEXT
