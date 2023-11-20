@@ -130,20 +130,8 @@ const wireHasParamsThatHaveChanged = (
 	wire: WireDefinition,
 	params?: Record<string, string>
 ) => {
-	if (!params) return false
-	const { defaults, viewOnly = false } = wire
-	if (!defaults && viewOnly) return false
-	// First check the defaults
-	defaults?.forEach((defaultParam) => {
-		if (
-			defaultParam.valueSource === "PARAM" &&
-			defaultParam.param in params
-		) {
-			return true
-		}
-	})
-	// If we got here and its a view only wire, there's nothing else to do
-	if (viewOnly) return false
+	const { viewOnly = false } = wire
+	if (viewOnly || !params) return false
 	const conditions = (wire as RegularWireDefinition).conditions
 	if (!conditions || !conditions.length) return false
 	return conditions?.some((condition) =>
