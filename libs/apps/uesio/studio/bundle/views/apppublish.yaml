@@ -101,6 +101,38 @@ definition:
         - field: uesio/studio.status
           valueSource: VALUE
           value: OPEN
+    newlicensetemplate:
+      collection: uesio/studio.licensetemplate
+      fields:
+        uesio/core.id:
+        uesio/studio.app:
+        uesio/studio.autocreate:
+        uesio/studio.monthlyprice:
+      conditions:
+        - field: uesio/studio.app
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio/core.id
+      init:
+        query: false
+        create: true
+      defaults:
+        - field: uesio/studio.app
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio/core.id
+    licensetemplate:
+      collection: uesio/studio.licensetemplate
+      fields:
+        uesio/core.id:
+        uesio/studio.app:
+        uesio/studio.autocreate:
+        uesio/studio.monthlyprice:
+      conditions:
+        - field: uesio/studio.app
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio/core.id
   # Components are how we describe the layout of our view
   components:
     - uesio/studio.mainlayout:
@@ -196,6 +228,8 @@ definition:
                                 uesio.display:
                                   - field: uesio/studio.status
                                     value: OPEN
+                                  - type: wireHasRecords
+                                    wire: licensetemplate
                             - uesio/io.button:
                                 uesio.variant: uesio/io.primary
                                 text: Publish
@@ -227,6 +261,40 @@ definition:
                                       title: ${uesio/studio.app->uesio/studio.fullname}
                                       subtitle: ${uesio/studio.description}
                                       verified: false
+          - uesio/io.box:
+              uesio.display:
+                - type: wireHasRecords
+                  wire: bundlelisting
+              uesio.variant: uesio/io.section
+              components:
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.section
+                    title: Pricing Template
+                    subtitle: Set the monthly price of your application
+                    actions:
+                      - uesio/io.group:
+                          components:
+                            - uesio/io.button:
+                                text: add Template
+                                uesio.variant: uesio/io.primary
+                                signals:
+                                  - signal: panel/TOGGLE
+                                    panel: newLicenseTemplate
+                                uesio.display:
+                                  - type: wireHasNoRecords
+                                    wire: licensetemplate
+                - uesio/io.list:
+                    uesio.id: licensetemplateList
+                    wire: licensetemplate
+                    mode: READ
+                    components:
+                      - uesio/io.grid:
+                          uesio.variant: uesio/io.four_columns
+                          items:
+                            - uesio/io.field:
+                                fieldId: uesio/studio.monthlyprice
+                            - uesio/io.field:
+                                fieldId: uesio/studio.autocreate
           - uesio/io.box:
               uesio.display:
                 - type: wireHasRecords
@@ -338,3 +406,39 @@ definition:
             signals:
               - signal: panel/TOGGLE
                 panel: publish
+    newLicenseTemplate:
+      uesio.type: uesio/io.dialog
+      title: Add a New License Template
+      width: 400px
+      height: 500px
+      components:
+        - uesio/io.list:
+            uesio.id: newlicenseTemplatelist
+            wire: newlicensetemplate
+            mode: EDIT
+            components:
+              - uesio/io.field:
+                  fieldId: uesio/studio.autocreate
+              - uesio/io.field:
+                  fieldId: uesio/studio.monthlyprice
+      actions:
+        - uesio/io.button:
+            uesio.variant: "uesio/io.primary"
+            text: $Label{uesio/io.save}
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - newlicensetemplate
+              - signal: wire/LOAD
+                wires:
+                  - licensetemplate
+              - signal: wire/RESET
+                wire: newlicensepricingtemplate
+              - signal: "panel/TOGGLE"
+                panel: "newLicenseTemplate"
+        - uesio/io.button:
+            uesio.variant: "uesio/io.secondary"
+            text: $Label{uesio/io.cancel}
+            signals:
+              - signal: "panel/TOGGLE"
+                panel: "newLicenseTemplate"
