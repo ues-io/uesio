@@ -74,25 +74,17 @@ const View: UC<ViewComponentDefinition> = (props) => {
 	const isSubView = !!path
 
 	const viewDef = useViewDef(viewDefId)
-	const initialParams = context.mergeStringMap(params)
-	const componentId = componentApi.getComponentId(
-		uesioId,
-		ViewComponentId,
-		path,
-		context
-	)
 	const [paramState] = componentApi.useState<Record<string, string>>(
-		componentId,
-		initialParams
+		componentApi.getComponentId(uesioId, ViewComponentId, path, context),
+		context.mergeStringMap(params)
 	)
-	// This is tricky --- we need to upsert the view frame, rather than just adding, to ensure that we do not add an additional frame
-	// on top of what is already there, otherwise the component id will be DIFFERENT when Component Signals (such as SET_PARAM) are dispatched,
-	// and those signals would be updating state for the wrong component id.
-	const viewContext = context.upsertViewFrame({
+
+	const viewContext = context.addViewFrame({
 		view: viewId,
 		viewDef: viewDefId,
 		params: paramState,
 	})
+
 	useLoadWires(viewContext, viewDef)
 
 	if (!viewDef) return null
