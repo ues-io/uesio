@@ -52,6 +52,27 @@ function afterbundlelisting(bot: AfterSaveBotApi) {
 		}
 
 		if (OldStatus === "APPROVED" && NewStatus === "PUBLISHED") {
+			//check if app has a default pricing
+			const appID = change.get("uesio/studio.app->uesio/core.id")
+			const records = bot.load({
+				collection: "uesio/studio.licensetemplate",
+				fields: [{ id: "uesio/studio.app" }],
+				conditions: [
+					{
+						operator: "EQ",
+						field: "uesio/studio.app",
+						value: appID,
+					},
+				],
+			})
+
+			if (records.length === 0) {
+				bot.addError(
+					`Cannot publish bundle listing without a default pricing`
+				)
+				return
+			}
+
 			historyChanges.push(getHistoryItem(change))
 			return
 		}
