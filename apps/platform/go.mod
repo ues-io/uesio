@@ -16,7 +16,7 @@ require (
 	github.com/dimchansky/utfbom v1.1.1
 	github.com/dop251/goja v0.0.0-20230707174833-636fdf960de1
 	github.com/evanw/esbuild v0.19.5
-	github.com/fatih/color v1.15.0
+	github.com/fatih/color v1.16.0
 	github.com/felixge/httpsnoop v1.0.3
 	github.com/francoispqt/gojay v1.2.13
 	github.com/gofrs/uuid v4.4.0+incompatible
@@ -94,7 +94,7 @@ require (
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
-	github.com/mattn/go-isatty v0.0.19 // indirect
+	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/qdm12/reprint v0.0.0-20200326205758-722754a53494
 	github.com/sendgrid/sendgrid-go v3.13.0+incompatible
 	github.com/shopspring/decimal v1.3.1 // indirect
