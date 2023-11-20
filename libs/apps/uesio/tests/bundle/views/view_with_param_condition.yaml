@@ -1,0 +1,51 @@
+name: view_with_param_condition
+definition:
+  wires:
+    animal:
+      collection: uesio/tests.animal
+      fields:
+        uesio/tests.genus:
+        uesio/tests.species:
+        uesio/tests.ancestor:
+        uesio/tests.lookalike:
+        uesio/tests.total_population:
+        uesio/core.updatedat:
+        uesio/core.createdat:
+      batchsize: 1
+      conditions:
+        - field: uesio/tests.genus
+          operator: EQ
+          valueSource: PARAM
+          param: genus
+        - field: uesio/tests.species
+          operator: EQ
+          valueSource: PARAM
+          param: species
+  # Components determine the layout and composition of your view
+  components:
+    - uesio/io.item:
+      wire: animal
+      components:
+        - uesio/io.titlebar:
+            title: "Animal: ${uesio/tests.genus} ${uesio/tests.species}"
+        - uesio/io.field:
+            fieldId: uesio/tests.genus
+        - uesio/io.field:
+            fieldId: uesio/tests.species
+        - uesio/io.field:
+            fieldId: uesio/tests.total_population
+        - uesio/io.field:
+            fieldId: uesio/tests.ancestor
+        - uesio/io.field:
+            fieldId: uesio/tests.lookalike
+        - uesio/io.field:
+            fieldId: uesio/core.createdat
+        - uesio/io.field:
+            fieldId: uesio/core.updatedat
+  params:
+    genus:
+      type: TEXT
+      required: true
+    species:
+      type: TEXT
+      required: true

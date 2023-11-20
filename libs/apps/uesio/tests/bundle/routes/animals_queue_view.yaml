@@ -1,0 +1,4 @@
+name: animals_queue_view
+path: animals_queue_view
+view: animals_queue_view
+title: For testing view SET_PARAMS signal
