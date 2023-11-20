@@ -16,6 +16,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	oauthlib "github.com/thecloudmasters/uesio/pkg/oauth2"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/templating"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
 
@@ -198,20 +199,17 @@ func (api *BotHttpAPI) Request(req *BotHttpRequest) *BotHttpResponse {
 func (api *BotHttpAPI) makeRequest(req *http.Request, auth *BotHttpAuth) (*http.Response, error) {
 	switch auth.Type {
 	case "API_KEY":
-		// TODO: Determine where to put the key (header, query param, etc.)
-		// and apply this to the request
+		if err := api.setApiKeyInRequest(req, auth.Credentials); err != nil {
+			return nil, err
+		}
 		break
 	case "BASIC_AUTH":
 		if err := api.setBasicAuthHeaderInRequest(req, auth.Credentials); err != nil {
 			return nil, err
 		}
 		break
-	case "OAUTH2_AUTHORIZATION_CODE":
-		return oauthlib.MakeRequestWithStoredUserCredentials(req, api.ic.GetIntegration().GetKey(), api.getSession(), auth.Credentials)
-	case "OAUTH2_CLIENT_CREDENTIALS":
-		// TODO: Check for an integration credential record for the "system" user for the tenant,
-		// and if one exists and is unexpired, use this token directly,
-		// otherwise hit the access token endpoint to get a fresh token
+	case "OAUTH2_AUTHORIZATION_CODE", "OAUTH2_CLIENT_CREDENTIALS":
+		return oauthlib.MakeRequestWithStoredUserCredentials(req, api.ic)
 		break
 	}
 	// Default
@@ -227,13 +225,47 @@ func (api *BotHttpAPI) setBasicAuthHeaderInRequest(req *http.Request, cred *adap
 	if err != nil {
 		return exceptions.NewUnauthorizedException("password is required")
 	}
-	buf := bytes.NewBuffer([]byte{})
-	_, err = base64.NewEncoder(base64.StdEncoding, buf).Write([]byte(username + ":" + password))
-	if err != nil {
-		return exceptions.NewUnauthorizedException("invalid username and password provided for integration")
-	}
-	req.Header.Set("Authorization", "Basic "+buf.String())
+	req.Header.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte(username+":"+password)))
 	return nil
+}
+
+func (api *BotHttpAPI) setApiKeyInRequest(req *http.Request, cred *adapt.Credentials) error {
+	_, err := cred.GetRequiredEntry("apikey")
+	if err != nil {
+		return exceptions.NewUnauthorizedException("apikey is required")
+	}
+	location, err := cred.GetRequiredEntry("location")
+	if err != nil {
+		return exceptions.NewUnauthorizedException("location is required")
+	}
+	locationName, err := cred.GetRequiredEntry("locationName")
+	if err != nil {
+		return exceptions.NewUnauthorizedException("locationName is required")
+	}
+	templateString := cred.GetEntry("locationValue", "${apikey}")
+
+	locationTemplate, err := templating.NewWithFunc(templateString, func(m map[string]interface{}, key string) (interface{}, error) {
+		return cred.GetRequiredEntry(key)
+	})
+	if err != nil {
+		return exceptions.NewUnauthorizedException("invalid API Key credentials, invalid location template: " + err.Error())
+	}
+	locationValue, err := templating.Execute(locationTemplate, nil)
+	if err != nil {
+		return exceptions.NewUnauthorizedException("invalid API Key credentials, location template could not be merged: " + err.Error())
+	}
+
+	switch location {
+	case "header":
+		req.Header.Set(http.CanonicalHeaderKey(locationName), locationValue)
+		return nil
+	case "querystring":
+		query := req.URL.Query()
+		query.Set(locationName, locationValue)
+		req.URL.RawQuery = query.Encode()
+		return nil
+	}
+	return exceptions.NewUnauthorizedException("invalid API Key credentials, location is invalid")
 }
 
 func getBotHeaders(header http.Header) map[string]string {

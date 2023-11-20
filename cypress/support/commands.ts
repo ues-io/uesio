@@ -47,6 +47,22 @@ Cypress.Commands.add(
 	}
 )
 
+// Logs in to the app and creates 2 workspaces
+// and creates an App and Workspace to use for subsequent tests
+Cypress.Commands.add(
+	"loginWithAppAnd2Workspaces",
+	(appName: string, workspace1Name: string, workspace2Name: string) => {
+		// Caching session when logging in via page visit
+		cy.session("automationSession3", () => {
+			login()
+			createApp(appName)
+			createWorkspaceInApp(workspace1Name, appName)
+			cy.visitRoute(getAppBasePath(appName))
+			createWorkspaceInApp(workspace2Name, appName)
+		})
+	}
+)
+
 // Just logs in to the app
 Cypress.Commands.add("login", () => {
 	cy.session("automationSession2", login)
@@ -173,6 +189,10 @@ Cypress.Commands.add("getComponentState", (componentId: string) => {
 		.invoke("getExternalState", componentId)
 })
 
+Cypress.Commands.add("getRoute", () => {
+	cy.window().its("uesio.api.route").invoke("getRoute")
+})
+
 Cypress.Commands.add("getWireState", (viewId: string, wireName: string) => {
 	cy.window().its("uesio.api.wire").invoke("getWire", viewId, wireName)
 })
@@ -200,6 +220,11 @@ declare global {
 				appName: string,
 				workspaceName: string
 			): Chainable<void>
+			loginWithAppAnd2Workspaces(
+				appName: string,
+				workspace1Name: string,
+				workspace2Name: string
+			): Chainable<void>
 			login(): Chainable<void>
 			visitRoute(route: string): Chainable<void>
 			getByIdFragment(
@@ -225,6 +250,7 @@ declare global {
 				expectLabel: string
 			): Chainable<void>
 			getComponentState(componentId: string): Chainable<void>
+			getRoute(): Chainable<void>
 			getWireState(viewId: string, wireName: string): Chainable<void>
 			hotkey(hotkey: string): Chainable<void>
 			changeSelectValue(

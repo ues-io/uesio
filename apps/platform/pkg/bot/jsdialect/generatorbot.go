@@ -3,15 +3,14 @@ package jsdialect
 import (
 	"bytes"
 	"io"
-	"io/ioutil"
 	"regexp"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/retrieve"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 	"gopkg.in/yaml.v3"
@@ -28,7 +27,7 @@ func mergeTemplate(file io.Writer, params map[string]interface{}, templateString
 type GeneratorBotAPI struct {
 	Session    *sess.Session
 	Params     *ParamsAPI `bot:"params"`
-	Create     retrieve.WriterCreator
+	Create     bundlestore.FileCreator
 	Bot        *meta.Bot
 	Connection adapt.Connection
 }
@@ -39,16 +38,12 @@ func (gba *GeneratorBotAPI) RunGenerator(namespace, name string, params map[stri
 
 func (gba *GeneratorBotAPI) GetTemplate(templateFile string) (string, error) {
 	// Load in the template text from the Bot.
-	_, stream, err := bundle.GetItemAttachment(gba.Bot, templateFile, gba.Session)
+	buf := &bytes.Buffer{}
+	_, err := bundle.GetItemAttachment(buf, gba.Bot, templateFile, gba.Session)
 	if err != nil {
 		return "", err
 	}
-	templateBytes, err := ioutil.ReadAll(stream)
-	if err != nil {
-		return "", err
-	}
-
-	return string(templateBytes), nil
+	return string(buf.Bytes()), nil
 }
 
 func (gba *GeneratorBotAPI) MergeString(params map[string]interface{}, templateString string) (string, error) {

@@ -37,7 +37,7 @@
 		"nx": "nx",
 		"setup-ssl": "cd ./apps/platform/ssl && ./create.sh",
 		"start": "nx serve platform",
-		"test": "nx test"
+		"test": "nx run-many --target=test --all"
 	},
 	"files": [],
 	"devDependencies": {
@@ -53,7 +53,7 @@
 		"@types/fontfaceobserver": "^2.1.0",
 		"@types/jest": "29.5.6",
 		"@types/json-pointer": "^1.0.31",
-		"@types/lodash": "^4.14.198",
+		"@types/lodash": "^4.14.201",
 		"@types/papaparse": "^5.3.10",
 		"@types/react": "^17.0.38",
 		"@types/react-dom": "^17.0.11",

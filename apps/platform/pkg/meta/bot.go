@@ -393,8 +393,7 @@ func (b *Bot) ValidateParams(params map[string]interface{}) error {
 		switch param.Type {
 		case "NUMBER":
 			// Cast to the corresponding type
-			_, ok := paramValue.(float64)
-			if !ok {
+			if !isNumericType(paramValue) {
 				return NewParamError("could not convert param to number", param.Name)
 			}
 		case "CHECKBOX":
@@ -410,4 +409,12 @@ func (b *Bot) ValidateParams(params map[string]interface{}) error {
 		}
 	}
 	return nil
+}
+
+func isNumericType(val interface{}) bool {
+	switch val.(type) {
+	case int64, float64, int, float32, int32, int8, int16:
+		return true
+	}
+	return false
 }

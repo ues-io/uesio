@@ -1,6 +1,7 @@
 package file
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"io"
@@ -111,7 +112,8 @@ func DownloadUserFile(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	fileStream, userFile, err := filesource.Download(userFileID, session)
+	buf := &bytes.Buffer{}
+	userFile, err := filesource.Download(buf, userFileID, session)
 	if err != nil {
 		err := errors.New("unable to load file:" + err.Error())
 		slog.Error(err.Error())
@@ -124,5 +126,5 @@ func DownloadUserFile(w http.ResponseWriter, r *http.Request) {
 		LastModified: time.Unix(userFile.UpdatedAt, 0),
 		Namespace:    "",
 		Version:      version,
-	}, fileStream)
+	}, bytes.NewReader(buf.Bytes()))
 }

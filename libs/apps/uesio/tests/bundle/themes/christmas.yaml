@@ -1,0 +1,10 @@
+name: christmas
+definition:
+  palette:
+    primary: "#FF0000"
+    secondary: "#FF0000"
+    error: "#FF0000"
+    warning: "#FF0000"
+    info: "#FF0000"
+    success: "#FF0000"
+public: true

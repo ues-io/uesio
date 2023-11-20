@@ -9,10 +9,16 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/constant"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 var DEBUG_SQL = os.Getenv("UESIO_DEBUG_SQL") == "true"
+
+const (
+	stabby     = "->"
+	waffleCone = "#>"
+)
 
 func getFieldNameWithAlias(fieldMetadata *adapt.FieldMetadata) string {
 	fieldName := getJSONBFieldName(fieldMetadata, "main")
@@ -49,8 +55,31 @@ func getJSONBFieldName(fieldMetadata *adapt.FieldMetadata, tableAlias string) st
 		return getAliasedName("collection", tableAlias)
 	}
 
-	return fmt.Sprintf("%s->'%s'", getAliasedName("fields", tableAlias), fieldName)
+	return fmt.Sprintf("%s%s'%s'", getAliasedName("fields", tableAlias), stabby, fieldName)
 
+}
+
+func getFieldNameString(fieldType string, fieldsField string, fieldName string) string {
+	// If the fieldName includes a Uesio path indicator, then we need to use a Postgres JSON path array operator
+	// (aka "Waffle Cone") instead of the "stabby" operator to deeply traverse
+	traversalOperator := stabby
+	useFieldName := fmt.Sprintf("'%s'", fieldName)
+	if strings.Contains(fieldName, constant.RefSep) {
+		traversalOperator = waffleCone
+		useFieldName = fmt.Sprintf("Array['%s']", strings.Join(strings.Split(fieldName, constant.RefSep), "','"))
+	}
+	switch fieldType {
+	case "CHECKBOX":
+		return fmt.Sprintf("(%s%s>%s)::boolean", fieldsField, traversalOperator, useFieldName)
+	case "TIMESTAMP":
+		return fmt.Sprintf("(%s%s>%s)::bigint", fieldsField, traversalOperator, useFieldName)
+	case "NUMBER", "MAP", "LIST", "MULTISELECT", "STRUCT":
+		// Return just as bytes
+		return fmt.Sprintf("%s%s%s", fieldsField, traversalOperator, useFieldName)
+	default:
+		// Cast to string
+		return fmt.Sprintf("%s%s>%s", fieldsField, traversalOperator, useFieldName)
+	}
 }
 
 func getFieldName(fieldMetadata *adapt.FieldMetadata, tableAlias string) string {
@@ -76,18 +105,7 @@ func getFieldName(fieldMetadata *adapt.FieldMetadata, tableAlias string) string 
 	}
 
 	fieldsField := getAliasedName("fields", tableAlias)
-	switch fieldMetadata.Type {
-	case "CHECKBOX":
-		return fmt.Sprintf("(%s->>'%s')::boolean", fieldsField, fieldName)
-	case "TIMESTAMP":
-		return fmt.Sprintf("(%s->>'%s')::bigint", fieldsField, fieldName)
-	case "NUMBER", "MAP", "LIST", "MULTISELECT", "STRUCT":
-		// Return just as bytes
-		return fmt.Sprintf("%s->'%s'", fieldsField, fieldName)
-	default:
-		// Cast to string
-		return fmt.Sprintf("%s->>'%s'", fieldsField, fieldName)
-	}
+	return getFieldNameString(fieldMetadata.Type, fieldsField, fieldName)
 }
 
 func getAliasedName(name, alias string) string {

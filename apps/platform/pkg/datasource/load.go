@@ -73,17 +73,33 @@ func processConditions(
 
 	var err error
 
+	currentCollectionMeta, _ := metadata.GetCollection(collectionKey)
+
 	for i, condition := range conditions {
 
-		// Convert reference-crossing conditions to subquery conditions
+		// Convert potentially reference-crossing conditions to subquery conditions
 		if isReferenceCrossingField(condition.Field) {
-			conditionPointer := &condition
-			err = transformReferenceCrossingConditionToSubquery(collectionKey, conditionPointer, metadata)
-			if err != nil {
-				return err
+			// Just because it has an arrow does NOT mean it is reference-crossing, it might be a struct field,
+			// in which case, we just want to leave it alone. This will mostly be relevant for external integrations.
+			mainField := strings.Split(condition.Field, constant.RefSep)[0]
+			// Assume it's a reference, unless we can prove otherwise
+			isReferenceField := true
+			if mainField != "" && currentCollectionMeta != nil {
+				mainFieldMeta, err := currentCollectionMeta.GetField(mainField)
+				if err == nil && !adapt.IsReference(mainFieldMeta.Type) {
+					isReferenceField = false
+				}
 			}
-			// Mutate the original condition in the array, otherwise the changes will be lost
-			conditions[i] = *conditionPointer
+			// If this IS a Condition on a Reference field, then transform it to a Sub-query condition
+			if isReferenceField {
+				conditionPointer := &condition
+				err = transformReferenceCrossingConditionToSubquery(collectionKey, conditionPointer, metadata)
+				if err != nil {
+					return err
+				}
+				// Mutate the original condition in the array, otherwise the changes will be lost
+				conditions[i] = *conditionPointer
+			}
 		}
 
 		if condition.Type == "SUBQUERY" || condition.Type == "GROUP" {

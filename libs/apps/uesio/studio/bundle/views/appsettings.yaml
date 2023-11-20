@@ -103,6 +103,7 @@ definition:
                                             wire: apps
                                             components:
                                               - uesio/io.button:
+                                                  uesio.id: delete-app
                                                   text: Delete this app
                                                   uesio.variant: uesio/io.destructive
                                                   signals:

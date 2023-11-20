@@ -1,5 +1,4 @@
 import { definition, api, component, styles } from "@uesio/ui"
-import { nanoid } from "@reduxjs/toolkit"
 import Papa, { ParseResult } from "papaparse"
 
 interface Props {
@@ -32,37 +31,32 @@ const readCSV = async (file: File): Promise<string[][]> =>
 		})
 	})
 
+const StyleDefaults = Object.freeze({
+	div: [
+		"p-24",
+		"outline-1",
+		"outline-dashed",
+		"outline-primary",
+		"text-slate-700",
+		"font-light",
+		"text-sm",
+		"text-center",
+		"grid",
+		"items-center",
+		"justify-center",
+		"content-center",
+		"gap-4",
+		"rounded",
+	],
+	icon: ["text-7xl", "text-primary"],
+})
+
 const ImportButton: definition.UtilityComponent<Props> = (props) => {
 	const Button = component.getUtility("uesio/io.button")
 	const Icon = component.getUtility("uesio/io.icon")
 	const UploadArea = component.getUtility("uesio/io.uploadarea")
-	const { context, changeUploaded, type } = props
-
-	const uploadLabelId = nanoid()
-
-	const classes = styles.useUtilityStyleTokens(
-		{
-			div: [
-				"p-24",
-				"outline-1",
-				"outline-dashed",
-				"outline-primary",
-				"text-slate-700",
-				"font-light",
-				"text-sm",
-				"text-center",
-				"grid",
-				"items-center",
-				"justify-center",
-				"content-center",
-				"gap-4",
-				"rounded",
-			],
-			icon: ["text-7xl", "text-primary"],
-		},
-		props
-	)
-
+	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
+	const { context, changeUploaded, id, type } = props
 	return (
 		<UploadArea
 			context={context}
@@ -80,11 +74,11 @@ const ImportButton: definition.UtilityComponent<Props> = (props) => {
 					api.notification.addError("No file found", context)
 				}
 			}}
-			uploadLabelId={uploadLabelId}
+			uploadLabelId={id}
 		>
-			{type && type === "button" ? (
-				<label htmlFor={uploadLabelId}>
-					{/* A bit hacky, we the button styling but not the click event*/}
+			<label htmlFor={id}>
+				{/* A bit hacky, we the button styling but not the click event*/}
+				{type && type === "button" ? (
 					<div style={{ pointerEvents: "none", cursor: "pointer" }}>
 						<Button
 							context={context}
@@ -92,9 +86,7 @@ const ImportButton: definition.UtilityComponent<Props> = (props) => {
 							label={"Upload another file"}
 						/>
 					</div>
-				</label>
-			) : (
-				<label htmlFor={uploadLabelId}>
+				) : (
 					<div className={classes.div}>
 						<p>Drop your .csv file here or Click to browse.</p>
 						<Icon
@@ -103,8 +95,8 @@ const ImportButton: definition.UtilityComponent<Props> = (props) => {
 							icon="image"
 						/>
 					</div>
-				</label>
-			)}
+				)}
+			</label>
 		</UploadArea>
 	)
 }

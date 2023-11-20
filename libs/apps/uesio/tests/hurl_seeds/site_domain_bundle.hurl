@@ -43,6 +43,32 @@ jsonpath "$.success" == true
 jsonpath "$.error" == ""
 jsonpath "$.params.description" == "test bundle"
 
+# Create a workspace using that bundle
+POST https://{{host}}:{{port}}/site/wires/save
+{
+    "wires": [
+        {
+            "wire": "newworkspace",
+            "collection": "uesio/studio.workspace",
+            "changes": {
+                "1": {
+                    "uesio/studio.app": {
+                        "uesio/core.id": "{{app_id}}"
+                    },
+                    "uesio/studio.name": "quickstart",
+                    "uesio/studio.sourcebundle": {
+                        "uesio/core.uniquekey": "uesio/tests:{{major}}:{{minor}}:{{patch}}"
+                    }
+                }
+            }
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" == null
+jsonpath "$.wires[0].changes['1']['uesio/core.uniquekey']" == "uesio/tests:quickstart"
+
 # Create a site using that bundle
 POST https://{{host}}:{{port}}/site/wires/save
 {
@@ -103,5 +129,12 @@ HTTP 200
 POST https://{{host}}:{{port}}/siteadmin/uesio/tests/testsite/configvalues/uesio/tests/studio_apis_url
 {
     "value": "https://tests.{{domain}}:{{port}}/site"
+}
+HTTP 200
+
+# Set the SendGrid API key secret for the site
+POST https://{{host}}:{{port}}/siteadmin/uesio/tests/testsite/secrets/uesio/core/sendgridkey
+{
+    "value": "a-fake-send-grid-key"
 }
 HTTP 200

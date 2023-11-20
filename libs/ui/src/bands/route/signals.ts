@@ -23,25 +23,30 @@ type AssignmentNavigateSignal = SignalDefinition & AssignmentNavigateRequest
 const signals: Record<string, SignalDescriptor> = {
 	[`${ROUTE_BAND}/REDIRECT`]: {
 		dispatcher: (signal: RedirectSignal, context: Context) =>
-			redirect(context, signal.path, signal.newtab),
+			redirect(
+				context,
+				context.mergeString(signal.path),
+				context.mergeBoolean(signal.newtab, false)
+			),
 	},
 	[`${ROUTE_BAND}/RELOAD`]: {
 		dispatcher: (signal: SignalDefinition, context: Context) => {
 			const routeState = getCurrentState().route
 			if (!routeState) return context
+			const { namespace, path } = routeState
 			return navigate(context, {
-				namespace: routeState.namespace,
-				path: routeState.path,
+				namespace,
+				path,
 			})
 		},
 	},
 	[`${ROUTE_BAND}/NAVIGATE`]: {
 		dispatcher: (signal: PathNavigateSignal, context: Context) =>
-			navigate(context, signal),
+			navigate(context, context.mergeMap(signal)),
 	},
 	[`${ROUTE_BAND}/NAVIGATE_TO_ASSIGNMENT`]: {
 		dispatcher: (signal: AssignmentNavigateSignal, context: Context) =>
-			navigateToAssignment(context, signal),
+			navigateToAssignment(context, context.mergeMap(signal)),
 	},
 }
 

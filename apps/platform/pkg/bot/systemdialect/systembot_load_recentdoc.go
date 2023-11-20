@@ -49,7 +49,10 @@ func getArticleLoad(op *adapt.LoadOp, connection adapt.Connection, session *sess
 		return err
 	}
 
-	meta.Copy(dynamicCollectionMetadata, originalCollectionMetadata)
+	err = meta.Copy(dynamicCollectionMetadata, originalCollectionMetadata)
+	if err != nil {
+		return err
+	}
 
 	namespace, name, err := meta.ParseKey(collectionName)
 	if err != nil {

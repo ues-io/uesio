@@ -12,38 +12,87 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	httpClient "github.com/thecloudmasters/uesio/pkg/http"
-	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
 
+type CredentialAccessors struct {
+	Fetch  CredentialFetcher
+	Save   CredentialSaver
+	Delete CredentialSaver
+}
+type CredentialFetcher func(ic *adapt.IntegrationConnection) (*adapt.Item, error)
+type CredentialSaver func(credential *adapt.Item, ic *adapt.IntegrationConnection) error
 type authHeaderEventListener func(token *oauth2.Token, authHeader string)
 
-func MakeRequestWithStoredUserCredentials(req *http.Request, integrationName string, session *sess.Session, credentials *adapt.Credentials) (*http.Response, error) {
+var (
+	credentialAccessors *CredentialAccessors
+)
 
-	config, err := GetConfig(credentials, session.GetContextSite().GetHost())
-	if err != nil {
-		return nil, exceptions.NewUnauthorizedException(err.Error())
-	}
+func SetUserCredentialAccessors(accessors *CredentialAccessors) {
+	credentialAccessors = accessors
+}
 
-	// Fetch OAuth credentials from the DB Integration Collection record
-	// TODO: use existing metadata cache... or connection...
-	connection, err := datasource.GetPlatformConnection(nil, session, nil)
-	if err != nil {
-		return nil, errors.New("unable to obtain platform connection")
-	}
+func defaultCredentialFetch(ic *adapt.IntegrationConnection) (*adapt.Item, error) {
+	session := ic.GetSession()
+	connection := ic.GetPlatformConnection()
 	coreSession, err := datasource.EnterVersionContext("uesio/core", session, connection)
 	if err != nil {
 		return nil, errors.New("failed to enter uesio/core context: " + err.Error())
 	}
+	return GetIntegrationCredential(session.GetSiteUser().ID, ic.GetIntegration().GetKey(), coreSession, connection)
+}
 
-	integrationCredential, err := GetIntegrationCredential(
-		session.GetSiteUser().ID, integrationName, coreSession, connection)
+func defaultCredentialSave(credential *adapt.Item, ic *adapt.IntegrationConnection) error {
+	connection := ic.GetPlatformConnection()
+	coreSession, err := datasource.EnterVersionContext("uesio/core", ic.GetSession(), connection)
+	if err != nil {
+		return errors.New("failed to enter uesio/core context: " + err.Error())
+	}
+	return UpsertIntegrationCredential(credential, coreSession, connection)
+}
+
+func defaultCredentialDelete(credential *adapt.Item, ic *adapt.IntegrationConnection) error {
+	connection := ic.GetPlatformConnection()
+	coreSession, err := datasource.EnterVersionContext("uesio/core", ic.GetSession(), connection)
+	if err != nil {
+		return errors.New("failed to enter uesio/core context: " + err.Error())
+	}
+	return DeleteIntegrationCredential(credential, coreSession, connection)
+}
+
+func InitCredentialAccessors() {
+	credentialAccessors = &CredentialAccessors{
+		Fetch:  defaultCredentialFetch,
+		Save:   defaultCredentialSave,
+		Delete: defaultCredentialDelete,
+	}
+}
+
+func init() {
+	InitCredentialAccessors()
+}
+
+func MakeRequestWithStoredUserCredentials(req *http.Request, ic *adapt.IntegrationConnection) (*http.Response, error) {
+	session := ic.GetSession()
+	integration := ic.GetIntegration()
+	credentials := ic.GetCredentials()
+	// Fetch OAuth credentials from the DB Integration Collection record,
+	isAuthCodeFlow := integration.Authentication == "OAUTH2_AUTHORIZATION_CODE"
+	integrationCredential, err := credentialAccessors.Fetch(ic)
 	if err != nil {
 		return nil, errors.New("unable to retrieve integration credential: " + err.Error())
 	}
-	// If we do NOT have an existing record, then we cannot authenticate
+	// If we do NOT have an existing record...
 	if integrationCredential == nil {
-		return nil, exceptions.NewUnauthorizedException("user has not yet authorized this integration")
+		// If this is the Authorization Code flow, then we cannot authenticate, we must have an existing access token
+		// or a refresh token present on an existing record
+		if isAuthCodeFlow {
+			return nil, exceptions.NewUnauthorizedException("user has not yet authorized this integration")
+		}
+		// If this is the Client Credentials flow, it's very likely we don't have an integration credential yet,
+		// so we'll need to create one
+		integrationCredential = BuildIntegrationCredential(integration.GetKey(), ic.GetSession().GetContextUser().ID, nil)
 	}
 	tok := GetTokenFromCredential(integrationCredential)
 	accessToken := tok.AccessToken
@@ -58,16 +107,21 @@ func MakeRequestWithStoredUserCredentials(req *http.Request, integrationName str
 		TokenTypeOverride: tokenTypeOverride,
 	}
 
-	httpResp, err := NewClient(config, tok, clientOptions).Do(req)
+	client, err := getClient(integration, credentials, tok, session.GetContextSite().GetHost(), clientOptions)
+	if err != nil {
+		return nil, err
+	}
+
+	httpResp, err := client.Do(req)
 
 	// If the status code is unauthorized, then we need to get a new access token.
 	// Retry the request without the access token, just once.
 	// This shouldn't happen if the access token expiration is reliable,
 	// but that's not the case for many OAuth implementations
-	if err == nil && httpResp != nil && httpResp.StatusCode == http.StatusUnauthorized && tok.RefreshToken != "" {
-		slog.Info("GOT unauthorized response, clearing access token to force reauth with refresh token...")
+	if err == nil && httpResp != nil && httpResp.StatusCode == http.StatusUnauthorized {
+		slog.Info("GOT unauthorized response, clearing access token to force re-authenticate...")
 		tok.AccessToken = ""
-		httpResp, err = NewClient(config, tok, clientOptions).Do(req)
+		httpResp, err = client.Do(req)
 	}
 
 	if err == nil {
@@ -76,7 +130,7 @@ func MakeRequestWithStoredUserCredentials(req *http.Request, integrationName str
 			if finalToken.AccessToken != accessToken {
 				slog.Info("GOT new AccessToken, SAVING to DB...")
 				PopulateCredentialFieldsFromToken(integrationCredential, finalToken)
-				if upsertErr := UpsertIntegrationCredential(integrationCredential, coreSession, connection); upsertErr != nil {
+				if upsertErr := credentialAccessors.Save(integrationCredential, ic); upsertErr != nil {
 					slog.Error("error upserting integration credential: " + upsertErr.Error())
 				}
 			}
@@ -91,9 +145,11 @@ func MakeRequestWithStoredUserCredentials(req *http.Request, integrationName str
 		case *oauth2.RetrieveError:
 			// This usually means that the refresh token is invalid, expired, or can't be obtained.
 			// Delete it, or at least attempt to
-			slog.Info("Refresh token must be invalid/expired, so we are purging it...")
-			if deleteErr := DeleteIntegrationCredential(integrationCredential, coreSession, connection); deleteErr != nil {
-				slog.Error("unable to delete integration credential record: " + deleteErr.Error())
+			if isAuthCodeFlow {
+				slog.Info("Refresh token must be invalid/expired, so we are purging it...")
+				if deleteErr := credentialAccessors.Delete(integrationCredential, ic); deleteErr != nil {
+					slog.Error("unable to delete integration credential record: " + deleteErr.Error())
+				}
 			}
 			return nil, exceptions.NewUnauthorizedException(innerErr.Error())
 		}
@@ -101,17 +157,36 @@ func MakeRequestWithStoredUserCredentials(req *http.Request, integrationName str
 	return nil, exceptions.NewUnauthorizedException("Authentication failed: " + err.Error())
 }
 
-// NewClient creates a custom HTTP client which performs automatic token refreshing on expiration
+// getClient creates a custom HTTP client which performs automatic token refreshing on expiration
 // while allowing for us (Uesio) to modify how the authorization header is set,
 // and notify other code when the header is set to know whether a new access token / refresh token was generated
-func NewClient(config *oauth2.Config, t *oauth2.Token, opts *ClientOptions) *http.Client {
+func getClient(integration *meta.Integration, credentials *adapt.Credentials, t *oauth2.Token, host string, opts *ClientOptions) (*http.Client, error) {
+
+	var tokenSource oauth2.TokenSource
+
+	if integration.Authentication == "OAUTH2_CLIENT_CREDENTIALS" {
+		config, err := GetClientCredentialsConfig(credentials)
+		if err != nil {
+			return nil, exceptions.NewUnauthorizedException(err.Error())
+		}
+		tokenSource = oauth2.ReuseTokenSource(t, config.TokenSource(context.Background()))
+	} else if integration.Authentication == "OAUTH2_AUTHORIZATION_CODE" {
+		config, err := GetConfig(credentials, host)
+		if err != nil {
+			return nil, exceptions.NewUnauthorizedException(err.Error())
+		}
+		tokenSource = config.TokenSource(context.Background(), t)
+	} else {
+		return nil, exceptions.NewUnauthorizedException("unsupported OAuth 2 grant type")
+	}
+
 	return &http.Client{
 		Transport: &Transport{
-			Source:        config.TokenSource(context.Background(), t),
+			Source:        tokenSource,
 			Base:          httpClient.Get().Transport,
 			ClientOptions: opts,
 		},
-	}
+	}, nil
 }
 
 type ClientOptions struct {

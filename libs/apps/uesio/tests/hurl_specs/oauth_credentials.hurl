@@ -111,3 +111,10 @@ jsonpath "$.wires[0].data[0]['uesio/core.integration']" == "uesio/tests.oauth2_a
 jsonpath "$.wires[0].data[0]['uesio/core.user']" == "{{user_id}}"
 jsonpath "$.wires[0].data[0]['uesio/core.hasaccesstoken']" == false
 jsonpath "$.wires[0].data[0]['uesio/core.hasrefreshtoken']" == false
+
+# test the OAuth callback error handling
+GET https://{{host}}:{{port}}/site/oauth2/callback?error=invalid_request&error_description=missing+required+code+challenge
+Accept: text/html
+HTTP 400
+[Asserts]
+body contains "invalid_request: missing required code challenge"

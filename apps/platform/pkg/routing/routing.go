@@ -66,7 +66,10 @@ func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *
 	for _, item := range routes {
 		if item.Path == pathTemplate {
 			// Clone the route to ensure we don't mutate in-memory metadata
-			meta.Copy(route, item)
+			err := meta.Copy(route, item)
+			if err != nil {
+				return nil, err
+			}
 			break
 		}
 	}

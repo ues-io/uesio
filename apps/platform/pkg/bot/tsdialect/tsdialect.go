@@ -1,8 +1,8 @@
 package tsdialect
 
 import (
+	"bytes"
 	"fmt"
-	"io"
 	"strings"
 
 	esbuild "github.com/evanw/esbuild/pkg/api"
@@ -11,8 +11,8 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bot/jsdialect"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/retrieve"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -126,17 +126,14 @@ const DefaultBotBody = `export default function %s(bot) {
 
 // TODO: cache the transformed code, or generate it server-side as part of save of bot.ts
 func (b *TSDialect) hydrateBot(bot *meta.Bot, session *sess.Session) error {
-	_, stream, err := bundle.GetItemAttachment(bot, b.GetFilePath(), session)
-	if err != nil {
-		return err
-	}
-	content, err := io.ReadAll(stream)
+	buf := &bytes.Buffer{}
+	_, err := bundle.GetItemAttachment(buf, bot, b.GetFilePath(), session)
 	if err != nil {
 		return err
 	}
 
 	// Transform from TS to JS
-	result := esbuild.Transform(string(content), esbuild.TransformOptions{
+	result := esbuild.Transform(string(buf.Bytes()), esbuild.TransformOptions{
 		Loader: esbuild.LoaderTS,
 	})
 
@@ -185,7 +182,7 @@ func (b *TSDialect) CallBot(bot *meta.Bot, params map[string]interface{}, connec
 	return botAPI.Results, nil
 }
 
-func (b *TSDialect) CallGeneratorBot(bot *meta.Bot, create retrieve.WriterCreator, params map[string]interface{}, connection adapt.Connection, session *sess.Session) error {
+func (b *TSDialect) CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreator, params map[string]interface{}, connection adapt.Connection, session *sess.Session) error {
 	botAPI := &jsdialect.GeneratorBotAPI{
 		Session: session,
 		Params: &jsdialect.ParamsAPI{

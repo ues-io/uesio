@@ -3,10 +3,11 @@ package meta
 import (
 	"errors"
 	"fmt"
-	"reflect"
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/qdm12/reprint"
 
 	"github.com/thecloudmasters/uesio/pkg/goutils"
 	"github.com/thecloudmasters/uesio/pkg/reflecttool"
@@ -62,6 +63,8 @@ type CollectionableItem interface {
 	GetItemMeta() *ItemMeta
 	SetItemMeta(*ItemMeta)
 }
+
+type FilterFunc func(string, BundleConditions, bool) bool
 
 type BundleableGroup interface {
 	CollectionableGroup
@@ -272,6 +275,10 @@ func GetGroupingConditions(metadataType, grouping string) (BundleConditions, err
 			return nil, errors.New("metadata type record challenge token requires grouping value")
 		}
 		conditions["uesio/studio.collection"] = grouping
+	} else if metadataType == "credentials" {
+		if grouping != "" {
+			conditions["uesio/studio.type"] = grouping
+		}
 	}
 	return conditions, nil
 }
@@ -301,8 +308,8 @@ func GetTypeFromCollectionName(studioCollectionName string) string {
 	return bundleableCollectionNames[studioCollectionName]
 }
 
-func Copy(to, from interface{}) {
-	reflect.Indirect(reflect.ValueOf(to)).Set(reflect.Indirect(reflect.ValueOf(from)))
+func Copy(to, from interface{}) error {
+	return reprint.FromTo(from, to)
 }
 
 var validMetaRegex, _ = regexp.Compile("^[a-z0-9_]+$")

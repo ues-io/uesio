@@ -1,0 +1,13 @@
+name: recursive_add_numbers
+type: LISTENER
+dialect: TYPESCRIPT
+params:
+  - name: a
+    type: NUMBER
+    required: true
+  - name: b
+    type: NUMBER
+    required: true
+  - name: c
+    type: NUMBER
+    required: false

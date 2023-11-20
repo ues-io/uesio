@@ -54,8 +54,7 @@ definition:
               params:
                 selected: profiles
         content:
-          - uesio/io.list:
-              uesio.id: profilesList
+          - uesio/io.item:
               wire: profiles
               mode: EDIT
               components:
@@ -151,10 +150,30 @@ definition:
                                   - type: paramValue
                                     param: app
                                     field: uesio/core.dynamiccollection
+                                    operator: EQUALS
+                                    value: $Param{namespace}
+                                fieldId: uesio/studio.homeroute
+                                label: Login redirect route for this profile
+                            - uesio/io.field:
+                                uesio.display:
+                                  - type: paramValue
+                                    param: app
+                                    field: uesio/core.dynamiccollection
                                     operator: NOT_EQUALS
                                     value: $Param{namespace}
                                 fieldId: uesio/studio.permissionsetsrefs
                                 label: Permission Sets assigned to this Profile
+                                uesio.context:
+                                  fieldMode: READ
+                            - uesio/io.field:
+                                uesio.display:
+                                  - type: paramValue
+                                    param: app
+                                    field: uesio/core.dynamiccollection
+                                    operator: NOT_EQUALS
+                                    value: $Param{namespace}
+                                fieldId: uesio/studio.homeroute
+                                label: Login redirect route for this profile
                                 uesio.context:
                                   fieldMode: READ
   panels:
