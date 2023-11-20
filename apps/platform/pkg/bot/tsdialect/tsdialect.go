@@ -212,7 +212,14 @@ func (b *TSDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adapt.Co
 	if err := b.hydrateBot(bot, session); err != nil {
 		return err
 	}
-	return RunBot(bot, botAPI, nil)
+	if err = RunBot(bot, botAPI, nil); err != nil {
+		return err
+	}
+	loadErrors := botAPI.GetLoadErrors()
+	if len(loadErrors) > 0 {
+		return meta.NewBotExecutionError(strings.Join(loadErrors, ", "))
+	}
+	return nil
 }
 
 func (b *TSDialect) SaveBot(bot *meta.Bot, op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
