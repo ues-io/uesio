@@ -17,7 +17,7 @@ require (
 	github.com/dop251/goja v0.0.0-20230707174833-636fdf960de1
 	github.com/evanw/esbuild v0.19.5
 	github.com/fatih/color v1.15.0
-	github.com/felixge/httpsnoop v1.0.3
+	github.com/felixge/httpsnoop v1.0.4
 	github.com/francoispqt/gojay v1.2.13
 	github.com/gofrs/uuid v4.4.0+incompatible
 	github.com/golang-migrate/migrate/v4 v4.16.2
