@@ -26,17 +26,7 @@ const textAlikeFiledTypes = ["TEXT", "AUTONUMBER", "EMAIL", "LONGTEXT"]
 
 function getConditionTitle(condition: wire.WireConditionState): string {
 	if (condition.type === "GROUP" && !condition.valueSource) {
-		return `GROUP ${condition.conjunction}`
-	}
-
-	if (condition.valueSource === "VALUE") {
-		const valueCondition = condition as wire.ValueConditionState
-		const valuesString = valueCondition.values
-			? "(" + valueCondition.values.join(",") + ")"
-			: valueCondition.value
-		return `${valueCondition.field} ${valueCondition.operator || ""} ${
-			valuesString || ""
-		}`
+		return `GROUP ${condition.conjunction || "AND"}`
 	}
 
 	if (condition.valueSource === "PARAM") {
@@ -59,7 +49,17 @@ function getConditionTitle(condition: wire.WireConditionState): string {
 	}
 
 	if (condition.type === "SEARCH") {
-		return `SEARCH`
+		return `SEARCH${
+			condition.fields ? "[" + condition.fields?.join(", ") + "]" : ""
+		}`
+	}
+
+	if (condition.type === "SUBQUERY") {
+		return `SUBQUERY: ${condition.field || "[No field]"} ${
+			condition.operator || "IN"
+		} (SELECT ${condition.subfield || "[No field]"} FROM ${
+			condition.subcollection || "[No collection]"
+		})`
 	}
 
 	if (
@@ -67,6 +67,16 @@ function getConditionTitle(condition: wire.WireConditionState): string {
 		condition.operator === "IS_NOT_BLANK"
 	) {
 		return `${condition.field} ${condition.operator}`
+	}
+
+	if (condition.valueSource === "VALUE" || !condition.valueSource) {
+		const valueCondition = condition as wire.ValueConditionState
+		const valuesString = valueCondition.values
+			? "(" + valueCondition.values.join(",") + ")"
+			: valueCondition.value || "[No value]"
+		return `${valueCondition.field || "[No field]"} ${
+			valueCondition.operator || ""
+		} ${valuesString || ""}`
 	}
 
 	return "NEW_VALUE"

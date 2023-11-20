@@ -48,6 +48,8 @@ type GroupConditionState = ConditionBase & {
 type SubqueryConditionState = ConditionBase & {
 	type: typeof SUBQUERY
 	conditions?: WireConditionState[]
+	field: string
+	operator: "IN" | "NOT_IN"
 	valueSource: undefined
 	subcollection: MetadataKey
 	subfield: MetadataKey
