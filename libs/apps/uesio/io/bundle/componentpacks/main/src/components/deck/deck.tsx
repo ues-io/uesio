@@ -1,4 +1,4 @@
-import { component, styles, definition } from "@uesio/ui"
+import { api, component, definition, styles } from "@uesio/ui"
 import List, { ListDefinition } from "../list/list"
 
 import { default as IOGrid } from "../../utilities/grid/grid"
@@ -16,6 +16,7 @@ const Deck: definition.UC<ListDefinition> = (props) => {
 			variant={definition[component.STYLE_VARIANT]}
 			classes={classes}
 			context={context}
+			id={api.component.getComponentIdFromProps(props)}
 		>
 			<List {...props} />
 		</IOGrid>
