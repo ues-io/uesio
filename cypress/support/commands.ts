@@ -267,6 +267,7 @@ function createWorkspaceInApp(workspaceName: string, appName: string) {
 	cy.clickButton("uesio/io.button:add-workspace")
 	cy.typeInInput("workspace-name", workspaceName)
 	cy.clickButton("uesio/io.button:save-workspace")
+	cy.wait(500)
 	cy.url().should(
 		"eq",
 		Cypress.config().baseUrl + getWorkspaceBasePath(appName, workspaceName)
@@ -278,6 +279,7 @@ function createApp(appName: string) {
 	cy.typeInInput("new-app-name", appName)
 	cy.typeInInput("new-app-description", "E2E Test App")
 	cy.clickButton("save-new-app")
+	cy.wait(500)
 	cy.url().should("eq", Cypress.config().baseUrl + getAppBasePath(appName))
 }
 
