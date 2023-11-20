@@ -15,6 +15,15 @@ import (
 var oauthExchangeCache cache.Cache[string]
 
 func init() {
+	resetCacheImpl()
+}
+
+// used by tests to use an alternative cache implementation
+func setCacheImpl(cacheImpl cache.Cache[string]) {
+	oauthExchangeCache = cacheImpl
+}
+
+func resetCacheImpl() {
 	oauthExchangeCache = cache.NewRedisCache[string]("oauthExchange")
 }
 
