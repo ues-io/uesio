@@ -3,6 +3,7 @@ package oauth2
 import (
 	"context"
 	"errors"
+	"time"
 
 	"golang.org/x/oauth2"
 
@@ -24,7 +25,9 @@ func setCacheImpl(cacheImpl cache.Cache[string]) {
 }
 
 func resetCacheImpl() {
-	oauthExchangeCache = cache.NewRedisCache[string]("oauthExchange")
+	// This Redis cache can have a very short expiration, to prevent replay attacks,
+	// but should be long enough to allow for 2FA exchanges initiated by the auth server
+	oauthExchangeCache = cache.NewRedisCache[string]("oauthExchange").WithExpiration(time.Minute * 5)
 }
 
 type RedirectMetadata struct {
