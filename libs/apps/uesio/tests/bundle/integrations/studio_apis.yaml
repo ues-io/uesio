@@ -1,4 +1,3 @@
 name: studio_apis
-# intentionally using plain "web" (not uesio/core.web) for backwards compatibility testing here
-type: web
+type: studio_apis_custom
 baseUrl: https://studio.uesio-dev.com:3000

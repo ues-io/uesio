@@ -6,13 +6,11 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
-	"github.com/thecloudmasters/uesio/pkg/clickup"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/integ/bedrock"
 	"github.com/thecloudmasters/uesio/pkg/integ/openai"
 	"github.com/thecloudmasters/uesio/pkg/integ/sendgrid"
 	"github.com/thecloudmasters/uesio/pkg/integ/stripe"
-	"github.com/thecloudmasters/uesio/pkg/integ/web"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -154,8 +152,6 @@ func (b *SystemDialect) RunIntegrationActionBot(bot *meta.Bot, ic *adapt.Integra
 		botFunction = stripe.RunAction
 	case "uesio/core.sendgrid":
 		botFunction = sendgrid.RunAction
-	case "uesio/core.web":
-		botFunction = web.RunAction
 	}
 
 	if botFunction == nil {
@@ -210,10 +206,6 @@ func (b *SystemDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adap
 		botFunction = runUserTokenValueLoadBot
 	case "uesio/studio.recordtokenvalue":
 		botFunction = runRecordTokenValueLoadBot
-	case "tcm/timetracker.project":
-		botFunction = clickup.ProjectLoadBot
-	case "tcm/timetracker.task":
-		botFunction = clickup.TaskLoadBot
 	}
 
 	if meta.IsBundleableCollection(op.CollectionName) {
