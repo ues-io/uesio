@@ -26,9 +26,11 @@ import {
 	setSelectedPath,
 	useBuilderExternalState,
 	useBuilderExternalStatesCount,
+	useBuilderState,
 } from "./stateapi"
 import yaml from "yaml"
-import { validateViewDefinition } from "../yaml/validate"
+import get from "lodash/get"
+import { validateViewDefinition, ValidationResult } from "../yaml/validate"
 
 const moveInArray = (arr: unknown[], fromIndex: number, toIndex: number) =>
 	arr.splice(toIndex, 0, arr.splice(fromIndex, 1)[0])
@@ -47,49 +49,42 @@ const setMetadataValue = (
 	const metadataId = getMetadataId(path)
 	const originalMetadataId = `original:${metadataId}`
 	const original = getBuilderState<string>(context, originalMetadataId)
-	const newTextValue = text || yamlDoc.toString()
 	const current = getMetadataValue(context, path)
+	const newTextValue = text || yamlDoc.toString()
 
 	const isViewDef = path.itemType === "viewdef"
+	let validationResult: ValidationResult | undefined
 
 	// Validate the view definition before proceeding any further
 	if (isViewDef) {
-		const validationResult = validateViewDefinition(yamlDoc.toJS())
-
-		if (!validationResult) {
-			api.signal.run(
-				{
-					signal: "notification/ADD",
-					id: "viewdef-validation",
-					severity: "warn",
-					text: "View definition is invalid",
-					// details: "results"
-					path,
-				},
-				context
-			)
-			return
-		}
+		validationResult = validateViewDefinition(yamlDoc.toJS())
 	}
-
+	const isValid = validationResult?.valid || false
 	if (original === undefined) {
 		setBuilderState(context, originalMetadataId, current)
 	}
 	if (original && newTextValue === original) {
 		removeBuilderState(context, originalMetadataId)
 	}
+
 	setBuilderState(context, metadataId, newTextValue)
-	if (isViewDef) {
+	if (isViewDef && isValid) {
 		api.view.setViewDefinition(path.itemName, yamlDoc.toJSON())
 	}
 }
 
-const get = (context: ctx.Context, path: FullPath) =>
-	api.builder.getDefinitionAtPath(
-		path.itemType,
-		path.itemName,
-		path.localPath
-	)
+const useDefinition = (context: ctx.Context, path: FullPath) =>
+	useBuilderState(context, getMetadataId(path))
+
+const getDef = (context: ctx.Context, path: FullPath) => {
+	if (path.itemType === "viewdef" && path.itemName) {
+		const viewDef = getMetadataValue(context, path)
+		if (!path.localPath) {
+			return viewDef as definition.Definition
+		}
+		return get(viewDef, path.localPath) as definition.Definition
+	}
+}
 
 const set = (
 	context: ctx.Context,
@@ -325,9 +320,6 @@ const changeKey = (context: ctx.Context, path: FullPath, key: string) => {
 	setSelectedPath(context, path.pop()[1].addLocal(key))
 }
 
-const useDefinition = (path: FullPath) =>
-	api.builder.useDefinition(path.itemType, path.itemName, path.localPath)
-
 const getMetadataId = (path: FullPath) =>
 	`metadata:${path.itemType}:${path.itemName}`
 
@@ -443,7 +435,9 @@ export {
 	remove,
 	move,
 	yamlMove,
-	get,
+	getDef as get,
+	getMetadataId,
+	getMetadataValue,
 	clone,
 	cloneKey,
 	changeKey,
