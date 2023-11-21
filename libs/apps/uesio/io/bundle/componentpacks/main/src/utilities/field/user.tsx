@@ -28,7 +28,11 @@ const UserField: definition.UtilityComponent<UserFieldProps> = (props) => {
 		return (
 			<ReferenceField
 				{...props}
-				options={refoptions}
+				context={context.deleteWorkspace()}
+				options={{
+					...refoptions,
+					requirewriteaccess: true,
+				}}
 				setValue={setValue}
 			/>
 		)
