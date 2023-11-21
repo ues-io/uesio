@@ -40,9 +40,18 @@ jsonpath "$.wires[0].data[0]['uesio/core.hasrefreshtoken']" == false
 DELETE https://{{host}}:{{port}}/workspace/uesio/tests/dev/auth/credentials/uesio/tests/oauth2_authorization_code_1
 HTTP 404
 
-# go to our OAuth 2 callback URL,
+# simulate initiating an authorization code exchange
+GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/oauth2/authorize/uesio/tests/oauth2_authorization_code_1
+HTTP 200
+[Captures]
+oauth_state: jsonpath "$.state"
+[Asserts]
+jsonpath "$.authUrl" exists
+jsonpath "$.state" exists
+
+# now simulate going back to our OAuth 2 callback URL,
 # which should invoke the token endpoint to exchange the authorization code for an access token
-GET https://{{host}}:{{port}}/site/oauth2/callback?state=eyJuIjoiMTIzIiwiaSI6InVlc2lvL3Rlc3RzLm9hdXRoMl9hdXRob3JpemF0aW9uX2NvZGVfMSIsImMiOiJ3IiwiYSI6InVlc2lvL3Rlc3RzIiwidyI6ImRldiJ9&code=abcd1234
+GET https://{{host}}:{{port}}/site/oauth2/callback?state={{oauth_state}}&code=abcd1234
 Accept: text/html
 HTTP 200
 

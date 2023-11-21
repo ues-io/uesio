@@ -122,6 +122,7 @@ func getTimeout(timeout int) int {
 }
 
 func (b *JSDialect) hydrateBot(bot *meta.Bot, session *sess.Session) error {
+
 	buf := &bytes.Buffer{}
 	_, err := bundle.GetItemAttachment(buf, bot, b.GetFilePath(), session)
 	if err != nil {
@@ -240,7 +241,7 @@ func (b *JSDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adapt.Co
 		return err
 	}
 	if len(botAPI.loadErrors) > 0 {
-		return errors.New(strings.Join(botAPI.loadErrors, "\n"))
+		return meta.NewBotExecutionError(strings.Join(botAPI.loadErrors, "\n"))
 	}
 	return nil
 }
@@ -268,7 +269,7 @@ func (b *JSDialect) RunIntegrationActionBot(bot *meta.Bot, ic *adapt.Integration
 		return nil, err
 	}
 	if len(botAPI.Errors) > 0 {
-		err = errors.New(strings.Join(botAPI.Errors, ", "))
+		err = meta.NewBotExecutionError(strings.Join(botAPI.Errors, ", "))
 	}
 	return botAPI.Results, err
 }

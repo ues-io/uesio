@@ -38,7 +38,18 @@ definition:
         - field: uesio/core.integration
           value: "$Param{namespace}.$Param{integrationname}"
           valueSource: VALUE
-
+    viewonly:
+      viewOnly: true
+      fields:
+        expiration:
+          type: TEXT
+          label: Access Token Expiration
+      init:
+        create: true
+      defaults:
+        - field: expiration
+          valueSource: VALUE
+          value: "Unknown"
   # Components are how we describe the layout of our view
   components:
     - uesio/studio.mainlayout:
@@ -233,8 +244,8 @@ definition:
     testAuthentication:
       uesio.type: uesio/io.dialog
       title: "Test Authentication: ${uesio/studio.name}"
-      width: 600px
-      height: 680px
+      width: 660px
+      height: 540px
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.secondary
@@ -301,32 +312,61 @@ definition:
             uesio.id: integrationCredentialItem
             mode: READ
             components:
-              - uesio/io.field:
-                  fieldId: uesio/core.hasaccesstoken
-                  uesio.id: has-access-token
+              - uesio/io.grid:
+                  uesio.styleTokens:
+                    root:
+                      - grid-cols-3
+                      - gap-4
+                  items:
+                    - uesio/io.griditem:
+                        components:
+                          - uesio/io.field:
+                              fieldId: uesio/core.hasaccesstoken
+                              uesio.id: has-access-token
+                    - uesio/io.griditem:
+                        components:
+                          - uesio/io.field:
+                              fieldId: uesio/core.accesstokenexpiration
+                              uesio.display:
+                                - field: uesio/core.hasaccesstoken
+                                  value: true
+                                - type: hasValue
+                                  value: ${uesio/core.accesstokenexpiration}
+                          - uesio/io.field:
+                              wire: viewonly
+                              fieldId: expiration
+                              uesio.display:
+                                - field: uesio/core.hasaccesstoken
+                                  value: true
+                                - type: hasNoValue
+                                  value: ${uesio/core.accesstokenexpiration}
+                    - uesio/io.griditem:
+                        components:
+                          - uesio/io.field:
+                              fieldId: uesio/core.tokentype
+                              uesio.display:
+                                - field: uesio/core.hasaccesstoken
+                                  value: true
               - uesio/io.field:
                   fieldId: uesio/core.hasrefreshtoken
                   uesio.id: has-refresh-token
                   uesio.display:
                     - field: uesio/core.hasaccesstoken
                       value: true
-              - uesio/io.field:
-                  fieldId: uesio/core.accesstokenexpiration
+              - uesio/io.grid:
                   uesio.display:
                     - field: uesio/core.hasaccesstoken
                       value: true
-              - uesio/io.field:
-                  fieldId: uesio/core.tokentype
-                  uesio.display:
-                    - field: uesio/core.hasaccesstoken
-                      value: true
-              - uesio/io.field:
-                  fieldId: uesio/core.updatedat
-                  uesio.display:
-                    - field: uesio/core.hasaccesstoken
-                      value: true
-              - uesio/io.field:
-                  fieldId: uesio/core.createdat
-                  uesio.display:
-                    - field: uesio/core.hasaccesstoken
-                      value: true
+                  uesio.styleTokens:
+                    root:
+                      - grid-cols-2
+                      - gap-4
+                  items:
+                    - uesio/io.griditem:
+                        components:
+                          - uesio/io.field:
+                              fieldId: uesio/core.updatedat
+                    - uesio/io.griditem:
+                        components:
+                          - uesio/io.field:
+                              fieldId: uesio/core.createdat
