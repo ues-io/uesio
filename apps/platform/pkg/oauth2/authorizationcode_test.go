@@ -2,7 +2,6 @@ package oauth2
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -59,9 +58,6 @@ func TestAuthorizationCodeFlow(t *testing.T) {
 	})()
 
 	setCacheImpl(cache.NewMemoryCache[string](time.Hour, time.Hour))
-	defer (func() {
-		resetCacheImpl()
-	})()
 
 	happyCredentials := &adapt.Credentials{
 		"clientId":     "testclientid",
@@ -138,10 +134,14 @@ func TestAuthorizationCodeFlow(t *testing.T) {
 			parsed, err := url.Parse(redirectMeta.AuthURL)
 			assert.Nil(t, err)
 			queryVals := parsed.Query()
-			fmt.Printf("query vals: %v\n", queryVals)
 			assert.True(t, queryVals.Has("code_challenge"))
-			assert.Equal(t, host+"/site/oauth2/callback", queryVals.Get("redirect_uri"))
+			assert.Equal(t, "offline", queryVals.Get("access_type"))
 			assert.Equal(t, "testclientid", queryVals.Get("client_id"))
+			assert.Equal(t, "S256", queryVals.Get("code_challenge_method"))
+			assert.Equal(t, redirectUri, queryVals.Get("redirect_uri"))
+			assert.Equal(t, "code", queryVals.Get("response_type"))
+			assert.Equal(t, redirectMeta.State, queryVals.Get("state"))
+			assert.Equal(t, []string{"scope1 scope2"}, queryVals["scope"])
 			stateObject, err := UnmarshalState(redirectMeta.State)
 			assert.Nil(t, err)
 			gotToken, err := ExchangeAuthorizationCodeForAccessToken(tt.credentials, host, sampleAuthCode, stateObject)
