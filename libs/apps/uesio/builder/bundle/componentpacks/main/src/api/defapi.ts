@@ -321,7 +321,7 @@ const changeKey = (context: ctx.Context, path: FullPath, key: string) => {
 }
 
 const getMetadataId = (path: FullPath) =>
-	`metadata:${path.itemType}:${path.itemName}`
+	`metadata:${path ? `${path.itemType}:${path.itemName}` : "undefined"}`
 
 const useContent = (context: ctx.Context, path: FullPath) =>
 	useBuilderExternalState<string>(context, getMetadataId(path))
