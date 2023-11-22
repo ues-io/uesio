@@ -73,16 +73,29 @@ const setMetadataValue = (
 	}
 }
 
-const useDefinition = (context: ctx.Context, path: FullPath) =>
-	useBuilderState(context, getMetadataId(path))
+const useDefinition = <T extends definition.Definition>(
+	context: ctx.Context,
+	path: FullPath
+) => useBuilderState<T>(context, getMetadataId(path), getDef<T>(context, path))
 
-const getDef = (context: ctx.Context, path: FullPath) => {
+const getDef = <T extends definition.Definition>(
+	context: ctx.Context,
+	path: FullPath
+) => {
 	if (path.itemType === "viewdef" && path.itemName) {
-		const viewDef = getMetadataValue(context, path)
-		if (!path.localPath) {
-			return viewDef as definition.Definition
+		const viewDefString = getMetadataValue(context, path)
+		let viewDef = null
+		if (viewDefString) {
+			viewDef = parse(viewDefString).toJS()
 		}
-		return get(viewDef, path.localPath) as definition.Definition
+		// If we don't have this state yet, we need to initialize it
+		if (!viewDef) {
+			viewDef = api.view.getViewDef(path.itemName)
+		}
+		if (!path.localPath) {
+			return viewDef as T
+		}
+		return get(viewDef, path.localPath) as T
 	}
 }
 
