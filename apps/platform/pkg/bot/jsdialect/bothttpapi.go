@@ -12,7 +12,6 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	httpClient "github.com/thecloudmasters/uesio/pkg/http"
-	"github.com/thecloudmasters/uesio/pkg/integ/web"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	oauthlib "github.com/thecloudmasters/uesio/pkg/oauth2"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -177,7 +176,7 @@ func (api *BotHttpAPI) Request(req *BotHttpRequest) *BotHttpResponse {
 
 	// Attempt to parse the response body into a structured representation,
 	// if possible. If it fails, just return the raw response as a string
-	parsedBody, err := web.ParseResponseBody(contentType, responseData, nil)
+	parsedBody, err := ParseResponseBody(contentType, responseData, nil)
 	if err != nil {
 		return &BotHttpResponse{
 			Headers: getBotHeaders(httpResp.Header),
@@ -274,4 +273,37 @@ func getBotHeaders(header http.Header) map[string]string {
 		headers[k] = header.Get(k)
 	}
 	return headers
+}
+
+// ParseResponseBody has two returns: one if responseBody is not nil, to be used by GO
+// and the other one if it is to be used by TS/JS the first returned argument
+func ParseResponseBody(contentType string, rawBody []byte, responseBody interface{}) (interface{}, error) {
+
+	// responseBody may be a non-nil struct so that we can deserialize directly into specific structs.
+	if responseBody != nil {
+		err := json.NewDecoder(bytes.NewReader(rawBody)).Decode(responseBody)
+		if err != nil {
+			return nil, err
+		}
+		return responseBody, nil
+	}
+
+	if strings.Contains(contentType, "/json") {
+		// If it starts with a curly brace, treat it as JSON object
+		if string(rawBody[0]) == "{" {
+			responseBody = &map[string]interface{}{}
+		} else {
+			// Otherwise, assume it's a JSON array
+			responseBody = &[]interface{}{}
+		}
+		err := json.NewDecoder(bytes.NewReader(rawBody)).Decode(responseBody)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		responseBody = string(rawBody)
+	}
+
+	return responseBody, nil
+
 }

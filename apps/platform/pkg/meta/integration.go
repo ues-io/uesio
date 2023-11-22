@@ -2,7 +2,7 @@ package meta
 
 import (
 	"errors"
-	"strings"
+	"fmt"
 
 	"gopkg.in/yaml.v3"
 )
@@ -33,10 +33,10 @@ type Integration struct {
 type IntegrationWrapper Integration
 
 func (i *Integration) GetType() string {
-	// TEMPORARY backwards compatibility: map "web" to uesio/core.web
+	// backwards compatibility: map the old "stripe" and "sendgrid" integrations to fully-qualified core integrations
 	integrationTypeName := i.Type
-	if strings.HasSuffix(integrationTypeName, ".web") {
-		integrationTypeName = "uesio/core.web"
+	if integrationTypeName == "stripe" || integrationTypeName == "sendgrid" {
+		integrationTypeName = fmt.Sprintf("uesio/core.%s", integrationTypeName)
 	}
 	return integrationTypeName
 }
