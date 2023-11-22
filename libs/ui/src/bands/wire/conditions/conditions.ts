@@ -42,15 +42,14 @@ type GroupConditionState = ConditionBase & {
 	type: typeof GROUP
 	conjunction: Conjunction
 	conditions: WireConditionState[]
-	valueSource: undefined
+	valueSource?: undefined
 }
 
 type SubqueryConditionState = ConditionBase & {
 	type: typeof SUBQUERY
 	conditions?: WireConditionState[]
 	field: string
-	operator: "IN" | "NOT_IN"
-	valueSource: undefined
+	valueSource?: undefined
 	subcollection: MetadataKey
 	subfield: MetadataKey
 }
