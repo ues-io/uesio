@@ -81,7 +81,7 @@ variable: validyamlview="validyamlview_{{unix_epoch_seconds}}"
             "deletes": {},
             "changes": {
                 "temp1": {
-                    "uesio/studio.definition": "wires:\n  users:\n    collection: uesio/core.user\n    fields:\n      uesio/core.id:\n      uesio/core.firstname:\n      uesio/core.lastname: {}\n    batchsize: 100\ncomponents:\n",
+                    "uesio/studio.definition": "  wires:\n    users:\n        collection: uesio/core.user\n        fields:\n            uesio/core.id:\n            uesio/core.firstname:\n            uesio/core.lastname: {}\n        conditions:\n            - field: uesio/core.firstname\n              value: Sally\n            - field: uesio/core.lastname\n              valueSource: VALUE\n              operator: NOT_EQ\n              value: Jones\n        batchsize: 100\n  components:\n",
                     "uesio/studio.name": "{{validyamlview}}"
                 }
             },
