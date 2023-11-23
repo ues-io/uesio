@@ -152,7 +152,7 @@ func RunBot(bot *meta.Bot, api interface{}, errorFunc func(string)) error {
 }
 
 func (b *TSDialect) BeforeSave(bot *meta.Bot, request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
-	botAPI := jsdialect.NewBeforeSaveAPI(request, connection, session)
+	botAPI := jsdialect.NewBeforeSaveAPI(bot, request, connection, session)
 	err := b.hydrateBot(bot, session)
 	if err != nil {
 		return nil
@@ -161,7 +161,7 @@ func (b *TSDialect) BeforeSave(bot *meta.Bot, request *adapt.SaveOp, connection 
 }
 
 func (b *TSDialect) AfterSave(bot *meta.Bot, request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
-	botAPI := jsdialect.NewAfterSaveAPI(request, connection, session)
+	botAPI := jsdialect.NewAfterSaveAPI(bot, request, connection, session)
 	err := b.hydrateBot(bot, session)
 	if err != nil {
 		return nil
