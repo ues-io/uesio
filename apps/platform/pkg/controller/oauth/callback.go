@@ -73,7 +73,7 @@ func Callback(w http.ResponseWriter, r *http.Request) {
 	}
 
 	host := fmt.Sprintf("https://%s", r.Host)
-	tok, err := oauth.ExchangeAuthorizationCodeForAccessToken(integrationConnection.GetCredentials(), host, authCode)
+	tok, err := oauth.ExchangeAuthorizationCodeForAccessToken(integrationConnection.GetCredentials(), host, authCode, state)
 	if err != nil {
 		controller.HandleErrorRoute(w, r, s, r.URL.Path, err, false)
 		return

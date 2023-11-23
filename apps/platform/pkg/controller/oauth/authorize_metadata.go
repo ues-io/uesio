@@ -6,18 +6,12 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	oauthLib "golang.org/x/oauth2"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 	oauth "github.com/thecloudmasters/uesio/pkg/oauth2"
 )
-
-type RedirectMetadata struct {
-	AuthURL string `json:"authUrl"`
-	State   string `json:"state"`
-}
 
 func GetRedirectMetadata(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
@@ -33,21 +27,11 @@ func GetRedirectMetadata(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid integration configuration: "+err.Error(), http.StatusForbidden)
 		return
 	}
-
-	// Generate a state token, with workspace/site admin context as necessary, and serialize it
-	stateObject := oauth.NewState(integrationName).WithContext(session)
-	stateString, err := stateObject.Marshal()
+	redirectMetadata, err := oauth.GetRedirectMetadata(conf, integrationName, session)
 	if err != nil {
-		slog.Error("unable to generate an OAuth state token: " + err.Error())
+		slog.Error(err.Error())
 		http.Error(w, "unable to generate a state token", http.StatusInternalServerError)
 		return
 	}
-
-	// Generate the fully-qualified authorization code URL
-	url := conf.AuthCodeURL(stateString, oauthLib.AccessTypeOffline)
-
-	file.RespondJSON(w, r, &RedirectMetadata{
-		AuthURL: url,
-		State:   stateString,
-	})
+	file.RespondJSON(w, r, redirectMetadata)
 }

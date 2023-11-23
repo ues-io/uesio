@@ -78,6 +78,10 @@ type LoadBotAPI struct {
 	LogApi              *BotLogAPI           `bot:"log"`
 }
 
+func (lb *LoadBotAPI) GetLoadErrors() []string {
+	return lb.loadErrors
+}
+
 func (lb *LoadBotAPI) getSession() *sess.Session {
 	return lb.integrationConnection.GetSession()
 }

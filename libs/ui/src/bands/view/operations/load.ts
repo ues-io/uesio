@@ -7,6 +7,8 @@ import { selectWire } from "../../wire"
 import { useEffect, useRef } from "react"
 import { ViewEventsDef } from "../../../definition/view"
 import { ViewDefinition } from "../../../definition/ViewDefinition"
+import { RegularWireDefinition, WireDefinition } from "../../../definition/wire"
+import { WireConditionState } from "../../wire/conditions/conditions"
 
 const runEvents = async (
 	events: ViewEventsDef | undefined,
@@ -44,6 +46,7 @@ const useLoadWires = (
 	// Keeps track of the value of wires from the previous render
 	const prevWires = usePrevious(wires)
 	const prevRoute = usePrevious(route.path)
+	const prevParams = usePrevious(context.getParams())
 
 	useEffect(() => {
 		;(async () => {
@@ -96,16 +99,67 @@ const useLoadWires = (
 					return []
 				}
 			)
-			if (!changedWires.length) return
-			const wiresToInit = Object.fromEntries(
-				changedWires.map((wirename) => [wirename, wires[wirename]])
+			const newParams = context.getParams()
+			const paramsHaveChanged =
+				JSON.stringify(newParams) !== JSON.stringify(prevParams)
+
+			// We also need to update any wires with Conditions / Defaults params have changed
+			const wiresWithUpdatedParams = paramsHaveChanged
+				? Object.entries(wires).flatMap(([wirename, wire]) =>
+						wireHasParamsThatHaveChanged(wire, newParams)
+							? [wirename]
+							: []
+				  )
+				: []
+			if (!changedWires.length && !wiresWithUpdatedParams.length) return
+			if (changedWires.length) {
+				const wiresToInit = Object.fromEntries(
+					changedWires.map((wirename) => [wirename, wires[wirename]])
+				)
+				initializeWiresOp(context, wiresToInit)
+			}
+			const wiresToLoad = new Set(
+				changedWires.concat(wiresWithUpdatedParams)
 			)
-			initializeWiresOp(context, wiresToInit)
-			await loadWiresOp(context, changedWires)
+			await loadWiresOp(context, Array.from(wiresToLoad.values()))
 		})()
-		// TODO: probably a better way to do this
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [JSON.stringify(wires), route.path])
+	}, [wires, prevWires, route.path, prevRoute, prevParams, context])
+}
+
+const wireHasParamsThatHaveChanged = (
+	wire: WireDefinition,
+	params?: Record<string, string>
+) => {
+	const { viewOnly = false } = wire
+	if (viewOnly || !params) return false
+	const conditions = (wire as RegularWireDefinition).conditions
+	if (!conditions || !conditions.length) return false
+	return conditions?.some((condition) =>
+		doesConditionHaveParamDependency(condition, params)
+	)
+}
+
+const doesConditionHaveParamDependency = (
+	condition: WireConditionState,
+	params: Record<string, string>
+): boolean => {
+	if (
+		condition.valueSource === "PARAM" &&
+		condition.param &&
+		condition.param in params
+	) {
+		return true
+	}
+	if (
+		(condition.type === "GROUP" || condition.type === "SUBQUERY") &&
+		condition.conditions &&
+		condition.conditions?.length
+	) {
+		return condition.conditions.some((c) =>
+			doesConditionHaveParamDependency(c, params)
+		)
+	}
+	return false
 }
 
 export { useLoadWires }

@@ -1,0 +1,66 @@
+name: animals_queue_view
+definition:
+  # Wires connect to data in collections
+  wires:
+    animals:
+      collection: uesio/tests.animal
+      fields:
+        uesio/tests.genus:
+        uesio/tests.species:
+      batchsize: 20
+      init:
+        query: true
+        create: false
+      order:
+        - field: uesio/tests.genus
+          desc: false
+  # Components determine the layout and composition of your view
+  components:
+    - uesio/io.grid:
+        uesio.styleTokens:
+          root:
+            - grid-cols-[300px_1fr]
+        items:
+          - uesio/io.griditem:
+              components:
+                - uesio/io.box:
+                    components:
+                      - uesio/io.titlebar:
+                          title: Animals
+                      - uesio/io.searchbox:
+                          uesio.id: animalsSearch
+                          wire: animals
+                          searchFields:
+                            - uesio/tests.genus
+                            - uesio/tests.species
+                      - uesio/io.deck:
+                          uesio.id: animalsDeck
+                          wire: animals
+                          components:
+                            - uesio/io.tile:
+                                uesio.variant: uesio/io.item
+                                content:
+                                  - uesio/io.text:
+                                      text: ${uesio/tests.genus} ${uesio/tests.species}
+                                signals:
+                                  - signal: component/CALL
+                                    component: uesio/core.view
+                                    componentsignal: SET_PARAMS
+                                    targettype: specific
+                                    componentid: detailview
+                                    params:
+                                      genus: ${uesio/tests.genus}
+                                      species: ${uesio/tests.species}
+          - uesio/io.griditem:
+              components:
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.titlebar:
+                          title: Animal Details
+                      - uesio/core.view:
+                          id: detailview
+                          view: uesio/tests.view_with_param_condition
+                          params:
+                            genus: ${uesio/tests.genus}
+                            species: ${uesio/tests.species}

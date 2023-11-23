@@ -18,7 +18,8 @@ const StyleDefaults = Object.freeze({
 })
 
 const TitleBar: definition.UtilityComponent<TitleBarUtilityProps> = (props) => {
-	const { context, title, subtitle, subtitlenode, actions, onClick } = props
+	const { context, title, subtitle, subtitlenode, actions, onClick, id } =
+		props
 	const classes = styles.useUtilityStyleTokens(
 		StyleDefaults,
 		props,
@@ -27,6 +28,7 @@ const TitleBar: definition.UtilityComponent<TitleBarUtilityProps> = (props) => {
 
 	return (
 		<div
+			id={id}
 			role={onClick ? "button" : undefined}
 			onClick={() => onClick && onClick()}
 			className={classes.root}

@@ -1,4 +1,4 @@
-import { component, definition, styles } from "@uesio/ui"
+import { api, component, definition, styles } from "@uesio/ui"
 import { default as IOTitleBar } from "../../utilities/titlebar/titlebar"
 
 type TitleBarDefinition = {
@@ -21,6 +21,7 @@ const TitleBar: definition.UC<TitleBarDefinition> = (props) => {
 
 	return (
 		<IOTitleBar
+			id={api.component.getComponentIdFromProps(props)}
 			classes={classes}
 			context={context}
 			variant={definition[component.STYLE_VARIANT]}
