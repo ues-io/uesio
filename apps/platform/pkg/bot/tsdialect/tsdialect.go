@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"strings"
+	"time"
 
 	esbuild "github.com/evanw/esbuild/pkg/api"
 	"github.com/pkg/errors"
@@ -127,15 +128,19 @@ const DefaultBotBody = `export default function %s(bot) {
 // TODO: cache the transformed code, or generate it server-side as part of save of bot.ts
 func (b *TSDialect) hydrateBot(bot *meta.Bot, session *sess.Session) error {
 	buf := &bytes.Buffer{}
+	t := time.Now()
 	_, err := bundle.GetItemAttachment(buf, bot, b.GetFilePath(), session)
 	if err != nil {
 		return err
 	}
+	fmt.Println("GETITEMATTACHMENT %d ms", time.Since(t).Milliseconds())
 
 	// Transform from TS to JS
+	t = time.Now()
 	result := esbuild.Transform(string(buf.Bytes()), esbuild.TransformOptions{
 		Loader: esbuild.LoaderTS,
 	})
+	fmt.Println("TRANSFORM %d ms", time.Since(t).Milliseconds())
 
 	if len(result.Errors) > 0 {
 		fmt.Println(fmt.Sprintf("TS Bot Compilation %d errors and %d warnings\n",
@@ -175,10 +180,11 @@ func (b *TSDialect) CallBot(bot *meta.Bot, params map[string]interface{}, connec
 	if err != nil {
 		return nil, err
 	}
-	err = RunBot(bot, botAPI, nil)
-	if err != nil {
+	t := time.Now()
+	if err = RunBot(bot, botAPI, nil); err != nil {
 		return nil, err
 	}
+	fmt.Println("RUN CALL BOT %d ms", time.Since(t).Milliseconds())
 	return botAPI.Results, nil
 }
 
@@ -209,12 +215,16 @@ func (b *TSDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adapt.Co
 		return err
 	}
 	botAPI := jsdialect.NewLoadBotAPI(bot, connection, op, integrationConnection)
+	t := time.Now()
 	if err := b.hydrateBot(bot, session); err != nil {
 		return err
 	}
+	fmt.Println("time to HYDRATE: %d ms", time.Since(t).Milliseconds())
+	t = time.Now()
 	if err = RunBot(bot, botAPI, nil); err != nil {
 		return err
 	}
+	fmt.Println("time to RUN: %d ms", time.Since(t).Milliseconds())
 	loadErrors := botAPI.GetLoadErrors()
 	if len(loadErrors) > 0 {
 		return meta.NewBotExecutionError(strings.Join(loadErrors, ", "))
