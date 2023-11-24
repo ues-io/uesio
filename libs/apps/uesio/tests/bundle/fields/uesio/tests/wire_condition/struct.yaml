@@ -1,7 +1,6 @@
 name: struct
 type: STRUCT
 label: struct
-subtype: STRUCT
 subfields:
   - name: firstname
     label: First Name
@@ -9,3 +8,4 @@ subfields:
   - name: age
     label: Age
     type: NUMBER
+subtype: STRUCT

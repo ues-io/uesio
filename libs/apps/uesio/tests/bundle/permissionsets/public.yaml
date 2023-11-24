@@ -71,9 +71,9 @@ collections:
 routes:
   uesio/tests.declarative1: true
   uesio/tests.declarative2: true
-  uesio/tests.publicanimalslist: true
   uesio/tests.dependencies_theme: true
   uesio/tests.dependencies_theme_no_theme: true
+  uesio/tests.publicanimalslist: true
 files: {}
 bots:
   uesio/tests.add_numbers: true

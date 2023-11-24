@@ -1,4 +1,5 @@
 name: christmas
+public: true
 definition:
   palette:
     primary: "#FF0000"
@@ -7,4 +8,3 @@ definition:
     warning: "#FF0000"
     info: "#FF0000"
     success: "#FF0000"
-public: true

@@ -2,6 +2,6 @@ name: account
 label: Account
 pluralLabel: Account
 uniqueKey:
-  - uesio/tests.name
-nameField: uesio/tests.name
+  - name
+nameField: name
 access: protected

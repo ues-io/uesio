@@ -2,7 +2,7 @@ name: contact
 label: Contact
 pluralLabel: Contacts
 uniqueKey:
-  - uesio/tests.firstname
-  - uesio/tests.lastname
+  - firstname
+  - lastname
 access: protected
 accessField: uesio/tests.account
