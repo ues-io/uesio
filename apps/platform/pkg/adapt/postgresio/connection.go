@@ -7,6 +7,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 )
 
@@ -68,6 +69,10 @@ func (c *Connection) GetClient() QueryAble {
 		return c.transaction
 	}
 	return c.client
+}
+
+func (c *Connection) GetPGConn(ctx context.Context) (*pgxpool.Conn, error) {
+	return c.client.Acquire(ctx)
 }
 
 func (c *Connection) GetDataSource() string {
