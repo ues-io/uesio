@@ -1,4 +1,4 @@
 name: increase_population
-collection: uesio/tests.animal
+collection: animal
 type: AFTERSAVE
 dialect: TYPESCRIPT

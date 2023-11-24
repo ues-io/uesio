@@ -248,7 +248,7 @@ func (b *Bot) GetBundleFolderName() string {
 }
 
 func (b *Bot) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s:%s:%s:%s", workspace, b.CollectionRef, b.Type, b.Name)
+	return fmt.Sprintf("%s:%s:%s:%s", workspace, GetFullyQualifiedKey(b.CollectionRef, b.Namespace), b.Type, b.Name)
 }
 
 func (b *Bot) GetKey() string {
@@ -291,11 +291,19 @@ func (b *Bot) Len() int {
 }
 
 func (b *Bot) UnmarshalYAML(node *yaml.Node) error {
-	err := validateNodeName(node, b.Name)
-	if err != nil {
+	if err := validateNodeName(node, b.Name); err != nil {
 		return err
 	}
-	return node.Decode((*BotWrapper)(b))
+	if err := node.Decode((*BotWrapper)(b)); err != nil {
+		return err
+	}
+	b.CollectionRef = GetFullyQualifiedKey(b.CollectionRef, b.Namespace)
+	return nil
+}
+
+func (b *Bot) MarshalYAML() (interface{}, error) {
+	b.CollectionRef = GetLocalizedKey(b.CollectionRef, b.Namespace)
+	return (*BotWrapper)(b), nil
 }
 
 type BotParamValidationError struct {
