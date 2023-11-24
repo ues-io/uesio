@@ -1,0 +1,4 @@
+name: decrease_population
+collection: uesio/tests.animal
+type: BEFORESAVE
+dialect: TYPESCRIPT
