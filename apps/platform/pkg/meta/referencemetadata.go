@@ -9,7 +9,7 @@ type ReferenceMetadataWrapper ReferenceMetadata
 type ReferenceMetadata struct {
 	Collection      string   `yaml:"collection,omitempty" json:"uesio/studio.collection"`
 	MultiCollection bool     `yaml:"multicollection,omitempty" json:"uesio/studio.multicollection"`
-	CollectionsRefs []string `yaml:"collections" json:"uesio/studio.collections"`
+	CollectionsRefs []string `yaml:"collections,omitempty" json:"uesio/studio.collections"`
 	Namespace       string   `yaml:"-" json:"-"`
 }
 
