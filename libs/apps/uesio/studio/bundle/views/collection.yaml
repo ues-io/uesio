@@ -979,6 +979,18 @@ definition:
                       value: REFERENCE
                   components:
                     - uesio/io.field:
+                        fieldId: uesio/studio.reference->uesio/studio.multicollection
+                        displayAs: TOGGLE
+                    - uesio/io.field:
+                        uesio.display:
+                          - field: uesio/studio.reference->uesio/studio.multicollection
+                            value: true
+                        fieldId: uesio/studio.reference->uesio/studio.collections
+                    - uesio/io.field:
+                        uesio.display:
+                          - field: uesio/studio.reference->uesio/studio.multicollection
+                            operator: NOT_EQUALS
+                            value: true
                         fieldId: uesio/studio.reference->uesio/studio.collection
                         label: Ref. Collection
                         uesio.id: new-field-collection

@@ -7,8 +7,10 @@ import (
 type ReferenceMetadataWrapper ReferenceMetadata
 
 type ReferenceMetadata struct {
-	Collection string `yaml:"collection,omitempty" json:"uesio/studio.collection"`
-	Namespace  string `yaml:"-" json:"-"`
+	Collection      string   `yaml:"collection,omitempty" json:"uesio/studio.collection"`
+	MultiCollection bool     `yaml:"multicollection,omitempty" json:"uesio/studio.multicollection"`
+	CollectionsRefs []string `yaml:"collections" json:"uesio/studio.collections"`
+	Namespace       string   `yaml:"-" json:"-"`
 }
 
 func (r *ReferenceMetadata) UnmarshalYAML(node *yaml.Node) error {
