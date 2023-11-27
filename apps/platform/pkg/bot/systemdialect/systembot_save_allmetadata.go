@@ -34,11 +34,8 @@ func runStudioMetadataSaveBot(op *adapt.SaveOp, connection adapt.Connection, ses
 	}
 
 	// Invalidate our metadata caches - now that we've saved, UniqueKey should be populated
-	// We only care about CHANGES for updating metadata caches, inserts won't have any corresponding cache entries
 	if err = op.LoopChanges(func(change *adapt.ChangeItem) error {
-		if change.IsNew == false {
-			changedMetadataItemKeys = append(changedMetadataItemKeys, change.UniqueKey)
-		}
+		changedMetadataItemKeys = append(changedMetadataItemKeys, change.UniqueKey)
 		return nil
 	}); err != nil {
 		return err
@@ -50,7 +47,7 @@ func runStudioMetadataSaveBot(op *adapt.SaveOp, connection adapt.Connection, ses
 
 	message := &workspacebundlestore.WorkspaceMetadataChange{
 		AppName:        appName,
-		WorkspaceName:  workspaceName,
+		WorkspaceName:  workspaceID,
 		CollectionName: op.Metadata.GetFullName(),
 		ChangedItems:   changedMetadataItemKeys,
 	}

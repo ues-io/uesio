@@ -2,5 +2,5 @@ name: weather_forecast
 label: Weather Forecast
 pluralLabel: Weather Forecasts
 integration: studio_apis
-loadBot: uesio/tests.load_weather_forecast
-saveBot: uesio/tests.save_weather_forecast
+loadBot: load_weather_forecast
+saveBot: save_weather_forecast

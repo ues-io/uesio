@@ -3,5 +3,5 @@ public: true
 label: Wire Condtion Test Data
 pluralLabel: Wire Conditions Test Data
 uniqueKey:
-  - uesio/tests.name
-nameField: uesio/tests.name
+  - name
+nameField: name
