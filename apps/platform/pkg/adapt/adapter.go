@@ -31,6 +31,8 @@ type Connection interface {
 	BeginTransaction() error
 	CommitTransaction() error
 	RollbackTransaction() error
+	Publish(channelName, payload string) error
+	Subscribe(channelName string, handler func(payload string)) error
 }
 
 var adapterMap = map[string]Adapter{}
