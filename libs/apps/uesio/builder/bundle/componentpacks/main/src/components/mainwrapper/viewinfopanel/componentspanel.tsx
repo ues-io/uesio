@@ -179,7 +179,7 @@ const ComponentBlock: definition.UtilityComponent<ComponentBlockProps> = (
 			onDoubleClick={() => {
 				addComponentToCanvas(
 					context,
-					`${componentDef.namespace}.${componentDef.name}`,
+					fullName,
 					findClosestSlot(selectedPath, context)
 				)
 			}}
@@ -267,26 +267,23 @@ const ComponentTag: definition.UtilityComponent<ComponentTagProps> = (
 	props
 ) => {
 	const { context, componentDef, selectedPath } = props
-	const { namespace, name } = componentDef
+	const { namespace, name, icon, title, description } = componentDef
 	if (!namespace) throw new Error("Invalid Property Definition")
 	const fullName = `${namespace}.${name}` as metadata.MetadataKey
 	const NamespaceLabel = getUtility("uesio/io.namespacelabel")
 	const IconButton = getUtility("uesio/io.iconbutton")
 	const Group = getUtility("uesio/io.group")
 
-	const nsInfo = getBuilderNamespace(
-		context,
-		componentDef.namespace as metadata.MetadataKey
-	)
+	const nsInfo = getBuilderNamespace(context, namespace)
 
 	return (
-		<ItemTag description={componentDef.description} context={context}>
+		<ItemTag description={description} context={context}>
 			<NamespaceLabel
-				metadatakey={componentDef.namespace}
+				metadatakey={namespace}
 				metadatainfo={nsInfo}
-				title={componentDef.title || componentDef.name}
+				title={title || name}
 				context={context}
-				icon={componentDef.icon}
+				icon={icon}
 			/>
 			<Group context={context}>
 				<IconButton
@@ -314,7 +311,7 @@ const ComponentTag: definition.UtilityComponent<ComponentTagProps> = (
 						if (e.detail > 1) return
 						addComponentToCanvas(
 							context,
-							`${componentDef.namespace}.${componentDef.name}`,
+							fullName,
 							findClosestSlot(selectedPath, context)
 						)
 					}}
