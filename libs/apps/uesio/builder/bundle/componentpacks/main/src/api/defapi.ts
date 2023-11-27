@@ -76,7 +76,16 @@ const setMetadataValue = (
 const useDefinition = <T extends definition.Definition>(
 	context: ctx.Context,
 	path: FullPath
-) => useBuilderState<T>(context, getMetadataId(path), getDef<T>(context, path))
+) => {
+	const [result] = useBuilderState<T>(
+		context,
+		getMetadataId(path),
+		getDef<T>(context, path)
+	)
+	if (typeof result === "string") {
+		return parse(result).toJS() as T
+	}
+}
 
 const getDef = <T extends definition.Definition>(
 	context: ctx.Context,

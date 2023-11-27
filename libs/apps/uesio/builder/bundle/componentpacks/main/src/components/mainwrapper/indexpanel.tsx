@@ -31,7 +31,7 @@ const IndexPanel: definition.UtilityComponent = (props) => {
 	const dragPath = useDragPath(parentContext)
 	const dropPath = useDropPath(parentContext)
 
-	const [viewDefinition] = useDefinition<component.ViewDefinition>(
+	const viewDefinition = useDefinition<component.ViewDefinition>(
 		parentContext,
 		selectedPath.setLocal("")
 	)
