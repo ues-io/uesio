@@ -12,6 +12,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
+	"github.com/thecloudmasters/uesio/pkg/cache"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -121,15 +122,33 @@ func getTimeout(timeout int) int {
 	return timeout
 }
 
+var botFileContentsCache cache.Cache[string]
+
+func init() {
+	botFileContentsCache = cache.NewMemoryCache[string](15*time.Minute, 5*time.Minute)
+}
+
 func (b *JSDialect) hydrateBot(bot *meta.Bot, session *sess.Session) error {
+	//check cache first
+	cacheKey := bot.GetKey()
+	// In workspace mode, we need to cache by the DB Id (the Unique Key),
+	// to ensure we don't have cross-workspace collisions
+	if session.GetWorkspace() != nil {
+		cacheKey = bot.GetDBID(session.GetWorkspace().UniqueKey)
+	}
+	if cacheItem, err := botFileContentsCache.Get(cacheKey); err == nil && cacheItem != "" {
+		bot.FileContents = cacheItem
+		return nil
+	}
 
 	buf := &bytes.Buffer{}
 	_, err := bundle.GetItemAttachment(buf, bot, b.GetFilePath(), session)
 	if err != nil {
 		return err
 	}
-
 	bot.FileContents = string(buf.Bytes())
+	// Add to cache
+	botFileContentsCache.Set(cacheKey, bot.FileContents)
 	return nil
 }
 

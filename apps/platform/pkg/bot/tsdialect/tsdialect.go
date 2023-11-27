@@ -3,6 +3,7 @@ package tsdialect
 import (
 	"bytes"
 	"fmt"
+	"log/slog"
 	"strings"
 	"time"
 
@@ -13,6 +14,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/bot/jsdialect"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
+	"github.com/thecloudmasters/uesio/pkg/cache"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -125,30 +127,41 @@ const DefaultBotBody = `export default function %s(bot) {
 
 }`
 
-// TODO: cache the transformed code, or generate it server-side as part of save of bot.ts
+var botFileContentsCache cache.Cache[string]
+
+func init() {
+	botFileContentsCache = cache.NewMemoryCache[string](15*time.Minute, 5*time.Minute)
+}
+
 func (b *TSDialect) hydrateBot(bot *meta.Bot, session *sess.Session) error {
+	//check cache first
+	cacheKey := bot.GetKey()
+	// In workspace mode, we need to cache by the database id (the Unique Key),
+	// to ensure we don't have cross-workspace collisions
+	if session.GetWorkspace() != nil {
+		cacheKey = bot.GetDBID(session.GetWorkspace().UniqueKey)
+	}
+	if cacheItem, err := botFileContentsCache.Get(cacheKey); err == nil && cacheItem != "" {
+		bot.FileContents = cacheItem
+		return nil
+	}
+
 	buf := &bytes.Buffer{}
-	t := time.Now()
-	_, err := bundle.GetItemAttachment(buf, bot, b.GetFilePath(), session)
-	if err != nil {
+	if _, err := bundle.GetItemAttachment(buf, bot, b.GetFilePath(), session); err != nil {
 		return err
 	}
-	fmt.Println("GETITEMATTACHMENT %d ms", time.Since(t).Milliseconds())
-
 	// Transform from TS to JS
-	t = time.Now()
 	result := esbuild.Transform(string(buf.Bytes()), esbuild.TransformOptions{
 		Loader: esbuild.LoaderTS,
 	})
-	fmt.Println("TRANSFORM %d ms", time.Since(t).Milliseconds())
-
 	if len(result.Errors) > 0 {
-		fmt.Println(fmt.Sprintf("TS Bot Compilation %d errors and %d warnings\n",
-			len(result.Errors), len(result.Warnings)))
+		slog.Error(fmt.Sprintf("TS Bot %s compilation had %d errors and %d warnings\n",
+			cacheKey, len(result.Errors), len(result.Warnings)))
 		return errors.Errorf(result.Errors[0].Text)
 	}
-
 	bot.FileContents = string(result.Code)
+	// Add to cache
+	botFileContentsCache.Set(cacheKey, bot.FileContents)
 	return nil
 }
 
@@ -215,16 +228,12 @@ func (b *TSDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adapt.Co
 		return err
 	}
 	botAPI := jsdialect.NewLoadBotAPI(bot, connection, op, integrationConnection)
-	t := time.Now()
 	if err := b.hydrateBot(bot, session); err != nil {
 		return err
 	}
-	fmt.Println("time to HYDRATE: %d ms", time.Since(t).Milliseconds())
-	t = time.Now()
 	if err = RunBot(bot, botAPI, nil); err != nil {
 		return err
 	}
-	fmt.Println("time to RUN: %d ms", time.Since(t).Milliseconds())
 	loadErrors := botAPI.GetLoadErrors()
 	if len(loadErrors) > 0 {
 		return meta.NewBotExecutionError(strings.Join(loadErrors, ", "))
