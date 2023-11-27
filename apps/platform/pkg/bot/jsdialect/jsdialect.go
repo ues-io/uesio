@@ -214,10 +214,6 @@ func RunBot(bot *meta.Bot, api interface{}, session *sess.Session, hydrateBot fu
 
 func (b *JSDialect) BeforeSave(bot *meta.Bot, request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 	botAPI := NewBeforeSaveAPI(bot, request, connection, session)
-	err := b.hydrateBot(bot, session)
-	if err != nil {
-		return nil
-	}
 	return RunBot(bot, botAPI, session, b.hydrateBot, botAPI.AddError)
 }
 
