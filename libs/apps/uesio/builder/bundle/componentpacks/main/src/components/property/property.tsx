@@ -205,6 +205,7 @@ export const getFormFieldFromProperty = (
 			return {
 				"uesio/io.field": {
 					...baseFieldDef,
+					applyChanges: "onBlur",
 					wrapperVariant: "uesio/builder.propfield",
 				},
 			}

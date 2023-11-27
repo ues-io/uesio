@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react"
+import { useEffect, useMemo, useRef } from "react"
 import { definition, component, api, styles } from "@uesio/ui"
 import type { EditorProps } from "@monaco-editor/react"
 import type monaco from "monaco-editor"
@@ -10,6 +10,7 @@ import {
 import { setContent, useContent } from "../../api/defapi"
 import yaml from "yaml"
 import { getNodeAtOffset, getNodeAtPath, parse } from "../../yaml/yamlutils"
+import debounce from "lodash/debounce"
 
 type YamlDoc = yaml.Document<yaml.Node>
 
@@ -107,6 +108,22 @@ const CodePanel: definition.UtilityComponent = (props) => {
 			*/
 		}
 	})
+
+	const debouncedSetValue = useMemo(
+		() =>
+			debounce((newValue): void => {
+				const selectedPath = getSelectedViewPath(context)
+				setContent(context, selectedPath, newValue || "")
+			}, 500),
+		[context]
+	)
+
+	useEffect(
+		() => () => {
+			debouncedSetValue.cancel()
+		},
+		[debouncedSetValue]
+	)
 
 	const monacoOptions: monaco.editor.IStandaloneEditorConstructionOptions = {
 		automaticLayout: true,
@@ -220,12 +237,7 @@ const CodePanel: definition.UtilityComponent = (props) => {
 					input: ["h-full", "border-0"],
 				}}
 				language="yaml"
-				setValue={
-					((newValue): void => {
-						const selectedPath = getSelectedViewPath(context)
-						setContent(context, selectedPath, newValue || "")
-					}) as EditorProps["onChange"]
-				}
+				setValue={debouncedSetValue}
 				onMount={onMount}
 			/>
 		</ScrollPanel>
