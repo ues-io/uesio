@@ -129,32 +129,42 @@ func init() {
 }
 
 func (b *JSDialect) hydrateBot(bot *meta.Bot, session *sess.Session) error {
-	//check cache first
-	cacheKey := bot.GetKey()
-	// In workspace mode, we need to cache by the DB Id (the Unique Key),
-	// to ensure we don't have cross-workspace collisions
-	if session.GetWorkspace() != nil {
-		cacheKey = bot.GetDBID(session.GetWorkspace().UniqueKey)
-	}
-	if cacheItem, err := botFileContentsCache.Get(cacheKey); err == nil && cacheItem != "" {
-		bot.FileContents = cacheItem
-		return nil
-	}
-
 	buf := &bytes.Buffer{}
 	_, err := bundle.GetItemAttachment(buf, bot, b.GetFilePath(), session)
 	if err != nil {
 		return err
 	}
 	bot.FileContents = string(buf.Bytes())
-	// Add to cache
-	botFileContentsCache.Set(cacheKey, bot.FileContents)
 	return nil
 }
 
-func RunBot(bot *meta.Bot, api interface{}, errorFunc func(string)) error {
+func RunBot(bot *meta.Bot, api interface{}, session *sess.Session, hydrateBot func(*meta.Bot, *sess.Session) error, errorFunc func(string)) error {
 
-	// TODO: We could possibly not start a new VM for every Bot we run.
+	// Check if the bot has been hydrated yet
+	if bot.FileContents == "" {
+		// Check the file contents cache
+		cacheKey := bot.GetKey()
+		// In workspace mode, we need to cache by the database id (the Unique Key),
+		// to ensure we don't have cross-workspace collisions.
+		// To prevent needing to do cache invalidation, add the Bot modification timestamp to the key.
+		if session.GetWorkspace() != nil {
+			cacheKey = fmt.Sprintf("%s:%d", bot.GetDBID(session.GetWorkspace().UniqueKey), bot.UpdatedAt)
+		}
+		if cacheItem, err := botFileContentsCache.Get(cacheKey); err == nil && cacheItem != "" {
+			bot.FileContents = cacheItem
+		} else {
+			// We need to hydrate using the dialect-specific hydration mechanism
+			if hydrateErr := hydrateBot(bot, session); hydrateErr != nil {
+				return hydrateErr
+			}
+			bot.FileContents = strings.ReplaceAll("("+bot.FileContents+")", "export default function", "function")
+			// add to cache
+			if cacheErr := botFileContentsCache.Set(cacheKey, bot.FileContents); cacheErr != nil {
+				return cacheErr
+			}
+		}
+	}
+
 	vm := goja.New()
 	vm.SetFieldNameMapper(goja.TagFieldNameMapper("bot", true))
 	err := vm.Set("log", Logger)
@@ -167,7 +177,7 @@ func RunBot(bot *meta.Bot, api interface{}, errorFunc func(string)) error {
 		return //Interrupt native Go functions
 	})
 
-	runner, err := vm.RunString(strings.ReplaceAll("("+bot.FileContents+")", "export default function", "function"))
+	runner, err := vm.RunString(bot.FileContents)
 	if err != nil {
 		return err
 	}
@@ -202,26 +212,17 @@ func (b *JSDialect) BeforeSave(bot *meta.Bot, request *adapt.SaveOp, connection 
 	if err != nil {
 		return nil
 	}
-	return RunBot(bot, botAPI, botAPI.AddError)
+	return RunBot(bot, botAPI, session, b.hydrateBot, botAPI.AddError)
 }
 
 func (b *JSDialect) AfterSave(bot *meta.Bot, request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 	botAPI := NewAfterSaveAPI(bot, request, connection, session)
-	err := b.hydrateBot(bot, session)
-	if err != nil {
-		return nil
-	}
-	return RunBot(bot, botAPI, botAPI.AddError)
+	return RunBot(bot, botAPI, session, b.hydrateBot, botAPI.AddError)
 }
 
 func (b *JSDialect) CallBot(bot *meta.Bot, params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
 	botAPI := NewCallBotAPI(bot, session, connection, params)
-	err := b.hydrateBot(bot, session)
-	if err != nil {
-		return nil, err
-	}
-	err = RunBot(bot, botAPI, nil)
-	if err != nil {
+	if err := RunBot(bot, botAPI, session, b.hydrateBot, nil); err != nil {
 		return nil, err
 	}
 	return botAPI.Results, nil
@@ -237,10 +238,7 @@ func (b *JSDialect) CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreat
 		Bot:        bot,
 		Connection: connection,
 	}
-	if err := b.hydrateBot(bot, session); err != nil {
-		return err
-	}
-	return RunBot(bot, botAPI, nil)
+	return RunBot(bot, botAPI, session, b.hydrateBot, nil)
 }
 
 func (b *JSDialect) RouteBot(bot *meta.Bot, route *meta.Route, session *sess.Session) (*meta.Route, error) {
@@ -253,10 +251,7 @@ func (b *JSDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adapt.Co
 		return err
 	}
 	botAPI := NewLoadBotAPI(bot, connection, op, integrationConnection)
-	if err = b.hydrateBot(bot, session); err != nil {
-		return err
-	}
-	if err = RunBot(bot, botAPI, nil); err != nil {
+	if err = RunBot(bot, botAPI, session, b.hydrateBot, nil); err != nil {
 		return err
 	}
 	if len(botAPI.loadErrors) > 0 {
@@ -271,19 +266,12 @@ func (b *JSDialect) SaveBot(bot *meta.Bot, op *adapt.SaveOp, connection adapt.Co
 		return err
 	}
 	botAPI := NewSaveBotAPI(bot, connection, op, integrationConnection)
-	if err := b.hydrateBot(bot, session); err != nil {
-		return err
-	}
-	return RunBot(bot, botAPI, nil)
+	return RunBot(bot, botAPI, session, b.hydrateBot, nil)
 }
 
 func (b *JSDialect) RunIntegrationActionBot(bot *meta.Bot, ic *adapt.IntegrationConnection, actionName string, params map[string]interface{}) (interface{}, error) {
 	botAPI := NewRunIntegrationActionBotAPI(bot, ic, actionName, params)
-	err := b.hydrateBot(bot, ic.GetSession())
-	if err != nil {
-		return nil, err
-	}
-	err = RunBot(bot, botAPI, nil)
+	err := RunBot(bot, botAPI, ic.GetSession(), b.hydrateBot, nil)
 	if err != nil {
 		return nil, err
 	}
