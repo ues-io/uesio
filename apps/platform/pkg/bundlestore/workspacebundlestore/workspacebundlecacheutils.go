@@ -23,16 +23,13 @@ type WorkspaceMetadataChange struct {
 }
 
 var doCache bool
-
-// For the workspace bundle store, cache entries should be short-lived,
-// we don't need to
-// TODO: Consider pre-loading common bundles into the cache on init, to prevent initial requests from being slow.
 var bundleStoreCache *bundle.BundleStoreCache
 
 func init() {
-	// Opt-in to workspace bundle caching
-	doCache = os.Getenv("UESIO_CACHE_WORKSPACE_BUNDLES") == "true"
+	// Default to using workspace bundle caching
+	doCache = os.Getenv("UESIO_CACHE_WORKSPACE_BUNDLES") != "false"
 	if doCache {
+		// For the workspace bundle store, cache entries should be short-lived
 		bundleStoreCache = bundle.NewBundleStoreCache(10*time.Minute, 10*time.Minute)
 		// Listen for changes to workspace metadata, and invalidate items in the cache as needed
 		go setupPlatformSubscription()
