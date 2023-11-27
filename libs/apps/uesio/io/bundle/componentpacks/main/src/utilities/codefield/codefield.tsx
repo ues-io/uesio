@@ -2,8 +2,9 @@ import { component, definition, styles, api, context } from "@uesio/ui"
 import Editor, { loader, Monaco, useMonaco } from "@monaco-editor/react"
 import type monaco from "monaco-editor"
 import { CodeFieldUtilityProps } from "./types"
-import { useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useDeepCompareEffect } from "react-use"
+import debounce from "lodash/debounce"
 const { ErrorMessage } = component
 
 const monacoEditorVersion = api.platform.getMonacoEditorVersion()
@@ -52,6 +53,8 @@ const StyleDefaults = Object.freeze({
 	readonly: [],
 })
 
+const DEFAULT_DEBOUNCE_INTERVAL = 100
+
 const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
 	props
 ) => {
@@ -65,6 +68,7 @@ const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
 		theme,
 		mode,
 	} = props
+	const debounceInterval = props.debounce || DEFAULT_DEBOUNCE_INTERVAL
 	const [loading, setLoading] = useState(true)
 	const [loadingError, setLoadingError] = useState("")
 	const typeDefinitionFileURIs = preprocessTypeFileURIs(
@@ -79,6 +83,18 @@ const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
 
 	const [loadedModels, setLoadedModels] = useState(
 		{} as Record<string, string>
+	)
+
+	const debouncedSetValue = useMemo(
+		() => debounce(setValue, debounceInterval),
+		[debounceInterval, setValue]
+	)
+
+	useEffect(
+		() => () => {
+			debouncedSetValue.cancel()
+		},
+		[debouncedSetValue]
 	)
 
 	useDeepCompareEffect(() => {
@@ -167,7 +183,7 @@ const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
 				}}
 				theme={theme}
 				language={language}
-				onChange={setValue}
+				onChange={debouncedSetValue}
 				beforeMount={handleEditorWillMount}
 				onMount={handleEditorDidMount}
 			/>
