@@ -62,9 +62,15 @@ func runFieldBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, s
 				return err
 			}
 		case "REFERENCE":
-			err = depMap.AddRequired(change, "collection", "uesio/studio.reference->uesio/studio.collection")
+			isMultiCollection, err := change.GetField("uesio/studio.reference->uesio/studio.multicollection")
 			if err != nil {
 				return err
+			}
+			if isMultiCollection == nil || isMultiCollection.(bool) == false {
+				err = depMap.AddRequired(change, "collection", "uesio/studio.reference->uesio/studio.collection")
+				if err != nil {
+					return err
+				}
 			}
 		case "FORMULA":
 
