@@ -27,7 +27,7 @@ const DefaultSlotName = "components"
 
 const getSlotProps = (props: SlotUtilityProps) => {
 	const { path, context, listName = DefaultSlotName } = props
-	const definition = props.definition as DefinitionMap
+	const definition = props.definition
 	if (!definition) return []
 
 	const listDef = (definition?.[listName] || []) as DefinitionList
@@ -38,7 +38,7 @@ const getSlotProps = (props: SlotUtilityProps) => {
 		const componentType = Object.keys(itemDef)[0]
 		const unWrappedDef = itemDef[componentType]
 		return {
-			definition: unWrappedDef as DefinitionMap,
+			definition: unWrappedDef,
 			componentType: componentType as MetadataKey,
 			path: `${listPath}["${index}"]["${componentType}"]`,
 			context,

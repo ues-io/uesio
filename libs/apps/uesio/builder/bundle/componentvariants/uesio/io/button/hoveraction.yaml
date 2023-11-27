@@ -1,0 +1,9 @@
+name: hoveraction
+label: Hover Action
+extends: uesio/io.default
+definition:
+  uesio.styleTokens:
+    root:
+      - "group-hover:visible"
+      - invisible
+public: true

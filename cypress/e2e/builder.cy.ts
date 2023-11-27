@@ -79,6 +79,22 @@ components:
       iconPlacement: start
 `
 
+const addBoxPageDef = `# Wires connect to data in collections
+wires: {}
+# Components determine the layout and composition of your view
+components:
+  - uesio/io.box: {}
+`
+
+const addBoxInBoxPageDef = `# Wires connect to data in collections
+wires: {}
+# Components determine the layout and composition of your view
+components:
+  - uesio/io.box:
+      components:
+        - uesio/io.box: {}
+`
+
 describe("Uesio Builder Tests", () => {
 	const username = Cypress.env("automation_username")
 
@@ -166,6 +182,60 @@ describe("Uesio Builder Tests", () => {
 				"eq",
 				initialPageDef
 			)
+
+			// Search for button component
+			cy.get("#builder-components-search").clear().type("box")
+
+			// Now test doubleclicking
+			getComponentBankElement("component", "uesio/io.box").dblclick()
+			getBuilderState(`metadata:viewdef:${fullViewName}`).should(
+				"eq",
+				addBoxPageDef
+			)
+
+			// Select the button
+			getCanvasElement('["components"]', 0).click()
+			// Verify the selection
+			getBuilderState("selected").should(
+				"eq",
+				`viewdef:${fullViewName}:["components"]["0"]`
+			)
+
+			getComponentBankElement("component", "uesio/io.box").dblclick()
+			getBuilderState(`metadata:viewdef:${fullViewName}`).should(
+				"eq",
+				addBoxInBoxPageDef
+			)
+
+			// Cancel the page - to verify cancel behavior
+			cy.clickButton("cancel-builder-changes")
+			getBuilderState(`metadata:viewdef:${fullViewName}`).should(
+				"eq",
+				initialPageDef
+			)
+
+			// Now test doubleclicking where the selected path is invalid
+			getComponentBankElement("component", "uesio/io.box").dblclick()
+			getBuilderState(`metadata:viewdef:${fullViewName}`).should(
+				"eq",
+				addBoxPageDef
+			)
+
+			// Cancel the page - to verify cancel behavior
+			cy.clickButton("cancel-builder-changes")
+			getBuilderState(`metadata:viewdef:${fullViewName}`).should(
+				"eq",
+				initialPageDef
+			)
+
+			// Search for button component
+			cy.get("#builder-components-search").clear().type("button")
+
+			// Select the component type
+			getComponentBankElement("component", "uesio/io.button")
+				.find("button")
+				.first()
+				.click({ force: true })
 			// Add the button (again), but double click on the default variant to test that
 			// you can add double-click to add variants
 			getComponentBankElement(
