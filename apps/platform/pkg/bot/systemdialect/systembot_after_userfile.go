@@ -1,6 +1,8 @@
 package systemdialect
 
 import (
+	"time"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -10,6 +12,7 @@ import (
 const (
 	userCollectionId       = "uesio/core.user"
 	studioFileCollectionId = "uesio/studio.file"
+	studioBotCollectionId  = "uesio/studio.bot"
 )
 
 func runUserFileAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
@@ -23,6 +26,7 @@ func runUserFileAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection,
 
 	userKeysToDelete := []string{}
 	studioFileUpdates := adapt.Collection{}
+	studioBotUpdates := adapt.Collection{}
 
 	if err := request.LoopChanges(func(change *adapt.ChangeItem) error {
 		relatedCollection, err := change.GetField("uesio/core.collectionid")
@@ -49,12 +53,18 @@ func runUserFileAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection,
 			if pathString, ok := pathField.(string); ok {
 				studioFileUpdates = append(studioFileUpdates, &adapt.Item{
 					"uesio/studio.path": pathString,
-					"uesio/core.id":     relatedRecord.(string),
+					adapt.ID_FIELD:      relatedRecord.(string),
 				})
 			} else {
 				return nil
 			}
-
+		} else if relatedCollection == studioBotCollectionId {
+			// Increment the timestamp on the parent Bot,
+			// so that we are able to achieve cache invalidation
+			studioBotUpdates = append(studioBotUpdates, &adapt.Item{
+				adapt.UPDATED_AT_FIELD: time.Now().Unix(),
+				adapt.ID_FIELD:         relatedRecord.(string),
+			})
 		}
 		return nil
 	}); err != nil {
@@ -86,11 +96,23 @@ func runUserFileAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection,
 	// If the related collection is uesio/studio.file,
 	// we need to set the file path on the related record as well
 	if len(studioFileUpdates) > 0 {
-		err = datasource.SaveWithOptions([]datasource.SaveRequest{
+		if err = datasource.SaveWithOptions([]datasource.SaveRequest{
 			{
 				Collection: studioFileCollectionId,
 				Wire:       "StudioFiles",
 				Changes:    &studioFileUpdates,
+				Params:     request.Params,
+			},
+		}, session, datasource.GetConnectionSaveOptions(connection)); err != nil {
+			return err
+		}
+	}
+	if len(studioBotUpdates) > 0 {
+		err = datasource.SaveWithOptions([]datasource.SaveRequest{
+			{
+				Collection: studioBotCollectionId,
+				Wire:       "StudioBots",
+				Changes:    &studioBotUpdates,
 				Params:     request.Params,
 			},
 		}, session, datasource.GetConnectionSaveOptions(connection))
