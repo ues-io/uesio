@@ -3,7 +3,7 @@ import { ComponentProperty } from "../properties/componentproperty"
 import { combinePath, FullPath, parseFullPath } from "./path"
 import { PropertiesPanelSection } from "./propertysection"
 import { SignalDescriptor } from "./signalsapi"
-import { get, getMetadataId, useDefinition } from "./defapi"
+import { get, useDefinition } from "./defapi"
 import pointer from "json-pointer"
 const { COMPONENT_ID } = component
 const {
@@ -86,13 +86,6 @@ const useBuilderState = <T extends definition.Definition>(
 	id: string,
 	initialState?: T
 ) => useState<T>(getBuilderComponentId(context, id), initialState)
-
-const useViewValidationState = (path: FullPath) =>
-	useState<boolean>(`viewValidation:${getMetadataId(path)}`)
-const useLastValidViewDefinition = (path: FullPath) =>
-	useState<component.ViewComponentDefinition>(
-		`lastValidView:${getMetadataId(path)}`
-	)
 
 const useBuilderExternalState = <T extends definition.Definition>(
 	context: ctx.Context,
@@ -411,8 +404,6 @@ export {
 	useSelectedViewPath,
 	getSelectedViewPath,
 	walkViewComponents,
-	useViewValidationState,
-	useLastValidViewDefinition,
 }
 
 export type { ComponentDef, SlotDef }

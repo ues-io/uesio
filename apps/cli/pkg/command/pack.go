@@ -28,7 +28,6 @@ func Pack(options *PackOptions) error {
 		"react-dom":        "ReactDOM",
 		"@uesio/ui":        "uesio",
 		"react-dom/server": "ReactDOM",
-		//"ajv":              "Ajv",
 	}
 
 	entryPoints, err := pack.CreateEntryFiles()
