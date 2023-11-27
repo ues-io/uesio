@@ -24,7 +24,7 @@ func runUserFileAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection,
 
 	appFullName := session.GetSite().GetAppFullName()
 
-	userKeysToDelete := []string{}
+	var userKeysToDelete []string
 	studioFileUpdates := adapt.Collection{}
 	studioBotUpdates := adapt.Collection{}
 
@@ -33,7 +33,7 @@ func runUserFileAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection,
 		if err != nil {
 			return err
 		}
-		relatedRecord, err := change.GetField("uesio/core.recordid")
+		relatedRecordId, err := change.GetFieldAsString("uesio/core.recordid")
 		if err != nil {
 			return err
 		}
@@ -43,7 +43,7 @@ func runUserFileAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection,
 				return err
 			}
 			if relatedField == "uesio/core.picture" {
-				userKeysToDelete = append(userKeysToDelete, auth.GetUserCacheKey(relatedRecord.(string), appFullName))
+				userKeysToDelete = append(userKeysToDelete, auth.GetUserCacheKey(relatedRecordId, appFullName))
 			}
 		} else if relatedCollection == studioFileCollectionId {
 			pathField, err := change.GetField("uesio/core.path")
@@ -53,7 +53,7 @@ func runUserFileAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection,
 			if pathString, ok := pathField.(string); ok {
 				studioFileUpdates = append(studioFileUpdates, &adapt.Item{
 					"uesio/studio.path": pathString,
-					adapt.ID_FIELD:      relatedRecord.(string),
+					adapt.ID_FIELD:      relatedRecordId,
 				})
 			} else {
 				return nil
@@ -63,7 +63,7 @@ func runUserFileAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection,
 			// so that we are able to achieve cache invalidation
 			studioBotUpdates = append(studioBotUpdates, &adapt.Item{
 				adapt.UPDATED_AT_FIELD: time.Now().Unix(),
-				adapt.ID_FIELD:         relatedRecord.(string),
+				adapt.ID_FIELD:         relatedRecordId,
 			})
 		}
 		return nil

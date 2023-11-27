@@ -1,6 +1,6 @@
-import { AfterSaveBotApi } from "@uesio/bots"
+import { BeforeSaveBotApi } from "@uesio/bots"
 //decrease the population in 6
-export default function decrease_population(bot: AfterSaveBotApi) {
+export default function decrease_population(bot: BeforeSaveBotApi) {
 	bot.inserts.get().forEach((change) => {
 		const a = 2
 		const b = 4
