@@ -137,9 +137,10 @@ func (b *TSDialect) hydrateBot(bot *meta.Bot, session *sess.Session) error {
 	//check cache first
 	cacheKey := bot.GetKey()
 	// In workspace mode, we need to cache by the database id (the Unique Key),
-	// to ensure we don't have cross-workspace collisions
+	// to ensure we don't have cross-workspace collisions.
+	// To prevent needing to do cache invalidation, add the Bot modification timestamp to the key.
 	if session.GetWorkspace() != nil {
-		cacheKey = bot.GetDBID(session.GetWorkspace().UniqueKey)
+		cacheKey = fmt.Sprintf("%s:%d", bot.GetDBID(session.GetWorkspace().UniqueKey), bot.UpdatedAt)
 	}
 	if cacheItem, err := botFileContentsCache.Get(cacheKey); err == nil && cacheItem != "" {
 		bot.FileContents = cacheItem
