@@ -143,9 +143,14 @@ const useSelectedPath = (context: ctx.Context) =>
 // we ignore it.
 const useSelectedComponentPath = (context: ctx.Context) => {
 	const selectedPath = useSelectedPath(context)
-
 	const selectedDef = useDefinition(selectedPath)
+	return getSelectedComponentPath(selectedPath, selectedDef)
+}
 
+const getSelectedComponentPath = (
+	selectedPath: FullPath,
+	selectedDef: unknown
+) => {
 	const [key] = selectedPath.pop()
 
 	let path = selectedPath
@@ -393,6 +398,7 @@ export {
 	getSelectedPath,
 	setSelectedPath,
 	useSelectedComponentPath,
+	getSelectedComponentPath,
 	useSelectedViewPath,
 	getSelectedViewPath,
 	walkViewComponents,

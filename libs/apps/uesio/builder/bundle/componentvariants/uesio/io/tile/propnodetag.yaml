@@ -3,6 +3,7 @@ label: Property Node Tag
 definition:
   uesio.styleTokens:
     root:
+      - group
       - border
       - border-slate-200
       - text-slate-700

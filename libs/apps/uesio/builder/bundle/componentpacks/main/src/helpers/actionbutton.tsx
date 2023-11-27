@@ -17,7 +17,6 @@ const ActionButton: definition.UtilityComponent<Props> = (props) => {
 		<IconButton
 			id={id}
 			onClick={onClick}
-			size="small"
 			disabled={disabled}
 			icon={icon}
 			className={className}

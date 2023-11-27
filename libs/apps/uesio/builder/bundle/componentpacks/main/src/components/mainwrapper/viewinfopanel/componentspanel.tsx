@@ -14,48 +14,67 @@ import {
 	ComponentDef,
 	getBuilderNamespace,
 	getBuilderNamespaces,
+	getComponentDef,
 	getComponentDefs,
+	getSelectedComponentPath,
 	setSelectedPath,
 	useSelectedPath,
 } from "../../../api/stateapi"
 import PropNodeTag from "../../../utilities/propnodetag/propnodetag"
 import { FullPath } from "../../../api/path"
 import SearchArea from "../../../helpers/searcharea"
-import { add } from "../../../api/defapi"
 import ItemTag from "../../../utilities/itemtag/itemtag"
 import {
 	getDragEndHandler,
 	getDragStartHandler,
+	addComponentToCanvas,
 } from "../../../helpers/dragdrop"
+import { get } from "../../../api/defapi"
 
 const getUtility = component.getUtility
 
-const addComponentToCanvas = (
-	context: context.Context,
-	componentDef: ComponentDef,
-	extraDef?: definition.Definition
-) => {
-	const { namespace, name } = componentDef
-	const fullName = `${namespace}.${name}` as metadata.MetadataKey
-	add(
-		context,
-		new FullPath(
+const findClosestSlot = (
+	selectedPath: FullPath,
+	context: context.Context
+): FullPath => {
+	if (!selectedPath.isSet() || selectedPath.size() === 0) {
+		return new FullPath(
 			"viewdef",
 			context.getViewDefId(),
 			component.path.fromPath(["components", "0"])
-		),
-		{
-			[fullName]: {
-				...(componentDef.defaultDefinition || {}),
-				...(extraDef || {}),
-			},
-		}
-	)
+		)
+	}
+	const def = get(context, selectedPath)
+	const trimmedPath = getSelectedComponentPath(selectedPath, def)
+	const [componentType] = trimmedPath.pop()
+	const componentDef = getComponentDef(componentType)
+
+	// If that slot does not exist in the slot metadata
+	// or it does not exist in the view definition,
+	// try the next one up the tree.
+	if (!componentDef?.slots?.[0] || !def) {
+		const [, rest] = trimmedPath.pop()
+		return findClosestSlot(rest, context)
+	}
+
+	return trimmedPath.addLocal(componentDef.slots[0].name).addLocal("0")
+}
+
+const isSelected = (
+	itemtype: string,
+	itemname: metadata.MetadataKey,
+	selectedPath: FullPath
+) => selectedPath.equals(new FullPath(itemtype, itemname))
+
+const alphabetical = (a: ComponentDef, b: ComponentDef) => {
+	if (!a.name) return 1
+	if (!b.name) return -1
+	return a.name.localeCompare(b.name)
 }
 
 type VariantsBlockProps = {
 	variants: component.ComponentVariant[]
-	isSelected: (itemtype: string, itemname: metadata.MetadataKey) => boolean
+	selectedPath: FullPath
 	component: ComponentDef
 }
 
@@ -66,7 +85,7 @@ const VariantsBlockStyleDefaults = Object.freeze({
 const VariantsBlock: definition.UtilityComponent<VariantsBlockProps> = (
 	props
 ) => {
-	const { component: componentDef, context, variants, isSelected } = props
+	const { component: componentDef, context, variants, selectedPath } = props
 	const classes = styles.useUtilityStyleTokens(
 		VariantsBlockStyleDefaults,
 		props
@@ -97,12 +116,21 @@ const VariantsBlock: definition.UtilityComponent<VariantsBlockProps> = (
 							// Have to stop propagation to prevent the Component's onDoubleClick
 							// from running as well
 							e.stopPropagation()
-							addComponentToCanvas(context, componentDef, {
-								[component.STYLE_VARIANT]:
-									metadata.getKey(variant),
-							})
+							addComponentToCanvas(
+								context,
+								`${componentDef.namespace}.${componentDef.name}`,
+								findClosestSlot(selectedPath, context),
+								{
+									[component.STYLE_VARIANT]:
+										metadata.getKey(variant),
+								}
+							)
 						}}
-						selected={isSelected("componentvariant", variantKey)}
+						selected={isSelected(
+							"componentvariant",
+							variantKey,
+							selectedPath
+						)}
 						draggable={`componentvariant:${variantKey}`}
 						context={context}
 						variant="uesio/builder.smallpropnodetag"
@@ -124,14 +152,14 @@ const VariantsBlock: definition.UtilityComponent<VariantsBlockProps> = (
 type ComponentBlockProps = {
 	componentDef: ComponentDef
 	variants: component.ComponentVariant[]
-	isSelected: (itemtype: string, itemname: metadata.MetadataKey) => boolean
+	selectedPath: FullPath
 }
 
 const ComponentBlock: definition.UtilityComponent<ComponentBlockProps> = (
 	props
 ) => {
 	const IOExpandPanel = getUtility("uesio/io.expandpanel")
-	const { context, componentDef, variants, isSelected } = props
+	const { context, componentDef, variants, selectedPath } = props
 	const { namespace, name } = componentDef
 	if (!namespace) throw new Error("Invalid Property Definition")
 	const fullName = `${namespace}.${name}` as metadata.MetadataKey
@@ -148,25 +176,28 @@ const ComponentBlock: definition.UtilityComponent<ComponentBlockProps> = (
 		<PropNodeTag
 			context={context}
 			key={fullName}
-			onClick={(e) => {
-				// Only run once on a double-click
-				if (e.detail > 1) return
-				setSelectedPath(context, new FullPath("component", fullName))
-			}}
 			onDoubleClick={() => {
-				addComponentToCanvas(context, componentDef)
+				addComponentToCanvas(
+					context,
+					`${componentDef.namespace}.${componentDef.name}`,
+					findClosestSlot(selectedPath, context)
+				)
 			}}
 			draggable={`component:${fullName}`}
-			selected={isSelected("component", fullName)}
+			selected={isSelected("component", fullName, selectedPath)}
 		>
-			<ComponentTag component={componentDef} context={context} />
+			<ComponentTag
+				componentDef={componentDef}
+				context={context}
+				selectedPath={selectedPath}
+			/>
 			<IOExpandPanel
 				context={context}
-				expanded={isSelected("component", fullName)}
+				expanded={isSelected("component", fullName, selectedPath)}
 			>
 				{validVariants && validVariants.length > 0 && (
 					<VariantsBlock
-						isSelected={isSelected}
+						selectedPath={selectedPath}
 						variants={validVariants}
 						context={context}
 						component={componentDef}
@@ -180,7 +211,7 @@ const ComponentBlock: definition.UtilityComponent<ComponentBlockProps> = (
 type CategoryBlockProps = {
 	components: ComponentDef[]
 	variants: Record<string, component.ComponentVariant[]>
-	isSelected: (itemtype: string, itemname: metadata.MetadataKey) => boolean
+	selectedPath: FullPath
 	category: string
 }
 
@@ -202,14 +233,10 @@ const CategoryBlock: definition.UtilityComponent<CategoryBlockProps> = (
 		CategoryBlockStyleDefaults,
 		props
 	)
-	const { context, components, category, variants, isSelected } = props
+	const { context, components, category, variants, selectedPath } = props
 	const comps = components
 	if (!comps || !comps.length) return null
-	comps.sort((a, b) => {
-		if (!a.name) return 1
-		if (!b.name) return -1
-		return a.name.localeCompare(b.name)
-	})
+	comps.sort(alphabetical)
 	return (
 		<>
 			<div className={classes.categoryLabel}>{category}</div>
@@ -223,7 +250,7 @@ const CategoryBlock: definition.UtilityComponent<CategoryBlockProps> = (
 						variants={variants[fullName]}
 						componentDef={component}
 						context={context}
-						isSelected={isSelected}
+						selectedPath={selectedPath}
 					/>
 				)
 			})}
@@ -232,29 +259,70 @@ const CategoryBlock: definition.UtilityComponent<CategoryBlockProps> = (
 }
 
 type ComponentTagProps = {
-	component: ComponentDef
+	componentDef: ComponentDef
+	selectedPath: FullPath
 }
 
 const ComponentTag: definition.UtilityComponent<ComponentTagProps> = (
 	props
 ) => {
-	const { context, component } = props
+	const { context, componentDef, selectedPath } = props
+	const { namespace, name } = componentDef
+	if (!namespace) throw new Error("Invalid Property Definition")
+	const fullName = `${namespace}.${name}` as metadata.MetadataKey
 	const NamespaceLabel = getUtility("uesio/io.namespacelabel")
+	const IconButton = getUtility("uesio/io.iconbutton")
+	const Group = getUtility("uesio/io.group")
 
 	const nsInfo = getBuilderNamespace(
 		context,
-		component.namespace as metadata.MetadataKey
+		componentDef.namespace as metadata.MetadataKey
 	)
 
 	return (
-		<ItemTag description={component.description} context={context}>
+		<ItemTag description={componentDef.description} context={context}>
 			<NamespaceLabel
-				metadatakey={component.namespace}
+				metadatakey={componentDef.namespace}
 				metadatainfo={nsInfo}
-				title={component.title || component.name}
+				title={componentDef.title || componentDef.name}
 				context={context}
-				icon={component.icon}
+				icon={componentDef.icon}
 			/>
+			<Group context={context}>
+				<IconButton
+					icon="info"
+					variant="uesio/builder.hoveraction"
+					label="Component Info"
+					onClick={(e: MouseEvent) => {
+						// Only run once on a double-click
+						if (e.detail > 1) return
+						setSelectedPath(
+							context,
+							new FullPath("component", fullName)
+						)
+					}}
+					tooltipPlacement="bottom"
+					tooltipOffset={10}
+					context={context}
+				/>
+				<IconButton
+					icon="tab_move"
+					variant="uesio/builder.hoveraction"
+					label="Add to Canvas"
+					onClick={(e: MouseEvent) => {
+						// Only run once on a double-click
+						if (e.detail > 1) return
+						addComponentToCanvas(
+							context,
+							`${componentDef.namespace}.${componentDef.name}`,
+							findClosestSlot(selectedPath, context)
+						)
+					}}
+					tooltipPlacement="bottom"
+					tooltipOffset={10}
+					context={context}
+				/>
+			</Group>
 		</ItemTag>
 	)
 }
@@ -297,11 +365,6 @@ const ComponentsPanel: definition.UC = (props) => {
 		(variant) => variant.component
 	)
 
-	const isComponentSelected = (
-		itemtype: string,
-		itemname: metadata.MetadataKey
-	) => selectedPath.equals(new FullPath(itemtype, itemname))
-
 	return (
 		<ScrollPanel
 			header={
@@ -324,7 +387,7 @@ const ComponentsPanel: definition.UC = (props) => {
 						variants={variantsByComponent}
 						components={componentsByCategory[category]}
 						category={category}
-						isSelected={isComponentSelected}
+						selectedPath={selectedPath}
 						context={context}
 					/>
 				))}

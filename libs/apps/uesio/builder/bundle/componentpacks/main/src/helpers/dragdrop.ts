@@ -97,15 +97,15 @@ const getDragLeaveHandler =
 
 const addComponentToCanvas = (
 	context: context.Context,
-	drag: FullPath,
+	componentType: string,
 	drop: FullPath,
 	extraDef?: definition.Definition
 ) => {
-	const componentDef = getComponentDef(drag.itemName)
+	const componentDef = getComponentDef(componentType)
 	if (!componentDef) return
 	batch(() => {
 		add(context, drop, {
-			[drag.itemName]: {
+			[componentType]: {
 				...(componentDef.defaultDefinition || {}),
 				...(extraDef || {}),
 			},
@@ -125,7 +125,7 @@ const handleDrop = (
 		case "componentvariant": {
 			addComponentToCanvas(
 				context,
-				drag,
+				drag.itemName,
 				drop,
 				drag.itemType === "componentvariant"
 					? {
@@ -210,4 +210,5 @@ export {
 	getDragOverHandler,
 	getDropHandler,
 	standardAccepts,
+	addComponentToCanvas,
 }
