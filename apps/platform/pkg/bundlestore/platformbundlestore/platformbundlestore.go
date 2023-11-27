@@ -5,7 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
@@ -15,6 +17,19 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/file"
 )
+
+var doCache bool
+
+// Bundle entries here should be fairly long-lived because (a) bundles are immutable (b) the cost of retrieval is high.
+var bundleStoreCache *bundle.BundleStoreCache
+
+func init() {
+	// on by default
+	doCache = os.Getenv("UESIO_CACHE_SITE_BUNDLES") != "false"
+	if doCache {
+		bundleStoreCache = bundle.NewBundleStoreCache(4*time.Hour, 15*time.Minute)
+	}
+}
 
 type PlatformBundleStore struct{}
 
@@ -56,14 +71,16 @@ func (b *PlatformBundleStoreConnection) GetItem(item meta.BundleableItem) error 
 		return bundlestore.NewPermissionError(message)
 	}
 
-	cachedItem, ok := bundle.GetItemFromCache(b.Namespace, b.Version, fullCollectionName, key)
-
-	if ok {
-		if !b.AllowPrivate && !cachedItem.IsPublic() {
-			return bundlestore.NewPermissionError("Metadata item: " + key + " is not public")
+	if doCache {
+		cachedItem, ok := bundleStoreCache.GetItemFromCache(b.Namespace, b.Version, fullCollectionName, key)
+		if ok {
+			if !b.AllowPrivate && !cachedItem.IsPublic() {
+				return bundlestore.NewPermissionError("Metadata item: " + key + " is not public")
+			}
+			return meta.Copy(item, cachedItem)
 		}
-		return meta.Copy(item, cachedItem)
 	}
+
 	buf := &bytes.Buffer{}
 	fileMetadata, err := download(buf, filepath.Join(getBasePath(b.Namespace, b.Version), collectionName, item.GetPath()))
 	if err != nil {
@@ -77,7 +94,10 @@ func (b *PlatformBundleStoreConnection) GetItem(item meta.BundleableItem) error 
 	if !b.AllowPrivate && !item.IsPublic() {
 		return bundlestore.NewPermissionError("Metadata item: " + key + " is not public")
 	}
-	return bundle.AddItemToCache(item, b.Namespace, b.Version)
+	if !doCache {
+		return nil
+	}
+	return bundleStoreCache.AddItemToCache(b.Namespace, b.Version, fullCollectionName, key, item)
 }
 
 func (b *PlatformBundleStoreConnection) HasAny(group meta.BundleableGroup, conditions meta.BundleConditions) (bool, error) {

@@ -14,7 +14,7 @@ const (
 
 func runUserFileAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 	// TASKS:
-	// 1. Whenever a user file is updated,  if the file is the User's profile,
+	// 1. Whenever a user file is inserted or updated,  if the file is the User's profile,
 	// we need to invalidate the User cache in Redis
 	// 2. If a new user file corresponding to a STUDIO file (static file) is inserted,
 	// we need to transfer the Path property to the studio file as well
@@ -24,27 +24,27 @@ func runUserFileAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection,
 	userKeysToDelete := []string{}
 	studioFileUpdates := adapt.Collection{}
 
-	for _, insert := range request.Inserts {
-		relatedCollection, err := insert.GetField("uesio/core.collectionid")
+	if err := request.LoopChanges(func(change *adapt.ChangeItem) error {
+		relatedCollection, err := change.GetField("uesio/core.collectionid")
 		if err != nil {
-			continue
+			return err
 		}
-		relatedRecord, err := insert.GetField("uesio/core.recordid")
+		relatedRecord, err := change.GetField("uesio/core.recordid")
 		if err != nil {
-			continue
+			return err
 		}
 		if relatedCollection == userCollectionId {
-			relatedField, err := insert.GetField("uesio/core.fieldid")
+			relatedField, err := change.GetField("uesio/core.fieldid")
 			if err != nil {
-				continue
+				return err
 			}
 			if relatedField == "uesio/core.picture" {
 				userKeysToDelete = append(userKeysToDelete, auth.GetUserCacheKey(relatedRecord.(string), appFullName))
 			}
 		} else if relatedCollection == studioFileCollectionId {
-			pathField, err := insert.GetField("uesio/core.path")
+			pathField, err := change.GetField("uesio/core.path")
 			if err != nil || pathField == "" {
-				continue
+				return nil
 			}
 			if pathString, ok := pathField.(string); ok {
 				studioFileUpdates = append(studioFileUpdates, &adapt.Item{
@@ -52,10 +52,13 @@ func runUserFileAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection,
 					"uesio/core.id":     relatedRecord.(string),
 				})
 			} else {
-				continue
+				return nil
 			}
 
 		}
+		return nil
+	}); err != nil {
+		return err
 	}
 
 	for _, deleteItem := range request.Deletes {

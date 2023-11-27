@@ -27,9 +27,12 @@ func GetConnection(dataSourceKey string, metadata *adapt.MetadataCache, session 
 
 	// Enter into a version context to get these
 	// credentials as the datasource's namespace
-	versionSession, err := EnterVersionContext(namespace, session, connection)
-	if err != nil {
-		return nil, err
+	versionSession := session
+	if session != nil {
+		versionSession, err = EnterVersionContext(namespace, session, connection)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	mergedType, hasType := dataSourceTypesByName[dataSourceKey]
