@@ -21,15 +21,11 @@ func runStudioMetadataSaveBot(op *adapt.SaveOp, connection adapt.Connection, ses
 	workspaceName := op.Params["workspacename"]
 	var changedMetadataItemKeys []string
 
-	err = op.LoopChanges(func(change *adapt.ChangeItem) error {
-		if err = change.SetField("uesio/studio.workspace", &adapt.Item{
+	if err = op.LoopChanges(func(change *adapt.ChangeItem) error {
+		return change.SetField("uesio/studio.workspace", &adapt.Item{
 			adapt.ID_FIELD: workspaceID,
-		}); err != nil {
-			return err
-		}
-		return nil
-	})
-	if err != nil {
+		})
+	}); err != nil {
 		return err
 	}
 
