@@ -63,3 +63,30 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data[*]" isEmpty
 jsonpath "$.wires[0].errors" not exists
+
+# Try to insert a axolotl and check if the aftersave bot increased the population to 10
+# and the before save decrease in 6
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.animal",
+            "deletes":{},
+            "changes":{
+                "temp1":{
+                    "uesio/tests.species":"axolotl",
+                    "uesio/tests.genus":"Mole salamander",
+                    "uesio/tests.total_population": 10
+                }
+            },
+            "wire":"mywire"
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" == null
+jsonpath "$.wires[0].changes['temp1']['uesio/tests.species']" == "axolotl"
+jsonpath "$.wires[0].changes['temp1']['uesio/tests.genus']" == "Mole salamander"
+jsonpath "$.wires[0].changes['temp1']['uesio/tests.total_population']" == 14

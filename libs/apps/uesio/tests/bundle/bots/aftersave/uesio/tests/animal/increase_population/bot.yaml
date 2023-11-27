@@ -1,4 +1,4 @@
-name: nozebras
+name: increase_population
 collection: animal
 type: AFTERSAVE
 dialect: TYPESCRIPT

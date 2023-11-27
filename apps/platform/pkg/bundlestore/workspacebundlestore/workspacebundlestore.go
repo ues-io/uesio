@@ -121,6 +121,12 @@ type WorkspaceBundleStoreConnection struct {
 	bundlestore.ConnectionOptions
 }
 
+// use the workspace's ID, not Name, as the cache key, to ensure that if workspaces are truncated / deleted
+// and then recreated, we don't use still use old workspace metadata caches
+func (b *WorkspaceBundleStoreConnection) getWorkspaceCacheKey() string {
+	return b.Workspace.ID
+}
+
 func (b *WorkspaceBundleStoreConnection) GetItem(item meta.BundleableItem) error {
 
 	itemUniqueKey := item.GetDBID(b.Workspace.UniqueKey)
@@ -128,7 +134,7 @@ func (b *WorkspaceBundleStoreConnection) GetItem(item meta.BundleableItem) error
 
 	// First check the cache
 	if doCache {
-		if cachedItem, ok := bundleStoreCache.GetItemFromCache(b.Namespace, b.Version, collectionName, itemUniqueKey); ok {
+		if cachedItem, ok := bundleStoreCache.GetItemFromCache(b.Namespace, b.getWorkspaceCacheKey(), collectionName, itemUniqueKey); ok {
 			return meta.Copy(item, cachedItem)
 		}
 	}
@@ -152,7 +158,7 @@ func (b *WorkspaceBundleStoreConnection) GetItem(item meta.BundleableItem) error
 	if !doCache {
 		return nil
 	}
-	return bundleStoreCache.AddItemToCache(b.Namespace, b.Version, collectionName, itemUniqueKey, item)
+	return bundleStoreCache.AddItemToCache(b.Namespace, b.getWorkspaceCacheKey(), collectionName, itemUniqueKey, item)
 }
 
 func (b *WorkspaceBundleStoreConnection) HasAny(group meta.BundleableGroup, conditions meta.BundleConditions) (bool, error) {

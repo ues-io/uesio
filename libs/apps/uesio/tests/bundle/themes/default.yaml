@@ -1,4 +1,5 @@
 name: default
+public: true
 definition:
   palette:
     primary: "#FFC0CB"
@@ -7,4 +8,3 @@ definition:
     warning: "#FFC0CB"
     info: "#FFC0CB"
     success: "#FFC0CB"
-public: true

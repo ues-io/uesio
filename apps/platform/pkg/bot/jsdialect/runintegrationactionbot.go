@@ -67,3 +67,7 @@ func (b *RunIntegrationActionBotAPI) GetSession() *SessionAPI {
 func (b *RunIntegrationActionBotAPI) GetUser() *UserAPI {
 	return NewUserAPI(b.integrationConnection.GetSession().GetContextUser())
 }
+
+func (b *RunIntegrationActionBotAPI) CallBot(botKey string, params map[string]interface{}) (interface{}, error) {
+	return botCall(botKey, params, b.integrationConnection.GetSession(), b.integrationConnection.GetPlatformConnection())
+}
