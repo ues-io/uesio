@@ -122,16 +122,15 @@ func getTimeout(timeout int) int {
 	return timeout
 }
 
-var botFileContentsCache cache.Cache[string]
+var botProgramsCache cache.Cache[*goja.Program]
 
 func init() {
-	botFileContentsCache = cache.NewMemoryCache[string](15*time.Minute, 5*time.Minute)
+	botProgramsCache = cache.NewMemoryCache[*goja.Program](15*time.Minute, 5*time.Minute)
 }
 
 func (b *JSDialect) hydrateBot(bot *meta.Bot, session *sess.Session) error {
 	buf := &bytes.Buffer{}
-	_, err := bundle.GetItemAttachment(buf, bot, b.GetFilePath(), session)
-	if err != nil {
+	if _, err := bundle.GetItemAttachment(buf, bot, b.GetFilePath(), session); err != nil {
 		return err
 	}
 	bot.FileContents = string(buf.Bytes())
@@ -139,27 +138,30 @@ func (b *JSDialect) hydrateBot(bot *meta.Bot, session *sess.Session) error {
 }
 
 func RunBot(bot *meta.Bot, api interface{}, session *sess.Session, hydrateBot func(*meta.Bot, *sess.Session) error, errorFunc func(string)) error {
+	cacheKey := bot.GetKey()
+	// In workspace mode, we need to cache by the database id (the Unique Key),
+	// to ensure we don't have cross-workspace collisions.
+	// To prevent needing to do cache invalidation, add the Bot modification timestamp to the key.
+	if session.GetWorkspace() != nil {
+		cacheKey = fmt.Sprintf("%s:%d", bot.GetDBID(session.GetWorkspace().UniqueKey), bot.UpdatedAt)
+	}
 
-	// Check if the bot has been hydrated yet
-	if bot.FileContents == "" {
-		// Check the file contents cache
-		cacheKey := bot.GetKey()
-		// In workspace mode, we need to cache by the database id (the Unique Key),
-		// to ensure we don't have cross-workspace collisions.
-		// To prevent needing to do cache invalidation, add the Bot modification timestamp to the key.
-		if session.GetWorkspace() != nil {
-			cacheKey = fmt.Sprintf("%s:%d", bot.GetDBID(session.GetWorkspace().UniqueKey), bot.UpdatedAt)
+	var program *goja.Program
+
+	// Check the file contents cache
+	if cacheItem, err := botProgramsCache.Get(cacheKey); err == nil && cacheItem != nil {
+		program = cacheItem
+	} else {
+		// We need to hydrate using the dialect-specific hydration mechanism
+		if hydrateErr := hydrateBot(bot, session); hydrateErr != nil {
+			return hydrateErr
 		}
-		if cacheItem, err := botFileContentsCache.Get(cacheKey); err == nil && cacheItem != "" {
-			bot.FileContents = cacheItem
+		if compiledProgram, compileErr := goja.Compile(cacheKey, strings.ReplaceAll("("+bot.FileContents+")", "export default function", "function"), true); compileErr != nil {
+			return compileErr
 		} else {
-			// We need to hydrate using the dialect-specific hydration mechanism
-			if hydrateErr := hydrateBot(bot, session); hydrateErr != nil {
-				return hydrateErr
-			}
-			bot.FileContents = strings.ReplaceAll("("+bot.FileContents+")", "export default function", "function")
+			program = compiledProgram
 			// add to cache
-			if cacheErr := botFileContentsCache.Set(cacheKey, bot.FileContents); cacheErr != nil {
+			if cacheErr := botProgramsCache.Set(cacheKey, program); cacheErr != nil {
 				return cacheErr
 			}
 		}
@@ -167,17 +169,14 @@ func RunBot(bot *meta.Bot, api interface{}, session *sess.Session, hydrateBot fu
 
 	vm := goja.New()
 	vm.SetFieldNameMapper(goja.TagFieldNameMapper("bot", true))
-	err := vm.Set("log", Logger)
-	if err != nil {
+	if err := vm.Set("log", Logger); err != nil {
 		return err
 	}
-
 	time.AfterFunc(time.Duration(getTimeout(bot.Timeout))*time.Second, func() {
 		vm.Interrupt("Bot: " + bot.Name + " is running too long, please check your code and run the operation again.")
 		return //Interrupt native Go functions
 	})
-
-	runner, err := vm.RunString(bot.FileContents)
+	runner, err := vm.RunProgram(program)
 	if err != nil {
 		return err
 	}
@@ -189,7 +188,6 @@ func RunBot(bot *meta.Bot, api interface{}, session *sess.Session, hydrateBot fu
 			return errors.New("invalid bot code. A bot must export a function with the same name as the bot")
 		}
 	}
-
 	_, err = change(goja.Undefined(), vm.ToValue(api))
 	if err != nil {
 		if errorFunc == nil {
