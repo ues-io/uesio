@@ -28,14 +28,6 @@ const loadViewDefinitionSchema = async () => {
 	}, 100)
 })()
 
-// const validateYamlDoc = (yamlDoc: object, validator: Ajv.ValidateFunction) => {
-// 	const validate = ajv.getSchema(schemaId)
-// 	if (!validate) {
-// 		throw new Error("Schema not found: " + schemaId)
-// 	}
-// 	return validate(yamlDoc)
-// }
-
 export type ValidationResult = {
 	errors?: Ajv.ErrorObject[] | null
 	valid: boolean
