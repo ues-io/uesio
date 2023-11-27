@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"os"
 	"strings"
 	"time"
 
@@ -17,8 +18,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func Logger(message string) {
-	fmt.Println(message)
+func Logger() {
 }
 
 type JSDialect struct {
@@ -125,7 +125,10 @@ func getTimeout(timeout int) int {
 var botProgramsCache cache.Cache[*goja.Program]
 
 func init() {
-	botProgramsCache = cache.NewMemoryCache[*goja.Program](15*time.Minute, 5*time.Minute)
+	// Always cache bot programs by default
+	if os.Getenv("UESIO_CACHE_BOT_PROGRAMS") != "false" {
+		botProgramsCache = cache.NewMemoryCache[*goja.Program](15*time.Minute, 5*time.Minute)
+	}
 }
 
 func (b *JSDialect) hydrateBot(bot *meta.Bot, session *sess.Session) error {
@@ -149,9 +152,12 @@ func RunBot(bot *meta.Bot, api interface{}, session *sess.Session, hydrateBot fu
 	var program *goja.Program
 
 	// Check the file contents cache
-	if cacheItem, err := botProgramsCache.Get(cacheKey); err == nil && cacheItem != nil {
-		program = cacheItem
-	} else {
+	if botProgramsCache != nil {
+		if cacheItem, err := botProgramsCache.Get(cacheKey); err == nil && cacheItem != nil {
+			program = cacheItem
+		}
+	}
+	if program == nil {
 		// We need to hydrate using the dialect-specific hydration mechanism
 		if hydrateErr := hydrateBot(bot, session); hydrateErr != nil {
 			return hydrateErr
@@ -161,8 +167,10 @@ func RunBot(bot *meta.Bot, api interface{}, session *sess.Session, hydrateBot fu
 		} else {
 			program = compiledProgram
 			// add to cache
-			if cacheErr := botProgramsCache.Set(cacheKey, program); cacheErr != nil {
-				return cacheErr
+			if botProgramsCache != nil {
+				if cacheErr := botProgramsCache.Set(cacheKey, program); cacheErr != nil {
+					return cacheErr
+				}
 			}
 		}
 	}
