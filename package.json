@@ -44,7 +44,7 @@
 		"@floating-ui/react": "^0.25.4",
 		"@monaco-editor/react": "^4.5.1",
 		"@nx/eslint-plugin": "16.10.0",
-		"@nx/jest": "16.10.0",
+		"@nx/jest": "17.1.3",
 		"@nx/linter": "16.10.0",
 		"@orangeopensource/hurl": "^4.0.0",
 		"@reduxjs/toolkit": "^1.9.7",
