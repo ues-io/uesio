@@ -139,27 +139,26 @@ export default async (
 		return errContext
 	}
 
-	const loadedResults = response.wires.map(
-		(wire, index) =>
-			({
-				...toLoadWithLookups[index],
-				...wire,
-				// Since we filtered out inactive conditions from the load request,
-				// we need to merge the active conditions back into the result
-				conditions: mergeConditions(
-					toLoadWithLookups[index].conditions,
-					wire.conditions
-				),
-				original: { ...wire.data },
-				isLoading: false,
-				// TODO: If we implement a concept of custom GET_COLLECTION_METADATA for Dynamic collections,
-				// then we can remove the `|| wire.query` branch, because "query" will only indicate whether data was queried,
-				// not data and possibly extra metadata. But right now Dynamic collections can extend metadata as part of their
-				// LOAD code (which is a hack that needs to go away by exposing a GET_COLLECTION_METADATA hook)
-				hasLoadedMetadata:
-					wire.hasLoadedMetadata || wire.query !== false,
-			} as PlainWire)
-	)
+	const loadedResults = response.wires.map((wire, index) => {
+		const originalWire = toLoadWithLookups[index]
+		return {
+			...originalWire,
+			...wire,
+			// Since we filtered out inactive conditions from the load request,
+			// we need to merge the active conditions back into the result
+			conditions: mergeConditions(
+				originalWire.conditions,
+				wire.conditions
+			),
+			original: { ...wire.data },
+			isLoading: false,
+			// TODO: If we implement a concept of custom GET_COLLECTION_METADATA for Dynamic collections,
+			// then we can remove the `|| wire.query` branch, because "query" will only indicate whether data was queried,
+			// not data and possibly extra metadata. But right now Dynamic collections can extend metadata as part of their
+			// LOAD code (which is a hack that needs to go away by exposing a GET_COLLECTION_METADATA hook)
+			hasLoadedMetadata: wire.hasLoadedMetadata || wire.query !== false,
+		} as PlainWire
+	})
 
 	const invalidWiresResults = invalidWires.map(
 		(wire) =>
