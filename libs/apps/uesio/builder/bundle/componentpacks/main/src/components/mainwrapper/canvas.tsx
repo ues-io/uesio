@@ -5,6 +5,7 @@ import {
 	useDragPath,
 	useDropPath,
 	setSelectedPath,
+	getSelectedComponentPath,
 } from "../../api/stateapi"
 import { FullPath } from "../../api/path"
 import SelectBorder from "./selectborder"
@@ -13,6 +14,7 @@ import {
 	getDragOverHandler,
 	getDropHandler,
 } from "../../helpers/dragdrop"
+import { get } from "../../api/defapi"
 
 const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 	const context = props.context
@@ -78,9 +80,11 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 		}
 
 		if (validPath) {
+			const pathToSelect = new FullPath("viewdef", viewDefId, validPath)
+			const def = get(context, pathToSelect)
 			setSelectedPath(
 				context,
-				new FullPath("viewdef", viewDefId, validPath)
+				getSelectedComponentPath(pathToSelect, def)
 			)
 		}
 	}

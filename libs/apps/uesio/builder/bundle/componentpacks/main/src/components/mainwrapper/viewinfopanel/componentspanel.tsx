@@ -53,7 +53,7 @@ const findClosestSlot = (
 	// or it does not exist in the view definition,
 	// try the next one up the tree.
 	if (!componentDef?.slots?.[0] || !def) {
-		const [, rest] = trimmedPath.pop()
+		const [, rest] = selectedPath.pop()
 		return findClosestSlot(rest, context)
 	}
 
