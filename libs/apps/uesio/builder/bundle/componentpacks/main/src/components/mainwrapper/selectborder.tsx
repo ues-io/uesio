@@ -120,9 +120,6 @@ const SelectBorder: definition.UtilityComponent<Props> = (props) => {
 	const draggingChildren = useRef<Element[]>()
 	const emptyComponents = useRef<NodeListOf<Element>>()
 
-	//const selectedLength = selectedChildren ? selectedChildren.length : 0
-	//const draggingLength = draggingChildren ? draggingChildren.length : 0
-
 	const dragPath = useDragPath(context)
 	const isDragging = dragPath.isSet()
 
