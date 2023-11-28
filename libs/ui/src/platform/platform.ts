@@ -641,7 +641,7 @@ const platform = {
 	): Promise<T> =>
 		memoizedGetJSON<T>(
 			context,
-			`${getStaticAssetsHost()}${getStaticAssetsPath()}${path}`
+			context.mergeString("$StaticFile{" + path + "}")
 		),
 	createLogin: async (
 		context: Context,

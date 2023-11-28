@@ -19,8 +19,8 @@ const WireProperties: definition.UtilityComponent = (props) => {
 	const [wireName] = wirePath.pop()
 
 	// This forces a rerender if the definition changes
-	const wireDefinition = useDefinition(wirePath) as wire.WireDefinition
-	const VIEW_ONLY = !!(wireDefinition && wireDefinition.viewOnly)
+	const wireDefinition = useDefinition<wire.WireDefinition>(context, wirePath)
+	const VIEW_ONLY = wireDefinition?.viewOnly === true
 	const IS_NOT_VIEW_ONLY = [
 		{
 			type: "hasNoValue",

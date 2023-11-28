@@ -220,12 +220,11 @@ const CodePanel: definition.UtilityComponent = (props) => {
 					input: ["h-full", "border-0"],
 				}}
 				language="yaml"
-				setValue={
-					((newValue): void => {
-						const selectedPath = getSelectedViewPath(context)
-						setContent(context, selectedPath, newValue || "")
-					}) as EditorProps["onChange"]
-				}
+				debounce={500}
+				setValue={(newValue: string) => {
+					const selectedPath = getSelectedViewPath(context)
+					setContent(context, selectedPath, newValue || "")
+				}}
 				onMount={onMount}
 			/>
 		</ScrollPanel>

@@ -37,7 +37,11 @@ function addOriginalSessionHashHeader(
 	context: Context,
 	headers: Record<string, string> = {}
 ) {
-	const session = context.getSession()
+	let session
+	try {
+		session = context.getSession()
+		// eslint-disable-next-line no-empty
+	} catch (e) {}
 	if (session && headers) {
 		headers["x-uesio-osh"] = session.hash
 	}

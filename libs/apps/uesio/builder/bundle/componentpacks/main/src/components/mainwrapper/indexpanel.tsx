@@ -20,23 +20,25 @@ const StyleDefaults = Object.freeze({
 })
 
 const IndexPanel: definition.UtilityComponent = (props) => {
+	const parentContext = props.context
 	const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
 	const TitleBar = component.getUtility("uesio/io.titlebar")
 	const IconButton = component.getUtility("uesio/io.iconbutton")
 	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
-	const selectedPath = useSelectedViewPath(props.context)
+	const selectedPath = useSelectedViewPath(parentContext)
 
-	const dragPath = useDragPath(props.context)
-	const dropPath = useDropPath(props.context)
+	const dragPath = useDragPath(parentContext)
+	const dropPath = useDropPath(parentContext)
 
-	const definition = useDefinition(
+	const viewDefinition = useDefinition<component.ViewDefinition>(
+		parentContext,
 		selectedPath.setLocal("")
-	) as definition.DefinitionMap
+	)
 
 	const [searchTerm, setSearchTerm] = useState("")
 
-	const context = props.context.addComponentFrame(
+	const context = parentContext.addComponentFrame(
 		"uesio/builder.indexpanel",
 		{
 			searchTerm,
@@ -92,7 +94,7 @@ const IndexPanel: definition.UtilityComponent = (props) => {
 						slot={{
 							name: "components",
 						}}
-						definition={definition}
+						definition={viewDefinition as component.ViewDefinition}
 						path={""}
 						context={context}
 					/>

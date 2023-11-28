@@ -24,7 +24,7 @@ const PanelProperties: definition.UtilityComponent = (props) => {
 	const { context } = props
 	const path = useSelectedPath(context).trimToSize(2)
 	// force rerender if definition changes - otherwise, properties won't update
-	useDefinition(path)
+	useDefinition(context, path)
 	const componentType = get(
 		context,
 		path.addLocal(panelComponentTypeProp)

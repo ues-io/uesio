@@ -53,18 +53,16 @@ const SearchBox: definition.UC<SearchBoxDefinition> = (props) => {
 			debounce(
 				(searchText: string) =>
 					search(searchText, wire, searchFields, context),
-				300
+				500
 			),
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[wire, searchFields]
+		[wire, searchFields, context]
 	)
 
 	useEffect(
 		() => () => {
 			debouncedSearch.cancel()
 		},
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[wire, searchFields]
+		[wire, searchFields, debouncedSearch]
 	)
 
 	return (
