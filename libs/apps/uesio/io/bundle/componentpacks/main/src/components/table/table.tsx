@@ -57,6 +57,7 @@ type ColumnDefinition = {
 	label: string
 	width?: string
 	applyChanges?: ApplyChanges
+	applyDelay?: number
 	reference?: ReferenceFieldOptions
 	user?: UserFieldOptions
 	number?: NumberFieldOptions

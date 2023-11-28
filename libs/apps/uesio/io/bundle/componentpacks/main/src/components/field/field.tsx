@@ -53,11 +53,12 @@ type FieldDefinition = {
 	text?: TextFieldOptions
 	wrapperVariant: metadata.MetadataKey
 	applyChanges?: ApplyChanges
+	applyDelay?: number
 } & definition.BaseDefinition
 
 type FieldValueSetter = (value: wire.FieldValue) => void
 
-type ApplyChanges = "onBlur" | ""
+type ApplyChanges = "onBlur" | "onTypingComplete" | ""
 
 type LabelPosition = "none" | "top" | "left" | "right"
 
@@ -118,6 +119,7 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		wrapperVariant,
 		labelPosition,
 		applyChanges,
+		applyDelay,
 	} = definition
 
 	const componentId = api.component.getComponentIdFromProps(props)
@@ -163,6 +165,7 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		placeholder,
 		displayAs,
 		applyChanges,
+		applyDelay,
 		// Some components have sub-fields that need to know about label position
 		labelPosition,
 	}
