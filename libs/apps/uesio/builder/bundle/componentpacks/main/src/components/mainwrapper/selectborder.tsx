@@ -130,9 +130,6 @@ const SelectBorder: definition.UtilityComponent<Props> = (props) => {
 		selectedComponentDef,
 	] = getComponentInfoFromPath(selectedComponentPath, context)
 
-	const [draggingChildIndex, , draggingSlotPath, ,] =
-		getComponentInfoFromPath(dragPath, context)
-
 	useEffect(() => {
 		// Empty component handling
 		if (emptyComponents?.current) {
@@ -151,7 +148,9 @@ const SelectBorder: definition.UtilityComponent<Props> = (props) => {
 			target.classList.remove(...StyleDefaults.emptyRemove)
 			target.removeAttribute("data-placeholder")
 		})
+	})
 
+	useEffect(() => {
 		// Selected component handling
 		if (selectedChildren?.current) {
 			selectedChildren.current.forEach((child) => {
@@ -175,8 +174,13 @@ const SelectBorder: definition.UtilityComponent<Props> = (props) => {
 				target.classList.add(...StyleDefaults.selectedAlways)
 			}
 		})
+	})
 
+	useEffect(() => {
 		// Dragging items handling
+		const [draggingChildIndex, , draggingSlotPath, ,] =
+			getComponentInfoFromPath(dragPath, context)
+
 		if (draggingChildren?.current) {
 			draggingChildren.current.forEach((child) => {
 				child.classList.remove(...StyleDefaults.dragging)
