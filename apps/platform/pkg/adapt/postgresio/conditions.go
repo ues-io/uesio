@@ -275,8 +275,7 @@ func processSubQueryCondition(condition adapt.LoadRequestCondition, collectionMe
 	subFieldName := getFieldName(subFieldMetadata, subTableAlias)
 
 	subConditionsBuilder := builder.getSubBuilder("")
-	err = processConditionListForTenant(condition.SubConditions, subCollectionMetadata, metadata, subConditionsBuilder, subTableAlias, session)
-	if err != nil {
+	if err = processConditionListForTenant(condition.SubConditions, subCollectionMetadata, metadata, subConditionsBuilder, subTableAlias, session); err != nil {
 		return err
 	}
 
@@ -307,13 +306,7 @@ func processConditionListForTenant(conditions []adapt.LoadRequestCondition, coll
 
 func processConditionList(conditions []adapt.LoadRequestCondition, collectionMetadata *adapt.CollectionMetadata, metadata *adapt.MetadataCache, builder *QueryBuilder, tableAlias string, session *sess.Session) error {
 	for _, condition := range conditions {
-
-		if condition.Inactive {
-			continue
-		}
-
-		err := processCondition(condition, collectionMetadata, metadata, builder, tableAlias, session)
-		if err != nil {
+		if err := processCondition(condition, collectionMetadata, metadata, builder, tableAlias, session); err != nil {
 			return err
 		}
 	}

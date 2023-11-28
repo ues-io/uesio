@@ -15,6 +15,7 @@ import { createRecordOp } from "./createrecord"
 import partition from "lodash/partition"
 import { batch } from "react-redux"
 import { addError } from "../../../../src/hooks/notificationapi"
+import { WireConditionState } from "../conditions/conditions"
 
 const getWireRequest = (context: Context, wires: PlainWire[]): LoadRequest[] =>
 	wires.map(
@@ -39,7 +40,8 @@ const getWireRequest = (context: Context, wires: PlainWire[]): LoadRequest[] =>
 			batchnumber,
 			batchsize,
 			collection,
-			conditions,
+			// Only send active conditions to the server
+			conditions: conditions?.filter((c) => !c.inactive),
 			fields: !viewOnlyMetadata
 				? fields
 				: // Strip out view only fields from when building a load request of regular wires
@@ -142,6 +144,12 @@ export default async (
 			({
 				...toLoadWithLookups[index],
 				...wire,
+				// Since we filtered out inactive conditions from the load request,
+				// we need to merge the active conditions back into the result
+				conditions: mergeConditions(
+					toLoadWithLookups[index].conditions,
+					wire.conditions
+				),
 				original: { ...wire.data },
 				isLoading: false,
 				// TODO: If we implement a concept of custom GET_COLLECTION_METADATA for Dynamic collections,
@@ -196,6 +204,33 @@ export default async (
 	)
 
 	return context
+}
+
+const mergeConditions = (
+	originalConditions: WireConditionState[] | undefined,
+	loadedConditions: WireConditionState[] | undefined
+) => {
+	// Shortcuts:
+	// 1. if we have no original conditions, just return whatever we got from loaded conditions
+	if (!originalConditions || !originalConditions.length) {
+		return loadedConditions
+	}
+	// 2. if we have no loaded conditions, just return the original conditions
+	if (!loadedConditions || !loadedConditions.length) {
+		return originalConditions
+	}
+	// 3. If the array lengths are the same, return loaded conditions
+	if (originalConditions.length === loadedConditions.length) {
+		return loadedConditions
+	}
+	// Otherwise, we need to merge the conditions.
+	// For the merge, prefer the loaded condition object over the original condition object
+	return originalConditions.map((originalCondition) => {
+		const loadedCondition = loadedConditions.find(
+			(c) => c.id === originalCondition.id
+		)
+		return loadedCondition || originalCondition
+	})
 }
 
 export { getWireRequest }

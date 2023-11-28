@@ -8,6 +8,7 @@ import * as platformModule from "../../src/platform/platform"
 import { PlainWire } from "../../src/bands/wire/types"
 import { Context } from "../../src/context/context"
 import { LoadRequestBatch } from "../../src/load/loadrequest"
+import { ValueConditionState } from "../../src/bands/wire/conditions/conditions"
 
 const wireId = "mywire"
 const collectionId = "ben/planets.exoplanet"
@@ -192,6 +193,82 @@ const tests: WireSignalTest[] = [
 					record1: { "ben/planets.name": "kepler" },
 					record2: { "ben/planets.name": "foobar" },
 				})
+			}
+		},
+	},
+	{
+		name: "Load request should strip inactive conditions",
+		wireId,
+		wireDef: {
+			collection: collectionId,
+			conditions: [
+				{
+					field: "ben/planets.name",
+					operator: "EQ",
+					valueSource: "VALUE",
+					value: "",
+					id: "planetName",
+					inactive: true,
+				},
+				{
+					field: "ben/planets.solarsystem",
+					operator: "EQ",
+					valueSource: "VALUE",
+					value: "Our solar system",
+					id: "solarSystem",
+					inactive: false,
+				},
+			],
+		},
+		signals: [
+			{
+				signal: "wire/LOAD",
+				wires: [wireId],
+			},
+		],
+		run: () => {
+			const spy = jest
+				.spyOn(platformModule.platform, "loadData")
+				.mockImplementation(defaultPlanetsWireLoadImplementation)
+			return (wire) => {
+				expect(spy).toBeCalledTimes(1)
+				expect(spy.mock.calls[0][1].includeMetadata).toBe(true)
+				spy.mock.calls.forEach((call) => {
+					const loadWire = call[1].wires[0]
+					expect(loadWire).toHaveProperty("name", wireId)
+					expect(loadWire).toHaveProperty("collection", collectionId)
+					const { conditions } = loadWire
+					// only the active conditions should have been sent to server
+					expect(conditions?.length).toBe(1)
+					expect(conditions?.[0].id).toBe("solarSystem")
+					expect((conditions?.[0] as ValueConditionState).value).toBe(
+						"Our solar system"
+					)
+				})
+				spy.mockRestore()
+				expect(wire.data).toEqual({
+					record1: { "ben/planets.name": "kepler" },
+					record2: { "ben/planets.name": "foobar" },
+				})
+				// verify that all original conditions are in the rehydrated wire
+				expect(wire.conditions).toEqual([
+					{
+						field: "ben/planets.name",
+						operator: "EQ",
+						valueSource: "VALUE",
+						value: "",
+						id: "planetName",
+						inactive: true,
+					},
+					{
+						field: "ben/planets.solarsystem",
+						operator: "EQ",
+						valueSource: "VALUE",
+						value: "Our solar system",
+						id: "solarSystem",
+						inactive: false,
+					},
+				])
 			}
 		},
 	},

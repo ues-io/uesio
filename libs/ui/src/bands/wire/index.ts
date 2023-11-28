@@ -111,6 +111,8 @@ const processCondition = (
 	condition: WireConditionState,
 	wires: PlainWire[]
 ): string[] => {
+	// ignore inactive conditions
+	if (condition.inactive) return []
 	const isGroupCondition = "type" in condition && condition.type === "GROUP"
 	if (isGroupCondition) {
 		return condition.conditions?.flatMap((c) => processCondition(c, wires))
