@@ -132,6 +132,8 @@ properties:
     options:
       - value: ""
         label: "Immediately (as user types)"
+      - value: "onTypingComplete"
+        label: "Wait until user finishes typing"
       - value: "onBlur"
         label: "On blur (when user tabs away)"
     displayConditions:
@@ -145,6 +147,13 @@ properties:
         field: readonly
         operator: NOT_EQUALS
         value: true
+  - name: applyDelay
+    type: NUMBER
+    label: Delay (ms) before applying changes
+    displayConditions:
+      - type: fieldValue
+        field: applyChanges
+        value: "onTypingComplete"
   - name: displayAs
     type: SELECT
     label: Display as
@@ -321,6 +330,7 @@ sections:
       - readonly
       - displayAs
       - applyChanges
+      - applyDelay
       # Display type specific properties
       - number
       - longtext
