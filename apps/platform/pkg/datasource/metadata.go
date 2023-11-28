@@ -197,7 +197,9 @@ func GetFormulaMetadata(f *meta.Field) *adapt.FormulaMetadata {
 func GetReferenceMetadata(f *meta.Field) *adapt.ReferenceMetadata {
 	if f.Type == "REFERENCE" && f.ReferenceMetadata != nil {
 		return &adapt.ReferenceMetadata{
-			Collection: f.ReferenceMetadata.Collection,
+			Collection:      f.ReferenceMetadata.Collection,
+			MultiCollection: f.ReferenceMetadata.MultiCollection,
+			CollectionsRefs: f.ReferenceMetadata.CollectionsRefs,
 		}
 	}
 	return nil

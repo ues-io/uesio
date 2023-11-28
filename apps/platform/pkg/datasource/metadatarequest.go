@@ -197,12 +197,26 @@ func ProcessFieldsMetadata(fields map[string]*adapt.FieldMetadata, collectionKey
 			}
 
 			referenceMetadata := fieldMetadata.ReferenceMetadata
-			// Only add to additional requests if we don't already have that metadata
-			refCollection, err := metadataResponse.GetCollection(referenceMetadata.Collection)
-			if err != nil {
-				err := additionalRequests.AddCollection(referenceMetadata.Collection)
+			var refCollection *adapt.CollectionMetadata
+			if referenceMetadata.MultiCollection {
+				for _, collectionID := range referenceMetadata.CollectionsRefs {
+					// Only add to additional requests if we don't already have that metadata
+					_, err := metadataResponse.GetCollection(collectionID)
+					if err != nil {
+						err := additionalRequests.AddCollection(collectionID)
+						if err != nil {
+							return err
+						}
+					}
+				}
+			} else {
+				// Only add to additional requests if we don't already have that metadata
+				refCollection, err = metadataResponse.GetCollection(referenceMetadata.Collection)
 				if err != nil {
-					return err
+					err := additionalRequests.AddCollection(referenceMetadata.Collection)
+					if err != nil {
+						return err
+					}
 				}
 			}
 

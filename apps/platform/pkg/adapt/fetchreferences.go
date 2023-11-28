@@ -73,6 +73,11 @@ func FetchReferences(
 	for i := range op.Metadata.Fields {
 		field := op.Metadata.Fields[i]
 		if IsReference(field.Type) {
+
+			if field.ReferenceMetadata.MultiCollection {
+				continue //TO-DO
+			}
+
 			refCollectionMetadata, err := metadata.GetCollection(field.ReferenceMetadata.Collection)
 			if err != nil {
 				return err

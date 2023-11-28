@@ -60,6 +60,8 @@ type FileMetadata = {
 
 type ReferenceMetadata = {
 	collection: CollectionKey
+	multicollection?: boolean
+	collections?: CollectionKey[]
 }
 
 type ReferenceGroupMetadata = {
