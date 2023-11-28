@@ -268,6 +268,34 @@ func canCallBot(namespace, name string, perms *meta.PermissionSet) (bool, error)
 	return false, meta.NewBotAccessError(fmt.Sprintf(BotAccessErrorMessage, botKey))
 }
 
+func CallListenerBotInTransaction(namespace, name string, params map[string]interface{}, session *sess.Session) (map[string]interface{}, error) {
+
+	connection, err := GetPlatformConnection(nil, session, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	err = connection.BeginTransaction()
+	if err != nil {
+		return nil, err
+	}
+
+	result, err := CallListenerBot(namespace, name, params, connection, session)
+	if err != nil {
+		rollbackError := connection.RollbackTransaction()
+		if rollbackError != nil {
+			return nil, rollbackError
+		}
+		return nil, err
+	}
+
+	err = connection.CommitTransaction()
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
 func CallListenerBot(namespace, name string, params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
 
 	if ok, err := canCallBot(namespace, name, session.GetContextPermissions()); !ok {

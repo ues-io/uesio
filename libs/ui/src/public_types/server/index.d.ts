@@ -164,6 +164,7 @@ interface ListenerBotApi {
 	callBot: CallBot
 	getConfigValue: (configValueKey: string) => string
 	asAdmin: AsAdminApi
+	getCollectionMetadata: (collectionKey: string) => CollectionMetadata
 	getSession: () => SessionApi
 	getUser: () => UserApi
 	log: LogApi
