@@ -137,6 +137,8 @@ interface BeforeSaveBotApi {
 	deletes: DeletesApi
 	inserts: InsertsApi
 	updates: UpdatesApi
+	callBot: CallBot
+	log: LogApi
 }
 interface AfterSaveBotApi extends BeforeSaveBotApi {
 	save: (collectionName: string, records: WireRecord[]) => void
@@ -181,6 +183,7 @@ interface RunActionBotApi {
 	log: LogApi
 	params: BotParamsApi
 	save: (collectionName: string, records: WireRecord[]) => void
+	callBot: CallBot
 }
 
 type FieldType =
@@ -259,6 +262,7 @@ interface LoadBotApi {
 	setHasMoreRecords: () => void
 	log: LogApi
 	http: HttpApi
+	callBot: CallBot
 }
 interface SaveBotApi {
 	addError: (message: string, fieldId: string, recordId: string) => void
@@ -273,6 +277,7 @@ interface SaveBotApi {
 	getUser: () => UserApi
 	log: LogApi
 	http: HttpApi
+	callBot: CallBot
 }
 export type {
 	AfterSaveBotApi,

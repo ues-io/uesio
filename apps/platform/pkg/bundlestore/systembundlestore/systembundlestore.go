@@ -7,6 +7,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
@@ -14,6 +15,21 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	filetypes "github.com/thecloudmasters/uesio/pkg/types/file"
 )
+
+var doCache bool
+
+// Bundle entries should be very long-lived, so we will allow them to live in memory for a relatively long time,
+// and only expire them infrequently because the cost of doing a filesystem read is quite high.
+// TODO: Consider pre-loading common bundles into the cache on init, to prevent initial requests from being slow.
+var bundleStoreCache *bundle.BundleStoreCache
+
+func init() {
+	// system bundle store cache - on by default
+	doCache = os.Getenv("UESIO_CACHE_SITE_BUNDLES") != "false"
+	if doCache {
+		bundleStoreCache = bundle.NewBundleStoreCache(15*time.Minute, 15*time.Minute)
+	}
+}
 
 type SystemBundleStore struct{}
 
@@ -39,9 +55,11 @@ func getFile(namespace string, version string, objectname string, filename strin
 
 func GetFilePaths(basePath string, filter meta.FilterFunc, conditions meta.BundleConditions, conn filetypes.Connection) ([]string, error) {
 
-	cachedKeys, ok := bundle.GetFileListFromCache(basePath, conditions)
-	if ok {
-		return cachedKeys, nil
+	if doCache {
+		cachedKeys, ok := bundleStoreCache.GetFileListFromCache(basePath, conditions)
+		if ok {
+			return cachedKeys, nil
+		}
 	}
 
 	paths, err := conn.List(basePath)
@@ -57,7 +75,10 @@ func GetFilePaths(basePath string, filter meta.FilterFunc, conditions meta.Bundl
 		}
 	}
 
-	bundle.AddFileListToCache(basePath, conditions, filteredPaths)
+	if doCache {
+		bundleStoreCache.AddFileListToCache(basePath, conditions, filteredPaths)
+	}
+
 	return filteredPaths, err
 }
 
@@ -72,14 +93,14 @@ func (b *SystemBundleStoreConnection) GetItem(item meta.BundleableItem) error {
 		return bundlestore.NewPermissionError(message)
 	}
 
-	cachedItem, ok := bundle.GetItemFromCache(b.Namespace, b.Version, fullCollectionName, key)
-
-	if ok {
-		if !b.AllowPrivate && !cachedItem.IsPublic() {
-			message := fmt.Sprintf("Metadata item: %s is not public", key)
-			return bundlestore.NewPermissionError(message)
+	if doCache {
+		if cachedItem, ok := bundleStoreCache.GetItemFromCache(b.Namespace, b.Version, fullCollectionName, key); ok {
+			if !b.AllowPrivate && !cachedItem.IsPublic() {
+				message := fmt.Sprintf("Metadata item: %s is not public", key)
+				return bundlestore.NewPermissionError(message)
+			}
+			return meta.Copy(item, cachedItem)
 		}
-		return meta.Copy(item, cachedItem)
 	}
 
 	file, err := getFile(b.Namespace, b.Version, collectionName, item.GetPath())
@@ -103,7 +124,10 @@ func (b *SystemBundleStoreConnection) GetItem(item meta.BundleableItem) error {
 		message := fmt.Sprintf("Metadata item: %s is not public", key)
 		return bundlestore.NewPermissionError(message)
 	}
-	return bundle.AddItemToCache(item, b.Namespace, b.Version)
+	if !doCache {
+		return nil
+	}
+	return bundleStoreCache.AddItemToCache(b.Namespace, b.Version, item.GetCollectionName(), item.GetKey(), item)
 
 }
 

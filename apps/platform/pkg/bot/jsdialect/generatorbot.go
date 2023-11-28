@@ -32,6 +32,10 @@ type GeneratorBotAPI struct {
 	Connection adapt.Connection
 }
 
+func (gba *GeneratorBotAPI) CallBot(botKey string, params map[string]interface{}) (interface{}, error) {
+	return botCall(botKey, params, gba.Session, gba.Connection)
+}
+
 func (gba *GeneratorBotAPI) RunGenerator(namespace, name string, params map[string]interface{}) error {
 	return datasource.CallGeneratorBot(gba.Create, namespace, name, params, gba.Connection, gba.Session)
 }

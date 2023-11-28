@@ -116,6 +116,10 @@ func (lb *LoadBotAPI) AddError(error string) {
 	lb.loadErrors = append(lb.loadErrors, error)
 }
 
+func (lb *LoadBotAPI) CallBot(botKey string, params map[string]interface{}) (interface{}, error) {
+	return botCall(botKey, params, lb.getSession(), lb.connection)
+}
+
 func (lb *LoadBotAPI) AddRecord(record interface{}) {
 	switch typedRecord := record.(type) {
 	case map[string]interface{}:

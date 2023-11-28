@@ -91,3 +91,7 @@ func (sba *SaveBotAPI) AddError(message, fieldId, recordId string) {
 		Message:  message,
 	})
 }
+
+func (sba *SaveBotAPI) CallBot(botKey string, params map[string]interface{}) (interface{}, error) {
+	return botCall(botKey, params, sba.getSession(), sba.connection)
+}

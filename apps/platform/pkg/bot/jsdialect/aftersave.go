@@ -3,6 +3,7 @@ package jsdialect
 import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -10,13 +11,14 @@ type AfterSaveAPI struct {
 	Inserts    *InsertsAPI `bot:"inserts"`
 	Updates    *UpdatesAPI `bot:"updates"`
 	Deletes    *DeletesAPI `bot:"deletes"`
+	LogApi     *BotLogAPI  `bot:"log"`
 	op         *adapt.SaveOp
 	session    *sess.Session
 	connection adapt.Connection
 	AsAdmin    AdminCallBotAPI `bot:"asAdmin"`
 }
 
-func NewAfterSaveAPI(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) *AfterSaveAPI {
+func NewAfterSaveAPI(bot *meta.Bot, request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) *AfterSaveAPI {
 	return &AfterSaveAPI{
 		Inserts: &InsertsAPI{
 			op: request,
@@ -27,6 +29,7 @@ func NewAfterSaveAPI(request *adapt.SaveOp, connection adapt.Connection, session
 		Deletes: &DeletesAPI{
 			op: request,
 		},
+		LogApi:     NewBotLogAPI(bot),
 		session:    session,
 		op:         request,
 		connection: connection,
@@ -55,4 +58,8 @@ func (bs *AfterSaveAPI) RunIntegrationAction(integrationID string, action string
 
 func (bs *AfterSaveAPI) GetConfigValue(configValueKey string) (string, error) {
 	return configstore.GetValueFromKey(configValueKey, bs.session)
+}
+
+func (bs *AfterSaveAPI) CallBot(botKey string, params map[string]interface{}) (interface{}, error) {
+	return botCall(botKey, params, bs.session, bs.connection)
 }

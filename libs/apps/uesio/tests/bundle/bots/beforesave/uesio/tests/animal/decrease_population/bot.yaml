@@ -1,0 +1,4 @@
+name: decrease_population
+collection: animal
+type: BEFORESAVE
+dialect: TYPESCRIPT

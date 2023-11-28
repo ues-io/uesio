@@ -1,5 +1,5 @@
 name: subject
 type: TEXT
-required: true
 label: Subject
+required: true
 columnname: subject

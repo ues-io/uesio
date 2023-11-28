@@ -2,6 +2,6 @@ name: animal
 label: Animal
 pluralLabel: Animals
 uniqueKey:
-  - uesio/tests.genus
-  - uesio/tests.species
-nameField: uesio/tests.species
+  - genus
+  - species
+nameField: species

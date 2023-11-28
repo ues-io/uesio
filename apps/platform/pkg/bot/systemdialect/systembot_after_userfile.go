@@ -1,6 +1,8 @@
 package systemdialect
 
 import (
+	"time"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -10,52 +12,63 @@ import (
 const (
 	userCollectionId       = "uesio/core.user"
 	studioFileCollectionId = "uesio/studio.file"
+	studioBotCollectionId  = "uesio/studio.bot"
 )
 
 func runUserFileAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 	// TASKS:
-	// 1. Whenever a user file is updated,  if the file is the User's profile,
+	// 1. Whenever a user file is inserted or updated,  if the file is the User's profile,
 	// we need to invalidate the User cache in Redis
 	// 2. If a new user file corresponding to a STUDIO file (static file) is inserted,
 	// we need to transfer the Path property to the studio file as well
 
 	appFullName := session.GetSite().GetAppFullName()
 
-	userKeysToDelete := []string{}
+	var userKeysToDelete []string
 	studioFileUpdates := adapt.Collection{}
+	studioBotUpdates := adapt.Collection{}
 
-	for _, insert := range request.Inserts {
-		relatedCollection, err := insert.GetField("uesio/core.collectionid")
+	if err := request.LoopChanges(func(change *adapt.ChangeItem) error {
+		relatedCollection, err := change.GetField("uesio/core.collectionid")
 		if err != nil {
-			continue
+			return err
 		}
-		relatedRecord, err := insert.GetField("uesio/core.recordid")
+		relatedRecordId, err := change.GetFieldAsString("uesio/core.recordid")
 		if err != nil {
-			continue
+			return err
 		}
 		if relatedCollection == userCollectionId {
-			relatedField, err := insert.GetField("uesio/core.fieldid")
+			relatedField, err := change.GetField("uesio/core.fieldid")
 			if err != nil {
-				continue
+				return err
 			}
 			if relatedField == "uesio/core.picture" {
-				userKeysToDelete = append(userKeysToDelete, auth.GetUserCacheKey(relatedRecord.(string), appFullName))
+				userKeysToDelete = append(userKeysToDelete, auth.GetUserCacheKey(relatedRecordId, appFullName))
 			}
 		} else if relatedCollection == studioFileCollectionId {
-			pathField, err := insert.GetField("uesio/core.path")
+			pathField, err := change.GetField("uesio/core.path")
 			if err != nil || pathField == "" {
-				continue
+				return nil
 			}
 			if pathString, ok := pathField.(string); ok {
 				studioFileUpdates = append(studioFileUpdates, &adapt.Item{
 					"uesio/studio.path": pathString,
-					"uesio/core.id":     relatedRecord.(string),
+					adapt.ID_FIELD:      relatedRecordId,
 				})
 			} else {
-				continue
+				return nil
 			}
-
+		} else if relatedCollection == studioBotCollectionId {
+			// Increment the timestamp on the parent Bot,
+			// so that we are able to achieve cache invalidation
+			studioBotUpdates = append(studioBotUpdates, &adapt.Item{
+				adapt.UPDATED_AT_FIELD: time.Now().Unix(),
+				adapt.ID_FIELD:         relatedRecordId,
+			})
 		}
+		return nil
+	}); err != nil {
+		return err
 	}
 
 	for _, deleteItem := range request.Deletes {
@@ -83,11 +96,23 @@ func runUserFileAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection,
 	// If the related collection is uesio/studio.file,
 	// we need to set the file path on the related record as well
 	if len(studioFileUpdates) > 0 {
-		err = datasource.SaveWithOptions([]datasource.SaveRequest{
+		if err = datasource.SaveWithOptions([]datasource.SaveRequest{
 			{
 				Collection: studioFileCollectionId,
 				Wire:       "StudioFiles",
 				Changes:    &studioFileUpdates,
+				Params:     request.Params,
+			},
+		}, session, datasource.GetConnectionSaveOptions(connection)); err != nil {
+			return err
+		}
+	}
+	if len(studioBotUpdates) > 0 {
+		err = datasource.SaveWithOptions([]datasource.SaveRequest{
+			{
+				Collection: studioBotCollectionId,
+				Wire:       "StudioBots",
+				Changes:    &studioBotUpdates,
 				Params:     request.Params,
 			},
 		}, session, datasource.GetConnectionSaveOptions(connection))

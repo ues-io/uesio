@@ -121,26 +121,44 @@ type WorkspaceBundleStoreConnection struct {
 	bundlestore.ConnectionOptions
 }
 
+// use the workspace's ID, not Name, as the cache key, to ensure that if workspaces are truncated / deleted
+// and then recreated, we don't use still use old workspace metadata caches
+func (b *WorkspaceBundleStoreConnection) getWorkspaceCacheKey() string {
+	return b.Workspace.ID
+}
+
 func (b *WorkspaceBundleStoreConnection) GetItem(item meta.BundleableItem) error {
 
-	err := datasource.PlatformLoadOne(item, &datasource.PlatformLoadOptions{
+	itemUniqueKey := item.GetDBID(b.Workspace.UniqueKey)
+	collectionName := item.GetCollectionName()
+
+	// First check the cache
+	if doCache {
+		if cachedItem, ok := bundleStoreCache.GetItemFromCache(b.Namespace, b.getWorkspaceCacheKey(), collectionName, itemUniqueKey); ok {
+			return meta.Copy(item, cachedItem)
+		}
+	}
+
+	// If we didn't find it in cache, we need to go to the database
+	if err := datasource.PlatformLoadOne(item, &datasource.PlatformLoadOptions{
 		Conditions: []adapt.LoadRequestCondition{
 			{
 				Field: adapt.UNIQUE_KEY_FIELD,
-				Value: item.GetDBID(b.Workspace.UniqueKey),
+				Value: itemUniqueKey,
 			},
 		},
 		Params:     getParamsFromWorkspace(b.Workspace),
 		Connection: b.Connection,
-	}, sess.GetStudioAnonSession())
-
-	if err != nil {
+	}, sess.GetStudioAnonSession()); err != nil {
 		return err
 	}
 
 	item.SetNamespace(b.Namespace)
 
-	return nil
+	if !doCache {
+		return nil
+	}
+	return bundleStoreCache.AddItemToCache(b.Namespace, b.getWorkspaceCacheKey(), collectionName, itemUniqueKey, item)
 }
 
 func (b *WorkspaceBundleStoreConnection) HasAny(group meta.BundleableGroup, conditions meta.BundleConditions) (bool, error) {
@@ -230,7 +248,7 @@ func (b *WorkspaceBundleStoreConnection) GetItemAttachments(creator bundlestore.
 	session := sess.GetStudioAnonSession()
 	recordIDString, err := b.GetItemRecordID(item)
 	if err != nil {
-		return errors.New("Invalid Record ID for attachment")
+		return errors.New("Invalid Record ID for attachment: " + err.Error())
 	}
 	userFiles := &meta.UserFileMetadataCollection{}
 	err = datasource.PlatformLoad(
