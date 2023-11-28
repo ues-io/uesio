@@ -38,12 +38,12 @@ const TextAreaField: definition.UtilityComponent<TextAreaFieldProps> = (
 	const value = props.value as string
 	const readOnly = readonly || mode === "READ"
 
-	const controlledInputProps = useControlledInput(
+	const controlledInputProps = useControlledInput({
 		value,
 		setValue,
 		applyChanges,
-		readOnly
-	)
+		readOnly,
+	})
 
 	const classes = styles.useUtilityStyleTokens(
 		StyleDefaults,

@@ -205,6 +205,8 @@ export const getFormFieldFromProperty = (
 			return {
 				"uesio/io.field": {
 					...baseFieldDef,
+					applyChanges: "onTypingComplete",
+					applyDelay: 100,
 					wrapperVariant: "uesio/builder.propfield",
 				},
 			}
