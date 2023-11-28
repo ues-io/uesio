@@ -83,7 +83,11 @@ const useDefinition = <T extends definition.Definition>(
 		getDef<T>(context, path)
 	)
 	if (typeof result === "string") {
-		return parse(result).toJS() as T
+		const viewDef = parse(result).toJS() as T
+		if (!path.localPath) {
+			return viewDef as T
+		}
+		return get(viewDef, path.localPath) as T
 	}
 }
 
