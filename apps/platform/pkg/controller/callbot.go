@@ -50,7 +50,7 @@ func CallListenerBot(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
 
-	returnParams, err := datasource.CallListenerBot(namespace, name, params, nil, session)
+	returnParams, err := datasource.CallListenerBotInTransaction(namespace, name, params, session)
 	if err != nil {
 		var statusCode int
 		switch err.(type) {

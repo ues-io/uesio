@@ -1,6 +1,8 @@
 package jsdialect
 
 import (
+	"errors"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -98,4 +100,15 @@ func (cba *CallBotAPI) GetSession() *SessionAPI {
 
 func (cba *CallBotAPI) GetUser() *UserAPI {
 	return NewUserAPI(cba.Session.GetContextUser())
+}
+
+func (cba *CallBotAPI) GetCollectionMetadata(collectionKey string) (*BotCollectionMetadata, error) {
+	if cba.connection == nil {
+		return nil, errors.New("no collection metadata available for this connection")
+	}
+	collectionMetadata, err := cba.connection.GetMetadata().GetCollection(collectionKey)
+	if err != nil {
+		return nil, err
+	}
+	return NewBotCollectionMetadata(collectionMetadata), nil
 }

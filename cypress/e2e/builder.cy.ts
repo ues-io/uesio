@@ -20,6 +20,22 @@ components:
       iconPlacement: start
 `
 
+const add2ButtonPageDef = `# Wires connect to data in collections
+wires: {}
+# Components determine the layout and composition of your view
+components:
+  - uesio/io.button:
+      text: New Button
+      icon: bolt
+      uesio.variant: uesio/io.default
+      iconPlacement: start
+  - uesio/io.button:
+      text: New Button
+      icon: bolt
+      uesio.variant: uesio/io.default
+      iconPlacement: start
+`
+
 const setButtonPageDef = `# Wires connect to data in collections
 wires: {}
 # Components determine the layout and composition of your view
@@ -193,12 +209,12 @@ describe("Uesio Builder Tests", () => {
 				addBoxPageDef
 			)
 
-			// Select the button
+			// Select the box
 			getCanvasElement('["components"]', 0).click()
 			// Verify the selection
 			getBuilderState("selected").should(
 				"eq",
-				`viewdef:${fullViewName}:["components"]["0"]`
+				`viewdef:${fullViewName}:["components"]["0"]["uesio/io.box"]`
 			)
 
 			getComponentBankElement("component", "uesio/io.box").dblclick()
@@ -231,6 +247,35 @@ describe("Uesio Builder Tests", () => {
 			// Search for button component
 			cy.get("#builder-components-search").clear().type("button")
 
+			// Now test doubleclicking a button
+			// (This is different than io.box because buttons don't have slots)
+			getComponentBankElement("component", "uesio/io.button").dblclick()
+			getBuilderState(`metadata:viewdef:${fullViewName}`).should(
+				"eq",
+				addButtonPageDef
+			)
+
+			// Select the button
+			getCanvasElement('["components"]', 0).click()
+			// Verify the selection
+			getBuilderState("selected").should(
+				"eq",
+				`viewdef:${fullViewName}:["components"]["0"]["uesio/io.button"]`
+			)
+
+			getComponentBankElement("component", "uesio/io.button").dblclick()
+			getBuilderState(`metadata:viewdef:${fullViewName}`).should(
+				"eq",
+				add2ButtonPageDef
+			)
+
+			// Cancel the page - to verify cancel behavior
+			cy.clickButton("cancel-builder-changes")
+			getBuilderState(`metadata:viewdef:${fullViewName}`).should(
+				"eq",
+				initialPageDef
+			)
+
 			// Select the component type
 			getComponentBankElement("component", "uesio/io.button")
 				.find("button")
@@ -252,7 +297,7 @@ describe("Uesio Builder Tests", () => {
 			// Verify the selection
 			getBuilderState("selected").should(
 				"eq",
-				`viewdef:${fullViewName}:["components"]["0"]`
+				`viewdef:${fullViewName}:["components"]["0"]["uesio/io.button"]`
 			)
 			// Change the text property
 			cy.clearInput("property:text")

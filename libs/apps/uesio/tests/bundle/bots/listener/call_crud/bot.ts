@@ -99,4 +99,27 @@ export default function call_crud(bot: ListenerBotApi) {
 	if (loadresult4.length !== 0) {
 		throw new Error("The delete was not successful in remove the item")
 	}
+
+	// Now make sure we have metadata
+	const metadataResult = bot.getCollectionMetadata("uesio/tests.animal")
+	if (
+		!metadataResult ||
+		metadataResult.name !== "animal" ||
+		metadataResult.namespace !== "uesio/tests"
+	) {
+		throw new Error("The collection metadata request was unsuccessful")
+	}
+
+	const genusFieldMetadata =
+		metadataResult.getFieldMetadata("uesio/tests.genus")
+	if (
+		!genusFieldMetadata ||
+		genusFieldMetadata.name !== "genus" ||
+		genusFieldMetadata.namespace !== "uesio/tests" ||
+		genusFieldMetadata.label !== "Genus"
+	) {
+		throw new Error(
+			"The collection metadata request did not contain the correct field metadata"
+		)
+	}
 }
