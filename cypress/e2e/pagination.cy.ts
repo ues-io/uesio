@@ -65,19 +65,24 @@ describe("Pagination", () => {
 			getLoadMoreButton().should("exist")
 			// Load more
 			getLoadMoreButton().click()
+			// Go to page 3
+			cy.getByIdFragment(
+				"span",
+				"routesTable-pagination-go-to-page-3"
+			).click()
 			// Check pagination buttons for Page 3
-			verifyPaginationButtonsExist([1, 2, 3], 3)
-			getNextPageButton().should("not.exist")
+			verifyPaginationButtonsExist([1, 2, 3, 4], 3)
+			getNextPageButton().should("exist")
 			getLoadMoreButton().should("not.exist")
 			// Go back to page 2 (using previous page button)
 			getPreviousPageButton().click()
-			verifyPaginationButtonsExist([1, 2, 3], 2)
+			verifyPaginationButtonsExist([1, 2, 3, 4], 2)
 			getNextPageButton().should("exist")
 			getLoadMoreButton().should("not.exist")
 			// Go back to page 3 (using next page button)
 			getNextPageButton().click()
-			verifyPaginationButtonsExist([1, 2, 3], 3)
-			getNextPageButton().should("not.exist")
+			verifyPaginationButtonsExist([1, 2, 3, 4], 3)
+			getNextPageButton().should("exist")
 			getLoadMoreButton().should("not.exist")
 		})
 	})

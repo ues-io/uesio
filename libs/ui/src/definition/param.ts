@@ -13,6 +13,7 @@ type ParamBase = {
 	type?:
 		| "RECORD"
 		| "TEXT"
+		| "LIST"
 		| "METADATA"
 		| "METADATANAME"
 		| "MULTIMETADATA"
@@ -37,6 +38,10 @@ type TextParam = ParamBase & {
 type NumberParam = ParamBase & {
 	type: "NUMBER"
 	default?: number
+}
+type ListParam = ParamBase & {
+	type: "LIST"
+	default?: string
 }
 
 type CheckboxParam = ParamBase & {
@@ -73,6 +78,7 @@ type MetadataNameParam = ParamBase & {
 export type ParamDefinition =
 	| RecordParam
 	| TextParam
+	| ListParam
 	| SelectParam
 	| CheckboxParam
 	| NumberParam

@@ -14,6 +14,7 @@ type MergeType =
 	| "Error"
 	| "Route"
 	| "Record"
+	| "Records"
 	| "Param"
 	| "Prop"
 	| "User"
@@ -51,6 +52,24 @@ const handlers: Record<MergeType, MergeHandler> = {
 			expression = expressionParts[1]
 		}
 		return record?.getFieldValue(expression) ?? ""
+	},
+	Records: (fullExpression, context) => {
+		const expressionParts = fullExpression.split(":")
+		let records: WireRecord[] | undefined
+		let expression = fullExpression
+		// TODO: Find closest multi-record context
+		if (expressionParts.length === 1) {
+			records = context.getWire()?.getData()
+		} else {
+			const wirename = expressionParts[0]
+			records = context.getWire(wirename)?.getData()
+			expression = expressionParts[1]
+		}
+		return (
+			records?.map(
+				(r) => r.getFieldValue<wire.PlainFieldValue>(expression) ?? ""
+			) || ([] as wire.PlainFieldValue[])
+		)
 	},
 	Sum: (fullExpression, context) => {
 		const expressionParts = fullExpression.split(":")

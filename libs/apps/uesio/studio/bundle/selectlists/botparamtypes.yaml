@@ -2,6 +2,8 @@ name: botparamtypes
 options:
   - label: "Check Box"
     value: "CHECKBOX"
+  - label: "List"
+    value: "LIST"
   - label: "Number"
     value: "NUMBER"
   - label: "Text"
