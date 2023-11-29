@@ -99,7 +99,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data" count == 8
+jsonpath "$.wires[0].data" count == {{num_common_fields}}
 jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "uesio/core.common:uesio/core.collection"
 jsonpath "$.wires[0].data[1]['uesio/core.uniquekey']" == "uesio/core.common:uesio/core.createdat"
 jsonpath "$.wires[0].data[2]['uesio/core.uniquekey']" == "uesio/core.common:uesio/core.createdby"
