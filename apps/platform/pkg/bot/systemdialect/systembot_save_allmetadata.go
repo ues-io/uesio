@@ -41,8 +41,18 @@ func runStudioMetadataSaveBot(op *adapt.SaveOp, connection adapt.Connection, ses
 		return err
 	}
 
-	if appName == "" || workspaceName == "" || len(changedMetadataItemKeys) < 1 {
+	if len(changedMetadataItemKeys) < 1 {
 		return nil
+	}
+
+	// We MUST have an app name and workspace nme in order to achieve cache invalidation, so we will need to query for them
+	if appName == "" || workspaceName == "" {
+		workspace, err := datasource.QueryWorkspaceForWrite(workspaceID, adapt.ID_FIELD, session, connection)
+		if err != nil {
+			return err
+		}
+		workspaceName = workspace.Name
+		appName = workspace.GetAppFullName()
 	}
 
 	message := &workspacebundlestore.WorkspaceMetadataChange{

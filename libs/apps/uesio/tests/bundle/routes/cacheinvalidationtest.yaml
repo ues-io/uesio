@@ -1,0 +1,4 @@
+name: cacheinvalidationtest
+path: cacheinvalidationtest
+view: cacheinvalidationtest
+title: Tests workspace bundle store cache invalidation
