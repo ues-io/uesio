@@ -15,7 +15,7 @@ const StyleDefaults = Object.freeze({
 })
 
 const TitleBar: definition.UC<TitleBarDefinition> = (props) => {
-	const { definition, path, context } = props
+	const { definition, path, context, componentType } = props
 
 	const classes = styles.useStyleTokens(StyleDefaults, props)
 
@@ -33,7 +33,7 @@ const TitleBar: definition.UC<TitleBarDefinition> = (props) => {
 					listName="actions"
 					path={path}
 					context={context}
-					label="Title Bar Actions"
+					componentType={componentType}
 				/>
 			}
 		/>

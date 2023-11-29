@@ -7,6 +7,8 @@ category: CONTENT
 discoverable: true
 slots:
   - name: actions
+    label: Title Bar Actions
+    direction: HORIZONTAL
 defaultDefinition:
   title: New Title
 properties:

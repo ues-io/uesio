@@ -11,7 +11,7 @@ const StyleDefaults = Object.freeze({
 const Box: definition.UC<BoxDefinition> = (props) => {
 	const classes = styles.useStyleTokens(StyleDefaults, props)
 
-	const { definition, context, path } = props
+	const { definition, context, path, componentType } = props
 	return (
 		<div
 			id={api.component.getComponentIdFromProps(props)}
@@ -23,7 +23,7 @@ const Box: definition.UC<BoxDefinition> = (props) => {
 				listName="components"
 				path={path}
 				context={context}
-				label="Box Components"
+				componentType={componentType}
 			/>
 		</div>
 	)

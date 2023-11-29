@@ -1,5 +1,4 @@
 import Slot, {
-	DefaultSlotDirection,
 	DefaultSlotName,
 	SlotUtilityProps,
 	getSlotProps,
@@ -61,7 +60,6 @@ export {
 	STYLE_TOKENS,
 	Declarative,
 	DefaultSlotName,
-	DefaultSlotDirection,
 	Slot,
 	SlotComponentId,
 	ErrorMessage,

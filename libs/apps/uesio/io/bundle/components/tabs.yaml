@@ -9,7 +9,7 @@ discoverable: true
 slots:
   - name: components
     path: /tabs/~{}
-  - name: footer
+    label: Tab Contents
 defaultDefinition:
   uesio.variant: uesio/io.default
   tabs:

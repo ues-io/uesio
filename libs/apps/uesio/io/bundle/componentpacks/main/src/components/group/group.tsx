@@ -10,7 +10,7 @@ const StyleDefaults = Object.freeze({
 })
 
 const Grid: definition.UC<GroupDefinition> = (props) => {
-	const { context, definition, path } = props
+	const { context, definition, path, componentType } = props
 	const classes = styles.useStyleTokens(StyleDefaults, props)
 	return (
 		<IOGroup classes={classes} context={context}>
@@ -19,8 +19,7 @@ const Grid: definition.UC<GroupDefinition> = (props) => {
 				listName="components"
 				path={path}
 				context={context}
-				label="Group Components"
-				direction="HORIZONTAL"
+				componentType={componentType}
 			/>
 		</IOGroup>
 	)

@@ -64,7 +64,7 @@ const ViewArea: UC<ViewComponentDefinition> = ({
 const ViewComponentId = "uesio/core.view"
 
 const View: UC<ViewComponentDefinition> = (props) => {
-	const { path, context, definition } = props
+	const { path, context, definition, componentType } = props
 	const { params, view: viewDefId } = definition
 	// Backwards compatibility for definition.id
 	// TODO: Remove when all instances of this are fixed
@@ -101,7 +101,7 @@ const View: UC<ViewComponentDefinition> = (props) => {
 			listName={DefaultSlotName}
 			path=""
 			context={viewContext}
-			label="View Components"
+			componentType={componentType}
 		/>
 	)
 }

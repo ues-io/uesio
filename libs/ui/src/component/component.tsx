@@ -213,6 +213,7 @@ const DeclarativeComponent: UC<DeclarativeProps> = (props) => {
 			path={path}
 			listName={DefaultSlotName}
 			definition={{ [DefaultSlotName]: actualDefinition }}
+			componentType={componentType}
 		/>
 	)
 }

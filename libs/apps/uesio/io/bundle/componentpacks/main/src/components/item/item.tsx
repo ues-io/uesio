@@ -16,7 +16,7 @@ const signals: Record<string, signal.ComponentSignalDescriptor> = {
 }
 
 const Item: definition.UC<ItemDefinition> = (props) => {
-	const { path, definition } = props
+	const { path, definition, componentType } = props
 	let { context } = props
 
 	const wire = api.wire.useWire(definition.wire, context)
@@ -50,7 +50,7 @@ const Item: definition.UC<ItemDefinition> = (props) => {
 			listName="components"
 			path={path}
 			context={context}
-			label="Item Components"
+			componentType={componentType}
 		/>
 	)
 }

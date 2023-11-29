@@ -13,7 +13,7 @@ const StyleDefaults = Object.freeze({
 })
 
 const ScrollPanel: definition.UC<Props> = (props) => {
-	const { definition, context, path } = props
+	const { definition, context, path, componentType } = props
 	const classes = styles.useStyleTokens(StyleDefaults, props)
 	return (
 		<ScrollPanelUtility
@@ -27,6 +27,7 @@ const ScrollPanel: definition.UC<Props> = (props) => {
 					listName="header"
 					path={path}
 					context={context}
+					componentType={componentType}
 				/>
 			}
 			footer={
@@ -35,6 +36,7 @@ const ScrollPanel: definition.UC<Props> = (props) => {
 					listName="footer"
 					path={path}
 					context={context}
+					componentType={componentType}
 				/>
 			}
 		>
@@ -43,6 +45,7 @@ const ScrollPanel: definition.UC<Props> = (props) => {
 				listName="content"
 				path={path}
 				context={context}
+				componentType={componentType}
 			/>
 		</ScrollPanelUtility>
 	)

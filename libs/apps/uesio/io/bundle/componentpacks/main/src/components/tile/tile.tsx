@@ -15,7 +15,7 @@ const StyleDefaults = Object.freeze({
 })
 
 const Tile: definition.UC<TileDefinition> = (props) => {
-	const { definition, context, path } = props
+	const { definition, context, path, componentType } = props
 
 	const classes = styles.useStyleTokens(StyleDefaults, props)
 	const isSelected = component.shouldHaveClass(
@@ -47,6 +47,7 @@ const Tile: definition.UC<TileDefinition> = (props) => {
 						listName="avatar"
 						path={path}
 						context={context}
+						componentType={componentType}
 					/>
 				)
 			}
@@ -56,6 +57,7 @@ const Tile: definition.UC<TileDefinition> = (props) => {
 				listName="content"
 				path={path}
 				context={context}
+				componentType={componentType}
 			/>
 		</IOTile>
 	)

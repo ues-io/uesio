@@ -62,6 +62,8 @@ type SlotDefinition struct {
 	Name           string   `yaml:"name"`
 	Path           string   `yaml:"path,omitempty"`
 	DefaultContent *YAMLDef `yaml:"defaultContent,omitempty"`
+	Label          string   `yaml:"label,omitempty"`
+	Direction      string   `yaml:"direction,omitempty"`
 }
 
 // GetFullPath returns a JSONPointer for extracting a component slot within an instance of this component

@@ -36,9 +36,6 @@ const StyleDefaults = Object.freeze({
 	slotTag: ["transition-all"],
 })
 
-const capitalizeFirst = (str: string) =>
-	str.charAt(0).toUpperCase() + str.slice(1)
-
 export const SlotBuilderComponentId = "uesio/builder.slotbuilder"
 
 const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
@@ -47,10 +44,7 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 		definition,
 		listName = component.DefaultSlotName,
 		path,
-		direction = component.DefaultSlotDirection,
-		label = listName === component.DefaultSlotName
-			? "Components Slot"
-			: `${capitalizeFirst(listName)} Components`,
+		componentType,
 	} = props
 
 	const buildMode = getBuildMode(context)
@@ -69,6 +63,13 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 	)
 
 	const [showSlotTags] = useBuilderState<boolean>(props.context, "slottags")
+
+	const slotDef = getComponentDef(componentType)?.slots?.find(
+		(slotDef) => slotDef.name === listName
+	)
+
+	const direction = slotDef?.direction || "VERTICAL"
+	const label = slotDef?.label || "Empty Component Area"
 
 	useEffect(() => {
 		const parentElem = ref?.current?.parentElement
@@ -105,7 +106,7 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 			/>
 			{size === 0 && (
 				<PlaceHolder
-					label={"Empty Component Area"}
+					label={label}
 					isHovering={isHovering}
 					context={context}
 					direction={direction}
