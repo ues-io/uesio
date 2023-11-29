@@ -267,8 +267,17 @@ const mergeStringTestCases = [
 			},
 		}),
 		input: "${foo}",
-		expectError:
-			"Merge failed: result is of type object and cannot be returned as a string, please check your merge.",
+		expected: JSON.stringify({
+			bar: "baz",
+		}),
+	},
+	{
+		name: "value is array, merge is the array itself",
+		context: new Context().addRecordDataFrame({
+			foo: ["bar", "baz"],
+		}),
+		input: "${foo}",
+		expected: JSON.stringify(["bar", "baz"]),
 	},
 ] as MergeWithContextTestCase[]
 

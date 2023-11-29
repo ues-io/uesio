@@ -38,6 +38,7 @@ func getParamResponse(params meta.BotParams) meta.BotParamsResponse {
 			Default:      param.Default,
 			Choices:      param.Choices,
 			SelectList:   param.SelectList,
+			Required:     param.Required,
 			Conditions:   getParamConditionsResponse(param.Conditions),
 		})
 	}

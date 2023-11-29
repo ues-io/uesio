@@ -621,7 +621,10 @@ class Context {
 
 	mergeString = (template: Mergeable) => {
 		const result = this.merge(template)
-		if (typeof result === "object" || typeof result === "function") {
+		if (typeof result === "object") {
+			return JSON.stringify(result)
+		}
+		if (typeof result === "function") {
 			throw new Error(
 				`Merge failed: result is of type ${typeof result} and cannot be returned as a string, please check your merge.`
 			)
