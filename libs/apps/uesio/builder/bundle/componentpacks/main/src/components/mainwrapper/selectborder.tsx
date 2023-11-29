@@ -118,7 +118,6 @@ const SelectBorder: definition.UtilityComponent<Props> = (props) => {
 
 	const selectedChildren = useRef<Element[]>()
 	const draggingChildren = useRef<Element[]>()
-	const emptyComponents = useRef<NodeListOf<Element>>()
 
 	const dragPath = useDragPath(context)
 	const isDragging = dragPath.isSet()
@@ -129,26 +128,6 @@ const SelectBorder: definition.UtilityComponent<Props> = (props) => {
 		selectedSlotPath,
 		selectedComponentDef,
 	] = getComponentInfoFromPath(selectedComponentPath, context)
-
-	useEffect(() => {
-		// Empty component handling
-		if (emptyComponents?.current) {
-			emptyComponents.current.forEach((child) => {
-				child.classList.remove(...StyleDefaults.empty)
-				child.classList.add(...StyleDefaults.emptyRemove)
-				child.setAttribute("data-placeholder", "true")
-			})
-		}
-		emptyComponents.current = document.querySelectorAll(
-			`[data-path]>[data-component]:empty`
-		)
-
-		emptyComponents.current.forEach((target) => {
-			target.classList.add(...StyleDefaults.empty)
-			target.classList.remove(...StyleDefaults.emptyRemove)
-			target.removeAttribute("data-placeholder")
-		})
-	})
 
 	useEffect(() => {
 		// Selected component handling
