@@ -1,0 +1,5 @@
+name: updatedat
+type: TIMESTAMP
+label: Updated At
+readOnly: true
+autopopulate: UPDATE

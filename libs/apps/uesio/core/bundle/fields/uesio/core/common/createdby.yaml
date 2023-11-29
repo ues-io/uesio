@@ -1,0 +1,5 @@
+name: createdby
+type: USER
+label: Created By
+readOnly: true
+autopopulate: CREATE

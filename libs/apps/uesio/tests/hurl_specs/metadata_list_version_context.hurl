@@ -24,10 +24,10 @@ GET https://{{host}}:{{port}}/version/uesio/tests/v0.0.1/metadata/types/collecti
 Accept: application/json
 HTTP 200
 [Asserts]
-# There are currently 11 public uesio/core collections and 9 uesio/test collections
+# There are currently 12 public uesio/core collections and 9 uesio/test collections
 # we want to bring this number down at some point by making most of the uesio/core
 # collections private.
-jsonpath "$[*]" count == 20
+jsonpath "$[*]" count == 21
 # Spot check a uesio/tests collection
 jsonpath "$['uesio/tests.animal'].key" == "uesio/tests.animal"
 jsonpath "$['uesio/tests.animal'].namespace" == "uesio/tests"
@@ -51,7 +51,7 @@ GET https://{{host}}:{{port}}/version/uesio/tests/v0.0.1/metadata/types/collecti
 Accept: application/json
 HTTP 200
 [Asserts]
-jsonpath "$[*]" count == 11
+jsonpath "$[*]" count == 12
 # Spot check a uesio/core collection
 jsonpath "$['uesio/core.user'].key" == "uesio/core.user"
 jsonpath "$['uesio/core.user'].namespace" == "uesio/core"
@@ -62,7 +62,7 @@ GET https://{{host}}:{{port}}/version/uesio/tests/v0.0.1/metadata/types/fields/l
 Accept: application/json
 HTTP 200
 [Asserts]
-jsonpath "$[*]" count == 14
+jsonpath "$[*]" count == 15
 # Spot check a uesio/tests field
 jsonpath "$['uesio/tests.genus'].key" == "uesio/tests.genus"
 jsonpath "$['uesio/tests.genus'].namespace" == "uesio/tests"

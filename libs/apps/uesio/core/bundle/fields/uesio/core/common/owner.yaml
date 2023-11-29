@@ -1,0 +1,5 @@
+name: owner
+type: USER
+label: Owner
+readOnly: false
+autopopulate: CREATE

@@ -223,11 +223,14 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		// Special handling if we are asked to load common fields
 		if op.CollectionName == "uesio/studio.field" {
 			// Only add built-in fields if we're grouping on a collection
-			collection, ok := conditions["uesio/studio.collection"]
+			_, ok := conditions["uesio/studio.collection"]
 			// and if we don't have a condition to exclude built-in fields
 			if ok && (isCommonFieldCondition != nil && isCommonFieldCondition.Value == true) {
 				onlyLoadCommonFields = true
-				datasource.AddAllBuiltinFields(group, collection)
+				err = datasource.AddAllBuiltinFields(group, session)
+				if err != nil {
+					return err
+				}
 			}
 		}
 

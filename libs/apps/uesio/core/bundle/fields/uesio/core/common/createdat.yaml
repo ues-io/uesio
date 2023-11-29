@@ -1,0 +1,5 @@
+name: createdat
+type: TIMESTAMP
+label: Created At
+readOnly: true
+autopopulate: CREATE

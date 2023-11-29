@@ -1,0 +1,4 @@
+name: id
+type: TEXT
+label: Id
+readOnly: true

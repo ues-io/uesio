@@ -54,10 +54,13 @@ func getMetadataList(metadatatype, namespace, grouping string, session *sess.Ses
 	}
 
 	if (namespace == "uesio/core" || namespace == "") && metadatatype == "fields" {
-		collectionKey, ok := conditions["uesio/studio.collection"]
+		_, ok := conditions["uesio/studio.collection"]
 		if ok {
 			// Only add built-in fields if we're grouping on a collection
-			datasource.AddAllBuiltinFields(collection, collectionKey)
+			err = datasource.AddAllBuiltinFields(collection, session)
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 
@@ -68,6 +71,7 @@ func getMetadataList(metadatatype, namespace, grouping string, session *sess.Ses
 		// Strip off the grouping part of the key
 		if grouping != "" {
 			key = strings.TrimPrefix(key, strings.ToLower(grouping)+":")
+			key = strings.TrimPrefix(key, "uesio/core.common:")
 		}
 
 		appInfo, ok := appData[ns]

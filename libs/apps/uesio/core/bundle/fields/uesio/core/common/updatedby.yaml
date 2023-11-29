@@ -1,0 +1,5 @@
+name: updatedby
+type: USER
+label: Updated By
+readOnly: true
+autopopulate: UPDATE

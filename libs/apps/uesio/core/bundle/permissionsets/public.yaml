@@ -27,3 +27,4 @@ collections:
   uesio/core.featureflagassignment: true
   uesio/core.user: true
   uesio/core.organizationuser: true
+  uesio/core.common: true

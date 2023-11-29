@@ -1,0 +1,4 @@
+name: uniquekey
+type: TEXT
+label: Unique Key
+readOnly: true

@@ -3,6 +3,8 @@ package datasource
 import (
 	"errors"
 	"fmt"
+	"slices"
+	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -126,7 +128,7 @@ func GetSubFieldMetadata(f *meta.SubField) *adapt.FieldMetadata {
 	}
 	if subFieldsSupported(f.Type, f.SubType) && len(f.SubFields) > 0 {
 		subFieldsMetadata := map[string]*adapt.FieldMetadata{}
-		for i, _ := range f.SubFields {
+		for i := range f.SubFields {
 			subField := f.SubFields[i]
 			subFieldsMetadata[subField.Name] = GetSubFieldMetadata(&subField)
 		}
@@ -273,7 +275,10 @@ func LoadAllFieldsMetadata(collectionKey string, collectionMetadata *adapt.Colle
 		return err
 	}
 
-	AddAllBuiltinFields(&fields, collectionKey)
+	err = AddAllBuiltinFields(&fields, session)
+	if err != nil {
+		return err
+	}
 
 	for _, field := range fields {
 		collectionMetadata.SetField(GetFieldMetadata(field, session))
@@ -283,16 +288,23 @@ func LoadAllFieldsMetadata(collectionKey string, collectionMetadata *adapt.Colle
 
 func LoadFieldsMetadata(keys []string, collectionKey string, collectionMetadata *adapt.CollectionMetadata, session *sess.Session, connection adapt.Connection) error {
 
+	var commonFields meta.FieldCollection
+	err := AddAllBuiltinFields(&commonFields, session)
+	if err != nil {
+		return err
+	}
+	//add only the fields that have been requested
+	for _, field := range commonFields {
+		key := strings.TrimPrefix(field.GetKey(), "uesio/core.common:")
+		if slices.Contains(keys, key) {
+			collectionMetadata.SetField(GetFieldMetadata(field, session))
+		}
+	}
+
 	fields := []meta.BundleableItem{}
 	for _, key := range keys {
 		_, err := collectionMetadata.GetField(key)
 		if err != nil {
-			// Check if this field is built-in, if so, handle its metadata here
-			builtInField, isBuiltIn := GetBuiltinField(key, collectionKey)
-			if isBuiltIn {
-				collectionMetadata.SetField(GetFieldMetadata(&builtInField, session))
-				continue
-			}
 			field, err := meta.NewField(collectionKey, meta.GetFullyQualifiedKey(key, collectionMetadata.Namespace))
 			if err != nil {
 				return err
@@ -303,7 +315,7 @@ func LoadFieldsMetadata(keys []string, collectionKey string, collectionMetadata 
 	if len(fields) == 0 {
 		return nil
 	}
-	err := bundle.LoadMany(fields, session, connection)
+	err = bundle.LoadMany(fields, session, connection)
 	if err != nil {
 		return fmt.Errorf("collection: %s : %v", collectionKey, err)
 	}

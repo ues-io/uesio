@@ -2,6 +2,7 @@ package datasource
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/constant"
@@ -330,10 +331,15 @@ func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *
 			// Automagically add the id field and the name field whether they were requested or not.
 			fieldsToLoad := []string{adapt.ID_FIELD, adapt.UNIQUE_KEY_FIELD, metadata.NameField}
 			for fieldKey := range collection {
-				fieldsToLoad = append(fieldsToLoad, fieldKey)
+				if !slices.Contains(fieldsToLoad, fieldKey) {
+					fieldsToLoad = append(fieldsToLoad, fieldKey)
+				}
+
 			}
 			if metadata.AccessField != "" {
-				fieldsToLoad = append(fieldsToLoad, metadata.AccessField)
+				if !slices.Contains(fieldsToLoad, metadata.AccessField) {
+					fieldsToLoad = append(fieldsToLoad, metadata.AccessField)
+				}
 			}
 			err = LoadFieldsMetadata(fieldsToLoad, collectionKey, metadata, session, connection)
 			if err != nil {
