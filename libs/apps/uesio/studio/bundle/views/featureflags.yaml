@@ -154,7 +154,7 @@ definition:
       uesio.type: uesio/io.dialog
       title: Create a New Feature Flag
       width: 500px
-      height: 600px
+      height: 700px
       components:
         - uesio/io.list:
             uesio.id: newfeatureflaglist

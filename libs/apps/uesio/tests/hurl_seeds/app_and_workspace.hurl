@@ -182,6 +182,8 @@ POST https://{{host}}:{{port}}/site/wires/save
     ]
 }
 HTTP 200
+[Captures]
+workspace_id: jsonpath "$.wires[0].changes['1']['uesio/core.id']"
 [Asserts]
 jsonpath "$.wires[0].errors" == null
 
@@ -191,6 +193,44 @@ POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/configvalues/uesio/core
     "value": "A client id"
 }
 HTTP 200
+
+# Create a sample metadata item within the workspace,
+# to verify that when we do a deploy, the value is overridden and the workspace bundle cache is invalidated
+POST https://{{host}}:{{port}}/site/wires/save
+{
+    "wires": [
+        {
+            "wire": "newView",
+            "collection":"uesio/studio.view",
+            "changes": {
+                "1": {
+                    "uesio/studio.name": "cacheinvalidationtest",
+                    "uesio/studio.definition": "wires:\ncomponents:\n",
+                    "uesio/studio.workspace": {
+                        "uesio/core.id": "{{workspace_id}}"
+                    }
+                }
+            },
+            "params": {
+                "workspacename": "dev",
+                "app": "uesio/tests"
+            }
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" == null
+jsonpath "$.wires[0].changes['1']['uesio/core.id']" exists
+jsonpath "$.wires[0].changes['1']['uesio/studio.name']" == "cacheinvalidationtest"
+
+# Now, access the deps route for previewing that view,
+# so that we force the view to be loaded into the workspace bundle cache
+GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/cacheinvalidationtest
+HTTP 200
+[Asserts]
+jsonpath "$.dependencies.viewdef[0].definition.wires" == null
+jsonpath "$.dependencies.wire" count == 0
 
 # Create truncatetests workspace
 POST https://{{host}}:{{port}}/site/wires/save
