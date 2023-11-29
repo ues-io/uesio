@@ -33,10 +33,6 @@ func extractConditionByType(conditions []adapt.LoadRequestCondition, conditionTy
 }
 
 func GetWorkspaceIDFromParams(params map[string]string, connection adapt.Connection, session *sess.Session) (string, error) {
-	workspaceid := params["workspaceid"]
-	if workspaceid != "" {
-		return workspaceid, nil
-	}
 	inContextSession, err := datasource.GetContextSessionFromParams(params, connection, session)
 	if err != nil {
 		return "", err

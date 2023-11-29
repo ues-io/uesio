@@ -12,7 +12,8 @@ import (
 
 func runStudioMetadataSaveBot(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 
-	// Extract app and workspace from params
+	// Get the workspace ID from params, and verify that the user performing the query
+	// has write access to the requested workspace
 	workspaceID, err := GetWorkspaceIDFromParams(op.Params, connection, session)
 	if err != nil {
 		return err

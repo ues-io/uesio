@@ -3,6 +3,7 @@ package datasource
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -100,6 +101,11 @@ func addWorkspaceContext(workspace *meta.Workspace, session *sess.Session, conne
 }
 
 func AddWorkspaceContextByKey(workspaceKey string, session *sess.Session, connection adapt.Connection) (*sess.Session, error) {
+	// Shortcut - if the target workspace is exactly the same as the workspace we already have,
+	// just use the existing session
+	if session.GetWorkspace() != nil && session.GetWorkspace().UniqueKey == workspaceKey {
+		return session, nil
+	}
 	sessClone := session.RemoveWorkspaceContext()
 	workspace, err := QueryWorkspaceForWrite(workspaceKey, adapt.UNIQUE_KEY_FIELD, sessClone, connection)
 	if err != nil {
@@ -109,6 +115,11 @@ func AddWorkspaceContextByKey(workspaceKey string, session *sess.Session, connec
 }
 
 func AddWorkspaceContextByID(workspaceID string, session *sess.Session, connection adapt.Connection) (*sess.Session, error) {
+	// Shortcut - if the target workspace is exactly the same as the workspace we already have,
+	// just use the existing session
+	if session.GetWorkspace() != nil && session.GetWorkspace().ID == workspaceID {
+		return session, nil
+	}
 	sessClone := session.RemoveWorkspaceContext()
 	workspace, err := QueryWorkspaceForWrite(workspaceID, adapt.ID_FIELD, sessClone, connection)
 	if err != nil {
@@ -140,6 +151,10 @@ func QueryWorkspaceForWrite(value, field string, session *sess.Session, connecti
 	)
 	if err != nil {
 		return nil, err
+	}
+	// Shortcut to avoid having to do a join to fetch Apps every time we query workspaces
+	if workspace.GetAppFullName() == "" && workspace.UniqueKey != "" {
+		workspace.App.UniqueKey = strings.Split(workspace.UniqueKey, ":")[0]
 	}
 	return &workspace, nil
 }
