@@ -5,7 +5,7 @@ const StyleDefaults = Object.freeze({
 })
 
 const GridItem: definition.UC = (props) => {
-	const { definition, context, path } = props
+	const { definition, context, path, componentType } = props
 	if (!definition) return <div />
 	const classes = styles.useStyleTokens(StyleDefaults, props)
 	return (
@@ -15,6 +15,7 @@ const GridItem: definition.UC = (props) => {
 				listName="components"
 				path={path}
 				context={context}
+				componentType={componentType}
 			/>
 		</div>
 	)

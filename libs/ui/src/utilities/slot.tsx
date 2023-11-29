@@ -9,29 +9,24 @@ import { MetadataKey } from "../metadata/types"
 import { getUtilityLoader } from "../component/registry"
 import { definition } from ".."
 
-type SlotDirection = "VERTICAL" | "HORIZONTAL"
-
 interface SlotUtilityProps extends UtilityProps {
 	path: string
 	definition?: DefinitionMap
-	direction?: SlotDirection
-	label?: string
 	listName?: string
 	// componentType will be populated if we're coming from a Declarative Component,
 	// where we need to be able to lookup the Slot metadata.
 	componentType?: MetadataKey
 }
 
-const DefaultSlotDirection = "VERTICAL"
 const DefaultSlotName = "components"
 
 const getSlotProps = (props: SlotUtilityProps) => {
-	const { path, context, listName = DefaultSlotName } = props
+	const { path = "", context, listName = DefaultSlotName } = props
 	const definition = props.definition
 	if (!definition) return []
 
 	const listDef = (definition?.[listName] || []) as DefinitionList
-	const listPath = path ? `${path}["${listName}"]` : `["${listName}"]`
+	const listPath = `${path}["${listName}"]`
 
 	return listDef.flatMap((itemDef, index) => {
 		if (!itemDef) return []
@@ -65,6 +60,6 @@ const Slot: FunctionComponent<SlotUtilityProps> = (props) => {
 
 Slot.displayName = "Slot"
 
-export type { SlotDirection, SlotUtilityProps }
-export { getSlotProps, DefaultSlotDirection, DefaultSlotName }
+export type { SlotUtilityProps }
+export { getSlotProps, DefaultSlotName }
 export default Slot

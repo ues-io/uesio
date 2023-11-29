@@ -39,11 +39,15 @@ type SlotContextProvision =
 	| RecordContextProvision
 	| FieldModeContextProvision
 
+type SlotDirection = "VERTICAL" | "HORIZONTAL"
+
 type SlotDef = {
 	name: string
 	path?: string
 	providesContexts?: SlotContextProvision[]
 	defaultContent?: definition.DefinitionList
+	label?: string
+	direction?: SlotDirection
 }
 
 type StyleRegion = {

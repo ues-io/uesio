@@ -17,7 +17,7 @@ const StyleDefaults = Object.freeze({
 })
 
 const Dialog: definition.UC<DialogDefinition> = (props) => {
-	const { context, definition, path } = props
+	const { context, definition, path, componentType } = props
 	if (!definition) return null
 	const classes = styles.useStyleTokens(StyleDefaults, props)
 	const panelId = definition?.id as string
@@ -46,6 +46,7 @@ const Dialog: definition.UC<DialogDefinition> = (props) => {
 						listName="actions"
 						path={path}
 						context={context}
+						componentType={componentType}
 					/>
 				)
 			}
@@ -55,6 +56,7 @@ const Dialog: definition.UC<DialogDefinition> = (props) => {
 				listName="components"
 				path={path}
 				context={context}
+				componentType={componentType}
 			/>
 		</IODialog>
 	)

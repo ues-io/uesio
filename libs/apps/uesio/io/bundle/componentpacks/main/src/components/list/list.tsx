@@ -17,7 +17,7 @@ const signals: Record<string, signal.ComponentSignalDescriptor> = {
 }
 
 const List: definition.UC<ListDefinition> = (props) => {
-	const { path, context, definition } = props
+	const { path, context, definition, componentType } = props
 	const wire = api.wire.useWire(definition.wire, context)
 
 	const componentId = api.component.getComponentIdFromProps(props)
@@ -51,7 +51,7 @@ const List: definition.UC<ListDefinition> = (props) => {
 					listName="components"
 					path={path}
 					context={recordContext.context}
-					label="List Components"
+					componentType={componentType}
 				/>
 			))}
 		</>

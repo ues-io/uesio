@@ -18,6 +18,8 @@ discoverable: true
 slots:
   - name: components
     path: /columns/~{}
+    label: Column Contents
+    direction: HORIZONTAL
     providesContexts:
       - type: WIRE
         wireProperty: wire
