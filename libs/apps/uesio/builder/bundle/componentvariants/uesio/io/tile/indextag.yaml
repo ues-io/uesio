@@ -10,7 +10,8 @@ definition:
       - bg-slate-50
       - m-1
     selected:
-      - border-r-4
+      - border-1
       - border-[$Theme{color.primary}]
-      - bg-slate-200
+      - bg-white
+      - rounded-sm
 public: true

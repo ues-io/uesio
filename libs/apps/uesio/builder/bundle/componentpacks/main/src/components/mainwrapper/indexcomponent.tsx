@@ -9,18 +9,21 @@ import ItemTag from "../../utilities/itemtag/itemtag"
 import PropNodeTag from "../../utilities/propnodetag/propnodetag"
 import { FullPath } from "../../api/path"
 import IndexSlot from "./indexslot"
+import DeleteAction from "../../actions/deleteaction"
+import MoveActions from "../../actions/moveactions"
+import CloneAction from "../../actions/cloneaction"
 
 const StyleDefaults = Object.freeze({
-	slot: ["border-l-4", "ml-1", "border-slate-50"],
-	slotSelected: ["border-l-4", "ml-1", "border-slate-200"],
 	tag: ["py-1", "px-1.5", "m-0"],
+	tagselected: ["py-1", "px-1.5", "bg-white", "m-0.5", "rounded-sm"],
 	tagtitle: ["uppercase", "font-light", "text-[8pt]", "mb-0"],
+	actionarea: ["text-right", "bg-slate-50", "text-slate-700"],
 })
 
 const IndexComponent: definition.UC = (props) => {
 	const { componentType, context, path, definition } = props
-
 	const componentDef = getComponentDef(componentType)
+	const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
 	const NamespaceLabel = component.getUtility("uesio/io.namespacelabel")
 	const classes = styles.useStyleTokens(StyleDefaults, props)
 
@@ -29,6 +32,7 @@ const IndexComponent: definition.UC = (props) => {
 	const viewDefId = context.getViewDefId()
 
 	const fullPath = new FullPath("viewdef", viewDefId, path)
+	const [, parentPath] = fullPath.pop()
 
 	if (!componentDef) return null
 	const nsInfo = getBuilderNamespaces(context)[componentDef.namespace]
@@ -53,14 +57,17 @@ const IndexComponent: definition.UC = (props) => {
 					context={context}
 					draggable={fullPath.combine()}
 					key={path}
-					onClick={() => {
+					onClick={(e) => {
 						setSelectedPath(context, fullPath)
+						e.stopPropagation()
 					}}
 					selected={isSelected}
 				>
 					<ItemTag
 						classes={{
-							root: classes.tag,
+							root: isSelected
+								? classes.tagselected
+								: classes.tag,
 							title: classes.tagtitle,
 						}}
 						context={context}
@@ -75,20 +82,26 @@ const IndexComponent: definition.UC = (props) => {
 							context={context}
 						/>
 					</ItemTag>
+					<IOExpandPanel context={context} expanded={isSelected}>
+						<div className={classes.actionarea}>
+							<DeleteAction context={context} path={parentPath} />
+							<MoveActions context={context} path={parentPath} />
+							<CloneAction context={context} path={parentPath} />
+						</div>
+					</IOExpandPanel>
 				</PropNodeTag>
 			)}
-
-			<div className={isSelected ? classes.slotSelected : classes.slot}>
-				{componentDef.slots?.map((slot) => (
-					<IndexSlot
-						key={slot.name}
-						slot={slot}
-						definition={definition}
-						path={path}
-						context={context}
-					/>
-				))}
-			</div>
+			{componentDef.slots?.map((slot) => (
+				<IndexSlot
+					key={slot.name}
+					slot={slot}
+					indent={true}
+					selected={isSelected}
+					definition={definition}
+					path={path}
+					context={context}
+				/>
+			))}
 		</div>
 	)
 }

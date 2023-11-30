@@ -109,8 +109,8 @@ const SelectBorder: definition.UtilityComponent<Props> = (props) => {
 	const context = props.context
 
 	const Popper = component.getUtility("uesio/io.popper")
-	const Text = component.getUtility("uesio/io.text")
 	const IconButton = component.getUtility("uesio/io.iconbutton")
+	const NamespaceLabel = component.getUtility("uesio/io.namespacelabel")
 
 	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
@@ -210,13 +210,15 @@ const SelectBorder: definition.UtilityComponent<Props> = (props) => {
 						setDragPath(context)
 					}}
 				>
-					<Text
-						variant="uesio/io.icon"
-						text={nsInfo.icon}
-						color={nsInfo.color}
+					<NamespaceLabel
+						metadatakey={selectedComponentDef.namespace}
+						metadatainfo={nsInfo}
+						title={componentTitle}
 						context={context}
+						classes={{
+							root: classes.titletext,
+						}}
 					/>
-					<span className={classes.titletext}>{componentTitle}</span>
 					<IconButton
 						context={context}
 						variant="uesio/builder.buildtitle"

@@ -21,6 +21,43 @@ type Props = {
 	onUnselect?: () => void
 }
 
+const getPathDots = (
+	path: FullPath,
+	className: string,
+	wrapperClassName: string
+) => (
+	<div className={wrapperClassName}>
+		<div
+			className={className}
+			style={{
+				width: "16px",
+			}}
+		/>
+		{component.path.toPath(path.localPath).map((segment, index) => {
+			// Try to parse the path into a number
+			const num = parseInt(segment, 10)
+			if (!isNaN(num)) {
+				return (
+					<Fragment key={index}>
+						{Array.from(Array(num + 1).keys()).map((index) => (
+							<div className={className} key={index} />
+						))}
+					</Fragment>
+				)
+			}
+			return (
+				<div
+					className={className}
+					style={{
+						width: segment.length + "px",
+					}}
+					key={index}
+				/>
+			)
+		})}
+	</div>
+)
+
 const PropertiesWrapper: definition.UtilityComponent<Props> = (props) => {
 	const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
 	const TitleBar = component.getUtility("uesio/io.titlebar")
@@ -56,38 +93,7 @@ const PropertiesWrapper: definition.UtilityComponent<Props> = (props) => {
 		props
 	)
 
-	const subtitlenode = (
-		<div className={classes.crumbwrapper}>
-			<div
-				className={classes.crumb}
-				style={{
-					width: "16px",
-				}}
-			/>
-			{component.path.toPath(path.localPath).map((segment, index) => {
-				// Try to parse the path into a number
-				const num = parseInt(segment, 10)
-				if (!isNaN(num)) {
-					return (
-						<Fragment key={index}>
-							{Array.from(Array(num + 1).keys()).map((index) => (
-								<div className={classes.crumb} key={index} />
-							))}
-						</Fragment>
-					)
-				}
-				return (
-					<div
-						className={classes.crumb}
-						style={{
-							width: segment.length + "px",
-						}}
-						key={index}
-					/>
-				)
-			})}
-		</div>
-	)
+	const subtitlenode = getPathDots(path, classes.crumb, classes.crumbwrapper)
 
 	return (
 		<ScrollPanel
@@ -149,5 +155,7 @@ const PropertiesWrapper: definition.UtilityComponent<Props> = (props) => {
 PropertiesWrapper.displayName = "PropertiesWrapper"
 
 export default PropertiesWrapper
+
+export { getPathDots }
 
 export type { Tab }

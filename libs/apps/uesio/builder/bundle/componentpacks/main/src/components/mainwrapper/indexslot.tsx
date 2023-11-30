@@ -1,8 +1,9 @@
 import { definition, component, styles } from "@uesio/ui"
-import { SlotDef } from "../../api/stateapi"
+import { SlotDef, setSelectedPath } from "../../api/stateapi"
 import IndexComponent from "./indexcomponent"
 import { standardAccepts } from "../../helpers/dragdrop"
 import { usePlaceHolders } from "../../utilities/buildwrapper/buildwrapper"
+import { FullPath } from "../../api/path"
 
 const StyleDefaults = Object.freeze({
 	placeholder: [
@@ -37,18 +38,55 @@ const IndexBuildWrapper: definition.UC = (props) => {
 
 type IndexSlotProps = {
 	slot: SlotDef
+	selected?: boolean
+	indent?: boolean
 } & definition.BaseProps
 
+const SlotStyleDefaults = Object.freeze({
+	slot: ["border-slate-50"],
+	slotIndent: ["border-l-4", "ml-1"],
+	slotSelected: ["border-slate-200"],
+	slotheader: [
+		"mx-1",
+		"mt-1",
+		"border-b-1",
+		"border-slate-200",
+		"text-slate-500",
+		"font-light",
+		"text-[8pt]",
+		"pt-1",
+		"px-0.5",
+		"uppercase",
+	],
+})
+
 const IndexSlot: definition.UtilityComponent<IndexSlotProps> = (props) => {
-	const { context, slot, path, definition } = props
+	const { context, slot, path, definition, indent, selected } = props
 	const listName = slot.name
+	const label = slot.label || "Slot"
 
 	const listPath = path ? `${path}["${listName}"]` : `["${listName}"]`
+	const classes = styles.useUtilityStyleTokens(SlotStyleDefaults, props)
 
 	if (!definition) return null
 
 	return (
-		<div data-accepts={standardAccepts.join(",")} data-path={listPath}>
+		<div
+			onClick={(e) => {
+				setSelectedPath(
+					context,
+					new FullPath("viewdef", context.getViewDefId(), listPath)
+				)
+				e.stopPropagation()
+			}}
+			className={styles.cx(
+				indent && classes.slotIndent,
+				selected ? classes.slotSelected : classes.slot
+			)}
+			data-accepts={standardAccepts.join(",")}
+			data-path={listPath}
+		>
+			<div className={classes.slotheader}>{label}</div>
 			{component
 				.getSlotProps({
 					listName,
