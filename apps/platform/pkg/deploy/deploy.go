@@ -110,7 +110,17 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 
 	var by *meta.BundleDef
 
-	uploadOps := []*filesource.FileUploadOp{}
+	var uploadOps []*filesource.FileUploadOp
+	var readersToClose []io.ReadCloser
+
+	// Make sure we close any ReadClosers that we opened
+	defer func() {
+		if len(readersToClose) > 0 {
+			for _, r := range readersToClose {
+				r.Close()
+			}
+		}
+	}()
 
 	// Read all the files from zip archive
 	for _, zipFile := range zipReader.File {
@@ -130,15 +140,14 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 			if err != nil {
 				return err
 			}
-			err = bundlestore.DecodeYAML(by, readCloser)
-			readCloser.Close()
-			if err != nil {
+			readersToClose = append(readersToClose, readCloser)
+			if err = bundlestore.DecodeYAML(by, readCloser); err != nil {
 				return err
 			}
 			continue
 		}
 
-		// Any files outher than bundle.yaml without a metadata type should be ignored
+		// Any files other than bundle.yaml without a metadata type should be ignored
 		if metadataType == "" {
 			continue
 		}
@@ -158,15 +167,15 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 			continue
 		}
 
-		path := path.Join(path.Join(dirParts[1:]...), fileName)
+		filePath := path.Join(path.Join(dirParts[1:]...), fileName)
 
-		if !collection.FilterPath(path, nil, false) {
+		if !collection.FilterPath(filePath, nil, false) {
 			continue
 		}
 
 		attachableGroup, isAttachable := collection.(meta.AttachableGroup)
 
-		collectionItem := collection.GetItemFromPath(path, namespace)
+		collectionItem := collection.GetItemFromPath(filePath, namespace)
 		if err != nil {
 			return err
 		}
@@ -178,16 +187,16 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 		isDefinition := true
 
 		if isAttachable {
-			isDefinition = attachableGroup.IsDefinitionPath(path)
+			isDefinition = attachableGroup.IsDefinitionPath(filePath)
 		}
 
 		if isDefinition {
-			collection.AddItem(collectionItem)
-			err = readZipFile(zipFile, collectionItem)
-			if err != nil {
+			if err = collection.AddItem(collectionItem); err != nil {
+				return err
+			}
+			if err = readZipFile(zipFile, collectionItem); err != nil {
 				return errors.New("Reading File: " + collectionItem.GetKey() + " : " + err.Error())
 			}
-
 			continue
 		}
 
@@ -203,19 +212,20 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 			f, err := zipFile.Open()
 			if err != nil {
 				return err
+			} else {
+				readersToClose = append(readersToClose, f)
 			}
 
 			uploadOps = append(uploadOps, &filesource.FileUploadOp{
 				Data:            f,
-				Path:            strings.TrimPrefix(path, attachableItem.GetBasePath()+"/"),
+				Path:            strings.TrimPrefix(filePath, attachableItem.GetBasePath()+"/"),
 				CollectionID:    collection.GetName(),
 				RecordUniqueKey: collectionItem.GetDBID(workspace.UniqueKey),
 			})
-			defer f.Close()
 		}
 	}
 
-	saves := []datasource.PlatformSaveRequest{}
+	var saves []datasource.PlatformSaveRequest
 
 	saveOptions := &adapt.SaveOptions{
 		Upsert: options.Upsert,
@@ -264,7 +274,7 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 			},
 		}
 
-		// We set the valid fields here because it's an update and we don't want
+		// We set the valid fields here because it's an update, and we don't want
 		// to overwrite the other fields
 		workspaceItem.SetItemMeta(&meta.ItemMeta{
 			ValidFields: map[string]bool{
@@ -289,7 +299,9 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 	}
 
 	params := map[string]string{
-		"workspaceid": workspace.ID,
+		"workspaceid":   workspace.ID,
+		"workspacename": workspace.Name,
+		"app":           namespace,
 	}
 
 	for _, element := range ORDERED_ITEMS {
@@ -302,13 +314,11 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 		}
 	}
 
-	err = datasource.PlatformSaves(saves, options.Connection, session.RemoveWorkspaceContext())
-	if err != nil {
+	studioSession := session.RemoveWorkspaceContext()
+	if err = datasource.PlatformSaves(saves, options.Connection, studioSession); err != nil {
 		return err
 	}
-
-	_, err = filesource.Upload(uploadOps, options.Connection, session.RemoveWorkspaceContext(), params)
-	if err != nil {
+	if _, err = filesource.Upload(uploadOps, options.Connection, studioSession, params); err != nil {
 		return err
 	}
 

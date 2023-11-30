@@ -1,0 +1,16 @@
+name: cacheinvalidationtest
+definition:
+  # Wires connect to data in collections
+  wires:
+    animals:
+      collection: uesio/tests.animal
+      fields:
+        uesio/tests.genus:
+        uesio/tests.species:
+      batchsize: 2
+      conditions:
+        - field: uesio/tests.genus
+          operator: EQ
+          value: Mouton
+  # Components determine the layout and composition of your view
+  components:
