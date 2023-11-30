@@ -16,7 +16,6 @@ definition:
       - h-full
       - overflow-auto
       - "[container-type:inline-size]"
-      - w-full
       - col-start-2
       - col-end-2
     right:
