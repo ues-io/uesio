@@ -32,7 +32,11 @@ func newS3FileMeta(s3Output *s3.HeadObjectOutput) file.Metadata {
 }
 
 func (fm *s3FileMeta) ContentLength() int64 {
-	return fm.s3Output.ContentLength
+	ptr := fm.s3Output.ContentLength
+	if ptr != nil {
+		return *ptr
+	}
+	return 0
 }
 
 func (fm *s3FileMeta) LastModified() *time.Time {
