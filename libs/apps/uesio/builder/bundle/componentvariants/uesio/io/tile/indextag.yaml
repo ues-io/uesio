@@ -3,15 +3,14 @@ label: Index Tag
 definition:
   uesio.styleTokens:
     root:
-      - text-slate-700
-      - text-xs
       - overflow-hidden
       - select-none
-      - bg-slate-50
-      - m-1
-    selected:
-      - border-1
-      - border-[$Theme{color.primary}]
       - bg-white
+      - mt-1
+      - mx-1
+      - border-1
+      - border-transparent
+    selected:
+      - border-[$Theme{color.primary}]
       - rounded-sm
 public: true

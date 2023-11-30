@@ -38,14 +38,12 @@ const IndexBuildWrapper: definition.UC = (props) => {
 
 type IndexSlotProps = {
 	slot: SlotDef
-	selected?: boolean
 	indent?: boolean
 } & definition.BaseProps
 
 const SlotStyleDefaults = Object.freeze({
 	slot: ["border-slate-50"],
-	slotIndent: ["border-l-4", "ml-1"],
-	slotSelected: ["border-slate-200"],
+	slotIndent: ["border-l-4", "pb-1"],
 	slotheader: [
 		"mx-1",
 		"mt-1",
@@ -61,7 +59,7 @@ const SlotStyleDefaults = Object.freeze({
 })
 
 const IndexSlot: definition.UtilityComponent<IndexSlotProps> = (props) => {
-	const { context, slot, path, definition, indent, selected } = props
+	const { context, slot, path, definition, indent } = props
 	const listName = slot.name
 	const label = slot.label || "Slot"
 
@@ -79,10 +77,7 @@ const IndexSlot: definition.UtilityComponent<IndexSlotProps> = (props) => {
 				)
 				e.stopPropagation()
 			}}
-			className={styles.cx(
-				indent && classes.slotIndent,
-				selected ? classes.slotSelected : classes.slot
-			)}
+			className={styles.cx(indent && classes.slotIndent, classes.slot)}
 			data-accepts={standardAccepts.join(",")}
 			data-path={listPath}
 		>
