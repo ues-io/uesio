@@ -3,6 +3,7 @@ package datasource
 import (
 	"fmt"
 	"strings"
+	"sync"
 
 	"github.com/thecloudmasters/uesio/pkg/constant"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
@@ -94,13 +95,24 @@ type MetadataRequest struct {
 	Collections FieldsMap
 	SelectLists map[string]bool
 	Options     *MetadataRequestOptions
+	sync.RWMutex
 }
 
 func (mr *MetadataRequest) HasRequests() bool {
+	mr.RLock()
+	defer mr.RUnlock()
 	return len(mr.Collections) > 0 || len(mr.SelectLists) > 0
 }
 
 func (mr *MetadataRequest) AddCollection(collectionName string) error {
+	mr.Lock()
+	defer mr.Unlock()
+	err := mr.addCollectionInternal(collectionName)
+	return err
+}
+
+// internal version which does NOT take out a lock to prevent nested locking
+func (mr *MetadataRequest) addCollectionInternal(collectionName string) error {
 	if collectionName == "" {
 		return exceptions.NewBadRequestException("tried to add blank collection")
 	}
@@ -115,13 +127,15 @@ func (mr *MetadataRequest) AddCollection(collectionName string) error {
 }
 
 func (mr *MetadataRequest) AddField(collectionName, fieldName string, subFields *FieldsMap) error {
+	mr.Lock()
+	defer mr.Unlock()
 	if collectionName == "" {
 		return fmt.Errorf("cannot request metadata without a valid collection name (field = %s)", fieldName)
 	}
 	if fieldName == "" {
 		return fmt.Errorf("cannot request metadata without a valid field name (collection = %s)", collectionName)
 	}
-	err := mr.AddCollection(collectionName)
+	err := mr.addCollectionInternal(collectionName)
 	if err != nil {
 		return err
 	}
@@ -138,6 +152,8 @@ func (mr *MetadataRequest) AddField(collectionName, fieldName string, subFields 
 }
 
 func (mr *MetadataRequest) AddSelectList(collectionName, fieldName, selectListName string) {
+	mr.Lock()
+	defer mr.Unlock()
 	if mr.SelectLists == nil {
 		mr.SelectLists = map[string]bool{}
 	}

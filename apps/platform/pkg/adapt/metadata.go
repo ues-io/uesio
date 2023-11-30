@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"sync"
 
 	"github.com/thecloudmasters/uesio/pkg/constant"
 
@@ -14,9 +15,12 @@ import (
 type MetadataCache struct {
 	Collections map[string]*CollectionMetadata
 	SelectLists map[string]*SelectListMetadata
+	sync.RWMutex
 }
 
 func (mc *MetadataCache) AddCollection(key string, metadata *CollectionMetadata) {
+	mc.Lock()
+	defer mc.Unlock()
 	if mc.Collections == nil {
 		mc.Collections = map[string]*CollectionMetadata{}
 	}
@@ -24,6 +28,8 @@ func (mc *MetadataCache) AddCollection(key string, metadata *CollectionMetadata)
 }
 
 func (mc *MetadataCache) GetCollection(key string) (*CollectionMetadata, error) {
+	mc.RLock()
+	defer mc.RUnlock()
 	collectionMetadata, ok := mc.Collections[key]
 	if !ok {
 		return nil, errors.New("No metadata provided for collection: " + key)
