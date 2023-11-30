@@ -105,6 +105,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 					</div>
 				</div>
 			</div>
+			{/*<DebugPanel context={context} />*/}
 		</div>
 	)
 }
