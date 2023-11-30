@@ -59,6 +59,7 @@ type CollectionMetadata struct {
 	Integration           string                       `json:"-"`
 	LoadBot               string                       `json:"-"`
 	SaveBot               string                       `json:"-"`
+	sync.RWMutex
 }
 
 func (cm *CollectionMetadata) GetIntegrationName() string {
@@ -95,7 +96,8 @@ func (cm *CollectionMetadata) GetField(key string) (*FieldMetadata, error) {
 }
 
 func (cm *CollectionMetadata) GetFieldWithMetadata(key string, metadata *MetadataCache) (*FieldMetadata, error) {
-
+	cm.RLock()
+	defer cm.RUnlock()
 	names := strings.Split(key, constant.RefSep)
 	if len(names) == 1 {
 		fieldMetadata, ok := cm.Fields[meta.GetFullyQualifiedKey(key, cm.Namespace)]
@@ -137,6 +139,8 @@ func (cm *CollectionMetadata) GetFieldWithMetadata(key string, metadata *Metadat
 }
 
 func (cm *CollectionMetadata) SetField(metadata *FieldMetadata) {
+	cm.Lock()
+	defer cm.Unlock()
 	cm.Fields[metadata.GetFullName()] = metadata
 }
 
@@ -149,6 +153,8 @@ func (cm *CollectionMetadata) GetFullName() string {
 }
 
 func (cm *CollectionMetadata) Merge(other *CollectionMetadata) {
+	cm.Lock()
+	defer cm.Unlock()
 	otherHasFields := len(other.Fields) > 0
 	// Shortcuts --- if either the current or the other indicates that it "HasAllFields",
 	// then we will use its fields
