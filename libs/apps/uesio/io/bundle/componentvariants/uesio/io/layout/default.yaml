@@ -12,6 +12,8 @@ definition:
     left:
       - h-full
       - overflow-auto
+      - col-start-1
+      - col-end-1
     content:
       - h-full
       - overflow-auto
@@ -21,6 +23,8 @@ definition:
     right:
       - h-full
       - overflow-auto
+      - col-start-3
+      - col-end-3
     footer:
       - col-span-3
 public: true
