@@ -1,0 +1,29 @@
+name: missinghome
+public: true
+definition:
+  # Wires are how we pull in data
+  wires:
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/io.grid:
+        uesio.variant: uesio/io.center
+        uesio.styleTokens:
+          root:
+            - h-screen
+            - text-center
+            - bg-slate-100
+            - text-slate-700
+        items:
+          - uesio/io.text:
+              text: "🤯"
+              uesio.styleTokens:
+                root:
+                  - p-8
+                  - text-8xl
+              element: div
+          - uesio/io.text:
+              text: "Home page is missing"
+              uesio.styleTokens:
+                root:
+                  - text-6xl
+              element: div

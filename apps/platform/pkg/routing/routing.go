@@ -16,12 +16,23 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
+func getMissingHomeRoute() *meta.Route {
+	return &meta.Route{
+		ViewRef: "uesio/core.missinghome",
+		BundleableBase: meta.BundleableBase{
+			Namespace: "uesio/core",
+		},
+		ThemeRef: "uesio/core.default",
+		Title:    "Missing home route",
+	}
+}
+
 func GetHomeRoute(session *sess.Session) (*meta.Route, error) {
 	homeRoute := session.GetSite().GetAppBundle().HomeRoute
 
 	route, err := meta.NewRoute(homeRoute)
 	if err != nil {
-		return nil, err
+		return getMissingHomeRoute(), nil
 	}
 	err = bundle.Load(route, session, nil)
 	if err != nil {
