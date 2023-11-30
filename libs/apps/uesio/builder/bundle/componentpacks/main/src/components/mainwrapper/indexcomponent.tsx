@@ -43,8 +43,6 @@ const IndexComponent: definition.UC = (props) => {
 
 	const { [component.COMPONENT_ID]: componentId } = definition
 
-	console.log(searchTerm, componentType, componentId)
-
 	const isVisible =
 		!searchTerm ||
 		componentType?.includes(searchTerm) ||
