@@ -60,13 +60,14 @@ definition:
         wires:
           - orgs
   components:
-    - uesio/studio.mainlayout:
-        topbar:
+    - uesio/io.layout:
+        uesio.variant: uesio/studio.main
+        header:
           - uesio/core.view:
               view: uesio/studio.topbar
               uesio.context:
                 wire: sites
-        leftbar:
+        left:
           - uesio/core.view:
               view: uesio/studio.sitenav
               uesio.context:

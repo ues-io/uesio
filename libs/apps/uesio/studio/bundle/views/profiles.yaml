@@ -40,8 +40,9 @@ definition:
           lookupField: uesio/core.id
   # Components are how we describe the layout of our view
   components:
-    - uesio/studio.mainlayout:
-        topbar:
+    - uesio/io.layout:
+        uesio.variant: uesio/studio.main
+        header:
           - uesio/core.view:
               view: uesio/studio.topbar
               uesio.context:
@@ -49,7 +50,7 @@ definition:
               params:
                 itemType: profiles
                 itemIcon: group
-        leftbar:
+        left:
           - uesio/core.view:
               uesio.context:
                 wire: workspaces

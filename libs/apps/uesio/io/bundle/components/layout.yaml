@@ -1,0 +1,27 @@
+name: layout
+pack: main
+entrypoint: components/layout/layout
+title: Layout
+description: Main View Layout
+category: LAYOUT
+discoverable: true
+icon: dashboard
+slots:
+  - name: header
+    label: Header Contents
+  - name: left
+    label: Left Panel Contents
+  - name: content
+    label: Main Contents
+  - name: right
+    label: Right Panel Contents
+  - name: footer
+    label: Footer Contents
+defaultDefinition:
+  uesio.variant: uesio/io.default
+properties:
+sections:
+  - type: HOME
+    properties:
+  - type: STYLES
+  - type: DISPLAY

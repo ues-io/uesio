@@ -152,13 +152,14 @@ definition:
           lookupField: uesio/core.id
 
   components:
-    - uesio/studio.mainlayout:
-        topbar:
+    - uesio/io.layout:
+        uesio.variant: uesio/studio.main
+        header:
           - uesio/core.view:
               view: uesio/studio.topbar
               uesio.context:
                 wire: workspaces
-        leftbar:
+        left:
           - uesio/core.view:
               uesio.context:
                 wire: workspaces

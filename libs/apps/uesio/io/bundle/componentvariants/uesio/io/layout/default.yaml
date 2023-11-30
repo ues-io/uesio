@@ -1,0 +1,27 @@
+name: default
+label: Default
+definition:
+  uesio.styleTokens:
+    root:
+      - grid
+      - grid-cols-[auto_1fr_auto]
+      - grid-rows-[auto_1fr_auto]
+      - h-screen
+    header:
+      - col-span-3
+    left:
+      - h-full
+      - overflow-auto
+    content:
+      - h-full
+      - overflow-auto
+      - "[container-type:inline-size]"
+      - w-full
+      - col-start-2
+      - col-end-2
+    right:
+      - h-full
+      - overflow-auto
+    footer:
+      - col-span-3
+public: true

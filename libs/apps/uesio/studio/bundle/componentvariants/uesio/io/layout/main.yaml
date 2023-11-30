@@ -1,0 +1,10 @@
+name: main
+label: Main
+extends: uesio/io.default
+definition:
+  uesio.styleTokens:
+    content:
+      - bg-slate-50
+      - p-10
+    left:
+      - w-[300px]

@@ -67,11 +67,12 @@ definition:
         query: false
         create: true
   components:
-    - uesio/studio.mainlayout:
-        topbar:
+    - uesio/io.layout:
+        uesio.variant: uesio/studio.main
+        header:
           - uesio/core.view:
               view: uesio/studio.topbar
-        leftbar:
+        left:
           - uesio/core.view:
               view: uesio/studio.homeleftnav
         content:
