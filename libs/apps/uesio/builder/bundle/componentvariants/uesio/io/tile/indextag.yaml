@@ -6,11 +6,8 @@ definition:
       - overflow-hidden
       - select-none
       - bg-white
-      - mt-1
-      - mx-1
-      - border-1
-      - border-transparent
     selected:
+      - border-1
       - border-[$Theme{color.primary}]
       - rounded-sm
 public: true

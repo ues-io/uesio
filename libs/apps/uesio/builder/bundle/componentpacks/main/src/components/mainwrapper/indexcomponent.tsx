@@ -43,10 +43,25 @@ const IndexComponent: definition.UC = (props) => {
 
 	const { [component.COMPONENT_ID]: componentId } = definition
 
+	console.log(searchTerm, componentType, componentId)
+
 	const isVisible =
 		!searchTerm ||
 		componentType?.includes(searchTerm) ||
 		componentId?.includes(searchTerm)
+
+	const slotsNode =
+		componentDef.slots?.map((slot) => (
+			<IndexSlot
+				key={slot.name}
+				slot={slot}
+				indent={true}
+				selected={isSelected}
+				definition={definition}
+				path={path}
+				context={context}
+			/>
+		)) || null
 
 	return isVisible ? (
 		<PropNodeTag
@@ -84,18 +99,11 @@ const IndexComponent: definition.UC = (props) => {
 					<CloneAction context={context} path={parentPath} />
 				</div>
 			</IOExpandPanel>
-			{componentDef.slots?.map((slot) => (
-				<IndexSlot
-					key={slot.name}
-					slot={slot}
-					indent={true}
-					definition={definition}
-					path={path}
-					context={context}
-				/>
-			))}
+			{slotsNode}
 		</PropNodeTag>
-	) : null
+	) : (
+		<>{slotsNode}</>
+	)
 }
 
 export default IndexComponent
