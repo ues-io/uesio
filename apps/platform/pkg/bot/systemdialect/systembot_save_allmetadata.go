@@ -18,7 +18,6 @@ func runStudioMetadataSaveBot(op *adapt.SaveOp, connection adapt.Connection, ses
 		return err
 	}
 	appName := op.Params["app"]
-	workspaceName := op.Params["workspacename"]
 	var changedMetadataItemKeys []string
 
 	if err = op.LoopChanges(func(change *adapt.ChangeItem) error {
@@ -41,13 +40,24 @@ func runStudioMetadataSaveBot(op *adapt.SaveOp, connection adapt.Connection, ses
 		return err
 	}
 
-	if appName == "" || workspaceName == "" || len(changedMetadataItemKeys) < 1 {
+	if len(changedMetadataItemKeys) < 1 {
 		return nil
+	}
+
+	// We already verified that we have a workspace id,
+	// but we MUST also know the context app name in order to achieve cache invalidation,
+	// so if we do NOT have this yet (which ideally should never happen), we will need to query for it
+	if appName == "" {
+		workspace, err := datasource.QueryWorkspaceForWrite(workspaceID, adapt.ID_FIELD, session, connection)
+		if err != nil {
+			return err
+		}
+		appName = workspace.GetAppFullName()
 	}
 
 	message := &workspacebundlestore.WorkspaceMetadataChange{
 		AppName:        appName,
-		WorkspaceName:  workspaceID,
+		WorkspaceID:    workspaceID,
 		CollectionName: op.Metadata.GetFullName(),
 		ChangedItems:   changedMetadataItemKeys,
 	}
