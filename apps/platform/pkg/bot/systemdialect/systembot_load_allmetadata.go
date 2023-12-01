@@ -100,9 +100,11 @@ func runStudioMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 		return runAllMetadataLoadBot(op, connection, inContextSession)
 	}
 
-	workspaceID, err := GetWorkspaceIDFromParams(op.Params, connection, session)
-	if err != nil {
-		return err
+	// Get the workspace ID from params, and verify that the user performing the query
+	// has write access to the requested workspace
+	wsAccessResult := datasource.RequestWorkspaceWriteAccess(op.Params, connection, session)
+	if !wsAccessResult.HasWriteAccess() {
+		return wsAccessResult.Error()
 	}
 
 	itemCondition := extractConditionByField(op.Conditions, itemField)
@@ -113,7 +115,7 @@ func runStudioMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 
 	op.Conditions = append(op.Conditions, adapt.LoadRequestCondition{
 		Field: "uesio/studio.workspace",
-		Value: workspaceID,
+		Value: wsAccessResult.GetWorkspaceID(),
 	})
 
 	return datasource.LoadOp(op, connection, session)

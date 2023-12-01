@@ -4,12 +4,107 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/cache"
+	"github.com/thecloudmasters/uesio/pkg/constant"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/workspace"
 )
+
+type QueryWorkspaceForWriteFn func(queryValue, queryField string, session *sess.Session, connection adapt.Connection) (*meta.Workspace, error)
+
+// this cache exists to provide quick access to essential fields about a workspace
+// without having to constantly query for it
+var wsKeyInfoCache cache.Cache[workspace.KeyInfo]
+var queryWorkspaceForWriteFn QueryWorkspaceForWriteFn
+
+func init() {
+	wsKeyInfoCache = cache.NewMemoryCache[workspace.KeyInfo](15*time.Minute, 15*time.Minute)
+	queryWorkspaceForWriteFn = QueryWorkspaceForWrite
+}
+
+func SetQueryWorkspaceForWriteFn(fn QueryWorkspaceForWriteFn) {
+	queryWorkspaceForWriteFn = fn
+}
+
+func RequestWorkspaceWriteAccess(params map[string]string, connection adapt.Connection, session *sess.Session) *workspace.AccessResult {
+
+	workspaceID := params["workspaceid"]
+	workspaceName := params["workspacename"]
+	appName := params["app"]
+	workspaceUniqueKey := ""
+
+	var wsKeyInfo workspace.KeyInfo
+
+	if appName != "" && workspaceName != "" {
+		workspaceUniqueKey = fmt.Sprintf("%s:%s", appName, workspaceName)
+		// Try to lookup workspace key info from the key
+		if result, err := wsKeyInfoCache.Get(workspaceUniqueKey); err == nil {
+			wsKeyInfo = result
+		}
+	}
+	if workspaceID != "" && wsKeyInfo.HasAnyMissingField() {
+		// Try to find the workspace key info from workspace ID
+		if result, err := wsKeyInfoCache.Get(workspaceID); err == nil {
+			wsKeyInfo = result
+		}
+	}
+
+	// First check the Studio Site Session permissions
+	site := session.GetSite()
+	studioPerms := session.GetSiteUser().Permissions
+
+	var accessErr error
+	// 1. Make sure we're in a site that can read/modify workspaces
+	if site.GetAppFullName() != "uesio/studio" {
+		accessErr = errors.New("this site does not allow working with workspaces")
+	} else if !studioPerms.HasNamedPermission(constant.WorkspaceAdminPerm) {
+		accessErr = errors.New("your profile does not allow you to edit workspace metadata")
+	}
+	if accessErr != nil {
+		return workspace.NewWorkspaceAccessResult(wsKeyInfo, false, accessErr)
+	}
+	// 2. does the user have the workspace-specific write permission?
+	haveAccess := false
+	if workspaceID != "" && studioPerms.HasNamedPermission(getWorkspaceWritePermName(workspaceID)) {
+		haveAccess = true
+	} else if workspaceUniqueKey != "" && studioPerms.HasNamedPermission(getWorkspaceWritePermName(workspaceUniqueKey)) {
+		haveAccess = true
+	}
+	if haveAccess {
+		return workspace.NewWorkspaceAccessResult(wsKeyInfo, true, nil)
+	}
+
+	if !haveAccess {
+		// Otherwise we need to query the workspace for write
+		queryField := adapt.ID_FIELD
+		queryValue := workspaceID
+		if workspaceID == "" && workspaceUniqueKey != "" {
+			queryField = adapt.UNIQUE_KEY_FIELD
+			queryValue = workspaceUniqueKey
+		}
+		ws, err := queryWorkspaceForWriteFn(queryValue, queryField, session, connection)
+		if err == nil && ws != nil {
+			haveAccess = true
+		} else {
+			accessErr = err
+		}
+		// Flesh out our workspace key info cache
+		if ws != nil && wsKeyInfo.HasAnyMissingField() {
+			workspaceUniqueKey = fmt.Sprintf("%s:%s", appName, workspaceName)
+			workspaceID = ws.ID
+			wsKeyInfo = workspace.NewKeyInfo(appName, workspaceName, workspaceID)
+			wsKeyInfoCache.Set(workspaceID, wsKeyInfo)
+			wsKeyInfoCache.Set(workspaceUniqueKey, wsKeyInfo)
+		}
+	}
+
+	return workspace.NewWorkspaceAccessResult(wsKeyInfo, haveAccess, accessErr)
+}
 
 func addWorkspaceContext(workspace *meta.Workspace, session *sess.Session, connection adapt.Connection) error {
 	site := session.GetSite()
@@ -128,6 +223,16 @@ func AddWorkspaceContextByID(workspaceID string, session *sess.Session, connecti
 	return sessClone, addWorkspaceContext(workspace, sessClone, connection)
 }
 
+const workspaceWritePerm = "uesio.workspacewrite.%s"
+
+func getWorkspaceWritePermName(workspaceID string) string {
+	return fmt.Sprintf(workspaceWritePerm, workspaceID)
+}
+
+func isMetadataKey(s string) bool {
+	return strings.Contains(s, "/")
+}
+
 // QueryWorkspaceForWrite queries a workspace, with write access required
 func QueryWorkspaceForWrite(value, field string, session *sess.Session, connection adapt.Connection) (*meta.Workspace, error) {
 	var workspace meta.Workspace
@@ -156,5 +261,9 @@ func QueryWorkspaceForWrite(value, field string, session *sess.Session, connecti
 	if workspace.GetAppFullName() == "" && workspace.UniqueKey != "" {
 		workspace.App.UniqueKey = strings.Split(workspace.UniqueKey, ":")[0]
 	}
+	// Attach the named permissions for workspace write access
+	siteUserPerms := session.GetSiteUser().Permissions
+	siteUserPerms.AddNamedPermission(getWorkspaceWritePermName(workspace.UniqueKey))
+	siteUserPerms.AddNamedPermission(getWorkspaceWritePermName(workspace.ID))
 	return &workspace, nil
 }
