@@ -50,8 +50,9 @@ definition:
           value: "uesio/core"
   # Components are how we describe the layout of our view
   components:
-    - uesio/studio.mainlayout:
-        topbar:
+    - uesio/io.viewlayout:
+        uesio.variant: uesio/studio.main
+        header:
           - uesio/core.view:
               view: uesio/studio.topbar
               uesio.context:
@@ -64,7 +65,7 @@ definition:
                 subItemType: collection
                 subItemName: $Param{collectionname}
                 subItemNameSpace: $Param{collectionNamespace}
-        leftbar:
+        left:
           - uesio/core.view:
               uesio.context:
                 wire: workspaces
