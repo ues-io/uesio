@@ -15,15 +15,21 @@ definition:
             - text-slate-700
         items:
           - uesio/io.text:
-              text: "🤯"
+              text: "🫣"
               uesio.styleTokens:
                 root:
                   - p-8
                   - text-8xl
               element: div
           - uesio/io.text:
-              text: "Home page is missing"
+              text: This is a bit embarrassing...
               uesio.styleTokens:
                 root:
                   - text-6xl
+              element: div
+          - uesio/io.text:
+              text: It appears that the developer of this site has not specified a home page.
+              uesio.styleTokens:
+                root:
+                  - text-xl
               element: div
