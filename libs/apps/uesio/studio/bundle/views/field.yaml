@@ -75,7 +75,6 @@ definition:
                           uesio.display:
                             - type: paramValue
                               param: app
-                              field: uesio/core.dynamiccollection
                               operator: EQUALS
                               value: $Param{fieldNamespace}
                           components:

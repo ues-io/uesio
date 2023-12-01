@@ -7,6 +7,7 @@ export UESIO_CLI_USERNAME=uesio
 export UESIO_CLI_HOST="https://studio.uesio-dev.com:3000"
 # this enables {{unix_epoch_seconds}} variable to be used within tests to add some uniqueness to seed values
 export HURL_unix_epoch_seconds=$(date +%s)
+export HURL_num_common_fields=8
 
 # Initialize and the sample app and seed test data
 bash "scripts/tests-init.sh"

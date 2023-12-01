@@ -88,7 +88,6 @@ definition:
                                 uesio.display:
                                   - type: paramValue
                                     param: app
-                                    field: uesio/core.dynamiccollection
                                     operator: EQUALS
                                     value: $Param{namespace}
                 - uesio/io.box:
@@ -107,7 +106,6 @@ definition:
                           uesio.display:
                             - type: paramValue
                               param: app
-                              field: uesio/core.dynamiccollection
                               operator: EQUALS
                               value: $Param{namespace}
                           components:
@@ -132,7 +130,6 @@ definition:
                           uesio.display:
                             - type: paramValue
                               param: app
-                              field: uesio/core.dynamiccollection
                               operator: NOT_EQUALS
                               value: $Param{namespace}
   panels:

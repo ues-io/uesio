@@ -83,7 +83,6 @@ definition:
                                     mode: READ
                                   - type: paramValue
                                     param: app
-                                    field: uesio/core.dynamiccollection
                                     operator: EQUALS
                                     value: $Param{namespace}
                                 signals:
@@ -129,7 +128,6 @@ definition:
                                     mode: READ
                                   - type: paramValue
                                     param: app
-                                    field: uesio/core.dynamiccollection
                                     operator: EQUALS
                                     value: $Param{namespace}
                                 signals:
@@ -186,7 +184,6 @@ definition:
                                       uesio.display:
                                         - type: paramValue
                                           param: app
-                                          field: uesio/core.dynamiccollection
                                           operator: EQUALS
                                           value: $Param{namespace}
                                       signals:
