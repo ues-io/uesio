@@ -70,7 +70,14 @@ app_id: jsonpath "$.wires[0].data[0]['uesio/core.id']"
 app_fullname: jsonpath "$.wires[0].data[0]['uesio/studio.fullname']"
 workspace_id: jsonpath "$.wires[1].data[0]['uesio/core.id']"
 
-# Login as Abel, who should not have write access to this workspace, and try to modify metadata
+# Test as a logged-in user so that we don't get redirected to the login page
+POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+{
+    "token": "baxter"
+}
+HTTP 200
+
+# Login as baxter, who should not have write access to this workspace, and try to modify metadata
 POST https://{{host}}:{{port}}/site/wires/save
 {
     "wires": [
@@ -93,4 +100,4 @@ POST https://{{host}}:{{port}}/site/wires/save
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].errors" count == 1
-jsonpath "$.wires[0].errors[0].message" == "You do not have write access to this workspace"
+jsonpath "$.wires[0].errors[0].message" == "you do not have write access to this workspace"

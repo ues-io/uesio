@@ -32,14 +32,6 @@ func extractConditionByType(conditions []adapt.LoadRequestCondition, conditionTy
 	return nil
 }
 
-func GetWorkspaceIDFromParams(params map[string]string, connection adapt.Connection, session *sess.Session) (string, error) {
-	inContextSession, err := datasource.GetContextSessionFromParams(params, connection, session)
-	if err != nil {
-		return "", err
-	}
-	return inContextSession.GetWorkspaceID(), nil
-}
-
 func runCoreMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
 
 	newCollection := NewNamespaceSwapCollection("uesio/core", "uesio/studio")

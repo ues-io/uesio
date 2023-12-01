@@ -58,10 +58,6 @@ func TestRequestWorkspaceWriteAccess(t *testing.T) {
 		constant.WorkspaceAdminPerm:      true,
 		getWorkspaceWritePermName(ws.ID): true,
 	}}
-	wsAdminPermsWithWorkspaceUniqueKeyWritePerm := &meta.PermissionSet{NamedRefs: map[string]bool{
-		constant.WorkspaceAdminPerm:             true,
-		getWorkspaceWritePermName(ws.UniqueKey): true,
-	}}
 	otherSite := &meta.Site{
 		BuiltIn: meta.BuiltIn{
 			UniqueKey: "luigi/foo:staging",
@@ -102,18 +98,12 @@ func TestRequestWorkspaceWriteAccess(t *testing.T) {
 			name:    "grant access if Session already has named perm",
 			session: sessWithPerms(studioSite, wsAdminPermsWithWorkspaceIdWritePerm),
 			params: map[string]string{
-				"workspaceid": ws.ID,
-			},
-			expectHasAccess: true,
-		},
-		{
-			name:    "grant access if Session already has named perm",
-			session: sessWithPerms(studioSite, wsAdminPermsWithWorkspaceUniqueKeyWritePerm),
-			params: map[string]string{
+				"workspaceid":   ws.ID,
 				"workspacename": ws.Name,
 				"app":           app.FullName,
 			},
 			expectHasAccess: true,
+			expectKeyInfo:   workspace.NewKeyInfo(app.FullName, ws.Name, ws.ID),
 		},
 		{
 			name:    "it should query the database to check if user has workspace write access",

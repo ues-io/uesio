@@ -15,7 +15,7 @@ uesio sethost
 uesio login
 
 echo "Deleting and recreating the tests app and dev workspace..."
-hurl -k --error-format long --variable host=studio.uesio-dev.com --variable port=3000 --variable domain=uesio-dev.com hurl_seeds/app_and_workspace.hurl
+hurl -k --error-format long --no-output --variable host=studio.uesio-dev.com --variable port=3000 --variable domain=uesio-dev.com hurl_seeds/app_and_workspace.hurl
 
 # dev workspace
 echo "Configuring dev workspace..."
@@ -30,7 +30,7 @@ uesio upsert -f seed_data/contacts.csv -s seed_data/contacts_import.spec.json
 uesio upsert -f seed_data/tools.csv -s seed_data/tools_import.spec.json
 
 # Populate secrets and config values for the dev workspace
-hurl -k --error-format long --variable host=studio.uesio-dev.com --variable port=3000 --variable domain=uesio-dev.com hurl_seeds/populate_secrets_and_config_values.hurl
+hurl -k --error-format long --no-output --variable host=studio.uesio-dev.com --variable port=3000 --variable domain=uesio-dev.com hurl_seeds/populate_secrets_and_config_values.hurl
 
 # truncatetests workspace
 echo "Changing to truncatetests workspace..."
@@ -44,7 +44,7 @@ uesio upsert -f seed_data/wire_conditions.csv -s seed_data/wire_conditions_impor
 echo "Successfully upserted seed data into our workspace. Creating a test site, domain, and bundle..."
 
 # Now that we have deployed our site, we can create a bundle, site, and domain which uses its metadata
-hurl -k --error-format long --variable host=studio.uesio-dev.com --variable port=3000 --variable domain=uesio-dev.com hurl_seeds/site_domain_bundle.hurl
+hurl -k --error-format long --no-output --variable host=studio.uesio-dev.com --variable port=3000 --variable domain=uesio-dev.com hurl_seeds/site_domain_bundle.hurl
 
 echo "Seeding data into our test site..."
 uesio siteadmin -n=testsite

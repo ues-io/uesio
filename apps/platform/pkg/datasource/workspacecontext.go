@@ -38,14 +38,10 @@ func RequestWorkspaceWriteAccess(params map[string]string, connection adapt.Conn
 	appName := params["app"]
 	workspaceUniqueKey := ""
 
-	var wsKeyInfo workspace.KeyInfo
+	wsKeyInfo := workspace.NewKeyInfo(appName, workspaceName, workspaceID)
 
 	if appName != "" && workspaceName != "" {
 		workspaceUniqueKey = fmt.Sprintf("%s:%s", appName, workspaceName)
-		// Try to lookup workspace key info from the key
-		if result, err := wsKeyInfoCache.Get(workspaceUniqueKey); err == nil {
-			wsKeyInfo = result
-		}
 	}
 	if workspaceID != "" && wsKeyInfo.HasAnyMissingField() {
 		// Try to find the workspace key info from workspace ID
@@ -69,15 +65,7 @@ func RequestWorkspaceWriteAccess(params map[string]string, connection adapt.Conn
 		return workspace.NewWorkspaceAccessResult(wsKeyInfo, false, accessErr)
 	}
 	// 2. does the user have the workspace-specific write permission?
-	haveAccess := false
-	if workspaceID != "" && studioPerms.HasNamedPermission(getWorkspaceWritePermName(workspaceID)) {
-		haveAccess = true
-	} else if workspaceUniqueKey != "" && studioPerms.HasNamedPermission(getWorkspaceWritePermName(workspaceUniqueKey)) {
-		haveAccess = true
-	}
-	if haveAccess {
-		return workspace.NewWorkspaceAccessResult(wsKeyInfo, true, nil)
-	}
+	haveAccess := studioPerms.HasNamedPermission(getWorkspaceWritePermName(workspaceID))
 
 	if !haveAccess {
 		// Otherwise we need to query the workspace for write
@@ -99,10 +87,12 @@ func RequestWorkspaceWriteAccess(params map[string]string, connection adapt.Conn
 			workspaceID = ws.ID
 			wsKeyInfo = workspace.NewKeyInfo(appName, workspaceName, workspaceID)
 			wsKeyInfoCache.Set(workspaceID, wsKeyInfo)
-			wsKeyInfoCache.Set(workspaceUniqueKey, wsKeyInfo)
 		}
 	}
-
+	// Ensure our params are hydrated before returning with the full results of our checks
+	params["workspaceid"] = wsKeyInfo.GetWorkspaceID()
+	params["workspacename"] = wsKeyInfo.GetWorkspaceName()
+	params["app"] = wsKeyInfo.GetAppName()
 	return workspace.NewWorkspaceAccessResult(wsKeyInfo, haveAccess, accessErr)
 }
 
@@ -115,11 +105,7 @@ func addWorkspaceContext(workspace *meta.Workspace, session *sess.Session, conne
 		return errors.New("this site does not allow working with workspaces")
 	}
 	// 2. we should have a profile that allows modifying workspaces
-	if !perms.HasPermission(&meta.PermissionSet{
-		NamedRefs: map[string]bool{
-			"uesio/studio.workspace_admin": true,
-		},
-	}) {
+	if !perms.HasNamedPermission(constant.WorkspaceAdminPerm) {
 		return errors.New("your profile does not allow you to work with workspaces")
 	}
 
@@ -255,7 +241,7 @@ func QueryWorkspaceForWrite(value, field string, session *sess.Session, connecti
 		useSession,
 	)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("you do not have write access to this workspace")
 	}
 	// Shortcut to avoid having to do a join to fetch Apps every time we query workspaces
 	if workspace.GetAppFullName() == "" && workspace.UniqueKey != "" {
