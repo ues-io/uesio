@@ -153,9 +153,9 @@ func TestRequestWorkspaceWriteAccess(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if tt.mockWSQuery != nil {
-				SetQueryWorkspaceForWriteFn(tt.mockWSQuery)
+				setQueryWorkspaceForWriteFn(tt.mockWSQuery)
 			} else {
-				SetQueryWorkspaceForWriteFn(mockQuery)
+				setQueryWorkspaceForWriteFn(mockQuery)
 			}
 			testInstance = t
 			actual := RequestWorkspaceWriteAccess(tt.params, nil, tt.session)

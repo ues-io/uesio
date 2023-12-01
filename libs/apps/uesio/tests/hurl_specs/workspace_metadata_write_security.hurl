@@ -70,14 +70,13 @@ app_id: jsonpath "$.wires[0].data[0]['uesio/core.id']"
 app_fullname: jsonpath "$.wires[0].data[0]['uesio/studio.fullname']"
 workspace_id: jsonpath "$.wires[1].data[0]['uesio/core.id']"
 
-# Test as a logged-in user so that we don't get redirected to the login page
+# Login as baxter, who should not have write access to this workspace, and try to modify metadata
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 {
     "token": "baxter"
 }
 HTTP 200
 
-# Login as baxter, who should not have write access to this workspace, and try to modify metadata
 POST https://{{host}}:{{port}}/site/wires/save
 {
     "wires": [
@@ -86,7 +85,7 @@ POST https://{{host}}:{{port}}/site/wires/save
             "collection":"uesio/studio.view",
             "changes": {
                 "1": {
-                    "uesio/studio.name": "abel_should_not_be_able_to_create_this",
+                    "uesio/studio.name": "baxter_should_not_be_able_to_create_this",
                     "uesio/studio.definition": "wires:\ncomponents:\n"
                 }
             },

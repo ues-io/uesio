@@ -27,7 +27,8 @@ func init() {
 	queryWorkspaceForWriteFn = QueryWorkspaceForWrite
 }
 
-func SetQueryWorkspaceForWriteFn(fn QueryWorkspaceForWriteFn) {
+// setQueryWorkspaceForWriteFn this only exists for tests to be able to mock the query result
+func setQueryWorkspaceForWriteFn(fn QueryWorkspaceForWriteFn) {
 	queryWorkspaceForWriteFn = fn
 }
 
@@ -250,7 +251,6 @@ func QueryWorkspaceForWrite(value, field string, session *sess.Session, connecti
 	}
 	// Attach the named permissions for workspace write access
 	siteUserPerms := session.GetSiteUser().Permissions
-	siteUserPerms.AddNamedPermission(getWorkspaceWritePermName(workspace.UniqueKey))
 	siteUserPerms.AddNamedPermission(getWorkspaceWritePermName(workspace.ID))
 	return &workspace, nil
 }
