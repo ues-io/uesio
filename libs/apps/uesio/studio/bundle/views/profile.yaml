@@ -51,8 +51,9 @@ definition:
           value: $Param{namespace}.$Param{profilename}
   # Components are how we describe the layout of our view
   components:
-    - uesio/studio.mainlayout:
-        topbar:
+    - uesio/io.viewlayout:
+        uesio.variant: uesio/studio.main
+        header:
           - uesio/core.view:
               view: uesio/studio.topbar
               uesio.context:
@@ -62,7 +63,7 @@ definition:
                 itemIcon: group
                 itemName: $Param{profilename}
                 itemNameSpace: $Param{namespace}
-        leftbar:
+        left:
           - uesio/core.view:
               uesio.context:
                 wire: workspaces

@@ -1,40 +1,11 @@
-import { definition, component, styles } from "@uesio/ui"
+import { definition, component } from "@uesio/ui"
 import { FunctionComponent, useEffect, useRef } from "react"
 import { FullPath } from "../../api/path"
-import {
-	getBuildMode,
-	getComponentDef,
-	useBuilderState,
-	useDropPath,
-} from "../../api/stateapi"
+import { getBuildMode, getComponentDef, useDropPath } from "../../api/stateapi"
 import BuildWrapper from "../buildwrapper/buildwrapper"
 import PlaceHolder from "../placeholder/placeholder"
 import { DeclarativeComponentSlotLoaderId } from "../declarativecomponentslotloader/declarativecomponentslotloader"
 import { standardAccepts } from "../../helpers/dragdrop"
-
-const StyleDefaults = Object.freeze({
-	slotTagOn: [
-		"relative",
-		"pt-[29px]",
-		"!h-max",
-		"before:absolute",
-		"before:content-[attr(data-title)]",
-		"before:text-slate-500",
-		"before:text-[8pt]",
-		"before:font-light",
-		"before:uppercase",
-		"before:block",
-		"before:top-0",
-		"before:left-0",
-		"before:right-0",
-		"before:p-2",
-		"before:leading-none",
-		"before:bg-slate-100",
-		"before:border-b",
-		"before:border-slate-300",
-	],
-	slotTag: ["transition-all"],
-})
 
 export const SlotBuilderComponentId = "uesio/builder.slotbuilder"
 
@@ -55,14 +26,11 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 	const listPath = path ? `${path}["${listName}"]` : `["${listName}"]`
 	const size = listDef.length
 	const viewDefId = context.getViewDefId()
-	styles.useUtilityStyleTokens(StyleDefaults, props)
 
 	const dropPath = useDropPath(context)
 	const isHovering = dropPath.equals(
 		new FullPath("viewdef", viewDefId, `${listPath}["0"]`)
 	)
-
-	const [showSlotTags] = useBuilderState<boolean>(props.context, "slottags")
 
 	const slotDef = getComponentDef(componentType)?.slots?.find(
 		(slotDef) => slotDef.name === listName
@@ -78,14 +46,7 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 		parentElem.setAttribute("data-direction", direction)
 		parentElem.setAttribute("data-path", listPath)
 		parentElem.setAttribute("data-title", label)
-		parentElem.classList.add(...StyleDefaults.slotTag)
 	}, [listPath, listName, label, direction])
-
-	useEffect(() => {
-		ref?.current?.parentElement?.classList[showSlotTags ? "add" : "remove"](
-			...StyleDefaults.slotTagOn
-		)
-	}, [showSlotTags])
 
 	if (!buildMode) {
 		return (
