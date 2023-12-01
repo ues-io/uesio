@@ -64,8 +64,9 @@ func RequestWorkspaceWriteAccess(params map[string]string, connection adapt.Conn
 	if accessErr != nil {
 		return workspace.NewWorkspaceAccessResult(wsKeyInfo, false, accessErr)
 	}
-	// 2. does the user have the workspace-specific write permission?
-	haveAccess := studioPerms.HasNamedPermission(getWorkspaceWritePermName(workspaceID))
+	// 2. does the user have the workspace-specific write permission,
+	// or is this a Studio Super-User (such as the  Anonymous Admin Session which we use for Workspace Bundle Store?)
+	haveAccess := studioPerms.HasNamedPermission(getWorkspaceWritePermName(workspaceID)) || studioPerms.ModifyAllRecords
 
 	if !haveAccess {
 		// Otherwise we need to query the workspace for write
