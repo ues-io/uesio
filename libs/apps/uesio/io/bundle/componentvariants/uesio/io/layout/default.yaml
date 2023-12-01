@@ -20,6 +20,7 @@ definition:
       - "[container-type:inline-size]"
       - col-start-2
       - col-end-2
+      - p-10
     right:
       - h-full
       - overflow-auto

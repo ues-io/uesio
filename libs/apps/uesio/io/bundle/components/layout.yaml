@@ -19,6 +19,7 @@ slots:
     label: Footer Contents
 defaultDefinition:
   uesio.variant: uesio/io.default
+  content: []
 properties:
 sections:
   - type: HOME
