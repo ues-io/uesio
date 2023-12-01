@@ -34,7 +34,7 @@ func NewAfterSaveAPI(bot *meta.Bot, request *adapt.SaveOp, connection adapt.Conn
 		op:         request,
 		connection: connection,
 		AsAdmin: AdminCallBotAPI{
-			Session:    session,
+			session:    session,
 			connection: connection,
 		},
 	}
@@ -46,6 +46,10 @@ func (as *AfterSaveAPI) AddError(message string) {
 
 func (as *AfterSaveAPI) Save(collection string, changes adapt.Collection) error {
 	return botSave(collection, changes, as.session, as.connection)
+}
+
+func (as *AfterSaveAPI) Delete(collection string, deletes adapt.Collection) error {
+	return botDelete(collection, deletes, as.session, as.connection)
 }
 
 func (bs *AfterSaveAPI) Load(request BotLoadOp) (*adapt.Collection, error) {

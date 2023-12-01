@@ -143,6 +143,7 @@ interface BeforeSaveBotApi {
 }
 interface AfterSaveBotApi extends BeforeSaveBotApi {
 	save: (collectionName: string, records: WireRecord[]) => void
+	delete: (collectionName: string, records: WireRecord[]) => void
 	runIntegrationAction: RunIntegrationAction
 	getConfigValue: (configValueKey: string) => string
 	asAdmin: AsAdminApi
