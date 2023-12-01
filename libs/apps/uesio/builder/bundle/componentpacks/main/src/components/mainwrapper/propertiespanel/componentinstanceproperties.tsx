@@ -6,6 +6,7 @@ import {
 	useSelectedComponentPath,
 } from "../../../api/stateapi"
 import PropertiesForm from "../../../helpers/propertiesform"
+import NothingSelectedProperties from "./nothingselectedproperties"
 
 export function getSections(
 	componentType: string,
@@ -35,7 +36,7 @@ const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 	const [componentType] = path.pop()
 	const componentDef = getComponentDef(componentType)
 
-	if (!componentDef) return null
+	if (!componentDef) return <NothingSelectedProperties context={context} />
 
 	// This forces a rerender if the definition changes
 	// useDefinition(selectedPath) as definition.DefinitionMap

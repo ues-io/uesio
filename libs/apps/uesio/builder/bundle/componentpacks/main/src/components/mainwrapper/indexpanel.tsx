@@ -93,6 +93,7 @@ const IndexPanel: definition.UtilityComponent = (props) => {
 					<IndexSlot
 						slot={{
 							name: "components",
+							label: "View Contents",
 						}}
 						definition={viewDefinition as component.ViewDefinition}
 						path={""}
