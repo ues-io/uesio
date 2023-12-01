@@ -57,6 +57,7 @@ type ColumnDefinition = {
 	label: string
 	width?: string
 	applyChanges?: ApplyChanges
+	applyDelay?: number
 	reference?: ReferenceFieldOptions
 	user?: UserFieldOptions
 	number?: NumberFieldOptions
@@ -82,7 +83,7 @@ const StyleDefaults = Object.freeze({
 })
 
 const Table: definition.UC<TableDefinition> = (props) => {
-	const { path, context, definition } = props
+	const { path, context, definition, componentType } = props
 	const wire = api.wire.useWire(definition.wire, context)
 	const componentId = api.component.getComponentIdFromProps(props)
 	const [mode] = api.component.useMode(componentId, definition.mode)
@@ -233,8 +234,8 @@ const Table: definition.UC<TableDefinition> = (props) => {
 		return column.components ? (
 			<component.Slot
 				definition={column}
+				componentType={componentType}
 				listName="components"
-				direction="HORIZONTAL"
 				{...sharedProps}
 			/>
 		) : (

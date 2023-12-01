@@ -39,11 +39,15 @@ type SlotContextProvision =
 	| RecordContextProvision
 	| FieldModeContextProvision
 
+type SlotDirection = "VERTICAL" | "HORIZONTAL"
+
 type SlotDef = {
 	name: string
 	path?: string
 	providesContexts?: SlotContextProvision[]
 	defaultContent?: definition.DefinitionList
+	label?: string
+	direction?: SlotDirection
 }
 
 type StyleRegion = {
@@ -67,12 +71,14 @@ type ComponentDef = {
 } & component.ComponentDef
 
 const getBuilderComponentId = (context: ctx.Context, id: string) =>
-	api.component.makeComponentId(
-		context.getRouteContext(),
-		"uesio/builder.mainwrapper",
-		id,
-		true
-	)
+	context && typeof context.getRouteContext === "function"
+		? api.component.makeComponentId(
+				context.getRouteContext(),
+				"uesio/builder.mainwrapper",
+				id,
+				true
+		  )
+		: ""
 
 const getBuilderState = <T extends definition.Definition>(
 	context: ctx.Context,
@@ -143,7 +149,7 @@ const useSelectedPath = (context: ctx.Context) =>
 // we ignore it.
 const useSelectedComponentPath = (context: ctx.Context) => {
 	const selectedPath = useSelectedPath(context)
-	const selectedDef = useDefinition(selectedPath)
+	const selectedDef = useDefinition(context, selectedPath)
 	return getSelectedComponentPath(selectedPath, selectedDef)
 }
 

@@ -6,7 +6,7 @@ const StyleDefaults = Object.freeze({
 })
 
 const Grid: definition.UC = (props) => {
-	const { definition, context } = props
+	const { definition, context, componentType } = props
 
 	const classes = styles.useStyleTokens(StyleDefaults, props)
 	return (
@@ -16,6 +16,7 @@ const Grid: definition.UC = (props) => {
 				listName="items"
 				path={props.path}
 				context={context}
+				componentType={componentType}
 			/>
 		</IOGrid>
 	)

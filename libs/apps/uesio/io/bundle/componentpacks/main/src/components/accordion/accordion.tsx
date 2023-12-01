@@ -17,7 +17,7 @@ const StyleDefaults = Object.freeze({
 })
 
 const Accordion: definition.UC<AccordionDefinition> = (props) => {
-	const { context, path, definition } = props
+	const { context, path, definition, componentType } = props
 	const { title, subtitle, expandicon, collapseicon, expanded } = definition
 	const componentId = api.component.getComponentIdFromProps(props)
 	const classes = styles.useStyleTokens(StyleDefaults, props)
@@ -48,7 +48,7 @@ const Accordion: definition.UC<AccordionDefinition> = (props) => {
 					listName="components"
 					path={path}
 					context={context}
-					label="Accordion Components"
+					componentType={componentType}
 				/>
 			</ExpandPanel>
 		</div>

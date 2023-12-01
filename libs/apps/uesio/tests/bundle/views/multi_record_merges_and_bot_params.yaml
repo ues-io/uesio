@@ -1,0 +1,69 @@
+name: multi_record_merges_and_bot_params
+definition:
+  # Wires connect to data in collections
+  wires:
+    outputs:
+      viewOnly: true
+      init:
+        create: true
+      fields:
+        values:
+          type: LIST
+          subtype: TEXT
+          label: Values
+    conditions:
+      collection: uesio/tests.wire_condition
+      batchsize: 2
+      fields:
+        uesio/tests.name:
+        uesio/tests.select:
+        uesio/core.owner:
+        uesio/core.updatedby:
+        uesio/core.updatedat:
+        uesio/core.createdby:
+        uesio/core.createdat:
+      order:
+        - field: uesio/tests.name
+  # Components determine the layout and composition of your view
+  components:
+    - uesio/io.titlebar:
+        title: Multi-record merges
+        uesio.variant: uesio/io.main
+        actions:
+          - uesio/io.button:
+              text: Prefix Values
+              icon: add
+              uesio.variant: uesio/io.primary
+              uesio.id: prefixValues
+              signals:
+                - signal: bot/CALL
+                  bot: uesio/tests.prefix_values
+                  params:
+                    prefix: "Hello "
+                    values: $Records{conditions:uesio/tests.name}
+                  stepId: concat
+                - signal: wire/UPDATE_FIELDS
+                  wire: outputs
+                  fields:
+                    - field: values
+                      value: $SignalOutput{concat:values}
+    - uesio/io.box:
+        uesio.variant: uesio/io.section
+        components:
+          - uesio/io.table:
+              columns:
+                - field: uesio/tests.name
+                - field: uesio/tests.select
+              uesio.id: conditionsTable
+              mode: EDIT
+              wire: conditions
+    - uesio/io.box:
+        uesio.variant: uesio/io.section
+        components:
+          - uesio/io.item:
+              wire: outputs
+              mode: READ
+              components:
+                - uesio/io.field:
+                    uesio.id: outputvalues
+                    fieldId: values

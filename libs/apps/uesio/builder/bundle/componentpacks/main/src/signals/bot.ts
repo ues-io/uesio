@@ -49,7 +49,7 @@ const signals: SignalBandDefinition = {
 							properties: params.map(
 								({ name, type, required }) =>
 									({
-										type,
+										type: type === "LIST" ? "TEXT" : type,
 										name,
 										required,
 									} as ComponentProperty)

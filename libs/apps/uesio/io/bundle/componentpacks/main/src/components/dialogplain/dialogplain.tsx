@@ -1,13 +1,19 @@
 import { definition, component } from "@uesio/ui"
 import { default as IODialogPlain } from "../../utilities/dialogplain/dialogplain"
 
-const PlainDialog: definition.UC = (props) => (
-	<IODialogPlain context={props.context}>
+const PlainDialog: definition.UC = ({
+	context,
+	definition,
+	path,
+	componentType,
+}) => (
+	<IODialogPlain context={context}>
 		<component.Slot
-			definition={props.definition}
+			definition={definition}
 			listName="components"
-			path={props.path}
-			context={props.context}
+			path={path}
+			context={context}
+			componentType={componentType}
 		/>
 	</IODialogPlain>
 )

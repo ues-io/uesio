@@ -7,7 +7,7 @@ import {
 	useDragPath,
 	setSelectedPath,
 } from "../../api/stateapi"
-import { useEffect, useState } from "react"
+import { useEffect, useRef } from "react"
 import { FullPath } from "../../api/path"
 import DeleteAction from "../../actions/deleteaction"
 import MoveActions from "../../actions/moveactions"
@@ -109,20 +109,15 @@ const SelectBorder: definition.UtilityComponent<Props> = (props) => {
 	const context = props.context
 
 	const Popper = component.getUtility("uesio/io.popper")
-	const Text = component.getUtility("uesio/io.text")
 	const IconButton = component.getUtility("uesio/io.iconbutton")
+	const NamespaceLabel = component.getUtility("uesio/io.namespacelabel")
 
 	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
 	const selectedComponentPath = useSelectedComponentPath(context)
 
-	const [selectedChildren, setSelectedChildren] = useState<Element[]>()
-	const [draggingChildren, setDraggingChildren] = useState<Element[]>()
-	const [emptyComponents, setEmptyComponents] =
-		useState<NodeListOf<Element>>()
-
-	const selectedLength = selectedChildren ? selectedChildren.length : 0
-	const draggingLength = draggingChildren ? draggingChildren.length : 0
+	const selectedChildren = useRef<Element[]>()
+	const draggingChildren = useRef<Element[]>()
 
 	const dragPath = useDragPath(context)
 	const isDragging = dragPath.isSet()
@@ -134,105 +129,57 @@ const SelectBorder: definition.UtilityComponent<Props> = (props) => {
 		selectedComponentDef,
 	] = getComponentInfoFromPath(selectedComponentPath, context)
 
-	const selectedSlotPathString = selectedSlotPath?.combine() || ""
-
 	useEffect(() => {
-		if (emptyComponents) {
-			emptyComponents.forEach((child) => {
-				child.classList.remove(...StyleDefaults.empty)
-				child.classList.add(...StyleDefaults.emptyRemove)
-				child.setAttribute("data-placeholder", "true")
-			})
-		}
-		const targets = document.querySelectorAll(
-			`[data-path]>[data-component]:empty`
-		)
-
-		if (!targets.length) {
-			setEmptyComponents(undefined)
-			return
-		}
-
-		targets.forEach((target) => {
-			target.classList.add(...StyleDefaults.empty)
-			target.classList.remove(...StyleDefaults.emptyRemove)
-			target.removeAttribute("data-placeholder")
-		})
-
-		setEmptyComponents(targets)
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [props.viewdef])
-
-	// Handle figuring out what the selected element is so that we can
-	// Add some styling to it.
-	useEffect(() => {
-		if (selectedChildren) {
-			selectedChildren.forEach((child) => {
+		// Selected component handling
+		if (selectedChildren?.current) {
+			selectedChildren.current.forEach((child) => {
 				child.classList.remove(...StyleDefaults.selected)
 			})
 		}
 
 		if (!selectedSlotPath || isDragging) {
-			setSelectedChildren(undefined)
+			selectedChildren.current = undefined
 			return
 		}
 
-		const targets = getTargetsFromSlotIndex(
+		selectedChildren.current = getTargetsFromSlotIndex(
 			selectedSlotPath,
 			selectedChildIndex
 		)
 
-		if (!targets) {
-			setSelectedChildren(undefined)
-			return
-		}
-
-		targets.forEach((target) => {
+		selectedChildren.current.forEach((target) => {
 			target.classList.add(...StyleDefaults.selected)
 			if (!target.classList.contains("absolute")) {
 				target.classList.add(...StyleDefaults.selectedAlways)
 			}
 		})
+	})
 
-		setSelectedChildren(targets)
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [selectedSlotPathString, selectedChildIndex, selectedLength, isDragging])
-
-	const [draggingChildIndex, , draggingSlotPath, ,] =
-		getComponentInfoFromPath(dragPath, context)
-
-	const draggingSlotPathString = draggingSlotPath?.combine() || ""
-
-	// Handle figuring out what the dragging element is so that we can
-	// Add some styling to it.
 	useEffect(() => {
-		if (draggingChildren) {
-			draggingChildren.forEach((child) => {
+		// Dragging items handling
+		const [draggingChildIndex, , draggingSlotPath, ,] =
+			getComponentInfoFromPath(dragPath, context)
+
+		if (draggingChildren?.current) {
+			draggingChildren.current.forEach((child) => {
 				child.classList.remove(...StyleDefaults.dragging)
 			})
 		}
 
 		if (!draggingSlotPath) {
-			setDraggingChildren(undefined)
+			draggingChildren.current = undefined
 			return
 		}
 
-		const targets = getTargetsFromSlotIndex(
+		draggingChildren.current = getTargetsFromSlotIndex(
 			draggingSlotPath,
 			draggingChildIndex
 		)
 
-		if (!targets) {
-			setDraggingChildren(undefined)
-			return
-		}
-
-		targets.forEach((target) => {
+		draggingChildren.current.forEach((target) => {
 			target.classList.add(...StyleDefaults.dragging)
 		})
-		setDraggingChildren(targets)
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [draggingSlotPathString, draggingChildIndex, draggingLength])
+	})
 
 	if (!selectedChildren || !selectedParentPath || !selectedComponentDef)
 		return null
@@ -241,9 +188,9 @@ const SelectBorder: definition.UtilityComponent<Props> = (props) => {
 	const componentTitle =
 		selectedComponentDef.title || selectedComponentDef.name
 
-	return !isDragging && selectedChildren?.length ? (
+	return !isDragging && selectedChildren?.current?.length ? (
 		<Popper
-			referenceEl={selectedChildren[0]}
+			referenceEl={selectedChildren.current[0]}
 			context={context}
 			placement="top"
 			offset={8}
@@ -263,13 +210,15 @@ const SelectBorder: definition.UtilityComponent<Props> = (props) => {
 						setDragPath(context)
 					}}
 				>
-					<Text
-						variant="uesio/io.icon"
-						text={nsInfo.icon}
-						color={nsInfo.color}
+					<NamespaceLabel
+						metadatakey={selectedComponentDef.namespace}
+						metadatainfo={nsInfo}
+						title={componentTitle}
 						context={context}
+						classes={{
+							root: classes.titletext,
+						}}
 					/>
-					<span className={classes.titletext}>{componentTitle}</span>
 					<IconButton
 						context={context}
 						variant="uesio/builder.buildtitle"

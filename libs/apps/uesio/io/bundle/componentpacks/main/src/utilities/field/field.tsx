@@ -50,6 +50,9 @@ interface FieldProps {
 	displayAs?: string
 	focusOnRender?: boolean
 	applyChanges?: ApplyChanges
+	// if applyChanges is set to "onTypingComplete", this is the number of milliseconds
+	// after the last keypress before setValue is invoked with the last value
+	applyDelay?: number
 	labelPosition?: LabelPosition
 	// Type specific
 	reference?: ReferenceFieldOptions | ReferenceGroupFieldOptions
@@ -68,6 +71,7 @@ interface FieldProps {
 const Field: definition.UtilityComponent<FieldProps> = (props) => {
 	const {
 		applyChanges,
+		applyDelay,
 		checkbox,
 		classes,
 		context,
@@ -111,6 +115,7 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 
 	const common = {
 		applyChanges,
+		applyDelay,
 		classes,
 		context,
 		fieldId,

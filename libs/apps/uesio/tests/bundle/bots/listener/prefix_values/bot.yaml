@@ -1,0 +1,10 @@
+name: prefix_values
+type: LISTENER
+dialect: TYPESCRIPT
+params:
+  - name: prefix
+    type: TEXT
+    required: true
+  - name: values
+    type: LIST
+    required: true

@@ -9,6 +9,8 @@ variants:
   - uesio/io.group:uesio/io.default
 slots:
   - name: components
+    label: Group Contents
+    direction: HORIZONTAL
 defaultDefinition:
   columnGap: 10px
 properties:

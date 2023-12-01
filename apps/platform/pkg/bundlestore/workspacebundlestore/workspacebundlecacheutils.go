@@ -17,7 +17,7 @@ const WorkspaceMetadataChangesChannel = "workspacemetadatachanges"
 
 type WorkspaceMetadataChange struct {
 	AppName        string
-	WorkspaceName  string
+	WorkspaceID    string
 	CollectionName string
 	ChangedItems   []string
 }
@@ -96,7 +96,7 @@ func handleWorkspaceMetadataChange(payload string) {
 		slog.Error("unable to unmarshal workspace metadata change payload: " + unmarshalErr.Error())
 	} else {
 		for _, itemKey := range wmc.ChangedItems {
-			if err := bundleStoreCache.InvalidateCacheItem(wmc.AppName, wmc.WorkspaceName, wmc.CollectionName, itemKey); err != nil {
+			if err := bundleStoreCache.InvalidateCacheItem(wmc.AppName, wmc.WorkspaceID, wmc.CollectionName, itemKey); err != nil {
 				slog.Error("Unable to purge workspace metadata cache key: " + err.Error())
 			}
 		}

@@ -27,7 +27,7 @@ const signals: Record<string, signal.ComponentSignalDescriptor> = {
 }
 
 const Tabs: definition.UC<TabsDefinition> = (props) => {
-	const { definition, context, path } = props
+	const { definition, context, path, componentType } = props
 	const { tabs = [] } = definition
 	const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
 
@@ -76,7 +76,7 @@ const Tabs: definition.UC<TabsDefinition> = (props) => {
 					listName="components"
 					path={`${path}["tabs"]["${selectedIndex}"]`}
 					context={context}
-					label={`Tab ${selectedTab?.label} Components`}
+					componentType={componentType}
 				/>
 			)}
 		</ScrollPanel>

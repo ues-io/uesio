@@ -8,6 +8,7 @@ discoverable: true
 icon: expand_more
 slots:
   - name: components
+    label: Accordion Contents
 defaultDefinition:
   uesio.variant: uesio/io.default
   title: Title

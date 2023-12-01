@@ -8,6 +8,7 @@ entrypoint: components/item/item
 discoverable: true
 slots:
   - name: components
+    label: Item Contents
     providesContexts:
       - type: RECORD
         wireProperty: wire

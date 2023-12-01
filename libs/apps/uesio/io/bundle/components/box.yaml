@@ -8,6 +8,7 @@ entrypoint: components/box/box
 discoverable: true
 slots:
   - name: components
+    label: Box Contents
 sections:
   - type: SIGNALS
   - type: STYLES

@@ -1,5 +1,4 @@
 import Slot, {
-	DefaultSlotDirection,
 	DefaultSlotName,
 	SlotUtilityProps,
 	getSlotProps,
@@ -33,6 +32,7 @@ import { Component as ComponentDef, Declarative } from "./definition/component"
 import ErrorBoundary from "./utilities/errorboundary"
 import ErrorMessage from "./utilities/errormessage"
 import { SlotComponentId } from "./components/slot"
+import { ViewDefinition } from "./definition/ViewDefinition"
 const COMPONENT_ID = "uesio.id"
 const COMPONENT_CONTEXT = "uesio.context"
 const DISPLAY_CONDITIONS = "uesio.display"
@@ -48,6 +48,7 @@ export type {
 	ItemContext,
 	SlotUtilityProps,
 	ViewComponentDefinition,
+	ViewDefinition,
 }
 
 export {
@@ -59,7 +60,6 @@ export {
 	STYLE_TOKENS,
 	Declarative,
 	DefaultSlotName,
-	DefaultSlotDirection,
 	Slot,
 	SlotComponentId,
 	ErrorMessage,

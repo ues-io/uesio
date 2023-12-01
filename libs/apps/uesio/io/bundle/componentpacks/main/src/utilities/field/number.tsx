@@ -45,15 +45,16 @@ const NumberField: definition.UtilityComponent<NumberFieldProps> = (props) => {
 	} = props
 
 	const value = props.value as number | string
-	const readonly = mode === "READ" || props.readonly
+	const readOnly = mode === "READ" || props.readonly
 	const numberOptions = fieldMetadata?.getNumberMetadata()
 	const decimals = numberOptions?.decimals || 2
 
-	const controlledInputProps = useControlledInputNumber(
+	const controlledInputProps = useControlledInputNumber({
 		value,
 		setValue,
-		applyChanges
-	)
+		applyChanges,
+		readOnly,
+	})
 
 	const classes = styles.useUtilityStyleTokens(
 		StyleDefaults,
@@ -61,7 +62,7 @@ const NumberField: definition.UtilityComponent<NumberFieldProps> = (props) => {
 		"uesio/io.field"
 	)
 
-	if (readonly) {
+	if (readOnly) {
 		return (
 			<ReadOnlyField variant={variant} context={context}>
 				{typeof value === "number" ? value.toFixed(decimals) : value}
@@ -74,11 +75,11 @@ const NumberField: definition.UtilityComponent<NumberFieldProps> = (props) => {
 					id={id}
 					className={styles.cx(
 						classes.input,
-						readonly && classes.readonly
+						readOnly && classes.readonly
 					)}
 					{...controlledInputProps}
 					type={type}
-					disabled={readonly}
+					disabled={readOnly}
 					placeholder={placeholder}
 					step={options?.step}
 					min={options?.min}
