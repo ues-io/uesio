@@ -1,5 +1,6 @@
 package constant
 
 const (
-	RefSep = "->"
+	RefSep             = "->"
+	WorkspaceAdminPerm = "uesio/studio.workspace_admin"
 )

@@ -4,6 +4,8 @@ import (
 	"errors"
 
 	"gopkg.in/yaml.v3"
+
+	"github.com/thecloudmasters/uesio/pkg/constant"
 )
 
 func NewPermissionSet(key string) (*PermissionSet, error) {
@@ -312,6 +314,13 @@ func (ps *PermissionSet) HasNamedPermission(namedPermission string) bool {
 	return ps.NamedRefs[namedPermission] == true
 }
 
+func (ps *PermissionSet) AddNamedPermission(namedPermission string) {
+	if ps.NamedRefs == nil {
+		ps.NamedRefs = map[string]bool{}
+	}
+	ps.NamedRefs[namedPermission] = true
+}
+
 func FlattenPermissions(permissionSets []PermissionSet) *PermissionSet {
 
 	allowAllBots := false
@@ -486,5 +495,8 @@ func GetAdminPermissionSet() *PermissionSet {
 		AllowAllCollections:        true,
 		ModifyAllRecords:           true,
 		ViewAllRecords:             true,
+		NamedRefs: map[string]bool{
+			constant.WorkspaceAdminPerm: true,
+		},
 	}
 }

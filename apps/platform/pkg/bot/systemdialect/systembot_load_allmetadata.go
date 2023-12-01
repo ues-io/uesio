@@ -32,18 +32,6 @@ func extractConditionByType(conditions []adapt.LoadRequestCondition, conditionTy
 	return nil
 }
 
-func GetWorkspaceIDFromParams(params map[string]string, connection adapt.Connection, session *sess.Session) (string, error) {
-	workspaceid := params["workspaceid"]
-	if workspaceid != "" {
-		return workspaceid, nil
-	}
-	inContextSession, err := datasource.GetContextSessionFromParams(params, connection, session)
-	if err != nil {
-		return "", err
-	}
-	return inContextSession.GetWorkspaceID(), nil
-}
-
 func runCoreMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
 
 	newCollection := NewNamespaceSwapCollection("uesio/core", "uesio/studio")
@@ -104,9 +92,11 @@ func runStudioMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 		return runAllMetadataLoadBot(op, connection, inContextSession)
 	}
 
-	workspaceID, err := GetWorkspaceIDFromParams(op.Params, connection, session)
-	if err != nil {
-		return err
+	// Get the workspace ID from params, and verify that the user performing the query
+	// has write access to the requested workspace
+	wsAccessResult := datasource.RequestWorkspaceWriteAccess(op.Params, connection, session)
+	if !wsAccessResult.HasWriteAccess() {
+		return wsAccessResult.Error()
 	}
 
 	itemCondition := extractConditionByField(op.Conditions, itemField)
@@ -117,7 +107,7 @@ func runStudioMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 
 	op.Conditions = append(op.Conditions, adapt.LoadRequestCondition{
 		Field: "uesio/studio.workspace",
-		Value: workspaceID,
+		Value: wsAccessResult.GetWorkspaceID(),
 	})
 
 	return datasource.LoadOp(op, connection, session)

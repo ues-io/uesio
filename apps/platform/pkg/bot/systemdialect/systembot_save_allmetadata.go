@@ -12,28 +12,29 @@ import (
 
 func runStudioMetadataSaveBot(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 
-	// Extract app and workspace from params
-	workspaceID, err := GetWorkspaceIDFromParams(op.Params, connection, session)
-	if err != nil {
-		return err
+	// Get the workspace ID from params, and verify that the user performing the query
+	// has write access to the requested workspace
+	wsAccessResult := datasource.RequestWorkspaceWriteAccess(op.Params, connection, session)
+	if !wsAccessResult.HasWriteAccess() {
+		return wsAccessResult.Error()
 	}
-	appName := op.Params["app"]
+
 	var changedMetadataItemKeys []string
 
-	if err = op.LoopChanges(func(change *adapt.ChangeItem) error {
+	if err := op.LoopChanges(func(change *adapt.ChangeItem) error {
 		return change.SetField("uesio/studio.workspace", &adapt.Item{
-			adapt.ID_FIELD: workspaceID,
+			adapt.ID_FIELD: wsAccessResult.GetWorkspaceID(),
 		})
 	}); err != nil {
 		return err
 	}
 
-	if err = datasource.SaveOp(op, connection, session); err != nil {
+	if err := datasource.SaveOp(op, connection, session); err != nil {
 		return err
 	}
 
 	// Invalidate our metadata caches - now that we've saved, UniqueKey should be populated
-	if err = op.LoopChanges(func(change *adapt.ChangeItem) error {
+	if err := op.LoopChanges(func(change *adapt.ChangeItem) error {
 		changedMetadataItemKeys = append(changedMetadataItemKeys, change.UniqueKey)
 		return nil
 	}); err != nil {
@@ -44,20 +45,9 @@ func runStudioMetadataSaveBot(op *adapt.SaveOp, connection adapt.Connection, ses
 		return nil
 	}
 
-	// We already verified that we have a workspace id,
-	// but we MUST also know the context app name in order to achieve cache invalidation,
-	// so if we do NOT have this yet (which ideally should never happen), we will need to query for it
-	if appName == "" {
-		workspace, err := datasource.QueryWorkspaceForWrite(workspaceID, adapt.ID_FIELD, session, connection)
-		if err != nil {
-			return err
-		}
-		appName = workspace.GetAppFullName()
-	}
-
 	message := &workspacebundlestore.WorkspaceMetadataChange{
-		AppName:        appName,
-		WorkspaceID:    workspaceID,
+		AppName:        wsAccessResult.GetAppName(),
+		WorkspaceID:    wsAccessResult.GetWorkspaceID(),
 		CollectionName: op.Metadata.GetFullName(),
 		ChangedItems:   changedMetadataItemKeys,
 	}

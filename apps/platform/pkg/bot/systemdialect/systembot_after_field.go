@@ -44,6 +44,11 @@ func (te *TestEvaluator) SelectGVal(ctx context.Context, k string) (interface{},
 
 func runFieldAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 
+	// If there are no changes, only deletes, we have nothing to do
+	if !request.HasChanges() {
+		return nil
+	}
+
 	depMap := MetadataDependencyMap{}
 
 	metadataResponse := &adapt.MetadataCache{}
@@ -53,13 +58,14 @@ func runFieldAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, se
 		},
 	}
 
-	workspaceID, err := GetWorkspaceIDFromParams(request.Params, connection, session)
-	if err != nil {
-		return err
+	wsAccessResult := datasource.RequestWorkspaceWriteAccess(request.Params, connection, session)
+	if !wsAccessResult.HasWriteAccess() {
+		return wsAccessResult.Error()
 	}
+	workspaceID := wsAccessResult.GetWorkspaceID()
 
 	//Pre-Loop for formula fields
-	err = request.LoopChanges(func(change *adapt.ChangeItem) error {
+	err := request.LoopChanges(func(change *adapt.ChangeItem) error {
 
 		ftype, err := change.GetFieldAsString("uesio/studio.type")
 		if err != nil {
