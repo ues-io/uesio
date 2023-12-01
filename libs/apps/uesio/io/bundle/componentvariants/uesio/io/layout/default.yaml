@@ -20,7 +20,6 @@ definition:
       - md:col-start-1
       - md:col-end-1
       - md:w-72
-      - "[container-type:inline-size]"
     content:
       - lg:h-full
       - lg:overflow-auto
@@ -37,7 +36,6 @@ definition:
       - lg:col-end-3
       - lg:w-72
       - md:col-span-2
-      - "[container-type:inline-size]"
     footer:
       - lg:col-span-3
       - md:col-span-2
