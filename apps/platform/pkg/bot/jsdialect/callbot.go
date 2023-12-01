@@ -11,32 +11,32 @@ import (
 )
 
 type AdminCallBotAPI struct {
-	Session    *sess.Session
+	session    *sess.Session
 	connection adapt.Connection
 }
 
 func (acba *AdminCallBotAPI) Save(collection string, changes adapt.Collection) error {
-	return botSave(collection, changes, datasource.GetSiteAdminSession(acba.Session), acba.connection)
+	return botSave(collection, changes, datasource.GetSiteAdminSession(acba.session), acba.connection)
 }
 
 func (acba *AdminCallBotAPI) Delete(collection string, deletes adapt.Collection) error {
-	return botDelete(collection, deletes, datasource.GetSiteAdminSession(acba.Session), acba.connection)
+	return botDelete(collection, deletes, datasource.GetSiteAdminSession(acba.session), acba.connection)
 }
 
 func (acba *AdminCallBotAPI) RunIntegrationAction(integrationID string, action string, options interface{}) (interface{}, error) {
-	return runIntegrationAction(integrationID, action, options, datasource.GetSiteAdminSession(acba.Session), acba.connection)
+	return runIntegrationAction(integrationID, action, options, datasource.GetSiteAdminSession(acba.session), acba.connection)
 }
 
 func (acba *AdminCallBotAPI) CallBot(botKey string, params map[string]interface{}) (interface{}, error) {
-	return botCall(botKey, params, acba.Session, acba.connection)
+	return botCall(botKey, params, acba.session, acba.connection)
 }
 
 func (acba *AdminCallBotAPI) GetConfigValue(configValueKey string) (string, error) {
-	return configstore.GetValueFromKey(configValueKey, datasource.GetSiteAdminSession(acba.Session))
+	return configstore.GetValueFromKey(configValueKey, datasource.GetSiteAdminSession(acba.session))
 }
 
 func (acba *AdminCallBotAPI) Load(request BotLoadOp) (*adapt.Collection, error) {
-	return botLoad(request, datasource.GetSiteAdminSession(acba.Session), acba.connection)
+	return botLoad(request, datasource.GetSiteAdminSession(acba.session), acba.connection)
 }
 
 func NewCallBotAPI(bot *meta.Bot, session *sess.Session, connection adapt.Connection, params map[string]interface{}) *CallBotAPI {
@@ -46,7 +46,7 @@ func NewCallBotAPI(bot *meta.Bot, session *sess.Session, connection adapt.Connec
 			Params: params,
 		},
 		AsAdmin: AdminCallBotAPI{
-			Session:    session,
+			session:    session,
 			connection: connection,
 		},
 		connection: connection,
