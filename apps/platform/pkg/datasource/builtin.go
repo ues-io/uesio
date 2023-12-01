@@ -80,6 +80,16 @@ var UPDATEDAT_FIELD_DEF = meta.Field{
 	AutoPopulate: "UPDATE",
 }
 
+var COLLECTION_FIELD_DEF = meta.Field{
+	BundleableBase: meta.BundleableBase{
+		Name:      "collection",
+		Namespace: "uesio/core",
+	},
+	ReadOnly: true,
+	Type:     "TEXT",
+	Label:    "Collection",
+}
+
 var BUILTIN_FIELDS_MAP = map[string]meta.Field{
 	adapt.ID_FIELD:         ID_FIELD_DEF,
 	adapt.UNIQUE_KEY_FIELD: UNIQUE_KEY_FIELD_DEF,
@@ -88,6 +98,7 @@ var BUILTIN_FIELDS_MAP = map[string]meta.Field{
 	adapt.UPDATED_BY_FIELD: UPDATEDBY_FIELD_DEF,
 	adapt.CREATED_AT_FIELD: CREATEDAT_FIELD_DEF,
 	adapt.UPDATED_AT_FIELD: UPDATEDAT_FIELD_DEF,
+	adapt.COLLECTION_FIELD: COLLECTION_FIELD_DEF,
 }
 
 var BUILTIN_FIELD_KEYS = []string{
@@ -98,6 +109,7 @@ var BUILTIN_FIELD_KEYS = []string{
 	adapt.UPDATED_BY_FIELD,
 	adapt.CREATED_AT_FIELD,
 	adapt.UPDATED_AT_FIELD,
+	adapt.COLLECTION_FIELD,
 }
 
 func AddAllBuiltinFields(fields meta.BundleableGroup, collectionKey string) {

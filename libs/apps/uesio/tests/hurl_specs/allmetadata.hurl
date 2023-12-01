@@ -99,14 +99,15 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data" count == 7
-jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.createdat"
-jsonpath "$.wires[0].data[1]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.createdby"
-jsonpath "$.wires[0].data[2]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.id"
-jsonpath "$.wires[0].data[3]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.owner"
-jsonpath "$.wires[0].data[4]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.uniquekey"
-jsonpath "$.wires[0].data[5]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.updatedat"
-jsonpath "$.wires[0].data[6]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.updatedby"
+jsonpath "$.wires[0].data" count == {{num_common_fields}}
+jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.collection"
+jsonpath "$.wires[0].data[1]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.createdat"
+jsonpath "$.wires[0].data[2]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.createdby"
+jsonpath "$.wires[0].data[3]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.id"
+jsonpath "$.wires[0].data[4]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.owner"
+jsonpath "$.wires[0].data[5]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.uniquekey"
+jsonpath "$.wires[0].data[6]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.updatedat"
+jsonpath "$.wires[0].data[7]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.updatedby"
 
 # Get a list of all secrets available to our workspace
 POST https://{{host}}:{{port}}/site/wires/load

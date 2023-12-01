@@ -64,7 +64,6 @@ definition:
                                     wire: themes
                                   - type: paramValue
                                     param: app
-                                    field: uesio/core.dynamiccollection
                                     operator: EQUALS
                                     value: $Param{namespace}
                                 signals:
@@ -79,7 +78,6 @@ definition:
                                     wire: themes
                                   - type: paramValue
                                     param: app
-                                    field: uesio/core.dynamiccollection
                                     operator: EQUALS
                                     value: $Param{namespace}
                                 signals:
@@ -123,7 +121,6 @@ definition:
                                 uesio.display:
                                   - type: paramValue
                                     param: app
-                                    field: uesio/core.dynamiccollection
                                     operator: EQUALS
                                     value: $Param{namespace}
                                 signals:
@@ -145,7 +142,6 @@ definition:
                           uesio.display:
                             - type: paramValue
                               param: app
-                              field: uesio/core.dynamiccollection
                               operator: NOT_EQUALS
                               value: $Param{namespace}
                       - uesio/studio.codefield:
@@ -155,7 +151,6 @@ definition:
                           uesio.display:
                             - type: paramValue
                               param: app
-                              field: uesio/core.dynamiccollection
                               operator: EQUALS
                               value: $Param{namespace}
   panels:

@@ -75,7 +75,6 @@ definition:
                                     wire: views
                                   - type: paramValue
                                     param: app
-                                    field: uesio/core.dynamiccollection
                                     operator: EQUALS
                                     value: $Param{namespace}
                                 hotkey: "meta+b"
@@ -93,7 +92,6 @@ definition:
                                     wire: views
                                   - type: paramValue
                                     param: app
-                                    field: uesio/core.dynamiccollection
                                     operator: EQUALS
                                     value: $Param{namespace}
                                 signals:
@@ -108,7 +106,6 @@ definition:
                                     wire: views
                                   - type: paramValue
                                     param: app
-                                    field: uesio/core.dynamiccollection
                                     operator: EQUALS
                                     value: $Param{namespace}
                                 signals:
@@ -123,7 +120,6 @@ definition:
                                 uesio.display:
                                   - type: paramValue
                                     param: app
-                                    field: uesio/core.dynamiccollection
                                     operator: EQUALS
                                     value: $Param{namespace}
                 - uesio/io.box:
@@ -142,7 +138,6 @@ definition:
                           uesio.display:
                             - type: paramValue
                               param: app
-                              field: uesio/core.dynamiccollection
                               operator: NOT_EQUALS
                               value: $Param{namespace}
                       - uesio/studio.codefield:
@@ -152,7 +147,6 @@ definition:
                           uesio.display:
                             - type: paramValue
                               param: app
-                              field: uesio/core.dynamiccollection
                               operator: EQUALS
                               value: $Param{namespace}
 

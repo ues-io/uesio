@@ -10,7 +10,7 @@ describe("Uesio Sanity Smoke Tests", () => {
 	const namespace = getAppNamespace(appName)
 	const workspaceName = "test"
 	const workspaceBasePath = getWorkspaceBasePath(appName, workspaceName)
-	const NUM_COMMON_FIELDS = 7
+	const NUM_COMMON_FIELDS = 8
 
 	before(() => {
 		cy.loginWithAppAndWorkspace(appName, workspaceName)

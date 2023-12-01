@@ -156,7 +156,6 @@ definition:
                                 uesio.display:
                                   - type: paramValue
                                     param: app
-                                    field: uesio/core.dynamiccollection
                                     operator: EQUALS
                                     value: $Param{namespace}
                                 fieldId: uesio/studio.permissionsetsrefs
@@ -165,7 +164,6 @@ definition:
                                 uesio.display:
                                   - type: paramValue
                                     param: app
-                                    field: uesio/core.dynamiccollection
                                     operator: EQUALS
                                     value: $Param{namespace}
                                 fieldId: uesio/studio.homeroute
@@ -174,7 +172,6 @@ definition:
                                 uesio.display:
                                   - type: paramValue
                                     param: app
-                                    field: uesio/core.dynamiccollection
                                     operator: NOT_EQUALS
                                     value: $Param{namespace}
                                 fieldId: uesio/studio.permissionsetsrefs
@@ -185,7 +182,6 @@ definition:
                                 uesio.display:
                                   - type: paramValue
                                     param: app
-                                    field: uesio/core.dynamiccollection
                                     operator: NOT_EQUALS
                                     value: $Param{namespace}
                                 fieldId: uesio/studio.homeroute
