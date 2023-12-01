@@ -86,8 +86,11 @@ var COLLECTION_FIELD_DEF = meta.Field{
 		Namespace: "uesio/core",
 	},
 	ReadOnly: true,
-	Type:     "TEXT",
-	Label:    "Collection",
+	Type:     "METADATA",
+	MetadataFieldMetadata: &meta.MetadataFieldMetadata{
+		Type: "COLLECTION",
+	},
+	Label: "Collection",
 }
 
 var BUILTIN_FIELDS_MAP = map[string]meta.Field{
