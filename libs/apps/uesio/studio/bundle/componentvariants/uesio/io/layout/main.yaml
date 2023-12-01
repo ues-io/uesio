@@ -6,4 +6,4 @@ definition:
     content:
       - bg-slate-50
     left:
-      - w-[300px]
+      - md:w-[300px]
