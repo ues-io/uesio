@@ -9,7 +9,7 @@ const StyleDefaults = Object.freeze({
 	footer: [],
 })
 
-type LayoutDefinition = {
+type ViewLayoutDefinition = {
 	header?: definition.DefinitionList
 	left?: definition.DefinitionList
 	content?: definition.DefinitionList
@@ -17,7 +17,7 @@ type LayoutDefinition = {
 	footer?: definition.DefinitionList
 }
 
-const Layout: definition.UC<LayoutDefinition> = (props) => {
+const ViewLayout: definition.UC<ViewLayoutDefinition> = (props) => {
 	const { definition, context, componentType } = props
 	const { header, left, content, right, footer } = definition
 
@@ -83,6 +83,6 @@ const Layout: definition.UC<LayoutDefinition> = (props) => {
 	)
 }
 
-Layout.displayName = "Layout"
+ViewLayout.displayName = "ViewLayout"
 
-export default Layout
+export default ViewLayout

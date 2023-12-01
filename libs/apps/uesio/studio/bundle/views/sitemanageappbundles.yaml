@@ -137,7 +137,7 @@ definition:
       - signal: wire/CREATE_RECORD
         wire: newbundlelistinghistory
   components:
-    - uesio/io.layout:
+    - uesio/io.viewlayout:
         uesio.variant: uesio/studio.main
         header:
           - uesio/core.view:

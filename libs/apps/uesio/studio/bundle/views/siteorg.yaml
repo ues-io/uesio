@@ -67,7 +67,7 @@ definition:
         wires:
           - org
   components:
-    - uesio/io.layout:
+    - uesio/io.viewlayout:
         uesio.variant: uesio/studio.main
         header:
           - uesio/core.view:

@@ -36,7 +36,7 @@ definition:
           lookupField: uesio/core.id
   # Components are how we describe the layout of our view
   components:
-    - uesio/io.layout:
+    - uesio/io.viewlayout:
         uesio.variant: uesio/studio.main
         header:
           - uesio/core.view:

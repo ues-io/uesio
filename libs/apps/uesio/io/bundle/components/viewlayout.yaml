@@ -1,8 +1,8 @@
-name: layout
+name: viewlayout
 pack: main
-entrypoint: components/layout/layout
-title: Layout
-description: Main View Layout
+entrypoint: components/viewlayout/viewlayout
+title: View Layout
+description: Adds responsive regions to a view
 category: LAYOUT
 discoverable: true
 icon: dashboard
