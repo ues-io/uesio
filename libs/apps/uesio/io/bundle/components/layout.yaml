@@ -26,3 +26,10 @@ sections:
     properties:
   - type: STYLES
   - type: DISPLAY
+styleRegions:
+  root:
+  header:
+  left:
+  content:
+  right:
+  footer:

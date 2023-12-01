@@ -6,7 +6,7 @@ definition:
       - grid
       - grid-cols-[auto_1fr_auto]
       - grid-rows-[auto_1fr_auto]
-      - h-screen
+      - h-full
     header:
       - col-span-3
     left:
