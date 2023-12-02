@@ -153,6 +153,34 @@ const useSelectedComponentPath = (context: ctx.Context) => {
 	return getSelectedComponentPath(selectedPath, selectedDef)
 }
 
+const useSelectedComponentOrSlotPath = (context: ctx.Context) => {
+	const selectedPath = useSelectedPath(context)
+	const selectedDef = useDefinition(context, selectedPath)
+	return getSelectedComponentOrSlotPath(selectedPath, selectedDef)
+}
+
+const getSelectedComponentOrSlotPath = (
+	selectedPath: FullPath,
+	selectedDef: unknown
+) => {
+	const selectedComponentPath = getSelectedComponentPath(
+		selectedPath,
+		selectedDef
+	)
+
+	const [componentType] = selectedComponentPath.pop()
+	const slotsDef = getComponentDef(componentType)?.slots
+	if (!slotsDef) return selectedComponentPath
+
+	const selectedSlot = slotsDef.find((slotDef) =>
+		selectedPath.startsWith(selectedComponentPath.addLocal(slotDef.name))
+	)
+
+	return selectedSlot
+		? selectedComponentPath.addLocal(selectedSlot.name)
+		: selectedComponentPath
+}
+
 const getSelectedComponentPath = (
 	selectedPath: FullPath,
 	selectedDef: unknown
@@ -404,7 +432,9 @@ export {
 	getSelectedPath,
 	setSelectedPath,
 	useSelectedComponentPath,
+	useSelectedComponentOrSlotPath,
 	getSelectedComponentPath,
+	getSelectedComponentOrSlotPath,
 	useSelectedViewPath,
 	getSelectedViewPath,
 	walkViewComponents,
