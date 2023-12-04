@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/constant"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -101,7 +102,7 @@ func (mr *MetadataRequest) HasRequests() bool {
 
 func (mr *MetadataRequest) AddCollection(collectionName string) error {
 	if collectionName == "" {
-		return fmt.Errorf("tried to add blank collection")
+		return exceptions.NewBadRequestException("tried to add blank collection")
 	}
 	if mr.Collections == nil {
 		mr.Collections = map[string]FieldsMap{}

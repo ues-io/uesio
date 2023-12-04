@@ -17,6 +17,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/creds"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
 
 type Auth struct{}
@@ -46,23 +47,23 @@ func (c *Connection) Login(payload map[string]interface{}) (*meta.User, error) {
 
 	username, err := auth.GetRequiredPayloadValue(payload, "username")
 	if err != nil {
-		return nil, auth.NewAuthRequestError("You must enter a username")
+		return nil, exceptions.NewBadRequestException("You must enter a username")
 	}
 	password, err := auth.GetRequiredPayloadValue(payload, "password")
 	if err != nil {
-		return nil, auth.NewAuthRequestError("You must enter a password")
+		return nil, exceptions.NewBadRequestException("You must enter a password")
 	}
 	clientID, ok := (*c.credentials)["clientid"]
 	if !ok {
-		return nil, errors.New("no client id provided in credentials")
+		return nil, exceptions.NewBadRequestException("no client id provided in credentials")
 	}
 	poolID, ok := (*c.credentials)["poolid"]
 	if !ok {
-		return nil, errors.New("no user pool provided in credentials")
+		return nil, exceptions.NewBadRequestException("no user pool provided in credentials")
 	}
 	cfg, err := creds.GetAWSConfig(context.Background(), c.credentials)
 	if err != nil {
-		return nil, err
+		return nil, exceptions.NewBadRequestException(err.Error())
 	}
 
 	site := c.session.GetSiteTenantID()
@@ -130,11 +131,11 @@ func handleCognitoError(err error) error {
 		if respErr, isRespErr := opErr.Err.(*http.ResponseError); isRespErr {
 			switch cognitoErr := respErr.Err.(type) {
 			case *types.NotAuthorizedException:
-				return auth.NewNotAuthorizedError(cognitoErr.ErrorMessage())
+				return exceptions.NewUnauthorizedException(cognitoErr.ErrorMessage())
 			case *types.InvalidPasswordException:
-				return auth.NewAuthRequestError(cognitoErr.ErrorMessage())
+				return exceptions.NewBadRequestException(cognitoErr.ErrorMessage())
 			default:
-				return auth.NewAuthRequestError(cognitoErr.Error())
+				return exceptions.NewBadRequestException(cognitoErr.Error())
 			}
 		}
 	}

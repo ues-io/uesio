@@ -8,6 +8,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
 
 type MetadataDependencyMap map[string]map[string]bool
@@ -170,5 +171,5 @@ func getRequiredParameter(params map[string]interface{}, paramName string) (stri
 			return stringValue, nil
 		}
 	}
-	return "", meta.NewParamError("system bot: missing required parameter "+paramName, paramName)
+	return "", exceptions.NewInvalidParamException("system bot: missing required parameter "+paramName, paramName)
 }

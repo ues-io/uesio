@@ -2,7 +2,6 @@ package controller
 
 import (
 	"fmt"
-	"log/slog"
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/middleware"
@@ -11,14 +10,10 @@ import (
 
 func Retrieve(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
-
 	w.Header().Set("Content-Type", "application/zip")
 	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s.zip\"", "retrieve"))
-
-	err := retrieve.Retrieve(w, session)
-	if err != nil {
-		slog.Error(err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	if err := retrieve.Retrieve(w, session); err != nil {
+		HandleError(w, err)
 		return
 	}
 

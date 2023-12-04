@@ -8,6 +8,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
 
 func GetIntegrationConnection(integrationID string, session *sess.Session, connection adapt.Connection) (*adapt.IntegrationConnection, error) {
@@ -17,7 +18,7 @@ func GetIntegrationConnection(integrationID string, session *sess.Session, conne
 	}
 	// First load the integration
 	if err = bundle.Load(integration, session, connection); err != nil {
-		return nil, fmt.Errorf("could not find Integration: %s", integrationID)
+		return nil, exceptions.NewNotFoundException("could not find Integration: " + integrationID)
 	}
 	// Then load the integration type
 	integrationTypeName := integration.GetType()

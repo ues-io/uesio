@@ -2,10 +2,10 @@ package controller
 
 import (
 	"encoding/json"
-	"log/slog"
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -16,27 +16,21 @@ func Save(w http.ResponseWriter, r *http.Request) {
 
 	// 1. Parse the request object.
 	var saveRequestBatch datasource.SaveRequestBatch
-	err := json.NewDecoder(r.Body).Decode(&saveRequestBatch)
-	if err != nil {
-		msg := "Invalid request format: " + err.Error()
-		slog.Error(msg)
-		http.Error(w, msg, http.StatusBadRequest)
+	if err := json.NewDecoder(r.Body).Decode(&saveRequestBatch); err != nil {
+		HandleError(w, exceptions.NewBadRequestException("invalid save request: "+err.Error()))
 		return
 	}
 
 	session := middleware.GetSession(r)
 
-	err = datasource.Save(saveRequestBatch.Wires, session)
-	if err != nil {
+	if err := datasource.Save(saveRequestBatch.Wires, session); err != nil {
 		_, ok := err.(*adapt.SaveError)
+		// If the error is a save error still respond
 		if ok {
 			file.RespondJSON(w, r, &saveRequestBatch)
 			return
 		}
-		// If the error is a save error still respond
-		msg := "Save Failed: " + err.Error()
-		slog.Error(msg)
-		http.Error(w, msg, http.StatusBadRequest)
+		HandleError(w, err)
 		return
 	}
 	file.RespondJSON(w, r, &saveRequestBatch)

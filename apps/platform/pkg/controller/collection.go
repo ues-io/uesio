@@ -1,10 +1,13 @@
 package controller
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"net/http"
 
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
+
 	"github.com/gorilla/mux"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
@@ -21,15 +24,15 @@ func GetCollectionMetadata(w http.ResponseWriter, r *http.Request) {
 			LoadAllFields: true,
 		},
 	}
-	err := collections.AddCollection(collectionName)
-	if err != nil {
-		println(err)
+	if err := collections.AddCollection(collectionName); err != nil {
+		HandleError(w, err)
+		return
 	}
 
 	metadataResponse := adapt.MetadataCache{}
-	err = collections.Load(&metadataResponse, session, nil)
-	if err != nil {
-		println(err)
+	if err := collections.Load(&metadataResponse, session, nil); err != nil {
+		HandleError(w, exceptions.NewBadRequestException("unable to load collection metadata: "+err.Error()))
+		return
 	}
 
 	file.RespondJSON(w, r, &adapt.LoadResponseBatch{

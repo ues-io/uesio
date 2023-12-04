@@ -9,6 +9,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource/fieldvalidations"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/usage"
 )
 
@@ -162,15 +163,15 @@ func SaveOp(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session
 	}
 
 	if len(op.Inserts) > 0 && !permissions.HasCreatePermission(collectionKey) {
-		return fmt.Errorf("Profile %s does not have create access to the %s collection.", session.GetContextProfile(), collectionKey)
+		return exceptions.NewForbiddenException(fmt.Sprintf("Profile %s does not have create access to the %s collection.", session.GetContextProfile(), collectionKey))
 	}
 
 	if len(op.Updates) > 0 && !permissions.HasEditPermission(collectionKey) {
-		return fmt.Errorf("Profile %s does not have edit access to the %s collection.", session.GetContextProfile(), collectionKey)
+		return exceptions.NewForbiddenException(fmt.Sprintf("Profile %s does not have edit access to the %s collection.", session.GetContextProfile(), collectionKey))
 	}
 
 	if len(op.Deletes) > 0 && !permissions.HasDeletePermission(collectionKey) {
-		return fmt.Errorf("Profile %s does not have delete access to the %s collection.", session.GetContextProfile(), collectionKey)
+		return exceptions.NewForbiddenException(fmt.Sprintf("Profile %s does not have delete access to the %s collection.", session.GetContextProfile(), collectionKey))
 	}
 
 	if !isExternalIntegrationSave {

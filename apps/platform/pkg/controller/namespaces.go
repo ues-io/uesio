@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"log/slog"
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
@@ -48,8 +47,7 @@ func NamespaceList(w http.ResponseWriter, r *http.Request) {
 
 	namespaces, err := getNamespaces(metadatatype, session)
 	if err != nil {
-		slog.Error(err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		HandleError(w, err)
 		return
 	}
 

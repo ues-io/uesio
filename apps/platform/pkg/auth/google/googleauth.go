@@ -2,12 +2,13 @@ package googleauth
 
 import (
 	"context"
-	"errors"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
+
 	"google.golang.org/api/idtoken"
 )
 
@@ -33,26 +34,26 @@ type Connection struct {
 func (c *Connection) Validate(payload map[string]interface{}) (*idtoken.Payload, error) {
 	token, err := auth.GetPayloadValue(payload, "credential")
 	if err != nil {
-		return nil, auth.NewAuthRequestError("google login: " + err.Error())
+		return nil, exceptions.NewBadRequestException("google login: " + err.Error())
 	}
 	clientID, err := auth.GetPayloadValue(payload, "client_id")
 	if err != nil {
-		return nil, auth.NewAuthRequestError("google login: " + err.Error())
+		return nil, exceptions.NewBadRequestException("google login: " + err.Error())
 	}
 
 	// Verify that the client id sent in the payload matches the client id
 	// associated with our auth source.
 	trustedClientID, err := c.credentials.GetRequiredEntry("client_id")
 	if err != nil {
-		return nil, err
+		return nil, exceptions.NewBadRequestException("google login: " + err.Error())
 	}
 
 	if trustedClientID == "" {
-		return nil, auth.NewAuthRequestError("google login: no client id associated with auth source")
+		return nil, exceptions.NewBadRequestException("google login: no client id associated with auth source")
 	}
 
 	if trustedClientID != clientID {
-		return nil, auth.NewAuthRequestError("google login: invalid client id")
+		return nil, exceptions.NewBadRequestException("google login: invalid client id")
 	}
 
 	return idtoken.Validate(context.Background(), token, clientID)
@@ -88,10 +89,10 @@ func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]
 	}, c.connection, c.session)
 }
 func (c *Connection) ForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {
-	return errors.New("Google login: unfortunately you cannot change the password")
+	return exceptions.NewBadRequestException("Google login: unfortunately you cannot change the password")
 }
 func (c *Connection) ConfirmForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {
-	return errors.New("Google login: unfortunately you cannot change the password")
+	return exceptions.NewBadRequestException("Google login: unfortunately you cannot change the password")
 }
 func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[string]interface{}, user *meta.User) error {
 	validated, err := c.Validate(payload)
@@ -105,5 +106,5 @@ func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[st
 	}, c.connection, c.session)
 }
 func (c *Connection) ConfirmSignUp(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {
-	return errors.New("Google login: unfortunately you cannot change the password")
+	return exceptions.NewBadRequestException("Google login: unfortunately you cannot change the password")
 }

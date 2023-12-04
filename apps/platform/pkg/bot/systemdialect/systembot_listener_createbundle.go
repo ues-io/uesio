@@ -11,6 +11,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/retrieve"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
 
 func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
@@ -26,21 +27,21 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.
 	}
 
 	if bundlestore.IsSystemBundle(appID) {
-		return nil, meta.NewBotAccessError("cannot create a bundle for a system app")
+		return nil, exceptions.NewForbiddenException("cannot create a bundle for a system app")
 	}
 
 	if !session.GetSitePermissions().HasNamedPermission("uesio/studio.workspace_admin") {
-		return nil, meta.NewBotAccessError("you must be a workspace admin to create bundles")
+		return nil, exceptions.NewForbiddenException("you must be a workspace admin to create bundles")
 	}
 
 	app, err := datasource.QueryAppForWrite(appID, adapt.UNIQUE_KEY_FIELD, session, connection)
 	if err != nil {
-		return nil, meta.NewBotAccessError(fmt.Sprintf("you do not have permission to create bundles for app %s", appID))
+		return nil, exceptions.NewForbiddenException(fmt.Sprintf("you do not have permission to create bundles for app %s", appID))
 	}
 
 	workspace, err := datasource.QueryWorkspaceForWrite(appID+":"+workspaceName, adapt.UNIQUE_KEY_FIELD, session, connection)
 	if err != nil {
-		return nil, meta.NewBotAccessError(fmt.Sprintf("you do not have permission to create bundles for workspace %s", workspaceName))
+		return nil, exceptions.NewForbiddenException(fmt.Sprintf("you do not have permission to create bundles for workspace %s", workspaceName))
 	}
 
 	var bundles meta.BundleCollection

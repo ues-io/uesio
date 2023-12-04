@@ -3,7 +3,6 @@ package oauth
 import (
 	"errors"
 	"fmt"
-	"log/slog"
 	"net/http"
 	"net/url"
 
@@ -45,16 +44,12 @@ func Callback(w http.ResponseWriter, r *http.Request) {
 
 	connection, err := datasource.GetPlatformConnection(nil, s, nil)
 	if err != nil {
-		err = errors.New("failed to obtain platform connection: " + err.Error())
-		slog.Error(err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		controller.HandleError(w, errors.New("failed to obtain platform connection: "+err.Error()))
 		return
 	}
 	versionSession, err := datasource.EnterVersionContext("uesio/core", s, connection)
 	if err != nil {
-		err = errors.New("failed to enter version context: " + err.Error())
-		slog.Error(err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		controller.HandleError(w, errors.New("failed to enter version context: "+err.Error()))
 		return
 	}
 	route, err := loadCallbackRoute(r, versionSession, connection)
