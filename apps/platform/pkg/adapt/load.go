@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"sort"
+	"sync"
 
 	"gopkg.in/yaml.v3"
 
@@ -128,12 +129,17 @@ func (lr *LoadResponseBatch) TrimStructForSerialization() *LoadResponseBatch {
 	return lr
 }
 
-type FieldsMap map[string]*FieldMetadata
+type FieldsMap struct {
+	m map[string]*FieldMetadata
+	sync.RWMutex
+}
 
 func (fm *FieldsMap) GetKeys() []string {
+	fm.RLock()
+	defer fm.RUnlock()
 	fieldIDIndex := 0
-	fieldIDs := make([]string, len(*fm))
-	for k := range *fm {
+	fieldIDs := make([]string, len(fm.m))
+	for k := range fm.m {
 		fieldIDs[fieldIDIndex] = k
 		fieldIDIndex++
 	}
@@ -150,11 +156,13 @@ var UPDATED_AT_FIELD = "uesio/core.updatedat"
 var COLLECTION_FIELD = "uesio/core.collection"
 
 func (fm *FieldsMap) GetUniqueDBFieldNames(getDBFieldName func(*FieldMetadata) string) ([]string, error) {
-	if len(*fm) == 0 {
+	fm.RLock()
+	defer fm.RUnlock()
+	if len(fm.m) == 0 {
 		return nil, errors.New("No fields selected")
 	}
 	dbNamesMap := map[string]bool{}
-	for _, fieldMetadata := range *fm {
+	for _, fieldMetadata := range fm.m {
 		dbFieldName := getDBFieldName(fieldMetadata)
 		dbNamesMap[dbFieldName] = true
 	}
@@ -168,16 +176,17 @@ func (fm *FieldsMap) GetUniqueDBFieldNames(getDBFieldName func(*FieldMetadata) s
 	return dbNames, nil
 }
 
-func (fm *FieldsMap) AddField(fieldMetadata *FieldMetadata) error {
-	(*fm)[fieldMetadata.GetFullName()] = fieldMetadata
-	return nil
+func (fm *FieldsMap) AddField(fieldMetadata *FieldMetadata) {
+	fm.Lock()
+	defer fm.Unlock()
+	fm.m[fieldMetadata.GetFullName()] = fieldMetadata
 }
 
-func GetFieldsMap(fields []LoadRequestField, collectionMetadata *CollectionMetadata, metadata *MetadataCache) (FieldsMap, ReferenceRegistry, ReferenceGroupRegistry, map[string]*FieldMetadata, error) {
+func GetFieldsMap(fields []LoadRequestField, collectionMetadata *CollectionMetadata, metadata *MetadataCache) (*FieldsMap, ReferenceRegistry, ReferenceGroupRegistry, *FieldsMap, error) {
 	fieldIDMap := FieldsMap{}
 	referencedCollections := ReferenceRegistry{}
 	referencedGroupCollections := ReferenceGroupRegistry{}
-	formulaFields := map[string]*FieldMetadata{}
+	formulaFields := FieldsMap{}
 	for _, field := range fields {
 		fieldMetadata, err := collectionMetadata.GetField(field.ID)
 		if err != nil {
@@ -185,14 +194,11 @@ func GetFieldsMap(fields []LoadRequestField, collectionMetadata *CollectionMetad
 		}
 
 		if fieldMetadata.IsFormula {
-			formulaFields[fieldMetadata.GetFullName()] = fieldMetadata
+			formulaFields.AddField(fieldMetadata)
 			continue
 		}
 
-		err = fieldIDMap.AddField(fieldMetadata)
-		if err != nil {
-			return nil, nil, nil, nil, err
-		}
+		fieldIDMap.AddField(fieldMetadata)
 
 		if IsReference(fieldMetadata.Type) {
 			referencedCollection := fieldMetadata.ReferenceMetadata.Collection
@@ -227,5 +233,5 @@ func GetFieldsMap(fields []LoadRequestField, collectionMetadata *CollectionMetad
 		}
 
 	}
-	return fieldIDMap, referencedCollections, referencedGroupCollections, formulaFields, nil
+	return &fieldIDMap, referencedCollections, referencedGroupCollections, &formulaFields, nil
 }

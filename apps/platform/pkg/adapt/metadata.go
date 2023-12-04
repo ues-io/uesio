@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"sync"
 
 	"github.com/thecloudmasters/uesio/pkg/constant"
 
@@ -14,9 +15,12 @@ import (
 type MetadataCache struct {
 	Collections map[string]*CollectionMetadata
 	SelectLists map[string]*SelectListMetadata
+	sync.RWMutex
 }
 
 func (mc *MetadataCache) AddCollection(key string, metadata *CollectionMetadata) {
+	mc.Lock()
+	defer mc.Unlock()
 	if mc.Collections == nil {
 		mc.Collections = map[string]*CollectionMetadata{}
 	}
@@ -24,6 +28,8 @@ func (mc *MetadataCache) AddCollection(key string, metadata *CollectionMetadata)
 }
 
 func (mc *MetadataCache) GetCollection(key string) (*CollectionMetadata, error) {
+	mc.RLock()
+	defer mc.RUnlock()
 	collectionMetadata, ok := mc.Collections[key]
 	if !ok {
 		return nil, errors.New("No metadata provided for collection: " + key)
@@ -53,6 +59,7 @@ type CollectionMetadata struct {
 	Integration           string                       `json:"-"`
 	LoadBot               string                       `json:"-"`
 	SaveBot               string                       `json:"-"`
+	sync.RWMutex
 }
 
 func (cm *CollectionMetadata) GetIntegrationName() string {
@@ -89,7 +96,8 @@ func (cm *CollectionMetadata) GetField(key string) (*FieldMetadata, error) {
 }
 
 func (cm *CollectionMetadata) GetFieldWithMetadata(key string, metadata *MetadataCache) (*FieldMetadata, error) {
-
+	cm.RLock()
+	defer cm.RUnlock()
 	names := strings.Split(key, constant.RefSep)
 	if len(names) == 1 {
 		fieldMetadata, ok := cm.Fields[meta.GetFullyQualifiedKey(key, cm.Namespace)]
@@ -131,6 +139,8 @@ func (cm *CollectionMetadata) GetFieldWithMetadata(key string, metadata *Metadat
 }
 
 func (cm *CollectionMetadata) SetField(metadata *FieldMetadata) {
+	cm.Lock()
+	defer cm.Unlock()
 	cm.Fields[metadata.GetFullName()] = metadata
 }
 
@@ -143,6 +153,8 @@ func (cm *CollectionMetadata) GetFullName() string {
 }
 
 func (cm *CollectionMetadata) Merge(other *CollectionMetadata) {
+	cm.Lock()
+	defer cm.Unlock()
 	otherHasFields := len(other.Fields) > 0
 	// Shortcuts --- if either the current or the other indicates that it "HasAllFields",
 	// then we will use its fields
