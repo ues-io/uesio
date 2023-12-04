@@ -5,6 +5,15 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
+var COMMON_COLLECTION_METADATA = adapt.CollectionMetadata{
+	Name:        "common",
+	Namespace:   "uesio/core",
+	Label:       "Common",
+	PluralLabel: "Common",
+	Fields:      map[string]*adapt.FieldMetadata{},
+	Type:        "DYNAMIC",
+}
+
 var ID_FIELD_DEF = meta.Field{
 	BundleableBase: meta.BundleableBase{
 		Name:      "id",

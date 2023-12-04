@@ -198,7 +198,8 @@ func ProcessFieldsMetadata(fields map[string]*adapt.FieldMetadata, collectionKey
 
 			referenceMetadata := fieldMetadata.ReferenceMetadata
 			if referenceMetadata.MultiCollection {
-				continue //TO-DO
+				//Let's go and load the common collection
+				referenceMetadata = &adapt.ReferenceMetadata{Collection: "uesio/core.common"}
 			}
 
 			// Only add to additional requests if we don't already have that metadata

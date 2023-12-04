@@ -508,6 +508,19 @@ func GetMetadataForLoad(
 			}
 		}
 
+		if fieldMetadata.Type == "REFERENCE" && fieldMetadata.ReferenceMetadata.MultiCollection {
+			if len(op.Fields[i].Fields) == 0 {
+				op.Fields[i].Fields = []adapt.LoadRequestField{
+					{
+						ID: adapt.ID_FIELD,
+					},
+					{
+						ID: adapt.COLLECTION_FIELD,
+					},
+				}
+			}
+		}
+
 		if fieldMetadata.IsFormula && fieldMetadata.FormulaMetadata != nil {
 			fieldDeps, err := adapt.GetFormulaFields(fieldMetadata.FormulaMetadata.Expression)
 			if err != nil {

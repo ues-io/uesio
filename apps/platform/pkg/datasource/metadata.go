@@ -126,7 +126,7 @@ func GetSubFieldMetadata(f *meta.SubField) *adapt.FieldMetadata {
 	}
 	if subFieldsSupported(f.Type, f.SubType) && len(f.SubFields) > 0 {
 		subFieldsMetadata := map[string]*adapt.FieldMetadata{}
-		for i, _ := range f.SubFields {
+		for i := range f.SubFields {
 			subField := f.SubFields[i]
 			subFieldsMetadata[subField.Name] = GetSubFieldMetadata(&subField)
 		}
@@ -228,6 +228,13 @@ func GetValidationMetadata(f *meta.Field) *adapt.ValidationMetadata {
 }
 
 func LoadCollectionMetadata(key string, metadataCache *adapt.MetadataCache, session *sess.Session, connection adapt.Connection) (*adapt.CollectionMetadata, error) {
+
+	//fake the common collection
+	if key == "uesio/core.common" {
+		metadataCache.AddCollection(key, &COMMON_COLLECTION_METADATA)
+		return &COMMON_COLLECTION_METADATA, nil
+	}
+
 	// Check to see if the collection is already in our metadata cache
 	collectionMetadata, err := metadataCache.GetCollection(key)
 	if err == nil {

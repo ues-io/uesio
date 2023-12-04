@@ -196,11 +196,10 @@ func GetFieldsMap(fields []LoadRequestField, collectionMetadata *CollectionMetad
 
 		if IsReference(fieldMetadata.Type) {
 
-			if fieldMetadata.ReferenceMetadata.MultiCollection {
-				continue //TO-DO
-			}
-
 			referencedCollection := fieldMetadata.ReferenceMetadata.Collection
+			if fieldMetadata.ReferenceMetadata.MultiCollection {
+				referencedCollection = "uesio/core.common"
+			}
 
 			referencedCollectionMetadata, err := metadata.GetCollection(referencedCollection)
 			if err != nil {

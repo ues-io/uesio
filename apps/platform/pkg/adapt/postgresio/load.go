@@ -302,5 +302,10 @@ func (c *Connection) Load(op *adapt.LoadOp, session *sess.Session) error {
 		return err
 	}
 
+	err = adapt.HandleMultiCollectionReferences(c, referencedCollections, session)
+	if err != nil {
+		return err
+	}
+
 	return adapt.HandleReferences(c, referencedCollections, session, true)
 }

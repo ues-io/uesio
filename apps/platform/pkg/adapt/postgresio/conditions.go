@@ -292,7 +292,7 @@ func addTenantConditions(collectionMetadata *adapt.CollectionMetadata, metadata 
 	collectionName := collectionMetadata.GetFullName()
 
 	//we don't filter by collection if we want recent metadata
-	if collectionName != "uesio/studio.recentmetadata" {
+	if collectionName != "uesio/studio.recentmetadata" && collectionName != "uesio/core.common" {
 		builder.addQueryPart(fmt.Sprintf("%s = %s", getAliasedName("collection", tableAlias), builder.addValue(collectionName)))
 	}
 
