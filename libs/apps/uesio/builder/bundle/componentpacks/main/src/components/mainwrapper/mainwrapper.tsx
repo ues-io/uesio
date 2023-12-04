@@ -136,10 +136,6 @@ MainWrapper.signals = {
 		dispatcher: (state) => !state,
 		target: "indexpanel",
 	},
-	TOGGLE_SLOT_TAGS: {
-		dispatcher: (state) => !state,
-		target: "slottags",
-	},
 	SET_DIMENSIONS: {
 		dispatcher: (state, payload) => [payload.width, payload.height],
 		target: "dimensions",

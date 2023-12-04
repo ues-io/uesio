@@ -98,13 +98,14 @@ func DeleteRecordApi(w http.ResponseWriter, r *http.Request) {
 	collection := &adapt.Collection{}
 
 	op := &adapt.LoadOp{
-		WireName:       "query",
-		CollectionName: useCollectionName,
-		Collection:     collection,
-		Fields:         fields,
-		Conditions:     conditions,
-		Query:          true,
-		Params:         params,
+		WireName:           "query",
+		CollectionName:     useCollectionName,
+		Collection:         collection,
+		Fields:             fields,
+		Conditions:         conditions,
+		Query:              true,
+		Params:             params,
+		RequireWriteAccess: true,
 	}
 
 	_, err := datasource.Load([]*adapt.LoadOp{op}, session, nil)

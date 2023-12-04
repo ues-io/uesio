@@ -1,0 +1,35 @@
+name: viewlayout
+pack: main
+entrypoint: components/viewlayout/viewlayout
+title: View Layout
+description: Adds responsive regions to a view
+category: LAYOUT
+discoverable: true
+icon: dashboard
+slots:
+  - name: header
+    label: Header Contents
+  - name: left
+    label: Left Panel Contents
+  - name: content
+    label: Main Contents
+  - name: right
+    label: Right Panel Contents
+  - name: footer
+    label: Footer Contents
+defaultDefinition:
+  uesio.variant: uesio/io.default
+  content: []
+properties:
+sections:
+  - type: HOME
+    properties:
+  - type: STYLES
+  - type: DISPLAY
+styleRegions:
+  root:
+  header:
+  left:
+  content:
+  right:
+  footer:

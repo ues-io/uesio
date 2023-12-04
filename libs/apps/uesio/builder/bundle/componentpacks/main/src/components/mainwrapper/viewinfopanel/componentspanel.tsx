@@ -16,6 +16,7 @@ import {
 	getBuilderNamespaces,
 	getComponentDef,
 	getComponentDefs,
+	getSelectedComponentOrSlotPath,
 	getSelectedComponentPath,
 	setSelectedPath,
 	useSelectedPath,
@@ -46,8 +47,18 @@ const findClosestSlot = (
 	}
 	const def = get(context, selectedPath)
 	const trimmedPath = getSelectedComponentPath(selectedPath, def)
+	const slotPath = getSelectedComponentOrSlotPath(selectedPath, def)
 	const [componentType] = trimmedPath.pop()
 	const componentDef = getComponentDef(componentType)
+
+	// If we have a slotPath that is different than our component path
+	// Then we likely have a slot selected. We can just insert into that slot.
+	if (!slotPath.equals(trimmedPath)) {
+		const [slotName] = slotPath.pop()
+		if (componentDef?.slots?.find((slotDef) => slotDef.name === slotName)) {
+			return slotPath.addLocal("0")
+		}
+	}
 
 	// If that slot does not exist in the slot metadata
 	// or it does not exist in the view definition,

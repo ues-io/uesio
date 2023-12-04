@@ -6,12 +6,13 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/file"
 )
 
 func runUserFileBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 	// If a user file is being deleted, we want to delete the underlying file blob data as well
 	// using the configured file storage adapter
-	userFileIdsBeingDeleted := []string{}
+	var userFileIdsBeingDeleted []string
 	// If a user file is being attached to a Studio file, we need to delete all other
 	for i := range request.Deletes {
 		userFileIdsBeingDeleted = append(userFileIdsBeingDeleted, request.Deletes[i].IDValue)
@@ -37,20 +38,24 @@ func runUserFileBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection
 
 		tenantID := session.GetTenantID()
 
+		// Build a map of file connections by source,
+		// to prevent acquiring a separate connection for every file we are deleting
+		fileConnectionsBySource := map[string]file.Connection{}
+
 		for i := range ufmc {
 			ufm := ufmc[i]
 
-			conn, err := fileadapt.GetFileConnection(ufm.FileSourceID, session)
-			if err != nil {
-				return err
+			conn, isPresent := fileConnectionsBySource[ufm.FileSourceID]
+			if !isPresent {
+				conn, err = fileadapt.GetFileConnection(ufm.FileSourceID, session)
+				if err != nil {
+					return err
+				}
+				fileConnectionsBySource[ufm.FileSourceID] = conn
 			}
-
 			fullPath := ufm.GetFullPath(tenantID)
-
-			err = conn.Delete(fullPath)
-			if err != nil {
-				return err
-			}
+			// Ignore missing files, possibly it was already deleted
+			_ = conn.Delete(fullPath)
 		}
 	}
 

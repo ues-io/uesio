@@ -18,9 +18,9 @@ options:
     value: "LONGTEXT"
   - label: "Map"
     value: "MAP"
-  # Hidden for now until we make more Metadata types available
-  # - label: "Metadata"
-  #   value: "METADATA"
+  - label: "Metadata"
+    value: "METADATA"
+    disabled: true
   # - label: "Multi Metadata"
   #   value: "MULTIMETADATA"
   - label: "Multi Select"

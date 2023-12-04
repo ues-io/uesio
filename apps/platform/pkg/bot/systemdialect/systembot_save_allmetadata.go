@@ -3,6 +3,7 @@ package systemdialect
 import (
 	"encoding/json"
 	"errors"
+	"log/slog"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore/workspacebundlestore"
@@ -10,61 +11,66 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
+// In my testing with the CRM app, the variable metadata key size can sway the total size by several 100 to 1000 bytes,
+// so just to err on the cautious size, sticking with a number that averages around 4K
+// (which is about half of the Postgres NOTIFY 8K limit)
+const metadataItemsChunkSize = 90
+
 func runStudioMetadataSaveBot(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 
-	// Extract app and workspace from params
-	workspaceID, err := GetWorkspaceIDFromParams(op.Params, connection, session)
-	if err != nil {
-		return err
+	// Get the workspace ID from params, and verify that the user performing the query
+	// has write access to the requested workspace
+	wsAccessResult := datasource.RequestWorkspaceWriteAccess(op.Params, connection, session)
+	if !wsAccessResult.HasWriteAccess() {
+		return wsAccessResult.Error()
 	}
-	appName := op.Params["app"]
+
 	var changedMetadataItemKeys []string
 
-	if err = op.LoopChanges(func(change *adapt.ChangeItem) error {
+	if err := op.LoopChanges(func(change *adapt.ChangeItem) error {
 		return change.SetField("uesio/studio.workspace", &adapt.Item{
-			adapt.ID_FIELD: workspaceID,
+			adapt.ID_FIELD: wsAccessResult.GetWorkspaceID(),
 		})
 	}); err != nil {
 		return err
 	}
 
-	if err = datasource.SaveOp(op, connection, session); err != nil {
+	if err := datasource.SaveOp(op, connection, session); err != nil {
 		return err
 	}
 
 	// Invalidate our metadata caches - now that we've saved, UniqueKey should be populated
-	if err = op.LoopChanges(func(change *adapt.ChangeItem) error {
+	if err := op.LoopChanges(func(change *adapt.ChangeItem) error {
 		changedMetadataItemKeys = append(changedMetadataItemKeys, change.UniqueKey)
 		return nil
 	}); err != nil {
 		return err
 	}
 
-	if len(changedMetadataItemKeys) < 1 {
+	totalChangedKeys := len(changedMetadataItemKeys)
+	if totalChangedKeys < 1 {
 		return nil
 	}
 
-	// We already verified that we have a workspace id,
-	// but we MUST also know the context app name in order to achieve cache invalidation,
-	// so if we do NOT have this yet (which ideally should never happen), we will need to query for it
-	if appName == "" {
-		workspace, err := datasource.QueryWorkspaceForWrite(workspaceID, adapt.ID_FIELD, session, connection)
-		if err != nil {
-			return err
+	// Chunk the messages to avoid hitting the max Postgres NOTIFY size limit
+	for i := 0; i < totalChangedKeys; i += metadataItemsChunkSize {
+		end := i + metadataItemsChunkSize
+		if end > totalChangedKeys {
+			end = totalChangedKeys
 		}
-		appName = workspace.GetAppFullName()
+		messagePayload, err := json.Marshal(&workspacebundlestore.WorkspaceMetadataChange{
+			AppName:        wsAccessResult.GetAppName(),
+			WorkspaceID:    wsAccessResult.GetWorkspaceID(),
+			CollectionName: op.Metadata.GetFullName(),
+			ChangedItems:   changedMetadataItemKeys[i:end],
+		})
+		if err != nil {
+			return errors.New("unable to serialize workspace metadata changes cache key")
+		}
+		if err = connection.Publish(workspacebundlestore.WorkspaceMetadataChangesChannel, string(messagePayload)); err != nil {
+			slog.Error("unable to invalidate workspace cache: " + err.Error())
+			return errors.New("unable to invalidate workspace cache")
+		}
 	}
-
-	message := &workspacebundlestore.WorkspaceMetadataChange{
-		AppName:        appName,
-		WorkspaceID:    workspaceID,
-		CollectionName: op.Metadata.GetFullName(),
-		ChangedItems:   changedMetadataItemKeys,
-	}
-	messagePayload, err := json.Marshal(message)
-	if err != nil {
-		return errors.New("unable to serialize workspace metadata changes cache key")
-	}
-	return connection.Publish(workspacebundlestore.WorkspaceMetadataChangesChannel, string(messagePayload))
-
+	return nil
 }

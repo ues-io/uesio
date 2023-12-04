@@ -435,12 +435,17 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 
 	deps.Component.AddItem(NewComponentMergeData(fmt.Sprintf("%s:namespaces", builderComponentID), appData))
 	deps.Component.AddItem(NewComponentMergeData(GetBuildModeKey(builderComponentID), true))
+	deps.Component.AddItem(NewComponentMergeData(GetIndexPanelKey(builderComponentID), true))
 
 	return nil
 }
 
 func GetBuildModeKey(builderComponentID string) string {
 	return fmt.Sprintf("%s:buildmode", builderComponentID)
+}
+
+func GetIndexPanelKey(builderComponentID string) string {
+	return fmt.Sprintf("%s:indexpanel", builderComponentID)
 }
 
 func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata, error) {

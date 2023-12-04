@@ -59,7 +59,7 @@ func runRecentMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 	var fields = []adapt.LoadRequestField{
 		{ID: "uesio/studio.name"},
 		{ID: "uesio/studio.workspace"},
-		{ID: "uesio/core.dynamiccollection"},
+		{ID: "uesio/core.collection"},
 		{ID: "uesio/core.updatedby", Fields: []adapt.LoadRequestField{
 			{
 				ID: "uesio/core.firstname",
@@ -95,7 +95,7 @@ func runRecentMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 				Operator: "NOT_EQ",
 			},
 			{
-				Field:    "uesio/core.dynamiccollection",
+				Field:    "uesio/core.collection",
 				Operator: "IN",
 				Values:   supportedCollections,
 			},
@@ -151,7 +151,7 @@ func runRecentMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 	}
 
 	return newOp.Collection.Loop(func(item meta.Item, index string) error {
-		collection, err := item.GetField("uesio/core.dynamiccollection")
+		collection, err := item.GetField("uesio/core.collection")
 		if err != nil {
 			return err
 		}

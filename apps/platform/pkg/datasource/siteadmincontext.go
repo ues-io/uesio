@@ -5,6 +5,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/constant"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -52,11 +53,7 @@ func addSiteAdminContext(siteadmin *meta.Site, session *sess.Session, connection
 		return errors.New("this site does not allow administering other sites")
 	}
 	// 2. we should have a profile that allows modifying workspaces
-	if !perms.HasPermission(&meta.PermissionSet{
-		NamedRefs: map[string]bool{
-			"uesio/studio.workspace_admin": true,
-		},
-	}) {
+	if !perms.HasNamedPermission(constant.WorkspaceAdminPerm) {
 		return errors.New("your profile does not allow you to administer sites")
 	}
 
