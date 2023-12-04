@@ -3,12 +3,18 @@ package systemdialect
 import (
 	"encoding/json"
 	"errors"
+	"log/slog"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore/workspacebundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
+
+// In my testing with the CRM app, the variable metadata key size can sway the total size by several 100 to 1000 bytes,
+// so just to err on the cautious size, sticking with a number that averages around 4K
+// (which is about half of the Postgres NOTIFY 8K limit)
+const metadataItemsChunkSize = 90
 
 func runStudioMetadataSaveBot(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 
@@ -41,20 +47,30 @@ func runStudioMetadataSaveBot(op *adapt.SaveOp, connection adapt.Connection, ses
 		return err
 	}
 
-	if len(changedMetadataItemKeys) < 1 {
+	totalChangedKeys := len(changedMetadataItemKeys)
+	if totalChangedKeys < 1 {
 		return nil
 	}
 
-	message := &workspacebundlestore.WorkspaceMetadataChange{
-		AppName:        wsAccessResult.GetAppName(),
-		WorkspaceID:    wsAccessResult.GetWorkspaceID(),
-		CollectionName: op.Metadata.GetFullName(),
-		ChangedItems:   changedMetadataItemKeys,
+	// Chunk the messages to avoid hitting the max Postgres NOTIFY size limit
+	for i := 0; i < totalChangedKeys; i += metadataItemsChunkSize {
+		end := i + metadataItemsChunkSize
+		if end > totalChangedKeys {
+			end = totalChangedKeys
+		}
+		messagePayload, err := json.Marshal(&workspacebundlestore.WorkspaceMetadataChange{
+			AppName:        wsAccessResult.GetAppName(),
+			WorkspaceID:    wsAccessResult.GetWorkspaceID(),
+			CollectionName: op.Metadata.GetFullName(),
+			ChangedItems:   changedMetadataItemKeys[i:end],
+		})
+		if err != nil {
+			return errors.New("unable to serialize workspace metadata changes cache key")
+		}
+		if err = connection.Publish(workspacebundlestore.WorkspaceMetadataChangesChannel, string(messagePayload)); err != nil {
+			slog.Error("unable to invalidate workspace cache: " + err.Error())
+			return errors.New("unable to invalidate workspace cache")
+		}
 	}
-	messagePayload, err := json.Marshal(message)
-	if err != nil {
-		return errors.New("unable to serialize workspace metadata changes cache key")
-	}
-	return connection.Publish(workspacebundlestore.WorkspaceMetadataChangesChannel, string(messagePayload))
-
+	return nil
 }
