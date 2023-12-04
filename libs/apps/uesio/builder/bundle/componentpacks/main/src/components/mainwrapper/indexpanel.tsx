@@ -17,6 +17,7 @@ import IndexSlot from "./indexslot"
 
 const StyleDefaults = Object.freeze({
 	root: [],
+	index: ["pr-1"],
 })
 
 const IndexPanel: definition.UtilityComponent = (props) => {
@@ -88,18 +89,18 @@ const IndexPanel: definition.UtilityComponent = (props) => {
 				onDragEnd={getDragEndHandler(context)}
 				onDragOver={getDragOverHandler(context, dragPath, dropPath)}
 				onDrop={getDropHandler(context, dragPath, dropPath)}
+				className={classes.index}
 			>
-				{
-					<IndexSlot
-						slot={{
-							name: "components",
-							label: "View Contents",
-						}}
-						definition={viewDefinition as component.ViewDefinition}
-						path={""}
-						context={context}
-					/>
-				}
+				<IndexSlot
+					slot={{
+						name: "components",
+						label: "View Contents",
+					}}
+					selectedPath={selectedPath}
+					definition={viewDefinition as component.ViewDefinition}
+					path={""}
+					context={context}
+				/>
 			</div>
 		</ScrollPanel>
 	)

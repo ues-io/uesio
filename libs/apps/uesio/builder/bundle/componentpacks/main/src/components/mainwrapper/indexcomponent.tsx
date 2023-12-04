@@ -3,7 +3,7 @@ import {
 	getBuilderNamespaces,
 	getComponentDef,
 	setSelectedPath,
-	useSelectedComponentPath,
+	useSelectedComponentOrSlotPath,
 } from "../../api/stateapi"
 import ItemTag from "../../utilities/itemtag/itemtag"
 import PropNodeTag from "../../utilities/propnodetag/propnodetag"
@@ -26,7 +26,7 @@ const IndexComponent: definition.UC = (props) => {
 	const NamespaceLabel = component.getUtility("uesio/io.namespacelabel")
 	const classes = styles.useStyleTokens(StyleDefaults, props)
 
-	const selectedPath = useSelectedComponentPath(context)
+	const selectedPath = useSelectedComponentOrSlotPath(context)
 
 	const viewDefId = context.getViewDefId()
 
@@ -54,7 +54,8 @@ const IndexComponent: definition.UC = (props) => {
 				key={slot.name}
 				slot={slot}
 				indent={true}
-				selected={isSelected}
+				parentSelected={isSelected}
+				selectedPath={selectedPath}
 				definition={definition}
 				path={path}
 				context={context}

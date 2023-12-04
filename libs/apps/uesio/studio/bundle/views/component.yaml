@@ -30,8 +30,9 @@ definition:
           value: $Param{namespace}.$Param{componentname}
   # Components are how we describe the layout of our view
   components:
-    - uesio/studio.mainlayout:
-        topbar:
+    - uesio/io.viewlayout:
+        uesio.variant: uesio/studio.main
+        header:
           - uesio/core.view:
               view: uesio/studio.topbar
               uesio.context:
@@ -41,7 +42,7 @@ definition:
                 itemIcon: widgets
                 itemName: $Param{componentname}
                 itemNameSpace: $Param{namespace}
-        leftbar:
+        left:
           - uesio/core.view:
               uesio.context:
                 wire: workspaces
@@ -161,7 +162,6 @@ definition:
                                     uesio.display:
                                       - type: paramValue
                                         param: app
-                                        field: uesio/core.dynamiccollection
                                         operator: NOT_EQUALS
                                         value: $Param{namespace}
                                 - uesio/studio.codefield:
@@ -171,7 +171,6 @@ definition:
                                     uesio.display:
                                       - type: paramValue
                                         param: app
-                                        field: uesio/core.dynamiccollection
                                         operator: EQUALS
                                         value: $Param{namespace}
                             - id: slots
@@ -187,7 +186,6 @@ definition:
                                     uesio.display:
                                       - type: paramValue
                                         param: app
-                                        field: uesio/core.dynamiccollection
                                         operator: NOT_EQUALS
                                         value: $Param{namespace}
                                 - uesio/studio.codefield:
@@ -197,7 +195,6 @@ definition:
                                     uesio.display:
                                       - type: paramValue
                                         param: app
-                                        field: uesio/core.dynamiccollection
                                         operator: EQUALS
                                         value: $Param{namespace}
                             - id: sections
@@ -213,7 +210,6 @@ definition:
                                     uesio.display:
                                       - type: paramValue
                                         param: app
-                                        field: uesio/core.dynamiccollection
                                         operator: NOT_EQUALS
                                         value: $Param{namespace}
                                 - uesio/studio.codefield:
@@ -223,7 +219,6 @@ definition:
                                     uesio.display:
                                       - type: paramValue
                                         param: app
-                                        field: uesio/core.dynamiccollection
                                         operator: EQUALS
                                         value: $Param{namespace}
                             - id: defaultDefinition
@@ -239,7 +234,6 @@ definition:
                                     uesio.display:
                                       - type: paramValue
                                         param: app
-                                        field: uesio/core.dynamiccollection
                                         operator: NOT_EQUALS
                                         value: $Param{namespace}
                                 - uesio/studio.codefield:
@@ -249,7 +243,6 @@ definition:
                                     uesio.display:
                                       - type: paramValue
                                         param: app
-                                        field: uesio/core.dynamiccollection
                                         operator: EQUALS
                                         value: $Param{namespace}
                             - id: declarativeDefinition
@@ -268,7 +261,6 @@ definition:
                                     uesio.display:
                                       - type: paramValue
                                         param: app
-                                        field: uesio/core.dynamiccollection
                                         operator: NOT_EQUALS
                                         value: $Param{namespace}
                                 - uesio/studio.codefield:
@@ -278,7 +270,6 @@ definition:
                                     uesio.display:
                                       - type: paramValue
                                         param: app
-                                        field: uesio/core.dynamiccollection
                                         operator: EQUALS
                                         value: $Param{namespace}
                 - uesio/io.box:

@@ -55,8 +55,9 @@ definition:
           value: true
   # Components are how we describe the layout of our view
   components:
-    - uesio/studio.mainlayout:
-        topbar:
+    - uesio/io.viewlayout:
+        uesio.variant: uesio/studio.main
+        header:
           - uesio/core.view:
               view: uesio/studio.topbar
               uesio.context:
@@ -66,7 +67,7 @@ definition:
                 itemIcon: rule
                 itemName: $Param{permissionsetname}
                 itemNameSpace: $Param{namespace}
-        leftbar:
+        left:
           - uesio/core.view:
               uesio.context:
                 wire: workspaces
@@ -94,7 +95,6 @@ definition:
                                     mode: READ
                                   - type: paramValue
                                     param: app
-                                    field: uesio/core.dynamiccollection
                                     operator: EQUALS
                                     value: $Param{namespace}
                                 signals:
@@ -172,7 +172,6 @@ definition:
                                 uesio.display:
                                   - type: paramValue
                                     param: app
-                                    field: uesio/core.dynamiccollection
                                     operator: EQUALS
                                     value: $Param{namespace}
                 - uesio/io.tabs:

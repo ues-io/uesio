@@ -42,10 +42,7 @@ Accept: application/json
                 "temp1":{
                     "uesio/studio.dialect": "TYPESCRIPT",
                     "uesio/studio.name": "kupkerbot",
-                    "uesio/studio.type": "LISTENER",
-                    "uesio/studio.workspace": {
-                        "uesio/core.id": "{{workspace_id}}"
-                    }
+                    "uesio/studio.type": "LISTENER"
                 }
             },
             "params": {
@@ -60,6 +57,7 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].changes['temp1']['uesio/studio.dialect']" == "TYPESCRIPT"
 jsonpath "$.wires[0].changes['temp1']['uesio/studio.name']" == "kupkerbot"
+jsonpath "$.wires[0].changes['temp1']['uesio/studio.workspace']['uesio/core.id']" == "{{workspace_id}}"
 jsonpath "$.wires[0].changes['temp1']['uesio/core.id']" matches /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 jsonpath "$.wires[0].errors" == null
 [Captures]
@@ -108,7 +106,11 @@ Accept: application/json
                     "field": "uesio/core.recordid",
                     "value": "{{newid}}"
                 }
-            ]
+            ],
+            "params": {
+                "app": "uesio/tests",
+                "workspacename": "dev"
+            }
         }
     ]
 }

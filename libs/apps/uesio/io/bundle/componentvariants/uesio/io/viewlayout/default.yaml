@@ -1,0 +1,42 @@
+name: default
+label: Default
+definition:
+  uesio.styleTokens:
+    root:
+      - grid
+      - lg:grid-cols-[auto_1fr_auto]
+      - lg:grid-rows-[auto_1fr_auto]
+      - md:grid-cols-[auto_1fr]
+      - md:grid-rows-[auto_1fr_auto_auto]
+      - md:h-full
+      - grid-rows-[auto_auto_1fr_auto_auto]
+      - min-h-full
+    header:
+      - lg:col-span-3
+      - md:col-span-2
+    left:
+      - md:h-full
+      - md:overflow-auto
+      - md:col-start-1
+      - md:col-end-1
+      - md:w-72
+    content:
+      - lg:h-full
+      - lg:overflow-auto
+      - lg:col-start-2
+      - lg:col-end-2
+      - lg:p-10
+      - "[container-type:inline-size]"
+      - h-max
+      - p-4
+    right:
+      - lg:h-full
+      - lg:overflow-auto
+      - lg:col-start-3
+      - lg:col-end-3
+      - lg:w-72
+      - md:col-span-2
+    footer:
+      - lg:col-span-3
+      - md:col-span-2
+public: true

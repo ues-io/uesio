@@ -4,20 +4,27 @@ import (
 	"errors"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 func runFieldBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 
-	depMap := MetadataDependencyMap{}
-
-	workspaceID, err := GetWorkspaceIDFromParams(request.Params, connection, session)
-	if err != nil {
-		return err
+	// early return if we only have deletes
+	if !request.HasChanges() {
+		return nil
 	}
 
-	err = request.LoopChanges(func(change *adapt.ChangeItem) error {
+	wsAccessResult := datasource.RequestWorkspaceWriteAccess(request.Params, connection, session)
+	if !wsAccessResult.HasWriteAccess() {
+		return wsAccessResult.Error()
+	}
+	workspaceID := wsAccessResult.GetWorkspaceID()
+
+	depMap := MetadataDependencyMap{}
+
+	err := request.LoopChanges(func(change *adapt.ChangeItem) error {
 
 		ftype, err := change.GetFieldAsString("uesio/studio.type")
 		if err != nil {

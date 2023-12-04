@@ -137,13 +137,14 @@ definition:
       - signal: wire/CREATE_RECORD
         wire: newbundlelistinghistory
   components:
-    - uesio/studio.mainlayout:
-        topbar:
+    - uesio/io.viewlayout:
+        uesio.variant: uesio/studio.main
+        header:
           - uesio/core.view:
               view: uesio/studio.topbar
               uesio.context:
                 wire: sites
-        leftbar:
+        left:
           - uesio/core.view:
               view: uesio/studio.sitenav
               uesio.context:

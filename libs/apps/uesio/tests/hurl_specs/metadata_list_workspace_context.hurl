@@ -61,7 +61,7 @@ GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/metadata/types/fields/li
 Accept: application/json
 HTTP 200
 [Asserts]
-jsonpath "$[*]" count == 14
+jsonpath "$[*]" count == 15
 # Spot check a uesio/tests field
 jsonpath "$['uesio/tests.genus'].key" == "uesio/tests.genus"
 jsonpath "$['uesio/tests.genus'].namespace" == "uesio/tests"

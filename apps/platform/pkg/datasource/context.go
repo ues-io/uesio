@@ -23,12 +23,17 @@ func GetParamsFromSession(session *sess.Session) map[string]string {
 }
 
 func GetContextSessionFromParams(params map[string]string, connection adapt.Connection, session *sess.Session) (*sess.Session, error) {
-
+	workspaceID := params["workspaceid"]
 	workspace := params["workspacename"]
 	site := params["sitename"]
-	if workspace == "" && site == "" {
-		return nil, errors.New("no workspace name or site name parameter provided")
+	if workspace == "" && site == "" && workspaceID == "" {
+		return nil, errors.New("no workspacename, sitename, or workspaceid parameter provided")
 	}
+
+	if workspaceID != "" {
+		return AddWorkspaceContextByID(workspaceID, session, connection)
+	}
+
 	app := params["app"]
 	if app == "" {
 		return nil, errors.New("no app parameter provided")
