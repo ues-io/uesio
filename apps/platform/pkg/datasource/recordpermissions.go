@@ -1,13 +1,13 @@
 package datasource
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
 
 type tokenFunc func(meta.Item) (string, bool, error)
@@ -138,7 +138,7 @@ func handleStandardChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, sess
 	}
 
 	if !hasToken && !userCanModifyAllRecords {
-		return errors.New("User does not have access to write to this record: " + change.UniqueKey + " of collection: " + change.Metadata.GetFullName())
+		return exceptions.NewForbiddenException("User does not have access to write to this record: " + change.UniqueKey + " of collection: " + change.Metadata.GetFullName())
 	}
 
 	return nil
@@ -221,7 +221,7 @@ func handleAccessFieldChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, m
 	}
 
 	if !hasToken {
-		return errors.New("User does not have parent access to write to this record: " + change.UniqueKey + " of collection: " + change.Metadata.GetFullName())
+		return exceptions.NewForbiddenException("User does not have parent access to write to this record: " + change.UniqueKey + " of collection: " + change.Metadata.GetFullName())
 	}
 
 	return nil

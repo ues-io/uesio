@@ -1,8 +1,6 @@
 package controller
 
 import (
-	"encoding/json"
-	"log/slog"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -12,32 +10,19 @@ import (
 )
 
 func CreateLogin(w http.ResponseWriter, r *http.Request) {
-
 	session := middleware.GetSession(r)
-
-	var payload map[string]interface{}
-	err := json.NewDecoder(r.Body).Decode(&payload)
+	payload, err := getParamsFromRequestBody(r)
 	if err != nil {
-		msg := "Create Login failed: " + err.Error()
-		slog.Error(msg)
-		http.Error(w, msg, http.StatusInternalServerError)
+		HandleError(w, err)
 		return
 	}
-
 	signupMethod, err := auth.GetSignupMethod(getSignupMethodID(mux.Vars(r)), session)
 	if err != nil {
-		msg := "Create Login failed: " + err.Error()
-		slog.Error(msg)
-		http.Error(w, msg, http.StatusInternalServerError)
+		HandleError(w, err)
 		return
 	}
-
-	err = auth.CreateLogin(signupMethod, payload, session)
-	if err != nil {
-		msg := "Create Login failed: " + err.Error()
-		slog.Error(msg)
-		http.Error(w, msg, http.StatusInternalServerError)
+	if err = auth.CreateLogin(signupMethod, payload, session); err != nil {
+		HandleError(w, err)
 		return
 	}
-
 }

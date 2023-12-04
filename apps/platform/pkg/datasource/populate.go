@@ -8,6 +8,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
 
 type ChangeProcessor func(change *adapt.ChangeItem) *adapt.SaveError
@@ -118,7 +119,7 @@ func Populate(op *adapt.SaveOp, connection adapt.Connection, session *sess.Sessi
 		// Enforce field-level security for save
 		return change.Loop(func(field string, value interface{}) error {
 			if !session.GetContextPermissions().HasFieldEditPermission(collectionKey, field) {
-				return fmt.Errorf("Profile %s does not have edit access to the %s field.", session.GetContextProfile(), field)
+				return exceptions.NewForbiddenException(fmt.Sprintf("Profile %s does not have edit access to the %s field.", session.GetContextProfile(), field))
 			}
 			return nil
 		})

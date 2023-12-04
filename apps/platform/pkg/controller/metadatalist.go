@@ -1,12 +1,11 @@
 package controller
 
 import (
-	"errors"
-	"log/slog"
 	"net/http"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 
 	"github.com/gorilla/mux"
 
@@ -61,7 +60,7 @@ func getMetadataList(metadatatype, namespace, grouping string, session *sess.Ses
 		}
 	}
 
-	err = collection.Loop(func(item meta.Item, _ string) error {
+	if err = collection.Loop(func(item meta.Item, _ string) error {
 		bundleable := item.(meta.BundleableItem)
 		key := bundleable.GetKey()
 		ns := bundleable.GetNamespace()
@@ -72,15 +71,14 @@ func getMetadataList(metadatatype, namespace, grouping string, session *sess.Ses
 
 		appInfo, ok := appData[ns]
 		if !ok {
-			return errors.New("Could not find app info for " + ns)
+			return exceptions.NewNotFoundException("Could not find app info for " + ns)
 		}
 		collectionKeyMap[key] = datasource.MetadataResponse{
 			NamespaceInfo: appInfo,
 			Key:           key,
 		}
 		return nil
-	})
-	if err != nil {
+	}); err != nil {
 		return nil, err
 	}
 
@@ -98,8 +96,7 @@ func MetadataList(w http.ResponseWriter, r *http.Request) {
 
 	collectionKeyMap, err := getMetadataList(metadatatype, namespace, grouping, session)
 	if err != nil {
-		slog.Error(err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		HandleError(w, err)
 		return
 	}
 

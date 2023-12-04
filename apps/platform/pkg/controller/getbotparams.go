@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 
 	"github.com/gorilla/mux"
 
@@ -54,7 +55,7 @@ func GetBotParams(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 
 	if metadataType != "GENERATOR" && metadataType != "LISTENER" && metadataType != "RUNACTION" {
-		http.Error(w, "Wrong bot type", http.StatusBadRequest)
+		HandleError(w, exceptions.NewBadRequestException("Wrong bot type"))
 		return
 	}
 
@@ -69,7 +70,8 @@ func GetBotParams(w http.ResponseWriter, r *http.Request) {
 
 	err := bundle.Load(robot, session, nil)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		HandleError(w, err)
+		return
 	}
 
 	file.RespondJSON(w, r, getParamResponse(robot.Params))

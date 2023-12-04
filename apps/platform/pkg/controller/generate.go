@@ -2,8 +2,6 @@ package controller
 
 import (
 	"archive/zip"
-	"encoding/json"
-	"log/slog"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -19,31 +17,19 @@ func Generate(w http.ResponseWriter, r *http.Request) {
 	namespace := vars["namespace"]
 	name := vars["name"]
 
-	var params map[string]interface{}
-	err := json.NewDecoder(r.Body).Decode(&params)
+	params, err := getParamsFromRequestBody(r)
 	if err != nil {
-		msg := "Invalid request format: " + err.Error()
-		slog.Error(msg)
-		http.Error(w, msg, http.StatusBadRequest)
+		HandleError(w, err)
 		return
 	}
-
 	session := middleware.GetSession(r)
+	zipWriter := zip.NewWriter(w)
 
-	zipwriter := zip.NewWriter(w)
-
-	err = datasource.CallGeneratorBot(retrieve.NewWriterCreator(zipwriter.Create), namespace, name, params, nil, session)
-	if err != nil {
-		slog.Error(err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	if err := datasource.CallGeneratorBot(retrieve.NewWriterCreator(zipWriter.Create), namespace, name, params, nil, session); err != nil {
+		zipWriter.Close()
+		HandleError(w, err)
 		return
 	}
-
-	err = zipwriter.Close()
-	if err != nil {
-		slog.Error(err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	zipWriter.Close()
 
 }

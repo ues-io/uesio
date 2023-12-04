@@ -10,9 +10,9 @@ func GetStatusCodeForError(err error) int {
 	switch err.(type) {
 	case *UnauthorizedException:
 		return http.StatusUnauthorized
-	case *BadRequestException:
+	case *BadRequestException, *InvalidParamException, *ExecutionException:
 		return http.StatusBadRequest
-	case *NotFoundException:
+	case *NotFoundException, *SystemBotNotFoundException:
 		return http.StatusNotFound
 	case *ForbiddenException:
 		return http.StatusForbidden

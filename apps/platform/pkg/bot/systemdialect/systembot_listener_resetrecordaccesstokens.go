@@ -3,19 +3,19 @@ package systemdialect
 import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
 
 func runResetRecordAccessTokensListenerBot(params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
 	paramItems := (adapt.Item)(params)
 	collectionName, err := paramItems.GetFieldAsString("collection")
 	if err != nil {
-		return nil, meta.NewParamError("must provide a collection to reset record tokens", "collection")
+		return nil, exceptions.NewInvalidParamException("must provide a collection to reset record tokens", "collection")
 	}
 	app, err := paramItems.GetFieldAsString("app")
 	if err != nil {
-		return nil, meta.NewParamError("must provide an app to reset record tokens", "app")
+		return nil, exceptions.NewInvalidParamException("must provide an app to reset record tokens", "app")
 	}
 	siteName, _ := paramItems.GetFieldAsString("sitename")
 	workspaceName, _ := paramItems.GetFieldAsString("workspacename")

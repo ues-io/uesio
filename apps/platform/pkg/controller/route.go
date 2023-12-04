@@ -98,8 +98,8 @@ func handleApiErrorRoute(w http.ResponseWriter, r *http.Request, path string, se
 func handleApiNotFoundRoute(w http.ResponseWriter, r *http.Request, path string, session *sess.Session) {
 	routingMergeData, err := getRouteAPIResult(getNotFoundRoute(path), sess.GetAnonSession(session.GetSite()))
 	if err != nil {
-		slog.Error(err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		HandleError(w, err)
+		return
 	}
 	file.RespondJSON(w, r, routingMergeData)
 }
@@ -111,7 +111,7 @@ func handleRedirectAPIRoute(w http.ResponseWriter, r *http.Request, route *meta.
 		Session: session,
 	})
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		HandleError(w, err)
 		return
 	}
 

@@ -13,6 +13,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/integ/stripe"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
 
 type BotFunc func(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error
@@ -112,7 +113,7 @@ func (b *SystemDialect) CallBot(bot *meta.Bot, params map[string]interface{}, co
 	namespaces := session.GetContextNamespaces()
 
 	if !slices.Contains(namespaces, botNamespace) {
-		return nil, meta.NewBotAccessError(fmt.Sprintf(datasource.BotAccessErrorMessage, bot.GetKey()))
+		return nil, exceptions.NewForbiddenException(fmt.Sprintf(datasource.BotAccessErrorMessage, bot.GetKey()))
 	}
 
 	switch bot.GetKey() {
@@ -131,7 +132,7 @@ func (b *SystemDialect) CallBot(bot *meta.Bot, params map[string]interface{}, co
 	}
 
 	if botFunction == nil {
-		return nil, datasource.NewSystemBotNotFoundError()
+		return nil, exceptions.NewSystemBotNotFoundException()
 	}
 
 	return botFunction(params, connection, session)
@@ -155,7 +156,7 @@ func (b *SystemDialect) RunIntegrationActionBot(bot *meta.Bot, ic *adapt.Integra
 	}
 
 	if botFunction == nil {
-		return nil, datasource.NewSystemBotNotFoundError()
+		return nil, exceptions.NewSystemBotNotFoundException()
 	}
 
 	return botFunction(bot, ic, actionName, params)
@@ -181,7 +182,7 @@ func (b *SystemDialect) RouteBot(bot *meta.Bot, route *meta.Route, session *sess
 	}
 
 	if botFunction == nil {
-		return nil, datasource.NewSystemBotNotFoundError()
+		return nil, exceptions.NewSystemBotNotFoundException()
 	}
 
 	return botFunction(route, session)
@@ -215,7 +216,7 @@ func (b *SystemDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adap
 	}
 
 	if botFunction == nil {
-		return datasource.NewSystemBotNotFoundError()
+		return exceptions.NewSystemBotNotFoundException()
 	}
 
 	return botFunction(op, connection, session)
@@ -234,7 +235,7 @@ func (b *SystemDialect) SaveBot(bot *meta.Bot, op *adapt.SaveOp, connection adap
 	}
 
 	if botFunction == nil {
-		return datasource.NewSystemBotNotFoundError()
+		return exceptions.NewSystemBotNotFoundException()
 	}
 
 	return botFunction(op, connection, session)

@@ -3,10 +3,12 @@ package controller
 import (
 	"net/http"
 
-	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"gopkg.in/yaml.v3"
 
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
+
 	"github.com/gorilla/mux"
+
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
@@ -46,13 +48,12 @@ func GetViewParams(w http.ResponseWriter, r *http.Request) {
 	namespace := vars["namespace"]
 	name := vars["name"]
 	session := middleware.GetSession(r)
-
 	view := meta.NewBaseView(namespace, name)
 
-	err := bundle.Load(view, session, nil)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	if err := bundle.Load(view, session, nil); err != nil {
+		HandleError(w, err)
+		return
+	} else {
+		file.RespondJSON(w, r, getViewParamResponse((*yaml.Node)(view.Definition)))
 	}
-
-	file.RespondJSON(w, r, getViewParamResponse((*yaml.Node)(view.Definition)))
 }

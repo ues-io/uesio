@@ -15,6 +15,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
 
 type TSDialect struct {
@@ -187,7 +188,7 @@ func (b *TSDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adapt.Co
 	}
 	loadErrors := botAPI.GetLoadErrors()
 	if len(loadErrors) > 0 {
-		return meta.NewBotExecutionError(strings.Join(loadErrors, ", "))
+		return exceptions.NewExecutionException(strings.Join(loadErrors, ", "))
 	}
 	return nil
 }
@@ -208,7 +209,7 @@ func (b *TSDialect) RunIntegrationActionBot(bot *meta.Bot, ic *adapt.Integration
 		return nil, err
 	}
 	if len(botAPI.Errors) > 0 {
-		err = &meta.BotExecutionError{Message: strings.Join(botAPI.Errors, ", ")}
+		err = exceptions.NewExecutionException(strings.Join(botAPI.Errors, ", "))
 	}
 	return botAPI.Results, err
 }

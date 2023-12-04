@@ -1,10 +1,10 @@
 package controller
 
 import (
-	"log/slog"
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -19,8 +19,7 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 	site := session.GetSite()
 	publicUser, err := auth.GetPublicUser(site, nil)
 	if err != nil {
-		slog.Error(err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		HandleError(w, err)
 		return
 	}
 	session = sess.Logout(w, r, publicUser, session)
@@ -32,8 +31,7 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 	}
 	redirectNamespace, redirectRoute, err := meta.ParseKey(loginRoute)
 	if err != nil {
-		slog.Error(err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		HandleError(w, exceptions.NewBadRequestException("invalid login route: "+loginRoute))
 		return
 	}
 

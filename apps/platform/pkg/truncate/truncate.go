@@ -4,8 +4,8 @@ import (
 	"errors"
 
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
 
 func TruncateWorkspaceData(tenantID string, session *sess.Session) error {
@@ -16,15 +16,15 @@ func TruncateWorkspaceData(tenantID string, session *sess.Session) error {
 	}
 
 	if tenantID == "" {
-		return meta.NewParamError("required parameter not provided in session", "tenant id")
+		return exceptions.NewInvalidParamException("required parameter not provided in session", "tenant id")
 	}
 
 	if tenantID == "site:uesio/studio:prod" {
-		return meta.NewBotAccessError("cannot truncate Studio site data")
+		return exceptions.NewForbiddenException("cannot truncate Studio site data")
 	}
 
 	if !session.GetSitePermissions().HasNamedPermission("uesio/studio.workspace_admin") {
-		return meta.NewBotAccessError("you must be a Studio workspace admin to truncate workspace data")
+		return exceptions.NewForbiddenException("you must be a Studio workspace admin to truncate workspace data")
 	}
 	err = connection.BeginTransaction()
 	if err != nil {

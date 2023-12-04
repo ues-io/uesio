@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"log/slog"
 	"net/http"
 	"net/url"
 	"strings"
@@ -11,6 +10,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
 
 func getUesioOperatorFromPostgrestOperator(pgOp string) string {
@@ -111,9 +111,7 @@ func DeleteRecordApi(w http.ResponseWriter, r *http.Request) {
 	_, err := datasource.Load([]*adapt.LoadOp{op}, session, nil)
 
 	if err != nil {
-		msg := "Error querying collection records to delete: " + err.Error()
-		slog.Error(msg)
-		http.Error(w, msg, http.StatusBadRequest)
+		HandleError(w, exceptions.NewBadRequestException("Error querying collection records to delete: "+err.Error()))
 		return
 	}
 
@@ -125,12 +123,8 @@ func DeleteRecordApi(w http.ResponseWriter, r *http.Request) {
 			Deletes:    collection,
 			Params:     params,
 		}}
-		err = datasource.Save(saveRequests, session)
-		err = datasource.HandleSaveRequestErrors(saveRequests, err)
-		if err != nil {
-			msg := "Delete failed: " + err.Error()
-			slog.Error(msg)
-			http.Error(w, msg, http.StatusBadRequest)
+		if err = datasource.HandleSaveRequestErrors(saveRequests, datasource.Save(saveRequests, session)); err != nil {
+			HandleError(w, exceptions.NewBadRequestException("Delete failed: "+err.Error()))
 			return
 		}
 	}
