@@ -14,25 +14,15 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
-
-func getMissingHomeRoute() *meta.Route {
-	return &meta.Route{
-		ViewRef: "uesio/core.missinghome",
-		BundleableBase: meta.BundleableBase{
-			Namespace: "uesio/core",
-		},
-		ThemeRef: "uesio/core.default",
-		Title:    "Missing home route",
-	}
-}
 
 func GetHomeRoute(session *sess.Session) (*meta.Route, error) {
 	homeRoute := session.GetSite().GetAppBundle().HomeRoute
 
 	route, err := meta.NewRoute(homeRoute)
 	if err != nil {
-		return getMissingHomeRoute(), nil
+		return nil, exceptions.NewNotFoundException("It appears that the developer of this site has not specified a home page.")
 	}
 	err = bundle.Load(route, session, nil)
 	if err != nil {

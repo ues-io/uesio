@@ -15,14 +15,14 @@ definition:
             - text-slate-700
         items:
           - uesio/io.text:
-              text: "🤯"
+              text: $Param{icon}
               uesio.styleTokens:
                 root:
                   - p-8
                   - text-8xl
               element: div
           - uesio/io.text:
-              text: "Error"
+              text: $Param{title}
               uesio.styleTokens:
                 root:
                   - text-6xl
@@ -33,7 +33,27 @@ definition:
                 root:
                   - text-xl
               element: div
+          - uesio/io.button:
+              uesio.display:
+                - type: paramValue
+                  param: displayButton
+                  operator: EQUALS
+                  value: "true"
+              uesio.variant: uesio/io.nav
+              text: "Go To Login Page"
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: "login"
   params:
     error:
+      type: TEXT
+      required: true
+    title:
+      type: TEXT
+      required: true
+    icon:
+      type: TEXT
+      required: true
+    displayButton:
       type: TEXT
       required: true
