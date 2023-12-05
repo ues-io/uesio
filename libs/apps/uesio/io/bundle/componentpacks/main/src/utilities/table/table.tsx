@@ -20,11 +20,13 @@ interface TableUtilityProps<R, C extends TableColumn> {
 	rowNumberFunc?: (index: number) => string
 	defaultActionFunc?: (row: R) => void
 	rowActionsFunc?: (row: R) => ReactNode
+	drawerRendererFunc?: (row: R) => ReactNode
 }
 
 const StyleDefaults = Object.freeze({
 	root: [],
 	table: [],
+	drawer: [],
 	header: [],
 	headerCell: [],
 	headerCellInner: [],
@@ -51,6 +53,7 @@ const Table: definition.UtilityComponent<
 		onAllSelectChange,
 		defaultActionFunc,
 		rowActionsFunc,
+		drawerRendererFunc,
 		columnHeaderFunc,
 		columnMenuFunc,
 		isDeletedFunc,
@@ -148,48 +151,67 @@ const Table: definition.UtilityComponent<
 					{rows.map((row, index) => {
 						const isSelected = isSelectedFunc?.(row, index) || false
 						return (
-							<tr
-								onClick={
-									defaultActionFunc
-										? () => defaultActionFunc(row)
-										: undefined
-								}
-								className={styles.cx(
-									classes.row,
-									isDeletedFunc?.(row) && classes.rowDeleted
-								)}
-								key={index + 1}
-							>
-								{(rowNumberFunc || isSelectedFunc) && (
-									<td
-										className={styles.cx(
-											classes.cell,
-											classes.rowNumberCell,
-											isSelected && "isselected"
-										)}
-										key="rownumbers"
-									>
-										{getRowNumberCell(
-											row,
-											index,
-											isSelected
-										)}
-									</td>
-								)}
-								{columns.map((column, i) => (
-									<td key={i} className={classes.cell}>
-										{cellFunc(column, row, i)}
-									</td>
-								))}
-								{rowActionsFunc && (
-									<td
-										key="rowactions"
-										className={classes.cell}
-									>
-										{rowActionsFunc(row)}
-									</td>
-								)}
-							</tr>
+							<>
+								<tr
+									onClick={
+										defaultActionFunc
+											? () => defaultActionFunc(row)
+											: undefined
+									}
+									className={styles.cx(
+										classes.row,
+										isDeletedFunc?.(row) &&
+											classes.rowDeleted
+									)}
+									key={index + 1}
+								>
+									{(rowNumberFunc || isSelectedFunc) && (
+										<td
+											className={styles.cx(
+												classes.cell,
+												classes.rowNumberCell,
+												isSelected && "isselected"
+											)}
+											key="rownumbers"
+										>
+											{getRowNumberCell(
+												row,
+												index,
+												isSelected
+											)}
+										</td>
+									)}
+									{columns.map((column, i) => (
+										<td key={i} className={classes.cell}>
+											{cellFunc(column, row, i)}
+										</td>
+									))}
+									{rowActionsFunc && (
+										<td
+											key="rowactions"
+											className={classes.cell}
+										>
+											{rowActionsFunc(row)}
+										</td>
+									)}
+								</tr>
+								{(() => {
+									if (!drawerRendererFunc) return null
+									const DrawerComponent =
+										drawerRendererFunc?.(row)
+									if (!DrawerComponent) return null
+									return (
+										<tr className={styles.cx(classes.row)}>
+											<td
+												colSpan={rows.length}
+												className={classes.drawer}
+											>
+												{drawerRendererFunc(row)}
+											</td>
+										</tr>
+									)
+								})()}
+							</>
 						)
 					})}
 				</tbody>

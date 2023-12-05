@@ -74,4 +74,6 @@ definition:
       - text-slate-500
       - text-sm
       - font-light
+    drawer:
+      - p-2
 public: true

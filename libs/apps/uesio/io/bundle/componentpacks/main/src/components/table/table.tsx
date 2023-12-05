@@ -36,6 +36,7 @@ type TableDefinition = {
 	wire: string
 	mode: context.FieldMode
 	columns: ColumnDefinition[]
+	drawer: definition.DefinitionList
 	rowactions?: RowAction[]
 	recordDisplay?: component.DisplayCondition[]
 	rownumbers?: boolean
@@ -70,17 +71,33 @@ type ColumnDefinition = {
 
 type RecordContext = component.ItemContext<wire.WireRecord>
 
+const openDrawer: signal.ComponentSignalDescriptor<{
+	drawerState: Record<string, boolean>
+}> = {
+	dispatcher: (state, signal, context) => {
+		console.log({ signal })
+
+		state.drawerState = {
+			...state.drawerState,
+			[context.merge(signal.recordId as string) as string]: true,
+		}
+	},
+}
+
 const signals: Record<string, signal.ComponentSignalDescriptor> = {
 	TOGGLE_MODE: toggleMode,
 	SET_EDIT_MODE: setEditMode,
 	SET_READ_MODE: setReadMode,
 	NEXT_PAGE: nextPage,
 	PREV_PAGE: prevPage,
+	OPEN_DRAWER: openDrawer,
 }
 
 const StyleDefaults = Object.freeze({
 	root: [],
 })
+
+const getDrawerId = (r: RecordContext) => r.item.getIdFieldValue() || ""
 
 const Table: definition.UC<TableDefinition> = (props) => {
 	const { path, context, definition, componentType } = props
@@ -136,6 +153,10 @@ const Table: definition.UC<TableDefinition> = (props) => {
 		Record<string, boolean>
 	>("selected", componentId, {})
 
+	const [drawerOpen, setDrawerOpen] = api.component.useStateSlice<
+		Record<string, boolean>
+	>("drawerState", componentId, {})
+
 	if (!wire || !mode || !path || currentPage === undefined) return null
 
 	const classes = styles.useStyleTokens(StyleDefaults, props)
@@ -159,7 +180,13 @@ const Table: definition.UC<TableDefinition> = (props) => {
 				)
 				handler?.()
 		  }
-		: undefined
+		: (recordContext: RecordContext) => {
+				onDrawerChange?.(
+					recordContext,
+					0,
+					!isRowOpenFunc?.(recordContext)
+				)
+		  }
 
 	const rowActionsFunc = otherActions.length
 		? (recordContext: RecordContext) => (
@@ -194,6 +221,27 @@ const Table: definition.UC<TableDefinition> = (props) => {
 					</Group>
 				</FieldWrapper>
 		  )
+		: undefined
+
+	const isRowOpenFunc = definition.drawer
+		? (recordContext: RecordContext) =>
+				!!drawerOpen?.[getDrawerId(recordContext)]
+		: undefined
+
+	const drawerRendererFunc = definition.drawer
+		? (recordContext: RecordContext) => {
+				if (!(isRowOpenFunc && isRowOpenFunc(recordContext)))
+					return null
+				return (
+					<component.Slot
+						definition={definition}
+						componentType={componentType}
+						listName="drawer"
+						path={`${path}["drawer"]`}
+						context={recordContext.context}
+					/>
+				)
+		  }
 		: undefined
 
 	const columnHeaderFunc = (column: ColumnDefinition) =>
@@ -303,6 +351,27 @@ const Table: definition.UC<TableDefinition> = (props) => {
 		  }
 		: undefined
 
+	const onDrawerChange = definition.drawer
+		? (
+				recordContext: RecordContext,
+				index: number,
+				isDrawerOpen: boolean
+		  ) => {
+				const recordId = getDrawerId(recordContext)
+				if (!recordId) return
+				setDrawerOpen(
+					isDrawerOpen
+						? {
+								...drawerOpen,
+								...{
+									[recordId]: true,
+								},
+						  }
+						: omit(drawerOpen, recordId)
+				)
+		  }
+		: undefined
+
 	const isDeletedFunc = (recordContext: RecordContext) =>
 		recordContext.item.isDeleted()
 
@@ -325,6 +394,8 @@ const Table: definition.UC<TableDefinition> = (props) => {
 				}
 				defaultActionFunc={defaultActionsFunc}
 				rowActionsFunc={rowActionsFunc}
+				// Render func below in every row and return null if it shouldn't be open
+				drawerRendererFunc={drawerRendererFunc}
 				columnHeaderFunc={columnHeaderFunc}
 				columnMenuFunc={columnMenuFunc}
 				cellFunc={cellFunc}
