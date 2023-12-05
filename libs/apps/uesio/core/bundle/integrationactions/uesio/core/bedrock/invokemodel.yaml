@@ -1,3 +1,12 @@
 name: invokemodel
 label: Invoke Model
 public: true
+params:
+  - name: model
+    label: Model
+    type: TEXT
+    required: true
+  - name: input
+    label: Input
+    type: TEXT
+    required: true

@@ -1,3 +1,48 @@
 name: sendemail
 label: Send Email
 public: true
+params:
+  - name: subject
+    label: Subject
+    type: TEXT
+  - name: to
+    label: To
+    type: LIST
+    subtype: TEXT
+    required: true
+  - name: contentType
+    label: Content Type
+    type: SELECT
+    selectList: emailcontenttype
+  - name: from
+    label: From
+    type: TEXT
+  - name: cc
+    label: CC
+    type: LIST
+    subtype: TEXT
+  - name: bcc
+    label: BCC
+    type: LIST
+    subtype: TEXT
+  - name: plainBody
+    label: Plain text body
+    type: TEXTAREA
+    displayConditions:
+      - name: contentType
+        operator: EQUALS
+        value: text/plain
+  - name: templateId
+    label: SendGrid Template ID
+    type: TEXT
+    displayConditions:
+      - name: contentType
+        operator: EQUALS
+        value: text/html
+  - name: dynamicTemplateData
+    label: SendGrid Template data
+    type: MAP
+    displayConditions:
+      - name: contentType
+        operator: EQUALS
+        value: text/html
