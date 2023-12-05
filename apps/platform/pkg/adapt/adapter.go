@@ -32,4 +32,3 @@ func GetAdapter(adapterType string) (Adapter, error) {
 func RegisterAdapter(name string, adapter Adapter) {
 	adapterMap[name] = adapter
 }
-
