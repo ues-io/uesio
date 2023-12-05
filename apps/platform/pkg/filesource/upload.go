@@ -6,7 +6,6 @@ import (
 	"mime"
 	"path"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -84,7 +83,7 @@ func Upload(ops []*FileUploadOp, connection wire.Connection, session *sess.Sessi
 	for collectionKey := range idMaps {
 
 		idMap := idMaps[collectionKey]
-		err := adapt.LoadLooper(connection, collectionKey, idMap, []wire.LoadRequestField{
+		err := datasource.LoadLooper(connection, collectionKey, idMap, []wire.LoadRequestField{
 			{
 				ID: wire.ID_FIELD,
 			},

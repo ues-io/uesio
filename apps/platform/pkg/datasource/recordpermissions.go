@@ -3,7 +3,6 @@ package datasource
 import (
 	"fmt"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
@@ -12,6 +11,22 @@ import (
 )
 
 type tokenFunc func(meta.Item) (string, bool, error)
+
+func getChallengeCollection(metadata *wire.MetadataCache, collectionMetadata *wire.CollectionMetadata) (*wire.CollectionMetadata, error) {
+	if collectionMetadata.AccessField == "" {
+		return collectionMetadata, nil
+	}
+	fieldMetadata, err := collectionMetadata.GetField(collectionMetadata.AccessField)
+	if err != nil {
+		return nil, err
+	}
+	refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
+	if err != nil {
+		return nil, err
+	}
+
+	return getChallengeCollection(metadata, refCollectionMetadata)
+}
 
 func getAccessFields(collectionMetadata *wire.CollectionMetadata, metadata *wire.MetadataCache) ([]wire.LoadRequestField, error) {
 	if collectionMetadata.AccessField == "" {
@@ -91,7 +106,7 @@ func loadInAccessFieldData(op *wire.SaveOp, connection wire.Connection, session 
 		return err
 	}
 
-	return adapt.HandleReferences(connection, referencedCollections, session, false)
+	return HandleReferences(connection, referencedCollections, session, false)
 }
 
 func handleStandardChange(change *wire.ChangeItem, tokenFuncs []tokenFunc, session *sess.Session) error {
@@ -244,7 +259,7 @@ func GenerateRecordChallengeTokens(op *wire.SaveOp, connection wire.Connection, 
 
 	metadata := connection.GetMetadata()
 
-	challengeMetadata, err := adapt.GetChallengeCollection(metadata, op.Metadata)
+	challengeMetadata, err := getChallengeCollection(metadata, op.Metadata)
 	if err != nil {
 		return err
 	}

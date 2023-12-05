@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource/fieldvalidations"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -151,13 +150,13 @@ func SaveOp(op *wire.SaveOp, connection wire.Connection, session *sess.Session) 
 
 	permissions := session.GetContextPermissions()
 
-	err := adapt.FetchReferences(connection, op, session)
+	err := FetchReferences(connection, op, session)
 	if err != nil {
 		return HandleErrorAndAddToSaveOp(op, err)
 	}
 
 	if !isExternalIntegrationSave {
-		err = adapt.HandleUpsertLookup(connection, op, session)
+		err = HandleUpsertLookup(connection, op, session)
 		if err != nil {
 			return HandleErrorAndAddToSaveOp(op, err)
 		}
@@ -176,7 +175,7 @@ func SaveOp(op *wire.SaveOp, connection wire.Connection, session *sess.Session) 
 	}
 
 	if !isExternalIntegrationSave {
-		err = adapt.HandleOldValuesLookup(connection, op, session)
+		err = HandleOldValuesLookup(connection, op, session)
 		if err != nil {
 			return HandleErrorAndAddToSaveOp(op, err)
 		}
@@ -203,14 +202,14 @@ func SaveOp(op *wire.SaveOp, connection wire.Connection, session *sess.Session) 
 	}
 
 	// Fetch References again.
-	err = adapt.FetchReferences(connection, op, session)
+	err = FetchReferences(connection, op, session)
 	if err != nil {
 		return HandleErrorAndAddToSaveOp(op, err)
 	}
 
 	// Set the unique keys for the last time
 	err = op.LoopChanges(func(change *wire.ChangeItem) error {
-		return adapt.SetUniqueKey(change)
+		return SetUniqueKey(change)
 	})
 	if err != nil {
 		return HandleErrorAndAddToSaveOp(op, err)

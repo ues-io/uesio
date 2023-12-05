@@ -5,10 +5,10 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/constant"
+	"github.com/thecloudmasters/uesio/pkg/formula"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -279,7 +279,7 @@ func ProcessFieldsMetadata(fields map[string]*wire.FieldMetadata, collectionKey 
 		}
 
 		if fieldMetadata.IsFormula && fieldMetadata.FormulaMetadata != nil {
-			fieldDeps, err := adapt.GetFormulaFields(fieldMetadata.FormulaMetadata.Expression)
+			fieldDeps, err := formula.GetFormulaFields(fieldMetadata.FormulaMetadata.Expression)
 			if err != nil {
 				return err
 			}

@@ -10,6 +10,8 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/constant"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/formula"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
@@ -244,7 +246,7 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 	defer rows.Close()
 
 	op.HasMoreBatches = false
-	formulaPopulations := adapt.GetFormulaFunction(formulaFields, collectionMetadata)
+	formulaPopulations := formula.GetFormulaFunction(formulaFields, collectionMetadata)
 	index := 0
 	for rows.Next() {
 		if op.BatchSize == index {
@@ -298,10 +300,10 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 
 	op.BatchNumber++
 
-	err = adapt.HandleReferencesGroup(c, op.Collection, referencedGroupCollections, session)
+	err = datasource.HandleReferencesGroup(c, op.Collection, referencedGroupCollections, session)
 	if err != nil {
 		return err
 	}
 
-	return adapt.HandleReferences(c, referencedCollections, session, true)
+	return datasource.HandleReferences(c, referencedCollections, session, true)
 }
