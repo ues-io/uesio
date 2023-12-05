@@ -33,9 +33,3 @@ func RegisterAdapter(name string, adapter Adapter) {
 	adapterMap[name] = adapter
 }
 
-func GetStringWithDefault(field string, defaultField string) string {
-	if field != "" {
-		return field
-	}
-	return defaultField
-}
