@@ -12,8 +12,7 @@ params:
     required: true
   - name: contentType
     label: Content Type
-    type: SELECT
-    selectList: emailcontenttype
+    type: TEXT
   - name: from
     label: From
     type: TEXT
@@ -28,21 +27,21 @@ params:
   - name: plainBody
     label: Plain text body
     type: TEXTAREA
-    displayConditions:
+    conditions:
       - name: contentType
         operator: EQUALS
         value: text/plain
   - name: templateId
     label: SendGrid Template ID
     type: TEXT
-    displayConditions:
+    conditions:
       - name: contentType
         operator: EQUALS
         value: text/html
-  - name: dynamicTemplateData
-    label: SendGrid Template data
-    type: MAP
-    displayConditions:
-      - name: contentType
-        operator: EQUALS
-        value: text/html
+  # - name: dynamicTemplateData
+  #   label: SendGrid Template data
+  #   type: MAP
+  #   conditions:
+  #     - name: contentType
+  #       operator: EQUALS
+  #       value: text/html

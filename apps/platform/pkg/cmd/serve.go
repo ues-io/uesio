@@ -208,12 +208,10 @@ func serve(cmd *cobra.Command, args []string) {
 	wr.HandleFunc(botParamPath, controller.GetBotParams).Methods(http.MethodGet)
 
 	// Run Integration Action routes for site and workspace context
-	actionNameParam := getMetadataItemParam("action")
-	integrationActionBasePath := fmt.Sprintf("/integrations/%s/actions/%s", itemParam, actionNameParam)
-	runActionPath := integrationActionBasePath + "/run"
-	getActionParamsPath := integrationActionBasePath + "/params"
-	sr.HandleFunc(runActionPath, controller.RunIntegrationAction).Methods(http.MethodPost)
-	wr.HandleFunc(runActionPath, controller.RunIntegrationAction).Methods(http.MethodPost)
+	runIntegrationActionPath := fmt.Sprintf("/integrationactions/run/%s", itemParam)
+	getActionParamsPath := fmt.Sprintf("/integrationactions/params/%s", itemParam)
+	sr.HandleFunc(runIntegrationActionPath, controller.RunIntegrationAction).Methods(http.MethodPost)
+	wr.HandleFunc(runIntegrationActionPath, controller.RunIntegrationAction).Methods(http.MethodPost)
 	wr.HandleFunc(getActionParamsPath, controller.GetIntegrationActionParams).Methods(http.MethodGet)
 
 	viewParamPath := fmt.Sprintf("/views/params/%s", itemParam)

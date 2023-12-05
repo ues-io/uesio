@@ -7,10 +7,11 @@ import { MetadataKey } from "../../metadata/types"
 // The key for the entire band
 const INTEGRATION_BAND = "integration"
 
-interface RunActionSignal extends SignalDefinition {
+export interface RunActionSignal extends SignalDefinition {
+	integrationType: MetadataKey
 	integration: MetadataKey
 	action: string
-	params: BotParams
+	params?: BotParams
 }
 
 const signals: Record<string, SignalDescriptor> = {
@@ -19,7 +20,7 @@ const signals: Record<string, SignalDescriptor> = {
 			signalInvocation: RunActionSignal,
 			context: Context
 		) => {
-			const { integration, action, params } = signalInvocation
+			const { integration, action, params = {} } = signalInvocation
 			const mergedParams = context.mergeStringMap(params)
 
 			try {
@@ -27,7 +28,7 @@ const signals: Record<string, SignalDescriptor> = {
 					context,
 					integration,
 					action,
-					mergedParams || {}
+					mergedParams
 				)
 
 				// If this invocation was given a stable identifier,

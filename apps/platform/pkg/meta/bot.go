@@ -134,6 +134,7 @@ func (b BotParamConditionResponse) GetType() string {
 
 type BotParam struct {
 	Name         string              `yaml:"name" json:"name"`
+	Label        string              `yaml:"label,omitempty" json:"label"`
 	Prompt       string              `yaml:"prompt,omitempty" json:"prompt"`
 	Type         string              `yaml:"type" json:"type"`
 	MetadataType string              `yaml:"metadataType,omitempty" json:"metadatatype"`
@@ -161,6 +162,7 @@ func (b BotParam) GetConditions() []IBotParamCondition {
 
 type BotParamResponse struct {
 	Name         string                      `json:"name"`
+	Label        string                      `json:"label"`
 	Prompt       string                      `json:"prompt"`
 	Type         string                      `json:"type"`
 	MetadataType string                      `json:"metadataType,omitempty"`

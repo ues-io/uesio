@@ -281,6 +281,11 @@ func GetGroupingConditions(metadataType, grouping string) (BundleConditions, err
 		if grouping != "" {
 			conditions["uesio/studio.type"] = grouping
 		}
+	} else if metadataType == "integrations" {
+		// grouping is optional for integrations
+		if grouping != "" {
+			conditions["uesio/studio.type"] = grouping
+		}
 	}
 	return conditions, nil
 }

@@ -21,11 +21,16 @@ type RunIntegrationActionResponse struct {
 
 func RunIntegrationAction(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
+	// The Integration namespace/name
 	namespace := vars["namespace"]
 	name := vars["name"]
-
 	integrationId := fmt.Sprintf("%s.%s", namespace, name)
-	actionName := vars["action"]
+	// The action's name, or fully-qualified metadata key
+	actionKey := r.URL.Query().Get("action")
+	if actionKey == "" {
+		HandleError(w, exceptions.NewBadRequestException("action parameter is required"))
+		return
+	}
 
 	params, err := getParamsFromRequestBody(r)
 
@@ -41,7 +46,7 @@ func RunIntegrationAction(w http.ResponseWriter, r *http.Request) {
 		HandleError(w, err)
 		return
 	}
-	result, err := datasource.RunIntegrationAction(ic, actionName, params, connection)
+	result, err := datasource.RunIntegrationAction(ic, actionKey, params, connection)
 	if err != nil {
 		HandleError(w, err)
 		return
@@ -61,9 +66,15 @@ func RunIntegrationAction(w http.ResponseWriter, r *http.Request) {
 //     the action's params will default to the associated Bot's params.
 func GetIntegrationActionParams(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
+	// The namespace and name of the integration type
 	namespace := vars["namespace"]
 	name := vars["name"]
-	actionKey := vars["action"]
+	// The action's name, or fully-qualified metadata key
+	actionKey := r.URL.Query().Get("action")
+	if actionKey == "" {
+		HandleError(w, exceptions.NewBadRequestException("action parameter is required"))
+		return
+	}
 
 	session := middleware.GetSession(r)
 	connection, err := datasource.GetPlatformConnection(&wire.MetadataCache{}, session, nil)
@@ -73,13 +84,7 @@ func GetIntegrationActionParams(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Load the integration and integration type
-	integrationKey := fmt.Sprintf("%s.%s", namespace, name)
-	integration, err := datasource.GetIntegration(integrationKey, session, connection)
-	if err != nil {
-		HandleError(w, err)
-		return
-	}
-	integrationTypeName := integration.GetType()
+	integrationTypeName := fmt.Sprintf("%s.%s", namespace, name)
 	integrationType, err := datasource.GetIntegrationType(integrationTypeName, session, connection)
 	if err != nil {
 		HandleError(w, err)

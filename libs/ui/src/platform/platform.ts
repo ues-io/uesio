@@ -667,22 +667,28 @@ const platform = {
 		const prefix = getPrefix(context)
 		const response = await postJSON(
 			context,
-			`${prefix}/integration/${integration}/actions/${action}/run`,
+			`${prefix}/integrationactions/run/${integration.replace(
+				".",
+				"/"
+			)}?action=${encodeURIComponent(action)}`,
 			params
 		)
 		return respondJSON(response)
 	},
 	getIntegrationActionParams: async (
 		context: Context,
-		integration: MetadataKey,
-		action: string
+		integrationType: MetadataKey,
+		actionName: string
 	): Promise<ParamDefinition[]> => {
+		if (!integrationType || !actionName) return Promise.resolve([])
 		const prefix = getPrefix(context)
-		const response = await getJSON(
+		return getJSON(
 			context,
-			`${prefix}/integration/${integration}/actions/${action}/params`
+			`${prefix}/integrationactions/params/${integrationType.replace(
+				".",
+				"/"
+			)}?action=${encodeURIComponent(actionName)}`
 		)
-		return respondJSON(response)
 	},
 	getMonacoEditorVersion,
 	getStaticAssetsHost,

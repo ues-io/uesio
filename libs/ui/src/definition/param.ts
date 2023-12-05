@@ -10,6 +10,7 @@ export type ParamCondition = {
 type ParamBase = {
 	// name will only be populated for Bot Params
 	name: string
+	label?: string
 	type?:
 		| "RECORD"
 		| "TEXT"

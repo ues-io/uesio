@@ -5,6 +5,7 @@ import { getComponentSignalDefinition } from "../bands/component/signals"
 import authSignals from "../bands/auth/signals"
 import collectionSignals from "../bands/collection/signals"
 import botSignals from "../bands/bot/signals"
+import integrationSignals from "../bands/integration/signals"
 import routeSignals from "../bands/route/signals"
 import userSignals from "../bands/user/signals"
 import wireSignals from "../bands/wire/signals"
@@ -16,11 +17,11 @@ import contextSignals from "../context/signals"
 import debounce from "lodash/debounce"
 import { getErrorString } from "../utilexports"
 import { COMPONENT_CONTEXT } from "../componentexports"
-
 const registry: Record<string, SignalDescriptor> = {
 	...authSignals,
 	...collectionSignals,
 	...botSignals,
+	...integrationSignals,
 	...routeSignals,
 	...userSignals,
 	...wireSignals,

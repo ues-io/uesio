@@ -10,6 +10,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
@@ -33,7 +34,7 @@ type connection struct {
 func newSendGridConnection(ic *wire.IntegrationConnection) (*connection, error) {
 	apikey, err := ic.GetCredentials().GetRequiredEntry("apikey")
 	if err != nil || apikey == "" {
-		return nil, errors.New("SendGrid API Key not provided")
+		return nil, exceptions.NewUnauthorizedException("SendGrid API Key not provided")
 	}
 	return &connection{
 		client:      sendgrid.NewSendClient(apikey),

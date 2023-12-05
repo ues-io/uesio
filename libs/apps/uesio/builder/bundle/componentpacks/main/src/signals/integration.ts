@@ -7,10 +7,11 @@ import {
 	ComponentProperty,
 	StructProperty,
 } from "../properties/componentproperty"
-import { api } from "@uesio/ui"
+import { api, metadata } from "@uesio/ui"
 
 interface RunActionSignal extends SignalDefinition {
-	integration: string
+	integrationType: metadata.MetadataKey
+	integration: metadata.MetadataKey
 	action: string
 }
 
@@ -24,51 +25,85 @@ const signals: SignalBandDefinition = {
 			label: "Run Integration Action",
 			description: "Runs an action provided by an integration",
 			properties: (signal: RunActionSignal, context) => {
-				const props = [
+				const [params] = api.integration.useActionParams(
+					context,
+					signal
+				)
+				return [
+					{
+						type: "METADATA",
+						metadataType: "INTEGRATIONTYPE",
+						name: "integrationType",
+						label: "Integration Type",
+					},
 					{
 						type: "METADATA",
 						metadataType: "INTEGRATION",
+						groupingValue: signal.integrationType,
 						name: "integration",
 						label: "Integration",
+						displayConditions: [
+							{
+								type: "hasValue",
+								value: "${integrationType}",
+							},
+						],
 					},
 					{
 						type: "METADATA",
 						metadataType: "INTEGRATIONACTION",
-						groupingValue: signal.integration,
+						groupingValue: signal.integrationType,
 						name: "action",
 						label: "Action Name",
 						displayConditions: [
+							{
+								type: "hasValue",
+								value: "${integrationType}",
+							},
 							{
 								type: "hasValue",
 								value: "${integration}",
 							},
 						],
 					},
+					{
+						type: "STRUCT",
+						name: "params",
+						label: "Parameters",
+						properties: (params ?? []).map(
+							({
+								name,
+								label = name,
+								type,
+								required,
+								conditions,
+							}) =>
+								({
+									type: type === "LIST" ? "TEXT" : type,
+									name,
+									label,
+									required,
+									displayConditions: conditions?.map(
+										(condition) => ({
+											type: condition.type,
+											value: condition.value,
+											field: condition.param,
+										})
+									),
+								} as ComponentProperty)
+						) as ComponentProperty[],
+						displayConditions: [
+							{
+								type: "hasValue",
+								value: "${integrationType}",
+							},
+							{
+								type: "hasValue",
+								value: "${action}",
+							},
+						],
+					} as StructProperty,
 				] as ComponentProperty[]
-				// Fetch params for the integration action
-				if (signal.integration && signal.action) {
-					const [params] = api.integration.useActionParams(
-						context,
-						signal.integration,
-						signal.action
-					)
-					if (params && params.length) {
-						props.push({
-							type: "STRUCT",
-							name: "params",
-							label: "Parameters",
-							properties: params.map(
-								({ name, type, required }) =>
-									({
-										type: type === "LIST" ? "TEXT" : type,
-										name,
-										required,
-									} as ComponentProperty)
-							) as ComponentProperty[],
-						} as StructProperty)
-					}
-				}
-				return props
 			},
 			canError: true,
 			// TODO: Outputs could be a stream, don't require a named property in a map
