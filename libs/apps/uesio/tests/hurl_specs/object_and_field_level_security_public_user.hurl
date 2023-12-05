@@ -98,9 +98,9 @@ Content-Type: application/json
         }
     ]
 }
-HTTP 400
+HTTP 403
 [Asserts]
-body contains "Save Failed: Profile uesio/tests.public does not have edit access to the uesio/tests.animal collection."
+body contains "Profile uesio/tests.public does not have edit access to the uesio/tests.animal collection."
 
 # Object level security -- SAVE -- DELETE
 # We should NOT be able to DELETE animal records
@@ -120,9 +120,9 @@ Content-Type: application/json
         }
     ]
 }
-HTTP 400
+HTTP 403
 [Asserts]
-body contains "Save Failed: Profile uesio/tests.public does not have delete access to the uesio/tests.animal collection."
+body contains "Profile uesio/tests.public does not have delete access to the uesio/tests.animal collection."
 
 # Object level security -- SAVE -- CREATE
 # We SHOULD be able to CREATE animal records
@@ -171,9 +171,9 @@ Content-Type: application/json
         }
     ]
 }
-HTTP 400
+HTTP 403
 [Asserts]
-body contains "Save Failed: Profile uesio/tests.public does not have create access to the uesio/tests.wire_condition collection."
+body contains "Profile uesio/tests.public does not have create access to the uesio/tests.wire_condition collection."
 
 # FIELD level security -- SAVE -- CREATE
 # We should NOT be able to CREATE animal records
@@ -251,9 +251,9 @@ Content-Type: application/json
         }
     ]
 }
-HTTP 400
+HTTP 403
 [Asserts]
-body contains "Save Failed: Profile uesio/tests.public does not have edit access to the uesio/tests.tool collection."
+body contains "Profile uesio/tests.public does not have edit access to the uesio/tests.tool collection."
 
 # Object level security -- SAVE -- DELETE -- MODIFYALL
 # We should NOT be able to DELETE tool records
@@ -273,9 +273,9 @@ Content-Type: application/json
         }
     ]
 }
-HTTP 400
+HTTP 403
 [Asserts]
-body contains "Save Failed: Profile uesio/tests.public does not have delete access to the uesio/tests.tool collection."
+body contains "Profile uesio/tests.public does not have delete access to the uesio/tests.tool collection."
 
 # Object level security -- SAVE -- CREATE
 # We SHOULD NOT be able to CREATE tool records
@@ -299,10 +299,9 @@ variable: category="category {{unix_epoch_seconds}}"
         }
     ]
 }
-HTTP 400
+HTTP 403
 [Asserts]
-body contains "Save Failed: Profile uesio/tests.public does not have create access to the uesio/tests.tool collection."
-
+body contains "Profile uesio/tests.public does not have create access to the uesio/tests.tool collection."
 
 # Log into the studio as uesio
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login

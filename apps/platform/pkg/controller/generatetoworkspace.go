@@ -3,16 +3,14 @@ package controller
 import (
 	"archive/zip"
 	"bytes"
-	"encoding/json"
 	"io"
-	"log/slog"
 	"net/http"
+
+	"github.com/gorilla/mux"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/bot"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/retrieve"
-
-	"github.com/gorilla/mux"
 
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/deploy"
@@ -25,12 +23,10 @@ func GenerateToWorkspace(w http.ResponseWriter, r *http.Request) {
 	namespace := vars["namespace"]
 	name := vars["name"]
 
-	var params map[string]interface{}
-	err := json.NewDecoder(r.Body).Decode(&params)
+	params, err := getParamsFromRequestBody(r)
 	if err != nil {
-		msg := "Invalid request format: " + err.Error()
-		slog.Error(msg)
-		http.Error(w, msg, http.StatusBadRequest)
+		// this should be a BadRequestException
+		HandleError(w, err)
 		return
 	}
 
@@ -38,19 +34,18 @@ func GenerateToWorkspace(w http.ResponseWriter, r *http.Request) {
 
 	buf := new(bytes.Buffer)
 
-	zipwriter := zip.NewWriter(buf)
-	err = datasource.CallGeneratorBot(retrieve.NewWriterCreator(zipwriter.Create), namespace, name, params, nil, session)
-	if err != nil {
+	zipWriter := zip.NewWriter(buf)
+	if err = datasource.CallGeneratorBot(retrieve.NewWriterCreator(zipWriter.Create), namespace, name, params, nil, session); err != nil {
+		zipWriter.Close()
 		file.RespondJSON(w, r, &bot.BotResponse{
 			Success: false,
 			Error:   err.Error(),
 		})
 		return
 	}
-	zipwriter.Close()
+	zipWriter.Close()
 
-	err = deploy.DeployWithOptions(io.NopCloser(buf), session, &deploy.DeployOptions{Upsert: false})
-	if err != nil {
+	if err = deploy.DeployWithOptions(io.NopCloser(buf), session, &deploy.DeployOptions{Upsert: false}); err != nil {
 		file.RespondJSON(w, r, &bot.BotResponse{
 			Success: false,
 			Error:   err.Error(),

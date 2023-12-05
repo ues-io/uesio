@@ -6,6 +6,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/templating"
@@ -64,11 +65,11 @@ func signupWithConnection(signupMethod *meta.SignupMethod, payload map[string]in
 
 	username, err := mergeTemplate(payload, signupMethod.UsernameTemplate)
 	if err != nil {
-		return nil, NewAuthRequestError("Signup failed - username not provided")
+		return nil, exceptions.NewBadRequestException("Signup failed - username not provided")
 	}
 
 	if !matchesRegex(username, signupMethod.UsernameRegex) {
-		return nil, NewAuthRequestError("Signup failed - username does not match required pattern: " + signupMethod.UsernameFormatExplanation)
+		return nil, exceptions.NewBadRequestException("Signup failed - username does not match required pattern: " + signupMethod.UsernameFormatExplanation)
 	}
 
 	err = authconn.Signup(signupMethod, payload, username)

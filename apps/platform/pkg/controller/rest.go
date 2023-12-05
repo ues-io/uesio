@@ -1,11 +1,11 @@
 package controller
 
 import (
-	"log/slog"
 	"net/http"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 
 	"github.com/gorilla/mux"
 
@@ -50,9 +50,7 @@ func Rest(w http.ResponseWriter, r *http.Request) {
 
 	_, err := datasource.Load([]*adapt.LoadOp{op}, session, nil)
 	if err != nil {
-		msg := "Load Failed: " + err.Error()
-		slog.Error(msg)
-		http.Error(w, msg, http.StatusBadRequest)
+		HandleError(w, exceptions.NewBadRequestException("Load Failed: "+err.Error()))
 		return
 	}
 

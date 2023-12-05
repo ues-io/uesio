@@ -1,13 +1,13 @@
 package bulk
 
 import (
-	"errors"
 	"io"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
 
 type BatchResponse struct {
@@ -32,7 +32,7 @@ func NewBatch(body io.ReadCloser, jobID string, session *sess.Session) (*meta.Bu
 		session,
 	)
 	if err != nil {
-		return nil, err
+		return nil, exceptions.NewNotFoundException("bulk job not found: " + jobID)
 	}
 
 	if job.Spec.JobType == "IMPORT" {
@@ -43,7 +43,7 @@ func NewBatch(body io.ReadCloser, jobID string, session *sess.Session) (*meta.Bu
 		return NewFileUploadBatch(body, job, session)
 	}
 
-	return nil, errors.New("Invalid JobType for creating batches: " + job.Spec.JobType)
+	return nil, exceptions.NewBadRequestException("invalid JobType for creating batches: " + job.Spec.JobType)
 
 }
 
