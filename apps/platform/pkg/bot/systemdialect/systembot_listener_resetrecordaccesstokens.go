@@ -1,14 +1,14 @@
 package systemdialect
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runResetRecordAccessTokensListenerBot(params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
-	paramItems := (adapt.Item)(params)
+func runResetRecordAccessTokensListenerBot(params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
+	paramItems := (wire.Item)(params)
 	collectionName, err := paramItems.GetFieldAsString("collection")
 	if err != nil {
 		return nil, exceptions.NewInvalidParamException("must provide a collection to reset record tokens", "collection")

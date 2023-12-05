@@ -6,9 +6,9 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/types/file"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 var bundleStoreMap = map[string]BundleStore{}
@@ -64,7 +64,7 @@ func NewNotFoundError(message string) *NotFoundError {
 type ConnectionOptions struct {
 	Namespace    string
 	Version      string
-	Connection   adapt.Connection
+	Connection   wire.Connection
 	Workspace    *meta.Workspace
 	Permissions  *meta.PermissionSet
 	AllowPrivate bool

@@ -8,18 +8,18 @@ import (
 	"sort"
 	"time"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/goutils"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func getStringValue(fieldMetadata *adapt.FieldMetadata, value interface{}) (string, error) {
+func getStringValue(fieldMetadata *wire.FieldMetadata, value interface{}) (string, error) {
 
 	// Handle all nils as empty string
 	if value == nil {
 		return "", nil
 	}
-	if adapt.IsReference(fieldMetadata.Type) {
-		return adapt.GetReferenceKey(value)
+	if wire.IsReference(fieldMetadata.Type) {
+		return wire.GetReferenceKey(value)
 	}
 	switch fieldMetadata.Type {
 	case "LIST", "STRUCT", "MAP":

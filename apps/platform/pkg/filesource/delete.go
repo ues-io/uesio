@@ -3,10 +3,10 @@ package filesource
 import (
 	"errors"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 func Delete(userFileID string, session *sess.Session) error {
@@ -14,9 +14,9 @@ func Delete(userFileID string, session *sess.Session) error {
 	err := datasource.PlatformLoadOne(
 		&userFile,
 		&datasource.PlatformLoadOptions{
-			Conditions: []adapt.LoadRequestCondition{
+			Conditions: []wire.LoadRequestCondition{
 				{
-					Field: adapt.ID_FIELD,
+					Field: wire.ID_FIELD,
 					Value: userFileID,
 				},
 			},
@@ -31,7 +31,7 @@ func Delete(userFileID string, session *sess.Session) error {
 	collectionID := userFile.CollectionID
 	fieldID := userFile.FieldID
 
-	metadataResponse := &adapt.MetadataCache{}
+	metadataResponse := &wire.MetadataCache{}
 	err = datasource.GetMetadataResponse(metadataResponse, collectionID, fieldID, session)
 	if err != nil {
 		return err
@@ -57,10 +57,10 @@ func Delete(userFileID string, session *sess.Session) error {
 			{
 				Collection: collectionID,
 				Wire:       "filefieldupdate",
-				Changes: &adapt.Collection{
+				Changes: &wire.Collection{
 					{
-						fieldID:        nil,
-						adapt.ID_FIELD: userFile.RecordID,
+						fieldID:       nil,
+						wire.ID_FIELD: userFile.RecordID,
 					},
 				},
 			},

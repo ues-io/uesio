@@ -6,10 +6,10 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/constant"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 	"github.com/thecloudmasters/uesio/pkg/types/workspace"
 )
 
@@ -45,7 +45,7 @@ func TestRequestWorkspaceWriteAccess(t *testing.T) {
 		},
 	}
 
-	mockQuery := func(queryValue, queryField string, session *sess.Session, connection adapt.Connection) (*meta.Workspace, error) {
+	mockQuery := func(queryValue, queryField string, session *sess.Session, connection wire.Connection) (*meta.Workspace, error) {
 		return nil, errors.New("query not expected")
 	}
 
@@ -126,9 +126,9 @@ func TestRequestWorkspaceWriteAccess(t *testing.T) {
 				"workspacename": ws.Name,
 				"app":           app.FullName,
 			},
-			mockWSQuery: func(queryValue, queryField string, session *sess.Session, connection adapt.Connection) (*meta.Workspace, error) {
+			mockWSQuery: func(queryValue, queryField string, session *sess.Session, connection wire.Connection) (*meta.Workspace, error) {
 				assert.Equal(testInstance, queryValue, ws.UniqueKey)
-				assert.Equal(testInstance, queryField, adapt.UNIQUE_KEY_FIELD)
+				assert.Equal(testInstance, queryField, wire.UNIQUE_KEY_FIELD)
 				return ws, nil
 			},
 			expectHasAccess: true,
@@ -140,9 +140,9 @@ func TestRequestWorkspaceWriteAccess(t *testing.T) {
 			params: map[string]string{
 				"workspaceid": ws.ID,
 			},
-			mockWSQuery: func(queryValue, queryField string, session *sess.Session, connection adapt.Connection) (*meta.Workspace, error) {
+			mockWSQuery: func(queryValue, queryField string, session *sess.Session, connection wire.Connection) (*meta.Workspace, error) {
 				assert.Equal(testInstance, queryValue, ws.ID)
-				assert.Equal(testInstance, queryField, adapt.ID_FIELD)
+				assert.Equal(testInstance, queryField, wire.ID_FIELD)
 				return nil, errors.New("no access to this workspace")
 			},
 			expectHasAccess: false,

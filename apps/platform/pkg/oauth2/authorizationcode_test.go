@@ -11,9 +11,9 @@ import (
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/oauth2"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/cache"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 // TokenEndpointResponse is the struct representing the HTTP response from OAuth2
@@ -59,7 +59,7 @@ func TestAuthorizationCodeFlow(t *testing.T) {
 
 	setCacheImpl(cache.NewMemoryCache[string](time.Hour, time.Hour))
 
-	happyCredentials := &adapt.Credentials{
+	happyCredentials := &wire.Credentials{
 		"clientId":     "testclientid",
 		"clientSecret": "testclientsecret",
 		"scopes":       "scope1,scope2",
@@ -82,7 +82,7 @@ func TestAuthorizationCodeFlow(t *testing.T) {
 
 	tests := []struct {
 		name                  string
-		credentials           *adapt.Credentials
+		credentials           *wire.Credentials
 		wantAccessToken       string
 		wantRefreshToken      string
 		tokenEndpointResponse *TokenEndpointResponse

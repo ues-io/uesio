@@ -4,10 +4,10 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 func parseUniquekeyToCollectionKey(uniquekey string) (string, error) {
@@ -20,11 +20,11 @@ func parseUniquekeyToCollectionKey(uniquekey string) (string, error) {
 	return keyArray[0] + "." + keyArray[2], nil
 }
 
-func runCollectionAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func runCollectionAfterSaveBot(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	var collectionUniqueKeys []string
 	for i := range request.Deletes {
-		if collectionUniqueKey, err := request.Deletes[i].GetOldFieldAsString(adapt.UNIQUE_KEY_FIELD); err == nil {
+		if collectionUniqueKey, err := request.Deletes[i].GetOldFieldAsString(wire.UNIQUE_KEY_FIELD); err == nil {
 			collectionUniqueKeys = append(collectionUniqueKeys, collectionUniqueKey)
 		} else {
 			return err
@@ -53,12 +53,12 @@ func runCollectionAfterSaveBot(request *adapt.SaveOp, connection adapt.Connectio
 
 	fc := meta.FieldCollection{}
 	if err := datasource.PlatformLoad(&fc, &datasource.PlatformLoadOptions{
-		Fields: []adapt.LoadRequestField{
+		Fields: []wire.LoadRequestField{
 			{
-				ID: adapt.ID_FIELD,
+				ID: wire.ID_FIELD,
 			},
 		},
-		Conditions: []adapt.LoadRequestCondition{
+		Conditions: []wire.LoadRequestCondition{
 			{
 				Field:    "uesio/studio.collection",
 				Values:   targetCollections,
@@ -73,12 +73,12 @@ func runCollectionAfterSaveBot(request *adapt.SaveOp, connection adapt.Connectio
 
 	rac := meta.RouteAssignmentCollection{}
 	if err := datasource.PlatformLoad(&rac, &datasource.PlatformLoadOptions{
-		Fields: []adapt.LoadRequestField{
+		Fields: []wire.LoadRequestField{
 			{
-				ID: adapt.ID_FIELD,
+				ID: wire.ID_FIELD,
 			},
 		},
-		Conditions: []adapt.LoadRequestCondition{
+		Conditions: []wire.LoadRequestCondition{
 			{
 				Field:    "uesio/studio.collection",
 				Values:   targetCollections,
@@ -93,12 +93,12 @@ func runCollectionAfterSaveBot(request *adapt.SaveOp, connection adapt.Connectio
 
 	rct := meta.RecordChallengeTokenCollection{}
 	if err := datasource.PlatformLoad(&rct, &datasource.PlatformLoadOptions{
-		Fields: []adapt.LoadRequestField{
+		Fields: []wire.LoadRequestField{
 			{
-				ID: adapt.ID_FIELD,
+				ID: wire.ID_FIELD,
 			},
 		},
-		Conditions: []adapt.LoadRequestCondition{
+		Conditions: []wire.LoadRequestCondition{
 			{
 				Field:    "uesio/studio.collection",
 				Values:   targetCollections,

@@ -3,17 +3,17 @@ package fileadapt
 import (
 	"errors"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/file"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 type FileAdapter interface {
-	GetFileConnection(*adapt.Credentials, string) (file.Connection, error)
+	GetFileConnection(*wire.Credentials, string) (file.Connection, error)
 }
 
 var adapterMap = map[string]FileAdapter{}

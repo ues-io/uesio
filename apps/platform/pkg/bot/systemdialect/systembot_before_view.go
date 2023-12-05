@@ -1,12 +1,12 @@
 package systemdialect
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runViewBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
-	return request.LoopInserts(func(change *adapt.ChangeItem) error {
+func runViewBeforeSaveBot(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+	return request.LoopInserts(func(change *wire.ChangeItem) error {
 		err := addViewDefaultDefinition(change)
 		if err != nil {
 			return err
@@ -15,7 +15,7 @@ func runViewBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, se
 	})
 }
 
-func addViewDefaultDefinition(change *adapt.ChangeItem) error {
+func addViewDefaultDefinition(change *wire.ChangeItem) error {
 	defaultDefinition := "# Wires connect to data in collections\nwires: {}\n# Components determine the layout and composition of your view\ncomponents: []"
 	definition, _ := change.GetField("uesio/studio.definition")
 	if definition == nil {

@@ -5,9 +5,9 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 func TestGetFieldMetadata(t *testing.T) {
@@ -26,7 +26,7 @@ func TestGetFieldMetadata(t *testing.T) {
 	tests := []struct {
 		name  string
 		input *meta.Field
-		want  *adapt.FieldMetadata
+		want  *wire.FieldMetadata
 	}{
 		{
 			"FORMULA fields - TEXT return type",
@@ -40,14 +40,14 @@ func TestGetFieldMetadata(t *testing.T) {
 					ReturnType: "TEXT",
 				},
 			},
-			&adapt.FieldMetadata{
+			&wire.FieldMetadata{
 				Name:       "fieldname",
 				Namespace:  "luigi/appname",
 				Accessible: true,
 				Createable: false,
 				Updateable: false,
 				Type:       "TEXT",
-				FormulaMetadata: &adapt.FormulaMetadata{
+				FormulaMetadata: &wire.FormulaMetadata{
 					Expression: `luigi/foo.first_name + " " + zach/foo.last_name`,
 					ReturnType: "TEXT",
 				},
@@ -66,14 +66,14 @@ func TestGetFieldMetadata(t *testing.T) {
 					ReturnType: "CHECKBOX",
 				},
 			},
-			&adapt.FieldMetadata{
+			&wire.FieldMetadata{
 				Name:       "fieldname",
 				Namespace:  "luigi/appname",
 				Accessible: true,
 				Createable: false,
 				Updateable: false,
 				Type:       "CHECKBOX",
-				FormulaMetadata: &adapt.FormulaMetadata{
+				FormulaMetadata: &wire.FormulaMetadata{
 					Expression: `luigi/foo.somenumber > 0`,
 					ReturnType: "CHECKBOX",
 				},
@@ -132,14 +132,14 @@ func TestGetFieldMetadata(t *testing.T) {
 					},
 				},
 			},
-			&adapt.FieldMetadata{
+			&wire.FieldMetadata{
 				Name:       "fieldname",
 				Namespace:  "luigi/appname",
 				Accessible: true,
 				Createable: true,
 				Updateable: true,
 				Type:       "STRUCT",
-				SubFields: map[string]*adapt.FieldMetadata{
+				SubFields: map[string]*wire.FieldMetadata{
 					"first_name": {
 						Name:       "first_name",
 						Createable: true,
@@ -163,7 +163,7 @@ func TestGetFieldMetadata(t *testing.T) {
 						Updateable: true,
 						Type:       "SELECT",
 						Label:      "Salutation",
-						SelectListMetadata: &adapt.SelectListMetadata{
+						SelectListMetadata: &wire.SelectListMetadata{
 							Name: "uesio/core.salutations",
 						},
 					},
@@ -174,12 +174,12 @@ func TestGetFieldMetadata(t *testing.T) {
 						Updateable: true,
 						Type:       "STRUCT",
 						Label:      "Accuracy",
-						SubFields: map[string]*adapt.FieldMetadata{
+						SubFields: map[string]*wire.FieldMetadata{
 							"value": {
 								Name:  "value",
 								Label: "Accuracy Value",
 								Type:  "NUMBER",
-								NumberMetadata: &adapt.NumberMetadata{
+								NumberMetadata: &wire.NumberMetadata{
 									Decimals: 4,
 								},
 								Createable: true,
@@ -190,7 +190,7 @@ func TestGetFieldMetadata(t *testing.T) {
 								Name:  "source",
 								Label: "Source Integration",
 								Type:  "METADATA",
-								MetadataFieldMetadata: &adapt.MetadataFieldMetadata{
+								MetadataFieldMetadata: &wire.MetadataFieldMetadata{
 									Type: "INTEGRATION",
 								},
 								Createable: true,

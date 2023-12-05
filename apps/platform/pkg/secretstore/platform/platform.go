@@ -1,10 +1,10 @@
 package environment
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 type SecretStore struct {
@@ -20,13 +20,13 @@ func (ss *SecretStore) Get(key string, session *sess.Session) (string, error) {
 	err = datasource.PlatformLoadOne(
 		&s,
 		&datasource.PlatformLoadOptions{
-			Conditions: []adapt.LoadRequestCondition{
+			Conditions: []wire.LoadRequestCondition{
 				{
-					Field: adapt.UNIQUE_KEY_FIELD,
+					Field: wire.UNIQUE_KEY_FIELD,
 					Value: key,
 				},
 			},
-			Fields: []adapt.LoadRequestField{
+			Fields: []wire.LoadRequestField{
 				{
 					ID: "uesio/core.value",
 				},
@@ -50,7 +50,7 @@ func (ss *SecretStore) Set(key, value string, session *sess.Session) error {
 	if err != nil {
 		return err
 	}
-	return datasource.PlatformSaveOne(&s, &adapt.SaveOptions{
+	return datasource.PlatformSaveOne(&s, &wire.SaveOptions{
 		Upsert: true,
 	}, nil, versionSession)
 }

@@ -6,13 +6,14 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 var dataSourceTypesByName = map[string]string{
 	meta.PLATFORM_DATA_SOURCE: "uesio.postgresio",
 }
 
-func GetConnection(dataSourceKey string, metadata *adapt.MetadataCache, session *sess.Session, connection adapt.Connection) (adapt.Connection, error) {
+func GetConnection(dataSourceKey string, metadata *wire.MetadataCache, session *sess.Session, connection wire.Connection) (wire.Connection, error) {
 
 	// If we were provided a default connection for this datasource,
 	// use that instead

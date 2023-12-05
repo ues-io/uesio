@@ -7,9 +7,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 func Test_extractRegexParams(t *testing.T) {
@@ -52,7 +52,7 @@ func Test_extractRegexParams(t *testing.T) {
 
 func Test_serverMergeFuncs(t *testing.T) {
 
-	validItem := adapt.Item{}
+	validItem := wire.Item{}
 	validItem.SetField("uesio/studio.name", "happy")
 
 	tests := []struct {
@@ -205,7 +205,7 @@ func Test_serverMergeFuncs(t *testing.T) {
 			"Record",
 			ServerMergeData{
 				WireData: map[string]meta.Group{
-					"collection": &adapt.Collection{},
+					"collection": &wire.Collection{},
 				},
 			},
 			"collection:uesio/studio.name",
@@ -217,8 +217,8 @@ func Test_serverMergeFuncs(t *testing.T) {
 			"Record",
 			ServerMergeData{
 				WireData: map[string]meta.Group{
-					"collection": &adapt.Collection{
-						&adapt.Item{},
+					"collection": &wire.Collection{
+						&wire.Item{},
 					},
 				},
 			},
@@ -231,7 +231,7 @@ func Test_serverMergeFuncs(t *testing.T) {
 			"Record",
 			ServerMergeData{
 				WireData: map[string]meta.Group{
-					"collection": &adapt.Collection{
+					"collection": &wire.Collection{
 						&validItem,
 					},
 				},

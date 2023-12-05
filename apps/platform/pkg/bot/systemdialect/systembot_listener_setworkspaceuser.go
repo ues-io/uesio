@@ -3,12 +3,12 @@ package systemdialect
 import (
 	"errors"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runSetWorkspaceUserBot(params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
+func runSetWorkspaceUserBot(params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
 
 	workspaceID, hasWorkspaceID := params["workspaceid"]
 	if !hasWorkspaceID {
@@ -27,7 +27,7 @@ func runSetWorkspaceUserBot(params map[string]interface{}, connection adapt.Conn
 	err := datasource.Save([]datasource.SaveRequest{
 		{
 			Collection: "uesio/studio.workspaceuser",
-			Changes: &adapt.Collection{
+			Changes: &wire.Collection{
 				{
 					"uesio/studio.workspace": map[string]interface{}{
 						"uesio/core.id": workspaceID,
@@ -38,7 +38,7 @@ func runSetWorkspaceUserBot(params map[string]interface{}, connection adapt.Conn
 					},
 				},
 			},
-			Options: &adapt.SaveOptions{
+			Options: &wire.SaveOptions{
 				Upsert: true,
 			},
 		},

@@ -6,14 +6,14 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 func Test_sortItems(t *testing.T) {
 
 	now := time.Now()
-	coll := adapt.Collection{}
+	coll := wire.Collection{}
 	itemA := coll.NewItem()
 	itemA.SetField("uesio/studio.name", "alpha")
 	itemA.SetField("uesio/core.updatedat", now.Add(-time.Hour*12).Unix())
@@ -29,7 +29,7 @@ func Test_sortItems(t *testing.T) {
 
 	type args struct {
 		items     []meta.Item
-		orderings []adapt.LoadRequestOrder
+		orderings []wire.LoadRequestOrder
 		expect    []meta.Item
 	}
 	tests := []struct {
@@ -42,7 +42,7 @@ func Test_sortItems(t *testing.T) {
 				[]meta.Item{
 					itemD, itemB, itemC, itemA,
 				},
-				[]adapt.LoadRequestOrder{
+				[]wire.LoadRequestOrder{
 					{
 						Field: "uesio/studio.name",
 						Desc:  false,
@@ -59,7 +59,7 @@ func Test_sortItems(t *testing.T) {
 				[]meta.Item{
 					itemD, itemB, itemC, itemA,
 				},
-				[]adapt.LoadRequestOrder{
+				[]wire.LoadRequestOrder{
 					{
 						Field: "uesio/studio.name",
 						Desc:  true,
@@ -76,7 +76,7 @@ func Test_sortItems(t *testing.T) {
 				[]meta.Item{
 					itemD, itemB, itemC, itemA,
 				},
-				[]adapt.LoadRequestOrder{
+				[]wire.LoadRequestOrder{
 					{
 						Field: "uesio/core.updatedat",
 						Desc:  false,
@@ -97,7 +97,7 @@ func Test_sortItems(t *testing.T) {
 				[]meta.Item{
 					itemD, itemB, itemC, itemA,
 				},
-				[]adapt.LoadRequestOrder{
+				[]wire.LoadRequestOrder{
 					{
 						Field: "uesio/core.updatedat",
 						Desc:  true,

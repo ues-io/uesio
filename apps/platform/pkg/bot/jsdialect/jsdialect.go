@@ -10,13 +10,13 @@ import (
 
 	"github.com/dop251/goja"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/cache"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 func Logger() {
@@ -213,17 +213,17 @@ func RunBot(bot *meta.Bot, api interface{}, session *sess.Session, hydrateBot fu
 	return nil
 }
 
-func (b *JSDialect) BeforeSave(bot *meta.Bot, request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func (b *JSDialect) BeforeSave(bot *meta.Bot, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 	botAPI := NewBeforeSaveAPI(bot, request, connection, session)
 	return RunBot(bot, botAPI, session, b.hydrateBot, botAPI.AddError)
 }
 
-func (b *JSDialect) AfterSave(bot *meta.Bot, request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func (b *JSDialect) AfterSave(bot *meta.Bot, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 	botAPI := NewAfterSaveAPI(bot, request, connection, session)
 	return RunBot(bot, botAPI, session, b.hydrateBot, botAPI.AddError)
 }
 
-func (b *JSDialect) CallBot(bot *meta.Bot, params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
+func (b *JSDialect) CallBot(bot *meta.Bot, params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
 	botAPI := NewCallBotAPI(bot, session, connection, params)
 	if err := RunBot(bot, botAPI, session, b.hydrateBot, nil); err != nil {
 		return nil, err
@@ -231,7 +231,7 @@ func (b *JSDialect) CallBot(bot *meta.Bot, params map[string]interface{}, connec
 	return botAPI.Results, nil
 }
 
-func (b *JSDialect) CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreator, params map[string]interface{}, connection adapt.Connection, session *sess.Session) error {
+func (b *JSDialect) CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreator, params map[string]interface{}, connection wire.Connection, session *sess.Session) error {
 	botAPI := &GeneratorBotAPI{
 		Session: session,
 		Params: &ParamsAPI{
@@ -248,7 +248,7 @@ func (b *JSDialect) RouteBot(bot *meta.Bot, route *meta.Route, session *sess.Ses
 	return route, nil
 }
 
-func (b *JSDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+func (b *JSDialect) LoadBot(bot *meta.Bot, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 	integrationConnection, err := op.GetIntegrationConnection()
 	if err != nil {
 		return err
@@ -263,7 +263,7 @@ func (b *JSDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adapt.Co
 	return nil
 }
 
-func (b *JSDialect) SaveBot(bot *meta.Bot, op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func (b *JSDialect) SaveBot(bot *meta.Bot, op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 	integrationConnection, err := op.GetIntegration()
 	if err != nil {
 		return err
@@ -272,7 +272,7 @@ func (b *JSDialect) SaveBot(bot *meta.Bot, op *adapt.SaveOp, connection adapt.Co
 	return RunBot(bot, botAPI, session, b.hydrateBot, nil)
 }
 
-func (b *JSDialect) RunIntegrationActionBot(bot *meta.Bot, ic *adapt.IntegrationConnection, actionName string, params map[string]interface{}) (interface{}, error) {
+func (b *JSDialect) RunIntegrationActionBot(bot *meta.Bot, ic *wire.IntegrationConnection, actionName string, params map[string]interface{}) (interface{}, error) {
 	botAPI := NewRunIntegrationActionBotAPI(bot, ic, actionName, params)
 	err := RunBot(bot, botAPI, ic.GetSession(), b.hydrateBot, nil)
 	if err != nil {

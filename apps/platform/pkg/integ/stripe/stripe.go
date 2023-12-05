@@ -7,10 +7,10 @@ import (
 	"github.com/stripe/stripe-go/v74"
 	"github.com/stripe/stripe-go/v74/checkout/session"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 type CheckoutItem struct {
@@ -30,7 +30,7 @@ type connection struct {
 	session     *sess.Session
 }
 
-func newStripeConnection(ic *adapt.IntegrationConnection) (*connection, error) {
+func newStripeConnection(ic *wire.IntegrationConnection) (*connection, error) {
 	apikey, err := ic.GetCredentials().GetRequiredEntry("apikey")
 	if err != nil || apikey == "" {
 		return nil, errors.New("Stripe API Key not provided")
@@ -43,7 +43,7 @@ func newStripeConnection(ic *adapt.IntegrationConnection) (*connection, error) {
 }
 
 // RunAction implements the system bot interface
-func RunAction(bot *meta.Bot, ic *adapt.IntegrationConnection, actionName string, params map[string]interface{}) (interface{}, error) {
+func RunAction(bot *meta.Bot, ic *wire.IntegrationConnection, actionName string, params map[string]interface{}) (interface{}, error) {
 
 	c, err := newStripeConnection(ic)
 	if err != nil {

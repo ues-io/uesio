@@ -3,7 +3,7 @@ package adapt
 import (
 	"errors"
 
-	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 const MAX_LOAD_BATCH_SIZE = 500
@@ -14,25 +14,7 @@ type Adapter interface {
 	// GetCredentials returns the unique key of the credentials metadata record to use for this adapter
 	GetCredentials() string
 	// GetConnection returns a connection to use for this adapter
-	GetConnection(*Credentials, *MetadataCache, string) (Connection, error)
-}
-
-type Connection interface {
-	Load(*LoadOp, *sess.Session) error
-	Save(*SaveOp, *sess.Session) error
-	SetRecordAccessTokens(*SaveOp, *sess.Session) error
-	GetRecordAccessTokens(string, *sess.Session) ([]string, error)
-	Migrate() error
-	TruncateTenantData(tenantID string) error
-	GetAutonumber(*CollectionMetadata, *sess.Session) (int, error)
-	GetMetadata() *MetadataCache
-	GetCredentials() *Credentials
-	GetDataSource() string
-	BeginTransaction() error
-	CommitTransaction() error
-	RollbackTransaction() error
-	Publish(channelName, payload string) error
-	Subscribe(channelName string, handler func(payload string)) error
+	GetConnection(*wire.Credentials, *wire.MetadataCache, string) (wire.Connection, error)
 }
 
 var adapterMap = map[string]Adapter{}
@@ -49,11 +31,4 @@ func GetAdapter(adapterType string) (Adapter, error) {
 
 func RegisterAdapter(name string, adapter Adapter) {
 	adapterMap[name] = adapter
-}
-
-func GetStringWithDefault(field string, defaultField string) string {
-	if field != "" {
-		return field
-	}
-	return defaultField
 }

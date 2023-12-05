@@ -1,8 +1,8 @@
 package datasource
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 var ID_FIELD_DEF = meta.Field{
@@ -94,25 +94,25 @@ var COLLECTION_FIELD_DEF = meta.Field{
 }
 
 var BUILTIN_FIELDS_MAP = map[string]meta.Field{
-	adapt.ID_FIELD:         ID_FIELD_DEF,
-	adapt.UNIQUE_KEY_FIELD: UNIQUE_KEY_FIELD_DEF,
-	adapt.OWNER_FIELD:      OWNER_FIELD_DEF,
-	adapt.CREATED_BY_FIELD: CREATEDBY_FIELD_DEF,
-	adapt.UPDATED_BY_FIELD: UPDATEDBY_FIELD_DEF,
-	adapt.CREATED_AT_FIELD: CREATEDAT_FIELD_DEF,
-	adapt.UPDATED_AT_FIELD: UPDATEDAT_FIELD_DEF,
-	adapt.COLLECTION_FIELD: COLLECTION_FIELD_DEF,
+	wire.ID_FIELD:         ID_FIELD_DEF,
+	wire.UNIQUE_KEY_FIELD: UNIQUE_KEY_FIELD_DEF,
+	wire.OWNER_FIELD:      OWNER_FIELD_DEF,
+	wire.CREATED_BY_FIELD: CREATEDBY_FIELD_DEF,
+	wire.UPDATED_BY_FIELD: UPDATEDBY_FIELD_DEF,
+	wire.CREATED_AT_FIELD: CREATEDAT_FIELD_DEF,
+	wire.UPDATED_AT_FIELD: UPDATEDAT_FIELD_DEF,
+	wire.COLLECTION_FIELD: COLLECTION_FIELD_DEF,
 }
 
 var BUILTIN_FIELD_KEYS = []string{
-	adapt.ID_FIELD,
-	adapt.UNIQUE_KEY_FIELD,
-	adapt.OWNER_FIELD,
-	adapt.CREATED_BY_FIELD,
-	adapt.UPDATED_BY_FIELD,
-	adapt.CREATED_AT_FIELD,
-	adapt.UPDATED_AT_FIELD,
-	adapt.COLLECTION_FIELD,
+	wire.ID_FIELD,
+	wire.UNIQUE_KEY_FIELD,
+	wire.OWNER_FIELD,
+	wire.CREATED_BY_FIELD,
+	wire.UPDATED_BY_FIELD,
+	wire.CREATED_AT_FIELD,
+	wire.UPDATED_AT_FIELD,
+	wire.COLLECTION_FIELD,
 }
 
 func AddAllBuiltinFields(fields meta.BundleableGroup, collectionKey string) {

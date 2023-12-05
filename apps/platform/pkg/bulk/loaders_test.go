@@ -4,13 +4,13 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 func Test_TimestampLoader(t *testing.T) {
 
-	fieldMetadata := &adapt.FieldMetadata{
+	fieldMetadata := &wire.FieldMetadata{
 		Type:      "TIMESTAMP",
 		Name:      "updatedat",
 		Namespace: "uesio/core",
@@ -59,7 +59,7 @@ func Test_TimestampLoader(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run("it should "+tt.name, func(t *testing.T) {
-			changeItem := &adapt.Item{}
+			changeItem := &wire.Item{}
 			data := []string{
 				tt.input,
 			}
@@ -85,7 +85,7 @@ func Test_TimestampLoader(t *testing.T) {
 
 func Test_NumberLoader(t *testing.T) {
 
-	fieldMetadata := &adapt.FieldMetadata{
+	fieldMetadata := &wire.FieldMetadata{
 		Type:      "NUMBER",
 		Name:      "total_population",
 		Namespace: "uesio/core",
@@ -140,7 +140,7 @@ func Test_NumberLoader(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run("it should "+tt.name, func(t *testing.T) {
-			changeItem := &adapt.Item{}
+			changeItem := &wire.Item{}
 			data := []string{
 				tt.input,
 			}
@@ -161,7 +161,7 @@ func Test_NumberLoader(t *testing.T) {
 
 func Test_BooleanLoader(t *testing.T) {
 
-	fieldMetadata := &adapt.FieldMetadata{
+	fieldMetadata := &wire.FieldMetadata{
 		Type:      "CHECKBOX",
 		Name:      "checkbox",
 		Namespace: "uesio/core",
@@ -210,7 +210,7 @@ func Test_BooleanLoader(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run("it should "+tt.name, func(t *testing.T) {
-			changeItem := &adapt.Item{}
+			changeItem := &wire.Item{}
 			data := []string{
 				tt.input,
 			}
@@ -231,10 +231,10 @@ func Test_BooleanLoader(t *testing.T) {
 
 func Test_MultiselectLoader(t *testing.T) {
 
-	fieldMetadata := &adapt.FieldMetadata{
+	fieldMetadata := &wire.FieldMetadata{
 		Type: "MULTISELECT",
 		Name: "status",
-		SelectListMetadata: &adapt.SelectListMetadata{
+		SelectListMetadata: &wire.SelectListMetadata{
 			Name: "status",
 			Options: []meta.SelectListOption{
 				{
@@ -290,7 +290,7 @@ func Test_MultiselectLoader(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run("it should "+tt.name, func(t *testing.T) {
-			changeItem := &adapt.Item{}
+			changeItem := &wire.Item{}
 			data := []string{
 				tt.input,
 			}
@@ -311,7 +311,7 @@ func Test_MultiselectLoader(t *testing.T) {
 
 func Test_MapLoader(t *testing.T) {
 
-	fieldMetadata := &adapt.FieldMetadata{
+	fieldMetadata := &wire.FieldMetadata{
 		Type:      "MAP",
 		Name:      "status",
 		Namespace: "uesio/core",
@@ -371,7 +371,7 @@ func Test_MapLoader(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run("it should "+tt.name, func(t *testing.T) {
-			changeItem := &adapt.Item{}
+			changeItem := &wire.Item{}
 			data := []string{
 				tt.input,
 			}
@@ -402,7 +402,7 @@ func Test_MapLoader(t *testing.T) {
 
 func Test_ListLoader(t *testing.T) {
 
-	fieldMetadata := &adapt.FieldMetadata{
+	fieldMetadata := &wire.FieldMetadata{
 		Type:      "LIST",
 		Name:      "status",
 		Namespace: "uesio/core",
@@ -457,7 +457,7 @@ func Test_ListLoader(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run("it should "+tt.name, func(t *testing.T) {
-			changeItem := &adapt.Item{}
+			changeItem := &wire.Item{}
 			data := []string{
 				tt.input,
 			}
@@ -483,11 +483,11 @@ func Test_ListLoader(t *testing.T) {
 
 func Test_StructLoader(t *testing.T) {
 
-	fieldMetadata := &adapt.FieldMetadata{
+	fieldMetadata := &wire.FieldMetadata{
 		Type:      "STRUCT",
 		Name:      "location",
 		Namespace: "uesio/core",
-		SubFields: map[string]*adapt.FieldMetadata{
+		SubFields: map[string]*wire.FieldMetadata{
 			"latitude": {
 				Name: "latitude",
 				Type: "NUMBER",
@@ -554,7 +554,7 @@ func Test_StructLoader(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run("it should "+tt.name, func(t *testing.T) {
-			changeItem := &adapt.Item{}
+			changeItem := &wire.Item{}
 			data := []string{
 				tt.input,
 			}

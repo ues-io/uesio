@@ -6,126 +6,28 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-type LocatorMap map[string][]ReferenceLocator
-
-func (lm *LocatorMap) GetIDs() []string {
-	ids := make([]string, len(*lm))
-	fieldIDIndex := 0
-	for k := range *lm {
-		ids[fieldIDIndex] = k
-		fieldIDIndex++
-	}
-	return ids
-}
-
-func (lm *LocatorMap) AddID(value string, locator ReferenceLocator) error {
-
-	if value == "" {
-		return errors.New("Cannot add blank id to locator map")
-	}
-	items, ok := (*lm)[value]
-	if !ok {
-		(*lm)[value] = []ReferenceLocator{}
-	}
-	(*lm)[value] = append(items, locator)
-	return nil
-
-}
-
-type ReferenceRequest struct {
-	Fields     []LoadRequestField
-	FieldsMap  map[string]bool
-	Metadata   *CollectionMetadata
-	IDMap      LocatorMap
-	MatchField string
-	RefFields  map[string]*FieldMetadata
-}
-
-type ReferenceLocator struct {
-	Item  interface{}
-	Field *FieldMetadata
-}
-
-func (rr *ReferenceRequest) GetIDs() []string {
-	return rr.IDMap.GetIDs()
-}
-
-func (rr *ReferenceRequest) GetMatchField() string {
-	if rr.MatchField != "" {
-		return rr.MatchField
-	}
-	return ID_FIELD
-}
-
-func (rr *ReferenceRequest) AddID(value string, locator ReferenceLocator) error {
-	return rr.IDMap.AddID(value, locator)
-}
-
-func (rr *ReferenceRequest) AddFields(fields []LoadRequestField) {
-	for _, field := range fields {
-		_, ok := rr.FieldsMap[field.ID]
-		if !ok {
-			rr.Fields = append(rr.Fields, field)
-			rr.FieldsMap[field.ID] = true
-		}
-	}
-}
-
-func (rr *ReferenceRequest) AddRefField(field *FieldMetadata) {
-	_, ok := rr.RefFields[field.GetFullName()]
-	if !ok {
-		rr.RefFields[field.GetFullName()] = field
-	}
-}
-
-type ReferenceRegistry map[string]*ReferenceRequest
-
-func (rr *ReferenceRegistry) Add(collectionKey string) {
-	(*rr)[collectionKey] = &ReferenceRequest{
-		IDMap:     map[string][]ReferenceLocator{},
-		Fields:    []LoadRequestField{},
-		FieldsMap: map[string]bool{},
-		RefFields: map[string]*FieldMetadata{},
-	}
-}
-
-func (rr *ReferenceRegistry) Get(collectionKey string) *ReferenceRequest {
-	request, ok := (*rr)[collectionKey]
-	if !ok {
-		rr.Add(collectionKey)
-		return (*rr)[collectionKey]
-	}
-
-	return request
-}
-
-type Loader func([]*LoadOp) error
-
-func IsReference(fieldType string) bool {
-	return fieldType == "REFERENCE" || fieldType == "FILE" || fieldType == "USER"
-}
-
 func LoadLooper(
-	connection Connection,
+	connection wire.Connection,
 	collectionName string,
-	idMap LocatorMap,
-	fields []LoadRequestField,
+	idMap wire.LocatorMap,
+	fields []wire.LoadRequestField,
 	matchField string,
 	session *sess.Session,
-	looper func(meta.Item, []ReferenceLocator, string) error,
+	looper func(meta.Item, []wire.ReferenceLocator, string) error,
 ) error {
 	ids := idMap.GetIDs()
 	if len(ids) == 0 {
 		return errors.New("No ids provided for load looper")
 	}
-	op := &LoadOp{
+	op := &wire.LoadOp{
 		Fields:         fields,
 		WireName:       "LooperLoad",
-		Collection:     &Collection{},
+		Collection:     &wire.Collection{},
 		CollectionName: collectionName,
-		Conditions: []LoadRequestCondition{
+		Conditions: []wire.LoadRequestCondition{
 			{
 				Field:    matchField,
 				Operator: "IN",
@@ -173,8 +75,8 @@ func LoadLooper(
 }
 
 func HandleReferences(
-	connection Connection,
-	referencedCollections ReferenceRegistry,
+	connection wire.Connection,
+	referencedCollections wire.ReferenceRegistry,
 	session *sess.Session,
 	allowMissingItems bool,
 ) error {
@@ -185,16 +87,16 @@ func HandleReferences(
 			continue
 		}
 
-		ref.AddFields([]LoadRequestField{
+		ref.AddFields([]wire.LoadRequestField{
 			{
-				ID: ID_FIELD,
+				ID: wire.ID_FIELD,
 			},
 			{
-				ID: UNIQUE_KEY_FIELD,
+				ID: wire.UNIQUE_KEY_FIELD,
 			},
 		})
 
-		err := LoadLooper(connection, collectionName, ref.IDMap, ref.Fields, ref.GetMatchField(), session, func(refItem meta.Item, matchIndexes []ReferenceLocator, ID string) error {
+		err := LoadLooper(connection, collectionName, ref.IDMap, ref.Fields, ref.GetMatchField(), session, func(refItem meta.Item, matchIndexes []wire.ReferenceLocator, ID string) error {
 
 			// This is a weird situation.
 			// It means we found a value that we didn't ask for.
@@ -213,7 +115,7 @@ func HandleReferences(
 
 			// Loop over all matchIndexes and copy the data from the refItem
 			for _, locator := range matchIndexes {
-				referenceValue := &Item{}
+				referenceValue := &wire.Item{}
 				concreteItem := locator.Item.(meta.Item)
 				err := meta.Copy(referenceValue, refItem)
 				if err != nil {

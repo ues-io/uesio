@@ -10,7 +10,6 @@ import (
 	"github.com/thecloudmasters/cli/pkg/config"
 	"github.com/thecloudmasters/cli/pkg/config/ws"
 	"github.com/thecloudmasters/cli/pkg/wire"
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 
 	"github.com/thecloudmasters/cli/pkg/goutils"
 
@@ -20,6 +19,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/templating"
+	w "github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 func getMetadataList(metadataType, app, version, sessid, grouping string) ([]string, error) {
@@ -290,7 +290,7 @@ func Ask(param meta.BotParamResponse, app, version, sessid string, answers map[s
 
 }
 
-func getSelectListMetadata(selectList string) (*adapt.SelectListMetadata, error) {
+func getSelectListMetadata(selectList string) (*w.SelectListMetadata, error) {
 	workspaceName, err := ws.GetWorkspace()
 	if err != nil {
 		return nil, errors.New("no workspace has been set. Use `uesio work -n <workspace>` to set a workspace")
@@ -302,7 +302,7 @@ func getSelectListMetadata(selectList string) (*adapt.SelectListMetadata, error)
 	result, err := wire.LoadOne(
 		"uesio/studio.selectlist",
 		&wire.LoadOptions{
-			Fields: []adapt.LoadRequestField{
+			Fields: []w.LoadRequestField{
 				{
 					ID: "uesio/studio.name",
 				},
@@ -310,7 +310,7 @@ func getSelectListMetadata(selectList string) (*adapt.SelectListMetadata, error)
 					ID: "uesio/studio.options",
 				},
 			},
-			Conditions: []adapt.LoadRequestCondition{
+			Conditions: []w.LoadRequestCondition{
 				{
 					Field:    "uesio/studio.allmetadata",
 					RawValue: true,
@@ -344,7 +344,7 @@ func getSelectListMetadata(selectList string) (*adapt.SelectListMetadata, error)
 	if err != nil {
 		return nil, err
 	}
-	return &adapt.SelectListMetadata{
+	return &w.SelectListMetadata{
 		Name:    selectList,
 		Options: *selectListOptions,
 	}, nil

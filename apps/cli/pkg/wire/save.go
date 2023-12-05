@@ -11,14 +11,14 @@ import (
 	"github.com/thecloudmasters/cli/pkg/call"
 	"github.com/thecloudmasters/cli/pkg/config"
 	"github.com/thecloudmasters/cli/pkg/context"
-	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 type SaveRequest struct {
 	Collection string                            `json:"collection"`
 	Changes    map[string]map[string]interface{} `json:"changes"`
 	Wire       string                            `json:"wire"`
-	Errors     []adapt.SaveError                 `json:"errors"`
+	Errors     []wire.SaveError                  `json:"errors"`
 	Options    SaveOptions                       `json:"options"`
 	Params     map[string]string                 `json:"params"`
 }

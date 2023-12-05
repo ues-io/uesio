@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 //This is a short & temporary version for the CUG
@@ -29,7 +29,7 @@ var supportedCollections = []string{
 
 // intercepts the collection uesio/studio.recentmetadata & enhances the LoadOp
 // Add the required metadata to complete the operation
-func runRecentMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+func runRecentMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 
 	workspace := op.Params["workspacename"]
 	if workspace == "" {
@@ -56,11 +56,11 @@ func runRecentMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 		return errors.New("unable to retrieve recent metadata, workspace id is missing")
 	}
 
-	var fields = []adapt.LoadRequestField{
+	var fields = []wire.LoadRequestField{
 		{ID: "uesio/studio.name"},
 		{ID: "uesio/studio.workspace"},
 		{ID: "uesio/core.collection"},
-		{ID: "uesio/core.updatedby", Fields: []adapt.LoadRequestField{
+		{ID: "uesio/core.updatedby", Fields: []wire.LoadRequestField{
 			{
 				ID: "uesio/core.firstname",
 			},
@@ -78,12 +78,12 @@ func runRecentMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 		{ID: "uesio/core.uniquekey"},
 	}
 
-	newOp := &adapt.LoadOp{
+	newOp := &wire.LoadOp{
 		CollectionName: op.CollectionName,
 		WireName:       op.WireName,
 		View:           op.View,
 		Collection:     op.Collection,
-		Conditions: []adapt.LoadRequestCondition{
+		Conditions: []wire.LoadRequestCondition{
 			{
 				Field:    "uesio/studio.workspace",
 				Value:    workspaceID,
@@ -101,7 +101,7 @@ func runRecentMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 			},
 		},
 		Fields: fields,
-		Order: []adapt.LoadRequestOrder{{
+		Order: []wire.LoadRequestOrder{{
 			Field: "uesio/core.updatedat",
 			Desc:  true,
 		}},
@@ -116,7 +116,7 @@ func runRecentMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 		return err
 	}
 
-	recentmetadataCollectionMetadata.SetField(&adapt.FieldMetadata{
+	recentmetadataCollectionMetadata.SetField(&wire.FieldMetadata{
 		Name:       "name",
 		Namespace:  "uesio/studio",
 		Createable: false,
@@ -125,7 +125,7 @@ func runRecentMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 		Type:       "TEXT",
 		Label:      "Name",
 	})
-	recentmetadataCollectionMetadata.SetField(&adapt.FieldMetadata{
+	recentmetadataCollectionMetadata.SetField(&wire.FieldMetadata{
 		Name:       "workspace",
 		Namespace:  "uesio/studio",
 		Createable: false,
@@ -134,7 +134,7 @@ func runRecentMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 		Type:       "TEXT",
 		Label:      "Workspace",
 	})
-	recentmetadataCollectionMetadata.SetField(&adapt.FieldMetadata{
+	recentmetadataCollectionMetadata.SetField(&wire.FieldMetadata{
 		Name:       "dynamiccollection",
 		Namespace:  "uesio/core",
 		Createable: false,

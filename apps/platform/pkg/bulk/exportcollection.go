@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 func exportCollection(create bundlestore.FileCreator, spec *meta.JobSpec, session *sess.Session) error {
@@ -19,7 +19,7 @@ func exportCollection(create bundlestore.FileCreator, spec *meta.JobSpec, sessio
 	}
 
 	//Load operation
-	fields := []adapt.LoadRequestField{}
+	fields := []wire.LoadRequestField{}
 	collectionMetadata, err := metadataResponse.GetCollection(spec.Collection)
 	if err != nil {
 		return err
@@ -27,18 +27,18 @@ func exportCollection(create bundlestore.FileCreator, spec *meta.JobSpec, sessio
 
 	for _, fieldMetadata := range collectionMetadata.Fields {
 		// For reference fields, lets just request the id for now
-		if adapt.IsReference(fieldMetadata.Type) {
-			fields = append(fields, adapt.LoadRequestField{
+		if wire.IsReference(fieldMetadata.Type) {
+			fields = append(fields, wire.LoadRequestField{
 				ID: fieldMetadata.GetFullName(),
-				Fields: []adapt.LoadRequestField{
+				Fields: []wire.LoadRequestField{
 					{
-						ID: adapt.ID_FIELD,
+						ID: wire.ID_FIELD,
 					},
 				},
 			})
 			continue
 		}
-		fields = append(fields, adapt.LoadRequestField{
+		fields = append(fields, wire.LoadRequestField{
 			ID: fieldMetadata.GetFullName(),
 		})
 	}
@@ -58,7 +58,7 @@ func exportCollection(create bundlestore.FileCreator, spec *meta.JobSpec, sessio
 		return errors.New("Cannot process that file type: " + spec.FileType)
 	}
 
-	_, err = datasource.Load([]*adapt.LoadOp{{
+	_, err = datasource.Load([]*wire.LoadOp{{
 		WireName:       "uesio_data_export",
 		CollectionName: spec.Collection,
 		Collection:     collection,

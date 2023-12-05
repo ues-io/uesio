@@ -1,9 +1,10 @@
-package adapt
+package wire
 
 import (
 	"fmt"
-	"github.com/jackc/pgx/v5/pgconn"
 	"strings"
+
+	"github.com/jackc/pgx/v5/pgconn"
 )
 
 type SaveError struct {

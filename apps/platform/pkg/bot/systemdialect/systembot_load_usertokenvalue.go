@@ -3,14 +3,14 @@ package systemdialect
 import (
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runUserTokenValueLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+func runUserTokenValueLoadBot(op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 
 	tokenMap := sess.TokenMap{}
 
@@ -27,7 +27,7 @@ func runUserTokenValueLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 		return err
 	}
 
-	op.Fields = []adapt.LoadRequestField{
+	op.Fields = []wire.LoadRequestField{
 		{ID: "uesio/studio.token"},
 	}
 

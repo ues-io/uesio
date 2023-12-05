@@ -1,9 +1,9 @@
 package jsdialect
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 type BeforeSaveAPI struct {
@@ -11,12 +11,12 @@ type BeforeSaveAPI struct {
 	Updates    *UpdatesAPI `bot:"updates"`
 	Deletes    *DeletesAPI `bot:"deletes"`
 	LogApi     *BotLogAPI  `bot:"log"`
-	op         *adapt.SaveOp
+	op         *wire.SaveOp
 	session    *sess.Session
-	connection adapt.Connection
+	connection wire.Connection
 }
 
-func NewBeforeSaveAPI(bot *meta.Bot, op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) *BeforeSaveAPI {
+func NewBeforeSaveAPI(bot *meta.Bot, op *wire.SaveOp, connection wire.Connection, session *sess.Session) *BeforeSaveAPI {
 	return &BeforeSaveAPI{
 		Inserts:    &InsertsAPI{op},
 		Updates:    &UpdatesAPI{op},
@@ -29,10 +29,10 @@ func NewBeforeSaveAPI(bot *meta.Bot, op *adapt.SaveOp, connection adapt.Connecti
 }
 
 func (bs *BeforeSaveAPI) AddError(message string) {
-	bs.op.AddError(adapt.NewSaveError("", "", message))
+	bs.op.AddError(wire.NewSaveError("", "", message))
 }
 
-func (bs *BeforeSaveAPI) Load(request BotLoadOp) (*adapt.Collection, error) {
+func (bs *BeforeSaveAPI) Load(request BotLoadOp) (*wire.Collection, error) {
 	return botLoad(request, bs.session, bs.connection)
 }
 

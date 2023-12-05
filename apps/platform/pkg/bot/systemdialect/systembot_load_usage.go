@@ -6,9 +6,10 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runUsageLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+func runUsageLoadBot(op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 
 	siteAdmin := session.GetSiteAdmin()
 
@@ -18,17 +19,17 @@ func runUsageLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *ses
 
 	usageData := NewNamespaceSwapCollection("uesio/core", "uesio/studio")
 
-	newOp := &adapt.LoadOp{
+	newOp := &wire.LoadOp{
 		CollectionName: "uesio/studio.usage",
 		WireName:       "loadStudioUsage",
 		View:           op.View,
 		Collection:     usageData,
-		Conditions: append(usageData.MapConditions(op.Conditions), adapt.LoadRequestCondition{
+		Conditions: append(usageData.MapConditions(op.Conditions), wire.LoadRequestCondition{
 			Field:    "site",
 			Value:    session.GetContextSite().ID,
 			Operator: "EQ",
 		}),
-		Fields: []adapt.LoadRequestField{
+		Fields: []wire.LoadRequestField{
 			{ID: "actiontype"},
 			{ID: "app"},
 			{ID: "day"},
@@ -47,7 +48,7 @@ func runUsageLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *ses
 		BatchNumber:    op.BatchNumber,
 	}
 
-	studioMetadata, err := datasource.Load([]*adapt.LoadOp{newOp}, sess.GetStudioAnonSession(), &datasource.LoadOptions{})
+	studioMetadata, err := datasource.Load([]*wire.LoadOp{newOp}, sess.GetStudioAnonSession(), &datasource.LoadOptions{})
 	if err != nil {
 		return err
 	}
@@ -63,7 +64,7 @@ func runUsageLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *ses
 		return err
 	}
 
-	referencedCollections := adapt.ReferenceRegistry{}
+	referencedCollections := wire.ReferenceRegistry{}
 	userCollectionMetadata, err := metadataResponse.GetCollection("uesio/core.user")
 	if err != nil {
 		return err
@@ -77,9 +78,9 @@ func runUsageLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *ses
 		if err != nil {
 			return err
 		}
-		userRefReq.AddID(value, adapt.ReferenceLocator{
+		userRefReq.AddID(value, wire.ReferenceLocator{
 			Item: item,
-			Field: &adapt.FieldMetadata{
+			Field: &wire.FieldMetadata{
 				Namespace: "uesio/studio",
 				Name:      "user",
 			},

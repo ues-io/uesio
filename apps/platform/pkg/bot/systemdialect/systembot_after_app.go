@@ -1,26 +1,26 @@
 package systemdialect
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runAppAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func runAppAfterSaveBot(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	adminSession := datasource.GetSiteAdminSession(session)
 	wc := meta.WorkspaceCollection{}
 	err := datasource.PlatformLoad(&wc, &datasource.PlatformLoadOptions{
-		Fields: []adapt.LoadRequestField{
+		Fields: []wire.LoadRequestField{
 			{
-				ID: adapt.ID_FIELD,
+				ID: wire.ID_FIELD,
 			},
 			{
 				ID: "uesio/studio.name",
 			},
 		},
-		Conditions: []adapt.LoadRequestCondition{
+		Conditions: []wire.LoadRequestCondition{
 			{
 				Field:    "uesio/studio.app",
 				Values:   request.Deletes.GetIDs(),
@@ -43,7 +43,7 @@ func runAppAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, sess
 			Params: map[string]string{
 				"workspaceid": workspace.ID,
 			},
-			Options: &adapt.SaveOptions{IgnoreMissingRecords: true},
+			Options: &wire.SaveOptions{IgnoreMissingRecords: true},
 		})
 	}
 

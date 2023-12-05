@@ -1,22 +1,22 @@
 package systemdialect
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func getArticleLoad(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session, collectionName string) error {
-	metadata, err := datasource.Load([]*adapt.LoadOp{{
+func getArticleLoad(op *wire.LoadOp, connection wire.Connection, session *sess.Session, collectionName string) error {
+	metadata, err := datasource.Load([]*wire.LoadOp{{
 		CollectionName: "uesio/cms.article",
 		WireName:       op.WireName,
 		View:           op.View,
 		Collection:     op.Collection,
 		Conditions:     op.Conditions,
 		BatchSize:      op.BatchSize,
-		Fields: []adapt.LoadRequestField{
+		Fields: []wire.LoadRequestField{
 			{
 				ID: "uesio/cms.name",
 			},
@@ -64,7 +64,7 @@ func getArticleLoad(op *adapt.LoadOp, connection adapt.Connection, session *sess
 	return nil
 }
 
-func runRecentDocLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+func runRecentDocLoadBot(op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 	site, err := auth.GetSiteFromHost("docs." + session.GetSite().Domain)
 	if err != nil {
 		//Ignore the errors if the site is not found

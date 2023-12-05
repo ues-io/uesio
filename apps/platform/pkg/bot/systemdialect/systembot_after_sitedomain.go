@@ -4,16 +4,16 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/goutils"
 	"github.com/thecloudmasters/uesio/pkg/limits"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runDomainAfterSaveSiteBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func runDomainAfterSaveSiteBot(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 	err := enforceMaxDomainsLimit(request, connection, session)
 	if err != nil {
 		return err
@@ -21,17 +21,17 @@ func runDomainAfterSaveSiteBot(request *adapt.SaveOp, connection adapt.Connectio
 	return clearHostCacheForDomain(request, connection, session)
 }
 
-func clearHostCacheForDomain(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func clearHostCacheForDomain(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 	return auth.ClearHostCacheForDomains(getUniqueKeysFromUpdatesAndDeletes(request))
 }
 
-func enforceMaxDomainsLimit(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func enforceMaxDomainsLimit(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	// We need to enforce a limit on max domains per user
 	// To do that, we need to query for all domains across all sites' apps
 	// for the site domains being inserted
 	sitesBeingInserted := map[string]bool{}
-	err := request.LoopInserts(func(change *adapt.ChangeItem) error {
+	err := request.LoopInserts(func(change *wire.ChangeItem) error {
 		siteId, err1 := change.GetFieldAsString("uesio/studio.site->uesio/core.id")
 		if err1 != nil {
 			return err1
@@ -52,21 +52,21 @@ func enforceMaxDomainsLimit(request *adapt.SaveOp, connection adapt.Connection, 
 	users := meta.UserCollection{}
 	uniqueUserIds := map[string]string{}
 	err = datasource.PlatformLoad(&users, &datasource.PlatformLoadOptions{
-		Conditions: []adapt.LoadRequestCondition{
+		Conditions: []wire.LoadRequestCondition{
 			{
 				Field:         "uesio/core.id",
 				Operator:      "IN",
 				Type:          "SUBQUERY",
 				SubCollection: "uesio/studio.app",
 				SubField:      "uesio/studio.user",
-				SubConditions: []adapt.LoadRequestCondition{
+				SubConditions: []wire.LoadRequestCondition{
 					{
 						Field:         "uesio/core.id",
 						Operator:      "IN",
 						Type:          "SUBQUERY",
 						SubCollection: "uesio/studio.site",
 						SubField:      "uesio/studio.app",
-						SubConditions: []adapt.LoadRequestCondition{
+						SubConditions: []wire.LoadRequestCondition{
 							{
 								Field:    "uesio/core.id",
 								Operator: "IN",
@@ -77,7 +77,7 @@ func enforceMaxDomainsLimit(request *adapt.SaveOp, connection adapt.Connection, 
 				},
 			},
 		},
-		Fields: []adapt.LoadRequestField{
+		Fields: []wire.LoadRequestField{
 			{
 				ID: "uesio/core.id",
 			},
@@ -115,20 +115,20 @@ func enforceMaxDomainsLimit(request *adapt.SaveOp, connection adapt.Connection, 
 	// Lookup the current total domains for these users
 	domainsForUsers := meta.SiteDomainCollection{}
 	err = datasource.PlatformLoad(&domainsForUsers, &datasource.PlatformLoadOptions{
-		Conditions: []adapt.LoadRequestCondition{
+		Conditions: []wire.LoadRequestCondition{
 			{
 				Field:    "uesio/studio.site->uesio/studio.app->uesio/studio.user",
 				Operator: "IN",
 				Values:   goutils.MapKeys(uniqueUserIds),
 			},
 		},
-		Fields: []adapt.LoadRequestField{
+		Fields: []wire.LoadRequestField{
 			{
 				ID: "uesio/studio.site",
-				Fields: []adapt.LoadRequestField{
+				Fields: []wire.LoadRequestField{
 					{
 						ID: "uesio/studio.app",
-						Fields: []adapt.LoadRequestField{
+						Fields: []wire.LoadRequestField{
 							{
 								ID: "uesio/studio.user",
 							},

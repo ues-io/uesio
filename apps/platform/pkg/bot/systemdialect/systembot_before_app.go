@@ -1,12 +1,12 @@
 package systemdialect
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runAppBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
-	return request.LoopInserts(func(change *adapt.ChangeItem) error {
+func runAppBeforeSaveBot(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+	return request.LoopInserts(func(change *wire.ChangeItem) error {
 		user, err := change.GetField("uesio/studio.user")
 		if err != nil {
 			return err
@@ -14,7 +14,7 @@ func runAppBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, ses
 
 		if user == nil {
 			// Use the owner if no user was provided
-			user, err = change.GetField(adapt.OWNER_FIELD)
+			user, err = change.GetField(wire.OWNER_FIELD)
 			if err != nil {
 				return err
 			}
@@ -23,7 +23,7 @@ func runAppBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, ses
 				return err
 			}
 		}
-		userKey, err := adapt.GetFieldValueString(user, "uesio/core.uniquekey")
+		userKey, err := wire.GetFieldValueString(user, "uesio/core.uniquekey")
 		if err != nil {
 			return err
 		}

@@ -4,18 +4,18 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bot"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runBotAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func runBotAfterSaveBot(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	fileUploadOps := []*filesource.FileUploadOp{}
 
 	// Pre-create an Attachment file for the new Bot
-	var err = request.LoopInserts(func(change *adapt.ChangeItem) error {
+	var err = request.LoopInserts(func(change *wire.ChangeItem) error {
 
 		botName, err := change.GetFieldAsString("uesio/studio.name")
 		if err != nil {

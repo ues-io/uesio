@@ -4,15 +4,14 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/clientcredentials"
-
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 )
 
 const uesioAuthCodeCallbackPath = "/site/oauth2/callback"
 
-func getCoreOAuthConfigFields(credentials *adapt.Credentials) (clientId, clientSecret, tokenUrl string, scopes []string, err error) {
+func getCoreOAuthConfigFields(credentials *wire.Credentials) (clientId, clientSecret, tokenUrl string, scopes []string, err error) {
 	clientId, err = credentials.GetRequiredEntry("clientId")
 	if err != nil {
 		return "", "", "", nil, err
@@ -35,7 +34,7 @@ func getCoreOAuthConfigFields(credentials *adapt.Credentials) (clientId, clientS
 	return clientId, clientSecret, tokenUrl, scopes, err
 }
 
-func GetConfig(credentials *adapt.Credentials, host string) (*oauth2.Config, error) {
+func GetConfig(credentials *wire.Credentials, host string) (*oauth2.Config, error) {
 	clientId, clientSecret, tokenUrl, scopes, err := getCoreOAuthConfigFields(credentials)
 	if err != nil {
 		return nil, err
@@ -54,7 +53,7 @@ func GetConfig(credentials *adapt.Credentials, host string) (*oauth2.Config, err
 	}, nil
 }
 
-func GetClientCredentialsConfig(credentials *adapt.Credentials) (*clientcredentials.Config, error) {
+func GetClientCredentialsConfig(credentials *wire.Credentials) (*clientcredentials.Config, error) {
 	clientId, clientSecret, tokenUrl, scopes, err := getCoreOAuthConfigFields(credentials)
 	if err != nil {
 		return nil, err

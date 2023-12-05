@@ -3,11 +3,11 @@ package datasource
 import (
 	"errors"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/constant"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 func getSiteAdminUser() *meta.User {
@@ -44,7 +44,7 @@ func GetSiteAdminSession(currentSession *sess.Session) *sess.Session {
 	return &newSession
 }
 
-func addSiteAdminContext(siteadmin *meta.Site, session *sess.Session, connection adapt.Connection) error {
+func addSiteAdminContext(siteadmin *meta.Site, session *sess.Session, connection wire.Connection) error {
 	site := session.GetSite()
 	perms := session.GetSitePermissions()
 
@@ -85,7 +85,7 @@ func addSiteAdminContext(siteadmin *meta.Site, session *sess.Session, connection
 	return nil
 }
 
-func AddSiteAdminContextByID(siteID string, session *sess.Session, connection adapt.Connection) (*sess.Session, error) {
+func AddSiteAdminContextByID(siteID string, session *sess.Session, connection wire.Connection) (*sess.Session, error) {
 	sessClone := session.RemoveWorkspaceContext()
 	siteadmin, err := QuerySiteByID(siteID, sessClone, connection)
 	if err != nil {
@@ -94,7 +94,7 @@ func AddSiteAdminContextByID(siteID string, session *sess.Session, connection ad
 	return sessClone, addSiteAdminContext(siteadmin, sessClone, connection)
 }
 
-func AddSiteAdminContextByKey(siteKey string, session *sess.Session, connection adapt.Connection) (*sess.Session, error) {
+func AddSiteAdminContextByKey(siteKey string, session *sess.Session, connection wire.Connection) (*sess.Session, error) {
 	sessClone := session.RemoveWorkspaceContext()
 	siteadmin, err := QuerySiteByKey(siteKey, sessClone, connection)
 	if err != nil {
@@ -103,27 +103,27 @@ func AddSiteAdminContextByKey(siteKey string, session *sess.Session, connection 
 	return sessClone, addSiteAdminContext(siteadmin, sessClone, connection)
 }
 
-func QuerySiteByID(siteid string, session *sess.Session, connection adapt.Connection) (*meta.Site, error) {
-	return querySite(siteid, adapt.ID_FIELD, session, connection)
+func QuerySiteByID(siteid string, session *sess.Session, connection wire.Connection) (*meta.Site, error) {
+	return querySite(siteid, wire.ID_FIELD, session, connection)
 }
 
-func QuerySiteByKey(sitekey string, session *sess.Session, connection adapt.Connection) (*meta.Site, error) {
-	return querySite(sitekey, adapt.UNIQUE_KEY_FIELD, session, connection)
+func QuerySiteByKey(sitekey string, session *sess.Session, connection wire.Connection) (*meta.Site, error) {
+	return querySite(sitekey, wire.UNIQUE_KEY_FIELD, session, connection)
 }
 
-func querySite(value, field string, session *sess.Session, connection adapt.Connection) (*meta.Site, error) {
+func querySite(value, field string, session *sess.Session, connection wire.Connection) (*meta.Site, error) {
 
 	var s meta.Site
 	err := PlatformLoadOne(
 		&s,
 		&PlatformLoadOptions{
 			Connection: connection,
-			Fields: []adapt.LoadRequestField{
+			Fields: []wire.LoadRequestField{
 				{
-					ID: adapt.ID_FIELD,
+					ID: wire.ID_FIELD,
 				},
 				{
-					ID: adapt.UNIQUE_KEY_FIELD,
+					ID: wire.UNIQUE_KEY_FIELD,
 				},
 				{
 					ID: "uesio/studio.name",
@@ -136,26 +136,26 @@ func querySite(value, field string, session *sess.Session, connection adapt.Conn
 				},
 				{
 					ID: "uesio/studio.app",
-					Fields: []adapt.LoadRequestField{
+					Fields: []wire.LoadRequestField{
 						{
-							ID: adapt.ID_FIELD,
+							ID: wire.ID_FIELD,
 						},
 						{
-							ID: adapt.UNIQUE_KEY_FIELD,
+							ID: wire.UNIQUE_KEY_FIELD,
 						},
 					},
 				},
 				{
 					ID: "uesio/studio.bundle",
-					Fields: []adapt.LoadRequestField{
+					Fields: []wire.LoadRequestField{
 						{
 							ID: "uesio/studio.app",
-							Fields: []adapt.LoadRequestField{
+							Fields: []wire.LoadRequestField{
 								{
-									ID: adapt.ID_FIELD,
+									ID: wire.ID_FIELD,
 								},
 								{
-									ID: adapt.UNIQUE_KEY_FIELD,
+									ID: wire.UNIQUE_KEY_FIELD,
 								},
 							},
 						},
@@ -171,7 +171,7 @@ func querySite(value, field string, session *sess.Session, connection adapt.Conn
 					},
 				},
 			},
-			Conditions: []adapt.LoadRequestCondition{
+			Conditions: []wire.LoadRequestCondition{
 				{
 					Field: field,
 					Value: value,

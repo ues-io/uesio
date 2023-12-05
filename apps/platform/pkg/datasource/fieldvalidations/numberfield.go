@@ -1,9 +1,11 @@
 package fieldvalidations
 
-import "github.com/thecloudmasters/uesio/pkg/adapt"
+import (
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
+)
 
-func ValidateNumberField(field *adapt.FieldMetadata) ValidationFunc {
-	return func(change *adapt.ChangeItem) *adapt.SaveError {
+func ValidateNumberField(field *wire.FieldMetadata) ValidationFunc {
+	return func(change *wire.ChangeItem) *wire.SaveError {
 		val, err := change.FieldChanges.GetField(field.GetFullName())
 		if val == nil {
 			return nil
@@ -12,7 +14,7 @@ func ValidateNumberField(field *adapt.FieldMetadata) ValidationFunc {
 		_, isInt64 := val.(int64)
 		_, isInt := val.(int)
 		if err == nil && !isFloat && !isInt64 && !isInt {
-			return adapt.NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" is not a valid number")
+			return wire.NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" is not a valid number")
 		}
 		return nil
 	}

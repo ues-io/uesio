@@ -1,15 +1,17 @@
 package jsdialect
 
-import "github.com/thecloudmasters/uesio/pkg/adapt"
+import (
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
+)
 
 type UpdatesAPI struct {
-	op *adapt.SaveOp
+	op *wire.SaveOp
 }
 
 func (c *UpdatesAPI) Get() []*ChangeAPI {
 	changeAPIs := []*ChangeAPI{}
 
-	_ = c.op.LoopUpdates(func(change *adapt.ChangeItem) error {
+	_ = c.op.LoopUpdates(func(change *wire.ChangeItem) error {
 		changeAPIs = append(changeAPIs, &ChangeAPI{
 			change: change,
 		})

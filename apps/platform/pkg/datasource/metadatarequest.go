@@ -6,6 +6,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/constant"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -16,7 +17,7 @@ func ParseSelectListKey(key string) (string, string, string) {
 	return keyParts[0], keyParts[1], keyParts[2]
 }
 
-func GetFullMetadataForCollection(metadataResponse *adapt.MetadataCache, collectionID string, session *sess.Session) error {
+func GetFullMetadataForCollection(metadataResponse *wire.MetadataCache, collectionID string, session *sess.Session) error {
 	collections := MetadataRequest{
 		Options: &MetadataRequestOptions{
 			LoadAllFields:    true,
@@ -31,7 +32,7 @@ func GetFullMetadataForCollection(metadataResponse *adapt.MetadataCache, collect
 	return collections.Load(metadataResponse, session, nil)
 }
 
-func GetMetadataResponse(metadataResponse *adapt.MetadataCache, collectionID, fieldID string, session *sess.Session) error {
+func GetMetadataResponse(metadataResponse *wire.MetadataCache, collectionID, fieldID string, session *sess.Session) error {
 	collections := MetadataRequest{}
 
 	if fieldID != "" {
@@ -53,17 +54,17 @@ func GetMetadataResponse(metadataResponse *adapt.MetadataCache, collectionID, fi
 // FieldsMap type a recursive type to store an arbitrary list of nested fields
 type FieldsMap map[string]FieldsMap
 
-func (fm *FieldsMap) getRequestFields() []adapt.LoadRequestField {
-	fields := []adapt.LoadRequestField{
+func (fm *FieldsMap) getRequestFields() []wire.LoadRequestField {
+	fields := []wire.LoadRequestField{
 		{
-			ID: adapt.ID_FIELD,
+			ID: wire.ID_FIELD,
 		},
 	}
 	if fm == nil {
 		return fields
 	}
 	for fieldKey, subFields := range *fm {
-		fields = append(fields, adapt.LoadRequestField{
+		fields = append(fields, wire.LoadRequestField{
 			ID:     fieldKey,
 			Fields: subFields.getRequestFields(),
 		})
@@ -152,7 +153,7 @@ func GetSelectListKey(collectionName, fieldName, selectListName string) string {
 	return collectionName + ":" + fieldName + ":" + selectListName
 }
 
-func ProcessFieldsMetadata(fields map[string]*adapt.FieldMetadata, collectionKey string, collection FieldsMap, metadataResponse *adapt.MetadataCache, additionalRequests *MetadataRequest, prefix string) error {
+func ProcessFieldsMetadata(fields map[string]*wire.FieldMetadata, collectionKey string, collection FieldsMap, metadataResponse *wire.MetadataCache, additionalRequests *MetadataRequest, prefix string) error {
 
 	collectionMetadata, err := metadataResponse.GetCollection(collectionKey)
 	if err != nil {
@@ -187,11 +188,11 @@ func ProcessFieldsMetadata(fields map[string]*adapt.FieldMetadata, collectionKey
 			}
 		}
 
-		if adapt.IsReference(fieldMetadata.Type) {
+		if wire.IsReference(fieldMetadata.Type) {
 
 			// If we only have one field, and it's the id field, skip getting metadata
 			if len(collection[fieldKey]) == 1 {
-				_, ok := collection[fieldKey][adapt.ID_FIELD]
+				_, ok := collection[fieldKey][wire.ID_FIELD]
 				if ok {
 					continue
 				}
@@ -303,7 +304,7 @@ func ProcessFieldsMetadata(fields map[string]*adapt.FieldMetadata, collectionKey
 
 }
 
-func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *sess.Session, connection adapt.Connection) error {
+func (mr *MetadataRequest) Load(metadataResponse *wire.MetadataCache, session *sess.Session, connection wire.Connection) error {
 	if mr.Options == nil {
 		mr.Options = &MetadataRequestOptions{}
 	}
@@ -329,7 +330,7 @@ func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *
 			metadata.HasAllFields = true
 		} else {
 			// Automagically add the id field and the name field whether they were requested or not.
-			fieldsToLoad := []string{adapt.ID_FIELD, adapt.UNIQUE_KEY_FIELD, metadata.NameField}
+			fieldsToLoad := []string{wire.ID_FIELD, wire.UNIQUE_KEY_FIELD, metadata.NameField}
 			for fieldKey := range collection {
 				fieldsToLoad = append(fieldsToLoad, fieldKey)
 			}

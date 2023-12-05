@@ -1,13 +1,13 @@
 package jsdialect
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func NewRunIntegrationActionBotAPI(bot *meta.Bot, integrationConnection *adapt.IntegrationConnection, actionName string, params map[string]interface{}) *RunIntegrationActionBotAPI {
+func NewRunIntegrationActionBotAPI(bot *meta.Bot, integrationConnection *wire.IntegrationConnection, actionName string, params map[string]interface{}) *RunIntegrationActionBotAPI {
 	return &RunIntegrationActionBotAPI{
 		actionName: actionName,
 		LogApi:     NewBotLogAPI(bot),
@@ -23,7 +23,7 @@ func NewRunIntegrationActionBotAPI(bot *meta.Bot, integrationConnection *adapt.I
 type RunIntegrationActionBotAPI struct {
 	actionName            string
 	Http                  *BotHttpAPI `bot:"http"`
-	integrationConnection *adapt.IntegrationConnection
+	integrationConnection *wire.IntegrationConnection
 	LogApi                *BotLogAPI `bot:"log"`
 	Params                *ParamsAPI `bot:"params"`
 	Results               map[string]interface{}
