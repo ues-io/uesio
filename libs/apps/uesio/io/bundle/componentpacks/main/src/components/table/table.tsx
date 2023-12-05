@@ -20,6 +20,7 @@ import Button from "../../utilities/button/button"
 import Group from "../../utilities/group/group"
 import MenuButton from "../../utilities/menubutton/menubutton"
 import Paginator from "../../utilities/paginator/paginator"
+import drawerSignals from "./drawersignals"
 import { default as IOTable } from "../../utilities/table/table"
 
 import {
@@ -71,26 +72,13 @@ type ColumnDefinition = {
 
 type RecordContext = component.ItemContext<wire.WireRecord>
 
-const openDrawer: signal.ComponentSignalDescriptor<{
-	drawerState: Record<string, boolean>
-}> = {
-	dispatcher: (state, signal, context) => {
-		console.log({ signal })
-
-		state.drawerState = {
-			...state.drawerState,
-			[context.merge(signal.recordId as string) as string]: true,
-		}
-	},
-}
-
 const signals: Record<string, signal.ComponentSignalDescriptor> = {
 	TOGGLE_MODE: toggleMode,
 	SET_EDIT_MODE: setEditMode,
 	SET_READ_MODE: setReadMode,
 	NEXT_PAGE: nextPage,
 	PREV_PAGE: prevPage,
-	OPEN_DRAWER: openDrawer,
+	...drawerSignals,
 }
 
 const StyleDefaults = Object.freeze({
