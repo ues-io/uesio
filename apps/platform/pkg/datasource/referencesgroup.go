@@ -1,8 +1,9 @@
-package adapt
+package datasource
 
 import (
 	"errors"
 
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -10,7 +11,7 @@ import (
 
 func loadData(op *wire.LoadOp, connection wire.Connection, session *sess.Session, index int) error {
 
-	if index == MAX_ITER_REF_GROUP {
+	if index == adapt.MAX_ITER_REF_GROUP {
 		return errors.New("You have reached the maximum limit of Reference Group")
 	}
 

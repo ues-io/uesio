@@ -85,7 +85,6 @@ func RequestWorkspaceWriteAccess(params map[string]string, connection wire.Conne
 		}
 		// Flesh out our workspace key info cache
 		if ws != nil && wsKeyInfo.HasAnyMissingField() {
-			workspaceUniqueKey = fmt.Sprintf("%s:%s", appName, workspaceName)
 			workspaceID = ws.ID
 			wsKeyInfo = workspace.NewKeyInfo(appName, workspaceName, workspaceID)
 			wsKeyInfoCache.Set(workspaceID, wsKeyInfo)

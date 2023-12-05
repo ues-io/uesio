@@ -3,7 +3,6 @@ package systemdialect
 import (
 	"errors"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -91,6 +90,6 @@ func runUsageLoadBot(op *wire.LoadOp, connection wire.Connection, session *sess.
 	op.Collection = usageData
 
 	//get user references with the current site session
-	return adapt.HandleReferences(connection, referencedCollections, session, true)
+	return datasource.HandleReferences(connection, referencedCollections, session, true)
 
 }

@@ -126,7 +126,7 @@ func GetSubFieldMetadata(f *meta.SubField) *wire.FieldMetadata {
 	}
 	if subFieldsSupported(f.Type, f.SubType) && len(f.SubFields) > 0 {
 		subFieldsMetadata := map[string]*wire.FieldMetadata{}
-		for i, _ := range f.SubFields {
+		for i := range f.SubFields {
 			subField := f.SubFields[i]
 			subFieldsMetadata[subField.Name] = GetSubFieldMetadata(&subField)
 		}

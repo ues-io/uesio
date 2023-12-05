@@ -1,4 +1,4 @@
-package adapt
+package datasource
 
 import (
 	"errors"

@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/formula"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
@@ -134,7 +134,7 @@ func runFieldAfterSaveBot(request *wire.SaveOp, connection wire.Connection, sess
 				fieldKeys: map[string]bool{},
 			}
 
-			_, err = adapt.UesioLanguage.Evaluate(expression, testEval)
+			_, err = formula.UesioLanguage.Evaluate(expression, testEval)
 			if err != nil {
 				return errors.New("Field: invalid expression:" + err.Error())
 			}

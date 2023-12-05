@@ -114,6 +114,9 @@ func runBundleDependencyAfterSaveBot(request *wire.SaveOp, connection wire.Conne
 				},
 			},
 		}, session, datasource.GetConnectionSaveOptions(connection))
+		if err != nil {
+			return err
+		}
 	}
 
 	// Inserts next
