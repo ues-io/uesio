@@ -1,11 +1,11 @@
 package jsdialect
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 type DeleteAPI struct {
-	delete *adapt.ChangeItem
+	delete *wire.ChangeItem
 	errors []string
 }
 
@@ -14,7 +14,7 @@ func (d *DeleteAPI) GetId() string {
 }
 
 func (d *DeleteAPI) GetOld(fieldName string) interface{} {
-	if fieldName == adapt.ID_FIELD {
+	if fieldName == wire.ID_FIELD {
 		return d.GetId()
 	}
 	if d.delete.OldValues == nil {

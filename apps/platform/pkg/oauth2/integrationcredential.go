@@ -7,9 +7,9 @@ import (
 
 	"golang.org/x/oauth2"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 const (
@@ -22,7 +22,7 @@ const (
 	AccessTokenExpirationField      = "uesio/core.accesstokenexpiration"
 )
 
-func GetTokenFromCredential(credential *adapt.Item) *oauth2.Token {
+func GetTokenFromCredential(credential *wire.Item) *oauth2.Token {
 	accessToken, _ := credential.GetFieldAsString(AccessTokenField)
 	refreshToken, _ := credential.GetFieldAsString(RefreshTokenField)
 	tokenType, _ := credential.GetFieldAsString(TokenTypeField)
@@ -44,7 +44,7 @@ func GetTokenFromCredential(credential *adapt.Item) *oauth2.Token {
 
 // PopulateCredentialFieldsFromToken populates access token, refresh token, and access token expiration fields
 // on an integration_credential record using the corresponding fields from the token
-func PopulateCredentialFieldsFromToken(credential *adapt.Item, token *oauth2.Token) {
+func PopulateCredentialFieldsFromToken(credential *wire.Item, token *oauth2.Token) {
 	credential.SetField(AccessTokenField, token.AccessToken)
 	if token.RefreshToken != "" {
 		credential.SetField(RefreshTokenField, token.RefreshToken)
@@ -72,10 +72,10 @@ func ResolveTokenType(token *oauth2.Token) string {
 	return tokenType
 }
 
-func BuildIntegrationCredential(integrationName string, userId string, token *oauth2.Token) *adapt.Item {
-	integrationCredential := &adapt.Item{}
-	userReference := &adapt.Item{}
-	userReference.SetField(adapt.ID_FIELD, userId)
+func BuildIntegrationCredential(integrationName string, userId string, token *oauth2.Token) *wire.Item {
+	integrationCredential := &wire.Item{}
+	userReference := &wire.Item{}
+	userReference.SetField(wire.ID_FIELD, userId)
 	integrationCredential.SetField(IntegrationField, integrationName)
 	integrationCredential.SetField(UserField, userReference)
 	if token != nil {
@@ -85,14 +85,14 @@ func BuildIntegrationCredential(integrationName string, userId string, token *oa
 }
 
 // UpsertIntegrationCredential performs an upsert on the provided integration credential item
-func UpsertIntegrationCredential(integrationCredential *adapt.Item, coreSession *sess.Session, platformConn adapt.Connection) error {
-	integrationCredential.SetField(adapt.UPDATED_AT_FIELD, time.Now().Unix())
+func UpsertIntegrationCredential(integrationCredential *wire.Item, coreSession *sess.Session, platformConn wire.Connection) error {
+	integrationCredential.SetField(wire.UPDATED_AT_FIELD, time.Now().Unix())
 	requests := []datasource.SaveRequest{
 		{
 			Collection: IntegrationCredentialCollection,
 			Wire:       "upsertIntegrationCredential",
-			Options:    &adapt.SaveOptions{Upsert: true},
-			Changes: &adapt.Collection{
+			Options:    &wire.SaveOptions{Upsert: true},
+			Changes: &wire.Collection{
 				integrationCredential,
 			},
 			Params: datasource.GetParamsFromSession(coreSession),
@@ -105,13 +105,13 @@ func UpsertIntegrationCredential(integrationCredential *adapt.Item, coreSession 
 }
 
 // DeleteIntegrationCredential deletes a provided integration credential
-func DeleteIntegrationCredential(integrationCredential *adapt.Item, coreSession *sess.Session, platformConn adapt.Connection) error {
+func DeleteIntegrationCredential(integrationCredential *wire.Item, coreSession *sess.Session, platformConn wire.Connection) error {
 	requests := []datasource.SaveRequest{
 		{
 			Collection: IntegrationCredentialCollection,
 			Wire:       "deleteIntegrationCredential",
-			Options:    &adapt.SaveOptions{},
-			Deletes: &adapt.Collection{
+			Options:    &wire.SaveOptions{},
+			Deletes: &wire.Collection{
 				integrationCredential,
 			},
 			Params: datasource.GetParamsFromSession(coreSession),
@@ -125,18 +125,18 @@ func DeleteIntegrationCredential(integrationCredential *adapt.Item, coreSession 
 
 // GetIntegrationCredential retrieves any existing integration credential record for the provided user / integration
 func GetIntegrationCredential(
-	userId, integrationName string, coreSession *sess.Session, connection adapt.Connection,
-) (*adapt.Item, error) {
-	integrationCredentials := &adapt.Collection{}
-	fetchIntegrationCredentialOp := &adapt.LoadOp{
+	userId, integrationName string, coreSession *sess.Session, connection wire.Connection,
+) (*wire.Item, error) {
+	integrationCredentials := &wire.Collection{}
+	fetchIntegrationCredentialOp := &wire.LoadOp{
 		Params:         datasource.GetParamsFromSession(coreSession),
 		CollectionName: IntegrationCredentialCollection,
 		Collection:     integrationCredentials,
 		BatchSize:      1,
 		Query:          true,
-		Fields: []adapt.LoadRequestField{
+		Fields: []wire.LoadRequestField{
 			{
-				ID: adapt.ID_FIELD,
+				ID: wire.ID_FIELD,
 			},
 			{
 				ID: AccessTokenField,
@@ -151,7 +151,7 @@ func GetIntegrationCredential(
 				ID: TokenTypeField,
 			},
 		},
-		Conditions: []adapt.LoadRequestCondition{
+		Conditions: []wire.LoadRequestCondition{
 			{
 				Field: IntegrationField,
 				Value: integrationName,
@@ -163,7 +163,7 @@ func GetIntegrationCredential(
 		},
 	}
 	if _, err := datasource.Load(
-		[]*adapt.LoadOp{fetchIntegrationCredentialOp},
+		[]*wire.LoadOp{fetchIntegrationCredentialOp},
 		coreSession,
 		&datasource.LoadOptions{
 			Connection: connection,

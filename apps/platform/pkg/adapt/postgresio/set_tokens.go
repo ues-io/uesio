@@ -4,14 +4,14 @@ import (
 	"context"
 
 	"github.com/jackc/pgx/v5"
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 const TOKEN_DELETE_QUERY = "DELETE FROM public.tokens WHERE recordid = ANY($1) and collection = $2 and tenant = $3"
 const TOKEN_INSERT_QUERY = "INSERT INTO public.tokens (recordid,token,collection,tenant,readonly) VALUES ($1,$2,$3,$4,$5)"
 
-func (c *Connection) SetRecordAccessTokens(request *adapt.SaveOp, session *sess.Session) error {
+func (c *Connection) SetRecordAccessTokens(request *wire.SaveOp, session *sess.Session) error {
 
 	tenantID := session.GetTenantID()
 	collectionName := request.Metadata.GetFullName()
@@ -33,7 +33,7 @@ func (c *Connection) SetRecordAccessTokens(request *adapt.SaveOp, session *sess.
 		batch.Queue(TOKEN_DELETE_QUERY, resetTokenIDs, collectionName, tenantID)
 	}
 
-	err := request.LoopChanges(func(change *adapt.ChangeItem) error {
+	err := request.LoopChanges(func(change *wire.ChangeItem) error {
 		if request.Metadata.IsWriteProtected() {
 			for _, token := range change.ReadWriteTokens {
 				batch.Queue(

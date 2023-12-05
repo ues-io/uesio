@@ -1,10 +1,10 @@
 package jsdialect
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 type AfterSaveAPI struct {
@@ -12,13 +12,13 @@ type AfterSaveAPI struct {
 	Updates    *UpdatesAPI `bot:"updates"`
 	Deletes    *DeletesAPI `bot:"deletes"`
 	LogApi     *BotLogAPI  `bot:"log"`
-	op         *adapt.SaveOp
+	op         *wire.SaveOp
 	session    *sess.Session
-	connection adapt.Connection
+	connection wire.Connection
 	AsAdmin    AdminCallBotAPI `bot:"asAdmin"`
 }
 
-func NewAfterSaveAPI(bot *meta.Bot, request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) *AfterSaveAPI {
+func NewAfterSaveAPI(bot *meta.Bot, request *wire.SaveOp, connection wire.Connection, session *sess.Session) *AfterSaveAPI {
 	return &AfterSaveAPI{
 		Inserts: &InsertsAPI{
 			op: request,
@@ -41,18 +41,18 @@ func NewAfterSaveAPI(bot *meta.Bot, request *adapt.SaveOp, connection adapt.Conn
 }
 
 func (as *AfterSaveAPI) AddError(message string) {
-	as.op.AddError(adapt.NewSaveError("", "", message))
+	as.op.AddError(wire.NewSaveError("", "", message))
 }
 
-func (as *AfterSaveAPI) Save(collection string, changes adapt.Collection) error {
+func (as *AfterSaveAPI) Save(collection string, changes wire.Collection) error {
 	return botSave(collection, changes, as.session, as.connection)
 }
 
-func (as *AfterSaveAPI) Delete(collection string, deletes adapt.Collection) error {
+func (as *AfterSaveAPI) Delete(collection string, deletes wire.Collection) error {
 	return botDelete(collection, deletes, as.session, as.connection)
 }
 
-func (bs *AfterSaveAPI) Load(request BotLoadOp) (*adapt.Collection, error) {
+func (bs *AfterSaveAPI) Load(request BotLoadOp) (*wire.Collection, error) {
 	return botLoad(request, bs.session, bs.connection)
 }
 

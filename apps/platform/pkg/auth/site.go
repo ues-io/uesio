@@ -3,10 +3,10 @@ package auth
 import (
 	"errors"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 func getDomain(domainType, domain string) (*meta.SiteDomain, error) {
@@ -14,12 +14,12 @@ func getDomain(domainType, domain string) (*meta.SiteDomain, error) {
 	err := datasource.PlatformLoadOne(
 		&sd,
 		&datasource.PlatformLoadOptions{
-			Fields: []adapt.LoadRequestField{
+			Fields: []wire.LoadRequestField{
 				{
 					ID: "uesio/studio.site",
 				},
 			},
-			Conditions: []adapt.LoadRequestCondition{
+			Conditions: []wire.LoadRequestCondition{
 				{
 					Field: "uesio/studio.domain",
 					Value: domain,
@@ -49,21 +49,21 @@ func querySiteFromDomain(domainType, domain string) (*meta.Site, error) {
 	return datasource.QuerySiteByID(siteDomain.Site.ID, sess.GetStudioAnonSession(), nil)
 }
 
-func GetPublicUser(site *meta.Site, connection adapt.Connection) (*meta.User, error) {
+func GetPublicUser(site *meta.Site, connection wire.Connection) (*meta.User, error) {
 	if site == nil {
 		return nil, errors.New("No Site Provided")
 	}
 	return GetUserByKey("guest", sess.GetAnonSession(site), connection)
 }
 
-func GetSystemUser(site *meta.Site, connection adapt.Connection) (*meta.User, error) {
+func GetSystemUser(site *meta.Site, connection wire.Connection) (*meta.User, error) {
 	if site == nil {
 		return nil, errors.New("No Site Provided")
 	}
 	return GetUserByKey("system", sess.GetAnonSession(site), connection)
 }
 
-func GetSystemSession(site *meta.Site, connection adapt.Connection) (*sess.Session, error) {
+func GetSystemSession(site *meta.Site, connection wire.Connection) (*sess.Session, error) {
 	user, err := GetSystemUser(site, connection)
 	if err != nil {
 		return nil, err
@@ -75,6 +75,6 @@ func GetSystemSession(site *meta.Site, connection adapt.Connection) (*sess.Sessi
 	return session, nil
 }
 
-func GetStudioSystemSession(connection adapt.Connection) (*sess.Session, error) {
+func GetStudioSystemSession(connection wire.Connection) (*sess.Session, error) {
 	return GetSystemSession(sess.GetStudioSite(), connection)
 }

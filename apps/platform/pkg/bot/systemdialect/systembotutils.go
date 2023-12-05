@@ -3,12 +3,12 @@ package systemdialect
 import (
 	"errors"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 type MetadataDependencyMap map[string]map[string]bool
@@ -23,7 +23,7 @@ func (m *MetadataDependencyMap) AddMap(keys map[string]bool, metadataType string
 	return nil
 }
 
-func (m *MetadataDependencyMap) AddRequired(change *adapt.ChangeItem, metadataType, fieldName string) error {
+func (m *MetadataDependencyMap) AddRequired(change *wire.ChangeItem, metadataType, fieldName string) error {
 	metadataName, err := change.GetFieldAsString(fieldName)
 	if err != nil || metadataName == "" {
 		return errors.New("Missing metadata item in field: " + fieldName)
@@ -31,7 +31,7 @@ func (m *MetadataDependencyMap) AddRequired(change *adapt.ChangeItem, metadataTy
 	return m.AddItem(metadataType, metadataName)
 }
 
-func (m *MetadataDependencyMap) AddOptional(change *adapt.ChangeItem, metadataType, fieldName string) error {
+func (m *MetadataDependencyMap) AddOptional(change *wire.ChangeItem, metadataType, fieldName string) error {
 	metadataName, err := change.GetFieldAsString(fieldName)
 	if err != nil || metadataName == "" {
 		return nil
@@ -99,7 +99,7 @@ func (m *MetadataDependencyMap) GetItems() ([]meta.BundleableItem, error) {
 	return items, nil
 }
 
-func getIDsFromUpdatesAndDeletes(request *adapt.SaveOp) []string {
+func getIDsFromUpdatesAndDeletes(request *wire.SaveOp) []string {
 	keys := make([]string, len(request.Updates)+len(request.Deletes))
 	index := 0
 	for i := range request.Updates {
@@ -113,7 +113,7 @@ func getIDsFromUpdatesAndDeletes(request *adapt.SaveOp) []string {
 	return keys
 }
 
-func getUniqueKeysFromUpdatesAndDeletes(request *adapt.SaveOp) []string {
+func getUniqueKeysFromUpdatesAndDeletes(request *wire.SaveOp) []string {
 	keys := make([]string, len(request.Updates)+len(request.Deletes))
 	index := 0
 	for i := range request.Updates {
@@ -127,7 +127,7 @@ func getUniqueKeysFromUpdatesAndDeletes(request *adapt.SaveOp) []string {
 	return keys
 }
 
-func getUniqueKeysFromDeletes(request *adapt.SaveOp) []string {
+func getUniqueKeysFromDeletes(request *wire.SaveOp) []string {
 	keys := make([]string, len(request.Deletes))
 	index := 0
 	for i := range request.Deletes {
@@ -137,7 +137,7 @@ func getUniqueKeysFromDeletes(request *adapt.SaveOp) []string {
 	return keys
 }
 
-func checkValidItems(workspaceID string, items []meta.BundleableItem, session *sess.Session, connection adapt.Connection) error {
+func checkValidItems(workspaceID string, items []meta.BundleableItem, session *sess.Session, connection wire.Connection) error {
 	if len(items) == 0 {
 		return nil
 	}
@@ -150,7 +150,7 @@ func checkValidItems(workspaceID string, items []meta.BundleableItem, session *s
 
 }
 
-func requireValue(change *adapt.ChangeItem, fieldName string) (string, error) {
+func requireValue(change *wire.ChangeItem, fieldName string) (string, error) {
 
 	value, err := change.GetFieldAsString(fieldName)
 	valueIsUndefined := err != nil

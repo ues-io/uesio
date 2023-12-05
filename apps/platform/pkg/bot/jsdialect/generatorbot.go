@@ -6,13 +6,13 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 	"gopkg.in/yaml.v3"
 )
 
@@ -29,7 +29,7 @@ type GeneratorBotAPI struct {
 	Params     *ParamsAPI `bot:"params"`
 	Create     bundlestore.FileCreator
 	Bot        *meta.Bot
-	Connection adapt.Connection
+	Connection wire.Connection
 }
 
 func (gba *GeneratorBotAPI) CallBot(botKey string, params map[string]interface{}) (interface{}, error) {
@@ -122,7 +122,7 @@ func (gba *GeneratorBotAPI) GenerateYamlFile(filename string, params map[string]
 
 func (gba *GeneratorBotAPI) RepeatString(repeaterInput interface{}, templateString string) (string, error) {
 	// This allows the repeater input to be either a string or a slice of strings
-	repeater, err := adapt.GetStringSlice(repeaterInput)
+	repeater, err := wire.GetStringSlice(repeaterInput)
 	if err != nil {
 		return "", err
 	}

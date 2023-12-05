@@ -4,16 +4,16 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func GetCollectionMetadata(e *meta.Collection) *adapt.CollectionMetadata {
-	fieldMetadata := map[string]*adapt.FieldMetadata{}
+func GetCollectionMetadata(e *meta.Collection) *wire.CollectionMetadata {
+	fieldMetadata := map[string]*wire.FieldMetadata{}
 
-	return &adapt.CollectionMetadata{
+	return &wire.CollectionMetadata{
 		Name:        e.Name,
 		Namespace:   e.Namespace,
 		Type:        e.Type,
@@ -40,7 +40,7 @@ func GetNameField(c *meta.Collection) string {
 	if c.NameField != "" {
 		return c.NameField
 	}
-	return adapt.ID_FIELD
+	return wire.ID_FIELD
 }
 
 func GetFieldLabel(f *meta.Field, session *sess.Session) string {
@@ -54,8 +54,8 @@ func GetFieldLabel(f *meta.Field, session *sess.Session) string {
 	return translation
 }
 
-func GetFieldMetadata(f *meta.Field, session *sess.Session) *adapt.FieldMetadata {
-	fieldMetadata := &adapt.FieldMetadata{
+func GetFieldMetadata(f *meta.Field, session *sess.Session) *wire.FieldMetadata {
+	fieldMetadata := &wire.FieldMetadata{
 		Name:                   f.Name,
 		Namespace:              f.Namespace,
 		Createable:             !f.ReadOnly && f.Type != "AUTONUMBER" && f.Type != "FORMULA",
@@ -79,7 +79,7 @@ func GetFieldMetadata(f *meta.Field, session *sess.Session) *adapt.FieldMetadata
 		ColumnName:             f.ColumnName,
 	}
 	if subFieldsSupported(f.Type, f.SubType) && len(f.SubFields) > 0 {
-		fieldMetadata.SubFields = map[string]*adapt.FieldMetadata{}
+		fieldMetadata.SubFields = map[string]*wire.FieldMetadata{}
 		for _, subField := range f.SubFields {
 			fieldMetadata.SubFields[subField.Name] = GetSubFieldMetadata(&subField)
 		}
@@ -102,8 +102,8 @@ func subFieldsSupported(fieldType, fieldSubType string) bool {
 	return fieldType == "STRUCT" || ((fieldType == "LIST" || fieldType == "MAP") && fieldSubType == "STRUCT")
 }
 
-func GetSubFieldMetadata(f *meta.SubField) *adapt.FieldMetadata {
-	fieldMetadata := &adapt.FieldMetadata{
+func GetSubFieldMetadata(f *meta.SubField) *wire.FieldMetadata {
+	fieldMetadata := &wire.FieldMetadata{
 		Name:       f.Name,
 		Label:      f.Label,
 		Type:       f.Type,
@@ -125,7 +125,7 @@ func GetSubFieldMetadata(f *meta.SubField) *adapt.FieldMetadata {
 		SubType: f.SubType,
 	}
 	if subFieldsSupported(f.Type, f.SubType) && len(f.SubFields) > 0 {
-		subFieldsMetadata := map[string]*adapt.FieldMetadata{}
+		subFieldsMetadata := map[string]*wire.FieldMetadata{}
 		for i, _ := range f.SubFields {
 			subField := f.SubFields[i]
 			subFieldsMetadata[subField.Name] = GetSubFieldMetadata(&subField)
@@ -135,18 +135,18 @@ func GetSubFieldMetadata(f *meta.SubField) *adapt.FieldMetadata {
 	return fieldMetadata
 }
 
-func GetSelectListMetadata(f *meta.Field) *adapt.SelectListMetadata {
+func GetSelectListMetadata(f *meta.Field) *wire.SelectListMetadata {
 	if f.Type == "SELECT" || f.Type == "MULTISELECT" {
-		return &adapt.SelectListMetadata{
+		return &wire.SelectListMetadata{
 			Name: f.SelectList,
 		}
 	}
 	return nil
 }
 
-func GetMetadataFieldMetadata(f *meta.Field) *adapt.MetadataFieldMetadata {
+func GetMetadataFieldMetadata(f *meta.Field) *wire.MetadataFieldMetadata {
 	if f.Type == "METADATA" || f.Type == "MULTIMETADATA" && f.MetadataFieldMetadata != nil {
-		return &adapt.MetadataFieldMetadata{
+		return &wire.MetadataFieldMetadata{
 			Type:      f.MetadataFieldMetadata.Type,
 			Grouping:  f.MetadataFieldMetadata.Grouping,
 			Namespace: f.MetadataFieldMetadata.Namespace,
@@ -155,9 +155,9 @@ func GetMetadataFieldMetadata(f *meta.Field) *adapt.MetadataFieldMetadata {
 	return nil
 }
 
-func GetFileMetadata(f *meta.Field) *adapt.FileMetadata {
+func GetFileMetadata(f *meta.Field) *wire.FileMetadata {
 	if f.Type == "FILE" && f.FileMetadata != nil {
-		return &adapt.FileMetadata{
+		return &wire.FileMetadata{
 			Accept:     f.FileMetadata.Accept,
 			FileSource: f.FileMetadata.FileSource,
 		}
@@ -165,18 +165,18 @@ func GetFileMetadata(f *meta.Field) *adapt.FileMetadata {
 	return nil
 }
 
-func GetNumberMetadata(f *meta.Field) *adapt.NumberMetadata {
+func GetNumberMetadata(f *meta.Field) *wire.NumberMetadata {
 	if (f.Type == "NUMBER" || (f.Type == "FORMULA" && f.FormulaMetadata.ReturnType == "NUMBER")) && f.NumberMetadata != nil {
-		return &adapt.NumberMetadata{
+		return &wire.NumberMetadata{
 			Decimals: f.NumberMetadata.Decimals,
 		}
 	}
 	return nil
 }
 
-func GetAutoNumberMetadata(f *meta.Field) *adapt.AutoNumberMetadata {
+func GetAutoNumberMetadata(f *meta.Field) *wire.AutoNumberMetadata {
 	if f.Type == "AUTONUMBER" && f.AutoNumberMetadata != nil {
-		return &adapt.AutoNumberMetadata{
+		return &wire.AutoNumberMetadata{
 			Prefix:       f.AutoNumberMetadata.Prefix,
 			LeadingZeros: f.AutoNumberMetadata.LeadingZeros,
 		}
@@ -184,9 +184,9 @@ func GetAutoNumberMetadata(f *meta.Field) *adapt.AutoNumberMetadata {
 	return nil
 }
 
-func GetFormulaMetadata(f *meta.Field) *adapt.FormulaMetadata {
+func GetFormulaMetadata(f *meta.Field) *wire.FormulaMetadata {
 	if f.Type == "FORMULA" && f.FormulaMetadata != nil {
-		return &adapt.FormulaMetadata{
+		return &wire.FormulaMetadata{
 			Expression: f.FormulaMetadata.Expression,
 			ReturnType: f.FormulaMetadata.ReturnType,
 		}
@@ -194,18 +194,18 @@ func GetFormulaMetadata(f *meta.Field) *adapt.FormulaMetadata {
 	return nil
 }
 
-func GetReferenceMetadata(f *meta.Field) *adapt.ReferenceMetadata {
+func GetReferenceMetadata(f *meta.Field) *wire.ReferenceMetadata {
 	if f.Type == "REFERENCE" && f.ReferenceMetadata != nil {
-		return &adapt.ReferenceMetadata{
+		return &wire.ReferenceMetadata{
 			Collection: f.ReferenceMetadata.Collection,
 		}
 	}
 	return nil
 }
 
-func GetReferenceGroupMetadata(f *meta.Field) *adapt.ReferenceGroupMetadata {
+func GetReferenceGroupMetadata(f *meta.Field) *wire.ReferenceGroupMetadata {
 	if f.Type == "REFERENCEGROUP" && f.ReferenceGroupMetadata != nil {
-		return &adapt.ReferenceGroupMetadata{
+		return &wire.ReferenceGroupMetadata{
 			Collection: f.ReferenceGroupMetadata.Collection,
 			Field:      f.ReferenceGroupMetadata.Field,
 			OnDelete:   f.ReferenceGroupMetadata.OnDelete,
@@ -214,9 +214,9 @@ func GetReferenceGroupMetadata(f *meta.Field) *adapt.ReferenceGroupMetadata {
 	return nil
 }
 
-func GetValidationMetadata(f *meta.Field) *adapt.ValidationMetadata {
+func GetValidationMetadata(f *meta.Field) *wire.ValidationMetadata {
 	if f.ValidationMetadata != nil {
-		return &adapt.ValidationMetadata{
+		return &wire.ValidationMetadata{
 			Type:      f.ValidationMetadata.Type,
 			Regex:     f.ValidationMetadata.Regex,
 			SchemaUri: f.ValidationMetadata.SchemaUri,
@@ -225,7 +225,7 @@ func GetValidationMetadata(f *meta.Field) *adapt.ValidationMetadata {
 	return nil
 }
 
-func LoadCollectionMetadata(key string, metadataCache *adapt.MetadataCache, session *sess.Session, connection adapt.Connection) (*adapt.CollectionMetadata, error) {
+func LoadCollectionMetadata(key string, metadataCache *wire.MetadataCache, session *sess.Session, connection wire.Connection) (*wire.CollectionMetadata, error) {
 	// Check to see if the collection is already in our metadata cache
 	collectionMetadata, err := metadataCache.GetCollection(key)
 	if err == nil {
@@ -263,7 +263,7 @@ func LoadCollectionMetadata(key string, metadataCache *adapt.MetadataCache, sess
 	return collectionMetadata, nil
 }
 
-func LoadAllFieldsMetadata(collectionKey string, collectionMetadata *adapt.CollectionMetadata, session *sess.Session, connection adapt.Connection) error {
+func LoadAllFieldsMetadata(collectionKey string, collectionMetadata *wire.CollectionMetadata, session *sess.Session, connection wire.Connection) error {
 	var fields meta.FieldCollection
 
 	err := bundle.LoadAllFromAny(&fields, meta.BundleConditions{
@@ -281,7 +281,7 @@ func LoadAllFieldsMetadata(collectionKey string, collectionMetadata *adapt.Colle
 	return nil
 }
 
-func LoadFieldsMetadata(keys []string, collectionKey string, collectionMetadata *adapt.CollectionMetadata, session *sess.Session, connection adapt.Connection) error {
+func LoadFieldsMetadata(keys []string, collectionKey string, collectionMetadata *wire.CollectionMetadata, session *sess.Session, connection wire.Connection) error {
 
 	fields := []meta.BundleableItem{}
 	for _, key := range keys {
@@ -314,7 +314,7 @@ func LoadFieldsMetadata(keys []string, collectionKey string, collectionMetadata 
 	return nil
 }
 
-func LoadSelectListMetadata(key string, metadataCache *adapt.MetadataCache, session *sess.Session, connection adapt.Connection) error {
+func LoadSelectListMetadata(key string, metadataCache *wire.MetadataCache, session *sess.Session, connection wire.Connection) error {
 
 	collectionKey, fieldKey, selectListKey := ParseSelectListKey(key)
 
@@ -330,7 +330,7 @@ func LoadSelectListMetadata(key string, metadataCache *adapt.MetadataCache, sess
 		if err != nil {
 			return err
 		}
-		selectListMetadata = &adapt.SelectListMetadata{
+		selectListMetadata = &wire.SelectListMetadata{
 			Name:                     selectList.Name,
 			Options:                  selectList.Options,
 			BlankOptionLabel:         selectList.BlankOptionLabel,

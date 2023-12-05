@@ -6,13 +6,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 	"github.com/thecloudmasters/uesio/pkg/translate"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 func InvoicingJob() error {
@@ -113,7 +113,7 @@ func getLipsDescr(uniquekey string, labels map[string]string) (string, error) {
 	return result, nil
 }
 
-func CreateInvoice(app *meta.App, connection adapt.Connection, session *sess.Session) error {
+func CreateInvoice(app *meta.App, connection wire.Connection, session *sess.Session) error {
 
 	//This creates a copy of the session
 	userSession := session.RemoveWorkspaceContext()
@@ -141,7 +141,7 @@ func CreateInvoice(app *meta.App, connection adapt.Connection, session *sess.Ses
 		&licenses,
 		&datasource.PlatformLoadOptions{
 			Connection: connection,
-			Conditions: []adapt.LoadRequestCondition{
+			Conditions: []wire.LoadRequestCondition{
 				{
 					Field: "uesio/studio.applicensed",
 					Value: app.ID,
@@ -190,7 +190,7 @@ func CreateInvoice(app *meta.App, connection adapt.Connection, session *sess.Ses
 	err = datasource.PlatformLoad(
 		&lpic,
 		&datasource.PlatformLoadOptions{
-			Conditions: []adapt.LoadRequestCondition{
+			Conditions: []wire.LoadRequestCondition{
 				{
 					Field:    "uesio/studio.license",
 					Operator: "IN",
@@ -219,7 +219,7 @@ func CreateInvoice(app *meta.App, connection adapt.Connection, session *sess.Ses
 	err = datasource.PlatformLoad(
 		&usage,
 		&datasource.PlatformLoadOptions{
-			Conditions: []adapt.LoadRequestCondition{
+			Conditions: []wire.LoadRequestCondition{
 				{
 					Field: "uesio/studio.app",
 					Value: app.ID,

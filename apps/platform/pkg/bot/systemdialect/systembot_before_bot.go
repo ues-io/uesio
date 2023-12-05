@@ -1,12 +1,12 @@
 package systemdialect
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runBotBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func runBotBeforeSaveBot(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	// early return if we only have deletes
 	if !request.HasChanges() {
@@ -21,7 +21,7 @@ func runBotBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, ses
 
 	depMap := MetadataDependencyMap{}
 
-	err := request.LoopChanges(func(change *adapt.ChangeItem) error {
+	err := request.LoopChanges(func(change *wire.ChangeItem) error {
 
 		botType, err := requireValue(change, "uesio/studio.type")
 		if err != nil {

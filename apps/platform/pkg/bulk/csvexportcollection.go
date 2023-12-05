@@ -4,11 +4,11 @@ import (
 	"encoding/csv"
 	"io"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func WriteCSVItem(csvwriter *csv.Writer, item meta.Item, collectionMetadata *adapt.CollectionMetadata, columnIndexes map[string]int) error {
+func WriteCSVItem(csvwriter *csv.Writer, item meta.Item, collectionMetadata *wire.CollectionMetadata, columnIndexes map[string]int) error {
 	data := make([]string, len(columnIndexes))
 
 	err := item.Loop(func(fieldName string, value interface{}) error {
@@ -40,7 +40,7 @@ func WriteCSVItem(csvwriter *csv.Writer, item meta.Item, collectionMetadata *ada
 	return csvwriter.Error()
 }
 
-func NewCSVExportCollection(writer io.Writer, collectionMetadata *adapt.CollectionMetadata) *CSVExportCollection {
+func NewCSVExportCollection(writer io.Writer, collectionMetadata *wire.CollectionMetadata) *CSVExportCollection {
 
 	csvwriter := csv.NewWriter(writer)
 	columnIndexes := map[string]int{}
@@ -64,7 +64,7 @@ func NewCSVExportCollection(writer io.Writer, collectionMetadata *adapt.Collecti
 
 type CSVExportCollection struct {
 	writer             *csv.Writer
-	collectionMetadata *adapt.CollectionMetadata
+	collectionMetadata *wire.CollectionMetadata
 	columnIndexes      map[string]int
 }
 
@@ -73,7 +73,7 @@ func (c *CSVExportCollection) GetItem(index int) meta.Item {
 }
 
 func (c *CSVExportCollection) NewItem() meta.Item {
-	return &adapt.Item{}
+	return &wire.Item{}
 }
 
 func (c *CSVExportCollection) AddItem(item meta.Item) error {

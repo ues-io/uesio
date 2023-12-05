@@ -1,10 +1,12 @@
 package jsdialect
 
-import "github.com/thecloudmasters/uesio/pkg/adapt"
+import (
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
+)
 
 type BotCollectionMetadata struct {
 	// Private
-	fields map[string]*adapt.FieldMetadata
+	fields map[string]*wire.FieldMetadata
 	// Public
 	Name         string `bot:"name"`
 	Namespace    string `bot:"namespace"`
@@ -18,7 +20,7 @@ type BotCollectionMetadata struct {
 	PluralLabel  string `bot:"pluralLabel"`
 }
 
-func NewBotCollectionMetadata(metadata *adapt.CollectionMetadata) *BotCollectionMetadata {
+func NewBotCollectionMetadata(metadata *wire.CollectionMetadata) *BotCollectionMetadata {
 	return &BotCollectionMetadata{
 		fields:       metadata.Fields,
 		Name:         metadata.Name,
@@ -34,13 +36,13 @@ func NewBotCollectionMetadata(metadata *adapt.CollectionMetadata) *BotCollection
 	}
 }
 
-func (cm *BotCollectionMetadata) GetFieldMetadata(fieldName string) *adapt.FieldMetadata {
+func (cm *BotCollectionMetadata) GetFieldMetadata(fieldName string) *wire.FieldMetadata {
 	return cm.fields[fieldName]
 }
 
-func (cm *BotCollectionMetadata) GetAllFieldMetadata() map[string]*adapt.FieldMetadata {
+func (cm *BotCollectionMetadata) GetAllFieldMetadata() map[string]*wire.FieldMetadata {
 	// Clone the map to prevent it being messed with by bots
-	cloned := map[string]*adapt.FieldMetadata{}
+	cloned := map[string]*wire.FieldMetadata{}
 	for k, v := range cm.fields {
 		cloned[k] = v
 	}

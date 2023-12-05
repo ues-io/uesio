@@ -9,6 +9,7 @@ import (
 
 	"github.com/PaesslerAG/gval"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 var identFunc = func(r rune, pos int) bool {
@@ -69,7 +70,7 @@ type evalFunc func(item meta.Item) error
 
 type RuntimeEvaluator struct {
 	item               meta.Item
-	collectionMetadata *CollectionMetadata
+	collectionMetadata *wire.CollectionMetadata
 }
 
 func (re *RuntimeEvaluator) SelectGVal(ctx context.Context, k string) (interface{}, error) {
@@ -90,7 +91,7 @@ func (re *RuntimeEvaluator) SelectGVal(ctx context.Context, k string) (interface
 	return value, nil
 }
 
-func populateFormulaField(field *FieldMetadata, collectionMetadata *CollectionMetadata, exec gval.Evaluable) evalFunc {
+func populateFormulaField(field *wire.FieldMetadata, collectionMetadata *wire.CollectionMetadata, exec gval.Evaluable) evalFunc {
 	return func(item meta.Item) error {
 
 		evaluator := &RuntimeEvaluator{item: item, collectionMetadata: collectionMetadata}
@@ -110,7 +111,7 @@ func populateFormulaField(field *FieldMetadata, collectionMetadata *CollectionMe
 	}
 }
 
-func GetFormulaFunction(fields map[string]*FieldMetadata, collectionMetadata *CollectionMetadata) evalFunc {
+func GetFormulaFunction(fields map[string]*wire.FieldMetadata, collectionMetadata *wire.CollectionMetadata) evalFunc {
 
 	populations := []evalFunc{}
 	for _, field := range fields {

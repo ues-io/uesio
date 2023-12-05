@@ -1,6 +1,8 @@
 package adapt
 
-func GetChallengeCollection(metadata *MetadataCache, collectionMetadata *CollectionMetadata) (*CollectionMetadata, error) {
+import "github.com/thecloudmasters/uesio/pkg/types/wire"
+
+func GetChallengeCollection(metadata *wire.MetadataCache, collectionMetadata *wire.CollectionMetadata) (*wire.CollectionMetadata, error) {
 	if collectionMetadata.AccessField == "" {
 		return collectionMetadata, nil
 	}

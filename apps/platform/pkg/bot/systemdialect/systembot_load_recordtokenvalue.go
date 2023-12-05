@@ -4,12 +4,12 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runRecordTokenValueLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+func runRecordTokenValueLoadBot(op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 
 	recordIDCondition := extractConditionByField(op.Conditions, "uesio/studio.recordid")
 	if recordIDCondition == nil {

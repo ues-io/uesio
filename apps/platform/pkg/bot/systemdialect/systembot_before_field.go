@@ -3,13 +3,13 @@ package systemdialect
 import (
 	"errors"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runFieldBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func runFieldBeforeSaveBot(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	// early return if we only have deletes
 	if !request.HasChanges() {
@@ -24,7 +24,7 @@ func runFieldBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, s
 
 	depMap := MetadataDependencyMap{}
 
-	err := request.LoopChanges(func(change *adapt.ChangeItem) error {
+	err := request.LoopChanges(func(change *wire.ChangeItem) error {
 
 		ftype, err := change.GetFieldAsString("uesio/studio.type")
 		if err != nil {

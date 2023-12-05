@@ -5,15 +5,15 @@ import (
 
 	"github.com/thecloudmasters/cli/pkg/call"
 	"github.com/thecloudmasters/cli/pkg/config"
-	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 type LoadOptions struct {
-	Conditions         []adapt.LoadRequestCondition `json:"conditions,omitempty"`
-	Fields             []adapt.LoadRequestField     `json:"fields,omitempty"`
-	Orders             []adapt.LoadRequestOrder     `json:"order,omitempty"`
-	Params             map[string]string            `json:"params,omitempty"`
-	RequireWriteAccess bool                         `json:"requirewriteaccess"`
+	Conditions         []wire.LoadRequestCondition `json:"conditions,omitempty"`
+	Fields             []wire.LoadRequestField     `json:"fields,omitempty"`
+	Orders             []wire.LoadRequestOrder     `json:"order,omitempty"`
+	Params             map[string]string           `json:"params,omitempty"`
+	RequireWriteAccess bool                        `json:"requirewriteaccess"`
 }
 
 type LoadRequest struct {
@@ -29,7 +29,7 @@ type LoadReqBatch struct {
 }
 
 type LoadResponse struct {
-	Data adapt.Collection `json:"data"`
+	Data wire.Collection `json:"data"`
 }
 
 type LoadResBatch struct {
@@ -39,7 +39,7 @@ type LoadResBatch struct {
 const ERROR_TOO_MANY_RECORDS_FOR_LOAD_ONE = "Too many records returned from LoadOne"
 const ERROR_ZERO_RECORDS_FOR_LOAD_ONE = "Zero records returned from LoadOne"
 
-func LoadOne(collectionName string, options *LoadOptions) (*adapt.Item, error) {
+func LoadOne(collectionName string, options *LoadOptions) (*wire.Item, error) {
 	result, err := Load(collectionName, options)
 	if err != nil {
 		return nil, err
@@ -53,7 +53,7 @@ func LoadOne(collectionName string, options *LoadOptions) (*adapt.Item, error) {
 	return result[0], nil
 }
 
-func Load(collectionName string, options *LoadOptions) (adapt.Collection, error) {
+func Load(collectionName string, options *LoadOptions) (wire.Collection, error) {
 
 	payload := &LoadReqBatch{
 		Wires: []LoadRequest{

@@ -3,11 +3,11 @@ package bulk
 import (
 	"io"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 type BatchResponse struct {
@@ -22,9 +22,9 @@ func NewBatch(body io.ReadCloser, jobID string, session *sess.Session) (*meta.Bu
 	err := datasource.PlatformLoadOne(
 		&job,
 		&datasource.PlatformLoadOptions{
-			Conditions: []adapt.LoadRequestCondition{
+			Conditions: []wire.LoadRequestCondition{
 				{
-					Field: adapt.ID_FIELD,
+					Field: wire.ID_FIELD,
 					Value: jobID,
 				},
 			},
@@ -47,9 +47,9 @@ func NewBatch(body io.ReadCloser, jobID string, session *sess.Session) (*meta.Bu
 
 }
 
-func getBatchMetadata(collectionName string, session *sess.Session) (*adapt.MetadataCache, error) {
+func getBatchMetadata(collectionName string, session *sess.Session) (*wire.MetadataCache, error) {
 
-	metadataResponse := adapt.MetadataCache{}
+	metadataResponse := wire.MetadataCache{}
 	collections := datasource.MetadataRequest{
 		Options: &datasource.MetadataRequestOptions{
 			LoadAllFields: true,

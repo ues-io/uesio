@@ -5,15 +5,15 @@ import (
 
 	"github.com/francoispqt/gojay"
 	"github.com/jackc/pgx/v5"
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 const INSERT_QUERY = "INSERT INTO public.data (id,uniquekey,owner,createdby,updatedby,createdat,updatedat,collection,tenant,autonumber,fields) VALUES ($1,$2,$3,$4,$5,to_timestamp($6),to_timestamp($7),$8,$9,$10,$11)"
 const UPDATE_QUERY = "UPDATE public.data SET uniquekey = $2, owner = $3, createdby = $4, updatedby = $5, createdat = to_timestamp($6), updatedat = to_timestamp($7), fields = fields || $10 WHERE id = $1 and collection = $8 and tenant = $9"
 const DELETE_QUERY = "DELETE FROM public.data WHERE id = ANY($1) and collection = $2 and tenant = $3"
 
-func (c *Connection) Save(request *adapt.SaveOp, session *sess.Session) error {
+func (c *Connection) Save(request *wire.SaveOp, session *sess.Session) error {
 
 	db := c.GetClient()
 
@@ -23,7 +23,7 @@ func (c *Connection) Save(request *adapt.SaveOp, session *sess.Session) error {
 
 	batch := &pgx.Batch{}
 
-	err := request.LoopChanges(func(change *adapt.ChangeItem) error {
+	err := request.LoopChanges(func(change *wire.ChangeItem) error {
 
 		fieldJSON, err := gojay.MarshalJSONObject(change)
 		if err != nil {
@@ -47,12 +47,12 @@ func (c *Connection) Save(request *adapt.SaveOp, session *sess.Session) error {
 			return err
 		}
 
-		createdAt, err := change.GetFieldAsInt(adapt.CREATED_AT_FIELD)
+		createdAt, err := change.GetFieldAsInt(wire.CREATED_AT_FIELD)
 		if err != nil {
 			return err
 		}
 
-		updatedAt, err := change.GetFieldAsInt(adapt.UPDATED_AT_FIELD)
+		updatedAt, err := change.GetFieldAsInt(wire.UPDATED_AT_FIELD)
 		if err != nil {
 			return err
 		}

@@ -6,15 +6,15 @@ import (
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 )
 
 func Load(w http.ResponseWriter, r *http.Request) {
 
-	var batch adapt.LoadRequestBatch
+	var batch wire.LoadRequestBatch
 	err := json.NewDecoder(r.Body).Decode(&batch)
 	if err != nil {
 		msg := "Invalid request format: " + err.Error()
@@ -32,7 +32,7 @@ func Load(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, msg, http.StatusBadRequest)
 		return
 	}
-	loadResponse := &adapt.LoadResponseBatch{
+	loadResponse := &wire.LoadResponseBatch{
 		Wires: batch.Wires,
 	}
 	// Only include metadata if explicitly requested

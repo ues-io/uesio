@@ -6,13 +6,13 @@ import (
 	"io"
 	"time"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/file"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 type wsFileMeta struct {
@@ -38,11 +38,11 @@ func getParamsFromWorkspace(workspace *meta.Workspace) map[string]string {
 	}
 }
 
-func processItems(items []meta.BundleableItem, workspace *meta.Workspace, connection adapt.Connection, looper func(meta.Item, []adapt.ReferenceLocator, string) error) error {
+func processItems(items []meta.BundleableItem, workspace *meta.Workspace, connection wire.Connection, looper func(meta.Item, []wire.ReferenceLocator, string) error) error {
 	if workspace == nil {
 		return errors.New("Workspace bundle store, needs a workspace in context")
 	}
-	collectionLocatorMap := map[string]adapt.LocatorMap{}
+	collectionLocatorMap := map[string]wire.LocatorMap{}
 	namespace := workspace.GetAppFullName()
 
 	for _, item := range items {
@@ -50,10 +50,10 @@ func processItems(items []meta.BundleableItem, workspace *meta.Workspace, connec
 		dbID := item.GetDBID(workspace.UniqueKey)
 		_, ok := collectionLocatorMap[collectionName]
 		if !ok {
-			collectionLocatorMap[collectionName] = adapt.LocatorMap{}
+			collectionLocatorMap[collectionName] = wire.LocatorMap{}
 		}
 		locatorMap := collectionLocatorMap[collectionName]
-		locatorMap.AddID(dbID, adapt.ReferenceLocator{
+		locatorMap.AddID(dbID, wire.ReferenceLocator{
 			Item: item,
 		})
 	}
@@ -71,9 +71,9 @@ func processItems(items []meta.BundleableItem, workspace *meta.Workspace, connec
 			LoadAll:    true,
 			Connection: connection,
 			Params:     getParamsFromWorkspace(workspace),
-			Conditions: []adapt.LoadRequestCondition{
+			Conditions: []wire.LoadRequestCondition{
 				{
-					Field:    adapt.UNIQUE_KEY_FIELD,
+					Field:    wire.UNIQUE_KEY_FIELD,
 					Value:    locatorMap.GetIDs(),
 					Operator: "IN",
 				},
@@ -141,9 +141,9 @@ func (b *WorkspaceBundleStoreConnection) GetItem(item meta.BundleableItem) error
 
 	// If we didn't find it in cache, we need to go to the database
 	if err := datasource.PlatformLoadOne(item, &datasource.PlatformLoadOptions{
-		Conditions: []adapt.LoadRequestCondition{
+		Conditions: []wire.LoadRequestCondition{
 			{
-				Field: adapt.UNIQUE_KEY_FIELD,
+				Field: wire.UNIQUE_KEY_FIELD,
 				Value: itemUniqueKey,
 			},
 		},
@@ -170,7 +170,7 @@ func (b *WorkspaceBundleStoreConnection) HasAny(group meta.BundleableGroup, cond
 }
 
 func (b *WorkspaceBundleStoreConnection) GetManyItems(items []meta.BundleableItem) error {
-	return processItems(items, b.Workspace, b.Connection, func(item meta.Item, locators []adapt.ReferenceLocator, id string) error {
+	return processItems(items, b.Workspace, b.Connection, func(item meta.Item, locators []wire.ReferenceLocator, id string) error {
 		if locators == nil {
 			return errors.New("Found an item we weren't expecting")
 		}
@@ -190,11 +190,11 @@ func (b *WorkspaceBundleStoreConnection) GetManyItems(items []meta.BundleableIte
 func (b *WorkspaceBundleStoreConnection) GetAllItems(group meta.BundleableGroup, conditions meta.BundleConditions) error {
 
 	// Add the workspace id as a condition
-	loadConditions := make([]adapt.LoadRequestCondition, len(conditions))
+	loadConditions := make([]wire.LoadRequestCondition, len(conditions))
 
 	i := 0
 	for field, value := range conditions {
-		loadConditions[i] = adapt.LoadRequestCondition{
+		loadConditions[i] = wire.LoadRequestCondition{
 			Field: field,
 			Value: value,
 		}
@@ -209,8 +209,8 @@ func (b *WorkspaceBundleStoreConnection) GetAllItems(group meta.BundleableGroup,
 		Params:     getParamsFromWorkspace(b.Workspace),
 		Connection: b.Connection,
 		LoadAll:    true,
-		Orders: []adapt.LoadRequestOrder{{
-			Field: adapt.UNIQUE_KEY_FIELD,
+		Orders: []wire.LoadRequestOrder{{
+			Field: wire.UNIQUE_KEY_FIELD,
 		}},
 	}, sess.GetStudioAnonSession())
 
@@ -221,7 +221,7 @@ func (b *WorkspaceBundleStoreConnection) GetItemRecordID(item meta.AttachableIte
 	if err != nil {
 		return "", err
 	}
-	recordID, err := item.GetField(adapt.ID_FIELD)
+	recordID, err := item.GetField(wire.ID_FIELD)
 	if err != nil {
 		return "", err
 	}
@@ -255,7 +255,7 @@ func (b *WorkspaceBundleStoreConnection) GetItemAttachments(creator bundlestore.
 		userFiles,
 		&datasource.PlatformLoadOptions{
 			Params: getParamsFromWorkspace(b.Workspace),
-			Conditions: []adapt.LoadRequestCondition{
+			Conditions: []wire.LoadRequestCondition{
 				{
 					Field: "uesio/core.recordid",
 					Value: recordIDString,
@@ -301,7 +301,7 @@ func (b *WorkspaceBundleStoreConnection) GetBundleDef() (*meta.BundleDef, error)
 		&datasource.PlatformLoadOptions{
 			Connection: b.Connection,
 			Params:     getParamsFromWorkspace(b.Workspace),
-			Fields: []adapt.LoadRequestField{
+			Fields: []wire.LoadRequestField{
 				{
 					ID: "uesio/studio.workspace",
 				},
@@ -310,12 +310,12 @@ func (b *WorkspaceBundleStoreConnection) GetBundleDef() (*meta.BundleDef, error)
 				},
 				{
 					ID: "uesio/studio.bundle",
-					Fields: []adapt.LoadRequestField{
+					Fields: []wire.LoadRequestField{
 						{
 							ID: "uesio/studio.app",
-							Fields: []adapt.LoadRequestField{
+							Fields: []wire.LoadRequestField{
 								{
-									ID: adapt.UNIQUE_KEY_FIELD,
+									ID: wire.UNIQUE_KEY_FIELD,
 								},
 							},
 						},
@@ -331,7 +331,7 @@ func (b *WorkspaceBundleStoreConnection) GetBundleDef() (*meta.BundleDef, error)
 					},
 				},
 			},
-			Conditions: []adapt.LoadRequestCondition{
+			Conditions: []wire.LoadRequestCondition{
 				{
 					Field:    "uesio/studio.workspace",
 					Value:    b.Workspace.ID,
@@ -371,7 +371,7 @@ func (b *WorkspaceBundleStoreConnection) GetBundleDef() (*meta.BundleDef, error)
 
 func (b *WorkspaceBundleStoreConnection) HasAllItems(items []meta.BundleableItem) error {
 
-	return processItems(items, b.Workspace, b.Connection, func(item meta.Item, locators []adapt.ReferenceLocator, id string) error {
+	return processItems(items, b.Workspace, b.Connection, func(item meta.Item, locators []wire.ReferenceLocator, id string) error {
 		if locators == nil {
 			return errors.New("Found an item we weren't expecting")
 		}

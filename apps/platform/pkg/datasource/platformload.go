@@ -5,16 +5,16 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 type PlatformLoadOptions struct {
-	Conditions         []adapt.LoadRequestCondition
-	Fields             []adapt.LoadRequestField
-	Orders             []adapt.LoadRequestOrder
-	Connection         adapt.Connection
+	Conditions         []wire.LoadRequestCondition
+	Fields             []wire.LoadRequestField
+	Orders             []wire.LoadRequestOrder
+	Connection         wire.Connection
 	BatchSize          int
 	LoadAll            bool
 	Params             map[string]string
@@ -41,10 +41,10 @@ func NewRecordNotFoundError(message string) *RecordNotFoundError {
 	}
 }
 
-func GetLoadRequestFields(fieldStrings []string) []adapt.LoadRequestField {
-	fields := []adapt.LoadRequestField{}
+func GetLoadRequestFields(fieldStrings []string) []wire.LoadRequestField {
+	fields := []wire.LoadRequestField{}
 	for _, field := range fieldStrings {
-		fields = append(fields, adapt.LoadRequestField{
+		fields = append(fields, wire.LoadRequestField{
 			ID: field,
 		})
 	}
@@ -60,7 +60,7 @@ func PlatformLoad(group meta.CollectionableGroup, options *PlatformLoadOptions, 
 	if fields == nil {
 		fields = GetLoadRequestFields(group.GetFields())
 	}
-	return doPlatformLoad(&adapt.LoadOp{
+	return doPlatformLoad(&wire.LoadOp{
 		WireName:           group.GetName() + "Wire",
 		CollectionName:     group.GetName(),
 		Collection:         group,
@@ -74,8 +74,8 @@ func PlatformLoad(group meta.CollectionableGroup, options *PlatformLoadOptions, 
 	}, options, session)
 }
 
-func doPlatformLoad(op *adapt.LoadOp, options *PlatformLoadOptions, session *sess.Session) error {
-	_, err := Load([]*adapt.LoadOp{op}, session, &LoadOptions{
+func doPlatformLoad(op *wire.LoadOp, options *PlatformLoadOptions, session *sess.Session) error {
+	_, err := Load([]*wire.LoadOp{op}, session, &LoadOptions{
 		Connection: options.Connection,
 		Metadata:   GetConnectionMetadata(options.Connection),
 	})
@@ -113,14 +113,14 @@ func PlatformLoadOne(item meta.CollectionableItem, options *PlatformLoadOptions,
 	return nil
 }
 
-func PlatformLoadByID(item meta.CollectionableItem, id string, session *sess.Session, connection adapt.Connection) error {
+func PlatformLoadByID(item meta.CollectionableItem, id string, session *sess.Session, connection wire.Connection) error {
 	return PlatformLoadOne(
 		item,
 		&PlatformLoadOptions{
 			Connection: connection,
-			Conditions: []adapt.LoadRequestCondition{
+			Conditions: []wire.LoadRequestCondition{
 				{
-					Field: adapt.ID_FIELD,
+					Field: wire.ID_FIELD,
 					Value: id,
 				},
 			},

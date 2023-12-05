@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/thecloudmasters/cli/pkg/context"
-	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 func GetAvailableWorkspaceNames(appID string) ([]string, error) {
@@ -29,16 +29,16 @@ func GetAvailableWorkspaceNames(appID string) ([]string, error) {
 	return names, nil
 }
 
-func GetAvailableWorkspaces(appID string) (adapt.Collection, error) {
+func GetAvailableWorkspaces(appID string) (wire.Collection, error) {
 	return Load(
 		"uesio/studio.workspace",
 		&LoadOptions{
-			Fields: []adapt.LoadRequestField{
+			Fields: []wire.LoadRequestField{
 				{
 					ID: "uesio/studio.name",
 				},
 			},
-			Conditions: []adapt.LoadRequestCondition{
+			Conditions: []wire.LoadRequestCondition{
 				{
 					Field:    "uesio/studio.app",
 					RawValue: appID,

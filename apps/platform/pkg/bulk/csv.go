@@ -6,24 +6,24 @@ import (
 	"io"
 
 	"github.com/dimchansky/utfbom"
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 type CSVOptions struct {
 	Comma rune
 }
 
-func processCSV(body io.ReadCloser, spec *meta.JobSpec, metadata *adapt.MetadataCache, session *sess.Session, options *CSVOptions) ([]datasource.SaveRequest, error) {
+func processCSV(body io.ReadCloser, spec *meta.JobSpec, metadata *wire.MetadataCache, session *sess.Session, options *CSVOptions) ([]datasource.SaveRequest, error) {
 
 	r := csv.NewReader(utfbom.SkipOnly(body))
 	r.LazyQuotes = true
 	if options != nil {
 		r.Comma = options.Comma
 	}
-	changes := adapt.Collection{}
+	changes := wire.Collection{}
 
 	// Handle the header row
 	headerRow, err := r.Read()
@@ -94,7 +94,7 @@ func processCSV(body io.ReadCloser, spec *meta.JobSpec, metadata *adapt.Metadata
 			}
 		}
 
-		var loader func(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc
+		var loader func(index int, mapping *meta.FieldMapping, fieldMetadata *wire.FieldMetadata, getValue valueFunc) loaderFunc
 
 		switch fieldMetadata.Type {
 		case "CHECKBOX":
@@ -132,7 +132,7 @@ func processCSV(body io.ReadCloser, spec *meta.JobSpec, metadata *adapt.Metadata
 			return nil, err
 		}
 
-		changeRequest := adapt.Item{}
+		changeRequest := wire.Item{}
 
 		for _, loaderFunc := range loaderFuncs {
 			err := loaderFunc(changeRequest, record)
@@ -150,7 +150,7 @@ func processCSV(body io.ReadCloser, spec *meta.JobSpec, metadata *adapt.Metadata
 			Collection: spec.Collection,
 			Wire:       "bulkupload",
 			Changes:    &changes,
-			Options: &adapt.SaveOptions{
+			Options: &wire.SaveOptions{
 				Upsert: true,
 			},
 		},

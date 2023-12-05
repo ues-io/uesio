@@ -4,14 +4,15 @@ import (
 	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 func processLocalReferences(
-	op *SaveOp,
-	change *ChangeItem,
+	op *wire.SaveOp,
+	change *wire.ChangeItem,
 	uniqueKeyFieldValue string,
 	refValue interface{},
-	refCollectionMetadata *CollectionMetadata,
+	refCollectionMetadata *wire.CollectionMetadata,
 ) (bool, error) {
 	// Special case for allowing self-references
 	if op.Metadata.GetFullName() == refCollectionMetadata.GetFullName() {
@@ -22,15 +23,15 @@ func processLocalReferences(
 		}
 
 		if baseUniqueKeyValue == uniqueKeyFieldValue {
-			concreteItem, err := GetLoadable(refValue)
+			concreteItem, err := wire.GetLoadable(refValue)
 			if err != nil {
 				return false, err
 			}
-			return true, concreteItem.SetField(ID_FIELD, change.IDValue)
+			return true, concreteItem.SetField(wire.ID_FIELD, change.IDValue)
 		}
 		// As a final Fallback check to see if any of the changes have that id
 		foundMatch := false
-		err = op.LoopChanges(func(innerChange *ChangeItem) error {
+		err = op.LoopChanges(func(innerChange *wire.ChangeItem) error {
 
 			innerBaseUniqueKeyValue, err := GetUniqueKeyValue(innerChange)
 			if err != nil {
@@ -39,11 +40,11 @@ func processLocalReferences(
 
 			if innerBaseUniqueKeyValue == uniqueKeyFieldValue {
 				foundMatch = true
-				concreteItem, err := GetLoadable(refValue)
+				concreteItem, err := wire.GetLoadable(refValue)
 				if err != nil {
 					return err
 				}
-				return concreteItem.SetField(ID_FIELD, innerChange.IDValue)
+				return concreteItem.SetField(wire.ID_FIELD, innerChange.IDValue)
 			}
 			return nil
 		})
@@ -59,20 +60,20 @@ func processLocalReferences(
 }
 
 func FetchReferences(
-	connection Connection,
-	op *SaveOp,
+	connection wire.Connection,
+	op *wire.SaveOp,
 	session *sess.Session,
 ) error {
 
 	metadata := connection.GetMetadata()
 
-	referencedIDCollections := ReferenceRegistry{}
-	referencedUniqueKeyCollections := ReferenceRegistry{}
+	referencedIDCollections := wire.ReferenceRegistry{}
+	referencedUniqueKeyCollections := wire.ReferenceRegistry{}
 
 	// Load All Reference Fields for Inserts and add to changes
 	for i := range op.Metadata.Fields {
 		field := op.Metadata.Fields[i]
-		if IsReference(field.Type) {
+		if wire.IsReference(field.Type) {
 			refCollectionMetadata, err := metadata.GetCollection(field.ReferenceMetadata.Collection)
 			if err != nil {
 				return err
@@ -80,25 +81,25 @@ func FetchReferences(
 
 			refIDReq := referencedIDCollections.Get(field.ReferenceMetadata.Collection)
 			refIDReq.Metadata = refCollectionMetadata
-			refIDReq.MatchField = ID_FIELD
+			refIDReq.MatchField = wire.ID_FIELD
 
 			refUniqueKeyReq := referencedUniqueKeyCollections.Get(field.ReferenceMetadata.Collection)
 			refUniqueKeyReq.Metadata = refCollectionMetadata
-			refUniqueKeyReq.MatchField = UNIQUE_KEY_FIELD
+			refUniqueKeyReq.MatchField = wire.UNIQUE_KEY_FIELD
 
-			err = op.LoopChanges(func(change *ChangeItem) error {
+			err = op.LoopChanges(func(change *wire.ChangeItem) error {
 
 				refValue, err := change.FieldChanges.GetField(field.GetFullName())
 				if err != nil || refValue == nil {
 					return nil
 				}
 
-				idFieldValue, err := GetFieldValueString(refValue, ID_FIELD)
+				idFieldValue, err := wire.GetFieldValueString(refValue, wire.ID_FIELD)
 				if err != nil {
 					idFieldValue = ""
 				}
 
-				uniqueKeyFieldValue, err := GetFieldValueString(refValue, UNIQUE_KEY_FIELD)
+				uniqueKeyFieldValue, err := wire.GetFieldValueString(refValue, wire.UNIQUE_KEY_FIELD)
 				if err != nil {
 					uniqueKeyFieldValue = ""
 				}
@@ -113,7 +114,7 @@ func FetchReferences(
 						return nil
 					}
 
-					return refIDReq.AddID(idFieldValue, ReferenceLocator{
+					return refIDReq.AddID(idFieldValue, wire.ReferenceLocator{
 						Item:  change,
 						Field: field,
 					})
@@ -129,7 +130,7 @@ func FetchReferences(
 						return nil
 					}
 
-					return refUniqueKeyReq.AddID(uniqueKeyFieldValue, ReferenceLocator{
+					return refUniqueKeyReq.AddID(uniqueKeyFieldValue, wire.ReferenceLocator{
 						Item:  change,
 						Field: field,
 					})
