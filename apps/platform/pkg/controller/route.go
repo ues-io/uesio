@@ -96,7 +96,7 @@ func handleApiErrorRoute(w http.ResponseWriter, r *http.Request, path string, se
 }
 
 func handleApiNotFoundRoute(w http.ResponseWriter, r *http.Request, path string, session *sess.Session) {
-	routingMergeData, err := getRouteAPIResult(getNotFoundRoute(path, "You may need to log in again.", "Nothing to see here.", "😞", "true"), sess.GetAnonSession(session.GetSite()))
+	routingMergeData, err := getRouteAPIResult(getNotFoundRoute(path, "You may need to log in again.", "true"), sess.GetAnonSession(session.GetSite()))
 	if err != nil {
 		HandleError(w, err)
 		return
@@ -133,8 +133,8 @@ func getRouteAPIResult(route *meta.Route, session *sess.Session) (*routing.Route
 	return GetRoutingMergeData(route, depsCache, session)
 }
 
-func getNotFoundRoute(path string, err string, title string, icon string, displayButton string) *meta.Route {
-	params := map[string]string{"error": err, "title": title, "icon": icon, "displayButton": displayButton}
+func getNotFoundRoute(path string, err string, displayButton string) *meta.Route {
+	params := map[string]string{"error": err, "title": "Nothing to see here.", "icon": "😞", "displayButton": displayButton}
 	return &meta.Route{
 		ViewRef: "uesio/core.error",
 		BundleableBase: meta.BundleableBase{
@@ -173,7 +173,13 @@ func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Sess
 
 	var route *meta.Route
 	if redirect {
-		route = getNotFoundRoute(path, err.Error(), "Nothing to see here.", "😞", "true")
+		errMessage := err.Error()
+		showButtton := "true"
+		hideButton := strings.HasPrefix(errMessage, "It appears that")
+		if hideButton {
+			showButtton = "false"
+		}
+		route = getNotFoundRoute(path, errMessage, showButtton)
 	} else {
 		route = GetErrorRoute(path, err.Error())
 	}

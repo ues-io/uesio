@@ -20,9 +20,13 @@ import (
 func GetHomeRoute(session *sess.Session) (*meta.Route, error) {
 	homeRoute := session.GetSite().GetAppBundle().HomeRoute
 
+	if homeRoute == "" {
+		return nil, exceptions.NewNotFoundException("It appears that the developer of this site has not specified a home page.")
+	}
+
 	route, err := meta.NewRoute(homeRoute)
 	if err != nil {
-		return nil, exceptions.NewNotFoundException("It appears that the developer of this site has not specified a home page.")
+		return nil, exceptions.NewNotFoundException(err.Error())
 	}
 	err = bundle.Load(route, session, nil)
 	if err != nil {
