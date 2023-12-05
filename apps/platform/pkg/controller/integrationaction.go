@@ -12,6 +12,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
@@ -53,6 +54,11 @@ func RunIntegrationAction(w http.ResponseWriter, r *http.Request) {
 	//})
 }
 
+// GetIntegrationActionParams returns metadata about the parameters for an integration action.
+// This can come from one of two sources:
+//  1. the integration action - each action can define its params
+//  2. the action's associated bot - if an action does NOT define its params,
+//     the action's params will default to the associated Bot's params.
 func GetIntegrationActionParams(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	namespace := vars["namespace"]
@@ -79,21 +85,42 @@ func GetIntegrationActionParams(w http.ResponseWriter, r *http.Request) {
 		HandleError(w, err)
 		return
 	}
-	actionBotKey, err := datasource.GetIntegrationActionBotName(integration, integrationType, actionKey, session, connection)
+	// The action itself MUST exist as a baseline.
+	action, err := datasource.GetIntegrationAction(integrationTypeName, actionKey, session, connection)
 	if err != nil {
 		HandleError(w, err)
 		return
 	}
-	actionBotNamespace, actionBotName, err := meta.ParseKey(actionBotKey)
-	if err != nil {
-		HandleError(w, err)
+	var actionParams meta.BotParams
+	// 1. Priority 1 --- read params off of the Integration Action itself.
+	if action.Params != nil && len(action.Params) > 0 {
+		actionParams = action.Params
+	} else {
+		// 2. Fallback --- read params off of the associated Bot.
+		actionBotKey, err := datasource.GetIntegrationActionBotName(action, integrationType)
+		if err != nil {
+			HandleError(w, err)
+			return
+		}
+		actionBotNamespace, actionBotName, err := meta.ParseKey(actionBotKey)
+		if err != nil {
+			HandleError(w, err)
+			return
+		}
+		robot := meta.NewRunActionBot(actionBotNamespace, actionBotName)
+		err = bundle.Load(robot, session, nil)
+		if err != nil {
+			HandleError(w, err)
+			return
+		}
+		actionParams = robot.Params
+	}
+
+	// If we couldn't find any parameters --- return an error
+	if actionParams == nil || len(actionParams) < 1 {
+		HandleError(w, exceptions.NewNotFoundException("could not find any parameters for this action"))
 		return
 	}
-	robot := meta.NewRunActionBot(actionBotNamespace, actionBotName)
-	err = bundle.Load(robot, session, nil)
-	if err != nil {
-		HandleError(w, err)
-		return
-	}
-	file.RespondJSON(w, r, getParamResponse(robot.Params))
+
+	file.RespondJSON(w, r, getParamResponse(actionParams))
 }

@@ -336,19 +336,10 @@ func CallListenerBot(namespace, name string, params map[string]interface{}, conn
 
 // GetIntegrationActionBotName resolves the name of the Bot associated with an integration action,
 // which can either come from the integration action itself, or from the integration type
-func GetIntegrationActionBotName(integration *meta.Integration, integrationType *meta.IntegrationType, actionKey string, session *sess.Session, connection wire.Connection) (string, error) {
-	actionKey = strings.ToLower(actionKey)
-	action, err := meta.NewIntegrationAction(integration.GetType(), actionKey)
-	if err != nil {
-		return "", err
-	}
-	err = bundle.Load(action, session, nil)
-	if err != nil {
-		return "", exceptions.NewNotFoundException(fmt.Sprintf("could not find integration action with name %s for integration %s", actionKey, integration.GetKey()))
-	}
+func GetIntegrationActionBotName(integrationAction *meta.IntegrationAction, integrationType *meta.IntegrationType) (string, error) {
 	// Use the action's associated BotRef, if defined, otherwise use the Integration Type's RunActionBot
-	if action.BotRef != "" {
-		return action.BotRef, nil
+	if integrationAction.BotRef != "" {
+		return integrationAction.BotRef, nil
 	}
 	if integrationType.RunActionBot != "" {
 		return integrationType.RunActionBot, nil
@@ -362,16 +353,11 @@ func RunIntegrationAction(ic *wire.IntegrationConnection, actionKey string, requ
 	session := ic.GetSession()
 	integrationKey := integration.GetKey()
 	actionKey = strings.ToLower(actionKey)
-	action, err := meta.NewIntegrationAction(integration.GetType(), actionKey)
+	action, err := GetIntegrationAction(integrationType.GetKey(), actionKey, session, connection)
 	if err != nil {
 		return nil, err
 	}
-	err = bundle.Load(action, session, nil)
-	if err != nil {
-		return nil, exceptions.NewNotFoundException(fmt.Sprintf("could not find integration action with name %s for integration %s", actionKey, integrationKey))
-	}
-
-	actionBot, err := GetIntegrationActionBotName(integration, integrationType, actionKey, session, connection)
+	actionBot, err := GetIntegrationActionBotName(action, integrationType)
 	if err != nil {
 		return nil, err
 	}

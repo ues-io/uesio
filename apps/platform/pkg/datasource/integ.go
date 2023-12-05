@@ -3,6 +3,7 @@ package datasource
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -13,14 +14,14 @@ import (
 
 // GetIntegration loads the requested integration from bundle store
 func GetIntegration(integrationID string, session *sess.Session, connection wire.Connection) (*meta.Integration, error) {
-	integration, err := meta.NewIntegration(integrationID)
+	integrationInstance, err := meta.NewIntegration(integrationID)
 	if err != nil {
 		return nil, err
 	}
-	if err = bundle.Load(integration, session, connection); err != nil {
+	if err = bundle.Load(integrationInstance, session, connection); err != nil {
 		return nil, exceptions.NewNotFoundException("could not find Integration: " + integrationID)
 	}
-	return integration, nil
+	return integrationInstance, nil
 }
 
 // GetIntegrationType loads the requested integration type by name from the bundle store
@@ -30,9 +31,22 @@ func GetIntegrationType(integrationTypeName string, session *sess.Session, conne
 		return nil, err
 	}
 	if err = bundle.Load(integrationType, session, connection); err != nil {
-		return nil, fmt.Errorf("could not find Integration Type: %s", integrationTypeName)
+		return nil, exceptions.NewNotFoundException("could not find Integration Type: " + integrationTypeName)
 	}
 	return integrationType, nil
+}
+
+// GetIntegrationAction loads the requested integration action buy name from the bundle store
+func GetIntegrationAction(integrationType, actionKey string, session *sess.Session, connection wire.Connection) (*meta.IntegrationAction, error) {
+	actionKey = strings.ToLower(actionKey)
+	action, err := meta.NewIntegrationAction(integrationType, actionKey)
+	if err != nil {
+		return nil, exceptions.NewNotFoundException("could not find integration action: " + actionKey)
+	}
+	if err = bundle.Load(action, session, connection); err != nil {
+		return nil, exceptions.NewNotFoundException("could not find integration action: " + actionKey)
+	}
+	return action, nil
 }
 
 func GetIntegrationConnection(integrationID string, session *sess.Session, connection wire.Connection) (*wire.IntegrationConnection, error) {
