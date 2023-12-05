@@ -658,15 +658,29 @@ const platform = {
 		)
 		return respondVoid(response)
 	},
-	autocomplete: async (
+	runIntegrationAction: async (
 		context: Context,
-		request: AutocompleteRequest
-	): Promise<AutocompleteResponse> => {
+		integration: MetadataKey,
+		action: string,
+		params: BotParams
+	): Promise<unknown> => {
 		const prefix = getPrefix(context)
 		const response = await postJSON(
 			context,
-			`${prefix}/ai/complete`,
-			request
+			`${prefix}/integration/${integration}/actions/${action}/run`,
+			params
+		)
+		return respondJSON(response)
+	},
+	getIntegrationActionParams: async (
+		context: Context,
+		integration: MetadataKey,
+		action: string
+	): Promise<ParamDefinition[]> => {
+		const prefix = getPrefix(context)
+		const response = await getJSON(
+			context,
+			`${prefix}/integration/${integration}/actions/${action}/params`
 		)
 		return respondJSON(response)
 	},

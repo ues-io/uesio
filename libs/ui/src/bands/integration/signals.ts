@@ -35,7 +35,7 @@ const signals: Record<string, SignalDescriptor> = {
 				if (response && signalInvocation.stepId) {
 					return context.addSignalOutputFrame(
 						signalInvocation.stepId,
-						response.params
+						response
 					)
 				}
 				return context

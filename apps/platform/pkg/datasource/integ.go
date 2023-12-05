@@ -11,17 +11,20 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func GetIntegrationConnection(integrationID string, session *sess.Session, connection wire.Connection) (*wire.IntegrationConnection, error) {
+// GetIntegration loads the requested integration from bundle store
+func GetIntegration(integrationID string, session *sess.Session, connection wire.Connection) (*meta.Integration, error) {
 	integration, err := meta.NewIntegration(integrationID)
 	if err != nil {
 		return nil, err
 	}
-	// First load the integration
 	if err = bundle.Load(integration, session, connection); err != nil {
 		return nil, exceptions.NewNotFoundException("could not find Integration: " + integrationID)
 	}
-	// Then load the integration type
-	integrationTypeName := integration.GetType()
+	return integration, nil
+}
+
+// GetIntegrationType loads the requested integration type by name from the bundle store
+func GetIntegrationType(integrationTypeName string, session *sess.Session, connection wire.Connection) (*meta.IntegrationType, error) {
 	integrationType, err := meta.NewIntegrationType(integrationTypeName)
 	if err != nil {
 		return nil, err
@@ -29,7 +32,20 @@ func GetIntegrationConnection(integrationID string, session *sess.Session, conne
 	if err = bundle.Load(integrationType, session, connection); err != nil {
 		return nil, fmt.Errorf("could not find Integration Type: %s", integrationTypeName)
 	}
+	return integrationType, nil
+}
 
+func GetIntegrationConnection(integrationID string, session *sess.Session, connection wire.Connection) (*wire.IntegrationConnection, error) {
+	// First load the integration
+	integration, err := GetIntegration(integrationID, session, connection)
+	if err != nil {
+		return nil, err
+	}
+	// Then load the integration type
+	integrationType, err := GetIntegrationType(integration.GetType(), session, connection)
+	if err != nil {
+		return nil, err
+	}
 	// Enter into a version context to load credentials in the integration's namespace
 	versionSession, err := EnterVersionContext(integration.Namespace, session, connection)
 	if err != nil {

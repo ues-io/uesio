@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"strings"
 
 	"github.com/gorilla/mux"
 
@@ -13,7 +12,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
-	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
@@ -59,28 +57,43 @@ func GetIntegrationActionParams(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	namespace := vars["namespace"]
 	name := vars["name"]
-	metadataType := strings.ToUpper(vars["type"])
-	session := middleware.GetSession(r)
+	actionKey := vars["action"]
 
-	if metadataType != "GENERATOR" && metadataType != "LISTENER" && metadataType != "RUNACTION" {
-		HandleError(w, exceptions.NewBadRequestException("Wrong bot type"))
+	session := middleware.GetSession(r)
+	connection, err := datasource.GetPlatformConnection(&wire.MetadataCache{}, session, nil)
+	if err != nil {
+		HandleError(w, errors.New("Unable to obtain platform connection: "+err.Error()))
 		return
 	}
 
-	var robot *meta.Bot
-	if metadataType == "GENERATOR" {
-		robot = meta.NewGeneratorBot(namespace, name)
-	} else if metadataType == "LISTENER" {
-		robot = meta.NewListenerBot(namespace, name)
-	} else if metadataType == "RUNACTION" {
-		robot = meta.NewRunActionBot(namespace, name)
-	}
-
-	err := bundle.Load(robot, session, nil)
+	// Load the integration and integration type
+	integrationKey := fmt.Sprintf("%s.%s", namespace, name)
+	integration, err := datasource.GetIntegration(integrationKey, session, connection)
 	if err != nil {
 		HandleError(w, err)
 		return
 	}
-
+	integrationTypeName := integration.GetType()
+	integrationType, err := datasource.GetIntegrationType(integrationTypeName, session, connection)
+	if err != nil {
+		HandleError(w, err)
+		return
+	}
+	actionBotKey, err := datasource.GetIntegrationActionBotName(integration, integrationType, actionKey, session, connection)
+	if err != nil {
+		HandleError(w, err)
+		return
+	}
+	actionBotNamespace, actionBotName, err := meta.ParseKey(actionBotKey)
+	if err != nil {
+		HandleError(w, err)
+		return
+	}
+	robot := meta.NewRunActionBot(actionBotNamespace, actionBotName)
+	err = bundle.Load(robot, session, nil)
+	if err != nil {
+		HandleError(w, err)
+		return
+	}
 	file.RespondJSON(w, r, getParamResponse(robot.Params))
 }

@@ -1,0 +1,15 @@
+name: params
+type: LIST
+label: Input parameters
+subtype: STRUCT
+subfields:
+  - name: name
+    label: Parameter Name
+    type: TEXT
+  - name: type
+    label: Parameter Type
+    type: SELECT
+    selectList: uesio/studio.botparamtypes
+  - name: required
+    label: Required
+    type: CHECKBOX

@@ -33,8 +33,9 @@ type IntegrationAction struct {
 	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
 	// IntegrationType will be extracted from the filesystem path
-	IntegrationTypeRef string `yaml:"-" json:"uesio/studio.integrationtype"`
-	BotRef             string `yaml:"bot,omitempty" json:"uesio/studio.bot"`
+	IntegrationTypeRef string    `yaml:"-" json:"uesio/studio.integrationtype"`
+	BotRef             string    `yaml:"bot,omitempty" json:"uesio/studio.bot"`
+	Params             BotParams `yaml:"params,omitempty" json:"uesio/studio.params"`
 }
 
 type IntegrationActionWrapper IntegrationAction
