@@ -65,6 +65,10 @@ definition:
               uesio.variant: uesio/io.main
               title: Bots
               subtitle: Beep. Boop. Beep.
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: smart_toy
               actions:
                 - uesio/io.group:
                     components:

@@ -130,6 +130,11 @@ definition:
                           uesio.variant: uesio/io.main
                           title: ${uesio/studio.name}
                           subtitle: ${uesio/studio.description}
+                          avatar:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.icon
+                                text: ${uesio/studio.icon}
+                                color: ${uesio/studio.color}
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
@@ -190,7 +195,6 @@ definition:
                                 avatar:
                                   - uesio/io.text:
                                       uesio.variant: uesio/io.icon
-                                      color: "#ccc"
                                       text: groups
   panels:
     newTeam:

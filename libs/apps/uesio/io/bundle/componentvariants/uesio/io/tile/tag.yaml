@@ -8,19 +8,31 @@ definition:
   uesio.styleTokens:
     root:
       - px-3
-      - py-1.5
-      - bg-white
-      - rounded
-      - shadow-sm
+      - py-2
       - text-sm
       - max-width=[180px]
       - items-center
+      - border-1
+      - rounded
+      - border-transparent
+      - tracking-wider
+      - gap-3
+      - group
     content:
       - whitespace-nowrap
       - text-ellipsis
-      - text-slate-600
-      - text-[8pt]
+      - text-slate-200
+      - text-xs
       - uppercase
+      - group-hover:text-white
     avatar:
       - flex
+      - text-base
+      - text-slate-700
+      - bg-slate-200
+      - p-1.5
+      - rounded-full
+      - group-hover:bg-white
+      - group-hover:text-slate-900
+
 public: true

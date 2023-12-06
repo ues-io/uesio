@@ -25,10 +25,8 @@ definition:
       - lg:overflow-auto
       - lg:col-start-2
       - lg:col-end-2
-      - lg:p-10
       - "[container-type:inline-size]"
       - h-max
-      - p-4
     right:
       - lg:h-full
       - lg:overflow-auto

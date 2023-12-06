@@ -9,7 +9,7 @@ definition:
           root:
             - grid-flow-col
             - justify-between
-            - bg-slate-100
+            - bg-slate-900
             - h-[60px]
             - items-center
             - gap-2
@@ -25,7 +25,7 @@ definition:
                         - mr-4
                         - opacity-80
                     height: 34
-                    file: uesio/core.logo
+                    file: uesio/core.logowhite
                     signals:
                       - signal: "route/NAVIGATE"
                         path: "home"
@@ -130,15 +130,15 @@ definition:
           - uesio/io.group:
               components:
                 - uesio/io.button:
-                    uesio.variant: uesio/io.nav
+                    uesio.variant: uesio/studio.headernavicon
+                    icon: logout
                     uesio.id: logout
-                    text: Log Out
                     signals:
                       - signal: "user/LOGOUT"
                 - uesio/io.button:
-                    uesio.variant: uesio/io.nav
+                    uesio.variant: uesio/studio.headernavicon
                     uesio.id: user-profile
-                    text: Profile
+                    icon: account_circle
                     signals:
                       - signal: "route/NAVIGATE"
                         path: myprofile
@@ -146,5 +146,9 @@ definition:
                     uesio.styleTokens:
                       root:
                         - ml-3
+                        - border-2
+                        - border-white
+                        - h-9
+                        - w-9
                     text: $User{initials}
                     image: $User{picture}

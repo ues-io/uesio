@@ -94,7 +94,6 @@ definition:
                           avatar:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.icon
-                                color: "#ccc"
                                 text: tune
   panels:
     newtranslation:

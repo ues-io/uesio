@@ -62,7 +62,8 @@ definition:
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
-                    title: Translation - ${uesio/studio.language}
+                    title: ${uesio/studio.language}
+                    subtitle: Translation
                     actions:
                       - uesio/io.group:
                           components:

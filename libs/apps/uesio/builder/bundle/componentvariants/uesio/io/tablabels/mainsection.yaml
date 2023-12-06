@@ -3,7 +3,7 @@ label: mainsection
 definition:
   uesio.styleTokens:
     root:
-      - bg-[$Theme{color.primary}]
+      - bg-cyan-700
       - p-2
       - gap-x-2
       - gap-y-1

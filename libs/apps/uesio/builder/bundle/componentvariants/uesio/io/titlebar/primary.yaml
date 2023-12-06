@@ -4,7 +4,7 @@ extends: uesio/io.default
 definition:
   uesio.styleTokens:
     root:
-      - bg-[$Theme{color.primary}]
+      - bg-cyan-700
     content:
       - p-2
     title:
