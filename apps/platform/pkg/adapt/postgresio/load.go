@@ -10,7 +10,10 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/constant"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/formula"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 var DEBUG_SQL = os.Getenv("UESIO_DEBUG_SQL") == "true"
@@ -20,7 +23,7 @@ const (
 	waffleCone = "#>"
 )
 
-func getFieldNameWithAlias(fieldMetadata *adapt.FieldMetadata) string {
+func getFieldNameWithAlias(fieldMetadata *wire.FieldMetadata) string {
 	fieldName := getJSONBFieldName(fieldMetadata, "main")
 	return fmt.Sprintf("'%s',%s", fieldMetadata.GetFullName(), fieldName)
 }
@@ -33,25 +36,25 @@ func getIDFieldName(tableAlias string) string {
 	return castFieldToText(getAliasedName("id", tableAlias))
 }
 
-func getJSONBFieldName(fieldMetadata *adapt.FieldMetadata, tableAlias string) string {
+func getJSONBFieldName(fieldMetadata *wire.FieldMetadata, tableAlias string) string {
 	fieldName := fieldMetadata.GetFullName()
 
 	switch fieldName {
-	case adapt.ID_FIELD:
+	case wire.ID_FIELD:
 		return getAliasedName("id", tableAlias)
-	case adapt.UNIQUE_KEY_FIELD:
+	case wire.UNIQUE_KEY_FIELD:
 		return getAliasedName("uniquekey", tableAlias)
-	case adapt.OWNER_FIELD:
+	case wire.OWNER_FIELD:
 		return getAliasedName("owner", tableAlias)
-	case adapt.CREATED_BY_FIELD:
+	case wire.CREATED_BY_FIELD:
 		return getAliasedName("createdby", tableAlias)
-	case adapt.CREATED_AT_FIELD:
+	case wire.CREATED_AT_FIELD:
 		return fmt.Sprintf("date_part('epoch',%s)", getAliasedName("createdat", tableAlias))
-	case adapt.UPDATED_BY_FIELD:
+	case wire.UPDATED_BY_FIELD:
 		return getAliasedName("updatedby", tableAlias)
-	case adapt.UPDATED_AT_FIELD:
+	case wire.UPDATED_AT_FIELD:
 		return fmt.Sprintf("date_part('epoch',%s)", getAliasedName("updatedat", tableAlias))
-	case adapt.COLLECTION_FIELD:
+	case wire.COLLECTION_FIELD:
 		return getAliasedName("collection", tableAlias)
 	}
 
@@ -82,25 +85,25 @@ func getFieldNameString(fieldType string, fieldsField string, fieldName string) 
 	}
 }
 
-func getFieldName(fieldMetadata *adapt.FieldMetadata, tableAlias string) string {
+func getFieldName(fieldMetadata *wire.FieldMetadata, tableAlias string) string {
 	fieldName := fieldMetadata.GetFullName()
 
 	switch fieldName {
-	case adapt.ID_FIELD:
+	case wire.ID_FIELD:
 		return getIDFieldName(tableAlias)
-	case adapt.UNIQUE_KEY_FIELD:
+	case wire.UNIQUE_KEY_FIELD:
 		return getAliasedName("uniquekey", tableAlias)
-	case adapt.OWNER_FIELD:
+	case wire.OWNER_FIELD:
 		return castFieldToText(getAliasedName("owner", tableAlias))
-	case adapt.CREATED_BY_FIELD:
+	case wire.CREATED_BY_FIELD:
 		return castFieldToText(getAliasedName("createdby", tableAlias))
-	case adapt.CREATED_AT_FIELD:
+	case wire.CREATED_AT_FIELD:
 		return fmt.Sprintf("date_part('epoch',%s)", getAliasedName("createdat", tableAlias))
-	case adapt.UPDATED_BY_FIELD:
+	case wire.UPDATED_BY_FIELD:
 		return castFieldToText(getAliasedName("updatedby", tableAlias))
-	case adapt.UPDATED_AT_FIELD:
+	case wire.UPDATED_AT_FIELD:
 		return fmt.Sprintf("date_part('epoch',%s)", getAliasedName("updatedat", tableAlias))
-	case adapt.COLLECTION_FIELD:
+	case wire.COLLECTION_FIELD:
 		return getAliasedName("collection", tableAlias)
 	}
 
@@ -115,7 +118,7 @@ func getAliasedName(name, alias string) string {
 	return fmt.Sprintf("%s.%s", alias, name)
 }
 
-func (c *Connection) Load(op *adapt.LoadOp, session *sess.Session) error {
+func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 
 	metadata := c.metadata
 	userTokens := session.GetFlatTokens()
@@ -126,7 +129,7 @@ func (c *Connection) Load(op *adapt.LoadOp, session *sess.Session) error {
 		return err
 	}
 
-	fieldMap, referencedCollections, referencedGroupCollections, formulaFields, err := adapt.GetFieldsMap(op.Fields, collectionMetadata, metadata)
+	fieldMap, referencedCollections, referencedGroupCollections, formulaFields, err := wire.GetFieldsMap(op.Fields, collectionMetadata, metadata)
 	if err != nil {
 		return err
 	}
@@ -243,7 +246,7 @@ func (c *Connection) Load(op *adapt.LoadOp, session *sess.Session) error {
 	defer rows.Close()
 
 	op.HasMoreBatches = false
-	formulaPopulations := adapt.GetFormulaFunction(formulaFields, collectionMetadata)
+	formulaPopulations := formula.GetFormulaFunction(formulaFields, collectionMetadata)
 	index := 0
 	for rows.Next() {
 		if op.BatchSize == index {
@@ -264,11 +267,11 @@ func (c *Connection) Load(op *adapt.LoadOp, session *sess.Session) error {
 				if err != nil {
 					return err
 				}
-				refKey, err := adapt.GetReferenceKey(refObj)
+				refKey, err := wire.GetReferenceKey(refObj)
 				if err != nil {
 					return err
 				}
-				refCol.AddID(refKey, adapt.ReferenceLocator{
+				refCol.AddID(refKey, wire.ReferenceLocator{
 					Item:  item,
 					Field: fieldMetadata,
 				})
@@ -297,15 +300,15 @@ func (c *Connection) Load(op *adapt.LoadOp, session *sess.Session) error {
 
 	op.BatchNumber++
 
-	err = adapt.HandleReferencesGroup(c, op.Collection, referencedGroupCollections, session)
+	err = datasource.HandleReferencesGroup(c, op.Collection, referencedGroupCollections, session)
 	if err != nil {
 		return err
 	}
 
-	err = adapt.HandleMultiCollectionReferences(c, referencedCollections, session)
+	err = datasource.HandleMultiCollectionReferences(c, referencedCollections, session)
 	if err != nil {
 		return err
 	}
 
-	return adapt.HandleReferences(c, referencedCollections, session, true)
+	return datasource.HandleReferences(c, referencedCollections, session, true)
 }

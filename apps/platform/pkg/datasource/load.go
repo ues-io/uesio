@@ -5,26 +5,28 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/constant"
+	"github.com/thecloudmasters/uesio/pkg/formula"
 	"github.com/thecloudmasters/uesio/pkg/merge"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 	"github.com/thecloudmasters/uesio/pkg/translate"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 	"github.com/thecloudmasters/uesio/pkg/usage"
 )
 
 type SpecialReferences struct {
-	ReferenceMetadata *adapt.ReferenceMetadata
+	ReferenceMetadata *wire.ReferenceMetadata
 	Fields            []string
 }
 
 type MetadataInformed interface {
-	SetMetadata(*adapt.CollectionMetadata) error
+	SetMetadata(*wire.CollectionMetadata) error
 }
 
-func addMetadataToCollection(group meta.Group, metadata *adapt.CollectionMetadata) error {
+func addMetadataToCollection(group meta.Group, metadata *wire.CollectionMetadata) error {
 	informedGroup, isMetadataInformed := group.(MetadataInformed)
 	if isMetadataInformed {
 		if err := informedGroup.SetMetadata(metadata); err != nil {
@@ -36,13 +38,13 @@ func addMetadataToCollection(group meta.Group, metadata *adapt.CollectionMetadat
 
 var specialRefs = map[string]SpecialReferences{
 	"FILE": {
-		ReferenceMetadata: &adapt.ReferenceMetadata{
+		ReferenceMetadata: &wire.ReferenceMetadata{
 			Collection: "uesio/core.userfile",
 		},
 		Fields: []string{"uesio/core.mimetype", "uesio/core.path", "uesio/core.updatedat"},
 	},
 	"USER": {
-		ReferenceMetadata: &adapt.ReferenceMetadata{
+		ReferenceMetadata: &wire.ReferenceMetadata{
 			Collection: "uesio/core.user",
 		},
 		Fields: []string{"uesio/core.firstname", "uesio/core.lastname", "uesio/core.language", "uesio/core.picture"},
@@ -50,11 +52,11 @@ var specialRefs = map[string]SpecialReferences{
 }
 
 type LoadOptions struct {
-	Connection adapt.Connection
-	Metadata   *adapt.MetadataCache
+	Connection wire.Connection
+	Metadata   *wire.MetadataCache
 }
 
-func getSubFields(loadFields []adapt.LoadRequestField) *FieldsMap {
+func getSubFields(loadFields []wire.LoadRequestField) *FieldsMap {
 	subFields := FieldsMap{}
 	for _, subField := range loadFields {
 		subFields[subField.ID] = *getSubFields(subField.Fields)
@@ -64,10 +66,10 @@ func getSubFields(loadFields []adapt.LoadRequestField) *FieldsMap {
 
 func processConditions(
 	collectionKey string,
-	conditions []adapt.LoadRequestCondition,
+	conditions []wire.LoadRequestCondition,
 	params map[string]string,
-	metadata *adapt.MetadataCache,
-	ops []*adapt.LoadOp,
+	metadata *wire.MetadataCache,
+	ops []*wire.LoadOp,
 	session *sess.Session,
 ) error {
 
@@ -86,7 +88,7 @@ func processConditions(
 			isReferenceField := true
 			if mainField != "" && currentCollectionMeta != nil {
 				mainFieldMeta, err := currentCollectionMeta.GetField(mainField)
-				if err == nil && !adapt.IsReference(mainFieldMeta.Type) {
+				if err == nil && !wire.IsReference(mainFieldMeta.Type) {
 					isReferenceField = false
 				}
 			}
@@ -174,7 +176,7 @@ func processConditions(
 				continue
 			}
 			// Look through the previous wires to find the one to look up on.
-			var lookupOp *adapt.LoadOp
+			var lookupOp *wire.LoadOp
 			for _, lop := range ops {
 				if lop.WireName == condition.LookupWire {
 					lookupOp = lop
@@ -215,7 +217,7 @@ func processConditions(
 
 // example:
 // uesio/tests.user->uesio/core.username = 'abel'
-func transformReferenceCrossingConditionToSubquery(collectionName string, condition *adapt.LoadRequestCondition, metadata *adapt.MetadataCache) error {
+func transformReferenceCrossingConditionToSubquery(collectionName string, condition *wire.LoadRequestCondition, metadata *wire.MetadataCache) error {
 	// Split the field name, and recursively process each part as an IN subquery condition
 	// until we get to the final field, which we'll then handle as a normal condition
 	parts := strings.Split(condition.Field, constant.RefSep)
@@ -232,7 +234,7 @@ func transformReferenceCrossingConditionToSubquery(collectionName string, condit
 	originalRawValue := condition.RawValue
 	originalRawValues := condition.RawValues
 
-	var previousCondition *adapt.LoadRequestCondition
+	var previousCondition *wire.LoadRequestCondition
 	currentCondition := condition
 
 	currentCollectionMetadata, err := metadata.GetCollection(collectionName)
@@ -260,7 +262,7 @@ func transformReferenceCrossingConditionToSubquery(collectionName string, condit
 			if err != nil {
 				return errors.New("unable to find field " + fieldPart + " in collection " + currentCollectionMetadata.GetFullName())
 			}
-			if !adapt.IsReference(referenceField.Type) || referenceField.ReferenceMetadata == nil {
+			if !wire.IsReference(referenceField.Type) || referenceField.ReferenceMetadata == nil {
 				return errors.New("field " + fieldPart + " in collection " + currentCollectionMetadata.GetFullName() + " is not a valid Reference field")
 			}
 			relatedCollectionName := referenceField.ReferenceMetadata.Collection
@@ -269,7 +271,7 @@ func transformReferenceCrossingConditionToSubquery(collectionName string, condit
 				return errors.New("unable to find metadata for collection " + relatedCollectionName)
 			}
 
-			newCondition := adapt.LoadRequestCondition{}
+			newCondition := wire.LoadRequestCondition{}
 
 			currentCondition.Type = "SUBQUERY"
 			currentCondition.Operator = "IN"
@@ -277,7 +279,7 @@ func transformReferenceCrossingConditionToSubquery(collectionName string, condit
 			currentCondition.SubCollection = relatedCollectionName
 			currentCondition.SubField = "uesio/core.id"
 			currentCollectionMetadata = subCollectionMetadata
-			currentCondition.SubConditions = []adapt.LoadRequestCondition{
+			currentCondition.SubConditions = []wire.LoadRequestCondition{
 				newCondition,
 			}
 			previousCondition = currentCondition
@@ -293,17 +295,17 @@ func isReferenceCrossingField(field string) bool {
 
 func requestMetadataForReferenceCrossingField(collectionName, fieldName string, collections *MetadataRequest) error {
 	parts := strings.Split(fieldName, constant.RefSep)
-	var currentField *adapt.LoadRequestField
-	var currentFieldsArray, previousFieldsArray *[]adapt.LoadRequestField
+	var currentField *wire.LoadRequestField
+	var currentFieldsArray, previousFieldsArray *[]wire.LoadRequestField
 	i := len(parts) - 1
 	for i >= 0 {
 		previousFieldsArray = currentFieldsArray
-		currentField = &adapt.LoadRequestField{
+		currentField = &wire.LoadRequestField{
 			ID: parts[i],
 		}
 		// If we had a previous fields array,
 		// use it as subFields for this field
-		currentFieldsArray = &[]adapt.LoadRequestField{
+		currentFieldsArray = &[]wire.LoadRequestField{
 			*currentField,
 		}
 		if previousFieldsArray != nil {
@@ -320,11 +322,11 @@ func requestMetadataForReferenceCrossingField(collectionName, fieldName string, 
 }
 
 func getMetadataForConditionLoad(
-	condition *adapt.LoadRequestCondition,
+	condition *wire.LoadRequestCondition,
 	collectionName string,
 	collections *MetadataRequest,
-	op *adapt.LoadOp,
-	ops []*adapt.LoadOp,
+	op *wire.LoadOp,
+	ops []*wire.LoadOp,
 ) error {
 
 	var err error
@@ -422,9 +424,9 @@ func getMetadataForConditionLoad(
 }
 
 func GetMetadataForLoad(
-	op *adapt.LoadOp,
-	metadataResponse *adapt.MetadataCache,
-	ops []*adapt.LoadOp,
+	op *wire.LoadOp,
+	metadataResponse *wire.MetadataCache,
+	ops []*wire.LoadOp,
 	session *sess.Session,
 ) error {
 	collectionKey := op.CollectionName
@@ -439,7 +441,7 @@ func GetMetadataForLoad(
 	for _, requestField := range op.Fields {
 
 		if !session.GetContextPermissions().HasFieldReadPermission(collectionKey, requestField.ID) {
-			return fmt.Errorf("Profile %s does not have read access to the %s field.", session.GetContextProfile(), requestField.ID)
+			return exceptions.NewForbiddenException(fmt.Sprintf("Profile %s does not have read access to the %s field.", session.GetContextProfile(), requestField.ID))
 		}
 
 		subFields := getSubFields(requestField.Fields)
@@ -484,7 +486,7 @@ func GetMetadataForLoad(
 		if ok {
 			if len(op.Fields[i].Fields) == 0 {
 				for _, fieldID := range specialRef.Fields {
-					op.Fields[i].Fields = append(op.Fields[i].Fields, adapt.LoadRequestField{
+					op.Fields[i].Fields = append(op.Fields[i].Fields, wire.LoadRequestField{
 						ID: fieldID,
 					})
 				}
@@ -497,12 +499,12 @@ func GetMetadataForLoad(
 				if err != nil {
 					return err
 				}
-				op.Fields[i].Fields = []adapt.LoadRequestField{
+				op.Fields[i].Fields = []wire.LoadRequestField{
 					{
 						ID: refCollectionMetadata.NameField,
 					},
 					{
-						ID: adapt.ID_FIELD,
+						ID: wire.ID_FIELD,
 					},
 				}
 			}
@@ -522,12 +524,12 @@ func GetMetadataForLoad(
 		}
 
 		if fieldMetadata.IsFormula && fieldMetadata.FormulaMetadata != nil {
-			fieldDeps, err := adapt.GetFormulaFields(fieldMetadata.FormulaMetadata.Expression)
+			fieldDeps, err := formula.GetFormulaFields(fieldMetadata.FormulaMetadata.Expression)
 			if err != nil {
 				return err
 			}
 			for key := range fieldDeps {
-				op.Fields = append(op.Fields, adapt.LoadRequestField{ID: key})
+				op.Fields = append(op.Fields, wire.LoadRequestField{ID: key})
 			}
 		}
 	}
@@ -547,7 +549,7 @@ func getMetadataForOrderField(collectionKey string, fieldName string, collection
 
 	// Do an initial check on field read access.
 	if !session.GetContextPermissions().HasFieldReadPermission(collectionKey, topLevelFieldName) {
-		return fmt.Errorf("profile %s does not have read access to the %s field", session.GetContextProfile(), topLevelFieldName)
+		return exceptions.NewForbiddenException(fmt.Sprintf("profile %s does not have read access to the %s field", session.GetContextProfile(), topLevelFieldName))
 	}
 
 	if isReferenceCrossing {
@@ -568,12 +570,12 @@ func getAdditionalLookupFields(fields []string) FieldsMap {
 	}
 }
 
-func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*adapt.MetadataCache, error) {
+func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wire.MetadataCache, error) {
 	if options == nil {
 		options = &LoadOptions{}
 	}
-	allOps := []*adapt.LoadOp{}
-	metadataResponse := &adapt.MetadataCache{}
+	allOps := []*wire.LoadOp{}
+	metadataResponse := &wire.MetadataCache{}
 	// Use existing metadata if it was passed in
 	if options.Metadata != nil {
 		metadataResponse = options.Metadata
@@ -587,30 +589,30 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 	// Loop over the ops and batch per data source
 	for _, op := range ops {
 		if !session.GetContextPermissions().HasCollectionReadPermission(op.CollectionName) {
-			return nil, fmt.Errorf("Profile %s does not have read access to the %s collection.", session.GetContextProfile(), op.CollectionName)
+			return nil, exceptions.NewForbiddenException(fmt.Sprintf("Profile %s does not have read access to the %s collection.", session.GetContextProfile(), op.CollectionName))
 		}
 		// Verify that the id field is present
 		hasIDField := false
 		hasUniqueKeyField := false
 		for i := range op.Fields {
-			if op.Fields[i].ID == adapt.ID_FIELD {
+			if op.Fields[i].ID == wire.ID_FIELD {
 				hasIDField = true
 				break
 			}
-			if op.Fields[i].ID == adapt.UNIQUE_KEY_FIELD {
+			if op.Fields[i].ID == wire.UNIQUE_KEY_FIELD {
 				hasUniqueKeyField = true
 				break
 			}
 		}
 		if !hasIDField {
-			op.Fields = append(op.Fields, adapt.LoadRequestField{
-				ID: adapt.ID_FIELD,
+			op.Fields = append(op.Fields, wire.LoadRequestField{
+				ID: wire.ID_FIELD,
 			})
 		}
 
 		if !hasUniqueKeyField {
-			op.Fields = append(op.Fields, adapt.LoadRequestField{
-				ID: adapt.UNIQUE_KEY_FIELD,
+			op.Fields = append(op.Fields, wire.LoadRequestField{
+				ID: wire.UNIQUE_KEY_FIELD,
 			})
 		}
 
@@ -620,8 +622,8 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 
 		//Set default order by: id - asc
 		if op.Order == nil {
-			op.Order = append(op.Order, adapt.LoadRequestOrder{
-				Field: adapt.ID_FIELD,
+			op.Order = append(op.Order, wire.LoadRequestOrder{
+				Field: wire.ID_FIELD,
 				Desc:  false,
 			})
 		}
@@ -689,7 +691,7 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 	return metadataResponse, nil
 }
 
-func performExternalIntegrationLoad(integrationName string, op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+func performExternalIntegrationLoad(integrationName string, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 	integrationConnection, err := GetIntegrationConnection(integrationName, session, connection)
 	if err != nil {
 		return err
@@ -715,7 +717,7 @@ func performExternalIntegrationLoad(integrationName string, op *adapt.LoadOp, co
 
 // LoadOp loads one operation within a sequence.
 // WARNING!!! This is not a shortcut for Load(ops...)---DO NOT CALL THIS unless you know what you're doing
-func LoadOp(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+func LoadOp(op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 
 	if err := connection.Load(op, session); err != nil {
 		return err

@@ -1,17 +1,17 @@
 package jsdialect
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 type DeletesAPI struct {
-	op *adapt.SaveOp
+	op *wire.SaveOp
 }
 
 func (c *DeletesAPI) Get() []*DeleteAPI {
 	deleteAPIs := []*DeleteAPI{}
 
-	_ = c.op.LoopDeletes(func(delete *adapt.ChangeItem) error {
+	_ = c.op.LoopDeletes(func(delete *wire.ChangeItem) error {
 		deleteAPIs = append(deleteAPIs, &DeleteAPI{
 			delete: delete,
 		})

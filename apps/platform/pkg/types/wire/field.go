@@ -1,4 +1,4 @@
-package adapt
+package wire
 
 import (
 	"github.com/thecloudmasters/uesio/pkg/meta"

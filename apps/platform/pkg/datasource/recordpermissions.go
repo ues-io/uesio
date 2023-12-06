@@ -1,18 +1,34 @@
 package datasource
 
 import (
-	"errors"
 	"fmt"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 type tokenFunc func(meta.Item) (string, bool, error)
 
-func getAccessFields(collectionMetadata *adapt.CollectionMetadata, metadata *adapt.MetadataCache) ([]adapt.LoadRequestField, error) {
+func getChallengeCollection(metadata *wire.MetadataCache, collectionMetadata *wire.CollectionMetadata) (*wire.CollectionMetadata, error) {
+	if collectionMetadata.AccessField == "" {
+		return collectionMetadata, nil
+	}
+	fieldMetadata, err := collectionMetadata.GetField(collectionMetadata.AccessField)
+	if err != nil {
+		return nil, err
+	}
+	refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
+	if err != nil {
+		return nil, err
+	}
+
+	return getChallengeCollection(metadata, refCollectionMetadata)
+}
+
+func getAccessFields(collectionMetadata *wire.CollectionMetadata, metadata *wire.MetadataCache) ([]wire.LoadRequestField, error) {
 	if collectionMetadata.AccessField == "" {
 		return nil, nil
 	}
@@ -27,14 +43,14 @@ func getAccessFields(collectionMetadata *adapt.CollectionMetadata, metadata *ada
 		return nil, err
 	}
 
-	var fields []adapt.LoadRequestField
+	var fields []wire.LoadRequestField
 
 	for fieldID, fieldInfo := range refCollectionMetadata.Fields {
 		// TODO: We should be better about deciding which field we load in here
 		if fieldInfo.Type == "REFERENCEGROUP" {
 			continue
 		}
-		var subFields []adapt.LoadRequestField
+		var subFields []wire.LoadRequestField
 		if fieldID == refCollectionMetadata.AccessField {
 			subFields, err = getAccessFields(refCollectionMetadata, metadata)
 			if err != nil {
@@ -42,7 +58,7 @@ func getAccessFields(collectionMetadata *adapt.CollectionMetadata, metadata *ada
 			}
 		}
 
-		fields = append(fields, adapt.LoadRequestField{
+		fields = append(fields, wire.LoadRequestField{
 			ID:     fieldID,
 			Fields: subFields,
 		})
@@ -52,8 +68,8 @@ func getAccessFields(collectionMetadata *adapt.CollectionMetadata, metadata *ada
 
 }
 
-func loadInAccessFieldData(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
-	referencedCollections := adapt.ReferenceRegistry{}
+func loadInAccessFieldData(op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+	referencedCollections := wire.ReferenceRegistry{}
 
 	metadata := connection.GetMetadata()
 
@@ -77,12 +93,12 @@ func loadInAccessFieldData(op *adapt.SaveOp, connection adapt.Connection, sessio
 
 	refReq.AddFields(fields)
 
-	if err = op.LoopChanges(func(change *adapt.ChangeItem) error {
+	if err = op.LoopChanges(func(change *wire.ChangeItem) error {
 		fk, err := change.GetReferenceKey(op.Metadata.AccessField)
 		if err != nil {
 			return err
 		}
-		return refReq.AddID(fk, adapt.ReferenceLocator{
+		return refReq.AddID(fk, wire.ReferenceLocator{
 			Item:  change,
 			Field: fieldMetadata,
 		})
@@ -90,10 +106,10 @@ func loadInAccessFieldData(op *adapt.SaveOp, connection adapt.Connection, sessio
 		return err
 	}
 
-	return adapt.HandleReferences(connection, referencedCollections, session, false)
+	return HandleReferences(connection, referencedCollections, session, false)
 }
 
-func handleStandardChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, session *sess.Session) error {
+func handleStandardChange(change *wire.ChangeItem, tokenFuncs []tokenFunc, session *sess.Session) error {
 	ownerID, err := change.GetOwnerID()
 	if err != nil {
 		return err
@@ -138,14 +154,14 @@ func handleStandardChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, sess
 	}
 
 	if !hasToken && !userCanModifyAllRecords {
-		return errors.New("User does not have access to write to this record: " + change.UniqueKey + " of collection: " + change.Metadata.GetFullName())
+		return exceptions.NewForbiddenException("User does not have access to write to this record: " + change.UniqueKey + " of collection: " + change.Metadata.GetFullName())
 	}
 
 	return nil
 
 }
 
-func handleAccessFieldChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, metadata *adapt.MetadataCache, session *sess.Session) error {
+func handleAccessFieldChange(change *wire.ChangeItem, tokenFuncs []tokenFunc, metadata *wire.MetadataCache, session *sess.Session) error {
 
 	// Shortcut - if user can modify all records, no need to do any other checks
 	if session.GetContextPermissions().ModifyAllRecords {
@@ -164,7 +180,7 @@ func handleAccessFieldChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, m
 			return err
 		}
 
-		accessItem, err = adapt.GetLoadable(accessInterface)
+		accessItem, err = wire.GetLoadable(accessInterface)
 		if err != nil {
 			return fmt.Errorf("Couldn't convert item: %T", accessInterface)
 		}
@@ -179,12 +195,12 @@ func handleAccessFieldChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, m
 		}
 	}
 
-	ownerObj, err := accessItem.GetField(adapt.OWNER_FIELD)
+	ownerObj, err := accessItem.GetField(wire.OWNER_FIELD)
 	if err != nil {
 		return err
 	}
 
-	ownerID, err := adapt.GetReferenceKey(ownerObj)
+	ownerID, err := wire.GetReferenceKey(ownerObj)
 	if err != nil {
 		return err
 	}
@@ -221,13 +237,13 @@ func handleAccessFieldChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, m
 	}
 
 	if !hasToken {
-		return errors.New("User does not have parent access to write to this record: " + change.UniqueKey + " of collection: " + change.Metadata.GetFullName())
+		return exceptions.NewForbiddenException("User does not have parent access to write to this record: " + change.UniqueKey + " of collection: " + change.Metadata.GetFullName())
 	}
 
 	return nil
 }
 
-func GenerateRecordChallengeTokens(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func GenerateRecordChallengeTokens(op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	if !op.Metadata.IsWriteProtected() {
 		return nil
@@ -243,7 +259,7 @@ func GenerateRecordChallengeTokens(op *adapt.SaveOp, connection adapt.Connection
 
 	metadata := connection.GetMetadata()
 
-	challengeMetadata, err := adapt.GetChallengeCollection(metadata, op.Metadata)
+	challengeMetadata, err := getChallengeCollection(metadata, op.Metadata)
 	if err != nil {
 		return err
 	}
@@ -252,7 +268,7 @@ func GenerateRecordChallengeTokens(op *adapt.SaveOp, connection adapt.Connection
 
 	for index := range challengeMetadata.RecordChallengeTokens {
 		challengeToken := challengeMetadata.RecordChallengeTokens[index]
-		tokenTemplate, err := adapt.NewFieldChanges(challengeToken.Token, challengeMetadata, metadata)
+		tokenTemplate, err := wire.NewFieldChanges(challengeToken.Token, challengeMetadata, metadata)
 		if err != nil {
 			return err
 		}
@@ -280,7 +296,7 @@ func GenerateRecordChallengeTokens(op *adapt.SaveOp, connection adapt.Connection
 		})
 	}
 
-	return op.LoopChanges(func(change *adapt.ChangeItem) error {
+	return op.LoopChanges(func(change *wire.ChangeItem) error {
 		if op.Metadata.AccessField != "" {
 			return handleAccessFieldChange(change, tokenFuncs, metadata, session)
 		}

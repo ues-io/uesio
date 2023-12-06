@@ -2,8 +2,9 @@ package fieldvalidations
 
 import (
 	"fmt"
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"regexp"
+
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 var emailRegex = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
@@ -15,12 +16,12 @@ func isEmailValid(e string) bool {
 	return emailRegex.MatchString(e)
 }
 
-func ValidateEmailField(field *adapt.FieldMetadata) ValidationFunc {
-	return func(change *adapt.ChangeItem) *adapt.SaveError {
+func ValidateEmailField(field *wire.FieldMetadata) ValidationFunc {
+	return func(change *wire.ChangeItem) *wire.SaveError {
 		val, err := change.FieldChanges.GetField(field.GetFullName())
 		if err == nil && val != "" {
 			if !isEmailValid(fmt.Sprintf("%v", val)) {
-				return adapt.NewSaveError(change.RecordKey, field.GetFullName(), field.Label+" is not a valid email address")
+				return wire.NewSaveError(change.RecordKey, field.GetFullName(), field.Label+" is not a valid email address")
 			}
 		}
 		return nil

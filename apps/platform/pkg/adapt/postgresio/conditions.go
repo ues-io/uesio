@@ -7,9 +7,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/constant"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 type QueryBuilder struct {
@@ -71,7 +71,7 @@ func isTextAlike(fieldType string) bool {
 	return false
 }
 
-func processSearchCondition(condition adapt.LoadRequestCondition, collectionMetadata *adapt.CollectionMetadata, metadata *adapt.MetadataCache, builder *QueryBuilder, tableAlias string, session *sess.Session) error {
+func processSearchCondition(condition wire.LoadRequestCondition, collectionMetadata *wire.CollectionMetadata, metadata *wire.MetadataCache, builder *QueryBuilder, tableAlias string, session *sess.Session) error {
 
 	nameFieldMetadata, err := collectionMetadata.GetNameField()
 	if err != nil {
@@ -118,7 +118,7 @@ func processSearchCondition(condition adapt.LoadRequestCondition, collectionMeta
 	return nil
 }
 
-func processValueCondition(condition adapt.LoadRequestCondition, collectionMetadata *adapt.CollectionMetadata, metadata *adapt.MetadataCache, builder *QueryBuilder, tableAlias string, session *sess.Session) error {
+func processValueCondition(condition wire.LoadRequestCondition, collectionMetadata *wire.CollectionMetadata, metadata *wire.MetadataCache, builder *QueryBuilder, tableAlias string, session *sess.Session) error {
 	fieldMetadata, err := collectionMetadata.GetField(condition.Field)
 	if err != nil {
 		return err
@@ -241,7 +241,7 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 	return nil
 }
 
-func processGroupCondition(condition adapt.LoadRequestCondition, collectionMetadata *adapt.CollectionMetadata, metadata *adapt.MetadataCache, builder *QueryBuilder, tableAlias string, session *sess.Session) error {
+func processGroupCondition(condition wire.LoadRequestCondition, collectionMetadata *wire.CollectionMetadata, metadata *wire.MetadataCache, builder *QueryBuilder, tableAlias string, session *sess.Session) error {
 	subbuilder := builder.getSubBuilder(condition.Conjunction)
 	err := processConditionList(condition.SubConditions, collectionMetadata, metadata, subbuilder, tableAlias, session)
 	if err != nil {
@@ -251,7 +251,7 @@ func processGroupCondition(condition adapt.LoadRequestCondition, collectionMetad
 	return nil
 }
 
-func processSubQueryCondition(condition adapt.LoadRequestCondition, collectionMetadata *adapt.CollectionMetadata, metadata *adapt.MetadataCache, builder *QueryBuilder, tableAlias string, session *sess.Session) error {
+func processSubQueryCondition(condition wire.LoadRequestCondition, collectionMetadata *wire.CollectionMetadata, metadata *wire.MetadataCache, builder *QueryBuilder, tableAlias string, session *sess.Session) error {
 
 	fieldMetadata, err := collectionMetadata.GetField(condition.Field)
 	if err != nil {
@@ -286,7 +286,7 @@ func processSubQueryCondition(condition adapt.LoadRequestCondition, collectionMe
 	return nil
 }
 
-func addTenantConditions(collectionMetadata *adapt.CollectionMetadata, metadata *adapt.MetadataCache, builder *QueryBuilder, tableAlias string, session *sess.Session) {
+func addTenantConditions(collectionMetadata *wire.CollectionMetadata, metadata *wire.MetadataCache, builder *QueryBuilder, tableAlias string, session *sess.Session) {
 	tenantID := session.GetTenantIDForCollection(collectionMetadata.GetFullName())
 
 	collectionName := collectionMetadata.GetFullName()
@@ -299,12 +299,12 @@ func addTenantConditions(collectionMetadata *adapt.CollectionMetadata, metadata 
 	builder.addQueryPart(fmt.Sprintf("%s = %s", getAliasedName("tenant", tableAlias), builder.addValue(tenantID)))
 }
 
-func processConditionListForTenant(conditions []adapt.LoadRequestCondition, collectionMetadata *adapt.CollectionMetadata, metadata *adapt.MetadataCache, builder *QueryBuilder, tableAlias string, session *sess.Session) error {
+func processConditionListForTenant(conditions []wire.LoadRequestCondition, collectionMetadata *wire.CollectionMetadata, metadata *wire.MetadataCache, builder *QueryBuilder, tableAlias string, session *sess.Session) error {
 	addTenantConditions(collectionMetadata, metadata, builder, tableAlias, session)
 	return processConditionList(conditions, collectionMetadata, metadata, builder, tableAlias, session)
 }
 
-func processConditionList(conditions []adapt.LoadRequestCondition, collectionMetadata *adapt.CollectionMetadata, metadata *adapt.MetadataCache, builder *QueryBuilder, tableAlias string, session *sess.Session) error {
+func processConditionList(conditions []wire.LoadRequestCondition, collectionMetadata *wire.CollectionMetadata, metadata *wire.MetadataCache, builder *QueryBuilder, tableAlias string, session *sess.Session) error {
 	for _, condition := range conditions {
 		if err := processCondition(condition, collectionMetadata, metadata, builder, tableAlias, session); err != nil {
 			return err
@@ -313,7 +313,7 @@ func processConditionList(conditions []adapt.LoadRequestCondition, collectionMet
 	return nil
 }
 
-func processCondition(condition adapt.LoadRequestCondition, collectionMetadata *adapt.CollectionMetadata, metadata *adapt.MetadataCache, builder *QueryBuilder, tableAlias string, session *sess.Session) error {
+func processCondition(condition wire.LoadRequestCondition, collectionMetadata *wire.CollectionMetadata, metadata *wire.MetadataCache, builder *QueryBuilder, tableAlias string, session *sess.Session) error {
 
 	if condition.Type == "SEARCH" {
 		return processSearchCondition(condition, collectionMetadata, metadata, builder, tableAlias, session)

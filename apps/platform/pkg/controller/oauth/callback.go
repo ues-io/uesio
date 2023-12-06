@@ -3,11 +3,9 @@ package oauth
 import (
 	"errors"
 	"fmt"
-	"log/slog"
 	"net/http"
 	"net/url"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/controller"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -17,6 +15,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/routing"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 func Callback(w http.ResponseWriter, r *http.Request) {
@@ -45,16 +44,12 @@ func Callback(w http.ResponseWriter, r *http.Request) {
 
 	connection, err := datasource.GetPlatformConnection(nil, s, nil)
 	if err != nil {
-		err = errors.New("failed to obtain platform connection: " + err.Error())
-		slog.Error(err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		controller.HandleError(w, errors.New("failed to obtain platform connection: "+err.Error()))
 		return
 	}
 	versionSession, err := datasource.EnterVersionContext("uesio/core", s, connection)
 	if err != nil {
-		err = errors.New("failed to enter version context: " + err.Error())
-		slog.Error(err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		controller.HandleError(w, errors.New("failed to enter version context: "+err.Error()))
 		return
 	}
 	route, err := loadCallbackRoute(r, versionSession, connection)
@@ -88,7 +83,7 @@ func Callback(w http.ResponseWriter, r *http.Request) {
 	controller.ServeRouteInternal(w, r, s, route.Path, route)
 }
 
-func loadCallbackRoute(r *http.Request, coreSession *sess.Session, platformConn adapt.Connection) (*meta.Route, error) {
+func loadCallbackRoute(r *http.Request, coreSession *sess.Session, platformConn wire.Connection) (*meta.Route, error) {
 	route := meta.NewBaseRoute("uesio/core", "oauth2callback")
 	if err := bundle.Load(route, coreSession, platformConn); err != nil {
 		return nil, errors.New("unable to load oauth callback route: " + err.Error())

@@ -8,60 +8,33 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-type AuthRequestError struct {
-	message string
-}
-
-func NewAuthRequestError(message string) *AuthRequestError {
-	return &AuthRequestError{
-		message: message,
-	}
-}
-
-func (e *AuthRequestError) Error() string {
-	return e.message
-}
-
-type NotAuthorizedError struct {
-	message string
-}
-
-func NewNotAuthorizedError(message string) *NotAuthorizedError {
-	return &NotAuthorizedError{
-		message: message,
-	}
-}
-
-func (e *NotAuthorizedError) Error() string {
-	return e.message
-}
-
 func GetUserFromFederationID(authSourceID string, federationID string, session *sess.Session) (*meta.User, error) {
 
 	if session.GetWorkspace() != nil {
-		return nil, NewAuthRequestError("Login isn't currently supported for workspaces")
+		return nil, exceptions.NewBadRequestException("Login isn't currently supported for workspaces")
 	}
 
 	adminSession := sess.GetAnonSession(session.GetSite())
 
 	// 4. Check for Existing User
-	loginmethod, err := GetLoginMethod(federationID, authSourceID, adminSession)
+	loginMethod, err := GetLoginMethod(federationID, authSourceID, adminSession)
 	if err != nil {
 		return nil, errors.New("Failed Getting Login Method Data: " + err.Error())
 	}
 
-	if loginmethod == nil {
-		return nil, NewAuthRequestError("No account found with this login method")
+	if loginMethod == nil {
+		return nil, exceptions.NewNotFoundException("No account found with this login method")
 	}
 
-	user, err := GetUserByID(loginmethod.User.ID, adminSession, nil)
+	user, err := GetUserByID(loginMethod.User.ID, adminSession, nil)
 	if err != nil {
-		return nil, errors.New("failed Getting user Data: " + err.Error())
+		return nil, exceptions.NewNotFoundException("failed Getting user Data: " + err.Error())
 	}
 
 	return user, nil

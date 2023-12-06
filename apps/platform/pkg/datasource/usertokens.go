@@ -4,19 +4,19 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/constant"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 var OWNER_TOKEN = "uesio.owner"
 var INSTALLED_TOKEN = "uesio.installed"
 var NAMED_PERMISSION_TOKEN = "uesio.namedpermission"
 
-func getTokensForRequest(connection adapt.Connection, session *sess.Session, tokenMap sess.TokenMap) (meta.UserAccessTokenCollection, error) {
+func getTokensForRequest(connection wire.Connection, session *sess.Session, tokenMap sess.TokenMap) (meta.UserAccessTokenCollection, error) {
 	metadata := connection.GetMetadata()
 	uatc := meta.UserAccessTokenCollection{}
 	tokens := []meta.BundleableItem{}
@@ -83,7 +83,7 @@ func getFieldsMap(fieldKeys []string) *FieldsMap {
 			// fields in the token from being fully loaded.
 			// It shouldn't affect other fields
 			fieldsMap[fieldKey] = FieldsMap{
-				adapt.ID_FIELD: nil,
+				wire.ID_FIELD: nil,
 			}
 		} else {
 			fieldsMap[fieldParts[0]] = *getFieldsMap([]string{strings.Join(fieldParts[1:], constant.RefSep)})
@@ -92,7 +92,7 @@ func getFieldsMap(fieldKeys []string) *FieldsMap {
 	return &fieldsMap
 }
 
-func HydrateTokenMap(tokenMap sess.TokenMap, tokenDefs meta.UserAccessTokenCollection, connection adapt.Connection, session *sess.Session, reason bool) error {
+func HydrateTokenMap(tokenMap sess.TokenMap, tokenDefs meta.UserAccessTokenCollection, connection wire.Connection, session *sess.Session, reason bool) error {
 	user := session.GetContextUser()
 	if !tokenMap.Has(OWNER_TOKEN) {
 		tokenMap.Add(OWNER_TOKEN, []sess.TokenValue{{
@@ -138,21 +138,21 @@ func HydrateTokenMap(tokenMap sess.TokenMap, tokenDefs meta.UserAccessTokenColle
 				fieldsMap.merge(getFieldsMap(templating.ExtractKeys(token.Reason)))
 			}
 
-			var loadConditions []adapt.LoadRequestCondition
+			var loadConditions []wire.LoadRequestCondition
 			for _, condition := range token.Conditions {
 				fieldsMap.merge(&FieldsMap{
 					condition.Field: nil,
 				})
 
-				loadConditions = append(loadConditions, adapt.LoadRequestCondition{
+				loadConditions = append(loadConditions, wire.LoadRequestCondition{
 					Field:    condition.Field,
 					Value:    user.ID,
 					Operator: "=",
 				})
 			}
 
-			lookupResults := &adapt.Collection{}
-			var loadOp = &adapt.LoadOp{
+			lookupResults := &wire.Collection{}
+			var loadOp = &wire.LoadOp{
 				CollectionName: token.Collection,
 				WireName:       "foo",
 				Collection:     lookupResults,
@@ -161,7 +161,7 @@ func HydrateTokenMap(tokenMap sess.TokenMap, tokenDefs meta.UserAccessTokenColle
 				Query:          true,
 			}
 
-			err := GetMetadataForLoad(loadOp, metadata, []*adapt.LoadOp{loadOp}, adminSession)
+			err := GetMetadataForLoad(loadOp, metadata, []*wire.LoadOp{loadOp}, adminSession)
 			if err != nil {
 				return err
 			}
@@ -176,12 +176,12 @@ func HydrateTokenMap(tokenMap sess.TokenMap, tokenDefs meta.UserAccessTokenColle
 				return err
 			}
 
-			template, err := adapt.NewFieldChanges(token.Token, loadCollectionMetadata, metadata)
+			template, err := wire.NewFieldChanges(token.Token, loadCollectionMetadata, metadata)
 			if err != nil {
 				return err
 			}
 
-			reasonTemplate, err := adapt.NewFieldChanges(token.Reason, loadCollectionMetadata, metadata)
+			reasonTemplate, err := wire.NewFieldChanges(token.Reason, loadCollectionMetadata, metadata)
 			if err != nil {
 				return err
 			}
@@ -215,7 +215,7 @@ func HydrateTokenMap(tokenMap sess.TokenMap, tokenDefs meta.UserAccessTokenColle
 	return nil
 }
 
-func GenerateUserAccessTokens(connection adapt.Connection, session *sess.Session) error {
+func GenerateUserAccessTokens(connection wire.Connection, session *sess.Session) error {
 
 	tokenMap := session.GetTokenMap()
 

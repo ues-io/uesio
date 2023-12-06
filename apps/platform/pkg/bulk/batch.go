@@ -1,13 +1,13 @@
 package bulk
 
 import (
-	"errors"
 	"io"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 type BatchResponse struct {
@@ -22,9 +22,9 @@ func NewBatch(body io.ReadCloser, jobID string, session *sess.Session) (*meta.Bu
 	err := datasource.PlatformLoadOne(
 		&job,
 		&datasource.PlatformLoadOptions{
-			Conditions: []adapt.LoadRequestCondition{
+			Conditions: []wire.LoadRequestCondition{
 				{
-					Field: adapt.ID_FIELD,
+					Field: wire.ID_FIELD,
 					Value: jobID,
 				},
 			},
@@ -32,7 +32,7 @@ func NewBatch(body io.ReadCloser, jobID string, session *sess.Session) (*meta.Bu
 		session,
 	)
 	if err != nil {
-		return nil, err
+		return nil, exceptions.NewNotFoundException("bulk job not found: " + jobID)
 	}
 
 	if job.Spec.JobType == "IMPORT" {
@@ -43,13 +43,13 @@ func NewBatch(body io.ReadCloser, jobID string, session *sess.Session) (*meta.Bu
 		return NewFileUploadBatch(body, job, session)
 	}
 
-	return nil, errors.New("Invalid JobType for creating batches: " + job.Spec.JobType)
+	return nil, exceptions.NewBadRequestException("invalid JobType for creating batches: " + job.Spec.JobType)
 
 }
 
-func getBatchMetadata(collectionName string, session *sess.Session) (*adapt.MetadataCache, error) {
+func getBatchMetadata(collectionName string, session *sess.Session) (*wire.MetadataCache, error) {
 
-	metadataResponse := adapt.MetadataCache{}
+	metadataResponse := wire.MetadataCache{}
 	collections := datasource.MetadataRequest{
 		Options: &datasource.MetadataRequestOptions{
 			LoadAllFields: true,

@@ -6,15 +6,15 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/creds"
 	"github.com/thecloudmasters/uesio/pkg/types/file"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 type FileAdapter struct {
 }
 
-func (a *FileAdapter) GetFileConnection(credentials *adapt.Credentials, bucket string) (file.Connection, error) {
+func (a *FileAdapter) GetFileConnection(credentials *wire.Credentials, bucket string) (file.Connection, error) {
 	client, err := getS3Client(context.Background(), credentials)
 	if err != nil {
 		return nil, errors.New("invalid FileAdapterCredentials specified: " + err.Error())
@@ -27,7 +27,7 @@ func (a *FileAdapter) GetFileConnection(credentials *adapt.Credentials, bucket s
 }
 
 type Connection struct {
-	credentials *adapt.Credentials
+	credentials *wire.Credentials
 	bucket      string
 	client      *s3.Client
 }
@@ -35,7 +35,7 @@ type Connection struct {
 // TODO: Figure out a way to clean up and close unused clients
 var clientPool = map[string]*s3.Client{}
 
-func getS3Client(ctx context.Context, dbcreds *adapt.Credentials) (*s3.Client, error) {
+func getS3Client(ctx context.Context, dbcreds *wire.Credentials) (*s3.Client, error) {
 
 	hash := dbcreds.GetHash()
 	// Check the pool for a client

@@ -4,17 +4,18 @@ import (
 	"context"
 	"errors"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/formula"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 type TestEvaluator struct {
-	metadata  *adapt.CollectionMetadata
+	metadata  *wire.CollectionMetadata
 	fieldKeys map[string]bool
 }
 
-func getDummyData(fieldType string, field *adapt.FieldMetadata) interface{} {
+func getDummyData(fieldType string, field *wire.FieldMetadata) interface{} {
 	switch fieldType {
 	case "NUMBER":
 		return 1234
@@ -42,7 +43,7 @@ func (te *TestEvaluator) SelectGVal(ctx context.Context, k string) (interface{},
 
 }
 
-func runFieldAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func runFieldAfterSaveBot(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	// If there are no changes, only deletes, we have nothing to do
 	if !request.HasChanges() {
@@ -51,7 +52,7 @@ func runFieldAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, se
 
 	depMap := MetadataDependencyMap{}
 
-	metadataResponse := &adapt.MetadataCache{}
+	metadataResponse := &wire.MetadataCache{}
 	collections := datasource.MetadataRequest{
 		Options: &datasource.MetadataRequestOptions{
 			LoadAllFields: true,
@@ -65,7 +66,7 @@ func runFieldAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, se
 	workspaceID := wsAccessResult.GetWorkspaceID()
 
 	//Pre-Loop for formula fields
-	err := request.LoopChanges(func(change *adapt.ChangeItem) error {
+	err := request.LoopChanges(func(change *wire.ChangeItem) error {
 
 		ftype, err := change.GetFieldAsString("uesio/studio.type")
 		if err != nil {
@@ -103,7 +104,7 @@ func runFieldAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, se
 		}
 	}
 
-	err = request.LoopChanges(func(change *adapt.ChangeItem) error {
+	err = request.LoopChanges(func(change *wire.ChangeItem) error {
 
 		ftype, err := change.GetFieldAsString("uesio/studio.type")
 		if err != nil {
@@ -133,7 +134,7 @@ func runFieldAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, se
 				fieldKeys: map[string]bool{},
 			}
 
-			_, err = adapt.UesioLanguage.Evaluate(expression, testEval)
+			_, err = formula.UesioLanguage.Evaluate(expression, testEval)
 			if err != nil {
 				return errors.New("Field: invalid expression:" + err.Error())
 			}

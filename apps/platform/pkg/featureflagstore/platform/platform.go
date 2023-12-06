@@ -1,10 +1,10 @@
 package environment
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 type FeatureFlagStore struct{}
@@ -13,7 +13,7 @@ func (ffs *FeatureFlagStore) Get(user string, assignments *meta.FeatureFlagAssig
 	return datasource.PlatformLoad(
 		assignments,
 		&datasource.PlatformLoadOptions{
-			Fields: []adapt.LoadRequestField{
+			Fields: []wire.LoadRequestField{
 				{
 					ID: "uesio/core.value",
 				},
@@ -21,7 +21,7 @@ func (ffs *FeatureFlagStore) Get(user string, assignments *meta.FeatureFlagAssig
 					ID: "uesio/core.flag",
 				},
 			},
-			Conditions: []adapt.LoadRequestCondition{
+			Conditions: []wire.LoadRequestCondition{
 				{
 					Field:    "uesio/core.user",
 					Value:    user,
@@ -34,7 +34,7 @@ func (ffs *FeatureFlagStore) Get(user string, assignments *meta.FeatureFlagAssig
 }
 
 func (ffs *FeatureFlagStore) Set(flag *meta.FeatureFlagAssignment, session *sess.Session) error {
-	return datasource.PlatformSaveOne(flag, &adapt.SaveOptions{
+	return datasource.PlatformSaveOne(flag, &wire.SaveOptions{
 		Upsert: true,
 	}, nil, session)
 }

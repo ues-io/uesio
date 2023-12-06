@@ -3,23 +3,23 @@ package jsdialect
 import (
 	"errors"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 type AdminCallBotAPI struct {
 	session    *sess.Session
-	connection adapt.Connection
+	connection wire.Connection
 }
 
-func (acba *AdminCallBotAPI) Save(collection string, changes adapt.Collection) error {
+func (acba *AdminCallBotAPI) Save(collection string, changes wire.Collection) error {
 	return botSave(collection, changes, datasource.GetSiteAdminSession(acba.session), acba.connection)
 }
 
-func (acba *AdminCallBotAPI) Delete(collection string, deletes adapt.Collection) error {
+func (acba *AdminCallBotAPI) Delete(collection string, deletes wire.Collection) error {
 	return botDelete(collection, deletes, datasource.GetSiteAdminSession(acba.session), acba.connection)
 }
 
@@ -35,11 +35,11 @@ func (acba *AdminCallBotAPI) GetConfigValue(configValueKey string) (string, erro
 	return configstore.GetValueFromKey(configValueKey, datasource.GetSiteAdminSession(acba.session))
 }
 
-func (acba *AdminCallBotAPI) Load(request BotLoadOp) (*adapt.Collection, error) {
+func (acba *AdminCallBotAPI) Load(request BotLoadOp) (*wire.Collection, error) {
 	return botLoad(request, datasource.GetSiteAdminSession(acba.session), acba.connection)
 }
 
-func NewCallBotAPI(bot *meta.Bot, session *sess.Session, connection adapt.Connection, params map[string]interface{}) *CallBotAPI {
+func NewCallBotAPI(bot *meta.Bot, session *sess.Session, connection wire.Connection, params map[string]interface{}) *CallBotAPI {
 	return &CallBotAPI{
 		Session: session,
 		Params: &ParamsAPI{
@@ -52,14 +52,14 @@ func NewCallBotAPI(bot *meta.Bot, session *sess.Session, connection adapt.Connec
 		connection: connection,
 		Results:    map[string]interface{}{},
 		LogApi:     NewBotLogAPI(bot),
-		Http:       NewBotHttpAPI(bot, adapt.NewIntegrationConnection(nil, nil, session, nil, connection)),
+		Http:       NewBotHttpAPI(bot, wire.NewIntegrationConnection(nil, nil, session, nil, connection)),
 	}
 }
 
 type CallBotAPI struct {
 	Session    *sess.Session
 	Params     *ParamsAPI `bot:"params"`
-	connection adapt.Connection
+	connection wire.Connection
 	Results    map[string]interface{}
 	AsAdmin    AdminCallBotAPI `bot:"asAdmin"`
 	LogApi     *BotLogAPI      `bot:"log"`
@@ -70,15 +70,15 @@ func (cba *CallBotAPI) AddResult(key string, value interface{}) {
 	cba.Results[key] = value
 }
 
-func (cba *CallBotAPI) Save(collection string, changes adapt.Collection) error {
+func (cba *CallBotAPI) Save(collection string, changes wire.Collection) error {
 	return botSave(collection, changes, cba.Session, cba.connection)
 }
 
-func (cba *CallBotAPI) Delete(collection string, deletes adapt.Collection) error {
+func (cba *CallBotAPI) Delete(collection string, deletes wire.Collection) error {
 	return botDelete(collection, deletes, cba.Session, cba.connection)
 }
 
-func (cba *CallBotAPI) Load(request BotLoadOp) (*adapt.Collection, error) {
+func (cba *CallBotAPI) Load(request BotLoadOp) (*wire.Collection, error) {
 	return botLoad(request, cba.Session, cba.connection)
 }
 

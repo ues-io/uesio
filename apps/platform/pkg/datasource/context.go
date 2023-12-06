@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 // GetParamsFromSession returns a map of parameters needed for querying / saving
@@ -22,7 +22,7 @@ func GetParamsFromSession(session *sess.Session) map[string]string {
 	return params
 }
 
-func GetContextSessionFromParams(params map[string]string, connection adapt.Connection, session *sess.Session) (*sess.Session, error) {
+func GetContextSessionFromParams(params map[string]string, connection wire.Connection, session *sess.Session) (*sess.Session, error) {
 	workspaceID := params["workspaceid"]
 	workspace := params["workspacename"]
 	site := params["sitename"]

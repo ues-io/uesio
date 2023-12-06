@@ -2,12 +2,12 @@ package controller
 
 import (
 	"encoding/json"
-	"log/slog"
 	"net/http"
 	"net/url"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 
 	"github.com/gorilla/mux"
 
@@ -30,8 +30,7 @@ func loginRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta.Us
 
 	profile, err := datasource.LoadAndHydrateProfile(user.Profile, session)
 	if err != nil {
-		slog.Error(err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		HandleError(w, err)
 		return
 	}
 
@@ -47,8 +46,7 @@ func loginRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta.Us
 	// Check for redirect parameter on the referrer
 	referer, err := url.Parse(r.Referer())
 	if err != nil {
-		slog.Error(err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		HandleError(w, err)
 		return
 	}
 
@@ -63,8 +61,7 @@ func loginRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta.Us
 		}
 		redirectNamespace, redirectRoute, err = meta.ParseKey(redirectKey)
 		if err != nil {
-			slog.Error(err.Error())
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			HandleError(w, err)
 			return
 		}
 	}
@@ -83,9 +80,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	var loginRequest map[string]interface{}
 	err := json.NewDecoder(r.Body).Decode(&loginRequest)
 	if err != nil {
-		msg := "Invalid request format: " + err.Error()
-		slog.Error(msg)
-		http.Error(w, msg, http.StatusInternalServerError)
+		HandleError(w, exceptions.NewBadRequestException("invalid login request body"))
 		return
 	}
 
@@ -93,18 +88,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	user, err := auth.Login(getAuthSourceID(mux.Vars(r)), loginRequest, s)
 	if err != nil {
-		var responseCode int
-		switch err.(type) {
-		case *auth.AuthRequestError:
-			responseCode = http.StatusBadRequest
-		case *auth.NotAuthorizedError:
-			responseCode = http.StatusUnauthorized
-		default:
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-			slog.Error(err.Error())
-			return
-		}
-		http.Error(w, err.Error(), responseCode)
+		HandleError(w, err)
 		return
 	}
 

@@ -3,18 +3,19 @@ package datasource
 import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 func ResetRecordTokens(collection string, session *sess.Session) error {
 
-	loadOp := &adapt.LoadOp{
+	loadOp := &wire.LoadOp{
 		CollectionName: collection,
-		Collection:     &adapt.Collection{},
+		Collection:     &wire.Collection{},
 		Query:          true,
 		BatchSize:      adapt.MAX_SAVE_BATCH_SIZE,
-		Fields: []adapt.LoadRequestField{
+		Fields: []wire.LoadRequestField{
 			{
-				ID: adapt.ID_FIELD,
+				ID: wire.ID_FIELD,
 			},
 		},
 	}
@@ -46,10 +47,10 @@ func ResetRecordTokens(collection string, session *sess.Session) error {
 	return nil
 }
 
-func resetTokenBatches(loadOp *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+func resetTokenBatches(loadOp *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 
 	for {
-		_, err := Load([]*adapt.LoadOp{loadOp}, session, nil)
+		_, err := Load([]*wire.LoadOp{loadOp}, session, nil)
 		if err != nil {
 			return err
 		}

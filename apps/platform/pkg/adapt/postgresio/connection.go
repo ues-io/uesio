@@ -8,7 +8,7 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 type QueryAble interface {
@@ -19,18 +19,18 @@ type QueryAble interface {
 }
 
 type Connection struct {
-	metadata    *adapt.MetadataCache
-	credentials *adapt.Credentials
+	metadata    *wire.MetadataCache
+	credentials *wire.Credentials
 	client      *pgxpool.Pool
 	transaction pgx.Tx
 	datasource  string
 }
 
-func (c *Connection) GetCredentials() *adapt.Credentials {
+func (c *Connection) GetCredentials() *wire.Credentials {
 	return c.credentials
 }
 
-func (c *Connection) GetMetadata() *adapt.MetadataCache {
+func (c *Connection) GetMetadata() *wire.MetadataCache {
 	return c.metadata
 }
 
@@ -79,7 +79,7 @@ func (c *Connection) GetDataSource() string {
 	return c.datasource
 }
 
-func (a *Adapter) GetConnection(credentials *adapt.Credentials, metadata *adapt.MetadataCache, datasource string) (adapt.Connection, error) {
+func (a *Adapter) GetConnection(credentials *wire.Credentials, metadata *wire.MetadataCache, datasource string) (wire.Connection, error) {
 
 	client, err := connect(credentials)
 	if err != nil {

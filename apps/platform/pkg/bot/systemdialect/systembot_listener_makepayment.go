@@ -8,12 +8,12 @@ import (
 	"github.com/stripe/stripe-go/v74"
 	"github.com/stripe/stripe-go/v74/checkout/session"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runMakePaymentListenerBot(params map[string]interface{}, connection adapt.Connection, uesioSession *sess.Session) (map[string]interface{}, error) {
+func runMakePaymentListenerBot(params map[string]interface{}, connection wire.Connection, uesioSession *sess.Session) (map[string]interface{}, error) {
 
 	amount, err := strconv.ParseInt(params["price"].(string), 10, 64)
 	if err != nil {

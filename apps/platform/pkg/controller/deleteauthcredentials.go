@@ -1,15 +1,16 @@
 package controller
 
 import (
+	"errors"
 	"fmt"
-	"log/slog"
 	"net/http"
 
 	"github.com/gorilla/mux"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/oauth2"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 )
@@ -23,36 +24,33 @@ func DeleteAuthCredentials(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	integrationName := fmt.Sprintf("%s.%s", vars["namespace"], vars["name"])
 
-	conn, err := datasource.GetPlatformConnection(&adapt.MetadataCache{}, session, nil)
+	conn, err := datasource.GetPlatformConnection(&wire.MetadataCache{}, session, nil)
 	if err != nil {
-		slog.Error("unable to obtain platform connection: " + err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		HandleError(w, errors.New("unable to obtain platform connection: "+err.Error()))
 		return
 	}
 	coreSession, err := datasource.EnterVersionContext("uesio/core", session, conn)
 	if err != nil {
-		slog.Error("unable to obtain core session: " + err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		HandleError(w, errors.New("unable to obtain core session: "+err.Error()))
 		return
 	}
 
 	credential, err := oauth2.GetIntegrationCredential(user.ID, integrationName, coreSession, conn)
 
 	if err != nil {
-		slog.Error("unable to retrieve integration credential: " + err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		HandleError(w, errors.New("unable to retrieve integration credential for user: "+err.Error()))
 		return
 	}
 
 	if credential == nil {
-		http.Error(w, "no integration credential found", http.StatusNotFound)
+		HandleError(w, exceptions.NewNotFoundException("no integration credential found"))
 		return
 	}
 
 	// If we have a credential, delete it, otherwise, there's nothing to do
 	if credential != nil {
 		if err = oauth2.DeleteIntegrationCredential(credential, session, conn); err != nil {
-			http.Error(w, "unable to delete integration credential", http.StatusInternalServerError)
+			HandleError(w, errors.New("unable to delete integration credential: "+err.Error()))
 			return
 		}
 	}

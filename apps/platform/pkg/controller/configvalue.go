@@ -2,11 +2,11 @@ package controller
 
 import (
 	"encoding/json"
-	"log/slog"
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/bot"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 
 	"github.com/gorilla/mux"
 
@@ -80,8 +80,7 @@ func ConfigValues(w http.ResponseWriter, r *http.Request) {
 
 	response, err := getValues(session)
 	if err != nil {
-		slog.Error(err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		HandleError(w, err)
 		return
 	}
 
@@ -96,8 +95,7 @@ func ConfigValue(w http.ResponseWriter, r *http.Request) {
 
 	response, err := getValue(session, key)
 	if err != nil {
-		slog.Error(err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		HandleError(w, err)
 		return
 	}
 
@@ -116,15 +114,11 @@ func SetConfigValue(w http.ResponseWriter, r *http.Request) {
 	var setRequest ConfigValueSetRequest
 	err := json.NewDecoder(r.Body).Decode(&setRequest)
 	if err != nil {
-		msg := "Invalid request format: " + err.Error()
-		slog.Error(msg)
-		http.Error(w, msg, http.StatusBadRequest)
+		HandleError(w, exceptions.NewBadRequestException("invalid request format"))
 		return
 	}
-	err = configstore.SetValueFromKey(namespace+"."+name, setRequest.Value, session)
-	if err != nil {
-		slog.Error(err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	if err = configstore.SetValueFromKey(namespace+"."+name, setRequest.Value, session); err != nil {
+		HandleError(w, err)
 		return
 	}
 	file.RespondJSON(w, r, &bot.BotResponse{

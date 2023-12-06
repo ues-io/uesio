@@ -3,18 +3,18 @@ package systemdialect
 import (
 	"errors"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	oauthlib "github.com/thecloudmasters/uesio/pkg/oauth2"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 // Return a list of Integrations with per-user access credentials,
 // along with info about whether the current user has any access / refresh tokens for that integration yet,
 // and if so, when the access token expires.
-func runMyIntegrationCredentialsLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+func runMyIntegrationCredentialsLoadBot(op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 	// If the load op included workspace/site admin parameters, use these to adjust the context of our session
 	if contextSession, err := datasource.GetContextSessionFromParams(op.Params, connection, session); err == nil {
 		session = contextSession
@@ -57,11 +57,11 @@ func runMyIntegrationCredentialsLoadBot(op *adapt.LoadOp, connection adapt.Conne
 			if expiry, err := existingCred.GetField(oauthlib.AccessTokenExpirationField); err == nil {
 				item.SetField("uesio/core.accesstokenexpiration", expiry)
 			}
-			if updatedAt, err := existingCred.GetField(adapt.UPDATED_AT_FIELD); err == nil {
-				item.SetField(adapt.UPDATED_AT_FIELD, updatedAt)
+			if updatedAt, err := existingCred.GetField(wire.UPDATED_AT_FIELD); err == nil {
+				item.SetField(wire.UPDATED_AT_FIELD, updatedAt)
 			}
-			if createdAt, err := existingCred.GetField(adapt.CREATED_AT_FIELD); err == nil {
-				item.SetField(adapt.CREATED_AT_FIELD, createdAt)
+			if createdAt, err := existingCred.GetField(wire.CREATED_AT_FIELD); err == nil {
+				item.SetField(wire.CREATED_AT_FIELD, createdAt)
 			}
 			if tokenType, err := existingCred.GetField(oauthlib.TokenTypeField); err == nil {
 				item.SetField(oauthlib.TokenTypeField, tokenType)
@@ -81,7 +81,7 @@ func runMyIntegrationCredentialsLoadBot(op *adapt.LoadOp, connection adapt.Conne
 	return nil
 }
 
-func getTargetIntegrationNameFromConditions(conditions []adapt.LoadRequestCondition) string {
+func getTargetIntegrationNameFromConditions(conditions []wire.LoadRequestCondition) string {
 	name := ""
 	if len(conditions) < 1 {
 		return name
@@ -106,7 +106,7 @@ func hasStringField(item meta.Item, fieldName string) bool {
 	return false
 }
 
-func getAllPerUserIntegrationsUserHasAccessTo(session *sess.Session, connection adapt.Connection, integrationName string) (*meta.IntegrationCollection, error) {
+func getAllPerUserIntegrationsUserHasAccessTo(session *sess.Session, connection wire.Connection, integrationName string) (*meta.IntegrationCollection, error) {
 	group := &meta.IntegrationCollection{}
 	conditions := meta.BundleConditions{}
 	// TODO: Eventually we need to support "IN" Bundle Conditions
@@ -125,40 +125,40 @@ func getAllPerUserIntegrationsUserHasAccessTo(session *sess.Session, connection 
 	return group, nil
 }
 
-func getAllIntegrationCredentialsForUser(userId string, session *sess.Session, connection adapt.Connection, params map[string]string) (*adapt.Collection, error) {
+func getAllIntegrationCredentialsForUser(userId string, session *sess.Session, connection wire.Connection, params map[string]string) (*wire.Collection, error) {
 
 	versionSession, err := datasource.EnterVersionContext("uesio/core", session, connection)
 	if err != nil {
 		return nil, errors.New("unable to enter version context")
 	}
 
-	collection := &adapt.Collection{}
-	newOp := &adapt.LoadOp{
+	collection := &wire.Collection{}
+	newOp := &wire.LoadOp{
 		CollectionName: oauthlib.IntegrationCredentialCollection,
 		WireName:       "loadIntegrationCredentials",
 		Collection:     collection,
-		Conditions: []adapt.LoadRequestCondition{
+		Conditions: []wire.LoadRequestCondition{
 			{
 				Field:    oauthlib.UserField,
 				Value:    userId,
 				Operator: "EQ",
 			},
 		},
-		Fields: []adapt.LoadRequestField{
+		Fields: []wire.LoadRequestField{
 			{ID: oauthlib.AccessTokenField},
 			{ID: oauthlib.RefreshTokenField},
 			{ID: oauthlib.TokenTypeField},
 			{ID: oauthlib.AccessTokenExpirationField},
 			{ID: oauthlib.IntegrationField},
-			{ID: adapt.CREATED_AT_FIELD},
-			{ID: adapt.UPDATED_AT_FIELD},
+			{ID: wire.CREATED_AT_FIELD},
+			{ID: wire.UPDATED_AT_FIELD},
 		},
 		Query:   true,
 		LoadAll: true,
 		Params:  params,
 	}
 
-	_, err = datasource.Load([]*adapt.LoadOp{newOp}, versionSession, &datasource.LoadOptions{
+	_, err = datasource.Load([]*wire.LoadOp{newOp}, versionSession, &datasource.LoadOptions{
 		Connection: connection,
 		Metadata:   connection.GetMetadata(),
 	})

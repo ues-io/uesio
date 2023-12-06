@@ -4,18 +4,18 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runBundleAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func runBundleAfterSaveBot(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 	return cleanBundleFiles(request, connection, session)
 }
 
-func cleanBundleFiles(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func cleanBundleFiles(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	ids := []string{}
 	uniqueKeys := []string{}
@@ -30,7 +30,7 @@ func cleanBundleFiles(request *adapt.SaveOp, connection adapt.Connection, sessio
 
 	bundleDependency := meta.BundleDependencyCollection{}
 	err := datasource.PlatformLoad(&bundleDependency, &datasource.PlatformLoadOptions{
-		Conditions: []adapt.LoadRequestCondition{
+		Conditions: []wire.LoadRequestCondition{
 			{
 				Field:    "uesio/studio.bundle",
 				Value:    ids,

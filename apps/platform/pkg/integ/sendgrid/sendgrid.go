@@ -8,9 +8,9 @@ import (
 	"github.com/sendgrid/sendgrid-go"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 type SendEmailOptions struct {
@@ -27,10 +27,10 @@ type SendEmailOptions struct {
 
 type connection struct {
 	client      *sendgrid.Client
-	integration *adapt.IntegrationConnection
+	integration *wire.IntegrationConnection
 }
 
-func newSendGridConnection(ic *adapt.IntegrationConnection) (*connection, error) {
+func newSendGridConnection(ic *wire.IntegrationConnection) (*connection, error) {
 	apikey, err := ic.GetCredentials().GetRequiredEntry("apikey")
 	if err != nil || apikey == "" {
 		return nil, errors.New("SendGrid API Key not provided")
@@ -42,7 +42,7 @@ func newSendGridConnection(ic *adapt.IntegrationConnection) (*connection, error)
 }
 
 // RunAction implements the system bot interface
-func RunAction(bot *meta.Bot, ic *adapt.IntegrationConnection, actionName string, params map[string]interface{}) (interface{}, error) {
+func RunAction(bot *meta.Bot, ic *wire.IntegrationConnection, actionName string, params map[string]interface{}) (interface{}, error) {
 
 	sgic, err := newSendGridConnection(ic)
 	if err != nil {

@@ -9,11 +9,11 @@ import (
 
 	"github.com/gomodule/redigo/redis"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/cache"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 	"github.com/thecloudmasters/uesio/pkg/usage/usage_common"
 )
 
@@ -107,7 +107,7 @@ func UsageWorker() error {
 				Collection: "uesio/studio.usage",
 				Wire:       "CoolWireName",
 				Changes:    &changes,
-				Options:    &adapt.SaveOptions{Upsert: true},
+				Options:    &wire.SaveOptions{Upsert: true},
 			},
 		}
 

@@ -2,10 +2,10 @@ package controller
 
 import (
 	"encoding/json"
-	"log/slog"
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 
 	"github.com/thecloudmasters/uesio/pkg/bulk"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -14,23 +14,18 @@ import (
 
 func BulkJob(w http.ResponseWriter, r *http.Request) {
 	// 1. Parse the request object.
-	var specreq meta.JobSpecRequest
-	err := json.NewDecoder(r.Body).Decode(&specreq)
-	if err != nil {
-		msg := "Invalid request format: " + err.Error()
-		slog.Error(msg)
-		http.Error(w, msg, http.StatusBadRequest)
+	var specRequest meta.JobSpecRequest
+	if err := json.NewDecoder(r.Body).Decode(&specRequest); err != nil {
+		HandleError(w, exceptions.NewBadRequestException("invalid job spec request: "+err.Error()))
 		return
 	}
 
 	session := middleware.GetSession(r)
 
-	spec := meta.JobSpec(specreq)
+	spec := meta.JobSpec(specRequest)
 	jobID, err := bulk.NewJob(&spec, session)
 	if err != nil {
-		msg := "Failed Creating New Job: " + err.Error()
-		slog.Error(msg)
-		http.Error(w, msg, http.StatusBadRequest)
+		HandleError(w, exceptions.NewBadRequestException("Failed Creating New Job: "+err.Error()))
 		return
 	}
 

@@ -1,16 +1,16 @@
 package controller
 
 import (
-	"log/slog"
 	"net/http"
 	"net/url"
 	"strings"
 
 	"github.com/gorilla/mux"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 func getUesioOperatorFromPostgrestOperator(pgOp string) string {
@@ -33,7 +33,7 @@ func getUesioOperatorFromPostgrestOperator(pgOp string) string {
 	return "EQ"
 }
 
-func parseConditionFromQueryValue(paramName string, paramValue string) adapt.LoadRequestCondition {
+func parseConditionFromQueryValue(paramName string, paramValue string) wire.LoadRequestCondition {
 
 	// partial implementation of PostgREST Horizontal Filtering specification
 	// https://postgrest.org/en/stable/api.html#horizontal-filtering-rows
@@ -58,7 +58,7 @@ func parseConditionFromQueryValue(paramName string, paramValue string) adapt.Loa
 		useValue = value
 	}
 
-	return adapt.LoadRequestCondition{
+	return wire.LoadRequestCondition{
 		Field:       paramName,
 		Value:       useValue,
 		ValueSource: "VALUE",
@@ -67,8 +67,8 @@ func parseConditionFromQueryValue(paramName string, paramValue string) adapt.Loa
 	}
 }
 
-func parseLoadRequestConditionsFromQueryValues(values url.Values) []adapt.LoadRequestCondition {
-	conditions := []adapt.LoadRequestCondition{}
+func parseLoadRequestConditionsFromQueryValues(values url.Values) []wire.LoadRequestCondition {
+	conditions := []wire.LoadRequestCondition{}
 	for queryField, values := range values {
 		// Only support a single query string value per param name,
 		// i.e. with "foo=bar&foo=baz" we would ignore foo=baz
@@ -83,9 +83,9 @@ func DeleteRecordApi(w http.ResponseWriter, r *http.Request) {
 	collectionNamespace := vars["namespace"]
 	collectionName := vars["name"]
 
-	fields := []adapt.LoadRequestField{
+	fields := []wire.LoadRequestField{
 		{
-			ID: adapt.ID_FIELD,
+			ID: wire.ID_FIELD,
 		},
 	}
 	conditions := parseLoadRequestConditionsFromQueryValues(r.URL.Query())
@@ -95,9 +95,9 @@ func DeleteRecordApi(w http.ResponseWriter, r *http.Request) {
 
 	params := getWireParamsFromRequestHeaders(r)
 
-	collection := &adapt.Collection{}
+	collection := &wire.Collection{}
 
-	op := &adapt.LoadOp{
+	op := &wire.LoadOp{
 		WireName:           "query",
 		CollectionName:     useCollectionName,
 		Collection:         collection,
@@ -108,12 +108,10 @@ func DeleteRecordApi(w http.ResponseWriter, r *http.Request) {
 		RequireWriteAccess: true,
 	}
 
-	_, err := datasource.Load([]*adapt.LoadOp{op}, session, nil)
+	_, err := datasource.Load([]*wire.LoadOp{op}, session, nil)
 
 	if err != nil {
-		msg := "Error querying collection records to delete: " + err.Error()
-		slog.Error(msg)
-		http.Error(w, msg, http.StatusBadRequest)
+		HandleError(w, exceptions.NewBadRequestException("Error querying collection records to delete: "+err.Error()))
 		return
 	}
 
@@ -125,12 +123,8 @@ func DeleteRecordApi(w http.ResponseWriter, r *http.Request) {
 			Deletes:    collection,
 			Params:     params,
 		}}
-		err = datasource.Save(saveRequests, session)
-		err = datasource.HandleSaveRequestErrors(saveRequests, err)
-		if err != nil {
-			msg := "Delete failed: " + err.Error()
-			slog.Error(msg)
-			http.Error(w, msg, http.StatusBadRequest)
+		if err = datasource.HandleSaveRequestErrors(saveRequests, datasource.Save(saveRequests, session)); err != nil {
+			HandleError(w, exceptions.NewBadRequestException("Delete failed: "+err.Error()))
 			return
 		}
 	}

@@ -1,27 +1,19 @@
 package systemdialect
 
 import (
-	"errors"
-
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runCheckAvailabilityBot(params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
+func runCheckAvailabilityBot(params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
 
-	paramItems := (adapt.Item)(params)
+	paramItems := (wire.Item)(params)
 	username, err := paramItems.GetFieldAsString("username")
-	if err != nil {
-		return nil, errors.New("no username provided")
-	}
-
-	if username == "" {
-		return nil, &meta.BotParamValidationError{
-			Message: "No username provided",
-		}
+	if err != nil || username == "" {
+		return nil, exceptions.NewBadRequestException("no username provided")
 	}
 
 	systemSession, err := auth.GetSystemSession(session.GetSite(), nil)
@@ -40,8 +32,6 @@ func runCheckAvailabilityBot(params map[string]interface{}, connection adapt.Con
 		return nil, err
 	}
 
-	return nil, &meta.BotParamValidationError{
-		Message: "That username is not available",
-	}
+	return nil, exceptions.NewBadRequestException("That username is not available")
 
 }

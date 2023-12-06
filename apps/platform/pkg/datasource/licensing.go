@@ -1,10 +1,10 @@
 package datasource
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/cache"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 type LicenseMap map[string]*meta.License
@@ -34,7 +34,7 @@ func getLicenseCache(namespace string) (LicenseMap, bool) {
 	return licenses, true
 }
 
-func GetLicenses(namespace string, connection adapt.Connection) (LicenseMap, error) {
+func GetLicenses(namespace string, connection wire.Connection) (LicenseMap, error) {
 	// Hardcode the license for uesio/core
 	// This prevents a circular dependency when we try to get
 	// the credentials to load the license data.
@@ -53,10 +53,10 @@ func GetLicenses(namespace string, connection adapt.Connection) (LicenseMap, err
 	app := meta.App{}
 	err := PlatformLoadOne(&app, &PlatformLoadOptions{
 		Connection: connection,
-		Fields:     []adapt.LoadRequestField{},
-		Conditions: []adapt.LoadRequestCondition{
+		Fields:     []wire.LoadRequestField{},
+		Conditions: []wire.LoadRequestCondition{
 			{
-				Field:    adapt.UNIQUE_KEY_FIELD,
+				Field:    wire.UNIQUE_KEY_FIELD,
 				Value:    namespace,
 				Operator: "=",
 			},
@@ -70,7 +70,7 @@ func GetLicenses(namespace string, connection adapt.Connection) (LicenseMap, err
 		&licenses,
 		&PlatformLoadOptions{
 			Connection: connection,
-			Fields: []adapt.LoadRequestField{
+			Fields: []wire.LoadRequestField{
 				{
 					ID: "uesio/studio.active",
 				},
@@ -81,7 +81,7 @@ func GetLicenses(namespace string, connection adapt.Connection) (LicenseMap, err
 					ID: "uesio/studio.applicensed",
 				},
 			},
-			Conditions: []adapt.LoadRequestCondition{
+			Conditions: []wire.LoadRequestCondition{
 				{
 					Field:    "uesio/studio.applicensed",
 					Value:    app.ID,

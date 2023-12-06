@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 func exportFiles(create bundlestore.FileCreator, spec *meta.JobSpec, session *sess.Session) error {
@@ -20,7 +20,7 @@ func exportFiles(create bundlestore.FileCreator, spec *meta.JobSpec, session *se
 	err := datasource.PlatformLoad(
 		userFiles,
 		&datasource.PlatformLoadOptions{
-			Conditions: []adapt.LoadRequestCondition{
+			Conditions: []wire.LoadRequestCondition{
 				{
 					Field: "uesio/core.collectionid",
 					Value: spec.Collection,

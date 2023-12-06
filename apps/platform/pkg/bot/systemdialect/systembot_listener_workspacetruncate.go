@@ -1,12 +1,12 @@
 package systemdialect
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/truncate"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func RunWorkspaceTruncateListenerBot(params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
+func RunWorkspaceTruncateListenerBot(params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
 
 	appID, err := getRequiredParameter(params, "app")
 	if err != nil {
