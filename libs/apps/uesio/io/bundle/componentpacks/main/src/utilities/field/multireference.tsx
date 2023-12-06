@@ -8,6 +8,7 @@ import {
 } from "@uesio/ui"
 import ReferenceField from "./reference"
 import { useState } from "react"
+const { COLLECTION_FIELD } = collection
 
 export type ReferenceFieldOptions = {
 	searchFields?: string[]
@@ -37,6 +38,7 @@ const MultiReferenceField: definition.UtilityComponent<
 	const SelectField = component.getUtility("uesio/io.selectfield")
 	const Group = component.getUtility("uesio/io.group")
 	const {
+		path,
 		fieldMetadata,
 		mode,
 		readonly,
@@ -46,7 +48,9 @@ const MultiReferenceField: definition.UtilityComponent<
 		setValue,
 	} = props
 
-	console.log({ fieldId, record })
+	const recordCollection =
+		(record?.getFieldValue(`${fieldId}->${COLLECTION_FIELD}`) as string) ||
+		""
 
 	const referenceMetadata = fieldMetadata.getReferenceMetadata()
 	const hasCollections =
@@ -59,7 +63,7 @@ const MultiReferenceField: definition.UtilityComponent<
 		? referenceMetadata?.collections
 		: Object.keys(metadata || {})
 
-	const [collectionId, setCollectionId] = useState<string>("")
+	const [collectionId, setCollectionId] = useState<string>(recordCollection)
 
 	if (!collections) return null
 	const options = collections.map((x) => ({ label: x, value: x }))
@@ -73,15 +77,15 @@ const MultiReferenceField: definition.UtilityComponent<
 					value={collectionId}
 					options={collection.addBlankSelectOption(options)}
 					setValue={(value: string) => {
-						console.log({ value })
 						setCollectionId(value)
 					}}
 				/>
 			)}
 			{collectionId && (
 				<ReferenceField
-					path={""}
-					fieldId={""}
+					path={path}
+					fieldId={fieldId}
+					record={record}
 					fieldMetadata={
 						new collection.Field({
 							...fieldMetadata.source,
