@@ -135,3 +135,51 @@ func HandleReferences(
 
 	return nil
 }
+
+func HandleMultiCollectionReferences(connection wire.Connection, referencedCollections wire.ReferenceRegistry,
+	session *sess.Session) error {
+	// 1. Check the map to see if there is "uesio/core.common" collection
+	common, ok := referencedCollections["uesio/core.common"]
+	if !ok {
+		return nil
+	}
+
+	delete(referencedCollections, "uesio/core.common")
+
+	return LoadLooper(connection, "uesio/core.common", common.IDMap, common.Fields, common.GetMatchField(), session, func(refItem meta.Item, matchIndexes []wire.ReferenceLocator, ID string) error {
+
+		// This is a weird situation.
+		// It means we found a value that we didn't ask for.
+		// refItem will be that strange item.
+		if matchIndexes == nil {
+			return nil
+		}
+
+		// This means we tried to load some references, but they don't exist.
+		if refItem == nil {
+			return nil
+		}
+
+		collectionName, err := refItem.GetField("uesio/core.collection")
+		if err != nil {
+			return err
+		}
+
+		refID, err := refItem.GetField("uesio/core.id")
+		if err != nil {
+			return err
+		}
+
+		refRequest := referencedCollections.Get(collectionName.(string))
+		refRequest.AddFields(common.Fields)
+		// Loop over all matchIndexes and copy the data from the refItem
+		for _, locator := range matchIndexes {
+			err := refRequest.AddID(refID.(string), locator)
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
+}
