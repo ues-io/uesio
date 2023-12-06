@@ -512,12 +512,12 @@ func GetMetadataForLoad(
 
 		if fieldMetadata.Type == "REFERENCE" && fieldMetadata.ReferenceMetadata.MultiCollection {
 			if len(op.Fields[i].Fields) == 0 {
-				op.Fields[i].Fields = []adapt.LoadRequestField{
+				op.Fields[i].Fields = []wire.LoadRequestField{
 					{
-						ID: adapt.ID_FIELD,
+						ID: wire.ID_FIELD,
 					},
 					{
-						ID: adapt.COLLECTION_FIELD,
+						ID: wire.COLLECTION_FIELD,
 					},
 				}
 			}

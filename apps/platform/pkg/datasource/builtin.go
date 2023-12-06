@@ -5,12 +5,12 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-var COMMON_COLLECTION_METADATA = adapt.CollectionMetadata{
+var COMMON_COLLECTION_METADATA = wire.CollectionMetadata{
 	Name:        "common",
 	Namespace:   "uesio/core",
 	Label:       "Common",
 	PluralLabel: "Common",
-	Fields:      map[string]*adapt.FieldMetadata{},
+	Fields:      map[string]*wire.FieldMetadata{},
 	Type:        "DYNAMIC",
 }
 
