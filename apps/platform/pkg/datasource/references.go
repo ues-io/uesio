@@ -146,7 +146,7 @@ func HandleMultiCollectionReferences(connection wire.Connection, referencedColle
 
 	delete(referencedCollections, "uesio/core.common")
 
-	return LoadLooper(connection, "uesio/core.common", common.IDMap, common.Fields, common.GetMatchField(), session, func(refItem meta.Item, matchIndexes []wire.ReferenceLocator, ID string) error {
+	err := LoadLooper(connection, "uesio/core.common", common.IDMap, common.Fields, common.GetMatchField(), session, func(refItem meta.Item, matchIndexes []wire.ReferenceLocator, ID string) error {
 
 		// This is a weird situation.
 		// It means we found a value that we didn't ask for.
@@ -182,4 +182,19 @@ func HandleMultiCollectionReferences(connection wire.Connection, referencedColle
 
 		return nil
 	})
+
+	if err != nil {
+		return err
+	}
+
+	//LOAD the metadata for the referenced collections
+	multiCollectionsRefs := MetadataRequest{}
+	for collectionName := range referencedCollections {
+		multiCollectionsRefs.AddCollection(collectionName)
+		for _, key := range BUILTIN_FIELD_KEYS {
+			multiCollectionsRefs.AddField(collectionName, key, nil)
+		}
+	}
+
+	return multiCollectionsRefs.Load(connection.GetMetadata(), session, connection)
 }
