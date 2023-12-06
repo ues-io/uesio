@@ -10,3 +10,16 @@ params:
     label: Input
     type: TEXT
     required: true
+  - name: temperature
+    label: Temperature (0 to 1)
+    type: NUMBER
+    default: 0.5
+  - name: max_tokens_to_sample
+    label: Max tokens to sample
+    type: NUMBER
+  - name: top_k
+    label: Top K
+    type: NUMBER
+  - name: top_p
+    label: Top P
+    type: NUMBER
