@@ -51,12 +51,21 @@ func RunIntegrationAction(w http.ResponseWriter, r *http.Request) {
 		HandleError(w, err)
 		return
 	}
-	fmt.Printf("result is %v \n", result)
-	//
-	//file.RespondJSON(w, r, &bot.BotResponse{
-	//	Params:  returnParams,
-	//	Success: true,
-	//})
+	// If the type is a channel, stream chunks from it to the client
+	switch v := result.(type) {
+	case chan []byte:
+		w.Header().Set("Transfer-Encoding", "chunked")
+		for chunk := range v {
+			fmt.Println("writing chunk")
+			if _, err := w.Write(chunk); err != nil {
+				HandleError(w, err)
+				return
+			}
+		}
+	default:
+		// Send the response to the client as JSON
+		file.RespondJSON(w, r, result)
+	}
 }
 
 // GetIntegrationActionParams returns metadata about the parameters for an integration action.

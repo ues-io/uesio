@@ -2,7 +2,7 @@ import { Context } from "../context/context"
 
 export const respondJSON = async (response: Response) => {
 	if (interceptPlatformRedirects(response)) return
-	if (response.status !== 200) {
+	if (response.status >= 400) {
 		const errorText = await response.text()
 		throw new Error(
 			errorText
@@ -16,7 +16,7 @@ export const respondJSON = async (response: Response) => {
 
 export const respondVoid = async (response: Response) => {
 	if (interceptPlatformRedirects(response)) return
-	if (response.status !== 200) {
+	if (response.status >= 400) {
 		const errorText = await response.text()
 		throw new Error(errorText)
 	}
@@ -24,7 +24,7 @@ export const respondVoid = async (response: Response) => {
 	return
 }
 
-function interceptPlatformRedirects(response: Response) {
+export function interceptPlatformRedirects(response: Response) {
 	const locationHeader = response.headers.get("location")
 	if (locationHeader) {
 		window.location.href = locationHeader

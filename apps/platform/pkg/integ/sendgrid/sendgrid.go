@@ -58,14 +58,55 @@ func RunAction(bot *meta.Bot, ic *wire.IntegrationConnection, actionName string,
 
 }
 
+func getStringSlice(value interface{}) []string {
+	switch v := value.(type) {
+	case string:
+		if strings.Contains(v, ",") {
+			return strings.Split(v, ",")
+		} else {
+			return []string{v}
+		}
+	case []string:
+		return v
+	}
+	return nil
+}
+
+func hydrateSendEmailOptions(requestOptions map[string]interface{}) *SendEmailOptions {
+	options := &SendEmailOptions{}
+	if requestOptions == nil {
+		return options
+	}
+	for k, v := range requestOptions {
+		switch k {
+		case "to":
+			options.To = getStringSlice(v)
+		case "cc":
+			options.CC = getStringSlice(v)
+		case "bcc":
+			options.BCC = getStringSlice(v)
+		case "subject":
+			options.Subject = v.(string)
+		case "plainBody":
+			options.PlainBody = v.(string)
+		case "contentType":
+			options.ContentType = v.(string)
+		case "from":
+			options.From = v.(string)
+		case "templateId":
+			options.TemplateId = v.(string)
+		case "dynamicTemplateData":
+			if mapVal, isMap := v.(map[string]interface{}); isMap {
+				options.DynamicTemplateData = mapVal
+			}
+		}
+	}
+	return options
+}
+
 func (sgic *connection) sendEmail(requestOptions map[string]interface{}) error {
 
-	options := &SendEmailOptions{}
-	err := datasource.HydrateOptions(requestOptions, options)
-	if err != nil {
-		return err
-	}
-
+	options := hydrateSendEmailOptions(requestOptions)
 	var toUsers []*mail.Email
 	for _, toRecipient := range options.To {
 		toUsers = append(toUsers, mail.NewEmail(toRecipient, toRecipient))

@@ -21,6 +21,7 @@ import {
 	respondVoid,
 	postMultipartForm,
 	del,
+	interceptPlatformRedirects,
 } from "./async"
 import { memoizedGetJSON } from "./memoizedAsync"
 import { SiteState } from "../bands/site"
@@ -663,7 +664,7 @@ const platform = {
 		integration: MetadataKey,
 		action: string,
 		params: BotParams
-	): Promise<unknown> => {
+	): Promise<Response> => {
 		const prefix = getPrefix(context)
 		const response = await postJSON(
 			context,
@@ -673,7 +674,18 @@ const platform = {
 			)}?action=${encodeURIComponent(action)}`,
 			params
 		)
-		return respondJSON(response)
+		if (interceptPlatformRedirects(response)) {
+			return response
+		}
+		if (response.status >= 400) {
+			const errorText = await response.text()
+			throw new Error(
+				errorText
+					? errorText
+					: "We are sorry, something went wrong on our side"
+			)
+		}
+		return response
 	},
 	getIntegrationActionParams: async (
 		context: Context,
