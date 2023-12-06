@@ -4,8 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
+	"os"
+	"os/signal"
 	"strings"
+	"syscall"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/bedrockruntime"
@@ -26,8 +28,12 @@ func estimateTokens(characterCount int64) int64 {
 }
 
 type InvokeModelOptions struct {
-	Input string `json:"input"`
-	Model string `json:"model"`
+	Input             string  `json:"input"`
+	Model             string  `json:"model"`
+	MaxTokensToSample int     `json:"max_tokens_to_sample"`
+	Temperature       float64 `json:"temperature"`
+	TopK              int     `json:"top_k"`
+	TopP              float64 `json:"top_p"`
 }
 
 func getBedrockConnection(ic *wire.IntegrationConnection) (*connection, error) {
@@ -86,16 +92,75 @@ func RunAction(bot *meta.Bot, ic *wire.IntegrationConnection, actionName string,
 
 }
 
+const claudePromptStart = "\n\nHuman:"
+const claudePromptEnding = "\n\nAssistant:"
+
+func intWithDefault(v interface{}, defaultValue int) int {
+	switch val := v.(type) {
+	case int:
+		return val
+	case int64:
+		return int(val)
+	case float64:
+		return int(val)
+	}
+	return defaultValue
+}
+
+func float64WithDefault(v interface{}, defaultValue float64) float64 {
+	switch val := v.(type) {
+	case float64:
+		return val
+	case int:
+		return float64(val)
+	case int64:
+		return float64(val)
+	case float32:
+		return float64(val)
+	}
+	return defaultValue
+}
+
+const MAX_TOKENS_TO_SAMPLE = 200000
+const DEFAULT_TOKENS_TO_SAMPLE = 4096
+
+func hydrateInvokeModelOptions(requestOptions map[string]interface{}) *InvokeModelOptions {
+
+	maxTokensToSample := intWithDefault(requestOptions["max_tokens_to_sample"], DEFAULT_TOKENS_TO_SAMPLE)
+	// Set a hard limit
+	if maxTokensToSample > MAX_TOKENS_TO_SAMPLE {
+		maxTokensToSample = MAX_TOKENS_TO_SAMPLE
+	}
+	temperature := float64WithDefault(requestOptions["temperature"], 0.5)
+	if temperature < 0 {
+		temperature = 0
+	}
+	if temperature > 1 {
+		temperature = 1
+	}
+	topP := float64WithDefault(requestOptions["top_p"], 0.999)
+	topK := intWithDefault(requestOptions["top_k"], 250)
+	return &InvokeModelOptions{
+		Input:             requestOptions["input"].(string),
+		Model:             requestOptions["model"].(string),
+		MaxTokensToSample: maxTokensToSample,
+		Temperature:       temperature,
+		TopK:              topK,
+		TopP:              topP,
+	}
+}
+
 func (c *connection) invokeModel(requestOptions map[string]interface{}) (interface{}, error) {
 
-	options := &InvokeModelOptions{
-		requestOptions["input"].(string),
-		requestOptions["model"].(string),
-	}
+	options := hydrateInvokeModelOptions(requestOptions)
+
+	// TODO: Validate the model against Bedrock's known valid models!!!
 
 	body, err := json.Marshal(&map[string]interface{}{
 		"prompt":               options.Input,
-		"max_tokens_to_sample": 2048,
+		"max_tokens_to_sample": options.MaxTokensToSample,
+		// TODO: Verify what other parameters are valid for particular models!!!
+		"temperature": options.Temperature,
 	})
 	if err != nil {
 		return nil, err
@@ -103,13 +168,21 @@ func (c *connection) invokeModel(requestOptions map[string]interface{}) (interfa
 
 	// If we are doing Claude, do some special handling
 	if options.Model == "anthropic.claude-v2" {
+		claudePrompt := options.Input
+		if !strings.Contains(claudePrompt, claudePromptStart) {
+			claudePrompt = claudePromptStart + claudePrompt
+		}
+		if !strings.Contains(claudePrompt, claudePromptEnding) {
+			claudePrompt = claudePrompt + claudePromptEnding
+		}
 		body, err = json.Marshal(AnthropicInput{
-			Prompt: "\n\nHuman:" + options.Input + "\n\nAssistant:",
-			// TODO:
-			MaxTokensToSample: 2048,
-			Temperature:       0.0,
-			TopK:              250,
-			TopP:              0.999,
+			// Claude has a VERY particular format. We need to make sure that if the format does not match,
+			// that we populate it
+			Prompt:            claudePrompt,
+			MaxTokensToSample: options.MaxTokensToSample,
+			Temperature:       options.Temperature,
+			TopK:              options.TopK,
+			TopP:              options.TopP,
 			StopSequences:     []string{"Human:", "```"},
 		})
 		if err != nil {
@@ -134,7 +207,8 @@ func (c *connection) invokeModel(requestOptions map[string]interface{}) (interfa
 	eventsChannel := reader.Events()
 	outputStream := integ.NewStream()
 
-	fmt.Println("initiating stream")
+	sigTerm := make(chan os.Signal, 1)
+	signal.Notify(sigTerm, syscall.SIGINT, syscall.SIGTERM)
 
 	go (func() {
 		totalCharacters := int64(0)
@@ -142,32 +216,35 @@ func (c *connection) invokeModel(requestOptions map[string]interface{}) (interfa
 		defer close(outputStream.Err())
 		defer close(outputStream.Done())
 		defer reader.Close()
-		for e := range eventsChannel {
-			switch event := e.(type) {
-			case *brtypes.ResponseStreamMemberChunk:
-				var modelOutput AnthropicOutput
-				bytesChunk := event.Value.Bytes
-				if err := json.Unmarshal(event.Value.Bytes, &modelOutput); err != nil {
-					outputStream.Err() <- err
-					break
+	outer:
+		for {
+			select {
+			case e := <-eventsChannel:
+				switch event := e.(type) {
+				case *brtypes.ResponseStreamMemberChunk:
+					var modelOutput AnthropicOutput
+					if err := json.Unmarshal(event.Value.Bytes, &modelOutput); err != nil {
+						outputStream.Err() <- err
+						break outer
+					}
+					totalCharacters = totalCharacters + int64(len(modelOutput.Completion))
+					// If we have any stop reason, break, we're done
+					if modelOutput.StopReason != "" {
+						usage.RegisterEvent("OUTPUT_TOKENS", "INTEGRATION", c.integration.GetKey(), estimateTokens(totalCharacters), c.session)
+						outputStream.Done() <- totalCharacters
+						break outer
+					}
+					outputStream.Chunk() <- []byte(modelOutput.Completion)
 				}
-				totalCharacters = totalCharacters + int64(len(modelOutput.Completion))
-				if modelOutput.StopReason != "" {
-					fmt.Println("STOP REASON ENCOUNTERED: " + modelOutput.StopReason)
-					break
-				}
-				fmt.Println("CHUNK received: " + string(bytesChunk))
-				outputStream.Chunk() <- []byte(modelOutput.Completion)
+			case <-sigTerm:
+				outputStream.Err() <- errors.New("request cancelled")
+				break outer
 			}
 		}
-		if reader.Err() != nil {
+		if reader != nil && reader.Err() != nil {
 			outputStream.Err() <- reader.Err()
 		}
-		usage.RegisterEvent("OUTPUT_TOKENS", "INTEGRATION", c.integration.GetKey(), estimateTokens(totalCharacters), c.session)
-		outputStream.Done() <- totalCharacters
 	})()
-
-	fmt.Println("returning outputStream")
 
 	return outputStream, nil
 

@@ -5,6 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/gorilla/mux"
 
@@ -62,24 +65,34 @@ func RunIntegrationAction(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 		w.Header().Set("X-Content-Type-Options", "nosniff")
 		w.Header().Set("Transfer-Encoding", "chunked")
-		w.WriteHeader(100)
 		if flusher, isOk := w.(http.Flusher); isOk {
 			flusher.Flush()
 		}
-		ctx, _ := context.WithCancel(r.Context())
+		ctx, cancel := context.WithCancel(r.Context())
+		defer cancel()
+
+		streamErrorHandler := func(w http.ResponseWriter, err error) {
+			statusCode := exceptions.GetStatusCodeForError(err)
+			errMessage := err.Error()
+			if statusCode == http.StatusInternalServerError {
+				errMessage = http.StatusText(statusCode)
+			}
+			// Write a special response body that the client can interpret
+			// as an error by the client while reading chunks
+			w.Write([]byte("-----ERROR-----" + errMessage + "-----ENDERROR-----"))
+			w.WriteHeader(statusCode)
+		}
+
 		go func() {
-			//defer wg.Done()
 			for {
 				select {
 				case chunk := <-v.Chunk():
 					if chunk == nil {
 						return
 					}
-					fmt.Println("Integration Action, GOT chunk: " + string(chunk))
 					// Have to append newline to every chunk, otherwise it doesn't work as expected
 					if _, err := w.Write(chunk); err != nil {
-						fmt.Println("ERROR WRITING CHUNK TO HTTP ResponseWriter: " + err.Error())
-						HandleError(w, err)
+						streamErrorHandler(w, err)
 						return
 					}
 					// Have to flush each chunk!
@@ -92,20 +105,20 @@ func RunIntegrationAction(w http.ResponseWriter, r *http.Request) {
 			}
 		}()
 
-		// Telling the loop that keeps the connection alive to end
-		//cancel()
-
-		// Waiting until the loop ends
+		sigTerm := make(chan os.Signal, 1)
+		signal.Notify(sigTerm, syscall.SIGINT, syscall.SIGTERM)
 		for {
 			select {
 			case streamErr := <-v.Err():
-				if streamErr != nil {
-					fmt.Println("GOT AN ERROR ON THE STREAM: " + streamErr.Error())
-					HandleError(w, streamErr)
+				if streamErr == nil {
+					streamErr = errors.New("request terminated for unknown reason")
 				}
+				streamErrorHandler(w, err)
+				return
+			case <-sigTerm:
+				streamErrorHandler(w, errors.New("request cancelled"))
 				return
 			case <-v.Done():
-				fmt.Println("Stream is done!")
 				w.WriteHeader(200)
 				return
 			}

@@ -17,6 +17,9 @@ export interface RunActionSignal extends SignalDefinition {
 	onChunk?: SignalDefinition[]
 }
 
+const errorBoundaryStart = "-----ERROR-----"
+const errorBoundaryEnd = "-----ENDERROR-----"
+
 const signals: Record<string, SignalDescriptor> = {
 	[`${INTEGRATION_BAND}/RUN_ACTION`]: {
 		dispatcher: async (
@@ -56,6 +59,16 @@ const signals: Record<string, SignalDescriptor> = {
 					const chunks = []
 					while (!streamResult.done) {
 						const text = decoder.decode(streamResult.value)
+						// Check if the text contains a special error message boundary
+						if (text.includes(errorBoundaryStart)) {
+							throw new Error(
+								text.substring(
+									text.indexOf(errorBoundaryStart) +
+										errorBoundaryStart.length,
+									text.indexOf(errorBoundaryEnd)
+								)
+							)
+						}
 						chunks.push(text)
 						if (onChunk && stepId) {
 							await runMany(
@@ -71,6 +84,7 @@ const signals: Record<string, SignalDescriptor> = {
 				} else {
 					finalResult = await response.text()
 				}
+
 				// If this invocation was given a stable identifier,
 				// expose its outputs for later use
 				if (stepId) {
