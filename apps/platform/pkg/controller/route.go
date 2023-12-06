@@ -143,7 +143,7 @@ func getNotFoundRoute(path string, err string, displayButton string) *meta.Route
 		Path:     path,
 		ThemeRef: "uesio/core.default",
 		Params:   params,
-		Title:    "Error",
+		Title:    "Not Found",
 	}
 }
 
@@ -173,13 +173,12 @@ func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Sess
 
 	var route *meta.Route
 	if redirect {
-		errMessage := err.Error()
-		showButtton := "true"
-		hideButton := strings.HasPrefix(errMessage, "It appears that")
-		if hideButton {
-			showButtton = "false"
+		showButtton := "false"
+		switch err.(type) {
+		case *exceptions.UnauthorizedException, *exceptions.ForbiddenException:
+			showButtton = "true"
 		}
-		route = getNotFoundRoute(path, errMessage, showButtton)
+		route = getNotFoundRoute(path, err.Error(), showButtton)
 	} else {
 		route = GetErrorRoute(path, err.Error())
 	}
