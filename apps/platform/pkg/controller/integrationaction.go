@@ -61,6 +61,7 @@ func RunIntegrationAction(w http.ResponseWriter, r *http.Request) {
 		// to allow streaming responses to be sent
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 		w.Header().Set("X-Content-Type-Options", "nosniff")
+		w.Header().Set("Transfer-Encoding", "chunked")
 		w.WriteHeader(100)
 		if flusher, isOk := w.(http.Flusher); isOk {
 			flusher.Flush()

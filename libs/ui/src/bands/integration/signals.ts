@@ -44,28 +44,20 @@ const signals: Record<string, SignalDescriptor> = {
 
 				// Handle the response based on the content type
 				const contentType = response.headers.get("content-type")
-				const transferEncoding =
-					response.headers.get("transfer-encoding")
-				console.log("content type: " + contentType)
-				console.log("transfer encoding: " + transferEncoding)
+				const noSniff =
+					response.headers.get("X-Content-Type-Options") === "nosniff"
 				if (contentType?.includes("json")) {
 					finalResult = await response.json()
-				} else if (response.body && transferEncoding === "chunked") {
+				} else if (response.body && noSniff) {
 					// Handle streaming responses
-					console.log("got a chunked response!")
 					const reader = response.body.getReader()
 					const decoder = new TextDecoder()
 					let streamResult = await reader.read()
 					const chunks = []
 					while (!streamResult.done) {
 						const text = decoder.decode(streamResult.value)
-						console.log(
-							`RUN_ACTION - CHUNK[${chunks.length}]: `,
-							text
-						)
 						chunks.push(text)
 						if (onChunk && stepId) {
-							console.log("invoking onChunk signals")
 							await runMany(
 								onChunk,
 								context.addSignalOutputFrame(stepId, {
@@ -79,8 +71,6 @@ const signals: Record<string, SignalDescriptor> = {
 				} else {
 					finalResult = await response.text()
 				}
-
-				console.log("RUN_ACTION - FINAL: ", finalResult)
 				// If this invocation was given a stable identifier,
 				// expose its outputs for later use
 				if (stepId) {
