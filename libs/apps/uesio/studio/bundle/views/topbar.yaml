@@ -23,7 +23,6 @@ definition:
                     uesio.styleTokens:
                       root:
                         - mr-4
-                        - opacity-80
                     height: 34
                     file: uesio/core.logowhite
                     signals:

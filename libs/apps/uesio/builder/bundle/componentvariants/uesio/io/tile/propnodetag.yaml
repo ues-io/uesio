@@ -6,7 +6,7 @@ definition:
       - group
       - border
       - border-slate-200
-      - text-slate-700
+      - text-slate-600
       - text-sm
       - rounded
       - overflow-hidden

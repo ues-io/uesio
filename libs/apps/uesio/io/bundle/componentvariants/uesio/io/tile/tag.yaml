@@ -27,7 +27,7 @@ definition:
       - group-hover:text-white
     avatar:
       - flex
-      - text-base
+      - text-sm
       - text-slate-700
       - bg-slate-200
       - p-1.5

@@ -6,7 +6,7 @@ definition:
     icon:
       - text-xl
       - text-slate-200
-      - hover:bg-slate-800
+      - hover:bg-slate-700
       - hover:text-white
       - px-2
       - py-1

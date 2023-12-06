@@ -14,7 +14,7 @@ const StyleDefaults = Object.freeze({
 		"px-4",
 		"shrink-0",
 	],
-	logo: ["opacity-80", "pr-4"],
+	logo: ["pr-4"],
 	avatar: ["h-9", "w-9", "border-2", "border-white"],
 })
 
@@ -74,7 +74,7 @@ const MainHeader: definition.UtilityComponent = (props) => {
 							icon={"visibility"}
 						/>
 					}
-					variant="uesio/builder.panelactionbutton"
+					variant="uesio/builder.secondarytoolbar"
 					onClick={() => {
 						api.builder.getBuilderDeps(context).then(() => {
 							setBuildMode(!buildMode)
