@@ -146,6 +146,22 @@ func HandleMultiCollectionReferences(connection wire.Connection, referencedColle
 
 	delete(referencedCollections, "uesio/core.common")
 
+	if len(common.IDMap) == 0 {
+		return nil
+	}
+
+	common.AddFields([]wire.LoadRequestField{
+		{
+			ID: wire.ID_FIELD,
+		},
+		{
+			ID: wire.UNIQUE_KEY_FIELD,
+		},
+		{
+			ID: wire.COLLECTION_FIELD,
+		},
+	})
+
 	err := LoadLooper(connection, "uesio/core.common", common.IDMap, common.Fields, common.GetMatchField(), session, func(refItem meta.Item, matchIndexes []wire.ReferenceLocator, ID string) error {
 
 		// This is a weird situation.

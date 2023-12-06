@@ -75,20 +75,21 @@ func FetchReferences(
 		field := op.Metadata.Fields[i]
 		if wire.IsReference(field.Type) {
 
+			referencedCollection := field.ReferenceMetadata.Collection
 			if field.ReferenceMetadata.MultiCollection {
-				continue //TO-DO
+				referencedCollection = "uesio/core.common"
 			}
 
-			refCollectionMetadata, err := metadata.GetCollection(field.ReferenceMetadata.Collection)
+			refCollectionMetadata, err := metadata.GetCollection(referencedCollection)
 			if err != nil {
 				return err
 			}
 
-			refIDReq := referencedIDCollections.Get(field.ReferenceMetadata.Collection)
+			refIDReq := referencedIDCollections.Get(referencedCollection)
 			refIDReq.Metadata = refCollectionMetadata
 			refIDReq.MatchField = wire.ID_FIELD
 
-			refUniqueKeyReq := referencedUniqueKeyCollections.Get(field.ReferenceMetadata.Collection)
+			refUniqueKeyReq := referencedUniqueKeyCollections.Get(referencedCollection)
 			refUniqueKeyReq.Metadata = refCollectionMetadata
 			refUniqueKeyReq.MatchField = wire.UNIQUE_KEY_FIELD
 
