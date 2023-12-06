@@ -21,7 +21,6 @@ import {
 	respondVoid,
 	postMultipartForm,
 	del,
-	interceptPlatformRedirects,
 } from "./async"
 import { memoizedGetJSON } from "./memoizedAsync"
 import { SiteState } from "../bands/site"
@@ -659,33 +658,46 @@ const platform = {
 		)
 		return respondVoid(response)
 	},
-	runIntegrationAction: async (
+	runIntegrationAction: (
 		context: Context,
 		integration: MetadataKey,
 		action: string,
-		params: BotParams
-	): Promise<Response> => {
+		params: BotParams,
+		onDone?: (finalBody: string, xhr: XMLHttpRequest) => void,
+		onError?: (error: string, xhr: XMLHttpRequest) => void,
+		onChunk?: (chunk: string, xhr: XMLHttpRequest) => void
+	): XMLHttpRequest => {
 		const prefix = getPrefix(context)
-		const response = await postJSON(
-			context,
-			`${prefix}/integrationactions/run/${integration.replace(
-				".",
-				"/"
-			)}?action=${encodeURIComponent(action)}`,
-			params
-		)
-		if (interceptPlatformRedirects(response)) {
-			return response
-		}
-		if (response.status >= 400) {
-			const errorText = await response.text()
-			throw new Error(
-				errorText
-					? errorText
-					: "We are sorry, something went wrong on our side"
+		const url = `${prefix}/integrationactions/run/${integration.replace(
+			".",
+			"/"
+		)}?action=${encodeURIComponent(action)}`
+
+		const xhr = new XMLHttpRequest()
+		xhr.onreadystatechange = function () {
+			console.log(
+				"readyState: " + xhr.readyState + ", status: " + xhr.status
 			)
+			if (xhr.readyState === 3) {
+				console.log("chunk time")
+				// Check if the response is still loading (partial data received)
+				onChunk?.(xhr.responseText, xhr)
+			} else if (xhr.readyState === 4) {
+				if (xhr.status >= 400) {
+					onError?.(xhr.statusText, xhr)
+				} else {
+					console.log("DONE WITH IT ALL")
+					// Check if the response is complete
+					// The entire response has been received
+					onDone?.(xhr.responseText, xhr)
+				}
+			}
 		}
-		return response
+		xhr.open("POST", url)
+		xhr.responseType = "text"
+		xhr.setRequestHeader("Content-Type", "application/json")
+		xhr.send(JSON.stringify(params))
+		return xhr
 	},
 	getIntegrationActionParams: async (
 		context: Context,
