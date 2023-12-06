@@ -1,19 +1,19 @@
 package systemdialect
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 const defaultSitePublicProfile = "uesio/core.public"
 const bundleField = "uesio/studio.bundle->uesio/core.id"
 
-func runSiteAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func runSiteAfterSaveBot(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
-	err := request.LoopInserts(func(change *adapt.ChangeItem) error {
+	err := request.LoopInserts(func(change *wire.ChangeItem) error {
 
 		siteID := change.IDValue
 
@@ -30,15 +30,15 @@ func runSiteAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, ses
 			publicProfile = defaultSitePublicProfile
 		}
 
-		newDeps := adapt.Collection{}
+		newDeps := wire.Collection{}
 
-		newDeps = append(newDeps, &adapt.Item{
+		newDeps = append(newDeps, &wire.Item{
 			"uesio/core.username":  "system",
 			"uesio/core.type":      "PERSON",
 			"uesio/core.firstname": "System",
 			"uesio/core.lastname":  "User",
 			"uesio/core.profile":   publicProfile,
-		}, &adapt.Item{
+		}, &wire.Item{
 			"uesio/core.username":  "guest",
 			"uesio/core.type":      "PERSON",
 			"uesio/core.firstname": "Guest",
@@ -53,7 +53,7 @@ func runSiteAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, ses
 				Collection: "uesio/core.user",
 				Wire:       "defaultusers",
 				Changes:    &newDeps,
-				Options: &adapt.SaveOptions{
+				Options: &wire.SaveOptions{
 					Upsert: true,
 				},
 			},
@@ -64,7 +64,7 @@ func runSiteAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, ses
 		return err
 	}
 
-	err = request.LoopUpdates(func(change *adapt.ChangeItem) error {
+	err = request.LoopUpdates(func(change *wire.ChangeItem) error {
 
 		siteID := change.IDValue
 
@@ -94,8 +94,8 @@ func runSiteAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, ses
 			newPublicProfile = defaultSitePublicProfile
 		}
 
-		updatedUsers := adapt.Collection{
-			&adapt.Item{
+		updatedUsers := wire.Collection{
+			&wire.Item{
 				"uesio/core.username":  "guest",
 				"uesio/core.uniquekey": "guest",
 				"uesio/core.profile":   newPublicProfile,
@@ -109,7 +109,7 @@ func runSiteAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, ses
 				Collection: "uesio/core.user",
 				Wire:       "updateUsers",
 				Changes:    &updatedUsers,
-				Options: &adapt.SaveOptions{
+				Options: &wire.SaveOptions{
 					Upsert: true,
 				},
 			},
@@ -123,11 +123,11 @@ func runSiteAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, ses
 	return clearHostCacheForSite(request, connection, session)
 }
 
-func clearHostCacheForSite(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func clearHostCacheForSite(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 	ids := getIDsFromUpdatesAndDeletes(request)
 	domains := meta.SiteDomainCollection{}
 	err := datasource.PlatformLoad(&domains, &datasource.PlatformLoadOptions{
-		Conditions: []adapt.LoadRequestCondition{
+		Conditions: []wire.LoadRequestCondition{
 			{
 				Field:    "uesio/studio.site",
 				Value:    ids,
@@ -141,7 +141,7 @@ func clearHostCacheForSite(request *adapt.SaveOp, connection adapt.Connection, s
 	}
 	domainIds := []string{}
 	err = domains.Loop(func(item meta.Item, index string) error {
-		id, err := item.GetField(adapt.UNIQUE_KEY_FIELD)
+		id, err := item.GetField(wire.UNIQUE_KEY_FIELD)
 		if err != nil {
 			return err
 		}

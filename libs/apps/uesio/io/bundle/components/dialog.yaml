@@ -3,6 +3,7 @@ pack: main
 entrypoint: components/dialog/dialog
 variants:
   - uesio/io.titlebar:uesio/io.dialog
+  - uesio/io.scrollpanel:uesio/io.default
 slots:
   - name: actions
   - name: components

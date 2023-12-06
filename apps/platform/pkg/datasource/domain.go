@@ -3,9 +3,9 @@ package datasource
 import (
 	"fmt"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 func QueryDomainFromSite(siteID string) (*meta.SiteDomain, error) {
@@ -13,7 +13,7 @@ func QueryDomainFromSite(siteID string) (*meta.SiteDomain, error) {
 	err := PlatformLoadOne(
 		&sd,
 		&PlatformLoadOptions{
-			Fields: []adapt.LoadRequestField{
+			Fields: []wire.LoadRequestField{
 				{
 					ID: "uesio/studio.domain",
 				},
@@ -21,7 +21,7 @@ func QueryDomainFromSite(siteID string) (*meta.SiteDomain, error) {
 					ID: "uesio/studio.type",
 				},
 			},
-			Conditions: []adapt.LoadRequestCondition{
+			Conditions: []wire.LoadRequestCondition{
 				{
 					Field: "uesio/studio.site",
 					Value: siteID,

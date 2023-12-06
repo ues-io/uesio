@@ -7,10 +7,10 @@ import (
 
 	"golang.org/x/oauth2"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/cache"
 	httpClient "github.com/thecloudmasters/uesio/pkg/http"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 var oauthExchangeCache cache.Cache[string]
@@ -37,7 +37,7 @@ type RedirectMetadata struct {
 
 // ExchangeAuthorizationCodeForAccessToken takes an authorization code that is pushed to the redirect URL
 // and exchanges it for an access token.
-func ExchangeAuthorizationCodeForAccessToken(credentials *adapt.Credentials, host, code string, state *State) (*oauth2.Token, error) {
+func ExchangeAuthorizationCodeForAccessToken(credentials *wire.Credentials, host, code string, state *State) (*oauth2.Token, error) {
 	conf, err := GetConfig(credentials, host)
 	if err != nil {
 		return nil, err

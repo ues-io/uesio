@@ -1,9 +1,10 @@
-package adapt
+package wire
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestCollectionMetadata_Merge(t *testing.T) {

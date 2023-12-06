@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 func addDateRangeCondition(start, end time.Time, fieldName string, builder *QueryBuilder) error {
@@ -25,7 +25,7 @@ func getWeekRange(week, year int) (startDate, endDate time.Time) {
 	return startDate, endDate
 }
 
-func processDateRangeCondition(condition adapt.LoadRequestCondition, fieldName string, builder *QueryBuilder) error {
+func processDateRangeCondition(condition wire.LoadRequestCondition, fieldName string, builder *QueryBuilder) error {
 
 	value, ok := condition.Value.(string)
 	if !ok {

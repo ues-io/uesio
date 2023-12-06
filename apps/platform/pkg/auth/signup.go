@@ -3,10 +3,10 @@ package auth
 import (
 	"regexp"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/templating"
@@ -56,7 +56,7 @@ func Signup(signupMethod *meta.SignupMethod, payload map[string]interface{}, ses
 	return user, nil
 }
 
-func signupWithConnection(signupMethod *meta.SignupMethod, payload map[string]interface{}, connection adapt.Connection, session *sess.Session) (*meta.User, error) {
+func signupWithConnection(signupMethod *meta.SignupMethod, payload map[string]interface{}, connection wire.Connection, session *sess.Session) (*meta.User, error) {
 
 	authconn, err := GetAuthConnection(signupMethod.AuthSource, connection, session)
 	if err != nil {

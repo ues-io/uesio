@@ -7,10 +7,9 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
-
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 type RunIntegrationActionResponse struct {
@@ -28,7 +27,7 @@ func RunIntegrationAction(w http.ResponseWriter, r *http.Request) {
 	params, err := getParamsFromRequestBody(r)
 
 	session := middleware.GetSession(r)
-	connection, err := datasource.GetPlatformConnection(&adapt.MetadataCache{}, session, nil)
+	connection, err := datasource.GetPlatformConnection(&wire.MetadataCache{}, session, nil)
 	if err != nil {
 		HandleError(w, errors.New("Unable to obtain platform connection: "+err.Error()))
 		return

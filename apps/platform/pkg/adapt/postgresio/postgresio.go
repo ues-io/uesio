@@ -7,8 +7,7 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
-
-	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 type Adapter struct {
@@ -58,15 +57,15 @@ var clientPool = map[string]*pgxpool.Pool{}
 var saveClientPool = map[string]*pgxpool.Pool{}
 var lock sync.RWMutex
 
-func connect(credentials *adapt.Credentials) (*pgxpool.Pool, error) {
+func connect(credentials *wire.Credentials) (*pgxpool.Pool, error) {
 	return checkPoolCache(clientPool, credentials)
 }
 
-func connectForSave(credentials *adapt.Credentials) (*pgxpool.Pool, error) {
+func connectForSave(credentials *wire.Credentials) (*pgxpool.Pool, error) {
 	return checkPoolCache(saveClientPool, credentials)
 }
 
-func checkPoolCache(cache map[string]*pgxpool.Pool, credentials *adapt.Credentials) (*pgxpool.Pool, error) {
+func checkPoolCache(cache map[string]*pgxpool.Pool, credentials *wire.Credentials) (*pgxpool.Pool, error) {
 	hash := credentials.GetHash()
 	// Check the pool for a client
 	lock.RLock()
@@ -87,7 +86,7 @@ func checkPoolCache(cache map[string]*pgxpool.Pool, credentials *adapt.Credentia
 	return pool, nil
 }
 
-func getConnection(credentials *adapt.Credentials, hash string) (*pgxpool.Pool, error) {
+func getConnection(credentials *wire.Credentials, hash string) (*pgxpool.Pool, error) {
 	host, err := credentials.GetRequiredEntry("host")
 	if err != nil {
 		return nil, err

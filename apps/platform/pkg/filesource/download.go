@@ -3,11 +3,11 @@ package filesource
 import (
 	"io"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 	"github.com/thecloudmasters/uesio/pkg/usage"
 )
 
@@ -17,7 +17,7 @@ func DownloadAttachment(w io.Writer, recordID string, path string, session *sess
 	err := datasource.PlatformLoadOne(
 		userFile,
 		&datasource.PlatformLoadOptions{
-			Conditions: []adapt.LoadRequestCondition{
+			Conditions: []wire.LoadRequestCondition{
 				{
 					Field: "uesio/core.recordid",
 					Value: recordID,
@@ -43,9 +43,9 @@ func Download(w io.Writer, userFileID string, session *sess.Session) (*meta.User
 	err := datasource.PlatformLoadOne(
 		userFile,
 		&datasource.PlatformLoadOptions{
-			Conditions: []adapt.LoadRequestCondition{
+			Conditions: []wire.LoadRequestCondition{
 				{
-					Field: adapt.ID_FIELD,
+					Field: wire.ID_FIELD,
 					Value: userFileID,
 				},
 			},

@@ -1,10 +1,11 @@
 package bulk
 
 import (
+	"testing"
+
 	"github.com/gofrs/uuid"
 	"github.com/stretchr/testify/assert"
-	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"testing"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 func Test_getStringValue(t *testing.T) {
@@ -12,7 +13,7 @@ func Test_getStringValue(t *testing.T) {
 	v7UUID, _ := uuid.NewV7()
 
 	type args struct {
-		fieldMetadata *adapt.FieldMetadata
+		fieldMetadata *wire.FieldMetadata
 		value         interface{}
 	}
 	tests := []struct {
@@ -24,7 +25,7 @@ func Test_getStringValue(t *testing.T) {
 		{
 			"stringify number fields with floating point precision",
 			args{
-				&adapt.FieldMetadata{
+				&wire.FieldMetadata{
 					Type: "NUMBER",
 				},
 				123.45,
@@ -35,7 +36,7 @@ func Test_getStringValue(t *testing.T) {
 		{
 			"stringify number fields with 0 value",
 			args{
-				&adapt.FieldMetadata{
+				&wire.FieldMetadata{
 					Type: "NUMBER",
 				},
 				0,
@@ -46,7 +47,7 @@ func Test_getStringValue(t *testing.T) {
 		{
 			"stringify number fields with nil value",
 			args{
-				&adapt.FieldMetadata{
+				&wire.FieldMetadata{
 					Type: "NUMBER",
 				},
 				nil,
@@ -57,7 +58,7 @@ func Test_getStringValue(t *testing.T) {
 		{
 			"stringify number fields with integer precision",
 			args{
-				&adapt.FieldMetadata{
+				&wire.FieldMetadata{
 					Type: "NUMBER",
 				},
 				123,
@@ -68,7 +69,7 @@ func Test_getStringValue(t *testing.T) {
 		{
 			"stringify CHECKBOX true",
 			args{
-				&adapt.FieldMetadata{
+				&wire.FieldMetadata{
 					Type: "CHECKBOX",
 				},
 				true,
@@ -79,7 +80,7 @@ func Test_getStringValue(t *testing.T) {
 		{
 			"stringify CHECKBOX false",
 			args{
-				&adapt.FieldMetadata{
+				&wire.FieldMetadata{
 					Type: "CHECKBOX",
 				},
 				false,
@@ -90,7 +91,7 @@ func Test_getStringValue(t *testing.T) {
 		{
 			"stringify CHECKBOX fields with nil value",
 			args{
-				&adapt.FieldMetadata{
+				&wire.FieldMetadata{
 					Type: "CHECKBOX",
 				},
 				nil,
@@ -101,7 +102,7 @@ func Test_getStringValue(t *testing.T) {
 		{
 			"Return error if invalid timestamp value",
 			args{
-				&adapt.FieldMetadata{
+				&wire.FieldMetadata{
 					Type: "TIMESTAMP",
 				},
 				"foo",
@@ -112,7 +113,7 @@ func Test_getStringValue(t *testing.T) {
 		{
 			"stringify TIMESTAMP fields with float64 values into RFC-3339 UTC format",
 			args{
-				&adapt.FieldMetadata{
+				&wire.FieldMetadata{
 					Type: "TIMESTAMP",
 				},
 				float64(1674836033),
@@ -123,7 +124,7 @@ func Test_getStringValue(t *testing.T) {
 		{
 			"stringify TIMESTAMP fields with int64 values into RFC-3339 UTC format",
 			args{
-				&adapt.FieldMetadata{
+				&wire.FieldMetadata{
 					Type: "TIMESTAMP",
 				},
 				int64(1674836033),
@@ -134,7 +135,7 @@ func Test_getStringValue(t *testing.T) {
 		{
 			"stringify DATE fields in ISO-8601 date format in UTC",
 			args{
-				&adapt.FieldMetadata{
+				&wire.FieldMetadata{
 					Type: "DATE",
 				},
 				"2023-01-27",
@@ -145,7 +146,7 @@ func Test_getStringValue(t *testing.T) {
 		{
 			"stringify DATE fields in ISO-8601 date format in UTC",
 			args{
-				&adapt.FieldMetadata{
+				&wire.FieldMetadata{
 					Type: "DATE",
 				},
 				"2023-01-27",
@@ -156,7 +157,7 @@ func Test_getStringValue(t *testing.T) {
 		{
 			"return Reference field as string",
 			args{
-				&adapt.FieldMetadata{
+				&wire.FieldMetadata{
 					Type: "REFERENCE",
 				},
 				v7UUID.String(),
@@ -167,7 +168,7 @@ func Test_getStringValue(t *testing.T) {
 		{
 			"return ID field of Reference object",
 			args{
-				&adapt.FieldMetadata{
+				&wire.FieldMetadata{
 					Type: "REFERENCE",
 				},
 				map[string]interface{}{
@@ -180,7 +181,7 @@ func Test_getStringValue(t *testing.T) {
 		{
 			"stringify MULTISELECT with multiple values",
 			args{
-				&adapt.FieldMetadata{
+				&wire.FieldMetadata{
 					Type: "MULTISELECT",
 				},
 				map[string]interface{}{
@@ -194,7 +195,7 @@ func Test_getStringValue(t *testing.T) {
 		{
 			"stringify MULTISELECT with no values",
 			args{
-				&adapt.FieldMetadata{
+				&wire.FieldMetadata{
 					Type: "MULTISELECT",
 				},
 				map[string]interface{}{},
@@ -205,7 +206,7 @@ func Test_getStringValue(t *testing.T) {
 		{
 			"stringify MULTISELECT with nil value",
 			args{
-				&adapt.FieldMetadata{
+				&wire.FieldMetadata{
 					Type: "MULTISELECT",
 				},
 				nil,
@@ -216,7 +217,7 @@ func Test_getStringValue(t *testing.T) {
 		{
 			"stringify a LIST with TEXT values",
 			args{
-				&adapt.FieldMetadata{
+				&wire.FieldMetadata{
 					Type: "LIST",
 				},
 				[]string{"foo", "bar"},
@@ -227,7 +228,7 @@ func Test_getStringValue(t *testing.T) {
 		{
 			"stringify a LIST with NUMBER values",
 			args{
-				&adapt.FieldMetadata{
+				&wire.FieldMetadata{
 					Type: "LIST",
 				},
 				[]float64{123.45, -555.33},
@@ -238,7 +239,7 @@ func Test_getStringValue(t *testing.T) {
 		{
 			"stringify a LIST with nil value",
 			args{
-				&adapt.FieldMetadata{
+				&wire.FieldMetadata{
 					Type: "LIST",
 				},
 				nil,
@@ -249,7 +250,7 @@ func Test_getStringValue(t *testing.T) {
 		{
 			"stringify a LIST with nil value",
 			args{
-				&adapt.FieldMetadata{
+				&wire.FieldMetadata{
 					Type: "LIST",
 				},
 				nil,
@@ -260,7 +261,7 @@ func Test_getStringValue(t *testing.T) {
 		{
 			"stringify a STRUCT with nil value",
 			args{
-				&adapt.FieldMetadata{
+				&wire.FieldMetadata{
 					Type: "STRUCT",
 				},
 				nil,
@@ -271,7 +272,7 @@ func Test_getStringValue(t *testing.T) {
 		{
 			"stringify a STRUCT with value",
 			args{
-				&adapt.FieldMetadata{
+				&wire.FieldMetadata{
 					Type: "STRUCT",
 				},
 				map[string]interface{}{
@@ -286,7 +287,7 @@ func Test_getStringValue(t *testing.T) {
 		{
 			"stringify a MAP with STRUCT subtype value",
 			args{
-				&adapt.FieldMetadata{
+				&wire.FieldMetadata{
 					Type:    "MAP",
 					SubType: "STRUCT",
 				},

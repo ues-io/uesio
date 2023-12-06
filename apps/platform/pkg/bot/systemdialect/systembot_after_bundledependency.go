@@ -4,10 +4,10 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 func parseKey(key string) (string, string, error) {
@@ -18,13 +18,13 @@ func parseKey(key string) (string, string, error) {
 	return keyArray[0], keyArray[2], nil
 }
 
-func runBundleDependencyAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func runBundleDependencyAfterSaveBot(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
-	LicenseTemplateDeps := adapt.Collection{}
+	LicenseTemplateDeps := wire.Collection{}
 	visited := map[string]bool{}
-	corruptedLicenses := adapt.Collection{}
+	corruptedLicenses := wire.Collection{}
 
-	err := request.LoopInserts(func(change *adapt.ChangeItem) error {
+	err := request.LoopInserts(func(change *wire.ChangeItem) error {
 
 		applicensed, app, err := parseKey(change.UniqueKey)
 		if err != nil {
@@ -45,9 +45,9 @@ func runBundleDependencyAfterSaveBot(request *adapt.SaveOp, connection adapt.Con
 			&datasource.PlatformLoadOptions{
 				Connection: connection,
 
-				Conditions: []adapt.LoadRequestCondition{
+				Conditions: []wire.LoadRequestCondition{
 					{
-						Field: adapt.UNIQUE_KEY_FIELD,
+						Field: wire.UNIQUE_KEY_FIELD,
 						Value: pairKey,
 					},
 				},
@@ -58,7 +58,7 @@ func runBundleDependencyAfterSaveBot(request *adapt.SaveOp, connection adapt.Con
 		if existingLicense.UniqueKey != "" {
 			// If the AppLicensed is nil, then this license is corrupted and needs to be recreated
 			if existingLicense.AppLicensed == nil {
-				corruptedLicenses = append(corruptedLicenses, &adapt.Item{
+				corruptedLicenses = append(corruptedLicenses, &wire.Item{
 					"uesio/core.id": existingLicense.ID,
 				})
 			} else {
@@ -71,9 +71,9 @@ func runBundleDependencyAfterSaveBot(request *adapt.SaveOp, connection adapt.Con
 			&lt,
 			&datasource.PlatformLoadOptions{
 				Connection: connection,
-				Conditions: []adapt.LoadRequestCondition{
+				Conditions: []wire.LoadRequestCondition{
 					{
-						Field: adapt.UNIQUE_KEY_FIELD,
+						Field: wire.UNIQUE_KEY_FIELD,
 						Value: app,
 					},
 				},
@@ -82,12 +82,12 @@ func runBundleDependencyAfterSaveBot(request *adapt.SaveOp, connection adapt.Con
 		)
 
 		if lt.AutoCreate {
-			LicenseTemplateDeps = append(LicenseTemplateDeps, &adapt.Item{
+			LicenseTemplateDeps = append(LicenseTemplateDeps, &wire.Item{
 				"uesio/studio.app": map[string]interface{}{
-					adapt.UNIQUE_KEY_FIELD: app,
+					wire.UNIQUE_KEY_FIELD: app,
 				},
 				"uesio/studio.applicensed": map[string]interface{}{
-					adapt.UNIQUE_KEY_FIELD: applicensed,
+					wire.UNIQUE_KEY_FIELD: applicensed,
 				},
 				"uesio/studio.active":       true,
 				"uesio/studio.monthlyprice": lt.MonthlyPrice,
@@ -109,11 +109,14 @@ func runBundleDependencyAfterSaveBot(request *adapt.SaveOp, connection adapt.Con
 				Collection: "uesio/studio.license",
 				Wire:       "LicensedWire",
 				Deletes:    &corruptedLicenses,
-				Options: &adapt.SaveOptions{
+				Options: &wire.SaveOptions{
 					Upsert: true,
 				},
 			},
 		}, session, datasource.GetConnectionSaveOptions(connection))
+		if err != nil {
+			return err
+		}
 	}
 
 	// Inserts next
@@ -122,7 +125,7 @@ func runBundleDependencyAfterSaveBot(request *adapt.SaveOp, connection adapt.Con
 			Collection: "uesio/studio.license",
 			Wire:       "LicensedWire",
 			Changes:    &LicenseTemplateDeps,
-			Options: &adapt.SaveOptions{
+			Options: &wire.SaveOptions{
 				Upsert: true,
 			},
 		},

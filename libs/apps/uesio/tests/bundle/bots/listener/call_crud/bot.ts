@@ -27,9 +27,7 @@ export default function call_crud(bot: ListenerBotApi) {
 		throw new Error("Initial insert failed")
 	}
 
-	const recordid = (loadresult[0] as unknown as Record<string, unknown>)[
-		"uesio/core.id"
-	]
+	const recordid = loadresult[0]["uesio/core.id"]
 
 	// Now update the record
 	// Save a new animal

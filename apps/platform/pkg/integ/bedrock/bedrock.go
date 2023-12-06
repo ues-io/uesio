@@ -9,10 +9,10 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/bedrockruntime"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/creds"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 	"github.com/thecloudmasters/uesio/pkg/usage"
 )
 
@@ -27,7 +27,7 @@ type InvokeModelOptions struct {
 	Model string `json:"model"`
 }
 
-func getBedrockConnection(ic *adapt.IntegrationConnection) (*connection, error) {
+func getBedrockConnection(ic *wire.IntegrationConnection) (*connection, error) {
 
 	cfg, err := creds.GetAWSConfig(context.Background(), ic.GetCredentials())
 	if err != nil {
@@ -48,12 +48,12 @@ func getBedrockConnection(ic *adapt.IntegrationConnection) (*connection, error) 
 type connection struct {
 	session     *sess.Session
 	integration *meta.Integration
-	credentials *adapt.Credentials
+	credentials *wire.Credentials
 	client      *bedrockruntime.Client
 }
 
 // RunAction implements the system bot interface
-func RunAction(bot *meta.Bot, ic *adapt.IntegrationConnection, actionName string, params map[string]interface{}) (interface{}, error) {
+func RunAction(bot *meta.Bot, ic *wire.IntegrationConnection, actionName string, params map[string]interface{}) (interface{}, error) {
 
 	bc, err := getBedrockConnection(ic)
 	if err != nil {

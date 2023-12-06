@@ -134,7 +134,7 @@ type CallBot = (
 
 interface BeforeSaveBotApi {
 	addError: (error: string) => void
-	load: (loadRequest: LoadRequest) => WireRecord[]
+	load: (loadRequest: LoadRequest) => Record<string, FieldValue>[]
 	deletes: DeletesApi
 	inserts: InsertsApi
 	updates: UpdatesApi
@@ -149,7 +149,7 @@ interface AfterSaveBotApi extends BeforeSaveBotApi {
 	asAdmin: AsAdminApi
 }
 interface AsAdminApi {
-	load: (loadRequest: LoadRequest) => WireRecord[]
+	load: (loadRequest: LoadRequest) => Record<string, FieldValue>[]
 	delete: (collectionName: string, records: WireRecord[]) => void
 	save: (collectionName: string, records: WireRecord[]) => void
 	runIntegrationAction: RunIntegrationAction
@@ -158,7 +158,7 @@ interface AsAdminApi {
 }
 interface ListenerBotApi {
 	addResult: (key: string, value: FieldValue | undefined) => void
-	load: (loadRequest: LoadRequest) => WireRecord[]
+	load: (loadRequest: LoadRequest) => Record<string, FieldValue>[]
 	params: BotParamsApi
 	delete: (collectionName: string, records: WireRecord[]) => void
 	save: (collectionName: string, records: WireRecord[]) => void
@@ -182,7 +182,7 @@ interface RunActionBotApi {
 	getSession: () => SessionApi
 	getUser: () => UserApi
 	http: HttpApi
-	load: (loadRequest: LoadRequest) => WireRecord[]
+	load: (loadRequest: LoadRequest) => Record<string, FieldValue>[]
 	log: LogApi
 	params: BotParamsApi
 	save: (collectionName: string, records: WireRecord[]) => void

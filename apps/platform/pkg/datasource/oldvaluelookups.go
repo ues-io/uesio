@@ -1,4 +1,4 @@
-package adapt
+package datasource
 
 import (
 	"errors"
@@ -7,9 +7,10 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func GetUniqueKeyPart(change *ChangeItem, fieldName string) (string, error) {
+func GetUniqueKeyPart(change *wire.ChangeItem, fieldName string) (string, error) {
 	fieldMetadata, err := change.Metadata.GetField(fieldName)
 	if err != nil {
 		return "", err
@@ -18,24 +19,24 @@ func GetUniqueKeyPart(change *ChangeItem, fieldName string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if IsReference(fieldMetadata.Type) {
-		return GetFieldValueString(value, UNIQUE_KEY_FIELD)
+	if wire.IsReference(fieldMetadata.Type) {
+		return wire.GetFieldValueString(value, wire.UNIQUE_KEY_FIELD)
 	}
 	if fieldMetadata.Type == "NUMBER" {
-		intValue, err := GetValueInt(value)
+		intValue, err := wire.GetValueInt(value)
 		if err != nil {
 			return "", err
 		}
 		return strconv.FormatInt(intValue, 10), nil
 	}
-	return GetValueString(value)
+	return wire.GetValueString(value)
 
 }
 
-func GetUniqueKeyValue(change *ChangeItem) (string, error) {
+func GetUniqueKeyValue(change *wire.ChangeItem) (string, error) {
 	keyFields := change.Metadata.UniqueKey
 	if len(keyFields) == 0 {
-		keyFields = []string{ID_FIELD}
+		keyFields = []string{wire.ID_FIELD}
 	}
 	keyValues := make([]string, len(keyFields))
 	for i, keyField := range keyFields {
@@ -49,22 +50,22 @@ func GetUniqueKeyValue(change *ChangeItem) (string, error) {
 	return strings.Join(keyValues, ":"), nil
 }
 
-func SetUniqueKey(change *ChangeItem) error {
+func SetUniqueKey(change *wire.ChangeItem) error {
 	uniqueKey, err := GetUniqueKeyValue(change)
 	if err != nil {
 		return err
 	}
 	change.UniqueKey = uniqueKey
-	return change.SetField(UNIQUE_KEY_FIELD, uniqueKey)
+	return change.SetField(wire.UNIQUE_KEY_FIELD, uniqueKey)
 }
 
 func HandleOldValuesLookup(
-	connection Connection,
-	op *SaveOp,
+	connection wire.Connection,
+	op *wire.SaveOp,
 	session *sess.Session,
 ) error {
 
-	allFields := []LoadRequestField{}
+	allFields := []wire.LoadRequestField{}
 
 	for fieldID := range op.Metadata.Fields {
 
@@ -89,7 +90,7 @@ func HandleOldValuesLookup(
 		if err != nil {
 			return err
 		}
-		if IsReference(fieldMetadata.Type) {
+		if wire.IsReference(fieldMetadata.Type) {
 
 			isPartOfKey := false
 
@@ -101,11 +102,11 @@ func HandleOldValuesLookup(
 			}
 
 			if isPartOfKey {
-				allFields = append(allFields, LoadRequestField{
+				allFields = append(allFields, wire.LoadRequestField{
 					ID: fieldID,
-					Fields: []LoadRequestField{
+					Fields: []wire.LoadRequestField{
 						{
-							ID: UNIQUE_KEY_FIELD,
+							ID: wire.UNIQUE_KEY_FIELD,
 						},
 					},
 				})
@@ -115,15 +116,15 @@ func HandleOldValuesLookup(
 		}
 		// END TEMPORARY FIX
 
-		allFields = append(allFields, LoadRequestField{
+		allFields = append(allFields, wire.LoadRequestField{
 			ID: fieldID,
 		})
 	}
 
 	// Go through all the changes and get a list of the upsert keys
-	idMap := LocatorMap{}
+	idMap := wire.LocatorMap{}
 	for _, change := range op.Updates {
-		err := idMap.AddID(change.IDValue, ReferenceLocator{
+		err := idMap.AddID(change.IDValue, wire.ReferenceLocator{
 			Item: change,
 		})
 		if err != nil {
@@ -131,7 +132,7 @@ func HandleOldValuesLookup(
 		}
 	}
 	for _, change := range op.Deletes {
-		err := idMap.AddID(change.IDValue, ReferenceLocator{
+		err := idMap.AddID(change.IDValue, wire.ReferenceLocator{
 			Item: change,
 		})
 		if err != nil {
@@ -143,7 +144,7 @@ func HandleOldValuesLookup(
 		return nil
 	}
 
-	return LoadLooper(connection, op.Metadata.GetFullName(), idMap, allFields, ID_FIELD, session, func(item meta.Item, matchIndexes []ReferenceLocator, ID string) error {
+	return LoadLooper(connection, op.Metadata.GetFullName(), idMap, allFields, wire.ID_FIELD, session, func(item meta.Item, matchIndexes []wire.ReferenceLocator, ID string) error {
 
 		if item == nil {
 			// This should result in an error, unless we have explicitly indicated that
@@ -160,7 +161,7 @@ func HandleOldValuesLookup(
 		}
 		match := matchIndexes[0].Item
 		// Cast item to a change
-		change := match.(*ChangeItem)
+		change := match.(*wire.ChangeItem)
 		change.OldValues = item
 
 		return SetUniqueKey(change)

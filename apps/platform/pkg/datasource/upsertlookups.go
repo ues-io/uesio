@@ -1,4 +1,4 @@
-package adapt
+package datasource
 
 import (
 	"errors"
@@ -6,11 +6,12 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 func HandleUpsertLookup(
-	connection Connection,
-	op *SaveOp,
+	connection wire.Connection,
+	op *wire.SaveOp,
 	session *sess.Session,
 ) error {
 
@@ -21,13 +22,13 @@ func HandleUpsertLookup(
 		return nil
 	}
 
-	idMap := LocatorMap{}
+	idMap := wire.LocatorMap{}
 	for _, change := range op.Inserts {
 
 		// For upserts, if you provide the actual unique key we will
 		// use that as a higher priority than the constructed unique
 		// key to get a match.
-		existingKey, err := change.GetFieldAsString(UNIQUE_KEY_FIELD)
+		existingKey, err := change.GetFieldAsString(wire.UNIQUE_KEY_FIELD)
 		if err != nil || existingKey == "" {
 			// As a fallback, we'll construct the unique key for you
 			constructedKey, err := GetUniqueKeyValue(change)
@@ -37,7 +38,7 @@ func HandleUpsertLookup(
 			existingKey = constructedKey
 		}
 
-		err = idMap.AddID(existingKey, ReferenceLocator{
+		err = idMap.AddID(existingKey, wire.ReferenceLocator{
 			Item: change,
 		})
 		if err != nil {
@@ -49,14 +50,14 @@ func HandleUpsertLookup(
 		return nil
 	}
 
-	return LoadLooper(connection, op.Metadata.GetFullName(), idMap, []LoadRequestField{
+	return LoadLooper(connection, op.Metadata.GetFullName(), idMap, []wire.LoadRequestField{
 		{
-			ID: ID_FIELD,
+			ID: wire.ID_FIELD,
 		},
 		{
-			ID: UNIQUE_KEY_FIELD,
+			ID: wire.UNIQUE_KEY_FIELD,
 		},
-	}, UNIQUE_KEY_FIELD, session, func(item meta.Item, matchIndexes []ReferenceLocator, ID string) error {
+	}, wire.UNIQUE_KEY_FIELD, session, func(item meta.Item, matchIndexes []wire.ReferenceLocator, ID string) error {
 
 		// This is a weird situation.
 		// It means we found a value that we didn't ask for.
@@ -77,13 +78,13 @@ func HandleUpsertLookup(
 		match := matchIndexes[0].Item
 
 		// Cast item to a change
-		change := match.(*ChangeItem)
+		change := match.(*wire.ChangeItem)
 
-		idValue, err := item.GetField(ID_FIELD)
+		idValue, err := item.GetField(wire.ID_FIELD)
 		if err != nil {
 			return err
 		}
-		err = change.SetField(ID_FIELD, idValue)
+		err = change.SetField(wire.ID_FIELD, idValue)
 		if err != nil {
 			return err
 		}

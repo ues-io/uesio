@@ -5,11 +5,11 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource/fieldvalidations"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 	"github.com/thecloudmasters/uesio/pkg/usage"
 )
 
@@ -18,25 +18,25 @@ type SaveRequestBatch struct {
 }
 
 type SaveRequest struct {
-	Collection string             `json:"collection"`
-	Wire       string             `json:"wire"`
-	Changes    meta.Group         `json:"changes"`
-	Deletes    meta.Group         `json:"deletes"`
-	Errors     []adapt.SaveError  `json:"errors"`
-	Options    *adapt.SaveOptions `json:"options"`
-	Params     map[string]string  `json:"params"`
+	Collection string            `json:"collection"`
+	Wire       string            `json:"wire"`
+	Changes    meta.Group        `json:"changes"`
+	Deletes    meta.Group        `json:"deletes"`
+	Errors     []wire.SaveError  `json:"errors"`
+	Options    *wire.SaveOptions `json:"options"`
+	Params     map[string]string `json:"params"`
 }
 
 func (sr *SaveRequest) UnmarshalJSON(b []byte) error {
 	type alias SaveRequest
-	sr.Changes = &adapt.CollectionMap{}
-	sr.Deletes = &adapt.CollectionMap{}
+	sr.Changes = &wire.CollectionMap{}
+	sr.Deletes = &wire.CollectionMap{}
 	return json.Unmarshal(b, (*alias)(sr))
 }
 
 type SaveOptions struct {
-	Connection adapt.Connection
-	Metadata   *adapt.MetadataCache
+	Connection wire.Connection
+	Metadata   *wire.MetadataCache
 }
 
 func Save(requests []SaveRequest, session *sess.Session) error {
@@ -47,8 +47,8 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 	if options == nil {
 		options = &SaveOptions{}
 	}
-	allOps := []*adapt.SaveOp{}
-	metadataResponse := &adapt.MetadataCache{}
+	allOps := []*wire.SaveOp{}
+	metadataResponse := &wire.MetadataCache{}
 	// Use existing metadata if it was passed in
 	if options.Metadata != nil {
 		metadataResponse = options.Metadata
@@ -131,18 +131,18 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 	return nil
 }
 
-func HandleErrorAndAddToSaveOp(op *adapt.SaveOp, err error) *adapt.SaveError {
-	saveError := adapt.NewGenericSaveError(err)
+func HandleErrorAndAddToSaveOp(op *wire.SaveOp, err error) *wire.SaveError {
+	saveError := wire.NewGenericSaveError(err)
 	op.AddError(saveError)
 	return saveError
 }
 
-func isExternalIntegrationCollection(op *adapt.SaveOp) bool {
+func isExternalIntegrationCollection(op *wire.SaveOp) bool {
 	integrationName := op.Metadata.GetIntegrationName()
 	return integrationName != "" && integrationName != meta.PLATFORM_DATA_SOURCE
 }
 
-func SaveOp(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func SaveOp(op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	collectionKey := op.Metadata.GetFullName()
 	integrationName := op.Metadata.GetIntegrationName()
@@ -150,13 +150,13 @@ func SaveOp(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session
 
 	permissions := session.GetContextPermissions()
 
-	err := adapt.FetchReferences(connection, op, session)
+	err := FetchReferences(connection, op, session)
 	if err != nil {
 		return HandleErrorAndAddToSaveOp(op, err)
 	}
 
 	if !isExternalIntegrationSave {
-		err = adapt.HandleUpsertLookup(connection, op, session)
+		err = HandleUpsertLookup(connection, op, session)
 		if err != nil {
 			return HandleErrorAndAddToSaveOp(op, err)
 		}
@@ -175,7 +175,7 @@ func SaveOp(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session
 	}
 
 	if !isExternalIntegrationSave {
-		err = adapt.HandleOldValuesLookup(connection, op, session)
+		err = HandleOldValuesLookup(connection, op, session)
 		if err != nil {
 			return HandleErrorAndAddToSaveOp(op, err)
 		}
@@ -188,7 +188,7 @@ func SaveOp(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session
 
 	// Check for population errors here
 	if op.HasErrors() {
-		return adapt.NewGenericSaveError(errors.New("Error with field population"))
+		return wire.NewGenericSaveError(errors.New("Error with field population"))
 	}
 
 	err = runBeforeSaveBots(op, connection, session)
@@ -202,14 +202,14 @@ func SaveOp(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session
 	}
 
 	// Fetch References again.
-	err = adapt.FetchReferences(connection, op, session)
+	err = FetchReferences(connection, op, session)
 	if err != nil {
 		return HandleErrorAndAddToSaveOp(op, err)
 	}
 
 	// Set the unique keys for the last time
-	err = op.LoopChanges(func(change *adapt.ChangeItem) error {
-		return adapt.SetUniqueKey(change)
+	err = op.LoopChanges(func(change *wire.ChangeItem) error {
+		return SetUniqueKey(change)
 	})
 	if err != nil {
 		return HandleErrorAndAddToSaveOp(op, err)
@@ -263,7 +263,7 @@ func SaveOp(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session
 	return nil
 }
 
-func performExternalIntegrationSave(integrationName string, op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func performExternalIntegrationSave(integrationName string, op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 	integrationConnection, err := GetIntegrationConnection(integrationName, session, connection)
 	if err != nil {
 		return err
@@ -283,7 +283,7 @@ func performExternalIntegrationSave(integrationName string, op *adapt.SaveOp, co
 	return nil
 }
 
-func SaveOps(batch []*adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func SaveOps(batch []*wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	// Get all the user access tokens that we'll need for this request
 	// TODO:
@@ -299,7 +299,7 @@ func SaveOps(batch []*adapt.SaveOp, connection adapt.Connection, session *sess.S
 			err2 := runDynamicCollectionSaveBots(op, connection, session)
 			if err2 != nil {
 				// If this error is already in the save op, don't add it again
-				if _, isGenericSaveError := err2.(*adapt.SaveError); isGenericSaveError {
+				if _, isGenericSaveError := err2.(*wire.SaveError); isGenericSaveError {
 					return err2
 				} else {
 					return HandleErrorAndAddToSaveOp(op, err2)

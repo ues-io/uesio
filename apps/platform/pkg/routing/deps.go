@@ -9,7 +9,6 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -19,6 +18,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 	"github.com/thecloudmasters/uesio/pkg/translate"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 
 	yptr "github.com/zachelrath/yaml-jsonpointer"
 )
@@ -281,7 +281,7 @@ func processView(key string, viewInstanceID string, deps *PreloadMetadata, param
 	}
 
 	if viewInstanceID != "" {
-		ops := []*adapt.LoadOp{}
+		ops := []*wire.LoadOp{}
 
 		for _, pair := range depMap.Wires {
 
@@ -290,7 +290,7 @@ func processView(key string, viewInstanceID string, deps *PreloadMetadata, param
 				continue
 			}
 
-			loadOp := &adapt.LoadOp{
+			loadOp := &wire.LoadOp{
 				WireName:  pair.Key,
 				View:      view.GetKey() + "(" + viewInstanceID + ")",
 				Query:     true,
@@ -314,7 +314,7 @@ func processView(key string, viewInstanceID string, deps *PreloadMetadata, param
 			// to create a union of all metadata requested by any wires
 			if existingItem, alreadyExists := deps.Collection.AddItemIfNotExists(collection); alreadyExists {
 				// Cast to CollectionMetadata so that we can use nicer methods
-				existingCollection := existingItem.(*adapt.CollectionMetadata)
+				existingCollection := existingItem.(*wire.CollectionMetadata)
 				// Merge the inbound collection with the existing collection
 				existingCollection.Merge(collection)
 			}

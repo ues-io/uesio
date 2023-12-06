@@ -7,14 +7,14 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
 	// Using text/template here instead of html/template
 	// because we trust both the template and the merge data
 	"text/template"
 	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
-
-	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/merge"
@@ -177,7 +177,7 @@ func GetRoutingMergeData(route *meta.Route, metadata *routing.PreloadMetadata, s
 	wireData := map[string]meta.Group{}
 	if metadata != nil && metadata.Wire != nil {
 		for _, entity := range metadata.Wire.GetItems() {
-			wire := entity.(*adapt.LoadOp)
+			wire := entity.(*wire.LoadOp)
 			wireData[wire.WireName] = wire.Collection
 		}
 	}

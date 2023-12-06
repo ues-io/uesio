@@ -9,13 +9,13 @@ import (
 	esbuild "github.com/evanw/esbuild/pkg/api"
 	"github.com/pkg/errors"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bot/jsdialect"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 type TSDialect struct {
@@ -140,17 +140,17 @@ func (b *TSDialect) hydrateBot(bot *meta.Bot, session *sess.Session) error {
 	return nil
 }
 
-func (b *TSDialect) BeforeSave(bot *meta.Bot, request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func (b *TSDialect) BeforeSave(bot *meta.Bot, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 	botAPI := jsdialect.NewBeforeSaveAPI(bot, request, connection, session)
 	return jsdialect.RunBot(bot, botAPI, session, b.hydrateBot, botAPI.AddError)
 }
 
-func (b *TSDialect) AfterSave(bot *meta.Bot, request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func (b *TSDialect) AfterSave(bot *meta.Bot, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 	botAPI := jsdialect.NewAfterSaveAPI(bot, request, connection, session)
 	return jsdialect.RunBot(bot, botAPI, session, b.hydrateBot, botAPI.AddError)
 }
 
-func (b *TSDialect) CallBot(bot *meta.Bot, params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
+func (b *TSDialect) CallBot(bot *meta.Bot, params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
 	botAPI := jsdialect.NewCallBotAPI(bot, session, connection, params)
 	err := jsdialect.RunBot(bot, botAPI, session, b.hydrateBot, nil)
 	if err != nil {
@@ -159,7 +159,7 @@ func (b *TSDialect) CallBot(bot *meta.Bot, params map[string]interface{}, connec
 	return botAPI.Results, nil
 }
 
-func (b *TSDialect) CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreator, params map[string]interface{}, connection adapt.Connection, session *sess.Session) error {
+func (b *TSDialect) CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreator, params map[string]interface{}, connection wire.Connection, session *sess.Session) error {
 	botAPI := &jsdialect.GeneratorBotAPI{
 		Session: session,
 		Params: &jsdialect.ParamsAPI{
@@ -176,7 +176,7 @@ func (b *TSDialect) RouteBot(bot *meta.Bot, route *meta.Route, session *sess.Ses
 	return route, nil
 }
 
-func (b *TSDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+func (b *TSDialect) LoadBot(bot *meta.Bot, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 	integrationConnection, err := op.GetIntegrationConnection()
 	if err != nil {
 		return err
@@ -193,7 +193,7 @@ func (b *TSDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adapt.Co
 	return nil
 }
 
-func (b *TSDialect) SaveBot(bot *meta.Bot, op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func (b *TSDialect) SaveBot(bot *meta.Bot, op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 	integrationConnection, err := op.GetIntegration()
 	if err != nil {
 		return err
@@ -202,7 +202,7 @@ func (b *TSDialect) SaveBot(bot *meta.Bot, op *adapt.SaveOp, connection adapt.Co
 	return jsdialect.RunBot(bot, botAPI, session, b.hydrateBot, nil)
 }
 
-func (b *TSDialect) RunIntegrationActionBot(bot *meta.Bot, ic *adapt.IntegrationConnection, actionName string, params map[string]interface{}) (interface{}, error) {
+func (b *TSDialect) RunIntegrationActionBot(bot *meta.Bot, ic *wire.IntegrationConnection, actionName string, params map[string]interface{}) (interface{}, error) {
 	botAPI := jsdialect.NewRunIntegrationActionBotAPI(bot, ic, actionName, params)
 	err := jsdialect.RunBot(bot, botAPI, ic.GetSession(), b.hydrateBot, nil)
 	if err != nil {

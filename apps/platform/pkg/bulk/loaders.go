@@ -7,20 +7,20 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/timeutils"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 type valueFunc func(data interface{}, mapping *meta.FieldMapping, index int) string
-type loaderFunc func(change adapt.Item, data interface{}) error
+type loaderFunc func(change wire.Item, data interface{}) error
 
 const InvalidTimestampError = "Invalid format for TIMESTAMP field '%s': value '%v' is not valid ISO-8601 UTC datetime or Unix timestamp"
 const InvalidNumberError = "Invalid format for NUMBER field '%s': value '%v' is not a valid number"
 const InvalidCheckboxError = "Invalid format for CHECKBOX field '%s': value '%v' is not a valid boolean"
 
-func getNumberLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
-	return func(change adapt.Item, data interface{}) error {
+func getNumberLoader(index int, mapping *meta.FieldMapping, fieldMetadata *wire.FieldMetadata, getValue valueFunc) loaderFunc {
+	return func(change wire.Item, data interface{}) error {
 		rawVal := getValue(data, mapping, index)
 		if rawVal == "" {
 			change[fieldMetadata.GetFullName()] = nil
@@ -35,8 +35,8 @@ func getNumberLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt
 	}
 }
 
-func getBooleanLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
-	return func(change adapt.Item, data interface{}) error {
+func getBooleanLoader(index int, mapping *meta.FieldMapping, fieldMetadata *wire.FieldMetadata, getValue valueFunc) loaderFunc {
+	return func(change wire.Item, data interface{}) error {
 		rawVal := getValue(data, mapping, index)
 		if rawVal == "" {
 			change[fieldMetadata.GetFullName()] = nil
@@ -51,19 +51,19 @@ func getBooleanLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adap
 	}
 }
 
-func getTextLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
-	return func(change adapt.Item, data interface{}) error {
+func getTextLoader(index int, mapping *meta.FieldMapping, fieldMetadata *wire.FieldMetadata, getValue valueFunc) loaderFunc {
+	return func(change wire.Item, data interface{}) error {
 		change[fieldMetadata.GetFullName()] = getValue(data, mapping, index)
 		return nil
 	}
 }
 
-func getReferenceLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
-	return func(change adapt.Item, data interface{}) error {
+func getReferenceLoader(index int, mapping *meta.FieldMapping, fieldMetadata *wire.FieldMetadata, getValue valueFunc) loaderFunc {
+	return func(change wire.Item, data interface{}) error {
 		value := getValue(data, mapping, index)
 		if value != "" {
 			change[fieldMetadata.GetFullName()] = map[string]interface{}{
-				adapt.UNIQUE_KEY_FIELD: value,
+				wire.UNIQUE_KEY_FIELD: value,
 			}
 		}
 		return nil
@@ -75,8 +75,8 @@ func getReferenceLoader(index int, mapping *meta.FieldMapping, fieldMetadata *ad
 //   - int64 number of seconds since Unix epoch
 //
 // Expected output: an int64 representation for a Unix Timestamp
-func getTimestampLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
-	return func(change adapt.Item, data interface{}) error {
+func getTimestampLoader(index int, mapping *meta.FieldMapping, fieldMetadata *wire.FieldMetadata, getValue valueFunc) loaderFunc {
+	return func(change wire.Item, data interface{}) error {
 		stringValue := getValue(data, mapping, index)
 		// If there's no value, there's nothing to do
 		if stringValue == "" {
@@ -97,8 +97,8 @@ func getTimestampLoader(index int, mapping *meta.FieldMapping, fieldMetadata *ad
 	}
 }
 
-func getDateLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
-	return func(change adapt.Item, data interface{}) error {
+func getDateLoader(index int, mapping *meta.FieldMapping, fieldMetadata *wire.FieldMetadata, getValue valueFunc) loaderFunc {
+	return func(change wire.Item, data interface{}) error {
 		stringValue := getValue(data, mapping, index)
 		// If there's no value, there's nothing to do
 		if stringValue == "" {
@@ -115,8 +115,8 @@ func getDateLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.F
 }
 
 // Struct fields are stored in DB as a JSON object
-func getStructLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
-	return func(change adapt.Item, data interface{}) error {
+func getStructLoader(index int, mapping *meta.FieldMapping, fieldMetadata *wire.FieldMetadata, getValue valueFunc) loaderFunc {
+	return func(change wire.Item, data interface{}) error {
 		rawVal := getValue(data, mapping, index)
 		cleanMap := make(map[string]interface{}, len(fieldMetadata.SubFields))
 		if rawVal != "" && rawVal != "{}" {
@@ -140,8 +140,8 @@ func getStructLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt
 // Multi-select fields are stored in DB as map[string]bool
 // To be concise, but also allow for nested commas/quotes within the Multiselect value,
 // we serialize to a JSON array
-func getMultiSelectLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
-	return func(change adapt.Item, data interface{}) error {
+func getMultiSelectLoader(index int, mapping *meta.FieldMapping, fieldMetadata *wire.FieldMetadata, getValue valueFunc) loaderFunc {
+	return func(change wire.Item, data interface{}) error {
 		rawVal := getValue(data, mapping, index)
 		valuesMap := map[string]bool{}
 		// If there's no data, just do an early return
@@ -171,8 +171,8 @@ func getMultiSelectLoader(index int, mapping *meta.FieldMapping, fieldMetadata *
 }
 
 // We serialize STRUCT and MAP fields to a JSON object
-func getMapLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
-	return func(change adapt.Item, data interface{}) error {
+func getMapLoader(index int, mapping *meta.FieldMapping, fieldMetadata *wire.FieldMetadata, getValue valueFunc) loaderFunc {
+	return func(change wire.Item, data interface{}) error {
 		rawVal := getValue(data, mapping, index)
 		value := map[string]interface{}{}
 		// If there's no data, just use the empty map
@@ -188,8 +188,8 @@ func getMapLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.Fi
 }
 
 // We serialize LIST fields to a JSON array
-func getListLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
-	return func(change adapt.Item, data interface{}) error {
+func getListLoader(index int, mapping *meta.FieldMapping, fieldMetadata *wire.FieldMetadata, getValue valueFunc) loaderFunc {
+	return func(change wire.Item, data interface{}) error {
 		rawVal := getValue(data, mapping, index)
 		value := []interface{}{}
 		// If there's no data, just use the empty slice

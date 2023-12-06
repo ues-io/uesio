@@ -6,12 +6,12 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore/systembundlestore"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt/localfiles"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 type LocalBundleStore struct{}
@@ -121,7 +121,7 @@ func (b *LocalBundleStore) StoreItem(namespace, version, path string, reader io.
 	return errors.New("Cannot Write to System Bundle Store")
 }
 
-func (b *LocalBundleStore) GetBundleDef(namespace, version string, session *sess.Session, connection adapt.Connection) (*meta.BundleDef, error) {
+func (b *LocalBundleStore) GetBundleDef(namespace, version string, session *sess.Session, connection wire.Connection) (*meta.BundleDef, error) {
 	var by meta.BundleDef
 	file, err := getFile(namespace, version, "", "bundle.yaml")
 	if err != nil {
@@ -136,7 +136,7 @@ func (b *LocalBundleStore) GetBundleDef(namespace, version string, session *sess
 	return &by, nil
 }
 
-func (b *LocalBundleStore) HasAllItems(items []meta.BundleableItem, version string, session *sess.Session, connection adapt.Connection) error {
+func (b *LocalBundleStore) HasAllItems(items []meta.BundleableItem, version string, session *sess.Session, connection wire.Connection) error {
 	for _, item := range items {
 		err := b.GetItem(item, version, session)
 		if err != nil {

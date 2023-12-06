@@ -3,13 +3,13 @@ package datasource
 import (
 	"errors"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func addVersionContext(app, version string, session *sess.Session, connection adapt.Connection) error {
+func addVersionContext(app, version string, session *sess.Session, connection wire.Connection) error {
 
 	bundleDef, err := bundle.GetVersionBundleDef(app, version, connection)
 	if err != nil {
@@ -28,7 +28,7 @@ func addVersionContext(app, version string, session *sess.Session, connection ad
 
 }
 
-func AddVersionContext(app, version string, session *sess.Session, connection adapt.Connection) (*sess.Session, error) {
+func AddVersionContext(app, version string, session *sess.Session, connection wire.Connection) (*sess.Session, error) {
 	site := session.GetSite()
 	perms := session.GetSitePermissions()
 
@@ -48,7 +48,7 @@ func AddVersionContext(app, version string, session *sess.Session, connection ad
 	return sessClone, addVersionContext(app, version, sessClone, connection)
 }
 
-func EnterVersionContext(app string, session *sess.Session, connection adapt.Connection) (*sess.Session, error) {
+func EnterVersionContext(app string, session *sess.Session, connection wire.Connection) (*sess.Session, error) {
 	// We don't need to enter into a version context for our own app
 	if app == session.GetContextAppName() {
 		return session, nil

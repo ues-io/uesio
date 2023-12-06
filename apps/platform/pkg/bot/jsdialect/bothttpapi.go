@@ -10,18 +10,18 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	httpClient "github.com/thecloudmasters/uesio/pkg/http"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	oauthlib "github.com/thecloudmasters/uesio/pkg/oauth2"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 type BotHttpAPI struct {
 	bot *meta.Bot
-	ic  *adapt.IntegrationConnection
+	ic  *wire.IntegrationConnection
 }
 
 func (api *BotHttpAPI) getSession() *sess.Session {
@@ -32,7 +32,7 @@ func (api *BotHttpAPI) GetIntegration() *meta.Integration {
 	return api.ic.GetIntegration()
 }
 
-func NewBotHttpAPI(bot *meta.Bot, integrationConnection *adapt.IntegrationConnection) *BotHttpAPI {
+func NewBotHttpAPI(bot *meta.Bot, integrationConnection *wire.IntegrationConnection) *BotHttpAPI {
 	return &BotHttpAPI{
 		bot: bot,
 		ic:  integrationConnection,
@@ -40,13 +40,13 @@ func NewBotHttpAPI(bot *meta.Bot, integrationConnection *adapt.IntegrationConnec
 }
 
 type BotHttpAuth struct {
-	Type        string             `json:"type"`
-	Credentials *adapt.Credentials `json:"credentials"`
+	Type        string            `json:"type"`
+	Credentials *wire.Credentials `json:"credentials"`
 }
 
-func NewBotHttpAuth(connection *adapt.IntegrationConnection) *BotHttpAuth {
+func NewBotHttpAuth(connection *wire.IntegrationConnection) *BotHttpAuth {
 	authType := "NONE"
-	var credentials *adapt.Credentials
+	var credentials *wire.Credentials
 	if connection != nil {
 		if connection.GetIntegration() != nil {
 			authType = connection.GetIntegration().Authentication
@@ -215,7 +215,7 @@ func (api *BotHttpAPI) makeRequest(req *http.Request, auth *BotHttpAuth) (*http.
 	return httpClient.Get().Do(req)
 }
 
-func (api *BotHttpAPI) setBasicAuthHeaderInRequest(req *http.Request, cred *adapt.Credentials) error {
+func (api *BotHttpAPI) setBasicAuthHeaderInRequest(req *http.Request, cred *wire.Credentials) error {
 	username, err := cred.GetRequiredEntry("username")
 	if err != nil {
 		return exceptions.NewUnauthorizedException("username is required")
@@ -228,7 +228,7 @@ func (api *BotHttpAPI) setBasicAuthHeaderInRequest(req *http.Request, cred *adap
 	return nil
 }
 
-func (api *BotHttpAPI) setApiKeyInRequest(req *http.Request, cred *adapt.Credentials) error {
+func (api *BotHttpAPI) setApiKeyInRequest(req *http.Request, cred *wire.Credentials) error {
 	_, err := cred.GetRequiredEntry("apikey")
 	if err != nil {
 		return exceptions.NewUnauthorizedException("apikey is required")

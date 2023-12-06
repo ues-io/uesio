@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"slices"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/integ/bedrock"
@@ -14,24 +13,25 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-type BotFunc func(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error
+type BotFunc func(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error
 
-type CallBotFunc func(params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error)
+type CallBotFunc func(params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error)
 
-type LoadBotFunc func(request *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error
+type LoadBotFunc func(request *wire.LoadOp, connection wire.Connection, session *sess.Session) error
 
-type SaveBotFunc func(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error
+type SaveBotFunc func(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error
 
 type RouteBotFunc func(*meta.Route, *sess.Session) (*meta.Route, error)
 
-type RunIntegrationActionBotFunc func(bot *meta.Bot, integration *adapt.IntegrationConnection, actionName string, params map[string]interface{}) (interface{}, error)
+type RunIntegrationActionBotFunc func(bot *meta.Bot, integration *wire.IntegrationConnection, actionName string, params map[string]interface{}) (interface{}, error)
 
 type SystemDialect struct {
 }
 
-func (b *SystemDialect) BeforeSave(bot *meta.Bot, request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func (b *SystemDialect) BeforeSave(bot *meta.Bot, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	var botFunction BotFunc
 
@@ -66,7 +66,7 @@ func (b *SystemDialect) BeforeSave(bot *meta.Bot, request *adapt.SaveOp, connect
 
 }
 
-func (b *SystemDialect) AfterSave(bot *meta.Bot, request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func (b *SystemDialect) AfterSave(bot *meta.Bot, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 	var botFunction BotFunc
 
 	switch request.Metadata.GetFullName() {
@@ -106,7 +106,7 @@ func (b *SystemDialect) AfterSave(bot *meta.Bot, request *adapt.SaveOp, connecti
 
 }
 
-func (b *SystemDialect) CallBot(bot *meta.Bot, params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
+func (b *SystemDialect) CallBot(bot *meta.Bot, params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
 	var botFunction CallBotFunc
 
 	botNamespace := bot.GetNamespace()
@@ -139,7 +139,7 @@ func (b *SystemDialect) CallBot(bot *meta.Bot, params map[string]interface{}, co
 
 }
 
-func (b *SystemDialect) RunIntegrationActionBot(bot *meta.Bot, ic *adapt.IntegrationConnection, actionName string, params map[string]interface{}) (interface{}, error) {
+func (b *SystemDialect) RunIntegrationActionBot(bot *meta.Bot, ic *wire.IntegrationConnection, actionName string, params map[string]interface{}) (interface{}, error) {
 
 	var botFunction RunIntegrationActionBotFunc
 
@@ -163,7 +163,7 @@ func (b *SystemDialect) RunIntegrationActionBot(bot *meta.Bot, ic *adapt.Integra
 
 }
 
-func (b *SystemDialect) CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreator, params map[string]interface{}, connection adapt.Connection, session *sess.Session) error {
+func (b *SystemDialect) CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreator, params map[string]interface{}, connection wire.Connection, session *sess.Session) error {
 	return nil
 }
 
@@ -189,7 +189,7 @@ func (b *SystemDialect) RouteBot(bot *meta.Bot, route *meta.Route, session *sess
 
 }
 
-func (b *SystemDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+func (b *SystemDialect) LoadBot(bot *meta.Bot, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 	var botFunction LoadBotFunc
 
 	switch op.CollectionName {
@@ -223,7 +223,7 @@ func (b *SystemDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adap
 
 }
 
-func (b *SystemDialect) SaveBot(bot *meta.Bot, op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func (b *SystemDialect) SaveBot(bot *meta.Bot, op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 	var botFunction SaveBotFunc
 
 	switch op.Metadata.GetFullName() {

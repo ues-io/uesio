@@ -9,11 +9,11 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 func init() {
@@ -41,18 +41,18 @@ func getSeedDataFile(v interface{}, fileName string) error {
 func getPlatformSeedSR(collection meta.CollectionableGroup) datasource.SaveRequest {
 	return datasource.GetSaveRequestFromPlatformSave(datasource.PlatformSaveRequest{
 		Collection: collection,
-		Options: &adapt.SaveOptions{
+		Options: &wire.SaveOptions{
 			Upsert: true,
 		},
 	})
 }
 
-func getSeedSR(collectionName string, collection *adapt.Collection) datasource.SaveRequest {
+func getSeedSR(collectionName string, collection *wire.Collection) datasource.SaveRequest {
 	return datasource.SaveRequest{
 		Collection: collectionName,
 		Wire:       collectionName,
 		Changes:    collection,
-		Options: &adapt.SaveOptions{
+		Options: &wire.SaveOptions{
 			Upsert: true,
 		},
 	}
@@ -68,7 +68,7 @@ func populateSeedData(collections ...meta.CollectionableGroup) error {
 	return nil
 }
 
-func runSeeds(connection adapt.Connection) error {
+func runSeeds(connection wire.Connection) error {
 	err := connection.Migrate()
 	if err != nil {
 		return err
@@ -115,10 +115,10 @@ func runSeeds(connection adapt.Connection) error {
 		return err
 	}
 
-	var teams adapt.Collection
-	var teammembers adapt.Collection
-	var bundlelistings adapt.Collection
-	var organizationusers adapt.Collection
+	var teams wire.Collection
+	var teammembers wire.Collection
+	var bundlelistings wire.Collection
+	var organizationusers wire.Collection
 
 	err = getSeedDataFile(&teams, "uesio/studio.team.json")
 	if err != nil {

@@ -9,12 +9,12 @@ import (
 
 	"github.com/icza/session"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 func init() {
@@ -41,7 +41,7 @@ func init() {
 }
 
 type AuthenticationType interface {
-	GetAuthConnection(*adapt.Credentials, *meta.AuthSource, adapt.Connection, *sess.Session) (AuthConnection, error)
+	GetAuthConnection(*wire.Credentials, *meta.AuthSource, wire.Connection, *sess.Session) (AuthConnection, error)
 }
 
 type AuthConnection interface {
@@ -53,7 +53,7 @@ type AuthConnection interface {
 	CreateLogin(*meta.SignupMethod, map[string]interface{}, *meta.User) error
 }
 
-func GetAuthConnection(authSourceID string, connection adapt.Connection, session *sess.Session) (AuthConnection, error) {
+func GetAuthConnection(authSourceID string, connection wire.Connection, session *sess.Session) (AuthConnection, error) {
 	authSource, err := getAuthSource(authSourceID, session)
 	if err != nil {
 		return nil, err
@@ -161,7 +161,7 @@ func getSiteFromDomain(domainType, domainValue string) (*meta.Site, error) {
 	return site, nil
 }
 
-func CreateUser(signupMethod *meta.SignupMethod, user *meta.User, connection adapt.Connection, session *sess.Session) (*meta.User, error) {
+func CreateUser(signupMethod *meta.SignupMethod, user *meta.User, connection wire.Connection, session *sess.Session) (*meta.User, error) {
 	user.Type = "PERSON"
 	user.Profile = signupMethod.Profile
 	if user.Language == "" {
@@ -175,13 +175,13 @@ func CreateUser(signupMethod *meta.SignupMethod, user *meta.User, connection ada
 	return user, nil
 }
 
-func getUser(field, value string, session *sess.Session, connection adapt.Connection) (*meta.User, error) {
+func getUser(field, value string, session *sess.Session, connection wire.Connection) (*meta.User, error) {
 	var user meta.User
 	err := datasource.PlatformLoadOne(
 		&user,
 		&datasource.PlatformLoadOptions{
 			Connection: connection,
-			Fields: []adapt.LoadRequestField{
+			Fields: []wire.LoadRequestField{
 				{
 					ID: "uesio/core.firstname",
 				},
@@ -199,12 +199,12 @@ func getUser(field, value string, session *sess.Session, connection adapt.Connec
 				},
 				{
 					ID: "uesio/core.picture",
-					Fields: []adapt.LoadRequestField{
+					Fields: []wire.LoadRequestField{
 						{
-							ID: adapt.ID_FIELD,
+							ID: wire.ID_FIELD,
 						},
 						{
-							ID: adapt.UPDATED_AT_FIELD,
+							ID: wire.UPDATED_AT_FIELD,
 						},
 					},
 				},
@@ -215,7 +215,7 @@ func getUser(field, value string, session *sess.Session, connection adapt.Connec
 					ID: "uesio/core.owner",
 				},
 			},
-			Conditions: []adapt.LoadRequestCondition{
+			Conditions: []wire.LoadRequestCondition{
 				{
 					Field: field,
 					Value: value,
@@ -230,12 +230,12 @@ func getUser(field, value string, session *sess.Session, connection adapt.Connec
 	return &user, nil
 }
 
-func GetUserByKey(username string, session *sess.Session, connection adapt.Connection) (*meta.User, error) {
-	return getUser(adapt.UNIQUE_KEY_FIELD, username, session, connection)
+func GetUserByKey(username string, session *sess.Session, connection wire.Connection) (*meta.User, error) {
+	return getUser(wire.UNIQUE_KEY_FIELD, username, session, connection)
 }
 
-func GetUserByID(id string, session *sess.Session, connection adapt.Connection) (*meta.User, error) {
-	return getUser(adapt.ID_FIELD, id, session, connection)
+func GetUserByID(id string, session *sess.Session, connection wire.Connection) (*meta.User, error) {
+	return getUser(wire.ID_FIELD, id, session, connection)
 }
 
 func getAuthSource(key string, session *sess.Session) (*meta.AuthSource, error) {
@@ -272,7 +272,7 @@ func getLoginMethod(value, field, authSourceID string, session *sess.Session) (*
 	err := datasource.PlatformLoadOne(
 		&loginMethod,
 		&datasource.PlatformLoadOptions{
-			Conditions: []adapt.LoadRequestCondition{
+			Conditions: []wire.LoadRequestCondition{
 				{
 					Field: "uesio/core.auth_source",
 					Value: authSourceID,
@@ -309,7 +309,7 @@ func GetLoginMethodByUserID(userID string, authSourceID string, session *sess.Se
 	return getLoginMethod(userID, "uesio/core.user", authSourceID, session)
 }
 
-func CreateLoginMethod(loginMethod *meta.LoginMethod, connection adapt.Connection, session *sess.Session) error {
+func CreateLoginMethod(loginMethod *meta.LoginMethod, connection wire.Connection, session *sess.Session) error {
 	return datasource.PlatformSaveOne(loginMethod, nil, connection, session)
 }
 

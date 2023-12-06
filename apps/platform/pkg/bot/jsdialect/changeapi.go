@@ -1,11 +1,9 @@
 package jsdialect
 
-import (
-	"github.com/thecloudmasters/uesio/pkg/adapt"
-)
+import "github.com/thecloudmasters/uesio/pkg/types/wire"
 
 type ChangeAPI struct {
-	change *adapt.ChangeItem
+	change *wire.ChangeItem
 	errors []string
 }
 

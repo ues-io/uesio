@@ -4,14 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func GetIntegrationConnection(integrationID string, session *sess.Session, connection adapt.Connection) (*adapt.IntegrationConnection, error) {
+func GetIntegrationConnection(integrationID string, session *sess.Session, connection wire.Connection) (*wire.IntegrationConnection, error) {
 	integration, err := meta.NewIntegration(integrationID)
 	if err != nil {
 		return nil, err
@@ -36,7 +36,7 @@ func GetIntegrationConnection(integrationID string, session *sess.Session, conne
 		return nil, err
 	}
 	// Credentials are optional, depending on the Integration, there may not be any
-	var credentials *adapt.Credentials
+	var credentials *wire.Credentials
 	if integration.Credentials != "" {
 		credentials, err = GetCredentials(integration.Credentials, versionSession)
 		if err != nil {
@@ -44,7 +44,7 @@ func GetIntegrationConnection(integrationID string, session *sess.Session, conne
 		}
 	}
 
-	return adapt.NewIntegrationConnection(integration, integrationType, session, credentials, connection), nil
+	return wire.NewIntegrationConnection(integration, integrationType, session, credentials, connection), nil
 }
 
 // HydrateOptions takes loads arbitrary map[string]interface{} data into a struct.

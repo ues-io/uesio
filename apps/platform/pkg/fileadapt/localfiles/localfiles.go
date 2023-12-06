@@ -8,8 +8,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/types/file"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 type FileAdapter struct {
@@ -27,7 +27,7 @@ func removeEmptyDir(path string) {
 	removeEmptyDir(filepath.Dir(path))
 }
 
-func (a *FileAdapter) GetFileConnection(credentials *adapt.Credentials, bucket string) (file.Connection, error) {
+func (a *FileAdapter) GetFileConnection(credentials *wire.Credentials, bucket string) (file.Connection, error) {
 	return &Connection{
 		bucket: bucket,
 	}, nil

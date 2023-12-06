@@ -1,10 +1,11 @@
-package adapt
+package wire
 
 import (
 	"errors"
+	"testing"
+
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestNewGenericSaveError(t *testing.T) {

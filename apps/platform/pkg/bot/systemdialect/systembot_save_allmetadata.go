@@ -5,10 +5,10 @@ import (
 	"errors"
 	"log/slog"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore/workspacebundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 // In my testing with the CRM app, the variable metadata key size can sway the total size by several 100 to 1000 bytes,
@@ -16,7 +16,7 @@ import (
 // (which is about half of the Postgres NOTIFY 8K limit)
 const metadataItemsChunkSize = 90
 
-func runStudioMetadataSaveBot(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func runStudioMetadataSaveBot(op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	// Get the workspace ID from params, and verify that the user performing the query
 	// has write access to the requested workspace
@@ -27,9 +27,9 @@ func runStudioMetadataSaveBot(op *adapt.SaveOp, connection adapt.Connection, ses
 
 	var changedMetadataItemKeys []string
 
-	if err := op.LoopChanges(func(change *adapt.ChangeItem) error {
-		return change.SetField("uesio/studio.workspace", &adapt.Item{
-			adapt.ID_FIELD: wsAccessResult.GetWorkspaceID(),
+	if err := op.LoopChanges(func(change *wire.ChangeItem) error {
+		return change.SetField("uesio/studio.workspace", &wire.Item{
+			wire.ID_FIELD: wsAccessResult.GetWorkspaceID(),
 		})
 	}); err != nil {
 		return err
@@ -40,7 +40,7 @@ func runStudioMetadataSaveBot(op *adapt.SaveOp, connection adapt.Connection, ses
 	}
 
 	// Invalidate our metadata caches - now that we've saved, UniqueKey should be populated
-	if err := op.LoopChanges(func(change *adapt.ChangeItem) error {
+	if err := op.LoopChanges(func(change *wire.ChangeItem) error {
 		changedMetadataItemKeys = append(changedMetadataItemKeys, change.UniqueKey)
 		return nil
 	}); err != nil {

@@ -7,14 +7,14 @@ import (
 	"github.com/teris-io/shortid"
 	"golang.org/x/exp/slices"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func extractConditionByField(conditions []adapt.LoadRequestCondition, field string) *adapt.LoadRequestCondition {
+func extractConditionByField(conditions []wire.LoadRequestCondition, field string) *wire.LoadRequestCondition {
 	for i, condition := range conditions {
 		if condition.Field == field {
 			return &conditions[i]
@@ -23,7 +23,7 @@ func extractConditionByField(conditions []adapt.LoadRequestCondition, field stri
 	return nil
 }
 
-func extractConditionByType(conditions []adapt.LoadRequestCondition, conditionType string) *adapt.LoadRequestCondition {
+func extractConditionByType(conditions []wire.LoadRequestCondition, conditionType string) *wire.LoadRequestCondition {
 	for i, condition := range conditions {
 		if condition.Type == conditionType {
 			return &conditions[i]
@@ -32,13 +32,13 @@ func extractConditionByType(conditions []adapt.LoadRequestCondition, conditionTy
 	return nil
 }
 
-func runCoreMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+func runCoreMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 
 	newCollection := NewNamespaceSwapCollection("uesio/core", "uesio/studio")
 
 	studioCollectionName := meta.SwapKeyNamespace(op.CollectionName, "uesio/core", "uesio/studio")
 
-	newOp := &adapt.LoadOp{
+	newOp := &wire.LoadOp{
 		BatchSize:      op.BatchSize,
 		BatchNumber:    op.BatchNumber,
 		CollectionName: studioCollectionName,
@@ -80,7 +80,7 @@ const (
 	isCommonFieldField = "uesio/studio.iscommonfield"
 )
 
-func runStudioMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+func runStudioMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 
 	allMetadataCondition := extractConditionByField(op.Conditions, allMetadataField)
 
@@ -105,7 +105,7 @@ func runStudioMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 		return errors.New("item or grouping conditions are not allowed unless the allmetadata condition is set")
 	}
 
-	op.Conditions = append(op.Conditions, adapt.LoadRequestCondition{
+	op.Conditions = append(op.Conditions, wire.LoadRequestCondition{
 		Field: "uesio/studio.workspace",
 		Value: wsAccessResult.GetWorkspaceID(),
 	})
@@ -114,7 +114,7 @@ func runStudioMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, ses
 
 }
 
-func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 
 	itemCondition := extractConditionByField(op.Conditions, itemField)
 	groupingCondition := extractConditionByField(op.Conditions, groupingField)
@@ -135,7 +135,7 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		return err
 	}
 
-	collectionMetadata.SetField(&adapt.FieldMetadata{
+	collectionMetadata.SetField(&wire.FieldMetadata{
 		Name:       "namespace",
 		Namespace:  "uesio/studio",
 		Createable: false,
@@ -145,7 +145,7 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		Label:      "Namespace",
 	})
 
-	collectionMetadata.SetField(&adapt.FieldMetadata{
+	collectionMetadata.SetField(&wire.FieldMetadata{
 		Name:       "appicon",
 		Namespace:  "uesio/studio",
 		Createable: false,
@@ -155,7 +155,7 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		Label:      "App Icon",
 	})
 
-	collectionMetadata.SetField(&adapt.FieldMetadata{
+	collectionMetadata.SetField(&wire.FieldMetadata{
 		Name:       "appcolor",
 		Namespace:  "uesio/studio",
 		Createable: false,
@@ -276,16 +276,16 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 				return err
 			}
 		}
-		realID, err := item.GetField(adapt.ID_FIELD)
+		realID, err := item.GetField(wire.ID_FIELD)
 		if err != nil {
 			return err
 		}
 		if realID == "" {
 			fakeID, _ := shortid.Generate()
-			opItem.SetField(adapt.ID_FIELD, fakeID)
+			opItem.SetField(wire.ID_FIELD, fakeID)
 		}
 
-		opItem.SetField(adapt.UNIQUE_KEY_FIELD, key)
+		opItem.SetField(wire.UNIQUE_KEY_FIELD, key)
 		return nil
 	})
 	if err != nil {
@@ -327,7 +327,7 @@ func getStringValue(val interface{}) string {
 	return ""
 }
 
-func getConditionValue(condition *adapt.LoadRequestCondition) string {
+func getConditionValue(condition *wire.LoadRequestCondition) string {
 	var conditionValue string
 	if condition.Value != nil {
 		conditionValue = getStringValue(condition.Value)
@@ -340,13 +340,13 @@ func getConditionValue(condition *adapt.LoadRequestCondition) string {
 	return conditionValue
 }
 
-func sortItems(items []meta.Item, orderings []adapt.LoadRequestOrder) {
+func sortItems(items []meta.Item, orderings []wire.LoadRequestOrder) {
 	// Order the collection results, by unique key ASC by default
 	orderSpec := orderings
 	if len(orderSpec) < 1 {
-		orderSpec = []adapt.LoadRequestOrder{
+		orderSpec = []wire.LoadRequestOrder{
 			{
-				Field: adapt.ID_FIELD,
+				Field: wire.ID_FIELD,
 				Desc:  false,
 			},
 		}

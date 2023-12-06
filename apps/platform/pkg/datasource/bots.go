@@ -7,8 +7,8 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/bot"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -36,7 +36,7 @@ func RunRouteBots(route *meta.Route, session *sess.Session) (*meta.Route, error)
 	return modifiedRoute, nil
 }
 
-func runBeforeSaveBots(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func runBeforeSaveBots(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	collectionName := request.Metadata.GetFullName()
 
@@ -76,7 +76,7 @@ func runBeforeSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessi
 	return nil
 }
 
-func runDynamicCollectionLoadBots(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+func runDynamicCollectionLoadBots(op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 
 	// Currently, all dynamic collections are routed to
 	// the system bot dialect.
@@ -92,7 +92,7 @@ func runDynamicCollectionLoadBots(op *adapt.LoadOp, connection adapt.Connection,
 
 }
 
-func runDynamicCollectionSaveBots(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func runDynamicCollectionSaveBots(op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	// Currently, all dynamic collections are routed to
 	// the system bot dialect.
@@ -108,7 +108,7 @@ func runDynamicCollectionSaveBots(op *adapt.SaveOp, connection adapt.Connection,
 
 }
 
-func runExternalDataSourceLoadBot(botName string, op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+func runExternalDataSourceLoadBot(botName string, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 
 	namespace, name, err := meta.ParseKey(botName)
 	if err != nil {
@@ -152,7 +152,7 @@ func runExternalDataSourceLoadBot(botName string, op *adapt.LoadOp, connection a
 
 }
 
-func runExternalDataSourceSaveBot(botName string, op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func runExternalDataSourceSaveBot(botName string, op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	namespace, name, err := meta.ParseKey(botName)
 	if err != nil {
@@ -180,7 +180,7 @@ func runExternalDataSourceSaveBot(botName string, op *adapt.SaveOp, connection a
 
 }
 
-func runAfterSaveBots(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func runAfterSaveBots(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	collectionName := request.Metadata.GetFullName()
 
@@ -220,7 +220,7 @@ func runAfterSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessio
 	return nil
 }
 
-func CallGeneratorBot(create bundlestore.FileCreator, namespace, name string, params map[string]interface{}, connection adapt.Connection, session *sess.Session) error {
+func CallGeneratorBot(create bundlestore.FileCreator, namespace, name string, params map[string]interface{}, connection wire.Connection, session *sess.Session) error {
 
 	if ok, err := canCallBot(namespace, name, session.GetContextPermissions()); !ok {
 		return err
@@ -285,7 +285,7 @@ func CallListenerBotInTransaction(namespace, name string, params map[string]inte
 	return result, nil
 }
 
-func CallListenerBot(namespace, name string, params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
+func CallListenerBot(namespace, name string, params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
 
 	if ok, err := canCallBot(namespace, name, session.GetContextPermissions()); !ok {
 		return nil, err
@@ -334,7 +334,7 @@ func CallListenerBot(namespace, name string, params map[string]interface{}, conn
 
 }
 
-func RunIntegrationAction(ic *adapt.IntegrationConnection, actionKey string, requestOptions interface{}, connection adapt.Connection) (interface{}, error) {
+func RunIntegrationAction(ic *wire.IntegrationConnection, actionKey string, requestOptions interface{}, connection wire.Connection) (interface{}, error) {
 	integration := ic.GetIntegration()
 	integrationType := ic.GetIntegrationType()
 	session := ic.GetSession()

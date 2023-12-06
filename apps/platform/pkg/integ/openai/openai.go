@@ -8,10 +8,10 @@ import (
 
 	oai "github.com/sashabaranov/go-openai"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 	"github.com/thecloudmasters/uesio/pkg/usage"
 )
 
@@ -27,7 +27,7 @@ type connection struct {
 	session     *sess.Session
 }
 
-func newOpenAiConnection(ic *adapt.IntegrationConnection) (*connection, error) {
+func newOpenAiConnection(ic *wire.IntegrationConnection) (*connection, error) {
 	apikey, err := ic.GetCredentials().GetRequiredEntry("apikey")
 	if err != nil || apikey == "" {
 		return nil, errors.New("OpenAI API Key not provided")
@@ -40,7 +40,7 @@ func newOpenAiConnection(ic *adapt.IntegrationConnection) (*connection, error) {
 }
 
 // RunAction implements the system bot interface
-func RunAction(bot *meta.Bot, ic *adapt.IntegrationConnection, actionName string, params map[string]interface{}) (interface{}, error) {
+func RunAction(bot *meta.Bot, ic *wire.IntegrationConnection, actionName string, params map[string]interface{}) (interface{}, error) {
 
 	c, err := newOpenAiConnection(ic)
 	if err != nil {

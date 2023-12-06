@@ -5,16 +5,16 @@ import (
 	"io"
 	"strconv"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/retrieve"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
+func runCreateBundleListenerBot(params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
 
 	appID, err := getRequiredParameter(params, "app")
 	if err != nil {
@@ -34,12 +34,12 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.
 		return nil, exceptions.NewForbiddenException("you must be a workspace admin to create bundles")
 	}
 
-	app, err := datasource.QueryAppForWrite(appID, adapt.UNIQUE_KEY_FIELD, session, connection)
+	app, err := datasource.QueryAppForWrite(appID, wire.UNIQUE_KEY_FIELD, session, connection)
 	if err != nil {
 		return nil, exceptions.NewForbiddenException(fmt.Sprintf("you do not have permission to create bundles for app %s", appID))
 	}
 
-	workspace, err := datasource.QueryWorkspaceForWrite(appID+":"+workspaceName, adapt.UNIQUE_KEY_FIELD, session, connection)
+	workspace, err := datasource.QueryWorkspaceForWrite(appID+":"+workspaceName, wire.UNIQUE_KEY_FIELD, session, connection)
 	if err != nil {
 		return nil, exceptions.NewForbiddenException(fmt.Sprintf("you do not have permission to create bundles for workspace %s", workspaceName))
 	}
@@ -48,7 +48,7 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.
 	err = datasource.PlatformLoad(
 		&bundles,
 		&datasource.PlatformLoadOptions{
-			Orders: []adapt.LoadRequestOrder{
+			Orders: []wire.LoadRequestOrder{
 				{
 					Field: "uesio/studio.major",
 					Desc:  true,
@@ -62,7 +62,7 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.
 					Desc:  true,
 				},
 			},
-			Conditions: []adapt.LoadRequestCondition{
+			Conditions: []wire.LoadRequestCondition{
 				{
 					Field: "uesio/studio.app",
 					Value: app.ID,
