@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"net/http"
@@ -10,6 +11,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/integ"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
@@ -51,14 +53,56 @@ func RunIntegrationAction(w http.ResponseWriter, r *http.Request) {
 		HandleError(w, err)
 		return
 	}
-	// If the type is a channel, stream chunks from it to the client
+	// If the type is a Stream, stream chunks from it to the client
 	switch v := result.(type) {
-	case chan []byte:
-		w.Header().Set("Transfer-Encoding", "chunked")
-		for chunk := range v {
-			fmt.Println("writing chunk")
-			if _, err := w.Write(chunk); err != nil {
-				HandleError(w, err)
+	case *integ.Stream:
+		w.Header().Set("Connection", "Keep-Alive")
+		w.Header().Set("X-Content-Type-Options", "nosniff")
+
+		ctx, _ := context.WithCancel(r.Context())
+		go func() {
+			//defer wg.Done()
+			for {
+				select {
+				case chunk := <-v.Chunk():
+					if chunk == nil {
+						return
+					}
+					flusher, ok := w.(http.Flusher)
+					if !ok {
+						HandleError(w, errors.New("expected http.ResponseWriter to be an http.Flusher"))
+						return
+					}
+					fmt.Println("GOT chunk")
+					// Have to append newline to every chunk, otherwise it doesn't work as expected
+					if _, err := w.Write(chunk); err != nil {
+						fmt.Println("ERROR WRITING CHUNK TO HTTP ResponseWriter: " + err.Error())
+						HandleError(w, err)
+						return
+					}
+					// Have to flush each chunk!
+					flusher.Flush() // Trigger "chunked" encoding and send a chunk...
+				case <-ctx.Done():
+					return
+				}
+			}
+		}()
+
+		// Telling the loop that keeps the connection alive to end
+		//cancel()
+
+		// Waiting until the loop ends
+		for {
+			select {
+			case streamErr := <-v.Err():
+				if streamErr != nil {
+					fmt.Println("GOT AN ERROR ON THE STREAM: " + streamErr.Error())
+					HandleError(w, streamErr)
+				}
+				return
+			case <-v.Done():
+				fmt.Println("Stream is done!")
+				w.WriteHeader(200)
 				return
 			}
 		}

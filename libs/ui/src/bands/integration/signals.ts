@@ -44,12 +44,13 @@ const signals: Record<string, SignalDescriptor> = {
 
 				// Handle the response based on the content type
 				const contentType = response.headers.get("content-type")
+				const transferEncoding =
+					response.headers.get("transfer-encoding")
+				console.log("content type: " + contentType)
+				console.log("transfer encoding: " + transferEncoding)
 				if (contentType?.includes("json")) {
 					finalResult = await response.json()
-				} else if (
-					response.body &&
-					response.headers.get("transfer-encoding") === "chunked"
-				) {
+				} else if (response.body && transferEncoding === "chunked") {
 					// Handle streaming responses
 					console.log("got a chunked response!")
 					const reader = response.body.getReader()
@@ -82,7 +83,7 @@ const signals: Record<string, SignalDescriptor> = {
 				console.log("RUN_ACTION - FINAL: ", finalResult)
 				// If this invocation was given a stable identifier,
 				// expose its outputs for later use
-				if (finalResult && stepId) {
+				if (stepId) {
 					return context.addSignalOutputFrame(stepId, {
 						data: finalResult,
 					})
