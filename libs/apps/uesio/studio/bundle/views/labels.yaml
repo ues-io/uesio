@@ -61,7 +61,11 @@ definition:
           - uesio/io.titlebar:
               uesio.variant: uesio/io.main
               title: Labels
-              subtitle: Something Clever
+              subtitle: Something clever
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: label
               actions:
                 - uesio/io.group:
                     components:

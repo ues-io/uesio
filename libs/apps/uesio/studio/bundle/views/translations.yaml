@@ -66,6 +66,10 @@ definition:
               uesio.variant: uesio/io.main
               title: Translations
               subtitle: The Rosetta Stone of your app
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: translate
               actions:
                 - uesio/io.group:
                     components:

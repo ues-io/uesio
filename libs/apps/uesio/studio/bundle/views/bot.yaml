@@ -65,7 +65,12 @@ definition:
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
-                    title: Bot - ${uesio/studio.name}
+                    title: ${uesio/studio.name}
+                    subtitle: Bot
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: smart_toy
                     actions:
                       - uesio/io.group:
                           uesio.display:

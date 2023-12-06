@@ -174,7 +174,7 @@ definition:
                     uesio.variant: uesio/io.section
                     components:
                       - uesio/io.titlebar:
-                          uesio.variant: uesio/io.main
+                          uesio.variant: uesio/io.section
                           title: Integration Actions
                           actions:
                             - uesio/io.group:

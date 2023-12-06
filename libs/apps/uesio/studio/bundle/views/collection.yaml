@@ -202,8 +202,12 @@ definition:
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
-                    title: Collection - ${uesio/studio.plurallabel}
-                    subtitle: $Param{namespace}
+                    title: ${uesio/studio.plurallabel}
+                    subtitle: Collection
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: list
                     actions:
                       - uesio/io.group:
                           components:
