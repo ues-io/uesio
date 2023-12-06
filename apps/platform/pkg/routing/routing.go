@@ -14,14 +14,19 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
 
 func GetHomeRoute(session *sess.Session) (*meta.Route, error) {
 	homeRoute := session.GetSite().GetAppBundle().HomeRoute
 
+	if homeRoute == "" {
+		return nil, exceptions.NewNotFoundException("It appears that the developer of this site has not specified a home page.")
+	}
+
 	route, err := meta.NewRoute(homeRoute)
 	if err != nil {
-		return nil, err
+		return nil, exceptions.NewNotFoundException(err.Error())
 	}
 	err = bundle.Load(route, session, nil)
 	if err != nil {
