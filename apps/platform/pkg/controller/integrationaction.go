@@ -57,8 +57,14 @@ func RunIntegrationAction(w http.ResponseWriter, r *http.Request) {
 	switch v := result.(type) {
 	case *integ.Stream:
 		w.Header().Set("Connection", "Keep-Alive")
+		// Set an initial content type to prevent GZIP handler from buffering,
+		// to allow streaming responses to be sent
+		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 		w.Header().Set("X-Content-Type-Options", "nosniff")
-
+		w.WriteHeader(100)
+		if flusher, isOk := w.(http.Flusher); isOk {
+			flusher.Flush()
+		}
 		ctx, _ := context.WithCancel(r.Context())
 		go func() {
 			//defer wg.Done()
@@ -68,12 +74,7 @@ func RunIntegrationAction(w http.ResponseWriter, r *http.Request) {
 					if chunk == nil {
 						return
 					}
-					flusher, ok := w.(http.Flusher)
-					if !ok {
-						HandleError(w, errors.New("expected http.ResponseWriter to be an http.Flusher"))
-						return
-					}
-					fmt.Println("GOT chunk")
+					fmt.Println("Integration Action, GOT chunk: " + string(chunk))
 					// Have to append newline to every chunk, otherwise it doesn't work as expected
 					if _, err := w.Write(chunk); err != nil {
 						fmt.Println("ERROR WRITING CHUNK TO HTTP ResponseWriter: " + err.Error())
@@ -81,7 +82,9 @@ func RunIntegrationAction(w http.ResponseWriter, r *http.Request) {
 						return
 					}
 					// Have to flush each chunk!
-					flusher.Flush() // Trigger "chunked" encoding and send a chunk...
+					if flusher, ok := w.(http.Flusher); ok {
+						flusher.Flush() // Trigger "chunked" encoding and send a chunk...
+					}
 				case <-ctx.Done():
 					return
 				}
