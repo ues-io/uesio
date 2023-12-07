@@ -10,6 +10,4 @@ definition:
       - overflow-hidden
       - shadow-lg
       - shadow-slate-200
-      - border-1
-      - border-slate-300
 public: true

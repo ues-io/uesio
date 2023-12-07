@@ -4,13 +4,11 @@ extends: uesio/io.default
 definition:
   uesio.styleTokens:
     root:
-      - bg-slate-50
-      - border-b-1
-      - border-slate-300
+      - bg-[$Theme{color.primary}]
     content:
       - p-2
     title:
-      - text-slate-600
+      - text-white
       - tracking-wide
       - uppercase
       - text-xs
