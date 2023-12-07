@@ -1,6 +1,6 @@
 name: forecast
-type: LIST
 label: Forecast Weather
+type: LIST
 subfields:
   - name: day
     label: Day

@@ -1,4 +1,4 @@
 name: brand
-type: TEXT
 label: Brand
+type: TEXT
 required: true

@@ -1,5 +1,5 @@
 name: lookalike
-type: REFERENCE
 label: Common look-alike animal
+type: REFERENCE
 reference:
   collection: animal

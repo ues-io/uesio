@@ -1,5 +1,5 @@
 name: genus
-type: TEXT
 label: Genus
+type: TEXT
 createOnly: true
 required: true

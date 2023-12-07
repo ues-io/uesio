@@ -1,4 +1,4 @@
 name: priority
-type: NUMBER
 label: Priority
+type: NUMBER
 columnname: priority
