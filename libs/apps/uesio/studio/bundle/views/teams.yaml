@@ -1,0 +1,134 @@
+name: teams
+definition:
+  # Wires are how we pull in data
+  wires:
+    apps:
+      collection: uesio/studio.app
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.color:
+        uesio/studio.icon:
+      conditions:
+        - field: uesio/core.uniquekey
+          valueSource: PARAM
+          param: app
+      requirewriteaccess: true
+    teams:
+      collection: uesio/studio.team
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.app:
+      conditions:
+        - field: uesio/studio.app
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio/core.id
+    newteam:
+      collection: uesio/studio.team
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.app:
+      init:
+        query: false
+        create: true
+      defaults:
+        - field: uesio/studio.app
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio/core.id
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/io.viewlayout:
+        uesio.variant: uesio/studio.main
+        header:
+          - uesio/core.view:
+              view: uesio/studio.topbar
+              uesio.context:
+                wire: apps
+        left:
+          - uesio/core.view:
+              uesio.display:
+                - type: wireHasRecords
+                  wire: apps
+              uesio.id: appnavview
+              view: uesio/studio.appnav
+              uesio.context:
+                wire: apps
+              params:
+                app: $Param{app}
+                selected: teams
+        content:
+          - uesio/io.box:
+              uesio.display:
+                - type: wireHasRecords
+                  wire: apps
+              components:
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.main
+                    title: Teams
+                    subtitle: There's no I in team, but there is M and E.
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: groups
+                    actions:
+                      - uesio/io.group:
+                          components:
+                            - uesio/io.button:
+                                text: "New Team"
+                                uesio.variant: uesio/io.secondary
+                                signals:
+                                  - signal: "panel/TOGGLE"
+                                    panel: "newTeam"
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.deck:
+                          uesio.id: teamslist
+                          wire: teams
+                          components:
+                            - uesio/io.tile:
+                                uesio.variant: uesio/io.item
+                                signals:
+                                  - signal: "route/NAVIGATE"
+                                    path: "app/$Param{app}/teams/${uesio/studio.name}"
+                                content:
+                                  - uesio/io.text:
+                                      text: ${uesio/studio.name}
+                                avatar:
+                                  - uesio/io.text:
+                                      uesio.variant: uesio/io.icon
+                                      text: groups
+  panels:
+    newTeam:
+      uesio.type: uesio/io.dialog
+      title: Create a New Team
+      width: 400px
+      height: 500px
+      components:
+        - uesio/io.list:
+            uesio.id: newteamlist
+            wire: newteam
+            mode: EDIT
+            components:
+              - uesio/io.field:
+                  fieldId: uesio/studio.name
+      actions:
+        - uesio/io.button:
+            uesio.variant: "uesio/io.primary"
+            text: $Label{uesio/io.save}
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - "newteam"
+              - signal: "route/NAVIGATE"
+                path: "app/$Param{app}/teams/${uesio/studio.name}"
+        - uesio/io.button:
+            uesio.variant: "uesio/io.secondary"
+            text: $Label{uesio/io.cancel}
+            signals:
+              - signal: "panel/TOGGLE"
+                panel: "newTeam"

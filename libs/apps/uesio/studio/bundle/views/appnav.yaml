@@ -130,6 +130,23 @@ definition:
                 - uesio/io.text:
                     uesio.variant: uesio/io.icon
                     text: outbox
+          - uesio/io.tile:
+              uesio.variant: uesio/io.nav
+              uesio.classes:
+                selected:
+                  - type: paramValue
+                    param: selected
+                    value: teams
+              signals:
+                - signal: route/NAVIGATE
+                  path: app/${apps:uesio/core.uniquekey}/teams
+              content:
+                - uesio/io.text:
+                    text: Teams
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: groups
     - uesio/studio.navsection:
         title: Workspaces
         actions:

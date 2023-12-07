@@ -81,6 +81,17 @@ definition:
               uesio.context:
                 wire: teams
         left:
+          - uesio/core.view:
+              uesio.display:
+                - type: wireHasRecords
+                  wire: apps
+              uesio.id: appnavview
+              view: uesio/studio.appnav
+              uesio.context:
+                wire: apps
+              params:
+                app: $Param{app}
+                selected: teams
         content:
           - uesio/io.list:
               uesio.id: teamDeck
@@ -89,7 +100,12 @@ definition:
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
-                    title: Team - ${uesio/studio.name}
+                    title: ${uesio/studio.name}
+                    subtitle: Team
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: groups
                     actions:
                       - uesio/io.group:
                           components:

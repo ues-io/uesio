@@ -1,0 +1,5 @@
+name: teams
+path: app/{app:\w*\/\w*}/teams
+view: teams
+theme: default
+title: Teams
