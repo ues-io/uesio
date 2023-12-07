@@ -11,6 +11,7 @@ import (
 
 	"github.com/robfig/cron/v3"
 
+	"github.com/thecloudmasters/uesio/pkg/controller"
 	"github.com/thecloudmasters/uesio/pkg/invoices"
 	"github.com/thecloudmasters/uesio/pkg/usage/usage_worker"
 )
@@ -76,10 +77,11 @@ func ScheduleJobs() {
 	done := make(chan os.Signal, 1)
 	signal.Notify(done, syscall.SIGINT, syscall.SIGTERM)
 	<-done // Will block here until process is terminated
-	slog.Info("Received SIGTERM, stopping job scheduler with 5 second grace period...")
+	gracePeriod := controller.GetGracefulShutdownSeconds()
+	slog.Info(fmt.Sprintf("Received SIGTERM, stopping job scheduler with %d second grace period...", gracePeriod))
 	s.Stop()
-	time.Sleep(5 * time.Second)
-	slog.Info("Process completed")
+	time.Sleep(time.Duration(gracePeriod) * time.Second)
+	slog.Info("Worker process completed.")
 }
 
 // wraps a Job so that we can perform logging and other utility work,
