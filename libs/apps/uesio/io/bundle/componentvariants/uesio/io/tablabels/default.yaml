@@ -6,17 +6,20 @@ definition:
       - grid
       - grid-flow-col
       - auto-cols-max
+      - bg-slate-300
+      - rounded-tl-lg
+      - rounded-tr-lg
     tab:
-      - px-4
-      - py-2
+      - m-2
+      - p-2
       - rounded-lg
       - text-sm
       - text-slate-700
       - mr-2
       - cursor-pointer
     tabSelected:
-      - bg-slate-800
-      - text-white
+      - bg-white
+      - text-black
       - font-medium
       - cursor-default
 public: true
