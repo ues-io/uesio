@@ -1,0 +1,11 @@
+name: danger
+label: Danger Section
+definition:
+  uesio.styleTokens:
+    root:
+      - m-10
+      - p-10
+      - border-1
+      - border-red-500
+      - rounded-lg
+public: true

@@ -6,60 +6,60 @@ definition:
   components:
     - uesio/io.list:
         components:
-          - uesio/io.titlebar:
-              uesio.variant: uesio/io.nav
+          - uesio/studio.navsection:
               title: User Profile
-          - uesio/io.tile:
-              uesio.variant: uesio/io.nav
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: personalinfo
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: myprofile
               content:
-                - uesio/io.text:
-                    text: Personal info
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: person
-          - uesio/io.tile:
-              uesio.display:
-                - type: featureFlag
-                  name: manage_billing_licensing
-              uesio.variant: uesio/io.nav
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: payments
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: mypayments
-              content:
-                - uesio/io.text:
-                    text: Payments
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: credit_card
-          - uesio/io.tile:
-              uesio.variant: uesio/io.nav
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: tokens
-              signals:
-                - signal: route/NAVIGATE
-                  path: user/security/access-tokens
-              content:
-                - uesio/io.text:
-                    text: User Access Tokens
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: token
+                - uesio/io.tile:
+                    uesio.variant: uesio/io.nav
+                    uesio.classes:
+                      selected:
+                        - type: paramValue
+                          param: selected
+                          value: personalinfo
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: myprofile
+                    content:
+                      - uesio/io.text:
+                          text: Personal info
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: person
+                - uesio/io.tile:
+                    uesio.display:
+                      - type: featureFlag
+                        name: manage_billing_licensing
+                    uesio.variant: uesio/io.nav
+                    uesio.classes:
+                      selected:
+                        - type: paramValue
+                          param: selected
+                          value: payments
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: mypayments
+                    content:
+                      - uesio/io.text:
+                          text: Payments
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: credit_card
+                - uesio/io.tile:
+                    uesio.variant: uesio/io.nav
+                    uesio.classes:
+                      selected:
+                        - type: paramValue
+                          param: selected
+                          value: tokens
+                    signals:
+                      - signal: route/NAVIGATE
+                        path: user/security/access-tokens
+                    content:
+                      - uesio/io.text:
+                          text: User Access Tokens
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: token

@@ -68,6 +68,9 @@ definition:
         create: true
   components:
     - uesio/io.viewlayout:
+        uesio.styleTokens:
+          left:
+            - block
         uesio.variant: uesio/studio.main
         header:
           - uesio/core.view:
@@ -75,6 +78,7 @@ definition:
         left:
           - uesio/core.view:
               view: uesio/studio.homeleftnav
+              uesio.id: orglist
         content:
           - uesio/io.list:
               wire: org
@@ -82,7 +86,8 @@ definition:
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
-                    title: "Organization: ${uesio/core.username}"
+                    title: ${uesio/core.username}
+                    subtitle: Organization
                     actions:
                       - uesio/io.group:
                           components:

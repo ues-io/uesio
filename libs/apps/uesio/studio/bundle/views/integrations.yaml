@@ -63,6 +63,10 @@ definition:
               uesio.variant: uesio/io.main
               title: Integrations
               subtitle: Let's bring the whole family together
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: electrical_services
               actions:
                 - uesio/io.group:
                     components:

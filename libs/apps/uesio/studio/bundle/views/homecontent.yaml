@@ -11,6 +11,7 @@ definition:
   # Components are how we describe the layout of our view
   components:
     - uesio/io.box:
+        uesio.variant: uesio/io.section
         uesio.styleTokens:
           root:
             - overflow-hidden
@@ -84,7 +85,7 @@ definition:
                 - uesio/io.griditem:
                     components:
                       - uesio/io.titlebar:
-                          uesio.variant: uesio/io.main
+                          uesio.variant: uesio/io.section
                           title: Latest Updates & News
                       - uesio/io.list:
                           wire: blogentries
@@ -107,7 +108,7 @@ definition:
                 - uesio/io.griditem:
                     components:
                       - uesio/io.titlebar:
-                          uesio.variant: uesio/io.main
+                          uesio.variant: uesio/io.section
                           title: Recent Documentation
                       - uesio/io.list:
                           wire: recentdocs

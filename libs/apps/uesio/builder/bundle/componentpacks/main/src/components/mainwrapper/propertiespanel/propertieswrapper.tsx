@@ -79,7 +79,7 @@ const PropertiesWrapper: definition.UtilityComponent<Props> = (props) => {
 	const classes = styles.useUtilityStyleTokens(
 		{
 			root: ["w-[300px]"],
-			crumbwrapper: ["leading-3"],
+			crumbwrapper: ["leading-[8px]"],
 			crumb: [
 				"bg-white",
 				"h-[3px]",
@@ -88,7 +88,7 @@ const PropertiesWrapper: definition.UtilityComponent<Props> = (props) => {
 				"mr-[3px]",
 				"rounded-full",
 			],
-			tabsTitle: [`pb-[${tabs ? "2px" : "8px"}]`],
+			tabsTitle: ["pb-2"],
 		},
 		props
 	)

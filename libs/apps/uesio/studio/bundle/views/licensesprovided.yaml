@@ -84,6 +84,10 @@ definition:
               uesio.variant: uesio/io.main
               title: Licenses
               subtitle: List of applications licensed to use your application $Param{app}
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: payments
               actions:
                 - uesio/io.group:
                     components:

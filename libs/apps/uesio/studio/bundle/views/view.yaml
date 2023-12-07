@@ -35,6 +35,8 @@ definition:
                 itemIcon: view_quilt
                 itemName: $Param{viewname}
                 itemNameSpace: $Param{namespace}
+                itemNameSpaceIcon: ${views:uesio/studio.appicon}
+                itemNameSpaceColor: ${views:uesio/studio.appcolor}
         left:
           - uesio/core.view:
               uesio.context:
@@ -50,8 +52,13 @@ definition:
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
-                    title: View - ${uesio/studio.name}
-                    subtitle: $Param{namespace}
+                    title: ${uesio/studio.name}
+                    subtitle: View
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: ${uesio/studio.appicon}
+                          color: ${uesio/studio.appcolor}
                     actions:
                       - uesio/io.group:
                           components:

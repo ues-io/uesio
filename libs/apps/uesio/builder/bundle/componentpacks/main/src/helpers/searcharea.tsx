@@ -17,6 +17,7 @@ const StyleDefaults = Object.freeze({
 		"text-xs",
 		"px-2",
 		"py-1.5",
+		"font-light",
 		"rounded",
 		"border",
 		"border-slate-200",

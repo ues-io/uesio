@@ -4,6 +4,7 @@ extends: uesio/io.default
 definition:
   uesio.styleTokens:
     input:
+      - text-slate-600
       - text-xs
       - px-1.5
       - py-1

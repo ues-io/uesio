@@ -35,6 +35,8 @@ definition:
                 itemIcon: map
                 itemName: $Param{routename}
                 itemNameSpace: $Param{namespace}
+                itemNameSpaceIcon: ${routes:uesio/studio.appicon}
+                itemNameSpaceColor: ${routes:uesio/studio.appcolor}
         left:
           - uesio/core.view:
               uesio.context:
@@ -50,8 +52,13 @@ definition:
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
-                    title: Route - ${uesio/studio.path}
-                    subtitle: $Param{namespace}
+                    title: ${uesio/studio.path}
+                    subtitle: Route
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: ${uesio/studio.appicon}
+                          color: ${uesio/studio.appcolor}
                     actions:
                       - uesio/io.group:
                           components:

@@ -63,6 +63,8 @@ definition:
                 itemIcon: group
                 itemName: $Param{profilename}
                 itemNameSpace: $Param{namespace}
+                itemNameSpaceIcon: ${profiles:uesio/studio.appicon}
+                itemNameSpaceColor: ${profiles:uesio/studio.appcolor}
         left:
           - uesio/core.view:
               uesio.context:
@@ -77,8 +79,13 @@ definition:
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
-                    title: Profile - ${uesio/studio.name}
-                    subtitle: $Param{namespace}
+                    title: ${uesio/studio.name}
+                    subtitle: Profile
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: ${uesio/studio.appicon}
+                          color: ${uesio/studio.appcolor}
                     actions:
                       - uesio/io.group:
                           components:

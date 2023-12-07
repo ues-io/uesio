@@ -62,6 +62,10 @@ definition:
               uesio.variant: uesio/io.main
               title: Profiles
               subtitle: Be yourself. Only better.
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: group
               actions:
                 - uesio/io.group:
                     components:

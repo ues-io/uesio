@@ -64,6 +64,8 @@ definition:
                 itemIcon: electrical_services
                 itemName: $Param{integrationname}
                 itemNameSpace: $Param{namespace}
+                itemNameSpaceIcon: ${integration:uesio/studio.appicon}
+                itemNameSpaceColor: ${integration:uesio/studio.appcolor}
         left:
           - uesio/core.view:
               uesio.context:
@@ -79,8 +81,13 @@ definition:
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
-                    title: Integration - ${uesio/studio.name}
-                    subtitle: $Param{namespace}
+                    title: ${uesio/studio.name}
+                    subtitle: Integration
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: ${uesio/studio.appicon}
+                          color: ${uesio/studio.appcolor}
                     actions:
                       - uesio/io.group:
                           components:

@@ -1,0 +1,28 @@
+name: navsection
+category: CONTENT
+pack: main
+type: DECLARATIVE
+slots:
+  - name: content
+  - name: actions
+description: A section of a navigation panel
+properties:
+  - type: TEXT
+    name: title
+    label: Title text
+definition:
+  - uesio/io.box:
+      components:
+        - uesio/io.titlebar:
+            uesio.variant: uesio/io.nav
+            title: $Prop{title}
+            actions:
+              - uesio/core.slot:
+                  name: actions
+        - uesio/io.box:
+            uesio.styleTokens:
+              root:
+                - pb-3
+            components:
+              - uesio/core.slot:
+                  name: content

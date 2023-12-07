@@ -6,12 +6,9 @@ definition:
   components:
     - uesio/io.list:
         components:
-          - uesio/io.box:
-              uesio.variant: uesio/studio.navarea
-              components:
-                - uesio/io.titlebar:
-                    uesio.variant: uesio/io.nav
-                    title: Workspace Admin
+          - uesio/studio.navsection:
+              title: Workspace Admin
+              content:
                 - uesio/io.tile:
                     uesio.variant: uesio/io.nav
                     uesio.id: home
@@ -84,404 +81,404 @@ definition:
                       - uesio/io.text:
                           uesio.variant: uesio/io.icon
                           text: package
-          - uesio/io.titlebar:
-              uesio.variant: uesio/io.nav
+          - uesio/studio.navsection:
               title: Data Structure & Content
-          - uesio/io.tile:
-              uesio.display:
-                - type: featureFlag
-                  name: manage_bots
-              uesio.variant: uesio/io.nav
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: bots
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/bots
               content:
-                - uesio/io.text:
-                    text: Bots
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: smart_toy
-          - uesio/io.tile:
-              uesio.variant: uesio/io.nav
-              uesio.id: collections
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: collections
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/collections
-              content:
-                - uesio/io.text:
-                    text: Collections
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: list
-          - uesio/io.tile:
-              uesio.display:
-                - type: featureFlag
-                  name: manage_integrations
-              uesio.variant: uesio/io.nav
-              uesio.id: integrations
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: integrations
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/integrations
-              content:
-                - uesio/io.text:
-                    text: Integrations
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: electrical_services
-          - uesio/io.tile:
-              uesio.display:
-                - type: featureFlag
-                  name: manage_integration_types
-              uesio.variant: uesio/io.nav
-              uesio.id: integrationtypes
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: integrationtypes
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/integrationtypes
-              content:
-                - uesio/io.text:
-                    text: Integration Types
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: code
-          - uesio/io.tile:
-              uesio.variant: uesio/io.nav
-              uesio.id: selectlists
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: selectlists
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/selectlists
-              content:
-                - uesio/io.text:
-                    text: Select Lists
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: playlist_add_check
-          - uesio/io.tile:
-              uesio.variant: uesio/io.nav
-              uesio.id: files
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: files
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/files
-              content:
-                - uesio/io.text:
-                    text: Files
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: collections
-          - uesio/io.titlebar:
-              uesio.variant: uesio/io.nav
+                - uesio/io.tile:
+                    uesio.display:
+                      - type: featureFlag
+                        name: manage_bots
+                    uesio.variant: uesio/io.nav
+                    uesio.classes:
+                      selected:
+                        - type: paramValue
+                          param: selected
+                          value: bots
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/bots
+                    content:
+                      - uesio/io.text:
+                          text: Bots
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: smart_toy
+                - uesio/io.tile:
+                    uesio.variant: uesio/io.nav
+                    uesio.id: collections
+                    uesio.classes:
+                      selected:
+                        - type: paramValue
+                          param: selected
+                          value: collections
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/collections
+                    content:
+                      - uesio/io.text:
+                          text: Collections
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: list
+                - uesio/io.tile:
+                    uesio.display:
+                      - type: featureFlag
+                        name: manage_integrations
+                    uesio.variant: uesio/io.nav
+                    uesio.id: integrations
+                    uesio.classes:
+                      selected:
+                        - type: paramValue
+                          param: selected
+                          value: integrations
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/integrations
+                    content:
+                      - uesio/io.text:
+                          text: Integrations
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: electrical_services
+                - uesio/io.tile:
+                    uesio.display:
+                      - type: featureFlag
+                        name: manage_integration_types
+                    uesio.variant: uesio/io.nav
+                    uesio.id: integrationtypes
+                    uesio.classes:
+                      selected:
+                        - type: paramValue
+                          param: selected
+                          value: integrationtypes
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/integrationtypes
+                    content:
+                      - uesio/io.text:
+                          text: Integration Types
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: code
+                - uesio/io.tile:
+                    uesio.variant: uesio/io.nav
+                    uesio.id: selectlists
+                    uesio.classes:
+                      selected:
+                        - type: paramValue
+                          param: selected
+                          value: selectlists
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/selectlists
+                    content:
+                      - uesio/io.text:
+                          text: Select Lists
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: playlist_add_check
+                - uesio/io.tile:
+                    uesio.variant: uesio/io.nav
+                    uesio.id: files
+                    uesio.classes:
+                      selected:
+                        - type: paramValue
+                          param: selected
+                          value: files
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/files
+                    content:
+                      - uesio/io.text:
+                          text: Files
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: collections
+          - uesio/studio.navsection:
               title: User Interface
-          - uesio/io.tile:
-              uesio.variant: uesio/io.nav
-              uesio.id: views
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: views
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/views
               content:
-                - uesio/io.text:
-                    text: Views
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: view_quilt
-          - uesio/io.tile:
-              uesio.variant: uesio/io.nav
-              uesio.id: routes
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: routes
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/routes
-              content:
-                - uesio/io.text:
-                    text: Routes
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: map
-          - uesio/io.tile:
-              uesio.display:
-                - type: featureFlag
-                  name: manage_components
-              uesio.variant: uesio/io.nav
-              uesio.id: components
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: components
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/components
-              content:
-                - uesio/io.text:
-                    text: Components
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: widgets
-          - uesio/io.tile:
-              uesio.variant: uesio/io.nav
-              uesio.id: themes
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: themes
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/themes
-              content:
-                - uesio/io.text:
-                    text: Themes
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: palette
-          - uesio/io.titlebar:
-              uesio.variant: uesio/io.nav
+                - uesio/io.tile:
+                    uesio.variant: uesio/io.nav
+                    uesio.id: views
+                    uesio.classes:
+                      selected:
+                        - type: paramValue
+                          param: selected
+                          value: views
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/views
+                    content:
+                      - uesio/io.text:
+                          text: Views
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: view_quilt
+                - uesio/io.tile:
+                    uesio.variant: uesio/io.nav
+                    uesio.id: routes
+                    uesio.classes:
+                      selected:
+                        - type: paramValue
+                          param: selected
+                          value: routes
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/routes
+                    content:
+                      - uesio/io.text:
+                          text: Routes
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: map
+                - uesio/io.tile:
+                    uesio.display:
+                      - type: featureFlag
+                        name: manage_components
+                    uesio.variant: uesio/io.nav
+                    uesio.id: components
+                    uesio.classes:
+                      selected:
+                        - type: paramValue
+                          param: selected
+                          value: components
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/components
+                    content:
+                      - uesio/io.text:
+                          text: Components
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: widgets
+                - uesio/io.tile:
+                    uesio.variant: uesio/io.nav
+                    uesio.id: themes
+                    uesio.classes:
+                      selected:
+                        - type: paramValue
+                          param: selected
+                          value: themes
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/themes
+                    content:
+                      - uesio/io.text:
+                          text: Themes
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: palette
+          - uesio/studio.navsection:
               title: Security & Access
-          - uesio/io.tile:
-              uesio.variant: uesio/io.nav
-              uesio.id: permission-sets
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: permissionsets
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/permissionsets
               content:
-                - uesio/io.text:
-                    text: Permission Sets
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: rule
-          - uesio/io.tile:
-              uesio.variant: uesio/io.nav
-              uesio.id: profiles
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: profiles
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/profiles
-              content:
-                - uesio/io.text:
-                    text: Profiles
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: group
-          - uesio/io.tile:
-              uesio.display:
-                - type: featureFlag
-                  name: manage_config_values
-              uesio.variant: uesio/io.nav
-              uesio.id: config-values
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: configvalues
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/configvalues
-              content:
-                - uesio/io.text:
-                    text: Config Values
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: tune
-          - uesio/io.tile:
-              uesio.display:
-                - type: featureFlag
-                  name: manage_secrets
-              uesio.variant: uesio/io.nav
-              uesio.id: secrets
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: secrets
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/secrets
-              content:
-                - uesio/io.text:
-                    text: Secrets
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: lock
-          - uesio/io.tile:
-              uesio.display:
-                - type: featureFlag
-                  name: manage_credentials
-              uesio.variant: uesio/io.nav
-              uesio.id: credentials
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: credentials
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/credentials
-              content:
-                - uesio/io.text:
-                    text: Credentials
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: vpn_key
-          - uesio/io.tile:
-              uesio.display:
-                - type: featureFlag
-                  name: manage_feature_flags
-              uesio.variant: uesio/io.nav
-              uesio.id: feature-flags
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: featureflags
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/featureflags
-              content:
-                - uesio/io.text:
-                    text: Feature Flags
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: new_releases
-          - uesio/io.tile:
-              uesio.display:
-                - type: featureFlag
-                  name: manage_auth_sources
-              uesio.id: auth-sources
-              uesio.variant: uesio/io.nav
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: authsources
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/authsources
-              content:
-                - uesio/io.text:
-                    text: Auth Sources
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: dynamic_feed
-          - uesio/io.tile:
-              uesio.display:
-                - type: featureFlag
-                  name: manage_user_access_tokens
-              uesio.id: user-access-tokens
-              uesio.variant: uesio/io.nav
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: useraccesstokens
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/useraccesstokens
-              content:
-                - uesio/io.text:
-                    text: User Access Tokens
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: token
-          - uesio/io.titlebar:
-              uesio.variant: uesio/io.nav
+                - uesio/io.tile:
+                    uesio.variant: uesio/io.nav
+                    uesio.id: permission-sets
+                    uesio.classes:
+                      selected:
+                        - type: paramValue
+                          param: selected
+                          value: permissionsets
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/permissionsets
+                    content:
+                      - uesio/io.text:
+                          text: Permission Sets
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: rule
+                - uesio/io.tile:
+                    uesio.variant: uesio/io.nav
+                    uesio.id: profiles
+                    uesio.classes:
+                      selected:
+                        - type: paramValue
+                          param: selected
+                          value: profiles
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/profiles
+                    content:
+                      - uesio/io.text:
+                          text: Profiles
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: group
+                - uesio/io.tile:
+                    uesio.display:
+                      - type: featureFlag
+                        name: manage_config_values
+                    uesio.variant: uesio/io.nav
+                    uesio.id: config-values
+                    uesio.classes:
+                      selected:
+                        - type: paramValue
+                          param: selected
+                          value: configvalues
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/configvalues
+                    content:
+                      - uesio/io.text:
+                          text: Config Values
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: tune
+                - uesio/io.tile:
+                    uesio.display:
+                      - type: featureFlag
+                        name: manage_secrets
+                    uesio.variant: uesio/io.nav
+                    uesio.id: secrets
+                    uesio.classes:
+                      selected:
+                        - type: paramValue
+                          param: selected
+                          value: secrets
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/secrets
+                    content:
+                      - uesio/io.text:
+                          text: Secrets
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: lock
+                - uesio/io.tile:
+                    uesio.display:
+                      - type: featureFlag
+                        name: manage_credentials
+                    uesio.variant: uesio/io.nav
+                    uesio.id: credentials
+                    uesio.classes:
+                      selected:
+                        - type: paramValue
+                          param: selected
+                          value: credentials
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/credentials
+                    content:
+                      - uesio/io.text:
+                          text: Credentials
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: vpn_key
+                - uesio/io.tile:
+                    uesio.display:
+                      - type: featureFlag
+                        name: manage_feature_flags
+                    uesio.variant: uesio/io.nav
+                    uesio.id: feature-flags
+                    uesio.classes:
+                      selected:
+                        - type: paramValue
+                          param: selected
+                          value: featureflags
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/featureflags
+                    content:
+                      - uesio/io.text:
+                          text: Feature Flags
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: new_releases
+                - uesio/io.tile:
+                    uesio.display:
+                      - type: featureFlag
+                        name: manage_auth_sources
+                    uesio.id: auth-sources
+                    uesio.variant: uesio/io.nav
+                    uesio.classes:
+                      selected:
+                        - type: paramValue
+                          param: selected
+                          value: authsources
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/authsources
+                    content:
+                      - uesio/io.text:
+                          text: Auth Sources
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: dynamic_feed
+                - uesio/io.tile:
+                    uesio.display:
+                      - type: featureFlag
+                        name: manage_user_access_tokens
+                    uesio.id: user-access-tokens
+                    uesio.variant: uesio/io.nav
+                    uesio.classes:
+                      selected:
+                        - type: paramValue
+                          param: selected
+                          value: useraccesstokens
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/useraccesstokens
+                    content:
+                      - uesio/io.text:
+                          text: User Access Tokens
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: token
+          - uesio/studio.navsection:
               title: Internationalization
-          - uesio/io.tile:
-              uesio.variant: uesio/io.nav
-              uesio.id: labels
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: labels
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/labels
               content:
-                - uesio/io.text:
-                    text: Labels
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: label
-          - uesio/io.tile:
-              uesio.variant: uesio/io.nav
-              uesio.id: translations
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: translations
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/translations
-              content:
-                - uesio/io.text:
-                    text: Translations
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: translate
+                - uesio/io.tile:
+                    uesio.variant: uesio/io.nav
+                    uesio.id: labels
+                    uesio.classes:
+                      selected:
+                        - type: paramValue
+                          param: selected
+                          value: labels
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/labels
+                    content:
+                      - uesio/io.text:
+                          text: Labels
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: label
+                - uesio/io.tile:
+                    uesio.variant: uesio/io.nav
+                    uesio.id: translations
+                    uesio.classes:
+                      selected:
+                        - type: paramValue
+                          param: selected
+                          value: translations
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/translations
+                    content:
+                      - uesio/io.text:
+                          text: Translations
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: translate

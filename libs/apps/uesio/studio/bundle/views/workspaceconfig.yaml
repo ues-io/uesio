@@ -42,6 +42,10 @@ definition:
           - uesio/io.titlebar:
               uesio.variant: uesio/io.main
               title: Workspace Settings
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: settings
           - uesio/io.box:
               uesio.variant: uesio/io.section
               components:
@@ -106,11 +110,7 @@ definition:
                               name: $Param{workspacename}
                               app: $Param{app}
           - uesio/io.box:
-              uesio.variant: uesio/io.section
-              uesio.styleTokens:
-                root:
-                  - border-1
-                  - border-red-500
+              uesio.variant: uesio/io.danger
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.section

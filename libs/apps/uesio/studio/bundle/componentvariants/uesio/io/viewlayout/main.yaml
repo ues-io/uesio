@@ -3,7 +3,12 @@ label: Main
 extends: uesio/io.default
 definition:
   uesio.styleTokens:
-    content:
-      - bg-slate-50
     left:
-      - md:w-[300px]
+      - md:w-80
+      - from-white
+      - to-slate-100
+      - bg-gradient-to-br
+      - p-3
+      - gap-3
+      - grid
+      - auto-rows-min

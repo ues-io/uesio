@@ -32,9 +32,11 @@ definition:
                 wire: workspaces
               params:
                 itemType: labels
-                itemIcon: tune
+                itemIcon: label
                 itemName: $Param{labelname}
                 itemNameSpace: $Param{namespace}
+                itemNameSpaceIcon: ${labels:uesio/studio.appicon}
+                itemNameSpaceColor: ${labels:uesio/studio.appcolor}
         left:
           - uesio/core.view:
               uesio.context:
@@ -50,8 +52,13 @@ definition:
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
-                    title: Label - ${uesio/studio.name}
-                    subtitle: $Param{namespace}
+                    title: ${uesio/studio.name}
+                    subtitle: Label
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: ${uesio/studio.appicon}
+                          color: ${uesio/studio.appcolor}
                     actions:
                       - uesio/io.group:
                           components:

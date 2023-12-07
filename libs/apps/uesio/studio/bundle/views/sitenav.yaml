@@ -6,69 +6,69 @@ definition:
   components:
     - uesio/io.list:
         components:
-          - uesio/io.titlebar:
-              uesio.variant: uesio/io.nav
+          - uesio/studio.navsection:
               title: Site Admin
-          - uesio/studio.sitenavtile:
-              title: Users
-              icon: person
-              id: users
-          - uesio/studio.sitenavtile:
-              title: Organizations
-              icon: corporate_fare
-              id: organizations
-              # For now, we only want to allow the Studio to have Organization-type Users,
-              # but in the future we could open this up
-              uesio.display:
-                - field: "uesio/studio.app->uesio/core.uniquekey"
-                  value: "uesio/studio"
-          - uesio/studio.sitenavtile:
-              title: Manage Bundles
-              icon: outbox
-              id: managebundles
-              # Should only be visible to those administering a Studio PROD site
-              # (which should require write access) on that site
-              uesio.display:
-                - field: "uesio/studio.app->uesio/core.uniquekey"
-                  value: "uesio/studio"
-          - uesio/studio.sitenavtile:
-              title: Domains
-              icon: verified_user
-              id: domains
-          - uesio/studio.sitenavtile:
-              title: Collections
-              icon: list
-              id: collections
-          - uesio/io.titlebar:
-              uesio.variant: uesio/io.nav
+              content:
+                - uesio/studio.sitenavtile:
+                    title: Users
+                    icon: person
+                    id: users
+                - uesio/studio.sitenavtile:
+                    title: Organizations
+                    icon: corporate_fare
+                    id: organizations
+                    # For now, we only want to allow the Studio to have Organization-type Users,
+                    # but in the future we could open this up
+                    uesio.display:
+                      - field: "uesio/studio.app->uesio/core.uniquekey"
+                        value: "uesio/studio"
+                - uesio/studio.sitenavtile:
+                    title: Manage Bundles
+                    icon: outbox
+                    id: managebundles
+                    # Should only be visible to those administering a Studio PROD site
+                    # (which should require write access) on that site
+                    uesio.display:
+                      - field: "uesio/studio.app->uesio/core.uniquekey"
+                        value: "uesio/studio"
+                - uesio/studio.sitenavtile:
+                    title: Domains
+                    icon: verified_user
+                    id: domains
+                - uesio/studio.sitenavtile:
+                    title: Collections
+                    icon: list
+                    id: collections
+          - uesio/studio.navsection:
               title: Usage
-          - uesio/studio.sitenavusagetile:
-              title: Route Loads
-              icon: map
-              usageMetadataType: ROUTE
-              usageActionType: LOAD
-              path: routes/load
-          - uesio/studio.sitenavusagetile:
-              title: Collection Loads
-              icon: input
-              usageMetadataType: COLLECTION
-              usageActionType: LOAD
-              path: collections/load
-          - uesio/studio.sitenavusagetile:
-              title: Collection Saves
-              icon: save
-              usageMetadataType: COLLECTION
-              usageActionType: SAVE
-              path: collections/save
-          - uesio/studio.sitenavusagetile:
-              title: File Downloads
-              icon: download_for_offline
-              usageMetadataType: FILESOURCE
-              usageActionType: DOWNLOAD
-              path: files/download
-          - uesio/studio.sitenavusagetile:
-              title: File Download Bytes
-              icon: download_done
-              usageMetadataType: FILESOURCE
-              usageActionType: DOWNLOAD_BYTES
-              path: files/download/bytes
+              content:
+                - uesio/studio.sitenavusagetile:
+                    title: Route Loads
+                    icon: map
+                    usageMetadataType: ROUTE
+                    usageActionType: LOAD
+                    path: routes/load
+                - uesio/studio.sitenavusagetile:
+                    title: Collection Loads
+                    icon: input
+                    usageMetadataType: COLLECTION
+                    usageActionType: LOAD
+                    path: collections/load
+                - uesio/studio.sitenavusagetile:
+                    title: Collection Saves
+                    icon: save
+                    usageMetadataType: COLLECTION
+                    usageActionType: SAVE
+                    path: collections/save
+                - uesio/studio.sitenavusagetile:
+                    title: File Downloads
+                    icon: download_for_offline
+                    usageMetadataType: FILESOURCE
+                    usageActionType: DOWNLOAD
+                    path: files/download
+                - uesio/studio.sitenavusagetile:
+                    title: File Download Bytes
+                    icon: download_done
+                    usageMetadataType: FILESOURCE
+                    usageActionType: DOWNLOAD_BYTES
+                    path: files/download/bytes

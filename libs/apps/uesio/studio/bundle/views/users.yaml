@@ -94,7 +94,7 @@ definition:
           - uesio/io.titlebar:
               uesio.variant: uesio/io.main
               title: Users
-              subtitle: User is as user does.
+              subtitle: User is as user does
               actions:
                 - uesio/io.group:
                     components:

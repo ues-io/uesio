@@ -67,6 +67,8 @@ definition:
                 itemIcon: rule
                 itemName: $Param{permissionsetname}
                 itemNameSpace: $Param{namespace}
+                itemNameSpaceIcon: ${permissionsets:uesio/studio.appicon}
+                itemNameSpaceColor: ${permissionsets:uesio/studio.appcolor}
         left:
           - uesio/core.view:
               uesio.context:
@@ -82,8 +84,13 @@ definition:
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
-                    title: Permission Set - ${uesio/studio.name}
-                    subtitle: $Param{namespace}
+                    title: ${uesio/studio.name}
+                    subtitle: Permission Set
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: ${uesio/studio.appicon}
+                          color: ${uesio/studio.appcolor}
                     actions:
                       - uesio/io.group:
                           components:
@@ -174,188 +181,191 @@ definition:
                                     param: app
                                     operator: EQUALS
                                     value: $Param{namespace}
-                - uesio/io.tabs:
-                    tabs:
-                      - id: bots
-                        label: Listener Bots
-                        uesio.display:
-                          - type: featureFlag
-                            name: manage_bots
-                        components:
-                          - uesio/studio.permissionmapeditor:
-                              metadataRecordsWireName: bots
-                              allowAllField: uesio/studio.allowallbots
-                              recordPermsMapField: uesio/studio.botrefs
-                      - id: files
-                        label: Files
-                        components:
-                          - uesio/studio.permissionmapeditor:
-                              metadataRecordsWireName: files
-                              allowAllField: uesio/studio.allowallfiles
-                              recordPermsMapField: uesio/studio.filerefs
-                      - id: routes
-                        label: Routes
-                        components:
-                          - uesio/studio.permissionmapeditor:
-                              metadataRecordsWireName: routes
-                              allowAllField: uesio/studio.allowallroutes
-                              recordPermsMapField: uesio/studio.routerefs
-                      - id: views
-                        label: Views
-                        components:
-                          - uesio/studio.permissionmapeditor:
-                              metadataRecordsWireName: views
-                              allowAllField: uesio/studio.allowallviews
-                              recordPermsMapField: uesio/studio.viewrefs
-                      - id: collections
-                        label: Collections
-                        components:
-                          - uesio/io.box:
-                              uesio.variant: uesio/io.section
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.tabs:
+                          tabs:
+                            - id: bots
+                              label: Listener Bots
+                              uesio.display:
+                                - type: featureFlag
+                                  name: manage_bots
+                              components:
+                                - uesio/studio.permissionmapeditor:
+                                    metadataRecordsWireName: bots
+                                    allowAllField: uesio/studio.allowallbots
+                                    recordPermsMapField: uesio/studio.botrefs
+                            - id: files
+                              label: Files
+                              components:
+                                - uesio/studio.permissionmapeditor:
+                                    metadataRecordsWireName: files
+                                    allowAllField: uesio/studio.allowallfiles
+                                    recordPermsMapField: uesio/studio.filerefs
+                            - id: routes
+                              label: Routes
+                              components:
+                                - uesio/studio.permissionmapeditor:
+                                    metadataRecordsWireName: routes
+                                    allowAllField: uesio/studio.allowallroutes
+                                    recordPermsMapField: uesio/studio.routerefs
+                            - id: views
+                              label: Views
+                              components:
+                                - uesio/studio.permissionmapeditor:
+                                    metadataRecordsWireName: views
+                                    allowAllField: uesio/studio.allowallviews
+                                    recordPermsMapField: uesio/studio.viewrefs
+                            - id: collections
+                              label: Collections
                               components:
                                 - uesio/io.box:
+                                    uesio.variant: uesio/io.section
                                     components:
-                                      - uesio/io.grid:
-                                          uesio.variant: uesio/io.four_columns
-                                          items:
-                                            - uesio/io.field:
-                                                fieldId: uesio/studio.allowallcollections
-                                                displayAs: "TOGGLE"
-                                            - uesio/io.field:
-                                                fieldId: uesio/studio.viewallrecords
-                                                displayAs: "TOGGLE"
-                                            - uesio/io.field:
-                                                fieldId: uesio/studio.modifyallrecords
-                                                displayAs: "TOGGLE"
-                                      - uesio/io.searchbox:
-                                          wire: collections
-                                          uesio.display:
-                                            - type: group
-                                              conjunction: OR
-                                              conditions:
-                                                - type: fieldValue
-                                                  wire: permissionsets
-                                                  field: uesio/studio.allowallcollections
-                                                  operator: NOT_EQUALS
-                                                  value: true
-                                                - type: fieldValue
-                                                  field: uesio/studio.modifyallrecords
-                                                  operator: NOT_EQUALS
-                                                  value: true
-                                                - type: fieldValue
-                                                  field: uesio/studio.viewallrecords
-                                                  operator: NOT_EQUALS
-                                                  value: true
-                                          searchFields:
-                                            - uesio/studio.name
-                                            - uesio/studio.namespace
-                                      - uesio/studio.multipermissionpicker:
-                                          uesio.id: permsTable-collections
-                                          uesio.context:
-                                            workspace:
-                                              name: $Param{workspacename}
-                                              app: $Param{app}
-                                          uesio.display:
-                                            - type: group
-                                              conjunction: OR
-                                              conditions:
-                                                - type: fieldValue
-                                                  field: uesio/studio.allowallcollections
-                                                  operator: NOT_EQUALS
-                                                  value: true
-                                                - type: fieldValue
-                                                  field: uesio/studio.modifyallrecords
-                                                  operator: NOT_EQUALS
-                                                  value: true
-                                                - type: fieldValue
-                                                  field: uesio/studio.viewallrecords
-                                                  operator: NOT_EQUALS
-                                                  value: true
-                                          fieldId: uesio/studio.collectionrefs
-                                          sourceWires:
-                                            - collections
-                                          rowactions:
-                                            - text: Field Permissions
-                                              signals:
-                                                - path: app/$Param{app}/workspace/$Param{workspacename}/permissionsets/$Param{namespace}/$Param{permissionsetname}/collection/${uesio/studio.namespace}/${uesio/studio.name}
-                                                  signal: route/NAVIGATE
-                                          permissionFields:
-                                            - name: read
-                                              label: Read
-                                              type: CHECKBOX
-                                            - name: create
-                                              label: Create
-                                              type: CHECKBOX
-                                            - name: edit
-                                              label: Edit
-                                              type: CHECKBOX
-                                            - name: delete
-                                              label: Delete
-                                              type: CHECKBOX
-                                            - name: modifyall
-                                              label: Modify all
-                                              type: CHECKBOX
-                                            - name: viewall
-                                              label: View all
-                                              type: CHECKBOX
-                                            - name: fields
-                                              label: Fields
-                                              type: MAP
-                      - id: integrationactions
-                        label: Integration Actions
-                        uesio.display:
-                          - type: featureFlag
-                            name: manage_integrations
-                        components:
-                          - uesio/io.box:
-                              uesio.variant: uesio/io.section
+                                      - uesio/io.box:
+                                          components:
+                                            - uesio/io.grid:
+                                                uesio.variant: uesio/io.four_columns
+                                                items:
+                                                  - uesio/io.field:
+                                                      fieldId: uesio/studio.allowallcollections
+                                                      displayAs: "TOGGLE"
+                                                  - uesio/io.field:
+                                                      fieldId: uesio/studio.viewallrecords
+                                                      displayAs: "TOGGLE"
+                                                  - uesio/io.field:
+                                                      fieldId: uesio/studio.modifyallrecords
+                                                      displayAs: "TOGGLE"
+                                            - uesio/io.searchbox:
+                                                wire: collections
+                                                uesio.display:
+                                                  - type: group
+                                                    conjunction: OR
+                                                    conditions:
+                                                      - type: fieldValue
+                                                        wire: permissionsets
+                                                        field: uesio/studio.allowallcollections
+                                                        operator: NOT_EQUALS
+                                                        value: true
+                                                      - type: fieldValue
+                                                        field: uesio/studio.modifyallrecords
+                                                        operator: NOT_EQUALS
+                                                        value: true
+                                                      - type: fieldValue
+                                                        field: uesio/studio.viewallrecords
+                                                        operator: NOT_EQUALS
+                                                        value: true
+                                                searchFields:
+                                                  - uesio/studio.name
+                                                  - uesio/studio.namespace
+                                            - uesio/studio.multipermissionpicker:
+                                                uesio.id: permsTable-collections
+                                                uesio.context:
+                                                  workspace:
+                                                    name: $Param{workspacename}
+                                                    app: $Param{app}
+                                                uesio.display:
+                                                  - type: group
+                                                    conjunction: OR
+                                                    conditions:
+                                                      - type: fieldValue
+                                                        field: uesio/studio.allowallcollections
+                                                        operator: NOT_EQUALS
+                                                        value: true
+                                                      - type: fieldValue
+                                                        field: uesio/studio.modifyallrecords
+                                                        operator: NOT_EQUALS
+                                                        value: true
+                                                      - type: fieldValue
+                                                        field: uesio/studio.viewallrecords
+                                                        operator: NOT_EQUALS
+                                                        value: true
+                                                fieldId: uesio/studio.collectionrefs
+                                                sourceWires:
+                                                  - collections
+                                                rowactions:
+                                                  - text: Field Permissions
+                                                    signals:
+                                                      - path: app/$Param{app}/workspace/$Param{workspacename}/permissionsets/$Param{namespace}/$Param{permissionsetname}/collection/${uesio/studio.namespace}/${uesio/studio.name}
+                                                        signal: route/NAVIGATE
+                                                permissionFields:
+                                                  - name: read
+                                                    label: Read
+                                                    type: CHECKBOX
+                                                  - name: create
+                                                    label: Create
+                                                    type: CHECKBOX
+                                                  - name: edit
+                                                    label: Edit
+                                                    type: CHECKBOX
+                                                  - name: delete
+                                                    label: Delete
+                                                    type: CHECKBOX
+                                                  - name: modifyall
+                                                    label: Modify all
+                                                    type: CHECKBOX
+                                                  - name: viewall
+                                                    label: View all
+                                                    type: CHECKBOX
+                                                  - name: fields
+                                                    label: Fields
+                                                    type: MAP
+                            - id: integrationactions
+                              label: Integration Actions
+                              uesio.display:
+                                - type: featureFlag
+                                  name: manage_integrations
                               components:
                                 - uesio/io.box:
+                                    uesio.variant: uesio/io.section
                                     components:
-                                      - uesio/io.field:
-                                          fieldId: uesio/studio.allowallintegrationactions
-                                          displayAs: "TOGGLE"
-                                      - uesio/io.searchbox:
-                                          wire: integrations
-                                          uesio.display:
-                                            - type: fieldValue
-                                              field: uesio/studio.allowallintegrationactions
-                                              operator: NOT_EQUALS
-                                              value: true
-                                          searchFields:
-                                            - uesio/studio.name
-                                            - uesio/studio.namespace
-                                      - uesio/studio.multipermissionpicker:
-                                          uesio.id: permsTable-integrationactions
-                                          uesio.display:
-                                            - type: fieldValue
-                                              field: uesio/studio.allowallintegrationactions
-                                              operator: NOT_EQUALS
-                                              value: true
-                                          uesio.context:
-                                            workspace:
-                                              name: $Param{workspacename}
-                                              app: $Param{app}
-                                          fieldId: uesio/studio.integrationactionrefs
-                                          sourceWires:
-                                            - integrations
-                                          rowactions:
-                                            - text: Grant access to individual Actions
-                                              signals:
-                                                - path: app/$Param{app}/workspace/$Param{workspacename}/permissionsets/$Param{namespace}/$Param{permissionsetname}/integration/${uesio/studio.namespace}/${uesio/studio.name}
-                                                  signal: route/NAVIGATE
-                                              uesio.display:
-                                                - type: fieldValue
-                                                  field: allowAll
-                                                  operator: NOT_EQUALS
-                                                  value: true
-                                          permissionFields:
-                                            - name: allowAll
-                                              label: Allow all Actions provided by this Integration
-                                              type: CHECKBOX
-                                            - name: actions
-                                              label: Action Access
-                                              type: MAP
+                                      - uesio/io.box:
+                                          components:
+                                            - uesio/io.field:
+                                                fieldId: uesio/studio.allowallintegrationactions
+                                                displayAs: "TOGGLE"
+                                            - uesio/io.searchbox:
+                                                wire: integrations
+                                                uesio.display:
+                                                  - type: fieldValue
+                                                    field: uesio/studio.allowallintegrationactions
+                                                    operator: NOT_EQUALS
+                                                    value: true
+                                                searchFields:
+                                                  - uesio/studio.name
+                                                  - uesio/studio.namespace
+                                            - uesio/studio.multipermissionpicker:
+                                                uesio.id: permsTable-integrationactions
+                                                uesio.display:
+                                                  - type: fieldValue
+                                                    field: uesio/studio.allowallintegrationactions
+                                                    operator: NOT_EQUALS
+                                                    value: true
+                                                uesio.context:
+                                                  workspace:
+                                                    name: $Param{workspacename}
+                                                    app: $Param{app}
+                                                fieldId: uesio/studio.integrationactionrefs
+                                                sourceWires:
+                                                  - integrations
+                                                rowactions:
+                                                  - text: Grant access to individual Actions
+                                                    signals:
+                                                      - path: app/$Param{app}/workspace/$Param{workspacename}/permissionsets/$Param{namespace}/$Param{permissionsetname}/integration/${uesio/studio.namespace}/${uesio/studio.name}
+                                                        signal: route/NAVIGATE
+                                                    uesio.display:
+                                                      - type: fieldValue
+                                                        field: allowAll
+                                                        operator: NOT_EQUALS
+                                                        value: true
+                                                permissionFields:
+                                                  - name: allowAll
+                                                    label: Allow all Actions provided by this Integration
+                                                    type: CHECKBOX
+                                                  - name: actions
+                                                    label: Action Access
+                                                    type: MAP
   panels:
     deletePermissonset:
       uesio.type: uesio/io.dialog
