@@ -168,7 +168,7 @@ definition:
                 wires:
                   - "teams"
               - signal: "route/NAVIGATE"
-                path: "app/$Param{app}"
+                path: "app/$Param{app}/teams"
         - uesio/io.button:
             text: $Label{uesio/io.cancel}
             uesio.variant: uesio/io.secondary
