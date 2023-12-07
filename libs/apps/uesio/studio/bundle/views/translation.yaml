@@ -69,7 +69,7 @@ definition:
                     avatar:
                       - uesio/io.text:
                           uesio.variant: uesio/io.icon
-                          text: ${uesio/studio.appicon}
+                          text: translate
                           color: ${uesio/studio.appcolor}
                     actions:
                       - uesio/io.group:

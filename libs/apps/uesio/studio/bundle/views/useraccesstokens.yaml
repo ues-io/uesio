@@ -58,7 +58,7 @@ definition:
                 wire: workspaces
               params:
                 itemType: useraccesstokens
-                itemIcon: dynamic_feed
+                itemIcon: token
         left:
           - uesio/core.view:
               uesio.context:

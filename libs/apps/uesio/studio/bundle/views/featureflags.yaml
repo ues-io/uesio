@@ -93,7 +93,7 @@ definition:
                 wire: workspaces
               params:
                 itemType: featureflags
-                itemIcon: tune
+                itemIcon: new_releases
         left:
           - uesio/core.view:
               uesio.context:

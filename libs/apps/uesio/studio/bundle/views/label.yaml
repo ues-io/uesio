@@ -32,7 +32,7 @@ definition:
                 wire: workspaces
               params:
                 itemType: labels
-                itemIcon: tune
+                itemIcon: label
                 itemName: $Param{labelname}
                 itemNameSpace: $Param{namespace}
                 itemNameSpaceIcon: ${labels:uesio/studio.appicon}

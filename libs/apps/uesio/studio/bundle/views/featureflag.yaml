@@ -69,7 +69,7 @@ definition:
                 wire: workspaces
               params:
                 itemType: featureflags
-                itemIcon: tune
+                itemIcon: new_releases
                 itemName: $Param{featureflagname}
                 itemNameSpace: $Param{namespace}
                 itemNameSpaceIcon: ${featureflags:uesio/studio.appicon}

@@ -98,7 +98,7 @@ definition:
                           avatar:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.icon
-                                text: tune
+                                text: translate
   panels:
     newtranslation:
       uesio.type: uesio/io.dialog
