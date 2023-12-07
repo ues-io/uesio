@@ -9,11 +9,15 @@ definition:
           root:
             - grid-flow-col
             - justify-between
-            - bg-slate-900
+            - from-white
+            - to-slate-100
+            - bg-gradient-to-br
             - h-[60px]
             - items-center
             - gap-2
             - px-4
+            - border-b-1
+            - border-slate-300
         items:
           # Uesio Logo
           - uesio/io.group:
@@ -23,8 +27,9 @@ definition:
                     uesio.styleTokens:
                       root:
                         - mr-4
+                        - opacity-80
                     height: 34
-                    file: uesio/core.logowhite
+                    file: uesio/core.logo
                     signals:
                       - signal: "route/NAVIGATE"
                         path: "home"

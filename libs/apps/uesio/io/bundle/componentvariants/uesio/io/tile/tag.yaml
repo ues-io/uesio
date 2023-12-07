@@ -16,23 +16,20 @@ definition:
       - rounded
       - border-transparent
       - tracking-wider
-      - gap-3
+      - gap-2
       - group
     content:
       - whitespace-nowrap
       - text-ellipsis
-      - text-slate-200
+      - text-slate-600
       - text-xs
       - uppercase
-      - group-hover:text-white
+      - group-hover:text-slate-900
     avatar:
       - flex
-      - text-sm
-      - text-slate-700
-      - bg-slate-50
-      - p-1.5
-      - rounded-full
-      - group-hover:bg-white
+      - text-base
+      - text-slate-600
+      - bg-white
       - group-hover:text-slate-900
 
 public: true

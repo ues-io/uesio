@@ -7,14 +7,14 @@ const StyleDefaults = Object.freeze({
 	root: [
 		"grid-flow-col",
 		"justify-between",
-		"bg-slate-900",
 		"h-[60px]",
+		"bg-slate-50",
 		"items-center",
 		"gap-2",
 		"px-4",
 		"shrink-0",
 	],
-	logo: ["pr-4"],
+	logo: ["pr-4", "opacity-80"],
 	avatar: ["h-9", "w-9", "border-2", "border-white"],
 })
 
@@ -55,7 +55,7 @@ const MainHeader: definition.UtilityComponent = (props) => {
 				<IOImage
 					className={classes.logo}
 					height="34"
-					file="uesio/core.logowhite"
+					file="uesio/core.logo"
 					context={context}
 					onClick={homeLogoOnClick}
 					link={homeLogoLink}
