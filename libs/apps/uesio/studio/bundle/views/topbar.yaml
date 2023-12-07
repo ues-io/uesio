@@ -9,11 +9,15 @@ definition:
           root:
             - grid-flow-col
             - justify-between
-            - bg-slate-100
+            - from-white
+            - to-slate-100
+            - bg-gradient-to-br
             - h-[60px]
             - items-center
             - gap-2
             - px-4
+            - border-b-1
+            - border-slate-300
         items:
           # Uesio Logo
           - uesio/io.group:
@@ -114,7 +118,9 @@ definition:
                             - type: paramIsSet
                               param: itemType
                           title: $Param{itemName}
-                          path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/$Param{itemType}/$Param{itemNameSpace}/$Param{itemName}$Param{itemParam}
+                          icon: $Param{itemNameSpaceIcon}
+                          iconcolor: $Param{itemNameSpaceColor}
+                          path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/$Param{itemType}/$Param{itemNameSpace}/$Param{itemName}
                       - uesio/io.navtile:
                           uesio.display:
                             - type: paramIsSet
@@ -130,15 +136,15 @@ definition:
           - uesio/io.group:
               components:
                 - uesio/io.button:
-                    uesio.variant: uesio/io.nav
+                    uesio.variant: uesio/studio.headernavicon
+                    icon: logout
                     uesio.id: logout
-                    text: Log Out
                     signals:
                       - signal: "user/LOGOUT"
                 - uesio/io.button:
-                    uesio.variant: uesio/io.nav
+                    uesio.variant: uesio/studio.headernavicon
                     uesio.id: user-profile
-                    text: Profile
+                    icon: account_circle
                     signals:
                       - signal: "route/NAVIGATE"
                         path: myprofile
@@ -146,5 +152,9 @@ definition:
                     uesio.styleTokens:
                       root:
                         - ml-3
+                        - border-2
+                        - border-white
+                        - h-9
+                        - w-9
                     text: $User{initials}
                     image: $User{picture}

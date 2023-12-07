@@ -109,6 +109,10 @@ definition:
           - uesio/io.titlebar:
               uesio.variant: uesio/io.main
               title: Packaging
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: package
               actions:
                 - uesio/io.group:
                     components:

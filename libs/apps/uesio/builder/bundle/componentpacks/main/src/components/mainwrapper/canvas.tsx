@@ -42,7 +42,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 				"mx-auto",
 				"transition-all",
 				"border",
-				"border-slate-300",
+				"border-slate-500",
 				"rounded-md",
 			],
 			contentwrapper: [

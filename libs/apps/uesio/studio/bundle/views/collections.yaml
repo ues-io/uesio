@@ -95,6 +95,10 @@ definition:
               uesio.variant: uesio/io.main
               title: Collections
               subtitle: Gotta catch 'em all!
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: list
               actions:
                 - uesio/io.group:
                     components:

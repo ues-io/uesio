@@ -3,9 +3,5 @@ label: Section
 definition:
   uesio.styleTokens:
     root:
-      - shadow
-      - p-10
-      - bg-white
-      - rounded-lg
-      - my-10
+      - m-10
 public: true

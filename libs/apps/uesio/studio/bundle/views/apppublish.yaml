@@ -173,6 +173,10 @@ definition:
                     uesio.variant: uesio/io.main
                     title: Publish App
                     subtitle: ${uesio/core.uniquekey}
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: outbox
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
@@ -223,6 +227,10 @@ definition:
                     uesio.variant: uesio/io.main
                     title: Publish App
                     subtitle: ${uesio/core.uniquekey}
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: outbox
                     actions:
                       - uesio/io.group:
                           components:

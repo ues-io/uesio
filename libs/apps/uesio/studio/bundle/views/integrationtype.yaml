@@ -56,6 +56,8 @@ definition:
                 itemIcon: code
                 itemName: $Param{integrationtypename}
                 itemNameSpace: $Param{namespace}
+                itemNameSpaceIcon: ${integrationType:uesio/studio.appicon}
+                itemNameSpaceColor: ${integrationType:uesio/studio.appcolor}
         left:
           - uesio/core.view:
               uesio.context:
@@ -71,8 +73,13 @@ definition:
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
-                    title: Integration Type - ${uesio/studio.name}
-                    subtitle: $Param{namespace}
+                    title: ${uesio/studio.name}
+                    subtitle: Integration Type
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: ${uesio/studio.appicon}
+                          color: ${uesio/studio.appcolor}
                     actions:
                       - uesio/io.group:
                           components:
@@ -174,7 +181,7 @@ definition:
                     uesio.variant: uesio/io.section
                     components:
                       - uesio/io.titlebar:
-                          uesio.variant: uesio/io.main
+                          uesio.variant: uesio/io.section
                           title: Integration Actions
                           actions:
                             - uesio/io.group:

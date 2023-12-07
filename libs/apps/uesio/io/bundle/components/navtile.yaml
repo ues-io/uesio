@@ -12,7 +12,6 @@ properties:
     name: icon
   - type: TEXT
     name: iconcolor
-    defaultValue: "#AAA"
   - type: TEXT
     name: path
     label: Link navigate path

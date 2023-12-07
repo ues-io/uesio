@@ -89,47 +89,40 @@ definition:
           - uesio/io.titlebar:
               uesio.variant: uesio/io.main
               title: Payments
+              actions:
+                - uesio/io.group:
+                    components:
+                      - uesio/io.button:
+                          uesio.variant: uesio/io.secondary
+                          text: Settle Up
+                          signals:
+                            - signal: "bot/CALL"
+                              bot: "uesio/studio.makepayment"
+                              params:
+                                price: "0"
+                                #This should be an int and also the balance
+                                # "$Sum{invoices:uesio/studio.total}"
+                            - signal: "route/REDIRECT"
+                              path: $Param{redirectUrl}
+          - uesio/io.grid:
+              uesio.styleTokens:
+                root:
+                  - grid-cols-3
+                  - gap-4
+              items:
+                - uesio/io.metric:
+                    title: Payments
+                    unit: United States Dollar
+                    value: $Sum{payments:uesio/studio.total} $
+                - uesio/io.metric:
+                    title: Invoices
+                    unit: United States Dollar
+                    value: $Sum{invoices:uesio/studio.total} $
+                - uesio/io.metric:
+                    title: Balance
+                    unit: United States Dollar
+                    value: 0 $
           - uesio/io.box:
-              uesio.variant: uesio/io.section
-              components:
-                - uesio/io.titlebar:
-                    uesio.variant: uesio/io.section
-                    title: Overview
-                    actions:
-                      - uesio/io.group:
-                          components:
-                            - uesio/io.button:
-                                uesio.variant: uesio/io.secondary
-                                text: Settle Up
-                                signals:
-                                  - signal: "bot/CALL"
-                                    bot: "uesio/studio.makepayment"
-                                    params:
-                                      price: "0"
-                                      #This should be an int and also the balance
-                                      # "$Sum{invoices:uesio/studio.total}"
-                                  - signal: "route/REDIRECT"
-                                    path: $Param{redirectUrl}
-                - uesio/io.grid:
-                    uesio.styleTokens:
-                      root:
-                        - grid-cols-3
-                        - gap-4
-                    items:
-                      - uesio/io.metric:
-                          title: Payments
-                          unit: United States Dollar
-                          value: $Sum{payments:uesio/studio.total} $
-                      - uesio/io.metric:
-                          title: Invoices
-                          unit: United States Dollar
-                          value: $Sum{invoices:uesio/studio.total} $
-                      - uesio/io.metric:
-                          title: Balance
-                          unit: United States Dollar
-                          value: 0 $
-          - uesio/io.box:
-              uesio.variant: uesio/io.section
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.section

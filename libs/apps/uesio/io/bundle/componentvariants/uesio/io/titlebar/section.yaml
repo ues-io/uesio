@@ -7,10 +7,11 @@ extends: uesio/io.default
 definition:
   uesio.styleTokens:
     root:
-      - -mx-10
-      - -mt-10
       - mb-10
-      - p-10
-      - border-b
-      - border-slate-200
+    title:
+      - text-slate-900
+      - text-lg
+    subtitle:
+      - text-slate-500
+      - text-xs
 public: true

@@ -7,4 +7,6 @@ definition:
       - font-[Material_Icons]
       - align-middle
       - "[font-variation-settings:'FILL'_0]"
+      - leading-none
+      - isicon
 public: true

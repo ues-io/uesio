@@ -6,11 +6,26 @@ extends: uesio/io.default
 definition:
   uesio.styleTokens:
     root:
-      - mb-10
+      - p-10
+      - sticky
+      - top-0
+      - bg-white
+      - border-b-1
+      - border-slate-100
+      - z-10
     title:
       - text-slate-900
       - text-xl
     subtitle:
       - text-slate-500
       - text-sm
+    avatar:
+      - text-2xl
+      - h-12
+      - w-12
+      - grid
+      - items-center
+      - justify-center
+      - bg-slate-100
+      - rounded-full
 public: true

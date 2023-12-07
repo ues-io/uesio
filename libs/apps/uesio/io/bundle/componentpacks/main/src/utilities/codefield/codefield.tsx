@@ -51,6 +51,7 @@ type AsyncResult = {
 const StyleDefaults = Object.freeze({
 	input: [],
 	readonly: [],
+	loading: [],
 })
 
 const DEFAULT_DEBOUNCE_INTERVAL = 100
@@ -152,7 +153,11 @@ const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
 	const monacoApi = useMonaco()
 
 	if (loading || !monacoApi) {
-		return <div>Loading language models for {language}...</div>
+		return (
+			<div className={classes.loading}>
+				Loading language models for {language}...
+			</div>
+		)
 	}
 
 	if (!loading && loadingError) {

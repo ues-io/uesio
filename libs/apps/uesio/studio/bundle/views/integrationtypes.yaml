@@ -65,6 +65,10 @@ definition:
               uesio.variant: uesio/io.main
               title: Integration Types
               subtitle: The magic glue that makes integrations run
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: code
               actions:
                 - uesio/io.group:
                     components:

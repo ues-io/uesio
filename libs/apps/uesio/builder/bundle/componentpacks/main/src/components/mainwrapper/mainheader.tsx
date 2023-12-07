@@ -7,15 +7,15 @@ const StyleDefaults = Object.freeze({
 	root: [
 		"grid-flow-col",
 		"justify-between",
-		"bg-slate-100",
-		"h-12",
+		"h-[60px]",
+		"bg-slate-50",
 		"items-center",
 		"gap-2",
-		"px-3",
+		"px-4",
 		"shrink-0",
 	],
-	logo: ["opacity-80", "pr-4"],
-	avatar: ["h-7", "w-7"],
+	logo: ["pr-4", "opacity-80"],
+	avatar: ["h-9", "w-9", "border-2", "border-white"],
 })
 
 // Yes, navigator.platform is deprecated, but according to MDN in 2023
@@ -54,7 +54,7 @@ const MainHeader: definition.UtilityComponent = (props) => {
 			<Group context={context}>
 				<IOImage
 					className={classes.logo}
-					height="28"
+					height="34"
 					file="uesio/core.logo"
 					context={context}
 					onClick={homeLogoOnClick}
@@ -74,7 +74,7 @@ const MainHeader: definition.UtilityComponent = (props) => {
 							icon={"visibility"}
 						/>
 					}
-					variant="uesio/builder.panelactionbutton"
+					variant="uesio/builder.secondarytoolbar"
 					onClick={() => {
 						api.builder.getBuilderDeps(context).then(() => {
 							setBuildMode(!buildMode)

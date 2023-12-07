@@ -6,6 +6,7 @@ interface TitleBarUtilityProps {
 	subtitle?: string
 	subtitlenode?: ReactNode
 	actions?: ReactNode
+	avatar?: ReactNode
 	onClick?: () => void
 }
 
@@ -15,11 +16,20 @@ const StyleDefaults = Object.freeze({
 	title: [],
 	subtitle: [],
 	actions: [],
+	avatar: ["empty:hidden"],
 })
 
 const TitleBar: definition.UtilityComponent<TitleBarUtilityProps> = (props) => {
-	const { context, title, subtitle, subtitlenode, actions, onClick, id } =
-		props
+	const {
+		context,
+		title,
+		subtitle,
+		subtitlenode,
+		actions,
+		onClick,
+		id,
+		avatar,
+	} = props
 	const classes = styles.useUtilityStyleTokens(
 		StyleDefaults,
 		props,
@@ -33,6 +43,9 @@ const TitleBar: definition.UtilityComponent<TitleBarUtilityProps> = (props) => {
 			onClick={() => onClick && onClick()}
 			className={classes.root}
 		>
+			{avatar ? (
+				<div className={classes.avatar}>{avatar}</div>
+			) : undefined}
 			<div className={classes.content}>
 				<p className={classes.title}>{context.merge(title)}</p>
 

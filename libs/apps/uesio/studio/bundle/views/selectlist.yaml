@@ -35,6 +35,8 @@ definition:
                 itemIcon: playlist_add_check
                 itemName: $Param{selectlistname}
                 itemNameSpace: $Param{namespace}
+                itemNameSpaceIcon: ${selectlists:uesio/studio.appicon}
+                itemNameSpaceColor: ${selectlists:uesio/studio.appcolor}
         left:
           - uesio/core.view:
               uesio.context:
@@ -50,8 +52,13 @@ definition:
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
-                    title: Select List - ${uesio/studio.name}
-                    subtitle: $Param{namespace}
+                    title: ${uesio/studio.name}
+                    subtitle: Select List
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: ${uesio/studio.appicon}
+                          color: ${uesio/studio.appcolor}
                     actions:
                       - uesio/io.group:
                           components:

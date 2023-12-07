@@ -5,6 +5,9 @@ definition:
   # Components are how we describe the layout of our view
   components:
     - uesio/io.viewlayout:
+        uesio.styleTokens:
+          left:
+            - block
         uesio.variant: uesio/studio.main
         header:
           - uesio/core.view:

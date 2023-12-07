@@ -4,6 +4,8 @@ import { default as IOTitleBar } from "../../utilities/titlebar/titlebar"
 type TitleBarDefinition = {
 	title: string
 	subtitle: string
+	avatar?: definition.DefinitionList
+	actions?: definition.DefinitionList
 }
 
 const StyleDefaults = Object.freeze({
@@ -28,13 +30,26 @@ const TitleBar: definition.UC<TitleBarDefinition> = (props) => {
 			title={definition.title}
 			subtitle={definition.subtitle}
 			actions={
-				<component.Slot
-					definition={definition}
-					listName="actions"
-					path={path}
-					context={context}
-					componentType={componentType}
-				/>
+				definition.actions && (
+					<component.Slot
+						definition={definition}
+						listName="actions"
+						path={path}
+						context={context}
+						componentType={componentType}
+					/>
+				)
+			}
+			avatar={
+				definition.avatar && (
+					<component.Slot
+						definition={definition}
+						listName="avatar"
+						path={path}
+						context={context}
+						componentType={componentType}
+					/>
+				)
 			}
 		/>
 	)

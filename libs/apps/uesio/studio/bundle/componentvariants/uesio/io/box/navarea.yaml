@@ -3,7 +3,7 @@ label: Nav Area
 definition:
   uesio.styleTokens:
     root:
-      - pb-3
-      - bg-slate-100
-      - m-2
       - rounded-lg
+      - bg-white
+      - border-1
+      - border-slate-200

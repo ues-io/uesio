@@ -93,7 +93,7 @@ definition:
                 wire: workspaces
               params:
                 itemType: featureflags
-                itemIcon: tune
+                itemIcon: new_releases
         left:
           - uesio/core.view:
               uesio.context:
@@ -106,6 +106,10 @@ definition:
               uesio.variant: uesio/io.main
               title: Feature Flags
               subtitle: Change a user's experience of your app with the click of a button
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: new_releases
               actions:
                 - uesio/io.group:
                     components:

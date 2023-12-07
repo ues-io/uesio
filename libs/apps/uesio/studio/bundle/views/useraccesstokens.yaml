@@ -58,7 +58,7 @@ definition:
                 wire: workspaces
               params:
                 itemType: useraccesstokens
-                itemIcon: dynamic_feed
+                itemIcon: token
         left:
           - uesio/core.view:
               uesio.context:
@@ -71,6 +71,10 @@ definition:
               uesio.variant: uesio/io.main
               title: User Access Tokens
               subtitle: Pedo mellon a minno!
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: token
               actions:
                 - uesio/io.group:
                     components:

@@ -6,4 +6,15 @@ definition:
     input:
       - p-0
       - h-[320px]
+    loading:
+      - p-4
+      - h-[320px]
+      - border
+      - border-slate-300
+      - rounded
+      - text-sm
+      - text-slate-600
+      - text-uppercase
+      - tracking-wider
+      - font-light
 public: true
