@@ -126,11 +126,22 @@ definition:
               components:
                 - uesio/io.titlebar:
                     title: Team Members
+                    uesio.display:
+                      - type: wireHasRecords
+                        wire: teammembers
                     uesio.styleTokens:
                       root:
                         - mb-4
+                - uesio/io.titlebar:
+                    title: This team has no members - click 'Add Member' to build this team.
+                    uesio.display:
+                      - type: wireHasNoRecords
+                        wire: teammembers
                 - uesio/io.deck:
                     uesio.id: teammembersslist
+                    uesio.display:
+                      - type: wireHasRecords
+                        wire: teammembers
                     wire: teammembers
                     components:
                       - uesio/io.tile:
