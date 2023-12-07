@@ -217,7 +217,7 @@ definition:
                         path: "app/$Param{app}/site/${uesio/studio.name}"
                     content:
                       - uesio/io.text:
-                          text: ${uesio/studio.label}
+                          text: ${uesio/studio.name}
                     avatar:
                       - uesio/io.text:
                           uesio.variant: uesio/io.icon

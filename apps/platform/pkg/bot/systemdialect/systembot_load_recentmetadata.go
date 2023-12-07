@@ -58,6 +58,7 @@ func runRecentMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, sessi
 
 	var fields = []wire.LoadRequestField{
 		{ID: "uesio/studio.name"},
+		{ID: "uesio/studio.label"},
 		{ID: "uesio/studio.workspace"},
 		{ID: "uesio/core.collection"},
 		{ID: "uesio/core.updatedby", Fields: []wire.LoadRequestField{
@@ -126,6 +127,15 @@ func runRecentMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, sessi
 		Label:      "Name",
 	})
 	recentmetadataCollectionMetadata.SetField(&wire.FieldMetadata{
+		Name:       "label",
+		Namespace:  "uesio/studio",
+		Createable: false,
+		Accessible: true,
+		Updateable: false,
+		Type:       "TEXT",
+		Label:      "Label",
+	})
+	recentmetadataCollectionMetadata.SetField(&wire.FieldMetadata{
 		Name:       "workspace",
 		Namespace:  "uesio/studio",
 		Createable: false,
@@ -164,6 +174,16 @@ func runRecentMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, sessi
 		_, collectionName, err := meta.ParseKey(collectionValue)
 		if err != nil {
 			return err
+		}
+
+		name, err := item.GetField("uesio/studio.name")
+		if err != nil {
+			return err
+		}
+
+		label, err := item.GetField("uesio/studio.label")
+		if label == nil || label == "" {
+			item.SetField("uesio/studio.label", name)
 		}
 
 		err = item.SetField("uesio/core.dynamiccollection", meta.METADATA_NAME_MAP[strings.ToUpper(collectionName)])
