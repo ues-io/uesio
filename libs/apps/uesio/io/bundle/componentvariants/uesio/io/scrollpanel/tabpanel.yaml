@@ -7,6 +7,5 @@ definition:
       - border
       - border-rounded
       - border-slate-300
-      - bg-black-100
       - p-4
 public: true

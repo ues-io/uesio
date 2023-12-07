@@ -6,7 +6,7 @@ definition:
       - grid
       - grid-flow-col
       - auto-cols-max
-      - bg-slate-300
+      - bg-slate-200
       - rounded-tl-lg
       - rounded-tr-lg
     tab:
