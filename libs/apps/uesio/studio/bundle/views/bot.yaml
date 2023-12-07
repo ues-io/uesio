@@ -49,7 +49,8 @@ definition:
                 itemIcon: smart_toy
                 itemName: $Param{botname}
                 itemNameSpace: $Param{bottype}/$Param{namespace}
-                itemParam: "?collection=$Param{collection}"
+                itemNameSpaceIcon: ${bots:uesio/studio.appicon}
+                itemNameSpaceColor: ${bots:uesio/studio.appcolor}
         left:
           - uesio/core.view:
               uesio.context:
@@ -70,7 +71,8 @@ definition:
                     avatar:
                       - uesio/io.text:
                           uesio.variant: uesio/io.icon
-                          text: smart_toy
+                          text: ${uesio/studio.appicon}
+                          color: ${uesio/studio.appcolor}
                     actions:
                       - uesio/io.group:
                           uesio.display:
@@ -178,6 +180,9 @@ definition:
                                 fieldId: uesio/core.updatedby
                                 user:
                                   subtitle: $Time{uesio/core.updatedat}
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
                       - uesio/io.list:
                           uesio.id: botAttachmentsList
                           wire: attachments
@@ -189,8 +194,10 @@ definition:
                                 language: $Record{bots:uesio/studio.dialect}
                                 typeDefinitionFileURIs:
                                   - $StaticFile{/ui/types/server/bots.d.ts}
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
                       - uesio/io.box:
-                          uesio.variant: uesio/io.section
                           uesio.display:
                             - field: uesio/studio.type
                               type: fieldValue

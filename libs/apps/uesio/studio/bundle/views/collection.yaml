@@ -187,6 +187,8 @@ definition:
                 itemIcon: list
                 itemName: $Param{collectionname}
                 itemNameSpace: $Param{namespace}
+                itemNameSpaceIcon: ${collections:uesio/studio.appicon}
+                itemNameSpaceColor: ${collections:uesio/studio.appcolor}
         left:
           - uesio/core.view:
               uesio.context:
@@ -207,7 +209,8 @@ definition:
                     avatar:
                       - uesio/io.text:
                           uesio.variant: uesio/io.icon
-                          text: list
+                          text: ${uesio/studio.appicon}
+                          color: ${uesio/studio.appcolor}
                     actions:
                       - uesio/io.group:
                           components:

@@ -60,6 +60,8 @@ definition:
                 itemIcon: collections
                 itemName: $Param{filename}
                 itemNameSpace: $Param{namespace}
+                itemNameSpaceIcon: ${files:uesio/studio.appicon}
+                itemNameSpaceColor: ${files:uesio/studio.appcolor}
         left:
           - uesio/core.view:
               uesio.context:
@@ -75,8 +77,13 @@ definition:
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
-                    title: File - ${uesio/studio.name}
-                    subtitle: $Param{namespace}
+                    title: ${uesio/studio.name}
+                    subtitle: File
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: ${uesio/studio.appicon}
+                          color: ${uesio/studio.appcolor}
                     actions:
                       - uesio/io.group:
                           components:

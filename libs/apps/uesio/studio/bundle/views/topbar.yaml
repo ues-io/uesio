@@ -118,7 +118,9 @@ definition:
                             - type: paramIsSet
                               param: itemType
                           title: $Param{itemName}
-                          path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/$Param{itemType}/$Param{itemNameSpace}/$Param{itemName}$Param{itemParam}
+                          icon: $Param{itemNameSpaceIcon}
+                          iconcolor: $Param{itemNameSpaceColor}
+                          path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/$Param{itemType}/$Param{itemNameSpace}/$Param{itemName}
                       - uesio/io.navtile:
                           uesio.display:
                             - type: paramIsSet
