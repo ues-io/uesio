@@ -389,30 +389,37 @@ func serve(cmd *cobra.Command, args []string) {
 	// Universal middlewares
 	r.Use(middleware.GZip())
 
-	server := &http.Server{
-		Addr:    serveAddr,
-		Handler: r,
-	}
-
+	server := controller.NewServer(serveAddr, r)
 	var serveErr error
-	if tls.ServeAppWithTLS() {
-		slog.Info("Service started over TLS on port: " + port)
-		serveErr = server.ListenAndServeTLS(tls.GetSelfSignedCertFilePath(), tls.GetSelfSignedPrivateKeyFile())
-	} else {
-		slog.Info("Service started on port: " + port)
-		serveErr = server.ListenAndServe()
-	}
-	if serveErr != nil {
-		slog.Error("Failed to start server: " + serveErr.Error())
-	}
 
-	// CORS Stuff we don't need right now
-	/*
-		err := http.ListenAndServe(":"+port, handlers.CORS(
-			handlers.AllowedOrigins([]string{"*"}),
-			handlers.AllowedMethods([]string{"*"}),
-			handlers.AllowedHeaders([]string{"*"}),
-		)(r))
-	*/
+	done := make(chan bool)
+	go func() {
+		if tls.ServeAppWithTLS() {
+			slog.Info("Service started over TLS on port: " + port)
+			serveErr = server.ListenAndServeTLS(tls.GetSelfSignedCertFilePath(), tls.GetSelfSignedPrivateKeyFile())
+		} else {
+			slog.Info("Service started on port: " + port)
+			serveErr = server.ListenAndServe()
+		}
+		// CORS Stuff we don't need right now
+		/*
+			err := http.ListenAndServe(":"+port, handlers.CORS(
+				handlers.AllowedOrigins([]string{"*"}),
+				handlers.AllowedMethods([]string{"*"}),
+				handlers.AllowedHeaders([]string{"*"}),
+			)(r))
+		*/
+		if serveErr != nil && serveErr.Error() != "http: Server closed" {
+			slog.Error("Failed to start server: " + serveErr.Error())
+			// this will terminate the server without waiting for graceful shutdown
+			server.StartupError()
+		}
+		done <- true
+	}()
+
+	// wait for graceful shutdown to complete
+	server.WaitShutdown()
+
+	<-done
 
 }
