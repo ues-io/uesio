@@ -86,6 +86,8 @@ func RunAction(bot *meta.Bot, ic *wire.IntegrationConnection, actionName string,
 	switch strings.ToLower(actionName) {
 	case "invokemodel":
 		return bc.invokeModel(params)
+	case "streammodel":
+		return bc.streamModel(params)
 	}
 
 	return nil, errors.New("invalid action name for Bedrock integration")
@@ -150,11 +152,7 @@ func hydrateInvokeModelOptions(requestOptions map[string]interface{}) *InvokeMod
 	}
 }
 
-func (c *connection) invokeModel(requestOptions map[string]interface{}) (interface{}, error) {
-
-	options := hydrateInvokeModelOptions(requestOptions)
-
-	// TODO: Validate the model against Bedrock's known valid models!!!
+func getModelBody(options *InvokeModelOptions) ([]byte, error) {
 
 	body, err := json.Marshal(&map[string]interface{}{
 		"prompt":               options.Input,
@@ -188,6 +186,17 @@ func (c *connection) invokeModel(requestOptions map[string]interface{}) (interfa
 		if err != nil {
 			return nil, err
 		}
+	}
+	return body, nil
+}
+
+func (c *connection) streamModel(requestOptions map[string]interface{}) (interface{}, error) {
+
+	options := hydrateInvokeModelOptions(requestOptions)
+	// TODO: Validate the model against Bedrock's known valid models!!!
+	body, err := getModelBody(options)
+	if err != nil {
+		return nil, err
 	}
 
 	usage.RegisterEvent("INPUT_TOKENS", "INTEGRATION", c.integration.GetKey(), estimateTokens(int64(len(options.Input))), c.session)
@@ -248,4 +257,43 @@ func (c *connection) invokeModel(requestOptions map[string]interface{}) (interfa
 
 	return outputStream, nil
 
+}
+
+func (c *connection) invokeModel(requestOptions map[string]interface{}) (interface{}, error) {
+
+	options := hydrateInvokeModelOptions(requestOptions)
+	// TODO: Validate the model against Bedrock's known valid models!!!
+	body, err := getModelBody(options)
+	if err != nil {
+		return nil, err
+	}
+
+	estimatedInputTokens := estimateTokens(int64(len(options.Input)))
+
+	usage.RegisterEvent("INPUT_TOKENS", "INTEGRATION", c.integration.GetKey(), estimatedInputTokens, c.session)
+
+	input := &bedrockruntime.InvokeModelInput{
+		ModelId:     aws.String(options.Model),
+		Body:        body,
+		ContentType: aws.String("application/json"),
+		Accept:      aws.String("application/json"),
+	}
+
+	output, err := c.client.InvokeModel(context.Background(), input)
+	if err != nil {
+		return nil, err
+	}
+
+	completionMap := map[string]string{}
+
+	err = json.Unmarshal(output.Body, &completionMap)
+	if err != nil {
+		return nil, err
+	}
+
+	response := completionMap["completion"]
+
+	usage.RegisterEvent("OUTPUT_TOKENS", "INTEGRATION", c.integration.GetKey(), estimateTokens(int64(len(response))), c.session)
+
+	return []string{response}, nil
 }
