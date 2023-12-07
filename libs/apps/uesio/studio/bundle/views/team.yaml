@@ -114,7 +114,7 @@ definition:
                                   - signal: panel/TOGGLE
                                     panel: newMember
                                 text: Add Member
-                                uesio.variant: uesio/io.secondary
+                                uesio.variant: uesio/io.primary
                             - uesio/io.button:
                                 text: $Label{uesio/io.delete}
                                 signals:

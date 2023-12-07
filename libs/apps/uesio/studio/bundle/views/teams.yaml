@@ -79,7 +79,7 @@ definition:
                           components:
                             - uesio/io.button:
                                 text: "New Team"
-                                uesio.variant: uesio/io.secondary
+                                uesio.variant: uesio/io.primary
                                 signals:
                                   - signal: "panel/TOGGLE"
                                     panel: "newTeam"
