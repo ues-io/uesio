@@ -186,7 +186,7 @@ definition:
                                     path: "app/$Param{app}/teams/${uesio/studio.name}"
                                 content:
                                   - uesio/io.text:
-                                      text: ${uesio/studio.name}
+                                      text: ${uesio/studio.label}
                                 avatar:
                                   - uesio/io.text:
                                       uesio.variant: uesio/io.icon

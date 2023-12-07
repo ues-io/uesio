@@ -104,7 +104,7 @@ definition:
                                           components:
                                             - uesio/io.iconlabel:
                                                 uesio.variant: uesio/io.namespacefield
-                                                text: ${uesio/studio.name}
+                                                text: ${uesio/studio.label}
                                                 subtitle: ${workspaces:uesio/studio.app->uesio/studio.fullname}
                                                 icon: ${workspaces:uesio/studio.app->uesio/studio.icon}
                                                 color: ${workspaces:uesio/studio.app->uesio/studio.color}

@@ -144,9 +144,14 @@ definition:
                             - uesio/io.field:
                                 fieldId: uesio/studio.name
                             - uesio/io.field:
+                                fieldId: uesio/studio.label
+                            - uesio/io.field:
                                 fieldId: uesio/studio.type
                             - uesio/io.field:
                                 fieldId: uesio/studio.dialect
+                      - uesio/io.grid:
+                          uesio.variant: uesio/io.four_columns
+                          items:
                             - uesio/io.field:
                                 mode: READ
                                 fieldId: uesio/studio.collection
@@ -160,9 +165,6 @@ definition:
                                     values:
                                       - BEFORESAVE
                                       - AFTERSAVE
-                      - uesio/io.grid:
-                          uesio.variant: uesio/io.four_columns
-                          items:
                             - uesio/io.field:
                                 fieldId: uesio/core.owner
                             - uesio/io.field:

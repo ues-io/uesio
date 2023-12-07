@@ -192,7 +192,7 @@ definition:
                   path: "app/$Param{app}/workspace/${uesio/studio.name}"
               content:
                 - uesio/io.text:
-                    text: ${uesio/studio.name}
+                    text: ${uesio/studio.label}
               avatar:
                 - uesio/io.text:
                     uesio.variant: uesio/io.icon
@@ -219,7 +219,7 @@ definition:
                   path: "app/$Param{app}/site/${uesio/studio.name}"
               content:
                 - uesio/io.text:
-                    text: ${uesio/studio.name}
+                    text: ${uesio/studio.label}
               avatar:
                 - uesio/io.text:
                     uesio.variant: uesio/io.icon

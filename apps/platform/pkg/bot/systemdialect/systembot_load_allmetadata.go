@@ -284,7 +284,10 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 			fakeID, _ := shortid.Generate()
 			opItem.SetField(wire.ID_FIELD, fakeID)
 		}
-
+		// Set the label to the label or name, whichever is provided.
+		// Do this here, before the loop over the requested fields,
+		// to ensure it doesn't get overridden.
+		opItem.SetField("uesio/studio.label", groupableItem.GetLabel())
 		opItem.SetField(wire.UNIQUE_KEY_FIELD, key)
 		return nil
 	})

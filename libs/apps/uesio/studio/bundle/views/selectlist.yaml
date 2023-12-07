@@ -118,17 +118,30 @@ definition:
                         name: $Param{workspacename}
                         app: $Param{app}
                     components:
-                      - uesio/io.field:
-                          fieldId: uesio/studio.name
-                      - uesio/io.field:
-                          fieldId: uesio/studio.options
                       - uesio/io.grid:
-                          uesio.variant: uesio/io.two_columns
+                          uesio.variant: uesio/io.four_columns
                           items:
+                            - uesio/io.field:
+                                fieldId: uesio/studio.name
+                            - uesio/io.field:
+                                fieldId: uesio/studio.label
                             - uesio/io.field:
                                 fieldId: uesio/studio.blank_option_label
                             - uesio/io.field:
                                 fieldId: uesio/studio.blank_option_language_label
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    uesio.context:
+                      workspace:
+                        name: $Param{workspacename}
+                        app: $Param{app}
+                    components:
+                      - uesio/io.titlebar:
+                          uesio.variant: uesio/io.section
+                          title: Select Options
+                      - uesio/io.field:
+                          label: " "
+                          fieldId: uesio/studio.options
 
   panels:
     deleteSelectlist:

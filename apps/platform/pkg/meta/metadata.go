@@ -93,6 +93,8 @@ type BundleableItem interface {
 	GetDBID(string) string
 	SetNamespace(string)
 	GetNamespace() string
+	SetLabel(string)
+	GetLabel() string
 	SetModified(time.Time)
 	IsPublic() bool
 }

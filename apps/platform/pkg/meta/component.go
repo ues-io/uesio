@@ -164,6 +164,16 @@ func (c *Component) Len() int {
 	return StandardItemLen(c)
 }
 
+func (c *Component) GetLabel() string {
+	if c.Title != "" {
+		return c.Title
+	}
+	if c.Label != "" {
+		return c.Label
+	}
+	return c.Name
+}
+
 func (c *Component) UnmarshalYAML(node *yaml.Node) error {
 	err := validateNodeName(node, c.Name)
 	if err != nil {

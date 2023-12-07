@@ -180,11 +180,7 @@ definition:
                             - uesio/io.field:
                                 fieldId: uesio/studio.name
                             - uesio/io.field:
-                                fieldId: uesio/studio.type
-                                uesio.context:
-                                  workspace:
-                                    name: $Param{workspacename}
-                                    app: $Param{app}
+                                fieldId: uesio/studio.label
                             - uesio/io.field:
                                 fieldId: uesio/core.updatedby
                                 user:
@@ -200,6 +196,8 @@ definition:
                               name: $Param{workspacename}
                               app: $Param{app}
                           items:
+                            - uesio/io.field:
+                                fieldId: uesio/studio.type
                             - uesio/io.field:
                                 fieldId: uesio/studio.authentication
                             - uesio/io.field:
@@ -232,12 +230,6 @@ definition:
                                     value: API_KEY
                             - uesio/io.field:
                                 fieldId: uesio/studio.baseurl
-                            - uesio/io.field:
-                              fieldId: uesio/studio.headers
-                              uesio.display:
-                                - type: fieldValue
-                                  field: uesio/studio.type
-                                  value: web
 
   panels:
     testAuthentication:

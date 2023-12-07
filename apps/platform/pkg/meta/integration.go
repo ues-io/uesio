@@ -27,8 +27,6 @@ type Integration struct {
 	Authentication string `yaml:"authentication,omitempty" json:"uesio/studio.authentication"`
 	Credentials    string `yaml:"credentials,omitempty" json:"uesio/studio.credentials"`
 	BaseURL        string `yaml:"baseUrl,omitempty" json:"uesio/studio.baseurl"`
-	// TODO Remove headers
-	Headers map[string]string `yaml:"headers,omitempty" json:"uesio/studio.headers"`
 }
 
 type IntegrationWrapper Integration

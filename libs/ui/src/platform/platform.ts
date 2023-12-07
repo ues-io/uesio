@@ -143,6 +143,7 @@ type MetadataInfo = {
 	icon: string
 	namespace: string
 	key: string
+	label?: string
 }
 
 type NamespaceInfo = {
