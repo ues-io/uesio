@@ -75,3 +75,7 @@ signals:
       - name: id
         type: TEXT
         label: Tab Id
+styleRegions:
+  root:
+  panel:
+  labels:
