@@ -124,6 +124,11 @@ definition:
           - uesio/io.box:
               uesio.variant: uesio/io.section
               components:
+                - uesio/io.titlebar:
+                    title: Team Members
+                    uesio.styleTokens:
+                      root:
+                        - mb-4
                 - uesio/io.deck:
                     uesio.id: teammembersslist
                     wire: teammembers
