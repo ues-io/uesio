@@ -29,7 +29,6 @@ definition:
       - flex
       - text-base
       - text-slate-600
-      - bg-white
       - group-hover:text-slate-900
 
 public: true
