@@ -194,8 +194,8 @@ definition:
     newMember:
       uesio.type: uesio/io.dialog
       title: Create a New Team Member
-      width: 400px
-      height: 500px
+      width: 550px
+      height: 350px
       components:
         - uesio/io.list:
             uesio.id: newteamlist
@@ -231,7 +231,21 @@ definition:
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
-            text: $Label{uesio/io.save}
+            text: Save and new
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - newteammember
+              - signal: wire/RESET
+                wire: newteammember
+              - signal: wire/LOAD
+                wires:
+                  - apps
+                  - teams
+                  - teammembers
+        - uesio/io.button:
+            uesio.variant: uesio/io.secondary
+            text: Save and close
             signals:
               - signal: wire/SAVE
                 wires:
