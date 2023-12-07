@@ -26,4 +26,5 @@ definition:
       - bg-white
       - font-medium
       - cursor-default
+      - z-0
 public: true
