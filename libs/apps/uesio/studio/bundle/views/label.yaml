@@ -35,6 +35,8 @@ definition:
                 itemIcon: tune
                 itemName: $Param{labelname}
                 itemNameSpace: $Param{namespace}
+                itemNameSpaceIcon: ${labels:uesio/studio.appicon}
+                itemNameSpaceColor: ${labels:uesio/studio.appcolor}
         left:
           - uesio/core.view:
               uesio.context:
@@ -52,6 +54,11 @@ definition:
                     uesio.variant: uesio/io.main
                     title: ${uesio/studio.name}
                     subtitle: Label
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: ${uesio/studio.appicon}
+                          color: ${uesio/studio.appcolor}
                     actions:
                       - uesio/io.group:
                           components:
