@@ -87,4 +87,7 @@ func (s *ServerWithShutdown) WaitShutdown() {
 	if err != nil {
 		slog.Error("Error terminating server: %v", err)
 	}
+	if !startupError {
+		slog.Info("Graceful shutdown is complete.")
+	}
 }

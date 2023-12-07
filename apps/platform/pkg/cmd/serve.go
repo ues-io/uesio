@@ -421,6 +421,5 @@ func serve(cmd *cobra.Command, args []string) {
 	server.WaitShutdown()
 
 	<-done
-	slog.Info("Graceful shutdown completed.")
 
 }
