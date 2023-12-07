@@ -1,4 +1,4 @@
 name: type
-type: TEXT
 label: Type
+type: TEXT
 required: true

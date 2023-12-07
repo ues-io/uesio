@@ -35,7 +35,6 @@ type IntegrationAction struct {
 	// IntegrationType will be extracted from the filesystem path
 	IntegrationTypeRef string `yaml:"-" json:"uesio/studio.integrationtype"`
 	BotRef             string `yaml:"bot,omitempty" json:"uesio/studio.bot"`
-	Label              string `yaml:"label,omitempty" json:"uesio/studio.label"`
 }
 
 type IntegrationActionWrapper IntegrationAction

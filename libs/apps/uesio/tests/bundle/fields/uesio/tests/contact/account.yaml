@@ -1,6 +1,6 @@
 name: account
-type: REFERENCE
 label: Account
+type: REFERENCE
 required: true
 reference:
   collection: account

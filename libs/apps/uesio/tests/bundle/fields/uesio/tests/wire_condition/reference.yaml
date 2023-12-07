@@ -1,5 +1,5 @@
 name: reference
-type: REFERENCE
 label: Reference
+type: REFERENCE
 reference:
   collection: wire_condition

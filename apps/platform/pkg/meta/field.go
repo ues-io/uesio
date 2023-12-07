@@ -28,7 +28,6 @@ type Field struct {
 	BundleableBase         `yaml:",inline"`
 	CollectionRef          string                  `yaml:"-" json:"uesio/studio.collection"`
 	Type                   string                  `yaml:"type" json:"uesio/studio.type"`
-	Label                  string                  `yaml:"label" json:"uesio/studio.label"`
 	ReadOnly               bool                    `yaml:"readOnly,omitempty" json:"uesio/studio.readonly"`
 	CreateOnly             bool                    `yaml:"createOnly,omitempty" json:"uesio/studio.createonly"`
 	SelectList             string                  `yaml:"selectList,omitempty" json:"uesio/studio.selectlist"`

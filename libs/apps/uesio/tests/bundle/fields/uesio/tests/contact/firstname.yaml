@@ -1,4 +1,4 @@
 name: firstname
-type: TEXT
 label: First Name
+type: TEXT
 required: true

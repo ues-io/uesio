@@ -170,6 +170,7 @@ definition:
                                   - signal: panel/TOGGLE
                                     panel: deleteUser
                 - uesio/io.box:
+                    uesio.variant: uesio/io.section
                     components:
                       - uesio/io.grid:
                           uesio.styleTokens:

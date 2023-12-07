@@ -64,6 +64,7 @@ func getMetadataList(metadatatype, namespace, grouping string, session *sess.Ses
 		bundleable := item.(meta.BundleableItem)
 		key := bundleable.GetKey()
 		ns := bundleable.GetNamespace()
+		label := bundleable.GetLabel()
 		// Strip off the grouping part of the key
 		if grouping != "" {
 			key = strings.TrimPrefix(key, strings.ToLower(grouping)+":")
@@ -76,6 +77,7 @@ func getMetadataList(metadatatype, namespace, grouping string, session *sess.Ses
 		collectionKeyMap[key] = datasource.MetadataResponse{
 			NamespaceInfo: appInfo,
 			Key:           key,
+			Label:         label,
 		}
 		return nil
 	}); err != nil {

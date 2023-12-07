@@ -1,4 +1,4 @@
 name: multiselect
-type: MULTISELECT
 label: MultiSelect
+type: MULTISELECT
 selectList: selectlist

@@ -356,6 +356,7 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data" count >= 1
 jsonpath "$.wires[0].data[*]['uesio/studio.name']" != ""
+jsonpath "$.wires[0].data[*]['uesio/studio.label']" != ""
 
 # Delete the collection
 POST https://{{host}}:{{port}}/site/wires/save

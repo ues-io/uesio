@@ -160,6 +160,19 @@ definition:
                               name: $Param{workspacename}
                               app: $Param{app}
                           components:
+                            - uesio/io.grid:
+                                uesio.variant: uesio/io.four_columns
+                                items:
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.label
+                                  - uesio/io.field:
+                                      fieldId: uesio/core.updatedby
+                                      user:
+                                        subtitle: $Time{uesio/core.updatedat}
+                                  - uesio/io.field:
+                                      fieldId: uesio/core.createdby
+                                      user:
+                                        subtitle: $Time{uesio/core.createdat}
                             - uesio/io.field:
                                 uesio.display:
                                   - type: paramValue

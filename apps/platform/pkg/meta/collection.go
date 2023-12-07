@@ -39,7 +39,6 @@ type Collection struct {
 	BuiltIn         `yaml:",inline"`
 	BundleableBase  `yaml:",inline"`
 	Type            string   `yaml:"type,omitempty" json:"uesio/studio.type"`
-	Label           string   `yaml:"label,omitempty" json:"uesio/studio.label"`
 	PluralLabel     string   `yaml:"pluralLabel,omitempty" json:"uesio/studio.plurallabel"`
 	UniqueKeyFields []string `yaml:"uniqueKey,omitempty" json:"uesio/studio.uniquekey"`
 	NameField       string   `yaml:"nameField,omitempty" json:"uesio/studio.namefield"`

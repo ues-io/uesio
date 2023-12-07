@@ -1,6 +1,6 @@
 name: struct
-type: STRUCT
 label: struct
+type: STRUCT
 subfields:
   - name: firstname
     label: First Name

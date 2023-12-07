@@ -26,35 +26,33 @@ sections:
       - accessFieldLabel
   - type: DISPLAY
 definition:
-  - uesio/io.box:
-      components:
-        - uesio/io.field:
-            fieldId: $Prop{allowAllField}
-            displayAs: "TOGGLE"
-        - uesio/io.searchbox:
-            wire: $Prop{metadataRecordsWireName}
-            uesio.display:
-              - type: fieldValue
-                field: $Prop{allowAllField}
-                operator: NOT_EQUALS
-                value: true
-            searchFields:
-              - uesio/studio.name
-              - uesio/studio.namespace
-        - uesio/studio.multipermissionpicker:
-            uesio.id: permsTable-$Prop{metadataRecordsWireName}
-            uesio.display:
-              - type: fieldValue
-                field: $Prop{allowAllField}
-                operator: NOT_EQUALS
-                value: true
-            uesio.context:
-              workspace:
-                name: $Param{workspacename}
-                app: $Param{app}
-            fieldId: $Prop{recordPermsMapField}
-            sourceWires:
-              - $Prop{metadataRecordsWireName}
-            permissionFields:
-              - type: CHECKBOX
-                label: $Prop{accessFieldLabel}
+  - uesio/io.field:
+      fieldId: $Prop{allowAllField}
+      displayAs: "TOGGLE"
+  - uesio/io.searchbox:
+      wire: $Prop{metadataRecordsWireName}
+      uesio.display:
+        - type: fieldValue
+          field: $Prop{allowAllField}
+          operator: NOT_EQUALS
+          value: true
+      searchFields:
+        - uesio/studio.name
+        - uesio/studio.namespace
+  - uesio/studio.multipermissionpicker:
+      uesio.id: permsTable-$Prop{metadataRecordsWireName}
+      uesio.display:
+        - type: fieldValue
+          field: $Prop{allowAllField}
+          operator: NOT_EQUALS
+          value: true
+      uesio.context:
+        workspace:
+          name: $Param{workspacename}
+          app: $Param{app}
+      fieldId: $Prop{recordPermsMapField}
+      sourceWires:
+        - $Prop{metadataRecordsWireName}
+      permissionFields:
+        - type: CHECKBOX
+          label: $Prop{accessFieldLabel}

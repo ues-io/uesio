@@ -284,6 +284,8 @@ jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "uesio/core.opena
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "uesio/tests.secret_access_allowed"
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "uesio/tests.secret_access_forbidden"
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "uesio/tests.test_api_key_credentials"
+jsonpath "$.wires[0].data[*]['uesio/studio.label']" != ""
+jsonpath "$.wires[0].data[*]['uesio/studio.label']" includes "Test API Key Credentials"
 
 POST https://{{host}}:{{port}}/site/wires/load
 Accept: application/json

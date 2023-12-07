@@ -1,4 +1,4 @@
-import { signal, component, api, metadata, definition } from "@uesio/ui"
+import { signal, component, api, metadata, definition, styles } from "@uesio/ui"
 import TabLabels from "../../utilities/tablabels/tablabels"
 import { useEffect } from "react"
 
@@ -26,10 +26,17 @@ const signals: Record<string, signal.ComponentSignalDescriptor> = {
 	},
 }
 
+const StyleDefaults = Object.freeze({
+	root: [],
+	labels: [],
+	panel: [],
+})
+
 const Tabs: definition.UC<TabsDefinition> = (props) => {
 	const { definition, context, path, componentType } = props
 	const { tabs = [] } = definition
 	const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
+	const classes = styles.useStyleTokens(StyleDefaults, props)
 
 	const componentId = api.component.getComponentIdFromProps(props)
 
@@ -58,6 +65,7 @@ const Tabs: definition.UC<TabsDefinition> = (props) => {
 
 	return (
 		<ScrollPanel
+			className={classes.root}
 			context={context}
 			variant={definition.panelVariant}
 			header={
@@ -66,6 +74,7 @@ const Tabs: definition.UC<TabsDefinition> = (props) => {
 					selectedTab={selectedTab?.id}
 					setSelectedTab={setSelectedTab}
 					tabs={tabs}
+					className={classes.labels}
 					context={context}
 				/>
 			}
@@ -77,6 +86,7 @@ const Tabs: definition.UC<TabsDefinition> = (props) => {
 					path={`${path}["tabs"]["${selectedIndex}"]`}
 					context={context}
 					componentType={componentType}
+					className={classes.panel}
 				/>
 			)}
 		</ScrollPanel>

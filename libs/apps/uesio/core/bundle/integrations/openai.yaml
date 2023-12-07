@@ -3,5 +3,4 @@ public: true
 type: openai
 credentials: openai
 authentication: API_KEY
-headers: {}
 baseUrl: ""

@@ -10,105 +10,105 @@ import (
 
 var field_basic = trimYamlString(`
 name: myfield
-type: TEXT
 label: My Label
+type: TEXT
 `)
 
 var field_invalid_type = trimYamlString(`
 name: myfield
-type: TACO
 label: My Label
+type: TACO
 `)
 
 var field_reference = trimYamlString(`
 name: myfield
-type: REFERENCE
 label: My Label
+type: REFERENCE
 reference:
     collection: my/namespace.myothercollection
 `)
 
 var field_reference_local_collection = trimYamlString(`
 name: myfield
-type: REFERENCE
 label: My Label
+type: REFERENCE
 reference:
     collection: myothercollection
 `)
 
 var field_reference_missing_node = trimYamlString(`
 name: myfield
-type: REFERENCE
 label: My Label
+type: REFERENCE
 `)
 
 var field_reference_empty_node = trimYamlString(`
 name: myfield
-type: REFERENCE
 label: My Label
+type: REFERENCE
 reference:
 `)
 
 var field_reference_missing_collection = trimYamlString(`
 name: myfield
-type: REFERENCE
 label: My Label
+type: REFERENCE
 reference:
     wrong_property: wrong_value
 `)
 
 var field_select = trimYamlString(`
 name: myfield
-type: SELECT
 label: My Label
+type: SELECT
 selectList: my/namespace.myselectlist
 `)
 
 var field_select_local = trimYamlString(`
 name: myfield
-type: SELECT
 label: My Label
+type: SELECT
 selectList: myselectlist
 `)
 
 var field_select_missing_selectlist = trimYamlString(`
 name: myfield
-type: SELECT
 label: My Label
+type: SELECT
 `)
 
 var field_number = trimYamlString(`
 name: myfield
-type: NUMBER
 label: My Label
+type: NUMBER
 `)
 
 var field_number_decimals = trimYamlString(`
 name: myfield
-type: NUMBER
 label: My Label
+type: NUMBER
 number:
     decimals: 2
 `)
 
 var field_file = trimYamlString(`
 name: myfield
-type: FILE
 label: My Label
+type: FILE
 `)
 
 var field_file_accept = trimYamlString(`
 name: myfield
-type: FILE
 label: My Label
+type: FILE
 file:
     accept: IMAGE
 `)
 
 var field_referencegroup = trimYamlString(`
 name: myfield
-type: REFERENCEGROUP
 label: My Label
+type: REFERENCEGROUP
 referenceGroup:
     collection: my/namespace.myothercollection
     field: my/namespace.somefield
@@ -117,8 +117,8 @@ referenceGroup:
 
 var field_referencegroup_local = trimYamlString(`
 name: myfield
-type: REFERENCEGROUP
 label: My Label
+type: REFERENCEGROUP
 referenceGroup:
     collection: myothercollection
     field: somefield
@@ -127,21 +127,21 @@ referenceGroup:
 
 var field_referencegroup_missing_node = trimYamlString(`
 name: myfield
-type: REFERENCEGROUP
 label: My Label
+type: REFERENCEGROUP
 `)
 
 var field_referencegroup_empty_node = trimYamlString(`
 name: myfield
-type: REFERENCEGROUP
 label: My Label
+type: REFERENCEGROUP
 referenceGroup:
 `)
 
 var field_referencegroup_missing_collection = trimYamlString(`
 name: myfield
-type: REFERENCEGROUP
 label: My Label
+type: REFERENCEGROUP
 referenceGroup:
     field: my/namespace.somefield
     onDelete: CASCADE
@@ -149,8 +149,8 @@ referenceGroup:
 
 var field_referencegroup_missing_field = trimYamlString(`
 name: myfield
-type: REFERENCEGROUP
 label: My Label
+type: REFERENCEGROUP
 referenceGroup:
     collection: my/namespace.myothercollection
     onDelete: CASCADE
@@ -179,10 +179,10 @@ func TestFieldUnmarshal(t *testing.T) {
 				BundleableBase: BundleableBase{
 					Name:      "myfield",
 					Namespace: "my/namespace",
+					Label:     "My Label",
 				},
 				CollectionRef: "my/namespace.mycollection",
 				Type:          "TEXT",
-				Label:         "My Label",
 			},
 			nil,
 		},
@@ -205,10 +205,10 @@ func TestFieldUnmarshal(t *testing.T) {
 				BundleableBase: BundleableBase{
 					Name:      "myfield",
 					Namespace: "my/namespace",
+					Label:     "My Label",
 				},
 				CollectionRef: "my/namespace.mycollection",
 				Type:          "REFERENCE",
-				Label:         "My Label",
 				ReferenceMetadata: &ReferenceMetadata{
 					Collection: "my/namespace.myothercollection",
 					Namespace:  "my/namespace",
@@ -226,10 +226,10 @@ func TestFieldUnmarshal(t *testing.T) {
 				BundleableBase: BundleableBase{
 					Name:      "myfield",
 					Namespace: "my/namespace",
+					Label:     "My Label",
 				},
 				CollectionRef: "my/namespace.mycollection",
 				Type:          "REFERENCE",
-				Label:         "My Label",
 				ReferenceMetadata: &ReferenceMetadata{
 					Collection: "my/namespace.myothercollection",
 					Namespace:  "my/namespace",
@@ -274,10 +274,10 @@ func TestFieldUnmarshal(t *testing.T) {
 				BundleableBase: BundleableBase{
 					Name:      "myfield",
 					Namespace: "my/namespace",
+					Label:     "My Label",
 				},
 				CollectionRef: "my/namespace.mycollection",
 				Type:          "SELECT",
-				Label:         "My Label",
 				SelectList:    "my/namespace.myselectlist",
 			},
 			nil,
@@ -292,10 +292,10 @@ func TestFieldUnmarshal(t *testing.T) {
 				BundleableBase: BundleableBase{
 					Name:      "myfield",
 					Namespace: "my/namespace",
+					Label:     "My Label",
 				},
 				CollectionRef: "my/namespace.mycollection",
 				Type:          "SELECT",
-				Label:         "My Label",
 				SelectList:    "my/namespace.myselectlist",
 			},
 			nil,
@@ -319,10 +319,10 @@ func TestFieldUnmarshal(t *testing.T) {
 				BundleableBase: BundleableBase{
 					Name:      "myfield",
 					Namespace: "my/namespace",
+					Label:     "My Label",
 				},
 				CollectionRef:  "my/namespace.mycollection",
 				Type:           "NUMBER",
-				Label:          "My Label",
 				NumberMetadata: &NumberMetadata{},
 			},
 			nil,
@@ -337,10 +337,10 @@ func TestFieldUnmarshal(t *testing.T) {
 				BundleableBase: BundleableBase{
 					Name:      "myfield",
 					Namespace: "my/namespace",
+					Label:     "My Label",
 				},
 				CollectionRef: "my/namespace.mycollection",
 				Type:          "NUMBER",
-				Label:         "My Label",
 				NumberMetadata: &NumberMetadata{
 					Decimals: 2,
 				},
@@ -357,10 +357,10 @@ func TestFieldUnmarshal(t *testing.T) {
 				BundleableBase: BundleableBase{
 					Name:      "myfield",
 					Namespace: "my/namespace",
+					Label:     "My Label",
 				},
 				CollectionRef: "my/namespace.mycollection",
 				Type:          "FILE",
-				Label:         "My Label",
 				FileMetadata: &FileMetadata{
 					FileSource: "uesio/core.platform",
 					Namespace:  "my/namespace",
@@ -378,10 +378,10 @@ func TestFieldUnmarshal(t *testing.T) {
 				BundleableBase: BundleableBase{
 					Name:      "myfield",
 					Namespace: "my/namespace",
+					Label:     "My Label",
 				},
 				CollectionRef: "my/namespace.mycollection",
 				Type:          "FILE",
-				Label:         "My Label",
 				FileMetadata: &FileMetadata{
 					FileSource: "uesio/core.platform",
 					Namespace:  "my/namespace",
@@ -400,10 +400,10 @@ func TestFieldUnmarshal(t *testing.T) {
 				BundleableBase: BundleableBase{
 					Name:      "myfield",
 					Namespace: "my/namespace",
+					Label:     "My Label",
 				},
 				CollectionRef: "my/namespace.mycollection",
 				Type:          "REFERENCEGROUP",
-				Label:         "My Label",
 				ReferenceGroupMetadata: &ReferenceGroupMetadata{
 					Collection: "my/namespace.myothercollection",
 					Field:      "my/namespace.somefield",
@@ -423,10 +423,10 @@ func TestFieldUnmarshal(t *testing.T) {
 				BundleableBase: BundleableBase{
 					Name:      "myfield",
 					Namespace: "my/namespace",
+					Label:     "My Label",
 				},
 				CollectionRef: "my/namespace.mycollection",
 				Type:          "REFERENCEGROUP",
-				Label:         "My Label",
 				ReferenceGroupMetadata: &ReferenceGroupMetadata{
 					Collection: "my/namespace.myothercollection",
 					Field:      "my/namespace.somefield",
@@ -509,10 +509,10 @@ func TestFieldMarshal(t *testing.T) {
 				BundleableBase: BundleableBase{
 					Name:      "myfield",
 					Namespace: "my/namespace",
+					Label:     "My Label",
 				},
 				CollectionRef: "my/namespace.mycollection",
 				Type:          "TEXT",
-				Label:         "My Label",
 			},
 			field_basic,
 			"my/namespace/mycollection/myfield.yaml",
@@ -525,10 +525,10 @@ func TestFieldMarshal(t *testing.T) {
 				BundleableBase: BundleableBase{
 					Name:      "myfield",
 					Namespace: "my/namespace",
+					Label:     "My Label",
 				},
 				CollectionRef: "my/namespace.mycollection",
 				Type:          "REFERENCE",
-				Label:         "My Label",
 				ReferenceMetadata: &ReferenceMetadata{
 					Collection: "my/namespace.myothercollection",
 				},
@@ -544,10 +544,10 @@ func TestFieldMarshal(t *testing.T) {
 				BundleableBase: BundleableBase{
 					Name:      "myfield",
 					Namespace: "my/namespace",
+					Label:     "My Label",
 				},
 				CollectionRef: "my/namespace.mycollection",
 				Type:          "SELECT",
-				Label:         "My Label",
 				SelectList:    "my/namespace.myselectlist",
 			},
 			field_select_local,
@@ -561,10 +561,10 @@ func TestFieldMarshal(t *testing.T) {
 				BundleableBase: BundleableBase{
 					Name:      "myfield",
 					Namespace: "my/namespace",
+					Label:     "My Label",
 				},
 				CollectionRef:  "my/namespace.mycollection",
 				Type:           "NUMBER",
-				Label:          "My Label",
 				NumberMetadata: &NumberMetadata{},
 			},
 			field_number,
@@ -578,10 +578,10 @@ func TestFieldMarshal(t *testing.T) {
 				BundleableBase: BundleableBase{
 					Name:      "myfield",
 					Namespace: "my/namespace",
+					Label:     "My Label",
 				},
 				CollectionRef: "my/namespace.mycollection",
 				Type:          "NUMBER",
-				Label:         "My Label",
 				NumberMetadata: &NumberMetadata{
 					Decimals: 2,
 				},
@@ -597,10 +597,10 @@ func TestFieldMarshal(t *testing.T) {
 				BundleableBase: BundleableBase{
 					Name:      "myfield",
 					Namespace: "my/namespace",
+					Label:     "My Label",
 				},
 				CollectionRef: "my/namespace.mycollection",
 				Type:          "FILE",
-				Label:         "My Label",
 				FileMetadata:  &FileMetadata{},
 			},
 			field_file,
@@ -614,10 +614,10 @@ func TestFieldMarshal(t *testing.T) {
 				BundleableBase: BundleableBase{
 					Name:      "myfield",
 					Namespace: "my/namespace",
+					Label:     "My Label",
 				},
 				CollectionRef: "my/namespace.mycollection",
 				Type:          "FILE",
-				Label:         "My Label",
 				FileMetadata: &FileMetadata{
 					Accept: "IMAGE",
 				},
@@ -633,10 +633,10 @@ func TestFieldMarshal(t *testing.T) {
 				BundleableBase: BundleableBase{
 					Name:      "myfield",
 					Namespace: "my/namespace",
+					Label:     "My Label",
 				},
 				CollectionRef: "my/namespace.mycollection",
 				Type:          "REFERENCEGROUP",
-				Label:         "My Label",
 				ReferenceGroupMetadata: &ReferenceGroupMetadata{
 					Collection: "my/namespace.myothercollection",
 					Field:      "my/namespace.somefield",
