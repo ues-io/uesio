@@ -1,6 +1,6 @@
 name: openai
+label: OpenAI
 public: true
 type: openai
 credentials: openai
 authentication: API_KEY
-baseUrl: ""

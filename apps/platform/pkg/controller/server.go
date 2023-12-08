@@ -12,6 +12,8 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+
+	"github.com/thecloudmasters/uesio/pkg/env"
 )
 
 var gracefulShutdownSeconds int
@@ -20,6 +22,8 @@ func init() {
 	gracefulShutdownSecondsEnvVar := os.Getenv("UESIO_GRACEFUL_SHUTDOWN_SECONDS")
 	if intVal, err := strconv.Atoi(gracefulShutdownSecondsEnvVar); err == nil {
 		gracefulShutdownSeconds = intVal
+	} else if env.InDevMode() {
+		gracefulShutdownSeconds = 0
 	} else {
 		gracefulShutdownSeconds = 5
 	}
@@ -69,7 +73,7 @@ func (s *ServerWithShutdown) WaitShutdown() {
 		startupError = true
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(gracefulShutdownSeconds)*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(gracefulShutdownSeconds+1)*time.Second)
 	defer cancel()
 
 	// If there was an error starting up the server, this channel will receive a message

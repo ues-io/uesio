@@ -151,7 +151,6 @@ func LoadMany(items []meta.BundleableItem, session *sess.Session, connection wir
 func Load(item meta.BundleableItem, session *sess.Session, connection wire.Connection) error {
 	bs, err := GetBundleStoreConnection(item.GetNamespace(), session, connection)
 	if err != nil {
-		fmt.Println("Failed load one: " + item.GetKey() + " : " + err.Error())
 		return err
 	}
 	return bs.GetItem(item)
