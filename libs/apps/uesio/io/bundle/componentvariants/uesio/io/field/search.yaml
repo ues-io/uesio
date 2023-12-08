@@ -2,12 +2,14 @@ name: search
 label: Search
 definition:
   uesio.styleTokens:
+    root:
+      - relative
     input:
       - border
-      - border-slate-400
+      - border-slate-300
       - px-2.5
-      - py-1.5
+      - py-2
       - rounded
-      - text-xs
+      - text-sm
       - outline-offset-0
 public: true

@@ -113,9 +113,11 @@ definition:
           - uesio/io.box:
               uesio.variant: uesio/io.section
               components:
-                - uesio/io.searchbox:
-                    wire: allcollections
-                    focusOnRender: true
+                - uesio/io.group:
+                    components:
+                      - uesio/io.searchbox:
+                          wire: allcollections
+                          focusOnRender: true
                 - uesio/io.table:
                     wire: allcollections
                     columns:
@@ -127,7 +129,8 @@ definition:
                               subtitle: ${uesio/studio.namespace}
                               icon: ${uesio/studio.appicon}
                               color: ${uesio/studio.appcolor}
-                      - field: uesio/studio.label
+                      - field: uesio/studio.type
+                        label: Data Source Type
                       - field: uesio/core.updatedby
                         user:
                           subtitle: $Time{uesio/core.updatedat}
