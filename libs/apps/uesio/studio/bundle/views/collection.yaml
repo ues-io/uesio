@@ -507,11 +507,11 @@ definition:
                               workspace:
                                 name: $Param{workspacename}
                                 app: $Param{app}
+          - uesio/io.box:
+              uesio.variant: uesio/io.section
+              components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.section
-                    uesio.styleTokens:
-                      root:
-                        - mt-2
                     uesio.display:
                       - type: fieldValue
                         wire: collections
