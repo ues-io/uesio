@@ -9,8 +9,6 @@ definition:
       - border-separate
       - border-spacing-0
       - w-full
-      - border-slate-300
-      - border-t
     header:
       - border-b
       - border-slate-150

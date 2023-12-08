@@ -10,7 +10,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/credentials"
 )
 
-var apiKeyLocalMetadataNames = trimYamlString(`
+var apiKeyLocalMetadataNames = TrimYamlString(`
 name: somecredential
 type: API_KEY
 apiKey:
@@ -24,7 +24,7 @@ entries:
         value: someconfigvalue
 `)
 
-var apiKeyQualifiedMetadataReferences = trimYamlString(`
+var apiKeyQualifiedMetadataReferences = TrimYamlString(`
 name: somecredential
 type: API_KEY
 apiKey:
@@ -38,7 +38,7 @@ entries:
         value: luigi/foo.someconfigvalue
 `)
 
-var apiKeyThisAppMetadataReferences = trimYamlString(`
+var apiKeyThisAppMetadataReferences = TrimYamlString(`
 name: somecredential
 type: API_KEY
 apiKey:
@@ -52,7 +52,7 @@ entries:
         value: this/app.someconfigvalue
 `)
 
-var oauthFullyQualifiedNames = trimYamlString(`
+var oauthFullyQualifiedNames = TrimYamlString(`
 name: somecredential
 type: OAUTH2_CREDENTIALS
 oauth2:

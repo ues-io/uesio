@@ -8,7 +8,8 @@ components:
   - uesio/io.box:
       components:
         - uesio/io.titlebar:
-            title: ${collection}
+            title: $Collection{${wirename}:pluralLabel}
+            subtitle: List View
             uesio.variant: uesio/io.main
             actions:
               - uesio/io.group:

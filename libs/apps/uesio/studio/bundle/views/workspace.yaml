@@ -40,7 +40,7 @@ definition:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
                     title: ${uesio/studio.name}
-                    subtitle: Workspace
+                    subtitle: $Collection{label}
                     avatar:
                       - uesio/io.text:
                           uesio.variant: uesio/io.icon
