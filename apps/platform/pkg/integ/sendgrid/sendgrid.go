@@ -36,7 +36,7 @@ func RunAction(bot *meta.Bot, ic *wire.IntegrationConnection, actionName string,
 	}
 	switch strings.ToLower(actionName) {
 	case "sendemail":
-		return nil, sgic.sendEmail(params)
+		return sgic.sendEmail(params)
 	}
 	return nil, exceptions.NewBadRequestException("invalid action name for SendGrid integration")
 }
@@ -156,14 +156,16 @@ func createMessage(requestOptions map[string]interface{}) *mail.SGMailV3 {
 	return message
 }
 
-func (sgic *connection) sendEmail(requestOptions map[string]interface{}) error {
+func (sgic *connection) sendEmail(requestOptions map[string]interface{}) (map[string]interface{}, error) {
 	message := createMessage(requestOptions)
 	response, err := sgic.client.Send(message)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if response.StatusCode != 202 {
-		return fmt.Errorf("%v %s", response.StatusCode, response.Body)
+		return nil, fmt.Errorf("%v %s", response.StatusCode, response.Body)
 	}
-	return nil
+	return map[string]interface{}{
+		"messageId": response.Headers["X-Message-Id"],
+	}, nil
 }

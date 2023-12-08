@@ -97,9 +97,10 @@ type IBotParam interface {
 }
 
 type BotParamCondition struct {
-	Param string      `yaml:"param" json:"param"`
-	Value interface{} `yaml:"value" json:"value"`
-	Type  string      `yaml:"type,omitempty" json:"type"`
+	Param    string      `yaml:"param" json:"param"`
+	Value    interface{} `yaml:"value" json:"value"`
+	Type     string      `yaml:"type,omitempty" json:"type"`
+	Operator string      `yaml:"operator,omitempty" json:"operator"`
 }
 
 func (b BotParamCondition) GetParam() string {
@@ -115,9 +116,10 @@ func (b BotParamCondition) GetType() string {
 }
 
 type BotParamConditionResponse struct {
-	Param string      `json:"param"`
-	Value interface{} `json:"value"`
-	Type  string      `json:"type"`
+	Param    string      `json:"param"`
+	Value    interface{} `json:"value"`
+	Type     string      `json:"type"`
+	Operator string      `json:"operator"`
 }
 
 func (b BotParamConditionResponse) GetParam() string {
@@ -126,6 +128,10 @@ func (b BotParamConditionResponse) GetParam() string {
 
 func (b BotParamConditionResponse) GetValue() interface{} {
 	return b.Value
+}
+
+func (b BotParamConditionResponse) GetOperator() string {
+	return b.Operator
 }
 
 func (b BotParamConditionResponse) GetType() string {

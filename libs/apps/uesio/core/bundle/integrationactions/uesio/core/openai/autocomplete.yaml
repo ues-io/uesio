@@ -1,3 +1,16 @@
 name: autocomplete
 label: Autocomplete
 public: true
+params:
+  - name: model
+    label: Model
+    type: TEXT
+    required: true
+  - name: input
+    label: Input
+    type: TEXT
+    required: true
+  - name: format
+    label: Format
+    type: TEXT
+    required: true

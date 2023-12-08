@@ -273,8 +273,8 @@ definition:
     editIntegrationAction:
       uesio.type: uesio/io.dialog
       title: Edit Integration Action
-      width: 440px
-      height: 500px
+      width: 800px
+      height: 680px
       afterClose:
         - signal: wire/CANCEL
           wire: integrationActions
@@ -299,6 +299,16 @@ definition:
                     workspace:
                       name: $Param{workspacename}
                       app: $Param{app}
+              - uesio/io.box:
+                  uesio.variant: uesio/io.section
+                  components:
+                    - uesio/io.titlebar:
+                        title: Action Input Parameters
+                        subtitle: (optional, defaults to to the Bot's parameters)
+                    - uesio/io.field:
+                        fieldId: uesio/studio.params
+                        uesio.id: action-params
+                        label: " "
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary

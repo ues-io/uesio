@@ -1,5 +1,5 @@
-name: invokemodel
-label: Invoke Model
+name: streammodel
+label: Stream Model
 public: true
 params:
   - name: model

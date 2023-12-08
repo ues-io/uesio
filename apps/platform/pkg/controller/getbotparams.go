@@ -32,6 +32,7 @@ func getParamResponse(params meta.BotParams) meta.BotParamsResponse {
 	for _, param := range params {
 		response = append(response, meta.BotParamResponse{
 			Name:         param.Name,
+			Label:        param.Label,
 			Prompt:       param.Prompt,
 			Type:         param.Type,
 			MetadataType: param.MetadataType,
