@@ -176,6 +176,6 @@ func getYamlNode(yamlContent string) *YAMLDef {
 	return yamlNode
 }
 
-func trimYamlString(yamlContent string) string {
+func TrimYamlString(yamlContent string) string {
 	return strings.TrimPrefix(yamlContent, "\n")
 }

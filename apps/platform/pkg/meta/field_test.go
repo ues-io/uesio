@@ -8,19 +8,19 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-var field_basic = trimYamlString(`
+var field_basic = TrimYamlString(`
 name: myfield
 label: My Label
 type: TEXT
 `)
 
-var field_invalid_type = trimYamlString(`
+var field_invalid_type = TrimYamlString(`
 name: myfield
 label: My Label
 type: TACO
 `)
 
-var field_reference = trimYamlString(`
+var field_reference = TrimYamlString(`
 name: myfield
 label: My Label
 type: REFERENCE
@@ -28,7 +28,7 @@ reference:
     collection: my/namespace.myothercollection
 `)
 
-var field_reference_local_collection = trimYamlString(`
+var field_reference_local_collection = TrimYamlString(`
 name: myfield
 label: My Label
 type: REFERENCE
@@ -36,20 +36,20 @@ reference:
     collection: myothercollection
 `)
 
-var field_reference_missing_node = trimYamlString(`
+var field_reference_missing_node = TrimYamlString(`
 name: myfield
 label: My Label
 type: REFERENCE
 `)
 
-var field_reference_empty_node = trimYamlString(`
+var field_reference_empty_node = TrimYamlString(`
 name: myfield
 label: My Label
 type: REFERENCE
 reference:
 `)
 
-var field_reference_missing_collection = trimYamlString(`
+var field_reference_missing_collection = TrimYamlString(`
 name: myfield
 label: My Label
 type: REFERENCE
@@ -57,33 +57,33 @@ reference:
     wrong_property: wrong_value
 `)
 
-var field_select = trimYamlString(`
+var field_select = TrimYamlString(`
 name: myfield
 label: My Label
 type: SELECT
 selectList: my/namespace.myselectlist
 `)
 
-var field_select_local = trimYamlString(`
+var field_select_local = TrimYamlString(`
 name: myfield
 label: My Label
 type: SELECT
 selectList: myselectlist
 `)
 
-var field_select_missing_selectlist = trimYamlString(`
+var field_select_missing_selectlist = TrimYamlString(`
 name: myfield
 label: My Label
 type: SELECT
 `)
 
-var field_number = trimYamlString(`
+var field_number = TrimYamlString(`
 name: myfield
 label: My Label
 type: NUMBER
 `)
 
-var field_number_decimals = trimYamlString(`
+var field_number_decimals = TrimYamlString(`
 name: myfield
 label: My Label
 type: NUMBER
@@ -91,13 +91,13 @@ number:
     decimals: 2
 `)
 
-var field_file = trimYamlString(`
+var field_file = TrimYamlString(`
 name: myfield
 label: My Label
 type: FILE
 `)
 
-var field_file_accept = trimYamlString(`
+var field_file_accept = TrimYamlString(`
 name: myfield
 label: My Label
 type: FILE
@@ -105,7 +105,7 @@ file:
     accept: IMAGE
 `)
 
-var field_referencegroup = trimYamlString(`
+var field_referencegroup = TrimYamlString(`
 name: myfield
 label: My Label
 type: REFERENCEGROUP
@@ -115,7 +115,7 @@ referenceGroup:
     onDelete: CASCADE
 `)
 
-var field_referencegroup_local = trimYamlString(`
+var field_referencegroup_local = TrimYamlString(`
 name: myfield
 label: My Label
 type: REFERENCEGROUP
@@ -125,20 +125,20 @@ referenceGroup:
     onDelete: CASCADE
 `)
 
-var field_referencegroup_missing_node = trimYamlString(`
+var field_referencegroup_missing_node = TrimYamlString(`
 name: myfield
 label: My Label
 type: REFERENCEGROUP
 `)
 
-var field_referencegroup_empty_node = trimYamlString(`
+var field_referencegroup_empty_node = TrimYamlString(`
 name: myfield
 label: My Label
 type: REFERENCEGROUP
 referenceGroup:
 `)
 
-var field_referencegroup_missing_collection = trimYamlString(`
+var field_referencegroup_missing_collection = TrimYamlString(`
 name: myfield
 label: My Label
 type: REFERENCEGROUP
@@ -147,7 +147,7 @@ referenceGroup:
     onDelete: CASCADE
 `)
 
-var field_referencegroup_missing_field = trimYamlString(`
+var field_referencegroup_missing_field = TrimYamlString(`
 name: myfield
 label: My Label
 type: REFERENCEGROUP
