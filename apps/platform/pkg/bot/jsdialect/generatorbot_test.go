@@ -1,6 +1,7 @@
 package jsdialect
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -43,10 +44,11 @@ func Test_MergeYAMLString(t *testing.T) {
 	botAPI := &GeneratorBotAPI{}
 
 	tests := []struct {
-		name     string
-		params   map[string]interface{}
-		template string
-		response string
+		name        string
+		params      map[string]interface{}
+		template    string
+		response    string
+		expectedErr error
 	}{
 		{
 			name:     "Sanity",
@@ -71,6 +73,15 @@ func Test_MergeYAMLString(t *testing.T) {
 			response: inlineMergeResult,
 		},
 		{
+			name: "Inline Merge Value Fail",
+			params: map[string]interface{}{
+				"mymerge": list,
+			},
+			template:    inlineMerge,
+			response:    "",
+			expectedErr: errors.New("cannot merge a sequence or map into a multipart template: ${mymerge} : prefix:${mymerge}:suffix"),
+		},
+		{
 			name: "List Merge",
 			params: map[string]interface{}{
 				"mymerge": list,
@@ -91,8 +102,12 @@ func Test_MergeYAMLString(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 
 			response, err := botAPI.MergeYamlString(tt.params, tt.template)
+			if tt.expectedErr != nil {
+				assert.Equal(t, tt.expectedErr, err)
+				return
+			}
 			if err != nil {
-				assert.Fail(t, tt.name+" : "+err.Error())
+				t.Errorf("Unexpected failure merging: %s", err.Error())
 			}
 
 			assert.Equal(t, tt.response, response)

@@ -464,7 +464,8 @@ class Context {
 		return wire
 	}
 
-	getCollection = (wireid?: string) => this.getWire(wireid)?.getCollection()
+	getWireCollection = (wireid?: string) =>
+		this.getWire(wireid)?.getCollection()
 
 	getPlainWire = (wireid?: string) => {
 		const [view, wire] = this.getViewAndWireId(wireid)

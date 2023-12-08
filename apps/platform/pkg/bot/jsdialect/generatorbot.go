@@ -168,7 +168,7 @@ func mergeYamlString(templateString string, params map[string]interface{}) (*yam
 		return nil, err
 	}
 
-	err = mergeNodes(node, params)
+	err = mergeNode(node, params)
 	if err != nil {
 		return nil, err
 	}
@@ -177,18 +177,18 @@ func mergeYamlString(templateString string, params map[string]interface{}) (*yam
 
 }
 
-func mergeNodes(node *yaml.Node, params map[string]interface{}) error {
+func mergeNode(node *yaml.Node, params map[string]interface{}) error {
 	if node == nil || params == nil {
 		return nil
 	}
 
 	if node.Kind == yaml.DocumentNode {
-		return mergeNodes(node.Content[0], params)
+		return mergeNode(node.Content[0], params)
 	}
 
 	if node.Kind == yaml.SequenceNode || node.Kind == yaml.MappingNode {
 		for i := range node.Content {
-			err := mergeNodes(node.Content[i], params)
+			err := mergeNode(node.Content[i], params)
 			if err != nil {
 				return err
 			}

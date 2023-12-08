@@ -1,4 +1,4 @@
-import testWireSignal, { WireSignalTest } from "./utils"
+import testWireSignal, { WireSignalTest } from "../../test/wire/utils"
 
 const wireId = "mywire"
 const collectionId = "ben/planets.exoplanet"
@@ -12,12 +12,12 @@ const tests: WireSignalTest[] = [
 		run: () => (wire, context) => {
 			const data = Object.values(wire.data)
 			expect(data).toHaveLength(0)
-			expect(context.mergeString("$CollectionMeta{mywire:label}")).toBe(
+			expect(context.mergeString("$Collection{mywire:label}")).toBe(
 				"Exoplanet"
 			)
-			expect(
-				context.mergeString("$CollectionMeta{mywire:pluralLabel}")
-			).toBe("Exoplanets")
+			expect(context.mergeString("$Collection{mywire:pluralLabel}")).toBe(
+				"Exoplanets"
+			)
 		},
 	},
 	{
@@ -33,10 +33,8 @@ const tests: WireSignalTest[] = [
 		run: () => (wire, context) => {
 			const data = Object.values(wire.data)
 			expect(data).toHaveLength(1)
-			expect(context.mergeString("$CollectionMeta{label}")).toBe(
-				"Exoplanet"
-			)
-			expect(context.mergeString("$CollectionMeta{pluralLabel}")).toBe(
+			expect(context.mergeString("$Collection{label}")).toBe("Exoplanet")
+			expect(context.mergeString("$Collection{pluralLabel}")).toBe(
 				"Exoplanets"
 			)
 		},

@@ -19,7 +19,7 @@ type MergeType =
 	| "Time"
 	| "Date"
 	| "RecordMeta"
-	| "CollectionMeta"
+	| "Collection"
 	| "Theme"
 	| "File"
 	| "UserFile"
@@ -159,9 +159,9 @@ const handlers: Record<MergeType, MergeHandler> = {
 		}
 		return ""
 	},
-	CollectionMeta: (fullExpression, context) => {
+	Collection: (fullExpression, context) => {
 		const [wirename, expression] = parseWireExpression(fullExpression)
-		const collection = context.getCollection(wirename)
+		const collection = context.getWireCollection(wirename)
 		if (expression === "label") {
 			return collection?.getLabel() || ""
 		}
@@ -179,7 +179,7 @@ const handlers: Record<MergeType, MergeHandler> = {
 		return ""
 	},
 	SelectList: (expression, context) => {
-		const fieldMetadata = context.getCollection()?.getField(expression)
+		const fieldMetadata = context.getWireCollection()?.getField(expression)
 		const selectListMetadata = fieldMetadata?.getSelectOptions(context)
 		const value = context.getRecord()?.getFieldValue(expression)
 		const label =
