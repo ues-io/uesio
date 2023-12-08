@@ -84,11 +84,18 @@ definition:
           - uesio/io.box:
               uesio.variant: uesio/io.section
               components:
-                - uesio/io.searchbox:
-                    wire: bots
-                    focusOnRender: true
-                    searchFields:
-                      - uesio/studio.name
+                - uesio/io.group:
+                    components:
+                      - uesio/io.searchbox:
+                          wire: bots
+                          focusOnRender: true
+                          searchFields:
+                            - uesio/studio.name
+                            - uesio/studio.type
+                      - uesio/io.filter:
+                          wire: bots
+                          fieldId: uesio/studio.type
+                          labelPosition: none
                 - uesio/io.table:
                     uesio.id: botsTable
                     wire: bots

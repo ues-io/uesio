@@ -154,6 +154,8 @@ definition:
                             - uesio/io.field:
                                 fieldId: uesio/studio.name
                             - uesio/io.field:
+                                fieldId: uesio/studio.label
+                            - uesio/io.field:
                                 fieldId: uesio/core.updatedby
                                 user:
                                   subtitle: $Time{uesio/core.updatedat}
