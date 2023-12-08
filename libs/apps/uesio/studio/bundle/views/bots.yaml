@@ -95,7 +95,7 @@ definition:
                       - uesio/io.filter:
                           wire: bots
                           fieldId: uesio/studio.type
-                          label: " "
+                          labelPosition: none
                 - uesio/io.table:
                     uesio.id: botsTable
                     wire: bots
