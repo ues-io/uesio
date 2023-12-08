@@ -12,9 +12,6 @@ components:
       uesio.display:
         - type: paramIsSet
           param: recordid
-      uesio.styleTokens:
-        root:
-          - p-10
       components:
         - uesio/io.titlebar:
             title: ${collection}

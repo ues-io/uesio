@@ -9,4 +9,5 @@ definition:
       - py-2
       - px-4
       - uppercase
+      - tracking-wider
 public: true

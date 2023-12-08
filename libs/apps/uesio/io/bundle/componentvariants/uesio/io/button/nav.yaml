@@ -8,4 +8,5 @@ definition:
       - hover:text-primary
       - p-2
       - uppercase
+      - tracking-wider
 public: true
