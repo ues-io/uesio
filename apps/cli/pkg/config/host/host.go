@@ -5,7 +5,9 @@ import (
 	"os"
 
 	"github.com/AlecAivazis/survey/v2"
+
 	"github.com/thecloudmasters/cli/pkg/config"
+	"github.com/thecloudmasters/uesio/pkg/env"
 )
 
 var validHostsDevMode = []string{
@@ -18,7 +20,7 @@ var validHostsRegular = []string{
 }
 
 func GetValidHosts() []string {
-	if os.Getenv("UESIO_DEV") == "true" {
+	if env.InDevMode() {
 		return validHostsDevMode
 	} else {
 		return validHostsRegular
