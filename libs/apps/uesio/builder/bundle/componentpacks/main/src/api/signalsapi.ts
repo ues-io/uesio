@@ -2,6 +2,7 @@ import { collection, component, context, definition, wire } from "@uesio/ui"
 import collectionSignals from "../signals/collection"
 import componentSignals from "../signals/component"
 import botSignals from "../signals/bot"
+import integrationSignals from "../signals/integration"
 import notificationSignals from "../signals/notification"
 import panelSignals from "../signals/panel"
 import userSignals from "../signals/user"
@@ -17,8 +18,8 @@ const signalBandDefinitions: SignalBandDefinition[] = [
 	notificationSignals,
 	panelSignals,
 	routeSignals,
-	// TODO: Should we hide Bot signals if users don't have Bot feature flag activated?
 	botSignals,
+	integrationSignals,
 	toolsSignals,
 	componentSignals,
 	collectionSignals,

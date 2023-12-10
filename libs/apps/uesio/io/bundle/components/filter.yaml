@@ -86,7 +86,7 @@ properties:
     displayConditions:
       - type: fieldValue
         field: fieldDisplayType
-        operator: EQ
+        operator: EQUALS
         value: MULTISELECT
   - name: displayAs
     type: SELECT

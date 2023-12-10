@@ -334,32 +334,28 @@ func CallListenerBot(namespace, name string, params map[string]interface{}, conn
 
 }
 
+// GetIntegrationActionBotName resolves the name of the Bot associated with an integration action,
+// which can either come from the integration action itself, or from the integration type
+func GetIntegrationActionBotName(integrationAction *meta.IntegrationAction, integrationType *meta.IntegrationType) (string, error) {
+	// Use the action's associated BotRef, if defined, otherwise use the Integration Type's RunActionBot
+	if integrationAction.BotRef != "" {
+		return integrationAction.BotRef, nil
+	}
+	if integrationType.RunActionBot != "" {
+		return integrationType.RunActionBot, nil
+	}
+	return "", exceptions.NewNotFoundException("could not find bot for this integration action")
+}
+
 func RunIntegrationAction(ic *wire.IntegrationConnection, actionKey string, requestOptions interface{}, connection wire.Connection) (interface{}, error) {
 	integration := ic.GetIntegration()
 	integrationType := ic.GetIntegrationType()
 	session := ic.GetSession()
 	integrationKey := integration.GetKey()
 	actionKey = strings.ToLower(actionKey)
-	action, err := meta.NewIntegrationAction(integration.GetType(), actionKey)
+	action, err := GetIntegrationAction(integrationType.GetKey(), actionKey, session, connection)
 	if err != nil {
 		return nil, err
-	}
-	err = bundle.Load(action, session, nil)
-	if err != nil {
-		return nil, exceptions.NewNotFoundException(fmt.Sprintf("could not find integration action with name %s for integration %s", actionKey, integrationKey))
-	}
-	// Use the action's associated BotRef, if defined, otherwise use the Integration Type's RunActionBot
-	var botNamespace, botName string
-	if action.BotRef != "" {
-		botNamespace, botName, err = meta.ParseKey(action.BotRef)
-		if err != nil {
-			return nil, exceptions.NewNotFoundException(fmt.Sprintf("invalid Bot name '%s' for Integration Action: %s", action.BotRef, actionKey))
-		}
-	} else if integrationType.RunActionBot != "" {
-		botNamespace, botName, err = meta.ParseKey(integrationType.RunActionBot)
-		if err != nil {
-			return nil, exceptions.NewNotFoundException(fmt.Sprintf("invalid Bot name '%s' for Integration: %s", integrationType.RunActionBot, integrationKey))
-		}
 	}
 
 	// convert requestOptions into a params map
@@ -368,8 +364,6 @@ func RunIntegrationAction(ic *wire.IntegrationConnection, actionKey string, requ
 		return nil, fmt.Errorf("invalid request options provided to integrationConnection action with name %s for integrationConnection %s - must be a map", actionKey, integrationKey)
 	}
 
-	botKey := fmt.Sprintf("%s.%s", botNamespace, botName)
-
 	fullyQualifiedActionKey := fmt.Sprintf("%s.%s", action.Namespace, action.Name)
 
 	if !session.GetContextPermissions().CanRunIntegrationAction(integrationKey, fullyQualifiedActionKey) {
@@ -377,7 +371,7 @@ func RunIntegrationAction(ic *wire.IntegrationConnection, actionKey string, requ
 	}
 
 	// First try to run a system bot
-	systemListenerBot := meta.NewListenerBot(botNamespace, botName)
+	systemListenerBot := meta.NewListenerBot(action.Namespace, actionKey)
 	systemListenerBot.Dialect = "SYSTEM"
 
 	systemDialect, err := bot.GetBotDialect(systemListenerBot.Dialect)
@@ -393,11 +387,23 @@ func RunIntegrationAction(ic *wire.IntegrationConnection, actionKey string, requ
 		return systemBotResults, err
 	}
 
+	// Otherwise, since it is NOT a system bot, parse the bot's name
+	actionBot, err := GetIntegrationActionBotName(action, integrationType)
+	if err != nil {
+		return nil, exceptions.NewNotFoundException(fmt.Sprintf("no bot name could be determined for integration action %s:%s", integrationKey, actionKey))
+	}
+	botNamespace, botName, err := meta.ParseKey(actionBot)
+	if err != nil {
+		return nil, exceptions.NewNotFoundException(fmt.Sprintf("invalid bot name %s for integration action %s:%s", actionBot, integrationKey, actionKey))
+	}
+
 	robot := meta.NewRunActionBot(botNamespace, botName)
 	err = bundle.Load(robot, session, connection)
 	if err != nil {
-		return nil, exceptions.NewNotFoundException("integration run action bot not found: " + botKey)
+		return nil, exceptions.NewNotFoundException("integration run action bot not found: " + actionBot)
 	}
+
+	// TODO: Make sure that Bot params and Action Params match up!
 
 	if err = robot.ValidateParams(params); err != nil {
 		// This error will already be a BotParamError strongly typed
